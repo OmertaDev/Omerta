@@ -399,7 +399,13 @@ export async function sellPaper(ch, loanId, body, client, h) {
   if (!loan || loan.status !== 'active') throw new GameError('no_loan', 'No such debt to sell.');
   if (loan.lender_character !== ch.id) throw new GameError('not_yours', 'That’s not your book to sell.');
   await client.query('UPDATE loans SET for_sale=$2 WHERE id=$1', [loanId, price]);
-  return { ok: true, price };
+  const borrower = (await client.query('SELECT name FROM characters WHERE id=$1', [loan.borrower_character])).rows[0];
+  // THE TERMS RIDE WITH THE PRICE. What is for sale is not a number — it is somebody ELSE's debt, and
+  // the buyer takes over the right to collect it. The ask alone cannot say that, so the reply carries
+  // what is OWED and by WHOM (the client has no loan catalog to price a claim from), plus whether a
+  // car is pledged behind it, which is the whole difference between secured and unsecured paper.
+  return { ok: true, paper: 'listed', price, owed: loanOwed(loan.principal, loan.rate),
+    borrower: borrower?.name || null, secured: loan.collateral_car != null };
 }
 
 // POST /v1/loans/:id/unsell — the lender pulls the paper off the market (just clears the flag)
@@ -408,7 +414,7 @@ export async function unsellPaper(ch, loanId, client, h) {
   if (!loan || loan.lender_character !== ch.id) throw new GameError('not_yours', 'That’s not your book.');
   if (loan.for_sale == null) throw new GameError('not_listed', 'That paper isn’t on the market.');
   await client.query('UPDATE loans SET for_sale=NULL WHERE id=$1', [loanId]);
-  return { ok: true };
+  return { ok: true, paper: 'pulled' };
 }
 
 // POST /v1/loans/:id/buy — two-party: ch=buyer (actor, the NEW lender), seller=current lender. The buyer

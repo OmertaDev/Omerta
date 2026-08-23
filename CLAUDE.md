@@ -5605,6 +5605,125 @@ faucet for a bigger fresh/mid hit — no free lunch). All `CRIME_STAT` numbers a
 levers, pinned in `test/levers.js`. Two mutations (old coefficients restored; muscle leaked into the
 roll) each fail by name.
 
+**PLAY WAVE 68 — THE DECK FIRES THROUGH `act()` TOO, AND 80 ROUTES WERE INVISIBLE TO THE GUARD
+(2026-08-23).** Wave 67 ended on the sweep's standing root cause — *a route nobody has driven has a
+line nobody has read* — so this wave went at the guard's own CORPUS BOUND rather than another
+cluster. **THE SILENCE LEDGER (check 14) collected its pressed set from `act('POST','/literal')` and
+`data-do="POST /literal"` only — and the raw deck presses through `act()` as well** (`goBtn.onclick`
+→ `await act(m, path, body)`), with paths built at runtime. Every route the deck alone reaches is
+**parameterized** (`fire`, `jump`, `npchit`, `melt`, `bounty`), because a curated screen builds those
+by concatenation — so **80 routes were structurally outside the ledger's reach**, and widening
+`ACTPATHS` by the deck's own static tuples surfaced exactly five new mutes: a tight, high-value list
+rather than noise.
+
+**THE HEADLINE IS THE HIRED GUN, and it is the bare-price catch-all on the one verb that most needs
+its terms.** The whole NPC-hit family — the street contract AND the Pen's burner call, on the MISS
+and on the KILL — read **`paid $50,000`**: a price with the purchase left off, on the only action in
+the game whose fee is **gone whether or not anybody dies**. Nothing said the odds it was priced at,
+nothing said the mark had died, and nothing said the contact rests six hours and will not touch that
+same mark for a day — two cooldowns that are LEVERS the client cannot read, since neither is
+published anywhere. **`success` could not carry the marker** — crime, world raids, the bust and the
+family raid all send that field — so the server names the SYSTEM (`op: 'npchit'`) and ships the two
+cooldowns, through **ONE shared `terms` object** all four outcomes spread, so the miss, the absorb,
+the revive and the kill can never disagree about what the job cost. `burnerHit` needed nothing: it
+spreads `...await npcHit(…)`, so the marker flows through — which is also why the static walk cannot
+see it and it is DECLARED with that property rather than left to read as covered.
+
+**Three more, each the recorded shape.** A **shank that got caught** read `"done."` over three real
+terms the server had already handed it — the beating, thirty minutes in the hole, and a sentence now
+LONGER than the one you walked in with — because the miss branch keys on `btk`, a rounds-versus-
+bodyweight number a yard shanking has no concept of; the **shank KILL** shared the fire-kill line and
+dropped the one term only a yard killing has (the added stretch); and **putting a loan claim on the
+market** (and pulling it back) said `"done."` while `paper: 'bought'` had sat on `buyPaper` since it
+shipped — the forgotten-sibling shape, one function away. The listing line needed SERVER fields to
+say anything true: what is for sale is not a number but somebody else's debt, and the client has no
+loan catalog to price a claim from, so `owed`, `borrower` and `secured` ride with the ask.
+
+**Two of the five are NOT defects and are declared with the property that makes each right**:
+`quoteBond` is the chain rail (the bond card renders the quote it signs — matching `requestWithdraw`/
+`requestDynastyMint`), and `repairCar`'s branches key on `body.fixed === true|false`, a LITERAL the
+Proxy sentinel walk cannot supply (the `playDice` precedent). **Driving all five is what separated
+them**, which is the wave's own argument for never trusting the static walk alone.
+
+**THE GUARD IS DRIVEN, NEVER SYNTHETIC, and its outcome-independence is deliberate**: the NPC-hit
+roll has no test knob, so pinning *"it missed"* would be a deterministic assertion resting on a 2%
+chance (the recorded flake shape). Every term asserted rides BOTH lines — the fee, that it burns
+either way, the odds, both cooldowns — and only the KILL's own wording is taken on the DRIVEN reply's
+real fields with the outcome flag flipped, since the branch selector is client-side and every figure
+it reads is the terms object already proven sent. Six mutations, each caught at its own named
+assertion — **and M4 SURVIVED its first run because the mutation never properly applied**: the anchor
+used a real emoji where the file stores the literal `🔫` escape, so the replacement clipped
+the template's opening and left the asserted words in place. *A mutation that does not apply reads
+exactly like a fix that holds*, for the fourth time in this file; the anchor is asserted, and the
+redone mutation fails printing the original defect verbatim. Driven actions 238 → 239. Suite green +
+docs + mobile 81/81 + pgquery + pgcheck on a FRESH real Postgres (one new `SELECT` in `loans.js`).
+
+**PLAY WAVE 69 — THE VANITY FAMILY: FIVE $OMR BURNS IN ONE FILE, ONE OF THEM NAMING ITS PRICE
+(2026-08-23).** Wave 68 widened the silence ledger's corpus to the raw deck; driving the clusters
+that surfaced reached `src/vanity.js`, and the finding is a **comment asserting a family property
+the family did not have.** `setPlate` ships `omr: VANITY.PLATE_OMR` and says so in its own words —
+*"The price ships for the same reason every other $OMR burn in this file ships one"* — while **four
+of its five siblings shipped no price at all**: the street rename (30), the custom title (60), the
+family crest (60) and the family rename (150) each named the purchase and left the figure off, on
+the game's PREMIUM currency, driven and read back verbatim (*"they call you The Quiet One now"*,
+*"the family flies #aa3311 now"*). The forgotten-sibling shape at its plainest — the fix and its
+justification were both written once, at one site, and the other four were never revisited.
+**The client could not have supplied any of the four**: there is no vanity catalog on that side (the
+plate's own comment says exactly this about the CAR name), so the price ships from the server, and
+the four lines read it through the same `${body.omr ? …}` suffix the plate already used.
+**THE FREE CLEAR IS WHAT MAKES THE SUFFIX HONEST RATHER THAN A GUESS.** `setTitle` returns
+`{ok, title: null}` with no burn when the title is dropped — *we sell ink, not ransom* — so a
+conditional suffix is SELF-GATING: the one reply that charges nothing quotes nothing. That branch
+now also SAYS so (*"just your name from here, and that costs nothing"*), because a player dropping
+a title beside four lines that all quote a price has no way to know this one is free, and the
+terms-ride-with-the-price rule cuts both ways.
+**AND THE SAME CLASS ON TWO CASH SINKS IN THE SAME SWEEP.** Founding a family ($25,000) read
+*"the family is founded — you're the boss"* and the Underworld envelope ($5,000) read *"the envelope
+lands — Doc Moretti is at 5"*: both name the purchase, neither the price. Both differ from the
+vanity four in one way that is worth stating rather than glossing — **their prices ARE on the buy
+screen** (the founding card quotes `rules.family.foundCost`, the fixture card quotes the board's
+`gift.cost`), so the terms rode with the price BEFORE the press and only the RECEIPT was silent. The
+founding line reads the published lever; the envelope's ships from the server, because `describe()`
+has no handle on the underworld board — and its own sibling `payPenance`, one function down, has
+shipped `cost` all along, which is what makes it the forgotten-sibling shape rather than a rule.
+Guarded by a WAVE 69 driven block in `test/client.js`, asserting the SERVER half first and the LINE
+second on each of the four (a synthetic passes the field going missing straight through — the
+recorded rule), plus the free clear sending no price and quoting none. Five mutations, five
+distinct named kills (the server's `omr` dropped from the family rename → *"must SEND the $OMR it
+burned"*; the client suffix dropped from the street rename → the line printed back verbatim; the
+free clear made to send a price → *"the free title clear must send no price"*; the envelope's `cost`
+dropped; the founding line un-priced → the original sentence printed back verbatim). Driven actions
+238 → 244. No SQL moved in `src/` (checked with a diff filter, not assumed), so the real-Postgres
+gates do not apply. Suite green + docs + mobile 81/81.
+
+**PLAY WAVE 70 — THE DEN: A STAKE TAKEN AT THE DEAL AND NEVER NAMED, AND A WHOLE PASS LINE REPORTED
+AS ONE NET FIGURE (2026-08-23).** Neither table was in the driven set at all, which is the sweep's
+own root cause reappearing on the flashiest room in the city. **THE DEAL is the terms case**:
+blackjack debits and books the stake AT THE DEAL rather than at the resolve (that is the documented
+design — `casino:bet:blackjack` fires on the deal), and the line read *"dealt 18 — dealer shows 12"*
+— two card totals and no money, on a table whose very next press can DOUBLE it. **CRAPS is the
+legibility case**: the whole pass line resolves in ONE call, so *"the table paid — +$500"* discarded
+the come-out, the point and every roll that chased it — a gambling result reported as an accounting
+entry, on a game whose product IS the roll. Neither needed a server field: `bet`, `canDouble`,
+`rolls` and `point` all rode the reply already and only the line was short. The stake is named on
+the OPENING deal alone (`player.length === 2`), because a hit is not a second charge.
+**AND THE STALE-WAIVER CHECK CAUGHT ITS OWN IMPROVEMENT, which is the guard working in the direction
+nobody plans for.** `playDice` was declared in `MUTE_OK` with a true reason — the money branch keys
+on `typeof body.win === 'boolean'`, which a Proxy sentinel can never satisfy, so the static walk saw
+a silent reply. The new rolls branch IS statically reachable (`game: 'dice'` is a literal in the
+reply and `rolls` walks as an array sentinel), so the declaration stopped waiving anything and the
+ledger refused the run until it was removed — *a waiver that waives nothing is a decision nobody is
+making*. Silence declarations 10 → 9.
+Guarded by a WAVE 70 driven block, and the fixture is placed at the Neon Mile **directly rather than
+by travelling**, because an earlier row may already have taken it there and travel correctly refuses
+a no-op — the block needs the den's district gate satisfied, not a journey. The deal's assertions
+are skipped on a NATURAL, which resolves at the deal and renders the payout line instead; the craps
+assertions are outcome-independent (the come-out is thrown either way) and the point is asserted
+only when there was one. Three mutations, three named kills — and the third is the instructive one:
+disabling the rolls branch outright fails at the SILENCE LEDGER (the static half) rather than at the
+driven claim, so it was re-cut to keep the branch and change only its WORDING, which fails at
+*"craps must name the come-out it threw"* with the line printed back. Driven actions 244 → 246.
+
 ## Sensitive design notes
 *These are standing PRODUCT rules. They bind whatever else is true, and several of them exist
 because breaking one is very hard to walk back.*
@@ -17062,4 +17181,44 @@ kills** (the client dropping the lapse window; the server dropping `activeSecond
 the price; the pledge line reverting to a deposit) — every claim DRIVEN rather than synthetic, which is
 wave 65's own lesson applied from the start: a literal passes straight through the mutation that stops
 a field being sent. Driven actions 261 → 265. Suite green; **no SQL moved in `src/`** (checked with a
+diff filter, not assumed), so the real-Postgres gates do not apply.
+
+**PLAY WAVE 67 — FOUR ENTRIES THAT TOOK THE MONEY AND NEVER NAMED WHEN THE BELL RINGS
+(2026-08-23).** Check 14 (THE SILENCE LEDGER) proves statically that no act()-pressed handler is MUTE,
+and it is structurally blind to the class every tester complaint in this project has actually been: a
+line that is FLUENT and simply leaves a TERM off. So this wave drove the entry surfaces — the routes
+that take money and put you into something that RESOLVES LATER — and found one coherent family of five.
+**THE TELL is that two of the branches GUARDED on `body.fee !== undefined` to decide they were the
+right branch and never rendered it**: the figure was in hand at the moment it was withheld.
+**The four entries split on a distinction the player cannot see and must be told**: the tournament and
+the stakes **ESCROW** a buy-in and resolve at a DEADLINE, and a short field REFUNDS the lot; the card
+entry and the futurity nomination **BURN** a non-refundable fee to the buyback that never comes back.
+All four read as if the money had simply gone somewhere and nothing said when, or whether, anything
+happens next. **The boxing main event is the forgotten sibling that got this right all along**
+(`public/index.html:2756` renders `closesSeconds` — *"Betting closes in …"*), three screens from four
+neighbours in the same family that did not. A FIFTH, one system over, is the same shape: a posted
+FAVOR states that the pay is held up front and never said it STANDS for a window after which the
+unfilled escrow comes back.
+**TWO SERVER FIELDS, and the reason `minEntrants` is SENT rather than restated is the whole class**:
+a threshold copied into the client drifts the day the lever moves, and only the server knows this
+table's own number (the `crewNextCost`/`hunterSearchMs` discipline). Everything else was already in
+the reply and merely dropped.
+**THE GUARD IS DRIVEN, NEVER SYNTHETIC** — wave 65's lesson applied from the start: every claim here
+is about a figure the SERVER sends, and a synthetic passes straight through the mutation that stops it
+being sent. The block rides inside the wave-65 driven scope (its `id65`/`t65`/`drive65` fixture) and
+asserts the two halves separately for each entry — the server SENT the term, and the driven line
+NAMES it — with the fee assertions built from the reply's own figure through `fmtLike` rather than a
+literal.
+**Six probe errors are recorded rather than reported**, each traced before being called anything:
+`/v1/me` returns the character under `.character` (so the seed UPDATE matched zero rows and every
+drive read level 1 — which looked exactly like a game defect and was mine), `/v1/sov/:d/build` takes
+`windowHour`, `/v1/stable/buy` requires `name`, `/v1/stable/list/:id` takes `limit` not `price`,
+`npc_standing`'s column is `npc_id`, and `POST /v1/business/:id/spec` is not a mounted route at all.
+*A finding produced by a tool you wrote and did not check is not a finding*, for the tenth session
+running — and the probe itself LIFTS `test/client.js`'s own `DESCRIBE` IIFE at runtime rather than
+making a third copy of describe()'s dependency list, because *a third copy is how the second one went
+stale.* **Four mutations, four distinct named kills** (the tournament line dropping the deadline and
+the refund; the server dropping `minEntrants` on the stakes; the card entry dropping the fee it guards
+on; the futurity reverting to its original sentence), each restored by `cp` from a scratchpad copy,
+never `git checkout`. Driven actions 265 → 270. Suite green; **no SQL moved in `src/`** (checked with a
 diff filter, not assumed), so the real-Postgres gates do not apply.

@@ -5675,7 +5675,8 @@ assert.match(String(describeFn(dep.body, 200)), /transit/i,
 // the chat send, the Wire dossier all read "done." through describe() and are not defects, because
 // describe() is never invoked on them). data-do buttons go through act(), so they count.
 const ACTPATHS = new Set([...html.matchAll(/\bact\(\s*'(POST|DELETE)'\s*,\s*'([^']+)'/g)].map((m) => m[2])
-  .concat([...html.matchAll(/data-do="(POST|DELETE) ([^"]+)"/g)].map((m) => m[2])));
+  .concat([...html.matchAll(/data-do="(POST|DELETE) ([^"]+)"/g)].map((m) => m[2]))
+  .concat([...html.matchAll(/\['(POST|DELETE)',\s*'(\/v1[^']+)'/g)].map((m) => m[2])));
 const ACTFNS = new Map();   // route path → the handler names its registration calls
 
 // ── check 13: THE COLLISION LEDGER ─────────────────────────────────────────────────────────────
@@ -5878,7 +5879,10 @@ const ACTFNS = new Map();   // route path → the handler names its registration
     ['withCharacter', 'the request wrapper itself — every route unwraps it; a player never reads this shape'],
     ['requestWithdraw', 'the chain rail renders its own voucher card; the console never toasts it'],
     ['requestDynastyMint', 'same rail, same card'],
-    ['playDice', 'the dice branch keys on game===\'dice\'; the sentinel walk cannot supply a literal it does not have'],
+    ['quoteBond', 'the same chain rail — the bond card renders the quote it signs, never a toast'],
+    ['repairCar', 'its branches key on body.fixed === true|false; the sentinel walk cannot supply a literal'],
+    ['burnerHit', 'it spreads ...await npcHit(...) — a call the static walk cannot follow; the npchit '
+      + 'branch renders it live, and the WAVE 68 block below drives the burner line for real'],
     ['upgradeSpeakeasy', 'the raid early-return renders the RAIDED line; driven by the action ledger'],
     ['collectCorner', 'the corner take renders through the collect family — driven live'],
     ['settlePassStipend', 'an internal settle called from the pass claim, whose own reply carries the line'],
@@ -6094,6 +6098,151 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   assert(pled.r.body.pledged > 0 && pled.r.body.standing, 'the pledge must send what left and what it bought');
   assert(/BURNED/.test(pled.line) && /does not come back/.test(pled.line),
     `the pledge line must say the $OMR is burned, not deposited: ${pled.line}`);
+  // ── WAVE 67: four ENTRIES that took the money and never named when the bell rings ─────────────
+  // The boxing main event is the sibling that got this right ("Betting closes in ..."), and its four
+  // neighbours did not: two ESCROW a buy-in and resolve at a deadline (a short field refunds the
+  // lot), and two BURN a non-refundable nomination fee — and both of those GUARD on `body.fee` while
+  // never saying it, which is the tell. DRIVEN, because every claim is about a figure the SERVER
+  // sends: a synthetic passes straight through the mutation that stops it being sent.
+  await app.pool.query("UPDATE characters SET cash=90000000, loc='neon' WHERE id=$1", [id65]);
+  const tourney = await drive65('/v1/casino/tournament');
+  assert(tourney.r.body.closesSeconds > 0 && tourney.r.body.minEntrants > 0,
+    'the tournament must SEND its deadline and its short-field threshold — a restated threshold drifts the day the lever moves');
+  assert(/deals in/.test(tourney.line) && new RegExp(`under ${tourney.r.body.minEntrants} `).test(tourney.line),
+    `the DRIVEN tournament line must name when it deals AND that a short field refunds: ${tourney.line}`);
+
+  await inject('POST', '/v1/stable/buy', t65, { kind: 'dog', name: 'Wave Comet' });
+  const rid67 = (await inject('GET', '/v1/stable', t65)).body.stable[0].id;
+  const stakes = await drive65(`/v1/stable/stakes/${rid67}`);
+  assert(stakes.r.body.closesSeconds > 0 && stakes.r.body.minEntrants > 0, 'the stakes must SEND both terms too');
+  assert(/runs in/.test(stakes.line) && new RegExp(`under ${stakes.r.body.minEntrants} `).test(stakes.line),
+    `the DRIVEN stakes line must name the deadline AND the refund: ${stakes.line}`);
+
+  // The two BURNS. Both branches already read `body.fee` to decide they are the right branch, which
+  // is what makes the silence indefensible — the figure was in hand at the moment it was withheld.
+  const cardEntry = await drive65(`/v1/casino/track/enter/${rid67}`);
+  assert(cardEntry.r.body.fee > 0, "the card entry must send its fee — the client has no catalog to price it from");
+  assert(new RegExp(fmtLike(cardEntry.r.body.fee)).test(cardEntry.line) && /does not come back/.test(cardEntry.line),
+    `the DRIVEN card-entry line must name the fee AND that it is gone: ${cardEntry.line}`);
+  // A FIFTH in the same family, one system over: a posted favor HOLDS the pay up front (the line said
+  // so) and STANDS for a window after which the unfilled escrow comes back — a term sent and dropped.
+  const fav67 = await drive65('/v1/favors', { goodId: 'gin', qty: 2, pay: 5000, district: 'neon' });
+  assert(fav67.r.body.expiresSeconds > 0, 'the favor must SEND how long it stands');
+  assert(/stands/.test(fav67.line) && /comes back/.test(fav67.line),
+    `the DRIVEN favor line must say how long it stands and that the rest comes back: ${fav67.line}`);
+
+  const nom = await drive65(`/v1/casino/futurity/nominate/${rid67}`);
+  assert(nom.r.body.fee > 0 && nom.r.body.closesSeconds > 0, 'the nomination must send its fee and the card clock');
+  assert(new RegExp(fmtLike(nom.r.body.fee)).test(nom.line) && /NOT come back/.test(nom.line) && /closes in/.test(nom.line),
+    `the DRIVEN nomination line must name the burned fee AND when the card closes: ${nom.line}`);
+
+  // ── WAVE 68: the hired gun — a fee that burns whether or not anybody dies ─────────────────────
+  // Found by widening the silence ledger's corpus to the raw deck (which fires through act() too,
+  // with VARIABLE paths, so 80 parameterized routes were structurally invisible to it). The whole
+  // NPC-hit family — the street contract AND the Pen's burner call, on the MISS and on the KILL —
+  // fell to the bare-price catch-all "paid $50,000": a price with the purchase left off, on the one
+  // verb in the game whose fee is gone whether or not the mark goes down. `success` could not carry
+  // the marker (crime, world raids, the bust and the family raid all send it), so the server names
+  // the SYSTEM, and ships the two cooldowns because neither lever is published anywhere.
+  const tMark = (await inject('POST', '/v1/auth/guest')).body.token;
+  await inject('POST', '/v1/character', tMark, { name: 'Mark ' + Math.random().toString(36).slice(2, 7) });
+  const idMark = (await inject('GET', '/v1/me', tMark)).body.character.id;
+  await app.pool.query('UPDATE characters SET respect=900000, loc=$2 WHERE id=$1', [idMark, 'docks']);
+  await app.pool.query('UPDATE characters SET cash=90000000 WHERE id=$1', [id65]);
+  const hit = await drive65(`/v1/streets/${idMark}/npchit`, { tier: 'legbreaker' });
+  // the SERVER must send all four, or the line below has nothing to read — this is the half a
+  // synthetic passes straight through, which is why the whole block is driven.
+  assert(hit.r.body.cost > 0 && hit.r.body.success > 0 && hit.r.body.cooldownSeconds > 0
+    && hit.r.body.targetCdSeconds > 0, 'the hired gun must SEND the fee, the odds and both cooldowns');
+  // OUTCOME-INDEPENDENT on purpose: the roll has no test knob, so pinning "it missed" would be a
+  // deterministic assertion resting on a 2% chance. Every term below rides BOTH lines.
+  assert(new RegExp(`\\$${hit.r.body.cost.toLocaleString('en-US')}`).test(hit.line)
+    && /either way/.test(hit.line), `the hired-gun line must name the fee AND that it burns regardless: ${hit.line}`);
+  assert(new RegExp(`${Math.round(hit.r.body.success * 100)}% odds`).test(hit.line),
+    `the hired-gun line must name the odds it was priced at: ${hit.line}`);
+  assert(/contact rests/.test(hit.line) && /this mark again/.test(hit.line),
+    `the hired-gun line must name BOTH cooldowns — the contact's and this mark's: ${hit.line}`);
+  assert(/contractor/.test(hit.line), `the hired-gun line must say what the contractor did: ${hit.line}`);
+  // the KILL's own wording, on the DRIVEN reply's real fields with only the outcome flag flipped —
+  // the branch selector is client-side, and every figure it reads is the terms object above.
+  const npcKill = String(describeFn({ ...hit.r.body, hit: true, killed: true }, 200));
+  assert(/mark is gone/.test(npcKill) && /no reputation/.test(npcKill),
+    `the hired-gun KILL must name the death AND that it pays no rep: ${npcKill}`);
+
+  // ── WAVE 69: THE VANITY FAMILY — four $OMR burns, one of five naming its price ────────────────
+  // setPlate ships `omr` and its own comment says it does so "for the same reason every other $OMR
+  // burn in this file ships one" — which was FALSE about four of its five siblings: the street
+  // rename (30), the title (60), the crest (60) and the family rename (150) each named the purchase
+  // and left the price off, on the game's PREMIUM currency. The forgotten-sibling shape, with a
+  // comment asserting a family property the family did not have. The client cannot supply the
+  // figure — there is no vanity catalog on that side — so the server sends it, and the free title
+  // CLEAR sends none, which is what makes a `body.omr ? …` suffix self-gating rather than a lie.
+  await app.pool.query('UPDATE account_persistent SET omr=100000 WHERE account_id=(SELECT account_id FROM characters WHERE id=$1)', [id65]);
+  await drive65('/v1/gangs', { name: 'Wave69 ' + Math.random().toString(36).slice(2, 6), tag: 'W6' + Math.random().toString(36).slice(2, 4).toUpperCase() });
+  const vanity69 = [
+    ['/v1/vanity/name', { name: 'Wave Sixtynine' }, /knows you as/],
+    ['/v1/vanity/title', { title: 'The Quiet One' }, /they call you/],
+    ['/v1/gangs/vanity/color', { color: '#aa3311' }, /family flies/],
+    ['/v1/gangs/vanity/name', { name: 'Wave Sixtynine Fam', tag: 'W69' }, /family is/],
+  ];
+  for (const [url, body, names] of vanity69) {
+    const v = await drive65(url, body);
+    assert(v.r.code === 200, `wave 69 fixture: ${url} refused (${v.r.code} ${JSON.stringify(v.r.body).slice(0, 90)})`);
+    // the SERVER half first — a synthetic passes straight through the field going missing.
+    assert(v.r.body.omr > 0, `${url} must SEND the $OMR it burned`);
+    assert(names.test(v.line), `the ${url} line must still name what changed: ${v.line}`);
+    assert(new RegExp(`${v.r.body.omr.toLocaleString('en-US')} \\$OMR`).test(v.line),
+      `the ${url} line must name the $OMR it burned: ${v.line}`);
+  }
+  // …and clearing a title really is free, so it must not quote a price it did not charge.
+  const clear69 = await drive65('/v1/vanity/title', { title: '' });
+  assert(clear69.r.body.omr === undefined, 'the free title clear must send no price');
+  assert(/costs nothing/.test(clear69.line) && !/\$OMR/.test(clear69.line),
+    `the free clear must SAY it is free and quote no burn: ${clear69.line}`);
+
+  // …and the same class on two CASH sinks in the same sweep. Both prices are already on the buy
+  // screen — the founding card quotes rules.family.foundCost, the fixture card quotes the board's
+  // gift.cost — so the terms ride with the price BEFORE the press and only the receipt was silent.
+  // The founding line reads the published lever; the gift's ships from the server, because
+  // describe() has no handle on the underworld board (the penance sibling one branch over already
+  // ships its own `cost`, which is what makes this the forgotten-sibling shape rather than a rule).
+  const gift69 = await drive65('/v1/underworld/doc/gift', {});
+  assert(gift69.r.body.cost > 0, 'the envelope must SEND what it cost');
+  assert(new RegExp(`\\$${gift69.r.body.cost.toLocaleString('en-US')}`).test(gift69.line)
+    && /Doc Moretti/.test(gift69.line), `the envelope line must name the price AND the fixture: ${gift69.line}`);
+  const found69 = said.get('/v1/gangs');
+  assert(found69 && /25,000/.test(found69) && /boss/.test(found69),
+    `founding a family must name the $25,000 it took: ${found69}`);
+
+  // ── WAVE 70: THE DEN, where the receipt named neither the money nor the game ──────────────────
+  // Neither table was in the driven set at all. THE DEAL takes the stake THERE AND THEN (bet
+  // debited and booked at the deal, not at the resolve) and read "dealt 18 — dealer shows 12":
+  // two card totals and no money, on a table whose very next press can DOUBLE it. And CRAPS
+  // resolves the whole pass line in ONE call, so "the table paid — +$500" discarded the come-out,
+  // the point and every roll that chased it — a gambling result reported as an accounting entry.
+  // Both figures already rode the reply; only the line was short.
+  await app.pool.query("UPDATE characters SET loc='neon', cash=90000000 WHERE id=$1", [id65]);
+  const deal70 = await drive65('/v1/casino/blackjack', { amount: 500 });
+  assert(deal70.r.code === 200, `wave 70 fixture: the deal refused (${JSON.stringify(deal70.r.body).slice(0, 90)})`);
+  assert(deal70.r.body.bet > 0, 'the deal must SEND the stake it just took');
+  if (!deal70.r.body.done) { // a natural resolves at the deal and renders the payout line instead
+    assert(new RegExp(`\\$${deal70.r.body.bet.toLocaleString('en-US')} is down`).test(deal70.line),
+      `the deal must name the stake it took: ${deal70.line}`);
+    assert(/dealer shows/.test(deal70.line), `the deal must still name the cards: ${deal70.line}`);
+    if (deal70.r.body.canDouble) assert(/double/.test(deal70.line),
+      `the deal must name the one decision on the table: ${deal70.line}`);
+    await drive65('/v1/casino/blackjack/stand');
+  }
+  const dice70 = await drive65('/v1/casino/dice', { amount: 500 });
+  assert(dice70.r.code === 200 && Array.isArray(dice70.r.body.rolls) && dice70.r.body.rolls.length,
+    'the craps call must SEND the rolls it made');
+  assert(new RegExp(`come-out ${dice70.r.body.rolls[0]}`).test(dice70.line),
+    `craps must name the come-out it threw: ${dice70.line}`);
+  assert(/\$/.test(dice70.line), `craps must still name the money: ${dice70.line}`);
+  if (dice70.r.body.point) assert(new RegExp(`point ${dice70.r.body.point}`).test(dice70.line),
+    `craps must name the point it was chasing: ${dice70.line}`);
+
+
 }
 
 await app.close();
@@ -6194,8 +6343,13 @@ await app.close();
   const score = say({ ok: true, take: 276406, rep: 1800, soldier: null, nextScoreSeconds: 28800 });
   assert(/276,406/.test(score) && /1800 respect/.test(score), `the Score must still name the take: ${score}`);
   assert(/8h/.test(score) && /crew/i.test(score), `the Score must name its cooldown AND that crew jobs share it: ${score}`);
+
   console.log('  ✓ wave 65: two shared clocks and a fare that were charged without being named');
   console.log('  ✓ wave 66: a paid activation that never named its window, and a burn that read as a deposit');
+  console.log('  ✓ wave 67: four entries that took the money and never named when the bell rings');
+  console.log('  ✓ wave 68: the hired gun — a fee that burned whether or not anybody died, and never said so');
+  console.log('  ✓ wave 69: six purchases that named what they bought and left the price off — four of the five $OMR burns in one file, plus founding a family and the envelope');
+  console.log('  ✓ wave 70: the den — a stake taken at the deal and never named, and a whole pass line reported as one net figure');
 }
 
 console.log(`✅ client wiring test passed — across the console AND /admin: of ${refs.size} routes they can ` +

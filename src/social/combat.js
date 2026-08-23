@@ -628,24 +628,34 @@ export async function npcHit(ch, victim, client, h, tierId, opts = {}) {
   else await client.query('INSERT INTO npc_hits (payer, target) VALUES ($1,$2)', [ch.id, victim.id]);
 
   const success = Math.min(M3.NPC_MAX_SUCCESS, Math.max(M3.NPC_MIN_SUCCESS, tier.base - vicLvl * M3.NPC_DEF_PER_LVL));
+  // ONE terms object shared by all four outcomes, so the miss, the absorb, the revive and the kill
+  // can never disagree about what the job cost or when the contact will take another. The two
+  // cooldowns are LEVERS the client cannot read (neither is published), so the server sends them.
+  const terms = { op: 'npchit', success, cost,
+    cooldownSeconds: Math.round(M3.NPC_HIT_CD_MS / 1000),
+    targetCdSeconds: Math.round(M3.NPC_HIT_TARGET_CD_MS / 1000) };
   const roll = Math.random();
   await h.rngLog(client, ch.id, `npchit:${victim.id}`, roll, roll < success ? `hit (p=${success.toFixed(2)})` : `miss (p=${success.toFixed(2)})`);
   await h.track(client, ch.account_id, 'npchit', { tier: tierId, target: victim.id, success: roll < success });
   if (roll >= success) {
     await h.notify(client, victim.id, 'npchit_survived', {}); // "you feel someone wants you dead" — nudge to insure
-    return { ok: true, hit: false, success, cost };
+    // `op` names the SYSTEM at the source. `success` alone is NOT a discriminator — crime, world
+    // raids, the bust and the family raid all send it — so without this the whole NPC-hit family
+    // (street AND burner, miss AND kill) fell to the bare-price catch-all: "paid $50,000", a price
+    // with the purchase left off on the one verb whose fee burns whether or not anybody dies.
+    return { ok: true, ...terms, hit: false };
   }
   // ── the contractor lands the kill ──
   // the bodyguard steps in first (earnable shield before real-ETH insurance). The PAYER is the
   // attacker for the betrayal check: a guard who hires out the job on their own principal has
   // already stepped aside.
   const guard = await bodyguardAbsorbs(client, h, ch, victim);
-  if (guard) return { ok: true, hit: true, absorbed: true, guard: guard.name, success, cost };
+  if (guard) return { ok: true, ...terms, hit: true, absorbed: true, guard: guard.name };
   if (Number(h.victimAcct.respawn_tokens || 0) > 0) { // pre-paid insurance absorbs it (like a player hit)
     h.victimAcct.respawn_tokens = Number(h.victimAcct.respawn_tokens) - 1;
     victim.health = 100;
     await h.notify(client, victim.id, 'revived', { from: 'a hired gun' });
-    return { ok: true, hit: true, revived: true, success, cost };
+    return { ok: true, ...terms, hit: true, revived: true };
   }
   // GRUDGES (step three): the fixtures know who sent the man with the bag — the PAYER wears
   // the loss for every friend of the house the contractor drops (read before the estate wipe).
@@ -656,7 +666,7 @@ export async function npcHit(ch, victim, client, h, tierId, opts = {}) {
   const estate = await runEstate(client, h, victim, 'A HIRED GUN', { killerCh: ch });
   await h.notify(client, victim.id, 'whacked', { from: 'a hired gun' });
   bus.emit('streets', { type: 'kill', by: 'a hired gun', victim: victim.name });
-  return { ok: true, hit: true, killed: true, success, cost, ...(grudges.length ? { grudges } : {}),
+  return { ok: true, ...terms, hit: true, killed: true, ...(grudges.length ? { grudges } : {}),
     estate: { heirId: estate.heirId } };
 }
 
