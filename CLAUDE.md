@@ -17020,3 +17020,46 @@ refund rows are written and the escrow checks still reconcile — a blanket `UPD
 accounting and was a bad mutation, not a finding): with the loop it recovers, without it the run dies
 at its own named assertion. Driven actions 259 → 261. Suite green + mobile 81/81; **no SQL moved in
 `src/`** (checked with a diff filter, not assumed), so the real-Postgres gates do not apply.
+
+**PLAY WAVE 66 — A PAID ACTIVATION THAT NEVER NAMED ITS WINDOW, AND A BURN THAT READ AS A DEPOSIT
+(2026-08-23).** Wave 65 hunted withheld terms — the class check 14 is structurally blind to, since a
+line can be FLUENT and still leave a term off. This continued the sweep across six more clusters
+(commission, bonds, brokers, boxing, the poker ring, the whole Wire, crew, roster, soldiers, favors,
+the exchange, dynasty), driving each and reading every reply back through the client's REAL
+`describe()`. **Most of it came back clean**, which is a result rather than a shortfall — those
+clusters had been read by earlier waves — and two paid surfaces had not.
+**THE BROKER'S ACTIVATION IS A SUBSCRIPTION AND THE LINE NAMED NEITHER TERM.** It read *"you're an
+activated broker — Runner (×1)"*: the tier and the multiplier, and neither the $OMR that had just
+left nor the fact that the window LAPSES — the `made` case one system over, on the demand engine of
+the whole stock machine. The reply already carried the price; what it did not carry was the window,
+and **only the server can state it**, because a re-activation EXTENDS from the current end — renewing
+early keeps the remainder, so an upgrade at day 1 runs 60 days, not 30. `activeSeconds` ships (the
+`madeSeconds` shape — SECONDS, the unit the client renders clocks in) and the line reads both.
+**THE PLEDGE READ LIKE A DEPOSIT.** *"pledged 200 $OMR to the treasury"* — and `bond:pledge` is a
+one-way BURN buying nothing but a status score. Both words in that sentence point the wrong way, and
+it needed NO server field: the burn is structural, so the fix is the SENTENCE (*"it is BURNED, not
+deposited: the score is what you get, and it does not come back"*). This is the withheld-terms class
+in its purest form — the game knowing what happens to a player's money and saying something that
+implies the opposite.
+**THE MEASUREMENT HAD TO BE INSTRUMENTED, AND MY FIRST EXTRACTOR OVER-COUNTED BY 62.** A static regex
+over the ledger reports far more undriven routes than exist, because dynamic rows resolve their URL at
+drive time and are invisible to it — so the driven set was dumped from the RUN itself and the gap
+recomputed by structural path matching. Even then it is a POINTER rather than a census (several drive
+helpers key `said` under a label rather than a URL), which is what every wave has actually used it as.
+**AND THE PROBE'S OWN `describe()` HOST WAS REBUILT THREE TIMES BEFORE IT WAS ABANDONED FOR THE
+LEDGER'S.** An unbounded grow-until-compiles swallowed the NEXT helper's declaration whole (*"Identifier
+'goodName' has already been declared"* — the recorded 86,000-character class), a bounded one then
+hoisted DOM helpers and a `const blurb` out of an unrelated function. The right answer was not a fourth
+private copy: `test/client.js` already carries a correct extraction (sibling-derived, over-inclusive by
+design, with a load-bearing token pinned per helper), so the probe uses that one. *A third copy of a
+dependency list is how the second one went stale.*
+**Five probe "findings" were the probe and are recorded rather than reported**: wrong body fields on
+`boxing/list` (`limit` for `stake`) and `ring/open` (`ante` for `bb`) — the CONSOLE sends the right
+ones, checked before filing — plus a gangs column that does not exist, a broker tier id read as a
+string, and a favors payload under the good-id floor. *A finding produced by a tool you wrote and did
+not check is not a finding*, for the ninth session running. **Four mutations, four distinct named
+kills** (the client dropping the lapse window; the server dropping `activeSeconds`; the client dropping
+the price; the pledge line reverting to a deposit) — every claim DRIVEN rather than synthetic, which is
+wave 65's own lesson applied from the start: a literal passes straight through the mutation that stops
+a field being sent. Driven actions 261 → 265. Suite green; **no SQL moved in `src/`** (checked with a
+diff filter, not assumed), so the real-Postgres gates do not apply.

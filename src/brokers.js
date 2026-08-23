@@ -87,7 +87,13 @@ export async function activate(ch, client, h, tierId) {
       'INSERT INTO broker_activations (account_id, tier, until, spent_omr) VALUES ($1,$2,$3,$4)',
       [ch.account_id, t.id, until, spent]);
   }
-  return { tier: t.id, name: t.name, omr: t.omr, mult: t.mult, until, spentOmr: spent };
+  // THE TERMS RIDE WITH THE PRICE. An activation is PAID and it LAPSES — the line named the tier and
+  // the multiplier and neither of those, which is the `made` subscription case one system over. The
+  // window is sent in SECONDS because that is the unit the client renders clocks in, and it is
+  // computed rather than restated: a re-activation EXTENDS from the current end (`base` above), so a
+  // holder renewing early keeps the remainder, and only the server knows what that leaves.
+  return { tier: t.id, name: t.name, omr: t.omr, mult: t.mult, until, spentOmr: spent,
+    activeSeconds: Math.max(0, Math.ceil((until.getTime() - Date.now()) / 1000)) };
 }
 
 /// The holder's own view: where they stand, what they would weigh, and what is missing.

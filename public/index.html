@@ -2084,7 +2084,7 @@
       return `\u{1F4E9} the envelope: +${fmt(body.omr)} $OMR${body.freeMint ? ' — and a FREE made-man credit (mint your identity on this screen)' : ''}`;
     // THE BROKERS' DESK — activated a window ({tier,name,omr,mult,until,spentOmr} is the activate shape)
     if (body && body.mult != null && body.spentOmr != null && body.until)
-      return `\u{1F3A9} you're an activated broker — ${txt(body.name)} (×${body.mult}). Now PLAY: the split pays the men who did.`;
+      return `\u{1F3A9} you're an activated broker — ${txt(body.name)} (×${body.mult})${body.omr ? ` — ${fmt(body.omr)} $OMR` : ''}${body.activeSeconds ? `, and it runs ${minsTxt(body.activeSeconds)} before it lapses` : ''}. Now PLAY: the split pays the men who did.`;
     // THE WEEKLY BULLETIN — claimed the week's title
     if (body && body.title && body.theme) return `\u{1F4F0} ${txt(body.theme)} — you took the title: ${txt(body.title)}`;
     // PRIME TIME — answered tonight's call
@@ -2963,7 +2963,7 @@
     }
     if (body.spec !== undefined && body.name && body.spent !== undefined) bits.push(`✦ your ${txt(body.kindName || body.kind)} is now ${txt(body.name)} (−${body.spent} $OMR)`);
     if (body.won !== undefined && body.feeBurned !== undefined) bits.push(body.won ? `TOOK IT OVER — ${art(txt(body.kindName || body.kind))} is yours (they got $${fmt(body.net)})` : `the takeover of ${art(txt(body.kindName || body.kind))} was fought off — the $${fmt(body.feeBurned)} fee is gone`);
-    if (body.pledged !== undefined && body.standing) bits.push(`pledged ${fmt(body.pledged)} $OMR to the treasury — ${body.standing.tier} (score ${fmt(body.standing.score)})`);
+    if (body.pledged !== undefined && body.standing) bits.push(`pledged ${fmt(body.pledged)} $OMR to the treasury — ${body.standing.tier} (score ${fmt(body.standing.score)}). It is BURNED, not deposited: the score is what you get, and it does not come back`);
     if (body.charter !== undefined && body.name && body.spent !== undefined) bits.push(`✦ commissioned ${art(body.name)} (−${body.spent} $OMR)`);
     if (body.restored !== undefined && body.need !== undefined) bits.push(body.restored ? `the floor OVERRODE the head veto — the decree is RESTORED (${body.weight}/${body.need})` : `moved to override — the floor musters ${body.weight}/${body.need}`);
     if (body.vetoed && body.week !== undefined) bits.push(`VETOED ${txt(body.name || body.vetoed)} at the table`);
