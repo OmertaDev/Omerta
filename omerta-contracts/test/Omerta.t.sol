@@ -648,6 +648,27 @@ contract OmertaTest is Test {
         vm.stopPrank();
     }
 
+    function test_staking_apy_change_is_not_retroactive() public {
+        vm.startPrank(player);
+        omr.approve(address(staking), type(uint256).max);
+        staking.stake(10_000e18);
+        vm.stopPrank();
+
+        vm.warp(block.timestamp + 180 days);
+        uint256 earnedAtOldRate = staking.pendingRewards(player);
+
+        vm.prank(safe);
+        staking.setApy(5_000);
+        assertApproxEqAbs(staking.pendingRewards(player), earnedAtOldRate, 1);
+
+        vm.warp(block.timestamp + 185 days);
+        uint256 principal = 10_000e18;
+        uint256 expected = (principal * 1_400 * 180 days) / (10_000 * 365 days)
+            + (principal * 5_000 * 185 days) / (10_000 * 365 days);
+        // The global index rounds once per rate epoch; tolerate only sub-token wei dust.
+        assertApproxEqAbs(staking.pendingRewards(player), expected, 20_000);
+    }
+
     function test_vig_recipient_cannot_zero_while_active_but_rotates() public {
         address payable dev = payable(makeAddr("dev"));
         address payable vig = payable(makeAddr("vig"));
