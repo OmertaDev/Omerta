@@ -2208,7 +2208,7 @@
         ? `squared with ${txt(body.npcName)} — $${fmt(body.cost)}, and they'll do favors again`
         : `paid $${fmt(body.cost)} toward ${txt(body.npcName)} — ${body.remaining} more to square`;
     if (body && body.ok && body.npcName && body.standing !== undefined)
-      return `the envelope lands — ${txt(body.npcName)} is at ${body.standing}${body.tier ? ` (tier ${body.tier})` : ''}`;
+      return `the envelope lands${body.cost ? ` ($${fmt(body.cost)})` : ''} — ${txt(body.npcName)} is at ${body.standing}${body.tier ? ` (tier ${body.tier})` : ''}`;
     if (body && body.ok && body.npcName)
       return `${txt(body.npcName)} does you a favor — ${body.health !== undefined ? 'patched up, back to full'
         : body.energy !== undefined ? `you're rested (${body.energy} energy)`
@@ -2222,12 +2222,12 @@
       return body.currency === 'omr'
         ? `${fmt(body.amount)} $OMR into the family reserve — that's what seals and the Foundation are bought with`
         : `$${fmt(body.amount)} into the family treasury`;
-    if (body && body.ok && body.color && body.name === undefined) return `the family flies ${txt(body.color)} now`;
+    if (body && body.ok && body.color && body.name === undefined) return `the family flies ${txt(body.color)} now${body.omr ? ` \u00B7 ${fmt(body.omr)} $OMR` : ''}`;
     // THE RENAME read "done." beside it — same card, same $OMR till, 150 for a name and tag that
     // change on every surface in the game. Guarded on `tag` so it cannot take the street-name line
     // above (which answers {name, referralCodeChanged}); `name` alone is far too common a field.
     if (body && body.ok && body.tag && body.name && body.color === undefined)
-      return `\u{1F3F4} the family is ${txt(body.name)} [${txt(body.tag)}] now — the name changes everywhere it's written`;
+      return `\u{1F3F4} the family is ${txt(body.name)} [${txt(body.tag)}] now — the name changes everywhere it's written${body.omr ? ` \u00B7 ${fmt(body.omr)} $OMR` : ''}`;
     if (body && body.ok && body.id && body.kind && body.name && body.tier !== undefined)
       return body.tier > 1
         // the price AND the consequence. The pad is a percentage of income, so a tier raises the
@@ -2698,7 +2698,8 @@
       return `\u{1F4B5} Bella took ${art(txt(g ? g.name : body.sold))} off you — $${fmt(body.price)}`
         + `${body.carrying ? `. You're carrying ${txt(c ? c.name : body.carrying)} now.` : '. You\'re carrying nothing now.'}`;
     }
-    if (body && body.ok && body.gangId && body.name === undefined) return '\u{1F3B4} the family is founded — you\'re the boss. Bring people in.';
+    if (body && body.ok && body.gangId && body.name === undefined)
+      return `\u{1F3B4} the family is founded${rules?.family?.foundCost ? ` — $${fmt(rules.family.foundCost)} out of your pocket` : ''}. You're the boss; bring people in.`;
     // …and JOINING one, which the guard above excludes by name and nothing then picked up. The
     // founding line has shipped since M3; the join — a one-way move that puts you under omertà,
     // makes the treasury and the tribute yours to pay into, and counts your standing to the family
@@ -2732,7 +2733,7 @@
     if (body && body.ok && 'listed' in body && body.listed !== undefined && body.street === undefined)
       return body.listed ? 'you\'re on the duelling ladder — anyone can call you out now' : 'off the ladder — no more challenges';
     if (body && body.ok && body.folded) return 'paper folded — you\'re caught up';
-    if (body && body.ok && body.referralCodeChanged) return `the street knows you as ${txt(body.name)} now — your referral link changed with the name`;
+    if (body && body.ok && body.referralCodeChanged) return `the street knows you as ${txt(body.name)} now — your referral link changed with the name${body.omr ? ` \u00B7 ${fmt(body.omr)} $OMR` : ''}`;
     // THE MISSION LADDER read as a TITLE BEING STRIPPED. doMission sends `title: m.title || null`
     // and 27 of the 36 missions carry no title, so three claims in four fell into the vanity
     // title-CLEAR line one branch down — "title dropped — just your name from here" — telling a
@@ -2755,7 +2756,7 @@
       return `\u{1F94A} ${body.titleBout ? 'TITLE FIGHT' : 'the card is booked'} — ${txt(body.card)}. `
         + `Betting closes in ${minsTxt(body.closesSeconds)}; both fighters are booked until it settles.`;
     if (body && body.ok && 'title' in body && body.tier === undefined)
-      return body.title ? `they call you ${txt(body.title)} now` : 'title dropped — just your name from here';
+      return body.title ? `they call you ${txt(body.title)} now${body.omr ? ` \u00B7 ${fmt(body.omr)} $OMR` : ''}` : 'title dropped — just your name from here, and that costs nothing';
     if (body && body.ok && body.lab && body.cap !== undefined) return `\u{1F9EA} the lab is ${art(body.name || body.lab, 'a')} now — ${body.cap} units a batch`;
     // A LAB MODULE is $60k+ of bench and read "done." — no level, no price, and above all no word on
     // what it buys. The effect comes from `rules.kitchen.modules` rather than a new server field:
@@ -3307,7 +3308,20 @@
     if (body.toOwner !== undefined && body.round) bits.push(`\u{1F942} bought ${body.round} — $${fmt(body.paid)}, $${fmt(body.toOwner)} of it to the house${body.regular ? '. You\'re a regular here now.' : ''}`);
     if (body.bottle && body.spent !== undefined) bits.push(`${body.bottle} — ${fmt(body.spent)} $OMR, and the room turned to look`);
     if (body.game && typeof body.win === 'boolean' && body.bet !== undefined) bits.push(body.win ? `the table paid — +$${fmt(Math.abs(body.net ?? 0))}` : `the house keeps it — −$${fmt(Math.abs(body.net ?? body.bet))}`);
-    if (body.game === 'blackjack' && !body.done) bits.push(`dealt ${body.playerTotal} — dealer shows ${body.dealerUp === 1 ? 'an ace' : body.dealerUp}`);
+    // …and for CRAPS the roll IS the product: the whole pass line resolves in ONE call, so the
+    // net alone discarded the come-out, the point and every roll that chased it — a gambling
+    // result reported as an accounting entry.
+    if (body.game === 'dice' && Array.isArray(body.rolls) && body.rolls.length)
+      bits.push(`come-out ${body.rolls[0]}${body.point ? ` · point ${body.point}` : ''}`
+        + `${body.rolls.length > 1 ? ` · rolled ${body.rolls.slice(1).join(', ')}` : ''}`);
+    // THE DEAL takes the stake THERE AND THEN (the bet is debited and booked at the deal, not at
+    // the resolve), and this named two card totals and no money — the terms class on a table
+    // where the next press can DOUBLE it. Both figures ride the reply already; `bet` is only
+    // stated on the opening deal, because a hit is not a second charge.
+    if (body.game === 'blackjack' && !body.done)
+      bits.push(`dealt ${body.playerTotal} — dealer shows ${body.dealerUp === 1 ? 'an ace' : body.dealerUp}`
+        + `${body.player && body.player.length === 2 && body.bet ? ` · $${fmt(body.bet)} is down`
+          + `${body.canDouble ? ', and you can still double it' : ''}` : ''}`);
     if (body.game === 'blackjack' && body.done) bits.push(
       body.outcome === 'blackjack' ? `BLACKJACK — +$${fmt(body.net)}` :
       body.outcome === 'bust' ? `bust at ${body.playerTotal} — −$${fmt(Math.abs(body.net))}` :

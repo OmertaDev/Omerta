@@ -41,7 +41,10 @@ export async function changeName(ch, name, client, h) {
   const was = ch.name;
   ch.name = name;
   await h.track(client, ch.account_id, 'vanity_name', { was, now: name });
-  return { ok: true, name, referralCodeChanged: true };
+  // the burn ships for the same reason the plate's does — the client has no vanity catalog to
+  // price a rename from, and a premium-currency spend whose figure the line never names is the
+  // bare-price class inverted: the purchase named, the price left off.
+  return { ok: true, name, referralCodeChanged: true, omr: VANITY.NAME_CHANGE_OMR };
 }
 
 // A custom title — it lives in the SAME display slot the mission titles use (characters.title),
@@ -52,7 +55,7 @@ export async function setTitle(ch, title, client, h) {
   if (!t) { ch.title = null; return { ok: true, title: null }; }
   await spendOmr(client, h, VANITY.TITLE_OMR, 'vanity:title');
   ch.title = t;
-  return { ok: true, title: t };
+  return { ok: true, title: t, omr: VANITY.TITLE_OMR };
 }
 
 // A vanity plate for one car in the garage (2–8 chars, letters/digits/space/dash, engraved
@@ -82,7 +85,7 @@ export async function recolorGang(ch, color, client, h) {
   await spendOmr(client, h, VANITY.GANG_COLOR_OMR, 'vanity:gang:color');
   await client.query('UPDATE gangs SET color=$2 WHERE id=$1', [h.owned.gangId, c]);
   if (h.owned.gang) h.owned.gang.color = c;
-  return { ok: true, color: c };
+  return { ok: true, color: c, omr: VANITY.GANG_COLOR_OMR };
 }
 
 // M8 — THE FAMILY SEAL: the gang-prestige ladder, bought SEQUENTIALLY by the boss from the
@@ -156,5 +159,5 @@ export async function renameGang(ch, name, tag, client, h) {
   await client.query('UPDATE gangs SET name=$2, tag=$3 WHERE id=$1', [h.owned.gangId, finalName, finalTag]);
   if (h.owned.gang) { h.owned.gang.name = finalName; h.owned.gang.tag = finalTag; }
   await h.track(client, ch.account_id, 'vanity_gang_name', { was: g.name, now: finalName });
-  return { ok: true, name: finalName, tag: finalTag };
+  return { ok: true, name: finalName, tag: finalTag, omr: VANITY.GANG_RENAME_OMR };
 }

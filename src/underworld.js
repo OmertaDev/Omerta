@@ -77,7 +77,11 @@ export async function giftNpc(ch, npcId, client, h) {
   await h.track(client, ch.account_id, 'underworld_gift', { npc: npcId });
   // npcName rides every fixture response: the id ('doc') is a key, the name ('Doc Moretti') is
   // what a player is owed — and the client has no catalog of the cast to resolve it from.
-  return { ok: true, npc: npcId, npcName: n.name, standing: Number(h.owned.npc[npcId]), tier: npcTier(h, npcId) };
+  // the COST ships for the same reason penance's does one function down: describe() has no handle
+  // on the underworld board, so the button's price is unreadable from the receipt — the purchase
+  // named and the price left off, which is the bare-price class inverted.
+  return { ok: true, npc: npcId, npcName: n.name, cost: UNDERWORLD.GIFT_COST,
+    standing: Number(h.owned.npc[npcId]), tier: npcTier(h, npcId) };
 }
 
 // EARLY DISCHARGE — Doc T2 halves a hospital stay, T3 releases in full. Priced per remaining

@@ -5658,6 +5658,72 @@ exactly like a fix that holds*, for the fourth time in this file; the anchor is 
 redone mutation fails printing the original defect verbatim. Driven actions 238 → 239. Suite green +
 docs + mobile 81/81 + pgquery + pgcheck on a FRESH real Postgres (one new `SELECT` in `loans.js`).
 
+**PLAY WAVE 69 — THE VANITY FAMILY: FIVE $OMR BURNS IN ONE FILE, ONE OF THEM NAMING ITS PRICE
+(2026-08-23).** Wave 68 widened the silence ledger's corpus to the raw deck; driving the clusters
+that surfaced reached `src/vanity.js`, and the finding is a **comment asserting a family property
+the family did not have.** `setPlate` ships `omr: VANITY.PLATE_OMR` and says so in its own words —
+*"The price ships for the same reason every other $OMR burn in this file ships one"* — while **four
+of its five siblings shipped no price at all**: the street rename (30), the custom title (60), the
+family crest (60) and the family rename (150) each named the purchase and left the figure off, on
+the game's PREMIUM currency, driven and read back verbatim (*"they call you The Quiet One now"*,
+*"the family flies #aa3311 now"*). The forgotten-sibling shape at its plainest — the fix and its
+justification were both written once, at one site, and the other four were never revisited.
+**The client could not have supplied any of the four**: there is no vanity catalog on that side (the
+plate's own comment says exactly this about the CAR name), so the price ships from the server, and
+the four lines read it through the same `${body.omr ? …}` suffix the plate already used.
+**THE FREE CLEAR IS WHAT MAKES THE SUFFIX HONEST RATHER THAN A GUESS.** `setTitle` returns
+`{ok, title: null}` with no burn when the title is dropped — *we sell ink, not ransom* — so a
+conditional suffix is SELF-GATING: the one reply that charges nothing quotes nothing. That branch
+now also SAYS so (*"just your name from here, and that costs nothing"*), because a player dropping
+a title beside four lines that all quote a price has no way to know this one is free, and the
+terms-ride-with-the-price rule cuts both ways.
+**AND THE SAME CLASS ON TWO CASH SINKS IN THE SAME SWEEP.** Founding a family ($25,000) read
+*"the family is founded — you're the boss"* and the Underworld envelope ($5,000) read *"the envelope
+lands — Doc Moretti is at 5"*: both name the purchase, neither the price. Both differ from the
+vanity four in one way that is worth stating rather than glossing — **their prices ARE on the buy
+screen** (the founding card quotes `rules.family.foundCost`, the fixture card quotes the board's
+`gift.cost`), so the terms rode with the price BEFORE the press and only the RECEIPT was silent. The
+founding line reads the published lever; the envelope's ships from the server, because `describe()`
+has no handle on the underworld board — and its own sibling `payPenance`, one function down, has
+shipped `cost` all along, which is what makes it the forgotten-sibling shape rather than a rule.
+Guarded by a WAVE 69 driven block in `test/client.js`, asserting the SERVER half first and the LINE
+second on each of the four (a synthetic passes the field going missing straight through — the
+recorded rule), plus the free clear sending no price and quoting none. Five mutations, five
+distinct named kills (the server's `omr` dropped from the family rename → *"must SEND the $OMR it
+burned"*; the client suffix dropped from the street rename → the line printed back verbatim; the
+free clear made to send a price → *"the free title clear must send no price"*; the envelope's `cost`
+dropped; the founding line un-priced → the original sentence printed back verbatim). Driven actions
+238 → 244. No SQL moved in `src/` (checked with a diff filter, not assumed), so the real-Postgres
+gates do not apply. Suite green + docs + mobile 81/81.
+
+**PLAY WAVE 70 — THE DEN: A STAKE TAKEN AT THE DEAL AND NEVER NAMED, AND A WHOLE PASS LINE REPORTED
+AS ONE NET FIGURE (2026-08-23).** Neither table was in the driven set at all, which is the sweep's
+own root cause reappearing on the flashiest room in the city. **THE DEAL is the terms case**:
+blackjack debits and books the stake AT THE DEAL rather than at the resolve (that is the documented
+design — `casino:bet:blackjack` fires on the deal), and the line read *"dealt 18 — dealer shows 12"*
+— two card totals and no money, on a table whose very next press can DOUBLE it. **CRAPS is the
+legibility case**: the whole pass line resolves in ONE call, so *"the table paid — +$500"* discarded
+the come-out, the point and every roll that chased it — a gambling result reported as an accounting
+entry, on a game whose product IS the roll. Neither needed a server field: `bet`, `canDouble`,
+`rolls` and `point` all rode the reply already and only the line was short. The stake is named on
+the OPENING deal alone (`player.length === 2`), because a hit is not a second charge.
+**AND THE STALE-WAIVER CHECK CAUGHT ITS OWN IMPROVEMENT, which is the guard working in the direction
+nobody plans for.** `playDice` was declared in `MUTE_OK` with a true reason — the money branch keys
+on `typeof body.win === 'boolean'`, which a Proxy sentinel can never satisfy, so the static walk saw
+a silent reply. The new rolls branch IS statically reachable (`game: 'dice'` is a literal in the
+reply and `rolls` walks as an array sentinel), so the declaration stopped waiving anything and the
+ledger refused the run until it was removed — *a waiver that waives nothing is a decision nobody is
+making*. Silence declarations 10 → 9.
+Guarded by a WAVE 70 driven block, and the fixture is placed at the Neon Mile **directly rather than
+by travelling**, because an earlier row may already have taken it there and travel correctly refuses
+a no-op — the block needs the den's district gate satisfied, not a journey. The deal's assertions
+are skipped on a NATURAL, which resolves at the deal and renders the payout line instead; the craps
+assertions are outcome-independent (the come-out is thrown either way) and the point is asserted
+only when there was one. Three mutations, three named kills — and the third is the instructive one:
+disabling the rolls branch outright fails at the SILENCE LEDGER (the static half) rather than at the
+driven claim, so it was re-cut to keep the branch and change only its WORDING, which fails at
+*"craps must name the come-out it threw"* with the line printed back. Driven actions 244 → 246.
+
 ## Sensitive design notes
 *These are standing PRODUCT rules. They bind whatever else is true, and several of them exist
 because breaking one is very hard to walk back.*
