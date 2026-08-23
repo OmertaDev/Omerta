@@ -6068,6 +6068,32 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   assert(scoreDriven.r.body.nextScoreSeconds > 0, 'the Score must SEND its cooldown — only the server knows the figure');
   assert(/crew/i.test(scoreDriven.line) && /\d/.test(scoreDriven.line),
     `the DRIVEN Score line must name the clock crew jobs share: ${scoreDriven.line}`);
+
+  // ── WAVE 66: two PAID surfaces that named the purchase and not the terms ──────────────────────
+  // Both are DRIVEN for the same reason as the clocks above: each claim is about a field the SERVER
+  // sends, and a synthetic passes straight through the mutation that stops it being sent.
+  await app.pool.query(
+    "UPDATE account_persistent SET omr=50000 WHERE account_id=(SELECT account_id FROM characters WHERE id=$1)", [id65]);
+
+  // THE BROKER'S ACTIVATION is PAID and it LAPSES, and the line named the tier and the multiplier and
+  // neither of those — the `made` subscription case one system over. The window is the interesting
+  // half: a re-activation EXTENDS from the current end, so renewing early keeps the remainder, which
+  // is a term only the server can state.
+  const brok = await drive65('/v1/brokers/activate', { tier: 1 });
+  assert(brok.r.body.omr > 0 && brok.r.body.activeSeconds > 0,
+    'the activation must SEND both its price and its window — the client cannot compute either');
+  assert(new RegExp(String(brok.r.body.omr)).test(brok.line.replace(/,/g, '')) && /lapses/.test(brok.line),
+    `the DRIVEN broker line must name what it cost AND that it runs out: ${brok.line}`);
+  const brok2 = await drive65('/v1/brokers/activate', { tier: 2 });
+  assert(brok2.r.body.activeSeconds > brok.r.body.activeSeconds,
+    'renewing EXTENDS from the current end — the remainder is kept, which is why the figure is sent rather than restated');
+
+  // THE PLEDGE reads like a deposit and is a one-way BURN buying a status score. No server field is
+  // needed — the burn is structural — so this pins the SENTENCE, which is the whole defect.
+  const pled = await drive65('/v1/bonds/pledge', { omr: 200 });
+  assert(pled.r.body.pledged > 0 && pled.r.body.standing, 'the pledge must send what left and what it bought');
+  assert(/BURNED/.test(pled.line) && /does not come back/.test(pled.line),
+    `the pledge line must say the $OMR is burned, not deposited: ${pled.line}`);
 }
 
 await app.close();
@@ -6169,6 +6195,7 @@ await app.close();
   assert(/276,406/.test(score) && /1800 respect/.test(score), `the Score must still name the take: ${score}`);
   assert(/8h/.test(score) && /crew/i.test(score), `the Score must name its cooldown AND that crew jobs share it: ${score}`);
   console.log('  ✓ wave 65: two shared clocks and a fare that were charged without being named');
+  console.log('  ✓ wave 66: a paid activation that never named its window, and a burn that read as a deposit');
 }
 
 console.log(`✅ client wiring test passed — across the console AND /admin: of ${refs.size} routes they can ` +
