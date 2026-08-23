@@ -214,6 +214,8 @@ export async function buildServer() {
     // ERR_HTTP_HEADERS_SENT and kill the process. Skip once headers are on the wire.
     if (reply.raw.headersSent) return;
     reply.header('X-Content-Type-Options', 'nosniff');
+    reply.header('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+    reply.header('Cross-Origin-Opener-Policy', 'same-origin');
     if (process.env.NODE_ENV === 'production')
       reply.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
     const ct = String(reply.getHeader('content-type') || '');
@@ -223,6 +225,13 @@ export async function buildServer() {
       // (none are meant to be framed); don't clobber /admin's own DENY + no-referrer.
       if (!reply.getHeader('x-frame-options')) reply.header('X-Frame-Options', 'DENY');
       if (!reply.getHeader('referrer-policy')) reply.header('Referrer-Policy', 'strict-origin-when-cross-origin');
+      // Monitor the legacy inline surface before enforcing CSP. Once the shell is split into
+      // self-hosted modules, remove unsafe-inline and promote this policy to enforced.
+      if (!reply.getHeader('content-security-policy')) reply.header('Content-Security-Policy-Report-Only',
+        "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; "
+        + "script-src 'self' 'unsafe-inline' https://esm.sh; style-src 'self' 'unsafe-inline'; "
+        + "img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://*.walletconnect.com https://*.walletconnect.org wss://*.walletconnect.com wss://*.walletconnect.org; "
+        + "manifest-src 'self'; worker-src 'self' blob:");
     } else if (ct.startsWith('image/svg')) {
       // /card, /beef, /v1/avatar, the /v1/art SVG fallback — served as navigable documents on the game
       // origin. Make them inert if navigated to: no script/frame, only inline styles + the data: art
@@ -586,7 +595,12 @@ export async function buildServer() {
     ['# OMERTÀ — all crawlers and AI agents welcome. Agents are first-class players.',
       '# Machine surfaces: /llms.txt (index) · /agents (agent guide) · /openapi.json (API contract) · /play (no-code setup)',
       `# Start here: ${baseUrl}/llms.txt`,
-      'User-agent: *', 'Allow: /'].join('\n') + '\n'));
+      'User-agent: *', 'Allow: /', `Sitemap: ${baseUrl}/sitemap.xml`].join('\n') + '\n'));
+  app.get('/sitemap.xml', async (req, reply) => reply.type('application/xml; charset=utf-8')
+    .header('cache-control', 'public, max-age=3600').send(
+      `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`
+      + ['/', '/wiki', '/arena', '/play', '/agents'].map((path) => `  <url><loc>${baseUrl}${path}</loc></url>`).join('\n')
+      + '\n</urlset>\n'));
   // OpenAPI 3.1 of every mounted route — built once, after all routes register (deferred to first hit).
   let openApiCache = null;
   app.get('/openapi.json', async () => (openApiCache ||= buildOpenApi(routeRegistry, { baseUrl })));
@@ -1027,12 +1041,14 @@ export async function buildServer() {
     // so an attacker who leaks their authorize URL can't have a victim's X identity bound to the
     // attacker's account (the victim's browser never carries the attacker's cookie). Path-scoped +
     // HttpOnly + Lax so it rides the top-level redirect back but nothing else.
-    reply.header('Set-Cookie', `omerta_oauth=${state}; Path=/v1/auth/x; HttpOnly; SameSite=Lax; Max-Age=900`);
+    const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
+    reply.header('Set-Cookie', `omerta_oauth=${state}; Path=/v1/auth/x; HttpOnly; SameSite=Lax; Max-Age=900${secure}`);
     return { url };
   });
   app.get('/v1/auth/x/callback', async (req, reply) => {
     // clear the one-shot binding cookie no matter the outcome
-    reply.header('Set-Cookie', 'omerta_oauth=; Path=/v1/auth/x; HttpOnly; SameSite=Lax; Max-Age=0');
+    const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
+    reply.header('Set-Cookie', `omerta_oauth=; Path=/v1/auth/x; HttpOnly; SameSite=Lax; Max-Age=0${secure}`);
     try {
       if (!req.query?.state || cookieVal(req, 'omerta_oauth') !== req.query.state) {
         return reply.redirect('/#autherr=oauth_session'); // no matching browser binding → refuse (CSRF guard)
