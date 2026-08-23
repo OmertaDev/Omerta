@@ -1283,6 +1283,15 @@ const SCENERY_WAIVED = {
       }
     };
     scan(/notify\(\s*[a-zA-Z_$][\w$]*\s*,[^,]+,\s*'([a-z_0-9]+)'\s*,\s*(\{[\s\S]{0,400})/g, true);
+    // A TERNARY TYPE was invisible to the pattern above: `[^,]+` cannot cross the comma in
+    // `notify(client, victim.id, rob ? 'robbed' : 'shakedown', {…})`, so the whole call — both
+    // branches — was never read. Three types shipped dark that way (`shakedown`, `campaign_done`,
+    // `campaign_step`): a player leaned on for a cut of their own till was shown the literal word
+    // "shakedown". Both arms are scanned, and the payload is taken from after the second literal,
+    // since a ternary payload (`isSiege ? {…} : {…}`) belongs to whichever arm was chosen and the
+    // shapes are unioned per type anyway.
+    scan(/notify\([\s\S]{0,120}?\?\s*'([a-z_0-9]+)'\s*:\s*'[a-z_0-9]+'\s*,\s*(\{[\s\S]{0,400})/g, true);
+    scan(/notify\([\s\S]{0,120}?\?\s*'[a-z_0-9]+'\s*:\s*'([a-z_0-9]+)'\s*,\s*(\{[\s\S]{0,400})/g, true);
     scan(/bus\.emit\(\s*'streets'\s*,\s*\{\s*type:\s*'([a-z_0-9]+)'([\s\S]{0,300})/g, false);
   }
   assert(sites >= 200, `the emit scan found only ${sites} sites — the extractor has stopped reading `
@@ -1405,6 +1414,43 @@ const SCENERY_WAIVED = {
   console.log(`✓ all ${names} refusal messages naming a catalog rung let the NAME supply its own article`);
 }
 
+// ── the CLIENT half of the same rule ──────────────────────────────────────────────────────────────
+// Wave 57 fixed 17 client lines by hand and left nothing behind it, so wave 62 found five more the
+// same way — by driving a rung that happened to begin with "The". `describe()` said "at the The
+// Gambler table" on the yard, "an The Iron Capital stands on The Docks" on a $1.2M stronghold,
+// "rolled a The Full Confession" at the bench, and the Estate card read "You hold a The Compound."
+// The server rule cannot see any of it: those sentences are built in public/index.html.
+//
+// Scope is the WHOLE client script, not just describe(), because the Estate card is a render — and
+// it stays tractable for the same reason the server half does: only an interpolation naming a
+// `.name`/`.title`/`*Name` counts. A district id, a role word and a money figure all read as an
+// article followed by an interpolation and none of them is a catalog rung.
+{
+  const html = fs.readFileSync(new URL('../public/index.html', import.meta.url).pathname, 'utf8')
+    .replace(/^\s*\/\/.*$/gm, '');                       // prose describing the rule is not a violation
+  const bad = [];
+  let names = 0, raw = 0;
+  for (const _ of html.matchAll(/\bart\(/g)) names++;      // the sentences already routed through the helper
+  for (const d of html.matchAll(/(^|[^\w])(the|a|an)\s+\$\{([^}]*)\}/gi)) {
+    raw++;
+    if (!/(\.name\b|\.title\b|Name\b|Title\b)/.test(d[3])) continue;
+    names++;
+    bad.push(`${d[2]} $\{${d[3]}}  (line ${html.slice(0, d.index).split('\n').length})`);
+  }
+  // TWO floors, because they fail differently. `names` (the art() calls plus the violations) is the
+  // corpus the rule GOVERNS — violations floor at zero the moment the tree is clean, so counting only
+  // those would measure nothing forever. `raw` is the MATCHER: with the tree clean, blinding the
+  // article pattern leaves every art() call standing and the first floor holds, so only a count of
+  // what the pattern finds AT ALL tells a broken narrowing from a clean tree.
+  assert(names > 20, `THE ARTICLE LEDGER (client) governs only ${names} sentences — the narrowing is ` +
+    'broken, not the tree. A scan that matches nothing passes for a clean bill of health.');
+  assert(raw > 20, `THE ARTICLE LEDGER (client) matched only ${raw} article+interpolation sites — the ` +
+    'pattern itself is broken, and a matcher that finds nothing reads exactly like a clean tree.');
+  assert.deepEqual(bad, [], 'client line(s) hardcoding an article before a catalog NAME. The client has ' +
+    'its own `art(n, a)` at module scope — use it, and the name supplies its own article:\n   - ' + bad.join('\n   - '));
+  console.log(`✓ all ${names} client lines naming a catalog rung let the NAME supply its own article`);
+}
+
 // ═══ THE RAW-KEY LEDGER — a catalog id is not a name ══════════════════════════════════════════════
 // `describe()` has no catalog of its own, so a reply that sends a catalog `id` where a display NAME
 // belongs leaves the client nothing to print but the key: "the payroll came off HOT" on the biggest
@@ -1447,6 +1493,27 @@ const SCENERY_WAIVED = {
     'game.js:approach':     'published on /v1/rules; the client COMPARES it to pick a phrase, never renders it',
     'combat.js:intent':     'published on /v1/rules; compared, never rendered (the approach precedent)',
     'rules.tail.js:rarity': 'a catalog helper return — its callers attach the display name',
+    // ── the `.kind` half. The rule was widened from `X.id` to `X.id|X.kind` after the business
+    // TAKEOVER shipped `kind: r.kind` and the wire read "took your nightclub" as "took your
+    // nightclub" only by luck of the id reading like a word — seven feedText templates were
+    // rendering a raw `d.kind` at a player. Most `kind` fields are NOT catalog rungs though: they
+    // are two- and three-value DISCRIMINATORS the client branches on, and a rule that demanded a
+    // display name beside those would be mostly wrong, which is the shape people route around.
+    // business.js is deliberately UNWAIVED: it is the file the takeover defect came out of, and a
+    // (file, key) waiver is a BLANKET one — waiving `business.js:kind` for the shutter reply would
+    // have silently re-covered the raid, the rob and the shakedown notifies fixed alongside it.
+    'casino.js:kind':     'dog|horse — the racer kind IS the display word, on a board, not prose',
+    'stable.js:kind':     'dog|horse — the same two-value word on the stakes board',
+    'chain.js:kind':      "the EIP-712 voucher struct's numeric kind — signed, never rendered",
+    'chain.js:amount':    'the same voucher struct — a wei amount reached by the kind ternary',
+    'server.js:kind':     "omr|gear on the chain board — a voucher's rail, not a catalog rung",
+    'contacts.js:kind':   'freight|visit — the discriminator the client branches on',
+    'corner.js:kind':     'the drawn daily-counter kind (crime|jump|…) the client jumps a tab on',
+    'diplomacy.js:kind':  'pact|coalition — the discriminator',
+    'market.js:kind':     'car|good|order — the discriminator every market card branches on',
+    'game.js:kind':       'an internal progress return; crew.js attaches the label before a player sees it',
+    'regimen.js:kind':    "the drawn drill; `how` in the same literal is the human sentence",
+    'rules.tail.js:kind': 'the same drill helper — `how` is the sentence beside it',
   };
   const seen = new Set();
   const bad = [];
@@ -1467,7 +1534,7 @@ const SCENERY_WAIVED = {
     const s = fs.readFileSync(f, 'utf8');
     const base = f.split('/').pop();
     for (const lit of literals(s)) {
-      for (const m of lit.matchAll(/\b(\w+):\s*(\w+)\.id\b/g)) {
+      for (const m of lit.matchAll(/\b(\w+):\s*(\w+)\.(id|kind)\b/g)) {
         const [, k, src] = m;
         // a HANDLE says so in its own name — `carId`, `heistId`, `character_id`, or the bare `id`
         if (k === 'id' || /Id$/.test(k) || /_id$/.test(k)) continue;
@@ -1477,7 +1544,7 @@ const SCENERY_WAIVED = {
         if (named) continue;
         const key = `${base}:${k}`;
         if (WAIVED[key]) { seen.add(key); continue; }
-        bad.push(`${f} — ${k}: ${src}.id`);
+        bad.push(`${f} — ${k}: ${src}.${m[3]}`);
       }
     }
   }
@@ -1573,10 +1640,21 @@ const SCENERY_WAIVED = {
           const e = v[1].trim();
           if (/\bname\b/.test(e)) continue;                        // resolved at the source
           // a plain member access only — `shares[m.id]` and `x && winner.id === y` are not ids
-          if (!/^[\w.?]+$/.test(e) || !/\.(id|\w*_id)\b|\w+Id\b/.test(e)) continue;
+          // `.kind` joins `.id` here for the reason the SERVER half was widened: the seven templates
+          // rendering a raw `d.kind` were invisible to both halves, because a `kind` field is shipped
+          // as `row.kind` and not as an id. It is narrow — only a field the LINE renders and the
+          // PAYLOAD ships as a bare member access — so the many `kind` discriminators nothing renders
+          // are untouched.
+          if (!/^[\w.?]+$/.test(e) || !/\.(id|kind|\w*_id)\b|\w+Id\b/.test(e)) continue;
           watched++;
           if (!new RegExp(`\\b(name|${k}Name)\\s*:`).test(lit)) {
             raw.add(`${type}.${k} — ${f} sends ${e} with no display name beside it`);
+          } else if (new RegExp(`\\b${k}Name\\s*:`).test(lit) && !new RegExp(`\\bd\\.${k}Name\\b`).test(line)) {
+            // (d) the INVERSE of (a): the server went and sent the name and the line still renders the
+            // key. Rule (b) above cannot see it — it asks whether the payload carries a name, and it
+            // does. This is the half that would have let the seven `d.kind` templates sit unfixed
+            // beside a server that had already been corrected.
+            raw.add(`${type}.${k} — ${f} sends ${k}Name and the line renders the raw ${k}`);
           }
         }
       }

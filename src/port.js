@@ -105,7 +105,9 @@ export async function sellBoat(ch, boatId, client, h) {
   await clearIntercepts(client, boatId);
   await client.query('DELETE FROM boats WHERE id=$1', [boatId]);
   await h.track(client, ch.account_id, 'port', { act: 'sell', kind: boat.kind });
-  return { ok: true, refund: back };
+  // the fleet runs to 5 — a line that says 'sold her back to the yard' names no boat. The NAME
+  // ships with the reply (the buy line beside it already does), so the client needs no boat catalog.
+  return { ok: true, refund: back, kind: boat.kind, name: boatOf(boat.kind)?.name || boat.kind };
 }
 
 // POST /v1/port/upgrade/:boatId {part} — NAVAL UPGRADE: buy a hull (+cargo) or engine (+knots) level (cash sink)

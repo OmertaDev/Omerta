@@ -16239,6 +16239,41 @@ the name and a defensive line costs nothing. Five mutations, each caught at its 
 the original sentence reproduced verbatim). No SQL moved — checked with a diff filter, not assumed.
 Driven actions 243 → 253. Suite 8/8 + sim drift-0 + mobile 81/81.
 
+**PLAY WAVE 62–63 — THE ARTICLE RULE READS OFF THE NAME, AND A TERNARY TYPE WAS INVISIBLE TO THE WIRE
+LEDGER (2026-08-23).** Wave 57 built THE ARTICLE LEDGER over the SERVER's refusal messages and never
+extended it to the client, which is exactly why wave 62 found five more instances there. Two halves.
+**(1) `art()` GOT ITS ARTICLE AGREEMENT WRONG, on the most-pressed button in the garage.** The helper
+supplied a hardcoded `a`, and the CARS catalog alone holds **seven vowel-initial rungs** ("boosted a
+Errand Boy Coupe") **AND one that begins with "The"** — so a caller-chosen article is wrong two ways
+in one catalog. `art(n, a)` now decides `a`/`an` from the NAME and still yields to a name that brings
+its own "The"; the LEDGER moved to the client script, where it governs 67 lines. **Its anti-vacuity
+floor needed a SECOND half and the mutation is what proved it**: the corpus is the `art()` calls plus
+the violations, so with the tree clean, blinding the article MATCHER leaves every `art()` call
+standing and the first floor holds — only a count of what the pattern finds AT ALL tells a broken
+narrowing from a clean tree. **(2) THE RAW-KEY LEDGER matched `k: X.id` and not `k: X.kind`**, which
+is how the business TAKEOVER shipped a reply naming nothing; widened, it flagged **136 fields** and
+found **seven feedText templates rendering a raw `d.kind` at a player** — the Bureau raiding "your
+laundromat", a rival hitting "the register at your casino" — every one a business or boat catalog
+rung. Fixed at the SOURCE (`kindName` on eight payloads) with the twelve genuine DISCRIMINATORS
+(`car|good|order`, `pact|coalition`, `freight|visit`, the voucher rails) declared as waivers, and
+**`business.js` deliberately left UNWAIVED**: a (file, key) waiver is a BLANKET one, so waiving it for
+the shutter reply would have silently re-covered the raid, rob and shakedown notifies fixed beside it
+— the shutter reply carries the name instead. **THE HEADLINE IS THE GUARD HOLE UNDER IT: a TERNARY
+notify type was invisible to THE WIRE LEDGER.** Its scan is `notify(client, target, 'type', {…})`
+where the target matcher cannot cross a comma, so `notify(client, victim.id, rob ? 'robbed' :
+'shakedown', {…})` was never read — **both arms, silently** — and three types shipped dark:
+`shakedown`, `campaign_done`, `campaign_step`. A player leaned on for a cut of their own till was
+shown the literal word **"shakedown"**. Both arms are scanned now, three templates written, and the
+hole is **demonstrated rather than argued**: with both ternary scans removed the suite goes GREEN over
+a genuinely dark type. **The wire half gained rule (d), the INVERSE of rule (a)** — the server sends
+`<k>Name` and the line still renders the raw key — because rule (b) asks whether the PAYLOAD carries a
+name and it does, so nothing covered a client left behind by a corrected server; that is the half that
+would have let the seven `d.kind` templates sit unfixed. Five mutations, five distinct named kills —
+and one produced a **second-order kill worth keeping**: narrowing the server rule back to `.id`
+orphans every `.kind` waiver, so the STALE-WAIVER assertion fires and the rule cannot be quietly
+narrowed. §10.4 untouched (display names and templates move no value); no SQL moved (verified with a
+diff filter, not assumed), so the real-Postgres gates do not apply.
+
 **THE AUDIT PACKET, AND TWO FALSE FACTS IN THE DOCUMENT WHOSE ONLY VALUE IS BEING ACCURATE
 (2026-08-21).** Gate 2 — the third-party review of the contracts AND the off-chain signer — is the one
 outstanding mainnet gate and the one that cannot be patched after the fact, and the scope for it lived

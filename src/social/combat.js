@@ -974,7 +974,7 @@ export async function stealBoat(ch, victim, client, h) {
     await client.query('UPDATE boats SET character_id=$2, rendezvous=false WHERE id=$1', [boat.id, ch.id]);
     await client.query('DELETE FROM port_intercepts WHERE boat_id=$1', [boat.id]);
     await client.query('UPDATE characters SET car_stolen_at=now() WHERE id=$1', [victim.id]);
-    await h.notify(client, victim.id, 'boat_stolen', { from: ch.name, kind: boat.kind });
+    await h.notify(client, victim.id, 'boat_stolen', { from: ch.name, kind: boat.kind, kindName: spec?.name || boat.kind });
     await recordRival(client, victim.account_id, ch, 'boat_theft', { kind: boat.kind });
     if (revenge) await bumpHonor(client, ch, RIVALS.REVENGE_HONOR);
     bus.emit('streets', { type: 'boat_theft', by: ch.name, on: victim.name });

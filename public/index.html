@@ -2017,7 +2017,14 @@
   // per site. MODULE scope, not inside describe(): the same names are rendered by a dozen screens, and a
   // second private copy is how three gate predicates ended up with sixty-nine of them. Mirrors the
   // server's own `art()` in rules.tail.js — the two surfaces must not disagree about the same name.
-  const art = (n, a = 'the') => { const v = String(n == null ? '' : n); return /^the\s/i.test(v) ? v : `${a} ${v}`; };
+  // 'a'/'an' is decided by the NAME, not by the caller — the CARS catalog alone holds seven
+  // vowel-initial rungs ("boosted a Errand Boy Coupe" on the most-pressed button in the garage)
+  // AND one that begins with "The", so a hardcoded article is wrong two ways in one catalog.
+  const art = (n, a = 'the') => {
+    const v = String(n == null ? '' : n);
+    if (/^the\s/i.test(v)) return v;
+    return `${a === 'a' && /^[aeiou]/i.test(v) ? 'an' : a} ${v}`;
+  };
   function describe(body, code) {
     // PLAIN TEXT, not HTML. Every consumer of describe() is toast(), which assigns to textContent —
     // injection-proof by construction — so HTML-escaping here protects nothing and CORRUPTS the very
@@ -2315,7 +2322,7 @@
     // along. The WINDOW is the one that matters most: a stronghold is only vulnerable in the hour its
     // boss picks, so that hour IS the defence, and it was never said out loud after being chosen.
     if (body && body.ok && body.district && body.tier === 1 && body.windowHour !== undefined)
-      return `\u{1F3F0} an ${txt(body.name)} stands on ${$dist(body.district)} — $${fmt(body.cost)} out of the treasury. `
+      return `\u{1F3F0} ${art(txt(body.name), 'an')} stands on ${$dist(body.district)} — $${fmt(body.cost)} out of the treasury. `
         + `It can only be stormed in its window: ${String(body.windowHour).padStart(2, '0')}:00 UTC. Every other hour, the walls hold.`;
     if (body && body.ok && body.district && body.tier > 1 && body.windowHour === undefined && body.cost !== undefined)
       return `\u{1F3F0} the walls on ${$dist(body.district)} rise to tier ${body.tier} — ${txt(body.name)}, $${fmt(body.cost)}. Harder to storm, dearer to keep.`;
@@ -2434,14 +2441,14 @@
     // which is the highest-stakes consent in the game: agree to it and a loss hands over the car.
     if (body && body.ok && body.pinkSlip !== undefined)
       return body.pinkSlip
-        ? `\u{1F380} ${art(body.car || 'car')} is up for PINKS — a challenger can race you for the title, and if you lose it's THEIRS`
-        : `${art(body.car || 'car')} is off pinks — no more racing for the title`;
+        ? `\u{1F380} ${art(txt(body.name || body.car || 'car'))} is up for PINKS — a challenger can race you for the title, and if you lose it's THEIRS`
+        : `${art(txt(body.name || body.car || 'car'))} is off pinks — no more racing for the title`;
     if (body && body.ok && body.nos !== undefined && body.carId)
-      return `\u{1F4A8} nitrous loaded in ${art(body.car || 'car')} — ${body.nos}/${body.max} charges, $${fmt(body.spent)}. One burns per race, win or lose.`;
+      return `\u{1F4A8} nitrous loaded in ${art(txt(body.name || body.car || 'car'))} — ${body.nos}/${body.max} charges, $${fmt(body.spent)}. One burns per race, win or lose.`;
     if (body && body.ok && body.carId && body.limit !== undefined)
       return body.limit
-        ? `\u{1F4CB} ${art(body.car || 'car')} is on the strip — any driver can wager you up to $${fmt(body.limit)}${body.asked > body.limit ? ` (you asked $${fmt(body.asked)}; the table caps there)` : ''}`
-        : `\u{1F4CB} ${art(body.car || 'car')} is off the strip — no new wager races`;
+        ? `\u{1F4CB} ${art(txt(body.name || body.car || 'car'))} is on the strip — any driver can wager you up to $${fmt(body.limit)}${body.asked > body.limit ? ` (you asked $${fmt(body.asked)}; the table caps there)` : ''}`
+        : `\u{1F4CB} ${art(txt(body.name || body.car || 'car'))} is off the strip — no new wager races`;
     if (body && body.ok && body.boutLimit !== undefined)
       return body.boutLimit
         ? `\u{1F4CB} ${txt(body.fighter)} is on the card — anyone can make a match up to $${fmt(body.boutLimit)}, and the loser gets laid up`
@@ -2656,7 +2663,7 @@
     // and the player was told nothing at all.
     if (body && body.ok && body.op === 'craft') {
       const c = (rules?.consumables || []).find((x) => x.id === body.item);
-      return `\u{1F527} rolled a ${txt(c?.name || body.item)}${c?.effect ? ` — ${txt(c.effect)}` : ''}${
+      return `\u{1F527} rolled ${art(txt(c?.name || body.item), 'a')}${c?.effect ? ` — ${txt(c.effect)}` : ''}${
         body.cost !== undefined ? ` \u00b7 $${fmt(body.cost)}${body.crates ? ` + ${body.crates} crate${body.crates === 1 ? '' : 's'}` : ''}` : ''
       }. It's in your kit until you use it.`;
     }
@@ -2685,7 +2692,7 @@
     if (body && body.ok && body.sold && body.price !== undefined) {
       const g = (rules?.guns || []).find((x) => x.id === body.sold);
       const c = (rules?.guns || []).find((x) => x.id === body.carrying);
-      return `\u{1F4B5} Bella took the ${txt(g ? g.name : body.sold)} off you — $${fmt(body.price)}`
+      return `\u{1F4B5} Bella took ${art(txt(g ? g.name : body.sold))} off you — $${fmt(body.price)}`
         + `${body.carrying ? `. You're carrying ${txt(c ? c.name : body.carrying)} now.` : '. You\'re carrying nothing now.'}`;
     }
     if (body && body.ok && body.gangId && body.name === undefined) return '\u{1F3B4} the family is founded — you\'re the boss. Bring people in.';
@@ -2811,7 +2818,7 @@
     if (body.success === true && body.car) {
       const c = body.car;
       const iron = `${c.rarity && c.rarity !== 'common' ? `${c.rarity} ` : ''}${c.name || 'ride'}${c.trimName ? ` · ${c.trimName}` : ''}`;
-      bits.push(`boosted a ${iron} — she's in the garage${c.dmg ? ` (took some dents: ${c.dmg} dmg)` : ''}`);
+      bits.push(`boosted ${art(iron, 'a')} — she's in the garage${c.dmg ? ` (took some dents: ${c.dmg} dmg)` : ''}`);
     }
     // THE SOLO RAID dropped `frontier` — so a rout that planted the FAMILY'S FLAG on the outfit's
     // turf (which starts tribute accruing to the treasury and can be invaded) read byte-for-byte
@@ -2889,7 +2896,7 @@
     // street jump / extortion / convoy hijack — carry a `win` but no cash `net`, so each gets its own line
     if (body.win === true && body.stolen !== undefined) bits.push(`${body.intent === 'message' ? '📢 THE STREET SAW IT' : body.intent === 'rob' ? 'rolled them' : 'they went down'} — lifted $${fmt(body.stolen)}${body.crates ? `, ${body.crates} crate${body.crates > 1 ? 's' : ''}` : ''}${body.rep ? `, +${body.rep} respect` : ''}${body.war ? ' (war point)' : ''}${body.bounty ? ` · contract paid $${fmt(body.bounty)}` : ''}`);
     if (body.win === false && body.dmg !== undefined && body.field === undefined && body.wager === undefined && body.district === undefined) bits.push(`the jump went bad — you took ${body.dmg} damage`);
-    if (body.robbed) bits.push(body.win ? `hit the register — skimmed $${fmt(body.cut)} off their ${txt(body.name || body.kind)}` : `pinched at the register — ${body.jailedS ? Math.round(body.jailedS / 60) + 'm in' : ''} lockup`);
+    if (body.robbed) bits.push(body.win ? `hit the register — skimmed $${fmt(body.cut)} off their ${txt(body.kindName || body.kind)}` : `pinched at the register — ${body.jailedS ? Math.round(body.jailedS / 60) + 'm in' : ''} lockup`);
     else if (body.theft) bits.push(body.win ? `🚗 GONE IN SIXTY — took their ${body.car.model}` : `caught mid-hotwire — ${body.jailedS ? Math.round(body.jailedS / 60) + 'm in' : ''} lockup`);
     else if (body.trunk) bits.push(body.win ? `mugged the freight — ${fmt(body.qty)} × ${txt(goodName(body.good))} off their back${body.revenge ? ' · 🗡 payback' : ''}` : `pinched mid-mugging — ${body.jailedS ? Math.round(body.jailedS / 60) + 'm in' : ''} lockup`);
     else if (body.boatTheft) bits.push(body.win ? `⚓ SLIPPED HER MOORINGS — took their ${body.boat.name}${body.revenge ? ' · 🗡 payback' : ''}` : `caught on the gangway — ${body.jailedS ? Math.round(body.jailedS / 60) + 'm in' : ''} lockup`);
@@ -2897,7 +2904,7 @@
     else if (body.cut !== undefined && body.kind) bits.push(body.win ? `shook 'em down — took $${fmt(body.cut)}` : 'the shakedown flopped — nothing to show for it');
     if (body.district && body.win === true && body.cut !== undefined && !body.kind) bits.push(`muscled the block — grabbed $${fmt(body.cut)} from their operation`);
     if (body.district && body.win === false && body.dmg !== undefined && body.field === undefined) bits.push(`they held the block — you took ${body.dmg} damage`);
-    if (body.fortitude !== undefined && body.cost !== undefined) bits.push(`dug in — defense at level ${body.fortitude} ($${fmt(body.cost)})`);
+    if (body.fortitude !== undefined && body.cost !== undefined) bits.push(`\u{1F6E1} ${body.name || 'the operation'} in ${$dist(body.district)} is dug in to level ${body.fortitude}${body.max ? `/${body.max}` : ''} — $${fmt(body.cost)} out of the treasury. A rival raid has less chance of taking the till.`);
     // TAKING TURF, which said nothing at all — and the reply carried four terms the whole time.
     // The two figures are NOT a whole and its part, which is what driving it caught: `cost` is the
     // base PLUS the war premium, then multiplied by every discount you brought (a coalition, a
@@ -2928,7 +2935,7 @@
       if (body.discipline && body.levelUp !== undefined) bits.push(`🏋 ${body.yard ? 'the iron pile — ' : ''}${discName(body.discipline)} — +${body.xp} xp${body.levelUp ? ` · LEVEL ${body.level}` : ''}`);
       if (body.discipline && body.npc && !body.line) bits.push(`📋 schooled — +${body.xp} xp ${discName(body.discipline)} (now lvl ${body.level})`);
       // PEN step six — cards with the crew + the yard character
-      if (body.cards) bits.push(`🂠 cards with the crew — +${body.xp} xp at the ${txt(body.trackName || body.track)} table`);
+      if (body.cards) bits.push(`🂠 cards with the crew — +${body.xp} xp at ${art(txt(body.trackName || body.track))} table`);
       if (body.line && body.npc && body.effect) {
         if (body.effect === 'wisdom') bits.push(`🗣 ${body.npc}: “${body.line}” — +${body.xp} xp ${discName(body.discipline)}`);
         else if (body.effect === 'shortcut') bits.push(`🗣 ${body.npc} knows a guy — ${Math.round(body.cutSeconds / 60)}m off your stretch`);
@@ -2952,7 +2959,7 @@
         + (body.belt ? ' — AND THE BELT' : body.defended ? ' — title DEFENDED' : ''));
     }
     if (body.spec !== undefined && body.name && body.spent !== undefined) bits.push(`✦ your ${txt(body.kindName || body.kind)} is now ${txt(body.name)} (−${body.spent} $OMR)`);
-    if (body.won !== undefined && body.feeBurned !== undefined) bits.push(body.won ? `TOOK IT OVER — the ${body.kind} is yours (they got $${fmt(body.net)})` : `the takeover was fought off — the $${fmt(body.feeBurned)} fee is gone`);
+    if (body.won !== undefined && body.feeBurned !== undefined) bits.push(body.won ? `TOOK IT OVER — ${art(txt(body.kindName || body.kind))} is yours (they got $${fmt(body.net)})` : `the takeover of ${art(txt(body.kindName || body.kind))} was fought off — the $${fmt(body.feeBurned)} fee is gone`);
     if (body.pledged !== undefined && body.standing) bits.push(`pledged ${fmt(body.pledged)} $OMR to the treasury — ${body.standing.tier} (score ${fmt(body.standing.score)})`);
     if (body.charter !== undefined && body.name && body.spent !== undefined) bits.push(`✦ commissioned ${art(body.name)} (−${body.spent} $OMR)`);
     if (body.restored !== undefined && body.need !== undefined) bits.push(body.restored ? `the floor OVERRODE the head veto — the decree is RESTORED (${body.weight}/${body.need})` : `moved to override — the floor musters ${body.weight}/${body.need}`);
@@ -3198,7 +3205,7 @@
     // to be claimed FIRST and by its own `op` — and it says what it ADDED and what the quality fell
     // to, because that trade is the entire mechanic. A line reporting only the new totals is a
     // receipt for a decision it never mentions you made.
-    if (body.op === 'cut') bits.push(`stepped on the ${body.name || body.drug} — +${body.added} units, now ${body.qty} at q${body.quality} · $${fmt(body.cost)}`);
+    if (body.op === 'cut') bits.push(`stepped on ${art(body.name || body.drug)} — +${body.added} units, now ${body.qty} at q${body.quality} · $${fmt(body.cost)}`);
     // WAVE 59: it named no line either — the whole kitchen loop read the same sentence whichever of
     // the eight drugs you were running. The reply carries the name now (the `cook` line above has
     // since it shipped; its three siblings did not — the forgotten-sibling shape one loop over).
@@ -3318,7 +3325,7 @@
     if (body.interdicted === true) bits.push(`⚓ BUSTED AT SEA — the Coast Guard seized the cargo, fined $${fmt(body.fine)}${body.sunk ? ' and SANK her' : ''}`);
     if (body.arrivesSeconds !== undefined && body.route) bits.push(`⚓ cast off on ${art(body.routeName || body.route)} — back in ${Math.ceil(body.arrivesSeconds / 60)}m`);
     if (body.boat && body.boat.name && body.spent !== undefined) bits.push(`bought ${art(body.boat.name)} — $${fmt(body.spent)}`);
-    if (body.refund !== undefined && body.boat === undefined && body.landed === undefined && !bits.length) bits.push(`sold her back to the yard — +$${fmt(body.refund)}`);
+    if (body.refund !== undefined && body.boat === undefined && body.landed === undefined && !bits.length) bits.push(`\u{1F6A4} sold ${art(txt(body.name || 'her'))} back to the yard — +${fmt(body.refund)}`);
     // THE SEAL, and its own sibling on the same card got it right. Both are bought from the family's
     // POOLED $OMR reserve — money every member tributed in — and `foundation` one line down names
     // the institution while the seal read "done.": no seal, no reserve left, no next rung, after 150
@@ -3405,13 +3412,13 @@
     if (body.kind === 'car' && body.minBid !== undefined)
       bits.push(`🏷 on the block — bidding opens at $${fmt(body.minBid)}${body.buyNow ? `, buy-now $${fmt(body.buyNow)}` : ''}${body.reserve ? ' (reserve set)' : ''}. Listing fee $${fmt(body.fee)}; it runs ${minsTxt(body.expiresSeconds)}, then comes back to you.`);
     if (body.kind === 'good' && body.qty !== undefined && body.price !== undefined)
-      bits.push(`🏷 ${body.qty} × ${txt(body.good)} up at $${fmt(body.price)} a unit in ${txt(body.district)} — buyers collect in person. Fee $${fmt(body.fee)}; it runs ${minsTxt(body.expiresSeconds)}.`);
+      bits.push(`🏷 ${body.qty} × ${txt(goodName(body.good))} up at $${fmt(body.price)} a unit in ${$dist(body.district)} — buyers collect in person. Fee $${fmt(body.fee)}; it runs ${minsTxt(body.expiresSeconds)}.`);
     if (body.kind === 'order' && body.wanted !== undefined)
-      bits.push(`📇 WANTED: ${body.wanted} × ${txt(body.good)} at $${fmt(body.price)} in ${txt(body.district)} — $${fmt(body.escrow)} is ESCROWED out of your pocket until it fills or you pull it (fee $${fmt(body.fee)}). Sellers deliver to that dock; you claim it from there.`);
+      bits.push(`📇 WANTED: ${body.wanted} × ${txt(goodName(body.good))} at $${fmt(body.price)} in ${$dist(body.district)} — $${fmt(body.escrow)} is ESCROWED out of your pocket until it fills or you pull it (fee $${fmt(body.fee)}). Sellers deliver to that dock; you claim it from there.`);
     if (body.delivered !== undefined && body.earned !== undefined)
-      bits.push(`🚚 delivered ${body.delivered} — $${fmt(body.earned)} in${body.remaining > 0 ? `, the order still wants ${body.remaining}` : ' (order filled)'}`);
+      bits.push(`🚚 delivered ${body.delivered}${body.good ? ` × ${txt(goodName(body.good))}` : ''} — $${fmt(body.earned)} in${body.remaining > 0 ? `, the order still wants ${body.remaining}` : ' (order filled)'}`);
     if (body.claimed !== undefined && body.awaiting !== undefined)
-      bits.push(`picked up ${body.claimed} into the trunk${body.awaiting > 0 ? ` — ${body.awaiting} still waiting at the dock` : ''}`);
+      bits.push(`picked up ${body.claimed}${body.good ? ` × ${txt(goodName(body.good))}` : ''} into the trunk${body.awaiting > 0 ? ` — ${body.awaiting} still waiting at the dock` : ''}`);
     // THREE ESCROWS COME BACK AND ONLY ONE OF THEM SPOKE. `refunded` is what the game says when
     // money it was holding for you is released, and four systems send it: the crew heist (its own
     // line, further up), the Black Market (this one), the loan shark and a hit contract (both of
@@ -3425,7 +3432,7 @@
       bits.push(`\u{1F517} the withdrawal is off the queue — ${fmt(body.refunded)} $OMR back in your balance. Nothing was signed, so nothing was ever claimable on-chain.`);
     else if (body.cancelled !== undefined) bits.push(body.refunded !== undefined
       ? `pulled it off the board — $${fmt(body.refunded)} escrow back${body.awaiting > 0 ? `, and ${body.awaiting} delivered units still wait for you at the dock` : ''}`
-      : 'pulled it off the board — what was on it comes back to you');
+      : `pulled it off the board${body.good ? ` — ${art(txt(goodName(body.good)))} comes back to you` : ' — what was on it comes back to you'}`);
     // The shark's own offer and a hit contract's stake, both of which read "done." while real money
     // moved back. Each is scoped by a field only its own reply carries: the contract names what is
     // LEFT on the mark's head (a pot several funders share, so pulling your share does not
@@ -3436,7 +3443,7 @@
       bits.push(`\u{1F91D} took the offer off the street — $${fmt(body.refunded)} out of escrow and back in your pocket`);
     if (body.bought !== undefined && body.paid !== undefined) bits.push(body.bought === 'car'
       ? `🚗 bought outright — $${fmt(body.paid)}. It's in your garage.`
-      : `bought ${body.qty} × ${txt(body.bought)} — $${fmt(body.paid)} out of pocket${body.remaining > 0 ? ` (${body.remaining} left on the lot)` : ''}`);
+      : `bought ${body.qty} × ${txt(goodName(body.bought) || body.bought)} — $${fmt(body.paid)} out of pocket${body.remaining > 0 ? ` (${body.remaining} left on the lot)` : ''}`);
     // a demanded RICO trial — the conviction gets the cinematic; the acquittal deserves a line too
     if (body.convicted === false && body.forfeited !== undefined) bits.push('ACQUITTED — the case fell apart. Walk out clean.');
     if (body.convicted === true && body.forfeited !== undefined) bits.push(`CONVICTED — they seized $${fmt(body.forfeited)}${body.jailSeconds ? ` and you're in for ${minsTxt(body.jailSeconds)}` : ''}`);
@@ -6672,7 +6679,7 @@
     const stat = (rc) => rc.qualified ? '<span class="chip good">made</span>' : rc.sparked ? '<span class="chip">coming up</span>' : rc.alive ? '<span class="chip">green</span>' : '<span class="chip bad">gone</span>';
     // the About Me blurb — auto-written from the sheet (MySpace made you write one; the city writes yours)
     const famLine = p.family ? `${p.family.role === 'boss' ? 'Runs' : 'Runs with'} ${esc(p.family.name)} [${esc(p.family.tag)}].` : 'Answers to nobody.';
-    const blurb = `Generation ${p.generation} of the ${esc(p.dynasty || p.name)} line. ${p.days < 1 ? 'Stepped off the bus today' : `${p.days} day${p.days === 1 ? '' : 's'} in the city`}, level ${p.level}${p.kills ? `, ${p.kills} ${p.kills === 1 ? 'body' : 'bodies'} on the account` : ''}. ${famLine} ${p.honorTier}.${p.recruitsTotal ? ` Brought ${p.recruitsTotal} soul${p.recruitsTotal === 1 ? '' : 's'} to the city.` : ''}`;
+    const blurb = `Generation ${p.generation} of ${art(esc(p.dynasty || p.name))} line. ${p.days < 1 ? 'Stepped off the bus today' : `${p.days} day${p.days === 1 ? '' : 's'} in the city`}, level ${p.level}${p.kills ? `, ${p.kills} ${p.kills === 1 ? 'body' : 'bodies'} on the account` : ''}. ${famLine} ${p.honorTier}.${p.recruitsTotal ? ` Brought ${p.recruitsTotal} soul${p.recruitsTotal === 1 ? '' : 's'} to the city.` : ''}`;
     t.innerHTML = `
       <div class="msp-banner">★ <b>${esc(p.name)}</b> is in your extended network</div>
       <div class="msp-cols">
@@ -9566,7 +9573,7 @@
         <span class="d" style="font-size:12.5px">${e.tierName ? `· ${e.tierName} · ${fmt(e.spent)} $OMR sunk` : ''}</span>
         ${auc.collector ? `<span class="chip">${auc.collector.rank} · ${fmt(auc.collector.sunk)} $OMR sunk into prestige</span>` : ''}</h2>
       <div class="card">${e.tier > 0 ? aart('estate', e.tier) : ''}<span class="t">The Deed</span>
-        <div class="d">${e.tierName ? `You hold a ${e.tierName}.` : 'You don\'t own a thing worth showing.'} · ${fmt(Math.floor(e.omr || 0))} $OMR on hand</div>
+        <div class="d">${e.tierName ? `You hold ${art(e.tierName, 'a')}.` : 'You don\'t own a thing worth showing.'} · ${fmt(Math.floor(e.omr || 0))} $OMR on hand</div>
         ${e.nextTier ? `<button class="act" id="est-up">move up → ${e.nextTier.name} (${fmt(e.nextTier.omr)} $OMR)</button> <span class="d">${e.nextTier.blurb}</span>` : '<span class="chip good">THE COMPOUND — top of the world</span>'}
         ${e.tier > 0 ? `<div style="margin-top:6px"><input id="est-name" placeholder="name the place" size="18"> <button class="act" id="est-name-go">name it (${fmt(rules?.estate?.nameOmr ?? 18)} $OMR)</button></div>` : ''}</div>
 
@@ -10073,13 +10080,13 @@
       kill: () => `${d.by} whacked ${d.victim}`,
       jump: () => `${d.by} jumped ${d.on}${d.war ? ' — war points' : ''}`,
       // THE STREET WAR — asset crimes (victim notifies + streets shouts; the notify names the attacker)
-      robbed: () => `${d.from} hit the register at your ${d.kind} — skimmed ${$c(d.cut)}`,
-      rob_failed: () => `${d.from} tried to rob your ${d.kind} — security had them pinched`,
+      robbed: () => `${d.from} hit the register at your ${d.kindName || d.kind} — skimmed ${$c(d.cut)}`,
+      rob_failed: () => `${d.from} tried to rob your ${d.kindName || d.kind} — security had them pinched`,
       car_stolen: () => `${d.from} stole your ${d.name || d.model} right off the street`,
       car_theft_failed: () => `${d.from} got caught trying to boost your car`,
       trunk_robbed: () => `${d.from} mugged ${d.qty} × ${goodName(d.good)} out of your trunk`,
       trunk_rob_failed: () => `${d.from} tried to mug your freight — pinched`,
-      boat_stolen: () => `${d.from} slipped your ${d.kind} off its moorings`,
+      boat_stolen: () => `${d.from} slipped your ${d.kindName || d.kind} off its moorings`,
       boat_theft_failed: () => `${d.from} got caught on your gangway`,
       sabotaged: () => `${d.from} wrecked your ${d.what} ${d.name} — laid up for hours`,
       sabotage_failed: () => `${d.from} was caught creeping your stable`,
@@ -10225,12 +10232,15 @@
       escaped: () => `OVER THE WALL — you're out, and WANTED for ${d.wantedHours}h`,
       break_failed: () => `the break went wrong — the hole${d.addSeconds ? `, and ${minsTxt(d.addSeconds)} more on your stretch` : d.reason === 'ratted' ? ', somebody talked' : ''}`,
       // ── the empire & the street war
-      business_raid: () => `the Bureau raided your ${d.kind} — ${$c(d.seized)} seized, ${$c(d.fine)} fine`,
-      shakedown_failed: () => `${d.from} tried to lean on your ${d.kind} — your people saw them off`,
-      takeover: () => `${d.from} took your ${d.kind} out from under you — ${$c(d.net)} for the paper`,
-      takeover_failed: () => `${d.from} moved on your ${d.kind} and came up short`,
-      inside_job: () => `a crew went through your ${d.kind} from the inside — ${$c(d.pot)} gone`,
-      inside_job_failed: () => `somebody cased your ${d.kind} for a crew job and blew it`,
+      business_raid: () => `the Bureau raided your ${d.kindName || d.kind} — ${$c(d.seized)} seized, ${$c(d.fine)} fine`,
+      shakedown: () => `${d.from} leaned on your ${d.kindName || d.kind} — ${$c(d.cut)} out of the till`,
+      shakedown_failed: () => `${d.from} tried to lean on your ${d.kindName || d.kind} — your people saw them off`,
+      takeover: () => `${d.from} took your ${d.kindName || d.kind} out from under you — ${$c(d.net)} for the paper`,
+      takeover_failed: () => `${d.from} moved on your ${d.kindName || d.kind} and came up short`,
+      campaign_step: () => `${d.campaign} — step ${d.step} of ${d.of} done`,
+      campaign_done: () => `${d.campaign} — the job is finished`,
+      inside_job: () => `a crew went through your ${d.kindName || d.kind} from the inside — ${$c(d.pot)} gone`,
+      inside_job_failed: () => `somebody cased your ${d.kindName || d.kind} for a crew job and blew it`,
       // ── the club
       speakeasy_raid: () => `the law came through ${$d(d.district)} — ${$c(d.seized)} seized, ${$c(d.fine)} fine, doors shut`,
       speakeasy_round: () => (d.at ? `${d.by} was seen buying a round at ${d.at}`

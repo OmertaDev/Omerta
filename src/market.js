@@ -216,7 +216,7 @@ export async function fillOrder(ch, listingId, qty, client, h) {
     [listingId, Number(l.qty) - n, Number(l.filled_qty) + n]);
   await h.notify(client, l.seller_character, 'order_filled', { listing: l.id, good: l.good_id, qty: n });
   bus.emit('streets', { type: 'market_sale', kind: 'order' });
-  return { ok: true, delivered: n, earned: net, remaining: Number(l.qty) - n };
+  return { ok: true, delivered: n, earned: net, remaining: Number(l.qty) - n, good: l.good_id };
 }
 
 // CLAIM — the buyer collects delivered goods from the warehouse, at the dock, into trunk space.
@@ -239,7 +239,7 @@ export async function claimOrder(ch, listingId, client, h) {
   await client.query('UPDATE market_listings SET filled_qty=$2 WHERE id=$1', [listingId, left]);
   if (l.status === 'live' && Number(l.qty) === 0 && left === 0)
     await client.query("UPDATE market_listings SET status='sold' WHERE id=$1", [listingId]);
-  return { ok: true, claimed: n, awaiting: left };
+  return { ok: true, claimed: n, awaiting: left, good: l.good_id };
 }
 
 // ── BUY — cars at buy-now (instant settle); goods at the dock (partial, trunk-clamped) ──
@@ -344,7 +344,7 @@ export async function cancelListing(ch, listingId, client, h) {
       await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: remaining, reason: 'market:refund' });
     }
     await client.query("UPDATE market_listings SET qty=0, status='cancelled' WHERE id=$1", [listingId]);
-    return { ok: true, cancelled: l.id, refunded: remaining, awaiting: Number(l.filled_qty) };
+    return { ok: true, cancelled: l.id, refunded: remaining, awaiting: Number(l.filled_qty), good: l.good_id };
   } else {
     const back = (h.owned.cargo[l.good_id] || 0) + Number(l.qty);
     if (cargoCount(h.owned.cargo) + Number(l.qty) > trunkCap(h))
@@ -353,7 +353,9 @@ export async function cancelListing(ch, listingId, client, h) {
     await setCargo(client, ch.id, l.good_id, back);
   }
   await client.query("UPDATE market_listings SET status='cancelled', bid=NULL, bidder=NULL WHERE id=$1", [listingId]);
-  return { ok: true, cancelled: l.id };
+  // name what came back: a car listing is the iron, a goods lot is the freight. 'what was on it'
+  // is the line a player got either way, and the row has known which all along.
+  return { ok: true, cancelled: l.id, ...(l.kind === 'good' ? { good: l.good_id, qty: Number(l.qty) } : { car: l.car_id }) };
 }
 
 // ── The board — public; car listings show the iron, goods show the dock ──
