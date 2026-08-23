@@ -16913,3 +16913,63 @@ re-encoding assets through the art pipeline or deferring them behind an Intersec
 `/v1/rules` still carries no `cache-control` — it was verified time-invariant, but a generic JSON
 ETag/304 touches the response lifecycle **every money route passes through**, including the
 idempotency `onSend` store, which is not a page-weight drop's change to make.
+
+**PLAY WAVE 64 — THE SILENCE LEDGER: the class fixed in nineteen waves by hand, made a guard
+(2026-08-23).** Every wave since 45 has found the same shape at least once — `act()` toasts
+`describe(r.body)` with no override, so a reply matching no branch reads **`"done."`**, or falls to
+the bare-price catch-all **`paid $N`**, which is worse because a price with the purchase left off
+reads like an answer. Nineteen waves, ~90 instances, the same remedy each time and no guard behind
+it — the RT#7 shape exactly. **THE SILENCE LEDGER** (check 14 in `test/client.js`, the twelfth
+catalogue-or-declare guard) converts it: reuse check 13's corpus (508 `return {…}` literals whose
+shapes come from the REAL parser, run through an INSTRUMENTED copy of the real `describe()`), keep
+only the replies of routes the console **PRESSES**, and fail if any renders a catch-all unless
+declared with the property that makes the silence correct. **58 replies render a catch-all, 7 of
+them act()-pressed and each declared — none of 227 pressed handlers is mute.**
+
+**THE CORPUS BOUND IS TIGHTER THAN CHECK 13's, AND THE DIFFERENCE IS THE WHOLE DESIGN.** Check 13
+asks *could two systems collide* — true of any reply `describe()` might see, so its corpus is every
+mutating route. Check 14 asks *does a PLAYER read nothing* — and that is only true of an
+**`act()`-pressed** route, because **`api()` is SILENT and its callers render their own wording**:
+the phone's block line, the chat send and the Wire dossier all render `"done."` through `describe()`
+and are **not defects**. Reporting them would be the mostly-wrong advisory this file calls worse than
+no check. The path set is extracted from the client's own `act('POST','…')` calls **and** its
+`data-do="POST …"` attributes (a `data-do` button goes through `act()` too), then mapped to handlers
+by brace-matching each route registration — the same attribution check 13 uses, because
+"nearest preceding declaration" credited literals to `uid` and `deadlockToRetry` and dropped 1126 of
+1218.
+
+**THE ALL-SUBSTITUTIONS RULE, AND THE FALSE POSITIVE IT PREVENTS.** Shapes are walked with three
+sentinel substitutions (`1`, `'x'`, `[1]`), and the first cut deleted a SILENT entry on any
+non-silent run — so the LAST substitution decided the verdict. `hireCrew`'s branch **type-checks its
+own field** (`typeof body.crew === 'number'`), so it speaks under the numeric sentinel and falls to
+the catch-all under the string one; whichever ran last was the answer. A reply is mute only if it is
+silent under **every** substitution (a `SPOKE` set alongside the `SILENT` map) — otherwise the tool
+invents a finding about a line that is right.
+
+**THIRTEEN LIVE DEFECTS, and the headline is the only $OMR→cash rail in the game.** `/v1/window/redeem`
+said **`"done."`** over the burn, the rate, the till and — the term — the family's cut, which is a
+slice of the burn reclassified rather than added, so a player who never read the card had no way to
+know a share of their $OMR went to the family reserve. With it: fencing a smuggled hold (the
+harbormaster's toll unnamed), **witness protection** (a 24h untouchable window announced as nothing),
+**squaring your name** (the WANTED mark AND the welsher brand lifted for $50,000, both unstated),
+opening a poker table, the gala, the championship **callout** (48h to accept or forfeit), the ETH
+**vault claim** (the rate and the allocation), fencing a heist score, an early **discharge**, standing
+a specialist down, and the counter-intel **peek**. Two needed a SERVER field, because the client
+cannot fix what the server does not send: `unassignSpecialist` had no name to render **though its own
+sibling `assignSpecialist` sends one three lines up** (the forgotten-sibling shape), and `paySovUpkeep`'s
+nothing-owed early return **dropped the one field its own client branch reads**, so a purpose-written
+line had never once been reachable. The specialist name is read in its OWN statement rather than as a
+`LEFT JOIN … FOR UPDATE OF t` — the row lock must stay on the racket alone, and the join form is
+exactly the shape pg-mem cannot parse.
+
+**Two article-doubling bugs I introduced were caught by READING the output**, not by any check: the
+gala rendered *"Don Vito's The Compound"* and the unassign *"off the The Docks operation"* — the
+wave-57 class arriving from underneath, in copy written to fix a different class. Eight mutations,
+eight distinct named kills — including one that demonstrates the `hireCrew` false positive the
+all-substitutions rule prevents, and one that verifies the stale-waiver assertion by **ADDING** a
+bogus waiver, since renaming a live one trips the main assertion first and proves something else.
+Fixing the ledger's own first cut also surfaced **8 stale waivers** (uid, claimStreak, payCrewWages,
+acceptMentor, listDeed, buyDeed, leaveFaction, paySovUpkeep) — declarations for silences that had
+stopped existing, which the stale check caught immediately. Driven actions 259; suite green + sim
+drift-0 + mobile 81/81 + pgquery + **pgcheck 61/61 on a FRESH real Postgres** (`src/territory.js`
+gained a SELECT).

@@ -380,8 +380,13 @@ export async function unassignSpecialist(ch, districtId, client, h) {
   const r = (await client.query('SELECT owner_gang, specialist FROM territory_rackets WHERE district_id=$1 FOR UPDATE', [districtId])).rows[0];
   if (!r || r.owner_gang !== h.owned.gangId) throw new GameError('no_racket', "Your family doesn't run that operation.");
   if (!r.specialist) throw new GameError('none', 'No specialist runs that operation.');
+  // the name is read in its OWN statement rather than as a LEFT JOIN with `FOR UPDATE OF t`: the row
+  // lock must stay on the racket alone, and the join form is exactly the shape pg-mem cannot parse.
+  const who = (await client.query('SELECT name FROM characters WHERE id=$1', [r.specialist])).rows[0];
   await client.query('UPDATE territory_rackets SET specialist=NULL, spec_power=0 WHERE district_id=$1', [districtId]);
-  return { ok: true, district: districtId };
+  // the NAME, because ASSIGN's own reply three functions up sends `specialist: m.name` and this one
+  // sent an id-less nothing — so the line could only read "done." over a man leaving his post.
+  return { ok: true, district: districtId, specialist: (who && who.name) || null };
 }
 
 // Run the operation's TYPE-specific special operation (requires a specialist), on a per-racket cooldown.

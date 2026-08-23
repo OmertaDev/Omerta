@@ -3504,6 +3504,62 @@
       const beat = st && (rules.duels.styles.find((x) => x.id === st.beats) || {}).name;
       bits.push(`\u{1F94A} you fight as ${txt(body.name)}${beat ? ` \u2014 you have the edge on a ${txt(beat)}, and give it to whoever counters you` : ''}`);
     }
+    // ── WAVE 64: THE SILENCE LEDGER's first crop. Each of these is a route the console PRESSES
+    // whose reply matched no branch at all, found by running every act()-reachable shape through
+    // this very function rather than by driving one more cluster by hand.
+    //
+    // THE WINDOW is the sharpest: the ONE rail that turns $OMR back into cash, and it said "done."
+    // over the burn, the rate and the till it drew from — including the family's cut, which is a
+    // TERM (a slice of every redemption goes to the family reserve, not to you).
+    if (body.burned !== undefined && body.rate !== undefined && body.cash !== undefined)
+      bits.push(`\u{1F4B5} burned ${fmt(body.spent ?? body.burned)} $OMR at the window — $${fmt(body.cash)} in hand`
+        + `${body.familyCut ? ` (${fmt(body.familyCut)} $OMR of it to the family reserve)` : ''}`
+        + `${body.poolLeft !== undefined ? ` · $${fmt(body.poolLeft)} left in the till` : ''}`);
+    // the warehouse fence — the market-timing play warehousing exists FOR, and the toll is a term:
+    // the family holding the docks takes a cut of every landing before you see it.
+    if (body.proceeds !== undefined && body.book !== undefined)
+      bits.push(`\u{1F6A2} fenced the hold — $${fmt(body.net ?? body.proceeds)}`
+        + `${body.rate ? ` at ${body.rate}× book` : ''}${body.toll ? ` · $${fmt(body.toll)} of it to the harbormaster` : ''}`);
+    // witness protection: a one-time untouchable window, and the DURATION is the whole thing.
+    if (body.witproSeconds > 0)
+      bits.push(`\u{1F6E1} witness protection — relocated and untouchable for ${minsTxt(body.witproSeconds)}. Nobody can put a shot or a hire on you until it lapses.`);
+    // squaring your name read "paid $50,000" — the price with the purchase left off, and the
+    // purchase is the whole point: it lifts the WANTED mark AND the welsher brand together.
+    if (body.cleared === true && body.cost !== undefined)
+      bits.push(`\u{1F9FE} your name is square — $${fmt(body.cost)}. The WANTED mark is off you and the welsher brand with it: the families take your paper again.`);
+    // the back room. `seat` tells the two apart — opening a table is not sitting at one.
+    if (body.tableId && body.bb !== undefined)
+      bits.push(body.seat !== undefined
+        ? `\u{1F0CF} you're in seat ${body.seat} — $${fmt(body.stack)} in front of you, $${fmt(body.bb)} big blind`
+        : `\u{1F0CF} the table is open — $${fmt(body.bb)} big blind. Now somebody has to sit down.`);
+    if (body.host && body.estate !== undefined && body.guests !== undefined)
+      bits.push(`\u{1F942} you were seen at ${txt(body.host)}'s place — ${txt(body.estate)}, ${body.guests} on the guest list tonight`);
+    // the mandatory title shot: DUCK IT and the belt forfeits, which is why the clock is the line.
+    if (body.champion && body.challenger && body.acceptWithinSeconds !== undefined)
+      bits.push(`\u{1F4E3} you called out ${txt(body.champion)} — they have ${minsTxt(body.acceptWithinSeconds)} to accept or forfeit the belt to you`);
+    // the vault claim. `clamped` is a TERM: you asked for more than the treasury had unallocated
+    // and took what there was, which a player must be told rather than left to work out.
+    if (body.eth !== undefined && body.omrPerEth !== undefined)
+      bits.push(`\u{1F3E6} claimed ${body.eth} ETH into the vault for ${fmt(body.spent)} $OMR (${fmt(body.omrPerEth)} $OMR/ETH)`
+        + `${body.clamped ? ' — clamped to what the treasury had unallocated' : ''}`
+        + `${body.totalEth !== undefined ? ` · ${body.totalEth} ETH allocated to you now` : ''}`);
+    // the heist fence read "paid $72,000" — the catch-all, which frames money RECEIVED as money
+    // spent, and threw away the rate that makes fencing a decision rather than a button.
+    if (body.loot !== undefined && body.mult !== undefined && body.paid !== undefined)
+      bits.push(`\u{1F4B0} fenced the score — $${fmt(body.paid)} for $${fmt(body.loot)} of hot goods (${body.mult}× today)`);
+    // the Doc's early discharge: the price, and whether he let you out whole.
+    if (body.full !== undefined && body.hospSeconds !== undefined && body.cost !== undefined)
+      bits.push(body.full
+        ? `\u{1FA7A} the Doc signs you out whole — $${fmt(body.cost)}, and you walk out at full strength`
+        : `\u{1FA7A} discharged early — $${fmt(body.cost)}${body.hospSeconds > 0 ? `, ${minsTxt(body.hospSeconds)} still on the chart` : ', and the bed is behind you'}`);
+    if (body.specialist !== undefined && body.district && body.fortBonus === undefined)
+      bits.push(`\u{1F454} ${txt(body.specialist || 'your specialist')} stands down at ${$dist(body.district)} — free for another post, and that one runs unwatched`);
+    // the peek pierces anonymity on every pot on your own head, and said nothing about what it found.
+    if (Array.isArray(body.contracts) && body.ok === true) {
+      const pot = body.contracts.reduce((a, c) => a + (Number(c.pot) || 0), 0);
+      bits.push(`\u{1F441} ${body.contracts.length} contract${body.contracts.length === 1 ? '' : 's'} on your head`
+        + `${pot ? ` — $${fmt(pot)} of paper, funders and all` : ''}. The board on Wet Work names them now.`);
+    }
     if (body.cost && body.fixed === undefined && !bits.length) bits.push(`paid $${fmt(body.cost)}`);
     // THE BARE FIGURE, and it belongs HERE rather than in the obligation chain it used to end: it is
     // a last resort, so its guard is that no other branch spoke. `bought` stays in the condition —

@@ -5659,6 +5659,14 @@ assert.match(String(describeFn(dep.body, 200)), /transit/i,
   console.log(`  ✓ wave 60: ${checked} catalog lines name the rung instead of its key`);
 }
 
+// The act()-PRESSED path set. `api()` is deliberately excluded: the discrimination this whole sweep
+// turns on is that api() is SILENT and its callers render their own wording (the phone's block line,
+// the chat send, the Wire dossier all read "done." through describe() and are not defects, because
+// describe() is never invoked on them). data-do buttons go through act(), so they count.
+const ACTPATHS = new Set([...html.matchAll(/\bact\(\s*'(POST|DELETE)'\s*,\s*'([^']+)'/g)].map((m) => m[2])
+  .concat([...html.matchAll(/data-do="(POST|DELETE) ([^"]+)"/g)].map((m) => m[2])));
+const ACTFNS = new Map();   // route path → the handler names its registration calls
+
 // ── check 13: THE COLLISION LEDGER ─────────────────────────────────────────────────────────────
 // The eleventh catalogue-or-declare ledger, over the class this file has fixed BY HAND fifteen times
 // and never swept: describe() is a flat chain over field NAMES, so a reply whose field-set happens to
@@ -5692,6 +5700,7 @@ assert.match(String(describeFn(dep.body, 200)), /transit/i,
         if (t[j] === '(') d++; else if (t[j] === ')' && --d === 0) { end = j; break; }
       }
       for (const c of t.slice(m.index, end).matchAll(/\b([A-Za-z_$][\w$]*)\s*\(/g)) MUT.add(c[1]);
+      ACTFNS.set(m[2], [...t.slice(m.index, end).matchAll(/\b([A-Za-z_$][\w$]*)\s*\(/g)].map((c) => c[1]));
     }
   }
   assert(MUT.size > 200, `the mutating-route scan found only ${MUT.size} handlers — it is broken, not the routes`);
@@ -5739,6 +5748,8 @@ assert.match(String(describeFn(dep.body, 200)), /transit/i,
   const files = [...readdirSync('src').filter((f) => f.endsWith('.js')).map((f) => `src/${f}`),
     ...readdirSync('src/social').map((f) => `src/social/${f}`)];
   const claims = new Map();   // branch line → module → { at, line }
+  const SILENT = new Map();   // act()-reachable reply → the catch-all it fell to
+  const SPOKE = new Set();    // …and the ones that read as SOMETHING under any substitution
   let corpus = 0;
   for (const f of files) {
     const base = f.split('/').pop();
@@ -5762,6 +5773,17 @@ assert.match(String(describeFn(dep.body, 200)), /transit/i,
         const body = {}; for (const k of keys) body[k] = isSentinel(shape[k]) ? sent : shape[k];
         hits.length = 0;
         let line; try { line = traced(body); } catch { continue; }
+        // THE SILENCE LEDGER's raw material, gathered on the same pass: a reply that renders the
+        // catch-all is a button that works and then says nothing. Recorded per (function, line) and
+        // CLEARED the moment any sentinel run produces a real line, so a shape that reads well for a
+        // string but not a number is not counted as mute.
+        // ALL THREE substitutions must be silent, not merely the last. A branch that TYPE-checks its
+        // own field (the crew hire reads `typeof body.crew === 'number'`) speaks under the numeric
+        // sentinel and falls to the catch-all under the string one — reporting that as mute would be
+        // the tool inventing a finding about a line that is right, which is how a mostly-wrong
+        // advisory gets routed around.
+        if (/^(done\.|paid \$[\d,.]+)$/.test(String(line))) { if (!SPOKE.has(at) && !SILENT.has(at)) SILENT.set(at, { fn, line }); }
+        else { SPOKE.add(at); SILENT.delete(at); }
         for (const h of new Set(hits)) {
           if (!claims.has(h)) claims.set(h, new Map());
           if (!claims.get(h).has(base)) claims.get(h).set(base, { at, line });
@@ -5813,6 +5835,59 @@ assert.match(String(describeFn(dep.body, 200)), /transit/i,
   const stale = [...SHARED.keys()].filter((k) => !used.has(k));
   assert(stale.length === 0, `these declarations match no shared branch any more — a rewritten branch `
     + `silently stops being governed, and a stale key waives nothing:\n  ${stale.join('\n  ')}`);
+  // ── check 14: THE SILENCE LEDGER ────────────────────────────────────────────────────────────
+  // The twelfth catalogue-or-declare ledger, over the class nineteen play waves have fixed BY HAND
+  // and never swept: act() toasts describe(body) with no override, so a reply matching no branch
+  // reads "done." — or falls to the bare-price catch-all, which is worse, because a price with the
+  // purchase left off reads like an answer. Waves 45-63 each found more of these by DRIVING one
+  // cluster; the root cause every wave named is that a route nobody has driven has a line nobody
+  // has read. This sweeps the remaining ones statically: every reply the collision ledger already
+  // walks out of src/, run through the REAL describe(), and flagged if it renders silence.
+  //
+  // THE CORPUS BOUND IS TIGHTER THAN CHECK 13's AND THAT IS THE POINT. Check 13 asks "could two
+  // systems collide here", which is worth asking of any reply describe() might see. This asks "does
+  // a PLAYER read nothing", which is only true of a route the console PRESSES through act(): a reply
+  // rendered by its own card through the silent api() (the phone's block line, the chat send, the
+  // Wire dossier) reads "done." here and is not a defect. So the corpus is replies of functions
+  // called by a route registration whose path the client act()-presses — 29 of check 13's 508 when
+  // this shipped, of which 13 were live and one (the sov nothing-owed early return) had a
+  // purpose-written line it could not reach because the shape dropped a field.
+  const segMatch = (a, b) => {
+    const A = a.split('/'), B = b.split('/');
+    return A.length === B.length && A.every((x, i) => x === B[i] || x.startsWith(':') || B[i].startsWith(':'));
+  };
+  const pressedFns = new Set();
+  for (const path of ACTPATHS) for (const [rp, fns] of ACTFNS) if (segMatch(rp, path)) for (const f of fns) pressedFns.add(f);
+  assert(pressedFns.size > 100, `only ${pressedFns.size} handlers are reachable from an act()-pressed `
+    + 'route — the path match is broken, not the client, and a corpus of nothing reads exactly like a clean tree');
+  // DELIBERATELY SILENT REPLIES. Each is a decision on the record with the property that makes it
+  // right — a helper the player never sees the reply of, a shape whose own card renders it, or a
+  // branch that cannot be reached with a real body.
+  const MUTE_OK = new Map([
+    ['withCharacter', 'the request wrapper itself — every route unwraps it; a player never reads this shape'],
+    ['requestWithdraw', 'the chain rail renders its own voucher card; the console never toasts it'],
+    ['requestDynastyMint', 'same rail, same card'],
+    ['playDice', 'the dice branch keys on game===\'dice\'; the sentinel walk cannot supply a literal it does not have'],
+    ['upgradeSpeakeasy', 'the raid early-return renders the RAIDED line; driven by the action ledger'],
+    ['collectCorner', 'the corner take renders through the collect family — driven live'],
+    ['settlePassStipend', 'an internal settle called from the pass claim, whose own reply carries the line'],
+  ]);
+  const muteUsed = new Set();
+  const mute = [];
+  for (const [at, v] of SILENT) {
+    if (!pressedFns.has(v.fn)) continue;
+    if (MUTE_OK.has(v.fn)) { muteUsed.add(v.fn); continue; }
+    mute.push(`\n  ${at} → ${JSON.stringify(v.line)}`);
+  }
+  assert(mute.length === 0, 'THE SILENCE LEDGER: an act()-pressed route renders the catch-all, so the '
+    + 'button works and then says nothing a player can act on. Give the reply a branch that names what '
+    + 'happened (and its TERMS — a price with the purchase left off is not a line), or declare it in '
+    + `MUTE_OK with the property that makes the silence right:${mute.join('')}`);
+  const staleMute = [...MUTE_OK.keys()].filter((k) => !muteUsed.has(k));
+  assert(staleMute.length === 0, 'these silence declarations match no silent reply any more — a waiver '
+    + `that waives nothing is a decision nobody is making:\n  ${staleMute.join('\n  ')}`);
+  console.log(`  ✓ silence ledger: ${SILENT.size} replies render the catch-all, ${muteUsed.size} of them `
+    + `on act()-pressed routes and each declared — none of ${pressedFns.size} pressed handlers is mute`);
   console.log(`  ✓ collision ledger: ${corpus} act()-reachable replies over ${claims.size} describe() `
     + `branches — ${sharedSeen} deliberately shared, none colliding`);
 }
@@ -5958,6 +6033,70 @@ assert.match(String(describeFn(dep.body, 200)), /transit/i,
 }
 
 await app.close();
+// ── WAVE 64 — the lines THE SILENCE LEDGER's first crop now produces. The ledger above proves each
+// reply is no longer mute; these pin what it SAYS, because a branch that fires and says the wrong
+// thing is the same defect one step later. Synthetic on the exact shapes the servers return (the
+// shapes themselves are what the ledger walks out of src/), because standing up a redemption
+// window, a warehouse fence, a title callout and a vault claim for one sentence each is a fixture
+// bigger than the wave. The three whose SERVER changed are asserted against the field that moved.
+{
+  const say = (b) => describeFn(b, 200);
+  // THE WINDOW — the one rail turning $OMR back into cash, silent over the burn, the rate and the
+  // family's cut, which is a TERM: a slice of every redemption goes to the reserve, not to you.
+  const win = say({ ok: true, burned: 25, familyCut: 1.25, spent: 25, cash: 12500, rate: 500, poolLeft: 900000 });
+  assert(/12,500/.test(win) && /25 \$OMR/.test(win), `the window must name the burn and the cash: ${win}`);
+  assert(/family reserve/.test(win), `the window must name the family's cut — it is a term, not flavour: ${win}`);
+  // the warehouse fence: the toll is the harbormaster's, taken before the shipper sees a dollar.
+  const fen = say({ ok: true, book: 40000, proceeds: 44000, rate: 1.1, toll: 2200, net: 41800 });
+  assert(/41,800/.test(fen) && /2,200/.test(fen) && /harbormaster/.test(fen),
+    `the fence must name the net AND the toll taken out of it: ${fen}`);
+  // witness protection: the DURATION is the whole purchase.
+  const wp = say({ ok: true, witproSeconds: 86400 });
+  assert(/24h/.test(wp) && /untouchable/i.test(wp), `witpro must name how long it lasts: ${wp}`);
+  // squaring your name read "paid $50,000" — the price with the purchase left off, and it lifts TWO
+  // marks: the WANTED bounty and the welsher brand that locks you out of the loan market.
+  const sq = say({ ok: true, cost: 50000, cleared: true });
+  assert(/50,000/.test(sq) && /WANTED/.test(sq) && /welsher/i.test(sq),
+    `squaring up must name both marks it lifts, not just the price: ${sq}`);
+  // the back room — opening a table is not sitting at one, and `seat` is what tells them apart.
+  const open = say({ ok: true, tableId: 't1', bb: 200 });
+  const sit = say({ ok: true, tableId: 't1', seat: 3, stack: 20000, bb: 200 });
+  assert(/open/.test(open) && !/seat/.test(open), `opening a table must not read as sitting at one: ${open}`);
+  assert(/seat 3/.test(sit) && /20,000/.test(sit), `sitting down must name the seat and the stack: ${sit}`);
+  // the gala. The estate names in the catalog already begin with "The", so the possessive must not
+  // put a second article in front of one (the article class, arriving from underneath).
+  const gala = say({ ok: true, host: 'Don Vito', estate: 'The Compound', guests: 4 });
+  assert(/Don Vito/.test(gala) && /The Compound/.test(gala) && !/the The/i.test(gala),
+    `the gala must name the host and the house without doubling its article: ${gala}`);
+  // the mandatory title shot: DUCKING IT forfeits the belt, which is why the clock is the line.
+  const co = say({ ok: true, champion: 'Bo Dunn', challenger: 'Kid Malone', acceptWithinSeconds: 172800 });
+  assert(/Bo Dunn/.test(co) && /48h/.test(co) && /forfeit/.test(co),
+    `the callout must name the champ, the clock and what ducking it costs them: ${co}`);
+  // the vault claim: `clamped` is a TERM — you asked for more than the treasury had unallocated.
+  const v = say({ ok: true, eth: 0.25, totalEth: 1.5, spent: 4000, omrPerEth: 16000, clamped: true, scrutiny: false });
+  assert(/0\.25 ETH/.test(v) && /4,000/.test(v) && /clamped/.test(v),
+    `the vault claim must name what it took, what it cost, and that it was clamped: ${v}`);
+  // the heist fence read "paid $72,000" — the catch-all, which frames money RECEIVED as money spent.
+  const fl = say({ ok: true, loot: 80000, mult: 0.9, paid: 72000 });
+  assert(/72,000/.test(fl) && /80,000/.test(fl) && /0\.9/.test(fl) && !/^paid/.test(fl),
+    `fencing a score must read as money taken IN, at a stated rate: ${fl}`);
+  // the Doc's discharge, both ways: his tier-3 standing releases you whole.
+  assert(/whole/.test(say({ ok: true, cost: 5400, full: true, hospSeconds: 0 })), 'a full discharge must say so');
+  assert(/5,400/.test(say({ ok: true, cost: 5400, full: false, hospSeconds: 900 })), 'an early discharge must name its price');
+  // the specialist standing down — the reply had no NAME to render until this wave, though its own
+  // sibling (assign) had sent one all along. `$dist` already returns "The Docks": no second article.
+  const un = say({ ok: true, district: 'docks', specialist: 'Sal Vitto' });
+  assert(/Sal Vitto/.test(un) && !/the The/i.test(un), `standing a specialist down must name the man: ${un}`);
+  // the peek pierces anonymity on every pot on your own head and said nothing about what it found.
+  const pk = say({ ok: true, contracts: [{ kind: 'kill', pot: 60000 }, { kind: 'hospitalize', pot: 5000 }] });
+  assert(/2 contracts/.test(pk) && /65,000/.test(pk), `the peek must name what it bought: ${pk}`);
+  // the sov pad's NOTHING-OWED early return dropped `overextension`, which its own branch requires —
+  // so the line written for exactly this case ("nothing owed on the walls right now") was unreachable.
+  assert(/nothing owed/.test(say({ ok: true, paid: 0, overextension: 0, settled: [] })),
+    'the sov pad with nothing owed must reach the line written for it');
+  console.log('  ✓ wave 64: thirteen act()-pressed routes that said nothing now name what they did');
+}
+
 console.log(`✅ client wiring test passed — across the console AND /admin: of ${refs.size} routes they can ` +
   `call, ${refs.size - dynamic.length} resolve to a really-mounted route (segment-wise, so ` +
   `/v1/streets/:id/jump cannot match /v1/streets/roster) and the ${dynamic.length} that build their ` +
@@ -6010,4 +6149,14 @@ console.log(`✅ client wiring test passed — across the console AND /admin: of
   `data-do plus ${shieldStats.wired} wired take-controls reaching one now each read that state, the `+
   `figure still on screen because it is the reason to surface. The Empire read "$120,017 READY TO `+
   `COLLECT - collect before the pad or a raid eats it" over a live button while the server answered `+
-  `safe, on a screen whose own warning advises going to ground.`);
+  `safe, on a screen whose own warning advises going to ground. And the TWELFTH, which is the `
+  + `EIGHTH swept instead of driven: check 8 proves the ${describedCount} actions it DRIVES read as `
+  + `something, and nineteen play waves found the rest one cluster at a time. This runs every `
+  + `act()-reachable reply in src/ through the real describe() and flags the ones that render the `
+  + `catch-all — 7 of them sit on routes the console presses, and each is declared with the `
+  + `property that makes the silence right. It found thirteen live: the WINDOW, the one rail `
+  + `turning $OMR back into cash, said "done." over the burn, the rate and the family's cut; `
+  + `squaring your name read "paid $50,000" for a purchase that lifts the WANTED mark and the `
+  + `welsher brand together; fencing a score framed money RECEIVED as money spent; and the `
+  + `sovereignty pad's nothing-owed early return had dropped the one field its own branch reads, `
+  + `so the line written for exactly that case was unreachable.`);

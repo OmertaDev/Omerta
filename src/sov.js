@@ -137,7 +137,7 @@ export async function paySovUpkeep(ch, client, h) {
     await client.query('UPDATE sov_structures SET upkeep_at=now() WHERE district_id=$1', [s.district_id]);
     settled.push({ district: s.district_id, paid: owed });
   }
-  if (!paid) return { ok: true, paid: 0, settled: [] };
+  if (!paid) return { ok: true, paid: 0, overextension: Math.round((mult - 1) * 100), settled: [] };
   await client.query('UPDATE gangs SET treasury=$2 WHERE id=$1', [g.id, treasury]);
   await h.ledger(client, { currency: 'cash', amount: -paid, reason: 'sov:upkeep', counterparty: g.id });
   if (h.owned.gang) h.owned.gang.treasury = treasury;
