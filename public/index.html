@@ -5574,9 +5574,79 @@
             data-confirm="Run the family as ${c.name}? You take the handicap with the edge${g.charter ? `, and re-founding costs ${g.charter.changeOmr} $OMR from the reserve` : ' — free the first time'}.">${g.charter ? `re-found as ${c.name}` : `charter as ${c.name}`}</button></div>`).join('')
         : '<div class="d" style="margin-top:4px;color:var(--dim)">the boss says what the family is</div>'}`)}
 
-      ${sect('fam-regalia', 'Family Regalia', 'status badges bought from the $OMR reserve — 
-... 7829 bytes omitted ...
-ropose', { decree: t.querySelector('#com-decree').value }).then(() => renderFamily());
+      ${sect('fam-regalia', 'Family Regalia', 'status badges bought from the $OMR reserve — the boss\'s call', `
+      <div class="card"><span class="t">Seal: ${g.seal || 'none'}</span>
+        ${g.nextSeal ? (boss ? `<button class="act" data-do="POST /v1/gangs/vanity/seal">commission ${art(g.nextSeal.name)} (${g.nextSeal.omr} $OMR)</button>` : '<span class="d" style="color:var(--dim)"> — the boss commissions seals</span>') : '<span class="chip good"> Obsidian — the finest seal in the city</span>'}</div>
+      ${boss ? `<div class="card" style="margin-top:6px"><span class="t">Crest &amp; Name</span>
+        <div style="margin-top:4px"><input id="crest-color" placeholder="#rrggbb" size="9"> <button class="act" id="crest-go">recolor the crest (${rules?.seals?.colorOmr ?? ''} $OMR)</button></div>
+        <div style="margin-top:4px"><input id="fam-rename" placeholder="new family name" size="16"> <input id="fam-retag" placeholder="TAG" size="5" maxlength="4"> <button class="act" id="fam-rename-go">rename the family (${rules?.seals?.renameOmr ?? ''} $OMR)</button></div></div>` : ''}`)}
+
+      <div style="margin-top:14px"><button class="act" data-do="POST /v1/gangs/leave" style="border-color:var(--blood)">walk away from the family</button></div>`;
+    wireSects(t);
+    t.querySelectorAll('[data-spec]').forEach((b) => b.onclick = () => {
+      const sel = $(`#spec-${b.dataset.spec}`); act('POST', `/v1/territory/${b.dataset.spec}/specialist`, { memberId: sel && sel.value }).then(() => renderFamily()); });
+    t.querySelectorAll('[data-terrop]').forEach((b) => b.onclick = () => act('POST', `/v1/territory/${b.dataset.terrop}/op`, {}).then(() => renderFamily()));
+    // diplomacy
+    t.querySelectorAll('[data-pactaccept]').forEach((b) => b.onclick = () => act('POST', `/v1/diplomacy/pact/${b.dataset.pactaccept}/accept`, {}).then(() => renderFamily()));
+    t.querySelectorAll('[data-pactbreak]').forEach((b) => b.onclick = () => act('DELETE', `/v1/diplomacy/pact/${b.dataset.pactbreak}`, {}).then(() => renderFamily()));
+    t.querySelectorAll('[data-coaljoin]').forEach((b) => b.onclick = () => act('POST', `/v1/diplomacy/coalition/${b.dataset.coaljoin}/join`, {}).then(() => renderFamily()));
+    t.querySelectorAll('[data-coalleave]').forEach((b) => b.onclick = () => act('DELETE', `/v1/diplomacy/coalition/${b.dataset.coalleave}`, {}).then(() => renderFamily()));
+    { const b = $('#pact-go'); if (b) b.onclick = () => { const gid = $('#pact-gang').value.trim(); if (gid) act('POST', `/v1/diplomacy/pact/${gid}`, {}).then(() => renderFamily()); }; }
+    { const b = $('#coal-go'); if (b) b.onclick = () => { const gid = $('#coal-gang').value.trim(); if (gid) act('POST', `/v1/diplomacy/coalition/${gid}`, {}).then(() => renderFamily()); }; }
+    // sovereignty
+    t.querySelectorAll('[data-sovup]').forEach((b) => b.onclick = () => act('POST', `/v1/sov/${b.dataset.sovup}/upgrade`, {}).then(() => renderFamily()));
+    t.querySelectorAll('[data-sovkeep]').forEach((b) => b.onclick = () => act('POST', '/v1/sov/upkeep', {}).then(() => renderFamily()));
+    t.querySelectorAll('[data-sovsiege]').forEach((b) => b.onclick = () => act('POST', `/v1/sov/${b.dataset.sovsiege}/siege`, {}).then(() => renderFamily()));
+    { const b = $('#sov-build'); if (b) b.onclick = () => { const d = $('#sov-dist')?.value; if (d) act('POST', `/v1/sov/${d}/build`, { windowHour: Number($('#sov-hour').value) }).then(() => renderFamily()); }; }
+    { const lb = $('#sov-lb-link'); if (lb) lb.onclick = async (e) => { e.preventDefault(); const b = (await api('GET', '/v1/leaderboard/sov')).body?.families || [];
+      $('#sov-lb').innerHTML = `<div class="grid" style="margin-top:4px">${b.map((f, i) => `<div class="card"><span class="t">#${i + 1} [${f.tag}] ${f.name}</span><div class="d">${fmt(f.points)} sov points · ${f.rank || ''}</div></div>`).join('') || '<span class="d">no strongholds standing yet</span>'}</div>`; }; }
+    { const cg = $('#crest-go'); if (cg) cg.onclick = () => act('POST', '/v1/gangs/vanity/color', { color: $('#crest-color').value.trim() }).then(() => renderFamily()); }
+    { const fr = $('#fam-rename-go'); if (fr) fr.onclick = () => act('POST', '/v1/gangs/vanity/name', { name: $('#fam-rename').value.trim(), tag: $('#fam-retag').value.trim() }).then(() => renderFamily()); }
+    { const flb = $('#foundation-lb-link'); if (flb) flb.onclick = async (e) => {
+      e.preventDefault(); const el = $('#foundation-lb'); if (!el) return;
+      const rows = (await api('GET', '/v1/leaderboard/foundation')).body?.board || [];
+      el.innerHTML = rows.length
+        ? `<div class="grid">${rows.slice(0, 10).map((f, i) => `<div class="card"><span class="t">${i + 1}. ${f.tag ? `[${f.tag}] ` : ''}${f.name}</span><div class="d">${f.foundation || ''}</div></div>`).join('')}</div>`
+        : '<div class="d" style="color:var(--dim);font-size:12.5px">No family has endowed a foundation yet — be the first pillar of the city.</div>';
+    }; }
+    { const tlb = $('#terr-lb'); if (tlb) tlb.onclick = async (e) => { e.preventDefault();
+      const d = (await api('GET', '/v1/leaderboard/territory')).body || {};
+      sheetModal('THE EMPIRE — biggest territorial families',
+        rankRows((d.empires || []).map((x) => ({ name: x.family, note: x.rank, val: `$${fmt(x.earned)}` })),
+          'no territory income logged yet')); }; }
+    { const te = $('#terr-establish'); if (te) te.onclick = () =>
+      act('POST', `/v1/territory/${me.loc}/establish`, { kind: $('#terr-kind').value }).then(() => renderFamily()); }
+    { const tr = $('#terr-raid-go'); if (tr) tr.onclick = () => {
+      const d = $('#terr-raid-dist').value.trim(); if (d) act('POST', `/v1/territory/${d}/raid`, {}).then(() => renderFamily()); }; }
+    t.querySelector('#trib-go').onclick = () =>
+      act('POST', '/v1/gangs/tribute', { amount: Number(t.querySelector('#trib-amt').value) }).then(() => renderFamily());
+    t.querySelector('#tribo-go').onclick = () =>
+      act('POST', '/v1/gangs/tribute/omr', { amount: Number(t.querySelector('#tribo-amt').value) }).then(() => renderFamily());
+    // THE WATCH — the boss declares the hour their family stands ready on turf they hold.
+    t.querySelectorAll('[data-watch]').forEach((b) => b.onclick = () =>
+      act('POST', `/v1/districts/${b.dataset.watch}/watch`, { hour: Number(t.querySelector(`#wh-${b.dataset.watch}`).value) }).then(() => renderFamily()));
+    // THE SEALED BID — a stake is secret and irreversible, so it gets a confirm.
+    t.querySelectorAll('[data-claim]').forEach((b) => b.onclick = async () => {
+      const id = b.dataset.claim, amt = Number(t.querySelector('#cl-' + id).value);
+      if (!(amt > 0)) return toast('Name what you are putting up.');
+      if (!await ask(`Stake $${fmt(amt)} on ${id}?`,
+        'It leaves the treasury now and nobody can see it. Highest takes the district when the window closes \u2014 the holder wins ties, and a loser only gets half of it back.',
+        { yes: 'put it up', no: 'think again', danger: true })) return;
+      act('POST', `/v1/districts/${id}/claim`, { amount: amt }).then(() => renderFamily());
+    });
+    t.querySelectorAll('[data-post]').forEach((b) => b.onclick = () => {
+      const id = t.querySelector('#rp-' + b.dataset.post).value;
+      if (!id) return toast('Pick the man first.');
+      act('POST', `/v1/roster/${b.dataset.post}`, { memberId: id }).then(() => renderFamily());
+    });
+    t.querySelectorAll('[data-unpost]').forEach((b) => b.onclick = () =>
+      act('DELETE', `/v1/roster/${b.dataset.unpost}`, {}).then(() => renderFamily()));
+    const warBtn = t.querySelector('#war-go');
+    if (warBtn) warBtn.onclick = () =>
+      act('POST', `/v1/gangs/war/${t.querySelector('#war-gang').value.trim()}`, {}).then(() => renderFamily());
+    const propBtn = t.querySelector('#com-propose');
+    if (propBtn) propBtn.onclick = () =>
+      act('POST', '/v1/commission/propose', { decree: t.querySelector('#com-decree').value }).then(() => renderFamily());
     const voteBtn = t.querySelector('#com-vote');
     if (voteBtn) voteBtn.onclick = () =>
       act('POST', '/v1/commission/vote', { decree: t.querySelector('#com-decree').value }).then(() => renderFamily());
