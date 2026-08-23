@@ -2886,7 +2886,7 @@
     else if (body.call === true && body.from) bits.push(body.kind === 'freight'
       ? `📞 delivered ${fmt(body.qty)} ${goodName(body.good)} to ${body.from} — they paid $${fmt(body.pay)}`
       : `📞 paid ${body.from} a visit — worth $${fmt(body.pay)}`);
-    if (body.favor === 'posted') bits.push(`🤝 the word's out — ${fmt(body.qty)} ${goodName(body.good)} wanted at ${txt($dist(body.district))}, $${fmt(body.pay)} held up front`);
+    if (body.favor === 'posted') bits.push(`🤝 the word's out — ${fmt(body.qty)} ${goodName(body.good)} wanted at ${txt($dist(body.district))}, $${fmt(body.pay)} held up front${body.expiresSeconds ? `. It stands ${minsTxt(body.expiresSeconds)}; whatever nobody runs comes back to you` : ''}.`);
     if (body.favor === 'ran') bits.push(`🤝 ran the favor — ${fmt(body.qty)} ${goodName(body.good)} delivered, +$${fmt(body.net)} (house took $${fmt(body.take)})`);
     if (body.favor === 'pulled') bits.push(`🤝 pulled it back — $${fmt(body.refund)} returned`);
     // THE DISPATCH — the email digest opt-in response is {available, email, optin}
@@ -3299,13 +3299,13 @@
     // the line says which corner they took as well as what it returns.
     if (body.game === 'fight' && body.side && body.stake !== undefined) { const fav = body.side === 'a';
       bits.push(`$${fmt(body.stake)} on ${txt(fav ? body.a : body.b)}${fav ? '' : ' (the dog)'} in this week's fight at ${fav ? body.favPays : body.dogPays}× — pays $${fmt(Math.round(body.stake * (fav ? body.favPays : body.dogPays)))} if they win`); }
-    if (body.racer && body.post !== undefined && body.fee !== undefined && body.race) bits.push(`${body.racer} is in today's ${body.race} — post ${body.post} at ${body.odds}:1 (the town's betting on your animal now)`);
-    if (body.futurity && body.racer && body.fee !== undefined && body.form !== undefined) bits.push(`${body.racer} (form ${body.form}) is nominated to the futurity — the whole town's betting on the field`);
+    if (body.racer && body.post !== undefined && body.fee !== undefined && body.race) bits.push(`${body.racer} is in today's ${body.race} — post ${body.post} at ${body.odds}:1. The nomination cost $${fmt(body.fee)} and it does not come back; the town's betting on your animal now.`);
+    if (body.futurity && body.racer && body.fee !== undefined && body.form !== undefined) bits.push(`${body.racer} (form ${body.form}) is nominated to the futurity — $${fmt(body.fee)} to nominate, and that one does NOT come back${body.closesSeconds ? `. The card closes in ${minsTxt(body.closesSeconds)}` : ''} and the whole town bets on the field.`);
     if (body.futurity && body.on && body.amount !== undefined) bits.push(`$${fmt(body.amount)} on ${body.on} in the futurity`);
     if (body.cost !== undefined && body.garrison !== undefined && body.name && body.npc) bits.push(`reinforced ${body.name}'s garrison to $${fmt(body.garrison)} (−$${fmt(body.cost)} from the treasury)`);
     if (body.settled !== undefined && Array.isArray(body.results) && body.results[0]?.winner !== undefined && body.results[0]?.race) bits.push(
       body.won > 0 ? `it came in — +$${fmt(body.won)} at the window` : `the tickets tore up — better luck at the next post`);
-    if (body.game === 'tourney') bits.push(`seated at the big table — $${fmt(body.buyin)} in, pool $${fmt(body.pool)} (${body.entrants} runner${body.entrants === 1 ? '' : 's'})`);
+    if (body.game === 'tourney') bits.push(`seated at the big table — $${fmt(body.buyin)} in, pool $${fmt(body.pool)} (${body.entrants} runner${body.entrants === 1 ? '' : 's'})${body.closesSeconds ? `. It deals in ${minsTxt(body.closesSeconds)}` : ''}${body.minEntrants ? `; under ${body.minEntrants} seated and the buy-in comes back` : ''}.`);
     if (body.game === 'poker' && body.result) bits.push(
       body.result === 'push' ? `split pot — ${body.yourHand} both ways` :
       body.result === 'win' ? `${body.yourHand} takes it — +$${fmt(body.net)}` :
@@ -3320,7 +3320,7 @@
     // future branch that mentions the purse cannot reintroduce the echo.
     if ((body.opponent !== undefined || body.yourFighter !== undefined) && body.you && typeof body.win === 'boolean') { const rec = body.record || body.yourFighter; const m = saidNet() ? '' : ` — ${body.win ? 'took' : 'lost'} $${fmt(Math.abs(body.net))}`; bits.push(`${body.you.name} ${body.win ? 'WINS' : 'dropped it'}${m}${rec ? ` (${rec})` : ''}`); }
     if (body.sire && body.dam && body.speed !== undefined) bits.push(`🐎 ${body.name} is born — out of ${body.dam} by ${body.sire} (speed ${body.speed} / stamina ${body.stamina} / heart ${body.heart})`);
-    if (body.stakes && body.form !== undefined && body.racer) bits.push(`${body.racer} is in the stakes (form ${body.form}) — $${fmt(body.buyin)} in, purse $${fmt(body.pool)} (${body.entrants} entered)`);
+    if (body.stakes && body.form !== undefined && body.racer) bits.push(`${body.racer} is in the stakes (form ${body.form}) — $${fmt(body.buyin)} in, purse $${fmt(body.pool)} (${body.entrants} entered)${body.closesSeconds ? `. It runs in ${minsTxt(body.closesSeconds)}` : ''}${body.minEntrants ? `; under ${body.minEntrants} in the field and the buy-in comes back` : ''}.`);
     if ((body.game === 'circuit' || body.game === 'race') && body.you && typeof body.win === 'boolean') { const rec = body.record || body.yourRacer;
       const m = saidNet() ? (body.game === 'circuit' && body.win ? ' — the purse is yours' : '')
         : (body.win ? ` — ${body.game === 'circuit' ? `took ${art(body.name || 'the meet')}, +$${fmt(Math.abs(body.net))} purse` : `took $${fmt(Math.abs(body.net))}`}` : ` — −$${fmt(Math.abs(body.net))}`);

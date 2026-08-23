@@ -257,7 +257,10 @@ export async function enterStakes(ch, racerId, client, h) {
   await bumpStanding(client, h, ch, 'cornerman', 2, { action: 'race' });
   await h.track(client, ch.account_id, 'stable_stakes', { buyin });
   bus.emit('streets', { type: 'stakes_entry', who: ch.name, racer: r.name, entrants });
+  // The buy-in ESCROWS and the race runs at a DEADLINE; a short field refunds every entrant. Both are
+  // terms, and `minEntrants` is SENT rather than restated client-side — the tournament's own precedent.
   return { ok: true, stakes: g.id, racer: r.name, form: f, buyin, pool: Number(g.pool) + buyin, entrants,
+    minEntrants: STABLE.STAKES.MIN_ENTRANTS,
     closesSeconds: Math.max(0, Math.ceil((new Date(g.resolves_at) - Date.now()) / 1000)) };
 }
 

@@ -17063,3 +17063,43 @@ the price; the pledge line reverting to a deposit) — every claim DRIVEN rather
 wave 65's own lesson applied from the start: a literal passes straight through the mutation that stops
 a field being sent. Driven actions 261 → 265. Suite green; **no SQL moved in `src/`** (checked with a
 diff filter, not assumed), so the real-Postgres gates do not apply.
+
+**PLAY WAVE 67 — FOUR ENTRIES THAT TOOK THE MONEY AND NEVER NAMED WHEN THE BELL RINGS
+(2026-08-23).** Check 14 (THE SILENCE LEDGER) proves statically that no act()-pressed handler is MUTE,
+and it is structurally blind to the class every tester complaint in this project has actually been: a
+line that is FLUENT and simply leaves a TERM off. So this wave drove the entry surfaces — the routes
+that take money and put you into something that RESOLVES LATER — and found one coherent family of five.
+**THE TELL is that two of the branches GUARDED on `body.fee !== undefined` to decide they were the
+right branch and never rendered it**: the figure was in hand at the moment it was withheld.
+**The four entries split on a distinction the player cannot see and must be told**: the tournament and
+the stakes **ESCROW** a buy-in and resolve at a DEADLINE, and a short field REFUNDS the lot; the card
+entry and the futurity nomination **BURN** a non-refundable fee to the buyback that never comes back.
+All four read as if the money had simply gone somewhere and nothing said when, or whether, anything
+happens next. **The boxing main event is the forgotten sibling that got this right all along**
+(`public/index.html:2756` renders `closesSeconds` — *"Betting closes in …"*), three screens from four
+neighbours in the same family that did not. A FIFTH, one system over, is the same shape: a posted
+FAVOR states that the pay is held up front and never said it STANDS for a window after which the
+unfilled escrow comes back.
+**TWO SERVER FIELDS, and the reason `minEntrants` is SENT rather than restated is the whole class**:
+a threshold copied into the client drifts the day the lever moves, and only the server knows this
+table's own number (the `crewNextCost`/`hunterSearchMs` discipline). Everything else was already in
+the reply and merely dropped.
+**THE GUARD IS DRIVEN, NEVER SYNTHETIC** — wave 65's lesson applied from the start: every claim here
+is about a figure the SERVER sends, and a synthetic passes straight through the mutation that stops it
+being sent. The block rides inside the wave-65 driven scope (its `id65`/`t65`/`drive65` fixture) and
+asserts the two halves separately for each entry — the server SENT the term, and the driven line
+NAMES it — with the fee assertions built from the reply's own figure through `fmtLike` rather than a
+literal.
+**Six probe errors are recorded rather than reported**, each traced before being called anything:
+`/v1/me` returns the character under `.character` (so the seed UPDATE matched zero rows and every
+drive read level 1 — which looked exactly like a game defect and was mine), `/v1/sov/:d/build` takes
+`windowHour`, `/v1/stable/buy` requires `name`, `/v1/stable/list/:id` takes `limit` not `price`,
+`npc_standing`'s column is `npc_id`, and `POST /v1/business/:id/spec` is not a mounted route at all.
+*A finding produced by a tool you wrote and did not check is not a finding*, for the tenth session
+running — and the probe itself LIFTS `test/client.js`'s own `DESCRIBE` IIFE at runtime rather than
+making a third copy of describe()'s dependency list, because *a third copy is how the second one went
+stale.* **Four mutations, four distinct named kills** (the tournament line dropping the deadline and
+the refund; the server dropping `minEntrants` on the stakes; the card entry dropping the fee it guards
+on; the futurity reverting to its original sentence), each restored by `cp` from a scratchpad copy,
+never `git checkout`. Driven actions 265 → 270. Suite green; **no SQL moved in `src/`** (checked with a
+diff filter, not assumed), so the real-Postgres gates do not apply.

@@ -1127,8 +1127,12 @@ export async function enterTournament(ch, client, h, opts = {}) {
   const entrants = Number((await client.query('SELECT COUNT(*) n FROM poker_entries WHERE tournament_id=$1', [t.id])).rows[0].n);
   await h.track(client, ch.account_id, 'casino', { game: 'tourney', buyin });
   bus.emit('streets', { type: 'tourney_entry', who: ch.name, entrants });
+  // THE TERMS RIDE WITH THE PRICE. The buy-in ESCROWS and the table resolves at a DEADLINE, and a
+  // short field refunds the lot — so both are sent. `minEntrants` is sent rather than restated on the
+  // client for the reason the whole class exists: a restated threshold drifts the day the lever moves,
+  // and only the server knows this table's own number.
   return { ok: true, game: 'tourney', tournament: t.id, buyin, pool: Number(t.pool) + buyin, entrants,
-    format: t.format || 'showdown',
+    format: t.format || 'showdown', minEntrants: CASINO.TOURNEY.MIN_ENTRANTS,
     closesSeconds: Math.max(0, Math.ceil((new Date(t.resolves_at) - Date.now()) / 1000)) };
 }
 

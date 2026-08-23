@@ -6094,6 +6094,44 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   assert(pled.r.body.pledged > 0 && pled.r.body.standing, 'the pledge must send what left and what it bought');
   assert(/BURNED/.test(pled.line) && /does not come back/.test(pled.line),
     `the pledge line must say the $OMR is burned, not deposited: ${pled.line}`);
+  // ── WAVE 67: four ENTRIES that took the money and never named when the bell rings ─────────────
+  // The boxing main event is the sibling that got this right ("Betting closes in ..."), and its four
+  // neighbours did not: two ESCROW a buy-in and resolve at a deadline (a short field refunds the
+  // lot), and two BURN a non-refundable nomination fee — and both of those GUARD on `body.fee` while
+  // never saying it, which is the tell. DRIVEN, because every claim is about a figure the SERVER
+  // sends: a synthetic passes straight through the mutation that stops it being sent.
+  await app.pool.query("UPDATE characters SET cash=90000000, loc='neon' WHERE id=$1", [id65]);
+  const tourney = await drive65('/v1/casino/tournament');
+  assert(tourney.r.body.closesSeconds > 0 && tourney.r.body.minEntrants > 0,
+    'the tournament must SEND its deadline and its short-field threshold — a restated threshold drifts the day the lever moves');
+  assert(/deals in/.test(tourney.line) && new RegExp(`under ${tourney.r.body.minEntrants} `).test(tourney.line),
+    `the DRIVEN tournament line must name when it deals AND that a short field refunds: ${tourney.line}`);
+
+  await inject('POST', '/v1/stable/buy', t65, { kind: 'dog', name: 'Wave Comet' });
+  const rid67 = (await inject('GET', '/v1/stable', t65)).body.stable[0].id;
+  const stakes = await drive65(`/v1/stable/stakes/${rid67}`);
+  assert(stakes.r.body.closesSeconds > 0 && stakes.r.body.minEntrants > 0, 'the stakes must SEND both terms too');
+  assert(/runs in/.test(stakes.line) && new RegExp(`under ${stakes.r.body.minEntrants} `).test(stakes.line),
+    `the DRIVEN stakes line must name the deadline AND the refund: ${stakes.line}`);
+
+  // The two BURNS. Both branches already read `body.fee` to decide they are the right branch, which
+  // is what makes the silence indefensible — the figure was in hand at the moment it was withheld.
+  const cardEntry = await drive65(`/v1/casino/track/enter/${rid67}`);
+  assert(cardEntry.r.body.fee > 0, "the card entry must send its fee — the client has no catalog to price it from");
+  assert(new RegExp(fmtLike(cardEntry.r.body.fee)).test(cardEntry.line) && /does not come back/.test(cardEntry.line),
+    `the DRIVEN card-entry line must name the fee AND that it is gone: ${cardEntry.line}`);
+  // A FIFTH in the same family, one system over: a posted favor HOLDS the pay up front (the line said
+  // so) and STANDS for a window after which the unfilled escrow comes back — a term sent and dropped.
+  const fav67 = await drive65('/v1/favors', { goodId: 'gin', qty: 2, pay: 5000, district: 'neon' });
+  assert(fav67.r.body.expiresSeconds > 0, 'the favor must SEND how long it stands');
+  assert(/stands/.test(fav67.line) && /comes back/.test(fav67.line),
+    `the DRIVEN favor line must say how long it stands and that the rest comes back: ${fav67.line}`);
+
+  const nom = await drive65(`/v1/casino/futurity/nominate/${rid67}`);
+  assert(nom.r.body.fee > 0 && nom.r.body.closesSeconds > 0, 'the nomination must send its fee and the card clock');
+  assert(new RegExp(fmtLike(nom.r.body.fee)).test(nom.line) && /NOT come back/.test(nom.line) && /closes in/.test(nom.line),
+    `the DRIVEN nomination line must name the burned fee AND when the card closes: ${nom.line}`);
+
 }
 
 await app.close();
@@ -6194,8 +6232,10 @@ await app.close();
   const score = say({ ok: true, take: 276406, rep: 1800, soldier: null, nextScoreSeconds: 28800 });
   assert(/276,406/.test(score) && /1800 respect/.test(score), `the Score must still name the take: ${score}`);
   assert(/8h/.test(score) && /crew/i.test(score), `the Score must name its cooldown AND that crew jobs share it: ${score}`);
+
   console.log('  ✓ wave 65: two shared clocks and a fare that were charged without being named');
   console.log('  ✓ wave 66: a paid activation that never named its window, and a burn that read as a deposit');
+  console.log('  ✓ wave 67: four entries that took the money and never named when the bell rings');
 }
 
 console.log(`✅ client wiring test passed — across the console AND /admin: of ${refs.size} routes they can ` +
