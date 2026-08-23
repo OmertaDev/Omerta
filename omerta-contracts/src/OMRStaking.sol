@@ -22,9 +22,12 @@ contract OMRStaking is Ownable2Step, ReentrancyGuard {
     uint256 public apyBps; // e.g. 1400 = 14%
     uint256 public totalStaked;
     uint256 public rewardPool; // accounted separately from principal
+    uint256 public rewardIndex; // cumulative rewards per staked token, scaled by 1e18
+    uint64 public lastRewardUpdate;
 
     struct Position { uint256 staked; uint256 accrued; uint64 lastAccrued; }
     mapping(address => Position) public positions;
+    mapping(address => uint256) public rewardIndexPaid;
 
     event ApySet(uint256 bps);
     event PoolFunded(uint256 amount);
@@ -36,10 +39,15 @@ contract OMRStaking is Ownable2Step, ReentrancyGuard {
         require(apyBps_ <= MAX_APY_BPS, "Staking: apy too high");
         omr = omr_;
         apyBps = apyBps_;
+        lastRewardUpdate = uint64(block.timestamp);
     }
 
     function setApy(uint256 bps) external onlyOwner {
         require(bps <= MAX_APY_BPS, "Staking: apy too high");
+        // Settle the elapsed interval at the OLD rate before changing it. Without this checkpoint,
+        // raising APY reprices every user's entire unclaimed history at the new rate (and lowering it
+        // confiscates already-earned rewards). The global index avoids iterating over stakers.
+        _updateRewardIndex();
         apyBps = bps;
         emit ApySet(bps);
     }
@@ -51,11 +59,21 @@ contract OMRStaking is Ownable2Step, ReentrancyGuard {
         emit PoolFunded(amount);
     }
 
+    function _updateRewardIndex() internal {
+        uint256 elapsed = block.timestamp - lastRewardUpdate;
+        if (elapsed > 0) {
+            rewardIndex += (apyBps * elapsed * 1e18) / (10_000 * YEAR);
+            lastRewardUpdate = uint64(block.timestamp);
+        }
+    }
+
     function _accrue(address user) internal {
+        _updateRewardIndex();
         Position storage p = positions[user];
         if (p.staked > 0) {
-            p.accrued += (p.staked * apyBps * (block.timestamp - p.lastAccrued)) / (10_000 * YEAR);
+            p.accrued += (p.staked * (rewardIndex - rewardIndexPaid[user])) / 1e18;
         }
+        rewardIndexPaid[user] = rewardIndex;
         p.lastAccrued = uint64(block.timestamp);
     }
 
@@ -92,9 +110,10 @@ contract OMRStaking is Ownable2Step, ReentrancyGuard {
 
     function pendingRewards(address user) external view returns (uint256) {
         Position memory p = positions[user];
-        uint256 live = p.staked > 0
-            ? (p.staked * apyBps * (block.timestamp - p.lastAccrued)) / (10_000 * YEAR)
-            : 0;
+        uint256 liveIndex = rewardIndex;
+        uint256 elapsed = block.timestamp - lastRewardUpdate;
+        if (elapsed > 0) liveIndex += (apyBps * elapsed * 1e18) / (10_000 * YEAR);
+        uint256 live = p.staked > 0 ? (p.staked * (liveIndex - rewardIndexPaid[user])) / 1e18 : 0;
         return p.accrued + live;
     }
 }
