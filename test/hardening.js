@@ -349,7 +349,25 @@ assert(lt.statusCode === 200 && /\/openapi\.json/.test(lt.body) && /\/agents/.te
 const rb = await app.inject({ method: 'GET', url: '/robots.txt' });
 assert(rb.statusCode === 200 && /text\/plain/.test(rb.headers['content-type'])
   && /User-agent: \*/.test(rb.body) && /Allow: \//.test(rb.body) && !/Disallow/.test(rb.body)
-  && /llms\.txt/.test(rb.body), 'robots.txt welcomes all crawlers/AI agents and points at llms.txt');
+  && /llms\.txt/.test(rb.body) && /Sitemap: .*\/sitemap\.xml/.test(rb.body),
+  'robots.txt welcomes all crawlers/AI agents and points at discovery surfaces');
+const sm = await app.inject({ method: 'GET', url: '/sitemap.xml' });
+assert(sm.statusCode === 200 && /application\/xml/.test(sm.headers['content-type'])
+  && /<loc>.*\/arena<\/loc>/.test(sm.body), 'sitemap publishes the indexable public surfaces');
+const home = await app.inject({ method: 'GET', url: '/' });
+assert.equal(home.headers['x-frame-options'], 'DENY', 'browser pages deny framing');
+assert.equal(home.headers['x-content-type-options'], 'nosniff', 'all responses deny MIME sniffing');
+assert(/object-src 'none'/.test(home.headers['content-security-policy-report-only'] || ''),
+  'browser pages ship the monitored CSP boundary');
+assert(/camera=\(\)/.test(home.headers['permissions-policy'] || ''), 'browser capabilities default closed');
+const clientSrc = readFileSync(new URL('../public/index.html', import.meta.url), 'utf8');
+assert(/ethereum-provider@2\.21\.5/.test(clientSrc) && !/ethereum-provider@2['"]/.test(clientSrc),
+  'WalletConnect CDN import is pinned to an exact SDK version');
+assert(/rel="canonical"/.test(clientSrc) && /twitter:card/.test(clientSrc),
+  'the front door publishes canonical and social metadata');
+for (const id of ['btn-jump', 'btn-phone', 'btn-alerts', 'btn-sfx'])
+  assert(new RegExp(`id="${id}"[^>]*aria-label=`).test(clientSrc), `${id} has an accessible name`);
+assert(!/<a\b[^>]*>\s*<button\b/i.test(clientSrc), 'interactive controls are not nested');
 // and the guide itself is vendor-neutral — a non-Claude agent reading it finds its own lane.
 assert(/Every model works here/.test(ag.body) && /openapi\.json/.test(ag.body),
   'the agent guide carries the vendor-neutral (any-model) section');
