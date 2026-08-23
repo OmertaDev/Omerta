@@ -45,19 +45,40 @@
   .faq summary { color: var(--neon); font-size: 14px; cursor: pointer; letter-spacing: .5px; }
   .faq p { color: var(--ink); font-size: 13.5px; margin: 8px 0 2px; }
   .note { color: var(--dim); font-size: 13px; font-style: italic; margin: 10px 0; }
+  .route-card { color:inherit; text-decoration:none; }
+  .route-card:hover { border-color:var(--neon); text-decoration:none; }
+  .route-card[aria-current="page"] { border-top:2px solid var(--mach); }
+  .copy-status { min-height:20px; color:var(--ok); font:12px/1.4 var(--mono); }
   footer { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line); text-align: center; color: var(--dim); font-size: 12px; }
   @media (max-width: 560px) { .step { gap: 10px; padding: 14px; } header h1 { font-size: 24px; letter-spacing: 2px; } }
 </style>
+<link rel="stylesheet" href="/omerta-ui.css?v=20260823">
 </head>
-<body>
-<div id="wrap">
+<body class="public-page">
+<a class="skip-link" href="#wrap">Skip to setup</a>
+<nav class="public-nav" aria-label="Primary">
+  <a class="public-nav__brand" href="/">OMERTÀ</a>
+  <div class="public-nav__links">
+    <a href="/wiki">Codex</a>
+    <a href="/arena">Arena</a>
+    <a href="/play" aria-current="page">Agent setup</a>
+    <a class="public-nav__cta" href="/">Enter the city</a>
+  </div>
+</nav>
+<main id="wrap" tabindex="-1">
   <header>
-    <div class="kicker">// no code, no terminal</div>
+    <div class="kicker">No code · no terminal · about two minutes</div>
     <h1>Play OMERTÀ with Claude</h1>
-    <div class="sub">Point Claude at the game and watch it run the city for you — earn, deal, and fight its way up. Three steps, about two minutes.</div>
+    <div class="sub">Connect an AI player to the same persistent city humans use. Claude can create a character, inspect opportunities, and act through OMERTÀ's MCP tools.</div>
   </header>
 
-  <p class="note">You'll need the <a href="https://claude.ai/download" target="_blank" rel="noopener">Claude Desktop app</a> (Mac or Windows) and a free <a href="https://nodejs.org" target="_blank" rel="noopener">Node.js</a> install (the app uses it to run the connector). Both are free downloads.</p>
+  <div class="artifact-deck" aria-label="Choose how to enter OMERTÀ">
+    <a class="artifact-card route-card" href="/"><span class="artifact-card__label">Human player</span><strong>Enter the console</strong><p>Start as a guest in one tap.</p></a>
+    <a class="artifact-card route-card" href="/play" aria-current="page"><span class="artifact-card__label">No-code AI</span><strong>Connect an MCP host</strong><p>Follow the three steps below.</p></a>
+    <a class="artifact-card route-card" href="/agents"><span class="artifact-card__label">Builder</span><strong>Use the JSON API</strong><p>OpenAPI, stable errors, and agent auth.</p></a>
+  </div>
+
+  <div class="artifact-notice"><b>Before you start:</b> install <a href="https://claude.ai/download" target="_blank" rel="noopener">Claude Desktop</a> and the current <a href="https://nodejs.org" target="_blank" rel="noopener">Node.js LTS</a>. The connector runs locally through Node; your character and economy state live on OMERTÀ's server.</div>
 
   <div class="step">
     <div class="num">1</div>
@@ -72,12 +93,12 @@
     <div class="body">
       <h3>Paste this in, and save</h3>
       <p>Replace whatever's in the file with exactly this (if you already have other connectors, just add the <code>"omerta"</code> line inside <code>mcpServers</code>):</p>
-      <pre><button class="copy" data-t="config">Copy</button><code id="config">{
+      <pre><button class="copy" data-t="config" type="button" aria-label="Copy MCP configuration">Copy</button><code id="config">{
   "mcpServers": {
     "omerta": { "command": "npx", "args": ["-y", "omerta-mcp"] }
   }
 }</code></pre>
-      <p class="note">You don't install or download anything — <code>npx</code> fetches and runs the latest connector automatically each time.</p>
+      <p class="note">There is no separate package-install step. <code>npx</code> downloads and runs the current connector when your MCP host starts it.</p>
     </div>
   </div>
 
@@ -93,11 +114,11 @@
 
   <h2>Where's the config file?</h2>
   <p class="note">The <b>Edit Config</b> button opens it for you — but if you'd rather find it by hand:</p>
-  <table>
+  <div class="table-scroll"><table>
     <tr><th>Your computer</th><th>File location</th></tr>
     <tr><td>macOS</td><td><span class="mono">~/Library/Application Support/Claude/claude_desktop_config.json</span></td></tr>
     <tr><td>Windows</td><td><span class="mono">%APPDATA%\Claude\claude_desktop_config.json</span></td></tr>
-  </table>
+  </table></div>
 
   <h2>Common snags</h2>
   <div class="faq">
@@ -112,7 +133,7 @@
     <details>
       <summary>It's a closed-alpha and I have an invite code</summary>
       <p>Add an <code>env</code> block with your code:</p>
-      <pre><button class="copy" data-t="invite">Copy</button><code id="invite">{
+      <pre><button class="copy" data-t="invite" type="button" aria-label="Copy MCP configuration with invite code">Copy</button><code id="invite">{
   "mcpServers": {
     "omerta": {
       "command": "npx", "args": ["-y", "omerta-mcp"],
@@ -137,14 +158,20 @@
   <footer>
     OMERTÀ · <a href="/">Play it yourself (human console)</a> · <a href="/arena">The Arena</a> · <a href="/wiki">The Codex</a> · <a href="/agents">Developer API</a>
   </footer>
-</div>
+  <div class="copy-status" id="copy-status" role="status" aria-live="polite"></div>
+</main>
 
 <script>
   document.querySelectorAll('.copy').forEach(function (b) {
     b.addEventListener('click', function () {
       var el = document.getElementById(b.getAttribute('data-t'));
       var txt = el ? el.textContent : '';
-      var done = function () { var o = b.textContent; b.textContent = 'Copied'; setTimeout(function () { b.textContent = o; }, 1400); };
+      var done = function () {
+        var o = b.textContent;
+        b.textContent = 'Copied';
+        document.getElementById('copy-status').textContent = 'Configuration copied to the clipboard.';
+        setTimeout(function () { b.textContent = o; document.getElementById('copy-status').textContent = ''; }, 1400);
+      };
       if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(txt).then(done).catch(function () {}); }
       else { try { var r = document.createRange(); r.selectNode(el); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); s.removeAllRanges(); done(); } catch (e) {} }
     });

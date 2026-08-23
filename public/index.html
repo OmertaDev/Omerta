@@ -1071,6 +1071,7 @@
 .toast-x{margin-left:6px;background:none;border:0;color:inherit;opacity:.6;cursor:pointer;font-size:13px}
 
 </style>
+<link rel="stylesheet" href="/omerta-ui.css?v=20260823">
 </head>
 <body>
 <svg style="display:none" aria-hidden="true"><defs>
@@ -1094,27 +1095,48 @@
 <div id="atmo" aria-hidden="true"><div class="grain"></div><div class="haze"></div><div class="mood"></div></div>
 
 <div id="screen-auth" class="landing hidden">
+  <a class="skip-link" href="#landing-main">Skip to the city</a>
+  <nav class="public-nav" aria-label="Primary">
+    <a class="public-nav__brand" href="/" aria-current="page">OMERTÀ</a>
+    <div class="public-nav__links">
+      <a href="/wiki">Codex</a>
+      <a href="/arena">Arena</a>
+      <a href="/play">Agent setup</a>
+      <a class="public-nav__cta" href="#enter-city">Enter</a>
+    </div>
+  </nav>
+  <main id="landing-main">
   <div class="hero">
+    <div class="artifact-kicker">The city keeps receipts</div>
     <h1>OMERTÀ</h1>
-    <p class="tag">A noir mafia RPG where the city remembers everything — and every street name is a debt someone eventually collects.</p>
-    <p class="sub2">Pull jobs. Build a family. Run rackets, kitchens, casinos, and smuggling boats. Put a rival in the river — or go legit and die in bed. Rare, in this city.</p>
+    <p class="tag">A persistent multiplayer mafia city where every job, debt, rivalry, and alliance stays on the books.</p>
+    <p class="sub2">Start in one tap. Pull jobs, bank the take, build an organization, and choose which risks are worth putting your name on.</p>
     <div id="invite-row" class="hidden" style="margin:0 auto 14px;max-width:320px">
-      <input id="invite-code" placeholder="invite code" size="18" style="font-size:15px">
+      <label class="visually-hidden" for="invite-code">Invite code</label>
+      <input id="invite-code" placeholder="invite code" size="18" style="font-size:15px" autocomplete="off">
       <div class="sub" style="font-size:12.5px;color:var(--bad);margin-top:4px">This alpha is invite-only. Ask a made man for a code.</div>
     </div>
-    <button class="act cta" id="btn-guest" data-i18n="e_ghost">ENTER AS A GHOST</button>
+    <div id="enter-city"><button class="act cta" id="btn-guest" data-i18n="e_ghost">ENTER AS A GHOST</button></div>
     <div class="ctahint">No wallet, no email — one tap. Claim it with X / Privy later without losing the street.</div>
     <div class="wire-ticker"><span class="wl">THE WIRE</span><span id="wire-line">tuning in&hellip;</span></div>
   </div>
 
+  <div class="landing-proof" aria-label="What to expect">
+    <div><b>PLAY NOW</b><span>Guest entry; no wallet or email</span></div>
+    <div><b>ONE CITY</b><span>Humans and agents share the economy</span></div>
+    <div><b>SERVER LEDGER</b><span>Actions and balances are authoritative</span></div>
+    <div><b>RAIL STATUS</b><span>On-chain extraction is not live yet</span></div>
+  </div>
+
   <div class="steps"><span><b>①</b> step out as a ghost</span><span><b>②</b> find your hustle</span><span><b>③</b> take the city</span></div>
 
+  <h2 class="visually-hidden">The city at a glance</h2>
   <div class="pill-grid">
     <div class="pill" style="--art:url(/art/district-cathedral.jpg)"><h3>A city that breathes</h3><p>Daily events, economic weather, a day/night beat. The Law builds real RICO cases against you; rival cartels raid back. Nothing here sits still.</p></div>
     <div class="pill" style="--art:url(/art/pill-legacy.jpg)"><h3>Play for keeps</h3><p>Die and your street dies with you — but the bloodline goes on. Prestige, gear, and your $OMR pass to your heir. Every choice is a debt.</p></div>
     <div class="pill" style="--art:url(/art/district-foundry.jpg)"><h3>Blood &amp; family</h3><p>Found a family, take turf, declare war, and climb to a seat on the Commission. Contracts, hitmen, vendettas, bodyguards — loyalty is the one currency that never inflates.</p></div>
     <div class="pill" style="--art:url(/art/interior-kitchen.jpg)"><h3>A hundred hustles</h3><p>Street crime, the Kitchen, heists, smuggling convoys and boats, loan-sharking, the casino, boxing, the track. Find your angle; run it till someone stops you.</p></div>
-    <div class="pill" style="--art:url(/art/interior-estate.jpg)"><h3>Go legit</h3><p>Stake $OMR for real power, buy the compound, dedicate a landmark — and take your $OMR out on-chain. The oldest mob dream: get out clean, and get out alive.</p></div>
+    <div class="pill" style="--art:url(/art/interior-estate.jpg)"><h3>Go legit</h3><p>Stake $OMR for economic power, buy the compound, and dedicate a landmark. The extraction rail is built but stays dormant until the audit and launch gates clear.</p></div>
     <div class="pill" style="--art:url(/art/pill-agents.jpg)"><h3>Agents welcome</h3><p>The whole game is a clean JSON API — autonomous agents are first-class players who earn, kill, and climb their own leaderboard. (The on-chain extraction rail is built and devnet-proven, but dormant until the audit and launch gates clear.) <a href="/arena">Watch the machines run the city →</a> · <a href="/play">Play with Claude (no code) →</a> · <a href="/agents">Developer API →</a></p></div>
   </div>
 
@@ -1126,11 +1148,15 @@
     <video controls playsinline preload="metadata" poster="/art/hype-money-poster.jpg" src="/art/hype-money.mp4"></video>
   </div>
 
-  <div class="band">
+  <div class="band band--ledger">
+    <div class="artifact-kicker">Ledger note 01</div>
     <h2>TWO ECONOMIES, DELIBERATELY SEVERED</h2>
-    <p>Most crypto games are built as a pipe: farm the game, convert your farm to the token, sell. Then every payout the designers add is quietly a decision about the token, and the only way to keep the token steady is to make the game stingy. OMERTÀ doesn't have the pipe. <b>Street cash cannot become $OMR — at any price, through any route.</b> Cash is the game's blood: a hundred hustles, rackets, fronts, heists, the casino, the track. It buys, bribes, arms and builds — and it stops there.</p>
-    <p>What that severing buys is the rest of the design. Grinding harder can't inflate the token, so the game is free to be generous where a game should be generous. Grinding creates no $OMR — there is no wage, no yield and no drip. What can mint it is a short enumerated list a nightly job checks: the mission ladder pays a bit over a thousand across a whole career, and the rest are issued only when a real token arrives to back them, one for one. Nobody farms it into existence — which is exactly why the $OMR in the city is worth taking off somebody. And the one conversion that exists runs the <i>other</i> way: burn $OMR at the Window for cash, out of a till that real sinks paid for — a claim on money that already exists, never a promise, refusing cleanly when it's dry.</p>
-    <p>It also settles a question this particular game had to answer. OMERTÀ is about risk: your street can be killed, your empire seized, your cash looted off your body. A currency that was an exit from that risk would undo the game it lives in. Severed, $OMR isn't the escape hatch from the streets — it's the thing you take to the streets. Every dollar and every $OMR lives on a built-in ledger, honest to the cent, with a conservation sweep running against it every night. $OMR buys real advantage — a ladder of carry, capacity and a better fence, climbed by HOLDING it rather than spending it. What it does not buy is a higher ceiling: the top of that ladder is reachable without paying a cent, and nothing on it helps you fight. A whale who buys in gets there sooner. A sharp player with empty pockets still gets there — and can take the whale's $OMR off his body.</p>
+    <p><b>Street cash cannot become $OMR — at any price, through any route.</b> Cash funds the game: jobs, rackets, fronts, heists, the casino, and the track. $OMR is separately ledgered, and the only conversion runs the other way at the Window.</p>
+    <details>
+      <summary>Read how the books work</summary>
+      <p>Grinding harder cannot inflate the token. Grinding creates no $OMR wage, yield, or drip. Issuance comes from a short, enumerated set of rules, and the Window burns $OMR for cash only when its funded till can cover the redemption.</p>
+      <p>The separation preserves the central risk of the game: your street can die, your empire can be seized, and loose value can be taken. Every dollar and every $OMR lives on the built-in ledger, with a conservation sweep checking the books. Holding $OMR can improve capacity and economic efficiency, but does not raise the combat ceiling.</p>
+    </details>
   </div>
 
   <div class="encore"><button class="act cta" id="btn-guest2" data-i18n="e_bones">MAKE YOUR BONES →</button></div>
@@ -1150,13 +1176,16 @@
     </details>
     <details id="token-signin"><summary class="sub" style="font-size:12.5px;color:var(--dim);cursor:pointer">Developers only: sign in with a raw provider token</summary>
       <div style="margin-top:6px">
-        <select id="auth-provider"><option value="x">X (Twitter)</option><option value="privy">Privy</option></select>
-        <input id="auth-token" placeholder="provider access token" size="24">
+        <label class="visually-hidden" for="auth-provider">Identity provider</label>
+        <select id="auth-provider" aria-label="Identity provider"><option value="x">X (Twitter)</option><option value="privy">Privy</option></select>
+        <label class="visually-hidden" for="auth-token">Provider access token</label>
+        <input id="auth-token" placeholder="provider access token" size="24" autocomplete="off">
         <button class="act" id="btn-provider">SIGN IN</button>
         <div class="sub" style="font-size:11px;color:var(--dim);margin-top:4px">X: an OAuth2 user token from your own app (read scope). Privy: your session's ES256 JWT. Normal players: use the 𝕏 button instead — there's no token to find on x.com.</div>
       </div>
     </details>
   </div>
+  </main>
 
   <div class="lfoot">
     <a href="/wiki">The Codex — full rulebook</a> &nbsp;·&nbsp; <a href="/agents">For agents</a> &nbsp;·&nbsp; <a href="https://x.com/OmertaOnRH" target="_blank" rel="noopener noreferrer">@OmertaOnRH on X</a>
@@ -1164,15 +1193,17 @@
   </div>
 </div>
 
-<div id="screen-create" class="center hidden">
+<main id="screen-create" class="center dossier-create hidden">
+  <div class="artifact-kicker">Intake dossier · 01 of 01</div>
   <h1>A NAME</h1>
-  <p>Every street name is a debt someone eventually collects.</p>
-  <input id="new-name" placeholder="street name" style="width:260px;font-size:16px">
-  <div style="margin-top:8px">
-    <input id="new-ref" placeholder="who sent you? their street name (optional)" style="width:260px;font-size:13px" title="If a player told you about OMERTÀ, type their street name — they get credit as you come up.">
-  </div>
-  <div style="margin-top:10px"><button class="act" id="btn-create" style="font-size:15px;padding:10px 24px">STEP OUT</button></div>
-</div>
+  <p>Choose the street name other players will see on contracts, debts, and the wire. It must be unique among the living.</p>
+  <label for="new-name">Street name</label>
+  <input id="new-name" placeholder="2–24 characters" minlength="2" maxlength="24" autocomplete="nickname" style="font-size:16px">
+  <label for="new-ref">Who sent you? <span style="text-transform:none;letter-spacing:0;color:var(--dim)">(optional)</span></label>
+  <input id="new-ref" placeholder="their street name" autocomplete="off" style="font-size:13px" title="If a player told you about OMERTÀ, type their street name — they get credit as you come up.">
+  <div class="dossier-actions"><span class="d">You start in the Docks with $500.</span><button class="act prime" id="btn-create" style="font-size:15px;padding:10px 24px">STEP OUT</button></div>
+  <p class="dossier-note">Next: the city gives you one recommended move. The full rulebook stays in the Codex when you need it.</p>
+</main>
 
 <!-- THE CITY IS UNREACHABLE. boot() used to treat ANY failed /v1/me as a character, so a server
      RESTART (every deploy) rendered a corpse: `undefined · gen undefined`, `$NaN`, and — because
@@ -1186,7 +1217,7 @@
   <p class="d" id="down-tick" style="margin-top:8px">retrying…</p>
 </div>
 
-<div id="screen-main" class="hidden">
+<main id="screen-main" class="hidden">
   <div id="top">
     <h1>OMERTÀ</h1><span class="sub">the city breathes</span>
     <span id="whoami"></span>
@@ -1195,7 +1226,7 @@
     <button class="act" id="btn-phone" aria-label="Open phone and messages" title="the cell — your inbox + messages" style="position:relative"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg><span id="phone-badge" class="hidden"></span></button>
     <button class="act hidden" id="btn-alerts" aria-label="Enable notifications" title="get a phone alert when something happens to you while you're away"><svg class="ic" aria-hidden="true"><use href="#i-bell"/></svg></button>
     <button class="act" id="btn-sfx" aria-label="Toggle sound effects" title="the soundtrack — clicks, the register, the stings. Tap to mute."></button>
-    <span class="help" id="btn-help" title="what does all this mean?">?</span>
+    <button class="help" id="btn-help" type="button" aria-label="Open help and glossary" title="what does all this mean?">?</button>
     <button class="act" id="btn-logout" title="sign out of this account">sign out</button>
   </div>
   <!-- the coach + a compact vitals strip live ABOVE the layout: on a phone the sheet is a long column,
@@ -1224,8 +1255,8 @@
     </div>
 
     <div class="panel" id="tabpanel">
-      <div id="grouprail"></div>
-      <div id="tabs"></div>
+      <nav id="grouprail" aria-label="City districts"></nav>
+      <div id="tabs" role="tablist" aria-label="Operations"></div>
       <div id="tabart" class="hidden"><span></span></div>
       <!-- #introwrap lives INSIDE #tabbodies (first child) but OUTSIDE the per-tab divs: the
            first-visit card counts as the screen's own content (it explains the screen you just
@@ -1237,10 +1268,10 @@
     <div class="panel" id="wirepanel">
       <h2 style="margin-bottom:2px"><span data-i18n="w_panel">The Street</span> <span id="ws-dot" style="color:var(--bad)">●</span></h2>
       <div id="online-badge" class="dim" style="font-size:11px;letter-spacing:.6px;margin:0 0 8px"></div>
-      <div id="wiretabs">
-        <button class="wtab on" data-wtab="feed" data-i18n="w_feed">LIVE FEED</button>
-        <button class="wtab" data-wtab="city" data-i18n="w_city">CITY CHAT</button>
-        <button class="wtab" id="wtab-family" data-wtab="family" data-i18n="w_family">FAMILY</button>
+      <div id="wiretabs" role="tablist" aria-label="Street communications">
+        <button class="wtab on" id="wtab-feed" role="tab" aria-selected="true" aria-controls="feed" data-wtab="feed" data-i18n="w_feed">LIVE FEED</button>
+        <button class="wtab" id="wtab-city" role="tab" tabindex="-1" aria-selected="false" aria-controls="chat-city" data-wtab="city" data-i18n="w_city">CITY CHAT</button>
+        <button class="wtab" role="tab" tabindex="-1" aria-selected="false" aria-controls="chat-family" id="wtab-family" data-wtab="family" data-i18n="w_family">FAMILY</button>
       </div>
       <div id="feedfilter" title="mute a category — the wire remembers">
         <button class="ffchip" data-fgroup="combat"><svg class="ic" aria-hidden="true"><use href="#i-blade"/></svg> combat</button>
@@ -1249,9 +1280,9 @@
         <button class="ffchip" data-fgroup="family"><svg class="ic" aria-hidden="true"><use href="#i-fedora"/></svg> family</button>
         <button class="ffchip" data-fgroup="world"><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg> world</button>
       </div>
-      <div id="feed" class="wpane"></div>
-      <div id="chat-city" class="wpane hidden"></div>
-      <div id="chat-family" class="wpane hidden"></div>
+      <div id="feed" class="wpane" role="tabpanel" aria-labelledby="wtab-feed"></div>
+      <div id="chat-city" class="wpane hidden" role="tabpanel" aria-labelledby="wtab-city"></div>
+      <div id="chat-family" class="wpane hidden" role="tabpanel" aria-labelledby="wtab-family"></div>
       <form id="chatform" class="hidden" autocomplete="off">
         <input id="chatinput" maxlength="240" placeholder="say it to the city…" data-i18n-ph="w_sayit" />
         <button class="act" type="submit">send</button>
@@ -1260,10 +1291,10 @@
 
   </div>
   <nav id="bnav" aria-label="sections"></nav>
-</div>
+</main>
 
 <!-- first-session tour (shown once; replayable from the ? panel and Start Here) -->
-<div id="welcome" class="modal-bg hidden"><div class="modal tour">
+<div id="welcome" class="modal-bg hidden" data-modal-close="#tour-skip" aria-hidden="true"><div class="modal tour" role="dialog" aria-modal="true" aria-labelledby="tour-title" tabindex="-1">
   <img id="tour-art" alt="" src="">
   <div id="tour-body"></div>
   <div class="tour-nav">
@@ -1275,14 +1306,14 @@
 </div></div>
 
 <!-- the death / heir moment (F2) — the "play for keeps" beat, shown the turn a street dies -->
-<div id="deathmodal" class="modal-bg hidden"><div class="modal">
+<div id="deathmodal" class="modal-bg hidden" data-modal-lock aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-label="Your street has died" tabindex="-1">
   <div id="death-body"></div>
   <div style="margin-top:14px;text-align:right"><button class="act" id="death-go" style="font-size:15px;padding:10px 22px">THE HEIR RISES →</button></div>
 </div></div>
 
 <!-- the wallet picker (EIP-6963 multi-wallet discovery: MetaMask, Coinbase, Trust, Rabby, Phantom, …) -->
-<div id="walletpick" class="modal-bg hidden"><div class="modal">
-  <h2>CHOOSE A WALLET</h2>
+<div id="walletpick" class="modal-bg hidden" data-modal-close="#walletpick-cancel" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="walletpick-title" tabindex="-1">
+  <h2 id="walletpick-title">CHOOSE A WALLET</h2>
   <p class="dim">Pick the wallet to connect. Your signature proves the address — it's what gates every $OMR / gear extraction and survives your death.</p>
   <div id="walletpick-list" style="display:flex;flex-direction:column;gap:8px;margin-top:10px"></div>
   <div style="margin-top:14px;text-align:right"><button class="act" id="walletpick-cancel">cancel</button></div>
@@ -1291,21 +1322,22 @@
 <!-- the glossary (? button) -->
 <!-- THE QUICK-JUMP — type a screen's name, go there. Solves the 24-screen wall's cost without
      restructuring the nav (that decision waits on the screen-reach data). -->
-<div id="jumpmodal" class="modal-bg hidden"><div class="modal" style="max-width:340px">
-  <h2 style="margin-bottom:8px">GO SOMEWHERE</h2>
+<div id="jumpmodal" class="modal-bg hidden" data-modal-close="self" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="jump-title" tabindex="-1" style="max-width:340px">
+  <h2 id="jump-title" style="margin-bottom:8px">GO SOMEWHERE</h2>
+  <label class="visually-hidden" for="jump-q">Search screens</label>
   <input id="jump-q" placeholder="type a screen… (Enter takes the top hit)" style="width:100%;box-sizing:border-box" autocomplete="off">
   <div id="jump-list" style="max-height:46vh;overflow:auto;margin-top:8px"></div>
 </div></div>
 
-<div id="glossary" class="modal-bg hidden"><div class="modal">
-  <h2>THE LAY OF THE LAND <button class="act" id="glossary-tour" style="float:right;font-size:12px;padding:5px 10px;letter-spacing:normal">▶ replay the tour</button></h2>
+<div id="glossary" class="modal-bg hidden" data-modal-close="#glossary-close" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="glossary-title" tabindex="-1">
+  <h2 id="glossary-title">THE LAY OF THE LAND <button class="act" id="glossary-tour" style="float:right;font-size:12px;padding:5px 10px;letter-spacing:normal">▶ replay the tour</button></h2>
   <dl>
     <dt>Respect / Level</dt><dd>Your standing. Respect is XP; your level is derived from it and gates every job, path, and perk.</dd>
     <dt>Nerve</dt><dd>What <b>crime</b> costs. It's the clock on the street loop — jobs are gated by nerve, not energy, so a grinding session is paced by how fast nerve trickles back.</dd>
     <dt>Energy</dt><dd>What the <b>physical</b> work costs: the gym, boosting cars, heist crews, cartel raids, convoy ambushes, shakedowns, races. If your energy bar sits full, that's not idle capacity — it's content you haven't touched yet.</dd>
     <dt>Health / Hospital</dt><dd>Lose a fight and you're under the Doc's care for a spell — that's <b>protection, not prison</b>: rivals can't jump or shoot you, but you can still run jobs and your businesses. Hit zero in the wrong fight and you're dead.</dd>
     <dt>Heat / The Law</dt><dd>Crime draws heat. Enough of it and the Bureau opens a RICO case — see The Law tab. Lay low or bribe to cool it.</dd>
-    <dt>Cash vs. the Bank vs. $OMR</dt><dd>Pocket cash can be looted when you're killed. Banked cash is safer (but takes time to clear). $OMR is the premium, extractable currency — redeemed for cash at the Exchange window, one way.</dd>
+    <dt>Cash vs. the Bank vs. $OMR</dt><dd>Pocket cash can be looted when you're killed. Banked cash is safer (but takes time to clear). $OMR is the premium currency, redeemable for cash at the Window one way; its on-chain extraction rail is dormant until launch gates clear.</dd>
     <dt>Omertà</dt><dd>The code of silence — your family won't hunt you, and you can't contract a made brother… unless they turn rat.</dd>
     <dt>The Kitchen / Deal</dt><dd>Cook product, hire a crew, and move weight — the deepest cash engine. Watch the heat and the nut (crew wages).</dd>
     <dt>Going Legit</dt><dd>What your earned $OMR does: stake it for real power (the ladder), redeem it for cash at the Window, claim backed ETH at the Vault — or get Made and take it out on-chain. The endgame.</dd>
@@ -1327,19 +1359,63 @@
 </div></div>
 
 <!-- THE CELLPHONE — inbox + direct messages (the 📱 up top) -->
-<div id="phone" class="modal-bg hidden"><div class="modal" style="max-width:640px">
-  <h2>📱 THE CELL</h2>
+<div id="phone" class="modal-bg hidden" data-modal-close="#phone-close" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="phone-title" tabindex="-1" style="max-width:640px">
+  <h2 id="phone-title">📱 THE CELL</h2>
   <div id="phone-main"></div>
   <div style="margin-top:12px;text-align:right"><button class="act" id="phone-close" style="padding:9px 18px">hang up</button></div>
 </div></div>
 
-<div id="toast"></div>
+<div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 <div id="brag" class="hidden"></div>
 
 <script>
 (() => {
   const $ = (s) => document.querySelector(s);
   const $$ = (s) => [...document.querySelectorAll(s)];
+  // Static overlays predate the Promise-based dialog helper. Give them the same baseline contract:
+  // announced open/closed state, trapped focus, Escape where cancellation is safe, and focus return.
+  const staticModalState = new WeakMap();
+  const syncStaticModal = (bg) => {
+    const open = !bg.classList.contains('hidden');
+    const prior = staticModalState.get(bg) || {};
+    bg.setAttribute('aria-hidden', String(!open));
+    if (open && !prior.open) {
+      prior.returnFocus = document.activeElement;
+      document.body.classList.add('modal-open');
+      requestAnimationFrame(() => {
+        const panel = bg.querySelector('.modal');
+        (focusableIn(panel)[0] || panel)?.focus({ preventScroll: true });
+      });
+    } else if (!open && prior.open) {
+      if (!document.querySelector('.modal-bg:not(.hidden)')) document.body.classList.remove('modal-open');
+      if (prior.returnFocus?.isConnected) prior.returnFocus.focus({ preventScroll: true });
+    }
+    prior.open = open;
+    staticModalState.set(bg, prior);
+  };
+  const staticModals = $$('.modal-bg:not([data-managed-dialog])');
+  staticModals.forEach((bg) => {
+    syncStaticModal(bg);
+    new MutationObserver(() => syncStaticModal(bg)).observe(bg, { attributes: true, attributeFilter: ['class'] });
+  });
+  document.addEventListener('keydown', (e) => {
+    const bg = [...staticModals].reverse().find((node) => !node.classList.contains('hidden'));
+    if (!bg) return;
+    const panel = bg.querySelector('.modal');
+    if (e.key === 'Escape' && !bg.hasAttribute('data-modal-lock')) {
+      e.preventDefault(); e.stopPropagation();
+      const close = bg.dataset.modalClose;
+      if (close === 'self') bg.classList.add('hidden');
+      else if (close) $(close)?.click();
+      return;
+    }
+    if (e.key !== 'Tab') return;
+    const items = focusableIn(panel);
+    if (!items.length) { e.preventDefault(); panel?.focus(); return; }
+    const first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }, true);
   // ═══ LANGUAGE PACKS (founder-directed): the console CHROME in the world's 15 biggest player
   // languages — toggleable (the 🌐 picker, sticky per browser), defaulting from the browser
   // locale. T(key) resolves the active pack with an English fallback, so a missing key can never
@@ -1731,11 +1807,41 @@
   // "browser", not "city". These three are the same three verbs in the game's own type.
   // ask() is deliberately a PROMISE so a caller can `if (!await ask(...)) return;` and read like
   // the confirm() it replaces.
+  let modalSeq = 0;
+  const focusableIn = (root) => [...root.querySelectorAll('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+    .filter((node) => !node.closest('.hidden'));
   function dialog(inner, { wide = false } = {}) {
-    const bg = el(`<div class="modal-bg"><div class="modal"${wide ? ' style="max-width:640px"' : ''}>${inner}</div></div>`);
+    const returnFocus = document.activeElement;
+    const bg = el(`<div class="modal-bg" data-managed-dialog><div class="modal" role="dialog" aria-modal="true" tabindex="-1"${wide ? ' style="max-width:640px"' : ''}>${inner}</div></div>`);
+    const panel = bg.firstElementChild;
+    const heading = panel.querySelector('h2');
+    if (heading) {
+      heading.id ||= `modal-title-${++modalSeq}`;
+      panel.setAttribute('aria-labelledby', heading.id);
+    } else panel.setAttribute('aria-label', 'Dialog');
     document.body.appendChild(bg);
-    const close = () => bg.remove();
+    document.body.classList.add('modal-open');
+    const onKey = (e) => {
+      if (e.key === 'Escape') { e.preventDefault(); bg.click(); return; }
+      if (e.key !== 'Tab') return;
+      const items = focusableIn(panel);
+      if (!items.length) { e.preventDefault(); panel.focus(); return; }
+      const first = items[0], last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
+    document.addEventListener('keydown', onKey);
+    let closed = false;
+    const close = () => {
+      if (closed) return;
+      closed = true;
+      document.removeEventListener('keydown', onKey);
+      bg.remove();
+      if (!document.querySelector('.modal-bg:not(.hidden)')) document.body.classList.remove('modal-open');
+      if (returnFocus?.isConnected) returnFocus.focus({ preventScroll: true });
+    };
     bg.onclick = (e) => { if (e.target === bg) close(); };
+    requestAnimationFrame(() => (focusableIn(panel)[0] || panel).focus({ preventScroll: true }));
     return { bg, close };
   }
   // a read-only sheet — the leaderboards and case files that were alert()s
@@ -1758,11 +1864,16 @@
     return new Promise((resolve) => {
       const { bg, close } = dialog(
         `<h2 style="${danger ? 'color:var(--bad)' : ''}">${esc(title)}</h2>
-         <p class="dim" style="white-space:pre-line">${esc(body)}</p>
+         <p class="dim" data-dialog-description style="white-space:pre-line">${esc(body)}</p>
          <div style="margin-top:15px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
            <button class="act" data-no>${esc(no)}</button>
            ${alt ? `<button class="act risk" data-alt>${esc(alt)}</button>` : ''}
            <button class="act ${danger ? 'risk' : 'prime'}" data-yes>${esc(yes)}</button></div>`);
+      const panel = bg.querySelector('.modal');
+      if (danger) panel.setAttribute('role', 'alertdialog');
+      const description = bg.querySelector('[data-dialog-description]');
+      description.id = `modal-description-${modalSeq}`;
+      panel.setAttribute('aria-describedby', description.id);
       let done = false;
       const fin = (v) => { if (done) return; done = true; close(); resolve(v); };
       bg.querySelector('[data-yes]').onclick = () => { haptic('tap'); fin(true); };
@@ -1924,7 +2035,9 @@
     cine(spec);
   }
   // the working line — a thin indeterminate hairline at the very top while an action is in flight
-  const busy = document.createElement('div'); busy.id = 'busy'; document.body.appendChild(busy);
+  const busy = document.createElement('div');
+  busy.id = 'busy'; busy.setAttribute('role', 'status'); busy.setAttribute('aria-live', 'polite');
+  document.body.appendChild(busy);
   // item art — a generated photo per catalog id (SVG emblem fallback), served by GET /v1/art/:kind/:id.
   const ico = (kind, id) => id ? `<img class="ico" loading="lazy" alt="" src="/v1/art/${kind}/${encodeURIComponent(id)}">` : '';
   // action art — the same route, but a WIDE strip for the verb cards (crimes, den games, heist jobs,
@@ -2070,7 +2183,7 @@
     // newly-made man read "🤝 pact sealed — no war between your families" (driven, wave 16). `made:true`
     // is the discriminator the pact reply never carries; the reply's own message is surfaced here.
     if (body && body.ok && body.made === true && body.until && body.message !== undefined)
-      return `\u{1F3A9} ${txt(body.message)} — ${body.omr} $OMR down.`;
+      return `\u{1F3A9} ${txt(body.message)} — ${body.omr} $OMR down${body.madeSeconds ? `, standing runs ${minsTxt(body.madeSeconds)}` : ''}.`;
     // STREET DEEDS — you claimed a named plot of the world (the claim response is {ok,name,district,districtName})
     if (body && body.ok && body.districtName && body.district && body.name && !body.tier)
       return `\u{1F3F7} the deed to ${txt(body.name)} is yours — on ${txt(body.districtName)}. It's yours forever, and it outlives your street.`;
@@ -2249,7 +2362,7 @@
         // the price AND the consequence. The pad is a percentage of income, so a tier raises the
         // recurring bill for good — the buy line one branch down says "mind the pad" and this, the
         // six-figure move that MAKES the pad bigger, used to say only which tier it reached.
-        ? `${art(body.name)} moves up to tier ${body.tier}${body.cost ? ` — $${fmt(body.cost)}` : ''}`
+        ? `${art(body.name)} moves up to tier ${body.tier}${body.cost ? ` — −$${fmt(body.cost)}` : ''}`
           + `${body.collected ? `, $${fmt(body.collected)} banked at the old rate first` : ''}`
           + `${body.incomePerHr ? `. It earns $${fmt(body.incomePerHr)}/hr now`
             + `${body.upkeepPerHr ? `, and the pad rises with it: $${fmt(body.upkeepPerHr)}/hr` : ''}.` : ''}`
@@ -2771,6 +2884,8 @@
     }
     // THE CARD IS BOOKED — announce and the accepted callout both land here. The accepted callout used
     // to send `title: true`, which the vanity title-clear branch below claimed ("they call you true now").
+    if (body && body.ok && body.card && body.title === true && body.closesSeconds !== undefined)
+      return `\u{1F94A} title fight ON — ${txt(body.card)}. Betting closes in ${minsTxt(body.closesSeconds)}.`;
     if (body && body.ok && body.bout && body.card)
       return `\u{1F94A} ${body.titleBout ? 'TITLE FIGHT' : 'the card is booked'} — ${txt(body.card)}. `
         + `Betting closes in ${minsTxt(body.closesSeconds)}; both fighters are booked until it settles.`;
@@ -2826,6 +2941,7 @@
     const spec = body.game || body.field !== undefined || body.wager !== undefined || body.forPinks !== undefined ||
       body.opponent !== undefined || body.yourFighter !== undefined || body.record !== undefined ||
       body.stolen !== undefined || body.cut !== undefined || body.taken !== undefined || body.hospSeconds !== undefined ||
+      body.elo !== undefined ||
       body.op === 'piracy' ||
       (body.win === false && body.dmg !== undefined);
     if (body.rerolled && body.stats) bits.push(`new build rolled — muscle ${body.stats.muscle} / cunning ${body.stats.cunning} / speed ${body.stats.speed}`);
@@ -3490,7 +3606,9 @@
     // escrowed $50,000 out of their own pocket and is owed $60,000 — was told "took the loan —
     // $50,000 now, owe $60,000": the two sides of the table, one line, and it named the wrong one.
     // `dueSeconds` is on the borrower's reply only; `hours` and `directed` are the poster's.
-    if (body.principal !== undefined && body.owed !== undefined && body.dueSeconds === undefined)
+    if (body.house === true && body.principal !== undefined && body.owed !== undefined)
+      bits.push(`\u{1F3E6} the house lent you $${fmt(body.principal)} — $${fmt(body.owed)} owed back inside ${body.dueHours}h`);
+    else if (body.principal !== undefined && body.owed !== undefined && body.dueSeconds === undefined)
       bits.push(`\uD83E\uDD1D money's on the street — $${fmt(body.principal)} out of your pocket and into escrow, $${fmt(body.owed)} owed back inside ${body.hours}h${body.directed ? ' (spoken for)' : ''}${body.collateralMin > 0 ? `, secured against a car worth $${fmt(body.collateralMin)}+` : ''}${body.collateralOmr > 0 ? `, plus a ${fmt(body.collateralOmr)} $OMR pledge` : ''}. Nobody's on the hook until somebody takes it.`);
     else if (body.principal !== undefined && body.owed !== undefined) bits.push(`took the loan — $${fmt(body.principal)} now, owe $${fmt(body.owed)}${body.collateral ? ' (car pledged)' : ''}${body.pledgedOmr > 0 ? ` — ${fmt(body.pledgedOmr)} $OMR escrowed against it: it comes home when you square up, the shark keeps it if you don't` : ''}${body.dueSeconds ? ` inside ${minsTxt(body.dueSeconds)}` : ''}`);
     if (body.guard !== undefined && body.price !== undefined) bits.push(`hired protection — $${fmt(body.price)} up front`);
@@ -3662,6 +3780,18 @@
       bits.push(body.full
         ? `\u{1FA7A} the Doc signs you out whole — $${fmt(body.cost)}, and you walk out at full strength`
         : `\u{1FA7A} discharged early — $${fmt(body.cost)}${body.hospSeconds > 0 ? `, ${minsTxt(body.hospSeconds)} still on the chart` : ', and the bed is behind you'}`);
+    if (body.op === 'npchit' && body.hit !== undefined)
+      bits.push(body.hit
+        ? `\u{1F3AF} contractor put him down — $${fmt(body.cost)}${body.killed ? ', the target is dead' : body.absorbed ? `, ${txt(body.guard || 'a bodyguard')} took the hit` : body.revived ? ', insurance brought the target back' : ''}`
+        : `\u{1F3AF} contractor missed — $${fmt(body.cost)} burned, and the target knows somebody came looking`);
+    if (body.op === 'show_of_force' && body.district && body.fortitude !== undefined)
+      bits.push(`\u{1F6E1} show of force on ${$dist(body.district)} — the operation is fortified to level ${fmt(body.fortitude)}`);
+    if (body.op === 'ghost_route' && body.district && body.ghostSeconds !== undefined)
+      bits.push(`\u{1F47B} ghosted the route through ${$dist(body.district)} for ${minsTxt(body.ghostSeconds)} — Bureau scrutiny wiped`);
+    if (body.op === 'cook_books' && body.district && body.scrutiny !== undefined)
+      bits.push(`\u{1F9FE} cooked the books on ${$dist(body.district)} — Bureau scrutiny wiped to ${fmt(body.scrutiny)}`);
+    if (body.specialist !== undefined && body.district && body.fortBonus !== undefined)
+      bits.push(`\u{1F454} ${txt(body.specialist)} takes the post at ${$dist(body.district)} — +${fmt(body.fortBonus)} fortitude while they run the operation`);
     if (body.specialist !== undefined && body.district && body.fortBonus === undefined)
       bits.push(`\u{1F454} ${txt(body.specialist || 'your specialist')} stands down at ${$dist(body.district)} — free for another post, and that one runs unwatched`);
     // the peek pierces anonymity on every pot on your own head, and said nothing about what it found.
@@ -3735,6 +3865,8 @@
   // dismissed. A refusal you can act on is worth more than one that merely explains itself.
   function toast(msg, bad = false, action = null) {
     const t = $('#toast');
+    t.setAttribute('role', bad ? 'alert' : 'status');
+    t.setAttribute('aria-live', bad ? 'assertive' : 'polite');
     t.innerHTML = '';
     const ic = document.createElement('span'); ic.className = 'ti'; ic.textContent = bad ? '✕' : '✓';
     const tx = document.createElement('span'); tx.textContent = msg;
@@ -3744,7 +3876,7 @@
       b.className = 'toast-act'; b.textContent = action.label;
       b.onclick = () => { t.classList.remove('show'); action.run(); };
       const x = document.createElement('button');
-      x.className = 'toast-x'; x.textContent = '✕'; x.title = 'dismiss';
+      x.className = 'toast-x'; x.textContent = '✕'; x.title = 'dismiss'; x.setAttribute('aria-label', 'Dismiss message');
       x.onclick = () => t.classList.remove('show');
       t.append(b, x);
     }
@@ -3844,7 +3976,12 @@
   }
   async function act(method, path, body) {
     if (acting) { toast('easy — one move at a time', false); return { code: 429, body: {} }; }
-    acting = true; document.body.style.cursor = 'progress'; busy.classList.add('on');
+    const trigger = lastPressed?.isConnected ? lastPressed : null;
+    acting = true;
+    document.body.style.cursor = 'progress';
+    document.body.setAttribute('aria-busy', 'true');
+    trigger?.setAttribute('aria-busy', 'true');
+    busy.setAttribute('aria-label', 'Working'); busy.classList.add('on');
     try {
       const r = await api(method, path, body);
       // the "Last Word" viewer shows the ACTION result (written here, before refresh's GET /v1/me
@@ -3895,7 +4032,13 @@
       // screen already in front of you.
       if (r.code < 400) renderActive();
       return r;
-    } finally { acting = false; document.body.style.cursor = ''; busy.classList.remove('on'); }
+    } finally {
+      acting = false;
+      document.body.style.cursor = '';
+      document.body.removeAttribute('aria-busy');
+      trigger?.removeAttribute('aria-busy');
+      busy.removeAttribute('aria-label'); busy.classList.remove('on');
+    }
   }
 
   // ── wallet integration: EIP-6963 multi-wallet discovery (MetaMask, Robinhood Wallet, Coinbase, Rabby, …) ──
@@ -4296,36 +4439,24 @@
   // single-modal welcome was five paragraphs nobody read (tester feedback).
   const TOUR = [
     { art: 'hero-poster', title: 'WELCOME TO THE CITY', body:
-      `<p>A noir mob RPG. You start as a nobody. You end as a name people are afraid to say — or a body in the river.</p>
-       <p><b>The loop:</b> pull jobs for cash → train up → bank what you earn → join a family → set up earners that pay while you sleep → take the city.</p>` },
+      `<p>You start as a nobody in the Docks. The city remembers every job, debt, alliance, and enemy you make.</p>
+       <p><b>Your first loop:</b> pull a job → earn cash and respect → bank the take → follow the next move on your sheet.</p>` },
     { art: 'interior-streets', title: 'THE STREETS', body:
-      `<p><b style="color:var(--neon)">Your first goal: LEVEL 5.</b> It's simple — pull jobs. Every job pays respect, and respect IS your level. At level 5 you choose your Path. Nothing else required: do a job, wait a minute for nerve, do another.</p>
-       <p class="dim">Crimes run on <b>nerve</b> (it refills on its own). Every job has three plays: <b>case it</b> (quiet), <b>do it</b>, or <b>go loud</b> (bigger score, draws the Law). Get busted and you sit in lockup.</p>` },
+      `<p><b style="color:var(--neon)">First goal: pull one job.</b> Jobs pay cash and respect; respect raises your level and opens the city.</p>
+       <p class="dim">Jobs spend <b>nerve</b>, which refills on its own. The ordinary play is safest to learn. Quiet and loud variants make more sense once you know the terms.</p>` },
     { art: 'interior-legit', title: 'YOUR MONEY', body:
       `<p><b>Pocket cash gets jumped.</b> Bank it — deposits ride "in transit" for a couple of hours before they're safe, so bank early, not on the way to a fight.</p>
-       <p class="dim"><b style="color:var(--neon)">$OMR</b> is the token — earned by playing well, spent on the serious things, and losable if you get whacked holding it loose. Staking cuts what a killer takes — 20% of a staked balance against 50% of a loose one — but nothing makes it safe.</p>` },
-    { art: 'interior-trade', title: 'THE FREIGHT GAME', body:
-      `<p><b>Trade goods are the city's oldest hustle</b> — every district posts its own prices, fresh each day. Buy gin where it's cheap, drive across town, sell it where it's rich. The spread is your margin.</p>
-       <p class="dim">Start small on the Streets (the Trade Goods drawer shows each good's cheapest and richest district). Scale up later: <b>convoys</b> haul in bulk, <b>boats</b> run contraband, and the <b>Trade Winds</b> board on The City maps the whole day's spread.</p>` },
-    { art: 'card-whacked', title: 'DEATH IS REAL', body:
-      `<p>Another player can end your street — for good. But your <b style="color:var(--neon)">account</b> survives: prestige, $OMR and your estate pass to your <b>heir</b>, who rises with the family name.</p>
-       <p class="dim">Shields exist — the safehouse, a bodyguard, revive insurance. None are forever. Play like it counts.</p>` },
-    { art: 'interior-family', title: 'THE FAMILY & THE PEOPLE', body:
-      `<p>Nobody survives alone. A <b>family</b> means turf, a treasury, wars and a seat at the Commission. The city's <b>fixtures</b> — the Doc, the Madame, the rest — remember who's good to them.</p>
-       <p class="dim">So do your enemies. Kill a man and his bloodline swears a vendetta.</p>` },
-    { art: 'interior-law', title: 'THE LAW IS WATCHING', body:
-      `<p>Every loud job feeds your <b style="color:var(--bad)">heat</b>, and heat feeds a RICO case. Lay low, pay the right people, or face the courtroom — a conviction seizes your money and puts you in the Pen.</p>
-       <p class="dim">The Pen is a place, not a timeout: work the yard, bribe the guard, or go over the wall.</p>` },
+       <p class="dim"><b style="color:var(--neon)">$OMR</b> is separate from street cash. It can be lost when held loose. The on-chain extraction rail is not live yet.</p>` },
     { art: 'interior-start', title: 'FOLLOW THE COACH', body:
-      `<p>This city is deep. Don't learn it all at once — the <b style="color:var(--neon)">▸ coach line</b> on your sheet always names the one thing to do next, and the glowing button shows where.</p>
-       <p><b>Start Here</b> is your first-week checklist — it pays cash to teach you the ropes. The <b>?</b> up top is the glossary (and replays this tour); the <b>CODEX</b> is the full rulebook. Now go make your bones.</p>` },
+      `<p>Don't learn the whole city now. The <b style="color:var(--neon)">▸ coach line</b> always names one useful next move and can take you straight to it.</p>
+       <p><b>Start Here</b> pays you to learn the first week. The <b>?</b> opens the glossary; the <b>Codex</b> holds every rule. New systems explain themselves when you first open them.</p>` },
   ];
   let tourAt = 0;
   function tourStep(i) {
     tourAt = Math.max(0, Math.min(TOUR.length - 1, i));
     const s = TOUR[tourAt], last = tourAt === TOUR.length - 1;
     $('#tour-art').src = `/art/${s.art}.jpg`;
-    $('#tour-body').innerHTML = `<h2>${s.title}</h2>${s.body}`;
+    $('#tour-body').innerHTML = `<h2 id="tour-title">${s.title}</h2>${s.body}`;
     $('#tour-dots').innerHTML = TOUR.map((_, j) => `<i${j === tourAt ? ' class="on"' : ''}></i>`).join('');
     $('#tour-back').style.visibility = tourAt ? 'visible' : 'hidden';
     $('#tour-skip').style.display = last ? 'none' : '';
@@ -5052,15 +5183,20 @@
     const rail = $('#grouprail');
     if (rail) {
       rail.classList.toggle('hidden', simple);
-      for (const b of rail.children) b.classList.toggle('on', b.dataset.group === activeGroup);
+      for (const b of rail.children) {
+        const on = b.dataset.group === activeGroup;
+        b.classList.toggle('on', on);
+        b.setAttribute('aria-pressed', String(on));
+      }
     }
     const bn = $('#bnav');
-    // simple mode: the thumb-bar shows exactly the five SIMPLE_TABS (start/streets/garage/city/family).
-    // full mode: show the seven group stops and hide garage/city (they're reachable via the Streets rail).
+    // A thumb bar is a set of dependable destinations, not a second copy of the whole information
+    // architecture. Four high-frequency stops + More keeps labels readable and targets generous.
     if (bn) for (const b of bn.children) {
       const go = b.dataset.go;
-      if (!go) continue; // the cell stop rides in both modes
-      b.classList.toggle('hidden', simple ? !SIMPLE_TABS.includes(go) : (go === 'garage' || go === 'city'));
+      if (!go) continue; // More rides in both modes
+      const stops = simple ? ['start', 'streets', 'city', 'family'] : ['start', 'streets', 'kitchen', 'family'];
+      b.classList.toggle('hidden', !stops.includes(go));
     }
   }
   function unlockAllTabs(say) {
@@ -5077,35 +5213,45 @@
       // the group rail: one bold button per cluster (an ungrouped single screen is its own stop)
       if (rail) {
         const label = group ? T('g_' + group.toLowerCase()) : TABS[ids[0]];
-        const gb = el(`<button data-group="${key}">${label}</button>`);
+        const gb = el(`<button type="button" data-group="${key}" aria-pressed="false">${label}</button>`);
         gb.onclick = () => setTab(lastTabIn[key] || ids[0]);
         rail.appendChild(gb);
       }
       if (group) tabs.appendChild(el(`<span class="tabgrp hidden">${T('g_' + group.toLowerCase())}</span>`)); // retired by the rail; kept for simple-mode DOM stability
       for (const id of ids) {
-        const b = el(`<button data-tab="${id}">${TABS[id]}</button>`);
+        const b = el(`<button type="button" role="tab" id="tab-control-${id}" aria-selected="false" aria-controls="tab-${id}" tabindex="-1" data-tab="${id}">${TABS[id]}</button>`);
         b.onclick = () => { setTab(id); };
         tabs.appendChild(b);
-        bodies.appendChild(el(`<div class="tab" id="tab-${id}"></div>`));
+        bodies.appendChild(el(`<div class="tab" id="tab-${id}" role="tabpanel" aria-labelledby="tab-control-${id}"></div>`));
       }
     }
     { // the expander a simple-mode player uses to open the whole city early
-      const more = el(`<button id="tabs-more" class="hidden" style="color:var(--neon)">${T('b_wholecity')}</button>`);
+      const more = el(`<button type="button" id="tabs-more" class="hidden" style="color:var(--neon)">${T('b_wholecity')}</button>`);
       more.onclick = () => unlockAllTabs(true);
       tabs.appendChild(more);
     }
     const bnav = $('#bnav');
     if (bnav && !bnav.childElementCount) {
       for (const [id, icon, label] of BNAV) {
-        const b = el(`<button data-go="${id}"><span class="bi">${icon}</span>${label}</button>`);
+        const b = el(`<button type="button" data-go="${id}"><span class="bi" aria-hidden="true">${icon}</span><span>${label}</span></button>`);
         b.onclick = () => setTab(id);
         bnav.appendChild(b);
       }
-      // the cell rides the thumb bar in BOTH modes (no data-go — the visibility loop skips it)
-      const pb = el(`<button style="position:relative"><span class="bi">${ic('phone')}</span>cell<span id="bnav-phone-badge" class="hidden"></span></button>`);
-      pb.onclick = () => { $('#phone').classList.remove('hidden'); renderPhone(); };
-      bnav.appendChild(pb);
+      // Mobile gets five dependable destinations. Every less-frequent operation remains one tap
+      // away through More/search, instead of competing in an eight-item thumb bar.
+      const more = el(`<button type="button" data-more><span class="bi" aria-hidden="true">•••</span><span>more</span></button>`);
+      more.onclick = openJump;
+      bnav.appendChild(more);
     }
+    tabs.addEventListener('keydown', (e) => {
+      if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+      const items = [...tabs.querySelectorAll('[role="tab"]')].filter((node) => !node.classList.contains('hidden'));
+      if (!items.length) return;
+      const at = Math.max(0, items.indexOf(document.activeElement));
+      const next = e.key === 'Home' ? items[0] : e.key === 'End' ? items[items.length - 1]
+        : items[(at + (e.key === 'ArrowRight' ? 1 : -1) + items.length) % items.length];
+      e.preventDefault(); next.focus(); setTab(next.dataset.tab);
+    });
     applyTabVisibility();
     renderStreets(); renderCity(); renderDen(); renderDeck();
     // LOADING WHILE JAILED lands in the Pen, and nothing after this may argue with it. The latch in
@@ -5241,10 +5387,18 @@
     for (const b of $('#tabs').children) {
       const on = b.dataset.tab === id;
       b.classList.toggle('on', on);
+      if (b.getAttribute('role') === 'tab') {
+        b.setAttribute('aria-selected', String(on));
+        b.tabIndex = on ? 0 : -1;
+      }
       // phones: the scrubbing rail centers the screen you just picked (never lose your place)
       if (on && window.innerWidth <= 760) b.scrollIntoView?.({ inline: 'center', block: 'nearest', behavior: REDUCED ? 'auto' : 'smooth' });
     }
-    for (const t of $('#tabbodies').children) t.classList.toggle('on', t.id === 'tab-' + id);
+    for (const t of $('#tabbodies').children) {
+      const on = t.id === 'tab-' + id;
+      t.classList.toggle('on', on);
+      if (t.getAttribute('role') === 'tabpanel') t.hidden = !on;
+    }
     // THE SCREEN PLATE — this screen's own art + its name (see #tabart in the stylesheet).
     // A tab with no plate hides the band rather than showing an empty box.
     const art = $('#tabart');
@@ -5264,7 +5418,13 @@
     document.body.dataset.group = grp;
     AMBIENT.set(id, grp);   // the part of town decides the bed under it
     const bn = $('#bnav');
-    if (bn) for (const b of bn.children) b.classList.toggle('on', groupOf(b.dataset.go) === grp);
+    if (bn) for (const b of bn.children) {
+      const directGroups = ['start', 'streets', 'earners', 'family'];
+      const on = b.dataset.go ? groupOf(b.dataset.go) === grp
+        : b.hasAttribute('data-more') && !directGroups.includes(grp);
+      b.classList.toggle('on', !!on);
+      if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    }
     renderIntro(id);   // the one-time "first time here" banner (outside the tab body — re-render-proof)
     RENDERERS[id]?.();
     // KEYBOARD: PICKING A SCREEN PUTS YOU ON IT. Tab order is DOM order, and the sheet's ~40
@@ -10669,13 +10829,27 @@
   document.addEventListener('click', (e) => {
     const b = e.target?.closest?.('[data-wtab]'); if (!b) return;
     wtab = b.dataset.wtab;
-    $$('#wiretabs .wtab').forEach((t) => t.classList.toggle('on', t === b));
+    $$('#wiretabs .wtab').forEach((t) => {
+      const on = t === b;
+      t.classList.toggle('on', on);
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+    });
     $('#feed').classList.toggle('hidden', wtab !== 'feed');
     $('#chat-city').classList.toggle('hidden', wtab !== 'city');
     $('#chat-family').classList.toggle('hidden', wtab !== 'family');
     $('#chatform').classList.toggle('hidden', wtab === 'feed');
     $('#chatinput').placeholder = wtab === 'family' ? T('w_famonly') : T('w_sayit');
     if (wtab !== 'feed') loadChat(wtab);
+  });
+  $('#wiretabs')?.addEventListener('keydown', (e) => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+    const items = $$('#wiretabs [role="tab"]').filter((node) => !node.classList.contains('hidden') && !node.disabled);
+    if (!items.length) return;
+    const at = Math.max(0, items.indexOf(document.activeElement));
+    const next = e.key === 'Home' ? items[0] : e.key === 'End' ? items[items.length - 1]
+      : items[(at + (e.key === 'ArrowRight' ? 1 : -1) + items.length) % items.length];
+    e.preventDefault(); next.focus(); next.click();
   });
   $('#chatform')?.addEventListener('submit', async (e) => {
     e.preventDefault();

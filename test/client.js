@@ -3622,7 +3622,7 @@ if (traceLine) assert(/still listening/i.test(traceLine) && !/swept/i.test(trace
     `laying low DROPS heat — the line said "heat +N" because the generic push reads the new absolute as a ` +
     `delta. It must read the drop, not a phantom rise. Got: ${JSON.stringify(laylowLine)}`);
   const cutLine = said.get(`/v1/kitchen/cut/${DRUGS[0].id}`);
-  assert(cutLine && /cut the/i.test(cutLine) && /\$/.test(cutLine),
+  assert(cutLine && /stepped on/i.test(cutLine) && /\$/.test(cutLine),
     `cutting product is a $8k STRETCH, not a fresh cook — it read "pulled N units at q" (the cook-collect ` +
     `line) and hid the cost and the quality drop. Got: ${JSON.stringify(cutLine)}`);
   const wagesLine = said.get('/v1/kitchen/crew/wages');
@@ -3630,7 +3630,7 @@ if (traceLine) assert(/still listening/i.test(traceLine) && !/swept/i.test(trace
     `paying the nut is not a bare "paid $N" — it names the crew back on the corner, and it was DOUBLE-` +
     `printing the figure with the catch-all. Got: ${JSON.stringify(wagesLine)}`);
   const rkUpLine = said.get(`/v1/rackets/${RK}/upgrade`);
-  assert(rkUpLine && /level/i.test(rkUpLine) && /\/hr/.test(rkUpLine),
+  assert(rkUpLine && /level/i.test(rkUpLine) && /an hour/i.test(rkUpLine),
     `a racket upgrade buys a LEVEL and more income — it read the catch-all "paid $N". Got: ${JSON.stringify(rkUpLine)}`);
   const bizUpLine = said.get(`/v1/business/${biz.id}/upgrade`);
   assert(bizUpLine && /−\$|-\$/.test(bizUpLine) && /tier/i.test(bizUpLine),
@@ -3821,7 +3821,7 @@ if (traceLine) assert(/still listening/i.test(traceLine) && !/swept/i.test(trace
   // THE WINDOW — redeem earned $OMR for cash out of the till (one way). Read "done."
   await app.pool.query('UPDATE exchange_pool SET balance = 100000000 WHERE id=1');
   const redeemLine = fold19('POST', '/v1/window/redeem', await inject('POST', '/v1/window/redeem', a.t, { amount: 50 }));
-  assert(/redeemed .* \$OMR at the window/.test(redeemLine),
+  assert(/burned .* \$OMR at the window/.test(redeemLine),
     `redeeming $OMR at the window read "done." Got: ${JSON.stringify(redeemLine)}`);
 
   // THE LAW — a plea (certain forfeiture + short jail) and flipping informant, both "done." Flip is
@@ -3829,27 +3829,27 @@ if (traceLine) assert(/still listening/i.test(traceLine) && !/swept/i.test(trace
   // then re-indict for the plea.
   await app.pool.query("UPDATE characters SET indicted_at=now(), heat_exposure=5000 WHERE id=$1", [a.id]);
   const flipLine = fold19('POST', `/v1/law/flip/${b.id}`, await inject('POST', `/v1/law/flip/${b.id}`, a.t, {}));
-  assert(/you flipped — named/.test(flipLine),
+  assert(/you gave them .*case is dropped/.test(flipLine),
     `flipping informant read "done." Got: ${JSON.stringify(flipLine)}`);
   await app.pool.query("UPDATE characters SET indicted_at=now(), heat_exposure=5000, jail_until=NULL WHERE id=$1", [a.id]);
   const pleaLine = fold19('POST', '/v1/law/plea', await inject('POST', '/v1/law/plea', a.t, {}));
-  assert(/copped a plea/.test(pleaLine),
+  assert(/you took the deal/.test(pleaLine),
     `copping a plea read "done." Got: ${JSON.stringify(pleaLine)}`);
 
   // A COMPLETED MISSION — carries `title` (null here) AND a `reward`; it read the vanity custom-title
   // line "title dropped — just your name from here" as if the player had CLEARED their title.
   await app.pool.query("UPDATE characters SET muscle=15, mission_at=NULL WHERE id=$1", [c.id]);
   const misLine = fold19('POST', '/v1/missions/m1', await inject('POST', '/v1/missions/m1', c.t, {}));
-  assert(/mission done/.test(misLine) && !/title dropped|just your name/.test(misLine),
+  assert(/next job in/.test(misLine) && /\$1,000/.test(misLine) && !/title dropped|just your name/.test(misLine),
     `a completed mission read the vanity title line ("title dropped — just your name"). Got: ${JSON.stringify(misLine)}`);
 
   // STATE-HEAVY (shapes pinned to src; driven live by test/expansion.js siege + test/world.js invade,
   // which fail if a core field of these returns is renamed).
-  const siegeWin = String(describeFn({ ok: true, sov: true, win: true, razed: false, newTier: 2, sovPoints: 5, cost: 100000 }, 200));
-  assert(/stronghold falls to tier 2/.test(siegeWin) && !/^WIN — \+\$0|the house keeps/.test(siegeWin),
+  const siegeWin = String(describeFn({ ok: true, win: true, district: 'docks', razed: false, newTier: 2, sovPoints: 5, cost: 100000 }, 200));
+  assert(/you breached The Docks — knocked to tier 2/.test(siegeWin) && !/^WIN — \+\$0|the house keeps/.test(siegeWin),
     `a sovereignty siege WIN read the casino win line "WIN — +$0". Got: ${JSON.stringify(siegeWin)}`);
-  const siegeLoss = String(describeFn({ ok: true, sov: true, win: false, dmg: 20, cost: 100000 }, 200));
-  assert(/siege was thrown back/.test(siegeLoss) && !/jump went bad/.test(siegeLoss),
+  const siegeLoss = String(describeFn({ ok: true, win: false, district: 'docks', dmg: 20, cost: 100000 }, 200));
+  assert(/walls on The Docks held/.test(siegeLoss) && !/jump went bad/.test(siegeLoss),
     `a repelled siege read the street-jump loss line "the jump went bad". Got: ${JSON.stringify(siegeLoss)}`);
   const invadeLine = String(describeFn({ ok: true, npc: 'kryl', name: 'The Kryl Syndicate', cost: 75000, garrison: 75000 }, 200));
   assert(/took The Kryl Syndicate's outpost/.test(invadeLine) && !/reinforced/.test(invadeLine),
@@ -3857,10 +3857,10 @@ if (traceLine) assert(/still listening/i.test(traceLine) && !/swept/i.test(trace
   const reinforceLine = String(describeFn({ ok: true, npc: 'kryl', name: 'The Kryl Syndicate', spent: 50000, garrison: 75000 }, 200));
   assert(/reinforced The Kryl Syndicate's garrison/.test(reinforceLine),
     `reinforcing your own garrison read "done." (its branch was gated on the invade field). Got: ${JSON.stringify(reinforceLine)}`);
-  const hitKill = String(describeFn({ ok: true, hit: true, killed: true, success: 0.5, cost: 1000000 }, 200));
+  const hitKill = String(describeFn({ ok: true, op: 'npchit', hit: true, killed: true, success: 0.5, cost: 1000000 }, 200));
   assert(/contractor put him down/.test(hitKill) && !/^paid \$/.test(hitKill),
     `an npc-hire KILL read the bare "paid $N" catch-all. Got: ${JSON.stringify(hitKill)}`);
-  const hitMiss = String(describeFn({ ok: true, hit: false, success: 0.5, cost: 50000 }, 200));
+  const hitMiss = String(describeFn({ ok: true, op: 'npchit', hit: false, success: 0.5, cost: 50000 }, 200));
   assert(/contractor missed/.test(hitMiss) && !/^paid \$/.test(hitMiss),
     `an npc-hire MISS read the bare "paid $N" catch-all. Got: ${JSON.stringify(hitMiss)}`);
 
@@ -3874,35 +3874,35 @@ if (traceLine) assert(/still listening/i.test(traceLine) && !/swept/i.test(trace
   const calloutAccept = String(describeFn({ ok: true, card: 'Champ vs Bee', title: true, closesSeconds: 600 }, 200));
   assert(/title fight ON/.test(calloutAccept) && !/call you true/i.test(calloutAccept),
     `accepting a title-fight callout read "they call you TRUE now" (title:true hit the vanity title branch). Got: ${JSON.stringify(calloutAccept)}`);
-  const piracy = String(describeFn({ ok: true, win: true, take: 1200, route: 'openwater' }, 200));
-  assert(/lifted off their deck/.test(piracy) && !/\+\$0\b/.test(piracy),
+  const piracy = String(describeFn({ ok: true, op: 'piracy', win: true, take: 1200, route: 'openwater' }, 200));
+  assert(/took the load off the water/.test(piracy) && !/\+\$0\b/.test(piracy),
     `a PIRACY hijack read the casino "WIN — +$0" line. Got: ${JSON.stringify(piracy)}`);
-  const frontier = String(describeFn({ ok: true, collected: 2400, tributes: [{}] }, 200));
-  assert((frontier.match(/collected/g) || []).length === 1 && /vassal tribute/.test(frontier),
+  const frontier = String(describeFn({ ok: true, collect: 'frontier', collected: 2400, tributes: [{}] }, 200));
+  assert((frontier.match(/collected/g) || []).length === 1 && /frontier tribute/.test(frontier),
     `frontier tribute collect DOUBLED (the corner-take line + the tribute line). Got: ${JSON.stringify(frontier)}`);
   const wagesPay = String(describeFn({ ok: true, paid: 2400, perDay: 1200, staff: 2 }, 200));
   assert(!/paid \$2,400/.test(wagesPay) && /staff wages settled/.test(wagesPay),
     `paying estate staff wages DOUBLED (the wages line + the "paid $N" catch-all). Got: ${JSON.stringify(wagesPay)}`);
   // DOUBLES where a later mute-line and the "paid $N" catch-all both fired:
   const fence = String(describeFn({ ok: true, loot: 250000, mult: 0.852, paid: 212920 }, 200));
-  assert((fence.match(/212,920/g) || []).length === 1 && /fenced the take/.test(fence),
+  assert((fence.match(/212,920/g) || []).length === 1 && /fenced the score/.test(fence),
     `heist FENCE printed the figure twice (a mute-line + the "paid $N" catch-all). Got: ${JSON.stringify(fence)}`);
   const sovUpkeep = String(describeFn({ ok: true, paid: 6250, overextension: 2, settled: [{}] }, 200));
-  assert((sovUpkeep.match(/6,250/g) || []).length === 1 && /sovereignty upkeep/.test(sovUpkeep),
+  assert((sovUpkeep.match(/6,250/g) || []).length === 1 && /stronghold kept/.test(sovUpkeep),
     `sovereignty upkeep printed the figure twice. Got: ${JSON.stringify(sovUpkeep)}`);
   // the prestige POLITICAL layer — the mutest layer in the game — now narrates its most consequential verbs:
   const decree = String(describeFn({ ok: true, week: 5, decree: 'pax', deposit: 100000, takesEffectWeek: 6 }, 200));
-  assert(/Commission/.test(decree) && decree !== 'done.',
+  assert(/family moves pax/.test(decree) && decree !== 'done.',
     `proposing a Commission decree read "done." — the most consequential action in the game. Got: ${JSON.stringify(decree)}`);
   const pactOffer = String(describeFn({ ok: true, pending: true, to: 'The Rival' }, 200));
-  assert(/pact/.test(pactOffer) && !/the The Rival/.test(pactOffer),
+  assert(/offer is on The Rival's table/.test(pactOffer) && !/the The Rival/.test(pactOffer),
     `offering a pact read "done." or double-articled a "The"-prefixed family. Got: ${JSON.stringify(pactOffer)}`);
-  const breakPlan = String(describeFn({ ok: true, id: 'x', crewNeeded: 2, crewMax: 4 }, 200));
-  assert(/planning a break/.test(breakPlan), `planning a pen breakout read "done.". Got: ${JSON.stringify(breakPlan)}`);
+  const breakPlan = String(describeFn({ ok: true, op: 'breakout', id: 'x', crewNeeded: 2, crewMax: 4 }, 200));
+  assert(/the break is planned/.test(breakPlan), `planning a pen breakout read "done.". Got: ${JSON.stringify(breakPlan)}`);
   const dailyClaim = String(describeFn({ ok: true, payout: 44800, rep: 1120, all: false, omrBonus: 0 }, 200));
-  assert(/daily contract done/.test(dailyClaim), `claiming a daily contract read "done.". Got: ${JSON.stringify(dailyClaim)}`);
+  assert(/contract paid/.test(dailyClaim), `claiming a daily contract read "done.". Got: ${JSON.stringify(dailyClaim)}`);
   const square = String(describeFn({ ok: true, cost: 50000, cleared: true }, 200));
-  assert(/WANTED lifted/.test(square) && !/^paid \$/.test(square),
+  assert(/WANTED mark is off/.test(square) && !/^paid \$/.test(square),
     `squaring a WANTED name read the bare "paid $N" — the terms (WANTED + welsher cleared) withheld. Got: ${JSON.stringify(square)}`);
   const gala = String(describeFn({ ok: true, cost: 180, until: 'x', hoursOpen: 4 }, 200));
   assert(/180 \$OMR/.test(gala) && !/\$180\b/.test(gala),
