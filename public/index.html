@@ -2065,6 +2065,12 @@
     if (body && body.tokenId && body.nonce != null)
       return `\u26D3 ${body.name || 'it'} is on-chain — token #${body.tokenId}. Safe forever, and out of the game.`;
     if (body && body.referrer && body.ok) return `on the record — ${body.referrer} gets credit as you come up`;
+    // GETTING MADE — the buy returns {made:true, until, message}; without this it fell straight into
+    // the diplomacy pact branch below (both key on `until` with no hoursOpen/cost/pending), so a
+    // newly-made man read "🤝 pact sealed — no war between your families" (driven, wave 16). `made:true`
+    // is the discriminator the pact reply never carries; the reply's own message is surfaced here.
+    if (body && body.ok && body.made === true && body.until && body.message !== undefined)
+      return `\u{1F3A9} ${txt(body.message)} — ${body.omr} $OMR down.`;
     // STREET DEEDS — you claimed a named plot of the world (the claim response is {ok,name,district,districtName})
     if (body && body.ok && body.districtName && body.district && body.name && !body.tier)
       return `\u{1F3F7} the deed to ${txt(body.name)} is yours — on ${txt(body.districtName)}. It's yours forever, and it outlives your street.`;
@@ -2261,7 +2267,10 @@
     // BOTH cost real cash the Cornerman discounts, so the price rides the reply (see boxing.js).
     // The stable's own sheet is guarded on `heart`, which a boxer never has, so it cannot cross-fire
     // on the recruit branch above (both carry `stable`).
-    if (body && body.ok && body.heart !== undefined && body.stamina !== undefined && body.name)
+    // GATE `body.sire === undefined`: a BRED foal carries {heart, stamina, name} too, so it matched
+    // this buy line and read "undefined in the stable" (breed has no `stable` count) — the birth
+    // gets its own line further down (out of dam by sire). Only a fresh BUY reaches here.
+    if (body && body.ok && body.heart !== undefined && body.stamina !== undefined && body.name && body.sire === undefined)
       return `\u{1F3C7} ${txt(body.kindName || 'a racer')} bought — ${txt(body.name)}, ${body.speed} speed / ${body.stamina} stamina / ${body.heart} heart. ${body.stable} in the stable${body.spent ? `, $${fmt(body.spent)}` : ''}.`;
     if (body && body.ok && body.stat && body.value !== undefined && body.cap !== undefined)
       return body.value >= body.cap
@@ -2794,6 +2803,9 @@
     if (body && body.minted && !body.alreadyMinted) return '\u{1F396} you\'re MADE. The extraction rail is open to you now.';
     if (body && body.ok && body.listed === false && body.street)
       return `\u{1F3F7} ${txt(body.street)} is off the market — the deed stays yours`;
+    // ASSIGNING a soldier as your second answers {ok, name} — byte-identical to a deed RENAME, so it
+    // read "the place has a name now — Paulie from Canal". The `soldier` marker names the system.
+    if (body && body.ok && body.soldier && body.name) return `\u{1F396} ${txt(body.name)} is your second now — riding shotgun on the next job`;
     if (body && body.ok && body.name && body.estate === undefined && body.district === undefined && body.price === undefined && body.tier === undefined && Object.keys(body).filter((k) => k !== 'events' && k !== 'ok' && k !== 'character' && k !== 'owned').length === 1)
       return `the place has a name now — ${txt(body.name)}`;
     if (!body || typeof body !== 'object') return code < 400 ? 'done.' : 'no dice.';
@@ -3188,7 +3200,11 @@
       : `settled $${fmt(body.settled)} and let one go — ${body.crew} left on the corner`);
     // the circuit already sends YOUR power and the FIELD's; printing neither made a $25k tune a
     // coin-flip purchase — you could not tell whether one more level would have taken it.
-    if (typeof body.win === 'boolean' && (body.field !== undefined || body.wager !== undefined)) {
+    // GATE `body.you === undefined`: the NPC circuit sends `field` (no `you`), but a PvP race/match
+    // sends `you:{score}`+`wager` and its SCORE line (margin + money) already fires above — this
+    // "took the checkered / ate the loss" line was DOUBLING it ("lost … −$20,000 · ate the loss —
+    // $20,000") on every challenge and match. Fire only for the NPC circuit.
+    if (typeof body.win === 'boolean' && (body.field !== undefined || body.wager !== undefined) && body.you === undefined) {
       const margin = (body.power !== undefined && body.field !== undefined) ? ` — your ${body.power} vs the field's ${body.field}` : '';
       const said = saidNet();
       bits.push((body.win ? `\u{1F3C1} took the checkered${margin}${said ? '' : ` — ${body.net >= 0 ? '+' : ''}$${fmt(body.net)}`}`
@@ -3347,7 +3363,28 @@
     if (body.racer && body.post !== undefined && body.fee !== undefined && body.race) bits.push(`${body.racer} is in today's ${body.race} — post ${body.post} at ${body.odds}:1. The nomination cost $${fmt(body.fee)} and it does not come back; the town's betting on your animal now.`);
     if (body.futurity && body.racer && body.fee !== undefined && body.form !== undefined) bits.push(`${body.racer} (form ${body.form}) is nominated to the futurity — $${fmt(body.fee)} to nominate, and that one does NOT come back${body.closesSeconds ? `. The card closes in ${minsTxt(body.closesSeconds)}` : ''} and the whole town bets on the field.`);
     if (body.futurity && body.on && body.amount !== undefined) bits.push(`$${fmt(body.amount)} on ${body.on} in the futurity`);
-    if (body.cost !== undefined && body.garrison !== undefined && body.name && body.npc) bits.push(`reinforced ${body.name}'s garrison to $${fmt(body.garrison)} (−$${fmt(body.cost)} from the treasury)`);
+    // THE FIGHT CIRCUIT main events (announce + a callout) and the back-room POKER ring both read
+    // "done." — the mute class, a whole screen at a time. Each keys on its own shape so none crosses.
+    if (body.champion && body.challenger && body.acceptWithinSeconds !== undefined)
+      bits.push(`\u{1F4E3} you called out ${txt(body.champion)} — they've got ${minsTxt(body.acceptWithinSeconds)} to answer or forfeit the belt`);
+    if (body.bout && body.card && body.closesSeconds !== undefined && body.on === undefined)
+      bits.push(`\u{1F4E2} ${body.title ? 'TITLE FIGHT booked' : 'the card is set'} — ${txt(body.card)}. The crowd bets for ${minsTxt(body.closesSeconds)}.`);
+    if (body.bout && body.on && body.amount !== undefined)
+      bits.push(`\u{1F4B5} $${fmt(body.amount)} on ${txt(body.on)} — riding on the main event`);
+    if (body.tableId && body.seat !== undefined && body.stack !== undefined)
+      bits.push(`\u{1F0A0} sat down at the table — $${fmt(body.stack)} behind, blinds $${fmt(body.bb)}`);
+    if (body.yourHole !== undefined && body.hand !== undefined)
+      bits.push(`\u{1F0A1} dealt in — hand #${body.hand}, ${body.players} at the table, pot $${fmt(body.pot)}`);
+    if (body.action && body.table && body.table.pot !== undefined)
+      bits.push(`\u{1F0A2} you ${txt(body.action)} — pot $${fmt(body.table.pot)}`);
+    if (body.cashedOut !== undefined)
+      bits.push(`\u{1F6AA} up from the table — $${fmt(body.cashedOut)} cashed out`);
+    // reinforce sends `spent`, invade sends `cost` — the reinforce branch was gated on `cost`, so it
+    // fired for an INVASION (reading "reinforced …") while a real reinforce fell to "done.". Two
+    // distinct outposts acts: reinforce = pour money into a garrison you HOLD; invade = take a
+    // rival-held one. Gate each on the field it uniquely sends.
+    if (body.spent !== undefined && body.garrison !== undefined && body.name && body.npc) bits.push(`reinforced ${body.name}'s garrison to $${fmt(body.garrison)} (−$${fmt(body.spent)} from the treasury)`);
+    if (body.cost !== undefined && body.garrison !== undefined && body.name && body.npc && body.district === undefined && body.premium === undefined) bits.push(`\u{1F6A9} took ${txt(body.name)}'s outpost — $${fmt(body.cost)} out of the treasury, now behind a $${fmt(body.garrison)} garrison a rival has to outbid to take it back`);
     if (body.settled !== undefined && Array.isArray(body.results) && body.results[0]?.winner !== undefined && body.results[0]?.race) bits.push(
       body.won > 0 ? `it came in — +$${fmt(body.won)} at the window` : `the tickets tore up — better luck at the next post`);
     if (body.game === 'tourney') bits.push(`seated at the big table — $${fmt(body.buyin)} in, pool $${fmt(body.pool)} (${body.entrants} runner${body.entrants === 1 ? '' : 's'})${body.closesSeconds ? `. It deals in ${minsTxt(body.closesSeconds)}` : ''}${body.minEntrants ? `; under ${body.minEntrants} seated and the buy-in comes back` : ''}.`);
@@ -3386,6 +3423,9 @@
     if (body.escaped === true) bits.push("OVER THE WALL — you're out, but WANTED now (no family cover, hunters coming)");
     if (body.escaped === false) bits.push('caught at the fence — the hole, a longer stretch, and a beating');
     if (body.interdicted === false && body.landed !== undefined) bits.push(`⚓ slipped the Coast Guard — landed the haul, +$${fmt(body.landed)} (net $${fmt(body.net)})`);
+    // WAREHOUSING a clean landing carries `warehoused` (its book value) not `landed` — so it had no
+    // branch and fell into the catch-all `paid $cost`, reporting a GAIN as a payment.
+    if (body.interdicted === false && body.warehoused !== undefined) bits.push(`⚓ slipped the Coast Guard — the haul's in the warehouse, $${fmt(body.warehoused)} on the books to fence when the price is right`);
     if (body.interdicted === true) bits.push(`⚓ BUSTED AT SEA — the Coast Guard seized the cargo, fined $${fmt(body.fine)}${body.sunk ? ' and SANK her' : ''}`);
     if (body.arrivesSeconds !== undefined && body.route) bits.push(`⚓ cast off on ${art(body.routeName || body.route)} — back in ${Math.ceil(body.arrivesSeconds / 60)}m`);
     if (body.boat && body.boat.name && body.spent !== undefined) bits.push(`bought ${art(body.boat.name)} — $${fmt(body.spent)}`);

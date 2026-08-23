@@ -143,7 +143,7 @@ export async function takeHouseLoan(ch, amount, client, h) {
     [id, ch.id, amt, LOAN.HOUSE_RATE, LOAN.HOUSE_TERM_H, new Date(Date.now() + LOAN.HOUSE_TERM_H * 3600000)]);
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: amt, reason: 'loan:house:take' });
   await track(client, ch.account_id, 'loan_house_take', { amount: amt });
-  return { ok: true, id, principal: amt, rate: LOAN.HOUSE_RATE,
+  return { ok: true, id, principal: amt, rate: LOAN.HOUSE_RATE, house: true,
     owed: loanOwed(amt, LOAN.HOUSE_RATE), dueHours: LOAN.HOUSE_TERM_H };
 }
 
