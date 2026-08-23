@@ -2246,7 +2246,11 @@ export async function travel(ch, district, client, h) {
   // NPC residents move via residentAct (no emit), and agents are excluded like every other human
   // presence surface (the collision board's rule). Best-effort, post-state.
   if (!ch.is_npc && !h?.acct?.agent_flag) bus.emit('streets', { type: 'arrival', who: ch.name, cid: ch.id, district });
-  return { ok: true, loc: district };
+  // THE FARE. A ride is charged and the line said only where you ended up — the purchase named and
+  // the price silent, which is the bare-price catch-all inverted and just as unreadable. The figure
+  // ships rather than being restated on the client, because CONSTANTS.TRAVEL_COST is a founder lever
+  // and a second copy is how the two come to disagree.
+  return { ok: true, loc: district, cost: CONSTANTS.TRAVEL_COST };
 }
 
 // ── §7.13 REFERRAL QUALIFICATION ──

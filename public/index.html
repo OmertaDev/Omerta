@@ -2574,8 +2574,11 @@
     if (body && body.banked !== undefined && body.clearSeconds !== undefined)
       return `banked $${fmt(body.banked)} — it rides IN TRANSIT for ${minsTxt(body.clearSeconds)}, and a killer can loot it off you until it clears${body.intransit > body.banked ? ` (${'$' + fmt(body.intransit)} in transit now — deposits stack and reset the clock)` : ''}`;
     if (body && body.withdrew !== undefined) return `drew $${fmt(body.withdrew)} out — $${fmt(body.bank)} still banked`;
-    if (body && body.ok && body.loc && Object.keys(body).filter((k) => k !== 'events' && k !== 'ok' && k !== 'character' && k !== 'owned').length === 1)
-      return `you're in ${txt($dist(body.loc))} now`;
+    // THE FARE rides with the destination now, so the key-count guard counts `cost` too — a branch
+    // scoped on the ABSENCE of a field holds exactly until the reply grows one, which is the shape
+    // this sweep keeps paying for.
+    if (body && body.ok && body.loc && Object.keys(body).filter((k) => k !== 'events' && k !== 'ok' && k !== 'character' && k !== 'owned' && k !== 'cost').length === 1)
+      return `you're in ${txt($dist(body.loc))} now${body.cost ? ` — $${fmt(body.cost)} for the ride` : ''}`;
     if (body && body.ok && body.qty !== undefined && body.unit !== undefined && (body.spent !== undefined || body.earned !== undefined))
       return body.spent !== undefined
         ? `bought ${body.qty} × ${txt(goodName(body.good))} at $${fmt(body.unit)} a unit — $${fmt(body.spent)} out of pocket`
@@ -2932,7 +2935,7 @@
     // The YARD TALK's wisdom shape also carries npc+discipline but adds the character's LINE — it
     // gets its own flavored branch below, so the drill branch skips it.
     {
-      if (body.discipline && body.levelUp !== undefined) bits.push(`🏋 ${body.yard ? 'the iron pile — ' : ''}${discName(body.discipline)} — +${body.xp} xp${body.levelUp ? ` · LEVEL ${body.level}` : ''}`);
+      if (body.discipline && body.levelUp !== undefined) bits.push(`🏋 ${body.yard ? 'the iron pile — ' : ''}${discName(body.discipline)} — +${body.xp} xp${body.levelUp ? ` · LEVEL ${body.level}` : ''}${body.nextTrainSeconds ? ` · the gym is shut for ${minsTxt(body.nextTrainSeconds)}, stats included` : ''}`);
       if (body.discipline && body.npc && !body.line) bits.push(`📋 schooled — +${body.xp} xp ${discName(body.discipline)} (now lvl ${body.level})`);
       // PEN step six — cards with the crew + the yard character
       if (body.cards) bits.push(`🂠 cards with the crew — +${body.xp} xp at ${art(txt(body.trackName || body.track))} table`);
@@ -3020,7 +3023,14 @@
     if (body.calledOff) bits.push(body.calledOff === 'you' ? 'called your people off — the mark is yours to pick again'
       : `the hit is OFF — ${body.name || 'they'} ${body.calledOff === 'family' ? 'is family now' : 'runs with your crew now'}. Your search is cleared.`);
     if (body.reserve !== undefined && body.fee !== undefined && body.serial) bits.push(`🔨 ${body.name} #${body.serial} on the block — reserve ${fmt(body.reserve)} $OMR (−${body.fee} fee)`);
-    if (body.gain) bits.push(`+${body.gain} ${body.stat || ''}`);
+    // THE GYM'S TERMS. `+2 muscle` named the gain and nothing it cost: not the energy, not the
+    // cooldown the server has been sending all along in `nextTrainSeconds`, and — the term a player
+    // cannot infer from anywhere — that the clock is SHARED with the eight regimen disciplines, so a
+    // stat session locks Roadwork and Cool Head with it. The figure is read off the reply rather than
+    // off PACING.TRAIN_CD_MS: it is scaled per player, so a restated constant would be wrong for
+    // anyone the perks touch.
+    if (body.gain) bits.push(`+${body.gain} ${body.stat || ''}${body.nextTrainSeconds
+      ? ` — the gym is shut for ${minsTxt(body.nextTrainSeconds)}, and that clock covers the disciplines too` : ''}`);
     if (body.earned && body.delivered === undefined) bits.push(`${body.play === 'flood' ? '🔥 moved WEIGHT' : body.play === 'careful' ? '🤫 worked the regulars' : 'moved product'}${body.op === 'deal' ? ` — ${body.units} × ${txt(body.name || body.drug)}` : ''} · +$${fmt(body.earned)}${body.cornerPremium ? ' (corner premium)' : ''}${body.heat ? ` · +${body.heat} heat` : ''}`);
     // THE FREIGHT lands in CRATES, not dollars, and it comes off a trunk-load at a time — so the
     // convoy's `collected` is a COUNT and must be read before the business collect's dollars below,
@@ -3448,7 +3458,13 @@
     if (body.convicted === false && body.forfeited !== undefined) bits.push('ACQUITTED — the case fell apart. Walk out clean.');
     if (body.convicted === true && body.forfeited !== undefined) bits.push(`CONVICTED — they seized $${fmt(body.forfeited)}${body.jailSeconds ? ` and you're in for ${minsTxt(body.jailSeconds)}` : ''}`);
     // the solo Score — {take, rep} with no success flag
-    if (body.take !== undefined && body.rep !== undefined && !('success' in body) && !bits.length) bits.push(`THE SCORE — $${fmt(body.take)}, +${body.rep} respect`);
+    // THE SCORE'S OWN CLOCK, and it is shared: heists.js gates a CREW job on the same `heist_at`, so
+    // a player who pulls a solo score and is then turned away from a crew's was told nothing about
+    // why. The server sends the figure because only it knows one — the 8h base is scaled by the
+    // scores mastery perk and by a safecracker second.
+    if (body.take !== undefined && body.rep !== undefined && !('success' in body) && !bits.length)
+      bits.push(`THE SCORE — $${fmt(body.take)}, +${body.rep} respect${body.nextScoreSeconds
+        ? ` · the next job lines up in ${minsTxt(body.nextScoreSeconds)}, crew scores included` : ''}`);
     // the repair is a GAMBLE (a botched roll charges you and doesn't fix it) — say so plainly so a
     // failed repair reads as "the shop botched it," never as a silent charge that looks like fraud
     if (body.fixed === true && body.cost !== undefined) bits.push(`the shop fixed her up — good as new, $${fmt(body.cost)}`);
