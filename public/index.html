@@ -3005,7 +3005,7 @@
         : `laid ${paid} into ${body.monument}${worth} (your total: $${fmt(body.yourTotal)})`);
     }
     if (body.win === false && body.hospSeconds !== undefined) bits.push(`the guards drove you off — ${Math.ceil(body.hospSeconds / 60)}m in the hospital`);
-    if (body.kill) bits.push(`THEY'RE DONE.${body.loot ? ` looted $${fmt(body.loot)}` : ''}${body.contraLoot ? ` · seized $${fmt(body.contraLoot)} in contraband` : ''}${body.empireLoot ? ` · 🏢 TOOK OVER their ${body.empireLoot.name}` : ''}${body.bounty ? ` · contract paid $${fmt(body.bounty)}` : ''}${body.ammoBack ? ` · the contract covered ${fmt(body.ammoBack)} rounds` : ''}${body.hitman?.blood?.ours > 1 ? ` · that's ${nth(body.hitman.blood.ours)} body between your bloodlines` : ''}`);
+    if (body.kill) bits.push(`THEY'RE DONE.${body.loot ? ` looted $${fmt(body.loot)}` : ''}${body.contraLoot ? ` · seized $${fmt(body.contraLoot)} in contraband` : ''}${body.empireLoot ? ` · 🏢 TOOK OVER their ${body.empireLoot.name}` : ''}${body.bounty ? ` · contract paid $${fmt(body.bounty)}` : ''}${body.ammoBack ? ` · the contract covered ${fmt(body.ammoBack)} rounds` : ''}${body.hitman?.blood?.ours > 1 ? ` · that's ${nth(body.hitman.blood.ours)} body between your bloodlines` : ''}${body.op === 'shank' && body.sentenceSeconds ? ` · a yard killing, so your own stretch runs ${minsTxt(body.sentenceSeconds)} now` : ''}`);
     if (body.hospitalized && !body.kill) bits.push('they went down — hospital job');
     if (body.absorbed) bits.push('their cover took the hit');
     // THE SHOT THAT DIDN'T LAND. Found by playing: a hit is the most expensive action in the game —
@@ -3017,6 +3017,27 @@
     if (body.kill === false && body.btk !== undefined && !body.absorbed && !body.revived)
       bits.push(`he's still standing — ${fmt(body.effective)} rounds told and he can take ${fmt(body.btk)}`
         + `${body.jammed ? ' · YOUR PIECE JAMMED' : ''} · your search is burned and the trigger cools`);
+    // A SHANK THAT DIDN'T LAND. The miss above keys on `btk` — a rounds-vs-bodyweight number a yard
+    // shanking has no concept of — so the caught branch matched nothing and the most expensive verb
+    // inside the walls read "done." over three real terms it had already been handed: the beating,
+    // thirty minutes in the hole, and a sentence that is now LONGER than the one you walked in with.
+    if (body.op === 'shank' && body.caught)
+      bits.push(`the screws had you before it landed — ${fmt(body.dmg)} health gone, ${minsTxt(body.holeSeconds)} in the hole`
+        + `, and your stretch runs ${minsTxt(body.sentenceSeconds)} now. The shiv's spent either way.`);
+    // THE HIRED GUN — the whole family (street npcHit AND the Pen's burner call), on the miss AND
+    // the kill, read the bare-price catch-all "paid $50,000": a price with the purchase left off, on
+    // the one verb whose fee burns WHETHER OR NOT anybody dies. `success` alone could not carry it —
+    // crime, world raids, the bust and the family raid all send that field — so the server names the
+    // system. The two cooldowns come from the reply because neither lever is published.
+    if (body.op === 'npchit') {
+      bits.push(body.killed ? `\uD83D\uDD2B the contractor got it done — the mark is gone, and no reputation comes back to you.`
+        : body.absorbed || body.revived ? 'the contractor reached them — somebody else ate it'
+        : "the contractor came back empty — they're still walking.");
+      bits.push(`$${fmt(body.cost)} gone either way (${Math.round(body.success * 100)}% odds at that tier)`
+        + `${body.burner ? " \u00B7 the burner's spent" : ''}`
+        + `${body.cooldownSeconds ? ` \u00B7 your contact rests ${minsTxt(body.cooldownSeconds)}` : ''}`
+        + `${body.targetCdSeconds ? `, and won't touch this mark again for ${minsTxt(body.targetCdSeconds)}` : ''}`);
+    }
     if (body.revived) bits.push('they were carried out and patched up — pre-paid insurance. Still breathing.');
     // ...and the contract the city cancelled on you: family or crew now, so the hit is off and the
     // search is gone with it (the server clears it for real — it used to say so and not do it).
@@ -3311,6 +3332,15 @@
       body.result === 'win' ? `${body.yourHand} takes it — +$${fmt(body.net)}` :
       `their ${body.theirHand} beat your ${body.yourHand} — −$${fmt(Math.abs(body.net))}`);
     if (body.raid && body.raid.raided) bits.push(`RAIDED — the Prohibition boys took $${fmt(body.raid.seized)} + fined $${fmt(body.raid.fine)}, club dark`);
+    // `paper` was already this family's system marker — buyPaper carried it, and its two SIBLINGS one
+    // function away never did, so putting a claim on the market (and pulling it back) read "done."
+    // What is for sale is not a number: it is somebody else's debt, and the buyer takes over the right
+    // to collect it. The ask alone cannot say that, so the server sends what is OWED, by WHOM, and
+    // whether a car stands behind it — the difference between secured and unsecured paper.
+    if (body.paper === 'listed') bits.push(`\uD83D\uDCC3 the paper's on the market — $${fmt(body.price)} for a claim on $${fmt(body.owed)}`
+      + `${body.borrower ? ` owed by ${body.borrower}` : ''}${body.secured ? ', with a car pledged behind it' : ' (unsecured)'}.`
+      + ' Whoever buys it takes over the right to collect.');
+    if (body.paper === 'pulled') bits.push("pulled the paper off the market — the claim's yours again, and nobody can buy it out from under you.");
     if (body.paper === 'bought') bits.push(`bought the paper — $${fmt(body.price)} down ($${fmt(body.toSeller)} to the old lender, $${fmt(body.take)} house take). The debt owes YOU $${fmt(body.owed)} now.`);
     else if (body.toSeller !== undefined) bits.push(`took over ${art(body.name || 'club')} — $${fmt(body.paid)} paid ($${fmt(body.toSeller)} to the old owner)`);
     if (body.won !== undefined && body.feePaid !== undefined) bits.push(body.won ? `STOOD OVER ${art(body.name || 'club')} — forced the sale, it's yours ($${fmt(body.paid)})` : `the standover was repelled — the $${fmt(body.feePaid)} fee's gone`);

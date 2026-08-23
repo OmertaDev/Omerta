@@ -5675,7 +5675,8 @@ assert.match(String(describeFn(dep.body, 200)), /transit/i,
 // the chat send, the Wire dossier all read "done." through describe() and are not defects, because
 // describe() is never invoked on them). data-do buttons go through act(), so they count.
 const ACTPATHS = new Set([...html.matchAll(/\bact\(\s*'(POST|DELETE)'\s*,\s*'([^']+)'/g)].map((m) => m[2])
-  .concat([...html.matchAll(/data-do="(POST|DELETE) ([^"]+)"/g)].map((m) => m[2])));
+  .concat([...html.matchAll(/data-do="(POST|DELETE) ([^"]+)"/g)].map((m) => m[2]))
+  .concat([...html.matchAll(/\['(POST|DELETE)',\s*'(\/v1[^']+)'/g)].map((m) => m[2])));
 const ACTFNS = new Map();   // route path → the handler names its registration calls
 
 // ── check 13: THE COLLISION LEDGER ─────────────────────────────────────────────────────────────
@@ -5878,6 +5879,10 @@ const ACTFNS = new Map();   // route path → the handler names its registration
     ['withCharacter', 'the request wrapper itself — every route unwraps it; a player never reads this shape'],
     ['requestWithdraw', 'the chain rail renders its own voucher card; the console never toasts it'],
     ['requestDynastyMint', 'same rail, same card'],
+    ['quoteBond', 'the same chain rail — the bond card renders the quote it signs, never a toast'],
+    ['repairCar', 'its branches key on body.fixed === true|false; the sentinel walk cannot supply a literal'],
+    ['burnerHit', 'it spreads ...await npcHit(...) — a call the static walk cannot follow; the npchit '
+      + 'branch renders it live, and the WAVE 68 block below drives the burner line for real'],
     ['playDice', 'the dice branch keys on game===\'dice\'; the sentinel walk cannot supply a literal it does not have'],
     ['upgradeSpeakeasy', 'the raid early-return renders the RAIDED line; driven by the action ledger'],
     ['collectCorner', 'the corner take renders through the collect family — driven live'],
@@ -6132,6 +6137,40 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   assert(new RegExp(fmtLike(nom.r.body.fee)).test(nom.line) && /NOT come back/.test(nom.line) && /closes in/.test(nom.line),
     `the DRIVEN nomination line must name the burned fee AND when the card closes: ${nom.line}`);
 
+  // ── WAVE 68: the hired gun — a fee that burns whether or not anybody dies ─────────────────────
+  // Found by widening the silence ledger's corpus to the raw deck (which fires through act() too,
+  // with VARIABLE paths, so 80 parameterized routes were structurally invisible to it). The whole
+  // NPC-hit family — the street contract AND the Pen's burner call, on the MISS and on the KILL —
+  // fell to the bare-price catch-all "paid $50,000": a price with the purchase left off, on the one
+  // verb in the game whose fee is gone whether or not the mark goes down. `success` could not carry
+  // the marker (crime, world raids, the bust and the family raid all send it), so the server names
+  // the SYSTEM, and ships the two cooldowns because neither lever is published anywhere.
+  const tMark = (await inject('POST', '/v1/auth/guest')).body.token;
+  await inject('POST', '/v1/character', tMark, { name: 'Mark ' + Math.random().toString(36).slice(2, 7) });
+  const idMark = (await inject('GET', '/v1/me', tMark)).body.character.id;
+  await app.pool.query('UPDATE characters SET respect=900000, loc=$2 WHERE id=$1', [idMark, 'docks']);
+  await app.pool.query('UPDATE characters SET cash=90000000 WHERE id=$1', [id65]);
+  const hit = await drive65(`/v1/streets/${idMark}/npchit`, { tier: 'legbreaker' });
+  // the SERVER must send all four, or the line below has nothing to read — this is the half a
+  // synthetic passes straight through, which is why the whole block is driven.
+  assert(hit.r.body.cost > 0 && hit.r.body.success > 0 && hit.r.body.cooldownSeconds > 0
+    && hit.r.body.targetCdSeconds > 0, 'the hired gun must SEND the fee, the odds and both cooldowns');
+  // OUTCOME-INDEPENDENT on purpose: the roll has no test knob, so pinning "it missed" would be a
+  // deterministic assertion resting on a 2% chance. Every term below rides BOTH lines.
+  assert(new RegExp(`\\$${hit.r.body.cost.toLocaleString('en-US')}`).test(hit.line)
+    && /either way/.test(hit.line), `the hired-gun line must name the fee AND that it burns regardless: ${hit.line}`);
+  assert(new RegExp(`${Math.round(hit.r.body.success * 100)}% odds`).test(hit.line),
+    `the hired-gun line must name the odds it was priced at: ${hit.line}`);
+  assert(/contact rests/.test(hit.line) && /this mark again/.test(hit.line),
+    `the hired-gun line must name BOTH cooldowns — the contact's and this mark's: ${hit.line}`);
+  assert(/contractor/.test(hit.line), `the hired-gun line must say what the contractor did: ${hit.line}`);
+  // the KILL's own wording, on the DRIVEN reply's real fields with only the outcome flag flipped —
+  // the branch selector is client-side, and every figure it reads is the terms object above.
+  const npcKill = String(describeFn({ ...hit.r.body, hit: true, killed: true }, 200));
+  assert(/mark is gone/.test(npcKill) && /no reputation/.test(npcKill),
+    `the hired-gun KILL must name the death AND that it pays no rep: ${npcKill}`);
+
+
 }
 
 await app.close();
@@ -6236,6 +6275,7 @@ await app.close();
   console.log('  ✓ wave 65: two shared clocks and a fare that were charged without being named');
   console.log('  ✓ wave 66: a paid activation that never named its window, and a burn that read as a deposit');
   console.log('  ✓ wave 67: four entries that took the money and never named when the bell rings');
+  console.log('  ✓ wave 68: the hired gun — a fee that burned whether or not anybody died, and never said so');
 }
 
 console.log(`✅ client wiring test passed — across the console AND /admin: of ${refs.size} routes they can ` +

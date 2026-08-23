@@ -589,7 +589,11 @@ export async function shank(ch, victim, client, h) {
     // reactivated on a FUTURE re-jail, blocking an unrelated stretch) — cap it at jail_until.
     ch.hole_until = new Date(Math.min(Date.now() + PEN.HOLE_MS, new Date(ch.jail_until).getTime()));
     await h.notify(client, victim.id, 'shank_survived', { from: ch.name });
-    return { ok: true, kill: false, caught: true, dmg, holeSeconds: Math.round(PEN.HOLE_MS / 1000), sentenceSeconds: jailSecondsLeft(ch) };
+    // `op` names the SYSTEM at the source rather than leaving the line to key on a field's ABSENCE —
+    // the fire miss keys on `btk`, which a shank never carries, so this shape matched nothing and the
+    // most expensive failure in the Pen read "done." All three terms it already knew are sent: the
+    // beating, the hole, and the stretch it just made longer.
+    return { ok: true, op: 'shank', kill: false, caught: true, dmg, holeSeconds: Math.round(PEN.HOLE_MS / 1000), sentenceSeconds: jailSecondsLeft(ch) };
   }
 
   // ── the blade lands ── real-ETH revive insurance still pulls them from the brink (paid anywhere)
@@ -598,7 +602,7 @@ export async function shank(ch, victim, client, h) {
     victim.health = 100;
     await h.notify(client, victim.id, 'revived', { from: ch.name });
     await h.notify(client, ch.id, 'target_revived', { victim: victim.name });
-    return { ok: true, kill: false, revived: true };
+    return { ok: true, op: 'shank', kill: false, revived: true };
   }
   // a body in the yard — the full estate (heir, prestige, a sworn bloodline), but no loot/chop (you
   // can't strip a fleet from a cell) and no feared-rep (a shanking is dishonorable — the npcHit rule)
@@ -619,7 +623,9 @@ export async function shank(ch, victim, client, h) {
   ch.jail_until = new Date(new Date(ch.jail_until).getTime() + PEN.KILL_ADD_S * 1000); // a body means more time
   bus.emit('streets', { type: 'shank', by: ch.name, victim: victim.name });
   await h.track(client, ch.account_id, 'shank', { victim: victim.id, bounty });
-  return { ok: true, kill: true, bounty, sentenceSeconds: jailSecondsLeft(ch), estate: { heirId: estate.heirId } };
+  // The kill shares the fire-kill line (it IS a kill), and adds the one term only a yard killing has:
+  // your own stretch just grew by KILL_ADD_S. `op` is what lets the line say so without guessing.
+  return { ok: true, op: 'shank', kill: true, bounty, sentenceSeconds: jailSecondsLeft(ch), estate: { heirId: estate.heirId } };
 }
 
 // POST /v1/pen/burner/:targetId — the BURNER PHONE (step two): the ONE way to reach the outside from

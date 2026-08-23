@@ -5605,6 +5605,59 @@ faucet for a bigger fresh/mid hit — no free lunch). All `CRIME_STAT` numbers a
 levers, pinned in `test/levers.js`. Two mutations (old coefficients restored; muscle leaked into the
 roll) each fail by name.
 
+**PLAY WAVE 68 — THE DECK FIRES THROUGH `act()` TOO, AND 80 ROUTES WERE INVISIBLE TO THE GUARD
+(2026-08-23).** Wave 67 ended on the sweep's standing root cause — *a route nobody has driven has a
+line nobody has read* — so this wave went at the guard's own CORPUS BOUND rather than another
+cluster. **THE SILENCE LEDGER (check 14) collected its pressed set from `act('POST','/literal')` and
+`data-do="POST /literal"` only — and the raw deck presses through `act()` as well** (`goBtn.onclick`
+→ `await act(m, path, body)`), with paths built at runtime. Every route the deck alone reaches is
+**parameterized** (`fire`, `jump`, `npchit`, `melt`, `bounty`), because a curated screen builds those
+by concatenation — so **80 routes were structurally outside the ledger's reach**, and widening
+`ACTPATHS` by the deck's own static tuples surfaced exactly five new mutes: a tight, high-value list
+rather than noise.
+
+**THE HEADLINE IS THE HIRED GUN, and it is the bare-price catch-all on the one verb that most needs
+its terms.** The whole NPC-hit family — the street contract AND the Pen's burner call, on the MISS
+and on the KILL — read **`paid $50,000`**: a price with the purchase left off, on the only action in
+the game whose fee is **gone whether or not anybody dies**. Nothing said the odds it was priced at,
+nothing said the mark had died, and nothing said the contact rests six hours and will not touch that
+same mark for a day — two cooldowns that are LEVERS the client cannot read, since neither is
+published anywhere. **`success` could not carry the marker** — crime, world raids, the bust and the
+family raid all send that field — so the server names the SYSTEM (`op: 'npchit'`) and ships the two
+cooldowns, through **ONE shared `terms` object** all four outcomes spread, so the miss, the absorb,
+the revive and the kill can never disagree about what the job cost. `burnerHit` needed nothing: it
+spreads `...await npcHit(…)`, so the marker flows through — which is also why the static walk cannot
+see it and it is DECLARED with that property rather than left to read as covered.
+
+**Three more, each the recorded shape.** A **shank that got caught** read `"done."` over three real
+terms the server had already handed it — the beating, thirty minutes in the hole, and a sentence now
+LONGER than the one you walked in with — because the miss branch keys on `btk`, a rounds-versus-
+bodyweight number a yard shanking has no concept of; the **shank KILL** shared the fire-kill line and
+dropped the one term only a yard killing has (the added stretch); and **putting a loan claim on the
+market** (and pulling it back) said `"done."` while `paper: 'bought'` had sat on `buyPaper` since it
+shipped — the forgotten-sibling shape, one function away. The listing line needed SERVER fields to
+say anything true: what is for sale is not a number but somebody else's debt, and the client has no
+loan catalog to price a claim from, so `owed`, `borrower` and `secured` ride with the ask.
+
+**Two of the five are NOT defects and are declared with the property that makes each right**:
+`quoteBond` is the chain rail (the bond card renders the quote it signs — matching `requestWithdraw`/
+`requestDynastyMint`), and `repairCar`'s branches key on `body.fixed === true|false`, a LITERAL the
+Proxy sentinel walk cannot supply (the `playDice` precedent). **Driving all five is what separated
+them**, which is the wave's own argument for never trusting the static walk alone.
+
+**THE GUARD IS DRIVEN, NEVER SYNTHETIC, and its outcome-independence is deliberate**: the NPC-hit
+roll has no test knob, so pinning *"it missed"* would be a deterministic assertion resting on a 2%
+chance (the recorded flake shape). Every term asserted rides BOTH lines — the fee, that it burns
+either way, the odds, both cooldowns — and only the KILL's own wording is taken on the DRIVEN reply's
+real fields with the outcome flag flipped, since the branch selector is client-side and every figure
+it reads is the terms object already proven sent. Six mutations, each caught at its own named
+assertion — **and M4 SURVIVED its first run because the mutation never properly applied**: the anchor
+used a real emoji where the file stores the literal `🔫` escape, so the replacement clipped
+the template's opening and left the asserted words in place. *A mutation that does not apply reads
+exactly like a fix that holds*, for the fourth time in this file; the anchor is asserted, and the
+redone mutation fails printing the original defect verbatim. Driven actions 238 → 239. Suite green +
+docs + mobile 81/81 + pgquery + pgcheck on a FRESH real Postgres (one new `SELECT` in `loans.js`).
+
 ## Sensitive design notes
 *These are standing PRODUCT rules. They bind whatever else is true, and several of them exist
 because breaking one is very hard to walk back.*
