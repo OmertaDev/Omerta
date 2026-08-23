@@ -5564,9 +5564,20 @@ assert.match(String(describeFn(dep.body, 200)), /transit/i,
       `WAVE 59: buying makings read "20 lots of makings" for every one of the ${DRUGS.length} lines. ` +
       `Got: ${JSON.stringify(mk.line)}`);
 
-    await drive59('/v1/kitchen/cook', `cook ${d.id}`, { drugId: d.id, qty: 5 });
-    await app.pool.query("UPDATE batches SET done_at=now() - interval '1 hour' WHERE character_id=$1", [id59]);
-    const col = await drive59('/v1/kitchen/collect', `collect ${d.id}`, null);
+    // A COOK CAN BURN — `k.fire` is 2% even at the apex lab, and the burn line does not name the
+    // drug, so this block was a deterministic assertion resting on a probabilistic precondition:
+    // over the two lines that is a ~1-in-25 red, and it fired once during a mutation run, which is
+    // exactly how a flake teaches people that red means nothing. GUARANTEE the precondition rather
+    // than making it likelier — re-cook on a burn, bounded, and fail loudly if the bound is reached.
+    let col;
+    for (let attempt = 1; ; attempt++) {
+      await drive59('/v1/kitchen/cook', `cook ${d.id}#${attempt}`, { drugId: d.id, qty: 5 });
+      await app.pool.query("UPDATE batches SET done_at=now() - interval '1 hour' WHERE character_id=$1", [id59]);
+      col = await drive59('/v1/kitchen/collect', `collect ${d.id}#${attempt}`, null);
+      if (!col.r.body.fire) break;
+      assert(attempt < 12, `WAVE 59: twelve batches in a row burned on ${d.id} — that is not the 2% roll, it is a bug`);
+      await app.pool.query('UPDATE characters SET health=100, heat=0 WHERE id=$1', [id59]);
+    }
     assert.equal(col.r.body.name, d.name,
       `WAVE 59: pulling the batch must NAME what came off the burner. Got: ${JSON.stringify(col.r.body.name)}`);
     assert(col.line.includes(d.name),
@@ -6032,6 +6043,33 @@ const ACTFNS = new Map();   // route path → the handler names its registration
     'a successful open RESETS the backoff — an ordinary blip must still reconnect fast');
 }
 
+
+// ── WAVE 65 (driven half): the two shared clocks, asserted against what the SERVER sent ────────
+{
+  // DRIVEN, not synthetic, wherever the claim is about a field the SERVER sends: a literal passes
+  // straight through the mutation that stops it being sent, which is the whole reason the rule is
+  // "assert against what the server sent". Its own token, because the shared fixture's gym and Score
+  // clocks are armed by rows above and a refused action is SKIPPED — which reads on the summary line
+  // exactly like a covered one.
+  const t65 = (await inject('POST', '/v1/auth/guest')).body.token;
+  await inject('POST', '/v1/character', t65, { name: 'Clock ' + Math.random().toString(36).slice(2, 7) });
+  const id65 = (await inject('GET', '/v1/me', t65)).body.character.id;
+  await app.pool.query('UPDATE characters SET cash=5000000, respect=500000, energy=200, health=100 WHERE id=$1', [id65]);
+  const drive65 = async (url, payload) => {
+    const r = await inject('POST', url, t65, payload || null);
+    assert.equal(r.code, 200, `WAVE 65 could not drive ${url} (${JSON.stringify(r.body)})`);
+    described++; const line = String(describeFn(r.body, 200)); said.set(url, line); return { r, line };
+  };
+  const gymDriven = await drive65('/v1/train/muscle');
+  assert(gymDriven.r.body.nextTrainSeconds > 0, 'the gym must SEND its cooldown, or the line has nothing to read');
+  assert(/covers the disciplines/.test(gymDriven.line),
+    `the DRIVEN gym line must name the shared clock: ${gymDriven.line}`);
+  const scoreDriven = await drive65('/v1/heist');
+  assert(scoreDriven.r.body.nextScoreSeconds > 0, 'the Score must SEND its cooldown — only the server knows the figure');
+  assert(/crew/i.test(scoreDriven.line) && /\d/.test(scoreDriven.line),
+    `the DRIVEN Score line must name the clock crew jobs share: ${scoreDriven.line}`);
+}
+
 await app.close();
 // ── WAVE 64 — the lines THE SILENCE LEDGER's first crop now produces. The ledger above proves each
 // reply is no longer mute; these pin what it SAYS, because a branch that fires and says the wrong
@@ -6095,6 +6133,42 @@ await app.close();
   assert(/nothing owed/.test(say({ ok: true, paid: 0, overextension: 0, settled: [] })),
     'the sov pad with nothing owed must reach the line written for it');
   console.log('  ✓ wave 64: thirteen act()-pressed routes that said nothing now name what they did');
+}
+
+// ── WAVE 65: THE SHARED CLOCKS AND THE FARE ────────────────────────────────────────────────────
+// check 14 proves no pressed handler is MUTE. It cannot see a line that is fluent and simply leaves
+// a TERM off — the pad, the nut, the Port lane, and these four. Driving the last undriven clusters
+// (crew, den, primetime, pen, bonds, brokers) found the crew lines reading well and four buttons —
+// three of them among the most-pressed in the game — charging or locking something they never named.
+{
+  const say = (b, code) => describeFn(b, code === undefined ? 200 : code);
+  // THE GYM, both sides of ONE clock. `nextTrainSeconds` was SENT by both handlers and read by
+  // neither, and the term a player cannot infer from any catalog is that the clock is SHARED: a stat
+  // session shuts the eight regimen disciplines with it, and a discipline session shuts the stats.
+  const gym = say({ ok: true, stat: 'muscle', gain: 2, nextTrainSeconds: 180 });
+  assert(/\+2 muscle/.test(gym), `the gym must still name the gain: ${gym}`);
+  assert(/3m/.test(gym) && /disciplines/.test(gym), `the gym must name its cooldown AND that it covers the disciplines: ${gym}`);
+  const reg = say({ ok: true, discipline: 'stamina', xp: 9, total: 9, level: 1, levelUp: false, nextTrainSeconds: 180 });
+  assert(/3m/.test(reg) && /stats/.test(reg), `a discipline session must name the same shared clock: ${reg}`);
+  // …and the figure must come off the REPLY, not a restated PACING constant: the cooldown is scaled
+  // per player by the scores/trainer perks, so a client-side copy is wrong for anyone they touch.
+  const gymFast = say({ ok: true, stat: 'speed', gain: 1, nextTrainSeconds: 60 });
+  assert(/1m/.test(gymFast) && !/3m/.test(gymFast), `the gym must quote the reply's own figure: ${gymFast}`);
+  // THE FARE — a ride is charged and the line named only where you ended up. The reply grew `cost`,
+  // so the branch's key-count guard had to grow with it: a branch scoped on the ABSENCE of a field
+  // holds exactly until the reply grows one.
+  // …asserted against the line the DRIVEN route really produced, never a literal — the server
+  // dropping the field is exactly the mutation a synthetic passes straight through.
+  const ride = said.get('/v1/travel/neon');
+  assert(ride && /The Neon Mile/.test(ride), `the ride must still name where you are: ${ride}`);
+  assert(ride && /250/.test(ride), `the ride must name the fare it just charged: ${ride}`);
+  // THE SCORE's clock is shared the same way — heists.js gates a CREW job on the same `heist_at` —
+  // and only the server knows the figure (the 8h base is scaled by the scores mastery and by a
+  // safecracker second), which is why it ships rather than being restated.
+  const score = say({ ok: true, take: 276406, rep: 1800, soldier: null, nextScoreSeconds: 28800 });
+  assert(/276,406/.test(score) && /1800 respect/.test(score), `the Score must still name the take: ${score}`);
+  assert(/8h/.test(score) && /crew/i.test(score), `the Score must name its cooldown AND that crew jobs share it: ${score}`);
+  console.log('  ✓ wave 65: two shared clocks and a fare that were charged without being named');
 }
 
 console.log(`✅ client wiring test passed — across the console AND /admin: of ${refs.size} routes they can ` +

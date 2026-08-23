@@ -95,7 +95,12 @@ export async function heist(ch, client, h) {
   await h.bumpDaily(client, ch.id, 'heist');
   await bumpMastery(client, h, ch, 'scores', 'score');
   const soldier = second ? await soldierResult(client, h, ch, second, { success: true }) : null;
-  return { ok: true, take, rep, soldier: soldier ? { ...soldier, cut: soldierCut } : null };
+  // THE CLOCK IS SHARED, and only the server knows it: `cdMs` is the 8h base scaled by the scores
+  // mastery perk and by a safecracker second, so the client cannot compute it off any catalog (the
+  // heal/crewNextCost case). It also gates CREW scores — heists.js reads the same `heist_at` — so a
+  // player who pulls a solo job and then cannot join a crew's has been told nothing about why.
+  return { ok: true, take, rep, soldier: soldier ? { ...soldier, cut: soldierCut } : null,
+    nextScoreSeconds: Math.ceil(cdMs / 1000) };
 }
 
 // ── MISSIONS (§5.1): validate reqs (eff stats, fp, trade), pay once ──

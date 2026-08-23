@@ -451,9 +451,20 @@ assert(credits.includes('npc:seed'), 'and the seed is the source it all traces b
 
 // (4) RETIREMENT WITH LIVE ESCROW — the books must still close. A retiring resident pulls its offers
 //     and orders back in first, so nothing is left standing on a board with nobody behind it.
-const withEscrow = (await pool.query(
+// GUARANTEE the precondition rather than hoping for it. Whether any resident is HOLDING an open
+// offer at this point is a probabilistic draw — residentAct picks one behaviour per turn in a
+// priority order, and the blocks above drain, retire and take offers as they go — so asserting
+// that one happens to be standing is a deterministic assertion resting on a probabilistic
+// precondition, the recorded flake class (it fired once in three runs). Drive the real behaviour
+// path until one posts, bounded, and fail LOUDLY at the bound rather than passing on luck.
+let withEscrow = (await pool.query(
   "SELECT c.id FROM characters c JOIN loans l ON l.lender_character=c.id AND l.status='open' WHERE c.is_npc AND c.alive LIMIT 1")).rows[0];
-assert(withEscrow, 'found a resident holding live escrow');
+for (let attempt = 0; !withEscrow && attempt < 40; attempt++) {
+  await runResidentBehaviour(pool);
+  withEscrow = (await pool.query(
+    "SELECT c.id FROM characters c JOIN loans l ON l.lender_character=c.id AND l.status='open' WHERE c.is_npc AND c.alive LIMIT 1")).rows[0];
+}
+assert(withEscrow, 'found a resident holding live escrow — forty behaviour ticks posted none, which is not the draw, it is a bug');
 const c3 = await pool.connect();
 await c3.query('BEGIN');
 await retireResident(c3, withEscrow.id);

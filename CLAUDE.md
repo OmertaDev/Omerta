@@ -16973,3 +16973,50 @@ acceptMentor, listDeed, buyDeed, leaveFaction, paySovUpkeep) — declarations fo
 stopped existing, which the stale check caught immediately. Driven actions 259; suite green + sim
 drift-0 + mobile 81/81 + pgquery + **pgcheck 61/61 on a FRESH real Postgres** (`src/territory.js`
 gained a SELECT).
+
+**PLAY WAVE 65 — THE SHARED CLOCKS AND THE FARE: what the silence ledger cannot see (2026-08-23).**
+Wave 64 turned the mute class into a permanent guard — check 14 statically proves no act()-pressed
+handler renders nothing. **It is structurally blind to the other half**: a line that is FLUENT and
+simply leaves a TERM off, which is the pad / the nut / the Port lane, i.e. every tester complaint this
+project has ever had. So this wave drove the undriven surface hunting withheld terms rather than
+silence. **94 of 208 pressed routes had never been driven**; three batches driven and read back
+through the client's REAL `describe()`; the crew cluster came back clean and **four defects surfaced,
+two of them the same relation twice.**
+**THE TWO SHARED CLOCKS ARE THE HEADLINE, and neither relation was ever stated to a player.**
+`characters.train_at` gates the stat gym AND all eight REGIMEN disciplines, so a stat session locks
+Roadwork and Cool Head with it — and the gym line said `+2 muscle`: the gain named, and neither the
+energy, nor the cooldown the server had been **sending all along** in `nextTrainSeconds`, nor the
+sharing. `characters.heist_at` gates the solo Score AND crew heists, so a player who pulls a job and
+is then turned away from a crew's was told nothing about why; that one needed a server field, because
+**only the server knows the figure** — the 8h base is scaled by the scores mastery perk and by a
+safecracker second, so a client-side restated constant is wrong for anyone the perks touch (the
+`heal` / `crewNextCost` case). Two more: `+9 xp` on a discipline named the same clock from the other
+side, and **the ride was charged and never priced** — travel said only where you ended up, which is
+the bare-price catch-all inverted and just as unreadable. The fare ships from the server rather than
+being restated, since `CONSTANTS.TRAVEL_COST` is a founder lever and a second copy is how the two come
+to disagree. Fixing it also had to widen the travel branch's key-count guard to count `cost`: **a
+branch scoped on the ABSENCE of a field holds exactly until the reply grows one**, which is the shape
+this sweep keeps paying for.
+**TWO MUTATIONS SURVIVED AND BOTH WERE MY OWN ASSERTIONS.** M6 (server drops `cost`) and M8 (server
+drops `nextScoreSeconds`) each passed, because those two claims were written as SYNTHETICS against
+literal objects — **a literal passes straight through the mutation that stops the field being sent**,
+which is the whole reason the rule is *assert against what the SERVER sent, never a literal*. Both
+were rewritten as a DRIVEN half on its own token (the shared fixture's gym and Score clocks are armed
+by rows above, and a refused action is SKIPPED — which reads on the summary line exactly like a
+covered one), asserting the reply CARRIES the field and then that the line reads it; both then killed
+by name. Nine mutations, eight distinct named kills.
+**AND TWO PRE-EXISTING FLAKES WERE FOUND BY THE VERIFICATION RATHER THAN BY A FAILURE.** M4 killed at
+the WRONG assertion — a WAVE 59 *"THE BATCH BURNED"* failure — traced to `kitchen.js`'s 2% fire roll:
+the burn line does not name the drug, so over two lines that block was a ~1-in-25 red. And the full
+suite reddened once on `test/population.js`'s *"found a resident holding live escrow"*: whether a
+resident is HOLDING an open offer at that point is a probabilistic draw (residentAct picks one
+behaviour per turn in a priority order, and the blocks above drain, retire and take offers as they
+go). Both are the recorded class — **a deterministic assertion resting on a probabilistic
+precondition** — and both were fixed by GUARANTEEING the precondition rather than making it likelier:
+a bounded re-cook on a burn, and a bounded drive of the real behaviour path until an offer stands,
+each failing LOUDLY at the bound rather than passing on luck. The escrow loop was proven load-bearing
+by emptying the precondition **through the audited path** (retiring every resident lender, so the
+refund rows are written and the escrow checks still reconcile — a blanket `UPDATE … cancelled` broke
+accounting and was a bad mutation, not a finding): with the loop it recovers, without it the run dies
+at its own named assertion. Driven actions 259 → 261. Suite green + mobile 81/81; **no SQL moved in
+`src/`** (checked with a diff filter, not assumed), so the real-Postgres gates do not apply.
