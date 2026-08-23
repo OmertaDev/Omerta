@@ -276,7 +276,11 @@ export async function fortifyRacket(ch, districtId, client, h) {
   await client.query('UPDATE territory_rackets SET fortitude=$2 WHERE district_id=$1', [districtId, level + 1]);
   await h.ledger(client, { currency: 'cash', amount: -cost, reason: 'territory:fortify', counterparty: h.owned.gangId });
   if (h.owned.gang) h.owned.gang.treasury = Number(g.treasury) - cost;
-  return { ok: true, district: districtId, fortitude: level + 1, cost };
+  // the line beside it (establish) names the operation and the district; this one said "dug in —
+  // defense at level 1 ($100,000)" and named neither, on the recurring treasury drain a boss repeats
+  // five times. The cap is what tells him whether there is another rung to buy.
+  return { ok: true, district: districtId, fortitude: level + 1, cost, max: CONSTANTS.TERRITORY_FORT_MAX,
+    kind: r.kind, name: `${territoryTierOf(Number(r.tier))?.name || '—'} ${territoryTypeOf(r.kind).name}` };
 }
 
 // STEP FOUR — RIVAL RAID: a made man of ANOTHER family muscles a held operation for a CUT of its

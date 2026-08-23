@@ -128,9 +128,9 @@ async function resolveScrutiny(ch, row, client, h) {
       await client.query('UPDATE businesses SET scrutiny=0, scrutiny_at=now(), last_collect_at=now() WHERE id=$1', [row.id]);
       if (fine > 0) await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -fine, reason: 'business:raid' });
       await h.rngLog(client, ch.id, `business:raid:${row.kind}`, roll, `raided (P ${pWindow.toFixed(4)}, seized $${seized}, fined $${fine})`);
-      await h.notify(client, ch.id, 'business_raid', { kind: row.kind, seized, fine });
+      await h.notify(client, ch.id, 'business_raid', { kind: row.kind, kindName: businessOf(row.kind)?.name || row.kind, seized, fine });
       await h.track(client, ch.account_id, 'business_raid', { kind: row.kind, tier: Number(row.tier), seized, fine });
-      return { raided: true, kind: row.kind, seized, fine };
+      return { raided: true, kind: row.kind, kindName: businessOf(row.kind)?.name || row.kind, seized, fine };
     }
   }
   row.scrutiny = scr; row.scrutiny_at = new Date(now);
@@ -276,7 +276,7 @@ async function settlePad(ch, rows, client, h) {
       await client.query('UPDATE businesses SET upkeep_at=now() WHERE id=$1', [r.id]);
       r.upkeep_at = new Date();
       await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -owed, reason: 'business:upkeep' });
-      settled.push({ kind: r.kind, paid: owed });
+      settled.push({ kind: r.kind, kindName: businessOf(r.kind)?.name || r.kind, paid: owed });
     } else stillOwed += owed; // couldn't cover this one — it stays owed (and cold if past the window)
   }
   return { paid, settled, stillOwed };
@@ -321,7 +321,7 @@ export async function shutterBusiness(ch, businessId, client, h) {
   }
   await client.query('DELETE FROM businesses WHERE id=$1', [r.id]);
   h.owned.businesses = await businessesOf(client, ch.id);
-  return { ok: true, shuttered: businessOf(r.kind)?.name || r.kind, kind: r.kind, back };
+  return { ok: true, shuttered: businessOf(r.kind)?.name || r.kind, kind: r.kind, kindName: businessOf(r.kind)?.name || r.kind, back };
 }
 
 // Upgrade a front to the next tier — collects the pending income at the OLD rate first (so an
@@ -458,7 +458,7 @@ async function extortFront(ch, victim, businessId, client, h, verb) {
       ch.cash = Number(ch.cash) + cut;
       await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: cut, reason: rob ? 'business:rob' : 'business:shakedown', counterparty: victim.id });
     }
-    await h.notify(client, victim.id, rob ? 'robbed' : 'shakedown', { from: ch.name, kind: r.kind, cut });
+    await h.notify(client, victim.id, rob ? 'robbed' : 'shakedown', { from: ch.name, kind: r.kind, kindName: businessOf(r.kind)?.name || r.kind, cut });
     await recordRival(client, victim.account_id, ch, verb, { kind: r.kind, cut });
     if (revenge) await bumpHonor(client, ch, RIVALS.REVENGE_HONOR); // the code respects settled scores
     if (!rob) await bumpMastery(client, h, ch, 'muscle', 'shakedown'); // THE TRADES — extortion is the protection craft
@@ -468,15 +468,15 @@ async function extortFront(ch, victim, businessId, client, h, verb) {
   if (rob) {
     // pinched at the register — a failed robbery is a CRIME caught in the act
     ch.jail_until = new Date(Date.now() + RIVALS.ROB_JAIL_S * 1000);
-    await h.notify(client, victim.id, 'rob_failed', { from: ch.name, kind: r.kind });
+    await h.notify(client, victim.id, 'rob_failed', { from: ch.name, kind: r.kind, kindName: businessOf(r.kind)?.name || r.kind });
     await recordRival(client, victim.account_id, ch, verb, { kind: r.kind, failed: true });
     return { ok: true, win: false, kind: r.kind, name: businessOf(r.kind)?.name || r.kind, cut: 0, robbed: true, jailedS: RIVALS.ROB_JAIL_S };
   }
   // the front's security saw you off
   ch.health = Math.max(1, Number(ch.health) - rand(10, 25));
-  await h.notify(client, victim.id, 'shakedown_failed', { from: ch.name, kind: r.kind });
+  await h.notify(client, victim.id, 'shakedown_failed', { from: ch.name, kind: r.kind, kindName: businessOf(r.kind)?.name || r.kind });
   await recordRival(client, victim.account_id, ch, verb, { kind: r.kind, failed: true });
-  return { ok: true, win: false, kind: r.kind, cut: 0 };
+  return { ok: true, win: false, kind: r.kind, kindName: businessOf(r.kind)?.name || r.kind, cut: 0 };
 }
 export async function shakedownBusiness(ch, victim, businessId, client, h) {
   return extortFront(ch, victim, businessId, client, h, 'shakedown');
@@ -564,9 +564,9 @@ export async function takeoverBusiness(ch, owner, businessId, client, h) {
 
   if (!won) {
     ch.health = Math.max(1, Number(ch.health) - rand(10, 25));
-    await h.notify(client, owner.id, 'takeover_failed', { from: ch.name, kind: r.kind });
+    await h.notify(client, owner.id, 'takeover_failed', { from: ch.name, kind: r.kind, kindName: businessOf(r.kind)?.name || r.kind });
     await recordRival(client, owner.account_id, ch, 'takeover', { kind: r.kind, failed: true });
-    return { ok: true, won: false, kind: r.kind, feeBurned: fee };
+    return { ok: true, won: false, kind: r.kind, kindName: businessOf(r.kind)?.name || r.kind, feeBurned: fee };
   }
   // WON — settle the owner's pending scrutiny FIRST (a friendly takeover must not wash a pending fine),
   // then the taxed buyout transfer + the reset handover (the club-buyout mechanism verbatim)
@@ -579,10 +579,10 @@ export async function takeoverBusiness(ch, owner, businessId, client, h) {
   await resetFrontToNewOwner(client, businessId, ch.id); // fresh: scrutiny 0, spec cleared, clocks reset
   await client.query('UPDATE street_tax SET pool = pool + $1 WHERE id=1', [tax]); // singleton LAST (canonical order)
   h.owned.businesses = await businessesOf(client, ch.id);
-  await h.notify(client, owner.id, 'takeover', { from: ch.name, kind: r.kind, net });
+  await h.notify(client, owner.id, 'takeover', { from: ch.name, kind: r.kind, kindName: businessOf(r.kind)?.name || r.kind, net });
   await recordRival(client, owner.account_id, ch, 'takeover', { kind: r.kind });
-  bus.emit('streets', { type: 'business_takeover', by: ch.name, from: owner.name, kind: r.kind });
-  return { ok: true, won: true, kind: r.kind, price, net, feeBurned: fee };
+  bus.emit('streets', { type: 'business_takeover', by: ch.name, from: owner.name, kind: r.kind, kindName: businessOf(r.kind)?.name || r.kind });
+  return { ok: true, won: true, kind: r.kind, kindName: businessOf(r.kind)?.name || r.kind, price, net, feeBurned: fee };
 }
 
 // THE LAUNDERER leaderboard — the biggest money-men by lifetime cash washed through their fronts (survives

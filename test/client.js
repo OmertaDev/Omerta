@@ -5862,6 +5862,86 @@ assert.match(String(describeFn(dep.body, 200)), /transit/i,
   console.log('  ✓ wave 61: eight lines the collision fixes now produce read for their own system');
 }
 
+// ── WAVE 62 — the undriven-route sweep, continued. Every line below was found by DRIVING a route
+// the ACTION ledger had never driven and READING what came back; the class each belongs to was
+// already named by an earlier wave and applied only where it was discovered.
+//   • the ARTICLE class (wave 57 fixed 17 client lines and left no guard behind them — THE ARTICLE
+//     LEDGER's client half in test/gates.js is that guard, added here). The CARS catalog alone
+//     carries seven vowel-initial rungs AND one beginning with "The", so the garage's own boost
+//     line — the most-pressed button on that screen — was wrong two ways at once.
+//   • the RAW-KEY class: a reply sending an id where a display NAME belongs leaves describe()
+//     nothing to print but the key. Fixed at the SOURCE wherever the client has no catalog.
+{
+  const say = (b) => describeFn(b, 200);
+  // art(): the NAME decides the article, never the caller.
+  const vowel = say({ ok: true, success: true, car: { id: 'c', model: 'errand', name: 'Errand Boy Coupe', dmg: 0 } });
+  assert(/an Errand Boy Coupe/.test(vowel), `a vowel-initial rung takes "an". Got: ${vowel}`);
+  const thed = say({ ok: true, success: true, car: { id: 'c', model: 'tsarina', name: "The Tsarina's Ghost", dmg: 0 } });
+  assert(/boosted The Tsarina's Ghost/.test(thed) && !/a The/.test(thed),
+    `a name that carries its own article gets no second one. Got: ${thed}`);
+  const plain = say({ ok: true, success: true, car: { id: 'c', model: 'van', name: 'Panel Van', dmg: 0 } });
+  assert(/a Panel Van/.test(plain), `a plain name still gets an article — dropping it reads clipped. Got: ${plain}`);
+  // the CARS catalog really holds both edges, or the three assertions above prove nothing about it
+  {
+    const names = CARS.map((c) => c.name);
+    assert(names.some((n) => /^[aeiou]/i.test(n)), 'the cars catalog holds a vowel-initial rung');
+    assert(names.some((n) => /^the /i.test(n)), 'the cars catalog holds a rung that carries its own article');
+  }
+  // the market: three lines printed the good KEY and two the district id. The client resolves a
+  // good through the published catalog, so the reply need only send the id — which three of them
+  // did not send at all, leaving the line with nothing to name.
+  const filled = say({ ok: true, delivered: 4, earned: 800, remaining: 6, good: 'gin' });
+  assert(/gin/i.test(filled) && !/\bgin\b(?![\w ])/.test(filled.replace(/Gin/gi, 'Gin')), `the fill names the freight. Got: ${filled}`);
+  const listed = say({ ok: true, kind: 'good', good: 'gin', qty: 10, price: 90, district: 'docks', fee: 90, expiresSeconds: 172800 });
+  assert(/The Docks/.test(listed), `a listing names the DOCK, not its id. Got: ${listed}`);
+  assert(!/\bdocks\b/.test(listed), `the district id must not reach the player. Got: ${listed}`);
+  // pinned PER REPLY, not "the file mentions good_id somewhere": eight sites in market.js send that
+  // field and a file-wide match is satisfied by any one of them, so dropping it from the fill left
+  // the check green (a substring elsewhere proves nothing about the reply under test).
+  {
+    const mk = readFileSync(new URL('../src/market.js', import.meta.url), 'utf8');
+    for (const src of ['delivered: n, earned: net, remaining: Number(l.qty) - n, good: l.good_id',
+                       'claimed: n, awaiting: left, good: l.good_id',
+                       'cancelled: l.id, refunded: remaining, awaiting: Number(l.filled_qty), good: l.good_id'])
+      assert(mk.includes(src), `market.js reply must carry the good id — the client has no way to name the freight without it: ${src}`);
+  }
+  // the races: four replies sent car.model_id raw, so a tune, a NOS charge, a wager listing and a
+  // pinks offer all named a key. The notify one line down had sent the NAME all along.
+  assert(/name: carOf\(car\.model_id\)\?\.name/.test(readFileSync(new URL('../src/races.js', import.meta.url), 'utf8')),
+    'the race replies carry the car NAME — the client has no car catalog to resolve a model id with');
+  // fortify: "dug in — defense at level 1 ($100,000)" named neither the operation, the district
+  // nor the cap, on a recurring treasury drain a boss repeats five times. establish, one function
+  // up, has composed `${tier.name} ${type.name}` all along.
+  const fort = say({ ok: true, district: 'docks', fortitude: 1, cost: 100000, max: 5, kind: 'smuggling', name: 'Corner Smuggling Ring' });
+  assert(/Corner Smuggling Ring/.test(fort) && /The Docks/.test(fort) && /1\/5/.test(fort) && /100,000/.test(fort),
+    `the fortify line names the operation, the district, the rung and the price. Got: ${fort}`);
+  assert(/name: `\$\{territoryTierOf/.test(readFileSync(new URL('../src/territory.js', import.meta.url), 'utf8')),
+    'fortify composes the same operation name establish does — the scale alone is not the operation');
+  // the boatyard: "sold her back to the yard" named no boat, on a fleet that runs to five.
+  const boat = say({ ok: true, refund: 24000, kind: 'dinghy', name: 'Dinghy' });
+  assert(/Dinghy/.test(boat) && /24,000/.test(boat), `the sale names the boat. Got: ${boat}`);
+  assert(/name: boatOf\(boat\.kind\)\?\.name/.test(readFileSync(new URL('../src/port.js', import.meta.url), 'utf8')),
+    'sellBoat carries the boat NAME — the client has no boat catalog either');
+  // the hostile takeover printed the raw catalog KEY — "the nightclub is yours" — while its three
+  // siblings in the same file (rob, shutter, buy) all named the front. It hid because BUSINESSES ids
+  // are the lowercased names, so the laundromat read as a casing slip rather than a raw key.
+  // The field is `kindName`, not `name`: {name, price} is listDeed's shape, and the collision ledger
+  // caught the first cut claiming the deed-listing line ("Laundromat is on the market for $250,000").
+  const over = say({ ok: true, won: true, kind: 'nightclub', kindName: 'Nightclub', price: 2000000, net: 1960000, feeBurned: 50000 });
+  assert(/the Nightclub is yours/.test(over) && !/the nightclub/.test(over),
+    `a takeover names the front, not its key. Got: ${over}`);
+  assert(/1,960,000/.test(over) && !/\$\{/.test(over), `the price survives the line. Got: ${over}`);
+  const lost = say({ ok: true, won: false, kind: 'nightclub', kindName: 'Nightclub', feeBurned: 50000 });
+  assert(/Nightclub/.test(lost) && /50,000/.test(lost), `a failed takeover names what was moved on. Got: ${lost}`);
+  {
+    const bz = readFileSync(new URL('../src/business.js', import.meta.url), 'utf8');
+    for (const src of ['won: false, kind: r.kind, kindName: businessOf(r.kind)?.name',
+                       'won: true, kind: r.kind, kindName: businessOf(r.kind)?.name'])
+      assert(bz.includes(src), `takeoverBusiness carries the front's NAME — the client has no business catalog: ${src}`);
+  }
+  console.log('  ✓ wave 62: the article rule reads off the NAME, and seven replies name what they moved');
+}
+
 // ── WS RECONNECT BACKOFF (bulletproof audit) — a labelled SOURCE tripwire. A fixed 4s retry made
 // every open tab re-dial IN STEP after a server restart: a reconnect herd of simultaneous WS
 // upgrades at exactly the moment the box is coldest. The client must retry on a JITTERED

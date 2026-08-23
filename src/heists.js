@@ -18,7 +18,7 @@ import { GameError, bus, bumpMastery, gainRespect } from './game.js';
 import { HEIST_JOBS, HEIST_ROLES, heistJobOf, HEIST_PLAN_TTL_MS, HEIST_RAT_BPS, HEIST_LEADER_WEIGHT,
          HEIST_INSIDE_CD_MS, HEIST_CASE_ENERGY, HEIST_CASE_STEP, HEIST_CASE_MAX, heistFenceMultOf,
          HEIST_FENCE_HEAT, HEIST_RANKS, heistRankOf, HEIST_FILL_MAX, HEIST_FILL_FEE,
-         CONSTANTS, M4, levelOf, jailed, hospitalized, safeHoused, usd } from './rules.js';
+         CONSTANTS, M4, levelOf, jailed, hospitalized, safeHoused, usd, businessOf } from './rules.js';
 import { accrued, decayedScrutiny, npcPendingScale } from './business.js';
 import { dbCaps } from './db.js';
 
@@ -347,7 +347,7 @@ export async function executeHeist(ch, heistId, client, h) {
       const elapsed = Math.min(Date.now() - new Date(biz.last_collect_at).getTime(), CONSTANTS.BUSINESS_CAP_MS);
       await client.query('UPDATE businesses SET last_collect_at=$2 WHERE id=$1',
         [biz.id, new Date(Date.now() - Math.floor(Math.max(0, elapsed) * (1 - job.rateBps / 10000)))]);
-      await h.notify(client, biz.character_id, 'inside_job', { kind: biz.kind, pot });
+      await h.notify(client, biz.character_id, 'inside_job', { kind: biz.kind, kindName: businessOf(biz.kind)?.name || biz.kind, pot });
     } else {
       const avgLvl = realCrew.reduce((a, m) => a + levelOf(Number(m.respect)), 0) / realCrew.length; // hired hands don't set the pot's caliber (roll-neutral)
       pot = Math.floor(rand(job.takePerLvl[0], job.takePerLvl[1]) * avgLvl);
@@ -403,7 +403,7 @@ export async function executeHeist(ch, heistId, client, h) {
     if (m.id === ch.id) { ch.jail_until = jailTo; ch.heist_at = doneAt; }
     else { await setMember(m.id, 'jail_until=$2, heist_at=$3', [jailTo, doneAt]); await h.notify(client, m.id, 'heist_bust', { job: job.name, jailS: job.jailS }); }
   }
-  if (biz) await h.notify(client, biz.character_id, 'inside_job_failed', { kind: biz.kind });
+  if (biz) await h.notify(client, biz.character_id, 'inside_job_failed', { kind: biz.kind, kindName: businessOf(biz.kind)?.name || biz.kind });
   bus.emit('streets', { type: 'heist_bust', job: job.name, crew: crewRows.length });
   return { ok: true, score: false, job: job.id, name: job.name, jailSeconds: job.jailS };
 }
