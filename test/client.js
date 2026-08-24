@@ -40,6 +40,10 @@
 // misnamed, or whether the action then behaves correctly. Those need the gameplay suites, which exist.
 process.env.MOD_KEY = 'test-mod-key';
 process.env.WORLD_RAID_P = '1';   // the rout driven below must land every run, not most runs
+// This suite drives receipt and client-wiring paths, including several commissary purchases. The
+// seed-drawn daily `toss` incident closes that shop and turns calendar state into a false failure.
+// Pin the client fixture; test/pen.js exercises every yard incident and owns that behaviour coverage.
+process.env.PEN_YARD_EVENT = 'quiet';
 import assert from 'node:assert';
 import vm from 'node:vm';
 import { readFileSync, readdirSync } from 'node:fs';
