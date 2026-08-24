@@ -372,6 +372,7 @@ const NOT_API = new Set([
   'met',        // the black book's HOW_CHIP display map ({met:'met', …}) — render labels, never sent
   'intel',      // ditto ({intel:'tapped'})
   'cls',        // heroBand()'s stat class ('neon'/'warn') — the focal-header CSS accent, never sent
+  'tone',       // Operation Desk readiness state ('ready'/'caution'/'blocked') — render-only CSS modifier
   'label',      // heroBand()'s stat label — the render caption under the big number, never sent
 ]);
 // `field: 'value'` (deck bodies, JS objects) and `"field":"value"` (data-body attributes).

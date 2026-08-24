@@ -104,6 +104,90 @@ try {
   await mobile.click('#btn-create');
   await mobile.waitForSelector('#screen-main:not(.hidden)');
   if (await mobile.locator('#welcome:not(.hidden)').count()) await mobile.click('#tour-skip');
+  const operationDesk = await mobile.evaluate(() => {
+    const desk = document.querySelector('#operation-desk');
+    const primary = desk?.querySelector('[data-operation-primary]');
+    const rect = desk?.getBoundingClientRect();
+    return {
+      visible: !!desk && getComputedStyle(desk).display !== 'none',
+      region: desk?.getAttribute('role'),
+      labelled: !!desk?.getAttribute('aria-labelledby'),
+      primary: primary?.textContent.trim(),
+      top: rect?.top,
+      feed: !!desk?.querySelector('#operation-feed[aria-live="polite"]'),
+      over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    };
+  });
+  check(operationDesk.visible && operationDesk.region === 'region' && operationDesk.labelled
+      && operationDesk.primary && operationDesk.feed,
+    `Your Turn is not one labelled, actionable operation surface — ${JSON.stringify(operationDesk)}`);
+  check(operationDesk.top < 260 && operationDesk.over <= 1,
+    `Your Turn is buried or causes mobile overflow — ${JSON.stringify(operationDesk)}`);
+  const actionTerms = await mobile.evaluate(() => {
+    const crime = document.querySelector('#tab-streets .card [data-do^="POST /v1/crimes/"]')?.closest('.card');
+    const crimeButton = crime?.querySelector('[data-do^="POST /v1/crimes/"]');
+    const terms = crimeButton?.getAttribute('aria-describedby');
+    const locked = document.querySelector('#tab-streets [data-do^="POST /v1/crimes/"][disabled]');
+    return {
+      crimeTerms: terms ? document.getElementById(terms)?.textContent.replace(/\s+/g, ' ').trim() : '',
+      crimeChoice: crime?.querySelector('.operation-choice-terms')?.textContent.replace(/\s+/g, ' ').trim(),
+      lockedReason: locked?.getAttribute('title'),
+      gym: document.querySelector('#streets-gym-terms')?.textContent.replace(/\s+/g, ' ').trim(),
+      bank: document.querySelector('#streets-bank-terms')?.textContent.replace(/\s+/g, ' ').trim(),
+    };
+  });
+  check(/cost.*nerve/i.test(actionTerms.crimeTerms) && /quiet/i.test(actionTerms.crimeChoice)
+      && /standard/i.test(actionTerms.crimeChoice) && /loud/i.test(actionTerms.crimeChoice),
+    `crime controls do not expose standardized cost and approach risk — ${JSON.stringify(actionTerms)}`);
+  check(/requires level/i.test(actionTerms.lockedReason || ''),
+    `locked crime has no visible/programmatic reason — ${JSON.stringify(actionTerms.lockedReason)}`);
+  check(/10 energy/i.test(actionTerms.gym || '') && /deposit/i.test(actionTerms.bank || '') && /transit/i.test(actionTerms.bank || ''),
+    `gym or bank terms are missing before action — ${JSON.stringify(actionTerms)}`);
+
+  // A server-side in-progress response is the dangerous retry case: the same logical operation MUST
+  // reuse its idempotency key. Hold the first response long enough to observe the scoped pending state,
+  // then let the recovery control repeat the request against the real disposable server.
+  const checkinKeys = [];
+  let heldCheckin = true;
+  await mobile.route('**/v1/checkin', async (route) => {
+    checkinKeys.push(route.request().headers()['idempotency-key']);
+    if (heldCheckin) {
+      heldCheckin = false;
+      await new Promise((resolve) => setTimeout(resolve, 180));
+      await route.fulfill({ status: 409, contentType: 'application/json',
+        body: JSON.stringify({ error: 'in_progress', message: 'That move is still being recorded.' }) });
+    } else await route.continue();
+  });
+  const checkin = mobile.locator('#sheet [data-do="POST /v1/checkin"]');
+  await checkin.click();
+  await mobile.waitForTimeout(40);
+  const pending = await mobile.evaluate(() => ({
+    deskBusy: document.querySelector('#operation-desk')?.getAttribute('aria-busy'),
+    bodyBusy: document.body.hasAttribute('aria-busy'),
+    label: document.querySelector('#operation-pending')?.textContent.trim(),
+    buttonBusy: document.querySelector('#sheet [data-do="POST /v1/checkin"]')?.getAttribute('aria-busy'),
+  }));
+  check(pending.deskBusy === 'true' && pending.buttonBusy === 'true' && !pending.bodyBusy && /check in/i.test(pending.label),
+    `action pending state is not specific and locally scoped — ${JSON.stringify(pending)}`);
+  await mobile.waitForSelector('#operation-feed .operation-receipt--error [data-operation-retry]');
+  await mobile.click('#operation-feed .operation-receipt--error [data-operation-retry]');
+  await mobile.waitForSelector('#operation-feed .operation-receipt--success');
+  check(checkinKeys.length === 2 && checkinKeys[0] && checkinKeys[0] === checkinKeys[1],
+    `in-progress retry changed its idempotency key — ${JSON.stringify(checkinKeys)}`);
+  const receipt = await mobile.evaluate(() => {
+    const row = document.querySelector('#operation-feed .operation-receipt--success');
+    return { summary: row?.querySelector('.operation-receipt__summary')?.textContent.trim(),
+      delta: row?.querySelector('.operation-receipt__delta')?.textContent.trim(),
+      count: document.querySelectorAll('#operation-feed .operation-receipt').length };
+  });
+  check(receipt.count >= 2 && receipt.summary && receipt.delta,
+    `completed actions do not leave a durable result + resource receipt — ${JSON.stringify(receipt)}`);
+
+  await mobile.fill('#bank-amt', '999999999');
+  await mobile.click('#bank-dep');
+  await mobile.waitForSelector('#operation-feed .operation-receipt--error .operation-receipt__recovery');
+  const recovery = await mobile.locator('#operation-feed .operation-receipt--error .operation-receipt__recovery').first().textContent();
+  check(/lower|cash|earn/i.test(recovery || ''), `cash refusal has no concrete recovery guidance — ${JSON.stringify(recovery)}`);
   for (const [query, expected] of [['heal', 'life'], ['sell car', 'garage'], ['take loan', 'loans']]) {
     await mobile.click('#btn-jump');
     await mobile.fill('#jump-q', query);

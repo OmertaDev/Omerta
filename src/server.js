@@ -1429,6 +1429,7 @@ export async function buildServer() {
     // can render live cooldown timers instead of a bare error).
     pacing: { levelDivisor: PACING.LEVEL_DIVISOR,
       energyRegenPerMin: PACING.ENERGY_REGEN_PER_MIN, nerveRegenPerMin: PACING.NERVE_REGEN_PER_MIN,
+      trainEnergy: PACING.TRAIN_ENERGY,
       trainCooldownSeconds: Math.round(PACING.TRAIN_CD_MS / 1000),
       missionCooldownSeconds: Math.round(PACING.MISSION_CD_MS / 1000),
       // respect(L) = levelDivisor × (L−1)² — published so the client can draw a progress bar
