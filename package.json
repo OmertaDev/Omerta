@@ -21,6 +21,7 @@
     "concurrency": "node tools/concurrency.js",
     "graph": "node tools/graph.js build",
     "mobile": "node tools/mobile.js",
+    "ui:quality": "node tools/public-ui.js",
     "pollcost": "node tools/pollcost.js",
     "boardcost": "node tools/boardcost.js",
     "pageweight": "node tools/pageweight.js",

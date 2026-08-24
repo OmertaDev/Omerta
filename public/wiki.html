@@ -45,6 +45,14 @@
   #nav input{width:100%;background:#0e0d0c;border:1px solid var(--line2);color:var(--ink);
     min-height:44px;padding:9px 11px;border-radius:2px;font-size:13px}
   #nav input::placeholder{color:var(--faint)}
+  #search-results{padding:0 10px 10px}
+  #search-results:empty{display:none}
+  #search-results a{display:block;min-height:44px;padding:9px 10px;border-bottom:1px solid var(--line);color:var(--ink)}
+  #search-results a:hover{background:var(--panel2);text-decoration:none}
+  #search-results strong{display:block;font:600 13px/1.35 var(--display);letter-spacing:.04em}
+  #search-results .search-hit__snippet{display:block;margin-top:3px;color:var(--dim);font-size:12.5px;line-height:1.45}
+  #search-results mark{background:rgba(201,162,74,.2);color:var(--ink);padding:0 1px}
+  #nav.searching #navlist{display:none}
   #nav .grp{color:var(--faint);font-family:var(--mono);font-size:10px;letter-spacing:.22em;
     text-transform:uppercase;padding:18px 18px 6px;display:flex;align-items:center;gap:9px}
   #nav .grp:after{content:'';flex:1;height:1px;background:var(--line)}
@@ -137,6 +145,7 @@
     #top h1{font-size:20px}
     #top .sub{display:none}
     #nav a.item{min-height:44px;display:flex;align-items:center;padding-block:9px}
+    #nav .search{padding-top:4px}
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -158,10 +167,11 @@
 </nav>
 <main id="wrap">
   <aside id="nav" class="collapsed" aria-label="Codex contents">
+    <div class="search"><input id="q" placeholder="What do you want to do?" aria-label="Search the codex" autocomplete="off"></div>
+    <div id="search-status" role="status" aria-live="polite"></div>
+    <div id="search-results" aria-label="Codex search results"></div>
     <button id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-content">Browse sections</button>
     <div id="nav-content">
-      <div class="search"><input id="q" placeholder="search the codex…" aria-label="Search the codex" autocomplete="off"></div>
-      <div id="search-status" role="status" aria-live="polite"></div>
       <nav id="navlist" aria-label="Codex sections"></nav>
     </div>
   </aside>
@@ -174,6 +184,15 @@
 // GROUPS order the sidebar. Content authored from the verified feature inventory.
 const R = (s) => `<div class="routes">${s}</div>`;          // route line
 const L = (s) => `<div class="loop">${s}</div>`;            // loop / callout
+const escText = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const searchExcerpt = (text, query) => {
+  const clean = String(text || '').replace(/\s+/g, ' ').trim();
+  const lower = clean.toLowerCase(), at = lower.indexOf(query);
+  const from = Math.max(0, at - 54), to = Math.min(clean.length, at + query.length + 110);
+  const before = clean.slice(from, at), match = clean.slice(at, at + query.length), after = clean.slice(at + query.length, to);
+  return `${from ? '…' : ''}${escText(before)}<mark>${escText(match)}</mark>${escText(after)}${to < clean.length ? '…' : ''}`;
+};
 const SECTIONS = [
   { id: 'welcome', group: 'Start', title: 'Welcome to the City', tag: 'what this is',
     html: `<p class="lead">OMERTÀ is a persistent, server-authoritative multiplayer mafia RPG. You start in the Docks with $500, build a street, and share the city with human and autonomous players. Other players can kill your character; the account and its named bloodline records continue.</p>
@@ -920,22 +939,33 @@ function wireScroll() {
 }
 document.getElementById('q').addEventListener('input', (e) => {
   const q = e.target.value.trim().toLowerCase();
-  let hits = 0;
+  let hits = 0; const matches = [];
   for (const sec of document.querySelectorAll('#doc section')) {
     const hit = !q || sec.textContent.toLowerCase().includes(q);
-    if (hit) hits += 1;
+    if (hit) {
+      hits += 1;
+      if (q) matches.push({ id: sec.id, title: document.getElementById(sec.id + '-title')?.textContent || sec.id,
+        text: sec.textContent });
+    }
     sec.style.display = hit ? '' : 'none';
     const link = document.querySelector(`#nav a.item[data-id="${sec.id}"]`);
     if (link) link.classList.toggle('hide', !hit);
   }
+  const nav = document.getElementById('nav'), results = document.getElementById('search-results');
+  nav.classList.toggle('searching', !!q);
+  results.innerHTML = q ? matches.map((hit) => `<a href="#${escText(hit.id)}" data-search-hit="${escText(hit.id)}"><strong>${escText(hit.title)}</strong><span class="search-hit__snippet">${searchExcerpt(hit.text, q)}</span></a>`).join('') : '';
+  results.querySelectorAll('[data-search-hit]').forEach((link) => link.addEventListener('click', () => {
+    e.target.value = '';
+    e.target.dispatchEvent(new Event('input', { bubbles: true }));
+  }));
   // A search that hides everything and says nothing reads like a broken page.
   let none = document.getElementById('nohit');
   if (!none) {
     none = document.createElement('div'); none.id = 'nohit'; none.className = 'empty';
     document.getElementById('doc').appendChild(none);
   }
-  none.innerHTML = hits ? '' : `<h2 style="color:#6b6357">Nothing matches</h2>`
-    + `<p class="lead">The codex has no section mentioning “${q.replace(/[<>&]/g, '')}”. Try a shorter word.</p>`;
+  none.innerHTML = hits ? '' : `<h2 style="color:#8d8578">Nothing matches</h2>`
+    + `<p class="lead">The Codex has no section mentioning “${escText(q)}”. Try a task such as heal, borrow, travel, or recruit.</p>`;
   none.style.display = hits ? 'none' : '';
   document.getElementById('search-status').textContent = q ? `${hits} section${hits === 1 ? '' : 's'} found` : '';
 });
