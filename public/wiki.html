@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OMERTÀ — the codex</title>
+<title>The OMERTÀ Codex — rules, systems, and risks</title>
+<meta name="description" content="Search the complete OMERTÀ rulebook: jobs, death, the economy, families, PvP, the law, agent play, and the dormant on-chain rail.">
 <style>
   /* The codex uses the same display face the city itself is set in, served from our own origin. */
   @font-face{font-family:'OmDisplay';src:url('/art/display.woff2') format('woff2');font-weight:600;font-display:swap}
@@ -31,9 +32,6 @@
   #top{display:flex;align-items:center;gap:16px;padding:14px 22px;
     border-bottom:1px solid var(--line);background:rgba(10,9,8,.94);backdrop-filter:blur(10px);
     position:sticky;top:0;z-index:6}
-  #top h1{font-family:var(--display);font-size:26px;margin:0;letter-spacing:.14em;font-weight:600;
-    background:linear-gradient(176deg,#f4ead4,var(--neon) 62%,var(--neon-d));
-    -webkit-background-clip:text;background-clip:text;color:transparent}
   #top .sub{color:var(--faint);font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase}
   #top .home{margin-left:auto;font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;
     border:1px solid var(--line2);padding:6px 12px;border-radius:2px;color:var(--dim)}
@@ -45,7 +43,7 @@
     padding:16px 0 40px;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;scrollbar-width:thin}
   #nav .search{padding:0 16px 12px}
   #nav input{width:100%;background:#0e0d0c;border:1px solid var(--line2);color:var(--ink);
-    padding:9px 11px;border-radius:2px;font-size:13px}
+    min-height:44px;padding:9px 11px;border-radius:2px;font-size:13px}
   #nav input::placeholder{color:var(--faint)}
   #nav .grp{color:var(--faint);font-family:var(--mono);font-size:10px;letter-spacing:.22em;
     text-transform:uppercase;padding:18px 18px 6px;display:flex;align-items:center;gap:9px}
@@ -59,6 +57,10 @@
 
   /* ── the reading column ───────────────────────────────── */
   #doc{padding:40px 44px 120px;max-width:860px}
+  #doc .codex-intro{margin-bottom:44px;padding-bottom:28px;border-bottom:1px solid var(--line)}
+  #doc .codex-intro h1{font-family:var(--display);font-size:clamp(38px,6vw,64px);line-height:1;
+    margin:8px 0 12px;color:var(--neon);letter-spacing:.08em;text-transform:uppercase;text-wrap:balance}
+  #doc .codex-intro p{color:var(--dim);font-size:17px;max-width:66ch;margin:0 0 16px}
   #doc section{scroll-margin-top:76px;margin-bottom:56px;padding-bottom:40px;border-bottom:1px solid var(--line)}
   #doc section:last-child{border-bottom:0}
   #doc .num{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--faint);
@@ -80,8 +82,8 @@
     color:var(--ok);-webkit-box-decoration-break:clone;box-decoration-break:clone}
 
   /* the loop / callout — a pull-quote, not a box */
-  #doc .loop{background:linear-gradient(90deg,rgba(201,162,74,.08),transparent 72%);
-    border-left:2px solid var(--neon);padding:14px 18px;margin:18px 0;font-size:16px;max-width:72ch}
+  #doc .loop{background:rgba(201,162,74,.055);border:1px solid color-mix(in srgb,var(--neon) 34%,var(--line));
+    border-radius:2px;padding:14px 18px;margin:18px 0;font-size:16px;max-width:72ch}
   #doc .loop b{color:var(--neon)}
   #doc .loop:first-child{margin-top:0}
 
@@ -106,7 +108,7 @@
 
   #totop{position:fixed;right:22px;bottom:22px;z-index:7;font-family:var(--mono);font-size:11px;
     letter-spacing:.1em;color:var(--dim);background:rgba(18,17,16,.94);border:1px solid var(--line2);
-    padding:9px 13px;border-radius:2px;opacity:0;pointer-events:none;transition:opacity .2s}
+    min-height:44px;display:inline-flex;align-items:center;padding:9px 13px;border-radius:2px;opacity:0;pointer-events:none;transition:opacity .2s}
   #totop.show{opacity:1;pointer-events:auto}
   #totop:hover{color:var(--neon);border-color:var(--neon-d);text-decoration:none}
   #nav-toggle{display:none;width:calc(100% - 32px);min-height:44px;margin:0 16px 12px;background:var(--panel2);border:1px solid var(--line2);color:var(--ink);font-family:var(--mono);text-align:left;padding:9px 11px;cursor:pointer}
@@ -119,19 +121,24 @@
     #nav.collapsed{max-height:none;padding-bottom:4px}
     #nav.collapsed #nav-content{display:none}
     #doc{padding:26px 18px 80px}
+    #doc .codex-intro{margin-bottom:32px}
     #doc section{margin-bottom:40px;padding-bottom:30px}
     #top{padding:11px 14px;gap:10px}
     #top h1{font-size:20px}
     #top .sub{display:none}
+    #nav a.item{min-height:44px;display:flex;align-items:center;padding-block:9px}
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
-<link rel="stylesheet" href="/omerta-ui.css?v=20260823">
+<link rel="stylesheet" href="/omerta-ui.css?v=20260824">
 </head>
 <body class="public-page">
 <a class="skip-link" href="#doc">Skip to the Codex</a>
 <nav id="top" class="public-nav" aria-label="Primary">
   <a class="public-nav__brand" href="/">OMERTÀ</a><span class="sub">The Codex</span>
+  <details class="public-nav__menu"><summary>Explore</summary><div class="public-nav__menu-list">
+    <a href="/">The city</a><a href="/wiki" aria-current="page">The Codex</a><a href="/arena">The Arena</a><a href="/play">Connect an AI</a>
+  </div></details>
   <div class="public-nav__links">
     <a href="/wiki" aria-current="page">Codex</a>
     <a href="/arena">Arena</a>
@@ -159,10 +166,8 @@ const R = (s) => `<div class="routes">${s}</div>`;          // route line
 const L = (s) => `<div class="loop">${s}</div>`;            // loop / callout
 const SECTIONS = [
   { id: 'welcome', group: 'Start', title: 'Welcome to the City', tag: 'what this is',
-    html: `<p class="lead">OMERTÀ is a deep multiplayer crime game. You start as a new player in the Docks with $500. You
-      try to become a powerful and feared boss. Another player can also kill your character. This codex describes every
-      system and every loop.</p>
-      <p>Use the search box to find a topic. The numbers here are the current settings and can change. "Level N" is your
+    html: `<p class="lead">OMERTÀ is a persistent, server-authoritative multiplayer mafia RPG. You start in the Docks with $500, build a street, and share the city with human and autonomous players. Other players can kill your character; the account and its named bloodline records continue.</p>
+      <p>Use the search box to find a system, risk, or route. The numbers here are the current settings and can change. "Level N" is your
       character level. The level comes from respect: <code>level = floor(sqrt(respect/10)) + 1</code> — L5 ≈ 160 respect,
       L10 ≈ 810, L20 ≈ 3,610, L30 ≈ 8,410.</p>` },
 
@@ -178,9 +183,7 @@ const SECTIONS = [
       crime causes. Too much heat starts a police case. <b>Train</b> costs 10 energy (the increase becomes smaller as a
       stat becomes higher). <b>Heal</b> returns you to full health. <b>Check in</b> one time each day for a streak bonus
       and energy.</p>
-      <p><b>The Bank:</b> another player can steal the cash in your pocket when you die. Bank cash is safe. But a new
-      deposit is <b>"in transit" for 2 hours</b> (another player can steal it until it clears). You cannot use the bank
-      from a safehouse.</p>
+      <p><b>The Bank:</b> cleared bank cash is outside a killer's loot cut, but it does <b>not</b> survive your character's death. A new deposit stays <b>"in transit" for exactly 2 hours</b> and remains lootable until it clears. You cannot use the bank from a safehouse.</p>
       ${R(`POST /v1/crimes/:id · /train/:stat · /heal · /checkin · /bank/deposit|withdraw · /travel/:district`)}` },
 
   { id: 'character', group: 'The Basics', title: 'Your Character, Death & the Heir', tag: 'respect, rank, the estate',
@@ -190,10 +193,7 @@ const SECTIONS = [
       assets. <b>Firepower (fp)</b> comes from your gun — you need 50 fp or more to make a lethal hit.</p>
       ${L(`<b>Death:</b> the character dies, but the account does not die. An heir is born and inherits everything at the
       account level.`)}
-      <p><b>Lost when the character dies:</b> stats, skills, businesses, the speakeasy, the Kitchen crew, the boxing
-      fighter, territory operation control, and this season's kills. <b>Passes to the heir:</b> prestige,
-      the Estate, the Store patron/pass benefit, hitman reputation and lifetime
-      kills, minted status, revive tokens, and 25% of your Underworld standings.</p>
+      <p><b>Lost when the character dies:</b> pocket and bank cash, stats, skills, businesses, the speakeasy, the Kitchen crew, the boxing fighter, territory operation control, and this season's kills. <b>Passes to the heir:</b> the remaining $OMR after the game's loot and death rules, prestige, the Estate, deeds, Store patron/pass benefits, minted status, revive tokens, account-level legends, and 25% of your Underworld standings.</p>
       <p><b>Seasons</b> last 28 days. At the end, your level converts to prestige (<code>floor(level/2)</code>) and your
       respect returns to 0. <b>Respec</b> your stats for 90 $OMR (24-hour cooldown).</p>
       ${R(`POST /v1/character · GET /v1/me · /v1/session · POST /v1/respec`)}` },
@@ -205,17 +205,14 @@ const SECTIONS = [
       <p><b>Guns and the Armory.</b> 15 guns (Rusty .25 fp3 to the 'Undertaker' fp60), bought with cash and crates.
       <b>Vests</b> (bought with $OMR) increase survival. <b>Ammo</b> costs $2000 for 50 rounds. Its price is <b>never
       reduced</b> — it controls the cost of a kill.</p>
-      <p><b>Gear</b> (about 50 items, priced in $OMR) increases stats. Gear is a tradeable NFT on the blockchain. A
-      fire-kill has a <b>15% chance to take one in-game gear piece</b> — but <b>gear minted on the blockchain is safe</b>.
-      Keep gear in the game to use it (you can lose it), or move it to the blockchain (it is safe and tradeable, but you
-      cannot use it in the game).</p>
+      <p><b>Gear</b> (about 50 items, priced in $OMR) increases stats. The built chain rail can represent extracted gear as a tradeable NFT. A fire-kill has a <b>15% chance to take one in-game gear piece</b>. Extracted gear is safe but inert. <b>Production extraction is dormant</b>, so gear cannot move on-chain yet.</p>
       <p><b>Rarity, and the way off the board.</b> Every car and boat carries a rarity — Common, Rare, Legendary,
       Epic — rolled by the server the moment you <b>earn</b> it, and logged so the draw can be checked. It is pure
       status: no extra speed, no extra value, nothing but scarcity. You can buy your way up the ladder with $OMR, and
       the price buys <b>exactly the next tier</b> — a known item for a known price, never a roll. That is how the
       upgrade is built today; the old game-wide "nothing sells a random outcome for money" rule was retired
       2026-08-21, and any future product that does sell one will carry its own published odds.</p>
-      <p>You can also take one <b>on-chain</b>, on the same rail gear uses, and that is the real decision:
+      <p>Once the production rail opens, you can also take one <b>on-chain</b> through the same route gear uses. The tradeoff is:
       <b>in-game items are lootable; extracted NFTs are safe, and inert</b>. An extracted car is an ERC-1155 in your own
       wallet — nobody can steal it, win it in a pink-slip race, chop it off your corpse or take it in a war, and it
       <b>survives your death</b> and passes down the bloodline. In exchange it never races, hauls, melts, fences or
@@ -250,10 +247,7 @@ const SECTIONS = [
       ${R(`GET /v1/city [public] · /v1/world · POST /v1/world/:npcId/raid · /v1/world/:npcId/reinforce · GET /v1/market/prices [public]`)}` },
 
   { id: 'economy', group: 'Money', title: 'The Economy — $OMR, the Window & the Vault', tag: 'the money cycle',
-    html: `<p><b>Currencies:</b> cash (pocket and bank), <b>$OMR</b> (premium, earned by playing, extractable
-      on-chain by minted accounts, account-level so it survives death), crates, and ammo. <b>Cash and $OMR do
-      not trade</b> — cash is the city's own money and stays here; $OMR comes in from outside and leaves
-      through the Exchange window. The main rule: the game records every movement of value on a ledger.</p>
+    html: `<p><b>Currencies:</b> cash (pocket and bank), <b>$OMR</b> (premium, account-level, earned through enumerated rules, and eligible for on-chain extraction by minted accounts once the production rail opens), crates, and ammo. <b>Cash can never buy $OMR.</b> The one live conversion runs the other way at the Window: burn $OMR for cash from a funded till. The game records every movement of value on a ledger.</p>
       <p><b>Nothing you do in the game creates $OMR on a schedule.</b> No wage, no yield, no drip — the game has no
       scheduled printer. Outside the mission ladder's one-time payouts (~1,320 across a career) and the small
       daily bonus, every $OMR in this city was <b>bought with real money</b>
@@ -792,11 +786,11 @@ const SECTIONS = [
     html: `<p>Every promise in this game is a formula you can check; this is the other half — what can go wrong,
       stated before you plan around it. Figures are the live levers; if a lever moves, this page moves with it.</p>
       <ul>
-      <li><b>Thin launch liquidity.</b> The token's market opens small by design; ordinary trades move the price, and
+      <li><b>Thin launch liquidity.</b> When the token market opens, it starts small by design; ordinary trades can move the price, and
       a round trip pays the sell tax plus slippage. Do not treat the pool as an exit for size.</li>
-      <li><b>Selling is taxed.</b> On a DEX sell, 9% comes off the top. On top of that, $OMR younger than 48 hours
+      <li><b>Selling is taxed.</b> Once the chain market is live, <b>9% comes off the top</b> of every DEX sell. On top of that, $OMR younger than 48 hours
       pays an early-exit surcharge — up to an extra 50% that fades to zero over the window.</li>
-      <li><b>Withdrawing pays a toll and can queue.</b> Every on-chain withdrawal pays a flat 2% toll, and the rail is
+      <li><b>Withdrawing will pay a toll and can queue.</b> Once production extraction opens, every on-chain withdrawal pays a flat 2% toll, and the rail is
       full-reserve: it signs only what the reserve already holds. A thin reserve means your withdrawal queues —
       debited, safe, signed when revenue funds it. No timing is promised.</li>
       <li><b>Nothing you hold is safe from the game.</b> Unstaked principal unbonds for 6 hours and is lootable the
@@ -826,8 +820,7 @@ const SECTIONS = [
       (defaulted, cannot borrow — square it) · <b>indicted</b> (a RICO case — go to The Law) · <b>in transit</b> (a deposit
       is not cleared — another player can steal it) · <b>unbonding</b> ($OMR is not liquid — another player can steal it) ·
       <b>safehouse</b> (untargetable, but you cannot act) · <b>hospital / lockup / the hole</b> (wait).</p>
-      <h3>Currencies</h3><p><b>Cash</b> (pocket can be stolen, bank is safe) · <b>$OMR</b> (premium, earned by
-      playing — never converted from cash — extractable after minting, account-level, so it survives death;
+      <h3>Currencies</h3><p><b>Cash</b> (pocket can be stolen; cleared bank avoids the killer's cut but does not survive death) · <b>$OMR</b> (premium, earned through enumerated rules, never bought with cash, eligible for extraction after minting once the production rail opens, and account-level so it survives death;
       staked is looted lighter (a fifth vs half), never safe) · <b>crates</b> (guns/gear) ·
       <b>ammo</b> (jumps/fires/raids).</p>
       <h3>Do not confuse these</h3><p>A flat Racket/Asset "Speakeasy/Nightclub/Casino" (buy-once income) is NOT a Business
@@ -847,7 +840,13 @@ const GROUP_ORDER = ['Start','The Basics','Money','Money & Legit','Crews & Famil
 function render() {
   const doc = document.getElementById('doc');
   const nav = document.getElementById('navlist');
-  doc.innerHTML = '<h1 class="visually-hidden">OMERTÀ Codex</h1>'; nav.innerHTML = '';
+  doc.innerHTML = `<header class="codex-intro">
+    <span class="artifact-kicker">Human rulebook · machine truth</span>
+    <h1>THE CODEX</h1>
+    <p>Search the complete city: what every system does, what it costs, what can go wrong, and which route proves it.</p>
+    <div class="artifact-notice artifact-notice--status"><strong>Production status:</strong> the off-chain game and ledger are live. The on-chain extraction rail is built and devnet-proven, but dormant until the audit and launch gates clear.</div>
+  </header>`;
+  nav.innerHTML = '';
   const groups = {};
   for (const s of SECTIONS) (groups[s.group] = groups[s.group] || []).push(s);
   const order = [...GROUP_ORDER.filter((g) => groups[g]), ...Object.keys(groups).filter((g) => !GROUP_ORDER.includes(g))];

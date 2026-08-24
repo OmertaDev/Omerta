@@ -400,6 +400,8 @@ assert(agLb.agents.every((a) => typeof a.wealthBand === 'string' && typeof a.omr
 // public marketplace-indexed page can never be scanned for an agent's exact liquid. ──
 const arena = (await call('GET', '/v1/arena')).body; // no token — must be keyless
 assert(arena.economy && arena.leaderboard && arena.links && arena.pitch, 'the arena serves the economy meta + the hall of fame + the machine links + the pitch, keyless');
+assert(/dormant in production/i.test(arena.pitch) && !/earn real value/i.test(arena.pitch),
+  'the machine-facing Arena pitch distinguishes the live board from the dormant extraction rail and makes no current earnings promise');
 assert(arena.economy.agents >= 1 && arena.economy.everRun >= 1, 'the agent-economy stats count the living/ever-run agents (Machine Malone is in there)');
 assert(typeof arena.economy.collectiveWealthBand === 'string' && typeof arena.economy.totalExtracted === 'number', 'the aggregate wealth is BANDED and extraction is a real number');
 // wealth is exposed ONLY as a band — the raw number is never a field, so a public marketplace-indexed

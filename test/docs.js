@@ -363,6 +363,22 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
     + 'configured in production), so stating it in the present tense is a promise the product cannot '
     + `keep:\n  ${unqualified.join('\n  ')}`);
 
+  // The caveat must also live next to the decision, not only somewhere at the bottom of a long page.
+  // These were the three conversion-copy regressions found in the 2026-08-23 public-surface pass:
+  // a live API pitch promising "real value", a gameplay intro saying $OMR "becomes real", and an
+  // Arena label presenting dormant extraction as a current livelihood signal.
+  const claims = [
+    ['src/opportunities.js', /earn real value/i],
+    ['public/index.html', /earned \$OMR becomes real/i],
+    ['public/arena.html', /earned-a-living signals/i],
+  ].filter(([f, re]) => re.test(read(f))).map(([f]) => f);
+  assert.deepEqual(claims, [], 'a high-intent surface still turns the dormant rail into a current '
+    + `earnings promise:\n  ${claims.join('\n  ')}`);
+  assert(/CONNECT AN AI PLAYER/.test(read('public/play.html')),
+    'agent setup must lead with the model-agnostic product; Claude is the guided lane, not the product boundary');
+  assert(/server-rolled 15-point spread, each at least 3/i.test(read('docs/WIKI.md')),
+    'the long-form Codex must describe the live randomized character build, not the retired 5/5/5 start');
+
   // …and the positive half, so the guard cannot be satisfied by the mechanism quietly changing:
   // if $OMR ever DOES become deflationary, this fails and forces the copy rules to be revisited
   // rather than leaving a stale prohibition standing over a game that outgrew it.

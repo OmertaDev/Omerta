@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OMERTÀ — the books</title>
+<title>OMERTÀ Operations — the books</title>
+<meta name="robots" content="noindex,nofollow">
 <style>
   :root { --bg:#0b0b0e; --panel:#131318; --panel2:#17171e; --line:#26262f; --ink:#d6d2c4;
     --dim:#7d7a6f; --neon:#e8b34b; --blood:#c0392b; --ok:#5fa96b; --bad:#d16055; --cold:#5b84a8; --warn:#d1a355; font-size:15px; }
@@ -16,11 +17,11 @@
   #top .sub { color:var(--dim); font-size:12px; }
   #status { margin-left:auto; font-size:13px; }
   button { background:#1d1d25; border:1px solid var(--line); color:var(--ink); padding:7px 12px;
-    border-radius:4px; cursor:pointer; font-size:12px; min-height:42px; }
+    border-radius:4px; cursor:pointer; font-size:12px; min-height:44px; }
   button:hover { border-color:var(--neon); }
   button.danger { border-color:var(--blood); color:var(--bad); }
   button:focus-visible,input:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
-  input { background:#0e0e12; border:1px solid var(--line); color:var(--ink); padding:7px 8px; border-radius:4px; font-size:12px; min-height:42px; }
+  input { background:#0e0e12; border:1px solid var(--line); color:var(--ink); padding:7px 8px; border-radius:4px; font-size:12px; min-height:44px; }
   .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:12px; padding:12px 16px; }
   .panel { background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:12px; }
   .panel h2 { margin:0 0 10px; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--dim); font-weight:normal; }
@@ -39,9 +40,11 @@
   .bar i { display:block; height:100%; background:var(--neon); }
   .mod-row { display:flex; gap:6px; margin:6px 0; flex-wrap:wrap; align-items:center; }
   .mod-row input { flex:1; min-width:80px; }
-  .center { max-width:420px; margin:16vh auto; text-align:center; }
-  .center h1 { letter-spacing:8px; color:var(--neon); font-weight:normal; }
-  .center p { color:var(--dim); font-size:13px; }
+  .center { width:min(calc(100% - 28px),460px); margin:clamp(64px,16vh,160px) auto; text-align:left; }
+  .center h1 { font-family:var(--display);font-size:clamp(34px,8vw,52px);line-height:1;letter-spacing:.12em;color:var(--neon);font-weight:600;margin:8px 0 12px; }
+  .center p { color:var(--dim); font-size:15px;line-height:1.55; }
+  .login-field{display:grid;gap:6px;margin-top:20px}.login-field label{color:var(--ink);font:600 11px/1.4 var(--mono);letter-spacing:.09em;text-transform:uppercase}
+  .login-actions{display:flex;gap:8px;align-items:stretch}.login-actions input{min-width:0;flex:1}.login-actions button{flex:0 0 auto}
   .hidden { display:none !important; }
   #err { color:var(--bad); font-size:12px; margin-top:6px; }
   .note { color:var(--dim); font-size:11px; margin-top:4px; }
@@ -55,17 +58,20 @@
   .confirm-body{padding:16px 18px;color:var(--ink);font-size:14px;line-height:1.55}
   .confirm-body p{margin:0 0 12px}.confirm-body label{display:block;color:var(--dim);font:11px/1.4 var(--mono);margin-bottom:5px}
   .confirm-body input{width:100%}.confirm-foot{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid var(--line)}
-  @media(max-width:560px){.grid{grid-template-columns:1fr;padding:8px}.center{margin:10vh 14px}.mod-row{align-items:stretch}.mod-field{flex-basis:100%}}
+  @media(max-width:560px){.grid{grid-template-columns:1fr;padding:8px}.center{margin:10vh auto}.login-actions{flex-direction:column}.mod-row{align-items:stretch}.mod-field{flex-basis:100%}}
 </style>
-<link rel="stylesheet" href="/omerta-ui.css?v=20260823">
+<link rel="stylesheet" href="/omerta-ui.css?v=20260824">
 </head>
 <body>
 
-<main id="login" class="center">
+<main id="login" class="center" tabindex="-1">
+  <div class="artifact-kicker">Restricted operator access</div>
   <h1>THE BOOKS</h1>
-  <p>OMERTÀ live-ops. This is the mod console — the whole city, one screen.</p>
-  <div style="margin-top:14px"><label class="visually-hidden" for="mkey">Moderator key</label><input id="mkey" type="password" placeholder="mod key" size="26" autocomplete="current-password" style="font-size:14px">
-    <button id="enter" style="font-size:14px;padding:8px 18px">OPEN THE LEDGER</button></div>
+  <p>Live operations for the whole city: system health, economy integrity, player state, and guarded moderation actions. No city data loads until the moderator key is accepted.</p>
+  <form id="login-form">
+    <div class="login-field"><label for="mkey">Moderator key</label><div class="login-actions"><input id="mkey" type="password" placeholder="Enter the key" size="26" autocomplete="current-password" style="font-size:14px">
+      <button id="enter" type="submit" style="font-size:14px;padding:8px 18px">OPEN THE LEDGER</button></div></div>
+  </form>
   <div id="err" role="alert"></div>
 </main>
 
@@ -168,18 +174,25 @@
     });
   }
 
-  $('#enter').onclick = tryLogin;
-  $('#mkey').onkeydown = (e) => { if (e.key === 'Enter') tryLogin(); };
+  $('#login-form').onsubmit = (e) => { e.preventDefault(); tryLogin(); };
   async function tryLogin() {
     mkey = $('#mkey').value.trim();
+    if (!mkey) { $('#err').textContent = 'Enter the moderator key.'; $('#mkey').focus(); return; }
+    $('#enter').disabled = true;
+    $('#enter').setAttribute('aria-busy', 'true');
+    $('#err').textContent = 'Checking access…';
     const r = await j('GET', '/v1/mod/overview');
     // A 503 means the DATABASE is down, not that the key is wrong — `modAuth` is a pure timing-safe
     // header compare that never touches the database, so a wrong key 401s before the handler runs
     // and a 503 PROVES the key was accepted. Requiring a 200 locked the founder out of the ops
     // dashboard in exactly the situation it exists for: rehearsed on 2026-07-27 against a real
     // Postgres that was then stopped, the correct key returned "Error 503." and there was no way in.
+    $('#enter').disabled = false;
+    $('#enter').removeAttribute('aria-busy');
     if (r.code === 200 || r.code === 503) { sessionStorage.setItem('omerta_mod_key', mkey); showDash(); }
-    else { $('#err').textContent = r.code === 401 ? 'Wrong key.' : `Error ${r.code}.`; }
+    else if (r.code === 401) { $('#err').textContent = 'That moderator key was not accepted.'; $('#mkey').select(); }
+    else if (r.code === 0) { $('#err').textContent = 'Could not reach the operations API. Try again.'; }
+    else { $('#err').textContent = `Operations API returned error ${r.code}.`; }
   }
   $('#logout').onclick = () => { sessionStorage.removeItem('omerta_mod_key'); location.reload(); };
   $('#refresh').onclick = refreshAll;
