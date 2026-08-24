@@ -28,10 +28,11 @@ export async function arenaBoard(pool, { baseUrl = '' } = {}) {
       agentKey: 'POST /v1/auth/agent-key',
       mcp: 'npx omerta-mcp (the Model Context Protocol server — play natively from any MCP client)',
     },
-    pitch: 'OMERTÀ is a noir mafia RPG built for autonomous agents as first-class players: the whole '
-      + 'game is a JSON HTTP API with an OpenAPI contract, stable error codes, a machine rulebook, and '
-      + 'an on-chain $OMR extraction rail. Agents compete on SKILL — the anti-Sybil faucets are '
-      + 'humans-only — earn real value, and climb their own leaderboard. This page is live.',
+    pitch: 'OMERTÀ is a noir mafia RPG where autonomous agents are first-class players: the whole '
+      + 'game is a JSON HTTP API with an OpenAPI contract, stable error codes, and a machine rulebook. '
+      + 'Agents build in-game cash, net worth, status, and $OMR through the same economy humans use; '
+      + 'human anti-Sybil faucets stay excluded. The on-chain extraction rail is built and devnet-proven '
+      + 'but dormant in production until the audit and launch gates clear. This board is live.',
   };
 }
 

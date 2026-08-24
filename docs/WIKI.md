@@ -84,7 +84,8 @@ stops your own attacks and your money movements. A safehouse is a shield, not a 
 ## 2. Your character, death & the heir
 
 Each account has one living character. You start at Level 1 (respect 0). You have 50 energy, 10 nerve, 100
-health, and $500. Your muscle, cunning, and speed are 5 each. You start in the Docks district.
+health, and $500. Your muscle, cunning, and speed are a server-rolled 15-point spread, each at least 3. You
+start in the Docks district.
 
 **Respect, level, and rank.** Respect is your experience. Your level comes from your respect. The **RANKS**
 ladder gives you benefits at each level: L10 Hustler (+5% crime pay), L22 Runner (+1 energy increase), L35
@@ -96,11 +97,11 @@ the gun you carry. You need 50 fp or more to make a lethal attack.
 
 **Death and the estate (section 7.9).** A lethal attack starts the **estate** process in one step. **The
 character dies, but your account does not die.** An heir is born. The heir is a new character (generation
-+1). The heir inherits everything at the account level. **These are lost when the character dies:** stats,
-skills, businesses, the speakeasy, the Kitchen crew, the boxing fighter, control of territory operations, and
-this season's kills. **These pass to the heir:** prestige, the
-**Estate**, the Store **patron/pass** benefit, **hitman reputation and lifetime kills**,
-minted status, revive tokens, and 25% of your **Underworld** standings.
++1). **These are lost when the character dies:** pocket and bank cash, stats, skills, businesses, the
+speakeasy, the Kitchen crew, the boxing fighter, control of territory operations, and this season's kills.
+**These pass to the heir:** the remaining $OMR after the game's loot and death rules, prestige, the
+**Estate**, deeds, the Store **patron/pass** benefit, minted status, revive tokens, account-level legends,
+and 25% of your **Underworld** standings.
 
 **Prestige and seasons.** A season is 28 days. At the end of a season, your level converts to **prestige**
 (`floor(level/2)`). Your respect returns to 0.
@@ -131,8 +132,8 @@ exactly the next tier — a known item for a known price, never a roll. That is 
 today. (The old game-wide "nothing sells a random outcome for money" rule was retired by the founder on
 2026-08-21 — any future product that does sell one will carry its own published odds, stated before you pay.)
 
-You can also take one **ON-CHAIN** (`POST /v1/nft/:kind/:id/withdraw`, on the same rail gear uses),
-and this is the real decision:
+Once the production rail opens, you can also take one **ON-CHAIN**
+(`POST /v1/nft/:kind/:id/withdraw`, on the same rail gear uses). The tradeoff is:
 
 > **In-game items are lootable. Extracted NFTs are safe, and inert.**
 
@@ -154,11 +155,10 @@ your chance to survive. Routes: `POST /v1/armory/gun/:id/buy`, `/equip`, `/unequ
 `/armory/ammo`. Ammo costs $2000 for 50 rounds. **The price of ammo is never reduced. Ammo controls the cost
 of a kill.**
 
-**Gear** (about 50 items, from Common to Legendary, priced in $OMR) increases your stats. Gear is a
-**tradeable NFT on the blockchain** (the GearVault system, section 29). When a player kills you with a fire
-attack, they have a **15% chance to take one piece of your in-game gear.** **Gear that you minted on the
-blockchain is safe.** It has left the game. Keep gear in the game to use it (you can lose it), or move it to
-the blockchain (it is safe and tradeable, but you cannot use it in the game).
+**Gear** (about 50 items, from Common to Legendary, priced in $OMR) increases your stats. The built chain
+rail can represent extracted gear as a tradeable NFT (the GearVault system, section 29). When a player kills
+you with a fire attack, they have a **15% chance to take one piece of your in-game gear.** Extracted gear is
+safe but inert. **Production extraction is dormant**, so gear cannot move on-chain yet.
 
 **Consumables** (bought with crates): espresso (+energy), medkit (+health), Getaway Kit (leave jail), Priest's
 Alibi (−heat), and more. Route: `POST /v1/items/:id/use`. The **Workshop** (`POST /v1/workshop/craft/:id`,
@@ -201,11 +201,11 @@ with raids, a small garrison is enough.
 
 ## 5. The economy
 
-**Currencies:** **cash** (in your pocket and your bank), **$OMR** (the premium currency; earned by
-playing, extractable on-chain by minted accounts; held at the account level, so it survives death),
-**crates** (cb), and **ammo**. **Cash and $OMR do not trade** — cash is the city's own money and it
-stays in the city; $OMR comes in from outside and leaves through the Exchange window. The
-main economic rule (section 10.4): the game records and checks every movement of value.
+**Currencies:** **cash** (in your pocket and your bank), **$OMR** (premium, account-level, earned through
+enumerated rules, and eligible for on-chain extraction by minted accounts once the production rail opens),
+**crates** (cb), and **ammo**. **Cash can never buy $OMR.** The one live conversion runs the other way at
+the Window: burn $OMR for cash from a funded till. The main economic rule (section 10.4) is that the game
+records and checks every movement of value.
 
 **Nothing you do in the game creates $OMR on a schedule.** There is no wage, no yield and no drip — the city has no
 scheduled printer. Outside the mission ladder's one-time payouts (~1,320 across a career) and the small
@@ -1236,14 +1236,14 @@ wrong, stated plainly BEFORE you plan around it. It is not legal advice, and it 
 written the way a careful counterparty would want it written. Figures below are the live levers; if
 a lever moves, this page moves with it (a test enforces that).
 
-- **Thin launch liquidity.** The token's market opens SMALL by design. Ordinary trades move the
+- **Thin launch liquidity.** When the token market opens, it starts SMALL by design. Ordinary trades can move the
   price, and a round trip pays the sell tax plus slippage. Do not treat the pool as an exit for
   size.
-- **Selling is taxed.** On a DEX sell, 9% comes off the top (split between the founder, the
+- **Selling is taxed.** Once the chain market is live, **9% comes off the top** of every DEX sell (split between the founder, the
   treasury and the pool's own depth). On top of that, $OMR younger than 48 hours pays an early-exit
   surcharge — up to an extra 50% that fades to zero over the window. Fresh tokens are expensive to
   flip; that is the design, not a bug.
-- **Withdrawing pays a toll and can queue.** Every on-chain withdrawal pays a flat 2% toll, and the
+- **Withdrawing will pay a toll and can queue.** Once production extraction opens, every on-chain withdrawal pays a flat 2% toll, and the
   rail is FULL-RESERVE: the server signs only what the reserve already holds, funded by real
   revenue. If the reserve is thin your withdrawal QUEUES — debited, safe, and signed when revenue
   funds it. No timing is promised.
@@ -1295,9 +1295,9 @@ can steal it) · **unbonding** ($OMR is not liquid yet — another player can st
 (untargetable, but you cannot act) · **hospital / lockup / the hole** (wait).
 
 ### Currency quick-reference
-- **Cash** — earned everywhere. Pocket cash can be stolen. Bank cash is safe (after it clears).
-- **$OMR** — the premium currency. It is earned by playing (never converted from cash), can be staked,
-  and can be extracted (after you mint). It is account-level, so it survives death. A killer takes half a loose or
+- **Cash** — earned everywhere. Pocket cash can be stolen. Cleared bank cash avoids a killer's cut but does not survive death.
+- **$OMR** — the premium currency. It is earned through enumerated rules (never bought with cash), can be staked,
+  and becomes eligible for extraction after you mint and the production rail opens. It is account-level, so it survives death. A killer takes half a loose or
   unbonding balance and a fifth of a staked one — cheaper, never safe.
 - **Crates (cb)** — from crimes and cooking. Use them to buy guns and make gear.
 - **Ammo** — from melting cars, or bought at $2000 for 50. Used on jumps, fires, raids, and ambushes.
