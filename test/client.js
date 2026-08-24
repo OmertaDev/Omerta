@@ -50,7 +50,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { buildServer } from '../src/server.js';
 import { M3, M4, PATHS, NPC_HITMEN, HEIST_ROLES, HEIST_JOBS, DRUGS, GOODS, DISTRICTS,
   COMMISSION, CONVOY, DUELS, TERRITORY_TYPES, CARS, TRIMS, ASSETS, RACKETS, BUSINESSES, ESTATE, WIRE, SECRETS, STABLE, WORLD, WORLD_NPCS,
-  PEN, HONOR, MARRIAGE, CAMPAIGNS, LIMITED_RUNS, VANITY } from '../src/rules.js';
+  PEN, HONOR, MARRIAGE, CAMPAIGNS, LIMITED_RUNS, SHIPMENT, VANITY } from '../src/rules.js';
 import { bumpHonor } from '../src/honor.js';
 import { mintLimitedRun } from '../src/economy.js';
 
@@ -6720,6 +6720,20 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   assert(/\$/.test(dice70.line), `craps must still name the money: ${dice70.line}`);
   if (dice70.r.body.point) assert(new RegExp(`point ${dice70.r.body.point}`).test(dice70.line),
     `craps must name the point it was chasing: ${dice70.line}`);
+
+  // ── WAVE 71: THE SHIPMENT — the collectible was named, both things consumed were not ─────────
+  // A commission is a two-input sink: the daily contested material plus cash. The board quotes both,
+  // but the receipt only said “commissioned, and yours.” Drive it so dropping either SERVER field
+  // cannot pass behind a synthetic response.
+  const commission71 = SHIPMENT.COMMISSIONS[0];
+  await app.pool.query('UPDATE characters SET shipment=$2, cash=90000000 WHERE id=$1', [id65, commission71.units]);
+  const made71 = await drive65(`/v1/shipment/commission/${commission71.id}`);
+  assert.equal(made71.r.body.units, commission71.units, 'the commission must SEND the scarce units it consumed');
+  assert.equal(made71.r.body.material, SHIPMENT.MATERIAL, 'the commission must SEND the material name');
+  assert(made71.r.body.spent > 0, 'the commission must SEND the cash it consumed');
+  assert(new RegExp(`${made71.r.body.units} of ${made71.r.body.material}`).test(made71.line)
+    && new RegExp(`\\$${made71.r.body.spent.toLocaleString('en-US')}`).test(made71.line),
+  `the DRIVEN commission receipt must name BOTH consumed inputs: ${made71.line}`);
 
 
 }

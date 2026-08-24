@@ -108,6 +108,8 @@ const cashBefore = Number((await pool.query(`SELECT cash FROM characters WHERE i
 r = await call('POST', `/v1/shipment/commission/${piece.id}`, { token: ace.token });
 assert.equal(r.code, 200, 'the craftsman takes the commission');
 assert.equal(r.body.piece.serial, 1, 'the first of its kind in this city');
+assert.equal(r.body.units, piece.units, 'the receipt sends how much scarce material it consumed');
+assert.equal(r.body.material, SHIPMENT.MATERIAL, 'and names that material instead of making the client guess');
 assert.equal(await heldBy(ace.id), 0, 'the material is consumed');
 assert.equal(Number((await pool.query(`SELECT cash FROM characters WHERE id='${ace.id}'`)).rows[0].cash),
   cashBefore - piece.cash, 'and the cash is spent to the dollar');
@@ -129,6 +131,24 @@ assert.equal(me.bespoke.length, 1, 'the sheet carries the pieces you commissione
 const col = (await call('GET', '/v1/collection', { token: ace.token })).body;
 assert(col.categories.find((c) => c.id === 'bespoke').items.find((i) => i.id === piece.id).got,
   'and the collection logged it');
+
+// Serial allocation is a shared write across DIFFERENT character locks. COUNT(*) + 1 lets two
+// simultaneous commissions choose the same number; the PK rolls one transaction back as contention,
+// even though both commissions were valid. The counter upsert is the serialization point instead.
+const commissionSrc = (await import('node:fs')).readFileSync('src/shipment.js', 'utf8')
+  .split('export async function commissionPiece')[1].split('export async function')[0];
+assert(/INSERT INTO bespoke_serials[\s\S]+ON CONFLICT[\s\S]+DO UPDATE[\s\S]+RETURNING minted/.test(commissionSrc),
+  'commission serials come from one atomic per-piece counter upsert');
+assert(!/SELECT COUNT\(\*\)[\s\S]+FROM bespoke_pieces/.test(commissionSrc),
+  'commission serials never use a raced COUNT(*) + 1');
+
+// Upgrade posture: production already has numbered pieces. If the new counter has not seen this
+// kind yet, it must begin after the highest historical serial rather than collide with #1.
+await pool.query('DELETE FROM bespoke_serials WHERE commission_id=$1', [piece.id]);
+await pool.query(`UPDATE characters SET shipment=${piece.units}, cash=${piece.cash} WHERE id='${cy.id}'`);
+r = await call('POST', `/v1/shipment/commission/${piece.id}`, { token: cy.token });
+assert.equal(r.code, 200, 'a pre-counter city can still commission after the upgrade');
+assert.equal(r.body.piece.serial, 3, 'the first counter allocation continues after historical pieces');
 
 // refusals when short of either half
 r = await call('POST', `/v1/shipment/commission/${piece.id}`, { token: ace.token });

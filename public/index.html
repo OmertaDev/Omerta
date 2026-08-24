@@ -2269,7 +2269,8 @@
     // THE SHIPMENT — the take and the commission. The take says how much of the CITY'S day is left,
     // because that's the number a player is actually racing.
     if (body && body.took != null && body.material) return `\uD83D\uDCE6 took ${body.took} of ${body.material} — ${body.cityLeft} left in the whole city today`;
-    if (body && body.piece && body.piece.serial) return `\u2726 ${body.piece.name} — number ${body.piece.serial}. Commissioned, and yours.`;
+    if (body && body.piece && body.piece.serial) return `\u2726 ${body.piece.name}, number ${body.piece.serial}. `
+      + `${body.units} of ${body.material} + $${fmt(body.spent)} spent; ${body.held} ${body.material} left.`;
     if (body && body.tokenId && body.nonce != null)
       return `\u26D3 ${body.name || 'it'} is on-chain — token #${body.tokenId}. Safe forever, and out of the game.`;
     if (body && body.referrer && body.ok) return `on the record — ${body.referrer} gets credit as you come up`;

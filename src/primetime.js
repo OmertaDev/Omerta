@@ -203,8 +203,12 @@ export async function settlePrimeTime(pool) {
     await client.query('BEGIN');
     const now = Date.now();
     const today = dayOf(now);
-    for (let d = today - 1; d >= today - 3; d--) {   // look back a few closed nights (worker-downtime backfill)
-      const pt = primeTimeOf(d);
+    // Include today: a drawn window may close hours before UTC midnight, and the UI promises close-
+    // time settlement. The old yesterday-first scan left those rows pending until the day rolled.
+    // The explicit end check keeps the live/current window out while retaining the downtime backfill.
+    for (let d = today; d >= today - 3; d--) {
+      const { pt, end } = windowOf(d);
+      if (now < end) continue;
       // Only rally + siege settle at close (happy hour pays per-round in-window; honor rally rows are born
       // settled). Both settling mechanics ride primetime_rally, so the row set + claim discipline is shared.
       const isRally = pt.mechanic === 'rally' && pt.mode === 'value';
