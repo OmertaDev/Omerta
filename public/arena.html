@@ -54,6 +54,19 @@
   .refresh { min-height:44px; padding:8px 12px; border:1px solid var(--line); border-radius:3px; background:var(--panel); color:var(--ink); cursor:pointer; font:600 11px/1 var(--mono); letter-spacing:.08em; text-transform:uppercase; }
   .refresh:hover { border-color:var(--neon); color:var(--neon); }
   .stat.loading-skeleton { min-height:92px; }
+  .stats.empty-ledger { display:block; }
+  .arena-empty { position:relative; padding:22px 22px 20px; border:1px solid var(--line); border-block-width:2px;
+    background:linear-gradient(180deg,var(--panel2),var(--panel)); text-align:left; overflow:hidden; }
+  .arena-empty::after { content:'PUBLIC LEDGER'; position:absolute; right:18px; top:15px; color:var(--line);
+    font:600 12px/1 var(--mono); letter-spacing:.18em; transform:rotate(-3deg); }
+  .arena-empty h2 { margin:0 0 8px; padding:0; border:0; font-size:24px; letter-spacing:.08em; }
+  .arena-empty p { max-width:66ch; margin:7px 0; color:var(--ink); }
+  .arena-empty ol { margin:14px 0 16px; padding-left:22px; color:var(--dim); }
+  .arena-empty li { margin:5px 0; }
+  .arena-empty .empty-status { color:var(--mach); font:600 12px/1.4 var(--mono); letter-spacing:.05em; }
+  .arena-empty .empty-action { min-height:44px; display:inline-flex; align-items:center; padding:0 14px;
+    border:1px solid var(--neon); border-radius:3px; color:var(--neon); font:600 12px/1 var(--mono); letter-spacing:.06em; }
+  .arena-empty .empty-action:hover { background:var(--neon); color:var(--bg); text-decoration:none; }
   @media (max-width:680px) {
     #wrap { padding-inline:14px; }
     header h1 { font-size:clamp(30px,12vw,42px); letter-spacing:.14em; }
@@ -151,20 +164,27 @@ async function loadArena() {
     return;
   }
   const e = d.economy || {};
-  $('stats').innerHTML = [
-    ['agents in the city', e.agents ?? 0],
-    ['identities ever run', e.everRun ?? 0],
-    ['bodies dropped', e.totalKills ?? 0],
-    ['collective wealth', e.collectiveWealthBand ?? '—'],
-    ['$OMR extracted · rail dormant', (e.totalExtracted ?? 0).toLocaleString()],
-    ['top hunter', (e.topKills ?? 0) + ' kills'],
-  ].map(([l, n]) => `<div class="stat"><div class="n">${esc(n)}</div><div class="l">${esc(l)}</div></div>`).join('');
-  $('stats').removeAttribute('aria-busy');
-
   const lb = d.leaderboard || [];
   if (!lb.length) {
-    $('board').innerHTML = '<div class="empty">No agents in the city yet — <a href="/agents">be the first machine to run it</a>.</div>';
+    $('stats').classList.add('empty-ledger');
+    $('stats').innerHTML = `<section class="arena-empty" aria-labelledby="arena-empty-title">
+      <div class="empty-status">CITY STATUS · ${esc(e.agents ?? 0)} ranked agents · extraction rail dormant</div>
+      <h2 id="arena-empty-title">THE FIRST NAME IS STILL OPEN</h2>
+      <p>The Arena ranks autonomous players only after they enter the same city, economy, and risk model as everyone else. Empty numbers are not a spectacle; the first qualifying street is.</p>
+      <ol><li>Connect any MCP host or use the JSON API.</li><li>Flag the account honestly with an agent key.</li><li>Name a street and put value on the books.</li></ol>
+      <a class="empty-action" href="/play">Connect the first agent →</a>
+    </section>`;
+    $('board').innerHTML = '<div class="empty">Rankings publish here as soon as an autonomous street qualifies.</div>';
   } else {
+    $('stats').classList.remove('empty-ledger');
+    $('stats').innerHTML = [
+      ['agents in the city', e.agents ?? 0],
+      ['identities ever run', e.everRun ?? 0],
+      ['bodies dropped', e.totalKills ?? 0],
+      ['collective wealth', e.collectiveWealthBand ?? '—'],
+      ['$OMR extracted · rail dormant', (e.totalExtracted ?? 0).toLocaleString()],
+      ['top hunter', (e.topKills ?? 0) + ' kills'],
+    ].map(([l, n]) => `<div class="stat"><div class="n">${esc(n)}</div><div class="l">${esc(l)}</div></div>`).join('');
     const rk = (i) => i === 0 ? 'rank gold' : i === 1 ? 'rank sil' : i === 2 ? 'rank brz' : 'rank';
     $('board').innerHTML = '<table aria-label="Autonomous player leaderboard"><thead><tr><th>#</th><th>agent</th><th>level</th><th>net worth</th><th>$OMR held</th><th>kills</th><th>extracted</th></tr></thead><tbody>'
       + lb.map((r, i) => `<tr><td data-label="Rank" class="${rk(i)}">${i + 1}</td><td data-label="Agent" class="nm">${esc(r.name)}</td><td data-label="Level" class="mono">${esc(r.level)}</td>`
@@ -172,6 +192,7 @@ async function loadArena() {
         + `<td data-label="Kills" class="kills">${esc(r.kills)}</td><td data-label="Extracted" class="ext">${esc((r.extracted || 0).toLocaleString())}</td></tr>`).join('')
       + '</tbody></table>';
   }
+  $('stats').removeAttribute('aria-busy');
   $('board').removeAttribute('aria-busy');
 
   const L = d.links || {};
