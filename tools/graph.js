@@ -38,9 +38,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { fileURLToPath } from 'node:url';
 
-const ROOT = path.resolve(new URL('.', import.meta.url).pathname, '..');
-const rel = (p) => path.relative(ROOT, p);
+// URL.pathname leaves Windows file URLs in `/C:/...` form; feeding that back to path.resolve()
+// produces `C:\C:\...`. Convert through the platform-aware URL helper before joining paths.
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const rel = (p) => path.relative(ROOT, p).replaceAll('\\', '/');
 const read = (p) => fs.readFileSync(p, 'utf8');
 const sha = (s) => crypto.createHash('sha256').update(s).digest('hex').slice(0, 12);
 
@@ -111,8 +114,10 @@ export function build() {
   const testFiles = walk(path.join(ROOT, 'test'), (f) => f.endsWith('.js'));
   const toolFiles = walk(path.join(ROOT, 'tools'), (f) => f.endsWith('.js'));
   const docFiles = [
-    ...walk(ROOT, (f) => f.endsWith('.md') && !f.includes('/node_modules/')
-      && !f.includes('/omerta-contracts/') && !f.includes('/omerta-mcp/')),
+    ...walk(ROOT, (f) => {
+      const r = rel(f);
+      return f.endsWith('.md') && !r.startsWith('omerta-contracts/') && !r.startsWith('omerta-mcp/');
+    }),
   ];
 
   // ── Levers: SCREAMING_CASE keys declared in the HAND-WRITTEN rules tail ────────────────────────

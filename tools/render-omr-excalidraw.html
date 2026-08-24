@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body { background: #fff; overflow: hidden; }
+      #root { display: inline-block; }
+      #root svg { display: block; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module">
+      import { exportToSvg } from 'https://esm.run/@excalidraw/excalidraw@0.18.0';
+
+      window.renderDiagram = async (data) => {
+        try {
+          const svg = await exportToSvg({
+            elements: data.elements || [],
+            appState: {
+              ...(data.appState || {}),
+              exportBackground: true,
+              exportWithDarkMode: false,
+              viewBackgroundColor: '#ffffff',
+            },
+            files: data.files || {},
+          });
+          const root = document.querySelector('#root');
+          root.replaceChildren(svg);
+          return { success: true, width: svg.getAttribute('width'), height: svg.getAttribute('height') };
+        } catch (error) {
+          return { success: false, error: error.message };
+        }
+      };
+      window.__moduleReady = true;
+    </script>
+  </body>
+</html>

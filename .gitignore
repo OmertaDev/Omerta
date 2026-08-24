@@ -21,3 +21,4 @@ baselines/
 # manifest, so a clip in this directory IS in the game (the gitignored-directory CI 404 of
 # 2026-08-14 is the reason this is stated rather than assumed)
 probe-tmp.mjs
+.worktrees/

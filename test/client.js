@@ -2248,7 +2248,9 @@ const shieldStats = { routes: 0, markup: 0, wired: 0 };
 // it reads as a page bug and is a probe bug — that mistake cost a false finding while writing this).
 const rulesBody = (await inject('GET', '/v1/rules', token)).body;
 const DESCRIBE = (() => {
-  const L = html.split('\n');
+  // Git may materialize the HTML with CRLF on Windows. Strip the optional carriage return so
+  // exact declaration-boundary checks below see the same source lines on every platform.
+  const L = html.split(/\r?\n/);
   // Take each helper as a WHOLE DECLARATION rather than a line, or a fixed count of them. All the
   // shapes it must handle are live in the client right now: `esc`/`nth` are one line, `minsTxt` is a
   // four-line ternary, and `fmt` is a six-line block. A one-line grab silently truncates the block

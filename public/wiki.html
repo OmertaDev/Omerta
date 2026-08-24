@@ -106,6 +106,15 @@
   #doc .routes{color:var(--faint);font-size:12px;font-family:var(--mono);line-height:1.7;
     border-top:1px solid var(--line);margin-top:20px;padding-top:11px;word-break:break-word}
 
+  /* Editorial research sheets. The previews stay compact; each image links to the full-resolution export. */
+  #doc .diagram-series{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:22px 0 28px;max-width:1040px}
+  #doc .diagram-sheet{margin:0;background:#f8fafc;border:1px solid var(--line2);border-radius:2px;overflow:hidden}
+  #doc .diagram-sheet:first-child{grid-column:1/-1}
+  #doc .diagram-sheet a{display:block;background:#fff}
+  #doc .diagram-sheet img{display:block;width:100%;height:auto}
+  #doc .diagram-sheet figcaption{padding:8px 10px;background:var(--panel2);color:var(--dim);font:11px/1.45 var(--mono)}
+  #doc .diagram-sheet:hover{border-color:var(--neon-d)}
+
   #totop{position:fixed;right:22px;bottom:22px;z-index:7;font-family:var(--mono);font-size:11px;
     letter-spacing:.1em;color:var(--dim);background:rgba(18,17,16,.94);border:1px solid var(--line2);
     min-height:44px;display:inline-flex;align-items:center;padding:9px 13px;border-radius:2px;opacity:0;pointer-events:none;transition:opacity .2s}
@@ -123,6 +132,7 @@
     #doc{padding:26px 18px 80px}
     #doc .codex-intro{margin-bottom:32px}
     #doc section{margin-bottom:40px;padding-bottom:30px}
+    #doc .diagram-series{grid-template-columns:1fr}
     #top{padding:11px 14px;gap:10px}
     #top h1{font-size:20px}
     #top .sub{display:none}
@@ -249,11 +259,16 @@ const SECTIONS = [
       ${R(`GET /v1/city [public] · /v1/world · POST /v1/world/:npcId/raid · /v1/world/:npcId/reinforce · GET /v1/market/prices [public]`)}` },
 
   { id: 'economy', group: 'Money', title: 'The Economy — $OMR, the Window & the Vault', tag: 'the money cycle',
-    html: `<p><b>Currencies:</b> cash (pocket and bank), <b>$OMR</b> (premium, account-level, earned through enumerated rules, and eligible for on-chain extraction by minted accounts once the production rail opens), crates, and ammo. <b>Cash can never buy $OMR.</b> The one live conversion runs the other way at the Window: burn $OMR for cash from a funded till. The game records every movement of value on a ledger.</p>
-      <p><b>Nothing you do in the game creates $OMR on a schedule.</b> No wage, no yield, no drip — the game has no
-      scheduled printer. Outside the mission ladder's one-time payouts (~1,320 across a career) and the small
-      daily bonus, every $OMR in this city was <b>bought with real money</b>
-      by somebody, which is exactly why it is worth taking off them. Five ways to get some: <b>take it</b>
+    html: `<p><b>Currencies:</b> cash (pocket and bank), <b>$OMR</b> (premium, account-level, earned through enumerated rules, and eligible for on-chain extraction by minted accounts once the production rail opens), crates, and ammo. <b>Cash can never buy $OMR.</b> The one live conversion runs the other way at the Window: spend $OMR for cash from a funded till. The game records every movement of value on a ledger.</p>
+      <div class="diagram-series" aria-label="Five-sheet OMR system explainer">
+        <figure class="diagram-sheet"><a href="/art/omr-01-severance.png"><img src="/art/omr-01-severance.png" width="2568" height="1592" loading="lazy" alt="OMR map: one token, two ledgers, and the explicit extraction bridge."></a><figcaption>01 / 05 · SEVERANCE + SUPPLY RAIL</figcaption></figure>
+        <figure class="diagram-sheet"><a href="/art/omr-02-return-velocity.png"><img src="/art/omr-02-return-velocity.png" width="2568" height="1626" loading="lazy" alt="OMR return-velocity loop from utility to house sink to the daily Desk auction."></a><figcaption>02 / 05 · RETURN VELOCITY</figcaption></figure>
+        <figure class="diagram-sheet"><a href="/art/omr-03-money-router.png"><img src="/art/omr-03-money-router.png" width="2568" height="1638" loading="lazy" alt="OMR money router showing declared revenue sources, destinations, and three bounded buybacks."></a><figcaption>03 / 05 · DECLARED WATERFALL</figcaption></figure>
+        <figure class="diagram-sheet"><a href="/art/omr-04-reserve-rwa.png"><img src="/art/omr-04-reserve-rwa.png" width="2568" height="1642" loading="lazy" alt="OMR reserve and RWA rails showing conservation invariants and dormant launch state."></a><figcaption>04 / 05 · RESERVE + RWA RAILS</figcaption></figure>
+        <figure class="diagram-sheet"><a href="/art/omr-05-ohm-contrast.png"><img src="/art/omr-05-ohm-contrast.png" width="2568" height="1648" loading="lazy" alt="Comparison of legacy 2021 Olympus mechanics and OMR's coded design."></a><figcaption>05 / 05 · LEGACY OHM CONTRAST</figcaption></figure>
+      </div>
+      <p><b>The game has no time-based $OMR faucet.</b> No wage, inflationary yield, or drip. One-time mission awards and daily prize credits are enumerated and funded on the game ledger; they do not call the ERC-20 mint. The contract has one additional mint path — <b>OmertaBond</b> — behind a daily cap, a 20% discount ceiling, a fail-closed TWAP and an absolute rate wall. Contract staking, if funded, redistributes a pre-loaded reward pool rather than minting rewards.</p>
+      <p>Five ways to get some: <b>take it</b>
       (a kill loots the victim's liquid $OMR — staked and committed $OMR is safer), <b>earn it</b> from a
       player who pays you in it, <b>work for it</b> (the mission ladder's one-time payouts and the daily
       all-three bonus), <b>buy it</b>, or <b>get paid out of the Bank</b>. A nightly job asserts nothing
@@ -281,8 +296,8 @@ const SECTIONS = [
       paying fees to trade with itself. The
       board publishes the shelf, the clock, the price and the exact list of spends that feed it. <b>$OMR
       bought at the desk is FRESH</b> — full early-exit toll for its first 48 hours, like any other.</p>
-      <p><b>The Exchange window</b> — the ONE conversion, one way: burn $OMR, receive cash at a published
-      rate, from a till that real cash sinks fill. A short till refuses and burns nothing. 5% of every
+      <p><b>The Exchange window</b> — the ONE conversion, one way: spend $OMR, receive cash at a published
+      rate, from a till that real cash sinks fill. A short till refuses and takes nothing. 5% of every
       redemption goes to the top families (the family yield). <b>Cash can never become $OMR</b> — there is no swap
       and no laundering rail. <b>The early-exit tax:</b> $OMR younger than 48 hours pays
       an extra toll when withdrawn on-chain — 50% at age zero, straight-line to 0% at 48 hours, newest tokens
@@ -290,8 +305,8 @@ const SECTIONS = [
       <p><b>THE MADE MAN</b> — the recurring subscription. Pay <b>120 $OMR every 30 days</b> and you are <i>made</i>:
       the badge, the upper compound (Country Estate and above), a club of your own, and <b>the pad pays itself</b> —
       your fronts settle their own cash upkeep the moment you touch them, so a stretch away does not leave them cold.
-      <b>It buys standing, never power:</b> no earning loop is gated, no odds move, no stat changes, and the pad is not
-      discounted by a cent. Operating costs stay in cash — all of them — which is the line that keeps the game free. A
+      <b>It buys capped economic capacity and convenience, never a higher combat ceiling:</b> raw combat stats and the
+      maximum combat power do not move. Operating costs stay in cash — all of them — which is the line that keeps the game free. A
       man who never pays dues runs the whole city at full strength, and can hunt made men for their $OMR. Dues are a
       sink like any other, so they go to <b>the Desk</b> to be sold again rather than being destroyed.</p>
       <p><b>The access stake</b> — the Den's high-stakes room wants a seat (level 30, or the Madame's velvet rope)

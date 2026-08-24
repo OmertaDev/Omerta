@@ -26,8 +26,10 @@
 import assert from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const SRC = new URL('../src/', import.meta.url).pathname;
+const SRC = fileURLToPath(new URL('../src/', import.meta.url));
+const relPath = (from, to) => path.relative(from, to).replaceAll('\\', '/');
 const GATES = ['jailed', 'hospitalized', 'safeHoused', 'penSafe', 'inHole', 'witproActive'];
 // The column each gate reads, so a hand-written inline check counts as enforcement. Matched as a
 // PROPERTY ACCESS (`ch.safe_until`) rather than the bare column, because the bare name also appears
@@ -307,7 +309,7 @@ const DEFINES_CANON = {                                 // file → why it may b
 };
 const copies = [];
 for (const f of files) {
-  const rel = path.relative(process.cwd(), f);
+  const rel = relPath(process.cwd(), f);
   if (DEFINES_CANON[rel]) continue;
   const src = fs.readFileSync(f, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
   for (const g of CANON) {
@@ -346,7 +348,7 @@ const DISTRICT_WAIVED = {
 const mute = [];
 let districtGates = 0;
 for (const f of files) {
-  const rel = path.relative(process.cwd(), f);
+  const rel = relPath(process.cwd(), f);
   const src = fs.readFileSync(f, 'utf8');
   for (const m of src.matchAll(/new GameError\(\s*'district'/g)) {
     districtGates++;
@@ -489,7 +491,7 @@ console.log('✅ THE GATE MATRIX passed — every verb in a family enforces the 
       for (let j = i + 1; j < lines.length && !/^\}/.test(lines[j]); j++) {
         if (new RegExp(`\\b${v}\\.release\\(\\)`).test(lines[j])) { released = true; break; }
       }
-      if (!released) leaked.push(`${path.relative(SRC, f)}:${i + 1} (${v})`);
+      if (!released) leaked.push(`${relPath(SRC, f)}:${i + 1} (${v})`);
     }
   }
   // Anti-vacuity: an empty `leaked` is also what a broken scanner looks like. The tree has >100 of
@@ -537,7 +539,7 @@ console.log('✅ THE GATE MATRIX passed — every verb in a family enforces the 
   const bad = [];
   let handovers = 0;
   for (const f of files) {
-    const rel = path.relative(SRC, f);
+    const rel = relPath(SRC, f);
     const lines = fs.readFileSync(f, 'utf8').split('\n');
     for (let i = 0; i < lines.length; i++) {
       const m = /UPDATE (cars|boats) SET character_id\s*=/.exec(lines[i]);
@@ -601,7 +603,7 @@ const SCENERY_WAIVED = {
 {
   const bad = [], boards = [];
   for (const f of files) {
-    const rel = path.relative(SRC, f);
+    const rel = relPath(SRC, f);
     const src = fs.readFileSync(f, 'utf8');
     for (const m of src.matchAll(/export async function (\w*[Ll]eaderboard)\s*\(/g)) {
       const name = `${rel}:${m[1]}`;
@@ -812,7 +814,7 @@ const SCENERY_WAIVED = {
   const seenKeys = new Set();
   let gates = 0;
   for (const f of files) {                       // the tree-wide list built at the top of this file
-    const rel = path.relative(SRC, f);
+    const rel = relPath(SRC, f);
     // line-based, so drop whole-line comments: prose about a gate is not a gate (the gate-matrix
     // extractor learned this the expensive way — an over-read is the permissive direction).
     const lines = fs.readFileSync(f, 'utf8').split('\n').map((l) => (/^\s*(\/\/|\*)/.test(l) ? '' : l));
@@ -897,7 +899,7 @@ const SCENERY_WAIVED = {
     Transfer: 'the ERC-721 standard event (OpenZeppelin IERC721), not declared in our sources',
   };
 
-  const SOL = new URL('../omerta-contracts/src/', import.meta.url).pathname;
+  const SOL = fileURLToPath(new URL('../omerta-contracts/src/', import.meta.url));
   const walkSol = (d) => fs.readdirSync(d, { withFileTypes: true })
     .flatMap((e) => (e.isDirectory() ? walkSol(path.join(d, e.name)) : [path.join(d, e.name)]));
 
@@ -921,7 +923,7 @@ const SCENERY_WAIVED = {
     const s = fs.readFileSync(f, 'utf8');
     for (const m of s.matchAll(/parseAbiItem\(\s*'(event [^']+)'\s*\)/g)) {
       const e = parseEvt(m[1]);
-      if (e) backendEvents.push({ file: path.relative(SRC, f), ...e });
+      if (e) backendEvents.push({ file: relPath(SRC, f), ...e });
     }
   }
   const onchain = new Map();
@@ -997,7 +999,7 @@ const SCENERY_WAIVED = {
         if (!bound) continue;                    // nothing named an event yet — not a decode we can bind
         argReads++;
         if (!declared.get(bound).includes(m[1]))
-          argDrift.push(`${path.relative(SRC, f)}:${i + 1}  reads .args.${m[1]}, but ${bound} declares (${declared.get(bound).join(', ')})`);
+          argDrift.push(`${relPath(SRC, f)}:${i + 1}  reads .args.${m[1]}, but ${bound} declares (${declared.get(bound).join(', ')})`);
       }
     }
   }
@@ -1071,7 +1073,7 @@ const SCENERY_WAIVED = {
         if (!locks.length) continue;
         segments++;
         singletonSites += locks.filter((t) => SINGLETON.test(t)).length;
-        const site = `${path.relative(SRC, f)}:${marks[i].name}`;
+        const site = `${relPath(SRC, f)}:${marks[i].name}`;
         // rule 2 — a pot taken before a character row, inside one transaction
         const firstChar = locks.indexOf('characters');
         if (firstChar > 0) {
@@ -1195,13 +1197,13 @@ const SCENERY_WAIVED = {
     while ((m = re.exec(src))) {
       scanned++;
       const arg = argOf(src, m.index + m[0].length - 1);
-      const site = `${f.replace(/^.*\/src\//, 'src/')}:${src.slice(0, m.index).split('\n').length}`;
+      const site = `${relPath(process.cwd(), f)}:${src.slice(0, m.index).split('\n').length}`;
       // ANY mention of the identifier, not just `client.query(` or a literal `f(client, …)` argument.
       // The narrow forms were the first cut and they had THREE false negatives — `roster.js` hands
       // the client to a reader inside a `.map`, and `dynasty.js` calls a closure that captures it —
       // and a guard that misses the sites it exists for is worse than no guard.
       if (!/\bclient\b/.test(arg)) continue;
-      const shortFile = f.replace(/^.*\/src\//, 'src/');
+      const shortFile = relPath(process.cwd(), f);
       const waiver = VIEM_CLIENTS.find((w) => w.file === shortFile && arg.includes(w.mark));
       if (waiver) { waiverHits.set(`${waiver.file}#${waiver.mark}`, waiverHits.get(`${waiver.file}#${waiver.mark}`) + 1); continue; }
       offenders.push(site);
@@ -1238,7 +1240,7 @@ const SCENERY_WAIVED = {
 // Scope: it proves an entry EXISTS and BRANCHES, not that the sentence is right. That still needs a
 // person reading the wire — which is how these were found.
 {
-  const CLIENT = new URL('../public/index.html', import.meta.url).pathname;
+  const CLIENT = fileURLToPath(new URL('../public/index.html', import.meta.url));
   const html = fs.readFileSync(CLIENT, 'utf8');
   const start = html.indexOf('function feedText(');
   assert(start > 0, 'feedText not found in the client — this check cannot run');
@@ -1451,7 +1453,7 @@ const SCENERY_WAIVED = {
 // `.name`/`.title`/`*Name` counts. A district id, a role word and a money figure all read as an
 // article followed by an interpolation and none of them is a catalog rung.
 {
-  const html = fs.readFileSync(new URL('../public/index.html', import.meta.url).pathname, 'utf8')
+  const html = fs.readFileSync(fileURLToPath(new URL('../public/index.html', import.meta.url)), 'utf8')
     .replace(/^\s*\/\/.*$/gm, '');                       // prose describing the rule is not a violation
   const bad = [];
   let names = 0, raw = 0;
@@ -1557,7 +1559,7 @@ const SCENERY_WAIVED = {
   };
   for (const f of files) {
     const s = fs.readFileSync(f, 'utf8');
-    const base = f.split('/').pop();
+    const base = path.basename(f);
     for (const lit of literals(s)) {
       for (const m of lit.matchAll(/\b(\w+):\s*(\w+)\.(id|kind)\b/g)) {
         const [, k, src] = m;
@@ -1726,7 +1728,7 @@ const SCENERY_WAIVED = {
     // comments are STRIPPED first: the rule is cited by name in fifteen comments across src/ (that is
     // how well known it is and how unenforced it was), and a scanner that reads prose reports every one
     // of them as a violation — a mostly-wrong advisory is one people route around.
-    const txt = fs.readFileSync(f, 'utf8').split('\n').map((l) => l.replace(/\/\/.*$/, '')).join('\n');
+    const txt = fs.readFileSync(f, 'utf8').split(/\r?\n/).map((l) => l.replace(/\/\/.*$/, '')).join('\n');
     txt.split('\n').forEach((line, i) => {
       if (/=\s*ANY\(\$\d/.test(line)) bad.push(`${f}:${i + 1}  ${line.trim().slice(0, 90)}`);
       if (/IN \(\$\d|IN \(\$\{/.test(line)) inForms.push(f);
