@@ -16,7 +16,7 @@ process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
 import { readFileSync, readdirSync } from 'node:fs';
 import zlib from 'node:zlib';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { buildServer } from '../src/server.js';
 
 const app = await buildServer();
@@ -297,6 +297,38 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
 }
 
 // ── THE WIRE ────────────────────────────────────────────────────────────────────────────────────
+// IMMUTABLE ART URLS. /art is cache-first in the service worker and served with a seven-day immutable
+// browser cache. That contract only works when a changed byte stream gets a changed request URL. The
+// OMR sheets were replaced in place once, and an already-open Codex legally kept the old diagrams.
+// Bind every public reference to the file's content hash so a future re-render cannot repeat that failure.
+{
+  const diagrams = [
+    'omr-01-severance.png',
+    'omr-02-return-velocity.png',
+    'omr-03-money-router.png',
+    'omr-04-reserve-rwa.png',
+    'omr-05-ohm-contrast.png',
+  ];
+  const versionOf = new Map(diagrams.map((name) => [name, createHash('sha256')
+    .update(readFileSync(new URL(`../public/art/${name}`, import.meta.url))).digest('hex').slice(0, 12)]));
+  const surfaces = [
+    ['/', new Set(['omr-03-money-router.png'])],
+    ['/wiki', new Set(diagrams)],
+  ];
+
+  for (const [url, expectedNames] of surfaces) {
+    const res = await app.inject({ method: 'GET', url });
+    assert.equal(res.statusCode, 200, `${url} must serve before its immutable art references can be checked`);
+    const refs = [...res.body.matchAll(/(?:src|href)="\/art\/(omr-0[1-5]-[^"?]+\.png)(?:\?v=([a-f0-9]{12}))?"/g)];
+    assert.deepEqual(new Set(refs.map((m) => m[1])), expectedNames,
+      `${url} must reference exactly its intended OMR sheets`);
+    for (const [, name, version] of refs)
+      assert.equal(version, versionOf.get(name),
+        `${url} references immutable ${name} without its current content hash; a warm browser will show stale art`);
+  }
+  console.log('✅ every immutable OMR diagram reference is versioned by its current content hash');
+}
+
 // What the player DOWNLOADS. tools/pageweight.js measured a cold load of the landing at 5.3 MB on a
 // phone, of which 757 KB was text shipped uncompressed: index.html is 1,047,078 bytes and gzips to
 // 319,499 (31%), and it carried no cache-control while every neighbouring static route already set
