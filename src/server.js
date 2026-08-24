@@ -973,11 +973,24 @@ export async function buildServer() {
     // reservation so the key isn't poisoned — a transient "jailed" or a 429 must not
     // permanently lock the key out.
     if (reply.statusCode >= 200 && reply.statusCode < 300) {
+      // Compression's onSend hook runs first. A real fetch client advertises gzip, so `payload` is
+      // then arbitrary binary; String(Buffer) can contain a literal NUL, which Postgres TEXT refuses.
+      // The action has already committed at this seam, so that refusal strands the key at status=0.
+      // Persist the ORIGINAL JSON and let the normal response pipeline gzip it again on a replay.
+      let storedPayload;
+      try {
+        storedPayload = /\bgzip\b/i.test(String(reply.getHeader('content-encoding') || ''))
+          ? zlib.gunzipSync(payload).toString('utf8')
+          : (Buffer.isBuffer(payload) ? payload.toString('utf8') : String(payload));
+      } catch (e) {
+        console.error('idempotency: response decode failed — key left in-progress, value may have committed', e?.message);
+        return payload;
+      }
       // (red-team R15 F1) A swallowed store failure leaves a COMMITTED action's key at status=0 — the
       // orphan the long-horizon worker prune protects. Surface it so an operator sees the (rare)
       // committed-but-unstored seam rather than it vanishing silently.
       await pool.query('UPDATE idempotency SET status=$3, response=$4 WHERE account_id=$1 AND key=$2',
-        [req.user.sub, key, reply.statusCode, String(payload)])
+        [req.user.sub, key, reply.statusCode, storedPayload])
         .catch((e) => console.error('idempotency: store UPDATE failed — key left in-progress, value may have committed', e?.message));
     } else {
       await pool.query('DELETE FROM idempotency WHERE account_id=$1 AND key=$2 AND status=0',
