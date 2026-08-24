@@ -109,10 +109,15 @@
     padding:9px 13px;border-radius:2px;opacity:0;pointer-events:none;transition:opacity .2s}
   #totop.show{opacity:1;pointer-events:auto}
   #totop:hover{color:var(--neon);border-color:var(--neon-d);text-decoration:none}
+  #nav-toggle{display:none;width:calc(100% - 32px);min-height:44px;margin:0 16px 12px;background:var(--panel2);border:1px solid var(--line2);color:var(--ink);font-family:var(--mono);text-align:left;padding:9px 11px;cursor:pointer}
+  #search-status{padding:0 18px;color:var(--faint);font-family:var(--mono);font-size:11px}
 
   @media (max-width:900px){
     #wrap{grid-template-columns:1fr}
     #nav{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line);max-height:44vh}
+    #nav-toggle{display:block}
+    #nav.collapsed{max-height:none;padding-bottom:4px}
+    #nav.collapsed #nav-content{display:none}
     #doc{padding:26px 18px 80px}
     #doc section{margin-bottom:40px;padding-bottom:30px}
     #top{padding:11px 14px;gap:10px}
@@ -121,19 +126,30 @@
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
+<link rel="stylesheet" href="/omerta-ui.css?v=20260823">
 </head>
-<body>
-<div id="top">
-  <h1>OMERTÀ</h1><span class="sub">The Codex</span>
-  <a class="home" href="/">← the city</a>
-</div>
-<div id="wrap">
-  <div id="nav">
-    <div class="search"><input id="q" placeholder="search the codex…" aria-label="Search the codex" autocomplete="off"></div>
-    <div id="navlist"></div>
+<body class="public-page">
+<a class="skip-link" href="#doc">Skip to the Codex</a>
+<nav id="top" class="public-nav" aria-label="Primary">
+  <a class="public-nav__brand" href="/">OMERTÀ</a><span class="sub">The Codex</span>
+  <div class="public-nav__links">
+    <a href="/wiki" aria-current="page">Codex</a>
+    <a href="/arena">Arena</a>
+    <a href="/play">Agent setup</a>
+    <a class="public-nav__cta" href="/">Enter the city</a>
   </div>
-  <div id="doc"></div>
-</div>
+</nav>
+<main id="wrap">
+  <aside id="nav" class="collapsed" aria-label="Codex contents">
+    <button id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-content">Browse sections</button>
+    <div id="nav-content">
+      <div class="search"><input id="q" placeholder="search the codex…" aria-label="Search the codex" autocomplete="off"></div>
+      <div id="search-status" role="status" aria-live="polite"></div>
+      <nav id="navlist" aria-label="Codex sections"></nav>
+    </div>
+  </aside>
+  <article id="doc" tabindex="-1"></article>
+</main>
 <a id="totop" href="#top">↑ top</a>
 
 <script>
@@ -831,7 +847,7 @@ const GROUP_ORDER = ['Start','The Basics','Money','Money & Legit','Crews & Famil
 function render() {
   const doc = document.getElementById('doc');
   const nav = document.getElementById('navlist');
-  doc.innerHTML = ''; nav.innerHTML = '';
+  doc.innerHTML = '<h1 class="visually-hidden">OMERTÀ Codex</h1>'; nav.innerHTML = '';
   const groups = {};
   for (const s of SECTIONS) (groups[s.group] = groups[s.group] || []).push(s);
   const order = [...GROUP_ORDER.filter((g) => groups[g]), ...Object.keys(groups).filter((g) => !GROUP_ORDER.includes(g))];
@@ -841,14 +857,24 @@ function render() {
     for (const s of groups[g]) {
       const a = document.createElement('a'); a.className = 'item'; a.href = '#' + s.id; a.dataset.id = s.id;
       a.textContent = s.title; nav.appendChild(a);
-      const sec = document.createElement('section'); sec.id = s.id;
+      const sec = document.createElement('section'); sec.id = s.id; sec.setAttribute('aria-labelledby', s.id + '-title');
       n += 1;
       const num = String(n).padStart(2, '0');
-      sec.innerHTML = `<span class="num">${num} — ${g}</span><h2>${s.title}</h2>`
+      sec.innerHTML = `<span class="num">${num} — ${g}</span><h2 id="${s.id}-title">${s.title}</h2>`
         + `${s.tag ? `<div class="tag">${s.tag}</div>` : ''}${s.html}`;
       doc.appendChild(sec);
     }
   }
+  for (const table of doc.querySelectorAll('table')) {
+    const scroller = document.createElement('div'); scroller.className = 'table-scroll';
+    table.parentNode.insertBefore(scroller, table); scroller.appendChild(table);
+  }
+  nav.querySelectorAll('a.item').forEach((a) => a.addEventListener('click', () => {
+    if (matchMedia('(max-width: 900px)').matches) {
+      document.getElementById('nav').classList.add('collapsed');
+      document.getElementById('nav-toggle').setAttribute('aria-expanded', 'false');
+    }
+  }));
   wireScroll();
 }
 function wireScroll() {
@@ -856,7 +882,11 @@ function wireScroll() {
   const secs = [...document.querySelectorAll('#doc section')];
   const io = new IntersectionObserver((ents) => {
     for (const e of ents) if (e.isIntersecting) {
-      links.forEach((l) => l.classList.toggle('on', l.dataset.id === e.target.id));
+      links.forEach((l) => {
+        const on = l.dataset.id === e.target.id;
+        l.classList.toggle('on', on);
+        if (on) l.setAttribute('aria-current', 'location'); else l.removeAttribute('aria-current');
+      });
       // …and keep the active item in view: the nav is far taller than one screen, so without this
       // the reader's place in the contents silently scrolls out of sight.
       const on = links.find((l) => l.classList.contains('on'));
@@ -890,6 +920,15 @@ document.getElementById('q').addEventListener('input', (e) => {
   none.innerHTML = hits ? '' : `<h2 style="color:#6b6357">Nothing matches</h2>`
     + `<p class="lead">The codex has no section mentioning “${q.replace(/[<>&]/g, '')}”. Try a shorter word.</p>`;
   none.style.display = hits ? 'none' : '';
+  document.getElementById('search-status').textContent = q ? `${hits} section${hits === 1 ? '' : 's'} found` : '';
+});
+
+document.getElementById('nav-toggle').addEventListener('click', () => {
+  const nav = document.getElementById('nav');
+  const open = nav.classList.toggle('collapsed') === false;
+  document.getElementById('nav-toggle').setAttribute('aria-expanded', String(open));
+  document.getElementById('nav-toggle').textContent = open ? 'Hide sections' : 'Browse sections';
+  if (open) requestAnimationFrame(() => document.getElementById('q').focus());
 });
 
 // the way back up, once the reader is deep enough to want one

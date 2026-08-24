@@ -16,10 +16,11 @@
   #top .sub { color:var(--dim); font-size:12px; }
   #status { margin-left:auto; font-size:13px; }
   button { background:#1d1d25; border:1px solid var(--line); color:var(--ink); padding:7px 12px;
-    border-radius:4px; cursor:pointer; font-size:12px; }
+    border-radius:4px; cursor:pointer; font-size:12px; min-height:42px; }
   button:hover { border-color:var(--neon); }
   button.danger { border-color:var(--blood); color:var(--bad); }
-  input { background:#0e0e12; border:1px solid var(--line); color:var(--ink); padding:7px 8px; border-radius:4px; font-size:12px; }
+  button:focus-visible,input:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
+  input { background:#0e0e12; border:1px solid var(--line); color:var(--ink); padding:7px 8px; border-radius:4px; font-size:12px; min-height:42px; }
   .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:12px; padding:12px 16px; }
   .panel { background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:12px; }
   .panel h2 { margin:0 0 10px; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--dim); font-weight:normal; }
@@ -44,25 +45,37 @@
   .hidden { display:none !important; }
   #err { color:var(--bad); font-size:12px; margin-top:6px; }
   .note { color:var(--dim); font-size:11px; margin-top:4px; }
+  .mod-field{display:flex;flex:1 1 120px;flex-direction:column;gap:3px}
+  .mod-field label{color:var(--dim);font:10px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase}
+  .danger-zone{margin-top:10px;padding-top:10px;border-top:1px solid color-mix(in srgb,var(--blood) 45%,var(--line))}
+  dialog{width:min(92vw,520px);padding:0;border:1px solid var(--blood);border-radius:8px;background:var(--panel);color:var(--ink);box-shadow:0 24px 80px #000c}
+  dialog::backdrop{background:#050508cc;backdrop-filter:blur(5px)}
+  .confirm-head{padding:16px 18px;border-bottom:1px solid var(--line)}
+  .confirm-head h2{margin:0;color:var(--bad);font-size:18px;letter-spacing:.08em}
+  .confirm-body{padding:16px 18px;color:var(--ink);font-size:14px;line-height:1.55}
+  .confirm-body p{margin:0 0 12px}.confirm-body label{display:block;color:var(--dim);font:11px/1.4 var(--mono);margin-bottom:5px}
+  .confirm-body input{width:100%}.confirm-foot{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid var(--line)}
+  @media(max-width:560px){.grid{grid-template-columns:1fr;padding:8px}.center{margin:10vh 14px}.mod-row{align-items:stretch}.mod-field{flex-basis:100%}}
 </style>
+<link rel="stylesheet" href="/omerta-ui.css?v=20260823">
 </head>
 <body>
 
-<div id="login" class="center">
+<main id="login" class="center">
   <h1>THE BOOKS</h1>
   <p>OMERTÀ live-ops. This is the mod console — the whole city, one screen.</p>
-  <div style="margin-top:14px"><input id="mkey" type="password" placeholder="mod key" size="26" style="font-size:14px">
+  <div style="margin-top:14px"><label class="visually-hidden" for="mkey">Moderator key</label><input id="mkey" type="password" placeholder="mod key" size="26" autocomplete="current-password" style="font-size:14px">
     <button id="enter" style="font-size:14px;padding:8px 18px">OPEN THE LEDGER</button></div>
-  <div id="err"></div>
-</div>
+  <div id="err" role="alert"></div>
+</main>
 
-<div id="dash" class="hidden">
-  <div id="dbbanner" class="banner hidden">…</div>
-  <div id="bkbanner" class="banner hidden">…</div>
-  <div id="banner" class="banner">…</div>
+<main id="dash" class="hidden">
+  <div id="dbbanner" class="banner hidden" role="alert">…</div>
+  <div id="bkbanner" class="banner hidden" role="alert">…</div>
+  <div id="banner" class="banner" role="status" aria-live="polite">…</div>
   <div id="top">
     <h1>THE BOOKS</h1><span class="sub" id="stamp">—</span>
-    <span id="status"></span>
+    <span id="status" role="status" aria-live="polite"></span>
     <button id="refresh">refresh</button>
     <button id="logout" class="danger">lock up</button>
   </div>
@@ -84,7 +97,22 @@
     <div class="panel" id="p-activity"><h2>Live Activity</h2><div class="feed body">…</div></div>
     <div class="panel" id="p-mod"><h2>Moderation</h2><div class="body"></div></div>
   </div>
-</div>
+</main>
+
+<dialog id="action-confirm" role="alertdialog" aria-labelledby="confirm-title" aria-describedby="confirm-copy">
+  <div class="confirm-head"><h2 id="confirm-title">Confirm action</h2></div>
+  <div class="confirm-body">
+    <p id="confirm-copy"></p>
+    <div id="confirm-type-wrap" class="hidden">
+      <label id="confirm-type-label" for="confirm-entry"></label>
+      <input id="confirm-entry" autocomplete="off" spellcheck="false">
+    </div>
+  </div>
+  <div class="confirm-foot">
+    <button id="confirm-cancel" type="button">Cancel</button>
+    <button id="confirm-go" type="button" class="danger">Confirm</button>
+  </div>
+</dialog>
 
 <script>
   const $ = (s) => document.querySelector(s);
@@ -97,11 +125,47 @@
   let timer = null;
 
   async function j(method, path, body) {
-    const r = await fetch(path, { method, headers: { 'x-mod-key': mkey,
-      ...(body !== undefined ? { 'content-type': 'application/json' } : {}) },
-      body: body === undefined ? undefined : JSON.stringify(body) });
+    let r;
+    try {
+      r = await fetch(path, { method, headers: { 'x-mod-key': mkey,
+        ...(body !== undefined ? { 'content-type': 'application/json' } : {}) },
+        body: body === undefined ? undefined : JSON.stringify(body) });
+    } catch {
+      return { code: 0, body: { error: 'offline', message: 'Could not reach the server.' } };
+    }
     let b = null; try { b = await r.json(); } catch { b = {}; }
     return { code: r.status, body: b };
+  }
+
+  function confirmAction({ title, body, confirmText = '', yes = 'confirm' }) {
+    return new Promise((resolve) => {
+      const dlg = $('#action-confirm');
+      const entry = $('#confirm-entry');
+      const wrap = $('#confirm-type-wrap');
+      const go = $('#confirm-go');
+      const returnFocus = document.activeElement;
+      $('#confirm-title').textContent = title;
+      $('#confirm-copy').textContent = body;
+      go.textContent = yes;
+      entry.value = '';
+      wrap.classList.toggle('hidden', !confirmText);
+      $('#confirm-type-label').textContent = confirmText ? `Type ${confirmText} to confirm` : '';
+      const sync = () => { go.disabled = !!confirmText && entry.value.trim() !== confirmText; };
+      sync(); entry.oninput = sync;
+      let done = false;
+      const finish = (value) => {
+        if (done) return;
+        done = true;
+        dlg.close();
+        if (returnFocus?.isConnected) returnFocus.focus({ preventScroll: true });
+        resolve(value);
+      };
+      $('#confirm-cancel').onclick = () => finish(false);
+      go.onclick = () => finish(true);
+      dlg.oncancel = (e) => { e.preventDefault(); finish(false); };
+      dlg.showModal();
+      requestAnimationFrame(() => (confirmText ? entry : $('#confirm-cancel')).focus());
+    });
   }
 
   $('#enter').onclick = tryLogin;
@@ -128,6 +192,8 @@
   }
 
   async function refreshAll() {
+    $('#dash').setAttribute('aria-busy', 'true');
+    $('#status').textContent = 'refreshing…';
     const [ov, inv, fn, res, vig, em, act, rev, eng, bnd, tre, coa, intg, rtr, cpar, bkv, com, thl] = await Promise.all([
       j('GET', '/v1/mod/overview'), j('GET', '/v1/mod/invariants'), j('GET', '/v1/mod/funnel'),
       j('GET', '/v1/mod/reserve'), j('GET', '/v1/mod/vig'), j('GET', '/v1/mod/emission'),
@@ -137,6 +203,7 @@
       j('GET', '/v1/mod/chain/params'), j('GET', '/v1/mod/bank'), j('GET', '/v1/mod/community'),
       j('GET', '/v1/mod/tokenhealth'),
     ]);
+    $('#dash').removeAttribute('aria-busy');
     if (ov.code === 401) return $('#logout').onclick();
 
     // THE 2AM CASE. Rehearsed on 2026-07-27 against a real Postgres that was then stopped: the
@@ -156,6 +223,7 @@
         + 'database comes back — you do NOT need to redeploy. Check your database host\'s status page '
         + 'first. Numbers below are stale.</div>';
       $('#stamp').textContent = 'STALE — database unreachable';
+      $('#status').textContent = 'database unreachable';
       return;                                     // do not paint stale numbers as if they were live
     }
     dbn.className = 'banner hidden';
@@ -166,6 +234,7 @@
     renderBackups(ov.body); renderSocial(ov.body); renderCoach(coa.body);
     renderIntegrations(intg.body); window.__cpar = (cpar.body && cpar.body.rows) || []; renderChainParams(cpar.body);
     renderActivity(act.body); renderMod();
+    $('#status').textContent = 'live';
   }
 
   const rowHtml = (k, v) => `<div class="row"><span class="k">${k}</span><span class="v">${v}</span></div>`;
@@ -659,18 +728,19 @@
     if ($('#p-mod').querySelector('.body').dataset.wired) return; // forms are static — wire once
     $('#p-mod').querySelector('.body').dataset.wired = '1';
     $('#p-mod').querySelector('.body').innerHTML = `
-      <div class="mod-row"><input id="m-invcount" placeholder="# codes" size="4" value="5"><input id="m-invuses" placeholder="uses" size="4" value="1">
+      <div class="mod-row"><div class="mod-field"><label for="m-invcount">Codes</label><input id="m-invcount" inputmode="numeric" size="4" value="5"></div><div class="mod-field"><label for="m-invuses">Uses each</label><input id="m-invuses" inputmode="numeric" size="4" value="1"></div>
         <button id="m-invite">mint invites</button></div>
-      <div id="m-invout" class="note"></div>
-      <div class="mod-row"><input id="m-conf-id" placeholder="character id"><input id="m-conf-amt" placeholder="$ (blank=all)" size="8">
+      <div id="m-invout" class="note" role="status" aria-live="polite"></div>
+      <div class="danger-zone"><div class="note">High-impact actions require the target identifier again at confirmation.</div>
+      <div class="mod-row"><div class="mod-field"><label for="m-conf-id">Character ID</label><input id="m-conf-id" autocomplete="off"></div><div class="mod-field"><label for="m-conf-amt">Amount (blank = all)</label><input id="m-conf-amt" inputmode="decimal" size="8"></div>
         <button id="m-conf" class="danger">confiscate</button></div>
-      <div class="mod-row"><input id="m-kill-id" placeholder="character id"><button id="m-kill" class="danger">mod-kill</button></div>
-      <div class="mod-row"><input id="m-ban-id" placeholder="account id"><button id="m-ban" class="danger">ban</button></div>
-      <div class="mod-row"><input id="m-fund" placeholder="$OMR to reserve" size="10"><button id="m-fund-go">fund reserve</button></div>
-      <div class="mod-row"><input id="m-push-h" placeholder="hours" size="5" value="48"><input id="m-push-m" placeholder="mult" size="5" value="2"><button id="m-push-go">start recruit drive</button></div>
+      <div class="mod-row"><div class="mod-field"><label for="m-kill-id">Character ID</label><input id="m-kill-id" autocomplete="off"></div><button id="m-kill" class="danger">mod-kill</button></div>
+      <div class="mod-row"><div class="mod-field"><label for="m-ban-id">Account ID</label><input id="m-ban-id" autocomplete="off"></div><button id="m-ban" class="danger">ban</button></div></div>
+      <div class="mod-row"><div class="mod-field"><label for="m-fund">$OMR to reserve</label><input id="m-fund" inputmode="decimal" size="10"></div><button id="m-fund-go">fund reserve</button></div>
+      <div class="mod-row"><div class="mod-field"><label for="m-push-h">Hours</label><input id="m-push-h" inputmode="numeric" size="5" value="48"></div><div class="mod-field"><label for="m-push-m">Cash multiplier</label><input id="m-push-m" inputmode="decimal" size="5" value="2"></div><button id="m-push-go">start recruit drive</button></div>
       <div class="mod-row"><button id="m-alert-go">send test alert</button>
         <span class="note">proves INVARIANT_WEBHOOK_URL works — before you need it</span></div>
-      <div id="m-out" class="note"></div>`;
+      <div id="m-out" class="note" role="status" aria-live="polite"></div>`;
     const out = (m, bad) => { const el = $('#m-out'); el.textContent = m; el.style.color = bad ? 'var(--bad)' : 'var(--dim)'; };
     $('#m-invite').onclick = async () => {
       const r = await j('POST', '/v1/mod/invites', { count: Number($('#m-invcount').value), uses: Number($('#m-invuses').value) });
@@ -678,32 +748,42 @@
     };
     $('#m-conf').onclick = async () => {
       const id = $('#m-conf-id').value.trim(); if (!id) return out('character id?', true);
-      if (!confirm(`Confiscate from ${id}?`)) return;
       const amt = $('#m-conf-amt').value.trim();
+      if (!await confirmAction({ title: 'Confiscate player funds?',
+        body: `${amt ? '$' + fmt(amt) : 'Every available dollar'} will be removed from character ${id}. This changes the live ledger immediately.`,
+        confirmText: id, yes: 'confiscate' })) return;
       const r = await j('POST', '/v1/mod/confiscate', { characterId: id, ...(amt ? { amount: Number(amt) } : {}) });
       out(r.code === 200 ? `confiscated $${fmt(r.body.confiscated)}` : `error: ${r.body.message || r.code}`, r.code !== 200); refreshAll();
     };
     $('#m-kill').onclick = async () => {
       const id = $('#m-kill-id').value.trim(); if (!id) return out('character id?', true);
-      if (!confirm(`MOD-KILL ${id}? This runs the estate — irreversible.`)) return;
+      if (!await confirmAction({ title: 'End this street?',
+        body: `Character ${id} will die. The estate runs and an heir rises. This is irreversible.`,
+        confirmText: id, yes: 'mod-kill' })) return;
       const r = await j('POST', '/v1/mod/kill', { characterId: id });
       out(r.code === 200 ? `retired — heir ${r.body.heirId}` : `error: ${r.body.message || r.code}`, r.code !== 200); refreshAll();
     };
     $('#m-ban').onclick = async () => {
       const id = $('#m-ban-id').value.trim(); if (!id) return out('account id?', true);
-      if (!confirm(`Ban account ${id}?`)) return;
+      if (!await confirmAction({ title: 'Ban this account?',
+        body: `Account ${id} will lose access to the city. This does not silently delete its ledger history.`,
+        confirmText: id, yes: 'ban account' })) return;
       const r = await j('POST', '/v1/mod/ban', { accountId: id });
       out(r.code === 200 ? 'banned.' : `error: ${r.body.message || r.code}`, r.code !== 200);
     };
     $('#m-fund-go').onclick = async () => {
       const amt = Number($('#m-fund').value); if (!(amt > 0)) return out('amount?', true);
+      if (!await confirmAction({ title: 'Fund the withdrawal reserve?',
+        body: `${fmt(amt)} $OMR will be added to the reserve and the pending queue may drain immediately.`,
+        confirmText: String(amt), yes: 'fund reserve' })) return;
       const r = await j('POST', '/v1/mod/reserve/fund', { amount: amt });
       out(r.code === 200 ? 'reserve funded (queue drained).' : `error: ${r.body.message || r.code}`, r.code !== 200); refreshAll();
     };
     $('#m-push-go').onclick = async () => {
       const hours = Number($('#m-push-h').value), mult = Number($('#m-push-m').value);
       if (!(hours > 0) || !(mult >= 1)) return out('hours & mult (≥1)?', true);
-      if (!confirm(`Start a ${mult}× recruitment drive for ${hours}h? Referral CASH payouts multiply.`)) return;
+      if (!await confirmAction({ title: 'Start recruitment drive?',
+        body: `Human referral cash payouts will run at ${mult}× for ${hours} hours.`, yes: 'start drive' })) return;
       const r = await j('POST', '/v1/mod/referral/push', { hours, mult });
       out(r.code === 200 ? `drive live: ${r.body.mult}× for ${r.body.hours}h` : `error: ${r.body.message || r.code}`, r.code !== 200);
     };

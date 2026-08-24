@@ -355,6 +355,13 @@ export async function buildServer() {
   let playHtml = '<!doctype html><title>Play OMERTA with Claude</title><p>Walkthrough file missing (public/play.html).</p>';
   try { playHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'play.html'), 'utf8'); } catch { /* headless */ }
   app.get('/play', servePage(playHtml));
+  // Shared interface tokens and public-shell primitives. Keeping this as a tiny, explicit asset route
+  // preserves the no-build architecture while stopping the public pages from drifting into separate
+  // palettes, focus treatments, and navigation patterns.
+  let uiCss = '';
+  try { uiCss = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'omerta-ui.css'), 'utf8'); } catch { /* headless */ }
+  app.get('/omerta-ui.css', async (req, reply) => reply.type('text/css; charset=utf-8')
+    .header('cache-control', 'no-cache').send(uiCss));
   // WEB PUSH service worker — must be served from the origin ROOT so it can control the whole scope.
   let swJs = '';
   try { swJs = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'sw.js'), 'utf8'); } catch { /* headless */ }
