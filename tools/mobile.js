@@ -89,6 +89,12 @@ if (!exe) {
 
 // ── the server ──────────────────────────────────────────────────────────────────────────────────
 // A real socket, not app.inject(): a browser has to actually fetch the page and its API calls.
+// src/db.js selects Postgres solely from DATABASE_URL. Refuse to run rather than risking a browser
+// rehearsal against inherited production state; this harness's disposable player must always be pg-mem.
+if (process.env.DATABASE_URL) {
+  console.error('✗ MOBILE HARNESS REFUSES DATABASE_URL — clear it to require disposable in-process pg-mem.');
+  process.exit(1);
+}
 const MOD_KEY = process.env.MOD_KEY || 'mobile-harness-mod-key';
 process.env.MOD_KEY = MOD_KEY;   // check F opens /admin, which is mod-key gated client-side
 const app = await buildServer();
@@ -197,18 +203,80 @@ for (const vp of VIEWPORTS) {
   await page.fill('#new-name', 'Probe ' + Math.random().toString(36).slice(2, 8));
   await page.click('#btn-create');
   await page.waitForSelector('#screen-main:not(.hidden)', { timeout: 20000 });
-  // the first-session TOUR (the illustrated multi-step welcome) — check ITS layout on the first
-  // step, then skip out; a layout guard that dismissed it blind would leave the game's very first
-  // screen unchecked, which is the headline-defect class this harness exists for
-  if (await page.locator('#welcome:not(.hidden)').count()) {
-    await check(page, 'the tour (step 1)', vp);
-    await page.click('#tour-skip'); await page.waitForTimeout(300);
+  // THE FIRST ACTION — the tour must hand this disposable local player to the REAL crime control.
+  let firstJobHandoff = false;
+  if (!(await page.locator('#welcome:not(.hidden)').count())) {
+    fail('(first action)', vp, 'a fresh character never received the first-session tour');
+  } else {
+    await check(page, 'the tour (arrival)', vp);
+    await page.click('#tour-next');
+    const step2 = await page.evaluate(() => ({
+      title: document.querySelector('#tour-title')?.textContent || '',
+      action: document.querySelector('#tour-next')?.textContent || '',
+      dots: document.querySelectorAll('#tour-dots i').length,
+    }));
+    firstJobHandoff = step2.title === 'THE STREETS' && /PULL YOUR FIRST JOB/.test(step2.action) && step2.dots === 2;
+    if (!firstJobHandoff) {
+      fail('(first action)', vp, `step two must be the playable Streets handoff — ${JSON.stringify(step2)}`);
+    } else {
+      await check(page, 'the tour (first job)', vp);
+      await page.click('#tour-next');
+      await page.waitForSelector('#welcome.hidden', { state: 'attached', timeout: 5000 });
+      await page.waitForFunction(() => document.querySelector('#tab-streets')?.classList.contains('on')
+        && localStorage.getItem('omerta_tour2') === '1'
+        && document.activeElement?.matches?.('#tab-streets .verbrow .prime')
+        && document.activeElement?.classList?.contains('spotlit'), { timeout: 5000 });
+      const handoff = await page.evaluate(() => ({
+        streets: document.querySelector('#tab-streets')?.classList.contains('on') || false,
+        completed: localStorage.getItem('omerta_tour2') === '1',
+        target: document.activeElement?.matches?.('#tab-streets .verbrow .prime') || false,
+        lit: document.activeElement?.classList?.contains('spotlit') || false,
+      }));
+      if (!handoff.streets || !handoff.completed || !handoff.target || !handoff.lit)
+        fail('(first action)', vp, `tour did not land on the focused real crime control — ${JSON.stringify(handoff)}`);
+
+      const crime = page.locator('#tab-streets .verbrow .prime').first();
+      const random = Math.random;
+      Math.random = () => 0; // pin the in-process server's crime die; the browser has its own realm
+      try {
+        const crimeResponse = page.waitForResponse((response) =>
+          response.request().method() === 'POST' && new URL(response.url()).pathname.startsWith('/v1/crimes/'));
+        await Promise.all([crime.click(), crimeResponse]);
+        await page.waitForTimeout(2200); // action response + vignette expiry + refresh
+      } finally {
+        Math.random = random;
+      }
+      const played = await page.evaluate(async () => {
+        const h = { authorization: 'Bearer ' + localStorage.omerta_token };
+        const [meR, obR] = await Promise.all([fetch('/v1/me', { headers: h }), fetch('/v1/onboard', { headers: h })]);
+        const m = (await meR.json())?.character || {}, ob = await obR.json();
+        const firstJob = (ob.tasks || []).find((t) => t.id === 'ob_crime');
+        return { firstJobReady: !!(firstJob?.ready || firstJob?.claimed), coach: m.coach?.label || '',
+          tourOpen: !document.querySelector('#welcome')?.classList.contains('hidden') };
+      });
+      if (!played.firstJobReady || played.coach === 'Pull your first job' || played.tourOpen)
+        fail('(first action)', vp, `visible crime did not advance the fresh player's coach cleanly — ${JSON.stringify(played)}`);
+
+      // Start Here remains reachable and visible after the action-first handoff.
+      await page.click('#tabs [data-tab="start"]');
+      await check(page, 'start-here (after first action)', vp, { contentMustShow: true });
+      await page.click('#btn-help');
+      await page.waitForSelector('#glossary:not(.hidden)', { timeout: 5000 });
+      const replayOpener = page.locator('#glossary-tour');
+      if (!(await replayOpener.count())) {
+        fail('(replay focus)', vp, 'the glossary has no tour replay opener');
+      } else {
+        await replayOpener.click();
+        await page.waitForSelector('#welcome:not(.hidden)', { timeout: 5000 });
+        await page.click('#tour-skip');
+        await page.waitForSelector('#welcome.hidden', { state: 'attached', timeout: 5000 });
+        await page.waitForFunction(() => document.querySelector('#tab-start')?.contains(document.activeElement)
+          || document.activeElement === document.querySelector('#tab-control-start'), { timeout: 5000 });
+      }
+    }
   }
 
-  // THE NEW PLAYER'S FIRST SCREEN. Checked before anything is unlocked, because this is the exact
-  // state the headline defect lived in and the one every single player passes through.
-  await check(page, 'start-here (fresh player)', vp, { contentMustShow: true });
-
+  if (firstJobHandoff) {
   // open the whole city and walk every screen in every group
   if (await page.locator('#tabs-more:not(.hidden)').count()) await page.click('#tabs-more');
   await page.waitForTimeout(400);
@@ -320,6 +388,7 @@ for (const vp of VIEWPORTS) {
       + '— a control that stays live and refuses on press is the game withholding its own rule');
   }
   screensChecked++;
+  }
 
   if (pageErrors.length) fail('(any screen)', vp, `${pageErrors.length} page error(s): ${pageErrors.slice(0, 3).join(' | ')}`);
   console.log(`   ${screensChecked} screens checked so far, ${failures.length} failure(s)`);

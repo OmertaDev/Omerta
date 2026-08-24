@@ -69,6 +69,50 @@ import { mintLimitedRun } from '../src/economy.js';
 const decomment = (s) => s.replace(/^[ \t]*\/\/.*$/gm, '');
 const html = decomment(readFileSync(new URL('../public/index.html', import.meta.url), 'utf8'));
 
+// ── 0c. FIRST ACTION HAPPENS AT TOUR STEP TWO ──────────────────────────────────────────────────
+{
+  const tourStart = html.indexOf('const TOUR = [');
+  const tour = html.slice(tourStart, html.indexOf('let phoneOpenThread', tourStart));
+  assert.equal((tour.match(/\{ art:/g) || []).length, 2,
+    'the mandatory tour is arrival + first job; later lessons belong to state-driven tips');
+  assert(tour.includes("action: 'first_job'"),
+    'the Streets step declares the first-job handoff rather than behaving like generic prose');
+  assert(tour.includes("'PULL YOUR FIRST JOB →'"),
+    'the final primary action tells the player what happens next');
+  assert(/closeTour\(\{ play: true \}\)/.test(tour),
+    'the final action takes both first-run and replay users to play');
+  assert(/closeTour\(\{ play: !tourReplay \}\)/.test(tour),
+    'first-run skip opens Streets while replay close returns to its captured screen');
+  assert(/tourReturnTab\s*=\s*currentTab/.test(tour) && /setTab\(tourReturnTab\)/.test(tour),
+    'replay captures and restores the screen it interrupted');
+  assert(/tourReplayOpener\s*=\s*document\.activeElement/.test(tour),
+    'replay captures its opener before the modal moves focus to Close');
+  assert(/tourReplayOpener\?\.isConnected[\s\S]*?tourReplayOpener\.focus/.test(tour),
+    'replay Close restores focus to its connected opener');
+  assert(/#tab-\$\{tourReturnTab\}[\s\S]*?#tab-control-\$\{tourReturnTab\}/.test(tour),
+    'replay Close has a focusable restored-tab fallback when its opener disappeared');
+  assert(/const fallbackCandidates\s*=\s*\[[\s\S]*?#tab-\$\{tourReturnTab\}[\s\S]*?#tab-control-\$\{tourReturnTab\}[\s\S]*?\]/.test(tour),
+    'replay fallback gathers restored-tab candidates before its tab control last');
+  assert(/fallbackCandidates\.find\(\(el\)\s*=>\s*el\?\.isConnected\s*&&\s*el\.getClientRects\(\)\.length\s*&&\s*typeof el\.focus === 'function'\)/.test(tour),
+    'replay fallback skips disconnected, hidden, and unfocusable candidates');
+  assert(/setTab\('streets'\)[\s\S]*?spotlight\(SPOT\.streets, true\)/.test(tour),
+    'the play handoff opens Streets and opts into focus on the real crime control');
+  assert(!/\b(?:api|act)\s*\(/.test(tour),
+    'tour code must not make API or action calls; the real Streets control owns gameplay');
+  assert(!/\/v1\/crimes\//.test(tour),
+    'tour code must not reference a crime route, including through an indirect client');
+}
+
+// ── 0d. OPT-IN SPOTLIGHT FOCUS DOES NOT STEAL A LATER TAB ─────────────────────────────────────
+{
+  const spotlightStart = html.indexOf('function spotlight(');
+  const spotlight = html.slice(spotlightStart, html.indexOf('let currentTab', spotlightStart));
+  assert(/const focusTab\s*=\s*focus \? currentTab : null/.test(spotlight),
+    'only opt-in focus snapshots the tab it was requested from');
+  assert(/if \(focus && currentTab !== focusTab\) return;/.test(spotlight),
+    'delayed opt-in focus cancels when the player changed tabs');
+}
+
 // A gate is a CONDITION, so test conditions — not a byte window. Walk out through the enclosing
 // `${...}` interpolations and at each level read only the HEAD: the text from `${` to where the
 // branch body starts (its first backtick). That is exactly the expression that decided whether to
@@ -322,6 +366,7 @@ const NOT_API = new Set([
   'no',         // ask()'s decline-button label
   'placeholder',// askNum()'s input placeholder
   'id',         // the milestone-TIPS registry key (localStorage suffix, client-internal)
+  'action',     // the tour's client-only handoff state, never sent to the API
   'tab',        // TIPS jump targets — setTab() destinations, never sent to the server
   'type',       // THE SOUNDTRACK's WebAudio oscillator type ('sine'/'triangle'/…) — synth-internal, never sent
   'met',        // the black book's HOW_CHIP display map ({met:'met', …}) — render labels, never sent

@@ -4479,17 +4479,11 @@
     { art: 'hero-poster', title: 'WELCOME TO THE CITY', body:
       `<p>You start as a nobody in the Docks. The city remembers every job, debt, alliance, and enemy you make.</p>
        <p><b>Your first loop:</b> pull a job → earn cash and respect → bank the take → follow the next move on your sheet.</p>` },
-    { art: 'interior-streets', title: 'THE STREETS', body:
+    { art: 'interior-streets', title: 'THE STREETS', action: 'first_job', body:
       `<p><b style="color:var(--neon)">First goal: pull one job.</b> Jobs pay cash and respect; respect raises your level and opens the city.</p>
        <p class="dim">Jobs spend <b>nerve</b>, which refills on its own. The ordinary play is safest to learn. Quiet and loud variants make more sense once you know the terms.</p>` },
-    { art: 'interior-legit', title: 'YOUR MONEY', body:
-      `<p><b>Pocket cash gets jumped.</b> Bank it. Deposits ride "in transit" for exactly two hours before they clear, so bank early, not on the way to a fight.</p>
-       <p class="dim"><b style="color:var(--neon)">$OMR</b> is separate from street cash. It can be lost when held loose. The on-chain extraction rail is not live yet.</p>` },
-    { art: 'interior-start', title: 'FOLLOW THE COACH', body:
-      `<p>Don't learn the whole city now. The <b style="color:var(--neon)">▸ coach line</b> always names one useful next move and can take you straight to it.</p>
-       <p><b>Start Here</b> pays you to learn the first week. The <b>?</b> opens the glossary; the <b>Codex</b> holds every rule. New systems explain themselves when you first open them.</p>` },
   ];
-  let tourAt = 0;
+  let tourAt = 0, tourReplay = false, tourReturnTab = 'streets', tourReplayOpener = null;
   function tourStep(i) {
     tourAt = Math.max(0, Math.min(TOUR.length - 1, i));
     const s = TOUR[tourAt], last = tourAt === TOUR.length - 1;
@@ -4497,18 +4491,42 @@
     $('#tour-body').innerHTML = `<h2 id="tour-title">${s.title}</h2>${s.body}`;
     $('#tour-dots').innerHTML = TOUR.map((_, j) => `<i${j === tourAt ? ' class="on"' : ''}></i>`).join('');
     $('#tour-back').style.visibility = tourAt ? 'visible' : 'hidden';
-    $('#tour-skip').style.display = last ? 'none' : '';
-    $('#tour-next').textContent = last ? 'STEP OUT →' : 'next →';
+    $('#tour-skip').textContent = tourReplay ? 'close' : 'skip';
+    $('#tour-skip').style.display = last && !tourReplay ? 'none' : '';
+    $('#tour-next').textContent = s.action === 'first_job' ? 'PULL YOUR FIRST JOB →' : 'next →';
   }
-  function openTour() { tourStep(0); $('#welcome').classList.remove('hidden'); }
-  window.openTour = openTour;   // replay buttons (glossary header + Start Here primer) reach it by name
-  const endTour = () => {
-    localStorage.setItem('omerta_tour2', '1'); localStorage.setItem('omerta_welcomed', '1');
-    $('#welcome').classList.add('hidden'); setTab('start');
+  function openTour() {
+    tourReplay = !!localStorage.getItem('omerta_tour2');
+    tourReturnTab = currentTab;
+    tourReplayOpener = document.activeElement;
+    tourStep(0);
+    $('#welcome').classList.remove('hidden');
+  }
+  window.openTour = openTour;
+  const closeTour = ({ play = false } = {}) => {
+    localStorage.setItem('omerta_tour2', '1');
+    localStorage.setItem('omerta_welcomed', '1');
+    $('#welcome').classList.add('hidden');
+    if (play || !tourReplay) {
+      setTab('streets');
+      spotlight(SPOT.streets, true);
+    } else {
+      setTab(tourReturnTab);
+      const fallbackCandidates = [
+        ...document.querySelectorAll(`#tab-${tourReturnTab} button:not([disabled]), #tab-${tourReturnTab} [href], #tab-${tourReturnTab} input:not([disabled]), #tab-${tourReturnTab} select:not([disabled])`),
+        $(`#tab-control-${tourReturnTab}`),
+      ];
+      const fallback = fallbackCandidates.find((el) =>
+        el?.isConnected && el.getClientRects().length && typeof el.focus === 'function');
+      if (tourReplayOpener?.isConnected && tourReplayOpener.getClientRects().length && typeof tourReplayOpener.focus === 'function') {
+        tourReplayOpener.focus({ preventScroll: true });
+      } else if (typeof fallback?.focus === 'function') fallback.focus({ preventScroll: true });
+    }
   };
-  $('#tour-next').onclick = () => (tourAt === TOUR.length - 1 ? endTour() : tourStep(tourAt + 1));
+  $('#tour-next').onclick = () => (tourAt === TOUR.length - 1
+    ? closeTour({ play: true }) : tourStep(tourAt + 1));
   $('#tour-back').onclick = () => tourStep(tourAt - 1);
-  $('#tour-skip').onclick = endTour;
+  $('#tour-skip').onclick = () => closeTour({ play: !tourReplay });
 
   // ── THE CELLPHONE (the 📱 up top) — inbox + player-to-player DMs ──
   let phoneOpenThread = null; // counterpart character id while a thread view is open
@@ -5370,14 +5388,17 @@
     start: '[data-obclaim], [data-obgo]', family: '#fam-found, [data-joingang], [data-join]',
     portfolio: '#wal-link, #wallet-connect', life: '[data-learn]', pen: '[data-do="POST /v1/pen/work"]',
   };
-  function spotlight(sel) {
+  function spotlight(sel, focus = false) {
     if (!sel) return;
+    const focusTab = focus ? currentTab : null;
     setTimeout(() => {
+      if (focus && currentTab !== focusTab) return;
       const scoped = sel.split(',').map((x) => `#tab-${currentTab} ${x.trim()}`).join(', ');
       const el = document.querySelector(scoped) || document.querySelector(sel);
       if (!el) return;
       el.scrollIntoView({ block: 'center', behavior: REDUCED ? 'auto' : 'smooth' });
       el.classList.add('spotlit');
+      if (focus && typeof el.focus === 'function') el.focus({ preventScroll: true });
       setTimeout(() => el.classList.remove('spotlit'), 6500);
     }, 700);
   }
