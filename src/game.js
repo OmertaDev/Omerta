@@ -1369,6 +1369,12 @@ function coachLadder(ch, acct, owned) {
   if ((owned.recentRivals || 0) > 0
     && add(`${owned.recentRivals > 1 ? `${owned.recentRivals} people` : 'Someone'} moved on you`, `You were robbed, jumped or hit inside the last two days and haven't answered ${owned.recentRivals > 1 ? 'them' : 'it'}. YOUR RIVALS on Wet Work names who — hit back and it pays honor. This clears when you've settled with every one of them.`, 'pvp')) return rungs;
   if (Number(ch.lc_crime || 0) < 1 && add('Pull your first job', 'Head to the Streets. Pick any crime and press DO IT. That\'s the whole move — it pays cash and respect.', 'streets')) return rungs;
+  // THE FIRST PAYOFF — the tour hands a new player to the real crime control, which leaves them on
+  // Streets when the job lands. The job also makes `ob_crime` claimable, but short phones hide the
+  // secondary coach plan; letting the level-5 rung lead here makes the ready cash + energy reward
+  // disappear. This one-time handback clears on the existing account-level claim latch.
+  if (lvl < 5 && Number(ch.lc_crime || 0) >= 1 && !onboard.ob_crime
+    && add('Claim your first-job reward', 'Your first job is done. Start Here has cash and energy waiting — collect it before the next job.', 'start')) return rungs;
   // ── THE ROAD TO LEVEL 5 (founder-directed: walk a brand-new player there, no exploring needed).
   // Two rungs, both clear on their own: the nerve-wait clears in minutes, the level rung at 5 —
   // so neither can mask the ladder below (the harness-F1 rule).
