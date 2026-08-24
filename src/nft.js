@@ -19,7 +19,7 @@
 // why that line is load-bearing rather than fastidious.
 import { GameError } from './game.js';
 import { spendOmr } from './vanity.js';
-import { RARITY, CARS, PORT, carOf, boatOf, rarityOf, rarityIdx, nftTokenId } from './rules.js';
+import { RARITY, CARS, PORT, carOf, boatOf, rarityOf, rarityIdx, rarityUtilityBps, nftTokenId } from './rules.js';
 
 // The two extractable classes, in one table so the board, the upgrade and the withdrawal cannot
 // disagree about what "a car" means. `esc` names the escrow/at-sea states that must clear first —
@@ -57,10 +57,16 @@ async function itemsOf(client, ch, kind) {
 const describe = (kind, row) => {
   const k = KINDS[kind];
   const rarity = String(row.rarity || 'common');
+  const utilityBps = rarityUtilityBps(rarity);
   const next = RARITY.TIERS[rarityIdx(rarity) + 1] || null;
   return {
     id: row.id, kind, name: k.label(row), rarity, rarityName: rarityOf(rarity).name,
     onChain: !!row.minted_onchain,
+    // Machine-readable utility for clients/agents. It is potential while on-chain and active only
+    // after re-import: cars boost chassis race power; boats boost base hold AND base speed.
+    utility: { bps: utilityBps, pct: utilityBps / 100,
+      appliesTo: kind === 'car' ? ['race_chassis'] : ['base_hold', 'base_speed'],
+      active: !row.minted_onchain },
     tokenId: nftTokenId(kind, k.catalog(row), rarity),
     // what the NEXT tier costs, and null at the top — the client renders the button off this rather
     // than re-deriving the ladder (the tradeRank precedent: the server owns the curve).
@@ -74,7 +80,8 @@ export async function nftBoard(ch, client, h) {
   const out = [];
   for (const kind of Object.keys(KINDS)) for (const row of await itemsOf(client, ch, kind)) out.push(describe(kind, row));
   return {
-    tiers: RARITY.TIERS.map((t) => ({ id: t.id, name: t.name })),
+    tiers: RARITY.TIERS.map((t) => ({ id: t.id, name: t.name,
+      utilityBps: rarityUtilityBps(t.id), utilityPct: rarityUtilityBps(t.id) / 100 })),
     upgradeOmr: RARITY.UPGRADE_OMR,
     omr: Number(h.acct?.omr || 0),
     // The extraction gate is the SAME one $OMR withdrawal uses — a free-trial street plays the whole
@@ -108,5 +115,8 @@ export async function upgradeRarity(ch, kind, itemId, client, h) {
   if (kind === 'car') { const c = (h.owned?.cars || []).find((x) => x.id === row.id); if (c) c.rarity = next.id; }
   await h.track(client, ch.account_id, 'rarity_upgrade', { kind, from, to: next.id, omr: cost });
   return { ok: true, kind, id: row.id, name: k.label(row), was: from, rarity: next.id,
-    rarityName: next.name, spent: cost, tokenId: nftTokenId(kind, k.catalog(row), next.id) };
+    rarityName: next.name, spent: cost,
+    utility: { bps: rarityUtilityBps(next.id), pct: rarityUtilityBps(next.id) / 100,
+      appliesTo: kind === 'car' ? ['race_chassis'] : ['base_hold', 'base_speed'], active: true },
+    tokenId: nftTokenId(kind, k.catalog(row), next.id) };
 }

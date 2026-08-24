@@ -6,7 +6,7 @@
 process.env.PORT_RUN_MS = '0'; // TEST-ONLY: runs arrive instantly
 import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
-import { PORT, NOTORIETY, boatOf, boatResale, fenceMultOf } from '../src/rules.js';
+import { PORT, NOTORIETY, boatOf, boatResale, fenceMultOf, rarityUtilityBps } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 
 const app = await buildServer();
@@ -39,6 +39,8 @@ await pool.query(`UPDATE characters SET loc='docks' WHERE id='${cap.id}'`);
 const preBuy = await cashOf(cap.token);
 let r = await call('POST', '/v1/port/boat/cutter', { token: cap.token });
 assert.equal(r.code, 200, 'bought the cutter'); const cutter = r.body.boat.id;
+const cutterBaseHold = r.body.boat.hold, cutterBaseSpeed = r.body.boat.speed;
+assert.equal(r.body.boat.utilityBps, rarityUtilityBps(r.body.boat.rarity), 'the bought boat publishes its rolled utility');
 assert.equal(await cashOf(cap.token), preBuy - boatOf('cutter').cost, 'cash paid for the boat (port:boat sink)');
 
 // ── launch a CLEAN run: the contraband sourcing sink + the arrival faucet ──
@@ -47,8 +49,8 @@ process.env.PORT_INTERDICT_P = '0'; // never caught
 assert.equal((await call('POST', `/v1/port/run/${cutter}`, { token: cap.token, body: { route: 'nowhere' } })).body.error, 'bad_route', 'no such route');
 const preLaunch = await cashOf(cap.token);
 r = await call('POST', `/v1/port/run/${cutter}`, { token: cap.token, body: { route: 'openwater' } });
-assert.equal(r.code, 200, 'the run launches'); assert.equal(r.body.hold, boatOf('cutter').hold, 'the full hold is loaded');
-const runCost = boatOf('cutter').hold * PORT.ROUTES.find((x) => x.id === 'openwater').buy;
+assert.equal(r.code, 200, 'the run launches'); assert.equal(r.body.hold, cutterBaseHold, 'the rarity-adjusted full hold is loaded');
+const runCost = cutterBaseHold * PORT.ROUTES.find((x) => x.id === 'openwater').buy;
 assert.equal(await cashOf(cap.token), preLaunch - runCost, 'the contraband cost was sourced (port:buy sink)');
 assert.equal((await call('POST', `/v1/port/run/${cutter}`, { token: cap.token, body: { route: 'coastal' } })).body.error, 'busy', 'she can only run one at a time');
 assert.equal((await call('POST', `/v1/port/boat/${cutter}/sell`, { token: cap.token })).body.error, 'at_sea', "can't sell a boat that's out");
@@ -56,7 +58,7 @@ assert.equal((await call('POST', `/v1/port/boat/${cutter}/sell`, { token: cap.to
 const preCollect = await cashOf(cap.token);
 r = await call('POST', `/v1/port/collect/${cutter}`, { token: cap.token });
 assert.equal(r.code, 200, 'collected'); assert.equal(r.body.interdicted, false, 'slipped the Coast Guard');
-const sale = boatOf('cutter').hold * PORT.ROUTES.find((x) => x.id === 'openwater').sell;
+const sale = cutterBaseHold * PORT.ROUTES.find((x) => x.id === 'openwater').sell;
 assert.equal(r.body.landed, sale, 'the contraband fenced for the route rate (port:sale faucet)');
 assert.equal(r.body.net, sale - runCost, 'net = landed − cost (the smuggling margin)');
 assert.equal(await cashOf(cap.token), preCollect + sale, 'the landing hit the pocket');
@@ -78,7 +80,7 @@ assert.equal((await call('POST', `/v1/port/collect/${cutter}`, { token: cap.toke
 // ── an INTERDICTED run: seize + the fine sink + heat, boat survives (PORT_SINK=0) ──
 process.env.PORT_INTERDICT_P = '1'; process.env.PORT_SINK = '0';
 await call('POST', `/v1/port/run/${cutter}`, { token: cap.token, body: { route: 'coastal' } });
-const coastalCost = boatOf('cutter').hold * PORT.ROUTES.find((x) => x.id === 'coastal').buy;
+const coastalCost = cutterBaseHold * PORT.ROUTES.find((x) => x.id === 'coastal').buy;
 // The RICO meter moves on the §7.1 clock — it GAINS while heat sits above LAW.WATCH and BLEEDS the
 // rest of the time — so an exact "the bust added BUST_EXPOSURE" assertion is only meaningful with
 // that confound removed. Zeroing both floors it: heat 0 is below WATCH so nothing gains, and the
@@ -156,12 +158,12 @@ assert.equal((await call('POST', `/v1/port/upgrade/${cutter}`, { token: cap.toke
 const preUp = await cashOf(cap.token);
 r = await call('POST', `/v1/port/upgrade/${cutter}`, { token: cap.token, body: { part: 'hull' } });
 assert.equal(r.code, 200, 'hull upgraded'); assert.equal(r.body.level, 1, 'hull now level 1');
-assert.equal(r.body.hold, boatOf('cutter').hold + S.HULL_STEP, 'the hull adds cargo capacity');
+assert.equal(r.body.hold, cutterBaseHold + S.HULL_STEP, 'the hull adds cargo capacity after the rarity base');
 assert.equal(await cashOf(cap.token), preUp - r.body.spent, 'the refit was a cash sink (port:upgrade)');
 r = await call('POST', `/v1/port/upgrade/${cutter}`, { token: cap.token, body: { part: 'engine' } });
-assert.equal(r.body.speed, boatOf('cutter').speed + S.ENGINE_STEP, 'the engine adds knots');
+assert.equal(r.body.speed, cutterBaseSpeed + S.ENGINE_STEP, 'the engine adds knots after the rarity base');
 const upBoard = (await call('GET', '/v1/port', { token: cap.token })).body.fleet.find((b) => b.id === cutter);
-assert(upBoard.hull === 1 && upBoard.engine === 1 && upBoard.hold === boatOf('cutter').hold + S.HULL_STEP, 'the board shows the upgraded boat');
+assert(upBoard.hull === 1 && upBoard.engine === 1 && upBoard.hold === cutterBaseHold + S.HULL_STEP, 'the board shows the upgraded boat');
 
 // ── PIRACY: a pirate runs down a rival's run at sea (the convoy-ambush twin) ──
 process.env.PORT_RUN_MS = String(60 * 60 * 1000); // a long run so it stays AT SEA (piratable)

@@ -40,9 +40,12 @@ export async function dayBoard(client, ch, h) {
   const liveIds = new Set(live.map((j) => j.id));
   const ready = daily.jobs.filter((j) => liveIds.has(j.id) && j.progress >= j.goal).length;
   const openN = live.length;
-  items.push({ id: 'contracts', label: 'Daily contracts', tab: 'start', count: ready,
+  const openJobs = daily.jobs.filter((j) => liveIds.has(j.id));
+  const target = openJobs.find((j) => j.progress >= j.goal) || openJobs[0];
+  const targetReady = target && target.progress >= target.goal;
+  items.push({ id: 'contracts', label: 'Daily contracts', tab: target ? (targetReady ? 'streets' : target.tab) : 'start', count: ready,
     state: openN === 0 ? 'done' : ready > 0 ? 'ready' : 'todo',
-    detail: openN === 0 ? 'all claimed' : ready > 0 ? `${ready} ready to collect` : `${openN} in progress` });
+    detail: openN === 0 ? 'all claimed' : targetReady ? `${target.name} ready to collect` : `${target.name} — ${target.progress}/${target.goal}` });
 
   // 3) tonight's hustle — the three-stop chain that routes you around the map
   items.push({ id: 'hustle', label: "Tonight's hustle", tab: 'streets',

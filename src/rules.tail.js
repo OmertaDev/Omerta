@@ -569,6 +569,26 @@ export const familyTaskOf=(wk=weekOf())=>FAMILY_TASKS[((wk%FAMILY_TASKS.length)+
 export const gunsValue=(ids=[])=>ids.reduce((a,id)=>a+(GUNS.find(g=>g.id===id)?.cash||0),0);
 export const racketsValue=(ids=[])=>ids.reduce((a,id)=>a+(RACKETS.find(r=>r.id===id)?.cost||0),0);
 export const dailyJobsOf=(day=dayOf())=>[0,1,2].map(i=>DAILY_POOL[(day+i*2)%DAILY_POOL.length]);
+// One owner for the exact route + instruction behind every daily contract. The generated pool owns
+// which work exists and its reward/goal; this hand-written guide owns only how a player reaches it.
+// `getDaily`, the day checklist, and the recurring coach all consume this so none can drift.
+export const DAILY_GUIDANCE = Object.freeze({
+  crime:   { how: 'Pull jobs right here on the Streets — only CLEAN (successful) ones count.', tab: 'streets' },
+  gta:     { how: 'Boost a car in The Garage.', tab: 'garage' },
+  train:   { how: 'Gym sessions — the Train drawer below. Any stat counts.', tab: 'streets' },
+  jump:    { how: 'Jump a player: Wet Work → The Streets roster → jump. A win counts.', tab: 'pvp' },
+  dice:    { how: 'Win back-room dice at the Den — fade a player taking bets (or list your own limit and let them come to you).', tab: 'den' },
+  tribute: { how: 'Pay cash tribute to your family (The Family → tribute). You need a family first.', tab: 'family' },
+  craft:   { how: 'Craft an item at the Workshop — The Garage.', tab: 'garage' },
+  trade:   { how: 'Buy a lot on the cb/ammo Exchange (The Garage → the armory / Exchange).', tab: 'garage' },
+  goods:   { how: 'Buy or sell trade goods — the Trade Goods drawer below.', tab: 'streets' },
+  melt:    { how: 'Melt a car down for parts in The Garage.', tab: 'garage' },
+  cook:    { how: 'Cook a batch at the Kitchen.', tab: 'kitchen' },
+  deal:    { how: 'Deal product on the corner at the Kitchen.', tab: 'kitchen' },
+  heist:   { how: 'Pull the Daily Score (the card right here — the solo Score is what counts).', tab: 'streets' },
+  bust:    { how: 'Spring ANYONE from lockup — Wet Work → The Streets roster: anyone with a LOCKUP chip shows a "bust them out" button. A success frees them and pays you; best odds near the end of a stretch.', tab: 'pvp' },
+});
+export const dailyGuidanceFor = (job) => DAILY_GUIDANCE[job?.k] || null;
 // A drawn contract the player STRUCTURALLY cannot complete, and why. `DAILY_POOL` is machine-owned
 // and every kind but one is doable alone — the NPC residents supply the counterparty for `jump`
 // (they walk the streets), `bust` (JAILBIRDS keeps some inside) and `dice` (they set a fade limit).
@@ -3046,9 +3066,11 @@ export const RACES = {
 export const raceTierOf = (id) => RACES.TIERS.find((t) => t.id === id) || null;
 export const raceRankOf = (wins) =>
   [...RACES.RANKS].reverse().find((r) => Number(wins) >= r.min) || RACES.RANKS[0];
-// a car's race power (deterministic; the car dominates, tune + wheelman speed decide close ones)
-export const carPower = (modelId, trimId, tune = 0, speed = 0, dmg = 0) =>
-  Math.max(1, Math.floor(Math.sqrt(carVal(modelId, trimId)))
+// a car's race power (deterministic; the car dominates, tune + wheelman speed decide close ones).
+// Rarity improves only the chassis term: it makes THAT car desirable without multiplying the
+// driver's build, tuning or nitrous. Common remains byte-for-byte the old curve.
+export const carPower = (modelId, trimId, tune = 0, speed = 0, dmg = 0, rarity = 'common') =>
+  Math.max(1, rarityBoost(Math.floor(Math.sqrt(carVal(modelId, trimId))), rarity)
     + Number(tune) * RACES.TUNE_POWER + Math.floor(Number(speed) / RACES.SPEED_DIV)
     - Math.floor(Number(dmg) / RACES.DMG_PEN_DIV));
 
@@ -3106,9 +3128,12 @@ PORT.STEP2 = {
   PIRATE_TAKE_BPS: 6000,                                // 60% of the seized cargo's landing value; the rest scatters
   ESCORT_VS_PIRATE: 30, FAIL_HOSP_MS: 30 * 60 * 1000,   // an escort fights pirates too; a repelled pirate is laid up
 };
-// effective hold/speed with naval upgrades folded in
-export const effHold = (boat, spec) => (spec?.hold || 0) + (Number(boat?.hull) || 0) * PORT.STEP2.HULL_STEP;
-export const effSpeed = (boat, spec) => (spec?.speed || 0) + (Number(boat?.engine) || 0) * PORT.STEP2.ENGINE_STEP;
+// Effective hold/speed with rarity on the BASE hull and naval upgrades folded in afterwards. This
+// keeps a refit worth the same on every copy while rarer NFTs retain a bounded, useful identity.
+export const effHold = (boat, spec) => rarityBoost(spec?.hold || 0, boat?.rarity)
+  + (Number(boat?.hull) || 0) * PORT.STEP2.HULL_STEP;
+export const effSpeed = (boat, spec) => rarityBoost(spec?.speed || 0, boat?.rarity)
+  + (Number(boat?.engine) || 0) * PORT.STEP2.ENGINE_STEP;
 // upgrade cost climbs with the level AND the boat's tier (a freighter's hull costs more than a dinghy's)
 export const boatUpgradeCost = (boat, spec, part) => {
   const lvl = Number(part === 'hull' ? boat?.hull : boat?.engine) || 0;
@@ -5499,20 +5524,22 @@ export const vouchRankOf = (n) => VOUCH_RANKS.reduce((a, r) => (Number(n) >= r.a
 //      product, so neither half may be softened (a safe item that still earns is a strictly-dominant
 //      option and the tradeoff disappears).
 //
-// RARITY IS PURE STATUS. It touches no power curve — not `carPower`, not `carVal`, not a boat's hold
-// or speed — because the races/port curves are sim-signed and a rarity multiplier on them would be an
-// unsigned balance change wearing a cosmetic's clothes. What it buys is scarcity, which is the whole
-// basis of a collectible market.
+// RARITY HAS BOUNDED HORIZONTAL UTILITY. It improves a car's CHASSIS contribution to race power and
+// a boat's BASE hold/speed by at most 10%; it never multiplies driver stats, tuning, naval upgrades,
+// resale/book value or melt yield. The item has a real reason to be sought out, while a rarity badge
+// cannot turn every other progression investment into paid power. Extracted NFTs remain inert until
+// their holder burns/re-imports them, keeping the safe-vs-useful choice intact.
 export const RARITY = {
   // Weights are a draw, not a ladder — `w` is relative, so the four need not sum to anything.
   // The design names four tiers in this order (epic above legendary), and that ordering IS the
   // upgrade path, so the array order is authoritative.
   TIERS: [
-    { id: 'common',    name: 'Common',    w: 700 },
-    { id: 'rare',      name: 'Rare',      w: 220 },
-    { id: 'legendary', name: 'Legendary', w: 65 },
-    { id: 'epic',      name: 'Epic',      w: 15 },
+    { id: 'common',    name: 'Common',    w: 700, utilityBps: 0 },
+    { id: 'rare',      name: 'Rare',      w: 220, utilityBps: 300 },
+    { id: 'legendary', name: 'Legendary', w: 65,  utilityBps: 600 },
+    { id: 'epic',      name: 'Epic',      w: 15,  utilityBps: 1000 },
   ],
+  UTILITY_MAX_BPS: 1000,
   // $OMR to buy the NEXT tier, indexed by the tier you are buying INTO (so [0] is unused — nothing
   // upgrades into common). Deterministic: this price, that tier, no roll. A §10.4 SINK that recycles
   // to the desk like every other, which is the design's "bridge between the two markets" — ETH-priced
@@ -5537,6 +5564,11 @@ export const RARITY = {
 };
 export const rarityIdx = (id) => Math.max(0, RARITY.TIERS.findIndex((t) => t.id === id));
 export const rarityOf = (id) => RARITY.TIERS[rarityIdx(id)];
+export const rarityUtilityBps = (id) => Math.min(RARITY.UTILITY_MAX_BPS, Number(rarityOf(id)?.utilityBps) || 0);
+export const rarityBoost = (base, rarity = 'common') => {
+  const n = Number(base) || 0, bps = rarityUtilityBps(rarity);
+  return n + Math.round(n * bps / 10000); // whole stat units; common stays exact and the bonus rounds at the stat boundary
+};
 // Roll a rarity from a [0,1) roll. Passed the roll (never rolling itself) so every caller can
 // rng_audit the exact number — server-authoritative and replayable, the §7.11/den discipline.
 export const rollRarity = (roll) => {

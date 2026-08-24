@@ -38,9 +38,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const ROOT = path.resolve(new URL('.', import.meta.url).pathname, '..');
-const rel = (p) => path.relative(ROOT, p);
+const ROOT = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
+const rel = (p) => path.relative(ROOT, p).replaceAll('\\', '/');
 const read = (p) => fs.readFileSync(p, 'utf8');
 const sha = (s) => crypto.createHash('sha256').update(s).digest('hex').slice(0, 12);
 
@@ -433,7 +434,7 @@ function census(g) {
   return { byNode, byEdge, nodes: g.nodes.size, edges: g.edges.length, unparsed: g.unparsed.length };
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   const [cmd = 'build', arg] = process.argv.slice(2);
   const g = build();
   if (cmd === 'build') {

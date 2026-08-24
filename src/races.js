@@ -58,7 +58,7 @@ export async function raceNpc(ch, carId, tierId, useNos, client, h) {
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -tier.fee, reason: 'race:fee' });
   await client.query('UPDATE characters SET race_at=$2 WHERE id=$1', [ch.id, new Date(now.getTime() + raceCdMs())]);
   const nos = await spendNos(client, car, useNos); // step 2 — one-race nitrous bump (consumed win/lose)
-  const power = carPower(car.model_id, car.trim_id, car.tune, ch.speed, car.dmg);
+  const power = carPower(car.model_id, car.trim_id, car.tune, ch.speed, car.dmg, car.rarity);
   const mine = power + nos + handlingAdd(h.owned) + rand(0, RACES.VARIANCE), field = tier.fieldPower + rand(0, RACES.VARIANCE);
   const win = mine > field;
   await h.rngLog(client, ch.id, `race:npc:${tier.id}`, mine, `${win ? 'win' : 'loss'}${nos ? ' +nos' : ''} (${mine} vs ${field})`);
@@ -110,7 +110,7 @@ export async function tuneCar(ch, carId, client, h) {
   await client.query('UPDATE cars SET tune=$2 WHERE id=$1', [car.id, nt]);
   car.tune = nt;
   await h.track(client, ch.account_id, 'race', { mode: 'tune', tune: nt });
-  return { ok: true, tune: nt, spent: tuneCost, power: carPower(car.model_id, car.trim_id, nt, ch.speed, car.dmg) };
+  return { ok: true, tune: nt, spent: tuneCost, power: carPower(car.model_id, car.trim_id, nt, ch.speed, car.dmg, car.rarity) };
 }
 
 // POST /v1/races/list/:carId {limit} — put a car on the strip to race for a wager up to `limit`
@@ -178,8 +178,8 @@ export async function raceChallenge(ch, opponent, body, client, h) {
   if (Number(opponent.cash) < amt) throw new GameError('their_cash', "They can't cover the wager right now.");
   let mine, theirs;
   const nos = await spendNos(client, my, body?.nos); // step 2 — the challenger may burn one nitrous charge (their own car only; the passive owner's isn't touched without consent)
-  const mp = carPower(my.model_id, my.trim_id, my.tune, ch.speed, my.dmg) + nos + handlingAdd(h.owned);
-  const tp = carPower(their.model_id, their.trim_id, their.tune, opponent.speed, their.dmg) + handlingAdd(h.victimOwned);
+  const mp = carPower(my.model_id, my.trim_id, my.tune, ch.speed, my.dmg, my.rarity) + nos + handlingAdd(h.owned);
+  const tp = carPower(their.model_id, their.trim_id, their.tune, opponent.speed, their.dmg, their.rarity) + handlingAdd(h.victimOwned);
   do { mine = mp + rand(0, RACES.VARIANCE); theirs = tp + rand(0, RACES.VARIANCE); } while (mine === theirs);
   const win = mine > theirs;
   const pot = amt * 2;
@@ -244,8 +244,8 @@ export async function pinkSlipRace(ch, opponent, body, client, h) {
   if (!their.pink_slip) throw new GameError('not_offered', "That car isn't up for pinks.");
   let mine, theirs;
   const nos = await spendNos(client, my, body?.nos); // the challenger may burn one nitrous charge on their own car
-  const mp = carPower(my.model_id, my.trim_id, my.tune, ch.speed, my.dmg) + nos + handlingAdd(h.owned);
-  const tp = carPower(their.model_id, their.trim_id, their.tune, opponent.speed, their.dmg) + handlingAdd(h.victimOwned);
+  const mp = carPower(my.model_id, my.trim_id, my.tune, ch.speed, my.dmg, my.rarity) + nos + handlingAdd(h.owned);
+  const tp = carPower(their.model_id, their.trim_id, their.tune, opponent.speed, their.dmg, their.rarity) + handlingAdd(h.victimOwned);
   do { mine = mp + rand(0, RACES.VARIANCE); theirs = tp + rand(0, RACES.VARIANCE); } while (mine === theirs);
   const win = mine > theirs;
   const winner = win ? ch : opponent, loser = win ? opponent : ch;
@@ -281,18 +281,19 @@ export async function raceBoard(ch, client, h) {
   const now = Date.now();
   const cars = (h.owned.cars || []).filter((c) => !c.listed && !c.pledged).map((c) => ({
     id: c.id, model: c.model_id, trim: c.trim_id, dmg: Number(c.dmg), tune: Number(c.tune || 0),
-    power: carPower(c.model_id, c.trim_id, c.tune, ch.speed, c.dmg),
+    rarity: String(c.rarity || 'common'),
+    power: carPower(c.model_id, c.trim_id, c.tune, ch.speed, c.dmg, c.rarity),
     raceLimit: c.race_limit != null ? Math.floor(Number(c.race_limit)) : null,
     pinkSlip: !!c.pink_slip, nos: Number(c.nos || 0),
   }));
   // the open strip — other players' cars taking a race (cash wager OR pinks). A power BAND, never the exact
   // figure (the convoy-band rule); `forPinks` flags the ones you can race for the title.
   const strip = (await client.query(
-    `SELECT c.id, c.model_id, c.trim_id, c.tune, c.dmg, c.race_limit, c.pink_slip, c.character_id, o.name owner, o.speed
+    `SELECT c.id, c.model_id, c.trim_id, c.tune, c.dmg, c.rarity, c.race_limit, c.pink_slip, c.character_id, o.name owner, o.speed
        FROM cars c JOIN characters o ON o.id = c.character_id AND o.alive
       WHERE (c.race_limit IS NOT NULL OR c.pink_slip) AND c.character_id <> $1 AND NOT c.listed AND NOT c.pledged AND NOT c.minted_onchain
       ORDER BY c.race_limit DESC NULLS LAST LIMIT 30`, [ch.id])).rows.map((r) => {
-    const p = carPower(r.model_id, r.trim_id, r.tune, r.speed, r.dmg);
+    const p = carPower(r.model_id, r.trim_id, r.tune, r.speed, r.dmg, r.rarity);
     return { ownerId: r.character_id, owner: r.owner, carId: r.id, model: r.model_id,
       limit: r.race_limit != null ? Math.floor(Number(r.race_limit)) : null, forPinks: !!r.pink_slip,
       band: p >= 500 ? 'a monster' : p >= 250 ? 'serious iron' : p >= 100 ? 'quick' : 'a runabout' };
@@ -323,7 +324,7 @@ export async function enterGrandPrix(ch, carId, client, h) {
   const car = raceable(h, carId); // a car you own, not on the block / pledged
   const buyin = RACES.GP.BUYIN;
   if (Number(ch.cash) < buyin) throw new GameError('cash', `The buy-in is ${usd(buyin)}.`);
-  const power = carPower(car.model_id, car.trim_id, car.tune, ch.speed, car.dmg); // SNAPSHOT the form at entry
+  const power = carPower(car.model_id, car.trim_id, car.tune, ch.speed, car.dmg, car.rarity); // SNAPSHOT the form at entry
   // materialize/find the open grand prix under the state singleton lock (LOCK ORDER: char → gp_state → gp)
   const st = (await client.query('SELECT current FROM grand_prix_state WHERE id=1 FOR UPDATE')).rows[0];
   let g = st.current ? (await client.query("SELECT * FROM grand_prix WHERE id=$1 AND status='open' FOR UPDATE", [st.current])).rows[0] : null;
@@ -368,9 +369,9 @@ export async function residentEnterGrandPrix(client, r) {
   // needs the level + a raceable car it OWNS (not on the block / pledged) + its own speed stat
   const full = (await client.query('SELECT respect, speed FROM characters WHERE id=$1', [r.id])).rows[0];
   if (!full || levelOf(Number(full.respect)) < RACES.GP.MIN_LEVEL) return null;
-  const car = (await client.query('SELECT model_id, trim_id, tune, dmg FROM cars WHERE character_id=$1 AND NOT listed AND NOT pledged ORDER BY id LIMIT 1', [r.id])).rows[0];
+  const car = (await client.query('SELECT model_id, trim_id, tune, dmg, rarity FROM cars WHERE character_id=$1 AND NOT listed AND NOT pledged ORDER BY id LIMIT 1', [r.id])).rows[0];
   if (!car) return null;
-  const power = carPower(car.model_id, car.trim_id, car.tune, Number(full.speed), car.dmg);
+  const power = carPower(car.model_id, car.trim_id, car.tune, Number(full.speed), car.dmg, car.rarity);
   await client.query('UPDATE characters SET cash = cash - $2 WHERE id=$1', [r.id, buyin]);
   await client.query('INSERT INTO grand_prix_entries (gp_id, character_id, buyin, power) VALUES ($1,$2,$3,$4)', [g.id, r.id, buyin, power]);
   await client.query('UPDATE grand_prix SET pool = pool + $2 WHERE id=$1', [g.id, buyin]);

@@ -533,6 +533,42 @@ for (let i = 0; i < 3; i++) {
   assert.equal((await call('POST', `/v1/daily/${job.id}/claim`, { token: chef.token })).code, 400, 'no double claim');
 }
 
+// Every kind in the generated DAILY_POOL has one server-owned, exact route + instruction. This is
+// deliberately table-driven over the source pool: adding a contract kind without its guidance
+// fails here before it can leave the client guessing where its work lives.
+{
+  const { DAILY_POOL } = await import('../src/rules.generated.js');
+  const { dailyJobsOf: jobsForDay } = await import('../src/rules.js');
+  const { getDaily } = await import('../src/growth.js');
+  const expectedGuidance = {
+    crime:   { how: 'Pull jobs right here on the Streets — only CLEAN (successful) ones count.', tab: 'streets' },
+    gta:     { how: 'Boost a car in The Garage.', tab: 'garage' },
+    train:   { how: 'Gym sessions — the Train drawer below. Any stat counts.', tab: 'streets' },
+    jump:    { how: 'Jump a player: Wet Work → The Streets roster → jump. A win counts.', tab: 'pvp' },
+    dice:    { how: 'Win back-room dice at the Den — fade a player taking bets (or list your own limit and let them come to you).', tab: 'den' },
+    tribute: { how: 'Pay cash tribute to your family (The Family → tribute). You need a family first.', tab: 'family' },
+    craft:   { how: 'Craft an item at the Workshop — The Garage.', tab: 'garage' },
+    trade:   { how: 'Buy a lot on the cb/ammo Exchange (The Garage → the armory / Exchange).', tab: 'garage' },
+    goods:   { how: 'Buy or sell trade goods — the Trade Goods drawer below.', tab: 'streets' },
+    melt:    { how: 'Melt a car down for parts in The Garage.', tab: 'garage' },
+    cook:    { how: 'Cook a batch at the Kitchen.', tab: 'kitchen' },
+    deal:    { how: 'Deal product on the corner at the Kitchen.', tab: 'kitchen' },
+    heist:   { how: 'Pull the Daily Score (the card right here — the solo Score is what counts).', tab: 'streets' },
+    bust:    { how: 'Spring ANYONE from lockup — Wet Work → The Streets roster: anyone with a LOCKUP chip shows a "bust them out" button. A success frees them and pays you; best odds near the end of a stretch.', tab: 'pvp' },
+  };
+  const kinds = [...new Set(DAILY_POOL.map((j) => j.k))].sort();
+  assert.deepEqual(kinds, Object.keys(expectedGuidance).sort(), 'the test table covers every DAILY_POOL kind exactly once');
+  for (const [kind, guide] of Object.entries(expectedGuidance)) {
+    let forcedDay = null;
+    for (let d = dayOf(); d < dayOf() + DAILY_POOL.length; d++) {
+      if (jobsForDay(d).some((j) => j.k === kind)) { forcedDay = d; break; }
+    }
+    assert.notEqual(forcedDay, null, `${kind} is drawn during one full pool cycle`);
+    const job = (await getDaily(pool, chef.id, forcedDay)).jobs.find((j) => j.kind === kind);
+    assert.deepEqual({ how: job.how, tab: job.tab }, guide, `${kind} carries its exact server guide`);
+  }
+}
+
 // ── a drawn contract the player STRUCTURALLY cannot finish says so, and the coach stops counting it ──
 // `tribute` needs a FAMILY, and the NPC residents deliberately never found one — so on the 6 days in
 // 31 the pool draws a tribute job, a family-less street has a card whose bar can never move, and the
@@ -581,6 +617,7 @@ let ob = (await call('GET', '/v1/onboard', { token: chef.token })).body;
 assert.equal(ob.total, 7, 'seven first-week tasks on the board (Discord retired as a growth funnel)');
 assert.equal(ob.claimed, 0, 'a fresh street has claimed nothing');
 assert.equal(ob.allDone, false, 'and is not done');
+assert.equal(ob.gameplayDone, false, 'the gameplay-complete signal stays false until every core solo task is claimed');
 assert.equal(ob.tasks.find((t) => t.id === 'ob_crime').ready, false, 'pull-a-job is not ready before any crime');
 assert.equal(ob.tasks.find((t) => t.id === 'ob_x').ready, true, 'social tasks are always ready to claim');
 assert.equal((await call('POST', '/v1/onboard/ob_crime/claim', { token: chef.token })).code, 400, 'no crime yet, no pay');
@@ -604,10 +641,32 @@ assert.equal((await call('POST', '/v1/wallet', { token: chef.token, body: { addr
 await pool.query(`UPDATE account_persistent SET wallet_address='0x1111111111111111111111111111111111111111' WHERE account_id=(SELECT account_id FROM characters WHERE id='${chef.id}')`);
 await seedCh(chef.id, 'jail_until=NULL, cash=500000');
 assert.equal((await call('POST', '/v1/gangs', { token: chef.token, body: { name: 'The Kitchen Cartel', tag: 'KC' } })).code, 200);
-for (const t of ['ob_boost', 'ob_bank', 'ob_wallet', 'ob_path', 'ob_family']) {
+for (const t of ['ob_boost', 'ob_bank', 'ob_path']) {
   r = await call('POST', `/v1/onboard/${t}/claim`, { token: chef.token });
   assert.equal(r.code, 200, `claimed ${t}`);
-  assert.equal(r.body.capstone, false, 'capstone waits for all seven');
+  assert.equal(r.body.capstone, false, 'capstone waits for every offered task');
+}
+ob = (await call('GET', '/v1/onboard', { token: chef.token })).body;
+assert.equal(ob.gameplayDone, true, 'the four core solo tasks unlock gameplay discovery');
+assert.equal(ob.allDone, false, 'wallet, family, and social tasks remain visible and keep the capstone unfinished');
+assert.deepEqual(ob.tasks.filter((t) => !t.claimed).map((t) => t.id), ['ob_family', 'ob_wallet', 'ob_x'],
+  'gameplay completion does not erase the unfinished optional checklist');
+// Each named core action is necessary. Seed the claimed checklist directly so this proves the board's
+// completion predicate rather than re-testing unrelated crime, garage, bank, or path mechanics.
+for (const missing of ['ob_crime', 'ob_boost', 'ob_bank', 'ob_path']) {
+  const claimed = Object.fromEntries(['ob_crime', 'ob_boost', 'ob_bank', 'ob_path']
+    .filter((taskId) => taskId !== missing).map((taskId) => [taskId, true]));
+  await pool.query(`UPDATE account_persistent SET onboard=$2 WHERE account_id=(SELECT account_id FROM characters WHERE id=$1)`,
+    [chef.id, JSON.stringify(claimed)]);
+  const withoutOne = (await call('GET', '/v1/onboard', { token: chef.token })).body;
+  assert.equal(withoutOne.gameplayDone, false, `${missing} is independently required for gameplay completion`);
+}
+await pool.query(`UPDATE account_persistent SET onboard=$2 WHERE account_id=(SELECT account_id FROM characters WHERE id=$1)`,
+  [chef.id, JSON.stringify({ ob_crime: true, ob_boost: true, ob_bank: true, ob_path: true })]);
+for (const t of ['ob_wallet', 'ob_family']) {
+  r = await call('POST', `/v1/onboard/${t}/claim`, { token: chef.token });
+  assert.equal(r.code, 200, `claimed ${t}`);
+  assert.equal(r.body.capstone, false, 'capstone still waits for the final offered task');
 }
 r = await call('POST', '/v1/onboard/ob_x/claim', { token: chef.token });
 assert.equal(r.code, 200, 'seventh (final) claim');
@@ -820,11 +879,27 @@ await pool.query(`UPDATE characters SET mission_at = now() WHERE id='${rook.id}'
 // not 3, on those days. Hardcoding made this a deterministic assertion resting on a seed-drawn
 // precondition: green most days, red on the ~6 in 31 the tribute is drawn (the population
 // duel-ladder / Doc-drill / kitchen-raid class — this one was live on main, found by a play session).
-const { dailyJobsOf, dailyLiveFor } = await import('../src/rules.js');
+const { dailyJobsOf, dailyGuidanceFor, dailyLiveFor } = await import('../src/rules.js');
 const cliveIds = dailyLiveFor([], { gangId: null }).map((j) => j.id);
 assert(cliveIds.length >= 2, 'the pool must always leave a solo player at least two live contracts — '
   + 'if that ever stops being true this walk is measuring nothing');
-assert.equal(await coachOf(), `${cliveIds.length} of today's contracts unclaimed`, 'then the day\'s contracts, counted');
+let liveDaily = dailyLiveFor([], { gangId: null })[0];
+let liveDailyGuide = dailyGuidanceFor(liveDaily);
+let coachedDaily = (await call('GET', '/v1/me', { token: rook.token })).body.character.coach;
+assert.equal(coachedDaily.label, liveDaily.name, 'the recurring coach names one actual live daily contract');
+assert.equal(coachedDaily.hint, liveDailyGuide.how, 'the recurring coach describes that contract with its server guide');
+assert.equal(coachedDaily.tab, liveDailyGuide.tab, 'the recurring coach jumps to that contract\'s actual activity');
+
+// A daily that is already complete is not work to repeat: the coach must identify that same live,
+// unclaimed job as ready and land on the Streets card that pays it. Seed the FIRST live job so this
+// also proves ready work wins the selection order without changing blocked/claimed semantics.
+await pool.query(`INSERT INTO daily_progress (character_id, day, counters, claimed) VALUES ($1, $2, $3, '[]')
+  ON CONFLICT (character_id, day) DO UPDATE SET counters=EXCLUDED.counters, claimed='[]'`,
+  [rook.id, cday, JSON.stringify({ [liveDaily.k]: liveDaily.n })]);
+coachedDaily = (await call('GET', '/v1/me', { token: rook.token })).body.character.coach;
+assert.equal(coachedDaily.label, `${liveDaily.name} — ready to collect`, 'the coach names the completed live contract as claim-ready');
+assert.match(coachedDaily.hint, /ready to collect.*Daily Work card/i, 'the coach explicitly says to collect its completed contract');
+assert.equal(coachedDaily.tab, 'streets', 'a completed live daily routes to the Streets claim card');
 // the REAL drawn ids — the count subtracts what this player has actually claimed, so a placeholder
 // id would be silently ignored and the assertion below would pass for the wrong reason. Claim all
 // but one of the LIVE ones, so "one left" is true whatever the day drew (claiming two of the three
@@ -832,7 +907,11 @@ assert.equal(await coachOf(), `${cliveIds.length} of today's contracts unclaimed
 const cjobs = dailyJobsOf(cday).map((j) => j.id);
 await pool.query(`INSERT INTO daily_progress (character_id, day, counters, claimed) VALUES ('${rook.id}', ${cday}, '{}', '${JSON.stringify(cliveIds.slice(0, -1))}')
   ON CONFLICT (character_id, day) DO UPDATE SET claimed = EXCLUDED.claimed`);
-assert.equal(await coachOf(), '1 of today\'s contracts unclaimed', 'and the count is REAL — the claims are subtracted');
+liveDaily = dailyLiveFor(cliveIds.slice(0, -1), { gangId: null })[0];
+liveDailyGuide = dailyGuidanceFor(liveDaily);
+coachedDaily = (await call('GET', '/v1/me', { token: rook.token })).body.character.coach;
+assert.equal(coachedDaily.label, liveDaily.name, 'the coach advances to the actual one remaining contract');
+assert.equal(coachedDaily.tab, liveDailyGuide.tab, 'and keeps its exact destination after claims are subtracted');
 await pool.query(`UPDATE daily_progress SET claimed='${JSON.stringify(cjobs)}' WHERE character_id='${rook.id}' AND day=${cday}`);
 assert.equal(await coachOf(), 'Tonight\'s hustle is waiting', 'then tonight\'s hustle, unstarted');
 await pool.query(`INSERT INTO hustles (character_id, day, step, baseline) VALUES ('${rook.id}', ${cday}, 1, '{}')`);

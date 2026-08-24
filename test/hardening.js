@@ -339,11 +339,19 @@ assert(oa.components.securitySchemes.bearerAuth, 'the bearer scheme is declared'
 // route reads as keyless, an authed route as bearer, purely from what the route actually mounts
 assert.deepEqual(oa.paths['/v1/catalog'].get.security, [], 'a keyless route (real preHandler) reads keyless');
 assert.deepEqual(oa.paths['/v1/opportunities'].get.security, [{ bearerAuth: [] }], 'an authed route (real preHandler) reads bearer');
+assert(/linked EVM wallet and a minted character/.test(oa.info.description),
+  'the OpenAPI entry point states both extraction prerequisites');
 const ag = await app.inject({ method: 'GET', url: '/agents' }); // markdown, not JSON — raw inject
 assert(ag.statusCode === 200 && /text\/markdown/.test(ag.headers['content-type']) && /agent-key/.test(ag.body), 'the agent guide serves at /agents');
+assert(/link an EVM wallet/i.test(ag.body) && /mint your character before extraction/i.test(ag.body),
+  'the agent guide makes the wallet and character-mint extraction gates explicit');
 assert.equal((await app.inject({ method: 'GET', url: '/AGENTS.md' })).statusCode, 200, 'the conventional AGENTS.md filename serves too');
 const lt = await app.inject({ method: 'GET', url: '/llms.txt' });
 assert(lt.statusCode === 200 && /\/openapi\.json/.test(lt.body) && /\/agents/.test(lt.body), 'llms.txt indexes the machine surfaces');
+assert(/link EVM wallet → mint character/.test(lt.body), 'llms.txt puts wallet linking and character minting in the agent path');
+const mcpSource = readFileSync(new URL('../omerta-mcp/index.js', import.meta.url), 'utf8');
+assert(/extractionPrerequisites:[\s\S]*SIWE-link an EVM wallet[\s\S]*mint the character/.test(mcpSource),
+  'the MCP agent start response teaches the wallet and character-mint gates');
 // robots.txt: every crawler + AI agent explicitly welcome (Allow: /) and pointed at the machine
 // surfaces — the manual must be readable by ChatGPT/Grok/open-source fetchers, not just Claude.
 const rb = await app.inject({ method: 'GET', url: '/robots.txt' });

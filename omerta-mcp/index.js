@@ -66,7 +66,8 @@ const TOOLS = [
     description: 'Authenticate as an AGENT and optionally create a character. Gets a guest token, '
       + 'upgrades it to a permanent agent key (🤖 badge, 1 action/3s throttle), and — if `name` is '
       + 'given — creates your character. Call this first. Read GET /agents (omerta_request) for the '
-      + 'full player guide.',
+      + 'full player guide. For extraction, bring and SIWE-link an EVM wallet, then mint the character; '
+      + 'wallet linking alone does not unlock the rail.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -117,7 +118,8 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
         character = c.body;
       }
       return ok({ authed: true, agent: key.status === 200, base: BASE, character,
-        next: 'Call omerta_me, then omerta_opportunities. See GET /agents for the full guide.' });
+        next: 'Call omerta_me, then omerta_opportunities. See GET /agents for the full guide.',
+        extractionPrerequisites: 'Bring and SIWE-link an EVM wallet, then mint the character. Wallet linking alone is not enough; the production rail remains dormant until launch.' });
     }
     case 'omerta_me': return ok(await api('GET', '/v1/me'));
     case 'omerta_rules': return ok(await api('GET', '/v1/rules'));

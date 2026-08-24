@@ -1,0 +1,101 @@
+flowchart LR
+  repo["OMERTÀ repository"]
+  sub_backend["backend"]
+  repo --> sub_backend
+  sub_database["database"]
+  repo --> sub_database
+  sub_web["web"]
+  repo --> sub_web
+  sub_contracts["contracts"]
+  repo --> sub_contracts
+  sub_agents["agents"]
+  repo --> sub_agents
+  sub_quality["quality"]
+  repo --> sub_quality
+  sub_operations["operations"]
+  repo --> sub_operations
+  sub_documentation["documentation"]
+  repo --> sub_documentation
+  dom_platform-core["platform-core"]
+  dom_economy-ledger["economy-ledger"]
+  dom_social-combat["social-combat"]
+  dom_world-progression["world-progression"]
+  dom_enterprise-logistics["enterprise-logistics"]
+  dom_vice-competition["vice-competition"]
+  dom_law-intelligence["law-intelligence"]
+  dom_chain-economy["chain-economy"]
+  dom_engagement-growth["engagement-growth"]
+  dom_client-experience["client-experience"]
+  dom_agent-experience["agent-experience"]
+  dom_delivery-assurance["delivery-assurance"]
+  sub_agents --> dom_agent-experience
+  sub_backend --> dom_economy-ledger
+  sub_backend --> dom_engagement-growth
+  sub_backend --> dom_enterprise-logistics
+  sub_backend --> dom_law-intelligence
+  sub_backend --> dom_platform-core
+  sub_backend --> dom_social-combat
+  sub_backend --> dom_vice-competition
+  sub_backend --> dom_world-progression
+  sub_contracts --> dom_chain-economy
+  sub_quality --> dom_delivery-assurance
+  sub_web --> dom_client-experience
+  dom_delivery-assurance -->|329| dom_platform-core
+  dom_delivery-assurance -->|136| dom_economy-ledger
+  dom_platform-core -->|38| dom_engagement-growth
+  dom_platform-core -->|34| dom_world-progression
+  dom_world-progression -->|33| dom_platform-core
+  dom_engagement-growth -->|32| dom_platform-core
+  dom_enterprise-logistics -->|31| dom_platform-core
+  dom_platform-core -->|31| dom_economy-ledger
+  dom_platform-core -->|31| dom_social-combat
+  dom_delivery-assurance -->|30| dom_engagement-growth
+  dom_platform-core -->|30| dom_enterprise-logistics
+  dom_social-combat -->|29| dom_platform-core
+  dom_delivery-assurance -->|25| dom_chain-economy
+  dom_economy-ledger -->|24| dom_platform-core
+  dom_delivery-assurance -->|22| dom_world-progression
+  dom_platform-core -->|22| dom_vice-competition
+  dom_delivery-assurance -->|21| dom_vice-competition
+  dom_delivery-assurance -->|20| dom_social-combat
+  dom_platform-core -->|17| dom_law-intelligence
+  dom_vice-competition -->|17| dom_platform-core
+  dom_chain-economy -->|13| dom_platform-core
+  dom_delivery-assurance -->|13| dom_law-intelligence
+  dom_law-intelligence -->|12| dom_platform-core
+  dom_platform-core -->|10| dom_chain-economy
+  dom_delivery-assurance -->|9| dom_enterprise-logistics
+  dom_enterprise-logistics -->|6| dom_social-combat
+  dom_enterprise-logistics -->|6| dom_world-progression
+  dom_chain-economy -->|5| dom_economy-ledger
+  dom_engagement-growth -->|5| dom_world-progression
+  dom_economy-ledger -->|4| dom_engagement-growth
+  dom_enterprise-logistics -->|4| dom_engagement-growth
+  dom_enterprise-logistics -->|4| dom_vice-competition
+  dom_law-intelligence -->|4| dom_engagement-growth
+  dom_vice-competition -->|4| dom_world-progression
+  dom_world-progression -->|4| dom_engagement-growth
+  dom_world-progression -->|4| dom_vice-competition
+  dom_engagement-growth -->|3| dom_economy-ledger
+  dom_engagement-growth -->|3| dom_enterprise-logistics
+  dom_engagement-growth -->|3| dom_social-combat
+  dom_enterprise-logistics -->|3| dom_law-intelligence
+  dom_law-intelligence -->|3| dom_social-combat
+  dom_world-progression -->|3| dom_enterprise-logistics
+  dom_chain-economy -->|2| dom_engagement-growth
+  dom_economy-ledger -->|2| dom_chain-economy
+  dom_economy-ledger -->|2| dom_law-intelligence
+  dom_enterprise-logistics -->|2| dom_economy-ledger
+  dom_social-combat -->|2| dom_engagement-growth
+  dom_social-combat -->|2| dom_enterprise-logistics
+  dom_chain-economy -->|1| dom_enterprise-logistics
+  dom_chain-economy -->|1| dom_social-combat
+  dom_engagement-growth -->|1| dom_chain-economy
+  dom_enterprise-logistics -->|1| dom_chain-economy
+  dom_law-intelligence -->|1| dom_world-progression
+  dom_social-combat -->|1| dom_economy-ledger
+  dom_vice-competition -->|1| dom_economy-ledger
+  dom_vice-competition -->|1| dom_engagement-growth
+  dom_vice-competition -->|1| dom_law-intelligence
+  dom_world-progression -->|1| dom_economy-ledger
+  dom_world-progression -->|1| dom_social-combat

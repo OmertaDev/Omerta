@@ -38,10 +38,11 @@ import path from 'node:path';
 import { buildServer } from '../src/server.js';
 
 const VIEWPORTS = [
+  { w: 320, h: 568, name: 'small legacy phone — the hard floor' },
   { w: 375, h: 667, name: 'iPhone SE / 8 — the tightest common phone' },
   { w: 360, h: 780, name: 'small Android' },
 ];
-const MIN_TAP = 36;          // px. Apple says 44pt for primary targets; 36 is the floor we enforce.
+const MIN_TAP = 44;          // px. Primary navigation is touched constantly; enforce the full floor.
 const SHOTS = process.env.MOBILE_SHOTS || '';   // set a directory to keep screenshots for eyeballing
 
 // ── finding a browser ───────────────────────────────────────────────────────────────────────────

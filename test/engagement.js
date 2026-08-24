@@ -55,11 +55,11 @@ console.log(`✓ catalog: all ${emitted.size} track() events in src/ are claimed
 // ── (2) the report reads a real database ────────────────────────────────────────────────────────
 const app = await buildServer();
 const pool = app.pool;
-const call = async (method, url, { token, mod } = {}) => {
+const call = async (method, url, { token, mod, body } = {}) => {
   const headers = {};
   if (token) headers.authorization = `Bearer ${token}`;
   if (mod) headers['x-mod-key'] = 'test-mod-key';
-  const res = await app.inject({ method, url, headers });
+  const res = await app.inject({ method, url, headers, payload: body });
   return { code: res.statusCode, body: res.json() };
 };
 const mk = async (name) => {
@@ -79,11 +79,53 @@ const b = await mk('Engage Bob');
 await call('POST', '/v1/crimes/pick', { token: a.token });
 await app.inject({ method: 'POST', url: '/v1/crimes/pick', headers: { authorization: `Bearer ${a.token}` } });
 
+// The economy report must observe real player interaction, not a fixture that inserts telemetry
+// directly. Supply and a completed trade are separate signals: two people list/buy contraband.
+const marketSeller = await mk('Engage Market Seller');
+const marketBuyer = await mk('Engage Market Buyer');
+await pool.query("UPDATE characters SET cash=100000, loc='docks' WHERE id=$1", [marketSeller.id]);
+await pool.query("UPDATE characters SET cash=100000, loc='docks' WHERE id=$1", [marketBuyer.id]);
+assert.equal((await call('POST', '/v1/goods/buy', { token: marketSeller.token, body: { goodId: 'gin', qty: 2 } })).code, 200,
+  'the seller stocks real goods before listing them');
+const marketListing = await call('POST', '/v1/market', { token: marketSeller.token,
+  body: { goodId: 'gin', qty: 2, price: 500 } });
+assert.equal(marketListing.code, 200, 'the seller lists goods through the public market route');
+assert.equal((await call('POST', `/v1/market/${marketListing.body.id}/buy`, { token: marketBuyer.token, body: { qty: 2 } })).code, 200,
+  'the buyer completes the listed trade through the public market route');
+
+// Likewise, a peer loan actually changes hands and is squared through the public routes.
+const lender = await mk('Engage Lender');
+const borrower = await mk('Engage Borrower');
+await pool.query('UPDATE characters SET cash=100000 WHERE id=$1 OR id=$2', [lender.id, borrower.id]);
+const offer = await call('POST', '/v1/loans', { token: lender.token, body: { amount: 10000, rate: 0.1, hours: 24 } });
+assert.equal(offer.code, 200, 'the lender posts a peer offer');
+assert.equal((await call('POST', `/v1/loans/${offer.body.id}/take`, { token: borrower.token })).code, 200,
+  'the borrower takes the offer');
+assert.equal((await call('POST', `/v1/loans/${offer.body.id}/repay`, { token: borrower.token })).code, 200,
+  'the borrower repays the peer loan');
+
+// A personal contract is a distinct supply signal from family contracts.
+const contractor = await mk('Engage Contractor');
+const mark = await mk('Engage Mark');
+await pool.query('UPDATE characters SET cash=100000 WHERE id=$1', [contractor.id]);
+assert.equal((await call('POST', `/v1/streets/${mark.id}/bounty`, { token: contractor.token,
+  body: { amount: 1000, kind: 'hospitalize' } })).code, 200, 'a player posts a personal contract');
+
 let r = await opsEngagement(pool, 14);
 assert(r.players.humans >= 2, `both guests counted as humans, got ${r.players.humans}`);
 const streets = r.systems.find((s) => s.system === 'streets / crime');
 assert(streets.accounts >= 1, 'the crime a player actually pulled shows up under streets / crime');
 assert(streets.events >= 1, 'and its events are counted');
+const blackMarket = r.systems.find((s) => s.system === 'the black market');
+assert(blackMarket.accounts >= 2 && blackMarket.events >= 2,
+  'a real market list and completed buy are attributed to black-market adoption');
+const loans = r.systems.find((s) => s.system === 'loan sharking');
+assert(loans.accounts >= 2 && loans.events >= 3,
+  'a real peer offer/take/repay lifecycle is attributed to loan-sharking adoption');
+const contracts = r.systems.find((s) => s.system === 'contracts');
+assert(contracts.accounts >= 1 && contracts.events >= 1,
+  'a personal contract post is attributed to contract adoption');
+assert(!r.untracked.includes('the black market'), 'instrumented market adoption is no longer reported as untracked');
 assert.equal(r.uncatalogued.length, 0, `uncatalogued events present: ${JSON.stringify(r.uncatalogued)}`);
 console.log(`✓ live read: ${r.players.humans} humans, streets/crime shows ${streets.accounts} account(s) / ${streets.events} event(s)`);
 
@@ -93,10 +135,10 @@ console.log(`✓ live read: ${r.players.humans} humans, streets/crime shows ${st
 assert(r.dead.includes('boxing'), 'a system nobody touched must appear on the dead list');
 assert(!r.dead.includes('streets / crime'), 'a system someone used must NOT appear on the dead list');
 assert(r.dead.length > 20, `most systems are untouched in this fixture; dead list has only ${r.dead.length}`);
-// A system with no declared events is untracked, not dead — the two must not be conflated, or an
-// instrumentation gap gets reported to the founder as a player verdict.
-assert(r.untracked.includes('the black market'), 'a system with no telemetry is reported untracked, not dead');
-assert(!r.dead.includes('the black market'), 'and is kept off the dead list');
+// The market has declared lifecycle events, so it is eligible for the same dead-list diagnosis as
+// every other instrumented system. This fixture exercised it, so it is neither untracked nor dead.
+assert(!r.untracked.includes('the black market'), 'the instrumented market is no longer reported untracked');
+assert(!r.dead.includes('the black market'), 'a market with real adoption is kept off the dead list');
 console.log(`✓ dead list: ${r.dead.length} systems with zero distinct players; ${r.untracked.length} untracked (no events declared)`);
 
 // ── (4) distinct-humans, not event volume ───────────────────────────────────────────────────────

@@ -113,6 +113,43 @@ const html = decomment(readFileSync(new URL('../public/index.html', import.meta.
     'delayed opt-in focus cancels when the player changed tabs');
 }
 
+// ── 0b. DAILY GUIDANCE COMES FROM THE SERVER ───────────────────────────────────────────────────
+{
+  const streets = html.slice(html.indexOf('async function renderStreets()'), html.indexOf('async function renderCity()'));
+  assert(!streets.includes('DAILY_HOWTO'), 'Streets must not keep a competing browser-only daily guide');
+  assert(streets.includes('j.how') && streets.includes('j.tab'),
+    'Streets renders the server-owned daily instruction and destination');
+}
+
+// ── 0a. FIRST-WEEK DISCOVERY UNLOCKS ON GAMEPLAY, NOT OPTIONAL IDENTITY ────────────────────────
+// The server exposes `gameplayDone` precisely so the Start screen can reveal the city after the four
+// core solo actions. The wallet/family/social cards must stay in the checklist until `allDone`, so a
+// player sees both the newly unlocked systems and the optional rewards still waiting. This is a
+// client-rendering contract: the page is its declarative renderer, and the narrow slice below keeps
+// a future broad replacement of the display gate from re-hiding discovery behind an optional task.
+{
+  const start = html.slice(html.indexOf('async function renderStart()'), html.indexOf("t.querySelectorAll('[data-obclaim]')"));
+  assert(start.includes('const gameplayDone = !!ob.gameplayDone;'),
+    'Start Here must read the server-owned gameplay completion signal');
+  assert(start.includes('${gameplayDone ? situation : \'\'}'),
+    'the Situation must unlock when core gameplay is complete');
+  assert(start.includes('${gameplayDone ? `<h2>The City Standing'),
+    'veteran standing must unlock when core gameplay is complete');
+  assert(start.includes("${ob.allDone ? '' : `"),
+    'the full checklist remains visible until optional onboarding rewards are claimed');
+  const explore = start.slice(start.indexOf('// STILL ON THE TABLE'), start.indexOf("${sect('howto'"));
+  assert(explore.includes('if (!gameplayDone) return \'\';'),
+    'Explore must unlock from gameplay completion rather than full checklist completion');
+  assert(explore.includes('featured systems catalog'),
+    'Explore must describe its finite list as featured systems, not every game system');
+  assert(explore.includes('every currently open featured system is worked'),
+    'the Explore all-clear must mean every currently open featured system, not the full catalog');
+  assert(explore.includes('featured systems currently open to you'),
+    'the all-clear explanation must name its currently-open scope');
+  assert(!explore.includes('every featured system in this catalog'),
+    'the all-clear must not imply every later featured system has already been unlocked');
+}
+
 // A gate is a CONDITION, so test conditions — not a byte window. Walk out through the enclosing
 // `${...}` interpolations and at each level read only the HEAD: the text from `${` to where the
 // branch body starts (its first backtick). That is exactly the expression that decided whether to

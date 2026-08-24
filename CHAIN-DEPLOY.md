@@ -186,8 +186,9 @@ makes co-mingling it with a spending key strictly worse than before.
       drift from source; recompile before every deploy.
 
 ## 2. Deploy order + wiring (Safe-owned from deploy — no hot-deployer window)
-Deploy with the deployer key, then immediately hand ownership to the Safe (§3). Mirror `tools/chain-e2e.js`
-PHASE 1 for the exact calls/args.
+Deploy from the deployer account, but pass the Safe to every ownable constructor so ownership is correct
+from the first block. Use `omerta-contracts/DEPLOYMENT.md` and its Foundry scripts for the exact calls/args;
+`tools/chain-e2e.js` remains the end-to-end behavior reference.
 - [ ] **`OMR(treasurySafe)`** — founding supply `100_000_000e18` minted once to the Safe. **No longer a
       fixed-supply token** (tokenomics v2 §4): it has ONE mint path, the `minter` address, which ships
       **unset (= minting off)** and is armed deliberately below. There is no owner mint.
@@ -207,9 +208,9 @@ PHASE 1 for the exact calls/args.
       (this contract's address) on the WORKER so the `Redeemed` watcher (`syncRedeemedEvents` → `reimportItem`
       + the `sweepReimports` retry) runs; dormant until set. The `redeem` burn is new audit surface — it is
       part of THIS deploy's audit batch (rule 2 clock), not a later add. No env is needed on the API for it.
-- [ ] **`VoucherClaim(omr, gearVault, signer, safe, dailyCapOMR)`** — the only $OMR bridge. Then
-      `gearVault.setMinter(voucherClaim)` so gear mints route through it.
-- [ ] **`OMRStaking(omr, safe)`** — pre-funded reward pool; principal always withdrawable.
+- [ ] **`VoucherClaim(safe, signer, omr, gearVault, dailyCapOMR)`** — the only $OMR bridge. Then
+       `gearVault.setMinter(voucherClaim)` so gear mints route through it.
+- [ ] **`OMRStaking(safe, omr, apyBps)`** — pre-funded reward pool; principal always withdrawable.
 - [ ] **`OmertaFees(safe, feeRecipient=devWallet, vigRecipient, vigBps=2500, mintFeeWei, respawnFeeWei)`** —
       the ETH tollbooth. It splits each fee ON-CHAIN in one tx: `vigBps` → `vigRecipient`, the remainder →
       `feeRecipient` (dev); it custodies nothing. **`vigBps=2500` is the Path A fee split** (fee vig 2500 —
@@ -454,10 +455,10 @@ omit them and the market looks healthy from the outside and is not.
       market's UNDERLYING (6dp for USDC), and `bank_revenue` is deliberately NOT mirrored into the
       ETH-denominated `rwa_revenue`, whose sum is the vault's `allocated <= held` wall.
 
-## 3. Transfer ownership to the Safe
-- [ ] Every contract is `Ownable2Step`. From the deployer: `transferOwnership(safe)`; from the Safe:
-      `acceptOwnership()`. Verify `owner() == safe` on all six. (In `chain-e2e.js` the deployer *is* the Safe;
-      in production they differ — do the two-step handoff.)
+## 3. Verify ownership at the Safe
+- [ ] Every ownable contract receives the Safe in its constructor. Verify `owner() == safe` on every
+      deployed ownable before any wiring transaction. A production deployment must not rely on a later
+      `transferOwnership`/`acceptOwnership` handoff from a hot deployer.
 
 ## 4. Backend env — activate the dormant rails (production API + worker, same DB)
 Each rail is OFF until its address/config is present. Set on BOTH processes.

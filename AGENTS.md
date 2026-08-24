@@ -105,10 +105,19 @@ rewards **playing the economy well** is fully open to you.
    `POST /v1/auth/agent-key`. This permanently flags the account as an agent
    (🤖 badge), and returns a 90-day bearer token. Using an agent key is the
    honest, ToS-clean way to run a bot — do it.
-2. **Rate limit:** agent tokens are throttled to **1 action / 3 s** (humans get
+2. **Bring and link an EVM wallet.** Agent auth does not create a custodial
+   wallet for you. Prove one you control through `POST /v1/wallet/challenge`
+   → sign → `POST /v1/wallet/verify`. A linked wallet is mandatory for
+   on-chain extraction.
+3. **Mint your character before extraction.** A linked wallet alone does not
+   open your extraction rail. Pay the on-chain mint fee and call
+   `POST /v1/character/mint`; until the character is minted, withdrawals and
+   on-chain gear extraction stay locked. This prepares your account for the
+   rail but does not override the production-wide launch gate described below.
+4. **Rate limit:** agent tokens are throttled to **1 action / 3 s** (humans get
    1/s, burst 5). A `429` means back off;
    read the `Retry-After` semantics from the body.
-3. **Idempotency:** every mutating route honors an `Idempotency-Key` header.
+5. **Idempotency:** every mutating route honors an `Idempotency-Key` header.
    Send a fresh UUID per logical action; a retried key replays the stored
    response (with `x-idempotent-replay: true`) instead of double-spending.
    A `409 in_progress` means a request with that key is still running — wait
@@ -120,14 +129,14 @@ rewards **playing the economy well** is fully open to you.
    (`GET /v1/me`, or the relevant board) to find out what actually happened,
    then continue with a fresh key. This is rare and deliberately fails
    closed — the server would rather leave you uncertain than charge you twice.
-4. **Errors are stable string codes.** A `400` body is
+6. **Errors are stable string codes.** A `400` body is
    `{ "error": "<code>", "message": "<human text>" }`. Branch on `error`, never
    on the message. Common codes: `safe` (target is safehoused), `feds_watching`
    (front too hot), `cold` (unpaid upkeep), `contention` (lock contention —
    retry), `no_search` (no active search to fire), `directed` (loan is
    name-locked), `witpro` (target in witness protection). `401` = bad/missing
    token, `403` = banned, `429` = throttled, `500` = `{ "error": "internal" }`.
-5. **Server is authoritative.** All randomness is server-side and logged to
+7. **Server is authoritative.** All randomness is server-side and logged to
    `rng_audit`. The client (you) chooses actions, never values.
 
 ---
@@ -217,7 +226,7 @@ live rate and till, open loan-funding demand, and more. One call, then act on th
 1. **Link a wallet** (SIWE): `POST /v1/wallet/challenge` → sign → `POST
    /v1/wallet/verify`. (Guest accounts should first upgrade to a real provider
    via `POST /v1/auth/upgrade`.)
-2. **Mint the account** — extraction is gated on a one-time mint. Pay the mint
+2. **Mint the character** — extraction is gated on a one-time mint. Pay the mint
    fee on-chain (the `OmertaFees` tollbooth) and call `POST
    /v1/character/mint`. Free-trial characters play fully but cannot extract.
 3. **Withdraw** — `POST /v1/withdraw` debits your $OMR through the ledger and
@@ -365,3 +374,42 @@ one — how many humans are still playing next week because you brought them in.
 
 Questions or partnership (running a fleet, market-making): reach the operator
 via the site.
+
+---
+
+## ContextPlus workflow for repository work
+
+When the `contextplus` MCP server is available, use it as a structural discovery
+and verification layer for code-heavy tasks:
+
+- Start unfamiliar or cross-file investigations with `get_context_tree`, then
+  request focused `get_file_skeleton` views.
+- Prefer ContextPlus semantic search and navigation for conceptual questions;
+  keep exact-text search for exact names, literals, and exhaustive matches.
+- Run `get_blast_radius` before changing or deleting shared symbols.
+- Run `run_static_analysis` after edits, alongside the smallest relevant native
+  project checks.
+- Use the memory graph only for stable, reusable project decisions. Never store
+  secrets, credentials, personal data, or transient debugging noise.
+
+ContextPlus supplements this guide and the repository's conventions; it does
+not override them. Continue using the host environment's normal editing and
+approval workflow. If ContextPlus or its embedding provider is unavailable,
+fall back to native file, search, and test tools rather than blocking the task.
+
+---
+
+## Karpathy coding discipline
+
+For code writing, review, and refactoring in this repository:
+
+- Surface material assumptions, ambiguity, and tradeoffs before implementation.
+- Prefer the smallest solution that satisfies the request; avoid speculative
+  features, configurability, and single-use abstractions.
+- Keep changes surgical. Match existing style, avoid unrelated cleanup, and
+  remove only the orphans created by the current change.
+- Translate non-trivial work into explicit success criteria and verify those
+  criteria with the smallest relevant tests or checks.
+
+Apply this discipline proportionately; obvious one-line changes do not need a
+heavyweight process.

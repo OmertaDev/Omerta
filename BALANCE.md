@@ -6453,3 +6453,19 @@ an outside asset,
 which is why it is a founder-signed lever and not a status axis. §10.4: zero surface (no currency
 moves; the forge writes no `transactions` row — test-pinned in `test/walletforge.js`). Only the
 BANDS are stored, never the raw features (the anti-precise-kill-EV rule on a permanent table).
+
+## RARITY GAMEPLAY UTILITY — bounded item perks (founder-directed 2026-08-23)
+
+Car and boat rarity is no longer status-only. Rare / Legendary / Epic copies add 3% / 6% / 10%
+respectively, creating a gameplay reason to seek and upgrade scarce items. The percentage applies
+only to a car's chassis contribution to race power or a boat's base hold and speed. It does not
+multiply driver stats, tuning, nitrous, naval upgrades, resale/book value, or melt yield. Extracted
+NFTs remain inert until re-imported, preserving the safe-versus-useful choice.
+
+| Lever | Ships at | What it bounds |
+|---|---|---|
+| `RARITY.TIERS` utility | Common 0, Rare 300, Legendary 600, Epic 1000 bps | The exact scarcity-to-utility ladder; the existing rarity weights and deterministic upgrade prices are unchanged. |
+| `RARITY.UTILITY_MAX_BPS` | 1000 | A hard 10% ceiling on every rarity-derived gameplay bonus. |
+
+The economic boundary is unchanged: rarity never changes item book/resale value or melt yield, and
+the existing upgrade is still a known tier for a known $OMR price rather than a random paid outcome.

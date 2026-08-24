@@ -45,6 +45,14 @@
   #nav input{width:100%;background:#0e0d0c;border:1px solid var(--line2);color:var(--ink);
     min-height:44px;padding:9px 11px;border-radius:2px;font-size:13px}
   #nav input::placeholder{color:var(--faint)}
+  #search-results{padding:0 10px 10px}
+  #search-results:empty{display:none}
+  #search-results a{display:block;min-height:44px;padding:9px 10px;border-bottom:1px solid var(--line);color:var(--ink)}
+  #search-results a:hover{background:var(--panel2);text-decoration:none}
+  #search-results strong{display:block;font:600 13px/1.35 var(--display);letter-spacing:.04em}
+  #search-results .search-hit__snippet{display:block;margin-top:3px;color:var(--dim);font-size:12.5px;line-height:1.45}
+  #search-results mark{background:rgba(201,162,74,.2);color:var(--ink);padding:0 1px}
+  #nav.searching #navlist{display:none}
   #nav .grp{color:var(--faint);font-family:var(--mono);font-size:10px;letter-spacing:.22em;
     text-transform:uppercase;padding:18px 18px 6px;display:flex;align-items:center;gap:9px}
   #nav .grp:after{content:'';flex:1;height:1px;background:var(--line)}
@@ -106,6 +114,15 @@
   #doc .routes{color:var(--faint);font-size:12px;font-family:var(--mono);line-height:1.7;
     border-top:1px solid var(--line);margin-top:20px;padding-top:11px;word-break:break-word}
 
+  /* Editorial research sheets. The previews stay compact; each image links to the full-resolution export. */
+  #doc .diagram-series{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:22px 0 28px;max-width:1040px}
+  #doc .diagram-sheet{margin:0;background:#f8fafc;border:1px solid var(--line2);border-radius:2px;overflow:hidden}
+  #doc .diagram-sheet:first-child{grid-column:1/-1}
+  #doc .diagram-sheet a{display:block;background:#fff}
+  #doc .diagram-sheet img{display:block;width:100%;height:auto}
+  #doc .diagram-sheet figcaption{padding:8px 10px;background:var(--panel2);color:var(--dim);font:11px/1.45 var(--mono)}
+  #doc .diagram-sheet:hover{border-color:var(--neon-d)}
+
   #totop{position:fixed;right:22px;bottom:22px;z-index:7;font-family:var(--mono);font-size:11px;
     letter-spacing:.1em;color:var(--dim);background:rgba(18,17,16,.94);border:1px solid var(--line2);
     min-height:44px;display:inline-flex;align-items:center;padding:9px 13px;border-radius:2px;opacity:0;pointer-events:none;transition:opacity .2s}
@@ -123,10 +140,13 @@
     #doc{padding:26px 18px 80px}
     #doc .codex-intro{margin-bottom:32px}
     #doc section{margin-bottom:40px;padding-bottom:30px}
+    #doc .diagram-series{grid-template-columns:1fr}
+    #doc .diagram-sheet:first-child{grid-column:auto}
     #top{padding:11px 14px;gap:10px}
     #top h1{font-size:20px}
     #top .sub{display:none}
     #nav a.item{min-height:44px;display:flex;align-items:center;padding-block:9px}
+    #nav .search{padding-top:4px}
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -148,10 +168,11 @@
 </nav>
 <main id="wrap">
   <aside id="nav" class="collapsed" aria-label="Codex contents">
+    <div class="search"><input id="q" placeholder="What do you want to do?" aria-label="Search the codex" autocomplete="off"></div>
+    <div id="search-status" role="status" aria-live="polite"></div>
+    <div id="search-results" aria-label="Codex search results"></div>
     <button id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-content">Browse sections</button>
     <div id="nav-content">
-      <div class="search"><input id="q" placeholder="search the codex…" aria-label="Search the codex" autocomplete="off"></div>
-      <div id="search-status" role="status" aria-live="polite"></div>
       <nav id="navlist" aria-label="Codex sections"></nav>
     </div>
   </aside>
@@ -164,6 +185,15 @@
 // GROUPS order the sidebar. Content authored from the verified feature inventory.
 const R = (s) => `<div class="routes">${s}</div>`;          // route line
 const L = (s) => `<div class="loop">${s}</div>`;            // loop / callout
+const escText = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const searchExcerpt = (text, query) => {
+  const clean = String(text || '').replace(/\s+/g, ' ').trim();
+  const lower = clean.toLowerCase(), at = lower.indexOf(query);
+  const from = Math.max(0, at - 54), to = Math.min(clean.length, at + query.length + 110);
+  const before = clean.slice(from, at), match = clean.slice(at, at + query.length), after = clean.slice(at + query.length, to);
+  return `${from ? '…' : ''}${escText(before)}<mark>${escText(match)}</mark>${escText(after)}${to < clean.length ? '…' : ''}`;
+};
 const SECTIONS = [
   { id: 'welcome', group: 'Start', title: 'Welcome to the City', tag: 'what this is',
     html: `<p class="lead">OMERTÀ is a persistent, server-authoritative multiplayer mafia RPG. You start in the Docks with $500, build a street, and share the city with human and autonomous players. Other players can kill your character; the account and its named bloodline records continue.</p>
@@ -207,8 +237,10 @@ const SECTIONS = [
       reduced</b> — it controls the cost of a kill.</p>
       <p><b>Gear</b> (about 50 items, priced in $OMR) increases stats. The built chain rail can represent extracted gear as a tradeable NFT. A fire-kill has a <b>15% chance to take one in-game gear piece</b>. Extracted gear is safe but inert. <b>Production extraction is dormant</b>, so gear cannot move on-chain yet.</p>
       <p><b>Rarity, and the way off the board.</b> Every car and boat carries a rarity — Common, Rare, Legendary,
-      Epic — rolled by the server the moment you <b>earn</b> it, and logged so the draw can be checked. It is pure
-      status: no extra speed, no extra value, nothing but scarcity. You can buy your way up the ladder with $OMR, and
+      Epic — rolled by the server the moment you <b>earn</b> it, and logged so the draw can be checked. Rarity has
+      bounded utility: Rare / Legendary / Epic add <b>3% / 6% / 10%</b> to a car's chassis race power, or to a
+      boat's base hold and speed. Driver stats, tuning, naval upgrades, resale value and melt yield are unchanged.
+      You can buy your way up the ladder with $OMR, and
       the price buys <b>exactly the next tier</b> — a known item for a known price, never a roll. That is how the
       upgrade is built today; the old game-wide "nothing sells a random outcome for money" rule was retired
       2026-08-21, and any future product that does sell one will carry its own published odds.</p>
@@ -247,11 +279,16 @@ const SECTIONS = [
       ${R(`GET /v1/city [public] · /v1/world · POST /v1/world/:npcId/raid · /v1/world/:npcId/reinforce · GET /v1/market/prices [public]`)}` },
 
   { id: 'economy', group: 'Money', title: 'The Economy — $OMR, the Window & the Vault', tag: 'the money cycle',
-    html: `<p><b>Currencies:</b> cash (pocket and bank), <b>$OMR</b> (premium, account-level, earned through enumerated rules, and eligible for on-chain extraction by minted accounts once the production rail opens), crates, and ammo. <b>Cash can never buy $OMR.</b> The one live conversion runs the other way at the Window: burn $OMR for cash from a funded till. The game records every movement of value on a ledger.</p>
-      <p><b>Nothing you do in the game creates $OMR on a schedule.</b> No wage, no yield, no drip — the game has no
-      scheduled printer. Outside the mission ladder's one-time payouts (~1,320 across a career) and the small
-      daily bonus, every $OMR in this city was <b>bought with real money</b>
-      by somebody, which is exactly why it is worth taking off them. Five ways to get some: <b>take it</b>
+    html: `<p><b>Currencies:</b> cash (pocket and bank), <b>$OMR</b> (premium, account-level, earned through enumerated rules, and eligible for on-chain extraction by minted accounts once the production rail opens), crates, and ammo. <b>Cash can never buy $OMR.</b> The one live conversion runs the other way at the Window: spend $OMR for cash from a funded till. The game records every movement of value on a ledger.</p>
+      <div class="diagram-series" aria-label="Five-sheet OMR system explainer">
+        <figure class="diagram-sheet"><a href="/art/omr-01-severance.png"><img src="/art/omr-01-severance.png" width="2568" height="1592" loading="lazy" alt="OMR map: one token, two ledgers, and the explicit extraction bridge."></a><figcaption>01 / 05 · SEVERANCE + SUPPLY RAIL</figcaption></figure>
+        <figure class="diagram-sheet"><a href="/art/omr-02-return-velocity.png"><img src="/art/omr-02-return-velocity.png" width="2568" height="1626" loading="lazy" alt="OMR return-velocity loop from utility to house sink to the daily Desk auction."></a><figcaption>02 / 05 · RETURN VELOCITY</figcaption></figure>
+        <figure class="diagram-sheet"><a href="/art/omr-03-money-router.png"><img src="/art/omr-03-money-router.png" width="2568" height="1638" loading="lazy" alt="OMR money router showing declared revenue sources, destinations, and three bounded buybacks."></a><figcaption>03 / 05 · DECLARED WATERFALL</figcaption></figure>
+        <figure class="diagram-sheet"><a href="/art/omr-04-reserve-rwa.png"><img src="/art/omr-04-reserve-rwa.png" width="2568" height="1642" loading="lazy" alt="OMR reserve and RWA rails showing conservation invariants and dormant launch state."></a><figcaption>04 / 05 · RESERVE + RWA RAILS</figcaption></figure>
+        <figure class="diagram-sheet"><a href="/art/omr-05-ohm-contrast.png"><img src="/art/omr-05-ohm-contrast.png" width="2568" height="1648" loading="lazy" alt="Comparison of legacy 2021 Olympus mechanics and OMR's coded design."></a><figcaption>05 / 05 · LEGACY OHM CONTRAST</figcaption></figure>
+      </div>
+      <p><b>The game has no time-based $OMR faucet.</b> No wage, inflationary yield, or drip. One-time mission awards and daily prize credits are enumerated and funded on the game ledger; they do not call the ERC-20 mint. The contract has one additional mint path — <b>OmertaBond</b> — behind a daily cap, a 20% discount ceiling, a fail-closed TWAP and an absolute rate wall. Contract staking, if funded, redistributes a pre-loaded reward pool rather than minting rewards.</p>
+      <p>Five ways to get some: <b>take it</b>
       (a kill loots the victim's liquid $OMR — staked and committed $OMR is safer), <b>earn it</b> from a
       player who pays you in it, <b>work for it</b> (the mission ladder's one-time payouts and the daily
       all-three bonus), <b>buy it</b>, or <b>get paid out of the Bank</b>. A nightly job asserts nothing
@@ -288,8 +325,8 @@ const SECTIONS = [
       <p><b>THE MADE MAN</b> — the recurring subscription. Pay <b>120 $OMR every 30 days</b> and you are <i>made</i>:
       the badge, the upper compound (Country Estate and above), a club of your own, and <b>the pad pays itself</b> —
       your fronts settle their own cash upkeep the moment you touch them, so a stretch away does not leave them cold.
-      <b>It buys standing, never power:</b> no earning loop is gated, no odds move, no stat changes, and the pad is not
-      discounted by a cent. Operating costs stay in cash — all of them — which is the line that keeps the game free. A
+      <b>It buys capped economic capacity and convenience, never a higher combat ceiling:</b> raw combat stats and the
+      maximum combat power do not move. Operating costs stay in cash — all of them — which is the line that keeps the game free. A
       man who never pays dues runs the whole city at full strength, and can hunt made men for their $OMR. Dues are a
       sink like any other, so they go to <b>the Desk</b> to be sold again rather than being destroyed.</p>
       <p><b>The access stake</b> — the Den's high-stakes room wants a seat (level 30, or the Madame's velvet rope)
@@ -902,22 +939,33 @@ function wireScroll() {
 }
 document.getElementById('q').addEventListener('input', (e) => {
   const q = e.target.value.trim().toLowerCase();
-  let hits = 0;
+  let hits = 0; const matches = [];
   for (const sec of document.querySelectorAll('#doc section')) {
     const hit = !q || sec.textContent.toLowerCase().includes(q);
-    if (hit) hits += 1;
+    if (hit) {
+      hits += 1;
+      if (q) matches.push({ id: sec.id, title: document.getElementById(sec.id + '-title')?.textContent || sec.id,
+        text: sec.textContent });
+    }
     sec.style.display = hit ? '' : 'none';
     const link = document.querySelector(`#nav a.item[data-id="${sec.id}"]`);
     if (link) link.classList.toggle('hide', !hit);
   }
+  const nav = document.getElementById('nav'), results = document.getElementById('search-results');
+  nav.classList.toggle('searching', !!q);
+  results.innerHTML = q ? matches.map((hit) => `<a href="#${escText(hit.id)}" data-search-hit="${escText(hit.id)}"><strong>${escText(hit.title)}</strong><span class="search-hit__snippet">${searchExcerpt(hit.text, q)}</span></a>`).join('') : '';
+  results.querySelectorAll('[data-search-hit]').forEach((link) => link.addEventListener('click', () => {
+    e.target.value = '';
+    e.target.dispatchEvent(new Event('input', { bubbles: true }));
+  }));
   // A search that hides everything and says nothing reads like a broken page.
   let none = document.getElementById('nohit');
   if (!none) {
     none = document.createElement('div'); none.id = 'nohit'; none.className = 'empty';
     document.getElementById('doc').appendChild(none);
   }
-  none.innerHTML = hits ? '' : `<h2 style="color:#6b6357">Nothing matches</h2>`
-    + `<p class="lead">The codex has no section mentioning “${q.replace(/[<>&]/g, '')}”. Try a shorter word.</p>`;
+  none.innerHTML = hits ? '' : `<h2 style="color:#8d8578">Nothing matches</h2>`
+    + `<p class="lead">The Codex has no section mentioning “${escText(q)}”. Try a task such as heal, borrow, travel, or recruit.</p>`;
   none.style.display = hits ? 'none' : '';
   document.getElementById('search-status').textContent = q ? `${hits} section${hits === 1 ? '' : 's'} found` : '';
 });

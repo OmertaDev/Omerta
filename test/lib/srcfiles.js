@@ -17,7 +17,11 @@ export function walkSrc(dir = 'src', { exclude = [] } = {}) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
     const p = path.join(dir, e.name);
     if (e.isDirectory()) return walkSrc(p, { exclude });
-    return e.isFile() && e.name.endsWith('.js') && !exclude.includes(p) ? [p] : [];
+    // Keep repository paths stable across platforms. Without this normalization a Windows run
+    // produces `src\\preflight.js`, so an exclusion written as `src/preflight.js` silently misses
+    // and the drift detector scans its own generic `process.env.X` example as a real variable.
+    const rel = p.replaceAll('\\', '/');
+    return e.isFile() && e.name.endsWith('.js') && !exclude.includes(rel) ? [rel] : [];
   });
 }
 

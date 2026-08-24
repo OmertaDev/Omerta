@@ -21,11 +21,15 @@ Contracts for Robinhood Chain (Arbitrum Orbit L2, ETH gas; testnet chainId 46630
 or manually:
 ```
 forge install foundry-rs/forge-std OpenZeppelin/openzeppelin-contracts   # first run only
-forge test           # 128 tests incl. five 512-run fuzzes (anti-Ponzi, sell-tax conservation, the
-                     #   four-wall mint-rate bound, TWAP decode overflow, hook fee-split dust)
-export SAFE=0x... SIGNER=0x... RPC=https://robinhood-testnet.g.alchemy.com/v2/KEY
-forge script script/Deploy.s.sol --rpc-url $RPC --broadcast --private-key $DEPLOYER_PK
+forge test
+cp .env.deploy.example .env     # fill reviewed values; .env is gitignored
+forge script script/Deploy.s.sol:Deploy --rpc-url $CHAIN_RPC_URL --account omerta-deployer -vvvv
 ```
+
+The deploy is intentionally staged: the pre-pool core, THE BANK, the post-pool TWAP, and the mined v4
+hook each have their own script and verification gate. Follow [`DEPLOYMENT.md`](DEPLOYMENT.md) for the
+complete dry-run, broadcast, Safe-wiring, backend activation, and rollback sequence. Never add
+`--broadcast` until the identical simulation trace has been reviewed.
 > The suite **also runs inside the sandboxed build environment** — `./run-forge-test-sandboxed.sh`
 > (forge from the official npm dist, forge-std/OZ from npm, solc via a solc-js 0.8.26 stdio shim:
 > the same compiler version+commit as native, plus `@uniswap/v4-core` for the hook). First executed

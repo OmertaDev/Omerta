@@ -1646,8 +1646,11 @@ export async function buildServer() {
     // THE RARITY NFTs (v3 step 7) — public so a client can render the ladder and the tokenId space
     // without re-deriving either. `sellDeterministic` is stated in the API on purpose: it is the
     // line the loot-box question turns on, and a claim nobody can check is not worth making.
-    rarity: { tiers: RARITY.TIERS.map((t) => ({ id: t.id, name: t.name, weight: t.w })),
+    rarity: { tiers: RARITY.TIERS.map((t) => ({ id: t.id, name: t.name, weight: t.w,
+        utilityBps: t.utilityBps, utilityPct: t.utilityBps / 100 })),
       upgradeOmr: RARITY.UPGRADE_OMR, kinds: ['car', 'boat'], token: RARITY.TOKEN,
+      utility: { maxBps: RARITY.UTILITY_MAX_BPS, car: ['race_chassis'], boat: ['base_hold', 'base_speed'],
+        requiresInGame: true },
       sellDeterministic: true, rolledOn: 'earned-in-play' },
     store: STORE.PACKAGES.map((p) => ({ sku: p.sku, name: p.name, priceEth: p.priceEth, grant: p.grant, blurb: p.blurb })),
     pass: { tiers: PASS.TRACK.map((t) => ({ tier: t.tier, reward: t.reward })), prestigeRanks: PASS.PRESTIGE_RANKS },
@@ -2629,8 +2632,8 @@ export async function buildServer() {
   // rare moment visible the second it exists. Pure read, §10.4-free. ──
   app.get('/v1/live', { preHandler: auth }, async (req) =>
     G.readCharacter(pool, req.user.sub, (ch, client) => Collision.collisionBoard(client, ch, [...wsClients.keys()])));
-  // ── STILL ON THE TABLE — the cross-system pull the coach's queue-of-5 can't carry: every system this
-  // player has UNLOCKED by level and never touched, plus an explorer tally. Pure read, §10.4-free. ──
+  // ── STILL ON THE TABLE — the featured-systems catalog the coach's queue-of-5 can't carry: level-unlocked
+  // entries this player has never touched, plus an explorer tally. Pure read, §10.4-free; not a census. ──
   app.get('/v1/explore', { preHandler: auth }, async (req) =>
     G.readCharacter(pool, req.user.sub, (ch, client, h) => Explore.exploreBoard(ch, h.acct, h.owned)));
   // ── PRIME TIME — the nightly synchronous window: answer the call during tonight's hour. Co-present
