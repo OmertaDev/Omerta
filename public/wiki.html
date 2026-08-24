@@ -110,6 +110,7 @@
   #doc .diagram-series{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:22px 0 28px;max-width:1040px}
   #doc .diagram-sheet{margin:0;background:var(--panel2);border:1px solid var(--line2);border-radius:2px;overflow:hidden}
   #doc .diagram-sheet:first-child{grid-column:1/-1}
+  #doc .diagram-sheet--wide{grid-column:1/-1}
   #doc .diagram-sheet a{display:block;background:var(--panel2)}
   #doc .diagram-sheet img{display:block;width:100%;height:auto}
   #doc .diagram-sheet figcaption{padding:8px 10px;background:var(--panel2);color:var(--dim);font:11px/1.45 var(--mono)}
@@ -207,6 +208,59 @@ const SECTIONS = [
       <p><b>Seasons</b> last 28 days. At the end, your level converts to prestige (<code>floor(level/2)</code>) and your
       respect returns to 0. <b>Respec</b> your stats for 90 $OMR (24-hour cooldown).</p>
       ${R(`POST /v1/character · GET /v1/me · /v1/session · POST /v1/respec`)}` },
+
+  { id: 'paths', group: 'The Basics', title: 'Choose Your Route', tag: 'paths, skills, mastery, career',
+    html: `<p class="lead"><b>No two streets have to grow the same way.</b> At level 5, $10,000 declares one of six Paths. Your Path changes concrete clocks, payouts, risks, and the rate at which specific trades learn. It does not lock you out of the rest of the city.</p>
+      ${L(`<b>Five systems shape the character:</b> the three core attributes, one declared Path, a three-branch skill build, ten learn-by-doing mastery tracks, and a five-book account-level Career.`)}
+      <p>The first Path pick costs cash and starts the switch clock. A later change burns <b>150 $OMR</b> and requires <b>7 days</b> since the previous choice. Home trades learn at <b>×1.5 mastery XP</b>, rival trades at <b>×0.6</b>, and every other trade remains at ×1.0. Skills award one point per four levels; mastery is earned only by doing the relevant work; Career claims are cash-only and survive the character.</p>
+      <div class="diagram-series diagram-series--gameplay" aria-label="Nine-sheet code-anchored gameplay route explainer">
+        <figure class="diagram-sheet diagram-sheet--wide">
+          <a href="/art/gameplay-01-choose-your-path.png?v=b56cedce0f70" aria-label="Open the full-size choose-your-Path field guide">
+            <img src="/art/gameplay-01-choose-your-path.png?v=b56cedce0f70" width="6480" height="4080" loading="lazy" alt="Six-way OMERTA Path selector comparing The Gun, Ledger, Kitchen, Wheel, Shadow, and Ring, including every signed edge, handicap, home trade, and rival trade.">
+          </a><figcaption>01 / 09 · SIX WAYS INTO THE CITY · EVERY EDGE HAS A COST</figcaption>
+        </figure>
+        <figure class="diagram-sheet">
+          <a href="/art/gameplay-02-the-gun.png?v=23daa219f30d" aria-label="Open the full-size Gun Path dossier">
+            <img src="/art/gameplay-02-the-gun.png?v=23daa219f30d" width="6480" height="4080" loading="lazy" alt="The Gun gameplay dossier showing its street-fight, hit-contract, trade-sale, mastery, skill, and counterplay mechanics.">
+          </a><figcaption>02 / 09 · THE GUN · FORCE CREATES WINDOWS, NOT SAFETY</figcaption>
+        </figure>
+        <figure class="diagram-sheet">
+          <a href="/art/gameplay-03-the-ledger.png?v=3e4259f905c2" aria-label="Open the full-size Ledger Path dossier">
+            <img src="/art/gameplay-03-the-ledger.png?v=3e4259f905c2" width="6480" height="4080" loading="lazy" alt="The Ledger gameplay dossier showing its racket, front, commerce, street-power, mastery, skill, and counterplay mechanics.">
+          </a><figcaption>03 / 09 · THE LEDGER · TURN MOVEMENT INTO MARGIN</figcaption>
+        </figure>
+        <figure class="diagram-sheet">
+          <a href="/art/gameplay-04-the-kitchen.png?v=06a91cbd9a54" aria-label="Open the full-size Kitchen Path dossier">
+            <img src="/art/gameplay-04-the-kitchen.png?v=06a91cbd9a54" width="6480" height="4080" loading="lazy" alt="The Kitchen gameplay dossier showing cook quality, dealing heat, jail time, mastery, skill, and counterplay mechanics.">
+          </a><figcaption>04 / 09 · THE KITCHEN · QUALITY UP, HEAT DOWN</figcaption>
+        </figure>
+        <figure class="diagram-sheet">
+          <a href="/art/gameplay-05-the-wheel.png?v=20b5b3719ab7" aria-label="Open the full-size Wheel Path dossier">
+            <img src="/art/gameplay-05-the-wheel.png?v=20b5b3719ab7" width="6480" height="4080" loading="lazy" alt="The Wheel gameplay dossier showing convoy speed, cook-time handicap, Wheels and Seamanship mastery, skill synergies, and counterplay.">
+          </a><figcaption>05 / 09 · THE WHEEL · OWN THE CLOCK</figcaption>
+        </figure>
+        <figure class="diagram-sheet">
+          <a href="/art/gameplay-06-the-shadow.png?v=d98e482bd5e2" aria-label="Open the full-size Shadow Path dossier">
+            <img src="/art/gameplay-06-the-shadow.png?v=d98e482bd5e2" width="6480" height="4080" loading="lazy" alt="The Shadow gameplay dossier showing search-clock, duel and bout, Larceny and Wet Work mastery, skill synergies, and counterplay.">
+          </a><figcaption>06 / 09 · THE SHADOW · WIN BEFORE THE FIGHT STARTS</figcaption>
+        </figure>
+        <figure class="diagram-sheet">
+          <a href="/art/gameplay-07-the-ring.png?v=f3662833ee7f" aria-label="Open the full-size Ring Path dossier">
+            <img src="/art/gameplay-07-the-ring.png?v=f3662833ee7f" width="6480" height="4080" loading="lazy" alt="The Ring gameplay dossier showing duel and bout power, Doctor-cost handicap, Fisticuffs and Gambler mastery, skill synergies, and counterplay.">
+          </a><figcaption>07 / 09 · THE RING · MAKE PRESSURE PAY</figcaption>
+        </figure>
+        <figure class="diagram-sheet diagram-sheet--wide">
+          <a href="/art/gameplay-08-character-blueprint.png?v=972a60e45d41" aria-label="Open the full-size character-system blueprint">
+            <img src="/art/gameplay-08-character-blueprint.png?v=972a60e45d41" width="6480" height="4080" loading="lazy" alt="Complete character blueprint linking attributes, the declared Path, skill branches, ten mastery tracks, rank milestones, virtuoso traits, inheritance, and Career progression.">
+          </a><figcaption>08 / 09 · THE CITY RECORDS WHAT YOU BECOME · FIVE INTERLOCKING SYSTEMS</figcaption>
+        </figure>
+        <figure class="diagram-sheet diagram-sheet--wide">
+          <a href="/art/gameplay-09-road-to-don.png?v=a8eec12eed77" aria-label="Open the full-size road-to-Don Career map">
+            <img src="/art/gameplay-09-road-to-don.png?v=a8eec12eed77" width="6480" height="4080" loading="lazy" alt="Five-book account Career map from Associate through Soldier, Made Man, Capo, and Don, with every task, claim payout, capstone, and opening rule.">
+          </a><figcaption>09 / 09 · FROM ASSOCIATE TO THE DON · 30 TASKS, FIVE BOOKS, ONE ACCOUNT RECORD</figcaption>
+        </figure>
+      </div>
+      ${R(`POST /v1/path · GET /v1/skills · POST /v1/skills/:id · GET /v1/mastery · GET /v1/career · POST /v1/career/:taskId`)}` },
 
   { id: 'cars', group: 'The Basics', title: 'Cars, Guns & Gear', tag: 'the garage and the armory',
     html: `<p><b>Cars and the Garage</b> (limit 12). 60 models, each with trims. <b>Boost</b> steals a random car (5-minute

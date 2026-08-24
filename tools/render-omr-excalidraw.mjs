@@ -10,8 +10,13 @@ const template = path.join(root, 'tools', 'render-omr-excalidraw.html');
 const chrome = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 
 const files = (await fs.readdir(diagramsDir))
-  .filter((file) => /^omr-\d{2}-.+\.excalidraw$/.test(file))
+  .filter((file) => /^(?:omr|gameplay)-\d{2}-.+\.excalidraw$/.test(file))
   .sort();
+
+if (process.argv.includes('--list')) {
+  console.log(files.join('\n'));
+  process.exit(0);
+}
 
 await fs.mkdir(artDir, { recursive: true });
 const browser = await chromium.launch({ executablePath: chrome, headless: true });
