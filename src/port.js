@@ -9,7 +9,7 @@
 // the offshore RENDEZVOUS (a consensual mid-sea handoff of an active run to a partner's boat — §10.4-neutral).
 import crypto from 'node:crypto';
 import { GameError, bus, bumpMastery, masteryFx } from './game.js';
-import { PORT, COMMISSION, NOTORIETY, boatOf, portRouteOf, boatResale, interdictChance, effHold, effSpeed, boatUpgradeCost, portRankOf, fenceMultOf, levelOf, cityHourOf, smugglerTierOf, smuggleRepPerks, notorietyNow, rollRarity, jailed, hospitalized, safeHoused, usd, art } from './rules.js';
+import { PORT, COMMISSION, NOTORIETY, boatOf, portRouteOf, boatResale, interdictChance, effHold, effSpeed, boatUpgradeCost, portRankOf, fenceMultOf, levelOf, cityHourOf, smugglerTierOf, smuggleRepPerks, notorietyNow, rollRarity, rarityUtilityBps, jailed, hospitalized, safeHoused, usd, art } from './rules.js';
 import { logCollect } from './collection.js';
 import { activeDecree } from './commission.js';
 import { laneHeat, heatLane } from './notoriety.js';
@@ -81,16 +81,17 @@ export async function buyBoat(ch, kind, client, h) {
   ch.cash = Number(ch.cash) - spec.cost;
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -spec.cost, reason: 'port:boat' });
   const id = crypto.randomUUID();
-  // THE RARITY NFTs (v3 step 7): rolled + audited when the vessel is EARNED (bought with in-game
-  // cash off a sim-signed price — no ETH path anywhere grants or re-rolls a rarity). Pure status:
-  // hold and speed come from the catalog, so the Port's interdiction curve never reads this.
+  // THE RARITY NFTs: rolled + audited when the vessel is EARNED (bought with in-game cash — no ETH
+  // path rolls rarity). Its bounded utility applies to the base hull while the boat is in play.
   const rrRoll = Math.random();
   const rarity = rollRarity(rrRoll);
   await client.query('INSERT INTO boats (id, character_id, kind, rarity) VALUES ($1,$2,$3,$4)', [id, ch.id, kind, rarity]);
   await h.rngLog(client, ch.id, 'rarity:boat', rrRoll, rarity);
   await h.track(client, ch.account_id, 'port', { act: 'buy', kind });
   await logCollect(client, ch.account_id, 'boats', kind); // THE COLLECTION
-  return { ok: true, boat: { id, kind, name: spec.name, hold: spec.hold, speed: spec.speed, rarity }, spent: spec.cost };
+  const boat = { id, kind, rarity };
+  return { ok: true, boat: { id, kind, name: spec.name, hold: effHold(boat, spec), speed: effSpeed(boat, spec),
+    rarity, utilityBps: rarityUtilityBps(rarity) }, spent: spec.cost };
 }
 
 // POST /v1/port/boat/:boatId/sell — sell a docked boat back to the yard (a fraction of cost)
@@ -418,7 +419,8 @@ export async function portBoard(ch, client, h) {
     const out = atSea(b);
     const arrived = out && new Date(b.run_until).getTime() <= now;
     return {
-      id: b.id, kind: b.kind, name: spec?.name, hold: effHold(b, spec), speed: effSpeed(b, spec),
+      id: b.id, kind: b.kind, name: spec?.name, rarity: String(b.rarity || 'common'),
+      utilityBps: rarityUtilityBps(b.rarity), hold: effHold(b, spec), speed: effSpeed(b, spec),
       baseHold: spec?.hold, baseSpeed: spec?.speed, hull: Number(b.hull) || 0, engine: Number(b.engine) || 0,
       rendezvous: !!b.rendezvous,
       // the console renders these on the buy buttons, so quote what the till will actually

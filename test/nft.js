@@ -10,7 +10,8 @@
 //       a genuinely open question, so it is asserted rather than promised: rarity is
 //       rolled ONLY when an item is earned in play (and rng_audit'd, so the draw is replayable), and
 //       the one thing money buys is a KNOWN tier for a KNOWN price.
-//   (2) SAFE **AND** INERT. Extraction has to be both halves or the tradeoff collapses. A safe item
+//   (2) USEFUL, SAFE **AND** INERT. Rarity improves the item only while it is in play. Extraction
+//       has to be both halves or the tradeoff collapses. A safe item
 //       that still races is strictly dominant and nobody would ever leave one in play; an inert item
 //       that still dies with the street is a purchase of nothing. Both are checked, in both
 //       directions, against a control that is NOT extracted.
@@ -26,7 +27,8 @@ process.env.CHAIN_ID = '46630';
 process.env.MOD_KEY = 'test-mod-key';
 
 const { buildServer } = await import('../src/server.js');
-const { RARITY, rollRarity, rarityIdx, nftTokenId, recyclesToDesk, CARS, PORT, MARKET, PACING } = await import('../src/rules.js');
+const { RARITY, rollRarity, rarityIdx, rarityUtilityBps, rarityBoost, nftTokenId, recyclesToDesk,
+  carPower, effHold, effSpeed, boatOf, CARS, PORT, MARKET, PACING } = await import('../src/rules.js');
 const { runLedgerInvariants } = await import('../src/invariants.js');
 const { reclaimExpiredVouchers } = await import('../src/chain.js');
 
@@ -94,6 +96,22 @@ const grantOmr = async (acct, n) => {
   for (let i = 0; i < 1000; i++) seen.add(rollRarity(i / 1000));
   for (const t of RARITY.TIERS) assert(seen.has(t.id), `${t.id} is reachable`);
   assert.equal(seen.size, RARITY.TIERS.length, 'and nothing outside the table is');
+
+  // Utility rises with scarcity but is hard-capped at 10%, and applies only to the ITEM terms.
+  assert.deepEqual(RARITY.TIERS.map((t) => rarityUtilityBps(t.id)), [0, 300, 600, 1000],
+    'the published rarity ladder carries bounded utility');
+  assert.equal(rarityBoost(100, 'rare'), 103, 'rare adds 3% to an item base');
+  assert.equal(rarityBoost(100, 'epic'), 110, 'the top tier stops at the 10% ceiling');
+  const model = CARS[CARS.length - 1];
+  assert(carPower(model.id, 'stock', 0, 0, 0, 'epic') > carPower(model.id, 'stock', 0, 0, 0, 'common'),
+    'car rarity improves chassis race power');
+  const vessel = boatOf('cutter');
+  assert.equal(effHold({ rarity: 'epic' }, vessel), vessel.hold + Math.round(vessel.hold * 0.1), 'boat rarity improves base hold');
+  assert.equal(effSpeed({ rarity: 'epic' }, vessel), vessel.speed + Math.round(vessel.speed * 0.1), 'boat rarity improves base speed');
+  const published = (await call('GET', '/v1/rules')).body.rarity;
+  assert.equal(published.utility.maxBps, 1000, 'the public machine rules publish the hard utility ceiling');
+  assert.deepEqual(published.tiers.map((t) => t.utilityBps), [0, 300, 600, 1000],
+    'agents can price every rarity from the public rulebook');
 }
 
 // ══ (3) DROP RANDOM — a boosted car is rolled AND audited ═══════════════════════════════════════
@@ -124,9 +142,12 @@ assert(carId, 'boosted a car');
   const mine = board0.items.find((i) => i.id === carId);
   assert(mine, 'the car is on the collection board');
   assert.equal(mine.rarity, 'common');
+  assert.deepEqual(mine.utility, { bps: 0, pct: 0, appliesTo: ['race_chassis'], active: true },
+    'the board publishes exactly where rarity utility applies');
   assert.equal(mine.upgrade.to, RARITY.TIERS[1].id, 'the board names the NEXT tier, not a mystery box');
   const price = RARITY.UPGRADE_OMR[1];
   assert.equal(mine.upgrade.omr, price, 'and its exact price');
+  const commonPower = (await call('GET', '/v1/races', { token: A.token })).body.cars.find((c) => c.id === carId).power;
 
   const broke = await call('POST', `/v1/nft/car/${carId}/upgrade`, { token: A.token });
   assert.equal(broke.body.error, 'omr', 'you cannot upgrade on credit');
@@ -136,6 +157,9 @@ assert(carId, 'boosted a car');
   const up = await call('POST', `/v1/nft/car/${carId}/upgrade`, { token: A.token });
   assert.equal(up.code, 200, JSON.stringify(up.body));
   assert.equal(up.body.rarity, RARITY.TIERS[1].id, 'DETERMINISTIC: the tier you paid for is the tier you got');
+  assert.equal(up.body.utility.bps, 300, 'the upgrade names the useful +3% trait it granted');
+  const rarePower = (await call('GET', '/v1/races', { token: A.token })).body.cars.find((c) => c.id === carId).power;
+  assert(rarePower > commonPower, `the upgraded rarity changes live race power (${commonPower} -> ${rarePower})`);
   assert.equal(up.body.spent, price);
   const omr1 = Number((await pool.query('SELECT omr FROM account_persistent WHERE account_id=$1', [A.acct])).rows[0].omr);
   assert.equal(omr1, omr0 - price, 'charged exactly once, exactly the price');
@@ -188,6 +212,8 @@ const wallet = privateKeyToAccount('0x59c6995e998f97a5a0044966f0945389dc9e86dae8
   // it is still on the board, in the on-chain half — a player who paid to extract must still see it
   const board = (await call('GET', '/v1/nft', { token: A.token })).body;
   assert(board.onChain.some((i) => i.id === carId), 'the collection still shows it');
+  assert.equal(board.onChain.find((i) => i.id === carId).utility.active, false,
+    'the NFT preserves its useful trait, but it is inactive until re-import');
   assert(!board.items.some((i) => i.id === carId), 'but never as extractable');
 }
 

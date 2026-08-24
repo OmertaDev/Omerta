@@ -124,8 +124,9 @@ book value. A **trim** (Rusted to Coachbuilt) increases all three values.
 
 **RARITY, AND THE WAY OFF THE BOARD (the rarity NFTs).** Every car and boat carries a rarity —
 Common, Rare, Legendary, Epic — rolled by the server the moment you EARN it, and logged so the draw
-can be checked. It is pure status: it changes no speed, no value, no race, nothing. What it changes is
-scarcity, and scarcity is what a collector pays for.
+can be checked. Rarity has bounded utility: Rare / Legendary / Epic add **3% / 6% / 10%** to a car's
+chassis contribution to race power, or to a boat's base hold and speed. It does not multiply driver
+stats, tuning, naval upgrades, resale/book value, or melt yield.
 
 You can buy your way up the ladder with $OMR (`POST /v1/nft/:kind/:id/upgrade`), and the price buys
 exactly the next tier — a known item for a known price, never a roll. That is how the upgrade is built
