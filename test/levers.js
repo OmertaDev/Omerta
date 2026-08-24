@@ -292,10 +292,13 @@ const SIGNED = [
   // precedent). Display-only forever (§9.4) — no ward carries a gameplay number.
   ['PROVENANCE.WARDS', {"1":{"name":"the Meridian Rooms","color":"#c9a24b"},"2":{"name":"the Ironbridge Club","color":"#4fd6c2"},"3":{"name":"the Old Harbor Ward","color":"#5a8fd6"},"4":{"name":"the Lantern Quarter","color":"#b8504a"},"5":{"name":"the Granite Row","color":"#9aa4ad"},"6":{"name":"the Velvet Stair","color":"#8a5ac2"},"7":{"name":"the Corniche","color":"#c98a4b"},"8":{"name":"the Winter Garden","color":"#7fc24f"}}],
   // ECONOMY v3 step 7 — THE RARITY NFTs (design §7/§9.7). The tier weights decide how scarce a
-  // legendary is (and therefore what one is worth on a secondary market); the upgrade ladder is the
-  // only price money pays here, and it is DETERMINISTIC by design — see the RARITY block.
-  ['RARITY.TIERS', [{ id: 'common', name: 'Common', w: 700 }, { id: 'rare', name: 'Rare', w: 220 },
-    { id: 'legendary', name: 'Legendary', w: 65 }, { id: 'epic', name: 'Epic', w: 15 }]],
+  // legendary is (and therefore what one is worth on a secondary market); utility is bounded to
+  // the item base and the upgrade ladder remains deterministic — see the RARITY block.
+  ['RARITY.TIERS', [{ id: 'common', name: 'Common', w: 700, utilityBps: 0 },
+    { id: 'rare', name: 'Rare', w: 220, utilityBps: 300 },
+    { id: 'legendary', name: 'Legendary', w: 65, utilityBps: 600 },
+    { id: 'epic', name: 'Epic', w: 15, utilityBps: 1000 }]],
+  ['RARITY.UTILITY_MAX_BPS', 1000],
   ['RARITY.UPGRADE_OMR', [0,150,540,1800]],
   ['M3.BODYGUARD_MIN_PRICE', 10000],
   ['M3.CASH_LOOT_RATE', 0.25],
