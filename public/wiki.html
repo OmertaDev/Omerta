@@ -108,9 +108,9 @@
 
   /* Editorial research sheets. The previews stay compact; each image links to the full-resolution export. */
   #doc .diagram-series{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:22px 0 28px;max-width:1040px}
-  #doc .diagram-sheet{margin:0;background:#f8fafc;border:1px solid var(--line2);border-radius:2px;overflow:hidden}
+  #doc .diagram-sheet{margin:0;background:var(--panel2);border:1px solid var(--line2);border-radius:2px;overflow:hidden}
   #doc .diagram-sheet:first-child{grid-column:1/-1}
-  #doc .diagram-sheet a{display:block;background:#fff}
+  #doc .diagram-sheet a{display:block;background:var(--panel2)}
   #doc .diagram-sheet img{display:block;width:100%;height:auto}
   #doc .diagram-sheet figcaption{padding:8px 10px;background:var(--panel2);color:var(--dim);font:11px/1.45 var(--mono)}
   #doc .diagram-sheet:hover{border-color:var(--neon-d)}
@@ -260,12 +260,13 @@ const SECTIONS = [
 
   { id: 'economy', group: 'Money', title: 'The Economy — $OMR, the Window & the Vault', tag: 'the money cycle',
     html: `<p><b>Currencies:</b> cash (pocket and bank), <b>$OMR</b> (premium, account-level, earned through enumerated rules, and eligible for on-chain extraction by minted accounts once the production rail opens), crates, and ammo. <b>Cash can never buy $OMR.</b> The one live conversion runs the other way at the Window: spend $OMR for cash from a funded till. The game records every movement of value on a ledger.</p>
-      <div class="diagram-series" aria-label="Five-sheet OMR system explainer">
-        <figure class="diagram-sheet"><a href="/art/omr-01-severance.png"><img src="/art/omr-01-severance.png" width="2568" height="1592" loading="lazy" alt="OMR map: one token, two ledgers, and the explicit extraction bridge."></a><figcaption>01 / 05 · SEVERANCE + SUPPLY RAIL</figcaption></figure>
-        <figure class="diagram-sheet"><a href="/art/omr-02-return-velocity.png"><img src="/art/omr-02-return-velocity.png" width="2568" height="1626" loading="lazy" alt="OMR return-velocity loop from utility to house sink to the daily Desk auction."></a><figcaption>02 / 05 · RETURN VELOCITY</figcaption></figure>
-        <figure class="diagram-sheet"><a href="/art/omr-03-money-router.png"><img src="/art/omr-03-money-router.png" width="2568" height="1638" loading="lazy" alt="OMR money router showing declared revenue sources, destinations, and three bounded buybacks."></a><figcaption>03 / 05 · DECLARED WATERFALL</figcaption></figure>
-        <figure class="diagram-sheet"><a href="/art/omr-04-reserve-rwa.png"><img src="/art/omr-04-reserve-rwa.png" width="2568" height="1642" loading="lazy" alt="OMR reserve and RWA rails showing conservation invariants and dormant launch state."></a><figcaption>04 / 05 · RESERVE + RWA RAILS</figcaption></figure>
-        <figure class="diagram-sheet"><a href="/art/omr-05-ohm-contrast.png"><img src="/art/omr-05-ohm-contrast.png" width="2568" height="1648" loading="lazy" alt="Comparison of legacy 2021 Olympus mechanics and OMR's coded design."></a><figcaption>05 / 05 · LEGACY OHM CONTRAST</figcaption></figure>
+      <p><b>Read the books:</b> gold marks token or ETH movement, blue marks code-controlled supply or allocation, green marks arrived backing, and red marks blocked or dormant paths. Sheet 03 uses the founder-signed go-live configuration; it is published but not armed while production chain rails are dormant. Open any sheet for the 6480 × 4080 source export.</p>
+      <div class="diagram-series" aria-label="Five-sheet code-anchored OMR system explainer">
+        <figure class="diagram-sheet"><a href="/art/omr-01-severance.png"><img src="/art/omr-01-severance.png" width="6480" height="4080" loading="lazy" alt="Two-ledger OMR map showing street cash, the one-way Window, the 100 million OMR founding supply, bounded bond mint, and dormant full-reserve exit."></a><figcaption>01 / 05 · TWO LEDGERS. ONE CONTROLLED BRIDGE.</figcaption></figure>
+        <figure class="diagram-sheet"><a href="/art/omr-02-return-velocity.png"><img src="/art/omr-02-return-velocity.png" width="6480" height="4080" loading="lazy" alt="OMR return-velocity loop from game utility to Desk inventory, a one-to-three-percent daily auction cap, and below-band buyback."></a><figcaption>02 / 05 · THE DESK: INVENTORY, NOT INFLATION.</figcaption></figure>
+        <figure class="diagram-sheet"><a href="/art/omr-03-money-router.png"><img src="/art/omr-03-money-router.png" width="6480" height="4080" loading="lazy" alt="OMR money router with exact signed splits for gameplay fees, Store receipts, reserve bonds, DEX sell tax, Desk proceeds, POL fees, Bank harvest fees, and exit tolls."></a><figcaption>03 / 05 · FOLLOW EVERY DOLLAR.</figcaption></figure>
+        <figure class="diagram-sheet"><a href="/art/omr-04-reserve-rwa.png"><img src="/art/omr-04-reserve-rwa.png" width="6480" height="4080" loading="lazy" alt="Parallel OMR extraction and tokenized-stock rails showing source percentages, the fifty-fifty Vig split, eligibility weights, and conservation invariants."></a><figcaption>04 / 05 · BACKING ARRIVES BEFORE THE PROMISE.</figcaption></figure>
+        <figure class="diagram-sheet"><a href="/art/omr-05-ohm-contrast.png"><img src="/art/omr-05-ohm-contrast.png" width="6480" height="4080" loading="lazy" alt="Causal comparison of the legacy 2021 Olympus premium and issuance loop with OMR's separated issuance, game-demand, revenue, and backed-exit rails."></a><figcaption>05 / 05 · SAME CATEGORY. DIFFERENT FAILURE SURFACE.</figcaption></figure>
       </div>
       <p><b>The game has no time-based $OMR faucet.</b> No wage, inflationary yield, or drip. One-time mission awards and daily prize credits are enumerated and funded on the game ledger; they do not call the ERC-20 mint. The contract has one additional mint path — <b>OmertaBond</b> — behind a daily cap, a 20% discount ceiling, a fail-closed TWAP and an absolute rate wall. Contract staking, if funded, redistributes a pre-loaded reward pool rather than minting rewards.</p>
       <p>Five ways to get some: <b>take it</b>

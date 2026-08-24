@@ -26,6 +26,23 @@ That changes the core metric from burn count to **return velocity**: how often t
 
 The fourth difference is the money router. Every supported real-value inflow has a declared source and permitted destinations: the vig, treasury, community pool, operations, protocol-owned liquidity, or the Desk buyback budget. The published map covers gameplay fees, Store receipts, reserve bonds, the one-layer sell tax, Desk auction proceeds, POL trading fees, Bank harvest fees, and exit tolls. The router describes and verifies the accounting; it is not a discretionary wallet.
 
+### Founder-signed go-live waterfall
+
+These are the exact signed configuration values in `deploy/fee-splits.json` and its founder-signature environment. They are published launch intent, **not active production-chain flows** while chain execution remains dormant.
+
+| Source | Amount being routed | Exact destination split |
+|---|---|---|
+| Gameplay fees | Gross real ETH | 25% Vig · 10% treasury · 15% community · 50% operations |
+| Store receipts | Gross real ETH | 25% Vig · 10% treasury · 15% community · 50% operations |
+| Reserve bonds | ETH principal | 75% POL · 5% Vig · 5% treasury · 15% operations |
+| DEX sell | 9% of each sell | 2.0% of trade to operations · 1.6% treasury · 2.4% community · 3.0% POL |
+| Desk auction | ETH proceeds | 50% POL · 50% operations |
+| POL trading fees | LP fee income | 75% Desk buyback budget · 25% Vig |
+| Bank harvest | 20% fee on yield that serviced debt | 37.2% of fee to treasury and 62.8% to community, equal to 7.44% and 12.56% of serviced yield |
+| OMR exit | 2% base toll plus an early-exit surcharge that fades from 50% to 0 over 48 hours | 50% operations · 50% community |
+
+The Vig buyback's default OMR allocation is 50% withdrawal reserve and 50% backed prize pool. The Desk's daily auction is separately capped at 1% of player float under base conditions and 3% at the surge ceiling. Those are executor rules, not extra router destinations.
+
 Three separate buybacks sit downstream:
 
 - **The vig buyback** can spend no more than arrived vig revenue. Purchased OMR funds the withdrawal reserve and the backed prize pool.
@@ -83,7 +100,7 @@ Spend OMR on supported game uses and one shared ledger hook returns it to Desk i
 
 A burn records one terminal event. A recycled token can return through another use and another revenue event. The question is not “how much vanished?” It is “how productively did the float circulate?”
 
-**8/** Real-value inflows follow a declared router: vig, treasury, community, operations, POL, and the Desk buyback budget. The map covers fees, Store receipts, bonds, the one-layer sell tax, Desk proceeds, POL fees, Bank harvest fees, and exit tolls.
+**8/** Real-value inflows follow an exact signed router. Gameplay fees + Store: 25% Vig / 10% treasury / 15% community / 50% operations. Bonds: 75% POL / 5% Vig / 5% treasury / 15% operations. Every other source is mapped on sheet 03.
 
 **9/** Three buybacks. Three root caps.
 
@@ -142,6 +159,48 @@ That is return velocity: one token, multiple real revenue events.
 Just a public ledger, explicit launch states, and a full mafia economy designed so the books have to balance.
 
 **omerta.fun/wiki#economy**
+
+## Percentage-led X explainer — 8 posts
+
+**1/** If a protocol says “revenue flows to the ecosystem,” ask for the percentages. OMR publishes the actual signed go-live router. Production chain execution is still dormant; these are the numbers intended for launch.
+
+**2/** Gameplay fees and Store receipts use the same split:
+
+- 25% Vig
+- 10% treasury
+- 15% community
+- 50% operations
+
+**3/** Reserve-bond ETH takes a different route because its job is liquidity formation:
+
+- 75% protocol-owned liquidity
+- 5% Vig
+- 5% treasury
+- 15% operations
+
+**4/** The DEX sell toll is 9% total, once:
+
+- 2.0% of the trade to operations
+- 1.6% treasury
+- 2.4% community
+- 3.0% POL
+
+That adds to 9.0%. No second hidden layer.
+
+**5/** Desk inventory sells through a bounded daily Dutch auction. ETH proceeds split 50% POL / 50% operations. Base lot cap: 1% of player float per day. Surge ceiling: 3%. Unsold inventory rolls; nothing is invented.
+
+**6/** POL trading fees split 75% to the Desk buyback budget and 25% to Vig. The Desk buyback can spend only that attributable budget and acts only below its defined band.
+
+**7/** The Bank harvest fee is 20% of yield that serviced debt. Of that fee, 37.2% routes to treasury and 62.8% to community: 7.44% and 12.56% of serviced yield. The OMR exit toll splits 50/50 between operations and community.
+
+**8/** Downstream caps matter more than percentages:
+
+- Vig spend ≤ Vig revenue
+- Desk spend ≤ POL-fee budget
+- family buyback spend ≤ community revenue
+- withdrawal committed + request ≤ funded OMR
+
+Trace the full books: **omerta.fun/wiki#economy**
 
 ## Gamer-first version
 
@@ -245,7 +304,7 @@ No. Mechanism design can remove specific reflexive paths. It cannot guarantee de
 
 | Surface | Lead asset | Copy |
 |---|---|---|
-| Landing page | Sheet 01 | Landing variation A or C |
+| Landing page | Sheet 03 | Landing variation C; lead with the exact signed waterfall and dormant-state label |
 | Codex | Full 5-sheet series | Canonical explainer |
 | X launch thread | Sheets 01–05 in order | 12-post technical thread |
 | X recurring education | One sheet per post | Short captions |
@@ -264,7 +323,9 @@ Repository anchors:
 - `src/invariants.js` — enumerated game-ledger credit reasons
 - `src/rules.tail.js` and `src/game.js` — Desk sink list and automatic inventory credit
 - `src/router.js` — revenue sources and destinations
-- `src/chain.js` — buybacks, withdrawal queue, vouchers, reserve accounting and RWA keeper
+- `src/vig.js`, `src/desk.js`, and `src/community.js` — the three revenue-capped buyback executors
+- `src/chain.js` — withdrawal queue, vouchers, and reserve accounting
+- `src/treasury.js` and `src/stockdeliver.js` — RWA budget, purchase, allocation, and delivery
 
 External primary sources for the historical comparison:
 

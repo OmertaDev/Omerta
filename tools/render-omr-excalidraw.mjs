@@ -28,6 +28,18 @@ try {
     const source = path.join(diagramsDir, file);
     const output = path.join(artDir, file.replace(/\.excalidraw$/, '.png'));
     const data = JSON.parse(await fs.readFile(source, 'utf8'));
+    const canvas = data.elements.find((element) => element.id?.endsWith('-canvas'));
+    if (!canvas) throw new Error(`${file}: missing explicit *-canvas artboard`);
+    for (const element of data.elements) {
+      if (element === canvas || element.isDeleted) continue;
+      const right = Number(element.x) + Math.max(0, Number(element.width) || 0);
+      const bottom = Number(element.y) + Math.max(0, Number(element.height) || 0);
+      const inside = Number(element.x) >= Number(canvas.x)
+        && Number(element.y) >= Number(canvas.y)
+        && right <= Number(canvas.x) + Number(canvas.width)
+        && bottom <= Number(canvas.y) + Number(canvas.height);
+      if (!inside) throw new Error(`${file}: ${element.id} escapes the canvas (${element.x},${element.y},${right},${bottom})`);
+    }
     const result = await page.evaluate((diagram) => window.renderDiagram(diagram), data);
     if (!result.success) throw new Error(`${file}: ${result.error}`);
     await page.locator('#root svg').screenshot({ path: output, omitBackground: false });

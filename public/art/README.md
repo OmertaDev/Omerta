@@ -5,7 +5,11 @@ Most files here are produced by `tools/art.js` from the manifest in that file, a
 only ever a Map lookup).
 
 The `omr-01-*.png` through `omr-05-*.png` research sheets are exported from the editable
-Excalidraw sources in `docs/diagrams/` by `tools/render-omr-excalidraw.mjs`.
+Excalidraw sources in `docs/diagrams/` by `tools/render-omr-excalidraw.mjs`. Their visual
+language follows the site tokens: near-black canvas, warm paper text, gold for value flow,
+blue for code-controlled state, green for arrived backing, and blood red for blocked,
+irreversible, or dormant paths. The renderer rejects any declared element outside the
+1600 × 1000 artboard before export.
 
 `manifest.json` is the ledger: for each image it records the model, aspect, seed, size, the *job* the
 image has to do, the exact prompt, and when it was generated — plus the running spend. Any image here

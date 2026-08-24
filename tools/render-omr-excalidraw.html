@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <style>
       * { box-sizing: border-box; margin: 0; padding: 0; }
-      body { background: #fff; overflow: hidden; }
+      body { background: #0a0909; overflow: hidden; }
       #root { display: inline-block; }
       #root svg { display: block; }
     </style>
@@ -22,7 +22,7 @@
               ...(data.appState || {}),
               exportBackground: true,
               exportWithDarkMode: false,
-              viewBackgroundColor: '#ffffff',
+              viewBackgroundColor: data.appState?.viewBackgroundColor || '#0a0909',
             },
             files: data.files || {},
           });

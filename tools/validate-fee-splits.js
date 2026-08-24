@@ -16,7 +16,7 @@
 import fs from 'node:fs';
 import assert from 'node:assert';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const envText = fs.readFileSync(path.join(ROOT, 'deploy/fee-splits.env'), 'utf8');
@@ -38,8 +38,8 @@ console.log(`loaded ${set} levers from deploy/fee-splits.env`);
 
 let router, rules;
 try {
-  router = await import(path.join(ROOT, 'src/router.js'));
-  rules = await import(path.join(ROOT, 'src/rules.js'));
+  router = await import(pathToFileURL(path.join(ROOT, 'src/router.js')).href);
+  rules = await import(pathToFileURL(path.join(ROOT, 'src/rules.js')).href);
 } catch (e) {
   console.error('\n❌ A LOAD GUARD REJECTED THE CONFIG (a split does not sum) — fee-splits.env is invalid:');
   console.error('   ' + e.message);
