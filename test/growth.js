@@ -625,13 +625,23 @@ assert.equal(rm.coach.tab, 'streets', 'and pointed at the Streets');
 assert(Array.isArray(rm.coachPlan) && rm.coachPlan.length >= 2, 'coachPlan is a queue, not one rung');
 assert.equal(rm.coachPlan[0].label, rm.coach.label, 'plan[0] IS the coach');
 assert(rm.coachPlan.some((s) => s.label === 'Get to level 5'), 'the road to level 5 is queued for a fresh street');
-// land a job → the coach moves off "first job"
+// Land a job → the reward becomes the next move BEFORE the longer road to level 5. The first-job
+// tour deliberately leaves the player on Streets, and short phones hide the rest of coachPlan, so
+// skipping this handback makes a ready cash + energy reward disappear at the exact moment the
+// onboarding loop is supposed to pay off.
 await seedCh(rook.id, 'nerve=50, energy=200, jail_until=NULL');
 for (let i = 0; i < 20; i++) { const c = await call('POST', '/v1/crimes/pick', { token: rook.token }); if (c.body.success) break; await seedCh(rook.id, 'nerve=50, energy=200, jail_until=NULL'); }
 rm = (await call('GET', '/v1/me', { token: rook.token })).body.character;
-assert.notEqual(rm.coach?.label, 'Pull your first job', 'once the first job is pulled the coach advances');
+ob = (await call('GET', '/v1/onboard', { token: rook.token })).body;
+assert.equal(ob.tasks.find((t) => t.id === 'ob_crime').ready, true, 'the first-job reward is ready');
+assert.equal(rm.coach?.label, 'Claim your first-job reward', 'the ready reward becomes the primary coach move');
+assert.equal(rm.coach?.tab, 'start', 'the reward handback points to Start Here');
+assert.equal((await call('POST', '/v1/onboard/ob_crime/claim', { token: rook.token })).code, 200,
+  'the coached first-job reward can be claimed');
+rm = (await call('GET', '/v1/me', { token: rook.token })).body.character;
 // (founder) THE ROAD TO LEVEL 5 — below 5, with nerve in the tank, the coach's one instruction is
-// "keep pulling jobs", with the live respect distance in the hint (no exploring required)…
+// "keep pulling jobs", with the live respect distance in the hint (no exploring required). It only
+// takes over AFTER the ready first-job reward has been collected…
 assert.equal(rm.coach?.label, 'Get to level 5', 'below level 5 the coach walks the road there');
 assert(/respect/.test(rm.coach.hint) && rm.coach.tab === 'streets', 'quoting the respect distance, pointing at the Streets');
 // …and with the nerve pool EMPTY it says exactly what to do while waiting (a rung that clears
