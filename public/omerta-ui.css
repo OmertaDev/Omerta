@@ -543,6 +543,20 @@ body.modal-open { overflow: hidden; }
   #tabart { height: 72px; }
 }
 
+@media (max-width: 360px) {
+  .public-nav,
+  #top.public-nav { gap: 10px; }
+  .public-nav__menu summary,
+  .public-nav__links a { padding-inline: 8px; }
+  .public-nav__menu-list {
+    position: fixed;
+    top: 54px;
+    right: 12px;
+    left: 12px;
+    min-width: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: .001ms !important;

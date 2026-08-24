@@ -66,8 +66,11 @@ try {
     `cold landing transfers ${Math.round(landingLoad.bytes / 1024)} KB; budget is 1536 KB — ${JSON.stringify(landingLoad.resources)}`);
   await desktop.close();
 
-  const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  const mobile = await browser.newPage({ viewport: { width: 320, height: 568 }, isMobile: true, hasTouch: true });
   await mobile.goto(`${BASE}/wiki`, { waitUntil: 'networkidle' });
+  let publicWidth = await mobile.evaluate(() => ({ inner: innerWidth, scroll: document.documentElement.scrollWidth }));
+  check(publicWidth.inner <= 320 && publicWidth.scroll <= 321,
+    `320px Codex expands its layout viewport — ${JSON.stringify(publicWidth)}`);
   const searchVisible = await mobile.locator('#q').isVisible();
   check(searchVisible, 'Codex search is hidden behind Browse sections on mobile');
   if (!searchVisible) await mobile.click('#nav-toggle');
@@ -84,6 +87,9 @@ try {
 
   await mobile.goto(`${BASE}/arena`, { waitUntil: 'networkidle' });
   await mobile.waitForFunction(() => !document.querySelector('#board')?.hasAttribute('aria-busy'));
+  publicWidth = await mobile.evaluate(() => ({ inner: innerWidth, scroll: document.documentElement.scrollWidth }));
+  check(publicWidth.inner <= 320 && publicWidth.scroll <= 321,
+    `320px Arena expands its layout viewport — ${JSON.stringify(publicWidth)}`);
   const arenaEmpty = await mobile.evaluate(() => ({
     metrics: document.querySelectorAll('#stats .stat').length,
     artifact: document.querySelectorAll('#stats .arena-empty').length,
