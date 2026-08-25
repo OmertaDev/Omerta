@@ -1,6 +1,16 @@
 # Foundry
 out/
 cache/
+foundry-cache/
 broadcast/
+keystores-testnet/
+.env.mainnet
+crytic-export/
+fizz_data/corpus_echidna/
+fizz_data/corpus_medusa/
+fizz_data/crytic-export/
+fizz_data/logs_medusa/
+fizz_data/slither_results.json
+x-ray/slither-token-summaries.json
 # Dependencies (installed with `forge install`, see README)
 lib/

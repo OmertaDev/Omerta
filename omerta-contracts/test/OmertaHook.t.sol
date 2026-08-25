@@ -7,6 +7,7 @@ import {IPoolManager} from "v4-core/interfaces/IPoolManager.sol";
 import {IHooks} from "v4-core/interfaces/IHooks.sol";
 import {Hooks} from "v4-core/libraries/Hooks.sol";
 import {PoolKey} from "v4-core/types/PoolKey.sol";
+import {PoolId} from "v4-core/types/PoolId.sol";
 import {Currency} from "v4-core/types/Currency.sol";
 import {BalanceDelta} from "v4-core/types/BalanceDelta.sol";
 import {ModifyLiquidityParams, SwapParams} from "v4-core/types/PoolOperation.sol";
@@ -14,6 +15,10 @@ import {PoolSwapTest} from "v4-core/test/PoolSwapTest.sol";
 import {PoolModifyLiquidityTest} from "v4-core/test/PoolModifyLiquidityTest.sol";
 import {OMR} from "../src/OMR.sol";
 import {OmertaHook, IOmrHookObserver} from "../src/OmertaHook.sol";
+
+interface IOpeningDeadlineHook {
+    function openingEndsAt(PoolId poolId) external view returns (uint256);
+}
 
 /// A quote token that is NOT on the hook's allow-list, for the pool gate.
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -150,6 +155,13 @@ contract OmertaHookTest is Test {
     // ── helpers ──────────────────────────────────────────────────────────────────────────────────
 
     function _swap(bool zeroForOne, int256 amountSpecified) internal returns (BalanceDelta) {
+        return _swapWithHookData(zeroForOne, amountSpecified, "");
+    }
+
+    function _swapWithHookData(bool zeroForOne, int256 amountSpecified, bytes memory hookData)
+        internal
+        returns (BalanceDelta)
+    {
         uint256 value = zeroForOne && amountSpecified < 0 ? uint256(-amountSpecified) : 0;
         vm.prank(trader);
         return swapRouter.swap{value: zeroForOne ? (value == 0 ? 100 ether : value) : 0}(
@@ -160,7 +172,7 @@ contract OmertaHookTest is Test {
                 sqrtPriceLimitX96: zeroForOne ? SQRT_PRICE_1_1 / 2 : SQRT_PRICE_1_1 * 2
             }),
             PoolSwapTest.TestSettings({takeClaims: false, settleUsingBurn: false}),
-            ""
+            hookData
         );
     }
 
@@ -201,6 +213,17 @@ contract OmertaHookTest is Test {
         assertEq(hook.HOOK_FLAGS(), FLAGS, "HOOK_FLAGS drifted from what this suite permits");
     }
 
+    /// Uniswap Labs requires manual routing review for the four return-delta flags. Omerta uses the
+    /// two swap flags and no liquidity return deltas; this pins the exact review-triggering surface.
+    function test_routing_review_flags_are_limited_to_swap_return_deltas() public pure {
+        uint160 reviewFlags = uint160(
+            Hooks.BEFORE_SWAP_RETURNS_DELTA_FLAG | Hooks.AFTER_SWAP_RETURNS_DELTA_FLAG
+                | Hooks.AFTER_ADD_LIQUIDITY_RETURNS_DELTA_FLAG | Hooks.AFTER_REMOVE_LIQUIDITY_RETURNS_DELTA_FLAG
+        );
+        uint160 expected = uint160(Hooks.BEFORE_SWAP_RETURNS_DELTA_FLAG | Hooks.AFTER_SWAP_RETURNS_DELTA_FLAG);
+        assertEq(FLAGS & reviewFlags, expected, "manual-review flag surface changed");
+    }
+
     // ── THE POOL GATE — what makes `SellTaxTaken` unforgeable ────────────────────────────────────
 
     function test_a_pool_without_omr_cannot_use_this_hook() public {
@@ -216,9 +239,8 @@ contract OmertaHookTest is Test {
 
     function test_a_pool_against_an_unapproved_quote_cannot_use_this_hook() public {
         Junk j = new Junk();
-        (Currency c0, Currency c1) = address(j) < address(omr)
-            ? (Currency.wrap(address(j)), omrC)
-            : (omrC, Currency.wrap(address(j)));
+        (Currency c0, Currency c1) =
+            address(j) < address(omr) ? (Currency.wrap(address(j)), omrC) : (omrC, Currency.wrap(address(j)));
         PoolKey memory bad = PoolKey(c0, c1, 3000, TICK_SPACING, IHooks(address(hook)));
 
         // Nobody can stand up an (OMR, WORTHLESS) pool, swap against themselves and emit a real
@@ -243,6 +265,32 @@ contract OmertaHookTest is Test {
         assertEq(d + r + l, 0, "a buy was taxed");
         (d, r, l) = _owed(omrC);
         assertEq(d + r + l, 0, "a buy was taxed in OMR");
+    }
+
+    /// The Labs router must not synthesize hook-specific calldata. Empty data is the production path;
+    /// arbitrary data is ignored as well, so integrating this hook does not require a router change.
+    function test_standard_router_swap_requires_no_custom_hook_data() public {
+        _sellExactIn(100e18); // empty hookData
+        (uint256 d0, uint256 r0, uint256 l0) = _owed(eth);
+        uint256 afterEmpty = d0 + r0 + l0;
+        assertGt(afterEmpty, 0, "empty hookData did not clear");
+
+        _swapWithHookData(false, -int256(100e18), hex"deadbeef");
+        (uint256 d1, uint256 r1, uint256 l1) = _owed(eth);
+        assertGt(d1 + r1 + l1, afterEmpty, "hookData unexpectedly controlled the swap");
+    }
+
+    /// The hook fee is additional accounting on the unspecified currency; it neither changes nor
+    /// bypasses the PoolManager's independently configured protocol fee on the input currency.
+    function test_the_hook_does_not_bypass_the_amm_protocol_fee() public {
+        manager.setProtocolFeeController(address(this));
+        manager.setProtocolFee(key, uint24(1000) << 12); // one-for-zero: OMR is the input
+
+        _sellExactIn(100e18);
+
+        assertGt(manager.protocolFeesAccrued(omrC), 0, "PoolManager protocol fee did not accrue");
+        (uint256 d, uint256 r, uint256 l) = _owed(eth);
+        assertGt(d + r + l, 0, "hook fee did not coexist with the protocol fee");
     }
 
     function test_an_exact_input_sell_pays_in_the_quote_currency() public {
@@ -401,7 +449,11 @@ contract OmertaHookTest is Test {
         // can never strand a wei in the hook
         hook.sweep(eth);
         assertEq(address(hook).balance, 0, "dust stranded in the hook");
-        assertEq(dev.balance + rwa.balance + community.balance + lp.balance, d + r + cm + l, "the wallets do not sum to the take");
+        assertEq(
+            dev.balance + rwa.balance + community.balance + lp.balance,
+            d + r + cm + l,
+            "the wallets do not sum to the take"
+        );
     }
 
     function test_the_community_bps_count_against_the_total() public {
@@ -462,6 +514,7 @@ contract OmertaHookTest is Test {
         uint256 before = trader.balance;
         _sellExactIn(50e18);
         assertGt(trader.balance, before, "a reverting observer stopped a trade");
+        hook.pokeObserver(key);
 
         // The gas stipend is the other half: an observer that tries to burn the whole budget is cut
         // off at OBSERVER_GAS rather than taking the swap down with it.
@@ -471,20 +524,36 @@ contract OmertaHookTest is Test {
         before = trader.balance;
         _sellExactIn(50e18);
         assertGt(trader.balance, before, "a gas-hungry observer stopped a trade");
+        hook.pokeObserver(key);
     }
 
-    function test_a_working_observer_sees_every_swap_and_the_pool_opening() public {
+    function test_a_working_observer_is_poked_after_each_swap_and_pool_opening() public {
         CountingObserver obs = new CountingObserver();
         vm.prank(safe);
         hook.setObserver(obs);
         _sellExactIn(10e18);
+        assertEq(obs.calls(), 0, "the observer ran inside PoolManager settlement");
+        hook.pokeObserver(key);
         _buyExactIn(1 ether);
-        assertEq(obs.calls(), 2, "the oracle seam did not fire on both swaps");
+        hook.pokeObserver(key);
+        assertEq(obs.calls(), 2, "the oracle seam was not poked after both swaps");
 
-        // ...and on initialize, which is how a fresh oracle gets its first observation.
+        // Initialize emits the request; the keeper then seeds the fresh oracle outside settlement.
         PoolKey memory k2 = PoolKey(eth, omrC, 500, 10, IHooks(address(hook)));
         manager.initialize(k2, SQRT_PRICE_1_1);
-        assertEq(obs.calls(), 3, "the oracle seam did not fire on initialize");
+        assertEq(obs.calls(), 2, "initialize synchronously entered the observer");
+        hook.pokeObserver(k2);
+        assertEq(obs.calls(), 3, "the oracle seam was not poked after initialize");
+    }
+
+    function test_an_observer_poke_only_accepts_a_pool_this_hook_opened() public {
+        PoolKey memory unopened = PoolKey(eth, omrC, 10_000, 200, IHooks(address(hook)));
+        vm.expectRevert(OmertaHook.PoolNotAllowed.selector);
+        hook.pokeObserver(unopened);
+
+        PoolKey memory wrongHook = PoolKey(eth, omrC, 3000, TICK_SPACING, IHooks(address(0)));
+        vm.expectRevert(OmertaHook.PoolNotAllowed.selector);
+        hook.pokeObserver(wrongHook);
     }
 
     // ── access ───────────────────────────────────────────────────────────────────────────────────
@@ -537,15 +606,26 @@ contract OmertaHookTest is Test {
         // accident of two independently-chosen constants.
         assertGt(uint256(2000), TAX_BPS, "MAX_DISCOUNT_BPS is a backstop, above the operating rate");
     }
-// ── THE OPENING WINDOW (anti-snipe) — the only thing here that can refuse a swap ─────────────
+    // ── THE OPENING WINDOW (anti-snipe) — the only thing here that can refuse a swap ─────────────
     //
     // The launch argues nobody can dump at the bell because the bond vest outlasts the genesis
     // window. That is an argument about BONDERS; it says nothing about a buyer in block 0. These
     // pin the guard's whole shape.
 
-    function _armWindow(uint256 blocks_, uint256 buyBps, uint256 maxBuy) internal {
+    function _configureWindow(uint256 blocks_, uint256 buyBps, uint256 maxBuy) internal {
         vm.prank(safe);
         hook.setAntiSnipe(blocks_, buyBps, maxBuy);
+    }
+
+    /// Window duration is captured at initialization, so behavior tests open a fresh pool after
+    /// configuring it. Reassigning `key` keeps the existing real-router helpers on that pool.
+    function _armWindow(uint256 blocks_, uint256 buyBps, uint256 maxBuy) internal {
+        _configureWindow(blocks_, buyBps, maxBuy);
+        key = PoolKey(eth, omrC, 500, 10, IHooks(address(hook)));
+        manager.initialize(key, SQRT_PRICE_1_1);
+        lpRouter.modifyLiquidity{value: 5_000 ether}(
+            key, ModifyLiquidityParams(MIN_TICK, MAX_TICK, 1_000e18, bytes32(0)), ""
+        );
     }
 
     function test_a_buy_over_the_cap_is_refused_inside_the_window() public {
@@ -645,9 +725,26 @@ contract OmertaHookTest is Test {
         // is already in the past. Arm it AFTER the pool has been open longer than the window and
         // nothing is refused — a compromised Safe cannot halt an open market this way.
         vm.roll(block.number + 300); // pool opened at setUp; MAX is 200
-        _armWindow(200, 500, 1);
+        _configureWindow(200, 500, 1);
         BalanceDelta d = _buyExactIn(2 ether);
         assertGt(d.amount1(), 0, "a pool past MAX_ANTISNIPE_BLOCKS can never re-enter a window");
+    }
+
+    function test_changing_global_duration_cannot_extend_a_pool_opening_deadline() public {
+        _armWindow(10, 500, 1 ether);
+        PoolKey memory laterPool = PoolKey(eth, omrC, 10_000, 200, IHooks(address(hook)));
+        uint256 opened = block.number;
+        manager.initialize(laterPool, SQRT_PRICE_1_1);
+
+        uint256 deadline = IOpeningDeadlineHook(address(hook)).openingEndsAt(laterPool.toId());
+        assertEq(deadline, opened + 10, "the pool did not snapshot its opening deadline");
+
+        _configureWindow(200, 500, 1);
+        assertEq(
+            IOpeningDeadlineHook(address(hook)).openingEndsAt(laterPool.toId()),
+            deadline,
+            "changing the global duration rearmed an already-open pool"
+        );
     }
 
     function test_the_window_length_is_capped_at_compile_time() public {

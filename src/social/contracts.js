@@ -118,6 +118,7 @@ export async function postBounty(ch, targetCharacterId, amount, client, h, opts 
   bus.emit('streets', { type: 'bounty', on: t.name, amount: amt, kind });
   await h.notify(client, targetCharacterId, 'bounty_on_you', { kind, amount: amt }); // the mark can react (lay low, etc.)
   if (hitmanId && !live) await h.notify(client, hitmanId, 'contract_offer', { target: t.name, kind, amount: amt }); // the named hitman is tapped
+  await h.track(client, ch.account_id, 'contract_post', { kind, amount: amt, directed: !!hitmanId });
   return { ok: true, kind, total: (live ? Number(existing.amount) : 0) + amt, expiresHours: ttlH, hitman: hitmanId || undefined };
 }
 
@@ -164,6 +165,7 @@ export async function claimBounty(client, h, ch, victimId, kinds) {
   if (total > 0) {
     ch.cash = Number(ch.cash) + total;
     await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: total, reason: 'bounty:claim', counterparty: victimId });
+    await h.track(client, ch.account_id, 'contract_claim', { total, kinds });
   }
   return { total, directed };
 }

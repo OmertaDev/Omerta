@@ -143,10 +143,10 @@ contract Alchemist is Ownable2Step, ReentrancyGuard, FlashGuard {
     error LtvFeeIncompatible();
     error FeeRecipientUnset();
     error BadFeeRecipient();
+    error AssetTransferMismatch(uint256 received, uint256 expected);
+    error InsufficientShares(uint256 received, uint256 minimum);
 
-    constructor(Denari debtToken_, IERC20 asset_, IERC4626 vault_, Transmuter transmuter_, address safe)
-        Ownable(safe)
-    {
+    constructor(Denari debtToken_, IERC20 asset_, IERC4626 vault_, Transmuter transmuter_, address safe) Ownable(safe) {
         debtToken = debtToken_;
         asset = asset_;
         vault = vault_;
@@ -256,8 +256,12 @@ contract Alchemist is Ownable2Step, ReentrancyGuard, FlashGuard {
 
     // ── deposit / withdraw ───────────────────────────────────────────────────────────────────────
 
-    function deposit(uint256 assets) external nonReentrant onlyAllowedCaller {
-        if (assets == 0) revert ZeroAmount();
+    /// @notice Deposit collateral with a caller-chosen ERC-4626 share floor.
+    /// @dev    The floor is mandatory because a vault donation can move its exchange rate between
+    ///         quote construction and execution. Measuring the escrow's actual share-balance delta
+    ///         also prevents a vault from satisfying this check with a dishonest return value.
+    function deposit(uint256 assets, uint256 minSharesOut) external nonReentrant onlyAllowedCaller {
+        if (assets == 0 || minSharesOut == 0) revert ZeroAmount();
         CollateralEscrow e = escrowOf[msg.sender];
         if (address(e) == address(0)) {
             e = new CollateralEscrow(msg.sender, asset, vault);
@@ -268,8 +272,15 @@ contract Alchemist is Ownable2Step, ReentrancyGuard, FlashGuard {
         // reverts. That is what makes the atomic deposit→borrow→exit round trip impossible.
         _recordEntry(msg.sender);
 
+        uint256 assetBalanceBefore = asset.balanceOf(address(e));
         asset.safeTransferFrom(msg.sender, address(e), assets);
-        e.deployToVault(assets);
+        uint256 assetBalanceAfter = asset.balanceOf(address(e));
+        if (assetBalanceAfter < assetBalanceBefore) revert AssetTransferMismatch(0, assets);
+        uint256 received = assetBalanceAfter - assetBalanceBefore;
+        if (received != assets) revert AssetTransferMismatch(received, assets);
+
+        uint256 shares = e.deployToVault(assets);
+        if (shares < minSharesOut) revert InsufficientShares(shares, minSharesOut);
         principalOf[msg.sender] += assets;
         emit Deposited(msg.sender, assets);
     }
@@ -307,6 +318,10 @@ contract Alchemist is Ownable2Step, ReentrancyGuard, FlashGuard {
         debtOf[msg.sender] = newDebt;
 
         debtToken.mint(msg.sender, debtAmount);
+        // `bufferHealthy` depends on total DNR supply. The pre-check above protects an already-thin
+        // reserve; this post-state check prevents the issuance itself from crossing the floor.
+        // Reverting here atomically rolls back both the token mint and the debt write.
+        if (!transmuter.bufferHealthy()) revert BufferUnhealthy();
         emit Minted(msg.sender, debtAmount);
     }
 
@@ -401,6 +416,11 @@ contract Alchemist is Ownable2Step, ReentrancyGuard, FlashGuard {
 
         e.withdraw(take + fee, address(this));
         debtOf[user] = d - asDebt;
+
+        // Fee-bearing/nonlinear ERC-4626 vaults can consume more share value than the requested
+        // underlying transfer suggests. Value collateral from redeemable assets (in the escrow)
+        // and re-assert the position invariant after the shares have actually been burned.
+        if (debtOf[user] > maxDebtOf(user)) revert Undercollateralised();
 
         // THE FEE ACCRUES; `sweepFees` pushes it. Do NOT "simplify" this into an in-tx transfer to
         // `feeRecipient`. `harvest` is the self-repaying mechanism and it is PERMISSIONLESS — a

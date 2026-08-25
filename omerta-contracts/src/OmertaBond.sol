@@ -90,21 +90,21 @@ contract OmertaBond is EIP712, Ownable2Step, Pausable, ReentrancyGuard {
     );
 
     struct BondQuote {
-        address payer;            // the bonder (must be msg.sender — a quote is not transferable)
-        uint256 principal;        // ETH (wei) the bonder deposits; must equal msg.value
-        uint256 priceOmrPerEth;   // OMR (wei) per 1 ETH (1e18 wei) at quote time (the DEX TWAP)
-        uint256 discountBps;      // the bonder's incentive (<= MAX_DISCOUNT_BPS)
-        uint256 vestSeconds;      // linear vesting window (<= MAX_VEST)
-        uint256 nonce;            // server-unique; replay protection
-        uint256 deadline;         // unix seconds
+        address payer; // the bonder (must be msg.sender — a quote is not transferable)
+        uint256 principal; // ETH (wei) the bonder deposits; must equal msg.value
+        uint256 priceOmrPerEth; // OMR (wei) per 1 ETH (1e18 wei) at quote time (the DEX TWAP)
+        uint256 discountBps; // the bonder's incentive (<= MAX_DISCOUNT_BPS)
+        uint256 vestSeconds; // linear vesting window (<= MAX_VEST)
+        uint256 nonce; // server-unique; replay protection
+        uint256 deadline; // unix seconds
     }
 
     struct Bond {
-        address owner;            // who may claim
-        uint256 payout;           // total OMR owed (discounted)
-        uint256 claimed;          // OMR released so far
-        uint64 start;             // vesting start (block.timestamp)
-        uint64 vestSeconds;       // vesting window
+        address owner; // who may claim
+        uint256 payout; // total OMR owed (discounted)
+        uint256 claimed; // OMR released so far
+        uint64 start; // vesting start (block.timestamp)
+        uint64 vestSeconds; // vesting window
     }
 
     IERC20 public immutable omr;
@@ -113,7 +113,7 @@ contract OmertaBond is EIP712, Ownable2Step, Pausable, ReentrancyGuard {
     /// @notice POL share of every bond's ETH, in basis points. IMMUTABLE — set once at deploy in
     ///         lockstep with the backend's BONDS.POL_BPS so on-chain and off-chain never drift.
     uint256 public immutable polBps;
-    uint256 public immutable devBps;   // the founder-revenue share of every bond's ETH
+    uint256 public immutable devBps; // the founder-revenue share of every bond's ETH
     /// @notice The TREASURY's share of every bond's ETH (tokenomics v2 §6). Bond ETH is PRIMARY
     ///         inflow — it arrives whether or not anyone is trading — so it is what keeps the treasury
     ///         growing when DEX volume is thin, which is exactly what a one-way conversion produces.
@@ -121,12 +121,12 @@ contract OmertaBond is EIP712, Ownable2Step, Pausable, ReentrancyGuard {
     ///         real tokenized stock until that layer was retired 2026-07-31; the bps and the split are
     ///         unchanged, only the destination — `rwaRecipient` is now a treasury Safe, not a buy bot.)
     uint256 public immutable rwaBps;
-    address public signer;              // the game server's quote signer (rotatable by the Safe)
+    address public signer; // the game server's quote signer (rotatable by the Safe)
     address payable public polRecipient; // where the POL ETH share is forwarded (the pairing manager)
     address payable public devRecipient; // where the dev ETH share is forwarded (founder revenue — the OmertaFees dev-wallet pattern)
     address payable public rwaRecipient; // where the treasury's ETH share is forwarded (a cold Safe; this
-                                         // slice funded a stock float until that layer was retired 2026-07-31 —
-                                         // the bps and the plumbing are unchanged, only the destination)
+    // slice funded a stock float until that layer was retired 2026-07-31 —
+    // the bps and the plumbing are unchanged, only the destination)
     address payable public vigRecipient; // where the Vig ETH share is forwarded (the Vig wallet)
 
     /// @notice OMR promised to outstanding (unclaimed) bonds. INVARIANT: <= omr.balanceOf(this).
@@ -157,10 +157,20 @@ contract OmertaBond is EIP712, Ownable2Step, Pausable, ReentrancyGuard {
     uint256 public maxOracleAge;
     mapping(uint256 => uint256) public bondedOnDay; // UTC day => OMR payout bonded that day
     mapping(uint256 => bool) public usedNonce; // quote replay protection
-    mapping(uint256 => Bond) public bonds;     // bondId => Bond
+    mapping(uint256 => Bond) public bonds; // bondId => Bond
     uint256 public nextBondId = 1;
 
-    event Bonded(uint256 indexed bondId, address indexed payer, uint256 indexed nonce, uint256 principal, uint256 payout, uint256 toPol, uint256 toDev, uint256 toRwa, uint256 toVig);
+    event Bonded(
+        uint256 indexed bondId,
+        address indexed payer,
+        uint256 indexed nonce,
+        uint256 principal,
+        uint256 payout,
+        uint256 toPol,
+        uint256 toDev,
+        uint256 toRwa,
+        uint256 toVig
+    );
     event BondClaimed(uint256 indexed bondId, address indexed owner, uint256 amount);
     event SignerSet(address indexed signer);
     event RecipientsSet(address indexed pol, address indexed dev, address indexed rwa, address vig);
@@ -178,15 +188,15 @@ contract OmertaBond is EIP712, Ownable2Step, Pausable, ReentrancyGuard {
     error VestTooLong();
     error Replay();
     error BadSignature();
-    error RateCeiling();           // the post-discount mint rate exceeds maxOmrPerEth (0 = unset, fails closed)
-    error OracleUnset();           // wall 4 not configured — fails closed rather than skipping the check
-    error OracleUnavailable();     // the feed reverted or reported no usable reading
+    error RateCeiling(); // the post-discount mint rate exceeds maxOmrPerEth (0 = unset, fails closed)
+    error OracleUnset(); // wall 4 not configured — fails closed rather than skipping the check
+    error OracleUnavailable(); // the feed reverted or reported no usable reading
     error OracleStale(uint256 updatedAt, uint256 maxAge);
     error PriceAboveOracle(uint256 quoted, uint256 ceiling); // the accretion wall
     error NotOwner();
     error NothingVested();
     error ForwardFailed();
-    error OverSweep();             // would dip into OMR backing outstanding bonds
+    error OverSweep(); // would dip into OMR backing outstanding bonds
 
     constructor(
         address owner_,
@@ -292,15 +302,32 @@ contract OmertaBond is EIP712, Ownable2Step, Pausable, ReentrancyGuard {
 
     // ── the bond ──
     function hashQuote(BondQuote calldata q) public view returns (bytes32) {
-        return _hashTypedDataV4(keccak256(abi.encode(
-            QUOTE_TYPEHASH, q.payer, q.principal, q.priceOmrPerEth, q.discountBps, q.vestSeconds, q.nonce, q.deadline
-        )));
+        return _hashTypedDataV4(
+            keccak256(
+                abi.encode(
+                    QUOTE_TYPEHASH,
+                    q.payer,
+                    q.principal,
+                    q.priceOmrPerEth,
+                    q.discountBps,
+                    q.vestSeconds,
+                    q.nonce,
+                    q.deadline
+                )
+            )
+        );
     }
 
     /// @notice Deposit ETH against a server-signed quote → book a vesting OMR bond. The ETH is split
     ///         (POL + Dev + Vig) and forwarded in this tx, so the contract custodies no ETH. It DOES
     ///         mint the OMR payout — see the header's three walls for what bounds that.
-    function bond(BondQuote calldata q, bytes calldata sig) external payable nonReentrant whenNotPaused returns (uint256 bondId) {
+    function bond(BondQuote calldata q, bytes calldata sig)
+        external
+        payable
+        nonReentrant
+        whenNotPaused
+        returns (uint256 bondId)
+    {
         if (msg.sender != q.payer) revert NotPayer();
         if (msg.value != q.principal || msg.value == 0) revert WrongValue(msg.value, q.principal);
         if (block.timestamp > q.deadline) revert Expired();
@@ -316,7 +343,7 @@ contract OmertaBond is EIP712, Ownable2Step, Pausable, ReentrancyGuard {
         // the discount is separately bounded by MAX_DISCOUNT_BPS, so splitting the two means each
         // wall guards one lie (an inflated market price / an excessive discount) and neither can be
         // used to hide the other. Reverts if the feed is unset, stale, zero or broken.
-        (uint256 ceiling, ) = priceCeiling();
+        (uint256 ceiling,) = priceCeiling();
         if (q.priceOmrPerEth > ceiling) revert PriceAboveOracle(q.priceOmrPerEth, ceiling);
 
         // discounted payout: principal's market OMR value, scaled UP by the discount (cheaper OMR)
@@ -341,7 +368,13 @@ contract OmertaBond is EIP712, Ownable2Step, Pausable, ReentrancyGuard {
         }
 
         bondId = nextBondId++;
-        bonds[bondId] = Bond({ owner: q.payer, payout: payout, claimed: 0, start: uint64(block.timestamp), vestSeconds: uint64(q.vestSeconds) });
+        bonds[bondId] = Bond({
+            owner: q.payer,
+            payout: payout,
+            claimed: 0,
+            start: uint64(block.timestamp),
+            vestSeconds: uint64(q.vestSeconds)
+        });
 
         // MINT the payout to this contract, which then releases it on the vesting schedule. Minting
         // here rather than at claim keeps `committedOMR <= omr.balanceOf(this)` true at all times —
@@ -358,10 +391,22 @@ contract OmertaBond is EIP712, Ownable2Step, Pausable, ReentrancyGuard {
         // the REMAINDER rule sits on the Vig: three of four shares round down, so a "natural" fourth
         // share would strand wei belonging to nobody. Vig takes what is left, exactly.
         uint256 toVig = msg.value - toPol - toDev - toRwa;
-        if (toPol > 0) { (bool okP, ) = polRecipient.call{value: toPol}(""); if (!okP) revert ForwardFailed(); }
-        if (toDev > 0) { (bool okD, ) = devRecipient.call{value: toDev}(""); if (!okD) revert ForwardFailed(); }
-        if (toRwa > 0) { (bool okR, ) = rwaRecipient.call{value: toRwa}(""); if (!okR) revert ForwardFailed(); }
-        if (toVig > 0) { (bool okV, ) = vigRecipient.call{value: toVig}(""); if (!okV) revert ForwardFailed(); }
+        if (toPol > 0) {
+            (bool okP,) = polRecipient.call{value: toPol}("");
+            if (!okP) revert ForwardFailed();
+        }
+        if (toDev > 0) {
+            (bool okD,) = devRecipient.call{value: toDev}("");
+            if (!okD) revert ForwardFailed();
+        }
+        if (toRwa > 0) {
+            (bool okR,) = rwaRecipient.call{value: toRwa}("");
+            if (!okR) revert ForwardFailed();
+        }
+        if (toVig > 0) {
+            (bool okV,) = vigRecipient.call{value: toVig}("");
+            if (!okV) revert ForwardFailed();
+        }
 
         emit Bonded(bondId, q.payer, q.nonce, msg.value, payout, toPol, toDev, toRwa, toVig);
     }
@@ -374,7 +419,7 @@ contract OmertaBond is EIP712, Ownable2Step, Pausable, ReentrancyGuard {
         amount = vested - b.claimed;
         if (amount == 0) revert NothingVested();
         b.claimed = vested;
-        committedOMR -= amount;         // the released OMR leaves the outstanding commitment
+        committedOMR -= amount; // the released OMR leaves the outstanding commitment
         omr.safeTransfer(b.owner, amount); // releases OMR minted at bond time; claim itself never mints
         emit BondClaimed(bondId, b.owner, amount);
     }
@@ -398,7 +443,10 @@ contract OmertaBond is EIP712, Ownable2Step, Pausable, ReentrancyGuard {
         emit SignerSet(s);
     }
 
-    function setRecipients(address payable pol, address payable dev, address payable rwa, address payable vig) external onlyOwner {
+    function setRecipients(address payable pol, address payable dev, address payable rwa, address payable vig)
+        external
+        onlyOwner
+    {
         if (polBps > 0 && pol == address(0)) revert ZeroAddress();
         if (devBps > 0 && dev == address(0)) revert ZeroAddress();
         if (rwaBps > 0 && rwa == address(0)) revert ZeroAddress();
@@ -410,8 +458,13 @@ contract OmertaBond is EIP712, Ownable2Step, Pausable, ReentrancyGuard {
         emit RecipientsSet(pol, dev, rwa, vig);
     }
 
-    function pause() external onlyOwner { _pause(); }
-    function unpause() external onlyOwner { _unpause(); }
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
 
     /// @notice The Safe can pull back only OMR that is NOT backing an outstanding vested bond. With
     ///         the payout minted at bond time, `committedOMR` is always covered by the balance, so
@@ -429,7 +482,7 @@ contract OmertaBond is EIP712, Ownable2Step, Pausable, ReentrancyGuard {
     function sweepETH() external onlyOwner nonReentrant {
         uint256 bal = address(this).balance;
         if (bal > 0) {
-            (bool ok, ) = payable(owner()).call{value: bal}("");
+            (bool ok,) = payable(owner()).call{value: bal}("");
             if (!ok) revert ForwardFailed();
         }
     }

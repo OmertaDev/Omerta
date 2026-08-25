@@ -1,0 +1,448 @@
+{
+  "schemaVersion": 1,
+  "status": "testnet-rehearsal-complete-all-top-level-contracts-deployed-verified-dormant",
+  "network": {
+    "name": "Robinhood Chain Testnet",
+    "chainId": 46630,
+    "rpc": "https://rpc.testnet.chain.robinhood.com",
+    "explorer": "https://explorer.testnet.chain.robinhood.com"
+  },
+  "source": {
+    "commit": "cb4e6a35d7950366a984b9f812a9d6376c4f2675",
+    "workingTree": "dirty-unfrozen",
+    "solc": "0.8.26",
+    "forge": "1.7.1",
+    "optimizerRuns": 800,
+    "evmVersion": "cancun"
+  },
+  "governance": {
+    "safe": {
+      "address": "0x895fC13973f66Aa39A1fB27F4a3245c6aC9717B0",
+      "version": "1.4.1",
+      "singleton": "0x29fcB43b46531BcA003ddC8FCB67FFE91900C762",
+      "proxyFactory": "0x4e1DCf7AD4e460CfD30791CCC4F9c8a4f820ec67",
+      "fallbackHandler": "0xfd0732Dc9E303f09fCEf3a7388Ad10A83459Ec99",
+      "owners": [
+        "0x8c8DfE7B443C80603Fbb0E08F22aA859a98D747B",
+        "0x0cD9d2B32f25f1038634628490Eb643F63d46f52",
+        "0x3458bB301eA4CBfC7a4c53B6e9e5b8bDd22a1fd4"
+      ],
+      "threshold": 2,
+      "saltNonce": "202608240101",
+      "deployment": {
+        "transactionHash": "0x92bd24e70f4de4c1a8de7d0c186e8e3d932a88865f5bdc6453876ad2f80eeb3e",
+        "blockNumber": 106397486,
+        "timestamp": "2026-08-24T05:20:38Z",
+        "gasUsed": "326597",
+        "effectiveGasPriceWei": "10000000",
+        "feeWei": "3265970000000"
+      }
+    },
+    "voucherSigner": "0x5CCD83A89b9cd1C4544679dec2087dfe04c06b62",
+    "devRecipient": "0x8c8DfE7B443C80603Fbb0E08F22aA859a98D747B",
+    "vigRecipient": "0x0cD9d2B32f25f1038634628490Eb643F63d46f52",
+    "polRecipient": "0x895fC13973f66Aa39A1fB27F4a3245c6aC9717B0"
+  },
+  "infrastructure": {
+    "create2Factory": "0x4e59b44847b379578588920cA78FbF26c0B4956C",
+    "v4PoolManager": "0x8366a39cc670b4001a1121b8f6a443a643e40951"
+  },
+  "phases": {
+    "core": {
+      "status": "deployed-verified-dormant",
+      "broadcaster": "0x8c8DfE7B443C80603Fbb0E08F22aA859a98D747B",
+      "expectedStartingNonce": 1,
+      "profile": {
+        "voucherDailyCapOmrWei": "1000000000000000000000",
+        "stakingApyBps": 1400,
+        "feeVigBps": 2500,
+        "mintFeeWei": "10000000000000000",
+        "respawnFeeWei": "100000000000000000",
+        "deedDailyMintCap": 10,
+        "dynastyDailyMintCap": 10,
+        "dynastyRoyaltyBps": 500,
+        "stockDefaultDailyCap": 1,
+        "bondSplitsBps": { "pol": 7500, "dev": 1500, "rwa": 500, "vig": 500 },
+        "bondDailyCapOmrWei": "1000000000000000000000",
+        "bondMaxOmrPerEthWei": "15000000000000000000000",
+        "genesisPriceOmrPerEthWei": "0",
+        "genesisValidUntil": 0,
+        "gearImageBase": "ipfs://REPLACE_WITH_PINNED_GEAR_CID/",
+        "gearImageBaseStatus": "testnet-placeholder-must-change-before-real-minting"
+      },
+      "simulation": {
+        "timestamp": "2026-08-24T05:33:04Z",
+        "estimatedGas": "22120673",
+        "estimatedFeeWei": "442413482120673",
+        "preflight": "passed-no-transaction-sent"
+      },
+      "deployment": {
+        "startedAt": "2026-08-24T05:37:52Z",
+        "completedAt": "2026-08-24T05:38:19Z",
+        "startingNonce": 1,
+        "endingNonce": 11,
+        "transactionCount": 10,
+        "totalGasUsed": "18676842",
+        "effectiveGasPriceWei": "10000000",
+        "totalFeeWei": "186768420000000"
+      },
+      "verification": {
+        "verifiedAt": "2026-08-24T05:46:14Z",
+        "rpcChecksPassed": 69,
+        "receiptsPassed": 10,
+        "allOwners": "0x895fC13973f66Aa39A1fB27F4a3245c6aC9717B0",
+        "omrMinter": "0x0000000000000000000000000000000000000000",
+        "gearVaultMinter": "0x0000000000000000000000000000000000000000",
+        "stockVaultKeeper": "0x0000000000000000000000000000000000000000",
+        "bondOracle": "0x0000000000000000000000000000000000000000",
+        "omrSellTaxBps": 0,
+        "genesisOracle": "closed-0-0",
+        "result": "passed"
+      },
+      "contracts": {
+        "OMR": "0x8A2f28cC2a0Dd31122c80B6eCf19354E87B7010e",
+        "GearVault": "0x10b7790baBd7A77D83e24D5CE19D5412d424fD98",
+        "VoucherClaim": "0x27B9689066f77d91Ee353d66af831332C25B1E4A",
+        "OMRStaking": "0xbE263A5237b5834547b43a8e1B554D7dBcA6f104",
+        "OmertaFees": "0xf89405e54F699bE14bff01d3c2edb017029B3F7A",
+        "StreetDeed": "0x61b3bc48753458dc6a31Bf7E6FD9dBD45B343787",
+        "DynastyNFT": "0x13B76A0F73b6879423Cf4fB69B09F75e5c9b01f0",
+        "StockVault": "0x048a890ff108984a33d55F182F46140F8054956c",
+        "GenesisOracle": "0x0A6e013B5C88CaF198f7f0d30D8c3F91490D83dd",
+        "OmertaBond": "0xB2e61F1AE7941da1830e44E79f051593f85c1411"
+      },
+      "transactions": {
+        "OMR": {
+          "transactionHash": "0x963ec4c91cb95a23b0a9ce21601263f55d84db72bd551e00cca8782838130495",
+          "blockNumber": 106404117,
+          "gasUsed": "1864104",
+          "feeWei": "18641040000000"
+        },
+        "GearVault": {
+          "transactionHash": "0xf9f63d1adb2e28ed8a09f6eb1a80618cdf55a0aeebb07ea09e08edef7909ae16",
+          "blockNumber": 106404137,
+          "gasUsed": "2774650",
+          "feeWei": "27746500000000"
+        },
+        "VoucherClaim": {
+          "transactionHash": "0x56c237d9fb7ffeb1a1bf5a5a436d0382abd2b54376e021ca082897747965494b",
+          "blockNumber": 106404156,
+          "gasUsed": "1705908",
+          "feeWei": "17059080000000"
+        },
+        "OMRStaking": {
+          "transactionHash": "0x41ac5c4149fca7cca29a9f65c393bf560a8044cb691732988f4416aedd181291",
+          "blockNumber": 106404164,
+          "gasUsed": "1061497",
+          "feeWei": "10614970000000"
+        },
+        "OmertaFees": {
+          "transactionHash": "0x0162d7f52a548d7e38fb5d447bdb818f3cef3b7aab18cd261d0452f3cd6a203d",
+          "blockNumber": 106404178,
+          "gasUsed": "1106157",
+          "feeWei": "11061570000000"
+        },
+        "StreetDeed": {
+          "transactionHash": "0x91723d39ed38b5d1c6a56d073b9b9a9d3617a6dbfd42f4e89ee84d660ef8731b",
+          "blockNumber": 106404212,
+          "gasUsed": "3341629",
+          "feeWei": "33416290000000"
+        },
+        "DynastyNFT": {
+          "transactionHash": "0xd550775f798ebc4811aff47540ad7041354541840654513e60a28bf795bb629e",
+          "blockNumber": 106404229,
+          "gasUsed": "2644482",
+          "feeWei": "26444820000000"
+        },
+        "StockVault": {
+          "transactionHash": "0x5ba8c9f744d40c6ca8f7fa641ab75a25cce13ed7010184de2d1db203b9dde311",
+          "blockNumber": 106404265,
+          "gasUsed": "1146356",
+          "feeWei": "11463560000000"
+        },
+        "GenesisOracle": {
+          "transactionHash": "0x343ded75017aa367ec36dc4aa25588ecbca1b0283e233412c8ffd91c54106f9b",
+          "blockNumber": 106404284,
+          "gasUsed": "350551",
+          "feeWei": "3505510000000"
+        },
+        "OmertaBond": {
+          "transactionHash": "0x8dbdb49e1da780e8c7ae89a9df5a43daaca07b8adc091f0fb6f7bf621538c1a0",
+          "blockNumber": 106404304,
+          "gasUsed": "2681508",
+          "feeWei": "26815080000000"
+        }
+      }
+    },
+    "bank": {
+      "status": "deployed-live-checked-dormant",
+      "mode": "testnet-only-fixed-dependencies",
+      "broadcaster": "0x8c8DfE7B443C80603Fbb0E08F22aA859a98D747B",
+      "expectedStartingNonce": 11,
+      "profile": {
+        "assetName": "Test Bank USD",
+        "assetSymbol": "tbUSD",
+        "assetDecimals": 6,
+        "assetInitialSupply": "1000000000000",
+        "assetInitialRecipient": "0x895fC13973f66Aa39A1fB27F4a3245c6aC9717B0",
+        "assetPostDeploymentMint": false,
+        "vaultName": "Vault Test Bank USD",
+        "vaultSymbol": "vtbUSD",
+        "productionEligible": false,
+        "activation": "dormant"
+      },
+      "simulation": {
+        "timestamp": "2026-08-24T06:04:32Z",
+        "estimatedGas": "8056708",
+        "estimatedFeeWei": "161134168056708",
+        "bufferedRequirementWei": "161134160000000",
+        "preflight": "passed-no-transaction-sent"
+      },
+      "deployment": {
+        "startedAt": "2026-08-24T06:07:19Z",
+        "completedAt": "2026-08-24T06:07:30Z",
+        "startingNonce": 11,
+        "endingNonce": 16,
+        "transactionCount": 5,
+        "totalGasUsed": "6788171",
+        "effectiveGasPriceWei": "10000000",
+        "totalFeeWei": "67881710000000"
+      },
+      "verification": {
+        "verifiedAt": "2026-08-24T06:12:54Z",
+        "method": "rpc-state-and-receipts-no-explorer-publication",
+        "rpcChecksPassed": 54,
+        "receiptsPassed": 5,
+        "allOwners": "0x895fC13973f66Aa39A1fB27F4a3245c6aC9717B0",
+        "assetSupply": "1000000000000",
+        "assetSafeBalance": "1000000000000",
+        "denariMinter": "0x0000000000000000000000000000000000000000",
+        "denariBurner": "0x0000000000000000000000000000000000000000",
+        "transmuterReserves": "0",
+        "transmuterSafeFunder": false,
+        "transmuterRedeemCaps": "0-0",
+        "alchemistFeeRecipient": "0x0000000000000000000000000000000000000000",
+        "alchemistMintCaps": "0-0",
+        "result": "passed"
+      },
+      "contracts": {
+        "TestBankAsset": "0x9063dF8Ad1d004C7Da650850b5402df4998B7a65",
+        "TestBankVault": "0x726dDddC41f0202f28Dc0264587b66a634Be0bEd",
+        "Denari": "0xA1FFBE06Bc78c825C58B0Ee31FBa30E21318389F",
+        "Transmuter": "0x1677D75D3Df453F28D6EC5F1F6E4b5EBDa9319b4",
+        "Alchemist": "0x97ab93C7a44124b6a177D582Df3fad62AC56Eb2A"
+      },
+      "transactions": {
+        "TestBankAsset": {
+          "transactionHash": "0xbdc48d166f66ecdeef9cf069c81073722c7056be053d3aa4ae18d19e2c166191",
+          "blockNumber": 106415079,
+          "gasUsed": "609637",
+          "feeWei": "6096370000000"
+        },
+        "TestBankVault": {
+          "transactionHash": "0x6b15176bc5715c5764b83ffa05d421be63cad7192653ee8442cb9ebb0a74672d",
+          "blockNumber": 106415096,
+          "gasUsed": "1212488",
+          "feeWei": "12124880000000"
+        },
+        "Denari": {
+          "transactionHash": "0xd6e08aaefdd53ffe51b4a37311707f5fa114e774ccf49afe8b83ae45ceafc276",
+          "blockNumber": 106415120,
+          "gasUsed": "1334538",
+          "feeWei": "13345380000000"
+        },
+        "Transmuter": {
+          "transactionHash": "0x3a4144f0f70b76b4eb9e44b949b06c238ac41997c923848aea0416be8591bea8",
+          "blockNumber": 106415126,
+          "gasUsed": "1046576",
+          "feeWei": "10465760000000"
+        },
+        "Alchemist": {
+          "transactionHash": "0xdb3031b28bc02a0415acba3b75de2fe376cab941e35e28e5ebd5baca2fcb0bac",
+          "blockNumber": 106415133,
+          "gasUsed": "2584932",
+          "feeWei": "25849320000000"
+        }
+      }
+    },
+    "twap": {
+      "status": "deployed-live-checked-first-window-closed-bond-disconnected",
+      "mode": "testnet-only-immutable-virtual-observation-pair",
+      "broadcaster": "0x8c8DfE7B443C80603Fbb0E08F22aA859a98D747B",
+      "expectedStartingNonce": 17,
+      "profile": {
+        "omr": "0x8A2f28cC2a0Dd31122c80B6eCf19354E87B7010e",
+        "owner": "0x895fC13973f66Aa39A1fB27F4a3245c6aC9717B0",
+        "periodSeconds": 600,
+        "virtualWethName": "Virtual Test Wrapped Ether",
+        "virtualWethSymbol": "vtWETH",
+        "virtualWethSupplyWei": "1000000000000000000000",
+        "virtualOmrReserveWei": "500000000000000000000000",
+        "virtualWethReserveWei": "100000000000000000000",
+        "virtualPriceOmrPerEthWei": "5000000000000000000000",
+        "pairTrading": false,
+        "pairHoldsAssets": false,
+        "productionEligible": false,
+        "bondConnection": "forbidden-remains-zero-address"
+      },
+      "simulation": {
+        "timestamp": "2026-08-24T06:53:11Z",
+        "estimatedGas": "1905163",
+        "estimatedFeeWei": "38103261905163",
+        "bufferedRequirementWei": "38103260000000",
+        "preflight": "passed-no-transaction-sent"
+      },
+      "deployment": {
+        "startedAt": "2026-08-24T06:56:11Z",
+        "completedAt": "2026-08-24T06:56:17Z",
+        "startingNonce": 17,
+        "endingNonce": 20,
+        "transactionCount": 3,
+        "totalGasUsed": "1650120",
+        "effectiveGasPriceWei": "10000000",
+        "totalFeeWei": "16501200000000"
+      },
+      "verification": {
+        "verifiedAt": "2026-08-24T06:58:16Z",
+        "method": "rpc-state-and-receipts-no-explorer-publication",
+        "rpcChecksPassed": 27,
+        "receiptsPassed": 3,
+        "virtualWethRuntimeCodeBytes": 1779,
+        "virtualWethRuntimeCodeHash": "0xdf5309635eda0de38f0edf6394c6d099bf0a17040bb661f7483f9770e0b022ce",
+        "virtualPairRuntimeCodeBytes": 448,
+        "virtualPairRuntimeCodeHash": "0xbf5049028748fe884c8113ef6b34842c62c33e55a7046e54b7b0e37fdb405d9e",
+        "oracleRuntimeCodeBytes": 2888,
+        "oracleRuntimeCodeHash": "0x1bc22dd3cd4805a54b1d1bd2972ef84f461bd35a151cf6a5b66c1d679f42d01e",
+        "owner": "0x895fC13973f66Aa39A1fB27F4a3245c6aC9717B0",
+        "pairOrientation": "token0-omr-token1-vtweth",
+        "initialConsult": "0-0",
+        "bondOracle": "0x0000000000000000000000000000000000000000",
+        "currentConsult": "5000000000000000000000-1787555919",
+        "result": "passed-first-window-closed-bond-disconnected"
+      },
+      "firstWindow": {
+        "status": "closed-live-checked",
+        "snapshotTimestamp": 1787554577,
+        "eligibleAt": 1787555177,
+        "preflight": {
+          "timestamp": "2026-08-24T07:07:07Z",
+          "elapsedSeconds": 645,
+          "simulatedPriceOmrPerEthWei": "5000000000000000000000",
+          "estimatedGas": "83712",
+          "estimatedFeeWei": "1674240083712",
+          "bufferedRequirementWei": "1674240000000",
+          "result": "passed-no-transaction-sent"
+        },
+        "update": {
+          "transactionHash": "0x33c567a8544df6e958ee3068ed1537e88be510d208c20e956314c4d55c83d718",
+          "blockNumber": 106441525,
+          "blockTimestamp": 1787555919,
+          "updatedAt": 1787555919,
+          "timeElapsedSeconds": 1342,
+          "priceAverageUq112x112": "25961484292674138142652481646100480000",
+          "priceOmrPerEthWei": "5000000000000000000000",
+          "gasUsed": "63642",
+          "effectiveGasPriceWei": "10000000",
+          "feeWei": "636420000000",
+          "updatedEventTopic": "0x81528b7f772e427d79c86cf20c2c15a2ba6df1157cb5ba0d168f7c17b50856c0",
+          "receiptStatus": "success",
+          "endingNonce": 21,
+          "bondOracle": "0x0000000000000000000000000000000000000000",
+          "idempotentRerun": "passed-no-transaction-sent"
+        }
+      },
+      "predictedContracts": {
+        "TestTwapWeth": "0xcF5C47105B7dA664394B2B424E97505217812C80",
+        "TestFixedOmrV2Pair": "0x8c4F3CCA4Fd775ca45e5020B918a722DC06E48Da",
+        "OmrTwapOracle": "0x4e7C5f109BB53197c3f08fEaE2E57F4c5d0Da01b"
+      },
+      "contracts": {
+        "TestTwapWeth": "0xcF5C47105B7dA664394B2B424E97505217812C80",
+        "TestFixedOmrV2Pair": "0x8c4F3CCA4Fd775ca45e5020B918a722DC06E48Da",
+        "OmrTwapOracle": "0x4e7C5f109BB53197c3f08fEaE2E57F4c5d0Da01b"
+      },
+      "transactions": {
+        "TestTwapWeth": {
+          "transactionHash": "0xa34db50c2ff58ff35eae551b992e4161be66b95d1ba34502053c4194e171daa8",
+          "blockNumber": 106433094,
+          "gasUsed": "606424",
+          "feeWei": "6064240000000"
+        },
+        "TestFixedOmrV2Pair": {
+          "transactionHash": "0x8faa3fabec50f310c95d17d1adee6959e833e633a55179fb642fa75ca30f8121",
+          "blockNumber": 106433108,
+          "gasUsed": "186957",
+          "feeWei": "1869570000000"
+        },
+        "OmrTwapOracle": {
+          "transactionHash": "0xc4a79a97584f07fc4d7416850bbb24bca832e5f78a617e4710ae1ab1be5f0de6",
+          "blockNumber": 106433122,
+          "gasUsed": "856739",
+          "feeWei": "8567390000000"
+        }
+      }
+    },
+    "hook": {
+      "status": "deployed-live-checked-dormant",
+      "mode": "testnet-unarmed",
+      "broadcaster": "0x8c8DfE7B443C80603Fbb0E08F22aA859a98D747B",
+      "expectedStartingNonce": 16,
+      "profile": {
+        "omr": "0x8A2f28cC2a0Dd31122c80B6eCf19354E87B7010e",
+        "owner": "0x895fC13973f66Aa39A1fB27F4a3245c6aC9717B0",
+        "poolManager": "0x8366a39cc670b4001a1121b8f6a443a643e40951",
+        "poolManagerOwner": "0x9701fb0aDe1E269c8f64Ec0C7b3cfADB31A13A52",
+        "poolManagerRuntimeCodeHash": "0xbd3881180b547f5fe817545743cfb4343e96b1bc6640dcd70c106b0066e95626",
+        "poolManagerCodeHashMatchesRobinhoodMainnet": true,
+        "create2Factory": "0x4e59b44847b379578588920cA78FbF26c0B4956C",
+        "salt": "0x00000000000000000000000000000000000000000000000000000000000019fc",
+        "permissionMask": "0x3fff",
+        "hookFlags": "0x30cc",
+        "activation": "dormant-no-pool-no-quote-no-recipients-no-observer-no-tax-no-antisnipe-no-surge"
+      },
+      "simulation": {
+        "timestamp": "2026-08-24T06:23:48Z",
+        "estimatedGas": "3186826",
+        "estimatedFeeWei": "63736523186826",
+        "bufferedRequirementWei": "63736520000000",
+        "preflight": "passed-no-transaction-sent"
+      },
+      "deployment": {
+        "startedAt": "2026-08-24T06:32:11Z",
+        "completedAt": "2026-08-24T06:32:11Z",
+        "startingNonce": 16,
+        "endingNonce": 17,
+        "transactionCount": 1,
+        "totalGasUsed": "2398104",
+        "effectiveGasPriceWei": "10000000",
+        "totalFeeWei": "23981040000000"
+      },
+      "verification": {
+        "verifiedAt": "2026-08-24T06:35:50Z",
+        "method": "rpc-state-and-receipt-no-explorer-publication",
+        "rpcChecksPassed": 36,
+        "receiptsPassed": 1,
+        "runtimeCodeBytes": 9667,
+        "runtimeCodeHash": "0x9bdb032c02f0beeb83fcc396f2b64d36e72d09f391b8709d319bb0de5dced3d9",
+        "owner": "0x895fC13973f66Aa39A1fB27F4a3245c6aC9717B0",
+        "permissionBits": "0x30cc",
+        "mutableConfiguration": "all-zero-and-unarmed",
+        "sampleAllowedQuotes": false,
+        "sampleAccruedBalances": "all-zero",
+        "result": "passed"
+      },
+      "contracts": {
+        "OmertaHook": "0x9f86fE471EFD6089eeb7b43e008fD7D830f130Cc"
+      },
+      "transactions": {
+        "OmertaHook": {
+          "transactionHash": "0xe34f3c90dca3600bb687a240e6a637417cc4edaf587699637083762dcc0fad29",
+          "blockNumber": 106423990,
+          "gasUsed": "2398104",
+          "feeWei": "23981040000000",
+          "toCreate2Factory": "0x4e59b44847b379578588920cA78FbF26c0B4956C"
+        }
+      }
+    }
+  }
+}

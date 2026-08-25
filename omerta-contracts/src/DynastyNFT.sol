@@ -53,19 +53,17 @@ contract DynastyNFT is ERC721, ERC2981, EIP712, Ownable2Step, Pausable, Reentran
     ///         pre-signed vouchers can't stay claimable for months. The server signs far shorter deadlines.
     uint256 public constant MAX_VOUCHER_TTL = 30 days;
 
-    bytes32 public constant MINT_VOUCHER_TYPEHASH = keccak256(
-        "MintVoucher(address to,uint256 nonce,uint256 deadline)"
-    );
+    bytes32 public constant MINT_VOUCHER_TYPEHASH = keccak256("MintVoucher(address to,uint256 nonce,uint256 deadline)");
 
     struct MintVoucher {
-        address to;       // the wallet that mints (the paying player's linked wallet)
-        uint256 nonce;    // server-unique; replay protection (also the backend's mint-request key)
+        address to; // the wallet that mints (the paying player's linked wallet)
+        uint256 nonce; // server-unique; replay protection (also the backend's mint-request key)
         uint256 deadline; // unix seconds
     }
 
     address public signer;
-    uint256 public dailyMintCap;   // max identities mintable per UTC day, 0 = unlimited (a leaked-signer rate wall)
-    uint256 public nextId = 1;     // sequential tokenId; uncapped collection
+    uint256 public dailyMintCap; // max identities mintable per UTC day, 0 = unlimited (a leaked-signer rate wall)
+    uint256 public nextId = 1; // sequential tokenId; uncapped collection
     mapping(uint256 => bool) public usedNonce;
     mapping(uint256 => uint256) public mintedOnDay; // day => identities minted
 
@@ -92,11 +90,7 @@ contract DynastyNFT is ERC721, ERC2981, EIP712, Ownable2Step, Pausable, Reentran
         address royaltyRecipient_,
         uint96 royaltyBps_,
         uint256 dailyMintCap_
-    )
-        ERC721("OMERTA Dynasty", "OMERTA")
-        EIP712("OmertaDynasty", "1")
-        Ownable(owner_)
-    {
+    ) ERC721("OMERTA Dynasty", "OMERTA") EIP712("OmertaDynasty", "1") Ownable(owner_) {
         require(signer_ != address(0), "DN: zero signer");
         require(royaltyRecipient_ != address(0), "DN: zero royalty recipient");
         signer = signer_;
@@ -132,14 +126,17 @@ contract DynastyNFT is ERC721, ERC2981, EIP712, Ownable2Step, Pausable, Reentran
 
     // Pausing stops new MINTS only; it can never trap a holder's token (there is no vault here and nothing
     // is delivered here — the token simply lives in the holder's wallet).
-    function pause() external onlyOwner { _pause(); }
-    function unpause() external onlyOwner { _unpause(); }
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
 
     // ── the mint (a server-signed, fee-gated-off-chain voucher self-mint) ──
     function hashVoucher(MintVoucher calldata v) public view returns (bytes32) {
-        return _hashTypedDataV4(keccak256(abi.encode(
-            MINT_VOUCHER_TYPEHASH, v.to, v.nonce, v.deadline
-        )));
+        return _hashTypedDataV4(keccak256(abi.encode(MINT_VOUCHER_TYPEHASH, v.to, v.nonce, v.deadline)));
     }
 
     /// @notice Mint one identity to `v.to` on a server signature. The tokenId is the next sequential id; the

@@ -43,7 +43,7 @@ product.
 | Loop / lock / ledger integrity on real Postgres | `npm run pgcheck` | ✅ 43/43 |
 | Mobile layout, real Chromium, two viewports | `npm run mobile` | ✅ |
 | Client wiring — every button reaches a real route, sends fields the handler reads, and reads fields the board sends | `node test/client.js` | ✅ 7 checks |
-| Contracts | `omerta-contracts/run-forge-test-sandboxed.sh` | ✅ 213/213, incl. fuzzes |
+| Contracts | `omerta-contracts/run-forge-test-sandboxed.sh` | ✅ 319/319, incl. fuzzes |
 | Docs match the tree | `node test/docs.js` | ✅ |
 | Signed levers pinned + register complete | `node test/levers.js` | ✅ |
 
@@ -146,14 +146,16 @@ that screen.
 
 # DOOR 3 — the chain
 
-**Hard-gated. Nothing below ships until all three gates are green — and the one still open (the
-security audit) is not ours to close alone.** `CHAIN-DEPLOY.md` §0 is the authority; this is the summary.
+**Hard-gated. Nothing below ships until all four gates are green — and the two still open (the
+security audit and Uniswap Labs routing review) are not ours to close alone.** `CHAIN-DEPLOY.md` §0 is
+the chain authority; `UNISWAP-ROUTING.md` is the routing authority.
 
 | Gate | State | Owner |
 |---|---|---|
-| **1 — `forge test` green** | ✅ 213/213, incl. fuzzes | us |
+| **1 — `forge test` green** | ✅ 319/319, incl. fuzzes | us |
 | **2 — third-party audit of contracts AND the signer** | ❌ **not started** | external |
 | **3 — the launch review** | ✅ **CLEARED 2026-08-13** (founder statement — the whole checklist) | external |
+| **4 — Uniswap Labs routing approval for `OmertaHook`** | ❌ **mainnet deploy, explorer verification, submission, and approval pending** | external |
 
 ### Gate 2 — the audit
 
@@ -188,6 +190,17 @@ it to the full list). **Gate 2 — the security audit — is a different thing e
 not started: nothing here should be ARMED until it also clears.** A review of whether a surface may
 run says nothing about whether the contract holding the money is safe; that is what the audit is for.
 
+### Gate 4 — Uniswap Labs routing
+
+`OmertaHook` uses swap return deltas to collect the quote-currency sell tax, so Uniswap Labs does not
+pick it up automatically. Follow `UNISWAP-ROUTING.md`: deploy the final audited implementation on the
+supported mainnet early, verify its exact source, initialize the minimally funded static-fee review pool
+required by the live form, submit the manual routing form with the full 9% tax, Safe controls, surge, and
+anti-snipe disclosure, and record affirmative approval. The CREATE2 miner rejects the separate `0x91…`
+address trigger. A hooklist issue improves interface metadata but is not routing approval. Do not seed or
+advertise canonical liquidity until a real interface/router smoke test confirms the approved pool is
+quoted and settles without custom calldata.
+
 ### If gate 2 also goes green — the sequence
 
 `omerta-launch-sequence-design.md` is the plan; `CHAIN-DEPLOY.md` §2 is the exact call order.
@@ -200,7 +213,8 @@ run says nothing about whether the contract holding the money is safe; that is w
   can dump the genesis at the bell, by construction.**
 - **G-2 the pool** — pair POL ETH with Safe genesis OMR at the genesis price, deploy the canonical v4
   pool with `OmertaHook`, warm the TWAP one full period, then cut `OmertaBond.setOracle` over to the
-  real TWAP. **The cutover is one operation** — a gap between them is a bond outage.
+  real TWAP. Gate 4 must already be green before the pool is announced. **The cutover is one operation**
+  — a gap between them is a bond outage.
 - **G-3 the community drop** — snapshot-before-announce, published merkle roots, claims-never-pushes,
   90–180 day window, unclaimed reverts to the Safe.
 

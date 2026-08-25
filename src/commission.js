@@ -12,6 +12,7 @@
 // exactly one touchpoint each (safehouse / declareWar / laylow / convoy defense).
 import { GameError, bus, ledger } from './game.js';
 import { COMMISSION, decreeOf, weekOf, dayOf, statesmanRankOf, TICKER_BALLOT, usd } from './rules.js';
+import { approvedStockTokenCatalog } from './stockcatalog.js';
 
 // THE STATESMAN (Tier-4) — bump the account's lifetime political-capital legend by DIRECT SQL (additive,
 // NUMERIC → pg-mem-safe; OFF persistAccount's positional list → clobber-safe, the hitman_rep precedent).
@@ -338,8 +339,11 @@ export async function castTickerVote(ch, ticker, client, h) {
   if (h.owned.gangRole !== 'boss' && h.owned.gangRole !== 'underboss')
     throw new GameError('rank', 'Only the boss or underboss speaks for the family.');
   const t = String(ticker || '').toUpperCase();
-  if (!TICKER_BALLOT.TICKERS.includes(t))
-    throw new GameError('bad_ticker', `The chamber buys from its own list: ${TICKER_BALLOT.TICKERS.join(', ')}.`);
+  const catalog = await approvedStockTokenCatalog(client);
+  if (!catalog.tickers.length)
+    throw new GameError('no_tickers', 'The approved Stock Token catalog is temporarily empty. No family pick can be recorded.');
+  if (!catalog.tickers.includes(t))
+    throw new GameError('bad_ticker', `The chamber buys from its approved list: ${catalog.tickers.join(', ')}.`);
   const seats = await seatedGangs(client);
   const seatIdx = seats.findIndex((s) => s.id === h.owned.gangId);
   if (seatIdx < 0)
@@ -389,13 +393,18 @@ export async function sweepTickerBallot(pool) {
   const everVoted = (await pool.query('SELECT 1 FROM commission_ticker_votes LIMIT 1')).rows[0];
   if (!everVoted) return { resolved: false };
   const won = await tallyTickerDay(pool, day);
-  const ticker = won ? won.ticker : TICKER_BALLOT.DEFAULT;
+  const catalog = await approvedStockTokenCatalog(pool);
+  if (!catalog.defaultTicker) return { resolved: false, reason: 'no_tickers' };
+  // A Stock Token can be emergency-deactivated after votes were cast. Never freeze a result the
+  // on-chain buyer must reject: fall back to the currently approved default and say who decided.
+  const chamberWon = !!won && catalog.tickers.includes(won.ticker);
+  const ticker = chamberWon ? won.ticker : catalog.defaultTicker;
   try {
     await pool.query('INSERT INTO ticker_ballot_results (day, ticker, votes, weighted, decided_by) VALUES ($1,$2,$3,$4,$5)',
-      [day, ticker, won ? won.votes : 0, won ? won.weighted : 0, won ? 'chamber' : 'default']);
+      [day, ticker, chamberWon ? won.votes : 0, chamberWon ? won.weighted : 0, chamberWon ? 'chamber' : 'default']);
   } catch { return { resolved: false }; } // a concurrent worker won the PK race — theirs is the record
-  bus.emit('streets', { type: 'ticker_ballot', ticker, decidedBy: won ? 'chamber' : 'default', votes: won ? won.votes : 0 });
-  return { resolved: true, day, ticker, decidedBy: won ? 'chamber' : 'default' };
+  bus.emit('streets', { type: 'ticker_ballot', ticker, decidedBy: chamberWon ? 'chamber' : 'default', votes: chamberWon ? won.votes : 0 });
+  return { resolved: true, day, ticker, decidedBy: chamberWon ? 'chamber' : 'default' };
 }
 
 // the public board half — today's open ballot + the standing record (KEYLESS via /v1/city + the
@@ -403,6 +412,7 @@ export async function sweepTickerBallot(pool) {
 // deleted with it (the removeMember cleanup), so board and tally always agree.
 export async function tickerBallotBoard(db) {
   const day = dayOf();
+  const catalog = await approvedStockTokenCatalog(db);
   const votes = (await db.query(
     `SELECT v.ticker, v.standing, g.name, g.tag FROM commission_ticker_votes v
        LEFT JOIN gangs g ON g.id = v.gang_id WHERE v.day=$1`, [day])).rows
@@ -411,7 +421,10 @@ export async function tickerBallotBoard(db) {
   const live = await tallyTickerDay(db, day);
   const last = (await db.query('SELECT day, ticker, decided_by FROM ticker_ballot_results ORDER BY day DESC LIMIT 1')).rows[0];
   return {
-    day, tickers: TICKER_BALLOT.TICKERS, defaultTicker: TICKER_BALLOT.DEFAULT,
+    day, tickers: catalog.tickers, defaultTicker: catalog.defaultTicker,
+    candidates: catalog.assets,
+    catalog: { source: catalog.source, chainId: catalog.chainId, registryAddress: catalog.registryAddress,
+      syncedAt: catalog.syncedAt },
     votes, leading: live ? live.ticker : null,
     lastResult: last ? { day: Number(last.day), ticker: last.ticker, decidedBy: last.decided_by } : null,
     // honest state: the buy keeper is Phase B — the record accrues now, nothing is bought yet

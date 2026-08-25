@@ -58,7 +58,10 @@ jobs:
           rm -f uniswap-v4-core-1.0.2.tgz
 
       - name: forge build
-        run: forge build --sizes
+        # FuzzTester deliberately composes every stateful handler into one Medusa/Echidna target and
+        # disables their code-size check; it is never deployed. Keep EIP-170 as a hard gate for every
+        # production/test contract while excluding only that synthetic 27KB harness from the table.
+        run: forge build --sizes --skip FuzzTester
 
       - name: forge test (unit + fuzz)
         run: forge test -vvv

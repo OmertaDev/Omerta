@@ -4,6 +4,55 @@ Founder-directed 2026-08-10. Funding source: **the treasury slice** (founder dec
 **tokenized stocks, in the Stonkbrokers pattern** (founder decision, made after the alternatives and
 their costs were laid out).
 
+> **Implementation amendment — 2026-08-24 (supersedes stale status and the gateless-keeper wording
+> below).** Product copy and new code use Robinhood's required term **Stock Tokens**. The chosen
+> activity policy is **minimum breadth/score, then uncapped proportional play**: at least 3 tracks and
+> score 25, followed by the full linear score; agent-flag and NPC/resident accounts are excluded.
+> `worker.js` now publishes the completed seven-day epoch automatically and `allocateEpoch` enforces
+> both exclusions. Delivery still has no player claim, but it is no longer an unauthenticated keeper
+> assertion once the Safe arms `StockVault.allocationSigner`: every push then requires an EIP-712
+> authorization binding the frozen epoch hash, account hash, exact token, deed TBA, units, delivery id,
+> and deadline. The EVM does not recompute gameplay; it verifies the independent server attestation.
+>
+> The acquisition authority is also explicit now. `StockTokenRegistry` is Safe-owned and enumerable;
+> an isolated publisher may commit one closed-day family result, but only for an active registry entry.
+> `RwaStockBuyer` accepts the immediately preceding UTC ballot day—not a ticker/address—resolves the
+> exact token address snapshotted when that result was published, uses only a Safe-approved venue adapter,
+> enforces a daily ETH cap and one buy per ballot, and verifies the exact resolved token arrived in
+> `StockVault` above the stricter of an independent fresh-oracle floor
+> and the keeper's floor. Both contracts deploy disabled via `DeployRwaStockMachine.s.sol`. The
+> venue-specific adapter, quote/TWAP oracle, Safe catalog approvals, and mainnet funding remain launch
+> configuration/gates; no document may
+> describe those as live merely because the bounded contracts exist.
+>
+> **Founder compliance posture — 2026-08-24.** OMERTÀ performs no KYC, residency, sanctions, or other
+> recipient-compliance check in gameplay or in the Stock Token delivery worker. Qualification is active
+> play plus the linked-wallet/extracted-deed delivery target; issuer KYC at direct redemption is outside
+> the game. The implementation already has this shape—there is no hidden eligibility-provider call to
+> remove. This is a product/risk decision, not a claim of legal approval: Robinhood's permissionless ERC-20
+> developer posture and its separately published transfer restrictions both remain facts the launch
+> review must address. Adding a recipient gate later requires a new founder decision.
+>
+> **Founder corporate-action posture — 2026-08-25.** RHJ's currently active split/dividend actions
+> are multiplier-managed, so neither raw `StockVault` balances nor raw-unit allocations are rewritten.
+> A terminal or conversion action (including redemption, merger, spin-off, or worthless removal) is a
+> rare, fail-closed exception: deactivate the catalog entry, pause purchases and undelivered pushes,
+> snapshot the source-token balance and outstanding allocation book, and wait for both an issuer
+> `COMPLETED` record and verified on-chain receipt of the actual successor property. The economic share
+> backing pending allocations follows that property pro rata to the same accounts; it never falls to
+> general treasury inventory or a later epoch. No keeper may infer settlement from an announcement.
+> Until RHJ activates and documents a terminal type, reconciliation is Safe-reviewed rather than
+> speculative automation. §3.4b is the normative calculation and runbook.
+>
+> **Founder closed-ballot execution posture — 2026-08-25.** Default selection ends when the UTC-day
+> result is published. If that result's exact Stock Token becomes inactive, halted, or otherwise
+> ineligible before purchase, the purchase is skipped: neither the keeper, publisher, nor Safe may
+> substitute another token or republish the day for a different winner. The unspent, bounded ETH carries
+> forward inside the existing treasury, funding, and per-buy/per-day cap walls; unused authority does not
+> enlarge a later cap. The immutable ballot remains public, and the public machine status records the
+> skipped purchase and reason. A tie, silence, or pre-close candidate removal may still resolve to the
+> active default under the ballot rules; it is not authority for post-close substitution.
+
 Supersedes nothing. It *reverses* part of `omerta-stock-layer-retirement.md` (2026-07-31), which is a
 founder call and is recorded as such in §6.
 
@@ -56,13 +105,51 @@ which is both a better game and a materially better posture on every other axis.
 ## 3. The architecture
 
 ```
-treasury ETH (rwa_revenue)  ──▶  the buy keeper  ──▶  per-ticker reserve  ──▶  epoch allocation
-   4 existing slices              (TWAP-bounded,          (allocated ≤ held,        │
-   no promise attached)            fail-closed)            per ticker)              ▼
-                                                                        the NFT's bound account
-                                                                                    ▲
-                                          weight = activationTier × activityScore ──┘
+Robinhood /rhj/assets ──proposal──▶ OMERTÀ Safe ──approval──▶ StockTokenRegistry (chain 4663)
+                                                               │ active candidates
+families vote in server DB ──daily tally hash + asset key───────┤
+                                                               ▼
+treasury ETH ──keeper──▶ RwaStockBuyer ──approved adapter──▶ StockVault (exact-token balance check)
+                                                                  │
+completed activity epoch ─▶ weight snapshot ─▶ allocations ─▶ signed delivery authorization
+                                                                  ▼
+                                                   Street Deed ERC-6551 account
 ```
+
+The server mirrors the on-chain active registry into Postgres before ballot resolution. Voting never
+waits on RPC under a family/character lock, and an RPC outage preserves the last-known-good approved
+list. The pre-chain development fallback publishes the original launch allowlist with null addresses;
+it is not purchase authority. In production, an empty synced registry means no candidates—not an
+automatic fall-through to static tickers.
+
+**Operator intake (implemented 2026-08-24, bootstrap policy approved 2026-08-24).**
+`npm run stock-catalog` reads Robinhood's official `https://api.robinhood.com/rhj/assets` discovery
+endpoint and reports the chain-4663 deployments, provider asset IDs, status, decimals, and trading
+capabilities. `--initial-top-volume --registry <address>` also reads the official bulk `/rhj/prices`
+feed and automatically emits the one-time initial Safe proposal for exactly the top 15 eligible assets
+by `dailyTradingVolume`. That field is the underlying security's daily share volume—not on-chain DEX
+volume or mint/burn volume. Eligibility requires active + fractional-tradable metadata, canonical
+address agreement between both feeds, a fresh non-halted quote, and positive bid/ask/volume; exact
+decimal comparison and ticker-order tie breaking make the output deterministic. The registry's ranked
+insertion order becomes the production fallback order, so silence/ties select the highest-volume active
+entry rather than an arbitrary alphabetic ticker. The static SPY default is development-only once a
+production registry is configured.
+
+The tool never signs or sends a privileged write. The Safe still verifies legal/product eligibility,
+the supported venue route and independent oracle, and exposure caps before executing the generated
+calls. This is an initial snapshot, not an automatically rotating index: supplying `--tickers` plus
+`--registry` emits unsigned calldata for later explicitly reviewed changes, and a newly listed provider
+asset never auto-enrolls. `--deactivate SYMBOL` produces the corresponding unsigned Safe removal call. Once the
+Safe executes the calls, the hourly registry mirror makes the subset visible
+through `GET /v1/commission/ticker`; that public response is the single candidate feed for the Family
+screen and API clients.
+
+**The default is resolution-only.** Once the publisher commits the closed day's registry key, exact
+token address, and tally hash, that result never falls through to the default or another active catalog
+entry. If the committed token becomes inactive, halted, or otherwise ineligible before execution,
+`RwaStockBuyer` fails closed and the day records no purchase. The bounded ETH remains unspent for later
+days under the existing funding and cap walls; the closed result and a public skip reason remain in the
+history. Reopening or replacing the closed ballot is a separate governance decision, not keeper recovery.
 
 **Epochs, not streams.** Allocation runs once per epoch (weekly) over a snapshot, because a
 continuously-streamed balance is far harder to reason about, to audit, and to stop. An epoch that has
@@ -189,8 +276,10 @@ street, sell the book with it.*
 EXTRACTED (`street_deeds.onchain_token_id` non-null). So: **to RECEIVE delivered tokenized stock
 on-chain, a player must own and EXTRACT a Street Deed.** An account with no deed, or an un-extracted
 one, accrues its `stock_allocations` as owed and waits — nothing is lost, delivery just has no target
-yet. This gives the deed a powerful new reason to exist (claim a street, extract it, and it becomes
-your investment vault) without changing any of the wall math.
+yet. **Founder-resolved 2026-08-24: that pending debt is permanent.** It has no expiry, inactivity
+forfeiture, treasury clawback, or redistribution into a later epoch; it remains owed until the account
+again has a valid extracted-deed target. This gives the deed a powerful new reason to exist (claim a
+street, extract it, and it becomes your investment vault) without changing any of the wall math.
 
 **§3.3's accepted risks (1 and 4) still apply, now on the deed, and are RE-flagged here rather than
 re-discovered later:**
@@ -271,6 +360,50 @@ disclosure in §3.4a — a voucher-gated TBA outflow is the only stronger form, 
 "self-contained NFT" property the gateless push was chosen for. (The other two former deferrals are
 CLOSED: the deed `Transfer` watcher re-targets delivery to a SECONDARY owner, and
 `runStockDeliveryKeeper` is the real TX send.)
+
+### 3.4b Corporate actions — the entitlement follows the property (founder-directed 2026-08-25)
+
+The two issuers must not be confused. NVIDIA, Apple, and the other underliers issue their ordinary
+shares. **Robinhood Assets (Jersey) Limited (RHJ) issues the Stock Token**, which is a tokenized debt
+security providing economic exposure to the underlier. A retirement of the Stock Token is therefore
+an RHJ product action even when it was triggered by an underlier merger or other corporate event.
+
+The hot path remains simple. RHJ documents forward/reverse splits and cash/stock dividends as active
+multiplier-managed actions. `uiMultiplier()` changes while the raw ERC-20 balance stays static, so
+`stock_allocations.units`, `delivered_units`, and the per-token `allocated ≤ held` wall stay in raw token
+units. **Do not rewrite those rows because a multiplier changed.** The on-chain oracle incorporates the
+multiplier when value is displayed or priced.
+
+Redemption, cash/stock merger, spin-off, rights distribution, unit split, and worthless removal are
+currently forward-compatible API types rather than active settlement contracts. They therefore use a
+rare-event, fail-closed runbook instead of code that guesses future issuer behavior:
+
+1. At an `IN_PROGRESS` non-multiplier action or an affected asset becoming inactive, the Safe disables
+   the registry entry and the per-token delivery cap. That blocks new ballots, buys, and undelivered
+   pushes without deleting any debt. Already delivered tokens stay with the deed owner; OMERTÀ cannot
+   and does not re-open that custody.
+2. Snapshot, with block numbers, the vault's affected raw-token balance `B`, every account's outstanding
+   units `u_i = units - delivered_units`, their total `U`, and any staged delivery. `U ≤ B` must hold.
+   If it does not, stop as an invariant incident rather than manufacturing a settlement.
+3. Wait for RHJ's action to be `COMPLETED`, then prove the actual successor property received by the
+   vault from on-chain transaction hashes and balance deltas. An announcement, API rate, or keeper
+   estimate is not receipt. If completion, asset identity, or receipt is ambiguous, the original
+   allocations remain permanently pending.
+4. Let `P` be the actual successor asset's atomic units received for the snapshotted `B`. The pending
+   cohort owns `C = floor(P × U / B)`; the remainder of `P` corresponds to the vault's unallocated
+   source inventory. Each pending account receives `floor(C × u_i / U)`. Allocate the remaining atomic
+   dust inside `C` by largest fractional remainder, with `keccak256(account_id)` as the deterministic
+   tie-break. Thus `sum(successor_i) = C` without over-allocation, and no player-backed atom leaks to
+   general treasury inventory or a later epoch.
+5. A Safe-approved reconciliation record binds the issuer action id/status, source and successor token
+   addresses, snapshot and receipt blocks, transaction hashes, `B`, `U`, `P`, every account result, and
+   the rounding proof. Only then may a successor allocation be delivered and the source allocation be
+   marked reconciled. Never delete the source history. A verified completed worthless removal with zero
+   actual proceeds records a zero settlement rather than fabricating value; absent that proof it waits.
+
+This is deliberately not automated today. Automation becomes appropriate only after RHJ activates a
+terminal action type, publishes its settlement semantics, and the resulting contract/schema change has
+the same audit and rehearsal as the original value-moving rail.
 
 ---
 

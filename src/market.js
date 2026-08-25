@@ -88,6 +88,7 @@ export async function listItem(ch, opts, client, h) {
       'INSERT INTO market_listings (id, seller_character, kind, car_id, price, buy_now, reserve, expires_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
       [id, ch.id, 'car', opts.carId, minBid, buyNow, reserve, expiresAt]);
     await bumpStanding(client, h, ch, 'harbor', 1, { action: 'list' }); // moving iron through the docks
+    await h.track(client, ch.account_id, 'market_list', { kind: 'car' });
     return { ok: true, id, kind: 'car', minBid, buyNow, reserve, fee, expiresSeconds: hours * 3600 };
   }
 
@@ -109,6 +110,7 @@ export async function listItem(ch, opts, client, h) {
     'INSERT INTO market_listings (id, seller_character, kind, good_id, qty, district, price, expires_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
     [id, ch.id, 'good', opts.goodId, qty, ch.loc, price, expiresAt]);
   await bumpStanding(client, h, ch, 'harbor', 1, { action: 'list' }); // moving freight through the docks
+  await h.track(client, ch.account_id, 'market_list', { kind: 'good' });
   return { ok: true, id, kind: 'good', good: opts.goodId, qty, price, district: ch.loc, fee, expiresSeconds: hours * 3600 };
 }
 
@@ -192,6 +194,7 @@ export async function postOrder(ch, opts, client, h) {
     'INSERT INTO market_listings (id, seller_character, kind, good_id, qty, district, price, expires_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
     [id, ch.id, 'order', opts.goodId, qty, ch.loc, price, new Date(Date.now() + hours * 3600 * 1000)]);
   await bumpStanding(client, h, ch, 'harbor', 1, { action: 'list' }); // standing paper at the docks is still dock business
+  await h.track(client, ch.account_id, 'market_list', { kind: 'order' });
   return { ok: true, id, kind: 'order', good: opts.goodId, wanted: qty, price, district: ch.loc, escrow, fee, expiresSeconds: hours * 3600 };
 }
 
@@ -215,6 +218,7 @@ export async function fillOrder(ch, listingId, qty, client, h) {
   await client.query('UPDATE market_listings SET qty=$2, filled_qty=$3 WHERE id=$1',
     [listingId, Number(l.qty) - n, Number(l.filled_qty) + n]);
   await h.notify(client, l.seller_character, 'order_filled', { listing: l.id, good: l.good_id, qty: n });
+  await h.track(client, ch.account_id, 'market_fill', { good: l.good_id, qty: n });
   bus.emit('streets', { type: 'market_sale', kind: 'order' });
   return { ok: true, delivered: n, earned: net, remaining: Number(l.qty) - n, good: l.good_id };
 }
@@ -283,6 +287,7 @@ export async function buyListing(ch, listingId, qty, client, h) {
     if (row) h.owned.cars.push(row); // the buyer's view sees the new iron this response
     await client.query("UPDATE market_listings SET status='sold', bid=NULL, bidder=NULL WHERE id=$1", [listingId]);
     await h.notify(client, l.seller_character, 'market_sold', { listing: l.id, kind: 'car', net });
+    await h.track(client, ch.account_id, 'market_buy', { kind: 'car', paid: price });
     bus.emit('streets', { type: 'market_sale', kind: 'car' });
     return { ok: true, bought: 'car', carId: l.car_id, paid: price };
   }
@@ -309,6 +314,7 @@ export async function buyListing(ch, listingId, qty, client, h) {
   if (left > 0) await client.query('UPDATE market_listings SET qty=$2 WHERE id=$1', [listingId, left]);
   else await client.query("UPDATE market_listings SET qty=0, status='sold' WHERE id=$1", [listingId]);
   await h.notify(client, l.seller_character, 'market_sold', { listing: l.id, kind: 'good', good: l.good_id, qty: n, net });
+  await h.track(client, ch.account_id, 'market_buy', { kind: 'good', qty: n, paid: gross });
   bus.emit('streets', { type: 'market_sale', kind: 'good' });
   return { ok: true, bought: l.good_id, qty: n, paid: gross, remaining: left };
 }
@@ -370,7 +376,7 @@ export async function marketBoard(pool) {
     levers: { minPrice: MARKET.MIN_PRICE, minRaiseBps: MARKET.MIN_RAISE_BPS, takeBps: MARKET.TAKE_BPS,
       listFeeBps: MARKET.LIST_FEE_BPS, maxTtlH: MARKET.MAX_TTL_H, maxListings: MARKET.MAX_LISTINGS },
     listings: rows.filter((l) => !expired(l)).map((l) => ({
-      id: l.id, kind: l.kind, seller: l.seller,
+      id: l.id, kind: l.kind, seller: l.seller, sellerId: l.seller_character,
       ...(l.kind === 'car' ? {
         car: carOfId[l.car_id]
           ? { model: carOfId[l.car_id].model_id, trim: carOfId[l.car_id].trim_id,

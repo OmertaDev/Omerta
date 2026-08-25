@@ -621,8 +621,9 @@ Nothing below starts before the founder answers §10, and nothing deploys before
      recipient now costs a failed sweep instead of a market outage (regression-tested).
    - **An immutable hook has to ship every seam its own roadmap needs.** Permissions live in the
      address and the logic has no proxy, so step 3's oracle could not have been wired to this pool
-     later at all. The hook therefore ships an `observer` seam (called fail-safe, gas-stipended) and
-     a mined `beforeSwap` + fee-override slot, both unused today.
+     later at all. The hook therefore ships an event-driven `observer` seam and a mined `beforeSwap`
+     + fee-override slot. `afterSwap` emits `ObservationRequested`; a keeper calls the gas-stipended
+     `pokeObserver` only after PoolManager settlement, so observer code cannot poison deferred deltas.
    - **Exact-output sells are taxed in OMR, not the quote**, and this is stated rather than hidden.
      `afterSwap` can only take a delta on the *unspecified* currency, which is the output for an
      exact-input swap (the upgrade, and where all router volume is) and the input for an exact-output

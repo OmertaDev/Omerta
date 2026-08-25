@@ -4,7 +4,7 @@ import { GameError, cleanText, assignedSoldier, soldierResult, bumpMastery, mast
 import { soldierFxOf, SOLDIERS, PATH_SWITCH_CD_MS, referralXpBonus, CAPO, capoPerksOf, usd } from './rules.js';
 import {
   PATHS, MISSIONS, ONBOARD_TASKS, CAREER, CONSTANTS, M4, M8, SOCIAL_TASKS, socialShareUrl, SOCIAL_LINKS,
-  levelOf, dayOf, dailyJobsOf, dailyBlockedFor, effStat, gunObjOf, assetEnergyCap, recruitRankOf, PACING,
+  levelOf, dayOf, dailyJobsOf, dailyGuidanceFor, dailyBlockedFor, effStat, gunObjOf, assetEnergyCap, recruitRankOf, PACING,
   hash01, hitmanRankOf, honorTierOf, jailed, IDENTITY } from './rules.js';
 import { verifySocial, verifyPostUp, socialProviders, socialTaskAvailable, throttleXCheck } from './verify.js';
 import { spendOmr } from './vanity.js';
@@ -216,7 +216,7 @@ export async function getDaily(pool, characterId, day = dayOf()) {
   const gangId = (await pool.query('SELECT gang_id FROM gang_members WHERE character_id=$1', [characterId])).rows[0]?.gang_id || null;
   return { day, jobs: jobs.map((j) => ({ id: j.id, name: j.name, kind: j.k, goal: j.n,
     progress: Math.min(counters[j.k] || 0, j.n), claimed: claimed.includes(j.id),
-    blocked: dailyBlockedFor(j, { gangId }) })) };
+    ...dailyGuidanceFor(j), blocked: dailyBlockedFor(j, { gangId }) })) };
 }
 
 export async function claimDaily(ch, jobId, client, h) {
@@ -676,6 +676,10 @@ export async function agentEconomyStats(pool) {
 // and the ledger never keeps is worse than the unreachable capstone it replaced.
 const offeredTasks = (onboard, ident) => ONBOARD_TASKS.filter((t) => !!onboard[t.id] || socialTaskAvailable(t.id, ident));
 
+// The coach's solo First-Week gate: these four claimed actions prove a player has played the core
+// loop. Wallet, family, and social tasks remain on the full checklist and retain their capstone role.
+const GAMEPLAY_ONBOARD_TASK_IDS = ['ob_crime', 'ob_boost', 'ob_bank', 'ob_path'];
+
 // THE SIGN-IN IDENTITY, which is NOT on `h.acct`. `h.acct` is the `account_persistent` row — prestige,
 // $OMR, the onboard blob — and the provider lives on `accounts`. That mismatch was a real bug, not a
 // tidiness point: `verifySocial` reads `acct.auth_provider` and `acct.auth_subject` off whatever it is
@@ -706,6 +710,7 @@ export async function onboardBoard(ch, h, client) {
     if (left > 0) referral = { referred: false, canClaim: true, windowSeconds: Math.ceil(left / 1000) };
   }
   return { tasks, claimed: tasks.filter((t) => t.claimed).length, total: tasks.length,
+    gameplayDone: GAMEPLAY_ONBOARD_TASK_IDS.every((taskId) => !!onboard[taskId]),
     allDone: tasks.every((t) => t.claimed), capstone: CONSTANTS.ONBOARD_CAPSTONE, referral };
 }
 

@@ -29,9 +29,13 @@ contract StreetDeedTest is Test {
     }
 
     function _voucher(address to, string memory name, string memory district, uint256 nonce)
-        internal view returns (StreetDeed.DeedVoucher memory)
+        internal
+        view
+        returns (StreetDeed.DeedVoucher memory)
     {
-        return StreetDeed.DeedVoucher({ to: to, name: name, district: district, nonce: nonce, deadline: block.timestamp + 1 hours });
+        return StreetDeed.DeedVoucher({
+            to: to, name: name, district: district, nonce: nonce, deadline: block.timestamp + 1 hours
+        });
     }
 
     function _sign(StreetDeed.DeedVoucher memory v) internal view returns (bytes memory) {
@@ -307,13 +311,23 @@ contract StreetDeedTest is Test {
     // ── metadata: identity on-chain, plate + legend off-chain ──
     function _uriFor(string memory name, string memory district, uint256 id) internal pure returns (string memory) {
         string memory json = string.concat(
-            '{"name":"', name, '",',
+            '{"name":"',
+            name,
+            '",',
             '"description":"A Street Deed \\u2014 a named, mapped plot in the city of OMERT\\u00c0. Its worth is the story on it: everything that ever happened here. Property with a history.",',
-            '"image":"', IMG, id.toString(), '.svg",',
-            '"external_url":"', EXT, id.toString(), '",',
+            '"image":"',
+            IMG,
+            id.toString(),
+            '.svg",',
+            '"external_url":"',
+            EXT,
+            id.toString(),
+            '",',
             '"attributes":[',
             '{"trait_type":"Type","value":"Street Deed"},',
-            '{"trait_type":"District","value":"', district, '"}',
+            '{"trait_type":"District","value":"',
+            district,
+            '"}',
             "]}"
         );
         return string.concat("data:application/json;base64,", Base64.encode(bytes(json)));

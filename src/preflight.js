@@ -115,11 +115,14 @@ export const OPERATIONAL_ENV = [
   // the ERC-6551 config (the canonical registry is the default; the account impl + salt are deploy
   // config; the TBA resolver reads all three). None of it moves value; all launch + audit gated.
   'STOCK_VAULT_ADDRESS', 'ERC6551_REGISTRY', 'ERC6551_ACCOUNT_IMPL', 'ERC6551_SALT',
-  // THE DELIVERY KEEPER — the tx sender that drives StockVault.deliver. STOCK_KEEPER_PK is a SECRET
-  // (the vault's Safe-set keeper key; leaked-key blast radius bounded by the vault's own walls);
-  // STOCK_TOKEN_ADDRESSES is a JSON ticker→ERC-20 map; decimals default 18. Dormant unless all of
-  // CHAIN_RPC_URL + STOCK_VAULT_ADDRESS + STOCK_KEEPER_PK are set on the worker.
-  'STOCK_KEEPER_PK', 'STOCK_TOKEN_ADDRESSES',
+  // THE RWA STOCK MACHINE. The Safe-owned registry is the one ticker→token authority; the catalog
+  // worker mirrors it for voting/delivery. The three hot roles are deliberately separate: ballot
+  // publisher (can choose only an approved asset), buy keeper (bounded by buyer cap/adapter), delivery
+  // keeper (pre-held-only); the allocation signer independently attests frozen active-play eligibility.
+  // STOCK_TOKEN_ADDRESSES remains a read-only legacy display fallback for vault-balance views and is
+  // never used by the purchase or delivery value-moving paths.
+  'STOCK_TOKEN_REGISTRY_ADDRESS', 'RWA_BALLOT_PUBLISHER_PK', 'STOCK_KEEPER_PK',
+  'STOCK_ALLOCATION_SIGNER_PK', 'STOCK_AUTH_TTL_SEC', 'STOCK_TOKEN_ADDRESSES',
   // THE TWO DEX BOTS (src/dexbot.js) — the buyback bot (swaps unspent Vig revenue for hard OMR on
   // the canonical v4 pool, books the ACHIEVED price through the audited runVigBuyback) + the
   // POL-pairing bot (pairs bond-delivered POL ETH into the pool, root-capped at bond_reserve.pol_eth).

@@ -17,6 +17,8 @@ omerta-contracts/cache/
 omerta-contracts/broadcast/
 baselines/
 .hype-tmp/
+.mcp_data/
+.firecrawl/
 # the motion library ships whole — every clip is wired by plate NAME through the /v1/art/motion
 # manifest, so a clip in this directory IS in the game (the gitignored-directory CI 404 of
 # 2026-08-14 is the reason this is stated rather than assumed)

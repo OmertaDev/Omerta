@@ -15,8 +15,8 @@ import {ModifyLiquidityParams, SwapParams} from "v4-core/types/PoolOperation.sol
 import {StateLibrary} from "v4-core/libraries/StateLibrary.sol";
 
 /// @notice The seam the hook-native oracle (omerta-v4-hook-design.md §5, sequencing step 3) plugs
-///         into. It exists NOW, unused, because THIS HOOK'S PERMISSION SET AND LOGIC ARE BOTH
-///         IMMUTABLE: a callback the roadmap needs later cannot be added later. See the header note
+///         into. It exists NOW, event-driven, because THIS HOOK'S PERMISSION SET AND LOGIC ARE BOTH
+///         IMMUTABLE: an observation seam the roadmap needs later cannot be added later. See the header note
 ///         "what an immutable hook must ship on day one".
 interface IOmrHookObserver {
     /// @param key the pool the observation belongs to. The observer reads price state off the
@@ -121,7 +121,7 @@ contract OmertaHook is IHooks, Ownable2Step {
     ///         callback that returns its selector is nearly free; a missing one is a migration.
     uint160 public constant HOOK_FLAGS = uint160(
         Hooks.BEFORE_INITIALIZE_FLAG // gate: only OMR / approved-quote pools may use this hook
-            | Hooks.AFTER_INITIALIZE_FLAG // seed the oracle observer
+            | Hooks.AFTER_INITIALIZE_FLAG // request the oracle's initial observation
             | Hooks.BEFORE_SWAP_FLAG // reserved: the dynamic-fee override slot
             | Hooks.BEFORE_SWAP_RETURNS_DELTA_FLAG // reserved: input-side fees
             | Hooks.AFTER_SWAP_FLAG // the sell tax
@@ -132,8 +132,8 @@ contract OmertaHook is IHooks, Ownable2Step {
     ///         purpose: the cap must survive the migration whichever layer is charging.
     uint256 public constant MAX_SELL_TAX_BPS = 1000; // 10%
 
-    /// @notice Gas stipend for the observer call. Bounded so a misbehaving or griefing observer can
-    ///         cost a swapper a little gas but can never consume the swap's whole budget.
+    /// @notice Gas stipend for an isolated observer poke. Bounded so a misbehaving observer cannot
+    ///         consume the caller's whole budget.
     uint256 public constant OBSERVER_GAS = 150_000;
 
     /// @notice THE LONGEST HALT THIS CONTRACT CAN EXPRESS. Anti-snipe is the only thing here that can
@@ -182,6 +182,9 @@ contract OmertaHook is IHooks, Ownable2Step {
     /// @notice The block a pool opened, per pool. Written once, in `afterInitialize`. Never updated —
     ///         which is what makes the window non-renewable.
     mapping(PoolId => uint256) public openedAt;
+    /// @notice The immutable opening deadline captured from `antiSnipeBlocks` at initialization.
+    ///         Later Safe changes configure future pools but cannot extend or re-arm this one.
+    mapping(PoolId => uint256) public openingEndsAt;
 
     // ── surge (design §2.2) ──────────────────────────────────────────────────────────────────────
     // Scales the rate with PRICE IMPACT rather than with depth consumed, because impact is the damage
@@ -226,6 +229,10 @@ contract OmertaHook is IHooks, Ownable2Step {
     event RecipientsSet(address dev, address rwa, address community, address lp);
     event QuoteAllowed(Currency indexed currency, bool allowed);
     event ObserverSet(address observer);
+    /// @notice Signals keepers to call `pokeObserver` after settlement has fully completed. Calling
+    ///         an arbitrary observer from inside PoolManager.unlock would let it leave a deferred
+    ///         currency delta that only reverts when the outer unlock finishes.
+    event ObservationRequested(PoolId indexed poolId);
     event AntiSnipeSet(uint256 blocks_, uint256 buyBps, uint256 maxBuy);
     event SurgeSet(uint256 maxBps, uint256 fullBps);
     event PoolOpened(PoolId indexed poolId, uint256 blockNumber);
@@ -267,10 +274,10 @@ contract OmertaHook is IHooks, Ownable2Step {
         if (devBps + rwaBps + communityBps > bps) revert BadBps();
         if (
             bps > 0
-                && (
-                    devRecipient == address(0) || rwaRecipient == address(0) || communityRecipient == address(0)
-                        || lpRecipient == address(0)
-                )
+                && (devRecipient == address(0)
+                    || rwaRecipient == address(0)
+                    || communityRecipient == address(0)
+                    || lpRecipient == address(0))
         ) {
             revert ZeroAddress();
         }
@@ -282,7 +289,9 @@ contract OmertaHook is IHooks, Ownable2Step {
     }
 
     function setRecipients(address dev, address rwa, address community, address lp) external onlyOwner {
-        if (dev == address(0) || rwa == address(0) || community == address(0) || lp == address(0)) revert ZeroAddress();
+        if (dev == address(0) || rwa == address(0) || community == address(0) || lp == address(0)) {
+            revert ZeroAddress();
+        }
         devRecipient = dev;
         rwaRecipient = rwa;
         communityRecipient = community;
@@ -302,11 +311,9 @@ contract OmertaHook is IHooks, Ownable2Step {
         emit ObserverSet(address(observer_));
     }
 
-    /// @notice Arm the opening window. `blocks_ = 0` is off and is the deploy default.
-    /// @dev    Setting this AFTER a pool has opened does not re-arm that pool: the window is measured
-    ///         from `openedAt`, which is written once and never updated, so a pool whose opening
-    ///         block is already `blocks_` in the past is permanently past its window whatever the
-    ///         Safe does later. That is the property that keeps this from being a pause.
+    /// @notice Configure the opening window for pools initialized afterward. `blocks_ = 0` is off
+    ///         and is the deploy default. Fee/cap changes affect a still-active window, but its
+    ///         snapshotted deadline can never move.
     function setAntiSnipe(uint256 blocks_, uint256 buyBps, uint256 maxBuy) external onlyOwner {
         if (blocks_ > MAX_ANTISNIPE_BLOCKS) revert BadBps();
         // The extra buy fee lives under the same compile-time cap as the sell tax. The window must
@@ -314,10 +321,10 @@ contract OmertaHook is IHooks, Ownable2Step {
         if (buyBps > MAX_SELL_TAX_BPS) revert BadBps();
         if (
             buyBps > 0
-                && (
-                    devRecipient == address(0) || rwaRecipient == address(0) || communityRecipient == address(0)
-                        || lpRecipient == address(0)
-                )
+                && (devRecipient == address(0)
+                    || rwaRecipient == address(0)
+                    || communityRecipient == address(0)
+                    || lpRecipient == address(0))
         ) {
             revert ZeroAddress();
         }
@@ -342,10 +349,10 @@ contract OmertaHook is IHooks, Ownable2Step {
         // paid every wei of it to address(0), irrecoverably.
         if (
             maxBps > 0
-                && (
-                    devRecipient == address(0) || rwaRecipient == address(0) || communityRecipient == address(0)
-                        || lpRecipient == address(0)
-                )
+                && (devRecipient == address(0)
+                    || rwaRecipient == address(0)
+                    || communityRecipient == address(0)
+                    || lpRecipient == address(0))
         ) {
             revert ZeroAddress();
         }
@@ -400,17 +407,14 @@ contract OmertaHook is IHooks, Ownable2Step {
         return IHooks.beforeInitialize.selector;
     }
 
-    function afterInitialize(address, PoolKey calldata key, uint160, int24)
-        external
-        onlyPoolManager
-        returns (bytes4)
-    {
+    function afterInitialize(address, PoolKey calldata key, uint160, int24) external onlyPoolManager returns (bytes4) {
         // Stamp the birth block. Written ONCE, here, and never updated anywhere — that is what makes
         // the opening window non-renewable, and it is why this is recorded rather than configured.
         PoolId id = key.toId();
         openedAt[id] = block.number;
+        openingEndsAt[id] = block.number + antiSnipeBlocks;
         emit PoolOpened(id, block.number);
-        _observe(key);
+        emit ObservationRequested(id);
         return IHooks.afterInitialize.selector;
     }
 
@@ -448,12 +452,12 @@ contract OmertaHook is IHooks, Ownable2Step {
     ///      Applies to BUYS only: a sell during the window is already taxed, and refusing sells would
     ///      be a honeypot — the exact thing `MAX_SELL_TAX_BPS` exists to make impossible.
     function _guardOpening(PoolKey calldata key, SwapParams calldata params) private view {
-        uint256 window = antiSnipeBlocks;
-        if (window == 0) return; // off — the deploy default
-        uint256 opened = openedAt[key.toId()];
+        PoolId id = key.toId();
+        uint256 opened = openedAt[id];
+        uint256 deadline = openingEndsAt[id];
         // A pool that predates the stamp (impossible for a pool created against this hook, since
         // `afterInitialize` always runs) reads zero and is treated as long since open.
-        if (opened == 0 || block.number >= opened + window) return;
+        if (opened == 0 || block.number >= deadline) return;
 
         bool zeroIsOmr = Currency.unwrap(key.currency0) == omr;
         if (zeroIsOmr == (Currency.unwrap(key.currency1) == omr)) return; // not an OMR pool: not ours to guard
@@ -474,12 +478,14 @@ contract OmertaHook is IHooks, Ownable2Step {
     /// @notice THE SELL TAX. Returns a positive delta on the unspecified currency, which the
     ///         PoolManager credits to this hook and debits from the swapper; the hook then `take`s
     ///         it. Zero on a buy, on an untaxed pool, and whenever the rate is off.
-    function afterSwap(address sender, PoolKey calldata key, SwapParams calldata params, BalanceDelta delta, bytes calldata)
-        external
-        onlyPoolManager
-        returns (bytes4, int128)
-    {
-        _observe(key);
+    function afterSwap(
+        address sender,
+        PoolKey calldata key,
+        SwapParams calldata params,
+        BalanceDelta delta,
+        bytes calldata
+    ) external onlyPoolManager returns (bytes4, int128) {
+        emit ObservationRequested(key.toId());
 
         (Currency feeCurrency, uint256 total) = _fee(key, params, delta);
         if (total == 0) return (IHooks.afterSwap.selector, 0);
@@ -561,10 +567,9 @@ contract OmertaHook is IHooks, Ownable2Step {
     /// @dev The opening window's buy fee. Zero — the permanent state — outside the window, when the
     ///      window is off, and when the window carries no fee (a size-cap-only configuration).
     function _openingBuyRate(PoolKey calldata key) private view returns (uint256) {
-        uint256 window = antiSnipeBlocks;
-        if (window == 0) return 0;
-        uint256 opened = openedAt[key.toId()];
-        if (opened == 0 || block.number >= opened + window) return 0;
+        PoolId id = key.toId();
+        uint256 opened = openedAt[id];
+        if (opened == 0 || block.number >= openingEndsAt[id]) return 0;
         return antiSnipeBuyBps;
     }
 
@@ -599,11 +604,15 @@ contract OmertaHook is IHooks, Ownable2Step {
         emit SellTaxTaken(sender, key.toId(), feeCurrency, total, dev, rwa, community, lp);
     }
 
-    /// @dev Fail-safe by construction: a reverting or gas-hungry observer must never be able to stop
-    ///      a swap. The oracle's OWN fail-closed rule is what keeps this honest — if observations
-    ///      stop arriving, the oracle goes stale, `priceCeiling()` reverts, and bonds refuse. Silent
-    ///      here, loud there.
-    function _observe(PoolKey calldata key) private {
+    /// @notice Run the optional observer only after PoolManager settlement has ended. Permissionless
+    ///         because it can update only the Safe-selected observer, for a pool this hook opened.
+    /// @dev    A reverting/gas-hungry observer is swallowed and bounded. More importantly, this call
+    ///         never runs inside PoolManager.unlock, so an observer cannot return successfully with
+    ///         an unsettled transient currency delta and poison an otherwise valid swap.
+    function pokeObserver(PoolKey calldata key) external {
+        PoolId id = key.toId();
+        if (address(key.hooks) != address(this) || openedAt[id] == 0) revert PoolNotAllowed();
+
         IOmrHookObserver obs = observer;
         if (address(obs) == address(0)) return;
         try obs.observe{gas: OBSERVER_GAS}(key) {} catch {}

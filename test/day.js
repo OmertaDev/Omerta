@@ -22,6 +22,7 @@ const txnCount = async () => Number((await pool.query('SELECT count(*) c FROM tr
 
 // ════════════ the checklist — five daily surfaces, each with a state ════════════
 const t = await mk('Day Planner');
+const characterId = (await call('GET', '/v1/me', { token: t })).body.character.id;
 let b = await day(t);
 assert.ok(Array.isArray(b.items) && b.items.length === 5, 'the five daily surfaces are consolidated');
 const ids = b.items.map((i) => i.id);
@@ -32,6 +33,23 @@ assert.equal(b.total, 5, 'the summary counts every item');
 const streak = b.items.find((i) => i.id === 'streak');
 assert.equal(streak.state, 'ready', 'a fresh player can claim today\'s streak');
 assert.equal(b.done, 0, 'nothing claimed yet');
+
+// ════════════ daily contracts point at the one real job, not a generic checklist ════════════
+let daily = (await call('GET', '/v1/daily', { token: t })).body;
+let target = daily.jobs.find((j) => !j.claimed && !j.blocked);
+let contracts = b.items.find((i) => i.id === 'contracts');
+assert.equal(contracts.tab, target.tab, 'an unfinished contract jumps to that job\'s actual activity');
+assert(contracts.detail.includes(target.name), 'the checklist names the live contract it is sending you to');
+
+// When the work is already done, the only useful destination is the claim card on Streets.
+await pool.query(`INSERT INTO daily_progress (character_id, day, counters, claimed) VALUES ($1, $2, $3, '[]')
+  ON CONFLICT (character_id, day) DO UPDATE SET counters=EXCLUDED.counters, claimed='[]'`,
+  [characterId, daily.day, JSON.stringify({ [target.kind]: target.goal })]);
+b = await day(t);
+contracts = b.items.find((i) => i.id === 'contracts');
+assert.equal(contracts.state, 'ready', 'a completed daily contract is ready to collect');
+assert.equal(contracts.tab, 'streets', 'a ready contract jumps to the Streets claim card');
+assert(contracts.detail.includes(target.name), 'the ready route still names the claimable contract');
 
 // ════════════ state reflects progress — claiming the streak flips it to done ════════════
 const claimed = await call('POST', '/v1/streak/claim', { token: t });

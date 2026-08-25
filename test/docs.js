@@ -547,7 +547,9 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
   const needed = new Set([...toml.matchAll(/=lib\/([\w.-]+)\//g)].map((m) => m[1]));
   // forge-std is auto-discovered rather than remapped, but the tests import it, so it is a real
   // dependency and belongs in the same check.
-  if (fs.readdirSync('omerta-contracts/test').some((f) => read(`omerta-contracts/test/${f}`).includes('forge-std/')))
+  if (fs.readdirSync('omerta-contracts/test', { withFileTypes: true })
+    .filter((entry) => entry.isFile())
+    .some((entry) => read(`omerta-contracts/test/${entry.name}`).includes('forge-std/')))
     needed.add('forge-std');
   assert(needed.size >= 3, `expected the contracts to need at least 3 lib deps, found ${[...needed]}`);
   for (const dep of needed) {
@@ -780,4 +782,49 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     `CHAIN-DEPLOY.md counts ${scope[2]} interface(s); the tree holds ${ifaces}`);
   console.log(`✓ no launch-gating doc calls an existing contract unwritten (${mentions} mentions), and the `
     + `batch matches the tree (${scope[1]} contracts + ${scope[2]} interface)`);
+}
+
+// The issuer-retirement answer is a value-conservation rule, not optional prose. Keep the player Codex,
+// the design authority, and the launch runbook aligned: ordinary multiplier actions preserve raw units;
+// terminal actions stop and reconcile actual receipt back to the same pending cohort, never treasury.
+{
+  const md = read('docs/WIKI.md');
+  const web = read('public/wiki.html');
+  const design = read('omerta-brokers-design.md');
+  const deploy = read('CHAIN-DEPLOY.md');
+
+  assert(md.includes('Robinhood Assets (Jersey)') && web.includes('Robinhood Assets (Jersey)'),
+    'both Codex surfaces must identify RHJ—not the underlier—as the Stock Token issuer');
+  assert(md.includes('raw token balance') && web.includes('raw units'),
+    'both Codex surfaces must preserve raw units across ordinary multiplier actions');
+  assert(md.includes('same accounts') && web.includes('same accounts'),
+    'both Codex surfaces must keep successor property with the original pending accounts');
+  assert(design.includes('C = floor(P × U / B)') && design.includes('largest fractional remainder'),
+    'the corporate-action design must retain its bounded pro-rata and deterministic dust calculation');
+  assert(deploy.includes('C=floor(P×U/B)') && deploy.includes('end-to-end rehearsal'),
+    'the launch runbook must carry the settlement math and forbid an unaudited automatic handler');
+  console.log('✓ corporate-action policy stays fail-closed, pro-rata, cohort-bound, and aligned across both Codices plus launch docs');
+}
+
+// A closed family ballot binds one exact token. If that token becomes unavailable before execution,
+// the approved product behavior is skip-and-carry—not keeper/Safe substitution. Keep the player-facing
+// Codices, design authority, historical amendment, and launch runbook aligned on that boundary.
+{
+  const md = read('docs/WIKI.md');
+  const web = read('public/wiki.html');
+  const design = read('omerta-brokers-design.md');
+  const historical = read('omerta-rwa-stock-machine-design.md');
+  const deploy = read('CHAIN-DEPLOY.md');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    assert(src.includes('skipped') && src.includes('does not enlarge a later daily cap'),
+      `${name} must disclose post-close skip, bounded carry-forward, and no cap accumulation`);
+  }
+  assert(design.includes('The default is resolution-only') && design.includes('never falls through'),
+    'the RWA design must forbid post-close default or catalog substitution');
+  assert(historical.includes('The keeper cannot substitute another'),
+    'the historical Stock Machine amendment must carry the current no-substitution rule');
+  assert(deploy.includes('POST-CLOSE INELIGIBILITY') && deploy.includes('public skipped-purchase status'),
+    'the launch runbook must require skip-and-carry disclosure and rehearsal before arming');
+  console.log('✓ post-close Stock Token ineligibility skips without substitution, preserves bounded ETH, and stays public');
 }

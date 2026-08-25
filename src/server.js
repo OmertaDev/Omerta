@@ -128,6 +128,7 @@ import { renderPathQuizPage, renderPathResultPage } from './path-pages.js';
 import { PATH_IDS, PATH_QUIZ_QUESTIONS, scorePathQuiz } from './path-funnel.js';
 import { buildOpenApi, llmsTxt } from './agentgateway.js';
 import { opportunityBoard, arenaBoard } from './opportunities.js';
+import { agentTurn } from './agentturn.js';
 import { postCityWire } from './citywire.js';
 import { bulletinPublic, bulletinBoard, claimBulletin } from './bulletin.js';
 import { rateLimitsEnabled, initRateLimiter, checkRateLimit, checkAuthRateLimit, checkReadLimit, checkPublicRateLimit } from './ratelimit.js';
@@ -148,6 +149,11 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const uid = () => crypto.randomUUID();
+
+// Used only to unwind a locked Agent Turn validation without converting the expected stale-snapshot
+// branch into a generic game error. The route catches it, rolls the transaction back, and returns a
+// freshly observed replacement turn with the documented 409 code.
+class AgentTurnConflict extends Error {}
 
 // ── WS BACKPRESSURE — the slow-consumer guard (bulletproof audit, Backpressure) ─────────────────
 // Bus fan-out writes into each socket with fire-and-forget `socket.send`. `ws` buffers UNBOUNDEDLY
@@ -474,7 +480,7 @@ export async function buildServer() {
   // (cosmetic; no ledger surface). Public + keyless, heavily cacheable — the same id always renders
   // the same image. Shown in garage/port/kitchen/armory/market. The photo lookup rides the SAME boot
   // ALLOWLIST Map as /art/:file, so user input is never joined into a path here either; unknown
-  // kind/id falls through to a neutral SVG emblem, so a broken <img src> never 500s. ──
+  // kind/id falls through to a neutral SVG emblem, so a missing image request never 500s. ──
   const ART_CATALOGS = { car: CARS, boat: PORT.BOATS, drug: DRUGS, gun: GUNS, vest: VESTS, good: GOODS };
   app.get('/v1/art/:kind/:id', async (req, reply) => {
     const photo = ART_FILES.get(`${req.params.kind}-${req.params.id}.jpg`);
@@ -2278,6 +2284,107 @@ export async function buildServer() {
     const ch = (await pool.query('SELECT id, loc FROM characters WHERE account_id=$1 AND alive', [req.user.sub])).rows[0] || null;
     return opportunityBoard(pool, ch);
   });
+  // One cadence-efficient observation for autonomous players: compact state + coach + live economy +
+  // executable method/path/body actions. readCharacter supplies the same lazy-accrued truth as /v1/me.
+  const readAgentTurn = async (accountId) => {
+    // Capture the accrued player truth inside readCharacter, then release its client/transaction
+    // before aggregating the wider economy. Agent polling must not hold a character row lock while
+    // unrelated contract, convoy, loan, and market boards are queried.
+    const observed = await G.readCharacter(pool, accountId, (ch, client, h) => ({
+      turnContext: { ch, acct: h.acct, owned: h.owned },
+    }));
+    const { ch, acct, owned } = observed.turnContext;
+    return agentTurn(pool, ch, acct, owned);
+  };
+  app.get('/v1/agent/turn', { preHandler: auth }, async (req) => readAgentTurn(req.user.sub));
+
+  // Execute only the descriptor the server just issued. Validation is repeated while holding the
+  // same character lock used by the mutation, so parallel requests cannot both consume one turn.
+  // The client submits no method/path/body — those come solely from the freshly recomputed turn.
+  const performAgentAction = async (action, ch, client, h, lender = null) => {
+    const tail = (prefix) => action.path.startsWith(prefix) ? action.path.slice(prefix.length) : null;
+    switch (action.kind) {
+      case 'crime': return G.doCrime(ch, tail('/v1/crimes/'), client, h, action.body?.approach);
+      case 'market_fill': return Market.fillOrder(ch, tail('/v1/market/').replace(/\/fill$/, ''), action.body?.qty, client, h);
+      case 'arbitrage_buy': return E.buyGood(ch, action.body?.goodId, action.body?.qty, client, h);
+      case 'arbitrage_sell': return E.sellGood(ch, action.body?.goodId, action.body?.qty, client, h);
+      case 'arbitrage_travel':
+      case 'convoy_travel': return G.travel(ch, tail('/v1/travel/'), client, h);
+      case 'kitchen_collect': return K.collect(ch, client, h);
+      case 'convoy_collect': return Convoy.collectConvoy(ch,
+        tail('/v1/convoy/').replace(/\/collect$/, ''), client, h);
+      case 'business_collect': return Business.collectBusiness(ch, client, h);
+      case 'territory_collect': return Territory.collectTerritory(ch, client, h);
+      case 'onboard_claim': return W.claimOnboard(ch,
+        tail('/v1/onboard/').replace(/\/claim$/, ''), client, h);
+      case 'daily_claim': return W.claimDaily(ch,
+        tail('/v1/daily/').replace(/\/claim$/, ''), client, h);
+      case 'career_claim': return Career.claimCareer(ch, tail('/v1/career/'), client, h);
+      case 'loan_repay':
+        if (action.path === '/v1/loans/house/repay') return Loans.repayHouseLoan(ch, client, h);
+        if (!lender) throw new G.GameError('no_loan', 'No such debt to square.');
+        return Loans.repayLoan(ch, lender, tail('/v1/loans/').replace(/\/repay$/, ''), client, h);
+      case 'crew_recruiting': return Crew.setRecruiting(ch, action.body?.on, client, h);
+      default: throw new G.GameError('unsupported_agent_action',
+        'That issued action is not supported by the turn executor. Refresh the turn.');
+    }
+  };
+  const authorizeAgentAction = async (client, ch, h, turnId, actionId) => {
+    const current = await agentTurn(client, ch, h.acct, h.owned);
+    if (current.turnId !== turnId) throw new AgentTurnConflict();
+    const action = current.actions.find((candidate) => candidate.id === actionId);
+    if (!action) throw new G.GameError('unknown_action',
+      'That action was not issued by this turn. Refresh and choose a current executable action.');
+    return action;
+  };
+  app.post('/v1/agent/act', { preHandler: auth }, async (req, reply) => {
+    const turnId = typeof req.body?.turnId === 'string' ? req.body.turnId : '';
+    const actionId = typeof req.body?.actionId === 'string' ? req.body.actionId : '';
+    if (!turnId || !actionId) throw new G.GameError('invalid_turn', 'Send both turnId and actionId from the latest agent turn.');
+
+    let result;
+    try {
+      // Player-loan repayment is the only issued two-party action. Preserve its existing stable
+      // character/account lock order; every other descriptor executes under the ordinary solo lock.
+      const loanMatch = /^loan:([^:]+):repay$/.exec(actionId);
+      if (loanMatch && loanMatch[1] !== 'house') {
+        const lenderId = (await pool.query(
+          "SELECT lender_character FROM loans WHERE id=$1 AND status='active'", [loanMatch[1]])).rows[0]?.lender_character;
+        if (lenderId) {
+          result = await G.withTwoCharacters(pool, req.user.sub, lenderId, async (ch, lender, client, h) => {
+            const action = await authorizeAgentAction(client, ch, h, turnId, actionId);
+            return performAgentAction(action, ch, client, h, lender);
+          });
+        } else {
+          // Re-enter the normal locked validator so a disappeared loan reports stale_turn (or an
+          // invented id reports unknown_action), rather than leaking an unrelated lookup result.
+          result = await G.withCharacter(pool, req.user.sub, async (ch, client, h) => {
+            const action = await authorizeAgentAction(client, ch, h, turnId, actionId);
+            return performAgentAction(action, ch, client, h);
+          });
+        }
+      } else {
+        result = await G.withCharacter(pool, req.user.sub, async (ch, client, h) => {
+          const action = await authorizeAgentAction(client, ch, h, turnId, actionId);
+          return performAgentAction(action, ch, client, h);
+        });
+      }
+    } catch (e) {
+      if (!(e instanceof AgentTurnConflict)) throw e;
+      let turn = null;
+      try { turn = await readAgentTurn(req.user.sub); }
+      catch (readError) { console.error('agent stale-turn refresh (non-fatal)', readError?.code || readError); }
+      return reply.code(409).send({ error: 'stale_turn',
+        message: 'That turn was invalidated. Use the replacement turn and choose again.', turn });
+    }
+
+    // The mutation is already committed. A wider-board render failure must never convert this to a
+    // retryable 500 and release its idempotency reservation; degrade to refreshRequired instead.
+    let turn = null;
+    try { turn = await readAgentTurn(req.user.sub); }
+    catch (e) { console.error('agent post-action turn refresh (non-fatal)', e?.code || e); }
+    return { actionId, result, turn, refreshRequired: !turn };
+  });
   // THE ARENA (JSON) — the public, keyless agent showcase behind GET /arena: the agent hall of fame +
   // the agent-economy aggregate + the machine-discovery links. Marketing surface AND agent meta.
   // Banded, read-only, §10.4-free — no exact per-agent liquid, so a public page can't scan wealth.
@@ -2737,8 +2844,8 @@ export async function buildServer() {
   // rare moment visible the second it exists. Pure read, §10.4-free. ──
   app.get('/v1/live', { preHandler: auth }, async (req) =>
     G.readCharacter(pool, req.user.sub, (ch, client) => Collision.collisionBoard(client, ch, [...wsClients.keys()])));
-  // ── STILL ON THE TABLE — the cross-system pull the coach's queue-of-5 can't carry: every system this
-  // player has UNLOCKED by level and never touched, plus an explorer tally. Pure read, §10.4-free. ──
+  // ── STILL ON THE TABLE — the featured-systems catalog the coach's queue-of-5 can't carry: level-unlocked
+  // entries this player has never touched, plus an explorer tally. Pure read, §10.4-free; not a census. ──
   app.get('/v1/explore', { preHandler: auth }, async (req) =>
     G.readCharacter(pool, req.user.sub, (ch, client, h) => Explore.exploreBoard(ch, h.acct, h.owned)));
   // ── PRIME TIME — the nightly synchronous window: answer the call during tonight's hour. Co-present

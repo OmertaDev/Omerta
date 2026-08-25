@@ -218,6 +218,7 @@ export async function offerLoan(ch, body, client, h) {
     [id, ch.id, amount, rate, hours, 'open', offeredTo, collateralMin, collateralOmr]);
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -amount, reason: 'loan:offer' });
   if (offeredTo) await h.notify(client, offeredTo, 'loan_offered', { by: ch.name, principal: amount, rate, collateralMin, collateralOmr });
+  await h.track(client, ch.account_id, 'loan_offer', { amount, directed: !!offeredTo });
   return { ok: true, id, principal: amount, owed: loanOwed(amount, rate), hours, directed: !!offeredTo, collateralMin, collateralOmr };
 }
 
@@ -266,6 +267,7 @@ export async function takeLoan(ch, loanId, carId, client, h) {
   }
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: Number(loan.principal), reason: 'loan:take', counterparty: loan.lender_character });
   await h.notify(client, loan.lender_character, 'loan_taken', { by: ch.name, principal: Number(loan.principal), collateral: !!pledgedCar, pledgedOmr: pledgeOmr });
+  await h.track(client, ch.account_id, 'loan_take', { principal: Number(loan.principal), collateral: !!pledgedCar, pledgedOmr: pledgeOmr });
   return { ok: true, principal: Number(loan.principal), owed: loanOwed(loan.principal, loan.rate), collateral: !!pledgedCar, pledgedOmr: pledgeOmr, dueSeconds: Math.ceil((dueAt - Date.now()) / 1000) };
 }
 
@@ -309,6 +311,7 @@ export async function repayLoan(ch, lender, loanId, client, h) {
   await h.ledger(client, { characterId: lender.id, currency: 'cash', amount: toLender, reason: 'loan:repay', counterparty: ch.id });
   await payVig(client, h.ledger, vig); // step 5: the vig splits — half → the buyback pool, half → the house window
   await h.notify(client, lender.id, 'loan_repaid', { by: ch.name, amount: toLender });
+  await h.track(client, ch.account_id, 'loan_repay', { paid: owed, vig });
   return { ok: true, paid: owed, toLender, vig, pledgeReturned: pledgeBack };
 }
 
@@ -400,6 +403,7 @@ export async function sellPaper(ch, loanId, body, client, h) {
   if (loan.lender_character !== ch.id) throw new GameError('not_yours', 'That’s not your book to sell.');
   await client.query('UPDATE loans SET for_sale=$2 WHERE id=$1', [loanId, price]);
   const borrower = (await client.query('SELECT name FROM characters WHERE id=$1', [loan.borrower_character])).rows[0];
+  await h.track(client, ch.account_id, 'loan_paper_list', { price });
   // THE TERMS RIDE WITH THE PRICE. What is for sale is not a number — it is somebody ELSE's debt, and
   // the buyer takes over the right to collect it. The ask alone cannot say that, so the reply carries
   // what is OWED and by WHOM (the client has no loan catalog to price a claim from), plus whether a
@@ -444,6 +448,7 @@ export async function buyPaper(ch, seller, loanId, client, h) {
   await h.ledger(client, { currency: 'cash', amount: -take, reason: 'loan:paper' }); // NULL-char take → pool (the market-take precedent)
   await h.notify(client, seller.id, 'paper_sold', { to: ch.name, price: toSeller });
   if (loan.borrower_character) await h.notify(client, loan.borrower_character, 'paper_transferred', { to: ch.name });
+  await h.track(client, ch.account_id, 'loan_paper_buy', { price, take });
   // `toSeller` alone read as the SPEAKEASY buyout ("took over the club — $undefined paid"): the marker
   // names this system, and `owed` is what the buyer actually acquired.
   return { ok: true, paper: 'bought', price, toSeller, take, owed: loanOwed(loan.principal, loan.rate) };

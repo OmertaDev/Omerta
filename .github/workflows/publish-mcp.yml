@@ -76,6 +76,8 @@ jobs:
       # install line hits it, and they hit it unattended.
       - name: install
         run: npm install --no-audit --no-fund
+      - name: agent-interface regressions
+        run: npm test
       - name: the server must actually start
         run: |
           node --check index.js

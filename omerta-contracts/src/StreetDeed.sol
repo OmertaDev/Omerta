@@ -42,15 +42,14 @@ contract StreetDeed is ERC721, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
     ///         much shorter deadlines in practice.
     uint256 public constant MAX_VOUCHER_TTL = 30 days;
 
-    bytes32 public constant DEED_VOUCHER_TYPEHASH = keccak256(
-        "DeedVoucher(address to,string name,string district,uint256 nonce,uint256 deadline)"
-    );
+    bytes32 public constant DEED_VOUCHER_TYPEHASH =
+        keccak256("DeedVoucher(address to,string name,string district,uint256 nonce,uint256 deadline)");
 
     struct DeedVoucher {
         address to;
-        string name;     // the canonical street name; tokenId = uint256(keccak256(bytes(name)))
+        string name; // the canonical street name; tokenId = uint256(keccak256(bytes(name)))
         string district; // the mapped district (display string) — on-chain identity, immutable
-        uint256 nonce;   // server-unique; replay protection
+        uint256 nonce; // server-unique; replay protection
         uint256 deadline; // unix seconds
     }
 
@@ -78,7 +77,7 @@ contract StreetDeed is ERC721, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
     // Off-chain pointers for the rich, LIVE parts (the block plate + the legend page). Set by the Safe.
     // The identity (name/district) is on-chain; only the image and the "see its full history" link are
     // off-chain, which is correct: the legend GROWS with play and cannot be immutable.
-    string private _imageBase;    // e.g. "https://www.omerta.fun/v1/deeds/plate/" → <base><id>.svg
+    string private _imageBase; // e.g. "https://www.omerta.fun/v1/deeds/plate/" → <base><id>.svg
     string private _externalBase; // e.g. "https://www.omerta.fun/deed/"            → <base><id>
 
     event SignerSet(address indexed signer);
@@ -101,11 +100,7 @@ contract StreetDeed is ERC721, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
         string memory imageBase_,
         string memory externalBase_,
         uint256 dailyMintCap_
-    )
-        ERC721("OMERTA Street Deed", "STREET")
-        EIP712("OmertaStreetDeed", "1")
-        Ownable(owner_)
-    {
+    ) ERC721("OMERTA Street Deed", "STREET") EIP712("OmertaStreetDeed", "1") Ownable(owner_) {
         require(signer_ != address(0), "SD: zero signer");
         signer = signer_;
         _imageBase = imageBase_;
@@ -138,8 +133,13 @@ contract StreetDeed is ERC721, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
 
     // Pausing stops new EXTRACTIONS (claims) only; `redeem` is never pausable so a holder can always
     // bring their property back into the game — a pause that traps property is a rug the design forbids.
-    function pause() external onlyOwner { _pause(); }
-    function unpause() external onlyOwner { _unpause(); }
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
 
     // ── the extraction (claim) ──
     function tokenIdFor(string memory name) public pure returns (uint256) {
@@ -147,9 +147,18 @@ contract StreetDeed is ERC721, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
     }
 
     function hashVoucher(DeedVoucher calldata v) public view returns (bytes32) {
-        return _hashTypedDataV4(keccak256(abi.encode(
-            DEED_VOUCHER_TYPEHASH, v.to, keccak256(bytes(v.name)), keccak256(bytes(v.district)), v.nonce, v.deadline
-        )));
+        return _hashTypedDataV4(
+            keccak256(
+                abi.encode(
+                    DEED_VOUCHER_TYPEHASH,
+                    v.to,
+                    keccak256(bytes(v.name)),
+                    keccak256(bytes(v.district)),
+                    v.nonce,
+                    v.deadline
+                )
+            )
+        );
     }
 
     /// @notice Mint (extract) the deed named `v.name` to `v.to`, on a server signature. tokenId is
@@ -205,11 +214,12 @@ contract StreetDeed is ERC721, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
     ///      the default-ON invariant holds for every owner, not just the first.
     function _update(address to, uint256 tokenId, address auth) internal override returns (address) {
         address from = _ownerOf(tokenId);
-        if (from != address(0) && to != address(0))
+        if (from != address(0) && to != address(0)) {
             require(!transferLocked[tokenId], "SD: locked - unlock before transfer");
+        }
         address prev = super._update(to, tokenId, auth);
-        if (to == address(0)) delete transferLocked[tokenId];          // burn: clear the slot
-        else transferLocked[tokenId] = true;                            // mint OR arrival: locked
+        if (to == address(0)) delete transferLocked[tokenId]; // burn: clear the slot
+        else transferLocked[tokenId] = true; // mint OR arrival: locked
         return prev;
     }
 
@@ -223,13 +233,23 @@ contract StreetDeed is ERC721, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
         string memory nm = _json(deedName[id]);
         string memory dt = _json(deedDistrict[id]);
         string memory json = string.concat(
-            '{"name":"', nm, '",',
+            '{"name":"',
+            nm,
+            '",',
             '"description":"A Street Deed \\u2014 a named, mapped plot in the city of OMERT\\u00c0. Its worth is the story on it: everything that ever happened here. Property with a history.",',
-            '"image":"', _imageBase, id.toString(), '.svg",',
-            '"external_url":"', _externalBase, id.toString(), '",',
+            '"image":"',
+            _imageBase,
+            id.toString(),
+            '.svg",',
+            '"external_url":"',
+            _externalBase,
+            id.toString(),
+            '",',
             '"attributes":[',
             '{"trait_type":"Type","value":"Street Deed"},',
-            '{"trait_type":"District","value":"', dt, '"}',
+            '{"trait_type":"District","value":"',
+            dt,
+            '"}',
             "]}"
         );
         return string.concat("data:application/json;base64,", Base64.encode(bytes(json)));
@@ -245,11 +265,17 @@ contract StreetDeed is ERC721, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
         uint256 n = 0;
         for (uint256 i = 0; i < b.length; i++) {
             bytes1 c = b[i];
-            if (c == '"' || c == "\\") { out[n++] = "\\"; out[n++] = c; }
-            else { out[n++] = c; }
+            if (c == '"' || c == "\\") {
+                out[n++] = "\\";
+                out[n++] = c;
+            } else {
+                out[n++] = c;
+            }
         }
         bytes memory trimmed = new bytes(n);
-        for (uint256 i = 0; i < n; i++) trimmed[i] = out[i];
+        for (uint256 i = 0; i < n; i++) {
+            trimmed[i] = out[i];
+        }
         return string(trimmed);
     }
 }

@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2404" height="490" viewBox="0 0 962 196" font-family="Arial, sans-serif">
+  <defs>
+    <marker id="ah" viewBox="0 0 8 6" refX="8" refY="3"
+      markerWidth="4" markerHeight="3" orient="auto">
+      <path d="M0.5,0.5 L7,3 L0.5,5.5" fill="none" stroke="#94A3B8"
+        stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
+    </marker>
+    <filter id="shadow" x="-6%" y="-8%" width="112%" height="128%">
+      <feDropShadow dx="0" dy="0.5" stdDeviation="0.8"
+        flood-color="#000" flood-opacity="0.05"/>
+    </filter>
+  </defs>
+  <rect width="962" height="196" fill="#F8F9FB" rx="3"/>
+  <text x="481" y="11" text-anchor="middle" font-size="6" font-weight="700" fill="#1E293B">OMERTA Contracts Architecture</text>
+  <rect x="406" y="16" width="150" height="10" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.4"/>
+  <rect x="411" y="18.5" width="5" height="5" rx="2.5" fill="#fff" stroke="#E2E5EA" stroke-width="0.4"/>
+  <text x="419" y="22.5" font-size="3.5" fill="#1E293B">Actor</text>
+  <rect x="451" y="18.5" width="5" height="5" rx="1.5" fill="#fff" stroke="#E2E5EA" stroke-width="0.4"/>
+  <rect x="452" y="19.5" width="0.8" height="3" rx="0.4" fill="#3B82F6"/>
+  <text x="459" y="22.5" font-size="3.5" fill="#1E293B">Protocol</text>
+  <rect x="499" y="18.5" width="5" height="5" rx="1.5" fill="#fff" stroke="#E2E5EA" stroke-width="0.4"/>
+  <rect x="500" y="19.5" width="0.8" height="3" rx="0.4" fill="#F59E0B"/>
+  <text x="507" y="22.5" font-size="3.5" fill="#1E293B">External</text>
+  <path d="M298.7,46.0 C298.7,70.0 687.4,70.0 687.4,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M298.7,46.0 C298.7,70.0 398.8,70.0 398.8,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M298.7,46.0 C298.7,70.0 296.2,70.0 296.2,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M298.7,46.0 C298.7,70.0 130.0,70.0 130.0,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M298.7,46.0 C298.7,70.0 508.6,70.0 508.6,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M480.1,46.0 C480.1,70.0 687.4,70.0 687.4,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M480.1,46.0 C480.1,70.0 296.2,70.0 296.2,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M480.1,46.0 C480.1,70.0 873.4,70.0 873.4,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M130.3,46.0 C130.3,70.0 296.2,70.0 296.2,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M130.3,46.0 C130.3,70.0 130.0,70.0 130.0,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M686.2,52.0 C686.2,73.0 873.4,73.0 873.4,94.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M687.4,114.0 C687.4,135.0 626.5,135.0 626.5,156.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M687.4,114.0 C687.4,135.0 758.5,135.0 758.5,156.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M398.8,114.0 C398.8,135.0 214.1,135.0 214.1,156.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M296.2,114.0 C296.2,135.0 346.1,135.0 346.1,156.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M296.2,114.0 C296.2,135.0 214.1,135.0 214.1,156.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M130.0,114.0 C130.0,135.0 214.1,135.0 214.1,156.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <path d="M873.4,114.0 C873.4,135.0 758.5,135.0 758.5,156.0" fill="none" stroke="#94A3B8" stroke-width="0.5" marker-end="url(#ah)"/>
+  <g filter="url(#shadow)">
+    <rect x="250.9" y="32.0" width="95.6" height="14" rx="7" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <text x="298.7" y="40.8" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">Players</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="432.3" y="32.0" width="95.6" height="14" rx="7" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <text x="480.1" y="40.8" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">Protocol Safe</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="75.3" y="32.0" width="110.0" height="14" rx="7" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <text x="130.3" y="40.8" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">Backend Signers</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="642.6" y="32.0" width="87.2" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="645.6" y="35.0" width="1.4" height="14" rx="0.6" fill="#F59E0B"/>
+    <text x="686.2" y="41.5" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">v4 PoolManager</text>
+    <text x="686.2" y="46.5" text-anchor="middle" font-size="3.5" fill="#64748B">Swap coordinator</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="582.0" y="94.0" width="210.8" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="585.0" y="97.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="687.4" y="103.5" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">Bank</text>
+    <text x="687.4" y="108.5" text-anchor="middle" font-size="3.5" fill="#64748B">Alchemist / Escrow / Transmuter / Denari / FlashGuard</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="362.4" y="94.0" width="72.8" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="365.4" y="97.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="398.8" y="103.5" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">OMR Staking</text>
+    <text x="398.8" y="108.5" text-anchor="middle" font-size="3.5" fill="#64748B">Index rewards</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="252.0" y="94.0" width="88.4" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="255.0" y="97.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="296.2" y="103.5" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">Omerta Bond</text>
+    <text x="296.2" y="108.5" text-anchor="middle" font-size="3.5" fill="#64748B">ETH-for-OMR vesting</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="30.0" y="94.0" width="200.0" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="33.0" y="97.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="130.0" y="103.5" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">Signed Assets</text>
+    <text x="130.0" y="108.5" text-anchor="middle" font-size="3.5" fill="#64748B">VoucherClaim / GearVault / StreetDeed / DynastyNFT</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="457.2" y="94.0" width="102.8" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="460.2" y="97.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="508.6" y="103.5" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">Treasury Rails</text>
+    <text x="508.6" y="108.5" text-anchor="middle" font-size="3.5" fill="#64748B">OmertaFees / StockVault</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="814.8" y="94.0" width="117.2" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="817.8" y="97.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="873.4" y="103.5" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">Omerta Hook</text>
+    <text x="873.4" y="108.5" text-anchor="middle" font-size="3.5" fill="#64748B">v4 tax / anti-snipe / surge</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="166.3" y="156.0" width="95.6" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="169.3" y="159.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="214.1" y="165.5" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">OMR</text>
+    <text x="214.1" y="170.5" text-anchor="middle" font-size="3.5" fill="#64748B">Mintable taxed ERC-20</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="283.9" y="156.0" width="124.4" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="286.9" y="159.0" width="1.4" height="14" rx="0.6" fill="#3B82F6"/>
+    <text x="346.1" y="165.5" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">OMR Oracles</text>
+    <text x="346.1" y="170.5" text-anchor="middle" font-size="3.5" fill="#64748B">GenesisOracle / OmrTwapOracle</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="578.7" y="156.0" width="95.6" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="581.7" y="159.0" width="1.4" height="14" rx="0.6" fill="#F59E0B"/>
+    <text x="626.5" y="165.5" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">ERC-4626 Vault</text>
+    <text x="626.5" y="170.5" text-anchor="middle" font-size="3.5" fill="#64748B">External yield source</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="696.3" y="156.0" width="124.4" height="20" rx="3" fill="#fff" stroke="#E2E5EA" stroke-width="0.5"/>
+    <rect x="699.3" y="159.0" width="1.4" height="14" rx="0.6" fill="#F59E0B"/>
+    <text x="758.5" y="165.5" text-anchor="middle" font-size="4.8" font-weight="600" fill="#1E293B">Reserve Assets</text>
+    <text x="758.5" y="170.5" text-anchor="middle" font-size="3.5" fill="#64748B">USDC / WETH / pool currencies</text>
+  </g>
+  <rect x="474.2" y="65.0" width="37.6" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="493.0" y="70.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">deposit borrow</text>
+  <rect x="333.5" y="65.0" width="30.4" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="348.7" y="70.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">stake claim</text>
+  <rect x="285.8" y="65.0" width="23.2" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="297.4" y="70.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">bond ETH</text>
+  <rect x="194.3" y="65.0" width="40.0" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="214.3" y="70.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">redeem vouchers</text>
+  <rect x="392.0" y="65.0" width="23.2" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="403.6" y="70.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">pay fees</text>
+  <rect x="572.2" y="65.0" width="23.2" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="583.8" y="70.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">set bank</text>
+  <rect x="376.6" y="57.0" width="23.2" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="388.2" y="62.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">set bond</text>
+  <rect x="665.2" y="65.0" width="23.2" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="676.8" y="70.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">set hook</text>
+  <rect x="198.1" y="57.0" width="30.4" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="213.3" y="62.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">sign quotes</text>
+  <rect x="115.0" y="65.0" width="30.4" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="130.2" y="70.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">sign claims</text>
+  <rect x="761.0" y="68.0" width="37.6" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="779.8" y="73.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">swap callbacks</text>
+  <rect x="634.6" y="130.0" width="44.8" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="657.0" y="135.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">deploy collateral</text>
+  <rect x="699.4" y="130.0" width="47.2" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="723.0" y="135.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">reserve settlement</text>
+  <rect x="286.5" y="130.0" width="40.0" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="306.5" y="135.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">custody rewards</text>
+  <rect x="304.8" y="122.0" width="32.8" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="321.2" y="127.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">read ceiling</text>
+  <rect x="240.0" y="130.0" width="30.4" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="255.2" y="135.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">mint payout</text>
+  <rect x="158.1" y="130.0" width="28.0" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="172.1" y="135.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">pay claims</text>
+  <rect x="798.4" y="130.0" width="35.2" height="6.0" rx="1" fill="#F8F9FB"/>
+  <text x="816.0" y="135.0" font-size="4" fill="#1E293B" font-weight="500" text-anchor="middle">collect taxes</text>
+</svg>

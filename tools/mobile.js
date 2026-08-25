@@ -54,13 +54,19 @@ function resolveBrowser() {
   // a Playwright-managed install (PLAYWRIGHT_BROWSERS_PATH, or the default cache). The directory
   // is versioned, and the version pinned by playwright-core often differs from what is installed,
   // so match by GLOB rather than asking playwright-core for its own expected path.
-  const roots = [process.env.PLAYWRIGHT_BROWSERS_PATH, `${process.env.HOME || ''}/.cache/ms-playwright`].filter(Boolean);
+  const roots = [...new Set([
+    process.env.PLAYWRIGHT_BROWSERS_PATH,
+    process.env.LOCALAPPDATA ? path.join(process.env.LOCALAPPDATA, 'ms-playwright') : null,
+    process.env.HOME ? path.join(process.env.HOME, '.cache', 'ms-playwright') : null,
+  ].filter(Boolean))];
   for (const root of roots) {
     let entries = [];
     try { entries = fs.readdirSync(root); } catch { continue; }
     for (const e of entries.filter((x) => x.startsWith('chromium')).sort().reverse()) {
       for (const rel of ['chrome-linux/chrome', 'chrome-linux/headless_shell',
-        'chrome-mac/Chromium.app/Contents/MacOS/Chromium']) {
+        'chrome-mac/Chromium.app/Contents/MacOS/Chromium',
+        'chrome-win64/chrome.exe', 'chrome-win/chrome.exe',
+        'chrome-headless-shell-win64/headless_shell.exe', 'chrome-headless-shell-win/headless_shell.exe']) {
         const p = path.join(root, e, rel);
         if (fs.existsSync(p)) return p;
       }

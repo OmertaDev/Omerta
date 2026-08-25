@@ -682,14 +682,44 @@ const SECTIONS = [
       ${R(`GET /v1/store [public] · GET /v1/pass · /pass/claim`)}` },
 
   { id: 'legit', group: 'Endgame & Going Legit', title: 'Going Legit — what your $OMR does', tag: 'the endgame',
-    html: `<p><b>The game sells no shares</b>, real or fictional — there are no tickers to buy and no fund to
-      invest in, and any route that would do it says so plainly if you try it. Going legit means what your
-      <b>earned $OMR</b> actually does:</p>
+    html: `<p><b>The game does not sell Stock Tokens for cash or $OMR.</b> The Brokers are a separate,
+      treasury-funded active-play distribution, described next. Going legit means what your
+      <b>earned $OMR</b> actually does directly:</p>
       <p><b>Stake it</b> — a held balance climbs the ladder (trunk, energy, nerve, garage, the fence at the top),
       and a committed balance is looted lighter than an idle one when you die. <b>Redeem it</b> at the Window for
       cash. <b>Claim backed ETH</b> at the Vault — real ETH the treasury holds, never more than it holds.
       <b>Get Made</b> and take your $OMR out on-chain. <b>Landmarks</b> — a district plaque still bears your name.</p>
       ${R(`POST /v1/stake · /v1/made · GET /v1/vault · /v1/window · POST /v1/landmarks/:id`)}` },
+
+  { id: 'brokers', group: 'Endgame & Going Legit', title: 'The Brokers — Active Play & Stock Tokens', tag: 'RWA rewards, family ballot, permanent allocation',
+    html: `<p><b>The Commission chooses the asset; verified play chooses the recipients.</b> Each seated family
+      votes for one Safe-approved Robinhood Stock Token. The initial catalog is a one-time Safe-reviewed
+      snapshot of the 15 highest-underlier-volume eligible tokens, not an automatically rotating list.
+      After the closed UTC-day result, a bounded buyer may buy only the exact token address committed for
+      that ballot.</p>
+      <p>If that exact token becomes inactive, halted, or otherwise ineligible before the purchase, the
+      day is <b>skipped</b>. The machine never substitutes the default or another token the families did
+      not choose. The bounded, unspent ETH carries forward under the existing purchase caps;
+      it does not enlarge a later daily cap. The public history keeps the closed ballot, skipped-purchase status, and
+      reason.</p>
+      <p>For each seven-day activity epoch, a human account must record successful server-authoritative work
+      in at least <b>3 distinct tracks</b> and reach score <b>25</b>. Failed attempts, page views, time online,
+      client telemetry, agent accounts, and NPC residents do not count. Above the gate, the full uncapped
+      score is multiplied by the activated Broker tier, and the purchased units are allocated pro rata.
+      Delivery waits for an extracted Street Deed and then goes automatically to that deed's ERC-6551
+      account. <b>A pending allocation never expires</b> and is never reclaimed for inactivity or moved to a
+      later epoch.</p>
+      <p><b>Corporate actions fail closed.</b> Robinhood Assets (Jersey) Limited (RHJ) is the Stock Token issuer;
+      the public company is the underlier. Ordinary splits and dividends use RHJ's multiplier, so raw units
+      do not change. If RHJ later retires or converts a token, OMERTÀ pauses new buys and pending deliveries,
+      snapshots the owed book, and waits for completed issuer data plus verified on-chain receipt. The
+      successor assets or proceeds backing pending allocations remain pro rata owed to the <b>same accounts</b>—
+      never the general treasury or a later epoch. If settlement is unclear, the allocation keeps waiting.
+      Already delivered tokens remain under the deed owner's control.</p>
+      <p>OMERTÀ applies no in-game KYC or recipient-compliance gate to this calculation or delivery. This is
+      the product posture, not a claim of legal clearance; issuer redemption requirements and the launch
+      review remain separate.</p>
+      ${R(`GET /v1/commission/ticker [public] · POST /v1/commission/ticker · GET /v1/brokers · POST /v1/brokers/activate`)}` },
 
   { id: 'window', group: 'Endgame & Going Legit', title: 'The Window & the Family Yield', tag: 'the one conversion',
     html: `<p><b>Cash cannot buy $OMR — at any price, by any route.</b> There is no wash house, no laundering at

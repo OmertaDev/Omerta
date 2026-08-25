@@ -12,24 +12,51 @@ contract Harness is FlashGuard {
     uint256 public perBlockCap;
     uint256 public perDayCap;
 
-    function enter() external { _recordEntry(msg.sender); }
+    function enter() external {
+        _recordEntry(msg.sender);
+    }
     function exit_() external notSameBlockAsEntry(msg.sender) {}
     function gated() external onlyAllowedCaller {}
-    function allow(address who, bool ok) external { _allowedContract[who] = ok; }
 
-    function setCaps(uint256 b, uint256 d) external { perBlockCap = b; perDayCap = d; }
-    function flow(uint256 amount) external { _meter(_flow, amount, perBlockCap, perDayCap); }
-    function inBlock() external view returns (uint256) { return _flow.inBlock; }
-    function inDay() external view returns (uint256) { return _flow.inDay; }
+    function allow(address who, bool ok) external {
+        _allowedContract[who] = ok;
+    }
+
+    function setCaps(uint256 b, uint256 d) external {
+        perBlockCap = b;
+        perDayCap = d;
+    }
+
+    function flow(uint256 amount) external {
+        _meter(_flow, amount, perBlockCap, perDayCap);
+    }
+
+    function inBlock() external view returns (uint256) {
+        return _flow.inBlock;
+    }
+
+    function inDay() external view returns (uint256) {
+        return _flow.inDay;
+    }
 }
 
 /// Calls the harness from a CONTRACT, to exercise the allowlist's contract branch.
 contract Caller {
     Harness immutable h;
-    constructor(Harness h_) { h = h_; }
-    function callGated() external { h.gated(); }
+
+    constructor(Harness h_) {
+        h = h_;
+    }
+
+    function callGated() external {
+        h.gated();
+    }
+
     /// The atomic round trip the whole guard exists to forbid: enter and exit in one transaction.
-    function roundTrip() external { h.enter(); h.exit_(); }
+    function roundTrip() external {
+        h.enter();
+        h.exit_();
+    }
 }
 
 contract FlashGuardTest is Test {

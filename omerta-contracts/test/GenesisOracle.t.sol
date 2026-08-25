@@ -32,11 +32,11 @@ contract GenesisOracleTest is Test {
     address payable vig = payable(makeAddr("vig"));
     address bonder = makeAddr("bonder");
 
-    uint256 constant PRICE = 205_882e18;      // the published genesis price, OMR per 1 ETH
-    uint256 constant MAX_RATE = 400_000e18;   // wall 3, generous so wall 4 is what binds here
+    uint256 constant PRICE = 205_882e18; // the published genesis price, OMR per 1 ETH
+    uint256 constant MAX_RATE = 400_000e18; // wall 3, generous so wall 4 is what binds here
     uint256 constant TOLERANCE_BPS = 500;
-    uint256 constant ORACLE_AGE = 1 hours;    // deliberately SHORTER than the window below
-    uint256 constant WINDOW = 3 days;         // the launch doc's longest genesis window
+    uint256 constant ORACLE_AGE = 1 hours; // deliberately SHORTER than the window below
+    uint256 constant WINDOW = 3 days; // the launch doc's longest genesis window
 
     function setUp() public {
         signer = vm.addr(signerPk);
@@ -61,8 +61,8 @@ contract GenesisOracleTest is Test {
 
     function _bond(uint256 principal, uint256 nonce) internal {
         OmertaBond.BondQuote memory q = _quote(principal, nonce);
-        bytes memory sig = _sign(q);            // hoisted above the prank — hashQuote is a STATICCALL
-        vm.prank(bonder);                        // that would otherwise consume it (the subtree's own footgun)
+        bytes memory sig = _sign(q); // hoisted above the prank — hashQuote is a STATICCALL
+        vm.prank(bonder); // that would otherwise consume it (the subtree's own footgun)
         bond.bond{value: principal}(q, sig);
     }
 
@@ -74,7 +74,7 @@ contract GenesisOracleTest is Test {
     /// dead 71 hours before the window closes.
     function test_bonding_works_for_the_whole_window_not_one_max_age() public {
         _bond(1 ether, 1);
-        vm.warp(block.timestamp + WINDOW - 1);   // 71h59m in — far past ORACLE_AGE
+        vm.warp(block.timestamp + WINDOW - 1); // 71h59m in — far past ORACLE_AGE
         _bond(1 ether, 2);
         assertGt(bond.committedOMR(), 0, "the genesis window must not go stale under the bond's age check");
     }

@@ -632,6 +632,10 @@ assert.equal(await omrOf(pShark.id) - sharkOmr3, 100, 'a headless kill loots not
 assert.equal(await omrLedger('loan:pledge:loot'), expectLoot, 'no new loot leg without a killer');
 assert((await check('loan omr pledge escrow')).ok, 'the escrow closes clean on the headless death');
 
+const loanEvents = (await pool.query("SELECT event FROM telemetry WHERE event IN ('loan_offer','loan_take','loan_repay','loan_paper_list','loan_paper_buy')")).rows.map((r) => r.event);
+for (const event of ['loan_offer', 'loan_take', 'loan_repay', 'loan_paper_list', 'loan_paper_buy'])
+  assert(loanEvents.includes(event), `a successful peer-loan lifecycle emits ${event}`);
+
 // ── §10.4: vocabulary closed (collateral is an ownership move, not currency — no new reasons) ──
 const vocab = await check('reason vocabulary');
 assert(vocab.ok, `loan:* rides the §10.4 vocabulary (${JSON.stringify(vocab.unknown || [])})`);

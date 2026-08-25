@@ -31,6 +31,7 @@ import { buildServer } from '../src/server.js';
 import { opsEngagement } from '../src/engagement.js';
 import { CRIMES, MISSIONS, GUNS, BUSINESSES, CONSTANTS, M3, PACING, RACKETS, PORT, POPULATION, nerveCapOf, DISTRICTS, STABLE } from '../src/rules.js';
 import { runPopulation, runResidentBehaviour } from '../src/population.js';
+import { crimeCoachRungObeyed } from './playthrough-truth.js';
 
 const argOf = (name, dflt) => {
   const i = process.argv.indexOf(`--${name}`);
@@ -962,12 +963,15 @@ async function tick(dayIdx) {
   //     only looks at obeyed rungs, so an early rung that DID stick would have been invisible.
   //     Marked here rather than in obeyCoach because obedience happens after it runs.
   const grindLabel = m.coach?.label;
-  if (grindLabel && (acted['crime:win'] || 0) > winsBefore) {
-    if (grindLabel.startsWith('Pull your first job') || grindLabel.startsWith('Get to level 5')
-      || grindLabel.startsWith('Out of nerve')) {
-      coachObeyed.add(grindLabel);
-      if (!rungDone.has(grindLabel)) rungDone.set(grindLabel, { at: playedMin, worth: m.cash + m.bank, level: m.level });
-    }
+  const wonCrime = (acted['crime:win'] || 0) > winsBefore;
+  // Crime replies intentionally contain the resolution, not a character snapshot. Read the post-
+  // action sheet only for the level gate; every other crime rung keeps the previous one-call rule.
+  const postCrime = wonCrime && grindLabel?.startsWith('Get to level 5') ? await me() : null;
+  if (crimeCoachRungObeyed({ label: grindLabel, successfulCrime: wonCrime,
+    postActionLevel: postCrime?.level ?? m.level })) {
+    coachObeyed.add(grindLabel);
+    if (!rungDone.has(grindLabel)) rungDone.set(grindLabel, { at: playedMin,
+      worth: (postCrime || m).cash + (postCrime || m).bank, level: (postCrime || m).level });
   }
   if (grindLabel?.startsWith('You\'ve made rank') && pathDeclared) {
     coachObeyed.add(grindLabel);

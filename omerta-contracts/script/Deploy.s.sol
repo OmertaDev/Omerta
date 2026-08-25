@@ -2,6 +2,7 @@
 pragma solidity 0.8.26;
 
 import {Script, console} from "forge-std/Script.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {OMR} from "../src/OMR.sol";
 import {GearVault} from "../src/GearVault.sol";
 import {VoucherClaim, IGearVault} from "../src/VoucherClaim.sol";
@@ -10,91 +11,206 @@ import {OmertaFees} from "../src/OmertaFees.sol";
 import {StreetDeed} from "../src/StreetDeed.sol";
 import {DynastyNFT} from "../src/DynastyNFT.sol";
 import {StockVault} from "../src/StockVault.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {GenesisOracle} from "../src/GenesisOracle.sol";
+import {OmertaBond} from "../src/OmertaBond.sol";
 
-/// Deploy order: OMR -> GearVault -> VoucherClaim -> Staking -> OmertaFees -> wire minter.
-/// env: SAFE (owner/treasury), SIGNER (server voucher key), DAILY_CAP_OMR (wei), BASE_URI,
-///      DEV_WALLET (fee recipient), MINT_FEE_WEI (0.01 eth), RESPAWN_FEE_WEI (0.10 eth)
-/// Testnet (Robinhood Chain 46630):
-///   forge script script/Deploy.s.sol --rpc-url $RPC --broadcast --private-key $DEPLOYER_PK
+/// @notice Phase 1: deploy every OMERTA contract that does not depend on an existing market.
+/// @dev Every privileged contract is owned by SAFE from birth. This script deliberately does not
+///      arm minters, keepers, gear classes, or the bond oracle: those are Safe transactions after
+///      the deployed bytecode and constructor values have been verified.
+///
+/// Run a simulation first, then add --broadcast only after reviewing the trace:
+///   forge script script/Deploy.s.sol:Deploy --rpc-url $CHAIN_RPC_URL --account omerta-deployer -vvvv
 contract Deploy is Script {
-    function run() external {
-        address safe = vm.envAddress("SAFE");
-        address signer = vm.envAddress("SIGNER");
-        uint256 cap = vm.envOr("DAILY_CAP_OMR", uint256(50_000e18));
-        string memory baseUri = vm.envOr("BASE_URI", string("https://omerta.example/gear/"));
+    struct Config {
+        uint256 expectedChainId;
+        address safe;
+        address signer;
+        address payable devWallet;
+        address payable vigWallet;
+        address payable polWallet;
+        uint256 voucherDailyCap;
+        uint256 stakingApyBps;
+        uint256 feeVigBps;
+        uint256 mintFee;
+        uint256 respawnFee;
+        uint256 deedDailyMintCap;
+        uint256 dynastyDailyMintCap;
+        uint256 dynastyRoyaltyBps;
+        uint256 stockDefaultDailyCap;
+        uint256 bondPolBps;
+        uint256 bondDevBps;
+        uint256 bondRwaBps;
+        uint256 bondVigBps;
+        uint256 bondDailyCap;
+        uint256 bondMaxOmrPerEth;
+        uint256 genesisPrice;
+        uint256 genesisValidUntil;
+        string gearImageBase;
+        string deedImageBase;
+        string deedExternalBase;
+        string dynastyBaseUri;
+    }
+
+    struct Deployment {
+        address omr;
+        address gearVault;
+        address voucherClaim;
+        address staking;
+        address fees;
+        address streetDeed;
+        address dynastyNft;
+        address stockVault;
+        address genesisOracle;
+        address bond;
+    }
+
+    function run() external returns (Deployment memory d) {
+        Config memory c = _loadConfig();
+        _validate(c);
 
         vm.startBroadcast();
-        OMR omr = new OMR(safe);
-        // Own GearVault to the Safe from birth — never leave a hot deployer key as the
-        // mint-authority gatekeeper (setMinter). Minter stays unset (mint impossible)
-        // until the Safe wires it, and gear can't mint until the Safe sets supply caps.
-        GearVault gear = new GearVault(safe, baseUri);
-        VoucherClaim vc = new VoucherClaim(safe, signer, IERC20(address(omr)), IGearVault(address(gear)), cap);
-        OMRStaking staking = new OMRStaking(safe, IERC20(address(omr)), 1400);
-        // §11 fee tollbooth — splits each fee dev/Vig and forwards straight to those wallets,
-        // owned by the Safe. VIG_BPS MUST equal the backend's VIG_BPS (src/vig.js) so on- and
-        // off-chain revenue accounting never drift. VIG_WALLET defaults to the dev wallet with a
-        // 0-bps split (100% dev) so a deploy without Phase-2 config keeps the pre-split behaviour.
-        // (Env reads are block-scoped so their locals drop off the stack — Deploy.s.sol is stack-tight.)
-        OmertaFees fees;
-        {
-            address payable devWallet = payable(vm.envAddress("DEV_WALLET"));
-            address payable vigWallet = payable(vm.envOr("VIG_WALLET", devWallet));
-            fees = new OmertaFees(
-                safe, devWallet, vigWallet,
-                vm.envOr("VIG_BPS", uint256(0)),
-                vm.envOr("MINT_FEE_WEI", uint256(0.01 ether)),
-                vm.envOr("RESPAWN_FEE_WEI", uint256(0.10 ether))
-            );
-        }
-        // StreetDeed — the on-chain tradeable Street Deed NFT (omerta-street-deeds-design.md §2/§3).
-        // Self-minting ERC-721 on the SAME server signer as VoucherClaim (no owner-mint), Safe-owned.
-        // deedImageBase → the game's block-plate route; deedExternalBase → the deed's legend page.
-        StreetDeed deed = new StreetDeed(
-            safe, signer,
-            vm.envOr("DEED_IMAGE_BASE", string("https://www.omerta.fun/v1/deeds/plate/")),
-            vm.envOr("DEED_EXTERNAL_BASE", string("https://www.omerta.fun/deed/")),
-            // The leaked-signer rate wall. Constructor-bound so a deploy must STATE it (0 = unlimited).
-            vm.envOr("DEED_DAILY_MINT_CAP", uint256(0))
-        );
-        // DynastyNFT — the uncapped identity NFT (omerta-dynasty-machine-design.md §4). Self-minting
-        // ERC-721 on the SAME server signer (no owner-mint), Safe-owned. tokenURI resolves to the
-        // account's metadata endpoint off-chain; the game entitlement stays account-bound (no balanceOf
-        // gate on-chain). EIP-2981 royalty pays the treasury Safe by default.
+
+        OMR omr = new OMR(c.safe);
+        GearVault gear = new GearVault(c.safe, c.gearImageBase);
+        VoucherClaim voucher =
+            new VoucherClaim(c.safe, c.signer, IERC20(address(omr)), IGearVault(address(gear)), c.voucherDailyCap);
+        OMRStaking staking = new OMRStaking(c.safe, IERC20(address(omr)), c.stakingApyBps);
+        OmertaFees fees = _deployFees(c);
+        StreetDeed deed = new StreetDeed(c.safe, c.signer, c.deedImageBase, c.deedExternalBase, c.deedDailyMintCap);
         DynastyNFT dynasty = new DynastyNFT(
-            safe, signer,
-            vm.envOr("DYNASTY_BASE_URI", string("https://www.omerta.fun/v1/identity/")),
-            vm.envOr("DYNASTY_ROYALTY_RECIPIENT", safe),
-            uint96(vm.envOr("DYNASTY_ROYALTY_BPS", uint256(500))), // 5%
-            // The leaked-signer rate wall. With NO supply cap here an unset wall is unbounded, so this is
-            // constructor-bound: a deploy must STATE it (0 = unlimited).
-            vm.envOr("DYNASTY_DAILY_MINT_CAP", uint256(0))
+            c.safe, c.signer, c.dynastyBaseUri, c.safe, uint96(c.dynastyRoyaltyBps), c.dynastyDailyMintCap
         );
-        // StockVault — the gateless keeper-push tokenized-stock delivery vault (omerta-brokers-design.md
-        // §3.3). NEVER mints (pre-held transfer only). Keeper unset (0) at deploy = deliveries OFF until
-        // the Safe wires the push bot; the Safe pre-funds the vault with bought stock and sets per-token
-        // daily caps before arming the keeper. STOCK_DEFAULT_DAILY_CAP is the wall a ticker inherits
-        // before anyone sets its own — the ticker set GROWS (the Commission votes one daily off a list
-        // the operator extends), and nothing in adding a token forces a setDailyCap, so this is what
-        // keeps a freshly-added stock from being the one a leaked keeper drains in a block.
-        StockVault vault = new StockVault(
-            safe, vm.envOr("STOCK_KEEPER", address(0)), vm.envOr("STOCK_DEFAULT_DAILY_CAP", uint256(0)));
+
+        // Keeper is intentionally OFF. The Safe must pre-fund, set per-token caps, and only then arm it.
+        StockVault stock = new StockVault(c.safe, address(0), c.stockDefaultDailyCap);
+        GenesisOracle genesis = new GenesisOracle(c.safe, c.genesisPrice, c.genesisValidUntil);
+        OmertaBond bond = _deployBond(c, omr);
+
         vm.stopBroadcast();
 
-        console.log("OMR:         ", address(omr));
-        console.log("GearVault:   ", address(gear));
-        console.log("VoucherClaim:", address(vc));
-        console.log("OMRStaking:  ", address(staking));
-        console.log("OmertaFees:  ", address(fees));
-        console.log("StreetDeed:  ", address(deed));
-        console.log("DynastyNFT:  ", address(dynasty));
-        console.log("StockVault:  ", address(vault));
-        console.log("NEXT (all Safe txs): gear.setMinter(VoucherClaim); vc.setGearSupplyCap(id,cap) per class;");
-        console.log("  fund VoucherClaim OMR tranche; omr.approve(staking) + staking.fundRewards(...).");
-        console.log("  StreetDeed/DynastyNFT: self-minting on SIGNER. Their daily mint caps are now CONSTRUCTOR");
-        console.log("    args (DEED_DAILY_MINT_CAP / DYNASTY_DAILY_MINT_CAP) - if you left them 0 they are UNCAPPED,");
-        console.log("    and the shared signer key's blast radius is the SUM of all four contracts' daily caps.");
-        console.log("  StockVault: pre-fund with bought stock, vault.setDailyCap(token,cap) per ticker, THEN vault.setKeeper(bot).");
+        d = Deployment({
+            omr: address(omr),
+            gearVault: address(gear),
+            voucherClaim: address(voucher),
+            staking: address(staking),
+            fees: address(fees),
+            streetDeed: address(deed),
+            dynastyNft: address(dynasty),
+            stockVault: address(stock),
+            genesisOracle: address(genesis),
+            bond: address(bond)
+        });
+        _logDeployment(d);
+    }
+
+    function _deployFees(Config memory c) private returns (OmertaFees) {
+        return new OmertaFees(c.safe, c.devWallet, c.vigWallet, c.feeVigBps, c.mintFee, c.respawnFee);
+    }
+
+    function _deployBond(Config memory c, OMR omr) private returns (OmertaBond) {
+        // The treasury/RWA recipient is the Safe by policy. The Vig takes the unlisted remainder.
+        return new OmertaBond(
+            c.safe,
+            c.signer,
+            IERC20(address(omr)),
+            c.bondPolBps,
+            c.bondDevBps,
+            c.bondRwaBps,
+            c.polWallet,
+            c.devWallet,
+            payable(c.safe),
+            c.vigWallet,
+            c.bondDailyCap,
+            c.bondMaxOmrPerEth
+        );
+    }
+
+    function _loadConfig() private view returns (Config memory c) {
+        c.expectedChainId = vm.envUint("EXPECTED_CHAIN_ID");
+        c.safe = _requiredAddress("SAFE");
+        c.signer = _requiredAddress("SIGNER");
+        c.devWallet = payable(_requiredAddress("DEV_WALLET"));
+        c.vigWallet = payable(_requiredAddress("VIG_WALLET"));
+        c.polWallet = payable(_requiredAddress("POL_WALLET"));
+        c.voucherDailyCap = vm.envUint("DAILY_CAP_OMR");
+        c.stakingApyBps = vm.envUint("STAKING_APY_BPS");
+        c.feeVigBps = vm.envUint("VIG_BPS");
+        c.mintFee = vm.envUint("MINT_FEE_WEI");
+        c.respawnFee = vm.envUint("RESPAWN_FEE_WEI");
+        c.deedDailyMintCap = vm.envUint("DEED_DAILY_MINT_CAP");
+        c.dynastyDailyMintCap = vm.envUint("DYNASTY_DAILY_MINT_CAP");
+        c.dynastyRoyaltyBps = vm.envUint("DYNASTY_ROYALTY_BPS");
+        c.stockDefaultDailyCap = vm.envUint("STOCK_DEFAULT_DAILY_CAP");
+        c.bondPolBps = vm.envUint("BOND_POL_BPS");
+        c.bondDevBps = vm.envUint("BOND_DEV_BPS");
+        c.bondRwaBps = vm.envUint("BOND_RWA_BPS");
+        c.bondVigBps = vm.envUint("BOND_VIG_BPS");
+        c.bondDailyCap = vm.envUint("BOND_DAILY_CAP_OMR");
+        c.bondMaxOmrPerEth = vm.envUint("BOND_MAX_OMR_PER_ETH");
+        c.genesisPrice = vm.envUint("GENESIS_PRICE_OMR_PER_ETH");
+        c.genesisValidUntil = vm.envUint("GENESIS_VALID_UNTIL");
+        c.gearImageBase = _requiredString("BASE_URI");
+        c.deedImageBase = _requiredString("DEED_IMAGE_BASE");
+        c.deedExternalBase = _requiredString("DEED_EXTERNAL_BASE");
+        c.dynastyBaseUri = _requiredString("DYNASTY_BASE_URI");
+    }
+
+    function _validate(Config memory c) private view {
+        require(block.chainid == c.expectedChainId, "Deploy: RPC chain id != EXPECTED_CHAIN_ID");
+        require(c.signer != c.safe, "Deploy: signer must not be the treasury Safe");
+        require(c.vigWallet != c.safe, "Deploy: Vig wallet must be separate from the treasury Safe");
+
+        // Zero means unlimited for these walls, so a production deploy must choose a real bound.
+        require(c.voucherDailyCap > 0, "Deploy: DAILY_CAP_OMR must be nonzero");
+        require(c.deedDailyMintCap > 0, "Deploy: DEED_DAILY_MINT_CAP must be nonzero");
+        require(c.dynastyDailyMintCap > 0, "Deploy: DYNASTY_DAILY_MINT_CAP must be nonzero");
+        require(c.stockDefaultDailyCap > 0, "Deploy: STOCK_DEFAULT_DAILY_CAP must be nonzero");
+        require(c.bondDailyCap > 0, "Deploy: BOND_DAILY_CAP_OMR must be nonzero");
+        require(c.bondMaxOmrPerEth > 0, "Deploy: BOND_MAX_OMR_PER_ETH must be nonzero");
+
+        require(c.stakingApyBps <= 5_000, "Deploy: staking APY exceeds contract ceiling");
+        require(c.feeVigBps <= 10_000, "Deploy: VIG_BPS exceeds 100%");
+        require(c.mintFee > 0 && c.respawnFee > 0, "Deploy: fees must be nonzero");
+        require(c.dynastyRoyaltyBps <= 10_000, "Deploy: dynasty royalty exceeds 100%");
+
+        uint256 namedBondBps = c.bondPolBps + c.bondDevBps + c.bondRwaBps;
+        require(namedBondBps <= 10_000, "Deploy: named bond splits exceed 100%");
+        require(namedBondBps + c.bondVigBps == 10_000, "Deploy: bond split does not sum to 100%");
+        require(10_000 - namedBondBps == c.bondVigBps, "Deploy: BOND_VIG_BPS != on-chain remainder");
+
+        // A zero/zero oracle is an explicitly closed genesis window. Any live window must end later.
+        require(
+            (c.genesisPrice == 0) == (c.genesisValidUntil == 0),
+            "Deploy: genesis price and deadline must both be zero or both be set"
+        );
+        if (c.genesisPrice > 0) {
+            require(c.genesisValidUntil > block.timestamp, "Deploy: genesis window already closed");
+        }
+    }
+
+    function _requiredAddress(string memory key) private view returns (address value) {
+        value = vm.envAddress(key);
+        require(value != address(0), string.concat("Deploy: zero ", key));
+    }
+
+    function _requiredString(string memory key) private view returns (string memory value) {
+        value = vm.envString(key);
+        require(bytes(value).length != 0, string.concat("Deploy: empty ", key));
+    }
+
+    function _logDeployment(Deployment memory d) private pure {
+        console.log("OMR:           ", d.omr);
+        console.log("GearVault:     ", d.gearVault);
+        console.log("VoucherClaim:  ", d.voucherClaim);
+        console.log("OMRStaking:    ", d.staking);
+        console.log("OmertaFees:    ", d.fees);
+        console.log("StreetDeed:    ", d.streetDeed);
+        console.log("DynastyNFT:    ", d.dynastyNft);
+        console.log("StockVault:    ", d.stockVault);
+        console.log("GenesisOracle: ", d.genesisOracle);
+        console.log("OmertaBond:    ", d.bond);
+        console.log("All owners are SAFE. Privileged paths remain OFF pending the Safe ceremony.");
+        console.log("Next: follow DEPLOYMENT.md; verify bytecode, then build and simulate the Safe batch.");
     }
 }

@@ -34,7 +34,9 @@ const ROOT = path.join(here, '..');
 const DEPS = process.env.V4_DEPS || '/tmp/v4deps/node_modules';
 const PORT = Number(process.env.ANVIL_PORT || 8549);
 const RPC = `http://127.0.0.1:${PORT}`;
-const CHAIN_ID = 31337;
+// Use the production Robinhood Chain id so the catalog synchronizer runs through its real
+// wrong-chain guard instead of a test seam.
+const CHAIN_ID = 4663;
 
 const steps = [];
 const step = (name, detail = '') => { steps.push(name); console.log(`  ✔ ${name}${detail ? ` — ${detail}` : ''}`); };
@@ -112,7 +114,14 @@ const vaultArt = ours('StockVault');
 const vault = await deploy(vaultArt, [SAFE, KEEPER, 0n]);   // 0 = no default cap; set a real one below
 const omrArt = ours('OMR');
 const stock = await deploy(omrArt, [SAFE]);                 // a plain ERC-20 standing in for a stock token
-step('StreetDeed + StockVault deployed', `vault keeper ${KEEPER.slice(0, 10)}…`);
+const stockRegistryArt = ours('StockTokenRegistry');
+const stockRegistry = await deploy(stockRegistryArt, [SAFE, SAFE]);
+const stockAssetKey = keccak256(toBytes('TSLA'));
+await send(deployer, stockRegistry, stockRegistryArt.abi, 'upsertAsset', [
+  stockAssetKey, stock, keccak256(toBytes('robinhood-stock-token:TSLA')),
+  'TSLA', 'Tesla Stock Token', true,
+]);
+step('StreetDeed + StockVault + approved stock registry deployed', `vault keeper ${KEEPER.slice(0, 10)}…`);
 
 // the vault delivers only what it HOLDS — pre-fund it, and cap the token (C2's defaultDailyCap is 0
 // here on purpose, so an unconfigured token would be UNLIMITED; the cap is what bounds a leaked key)
@@ -157,11 +166,16 @@ Object.assign(process.env, {
   CHAIN_RPC_URL: RPC, CHAIN_ID: String(CHAIN_ID),
   STREET_DEED_ADDRESS: deed, STOCK_VAULT_ADDRESS: vault, STOCK_KEEPER_PK: KEEPER_PK,
   ERC6551_REGISTRY: registry, ERC6551_ACCOUNT_IMPL: accountImpl,
-  STOCK_TOKEN_ADDRESSES: JSON.stringify({ TSLA: stock }), STOCK_TOKEN_DECIMALS: '18',
+  STOCK_TOKEN_REGISTRY_ADDRESS: stockRegistry, STOCK_TOKEN_DECIMALS: '18',
 });
 const { makeDb } = await import('../src/db.js');
 const pool = await makeDb();
 const Stock = await import('../src/stockdeliver.js');
+const Catalog = await import('../src/stockcatalog.js');
+const catalogSync = await Catalog.syncApprovedStockTokenCatalog(pool);
+assert.deepEqual(catalogSync, { synced: true, entries: 1, active: 1 },
+  'the Safe-approved on-chain catalog did not mirror into the delivery authority');
+step('the Safe-owned stock registry mirrored into Postgres', 'TSLA active on chain 4663');
 
 // the DB state a delivered allocation needs: a linked wallet, an extracted deed, an owed allocation
 const ACCOUNT = '00000000-0000-4000-8000-00000000beef';

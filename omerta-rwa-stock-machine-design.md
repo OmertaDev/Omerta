@@ -1,5 +1,19 @@
 # THE STOCK MACHINE — tax → daily Commission-voted stock buy → gas-paid claims
 
+> **2026-08-24 implementation note.** This design predates the deployed-shape decisions now recorded
+> in `omerta-brokers-design.md` and the in-game Codex (`docs/WIKI.md`). The current machine uses the
+> Safe-owned `StockTokenRegistry`, closed-day ballot commitments, `RwaStockBuyer`, automatic
+> human-only activity epochs, and EIP-712-authorized `StockVault` delivery. Any older passage below
+> proposing a free-form ticker map, a player claim voucher, a static candidate list, or a gateless
+> keeper-only delivery is historical analysis rather than the implementation contract. The founder's
+> current recipient posture is also explicit: OMERTÀ performs no KYC or compliance screening in the
+> game or delivery worker; older eligibility-allowlist proposals below are rejected historical options,
+> not unimplemented requirements. This posture is not represented as outside legal approval.
+> The current closed-ballot rule is equally exact: a tie, silence, or pre-close removal may resolve to
+> the active default, but if the committed winner becomes inactive, halted, or otherwise ineligible
+> before purchase, the day skips and bounded ETH carries forward. The keeper cannot substitute another
+> token; the closed result and public skip reason remain in history.
+
 **Status: DESIGN ONLY (founder-directed 2026-08-09). Approval recorded as a founder assertion, the standing directive pattern. Nothing here is built; the
 chain half is mainnet-gated on the third-party audit clock like every contract change.**
 
@@ -26,9 +40,12 @@ over, i.e. by OUR claim rail, not by the token (§5).
   the SAME chain family OMERTÀ's whole M6 rail targets. No bridge is needed anywhere in this
   design. (The tokenomics-v2 §10.2 cross-chain flag is moot here too.)
 - **Stock Tokens are ordinary ERC-20s**: ~200+ US stocks/ETFs, EU-facing, each with a Chainlink
-  price feed; corporate actions land as **on-chain multipliers, not balance changes** — which is a
-  gift: a vault holding N token units still holds N units after a split, so `allocated ≤ held`
-  in TOKEN UNITS stays exact across corporate actions with zero code.
+  price feed. RHJ's currently active split/dividend actions land as **on-chain multipliers, not raw
+  balance changes** — which is a gift: a vault holding N token units still holds N units after one of
+  those actions, so `allocated ≤ held` in TOKEN UNITS stays exact with zero allocation rewrite. Do not
+  generalize that sentence to a future redemption, merger, spin-off, or worthless removal: those
+  forward-compatible terminal types use the fail-closed successor-property runbook in
+  `omerta-brokers-design.md` §3.4b.
 - **Uniswap runs on Robinhood Chain from day one** (a dedicated deployment). OPEN DEPENDENCY:
   which version the stock-token pools run (v3 vs v4) — the keeper's swap call differs, nothing
   else in this design does. Verify before Phase B.

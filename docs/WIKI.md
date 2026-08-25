@@ -529,6 +529,64 @@ tie or no votes means no decree). The boss of the first seat can **veto** one ti
 loot cuts deeper), and **The Levy** (the buyback's family split goes to the seated chamber).
 `GET /v1/commission` [public], `POST /v1/commission/vote`, `/commission/veto`.
 
+### The daily Stock Token ballot
+
+The same five seats also choose **which approved Robinhood Stock Token** the RWA treasury machine may
+buy after the UTC day closes. A boss or underboss casts one public family pick at
+`POST /v1/commission/ticker`; it is changeable until rollover. Seat weights are 5, 4, 3, 2, 1, so the
+head family breaks a raw 1–1 split by weight. A weighted tie or silence uses the currently approved
+default. `GET /v1/commission/ticker` is public and returns the votes, leading pick, last result, and the
+current candidates.
+
+The candidate list is not a ticker typed into a bot configuration. Robinhood publishes the canonical
+Stock Token identities and chain-4663 addresses; the OMERTÀ Safe approves the subset the game is able
+and willing to buy in `StockTokenRegistry`. The worker mirrors only the registry's active entries into
+the ballot. `GET /v1/commission/ticker` feeds the Family screen its current `candidates`, ticker list,
+default, registry address, chain ID, and last-sync time. If the chain RPC is down, the last approved
+snapshot remains. Once a production registry address is configured but has never synced, the list is
+empty rather than silently returning to the old static list. If the Safe deactivates a token before
+rollover, the result fails over to the active default. After rollover, the worker commits the chosen
+registry key and a hash of the public family tally on-chain. The buy keeper names the day, not a ticker
+or token address—the buyer contract resolves the exact approved token from that result.
+
+The default applies only while resolving the ballot. If the exact Stock Token committed by the closed
+result becomes inactive, halted, or otherwise ineligible before purchase, that day's purchase is
+**skipped**. The machine does not substitute the default or any other token because the families did not
+vote for it. The bounded, unspent ETH carries forward inside the existing treasury and purchase caps;
+unused authority does not enlarge a later daily cap. The closed ballot remains in the public history,
+along with the skipped-purchase status and reason.
+
+Robinhood's public APIs are **discovery, not governance**. Operators run `npm run stock-catalog` to
+inspect the current chain-4663 list. For the initial launch only,
+`npm run stock-catalog -- --initial-top-volume --registry 0x...` automatically ranks the eligible feed
+and emits unsigned Safe calls for exactly the top 15. The metric is Robinhood's documented
+`dailyTradingVolume`: the **underlying security's daily share volume**, not Robinhood Chain DEX volume
+and not the API's separate mint/burn fields. The deterministic snapshot admits only active,
+fractional-tradable assets with a non-halted, fresh, positive bid/ask quote whose chain-4663 address
+matches the canonical asset entry; ties break by ticker. The ranked Safe insertion order is preserved:
+the highest-volume approved entry is the production quiet-chamber fallback, and if it is later
+deactivated the next active entry in that original ranking takes its place. SPY remains only the
+chain-dormant development fallback before a production registry has synced.
+
+The bootstrap is automatic selection, not automatic key custody. The tool holds no key and sends no
+transaction. Legal/product eligibility, venue route, independent oracle support, and exposure caps
+remain Safe-signing checks. A candidate reaches families only after the Safe executes the 15 calls and
+the worker observes the on-chain registry. The snapshot is one-time and is not a continuously rotating
+volume index: later additions or replacements use an explicitly reviewed
+`npm run stock-catalog -- --tickers AAPL,SPY --registry 0x...` proposal. Provider additions never
+auto-enroll themselves. `--deactivate SYMBOL` emits the matching Safe removal call when an asset is
+suspended, disappears, or falls outside policy; removal is likewise explicit and reviewable rather
+than API-controlled.
+
+The contracts do not call HTTP and do not wake themselves. The hourly worker supplies liveness: it
+refreshes the Safe registry mirror, resolves the closed ballot, publishes the immutable day result,
+and freezes the completed activity epoch. `RwaStockBuyer` supplies the value walls: one purchase per
+ballot, a Safe-set daily ETH cap, an approved venue adapter, a fresh independent quote oracle, and an
+exact-token balance check at `StockVault`. The contract enforces whichever output floor is stricter—the
+oracle's or the keeper's—so a stolen keeper key cannot relax slippage protection. Production buying
+remains disabled until a reviewed venue adapter and quote/TWAP oracle are configured; “the bounded
+contract exists” is not the same claim as “the rail is armed.”
+
 ---
 
 ## 11. The Den
@@ -965,10 +1023,13 @@ funded prize pool (never created). This is account-level, so it survives death.
 
 ## 27. Going Legit
 
-**The stock book is retired** (D11, 2026-08-05): the game sells no shares, real or fictional — the
-tickers, the invests, the Dynasty Fund and its leaderboards are gone, and their routes answer
-`retired` rather than 404 so nothing has to guess. Going legit now means what your **earned $OMR**
-actually does:
+The old player-bought **stock book** remains retired (D11, 2026-08-05): there is no cash/$OMR route
+where a player picks and buys a share, and those old invest routes still answer `retired`. A separate
+system now exists: **The Brokers**, a treasury-funded, play-weighted Robinhood Stock Token reward.
+It is not a shop, a promised yield, or a cash-out quote. The production chain leg remains off until
+the audit, legal/eligibility, venue, reserve, and Safe launch gates are cleared.
+
+Going legit includes what your **earned $OMR** does:
 
 - **Stake it** (`/v1/stake`) — a held balance climbs the ladder (trunk, energy, nerve, garage, the
   fence at the top), and a committed balance is looted lighter than an idle one when you die.
@@ -978,6 +1039,65 @@ actually does:
 - **Get Made** (`/v1/made`) and take your $OMR out on-chain (`/v1/withdraw`).
 - **Landmarks** (`/v1/landmarks/:districtId`) — one plaque in each district still bears a name that
   survives death.
+
+### The Brokers — how active play qualifies
+
+The policy is **minimum breadth and score, then uncapped proportional activity**:
+
+1. **Activate** a Broker tier by spending earned $OMR. Activation is a recurring window and a
+   multiplier, not eligibility by itself. An activated idler receives zero.
+2. During the seven-day epoch, successful server-authoritative actions write raw counts to the
+   activity log. A player must clear at least **3 distinct activity tracks** and the published
+   **minimum score of 25**. Failed attempts, page views, time-online, client telemetry, and granted XP
+   do not count. Agent-flag and NPC/resident accounts are excluded from this human distribution.
+3. After the gate, the full activity score remains linear and **has no cap**. Weight is
+   `activation multiplier × activity score`, so more genuine successful play earns a larger
+   pro-rata share. There is no cliff beyond the qualifying floor and no equal split.
+4. The worker automatically freezes the completed epoch. Re-running the hourly job is safe: the
+   `(start day, end day)` epoch is unique, so a restart cannot publish a second snapshot.
+5. A real treasury purchase distributes its received token units over the latest snapshot frozen
+   before that purchase. A snapshot published after a buy can never reach backward and capture it.
+   `allocated ≤ held` and `delivered ≤ allocated` are checked per ticker.
+6. Delivery waits until the account has an extracted Street Deed, then goes into that deed's
+   ERC-6551 token-bound account. No manual claim is required. **Pending allocations never expire:**
+   they are not forfeited for inactivity, reclaimed by the treasury, or redistributed to later epochs.
+   If a player has no valid delivery target for months or years, the exact outstanding units remain
+   owed until that player extracts or regains a qualifying Street Deed.
+
+**If Robinhood retires or converts a Stock Token.** Here, the issuer means Robinhood Assets (Jersey)
+Limited (RHJ), which issues the Stock Token—not the public company whose shares provide the economic
+exposure. Ordinary splits and dividends use RHJ's on-chain multiplier: the raw token balance and the
+game's raw-unit allocation do not change. A future redemption, merger, spin-off, or worthless-removal
+event is different and fails closed. OMERTÀ stops new buys and undelivered pushes for the affected token,
+snapshots the vault balance and every outstanding account allocation, and waits for RHJ to mark the event
+completed and for the vault's actual on-chain successor assets or proceeds to be reconciled. The portion
+backing pending players follows those proceeds pro rata to the **same accounts**. It never becomes general
+treasury inventory and is never redistributed to a later activity epoch. If completion or proceeds are
+ambiguous, the old allocation remains pending rather than being guessed away. Tokens already delivered
+to a Street Deed are in that deed owner's custody and are outside this pending-allocation reconciliation.
+
+Robinhood Chain cannot read the gameplay database, so the contract does not pretend to recalculate
+"active play." The server computes the frozen allocation; a separate Safe-configured allocation
+signer attests the exact epoch hash, account hash, token, deed account, units, delivery id, and
+deadline. Once that signer is enabled, `StockVault` disables the old keeper-only push and accepts only
+the signed authorization. The delivery keeper can relay an approved allocation but cannot invent a
+qualified account or alter its asset, recipient, or amount.
+
+**No in-game KYC or recipient compliance gate.** OMERTÀ does not request identity documents, store
+KYC data, screen residency or sanctions status, call a compliance provider, or condition the activity
+calculation or Stock Token delivery on those facts. Once a human account qualifies through active play
+and has a linked wallet plus an extracted Street Deed, the delivery worker uses only the frozen gameplay
+allocation and the on-chain ownership/safety checks described above. Any KYC/AML Robinhood requires for
+direct issuer redemption happens in Robinhood's exit process, outside the game.
+
+That is a founder-directed permissionless-product posture, not a representation that OMERTÀ has received
+legal clearance. Robinhood describes Robinhood Chain and its standard ERC-20 Stock Tokens as open and
+composable, while its issuer disclosures separately restrict offers, sales, distributions, and deliveries
+to some recipients and jurisdictions. The production launch review must therefore evaluate this exact
+no-in-game-check model; it must not quietly add a KYC gate without a new founder decision, and it must not
+describe the posture as legally approved without written support. See
+`https://docs.robinhood.com/chain/stock-tokens/` and
+`https://docs.robinhood.com/rhj/restricted-jurisdictions/`.
 
 ### The Window and the Family Yield
 
@@ -997,11 +1117,10 @@ any route that would convert cash into $OMR says so plainly if you try it. What 
 - **The Vault** (`GET /v1/vault`) — four streams of real ETH (the DEX sell tax, treasury bonds, the
   store, game fees) fund the protocol: liquidity, the withdrawal reserve, the founder, and a treasury.
   Burn earned $OMR and you claim a share of what that treasury actually holds. It is **backed by ETH,
-  not by stock** — until 2026-07-31 the vault was denominated in real tokenized shares; that layer is
-  retired. The rule is the same one it always had and is now unbreakable: **the house never owes more
-  than it holds**, and with ETH on both sides no price move can change that. The board publishes what
-  came in and from where, so you can check the claim yourself. Allocation only — nothing is delivered,
-  no sell, no cash-out.
+  not by stock** and remains separate from The Brokers. The rule is the same one it always had and is
+  now unbreakable: **the house never owes more than it holds**, and with ETH on both sides no price move
+  can change that. The board publishes what came in and from where, so you can check the claim yourself.
+  Allocation only — nothing is delivered, no sell, no cash-out.
 
 ---
 

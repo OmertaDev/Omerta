@@ -14,7 +14,7 @@ import { CRIMES, DISTRICTS, DRUGS, RECRUIT_MILESTONES, CONSTANTS, RANKS,
          REGIMEN, disciplineLvlOf, energyCapOf, nerveCapOf, BUSINESSES, WIRE, RIVALS, CORNER, cornerTasksOf,
          KITCHENS, labModuleCost, recyclesToDesk, DESK_RECYCLE_REASON, isMade, madeSeconds,
          MADE_LADDER, madeRungIdx, madeRungOf, ladderFx, STAKE_LOCKS, stakeLockActive, effectiveStake,
-         ASSETS, OPERATIONS, opSlotsOf, nextOpSlotLevel, MISSIONS, dailyLiveFor, jailed, safeHoused,
+         ASSETS, OPERATIONS, opSlotsOf, nextOpSlotLevel, MISSIONS, dailyGuidanceFor, dailyLiveFor, jailed, safeHoused,
          STABLE, SPEAKEASY, ESTATE, MADE, CREW, crewObjectiveOf, DEEDS, deedController , runOf, npcOf, usd, WALLET_FORGE } from './rules.js';
 import { dbCaps } from './db.js';
 import { accrue } from './accrual.js';
@@ -295,7 +295,7 @@ export async function loadOwned(client, ch) {
     -- than in a second query keeps the one-round-trip property this function exists for.
     -- $4 is TODAY (int) — bound separately so its type is inferred from the day columns alone.
     -- (No backticks in here: this whole query is a JS template literal, and one would end it.)
-    UNION ALL SELECT 'daily', NULL::text, claimed, NULL::numeric, NULL::numeric, NULL::timestamptz FROM daily_progress WHERE character_id=$1 AND day=$4
+    UNION ALL SELECT 'daily', counters, claimed, NULL::numeric, NULL::numeric, NULL::timestamptz FROM daily_progress WHERE character_id=$1 AND day=$4
     UNION ALL SELECT 'hustle', NULL::text, NULL::text, step::numeric, NULL::numeric, NULL::timestamptz FROM hustles WHERE character_id=$1 AND day=$4
     UNION ALL SELECT 'corner', district, NULL::text, slot::numeric, CASE WHEN claimed THEN 1 ELSE 0 END::numeric, NULL::timestamptz FROM corner_jobs WHERE character_id=$1 AND day=$4
     UNION ALL SELECT 'drill', npc, NULL::text, NULL::numeric, NULL::numeric, NULL::timestamptz FROM npc_drills WHERE character_id=$1 AND day=$4
@@ -345,13 +345,15 @@ export async function loadOwned(client, ch) {
   // THE WORK BOARD — today's repeatable work, folded into ONE shape the coach reads. Deliberately
   // COUNTS and FLAGS rather than the boards themselves: a rung only has to know there is unclaimed
   // work and what it pays, and re-deriving each system's full board here would put five modules'
-  // logic in the hot path of every authed request. `claimed` is the daily-contract JSON array.
+  // logic in the hot path of every authed request. `claimed` and `counters` are the daily-contract
+  // JSON blobs; carrying both lets the coach send a completed job to its claim card without a query.
   const work = {
     // the claimed IDs, not just the count: the rung has to subtract contracts this player
     // STRUCTURALLY cannot clear (dailyBlockedFor), and doing that exactly needs to know WHICH of
     // the three are already done — a player who paid tribute and then left the family would
     // otherwise be double-counted against themselves.
     dailyClaimedIds: (() => { try { return JSON.parse(grp.get('daily')?.[0]?.k2 || '[]'); } catch { return []; } })(),
+    dailyCounters: (() => { try { return JSON.parse(grp.get('daily')?.[0]?.k || '{}'); } catch { return {}; } })(),
     hustleStep: grp.get('hustle')?.[0] ? Number(grp.get('hustle')[0].n) : null, // null = not started today
     // (red-team F2) OPEN is not the same as CLAIMABLE. `claimCorner` refuses on two counts, and a
     // rung that points at work the server will not pay is worse than no rung at all — it sits at the
@@ -1566,9 +1568,13 @@ function coachLadder(ch, acct, owned) {
     // while pointing at a card they can never clear sits at the head of the tail all day and masks
     // every live rung under it — the F2 masking class, in the one place the pool can still produce
     // it. The same helper marks the card on the board, so the count and the copy cannot disagree.
-    const dailiesLeft = dailyLiveFor(w.dailyClaimedIds || [], { gangId: owned.gangId }).length;
-    if (dailiesLeft && add(`${dailiesLeft} of today's contracts unclaimed`,
-      'Daily contracts pay cash for work you were going to do anyway — pull jobs, boost cars, move product. Claim them before the day rolls over and they are gone.', 'streets')) return rungs;
+    const dailyJobs = dailyLiveFor(w.dailyClaimedIds || [], { gangId: owned.gangId });
+    const dailyJob = dailyJobs.find((j) => Number(w.dailyCounters?.[j.k] || 0) >= j.n) || dailyJobs[0];
+    const dailyReady = dailyJob && Number(w.dailyCounters?.[dailyJob.k] || 0) >= dailyJob.n;
+    const dailyGuide = dailyGuidanceFor(dailyJob);
+    if (dailyReady && add(`${dailyJob.name} — ready to collect`,
+      'This contract is ready to collect. Collect it on the Daily Work card before the day rolls over.', 'streets')) return rungs;
+    if (dailyJob && dailyGuide && add(dailyJob.name, dailyGuide.how, dailyGuide.tab)) return rungs;
     if (w.hustleStep !== 3 && add(w.hustleStep === null ? "Tonight's hustle is waiting" : 'Your hustle is half-finished',
       'Three stops, three districts, one payoff that scales with your level — and it walks you round the map while it pays. It resets at the end of the day whether you finish it or not.', 'streets')) return rungs;
     if ((w.cornerOpen || []).length && add(`The corner has an envelope for you`,

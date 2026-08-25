@@ -569,6 +569,26 @@ export const familyTaskOf=(wk=weekOf())=>FAMILY_TASKS[((wk%FAMILY_TASKS.length)+
 export const gunsValue=(ids=[])=>ids.reduce((a,id)=>a+(GUNS.find(g=>g.id===id)?.cash||0),0);
 export const racketsValue=(ids=[])=>ids.reduce((a,id)=>a+(RACKETS.find(r=>r.id===id)?.cost||0),0);
 export const dailyJobsOf=(day=dayOf())=>[0,1,2].map(i=>DAILY_POOL[(day+i*2)%DAILY_POOL.length]);
+// One owner for the exact route + instruction behind every daily contract. The generated pool owns
+// which work exists and its reward/goal; this hand-written guide owns only how a player reaches it.
+// `getDaily`, the day checklist, and the recurring coach all consume this so none can drift.
+export const DAILY_GUIDANCE = Object.freeze({
+  crime:   { how: 'Pull jobs right here on the Streets — only CLEAN (successful) ones count.', tab: 'streets' },
+  gta:     { how: 'Boost a car in The Garage.', tab: 'garage' },
+  train:   { how: 'Gym sessions — the Train drawer below. Any stat counts.', tab: 'streets' },
+  jump:    { how: 'Jump a player: Wet Work → The Streets roster → jump. A win counts.', tab: 'pvp' },
+  dice:    { how: 'Win back-room dice at the Den — fade a player taking bets (or list your own limit and let them come to you).', tab: 'den' },
+  tribute: { how: 'Pay cash tribute to your family (The Family → tribute). You need a family first.', tab: 'family' },
+  craft:   { how: 'Craft an item at the Workshop — The Garage.', tab: 'garage' },
+  trade:   { how: 'Buy a lot on the cb/ammo Exchange (The Garage → the armory / Exchange).', tab: 'garage' },
+  goods:   { how: 'Buy or sell trade goods — the Trade Goods drawer below.', tab: 'streets' },
+  melt:    { how: 'Melt a car down for parts in The Garage.', tab: 'garage' },
+  cook:    { how: 'Cook a batch at the Kitchen.', tab: 'kitchen' },
+  deal:    { how: 'Deal product on the corner at the Kitchen.', tab: 'kitchen' },
+  heist:   { how: 'Pull the Daily Score (the card right here — the solo Score is what counts).', tab: 'streets' },
+  bust:    { how: 'Spring ANYONE from lockup — Wet Work → The Streets roster: anyone with a LOCKUP chip shows a "bust them out" button. A success frees them and pays you; best odds near the end of a stretch.', tab: 'pvp' },
+});
+export const dailyGuidanceFor = (job) => DAILY_GUIDANCE[job?.k] || null;
 // A drawn contract the player STRUCTURALLY cannot complete, and why. `DAILY_POOL` is machine-owned
 // and every kind but one is doable alone — the NPC residents supply the counterparty for `jump`
 // (they walk the streets), `bust` (JAILBIRDS keeps some inside) and `dice` (they set a fade limit).

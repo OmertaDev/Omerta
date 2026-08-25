@@ -25,7 +25,11 @@ contract OMRStaking is Ownable2Step, ReentrancyGuard {
     uint256 public rewardIndex; // cumulative rewards per staked token, scaled by 1e18
     uint64 public lastRewardUpdate;
 
-    struct Position { uint256 staked; uint256 accrued; uint64 lastAccrued; }
+    struct Position {
+        uint256 staked;
+        uint256 accrued;
+        uint64 lastAccrued;
+    }
     mapping(address => Position) public positions;
     mapping(address => uint256) public rewardIndexPaid;
 

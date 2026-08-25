@@ -31,7 +31,7 @@ contract DynastyNFTTest is Test {
     }
 
     function _voucher(address to, uint256 nonce) internal view returns (DynastyNFT.MintVoucher memory) {
-        return DynastyNFT.MintVoucher({ to: to, nonce: nonce, deadline: block.timestamp + 1 hours });
+        return DynastyNFT.MintVoucher({to: to, nonce: nonce, deadline: block.timestamp + 1 hours});
     }
 
     function _sign(DynastyNFT.MintVoucher memory v) internal view returns (bytes memory) {
@@ -86,7 +86,7 @@ contract DynastyNFTTest is Test {
     }
 
     function test_expired_reverts() public {
-        DynastyNFT.MintVoucher memory v = DynastyNFT.MintVoucher({ to: alice, nonce: 1, deadline: block.timestamp - 1 });
+        DynastyNFT.MintVoucher memory v = DynastyNFT.MintVoucher({to: alice, nonce: 1, deadline: block.timestamp - 1});
         bytes memory sig = _sign(v);
         vm.expectRevert("DN: expired");
         nft.claim(v, sig);
@@ -94,7 +94,7 @@ contract DynastyNFTTest is Test {
 
     function test_deadline_too_far_reverts() public {
         DynastyNFT.MintVoucher memory v =
-            DynastyNFT.MintVoucher({ to: alice, nonce: 1, deadline: block.timestamp + 31 days });
+            DynastyNFT.MintVoucher({to: alice, nonce: 1, deadline: block.timestamp + 31 days});
         bytes memory sig = _sign(v);
         vm.expectRevert("DN: deadline too far");
         nft.claim(v, sig);

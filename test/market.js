@@ -115,6 +115,9 @@ assert.equal(r.code, 200, 'four units change hands'); assert.equal(r.body.paid, 
 assert.equal((await meOf(gus.token)).cargo.gin, 4, 'in the trunk');
 const gTake = Math.ceil(2000 * MARKET.TAKE_BPS / 10000);
 assert.equal((await meOf(sal.token)).cash, salCash2 + 2000 - gTake, 'sal nets the goods sale minus the take');
+const marketEvents = (await pool.query("SELECT event FROM telemetry WHERE event IN ('market_list','market_buy','market_fill')")).rows.map((r) => r.event);
+assert(marketEvents.includes('market_list'), 'a successful market listing emits its adoption event');
+assert(marketEvents.includes('market_buy'), 'a successful market buy emits its adoption event');
 
 // ── cancel/reclaim: goods come back only into free trunk space ──
 r = await call('POST', `/v1/market/${L2}/cancel`, { token: sal.token });
@@ -241,6 +244,7 @@ assert.equal((await call('POST', `/v1/market/${O1}/fill`, { token: gus.token, bo
 const rexCash3 = (await meOf(rex.token)).cash;
 r = await call('POST', `/v1/market/${O1}/fill`, { token: rex.token, body: { qty: 6 } });
 assert.equal(r.code, 200, 'rex delivers six'); assert.equal(r.body.remaining, 4, 'four still wanted');
+assert((await pool.query("SELECT 1 FROM telemetry WHERE event='market_fill'")).rows.length, 'a successful order fill emits its adoption event');
 const fillTake = Math.ceil(6 * 600 * MARKET.TAKE_BPS / 10000);
 assert.equal(r.body.earned, 6 * 600 - fillTake, 'paid from the escrow minus the 2% take');
 assert.equal((await meOf(rex.token)).cash, rexCash3 + 6 * 600 - fillTake, 'and it landed in-memory (no clobber)');

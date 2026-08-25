@@ -41,10 +41,19 @@ contract GearVaultTest is Test {
     // Rebuild the exact data URI the contract should return, so equality pins the real bytes.
     function _uriFor(string memory title, string memory attrs, uint256 id) internal pure returns (string memory) {
         string memory json = string.concat(
-            '{"name":"OMERT\\u00c0 ', title, '",',
-            '"description":"', DESC, '",',
-            '"image":"', IMG, id.toString(), '.png",',
-            '"attributes":', attrs, "}"
+            '{"name":"OMERT\\u00c0 ',
+            title,
+            '",',
+            '"description":"',
+            DESC,
+            '",',
+            '"image":"',
+            IMG,
+            id.toString(),
+            '.png",',
+            '"attributes":',
+            attrs,
+            "}"
         );
         return string.concat("data:application/json;base64,", Base64.encode(bytes(json)));
     }
@@ -91,13 +100,11 @@ contract GearVaultTest is Test {
             string memory attrs = string.concat(
                 '[{"trait_type":"Type","value":"Car"},',
                 '{"trait_type":"Class","value":5},',
-                '{"trait_type":"Rarity","value":"', names[r], '"}]'
+                '{"trait_type":"Rarity","value":"',
+                names[r],
+                '"}]'
             );
-            assertEq(
-                gear.uri(id),
-                _uriFor(string.concat("Car #5 \\u00b7 ", names[r]), attrs, id),
-                "rarity digit"
-            );
+            assertEq(gear.uri(id), _uriFor(string.concat("Car #5 \\u00b7 ", names[r]), attrs, id), "rarity digit");
         }
     }
 
@@ -128,8 +135,10 @@ contract GearVaultTest is Test {
     function test_batch_class_names() public {
         uint256[] memory keys = new uint256[](2);
         string[] memory names = new string[](2);
-        keys[0] = CAR_BASE; names[0] = "Beater";
-        keys[1] = BOAT_BASE; names[1] = "Dinghy";
+        keys[0] = CAR_BASE;
+        names[0] = "Beater";
+        keys[1] = BOAT_BASE;
+        names[1] = "Dinghy";
         vm.prank(safe);
         gear.setClassNames(keys, names);
         assertEq(gear.className(CAR_BASE), "Beater");
@@ -151,7 +160,9 @@ contract GearVaultTest is Test {
         // Re-derive with the new base.
         string memory json = string.concat(
             '{"name":"OMERT\\u00c0 Gear #1",',
-            '"description":"', DESC, '",',
+            '"description":"',
+            DESC,
+            '",',
             '"image":"ipfs://NEWCID/1.png",',
             '"attributes":[{"trait_type":"Type","value":"Gear"},{"trait_type":"Class","value":1}]}'
         );

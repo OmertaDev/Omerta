@@ -1,12 +1,11 @@
 // STILL ON THE TABLE — the cross-system pull the coach's queue can't carry.
 //
 // The coach (game.js coachLadder) names the SINGLE next step, priority-ordered, five deep — so for a
-// mid/late player five more urgent rungs fill the queue and a whole system they've never touched (the
+// mid/late player five more urgent rungs fill the queue and a featured system they've never touched (the
 // Den, the Wire, the Stable) never surfaces. And the coach's one-time cross-system rungs stop at level
-// 30. This board is the complement: it shows EVERY system the player has UNLOCKED by level and NEVER
-// engaged with, all at once, at any level — a browsable "rackets you haven't worked yet" grid plus an
-// explorer progress line (you've tried X of the N systems open to you). Completion-compulsion, pointed
-// at the depth players don't know they have.
+// 30. This board is the complement: it shows a FEATURED catalog of level-unlocked systems the player has
+// never engaged with — a browsable "rackets you haven't worked yet" grid plus an explorer progress line.
+// It deliberately does not claim to enumerate the entire city.
 //
 // PURE READ — no ledger row, no faucet, no new lever, ZERO §10.4 surface. It reads the same owned/acct
 // state view() already holds, so it costs no extra query on the hot path (the route hands it loadOwned).
@@ -64,20 +63,22 @@ export const SYSTEMS = [
     seen: (c) => !!c.owned.estate },
 ];
 
-// The board: the systems this player has UNLOCKED (level) but NEVER touched, plus an explorer tally.
-// `untapped` is capped for the client card (earliest-unlocked first — the most overdue); `progress`
-// carries the full X-of-N so a completionist reads how much of the city they've worked.
+// The board: the featured systems this player has UNLOCKED (level) but NEVER touched, plus an explorer
+// tally. `untapped` is capped for the client card (earliest-unlocked first — the most overdue); `progress`
+// carries the full X-of-N so a completionist reads how much of this catalog they've worked.
 export function exploreBoard(ch, acct = {}, owned = {}) {
   const ctx = { ch, acct, owned, lvl: levelOf(Number(ch.respect)) };
   const unlocked = SYSTEMS.filter((s) => ctx.lvl >= s.at);
   const tried = unlocked.filter((s) => { try { return !!s.seen(ctx); } catch { return false; } });
   const untapped = unlocked.filter((s) => !tried.includes(s));
   return {
+    // machine-readable honesty: this is a finite featured list, not a census of every game system.
+    catalog: { scope: 'featured_systems', count: SYSTEMS.length },
     // the browsable grid — what to go try, most overdue first
     untapped: untapped.map((s) => ({ id: s.id, name: s.name, hook: s.hook, tab: s.tab, at: s.at })),
     // the completion line: how much of the unlocked city you've actually worked
     progress: { tried: tried.length, unlocked: unlocked.length, remaining: untapped.length },
-    // a flourish for the completionist (client can celebrate an all-clear)
+    // a flourish for the completionist (client can celebrate an all-clear for the featured catalog)
     allTried: untapped.length === 0 && unlocked.length > 0,
   };
 }

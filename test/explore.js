@@ -6,7 +6,7 @@
 // moves NO value (no ledger row) — the whole feature is §10.4-free by construction.
 import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
-import { SYSTEMS } from '../src/explore.js';
+import { SYSTEMS, exploreBoard } from '../src/explore.js';
 import { levelOf } from '../src/rules.js';
 
 const app = await buildServer();
@@ -34,11 +34,23 @@ assert.equal(b.progress.unlocked, 0, 'a level-1 street has unlocked no systems y
 assert.deepEqual(b.untapped, [], 'so nothing is on the table');
 assert.equal(b.allTried, false, 'and allTried is false when nothing is even unlocked');
 
+// `allTried` is about the systems currently OPEN, never the full finite catalog. At level 3 this
+// street has three featured systems open; touching those three earns the all-clear even though the
+// catalog documents many later systems. The client copy must make this same scope clear.
+const earlyAllClear = exploreBoard({ respect: respectForLevel(3) }, {}, {
+  gangId: 'family', rackets: [{}], crewId: 'crew',
+});
+assert.equal(earlyAllClear.catalog.count, SYSTEMS.length, 'the featured catalog still documents all later entries');
+assert.equal(earlyAllClear.progress.unlocked, 3, 'only the three level-3 featured systems are currently open');
+assert.equal(earlyAllClear.allTried, true, 'trying those currently open systems earns the all-clear');
+
 // ════════════ level 30 — every system unlocked, none touched: the whole city on the table ════════════
 const p = await mk('The Explorer');
 await pool.query('UPDATE characters SET respect=$2 WHERE id=$1', [p.id, respectForLevel(30)]);
 b = await board(p.token);
 const total = SYSTEMS.length;
+assert.deepEqual(b.catalog, { scope: 'featured_systems', count: total },
+  'Explore identifies this finite list as a featured-system catalog, with its count');
 assert.equal(b.progress.unlocked, total, `at level 30 all ${total} systems are unlocked`);
 assert.equal(b.progress.tried, 0, 'a fresh street has tried none of them');
 assert.equal(b.progress.remaining, total, 'so all of them are on the table');
