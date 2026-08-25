@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `0a5474da70ad`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `7c8f9243c909`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 930 |
+| Commits in clone | 932 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-25 — feat: close agent reward and session loops |
+| Latest commit | 2026-08-25 — fix: make knowledge bytes checkout-stable |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 129 |
+| OmertaDev | 131 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
