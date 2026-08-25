@@ -2,9 +2,12 @@
 // A finite, conservative Agent Turn client. Identity state is deliberately local and reports are
 // deliberately lossy: the session owns the bearer token while telemetry owns no sensitive values.
 import crypto from 'node:crypto';
-import { appendFile, mkdir, open, readFile, rename, unlink } from 'node:fs/promises';
+import {
+  appendFile, lstat, mkdir, open, readFile, realpath, rename, stat, unlink,
+} from 'node:fs/promises';
 import { createServer } from 'node:net';
-import { dirname, resolve } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
+import { performance } from 'node:perf_hooks';
 import { fileURLToPath } from 'node:url';
 
 const SESSION_VERSION = 1;
@@ -23,6 +26,32 @@ const ALLOWED_KINDS = new Set([
 ]);
 
 const defaultSleep = (ms) => new Promise((resolveSleep) => setTimeout(resolveSleep, ms));
+
+async function waitForCadence(timing, intervalMs) {
+  const startedAt = timing.now();
+  let previous = startedAt;
+  for (;;) {
+    const elapsed = timing.now() - startedAt;
+    if (elapsed >= intervalMs) return;
+    await timing.sleep(intervalMs - elapsed);
+    const current = timing.now();
+    if (current < previous) throw new Error('Agent Alpha monotonic clock moved backwards');
+    if (current === previous) throw new Error('Agent Alpha cadence clock did not advance');
+    previous = current;
+  }
+}
+
+function productionTiming(advisorySleep) {
+  return {
+    now: () => performance.now(),
+    sleep: async (ms) => {
+      const startedAt = performance.now();
+      if (advisorySleep) await advisorySleep(ms);
+      const remaining = ms - (performance.now() - startedAt);
+      if (remaining > 0) await defaultSleep(remaining);
+    },
+  };
+}
 
 function originOf(value) {
   const url = new URL(value);
@@ -148,15 +177,57 @@ async function readSession(sessionFile) {
   return session;
 }
 
-function lockPort(sessionFile) {
-  const identity = process.platform === 'win32'
-    ? resolve(sessionFile).toLowerCase()
-    : resolve(sessionFile);
-  const digest = crypto.createHash('sha256').update(identity).digest();
-  return 20000 + (digest.readUInt32BE(0) % 20000);
+function physicalPathKey(path) {
+  return process.platform === 'win32' ? path.toLowerCase() : path;
 }
 
-async function listenForLock(server, port) {
+async function canonicalTarget(path, { rejectLink = false } = {}) {
+  const lexical = resolve(path);
+  await mkdir(dirname(lexical), { recursive: true });
+  const physicalParent = await realpath(dirname(lexical));
+  const candidate = join(physicalParent, basename(lexical));
+  try {
+    const info = await lstat(candidate);
+    if (info.nlink > 1) {
+      throw new Error('Agent Alpha target has ambiguous hard-link identity');
+    }
+    if (info.isSymbolicLink()) {
+      if (rejectLink) throw new Error('Agent Alpha lock target cannot be a link');
+      const physical = await realpath(candidate);
+      if ((await stat(physical)).nlink > 1) {
+        throw new Error('Agent Alpha target has ambiguous hard-link identity');
+      }
+      return physical;
+    }
+    return await realpath(candidate);
+  } catch (error) {
+    if (error?.code === 'ENOENT') return candidate;
+    throw error;
+  }
+}
+
+async function canonicalRunnerPaths(sessionFile, reportFile) {
+  if (!reportFile) throw new Error('Agent Alpha requires a report file');
+  const session = await canonicalTarget(sessionFile);
+  const report = await canonicalTarget(reportFile);
+  const lock = await canonicalTarget(`${session}.lock`, { rejectLink: true });
+  const keys = [session, report, lock].map(physicalPathKey);
+  if (new Set(keys).size !== keys.length) {
+    throw new Error('Agent Alpha session, report, and lock targets must be physically distinct');
+  }
+  return { sessionFile: session, reportFile: report, lockFile: lock };
+}
+
+function lockEndpoint(sessionFile) {
+  const digest = crypto.createHash('sha256').update(physicalPathKey(sessionFile)).digest('hex');
+  if (process.platform === 'win32') return `\\\\.\\pipe\\omerta-agent-alpha-${digest}`;
+  if (process.platform === 'linux') return `\0omerta-agent-alpha-${digest}`;
+  // A filesystem Unix socket can remain after SIGKILL, so unsupported hosts fail closed instead
+  // of falling back to a lease that either strands the session or permits concurrent owners.
+  throw new Error('Agent Alpha cannot provide a crash-releasing session lock on this platform');
+}
+
+async function listenForLock(server, endpoint) {
   await new Promise((resolveListen, rejectListen) => {
     const onError = (error) => {
       server.off('listening', onListening);
@@ -168,7 +239,7 @@ async function listenForLock(server, port) {
     };
     server.once('error', onError);
     server.once('listening', onListening);
-    server.listen({ host: '127.0.0.1', port, exclusive: true });
+    server.listen({ path: endpoint, exclusive: true });
   });
 }
 
@@ -178,14 +249,13 @@ async function closeLockServer(server) {
     error ? rejectClose(error) : resolveClose()));
 }
 
-async function acquireLock(sessionFile) {
+async function acquireLock(sessionFile, path) {
   await mkdir(dirname(sessionFile), { recursive: true });
-  const path = `${sessionFile}.lock`;
-  const port = lockPort(sessionFile);
+  const endpoint = lockEndpoint(sessionFile);
   const server = createServer((socket) => socket.destroy());
   server.unref();
   try {
-    await listenForLock(server, port);
+    await listenForLock(server, endpoint);
   } catch (error) {
     if (error?.code === 'EADDRINUSE') {
       throw new Error('Agent Alpha session is locked by another live runner');
@@ -199,8 +269,8 @@ async function acquireLock(sessionFile) {
     // leftover metadata is necessarily orphaned and can be replaced without PID-reuse/delete races.
     await atomicJsonWrite(path, {
       version: 1,
-      sessionHash: crypto.createHash('sha256').update(resolve(sessionFile)).digest('hex'),
-      port,
+      sessionHash: crypto.createHash('sha256').update(physicalPathKey(sessionFile)).digest('hex'),
+      lease: 'os-owned-session-endpoint',
       pid: process.pid,
       nonce,
     });
@@ -381,12 +451,11 @@ async function settlePending({ base, fetchImpl, reportFile, sessionFile, session
   return { session, status: 'executed', turn: result?.turn || null };
 }
 
-async function runUnlocked(options) {
+async function runUnlocked(options, timing) {
   const base = originOf(options.baseUrl);
-  const sessionFile = resolve(options.sessionFile);
-  const reportFile = resolve(options.reportFile);
+  const sessionFile = options.sessionFile;
+  const reportFile = options.reportFile;
   const fetchImpl = options.fetchImpl || globalThis.fetch;
-  const sleep = options.sleep || defaultSleep;
   const maxActions = options.maxActions ?? 1;
   const intervalMs = options.intervalMs ?? MIN_INTERVAL_MS;
   if (!Number.isInteger(maxActions) || maxActions < 1 || maxActions > 50) {
@@ -415,7 +484,7 @@ async function runUnlocked(options) {
   let attempts = 0;
   let currentTurn = null;
   if (session.pending) {
-    await sleep(intervalMs);
+    await waitForCadence(timing, intervalMs);
     attempts += 1;
     const settled = await settlePending({
       base, fetchImpl, reportFile, sessionFile, session,
@@ -452,7 +521,7 @@ async function runUnlocked(options) {
       }
       break;
     }
-    await sleep(intervalMs);
+    await waitForCadence(timing, intervalMs);
 
     const operationId = crypto.randomUUID();
     session = {
@@ -485,15 +554,29 @@ async function runUnlocked(options) {
   return { status: 'complete', actions };
 }
 
-export async function runAgentAlpha(options = {}) {
+async function runWithTiming(options, timing) {
   if (!options.sessionFile) throw new Error('Agent Alpha requires a session file');
-  const sessionFile = resolve(options.sessionFile);
-  const lock = await acquireLock(sessionFile);
+  const paths = await canonicalRunnerPaths(options.sessionFile, options.reportFile);
+  const lock = await acquireLock(paths.sessionFile, paths.lockFile);
   try {
-    return await runUnlocked({ ...options, sessionFile });
+    return await runUnlocked({ ...options, ...paths }, timing);
   } finally {
     await releaseLock(lock);
   }
+}
+
+export async function runAgentAlpha(options = {}) {
+  return runWithTiming(options, productionTiming(options.sleep));
+}
+
+// This conspicuously named constructor is the only fast-clock seam. Production callers using
+// runAgentAlpha always receive the monotonic elapsed-time backstop above, even with an advisory
+// sleeper. Tests must opt into a clock whose sleep advances time rather than merely returning.
+export function createAgentAlphaTestRunner({ now, sleep }) {
+  if (typeof now !== 'function' || typeof sleep !== 'function') {
+    throw new Error('Agent Alpha test timing requires now and sleep functions');
+  }
+  return (options = {}) => runWithTiming(options, { now, sleep });
 }
 
 function cliOptions(argv) {

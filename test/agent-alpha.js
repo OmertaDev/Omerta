@@ -1,14 +1,25 @@
 // Finite Agent Alpha runner regressions. These tests use a real local Fastify listener and
 // temporary on-disk sessions so lifecycle and recovery assertions exercise actual HTTP and I/O.
 import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
 import { spawn } from 'node:child_process';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { link, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import Fastify from 'fastify';
 
-import { runAgentAlpha } from '../tools/agent-alpha.js';
+import {
+  createAgentAlphaTestRunner,
+  runAgentAlpha as runAgentAlphaProduction,
+} from '../tools/agent-alpha.js';
+
+let testNow = 0;
+const runAgentAlpha = createAgentAlphaTestRunner({
+  now: () => testNow,
+  sleep: async (ms) => { testNow += ms; },
+});
 
 const POLICY = {
   cashReserve: 1000,
@@ -443,12 +454,16 @@ async function exactAllowlistTest() {
   const api = await actionApi({ kinds: ALLOWED_KINDS });
   await withReadySession(api, 'omerta-agent-alpha-allowlist-', async ({ sessionFile, reportFile }) => {
     const delays = [];
-    const summary = await runAgentAlpha({
+    let now = 0;
+    const runWithRecordedTime = createAgentAlphaTestRunner({
+      now: () => now,
+      sleep: async (ms) => { delays.push(ms); now += ms; },
+    });
+    const summary = await runWithRecordedTime({
       baseUrl: api.baseUrl,
       sessionFile,
       reportFile,
       maxActions: ALLOWED_KINDS.length,
-      sleep: async (ms) => { delays.push(ms); },
     });
     assert.equal(summary.actions, ALLOWED_KINDS.length,
       'every and only the exact design allowlist can execute through Agent Turn');
@@ -1045,7 +1060,12 @@ async function hardCrashReplayTest() {
 
   const runnerUrl = pathToFileURL(fileURLToPath(new URL('../tools/agent-alpha.js', import.meta.url))).href;
   const childCode = `
-    import { runAgentAlpha } from ${JSON.stringify(runnerUrl)};
+    import { createAgentAlphaTestRunner } from ${JSON.stringify(runnerUrl)};
+    let now = 0;
+    const runAgentAlpha = createAgentAlphaTestRunner({
+      now: () => now,
+      sleep: async (ms) => { now += ms; },
+    });
     await runAgentAlpha({
       baseUrl: process.env.TEST_BASE,
       sessionFile: process.env.TEST_SESSION,
@@ -1199,6 +1219,200 @@ async function redirectOriginTest() {
   }
 }
 
+async function physicalAliasLockTest() {
+  const dir = await mkdtemp(join(tmpdir(), 'omerta-agent-alpha-alias-lock-'));
+  const physicalDir = join(dir, 'physical');
+  const aliasDir = join(dir, 'alias');
+  await mkdir(physicalDir);
+  await symlink(physicalDir, aliasDir, process.platform === 'win32' ? 'junction' : 'dir');
+  const sessionFile = join(physicalDir, 'session.json');
+  const aliasSessionFile = join(aliasDir, 'session.json');
+
+  const app = Fastify({ logger: false });
+  let sessionCalls = 0;
+  let enterFirst;
+  const firstEntered = new Promise((resolveEntered) => { enterFirst = resolveEntered; });
+  let releaseFirst;
+  const firstGate = new Promise((resolveGate) => { releaseFirst = resolveGate; });
+  app.get('/v1/session', async () => {
+    sessionCalls += 1;
+    if (sessionCalls === 1) {
+      enterFirst();
+      await firstGate;
+    }
+    return {
+      authed: true,
+      agent: true,
+      hasCharacter: true,
+      character: { id: 'alias-secret', name: 'Alpha Machine', generation: 1 },
+    };
+  });
+  app.get('/v1/agent/turn', async () => ({
+    turnId: 'idle', recommendedActionId: null, policy: POLICY, actions: [],
+  }));
+  await app.listen({ port: 0, host: '127.0.0.1' });
+  const address = app.server.address();
+  const baseUrl = `http://127.0.0.1:${address.port}`;
+  await writeFile(sessionFile, JSON.stringify(sessionFor(baseUrl)), 'utf8');
+
+  let first;
+  try {
+    first = runAgentAlpha({
+      baseUrl,
+      sessionFile,
+      reportFile: join(physicalDir, 'report.jsonl'),
+      maxActions: 1,
+      intervalMs: 3100,
+    });
+    await firstEntered;
+    await assert.rejects(
+      runAgentAlpha({
+        baseUrl,
+        sessionFile: aliasSessionFile,
+        reportFile: join(aliasDir, 'report.jsonl'),
+        maxActions: 1,
+        intervalMs: 3100,
+      }),
+      /locked.*live runner/i,
+      'a real directory alias cannot acquire a second lease for one physical session',
+    );
+    assert.equal(sessionCalls, 1,
+      'exactly one alias-path runner reaches the protected session endpoint');
+  } finally {
+    releaseFirst();
+    await first?.catch(() => {});
+    await app.close();
+    await rm(dir, { recursive: true, force: true });
+  }
+}
+
+async function distinctPhysicalTargetsTest() {
+  const app = Fastify({ logger: false });
+  let sessionCalls = 0;
+  app.get('/v1/session', async () => {
+    sessionCalls += 1;
+    return {
+      authed: true,
+      agent: true,
+      hasCharacter: true,
+      character: { id: 'target-secret', name: 'Alpha Machine', generation: 1 },
+    };
+  });
+  app.get('/v1/agent/turn', async () => ({
+    turnId: 'idle', recommendedActionId: null, policy: POLICY, actions: [],
+  }));
+  await app.listen({ port: 0, host: '127.0.0.1' });
+  const address = app.server.address();
+  const baseUrl = `http://127.0.0.1:${address.port}`;
+  const dir = await mkdtemp(join(tmpdir(), 'omerta-agent-alpha-targets-'));
+  try {
+    for (const kind of ['equal', 'hardlink', 'lock']) {
+      const sessionFile = join(dir, `${kind}-session.json`);
+      await writeFile(sessionFile, JSON.stringify(sessionFor(baseUrl)), 'utf8');
+      let reportFile = join(dir, `${kind}-report.jsonl`);
+      if (kind === 'equal') reportFile = sessionFile;
+      if (kind === 'hardlink') await link(sessionFile, reportFile);
+      if (kind === 'lock') reportFile = `${sessionFile}.lock`;
+      await assert.rejects(
+        runAgentAlpha({ baseUrl, sessionFile, reportFile, maxActions: 1, intervalMs: 3100 }),
+        /session.*report.*lock|distinct|alias|target/i,
+        `${kind} session/report/lock targets are rejected before any remote probe`,
+      );
+    }
+    assert.equal(sessionCalls, 0,
+      'invalid physical target layouts are rejected before network work');
+  } finally {
+    await app.close();
+    await rm(dir, { recursive: true, force: true });
+  }
+}
+
+async function unrelatedLegacyPortTest() {
+  const app = Fastify({ logger: false });
+  let sessionCalls = 0;
+  app.get('/v1/session', async () => {
+    sessionCalls += 1;
+    return {
+      authed: true,
+      agent: true,
+      hasCharacter: true,
+      character: { id: 'port-secret', name: 'Alpha Machine', generation: 1 },
+    };
+  });
+  app.get('/v1/agent/turn', async () => ({
+    turnId: 'idle', recommendedActionId: null, policy: POLICY, actions: [],
+  }));
+  await app.listen({ port: 0, host: '127.0.0.1' });
+  const address = app.server.address();
+  const baseUrl = `http://127.0.0.1:${address.port}`;
+  const dir = await mkdtemp(join(tmpdir(), 'omerta-agent-alpha-port-'));
+  const sessionFile = join(dir, 'session.json');
+  const reportFile = join(dir, 'report.jsonl');
+  await writeFile(sessionFile, JSON.stringify(sessionFor(baseUrl)), 'utf8');
+  const identity = process.platform === 'win32'
+    ? resolve(sessionFile).toLowerCase()
+    : resolve(sessionFile);
+  const digest = crypto.createHash('sha256').update(identity).digest();
+  const occupiedPort = 20000 + (digest.readUInt32BE(0) % 20000);
+  const unrelated = createServer((socket) => socket.destroy());
+  await new Promise((resolveListen, rejectListen) => {
+    unrelated.once('error', rejectListen);
+    unrelated.listen({ host: '127.0.0.1', port: occupiedPort }, resolveListen);
+  });
+  try {
+    const summary = await runAgentAlphaProduction({
+      baseUrl, sessionFile, reportFile, maxActions: 1, intervalMs: 3100,
+    });
+    assert.deepEqual(summary, { status: 'complete', actions: 0 },
+      'an unrelated listener in the old 20k port namespace cannot impersonate a session owner');
+    assert.equal(sessionCalls, 1, 'the runner retains availability despite the unrelated listener');
+  } finally {
+    await new Promise((resolveClose) => unrelated.close(resolveClose));
+    await app.close();
+    await rm(dir, { recursive: true, force: true });
+  }
+}
+
+async function realElapsedCadenceTest() {
+  const api = await localApi();
+  const dir = await mkdtemp(join(tmpdir(), 'omerta-agent-alpha-real-cadence-'));
+  const sessionFile = join(dir, 'session.json');
+  const reportFile = join(dir, 'report.jsonl');
+  await writeFile(sessionFile, JSON.stringify(sessionFor(api.baseUrl)), 'utf8');
+  api.state.agent = true;
+  api.state.hasCharacter = true;
+  api.state.characterName = 'Alpha Machine';
+  const acceptedAt = [];
+  api.requests.length = 0;
+  api.state.actCalls = 0;
+  try {
+    const originalFetch = globalThis.fetch;
+    const recordingFetch = async (...args) => {
+      const response = await originalFetch(...args);
+      if (new URL(args[0]).pathname === '/v1/agent/act' && response.ok) {
+        acceptedAt.push(performance.now());
+      }
+      return response;
+    };
+    const summary = await runAgentAlphaProduction({
+      baseUrl: api.baseUrl,
+      sessionFile,
+      reportFile,
+      maxActions: 2,
+      intervalMs: 3100,
+      fetchImpl: recordingFetch,
+      sleep: async () => {},
+    });
+    assert.deepEqual(summary, { status: 'complete', actions: 2 });
+    assert.equal(acceptedAt.length, 2);
+    assert.ok(acceptedAt[1] - acceptedAt[0] >= 3100,
+      `accepted mutations were only ${acceptedAt[1] - acceptedAt[0]}ms apart`);
+  } finally {
+    await api.close();
+    await rm(dir, { recursive: true, force: true });
+  }
+}
+
 await lifecycleTest();
 await failClosedSessionTest();
 await orphanedLockMetadataTest();
@@ -1214,4 +1428,8 @@ await initialNameSafetyTest();
 await cliContractTest();
 await redirectOriginTest();
 await hardCrashReplayTest();
+await physicalAliasLockTest();
+await distinctPhysicalTargetsTest();
+await unrelatedLegacyPortTest();
+await realElapsedCadenceTest();
 console.log('agent-alpha tests passed');
