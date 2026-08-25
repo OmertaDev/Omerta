@@ -16,7 +16,7 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { ListToolsRequestSchema, CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { createHash, randomUUID } from 'node:crypto';
-import { mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { homedir, platform } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 
@@ -64,6 +64,7 @@ let token = process.env.OMERTA_TOKEN || readSession();
 let turnActions = new Map();
 let turnRecommendedId = null;
 let turnId = null;
+const preCharacterNext = 'No character is present. Call omerta_start with a valid name to create one on this account.';
 
 function cacheTurn(turn) {
   turnActions = new Map((turn && Array.isArray(turn.actions) ? turn.actions : [])
@@ -128,6 +129,7 @@ const TOOLS = [
         name: { type: 'string', description: 'Character name to create (2–24 chars, unique among the living). Omit to only authenticate.' },
         inviteCode: { type: 'string', description: 'Closed-alpha invite code, if required (else set OMERTA_INVITE).' },
         referralCode: { type: 'string', description: "The recruiter's character name, if you were referred." },
+        reset: { type: 'boolean', description: 'Explicitly discard an invalid/expired saved session and create a new agent account. Never use this to farm accounts.' },
       },
     },
   },
@@ -167,43 +169,89 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
   const { name, arguments: args = {} } = req.params;
   switch (name) {
     case 'omerta_start': {
+      if (args.reset) {
+        if (process.env.OMERTA_TOKEN) return ok({ authed: false, error: 'token_configured',
+          message: 'OMERTA_TOKEN is configured externally; remove or replace it there instead of resetting it from MCP.' });
+        if (token && !sessionError) {
+          const existing = await api('GET', '/v1/session');
+          if (existing.status === 200) return ok({ authed: true, agent: !!existing.body?.agent,
+            error: 'session_active', message: 'The saved session is still valid. Refusing to replace a healthy identity.' });
+          if (existing.status !== 401) return ok({ authed: false, error: 'session_reset_refused',
+            status: existing.status, body: existing.body,
+            message: 'The session could not be proven expired. Refusing to replace it.' });
+        }
+        try { rmSync(SESSION_FILE, { force: true }); }
+        catch (e) { return ok({ authed: false, error: 'session_reset',
+          message: `The saved session could not be removed: ${e?.message || e}` }); }
+        token = null;
+        sessionError = null;
+        cacheTurn(null);
+      }
       if (sessionError && !process.env.OMERTA_TOKEN) return ok({ authed: false, error: 'session_invalid',
-        message: 'The durable agent session cannot be read. Refusing to create a duplicate identity automatically.' });
+        message: 'The durable agent session cannot be read. Refusing to create a duplicate identity automatically; use omerta_start { reset: true } only if you intend to replace it.' });
       // A durable token means this is a RESUME, not another account creation. Probe it first; never
       // replace a stale identity with a new guest silently because that would manufacture a Sybil.
       if (token) {
         const session = await api('GET', '/v1/session');
         if (session.status === 200) {
+          let agent = !!session.body?.agent;
+          if (!agent) {
+            const key = await api('POST', '/v1/auth/agent-key', {});
+            if (key.status !== 200 || !key.body?.token) return ok({ authed: true, agent: false,
+              resumed: true, step: 'agent_key', status: key.status, body: key.body });
+            token = key.body.token;
+            agent = true;
+            try { writeSession(token); }
+            catch (e) { return ok({ authed: true, agent: true, resumed: true, error: 'session_write',
+              message: `Agent key created but its durable session could not be saved: ${e?.message || e}` }); }
+          }
           let character = null;
           if (args.name && !session.body?.hasCharacter) {
             const c = await api('POST', '/v1/character', { name: args.name, referralCode: args.referralCode });
+            if (c.status !== 200) return ok({ authed: true, agent, resumed: true,
+              step: 'character', status: c.status, body: c.body, character: null, next: preCharacterNext });
             character = c.body;
           }
-          return ok({ authed: true, agent: true, resumed: true, base: BASE, session: session.body, character,
-            next: 'Call omerta_turn, choose a current action, then execute it with omerta_act. See GET /agents for the full guide.',
+          return ok({ authed: true, agent, resumed: true, base: BASE, session: session.body, character,
+            next: session.body?.hasCharacter || character
+              ? 'Call omerta_turn, choose a current action, then execute it with omerta_act. See GET /agents for the full guide.'
+              : preCharacterNext,
             extractionPrerequisites: 'Bring and SIWE-link an EVM wallet, then mint the character. Wallet linking alone is not enough; the production rail remains dormant until launch.' });
         }
-        return ok({ authed: false, resumed: false, error: 'session_expired',
-          message: 'The saved agent token is no longer valid. Refusing to create a duplicate identity automatically.', status: session.status });
+        if (session.status === 401) return ok({ authed: false, resumed: false, error: 'session_expired',
+          message: 'The saved agent token is no longer valid. Refusing to create a duplicate identity automatically; use omerta_start { reset: true } only if you intend to replace it.', status: session.status });
+        return ok({ authed: false, resumed: true, error: 'session_unavailable',
+          message: 'The saved identity could not be verified right now. Keep it and retry later.',
+          status: session.status, body: session.body });
       }
       const invite = args.inviteCode || process.env.OMERTA_INVITE;
       const guest = await api('POST', '/v1/auth/guest', invite ? { inviteCode: invite } : {});
-      if (guest.status !== 200) return ok({ step: 'guest', ...guest });
+      if (guest.status !== 200 || !guest.body?.token) return ok({ step: 'guest', ...guest });
       token = guest.body.token;
       const key = await api('POST', '/v1/auth/agent-key', {});
-      if (key.status === 200 && key.body.token) {
-        token = key.body.token; // switch to the agent token
+      if (key.status !== 200 || !key.body?.token) {
         try { writeSession(token); }
-        catch (e) { return ok({ authed: true, agent: true, error: 'session_write',
-          message: `Agent created but its durable session could not be saved: ${e?.message || e}` }); }
+        catch (e) { return ok({ authed: true, agent: false, resumed: false,
+          step: 'agent_key', status: key.status, body: key.body, error: 'session_write',
+          message: `The guest identity could not be preserved for an agent-key retry: ${e?.message || e}` }); }
+        return ok({ authed: true, agent: false, resumed: false,
+          step: 'agent_key', status: key.status, body: key.body });
       }
+      token = key.body.token; // switch to the agent token
+      try { writeSession(token); }
+      catch (e) { return ok({ authed: true, agent: true, error: 'session_write',
+        message: `Agent created but its durable session could not be saved: ${e?.message || e}` }); }
       let character = null;
       if (args.name) {
         const c = await api('POST', '/v1/character', { name: args.name, referralCode: args.referralCode });
+        if (c.status !== 200) return ok({ authed: true, agent: true, resumed: false,
+          step: 'character', status: c.status, body: c.body, character: null, next: preCharacterNext });
         character = c.body;
       }
-      return ok({ authed: true, agent: key.status === 200, resumed: false, base: BASE, character,
-        next: 'Call omerta_turn, choose a current action, then execute it with omerta_act. See GET /agents for the full guide.',
+      return ok({ authed: true, agent: true, resumed: false, base: BASE, character,
+        next: character
+          ? 'Call omerta_turn, choose a current action, then execute it with omerta_act. See GET /agents for the full guide.'
+          : preCharacterNext,
         extractionPrerequisites: 'Bring and SIWE-link an EVM wallet, then mint the character. Wallet linking alone is not enough; the production rail remains dormant until launch.' });
     }
     case 'omerta_me': return ok(await api('GET', '/v1/me'));

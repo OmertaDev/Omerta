@@ -78,6 +78,109 @@ try {
   }, 'the turn publishes the scoring policy and requires a fresh observation after every mutation');
   assert.equal(turn.body.policy.cashReserve, 1000,
     'the planner publishes the cash floor it will preserve when sizing investments');
+
+  // Guaranteed server-side reward claims belong in the same EV queue. They must be derived from
+  // the mounted boards and executed through /v1/agent/act, never reconstructed or paid by the MCP.
+  await app.pool.query('UPDATE characters SET lc_crime=1 WHERE id=$1', [turn.body.state.identity.id]);
+  const onboardTurn = (await call('GET', '/v1/agent/turn', { token })).body;
+  const onboardClaim = onboardTurn.actions.find((action) => action.id === 'reward:onboard:ob_crime');
+  assert.deepEqual({ kind: onboardClaim?.kind, method: onboardClaim?.method,
+    path: onboardClaim?.path, body: onboardClaim?.body, risk: onboardClaim?.risk }, {
+    kind: 'onboard_claim', method: 'POST', path: '/v1/onboard/ob_crime/claim',
+    body: {}, risk: { level: 'none' },
+  }, 'a ready First Week payout becomes its exact mounted, risk-free claim descriptor');
+  assert.equal(onboardClaim?.ev?.confidence, 1,
+    'a ready deterministic reward is ranked at full confidence');
+  assert.match(onboardTurn.recommendedActionId, /^reward:onboard:/,
+    'a guaranteed onboarding payout outranks the starter crime');
+  assert.equal(onboardTurn.actions.some((action) => action.id === 'reward:onboard:ob_boost'), false,
+    'an unfinished onboarding task is not executable');
+  assert.equal(onboardTurn.actions.some((action) => action.kind === 'social_claim'), false,
+    'human-only and proof-deferred social rewards are never synthesized');
+  const onboardPaid = await call('POST', '/v1/agent/act', {
+    token, idempotencyKey: 'agent-turn-onboard-claim',
+    body: { turnId: onboardTurn.turnId, actionId: onboardClaim.id },
+  });
+  assert.equal(onboardPaid.code, 200,
+    'the authoritative turn executor closes a ready onboarding reward loop');
+  assert.equal(onboardPaid.body.result.cash, 500,
+    'the executor delegates to the canonical onboarding payout');
+  assert.equal(onboardPaid.body.turn.actions.some((action) => action.id === onboardClaim.id), false,
+    'a paid onboarding action disappears from the returned replacement turn');
+
+  const accountId = (await app.pool.query('SELECT account_id FROM characters WHERE id=$1',
+    [turn.body.state.identity.id])).rows[0].account_id;
+  const identity = (await app.pool.query('SELECT auth_provider,auth_subject FROM accounts WHERE id=$1',
+    [accountId])).rows[0];
+  const socialEnv = Object.fromEntries(['SOCIAL_VERIFY_MODE', 'X_BEARER_TOKEN', 'X_TARGET_USER_ID']
+    .map((key) => [key, process.env[key]]));
+  try {
+    process.env.SOCIAL_VERIFY_MODE = 'live';
+    process.env.X_BEARER_TOKEN = 'agent-turn-test-bearer';
+    process.env.X_TARGET_USER_ID = 'agent-turn-target';
+    await app.pool.query("UPDATE accounts SET auth_provider='x',auth_subject='agent-turn-player' WHERE id=$1",
+      [accountId]);
+    const proofDeferred = (await call('GET', '/v1/agent/turn', { token })).body;
+    assert.equal(proofDeferred.actions.some((action) => action.id === 'reward:onboard:ob_x'), false,
+      'a social card whose proof is deferred to an external verifier is never executable');
+  } finally {
+    await app.pool.query('UPDATE accounts SET auth_provider=$1,auth_subject=$2 WHERE id=$3',
+      [identity.auth_provider, identity.auth_subject, accountId]);
+    for (const [key, value] of Object.entries(socialEnv)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+
+  const dailyBoard = (await call('GET', '/v1/daily', { token })).body;
+  const readyDaily = dailyBoard.jobs.find((job) => !job.blocked);
+  assert(readyDaily, 'the daily board exposes at least one structurally executable contract');
+  await app.pool.query(
+    'INSERT INTO daily_progress (character_id,day,counters,claimed) VALUES ($1,$2,$3,$4)',
+    [turn.body.state.identity.id, dailyBoard.day,
+      JSON.stringify({ [readyDaily.kind]: readyDaily.goal }), '[]']);
+  const dailyTurn = (await call('GET', '/v1/agent/turn', { token })).body;
+  const dailyClaim = dailyTurn.actions.find((action) => action.id === `reward:daily:${readyDaily.id}`);
+  assert.deepEqual({ kind: dailyClaim?.kind, method: dailyClaim?.method,
+    path: dailyClaim?.path, body: dailyClaim?.body, confidence: dailyClaim?.ev?.confidence }, {
+    kind: 'daily_claim', method: 'POST', path: `/v1/daily/${readyDaily.id}/claim`,
+    body: {}, confidence: 1,
+  }, 'a completed unblocked daily becomes its exact mounted claim descriptor');
+  const dailyPaid = await call('POST', '/v1/agent/act', {
+    token, idempotencyKey: 'agent-turn-daily-claim',
+    body: { turnId: dailyTurn.turnId, actionId: dailyClaim.id },
+  });
+  assert.equal(dailyPaid.code, 200,
+    'the authoritative turn executor closes a ready daily reward loop');
+  assert.equal(dailyPaid.body.result.payout, dailyClaim.ev.cash,
+    'the daily descriptor and canonical payout agree exactly');
+  assert.equal(dailyPaid.body.turn.actions.some((action) => action.id === dailyClaim.id), false,
+    'a paid daily action disappears from the returned replacement turn');
+
+  await app.pool.query("UPDATE characters SET path='gun' WHERE id=$1", [turn.body.state.identity.id]);
+  const careerTurn = (await call('GET', '/v1/agent/turn', { token })).body;
+  const careerClaim = careerTurn.actions.find((action) => action.id === 'reward:career:ca_path');
+  assert.deepEqual({ kind: careerClaim?.kind, method: careerClaim?.method,
+    path: careerClaim?.path, body: careerClaim?.body, cash: careerClaim?.ev?.cash }, {
+    kind: 'career_claim', method: 'POST', path: '/v1/career/ca_path', body: {}, cash: 1000,
+  }, 'a ready open career rung becomes its exact mounted claim descriptor');
+  assert.equal(careerTurn.actions.some((action) => action.id === 'reward:career:ca_strap'), false,
+    'an incomplete career rung stays outside the executable queue');
+  const careerPaid = await call('POST', '/v1/agent/act', {
+    token, idempotencyKey: 'agent-turn-career-claim',
+    body: { turnId: careerTurn.turnId, actionId: careerClaim.id },
+  });
+  assert.equal(careerPaid.code, 200,
+    'the authoritative turn executor closes a ready career reward loop');
+  assert.equal(careerPaid.body.result.pay, 1000,
+    'the executor delegates to the canonical career payout');
+  assert.equal(careerPaid.body.turn.actions.some((action) => action.id === careerClaim.id), false,
+    'a paid career action disappears from the returned replacement turn');
+  await app.pool.query(
+    'UPDATE account_persistent SET onboard=$2 WHERE account_id=(SELECT account_id FROM characters WHERE id=$1)',
+    [turn.body.state.identity.id, JSON.stringify({ ob_crime: true, ob_boost: true, ob_bank: true,
+      ob_path: true, ob_family: true, ob_wallet: true })]);
+
   await app.pool.query('UPDATE characters SET cash=5000 WHERE id=$1', [turn.body.state.identity.id]);
   const fundedTurn = (await call('GET', '/v1/agent/turn', { token })).body;
   assert.ok(fundedTurn.plans.every((plan, index, plans) => index === 0 || plans[index - 1].score >= plan.score),

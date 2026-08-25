@@ -12,6 +12,8 @@ import { territoryOf } from './territory.js';
 import { convoyBoard } from './convoy.js';
 import { loanBoard } from './loans.js';
 import { crewBoard } from './crew.js';
+import { getDaily, onboardBoard } from './growth.js';
+import { careerBoard } from './career.js';
 
 const RANKING = Object.freeze({
   method: 'cash_equivalent', cashUnit: 'dollars', respectCashValue: 25,
@@ -408,10 +410,76 @@ function organizationPlans(board) {
   };
 }
 
+function onboardingRewardActions(onboard) {
+  // Social readiness is proof-deferred to the mounted claim route. A turn must never call an
+  // external verifier (or advertise an unverified faucet) as if it were an executable payout.
+  const ready = onboard.tasks.filter((task) => !task.social && task.ready && !task.claimed);
+  const finalClaim = onboard.tasks.filter((task) => !task.claimed).length === 1;
+  return ready.map((task) => {
+    const capstone = finalClaim ? onboard.capstone : {};
+    const cash = Number(task.reward.cash || 0) + Number(capstone.cash || 0);
+    const cb = Number(task.reward.cb || 0) + Number(capstone.cb || 0);
+    const energy = Number(task.reward.en || 0) + Number(capstone.en || 0);
+    return valued({
+      id: `reward:onboard:${task.id}`, kind: 'onboard_claim',
+      label: `Claim First Week: ${task.name}`,
+      method: 'POST', path: `/v1/onboard/${task.id}/claim`, body: {}, executable: true,
+      cost: {}, reward: { cash: { gross: cash, net: cash }, cb, energy }, risk: { level: 'none' },
+    }, { cash, confidence: 1,
+      basis: 'Server First Week readiness and exact mounted claim payout; the capstone is included only for the final offered task.' });
+  });
+}
+
+function dailyRewardActions(daily, level) {
+  const ready = daily.jobs.filter((job) => !job.claimed && !job.blocked && job.progress >= job.goal);
+  const finalClaim = daily.jobs.filter((job) => !job.claimed).length === 1;
+  return ready.map((job) => {
+    const cash = 200 * level + (finalClaim ? 500 * level : 0);
+    const respect = 5 * level + (finalClaim ? 15 * level : 0);
+    return valued({
+      id: `reward:daily:${job.id}`, kind: 'daily_claim',
+      label: `Claim daily contract: ${job.name}`,
+      method: 'POST', path: `/v1/daily/${job.id}/claim`, body: {}, executable: true,
+      cost: {}, reward: { cash: { gross: cash, net: cash }, respect,
+        ...(finalClaim ? { energyRefill: true } : {}) }, risk: { level: 'none' },
+    }, { cash, respect, confidence: 1,
+      basis: 'Server Daily Contracts readiness and exact claim formula; conditional event-fund OMR is excluded from guaranteed EV.' });
+  });
+}
+
+function careerRewardActions(career) {
+  return career.tiers.flatMap((tier) => tier.open
+    ? tier.tasks.filter((task) => task.ready && !task.claimed).map((task) => {
+      const capstone = tier.done + 1 >= tier.of ? Number(tier.capstone || 0) : 0;
+      const cash = Number(task.cash || 0) + capstone;
+      return valued({
+        id: `reward:career:${task.id}`, kind: 'career_claim',
+        label: `Claim career reward: ${task.name}`,
+        method: 'POST', path: `/v1/career/${task.id}`, body: {}, executable: true,
+        cost: {}, reward: { cash: { gross: cash, net: cash },
+          ...(capstone ? { capstone } : {}) }, risk: { level: 'none' },
+      }, { cash, confidence: 1,
+        basis: 'Server Career board readiness and exact mounted payout; the capstone is included only when this claim completes the tier.' });
+    }) : []);
+}
+
+async function rewardActions(db, ch, acct, owned) {
+  const h = { accountId: ch.account_id, acct, owned };
+  const [onboard, daily, career] = await Promise.all([
+    onboardBoard(ch, h, db), getDaily(db, ch.id), careerBoard(ch, db, h),
+  ]);
+  return [
+    ...onboardingRewardActions(onboard),
+    ...dailyRewardActions(daily, levelOf(Number(ch.respect))),
+    ...careerRewardActions(career),
+  ];
+}
+
 export async function agentTurn(db, ch, acct, owned) {
   const sheet = view(ch, acct, owned);
-  const [opportunities, convoyBoardState, loanBoardState, crewBoardState] = await Promise.all([
+  const [opportunities, convoyBoardState, loanBoardState, crewBoardState, rewards] = await Promise.all([
     opportunityBoard(db, ch), convoyBoard(db, ch.id), loanBoard(db, ch), crewBoard(ch, db),
+    rewardActions(db, ch, acct, owned),
   ]);
   const crime = crimePlan(ch, owned);
   const passive = [...await businessActions(db, ch), ...await territoryActions(db, ch, owned)];
@@ -420,7 +488,7 @@ export async function agentTurn(db, ch, acct, owned) {
   const convoy = convoyPlans(ch, sheet, owned, convoyBoardState);
   const loans = loanPlans(ch, loanBoardState);
   const organization = organizationPlans(crewBoardState);
-  const actions = rankActions([...passive, ...marketActions(ch, owned, opportunities.opportunities),
+  const actions = rankActions([...rewards, ...passive, ...marketActions(ch, owned, opportunities.opportunities),
     ...arbitrage.actions, ...kitchen.actions, ...convoy.actions, ...loans.actions,
     ...organization.actions, crime]
     .filter((action) => action?.executable));

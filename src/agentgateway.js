@@ -58,7 +58,7 @@ const TAG_DESC = {
   landmarks: 'Dedicate a district plaque ($OMR flex).', safehouse: 'Go to ground (survival shield).',
   bodyguard: 'The two-party protection market.',
   session: 'Pre-character session probe.', me: 'Your full character sheet.',
-  agent: 'Autonomous turn planning: compact state, extraction readiness, wake scheduling, and executable action descriptors.',
+  agent: 'Autonomous turn planning: compact state, extraction readiness, EV-ranked loops and guaranteed earned reward claims, wake scheduling, and server-authorized execution.',
   mod: 'Moderator tools (x-mod-key header, not a player token).',
 };
 

@@ -202,8 +202,11 @@ reserve, no autonomous PvP, no autonomous borrowing) instead of hiding them.
 The v2 planner currently coordinates crime, local buy-order fills, business and
 family-territory collections, fee/travel-aware deterministic arbitrage,
 kitchen batch clocks, convoy arrivals, near-due debt repayment, and reversible
-crew recruiting visibility. A plan exposes only its currently valid next step
-as executable; later legs are intent, not permission to replay stale state.
+crew recruiting visibility. It also promotes guaranteed, already-earned First
+Week, daily-contract, and career rewards into the same EV queue; human social
+tasks and proof-deferred claims are never labeled executable. A plan exposes
+only its currently valid next step as executable; later legs are intent, not
+permission to replay stale state.
 
 | Loop | Endpoints | The optimization |
 |---|---|---|

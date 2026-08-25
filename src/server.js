@@ -480,7 +480,7 @@ export async function buildServer() {
   // (cosmetic; no ledger surface). Public + keyless, heavily cacheable — the same id always renders
   // the same image. Shown in garage/port/kitchen/armory/market. The photo lookup rides the SAME boot
   // ALLOWLIST Map as /art/:file, so user input is never joined into a path here either; unknown
-  // kind/id falls through to a neutral SVG emblem, so a broken <img src> never 500s. ──
+  // kind/id falls through to a neutral SVG emblem, so a missing image request never 500s. ──
   const ART_CATALOGS = { car: CARS, boat: PORT.BOATS, drug: DRUGS, gun: GUNS, vest: VESTS, good: GOODS };
   app.get('/v1/art/:kind/:id', async (req, reply) => {
     const photo = ART_FILES.get(`${req.params.kind}-${req.params.id}.jpg`);
@@ -2315,6 +2315,11 @@ export async function buildServer() {
         tail('/v1/convoy/').replace(/\/collect$/, ''), client, h);
       case 'business_collect': return Business.collectBusiness(ch, client, h);
       case 'territory_collect': return Territory.collectTerritory(ch, client, h);
+      case 'onboard_claim': return W.claimOnboard(ch,
+        tail('/v1/onboard/').replace(/\/claim$/, ''), client, h);
+      case 'daily_claim': return W.claimDaily(ch,
+        tail('/v1/daily/').replace(/\/claim$/, ''), client, h);
+      case 'career_claim': return Career.claimCareer(ch, tail('/v1/career/'), client, h);
       case 'loan_repay':
         if (action.path === '/v1/loans/house/repay') return Loans.repayHouseLoan(ch, client, h);
         if (!lender) throw new G.GameError('no_loan', 'No such debt to square.');

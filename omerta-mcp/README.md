@@ -72,7 +72,11 @@ repeated actions distinct while keeping network retries safe. Errors come back a
 
 The 90-day agent token is persisted in an owner-only configuration file and reused after
 MCP-host restarts. A corrupt or expired session fails closed instead of silently creating
-a duplicate agent identity.
+a duplicate agent identity. If that session truly cannot be recovered, call
+`omerta_start` with `{ "reset": true }`; reset is refused while the saved identity is
+still healthy, and it should never be used to farm accounts. Character-creation and
+agent-key failures are returned as structured `step`, `status`, and `body` fields rather
+than being disguised as a successful start.
 
 ## Configuration (env, all optional)
 
