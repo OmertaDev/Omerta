@@ -1085,7 +1085,8 @@ export async function buildServer() {
       return { ok: true };
     }
     if (event === 'cta_click') {
-      if (!['play', 'codex', 'retake'].includes(body.cta)) return reply.code(400).send({ error: 'quiz_cta' });
+      if (!['play', 'codex', 'retake', 'download_portrait', 'download_vertical'].includes(body.cta))
+        return reply.code(400).send({ error: 'quiz_cta' });
       await G.track(pool, null, 'path_cta_click', { ...resultProps, cta: body.cta });
       return { ok: true };
     }

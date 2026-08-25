@@ -19,23 +19,40 @@ assert.ok(files.includes('gameplay-01-choose-your-path.excalidraw'), 'the gamepl
 assert.ok(files.includes('path-gun-1200x630.excalidraw'), 'the Path share-card family is discoverable');
 
 for (const id of ['gun', 'ledger', 'kitchen', 'wheel', 'shadow', 'ring']) {
-  assert.ok(files.includes(`path-${id}-1200x630.excalidraw`), `${id} has an editable Excalidraw share-card source`);
-  const source = JSON.parse(readFileSync(new URL(`../docs/diagrams/path-${id}-1200x630.excalidraw`, import.meta.url), 'utf8'));
-  const canvas = source.elements.find((element) => element.id === `pc-${id}-canvas`);
-  assert.deepEqual([canvas?.width, canvas?.height], [1200, 630], `${id} has an explicit 1200×630 artboard`);
-  const copy = source.elements.filter((element) => element.type === 'text').map((element) => element.text).join(' ').toUpperCase();
   const path = PATH_MANIFEST.find((entry) => entry.id === id);
-  assert(copy.includes(path.name.toUpperCase()), `${id} card names its result`);
-  for (const effect of path.effects) assert(copy.includes(effect.display.toUpperCase()), `${id} card states ${effect.display}`);
-  for (const lane of [...path.mastery.home, ...path.mastery.rival])
-    assert(copy.includes(lane.name.toUpperCase()), `${id} card states the ${lane.name} mastery lane`);
-  const card = readFileSync(new URL(`../public/art/path-${id}-1200x630.png`, import.meta.url));
-  assert.equal(card.toString('ascii', 1, 4), 'PNG', `${id} renders as a PNG`);
-  assert.deepEqual([card.readUInt32BE(16), card.readUInt32BE(20)], [1200, 630],
-    `${id} pixels match the Open Graph width and height exactly`);
-  const fingerprint = createHash('sha256').update(card).digest('hex').slice(0, 12);
-  assert.equal(path.shareCard, `/art/path-${id}-1200x630.png?v=${fingerprint}`,
-    `${id} Open Graph URL is versioned by the current PNG bytes`);
+  const formats = [
+    { size: '1200x630', width: 1200, height: 630, canvas: `pc-${id}-canvas`, url: path.shareCard, kind: 'Open Graph' },
+    { size: '1080x1350', width: 1080, height: 1350, canvas: `pp-${id}-canvas`, url: path.socialCards.portrait, kind: 'portrait' },
+    { size: '1080x1920', width: 1080, height: 1920, canvas: `pv-${id}-canvas`, url: path.socialCards.vertical, kind: 'vertical' },
+  ];
+  for (const format of formats) {
+    const filename = `path-${id}-${format.size}`;
+    assert.ok(files.includes(`${filename}.excalidraw`), `${id} has an editable ${format.kind} Excalidraw source`);
+    const source = JSON.parse(readFileSync(new URL(`../docs/diagrams/${filename}.excalidraw`, import.meta.url), 'utf8'));
+    const canvas = source.elements.find((element) => element.id === format.canvas);
+    assert.deepEqual([canvas?.width, canvas?.height], [format.width, format.height],
+      `${id} has an explicit ${format.size} artboard`);
+    const copy = source.elements.filter((element) => element.type === 'text')
+      .map((element) => element.text).join(' ').toUpperCase();
+    assert(copy.includes(path.name.toUpperCase()), `${id} ${format.kind} card names its result`);
+    for (const effect of path.effects)
+      assert(copy.includes(effect.display.toUpperCase()), `${id} ${format.kind} card states ${effect.display}`);
+    for (const lane of [...path.mastery.home, ...path.mastery.rival])
+      assert(copy.includes(lane.name.toUpperCase()), `${id} ${format.kind} card states the ${lane.name} mastery lane`);
+    if (format.size !== '1200x630') {
+      assert(copy.includes('LVL 5') && copy.includes('150 $OMR') && copy.includes('7-DAY'),
+        `${id} ${format.kind} card states the selection and switching gates`);
+      assert(copy.includes('OMERTA.FUN/PATH'), `${id} ${format.kind} card carries the quiz destination`);
+      assert(copy.includes('THREE-MOVE'), `${id} ${format.kind} card carries an operating playbook`);
+    }
+    const card = readFileSync(new URL(`../public/art/${filename}.png`, import.meta.url));
+    assert.equal(card.toString('ascii', 1, 4), 'PNG', `${id} ${format.kind} export is a PNG`);
+    assert.deepEqual([card.readUInt32BE(16), card.readUInt32BE(20)], [format.width, format.height],
+      `${id} ${format.kind} pixels match ${format.size} exactly`);
+    const fingerprint = createHash('sha256').update(card).digest('hex').slice(0, 12);
+    assert.equal(format.url, `/art/${filename}.png?v=${fingerprint}`,
+      `${id} ${format.kind} URL is versioned by the current PNG bytes`);
+  }
 }
 
 console.log('✅ the diagram renderer discovers every supported research-sheet family');

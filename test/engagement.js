@@ -93,6 +93,8 @@ await pathPost({ event: 'start', session: 'funnel-session-one' });
 await pathPost({ event: 'complete', session: 'funnel-session-one', answers: gunAnswers });
 await pathPost({ event: 'result_view', session: 'funnel-session-one', path: 'gun', secondary: 'ring' });
 await pathPost({ event: 'cta_click', session: 'funnel-session-one', path: 'gun', cta: 'play' });
+await pathPost({ event: 'cta_click', session: 'funnel-session-one', path: 'gun', cta: 'download_portrait' });
+await pathPost({ event: 'cta_click', session: 'funnel-session-one', path: 'gun', cta: 'download_vertical' });
 await pathPost({ event: 'share', session: 'funnel-session-one', path: 'gun', channel: 'native' });
 await pathPost({ event: 'start', session: 'funnel-session-two' });
 await pathPost({ event: 'result_view', session: 'funnel-social-view', path: 'ledger', secondary: null, source: 'social' });
@@ -110,6 +112,8 @@ assert.deepEqual(r.funnels.pathQuiz, {
   resultViews: 2,
   playClicks: 1,
   codexClicks: 0,
+  portraitDownloads: 1,
+  verticalDownloads: 1,
   shares: 1,
   startToCompletePct: 50,
   resultToPlayPct: 50,

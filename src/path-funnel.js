@@ -27,6 +27,8 @@ const CONTENT = {
   gun: {
     accent: '#c14f5b',
     shareHash: '5422339430cc',
+    portraitHash: 'c67bb87c2bb4',
+    verticalHash: '86096b6b05a5',
     icon: 'CROSSHAIRS',
     archetype: 'THE ENFORCER',
     promise: 'Make the opening. Take the contract.',
@@ -54,6 +56,8 @@ const CONTENT = {
   ledger: {
     accent: '#54a174',
     shareHash: '8ed287f841aa',
+    portraitHash: '7477b66abac7',
+    verticalHash: 'c245c51f5ff5',
     icon: 'LEDGER',
     archetype: 'THE OPERATOR',
     promise: 'Turn movement into margin.',
@@ -82,6 +86,8 @@ const CONTENT = {
   kitchen: {
     accent: '#d18a45',
     shareHash: '8d5a9ee075a1',
+    portraitHash: '7adb66d08f8b',
+    verticalHash: '4f2a72e0ce78',
     icon: 'BURNER',
     archetype: 'THE CHEMIST',
     promise: 'Quality up. Heat down. Keep the batch moving.',
@@ -109,6 +115,8 @@ const CONTENT = {
   wheel: {
     accent: '#4e8eb8',
     shareHash: 'c8f8115203ee',
+    portraitHash: '5bb30d4b0d93',
+    verticalHash: '10cf9ad68b25',
     icon: 'ROUTE',
     archetype: 'THE COURIER',
     promise: 'Own the clock. Move before the city can answer.',
@@ -135,6 +143,8 @@ const CONTENT = {
   shadow: {
     accent: '#8b73bd',
     shareHash: 'f561a0eefa70',
+    portraitHash: 'ac651b07c9d3',
+    verticalHash: 'c15162f16ca4',
     icon: 'SILHOUETTE',
     archetype: 'THE GHOST',
     promise: 'Win before the fight starts.',
@@ -161,6 +171,8 @@ const CONTENT = {
   ring: {
     accent: '#c66491',
     shareHash: '4771d4accfef',
+    portraitHash: '4411cd4ad2af',
+    verticalHash: '38ef5e263065',
     icon: 'BELL',
     archetype: 'THE CONTENDER',
     promise: 'Make pressure pay.',
@@ -236,6 +248,10 @@ export const PATH_MANIFEST = Object.freeze(PATH_IDS.map((id) => {
     links: Object.freeze({ codex: '/wiki#paths', play: '/#enter-city' }),
     resultUrl: `/path/${id}`,
     shareCard: `/art/path-${id}-1200x630.png?v=${content.shareHash}`,
+    socialCards: Object.freeze({
+      portrait: `/art/path-${id}-1080x1350.png?v=${content.portraitHash}`,
+      vertical: `/art/path-${id}-1080x1920.png?v=${content.verticalHash}`,
+    }),
   });
 }));
 
