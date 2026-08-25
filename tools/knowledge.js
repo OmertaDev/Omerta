@@ -259,7 +259,7 @@ function build(options = {}) {
     const lines = text ? text.split('\n').length : null;
     const n = node('Artifact', rel, {
       label: path.posix.basename(rel), path: rel, kind, extension: ext || '(none)',
-      bytes: stat.size, lines, version, text: !!text,
+      bytes: text ? Buffer.byteLength(text, 'utf8') : stat.size, lines, version, text: !!text,
     }, { file: rel, line: 1, version });
     artifacts.push(n);
     edge('CONTAINS', `Subsystem:${subsystemFor(kind)}`, n.key, { file: rel, line: 1 });

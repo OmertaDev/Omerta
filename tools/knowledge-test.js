@@ -22,6 +22,11 @@ assert(graph.census.byNodeType.PullRequest >= 120, 'the GitHub snapshot unexpect
 for (const artifact of graph.nodes.filter((n) => n.type === 'Artifact')) {
   assert(artifact.version, `${artifact.key} has no version`);
   assert(graph.edges.some((e) => e.type === 'CONTAINS' && e.to === artifact.key), `${artifact.key} has no subsystem`);
+  if (artifact.text) {
+    const normalized = fs.readFileSync(path.join(root, artifact.path), 'utf8').replaceAll('\r\n', '\n');
+    assert.equal(artifact.bytes, Buffer.byteLength(normalized, 'utf8'),
+      `${artifact.key} byte count must not vary with checkout line endings`);
+  }
 }
 for (const edge of graph.edges) {
   assert(keys.has(edge.from), `dangling edge source ${edge.from}`);
