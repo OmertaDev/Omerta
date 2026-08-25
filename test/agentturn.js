@@ -55,6 +55,45 @@ try {
   assert.ok(turn.body.coach?.label && Array.isArray(turn.body.coachPlan), 'the turn carries the personalized coach queue');
   assert.ok(turn.body.opportunities?.summary && turn.body.opportunities?.niches,
     'the turn includes the live economic signals that previously required a second throttled read');
+  assert.ok(turn.body.exploration, 'Agent Turn v3 requires the read-only exploration sibling');
+  assert.deepEqual(turn.body.exploration.catalog, { scope: 'engagement_systems', version: 1, count: 40 },
+    'Agent Turn v3 requires the canonical coverage catalog as a read-only sibling');
+  assert.equal(turn.body.exploration.next?.systemId, 'streets-crime',
+    'a fresh agent sees exactly one eligible unvisited exploration system');
+  for (const key of ['id', 'kind', 'method', 'path', 'body', 'executable', 'score', 'rank', 'ev', 'cost', 'reward', 'risk']) {
+    assert.equal(key in turn.body.exploration.next, false,
+      `exploration never leaks the executable/EV field ${key}`);
+  }
+  assert.equal(turn.body.actions.some((action) => action.id === turn.body.exploration.next.systemId), false,
+    'the exploration recommendation is never inserted into the executable action queue');
+
+  // Account visit evidence is deliberately outside turn authority. Mutating telemetry changes the
+  // read-only recommendation while preserving every action descriptor, rank, score, turn id, and EV recommendation.
+  const coverageBaseline = (await call('GET', '/v1/agent/turn', { token })).body;
+  const turnAccountId = (await app.pool.query('SELECT account_id FROM characters WHERE id=$1',
+    [turn.body.state.identity.id])).rows[0].account_id;
+  await app.pool.query(
+    "INSERT INTO telemetry (id,account_id,event,props) VALUES ('agent-turn-explore-visit',$1,'crime_attempt','{}')",
+    [turnAccountId]);
+  const exploredTurn = (await call('GET', '/v1/agent/turn', { token })).body;
+  assert.equal(exploredTurn.exploration.progress.visited, coverageBaseline.exploration.progress.visited + 1,
+    'classified telemetry advances exploration coverage');
+  assert.notDeepEqual(exploredTurn.exploration, coverageBaseline.exploration,
+    'visit evidence changes the exploration sibling');
+  assert.deepEqual(exploredTurn.actions, coverageBaseline.actions,
+    'visit evidence cannot change action descriptors, ranks, scores, or EV');
+  assert.equal(exploredTurn.recommendedActionId, coverageBaseline.recommendedActionId,
+    'visit evidence cannot change the EV recommendation');
+  assert.equal(exploredTurn.turnId, coverageBaseline.turnId,
+    'exploration is omitted from the authority fingerprint');
+  const explorationRejected = await call('POST', '/v1/agent/act', {
+    token, idempotencyKey: 'agent-turn-exploration-rejected',
+    body: { turnId: exploredTurn.turnId, actionId: coverageBaseline.exploration.next.systemId },
+  });
+  assert.equal(explorationRejected.code, 400,
+    'the canonical executor refuses an exploration system id');
+  assert.equal(explorationRejected.body.error, 'unknown_action',
+    'an exploration id receives the ordinary stable unknown-action refusal');
 
   const crime = turn.body.actions.find((a) => a.kind === 'crime');
   assert.deepEqual({ method: crime?.method, path: crime?.path, body: crime?.body, executable: crime?.executable }, {
@@ -355,6 +394,8 @@ try {
     'organization growth is represented in the same plan contract as economic loops');
   assert.equal(openRecruiting.ev.cash, 0,
     'organization maintenance is not disguised as monetary expected value');
+  const activationBefore = Number((await app.pool.query(
+    "SELECT COUNT(*) n FROM telemetry WHERE account_id=$1 AND event='agent_turn_action'", [agentAccount])).rows[0].n);
   const acted = await call('POST', '/v1/agent/act', {
     token, idempotencyKey: 'agent-turn-crew-open',
     body: { turnId: crewTurn.turnId, actionId: openRecruiting.id },
@@ -368,6 +409,24 @@ try {
     'a successful mutation returns a fresh, invalidated post-action turn in the same response');
   assert.equal(acted.body.turn.actions.some((action) => action.id === openRecruiting.id), false,
     'the returned post-action turn cannot replay a completed organization step');
+  const activationRows = (await app.pool.query(
+    "SELECT props FROM telemetry WHERE account_id=$1 AND event='agent_turn_action'", [agentAccount])).rows;
+  assert.equal(activationRows.length, activationBefore + 1,
+    'one successful canonical action writes exactly one activation event inside its transaction');
+  const activation = typeof activationRows.at(-1).props === 'string'
+    ? JSON.parse(activationRows.at(-1).props) : activationRows.at(-1).props;
+  assert.deepEqual(Object.keys(activation).sort(),
+    ['actionKind', 'blockerCodes', 'explorationSystemId', 'recommended', 'remaining', 'visited'].sort(),
+    'activation telemetry contains only the six allowed non-identifying properties');
+  assert.deepEqual(activation, {
+    actionKind: 'crew_recruiting',
+    recommended: crewTurn.recommendedActionId === openRecruiting.id,
+    explorationSystemId: crewTurn.exploration.next?.systemId || null,
+    visited: crewTurn.exploration.progress.visited,
+    remaining: crewTurn.exploration.progress.remaining,
+    blockerCodes: [...new Set(crewTurn.blockedActions.flatMap((action) =>
+      (action.blockedBy || []).map((blocker) => blocker.code)).filter(Boolean))].sort(),
+  }, 'activation evidence is derived from the authorized pre-action turn without IDs or authored data');
   const stale = await call('POST', '/v1/agent/act', {
     token, idempotencyKey: 'agent-turn-stale-replay',
     body: { turnId: crewTurn.turnId, actionId: openRecruiting.id },
@@ -382,6 +441,9 @@ try {
   });
   assert.equal(unknown.code, 400, 'a matching turn cannot authorize an action id it never issued');
   assert.equal(unknown.body.error, 'unknown_action', 'unknown action ids use a stable machine error code');
+  assert.equal(Number((await app.pool.query(
+    "SELECT COUNT(*) n FROM telemetry WHERE account_id=$1 AND event='agent_turn_action'", [agentAccount])).rows[0].n),
+  activationBefore + 1, 'stale and unknown execution attempts write no activation telemetry');
   await app.pool.query("DELETE FROM crew_members WHERE crew_id='agent-crew'");
   await app.pool.query("DELETE FROM crews WHERE id='agent-crew'");
 
@@ -426,8 +488,17 @@ try {
     'multi-step plans have a strict reusable OpenAPI contract');
   assert.deepEqual(openapi.components.schemas.AgentTurn.required,
     ['turnId', 'observedAt', 'state', 'extraction', 'policy', 'ranking', 'recommendedActionId',
-      'actions', 'blockedActions', 'plans', 'nextWakeAt', 'opportunities'],
-    'the v2 response requires policy, ranking, recommendation, and plans');
+      'actions', 'blockedActions', 'plans', 'nextWakeAt', 'opportunities', 'exploration'],
+    'the v3 response requires policy, ranking, recommendation, plans, and read-only exploration');
+  assert.equal(openapi.components.schemas.AgentTurn.properties.exploration.$ref,
+    '#/components/schemas/AgentExploration', 'Agent Turn references the strict exploration schema');
+  assert.deepEqual(openapi.components.schemas.AgentExploration.required,
+    ['catalog', 'progress', 'next', 'blocked'], 'the exploration payload has a strict reusable contract');
+  const explorationNext = openapi.components.schemas.AgentExplorationNext;
+  for (const key of ['method', 'path', 'body', 'executable', 'score', 'rank', 'ev']) {
+    assert.equal(Object.hasOwn(explorationNext.properties, key), false,
+      `OpenAPI exploration does not advertise the executable/EV field ${key}`);
+  }
   const actOperation = openapi.paths['/v1/agent/act'].post;
   assert.equal(actOperation.operationId, 'executeAgentTurnAction',
     'server-enforced turn execution has a stable OpenAPI operation id');

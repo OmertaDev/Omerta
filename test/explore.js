@@ -1,82 +1,179 @@
-// STILL ON THE TABLE — the cross-system pull: systems you've UNLOCKED by level and never touched.
+// DEEP CITY COVERAGE — one canonical recommendation over engagement's exact 40-system vocabulary.
 //
-// The centre of the test: a fresh street at a high level has unlocked many systems and TRIED none of
-// them (so they're all "on the table"); engaging one — a single mastery-track XP row, the same signal
-// the board reads — drops it from the untapped list and ticks the explorer tally. Pure read: a GET
-// moves NO value (no ledger row) — the whole feature is §10.4-free by construction.
+// Each assertion protects an observable contract: catalog drift, recommendation grids, per-system
+// telemetry reads, lost account-history evidence, dishonest eligibility, or a read that moves value.
 import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
-import { SYSTEMS, exploreBoard } from '../src/explore.js';
+import { SYSTEMS as ENGAGEMENT_SYSTEMS } from '../src/engagement.js';
+import * as Explore from '../src/explore.js';
 import { levelOf } from '../src/rules.js';
 
+const { SYSTEMS } = Explore;
+
+const expectedCatalog = [
+  ['streets / crime', 'streets-crime', 1, 'streets'],
+  ['the kitchen', 'kitchen', 8, 'kitchen'],
+  ['wet work', 'wet-work', 22, 'pvp'],
+  ['contracts', 'contracts', 22, 'pvp'],
+  ['the dueling ladder', 'dueling-ladder', 22, 'pvp'],
+  ['crew heists', 'crew-heists', 9, 'scores'],
+  ['clue scrolls', 'clue-scrolls', 3, 'streets'],
+  ['the family', 'family', 3, 'family'],
+  ['the commission', 'commission', 20, 'family'],
+  ['territory', 'territory', 15, 'map'],
+  ['the world', 'world', 18, 'family'],
+  ['the blood war', 'blood-war', 20, 'family'],
+  ['business empire', 'business-empire', 3, 'empire'],
+  ['convoys', 'convoys', 24, 'scores'],
+  ['the port', 'port', 16, 'port'],
+  ['the black market', 'black-market', 7, 'market'],
+  ['loan sharking', 'loan-sharking', 10, 'loans'],
+  ['the casino', 'casino', 10, 'den'],
+  ['the speakeasy', 'speakeasy', 26, 'speakeasy'],
+  ['boxing', 'boxing', 12, 'boxing'],
+  ['street races', 'street-races', 14, 'races'],
+  ['the stable', 'stable', 25, 'stable'],
+  ['the law', 'law', 18, 'law'],
+  ['the pen', 'pen', 1, 'pen'],
+  ['the wire', 'wire', 18, 'wire'],
+  ['secrets', 'secrets', 18, 'wire'],
+  ['skills', 'skills', 4, 'life'],
+  ['the underworld', 'underworld', 3, 'life'],
+  ['the estate', 'estate', 30, 'estate'],
+  ['the made man', 'made-man', 26, 'portfolio'],
+  ['the auction house', 'auction-house', 30, 'estate'],
+  ['the collection', 'collection', 20, 'estate'],
+  ['going legit', 'going-legit', 15, 'portfolio'],
+  ['the megaproject', 'megaproject', 28, 'city'],
+  ['street life', 'street-life', 3, 'streets'],
+  ['landmarks', 'landmarks', 12, 'city'],
+  ['street deeds', 'street-deeds', 15, 'deeds'],
+  ['vanity', 'vanity', 5, 'profile'],
+  ['the store / pass', 'store-pass', 1, 'store'],
+  ['growth / social', 'growth-social', 3, 'discover'],
+];
+
+assert.deepEqual(Object.keys(ENGAGEMENT_SYSTEMS), expectedCatalog.map(([system]) => system),
+  'the engagement vocabulary remains the exact ordered 40-system source of truth');
+assert.equal(typeof Explore.systemCoverage, 'function', 'coverage exposes the canonical async resolver');
+assert.deepEqual(SYSTEMS.map(({ system, systemId, at, tab }) => [system, systemId, at, tab]), expectedCatalog,
+  'coverage metadata maps every engagement system to the exact canonical id, gate, and destination');
+assert.equal(new Set(SYSTEMS.map((entry) => entry.systemId)).size, 40,
+  'every coverage system id is unique');
+
+const respectForLevel = (level) => { let respect = 0; while (levelOf(respect) < level) respect += 25; return respect; };
+const ch = (level, extra = {}) => ({ id: 'char-me', account_id: 'acct-me', respect: respectForLevel(level),
+  cash: 0, loc: 'brick', lab: null, jail_until: null, wanted_until: null, indicted_at: null, ...extra });
+const owned = (extra = {}) => ({ rackets: [], assets: [], businesses: [], fighters: [], cars: [], cargo: {},
+  skills: new Set(), mastery: {}, npc: {}, work: {}, held: [], ...extra });
+const acct = (extra = {}) => ({ agent_flag: false, omr: 0, ...extra });
+
+const eventsExcept = (...systems) => Object.entries(ENGAGEMENT_SYSTEMS)
+  .filter(([system]) => !systems.includes(system))
+  .map(([, events]) => ({ event: events[0], count: 1 }));
+const fakeDb = (rows = []) => {
+  const queries = [];
+  return {
+    queries,
+    async query(sql, params) { queries.push({ sql, params }); return { rows }; },
+  };
+};
+
+// A blank account gets exactly one solo recommendation. The literal expected card catches a second
+// choice, an executable/EV field leaking in, or drift from the published canonical sample.
+let db = fakeDb();
+let coverage = await Explore.systemCoverage(db, ch(3, { cash: 12500 }), acct(), owned());
+assert.deepEqual(coverage.catalog, { scope: 'engagement_systems', version: 1, count: 40 });
+assert.deepEqual(coverage.progress, { visited: 0, eligible: 2, remaining: 40 });
+assert.deepEqual(coverage.next, {
+  systemId: 'streets-crime', system: 'streets / crime', name: 'The Streets', tab: 'streets',
+  hook: 'Work a street crime — the city\'s first cash-and-respect loop.', at: 1, mode: 'solo',
+  reason: 'earliest_overdue_unlock', evidence: { visited: false, source: null },
+});
+assert.deepEqual(Object.keys(coverage.blocked).sort(), ['level', 'policy', 'resource', 'social', 'status']);
+assert.equal(Object.values(coverage.blocked).reduce((sum, count) => sum + count) + coverage.progress.eligible,
+  coverage.progress.remaining, 'every unvisited system is classified exactly once as ready or blocked');
+assert.equal(db.queries.length, 1, 'coverage reads account telemetry in one query, not once per system');
+assert.match(db.queries[0].sql, /GROUP BY event/i, 'the sole telemetry read is grouped by event');
+assert.deepEqual(db.queries[0].params, ['acct-me'], 'telemetry is scoped to the current account');
+
+// Telemetry survives character death and takes precedence as account-level visit evidence. Once the
+// streets event exists, the ready solo Empire card beats same-level social/organization work.
+db = fakeDb([{ event: 'crime_attempt', count: 7 }]);
+coverage = await Explore.systemCoverage(db, ch(3, { cash: 12500 }), acct(), owned(), {
+  onlineAccounts: [{ accountId: 'other', gangId: 'family-1' }],
+});
+assert.equal(coverage.progress.visited, 1);
+assert.equal(coverage.next.systemId, 'business-empire');
+assert.deepEqual(coverage.next.evidence, { visited: false, source: null });
+
+// The old Explore ownership/mastery/legend predicates remain valid durable evidence, even without a
+// telemetry row. These two state signals cover the old Empire and Kitchen predicates.
+db = fakeDb(eventsExcept('business empire', 'the kitchen', 'crew heists'));
+coverage = await Explore.systemCoverage(db, ch(30, { cash: 10_000_000, lab: 'bathtub' }), acct({ smuggled: 1 }),
+  owned({ rackets: ['laundro'], crewId: 'crew-1', mastery: { chemistry: 40 } }));
+assert.equal(coverage.progress.visited, 40, 'durable state evidence supplements telemetry without replacing it');
+assert.equal(coverage.progress.remaining, 0);
+assert.equal(coverage.next, null);
+
+// Resource, status, and organization contexts are blockers until their real condition is true.
+db = fakeDb(eventsExcept('the kitchen'));
+coverage = await Explore.systemCoverage(db, ch(8), acct(), owned());
+assert.equal(coverage.next, null);
+assert.deepEqual(coverage.blocked, { level: 0, resource: 1, status: 0, social: 0, policy: 0 });
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('the kitchen')), ch(8, { cash: 20000 }), acct(), owned());
+assert.equal(coverage.next.systemId, 'kitchen');
+
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('the pen')), ch(30), acct(), owned());
+assert.equal(coverage.next, null);
+assert.equal(coverage.blocked.status, 1);
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('the pen')),
+  ch(30, { jail_until: new Date(Date.now() + 60_000) }), acct(), owned());
+assert.equal(coverage.next.systemId, 'pen');
+
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('territory')), ch(30), acct(), owned());
+assert.equal(coverage.next, null);
+assert.equal(coverage.blocked.social, 1);
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('territory')), ch(30), acct(), owned({ gangId: 'gang-1' }));
+assert.equal(coverage.next.systemId, 'territory');
+assert.equal(coverage.next.mode, 'organization');
+
+// Agent policy is conservative and exhaustive: a human with a live counterparty can receive wet work;
+// an agent with the same state cannot, and receives no fallback choice.
+const liveCounterparty = { onlineAccounts: [{ accountId: 'other', characterId: 'target', loc: 'brick' }] };
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('wet work')), ch(30, { cash: 10_000_000 }), acct(), owned(), liveCounterparty);
+assert.equal(coverage.next.systemId, 'wet-work');
+assert.equal(coverage.next.mode, 'social');
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('wet work')), ch(30, { cash: 10_000_000 }),
+  acct({ agent_flag: true }), owned(), liveCounterparty);
+assert.equal(coverage.next, null, 'agent policy never substitutes a forbidden proactive system');
+assert.deepEqual(coverage.blocked, { level: 0, resource: 0, status: 0, social: 0, policy: 1 });
+
+// Route integration: account telemetry changes the recommendation, the response never becomes a grid,
+// and repeated reads append no economic ledger rows.
 const app = await buildServer();
 const pool = app.pool;
 const call = async (method, url, { token, body } = {}) => {
   const res = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
   return { code: res.statusCode, body: res.json() };
 };
-const mk = async (name) => {
-  const { body: { token } } = await call('POST', '/v1/auth/guest');
-  await call('POST', '/v1/character', { token, body: { name } });
-  const me = (await call('GET', '/v1/me', { token })).body.character;
-  return { token, id: me.id, name };
-};
-const idOf = async (cid) => (await pool.query('SELECT id FROM characters WHERE id=$1', [cid])).rows[0].id;
-// respect needed to sit at exactly level L (the levelOf inverse: floor(sqrt(respect/DIV))+1)
-const respectForLevel = (L) => { let r = 0; while (levelOf(r) < L) r += 25; return r; };
-const board = async (token) => (await call('GET', '/v1/explore', { token })).body;
-const txnCount = async () => Number((await pool.query('SELECT count(*) c FROM transactions')).rows[0].c);
+const { body: { token } } = await call('POST', '/v1/auth/guest');
+await call('POST', '/v1/character', { token, body: { name: 'Coverage Connie' } });
+const me = (await call('GET', '/v1/me', { token })).body.character;
+await pool.query('UPDATE characters SET respect=$2, cash=$3 WHERE id=$1', [me.id, respectForLevel(3), 12500]);
+let routeBoard = (await call('GET', '/v1/explore', { token })).body;
+assert.equal(routeBoard.next.systemId, 'streets-crime');
+assert.ok(!('untapped' in routeBoard), 'coverage returns one next recommendation, never the old choice grid');
+const accountId = (await pool.query('SELECT account_id FROM characters WHERE id=$1', [me.id])).rows[0].account_id;
+await pool.query("INSERT INTO telemetry (id,account_id,event,props) VALUES ('coverage-crime',$1,'crime_attempt','{}')", [accountId]);
+routeBoard = (await call('GET', '/v1/explore', { token })).body;
+assert.equal(routeBoard.next.systemId, 'business-empire', 'account telemetry changes the next recommendation');
+const before = Number((await pool.query('SELECT count(*) c FROM transactions')).rows[0].c);
+await call('GET', '/v1/explore', { token });
+await call('GET', '/v1/explore', { token });
+const after = Number((await pool.query('SELECT count(*) c FROM transactions')).rows[0].c);
+assert.equal(after, before, 'reading coverage writes zero ledger rows');
 
-// ════════════ a fresh street below every gate — nothing unlocked, so nothing on the table ════════════
-const rookie = await mk('Fresh Fish');
-let b = await board(rookie.token);
-assert.equal(b.progress.unlocked, 0, 'a level-1 street has unlocked no systems yet');
-assert.deepEqual(b.untapped, [], 'so nothing is on the table');
-assert.equal(b.allTried, false, 'and allTried is false when nothing is even unlocked');
-
-// `allTried` is about the systems currently OPEN, never the full finite catalog. At level 3 this
-// street has three featured systems open; touching those three earns the all-clear even though the
-// catalog documents many later systems. The client copy must make this same scope clear.
-const earlyAllClear = exploreBoard({ respect: respectForLevel(3) }, {}, {
-  gangId: 'family', rackets: [{}], crewId: 'crew',
-});
-assert.equal(earlyAllClear.catalog.count, SYSTEMS.length, 'the featured catalog still documents all later entries');
-assert.equal(earlyAllClear.progress.unlocked, 3, 'only the three level-3 featured systems are currently open');
-assert.equal(earlyAllClear.allTried, true, 'trying those currently open systems earns the all-clear');
-
-// ════════════ level 30 — every system unlocked, none touched: the whole city on the table ════════════
-const p = await mk('The Explorer');
-await pool.query('UPDATE characters SET respect=$2 WHERE id=$1', [p.id, respectForLevel(30)]);
-b = await board(p.token);
-const total = SYSTEMS.length;
-assert.deepEqual(b.catalog, { scope: 'featured_systems', count: total },
-  'Explore identifies this finite list as a featured-system catalog, with its count');
-assert.equal(b.progress.unlocked, total, `at level 30 all ${total} systems are unlocked`);
-assert.equal(b.progress.tried, 0, 'a fresh street has tried none of them');
-assert.equal(b.progress.remaining, total, 'so all of them are on the table');
-assert.equal(b.untapped.length, total, 'the untapped grid carries every one');
-assert.equal(b.allTried, false, 'not an all-clear yet');
-// the earliest-unlocked system leads (most overdue first)
-assert.ok(b.untapped[0].at <= b.untapped[b.untapped.length - 1].at, 'ordered by unlock level, earliest first');
-// every entry is well-formed (a hook + a tab to jump to)
-for (const s of b.untapped) { assert.ok(s.name && s.hook && s.tab, `entry ${s.id} is well-formed`); }
-// the Kitchen (a mastery-tracked system) is on the table for a street that's never cooked
-assert.ok(b.untapped.some((s) => s.id === 'kitchen'), 'the Kitchen is on the table before any cook');
-
-// ════════════ engaging a system drops it — the mastery XP the board reads is the signal ════════════
-// one row of chemistry XP is exactly what `seen` reads for the Kitchen (via loadOwned's mastery map).
-await pool.query('INSERT INTO masteries (character_id, track_id, xp) VALUES ($1,$2,$3)', [await idOf(p.id), 'chemistry', 40]);
-b = await board(p.token);
-assert.ok(!b.untapped.some((s) => s.id === 'kitchen'), 'the Kitchen leaves the table once you\'ve cooked');
-assert.equal(b.progress.tried, 1, 'the explorer tally ticks to 1 tried');
-assert.equal(b.progress.remaining, total - 1, 'one fewer on the table');
-
-// ════════════ §10.4 — a GET moves NO value (no ledger row): the feature is pure read ════════════
-const before = await txnCount();
-await board(p.token);
-await board(p.token);
-assert.equal(await txnCount(), before, 'reading the board writes zero transactions rows');
-
-console.log('explore: STILL ON THE TABLE ok');
+console.log('explore: canonical 40-system coverage ok');
 await app.close();
 process.exit(0);

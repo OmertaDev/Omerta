@@ -145,10 +145,45 @@ const AGENT_SCHEMAS = {
       availableAt: { type: 'string', format: 'date-time' },
     },
   },
+  AgentExplorationNext: {
+    type: 'object', additionalProperties: false,
+    required: ['systemId', 'system', 'name', 'tab', 'hook', 'at', 'mode', 'reason', 'evidence'],
+    properties: {
+      systemId: { type: 'string' }, system: { type: 'string' }, name: { type: 'string' },
+      tab: { type: 'string' }, hook: { type: 'string' }, at: { type: 'integer', minimum: 1 },
+      mode: { type: 'string', enum: ['solo', 'organization', 'social'] },
+      reason: { type: 'string', enum: ['earliest_overdue_unlock'] },
+      evidence: { type: 'object', additionalProperties: false, required: ['visited', 'source'], properties: {
+        visited: { type: 'boolean', const: false }, source: { type: 'null' },
+      } },
+    },
+  },
+  AgentExploration: {
+    type: 'object', additionalProperties: false,
+    required: ['catalog', 'progress', 'next', 'blocked'],
+    properties: {
+      catalog: { type: 'object', additionalProperties: false, required: ['scope', 'version', 'count'], properties: {
+        scope: { type: 'string', const: 'engagement_systems' }, version: { type: 'integer', const: 1 },
+        count: { type: 'integer', const: 40 },
+      } },
+      progress: { type: 'object', additionalProperties: false, required: ['visited', 'eligible', 'remaining'], properties: {
+        visited: { type: 'integer', minimum: 0, maximum: 40 },
+        eligible: { type: 'integer', minimum: 0, maximum: 40 },
+        remaining: { type: 'integer', minimum: 0, maximum: 40 },
+      } },
+      next: { oneOf: [{ $ref: '#/components/schemas/AgentExplorationNext' }, { type: 'null' }] },
+      blocked: { type: 'object', additionalProperties: false,
+        required: ['level', 'resource', 'status', 'social', 'policy'], properties: {
+          level: { type: 'integer', minimum: 0 }, resource: { type: 'integer', minimum: 0 },
+          status: { type: 'integer', minimum: 0 }, social: { type: 'integer', minimum: 0 },
+          policy: { type: 'integer', minimum: 0 },
+        } },
+    },
+  },
   AgentTurn: {
     type: 'object', additionalProperties: false,
     required: ['turnId', 'observedAt', 'state', 'extraction', 'policy', 'ranking', 'recommendedActionId',
-      'actions', 'blockedActions', 'plans', 'nextWakeAt', 'opportunities'],
+      'actions', 'blockedActions', 'plans', 'nextWakeAt', 'opportunities', 'exploration'],
     properties: {
       turnId: { type: 'string', pattern: '^turn_[0-9a-f]{64}$' },
       observedAt: { type: 'string', format: 'date-time' }, state: { type: 'object' },
@@ -163,6 +198,7 @@ const AGENT_SCHEMAS = {
       blockedActions: { type: 'array', items: { $ref: '#/components/schemas/AgentAction' } },
       plans: { type: 'array', items: { $ref: '#/components/schemas/AgentPlan' } },
       nextWakeAt: { type: ['string', 'null'], format: 'date-time' }, opportunities: { type: 'object' },
+      exploration: { $ref: '#/components/schemas/AgentExploration' },
     },
   },
   AgentActReceipt: {

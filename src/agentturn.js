@@ -14,6 +14,7 @@ import { loanBoard } from './loans.js';
 import { crewBoard } from './crew.js';
 import { getDaily, onboardBoard } from './growth.js';
 import { careerBoard } from './career.js';
+import { systemCoverage } from './explore.js';
 
 const RANKING = Object.freeze({
   method: 'cash_equivalent', cashUnit: 'dollars', respectCashValue: 25,
@@ -475,11 +476,12 @@ async function rewardActions(db, ch, acct, owned) {
   ];
 }
 
-export async function agentTurn(db, ch, acct, owned) {
+export async function agentTurn(db, ch, acct, owned, { onlineAccounts = [] } = {}) {
   const sheet = view(ch, acct, owned);
-  const [opportunities, convoyBoardState, loanBoardState, crewBoardState, rewards] = await Promise.all([
+  const [opportunities, convoyBoardState, loanBoardState, crewBoardState, rewards, exploration] = await Promise.all([
     opportunityBoard(db, ch), convoyBoard(db, ch.id), loanBoard(db, ch), crewBoard(ch, db),
     rewardActions(db, ch, acct, owned),
+    systemCoverage(db, ch, acct, owned, { onlineAccounts }),
   ]);
   const crime = crimePlan(ch, owned);
   const passive = [...await businessActions(db, ch), ...await territoryActions(db, ch, owned)];
@@ -523,6 +525,7 @@ export async function agentTurn(db, ch, acct, owned) {
     nextWakeAt: actions.length || !(futureClocks.length || blockedClocks.length)
       ? null : new Date(Math.min(...futureClocks, ...blockedClocks)).toISOString(),
     opportunities,
+    exploration,
   };
   // A turn is authority, not just advice. Fingerprint only the state and descriptors that govern
   // execution: wall-clock presentation fields (observedAt, dueSeconds, wake estimates) must not make

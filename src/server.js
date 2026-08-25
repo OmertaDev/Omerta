@@ -868,6 +868,10 @@ export async function buildServer() {
   // ban left an already-open socket feeding streets/gang chatter until the client chose to disconnect,
   // falsifying the documented "banned-WS close" guarantee. The ban handler closes every open socket.
   const wsClients = new Map(); // accountId -> Set<socket>
+  // Coverage needs the same human-only presence boundary as Collision/Discovery. Keep only the
+  // already-read classification/context beside the socket registry; no new presence query enters
+  // the Agent Turn polling path and no account/character id is returned to a client.
+  const wsCoverage = new Map(); // accountId -> { accountId, characterId, loc, gangId, agent, npc }
   // close every live socket for an account (its own 'close' handler tears down the bus subs + registry)
   const closeAccountSockets = (accountId, code, reason) => {
     const s = wsClients.get(accountId); if (!s) return;
@@ -1193,6 +1197,8 @@ export async function buildServer() {
   // exclusion) and mints a token the rate limiter throttles at 1 action / 3 s.
   app.post('/v1/auth/agent-key', { preHandler: auth }, async (req) => {
     await pool.query('UPDATE account_persistent SET agent_flag=true WHERE account_id=$1', [req.user.sub]);
+    const presence = wsCoverage.get(req.user.sub);
+    if (presence) presence.agent = true;
     return { token: await signFor(req.user.sub, { agent: true }, '90d'), agent: true };
   });
   // BLUE-TEAM M3: self-serve "log out everywhere" — bump the account's token_version, which invalidates
@@ -2294,7 +2300,7 @@ export async function buildServer() {
       turnContext: { ch, acct: h.acct, owned: h.owned },
     }));
     const { ch, acct, owned } = observed.turnContext;
-    return agentTurn(pool, ch, acct, owned);
+    return agentTurn(pool, ch, acct, owned, { onlineAccounts: [...wsCoverage.values()] });
   };
   app.get('/v1/agent/turn', { preHandler: auth }, async (req) => readAgentTurn(req.user.sub));
 
@@ -2330,12 +2336,30 @@ export async function buildServer() {
     }
   };
   const authorizeAgentAction = async (client, ch, h, turnId, actionId) => {
-    const current = await agentTurn(client, ch, h.acct, h.owned);
+    const current = await agentTurn(client, ch, h.acct, h.owned, { onlineAccounts: [...wsCoverage.values()] });
     if (current.turnId !== turnId) throw new AgentTurnConflict();
     const action = current.actions.find((candidate) => candidate.id === actionId);
     if (!action) throw new G.GameError('unknown_action',
       'That action was not issued by this turn. Refresh and choose a current executable action.');
-    return action;
+    return { action, current };
+  };
+  const executeAgentAction = async (client, ch, h, turnId, actionId, lender = null) => {
+    const { action, current } = await authorizeAgentAction(client, ch, h, turnId, actionId);
+    const result = await performAgentAction(action, ch, client, h, lender);
+    const blockerCodes = [...new Set(current.blockedActions.flatMap((candidate) =>
+      (candidate.blockedBy || []).map((blocker) => blocker.code)).filter(Boolean))].sort();
+    // Operational evidence belongs to the same transaction as the canonical mutation. A thrown
+    // domain action, stale turn, or unknown id never reaches this write; any later rollback removes
+    // both. Props are a fixed server-authored vocabulary with no ids, descriptors, or authored data.
+    await G.track(client, ch.account_id, 'agent_turn_action', {
+      actionKind: action.kind,
+      recommended: current.recommendedActionId === action.id,
+      explorationSystemId: current.exploration.next?.systemId || null,
+      visited: current.exploration.progress.visited,
+      remaining: current.exploration.progress.remaining,
+      blockerCodes,
+    });
+    return result;
   };
   app.post('/v1/agent/act', { preHandler: auth }, async (req, reply) => {
     const turnId = typeof req.body?.turnId === 'string' ? req.body.turnId : '';
@@ -2352,21 +2376,18 @@ export async function buildServer() {
           "SELECT lender_character FROM loans WHERE id=$1 AND status='active'", [loanMatch[1]])).rows[0]?.lender_character;
         if (lenderId) {
           result = await G.withTwoCharacters(pool, req.user.sub, lenderId, async (ch, lender, client, h) => {
-            const action = await authorizeAgentAction(client, ch, h, turnId, actionId);
-            return performAgentAction(action, ch, client, h, lender);
+            return executeAgentAction(client, ch, h, turnId, actionId, lender);
           });
         } else {
           // Re-enter the normal locked validator so a disappeared loan reports stale_turn (or an
           // invented id reports unknown_action), rather than leaking an unrelated lookup result.
           result = await G.withCharacter(pool, req.user.sub, async (ch, client, h) => {
-            const action = await authorizeAgentAction(client, ch, h, turnId, actionId);
-            return performAgentAction(action, ch, client, h);
+            return executeAgentAction(client, ch, h, turnId, actionId);
           });
         }
       } else {
         result = await G.withCharacter(pool, req.user.sub, async (ch, client, h) => {
-          const action = await authorizeAgentAction(client, ch, h, turnId, actionId);
-          return performAgentAction(action, ch, client, h);
+          return executeAgentAction(client, ch, h, turnId, actionId);
         });
       }
     } catch (e) {
@@ -2547,10 +2568,13 @@ export async function buildServer() {
       // the same token reconnected instantly, so that half was defeated by one reconnect. Same
       // grandfathering rule as both preHandlers — a token with NO `tv` claim predates the feature and
       // ages out within its TTL, so a deploy never mass-disconnects.
-      const acct = (await pool.query('SELECT status, token_version FROM accounts WHERE id=$1', [accountId])).rows[0];
+      const acct = (await pool.query(
+        `SELECT a.status, a.token_version, COALESCE(ap.agent_flag,false) AS agent,
+                COALESCE(ap.npc_flag,false) AS npc
+           FROM accounts a LEFT JOIN account_persistent ap ON ap.account_id=a.id WHERE a.id=$1`, [accountId])).rows[0];
       if (!acct || acct.status === 'banned') { socket.close(4003, 'banned'); return; }
       if (tokenTv !== undefined && Number(tokenTv) !== Number(acct.token_version)) { socket.close(4008, 'token_revoked'); return; }
-      const me = (await pool.query('SELECT id FROM characters WHERE account_id=$1 AND alive', [accountId])).rows[0];
+      const me = (await pool.query('SELECT id, loc, is_npc FROM characters WHERE account_id=$1 AND alive', [accountId])).rows[0];
       if (!me) { socket.close(4004, 'no_character'); return; }
       const gm = (await pool.query('SELECT gang_id FROM gang_members WHERE character_id=$1', [me.id])).rows[0];
       const cm = (await pool.query('SELECT crew_id FROM crew_members WHERE account_id=$1', [accountId])).rows[0];
@@ -2564,6 +2588,8 @@ export async function buildServer() {
       if (cm?.crew_id) subs.push([`crew:${cm.crew_id}`, send('crew')]); // THE CREW ROOM — the small-group live feed
       for (const [ev, fn] of subs) G.bus.on(ev, fn);
       let set = wsClients.get(accountId); if (!set) wsClients.set(accountId, set = new Set()); set.add(socket);
+      wsCoverage.set(accountId, { accountId, characterId: me.id, loc: me.loc, gangId: gm?.gang_id || null,
+        agent: !!acct.agent, npc: !!acct.npc || !!me.is_npc });
       // (red-team R9 WS) `app.register(websocket)` sets no keepalive, so half-open/dead sockets never get
       // reaped and their bus listeners accumulate forever. Standard heartbeat: ping every WS_PING_MS; a
       // browser auto-pongs (so legit idle viewers stay connected), a dead/half-open socket misses two
@@ -2578,7 +2604,11 @@ export async function buildServer() {
       socket.on('close', () => {
         clearInterval(hb);
         for (const [ev, fn] of subs) G.bus.off(ev, fn);
-        const s = wsClients.get(accountId); if (s) { s.delete(socket); if (!s.size) wsClients.delete(accountId); }
+        const s = wsClients.get(accountId);
+        if (s) {
+          s.delete(socket);
+          if (!s.size) { wsClients.delete(accountId); wsCoverage.delete(accountId); }
+        }
       });
       socket.send(JSON.stringify({ channel: 'hello', characterId: me.id }));
     } finally {
@@ -2847,7 +2877,8 @@ export async function buildServer() {
   // ── STILL ON THE TABLE — the featured-systems catalog the coach's queue-of-5 can't carry: level-unlocked
   // entries this player has never touched, plus an explorer tally. Pure read, §10.4-free; not a census. ──
   app.get('/v1/explore', { preHandler: auth }, async (req) =>
-    G.readCharacter(pool, req.user.sub, (ch, client, h) => Explore.exploreBoard(ch, h.acct, h.owned)));
+    G.readCharacter(pool, req.user.sub, (ch, client, h) =>
+      Explore.exploreBoard(client, ch, h.acct, h.owned, { onlineAccounts: [...wsCoverage.values()] })));
   // ── PRIME TIME — the nightly synchronous window: answer the call during tonight's hour. Co-present
   // (the value reward scales with turnout, settled at close); the mechanic + mode rotate by the seed. ──
   app.get('/v1/primetime', { preHandler: auth }, async (req) =>
