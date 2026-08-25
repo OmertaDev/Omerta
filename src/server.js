@@ -1415,7 +1415,9 @@ export async function buildServer() {
   // ── the public rulebook (client discoverability — the /v1/catalog precedent, read-only) ──
   // Curated PUBLIC constants only: what the prototype UI always showed players. Server stays
   // authoritative — knowing the odds table doesn't move a single roll client-side.
-  app.get('/v1/rules', async () => ({
+  app.get('/v1/rules', async (req, reply) => {
+    reply.header('cache-control', 'public, max-age=300, stale-while-revalidate=3600');
+    return ({
     crimes: CRIMES.map((c) => ({ id: c.id, name: c.name, lvl: c.lvl, nerve: c.nerve, cash: c.cash, base: c.base, jail: c.jail })),
     respecOmr: M8.RESPEC_OMR, // stat respec cost — so The Life tab can price the tradeoff before you commit
     respecStatMin: M8.RESPEC_STAT_MIN,
@@ -1683,7 +1685,8 @@ export async function buildServer() {
         playerSlots: CASINO.TRACK.PLAYER_SLOTS, entryFee: CASINO.TRACK.ENTRY_FEE },
       futurity: { nominateFee: CASINO.FUTURITY.NOMINATE_FEE, fieldMax: CASINO.FUTURITY.FIELD_MAX, minRunners: CASINO.FUTURITY.MIN_RUNNERS,
         minBet: CASINO.FUTURITY.MIN_BET, maxBet: CASINO.FUTURITY.MAX_BET, rakeBps: CASINO.FUTURITY.RAKE_BPS } },
-  }));
+    });
+  });
   app.post('/v1/business/:kind/buy', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Business.buyBusiness(ch, req.params.kind, client, h)));
   app.post('/v1/business/collect', { preHandler: auth }, async (req) =>

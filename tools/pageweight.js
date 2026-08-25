@@ -57,6 +57,10 @@ function resolveBrowser() {
   for (const p of ['/usr/bin/chromium', '/usr/bin/chromium-browser', '/usr/bin/google-chrome']) {
     if (fs.existsSync(p)) return p;
   }
+  for (const p of [
+    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+    'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+  ]) if (fs.existsSync(p)) return p;
   return null;
 }
 const exe = resolveBrowser();

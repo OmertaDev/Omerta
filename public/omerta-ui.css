@@ -136,7 +136,7 @@
   color: var(--om-surface-canvas);
   background: var(--om-action-primary-hover);
   border-radius: var(--om-radius-sm);
-  font: 700 13px/1 var(--om-font-data);
+  font: 700 var(--om-type-body)/1 var(--om-font-data);
   transform: translateY(-180%);
   transition: transform var(--om-duration-fast) var(--om-ease-out);
 }
@@ -200,7 +200,7 @@
   border-radius: var(--om-radius-sm);
   color: var(--om-text-muted);
   cursor: pointer;
-  font: 600 11px/1 var(--om-font-data);
+  font: 600 var(--om-type-body)/1 var(--om-font-data);
   letter-spacing: .08em;
   list-style: none;
   text-transform: uppercase;
@@ -227,7 +227,7 @@
   align-items: center;
   padding: 0 10px;
   color: var(--om-text-secondary);
-  font: 600 12px/1.3 var(--om-font-data);
+  font: 600 var(--om-type-body)/1.3 var(--om-font-data);
   text-decoration: none;
 }
 .public-nav__menu-list a:hover,
@@ -241,7 +241,7 @@
   border: 1px solid transparent;
   border-radius: var(--om-radius-sm);
   color: var(--om-text-muted);
-  font: 600 11px/1 var(--om-font-data);
+  font: 600 var(--om-type-body)/1 var(--om-font-data);
   letter-spacing: .08em;
   text-transform: uppercase;
   text-decoration: none;
@@ -311,6 +311,7 @@ a.artifact-card:hover {
 
 .artifact-card strong { color: var(--om-text-primary); }
 .artifact-card p { margin: 4px 0 0; color: var(--om-text-muted); }
+#screen-auth .artifact-card p { font-size: var(--om-type-public); }
 
 .artifact-notice {
   padding: 12px 14px;
@@ -469,7 +470,13 @@ body.modal-open { overflow: hidden; }
 
 .landing-proof > div:last-child { border-right: 0; }
 .landing-proof b { display: block; font: 600 var(--om-type-label)/1.3 var(--om-font-data); color: var(--om-text-primary); }
-.landing-proof span { display: block; margin-top: 3px; font-size: var(--om-type-body); color: var(--om-text-muted); }
+.landing-proof span { display: block; margin-top: 3px; font-size: var(--om-type-public); color: var(--om-text-muted); }
+
+#screen-auth .signin .sub,
+#screen-auth #invite-row .sub { font-size: var(--om-type-body); line-height: 1.55; }
+#screen-auth .signin button { font-size: var(--om-type-body); }
+#screen-auth .signin input,
+#screen-auth #invite-row input { font-size: var(--om-type-public); }
 
 .landing .band--ledger { text-align: left; }
 .landing .band--ledger p { max-width: 74ch; margin-inline: 0; }

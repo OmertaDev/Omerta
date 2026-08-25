@@ -60,13 +60,54 @@ try {
       name: new URL(r.name).pathname, bytes: r.transferSize || r.encodedBodySize || 0,
     })).sort((a, b) => b.bytes - a.bytes);
     return { bytes: (nav?.transferSize || nav?.encodedBodySize || 0) + resources.reduce((sum, r) => sum + r.bytes, 0),
+      heroFallbackBytes: resources.find((r) => r.name === '/art/hero-poster.jpg')?.bytes || 0,
       resources: resources.slice(0, 6) };
   });
-  check(landingLoad.bytes <= 1.5 * 1024 * 1024,
-    `cold landing transfers ${Math.round(landingLoad.bytes / 1024)} KB; budget is 1536 KB — ${JSON.stringify(landingLoad.resources)}`);
+  check(landingLoad.bytes <= 768 * 1024,
+    `cold landing transfers ${Math.round(landingLoad.bytes / 1024)} KB; budget is 768 KB — ${JSON.stringify(landingLoad.resources)}`);
+  check(landingLoad.heroFallbackBytes === 0,
+    `the responsive landing still fetched the 630 KB hero fallback — ${JSON.stringify(landingLoad.resources)}`);
   await desktop.close();
 
   const mobile = await browser.newPage({ viewport: { width: 320, height: 568 }, isMobile: true, hasTouch: true });
+  await mobile.goto(BASE, { waitUntil: 'networkidle' });
+  const landingMobile = await mobile.evaluate(() => {
+    const px = (selector) => Number.parseFloat(getComputedStyle(document.querySelector(selector)).fontSize);
+    const wire = document.querySelector('#wire-toggle').getBoundingClientRect();
+    const video = document.querySelector('.landing .band video');
+    const hero = document.querySelector('.hero-art img');
+    return {
+      inner: innerWidth,
+      scroll: document.documentElement.scrollWidth,
+      hero: new URL(hero.currentSrc).pathname,
+      heroNaturalWidth: hero.naturalWidth,
+      wire: { width: wire.width, height: wire.height },
+      type: {
+        heroSupport: px('.landing .hero .sub2'),
+        ctaHint: px('.landing .ctahint'),
+        wireLine: px('#wire-line'),
+        receiptRow: px('.operation-receipt span'),
+        receiptNote: px('.operation-receipt small'),
+        pillCopy: px('.landing .pill p'),
+        bandCopy: px('.landing .band p'),
+      },
+      videoDeferred: !video.hasAttribute('poster') && [...video.querySelectorAll('source')].every((source) => !source.hasAttribute('src')),
+      tourDeferred: !document.querySelector('#tour-art').style.backgroundImage,
+    };
+  });
+  check(landingMobile.scroll <= 321, `320px landing scrolls sideways — ${JSON.stringify(landingMobile)}`);
+  check(/hero-poster-(640|960)\.webp$/.test(landingMobile.hero) && landingMobile.heroNaturalWidth <= 960,
+    `phone selected a desktop hero source — ${JSON.stringify(landingMobile)}`);
+  check(landingMobile.wire.width >= 44 && landingMobile.wire.height >= 44,
+    `city-scenes control is not a 44px touch target — ${JSON.stringify(landingMobile.wire)}`);
+  check(landingMobile.type.heroSupport >= 16 && landingMobile.type.pillCopy >= 16 && landingMobile.type.bandCopy >= 16,
+    `public reading copy fell below 16px — ${JSON.stringify(landingMobile.type)}`);
+  check(landingMobile.type.ctaHint >= 14 && landingMobile.type.wireLine >= 14
+    && landingMobile.type.receiptRow >= 14 && landingMobile.type.receiptNote >= 14,
+  `dense support copy fell below 14px — ${JSON.stringify(landingMobile.type)}`);
+  check(landingMobile.videoDeferred && landingMobile.tourDeferred,
+    `below-fold/hidden media was exposed on the cold visit — ${JSON.stringify(landingMobile)}`);
+
   await mobile.goto(`${BASE}/wiki`, { waitUntil: 'networkidle' });
   let publicWidth = await mobile.evaluate(() => ({ inner: innerWidth, scroll: document.documentElement.scrollWidth }));
   check(publicWidth.inner <= 320 && publicWidth.scroll <= 321,
