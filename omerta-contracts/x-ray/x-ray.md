@@ -321,6 +321,45 @@ These may be aliases for one developer; identity consolidation could not be conf
 
 ---
 
+## Post-Sweep Verification Addendum — 25/08/26
+
+The release sweep expanded the scope after the structural snapshot above:
+
+- Foundry 1.7.1 compiled the full Solidity tree with solc 0.8.26 and passed **352/352 tests
+  across 20 suites**, including the RWA Stock Machine, four red-team regression suites, the
+  existing 512-run stateless fuzz cases, and the new stateful/property harness.
+- `forge build --sizes --skip FuzzTester` passed. `FuzzTester` is the synthetic all-handler
+  Medusa/Echidna target and is never deployed; every production and ordinary test contract remains
+  inside the EIP-170 size gate.
+- Echidna and Medusa configurations plus their shared handler/property harness are now checked in.
+  The targeted properties run through Foundry in this environment; long-running Echidna/Medusa
+  campaigns remain a separate release operation.
+- Slither completed successfully and produced the machine-readable detector, inheritance,
+  variable/authorization, function-summary, and ERC-20 reports in this directory.
+
+### Slither High-Signal Triage
+
+Slither reported three High/Medium heuristic signals. Manual review found no unresolved High issue:
+
+1. `RwaStockBuyer._acquire` / `arbitrary-send-eth` — the destination is an owner-selected adapter,
+   not caller input; stock output is forced to the immutable `stockVault`, measured by balance
+   delta, bounded by the independent oracle floor, and protected by pause, daily-cap, one-shot,
+   effects-before-interaction, and `nonReentrant` gates.
+2. `RwaStockBuyer._acquire` / `reentrancy-balance` — the public entry point is `nonReentrant`, and
+   the purchase latch plus daily spend are written before the adapter call. Adapter or output
+   failure reverts those effects atomically.
+3. `OmrTwapOracle._currentCumulativePrices` / `weak-prng` — the flagged modulo operation is the
+   canonical 32-bit timestamp wrap used for cumulative-price elapsed time; it is not randomness.
+
+The Medium `Alchemist.harvest` reentrancy signal is likewise covered by `nonReentrant`; the
+post-withdraw collateral invariant is intentionally checked after the ERC-4626 share burn. The
+remaining medium/low reports are arithmetic-order, strict-equality, timestamp, role-disable, and
+ignored-return heuristics whose relevant boundary behavior is pinned by the unit, fuzz, and
+red-team suites. This triage does not relax the existing third-party-audit and deployment-review
+gates for real adapters, vaults, oracles, multisig ownership, and mainnet addresses.
+
+---
+
 ## X-Ray Verdict
 
 **Tier: High complexity / elevated integration risk.** The contracts are non-upgradeable, heavily documented, and backed by a broad passing unit suite, but value safety depends on several external systems and immediate trust roots whose assumptions are not all enforced locally. The highest-priority audit work is stateful cross-contract conservation, v4 callback nesting, exact-transfer token configuration, ERC-4626 valuation behavior, oracle denomination/deployment parity, and signed-authorization lifecycle testing before any production arming.

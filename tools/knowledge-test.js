@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { build, validate, render } from './knowledge.js';
+import { buildForCheck, validate, render } from './knowledge.js';
 
 const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
-const model = build();
+const model = buildForCheck();
 const result = validate(model);
 assert.equal(result.ok, true, result.problems.join('\n'));
 

@@ -181,8 +181,8 @@ function relativeImport(from, spec, files) {
   return null;
 }
 
-function parseCommits() {
-  const raw = git(['log', '--date=iso-strict', '--pretty=format:%x1e%H%x1f%ad%x1f%an%x1f%s', '--name-only']);
+function parseCommits(revision = 'HEAD') {
+  const raw = git(['log', '--date=iso-strict', '--pretty=format:%x1e%H%x1f%ad%x1f%an%x1f%s', '--name-only', revision]);
   const commits = [];
   for (const chunk of raw.split('\x1e').filter(Boolean)) {
     const lines = chunk.replace(/^\r?\n/, '').split(/\r?\n/);
@@ -193,13 +193,14 @@ function parseCommits() {
   return commits;
 }
 
-function build() {
+function build(options = {}) {
   const paths = fileList();
   const fileSet = new Set(paths);
   const blobs = blobVersions();
-  const head = git(['rev-parse', 'HEAD']).trim();
+  const head = options.sourceRevision || git(['rev-parse', 'HEAD']).trim();
   const currentBranch = git(['branch', '--show-current']).trim() || '(detached)';
   const status = git(['status', '--porcelain=v1']).split(/\r?\n/).filter(Boolean);
+  const worktreeDirty = typeof options.worktreeDirty === 'boolean' ? options.worktreeDirty : status.length > 0;
   const githubPath = 'knowledge/github-snapshot.json';
   const github = fileSet.has(githubPath) ? JSON.parse(read(githubPath)) : { repository: {}, issues: [], pullRequests: [] };
   const nodes = new Map();
@@ -229,7 +230,7 @@ function build() {
     currentBranch,
     defaultBranch: github.repository?.defaultBranch || 'main',
     visibility: github.repository?.visibility || 'unknown',
-    worktreeDirty: status.length > 0,
+    worktreeDirty,
     currentArtifactCount: paths.length,
   }, { file: 'README.md', line: 1 });
   for (const [id, description] of Object.entries(SUBSYSTEMS)) {
@@ -441,7 +442,7 @@ function build() {
   }
 
   // Full local commit history and current/historical artifact lineage.
-  const commits = parseCommits();
+  const commits = parseCommits(head);
   const lastChanged = new Map();
   for (const commit of commits) {
     const url = `https://github.com/OmertaDev/Omerta/commit/${commit.hash}`;
@@ -491,7 +492,7 @@ function build() {
   const graph = {
     schema: 'omerta.knowledge-graph.v1',
     sourceRevision: head,
-    worktreeDirty: status.length > 0,
+    worktreeDirty,
     sourceSnapshot: github.fetchedAt || null,
     ontology: {
       nodeTypes: uniq(sortedNodes.map((n) => n.type)),
@@ -503,6 +504,18 @@ function build() {
   };
 
   return { graph, artifacts, imports, importers, routes, tables, contracts, commits, github, lastChanged, status };
+}
+
+function buildForCheck() {
+  const graphFile = path.join(OUT, 'graph.json');
+  if (!fs.existsSync(graphFile)) return build();
+  try {
+    const stored = JSON.parse(fs.readFileSync(graphFile, 'utf8'));
+    if (!/^[0-9a-f]{40}$/.test(stored.sourceRevision || '')) return build();
+    return build({ sourceRevision: stored.sourceRevision, worktreeDirty: stored.worktreeDirty === true });
+  } catch {
+    return build();
+  }
 }
 
 function validate(model) {
@@ -617,7 +630,7 @@ function query(model, term) {
 
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   const [command = 'build', ...args] = process.argv.slice(2);
-  const model = build();
+  const model = command === 'check' ? buildForCheck() : build();
   const valid = validate(model);
   if (!valid.ok) {
     console.error('knowledge graph invalid');
@@ -647,4 +660,4 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
   }
 }
 
-export { build, validate, render };
+export { build, buildForCheck, validate, render };

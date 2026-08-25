@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "62b32308c476f7616b9e32d30104be07d46a36ca",
+  "sourceRevision": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857",
   "worktreeDirty": true,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 4294,
-    "edges": 20359,
+    "nodes": 4306,
+    "edges": 20389,
     "byNodeType": {
-      "Artifact": 1457,
+      "Artifact": 1468,
       "Command": 31,
-      "Commit": 894,
+      "Commit": 895,
       "Contract": 27,
       "Document": 399,
       "Domain": 12,
@@ -64,15 +64,15 @@
       "Workflow": 3
     },
     "byEdgeType": {
-      "BELONGS_TO": 1740,
-      "CHANGED": 7744,
-      "CONTAINS": 1477,
+      "BELONGS_TO": 1751,
+      "CHANGED": 7751,
+      "CONTAINS": 1488,
       "DECLARES": 31,
       "DEFINED_IN": 981,
       "DEPENDS_ON": 59,
       "EXECUTES": 145,
       "HANDLED_BY": 652,
-      "HAS_COMMIT": 894,
+      "HAS_COMMIT": 895,
       "IMPLEMENTS": 123,
       "IMPORTS": 1428,
       "INHERITS": 4,
@@ -6474,9 +6474,9 @@
           "version": "400c07bc5d707cc8"
         }
       ],
-      "lastChangedAt": "2026-08-16T13:38:36-04:00",
+      "lastChangedAt": "2026-08-25T00:12:37-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "88af49eae675a4dc965505eeee264a15bb8ed41f"
+      "lastChangedCommit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
     },
     {
       "key": "Artifact:.github/workflows/publish-mcp.yml",
@@ -10384,9 +10384,9 @@
           "version": "741c80d73f736168"
         }
       ],
-      "lastChangedAt": "2026-08-25T00:11:25-04:00",
+      "lastChangedAt": "2026-08-25T00:12:37-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "62b32308c476f7616b9e32d30104be07d46a36ca"
+      "lastChangedCommit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
     },
     {
       "key": "Artifact:omerta-contracts/deployments/46630/manifest.json",
@@ -10525,6 +10525,26 @@
       "lastChangedAt": "2026-08-02T00:46:10Z",
       "lastChangedBy": "crvydev",
       "lastChangedCommit": "96ec2122d44a8ec2d7535d1c09d89506a31e08bf"
+    },
+    {
+      "key": "Artifact:omerta-contracts/inheritance-graph.dot",
+      "type": "Artifact",
+      "id": "omerta-contracts/inheritance-graph.dot",
+      "label": "inheritance-graph.dot",
+      "path": "omerta-contracts/inheritance-graph.dot",
+      "kind": "contract-project",
+      "extension": ".dot",
+      "bytes": 40900,
+      "lines": null,
+      "version": "e7033621de79194b",
+      "text": false,
+      "provenance": [
+        {
+          "file": "omerta-contracts/inheritance-graph.dot",
+          "line": 1,
+          "version": "e7033621de79194b"
+        }
+      ]
     },
     {
       "key": "Artifact:omerta-contracts/medusa.json",
@@ -12942,6 +12962,106 @@
       "lastChangedCommit": "62b32308c476f7616b9e32d30104be07d46a36ca"
     },
     {
+      "key": "Artifact:omerta-contracts/x-ray/erc1155-gear.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/x-ray/erc1155-gear.json",
+      "label": "erc1155-gear.json",
+      "path": "omerta-contracts/x-ray/erc1155-gear.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 19902,
+      "lines": 779,
+      "version": "c5609145fe858ff6",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/x-ray/erc1155-gear.json",
+          "line": 1,
+          "version": "c5609145fe858ff6"
+        }
+      ]
+    },
+    {
+      "key": "Artifact:omerta-contracts/x-ray/erc20-denari.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/x-ray/erc20-denari.json",
+      "label": "erc20-denari.json",
+      "path": "omerta-contracts/x-ray/erc20-denari.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 2229,
+      "lines": 81,
+      "version": "92047d38478054f6",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/x-ray/erc20-denari.json",
+          "line": 1,
+          "version": "92047d38478054f6"
+        }
+      ]
+    },
+    {
+      "key": "Artifact:omerta-contracts/x-ray/erc20-omr.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/x-ray/erc20-omr.json",
+      "label": "erc20-omr.json",
+      "path": "omerta-contracts/x-ray/erc20-omr.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 4368,
+      "lines": 170,
+      "version": "8501a564ffda96e6",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/x-ray/erc20-omr.json",
+          "line": 1,
+          "version": "8501a564ffda96e6"
+        }
+      ]
+    },
+    {
+      "key": "Artifact:omerta-contracts/x-ray/erc721-dynasty.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/x-ray/erc721-dynasty.json",
+      "label": "erc721-dynasty.json",
+      "path": "omerta-contracts/x-ray/erc721-dynasty.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 90,
+      "lines": 7,
+      "version": "e38f35e4fb8d514a",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/x-ray/erc721-dynasty.json",
+          "line": 1,
+          "version": "e38f35e4fb8d514a"
+        }
+      ]
+    },
+    {
+      "key": "Artifact:omerta-contracts/x-ray/erc721-streetdeed.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/x-ray/erc721-streetdeed.json",
+      "label": "erc721-streetdeed.json",
+      "path": "omerta-contracts/x-ray/erc721-streetdeed.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 90,
+      "lines": 7,
+      "version": "e38f35e4fb8d514a",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/x-ray/erc721-streetdeed.json",
+          "line": 1,
+          "version": "e38f35e4fb8d514a"
+        }
+      ]
+    },
+    {
       "key": "Artifact:omerta-contracts/x-ray/invariants.md",
       "type": "Artifact",
       "id": "omerta-contracts/x-ray/invariants.md",
@@ -12965,6 +13085,106 @@
       "lastChangedCommit": "62b32308c476f7616b9e32d30104be07d46a36ca"
     },
     {
+      "key": "Artifact:omerta-contracts/x-ray/slither-function-summary.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/x-ray/slither-function-summary.json",
+      "label": "slither-function-summary.json",
+      "path": "omerta-contracts/x-ray/slither-function-summary.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 2698822,
+      "lines": 2449,
+      "version": "ef2ae6bd358f1dad",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/x-ray/slither-function-summary.json",
+          "line": 1,
+          "version": "ef2ae6bd358f1dad"
+        }
+      ]
+    },
+    {
+      "key": "Artifact:omerta-contracts/x-ray/slither-inheritance.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/x-ray/slither-inheritance.json",
+      "label": "slither-inheritance.json",
+      "path": "omerta-contracts/x-ray/slither-inheritance.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 43166,
+      "lines": 25,
+      "version": "4b780de660234575",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/x-ray/slither-inheritance.json",
+          "line": 1,
+          "version": "4b780de660234575"
+        }
+      ]
+    },
+    {
+      "key": "Artifact:omerta-contracts/x-ray/slither-token-summaries.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/x-ray/slither-token-summaries.json",
+      "label": "slither-token-summaries.json",
+      "path": "omerta-contracts/x-ray/slither-token-summaries.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 17300071,
+      "lines": 508774,
+      "version": "c07de5c5b81782e7",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/x-ray/slither-token-summaries.json",
+          "line": 1,
+          "version": "c07de5c5b81782e7"
+        }
+      ]
+    },
+    {
+      "key": "Artifact:omerta-contracts/x-ray/slither-vars-and-auth.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/x-ray/slither-vars-and-auth.json",
+      "label": "slither-vars-and-auth.json",
+      "path": "omerta-contracts/x-ray/slither-vars-and-auth.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 883320,
+      "lines": 9374,
+      "version": "13bd46419e9fb7a4",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/x-ray/slither-vars-and-auth.json",
+          "line": 1,
+          "version": "13bd46419e9fb7a4"
+        }
+      ]
+    },
+    {
+      "key": "Artifact:omerta-contracts/x-ray/slither.json",
+      "type": "Artifact",
+      "id": "omerta-contracts/x-ray/slither.json",
+      "label": "slither.json",
+      "path": "omerta-contracts/x-ray/slither.json",
+      "kind": "contract-project",
+      "extension": ".json",
+      "bytes": 1953567,
+      "lines": 64621,
+      "version": "7bd3ad43a7974562",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/x-ray/slither.json",
+          "line": 1,
+          "version": "7bd3ad43a7974562"
+        }
+      ]
+    },
+    {
       "key": "Artifact:omerta-contracts/x-ray/x-ray.md",
       "type": "Artifact",
       "id": "omerta-contracts/x-ray/x-ray.md",
@@ -12972,15 +13192,15 @@
       "path": "omerta-contracts/x-ray/x-ray.md",
       "kind": "contract-project",
       "extension": ".md",
-      "bytes": 19469,
-      "lines": 327,
-      "version": "bf43d0362c53aed8",
+      "bytes": 21979,
+      "lines": 366,
+      "version": "cf89013b1d5ad9fe",
       "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/x-ray/x-ray.md",
           "line": 1,
-          "version": "bf43d0362c53aed8"
+          "version": "cf89013b1d5ad9fe"
         }
       ],
       "lastChangedAt": "2026-08-25T00:11:25-04:00",
@@ -32982,15 +33202,15 @@
       "path": "tools/knowledge-test.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 2843,
+      "bytes": 2859,
       "lines": 59,
-      "version": "7f2ec0c6f56a6952",
+      "version": "33a8e8e40d9fb764",
       "text": true,
       "provenance": [
         {
           "file": "tools/knowledge-test.js",
           "line": 1,
-          "version": "7f2ec0c6f56a6952"
+          "version": "33a8e8e40d9fb764"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -33005,15 +33225,15 @@
       "path": "tools/knowledge.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 41543,
-      "lines": 651,
-      "version": "ba0a2a0809ab6b67",
+      "bytes": 42165,
+      "lines": 664,
+      "version": "0dcc4669b8511eec",
       "text": true,
       "provenance": [
         {
           "file": "tools/knowledge.js",
           "line": 1,
-          "version": "ba0a2a0809ab6b67"
+          "version": "0dcc4669b8511eec"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -47135,6 +47355,22 @@
       ]
     },
     {
+      "key": "Commit:e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857",
+      "type": "Commit",
+      "id": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857",
+      "label": "ci: keep fuzz harness out of size gate",
+      "title": "ci: keep fuzz harness out of size gate",
+      "date": "2026-08-25T00:12:37-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857",
+      "provenance": [
+        {
+          "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
+        }
+      ]
+    },
+    {
       "key": "Commit:e95329df7cb7605cc89ba38a47951741ab9af826",
       "type": "Commit",
       "id": "e95329df7cb7605cc89ba38a47951741ab9af826",
@@ -53852,13 +54088,13 @@
       "id": "omerta-contracts/x-ray/x-ray.md",
       "label": "omerta-contracts/x-ray/x-ray.md",
       "documentType": "contract-project",
-      "lines": 327,
-      "version": "bf43d0362c53aed8",
+      "lines": 366,
+      "version": "cf89013b1d5ad9fe",
       "provenance": [
         {
           "file": "omerta-contracts/x-ray/x-ray.md",
           "line": 1,
-          "version": "bf43d0362c53aed8"
+          "version": "cf89013b1d5ad9fe"
         }
       ]
     },
@@ -56188,6 +56424,9 @@
         },
         {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
+        },
+        {
+          "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
         }
       ]
     },
@@ -56203,6 +56442,9 @@
         },
         {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
+        },
+        {
+          "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
         }
       ]
     },
@@ -56218,6 +56460,9 @@
         },
         {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
+        },
+        {
+          "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
         }
       ]
     },
@@ -56233,6 +56478,9 @@
         },
         {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
+        },
+        {
+          "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
         }
       ]
     },
@@ -56263,6 +56511,9 @@
         },
         {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
+        },
+        {
+          "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
         }
       ]
     },
@@ -61962,12 +62213,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "62b32308c476f7616b9e32d30104be07d46a36ca",
+      "revision": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857",
       "currentBranch": "codex/site-copy-ui-upgrade",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": true,
-      "currentArtifactCount": 1458,
+      "currentArtifactCount": 1469,
       "provenance": [
         {
           "file": "README.md",
@@ -85620,6 +85871,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/inheritance-graph.dot",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/inheritance-graph.dot",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:omerta-contracts/medusa.json",
       "to": "Domain:chain-economy",
       "provenance": {
@@ -86565,10 +86825,100 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/x-ray/erc1155-gear.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/erc1155-gear.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/x-ray/erc20-denari.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/erc20-denari.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/x-ray/erc20-omr.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/erc20-omr.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/x-ray/erc721-dynasty.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/erc721-dynasty.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/x-ray/erc721-streetdeed.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/erc721-streetdeed.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:omerta-contracts/x-ray/invariants.md",
       "to": "Domain:chain-economy",
       "provenance": {
         "file": "omerta-contracts/x-ray/invariants.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/x-ray/slither-function-summary.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/slither-function-summary.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/x-ray/slither-inheritance.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/slither-inheritance.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/x-ray/slither-token-summaries.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/slither-token-summaries.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/x-ray/slither-vars-and-auth.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/slither-vars-and-auth.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/x-ray/slither.json",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/slither.json",
         "line": 1
       }
     },
@@ -157528,6 +157878,62 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857",
+      "to": "Artifact:.github/workflows/forge.yml",
+      "provenance": {
+        "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857",
+      "to": "Artifact:omerta-contracts/DEPLOYMENT.md",
+      "provenance": {
+        "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:e95329df7cb7605cc89ba38a47951741ab9af826",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -163894,6 +164300,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/inheritance-graph.dot",
+      "provenance": {
+        "file": "omerta-contracts/inheritance-graph.dot",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
       "to": "Artifact:omerta-contracts/medusa.json",
       "provenance": {
         "file": "omerta-contracts/medusa.json",
@@ -164839,9 +165254,99 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/x-ray/erc1155-gear.json",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/erc1155-gear.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/x-ray/erc20-denari.json",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/erc20-denari.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/x-ray/erc20-omr.json",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/erc20-omr.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/x-ray/erc721-dynasty.json",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/erc721-dynasty.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/x-ray/erc721-streetdeed.json",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/erc721-streetdeed.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
       "to": "Artifact:omerta-contracts/x-ray/invariants.md",
       "provenance": {
         "file": "omerta-contracts/x-ray/invariants.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/x-ray/slither-function-summary.json",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/slither-function-summary.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/x-ray/slither-inheritance.json",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/slither-inheritance.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/x-ray/slither-token-summaries.json",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/slither-token-summaries.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/x-ray/slither-vars-and-auth.json",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/slither-vars-and-auth.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/x-ray/slither.json",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/slither.json",
         "line": 1
       }
     },
@@ -199288,6 +199793,14 @@
       "to": "Commit:e85af7449d659469d41379e25db38e0b960b1720",
       "provenance": {
         "commit": "e85af7449d659469d41379e25db38e0b960b1720"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857",
+      "provenance": {
+        "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
       }
     },
     {
