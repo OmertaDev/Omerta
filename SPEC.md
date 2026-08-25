@@ -11,14 +11,14 @@ Written 2026-07-25. Every number below was measured from the tree, not recalled.
 | | |
 |---|---|
 | Backend modules | **158** files, **54268** lines (`src/`, incl. `src/routes/` and `src/social/`) |
-| Test suites | **113** files, **46466** lines (`test/`) — ratio 0.86 test:src |
+| Test suites | **114** files, **46840** lines (`test/`) — ratio 0.86 test:src |
 | HTTP routes | **704** registrations |
 | Database tables | **243** (`schema.sql`, 3653 lines) |
-| Client | **11174** lines (`public/index.html`, single file, zero dependencies) |
+| Client | **11404** lines (`public/index.html`, single file, zero dependencies) |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **18** contracts, **3826** lines Solidity, **307** Foundry tests passing |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/bond-dials.js` (sizing the on-chain mint walls), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres) |
-| Design + audit docs | **216** markdown files, **64146** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
+| Design + audit docs | **217** markdown files, **64534** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
 | Ledger invariants | 18 named escrow/identity checks + per-currency conservation, **drift-0** |
 
 Roughly **55,000 lines** of code, tests, schema and contracts.
