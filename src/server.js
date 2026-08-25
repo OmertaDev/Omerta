@@ -2181,7 +2181,10 @@ export async function buildServer() {
   // `/v1/bulletin` is deliberately NOT here because it WRITES and the read path refuses writes.
   app.get('/v1/home', { preHandler: auth }, async (req) =>
     G.readCharacter(pool, req.user.sub, (ch, client, h) =>
-      Home.homeBoard(ch, client, h, { online: [...wsClients.keys()] })));
+      Home.homeBoard(ch, client, h, {
+        online: [...wsClients.keys()],
+        onlineAccounts: [...wsCoverage.values()],
+      })));
   // THE BLOCK — the streets screen's own boards in one read (see src/streets.js for why it is not
   // hung under /v1/streets, which is the ROSTER and a different thing entirely).
   app.get('/v1/block', { preHandler: auth }, async (req) =>
@@ -2874,8 +2877,9 @@ export async function buildServer() {
   // rare moment visible the second it exists. Pure read, §10.4-free. ──
   app.get('/v1/live', { preHandler: auth }, async (req) =>
     G.readCharacter(pool, req.user.sub, (ch, client) => Collision.collisionBoard(client, ch, [...wsClients.keys()])));
-  // ── STILL ON THE TABLE — the featured-systems catalog the coach's queue-of-5 can't carry: level-unlocked
-  // entries this player has never touched, plus an explorer tally. Pure read, §10.4-free; not a census. ──
+  // ── DEEP CITY — one canonical, presently actionable unvisited system, or an honest null. Home
+  // receives this same async resolver and the same human-only presence context; neither path ranks
+  // or queries a private second catalog. Pure read, §10.4-free; not a census. ──
   app.get('/v1/explore', { preHandler: auth }, async (req) =>
     G.readCharacter(pool, req.user.sub, (ch, client, h) =>
       Explore.exploreBoard(client, ch, h.acct, h.owned, { onlineAccounts: [...wsCoverage.values()] })));

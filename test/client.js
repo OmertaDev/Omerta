@@ -69,6 +69,87 @@ import { mintLimitedRun } from '../src/economy.js';
 const decomment = (s) => s.replace(/^[ \t]*\/\/.*$/gm, '');
 const html = decomment(readFileSync(new URL('../public/index.html', import.meta.url), 'utf8'));
 
+// ── 0b. DEEP CITY IS ONE SAFE, ACTIONABLE RECOMMENDATION ───────────────────────────────────────
+// Run the browser's real markup and click-binding functions in isolation. That makes these checks
+// fail on observable output/behavior: a resurrected grid reads the throwing legacy getter, unsafe
+// text becomes executable markup, a second action changes the button count, and wrong navigation
+// records the wrong tab. No assertion merely greps for a preferred implementation line.
+{
+  const lines = html.split(/\r?\n/);
+  const declaration = (re, label) => {
+    const start = lines.findIndex((line) => re.test(line));
+    assert(start >= 0, `${label} is missing from the browser client`);
+    for (let end = start; end < Math.min(lines.length, start + 100); end++) {
+      const source = lines.slice(start, end + 1).join('\n');
+      try { new vm.Script(source); return source; } catch { /* declaration is not complete yet */ }
+    }
+    assert(false, `${label} never parses as a complete browser declaration`);
+  };
+  const escSource = declaration(/^  const esc = /, 'the production HTML escaper');
+  const markupSource = declaration(/^  function deepCityMarkup\(/, 'Deep City markup');
+  const bindSource = declaration(/^  function bindDeepCity\(/, 'Deep City navigation binding');
+  const markup = vm.runInNewContext(
+    `(() => { ${escSource}\n${markupSource}\nreturn deepCityMarkup; })()`);
+
+  const payload = {
+    catalog: { scope: 'engagement_systems', version: 1, count: 40 },
+    progress: { visited: 7, eligible: 3, remaining: 33 },
+    next: {
+      systemId: 'not-for-display',
+      name: '<img src=x onerror="globalThis.pwned=1">The Empire',
+      hook: '<script>globalThis.pwned=2</script> passive income',
+      tab: 'empire"><svg onload="globalThis.pwned=3">',
+    },
+  };
+  Object.defineProperties(payload, {
+    untapped: { enumerable: true, get() { throw new Error('the removed untapped grid was read'); } },
+    allTried: { enumerable: true, get() { throw new Error('the removed allTried state was read'); } },
+  });
+  const card = markup(payload);
+  assert.match(card, /7 of 40 systems worked/, 'Deep City shows canonical account progress');
+  assert.equal((card.match(/<button\b/g) || []).length, 1,
+    'Deep City renders at most one destination action');
+  assert.match(card, /<section\b[^>]*aria-labelledby="new-territory-title"/,
+    'the recommendation is an accessible labelled region');
+  assert.match(card, /<button\b[^>]*type="button"[^>]*data-explore-next/,
+    'the one destination is an explicit accessible button');
+  assert(card.includes('&lt;img src=x onerror=&quot;globalThis.pwned=1&quot;&gt;The Empire'),
+    'the recommended system name is HTML-escaped');
+  assert(card.includes('&lt;script&gt;globalThis.pwned=2&lt;/script&gt; passive income'),
+    'the recommended hook is HTML-escaped');
+  assert(!card.includes('<img') && !card.includes('<script') && !card.includes('not-for-display')
+    && !card.includes(payload.next.tab),
+  'Deep City exposes no server ID or tab value in markup and cannot turn server text into HTML');
+
+  const waiting = markup({ catalog: { count: 40 }, progress: { visited: 12, remaining: 28 }, next: null });
+  assert.match(waiting, /12 of 40 systems worked/, 'the temporarily blocked state keeps canonical progress visible');
+  assert.match(waiting, /no new territory is actionable now/i,
+    'remaining work with no eligible recommendation is described honestly');
+  assert(!/all (?:40 )?systems (?:are )?worked/i.test(waiting),
+    'remaining work is never mislabeled as all worked');
+  assert.equal((waiting.match(/<button\b/g) || []).length, 0,
+    'a null recommendation has no dead action');
+
+  const complete = markup({ catalog: { count: 40 }, progress: { visited: 40, remaining: 0 }, next: null });
+  assert.match(complete, /40 of 40 systems worked/, 'the complete state keeps canonical progress visible');
+  assert.match(complete, /all 40 systems are worked/i, 'only zero remaining systems produces the all-worked state');
+  assert(!/no new territory is actionable now/i.test(complete),
+    'the all-worked state is distinct from temporary ineligibility');
+  const malformed = markup({ catalog: { count: 40 }, progress: { visited: 40, remaining: -1 }, next: null });
+  assert(!/all 40 systems are worked/i.test(malformed),
+    'even malformed progress cannot enter the all-worked branch unless remaining is exactly zero');
+
+  const navigated = [];
+  const button = {};
+  const bind = vm.runInNewContext(
+    `(() => { ${bindSource}\nreturn bindDeepCity; })()`,
+    { setTab: (tab) => navigated.push(tab) });
+  bind({ querySelector: (selector) => selector === '[data-explore-next]' ? button : null }, payload.next);
+  assert.equal(typeof button.onclick, 'function', 'the one recommendation action is wired');
+  button.onclick();
+  assert.deepEqual(navigated, [payload.next.tab], 'the action navigates with exact setTab(next.tab) semantics');
+}
+
 // ── 0c. FIRST ACTION HAPPENS AT TOUR STEP TWO ──────────────────────────────────────────────────
 {
   const tourStart = html.indexOf('const TOUR = [');
