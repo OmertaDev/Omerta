@@ -124,6 +124,8 @@ import { portraitSvg, portraitStateOf, portraitTraits, portraitRow, identityRowF
 import * as Deeds from './deeds.js';
 import * as Cards from './cards.js';
 import { renderPng } from './cardpng.js';
+import { renderPathQuizPage, renderPathResultPage } from './path-pages.js';
+import { PATH_IDS, PATH_QUIZ_QUESTIONS, scorePathQuiz } from './path-funnel.js';
 import { buildOpenApi, llmsTxt } from './agentgateway.js';
 import { opportunityBoard, arenaBoard } from './opportunities.js';
 import { postCityWire } from './citywire.js';
@@ -355,6 +357,17 @@ export async function buildServer() {
   let playHtml = '<!doctype html><title>Play OMERTA with Claude</title><p>Walkthrough file missing (public/play.html).</p>';
   try { playHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'play.html'), 'utf8'); } catch { /* headless */ }
   app.get('/play', servePage(playHtml));
+  // THE PATH FINDER — a public, server-rendered acquisition funnel. The content manifest derives its
+  // numbers from rules.js, the POST below owns scoring, and each result gets a stable indexable URL
+  // with its own OG image. Prepared once at boot like the other public pages: no per-hit rendering.
+  app.get('/path', servePage(renderPathQuizPage({ baseUrl })));
+  const pathPages = new Map(PATH_IDS.map((id) => [id, servePage(renderPathResultPage(id, { baseUrl }))]));
+  app.get('/path/:id', async (req, reply) => {
+    const page = pathPages.get(String(req.params.id || '').toLowerCase());
+    if (!page) return reply.code(404).type('text/html; charset=utf-8')
+      .send('<!doctype html><title>Path not found | OMERTÀ</title><p>This doctrine is not in the city.</p>');
+    return page(req, reply);
+  });
   // Shared interface tokens and public-shell primitives. Keeping this as a tiny, explicit asset route
   // preserves the no-build architecture while stopping the public pages from drifting into separate
   // palettes, focus treatments, and navigation patterns.
@@ -873,7 +886,8 @@ export async function buildServer() {
   // Applied to mutating player endpoints (auth/mod routes are excluded).
   await initRateLimiter();
   const guarded = (req) => (req.method === 'POST' || req.method === 'DELETE')
-    && req.url.startsWith('/v1') && !req.url.startsWith('/v1/auth') && !req.url.startsWith('/v1/mod');
+    && req.url.startsWith('/v1') && req.url !== '/v1/path-quiz'
+    && !req.url.startsWith('/v1/auth') && !req.url.startsWith('/v1/mod');
   app.addHook('preHandler', async (req, reply) => {
     // E-M1: auth endpoints are excluded from the account-keyed limiter above (they're unauthenticated),
     // so throttle them per-IP — bounds guest-mint Sybil floods + X/Privy auth-fetch amplification.
@@ -1007,6 +1021,79 @@ export async function buildServer() {
     const tv = knownTv ?? ((await pool.query('SELECT token_version FROM accounts WHERE id=$1', [accountId])).rows[0]?.token_version ?? 0);
     return app.jwt.sign({ sub: accountId, tv, ...extra }, { expiresIn });
   };
+  // PATH FUNNEL TELEMETRY — deliberately anonymous and deliberately narrow. The browser sends one
+  // random session id so the operator can see start→answer→result→CTA loss without an account, an IP,
+  // a wallet, or a fingerprint. Event names and every dimension are allowlisted; this is not a generic
+  // analytics sink. Complete samples are scored here through the same function the contract tests use.
+  const pathQuestionById = new Map(PATH_QUIZ_QUESTIONS.map((question) => [question.id, question]));
+  const pathEvents = new Set(['start', 'answer', 'complete', 'result_view', 'cta_click', 'share']);
+  const pathSources = new Set(['direct', 'site', 'landing', 'wiki', 'quiz', 'result', 'social']);
+  const validPathSession = (value) => typeof value === 'string' && /^[a-z0-9_-]{8,64}$/i.test(value);
+  const pathSource = (value) => pathSources.has(value) ? value : 'direct';
+  const publicPathQuizRateLimit = async function publicPathQuizRateLimit(req, reply) {
+    if (!rateLimitsEnabled()) return;
+    const limited = await checkPublicRateLimit({ ip: req.ip });
+    if (limited) return reply.code(429).header('retry-after', limited.retryAfter)
+      .send({ error: 'rate_limited', retryAfter: limited.retryAfter });
+  };
+  app.post('/v1/path-quiz', { preHandler: publicPathQuizRateLimit }, async (req, reply) => {
+    const body = req.body && typeof req.body === 'object' && !Array.isArray(req.body) ? req.body : {};
+    const event = body.event;
+    if (!pathEvents.has(event)) return reply.code(400).send({ error: 'quiz_event' });
+    if (!validPathSession(body.session)) return reply.code(400).send({ error: 'quiz_session' });
+    const common = { session: body.session, source: pathSource(body.source) };
+
+    if (event === 'start') {
+      await G.track(pool, null, 'path_quiz_start', common);
+      return { ok: true };
+    }
+    if (event === 'answer') {
+      const question = pathQuestionById.get(body.question);
+      const option = question?.options.find((entry) => entry.id === body.option);
+      if (!question || !option) return reply.code(400).send({ error: 'quiz_answer' });
+      const step = Number(body.step);
+      if (!Number.isInteger(step) || step < 1 || step > PATH_QUIZ_QUESTIONS.length)
+        return reply.code(400).send({ error: 'quiz_step' });
+      await G.track(pool, null, 'path_quiz_answer', {
+        ...common, question: question.id, option: option.id, lead: option.lead, step,
+      });
+      return { ok: true };
+    }
+    if (event === 'complete') {
+      let result;
+      try { result = scorePathQuiz(body.answers); }
+      catch { return reply.code(400).send({ error: 'quiz_answers' }); }
+      if (!result.complete) return reply.code(400).send({ error: 'quiz_incomplete' });
+      await G.track(pool, null, 'path_quiz_complete', {
+        ...common, primary: result.primary, secondary: result.secondary, margin: result.margin,
+      });
+      return {
+        ok: true,
+        primary: result.primary,
+        secondary: result.secondary,
+        url: `/path/${result.primary}?secondary=${result.secondary}`,
+      };
+    }
+
+    if (!PATH_IDS.includes(body.path)) return reply.code(400).send({ error: 'quiz_path' });
+    const resultProps = { ...common, path: body.path };
+    if (event === 'result_view') {
+      const secondary = body.secondary == null ? null : body.secondary;
+      if (secondary !== null && (!PATH_IDS.includes(secondary) || secondary === body.path))
+        return reply.code(400).send({ error: 'quiz_secondary' });
+      await G.track(pool, null, 'path_result_view', { ...resultProps, secondary });
+      return { ok: true };
+    }
+    if (event === 'cta_click') {
+      if (!['play', 'codex', 'retake'].includes(body.cta)) return reply.code(400).send({ error: 'quiz_cta' });
+      await G.track(pool, null, 'path_cta_click', { ...resultProps, cta: body.cta });
+      return { ok: true };
+    }
+    if (!['native', 'clipboard'].includes(body.channel)) return reply.code(400).send({ error: 'quiz_channel' });
+    await G.track(pool, null, 'path_share', { ...resultProps, channel: body.channel });
+    return { ok: true };
+  });
+
   app.post('/v1/auth/guest', async (req) => {
     await A.consumeInvite(pool, req.body?.inviteCode);
     const id = uid();

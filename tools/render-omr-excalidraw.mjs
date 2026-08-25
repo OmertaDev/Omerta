@@ -10,7 +10,7 @@ const template = path.join(root, 'tools', 'render-omr-excalidraw.html');
 const chrome = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 
 const files = (await fs.readdir(diagramsDir))
-  .filter((file) => /^(?:omr|gameplay)-\d{2}-.+\.excalidraw$/.test(file))
+  .filter((file) => /^(?:(?:omr|gameplay)-\d{2}-.+|path-(?:gun|ledger|kitchen|wheel|shadow|ring)-1200x630)\.excalidraw$/.test(file))
   .sort();
 
 if (process.argv.includes('--list')) {
@@ -47,8 +47,23 @@ try {
     }
     const result = await page.evaluate((diagram) => window.renderDiagram(diagram), data);
     if (!result.success) throw new Error(`${file}: ${result.error}`);
-    await page.locator('#root svg').screenshot({ path: output, omitBackground: false });
-    console.log(`${file} -> ${path.relative(root, output)} (${result.width}x${result.height})`);
+    const isPathCard = /^path-.+-1200x630\.excalidraw$/.test(file);
+    if (isPathCard) {
+      if (Number(canvas.width) !== 1200 || Number(canvas.height) !== 630)
+        throw new Error(`${file}: Path share-card canvas must be exactly 1200x630`);
+      // Excalidraw's SVG includes export padding and an internal 2× scale. That is useful for the
+      // high-resolution research sheets but violates OG's declared pixel contract. Crop the SVG's
+      // viewBox to the explicit artboard and ask Playwright for CSS pixels: exact 1200×630, no resample.
+      await page.locator('#root svg').evaluate((svg, artboard) => {
+        svg.setAttribute('viewBox', `${artboard.x} ${artboard.y} ${artboard.width} ${artboard.height}`);
+        svg.setAttribute('width', String(artboard.width));
+        svg.setAttribute('height', String(artboard.height));
+        svg.style.width = `${artboard.width}px`;
+        svg.style.height = `${artboard.height}px`;
+      }, { x: Number(canvas.x), y: Number(canvas.y), width: Number(canvas.width), height: Number(canvas.height) });
+    }
+    await page.locator('#root svg').screenshot({ path: output, omitBackground: false, scale: isPathCard ? 'css' : 'device' });
+    console.log(`${file} -> ${path.relative(root, output)} (${isPathCard ? '1200x630' : `${result.width}x${result.height}`})`);
   }
 } finally {
   await browser.close();

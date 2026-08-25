@@ -69,6 +69,7 @@ const PUBLIC = {
   'POST /v1/auth/privy': 'an auth entry point — there is no token to present yet',
   'POST /v1/auth/x': 'an auth entry point — there is no token to present yet',
   'POST /v1/auth/x/start': 'an auth entry point — there is no token to present yet',
+  'POST /v1/path-quiz': 'the anonymous Path acquisition funnel — an account does not exist yet; the route accepts only six allowlisted, rate-limited events with bounded dimensions and stores no IP or fingerprint',
 };
 for (const [route, why] of Object.entries(PUBLIC))
   assert(typeof why === 'string' && why.trim().length >= 20,
