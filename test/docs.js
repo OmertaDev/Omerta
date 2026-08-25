@@ -315,6 +315,11 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
   const { llmsTxt } = await import('../src/agentgateway.js');
   const surfaceText = (f) => (f === '<llms.txt>' ? llmsTxt() : read(f));
   const ALL_SURFACES = [...SURFACES, '<llms.txt>'];
+  const llms = llmsTxt();
+  assert(llms.includes('[Arena snapshot (JSON)](https://www.omerta.fun/v1/arena): the public banded board behind this page.'),
+    'llms.txt identifies the public Arena JSON snapshot as the public banded board behind this page');
+  assert(!llms.includes('/v1/leaderboard/agents'),
+    'llms.txt does not direct unauthenticated discovery to the authenticated agent leaderboard');
   const bad = [];
   for (const f of ALL_SURFACES) {
     let text;
