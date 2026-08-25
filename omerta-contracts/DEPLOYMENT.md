@@ -50,7 +50,8 @@ Set-Location omerta-contracts
 forge --version
 forge clean
 forge test -vv
-forge build --sizes
+# FuzzTester is a synthetic all-handler Medusa/Echidna target, never a deployment.
+forge build --sizes --skip FuzzTester
 ```
 
 The hook tests compile a real Uniswap v4 `PoolManager`; use native solc 0.8.26. Do not use a successful
