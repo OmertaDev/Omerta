@@ -54,13 +54,19 @@ function resolveBrowser() {
   // a Playwright-managed install (PLAYWRIGHT_BROWSERS_PATH, or the default cache). The directory
   // is versioned, and the version pinned by playwright-core often differs from what is installed,
   // so match by GLOB rather than asking playwright-core for its own expected path.
-  const roots = [process.env.PLAYWRIGHT_BROWSERS_PATH, `${process.env.HOME || ''}/.cache/ms-playwright`].filter(Boolean);
+  const roots = [...new Set([
+    process.env.PLAYWRIGHT_BROWSERS_PATH,
+    process.env.LOCALAPPDATA ? path.join(process.env.LOCALAPPDATA, 'ms-playwright') : null,
+    process.env.HOME ? path.join(process.env.HOME, '.cache', 'ms-playwright') : null,
+  ].filter(Boolean))];
   for (const root of roots) {
     let entries = [];
     try { entries = fs.readdirSync(root); } catch { continue; }
     for (const e of entries.filter((x) => x.startsWith('chromium')).sort().reverse()) {
       for (const rel of ['chrome-linux/chrome', 'chrome-linux/headless_shell',
-        'chrome-mac/Chromium.app/Contents/MacOS/Chromium']) {
+        'chrome-mac/Chromium.app/Contents/MacOS/Chromium',
+        'chrome-win64/chrome.exe', 'chrome-win/chrome.exe',
+        'chrome-headless-shell-win64/headless_shell.exe', 'chrome-headless-shell-win/headless_shell.exe']) {
         const p = path.join(root, e, rel);
         if (fs.existsSync(p)) return p;
       }
@@ -253,13 +259,52 @@ for (const vp of VIEWPORTS) {
         const m = (await meR.json())?.character || {}, ob = await obR.json();
         const firstJob = (ob.tasks || []).find((t) => t.id === 'ob_crime');
         return { firstJobReady: !!(firstJob?.ready || firstJob?.claimed), coach: m.coach?.label || '',
+          coachTab: m.coach?.tab || '',
           tourOpen: !document.querySelector('#welcome')?.classList.contains('hidden') };
       });
-      if (!played.firstJobReady || played.coach === 'Pull your first job' || played.tourOpen)
-        fail('(first action)', vp, `visible crime did not advance the fresh player's coach cleanly — ${JSON.stringify(played)}`);
+      if (!played.firstJobReady || played.coach !== 'Claim your first-job reward'
+        || played.coachTab !== 'start' || played.tourOpen)
+        fail('(first action)', vp, `visible crime did not hand the player back to the ready reward — ${JSON.stringify(played)}`);
 
-      // Start Here remains reachable and visible after the action-first handoff.
-      await page.click('#tabs [data-tab="start"]');
+      // THE HANDBACK — do not navigate to Start Here by hand. That masked the live defect: the
+      // first-job reward was ready, but the primary coach skipped straight to level 5, and short
+      // phones hide the secondary coach plan. Follow the real coach control, require the real claim
+      // control to be visible, then claim through the browser and prove the longer road resumes.
+      const coachGo = page.locator('#coach-go');
+      if (!(await coachGo.count())) {
+        fail('(first reward)', vp, 'the primary coach has no control to follow');
+      } else {
+        await coachGo.click();
+        await page.waitForTimeout(400);
+        const coachLanded = await page.locator('#tab-start.on').count();
+        if (!coachLanded) {
+          fail('(first reward)', vp, 'following the primary coach did not open Start Here');
+          // Keep the rest of the rehearsal diagnostic after recording the real failure. This manual
+          // recovery must never satisfy the assertion above; it only prevents one wrong tab from
+          // turning the whole harness into an unhelpful timeout.
+          await page.click('#tabs [data-tab="start"]');
+        }
+        await page.waitForSelector('#tab-start [data-obclaim="ob_crime"]', { state: 'visible', timeout: 5000 });
+        const reward = page.locator('#tab-start [data-obclaim="ob_crime"]').first();
+        if (!(await reward.isVisible()) || !(await reward.isEnabled())) {
+          fail('(first reward)', vp, 'the coached destination did not expose an enabled first-job reward control');
+        } else {
+          const claimResponse = page.waitForResponse((response) => response.request().method() === 'POST'
+            && new URL(response.url()).pathname === '/v1/onboard/ob_crime/claim');
+          await Promise.all([reward.click(), claimResponse]);
+          await page.waitForTimeout(900);
+          const claimed = await page.evaluate(async () => {
+            const h = { authorization: 'Bearer ' + localStorage.omerta_token };
+            const [meR, obR] = await Promise.all([fetch('/v1/me', { headers: h }), fetch('/v1/onboard', { headers: h })]);
+            const m = (await meR.json())?.character || {}, ob = await obR.json();
+            return { claimed: !!(ob.tasks || []).find((x) => x.id === 'ob_crime')?.claimed,
+              coach: m.coach?.label || '', coachTab: m.coach?.tab || '' };
+          });
+          if (!claimed.claimed || claimed.coach !== 'Get to level 5' || claimed.coachTab !== 'streets')
+            fail('(first reward)', vp, `claim did not resume the level-5 road — ${JSON.stringify(claimed)}`);
+        }
+      }
+
       await check(page, 'start-here (after first action)', vp, { contentMustShow: true });
       await page.click('#btn-help');
       await page.waitForSelector('#glossary:not(.hidden)', { timeout: 5000 });

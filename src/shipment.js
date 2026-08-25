@@ -144,8 +144,17 @@ export async function commissionPiece(ch, id, client, h) {
   ch.shipment = Number(ch.shipment || 0) - c.units;
   ch.cash = Number(ch.cash) - c.cash;
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -c.cash, reason: 'shipment:commission' });
+  // This serial is shared across accounts, while withCharacter only locks the ACTOR. COUNT(*) + 1
+  // therefore let two valid simultaneous commissions choose the same number; the piece PK saved
+  // uniqueness by rolling one whole transaction back as `contention`, but made the action fail.
+  // One counter UPSERT is the serialization point. On an upgraded DB its first insert starts after
+  // MAX(existing serial), so no separate backfill or deploy-order window exists.
   const serial = Number((await client.query(
-    'SELECT COUNT(*) n FROM bespoke_pieces WHERE commission_id=$1', [id])).rows[0].n) + 1;
+    `INSERT INTO bespoke_serials (commission_id, minted)
+     SELECT $1, COALESCE(MAX(serial), 0) + 1 FROM bespoke_pieces WHERE commission_id=$1
+     ON CONFLICT (commission_id) DO UPDATE
+       SET minted = GREATEST(bespoke_serials.minted + 1, EXCLUDED.minted)
+     RETURNING minted`, [id])).rows[0].minted);
   await client.query(
     'INSERT INTO bespoke_pieces (account_id, commission_id, serial, holder_name) VALUES ($1,$2,$3,$4)',
     [ch.account_id, id, serial, ch.name]);
@@ -153,7 +162,8 @@ export async function commissionPiece(ch, id, client, h) {
   await logCollect(client, ch.account_id, 'bespoke', id);
   await notify(client, ch.id, 'commissioned', { id, name: c.name, serial });
   bus.emit('streets', { type: 'commissioned', who: ch.name, piece: c.name, serial });
-  return { ok: true, piece: { id, name: c.name, serial }, held: ch.shipment, spent: c.cash };
+  return { ok: true, piece: { id, name: c.name, serial }, units: c.units,
+    material: SHIPMENT.MATERIAL, held: ch.shipment, spent: c.cash };
 }
 
 // the pieces an account has ever commissioned — account-keyed, so they SURVIVE DEATH and the heir

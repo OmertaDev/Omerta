@@ -11,6 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { buildServer } from '../src/server.js';
 import { opsEngagement, SYSTEMS, NON_ENGAGEMENT } from '../src/engagement.js';
+import { PATH_QUIZ_QUESTIONS } from '../src/path-funnel.js';
 
 // ── (1) the catalog covers src/, exactly ────────────────────────────────────────────────────────
 // Read the real track() call sites rather than a hand-list, so this cannot drift from the code.
@@ -79,6 +80,25 @@ const b = await mk('Engage Bob');
 await call('POST', '/v1/crimes/pick', { token: a.token });
 await app.inject({ method: 'POST', url: '/v1/crimes/pick', headers: { authorization: `Bearer ${a.token}` } });
 
+const pathPost = async (payload) => {
+  const response = await app.inject({ method: 'POST', url: '/v1/path-quiz',
+    payload: { source: 'direct', ...payload } });
+  assert.equal(response.statusCode, 200, `${payload.event} fixture should reach Path telemetry: ${response.body}`);
+  return response;
+};
+const gunAnswers = Object.fromEntries(PATH_QUIZ_QUESTIONS.map((question) => [
+  question.id, question.options.find((option) => option.lead === 'gun').id,
+]));
+await pathPost({ event: 'start', session: 'funnel-session-one' });
+await pathPost({ event: 'complete', session: 'funnel-session-one', answers: gunAnswers });
+await pathPost({ event: 'result_view', session: 'funnel-session-one', path: 'gun', secondary: 'ring' });
+await pathPost({ event: 'cta_click', session: 'funnel-session-one', path: 'gun', cta: 'play' });
+await pathPost({ event: 'cta_click', session: 'funnel-session-one', path: 'gun', cta: 'download_portrait' });
+await pathPost({ event: 'cta_click', session: 'funnel-session-one', path: 'gun', cta: 'download_vertical' });
+await pathPost({ event: 'share', session: 'funnel-session-one', path: 'gun', channel: 'native' });
+await pathPost({ event: 'start', session: 'funnel-session-two' });
+await pathPost({ event: 'result_view', session: 'funnel-social-view', path: 'ledger', secondary: null, source: 'social' });
+
 // The economy report must observe real player interaction, not a fixture that inserts telemetry
 // directly. Supply and a completed trade are separate signals: two people list/buy contraband.
 const marketSeller = await mk('Engage Market Seller');
@@ -90,14 +110,15 @@ assert.equal((await call('POST', '/v1/goods/buy', { token: marketSeller.token, b
 const marketListing = await call('POST', '/v1/market', { token: marketSeller.token,
   body: { goodId: 'gin', qty: 2, price: 500 } });
 assert.equal(marketListing.code, 200, 'the seller lists goods through the public market route');
-assert.equal((await call('POST', `/v1/market/${marketListing.body.id}/buy`, { token: marketBuyer.token, body: { qty: 2 } })).code, 200,
-  'the buyer completes the listed trade through the public market route');
+assert.equal((await call('POST', `/v1/market/${marketListing.body.id}/buy`, { token: marketBuyer.token,
+  body: { qty: 2 } })).code, 200, 'the buyer completes the listed trade through the public market route');
 
 // Likewise, a peer loan actually changes hands and is squared through the public routes.
 const lender = await mk('Engage Lender');
 const borrower = await mk('Engage Borrower');
 await pool.query('UPDATE characters SET cash=100000 WHERE id=$1 OR id=$2', [lender.id, borrower.id]);
-const offer = await call('POST', '/v1/loans', { token: lender.token, body: { amount: 10000, rate: 0.1, hours: 24 } });
+const offer = await call('POST', '/v1/loans', { token: lender.token,
+  body: { amount: 10000, rate: 0.1, hours: 24 } });
 assert.equal(offer.code, 200, 'the lender posts a peer offer');
 assert.equal((await call('POST', `/v1/loans/${offer.body.id}/take`, { token: borrower.token })).code, 200,
   'the borrower takes the offer');
@@ -127,6 +148,21 @@ assert(contracts.accounts >= 1 && contracts.events >= 1,
   'a personal contract post is attributed to contract adoption');
 assert(!r.untracked.includes('the black market'), 'instrumented market adoption is no longer reported as untracked');
 assert.equal(r.uncatalogued.length, 0, `uncatalogued events present: ${JSON.stringify(r.uncatalogued)}`);
+assert.deepEqual(r.funnels.pathQuiz, {
+  starts: 2,
+  answerEvents: 0,
+  completions: 1,
+  resultViews: 2,
+  playClicks: 1,
+  codexClicks: 0,
+  portraitDownloads: 1,
+  verticalDownloads: 1,
+  shares: 1,
+  startToCompletePct: 50,
+  resultToPlayPct: 50,
+  completionPaths: { gun: 1, ledger: 0, kitchen: 0, wheel: 0, shadow: 0, ring: 0 },
+  viewedPaths: { gun: 1, ledger: 1, kitchen: 0, wheel: 0, shadow: 0, ring: 0 },
+}, 'the mod report exposes the privacy-safe Path acquisition funnel and both conversion denominators');
 console.log(`✓ live read: ${r.players.humans} humans, streets/crime shows ${streets.accounts} account(s) / ${streets.events} event(s)`);
 
 // ── (3) THE DEAD LIST — the whole point ─────────────────────────────────────────────────────────

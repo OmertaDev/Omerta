@@ -16,7 +16,7 @@ process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
 import { readFileSync, readdirSync } from 'node:fs';
 import zlib from 'node:zlib';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { buildServer } from '../src/server.js';
 
 const app = await buildServer();
@@ -69,6 +69,7 @@ const PUBLIC = {
   'POST /v1/auth/privy': 'an auth entry point — there is no token to present yet',
   'POST /v1/auth/x': 'an auth entry point — there is no token to present yet',
   'POST /v1/auth/x/start': 'an auth entry point — there is no token to present yet',
+  'POST /v1/path-quiz': 'the anonymous Path acquisition funnel — an account does not exist yet; the route accepts only six allowlisted, rate-limited events with bounded dimensions and stores no IP or fingerprint',
 };
 for (const [route, why] of Object.entries(PUBLIC))
   assert(typeof why === 'string' && why.trim().length >= 20,
@@ -297,6 +298,88 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
 }
 
 // ── THE WIRE ────────────────────────────────────────────────────────────────────────────────────
+// IMMUTABLE ART URLS. /art is cache-first in the service worker and served with a seven-day immutable
+// browser cache. That contract only works when a changed byte stream gets a changed request URL. The
+// Research sheets were replaced in place once, and an already-open Codex legally kept the old diagrams.
+// Bind every public reference to the file's content hash so a future re-render cannot repeat that failure.
+{
+  const omrDiagrams = [
+    'omr-01-severance.png',
+    'omr-02-return-velocity.png',
+    'omr-03-money-router.png',
+    'omr-04-reserve-rwa.png',
+    'omr-05-ohm-contrast.png',
+  ];
+  const gameplayDiagrams = [
+    'gameplay-01-choose-your-path.png',
+    'gameplay-02-the-gun.png',
+    'gameplay-03-the-ledger.png',
+    'gameplay-04-the-kitchen.png',
+    'gameplay-05-the-wheel.png',
+    'gameplay-06-the-shadow.png',
+    'gameplay-07-the-ring.png',
+    'gameplay-08-character-blueprint.png',
+    'gameplay-09-road-to-don.png',
+  ];
+  const diagrams = [...omrDiagrams, ...gameplayDiagrams];
+  const versionOf = new Map(diagrams.map((name) => [name, createHash('sha256')
+    .update(readFileSync(new URL(`../public/art/${name}`, import.meta.url))).digest('hex').slice(0, 12)]));
+  const surfaces = [
+    ['/', new Set(['omr-03-money-router.png', 'gameplay-01-choose-your-path.png'])],
+    ['/wiki', new Set(diagrams)],
+  ];
+
+  for (const [url, expectedNames] of surfaces) {
+    const res = await app.inject({ method: 'GET', url });
+    assert.equal(res.statusCode, 200, `${url} must serve before its immutable art references can be checked`);
+    const refs = [...res.body.matchAll(/(?:src|href)="\/art\/((?:omr|gameplay)-\d{2}-[^"?]+\.png)(?:\?v=([a-f0-9]{12}))?"/g)];
+    assert.deepEqual(new Set(refs.map((m) => m[1])), expectedNames,
+      `${url} must reference exactly its intended research sheets`);
+    for (const [, name, version] of refs)
+      assert.equal(version, versionOf.get(name),
+        `${url} references immutable ${name} without its current content hash; a warm browser will show stale art`);
+  }
+  console.log('✅ every immutable research-sheet reference is versioned by its current content hash');
+}
+
+// The landing threshold is image-led, but a phone must not pay for desktop source pixels. The hero is
+// eager because it is the LCP; everything below the fold is responsive + lazy, and the narrated video
+// does not reveal either its poster or source until the observer brings it near the viewport.
+{
+  const landing = (await app.inject({ method: 'GET', url: '/' })).body;
+  assert(landing.includes('<picture class="hero-art" aria-hidden="true">'),
+    'the LCP hero must be a real responsive picture, not a fixed desktop CSS background');
+  assert(landing.includes('fetchpriority="high"'), 'the responsive LCP hero must remain high priority');
+  assert(landing.includes('/art/hero-poster-640.webp 640w') && landing.includes('/art/hero-poster-1920.webp 1920w'),
+    'the hero must publish mobile-through-desktop WebP candidates');
+  assert(landing.includes('<div id="tour-art" aria-hidden="true"></div>'),
+    'the hidden first-session tour must not fetch its hero art before the tour opens');
+  assert(landing.includes('data-video-poster="/art/hype-money-poster-960.webp"'),
+    'the below-fold video poster must wait for the landing media observer');
+  assert(landing.includes('data-video-poster-mobile="/art/hype-money-poster-640.webp"'),
+    'the deferred video poster must also have a phone-sized source');
+  assert(landing.includes('data-src="/art/hype-money-720.mp4"'),
+    'the narrated money map must provide a lighter phone encode');
+  assert(!/<video[^>]+(?:\sposter|\ssrc)="\/art\/hype-money/.test(landing),
+    'the below-fold video must not eagerly expose a poster or source on the cold visit');
+  for (const name of [
+    'hero-poster-640.webp',
+    'hero-poster-1920.webp',
+    'landing-break-640.webp',
+    'gameplay-01-choose-your-path-1080.webp',
+    'omr-03-money-router-1080.webp',
+    'hype-money-poster-960.webp',
+  ]) {
+    const asset = await app.inject({ method: 'GET', url: `/art/${name}` });
+    assert.equal(asset.statusCode, 200, `responsive landing asset ${name} must be mounted by /art`);
+    assert.equal(asset.headers['content-type'], 'image/webp', `${name} must be served as WebP`);
+  }
+  const mobileVideo = await app.inject({ method: 'GET', url: '/art/hype-money-720.mp4', headers: { range: 'bytes=0-1023' } });
+  assert.equal(mobileVideo.statusCode, 206, 'the lighter phone video must preserve range streaming');
+  assert.equal(mobileVideo.headers['content-length'], '1024');
+  console.log('✅ landing media is responsive, below-fold video is deferred, and the phone encode range-streams');
+}
+
 // What the player DOWNLOADS. tools/pageweight.js measured a cold load of the landing at 5.3 MB on a
 // phone, of which 757 KB was text shipped uncompressed: index.html is 1,047,078 bytes and gzips to
 // 319,499 (31%), and it carried no cache-control while every neighbouring static route already set
@@ -357,6 +440,8 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
   // a big JSON board compresses; a small one does not
   const rules = await get('/v1/rules', GZ);
   assert.equal(rules.headers['content-encoding'], 'gzip', '/v1/rules is 69 KB of catalog — it must compress');
+  assert.equal(rules.headers['cache-control'], 'public, max-age=300, stale-while-revalidate=3600',
+    '/v1/rules is deploy-stable public catalog data — repeat visits should reuse it while it revalidates');
   const tiny = await get('/v1/online', GZ);
   assert.equal(tiny.statusCode, 200);
   assert(Buffer.byteLength(tiny.body) < 1024, 'this check needs a genuinely small response to be about the threshold');

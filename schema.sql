@@ -2287,6 +2287,14 @@ CREATE TABLE IF NOT EXISTS bespoke_pieces (
   PRIMARY KEY (commission_id, serial)
 );
 CREATE INDEX IF NOT EXISTS ix_bespoke_account ON bespoke_pieces(account_id);
+-- Atomic per-kind serial allocator. The piece PK prevents duplicate serials from committing, but
+-- COUNT(*) + 1 still made one of two legitimate cross-account commissions roll back under a race.
+-- The upsert in commissionPiece serializes that shared write; MAX(existing) on first touch lets an
+-- upgraded database begin after every number it minted before this counter existed.
+CREATE TABLE IF NOT EXISTS bespoke_serials (
+  commission_id TEXT PRIMARY KEY,
+  minted INT NOT NULL DEFAULT 0
+);
 ALTER TABLE characters ADD COLUMN IF NOT EXISTS shipment INT NOT NULL DEFAULT 0;
 
 -- ═══ THE VAULT (omerta-stock-layer-retirement.md) — the full-reserve ETH layer. Out-of-band REAL

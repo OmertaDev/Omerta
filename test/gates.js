@@ -29,7 +29,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const SRC = fileURLToPath(new URL('../src/', import.meta.url));
-const relTo = (base, file) => path.relative(base, file).replaceAll('\\', '/');
+const relPath = (from, to) => path.relative(from, to).replaceAll('\\', '/');
 const GATES = ['jailed', 'hospitalized', 'safeHoused', 'penSafe', 'inHole', 'witproActive'];
 // The column each gate reads, so a hand-written inline check counts as enforcement. Matched as a
 // PROPERTY ACCESS (`ch.safe_until`) rather than the bare column, because the bare name also appears
@@ -309,7 +309,7 @@ const DEFINES_CANON = {                                 // file → why it may b
 };
 const copies = [];
 for (const f of files) {
-  const rel = relTo(process.cwd(), f);
+  const rel = relPath(process.cwd(), f);
   if (DEFINES_CANON[rel]) continue;
   const src = fs.readFileSync(f, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
   for (const g of CANON) {
@@ -348,7 +348,7 @@ const DISTRICT_WAIVED = {
 const mute = [];
 let districtGates = 0;
 for (const f of files) {
-  const rel = relTo(process.cwd(), f);
+  const rel = relPath(process.cwd(), f);
   const src = fs.readFileSync(f, 'utf8');
   for (const m of src.matchAll(/new GameError\(\s*'district'/g)) {
     districtGates++;
@@ -491,7 +491,7 @@ console.log('✅ THE GATE MATRIX passed — every verb in a family enforces the 
       for (let j = i + 1; j < lines.length && !/^\}/.test(lines[j]); j++) {
         if (new RegExp(`\\b${v}\\.release\\(\\)`).test(lines[j])) { released = true; break; }
       }
-      if (!released) leaked.push(`${relTo(SRC, f)}:${i + 1} (${v})`);
+      if (!released) leaked.push(`${relPath(SRC, f)}:${i + 1} (${v})`);
     }
   }
   // Anti-vacuity: an empty `leaked` is also what a broken scanner looks like. The tree has >100 of
@@ -539,7 +539,7 @@ console.log('✅ THE GATE MATRIX passed — every verb in a family enforces the 
   const bad = [];
   let handovers = 0;
   for (const f of files) {
-    const rel = relTo(SRC, f);
+    const rel = relPath(SRC, f);
     const lines = fs.readFileSync(f, 'utf8').split('\n');
     for (let i = 0; i < lines.length; i++) {
       const m = /UPDATE (cars|boats) SET character_id\s*=/.exec(lines[i]);
@@ -603,7 +603,7 @@ const SCENERY_WAIVED = {
 {
   const bad = [], boards = [];
   for (const f of files) {
-    const rel = relTo(SRC, f);
+    const rel = relPath(SRC, f);
     const src = fs.readFileSync(f, 'utf8');
     for (const m of src.matchAll(/export async function (\w*[Ll]eaderboard)\s*\(/g)) {
       const name = `${rel}:${m[1]}`;
@@ -814,7 +814,7 @@ const SCENERY_WAIVED = {
   const seenKeys = new Set();
   let gates = 0;
   for (const f of files) {                       // the tree-wide list built at the top of this file
-    const rel = relTo(SRC, f);
+    const rel = relPath(SRC, f);
     // line-based, so drop whole-line comments: prose about a gate is not a gate (the gate-matrix
     // extractor learned this the expensive way — an over-read is the permissive direction).
     const lines = fs.readFileSync(f, 'utf8').split('\n').map((l) => (/^\s*(\/\/|\*)/.test(l) ? '' : l));
@@ -923,7 +923,7 @@ const SCENERY_WAIVED = {
     const s = fs.readFileSync(f, 'utf8');
     for (const m of s.matchAll(/parseAbiItem\(\s*'(event [^']+)'\s*\)/g)) {
       const e = parseEvt(m[1]);
-      if (e) backendEvents.push({ file: relTo(SRC, f), ...e });
+      if (e) backendEvents.push({ file: relPath(SRC, f), ...e });
     }
   }
   const onchain = new Map();
@@ -999,7 +999,7 @@ const SCENERY_WAIVED = {
         if (!bound) continue;                    // nothing named an event yet — not a decode we can bind
         argReads++;
         if (!declared.get(bound).includes(m[1]))
-          argDrift.push(`${relTo(SRC, f)}:${i + 1}  reads .args.${m[1]}, but ${bound} declares (${declared.get(bound).join(', ')})`);
+          argDrift.push(`${relPath(SRC, f)}:${i + 1}  reads .args.${m[1]}, but ${bound} declares (${declared.get(bound).join(', ')})`);
       }
     }
   }
@@ -1073,7 +1073,7 @@ const SCENERY_WAIVED = {
         if (!locks.length) continue;
         segments++;
         singletonSites += locks.filter((t) => SINGLETON.test(t)).length;
-        const site = `${relTo(SRC, f)}:${marks[i].name}`;
+        const site = `${relPath(SRC, f)}:${marks[i].name}`;
         // rule 2 — a pot taken before a character row, inside one transaction
         const firstChar = locks.indexOf('characters');
         if (firstChar > 0) {
@@ -1197,13 +1197,13 @@ const SCENERY_WAIVED = {
     while ((m = re.exec(src))) {
       scanned++;
       const arg = argOf(src, m.index + m[0].length - 1);
-      const site = `${relTo(process.cwd(), f)}:${src.slice(0, m.index).split('\n').length}`;
+      const site = `${relPath(process.cwd(), f)}:${src.slice(0, m.index).split('\n').length}`;
       // ANY mention of the identifier, not just `client.query(` or a literal `f(client, …)` argument.
       // The narrow forms were the first cut and they had THREE false negatives — `roster.js` hands
       // the client to a reader inside a `.map`, and `dynasty.js` calls a closure that captures it —
       // and a guard that misses the sites it exists for is worse than no guard.
       if (!/\bclient\b/.test(arg)) continue;
-      const shortFile = relTo(process.cwd(), f);
+      const shortFile = relPath(process.cwd(), f);
       const waiver = VIEM_CLIENTS.find((w) => w.file === shortFile && arg.includes(w.mark));
       if (waiver) { waiverHits.set(`${waiver.file}#${waiver.mark}`, waiverHits.get(`${waiver.file}#${waiver.mark}`) + 1); continue; }
       offenders.push(site);

@@ -783,3 +783,25 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
   console.log(`✓ no launch-gating doc calls an existing contract unwritten (${mentions} mentions), and the `
     + `batch matches the tree (${scope[1]} contracts + ${scope[2]} interface)`);
 }
+
+// The issuer-retirement answer is a value-conservation rule, not optional prose. Keep the player Codex,
+// the design authority, and the launch runbook aligned: ordinary multiplier actions preserve raw units;
+// terminal actions stop and reconcile actual receipt back to the same pending cohort, never treasury.
+{
+  const md = read('docs/WIKI.md');
+  const web = read('public/wiki.html');
+  const design = read('omerta-brokers-design.md');
+  const deploy = read('CHAIN-DEPLOY.md');
+
+  assert(md.includes('Robinhood Assets (Jersey)') && web.includes('Robinhood Assets (Jersey)'),
+    'both Codex surfaces must identify RHJ—not the underlier—as the Stock Token issuer');
+  assert(md.includes('raw token balance') && web.includes('raw units'),
+    'both Codex surfaces must preserve raw units across ordinary multiplier actions');
+  assert(md.includes('same accounts') && web.includes('same accounts'),
+    'both Codex surfaces must keep successor property with the original pending accounts');
+  assert(design.includes('C = floor(P × U / B)') && design.includes('largest fractional remainder'),
+    'the corporate-action design must retain its bounded pro-rata and deterministic dust calculation');
+  assert(deploy.includes('C=floor(P×U/B)') && deploy.includes('end-to-end rehearsal'),
+    'the launch runbook must carry the settlement math and forbid an unaudited automatic handler');
+  console.log('✓ corporate-action policy stays fail-closed, pro-rata, cohort-bound, and aligned across both Codices plus launch docs');
+}

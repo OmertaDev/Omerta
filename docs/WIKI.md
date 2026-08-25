@@ -1057,6 +1057,18 @@ The policy is **minimum breadth and score, then uncapped proportional activity**
    If a player has no valid delivery target for months or years, the exact outstanding units remain
    owed until that player extracts or regains a qualifying Street Deed.
 
+**If Robinhood retires or converts a Stock Token.** Here, the issuer means Robinhood Assets (Jersey)
+Limited (RHJ), which issues the Stock Token—not the public company whose shares provide the economic
+exposure. Ordinary splits and dividends use RHJ's on-chain multiplier: the raw token balance and the
+game's raw-unit allocation do not change. A future redemption, merger, spin-off, or worthless-removal
+event is different and fails closed. OMERTÀ stops new buys and undelivered pushes for the affected token,
+snapshots the vault balance and every outstanding account allocation, and waits for RHJ to mark the event
+completed and for the vault's actual on-chain successor assets or proceeds to be reconciled. The portion
+backing pending players follows those proceeds pro rata to the **same accounts**. It never becomes general
+treasury inventory and is never redistributed to a later activity epoch. If completion or proceeds are
+ambiguous, the old allocation remains pending rather than being guessed away. Tokens already delivered
+to a Street Deed are in that deed owner's custody and are outside this pending-allocation reconciliation.
+
 Robinhood Chain cannot read the gameplay database, so the contract does not pretend to recalculate
 "active play." The server computes the frozen allocation; a separate Safe-configured allocation
 signer attests the exact epoch hash, account hash, token, deed account, units, delivery id, and

@@ -20,6 +20,7 @@
 // pg-mem: every query here is flat (no correlated subqueries, no window functions) and aggregation
 // happens in JS — the /v1/gangs precedent. Row reads are capped so a large alpha cannot make the
 // dashboard the slowest thing in the process.
+import { PATH_IDS } from './path-funnel.js';
 
 const num = (v) => Number(v || 0);
 const dayKey = (d) => new Date(d).toISOString().slice(0, 10);
@@ -110,7 +111,19 @@ export const SYSTEMS = {
 // opens (the reach block on the ops funnel). Counting it as engagement would double-count — every
 // screen visit already shows up as whatever ACTION the player took there, and a screen opened and
 // abandoned is precisely what the reach number exists to separate from a system being used.
-export const NON_ENGAGEMENT = ['mod_kill_reason', 'screen_open'];
+export const NON_ENGAGEMENT = [
+  'mod_kill_reason',
+  'screen_open',
+  // Anonymous acquisition-funnel instruments. They measure whether the Path explainer moves a
+  // visitor from first decision to guest play; counting them as player-system use would inflate DAU
+  // and make the gameplay adoption report lie.
+  'path_quiz_start',
+  'path_quiz_answer',
+  'path_quiz_complete',
+  'path_result_view',
+  'path_cta_click',
+  'path_share',
+];
 
 const EVENT_TO_SYSTEM = (() => {
   const m = new Map();
@@ -144,13 +157,40 @@ export async function opsEngagement(pool, days = 14) {
 
   // Flat read, JS aggregation (pg-mem). Windowed, so this scales with activity not with history.
   const rows = (await pool.query(
-    'SELECT account_id, event, at FROM telemetry WHERE at >= $1 LIMIT $2', [since, MAX_ROWS])).rows;
+    'SELECT account_id, event, props, at FROM telemetry WHERE at >= $1 LIMIT $2', [since, MAX_ROWS])).rows;
 
   const perSystem = new Map();          // system -> {accounts:Set, events:n, last:Date}
   const uncatalogued = new Map();       // event -> count (never silently dropped)
   const nonEng = new Set(NON_ENGAGEMENT);
+  const emptyPathCounts = () => Object.fromEntries(PATH_IDS.map((id) => [id, 0]));
+  const pathQuiz = {
+    startSessions: new Set(), completeSessions: new Set(), resultSessions: new Set(),
+    playSessions: new Set(), answerEvents: 0, playClicks: 0, codexClicks: 0,
+    portraitDownloads: 0, verticalDownloads: 0, shares: 0,
+    completionPaths: emptyPathCounts(), viewedPaths: emptyPathCounts(),
+  };
 
   for (const r of rows) {
+    let props = {};
+    if (r.event.startsWith('path_')) try {
+      props = typeof r.props === 'string' ? JSON.parse(r.props) : (r.props || {});
+    } catch { /* old malformed Path row */ }
+    const session = typeof props.session === 'string' ? props.session : null;
+    if (session && r.event === 'path_quiz_start') pathQuiz.startSessions.add(session);
+    else if (session && r.event === 'path_quiz_answer') pathQuiz.answerEvents++;
+    else if (session && r.event === 'path_quiz_complete') {
+      pathQuiz.completeSessions.add(session);
+      if (PATH_IDS.includes(props.primary)) pathQuiz.completionPaths[props.primary]++;
+    } else if (session && r.event === 'path_result_view') {
+      pathQuiz.resultSessions.add(session);
+      if (PATH_IDS.includes(props.path)) pathQuiz.viewedPaths[props.path]++;
+    } else if (session && r.event === 'path_cta_click') {
+      if (props.cta === 'play') { pathQuiz.playClicks++; pathQuiz.playSessions.add(session); }
+      else if (props.cta === 'codex') pathQuiz.codexClicks++;
+      else if (props.cta === 'download_portrait') pathQuiz.portraitDownloads++;
+      else if (props.cta === 'download_vertical') pathQuiz.verticalDownloads++;
+    } else if (session && r.event === 'path_share') pathQuiz.shares++;
+
     const h = human.get(r.account_id);
     if (h) h.days.add(dayKey(r.at));    // activity day, for DAU + retention
     if (nonEng.has(r.event)) continue;
@@ -210,6 +250,8 @@ export async function opsEngagement(pool, days = 14) {
 
   const activeDayCounts = [...human.values()].map((h) => h.days.size).filter((n) => n > 0).sort((a, b) => a - b);
   const median = activeDayCounts.length ? activeDayCounts[Math.floor(activeDayCounts.length / 2)] : 0;
+  const overlap = (left, right) => [...left].filter((session) => right.has(session)).length;
+  const pct = (numerator, denominator) => denominator ? Math.round((numerator / denominator) * 1000) / 10 : null;
 
   return {
     window: win,
@@ -220,6 +262,23 @@ export async function opsEngagement(pool, days = 14) {
       neverActive: human.size - activeDayCounts.length,
     },
     retention: { d1: cohort(1), d7: cohort(7), medianActiveDays: median, daily },
+    funnels: {
+      pathQuiz: {
+        starts: pathQuiz.startSessions.size,
+        answerEvents: pathQuiz.answerEvents,
+        completions: pathQuiz.completeSessions.size,
+        resultViews: pathQuiz.resultSessions.size,
+        playClicks: pathQuiz.playClicks,
+        codexClicks: pathQuiz.codexClicks,
+        portraitDownloads: pathQuiz.portraitDownloads,
+        verticalDownloads: pathQuiz.verticalDownloads,
+        shares: pathQuiz.shares,
+        startToCompletePct: pct(overlap(pathQuiz.completeSessions, pathQuiz.startSessions), pathQuiz.startSessions.size),
+        resultToPlayPct: pct(overlap(pathQuiz.playSessions, pathQuiz.resultSessions), pathQuiz.resultSessions.size),
+        completionPaths: pathQuiz.completionPaths,
+        viewedPaths: pathQuiz.viewedPaths,
+      },
+    },
     systems,
     dead,
     untracked,

@@ -36,9 +36,12 @@ over, i.e. by OUR claim rail, not by the token (§5).
   the SAME chain family OMERTÀ's whole M6 rail targets. No bridge is needed anywhere in this
   design. (The tokenomics-v2 §10.2 cross-chain flag is moot here too.)
 - **Stock Tokens are ordinary ERC-20s**: ~200+ US stocks/ETFs, EU-facing, each with a Chainlink
-  price feed; corporate actions land as **on-chain multipliers, not balance changes** — which is a
-  gift: a vault holding N token units still holds N units after a split, so `allocated ≤ held`
-  in TOKEN UNITS stays exact across corporate actions with zero code.
+  price feed. RHJ's currently active split/dividend actions land as **on-chain multipliers, not raw
+  balance changes** — which is a gift: a vault holding N token units still holds N units after one of
+  those actions, so `allocated ≤ held` in TOKEN UNITS stays exact with zero allocation rewrite. Do not
+  generalize that sentence to a future redemption, merger, spin-off, or worthless removal: those
+  forward-compatible terminal types use the fail-closed successor-property runbook in
+  `omerta-brokers-design.md` §3.4b.
 - **Uniswap runs on Robinhood Chain from day one** (a dedicated deployment). OPEN DEPENDENCY:
   which version the stock-token pools run (v3 vs v4) — the keeper's swap call differs, nothing
   else in this design does. Verify before Phase B.

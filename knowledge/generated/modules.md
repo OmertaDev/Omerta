@@ -53,7 +53,7 @@
 | [src/dynasty.js](../../src/dynasty.js) | 249 | chain-economy | 3 / 4 | 7 | 10 | 1 |
 | [src/economy.js](../../src/economy.js) | 632 | economy-ledger | 3 / 4 | 26 | 18 | 2 |
 | [src/emission.js](../../src/emission.js) | 34 | economy-ledger | 1 / 2 | 1 | 0 | 1 |
-| [src/engagement.js](../../src/engagement.js) | 231 | engagement-growth | 0 / 3 | 0 | 8 | 1 |
+| [src/engagement.js](../../src/engagement.js) | 290 | engagement-growth | 1 / 3 | 0 | 8 | 1 |
 | [src/estate.js](../../src/estate.js) | 387 | enterprise-logistics | 3 / 7 | 11 | 8 | 2 |
 | [src/events.js](../../src/events.js) | 103 | world-progression | 2 / 8 | 0 | 9 | 1 |
 | [src/exchange.js](../../src/exchange.js) | 355 | economy-ledger | 4 / 10 | 4 | 11 | 5 |
@@ -63,7 +63,7 @@
 | [src/fees.js](../../src/fees.js) | 225 | economy-ledger | 4 / 9 | 4 | 10 | 3 |
 | [src/firstblood.js](../../src/firstblood.js) | 85 | social-combat | 1 / 2 | 0 | 3 | 0 |
 | [src/firsts.js](../../src/firsts.js) | 144 | world-progression | 1 / 6 | 1 | 7 | 1 |
-| [src/game.js](../../src/game.js) | 2534 | platform-core | 9 / 122 | 23 | 62 | 11 |
+| [src/game.js](../../src/game.js) | 2540 | platform-core | 9 / 122 | 24 | 62 | 11 |
 | [src/growth.js](../../src/growth.js) | 980 | engagement-growth | 4 / 14 | 16 | 15 | 6 |
 | [src/heists.js](../../src/heists.js) | 502 | social-combat | 3 / 7 | 10 | 10 | 2 |
 | [src/home.js](../../src/home.js) | 53 | engagement-growth | 13 / 3 | 1 | 0 | 1 |
@@ -86,6 +86,8 @@
 | [src/opportunities.js](../../src/opportunities.js) | 184 | engagement-growth | 7 / 2 | 0 | 6 | 0 |
 | [src/ops.js](../../src/ops.js) | 219 | platform-core | 6 / 4 | 4 | 11 | 2 |
 | [src/pass.js](../../src/pass.js) | 118 | platform-core | 3 / 5 | 2 | 3 | 2 |
+| [src/path-funnel.js](../../src/path-funnel.js) | 379 | platform-core | 0 / 4 | 0 | 7 | 2 |
+| [src/path-pages.js](../../src/path-pages.js) | 326 | platform-core | 0 / 2 | 0 | 1 | 1 |
 | [src/payroll.js](../../src/payroll.js) | 110 | enterprise-logistics | 5 / 2 | 1 | 0 | 0 |
 | [src/pen.js](../../src/pen.js) | 652 | law-intelligence | 6 / 6 | 19 | 13 | 2 |
 | [src/people.js](../../src/people.js) | 230 | engagement-growth | 4 / 2 | 4 | 18 | 0 |
@@ -95,7 +97,7 @@
 | [src/portfolio.js](../../src/portfolio.js) | 51 | economy-ledger | 1 / 3 | 9 | 4 | 1 |
 | [src/portrait.js](../../src/portrait.js) | 337 | engagement-growth | 3 / 4 | 0 | 6 | 2 |
 | [src/preflight.js](../../src/preflight.js) | 391 | platform-core | 0 / 5 | 0 | 5 | 3 |
-| [src/primetime.js](../../src/primetime.js) | 256 | engagement-growth | 2 / 6 | 4 | 5 | 1 |
+| [src/primetime.js](../../src/primetime.js) | 260 | engagement-growth | 2 / 6 | 4 | 5 | 1 |
 | [src/push.js](../../src/push.js) | 226 | engagement-growth | 2 / 4 | 2 | 6 | 1 |
 | [src/races.js](../../src/races.js) | 489 | vice-competition | 4 / 9 | 11 | 9 | 3 |
 | [src/ratelimit.js](../../src/ratelimit.js) | 126 | platform-core | 1 / 1 | 0 | 0 | 0 |
@@ -124,13 +126,13 @@
 | [src/routes/territory.js](../../src/routes/territory.js) | 38 | enterprise-logistics | 2 / 1 | 10 | 2 | 0 |
 | [src/routes/underworld.js](../../src/routes/underworld.js) | 27 | world-progression | 2 / 1 | 7 | 1 | 0 |
 | [src/rules.generated.js](../../src/rules.generated.js) | 480 | platform-core | 0 / 2 | 0 | 10 | 1 |
-| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 195 | 0 | 0 | 108 |
-| [src/rules.tail.js](../../src/rules.tail.js) | 6044 | platform-core | 0 / 1 | 0 | 53 | 0 |
+| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 196 | 0 | 0 | 109 |
+| [src/rules.tail.js](../../src/rules.tail.js) | 6045 | platform-core | 0 / 1 | 0 | 53 | 0 |
 | [src/rwastockkeeper.js](../../src/rwastockkeeper.js) | 125 | platform-core | 0 / 1 | 0 | 5 | 0 |
 | [src/season.js](../../src/season.js) | 141 | world-progression | 1 / 2 | 2 | 8 | 0 |
 | [src/secrets.js](../../src/secrets.js) | 197 | law-intelligence | 3 / 5 | 5 | 6 | 2 |
-| [src/server.js](../../src/server.js) | 3215 | platform-core | 128 / 114 | 415 | 43 | 101 |
-| [src/shipment.js](../../src/shipment.js) | 166 | enterprise-logistics | 2 / 2 | 3 | 6 | 0 |
+| [src/server.js](../../src/server.js) | 3320 | platform-core | 130 / 115 | 418 | 43 | 102 |
+| [src/shipment.js](../../src/shipment.js) | 176 | enterprise-logistics | 2 / 2 | 3 | 8 | 0 |
 | [src/skills.js](../../src/skills.js) | 164 | world-progression | 4 / 2 | 5 | 4 | 0 |
 | [src/social.js](../../src/social.js) | 27 | social-combat | 6 / 12 | 44 | 3 | 6 |
 | [src/social/combat.js](../../src/social/combat.js) | 1039 | platform-core | 13 / 4 | 0 | 21 | 0 |
@@ -146,7 +148,7 @@
 | [src/speakeasy.js](../../src/speakeasy.js) | 581 | vice-competition | 3 / 5 | 14 | 8 | 0 |
 | [src/stable.js](../../src/stable.js) | 434 | vice-competition | 3 / 9 | 9 | 8 | 3 |
 | [src/standing.js](../../src/standing.js) | 119 | world-progression | 2 / 6 | 1 | 4 | 2 |
-| [src/stockcatalog.js](../../src/stockcatalog.js) | 388 | platform-core | 1 / 3 | 0 | 2 | 0 |
+| [src/stockcatalog.js](../../src/stockcatalog.js) | 388 | platform-core | 1 / 4 | 0 | 2 | 0 |
 | [src/stockdeliver.js](../../src/stockdeliver.js) | 579 | economy-ledger | 2 / 7 | 3 | 6 | 4 |
 | [src/store.js](../../src/store.js) | 435 | platform-core | 4 / 11 | 5 | 14 | 4 |
 | [src/streak.js](../../src/streak.js) | 108 | world-progression | 2 / 3 | 3 | 3 | 0 |

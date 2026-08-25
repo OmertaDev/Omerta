@@ -32,6 +32,17 @@ their costs were laid out).
 > remove. This is a product/risk decision, not a claim of legal approval: Robinhood's permissionless ERC-20
 > developer posture and its separately published transfer restrictions both remain facts the launch
 > review must address. Adding a recipient gate later requires a new founder decision.
+>
+> **Founder corporate-action posture — 2026-08-25.** RHJ's currently active split/dividend actions
+> are multiplier-managed, so neither raw `StockVault` balances nor raw-unit allocations are rewritten.
+> A terminal or conversion action (including redemption, merger, spin-off, or worthless removal) is a
+> rare, fail-closed exception: deactivate the catalog entry, pause purchases and undelivered pushes,
+> snapshot the source-token balance and outstanding allocation book, and wait for both an issuer
+> `COMPLETED` record and verified on-chain receipt of the actual successor property. The economic share
+> backing pending allocations follows that property pro rata to the same accounts; it never falls to
+> general treasury inventory or a later epoch. No keeper may infer settlement from an announcement.
+> Until RHJ activates and documents a terminal type, reconciliation is Safe-reviewed rather than
+> speculative automation. §3.4b is the normative calculation and runbook.
 
 Supersedes nothing. It *reverses* part of `omerta-stock-layer-retirement.md` (2026-07-31), which is a
 founder call and is recorded as such in §6.
@@ -333,6 +344,50 @@ disclosure in §3.4a — a voucher-gated TBA outflow is the only stronger form, 
 "self-contained NFT" property the gateless push was chosen for. (The other two former deferrals are
 CLOSED: the deed `Transfer` watcher re-targets delivery to a SECONDARY owner, and
 `runStockDeliveryKeeper` is the real TX send.)
+
+### 3.4b Corporate actions — the entitlement follows the property (founder-directed 2026-08-25)
+
+The two issuers must not be confused. NVIDIA, Apple, and the other underliers issue their ordinary
+shares. **Robinhood Assets (Jersey) Limited (RHJ) issues the Stock Token**, which is a tokenized debt
+security providing economic exposure to the underlier. A retirement of the Stock Token is therefore
+an RHJ product action even when it was triggered by an underlier merger or other corporate event.
+
+The hot path remains simple. RHJ documents forward/reverse splits and cash/stock dividends as active
+multiplier-managed actions. `uiMultiplier()` changes while the raw ERC-20 balance stays static, so
+`stock_allocations.units`, `delivered_units`, and the per-token `allocated ≤ held` wall stay in raw token
+units. **Do not rewrite those rows because a multiplier changed.** The on-chain oracle incorporates the
+multiplier when value is displayed or priced.
+
+Redemption, cash/stock merger, spin-off, rights distribution, unit split, and worthless removal are
+currently forward-compatible API types rather than active settlement contracts. They therefore use a
+rare-event, fail-closed runbook instead of code that guesses future issuer behavior:
+
+1. At an `IN_PROGRESS` non-multiplier action or an affected asset becoming inactive, the Safe disables
+   the registry entry and the per-token delivery cap. That blocks new ballots, buys, and undelivered
+   pushes without deleting any debt. Already delivered tokens stay with the deed owner; OMERTÀ cannot
+   and does not re-open that custody.
+2. Snapshot, with block numbers, the vault's affected raw-token balance `B`, every account's outstanding
+   units `u_i = units - delivered_units`, their total `U`, and any staged delivery. `U ≤ B` must hold.
+   If it does not, stop as an invariant incident rather than manufacturing a settlement.
+3. Wait for RHJ's action to be `COMPLETED`, then prove the actual successor property received by the
+   vault from on-chain transaction hashes and balance deltas. An announcement, API rate, or keeper
+   estimate is not receipt. If completion, asset identity, or receipt is ambiguous, the original
+   allocations remain permanently pending.
+4. Let `P` be the actual successor asset's atomic units received for the snapshotted `B`. The pending
+   cohort owns `C = floor(P × U / B)`; the remainder of `P` corresponds to the vault's unallocated
+   source inventory. Each pending account receives `floor(C × u_i / U)`. Allocate the remaining atomic
+   dust inside `C` by largest fractional remainder, with `keccak256(account_id)` as the deterministic
+   tie-break. Thus `sum(successor_i) = C` without over-allocation, and no player-backed atom leaks to
+   general treasury inventory or a later epoch.
+5. A Safe-approved reconciliation record binds the issuer action id/status, source and successor token
+   addresses, snapshot and receipt blocks, transaction hashes, `B`, `U`, `P`, every account result, and
+   the rounding proof. Only then may a successor allocation be delivered and the source allocation be
+   marked reconciled. Never delete the source history. A verified completed worthless removal with zero
+   actual proceeds records a zero settlement rather than fabricating value; absent that proof it waits.
+
+This is deliberately not automated today. Automation becomes appropriate only after RHJ activates a
+terminal action type, publishes its settlement semantics, and the resulting contract/schema change has
+the same audit and rehearsal as the original value-moving rail.
 
 ---
 

@@ -87,11 +87,36 @@ assert.equal(await cashOf(q.id), qStart + reward, 'both get the SAME final-turno
 const again = await settlePrimeTime(pool);
 assert.equal(await cashOf(p.id), paidBefore + reward, 'a second settle pays nothing more (idempotent)');
 
+// A window that closes earlier TODAY must settle at its close, not wait for the UTC day to roll.
+// The old worker started its scan at yesterday, so an 00:00–01:00 UTC window could leave the
+// promised payout pending for almost 23 hours. Freeze the worker just after today's real drawn end
+// and park one unsettled row on today; yesterday's already-settled rows keep this probe isolated.
+const sameDay = await mk('Same Day Settle');
+await levelUp(sameDay.id);
+await pool.query('INSERT INTO primetime_rally (day, character_id, settled) VALUES ($1,$2,false)', [today, sameDay.id]);
+const sameDayStart = await cashOf(sameDay.id);
+const realNow = Date.now;
+const todayPrime = primeTimeOf(today);
+const justClosed = today * 86400000 + (todayPrime.hour + PRIME_TIME.WINDOW_H) * 3600000 + 1000;
+Date.now = () => justClosed;
+try {
+  const sameDaySettle = await settlePrimeTime(pool);
+  assert.equal(sameDaySettle.paid, 1, 'the worker settles a same-day window immediately after it closes');
+} finally { Date.now = realNow; }
+assert.equal(await cashOf(sameDay.id), sameDayStart + rallyReward(1),
+  'the same-day answerer receives the promised close-time payout without waiting for midnight');
+
 // §10.4 — the value faucet reconciles by the per-character cash check (drift unchanged by the reward)
 assert.equal(await driftOf('character cash'), before, 'the value-rally faucet reconciles — no §10.4 drift');
 // the reward is the enumerated `primetime:rally` reason, character_id'd
 const led = (await pool.query("SELECT reason, amount, character_id FROM transactions WHERE reason='primetime:rally' ORDER BY amount")).rows;
-assert.ok(led.length >= 2 && led.every((x) => x.character_id && Number(x.amount) === reward), 'each faucet row is character_id\'d primetime:rally');
+assert.ok(led.length >= 3 && led.every((x) => x.character_id)
+  && led.filter((x) => Number(x.amount) === reward).length >= 2
+  && led.some((x) => x.character_id === sameDay.id && Number(x.amount) === rallyReward(1)),
+  'each close-time payout is a character_id\'d primetime:rally row at its own final turnout');
+// Later blocks pin a different mechanic on the same day; remove this settled fixture row so it
+// cannot masquerade as a siege fighter. The payout and ledger row remain the behavior under test.
+await pool.query('DELETE FROM primetime_rally WHERE character_id=$1', [sameDay.id]);
 
 // ════════════ HONOR MODE — a rotating title, zero §10.4 ════════════
 setMode('honor');

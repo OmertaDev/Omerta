@@ -427,6 +427,19 @@ from the first block. Use `omerta-contracts/DEPLOYMENT.md` and its Foundry scrip
       reliably 18dp). Dormant until wired. §10.4-NEUTRAL (out-of-band real value —
       zero `transactions` rows; the backend's `allocateStock` clamp + the nightly `allocated ≤ held` AND
       `delivered ≤ allocated` checks in `runTreasuryInvariants` are the owed-side half of the wall).
+      **CORPORATE ACTION RUNBOOK (`omerta-brokers-design.md` §3.4b, founder-approved 2026-08-25):**
+      ordinary split/dividend multipliers do not mutate raw vault balances or allocation rows. For a
+      non-multiplier terminal/conversion action, disable the registry entry and the affected token's
+      delivery cap first; snapshot the vault balance `B`, outstanding per-account units `u_i`, total
+      `U`, staged sends, and block numbers; require `U ≤ B`; wait for the issuer's `COMPLETED` status and
+      prove actual successor receipt `P` from transaction hashes plus on-chain balance deltas. The
+      player-backed pool is `C=floor(P×U/B)`, each account starts at `floor(C×u_i/U)`, and all dust inside
+      `C` is assigned by largest remainder with `keccak256(account_id)` as the stable tie-break. The Safe
+      must approve an immutable reconciliation record before delivery or source-row closure. The cohort's
+      `C` can never enter general treasury inventory or another epoch; ambiguous or incomplete settlement
+      leaves the original allocation pending. Already delivered assets remain in player-controlled deed
+      TBAs. **No automatic terminal-action handler is to be armed until RHJ activates and documents the
+      settlement type and that new value-moving path passes audit plus end-to-end rehearsal.**
       **✅ BOTH ON-CHAIN LEGS ARE PROVEN (2026-08-16)** — `npm run stock-e2e` (the forge CI job, beside
       dexbot-e2e) stands the whole rail up on anvil and runs `resolveTbaOnchain` + `sendDeliverOnchain`
       UNSEAMED against the REAL ERC-6551 registry (the reference implementation, vendored unmodified at

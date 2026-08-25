@@ -6,7 +6,7 @@ are set). Two Node processes over one Postgres DB. No build step.
 ## 0. Pre-flight (on the release commit)
 - [ ] `npm ci` (or `npm install`) — one runtime dep tree; no native build required for the game (the
       `@resvg/resvg-js` used by social-share PNGs is an **optionalDependency** — absent → cards fall back to SVG).
-- [ ] `npm test` → **100 suites green**.
+- [ ] `npm test` → **113 suites green**.
 - [ ] `node tools/sim.js` → ends with `✅ sim complete — §10.4 holds exactly` (drift-0).
 - [ ] **`npm run preflight`** — on the box, with the real environment loaded. Runs exactly the checks
       the server runs at startup, so a green result means it will boot; non-zero exit means it won't,

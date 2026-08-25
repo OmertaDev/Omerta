@@ -531,8 +531,9 @@
   @keyframes modalIn { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
   /* THE TOUR — the illustrated multi-step welcome (tester feedback: a real tutorial, not one wall of text) */
   .modal.tour { padding: 0 0 16px; overflow: hidden; display: flex; flex-direction: column; }
-  #tour-art { width: 100%; height: 180px; object-fit: cover; display: block; border-bottom: 1px solid var(--line);
-    background: #0e1015; }
+  #tour-art { width: 100%; height: 180px; display: block; border-bottom: 1px solid var(--line);
+    background-position: center; background-size: cover;
+    background-color: #0e1015; }
   #tour-body { padding: 14px 22px 4px; min-height: 168px; }
   #tour-body h2 { margin-top: 0; }
   .tour-nav { display: flex; align-items: center; justify-content: space-between; padding: 6px 22px 0; gap: 10px; }
@@ -662,7 +663,7 @@
 
   /* ── marketing landing (the front page — screen-auth) ── */
   .landing { max-width: 980px; margin: 0 auto; padding: 5vh 20px 40px; position: relative; z-index: 1; overflow-x: clip; }
-  /* THE HERO PLATE. hero-backdrop.jpg was generated for exactly this job — the figure sits low and
+  /* THE HERO PLATE. hero-poster.jpg was generated for exactly this job — the figure sits low and
      the top half is empty sky, so the wordmark lands on darkness instead of fighting a streetlamp.
      It bleeds full-width behind the masthead while the text column stays 980px, and a scrim ramps
      it to the page background at the bottom so there is no hard seam. */
@@ -672,13 +673,14 @@
      framed exactly the empty sky the image was generated to have — technically present, visually
      nothing. The picture is in the lower half: the lamp, the figure, the lit cobbles. Show that,
      and let the wordmark sit on the dark band above it. */
-  .landing .hero::before {
-    content: ''; position: absolute; inset: -6vh calc(50% - 50vw) -2vh; z-index: -1;
-    background: url('/art/hero-poster.jpg') center 62% / cover no-repeat;
+  .landing .hero > .hero-art {
+    position: absolute; inset: -6vh calc(50% - 50vw) -2vh; z-index: -1;
+    display: block; overflow: hidden; width: 100vw; text-shadow: none;
     -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 10%, #000 80%, transparent 100%);
     mask-image: linear-gradient(180deg, transparent 0%, #000 10%, #000 80%, transparent 100%);
     opacity: 1;
   }
+  .landing .hero .hero-art img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 62%; }
   /* The scrim that keeps copy readable over the picture — sits between plate and text.
      It is a NARROW band, not a wash: the first cut used a 70%×60% radial at .86 centre opacity, which
      protected copy beautifully and in doing so erased the photograph — the hero read as noise rather
@@ -704,116 +706,111 @@
   .landing .hero > * { position: relative; text-shadow: 0 2px 18px rgba(0,0,0,.9), 0 0 40px rgba(0,0,0,.7); }
   .landing .hero h1 { font-family: var(--display); font-weight: 600; text-shadow: 0 3px 30px #000, 0 0 60px rgba(0,0,0,.9); }
 
-  /* THE POSTER BREAK — hero-poster.jpg carries itself, so it gets no text over it at all. */
+  /* THE POSTER BREAK — landing-break.jpg carries itself, so it gets no text over it at all. */
   .landing .poster { position: relative; left: 50%; width: 100vw; height: 38vh; min-height: 240px;
     transform: translateX(-50%); margin: 34px 0; overflow: hidden;
     border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .landing .poster picture { display: block; width: 100%; height: 100%; }
   .landing .poster img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 58%; }
   .landing .poster::after { content: ''; position: absolute; inset: 0;
     background: linear-gradient(180deg, var(--bg, #0c0d11) 0%, transparent 22%, transparent 78%, var(--bg, #0c0d11) 100%); }
 
   /* DISTRICT ART BEHIND THE FEATURE PILLS.
-     The art goes in ::before ONLY — never on the pill's own background. The first cut put the url in
-     an inline `style="background-image:url(...)"` on .pill itself, which beats the stylesheet's
-     `background: linear-gradient(...)` for the background-image longhand: the card's own background
-     became the photo at FULL opacity, and ::before then stacked a SECOND copy at .22 on top of it.
-     Six photos of wildly different luminance sitting behind body text — three of the six were
-     genuinely unreadable. The url now rides a custom property that only ::before reads, so the panel
-     gradient stays the card's background and the art is actually dim.
-     Two more things earn their place: a `filter` normalises the plates (they run from near-black
+     Each plate is a responsive picture layer, never the pill's own background. That keeps the panel
+     gradient independent, lets the browser choose the right source width, and keeps lazy loading
+     observable instead of hiding it in CSS. Two more things earn their place: a `filter` normalises
+     the plates (they run from near-black
      docks to a bright teal kitchen, and untreated the grid reads as six unrelated designs), and a
      DIRECTIONAL scrim keeps the copy on near-solid panel while the picture breathes on the right. */
   .landing .pill { position: relative; overflow: hidden; }
-  .landing .pill::before { content: ''; position: absolute; inset: 0; z-index: 0;
-    background-image: var(--art, none); background-size: cover; background-position: center;
-    filter: saturate(.45) brightness(.72) contrast(.95); opacity: .6; }
+  .landing .landing-art { position: absolute; inset: 0; z-index: 0; display: block; overflow: hidden; pointer-events: none; }
+  .landing .landing-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .landing .pill .landing-art img { filter: saturate(.45) brightness(.72) contrast(.95); opacity: .6; }
   .landing .pill::after { content: ''; position: absolute; inset: 0; z-index: 0;
     background: linear-gradient(100deg, var(--panel) 0%, var(--panel) 30%,
       color-mix(in srgb, var(--panel) 80%, transparent) 60%, color-mix(in srgb, var(--panel) 38%, transparent) 100%); }
-  .landing .pill > * { position: relative; z-index: 1; }
+  .landing .pill > :not(.landing-art) { position: relative; z-index: 1; }
   /* The proposition is first-frame content. Atmosphere may arrive later; comprehension never waits. */
   .landing .hero > * { animation: none; }
   .landing .hero h1 { font-size: clamp(46px, 10vw, 96px); letter-spacing: 12px; color: var(--neon);
-    margin: 0; font-weight: normal; text-shadow: 0 2px 44px var(--neon-glow); }
+    margin: 0; font-weight: 600; text-shadow: 0 2px 44px var(--neon-glow); }
   .landing .hero .tag { color: var(--ink); font-size: clamp(16px, 2.6vw, 21px); max-width: 660px;
     margin: 16px auto 8px; line-height: 1.5; }
   .landing .hero .sub2, .landing .ctahint { text-shadow: 0 1px 10px #000, 0 0 22px rgba(0,0,0,.95); }
-  .landing .hero .sub2 { color: var(--dim); font-size: 14.5px; max-width: 580px; margin: 0 auto 24px; line-height: 1.6; }
+  .landing .hero .sub2 { color: var(--dim); font-size: var(--om-type-public); max-width: 580px; margin: 0 auto 24px; line-height: 1.6; }
   button.act.cta { font-size: 16px; padding: 14px 34px; letter-spacing: 2px; border-color: var(--neon); color: var(--neon);
     border-radius: var(--r-md); box-shadow: 0 0 0 0 var(--neon-glow), var(--shadow); animation: ctaBreathe 3.2s ease-in-out infinite; }
   @keyframes ctaBreathe { 0%, 100% { box-shadow: 0 0 6px 0 var(--neon-soft), var(--shadow); } 50% { box-shadow: 0 0 22px 2px var(--neon-soft), var(--shadow); } }
   button.act.cta:hover { background: var(--neon); color: #0b0b0e; animation: none; box-shadow: 0 0 30px var(--neon-glow); }
-  .landing .ctahint { color: var(--dim); font-size: 12.5px; margin-top: 9px; }
+  .landing .ctahint { color: var(--dim); font-size: var(--om-type-body); margin-top: 9px; }
   .landing .pill-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin: 28px 0; }
   .operation-proof { display: grid; grid-template-columns: minmax(0,1.15fr) minmax(260px,.85fr); gap: 0;
     margin: 10px 0 30px; border-block: 1px solid var(--line); background: var(--panel); text-align: left; }
   .operation-proof__choice { padding: 24px 26px; }
   .operation-proof h2 { margin: 0 0 8px; color: var(--ink); font-family: var(--display); font-size: 24px;
     letter-spacing: .06em; text-wrap: balance; }
-  .operation-proof__intro { margin: 0 0 15px; color: var(--dim); font-size: 15px; line-height: 1.55; }
+  .operation-proof__intro { margin: 0 0 15px; color: var(--dim); font-size: var(--om-type-public); line-height: 1.55; }
   .operation-approach { display: grid; grid-template-columns: 86px 1fr; gap: 14px; padding: 10px 0;
     border-top: 1px solid var(--line); align-items: baseline; }
   .operation-approach dt { color: var(--neon); font: 600 13px/1.4 var(--mono); }
-  .operation-approach dd { margin: 0; color: var(--dim); font-size: 14px; }
+  .operation-approach dd { margin: 0; color: var(--dim); font-size: var(--om-type-public); }
   .operation-receipt { padding: 24px 26px; border-left: 1px solid var(--line); background: var(--panel2);
     font-family: var(--mono); }
   .operation-receipt strong { display: block; margin-bottom: 13px; color: var(--neon); font-size: 13px; letter-spacing: .08em; }
   .operation-receipt span { display: flex; justify-content: space-between; gap: 16px; padding: 7px 0;
-    border-bottom: 1px dashed var(--line2); color: var(--dim); font-size: 13px; }
+    border-bottom: 1px dashed var(--line2); color: var(--dim); font-size: var(--om-type-body); }
   .operation-receipt span b { color: var(--ink); font-weight: normal; text-align: right; }
-  .operation-receipt small { display: block; margin-top: 13px; color: var(--faint); font-size: 12px; line-height: 1.5; }
+  .operation-receipt small { display: block; margin-top: 13px; color: var(--faint); font-size: var(--om-type-body); line-height: 1.5; }
   .landing .pill { background: linear-gradient(180deg, var(--panel2), var(--panel)); border: 1px solid var(--line);
     border-radius: var(--r-md); padding: 17px 16px 15px; transition: border-color .2s, transform .2s var(--ease), box-shadow .2s; }
   .landing .pill:hover { border-color: color-mix(in srgb, var(--neon) 40%, var(--line)); transform: translateY(-2px); box-shadow: var(--shadow); }
-  .landing .pill h3 { color: var(--neon); font-size: 15px; letter-spacing: 1px; margin: 0 0 7px; font-weight: normal; }
-  .landing .pill p { color: var(--dim); font-size: 14px; margin: 0; line-height: 1.55; }
+  .landing .pill h3 { color: var(--neon); font-size: var(--om-type-title); letter-spacing: 1px; margin: 0 0 7px; font-weight: normal; }
+  .landing .pill p { color: var(--dim); font-size: var(--om-type-public); margin: 0; line-height: 1.55; }
   .landing .band { position: relative; overflow: hidden; text-align: center; background: linear-gradient(180deg, var(--panel2), var(--panel));
     border: 1px solid var(--line); border-radius: var(--r-lg); padding: 24px; margin: 26px 0; box-shadow: var(--shadow); }
   /* the vault behind the pitch — this paragraph is about money being kept honestly, and it was the
      one flat grey rectangle on a page that had just shown a skyline. Same recipe as the pills:
-     art in ::before, a scrim in ::after, content lifted above both. */
-  .landing .band::before { content: ''; position: absolute; inset: 0; z-index: 0;
-    background-image: var(--art, none); background-position: center 45%; background-size: cover; background-repeat: no-repeat;
-    filter: saturate(.4) brightness(.62); opacity: .5; }
+     responsive picture below, scrim in ::after, content lifted above both. */
+  .landing .band .landing-art img { object-position: center 45%; filter: saturate(.4) brightness(.62); opacity: .5; }
   .landing .band::after { content: ''; position: absolute; inset: 0; z-index: 0;
     background: radial-gradient(75% 100% at 50% 50%, var(--panel) 0%, color-mix(in srgb, var(--panel) 76%, transparent) 70%, transparent 100%); }
-  .landing .band > * { position: relative; z-index: 1; }
-  .landing .band h2 { color: var(--neon); letter-spacing: 3px; font-size: 16px; margin: 0 0 9px; font-weight: normal; }
-  .landing .band p { color: var(--dim); font-size: 14px; max-width: 640px; margin: 0 auto; line-height: 1.65; }
+  .landing .band > :not(.landing-art) { position: relative; z-index: 1; }
+  .landing .band h2 { color: var(--neon); letter-spacing: 3px; font-size: var(--om-type-title); margin: 0 0 9px; font-weight: normal; }
+  .landing .band p { color: var(--dim); font-size: var(--om-type-public); max-width: 640px; margin: 0 auto; line-height: 1.65; }
   /* the economy band runs to three paragraphs; with margin:0 they set as one wall of centred prose */
   .landing .band p + p { margin-top: 11px; }
   /* THE MONEY MAP — the fees/flows explainer, click-to-play (it carries narration, so it must never
-     autoplay). Range-streamed off /art, poster committed alongside, max-width so phones never scroll. */
+     autoplay). Poster and sources attach only near the viewport; phones receive the 720p encode. */
   .landing .band video { display: block; width: 100%; max-width: 820px; aspect-ratio: 16/9; margin: 14px auto 2px;
     border: 1px solid var(--line); border-radius: var(--r-lg); background: #000; box-shadow: var(--shadow); }
   .landing .omr-preview { max-width: 920px; margin: 22px auto 2px; text-align: left; }
-  .landing .omr-preview a { display: block; background: #fff; border: 1px solid color-mix(in srgb, var(--neon) 45%, var(--line));
+  .landing .omr-preview a { display: block; background: var(--panel2); border: 1px solid color-mix(in srgb, var(--neon) 45%, var(--line));
     border-radius: var(--r-md); overflow: hidden; box-shadow: var(--shadow); }
   .landing .omr-preview a:hover { border-color: var(--neon); box-shadow: var(--shadow); }
-  .landing .omr-preview img { display: block; width: 100%; height: auto; }
-  .landing .omr-preview figcaption { color: var(--dim); font-family: var(--mono); font-size: 11.5px;
+  .landing .omr-preview picture, .landing .omr-preview img { display: block; width: 100%; height: auto; }
+  .landing .omr-preview figcaption { color: var(--dim); font-family: var(--mono); font-size: var(--om-type-body);
     line-height: 1.55; margin-top: 9px; text-align: center; }
   .landing .omr-preview figcaption a { display: inline; border: 0; background: none; box-shadow: none; }
   .landing .signin { max-width: 470px; margin: 26px auto 0; text-align: center; }
-  .landing .lfoot { text-align: center; color: var(--dim); font-size: 12.5px; margin-top: 30px;
+  .landing .lfoot { text-align: center; color: var(--dim); font-size: var(--om-type-body); margin-top: 30px;
     border-top: 1px solid var(--line); padding-top: 16px; line-height: 1.7; }
   .landing .lfoot-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px 14px; }
   .landing .lfoot-links a { min-height: 44px; display: inline-flex; align-items: center; }
   /* Editorial scenes, deliberately distinct from the authoritative in-game Wire. */
   .wire-ticker { display: flex; align-items: center; gap: 12px; max-width: 720px; margin: 20px auto 0;
     background: linear-gradient(180deg, var(--panel2), var(--panel)); border: 1px solid var(--line);
-    border-radius: var(--r-md); padding: 10px 14px; font-family: var(--mono); font-size: 13.5px;
+    border-radius: var(--r-md); padding: 10px 14px; font-family: var(--mono); font-size: var(--om-type-body);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.03); }
   .wire-ticker .wl { color: var(--blood); font-size: 12px; letter-spacing: 1.2px; white-space: nowrap;
     border-right: 1px solid var(--line); padding-right: 12px; }
   .wire-ticker #wire-line { color: var(--dim); transition: opacity .4s; white-space: nowrap;
     overflow: hidden; text-overflow: ellipsis; flex: 1 1 auto; }
-  .wire-ticker #wire-toggle { flex: 0 0 auto; min-height: 34px; padding: 5px 8px; color: var(--dim);
-    border-color: transparent; background: transparent; font-size: 12px; letter-spacing: 0; }
+  .wire-ticker #wire-toggle { flex: 0 0 auto; min-width: var(--om-target-min); min-height: var(--om-target-min); padding: 5px 8px; color: var(--dim);
+    border-color: transparent; background: transparent; font-size: var(--om-type-body); letter-spacing: 0; }
   .wire-ticker #wire-toggle:hover { color: var(--ink); border-color: var(--line); }
   /* the three-step orientation strip + secondary CTA */
   .landing .steps { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 18px; color: var(--dim);
-    font-size: 13.5px; margin: 4px auto 20px; }
+    font-size: var(--om-type-body); margin: 4px auto 20px; }
   .landing .steps b { color: var(--neon); font-weight: normal; }
   .landing .encore { text-align: center; margin: 4px 0 8px; }
 
@@ -864,7 +861,8 @@
     .wpane { max-height: 30vh; }
     #resp { max-height: 140px; }
     .landing { padding: 3vh 12px 30px; } .landing .hero h1 { letter-spacing: 6px; }
-    .wire-ticker { font-size: 12.5px; }
+    #screen-auth { font-size: var(--om-type-public); }
+    .wire-ticker { font-size: var(--om-type-body); }
     .operation-proof { grid-template-columns: 1fr; }
     .operation-proof__choice, .operation-receipt { padding: 20px 18px; }
     .operation-receipt { border-left: 0; border-top: 1px solid var(--line); }
@@ -940,10 +938,12 @@
        accent still name the place. The coach becomes one actionable line instead of a second card. */
     #tabart { display: none; }
     #coachwrap:not(:empty) { padding-top: 4px; }
-    #coach { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 5px 8px; margin-bottom: 4px; }
-    #coach .cwho, #coach .ch, #coach .c5, #coach .cplan { display: none; }
-    #coach .cl { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #coach { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; min-height: 44px; padding: 5px 8px; }
+    #coach .operation-desk__eyebrow, #coach .ch, #coach .c5, #coach .cplan,
+    #coach .operation-readiness, #coach .operation-resources { display: none; }
+    #coach .cl { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     #coach #coach-go { flex: 0 0 auto; min-height: 36px; margin: 0; }
+    #operation-desk:not(:has(.operation-receipt)) .operation-desk__history { display: none; }
     #vitals { min-height: 44px; padding-block: 4px; }
     #tabpanel { padding-top: 8px; }
     #grouprail, #tabs { padding-bottom: 4px; }
@@ -1121,7 +1121,7 @@
 .toast-x{margin-left:6px;background:none;border:0;color:inherit;opacity:.6;cursor:pointer;font-size:13px}
 
 </style>
-<link rel="stylesheet" href="/omerta-ui.css?v=20260824">
+<link rel="stylesheet" href="/omerta-ui.css?v=20260824-operations">
 </head>
 <body>
 <svg style="display:none" aria-hidden="true"><defs>
@@ -1160,14 +1160,18 @@
   </nav>
   <main id="landing-main">
   <div class="hero">
+    <picture class="hero-art" aria-hidden="true">
+      <source type="image/webp" sizes="100vw" srcset="/art/hero-poster-640.webp 640w, /art/hero-poster-960.webp 960w, /art/hero-poster-1440.webp 1440w, /art/hero-poster-1920.webp 1920w">
+      <img src="/art/hero-poster.jpg" width="3136" height="1344" alt="" fetchpriority="high" decoding="async">
+    </picture>
     <div class="artifact-kicker">One city · every move on the books</div>
     <h1>OMERTÀ</h1>
     <p class="tag">A persistent multiplayer mafia city where humans and autonomous agents build fortunes, rivalries, and families on the same streets.</p>
     <p class="sub2">Start free in one tap. Name your street, pull your first job, and let the city remember what you do next.</p>
     <div id="invite-row" class="hidden" style="margin:0 auto 14px;max-width:320px">
       <label class="visually-hidden" for="invite-code">Invite code</label>
-      <input id="invite-code" placeholder="invite code" size="18" style="font-size:15px" autocomplete="off">
-      <div class="sub" style="font-size:12.5px;color:var(--bad);margin-top:4px">This alpha is invite-only. Ask a made man for a code.</div>
+      <input id="invite-code" placeholder="invite code" size="18" autocomplete="off">
+      <div class="sub" style="color:var(--bad);margin-top:4px">This alpha is invite-only. Ask a made man for a code.</div>
     </div>
     <div id="enter-city"><button class="act cta" id="btn-guest" data-i18n="e_ghost">START A GUEST STREET — NO SIGNUP</button></div>
     <div class="ctahint">No wallet. No email. Claim the same street with X or Privy later.</div>
@@ -1211,27 +1215,44 @@
 
   <h2 class="visually-hidden">The city at a glance</h2>
   <div class="pill-grid">
-    <div class="pill" data-art="/art/district-cathedral.jpg"><h3>The city moves without you</h3><p>Daily events, economic weather, day and night, RICO cases, and rival cartels keep changing the odds.</p></div>
-    <div class="pill" data-art="/art/pill-legacy.jpg"><h3>Death writes the sequel</h3><p>Your street can die. Your bloodline continues through the account-level prestige, estate, deeds, minted status, and other named survivors in the Codex.</p></div>
-    <div class="pill" data-art="/art/district-foundry.jpg"><h3>Power needs people</h3><p>Build a crew, found a family, hold turf, run contracts, and fight for a Commission seat. A lone fortune is still a target.</p></div>
-    <div class="pill" data-art="/art/interior-kitchen.jpg"><h3>Find your angle</h3><p>Run street jobs, kitchens, heists, convoys, loans, businesses, boxing, races, or the tables. Every loop has a cost and a counterplay.</p></div>
+    <div class="pill"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 56px), 480px" data-srcset="/art/district-cathedral-480.webp 480w, /art/district-cathedral-960.webp 960w"><img data-lazy-src="/art/district-cathedral.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><h3>The city moves without you</h3><p>Daily events, economic weather, day and night, RICO cases, and rival cartels keep changing the odds.</p></div>
+    <div class="pill"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 56px), 480px" data-srcset="/art/pill-legacy-480.webp 480w, /art/pill-legacy-960.webp 960w"><img data-lazy-src="/art/pill-legacy.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><h3>Death writes the sequel</h3><p>Your street can die. Your bloodline continues through the account-level prestige, estate, deeds, minted status, and other named survivors in the Codex.</p></div>
+    <div class="pill"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 56px), 480px" data-srcset="/art/district-foundry-480.webp 480w, /art/district-foundry-960.webp 960w"><img data-lazy-src="/art/district-foundry.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><h3>Power needs people</h3><p>Build a crew, found a family, hold turf, run contracts, and fight for a Commission seat. A lone fortune is still a target.</p></div>
+    <div class="pill"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 56px), 480px" data-srcset="/art/interior-kitchen-480.webp 480w, /art/interior-kitchen-960.webp 960w"><img data-lazy-src="/art/interior-kitchen.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><h3>Find your angle</h3><p>Run street jobs, kitchens, heists, convoys, loans, businesses, boxing, races, or the tables. Every loop has a cost and a counterplay.</p></div>
   </div>
 
-  <div class="poster" aria-hidden="true"><img data-lazy-src="/art/landing-break.jpg" width="1920" height="1080" alt=""></div>
+  <div class="poster" aria-hidden="true"><picture><source type="image/webp" sizes="100vw" data-srcset="/art/landing-break-640.webp 640w, /art/landing-break-960.webp 960w, /art/landing-break-1440.webp 1440w"><img data-lazy-src="/art/landing-break.jpg" width="3136" height="1344" loading="lazy" decoding="async" alt=""></picture></div>
 
-  <div class="band" data-art="/art/interior-scores.jpg">
-    <h2>THE MONEY MAP</h2>
-    <p>See how cash, $OMR, community pools, fees, and the reserve move through the ledger — narrated from the live economy rules in ninety seconds.</p>
-    <video controls playsinline preload="metadata" poster="/art/hype-money-poster.jpg" src="/art/hype-money.mp4"></video>
-    <figure class="omr-preview">
-      <a href="/art/omr-01-severance.png" aria-label="Open the full-size OMR two-ledger system map">
-        <img src="/art/omr-01-severance.png" width="2568" height="1592" loading="lazy" alt="OMR system map showing the severed city ledger, bounded contract supply, and full-reserve extraction bridge.">
+  <div class="band band--paths">
+    <div class="artifact-kicker">Gameplay field guide 01</div>
+    <h2>CHOOSE WHAT THE CITY MAKES OF YOU</h2>
+    <p>At level 5, declare one of six Paths: Gun, Ledger, Kitchen, Wheel, Shadow, or Ring. Each changes real clocks, payouts, risks, and mastery rates. Every edge carries a signed handicap, and no Path closes the rest of the city.</p>
+    <p>Your first declaration costs $10,000. Changing later burns 150 $OMR and starts only after the seven-day switch clock clears.</p>
+    <p><a class="act prime" href="/path?source=landing">TAKE THE SEVEN-DECISION PATH QUIZ →</a></p>
+    <figure class="omr-preview gameplay-preview">
+      <a href="/art/gameplay-01-choose-your-path.png?v=b56cedce0f70" aria-label="Open the full-size choose-your-Path gameplay field guide">
+        <picture><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 48px), 920px" srcset="/art/gameplay-01-choose-your-path-640.webp 640w, /art/gameplay-01-choose-your-path-1080.webp 1080w, /art/gameplay-01-choose-your-path-1600.webp 1600w"><img src="/art/gameplay-01-choose-your-path.png?v=b56cedce0f70" width="6480" height="4080" loading="lazy" decoding="async" alt="Six-way OMERTA Path selector comparing The Gun, Ledger, Kitchen, Wheel, Shadow, and Ring with every edge, handicap, home trade, and rival trade."></picture>
       </a>
-      <figcaption>01 / 05 · CODE-AUDITED OMR EXPLAINER · <a href="/wiki#economy">OPEN THE COMPLETE SERIES IN THE CODEX →</a></figcaption>
+      <figcaption>01 / 09 · SIX WAYS INTO THE CITY · CODE-ANCHORED GAMEPLAY ROUTES · <a href="/wiki#paths">OPEN THE COMPLETE NINE-SHEET FIELD GUIDE →</a></figcaption>
     </figure>
   </div>
 
-  <div class="band band--ledger" data-art="/art/interior-scores.jpg">
+  <div class="band">
+    <picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 24px), 1024px" data-srcset="/art/interior-scores-640.webp 640w, /art/interior-scores-1024.webp 1024w"><img data-lazy-src="/art/interior-scores.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture>
+    <h2>THE MONEY MAP</h2>
+    <p>See how cash, $OMR, community pools, fees, and reserves move through the ledger. It is narrated from the live economy rules in ninety seconds.</p>
+    <p>The research sheet below traces every founder-signed go-live percentage. That configuration is public but not armed while the production chain, buybacks, extraction, and RWA delivery remain audit- and launch-gated.</p>
+    <video controls playsinline preload="none" data-video-poster="/art/hype-money-poster-960.webp" data-video-poster-mobile="/art/hype-money-poster-640.webp" aria-label="Play the narrated ninety-second money map"><source media="(max-width: 760px)" data-src="/art/hype-money-720.mp4" type="video/mp4"><source data-src="/art/hype-money.mp4" type="video/mp4">Your browser cannot play the money map. <a href="/art/hype-money-720.mp4">Download the smaller video.</a></video>
+    <figure class="omr-preview">
+      <a href="/art/omr-03-money-router.png?v=b2bde1b36f44" aria-label="Open the full-size OMR signed money-router diagram">
+        <picture><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 48px), 920px" srcset="/art/omr-03-money-router-640.webp 640w, /art/omr-03-money-router-1080.webp 1080w, /art/omr-03-money-router-1600.webp 1600w"><img src="/art/omr-03-money-router.png?v=b2bde1b36f44" width="6480" height="4080" loading="lazy" decoding="async" alt="OMR money router showing the exact signed percentage split for gameplay fees, Store revenue, bonds, DEX sell tax, Desk auctions, POL fees, Bank harvest fees, and exit tolls."></picture>
+      </a>
+      <figcaption>03 / 05 · FOLLOW EVERY DOLLAR · CODE-ANCHORED, STATE-LABELED · <a href="/wiki#economy">OPEN ALL FIVE RESEARCH SHEETS IN THE CODEX →</a></figcaption>
+    </figure>
+  </div>
+
+  <div class="band band--ledger">
+    <picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 24px), 1024px" data-srcset="/art/interior-scores-640.webp 640w, /art/interior-scores-1024.webp 1024w"><img data-lazy-src="/art/interior-scores.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture>
     <div class="artifact-kicker">Ledger note 01</div>
     <h2>TWO ECONOMIES, DELIBERATELY SEVERED</h2>
     <p><b>Street cash cannot become $OMR — at any price, through any route.</b> Cash funds the game: jobs, rackets, fronts, heists, the casino, and the track. $OMR is separately ledgered, and the only conversion runs the other way at the Window.</p>
@@ -1246,25 +1267,25 @@
 
   <div class="signin">
     <div id="xoauth-row" class="hidden" style="margin-bottom:10px">
-      <button class="act cta" id="btn-xoauth" style="font-size:15px">CONTINUE WITH 𝕏 →</button>
-      <div class="sub" style="font-size:11px;color:var(--dim);margin-top:4px">One click — you'll come right back, signed in.</div>
+      <button class="act cta" id="btn-xoauth">CONTINUE WITH 𝕏 →</button>
+      <div class="sub" style="color:var(--dim);margin-top:4px">One click — you'll come right back, signed in.</div>
     </div>
-    <details id="signin-faq"><summary class="sub" style="font-size:12.5px;color:var(--gold,#c9a227);cursor:pointer">How do I sign in with X? (quick FAQ)</summary>
-      <div class="sub" style="font-size:12px;color:var(--dim);margin-top:6px;max-width:560px;margin-left:auto;margin-right:auto;text-align:left">
+    <details id="signin-faq"><summary class="sub" style="color:var(--gold,#c9a227);cursor:pointer">How do I sign in with X? (quick FAQ)</summary>
+      <div class="sub" style="color:var(--dim);margin-top:6px;max-width:560px;margin-left:auto;margin-right:auto;text-align:left">
         <p style="margin:4px 0"><b>1.</b> Tap <b>CONTINUE WITH 𝕏</b> above. That's it — X asks you to authorize, then drops you right back here, signed in. <b>You never need to find or paste any token.</b></p>
         <p style="margin:4px 0"><b>2.</b> Don't see the 𝕏 button? X sign-in isn't switched on for this server yet — tap <b>MAKE YOUR BONES</b> to play as a ghost now, then use <b>CLAIM YOUR ACCOUNT</b> on The Sheet later. Nothing is lost.</p>
         <p style="margin:4px 0"><b>3.</b> Already playing as a ghost? Same deal — the claim card on The Sheet ties this street to your X in one click, keeping everything.</p>
         <p style="margin:4px 0"><b>4.</b> The "provider token" box below is for <b>developers and agents only</b> (a raw OAuth2 token from your own X app / Privy session). There is no such token to find on x.com — normal players should ignore it.</p>
       </div>
     </details>
-    <details id="token-signin"><summary class="sub" style="font-size:12.5px;color:var(--dim);cursor:pointer">Developers only: sign in with a raw provider token</summary>
+    <details id="token-signin"><summary class="sub" style="color:var(--dim);cursor:pointer">Developers only: sign in with a raw provider token</summary>
       <div style="margin-top:6px">
         <label class="visually-hidden" for="auth-provider">Identity provider</label>
         <select id="auth-provider" aria-label="Identity provider"><option value="x">X (Twitter)</option><option value="privy">Privy</option></select>
         <label class="visually-hidden" for="auth-token">Provider access token</label>
         <input id="auth-token" placeholder="provider access token" size="24" autocomplete="off">
         <button class="act" id="btn-provider">SIGN IN</button>
-        <div class="sub" style="font-size:11px;color:var(--dim);margin-top:4px">X: an OAuth2 user token from your own app (read scope). Privy: your session's ES256 JWT. Normal players: use the 𝕏 button instead — there's no token to find on x.com.</div>
+        <div class="sub" style="color:var(--dim);margin-top:4px">X: an OAuth2 user token from your own app (read scope). Privy: your session's ES256 JWT. Normal players: use the 𝕏 button instead — there's no token to find on x.com.</div>
       </div>
     </details>
   </div>
@@ -1389,7 +1410,7 @@
 
 <!-- first-session tour (shown once; replayable from the ? panel and Start Here) -->
 <div id="welcome" class="modal-bg hidden" data-modal-close="#tour-skip" aria-hidden="true"><div class="modal tour" role="dialog" aria-modal="true" aria-labelledby="tour-title" tabindex="-1">
-  <img id="tour-art" alt="" src="/art/hero-poster.jpg">
+  <div id="tour-art" aria-hidden="true"></div>
   <div id="tour-body"></div>
   <div class="tour-nav">
     <div id="tour-dots"></div>
@@ -2196,6 +2217,8 @@
     feds_watching: "the Bureau's watching that front — too hot to touch", cold: "that operation's gone cold — square the upkeep first",
     pax: "the Commission called a peace — no new wars this week", vetoed: "the head of the table killed that decree",
     again: "someone beat you to it — try again", contention: "the city's busy — try that again",
+    in_progress: "the city is still recording that move. Retry the same move in a moment.",
+    idempotency_key_reuse: "that request key belongs to a different move. Start this one again.",
     over_capacity: "the tranche is tapped out for now", not_for_sale: "that's not for sale", own_debt: "you can't buy your own paper",
     crew_changed: "your crew changed — line it up again", hole: "you're in the hole — nothing doing from solitary",
     witpro: "they're in witness protection — untouchable", welsher: "you welshed on a debt — square your name first",
@@ -2268,7 +2291,8 @@
     // THE SHIPMENT — the take and the commission. The take says how much of the CITY'S day is left,
     // because that's the number a player is actually racing.
     if (body && body.took != null && body.material) return `\uD83D\uDCE6 took ${body.took} of ${body.material} — ${body.cityLeft} left in the whole city today`;
-    if (body && body.piece && body.piece.serial) return `\u2726 ${body.piece.name} — number ${body.piece.serial}. Commissioned, and yours.`;
+    if (body && body.piece && body.piece.serial) return `\u2726 ${body.piece.name}, number ${body.piece.serial}. `
+      + `${body.units} of ${body.material} + $${fmt(body.spent)} spent; ${body.held} ${body.material} left.`;
     if (body && body.tokenId && body.nonce != null)
       return `\u26D3 ${body.name || 'it'} is on-chain — token #${body.tokenId}. Safe forever, and out of the game.`;
     if (body && body.referrer && body.ok) return `on the record — ${body.referrer} gets credit as you come up`;
@@ -3920,14 +3944,14 @@
   // Queueing here instead costs nothing (the total wait is identical) and holds no connections.
   // KEYLESS calls stay parallel — /v1/rules, /v1/city, /v1/online take no lock and needn't wait.
   let _authQueue = Promise.resolve();
-  async function api(method, path, body) {
-    if (!token) return apiNow(method, path, body);
-    const mine = _authQueue.then(() => apiNow(method, path, body));
+  async function api(method, path, body, options = {}) {
+    if (!token) return apiNow(method, path, body, options);
+    const mine = _authQueue.then(() => apiNow(method, path, body, options));
     // the chain must survive a rejection, or one failed call wedges every later one
     _authQueue = mine.catch(() => {});
     return mine;
   }
-  async function apiNow(method, path, body) {
+  async function apiNow(method, path, body, options = {}) {
     // content-type only when a body rides along — Fastify 400s an empty JSON-typed body.
     // a fresh Idempotency-Key on every mutation lets the server dedup a retried write (belt to the
     // in-flight lock's braces — a network layer that re-sends the request won't double-spend).
@@ -3936,7 +3960,7 @@
     try {
       r = await fetch(path, { method,
         headers: { ...(body !== undefined ? { 'content-type': 'application/json' } : {}),
-          ...(mutating ? { 'Idempotency-Key': uuid() } : {}),
+          ...(mutating ? { 'Idempotency-Key': options.idempotencyKey || uuid() } : {}),
           ...(token ? { authorization: 'Bearer ' + token } : {}) },
         body: body === undefined ? undefined : JSON.stringify(body) });
     } catch {
@@ -3984,7 +4008,9 @@
   // the question the 25-screen nav answered worst. Used by the masthead location and by any refusal
   // that names a district.
   function travelTo(district) {
-    return act('POST', `/v1/travel/${district}`, {}).then((r) => { if (r.code < 400) renderActive(); return r; });
+    const place = (rules?.districts || []).find((d) => (d.id || d) === district);
+    return act('POST', `/v1/travel/${district}`, {}, { label: `travel to ${place?.name || district}` })
+      .then((r) => { if (r.code < 400) renderActive(); return r; });
   }
   function openTravel() {
     const here = me?.loc;
@@ -4042,6 +4068,161 @@
   // (the 📣 broadcast top-bar button was RETIRED — founder call, task #318: a permanent chrome
   // button selling your own legend never fit; the share loop lives where it earns its place —
   // the share-a-win brag prompts + My Profile's Contact box, both of which carry the ?ref link.)
+  // THE OPERATION DESK. The coach already computes the one best next move on the server; this layer
+  // gives that order a complete interaction contract: scoped pending state, a durable result receipt,
+  // tracked resource changes, and a concrete way out when the city refuses the move. Receipts stay in
+  // memory for this session only. Exact balances are not copied into browser storage.
+  let operationSeq = 0;
+  let operationPending = null;
+  const operationReceipts = [];
+  const operationSnapshot = (m) => m ? ({
+    cash: Number(m.cash || 0), bank: Number(m.bank || 0), omr: Number(m.omr || 0),
+    energy: Number(m.energy || 0), nerve: Number(m.nerve || 0), health: Number(m.health || 0),
+    heat: Number(m.heat || 0), respect: Number(m.respect || 0),
+  }) : null;
+  function operationDelta(before, after) {
+    if (!before || !after) return 'Current state could not be refreshed.';
+    const spec = [
+      ['cash', 'cash', (v) => `${v > 0 ? '+' : '−'}$${fmt(Math.abs(v))}`],
+      ['bank', 'bank', (v) => `${v > 0 ? '+' : '−'}$${fmt(Math.abs(v))}`],
+      ['omr', '$OMR', (v) => `${v > 0 ? '+' : '−'}${fmt(Math.abs(v))}`],
+      ['energy', 'energy', (v) => `${v > 0 ? '+' : '−'}${fmt(Math.abs(v))}`],
+      ['nerve', 'nerve', (v) => `${v > 0 ? '+' : '−'}${fmt(Math.abs(v))}`],
+      ['health', 'health', (v) => `${v > 0 ? '+' : '−'}${fmt(Math.abs(v))}`],
+      ['heat', 'heat', (v) => `${v > 0 ? '+' : '−'}${fmt(Math.abs(v))}`],
+      ['respect', 'respect', (v) => `${v > 0 ? '+' : '−'}${fmt(Math.abs(v))}`],
+    ];
+    const changed = spec.map(([key, label, value]) => {
+      const d = Number(after[key]) - Number(before[key]);
+      return d ? `${label} ${value(d)}` : null;
+    }).filter(Boolean);
+    return changed.length ? changed.slice(0, 5).join(' · ') : 'State confirmed; no tracked resource changed.';
+  }
+  function operationName(method, path, trigger, supplied) {
+    if (supplied) return supplied;
+    const pressed = trigger?.dataset?.operationLabel || trigger?.getAttribute?.('aria-label') || trigger?.textContent;
+    const clean = String(pressed || '').replace(/\s+/g, ' ').trim();
+    if (clean && clean.length <= 72) return clean;
+    const crime = /^\/v1\/crimes\/([a-z0-9_]+)$/i.exec(path);
+    if (crime) return (rules?.crimes || []).find((c) => c.id === crime[1])?.name || 'pull the job';
+    if (path === '/v1/checkin') return 'check in';
+    if (path === '/v1/heal') return 'heal';
+    if (path === '/v1/bank/deposit') return 'deposit cash';
+    if (path === '/v1/bank/withdraw') return 'withdraw cash';
+    const last = path.split('/').filter(Boolean).slice(-2).join(' ').replace(/[_-]/g, ' ');
+    return last || `${method.toLowerCase()} operation`;
+  }
+  function operationRecovery(result, context) {
+    const code = result.body?.error;
+    const retrySame = () => act(context.method, context.path, context.body,
+      { idempotencyKey: context.idempotencyKey, label: context.label });
+    if (code === 'in_progress') return {
+      text: 'The server may still be recording this move. Retry safely with the same request key; it cannot charge twice.',
+      label: 'retry same move', run: retrySame,
+    };
+    if (code === 'idempotency_key_reuse') return {
+      text: 'That protected request key belongs to a different move. Start this move once with a fresh key.',
+      label: 'start as a new move',
+      run: () => act(context.method, context.path, context.body, { label: context.label }),
+    };
+    if (['offline', 'db_down', 'internal', 'contention', 'again'].includes(code)) return {
+      text: code === 'offline'
+        ? 'No response reached you. Retry the same move; its request key protects against a duplicate.'
+        : 'Nothing new is confirmed. Retry the same move with its protected request key.',
+      label: 'try again', run: retrySame,
+    };
+    if (code === 'district' && result.body?.district) return {
+      text: 'This move only works in the named district. Travel there, then try it again.',
+      label: 'go there', run: () => travelTo(result.body.district),
+    };
+    if (['cash', 'broke', 'short', 'omr'].includes(code)) return {
+      text: 'You cannot cover the current amount. Lower it, or earn more before trying again.',
+      tab: 'streets', label: 'open the streets',
+    };
+    if (code === 'nerve') return {
+      text: 'Wait for nerve to refill, or choose a job with a lower nerve cost.',
+      tab: 'streets', label: 'compare jobs',
+    };
+    if (code === 'energy') return {
+      text: 'Wait for energy to refill, or choose a move with a lower energy cost.',
+      tab: 'streets', label: 'review your tank',
+    };
+    if (code === 'jailed' || code === 'hole') return {
+      text: 'Street operations are blocked in lockup. The Pen still has work, protection, and ways out.',
+      tab: 'pen', label: 'open the pen',
+    };
+    if (code === 'cold' || code === 'feds_watching') return {
+      text: code === 'cold' ? 'Pay the pad or close the front before trying to run it again.'
+        : 'Cool the operation or clear its scrutiny before trying again.',
+      tab: code === 'cold' ? 'empire' : 'law', label: code === 'cold' ? 'review the front' : 'open the law',
+    };
+    if (['rate_limited', 'cooldown', 'too_soon', 'not_due'].includes(code)) return {
+      text: result.body?.retryAfter ? `Wait ${result.body.retryAfter} seconds, then try again.` : 'This move is on a clock. Wait for it to reopen before trying again.',
+    };
+    if (['safe', 'witpro', 'hospitalized'].includes(code)) return {
+      text: 'That target is protected right now. Choose another target or wait for the protection to end.',
+    };
+    if (result.code === 401 || code === 'auth' || code === 'token_revoked') return {
+      text: 'Your session is no longer valid. Sign in again before making another move.',
+      label: 'sign in again', run: () => {
+        token = null; localStorage.removeItem('omerta_token'); location.reload();
+      },
+    };
+    return { text: 'Review the stated terms, adjust the move, and try again.' };
+  }
+  function operationReceiptMarkup(receipt) {
+    const recovery = receipt.recovery;
+    return `<article class="operation-receipt operation-receipt--${receipt.state}" data-operation-receipt="${receipt.id}">
+      <div class="operation-receipt__head"><span class="operation-receipt__mark" aria-hidden="true">${receipt.state === 'success' ? '✓' : '!'}</span>
+        <b>${esc(receipt.label)}</b><time datetime="${esc(receipt.atIso)}">${esc(receipt.at)}</time></div>
+      <div class="operation-receipt__summary">${esc(receipt.summary)}</div>
+      <div class="operation-receipt__delta">${esc(receipt.delta)}</div>
+      ${recovery ? `<div class="operation-receipt__recovery"><span>${esc(recovery.text)}</span>
+        ${recovery.run ? `<button class="act" data-operation-retry="${receipt.id}">${esc(recovery.label || 'try again')}</button>` : ''}
+        ${recovery.tab ? `<button class="act" data-operation-tab="${esc(recovery.tab)}">${esc(recovery.label || 'show me')}</button>` : ''}</div>` : ''}
+    </article>`;
+  }
+  function operationFeedMarkup() {
+    if (!operationReceipts.length) return '<p class="operation-feed__empty">No moves recorded this session.</p>';
+    const [latest, ...older] = operationReceipts;
+    return operationReceiptMarkup(latest) + (older.length ? `<details class="operation-feed__earlier">
+      <summary>Earlier this session (${older.length})</summary>${older.map(operationReceiptMarkup).join('')}</details>` : '');
+  }
+  function bindOperationDesk() {
+    document.querySelectorAll('[data-operation-retry]').forEach((button) => {
+      button.onclick = () => operationReceipts.find((r) => String(r.id) === button.dataset.operationRetry)?.recovery?.run?.();
+    });
+    document.querySelectorAll('[data-operation-tab]').forEach((button) => {
+      button.onclick = () => { setTab(button.dataset.operationTab); spotlight(SPOT[button.dataset.operationTab]); };
+    });
+  }
+  function renderOperationFeed() {
+    const feed = $('#operation-feed');
+    if (!feed) return;
+    feed.innerHTML = operationFeedMarkup();
+    bindOperationDesk();
+  }
+  function renderOperationPending() {
+    const desk = $('#operation-desk'), line = $('#operation-pending');
+    if (!desk || !line) return;
+    desk.setAttribute('aria-busy', operationPending ? 'true' : 'false');
+    line.textContent = operationPending ? `Working: ${operationPending}…` : '';
+    line.classList.toggle('hidden', !operationPending);
+  }
+  function recordOperation({ label, result, before, after, method, path, body, idempotencyKey }) {
+    const failed = result.code >= 400;
+    const receipt = {
+      id: ++operationSeq, state: failed ? 'error' : 'success', label,
+      summary: describe(result.body, result.code),
+      delta: failed ? 'No state change confirmed.' : operationDelta(before, after),
+      at: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      atIso: new Date().toISOString(),
+    };
+    if (failed) receipt.recovery = operationRecovery(result, { label, method, path, body, idempotencyKey });
+    operationReceipts.unshift(receipt);
+    operationReceipts.splice(6);
+    renderOperationFeed();
+  }
   // one money move at a time — a global in-flight lock is the double-tap guard (buttons re-render
   // after each act, so a per-button disable is redundant; this covers every call site at once).
   let acting = false;
@@ -4068,16 +4249,26 @@
     setTimeout(() => v.classList.add('out'), 1250);
     setTimeout(gone, 1700);
   }
-  async function act(method, path, body) {
+  async function act(method, path, body, options = {}) {
     if (acting) { toast('easy — one move at a time', false); return { code: 429, body: {} }; }
     const trigger = lastPressed?.isConnected ? lastPressed : null;
+    const label = operationName(method, path, trigger, options.label);
+    const idempotencyKey = method === 'GET' ? null : (options.idempotencyKey || uuid());
+    const before = operationSnapshot(me);
+    const oldHtml = trigger?.innerHTML;
+    const oldAriaLabel = trigger?.getAttribute('aria-label');
     acting = true;
+    operationPending = label;
     document.body.style.cursor = 'progress';
-    document.body.setAttribute('aria-busy', 'true');
-    trigger?.setAttribute('aria-busy', 'true');
+    if (trigger) {
+      trigger.setAttribute('aria-busy', 'true');
+      trigger.setAttribute('aria-label', `Working: ${label}`);
+      trigger.textContent = `working…`;
+    }
+    renderOperationPending();
     busy.setAttribute('aria-label', 'Working'); busy.classList.add('on');
     try {
-      const r = await api(method, path, body);
+      const r = await api(method, path, body, { idempotencyKey });
       // the "Last Word" viewer shows the ACTION result (written here, before refresh's GET /v1/me
       // would otherwise overwrite it — the raw JSON for the deck / power users; the toast is the human read).
       $('#resp').textContent = `${method} ${path}\n` + JSON.stringify(r.body, null, 2);
@@ -4116,7 +4307,10 @@
         if (!spec) sfx('ok'); // the cinematic carries its own sting; everything else confirms softly
         const bt = bragText(r.body); if (bt) { haptic('big'); showBrag(bt); }
       } else if (r.code >= 400) { shake(); sfx('bad'); }
-      await refresh();
+      const stateRefresh = await refresh();
+      recordOperation({ label, result: r, before,
+        after: stateRefresh?.code < 400 ? operationSnapshot(me) : null,
+        method, path, body, idempotencyKey });
       // …and re-render the BOARD you are looking at, not just the sheet. `refresh()` only redraws the
       // left column, so until now the screen you just acted on kept showing the old state until a WS
       // event or the 30s poll happened along: you paid the pad and the front still said COLD, you let
@@ -4128,9 +4322,14 @@
       return r;
     } finally {
       acting = false;
+      operationPending = null;
       document.body.style.cursor = '';
-      document.body.removeAttribute('aria-busy');
-      trigger?.removeAttribute('aria-busy');
+      if (trigger?.isConnected) {
+        trigger.removeAttribute('aria-busy');
+        if (oldAriaLabel == null) trigger.removeAttribute('aria-label'); else trigger.setAttribute('aria-label', oldAriaLabel);
+        trigger.innerHTML = oldHtml;
+      }
+      renderOperationPending();
       busy.removeAttribute('aria-label'); busy.classList.remove('on');
     }
   }
@@ -4314,12 +4513,19 @@
 
   let landingArtObserver = null;
   function deferLandingArt() {
-    const plates = [...document.querySelectorAll('#screen-auth [data-art], #screen-auth [data-lazy-src]')]
+    const plates = [...document.querySelectorAll('#screen-auth [data-art], #screen-auth [data-lazy-src], #screen-auth [data-video-poster]')]
       .filter((x) => !x.dataset.artLoaded);
     if (!plates.length) return;
     const reveal = (node) => {
       if (node.dataset.art) node.style.setProperty('--art', `url(${node.dataset.art})`);
+      if (node.parentElement?.tagName === 'PICTURE')
+        for (const source of node.parentElement.querySelectorAll('source[data-srcset]')) source.srcset = source.dataset.srcset;
       if (node.dataset.lazySrc) node.src = node.dataset.lazySrc;
+      if (node.dataset.videoPoster) {
+        node.poster = matchMedia('(max-width: 760px)').matches
+          ? (node.dataset.videoPosterMobile || node.dataset.videoPoster) : node.dataset.videoPoster;
+        for (const source of node.querySelectorAll('source[data-src]')) source.src = source.dataset.src;
+      }
       node.dataset.artLoaded = 'true';
       landingArtObserver?.unobserve(node);
     };
@@ -4476,7 +4682,7 @@
       return;
     }
     let paused = false;
-    const timer = setInterval(() => { if (!paused) advance(); }, 4200);
+    setInterval(() => { if (!paused) advance(); }, 4200);
     toggle.onclick = () => {
       paused = !paused;
       toggle.textContent = paused ? 'resume' : 'pause';
@@ -4614,10 +4820,10 @@
   // (English prose, like all game prose); each step is one idea + one plate, because the old
   // single-modal welcome was five paragraphs nobody read (tester feedback).
   const TOUR = [
-    { art: 'hero-poster', title: 'WELCOME TO THE CITY', body:
+    { art: 'hero-poster-640.webp', title: 'WELCOME TO THE CITY', body:
       `<p>You start as a nobody in the Docks. The city remembers every job, debt, alliance, and enemy you make.</p>
        <p><b>Your first loop:</b> pull a job → earn cash and respect → bank the take → follow the next move on your sheet.</p>` },
-    { art: 'interior-streets', title: 'THE STREETS', action: 'first_job', body:
+    { art: 'interior-streets.jpg', title: 'THE STREETS', action: 'first_job', body:
       `<p><b style="color:var(--neon)">First goal: pull one job.</b> Jobs pay cash and respect; respect raises your level and opens the city.</p>
        <p class="dim">Jobs spend <b>nerve</b>, which refills on its own. The ordinary play is safest to learn. Quiet and loud variants make more sense once you know the terms.</p>` },
   ];
@@ -4625,7 +4831,7 @@
   function tourStep(i) {
     tourAt = Math.max(0, Math.min(TOUR.length - 1, i));
     const s = TOUR[tourAt], last = tourAt === TOUR.length - 1;
-    $('#tour-art').src = `/art/${s.art}.jpg`;
+    $('#tour-art').style.backgroundImage = `url(/art/${s.art})`;
     $('#tour-body').innerHTML = `<h2 id="tour-title">${s.title}</h2>${s.body}`;
     $('#tour-dots').innerHTML = TOUR.map((_, j) => `<i${j === tourAt ? ' class="on"' : ''}></i>`).join('');
     $('#tour-back').style.visibility = tourAt ? 'visible' : 'hidden';
@@ -4976,6 +5182,7 @@
       // undelivered (/v1/notifications is one-shot), so pull it in — feedLine routes `estate` to showDeath.
       if (prevGen != null && me.generation > prevGen) backfillFeed();
     }
+    return r;
   }
   // (F2) the death/heir moment — the client never hits screen-create on death (the estate txn auto-
   // creates the heir), so this is the "play for keeps" beat. Rendered from the estate report as it
@@ -5045,11 +5252,20 @@
     if (me.law?.rat) chips.push(['bad', 'RAT']);
     if (me.law?.stage && me.law.stage !== 'clean') chips.push(['cold', me.law.stage.toUpperCase()]);
     if (me.guardedBy) chips.push(['good', 'GUARDED']);
-    // THE COACH — the server-computed next step (guides new players; quietly absent for vets),
-    // now with THE PLAN: the whole queue of what's next (me.coachPlan, up to 5 rungs), numbered,
-    // each row a jump — so a brand-new player never has to guess what comes after the current step.
+    // YOUR TURN. The coach remains the server-authoritative decision; the desk makes its status,
+    // current resources, destination, result receipts, and recovery paths one coherent surface.
     {
       const plan = me.coachPlan || [];
+      const order = me.coach || { label: 'No urgent order',
+        hint: 'The city has no emergency for you. Keep working the operation in front of you, or open Start Here for the live board.',
+        tab: currentTab || 'start' };
+      let readiness = { tone: 'ready', label: 'READY', detail: 'Costs and risk are shown beside each operation.' };
+      if (me.jailSeconds > 0) readiness = { tone: 'blocked', label: 'LOCKUP', detail: 'Street moves are blocked. Work the Pen or find a way out.' };
+      else if (me.safeSeconds > 0) readiness = { tone: 'caution', label: 'SAFEHOUSE', detail: 'Offense, extraction, and money movement are blocked while you are under.' };
+      else if (me.law?.indicted) readiness = { tone: 'blocked', label: 'INDICTED', detail: 'The grace clock is running. Resolve the case before it goes to trial.' };
+      else if (me.wanted) readiness = { tone: 'blocked', label: 'WANTED', detail: 'Family protection is void and hired guns can move on you.' };
+      else if (Number(me.health) < 30) readiness = { tone: 'caution', label: 'LOW HEALTH', detail: 'Heal before a risky fight. Routine jobs remain available.' };
+      else if (Number(me.nerve) < 2) readiness = { tone: 'caution', label: 'LOW NERVE', detail: 'Crime waits on nerve. Training and collections use other resources.' };
       // THE ROAD TO LEVEL 5 — presentational only (the same published divisor the sheet's level bar
       // uses): a literal progress bar toward the Path unlock, so "get to level 5" has a visible dial.
       let road5 = '';
@@ -5063,18 +5279,31 @@
       let cpn = 1;
       const planRows = plan.slice(1, 5).map((s) =>
         `<button class="cstep" data-ctab="${s.tab}" title="${esc(s.hint)}"><b>${++cpn}</b> ${esc(s.label)}</button>`).join('');
-      // phones: the queue collapses behind its own header (the #1 move is always visible; the fold
-      // check measures the coach box as chrome, and 4 open rows pushed every screen below the fold)
-      // (founder) THE VOICE ON YOUR SHOULDER — the coach reads as your inner conscience, not UI
-      // chrome: a little devil whispering the next move. Same server-authoritative ladder underneath.
-      $('#coachwrap').innerHTML = me.coach ? `<div id="coach"><div class="cwho">😈 the voice on your shoulder</div><div class="cl">▸ ${me.coach.label}</div><div class="ch">${me.coach.hint}</div>
-        ${road5}
-        <button class="act" id="coach-go" style="padding:5px 12px;font-size:12.5px">${T('b_takeme')}</button>
-        ${planRows ? `<div class="cplan"><button class="cpt" id="cplan-tg">THEN:<i>+${plan.length - 1} more ▾</i></button>${planRows}</div>` : ''}</div>` : '';
+      const target = String(order.tab || 'start').replace(/[_-]/g, ' ').toUpperCase();
+      $('#coachwrap').innerHTML = `<section id="operation-desk" role="region" aria-labelledby="operation-title" aria-busy="${operationPending ? 'true' : 'false'}">
+        <div id="coach">
+          <div class="operation-desk__eyebrow"><span class="cwho" id="operation-title">YOUR TURN · CITY-RANKED MOVE</span>
+            <span class="operation-state operation-state--${readiness.tone}">${readiness.label}</span></div>
+          <div class="cl" title="${esc(order.label)}">${esc(order.label)}</div><div class="ch">${esc(order.hint)}</div>
+          <div class="operation-readiness">${esc(readiness.detail)}</div>
+          <div class="operation-resources" aria-label="Current resources">
+            <span><b>${fmt(me.nerve)}</b> / ${fmt(me.maxNerve)} nerve</span>
+            <span><b>${fmt(me.energy)}</b> / ${fmt(me.maxEnergy)} energy</span>
+            <span><b>${fmt(me.heat)}</b> heat</span><span><b>$${fmt(me.cash)}</b> cash</span></div>
+          ${road5}
+          <button class="act prime" id="coach-go" data-operation-primary>OPEN ${esc(target)} →</button>
+          ${planRows ? `<div class="cplan"><button class="cpt" id="cplan-tg">UP NEXT:<i>+${planRows ? plan.slice(1, 5).length : 0} more ▾</i></button>${planRows}</div>` : ''}
+        </div>
+        <div id="operation-pending" class="operation-pending${operationPending ? '' : ' hidden'}" role="status" aria-live="polite">${operationPending ? `Working: ${esc(operationPending)}…` : ''}</div>
+        <div class="operation-desk__history"><div class="operation-desk__history-title">RECENT OPERATIONS · THIS SESSION</div>
+          <div id="operation-feed" role="log" aria-live="polite" aria-relevant="additions text">${operationFeedMarkup()}</div></div>
+      </section>`;
       $('#coachwrap').querySelectorAll('[data-ctab]').forEach((b) => b.onclick = () => {
         setTab(b.dataset.ctab); spotlight(SPOT[b.dataset.ctab]);
       });
       { const tg = $('#cplan-tg'); if (tg) tg.onclick = () => tg.parentElement.classList.toggle('open'); }
+      { const go = $('#coach-go'); if (go) go.onclick = () => { setTab(order.tab); spotlight(SPOT[order.tab]); }; }
+      bindOperationDesk();
     }
     // …and its nav pulse: the button the coach points at breathes, so the destination is visible
     // even when the banner has scrolled away. Cleared first (the coach moves as you progress), and
@@ -6964,8 +7193,6 @@
     // `ob` now defaults to `{}` (a board the aggregate could not build comes back null), so the
     // list is guarded at the read — the same shape `sw.tasks` and `cr.tiers` already use.
     const obTasks = ob.tasks || [];
-    // Core play unlocks the city; wallet, family, and social rewards stay on the full checklist.
-    const gameplayDone = !!ob.gameplayDone;
     const next = obTasks.find((x) => !x.claimed && x.ready) || obTasks.find((x) => !x.claimed && !x.social) || obTasks.find((x) => !x.claimed);
     // a background re-render (WS event / 30s poll) fires the moment focus moves from the
     // who-sent-you input to its button — the focus guard doesn't cover that instant, and the
@@ -6979,11 +7206,11 @@
       ${bulletinBanner}
       ${eventStrip}
       ${resultsStrip}
-      ${gameplayDone ? situation : ''}
+      ${ob.allDone ? situation : ''}
       <!-- The City Standing led this screen — so the FIRST thing a brand-new player saw was six bars
            at 0% and a leaderboard of strangers, with the checklist (the actual point) pushed below.
-           It leads once the core gameplay checklist is behind you; optional rewards stay visible. -->
-      ${gameplayDone ? `<h2>The City Standing <span class="d" style="font-size:11px">— one score across everything you do. Blood, Empire, Power, Legit, Hustle, Honor. This is who's actually winning.</span></h2>
+           It leads only once the checklist is behind you; before that it's one honest line. -->
+      ${ob.allDone ? `<h2>The City Standing <span class="d" style="font-size:11px">— one score across everything you do. Blood, Empire, Power, Legit, Hustle, Honor. This is who's actually winning.</span></h2>
       <div id="city-standing" class="d" style="color:var(--dim);font-size:12.5px;margin-bottom:12px">loading…</div>` : ''}
       ${ob.allDone ? '' : `
       <h2>Make Your Bones <span class="d" style="font-size:12.5px">(${ob.claimed}/${ob.total} done — the first week pays cash to learn the ropes)</span></h2>
@@ -7001,7 +7228,7 @@
             : `<button class="act" data-obgo="${x.id}">${(go[x.id] || [, 'do it'])[1]} →</button>`}
         </div>`).join('')}</div>
       <div class="d" style="color:var(--dim);font-size:12.5px;margin-top:10px">Finish all of it for a capstone bonus (${reward(ob.capstone || {})}). Stuck? The other tabs across the top are the whole city — Streets is your bread and butter.</div>`}
-      ${!gameplayDone ? situation : ''}
+      ${!ob.allDone ? situation : ''}
       ${(() => { // THE CAREER (founder: another list of tasks in progression after the First Week,
         // with bonuses, that takes you throughout the game). Open tiers render their task cards;
         // the next locked tier is a one-line teaser; deeper tiers stay a count so the screen
@@ -7030,15 +7257,13 @@
       ${(() => { // STILL ON THE TABLE — a featured systems catalog the coach's queue-of-5 can't carry.
         // These level-unlocked entries have never been touched, most overdue first. This finite catalog
         // is not a claim to enumerate the whole city. Hidden when there is nothing untapped. Pure read.
-        if (!gameplayDone) return '';
+        if (!ob.allDone) return '';
         const untap = ex.untapped || [];
         const pg = ex.progress || {};
-        const catalog = ex.catalog || {};
-        const catalogCount = catalog.count || pg.unlocked || 0;
         if (ex.allTried) return `<h2 style="margin-top:14px">Still On The Table <span class="d" style="font-size:11px">— every currently open featured system is worked.</span></h2>
           <div class="d" style="color:var(--gold);font-size:12.5px;margin-bottom:12px">🏆 You've had a hand in all ${pg.unlocked || 0} featured systems currently open to you. More open as your level rises.</div>`;
         if (!untap.length) return '';
-        return `<h2 style="margin-top:14px">Still On The Table <span class="d" style="font-size:11px">— featured systems catalog (${catalogCount} entries): you've tried ${pg.tried || 0} of ${pg.unlocked || 0} open to you.</span></h2>
+        return `<h2 style="margin-top:14px">Still On The Table <span class="d" style="font-size:11px">— featured systems catalog: you've tried ${pg.tried || 0} of ${pg.unlocked || 0} open to you.</span></h2>
           <div class="grid">${untap.map((s) => `
             <div class="card"><span class="t">${esc(s.name)}</span>
               <div class="d">${esc(s.hook)}</div>
@@ -7344,15 +7569,27 @@
     // D6a — THE APPROACH: every job takes a risk/reward choice. Case It = safer, low-heat, soft bust
     // (play it when you're hot or can't afford lockup); Go Loud = bigger single score + more contraband,
     // but draws law heat + a harder bust. Same cash EV — the choice is your risk appetite.
-    const dis = (c) => (me?.level || 1) < c.lvl ? ' disabled' : '';
-    const crimeCard = (c) => `
+    const crimeApproaches = Object.fromEntries((rules?.crimeApproaches || []).map((a) => [a.id, a]));
+    const quiet = crimeApproaches.quiet || {}, loud = crimeApproaches.loud || {};
+    const approachTerms = `<b>QUIET</b> ${quiet.successMult ? `${Math.round((quiet.successMult - 1) * 100)}% safer, ` : ''}${quiet.heat || 0} added heat${quiet.jailMult ? `, ${Math.round((1 - quiet.jailMult) * 100)}% shorter jail` : ''}
+      · <b>STANDARD</b> baseline odds and take
+      · <b>LOUD</b> ${loud.payMult ? `${Math.round((loud.payMult - 1) * 100)}% larger win, ` : ''}+${loud.heat || 0} heat${loud.jailMult ? `, ${Math.round((loud.jailMult - 1) * 100)}% longer jail` : ''}`;
+    const crimeGate = (c) => (me?.level || 1) < c.lvl
+      ? ` disabled aria-disabled="true" title="Requires level ${c.lvl}. You are level ${me?.level || 1}."` : '';
+    const crimeCard = (c) => {
+      const termsId = `crime-${c.id}-terms`;
+      return `
       <div class="card">${aart('crime', c.id)}<span class="t">${c.name}</span>
-        <div class="d">lvl ${c.lvl} · ${c.nerve} nerve · $${fmt(c.cash[0])}–$${fmt(c.cash[1])}${c.jail ? ' · jail risk' : ''}</div>
+        <div id="${termsId}" class="operation-action-terms">
+          <div class="d operation-terms"><b>COST</b> ${c.nerve} nerve · <b>PAY</b> $${fmt(c.cash[0])}–$${fmt(c.cash[1])} · <b>RISK</b> ${c.jail ? 'jail on a miss' : 'no jail term'}</div>
+          <div class="d operation-choice-terms">${approachTerms}</div>
+        </div>
         <div class="verbrow">
-          <button class="act" style="opacity:.8" data-do="POST /v1/crimes/${c.id}" data-body='{"approach":"quiet"}'${dis(c)}>case it</button>
-          <button class="act prime" data-do="POST /v1/crimes/${c.id}" data-body='{"approach":"standard"}'${dis(c)}>do it</button>
-          <button class="act risk" data-do="POST /v1/crimes/${c.id}" data-body='{"approach":"loud"}'${dis(c)}>go loud</button>
+          <button class="act" style="opacity:.8" data-operation-label="${esc(c.name)}: quiet" aria-describedby="${termsId}" data-do="POST /v1/crimes/${c.id}" data-body='{"approach":"quiet"}'${crimeGate(c)}>case it</button>
+          <button class="act prime" data-operation-label="${esc(c.name)}: standard" aria-describedby="${termsId}" data-do="POST /v1/crimes/${c.id}" data-body='{"approach":"standard"}'${crimeGate(c)}>do it</button>
+          <button class="act risk" data-operation-label="${esc(c.name)}: loud" aria-describedby="${termsId}" data-do="POST /v1/crimes/${c.id}" data-body='{"approach":"loud"}'${crimeGate(c)}>go loud</button>
         </div></div>`;
+    };
     const allCrimes = [...(rules?.crimes || [])].sort((a, b) => a.lvl - b.lvl);
     const lvl = me?.level || 1;
     const unlocked = allCrimes.filter((c) => c.lvl <= lvl);
@@ -7367,10 +7604,11 @@
       `<button class="act" data-do="POST /v1/travel/${d.id || d}">${d.name || d.id || d}</button>`).join('');
     // PACING: the gym runs on a cooldown now, so show the live timer rather than letting the player
     // click into a bare `cooldown` error.
-    const gymCd = Number(me?.trainSeconds || 0);
+    const gymCd = Number(me?.trainSeconds || 0), trainEnergy = Number(rules?.pacing?.trainEnergy || 10);
+    const gymBlock = gymCd > 0 ? `Gym reopens in ${mins(gymCd)}.`
+      : Number(me?.energy || 0) < trainEnergy ? `Needs ${trainEnergy} energy. You have ${fmt(me?.energy || 0)}.` : '';
     const train = (rules?.stats || []).map((s) =>
-      `<button class="act" data-do="POST /v1/train/${s}"${gymCd > 0 ? ' disabled' : ''}>${s}</button>`).join('')
-      + (gymCd > 0 ? ` <span class="d">gym reopens in ${mins(gymCd)}</span>` : '');
+      `<button class="act" data-operation-label="train ${s}" aria-describedby="streets-gym-terms" data-do="POST /v1/train/${s}"${gymBlock ? ` disabled aria-disabled="true" title="${esc(gymBlock)}"` : ''}>${s}</button>`).join('');
     // THE REGIMEN — eight disciplines on the SAME gym clock + the fixtures' daily drills
     const regCd = Number(gym.trainSeconds || 0);
     const regimenBlock = !gym.disciplines ? '' : `
@@ -7436,9 +7674,25 @@
         <button class="act" data-gdbuy="${g.id}">buy</button>
         <button class="act" data-gdsell="${g.id}"${held ? '' : ' disabled'}>sell</button></div>`;
     }).join('');
+    const DAILY_HOWTO = {
+      crime: ['Pull jobs right here on the Streets — only CLEAN (successful) ones count.', null],
+      gta: ['Boost a car in The Garage.', 'garage'],
+      train: ['Gym sessions — the Train drawer below. Any stat counts.', null],
+      jump: ['Jump a player: Wet Work → The Streets roster → jump. A win counts.', 'pvp'],
+      dice: ['Win back-room dice at the Den — fade a player taking bets (or list your own limit and let them come to you).', 'den'],
+      tribute: ['Pay cash tribute to your family (The Family → tribute). You need a family first.', 'family'],
+      craft: ['Craft an item at the Workshop — The Garage.', 'garage'],
+      trade: ['Buy a lot on the cb/ammo Exchange (The Garage → the armory / Exchange).', 'garage'],
+      goods: ['Buy or sell trade goods — the Trade Goods drawer below.', null],
+      melt: ['Melt a car down for parts in The Garage.', 'garage'],
+      cook: ['Cook a batch at the Kitchen.', 'kitchen'],
+      deal: ['Deal product on the corner at the Kitchen.', 'kitchen'],
+      heist: ['Pull the Daily Score (the card right here — the solo Score is what counts).', null],
+      bust: ['Spring ANYONE from lockup — Wet Work → The Streets roster: anyone with a LOCKUP chip shows a "bust them out" button. A success frees them and pays you; best odds near the end of a stretch.', 'pvp'],
+    };
     const dailyCards = (daily.jobs || []).map((j) => {
       const ready = j.progress >= j.goal;
-      const how = j.how, goTab = j.tab;
+      const [how, goTab] = DAILY_HOWTO[j.kind] || [];
       // `blocked` is the server saying this contract is out of reach for THIS street today (a
       // tribute job with no family). Say so on the card instead of leaving a bar that never moves —
       // the coach subtracts the same contracts off the same helper, so the two always agree.
@@ -7489,10 +7743,10 @@
     t.innerHTML = `
       <div class="card" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
         <span class="t" style="margin-right:2px">The Bank</span>
-        <input id="bank-amt" placeholder="amount" size="9">
-        <button class="act" id="bank-dep"${groundOff('Banking a deposit')}>deposit</button>
-        <button class="act" id="bank-wd">withdraw</button>
-        <span class="d" style="color:var(--dim);font-size:12px;flex-basis:100%">deposits ride in transit (lootable) before they clear · interest is capped daily</span>
+        <label class="visually-hidden" for="bank-amt">Bank amount</label><input id="bank-amt" inputmode="numeric" placeholder="amount" size="9">
+        <button class="act" id="bank-dep" data-operation-label="deposit cash" aria-describedby="streets-bank-terms"${groundOff('Banking a deposit')}>deposit</button>
+        <button class="act" id="bank-wd" data-operation-label="withdraw cash" aria-describedby="streets-bank-terms">withdraw</button>
+        <span class="d operation-terms" id="streets-bank-terms" style="flex-basis:100%"><b>DEPOSIT</b> leaves your pocket, then rides in lootable transit before clearing. <b>WITHDRAW</b> returns cash to your lootable pocket. Interest is capped daily.</span>
       </div>
       <div class="card" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
         <span class="t" style="margin-right:2px">The Map</span><span class="d" style="color:var(--dim)">you're in <b>${me?.loc || '—'}</b> ·</span> ${travel}
@@ -7533,7 +7787,8 @@
       <div id="clue-slot"></div>
       ${sect('streets-daily', 'Daily Work', '3 contracts a day (all three pays a $OMR bonus) + the Daily Score', `<div class="grid">${dailyCards}</div>`, dailyReady)}
       ${sect('streets-train', 'The Gym &amp; The Regimen', 'raise your core stats + eight trainable disciplines · daily drills from the fixtures', `
-        <div class="d" style="margin-bottom:4px"><b>Core stats</b> — muscle powers fights, cunning powers schemes, speed powers wheels:</div>
+        <div class="d operation-terms" id="streets-gym-terms" style="margin-bottom:4px"><b>CORE TRAINING</b> · ${trainEnergy} energy per session · raises the chosen stat · shares a ${mins(rules?.pacing?.trainCooldownSeconds || 0)} recovery clock with the Regimen.${gymBlock ? ` <b>BLOCKED:</b> ${esc(gymBlock)}` : ''}</div>
+        <div class="d" style="margin-bottom:4px">Muscle powers fights, cunning powers schemes, and speed powers wheels.</div>
         <div>${train}</div>
         ${regimenBlock}`)}
       ${sect('streets-goods', 'Trade Goods — the Freight Game', 'buy low, haul it, sell high (feeds the Black Market, convoys &amp; the Port)', `

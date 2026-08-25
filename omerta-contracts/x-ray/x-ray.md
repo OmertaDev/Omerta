@@ -201,8 +201,26 @@ See [entry-points.md](entry-points.md) for the full permissionless entry point m
 
 **Token Assumptions:**
 
-- OMR protocol integrations assume 1:1 transfers; this is not locally validated by staking and depends on pair/exemption configuration.
-- The Transmuter reserve asset assumes no fee-on-transfer/rebase behavior; credited balance deltas are not measured.
+- OMR protocol integrations assume 1:1 transfers. That is true for ordinary OMR transfers, but the
+  Safe must never register a protocol receiver (staking, bond, claim, or treasury rail) as an AMM
+  pair; protocol addresses should also remain explicitly tax-exempt in the production checklist.
+- `Alchemist.deposit` and `Transmuter.fund` measure exact balance deltas and reject fee-on-transfer
+  input. `CollateralEscrow` measures the actual ERC-4626 share delta rather than trusting a return
+  value. The configured reserve asset and vault remain trusted, immutable dependencies: rebases,
+  blocklists, upgrades, changed decimals, or a transfer fee on the outbound redemption leg can still
+  change availability or what a recipient ultimately receives.
+- `RwaStockBuyer` measures the StockVault's actual post-trade token delta and enforces the stronger
+  of keeper and independent-oracle minimum output. `StockVault` then transfers exact nominal units
+  with `SafeERC20`; therefore the Safe-curated stock registry must exclude fee-on-transfer, rebasing,
+  callback-bearing, or otherwise non-standard delivery tokens unless a new adapter/vault review
+  explicitly models them.
+- OMR and Denari passed Slither's ERC-20 and ERC-2612 interface/event checks. Their permit support is
+  the OpenZeppelin implementation; integrations still carry the normal ERC-20 allowance-replacement
+  race and should use permit, allowance deltas, or zero-first/`forceApprove` patterns as appropriate.
+- OMR has one role-gated bond mint path and a bounded sell-tax hook; Denari has singular, fail-closed
+  minter and burner roles and no tax, rebase, blacklist, pause, or proxy surface. Neither contract is
+  upgradeable. No deployed-address holder/concentration analysis was possible because production
+  chain execution is deliberately unconfigured and dormant.
 
 **Shared State Exposure:**
 
@@ -335,7 +353,8 @@ The release sweep expanded the scope after the structural snapshot above:
   The targeted properties run through Foundry in this environment; long-running Echidna/Medusa
   campaigns remain a separate release operation.
 - Slither completed successfully and produced the machine-readable detector, inheritance,
-  variable/authorization, function-summary, and ERC-20 reports in this directory.
+  variable/authorization, function-summary, ERC-20/ERC-721/ERC-1155, and ERC-2612 reports in this
+  directory. OMR and Denari passed every ERC-2612 function, return-type, view, and event check.
 
 ### Slither High-Signal Triage
 

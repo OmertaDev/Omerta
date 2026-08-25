@@ -20,7 +20,7 @@
 //     MARKET_SEED='<32 random chars>' SOCIAL_VERIFY_MODE=off node tools/pgcheck.js
 import crypto from 'node:crypto';
 import fs from 'node:fs';
-import { TREASURY } from '../src/rules.js'; // read the claim floor, never restate it
+import { SHIPMENT, TREASURY } from '../src/rules.js'; // read live prices/floors, never restate them
 
 if (!process.env.DATABASE_URL) {
   console.error('pgcheck needs DATABASE_URL pointed at a real (throwaway) Postgres — that is the whole point.');
@@ -396,6 +396,53 @@ console.log("\n6b. loadOwned's UNION returns what the fourteen queries did");
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+console.log('\n6c. SHARED COLLECTIBLE SERIALS ACTUALLY SERIALIZE');
+// withCharacter locks the ACTOR, not the collectible kind shared by every account. pg-mem has no
+// row locks, so the old COUNT(*) + 1 allocator looked correct there while two real transactions could
+// choose the same number and make one valid commission roll back. A temporary BEFORE INSERT pause
+// makes the overlap deterministic: both requests reach the shared counter before either can finish.
+{
+  const piece = SHIPMENT.COMMISSIONS[0];
+  const stamp = `${Date.now() % 100000}-${process.pid}`;
+  const make = async (suffix) => {
+    const { body: { token: t } } = await call('POST', '/v1/auth/guest');
+    await call('POST', '/v1/character', { token: t, body: { name: `Serial ${suffix} ${stamp}` } });
+    const id = (await call('GET', '/v1/me', { token: t })).body.character.id;
+    return { id, token: t };
+  };
+  const [a, b] = await Promise.all([make('A'), make('B')]);
+  await pool.query('UPDATE characters SET shipment=$3, cash=cash+$4 WHERE id IN ($1,$2)',
+    [a.id, b.id, piece.units, piece.cash]);
+  const before = Number((await pool.query(
+    'SELECT COALESCE(MAX(serial),0) n FROM bespoke_pieces WHERE commission_id=$1', [piece.id])).rows[0].n);
+  let results = [];
+  try {
+    await pool.query(`CREATE OR REPLACE FUNCTION pgcheck_pause_bespoke() RETURNS trigger LANGUAGE plpgsql AS $$
+      BEGIN PERFORM pg_sleep(0.2); RETURN NEW; END $$`);
+    await pool.query(`CREATE TRIGGER pgcheck_pause_bespoke BEFORE INSERT ON bespoke_serials
+      FOR EACH ROW EXECUTE FUNCTION pgcheck_pause_bespoke()`);
+    results = await Promise.all([
+      call('POST', `/v1/shipment/commission/${piece.id}`, { token: a.token }),
+      call('POST', `/v1/shipment/commission/${piece.id}`, { token: b.token }),
+    ]);
+  } finally {
+    await pool.query('DROP TRIGGER IF EXISTS pgcheck_pause_bespoke ON bespoke_serials');
+    await pool.query('DROP FUNCTION IF EXISTS pgcheck_pause_bespoke()');
+  }
+  const serials = results.filter((r) => r.code === 200).map((r) => Number(r.body.piece.serial)).sort((x, y) => x - y);
+  check(results.length === 2 && results.every((r) => r.code === 200),
+    'both cross-account commissions land under a forced overlap',
+    results.map((r) => `${r.code} ${JSON.stringify(r.body)}`).join(' | '));
+  check(serials.length === 2 && serials[0] === before + 1 && serials[1] === before + 2,
+    'the overlapped commissions receive consecutive unique serials',
+    `before ${before}; got ${serials.join(', ')}`);
+  // The harness SQL-funded exactly the cash each route burned. Remove those two debit rows so the
+  // probe leaves the global ledger identity where it found it if later sections add another sweep.
+  await pool.query("DELETE FROM transactions WHERE character_id IN ($1,$2) AND reason='shipment:commission'",
+    [a.id, b.id]);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 console.log('\n7. THE SCHEMA IS RE-APPLIABLE (in-place upgrade)');
 // Boot applies schema.sql then a derived ADD COLUMN IF NOT EXISTS pass. A second boot against the
 // SAME database must be a clean no-op — that is what makes deploying a new build to a live database
@@ -437,7 +484,8 @@ console.log('\n7b. THE BUILD BOOTS AGAINST A DATABASE OLDER THAN ITSELF');
 // really has — and then boot the CURRENT build on top of it, which is what a deploy does.
 {
   const { execSync } = await import('node:child_process');
-  const ROOT = new URL('..', import.meta.url).pathname;
+  const { fileURLToPath } = await import('node:url');
+  const ROOT = fileURLToPath(new URL('..', import.meta.url));
   const oldDb = `pgcheck_old_${process.pid}`;
   const swap = (u) => u.replace(/\/[^/?]+(\?|$)/, `/${oldDb}$1`);
   let ok = true; let err = ''; let added = 0;

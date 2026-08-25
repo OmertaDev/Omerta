@@ -12,6 +12,7 @@ process.env.JWT_SECRET = 'test-jwt-secret-for-the-hardening-suite'; // pinned so
 import assert from 'node:assert';
 import crypto from 'node:crypto';
 import { readFileSync } from 'node:fs';
+import zlib from 'node:zlib';
 import { buildServer } from '../src/server.js';
 import { runLedgerInvariants, alertDrift } from '../src/invariants.js';
 import { runSeasonRollover } from '../src/worker.js';
@@ -173,6 +174,28 @@ assert.equal(r2.code, 200, 'replay returns the stored response');
 assert.equal(r2.headers['x-idempotent-replay'], 'true', 'flagged as replay');
 assert.equal(r2.body.character.bank, bankAfter, 'identical body');
 assert.equal(Math.floor((await meOf(boss.token)).bank), Math.floor(bankAfter), 'deposited exactly once');
+
+// A real HTTP client advertises gzip. Compression runs before the idempotency onSend hook, so storing
+// String(the compressed Buffer) writes arbitrary binary — including NUL — into a Postgres TEXT column.
+// The action has already committed at that point, leaving the key permanently `in_progress`. Pin the
+// wire shape as well as the replay: the database must hold the original JSON, never the gzip frame.
+const gzKey = { 'idempotency-key': 'dep-gzip-001', 'accept-encoding': 'gzip' };
+const gz1 = await app.inject({ method: 'POST', url: '/v1/bank/deposit', payload: { amount: 100 },
+  headers: { authorization: `Bearer ${boss.token}`, ...gzKey } });
+assert.equal(gz1.statusCode, 200, 'the gzip idempotent action succeeds');
+assert.equal(gz1.headers['content-encoding'], 'gzip', 'the first response is actually compressed');
+const gzBody = JSON.parse(zlib.gunzipSync(gz1.rawPayload).toString('utf8'));
+const gzStored = (await pool.query(
+  "SELECT status, response FROM idempotency WHERE account_id=$1 AND key='dep-gzip-001'", [bossAcct])).rows[0];
+assert.equal(gzStored.status, 200, 'the compressed success leaves a completed key, not status=0');
+assert(!gzStored.response.includes('\0'), 'the idempotency row never stores a NUL from the gzip frame');
+assert.deepEqual(JSON.parse(gzStored.response), gzBody, 'the idempotency row stores the original JSON response');
+const gz2 = await app.inject({ method: 'POST', url: '/v1/bank/deposit', payload: { amount: 100 },
+  headers: { authorization: `Bearer ${boss.token}`, ...gzKey } });
+assert.equal(gz2.statusCode, 200, 'the gzip retry replays cleanly');
+assert.equal(gz2.headers['x-idempotent-replay'], 'true', 'the gzip retry is flagged as a replay');
+assert.deepEqual(JSON.parse(zlib.gunzipSync(gz2.rawPayload).toString('utf8')), gzBody,
+  'the gzip replay is byte-decoded to the same response and does not execute twice');
 
 // ═══════ invite codes (closed alpha) ═══════
 process.env.INVITE_MODE = 'on';

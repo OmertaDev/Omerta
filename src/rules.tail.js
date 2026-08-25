@@ -1201,6 +1201,7 @@ export const PACING = {
   // (4) THE GYM. A per-session cooldown on top of the energy cost, so stat gates take days rather
   // than an afternoon. 3 min → ~20 sessions/hr; the ~500 sessions the top mission tier demands is
   // now a ~25-hour investment spread over real days instead of one sitting.
+  TRAIN_ENERGY: 10,
   TRAIN_CD_MS: 3 * 60 * 1000,
 };
 

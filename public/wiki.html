@@ -116,9 +116,10 @@
 
   /* Editorial research sheets. The previews stay compact; each image links to the full-resolution export. */
   #doc .diagram-series{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:22px 0 28px;max-width:1040px}
-  #doc .diagram-sheet{margin:0;background:#f8fafc;border:1px solid var(--line2);border-radius:2px;overflow:hidden}
+  #doc .diagram-sheet{margin:0;background:var(--panel2);border:1px solid var(--line2);border-radius:2px;overflow:hidden}
   #doc .diagram-sheet:first-child{grid-column:1/-1}
-  #doc .diagram-sheet a{display:block;background:#fff}
+  #doc .diagram-sheet--wide{grid-column:1/-1}
+  #doc .diagram-sheet a{display:block;background:var(--panel2)}
   #doc .diagram-sheet img{display:block;width:100%;height:auto}
   #doc .diagram-sheet figcaption{padding:8px 10px;background:var(--panel2);color:var(--dim);font:11px/1.45 var(--mono)}
   #doc .diagram-sheet:hover{border-color:var(--neon-d)}
@@ -141,7 +142,6 @@
     #doc .codex-intro{margin-bottom:32px}
     #doc section{margin-bottom:40px;padding-bottom:30px}
     #doc .diagram-series{grid-template-columns:1fr}
-    #doc .diagram-sheet:first-child{grid-column:auto}
     #top{padding:11px 14px;gap:10px}
     #top h1{font-size:20px}
     #top .sub{display:none}
@@ -163,7 +163,7 @@
     <a href="/wiki" aria-current="page">Codex</a>
     <a href="/arena">Arena</a>
     <a href="/play">Agent setup</a>
-    <a class="public-nav__cta" href="/">Enter the city</a>
+    <a class="public-nav__cta" href="/">Enter</a>
   </div>
 </nav>
 <main id="wrap">
@@ -228,6 +228,60 @@ const SECTIONS = [
       respect returns to 0. <b>Respec</b> your stats for 90 $OMR (24-hour cooldown).</p>
       ${R(`POST /v1/character · GET /v1/me · /v1/session · POST /v1/respec`)}` },
 
+  { id: 'paths', group: 'The Basics', title: 'Choose Your Route', tag: 'paths, skills, mastery, career',
+    html: `<p class="lead"><b>No two streets have to grow the same way.</b> At level 5, $10,000 declares one of six Paths. Your Path changes concrete clocks, payouts, risks, and the rate at which specific trades learn. It does not lock you out of the rest of the city.</p>
+      ${L(`<b>Five systems shape the character:</b> the three core attributes, one declared Path, a three-branch skill build, ten learn-by-doing mastery tracks, and a five-book account-level Career.`)}
+      <p>The first Path pick costs cash and starts the switch clock. A later change burns <b>150 $OMR</b> and requires <b>7 days</b> since the previous choice. Home trades learn at <b>×1.5 mastery XP</b>, rival trades at <b>×0.6</b>, and every other trade remains at ×1.0. Skills award one point per four levels; mastery is earned only by doing the relevant work; Career claims are cash-only and survive the character.</p>
+      <p class="loop"><b>Not sure which doctrine fits?</b> <a href="/path?source=wiki">Take the seven-decision Path quiz</a>. The result shows every signed edge, handicap, home school, and rival school before the guest-play CTA.</p>
+      <div class="diagram-series diagram-series--gameplay" aria-label="Nine-sheet code-anchored gameplay route explainer">
+        <figure class="diagram-sheet diagram-sheet--wide">
+          <a href="/art/gameplay-01-choose-your-path.png?v=b56cedce0f70" aria-label="Open the full-size choose-your-Path field guide">
+            <img src="/art/gameplay-01-choose-your-path.png?v=b56cedce0f70" width="6480" height="4080" loading="lazy" alt="Six-way OMERTA Path selector comparing The Gun, Ledger, Kitchen, Wheel, Shadow, and Ring, including every signed edge, handicap, home trade, and rival trade.">
+          </a><figcaption>01 / 09 · SIX WAYS INTO THE CITY · EVERY EDGE HAS A COST</figcaption>
+        </figure>
+        <figure class="diagram-sheet">
+          <a href="/art/gameplay-02-the-gun.png?v=23daa219f30d" aria-label="Open the full-size Gun Path dossier">
+            <img src="/art/gameplay-02-the-gun.png?v=23daa219f30d" width="6480" height="4080" loading="lazy" alt="The Gun gameplay dossier showing its street-fight, hit-contract, trade-sale, mastery, skill, and counterplay mechanics.">
+          </a><figcaption>02 / 09 · THE GUN · FORCE CREATES WINDOWS, NOT SAFETY</figcaption>
+        </figure>
+        <figure class="diagram-sheet">
+          <a href="/art/gameplay-03-the-ledger.png?v=3e4259f905c2" aria-label="Open the full-size Ledger Path dossier">
+            <img src="/art/gameplay-03-the-ledger.png?v=3e4259f905c2" width="6480" height="4080" loading="lazy" alt="The Ledger gameplay dossier showing its racket, front, commerce, street-power, mastery, skill, and counterplay mechanics.">
+          </a><figcaption>03 / 09 · THE LEDGER · TURN MOVEMENT INTO MARGIN</figcaption>
+        </figure>
+        <figure class="diagram-sheet">
+          <a href="/art/gameplay-04-the-kitchen.png?v=06a91cbd9a54" aria-label="Open the full-size Kitchen Path dossier">
+            <img src="/art/gameplay-04-the-kitchen.png?v=06a91cbd9a54" width="6480" height="4080" loading="lazy" alt="The Kitchen gameplay dossier showing cook quality, dealing heat, jail time, mastery, skill, and counterplay mechanics.">
+          </a><figcaption>04 / 09 · THE KITCHEN · QUALITY UP, HEAT DOWN</figcaption>
+        </figure>
+        <figure class="diagram-sheet">
+          <a href="/art/gameplay-05-the-wheel.png?v=20b5b3719ab7" aria-label="Open the full-size Wheel Path dossier">
+            <img src="/art/gameplay-05-the-wheel.png?v=20b5b3719ab7" width="6480" height="4080" loading="lazy" alt="The Wheel gameplay dossier showing convoy speed, cook-time handicap, Wheels and Seamanship mastery, skill synergies, and counterplay.">
+          </a><figcaption>05 / 09 · THE WHEEL · OWN THE CLOCK</figcaption>
+        </figure>
+        <figure class="diagram-sheet">
+          <a href="/art/gameplay-06-the-shadow.png?v=d98e482bd5e2" aria-label="Open the full-size Shadow Path dossier">
+            <img src="/art/gameplay-06-the-shadow.png?v=d98e482bd5e2" width="6480" height="4080" loading="lazy" alt="The Shadow gameplay dossier showing search-clock, duel and bout, Larceny and Wet Work mastery, skill synergies, and counterplay.">
+          </a><figcaption>06 / 09 · THE SHADOW · WIN BEFORE THE FIGHT STARTS</figcaption>
+        </figure>
+        <figure class="diagram-sheet">
+          <a href="/art/gameplay-07-the-ring.png?v=f3662833ee7f" aria-label="Open the full-size Ring Path dossier">
+            <img src="/art/gameplay-07-the-ring.png?v=f3662833ee7f" width="6480" height="4080" loading="lazy" alt="The Ring gameplay dossier showing duel and bout power, Doctor-cost handicap, Fisticuffs and Gambler mastery, skill synergies, and counterplay.">
+          </a><figcaption>07 / 09 · THE RING · MAKE PRESSURE PAY</figcaption>
+        </figure>
+        <figure class="diagram-sheet diagram-sheet--wide">
+          <a href="/art/gameplay-08-character-blueprint.png?v=972a60e45d41" aria-label="Open the full-size character-system blueprint">
+            <img src="/art/gameplay-08-character-blueprint.png?v=972a60e45d41" width="6480" height="4080" loading="lazy" alt="Complete character blueprint linking attributes, the declared Path, skill branches, ten mastery tracks, rank milestones, virtuoso traits, inheritance, and Career progression.">
+          </a><figcaption>08 / 09 · THE CITY RECORDS WHAT YOU BECOME · FIVE INTERLOCKING SYSTEMS</figcaption>
+        </figure>
+        <figure class="diagram-sheet diagram-sheet--wide">
+          <a href="/art/gameplay-09-road-to-don.png?v=a8eec12eed77" aria-label="Open the full-size road-to-Don Career map">
+            <img src="/art/gameplay-09-road-to-don.png?v=a8eec12eed77" width="6480" height="4080" loading="lazy" alt="Five-book account Career map from Associate through Soldier, Made Man, Capo, and Don, with every task, claim payout, capstone, and opening rule.">
+          </a><figcaption>09 / 09 · FROM ASSOCIATE TO THE DON · 30 TASKS, FIVE BOOKS, ONE ACCOUNT RECORD</figcaption>
+        </figure>
+      </div>
+      ${R(`POST /v1/path · GET /v1/skills · POST /v1/skills/:id · GET /v1/mastery · GET /v1/career · POST /v1/career/:taskId`)}` },
+
   { id: 'cars', group: 'The Basics', title: 'Cars, Guns & Gear', tag: 'the garage and the armory',
     html: `<p><b>Cars and the Garage</b> (limit 12). 60 models, each with trims. <b>Boost</b> steals a random car (5-minute
       cooldown). <b>Melt</b> scraps a car for ammo (25% goes to your family). <b>Fence</b> and <b>repair</b> sell or fix a
@@ -280,12 +334,13 @@ const SECTIONS = [
 
   { id: 'economy', group: 'Money', title: 'The Economy — $OMR, the Window & the Vault', tag: 'the money cycle',
     html: `<p><b>Currencies:</b> cash (pocket and bank), <b>$OMR</b> (premium, account-level, earned through enumerated rules, and eligible for on-chain extraction by minted accounts once the production rail opens), crates, and ammo. <b>Cash can never buy $OMR.</b> The one live conversion runs the other way at the Window: spend $OMR for cash from a funded till. The game records every movement of value on a ledger.</p>
-      <div class="diagram-series" aria-label="Five-sheet OMR system explainer">
-        <figure class="diagram-sheet"><a href="/art/omr-01-severance.png"><img src="/art/omr-01-severance.png" width="2568" height="1592" loading="lazy" alt="OMR map: one token, two ledgers, and the explicit extraction bridge."></a><figcaption>01 / 05 · SEVERANCE + SUPPLY RAIL</figcaption></figure>
-        <figure class="diagram-sheet"><a href="/art/omr-02-return-velocity.png"><img src="/art/omr-02-return-velocity.png" width="2568" height="1626" loading="lazy" alt="OMR return-velocity loop from utility to house sink to the daily Desk auction."></a><figcaption>02 / 05 · RETURN VELOCITY</figcaption></figure>
-        <figure class="diagram-sheet"><a href="/art/omr-03-money-router.png"><img src="/art/omr-03-money-router.png" width="2568" height="1638" loading="lazy" alt="OMR money router showing declared revenue sources, destinations, and three bounded buybacks."></a><figcaption>03 / 05 · DECLARED WATERFALL</figcaption></figure>
-        <figure class="diagram-sheet"><a href="/art/omr-04-reserve-rwa.png"><img src="/art/omr-04-reserve-rwa.png" width="2568" height="1642" loading="lazy" alt="OMR reserve and RWA rails showing conservation invariants and dormant launch state."></a><figcaption>04 / 05 · RESERVE + RWA RAILS</figcaption></figure>
-        <figure class="diagram-sheet"><a href="/art/omr-05-ohm-contrast.png"><img src="/art/omr-05-ohm-contrast.png" width="2568" height="1648" loading="lazy" alt="Comparison of legacy 2021 Olympus mechanics and OMR's coded design."></a><figcaption>05 / 05 · LEGACY OHM CONTRAST</figcaption></figure>
+      <p><b>Read the books:</b> gold marks token or ETH movement, blue marks code-controlled supply or allocation, green marks arrived backing, and red marks blocked or dormant paths. Sheet 03 uses the founder-signed go-live configuration; it is published but not armed while production chain rails are dormant. Open any sheet for the 6480 × 4080 source export.</p>
+      <div class="diagram-series" aria-label="Five-sheet code-anchored OMR system explainer">
+        <figure class="diagram-sheet"><a href="/art/omr-01-severance.png?v=7b50aea177a2"><img src="/art/omr-01-severance.png?v=7b50aea177a2" width="6480" height="4080" loading="lazy" alt="Two-ledger OMR map showing street cash, the one-way Window, the 100 million OMR founding supply, bounded bond mint, and dormant full-reserve exit."></a><figcaption>01 / 05 · TWO LEDGERS. ONE CONTROLLED BRIDGE.</figcaption></figure>
+        <figure class="diagram-sheet"><a href="/art/omr-02-return-velocity.png?v=cc8badf4b704"><img src="/art/omr-02-return-velocity.png?v=cc8badf4b704" width="6480" height="4080" loading="lazy" alt="OMR return-velocity loop from game utility to Desk inventory, a one-to-three-percent daily auction cap, and below-band buyback."></a><figcaption>02 / 05 · THE DESK: INVENTORY, NOT INFLATION.</figcaption></figure>
+        <figure class="diagram-sheet"><a href="/art/omr-03-money-router.png?v=b2bde1b36f44"><img src="/art/omr-03-money-router.png?v=b2bde1b36f44" width="6480" height="4080" loading="lazy" alt="OMR money router with exact signed splits for gameplay fees, Store receipts, reserve bonds, DEX sell tax, Desk proceeds, POL fees, Bank harvest fees, and exit tolls."></a><figcaption>03 / 05 · FOLLOW EVERY DOLLAR.</figcaption></figure>
+        <figure class="diagram-sheet"><a href="/art/omr-04-reserve-rwa.png?v=0b64dcd1f9f3"><img src="/art/omr-04-reserve-rwa.png?v=0b64dcd1f9f3" width="6480" height="4080" loading="lazy" alt="Parallel OMR extraction and tokenized-stock rails showing source percentages, the fifty-fifty Vig split, eligibility weights, and conservation invariants."></a><figcaption>04 / 05 · BACKING ARRIVES BEFORE THE PROMISE.</figcaption></figure>
+        <figure class="diagram-sheet"><a href="/art/omr-05-ohm-contrast.png?v=c7d637922bd1"><img src="/art/omr-05-ohm-contrast.png?v=c7d637922bd1" width="6480" height="4080" loading="lazy" alt="Causal comparison of the legacy 2021 Olympus premium and issuance loop with OMR's separated issuance, game-demand, revenue, and backed-exit rails."></a><figcaption>05 / 05 · SAME CATEGORY. DIFFERENT FAILURE SURFACE.</figcaption></figure>
       </div>
       <p><b>The game has no time-based $OMR faucet.</b> No wage, inflationary yield, or drip. One-time mission awards and daily prize credits are enumerated and funded on the game ledger; they do not call the ERC-20 mint. The contract has one additional mint path — <b>OmertaBond</b> — behind a daily cap, a 20% discount ceiling, a fail-closed TWAP and an absolute rate wall. Contract staking, if funded, redistributes a pre-loaded reward pool rather than minting rewards.</p>
       <p>Five ways to get some: <b>take it</b>
@@ -316,8 +371,8 @@ const SECTIONS = [
       paying fees to trade with itself. The
       board publishes the shelf, the clock, the price and the exact list of spends that feed it. <b>$OMR
       bought at the desk is FRESH</b> — full early-exit toll for its first 48 hours, like any other.</p>
-      <p><b>The Exchange window</b> — the ONE conversion, one way: burn $OMR, receive cash at a published
-      rate, from a till that real cash sinks fill. A short till refuses and burns nothing. 5% of every
+      <p><b>The Exchange window</b> — the ONE conversion, one way: spend $OMR, receive cash at a published
+      rate, from a till that real cash sinks fill. A short till refuses and takes nothing. 5% of every
       redemption goes to the top families (the family yield). <b>Cash can never become $OMR</b> — there is no swap
       and no laundering rail. <b>The early-exit tax:</b> $OMR younger than 48 hours pays
       an extra toll when withdrawn on-chain — 50% at age zero, straight-line to 0% at 48 hours, newest tokens
@@ -627,14 +682,39 @@ const SECTIONS = [
       ${R(`GET /v1/store [public] · GET /v1/pass · /pass/claim`)}` },
 
   { id: 'legit', group: 'Endgame & Going Legit', title: 'Going Legit — what your $OMR does', tag: 'the endgame',
-    html: `<p><b>The game sells no shares</b>, real or fictional — there are no tickers to buy and no fund to
-      invest in, and any route that would do it says so plainly if you try it. Going legit means what your
-      <b>earned $OMR</b> actually does:</p>
+    html: `<p><b>The game does not sell Stock Tokens for cash or $OMR.</b> The Brokers are a separate,
+      treasury-funded active-play distribution, described next. Going legit means what your
+      <b>earned $OMR</b> actually does directly:</p>
       <p><b>Stake it</b> — a held balance climbs the ladder (trunk, energy, nerve, garage, the fence at the top),
       and a committed balance is looted lighter than an idle one when you die. <b>Redeem it</b> at the Window for
       cash. <b>Claim backed ETH</b> at the Vault — real ETH the treasury holds, never more than it holds.
       <b>Get Made</b> and take your $OMR out on-chain. <b>Landmarks</b> — a district plaque still bears your name.</p>
       ${R(`POST /v1/stake · /v1/made · GET /v1/vault · /v1/window · POST /v1/landmarks/:id`)}` },
+
+  { id: 'brokers', group: 'Endgame & Going Legit', title: 'The Brokers — Active Play & Stock Tokens', tag: 'RWA rewards, family ballot, permanent allocation',
+    html: `<p><b>The Commission chooses the asset; verified play chooses the recipients.</b> Each seated family
+      votes for one Safe-approved Robinhood Stock Token. The initial catalog is a one-time Safe-reviewed
+      snapshot of the 15 highest-underlier-volume eligible tokens, not an automatically rotating list.
+      After the closed UTC-day result, a bounded buyer may buy only the exact token address committed for
+      that ballot.</p>
+      <p>For each seven-day activity epoch, a human account must record successful server-authoritative work
+      in at least <b>3 distinct tracks</b> and reach score <b>25</b>. Failed attempts, page views, time online,
+      client telemetry, agent accounts, and NPC residents do not count. Above the gate, the full uncapped
+      score is multiplied by the activated Broker tier, and the purchased units are allocated pro rata.
+      Delivery waits for an extracted Street Deed and then goes automatically to that deed's ERC-6551
+      account. <b>A pending allocation never expires</b> and is never reclaimed for inactivity or moved to a
+      later epoch.</p>
+      <p><b>Corporate actions fail closed.</b> Robinhood Assets (Jersey) Limited (RHJ) is the Stock Token issuer;
+      the public company is the underlier. Ordinary splits and dividends use RHJ's multiplier, so raw units
+      do not change. If RHJ later retires or converts a token, OMERTÀ pauses new buys and pending deliveries,
+      snapshots the owed book, and waits for completed issuer data plus verified on-chain receipt. The
+      successor assets or proceeds backing pending allocations remain pro rata owed to the <b>same accounts</b>—
+      never the general treasury or a later epoch. If settlement is unclear, the allocation keeps waiting.
+      Already delivered tokens remain under the deed owner's control.</p>
+      <p>OMERTÀ applies no in-game KYC or recipient-compliance gate to this calculation or delivery. This is
+      the product posture, not a claim of legal clearance; issuer redemption requirements and the launch
+      review remain separate.</p>
+      ${R(`GET /v1/commission/ticker [public] · POST /v1/commission/ticker · GET /v1/brokers · POST /v1/brokers/activate`)}` },
 
   { id: 'window', group: 'Endgame & Going Legit', title: 'The Window & the Family Yield', tag: 'the one conversion',
     html: `<p><b>Cash cannot buy $OMR — at any price, by any route.</b> There is no wash house, no laundering at
