@@ -7,7 +7,7 @@
 #
 # HOW TO RELEASE: Actions → "publish omerta-mcp" → Run workflow. That is the whole operation.
 #
-# ── AUTH: THIS RUNS ONE OF TWO WAYS, AND THE SECOND IS THE DESTINATION ──────────────────────────
+# ── AUTH: TRUSTED PUBLISHING ONLY ───────────────────────────────────────────────────────────────
 #
 # TRUSTED PUBLISHING (OIDC) is the target state and needs NO stored credential at all. GitHub mints
 # a short-lived identity token for this exact workflow file, npm checks it against the trusted
@@ -15,26 +15,10 @@
 # leak, and npm stamps the release with PROVENANCE — a verified link back to this repo and this
 # workflow, which matters for a package whose entire audience is agents running it unattended.
 #
-# A TOKEN, exactly once. Trusted publishing is configured on a package's settings page, and that page
-# does not exist until the package does — npm has no "pending publisher" (npm/cli#8544). So the FIRST
-# publish needs a token in NPM_TOKEN, and after it lands the trusted publisher is configured and
-# **the NPM_TOKEN secret is deleted**. From then on this file authenticates by identity, not secret.
-#
-# TREAT THE MIGRATION AS THE POINT, not as tidying up afterwards. npm caps granular tokens at 90 days
-# and revoked every classic token in December 2025, so a stored credential here is not a thing that
-# works and occasionally needs rotating — it is a thing that is guaranteed to be dead the next time
-# anyone reaches for it, at which point the failure is a misleading 404 and the debugging starts from
-# scratch. Worse, from January 2027 a 2FA-bypass token loses direct publish outright, so this bootstrap
-# path has an expiry date of its own. Configure the trusted publisher on the FIRST publish, while the
-# package page is open in front of you, and this file never needs a secret again.
-#
-# The step order below is deliberate: NODE_AUTH_TOKEN resolves to an empty string once the secret is
-# gone, and npm falls through to OIDC. So deleting the secret is the whole migration — no edit here.
-#
-# WHERE THIS STANDS: omerta-mcp@1.0.0 published 2026-08-11 (run #5), on a token. The package page now
-# exists, so the trusted publisher CAN be configured — which means the bootstrap is over and the only
-# thing keeping a credential in this repo is that nobody has switched it off yet. Do the two steps the
-# final job prints. Until then every release rides a secret that npm will expire out from under it.
+# The bootstrap token published omerta-mcp@1.0.0 and is no longer part of the release path. npm's
+# trusted-publishing authentication happens only during `npm publish`; `npm whoami` cannot validate
+# it. Do not inject NODE_AUTH_TOKEN here: one short-lived identity path is easier to audit, avoids a
+# long-lived fallback credential, and fails closed when the trusted-publisher binding does not match.
 name: publish omerta-mcp
 
 on:
@@ -61,7 +45,7 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: '22'
-          registry-url: 'https://registry.npmjs.org'   # writes the .npmrc NODE_AUTH_TOKEN feeds
+          registry-url: 'https://registry.npmjs.org'   # writes the registry config npm publish uses
 
       # setup-node's Node 22 ships npm 10.x, and OIDC needs 11.5.1+. Without this the trusted-publish
       # path silently degrades to "no credential", which surfaces as a misleading 404 (npm/cli#9088)
@@ -93,82 +77,16 @@ jobs:
       - name: what would go out
         run: npm pack --dry-run
 
-      # WHO DOES NPM THINK WE ARE. A failed publish reports `404 Not Found - PUT .../omerta-mcp`,
-      # because npm answers an auth failure with 404 rather than 401 so the error cannot be used to
-      # probe which private packages exist. That is a genuinely misleading error (npm/cli#9088) and it
-      # makes two very different problems look identical: a token that does not authenticate at all,
-      # and a token that authenticates but may not create this package. This splits them.
-      #
-      # It STOPS on a dead credential rather than reporting and carrying on. Run #4 proved the point:
-      # this step said plainly "the token did NOT authenticate — 401", the publish ran anyway, and the
-      # 404 it produced sent the reader off hunting a name collision and a permissions scope that were
-      # both fine. When the diagnosis is unambiguous, handing the reader a worse error afterwards is
-      # not neutrality, it is noise. A token that authenticates still falls through to `npm publish`,
-      # because THAT case really is ambiguous and only the publish can settle it.
-      - name: who does npm think we are
-        if: ${{ inputs.dry_run == false }}
-        run: |
-          if who=$(npm whoami 2>&1); then
-            echo "authenticated as: $who"
-            echo "→ so if the publish below still fails, the token is REAL but not permitted to"
-            echo "  create this package: check its Packages-and-scopes is 'All packages' with"
-            echo "  Read and write. A brand-new package cannot be named in a per-package scope."
-            exit 0
-          fi
-          echo "the token did NOT authenticate: $who"
-          echo
-          echo "STOPPING HERE. The publish would fail with a 404 that reads like a missing package"
-          echo "or a name someone else owns; neither is the problem. The credential is dead."
-          echo
-          echo "Most likely, in order:"
-          echo "  1. IT EXPIRED. npm caps granular tokens at 90 days — there is no longer such a"
-          echo "     thing as a token that keeps working. This is the common case."
-          echo "  2. IT WAS A CLASSIC TOKEN. npm revoked every one of them in December 2025."
-          echo "  3. It was pasted with a stray newline, or truncated, or the token NAME was pasted"
-          echo "     instead of the value."
-          echo
-          echo "Fix: npmjs.com → Access Tokens → Generate → Granular. Expiry 7 days (this token has"
-          echo "one job and should not outlive it). Packages and scopes: ALL packages, Read and"
-          echo "write — a package that does not exist yet cannot be named in a per-package scope."
-          echo "Bypass 2FA: ON (still permitted for publish until January 2027). Then paste it into"
-          echo "the NPM_TOKEN repository secret and run this again."
-          exit 1
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
       - name: publish
         if: ${{ inputs.dry_run == false }}
-        # THE TWO AUTH ERAS, decided by whether the secret exists rather than by anyone remembering.
-        #
-        # With a token present we are bootstrapping, and npm 11.5.1+ will ATTEMPT OIDC whenever the
-        # runner offers it — which this workflow does, because `id-token: write` is set for the
-        # trusted publishing we are heading toward. That attempt cannot succeed here: a trusted
-        # publisher is configured on a package, and the package does not exist yet. Worse, it does
-        # not fail cleanly and step aside — it surfaces as the same misleading 404 above. So while a
-        # token is in play, take OIDC off the table by removing the two variables npm probes for.
-        #
-        # Once the trusted publisher is configured and NPM_TOKEN is deleted, the branch flips on its
-        # own: no token, so the variables stay, and npm authenticates by identity. Deleting the
-        # secret remains the whole migration — still no edit to this file.
-        run: |
-          if [ -n "$NODE_AUTH_TOKEN" ]; then
-            echo "bootstrap: publishing with the stored token (OIDC held back)"
-            unset ACTIONS_ID_TOKEN_REQUEST_URL ACTIONS_ID_TOKEN_REQUEST_TOKEN
-          else
-            echo "publishing over OIDC — no stored credential involved"
-          fi
-          npm publish
-        env:
-          # Empty once the secret is deleted, at which point npm authenticates over OIDC instead.
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        # npm CLI 11.5.1+ discovers the GitHub OIDC identity from the runner. No long-lived publish
+        # token is injected, so authentication fails closed if the package's trusted-publisher
+        # configuration does not exactly match this repository and workflow filename.
+        run: npm publish
 
       - name: it is live
         if: ${{ inputs.dry_run == false }}
         run: |
           echo "published — anyone can now run it with: npx -y omerta-mcp"
           echo "listing: https://www.npmjs.com/package/omerta-mcp"
-          echo
-          echo "IF THIS WAS THE FIRST PUBLISH, do these two things now and never think about it again:"
-          echo "  1. npmjs.com/package/omerta-mcp/access → Trusted Publisher → GitHub Actions"
-          echo "     repository: OmertaDev/Omerta   workflow: publish-mcp.yml"
-          echo "  2. Delete the NPM_TOKEN repository secret. This workflow needs no edit."
+          echo "authenticated by npm trusted publishing (GitHub OIDC); no publish token was used"
