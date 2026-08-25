@@ -64,9 +64,74 @@ try {
   });
   check(landingLoad.bytes <= 1.5 * 1024 * 1024,
     `cold landing transfers ${Math.round(landingLoad.bytes / 1024)} KB; budget is 1536 KB — ${JSON.stringify(landingLoad.resources)}`);
+
+  // THE PATH FINDER — one real seven-decision walk, not a DOM snapshot. This catches a quiz whose
+  // progressive controls render but cannot complete, a result whose share image 404s, and dossiers
+  // that push their exact modifier cards sideways at ordinary desktop widths.
+  await desktop.goto(`${BASE}/path`, { waitUntil: 'networkidle' });
+  let pathShape = await desktop.evaluate(() => ({
+    form: document.querySelector('#path-quiz')?.tagName,
+    options: document.querySelectorAll('.quiz-option').length,
+    over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    question: document.querySelector('.quiz-prompt')?.textContent.trim(),
+  }));
+  check(pathShape.form === 'FORM' && pathShape.options === 6 && pathShape.question,
+    `Path quiz does not open as one semantic six-choice decision — ${JSON.stringify(pathShape)}`);
+  check(pathShape.over <= 1, `desktop Path quiz scrolls sideways by ${pathShape.over}px`);
+  for (let i = 0; i < 7; i++) await desktop.locator('.quiz-option').first().click();
+  await desktop.waitForURL(/\/path\/gun\?secondary=/);
+  await desktop.waitForLoadState('networkidle');
+  const resultShape = await desktop.evaluate(async () => {
+    const image = document.querySelector('meta[property="og:image"]')?.content;
+    const localImage = image ? new URL(new URL(image).pathname, location.origin).href : '';
+    const natural = await new Promise((resolve) => {
+      const probe = new Image(); probe.onload = () => resolve([probe.naturalWidth, probe.naturalHeight]);
+      probe.onerror = () => resolve([0, 0]); probe.src = localImage;
+    });
+    return {
+      path: document.body.dataset.path,
+      effects: document.querySelectorAll('.effect-card').length,
+      costs: document.querySelectorAll('.effect-card[data-impact="cost"]').length,
+      play: document.querySelector('[data-path-cta="play"]')?.getAttribute('href'),
+      codex: document.querySelector('[data-path-cta="codex"]')?.getAttribute('href'),
+      natural,
+      over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    };
+  });
+  check(resultShape.path === 'gun' && resultShape.effects === 3 && resultShape.costs === 1,
+    `Gun result does not expose every signed edge and its one cost — ${JSON.stringify(resultShape)}`);
+  check(resultShape.play === '/#enter-city' && resultShape.codex === '/wiki#paths',
+    `Path result CTAs do not close the guest-play/Codex loop — ${JSON.stringify(resultShape)}`);
+  check(resultShape.natural[0] === 1200 && resultShape.natural[1] === 630,
+    `Path Open Graph card is missing or not 1200×630 — ${JSON.stringify(resultShape.natural)}`);
+  check(resultShape.over <= 1, `desktop Path result scrolls sideways by ${resultShape.over}px`);
   await desktop.close();
 
   const mobile = await browser.newPage({ viewport: { width: 320, height: 568 }, isMobile: true, hasTouch: true });
+  await mobile.goto(`${BASE}/path`, { waitUntil: 'networkidle' });
+  pathShape = await mobile.evaluate(() => {
+    const choices = [...document.querySelectorAll('.quiz-option')];
+    return {
+      options: choices.length,
+      minTarget: Math.min(...choices.map((button) => button.getBoundingClientRect().height)),
+      promptVisible: !!document.querySelector('.quiz-prompt')?.getClientRects().length,
+      over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    };
+  });
+  check(pathShape.options === 6 && pathShape.promptVisible && pathShape.minTarget >= 44,
+    `320px Path quiz loses choices, prompt, or touch targets — ${JSON.stringify(pathShape)}`);
+  check(pathShape.over <= 1, `320px Path quiz scrolls sideways by ${pathShape.over}px`);
+  await mobile.goto(`${BASE}/path/shadow?secondary=wheel`, { waitUntil: 'networkidle' });
+  const mobileResult = await mobile.evaluate(() => ({
+    title: document.querySelector('#result-title')?.textContent.replace(/\s+/g, ' ').trim(),
+    secondary: document.querySelector('[data-secondary]')?.dataset.visible,
+    buttons: [...document.querySelectorAll('.path-actions .path-button')].every((button) => button.getBoundingClientRect().height >= 44),
+    over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  }));
+  check(/shadow/i.test(mobileResult.title || '') && mobileResult.secondary === 'true' && mobileResult.buttons,
+    `320px result loses its identity, secondary read, or touch targets — ${JSON.stringify(mobileResult)}`);
+  check(mobileResult.over <= 1, `320px Path result scrolls sideways by ${mobileResult.over}px`);
+
   await mobile.goto(`${BASE}/wiki`, { waitUntil: 'networkidle' });
   let publicWidth = await mobile.evaluate(() => ({ inner: innerWidth, scroll: document.documentElement.scrollWidth }));
   check(publicWidth.inner <= 320 && publicWidth.scroll <= 321,
@@ -214,4 +279,4 @@ if (failures.length) {
   failures.forEach((f) => console.error('   • ' + f));
   process.exit(1);
 }
-console.log('\n✅ public UI contract passed — first paint, payload, truth register, Codex search, Arena empty state, intent jump, and chat labeling.');
+console.log('\n✅ public UI contract passed — first paint, payload, Path quiz/results, truth register, Codex search, Arena empty state, intent jump, and chat labeling.');
