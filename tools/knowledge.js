@@ -43,7 +43,7 @@ const IGNORE_PREFIXES = [
 ];
 const TEXT_EXT = new Set([
   '', '.cjs', '.css', '.dot', '.env', '.example', '.excalidraw', '.geojson', '.html',
-  '.js', '.json', '.jsx', '.md', '.mjs', '.sh', '.sol', '.sql', '.svg', '.toml', '.ts',
+  '.js', '.json', '.jsx', '.md', '.mjs', '.ps1', '.sh', '.sol', '.sql', '.svg', '.toml', '.ts',
   '.tsx', '.txt', '.yaml', '.yml',
 ]);
 
@@ -75,11 +75,30 @@ function fileList() {
     .sort();
 }
 
-function blobVersions() {
-  const out = new Map();
+function blobMetadata() {
+  const entries = [];
   for (const line of git(['ls-files', '-s']).split(/\r?\n/)) {
     const m = line.match(/^\d+\s+([0-9a-f]+)\s+\d+\t(.+)$/);
-    if (m) out.set(posix(m[2]), m[1].slice(0, 16));
+    if (m) entries.push({ hash: m[1], path: posix(m[2]) });
+  }
+
+  const out = new Map(entries.map(({ hash, path: rel }) => [rel, { version: hash.slice(0, 16) }]));
+  if (!entries.length) return out;
+
+  try {
+    const input = `${entries.map(({ hash, path: rel }) => `${hash} ${rel}`).join('\n')}\n`;
+    const raw = execFileSync('git', ['cat-file', '--batch-check=%(objectname) %(objectsize) %(rest)'], {
+      cwd: ROOT,
+      input,
+      encoding: 'utf8',
+      maxBuffer: 256 * 1024 * 1024,
+    });
+    for (const line of raw.split(/\r?\n/)) {
+      const m = line.match(/^([0-9a-f]+)\s+(\d+)\s+(.+)$/);
+      if (m) out.set(posix(m[3]), { version: m[1].slice(0, 16), bytes: Number(m[2]) });
+    }
+  } catch {
+    // The version map above remains usable on older Git builds without batch metadata support.
   }
   return out;
 }
@@ -197,7 +216,7 @@ function parseCommits(revision = 'HEAD') {
 function build(options = {}) {
   const paths = fileList();
   const fileSet = new Set(paths);
-  const blobs = blobVersions();
+  const blobs = blobMetadata();
   const head = options.sourceRevision || git(['rev-parse', 'HEAD']).trim();
   const currentBranch = git(['branch', '--show-current']).trim() || '(detached)';
   const status = git(['status', '--porcelain=v1']).split(/\r?\n/).filter(Boolean);
@@ -256,11 +275,12 @@ function build(options = {}) {
       try { text = read(rel); textCache.set(rel, text); } catch { text = ''; }
     }
     const kind = classify(rel);
-    const version = text ? sha(text) : (blobs.get(rel) || sha(`${rel}:${stat.size}`));
+    const blob = blobs.get(rel);
+    const version = text ? sha(text) : (blob?.version || sha(`${rel}:${stat.size}`));
     const lines = text ? text.split('\n').length : null;
     const n = node('Artifact', rel, {
       label: path.posix.basename(rel), path: rel, kind, extension: ext || '(none)',
-      bytes: text ? Buffer.byteLength(text, 'utf8') : stat.size, lines, version, text: !!text,
+      bytes: text ? Buffer.byteLength(text, 'utf8') : (blob?.bytes ?? stat.size), lines, version, text: !!text,
     }, { file: rel, line: 1, version });
     artifacts.push(n);
     edge('CONTAINS', `Subsystem:${subsystemFor(kind)}`, n.key, { file: rel, line: 1 });

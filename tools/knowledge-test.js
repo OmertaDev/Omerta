@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -28,11 +29,21 @@ for (const artifact of graph.nodes.filter((n) => n.type === 'Artifact')) {
       `${artifact.key} byte count must not vary with checkout line endings`);
   }
 }
-for (const extension of ['.dot', '.example', '.excalidraw', '.geojson', '.ts', '.tsx']) {
+for (const extension of ['.dot', '.example', '.excalidraw', '.geojson', '.ps1', '.ts', '.tsx']) {
   const artifacts = graph.nodes.filter((n) => n.type === 'Artifact' && n.extension === extension);
   assert(artifacts.length > 0, `text fixture extension disappeared: ${extension}`);
   assert(artifacts.every((artifact) => artifact.text), `${extension} artifacts must use normalized text accounting`);
 }
+const trackedPaths = new Set(execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' })
+  .split('\0').filter(Boolean).map((file) => file.replaceAll('\\', '/')));
+const binaryArtifact = graph.nodes.find((n) => n.type === 'Artifact' && !n.text && trackedPaths.has(n.path));
+assert(binaryArtifact, 'tracked binary artifact fixture disappeared');
+const binaryBlobBytes = Number(execFileSync('git', ['cat-file', '-s', `:${binaryArtifact.path}`], {
+  cwd: root,
+  encoding: 'utf8',
+}).trim());
+assert.equal(binaryArtifact.bytes, binaryBlobBytes,
+  `${binaryArtifact.key} byte count must come from checkout-stable Git blob metadata`);
 for (const edge of graph.edges) {
   assert(keys.has(edge.from), `dangling edge source ${edge.from}`);
   assert(keys.has(edge.to), `dangling edge target ${edge.to}`);
@@ -42,7 +53,16 @@ const outputs = render(model);
 for (const [name, expected] of Object.entries(outputs)) {
   const file = path.join(root, 'knowledge', 'generated', name);
   assert(fs.existsSync(file), `generated knowledge artifact missing: ${name}`);
-  assert.equal(fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n'), expected, `${name} drifted; run npm run knowledge`);
+  const actual = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
+  if (actual !== expected) {
+    const actualLines = actual.split('\n');
+    const expectedLines = expected.split('\n');
+    let line = 0;
+    while (actualLines[line] === expectedLines[line] && line < Math.max(actualLines.length, expectedLines.length)) line += 1;
+    assert.fail(`${name} drifted; run npm run knowledge; first difference at line ${line + 1}\n`
+      + `committed: ${JSON.stringify(actualLines[line] ?? '<EOF>')}\n`
+      + `generated: ${JSON.stringify(expectedLines[line] ?? '<EOF>')}`);
+  }
 }
 
 const knowledgeRoot = path.join(root, 'knowledge');
