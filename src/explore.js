@@ -184,7 +184,7 @@ const eligibilityBlocker = (entry, ctx) => {
     case 'made': return isMade(ctx.acct) ? 'status' : resource(omr >= MADE.OMR);
     case 'auction': return ctx.live.auctionMinBid == null ? 'status' : resource(omr >= ctx.live.auctionMinBid);
     case 'collection': return resource(ctx.live.collectionItems.some((item) => {
-      if (item.minted_onchain || item.listed || item.pledged || nowActive(item.run_until)) return false;
+      if (item.minted_onchain) return false;
       const next = RARITY.TIERS[rarityIdx(String(item.rarity || 'common')) + 1];
       return !!next && omr >= num(RARITY.UPGRADE_OMR[rarityIdx(next.id)]);
     }));

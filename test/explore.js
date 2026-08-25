@@ -6,7 +6,8 @@ import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
 import * as Engagement from '../src/engagement.js';
 import * as Explore from '../src/explore.js';
-import { auctionLotsOf, DISTRICTS, levelOf, weekOf } from '../src/rules.js';
+import { upgradeRarity } from '../src/nft.js';
+import { auctionLotsOf, CARS, DISTRICTS, levelOf, PORT, weekOf } from '../src/rules.js';
 
 const { SYSTEMS } = Explore;
 const ENGAGEMENT_SYSTEMS = Engagement.SYSTEMS;
@@ -199,23 +200,59 @@ assert.equal(coverage.next, null, 'auction affordability uses the live 5% raise,
 coverage = await Explore.exploreBoard(liveDb('the auction house', { auctions: liveLots }), ch(30), acct({ omr: 2100 }), owned());
 assert.equal(coverage.next.systemId, 'auction-house', 'meeting the live current-bid minimum makes a lot usable');
 
-const commonCar = { kind: 'car', id: 'car-1', rarity: 'common', minted_onchain: false, listed: false, pledged: false, run_until: null };
-const blockedCollection = [
-  { ...commonCar, listed: true },
-  { ...commonCar, id: 'car-2', pledged: true },
-  { ...commonCar, id: 'car-3', rarity: 'epic' },
-  { ...commonCar, id: 'car-4', minted_onchain: true },
-  { kind: 'boat', id: 'boat-1', rarity: 'common', minted_onchain: false, listed: false, pledged: false,
-    run_until: new Date(Date.now() + 60_000) },
-  { kind: 'boat', id: 'boat-2', rarity: 'epic', minted_onchain: false, listed: false, pledged: false, run_until: null },
-];
-coverage = await Explore.exploreBoard(liveDb('the collection', { collectionItems: blockedCollection }),
-  ch(30), acct({ omr: 5000 }), owned({ cars: [raceCar({ listed: true })], gear: ['pistol'] }));
-assert.equal(coverage.next, null, 'only a real, in-play, non-max, unencumbered car or boat is upgradeable');
-coverage = await Explore.exploreBoard(liveDb('the collection', { collectionItems: [
-  { kind: 'boat', id: 'boat-free', rarity: 'common', minted_onchain: false, listed: false, pledged: false, run_until: null },
-] }), ch(30), acct({ omr: 150 }), owned());
-assert.equal(coverage.next.systemId, 'collection', 'a docked boat at the exact next-tier price is eligible');
+const commonCar = { kind: 'car', id: 'car-1', model_id: CARS[0].id, rarity: 'common', minted_onchain: false,
+  listed: false, pledged: false, run_until: null };
+const commonBoat = { kind: 'boat', id: 'boat-1', kind_id: PORT.BOATS[0].id, rarity: 'common',
+  minted_onchain: false, listed: false, pledged: false, run_until: null };
+for (const [message, item] of [
+  ['a listed and pledged car remains upgradeable at the rarity desk', { ...commonCar, listed: true, pledged: true }],
+  ['a boat on an active run remains upgradeable at the rarity desk',
+    { ...commonBoat, run_until: new Date(Date.now() + 60_000) }],
+]) {
+  coverage = await Explore.exploreBoard(liveDb('the collection', { collectionItems: [item] }),
+    ch(30), acct({ omr: 150 }), owned());
+  assert.equal(coverage.next?.systemId, 'collection', message);
+}
+for (const [message, item, omr] of [
+  ['an extracted item is not upgradeable', { ...commonCar, minted_onchain: true }, 5000],
+  ['a max-rarity item is not upgradeable', { ...commonBoat, rarity: 'epic' }, 5000],
+  ['the exact next-tier price is required', commonCar, 149],
+]) {
+  coverage = await Explore.exploreBoard(liveDb('the collection', { collectionItems: [item] }),
+    ch(30), acct({ omr }), owned());
+  assert.equal(coverage.next, null, message);
+}
+
+// Pin coverage to the authoritative mutation itself: unlike NFT extraction, rarity upgrades do not
+// reject market/collateral or at-sea state. Both encumbered rows must pass the real upgrade function.
+const assertAuthoritativeUpgrade = async (kind, row) => {
+  let updatedTo = null;
+  const ledger = [];
+  const events = [];
+  const routeDb = {
+    async query(sql, params) {
+      if (/^SELECT \*/i.test(sql)) return { rows: [row] };
+      if (/^UPDATE /i.test(sql)) { updatedTo = params[1]; return { rows: [] }; }
+      throw new Error(`unexpected rarity-upgrade query: ${sql}`);
+    },
+  };
+  const h = {
+    accountId: 'acct-me', acct: { omr: 150 }, owned: { cars: kind === 'car' ? [row] : [] },
+    ledger: async (_client, entry) => ledger.push(entry),
+    track: async (_client, _accountId, event) => events.push(event),
+  };
+  const result = await upgradeRarity(ch(30), kind, row.id, routeDb, h);
+  assert.equal(result.rarity, 'rare');
+  assert.equal(updatedTo, 'rare');
+  assert.equal(h.acct.omr, 0);
+  assert.deepEqual(ledger.map(({ amount, reason }) => ({ amount, reason })),
+    [{ amount: -150, reason: 'rarity:upgrade' }]);
+  assert.deepEqual(events, ['rarity_upgrade']);
+};
+await assertAuthoritativeUpgrade('car', { ...commonCar, listed: true, pledged: true });
+await assertAuthoritativeUpgrade('boat', {
+  ...commonBoat, kind: PORT.BOATS[0].id, run_until: new Date(Date.now() + 60_000),
+});
 
 const heldLandmarks = districts.map((district_id) => ({ district_id, amount: 500 }));
 coverage = await Explore.exploreBoard(liveDb('landmarks', { landmarks: heldLandmarks }), ch(30), acct({ omr: 500 }), owned());
