@@ -65,6 +65,7 @@ contract StockTokenRegistry is Ownable2Step {
     error DayNotClosed();
     error BallotAlreadyPublished();
     error BallotNotFound();
+    error ContractRequired(address target);
 
     modifier onlyPublisher() {
         if (msg.sender != publisher || publisher == address(0)) revert NotPublisher();
@@ -93,6 +94,7 @@ contract StockTokenRegistry is Ownable2Step {
         bool active
     ) external onlyOwner {
         if (token == address(0)) revert ZeroAddress();
+        if (token.code.length == 0) revert ContractRequired(token);
         if (
             assetKey == bytes32(0) || robinhoodAssetIdHash == bytes32(0) || bytes(ticker).length == 0
                 || bytes(name).length == 0

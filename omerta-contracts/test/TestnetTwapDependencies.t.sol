@@ -2,9 +2,15 @@
 pragma solidity 0.8.26;
 
 import {Test} from "forge-std/Test.sol";
+import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@openzeppelin/contracts/interfaces/IERC20Metadata.sol";
-import {OmrTwapOracle, IUniswapV2Pair} from "../src/OmrTwapOracle.sol";
+import {OmrTwapOracle, IUniswapV2Factory, IUniswapV2Pair} from "../src/OmrTwapOracle.sol";
+import {TestFixedV2Factory} from "../script/testnet/TestTwapDependencies.sol";
+
+contract TestnetMockOmr is ERC20 {
+    constructor() ERC20("Test OMR", "tOMR") {}
+}
 
 contract TwapCreationHarness {
     function deploy(bytes memory creationCode) external returns (address deployed) {
@@ -77,8 +83,10 @@ contract TestnetTwapDependenciesTest is Test {
 
     function test_virtual_pair_drives_a_real_oracle_after_one_full_window() public {
         address weth = _deployWeth();
-        IUniswapV2Pair pair = IUniswapV2Pair(_deployPair(omr, weth));
-        OmrTwapOracle oracle = new OmrTwapOracle(safe, pair, omr, PERIOD);
+        address realOmr = address(new TestnetMockOmr());
+        IUniswapV2Pair pair = IUniswapV2Pair(_deployPair(realOmr, weth));
+        IUniswapV2Factory factory = IUniswapV2Factory(_deployFactory(realOmr, weth, address(pair)));
+        OmrTwapOracle oracle = new OmrTwapOracle(safe, factory, pair, realOmr, weth, PERIOD);
 
         (uint256 unavailable, uint256 unavailableAt) = oracle.consult();
         assertEq(unavailable, 0);
@@ -110,6 +118,11 @@ contract TestnetTwapDependenciesTest is Test {
 
     function _deployPair(address omr_, address weth_) private returns (address) {
         bytes memory creation = abi.encodePacked(vm.getCode(PAIR_ARTIFACT), abi.encode(omr_, weth_));
+        return harness.deploy(creation);
+    }
+
+    function _deployFactory(address omr_, address weth_, address pair_) private returns (address) {
+        bytes memory creation = abi.encodePacked(type(TestFixedV2Factory).creationCode, abi.encode(omr_, weth_, pair_));
         return harness.deploy(creation);
     }
 }

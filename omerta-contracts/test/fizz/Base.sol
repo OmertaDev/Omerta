@@ -19,8 +19,8 @@ import {OMR} from "../../src/OMR.sol";
 import {OMRStaking} from "../../src/OMRStaking.sol";
 import {GearVault} from "../../src/GearVault.sol";
 import {StockVault} from "../../src/StockVault.sol";
-import {OmrTwapOracle, IUniswapV2Pair} from "../../src/OmrTwapOracle.sol";
-import {FuzzUSDC, FuzzVault, FuzzPair} from "./utils/FuzzMocks.sol";
+import {OmrTwapOracle, IUniswapV2Factory, IUniswapV2Pair} from "../../src/OmrTwapOracle.sol";
+import {FuzzUSDC, FuzzVault, FuzzWETH, FuzzFactory, FuzzPair} from "./utils/FuzzMocks.sol";
 
 /// @notice Base contract with state variables and setup functions
 abstract contract Base is StringUtils, Clamp, Deployer, Math {
@@ -74,6 +74,8 @@ abstract contract Base is StringUtils, Clamp, Deployer, Math {
     StockVault public stockVault;
 
     FuzzPair public fuzzPair;
+    FuzzWETH public fuzzWeth;
+    FuzzFactory public fuzzFactory;
     OmrTwapOracle public omrTwapOracle;
 
     // ―――――――――――――――――――――――――― Setup ―――――――――――――――――――――――――――
@@ -115,8 +117,17 @@ abstract contract Base is StringUtils, Clamp, Deployer, Math {
         stockVault = new StockVault(address(this), address(this), 500_000 * USDC_UNIT);
         reserveAsset.mint(address(stockVault), 10_000_000 * USDC_UNIT);
 
-        fuzzPair = new FuzzPair(address(0xBEEF), address(oMR), 1_000 ether, 5_000_000 ether);
-        omrTwapOracle = new OmrTwapOracle(address(this), IUniswapV2Pair(address(fuzzPair)), address(oMR), 10 minutes);
+        fuzzWeth = new FuzzWETH();
+        fuzzPair = new FuzzPair(address(fuzzWeth), address(oMR), 1_000 ether, 5_000_000 ether);
+        fuzzFactory = new FuzzFactory(address(oMR), address(fuzzWeth), address(fuzzPair));
+        omrTwapOracle = new OmrTwapOracle(
+            address(this),
+            IUniswapV2Factory(address(fuzzFactory)),
+            IUniswapV2Pair(address(fuzzPair)),
+            address(oMR),
+            address(fuzzWeth),
+            10 minutes
+        );
 
         for (uint256 i; i < actors.length; ++i) {
             reserveAsset.mint(actors[i], INITIAL_USDC_BALANCE);

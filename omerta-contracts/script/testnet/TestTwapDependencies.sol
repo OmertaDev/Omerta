@@ -2,7 +2,7 @@
 pragma solidity 0.8.26;
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {IUniswapV2Pair} from "../../src/OmrTwapOracle.sol";
+import {IUniswapV2Factory, IUniswapV2Pair} from "../../src/OmrTwapOracle.sol";
 
 /// @notice Virtual test token for the Robinhood Chain Testnet TWAP rehearsal only.
 contract TestTwapWeth is ERC20 {
@@ -49,3 +49,23 @@ contract TestFixedOmrV2Pair is IUniswapV2Pair {
         return (_reserve0, _reserve1, _blockTimestampLast);
     }
 }
+
+    /// @notice Minimal testnet-only factory attestation for the fixed observation pair.
+    contract TestFixedV2Factory is IUniswapV2Factory {
+        address public immutable tokenA;
+        address public immutable tokenB;
+        address public immutable pair;
+
+        constructor(address tokenA_, address tokenB_, address pair_) {
+            require(block.chainid == 46630, "TestFixedV2Factory: wrong chain");
+            require(tokenA_ != address(0) && tokenB_ != address(0) && pair_ != address(0), "TestFixedV2Factory: zero");
+            tokenA = tokenA_;
+            tokenB = tokenB_;
+            pair = pair_;
+        }
+
+        function getPair(address token0, address token1) external view returns (address) {
+            if ((token0 == tokenA && token1 == tokenB) || (token0 == tokenB && token1 == tokenA)) return pair;
+            return address(0);
+        }
+    }

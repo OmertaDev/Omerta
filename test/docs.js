@@ -805,3 +805,26 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     'the launch runbook must carry the settlement math and forbid an unaudited automatic handler');
   console.log('✓ corporate-action policy stays fail-closed, pro-rata, cohort-bound, and aligned across both Codices plus launch docs');
 }
+
+// A closed family ballot binds one exact token. If that token becomes unavailable before execution,
+// the approved product behavior is skip-and-carry—not keeper/Safe substitution. Keep the player-facing
+// Codices, design authority, historical amendment, and launch runbook aligned on that boundary.
+{
+  const md = read('docs/WIKI.md');
+  const web = read('public/wiki.html');
+  const design = read('omerta-brokers-design.md');
+  const historical = read('omerta-rwa-stock-machine-design.md');
+  const deploy = read('CHAIN-DEPLOY.md');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    assert(src.includes('skipped') && src.includes('does not enlarge a later daily cap'),
+      `${name} must disclose post-close skip, bounded carry-forward, and no cap accumulation`);
+  }
+  assert(design.includes('The default is resolution-only') && design.includes('never falls through'),
+    'the RWA design must forbid post-close default or catalog substitution');
+  assert(historical.includes('The keeper cannot substitute another'),
+    'the historical Stock Machine amendment must carry the current no-substitution rule');
+  assert(deploy.includes('POST-CLOSE INELIGIBILITY') && deploy.includes('public skipped-purchase status'),
+    'the launch runbook must require skip-and-carry disclosure and rehearsal before arming');
+  console.log('✓ post-close Stock Token ineligibility skips without substitution, preserves bounded ETH, and stays public');
+}

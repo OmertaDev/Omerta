@@ -3,7 +3,12 @@ pragma solidity 0.8.26;
 
 import {IOmrOracle} from "./IOmrOracle.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
+import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {Ownable2Step, Ownable} from "@openzeppelin/contracts/access/Ownable2Step.sol";
+
+interface IUniswapV2Factory {
+    function getPair(address tokenA, address tokenB) external view returns (address pair);
+}
 
 interface IUniswapV2Pair {
     function token0() external view returns (address);
@@ -56,6 +61,9 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
     uint32 public constant MAX_WINDOW_MULT = 4;
 
     IUniswapV2Pair public immutable pair;
+    IUniswapV2Factory public immutable factory;
+    address public immutable omr;
+    address public immutable weth;
     /// @dev True when OMR is the pair's token1, i.e. price0 (= token1 per token0) is OMR per WETH.
     bool public immutable omrIsToken1;
 
@@ -74,25 +82,48 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
 
     error PeriodTooShort();
     error ZeroAddress();
+    error SameToken();
     error NotOmrPair();
+    error PairNotCanonical();
+    error UnsupportedTokenDecimals(address token, uint8 decimals);
     error NoReserves();
     error PeriodNotElapsed(uint32 elapsed, uint32 required);
 
-    /// @param pair_ the OMR/WETH Uniswap V2-compatible pair
-    /// @param omr   the OMR token, so the constructor can work out which side of the pair it is
+    /// @param factory_ the reviewed V2 factory that must attest `pair_` as its OMR/WETH market
+    /// @param pair_ the canonical OMR/WETH Uniswap V2-compatible pair
+    /// @param omr_  the OMR token, so the constructor can work out which side of the pair it is
     ///              rather than trusting a caller-supplied flag
-    constructor(address owner_, IUniswapV2Pair pair_, address omr, uint32 period_) Ownable(owner_) {
-        if (address(pair_) == address(0) || omr == address(0)) revert ZeroAddress();
+    /// @param weth_ the reviewed wrapped native token; the other side may not be an arbitrary asset
+    constructor(
+        address owner_,
+        IUniswapV2Factory factory_,
+        IUniswapV2Pair pair_,
+        address omr_,
+        address weth_,
+        uint32 period_
+    ) Ownable(owner_) {
+        if (
+            address(factory_) == address(0) || address(pair_) == address(0) || omr_ == address(0) || weth_ == address(0)
+        ) revert ZeroAddress();
+        if (omr_ == weth_) revert SameToken();
         if (period_ < MIN_PERIOD) revert PeriodTooShort();
+        factory = factory_;
         pair = pair_;
+        omr = omr_;
+        weth = weth_;
         PERIOD = period_;
 
         address t0 = pair_.token0();
         address t1 = pair_.token1();
-        if (t0 != omr && t1 != omr) revert NotOmrPair();
+        if (!((t0 == weth_ && t1 == omr_) || (t0 == omr_ && t1 == weth_))) revert NotOmrPair();
+        if (factory_.getPair(omr_, weth_) != address(pair_)) revert PairNotCanonical();
+        uint8 omrDecimals = IERC20Metadata(omr_).decimals();
+        if (omrDecimals != 18) revert UnsupportedTokenDecimals(omr_, omrDecimals);
+        uint8 wethDecimals = IERC20Metadata(weth_).decimals();
+        if (wethDecimals != 18) revert UnsupportedTokenDecimals(weth_, wethDecimals);
         // price0Cumulative is token1-per-token0. We want OMR per WETH, so we want the cumulative
         // whose NUMERATOR is OMR: price0 when OMR is token1, price1 when OMR is token0.
-        omrIsToken1 = (t1 == omr);
+        omrIsToken1 = (t1 == omr_);
 
         // Seed the first snapshot. `priceAverage` stays 0 until an update closes a full PERIOD, so
         // the oracle reports UNAVAILABLE (not zero-price) for its whole first window.

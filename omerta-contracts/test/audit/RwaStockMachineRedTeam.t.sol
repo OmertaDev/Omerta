@@ -110,6 +110,7 @@ contract RwaStockMachineRedTeamTest is Test {
         vm.startPrank(SAFE);
         buyer.setQuoteOracle(address(new AuditStockQuoteOracle()), 1 hours);
         registry.upsertAsset(AAPL_KEY, address(stock), AAPL_ASSET_ID, "AAPL", "Apple", true);
+        buyer.unpause();
         vm.stopPrank();
         ballotDay = block.timestamp / 1 days - 1;
         vm.prank(PUBLISHER);

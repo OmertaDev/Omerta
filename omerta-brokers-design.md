@@ -43,6 +43,15 @@ their costs were laid out).
 > general treasury inventory or a later epoch. No keeper may infer settlement from an announcement.
 > Until RHJ activates and documents a terminal type, reconciliation is Safe-reviewed rather than
 > speculative automation. §3.4b is the normative calculation and runbook.
+>
+> **Founder closed-ballot execution posture — 2026-08-25.** Default selection ends when the UTC-day
+> result is published. If that result's exact Stock Token becomes inactive, halted, or otherwise
+> ineligible before purchase, the purchase is skipped: neither the keeper, publisher, nor Safe may
+> substitute another token or republish the day for a different winner. The unspent, bounded ETH carries
+> forward inside the existing treasury, funding, and per-buy/per-day cap walls; unused authority does not
+> enlarge a later cap. The immutable ballot remains public, and the public machine status records the
+> skipped purchase and reason. A tie, silence, or pre-close candidate removal may still resolve to the
+> active default under the ballot rules; it is not authority for post-close substitution.
 
 Supersedes nothing. It *reverses* part of `omerta-stock-layer-retirement.md` (2026-07-31), which is a
 founder call and is recorded as such in §6.
@@ -134,6 +143,13 @@ asset never auto-enrolls. `--deactivate SYMBOL` produces the corresponding unsig
 Safe executes the calls, the hourly registry mirror makes the subset visible
 through `GET /v1/commission/ticker`; that public response is the single candidate feed for the Family
 screen and API clients.
+
+**The default is resolution-only.** Once the publisher commits the closed day's registry key, exact
+token address, and tally hash, that result never falls through to the default or another active catalog
+entry. If the committed token becomes inactive, halted, or otherwise ineligible before execution,
+`RwaStockBuyer` fails closed and the day records no purchase. The bounded ETH remains unspent for later
+days under the existing funding and cap walls; the closed result and a public skip reason remain in the
+history. Reopening or replacing the closed ballot is a separate governance decision, not keeper recovery.
 
 **Epochs, not streams.** Allocation runs once per epoch (weekly) over a snapshot, because a
 continuously-streamed balance is far harder to reason about, to audit, and to stop. An epoch that has

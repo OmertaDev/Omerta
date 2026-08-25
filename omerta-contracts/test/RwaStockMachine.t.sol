@@ -55,6 +55,8 @@ contract MockStockQuoteOracle is IStockQuoteOracle {
     }
 }
 
+contract MockStockVaultRecipient {}
+
 contract RwaStockMachineTest is Test {
     StockTokenRegistry registry;
     RwaStockBuyer buyer;
@@ -66,7 +68,7 @@ contract RwaStockMachineTest is Test {
     address safe = makeAddr("safe");
     address ballotPublisher = makeAddr("ballotPublisher");
     address buyKeeper = makeAddr("buyKeeper");
-    address stockVault = makeAddr("stockVault");
+    address stockVault;
 
     bytes32 constant AAPL_KEY = keccak256("AAPL");
     bytes32 constant TSLA_KEY = keccak256("TSLA");
@@ -80,12 +82,14 @@ contract RwaStockMachineTest is Test {
         registry = new StockTokenRegistry(safe, ballotPublisher);
         adapter = new MockStockSwapAdapter(25e18);
         quoteOracle = new MockStockQuoteOracle(5e18);
+        stockVault = address(new MockStockVaultRecipient());
         buyer = new RwaStockBuyer(safe, buyKeeper, address(registry), address(adapter), stockVault, 5 ether);
 
         vm.startPrank(safe);
         buyer.setQuoteOracle(address(quoteOracle), 1 hours);
         registry.upsertAsset(AAPL_KEY, address(aapl), AAPL_UID_HASH, "AAPL", "Apple", true);
         registry.upsertAsset(TSLA_KEY, address(tsla), TSLA_UID_HASH, "TSLA", "Tesla", true);
+        buyer.unpause();
         vm.stopPrank();
         vm.deal(address(buyer), 20 ether);
     }
@@ -251,18 +255,17 @@ contract RwaStockMachineTest is Test {
         assertEq(aapl.balanceOf(stockVault), 0, "an out-of-cadence ballot bought stock");
     }
 
-    function test_only_safe_can_configure_or_disable_the_quote_oracle() public {
+    function test_only_safe_can_configure_and_disabling_the_oracle_blocks_reactivation() public {
         vm.expectRevert();
         buyer.setQuoteOracle(address(quoteOracle), 1 hours);
 
-        vm.prank(safe);
+        vm.startPrank(safe);
+        buyer.pause();
         buyer.setQuoteOracle(address(0), 0);
-        uint256 day = block.timestamp / 1 days - 1;
-        vm.prank(ballotPublisher);
-        registry.publishBallot(day, AAPL_KEY, keccak256("tally"));
-        vm.prank(buyKeeper);
-        vm.expectRevert(RwaStockBuyer.QuoteOracleDisabled.selector);
-        buyer.buy(day, 1 ether, 25e18, "");
+        assertEq(buyer.quoteOracle(), address(0));
+        vm.expectRevert(RwaStockBuyer.ConfigurationIncomplete.selector);
+        buyer.unpause();
+        vm.stopPrank();
     }
 
     function test_keeper_is_bounded_by_pause_balance_and_daily_cap() public {
@@ -283,5 +286,72 @@ contract RwaStockMachineTest is Test {
         vm.prank(buyKeeper);
         vm.expectRevert();
         buyer.buy(day, 1 ether, 1, "");
+    }
+
+    function test_buyer_is_paused_at_birth() public {
+        RwaStockBuyer newborn =
+            new RwaStockBuyer(safe, buyKeeper, address(registry), address(adapter), stockVault, 1 ether);
+        assertTrue(newborn.paused(), "an incompletely configured buyer must deploy paused");
+    }
+
+    function test_live_dependencies_cannot_be_rotated() public {
+        MockStockSwapAdapter replacementAdapter = new MockStockSwapAdapter(1);
+        MockStockQuoteOracle replacementOracle = new MockStockQuoteOracle(1);
+        vm.startPrank(safe);
+        vm.expectRevert();
+        buyer.setKeeper(makeAddr("replacement keeper"));
+        vm.expectRevert();
+        buyer.setAdapter(address(replacementAdapter));
+        vm.expectRevert();
+        buyer.setQuoteOracle(address(replacementOracle), 1 hours);
+        vm.stopPrank();
+    }
+
+    function test_incomplete_configuration_cannot_be_unpaused() public {
+        RwaStockBuyer disabled = new RwaStockBuyer(safe, address(0), address(registry), address(0), stockVault, 1 ether);
+        if (!disabled.paused()) {
+            vm.prank(safe);
+            disabled.pause();
+        }
+
+        vm.prank(safe);
+        vm.expectRevert();
+        disabled.unpause();
+    }
+
+    function test_constructor_rejects_an_unbounded_daily_budget() public {
+        vm.expectRevert();
+        new RwaStockBuyer(safe, buyKeeper, address(registry), address(adapter), stockVault, 0);
+    }
+
+    function test_adapter_and_quote_oracle_must_have_bytecode() public {
+        RwaStockBuyer disabled = new RwaStockBuyer(safe, address(0), address(registry), address(0), stockVault, 1 ether);
+        if (!disabled.paused()) {
+            vm.prank(safe);
+            disabled.pause();
+        }
+
+        vm.startPrank(safe);
+        vm.expectRevert();
+        disabled.setAdapter(makeAddr("adapter EOA"));
+        vm.expectRevert();
+        disabled.setQuoteOracle(makeAddr("oracle EOA"), 1 hours);
+        vm.stopPrank();
+    }
+
+    function test_buyer_registry_and_stock_vault_must_have_bytecode() public {
+        vm.expectRevert();
+        new RwaStockBuyer(safe, buyKeeper, makeAddr("registry EOA"), address(adapter), stockVault, 1 ether);
+
+        vm.expectRevert();
+        new RwaStockBuyer(safe, buyKeeper, address(registry), address(adapter), makeAddr("vault EOA"), 1 ether);
+    }
+
+    function test_registry_rejects_a_token_address_without_bytecode() public {
+        vm.prank(safe);
+        vm.expectRevert();
+        registry.upsertAsset(
+            keccak256("NVDA"), makeAddr("NVDA EOA"), keccak256("robinhood-nvda-asset-id"), "NVDA", "Nvidia", true
+        );
     }
 }

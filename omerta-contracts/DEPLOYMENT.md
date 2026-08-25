@@ -310,9 +310,12 @@ survives, but the market remains unusable until it is seeded; do not treat role 
 
 ## 7. Create the V2-compatible pool and deploy the TWAP
 
-The current `OmrTwapOracle` consumes a Uniswap V2-compatible cumulative-price pair. Confirm the factory and
-router addresses from the target chain's official deployment record, probe their bytecode, create the
-OMR/WETH pair, and add the signed initial liquidity. Record the pair address and set `OMR_V2_PAIR`.
+The current `OmrTwapOracle` consumes a Uniswap V2-compatible cumulative-price pair. Confirm the factory,
+router, and wrapped-native-token addresses from the target chain's official deployment record, probe their
+bytecode, create the OMR/WETH pair, and add the signed initial liquidity. Set `V2_FACTORY`, `WETH_ADDRESS`,
+and `OMR_V2_PAIR`. The oracle constructor independently requires both assets to use 18 decimals, requires
+the pair tokens to be exactly OMR and that WETH, and requires `factory.getPair(OMR,WETH)` to return the
+supplied pair; an arbitrary V2-shaped contract or an OMR pool against another quote asset cannot deploy.
 
 For the Robinhood Chain Testnet rehearsal only, where no reviewed OMR/WETH V2 deployment is available,
 use the guarded virtual-observation helper instead:
@@ -328,6 +331,7 @@ The helper derives the finalized Safe, broadcaster, OMR, OmertaBond, and prior-p
 
 - a fixed-supply `Virtual Test Wrapped Ether` token (`vtWETH`), with all 1,000 tokens assigned to the Safe;
 - a non-trading observation pair with immutable virtual reserves of 500,000 OMR and 100 vtWETH; and
+- a test-only factory attestation that recognizes only that exact OMR/vtWETH pair; and
 - the production `OmrTwapOracle` implementation with the minimum 600-second period.
 
 The virtual pair is not an AMM: it holds no assets and exposes no swap, mint, burn, sync, or reserve-mutation

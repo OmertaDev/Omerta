@@ -697,6 +697,11 @@ const SECTIONS = [
       snapshot of the 15 highest-underlier-volume eligible tokens, not an automatically rotating list.
       After the closed UTC-day result, a bounded buyer may buy only the exact token address committed for
       that ballot.</p>
+      <p>If that exact token becomes inactive, halted, or otherwise ineligible before the purchase, the
+      day is <b>skipped</b>. The machine never substitutes the default or another token the families did
+      not choose. The bounded, unspent ETH carries forward under the existing purchase caps;
+      it does not enlarge a later daily cap. The public history keeps the closed ballot, skipped-purchase status, and
+      reason.</p>
       <p>For each seven-day activity epoch, a human account must record successful server-authoritative work
       in at least <b>3 distinct tracks</b> and reach score <b>25</b>. Failed attempts, page views, time online,
       client telemetry, agent accounts, and NPC residents do not count. Above the gate, the full uncapped

@@ -59,10 +59,10 @@ function Assert-ScalarEquals([string]$Label, [string]$Actual, [string]$Expected)
 
 $expectedChainId = '46630'
 $expectedInitialNonce = 17
-$expectedEndingNonce = 20
+$expectedEndingNonce = 21
 $periodSeconds = '600'
 $zero = '0x0000000000000000000000000000000000000000'
-$expectedContracts = @('TestTwapWeth', 'TestFixedOmrV2Pair', 'OmrTwapOracle')
+$expectedContracts = @('TestTwapWeth', 'TestFixedOmrV2Pair', 'TestFixedV2Factory', 'OmrTwapOracle')
 
 $manifest = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
 Assert-ScalarEquals 'Manifest chain ID' ([string]$manifest.network.chainId) $expectedChainId
@@ -183,17 +183,26 @@ for ($index = 0; $index -lt $expectedContracts.Count; $index++) {
 
 $testWethArgs = @($transactions[0].arguments)
 $testPairArgs = @($transactions[1].arguments)
-$oracleArgs = @($transactions[2].arguments)
-if ($testWethArgs.Count -ne 1 -or $testPairArgs.Count -ne 2 -or $oracleArgs.Count -ne 4) {
+$testFactoryArgs = @($transactions[2].arguments)
+$oracleArgs = @($transactions[3].arguments)
+if (
+    $testWethArgs.Count -ne 1 -or $testPairArgs.Count -ne 2 -or
+    $testFactoryArgs.Count -ne 3 -or $oracleArgs.Count -ne 6
+) {
     throw 'A TWAP constructor argument count changed.'
 }
 Assert-AddressEquals 'TestTwapWeth recipient' ([string]$testWethArgs[0]) $safe
 Assert-AddressEquals 'Test pair OMR' ([string]$testPairArgs[0]) $omr
 Assert-AddressEquals 'Test pair vtWETH' ([string]$testPairArgs[1]) $predicted.TestTwapWeth
+Assert-AddressEquals 'Test factory OMR' ([string]$testFactoryArgs[0]) $omr
+Assert-AddressEquals 'Test factory vtWETH' ([string]$testFactoryArgs[1]) $predicted.TestTwapWeth
+Assert-AddressEquals 'Test factory pair' ([string]$testFactoryArgs[2]) $predicted.TestFixedOmrV2Pair
 Assert-AddressEquals 'Oracle owner' ([string]$oracleArgs[0]) $safe
-Assert-AddressEquals 'Oracle pair' ([string]$oracleArgs[1]) $predicted.TestFixedOmrV2Pair
-Assert-AddressEquals 'Oracle OMR' ([string]$oracleArgs[2]) $omr
-Assert-ScalarEquals 'Oracle period' ([string]$oracleArgs[3]) $periodSeconds
+Assert-AddressEquals 'Oracle factory' ([string]$oracleArgs[1]) $predicted.TestFixedV2Factory
+Assert-AddressEquals 'Oracle pair' ([string]$oracleArgs[2]) $predicted.TestFixedOmrV2Pair
+Assert-AddressEquals 'Oracle OMR' ([string]$oracleArgs[3]) $omr
+Assert-AddressEquals 'Oracle vtWETH' ([string]$oracleArgs[4]) $predicted.TestTwapWeth
+Assert-ScalarEquals 'Oracle period' ([string]$oracleArgs[5]) $periodSeconds
 
 [System.Numerics.BigInteger]$balanceWei = Invoke-Cast @('balance', $deployer, '--rpc-url', $RpcUrl)
 [System.Numerics.BigInteger]$gasPriceWei = Invoke-Cast @('gas-price', '--rpc-url', $RpcUrl)
@@ -230,9 +239,9 @@ if ($PreflightOnly) {
 }
 
 Write-Host ''
-Write-Warning 'This sends three real testnet transactions. If Foundry stops partway through, do not rerun this script blindly.'
+Write-Warning 'This sends four real testnet transactions. If Foundry stops partway through, do not rerun this script blindly.'
 Write-Warning 'These are virtual observation dependencies for testing only. The helper will verify OmertaBond stays disconnected.'
-$confirmation = Read-Host 'Type DEPLOY TWAP to broadcast the three testnet TWAP transactions'
+$confirmation = Read-Host 'Type DEPLOY TWAP to broadcast the four testnet TWAP transactions'
 if ($confirmation -cne 'DEPLOY TWAP') { throw 'Deployment cancelled; no transaction was sent.' }
 
 $networkNonce = [int](Invoke-Cast @('nonce', $deployer, '--rpc-url', $RpcUrl))
@@ -295,6 +304,7 @@ foreach ($name in $expectedContracts) {
 
 $testWeth = $predicted.TestTwapWeth
 $testPair = $predicted.TestFixedOmrV2Pair
+$testFactory = $predicted.TestFixedV2Factory
 $oracle = $predicted.OmrTwapOracle
 $testWethSupply = '1000000000000000000000'
 $omrVirtualReserve = '500000000000000000000000'
@@ -317,9 +327,14 @@ if ([System.Numerics.BigInteger]::Parse([string]$reserves[2]) -le 0) { throw 'Pa
 Assert-ScalarEquals 'Pair price0 cumulative' (Convert-CastUint (Invoke-Cast @('call', $testPair, 'price0CumulativeLast()(uint256)', '--rpc-url', $RpcUrl))) '0'
 Assert-ScalarEquals 'Pair price1 cumulative' (Convert-CastUint (Invoke-Cast @('call', $testPair, 'price1CumulativeLast()(uint256)', '--rpc-url', $RpcUrl))) '0'
 
+Assert-AddressEquals 'Factory OMR/vtWETH pair' (Invoke-Cast @('call', $testFactory, 'getPair(address,address)(address)', $omr, $testWeth, '--rpc-url', $RpcUrl)) $testPair
+
 Assert-AddressEquals 'Oracle owner' (Invoke-Cast @('call', $oracle, 'owner()(address)', '--rpc-url', $RpcUrl)) $safe
 Assert-AddressEquals 'Oracle pending owner' (Invoke-Cast @('call', $oracle, 'pendingOwner()(address)', '--rpc-url', $RpcUrl)) $zero
+Assert-AddressEquals 'Oracle factory' (Invoke-Cast @('call', $oracle, 'factory()(address)', '--rpc-url', $RpcUrl)) $testFactory
 Assert-AddressEquals 'Oracle pair' (Invoke-Cast @('call', $oracle, 'pair()(address)', '--rpc-url', $RpcUrl)) $testPair
+Assert-AddressEquals 'Oracle OMR' (Invoke-Cast @('call', $oracle, 'omr()(address)', '--rpc-url', $RpcUrl)) $omr
+Assert-AddressEquals 'Oracle vtWETH' (Invoke-Cast @('call', $oracle, 'weth()(address)', '--rpc-url', $RpcUrl)) $testWeth
 Assert-ScalarEquals 'Oracle period' (Convert-CastUint (Invoke-Cast @('call', $oracle, 'PERIOD()(uint32)', '--rpc-url', $RpcUrl))) $periodSeconds
 Assert-ScalarEquals 'Oracle minimum period' (Convert-CastUint (Invoke-Cast @('call', $oracle, 'MIN_PERIOD()(uint32)', '--rpc-url', $RpcUrl))) $periodSeconds
 Assert-ScalarEquals 'Oracle max-window multiple' (Convert-CastUint (Invoke-Cast @('call', $oracle, 'MAX_WINDOW_MULT()(uint32)', '--rpc-url', $RpcUrl))) '4'
@@ -354,5 +369,6 @@ Write-Host (($resultRows | Format-Table -AutoSize | Out-String).TrimEnd())
 Write-Host ''
 Write-Host "TWAP_TESTWETH=$testWeth"
 Write-Host "TWAP_TESTPAIR=$testPair"
+Write-Host "TWAP_TESTFACTORY=$testFactory"
 Write-Host "TWAP_ORACLE=$oracle"
 Write-Host 'Paste the table and TWAP_ lines into Codex so the manifest can be finalized and the first window can be closed.'

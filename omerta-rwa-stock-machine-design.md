@@ -9,6 +9,10 @@
 > current recipient posture is also explicit: OMERTÀ performs no KYC or compliance screening in the
 > game or delivery worker; older eligibility-allowlist proposals below are rejected historical options,
 > not unimplemented requirements. This posture is not represented as outside legal approval.
+> The current closed-ballot rule is equally exact: a tie, silence, or pre-close removal may resolve to
+> the active default, but if the committed winner becomes inactive, halted, or otherwise ineligible
+> before purchase, the day skips and bounded ETH carries forward. The keeper cannot substitute another
+> token; the closed result and public skip reason remain in history.
 
 **Status: DESIGN ONLY (founder-directed 2026-08-09). Approval recorded as a founder assertion, the standing directive pattern. Nothing here is built; the
 chain half is mainnet-gated on the third-party audit clock like every contract change.**

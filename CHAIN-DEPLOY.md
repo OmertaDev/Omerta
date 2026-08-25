@@ -271,11 +271,13 @@ from the first block. Use `omerta-contracts/DEPLOYMENT.md` and its Foundry scrip
       is the kill switch — zero is already "unavailable", so there is no pause flag and no second path.
       **This contract is retired by being unreferenced** at the `setOracle(twap)` cutover below;
       nothing needs tearing down.
-- [ ] **`OmrTwapOracle(safe, omrWethPair, omr, period)`** — WALL 4's price feed for NORMAL OPERATION,
+- [ ] **`OmrTwapOracle(safe, v2Factory, omrWethPair, omr, weth, period)`** — WALL 4's price feed for NORMAL OPERATION,
       deployed AFTER the pool exists (it reads that pool's cumulative price). `period >= MIN_PERIOD` (10 min); **30 min
       recommended** — past that the manipulation-cost curve flattens for a thin pool while the lag grows,
       and what actually makes this expensive is POOL DEPTH, not the clock (see `npm run dials`). The
-      constructor works out which side of the pair OMR sits on rather than being told. It reports **no
+      constructor works out which side of the pair OMR sits on rather than being told, requires the
+      pair assets to be exactly the reviewed 18-decimal OMR and WETH contracts, and requires the reviewed
+      factory's `getPair(omr,weth)` to attest the supplied pair. It reports **no
       usable reading until a full period has been closed**, so bonding cannot start on a price derived
       from nothing.
 - [ ] **`OmertaBond.setOracle(oracle, priceToleranceBps, maxOracleAge)`** — arm WALL 4. Recommended
@@ -479,6 +481,19 @@ from the first block. Use `omerta-contracts/DEPLOYMENT.md` and its Foundry scrip
       closed; it cannot silently redirect the buy. The buyer measures that exact token's balance increase
       at StockVault. **The generic buyer is built; the production venue adapter and
       quote/TWAP runner are not yet approved or armed.**
+      The buyer now deploys paused, rejects a zero daily ETH cap, rejects adapter/oracle EOAs,
+      permits dependency and cap changes only while paused, and refuses `unpause()` until the keeper,
+      reviewed adapter bytecode, fresh quote-oracle contract/window, and nonzero cap are all present.
+      The Safe activation order is therefore: pause (already true at birth), configure and read back
+      every dependency/cap, pre-fund only the reviewed tranche, then unpause last. Any later rotation
+      begins by pausing; a live buyer cannot have its execution boundary silently replaced.
+      **POST-CLOSE INELIGIBILITY (founder-approved 2026-08-25):** if the committed token becomes inactive,
+      halted, or otherwise ineligible before execution, skip the purchase. Do not republish that day,
+      substitute the registry default, or aim the keeper at another token. Leave the bounded ETH unspent
+      inside the existing treasury/buyer funding and cap walls; unused authority must not enlarge a later
+      daily cap. Preserve the immutable ballot result and record a public skipped-purchase status with the
+      reason. The contract's revert is the value wall; the status/reason and operator alert are still an
+      implementation and launch-rehearsal requirement before this rail may be armed.
 
 ### 2b. THE BANK — the Denari (DNR) market (only when it ships; not part of the first cut)
 Order matters more here than anywhere else in this file, because **two of these steps fail SILENTLY**:

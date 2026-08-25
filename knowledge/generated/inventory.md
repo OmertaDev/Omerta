@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `c8d8fdb693bb`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `e5cbed87fbd0`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,556 |
-| Text lines | 369,604 |
-| Repository bytes inventoried | 273,839,305 |
+| Text lines | 369,993 |
+| Repository bytes inventoried | 273,859,911 |
 | Backend/route modules | 163 |
 | HTTP route registrations / unique routes | 713 / 712 |
 | Database tables | 245 |
-| Solidity declarations | 27 |
-| Git commits | 897 |
+| Solidity declarations | 28 |
+| Git commits | 928 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 4,408 / 20,612 |
+| Graph nodes / edges | 4,441 / 20,865 |
 
 ## Artifact kinds
 
@@ -74,7 +74,7 @@
 | [src/chain.js](../../src/chain.js) | 1,703 | backend-module | 2026-08-22 |
 | [tools/sim.js](../../tools/sim.js) | 1,681 | engineering-harness | 2026-08-16 |
 | [src/casino.js](../../src/casino.js) | 1,468 | backend-module | 2026-08-23 |
-| [docs/WIKI.md](../../docs/WIKI.md) | 1,432 | documentation | 2026-08-25 |
+| [docs/WIKI.md](../../docs/WIKI.md) | 1,439 | documentation | 2026-08-25 |
 | [test/economy.js](../../test/economy.js) | 1,402 | test-suite | 2026-08-21 |
 
 ## Media estate

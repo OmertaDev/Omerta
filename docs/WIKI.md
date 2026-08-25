@@ -549,6 +549,13 @@ rollover, the result fails over to the active default. After rollover, the worke
 registry key and a hash of the public family tally on-chain. The buy keeper names the day, not a ticker
 or token address—the buyer contract resolves the exact approved token from that result.
 
+The default applies only while resolving the ballot. If the exact Stock Token committed by the closed
+result becomes inactive, halted, or otherwise ineligible before purchase, that day's purchase is
+**skipped**. The machine does not substitute the default or any other token because the families did not
+vote for it. The bounded, unspent ETH carries forward inside the existing treasury and purchase caps;
+unused authority does not enlarge a later daily cap. The closed ballot remains in the public history,
+along with the skipped-purchase status and reason.
+
 Robinhood's public APIs are **discovery, not governance**. Operators run `npm run stock-catalog` to
 inspect the current chain-4663 list. For the initial launch only,
 `npm run stock-catalog -- --initial-top-volume --registry 0x...` automatically ranks the eligible feed

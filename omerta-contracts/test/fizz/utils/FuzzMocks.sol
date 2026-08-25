@@ -4,7 +4,7 @@ pragma solidity 0.8.26;
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC4626} from "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {IUniswapV2Pair} from "../../../src/OmrTwapOracle.sol";
+import {IUniswapV2Factory, IUniswapV2Pair} from "../../../src/OmrTwapOracle.sol";
 
 contract FuzzUSDC is ERC20 {
     constructor() ERC20("Fuzz USD Coin", "fUSDC") {}
@@ -23,6 +23,27 @@ contract FuzzVault is ERC4626 {
 
     function earn(uint256 amount) external {
         FuzzUSDC(asset()).mint(address(this), amount);
+    }
+}
+
+contract FuzzWETH is ERC20 {
+    constructor() ERC20("Fuzz Wrapped Ether", "fWETH") {}
+}
+
+contract FuzzFactory is IUniswapV2Factory {
+    address public immutable tokenA;
+    address public immutable tokenB;
+    address public immutable pair;
+
+    constructor(address tokenA_, address tokenB_, address pair_) {
+        tokenA = tokenA_;
+        tokenB = tokenB_;
+        pair = pair_;
+    }
+
+    function getPair(address token0, address token1) external view returns (address) {
+        if ((token0 == tokenA && token1 == tokenB) || (token0 == tokenB && token1 == tokenA)) return pair;
+        return address(0);
     }
 }
 

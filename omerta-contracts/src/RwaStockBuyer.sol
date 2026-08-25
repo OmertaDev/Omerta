@@ -81,6 +81,9 @@ contract RwaStockBuyer is Ownable2Step, Pausable, ReentrancyGuard {
     error AlreadyPurchased();
     error BallotAssetInactive();
     error DailyCapExceeded();
+    error DailyCapRequired();
+    error ContractRequired(address target);
+    error ConfigurationIncomplete();
     error InsufficientBalance();
     error InsufficientOutput();
     error EthTransferFailed();
@@ -99,11 +102,16 @@ contract RwaStockBuyer is Ownable2Step, Pausable, ReentrancyGuard {
         uint256 dailyEthCap_
     ) Ownable(owner_) {
         if (registry_ == address(0) || stockVault_ == address(0)) revert ZeroAddress();
+        if (registry_.code.length == 0) revert ContractRequired(registry_);
+        if (stockVault_.code.length == 0) revert ContractRequired(stockVault_);
+        if (dailyEthCap_ == 0) revert DailyCapRequired();
+        if (adapter_ != address(0) && adapter_.code.length == 0) revert ContractRequired(adapter_);
         registry = IStockTokenRegistry(registry_);
         stockVault = stockVault_;
         keeper = keeper_;
         adapter = adapter_;
         dailyEthCap = dailyEthCap_;
+        _pause();
         emit KeeperSet(keeper_);
         emit AdapterSet(adapter_);
         emit DailyEthCapSet(dailyEthCap_);
@@ -113,28 +121,34 @@ contract RwaStockBuyer is Ownable2Step, Pausable, ReentrancyGuard {
         emit Funded(msg.sender, msg.value);
     }
 
-    function setKeeper(address keeper_) external onlyOwner {
+    function setKeeper(address keeper_) external onlyOwner whenPaused {
         keeper = keeper_; // zero deliberately disables buys
         emit KeeperSet(keeper_);
     }
 
-    function setAdapter(address adapter_) external onlyOwner {
+    function setAdapter(address adapter_) external onlyOwner whenPaused {
+        if (adapter_ != address(0) && adapter_.code.length == 0) revert ContractRequired(adapter_);
         adapter = adapter_; // zero deliberately disables buys
         emit AdapterSet(adapter_);
     }
 
     /// @notice Zero disables buying. A live oracle must have a nonzero freshness window so an old
     ///         fair price cannot become a keeper's permanent permission to trade through a moved market.
-    function setQuoteOracle(address oracle_, uint256 maxAge_) external onlyOwner {
-        if (oracle_ != address(0) && maxAge_ == 0) revert QuoteUnavailable();
+    function setQuoteOracle(address oracle_, uint256 maxAge_) external onlyOwner whenPaused {
+        if (oracle_ == address(0)) {
+            if (maxAge_ != 0) revert QuoteUnavailable();
+        } else {
+            if (oracle_.code.length == 0) revert ContractRequired(oracle_);
+            if (maxAge_ == 0) revert QuoteUnavailable();
+        }
         quoteOracle = oracle_;
         maxQuoteAge = oracle_ == address(0) ? 0 : maxAge_;
         emit QuoteOracleSet(oracle_, maxQuoteAge);
     }
 
-    /// @notice Zero means unlimited, matching StockVault's cap convention. Production deployment
-    ///         validation must choose a nonzero bound before the keeper is armed.
-    function setDailyEthCap(uint256 cap) external onlyOwner {
+    /// @notice The risk budget is mandatory and can only be changed as part of a paused ceremony.
+    function setDailyEthCap(uint256 cap) external onlyOwner whenPaused {
+        if (cap == 0) revert DailyCapRequired();
         dailyEthCap = cap;
         emit DailyEthCapSet(cap);
     }
@@ -144,6 +158,10 @@ contract RwaStockBuyer is Ownable2Step, Pausable, ReentrancyGuard {
     }
 
     function unpause() external onlyOwner {
+        if (
+            keeper == address(0) || adapter == address(0) || adapter.code.length == 0 || quoteOracle == address(0)
+                || quoteOracle.code.length == 0 || maxQuoteAge == 0 || dailyEthCap == 0
+        ) revert ConfigurationIncomplete();
         _unpause();
     }
 
@@ -182,7 +200,7 @@ contract RwaStockBuyer is Ownable2Step, Pausable, ReentrancyGuard {
     function _chargeDailyCap(uint256 ethIn) private {
         uint256 currentDay = block.timestamp / 1 days;
         uint256 newSpend = spentOnDay[currentDay] + ethIn;
-        if (dailyEthCap != 0 && newSpend > dailyEthCap) revert DailyCapExceeded();
+        if (newSpend > dailyEthCap) revert DailyCapExceeded();
         spentOnDay[currentDay] = newSpend;
     }
 

@@ -2,7 +2,29 @@
 pragma solidity 0.8.26;
 
 import {Test} from "forge-std/Test.sol";
-import {OmrTwapOracle, IUniswapV2Pair} from "../src/OmrTwapOracle.sol";
+import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {OmrTwapOracle, IUniswapV2Factory, IUniswapV2Pair} from "../src/OmrTwapOracle.sol";
+
+contract MockTwapToken is ERC20 {
+    uint8 private immutable _tokenDecimals;
+
+    constructor(string memory symbol_, uint8 decimals_) ERC20(symbol_, symbol_) {
+        _tokenDecimals = decimals_;
+    }
+
+    function decimals() public view override returns (uint8) {
+        return _tokenDecimals;
+    }
+}
+
+contract MockV2Factory is IUniswapV2Factory {
+    mapping(address => mapping(address => address)) public getPair;
+
+    function register(address tokenA, address tokenB, address pair) external {
+        getPair[tokenA][tokenB] = pair;
+        getPair[tokenB][tokenA] = pair;
+    }
+}
 
 /// A Uniswap V2 pair, faithful to the ONE behaviour this oracle depends on: `price*CumulativeLast`
 /// is only written when the pair is TOUCHED, and it accumulates price x elapsed-time in UQ112x112.
@@ -46,20 +68,27 @@ contract MockPair is IUniswapV2Pair {
 }
 
 contract OmrTwapOracleTest is Test {
-    address weth = makeAddr("weth");
-    address omr = makeAddr("omr");
+    address weth;
+    address omr;
     address safe = makeAddr("safe");
 
     uint32 constant PERIOD = 30 minutes;
 
     MockPair pair;
+    MockV2Factory factory;
     OmrTwapOracle oracle;
 
     function setUp() public {
         vm.warp(1_000_000);
+        weth = address(new MockTwapToken("WETH", 18));
+        omr = address(new MockTwapToken("OMR", 18));
         // OMR is token1: 1 WETH reserve vs 5000 OMR reserve → 5000 OMR per ETH
         pair = new MockPair(weth, omr, 1_000e18, 5_000_000e18);
-        oracle = new OmrTwapOracle(safe, IUniswapV2Pair(address(pair)), omr, PERIOD);
+        factory = new MockV2Factory();
+        factory.register(omr, weth, address(pair));
+        oracle = new OmrTwapOracle(
+            safe, IUniswapV2Factory(address(factory)), IUniswapV2Pair(address(pair)), omr, weth, PERIOD
+        );
     }
 
     function test_reads_the_right_side_of_the_pair() public view {
@@ -70,7 +99,10 @@ contract OmrTwapOracleTest is Test {
         // Pair ordering is decided by address sort, not by us. Getting this backwards would invert
         // every price the mint wall reads, so the constructor works it out rather than being told.
         MockPair flipped = new MockPair(omr, weth, 5_000_000e18, 1_000e18);
-        OmrTwapOracle o2 = new OmrTwapOracle(safe, IUniswapV2Pair(address(flipped)), omr, PERIOD);
+        factory.register(omr, weth, address(flipped));
+        OmrTwapOracle o2 = new OmrTwapOracle(
+            safe, IUniswapV2Factory(address(factory)), IUniswapV2Pair(address(flipped)), omr, weth, PERIOD
+        );
         assertFalse(o2.omrIsToken1());
 
         vm.warp(block.timestamp + PERIOD + 1);
@@ -147,13 +179,84 @@ contract OmrTwapOracleTest is Test {
     function test_period_floor_is_enforced_at_construction() public {
         // A 30-second "TWAP" is a spot price wearing a TWAP's name. This contract exists to stop that.
         vm.expectRevert(OmrTwapOracle.PeriodTooShort.selector);
-        new OmrTwapOracle(safe, IUniswapV2Pair(address(pair)), omr, 30);
+        new OmrTwapOracle(safe, IUniswapV2Factory(address(factory)), IUniswapV2Pair(address(pair)), omr, weth, 30);
     }
 
     function test_constructor_rejects_a_pair_that_is_not_an_OMR_pair() public {
         MockPair wrong = new MockPair(weth, makeAddr("other"), 1_000e18, 1_000e18);
         vm.expectRevert(OmrTwapOracle.NotOmrPair.selector);
-        new OmrTwapOracle(safe, IUniswapV2Pair(address(wrong)), omr, PERIOD);
+        new OmrTwapOracle(safe, IUniswapV2Factory(address(factory)), IUniswapV2Pair(address(wrong)), omr, weth, PERIOD);
+    }
+
+    function test_constructor_rejects_an_OMR_pair_against_the_wrong_counterasset() public {
+        MockTwapToken realOmr = new MockTwapToken("OMR", 18);
+        MockTwapToken realWeth = new MockTwapToken("WETH", 18);
+        MockTwapToken usdc = new MockTwapToken("USDC", 6);
+        MockPair wrongMarket = new MockPair(address(realOmr), address(usdc), 5_000_000e18, 1_000e6);
+        MockV2Factory localFactory = new MockV2Factory();
+        localFactory.register(address(realOmr), address(realWeth), address(wrongMarket));
+
+        vm.expectRevert();
+        new OmrTwapOracle(
+            safe,
+            IUniswapV2Factory(address(localFactory)),
+            IUniswapV2Pair(address(wrongMarket)),
+            address(realOmr),
+            address(realWeth),
+            PERIOD
+        );
+    }
+
+    function test_constructor_rejects_a_pair_the_expected_factory_did_not_create() public {
+        MockTwapToken realOmr = new MockTwapToken("OMR", 18);
+        MockTwapToken realWeth = new MockTwapToken("WETH", 18);
+        MockPair counterfeit = new MockPair(address(realWeth), address(realOmr), 1_000e18, 5_000_000e18);
+        MockV2Factory localFactory = new MockV2Factory();
+
+        vm.expectRevert();
+        new OmrTwapOracle(
+            safe,
+            IUniswapV2Factory(address(localFactory)),
+            IUniswapV2Pair(address(counterfeit)),
+            address(realOmr),
+            address(realWeth),
+            PERIOD
+        );
+    }
+
+    function test_constructor_rejects_non_18_decimal_market_assets() public {
+        MockTwapToken realOmr = new MockTwapToken("OMR", 18);
+        MockTwapToken sixDecimalWeth = new MockTwapToken("WETH", 6);
+        MockPair misScaled = new MockPair(address(sixDecimalWeth), address(realOmr), 1_000e6, 5_000_000e18);
+        MockV2Factory localFactory = new MockV2Factory();
+        localFactory.register(address(realOmr), address(sixDecimalWeth), address(misScaled));
+
+        vm.expectRevert();
+        new OmrTwapOracle(
+            safe,
+            IUniswapV2Factory(address(localFactory)),
+            IUniswapV2Pair(address(misScaled)),
+            address(realOmr),
+            address(sixDecimalWeth),
+            PERIOD
+        );
+    }
+
+    function test_constructor_rejects_OMR_as_its_own_counterasset() public {
+        MockTwapToken realOmr = new MockTwapToken("OMR", 18);
+        MockPair nonsensical = new MockPair(address(realOmr), address(realOmr), 1_000e18, 5_000_000e18);
+        MockV2Factory localFactory = new MockV2Factory();
+        localFactory.register(address(realOmr), address(realOmr), address(nonsensical));
+
+        vm.expectRevert();
+        new OmrTwapOracle(
+            safe,
+            IUniswapV2Factory(address(localFactory)),
+            IUniswapV2Pair(address(nonsensical)),
+            address(realOmr),
+            address(realOmr),
+            PERIOD
+        );
     }
 
     function test_update_is_permissionless() public {
@@ -168,8 +271,9 @@ contract OmrTwapOracleTest is Test {
 
     function test_empty_reserves_revert_rather_than_divide_by_zero() public {
         MockPair empty = new MockPair(weth, omr, 0, 0);
+        factory.register(omr, weth, address(empty));
         vm.expectRevert(OmrTwapOracle.NoReserves.selector);
-        new OmrTwapOracle(safe, IUniswapV2Pair(address(empty)), omr, PERIOD);
+        new OmrTwapOracle(safe, IUniswapV2Factory(address(factory)), IUniswapV2Pair(address(empty)), omr, weth, PERIOD);
     }
 
     /// The decode must not overflow. `priceAverage * 1e18` overflows uint256 for large averages,
@@ -178,7 +282,9 @@ contract OmrTwapOracleTest is Test {
     function testFuzz_price_decode_survives_extremes(uint112 reserveOmr) public {
         reserveOmr = uint112(bound(uint256(reserveOmr), 1e12, type(uint112).max / 2));
         MockPair p = new MockPair(weth, omr, 1_000e18, reserveOmr);
-        OmrTwapOracle o = new OmrTwapOracle(safe, IUniswapV2Pair(address(p)), omr, PERIOD);
+        factory.register(omr, weth, address(p));
+        OmrTwapOracle o =
+            new OmrTwapOracle(safe, IUniswapV2Factory(address(factory)), IUniswapV2Pair(address(p)), omr, weth, PERIOD);
         vm.warp(block.timestamp + PERIOD + 1);
         o.update();
         (uint256 price,) = o.consult();

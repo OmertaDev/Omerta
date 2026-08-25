@@ -18,13 +18,14 @@
 | `IStockQuoteOracle` | interface | [omerta-contracts/src/RwaStockBuyer.sol:28](../../omerta-contracts/src/RwaStockBuyer.sol#L28) | — |
 | `IStockSwapAdapter` | interface | [omerta-contracts/src/RwaStockBuyer.sol:20](../../omerta-contracts/src/RwaStockBuyer.sol#L20) | — |
 | `IStockTokenRegistry` | interface | [omerta-contracts/src/RwaStockBuyer.sol:9](../../omerta-contracts/src/RwaStockBuyer.sol#L9) | — |
-| `IUniswapV2Pair` | interface | [omerta-contracts/src/OmrTwapOracle.sol:7](../../omerta-contracts/src/OmrTwapOracle.sol#L7) | — |
+| `IUniswapV2Factory` | interface | [omerta-contracts/src/OmrTwapOracle.sol:8](../../omerta-contracts/src/OmrTwapOracle.sol#L8) | — |
+| `IUniswapV2Pair` | interface | [omerta-contracts/src/OmrTwapOracle.sol:12](../../omerta-contracts/src/OmrTwapOracle.sol#L12) | — |
 | `OmertaBond` | contract | [omerta-contracts/src/OmertaBond.sol:73](../../omerta-contracts/src/OmertaBond.sol#L73) | `EIP712`, `Ownable2Step`, `Pausable`, `ReentrancyGuard` |
 | `OmertaFees` | contract | [omerta-contracts/src/OmertaFees.sol:18](../../omerta-contracts/src/OmertaFees.sol#L18) | `Ownable2Step`, `ReentrancyGuard` |
 | `OmertaHook` | contract | [omerta-contracts/src/OmertaHook.sol:116](../../omerta-contracts/src/OmertaHook.sol#L116) | `IHooks`, `Ownable2Step` |
 | `OMR` | contract | [omerta-contracts/src/OMR.sol:76](../../omerta-contracts/src/OMR.sol#L76) | `ERC20Permit`, `Ownable2Step` |
 | `OMRStaking` | contract | [omerta-contracts/src/OMRStaking.sol:15](../../omerta-contracts/src/OMRStaking.sol#L15) | `Ownable2Step`, `ReentrancyGuard` |
-| `OmrTwapOracle` | contract | [omerta-contracts/src/OmrTwapOracle.sol:44](../../omerta-contracts/src/OmrTwapOracle.sol#L44) | `IOmrOracle`, `Ownable2Step` |
+| `OmrTwapOracle` | contract | [omerta-contracts/src/OmrTwapOracle.sol:49](../../omerta-contracts/src/OmrTwapOracle.sol#L49) | `IOmrOracle`, `Ownable2Step` |
 | `RwaStockBuyer` | contract | [omerta-contracts/src/RwaStockBuyer.sol:43](../../omerta-contracts/src/RwaStockBuyer.sol#L43) | `Ownable2Step`, `Pausable`, `ReentrancyGuard` |
 | `StockTokenRegistry` | contract | [omerta-contracts/src/StockTokenRegistry.sol:18](../../omerta-contracts/src/StockTokenRegistry.sol#L18) | `Ownable2Step` |
 | `StockVault` | contract | [omerta-contracts/src/StockVault.sol:44](../../omerta-contracts/src/StockVault.sol#L44) | `Ownable2Step`, `Pausable`, `ReentrancyGuard`, `EIP712` |
