@@ -218,7 +218,9 @@ function build(options = {}) {
   const fileSet = new Set(paths);
   const blobs = blobMetadata();
   const head = options.sourceRevision || git(['rev-parse', 'HEAD']).trim();
-  const currentBranch = git(['branch', '--show-current']).trim() || '(detached)';
+  const currentBranch = typeof options.currentBranch === 'string'
+    ? options.currentBranch
+    : (git(['branch', '--show-current']).trim() || '(detached)');
   const status = git(['status', '--porcelain=v1']).split(/\r?\n/).filter(Boolean);
   const worktreeDirty = typeof options.worktreeDirty === 'boolean' ? options.worktreeDirty : status.length > 0;
   const githubPath = 'knowledge/github-snapshot.json';
@@ -533,7 +535,12 @@ function buildForCheck() {
   try {
     const stored = JSON.parse(fs.readFileSync(graphFile, 'utf8'));
     if (!/^[0-9a-f]{40}$/.test(stored.sourceRevision || '')) return build();
-    return build({ sourceRevision: stored.sourceRevision, worktreeDirty: stored.worktreeDirty === true });
+    const repository = stored.nodes?.find((n) => n.key === 'Repository:omerta');
+    return build({
+      sourceRevision: stored.sourceRevision,
+      worktreeDirty: stored.worktreeDirty === true,
+      currentBranch: repository?.currentBranch,
+    });
   } catch {
     return build();
   }

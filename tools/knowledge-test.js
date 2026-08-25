@@ -13,6 +13,11 @@ assert.equal(result.ok, true, result.problems.join('\n'));
 const { graph } = model;
 const keys = new Set(graph.nodes.map((n) => n.key));
 assert(keys.has('Repository:omerta'));
+const storedGraph = JSON.parse(fs.readFileSync(path.join(root, 'knowledge', 'generated', 'graph.json'), 'utf8'));
+const storedRepository = storedGraph.nodes.find((n) => n.key === 'Repository:omerta');
+const repository = graph.nodes.find((n) => n.key === 'Repository:omerta');
+assert.equal(repository.currentBranch, storedRepository.currentBranch,
+  'knowledge checks must not drift when the same revision is checked from a named or detached branch');
 assert(graph.census.byNodeType.Artifact >= 1000, 'the repository inventory unexpectedly collapsed');
 assert(graph.census.byNodeType.Route >= 700, 'the HTTP surface unexpectedly collapsed');
 assert(graph.census.byNodeType.Table >= 240, 'the schema inventory unexpectedly collapsed');
