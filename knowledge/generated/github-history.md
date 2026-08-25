@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `e5cbed87fbd0`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `0a5474da70ad`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 928 |
+| Commits in clone | 930 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-25 — ci: fetch history for knowledge gate |
+| Latest commit | 2026-08-25 — feat: close agent reward and session loops |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 127 |
+| OmertaDev | 129 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -30,10 +30,10 @@
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 491 | yes |
 | [public/index.html](../../public/index.html) | 378 | yes |
-| [src/server.js](../../src/server.js) | 335 | yes |
+| [src/server.js](../../src/server.js) | 336 | yes |
 | [schema.sql](../../schema.sql) | 252 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
-| [SPEC.md](../../SPEC.md) | 230 | yes |
+| [SPEC.md](../../SPEC.md) | 231 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 169 | yes |
 | [package.json](../../package.json) | 127 | yes |
@@ -45,8 +45,8 @@
 | [test/levers.js](../../test/levers.js) | 95 | yes |
 | [test/social.js](../../test/social.js) | 83 | yes |
 | [test/growth.js](../../test/growth.js) | 78 | yes |
-| [public/wiki.html](../../public/wiki.html) | 73 | yes |
-| [docs/WIKI.md](../../docs/WIKI.md) | 64 | yes |
+| [public/wiki.html](../../public/wiki.html) | 74 | yes |
+| [docs/WIKI.md](../../docs/WIKI.md) | 65 | yes |
 | [test/hardening.js](../../test/hardening.js) | 63 | yes |
 | [tools/sim.js](../../tools/sim.js) | 58 | yes |
 | [README.md](../../README.md) | 54 | yes |
@@ -56,7 +56,7 @@
 | [test/economy.js](../../test/economy.js) | 46 | yes |
 | [src/economy.js](../../src/economy.js) | 44 | yes |
 | [src/casino.js](../../src/casino.js) | 43 | yes |
-| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 41 | yes |
+| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 42 | yes |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
 | [src/business.js](../../src/business.js) | 39 | yes |
 | [src/chain.js](../../src/chain.js) | 36 | yes |

@@ -167,7 +167,7 @@
 | [.agents/skills/remotion-saas/SKILL.md](../../.agents/skills/remotion-saas/SKILL.md) | documentation | 34 | 2026-08-24 |
 | [.agents/skills/remotion-studio/SKILL.md](../../.agents/skills/remotion-studio/SKILL.md) | documentation | 25 | 2026-08-24 |
 | [.agents/skills/remotion-upgrade/SKILL.md](../../.agents/skills/remotion-upgrade/SKILL.md) | documentation | 32 | 2026-08-24 |
-| [AGENTS.md](../../AGENTS.md) | documentation | 444 | 2026-08-25 |
+| [AGENTS.md](../../AGENTS.md) | documentation | 447 | 2026-08-25 |
 | [AUDIT-bank-city-leg.md](../../AUDIT-bank-city-leg.md) | audit | 119 | 2026-08-12 |
 | [AUDIT-blood-war.md](../../AUDIT-blood-war.md) | audit | 95 | 2026-08-05 |
 | [AUDIT-blue-team.md](../../AUDIT-blue-team.md) | audit | 178 | 2026-08-12 |

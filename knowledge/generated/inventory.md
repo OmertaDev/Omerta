@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `e5cbed87fbd0`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `0a5474da70ad`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,556 |
-| Text lines | 369,993 |
-| Repository bytes inventoried | 273,859,911 |
+| Text lines | 370,296 |
+| Repository bytes inventoried | 273,878,541 |
 | Backend/route modules | 163 |
 | HTTP route registrations / unique routes | 713 / 712 |
 | Database tables | 245 |
 | Solidity declarations | 28 |
-| Git commits | 928 |
+| Git commits | 930 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 4,441 / 20,865 |
+| Graph nodes / edges | 4,443 / 20,907 |
 
 ## Artifact kinds
 
@@ -59,7 +59,7 @@
 | [src/rules.tail.js](../../src/rules.tail.js) | 6,045 | backend-module | 2026-08-24 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
 | [schema.sql](../../schema.sql) | 3,716 | data-schema | 2026-08-25 |
-| [src/server.js](../../src/server.js) | 3,320 | backend-module | 2026-08-25 |
+| [src/server.js](../../src/server.js) | 3,325 | backend-module | 2026-08-25 |
 | [omerta-contracts/fizz_data/contracts.json](../../omerta-contracts/fizz_data/contracts.json) | 2,739 | contract-project | 2026-08-25 |
 | [public/art/manifest.json](../../public/art/manifest.json) | 2,700 | media-asset | 2026-08-09 |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 2,619 | audit | 2026-08-12 |
