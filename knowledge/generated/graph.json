@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "7c8f9243c90904f35cc97eb45aaccb36fc61f37e",
+  "sourceRevision": "9e8dfb73054cd7a68361e869d9e12a26bc588c46",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 4445,
-    "edges": 20919,
+    "nodes": 4447,
+    "edges": 20927,
     "byNodeType": {
       "Artifact": 1556,
       "Command": 32,
-      "Commit": 932,
+      "Commit": 934,
       "Contract": 28,
       "Document": 401,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1813,
-      "CHANGED": 8043,
+      "CHANGED": 8049,
       "CONTAINS": 1576,
       "DECLARES": 32,
       "DEFINED_IN": 986,
       "DEPENDS_ON": 59,
       "EXECUTES": 148,
       "HANDLED_BY": 653,
-      "HAS_COMMIT": 932,
+      "HAS_COMMIT": 934,
       "IMPLEMENTS": 124,
       "IMPORTS": 1440,
       "INHERITS": 4,
@@ -713,15 +713,15 @@
       "path": ".agents/skills/remotion-best-practices/remotion-maps/techniques/cesium/assets/CesiumFlythrough.tsx",
       "kind": "artifact",
       "extension": ".tsx",
-      "bytes": 9196,
-      "lines": null,
-      "version": "02465d0ead353c99",
-      "text": false,
+      "bytes": 8912,
+      "lines": 285,
+      "version": "4d4a90e373176e84",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-best-practices/remotion-maps/techniques/cesium/assets/CesiumFlythrough.tsx",
           "line": 1,
-          "version": "02465d0ead353c99"
+          "version": "4d4a90e373176e84"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -759,15 +759,15 @@
       "path": ".agents/skills/remotion-best-practices/remotion-maps/techniques/cesium/assets/example-Root.tsx",
       "kind": "artifact",
       "extension": ".tsx",
-      "bytes": 962,
-      "lines": null,
-      "version": "9a27a0b7c9491af6",
-      "text": false,
+      "bytes": 923,
+      "lines": 40,
+      "version": "51c2df109015adc9",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-best-practices/remotion-maps/techniques/cesium/assets/example-Root.tsx",
           "line": 1,
-          "version": "9a27a0b7c9491af6"
+          "version": "51c2df109015adc9"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -782,15 +782,15 @@
       "path": ".agents/skills/remotion-best-practices/remotion-maps/techniques/cesium/assets/flight-path.ts",
       "kind": "artifact",
       "extension": ".ts",
-      "bytes": 1275,
-      "lines": null,
-      "version": "de7f7bdb6878cff8",
-      "text": false,
+      "bytes": 1240,
+      "lines": 36,
+      "version": "fab65d2d9cc0c4ca",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-best-practices/remotion-maps/techniques/cesium/assets/flight-path.ts",
           "line": 1,
-          "version": "de7f7bdb6878cff8"
+          "version": "fab65d2d9cc0c4ca"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -805,15 +805,15 @@
       "path": ".agents/skills/remotion-best-practices/remotion-maps/techniques/cesium/assets/sample-river.geojson",
       "kind": "artifact",
       "extension": ".geojson",
-      "bytes": 6624,
-      "lines": null,
-      "version": "5574b30b311150ee",
-      "text": false,
+      "bytes": 6409,
+      "lines": 216,
+      "version": "2c9f6dd35ac4aed5",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-best-practices/remotion-maps/techniques/cesium/assets/sample-river.geojson",
           "line": 1,
-          "version": "5574b30b311150ee"
+          "version": "2c9f6dd35ac4aed5"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -1035,15 +1035,15 @@
       "path": ".agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/CountryLabel.tsx",
       "kind": "artifact",
       "extension": ".tsx",
-      "bytes": 1919,
-      "lines": null,
-      "version": "3e4b887ef5deb1ff",
-      "text": false,
+      "bytes": 1849,
+      "lines": 71,
+      "version": "6be8c7d5b3435c8d",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/CountryLabel.tsx",
           "line": 1,
-          "version": "3e4b887ef5deb1ff"
+          "version": "6be8c7d5b3435c8d"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -1058,15 +1058,15 @@
       "path": ".agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/example-Root.tsx",
       "kind": "artifact",
       "extension": ".tsx",
-      "bytes": 1061,
-      "lines": null,
-      "version": "4e252677de1ede88",
-      "text": false,
+      "bytes": 1039,
+      "lines": 23,
+      "version": "e53677a7a207e37c",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/example-Root.tsx",
           "line": 1,
-          "version": "4e252677de1ede88"
+          "version": "e53677a7a207e37c"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -1081,15 +1081,15 @@
       "path": ".agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/MapTilerVectorElement.ts",
       "kind": "artifact",
       "extension": ".ts",
-      "bytes": 2263,
-      "lines": null,
-      "version": "9d91691a266a49dd",
-      "text": false,
+      "bytes": 2183,
+      "lines": 81,
+      "version": "c8137792824323b9",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/MapTilerVectorElement.ts",
           "line": 1,
-          "version": "9d91691a266a49dd"
+          "version": "c8137792824323b9"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -1104,15 +1104,15 @@
       "path": ".agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/RiverReveal.tsx",
       "kind": "artifact",
       "extension": ".tsx",
-      "bytes": 11193,
-      "lines": null,
-      "version": "a0ade54a174a026c",
-      "text": false,
+      "bytes": 10830,
+      "lines": 364,
+      "version": "c3091e23dfd80178",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/RiverReveal.tsx",
           "line": 1,
-          "version": "a0ade54a174a026c"
+          "version": "c3091e23dfd80178"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -1173,15 +1173,15 @@
       "path": ".agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/tokens.ts",
       "kind": "artifact",
       "extension": ".ts",
-      "bytes": 1290,
-      "lines": null,
-      "version": "31505e3f5d9cf668",
-      "text": false,
+      "bytes": 1256,
+      "lines": 35,
+      "version": "29ae05eedb4988b5",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/tokens.ts",
           "line": 1,
-          "version": "31505e3f5d9cf668"
+          "version": "29ae05eedb4988b5"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -1978,15 +1978,15 @@
       "path": ".agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/cesium/assets/CesiumFlythrough.tsx",
       "kind": "artifact",
       "extension": ".tsx",
-      "bytes": 9196,
-      "lines": null,
-      "version": "02465d0ead353c99",
-      "text": false,
+      "bytes": 8912,
+      "lines": 285,
+      "version": "4d4a90e373176e84",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/cesium/assets/CesiumFlythrough.tsx",
           "line": 1,
-          "version": "02465d0ead353c99"
+          "version": "4d4a90e373176e84"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -2024,15 +2024,15 @@
       "path": ".agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/cesium/assets/example-Root.tsx",
       "kind": "artifact",
       "extension": ".tsx",
-      "bytes": 962,
-      "lines": null,
-      "version": "9a27a0b7c9491af6",
-      "text": false,
+      "bytes": 923,
+      "lines": 40,
+      "version": "51c2df109015adc9",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/cesium/assets/example-Root.tsx",
           "line": 1,
-          "version": "9a27a0b7c9491af6"
+          "version": "51c2df109015adc9"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -2047,15 +2047,15 @@
       "path": ".agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/cesium/assets/flight-path.ts",
       "kind": "artifact",
       "extension": ".ts",
-      "bytes": 1275,
-      "lines": null,
-      "version": "de7f7bdb6878cff8",
-      "text": false,
+      "bytes": 1240,
+      "lines": 36,
+      "version": "fab65d2d9cc0c4ca",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/cesium/assets/flight-path.ts",
           "line": 1,
-          "version": "de7f7bdb6878cff8"
+          "version": "fab65d2d9cc0c4ca"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -2070,15 +2070,15 @@
       "path": ".agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/cesium/assets/sample-river.geojson",
       "kind": "artifact",
       "extension": ".geojson",
-      "bytes": 6624,
-      "lines": null,
-      "version": "5574b30b311150ee",
-      "text": false,
+      "bytes": 6409,
+      "lines": 216,
+      "version": "2c9f6dd35ac4aed5",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/cesium/assets/sample-river.geojson",
           "line": 1,
-          "version": "5574b30b311150ee"
+          "version": "2c9f6dd35ac4aed5"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -2300,15 +2300,15 @@
       "path": ".agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/CountryLabel.tsx",
       "kind": "artifact",
       "extension": ".tsx",
-      "bytes": 1919,
-      "lines": null,
-      "version": "3e4b887ef5deb1ff",
-      "text": false,
+      "bytes": 1849,
+      "lines": 71,
+      "version": "6be8c7d5b3435c8d",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/CountryLabel.tsx",
           "line": 1,
-          "version": "3e4b887ef5deb1ff"
+          "version": "6be8c7d5b3435c8d"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -2323,15 +2323,15 @@
       "path": ".agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/example-Root.tsx",
       "kind": "artifact",
       "extension": ".tsx",
-      "bytes": 1061,
-      "lines": null,
-      "version": "4e252677de1ede88",
-      "text": false,
+      "bytes": 1039,
+      "lines": 23,
+      "version": "e53677a7a207e37c",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/example-Root.tsx",
           "line": 1,
-          "version": "4e252677de1ede88"
+          "version": "e53677a7a207e37c"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -2346,15 +2346,15 @@
       "path": ".agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/MapTilerVectorElement.ts",
       "kind": "artifact",
       "extension": ".ts",
-      "bytes": 2263,
-      "lines": null,
-      "version": "9d91691a266a49dd",
-      "text": false,
+      "bytes": 2183,
+      "lines": 81,
+      "version": "c8137792824323b9",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/MapTilerVectorElement.ts",
           "line": 1,
-          "version": "9d91691a266a49dd"
+          "version": "c8137792824323b9"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -2369,15 +2369,15 @@
       "path": ".agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/RiverReveal.tsx",
       "kind": "artifact",
       "extension": ".tsx",
-      "bytes": 11193,
-      "lines": null,
-      "version": "a0ade54a174a026c",
-      "text": false,
+      "bytes": 10830,
+      "lines": 364,
+      "version": "c3091e23dfd80178",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/RiverReveal.tsx",
           "line": 1,
-          "version": "a0ade54a174a026c"
+          "version": "c3091e23dfd80178"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -2438,15 +2438,15 @@
       "path": ".agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/tokens.ts",
       "kind": "artifact",
       "extension": ".ts",
-      "bytes": 1290,
-      "lines": null,
-      "version": "31505e3f5d9cf668",
-      "text": false,
+      "bytes": 1256,
+      "lines": 35,
+      "version": "29ae05eedb4988b5",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/tokens.ts",
           "line": 1,
-          "version": "31505e3f5d9cf668"
+          "version": "29ae05eedb4988b5"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -3818,15 +3818,15 @@
       "path": ".agents/skills/remotion-maps/techniques/cesium/assets/CesiumFlythrough.tsx",
       "kind": "artifact",
       "extension": ".tsx",
-      "bytes": 9196,
-      "lines": null,
-      "version": "02465d0ead353c99",
-      "text": false,
+      "bytes": 8912,
+      "lines": 285,
+      "version": "4d4a90e373176e84",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-maps/techniques/cesium/assets/CesiumFlythrough.tsx",
           "line": 1,
-          "version": "02465d0ead353c99"
+          "version": "4d4a90e373176e84"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -3864,15 +3864,15 @@
       "path": ".agents/skills/remotion-maps/techniques/cesium/assets/example-Root.tsx",
       "kind": "artifact",
       "extension": ".tsx",
-      "bytes": 962,
-      "lines": null,
-      "version": "9a27a0b7c9491af6",
-      "text": false,
+      "bytes": 923,
+      "lines": 40,
+      "version": "51c2df109015adc9",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-maps/techniques/cesium/assets/example-Root.tsx",
           "line": 1,
-          "version": "9a27a0b7c9491af6"
+          "version": "51c2df109015adc9"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -3887,15 +3887,15 @@
       "path": ".agents/skills/remotion-maps/techniques/cesium/assets/flight-path.ts",
       "kind": "artifact",
       "extension": ".ts",
-      "bytes": 1275,
-      "lines": null,
-      "version": "de7f7bdb6878cff8",
-      "text": false,
+      "bytes": 1240,
+      "lines": 36,
+      "version": "fab65d2d9cc0c4ca",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-maps/techniques/cesium/assets/flight-path.ts",
           "line": 1,
-          "version": "de7f7bdb6878cff8"
+          "version": "fab65d2d9cc0c4ca"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -3910,15 +3910,15 @@
       "path": ".agents/skills/remotion-maps/techniques/cesium/assets/sample-river.geojson",
       "kind": "artifact",
       "extension": ".geojson",
-      "bytes": 6624,
-      "lines": null,
-      "version": "5574b30b311150ee",
-      "text": false,
+      "bytes": 6409,
+      "lines": 216,
+      "version": "2c9f6dd35ac4aed5",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-maps/techniques/cesium/assets/sample-river.geojson",
           "line": 1,
-          "version": "5574b30b311150ee"
+          "version": "2c9f6dd35ac4aed5"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -4140,15 +4140,15 @@
       "path": ".agents/skills/remotion-maps/techniques/maptiler/assets/CountryLabel.tsx",
       "kind": "artifact",
       "extension": ".tsx",
-      "bytes": 1919,
-      "lines": null,
-      "version": "3e4b887ef5deb1ff",
-      "text": false,
+      "bytes": 1849,
+      "lines": 71,
+      "version": "6be8c7d5b3435c8d",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-maps/techniques/maptiler/assets/CountryLabel.tsx",
           "line": 1,
-          "version": "3e4b887ef5deb1ff"
+          "version": "6be8c7d5b3435c8d"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -4163,15 +4163,15 @@
       "path": ".agents/skills/remotion-maps/techniques/maptiler/assets/example-Root.tsx",
       "kind": "artifact",
       "extension": ".tsx",
-      "bytes": 1061,
-      "lines": null,
-      "version": "4e252677de1ede88",
-      "text": false,
+      "bytes": 1039,
+      "lines": 23,
+      "version": "e53677a7a207e37c",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-maps/techniques/maptiler/assets/example-Root.tsx",
           "line": 1,
-          "version": "4e252677de1ede88"
+          "version": "e53677a7a207e37c"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -4186,15 +4186,15 @@
       "path": ".agents/skills/remotion-maps/techniques/maptiler/assets/MapTilerVectorElement.ts",
       "kind": "artifact",
       "extension": ".ts",
-      "bytes": 2263,
-      "lines": null,
-      "version": "9d91691a266a49dd",
-      "text": false,
+      "bytes": 2183,
+      "lines": 81,
+      "version": "c8137792824323b9",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-maps/techniques/maptiler/assets/MapTilerVectorElement.ts",
           "line": 1,
-          "version": "9d91691a266a49dd"
+          "version": "c8137792824323b9"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -4209,15 +4209,15 @@
       "path": ".agents/skills/remotion-maps/techniques/maptiler/assets/RiverReveal.tsx",
       "kind": "artifact",
       "extension": ".tsx",
-      "bytes": 11193,
-      "lines": null,
-      "version": "a0ade54a174a026c",
-      "text": false,
+      "bytes": 10830,
+      "lines": 364,
+      "version": "c3091e23dfd80178",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-maps/techniques/maptiler/assets/RiverReveal.tsx",
           "line": 1,
-          "version": "a0ade54a174a026c"
+          "version": "c3091e23dfd80178"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -4278,15 +4278,15 @@
       "path": ".agents/skills/remotion-maps/techniques/maptiler/assets/tokens.ts",
       "kind": "artifact",
       "extension": ".ts",
-      "bytes": 1290,
-      "lines": null,
-      "version": "31505e3f5d9cf668",
-      "text": false,
+      "bytes": 1256,
+      "lines": 35,
+      "version": "29ae05eedb4988b5",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-maps/techniques/maptiler/assets/tokens.ts",
           "line": 1,
-          "version": "31505e3f5d9cf668"
+          "version": "29ae05eedb4988b5"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -5060,15 +5060,15 @@
       "path": ".agents/skills/remotion-markup/remotion-maps/techniques/cesium/assets/CesiumFlythrough.tsx",
       "kind": "artifact",
       "extension": ".tsx",
-      "bytes": 9196,
-      "lines": null,
-      "version": "02465d0ead353c99",
-      "text": false,
+      "bytes": 8912,
+      "lines": 285,
+      "version": "4d4a90e373176e84",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-markup/remotion-maps/techniques/cesium/assets/CesiumFlythrough.tsx",
           "line": 1,
-          "version": "02465d0ead353c99"
+          "version": "4d4a90e373176e84"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -5106,15 +5106,15 @@
       "path": ".agents/skills/remotion-markup/remotion-maps/techniques/cesium/assets/example-Root.tsx",
       "kind": "artifact",
       "extension": ".tsx",
-      "bytes": 962,
-      "lines": null,
-      "version": "9a27a0b7c9491af6",
-      "text": false,
+      "bytes": 923,
+      "lines": 40,
+      "version": "51c2df109015adc9",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-markup/remotion-maps/techniques/cesium/assets/example-Root.tsx",
           "line": 1,
-          "version": "9a27a0b7c9491af6"
+          "version": "51c2df109015adc9"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -5129,15 +5129,15 @@
       "path": ".agents/skills/remotion-markup/remotion-maps/techniques/cesium/assets/flight-path.ts",
       "kind": "artifact",
       "extension": ".ts",
-      "bytes": 1275,
-      "lines": null,
-      "version": "de7f7bdb6878cff8",
-      "text": false,
+      "bytes": 1240,
+      "lines": 36,
+      "version": "fab65d2d9cc0c4ca",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-markup/remotion-maps/techniques/cesium/assets/flight-path.ts",
           "line": 1,
-          "version": "de7f7bdb6878cff8"
+          "version": "fab65d2d9cc0c4ca"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -5152,15 +5152,15 @@
       "path": ".agents/skills/remotion-markup/remotion-maps/techniques/cesium/assets/sample-river.geojson",
       "kind": "artifact",
       "extension": ".geojson",
-      "bytes": 6624,
-      "lines": null,
-      "version": "5574b30b311150ee",
-      "text": false,
+      "bytes": 6409,
+      "lines": 216,
+      "version": "2c9f6dd35ac4aed5",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-markup/remotion-maps/techniques/cesium/assets/sample-river.geojson",
           "line": 1,
-          "version": "5574b30b311150ee"
+          "version": "2c9f6dd35ac4aed5"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -5382,15 +5382,15 @@
       "path": ".agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/CountryLabel.tsx",
       "kind": "artifact",
       "extension": ".tsx",
-      "bytes": 1919,
-      "lines": null,
-      "version": "3e4b887ef5deb1ff",
-      "text": false,
+      "bytes": 1849,
+      "lines": 71,
+      "version": "6be8c7d5b3435c8d",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/CountryLabel.tsx",
           "line": 1,
-          "version": "3e4b887ef5deb1ff"
+          "version": "6be8c7d5b3435c8d"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -5405,15 +5405,15 @@
       "path": ".agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/example-Root.tsx",
       "kind": "artifact",
       "extension": ".tsx",
-      "bytes": 1061,
-      "lines": null,
-      "version": "4e252677de1ede88",
-      "text": false,
+      "bytes": 1039,
+      "lines": 23,
+      "version": "e53677a7a207e37c",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/example-Root.tsx",
           "line": 1,
-          "version": "4e252677de1ede88"
+          "version": "e53677a7a207e37c"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -5428,15 +5428,15 @@
       "path": ".agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/MapTilerVectorElement.ts",
       "kind": "artifact",
       "extension": ".ts",
-      "bytes": 2263,
-      "lines": null,
-      "version": "9d91691a266a49dd",
-      "text": false,
+      "bytes": 2183,
+      "lines": 81,
+      "version": "c8137792824323b9",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/MapTilerVectorElement.ts",
           "line": 1,
-          "version": "9d91691a266a49dd"
+          "version": "c8137792824323b9"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -5451,15 +5451,15 @@
       "path": ".agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/RiverReveal.tsx",
       "kind": "artifact",
       "extension": ".tsx",
-      "bytes": 11193,
-      "lines": null,
-      "version": "a0ade54a174a026c",
-      "text": false,
+      "bytes": 10830,
+      "lines": 364,
+      "version": "c3091e23dfd80178",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/RiverReveal.tsx",
           "line": 1,
-          "version": "a0ade54a174a026c"
+          "version": "c3091e23dfd80178"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -5520,15 +5520,15 @@
       "path": ".agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/tokens.ts",
       "kind": "artifact",
       "extension": ".ts",
-      "bytes": 1290,
-      "lines": null,
-      "version": "31505e3f5d9cf668",
-      "text": false,
+      "bytes": 1256,
+      "lines": 35,
+      "version": "29ae05eedb4988b5",
+      "text": true,
       "provenance": [
         {
           "file": ".agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/tokens.ts",
           "line": 1,
-          "version": "31505e3f5d9cf668"
+          "version": "29ae05eedb4988b5"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -6417,15 +6417,15 @@
       "path": ".env.example",
       "kind": "operations",
       "extension": ".example",
-      "bytes": 3419,
-      "lines": null,
-      "version": "3c9611942165f9fd",
-      "text": false,
+      "bytes": 3370,
+      "lines": 50,
+      "version": "eda199b6d51ad018",
+      "text": true,
       "provenance": [
         {
           "file": ".env.example",
           "line": 1,
-          "version": "3c9611942165f9fd"
+          "version": "eda199b6d51ad018"
         }
       ],
       "lastChangedAt": "2026-08-07T18:51:10Z",
@@ -9292,15 +9292,15 @@
       "path": "docs/diagrams/gameplay-01-choose-your-path.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 38938,
-      "lines": null,
-      "version": "94c7889ca2bf80f6",
-      "text": false,
+      "bytes": 38855,
+      "lines": 84,
+      "version": "fa951d837c3451f1",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/gameplay-01-choose-your-path.excalidraw",
           "line": 1,
-          "version": "94c7889ca2bf80f6"
+          "version": "fa951d837c3451f1"
         }
       ],
       "lastChangedAt": "2026-08-24T16:10:38-04:00",
@@ -9315,15 +9315,15 @@
       "path": "docs/diagrams/gameplay-02-the-gun.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 22978,
-      "lines": null,
-      "version": "8b849255995bb872",
-      "text": false,
+      "bytes": 22927,
+      "lines": 52,
+      "version": "db0f64e4f9c893f0",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/gameplay-02-the-gun.excalidraw",
           "line": 1,
-          "version": "8b849255995bb872"
+          "version": "db0f64e4f9c893f0"
         }
       ],
       "lastChangedAt": "2026-08-24T16:10:38-04:00",
@@ -9338,15 +9338,15 @@
       "path": "docs/diagrams/gameplay-03-the-ledger.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 21321,
-      "lines": null,
-      "version": "8156b4b9cf1616f4",
-      "text": false,
+      "bytes": 21275,
+      "lines": 47,
+      "version": "73c0dd25f70951e9",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/gameplay-03-the-ledger.excalidraw",
           "line": 1,
-          "version": "8156b4b9cf1616f4"
+          "version": "73c0dd25f70951e9"
         }
       ],
       "lastChangedAt": "2026-08-24T16:10:38-04:00",
@@ -9361,15 +9361,15 @@
       "path": "docs/diagrams/gameplay-04-the-kitchen.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 23885,
-      "lines": null,
-      "version": "e1fa247992d9dbe9",
-      "text": false,
+      "bytes": 23834,
+      "lines": 52,
+      "version": "2a6bd36479e75c63",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/gameplay-04-the-kitchen.excalidraw",
           "line": 1,
-          "version": "e1fa247992d9dbe9"
+          "version": "2a6bd36479e75c63"
         }
       ],
       "lastChangedAt": "2026-08-24T16:10:38-04:00",
@@ -9384,15 +9384,15 @@
       "path": "docs/diagrams/gameplay-05-the-wheel.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 21967,
-      "lines": null,
-      "version": "c514f305971d8525",
-      "text": false,
+      "bytes": 21920,
+      "lines": 48,
+      "version": "05c2677ece049e19",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/gameplay-05-the-wheel.excalidraw",
           "line": 1,
-          "version": "c514f305971d8525"
+          "version": "05c2677ece049e19"
         }
       ],
       "lastChangedAt": "2026-08-24T16:10:38-04:00",
@@ -9407,15 +9407,15 @@
       "path": "docs/diagrams/gameplay-06-the-shadow.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 22383,
-      "lines": null,
-      "version": "a0b12d0567c6a8a4",
-      "text": false,
+      "bytes": 22335,
+      "lines": 49,
+      "version": "2ce234e80289d174",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/gameplay-06-the-shadow.excalidraw",
           "line": 1,
-          "version": "a0b12d0567c6a8a4"
+          "version": "2ce234e80289d174"
         }
       ],
       "lastChangedAt": "2026-08-24T16:10:38-04:00",
@@ -9430,15 +9430,15 @@
       "path": "docs/diagrams/gameplay-07-the-ring.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 23978,
-      "lines": null,
-      "version": "996d437c58bf7218",
-      "text": false,
+      "bytes": 23927,
+      "lines": 52,
+      "version": "33c93f2b0a45a255",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/gameplay-07-the-ring.excalidraw",
           "line": 1,
-          "version": "996d437c58bf7218"
+          "version": "33c93f2b0a45a255"
         }
       ],
       "lastChangedAt": "2026-08-24T16:10:38-04:00",
@@ -9453,15 +9453,15 @@
       "path": "docs/diagrams/gameplay-08-character-blueprint.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 25731,
-      "lines": null,
-      "version": "c0d03a7bc4549e31",
-      "text": false,
+      "bytes": 25678,
+      "lines": 54,
+      "version": "6aab5ae29a6f49d5",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/gameplay-08-character-blueprint.excalidraw",
           "line": 1,
-          "version": "c0d03a7bc4549e31"
+          "version": "6aab5ae29a6f49d5"
         }
       ],
       "lastChangedAt": "2026-08-24T16:10:38-04:00",
@@ -9476,15 +9476,15 @@
       "path": "docs/diagrams/gameplay-09-road-to-don.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 28316,
-      "lines": null,
-      "version": "c1e5acd4103c441b",
-      "text": false,
+      "bytes": 28257,
+      "lines": 60,
+      "version": "335628e409060e1e",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/gameplay-09-road-to-don.excalidraw",
           "line": 1,
-          "version": "c1e5acd4103c441b"
+          "version": "335628e409060e1e"
         }
       ],
       "lastChangedAt": "2026-08-24T16:10:38-04:00",
@@ -9499,15 +9499,15 @@
       "path": "docs/diagrams/omr-01-severance.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 22036,
-      "lines": null,
-      "version": "bf5435615f63c1db",
-      "text": false,
+      "bytes": 21995,
+      "lines": 42,
+      "version": "8c4ea998ce5cc8d0",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/omr-01-severance.excalidraw",
           "line": 1,
-          "version": "bf5435615f63c1db"
+          "version": "8c4ea998ce5cc8d0"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -9522,15 +9522,15 @@
       "path": "docs/diagrams/omr-02-return-velocity.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 18653,
-      "lines": null,
-      "version": "8ee30d6fe3ef3f94",
-      "text": false,
+      "bytes": 18618,
+      "lines": 36,
+      "version": "616df9d9dafc2fcb",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/omr-02-return-velocity.excalidraw",
           "line": 1,
-          "version": "8ee30d6fe3ef3f94"
+          "version": "616df9d9dafc2fcb"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -9545,15 +9545,15 @@
       "path": "docs/diagrams/omr-03-money-router.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 34529,
-      "lines": null,
-      "version": "ed8d38987dd19697",
-      "text": false,
+      "bytes": 34460,
+      "lines": 70,
+      "version": "a25f393e39f649d5",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/omr-03-money-router.excalidraw",
           "line": 1,
-          "version": "ed8d38987dd19697"
+          "version": "a25f393e39f649d5"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -9568,15 +9568,15 @@
       "path": "docs/diagrams/omr-04-reserve-rwa.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 23797,
-      "lines": null,
-      "version": "8af614c32998b1bc",
-      "text": false,
+      "bytes": 23753,
+      "lines": 45,
+      "version": "e54799278dd9c28a",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/omr-04-reserve-rwa.excalidraw",
           "line": 1,
-          "version": "8af614c32998b1bc"
+          "version": "e54799278dd9c28a"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -9591,15 +9591,15 @@
       "path": "docs/diagrams/omr-05-ohm-contrast.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 32990,
-      "lines": null,
-      "version": "5b4b77483433f80c",
-      "text": false,
+      "bytes": 32928,
+      "lines": 63,
+      "version": "ea65ab8717057440",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/omr-05-ohm-contrast.excalidraw",
           "line": 1,
-          "version": "5b4b77483433f80c"
+          "version": "ea65ab8717057440"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -9614,15 +9614,15 @@
       "path": "docs/diagrams/path-gun-1080x1350.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 12823,
-      "lines": null,
-      "version": "62b3f47d3c21049d",
-      "text": false,
+      "bytes": 12800,
+      "lines": 24,
+      "version": "ebdfe6bd869497b8",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/path-gun-1080x1350.excalidraw",
           "line": 1,
-          "version": "62b3f47d3c21049d"
+          "version": "ebdfe6bd869497b8"
         }
       ],
       "lastChangedAt": "2026-08-24T23:58:11-04:00",
@@ -9637,15 +9637,15 @@
       "path": "docs/diagrams/path-gun-1080x1920.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 12951,
-      "lines": null,
-      "version": "1b9f7245860ae2ec",
-      "text": false,
+      "bytes": 12928,
+      "lines": 24,
+      "version": "a081f37560de486e",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/path-gun-1080x1920.excalidraw",
           "line": 1,
-          "version": "1b9f7245860ae2ec"
+          "version": "a081f37560de486e"
         }
       ],
       "lastChangedAt": "2026-08-24T23:58:11-04:00",
@@ -9660,15 +9660,15 @@
       "path": "docs/diagrams/path-gun-1200x630.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 16009,
-      "lines": null,
-      "version": "b18f29fe00fe20cc",
-      "text": false,
+      "bytes": 15975,
+      "lines": 35,
+      "version": "43b9c3235cf69338",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/path-gun-1200x630.excalidraw",
           "line": 1,
-          "version": "b18f29fe00fe20cc"
+          "version": "43b9c3235cf69338"
         }
       ],
       "lastChangedAt": "2026-08-24T22:21:14-04:00",
@@ -9683,15 +9683,15 @@
       "path": "docs/diagrams/path-kitchen-1080x1350.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 12909,
-      "lines": null,
-      "version": "27e809a75b38f560",
-      "text": false,
+      "bytes": 12886,
+      "lines": 24,
+      "version": "59d0c5fe63d89cb4",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/path-kitchen-1080x1350.excalidraw",
           "line": 1,
-          "version": "27e809a75b38f560"
+          "version": "59d0c5fe63d89cb4"
         }
       ],
       "lastChangedAt": "2026-08-24T23:58:11-04:00",
@@ -9706,15 +9706,15 @@
       "path": "docs/diagrams/path-kitchen-1080x1920.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 13003,
-      "lines": null,
-      "version": "84e1b09f05692be9",
-      "text": false,
+      "bytes": 12980,
+      "lines": 24,
+      "version": "12fba848a1795546",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/path-kitchen-1080x1920.excalidraw",
           "line": 1,
-          "version": "84e1b09f05692be9"
+          "version": "12fba848a1795546"
         }
       ],
       "lastChangedAt": "2026-08-24T23:58:11-04:00",
@@ -9729,15 +9729,15 @@
       "path": "docs/diagrams/path-kitchen-1200x630.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 11094,
-      "lines": null,
-      "version": "7a6b1c06a123b922",
-      "text": false,
+      "bytes": 11061,
+      "lines": 34,
+      "version": "1b92f1af505fefe3",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/path-kitchen-1200x630.excalidraw",
           "line": 1,
-          "version": "7a6b1c06a123b922"
+          "version": "1b92f1af505fefe3"
         }
       ],
       "lastChangedAt": "2026-08-24T22:21:14-04:00",
@@ -9752,15 +9752,15 @@
       "path": "docs/diagrams/path-ledger-1080x1350.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 12878,
-      "lines": null,
-      "version": "0141101492fed7fe",
-      "text": false,
+      "bytes": 12855,
+      "lines": 24,
+      "version": "f060309cf89657db",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/path-ledger-1080x1350.excalidraw",
           "line": 1,
-          "version": "0141101492fed7fe"
+          "version": "f060309cf89657db"
         }
       ],
       "lastChangedAt": "2026-08-24T23:58:11-04:00",
@@ -9775,15 +9775,15 @@
       "path": "docs/diagrams/path-ledger-1080x1920.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 12995,
-      "lines": null,
-      "version": "c9ea008df2c1b47b",
-      "text": false,
+      "bytes": 12972,
+      "lines": 24,
+      "version": "86d369254d6858a8",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/path-ledger-1080x1920.excalidraw",
           "line": 1,
-          "version": "c9ea008df2c1b47b"
+          "version": "86d369254d6858a8"
         }
       ],
       "lastChangedAt": "2026-08-24T23:58:11-04:00",
@@ -9798,15 +9798,15 @@
       "path": "docs/diagrams/path-ledger-1200x630.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 11568,
-      "lines": null,
-      "version": "398bc25f28810b49",
-      "text": false,
+      "bytes": 11534,
+      "lines": 35,
+      "version": "575dbaa19520404d",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/path-ledger-1200x630.excalidraw",
           "line": 1,
-          "version": "398bc25f28810b49"
+          "version": "575dbaa19520404d"
         }
       ],
       "lastChangedAt": "2026-08-24T22:21:14-04:00",
@@ -9821,15 +9821,15 @@
       "path": "docs/diagrams/path-ring-1080x1350.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 12719,
-      "lines": null,
-      "version": "94bff1c42051267f",
-      "text": false,
+      "bytes": 12696,
+      "lines": 24,
+      "version": "b63e0588cc8b0365",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/path-ring-1080x1350.excalidraw",
           "line": 1,
-          "version": "94bff1c42051267f"
+          "version": "b63e0588cc8b0365"
         }
       ],
       "lastChangedAt": "2026-08-24T23:58:11-04:00",
@@ -9844,15 +9844,15 @@
       "path": "docs/diagrams/path-ring-1080x1920.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 12844,
-      "lines": null,
-      "version": "7e050e6b788060d4",
-      "text": false,
+      "bytes": 12821,
+      "lines": 24,
+      "version": "44207a305347d38b",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/path-ring-1080x1920.excalidraw",
           "line": 1,
-          "version": "7e050e6b788060d4"
+          "version": "44207a305347d38b"
         }
       ],
       "lastChangedAt": "2026-08-24T23:58:11-04:00",
@@ -9867,15 +9867,15 @@
       "path": "docs/diagrams/path-ring-1200x630.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 10227,
-      "lines": null,
-      "version": "e2efdda018050b7f",
-      "text": false,
+      "bytes": 10198,
+      "lines": 30,
+      "version": "f662fdfd1df4fe29",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/path-ring-1200x630.excalidraw",
           "line": 1,
-          "version": "e2efdda018050b7f"
+          "version": "f662fdfd1df4fe29"
         }
       ],
       "lastChangedAt": "2026-08-24T22:21:14-04:00",
@@ -9890,15 +9890,15 @@
       "path": "docs/diagrams/path-shadow-1080x1350.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 12745,
-      "lines": null,
-      "version": "e04428b0642ea72a",
-      "text": false,
+      "bytes": 12722,
+      "lines": 24,
+      "version": "9c2423ac5be40d47",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/path-shadow-1080x1350.excalidraw",
           "line": 1,
-          "version": "e04428b0642ea72a"
+          "version": "9c2423ac5be40d47"
         }
       ],
       "lastChangedAt": "2026-08-24T23:58:11-04:00",
@@ -9913,15 +9913,15 @@
       "path": "docs/diagrams/path-shadow-1080x1920.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 12870,
-      "lines": null,
-      "version": "fa364354b55a582f",
-      "text": false,
+      "bytes": 12847,
+      "lines": 24,
+      "version": "108758da07a745ce",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/path-shadow-1080x1920.excalidraw",
           "line": 1,
-          "version": "fa364354b55a582f"
+          "version": "108758da07a745ce"
         }
       ],
       "lastChangedAt": "2026-08-24T23:58:11-04:00",
@@ -9936,15 +9936,15 @@
       "path": "docs/diagrams/path-shadow-1200x630.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 9742,
-      "lines": null,
-      "version": "32b302acb32e510f",
-      "text": false,
+      "bytes": 9715,
+      "lines": 28,
+      "version": "62acd50aab1cfeda",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/path-shadow-1200x630.excalidraw",
           "line": 1,
-          "version": "32b302acb32e510f"
+          "version": "62acd50aab1cfeda"
         }
       ],
       "lastChangedAt": "2026-08-24T22:21:14-04:00",
@@ -9959,15 +9959,15 @@
       "path": "docs/diagrams/path-wheel-1080x1350.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 12780,
-      "lines": null,
-      "version": "cb1e777d6ce53b6a",
-      "text": false,
+      "bytes": 12757,
+      "lines": 24,
+      "version": "be51fd3b26bedd3a",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/path-wheel-1080x1350.excalidraw",
           "line": 1,
-          "version": "cb1e777d6ce53b6a"
+          "version": "be51fd3b26bedd3a"
         }
       ],
       "lastChangedAt": "2026-08-24T23:58:11-04:00",
@@ -9982,15 +9982,15 @@
       "path": "docs/diagrams/path-wheel-1080x1920.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 12867,
-      "lines": null,
-      "version": "65ba98d937eb0eea",
-      "text": false,
+      "bytes": 12844,
+      "lines": 24,
+      "version": "837cb90e9caae2a3",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/path-wheel-1080x1920.excalidraw",
           "line": 1,
-          "version": "65ba98d937eb0eea"
+          "version": "837cb90e9caae2a3"
         }
       ],
       "lastChangedAt": "2026-08-24T23:58:11-04:00",
@@ -10005,15 +10005,15 @@
       "path": "docs/diagrams/path-wheel-1200x630.excalidraw",
       "kind": "artifact",
       "extension": ".excalidraw",
-      "bytes": 10022,
-      "lines": null,
-      "version": "d16871d0e68e5971",
-      "text": false,
+      "bytes": 9994,
+      "lines": 29,
+      "version": "bdc5cfd413ca50cf",
+      "text": true,
       "provenance": [
         {
           "file": "docs/diagrams/path-wheel-1200x630.excalidraw",
           "line": 1,
-          "version": "d16871d0e68e5971"
+          "version": "bdc5cfd413ca50cf"
         }
       ],
       "lastChangedAt": "2026-08-24T22:21:14-04:00",
@@ -10925,15 +10925,15 @@
       "path": "omerta-contracts/.env.deploy.example",
       "kind": "contract-project",
       "extension": ".example",
-      "bytes": 2636,
-      "lines": null,
-      "version": "2a799269499dcff1",
-      "text": false,
+      "bytes": 2573,
+      "lines": 64,
+      "version": "6a75dd57e92f2f63",
+      "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/.env.deploy.example",
           "line": 1,
-          "version": "2a799269499dcff1"
+          "version": "6a75dd57e92f2f63"
         }
       ],
       "lastChangedAt": "2026-08-25T01:16:12-04:00",
@@ -10948,15 +10948,15 @@
       "path": "omerta-contracts/.env.mainnet.example",
       "kind": "contract-project",
       "extension": ".example",
-      "bytes": 2733,
-      "lines": null,
-      "version": "db378291b9ce4e1f",
-      "text": false,
+      "bytes": 2672,
+      "lines": 62,
+      "version": "f8caa036d55eb7ca",
+      "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/.env.mainnet.example",
           "line": 1,
-          "version": "db378291b9ce4e1f"
+          "version": "f8caa036d55eb7ca"
         }
       ],
       "lastChangedAt": "2026-08-25T01:16:12-04:00",
@@ -11178,15 +11178,15 @@
       "path": "omerta-contracts/inheritance-graph.dot",
       "kind": "contract-project",
       "extension": ".dot",
-      "bytes": 40900,
-      "lines": null,
-      "version": "e7033621de79194b",
-      "text": false,
+      "bytes": 40776,
+      "lines": 125,
+      "version": "d2a7f85fb680ba6f",
+      "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/inheritance-graph.dot",
           "line": 1,
-          "version": "e7033621de79194b"
+          "version": "d2a7f85fb680ba6f"
         }
       ],
       "lastChangedAt": "2026-08-25T00:19:21-04:00",
@@ -35230,20 +35230,20 @@
       "path": "tools/knowledge-test.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 3141,
-      "lines": 64,
-      "version": "3be1b5a798331650",
+      "bytes": 3534,
+      "lines": 69,
+      "version": "c542bff189e81f3f",
       "text": true,
       "provenance": [
         {
           "file": "tools/knowledge-test.js",
           "line": 1,
-          "version": "3be1b5a798331650"
+          "version": "c542bff189e81f3f"
         }
       ],
-      "lastChangedAt": "2026-08-25T01:42:15-04:00",
+      "lastChangedAt": "2026-08-25T01:57:43-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7c8f9243c90904f35cc97eb45aaccb36fc61f37e"
+      "lastChangedCommit": "9e8dfb73054cd7a68361e869d9e12a26bc588c46"
     },
     {
       "key": "Artifact:tools/knowledge.js",
@@ -35253,20 +35253,20 @@
       "path": "tools/knowledge.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 42206,
-      "lines": 664,
-      "version": "dea6f335668c3843",
+      "bytes": 42270,
+      "lines": 665,
+      "version": "b2f2274f51851962",
       "text": true,
       "provenance": [
         {
           "file": "tools/knowledge.js",
           "line": 1,
-          "version": "dea6f335668c3843"
+          "version": "b2f2274f51851962"
         }
       ],
-      "lastChangedAt": "2026-08-25T01:42:15-04:00",
+      "lastChangedAt": "2026-08-25T01:57:43-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7c8f9243c90904f35cc97eb45aaccb36fc61f37e"
+      "lastChangedCommit": "9e8dfb73054cd7a68361e869d9e12a26bc588c46"
     },
     {
       "key": "Artifact:tools/loadtest.js",
@@ -38103,6 +38103,22 @@
         {
           "commit": "25f2f2f97848bc0ae989f4dd97bfb3a920f2fe50",
           "url": "https://github.com/OmertaDev/Omerta/commit/25f2f2f97848bc0ae989f4dd97bfb3a920f2fe50"
+        }
+      ]
+    },
+    {
+      "key": "Commit:25f3c5ba9fedc5a79b57377d30829d39cfac3240",
+      "type": "Commit",
+      "id": "25f3c5ba9fedc5a79b57377d30829d39cfac3240",
+      "label": "docs: refresh portable knowledge snapshot",
+      "title": "docs: refresh portable knowledge snapshot",
+      "date": "2026-08-25T01:43:31-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/25f3c5ba9fedc5a79b57377d30829d39cfac3240",
+      "provenance": [
+        {
+          "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240",
+          "url": "https://github.com/OmertaDev/Omerta/commit/25f3c5ba9fedc5a79b57377d30829d39cfac3240"
         }
       ]
     },
@@ -45927,6 +45943,22 @@
         {
           "commit": "9e059b6d12dfec075b52e602e0278c74053bb715",
           "url": "https://github.com/OmertaDev/Omerta/commit/9e059b6d12dfec075b52e602e0278c74053bb715"
+        }
+      ]
+    },
+    {
+      "key": "Commit:9e8dfb73054cd7a68361e869d9e12a26bc588c46",
+      "type": "Commit",
+      "id": "9e8dfb73054cd7a68361e869d9e12a26bc588c46",
+      "label": "fix: normalize text asset inventory",
+      "title": "fix: normalize text asset inventory",
+      "date": "2026-08-25T01:57:43-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9e8dfb73054cd7a68361e869d9e12a26bc588c46",
+      "provenance": [
+        {
+          "commit": "9e8dfb73054cd7a68361e869d9e12a26bc588c46",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9e8dfb73054cd7a68361e869d9e12a26bc588c46"
         }
       ]
     },
@@ -59166,6 +59198,9 @@
       "path": "knowledge/generated/github-history.md",
       "provenance": [
         {
+          "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
+        },
+        {
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
         },
         {
@@ -59196,6 +59231,9 @@
       "path": "knowledge/generated/graph-summary.md",
       "provenance": [
         {
+          "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
+        },
+        {
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
         },
         {
@@ -59225,6 +59263,9 @@
       "label": "knowledge/generated/graph.json",
       "path": "knowledge/generated/graph.json",
       "provenance": [
+        {
+          "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
+        },
         {
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
         },
@@ -59273,6 +59314,9 @@
       "label": "knowledge/generated/inventory.md",
       "path": "knowledge/generated/inventory.md",
       "provenance": [
+        {
+          "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
+        },
         {
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
         },
@@ -65043,7 +65087,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "7c8f9243c90904f35cc97eb45aaccb36fc61f37e",
+      "revision": "9e8dfb73054cd7a68361e869d9e12a26bc588c46",
       "currentBranch": "(detached)",
       "defaultBranch": "main",
       "visibility": "public",
@@ -110828,6 +110872,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:25f3c5ba9fedc5a79b57377d30829d39cfac3240",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:25f3c5ba9fedc5a79b57377d30829d39cfac3240",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:25f3c5ba9fedc5a79b57377d30829d39cfac3240",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:25f3c5ba9fedc5a79b57377d30829d39cfac3240",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:265e164162d2d59a79635a084c60b743678f7ac6",
       "to": "Artifact:AUDIT-redteam-loop.md",
       "provenance": {
@@ -145056,6 +145132,22 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "commit": "9e059b6d12dfec075b52e602e0278c74053bb715"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e8dfb73054cd7a68361e869d9e12a26bc588c46",
+      "to": "Artifact:tools/knowledge-test.js",
+      "provenance": {
+        "commit": "9e8dfb73054cd7a68361e869d9e12a26bc588c46"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e8dfb73054cd7a68361e869d9e12a26bc588c46",
+      "to": "Artifact:tools/knowledge.js",
+      "provenance": {
+        "commit": "9e8dfb73054cd7a68361e869d9e12a26bc588c46"
       }
     },
     {
@@ -200863,6 +200955,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:25f3c5ba9fedc5a79b57377d30829d39cfac3240",
+      "provenance": {
+        "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:265e164162d2d59a79635a084c60b743678f7ac6",
       "provenance": {
         "commit": "265e164162d2d59a79635a084c60b743678f7ac6"
@@ -204770,6 +204870,14 @@
       "to": "Commit:9e059b6d12dfec075b52e602e0278c74053bb715",
       "provenance": {
         "commit": "9e059b6d12dfec075b52e602e0278c74053bb715"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:9e8dfb73054cd7a68361e869d9e12a26bc588c46",
+      "provenance": {
+        "commit": "9e8dfb73054cd7a68361e869d9e12a26bc588c46"
       }
     },
     {
