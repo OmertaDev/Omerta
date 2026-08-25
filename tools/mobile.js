@@ -630,7 +630,85 @@ for (const vp of VIEWPORTS) {
   await browser.close();
 }
 
-// ── I — A COLD LOAD IN LOCKUP LANDS IN THE PEN ──────────────────────────────────────────────────
+// ── J — DEEP CITY'S REAL HOME → DOM → TAB PATH ─────────────────────────────────────────────────
+// The focused client suite drives the production markup and binding functions directly. This one
+// protects the integration around them: renderStart must interpolate the markup, bind the button
+// that actually reached the DOM, and let that click drive the real tab system. A complete real Home
+// response is retained and only the two server-authoritative boards needed for this state are
+// replaced, so neighboring render code and its side effects remain real.
+{
+  const browser = await chromium.launch({ executablePath: exe });
+  const ctx = await browser.newContext({ viewport: { width: 375, height: 667 }, isMobile: true, hasTouch: true, locale: 'en-US' });
+  const page = await ctx.newPage();
+  const vp = { w: 375, h: 667 };
+  const errs = [];
+  page.on('pageerror', (e) => errs.push(String(e).split('\n')[0]));
+  await page.route('**/v1/home', async (route) => {
+    const response = await route.fetch();
+    const home = await response.json();
+    const tasks = (home.onboard?.tasks || []).map((task) => ({ ...task, claimed: true, ready: false }));
+    home.onboard = { ...(home.onboard || {}), tasks, claimed: tasks.length, total: tasks.length, allDone: true };
+    home.explore = {
+      catalog: { scope: 'engagement_systems', version: 1, count: 40 },
+      progress: { visited: 7, eligible: 3, remaining: 33 },
+      next: {
+        systemId: 'business-empire', system: 'business empire', name: 'The Empire', tab: 'empire',
+        hook: 'Buy a racket — passive income that pays while you sleep.', at: 3, mode: 'solo',
+        reason: 'earliest_overdue_unlock', evidence: { visited: false, source: null },
+      },
+      blocked: { level: 28, resource: 2, status: 0, social: 0, policy: 0 },
+    };
+    await route.fulfill({ response, json: home });
+  });
+  await page.goto(BASE, { waitUntil: 'domcontentloaded' });
+  await page.click('#btn-guest');
+  await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });
+  await page.fill('#new-name', 'Deep City Probe');
+  await page.click('#btn-create');
+  await page.waitForSelector('#screen-main:not(.hidden)', { timeout: 20000 });
+  await page.evaluate(() => {
+    localStorage.setItem('omerta_tour2', '1');
+    localStorage.setItem('omerta_welcomed', '1');
+    localStorage.setItem('omerta_alltabs', '1');
+  });
+  errs.length = 0;
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('#screen-main:not(.hidden)', { timeout: 20000 });
+  await page.click('#bnav [data-go="start"]');
+  await page.waitForTimeout(700);
+  const rendered = await page.evaluate(() => {
+    const region = document.querySelector('#tab-start section[aria-labelledby="new-territory-title"]');
+    const buttons = [...document.querySelectorAll('#tab-start [data-explore-next]')];
+    const labelledBy = region?.getAttribute('aria-labelledby') || '';
+    const heading = labelledBy ? document.getElementById(labelledBy) : null;
+    return {
+      regions: document.querySelectorAll('#tab-start section[aria-labelledby="new-territory-title"]').length,
+      buttons: buttons.length,
+      heading: heading?.textContent?.trim() || '',
+      buttonLabel: buttons[0]?.textContent?.trim() || '',
+      progress: region?.textContent?.includes('7 of 40 systems worked') || false,
+    };
+  });
+  if (rendered.regions !== 1 || rendered.buttons !== 1 || rendered.heading !== 'New territory'
+    || !rendered.buttonLabel || !rendered.progress) {
+    fail('(deep city)', vp, `completed onboarding did not render exactly one labelled recommendation action: ${JSON.stringify(rendered)}`);
+  } else {
+    await page.click('#tab-start [data-explore-next]');
+    await page.waitForTimeout(300);
+    const destination = await page.evaluate(() => ({
+      panel: document.querySelector('#tab-empire')?.classList.contains('on') || false,
+      tab: document.querySelector('#tabs button.on')?.dataset.tab || null,
+    }));
+    if (!destination.panel || destination.tab !== 'empire')
+      fail('(deep city)', vp, `the rendered recommendation did not navigate to its exact tab: ${JSON.stringify(destination)}`);
+  }
+  if (errs.length) fail('(deep city)', vp, `${errs.length} page error(s): ${errs.slice(0, 3).join(' | ')}`);
+  screensChecked++;
+  console.log(`   deep-city integration check done, ${failures.length} failure(s)`);
+  await browser.close();
+}
+
+// ── K — A COLD LOAD IN LOCKUP LANDS IN THE PEN ──────────────────────────────────────────────────
 // "Going to jail takes you to jail" is a founder-asked feature, and its own comment claimed to cover
 // "a page that LOADS jailed". It did not, and three things had to be true at once for it to fail:
 // renderSheet() runs BEFORE buildTabs(), so the latch's setTab('pen') fired when #tab-pen did not

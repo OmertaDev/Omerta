@@ -135,9 +135,13 @@ const html = decomment(readFileSync(new URL('../public/index.html', import.meta.
   assert.match(complete, /all 40 systems are worked/i, 'only zero remaining systems produces the all-worked state');
   assert(!/no new territory is actionable now/i.test(complete),
     'the all-worked state is distinct from temporary ineligibility');
-  const malformed = markup({ catalog: { count: 40 }, progress: { visited: 40, remaining: -1 }, next: null });
-  assert(!/all 40 systems are worked/i.test(malformed),
-    'even malformed progress cannot enter the all-worked branch unless remaining is exactly zero');
+  for (const remaining of [null, false, '', '0', -1]) {
+    const malformed = markup({ catalog: { count: 40 }, progress: { visited: 40, remaining }, next: null });
+    assert(!/all 40 systems are worked/i.test(malformed),
+      `malformed remaining=${JSON.stringify(remaining)} cannot enter the exact numeric-zero completion branch`);
+    assert.match(malformed, /no new territory is actionable now/i,
+      `malformed remaining=${JSON.stringify(remaining)} stays in the honest non-complete state`);
+  }
 
   const navigated = [];
   const button = {};

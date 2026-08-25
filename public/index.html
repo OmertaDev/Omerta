@@ -6953,7 +6953,7 @@
     const progress = explore.progress;
     const total = Math.max(0, Math.floor(Number(explore.catalog.count) || 0));
     const visited = Math.max(0, Math.min(total, Math.floor(Number(progress.visited) || 0)));
-    const remaining = Number(progress.remaining);
+    const remaining = progress.remaining;
     const progressLine = `<div class="d" style="color:var(--dim);font-size:12.5px">${visited} of ${total} systems worked</div>`;
     if (explore.next) return `<section class="card" aria-labelledby="new-territory-title" style="margin-top:14px;border-color:var(--gold)">
       <h2 id="new-territory-title" style="margin-top:0">New territory</h2>
@@ -6961,7 +6961,7 @@
       <div class="d">${esc(explore.next.hook)}</div>
       <div class="row" style="margin-top:6px"><button type="button" class="act" data-explore-next>take a look →</button></div>
     </section>`;
-    const message = Number.isFinite(remaining) && remaining === 0
+    const message = typeof remaining === 'number' && Number.isFinite(remaining) && remaining === 0
       ? `All ${total} systems are worked.`
       : 'No new territory is actionable now. The city will surface one when your situation changes.';
     return `<section class="card" aria-labelledby="new-territory-title" style="margin-top:14px">
