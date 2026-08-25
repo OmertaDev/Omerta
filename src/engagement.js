@@ -164,7 +164,8 @@ export async function opsEngagement(pool, days = 14) {
   const emptyPathCounts = () => Object.fromEntries(PATH_IDS.map((id) => [id, 0]));
   const pathQuiz = {
     startSessions: new Set(), completeSessions: new Set(), resultSessions: new Set(),
-    playSessions: new Set(), answerEvents: 0, playClicks: 0, codexClicks: 0, shares: 0,
+    playSessions: new Set(), answerEvents: 0, playClicks: 0, codexClicks: 0,
+    portraitDownloads: 0, verticalDownloads: 0, shares: 0,
     completionPaths: emptyPathCounts(), viewedPaths: emptyPathCounts(),
   };
 
@@ -185,6 +186,8 @@ export async function opsEngagement(pool, days = 14) {
     } else if (session && r.event === 'path_cta_click') {
       if (props.cta === 'play') { pathQuiz.playClicks++; pathQuiz.playSessions.add(session); }
       else if (props.cta === 'codex') pathQuiz.codexClicks++;
+      else if (props.cta === 'download_portrait') pathQuiz.portraitDownloads++;
+      else if (props.cta === 'download_vertical') pathQuiz.verticalDownloads++;
     } else if (session && r.event === 'path_share') pathQuiz.shares++;
 
     const h = human.get(r.account_id);
@@ -266,6 +269,8 @@ export async function opsEngagement(pool, days = 14) {
         resultViews: pathQuiz.resultSessions.size,
         playClicks: pathQuiz.playClicks,
         codexClicks: pathQuiz.codexClicks,
+        portraitDownloads: pathQuiz.portraitDownloads,
+        verticalDownloads: pathQuiz.verticalDownloads,
         shares: pathQuiz.shares,
         startToCompletePct: pct(overlap(pathQuiz.completeSessions, pathQuiz.startSessions), pathQuiz.startSessions.size),
         resultToPlayPct: pct(overlap(pathQuiz.playSessions, pathQuiz.resultSessions), pathQuiz.resultSessions.size),

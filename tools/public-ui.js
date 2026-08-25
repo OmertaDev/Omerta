@@ -91,6 +91,11 @@ try {
       const probe = new Image(); probe.onload = () => resolve([probe.naturalWidth, probe.naturalHeight]);
       probe.onerror = () => resolve([0, 0]); probe.src = localImage;
     });
+    const downloads = [...document.querySelectorAll('.social-download')];
+    const socialNatural = await Promise.all(downloads.map((link) => new Promise((resolve) => {
+      const probe = new Image(); probe.onload = () => resolve([probe.naturalWidth, probe.naturalHeight]);
+      probe.onerror = () => resolve([0, 0]); probe.src = link.href;
+    })));
     return {
       path: document.body.dataset.path,
       effects: document.querySelectorAll('.effect-card').length,
@@ -98,6 +103,8 @@ try {
       play: document.querySelector('[data-path-cta="play"]')?.getAttribute('href'),
       codex: document.querySelector('[data-path-cta="codex"]')?.getAttribute('href'),
       natural,
+      social: downloads.map((link) => ({ href: link.getAttribute('href'), download: link.getAttribute('download') })),
+      socialNatural,
       over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
     };
   });
@@ -107,6 +114,14 @@ try {
     `Path result CTAs do not close the guest-play/Codex loop — ${JSON.stringify(resultShape)}`);
   check(resultShape.natural[0] === 1200 && resultShape.natural[1] === 630,
     `Path Open Graph card is missing or not 1200×630 — ${JSON.stringify(resultShape.natural)}`);
+  check(resultShape.social.length === 2
+    && /path-gun-1080x1350\.png\?v=[a-f0-9]{12}$/.test(resultShape.social[0].href)
+    && /path-gun-1080x1920\.png\?v=[a-f0-9]{12}$/.test(resultShape.social[1].href)
+    && resultShape.social[0].download === 'omerta-path-gun-portrait.png'
+    && resultShape.social[1].download === 'omerta-path-gun-story.png',
+  `Path result social-kit links are incomplete — ${JSON.stringify(resultShape.social)}`);
+  check(JSON.stringify(resultShape.socialNatural) === JSON.stringify([[1080, 1350], [1080, 1920]]),
+    `Path social-kit image dimensions drifted — ${JSON.stringify(resultShape.socialNatural)}`);
   check(resultShape.over <= 1, `desktop Path result scrolls sideways by ${resultShape.over}px`);
   await desktop.close();
 
@@ -166,9 +181,14 @@ try {
     title: document.querySelector('#result-title')?.textContent.replace(/\s+/g, ' ').trim(),
     secondary: document.querySelector('[data-secondary]')?.dataset.visible,
     buttons: [...document.querySelectorAll('.path-actions .path-button')].every((button) => button.getBoundingClientRect().height >= 44),
+    socialDownloads: [...document.querySelectorAll('.social-download')].map((button) => ({
+      width: button.getBoundingClientRect().width, height: button.getBoundingClientRect().height,
+    })),
     over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
   }));
-  check(/shadow/i.test(mobileResult.title || '') && mobileResult.secondary === 'true' && mobileResult.buttons,
+  check(/shadow/i.test(mobileResult.title || '') && mobileResult.secondary === 'true' && mobileResult.buttons
+    && mobileResult.socialDownloads.length === 2
+    && mobileResult.socialDownloads.every((button) => button.width >= 44 && button.height >= 44),
     `320px result loses its identity, secondary read, or touch targets — ${JSON.stringify(mobileResult)}`);
   check(mobileResult.over <= 1, `320px Path result scrolls sideways by ${mobileResult.over}px`);
 

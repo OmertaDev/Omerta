@@ -52,6 +52,12 @@ for (const path of PATH_MANIFEST) {
   assert.equal(path.links.play, '/#enter-city', `${path.id} links to the guest-play CTA`);
   assert.match(path.shareCard, new RegExp(`^/art/path-${path.id}-1200x630\\.png\\?v=[a-f0-9]{12}$`),
     `${path.id} has a content-versioned OG-card contract`);
+  assert.match(path.socialCards.portrait,
+    new RegExp(`^/art/path-${path.id}-1080x1350\\.png\\?v=[a-f0-9]{12}$`),
+    `${path.id} has a content-versioned portrait-card contract`);
+  assert.match(path.socialCards.vertical,
+    new RegExp(`^/art/path-${path.id}-1080x1920\\.png\\?v=[a-f0-9]{12}$`),
+    `${path.id} has a content-versioned vertical-card contract`);
 }
 
 assert.equal(PATH_QUIZ_QUESTIONS.length, 7, 'the quiz is a focused seven decisions, not an endless personality test');
@@ -132,6 +138,12 @@ for (const path of PATH_MANIFEST) {
   assert(html.includes('href="/#enter-city"'), `${path.id} reaches the one-tap guest CTA`);
   assert(html.includes('href="/wiki#paths"'), `${path.id} reaches the complete Codex rules`);
   assert(html.includes('data-share-result'), `${path.id} has a first-class share action`);
+  assert(html.includes(`href="${path.socialCards.portrait}"`), `${path.id} exposes its portrait field card`);
+  assert(html.includes(`href="${path.socialCards.vertical}"`), `${path.id} exposes its vertical field card`);
+  assert(html.includes(`download="omerta-path-${path.id}-portrait.png"`), `${path.id} names its portrait download`);
+  assert(html.includes(`download="omerta-path-${path.id}-story.png"`), `${path.id} names its story download`);
+  assert(html.includes('width="1080" height="1350" loading="lazy"'), `${path.id} reserves portrait layout space`);
+  assert(html.includes('width="1080" height="1920" loading="lazy"'), `${path.id} reserves story layout space`);
   for (const effect of path.effects) {
     assert(html.includes(effect.label), `${path.id} result states ${effect.key}`);
     assert(html.includes(effect.display), `${path.id} result states the exact display value for ${effect.key}`);
@@ -186,6 +198,8 @@ try {
     { event: 'answer', question: 'instinct', option: 'force_the_opening', step: 1 },
     { event: 'result_view', path: 'gun', secondary: 'ring', source: 'result' },
     { event: 'cta_click', path: 'gun', cta: 'play', source: 'result' },
+    { event: 'cta_click', path: 'gun', cta: 'download_portrait', source: 'result' },
+    { event: 'cta_click', path: 'gun', cta: 'download_vertical', source: 'result' },
     { event: 'share', path: 'gun', channel: 'clipboard', source: 'result' },
   ]) {
     const response = await server.inject({
@@ -196,7 +210,7 @@ try {
   const telemetry = (await server.pool.query(
     "SELECT account_id, event, props FROM telemetry WHERE event LIKE 'path_%' ORDER BY at",
   )).rows;
-  assert.equal(telemetry.length, 6, 'the complete funnel has one anonymous row per explicit event');
+  assert.equal(telemetry.length, 8, 'the complete funnel has one anonymous row per explicit event');
   for (const row of telemetry) {
     const props = JSON.parse(row.props);
     assert.equal(row.account_id, null, `${row.event} does not invent or infer an account`);
@@ -223,6 +237,13 @@ try {
   });
   assert.equal(inventedEvent.statusCode, 400, 'the telemetry endpoint is an event allowlist, not a generic write surface');
   assert.equal(inventedEvent.json().error, 'quiz_event', 'unknown events have a stable error code');
+
+  const inventedCta = await server.inject({
+    method: 'POST', url: '/v1/path-quiz',
+    payload: { event: 'cta_click', session: 'path-test-session', path: 'gun', cta: 'download_wallet' },
+  });
+  assert.equal(inventedCta.statusCode, 400, 'download telemetry remains a bounded CTA allowlist');
+  assert.equal(inventedCta.json().error, 'quiz_cta', 'unknown CTA values have a stable error code');
 } finally {
   await server.close();
 }
