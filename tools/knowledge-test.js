@@ -28,6 +28,11 @@ for (const artifact of graph.nodes.filter((n) => n.type === 'Artifact')) {
       `${artifact.key} byte count must not vary with checkout line endings`);
   }
 }
+for (const extension of ['.dot', '.example', '.excalidraw', '.geojson', '.ts', '.tsx']) {
+  const artifacts = graph.nodes.filter((n) => n.type === 'Artifact' && n.extension === extension);
+  assert(artifacts.length > 0, `text fixture extension disappeared: ${extension}`);
+  assert(artifacts.every((artifact) => artifact.text), `${extension} artifacts must use normalized text accounting`);
+}
 for (const edge of graph.edges) {
   assert(keys.has(edge.from), `dangling edge source ${edge.from}`);
   assert(keys.has(edge.to), `dangling edge target ${edge.to}`);

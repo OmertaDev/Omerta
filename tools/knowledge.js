@@ -42,8 +42,9 @@ const IGNORE_PREFIXES = [
   'omerta-contracts/cache/',
 ];
 const TEXT_EXT = new Set([
-  '', '.cjs', '.css', '.env', '.html', '.js', '.json', '.jsx', '.md', '.mjs', '.sh',
-  '.sol', '.sql', '.svg', '.toml', '.txt', '.yaml', '.yml',
+  '', '.cjs', '.css', '.dot', '.env', '.example', '.excalidraw', '.geojson', '.html',
+  '.js', '.json', '.jsx', '.md', '.mjs', '.sh', '.sol', '.sql', '.svg', '.toml', '.ts',
+  '.tsx', '.txt', '.yaml', '.yml',
 ]);
 
 const posix = (p) => p.replaceAll('\\', '/').replace(/^\.\//, '');
