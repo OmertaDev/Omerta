@@ -186,24 +186,25 @@ async function canonicalTarget(path, { rejectLink = false } = {}) {
   await mkdir(dirname(lexical), { recursive: true });
   const physicalParent = await realpath(dirname(lexical));
   const candidate = join(physicalParent, basename(lexical));
+  let info;
   try {
-    const info = await lstat(candidate);
-    if (info.nlink > 1) {
-      throw new Error('Agent Alpha target has ambiguous hard-link identity');
-    }
-    if (info.isSymbolicLink()) {
-      if (rejectLink) throw new Error('Agent Alpha lock target cannot be a link');
-      const physical = await realpath(candidate);
-      if ((await stat(physical)).nlink > 1) {
-        throw new Error('Agent Alpha target has ambiguous hard-link identity');
-      }
-      return physical;
-    }
-    return await realpath(candidate);
+    info = await lstat(candidate);
   } catch (error) {
     if (error?.code === 'ENOENT') return candidate;
     throw error;
   }
+  if (info.nlink > 1) {
+    throw new Error('Agent Alpha target has ambiguous hard-link identity');
+  }
+  if (info.isSymbolicLink()) {
+    if (rejectLink) throw new Error('Agent Alpha lock target cannot be a link');
+    const physical = await realpath(candidate);
+    if ((await stat(physical)).nlink > 1) {
+      throw new Error('Agent Alpha target has ambiguous hard-link identity');
+    }
+    return physical;
+  }
+  return realpath(candidate);
 }
 
 async function canonicalRunnerPaths(sessionFile, reportFile) {

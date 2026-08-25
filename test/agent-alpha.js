@@ -1286,6 +1286,92 @@ async function physicalAliasLockTest() {
   }
 }
 
+async function danglingSessionAliasCreateTest() {
+  const dir = await mkdtemp(join(tmpdir(), 'omerta-agent-alpha-dangling-session-'));
+  const sessionFile = join(dir, 'future-session.json');
+  const aliasSessionFile = join(dir, 'dangling-session.json');
+  await symlink(sessionFile, aliasSessionFile, 'file');
+  let targetCalls = 0;
+  let aliasCalls = 0;
+  let targetEntered;
+  const targetAtGuest = new Promise((resolveEntered) => { targetEntered = resolveEntered; });
+  let releaseTarget;
+  const targetGate = new Promise((resolveGate) => { releaseTarget = resolveGate; });
+  const targetFetch = async () => {
+    targetCalls += 1;
+    targetEntered();
+    await targetGate;
+    throw new Error('stop-after-target-guest');
+  };
+  const aliasFetch = async () => {
+    aliasCalls += 1;
+    throw new Error('dangling alias reached network');
+  };
+
+  let targetRun;
+  try {
+    targetRun = runAgentAlpha({
+      baseUrl: 'http://127.0.0.1:1',
+      sessionFile,
+      reportFile: join(dir, 'target-report.jsonl'),
+      create: true,
+      name: 'Target Alpha',
+      fetchImpl: targetFetch,
+    });
+    await targetAtGuest;
+    await assert.rejects(
+      runAgentAlpha({
+        baseUrl: 'http://127.0.0.1:1',
+        sessionFile: aliasSessionFile,
+        reportFile: join(dir, 'alias-report.jsonl'),
+        create: true,
+        name: 'Alias Alpha',
+        fetchImpl: aliasFetch,
+      }),
+      /link|ENOENT|physical target/i,
+      'a dangling session alias fails closed instead of creating a second identity',
+    );
+    assert.equal(aliasCalls, 0,
+      'the rejected dangling-alias invocation performs zero network work');
+    assert.equal(targetCalls, 1,
+      'only the explicitly targeted physical session reaches guest creation');
+  } finally {
+    releaseTarget();
+    await targetRun?.catch(() => {});
+    await rm(dir, { recursive: true, force: true });
+  }
+}
+
+async function danglingReportToFutureLockTest() {
+  const dir = await mkdtemp(join(tmpdir(), 'omerta-agent-alpha-dangling-report-'));
+  const sessionFile = join(dir, 'session.json');
+  const reportFile = join(dir, 'report.jsonl');
+  const lockFile = `${sessionFile}.lock`;
+  const baseUrl = 'http://127.0.0.1:1';
+  await writeFile(sessionFile, JSON.stringify(sessionFor(baseUrl)), 'utf8');
+  await symlink(lockFile, reportFile, 'file');
+  let networkCalls = 0;
+  try {
+    await assert.rejects(
+      runAgentAlpha({
+        baseUrl,
+        sessionFile,
+        reportFile,
+        fetchImpl: async () => {
+          networkCalls += 1;
+          throw new Error('dangling report reached network');
+        },
+      }),
+      /link|ENOENT|physical target/i,
+      'a dangling report alias to the future lock target fails closed',
+    );
+    assert.equal(networkCalls, 0,
+      'dangling report/lock alias rejection happens before any network work');
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+}
+
 async function distinctPhysicalTargetsTest() {
   const app = Fastify({ logger: false });
   let sessionCalls = 0;
@@ -1429,6 +1515,8 @@ await cliContractTest();
 await redirectOriginTest();
 await hardCrashReplayTest();
 await physicalAliasLockTest();
+await danglingReportToFutureLockTest();
+await danglingSessionAliasCreateTest();
 await distinctPhysicalTargetsTest();
 await unrelatedLegacyPortTest();
 await realElapsedCadenceTest();
