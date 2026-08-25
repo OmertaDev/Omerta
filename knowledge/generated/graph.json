@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "9e8dfb73054cd7a68361e869d9e12a26bc588c46",
+  "sourceRevision": "60db725d1792bca62e3cfd8e28b4022784b8b664",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 4447,
-    "edges": 20927,
+    "nodes": 4449,
+    "edges": 20935,
     "byNodeType": {
       "Artifact": 1556,
       "Command": 32,
-      "Commit": 934,
+      "Commit": 936,
       "Contract": 28,
       "Document": 401,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1813,
-      "CHANGED": 8049,
+      "CHANGED": 8055,
       "CONTAINS": 1576,
       "DECLARES": 32,
       "DEFINED_IN": 986,
       "DEPENDS_ON": 59,
       "EXECUTES": 148,
       "HANDLED_BY": 653,
-      "HAS_COMMIT": 934,
+      "HAS_COMMIT": 936,
       "IMPLEMENTS": 124,
       "IMPORTS": 1440,
       "INHERITS": 4,
@@ -11339,15 +11339,15 @@
       "path": "omerta-contracts/script/Deploy-Mainnet.Utilities.ps1",
       "kind": "contract-project",
       "extension": ".ps1",
-      "bytes": 3931,
-      "lines": null,
-      "version": "e8082805601b1067",
-      "text": false,
+      "bytes": 3843,
+      "lines": 89,
+      "version": "49133ee22bf696bb",
+      "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/script/Deploy-Mainnet.Utilities.ps1",
           "line": 1,
-          "version": "e8082805601b1067"
+          "version": "49133ee22bf696bb"
         }
       ],
       "lastChangedAt": "2026-08-25T00:11:25-04:00",
@@ -11362,15 +11362,15 @@
       "path": "omerta-contracts/script/Deploy-MainnetCore.ps1",
       "kind": "contract-project",
       "extension": ".ps1",
-      "bytes": 18913,
-      "lines": null,
-      "version": "ac6fb028825a4f79",
-      "text": false,
+      "bytes": 18566,
+      "lines": 348,
+      "version": "b37aad8ccf5374b0",
+      "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/script/Deploy-MainnetCore.ps1",
           "line": 1,
-          "version": "ac6fb028825a4f79"
+          "version": "b37aad8ccf5374b0"
         }
       ],
       "lastChangedAt": "2026-08-25T00:11:25-04:00",
@@ -11385,15 +11385,15 @@
       "path": "omerta-contracts/script/Deploy-MainnetSafe.ps1",
       "kind": "contract-project",
       "extension": ".ps1",
-      "bytes": 9235,
-      "lines": null,
-      "version": "06a7528f16cca17a",
-      "text": false,
+      "bytes": 9043,
+      "lines": 193,
+      "version": "593a863551039772",
+      "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/script/Deploy-MainnetSafe.ps1",
           "line": 1,
-          "version": "06a7528f16cca17a"
+          "version": "593a863551039772"
         }
       ],
       "lastChangedAt": "2026-08-25T00:11:25-04:00",
@@ -11408,15 +11408,15 @@
       "path": "omerta-contracts/script/Deploy-TestnetBank.ps1",
       "kind": "contract-project",
       "extension": ".ps1",
-      "bytes": 16074,
-      "lines": null,
-      "version": "98d866930dd31901",
-      "text": false,
+      "bytes": 15783,
+      "lines": 292,
+      "version": "c5a5c1da2a39ec9d",
+      "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/script/Deploy-TestnetBank.ps1",
           "line": 1,
-          "version": "98d866930dd31901"
+          "version": "c5a5c1da2a39ec9d"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -11431,15 +11431,15 @@
       "path": "omerta-contracts/script/Deploy-TestnetCore.ps1",
       "kind": "contract-project",
       "extension": ".ps1",
-      "bytes": 16704,
-      "lines": null,
-      "version": "ab72aebf0261f6fd",
-      "text": false,
+      "bytes": 16360,
+      "lines": 345,
+      "version": "b1de24e13360d882",
+      "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/script/Deploy-TestnetCore.ps1",
           "line": 1,
-          "version": "ab72aebf0261f6fd"
+          "version": "b1de24e13360d882"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -11454,15 +11454,15 @@
       "path": "omerta-contracts/script/Deploy-TestnetCore.Utilities.ps1",
       "kind": "contract-project",
       "extension": ".ps1",
-      "bytes": 269,
-      "lines": null,
-      "version": "9792f062085a8f65",
-      "text": false,
+      "bytes": 262,
+      "lines": 8,
+      "version": "69a8b60e2ae8d19f",
+      "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/script/Deploy-TestnetCore.Utilities.ps1",
           "line": 1,
-          "version": "9792f062085a8f65"
+          "version": "69a8b60e2ae8d19f"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -11477,15 +11477,15 @@
       "path": "omerta-contracts/script/Deploy-TestnetHook.ps1",
       "kind": "contract-project",
       "extension": ".ps1",
-      "bytes": 17106,
-      "lines": null,
-      "version": "b0a46fc3901de9b3",
-      "text": false,
+      "bytes": 16770,
+      "lines": 337,
+      "version": "b8501d0f6efeeb7d",
+      "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/script/Deploy-TestnetHook.ps1",
           "line": 1,
-          "version": "b0a46fc3901de9b3"
+          "version": "b8501d0f6efeeb7d"
         }
       ],
       "lastChangedAt": "2026-08-25T00:11:25-04:00",
@@ -11500,15 +11500,15 @@
       "path": "omerta-contracts/script/Deploy-TestnetHook.Utilities.ps1",
       "kind": "contract-project",
       "extension": ".ps1",
-      "bytes": 763,
-      "lines": null,
-      "version": "8cc2aed498ade021",
-      "text": false,
+      "bytes": 732,
+      "lines": 32,
+      "version": "942b8c5c10c85f16",
+      "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/script/Deploy-TestnetHook.Utilities.ps1",
           "line": 1,
-          "version": "8cc2aed498ade021"
+          "version": "942b8c5c10c85f16"
         }
       ],
       "lastChangedAt": "2026-08-25T00:11:25-04:00",
@@ -11523,15 +11523,15 @@
       "path": "omerta-contracts/script/Deploy-TestnetSafe.ps1",
       "kind": "contract-project",
       "extension": ".ps1",
-      "bytes": 6263,
-      "lines": null,
-      "version": "14729381824b4571",
-      "text": false,
+      "bytes": 6132,
+      "lines": 132,
+      "version": "d04d2e6f2961a335",
+      "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/script/Deploy-TestnetSafe.ps1",
           "line": 1,
-          "version": "14729381824b4571"
+          "version": "d04d2e6f2961a335"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -11546,15 +11546,15 @@
       "path": "omerta-contracts/script/Deploy-TestnetTwap.ps1",
       "kind": "contract-project",
       "extension": ".ps1",
-      "bytes": 20093,
-      "lines": null,
-      "version": "ccb5eee59ea8b4a2",
-      "text": false,
+      "bytes": 19719,
+      "lines": 375,
+      "version": "83a1970ef7bba476",
+      "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/script/Deploy-TestnetTwap.ps1",
           "line": 1,
-          "version": "ccb5eee59ea8b4a2"
+          "version": "83a1970ef7bba476"
         }
       ],
       "lastChangedAt": "2026-08-25T01:16:12-04:00",
@@ -11753,15 +11753,15 @@
       "path": "omerta-contracts/script/New-TestnetWallets.ps1",
       "kind": "contract-project",
       "extension": ".ps1",
-      "bytes": 3257,
-      "lines": null,
-      "version": "d41dd44508a30d0f",
-      "text": false,
+      "bytes": 3174,
+      "lines": 84,
+      "version": "5d0d2afc6bc86d8c",
+      "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/script/New-TestnetWallets.ps1",
           "line": 1,
-          "version": "d41dd44508a30d0f"
+          "version": "5d0d2afc6bc86d8c"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -11776,15 +11776,15 @@
       "path": "omerta-contracts/script/Show-TestnetAddresses.ps1",
       "kind": "contract-project",
       "extension": ".ps1",
-      "bytes": 1779,
-      "lines": null,
-      "version": "861c6078dab42e1d",
-      "text": false,
+      "bytes": 1728,
+      "lines": 52,
+      "version": "dc9525270ed05b09",
+      "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/script/Show-TestnetAddresses.ps1",
           "line": 1,
-          "version": "861c6078dab42e1d"
+          "version": "dc9525270ed05b09"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -11845,15 +11845,15 @@
       "path": "omerta-contracts/script/tests/Deploy-Mainnet.Tests.ps1",
       "kind": "contract-project",
       "extension": ".ps1",
-      "bytes": 2164,
-      "lines": null,
-      "version": "ac0552d65764644d",
-      "text": false,
+      "bytes": 2122,
+      "lines": 43,
+      "version": "af5f49df2e10c432",
+      "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/script/tests/Deploy-Mainnet.Tests.ps1",
           "line": 1,
-          "version": "ac0552d65764644d"
+          "version": "af5f49df2e10c432"
         }
       ],
       "lastChangedAt": "2026-08-25T00:11:25-04:00",
@@ -11868,15 +11868,15 @@
       "path": "omerta-contracts/script/tests/Deploy-Mainnet.Utilities.Tests.ps1",
       "kind": "contract-project",
       "extension": ".ps1",
-      "bytes": 1654,
-      "lines": null,
-      "version": "2d3f453ed6a60c0a",
-      "text": false,
+      "bytes": 1609,
+      "lines": 46,
+      "version": "0e6313044ab5b2cf",
+      "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/script/tests/Deploy-Mainnet.Utilities.Tests.ps1",
           "line": 1,
-          "version": "2d3f453ed6a60c0a"
+          "version": "0e6313044ab5b2cf"
         }
       ],
       "lastChangedAt": "2026-08-25T00:11:25-04:00",
@@ -11891,15 +11891,15 @@
       "path": "omerta-contracts/script/tests/Deploy-TestnetCore.Utilities.Tests.ps1",
       "kind": "contract-project",
       "extension": ".ps1",
-      "bytes": 1070,
-      "lines": null,
-      "version": "db1c19e72ecccdf8",
-      "text": false,
+      "bytes": 1036,
+      "lines": 35,
+      "version": "0774f865ae162a80",
+      "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/script/tests/Deploy-TestnetCore.Utilities.Tests.ps1",
           "line": 1,
-          "version": "db1c19e72ecccdf8"
+          "version": "0774f865ae162a80"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -11914,15 +11914,15 @@
       "path": "omerta-contracts/script/tests/Deploy-TestnetHook.Utilities.Tests.ps1",
       "kind": "contract-project",
       "extension": ".ps1",
-      "bytes": 1862,
-      "lines": null,
-      "version": "db38960df6e5e2d7",
-      "text": false,
+      "bytes": 1811,
+      "lines": 52,
+      "version": "1e4192026eca1015",
+      "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/script/tests/Deploy-TestnetHook.Utilities.Tests.ps1",
           "line": 1,
-          "version": "db38960df6e5e2d7"
+          "version": "1e4192026eca1015"
         }
       ],
       "lastChangedAt": "2026-08-25T00:11:25-04:00",
@@ -11937,15 +11937,15 @@
       "path": "omerta-contracts/script/Update-TestnetTwap.ps1",
       "kind": "contract-project",
       "extension": ".ps1",
-      "bytes": 15181,
-      "lines": null,
-      "version": "1beb6279f9bca29d",
-      "text": false,
+      "bytes": 14876,
+      "lines": 306,
+      "version": "a8f94f01fade913e",
+      "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/script/Update-TestnetTwap.ps1",
           "line": 1,
-          "version": "1beb6279f9bca29d"
+          "version": "a8f94f01fade913e"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -35230,20 +35230,20 @@
       "path": "tools/knowledge-test.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 3534,
-      "lines": 69,
-      "version": "c542bff189e81f3f",
+      "bytes": 4695,
+      "lines": 89,
+      "version": "6d70789fc6179e62",
       "text": true,
       "provenance": [
         {
           "file": "tools/knowledge-test.js",
           "line": 1,
-          "version": "c542bff189e81f3f"
+          "version": "6d70789fc6179e62"
         }
       ],
-      "lastChangedAt": "2026-08-25T01:57:43-04:00",
+      "lastChangedAt": "2026-08-25T02:17:17-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9e8dfb73054cd7a68361e869d9e12a26bc588c46"
+      "lastChangedCommit": "60db725d1792bca62e3cfd8e28b4022784b8b664"
     },
     {
       "key": "Artifact:tools/knowledge.js",
@@ -35253,20 +35253,20 @@
       "path": "tools/knowledge.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 42270,
-      "lines": 665,
-      "version": "b2f2274f51851962",
+      "bytes": 43083,
+      "lines": 685,
+      "version": "00f0f9f041a12820",
       "text": true,
       "provenance": [
         {
           "file": "tools/knowledge.js",
           "line": 1,
-          "version": "b2f2274f51851962"
+          "version": "00f0f9f041a12820"
         }
       ],
-      "lastChangedAt": "2026-08-25T01:57:43-04:00",
+      "lastChangedAt": "2026-08-25T02:17:17-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9e8dfb73054cd7a68361e869d9e12a26bc588c46"
+      "lastChangedCommit": "60db725d1792bca62e3cfd8e28b4022784b8b664"
     },
     {
       "key": "Artifact:tools/loadtest.js",
@@ -38875,6 +38875,22 @@
       ]
     },
     {
+      "key": "Commit:2fc052ac49923400a09ec274e7b4e90432299ea2",
+      "type": "Commit",
+      "id": "2fc052ac49923400a09ec274e7b4e90432299ea2",
+      "label": "docs: refresh normalized knowledge snapshot",
+      "title": "docs: refresh normalized knowledge snapshot",
+      "date": "2026-08-25T01:58:50-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2fc052ac49923400a09ec274e7b4e90432299ea2",
+      "provenance": [
+        {
+          "commit": "2fc052ac49923400a09ec274e7b4e90432299ea2",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2fc052ac49923400a09ec274e7b4e90432299ea2"
+        }
+      ]
+    },
+    {
       "key": "Commit:2fdbd3f4a1edc9ed9d558c079b28f941dd1cfd74",
       "type": "Commit",
       "id": "2fdbd3f4a1edc9ed9d558c079b28f941dd1cfd74",
@@ -42071,6 +42087,22 @@
         {
           "commit": "60aebdbbd8880511a080f99ae017c47dde30531b",
           "url": "https://github.com/OmertaDev/Omerta/commit/60aebdbbd8880511a080f99ae017c47dde30531b"
+        }
+      ]
+    },
+    {
+      "key": "Commit:60db725d1792bca62e3cfd8e28b4022784b8b664",
+      "type": "Commit",
+      "id": "60db725d1792bca62e3cfd8e28b4022784b8b664",
+      "label": "fix: make knowledge inventory checkout invariant",
+      "title": "fix: make knowledge inventory checkout invariant",
+      "date": "2026-08-25T02:17:17-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/60db725d1792bca62e3cfd8e28b4022784b8b664",
+      "provenance": [
+        {
+          "commit": "60db725d1792bca62e3cfd8e28b4022784b8b664",
+          "url": "https://github.com/OmertaDev/Omerta/commit/60db725d1792bca62e3cfd8e28b4022784b8b664"
         }
       ]
     },
@@ -59201,6 +59233,9 @@
           "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
         },
         {
+          "commit": "2fc052ac49923400a09ec274e7b4e90432299ea2"
+        },
+        {
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
         },
         {
@@ -59234,6 +59269,9 @@
           "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
         },
         {
+          "commit": "2fc052ac49923400a09ec274e7b4e90432299ea2"
+        },
+        {
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
         },
         {
@@ -59265,6 +59303,9 @@
       "provenance": [
         {
           "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
+        },
+        {
+          "commit": "2fc052ac49923400a09ec274e7b4e90432299ea2"
         },
         {
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
@@ -59316,6 +59357,9 @@
       "provenance": [
         {
           "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
+        },
+        {
+          "commit": "2fc052ac49923400a09ec274e7b4e90432299ea2"
         },
         {
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
@@ -65087,7 +65131,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "9e8dfb73054cd7a68361e869d9e12a26bc588c46",
+      "revision": "60db725d1792bca62e3cfd8e28b4022784b8b664",
       "currentBranch": "(detached)",
       "defaultBranch": "main",
       "visibility": "public",
@@ -115984,6 +116028,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:2fc052ac49923400a09ec274e7b4e90432299ea2",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "2fc052ac49923400a09ec274e7b4e90432299ea2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2fc052ac49923400a09ec274e7b4e90432299ea2",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "2fc052ac49923400a09ec274e7b4e90432299ea2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2fc052ac49923400a09ec274e7b4e90432299ea2",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "2fc052ac49923400a09ec274e7b4e90432299ea2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2fc052ac49923400a09ec274e7b4e90432299ea2",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "2fc052ac49923400a09ec274e7b4e90432299ea2"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:2fdbd3f4a1edc9ed9d558c079b28f941dd1cfd74",
       "to": "Artifact:.github/workflows/ci.yml",
       "provenance": {
@@ -128588,6 +128664,22 @@
       "to": "Artifact:AUDIT-port-step-four.md",
       "provenance": {
         "commit": "60aebdbbd8880511a080f99ae017c47dde30531b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:60db725d1792bca62e3cfd8e28b4022784b8b664",
+      "to": "Artifact:tools/knowledge-test.js",
+      "provenance": {
+        "commit": "60db725d1792bca62e3cfd8e28b4022784b8b664"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:60db725d1792bca62e3cfd8e28b4022784b8b664",
+      "to": "Artifact:tools/knowledge.js",
+      "provenance": {
+        "commit": "60db725d1792bca62e3cfd8e28b4022784b8b664"
       }
     },
     {
@@ -201339,6 +201431,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2fc052ac49923400a09ec274e7b4e90432299ea2",
+      "provenance": {
+        "commit": "2fc052ac49923400a09ec274e7b4e90432299ea2"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2fdbd3f4a1edc9ed9d558c079b28f941dd1cfd74",
       "provenance": {
         "commit": "2fdbd3f4a1edc9ed9d558c079b28f941dd1cfd74"
@@ -202934,6 +203034,14 @@
       "to": "Commit:60aebdbbd8880511a080f99ae017c47dde30531b",
       "provenance": {
         "commit": "60aebdbbd8880511a080f99ae017c47dde30531b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:60db725d1792bca62e3cfd8e28b4022784b8b664",
+      "provenance": {
+        "commit": "60db725d1792bca62e3cfd8e28b4022784b8b664"
       }
     },
     {
@@ -220624,7 +220732,7 @@
       "to": "Artifact:tools/knowledge.js",
       "provenance": {
         "file": "tools/knowledge-test.js",
-        "line": 5
+        "line": 6
       }
     },
     {
