@@ -4,6 +4,13 @@ Most files here are produced by `tools/art.js` from the manifest in that file, a
 `GET /art/:file` (an allowlist built at boot, so there is no path-traversal surface — a request is
 only ever a Map lookup).
 
+The `*-480.webp` through `*-1920.webp` landing derivatives are generated from the committed source
+art by `npm run art:responsive`. The originals remain the legacy/no-JavaScript fallback and the
+full-resolution download target; the WebP files are the viewport-sized display sources. The
+`hype-money-720.mp4` mobile encode is derived from `hype-money.mp4` with H.264 CRF 29, 1280×720,
+96 kbps AAC, and the MP4 fast-start atom enabled. It is deliberately a separate file so phone
+playback does not spend the full 1080p source's transfer cost.
+
 The `omr-01-*.png` through `omr-05-*.png` economy sheets and `gameplay-01-*.png` through
 `gameplay-09-*.png` character-route sheets are exported from editable Excalidraw sources in
 `docs/diagrams/` by `tools/render-omr-excalidraw.mjs`. Their visual language follows the site

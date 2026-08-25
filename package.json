@@ -20,6 +20,7 @@
     "loadtest": "node tools/loadtest.js",
     "concurrency": "node tools/concurrency.js",
     "graph": "node tools/graph.js build",
+    "art:responsive": "node tools/responsive-art.mjs",
     "mobile": "node tools/mobile.js",
     "ui:quality": "node tools/public-ui.js",
     "pollcost": "node tools/pollcost.js",

@@ -341,6 +341,44 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
   console.log('✅ every immutable research-sheet reference is versioned by its current content hash');
 }
 
+// The landing threshold is image-led, but a phone must not pay for desktop source pixels. The hero is
+// eager because it is the LCP; everything below the fold is responsive + lazy, and the narrated video
+// does not reveal either its poster or source until the observer brings it near the viewport.
+{
+  const landing = (await app.inject({ method: 'GET', url: '/' })).body;
+  assert(landing.includes('<picture class="hero-art" aria-hidden="true">'),
+    'the LCP hero must be a real responsive picture, not a fixed desktop CSS background');
+  assert(landing.includes('fetchpriority="high"'), 'the responsive LCP hero must remain high priority');
+  assert(landing.includes('/art/hero-poster-640.webp 640w') && landing.includes('/art/hero-poster-1920.webp 1920w'),
+    'the hero must publish mobile-through-desktop WebP candidates');
+  assert(landing.includes('<div id="tour-art" aria-hidden="true"></div>'),
+    'the hidden first-session tour must not fetch its hero art before the tour opens');
+  assert(landing.includes('data-video-poster="/art/hype-money-poster-960.webp"'),
+    'the below-fold video poster must wait for the landing media observer');
+  assert(landing.includes('data-video-poster-mobile="/art/hype-money-poster-640.webp"'),
+    'the deferred video poster must also have a phone-sized source');
+  assert(landing.includes('data-src="/art/hype-money-720.mp4"'),
+    'the narrated money map must provide a lighter phone encode');
+  assert(!/<video[^>]+(?:\sposter|\ssrc)="\/art\/hype-money/.test(landing),
+    'the below-fold video must not eagerly expose a poster or source on the cold visit');
+  for (const name of [
+    'hero-poster-640.webp',
+    'hero-poster-1920.webp',
+    'landing-break-640.webp',
+    'gameplay-01-choose-your-path-1080.webp',
+    'omr-03-money-router-1080.webp',
+    'hype-money-poster-960.webp',
+  ]) {
+    const asset = await app.inject({ method: 'GET', url: `/art/${name}` });
+    assert.equal(asset.statusCode, 200, `responsive landing asset ${name} must be mounted by /art`);
+    assert.equal(asset.headers['content-type'], 'image/webp', `${name} must be served as WebP`);
+  }
+  const mobileVideo = await app.inject({ method: 'GET', url: '/art/hype-money-720.mp4', headers: { range: 'bytes=0-1023' } });
+  assert.equal(mobileVideo.statusCode, 206, 'the lighter phone video must preserve range streaming');
+  assert.equal(mobileVideo.headers['content-length'], '1024');
+  console.log('✅ landing media is responsive, below-fold video is deferred, and the phone encode range-streams');
+}
+
 // What the player DOWNLOADS. tools/pageweight.js measured a cold load of the landing at 5.3 MB on a
 // phone, of which 757 KB was text shipped uncompressed: index.html is 1,047,078 bytes and gzips to
 // 319,499 (31%), and it carried no cache-control while every neighbouring static route already set
@@ -401,6 +439,8 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
   // a big JSON board compresses; a small one does not
   const rules = await get('/v1/rules', GZ);
   assert.equal(rules.headers['content-encoding'], 'gzip', '/v1/rules is 69 KB of catalog — it must compress');
+  assert.equal(rules.headers['cache-control'], 'public, max-age=300, stale-while-revalidate=3600',
+    '/v1/rules is deploy-stable public catalog data — repeat visits should reuse it while it revalidates');
   const tiny = await get('/v1/online', GZ);
   assert.equal(tiny.statusCode, 200);
   assert(Buffer.byteLength(tiny.body) < 1024, 'this check needs a genuinely small response to be about the threshold');
