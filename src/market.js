@@ -376,7 +376,7 @@ export async function marketBoard(pool) {
     levers: { minPrice: MARKET.MIN_PRICE, minRaiseBps: MARKET.MIN_RAISE_BPS, takeBps: MARKET.TAKE_BPS,
       listFeeBps: MARKET.LIST_FEE_BPS, maxTtlH: MARKET.MAX_TTL_H, maxListings: MARKET.MAX_LISTINGS },
     listings: rows.filter((l) => !expired(l)).map((l) => ({
-      id: l.id, kind: l.kind, seller: l.seller,
+      id: l.id, kind: l.kind, seller: l.seller, sellerId: l.seller_character,
       ...(l.kind === 'car' ? {
         car: carOfId[l.car_id]
           ? { model: carOfId[l.car_id].model_id, trim: carOfId[l.car_id].trim_id,

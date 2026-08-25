@@ -23,7 +23,7 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 ///
 ///         The escrow holds the EXTERNAL yield vault's ERC-4626 shares. Those are that vault's
 ///         shares, not ours — one balance, one owner, no internal share price for us to round.
-///         A depositor's yield is simply the growth of `convertToAssets` on the shares they alone
+///         A depositor's realizable value is the growth of fee-aware `previewRedeem` on the shares they alone
 ///         hold, so one user's rounding can never move another user's balance: there is no shared
 ///         denominator between them.
 ///
@@ -69,9 +69,12 @@ contract CollateralEscrow {
     ///         never `type(uint256).max` — bounds what a compromised vault can take to what we
     ///         just deposited, rather than to everything this escrow will ever hold.
     function deployToVault(uint256 assets) external onlyController returns (uint256 shares) {
+        uint256 sharesBefore = vault.balanceOf(address(this));
         asset.forceApprove(address(vault), assets);
-        shares = vault.deposit(assets, address(this));
+        vault.deposit(assets, address(this));
         asset.forceApprove(address(vault), 0); // leave no standing allowance
+        uint256 sharesAfter = vault.balanceOf(address(this));
+        shares = sharesAfter - sharesBefore;
     }
 
     /// @notice Redeem enough shares to send exactly `assets` of underlying to `to`.
@@ -88,11 +91,12 @@ contract CollateralEscrow {
     }
 
     /// @notice This user's collateral, valued in underlying.
-    /// @dev    `convertToAssets` is the vault's own accounting and is not a price feed we read for
+    /// @dev    `previewRedeem` is the vault's executable, fee-aware accounting and is not a price
+    ///         feed we read for
     ///         a borrow decision — the market is denomination-matched (§2.1), so there is no
     ///         exchange rate in the borrow path at all. This is "how much USDC do my vault shares
     ///         represent", which is the vault's own bookkeeping, not an oracle.
     function totalAssets() external view returns (uint256) {
-        return vault.convertToAssets(vault.balanceOf(address(this)));
+        return vault.previewRedeem(vault.balanceOf(address(this)));
     }
 }

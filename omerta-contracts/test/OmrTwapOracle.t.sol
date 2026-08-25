@@ -17,11 +17,16 @@ contract MockPair is IUniswapV2Pair {
     uint256 public price1CumulativeLast;
 
     constructor(address t0, address t1, uint112 reserve0, uint112 reserve1) {
-        token0 = t0; token1 = t1; r0 = reserve0; r1 = reserve1;
+        token0 = t0;
+        token1 = t1;
+        r0 = reserve0;
+        r1 = reserve1;
         tsLast = uint32(block.timestamp % 2 ** 32);
     }
 
-    function getReserves() external view returns (uint112, uint112, uint32) { return (r0, r1, tsLast); }
+    function getReserves() external view returns (uint112, uint112, uint32) {
+        return (r0, r1, tsLast);
+    }
 
     /// Move the price, accruing the cumulative for the elapsed period FIRST — exactly what
     /// `_update` does inside a real pair on every swap/mint/burn/sync.
@@ -34,7 +39,9 @@ contract MockPair is IUniswapV2Pair {
                 price1CumulativeLast += ((uint256(r0) << 112) / r1) * elapsed;
             }
         }
-        r0 = reserve0; r1 = reserve1; tsLast = ts;
+        r0 = reserve0;
+        r1 = reserve1;
+        tsLast = ts;
     }
 }
 
@@ -68,7 +75,7 @@ contract OmrTwapOracleTest is Test {
 
         vm.warp(block.timestamp + PERIOD + 1);
         o2.update();
-        (uint256 price, ) = o2.consult();
+        (uint256 price,) = o2.consult();
         assertApproxEqRel(price, 5000e18, 1e15, "same market, same price, whichever side OMR sits on");
     }
 
@@ -76,7 +83,7 @@ contract OmrTwapOracleTest is Test {
         // THE ONE THAT MATTERS MOST: a freshly deployed oracle must read as "no reading", because
         // OmertaBond turns 0 into a revert. If this returned a price, the mint wall would be live
         // on a number derived from nothing.
-        (uint256 price, ) = oracle.consult();
+        (uint256 price,) = oracle.consult();
         assertEq(price, 0, "no usable reading until a full PERIOD has been closed");
     }
 
@@ -107,7 +114,7 @@ contract OmrTwapOracleTest is Test {
         vm.warp(block.timestamp + PERIOD / 10 + 1);
         oracle.update();
 
-        (uint256 price, ) = oracle.consult();
+        (uint256 price,) = oracle.consult();
         assertLt(price, 12_000e18, "a brief 10x spike must not drag the average anywhere near it");
         assertGt(price, 5_000e18, "but it is not ignored either -- it is averaged in");
     }
@@ -120,8 +127,11 @@ contract OmrTwapOracleTest is Test {
         pair.setReserves(1_000e18, 10_000_000e18); // the market really moved to 10,000 OMR/ETH
         // ...and a LIVE keeper pokes through it. Windows must stay inside MAX_WINDOW_MULT (F2), which
         // is what a working keeper produces anyway — this is the honest shape, not a workaround.
-        for (uint256 i = 0; i < 3; i++) { vm.warp(block.timestamp + PERIOD + 1); oracle.update(); }
-        (uint256 price, ) = oracle.consult();
+        for (uint256 i = 0; i < 3; i++) {
+            vm.warp(block.timestamp + PERIOD + 1);
+            oracle.update();
+        }
+        (uint256 price,) = oracle.consult();
         assertApproxEqRel(price, 10_000e18, 1e16, "a sustained move is tracked");
     }
 
@@ -129,8 +139,8 @@ contract OmrTwapOracleTest is Test {
         // A pair only writes its cumulative when touched. On a quiet pool the stored value lags, and
         // an oracle that ignored that would shorten every window by however long nobody traded.
         vm.warp(block.timestamp + PERIOD * 2); // nobody TOUCHES THE PAIR (the point) for two windows
-        oracle.update();                       // must still close a valid window off the counterfactual
-        (uint256 price, ) = oracle.consult();
+        oracle.update(); // must still close a valid window off the counterfactual
+        (uint256 price,) = oracle.consult();
         assertApproxEqRel(price, 5000e18, 1e15, "an untouched pool still prices correctly");
     }
 
@@ -152,7 +162,7 @@ contract OmrTwapOracleTest is Test {
         vm.warp(block.timestamp + PERIOD + 1);
         vm.prank(makeAddr("a passing stranger"));
         oracle.update();
-        (uint256 price, ) = oracle.consult();
+        (uint256 price,) = oracle.consult();
         assertGt(price, 0);
     }
 
@@ -171,7 +181,7 @@ contract OmrTwapOracleTest is Test {
         OmrTwapOracle o = new OmrTwapOracle(safe, IUniswapV2Pair(address(p)), omr, PERIOD);
         vm.warp(block.timestamp + PERIOD + 1);
         o.update();
-        (uint256 price, ) = o.consult();
+        (uint256 price,) = o.consult();
         // the expected OMR-per-ETH, computed independently of the contract's fixed-point path
         uint256 expected = (uint256(reserveOmr) * 1e18) / 1_000e18;
         assertApproxEqRel(price, expected, 1e15, "decoded price tracks the reserve ratio at any scale");
@@ -188,11 +198,11 @@ contract OmrTwapOracleTest is Test {
         vm.warp(block.timestamp + PERIOD + 1);
         oracle.update();
 
-        pair.setReserves(1_000e18, 20_000_000e18);  // a real bull run to 20,000...
-        vm.warp(block.timestamp + 9 days);          // ...nine days of it, keeper DOWN
-        pair.setReserves(1_000e18, 5_000_000e18);   // then back to 5,000
+        pair.setReserves(1_000e18, 20_000_000e18); // a real bull run to 20,000...
+        vm.warp(block.timestamp + 9 days); // ...nine days of it, keeper DOWN
+        pair.setReserves(1_000e18, 5_000_000e18); // then back to 5,000
         vm.warp(block.timestamp + 1 minutes);
-        oracle.update();                            // someone pokes right after the crash
+        oracle.update(); // someone pokes right after the crash
 
         (uint256 price, uint256 updatedAt) = oracle.consult();
         assertEq(price, 0, "an over-long window must be DISCARDED, not published as an average");
@@ -203,12 +213,12 @@ contract OmrTwapOracleTest is Test {
         // Fail-closed is only acceptable if it recovers. After the re-baseline, one more PERIOD of
         // honest observation must restore a correct reading -- otherwise a keeper blip bricks bonding.
         vm.warp(block.timestamp + PERIOD * 10);
-        oracle.update();                            // discards, re-baselines
-        (uint256 dead, ) = oracle.consult();
+        oracle.update(); // discards, re-baselines
+        (uint256 dead,) = oracle.consult();
         assertEq(dead, 0, "unavailable immediately after the re-baseline");
 
         vm.warp(block.timestamp + PERIOD + 1);
-        oracle.update();                            // one honest window
+        oracle.update(); // one honest window
         (uint256 price, uint256 updatedAt) = oracle.consult();
         assertApproxEqRel(price, 5000e18, 1e15, "and the feed is live again at the true price");
         assertEq(updatedAt, block.timestamp);
@@ -221,7 +231,7 @@ contract OmrTwapOracleTest is Test {
         oracle.update();
         vm.warp(block.timestamp + PERIOD * oracle.MAX_WINDOW_MULT()); // exactly at the limit
         oracle.update();
-        (uint256 price, ) = oracle.consult();
+        (uint256 price,) = oracle.consult();
         assertGt(price, 0, "a window exactly at MAX_WINDOW_MULT is still averaged, not discarded");
     }
 
@@ -231,7 +241,7 @@ contract OmrTwapOracleTest is Test {
         pair.setReserves(1_000e18, 20_000_000e18);
         vm.warp(block.timestamp + 30 days);
         oracle.update();
-        (uint256 price, ) = oracle.consult();
+        (uint256 price,) = oracle.consult();
         assertEq(price, 0, "a month-long first window is discarded like any other");
     }
 }

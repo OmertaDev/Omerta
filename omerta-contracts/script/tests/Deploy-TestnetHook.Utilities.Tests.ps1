@@ -31,9 +31,16 @@ if (-not (Test-Path -LiteralPath $utilitiesPath -PathType Leaf)) {
     Assert-Equal (Test-HookPermissionBits `
             -Address '0x9f86fE471EFD6089eeb7b43e008fD7D830f130Cd' `
             -ExpectedFlags 0x30cc) $false 'Neighbor address flags'
+    Assert-Equal (Test-HookAvoidsRoutingReviewPrefix `
+            -Address '0x9f86fE471EFD6089eeb7b43e008fD7D830f130Cc') $true 'Launch address prefix'
+    Assert-Equal (Test-HookAvoidsRoutingReviewPrefix `
+            -Address '0x91abcdefabcdefabcdefabcdefabcdefabcdefab') $false 'Uniswap review prefix'
     Assert-Throws {
         Test-HookPermissionBits -Address '0x1234' -ExpectedFlags 0x30cc
     } 'Invalid address'
+    Assert-Throws {
+        Test-HookAvoidsRoutingReviewPrefix -Address '0x1234'
+    } 'Invalid routing address'
 }
 
 if ($failures.Count -ne 0) {

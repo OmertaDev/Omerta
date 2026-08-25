@@ -2374,9 +2374,12 @@ CREATE TABLE IF NOT EXISTS stock_allocations (
   ticker TEXT NOT NULL,
   units NUMERIC NOT NULL DEFAULT 0,
   delivered BOOLEAN NOT NULL DEFAULT false,  -- step 7 sets it; nothing does today
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(), -- audit timestamp only; allocations NEVER expire
   PRIMARY KEY (epoch_id, account_id, ticker)
 );
+-- FOUNDER-APPROVED 2026-08-24: no expires_at, no retention FK, and no cleanup worker. Once assigned,
+-- outstanding units remain this account's debt until delivered; they are never recycled into a later
+-- epoch merely because the account has no extracted Street Deed or has been absent for a long time.
 -- (red-team HIGH, 2026-08-16) DELIVERY IS A RUNNING TOTAL, NOT A FLAG. `allocateStock` ACCUMULATES
 -- into this row's PK (a 7-day epoch against a DAILY ticker ballot means up to seven buys of the same
 -- ticker land on the same row), so a row-level `delivered` boolean is invalidated by the very next
@@ -3487,6 +3490,34 @@ CREATE TABLE IF NOT EXISTS ticker_ballot_results (
   decided_by TEXT NOT NULL DEFAULT 'default',   -- 'chamber' | 'default'
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+-- Existing-table additions must be ALTERs for live upgrades. `registry_sent_at` is the worker's
+-- claim/retry lease; `registry_tx_hash` is written only after the on-chain publication succeeds.
+ALTER TABLE ticker_ballot_results ADD COLUMN IF NOT EXISTS registry_sent_at TIMESTAMPTZ;
+ALTER TABLE ticker_ballot_results ADD COLUMN IF NOT EXISTS registry_tx_hash TEXT;
+
+-- The voter-facing cache of StockTokenRegistry, not a second approval authority. The worker reads
+-- the Safe-owned registry on Robinhood Chain mainnet (4663) and mirrors every entry here so vote
+-- transactions never hold gameplay locks across an RPC call. Rows are retained when deactivated so
+-- old ballots keep an auditable ticker→provider-id→token-address identity. The singleton distinguishes
+-- "registry synced and deliberately empty" from "chain-dormant, never synced"; only the latter uses
+-- the launch allowlist for local development.
+CREATE TABLE IF NOT EXISTS stock_token_catalog_state (
+  id INT PRIMARY KEY,
+  chain_id INT NOT NULL,
+  registry_address TEXT NOT NULL,
+  synced_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE TABLE IF NOT EXISTS stock_token_catalog (
+  asset_key TEXT PRIMARY KEY,
+  robinhood_asset_id_hash TEXT NOT NULL,
+  ticker TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  token_address TEXT NOT NULL UNIQUE,
+  active BOOLEAN NOT NULL DEFAULT false,
+  registry_index INT NOT NULL DEFAULT 0,
+  synced_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+ALTER TABLE stock_token_catalog ADD COLUMN IF NOT EXISTS registry_index INT NOT NULL DEFAULT 0;
 
 -- ── THE BROKERS (omerta-brokers-design.md) ───────────────────────────────────────────────────────
 -- All ACCOUNT-keyed and all NEW tables, so `CREATE TABLE IF NOT EXISTS` is live-DB-safe (a new

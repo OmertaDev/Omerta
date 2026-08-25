@@ -170,6 +170,9 @@ if (([string]$transaction.transaction.input).Substring(0, 66) -ine $expectedSalt
 if (-not (Test-HookPermissionBits -Address ([string]$transaction.contractAddress) -ExpectedFlags $expectedHookFlags)) {
     throw "Predicted hook does not encode permission flags 0x30cc: $($transaction.contractAddress)"
 }
+if (-not (Test-HookAvoidsRoutingReviewPrefix -Address ([string]$transaction.contractAddress))) {
+    throw "Predicted hook uses Uniswap Labs' 0x91 routing-review prefix: $($transaction.contractAddress)"
+}
 if (@($transaction.arguments).Count -ne 3) { throw 'OmertaHook constructor argument count changed.' }
 Assert-AddressEquals 'Constructor PoolManager' ([string]$transaction.arguments[0]) $poolManager
 Assert-AddressEquals 'Constructor OMR' ([string]$transaction.arguments[1]) $omr
@@ -201,6 +204,7 @@ Write-Host "PoolManager code hash: $poolManagerCodeHash"
 Write-Host "CREATE2 factory: $create2Factory"
 Write-Host "Mined salt: $expectedSalt"
 Write-Host "Predicted OmertaHook: $expectedHook (flags 0x30cc)"
+Write-Host 'Uniswap routing: address avoids 0x91; manual allowlisting remains required for the swap return-delta flags'
 Write-Host 'Hook activation state: no allowed quote, recipients, observer, tax, anti-snipe window, or surge'
 
 if ($PreflightOnly) {
@@ -277,6 +281,9 @@ $hookCode = Invoke-Cast @('code', $expectedHook, '--rpc-url', $RpcUrl)
 if ($hookCode -eq '0x') { throw "OmertaHook has no bytecode after broadcast: $expectedHook" }
 if (-not (Test-HookPermissionBits -Address $expectedHook -ExpectedFlags $expectedHookFlags)) {
     throw "Deployed hook address has incorrect permission flags: $expectedHook"
+}
+if (-not (Test-HookAvoidsRoutingReviewPrefix -Address $expectedHook)) {
+    throw "Deployed hook uses Uniswap Labs' 0x91 routing-review prefix: $expectedHook"
 }
 
 Assert-AddressEquals 'OmertaHook owner' (Invoke-Cast @('call', $expectedHook, 'owner()(address)', '--rpc-url', $RpcUrl)) $safe

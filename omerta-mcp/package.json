@@ -1,6 +1,6 @@
 {
   "name": "omerta-mcp",
-  "version": "1.0.1",
+  "version": "1.3.0",
   "description": "Model Context Protocol server for OMERTÀ — let any MCP-capable agent play the game natively.",
   "type": "module",
   "bin": {
@@ -12,7 +12,8 @@
     "README.md"
   ],
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "node ../test/mcp.js"
   },
   "keywords": [
     "mcp",

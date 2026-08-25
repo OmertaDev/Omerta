@@ -7,11 +7,17 @@ path off until the Safe completes a separate, reviewable ceremony.
 > Safe signer ceremony, chain/legal launch review, and the launch checklist are all signed off. Production
 > is intentionally chain-dormant until those gates clear.
 
+> **First mainnet cut — founder direction, 2026-08-24:** Phase 0 governance and the ten Phase 1 core
+> contracts may proceed once the reviewed core report hash and signer scope are recorded in
+> `.env.mainnet`. Phase 2 THE BANK is deliberately excluded while its audit finishes and is reserved as
+> a post-deployment catalyst roughly one to two weeks later. Phase 3 still depends on a real pool; Phase 4
+> still follows the separate Uniswap routing-review sequence. Deploying Phase 1 does not arm any rail.
+
 ## What actually gets deployed
 
 | Phase | Script | Contracts |
 |---|---|---|
-| 0 — governance prerequisite | `script/DeploySafe.s.sol` | Fresh Safe v1.4.1 proxy (external governance infrastructure; not part of the 15 OMERTA contracts) |
+| 0 — governance prerequisite | `script/DeploySafe.s.sol` | Fresh Safe v1.4.1 proxy (external governance infrastructure; not part of the 17 OMERTA contracts) |
 | 1 — pre-pool core | `script/Deploy.s.sol` | OMR, GearVault, VoucherClaim, OMRStaking, OmertaFees, StreetDeed, DynastyNFT, StockVault, GenesisOracle, OmertaBond |
 | 2 — Bank | `script/DeployBank.s.sol` | Denari, Transmuter, Alchemist |
 | 3 — post-pool oracle | `script/DeployTwapOracle.s.sol` | OmrTwapOracle |
@@ -71,6 +77,17 @@ cast code $safe --rpc-url $env:CHAIN_RPC_URL
 `EXPECTED_CHAIN_ID` is mandatory in every script. Robinhood Chain is documented as 46630 for testnet and
 4663 for mainnet, but trust the signed network deployment record and the RPC response, not a copied number.
 
+For mainnet, use the separate fail-closed profile rather than changing the testnet `.env`:
+
+```powershell
+Copy-Item .env.mainnet.example .env.mainnet
+```
+
+Fill every release placeholder, including the exact clean release commit, the deployer's current mainnet
+nonce, the core audit-report SHA-256, and `CORE_SIGNER_AUDIT_INCLUDED=true`. The mainnet wrappers reject a
+dirty worktree, a commit mismatch, a missing audit record, placeholder metadata, a wrong chain, and any
+nonzero Bank address. `.env.mainnet` is gitignored and must contain public configuration only.
+
 Before Phase 1, make the following explicit decisions:
 
 - `DAILY_CAP_OMR`, deed/dynasty daily mint caps, and `STOCK_DEFAULT_DAILY_CAP` must be nonzero. Zero means
@@ -121,7 +138,37 @@ broadcast:
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\script\Deploy-TestnetSafe.ps1
 ```
 
+For mainnet, the guarded wrapper defaults to preflight-only. It validates the frozen source, audit record,
+canonical Safe v1.4.1 infrastructure, 2-of-3 owner set, counterfactual address, exact deployer nonce, and a
+2x gas buffer. A broadcast requires both `-Broadcast` and the exact interactive confirmation:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\script\Deploy-MainnetSafe.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\script\Deploy-MainnetSafe.ps1 -Broadcast
+```
+
+After Phase 0, put the emitted `SAFE` in `.env.mainnet` and increment `EXPECTED_DEPLOYER_NONCE` to the
+live nonce before running Phase 1. Do not reuse the testnet keystores; the wrapper asks Foundry for the
+encrypted account named by `-Account` (default `omerta-mainnet-deployer`).
+
 ## 3. Phase 1 — deploy the pre-pool core
+
+For the first mainnet cut, use the guarded mainnet wrapper. The default invocation only simulates. It
+requires the closed `0/0` genesis window, the pinned IPFS gear base, the reviewed first-cut constructor
+profile, the verified Safe, exact nonce, empty predicted addresses, and a 2x gas buffer. It also requires
+`BANK_ASSET` and `BANK_ERC4626_VAULT` to remain zero, so this path cannot accidentally deploy or arm THE
+BANK:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\script\Deploy-MainnetCore.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\script\Deploy-MainnetCore.ps1 -Broadcast
+```
+
+The broadcast requires the exact confirmation `DEPLOY MAINNET CORE 4663`, sends ten creations with
+`--slow`, verifies ownership, constructor caps and recipients, and confirms that the OMR minter, gear
+minter, stock keeper, bond oracle, sell tax, and genesis window remain off. It then writes
+`deployments/4663/manifest.json`. Explorer source verification and review/commit of that manifest are the
+next gate; do not arm a contract merely because RPC verification passed.
 
 For the current Robinhood Chain Testnet rehearsal, use the guarded Windows helper. It pins the conservative
 profile selected for this rehearsal, verifies the deployed 2-of-3 Safe, requires broadcaster nonce 1,
@@ -218,6 +265,10 @@ one-venue/one-layer decision described in `CHAIN-DEPLOY.md`.
 
 ## 6. Phase 2 — deploy and arm THE BANK
 
+**First-cut status (2026-08-24): deferred.** Do not run `DeployBank.s.sol` on mainnet until the Bank/loan
+audit is complete and the post-launch catalyst window is explicitly opened. The Phase 0/1 wrappers neither
+read nor invoke this script.
+
 Only do this when the selected underlying and ERC-4626 vault are audited, denomination-matched, deployed on
 the target chain, and their addresses are in the signed manifest. The constructors verify
 `vault.asset() == BANK_ASSET`.
@@ -253,7 +304,8 @@ sequence:
 7. `Denari.setBurner(Transmuter)`.
 8. `Denari.setMinter(Alchemist)` **last**.
 
-An unseeded Bank accepts the first borrow and then deadlocks. Do not treat role wiring alone as activation.
+An unseeded Bank refuses the first borrow atomically under the post-issuance buffer check. No unsafe DNR
+survives, but the market remains unusable until it is seeded; do not treat role wiring alone as activation.
 
 ## 7. Create the V2-compatible pool and deploy the TWAP
 
@@ -342,6 +394,11 @@ forge script script/DeployHook.s.sol:DeployHook --rpc-url $env:CHAIN_RPC_URL --s
 After deployment, verify `(uint160(hook) & 0x3fff) == 0x30cc` and `HOOK_FLAGS() == 0x30cc`. Leave the hook
 unarmed until a separate Safe batch sets recipients, approved quote currencies, anti-snipe/surge policy,
 and finally the sell tax.
+
+If anti-snipe is required, call `setAntiSnipe` before PoolManager initializes the pool: the duration is
+snapshotted into that pool's immutable `openingEndsAt` deadline, and later global changes cannot extend it.
+When an oracle observer is eventually armed, a keeper must consume `ObservationRequested` events and call
+`pokeObserver(poolKey)` after settlement; the hook never enters observer code from inside `afterSwap`.
 
 Important: the current audited suite has no hook-native oracle. Deploying `OmertaHook` is complete; migrating
 the canonical market to v4 is not. Do not move canonical liquidity until a separately audited hook-native

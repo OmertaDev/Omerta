@@ -36,30 +36,29 @@ contract VoucherClaim is EIP712, Ownable2Step, Pausable, ReentrancyGuard {
     ///         for months. The server signs much shorter deadlines in practice.
     uint256 public constant MAX_VOUCHER_TTL = 30 days;
 
-    bytes32 public constant VOUCHER_TYPEHASH = keccak256(
-        "Voucher(address to,uint256 amount,uint8 kind,uint256 gearId,uint256 nonce,uint256 deadline)"
-    );
+    bytes32 public constant VOUCHER_TYPEHASH =
+        keccak256("Voucher(address to,uint256 amount,uint8 kind,uint256 gearId,uint256 nonce,uint256 deadline)");
 
     struct Voucher {
         address to;
-        uint256 amount;   // OMR wei for KIND_OMR; quantity (normally 1) for KIND_GEAR
+        uint256 amount; // OMR wei for KIND_OMR; quantity (normally 1) for KIND_GEAR
         uint8 kind;
-        uint256 gearId;   // 0 for KIND_OMR
-        uint256 nonce;    // server-unique; replay protection
+        uint256 gearId; // 0 for KIND_OMR
+        uint256 nonce; // server-unique; replay protection
         uint256 deadline; // unix seconds
     }
 
     IERC20 public immutable omr;
     IGearVault public immutable gear;
     address public signer;
-    uint256 public dailyCapOMR;               // max OMR claimable per UTC day, 0 = unlimited
+    uint256 public dailyCapOMR; // max OMR claimable per UTC day, 0 = unlimited
     mapping(uint256 => bool) public usedNonce;
     mapping(uint256 => uint256) public claimedOnDay; // day => OMR total
     // Gear is bounded the same way OMR is bounded by the tranche: a per-gearId cap on LIVE
     // on-chain supply the Safe sets, mirroring GearVault's own bound. FAIL-CLOSED — a gearId
     // with cap 0 cannot be minted at all, so a compromised signer can't mint unknown gear.
-    mapping(uint256 => uint256) public gearSupplyCap;  // gearId => max LIVE on-chain supply (0 = mint blocked)
-    mapping(uint256 => uint256) public gearMinted;     // gearId => minted through THIS bridge so far
+    mapping(uint256 => uint256) public gearSupplyCap; // gearId => max LIVE on-chain supply (0 = mint blocked)
+    mapping(uint256 => uint256) public gearMinted; // gearId => minted through THIS bridge so far
 
     event SignerSet(address indexed signer);
     event DailyCapSet(uint256 cap);
@@ -100,8 +99,13 @@ contract VoucherClaim is EIP712, Ownable2Step, Pausable, ReentrancyGuard {
         emit GearSupplyCapSet(gearId, cap);
     }
 
-    function pause() external onlyOwner { _pause(); }
-    function unpause() external onlyOwner { _unpause(); }
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
 
     /// @notice Tranche management: the Safe can pull unspent OMR back.
     function sweep(address to, uint256 amount) external onlyOwner {
@@ -111,9 +115,9 @@ contract VoucherClaim is EIP712, Ownable2Step, Pausable, ReentrancyGuard {
 
     // ── the claim ──
     function hashVoucher(Voucher calldata v) public view returns (bytes32) {
-        return _hashTypedDataV4(keccak256(abi.encode(
-            VOUCHER_TYPEHASH, v.to, v.amount, v.kind, v.gearId, v.nonce, v.deadline
-        )));
+        return _hashTypedDataV4(
+            keccak256(abi.encode(VOUCHER_TYPEHASH, v.to, v.amount, v.kind, v.gearId, v.nonce, v.deadline))
+        );
     }
 
     function claim(Voucher calldata v, bytes calldata sig) external nonReentrant whenNotPaused {

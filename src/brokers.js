@@ -141,10 +141,18 @@ export async function allocateEpoch(pool, { endDay = dayOf() - 1, days = BROKERS
       'SELECT id FROM broker_epochs WHERE start_day=$1 AND end_day=$2', [startDay, endDay])).rows[0];
     if (existing) { await client.query('COMMIT'); return { epochId: existing.id, already: true }; }
 
-    // Every account with a LIVE activation. Two flat queries and a join in JS — pg-mem parses
-    // neither a correlated subquery nor `= ANY($1::text[])` (the /v1/gangs and MY PROFILE lessons).
+    // Every eligible account with a LIVE activation. Flags are snapshotted here, where gameplay
+    // becomes an ownership weight: excluded accounts may still play and activate, but can never
+    // enter the frozen RWA epoch. Keep the queries flat/static — pg-mem parses neither a correlated
+    // subquery nor `= ANY($1::text[])` (the /v1/gangs and MY PROFILE lessons), and pgquery can prepare
+    // these exact statements against production Postgres.
+    const eligible = new Set((await client.query(
+      'SELECT account_id, agent_flag, npc_flag FROM account_persistent')).rows
+      .filter((r) => !(ACTIVITY.EXCLUDE_AGENTS && r.agent_flag) && !(ACTIVITY.EXCLUDE_NPC && r.npc_flag))
+      .map((r) => r.account_id));
     const acts = (await client.query(
-      'SELECT account_id, tier FROM broker_activations WHERE until > now()')).rows;
+      'SELECT account_id, tier FROM broker_activations WHERE until > now()')).rows
+      .filter((a) => eligible.has(a.account_id));
     const rows = (await client.query(
       'SELECT account_id, tag, SUM(n) AS n FROM activity_log WHERE day >= $1 AND day <= $2 GROUP BY account_id, tag',
       [startDay, endDay])).rows;

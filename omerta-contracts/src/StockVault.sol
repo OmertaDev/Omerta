@@ -6,10 +6,12 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Ownable2Step, Ownable} from "@openzeppelin/contracts/access/Ownable2Step.sol";
 import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {EIP712} from "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
+import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
-/// @title StockVault — the delivery contract for OMERTÀ's tokenized-stock reward (brokers step 7,
+/// @title StockVault — the delivery contract for OMERTÀ's Stock Token reward (brokers step 7,
 ///        omerta-brokers-design.md §3.3 / §5.1; omerta-dynasty-machine-design.md §3/§8).
-/// @notice Holds tokenized-stock ERC-20s the treasury keeper PRE-BOUGHT (runStockBuyback) and PUSHES the
+/// @notice Holds Stock Token ERC-20s the treasury keeper PRE-BOUGHT and PUSHES the
 ///         allocated units straight into a player's ERC-6551 token-bound account.
 ///
 ///         WHICH token-bound account is a backend decision this contract deliberately knows nothing
@@ -17,12 +19,14 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol
 ///         own the street, and the street holds your legit book. NOT the identity NFT: keeping stock
 ///         off `DynastyNFT` is what preserves its entitlement wall (see that contract's header).
 ///
-///         GATELESS PUSH (founder decision, §3.3): delivery is automatic and there is NO claim process and
-///         NO on-chain eligibility gate — stock accrues straight into the token-bound account, so the NFT
-///         sells self-contained. This is a DELIBERATE decision, recorded here rather than omitted: the design
-///         (§6) flags that Robinhood's tokenized stocks are issuer-restricted (EU-facing), so a gateless
-///         push has no on-chain control over who receives them. Any operational eligibility is a backend/
-///         keeper concern; this contract enforces none.
+///         AUTOMATIC PUSH, WITH SERVER-AUTHORITY ATTESTATION: there is no player claim process. The EVM
+///         cannot query OMERTÀ's gameplay DB, so the server computes the frozen active-play allocation.
+///         When the Safe sets `allocationSigner`, every push must carry that independent signer's EIP-712
+///         authorization binding the exact epoch/account hashes, token, destination, units, id and deadline;
+///         the legacy keeper-only entry points are disabled. Zero signer is retained only as an explicit
+///         Safe-controlled migration/dev posture. This attestation proves what the authoritative server
+///         approved. Per the founder's permissionless-delivery posture, neither this contract nor the
+///         game performs recipient KYC/compliance screening; launch legality remains an off-chain review.
 ///
 ///         IT MINTS NOTHING. Every delivery is a plain SafeERC20 transfer of a PRE-HELD balance — the same
 ///         "the bridge never mints" invariant as VoucherClaim. `held` is `balanceOf(this)` per token, so a
@@ -37,17 +41,36 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol
 ///         only ever move stock the vault ALREADY HOLDS, which the Safe can pull back at any time (`sweep`).
 ///         No mint path, so a compromised keeper cannot conjure units, only move held ones to a wrong
 ///         address, which the Safe stops by pausing + rotating and recovers to the extent units remain.
-contract StockVault is Ownable2Step, Pausable, ReentrancyGuard {
+contract StockVault is Ownable2Step, Pausable, ReentrancyGuard, EIP712 {
     using SafeERC20 for IERC20;
+
+    struct DeliveryAuthorization {
+        uint256 deliveryId;
+        bytes32 epochHash;
+        bytes32 accountHash;
+        address token;
+        address to;
+        uint256 units;
+        uint256 deadline;
+    }
+
+    bytes32 public constant DELIVERY_AUTHORIZATION_TYPEHASH = keccak256(
+        "DeliveryAuthorization(uint256 deliveryId,bytes32 epochHash,bytes32 accountHash,address token,address to,uint256 units,uint256 deadline)"
+    );
 
     /// @notice The automated delivery bot (the treasury's push keeper). Safe-set; 0 = deliveries disabled.
     address public keeper;
 
+    /// @notice The isolated server key that attests a delivery came from a frozen, qualified gameplay
+    ///         allocation. Zero preserves the legacy keeper-only mode; nonzero makes authorization
+    ///         mandatory and disables `deliver`/`deliverBatch` entirely.
+    address public allocationSigner;
+
     /// @notice Per-token daily delivery cap in units (0 = unlimited) — a leaked-keeper rate wall, the
     ///         VoucherClaim.dailyCapOMR discipline applied per stock so one key can't drain a whole ticker
     ///         in a block. The Safe sets it per token.
-    mapping(address => uint256) public dailyCap;                 // token => max units/UTC day (0 = unlimited)
-    mapping(address => bool) public capConfigured;               // token => the Safe has SET a cap (even 0)
+    mapping(address => uint256) public dailyCap; // token => max units/UTC day (0 = unlimited)
+    mapping(address => bool) public capConfigured; // token => the Safe has SET a cap (even 0)
     mapping(address => mapping(uint256 => uint256)) public deliveredOnDay; // token => day => units delivered
 
     /// @notice The wall a token inherits when the Safe has never set one (0 = unlimited).
@@ -67,6 +90,8 @@ contract StockVault is Ownable2Step, Pausable, ReentrancyGuard {
     mapping(uint256 => bool) public usedDeliveryId;
 
     event KeeperSet(address indexed keeper);
+    event AllocationSignerSet(address indexed signer);
+    event AllocationAuthorized(uint256 indexed deliveryId, bytes32 indexed epochHash, bytes32 indexed accountHash);
     event DailyCapSet(address indexed token, uint256 cap);
     event DefaultDailyCapSet(uint256 cap);
     event Delivered(uint256 indexed deliveryId, address indexed token, address indexed to, uint256 units);
@@ -77,7 +102,10 @@ contract StockVault is Ownable2Step, Pausable, ReentrancyGuard {
         _;
     }
 
-    constructor(address owner_, address keeper_, uint256 defaultDailyCap_) Ownable(owner_) {
+    constructor(address owner_, address keeper_, uint256 defaultDailyCap_)
+        Ownable(owner_)
+        EIP712("OMERTA StockVault", "1")
+    {
         keeper = keeper_; // may be 0 at deploy (deliveries off until the Safe wires the bot)
         defaultDailyCap = defaultDailyCap_;
         emit KeeperSet(keeper_);
@@ -88,6 +116,13 @@ contract StockVault is Ownable2Step, Pausable, ReentrancyGuard {
     function setKeeper(address k) external onlyOwner {
         keeper = k;
         emit KeeperSet(k);
+    }
+
+    /// @notice Enable/rotate the activity-allocation attestor. Setting zero is an explicit Safe
+    ///         rollback to the legacy keeper-only rail; production should arm this before the keeper.
+    function setAllocationSigner(address signer_) external onlyOwner {
+        allocationSigner = signer_;
+        emit AllocationSignerSet(signer_);
     }
 
     function setDailyCap(address token, uint256 cap) external onlyOwner {
@@ -110,8 +145,13 @@ contract StockVault is Ownable2Step, Pausable, ReentrancyGuard {
 
     // Pausing stops NEW deliveries. It can never trap a player's stock — delivered stock already sits in the
     // player's token-bound account, and undelivered stock is the Safe's to `sweep`.
-    function pause() external onlyOwner { _pause(); }
-    function unpause() external onlyOwner { _unpause(); }
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
 
     /// @notice Tranche management: the Safe pulls unspent stock back (the VoucherClaim.sweep precedent).
     ///         Routes to a Safe-chosen `to`, never a fixed recipient, so a misconfig can't trap the pull.
@@ -126,9 +166,47 @@ contract StockVault is Ownable2Step, Pausable, ReentrancyGuard {
     ///         the backend and resolved at delivery time). Pre-held transfer only — NEVER mints. Idempotent
     ///         on `deliveryId`.
     function deliver(uint256 deliveryId, address token, address to, uint256 units)
-        external onlyKeeper nonReentrant whenNotPaused
+        external
+        onlyKeeper
+        nonReentrant
+        whenNotPaused
     {
+        require(allocationSigner == address(0), "SV: authorization required");
         _deliver(deliveryId, token, to, units);
+    }
+
+    /// @notice Deliver only after the independent allocation signer attests that this exact transfer
+    ///         descends from the server-authoritative active-play snapshot. The hashes keep private DB
+    ///         identifiers off-chain while binding the signature to one account and epoch for audit.
+    function deliverAuthorized(DeliveryAuthorization calldata auth, bytes calldata signature)
+        external
+        onlyKeeper
+        nonReentrant
+        whenNotPaused
+    {
+        require(allocationSigner != address(0), "SV: authorization disabled");
+        require(auth.deadline >= block.timestamp, "SV: authorization expired");
+        require(auth.epochHash != bytes32(0) && auth.accountHash != bytes32(0), "SV: empty allocation identity");
+        require(ECDSA.recover(hashAuthorization(auth), signature) == allocationSigner, "SV: bad authorization");
+        emit AllocationAuthorized(auth.deliveryId, auth.epochHash, auth.accountHash);
+        _deliver(auth.deliveryId, auth.token, auth.to, auth.units);
+    }
+
+    function hashAuthorization(DeliveryAuthorization calldata auth) public view returns (bytes32) {
+        return _hashTypedDataV4(
+            keccak256(
+                abi.encode(
+                    DELIVERY_AUTHORIZATION_TYPEHASH,
+                    auth.deliveryId,
+                    auth.epochHash,
+                    auth.accountHash,
+                    auth.token,
+                    auth.to,
+                    auth.units,
+                    auth.deadline
+                )
+            )
+        );
     }
 
     /// @notice Batch the push for gas — the distributor delivers to many accounts per run. Same per-item
@@ -140,6 +218,7 @@ contract StockVault is Ownable2Step, Pausable, ReentrancyGuard {
         address[] calldata tos,
         uint256[] calldata unitsArr
     ) external onlyKeeper nonReentrant whenNotPaused {
+        require(allocationSigner == address(0), "SV: authorization required");
         uint256 n = deliveryIds.length;
         require(tokens.length == n && tos.length == n && unitsArr.length == n, "SV: length mismatch");
         for (uint256 i = 0; i < n; i++) {

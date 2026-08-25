@@ -78,7 +78,7 @@ contract OmertaFees is Ownable2Step, ReentrancyGuard {
         vigBps = vigBps_;
         mintFee = mintFee_;
         respawnFee = respawnFee_;
-        rerollFee = mintFee_;   // the re-roll costs the same as a mint by default (0.01 ETH); owner-tunable
+        rerollFee = mintFee_; // the re-roll costs the same as a mint by default (0.01 ETH); owner-tunable
         emit FeeRecipientChanged(feeRecipient_);
         emit VigRecipientChanged(vigRecipient_);
         emit FeesChanged(mintFee_, respawnFee_);
@@ -88,7 +88,7 @@ contract OmertaFees is Ownable2Step, ReentrancyGuard {
     /// @notice Pay the mint fee to make your character permanent. Exact-value only.
     function payMintFee() external payable nonReentrant {
         if (msg.value != mintFee) revert WrongFee(msg.value, mintFee);
-        uint256 n = ++nonce;              // effect before interaction (CEI + guard)
+        uint256 n = ++nonce; // effect before interaction (CEI + guard)
         _forward(n, msg.value);
         emit MintFeePaid(msg.sender, n, msg.value);
     }
@@ -113,9 +113,9 @@ contract OmertaFees is Ownable2Step, ReentrancyGuard {
     ///         watches `PackagePaid` and grants the package's (non-§10.4) entitlement idempotently on `nonce`.
     function payForPackage(uint256 sku) external payable nonReentrant {
         uint256 price = packagePrice[sku];
-        if (price == 0) revert ZeroFee();                 // sku not for sale (unset/retired) — fail closed
+        if (price == 0) revert ZeroFee(); // sku not for sale (unset/retired) — fail closed
         if (msg.value != price) revert WrongFee(msg.value, price);
-        uint256 n = ++nonce;                              // effect before interaction (CEI + guard)
+        uint256 n = ++nonce; // effect before interaction (CEI + guard)
         _forward(n, msg.value);
         emit PackagePaid(msg.sender, n, sku, msg.value);
     }
@@ -129,11 +129,11 @@ contract OmertaFees is Ownable2Step, ReentrancyGuard {
         uint256 toVig = (amount * vigBps) / 10000;
         uint256 toDev = amount - toVig;
         if (toVig > 0) {
-            (bool okV, ) = vigRecipient.call{value: toVig}("");
+            (bool okV,) = vigRecipient.call{value: toVig}("");
             if (!okV) revert ForwardFailed();
         }
         if (toDev > 0) {
-            (bool okD, ) = feeRecipient.call{value: toDev}("");
+            (bool okD,) = feeRecipient.call{value: toDev}("");
             if (!okD) revert ForwardFailed();
         }
         emit FeeSplit(n, toDev, toVig);
@@ -181,7 +181,7 @@ contract OmertaFees is Ownable2Step, ReentrancyGuard {
     function sweep() external onlyOwner nonReentrant {
         uint256 bal = address(this).balance;
         if (bal > 0) {
-            (bool ok, ) = payable(owner()).call{value: bal}("");
+            (bool ok,) = payable(owner()).call{value: bal}("");
             if (!ok) revert ForwardFailed();
         }
     }

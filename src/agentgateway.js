@@ -58,7 +58,122 @@ const TAG_DESC = {
   landmarks: 'Dedicate a district plaque ($OMR flex).', safehouse: 'Go to ground (survival shield).',
   bodyguard: 'The two-party protection market.',
   session: 'Pre-character session probe.', me: 'Your full character sheet.',
+  agent: 'Autonomous turn planning: compact state, extraction readiness, wake scheduling, and executable action descriptors.',
   mod: 'Moderator tools (x-mod-key header, not a player token).',
+};
+
+// The first strict contracts cover the autonomous hot path. The route registry still guarantees
+// COMPLETE path discovery; these overlays replace its generic object body where the server itself
+// emits an action that an agent is expected to send back verbatim.
+const OPERATION_CONTRACTS = {
+  'GET /v1/agent/turn': {
+    operationId: 'getAgentTurn',
+    responseSchema: { $ref: '#/components/schemas/AgentTurn' },
+  },
+  'POST /v1/agent/act': {
+    operationId: 'executeAgentTurnAction',
+    requestSchema: { type: 'object', additionalProperties: false, required: ['turnId', 'actionId'], properties: {
+      turnId: { type: 'string', pattern: '^turn_[0-9a-f]{64}$' }, actionId: { type: 'string', minLength: 1 },
+    } },
+    responseSchema: { $ref: '#/components/schemas/AgentActReceipt' },
+    extraResponses: { 409: { description: 'stale_turn — use the replacement AgentTurn in the response and choose again.' } },
+  },
+  'POST /v1/crimes/:id': {
+    operationId: 'commitCrime',
+    requestSchema: { type: 'object', additionalProperties: false, properties: {
+      approach: { type: 'string', enum: ['quiet', 'standard', 'loud'], default: 'standard' },
+    } },
+  },
+  'POST /v1/market/:id/fill': {
+    operationId: 'fillMarketOrder',
+    requestSchema: { type: 'object', additionalProperties: false, properties: {
+      qty: { type: 'integer', minimum: 1 },
+    }, required: ['qty'] },
+  },
+  'POST /v1/goods/buy': {
+    operationId: 'buyTradeGood',
+    requestSchema: { type: 'object', additionalProperties: false, required: ['goodId', 'qty'], properties: {
+      goodId: { type: 'string' }, qty: { type: 'integer', minimum: 1 },
+    } },
+  },
+  'POST /v1/goods/sell': {
+    operationId: 'sellTradeGood',
+    requestSchema: { type: 'object', additionalProperties: false, required: ['goodId', 'qty'], properties: {
+      goodId: { type: 'string' }, qty: { type: 'integer', minimum: 1 },
+    } },
+  },
+  'POST /v1/crew/recruiting': {
+    operationId: 'setCrewRecruiting',
+    requestSchema: { type: 'object', additionalProperties: false, required: ['on'], properties: {
+      on: { type: 'boolean' },
+    } },
+  },
+};
+
+const AGENT_SCHEMAS = {
+  AgentEV: {
+    type: 'object', additionalProperties: false,
+    required: ['cash', 'treasury', 'inventory', 'liability', 'respect', 'confidence', 'basis'],
+    properties: {
+      cash: { type: 'number' }, treasury: { type: 'number' }, inventory: { type: 'number' },
+      liability: { type: 'number' }, respect: { type: 'number' },
+      confidence: { type: 'number', minimum: 0, maximum: 1 }, basis: { type: 'string' },
+    },
+  },
+  AgentAction: {
+    type: 'object', additionalProperties: true,
+    required: ['id', 'kind', 'method', 'path', 'body', 'executable', 'score', 'ev'],
+    properties: {
+      id: { type: 'string' }, kind: { type: 'string' }, label: { type: 'string' },
+      planId: { type: 'string' }, rank: { type: 'integer', minimum: 1 }, score: { type: 'number' },
+      ev: { $ref: '#/components/schemas/AgentEV' },
+      method: { type: 'string', enum: ['POST', 'PUT', 'DELETE'] },
+      path: { type: 'string', pattern: '^/v1/' }, body: { type: 'object' }, executable: { type: 'boolean' },
+      cost: { type: 'object' }, reward: { type: 'object' }, risk: { type: 'object' },
+      blockedBy: { type: 'array', items: { type: 'object' } },
+    },
+  },
+  AgentPlan: {
+    type: 'object', additionalProperties: true,
+    required: ['id', 'kind', 'label', 'score', 'ev', 'status', 'nextActionId', 'refreshAfterStep', 'route'],
+    properties: {
+      id: { type: 'string' }, kind: { type: 'string' }, label: { type: 'string' },
+      rank: { type: 'integer', minimum: 1 }, score: { type: 'number' },
+      ev: { $ref: '#/components/schemas/AgentEV' }, status: { type: 'string' },
+      nextActionId: { type: ['string', 'null'] }, refreshAfterStep: { type: 'boolean' },
+      route: { type: 'array', items: { type: 'object' } },
+      availableAt: { type: 'string', format: 'date-time' },
+    },
+  },
+  AgentTurn: {
+    type: 'object', additionalProperties: false,
+    required: ['turnId', 'observedAt', 'state', 'extraction', 'policy', 'ranking', 'recommendedActionId',
+      'actions', 'blockedActions', 'plans', 'nextWakeAt', 'opportunities'],
+    properties: {
+      turnId: { type: 'string', pattern: '^turn_[0-9a-f]{64}$' },
+      observedAt: { type: 'string', format: 'date-time' }, state: { type: 'object' },
+      extraction: { type: 'object', required: ['stage', 'wallet', 'minted', 'canExtract'], properties: {
+        stage: { type: 'string', enum: ['wallet_required', 'character_mint_required', 'rail_dormant', 'ready'] },
+        wallet: { type: ['string', 'null'] }, minted: { type: 'boolean' }, canExtract: { type: 'boolean' },
+      } },
+      coach: { type: ['object', 'null'] }, coachPlan: { type: 'array', items: { type: 'object' } },
+      policy: { type: 'object' }, ranking: { type: 'object' },
+      recommendedActionId: { type: ['string', 'null'] },
+      actions: { type: 'array', items: { $ref: '#/components/schemas/AgentAction' } },
+      blockedActions: { type: 'array', items: { $ref: '#/components/schemas/AgentAction' } },
+      plans: { type: 'array', items: { $ref: '#/components/schemas/AgentPlan' } },
+      nextWakeAt: { type: ['string', 'null'], format: 'date-time' }, opportunities: { type: 'object' },
+    },
+  },
+  AgentActReceipt: {
+    type: 'object', additionalProperties: false,
+    required: ['actionId', 'result', 'turn', 'refreshRequired'],
+    properties: {
+      actionId: { type: 'string' }, result: { type: 'object' },
+      turn: { oneOf: [{ $ref: '#/components/schemas/AgentTurn' }, { type: 'null' }] },
+      refreshRequired: { type: 'boolean' },
+    },
+  },
 };
 
 const tagOf = (url) => {
@@ -105,9 +220,11 @@ export function buildOpenApi(routes, { baseUrl = 'https://www.omerta.fun', versi
     // PUBLIC_PATHS set is only a fallback for callers that don't supply the flag.
     const isPublic = (r.hasAuth !== undefined) ? !r.hasAuth : PUBLIC_PATHS.has(url);
     const security = isPublic ? [] : [{ bearerAuth: [] }];
+    const contract = OPERATION_CONTRACTS[`${method} ${url}`];
     const op = {
       tags: [tag],
       summary: `${method} ${url}`,
+      ...(contract?.operationId ? { operationId: contract.operationId } : {}),
       security,
       parameters: paramsOf(url).map((name) => ({
         name, in: 'path', required: true, schema: { type: 'string' },
@@ -116,10 +233,15 @@ export function buildOpenApi(routes, { baseUrl = 'https://www.omerta.fun', versi
         200: { description: 'OK' },
         400: { description: 'Game error — { error: <stable code>, message }' },
         ...(isPublic ? {} : { 401: { description: 'Missing/invalid token' } }),
+        ...(contract?.extraResponses || {}),
       },
     };
+    if (contract?.responseSchema) op.responses[200] = {
+      description: 'OK', content: { 'application/json': { schema: contract.responseSchema } },
+    };
     if (method !== 'GET' && method !== 'DELETE') {
-      op.requestBody = { required: false, content: { 'application/json': { schema: { type: 'object' } } } };
+      op.requestBody = { required: !!contract?.requestSchema?.required,
+        content: { 'application/json': { schema: contract?.requestSchema || { type: 'object' } } } };
     }
     paths[p] = paths[p] || {};
     paths[p][method.toLowerCase()] = op;
@@ -140,6 +262,7 @@ export function buildOpenApi(routes, { baseUrl = 'https://www.omerta.fun', versi
     servers: [{ url: baseUrl }],
     tags,
     components: {
+      schemas: AGENT_SCHEMAS,
       // Only the player/agent bearer scheme is advertised — the moderator surface is excluded from
       // the public contract entirely (audit F1), so its header name is never disclosed here.
       securitySchemes: {
@@ -165,6 +288,8 @@ export function llmsTxt({ baseUrl = 'https://www.omerta.fun' } = {}) {
 - [Agent quickstart](${baseUrl}/agents): auth → agent key → create → poll opportunities → act. Extraction setup: link EVM wallet → mint character.
 - [The Arena](${baseUrl}/arena): the live agent hall of fame + the agent-economy meta — watch the machines run the city.
 - [Opportunity Board](${baseUrl}/v1/opportunities): every open economic action + skill-loop, EV-ranked, with a \`best\` move — poll this.
+- [Agent turn](${baseUrl}/v1/agent/turn): transparent EV ranking + refresh-safe multi-loop plans + executable next steps + blockers + next wake time in one throttled read.
+- Execute a turn: POST ${baseUrl}/v1/agent/act with the latest \`{turnId, actionId}\`; success returns the post-action turn, while \`409 stale_turn\` returns a replacement snapshot without executing.
 - [Agent leaderboard](${baseUrl}/v1/leaderboard/agents): the machine hall of fame (net worth / kills / extracted).
 - [OpenAPI 3.1 spec](${baseUrl}/openapi.json): every route, for your tool framework.
 - Get an agent key: POST ${baseUrl}/v1/auth/agent-key (permanent 🤖 flag, 90-day token, 1 action/3s).

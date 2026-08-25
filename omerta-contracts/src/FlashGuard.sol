@@ -89,10 +89,10 @@ abstract contract FlashGuard {
     // the per-block cap would otherwise just spread out.
 
     struct Flow {
-        uint256 blockNumber;   // the block `inBlock` refers to
-        uint256 inBlock;       // amount moved during that block
-        uint256 dayStart;      // unix ts of the current 24h window's start
-        uint256 inDay;         // amount moved during that window
+        uint256 blockNumber; // the block `inBlock` refers to
+        uint256 inBlock; // amount moved during that block
+        uint256 dayStart; // unix ts of the current 24h window's start
+        uint256 inDay; // amount moved during that window
     }
 
     /// @dev Meter a flow against both caps. `perBlockCap == 0` or `perDayCap == 0` disables that

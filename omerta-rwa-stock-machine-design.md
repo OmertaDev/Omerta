@@ -1,5 +1,15 @@
 # THE STOCK MACHINE — tax → daily Commission-voted stock buy → gas-paid claims
 
+> **2026-08-24 implementation note.** This design predates the deployed-shape decisions now recorded
+> in `omerta-brokers-design.md` and the in-game Codex (`docs/WIKI.md`). The current machine uses the
+> Safe-owned `StockTokenRegistry`, closed-day ballot commitments, `RwaStockBuyer`, automatic
+> human-only activity epochs, and EIP-712-authorized `StockVault` delivery. Any older passage below
+> proposing a free-form ticker map, a player claim voucher, a static candidate list, or a gateless
+> keeper-only delivery is historical analysis rather than the implementation contract. The founder's
+> current recipient posture is also explicit: OMERTÀ performs no KYC or compliance screening in the
+> game or delivery worker; older eligibility-allowlist proposals below are rejected historical options,
+> not unimplemented requirements. This posture is not represented as outside legal approval.
+
 **Status: DESIGN ONLY (founder-directed 2026-08-09). Approval recorded as a founder assertion, the standing directive pattern. Nothing here is built; the
 chain half is mainnet-gated on the third-party audit clock like every contract change.**
 

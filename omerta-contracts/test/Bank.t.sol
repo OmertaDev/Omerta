@@ -18,15 +18,25 @@ import {FlashGuard} from "../src/FlashGuard.sol";
 /// runs against the mismatch rather than a convenient 18dp stand-in.
 contract MockUSDC is ERC20 {
     constructor() ERC20("USD Coin", "USDC") {}
-    function decimals() public pure override returns (uint8) { return 6; }
-    function mint(address to, uint256 a) external { _mint(to, a); }
+
+    function decimals() public pure override returns (uint8) {
+        return 6;
+    }
+
+    function mint(address to, uint256 a) external {
+        _mint(to, a);
+    }
 
     /// USDC's real BLOCKLIST, modelled rather than approximated. A "recipient contract that
     /// reverts" would test nothing here: a plain ERC20 transfer never calls its receiver, so the
     /// only way a push to a live address fails is the token refusing it — which is exactly the
     /// production case this suite has to cover.
     mapping(address => bool) public blocked;
-    function setBlocked(address a, bool b) external { blocked[a] = b; }
+
+    function setBlocked(address a, bool b) external {
+        blocked[a] = b;
+    }
+
     function _update(address from, address to, uint256 v) internal override {
         require(!blocked[to] && !blocked[from], "USDC: blocked");
         super._update(from, to, v);
@@ -38,8 +48,14 @@ contract MockUSDC is ERC20 {
 /// pass against accounting the real thing does not have.
 contract MockVault is ERC4626 {
     constructor(IERC20 a) ERC4626(a) ERC20("Vault USDC", "vUSDC") {}
-    function earn(uint256 a) external { MockUSDC(asset()).mint(address(this), a); }
-    function lose(uint256 a) external { MockUSDC(asset()).transfer(address(0xdead), a); }
+
+    function earn(uint256 a) external {
+        MockUSDC(asset()).mint(address(this), a);
+    }
+
+    function lose(uint256 a) external {
+        MockUSDC(asset()).transfer(address(0xdead), a);
+    }
 }
 
 /// A vault that tries to re-enter the Alchemist during a withdrawal. The vault is the ONE external
@@ -49,11 +65,20 @@ contract EvilVault is ERC4626 {
     Alchemist public target;
     bool armed;
     constructor(IERC20 a) ERC4626(a) ERC20("Evil", "EVIL") {}
-    function arm(Alchemist t) external { target = t; armed = true; }
+
+    function arm(Alchemist t) external {
+        target = t;
+        armed = true;
+    }
+
     function _withdraw(address caller, address receiver, address owner_, uint256 assets, uint256 shares)
-        internal override
+        internal
+        override
     {
-        if (armed) { armed = false; target.withdraw(1); } // re-enter mid-withdrawal
+        if (armed) {
+            armed = false; // re-enter mid-withdrawal
+            target.withdraw(1);
+        }
         super._withdraw(caller, receiver, owner_, assets, shares);
     }
 }
@@ -82,13 +107,13 @@ contract BankTest is Test {
         dnr.setMinter(address(alchemist));
         dnr.setBurner(address(transmuter));
         transmuter.setFunder(address(alchemist), true);
-        transmuter.setFunder(safe, true);       // the launch seeder
+        transmuter.setFunder(safe, true); // the launch seeder
         alchemist.setLtvBps(5_000);
         vm.stopPrank();
 
         // THE DEPLOY REQUIREMENT, exercised rather than assumed: seed the buffer before arming the
-        // market, or it accepts one borrow and deadlocks. Proven by
-        // `test_an_unseeded_market_bricks_after_one_borrow`, which builds a market WITHOUT this.
+        // market, or post-issuance reserve validation refuses the first borrow. Proven by
+        // `test_an_unseeded_market_refuses_the_first_borrow`, which builds a market WITHOUT this.
         usdc.mint(safe, 500_000 * M);
         vm.startPrank(safe);
         usdc.approve(address(transmuter), type(uint256).max);
@@ -97,8 +122,10 @@ contract BankTest is Test {
 
         usdc.mint(alice, 1_000_000 * M);
         usdc.mint(bob, 1_000_000 * M);
-        vm.prank(alice); usdc.approve(address(alchemist), type(uint256).max);
-        vm.prank(bob); usdc.approve(address(alchemist), type(uint256).max);
+        vm.prank(alice);
+        usdc.approve(address(alchemist), type(uint256).max);
+        vm.prank(bob);
+        usdc.approve(address(alchemist), type(uint256).max);
 
         vm.roll(1000);
         vm.warp(1_000_000);
@@ -106,19 +133,18 @@ contract BankTest is Test {
 
     function _depositAndBorrow(address who, uint256 assets, uint256 debt) internal {
         vm.prank(who);
-        alchemist.deposit(assets);
+        alchemist.deposit(assets, 1);
         vm.roll(block.number + 1); // L1: entry and exit cannot share a block
-        if (debt > 0) { vm.prank(who); alchemist.mint(debt); }
+        if (debt > 0) {
+            vm.prank(who);
+            alchemist.mint(debt);
+        }
     }
-
 
     /// Build a standalone market with a chosen buffer seed. Used by the tests that need a genuinely
     /// THIN buffer (the shared fixture is correctly seeded, which makes it healthy) and by the
     /// bootstrap test, which needs one seeded with nothing at all.
-    function _market(uint256 seed)
-        internal
-        returns (Denari n, Transmuter t, Alchemist a, MockVault v)
-    {
+    function _market(uint256 seed) internal returns (Denari n, Transmuter t, Alchemist a, MockVault v) {
         v = new MockVault(IERC20(address(usdc)));
         n = new Denari("Denari", "DNR", safe);
         t = new Transmuter(n, IERC20(address(usdc)), safe);
@@ -139,24 +165,23 @@ contract BankTest is Test {
         }
     }
 
-    /// THE DEPLOY REQUIREMENT, proven rather than asserted in a comment. An unseeded market takes
-    /// exactly one borrow — at zero supply the required buffer is zero — and then refuses every
-    /// further mint, because reserves are fed only by repay/harvest, which need existing debt.
-    /// This deadlock looks like a healthy config from the outside, which is why it is pinned here:
-    /// deleting the seed step from a deploy script must fail a test, not surface on mainnet.
-    function test_an_unseeded_market_bricks_after_one_borrow() public {
-        (, , Alchemist a, ) = _market(0);
+    /// THE DEPLOY REQUIREMENT, proven rather than asserted in a comment. An unseeded market must
+    /// refuse its very first borrow: checking only the old zero supply would let issuance create an
+    /// immediately unhealthy buffer. Deleting the seed step from a deploy script must therefore
+    /// fail closed before any unbacked DNR reaches a borrower.
+    function test_an_unseeded_market_refuses_the_first_borrow() public {
+        (Denari n,, Alchemist a,) = _market(0);
         vm.startPrank(alice);
         usdc.approve(address(a), type(uint256).max);
-        a.deposit(10_000 * M);
+        a.deposit(10_000 * M, 1);
         vm.stopPrank();
         vm.roll(block.number + 1);
 
-        vm.prank(alice); a.mint(100 ether);           // the first borrow always passes
-
         vm.prank(alice);
         vm.expectRevert(Alchemist.BufferUnhealthy.selector);
-        a.mint(1 ether);                              // and every one after it deadlocks
+        a.mint(100 ether);
+        assertEq(n.totalSupply(), 0, "a rejected bootstrap mint changed supply");
+        assertEq(a.debtOf(alice), 0, "a rejected bootstrap mint changed debt");
     }
 
     // ── the headline invariant ───────────────────────────────────────────────────────────────────
@@ -164,7 +189,11 @@ contract BankTest is Test {
     /// Σ DNR supply ≤ Σ collateral × LTV — the design's §2.4 item 4, fuzzed. Everything else in
     /// this file is a mechanism; this is the property those mechanisms exist to hold.
     function testFuzz_supply_never_exceeds_collateral_times_ltv(
-        uint96 depositA, uint96 depositB, uint96 borrowA, uint96 borrowB, uint16 ltv
+        uint96 depositA,
+        uint96 depositB,
+        uint96 borrowA,
+        uint96 borrowB,
+        uint16 ltv
     ) public {
         // the ceiling is now the PAIR bound, not MAX_LTV_BPS alone (see _assertLtvFeeCompatible):
         // at the shipped 20% fee the reachable maximum is 80%, not 90%.
@@ -172,13 +201,16 @@ contract BankTest is Test {
         uint16 pairCeiling = uint16(alchemist.BPS() - alchemist.harvestFeeBps());
         if (pairCeiling < ltvCeiling) ltvCeiling = pairCeiling;
         ltv = uint16(bound(ltv, 1, ltvCeiling));
-        vm.prank(safe); alchemist.setLtvBps(ltv);
+        vm.prank(safe);
+        alchemist.setLtvBps(ltv);
 
         uint256 dA = bound(depositA, 1, 100_000 * M);
         uint256 dB = bound(depositB, 1, 100_000 * M);
 
-        vm.prank(alice); alchemist.deposit(dA);
-        vm.prank(bob); alchemist.deposit(dB);
+        vm.prank(alice);
+        alchemist.deposit(dA, 1);
+        vm.prank(bob);
+        alchemist.deposit(dB, 1);
         vm.roll(block.number + 1);
 
         // Borrow whatever each is allowed — and ATTEMPT the over-borrow rather than skipping it.
@@ -187,16 +219,20 @@ contract BankTest is Test {
         // green. The violation must be attempted for the assertion to mean anything.
         uint256 maxA = alchemist.maxDebtOf(alice);
         uint256 bA = bound(borrowA, 1, type(uint96).max);
-        if (bA <= maxA) { vm.prank(alice); alchemist.mint(bA); }
-        else {
+        if (bA <= maxA) {
+            vm.prank(alice);
+            alchemist.mint(bA);
+        } else {
             vm.prank(alice);
             vm.expectRevert(Alchemist.Undercollateralised.selector);
             alchemist.mint(bA);
         }
         uint256 maxB = alchemist.maxDebtOf(bob);
         uint256 bB = bound(borrowB, 1, type(uint96).max);
-        if (bB <= maxB) { vm.prank(bob); alchemist.mint(bB); }
-        else {
+        if (bB <= maxB) {
+            vm.prank(bob);
+            alchemist.mint(bB);
+        } else {
             vm.prank(bob);
             vm.expectRevert(Alchemist.Undercollateralised.selector);
             alchemist.mint(bB);
@@ -211,7 +247,8 @@ contract BankTest is Test {
     }
 
     function test_borrowing_past_ltv_reverts() public {
-        vm.prank(alice); alchemist.deposit(1000 * M);
+        vm.prank(alice);
+        alchemist.deposit(1000 * M, 1);
         vm.roll(block.number + 1);
         uint256 max = alchemist.maxDebtOf(alice);
         assertEq(max, 500 ether, "50% of 1000 USDC, in 18dp");
@@ -232,7 +269,7 @@ contract BankTest is Test {
     /// The atomic round trip, at the protocol level rather than the harness level.
     function test_deposit_and_borrow_in_the_same_block_reverts() public {
         vm.startPrank(alice);
-        alchemist.deposit(1000 * M);
+        alchemist.deposit(1000 * M, 1);
         vm.expectRevert(FlashGuard.SameBlockAsEntry.selector);
         alchemist.mint(1 ether);
         vm.stopPrank();
@@ -240,7 +277,7 @@ contract BankTest is Test {
 
     function test_deposit_and_withdraw_in_the_same_block_reverts() public {
         vm.startPrank(alice);
-        alchemist.deposit(1000 * M);
+        alchemist.deposit(1000 * M, 1);
         vm.expectRevert(FlashGuard.SameBlockAsEntry.selector);
         alchemist.withdraw(1 * M);
         vm.stopPrank();
@@ -249,8 +286,10 @@ contract BankTest is Test {
     // ── escrow isolation: the FiRM lesson ────────────────────────────────────────────────────────
 
     function test_each_user_gets_their_own_escrow() public {
-        vm.prank(alice); alchemist.deposit(100 * M);
-        vm.prank(bob); alchemist.deposit(100 * M);
+        vm.prank(alice);
+        alchemist.deposit(100 * M, 1);
+        vm.prank(bob);
+        alchemist.deposit(100 * M, 1);
         address ea = address(alchemist.escrowOf(alice));
         address eb = address(alchemist.escrowOf(bob));
         assertTrue(ea != address(0) && eb != address(0) && ea != eb, "separate escrows");
@@ -261,7 +300,8 @@ contract BankTest is Test {
     /// NOBODY but the Alchemist may move a user's collateral — not the user, not the Safe, not
     /// another user. This is the property that makes "can my collateral be taken?" a ~90-line read.
     function test_nobody_but_the_alchemist_can_move_escrow_funds() public {
-        vm.prank(alice); alchemist.deposit(100 * M);
+        vm.prank(alice);
+        alchemist.deposit(100 * M, 1);
         CollateralEscrow e = alchemist.escrowOf(alice);
 
         vm.prank(alice);
@@ -280,8 +320,10 @@ contract BankTest is Test {
     /// Yield is per-escrow, so one user's position cannot dilute another's — the structural reason
     /// RV finding #1 is unreachable rather than merely fixed.
     function test_one_users_yield_does_not_touch_another() public {
-        vm.prank(alice); alchemist.deposit(1000 * M);
-        vm.prank(bob); alchemist.deposit(1000 * M);
+        vm.prank(alice);
+        alchemist.deposit(1000 * M, 1);
+        vm.prank(bob);
+        alchemist.deposit(1000 * M, 1);
         uint256 bobBefore = alchemist.collateralOf(bob);
         vault.earn(500 * M); // vault-wide yield: both hold shares, both gain pro-rata
         assertGt(alchemist.collateralOf(bob), bobBefore, "bob's own shares appreciate");
@@ -290,7 +332,8 @@ contract BankTest is Test {
         vm.roll(block.number + 1);
         uint256 bobMid = alchemist.collateralOf(bob);
         uint256 aliceAll = alchemist.collateralOf(alice); // hoisted, same reason
-        vm.prank(alice); alchemist.withdraw(aliceAll);
+        vm.prank(alice);
+        alchemist.withdraw(aliceAll);
         assertApproxEqAbs(alchemist.collateralOf(bob), bobMid, 2, "bob is unaffected by alice exiting");
     }
 
@@ -344,7 +387,7 @@ contract BankTest is Test {
         _depositAndBorrow(alice, 1000 * M, 400 ether);
         uint256 debtBefore = alchemist.debtOf(alice);
 
-        vault.earn(100 * M);           // yield is smaller than the debt, so the WHOLE yield is consumed
+        vault.earn(100 * M); // yield is smaller than the debt, so the WHOLE yield is consumed
         alchemist.harvest(alice);
 
         // 20% of the yield reaches the protocol; the other 80% clears debt. Both halves asserted,
@@ -382,7 +425,7 @@ contract BankTest is Test {
         uint256 takenOnce = _feeTaken();
         assertGt(takenOnce, 0, "the harvest that serviced the debt WAS billed");
 
-        vault.earn(500 * M);                       // more yield, still no debt
+        vault.earn(500 * M); // more yield, still no debt
         vm.expectRevert(Alchemist.NothingToHarvest.selector);
         alchemist.harvest(alice);
         assertEq(_feeTaken(), takenOnce, "a debt-free position is never billed again");
@@ -396,8 +439,7 @@ contract BankTest is Test {
         uint256 debtBefore = alchemist.debtOf(alice);
         vault.earn(100 * M);
         alchemist.harvest(alice);
-        assertApproxEqAbs(debtBefore - alchemist.debtOf(alice), 100 ether, 1e13,
-            "the whole yield repays the borrower");
+        assertApproxEqAbs(debtBefore - alchemist.debtOf(alice), 100 ether, 1e13, "the whole yield repays the borrower");
         assertEq(_feeTaken(), 0, "and nothing is taken");
     }
 
@@ -441,7 +483,7 @@ contract BankTest is Test {
         uint256 debtBefore = alchemist.debtOf(alice);
 
         vault.earn(100 * M);
-        alchemist.harvest(alice);                       // must NOT revert
+        alchemist.harvest(alice); // must NOT revert
 
         assertLt(alchemist.debtOf(alice), debtBefore, "the borrower's loan still repaid itself");
         assertGt(alchemist.accruedFees(), 0, "and the fee is held, waiting for a sweep");
@@ -451,9 +493,9 @@ contract BankTest is Test {
         alchemist.sweepFees();
 
         vm.prank(safe);
-        alchemist.setHarvestFee(2_000, feeDest);        // one transaction fixes it
+        alchemist.setHarvestFee(2_000, feeDest); // one transaction fixes it
         uint256 owed = alchemist.accruedFees();
-        alchemist.sweepFees();                          // permissionless: no Safe needed to collect
+        alchemist.sweepFees(); // permissionless: no Safe needed to collect
         assertEq(usdc.balanceOf(feeDest), owed, "the held fee reaches the new recipient");
         assertEq(alchemist.accruedFees(), 0, "and nothing is left double-payable");
     }
@@ -468,13 +510,14 @@ contract BankTest is Test {
         vm.prank(safe);
         alchemist.setHarvestFee(2_000, address(0));
         vm.expectRevert(Alchemist.FeeRecipientUnset.selector);
-        alchemist.sweepFees();                          // never a transfer to address(0)
+        alchemist.sweepFees(); // never a transfer to address(0)
 
         vm.prank(safe);
         alchemist.setHarvestFee(2_000, feeDest);
-        alchemist.sweepFees();                          // drains it
+        alchemist.sweepFees(); // drains it
         vm.expectRevert(Alchemist.ZeroAmount.selector);
-        vm.prank(bob); alchemist.sweepFees();           // and an empty sweep is a clean refusal
+        vm.prank(bob); // and an empty sweep is a clean refusal
+        alchemist.sweepFees();
     }
 
     function test_the_fee_cannot_be_pointed_at_an_address_that_swallows_it() public {
@@ -513,15 +556,17 @@ contract BankTest is Test {
         uint256 realised = alchemist.escrowOf(alice).totalAssets() - escrowBefore;
         uint256 net = realised - (realised * 2_000) / 10_000;
         uint256 naiveFee = (net * 2_000) / (10_000 - 2_000); // take == net in the yield-bound branch
-        assertGt(net + naiveFee, realised,
-            "precondition failed: this yield does not overshoot, so the clamp is not exercised");
+        assertGt(
+            net + naiveFee,
+            realised,
+            "precondition failed: this yield does not overshoot, so the clamp is not exercised"
+        );
 
         alchemist.harvest(alice);
 
         uint256 drawn = escrowBefore + realised - alchemist.escrowOf(alice).totalAssets();
         assertLe(drawn, realised, "the harvest drew more than it realised: the clamp is gone");
-        assertEq(_feeTaken(), realised - net,
-            "the fee was charged on top of the whole take: the clamp did not fire");
+        assertEq(_feeTaken(), realised - net, "the fee was charged on top of the whole take: the clamp did not fire");
     }
 
     function test_harvest_never_clears_more_debt_than_assets_moved() public {
@@ -536,9 +581,11 @@ contract BankTest is Test {
 
     function test_repay_in_underlying_clears_debt_and_funds_the_buffer() public {
         _depositAndBorrow(alice, 1000 * M, 400 ether);
-        vm.prank(alice); usdc.approve(address(alchemist), type(uint256).max);
+        vm.prank(alice);
+        usdc.approve(address(alchemist), type(uint256).max);
         uint256 reservesBefore = transmuter.reserves();
-        vm.prank(alice); alchemist.repay(100 * M);
+        vm.prank(alice);
+        alchemist.repay(100 * M);
         assertEq(alchemist.debtOf(alice), 300 ether);
         assertEq(transmuter.reserves(), reservesBefore + 100 * M);
     }
@@ -548,7 +595,8 @@ contract BankTest is Test {
     function test_repay_never_takes_more_than_is_owed() public {
         _depositAndBorrow(alice, 1000 * M, 100 ether);
         uint256 balBefore = usdc.balanceOf(alice);
-        vm.prank(alice); alchemist.repay(500 * M); // owes only 100
+        vm.prank(alice); // owes only 100
+        alchemist.repay(500 * M);
         assertEq(alchemist.debtOf(alice), 0);
         assertEq(balBefore - usdc.balanceOf(alice), 100 * M, "only what was owed was taken");
     }
@@ -557,11 +605,14 @@ contract BankTest is Test {
 
     function test_redeem_is_one_to_one_across_the_decimal_mismatch() public {
         _depositAndBorrow(alice, 1000 * M, 400 ether);
-        vm.prank(alice); alchemist.repay(400 * M); // fill the buffer so redemption can be paid
+        vm.prank(alice); // fill the buffer so redemption can be paid
+        alchemist.repay(400 * M);
 
-        vm.prank(alice); dnr.approve(address(transmuter), type(uint256).max);
+        vm.prank(alice);
+        dnr.approve(address(transmuter), type(uint256).max);
         uint256 usdcBefore = usdc.balanceOf(alice);
-        vm.prank(alice); transmuter.redeem(250 ether);
+        vm.prank(alice);
+        transmuter.redeem(250 ether);
 
         assertEq(usdc.balanceOf(alice) - usdcBefore, 250 * M, "250 DNR (18dp) -> 250 USDC (6dp)");
         assertEq(dnr.totalSupply(), 150 ether, "and the supply fell by exactly the burn");
@@ -587,26 +638,34 @@ contract BankTest is Test {
     /// redeeming. If this test ever fails, someone has taxed the peg defense.
     function test_the_peg_redemption_is_NEVER_taxed() public {
         _depositAndBorrow(alice, 1000 * M, 400 ether);
-        vm.prank(alice); alchemist.repay(400 * M);
+        vm.prank(alice);
+        alchemist.repay(400 * M);
 
-        vm.prank(alice); dnr.approve(address(transmuter), type(uint256).max);
+        vm.prank(alice);
+        dnr.approve(address(transmuter), type(uint256).max);
         uint256 before = usdc.balanceOf(alice);
         uint256 transmuterBefore = usdc.balanceOf(address(transmuter));
-        vm.prank(alice); transmuter.redeem(300 ether);
+        vm.prank(alice);
+        transmuter.redeem(300 ether);
 
         // the redeemer gets the WHOLE 1:1 value — not 90% of it, not 99% of it
         assertEq(usdc.balanceOf(alice) - before, 300 * M, "a redeemer receives the full 1:1 value");
         // and the protocol keeps nothing back: the transmuter's balance fell by exactly what it paid
-        assertEq(transmuterBefore - usdc.balanceOf(address(transmuter)), 300 * M,
-            "the protocol withheld nothing: a fee here is a peg band, not revenue");
+        assertEq(
+            transmuterBefore - usdc.balanceOf(address(transmuter)),
+            300 * M,
+            "the protocol withheld nothing: a fee here is a peg band, not revenue"
+        );
     }
 
     /// Sub-unit dust must not burn for nothing. 1 wei of DNR is less than one USDC unit, so paying
     /// out zero while burning the debt would be a silent loss for the redeemer.
     function test_dust_below_one_asset_unit_reverts_rather_than_burning_for_zero() public {
         _depositAndBorrow(alice, 1000 * M, 400 ether);
-        vm.prank(alice); alchemist.repay(400 * M);
-        vm.prank(alice); dnr.approve(address(transmuter), type(uint256).max);
+        vm.prank(alice);
+        alchemist.repay(400 * M);
+        vm.prank(alice);
+        dnr.approve(address(transmuter), type(uint256).max);
         vm.prank(alice);
         vm.expectRevert(Transmuter.ZeroAmount.selector);
         transmuter.redeem(1); // 1 wei
@@ -618,24 +677,28 @@ contract BankTest is Test {
     /// halt new debt while leaving existing claims redeemable — the reverse ordering would be a
     /// protocol that keeps selling claims it cannot honour.
     function test_a_thin_buffer_halts_issuance_but_never_redemption() public {
-        (Denari n, Transmuter t, Alchemist a, ) = _market(100 * M); // a deliberately thin seed
+        (Denari n, Transmuter t, Alchemist a,) = _market(100 * M); // a deliberately thin seed
         vm.startPrank(alice);
         usdc.approve(address(a), type(uint256).max);
-        a.deposit(100_000 * M);
+        a.deposit(100_000 * M, 1);
         vm.stopPrank();
         vm.roll(block.number + 1);
-        vm.prank(alice); a.mint(40_000 ether);
+        vm.prank(alice);
+        a.mint(400 ether);
 
-        vm.prank(safe); t.setBufferFloorBps(5_000);   // demand 50% backing: 20,000 vs 100 held
+        vm.prank(safe); // demand 50% backing: 200 vs 100 held
+        t.setBufferFloorBps(5_000);
         assertFalse(t.bufferHealthy(), "buffer is thin");
 
         vm.prank(alice);
         vm.expectRevert(Alchemist.BufferUnhealthy.selector);
-        a.mint(1 ether);                              // issuance halts
+        a.mint(1 ether); // issuance halts
 
         // but whatever backing exists is still payable — the ordering §2.4 exists to guarantee
-        vm.prank(alice); n.approve(address(t), type(uint256).max);
-        vm.prank(alice); t.redeem(100 ether);
+        vm.prank(alice);
+        n.approve(address(t), type(uint256).max);
+        vm.prank(alice);
+        t.redeem(100 ether);
         assertTrue(true);
     }
 
@@ -667,16 +730,20 @@ contract BankTest is Test {
     /// touching redemption — the same asymmetry the buffer floor encodes.
     function test_disarming_the_minter_halts_issuance_only() public {
         _depositAndBorrow(alice, 1000 * M, 400 ether);
-        vm.prank(alice); alchemist.repay(400 * M);
-        vm.prank(safe); dnr.setMinter(address(0));
+        vm.prank(alice);
+        alchemist.repay(400 * M);
+        vm.prank(safe);
+        dnr.setMinter(address(0));
 
         vm.roll(block.number + 1);
         vm.prank(alice);
         vm.expectRevert(Denari.NotMinter.selector);
         alchemist.mint(1 ether);
 
-        vm.prank(alice); dnr.approve(address(transmuter), type(uint256).max);
-        vm.prank(alice); transmuter.redeem(100 ether); // still payable
+        vm.prank(alice);
+        dnr.approve(address(transmuter), type(uint256).max);
+        vm.prank(alice); // still payable
+        transmuter.redeem(100 ether);
     }
 
     function test_ltv_has_a_compile_time_ceiling() public {
@@ -700,25 +767,29 @@ contract BankTest is Test {
     /// Reserves are a VARIABLE, never `balanceOf(this)`. A direct transfer must be ignored, or a
     /// donation could fake buffer health and unlock issuance the backing does not support.
     function test_a_donation_cannot_fake_buffer_health() public {
-        (, Transmuter t, Alchemist a, ) = _market(100 * M);
+        (, Transmuter t, Alchemist a,) = _market(100 * M);
         vm.startPrank(alice);
         usdc.approve(address(a), type(uint256).max);
-        a.deposit(100_000 * M);
+        a.deposit(100_000 * M, 1);
         vm.stopPrank();
         vm.roll(block.number + 1);
-        vm.prank(alice); a.mint(40_000 ether);
+        vm.prank(alice);
+        a.mint(400 ether);
 
-        vm.prank(safe); t.setBufferFloorBps(5_000);
+        vm.prank(safe);
+        t.setBufferFloorBps(5_000);
         assertFalse(t.bufferHealthy(), "thin to begin with");
 
         uint256 before = t.reserves();
-        vm.prank(bob); usdc.transfer(address(t), 500_000 * M); // straight donation, no fund() call
+        vm.prank(bob); // straight donation, no fund() call
+        usdc.transfer(address(t), 500_000 * M);
         assertFalse(t.bufferHealthy(), "an untracked transfer must not count as backing");
         assertEq(t.reserves(), before, "reserves unchanged by a donation");
     }
 
     function test_only_a_funder_may_fund() public {
-        vm.prank(bob); usdc.approve(address(transmuter), type(uint256).max);
+        vm.prank(bob);
+        usdc.approve(address(transmuter), type(uint256).max);
         vm.prank(bob);
         vm.expectRevert(Transmuter.NotFunder.selector);
         transmuter.fund(1 * M);
@@ -727,10 +798,13 @@ contract BankTest is Test {
     // ── flow caps in the market ──────────────────────────────────────────────────────────────────
 
     function test_the_daily_mint_cap_bounds_worst_case_issuance() public {
-        vm.prank(safe); alchemist.setMintCaps(0, 100 ether);
-        vm.prank(alice); alchemist.deposit(100_000 * M);
+        vm.prank(safe);
+        alchemist.setMintCaps(0, 100 ether);
+        vm.prank(alice);
+        alchemist.deposit(100_000 * M, 1);
         vm.roll(block.number + 1);
-        vm.prank(alice); alchemist.mint(100 ether);
+        vm.prank(alice);
+        alchemist.mint(100 ether);
         vm.prank(alice);
         vm.expectRevert(FlashGuard.DailyCapExceeded.selector);
         alchemist.mint(1);
@@ -738,10 +812,14 @@ contract BankTest is Test {
 
     function test_the_redeem_cap_bounds_a_drain() public {
         _depositAndBorrow(alice, 10_000 * M, 4_000 ether);
-        vm.prank(alice); alchemist.repay(4_000 * M);
-        vm.prank(safe); transmuter.setRedeemCaps(100 * M, 0);
-        vm.prank(alice); dnr.approve(address(transmuter), type(uint256).max);
-        vm.prank(alice); transmuter.redeem(100 ether);
+        vm.prank(alice);
+        alchemist.repay(4_000 * M);
+        vm.prank(safe);
+        transmuter.setRedeemCaps(100 * M, 0);
+        vm.prank(alice);
+        dnr.approve(address(transmuter), type(uint256).max);
+        vm.prank(alice);
+        transmuter.redeem(100 ether);
         vm.prank(alice);
         vm.expectRevert(FlashGuard.PerBlockCapExceeded.selector);
         transmuter.redeem(1 ether);
@@ -751,8 +829,10 @@ contract BankTest is Test {
     /// service, not an attack, and blocking it would trade a live peg defense for nothing.
     function test_redemption_is_deliberately_not_same_block_guarded() public {
         _depositAndBorrow(alice, 1000 * M, 400 ether);
-        vm.prank(alice); alchemist.repay(400 * M);
-        vm.prank(alice); dnr.approve(address(transmuter), type(uint256).max);
+        vm.prank(alice);
+        alchemist.repay(400 * M);
+        vm.prank(alice);
+        dnr.approve(address(transmuter), type(uint256).max);
         vm.startPrank(alice);
         transmuter.redeem(50 ether);
         transmuter.redeem(50 ether); // twice in one block: allowed, on purpose
@@ -765,21 +845,26 @@ contract BankTest is Test {
     function testFuzz_transmuter_never_pays_more_than_it_holds(uint96 borrow, uint96 repayAmt, uint96 redeemAmt)
         public
     {
-        vm.prank(alice); alchemist.deposit(100_000 * M);
+        vm.prank(alice);
+        alchemist.deposit(100_000 * M, 1);
         vm.roll(block.number + 1);
         uint256 b = bound(borrow, 1 ether, alchemist.maxDebtOf(alice));
-        vm.prank(alice); alchemist.mint(b);
+        vm.prank(alice);
+        alchemist.mint(b);
 
         uint256 r = bound(repayAmt, 1, b / alchemist.scale());
-        vm.prank(alice); alchemist.repay(r);
+        vm.prank(alice);
+        alchemist.repay(r);
 
         uint256 red = bound(redeemAmt, 1, type(uint96).max);
-        vm.prank(alice); dnr.approve(address(transmuter), type(uint256).max);
+        vm.prank(alice);
+        dnr.approve(address(transmuter), type(uint256).max);
         uint256 reservesBefore = transmuter.reserves();
         uint256 usdcBefore = usdc.balanceOf(address(transmuter));
 
         if (red / alchemist.scale() > 0 && red / alchemist.scale() <= reservesBefore && red <= dnr.balanceOf(alice)) {
-            vm.prank(alice); transmuter.redeem(red);
+            vm.prank(alice);
+            transmuter.redeem(red);
         }
         // reserves tracked and reality must agree, and reserves must never exceed real holdings
         assertLe(transmuter.reserves(), usdc.balanceOf(address(transmuter)), "reserves are always real");
@@ -788,11 +873,13 @@ contract BankTest is Test {
 
     /// A user must always be able to exit a debt-free position in full.
     function test_a_debt_free_user_can_always_exit() public {
-        vm.prank(alice); alchemist.deposit(1000 * M);
+        vm.prank(alice);
+        alchemist.deposit(1000 * M, 1);
         vm.roll(block.number + 1);
         uint256 c = alchemist.collateralOf(alice);
         uint256 before = usdc.balanceOf(alice);
-        vm.prank(alice); alchemist.withdraw(c);
+        vm.prank(alice);
+        alchemist.withdraw(c);
         assertEq(usdc.balanceOf(alice) - before, c);
     }
 
@@ -816,10 +903,11 @@ contract BankTest is Test {
         (, Transmuter t, Alchemist a, MockVault v) = _market(50_000 * M);
         vm.startPrank(alice);
         usdc.approve(address(a), type(uint256).max);
-        a.deposit(100_000 * M);
+        a.deposit(100_000 * M, 1);
         vm.stopPrank();
         vm.roll(block.number + 1);
-        vm.prank(alice); a.mint(50_000 ether);
+        vm.prank(alice);
+        a.mint(50_000 ether);
 
         v.lose(90_000 * M); // the sleeve takes a 90% loss
 
@@ -846,13 +934,15 @@ contract BankTest is Test {
         Transmuter t = new Transmuter(n, IERC20(address(usdc)), safe);
         Alchemist a = new Alchemist(n, IERC20(address(usdc)), IERC4626(address(ev)), t, safe);
         vm.startPrank(safe);
-        n.setMinter(address(a)); n.setBurner(address(t));
-        t.setFunder(address(a), true); a.setLtvBps(5_000);
+        n.setMinter(address(a));
+        n.setBurner(address(t));
+        t.setFunder(address(a), true);
+        a.setLtvBps(5_000);
         vm.stopPrank();
 
         vm.startPrank(alice);
         usdc.approve(address(a), type(uint256).max);
-        a.deposit(1_000 * M);
+        a.deposit(1_000 * M, 1);
         vm.stopPrank();
         vm.roll(block.number + 1);
 
@@ -893,34 +983,44 @@ contract BankTest is Test {
         vm.expectRevert(Alchemist.LtvFeeIncompatible.selector);
         alchemist.setLtvBps(9_000);
 
-        vm.prank(safe); alchemist.setHarvestFee(1_000, address(0xFEE));
-        vm.prank(safe); alchemist.setLtvBps(9_000);   // 90 + 10 is fine — the pair, not either alone
+        vm.prank(safe);
+        alchemist.setHarvestFee(1_000, address(0xFEE));
+        vm.prank(safe); // 90 + 10 is fine — the pair, not either alone
+        alchemist.setLtvBps(9_000);
         vm.prank(safe);
         vm.expectRevert(Alchemist.LtvFeeIncompatible.selector);
         alchemist.setHarvestFee(2_000, address(0xFEE)); // raising the fee under a 90% ltv is refused
 
-        vm.prank(safe); alchemist.setLtvBps(8_000);
-        vm.prank(safe); alchemist.setHarvestFee(2_000, address(0xFEE)); // 80 + 20 is the boundary: allowed
+        vm.prank(safe);
+        alchemist.setLtvBps(8_000);
+        vm.prank(safe); // 80 + 20 is the boundary: allowed
+        alchemist.setHarvestFee(2_000, address(0xFEE));
         vm.prank(safe);
         vm.expectRevert(Alchemist.LtvFeeIncompatible.selector);
-        alchemist.setLtvBps(8_001);                                     // and one bps past it is not
+        alchemist.setLtvBps(8_001); // and one bps past it is not
     }
 
     /// And the property the bound exists for, driven end to end at the boundary: a stranger's
     /// harvest must never leave a borrower unhealthy, however tightly they borrowed.
     function test_a_stranger_cannot_harvest_a_borrower_into_unhealth() public {
-        vm.prank(safe); alchemist.setLtvBps(8_000);
-        vm.prank(safe); alchemist.setHarvestFee(2_000, address(0xFEE));
-        vm.prank(alice); alchemist.deposit(1000 * M);
+        vm.prank(safe);
+        alchemist.setLtvBps(8_000);
+        vm.prank(safe);
+        alchemist.setHarvestFee(2_000, address(0xFEE));
+        vm.prank(alice);
+        alchemist.deposit(1000 * M, 1);
         vm.roll(block.number + 1);
-        vault.earn(100 * M);                                  // yield accrues BEFORE the borrow
-        uint256 ceiling = alchemist.maxDebtOf(alice);   // hoisted: an inline external call in a
-        vm.prank(alice); alchemist.mint(ceiling);       // pranked call's args CONSUMES the prank
+        vault.earn(100 * M); // yield accrues BEFORE the borrow
+        uint256 ceiling = alchemist.maxDebtOf(alice); // hoisted: an inline external call in a
+        vm.prank(alice); // pranked call's args CONSUMES the prank
+        alchemist.mint(ceiling);
 
-        vm.prank(bob); alchemist.harvest(alice);              // any EOA may call this on anyone
+        vm.prank(bob); // any EOA may call this on anyone
+        alchemist.harvest(alice);
 
-        assertLe(alchemist.debtOf(alice), alchemist.maxDebtOf(alice),
-            "a permissionless harvest left the position healthy");
+        assertLe(
+            alchemist.debtOf(alice), alchemist.maxDebtOf(alice), "a permissionless harvest left the position healthy"
+        );
         // The fee is CHARGED inside the harvest and PUSHED by a separate sweep, so read what the
         // protocol took rather than the recipient's balance, then prove the sweep delivers it.
         assertGt(alchemist.accruedFees(), 0, "and the fee was still collected");

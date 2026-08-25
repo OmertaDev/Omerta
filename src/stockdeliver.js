@@ -11,8 +11,9 @@
 // THE RULE THAT FOLLOWS: a Street Deed is an on-chain ERC-721 only once EXTRACTED
 // (`street_deeds.onchain_token_id` non-null). So to RECEIVE delivered stock on-chain a player must own
 // AND extract a deed; an account with no extracted deed accrues its allocation as owed and WAITS —
-// nothing is lost, delivery just has no target yet. This gives the deed real utility (extract it and
-// it becomes your investment vault) and changes none of the wall math.
+// permanently. There is no expiry, forfeiture, redistribution, or inactivity clawback; delivery just
+// has no target yet. This gives the deed real utility (extract it and it becomes your investment vault)
+// and changes none of the wall math.
 //
 // §10.4-NEUTRAL by construction: stock is out-of-band real value (the fees.js/treasury.js precedent).
 // This file writes ZERO `transactions` rows — the `allocated <= held` (per ticker, units) wall in
@@ -43,6 +44,8 @@
 //     read is what lets an in-game buyer see the result of it before they pay.
 
 import { GameError } from './game.js';
+import { getAddress, keccak256, toBytes } from 'viem';
+import { approvedStockTokenAddressMap } from './stockcatalog.js';
 
 const CANONICAL_6551_REGISTRY = '0x000000006551c19487814612e58FE06813775758';
 const ZERO_SALT = '0x0000000000000000000000000000000000000000000000000000000000000000';
@@ -404,10 +407,39 @@ export async function deliverStock(pool, { epochId, accountId, ticker, units, tx
 // second send a clean revert), and hands the send to `_sendDeliver`. It NEVER confirms — the
 // Delivered watcher is the only thing that flips an allocation, so a tx that never lands leaves a
 // claimed-pending row the resend window retries (sent_at older than RESEND_MS ⇒ eligible again).
-// Ticker → ERC-20 address comes from STOCK_TOKEN_ADDRESSES (JSON env, e.g. '{"AAPL":"0x…"}'); a
-// planned ticker with no address is SKIPPED BY NAME, never silently (the community-keeper no_budget
-// lesson — a stranded delivery must not read like an empty plan).
+// Ticker → ERC-20 address comes from the Postgres mirror of the Safe-owned StockTokenRegistry. A
+// planned ticker with no ACTIVE approved address is SKIPPED BY NAME, never silently (the community-
+// keeper no_budget lesson — a stranded delivery must not read like an empty plan). `opts.tokens`
+// exists only as the deterministic test seam.
 const RESEND_MS = 10 * 60 * 1000;                        // a claimed-but-unconfirmed send retries after this
+
+export const DELIVERY_AUTHORIZATION_TYPES = {
+  DeliveryAuthorization: [
+    { name: 'deliveryId', type: 'uint256' },
+    { name: 'epochHash', type: 'bytes32' },
+    { name: 'accountHash', type: 'bytes32' },
+    { name: 'token', type: 'address' },
+    { name: 'to', type: 'address' },
+    { name: 'units', type: 'uint256' },
+    { name: 'deadline', type: 'uint256' },
+  ],
+};
+
+// The EVM cannot query server-authoritative gameplay. This is the exact EIP-712 message the isolated
+// allocation signer attests after `allocateEpoch` has applied the breadth/score gate and account
+// exclusions. Hash the internal ids rather than publishing them, while binding every value-moving
+// field so neither the delivery keeper nor a relayer can change the recipient, token, or amount.
+export function deliveryAuthorizationMessage({ deliveryId, epochId, accountId, token, to, units, deadline }) {
+  return {
+    deliveryId: BigInt(deliveryId),
+    epochHash: keccak256(toBytes(String(epochId))),
+    accountHash: keccak256(toBytes(String(accountId))),
+    token: getAddress(token),
+    to: getAddress(to),
+    units: BigInt(units),
+    deadline: BigInt(deadline),
+  };
+}
 
 let _sendDeliver = sendDeliverOnchain;                   // the test seam (the __setTbaResolver discipline)
 export function __setTxSender(fn) { _sendDeliver = fn || sendDeliverOnchain; }
@@ -426,7 +458,7 @@ export const deliveryKeeperReady = () =>
 export async function runStockDeliveryKeeper(pool, opts = {}) {
   const seamed = _sendDeliver !== sendDeliverOnchain;
   if (!seamed && !deliveryKeeperReady()) return { dormant: true };
-  const tokens = opts.tokens || stockTokenAddresses();
+  const tokens = opts.tokens || await approvedStockTokenAddressMap(pool);
   const plan = await planStockDeliveries(pool);
   const out = { dormant: false, sent: [], skipped: [] };
   for (const p of plan) {
@@ -454,6 +486,7 @@ export async function runStockDeliveryKeeper(pool, opts = {}) {
       const txHash = await _sendDeliver({
         deliveryId, token, to: claimed.rows[0].tba,
         units: round6(num(claimed.rows[0].units)), ticker: p.ticker,
+        epochId: p.epochId, accountId: p.accountId,
       });
       out.sent.push({ deliveryId, ticker: p.ticker, accountId: p.accountId, units: p.units, txHash: txHash || null });
     } catch (e) {
@@ -469,12 +502,12 @@ export async function runStockDeliveryKeeper(pool, opts = {}) {
 // The real send: build + sign + submit StockVault.deliver from the keeper key. The Safe set this key
 // as the vault's `keeper`; a leaked key is bounded by the vault's own walls (per-token daily cap,
 // pause, setKeeper rotation, pre-held-only transfers). Wrong-chain guarded like every other sender.
-async function sendDeliverOnchain({ deliveryId, token, to, units }) {
+async function sendDeliverOnchain({ deliveryId, token, to, units, epochId, accountId }) {
   const rpc = process.env.CHAIN_RPC_URL;
   const vault = process.env.STOCK_VAULT_ADDRESS;
   const pk = process.env.STOCK_KEEPER_PK;
   if (!rpc || !vault || !pk) throw new Error('delivery keeper unconfigured');
-  const { createWalletClient, createPublicClient, http, parseUnits, getAddress } = await import('viem');
+  const { createWalletClient, createPublicClient, http, parseUnits } = await import('viem');
   const { privateKeyToAccount } = await import('viem/accounts');
   const pub = createPublicClient({ transport: http(rpc) });
   const chainId = Number(process.env.CHAIN_ID || 0);
@@ -487,11 +520,40 @@ async function sendDeliverOnchain({ deliveryId, token, to, units }) {
     nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
     rpcUrls: { default: { http: [rpc] } } };
   const wallet = createWalletClient({ account: privateKeyToAccount(pk), chain, transport: http(rpc) });
+  const rawUnits = parseUnits(String(units), decimals);
+  const allocationPk = process.env.STOCK_ALLOCATION_SIGNER_PK;
+  if (allocationPk) {
+    const ttl = Math.max(60, Number(process.env.STOCK_AUTH_TTL_SEC || 900));
+    const message = deliveryAuthorizationMessage({
+      deliveryId, epochId, accountId, token, to, units: rawUnits,
+      deadline: BigInt(Math.floor(Date.now() / 1000) + ttl),
+    });
+    const signature = await privateKeyToAccount(allocationPk.startsWith('0x') ? allocationPk : `0x${allocationPk}`)
+      .signTypedData({
+        domain: { name: 'OMERTA StockVault', version: '1', chainId: chain.id,
+          verifyingContract: getAddress(vault) },
+        types: DELIVERY_AUTHORIZATION_TYPES,
+        primaryType: 'DeliveryAuthorization',
+        message,
+      });
+    const abi = [{ type: 'function', name: 'deliverAuthorized', stateMutability: 'nonpayable',
+      inputs: [
+        { name: 'auth', type: 'tuple', components: [
+          { name: 'deliveryId', type: 'uint256' }, { name: 'epochHash', type: 'bytes32' },
+          { name: 'accountHash', type: 'bytes32' }, { name: 'token', type: 'address' },
+          { name: 'to', type: 'address' }, { name: 'units', type: 'uint256' },
+          { name: 'deadline', type: 'uint256' },
+        ] },
+        { name: 'signature', type: 'bytes' },
+      ], outputs: [] }];
+    return wallet.writeContract({ address: getAddress(vault), abi, functionName: 'deliverAuthorized',
+      args: [message, signature] });
+  }
   const abi = [{ type: 'function', name: 'deliver', stateMutability: 'nonpayable',
     inputs: [{ name: 'deliveryId', type: 'uint256' }, { name: 'token', type: 'address' },
       { name: 'to', type: 'address' }, { name: 'units', type: 'uint256' }], outputs: [] }];
   return wallet.writeContract({ address: getAddress(vault), abi, functionName: 'deliver',
-    args: [BigInt(deliveryId), getAddress(token), getAddress(to), parseUnits(String(units), decimals)] });
+    args: [BigInt(deliveryId), getAddress(token), getAddress(to), rawUnits] });
 }
 
 // The ops board: owed vs delivered per ticker, and how many accounts are waiting on a deed. Read-only.

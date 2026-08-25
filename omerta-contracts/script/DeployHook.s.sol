@@ -12,6 +12,7 @@ import {OmertaHook} from "../src/OmertaHook.sol";
 contract DeployHook is Script {
     address internal constant CREATE2_DEPLOYER = 0x4e59b44847b379578588920cA78FbF26c0B4956C;
     uint160 internal constant FLAG_MASK = 0x3FFF;
+    uint160 internal constant LABS_REVIEW_PREFIX = 0x91;
     uint256 internal constant MAX_LOOP = 200_000;
     uint160 internal constant REQUIRED_FLAGS = uint160(
         Hooks.BEFORE_INITIALIZE_FLAG | Hooks.AFTER_INITIALIZE_FLAG | Hooks.BEFORE_SWAP_FLAG
@@ -39,6 +40,7 @@ contract DeployHook is Script {
         vm.stopBroadcast();
 
         require(address(hook) == predicted, "DeployHook: hook landed at the wrong address");
+        require(uint160(address(hook)) >> 152 != LABS_REVIEW_PREFIX, "DeployHook: 0x91 routing-review prefix");
         require((uint160(address(hook)) & FLAG_MASK) == REQUIRED_FLAGS, "DeployHook: permission bits mismatch");
         require(hook.HOOK_FLAGS() == REQUIRED_FLAGS, "DeployHook: contract flag declaration drifted");
 
@@ -56,7 +58,11 @@ contract DeployHook is Script {
             address candidate = address(
                 uint160(uint256(keccak256(abi.encodePacked(bytes1(0xFF), deployer, bytes32(i), initCodeHash))))
             );
-            if ((uint160(candidate) & FLAG_MASK) == flags && candidate.code.length == 0) {
+            // Uniswap Labs subjects every 0x91-prefixed hook to manual routing review. This hook
+            // already needs review for its return-delta flags; never add an avoidable address-level
+            // trigger to that review packet.
+            bool avoidsLabsReviewPrefix = uint160(candidate) >> 152 != LABS_REVIEW_PREFIX;
+            if (avoidsLabsReviewPrefix && (uint160(candidate) & FLAG_MASK) == flags && candidate.code.length == 0) {
                 return (candidate, bytes32(i));
             }
         }

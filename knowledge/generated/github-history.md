@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `cb4e6a35d795`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `dee7593a66b9`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 891 |
+| Commits in clone | 893 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-23 — docs: plan first-action onboarding |
+| Latest commit | 2026-08-24 — Update game systems and player workflows |
 
 ## Commit authors
 
@@ -21,7 +21,7 @@
 |---|---:|
 | crvydev | 647 |
 | Claude | 113 |
-| OmertaDev | 90 |
+| OmertaDev | 92 |
 | CRVYDEV | 41 |
 
 ## Historical hotspots
@@ -29,45 +29,45 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 491 | yes |
-| [public/index.html](../../public/index.html) | 365 | yes |
-| [src/server.js](../../src/server.js) | 327 | yes |
+| [public/index.html](../../public/index.html) | 367 | yes |
+| [src/server.js](../../src/server.js) | 328 | yes |
 | [schema.sql](../../schema.sql) | 250 | yes |
-| [BALANCE.md](../../BALANCE.md) | 247 | yes |
-| [SPEC.md](../../SPEC.md) | 220 | yes |
+| [BALANCE.md](../../BALANCE.md) | 248 | yes |
+| [SPEC.md](../../SPEC.md) | 222 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
-| [src/game.js](../../src/game.js) | 166 | yes |
+| [src/game.js](../../src/game.js) | 167 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
-| [package.json](../../package.json) | 121 | yes |
+| [package.json](../../package.json) | 122 | yes |
 | [src/worker.js](../../src/worker.js) | 117 | yes |
 | [src/invariants.js](../../src/invariants.js) | 113 | yes |
-| [src/rules.tail.js](../../src/rules.tail.js) | 108 | yes |
-| [test/levers.js](../../test/levers.js) | 93 | yes |
-| [test/client.js](../../test/client.js) | 92 | yes |
-| [test/social.js](../../test/social.js) | 82 | yes |
-| [test/growth.js](../../test/growth.js) | 76 | yes |
-| [public/wiki.html](../../public/wiki.html) | 64 | yes |
-| [docs/WIKI.md](../../docs/WIKI.md) | 61 | yes |
-| [test/hardening.js](../../test/hardening.js) | 61 | yes |
+| [src/rules.tail.js](../../src/rules.tail.js) | 109 | yes |
+| [test/client.js](../../test/client.js) | 94 | yes |
+| [test/levers.js](../../test/levers.js) | 94 | yes |
+| [test/social.js](../../test/social.js) | 83 | yes |
+| [test/growth.js](../../test/growth.js) | 77 | yes |
+| [public/wiki.html](../../public/wiki.html) | 65 | yes |
+| [docs/WIKI.md](../../docs/WIKI.md) | 62 | yes |
+| [test/hardening.js](../../test/hardening.js) | 62 | yes |
 | [tools/sim.js](../../tools/sim.js) | 58 | yes |
 | [README.md](../../README.md) | 53 | yes |
+| [src/growth.js](../../src/growth.js) | 51 | yes |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
-| [src/growth.js](../../src/growth.js) | 50 | yes |
 | [src/preflight.js](../../src/preflight.js) | 46 | yes |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
 | [src/economy.js](../../src/economy.js) | 44 | yes |
 | [src/casino.js](../../src/casino.js) | 43 | yes |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
+| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 40 | yes |
 | [src/business.js](../../src/business.js) | 39 | yes |
-| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 39 | yes |
 | [src/chain.js](../../src/chain.js) | 36 | yes |
 | [public/admin.html](../../public/admin.html) | 30 | yes |
 | [DEPLOY.md](../../DEPLOY.md) | 29 | yes |
 | [src/kitchen.js](../../src/kitchen.js) | 28 | yes |
 | [src/world.js](../../src/world.js) | 28 | yes |
 | [test/migrate.js](../../test/migrate.js) | 28 | yes |
+| [src/loans.js](../../src/loans.js) | 27 | yes |
 | [src/social/combat.js](../../src/social/combat.js) | 27 | yes |
 | [test/casino.js](../../test/casino.js) | 27 | yes |
-| [src/loans.js](../../src/loans.js) | 26 | yes |
 
 ## Pull requests
 

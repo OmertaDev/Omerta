@@ -8,7 +8,10 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 /// A stand-in for a tokenized-stock ERC-20 the treasury pre-buys and StockVault delivers.
 contract MockStock is ERC20 {
     constructor() ERC20("Tokenized TSLA", "tTSLA") {}
-    function mint(address to, uint256 a) external { _mint(to, a); }
+
+    function mint(address to, uint256 a) external {
+        _mint(to, a);
+    }
 }
 
 /// StockVault — the gateless keeper-push delivery contract (omerta-brokers-design.md §3.3). The claims under
@@ -24,11 +27,14 @@ contract StockVaultTest is Test {
     address tbaA = makeAddr("tbaA"); // a player's ERC-6551 token-bound account
     address tbaB = makeAddr("tbaB");
     uint256 constant FUNDED = 1_000_000e18;
+    uint256 allocationSignerPk = 0xA110CA7E;
+    address allocationSigner;
 
     function setUp() public {
         vault = new StockVault(safe, keeper, 0); // 0 default = the pre-C2 posture, so every existing test is unchanged
         stock = new MockStock();
         stock.mint(address(vault), FUNDED); // the treasury pre-funds the vault
+        allocationSigner = vm.addr(allocationSignerPk);
     }
 
     // ── the push ──────────────────────────────────────────────────────────────────────────────────
@@ -69,6 +75,58 @@ contract StockVaultTest is Test {
         assertEq(stock.balanceOf(tbaB), 0, "the replay moved nothing");
     }
 
+    // ── ACTIVE-PLAY ATTESTATION ──────────────────────────────────────────────────────────────────
+    // Gameplay is server-authoritative and cannot be recomputed by an EVM contract. Once the Safe
+    // enables the allocation signer, the keeper must present a signature binding the frozen epoch,
+    // account, exact token, destination, units, and deadline. The delivery key alone cannot invent
+    // an eligible player, and the existing deliveryId latch still makes the signed push one-shot.
+    function test_enabling_allocation_signer_disables_the_gateless_push() public {
+        vm.prank(safe);
+        vault.setAllocationSigner(allocationSigner);
+        vm.prank(keeper);
+        vm.expectRevert("SV: authorization required");
+        vault.deliver(1, address(stock), tbaA, 1e18);
+    }
+
+    function test_keeper_delivers_only_a_valid_activity_allocation_authorization() public {
+        vm.prank(safe);
+        vault.setAllocationSigner(allocationSigner);
+        StockVault.DeliveryAuthorization memory auth = _authorization(91, 25e18);
+        bytes memory signature = _sign(auth, allocationSignerPk);
+
+        vm.prank(keeper);
+        vault.deliverAuthorized(auth, signature);
+
+        assertEq(stock.balanceOf(tbaA), 25e18);
+        assertTrue(vault.usedDeliveryId(91));
+    }
+
+    function test_authorization_binds_units_signer_and_deadline() public {
+        vm.prank(safe);
+        vault.setAllocationSigner(allocationSigner);
+        StockVault.DeliveryAuthorization memory auth = _authorization(92, 25e18);
+        bytes memory signature = _sign(auth, allocationSignerPk);
+
+        auth.units = 26e18;
+        vm.prank(keeper);
+        vm.expectRevert("SV: bad authorization");
+        vault.deliverAuthorized(auth, signature);
+        assertFalse(vault.usedDeliveryId(92), "a rejected authorization consumes no delivery id");
+
+        auth = _authorization(93, 25e18);
+        signature = _sign(auth, 0xBAD);
+        vm.prank(keeper);
+        vm.expectRevert("SV: bad authorization");
+        vault.deliverAuthorized(auth, signature);
+
+        auth = _authorization(94, 25e18);
+        signature = _sign(auth, allocationSignerPk);
+        vm.warp(auth.deadline + 1);
+        vm.prank(keeper);
+        vm.expectRevert("SV: authorization expired");
+        vault.deliverAuthorized(auth, signature);
+    }
+
     function test_zero_recipient_token_units_revert() public {
         vm.startPrank(keeper);
         vm.expectRevert("SV: zero recipient");
@@ -94,7 +152,7 @@ contract StockVaultTest is Test {
         vault.deliver(1, address(stock), tbaA, 60e18);
         vault.deliver(2, address(stock), tbaA, 40e18); // total 100 — at the cap
         vm.expectRevert("SV: daily cap");
-        vault.deliver(3, address(stock), tbaA, 1e18);  // 101 — over
+        vault.deliver(3, address(stock), tbaA, 1e18); // 101 — over
         vm.stopPrank();
         // resets the next UTC day
         vm.warp(block.timestamp + 1 days);
@@ -179,10 +237,14 @@ contract StockVaultTest is Test {
         address[] memory toks = new address[](2);
         address[] memory tos = new address[](2);
         uint256[] memory units = new uint256[](2);
-        ids[0] = 1; ids[1] = 2;
-        toks[0] = address(stock); toks[1] = address(stock);
-        tos[0] = tbaA; tos[1] = tbaB;
-        units[0] = 10e18; units[1] = 20e18;
+        ids[0] = 1;
+        ids[1] = 2;
+        toks[0] = address(stock);
+        toks[1] = address(stock);
+        tos[0] = tbaA;
+        tos[1] = tbaB;
+        units[0] = 10e18;
+        units[1] = 20e18;
         vm.prank(keeper);
         vault.deliverBatch(ids, toks, tos, units);
         assertEq(stock.balanceOf(tbaA), 10e18);
@@ -204,10 +266,14 @@ contract StockVaultTest is Test {
         address[] memory toks = new address[](2);
         address[] memory tos = new address[](2);
         uint256[] memory units = new uint256[](2);
-        ids[0] = 1; ids[1] = 2;
-        toks[0] = address(stock); toks[1] = address(stock);
-        tos[0] = tbaA; tos[1] = address(0); // item 2 is invalid
-        units[0] = 10e18; units[1] = 20e18;
+        ids[0] = 1;
+        ids[1] = 2;
+        toks[0] = address(stock);
+        toks[1] = address(stock);
+        tos[0] = tbaA; // item 2 is invalid
+        tos[1] = address(0);
+        units[0] = 10e18;
+        units[1] = 20e18;
         vm.prank(keeper);
         vm.expectRevert("SV: zero recipient");
         vault.deliverBatch(ids, toks, tos, units);
@@ -225,7 +291,36 @@ contract StockVaultTest is Test {
         vault.deliver(2, address(stock), tbaB, b);
         vm.stopPrank();
         // the vault created nothing — delivered + remaining == exactly what was funded
-        assertEq(stock.balanceOf(tbaA) + stock.balanceOf(tbaB) + stock.balanceOf(address(vault)), FUNDED,
-            "units are conserved: the vault only ever moves a pre-held balance, never mints");
+        assertEq(
+            stock.balanceOf(tbaA) + stock.balanceOf(tbaB) + stock.balanceOf(address(vault)),
+            FUNDED,
+            "units are conserved: the vault only ever moves a pre-held balance, never mints"
+        );
+    }
+
+    function _authorization(uint256 deliveryId, uint256 units)
+        private
+        view
+        returns (StockVault.DeliveryAuthorization memory)
+    {
+        return StockVault.DeliveryAuthorization({
+            deliveryId: deliveryId,
+            epochHash: keccak256("broker-epoch-2026-08-24"),
+            accountHash: keccak256("server-account-id"),
+            token: address(stock),
+            to: tbaA,
+            units: units,
+            deadline: block.timestamp + 15 minutes
+        });
+    }
+
+    function _sign(StockVault.DeliveryAuthorization memory auth, uint256 privateKey)
+        private
+        view
+        returns (bytes memory)
+    {
+        bytes32 digest = vault.hashAuthorization(auth);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, digest);
+        return abi.encodePacked(r, s, v);
     }
 }

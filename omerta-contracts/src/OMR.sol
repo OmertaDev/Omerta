@@ -85,21 +85,21 @@ contract OMR is ERC20Permit, Ownable2Step {
     ///         it deliberately, so a mis-sequenced deploy fails closed rather than open.
     address public minter;
 
-    uint256 public sellTaxBps;                    // 0 = off (the deploy default). the TOTAL rate
-    address public taxDevRecipient;               // founder revenue
-    address public taxRwaRecipient;               // the treasury (v2 §6; was the stock float)
+    uint256 public sellTaxBps; // 0 = off (the deploy default). the TOTAL rate
+    address public taxDevRecipient; // founder revenue
+    address public taxRwaRecipient; // the treasury (v2 §6; was the stock float)
     /// @notice The family buyback (treasury-to-family Phase 3). Must be the community-buyback keeper
     ///         wallet — a SEPARATE key from the treasury's (the custody rule: booking family backing
     ///         against OMR the family keeper does not hold is the class `allocated <= held` prevents).
     address public taxCommunityRecipient;
-    address public taxLpRecipient;                // LP depth / buybacks
+    address public taxLpRecipient; // LP depth / buybacks
     /// @notice How the total rate splits. dev + rwa + community must be <= sellTaxBps; LP takes the
     ///         remainder, so the four shares always sum to the tax EXACTLY and no dust is stranded.
     uint256 public taxDevBps;
     uint256 public taxRwaBps;
     uint256 public taxCommunityBps;
-    mapping(address => bool) public ammPairs;     // registered pools (sell detection)
-    mapping(address => bool) public taxExempt;    // protocol contracts / the POL manager
+    mapping(address => bool) public ammPairs; // registered pools (sell detection)
+    mapping(address => bool) public taxExempt; // protocol contracts / the POL manager
 
     event MinterSet(address indexed minter);
     event Minted(address indexed to, uint256 amount);
@@ -146,7 +146,13 @@ contract OMR is ERC20Permit, Ownable2Step {
     function setSellTax(uint256 bps, uint256 devBps, uint256 rwaBps, uint256 communityBps) external onlyOwner {
         if (bps > MAX_SELL_TAX_BPS) revert BadBps();
         if (devBps + rwaBps + communityBps > bps) revert BadBps();
-        if (bps > 0 && (taxDevRecipient == address(0) || taxRwaRecipient == address(0) || taxCommunityRecipient == address(0) || taxLpRecipient == address(0))) revert ZeroAddress();
+        if (
+            bps > 0
+                && (taxDevRecipient == address(0)
+                    || taxRwaRecipient == address(0)
+                    || taxCommunityRecipient == address(0)
+                    || taxLpRecipient == address(0))
+        ) revert ZeroAddress();
         sellTaxBps = bps;
         taxDevBps = devBps;
         taxRwaBps = rwaBps;
@@ -155,7 +161,9 @@ contract OMR is ERC20Permit, Ownable2Step {
     }
 
     function setTaxRecipients(address dev, address rwa, address community, address lp) external onlyOwner {
-        if (sellTaxBps > 0 && (dev == address(0) || rwa == address(0) || community == address(0) || lp == address(0))) revert ZeroAddress();
+        if (sellTaxBps > 0 && (dev == address(0) || rwa == address(0) || community == address(0) || lp == address(0))) {
+            revert ZeroAddress();
+        }
         taxDevRecipient = dev;
         taxRwaRecipient = rwa;
         taxCommunityRecipient = community;

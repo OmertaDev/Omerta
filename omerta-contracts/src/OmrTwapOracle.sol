@@ -59,12 +59,12 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
     /// @dev True when OMR is the pair's token1, i.e. price0 (= token1 per token0) is OMR per WETH.
     bool public immutable omrIsToken1;
 
-    uint256 public priceCumulativeLast;  // the OMR-per-WETH cumulative, whichever side that is
-    uint32 public blockTimestampLast;    // when the last snapshot was taken (mod 2^32, V2 convention)
+    uint256 public priceCumulativeLast; // the OMR-per-WETH cumulative, whichever side that is
+    uint32 public blockTimestampLast; // when the last snapshot was taken (mod 2^32, V2 convention)
     /// @notice The TWAP, as UQ112x112. Zero until the first `update()` closes a full PERIOD, which
     ///         is what makes a freshly-deployed oracle read as unavailable rather than as zero-price.
     uint224 public priceAverage;
-    uint256 public lastUpdate;           // unix seconds the current average closed (full width)
+    uint256 public lastUpdate; // unix seconds the current average closed (full width)
 
     event Updated(uint224 priceAverage, uint256 omrPerEth, uint32 timeElapsed);
     /// @notice An interval too long to trust was discarded and the snapshot re-baselined. Emitted
@@ -107,7 +107,9 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
     function update() external {
         (uint256 p0, uint256 p1, uint32 ts) = _currentCumulativePrices();
         uint32 timeElapsed;
-        unchecked { timeElapsed = ts - blockTimestampLast; } // wraps at 2^32, the V2 convention
+        unchecked {
+            timeElapsed = ts - blockTimestampLast; // wraps at 2^32, the V2 convention
+        }
         if (timeElapsed < PERIOD) revert PeriodNotElapsed(timeElapsed, PERIOD);
 
         uint256 cumulative = omrIsToken1 ? p0 : p1;
@@ -129,7 +131,7 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
         if (timeElapsed > PERIOD * MAX_WINDOW_MULT) {
             priceCumulativeLast = cumulative;
             blockTimestampLast = ts;
-            priceAverage = 0;   // -> consult() reports "no usable reading" -> OmertaBond reverts
+            priceAverage = 0; // -> consult() reports "no usable reading" -> OmertaBond reverts
             lastUpdate = 0;
             emit Rebaselined(timeElapsed);
             return;
@@ -168,7 +170,9 @@ contract OmrTwapOracle is IOmrOracle, Ownable2Step {
     ///      does this same counterfactual accrual, and skipping it would silently shorten every
     ///      window by however long the pool sat idle.
     function _currentCumulativePrices()
-        private view returns (uint256 price0Cumulative, uint256 price1Cumulative, uint32 blockTimestamp)
+        private
+        view
+        returns (uint256 price0Cumulative, uint256 price1Cumulative, uint32 blockTimestamp)
     {
         blockTimestamp = uint32(block.timestamp % 2 ** 32);
         price0Cumulative = pair.price0CumulativeLast();

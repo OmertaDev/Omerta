@@ -44,15 +44,13 @@ import {Denari} from "./Denari.sol";
 ///         ── ⚠ DEPLOY REQUIREMENT: THE BUFFER MUST BE SEEDED, OR THE MARKET BRICKS ────────────
 ///         Found by this contract's own suite before any deployment, and it is not obvious:
 ///
-///           • at zero supply `requiredBuffer()` is zero, so the FIRST borrow always passes;
-///           • the instant supply is non-zero the floor demands real backing;
-///           • reserves are fed only by `repay()` and `harvest()`, which require existing debt.
+///           • at zero supply `requiredBuffer()` is zero, but Alchemist validates again after mint;
+///           • the instant supply would make the floor demand real backing, that mint rolls back;
+///           • reserves are fed only by an explicit `fund()`, `repay()`, or `harvest()` transfer.
 ///
-///         So an unseeded market accepts exactly one borrow and then refuses every further mint
-///         until somebody repays — a deadlock that looks like a healthy config. The launch
-///         sequence must therefore be: `setFunder(safe, true)` → `fund(seed)` → arm the Alchemist.
-///         `test_an_unseeded_market_bricks_after_one_borrow` pins the failure so the requirement
-///         cannot be quietly dropped from a deploy script.
+///         So an unseeded market refuses its first borrow before issuing any DNR. The launch sequence
+///         must still be: `setFunder(safe, true)` → `fund(seed)` → arm the Alchemist.
+///         `test_an_unseeded_market_refuses_the_first_borrow` pins that fail-closed behavior.
 ///
 ///         This is deliberately NOT fixed by exempting early borrows in code. An exemption is a
 ///         window in which the protocol issues claims it cannot honour, which is the exact
@@ -96,6 +94,7 @@ contract Transmuter is Ownable2Step, ReentrancyGuard, FlashGuard {
     error FloorTooLow();
     error ZeroAmount();
     error InsufficientReserves();
+    error AssetTransferMismatch(uint256 received, uint256 expected);
 
     constructor(Denari debtToken_, IERC20 asset_, address safe) Ownable(safe) {
         debtToken = debtToken_;
@@ -145,8 +144,13 @@ contract Transmuter is Ownable2Step, ReentrancyGuard, FlashGuard {
     function fund(uint256 assets) external nonReentrant {
         if (!funder[msg.sender]) revert NotFunder();
         if (assets == 0) revert ZeroAmount();
+        uint256 balanceBefore = asset.balanceOf(address(this));
         asset.safeTransferFrom(msg.sender, address(this), assets);
-        reserves += assets;
+        uint256 balanceAfter = asset.balanceOf(address(this));
+        if (balanceAfter < balanceBefore) revert AssetTransferMismatch(0, assets);
+        uint256 received = balanceAfter - balanceBefore;
+        if (received != assets) revert AssetTransferMismatch(received, assets);
+        reserves += received;
         emit Funded(msg.sender, assets);
     }
 

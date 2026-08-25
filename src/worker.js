@@ -58,6 +58,9 @@ import { sweepGrandPrix } from './races.js';
 import { sweepStakes } from './stable.js';
 import { syncFeeEvents, syncClaimedEvents, syncBondEvents, syncHarvestFees, syncRedeemedEvents, syncDeedExtractedEvents, syncDeedRedeemedEvents, syncDeedTransferEvents, syncStockDeliveredEvents, syncStorePaidEvents, syncDynastyMintEvents, syncDynastyTransferEvents, makeViemSource, DEFAULT_CONFIRMATIONS } from './watcher.js';
 import { runStockDeliveryKeeper, deliveryKeeperReady } from './stockdeliver.js';
+import { allocateEpoch } from './brokers.js';
+import { syncApprovedStockTokenCatalog, stockTokenCatalogReady } from './stockcatalog.js';
+import { publishResolvedStockBallot, resolvedBallotPublisherReady } from './rwastockkeeper.js';
 import { runDexBuyback, runPolPairing, runDexBotInvariants, dexBuybackReady, polPairingReady,
   readLpPositions, lpReaderReady } from './dexbot.js';
 
@@ -386,10 +389,25 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
     // THE CAPO'S LICENSE — recompute each agent's minted+retained+levelled recruit count (the perk
     // gate the throttle + wire board read). Retention is a moving window, so this must re-run.
     await safe('capo license', () => sweepCapoLicense(pool));
+    // THE STOCK TOKEN CATALOG — mirror the Safe-owned Robinhood Chain registry into Postgres BEFORE
+    // resolving the ballot. Voting stays fast/local; a dead RPC preserves the last-known-good list.
+    if (stockTokenCatalogReady())
+      await safe('stock token catalog', () => syncApprovedStockTokenCatalog(pool));
     // THE TICKER BALLOT — resolve yesterday's chamber vote into the permanent record the Phase-B
     // buy keeper consumes (idempotent on the day PK; deadlock/silence records the DEFAULT ticker).
     const tb = await safe('ticker ballot', () => sweepTickerBallot(pool));
     if (tb?.resolved) console.log(`[worker] ticker ballot: day ${tb.day} → ${tb.ticker} (${tb.decidedBy})`);
+    // Commit the frozen family result to the registry. The buy keeper can then name only the day;
+    // RwaStockBuyer resolves the Safe-approved token itself. Chain-dormant unless its key is wired.
+    if (resolvedBallotPublisherReady()) {
+      const rp = await safe('RWA ballot publish', () => publishResolvedStockBallot(pool));
+      if (rp?.published) console.log(`[worker] RWA ballot on-chain: day ${rp.day} → ${rp.ticker} (${rp.txHash})`);
+    }
+    // THE ACTIVITY SNAPSHOT — freeze the completed seven-day play window before any later stock buy
+    // can select its distribution weights. Safe every hourly tick: allocateEpoch is idempotent on
+    // (start_day,end_day), so restarts and overlapping workers cannot publish a second epoch.
+    const be = await safe('broker epoch', () => allocateEpoch(pool));
+    if (be && !be.already) console.log(`[worker] broker epoch: ${be.startDay}–${be.endDay}, ${be.holders} eligible holder(s)`);
     // FIVE PILLARS #2: lapsed coalitions dissolve (reads filter on expires_at — row hygiene)
     await safe('diplomacy sweep', () => sweepDiplomacy(pool));
     // NPC-FAMILY DIPLOMACY: NPC families accept a player's peace offer (ending their OFFENSIVE) + form

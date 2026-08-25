@@ -10,15 +10,15 @@ Written 2026-07-25. Every number below was measured from the tree, not recalled.
 
 | | |
 |---|---|
-| Backend modules | **158** files, **54496** lines (`src/`, incl. `src/routes/` and `src/social/`) |
-| Test suites | **114** files, **46720** lines (`test/`) — ratio 0.86 test:src |
-| HTTP routes | **711** registrations |
-| Database tables | **242** (`schema.sql`, 3676 lines) |
-| Client | **10953** lines (`public/index.html`, single file, zero dependencies) |
+| Backend modules | **161** files, **55601** lines (`src/`, incl. `src/routes/` and `src/social/`) |
+| Test suites | **117** files, **47512** lines (`test/`) — ratio 0.85 test:src |
+| HTTP routes | **712** registrations |
+| Database tables | **244** (`schema.sql`, 3702 lines) |
+| Client | **11160** lines (`public/index.html`, single file, zero dependencies) |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
-| Smart contracts | **18** contracts, **3845** lines Solidity, **307** Foundry tests passing |
+| Smart contracts | **20** contracts, **4319** lines Solidity, **336** Foundry tests passing |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/bond-dials.js` (sizing the on-chain mint walls), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres) |
-| Design + audit docs | **399** markdown files, **85938** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
+| Design + audit docs | **412** markdown files, **87791** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
 | Ledger invariants | 18 named escrow/identity checks + per-currency conservation, **drift-0** |
 
 Roughly **55,000 lines** of code, tests, schema and contracts.

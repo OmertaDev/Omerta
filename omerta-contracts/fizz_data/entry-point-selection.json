@@ -1,0 +1,1067 @@
+[
+  {
+    "name": "Alchemist",
+    "sourcePath": "src\\Alchemist.sol",
+    "artifactPath": "out\\Alchemist.sol\\Alchemist.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "debtToken_",
+          "type": "contract",
+          "internalType": "Denari"
+        },
+        {
+          "name": "asset_",
+          "type": "contract",
+          "internalType": "IERC20"
+        },
+        {
+          "name": "vault_",
+          "type": "contract",
+          "internalType": "IERC4626"
+        },
+        {
+          "name": "transmuter_",
+          "type": "contract",
+          "internalType": "Transmuter"
+        },
+        {
+          "name": "safe",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "deposit",
+        "inputs": [
+          {
+            "name": "assets",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "harvest",
+        "inputs": [
+          {
+            "name": "user",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "mint",
+        "inputs": [
+          {
+            "name": "debtAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "repay",
+        "inputs": [
+          {
+            "name": "assets",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "setHarvestFee",
+        "inputs": [
+          {
+            "name": "bps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "recipient",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "setLtvBps",
+        "inputs": [
+          {
+            "name": "bps",
+            "type": "uint16",
+            "internalType": "uint16"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "setMintCaps",
+        "inputs": [
+          {
+            "name": "perBlock",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "perDay",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "sweepFees",
+        "inputs": [],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "withdraw",
+        "inputs": [
+          {
+            "name": "assets",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "Denari",
+    "sourcePath": "src\\Denari.sol",
+    "artifactPath": "out\\Denari.sol\\Denari.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "name_",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "symbol_",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "safe",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "approve",
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "value",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "setBurner",
+        "inputs": [
+          {
+            "name": "b",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "setMinter",
+        "inputs": [
+          {
+            "name": "m",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "transfer",
+        "inputs": [
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "value",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "transferFrom",
+        "inputs": [
+          {
+            "name": "from",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "value",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "GearVault",
+    "sourcePath": "src\\GearVault.sol",
+    "artifactPath": "out\\GearVault.sol\\GearVault.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "owner_",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "imageBase_",
+          "type": "string",
+          "internalType": "string"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "mint",
+        "inputs": [
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "redeem",
+        "inputs": [
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "setGearCap",
+        "inputs": [
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "c",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "setMinter",
+        "inputs": [
+          {
+            "name": "m",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "OmertaHook",
+    "sourcePath": "src\\OmertaHook.sol",
+    "artifactPath": "out\\OmertaHook.sol\\OmertaHook.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "poolManager_",
+          "type": "contract",
+          "internalType": "IPoolManager"
+        },
+        {
+          "name": "omr_",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "safe",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "setAllowedQuote",
+        "inputs": [
+          {
+            "name": "currency",
+            "type": "address",
+            "internalType": "Currency"
+          },
+          {
+            "name": "allowed",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "setAntiSnipe",
+        "inputs": [
+          {
+            "name": "blocks_",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "buyBps",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "maxBuy",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "setObserver",
+        "inputs": [
+          {
+            "name": "observer_",
+            "type": "contract",
+            "internalType": "IOmrHookObserver"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "setRecipients",
+        "inputs": [
+          {
+            "name": "dev",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "rwa",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "community",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "lp",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "setSellTax",
+        "inputs": [
+          {
+            "name": "bps",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "devBps",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "rwaBps",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "communityBps",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "setSurge",
+        "inputs": [
+          {
+            "name": "maxBps",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "fullBps",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "sweep",
+        "inputs": [
+          {
+            "name": "currency",
+            "type": "address",
+            "internalType": "Currency"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      }
+    ],
+    "hasReceive": true,
+    "hasFallback": false
+  },
+  {
+    "name": "OMR",
+    "sourcePath": "src\\OMR.sol",
+    "artifactPath": "out\\OMR.sol\\OMR.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "treasurySafe",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "approve",
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "value",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "mint",
+        "inputs": [
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "setExempt",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "exempt",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "setMinter",
+        "inputs": [
+          {
+            "name": "m",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "setPair",
+        "inputs": [
+          {
+            "name": "pair",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "isPair",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "setSellTax",
+        "inputs": [
+          {
+            "name": "bps",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "devBps",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "rwaBps",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "communityBps",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "setTaxRecipients",
+        "inputs": [
+          {
+            "name": "dev",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "rwa",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "community",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "lp",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "transfer",
+        "inputs": [
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "value",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "transferFrom",
+        "inputs": [
+          {
+            "name": "from",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "value",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "OMRStaking",
+    "sourcePath": "src\\OMRStaking.sol",
+    "artifactPath": "out\\OMRStaking.sol\\OMRStaking.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "owner_",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "omr_",
+          "type": "contract",
+          "internalType": "IERC20"
+        },
+        {
+          "name": "apyBps_",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "claimRewards",
+        "inputs": [],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "fundRewards",
+        "inputs": [
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "setApy",
+        "inputs": [
+          {
+            "name": "bps",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "stake",
+        "inputs": [
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "unstake",
+        "inputs": [
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "OmrTwapOracle",
+    "sourcePath": "src\\OmrTwapOracle.sol",
+    "artifactPath": "out\\OmrTwapOracle.sol\\OmrTwapOracle.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "owner_",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "pair_",
+          "type": "contract",
+          "internalType": "IUniswapV2Pair"
+        },
+        {
+          "name": "omr",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "period_",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "update",
+        "inputs": [],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "StockVault",
+    "sourcePath": "src\\StockVault.sol",
+    "artifactPath": "out\\StockVault.sol\\StockVault.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "owner_",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "keeper_",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "defaultDailyCap_",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "deliver",
+        "inputs": [
+          {
+            "name": "deliveryId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "token",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "units",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "deliverBatch",
+        "inputs": [
+          {
+            "name": "deliveryIds",
+            "type": "array",
+            "internalType": "uint256[]"
+          },
+          {
+            "name": "tokens",
+            "type": "array",
+            "internalType": "address[]"
+          },
+          {
+            "name": "tos",
+            "type": "array",
+            "internalType": "address[]"
+          },
+          {
+            "name": "unitsArr",
+            "type": "array",
+            "internalType": "uint256[]"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "pause",
+        "inputs": [],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "setDailyCap",
+        "inputs": [
+          {
+            "name": "token",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "cap",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "setDefaultDailyCap",
+        "inputs": [
+          {
+            "name": "cap",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "setKeeper",
+        "inputs": [
+          {
+            "name": "k",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "unpause",
+        "inputs": [],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  },
+  {
+    "name": "Transmuter",
+    "sourcePath": "src\\Transmuter.sol",
+    "artifactPath": "out\\Transmuter.sol\\Transmuter.json",
+    "constructor": {
+      "inputs": [
+        {
+          "name": "debtToken_",
+          "type": "contract",
+          "internalType": "Denari"
+        },
+        {
+          "name": "asset_",
+          "type": "contract",
+          "internalType": "IERC20"
+        },
+        {
+          "name": "safe",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    "functions": [
+      {
+        "name": "fund",
+        "inputs": [
+          {
+            "name": "assets",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "redeem",
+        "inputs": [
+          {
+            "name": "debtAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "primary"
+      },
+      {
+        "name": "setBufferFloorBps",
+        "inputs": [
+          {
+            "name": "bps",
+            "type": "uint16",
+            "internalType": "uint16"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "setFunder",
+        "inputs": [
+          {
+            "name": "who",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "allowed",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      },
+      {
+        "name": "setRedeemCaps",
+        "inputs": [
+          {
+            "name": "perBlock",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "perDay",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "tier": "secondary"
+      }
+    ],
+    "hasReceive": false,
+    "hasFallback": false
+  }
+]

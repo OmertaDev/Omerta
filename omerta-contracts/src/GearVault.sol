@@ -38,7 +38,7 @@ contract GearVault is ERC1155, Ownable2Step {
     // count and let every id mint its cap AGAIN (2x+ the intended lifetime supply). GearVault
     // persists across bridge upgrades, so tracking `minted` here makes "gear is fail-closed and
     // bounded by a per-id supply cap" (CLAUDE.md #5) actually hold. cap 0 => class can't mint.
-    mapping(uint256 => uint256) public cap;    // tokenId => max LIVE on-chain supply (0 = mint blocked)
+    mapping(uint256 => uint256) public cap; // tokenId => max LIVE on-chain supply (0 = mint blocked)
     mapping(uint256 => uint256) public minted; // tokenId => minted so far (survives a minter swap)
     // NFT RE-IMPORT (Option A, omerta-nft-reimport-design.md): tokenId => burned-back-to-game so far.
     // A `redeem` (burn back into the game) does NOT decrement `minted` — it increments `redeemed`, so
@@ -157,8 +157,13 @@ contract GearVault is ERC1155, Ownable2Step {
     // photographic art (see omerta-onchain-items-design.md §3/§4): a 260KB JPEG can't live on-chain,
     // but IPFS pins it permanently and the traits that matter for scarcity are on-chain regardless.
 
-    function _isCar(uint256 id) internal pure returns (bool) { return id >= CAR_BASE && id < BOAT_BASE; }
-    function _isBoat(uint256 id) internal pure returns (bool) { return id >= BOAT_BASE; }
+    function _isCar(uint256 id) internal pure returns (bool) {
+        return id >= CAR_BASE && id < BOAT_BASE;
+    }
+
+    function _isBoat(uint256 id) internal pure returns (bool) {
+        return id >= BOAT_BASE;
+    }
 
     /// @dev The class's base tokenId (rarity digit stripped). Gear ids are already unique class keys.
     function _classKey(uint256 id) internal pure returns (uint256) {
@@ -212,28 +217,34 @@ contract GearVault is ERC1155, Ownable2Step {
         // name: "<class> · <Rarity>" for cars/boats, "<class>" for gear. Every non-ASCII glyph
         // is a JSON \u escape so the whole document is ASCII bytes (unambiguous, trivially testable;
         // marketplaces decode the escapes).
-        string memory title = rarityBearing
-            ? string.concat(disp, " \\u00b7 ", _rarityName(_rarityIdx(id)))
-            : disp;
+        string memory title = rarityBearing ? string.concat(disp, " \\u00b7 ", _rarityName(_rarityIdx(id))) : disp;
 
         // attributes: Type + Class(number) always; Rarity for cars/boats.
         string memory attrs = string.concat(
-            '[{"trait_type":"Type","value":"', _typeName(id), '"},',
-            '{"trait_type":"Class","value":', _classIdx(id).toString(), "}"
+            '[{"trait_type":"Type","value":"',
+            _typeName(id),
+            '"},',
+            '{"trait_type":"Class","value":',
+            _classIdx(id).toString(),
+            "}"
         );
         if (rarityBearing) {
-            attrs = string.concat(
-                attrs,
-                ',{"trait_type":"Rarity","value":"', _rarityName(_rarityIdx(id)), '"}'
-            );
+            attrs = string.concat(attrs, ',{"trait_type":"Rarity","value":"', _rarityName(_rarityIdx(id)), '"}');
         }
         attrs = string.concat(attrs, "]");
 
         string memory json = string.concat(
-            '{"name":"OMERT\\u00c0 ', title, '",',
+            '{"name":"OMERT\\u00c0 ',
+            title,
+            '",',
             '"description":"An extracted OMERT\\u00c0 item \\u2014 real on-chain property that survives the character. It is inert in-game (a trophy, not an advantage), which is what makes it safe to trade.",',
-            '"image":"', _imageBase, id.toString(), '.png",',
-            '"attributes":', attrs, "}"
+            '"image":"',
+            _imageBase,
+            id.toString(),
+            '.png",',
+            '"attributes":',
+            attrs,
+            "}"
         );
 
         return string.concat("data:application/json;base64,", Base64.encode(bytes(json)));

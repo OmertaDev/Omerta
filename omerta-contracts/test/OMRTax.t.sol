@@ -13,7 +13,7 @@ contract OMRTaxTest is Test {
     address rwa = makeAddr("taxrwa");
     address community = makeAddr("taxcommunity");
     address lp = makeAddr("taxlp");
-    address pool = makeAddr("pool");          // a registered AMM pair
+    address pool = makeAddr("pool"); // a registered AMM pair
     address otherPool = makeAddr("otherPool"); // NOT registered
     address seller = makeAddr("seller");
     address friend = makeAddr("friend");
@@ -52,7 +52,9 @@ contract OMRTaxTest is Test {
         assertEq(omr.balanceOf(dev), (50e18 * 111) / 500, "the dev slice");
         assertEq(omr.balanceOf(rwa), (50e18 * 222) / 500, "the stock-float slice");
         assertEq(omr.balanceOf(lp), 50e18 - (50e18 * 111) / 500 - (50e18 * 222) / 500, "LP takes the remainder");
-        assertEq(omr.balanceOf(dev) + omr.balanceOf(rwa) + omr.balanceOf(lp), 50e18, "and the three sum to the tax EXACTLY");
+        assertEq(
+            omr.balanceOf(dev) + omr.balanceOf(rwa) + omr.balanceOf(lp), 50e18, "and the three sum to the tax EXACTLY"
+        );
         assertEq(omr.balanceOf(seller), 9_000e18, "the seller paid exactly the transfer amount");
     }
 
@@ -224,5 +226,4 @@ contract OMRTaxTest is Test {
         omr.renounceOwnership();
         assertEq(omr.owner(), address(0), "renounce still takes effect immediately");
     }
-
 }

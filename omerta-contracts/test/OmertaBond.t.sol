@@ -15,9 +15,20 @@ contract MockOracle is IOmrOracle {
     uint256 public updatedAt;
     bool public broken;
 
-    constructor(uint256 p) { price = p; updatedAt = block.timestamp; }
-    function set(uint256 p, uint256 t) external { price = p; updatedAt = t; }
-    function breakIt(bool b) external { broken = b; }
+    constructor(uint256 p) {
+        price = p;
+        updatedAt = block.timestamp;
+    }
+
+    function set(uint256 p, uint256 t) external {
+        price = p;
+        updatedAt = t;
+    }
+
+    function breakIt(bool b) external {
+        broken = b;
+    }
+
     function consult() external view returns (uint256, uint256) {
         if (broken) revert("oracle down");
         return (price, updatedAt);
@@ -26,15 +37,23 @@ contract MockOracle is IOmrOracle {
 
 /// A recipient that rejects all ETH — exercises the ForwardFailed / DoS path.
 contract RejectETH2 {
-    receive() external payable { revert("no ETH"); }
+    receive() external payable {
+        revert("no ETH");
+    }
 }
 
 /// A malicious POL recipient that re-enters the bond on receiving its ETH share — exercises the
 /// nonReentrant guard (the re-entry reverts, is swallowed by the forward `.call`, ForwardFailed bubbles).
 contract ReenterOnPol {
     OmertaBond public target;
-    function set(OmertaBond b) external { target = b; }
-    receive() external payable { target.claim(1); } // re-entry attempt — must be blocked
+
+    function set(OmertaBond b) external {
+        target = b;
+    }
+
+    receive() external payable {
+        target.claim(1); // re-entry attempt — must be blocked
+    }
 }
 
 contract OmertaBondTest is Test {
@@ -46,32 +65,34 @@ contract OmertaBondTest is Test {
     address signer;
     address payable pol = payable(makeAddr("pol"));
     address payable dev = payable(makeAddr("dev"));
-    address payable rwa = payable(makeAddr("rwa"));   // the stock-buy bot (v2 §6 — SEPARATE from the Vig by founder ruling)
+    address payable rwa = payable(makeAddr("rwa")); // the stock-buy bot (v2 §6 — SEPARATE from the Vig by founder ruling)
     address payable vig = payable(makeAddr("vig"));
     address bonder = makeAddr("bonder");
 
-    uint256 constant TRANCHE = 100_000e18;   // OMR the Safe seeds for the sweep/surplus tests
+    uint256 constant TRANCHE = 100_000e18; // OMR the Safe seeds for the sweep/surplus tests
     /// WALL 3 — the mint-rate ceiling. Generous here so the OTHER walls are what bind in each test;
     /// its own coverage is `test_rate_ceiling_*` below. Post-discount rate at PRICE/800bps is ~5435.
     uint256 constant MAX_RATE = 10_000e18;
-    uint256 constant POL_BPS = 5000;          // 50% of ETH → POL (matches backend BONDS.POL_BPS)
-    uint256 constant DEV_BPS = 2000;          // 20% → the dev wallet (founder revenue)
-    uint256 constant RWA_BPS = 1000;          // 10% → the stock float (the rest is the Vig)
-    uint256 constant PRICE = 5000e18;         // 5000 OMR per 1 ETH
+    uint256 constant POL_BPS = 5000; // 50% of ETH → POL (matches backend BONDS.POL_BPS)
+    uint256 constant DEV_BPS = 2000; // 20% → the dev wallet (founder revenue)
+    uint256 constant RWA_BPS = 1000; // 10% → the stock float (the rest is the Vig)
+    uint256 constant PRICE = 5000e18; // 5000 OMR per 1 ETH
     /// WALL 4's tolerance. The oracle is seeded AT `PRICE` in setUp, so a quote at PRICE sits exactly
     /// on the oracle and the other walls are what bind in each test; wall 4's own coverage is the
     /// `test_oracle_*` block below.
-    uint256 constant TOLERANCE_BPS = 500;     // 5%
+    uint256 constant TOLERANCE_BPS = 500; // 5%
     uint256 constant ORACLE_AGE = 1 hours;
     MockOracle oracle;
 
     function setUp() public {
         signer = vm.addr(signerPk);
         omr = new OMR(safe);
-        bond = new OmertaBond(safe, signer, IERC20(address(omr)), POL_BPS, DEV_BPS, RWA_BPS, pol, dev, rwa, vig, 0, MAX_RATE); // 0 = uncapped daily
+        bond = new OmertaBond(
+            safe, signer, IERC20(address(omr)), POL_BPS, DEV_BPS, RWA_BPS, pol, dev, rwa, vig, 0, MAX_RATE
+        ); // 0 = uncapped daily
         oracle = new MockOracle(PRICE);
         vm.startPrank(safe);
-        omr.setMinter(address(bond));         // v2 §4: the bond IS the mint path now
+        omr.setMinter(address(bond)); // v2 §4: the bond IS the mint path now
         omr.transfer(address(bond), TRANCHE); // a surplus balance, so `sweep` has something to pull
         bond.setOracle(IOmrOracle(address(oracle)), TOLERANCE_BPS, ORACLE_AGE); // WALL 4
         vm.stopPrank();
@@ -81,11 +102,15 @@ contract OmertaBondTest is Test {
     /// Keeps the mock's reading fresh across a `vm.warp`. A stale feed is a REVERT (that is the
     /// point of wall 4), so any test that moves time and then bonds must re-poke — exactly as a
     /// keeper must in production, which is worth having the tests feel.
-    function _pokeOracle() internal { oracle.set(PRICE, block.timestamp); }
+    function _pokeOracle() internal {
+        oracle.set(PRICE, block.timestamp);
+    }
 
     // ── helpers ──
     function _quote(address payer, uint256 principal, uint256 disc, uint256 vest, uint256 nonce)
-        internal view returns (OmertaBond.BondQuote memory)
+        internal
+        view
+        returns (OmertaBond.BondQuote memory)
     {
         return OmertaBond.BondQuote(payer, principal, PRICE, disc, vest, nonce, block.timestamp + 1 hours);
     }
@@ -107,8 +132,9 @@ contract OmertaBondTest is Test {
         // forwards dust, and a forward to address(0) SUCCEEDS on the EVM and burns it. The
         // remainder rule exists so no wei goes unowned; this is the case that would defeat it.
         vm.expectRevert(OmertaBond.ZeroAddress.selector);
-        new OmertaBond(safe, signer, IERC20(address(omr)), 5000, 3000, 2000,
-            pol, dev, rwa, payable(address(0)), 0, MAX_RATE);
+        new OmertaBond(
+            safe, signer, IERC20(address(omr)), 5000, 3000, 2000, pol, dev, rwa, payable(address(0)), 0, MAX_RATE
+        );
     }
 
     function test_bond_pays_discounted_omr_and_splits_eth() public {
@@ -119,7 +145,7 @@ contract OmertaBondTest is Test {
         uint256 id = bond.bond{value: 1 ether}(q, sig);
 
         uint256 expect = _payout(1 ether, 800);
-        (, uint256 payout, uint256 claimed, , ) = bond.bonds(id);
+        (, uint256 payout, uint256 claimed,,) = bond.bonds(id);
         assertEq(payout, expect, "discounted payout");
         assertEq(claimed, 0);
         assertEq(bond.committedOMR(), expect, "committed bumped");
@@ -139,7 +165,9 @@ contract OmertaBondTest is Test {
         // in its place is that supply moved by EXACTLY the payout and not one wei more: the bond is
         // the only door, and it opens exactly as wide as the quote it was handed.
         assertEq(omr.totalSupply(), supply0 + expect, "supply grew by exactly the payout");
-        assertLe(bond.committedOMR(), omr.balanceOf(address(bond)), "and the commitment is covered the instant it is booked");
+        assertLe(
+            bond.committedOMR(), omr.balanceOf(address(bond)), "and the commitment is covered the instant it is booked"
+        );
     }
 
     // ── WALL 3: the mint-rate ceiling. The tranche cap used to make minting structurally
@@ -168,7 +196,8 @@ contract OmertaBondTest is Test {
     function test_rate_ceiling_FAILS_CLOSED_when_unset() public {
         // An unset ceiling must stop every bond — so forgetting to configure wall 3 turns the
         // product OFF rather than opening it (the GearVault gear-cap precedent).
-        OmertaBond fresh = new OmertaBond(safe, signer, IERC20(address(omr)), POL_BPS, DEV_BPS, RWA_BPS, pol, dev, rwa, vig, 0, 0);
+        OmertaBond fresh =
+            new OmertaBond(safe, signer, IERC20(address(omr)), POL_BPS, DEV_BPS, RWA_BPS, pol, dev, rwa, vig, 0, 0);
         vm.startPrank(safe);
         omr.setMinter(address(fresh));
         fresh.setOracle(IOmrOracle(address(oracle)), TOLERANCE_BPS, ORACLE_AGE); // arm wall 4 so wall 3 is what binds
@@ -218,7 +247,8 @@ contract OmertaBondTest is Test {
     function test_bond_reverts_not_payer() public {
         OmertaBond.BondQuote memory q = _quote(bonder, 1 ether, 800, 5 days, 1);
         bytes memory sig = _sign(q, signerPk);
-        address other = makeAddr("other"); vm.deal(other, 1 ether);
+        address other = makeAddr("other");
+        vm.deal(other, 1 ether);
         vm.prank(other);
         vm.expectRevert(OmertaBond.NotPayer.selector);
         bond.bond{value: 1 ether}(q, sig); // a quote is not transferable
@@ -256,17 +286,15 @@ contract OmertaBondTest is Test {
 
     function test_bond_reverts_deadline_too_far() public {
         // a leaked-then-rotated signer's far-future quote can't stay bondable (the MAX_QUOTE_TTL backstop)
-        OmertaBond.BondQuote memory q = OmertaBond.BondQuote(
-            bonder, 1 ether, PRICE, 800, 5 days, 1, block.timestamp + 31 days
-        );
+        OmertaBond.BondQuote memory q =
+            OmertaBond.BondQuote(bonder, 1 ether, PRICE, 800, 5 days, 1, block.timestamp + 31 days);
         bytes memory sig = _sign(q, signerPk);
         vm.prank(bonder);
         vm.expectRevert(OmertaBond.DeadlineTooFar.selector);
         bond.bond{value: 1 ether}(q, sig);
         // exactly at the backstop is still fine
-        OmertaBond.BondQuote memory ok = OmertaBond.BondQuote(
-            bonder, 1 ether, PRICE, 800, 5 days, 2, block.timestamp + 30 days
-        );
+        OmertaBond.BondQuote memory ok =
+            OmertaBond.BondQuote(bonder, 1 ether, PRICE, 800, 5 days, 2, block.timestamp + 30 days);
         bytes memory sigOk = _sign(ok, signerPk);
         vm.prank(bonder);
         bond.bond{value: 1 ether}(ok, sigOk);
@@ -276,7 +304,8 @@ contract OmertaBondTest is Test {
     function test_bond_reverts_replay() public {
         OmertaBond.BondQuote memory q = _quote(bonder, 1 ether, 800, 5 days, 1);
         bytes memory sig = _sign(q, signerPk);
-        vm.prank(bonder); bond.bond{value: 1 ether}(q, sig);
+        vm.prank(bonder);
+        bond.bond{value: 1 ether}(q, sig);
         vm.prank(bonder);
         vm.expectRevert(OmertaBond.Replay.selector);
         bond.bond{value: 1 ether}(q, sig);
@@ -356,7 +385,8 @@ contract OmertaBondTest is Test {
 
     // ── pause + forward-failure + ownership ──
     function test_pause_blocks_bonding() public {
-        vm.prank(safe); bond.pause();
+        vm.prank(safe);
+        bond.pause();
         OmertaBond.BondQuote memory q = _quote(bonder, 1 ether, 800, 5 days, 1);
         bytes memory sig = _sign(q, signerPk);
         vm.prank(bonder);
@@ -377,7 +407,7 @@ contract OmertaBondTest is Test {
 
     // ── ETH rescue: any stray ETH goes to the Safe, never trapped ──
     function test_sweepETH_rescues_stray_eth() public {
-        vm.deal(address(bond), 3 ether);      // ETH lands outside bond() (e.g. a selfdestruct push)
+        vm.deal(address(bond), 3 ether); // ETH lands outside bond() (e.g. a selfdestruct push)
         uint256 before = safe.balance;
         vm.prank(safe);
         bond.sweepETH();
@@ -452,18 +482,22 @@ contract OmertaBondTest is Test {
     // ── the per-UTC-day cap (leaked-signer daily blast-radius backstop) ──
     function test_daily_cap_blocks_over_budget() public {
         // a fresh bond contract with a tight daily cap of 6,000 OMR
-        OmertaBond capped = new OmertaBond(safe, signer, IERC20(address(omr)), POL_BPS, DEV_BPS, RWA_BPS, pol, dev, rwa, vig, 6_000e18, MAX_RATE);
+        OmertaBond capped = new OmertaBond(
+            safe, signer, IERC20(address(omr)), POL_BPS, DEV_BPS, RWA_BPS, pol, dev, rwa, vig, 6_000e18, MAX_RATE
+        );
         vm.startPrank(safe);
         omr.setMinter(address(capped)); // the DAILY CAP, not a balance, is what must bind here
         capped.setOracle(IOmrOracle(address(oracle)), TOLERANCE_BPS, ORACLE_AGE); // arm wall 4 so the cap is what binds
         vm.stopPrank();
         // 1 ETH @ 5000, 8% disc → payout ≈ 5,434 OMR — under the cap, accepted
-        OmertaBond.BondQuote memory q1 = OmertaBond.BondQuote(bonder, 1 ether, PRICE, 800, 7 days, 1, block.timestamp + 1 hours);
+        OmertaBond.BondQuote memory q1 =
+            OmertaBond.BondQuote(bonder, 1 ether, PRICE, 800, 7 days, 1, block.timestamp + 1 hours);
         bytes memory sigC1 = _sign2(capped, q1);
         vm.prank(bonder);
         capped.bond{value: 1 ether}(q1, sigC1);
         // a second 1-ETH bond the same day → cumulative ≈ 10,869 > 6,000 cap → reverts
-        OmertaBond.BondQuote memory q2 = OmertaBond.BondQuote(bonder, 1 ether, PRICE, 800, 7 days, 2, block.timestamp + 1 hours);
+        OmertaBond.BondQuote memory q2 =
+            OmertaBond.BondQuote(bonder, 1 ether, PRICE, 800, 7 days, 2, block.timestamp + 1 hours);
         bytes memory sigC2 = _sign2(capped, q2);
         vm.prank(bonder);
         vm.expectRevert("OB: daily cap");
@@ -471,7 +505,8 @@ contract OmertaBondTest is Test {
         // next UTC day → the budget resets, the same bond now lands
         vm.warp(block.timestamp + 1 days);
         _pokeOracle(); // a day passed, so the feed is stale — a keeper must poke, exactly as in production
-        OmertaBond.BondQuote memory q3 = OmertaBond.BondQuote(bonder, 1 ether, PRICE, 800, 7 days, 3, block.timestamp + 1 hours);
+        OmertaBond.BondQuote memory q3 =
+            OmertaBond.BondQuote(bonder, 1 ether, PRICE, 800, 7 days, 3, block.timestamp + 1 hours);
         bytes memory sigC3 = _sign2(capped, q3);
         vm.prank(bonder);
         capped.bond{value: 1 ether}(q3, sigC3);
@@ -492,7 +527,9 @@ contract OmertaBondTest is Test {
 
     function test_oracle_FAILS_CLOSED_when_unset() public {
         // A bond contract that has never been told the price must refuse to mint, not mint blind.
-        OmertaBond fresh = new OmertaBond(safe, signer, IERC20(address(omr)), POL_BPS, DEV_BPS, RWA_BPS, pol, dev, rwa, vig, 0, MAX_RATE);
+        OmertaBond fresh = new OmertaBond(
+            safe, signer, IERC20(address(omr)), POL_BPS, DEV_BPS, RWA_BPS, pol, dev, rwa, vig, 0, MAX_RATE
+        );
         vm.prank(safe);
         omr.setMinter(address(fresh));
         OmertaBond.BondQuote memory q = _quote(bonder, 1 ether, 800, 7 days, 1);
@@ -585,7 +622,7 @@ contract OmertaBondTest is Test {
         // minted: wall 3 is the Safe's number and no feed can raise it. Manipulating the oracle
         // UPWARD buys an attacker nothing.
         vm.prank(safe);
-        bond.setMaxRate(1000e18);              // a tight absolute ceiling
+        bond.setMaxRate(1000e18); // a tight absolute ceiling
         oracle.set(PRICE * 1000, block.timestamp); // and a wildly manipulated feed
         OmertaBond.BondQuote memory q = _quote(bonder, 1 ether, 800, 7 days, 1); // PRICE is now far under the oracle
         bytes memory sig = _sign(q, signerPk);
@@ -669,7 +706,7 @@ contract OmertaBondTest is Test {
             uint256 minted = omr.totalSupply() - supply0;
             uint256 rate = (minted * 1e18) / 1 ether;
             assertLe(rate, bond.maxOmrPerEth(), "wall 3: the absolute ceiling always holds");
-            (uint256 ceiling, ) = bond.priceCeiling();
+            (uint256 ceiling,) = bond.priceCeiling();
             assertLe(quoted, ceiling, "wall 4: a bond that landed was priced within the oracle band");
         } catch {
             assertEq(omr.totalSupply(), supply0, "a refused bond mints nothing");
@@ -690,14 +727,17 @@ contract OmertaBondTest is Test {
         vm.prank(bonder);
         bond.bond{value: 1 ether}(q, sig);
         assertEq(rwa.balance, 1 ether * RWA_BPS / 10000, "the float's ETH reached the float's wallet");
-        assertEq(vig.balance - vig0, 1 ether * (10000 - POL_BPS - DEV_BPS - RWA_BPS) / 10000,
-            "and the Vig got ONLY its own share - not the float's on top of it");
+        assertEq(
+            vig.balance - vig0,
+            1 ether * (10000 - POL_BPS - DEV_BPS - RWA_BPS) / 10000,
+            "and the Vig got ONLY its own share - not the float's on top of it"
+        );
     }
 
     // The remainder rule sits on the Vig: three of four shares round DOWN, so a fourth "natural"
     // bps division would strand wei belonging to nobody. Uses a principal chosen to leave dust.
     function test_four_way_split_leaves_no_dust() public {
-        uint256 amt = 1 ether + 7;   // not divisible by 10000
+        uint256 amt = 1 ether + 7; // not divisible by 10000
         vm.deal(bonder, amt);
         OmertaBond.BondQuote memory q = _quote(bonder, amt, 800, 5 days, 92);
         bytes memory sig = _sign(q, signerPk);

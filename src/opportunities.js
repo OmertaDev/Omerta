@@ -23,6 +23,7 @@ export async function arenaBoard(pool, { baseUrl = '' } = {}) {
       quickstart: `${baseUrl}/agents`,
       openapi: `${baseUrl}/openapi.json`,
       llms: `${baseUrl}/llms.txt`,
+      turn: `${baseUrl}/v1/agent/turn`,
       opportunities: `${baseUrl}/v1/opportunities`,
       rules: `${baseUrl}/v1/rules`,
       agentKey: 'POST /v1/auth/agent-key',
@@ -110,7 +111,8 @@ export async function opportunityBoard(pool, ch) {
     if (l.kind === 'order') {
       opportunities.push({
         type: 'order', reward: l.wanted * l.unitPrice, risk: 'none',
-        action: 'fill', listingId: l.id, good: l.good, wanted: l.wanted, unitPrice: l.unitPrice, district: l.district,
+        action: 'fill', listingId: l.id, posterId: l.sellerId, good: l.good,
+        wanted: l.wanted, unitPrice: l.unitPrice, district: l.district,
         endpoint: `POST /v1/market/${l.id}/fill`,
         note: `WTB ${l.wanted}× ${l.good} @ $${l.unitPrice} at ${l.district} (fill from trunk)`,
       });

@@ -9,6 +9,18 @@ below clear.
 Everything here is REHEARSABLE on a devnet/testnet today (that's what `tools/chain-e2e.js` does). **Nothing
 touches mainnet** until §0 is satisfied.
 
+> **RWA AUTOMATION AMENDMENT — 2026-08-24 (authoritative over older “gateless StockVault” passages).**
+> The RWA surface now includes `StockTokenRegistry`, `RwaStockBuyer`, and StockVault's EIP-712
+> `allocationSigner`. Production delivery is not keeper-asserted: once the Safe sets that signer,
+> legacy `deliver`/`deliverBatch` are disabled and every push binds the frozen epoch, account, exact
+> token, deed TBA, units, delivery id, and deadline. The Safe curates the candidate registry; the
+> server publishes one closed-day family result; the buyer resolves its token from that day and cannot
+> accept a keeper-supplied address. All three deploy/operate disabled until the ceremony below. The
+> venue adapter, independent quote/TWAP oracle, third-party audit, mainnet funding, and written launch
+> review of the founder's no-in-game-KYC posture are still open gates. Historical “gateless keeper” text
+> below describes the superseded 2026-08-14 authorization posture; delivery itself intentionally has no
+> identity, residency, sanctions, or jurisdiction check.
+
 ---
 
 ## 0. The three HARD GATES (no mainnet step proceeds until all three are green)
@@ -58,7 +70,7 @@ touches mainnet** until §0 is satisfied.
    caps, RT#8's two-step ownership, the four-way sell tax — so re-measure rather than quoting this
    figure, and if the two disagree the tree is right and this line is stale.)*
 
-   **In the batch — 17 contracts + 1 interface, every one carrying tests:**
+   **In the batch — 19 contracts + 1 interface, every one carrying tests:**
 
    | subsystem | contracts | the thing to attack |
    |---|---|---|
@@ -68,7 +80,7 @@ touches mainnet** until §0 is satisfied.
    | THE BANK | `Denari` (the DNR debt token, né `nUSD`), `CollateralEscrow`, `Alchemist`, `Transmuter`, `FlashGuard` | that no oracle sits on the borrow path and no `liquidate()` exists anywhere — the design's central claim, and the class that cost Inverse ~$21M twice |
    | Street Deeds | `StreetDeed` | the EIP-712 self-mint (name↔tokenId bijection, the daily cap, replay/deadline; NO owner mint), that `redeem` (the burn-to-re-import) is never pausable so a paused contract can never trap a holder's asset, and the **default-ON per-token transfer lock** (added 2026-08-14, the drain-before-sale mitigation): mint locks, every transfer arrival RE-LOCKS, only the OWNER may unlock (an approved operator deliberately cannot — operator-unlock IS the drain vector), `redeem` is never blocked by it, and the unlock emits `TransferLockSet` — the public "listing" act a buyer anchors TBA-content checks on |
    | the identity NFT | `DynastyNFT` | the EIP-712 self-mint (NO owner mint, nonce/deadline/daily-cap walls), that it gates **NOTHING on `balanceOf`** (the entitlement is account-bound off-chain — the token is a transferable trophy), and the uncapped sequential supply + EIP-2981 royalty |
-   | the stock delivery | `StockVault` | that it **NEVER mints** (pre-held transfer only — the physical half of `allocated ≤ held`), the keeper-only gateless push (no on-chain eligibility, a DELIBERATE §3.3 decision), and the leaked-keeper bounds (per-token daily cap, pause, `setKeeper`, `sweep`) |
+   | the stock machine | `StockTokenRegistry`, `RwaStockBuyer`, `StockVault` | Safe-curated provider identity/address; one immutable closed-day family result; ballot-bound exact-token purchase through a Safe-approved adapter; daily ETH/slippage/one-shot walls; pre-held transfer only; EIP-712 allocation authorization; per-token delivery caps, pause, rotation, and sweep |
 
    **NOW IN THE BATCH (added 2026-08-14, founder-directed).** `DynastyNFT`, `StockVault` and
    `OmertaFees.payForPackage` were previously held out; the founder cleared every design choice and lifted
@@ -76,10 +88,12 @@ touches mainnet** until §0 is satisfied.
    - **`DynastyNFT`** — the tranche-schedule question that its "uncapped + escalating pricing" hinged on
      is settled (the published five-wave schedule with a hard 0.05-ETH ceiling; the mint fee lives in
      `OmertaFees`, not this contract, so it carries no pricing constant to audit).
-   - **`StockVault`** — the founder chose the **GATELESS PUSH** (§3.3): there is no claim rail and no
-     on-chain eligibility gate, so the claim-rail parameters it was gated on no longer exist. The
-     accepted risk (Robinhood's tokenized stocks are EU-restricted; a gateless push has no on-chain
-     control over who receives them) is documented in the contract NatSpec so the audit sees a decision.
+   - **`StockVault`** — automatic push remains (there is no player claim transaction), but the old
+     keeper-only authorization is superseded. In production the Safe sets `allocationSigner`, which
+     disables both legacy delivery functions and requires an EIP-712 server-authority attestation for
+     the exact frozen allocation. This proves gameplay authorization. Per the founder's 2026-08-24
+     posture, neither the signer nor the game performs recipient KYC/compliance screening; launch review
+     must evaluate that exact model rather than assuming an unwritten eligibility service exists.
    - **`ERC-6551` account contract** — NOT written and correctly so: the canonical registry singleton
      (`0x000000006551c19487814612e58FE06813775758`) + the ecosystem reference account implementation are
      used unmodified (deploy config, not a fork). Nothing to audit here beyond wiring.
@@ -106,23 +120,23 @@ touches mainnet** until §0 is satisfied.
    patched after the fact. **Nothing on this checklist should be armed until gate 2 also clears.**
    **What this gate covers has moved TWICE, and the current position is the second one.** The stock
    layer was retired 2026-07-31 (`omerta-stock-layer-retirement.md`) and **reinstated 2026-08-10**
-   (`omerta-brokers-design.md`, founder decision), so this runbook's earlier reading — that there was
-   no stock oracle and no eligibility gate to build — was stale for two days and is corrected here:
-   **buying, holding and eventually delivering tokenized stock is back in scope**, and with it the
-   claim-rail parameters (the eligibility list + verification depth) that step 7 is gated on.
-   **What is live TODAY, corrected 2026-08-21 — this paragraph said `StockVault` was unwritten and it
-   has shipped:** the whole rail is BUILT end to end and **chain-DORMANT**. `StockVault.sol` (2026-08-14,
+   (`omerta-brokers-design.md`, founder decision). Buying, holding and eventually delivering Stock
+   Tokens is back in scope. The once-open eligibility-list/verification-depth question is now founder-
+   resolved as **no in-game KYC or recipient-compliance check**; this resolves the product implementation
+   question but does not assert legal clearance for mainnet distribution.
+   **What is built TODAY, amended 2026-08-24:** the bounded contracts and most server orchestration are
+   built and **chain-DORMANT**. `StockVault.sol` (2026-08-14,
    in the batch above) never mints — every `deliver` is a pre-held `SafeERC20.transfer`, so
    `balanceOf(this)` per token is the PHYSICAL half of the wall — and the off-chain half is complete
    too: `brokers.js:distributeBuy` writes the owed side through the clamped `allocateStock`,
    `stockdeliver.js` stages→confirms against the `Delivered` log, `runStockDeliveryKeeper` is the tx
-   sender, and `delivered ≤ allocated` joins `allocated ≤ held` in the nightly sweep. **There is no
-   claim route BY DESIGN and that is a decision, not a gap** — the founder chose the gateless PUSH
-   (brokers §3.3): units land straight in the Street Deed's ERC-6551 account with no claim step and no
-   on-chain eligibility gate, which is precisely why the ADDRESS is the only thing between the treasury
-   and a permanent loss and why an auditor should attack it. Nothing moves until
+   sender, and `delivered ≤ allocated` joins `allocated ≤ held` in the nightly sweep. There is no player
+   claim route, but production pushes require the signed allocation authorization described above.
+   `StockTokenRegistry` and `RwaStockBuyer` additionally bind acquisition to the Safe-approved canonical
+   address selected by the closed family ballot. Nothing moves until
    `STOCK_VAULT_ADDRESS` + `STREET_DEED_ADDRESS` + the ERC-6551 config are set (the watcher) and
-   `STOCK_KEEPER_PK` besides (the sender), so **no stock has been delivered to anybody** — but the
+   `STOCK_KEEPER_PK` + `STOCK_ALLOCATION_SIGNER_PK` besides (sender and isolated allocation attestor),
+   so **no stock has been delivered to anybody** — but the
    reason is unset env, not unwritten code, and the two are different things to review. The ETH
    VAULT is the same shape one asset over: a player burns earned $OMR for a share of ETH the treasury
    already holds, same asset both sides, allocation-only. The $OMR side and the stock side are
@@ -377,22 +391,21 @@ from the first block. Use `omerta-contracts/DEPLOYMENT.md` and its Foundry scrip
       ecosystem reference **account implementation** are used UNMODIFIED — deploy config, not a fork. A
       player's token-bound account is `registry.account(accountImpl, salt, chainId, DynastyNFT, tokenId)`;
       nothing here is a new contract to deploy.
-- [ ] **`StockVault(safe, keeper)`** — the gateless keeper-push tokenized-stock delivery vault
-      (`omerta-brokers-design.md` §3.3). **NEVER mints** — every `deliver`/`deliverBatch` is a pre-held
+- [ ] **`StockVault(safe, keeper, defaultDailyCap)`** — the automatic-push Stock Token delivery vault
+      (`omerta-brokers-design.md` §3.3). **NEVER mints** — every delivery is a pre-held
       `SafeERC20.transfer`, so `balanceOf(this)` per token is the physical `allocated ≤ held` wall. Pass
-      **`keeper = address(0)` at deploy** (deliveries OFF). **⚠ ORDER (fail-safe):** the Safe (1) pre-funds
-      the vault with the tokenized-stock ERC-20s the treasury keeper bought (`runStockBuyback`), (2) sets a
-      per-ticker `setDailyCap(token, cap)` (the leaked-keeper rate wall — a compromised keeper can only move
-      HELD units, never mint, and the Safe can `sweep` unspent stock at any time), THEN (3) `setKeeper(bot)`
-      to arm it. **GATELESS is a DELIBERATE §3.3 decision** (recorded in the NatSpec so the audit sees a
-      decision, not an omission): there is no claim process and no on-chain eligibility gate — stock accrues
-      straight into the player's ERC-6551 token-bound account, so the NFT sells self-contained; the accepted
-      risk is that Robinhood's tokenized stocks are issuer-restricted (EU-facing) and a gateless push has no
-      on-chain control over who receives them. Any operational eligibility is a backend/keeper concern.
+      **`keeper = address(0)` at deploy** (deliveries OFF) and a reviewed nonzero default daily cap.
+      **⚠ ORDER (fail-safe):** the Safe (1) pre-funds the vault, (2) sets a per-token
+      `setDailyCap(token, cap)`, (3) sets and verifies `setAllocationSigner(attestor)`, and only then
+      (4) `setKeeper(bot)`. Once the signer is nonzero, legacy `deliver`/`deliverBatch` are disabled;
+      every automatic push must carry an EIP-712 authorization for the frozen gameplay allocation.
+      This is gameplay/server-authority verification. It intentionally performs no KYC, sanctions,
+      residency, jurisdiction, or other recipient-compliance check.
       **DELIVERY TARGET REDIRECTED to the STREET DEED (`omerta-brokers-design.md` §3.4, founder-directed
       2026-08-14):** stock lands in the player's on-chain **Street Deed's** ERC-6551 TBA, not the Dynasty
       NFT's — so a player must own AND extract a Street Deed to receive stock (an account with none accrues
-      its allocation as owed and waits). The identity NFT holds no stock, so its `balanceOf`-gates-nothing
+      its allocation as owed and waits permanently—no expiry, inactivity forfeiture, treasury clawback,
+      or redistribution). The identity NFT holds no stock, so its `balanceOf`-gates-nothing
       entitlement wall is intact. **Backend activation:** set **`STOCK_VAULT_ADDRESS`** on the WORKER +
       API, and **`STREET_DEED_ADDRESS`** + the ERC-6551 env (`ERC6551_REGISTRY` /
       `ERC6551_ACCOUNT_IMPL` / `ERC6551_SALT`, defaulting to the canonical registry singleton) so
@@ -402,12 +415,16 @@ from the first block. Use `omerta-contracts/DEPLOYMENT.md` and its Foundry scrip
       /v1/mod/treasury/deliveries/run`) stages each owed allocation, CLAIMS it atomically
       (claim-then-send — `sent_at` stamped before the tx, released on a failed send, `RESEND_MS` 10min
       retry with the SAME deterministic `deliveryId` so the contract's `usedDeliveryId` bounds any lost
-      race to a clean revert), and sends the real `StockVault.deliver` tx; it NEVER confirms — only the
+      race to a clean revert), and sends `StockVault.deliverAuthorized` with an isolated EIP-712
+      allocation signature; it NEVER confirms — only the
       `Delivered` watcher flips `stock_allocations.delivered`. Arm it with **`STOCK_KEEPER_PK`** (a
-      SECRET — the on-chain `keeper` bot key) + **`STOCK_TOKEN_ADDRESSES`** (JSON ticker→ERC-20 map;
-      a ticker missing from it is a NAMED `no_token_address` skip, never a silent one) +
+      SECRET — the on-chain `keeper` bot key) + **`STOCK_ALLOCATION_SIGNER_PK`** (a different SECRET)
+      + **`STOCK_TOKEN_REGISTRY_ADDRESS`**. Value-moving token addresses come from the mirrored
+      Safe registry, never from an environment ticker map; a missing registry address is a named
+      `no_token_address` skip, never a silent one. `STOCK_TOKEN_ADDRESSES` remains only a legacy
+      read-only vault-balance display fallback. In addition,
       each token's decimals are read off the token itself (never configured — a tokenized stock is not
-      reliably 18dp and the map holds several). Dormant until wired. §10.4-NEUTRAL (out-of-band real value —
+      reliably 18dp). Dormant until wired. §10.4-NEUTRAL (out-of-band real value —
       zero `transactions` rows; the backend's `allocateStock` clamp + the nightly `allocated ≤ held` AND
       `delivered ≤ allocated` checks in `runTreasuryInvariants` are the owed-side half of the wall).
       **✅ BOTH ON-CHAIN LEGS ARE PROVEN (2026-08-16)** — `npm run stock-e2e` (the forge CI job, beside
@@ -417,13 +434,38 @@ from the first block. Use `omerta-contracts/DEPLOYMENT.md` and its Foundry scrip
       steps: a deed minted from a server-signed EIP-712 voucher, the backend's computed TBA equal to the
       registry's own answer (and the account deployed there reporting THIS deed as its token), the units
       landing in that account, the keeper sending but never settling, and the `Delivered` log — not the
-      keeper — flipping the allocation. **Why this leg gets its own prover:** with §3.3's gateless push
-      the ADDRESS is the only thing between the treasury and a permanent loss, and a wrong one is
+      keeper — flipping the allocation. The EIP-712 authorization cases are additionally pinned in
+      `StockVault.t.sol`; extend `stock-e2e` to the signed path before arming mainnet. **Why this leg gets
+      its own prover:** the ADDRESS is still the physical destination, and a wrong one is
       invisible to every wall we have (they are denominated in UNITS; who received them is not a
       quantity). **Residual, as with the DEX bots:** the prover deploys the registry it then checks
       against, so a MISCONFIGURED `ERC6551_REGISTRY` / `ERC6551_ACCOUNT_IMPL` / `ERC6551_SALT` at deploy
       is a config error it cannot see — resolve one real deed's TBA against the live registry by hand
       before the first delivery.
+
+- [ ] **`StockTokenRegistry` + `RwaStockBuyer`** — deploy additively with
+      `DeployRwaStockMachine.s.sol`; the script accepts only Robinhood Chain mainnet **4663** or rehearsal
+      testnet **46630**, requires a nonzero Safe, StockVault, and buyer daily ETH cap, and deliberately
+      deploys the ballot publisher, buy keeper, and venue adapter as zero. On mainnet:
+      (1) run `npm run stock-catalog` to inspect Robinhood's official chain-4663 discovery feed;
+      (2) generate the one-time initial top-15 proposal with
+      `npm run stock-catalog -- --initial-top-volume --registry <registry>`; this ranks Robinhood's
+      documented **underlying daily share volume**, not Stock Token DEX or mint/burn volume, and fails
+      unless every selected entry is active, fractional-tradable, fresh, non-halted, positive-market,
+      and address-matched; its ranked registry insertion order sets the production fallback order;
+      (3) have the Safe verify provider IDs/addresses plus legal/product eligibility, venue/oracle
+      support, and exposure caps, then execute those calls. The tool never signs/sends, and the snapshot
+      never rotates merely because tomorrow's volume changes; later changes use explicit `--tickers`;
+      (4) set the isolated ballot publisher only after a closed-day rehearsal;
+      (5) audit and set one venue adapter plus an independent quote/TWAP oracle with a nonzero freshness window;
+      (6) pre-fund the buyer with only the bounded tranche; and only then
+      (7) set the buy keeper. The keeper calls `buy(ballotDay, ethIn, minUnits, routeData)` and has no
+      ticker/address argument. The contract accepts only the immediately preceding UTC day's ballot,
+      permits one buy for it, enforces the daily ETH cap, and buys the exact token address snapshotted
+      when that result was published. Disabling or rotating the catalog entry makes the old ballot fail
+      closed; it cannot silently redirect the buy. The buyer measures that exact token's balance increase
+      at StockVault. **The generic buyer is built; the production venue adapter and
+      quote/TWAP runner are not yet approved or armed.**
 
 ### 2b. THE BANK — the Denari (DNR) market (only when it ships; not part of the first cut)
 Order matters more here than anywhere else in this file, because **two of these steps fail SILENTLY**:
@@ -438,11 +480,10 @@ omit them and the market looks healthy from the outside and is not.
 - [ ] **`alchemist.setLtvBps(bps)`.** Bounded by `MAX_LTV_BPS` **and** by the harvest fee — the pair must
       satisfy `ltv + fee <= 10000`, enforced in both setters, so at the shipped 20% fee the reachable
       ceiling is 80%, not 90%.
-- [ ] **⚠ SEED THE BUFFER BEFORE ANY BORROW.** `transmuter.fund(seed)` from the Safe. At zero supply
-      the required buffer is zero, so the FIRST borrow always passes and every one after it reverts
-      `BufferUnhealthy` — reserves are fed only by repay/harvest, which need existing debt. An unseeded
-      market takes one borrow and deadlocks while reading as a correct config.
-      `test_an_unseeded_market_bricks_after_one_borrow` pins it.
+- [ ] **⚠ SEED THE BUFFER BEFORE ANY BORROW.** `transmuter.fund(seed)` from the Safe. `Alchemist.mint`
+      checks the reserve floor both before and after issuance, so an unseeded market now refuses the
+      FIRST borrow atomically—no DNR or debt survives. This is fail-closed, but still means the market is
+      unusable until real backing is seeded. `test_an_unseeded_market_refuses_the_first_borrow` pins it.
 - [ ] **⚠ SET THE MINT CAPS.** `alchemist.setMintCaps(perBlock, perDay)`. **Zero means UNLIMITED here** —
       these fail OPEN, unlike `maxOmrPerEth` and the gear caps. Skipping this does not stop the market;
       it runs it with no rate limit on issuance.
@@ -541,18 +582,31 @@ The backend keeps its own reserve records; they must track the on-chain balances
   server-encodes `bond(quote, sig)` (viem) and the connected wallet `eth_sendTransaction`s it after switching to
   the quote's chain. It is DORMANT until this rail is configured. Still deferred: the DEX-TWAP oracle below (for a
   live quote board) — today the oracle is the latest manual Vig-buyback print.
-- **The Uniswap v4 migration** (`omerta-v4-hook-design.md`) — `OmertaHook.sol` is BUILT and tested but
-  **not deployed and not deployable yet**, and the remaining work is deliberately ordered:
+- **The Uniswap v4 migration** (`omerta-v4-hook-design.md`) — `OmertaHook.sol` is BUILT, tested, and
+  rehearsed unarmed on testnet, but **not deployed on mainnet and not launchable yet**. The remaining
+  work is deliberately ordered. `UNISWAP-ROUTING.md` is the routing-specific release gate:
   - **The address must be MINED.** v4 encodes a hook's permissions in the low 14 bits of its address, and
     the constructor refuses to exist anywhere that does not carry exactly `HOOK_FLAGS` (`0x30CC`). So the
     deploy is a CREATE2 salt search, and the permission set can NEVER be extended afterwards — a missing
-    flag is a new hook plus a full liquidity migration.
+    flag is a new hook plus a full liquidity migration. The miner also rejects every `0x91…` candidate,
+    avoiding Uniswap Labs' address-prefix review trigger.
+  - **Routing approval is a launch blocker, not a post-launch listing task.** The hook's essential
+    `afterSwapReturnsDelta` flag (and reserved `beforeSwapReturnsDelta` flag) means it is not automatically
+    eligible for Uniswap Labs routing. Deploy the final audited bytecode to a Labs-supported mainnet early,
+    verify the exact source on the explorer, initialize a minimally funded static-fee review pool (the live
+    form requires a pool address), submit the Labs allowlist form with the full tax/admin/window disclosure,
+    and record affirmative approval before announcing or seeding canonical liquidity. A Uniswap hooklist
+    entry only supplies interface metadata; it does not grant routing approval.
   - **Wire before arming:** `setRecipients(dev, rwa, community, lp)` → `setAllowedQuote(quote, true)` for
     each quote currency the Safe is willing to HOLD (the empty allow-list is the deploy default, and until
-    it is set NO pool can be created on this hook at all) → `initialize` the pool →
+    it is set NO pool can be created on this hook at all) → configure `setAntiSnipe(...)` **before**
+    `initialize` if the new pool needs an opening window (the deadline is snapshotted at initialization
+    and can never be extended) → `initialize` the pool →
     `setSellTax(900, 200, 160, 240)` (Path A — rwa 400→160 with the 240-bps community slice a 4th ON-CHAIN
     recipient; the community wallet is the family-buyback keeper's, per the OMR sell-tax step above).
-    `setObserver` once the hook-native oracle exists.
+    `setObserver` once the hook-native oracle exists. The observer is event-driven: listen for
+    `ObservationRequested(poolId)` and call `pokeObserver(poolKey)` after PoolManager settlement; it is
+    deliberately never entered synchronously from `afterSwap`.
   - **✅ THE LP LEAGUE reader is BUILT AND PROVEN (2026-08-16)** — `src/dexbot.js:readLpPositions`,
     installed at worker boot (`lpReaderReady()`, a WEAKER condition than the bots': it is read-only
     and needs no `DEX_BOT_PK`, so a box that never sends a transaction still accrues the league).
@@ -634,7 +688,7 @@ The backend keeps its own reserve records; they must track the on-chain balances
   stock, `allocated ≤ held` (per ticker, in units) holds, and `StockVault` (now in the audit batch, §2c)
   is the GATELESS delivery leg. The BACKEND is now COMPLETE: the buy keeper (`runStockBuyback`), the
   per-account allocation ledger (`allocateStock` + nightly `runTreasuryInvariants`), and the delivery
-  keeper (`runStockDeliveryKeeper`, 2026-08-15 — §2c) that drives `StockVault.deliver` are all built
+  keeper (`runStockDeliveryKeeper`, 2026-08-15 — §2c) that drives `StockVault.deliverAuthorized` is built
   and chain-dormant. The ETH VAULT is the same shape one asset over
   (`omerta-stock-layer-retirement.md`) — allocation-only, same asset both sides.
 

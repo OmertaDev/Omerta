@@ -13,6 +13,7 @@ import {
   deliverStock, stockDeliveryBoard, __setTbaResolver,
 } from '../src/stockdeliver.js';
 import { runTreasuryInvariants, allocateStock } from '../src/treasury.js';
+import { srcText } from './lib/srcfiles.js';
 
 const pool = await makeDb();
 // a deterministic TBA resolver (the test seam) — production reads the ERC-6551 registry on-chain.
@@ -261,6 +262,8 @@ assert.equal(await txCount(), tx0, 'the stock delivery rail writes ZERO transact
   assert.equal(sends.length, 1, 'the seam saw the send');
   assert.equal(sends[0].token, tokens.AAPL, 'the ticker resolved to its ERC-20 address');
   assert.equal(sends[0].units, 7, 'the owed units rode the send');
+  assert.equal(sends[0].epochId, 'e4', 'the frozen activity epoch rides the on-chain authorization');
+  assert.equal(sends[0].accountId, 'accA', 'the qualified account rides the on-chain authorization');
   assert.ok(sends[0].to && sends[0].to.startsWith('0x'), 'the deed TBA is the destination');
   // the TSLA allocation (e2) has a SIMULATED comp row — the keeper must skip it BY NAME, and the
   // ticker-with-no-address path must also be named, never silent (the no_budget lesson)
@@ -377,6 +380,46 @@ assert.equal(await txCount(), tx0, 'the stock delivery rail writes ZERO transact
   __setTxSender(null);
 }
 
+// ════════════ THE ACTIVE-PLAY AUTHORIZATION PAYLOAD ════════════
+// The EVM cannot query the gameplay DB. The backend signs hashes of the exact frozen epoch/account
+// beside the exact transfer, so StockVault can require an independent eligibility attestation without
+// publishing internal account ids on-chain.
+{
+  const { deliveryAuthorizationMessage } = await import('../src/stockdeliver.js');
+  const { keccak256, toBytes } = await import('viem');
+  const message = deliveryAuthorizationMessage({
+    deliveryId: '123', epochId: 'e-activity', accountId: 'account-42',
+    token: '0x1111111111111111111111111111111111111111',
+    to: '0x2222222222222222222222222222222222222222', units: 7000000n, deadline: 999n,
+  });
+  assert.equal(message.deliveryId, 123n);
+  assert.equal(message.epochHash, keccak256(toBytes('e-activity')));
+  assert.equal(message.accountHash, keccak256(toBytes('account-42')));
+  assert.equal(message.units, 7000000n);
+  assert.equal(message.deadline, 999n);
+}
+
+// ════════════ PERMANENT PENDING ALLOCATIONS — founder-approved 2026-08-24 ════════════
+// An allocation is treasury debt already assigned to one account. Age, an absent delivery target,
+// worker restarts, and later epochs may never expire, delete, or redistribute it. An old row becomes
+// deliverable the moment a valid deed target appears.
+{
+  await q("INSERT INTO stock_allocations (epoch_id, account_id, ticker, units, created_at) VALUES ('eForever','accForever','AAPL',1,'2000-01-01T00:00:00Z')");
+  assert.equal((await q("SELECT COUNT(*) n FROM stock_allocations WHERE epoch_id='eForever'")).rows[0].n, 1,
+    'an arbitrarily old allocation still exists');
+  await q("INSERT INTO street_deeds (account_id, name, name_lc, district, onchain_token_id, extracted_by_account, extracted_at) VALUES ('onchain:9999','Forever Street','forever street','brick','9999','accForever',now())");
+  const forever = (await planStockDeliveries(pool)).find((p) => p.epochId === 'eForever');
+  assert.ok(forever && forever.accountId === 'accForever' && forever.units === 1,
+    'age does not affect delivery planning once the permanent allocation gets a target');
+
+  const columns = (await q(
+    "SELECT column_name FROM information_schema.columns WHERE table_name='stock_allocations'"))
+    .rows.map((r) => String(r.column_name).toLowerCase());
+  assert.ok(!columns.includes('expires_at'), 'stock allocations have no expiry clock');
+  assert.doesNotMatch(srcText(), /\b(?:DELETE\s+FROM|TRUNCATE(?:\s+TABLE)?)\s+stock_allocations\b/i,
+    'application code has no allocation deletion/pruning path');
+}
+
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
 // THE TOKEN'S DECIMALS (red team #9 F3) — the class AUDIT-red-team-six established for the Alchemist,
 // with this instance surviving: ONE configured `STOCK_TOKEN_DECIMALS` for a MAP of tickers, defaulting
@@ -411,5 +454,5 @@ assert.equal(await txCount(), tx0, 'the stock delivery rail writes ZERO transact
   console.log('  ✓ a stock token\'s decimals are read off the token, bounded, cached, and never guessed');
 }
 
-console.log('✅ stock delivery rail: the deed-required gate, stage→confirm (real flips / comp never), idempotency, the delivered<=allocated wall, the board, the secondary-market exclusion, THE DELIVERY KEEPER (claim-then-send, named skips, retry-on-release), and §10.4-neutrality');
+console.log('✅ stock delivery rail: the deed-required gate, permanent non-expiring allocations, stage→confirm (real flips / comp never), idempotency, the delivered<=allocated wall, the board, the secondary-market exclusion, THE DELIVERY KEEPER (claim-then-send, named skips, retry-on-release), and §10.4-neutrality');
 await pool.end?.();

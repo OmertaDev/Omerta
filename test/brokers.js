@@ -10,6 +10,7 @@
 // construction their largest earner. Ours multiplies by measured play, so an activated NFT owned by
 // somebody who did not play earns NOTHING. That assertion is the point of this file.
 import assert from 'node:assert';
+import { readFile } from 'node:fs/promises';
 import { buildServer } from '../src/server.js';
 import { BROKERS, ACTIVITY, MASTERY, brokerWeight, activityScore, activityQualifies, dayOf } from '../src/rules.js';
 import { allocateEpoch, epochBoard, gainsFor, distributeBuy } from '../src/brokers.js';
@@ -117,6 +118,50 @@ const again = await allocateEpoch(pool, { endDay: today });
 assert.equal(again.already, true, 'a re-run is a no-op');
 assert.equal(Number((await pool.query('SELECT COUNT(*) c FROM broker_epochs')).rows[0].c), 1,
   'still exactly one epoch for that window');
+
+// The live worker, not a moderator remembering a private route, publishes the completed epoch.
+// The allocator's (start_day,end_day) latch makes an hourly call safe and restart-proof.
+const workerSource = await readFile(new URL('../src/worker.js', import.meta.url), 'utf8');
+assert.match(workerSource, /import\s*\{[^}]*allocateEpoch[^}]*\}\s*from '\.\/brokers\.js'/s,
+  'the worker imports the canonical broker epoch allocator');
+assert.match(workerSource, /safe\('broker epoch',\s*\(\)\s*=>\s*allocateEpoch\(pool\)\)/,
+  'the worker automatically publishes the completed activity epoch');
+
+// ── AGENTS AND RESIDENTS ARE EXCLUDED AT THE SOURCE ─────────────────────────────────────────────
+// ACTIVITY publishes both exclusions. The broker allocator is the point where a gameplay score
+// becomes an RWA allocation weight, so this is the last safe place to enforce them: excluded
+// accounts may play and may even activate, but they can never enter the frozen ownership snapshot.
+{
+  const human = await mk('Broker Human');
+  const agent = await mk('Broker Agent');
+  const npc = await mk('Broker Resident');
+  const exclusionDay = today - 4;
+
+  await pool.query('UPDATE account_persistent SET agent_flag=true WHERE account_id=$1', [agent.aid]);
+  await pool.query('UPDATE account_persistent SET npc_flag=true WHERE account_id=$1', [npc.aid]);
+  for (const x of [human, agent, npc]) {
+    await pool.query('UPDATE account_persistent SET omr=6000 WHERE account_id=$1', [x.aid]);
+    const activated = await call('POST', '/v1/brokers/activate', {
+      token: x.token, body: { tier: 1 },
+    });
+    assert.equal(activated.code, 200, JSON.stringify(activated.body));
+    await pool.query(
+      `INSERT INTO activity_log (account_id, day, tag, n) VALUES
+       ($1, $2, 'crime', 50), ($1, $2, 'jump', 5), ($1, $2, 'heist', 1)`,
+      [x.aid, exclusionDay]);
+  }
+
+  const humanOnly = await allocateEpoch(pool, { endDay: exclusionDay, days: 1 });
+  assert.equal(humanOnly.holders, 1, 'only the qualified human enters the frozen RWA epoch');
+  const eligible = (await pool.query(
+    'SELECT account_id FROM broker_weights WHERE epoch_id=$1', [humanOnly.epochId])).rows;
+  assert.deepEqual(eligible.map((x) => x.account_id), [human.aid],
+    'agent and resident accounts receive no RWA weight even when equally active and activated');
+  // Keep this historical fixture historical: the distribution tests below deliberately select the
+  // latest epoch by computed_at and pin their own two candidates one and two hours in the past.
+  await pool.query('UPDATE broker_epochs SET computed_at=$2 WHERE id=$1',
+    [humanOnly.epochId, new Date(Date.now() - 10 * 86400e3)]);
+}
 
 // ── THE RECORDER LOGS COUNTS, NEVER GRANTED XP ──────────────────────────────────────────────────
 // bumpMastery applies pathXpMult (1.5x home / 0.6x rival) to `xp`. If the recorder wrote `xp`, a

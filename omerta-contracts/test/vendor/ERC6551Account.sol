@@ -19,17 +19,11 @@ import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 interface IERC6551Account {
     receive() external payable;
 
-    function token()
-        external
-        view
-        returns (uint256 chainId, address tokenContract, uint256 tokenId);
+    function token() external view returns (uint256 chainId, address tokenContract, uint256 tokenId);
 
     function state() external view returns (uint256);
 
-    function isValidSigner(address signer, bytes calldata context)
-        external
-        view
-        returns (bytes4 magicValue);
+    function isValidSigner(address signer, bytes calldata context) external view returns (bytes4 magicValue);
 }
 
 interface IERC6551Executable {
@@ -73,12 +67,7 @@ contract ERC6551Account is IERC165, IERC1271, IERC6551Account, IERC6551Executabl
         return bytes4(0);
     }
 
-    function isValidSignature(bytes32 hash, bytes memory signature)
-        external
-        view
-        virtual
-        returns (bytes4 magicValue)
-    {
+    function isValidSignature(bytes32 hash, bytes memory signature) external view virtual returns (bytes4 magicValue) {
         bool isValid = SignatureChecker.isValidSignatureNow(owner(), hash, signature);
 
         if (isValid) {
@@ -89,8 +78,7 @@ contract ERC6551Account is IERC165, IERC1271, IERC6551Account, IERC6551Executabl
     }
 
     function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
-        return interfaceId == type(IERC165).interfaceId
-            || interfaceId == type(IERC6551Account).interfaceId
+        return interfaceId == type(IERC165).interfaceId || interfaceId == type(IERC6551Account).interfaceId
             || interfaceId == type(IERC6551Executable).interfaceId;
     }
 

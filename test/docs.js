@@ -547,7 +547,9 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
   const needed = new Set([...toml.matchAll(/=lib\/([\w.-]+)\//g)].map((m) => m[1]));
   // forge-std is auto-discovered rather than remapped, but the tests import it, so it is a real
   // dependency and belongs in the same check.
-  if (fs.readdirSync('omerta-contracts/test').some((f) => read(`omerta-contracts/test/${f}`).includes('forge-std/')))
+  if (fs.readdirSync('omerta-contracts/test', { withFileTypes: true })
+    .filter((entry) => entry.isFile())
+    .some((entry) => read(`omerta-contracts/test/${entry.name}`).includes('forge-std/')))
     needed.add('forge-std');
   assert(needed.size >= 3, `expected the contracts to need at least 3 lib deps, found ${[...needed]}`);
   for (const dep of needed) {
