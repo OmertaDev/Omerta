@@ -217,6 +217,9 @@ await pool.query(`INSERT INTO telemetry (id,account_id,event,props) VALUES
   JSON.stringify({ actionKind: 'human-authored', recommended: true, explorationSystemId: 'streets-crime',
     visited: 40, remaining: 0, blockerCodes: ['human'] }),
 ]);
+await pool.query(
+  "INSERT INTO telemetry (id,account_id,event,props,at) VALUES ('agent-classified',$1,'crime_attempt','{}',now()+interval '1 minute')",
+  [b.account]);
 const withAgent = await opsEngagement(pool, 14);
 assert.equal(withAgent.players.agents, 1, 'the agent is counted separately');
 assert.equal(withAgent.players.humans, r.players.humans - 1, 'and removed from the human population');
@@ -235,11 +238,15 @@ assert.deepEqual({ accounts: agentEmpire.agentAccounts, events: agentEmpire.agen
   'per-system evidence counts distinct acting agents and activation events');
 assert.deepEqual({ accounts: agentKitchen.agentAccounts, events: agentKitchen.agentEvents }, { accounts: 1, events: 1 },
   'a second exploration system receives its own bounded aggregate');
+assert.equal(agentEmpire.systemId, 'business-empire',
+  'operator per-system evidence carries the shared canonical coverage system id');
 assert.deepEqual({ accounts: agentStreets.agentAccounts, events: agentStreets.agentEvents }, { accounts: 0, events: 0 },
   'operational rows authored under a human account are excluded from agent evidence');
 assert.deepEqual({ accounts: agentStreets.accounts, events: agentStreets.events },
-  { accounts: streets.accounts, events: streets.events },
-  'agent evidence does not change the existing human adoption metrics');
+  { accounts: streets.accounts, events: streets.events + 1 },
+  'legacy event volume still includes classified agent play while distinct adoption remains human-only');
+assert(new Date(agentStreets.last) > new Date(streets.last),
+  'legacy last-use time still advances for classified agent play');
 assert.equal(JSON.stringify({ actions: withAgent.agentActions, blockers: withAgent.agentBlockers,
   systems: withAgent.systems }).includes(b.account), false,
   'operator aggregates expose no account IDs or raw authored telemetry');

@@ -104,6 +104,51 @@ export const SYSTEMS = {
     'referral_qualified', 'referral_spark', 'referral_same_ip_flag', 'referral_claim_late'],
 };
 
+// Stable machine IDs for the engagement vocabulary. Coverage and operator evidence both consume
+// this explicit map: a display-label edit must never silently rename a historical system identity.
+export const SYSTEM_IDS = Object.freeze({
+  'streets / crime': 'streets-crime',
+  'the kitchen': 'kitchen',
+  'wet work': 'wet-work',
+  contracts: 'contracts',
+  'the dueling ladder': 'dueling-ladder',
+  'crew heists': 'crew-heists',
+  'clue scrolls': 'clue-scrolls',
+  'the family': 'family',
+  'the commission': 'commission',
+  territory: 'territory',
+  'the world': 'world',
+  'the blood war': 'blood-war',
+  'business empire': 'business-empire',
+  convoys: 'convoys',
+  'the port': 'port',
+  'the black market': 'black-market',
+  'loan sharking': 'loan-sharking',
+  'the casino': 'casino',
+  'the speakeasy': 'speakeasy',
+  boxing: 'boxing',
+  'street races': 'street-races',
+  'the stable': 'stable',
+  'the law': 'law',
+  'the pen': 'pen',
+  'the wire': 'wire',
+  secrets: 'secrets',
+  skills: 'skills',
+  'the underworld': 'underworld',
+  'the estate': 'estate',
+  'the made man': 'made-man',
+  'the auction house': 'auction-house',
+  'the collection': 'collection',
+  'going legit': 'going-legit',
+  'the megaproject': 'megaproject',
+  'street life': 'street-life',
+  landmarks: 'landmarks',
+  'street deeds': 'street-deeds',
+  vanity: 'vanity',
+  'the store / pass': 'store-pass',
+  'growth / social': 'growth-social',
+});
+
 // Events that exist but are NOT player engagement — moderator actions and anti-abuse flags. Declared
 // so the catalog test can demand total coverage: every event is either a system's or explicitly not
 // one. Silence is never allowed to be the answer.
@@ -150,9 +195,10 @@ export async function opsEngagement(pool, days = 14) {
       WHERE a.status <> 'banned' LIMIT $1`, [MAX_ROWS])).rows;
   const human = new Map();
   const agentIds = new Set();
+  const npcIds = new Set();
   let agents = 0;
   for (const a of accounts) {
-    if (a.npc) continue;
+    if (a.npc) { npcIds.add(a.id); continue; }
     if (a.agent) { agents++; agentIds.add(a.id); continue; }
     human.set(a.id, { created: a.created_at, days: new Set() });
   }
@@ -223,19 +269,21 @@ export async function opsEngagement(pool, days = 14) {
     if (!sys) { uncatalogued.set(r.event, (uncatalogued.get(r.event) || 0) + 1); continue; }
     if (!perSystem.has(sys)) perSystem.set(sys, { accounts: new Set(), events: 0, last: null });
     const s = perSystem.get(sys);
-    if (h) {
+    if (!npcIds.has(r.account_id)) {
       s.events++;
-      s.accounts.add(r.account_id);   // DISTINCT HUMANS — one player hammering a system is not adoption
       if (!s.last || new Date(r.at) > new Date(s.last)) s.last = r.at;
+    }
+    if (h) {
+      s.accounts.add(r.account_id);   // DISTINCT HUMANS — one player hammering a system is not adoption
     }
   }
 
   // ── systems, including the ones nobody has touched ─────────────────────────────────────────────
   const systems = Object.keys(SYSTEMS).map((sys) => {
     const s = perSystem.get(sys) || { accounts: new Set(), events: 0, last: null };
-    const systemId = sys.replace(/^the /, '').replace(/\s*\/\s*/g, ' ').replace(/\s+/g, '-');
+    const systemId = SYSTEM_IDS[sys];
     const agent = agentSystems.get(systemId) || { accounts: new Set(), events: 0 };
-    return { system: sys, accounts: s.accounts.size, events: s.events, last: s.last,
+    return { system: sys, systemId, accounts: s.accounts.size, events: s.events, last: s.last,
       agentAccounts: agent.accounts.size, agentEvents: agent.events };
   }).sort((a, b) => b.accounts - a.accounts || b.events - a.events);
 

@@ -4,12 +4,13 @@
 // mastery and legend signals from the former featured Explore board supplement old accounts whose
 // actions predate telemetry. Eligibility is current-character truth. The two are intentionally
 // separate so a veteran heir keeps the bloodline's history without inheriting stale actionability.
-import { SYSTEMS as ENGAGEMENT_SYSTEMS } from './engagement.js';
+import { SYSTEM_IDS, SYSTEMS as ENGAGEMENT_SYSTEMS } from './engagement.js';
 import {
-  AUCTION, BOXING, CASINO, CONVOY, ESTATE, KITCHENS, LANDMARKS, LOAN, MADE,
-  MEGAPROJECT, PORT, RACKETS, RARITY, SKILLS, SPEAKEASY, STABLE,
-  isMade, jailed, levelOf,
+  AUCTION, auctionLotsOf, BOXING, CASINO, CONVOY, DISTRICTS, ESTATE, KITCHENS, LANDMARKS, LOAN, MADE,
+  MEGAPROJECT, PORT, RACKETS, RARITY, RACES, SKILLS, SPEAKEASY, STABLE,
+  hospitalized, isMade, jailed, levelOf, rarityIdx, weekOf,
 } from './rules.js';
+import { seatedGangs } from './commission.js';
 
 const num = (value) => Number(value || 0);
 const mastery = (owned, id) => num(owned?.mastery?.[id]);
@@ -20,7 +21,7 @@ const state = (source, predicate) => (ctx) => { try { return predicate(ctx) ? so
 // Canonical metadata follows Object.keys(engagement.SYSTEMS), row-for-row. `eligibility` is an
 // internal predicate key, not a second public catalog. The display fields are the one shared copy
 // consumed by Agent Turn, standalone Explore, Home, and operator evidence.
-export const SYSTEMS = [
+const COVERAGE_SYSTEMS = [
   { system: 'streets / crime', systemId: 'streets-crime', name: 'The Streets', at: 1, tab: 'streets', mode: 'solo', eligibility: 'always',
     hook: 'Work a street crime — the city\'s first cash-and-respect loop.' },
   { system: 'the kitchen', systemId: 'kitchen', name: 'The Kitchen', at: 8, tab: 'kitchen', mode: 'solo', eligibility: 'kitchen',
@@ -120,6 +121,9 @@ export const SYSTEMS = [
     hook: 'Human social proof stays a human-only discovery surface.' },
 ];
 
+export const SYSTEMS = COVERAGE_SYSTEMS.map(({ systemId: _legacySystemId, ...entry }) =>
+  Object.freeze({ ...entry, systemId: SYSTEM_IDS[entry.system] }));
+
 const vocabulary = Object.keys(ENGAGEMENT_SYSTEMS);
 if (SYSTEMS.length !== 40 || SYSTEMS.some((entry, index) => entry.system !== vocabulary[index]))
   throw new Error('Explore coverage must match engagement.SYSTEMS exactly and in order.');
@@ -144,7 +148,8 @@ const eligibilityBlocker = (entry, ctx) => {
     case 'crew': return social(!!ctx.owned.crewId);
     case 'clue': return ctx.owned.work?.clue ? null : 'status';
     case 'reachableFamily': return social(online.some((row) => typeof row === 'object' && (row.gangId || row.gang_id || row.gangTag)));
-    case 'familySeat': return social(!!ctx.owned.gangId && ['boss', 'underboss'].includes(ctx.owned.gangRole));
+    case 'familySeat': return social(!!ctx.owned.gangId && ['boss', 'underboss'].includes(ctx.owned.gangRole)
+      && ctx.live.commissionSeatGangIds.includes(ctx.owned.gangId));
     case 'family': return social(!!ctx.owned.gangId);
     case 'empire': {
       const open = RACKETS.filter((racket) => racket.lvl <= ctx.level).sort((a, b) => a.cost - b.cost)[0];
@@ -156,9 +161,13 @@ const eligibilityBlocker = (entry, ctx) => {
     case 'loan': return resource(cash >= LOAN.MIN);
     case 'casino': return resource(cash >= CASINO.MIN_BET);
     case 'speakeasy': return !isMade(ctx.acct) ? 'status'
-      : !ctx.freeSpeakeasyDistricts?.length ? 'status' : resource(cash >= SPEAKEASY.OPEN_COST);
+      : !ctx.live.freeSpeakeasyDistricts.length ? 'status' : resource(cash >= SPEAKEASY.OPEN_COST);
     case 'boxing': return resource(cash >= BOXING.RECRUIT_COST);
-    case 'car': return resource(has(ctx.owned.cars));
+    case 'car': {
+      if (jailed(ctx.ch) || hospitalized(ctx.ch) || nowActive(ctx.ch.race_at)) return 'status';
+      const tier = RACES.TIERS.filter((race) => race.minLvl <= ctx.level).sort((a, b) => a.fee - b.fee)[0];
+      return resource(!!tier && ctx.owned.cars.some((car) => !car.listed && !car.pledged) && cash >= num(tier.fee));
+    }
     case 'stable': return resource(cash >= Math.min(...Object.values(STABLE.KINDS).map((kind) => num(kind.cost))));
     case 'law': return nowActive(ctx.ch.wanted_until) || !!ctx.ch.indicted_at || num(ctx.ch.heat_exposure) > 0 ? null : 'status';
     case 'jailed': return jailed(ctx.ch) ? null : 'status';
@@ -173,12 +182,16 @@ const eligibilityBlocker = (entry, ctx) => {
     case 'underworld': return Object.values(ctx.owned.npc || {}).some((standing) => num(standing) > 0) ? null : 'status';
     case 'estate': return resource(omr >= num(ESTATE.TIERS[0]?.omr));
     case 'made': return isMade(ctx.acct) ? 'status' : resource(omr >= MADE.OMR);
-    case 'auction': return resource(omr >= Math.min(...AUCTION.ARCHETYPES.map((lot) => num(lot.min))));
-    case 'collection': return resource((has(ctx.owned.cars) || has(ctx.owned.gear)) && omr >= num(RARITY.UPGRADE_OMR[1]));
+    case 'auction': return ctx.live.auctionMinBid == null ? 'status' : resource(omr >= ctx.live.auctionMinBid);
+    case 'collection': return resource(ctx.live.collectionItems.some((item) => {
+      if (item.minted_onchain || item.listed || item.pledged || nowActive(item.run_until)) return false;
+      const next = RARITY.TIERS[rarityIdx(String(item.rarity || 'common')) + 1];
+      return !!next && omr >= num(RARITY.UPGRADE_OMR[rarityIdx(next.id)]);
+    }));
     case 'legit': return resource(omr > 0 || num(ctx.acct.staked) > 0 || num(ctx.acct.mint_credits) > 0);
     case 'megaproject': return resource(cash >= MEGAPROJECT.MIN_CASH || omr >= MEGAPROJECT.MIN_OMR);
     case 'streetLife': return ctx.owned.work?.cornerOpen?.length || ctx.owned.contactCall || ctx.owned.openFavor ? null : 'status';
-    case 'landmark': return resource(omr >= LANDMARKS.MIN_DEDICATE);
+    case 'landmark': return resource(omr >= ctx.live.landmarkMinDedicate);
     case 'deed': return ctx.owned.deed ? 'status' : null;
     case 'vanity': return has(ctx.owned.cars) || !!ctx.owned.gangId || !!ctx.owned.deed ? null : 'status';
     default: return 'status';
@@ -209,11 +222,17 @@ const readyOrder = (ctx) => (left, right) => {
  * Return account-level system coverage and exactly one presently actionable discovery, or null.
  * The only database access is one grouped telemetry query scoped to the account.
  */
-export async function systemCoverage(db, ch, acct = {}, owned = {}, { onlineAccounts = [], freeSpeakeasyDistricts = [] } = {}) {
+export async function systemCoverage(db, ch, acct = {}, owned = {}, { onlineAccounts = [], live = {} } = {}) {
   const rows = (await db.query(
     'SELECT event, COUNT(*) AS count FROM telemetry WHERE account_id=$1 GROUP BY event', [ch.account_id])).rows;
   const telemetry = new Set(rows.filter((row) => num(row.count) > 0).map((row) => row.event));
-  const ctx = { ch, acct, owned, onlineAccounts, freeSpeakeasyDistricts, level: levelOf(num(ch.respect)) };
+  const ctx = { ch, acct, owned, onlineAccounts, level: levelOf(num(ch.respect)), live: {
+    commissionSeatGangIds: live.commissionSeatGangIds || [],
+    freeSpeakeasyDistricts: live.freeSpeakeasyDistricts || [],
+    auctionMinBid: live.auctionMinBid ?? null,
+    collectionItems: live.collectionItems || [],
+    landmarkMinDedicate: live.landmarkMinDedicate ?? LANDMARKS.MIN_DEDICATE,
+  } };
   const visited = new Map();
   for (const entry of SYSTEMS) {
     const event = ENGAGEMENT_SYSTEMS[entry.system].find((candidate) => telemetry.has(candidate));
@@ -250,7 +269,41 @@ export async function systemCoverage(db, ch, acct = {}, owned = {}, { onlineAcco
   };
 }
 
-// Standalone Explore is deliberately only the shared resolver — no second catalog or ranker.
+async function coverageLiveContext(db, ch) {
+  const week = weekOf();
+  const [seats, speakeasies, auctionRows, collectionRows, landmarkRows] = await Promise.all([
+    seatedGangs(db),
+    db.query('SELECT district_id FROM speakeasies'),
+    db.query('SELECT lot_id, current_bid, bidder, status FROM auctions WHERE week=$1', [week]),
+    db.query(`SELECT 'car' AS kind, id, rarity, minted_onchain, listed, pledged,
+                    NULL::timestamptz AS run_until FROM cars WHERE character_id=$1
+              UNION ALL
+              SELECT 'boat' AS kind, id, rarity, minted_onchain, false AS listed, false AS pledged,
+                    run_until FROM boats WHERE character_id=$1`, [ch.id]),
+    db.query('SELECT district_id, amount FROM landmarks'),
+  ]);
+  const occupied = new Set(speakeasies.rows.map((row) => row.district_id));
+  const byLot = new Map(auctionRows.rows.map((row) => [row.lot_id, row]));
+  const auctionMins = [];
+  for (const lot of auctionLotsOf(week)) {
+    const row = byLot.get(lot.id);
+    if (row && row.status !== 'live') continue;
+    const current = num(row?.current_bid);
+    auctionMins.push(row?.bidder ? Math.ceil(current * (1 + AUCTION.MIN_RAISE_BPS / 10000)) : num(lot.min));
+  }
+  const landmarkByDistrict = new Map(landmarkRows.rows.map((row) => [row.district_id, num(row.amount)]));
+  return {
+    commissionSeatGangIds: seats.map((seat) => seat.id),
+    freeSpeakeasyDistricts: DISTRICTS.map((district) => district.id).filter((id) => !occupied.has(id)),
+    auctionMinBid: auctionMins.length ? Math.min(...auctionMins) : null,
+    collectionItems: collectionRows.rows,
+    landmarkMinDedicate: Math.min(...Object.keys(LANDMARKS.PLACES).map((district) =>
+      landmarkByDistrict.has(district) ? landmarkByDistrict.get(district) + 1 : LANDMARKS.MIN_DEDICATE)),
+  };
+}
+
+// Standalone Explore loads shared live context, then delegates to the one resolver/catalog.
 export async function exploreBoard(db, ch, acct = {}, owned = {}, options = {}) {
-  return systemCoverage(db, ch, acct, owned, options);
+  const live = options.live || await coverageLiveContext(db, ch);
+  return systemCoverage(db, ch, acct, owned, { ...options, live });
 }

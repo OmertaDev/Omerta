@@ -4,11 +4,12 @@
 // telemetry reads, lost account-history evidence, dishonest eligibility, or a read that moves value.
 import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
-import { SYSTEMS as ENGAGEMENT_SYSTEMS } from '../src/engagement.js';
+import * as Engagement from '../src/engagement.js';
 import * as Explore from '../src/explore.js';
-import { levelOf } from '../src/rules.js';
+import { auctionLotsOf, DISTRICTS, levelOf, weekOf } from '../src/rules.js';
 
 const { SYSTEMS } = Explore;
+const ENGAGEMENT_SYSTEMS = Engagement.SYSTEMS;
 
 const expectedCatalog = [
   ['streets / crime', 'streets-crime', 1, 'streets'],
@@ -55,6 +56,8 @@ const expectedCatalog = [
 
 assert.deepEqual(Object.keys(ENGAGEMENT_SYSTEMS), expectedCatalog.map(([system]) => system),
   'the engagement vocabulary remains the exact ordered 40-system source of truth');
+assert.deepEqual(Object.entries(Engagement.SYSTEM_IDS || {}), expectedCatalog.map(([system, systemId]) => [system, systemId]),
+  'the shared canonical system-id map has exact ordered parity with coverage metadata');
 assert.equal(typeof Explore.systemCoverage, 'function', 'coverage exposes the canonical async resolver');
 assert.deepEqual(SYSTEMS.map(({ system, systemId, at, tab }) => [system, systemId, at, tab]), expectedCatalog,
   'coverage metadata maps every engagement system to the exact canonical id, gate, and destination');
@@ -76,6 +79,24 @@ const fakeDb = (rows = []) => {
   return {
     queries,
     async query(sql, params) { queries.push({ sql, params }); return { rows }; },
+  };
+};
+
+const liveDb = (target, live = {}) => {
+  const queries = [];
+  const events = eventsExcept(target);
+  return {
+    queries,
+    async query(sql, params) {
+      queries.push({ sql, params });
+      if (/FROM telemetry/i.test(sql)) return { rows: events };
+      if (/FROM gangs/i.test(sql)) return { rows: live.seats || [] };
+      if (/FROM speakeasies/i.test(sql)) return { rows: (live.occupiedSpeakeasies || []).map((district_id) => ({ district_id })) };
+      if (/FROM auctions/i.test(sql)) return { rows: live.auctions || [] };
+      if (/FROM cars/i.test(sql) && /FROM boats/i.test(sql)) return { rows: live.collectionItems || [] };
+      if (/FROM landmarks/i.test(sql)) return { rows: live.landmarks || [] };
+      throw new Error(`unexpected live coverage query: ${sql}`);
+    },
   };
 };
 
@@ -137,6 +158,70 @@ assert.equal(coverage.blocked.social, 1);
 coverage = await Explore.systemCoverage(fakeDb(eventsExcept('territory')), ch(30), acct(), owned({ gangId: 'gang-1' }));
 assert.equal(coverage.next.systemId, 'territory');
 assert.equal(coverage.next.mode, 'organization');
+
+// Dynamic gates use the same live state as their authoritative mutations. These go through the
+// production wrapper so a caller that forgets to load/pass context fails the test too.
+let live = liveDb('the commission');
+coverage = await Explore.exploreBoard(live, ch(30), acct(), owned({ gangId: 'gang-1', gangRole: 'boss' }));
+assert.equal(coverage.next, null, 'a boss outside the current Commission seats is not eligible to vote');
+assert.equal(coverage.blocked.social, 1);
+live = liveDb('the commission', { seats: [{ id: 'gang-1', standing: 10000 }] });
+coverage = await Explore.exploreBoard(live, ch(30), acct(), owned({ gangId: 'gang-1', gangRole: 'boss' }));
+assert.equal(coverage.next.systemId, 'commission', 'a current seated boss can use the Commission now');
+
+const made = acct({ made_until: new Date(Date.now() + 864e5).toISOString() });
+const districts = DISTRICTS.map((district) => district.id);
+live = liveDb('the speakeasy', { occupiedSpeakeasies: districts });
+coverage = await Explore.exploreBoard(live, ch(30, { cash: 750000 }), made, owned());
+assert.equal(coverage.next, null, 'an otherwise qualified made player cannot open in an occupied city');
+live = liveDb('the speakeasy', { occupiedSpeakeasies: districts.slice(1) });
+coverage = await Explore.exploreBoard(live, ch(30, { cash: 750000 }), made, owned());
+assert.equal(coverage.next.systemId, 'speakeasy', 'one live free district makes the Speakeasy usable now');
+
+const raceCar = (extra = {}) => ({ id: 'race-car', model_id: 'model', trim_id: 'stock', listed: false, pledged: false, ...extra });
+live = liveDb('street races');
+coverage = await Explore.exploreBoard(live, ch(30, { cash: 2000 }), acct(), owned({ cars: [raceCar({ listed: true })] }));
+assert.equal(coverage.next, null, 'a listed car is not raceable');
+coverage = await Explore.exploreBoard(liveDb('street races'), ch(30, { cash: 2000 }), acct(),
+  owned({ cars: [raceCar({ pledged: true })] }));
+assert.equal(coverage.next, null, 'a pledged car is not raceable');
+coverage = await Explore.exploreBoard(liveDb('street races'),
+  ch(30, { cash: 2000, race_at: new Date(Date.now() + 60_000) }), acct(), owned({ cars: [raceCar()] }));
+assert.equal(coverage.next, null, 'the authoritative driver cooldown blocks a fresh circuit run');
+coverage = await Explore.exploreBoard(liveDb('street races'), ch(30, { cash: 1999 }), acct(), owned({ cars: [raceCar()] }));
+assert.equal(coverage.next, null, 'the cheapest currently unlocked race still requires its live fee');
+coverage = await Explore.exploreBoard(liveDb('street races'), ch(30, { cash: 2000 }), acct(), owned({ cars: [raceCar()] }));
+assert.equal(coverage.next.systemId, 'street-races', 'an available car, driver, and fee make racing usable now');
+
+const liveLots = auctionLotsOf(weekOf()).map((lot) => ({ lot_id: lot.id, current_bid: 2000, bidder: 'other', status: 'live' }));
+coverage = await Explore.exploreBoard(liveDb('the auction house', { auctions: liveLots }), ch(30), acct({ omr: 2099 }), owned());
+assert.equal(coverage.next, null, 'auction affordability uses the live 5% raise, not an archetype floor');
+coverage = await Explore.exploreBoard(liveDb('the auction house', { auctions: liveLots }), ch(30), acct({ omr: 2100 }), owned());
+assert.equal(coverage.next.systemId, 'auction-house', 'meeting the live current-bid minimum makes a lot usable');
+
+const commonCar = { kind: 'car', id: 'car-1', rarity: 'common', minted_onchain: false, listed: false, pledged: false, run_until: null };
+const blockedCollection = [
+  { ...commonCar, listed: true },
+  { ...commonCar, id: 'car-2', pledged: true },
+  { ...commonCar, id: 'car-3', rarity: 'epic' },
+  { ...commonCar, id: 'car-4', minted_onchain: true },
+  { kind: 'boat', id: 'boat-1', rarity: 'common', minted_onchain: false, listed: false, pledged: false,
+    run_until: new Date(Date.now() + 60_000) },
+  { kind: 'boat', id: 'boat-2', rarity: 'epic', minted_onchain: false, listed: false, pledged: false, run_until: null },
+];
+coverage = await Explore.exploreBoard(liveDb('the collection', { collectionItems: blockedCollection }),
+  ch(30), acct({ omr: 5000 }), owned({ cars: [raceCar({ listed: true })], gear: ['pistol'] }));
+assert.equal(coverage.next, null, 'only a real, in-play, non-max, unencumbered car or boat is upgradeable');
+coverage = await Explore.exploreBoard(liveDb('the collection', { collectionItems: [
+  { kind: 'boat', id: 'boat-free', rarity: 'common', minted_onchain: false, listed: false, pledged: false, run_until: null },
+] }), ch(30), acct({ omr: 150 }), owned());
+assert.equal(coverage.next.systemId, 'collection', 'a docked boat at the exact next-tier price is eligible');
+
+const heldLandmarks = districts.map((district_id) => ({ district_id, amount: 500 }));
+coverage = await Explore.exploreBoard(liveDb('landmarks', { landmarks: heldLandmarks }), ch(30), acct({ omr: 500 }), owned());
+assert.equal(coverage.next, null, 'a held landmark requires the live holder amount plus one');
+coverage = await Explore.exploreBoard(liveDb('landmarks', { landmarks: heldLandmarks }), ch(30), acct({ omr: 501 }), owned());
+assert.equal(coverage.next.systemId, 'landmarks', 'meeting the lowest live holder-plus-one makes a landmark usable');
 
 // Agent policy is conservative and exhaustive: a human with a live counterparty can receive wet work;
 // an agent with the same state cannot, and receives no fallback choice.

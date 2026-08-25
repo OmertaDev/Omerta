@@ -14,7 +14,7 @@ import { loanBoard } from './loans.js';
 import { crewBoard } from './crew.js';
 import { getDaily, onboardBoard } from './growth.js';
 import { careerBoard } from './career.js';
-import { systemCoverage } from './explore.js';
+import { exploreBoard } from './explore.js';
 
 const RANKING = Object.freeze({
   method: 'cash_equivalent', cashUnit: 'dollars', respectCashValue: 25,
@@ -481,7 +481,7 @@ export async function agentTurn(db, ch, acct, owned, { onlineAccounts = [] } = {
   const [opportunities, convoyBoardState, loanBoardState, crewBoardState, rewards, exploration] = await Promise.all([
     opportunityBoard(db, ch), convoyBoard(db, ch.id), loanBoard(db, ch), crewBoard(ch, db),
     rewardActions(db, ch, acct, owned),
-    systemCoverage(db, ch, acct, owned, { onlineAccounts }),
+    exploreBoard(db, ch, acct, owned, { onlineAccounts }),
   ]);
   const crime = crimePlan(ch, owned);
   const passive = [...await businessActions(db, ch), ...await territoryActions(db, ch, owned)];
