@@ -2,7 +2,8 @@
 // A finite, conservative Agent Turn client. Identity state is deliberately local and reports are
 // deliberately lossy: the session owns the bearer token while telemetry owns no sensitive values.
 import crypto from 'node:crypto';
-import { appendFile, mkdir, open, readFile, rename, unlink, writeFile } from 'node:fs/promises';
+import { appendFile, mkdir, open, readFile, rename, unlink } from 'node:fs/promises';
+import { createServer } from 'node:net';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -44,8 +45,40 @@ async function pathExists(path) {
 async function atomicJsonWrite(path, value) {
   await mkdir(dirname(path), { recursive: true });
   const temporary = `${path}.${process.pid}.${crypto.randomUUID()}.tmp`;
-  await writeFile(temporary, `${JSON.stringify(value)}\n`, { encoding: 'utf8', mode: 0o600 });
-  await rename(temporary, path);
+  let handle;
+  let renamed = false;
+  try {
+    handle = await open(temporary, 'wx', 0o600);
+    await handle.writeFile(`${JSON.stringify(value)}\n`, 'utf8');
+    await handle.sync();
+    await handle.close();
+    handle = null;
+    await rename(temporary, path);
+    renamed = true;
+    await syncDirectory(dirname(path));
+  } catch (error) {
+    await handle?.close().catch(() => {});
+    if (!renamed) await unlink(temporary).catch((cleanupError) => {
+      if (cleanupError?.code !== 'ENOENT') throw cleanupError;
+    });
+    throw error;
+  }
+}
+
+async function syncDirectory(directory) {
+  let handle;
+  try {
+    handle = await open(directory, 'r');
+    await handle.sync();
+  } catch (error) {
+    // Windows does not expose directory fsync through Node on every filesystem. The temp file is
+    // still flushed before rename there; POSIX hosts fail closed unless the directory entry syncs.
+    const windowsUnsupported = process.platform === 'win32' &&
+      ['EBADF', 'EINVAL', 'EISDIR', 'ENOTSUP', 'EPERM'].includes(error?.code);
+    if (!windowsUnsupported) throw error;
+  } finally {
+    await handle?.close().catch(() => {});
+  }
 }
 
 async function appendReport(path, event) {
@@ -62,8 +95,15 @@ async function requestJson(fetchImpl, base, path, { token, method = 'GET', body,
   const response = await fetchImpl(`${base}${path}`, {
     method,
     headers,
+    redirect: 'manual',
     ...(body === undefined ? {} : { body: JSON.stringify(body) }),
   });
+  if (response.redirected || (response.status >= 300 && response.status < 400)) {
+    throw new Error('Agent Alpha API redirects are forbidden by origin binding');
+  }
+  if (response.url && originOf(response.url) !== base) {
+    throw new Error('Agent Alpha response escaped its bound origin');
+  }
   let payload = null;
   try { payload = await response.json(); }
   catch { throw new Error(`Agent Alpha received non-JSON response (${response.status})`); }
@@ -78,7 +118,8 @@ async function requestJson(fetchImpl, base, path, { token, method = 'GET', body,
 }
 
 function validName(name) {
-  return typeof name === 'string' && name.trim() === name && name.length >= 2 && name.length <= 24;
+  return typeof name === 'string' && name.trim() === name &&
+    name.length >= 2 && name.length <= 24 && /^[\w .,'&-]+$/.test(name);
 }
 
 async function readSession(sessionFile) {
@@ -98,7 +139,7 @@ async function readSession(sessionFile) {
   if (!session || !exactKeys(session,
       ['version', 'base', 'phase', 'token', 'characterName', 'pending']) ||
       session.version !== SESSION_VERSION ||
-      !['guest', 'agent'].includes(session.phase) ||
+      !['guest', 'initial_character_pending', 'agent'].includes(session.phase) ||
       typeof session.base !== 'string' ||
       typeof session.token !== 'string' || !session.token ||
       !validName(session.characterName) || !pendingValid) {
@@ -107,31 +148,80 @@ async function readSession(sessionFile) {
   return session;
 }
 
+function lockPort(sessionFile) {
+  const identity = process.platform === 'win32'
+    ? resolve(sessionFile).toLowerCase()
+    : resolve(sessionFile);
+  const digest = crypto.createHash('sha256').update(identity).digest();
+  return 20000 + (digest.readUInt32BE(0) % 20000);
+}
+
+async function listenForLock(server, port) {
+  await new Promise((resolveListen, rejectListen) => {
+    const onError = (error) => {
+      server.off('listening', onListening);
+      rejectListen(error);
+    };
+    const onListening = () => {
+      server.off('error', onError);
+      resolveListen();
+    };
+    server.once('error', onError);
+    server.once('listening', onListening);
+    server.listen({ host: '127.0.0.1', port, exclusive: true });
+  });
+}
+
+async function closeLockServer(server) {
+  if (!server.listening) return;
+  await new Promise((resolveClose, rejectClose) => server.close((error) =>
+    error ? rejectClose(error) : resolveClose()));
+}
+
 async function acquireLock(sessionFile) {
   await mkdir(dirname(sessionFile), { recursive: true });
   const path = `${sessionFile}.lock`;
-  const nonce = crypto.randomUUID();
-  let handle;
+  const port = lockPort(sessionFile);
+  const server = createServer((socket) => socket.destroy());
+  server.unref();
   try {
-    handle = await open(path, 'wx', 0o600);
-    await handle.writeFile(`${JSON.stringify({ pid: process.pid, nonce })}\n`, 'utf8');
+    await listenForLock(server, port);
   } catch (error) {
-    if (error?.code === 'EEXIST') {
-      throw new Error('Agent Alpha session is locked by another runner');
+    if (error?.code === 'EADDRINUSE') {
+      throw new Error('Agent Alpha session is locked by another live runner');
     }
     throw error;
-  } finally {
-    await handle?.close();
   }
-  return { path, nonce };
+
+  const nonce = crypto.randomUUID();
+  try {
+    // The kernel-owned loopback lease is released on hard process death. Once it is acquired, any
+    // leftover metadata is necessarily orphaned and can be replaced without PID-reuse/delete races.
+    await atomicJsonWrite(path, {
+      version: 1,
+      sessionHash: crypto.createHash('sha256').update(resolve(sessionFile)).digest('hex'),
+      port,
+      pid: process.pid,
+      nonce,
+    });
+  } catch (error) {
+    await closeLockServer(server).catch(() => {});
+    throw error;
+  }
+  return { path, nonce, server };
 }
 
 async function releaseLock(lock) {
   try {
     const current = JSON.parse(await readFile(lock.path, 'utf8'));
-    if (current?.nonce === lock.nonce) await unlink(lock.path);
+    if (current?.nonce === lock.nonce) {
+      await unlink(lock.path);
+      await syncDirectory(dirname(lock.path));
+    }
   } catch (error) {
     if (error?.code !== 'ENOENT') throw error;
+  } finally {
+    await closeLockServer(lock.server);
   }
 }
 
@@ -158,7 +248,7 @@ async function createIdentity({ base, sessionFile, name, fetchImpl }) {
   if (typeof agent?.token !== 'string' || !agent.token) {
     throw new Error('Agent-key creation returned no token');
   }
-  session = { ...session, phase: 'agent', token: agent.token };
+  session = { ...session, phase: 'initial_character_pending', token: agent.token };
   await atomicJsonWrite(sessionFile, session);
 
   await requestJson(fetchImpl, base, '/v1/character', {
@@ -168,7 +258,7 @@ async function createIdentity({ base, sessionFile, name, fetchImpl }) {
   return session;
 }
 
-async function ensureIdentity({ base, fetchImpl, sessionFile, session }) {
+async function ensureIdentity({ base, fetchImpl, sessionFile, session, requestedName }) {
   let probe = await requestJson(fetchImpl, base, '/v1/session', { token: session.token });
   if (!probe?.authed) throw new Error('Agent Alpha could not verify its bound session');
 
@@ -184,13 +274,30 @@ async function ensureIdentity({ base, fetchImpl, sessionFile, session }) {
     if (typeof agent?.token !== 'string' || !agent.token) {
       throw new Error('Agent-key creation returned no token');
     }
-    session = { ...session, phase: 'agent', token: agent.token };
+    session = { ...session, phase: 'initial_character_pending', token: agent.token };
     await atomicJsonWrite(sessionFile, session);
     probe = { ...probe, agent: true, hasCharacter: false, character: null };
   }
 
   if (!probe.agent) throw new Error('Agent Alpha session is not flagged as an agent');
-  if (!probe.hasCharacter) {
+  if (session.phase === 'initial_character_pending') {
+    if (probe.hasCharacter) {
+      if (probe.character?.name !== session.characterName) {
+        throw new Error('Initial character does not match its pending bound name');
+      }
+      session = { ...session, phase: 'agent' };
+      await atomicJsonWrite(sessionFile, session);
+      return session;
+    }
+    if (requestedName !== undefined) {
+      if (!validName(requestedName)) {
+        throw new Error('Initial character name must use letters, numbers, and simple punctuation');
+      }
+      if (requestedName !== session.characterName) {
+        session = { ...session, characterName: requestedName };
+        await atomicJsonWrite(sessionFile, session);
+      }
+    }
     await requestJson(fetchImpl, base, '/v1/character', {
       method: 'POST',
       token: session.token,
@@ -198,7 +305,20 @@ async function ensureIdentity({ base, fetchImpl, sessionFile, session }) {
         `character\0${base}\0${session.token}\0${session.characterName}`),
       body: { name: session.characterName },
     });
-  } else if (probe.character?.name !== session.characterName) {
+    const confirmed = await requestJson(fetchImpl, base, '/v1/session', { token: session.token });
+    if (!confirmed?.authed || !confirmed.agent || !confirmed.hasCharacter ||
+        confirmed.character?.name !== session.characterName) {
+      throw new Error('Initial character could not be confirmed under its bound name');
+    }
+    session = { ...session, phase: 'agent' };
+    await atomicJsonWrite(sessionFile, session);
+    return session;
+  }
+
+  if (!probe.hasCharacter) {
+    throw new Error('Final agent has no living character; replacement is forbidden');
+  }
+  if (probe.character?.name !== session.characterName) {
     throw new Error('Agent Alpha session character does not match its bound identity');
   }
   return session;
@@ -272,8 +392,7 @@ async function runUnlocked(options) {
   if (!Number.isInteger(maxActions) || maxActions < 1 || maxActions > 50) {
     throw new Error('Agent Alpha maxActions must be an integer from 1 to 50');
   }
-  if (!Number.isFinite(intervalMs) || intervalMs < 0 ||
-      (sleep === defaultSleep && intervalMs < MIN_INTERVAL_MS)) {
+  if (!Number.isFinite(intervalMs) || intervalMs < MIN_INTERVAL_MS) {
     throw new Error(`Agent Alpha production cadence must be at least ${MIN_INTERVAL_MS}ms`);
   }
 
@@ -288,20 +407,32 @@ async function runUnlocked(options) {
   }
 
   if (session.base !== base) throw new Error('Agent Alpha session belongs to a different origin');
-  session = await ensureIdentity({ base, fetchImpl, sessionFile, session });
+  session = await ensureIdentity({
+    base, fetchImpl, sessionFile, session, requestedName: options.name,
+  });
 
   let actions = 0;
+  let attempts = 0;
   let currentTurn = null;
   if (session.pending) {
     await sleep(intervalMs);
+    attempts += 1;
     const settled = await settlePending({
       base, fetchImpl, reportFile, sessionFile, session,
     });
     session = settled.session;
     currentTurn = settled.turn;
     if (settled.status === 'executed') actions += 1;
+    if (settled.status === 'stale' && attempts >= maxActions) {
+      await appendReport(reportFile, {
+        timestamp: new Date().toISOString(),
+        status: 'attempt_limit',
+        errorCode: 'max_attempts',
+      });
+      return { status: 'attempt_limit', actions };
+    }
   }
-  while (actions < maxActions) {
+  while (attempts < maxActions) {
     const turn = currentTurn || await requestJson(fetchImpl, base, '/v1/agent/turn', { token: session.token });
     currentTurn = null;
     const recommendation = recommendationOf(turn);
@@ -334,12 +465,21 @@ async function runUnlocked(options) {
       },
     };
     await atomicJsonWrite(sessionFile, session);
+    attempts += 1;
     const settled = await settlePending({
       base, fetchImpl, reportFile, sessionFile, session, actionKind: action.kind,
     });
     session = settled.session;
     currentTurn = settled.turn;
     if (settled.status === 'executed') actions += 1;
+    if (settled.status === 'stale' && attempts >= maxActions) {
+      await appendReport(reportFile, {
+        timestamp: new Date().toISOString(),
+        status: 'attempt_limit',
+        errorCode: 'max_attempts',
+      });
+      return { status: 'attempt_limit', actions };
+    }
   }
 
   return { status: 'complete', actions };
