@@ -675,7 +675,7 @@ for (const vp of VIEWPORTS) {
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.waitForSelector('#screen-main:not(.hidden)', { timeout: 20000 });
   await page.click('#bnav [data-go="start"]');
-  await page.waitForTimeout(700);
+  await page.waitForSelector('#tab-start [data-explore-next]', { state: 'visible', timeout: 20000 });
   const rendered = await page.evaluate(() => {
     const region = document.querySelector('#tab-start section[aria-labelledby="new-territory-title"]');
     const buttons = [...document.querySelectorAll('#tab-start [data-explore-next]')];
