@@ -36,11 +36,11 @@ import { wireBoard } from './wire.js';
 import { worldBoard } from './world.js';
 
 const num = (value) => Number(value || 0);
-const SQL_BATCH = 50;
-const sqlBatches = (values) => Array.from({ length: Math.ceil(values.length / SQL_BATCH) }, (_, index) => {
-  const batch = values.slice(index * SQL_BATCH, (index + 1) * SQL_BATCH);
-  return [...batch, ...Array(SQL_BATCH - batch.length).fill(null)];
-});
+// pg-mem silently misses indexed `= ANY($1)` when pg binds a JavaScript array. A scalar Postgres
+// array literal keeps the statement static/preparable and evaluates correctly on both engines; every
+// element is quoted and the two array metacharacters are escaped before the whole value is bound.
+const sqlTextArray = (values) => `{${values.map((value) =>
+  `"${String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`).join(',')}}`;
 const mastery = (owned, id) => num(owned?.mastery?.[id]);
 const has = (items) => Array.isArray(items) && items.length > 0;
 const nowActive = (value) => !!value && new Date(value).getTime() > Date.now();
@@ -642,43 +642,27 @@ async function scopedSocialContext(db, ch, onlineAccounts) {
   const accountIds = [...new Set(visible.map((row) => typeof row === 'string' ? row : targetAccount(row)).filter(Boolean))];
   if (!charIds.length && !accountIds.length) return { socialTargets: [], joinableFamilyIds: [] };
 
-  const charactersById = new Map();
-  const rounds = Math.max(Math.ceil(charIds.length / SQL_BATCH), Math.ceil(accountIds.length / SQL_BATCH));
-  for (let index = 0; index < rounds; index++) {
-    const charBatch = charIds.slice(index * SQL_BATCH, (index + 1) * SQL_BATCH);
-    const accountBatch = accountIds.slice(index * SQL_BATCH, (index + 1) * SQL_BATCH);
-    const params = [
-      ...charBatch, ...Array(SQL_BATCH - charBatch.length).fill(null),
-      ...accountBatch, ...Array(SQL_BATCH - accountBatch.length).fill(null),
-    ];
-    const rows = (await db.query(
-      `SELECT c.id, c.account_id, c.respect, c.cash, c.jail_until, c.hosp_until, c.witpro_until,
-              c.pen_safe_until, c.hole_until, c.duel_limit, c.wanted_until, ap.rat
-         FROM characters c JOIN account_persistent ap ON ap.account_id=c.account_id
-        WHERE c.alive AND NOT c.is_npc AND NOT ap.agent_flag
-          AND (c.id IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50)
-            OR c.account_id IN ($51,$52,$53,$54,$55,$56,$57,$58,$59,$60,$61,$62,$63,$64,$65,$66,$67,$68,$69,$70,$71,$72,$73,$74,$75,$76,$77,$78,$79,$80,$81,$82,$83,$84,$85,$86,$87,$88,$89,$90,$91,$92,$93,$94,$95,$96,$97,$98,$99,$100))`, params)).rows;
-    for (const row of rows) charactersById.set(row.id, row);
-  }
-  const characters = [...charactersById.values()];
+  const characters = (await db.query(
+    `SELECT c.id, c.account_id, c.respect, c.cash, c.jail_until, c.hosp_until, c.witpro_until,
+            c.pen_safe_until, c.hole_until, c.duel_limit, c.wanted_until, ap.rat
+       FROM characters c JOIN account_persistent ap ON ap.account_id=c.account_id
+      WHERE c.alive AND NOT c.is_npc AND NOT ap.agent_flag
+        AND ($1::text[] && ARRAY[c.id] OR $2::text[] && ARRAY[c.account_id])`,
+    [sqlTextArray(charIds), sqlTextArray(accountIds)])).rows;
   if (!characters.length) return { socialTargets: [], joinableFamilyIds: [] };
   const ids = characters.map((row) => row.id);
   const accounts = characters.map((row) => row.account_id);
-  const gangRows = { rows: [] };
-  for (const batch of sqlBatches(ids)) gangRows.rows.push(...(await db.query(
-    `SELECT character_id, gang_id FROM gang_members WHERE character_id IN
-      ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50)`, batch)).rows);
-  const crewRows = { rows: [] };
-  for (const batch of sqlBatches(accounts)) crewRows.rows.push(...(await db.query(
-    `SELECT account_id, crew_id FROM crew_members WHERE account_id IN
-      ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50)`, batch)).rows);
+  const gangRows = await db.query(
+    'SELECT character_id, gang_id FROM gang_members WHERE $1::text[] && ARRAY[character_id]',
+    [sqlTextArray(ids)]);
+  const crewRows = await db.query(
+    'SELECT account_id, crew_id FROM crew_members WHERE $1::text[] && ARRAY[account_id]',
+    [sqlTextArray(accounts)]);
   const heldRows = await db.query(
     'SELECT target_account FROM secrets WHERE holder_character=$1 AND expires_at > now()', [ch.id]);
-  const digRows = { rows: [] };
-  for (const batch of sqlBatches(accounts)) digRows.rows.push(...(await db.query(
-    `SELECT target_account, at FROM digs WHERE character_id=$1
-      AND target_account IN ($2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51)`,
-    [ch.id, ...batch])).rows);
+  const digRows = await db.query(
+    'SELECT target_account, at FROM digs WHERE character_id=$1 AND $2::text[] && ARRAY[target_account]',
+    [ch.id, sqlTextArray(accounts)]);
   const gangByCharacter = new Map(gangRows.rows.map((row) => [row.character_id, row.gang_id]));
   const crewByAccount = new Map(crewRows.rows.map((row) => [row.account_id, row.crew_id]));
   const held = new Set(heldRows.rows.map((row) => row.target_account));
@@ -686,11 +670,10 @@ async function scopedSocialContext(db, ch, onlineAccounts) {
   const gangIds = [...new Set(gangRows.rows.map((row) => row.gang_id).filter(Boolean))];
   let joinableFamilyIds = [];
   if (gangIds.length) {
-    const counts = [];
-    for (const batch of sqlBatches(gangIds)) counts.push(...(await db.query(
+    const counts = (await db.query(
       `SELECT gang_id, COUNT(*) n FROM gang_members
-        WHERE gang_id IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50)
-        GROUP BY gang_id`, batch)).rows);
+        WHERE $1::text[] && ARRAY[gang_id]
+        GROUP BY gang_id`, [sqlTextArray(gangIds)])).rows;
     const byGang = new Map(counts.map((row) => [row.gang_id, num(row.n)]));
     joinableFamilyIds = gangIds.filter((id) => num(byGang.get(id)) < M3.GANG_MAX_MEMBERS);
   }

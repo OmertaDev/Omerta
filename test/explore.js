@@ -818,14 +818,15 @@ const crowdedSocialDb = {
     if (/FROM vouches v/i.test(sql)) return { rows: [] };
     if (/COUNT\(\*\).*FROM vouches/i.test(sql)) return { rows: [{ n: 0 }] };
     if (/FROM characters c JOIN account_persistent ap/i.test(sql)) return {
-      rows: params.includes('reachable-account') || params.includes('reachable-character') ? [{
+      rows: params.some((value) => String(value).includes('reachable-account')
+        || String(value).includes('reachable-character')) ? [{
         id: 'reachable-character', account_id: 'reachable-account', respect: respectForLevel(30),
         cash: 10_000, jail_until: null, hosp_until: null, witpro_until: null, pen_safe_until: null,
         hole_until: null, duel_limit: 10_000, wanted_until: null, rat: false,
       }] : [],
     };
-    if (/FROM gang_members WHERE character_id/i.test(sql)
-        || /FROM crew_members WHERE account_id/i.test(sql)
+    if (/SELECT character_id, gang_id FROM gang_members/i.test(sql)
+        || /SELECT account_id, crew_id FROM crew_members/i.test(sql)
         || /FROM secrets WHERE holder_character/i.test(sql)
         || /FROM digs WHERE character_id/i.test(sql)) return { rows: [] };
     throw new Error(`unexpected crowded-social query: ${sql}`);
@@ -836,6 +837,91 @@ coverage = await Explore.exploreBoard(crowdedSocialDb, ch(30, { cash: 10_000 }),
 });
 assert.equal(coverage.next?.systemId, 'contracts',
   'an authoritative operation after the first 100 presence hints remains exactly discoverable');
+
+// Global socket coverage is a set-valued query input, not a reason to issue one SQL round trip per
+// screenful. Exercise both edges of the accepted scale finding: 101 human rows without gangs used
+// to cost 13 social queries, while 4,350 rows in distinct gangs cost 436. The fake is only the SQL
+// boundary; eligibility, deduplication, privacy, and the query orchestration are the real Explore code.
+const scaledSocialDb = (size, { gangs = false, injectionHint = null } = {}) => {
+  const characters = Array.from({ length: size }, (_, index) => ({
+    id: `scale-character-${index}`, account_id: `scale-account-${index}`,
+    respect: respectForLevel(30), cash: 10_000, jail_until: null, hosp_until: null,
+    witpro_until: null, pen_safe_until: null, hole_until: null, duel_limit: 10_000,
+    wanted_until: null, rat: false,
+  }));
+  const queries = [];
+  const valuesOf = (params) => new Set(params.flatMap((value) =>
+    typeof value === 'string' ? value.match(/scale-(?:character|account|gang)-\d+/g) || [] : []));
+  const db = {
+    queries,
+    async query(sql, params = []) {
+      queries.push({ sql, params });
+      if (/FROM telemetry/i.test(sql)) return { rows: eventsExcept('contracts') };
+      if (/FROM vouches v/i.test(sql)) return { rows: [] };
+      if (/COUNT\(\*\).*FROM vouches/i.test(sql)) return { rows: [{ n: 0 }] };
+      if (/FROM characters c JOIN account_persistent ap/i.test(sql)) {
+        const values = valuesOf(params);
+        return { rows: characters.filter((row) => values.has(row.id) || values.has(row.account_id)) };
+      }
+      if (/SELECT character_id, gang_id FROM gang_members/i.test(sql)) {
+        if (!gangs) return { rows: [] };
+        const values = valuesOf(params);
+        return { rows: characters.filter((row) => values.has(row.id))
+          .map((row) => ({ character_id: row.id, gang_id: row.id.replace('character', 'gang') })) };
+      }
+      if (/SELECT account_id, crew_id FROM crew_members/i.test(sql)
+          || /FROM secrets WHERE holder_character/i.test(sql)
+          || /FROM digs WHERE character_id/i.test(sql)) return { rows: [] };
+      if (/SELECT gang_id, COUNT\(\*\) n FROM gang_members/i.test(sql)) {
+        const values = valuesOf(params);
+        return { rows: [...values].filter((value) => value.startsWith('scale-gang-'))
+          .map((gang_id) => ({ gang_id, n: 1 })) };
+      }
+      throw new Error(`unexpected scaled-social query: ${sql}`);
+    },
+  };
+  const onlineAccounts = characters.map((row) => ({ accountId: row.account_id, characterId: row.id }));
+  if (onlineAccounts.length) onlineAccounts.push(onlineAccounts[0], { ...onlineAccounts[0] });
+  if (injectionHint) onlineAccounts.push({ accountId: injectionHint, characterId: injectionHint });
+  return { db, onlineAccounts, socialQueries: () => queries.filter(({ sql }) =>
+    /FROM characters c JOIN account_persistent ap|SELECT character_id, gang_id FROM gang_members|SELECT account_id, crew_id FROM crew_members|FROM secrets WHERE holder_character|FROM digs WHERE character_id|SELECT gang_id, COUNT\(\*\) n FROM gang_members/i.test(sql)) };
+};
+
+const injectionHint = "scale-probe-'); DROP TABLE accounts; --";
+const scaleCases = [
+  { size: 101, gangs: false, expectedSocialQueries: 5, injectionHint },
+  { size: 4_350, gangs: true, expectedSocialQueries: 6, injectionHint: null },
+];
+const scaleResults = [];
+for (const fixture of scaleCases) {
+  const scaled = scaledSocialDb(fixture.size, fixture);
+  const board = await Explore.exploreBoard(scaled.db, ch(30, { cash: 10_000 }), acct(), owned(), {
+    onlineAccounts: scaled.onlineAccounts,
+  });
+  const socialQueries = scaled.socialQueries();
+  scaleResults.push(socialQueries.length);
+  assert.equal(board.next?.systemId, 'contracts',
+    `${fixture.size} visible humans preserve the authoritative social operation`);
+  assert.equal(Object.hasOwn(board, 'socialTargets'), false,
+    'internal social target enrichment never enters the Explore payload');
+  assert.equal(Object.hasOwn(board, 'joinableFamilyIds'), false,
+    'internal family reachability never enters the Explore payload');
+  if (fixture.injectionHint) {
+    assert.ok(socialQueries.every(({ sql }) => !sql.includes(fixture.injectionHint)),
+      'presence identifiers remain bound data, never SQL text');
+    assert.ok(socialQueries.some(({ params }) => params.some((value) => String(value).includes(fixture.injectionHint))),
+      'the injection-shaped hint reaches the database only through a bound parameter');
+  }
+}
+assert.deepEqual(scaleResults, scaleCases.map((fixture) => fixture.expectedSocialQueries),
+  'social eligibility SQL stays set-oriented and constant-round-trip at 101 and 4,350 visible users');
+
+const emptyScaled = scaledSocialDb(0);
+const emptyScaleBoard = await Explore.exploreBoard(emptyScaled.db, ch(30, { cash: 10_000 }), acct(), owned(), {
+  onlineAccounts: [],
+});
+assert.equal(emptyScaleBoard.next, null, 'empty presence preserves an empty authoritative social slice');
+assert.equal(emptyScaled.socialQueries().length, 0, 'empty presence performs no social enrichment SQL');
 
 // Route integration: account telemetry changes the recommendation, the response never becomes a grid,
 // and repeated reads append no economic ledger rows.
