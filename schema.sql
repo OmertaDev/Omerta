@@ -3595,6 +3595,88 @@ CREATE TABLE IF NOT EXISTS stock_catalog_evidence_v2 (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Public family nomination/review state for immutable StockTokenRegistryV2 candidates. Candidate,
+-- sponsor, evidence, and deadline fields are written once by the domain layer; the current support
+-- slots live separately from the append-only event record. The partial unique index is the real
+-- PostgreSQL same-key race authority (pg-mem cannot demonstrate row-wait behavior).
+CREATE TABLE IF NOT EXISTS rwa_nominations_v2 (
+  id TEXT PRIMARY KEY,
+  asset_version_key TEXT NOT NULL,
+  chain_id INT NOT NULL CHECK (chain_id = 4663),
+  ticker TEXT NOT NULL,
+  ticker_hash TEXT NOT NULL,
+  token_address TEXT NOT NULL,
+  token_decimals INT NOT NULL CHECK (token_decimals >= 0 AND token_decimals <= 255),
+  robinhood_asset_id_hash TEXT NOT NULL,
+  name TEXT NOT NULL,
+  sponsor_family_id TEXT NOT NULL,
+  sponsor_account_id TEXT NOT NULL,
+  sponsor_support_active BOOLEAN NOT NULL DEFAULT true,
+  rationale TEXT NOT NULL,
+  evidence_hash TEXT NOT NULL,
+  evidence_uri TEXT,
+  prior_nomination_id TEXT,
+  status TEXT NOT NULL CHECK (status IN
+    ('pending','review_requested','under_review','approved','rejected','not_eligible','expired')),
+  execution_status TEXT NOT NULL DEFAULT 'not_applicable' CHECK (execution_status IN
+    ('not_applicable','safe_package_ready','safe_submitted','executed_pending_finality','synced_active',
+     'approval_stale','evidence_drift','safe_cancelled','execution_failed','reorged')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  pending_until TIMESTAMPTZ NOT NULL,
+  claimed_by TEXT,
+  claimed_at TIMESTAMPTZ,
+  disposition_by TEXT,
+  disposition_at TIMESTAMPTZ,
+  disposition_reason TEXT,
+  approved_at TIMESTAMPTZ,
+  valid_until TIMESTAMPTZ,
+  CHECK (pending_until > created_at),
+  CHECK ((claimed_by IS NULL) = (claimed_at IS NULL)),
+  CHECK ((disposition_by IS NULL) = (disposition_at IS NULL))
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_rwa_nominations_open_key_v2
+  ON rwa_nominations_v2(asset_version_key)
+  WHERE status IN ('pending','review_requested','under_review');
+CREATE INDEX IF NOT EXISTS ix_rwa_nominations_sponsor_cadence_v2
+  ON rwa_nominations_v2(sponsor_family_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS ix_rwa_nominations_expiry_v2
+  ON rwa_nominations_v2(pending_until, id);
+CREATE INDEX IF NOT EXISTS ix_rwa_nominations_queue_v2
+  ON rwa_nominations_v2(created_at, id);
+
+CREATE TABLE IF NOT EXISTS rwa_nomination_endorsements_v2 (
+  nomination_id TEXT NOT NULL,
+  family_id TEXT NOT NULL,
+  account_id TEXT NOT NULL,
+  active BOOLEAN NOT NULL,
+  rationale TEXT,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (nomination_id, family_id)
+);
+
+CREATE TABLE IF NOT EXISTS rwa_nomination_events_v2 (
+  event_id TEXT PRIMARY KEY,
+  nomination_id TEXT NOT NULL,
+  event_type TEXT NOT NULL,
+  family_id TEXT,
+  account_id TEXT,
+  actor_type TEXT NOT NULL,
+  actor_id TEXT NOT NULL,
+  details_hash TEXT NOT NULL,
+  details JSONB NOT NULL DEFAULT '{}'::jsonb,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_nomination_events_record_v2
+  ON rwa_nomination_events_v2(nomination_id, created_at, event_id);
+
+-- Task 3 creates this singleton shape for forward compatibility only. Authentication and the
+-- configured-reviewer latch belong to Task 4; nomination code in this slice never reads it.
+CREATE TABLE IF NOT EXISTS rwa_nomination_reviewer_state_v2 (
+  id INT PRIMARY KEY CHECK (id = 1),
+  reviewer_id TEXT NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 -- ── THE BROKERS (omerta-brokers-design.md) ───────────────────────────────────────────────────────
 -- All ACCOUNT-keyed and all NEW tables, so `CREATE TABLE IF NOT EXISTS` is live-DB-safe (a new
 -- COLUMN on an existing table would need an ALTER — the 2026-08-06 boot-crash lesson).
