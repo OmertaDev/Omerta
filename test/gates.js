@@ -1188,22 +1188,206 @@ const SCENERY_WAIVED = {
   const offenders = [];
   const ambiguous = [];
   let scanned = 0;
-  // balanced-paren extraction, not a fixed window: a `.slice(+N)` runs past the call into the next
-  // statement and reads as a finding, and a short one truncates the argument and reads as a pass.
-  const argOf = (src, i) => {
-    let d = 0;
-    for (let j = i; j < src.length; j++) {
-      if (src[j] === '(') d++;
-      else if (src[j] === ')') { d--; if (!d) return src.slice(i + 1, j); }
-    }
-    return '';
+  // Lex first: spelling regexes miss legal trivia/computed access, while character-count paren
+  // scans mistake literal `)` characters for syntax. Raw template text is inert; `${...}` is code.
+  const jsTokens = (src) => {
+    const tokens = [];
+    const parens = [];
+    const regexPrefixWords = new Set([
+      'await', 'case', 'delete', 'do', 'else', 'in', 'instanceof', 'new',
+      'return', 'throw', 'typeof', 'void', 'yield',
+    ]);
+    const controlWords = new Set(['catch', 'for', 'if', 'switch', 'while', 'with']);
+    let i = 0;
+    const push = (type, value, start, end = i, extra = {}) => {
+      const token = { type, value, start, end, ...extra };
+      tokens.push(token);
+      return token;
+    };
+    const regexMayStart = () => {
+      const prev = tokens.at(-1);
+      if (!prev) return true;
+      if (prev.type === 'id') return regexPrefixWords.has(prev.value);
+      if (['number', 'regex', 'string', 'template'].includes(prev.type)) return false;
+      if (prev.value === ')') return !!prev.controlClose;
+      return ![']', '}', '.', '++', '--'].includes(prev.value);
+    };
+    const scanString = (quote) => {
+      const start = i++;
+      let cooked = '';
+      while (i < src.length) {
+        const c = src[i++];
+        if (c === quote) break;
+        if (c !== '\\') { cooked += c; continue; }
+        if (i >= src.length) break;
+        const escaped = src[i++];
+        const simple = { b: '\b', f: '\f', n: '\n', r: '\r', t: '\t', v: '\v', 0: '\0' };
+        if (escaped in simple) cooked += simple[escaped];
+        else if (escaped === 'x' && /^[0-9a-fA-F]{2}$/.test(src.slice(i, i + 2))) {
+          cooked += String.fromCharCode(Number.parseInt(src.slice(i, i + 2), 16)); i += 2;
+        } else if (escaped === 'u' && /^[0-9a-fA-F]{4}$/.test(src.slice(i, i + 4))) {
+          cooked += String.fromCharCode(Number.parseInt(src.slice(i, i + 4), 16)); i += 4;
+        } else if (escaped !== '\n' && escaped !== '\r') cooked += escaped;
+        else if (escaped === '\r' && src[i] === '\n') i++;
+      }
+      push('string', cooked, start);
+    };
+    const scanRegex = () => {
+      const start = i;
+      let j = i + 1;
+      let inClass = false;
+      while (j < src.length && src[j] !== '\n' && src[j] !== '\r') {
+        if (src[j] === '\\') { j += 2; continue; }
+        if (src[j] === '[') inClass = true;
+        else if (src[j] === ']') inClass = false;
+        else if (src[j] === '/' && !inClass) {
+          j++;
+          while (/[a-z]/i.test(src[j] || '')) j++;
+          i = j;
+          push('regex', src.slice(start, i), start);
+          return true;
+        }
+        j++;
+      }
+      return false;
+    };
+    let scanCode;
+    const scanTemplate = () => {
+      const start = i++;
+      while (i < src.length) {
+        if (src[i] === '\\') { i += 2; continue; }
+        if (src[i] === '`') { i++; push('template', '', start); return; }
+        if (src[i] === '$' && src[i + 1] === '{') {
+          const expressionStart = i;
+          i += 2;
+          push('punct', '${', expressionStart);
+          scanCode(true);
+          continue;
+        }
+        i++;
+      }
+      push('template', '', start);
+    };
+    scanCode = (templateExpression = false) => {
+      let braces = 0;
+      while (i < src.length) {
+        const c = src[i];
+        if (/\s/.test(c)) { i++; continue; }
+        if (c === '/' && src[i + 1] === '/') {
+          i += 2;
+          while (i < src.length && src[i] !== '\n' && src[i] !== '\r') i++;
+          continue;
+        }
+        if (c === '/' && src[i + 1] === '*') {
+          i += 2;
+          while (i < src.length && !(src[i] === '*' && src[i + 1] === '/')) i++;
+          i = Math.min(src.length, i + 2);
+          continue;
+        }
+        if (c === "'" || c === '"') { scanString(c); continue; }
+        if (c === '`') { scanTemplate(); continue; }
+        if (c === '/' && regexMayStart() && scanRegex()) continue;
+        if (/[A-Za-z_$]/.test(c)) {
+          const start = i++;
+          while (/[\w$]/.test(src[i] || '')) i++;
+          push('id', src.slice(start, i), start);
+          continue;
+        }
+        if (/\d/.test(c)) {
+          const start = i++;
+          while (/[\w.]/.test(src[i] || '')) i++;
+          push('number', src.slice(start, i), start);
+          continue;
+        }
+        if (c === '}' && templateExpression && braces === 0) {
+          push('punct', '}', i, i + 1);
+          i++;
+          return;
+        }
+        const start = i++;
+        const pair = c + (src[i] || '');
+        if (pair === '++' || pair === '--') i++;
+        const value = pair === '++' || pair === '--' ? pair : c;
+        if (value === '(') {
+          const prev = tokens.at(-1);
+          parens.push(prev?.type === 'id' && controlWords.has(prev.value));
+          push('punct', value, start);
+        } else if (value === ')') {
+          push('punct', value, start, i, { controlClose: parens.pop() || false });
+        } else {
+          push('punct', value, start);
+          if (value === '{') braces++;
+          else if (value === '}') braces--;
+        }
+      }
+    };
+    scanCode();
+    return tokens;
   };
+  const promiseAllCalls = (src) => {
+    const tokens = jsTokens(src);
+    const calls = [];
+    for (let p = 0; p < tokens.length; p++) {
+      if (tokens[p].type !== 'id' || tokens[p].value !== 'Promise') continue;
+      let open = -1;
+      if (tokens[p + 1]?.value === '.' && tokens[p + 2]?.type === 'id' &&
+          tokens[p + 2].value === 'all' && tokens[p + 3]?.value === '(') open = p + 3;
+      else if (tokens[p + 1]?.value === '[' && tokens[p + 2]?.type === 'string' &&
+          tokens[p + 2].value === 'all' && tokens[p + 3]?.value === ']' &&
+          tokens[p + 4]?.value === '(') open = p + 4;
+      if (open < 0) continue;
+      let depth = 0;
+      let close = -1;
+      for (let q = open; q < tokens.length; q++) {
+        if (tokens[q].type === 'punct' && tokens[q].value === '(') depth++;
+        else if (tokens[q].type === 'punct' && tokens[q].value === ')' && --depth === 0) {
+          close = q; break;
+        }
+      }
+      calls.push({
+        at: tokens[p].start,
+        arg: close < 0 ? '' : src.slice(tokens[open].end, tokens[close].start),
+      });
+    }
+    return calls;
+  };
+
+  const balancedSource = "const x = Promise.all([')', /\\)/, `raw ) ${inside(')')}`]);";
+  assert.equal(promiseAllCalls(balancedSource)[0]?.arg,
+    "[')', /\\)/, `raw ) ${inside(')')}`]",
+    'Promise.all argument extraction must ignore parentheses in lexical literals');
+
+  // Literal discovery contract. Positive fixtures are executable direct member calls regardless of
+  // trivia or computed access. Negative fixtures are source text or a member VALUE, not a call.
+  const discoveryCases = [
+    { name: 'whitespace around dot', src: 'const x = Promise . all([one(), two()]);', want: 1 },
+    { name: 'block comments between member segments and call',
+      src: 'const x = Promise /* p */ . /* dot */ all /* call */ ([one(), two()]);', want: 1 },
+    { name: 'line comments between member segments and call',
+      src: `const x = Promise // p
+        . // dot
+        all // call
+        ([one(), two()]);`, want: 1 },
+    { name: 'computed single-quote access', src: "const x = Promise['all']([one(), two()]);", want: 1 },
+    { name: 'computed double-quote access', src: 'const x = Promise["all"]([one(), two()]);', want: 1 },
+    { name: 'executable template expression', src: 'const x = `raw ${Promise . all([one(), two()])}`;', want: 1 },
+    { name: 'single-quoted appearance', src: "const x = 'Promise.all([one(), two()])';", want: 0 },
+    { name: 'double-quoted appearance', src: 'const x = "Promise.all([one(), two()])";', want: 0 },
+    { name: 'line-comment appearance', src: '// Promise.all([one(), two()])\nconst x = 1;', want: 0 },
+    { name: 'block-comment appearance', src: '/* Promise.all([one(), two()]) */ const x = 1;', want: 0 },
+    { name: 'regex appearance', src: 'const x = /Promise\\.all\\s*\\(/;', want: 0 },
+    { name: 'raw template appearance', src: 'const x = `Promise.all([one(), two()])`;', want: 0 },
+    { name: 'dot member reference not called', src: 'const x = Promise.all;', want: 0 },
+    { name: 'computed member reference not called', src: "const x = Promise['all'];", want: 0 },
+  ];
+  for (const fixture of discoveryCases) assert.equal(promiseAllCalls(fixture.src).length, fixture.want,
+    `Promise.all lexical discovery failed: ${fixture.name}`);
+
   // Function-form and indirection pressure tests. Safe concurrency is not inferred from a name: it
   // earns one exact content-bound waiver, which the fixture must consume. This is the contract the
   // live source scan below needs to enforce, rather than merely recognizing named declarations.
   const auditFixture = (src, waiver = null) => {
-    const at = src.indexOf('Promise.all(');
-    const arg = argOf(src, at + 'Promise.all'.length);
+    const [{ arg } = { arg: '' }] = promiseAllCalls(src);
     const waived = waiver && waiver.file === 'fixture.js' && arg.includes(waiver.mark);
     return { offenders: waived ? 0 : 1, waiverHits: waived ? 1 : 0 };
   };
@@ -1261,16 +1445,13 @@ const SCENERY_WAIVED = {
   for (const fixture of fixtureCases) assert.deepEqual(auditFixture(fixture.src, fixture.waiver), fixture.want,
     `shared-client fixture failed: ${fixture.name}`);
   for (const f of files) {
-    // deliberately NOT comment-stripped: a string-aware stripper is its own trap here (backticks in
-    // SQL comments, `https://` inside a literal — both have bitten this repo), and the pattern being
-    // matched is a call, which prose does not contain.
+    // Token positions retain the original source offsets, so exact content waivers and line reports
+    // are checked against source text even though inert lexical regions are absent from discovery.
     const src = fs.readFileSync(f, 'utf8');
-    const re = /Promise\.all\s*\(/g;
-    let m;
-    while ((m = re.exec(src))) {
+    for (const call of promiseAllCalls(src)) {
       scanned++;
-      const arg = argOf(src, m.index + m[0].length - 1);
-      const site = `${relPath(process.cwd(), f)}:${src.slice(0, m.index).split('\n').length}`;
+      const { at, arg } = call;
+      const site = `${relPath(process.cwd(), f)}:${src.slice(0, at).split('\n').length}`;
       const shortFile = relPath(process.cwd(), f);
       const waivers = SAFE_CONCURRENT_SITES.filter((w) => w.file === shortFile && arg.includes(w.mark));
       if (waivers.length > 1) { ambiguous.push(`${site} (${waivers.map((w) => w.mark).join(' | ')})`); continue; }
