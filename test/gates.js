@@ -2079,25 +2079,26 @@ const SCENERY_WAIVED = {
   };
   const membershipExpressions = (sql) => {
     const tokens = sqlTokens(sql), expressions = [];
-    for (let index = 0; index + 2 < tokens.length; index += 1) {
-      const operator = tokens[index + 1];
-      if (tokens[index].value !== '=' || operator.type !== 'word'
-        || !['ANY', 'SOME'].includes(operator.upper) || tokens[index + 2].value !== '(') continue;
-      let depth = 1, end = index + 3;
+    for (let index = 0; index + 1 < tokens.length; index += 1) {
+      const operator = tokens[index];
+      if (operator.type !== 'word' || !['ANY', 'SOME'].includes(operator.upper)
+        || tokens[index + 1].value !== '(') continue;
+      let depth = 1, end = index + 2;
       for (; end < tokens.length && depth; end += 1) {
         if (tokens[end].value === '(') depth += 1;
         else if (tokens[end].value === ')') depth -= 1;
       }
-      const args = tokens.slice(index + 3, depth ? tokens.length : end - 1);
-      const scalarParameter = args[0]?.type === 'parameter' && (args.length === 1
-        || (args.length === 5 && args[1].value === '::' && args[2].type === 'word'
-          && args[3].value === '[' && args[4].value === ']'));
-      const prior = tokens[index - 1];
-      const qualified = tokens[index - 2]?.value === '.' && tokens[index - 3]?.type === 'word';
-      const column = prior?.type === 'word'
-        ? `${qualified ? `${tokens[index - 3].value}.` : ''}${prior.value}` : '<expression>';
+      const args = tokens.slice(index + 2, depth ? tokens.length : end - 1);
+      const scalarParameter = args.length === 5 && args[0]?.type === 'parameter'
+        && args[1].value === '::' && args[2].type === 'word' && args[2].upper === 'TEXT'
+        && args[3].value === '[' && args[4].value === ']';
+      const canonicalOperator = tokens[index - 1]?.value === '=';
+      const prior = tokens[index - 2];
+      const qualified = tokens[index - 3]?.value === '.' && tokens[index - 4]?.type === 'word';
+      const column = canonicalOperator && prior?.type === 'word'
+        ? `${qualified ? `${tokens[index - 4].value}.` : ''}${prior.value}` : '<expression>';
       expressions.push({ column, param: scalarParameter ? args[0].param : null,
-        operator: operator.upper, start: operator.start });
+        operator: operator.upper, canonicalOperator, start: operator.start });
     }
     return expressions;
   };
@@ -2108,8 +2109,21 @@ const SCENERY_WAIVED = {
     const canonicalBinding = moduleSerializer?.kind === 'const'
       && moduleSerializer.declaration?.type === 'VariableDeclarator' ? moduleSerializer : null;
     const usages = [];
-    const visit = (node, parent = null) => {
+    const reviewedQueryFunctions = new Set(['scopedSocialContext']);
+    const functionName = (node, parent) => node.id?.type === 'Identifier' ? node.id.name
+      : parent?.type === 'VariableDeclarator' && parent.id?.type === 'Identifier' ? parent.id.name : null;
+    const visit = (node, parent = null, insideReviewedQueryFunction = false) => {
       if (!node || typeof node !== 'object') return;
+      const isFunction = node.type === 'FunctionDeclaration' || node.type === 'FunctionExpression'
+        || node.type === 'ArrowFunctionExpression';
+      const insideReviewed = insideReviewedQueryFunction || (sourceName === 'explore.js' && isFunction
+        && reviewedQueryFunctions.has(functionName(node, parent)));
+      if (insideReviewed && node.type === 'CallExpression' && isQueryCall(node)
+        && staticText(node.arguments[0]) === null) {
+        usages.push({ source: sourceName, line: node.loc?.start.line || 0, sql: '<non-literal>',
+          column: '<query>', param: null, operator: 'ANY/SOME', unsafeReviewedQuery: true,
+          dynamic: false, scalarLiteral: false });
+      }
       if (node.type === 'Literal' || node.type === 'TemplateLiteral') {
         const dynamic = node.type === 'TemplateLiteral' && node.expressions.length > 0;
         const text = staticText(node) ?? (dynamic
@@ -2133,8 +2147,8 @@ const SCENERY_WAIVED = {
       }
       for (const value of Object.values(node)) {
         if (Array.isArray(value)) {
-          for (const child of value) if (child?.type) visit(child, node);
-        } else if (value?.type) visit(value, node);
+          for (const child of value) if (child?.type) visit(child, node, insideReviewed);
+        } else if (value?.type) visit(value, node, insideReviewed);
       }
     };
     visit(ast);
@@ -2143,8 +2157,16 @@ const SCENERY_WAIVED = {
   const classifyAny = (usages, { complete = false } = {}) => {
     const seen = new Set(), bad = [], approved = [];
     for (const usage of usages) {
+      if (usage.unsafeReviewedQuery) {
+        bad.push(`${usage.source}:${usage.line} scopedSocialContext passes non-literal SQL to query(...)`);
+        continue;
+      }
       if (usage.dynamic) {
         bad.push(`${usage.source}:${usage.line} interpolates a reviewed ANY/SOME SQL statement`);
+        continue;
+      }
+      if (!usage.canonicalOperator) {
+        bad.push(`${usage.source}:${usage.line} uses ${usage.operator} with an unreviewed surrounding operator`);
         continue;
       }
       const matches = reviewedAny.map((site, index) => ({ site, index })).filter(({ site }) =>
@@ -2249,6 +2271,60 @@ const SCENERY_WAIVED = {
       source: canonicalSerializer
         + 'db.query(`SELECT character_id, gang_id FROM gang_members WHERE character_id = A${middle}NY($1::text[])`, [sqlTextArray(ids)])',
       accepted: false,
+    },
+    {
+      name: 'reviewed function rejects a dynamic table and split ANY keyword',
+      source: canonicalSerializer
+        + 'async function scopedSocialContext(db, table, middle, ids) { return db.query(`SELECT character_id, gang_id FROM gang_${table} WHERE character_id = A${middle}NY($1::text[])`, [ids]); }',
+      accepted: false,
+    },
+    {
+      name: 'reviewed function rejects a dynamic table and split SOME keyword',
+      source: canonicalSerializer
+        + 'async function scopedSocialContext(db, table, middle, ids) { return db.query(`SELECT character_id, gang_id FROM gang_${table} WHERE character_id = S${middle}OME($1::text[])`, [ids]); }',
+      accepted: false,
+    },
+    {
+      name: 'reviewed function rejects a non-literal query argument',
+      source: canonicalSerializer
+        + 'async function scopedSocialContext(db, sql, ids) { return db.query(sql, [ids]); }',
+      accepted: false,
+    },
+    {
+      name: 'reviewed function permits a fully static query without membership',
+      source: canonicalSerializer
+        + "async function scopedSocialContext(db) { return db.query('SELECT target_account FROM secrets'); }",
+      accepted: true,
+    },
+    {
+      name: 'qualified OPERATOR form cannot hide ANY with a JavaScript array',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id OPERATOR(pg_catalog.=) ANY($1::text[])', [ids])",
+      accepted: false,
+    },
+    {
+      name: 'unqualified OPERATOR form cannot hide SOME with a JavaScript array',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id OPERATOR(=) SOME($1::text[])', [ids])",
+      accepted: false,
+    },
+    {
+      name: 'reviewed membership requires the explicit text-array cast',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1)', [sqlTextArray(ids)])",
+      accepted: false,
+    },
+    {
+      name: 'reviewed membership rejects a different array cast',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::varchar[])', [sqlTextArray(ids)])",
+      accepted: false,
+    },
+    {
+      name: 'membership text inside strings comments and dollar bodies is ignored',
+      source: canonicalSerializer
+        + "db.query(`SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[]) AND 'role = ANY($2::text[])' <> '' AND $$role = SOME($3::text[])$$ <> '' /* role = ANY($4::text[]) */`, [sqlTextArray(ids)])",
+      accepted: true,
     },
     {
       name: 'JavaScript array at a reviewed placeholder',
