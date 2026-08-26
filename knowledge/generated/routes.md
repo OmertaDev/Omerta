@@ -1,6 +1,6 @@
 # Generated HTTP route catalog
 
-> 713 literal registrations extracted from `src/server.js` and `src/routes/`. Runtime authority remains `GET /openapi.json`.
+> 712 literal registrations extracted from `src/server.js` and `src/routes/`. Runtime authority remains `GET /openapi.json`.
 
 ## Route groups
 
@@ -9,7 +9,7 @@
 | mod | 71 |
 | leaderboard | 46 |
 | casino | 28 |
-| web | 27 |
+| web | 26 |
 | gangs | 22 |
 | pen | 19 |
 | crew | 16 |
@@ -168,12 +168,11 @@
 
 | Method | Path | Access | Domain | Definition | Handler |
 |---|---|---|---|---|---|
-| GET | `/` | public | client-experience | [src/server.js:344](../../src/server.js#L344) | — |
-| GET | `/` | public | client-experience | [src/server.js:403](../../src/server.js#L403) | — |
-| GET | `/admin` | public | client-experience | [src/server.js:350](../../src/server.js#L350) | — |
+| GET | `/` | public | client-experience | [src/server.js:344](../../src/server.js#L344) | `servePage` |
+| GET | `/admin` | public | client-experience | [src/server.js:350](../../src/server.js#L350) | `servePage` |
 | GET | `/agents` | public | client-experience | [src/server.js:614](../../src/server.js#L614) | — |
 | GET | `/AGENTS.md` | public | client-experience | [src/server.js:615](../../src/server.js#L615) | — |
-| GET | `/arena` | public | client-experience | [src/server.js:360](../../src/server.js#L360) | — |
+| GET | `/arena` | public | client-experience | [src/server.js:360](../../src/server.js#L360) | `servePage` |
 | GET | `/art/:file` | public | client-experience | [src/server.js:463](../../src/server.js#L463) | `sendVideo` |
 | GET | `/art/hype/:file` | public | client-experience | [src/server.js:469](../../src/server.js#L469) | `sendVideo` |
 | GET | `/beef/:a/:b` | public | client-experience | [src/server.js:604](../../src/server.js#L604) | `Cards.beefDossier` |
@@ -187,9 +186,9 @@
 | GET | `/manifest.webmanifest` | public | client-experience | [src/server.js:395](../../src/server.js#L395) | — |
 | GET | `/omerta-ui.css` | public | client-experience | [src/server.js:382](../../src/server.js#L382) | — |
 | GET | `/openapi.json` | public | client-experience | [src/server.js:632](../../src/server.js#L632) | — |
-| GET | `/path` | public | client-experience | [src/server.js:369](../../src/server.js#L369) | — |
+| GET | `/path` | public | client-experience | [src/server.js:369](../../src/server.js#L369) | `servePage` |
 | GET | `/path/:id` | public | client-experience | [src/server.js:371](../../src/server.js#L371) | — |
-| GET | `/play` | public | client-experience | [src/server.js:365](../../src/server.js#L365) | — |
+| GET | `/play` | public | client-experience | [src/server.js:365](../../src/server.js#L365) | `servePage` |
 | GET | `/robots.txt` | public | client-experience | [src/server.js:620](../../src/server.js#L620) | — |
 | GET | `/sitemap.xml` | public | client-experience | [src/server.js:625](../../src/server.js#L625) | — |
 | GET | `/sw.js` | public | client-experience | [src/server.js:387](../../src/server.js#L387) | — |
@@ -214,9 +213,9 @@
 | POST | `/v1/auth/agent-key` | authenticated | platform-core | [src/server.js:1198](../../src/server.js#L1198) | — |
 | POST | `/v1/auth/guest` | public | platform-core | [src/server.js:1108](../../src/server.js#L1108) | `A.consumeInvite` |
 | POST | `/v1/auth/logout-all` | authenticated | platform-core | [src/server.js:1207](../../src/server.js#L1207) | — |
-| POST | `/v1/auth/privy` | public | platform-core | [src/server.js:1124](../../src/server.js#L1124) | — |
+| POST | `/v1/auth/privy` | public | platform-core | [src/server.js:1124](../../src/server.js#L1124) | `providerLogin` |
 | POST | `/v1/auth/upgrade` | authenticated | platform-core | [src/server.js:1189](../../src/server.js#L1189) | `A.upgradeAccount` |
-| POST | `/v1/auth/x` | public | platform-core | [src/server.js:1123](../../src/server.js#L1123) | — |
+| POST | `/v1/auth/x` | public | platform-core | [src/server.js:1123](../../src/server.js#L1123) | `providerLogin` |
 | GET | `/v1/auth/x/callback` | public | platform-core | [src/server.js:1166](../../src/server.js#L1166) | `A.xOAuthCallback` |
 | POST | `/v1/auth/x/start` | public | platform-core | [src/server.js:1134](../../src/server.js#L1134) | `A.upgradeAccount` |
 | GET | `/v1/avatar/:seed` | public | platform-core | [src/server.js:500](../../src/server.js#L500) | — |
@@ -880,4 +879,4 @@
 | POST | `/v1/world/raids/:id/leave` | authenticated | world-progression | [src/server.js:3302](../../src/server.js#L3302) | `World.leaveRaid` |
 | GET | `/v1/ws` | token-query | platform-core | [src/server.js:2535](../../src/server.js#L2535) | — |
 | GET | `/v1/yield` | public | economy-ledger | [src/server.js:1417](../../src/server.js#L1417) | `Exchange.yieldBoard` |
-| GET | `/wiki` | public | client-experience | [src/server.js:354](../../src/server.js#L354) | — |
+| GET | `/wiki` | public | client-experience | [src/server.js:354](../../src/server.js#L354) | `servePage` |

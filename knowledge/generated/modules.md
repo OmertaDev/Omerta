@@ -131,7 +131,7 @@
 | [src/rwastockkeeper.js](../../src/rwastockkeeper.js) | 125 | platform-core | 0 / 1 | 0 | 5 | 0 |
 | [src/season.js](../../src/season.js) | 141 | world-progression | 1 / 2 | 2 | 8 | 0 |
 | [src/secrets.js](../../src/secrets.js) | 197 | law-intelligence | 3 / 5 | 5 | 6 | 2 |
-| [src/server.js](../../src/server.js) | 3360 | platform-core | 130 / 115 | 418 | 43 | 102 |
+| [src/server.js](../../src/server.js) | 3360 | platform-core | 130 / 115 | 417 | 43 | 102 |
 | [src/shipment.js](../../src/shipment.js) | 176 | enterprise-logistics | 2 / 2 | 3 | 8 | 0 |
 | [src/skills.js](../../src/skills.js) | 164 | world-progression | 4 / 2 | 5 | 4 | 0 |
 | [src/social.js](../../src/social.js) | 27 | social-combat | 6 / 12 | 44 | 3 | 6 |
