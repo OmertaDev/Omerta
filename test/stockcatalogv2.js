@@ -22,6 +22,7 @@ import { runStockCatalogV2Cli } from '../tools/robinhood-stock-catalog-v2.js';
 
 const CHAIN_ID = '4663';
 const REGISTRY = '0x9999999999999999999999999999999999999999';
+const CASED_REGISTRY = getAddress('0x1234567890abcdef1234567890abcdef12345678');
 const MAX_TIMESTAMP_SECONDS = '253402300799';
 const ZERO_HASH = `0x${'00'.repeat(32)}`;
 const hash = (byte) => `0x${byte.repeat(64)}`;
@@ -411,19 +412,27 @@ function finalizedReaderClient({ postReadHash = hash('d') } = {}) {
 const readerEnvironment = {
   rpc: process.env.CHAIN_RPC_URL, registry: process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS,
 };
-process.env.CHAIN_RPC_URL = 'https://hostile-rpc.invalid';
-process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = REGISTRY;
+process.env.CHAIN_RPC_URL = '  https://hostile-rpc.invalid/rpc  ';
+process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = CASED_REGISTRY.toLowerCase();
 const stableReaderClient = finalizedReaderClient();
-stockCatalogV2.__setStockTokenRegistryV2ClientFactory(() => stableReaderClient);
+let normalizedReaderRpc = null;
+stockCatalogV2.__setStockTokenRegistryV2ClientFactory((rpc) => {
+  normalizedReaderRpc = rpc;
+  return stableReaderClient;
+});
 __setStockTokenRegistryV2Reader(null);
 const readerPool = await makeDb();
 await syncFinalizedStockCatalogV2(readerPool);
+assert.equal(normalizedReaderRpc, 'https://hostile-rpc.invalid/rpc',
+  'the real reader consumes the same trimmed absolute production RPC configuration');
 assert.deepEqual(stableReaderClient.blockCalls,
   [{ blockTag: 'finalized' }, { blockNumber: 99n }],
   'reader rechecks finalized block N after every registry getter');
 assert.equal(stableReaderClient.contractCalls.length, 7);
 assert(stableReaderClient.contractCalls.every((call) => call.blockNumber === 99n),
   'every registry getter is pinned to the one finalized block number');
+assert(stableReaderClient.contractCalls.every((call) => call.address === CASED_REGISTRY),
+  'the real reader consumes the canonicalized production V2 registry address');
 assert.deepEqual(stableReaderClient.callLog, [
   'getChainId',
   'getBlock:finalized',
@@ -445,6 +454,20 @@ await assert.rejects(() => syncFinalizedStockCatalogV2({
   connect: async () => { driftConnects++; return readerPool.connect(); },
 }), /finalized block.*hash|changed during registry read|reorg/i);
 assert.equal(driftConnects, 0, 'same-height finalized hash drift rejects before database work');
+process.env.CHAIN_RPC_URL = '  ';
+let invalidConfigFactoryCalls = 0;
+stockCatalogV2.__setStockTokenRegistryV2ClientFactory(() => {
+  invalidConfigFactoryCalls++;
+  throw new Error('invalid production configuration reached the client factory');
+});
+let invalidConfigConnects = 0;
+await assert.rejects(() => syncFinalizedStockCatalogV2({
+  connect: async () => { invalidConfigConnects++; return readerPool.connect(); },
+}), /unconfigured/i, 'the default reader rejects the same invalid production config as readiness');
+assert.equal(invalidConfigFactoryCalls, 0,
+  'invalid production config fails before constructing the real RPC client');
+assert.equal(invalidConfigConnects, 0,
+  'invalid production config fails before database work');
 stockCatalogV2.__setStockTokenRegistryV2ClientFactory(null);
 if (readerEnvironment.rpc === undefined) delete process.env.CHAIN_RPC_URL;
 else process.env.CHAIN_RPC_URL = readerEnvironment.rpc;
@@ -729,6 +752,74 @@ assert.equal(stockCatalogV2.stockTokenRegistryV2ReaderConfigured(), true,
 const readinessEnvironment = {
   rpc: process.env.CHAIN_RPC_URL, registry: process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS,
 };
+const injectedReadinessReader = async () => observation();
+for (const [label, rpc] of [
+  ['missing', undefined],
+  ['empty', ''],
+  ['whitespace', '   \t  '],
+  ['sentinel-like zero', '0'],
+  ['malformed', 'not-a-url'],
+  ['relative', '/rpc'],
+  ['unsupported file scheme', 'file:///tmp/rpc'],
+  ['unsupported websocket scheme', 'wss://configured-rpc.invalid'],
+]) {
+  if (rpc === undefined) delete process.env.CHAIN_RPC_URL;
+  else process.env.CHAIN_RPC_URL = rpc;
+  process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = REGISTRY;
+  let dbConnects = 0;
+  const countedDb = {
+    async connect() { dbConnects++; return exactlyFreshDb.connect(); },
+  };
+  assert.equal(await stockCatalogV2.stockTokenCatalogV2Ready(countedDb), false,
+    `${label} production RPC configuration fails readiness`);
+  assert.equal(dbConnects, 0, `${label} RPC fails closed before a database read`);
+  assert.equal(stockCatalogV2.stockTokenRegistryV2ReaderConfigured(), true,
+    `${label} production config does not disable an explicitly injected worker reader`);
+  __setStockTokenRegistryV2Reader(null);
+  assert.equal(stockCatalogV2.stockTokenRegistryV2ReaderConfigured(), false,
+    `${label} production config does not configure the default worker reader`);
+  __setStockTokenRegistryV2Reader(injectedReadinessReader);
+}
+for (const [label, registry] of [
+  ['missing', undefined],
+  ['empty', ''],
+  ['whitespace', '   '],
+  ['zero', address('0')],
+  ['malformed', '0x1234'],
+]) {
+  process.env.CHAIN_RPC_URL = 'https://configured-rpc.invalid';
+  if (registry === undefined) delete process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
+  else process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = registry;
+  let dbConnects = 0;
+  const countedDb = {
+    async connect() { dbConnects++; return exactlyFreshDb.connect(); },
+  };
+  assert.equal(await stockCatalogV2.stockTokenCatalogV2Ready(countedDb), false,
+    `${label} production registry configuration fails readiness`);
+  assert.equal(dbConnects, 0, `${label} registry fails closed before a database read`);
+  assert.equal(stockCatalogV2.stockTokenRegistryV2ReaderConfigured(), true,
+    `${label} production registry does not disable an explicitly injected worker reader`);
+  __setStockTokenRegistryV2Reader(null);
+  assert.equal(stockCatalogV2.stockTokenRegistryV2ReaderConfigured(), false,
+    `${label} production registry does not configure the default worker reader`);
+  __setStockTokenRegistryV2Reader(injectedReadinessReader);
+}
+for (const [label, rpc, configuredRegistry, mirroredRegistry] of [
+  ['lowercase address over HTTP', '  http://configured-rpc.invalid:8545/rpc  ',
+    CASED_REGISTRY.toLowerCase(), CASED_REGISTRY],
+  ['checksummed address over HTTPS', 'https://configured-rpc.invalid/rpc',
+    CASED_REGISTRY, CASED_REGISTRY.toLowerCase()],
+]) {
+  process.env.CHAIN_RPC_URL = rpc;
+  process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = configuredRegistry;
+  __setStockTokenRegistryV2Reader(null);
+  assert.equal(stockCatalogV2.stockTokenRegistryV2ReaderConfigured(), true,
+    `${label} configures the default production worker reader`);
+  assert.equal(await stockCatalogV2.stockTokenCatalogV2Ready(coherentReadDb({
+    registryAddress: mirroredRegistry,
+  })), true, `${label} normalizes to the same production registry authority`);
+  __setStockTokenRegistryV2Reader(injectedReadinessReader);
+}
 process.env.CHAIN_RPC_URL = 'https://configured-rpc.invalid';
 process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = REGISTRY;
 assert.equal(await stockCatalogV2.stockTokenCatalogV2Ready(exactlyFreshDb), true,

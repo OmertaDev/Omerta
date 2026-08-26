@@ -107,6 +107,27 @@ function canonicalAddress(value, field, { nonzero = true } = {}) {
   return normalized;
 }
 
+function stockTokenRegistryV2ProductionConfig() {
+  const rawRpc = process.env.CHAIN_RPC_URL;
+  if (typeof rawRpc !== 'string') return null;
+  const trimmedRpc = rawRpc.trim();
+  if (!trimmedRpc) return null;
+  let parsedRpc;
+  try { parsedRpc = new URL(trimmedRpc); }
+  catch { return null; }
+  if (!['http:', 'https:'].includes(parsedRpc.protocol) || !parsedRpc.hostname) return null;
+  let registryAddress;
+  try {
+    registryAddress = canonicalAddress(
+      String(process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS ?? '').trim(),
+      'configured registry address',
+    );
+  } catch {
+    return null;
+  }
+  return { rpc: parsedRpc.toString(), registryAddress };
+}
+
 function normalizedTicker(value, { requireCanonical = false } = {}) {
   const raw = String(value ?? '').trim();
   const ticker = raw.toUpperCase();
@@ -305,7 +326,7 @@ export function __setStockTokenRegistryV2ClientFactory(fn) {
 }
 
 export const stockTokenRegistryV2ReaderConfigured = () => _registryReaderV2 !== readStockTokenRegistryV2Onchain
-  || !!(process.env.CHAIN_RPC_URL && process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS);
+  || stockTokenRegistryV2ProductionConfig() !== null;
 
 const epochTimestampSql = (parameter) => `CASE WHEN ${parameter}='0' THEN NULL ELSE
   TIMESTAMPTZ '1970-01-01T00:00:00Z' + ((${parameter} || ' seconds')::interval) END`;
@@ -558,25 +579,16 @@ export async function approvedStockTokenCatalogV2(db) {
 }
 
 export async function stockTokenCatalogV2Ready(db) {
-  if (!process.env.CHAIN_RPC_URL || !stockTokenRegistryV2ReaderConfigured()) return false;
-  let configuredAddress;
-  try {
-    configuredAddress = canonicalAddress(
-      process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS,
-      'configured registry address',
-    );
-  } catch {
-    return false;
-  }
+  const config = stockTokenRegistryV2ProductionConfig();
+  if (!config) return false;
   const catalog = await approvedStockTokenCatalogV2(db);
-  return catalog.voteable && sameAddress(catalog.registryAddress, configuredAddress);
+  return catalog.voteable && sameAddress(catalog.registryAddress, config.registryAddress);
 }
 
 async function readStockTokenRegistryV2Onchain() {
-  const rpc = process.env.CHAIN_RPC_URL;
-  const configuredAddress = process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
-  if (!rpc || !configuredAddress) throw new Error('stock token registry v2 unconfigured');
-  const registryAddress = canonicalAddress(configuredAddress, 'registry address');
+  const config = stockTokenRegistryV2ProductionConfig();
+  if (!config) throw new Error('stock token registry v2 unconfigured');
+  const { rpc, registryAddress } = config;
   const client = _registryV2ClientFactory(rpc);
   const liveChainId = String(await client.getChainId());
   if (liveChainId !== ROBINHOOD_CHAIN_ID_V2) {
