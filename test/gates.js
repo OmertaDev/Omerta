@@ -1184,7 +1184,7 @@ const SCENERY_WAIVED = {
     { file: 'src/chain.js', mark: "functionName: 'polBps'", why: "viem, OmertaBond's three immutable bps" },
     { file: 'src/chainparams.js', mark: 'abi: abiFor(p), functionName: p.read',
       why: 'viem, independent control-room live-value RPC reads' },
-    { file: 'src/opportunities.js', mark: 'agentLeaderboard(pool, 25), agentEconomyStats(pool)',
+    { file: 'src/arena.js', mark: 'agentLeaderboard(pool, 25), agentEconomyStats(pool)',
       why: 'a genuine app pool; each reader acquires its own connection and no request snapshot is shared' },
   ];
   const waiverHits = new Map(SAFE_CONCURRENT_SITES.map((w) => [`${w.file}#${w.mark}`, 0]));
@@ -1253,6 +1253,17 @@ const SCENERY_WAIVED = {
     visit(ast);
     return calls.sort((a, b) => a.at - b.at);
   };
+
+  const arenaPoolWaiver = SAFE_CONCURRENT_SITES.find((waiver) =>
+    waiver.mark === 'agentLeaderboard(pool, 25), agentEconomyStats(pool)');
+  assert(arenaPoolWaiver, 'the arena genuine-pool Promise.all retains its exact reviewed waiver');
+  const exactWaiverHits = (waiver) => promiseAllCalls(
+    fs.readFileSync(path.resolve(waiver.file), 'utf8'), waiver.file)
+    .filter(({ arg }) => arg.includes(waiver.mark)).length;
+  assert.equal(exactWaiverHits({ ...arenaPoolWaiver, file: 'src/opportunities.js' }), 0,
+    'the stale opportunities.js provenance cannot consume the moved arena pool waiver');
+  assert.equal(exactWaiverHits(arenaPoolWaiver), 1,
+    'the live arena.js provenance consumes the exact genuine-pool waiver once');
 
   const balancedSource = "const x = Promise.all([')', /\\)/, `raw ) ${inside(')')}`]);";
   assert.equal(promiseAllCalls(balancedSource)[0]?.arg,
