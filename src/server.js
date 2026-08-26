@@ -1107,6 +1107,13 @@ export async function buildServer() {
   });
 
   app.post('/v1/auth/guest', async (req) => {
+    if (req.body && typeof req.body === 'object' && !Array.isArray(req.body) &&
+        Object.prototype.hasOwnProperty.call(req.body, 'bootstrapSecret')) {
+      const { accountId } = await A.accountForGuestBootstrap(
+        pool, req.body.bootstrapSecret, req.ip || '0.0.0.0', req.body.inviteCode,
+      );
+      return { token: await signFor(accountId) };
+    }
     await A.consumeInvite(pool, req.body?.inviteCode);
     const id = uid();
     await pool.query('INSERT INTO accounts (id, auth_provider, auth_subject, created_ip, last_ip) VALUES ($1,$2,$3,$4,$4)',

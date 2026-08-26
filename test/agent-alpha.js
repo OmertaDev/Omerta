@@ -2,14 +2,16 @@
 // temporary on-disk sessions so lifecycle and recovery assertions exercise actual HTTP and I/O.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-import { spawn } from 'node:child_process';
-import { link, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import { execFile, spawn } from 'node:child_process';
+import { chmod, chown, link, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { promisify } from 'node:util';
 import Fastify from 'fastify';
 
+import { buildServer } from '../src/server.js';
 import {
   createAgentAlphaTestRunner,
   runAgentAlpha as runAgentAlphaProduction,
@@ -27,6 +29,393 @@ const POLICY = {
   allowPvP: false,
   allowBorrowing: false,
 };
+
+const execFileAsync = promisify(execFile);
+
+async function runWindowsAclScript(script, target) {
+  await execFileAsync('powershell.exe', [
+    '-NoLogo', '-NoProfile', '-NonInteractive', '-Command', script,
+  ], {
+    env: { ...process.env, OMERTA_ALPHA_TEST_ACL_TARGET: target },
+    timeout: 10000,
+    windowsHide: true,
+  });
+}
+
+async function secureWindowsDirectory(directory) {
+  if (process.platform !== 'win32') return;
+  await runWindowsAclScript(`
+    $ErrorActionPreference = 'Stop'
+    $target = $env:OMERTA_ALPHA_TEST_ACL_TARGET
+    $user = [System.Security.Principal.WindowsIdentity]::GetCurrent().User
+    $system = New-Object System.Security.Principal.SecurityIdentifier('S-1-5-18')
+    $admins = New-Object System.Security.Principal.SecurityIdentifier('S-1-5-32-544')
+    $acl = New-Object System.Security.AccessControl.DirectorySecurity
+    $acl.SetOwner($user)
+    $acl.SetAccessRuleProtection($true, $false)
+    $inherit = [System.Security.AccessControl.InheritanceFlags]::ContainerInherit -bor
+      [System.Security.AccessControl.InheritanceFlags]::ObjectInherit
+    foreach ($sid in @($user, $system, $admins)) {
+      $rule = New-Object System.Security.AccessControl.FileSystemAccessRule(
+        $sid,
+        [System.Security.AccessControl.FileSystemRights]::FullControl,
+        $inherit,
+        [System.Security.AccessControl.PropagationFlags]::None,
+        [System.Security.AccessControl.AccessControlType]::Allow
+      )
+      [void]$acl.AddAccessRule($rule)
+    }
+    $directory = New-Object System.IO.DirectoryInfo($target)
+    $directory.SetAccessControl($acl)
+  `, directory);
+}
+
+async function grantWindowsRead(file) {
+  await runWindowsAclScript(`
+    $ErrorActionPreference = 'Stop'
+    $target = $env:OMERTA_ALPHA_TEST_ACL_TARGET
+    $file = New-Object System.IO.FileInfo($target)
+    $acl = $file.GetAccessControl()
+    $everyone = New-Object System.Security.Principal.SecurityIdentifier('S-1-1-0')
+    $rule = New-Object System.Security.AccessControl.FileSystemAccessRule(
+      $everyone,
+      [System.Security.AccessControl.FileSystemRights]::Read,
+      [System.Security.AccessControl.AccessControlType]::Allow
+    )
+    [void]$acl.AddAccessRule($rule)
+    $file.SetAccessControl($acl)
+  `, file);
+}
+
+async function grantWindowsDirectoryRead(directory) {
+  await runWindowsAclScript(`
+    $ErrorActionPreference = 'Stop'
+    $target = $env:OMERTA_ALPHA_TEST_ACL_TARGET
+    $item = New-Object System.IO.DirectoryInfo($target)
+    $acl = $item.GetAccessControl()
+    $everyone = New-Object System.Security.Principal.SecurityIdentifier('S-1-1-0')
+    $inherit = [System.Security.AccessControl.InheritanceFlags]::ContainerInherit -bor
+      [System.Security.AccessControl.InheritanceFlags]::ObjectInherit
+    $rule = New-Object System.Security.AccessControl.FileSystemAccessRule(
+      $everyone,
+      [System.Security.AccessControl.FileSystemRights]::ReadAndExecute,
+      $inherit,
+      [System.Security.AccessControl.PropagationFlags]::None,
+      [System.Security.AccessControl.AccessControlType]::Allow
+    )
+    [void]$acl.AddAccessRule($rule)
+    $item.SetAccessControl($acl)
+  `, directory);
+}
+
+async function privateTempDir(prefix) {
+  const directory = await mkdtemp(join(tmpdir(), prefix));
+  await secureWindowsDirectory(directory);
+  return directory;
+}
+
+async function writePrivateSession(file, contents) {
+  await writeFile(file, contents, { encoding: 'utf8', mode: 0o600 });
+  if (process.platform !== 'win32') await chmod(file, 0o600);
+}
+
+async function guestBootstrapServerRecoveryTest() {
+  const priorInviteMode = process.env.INVITE_MODE;
+  process.env.INVITE_MODE = 'on';
+  const app = await buildServer();
+  const inviteCode = `bootstrap-${crypto.randomUUID()}`;
+  const bootstrapSecret = crypto.randomBytes(32).toString('base64url');
+  try {
+    await app.pool.query(
+      'INSERT INTO invite_codes (code, uses_left) VALUES ($1, 1)',
+      [inviteCode],
+    );
+
+    const replies = await Promise.all(Array.from({ length: 5 }, () => app.inject({
+      method: 'POST',
+      url: '/v1/auth/guest',
+      payload: { bootstrapSecret, inviteCode },
+    })));
+    assert.equal(replies.every((reply) => reply.statusCode === 200 ||
+      (reply.statusCode === 400 && reply.json().error === 'bootstrap_contention')), true,
+    'a concurrent retry either recovers the account or fails closed while its creator commits');
+    const successful = replies.filter((reply) => reply.statusCode === 200);
+    assert.equal(successful.length >= 1, true,
+      'one concurrent bootstrap request completes the account transaction');
+
+    const subjects = new Set(successful.map((reply) => app.jwt.verify(reply.json().token).sub));
+    assert.equal(subjects.size, 1,
+      'concurrent bootstrap retries receive credentials for exactly one account');
+    assert.equal(Number((await app.pool.query(
+      "SELECT COUNT(*) n FROM accounts WHERE auth_provider='guest'",
+    )).rows[0].n), 1, 'one bootstrap secret creates exactly one guest account');
+    assert.equal(Number((await app.pool.query(
+      'SELECT uses_left FROM invite_codes WHERE code=$1', [inviteCode],
+    )).rows[0].uses_left), 0, 'the closed-alpha invite is consumed exactly once');
+
+    const replay = await app.inject({
+      method: 'POST',
+      url: '/v1/auth/guest',
+      payload: { bootstrapSecret },
+    });
+    assert.equal(replay.statusCode, 200,
+      'the recovery credential reissues authentication after the invite has been consumed');
+    assert.equal(app.jwt.verify(replay.json().token).sub === [...subjects][0], true,
+      'post-commit recovery reissues a token for the original account');
+
+    const stored = (await app.pool.query(
+      'SELECT auth_subject, guest_bootstrap_hash FROM accounts',
+    )).rows[0];
+    assert.equal(Object.values(stored).includes(bootstrapSecret), false,
+      'the server never stores the raw bootstrap recovery secret');
+
+    const unrelated = await app.inject({
+      method: 'POST',
+      url: '/v1/auth/guest',
+      payload: { bootstrapSecret: crypto.randomBytes(32).toString('base64url') },
+    });
+    assert.equal(unrelated.statusCode, 400,
+      'a different bootstrap identity cannot bypass a consumed closed-alpha invite');
+    assert.equal(unrelated.json().error, 'invite',
+      'closed-invite refusal keeps the existing stable error code');
+    assert.equal(Number((await app.pool.query(
+      "SELECT COUNT(*) n FROM accounts WHERE auth_provider='guest'",
+    )).rows[0].n), 1, 'a refused bootstrap attempt leaves the single-account invariant intact');
+  } finally {
+    if (priorInviteMode === undefined) delete process.env.INVITE_MODE;
+    else process.env.INVITE_MODE = priorInviteMode;
+    await app.close();
+    await app.pool.end?.();
+  }
+}
+
+async function initialGuestCrashRecoveryTest() {
+  const priorInviteMode = process.env.INVITE_MODE;
+  process.env.INVITE_MODE = 'on';
+  const app = await buildServer();
+  const dir = await privateTempDir('omerta-agent-alpha-bootstrap-crash-');
+  const sessionFile = join(dir, 'session.json');
+  const reportFile = join(dir, 'report.jsonl');
+  const inviteCode = `bootstrap-crash-${crypto.randomUUID()}`;
+  let child;
+  try {
+    await app.pool.query(
+      'INSERT INTO invite_codes (code, uses_left) VALUES ($1, 1)',
+      [inviteCode],
+    );
+    await app.listen({ port: 0, host: '127.0.0.1' });
+    const address = app.server.address();
+    const baseUrl = `http://127.0.0.1:${address.port}`;
+    const runnerUrl = pathToFileURL(
+      fileURLToPath(new URL('../tools/agent-alpha.js', import.meta.url)),
+    ).href;
+    const childCode = `
+      import { createAgentAlphaTestRunner } from ${JSON.stringify(runnerUrl)};
+      let now = 0;
+      const runAgentAlpha = createAgentAlphaTestRunner({
+        now: () => now,
+        sleep: async (ms) => { now += ms; },
+      });
+      const heldFetch = async (...args) => {
+        const response = await fetch(...args);
+        if (new URL(args[0]).pathname === '/v1/auth/guest') {
+          process.send?.({ type: 'guest_committed' });
+          await new Promise(() => {});
+        }
+        return response;
+      };
+      await runAgentAlpha({
+        baseUrl: process.env.TEST_BASE,
+        sessionFile: process.env.TEST_SESSION,
+        reportFile: process.env.TEST_REPORT,
+        create: true,
+        name: 'Bootstrap Alpha',
+        inviteCode: process.env.TEST_INVITE,
+        maxActions: 1,
+        intervalMs: 3100,
+        fetchImpl: heldFetch,
+      });
+    `;
+    let responseHeld;
+    const heldResponse = new Promise((resolveHeld) => { responseHeld = resolveHeld; });
+    child = spawn(process.execPath, ['--input-type=module', '--eval', childCode], {
+      env: {
+        ...process.env,
+        TEST_BASE: baseUrl,
+        TEST_SESSION: sessionFile,
+        TEST_REPORT: reportFile,
+        TEST_INVITE: inviteCode,
+      },
+      stdio: ['ignore', 'ignore', 'pipe', 'ipc'],
+    });
+    let childError = '';
+    child.stderr.setEncoding('utf8');
+    child.stderr.on('data', (chunk) => { childError += chunk; });
+    child.on('message', (message) => {
+      if (message?.type === 'guest_committed') responseHeld();
+    });
+
+    await waitFor(heldResponse, 'committed guest response');
+    let bootstrapState = null;
+    try { bootstrapState = JSON.parse(await readFile(sessionFile, 'utf8')); } catch { /* asserted below */ }
+    assert.equal(bootstrapState?.phase, 'bootstrap',
+      'the recovery identity is durable before the first guest request can return');
+    assert.equal(typeof bootstrapState?.bootstrapSecret === 'string' &&
+      bootstrapState.bootstrapSecret.length === 43, true,
+    'the durable bootstrap identity is a high-entropy 256-bit base64url credential');
+    assert.equal(Object.prototype.hasOwnProperty.call(bootstrapState || {}, 'token'), false,
+      'the pre-response bootstrap state cannot pretend a bearer was received');
+    assert.equal(Number((await app.pool.query(
+      "SELECT COUNT(*) n FROM accounts WHERE auth_provider='guest'",
+    )).rows[0].n), 1, 'the server committed exactly one guest before the client hard crash');
+    assert.equal(Number((await app.pool.query(
+      'SELECT uses_left FROM invite_codes WHERE code=$1', [inviteCode],
+    )).rows[0].uses_left), 0, 'the guest commit consumed the closed-alpha invite once');
+
+    child.kill();
+    await waitFor(new Promise((resolveExit) => child.once('exit', resolveExit)),
+      'bootstrap child hard exit');
+    assert.notEqual(child.exitCode, 0,
+      'the first runner dies before its normal response/session persistence path');
+
+    const summary = await runAgentAlpha({
+      baseUrl,
+      sessionFile,
+      reportFile,
+      maxActions: 1,
+      intervalMs: 3100,
+      fetchImpl: async (url, options) => {
+        if (new URL(url).pathname === '/v1/agent/turn') {
+          return new Response(JSON.stringify({
+            turnId: 'bootstrap-idle', recommendedActionId: null, policy: POLICY, actions: [],
+          }), { status: 200, headers: { 'content-type': 'application/json' } });
+        }
+        return fetch(url, options);
+      },
+    });
+    assert.deepEqual(summary, { status: 'complete', actions: 0 },
+      'restart recovers the committed identity and reaches a bounded idle turn');
+    const recovered = JSON.parse(await readFile(sessionFile, 'utf8'));
+    assert.equal(recovered.phase, 'agent', 'recovery completes the original agent identity');
+    assert.equal(typeof recovered.token === 'string' && recovered.token.length > 0, true,
+      'recovery stores the reissued agent token only after receiving it');
+    assert.equal(Object.prototype.hasOwnProperty.call(recovered, 'bootstrapSecret'), false,
+      'the recovery credential is erased once the bearer session is durable');
+    assert.equal(Object.prototype.hasOwnProperty.call(recovered, 'inviteCode'), false,
+      'the consumed invite is erased with the completed bootstrap phase');
+    const account = (await app.pool.query(
+      "SELECT id FROM accounts WHERE auth_provider='guest'",
+    )).rows[0];
+    assert.equal(app.jwt.verify(recovered.token).sub === account.id, true,
+      'the recovered bearer authenticates the one pre-crash account');
+    assert.equal(Number((await app.pool.query(
+      "SELECT COUNT(*) n FROM accounts WHERE auth_provider='guest'",
+    )).rows[0].n), 1, 'restart and reissuance leave the guest-account count exactly one');
+    assert.equal(childError.includes(inviteCode), false,
+      'the crashed child never prints the bootstrap invite');
+    assert.equal(childError.includes(bootstrapState.bootstrapSecret), false,
+      'the crashed child never prints the bootstrap recovery secret');
+  } finally {
+    if (child && child.exitCode == null && child.signalCode == null) {
+      child.kill();
+      await new Promise((resolveExit) => child.once('exit', resolveExit));
+    }
+    if (priorInviteMode === undefined) delete process.env.INVITE_MODE;
+    else process.env.INVITE_MODE = priorInviteMode;
+    await app.close();
+    await app.pool.end?.();
+    await rm(dir, { recursive: true, force: true });
+  }
+}
+
+async function credentialStorageConfidentialityTest() {
+  if (process.platform === 'win32') {
+    {
+      const api = await probeApi();
+      const dir = await privateTempDir('omerta-agent-alpha-file-acl-');
+      const sessionFile = join(dir, 'session.json');
+      const reportFile = join(dir, 'report.jsonl');
+      try {
+        await writePrivateSession(sessionFile, JSON.stringify(sessionFor(api.baseUrl)));
+        await grantWindowsRead(sessionFile);
+        await assert.rejects(
+          runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1 }),
+          /ACL|private|credential|session/i,
+          'a Windows session file readable by another principal fails closed',
+        );
+        assert.equal(api.state.sessionCalls, 0,
+          'an exposed Windows file is rejected before its bearer can reach the network');
+      } finally {
+        await api.close();
+        await rm(dir, { recursive: true, force: true });
+      }
+    }
+
+    {
+      const api = await probeApi();
+      const dir = await mkdtemp(join(tmpdir(), 'omerta-agent-alpha-parent-acl-'));
+      const sessionFile = join(dir, 'session.json');
+      const reportFile = join(dir, 'report.jsonl');
+      try {
+        await grantWindowsDirectoryRead(dir);
+        await writePrivateSession(sessionFile, JSON.stringify(sessionFor(api.baseUrl)));
+        await assert.rejects(
+          runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1 }),
+          /ACL|private|credential|session/i,
+          'a Windows session under an inheritance-exposed parent fails closed',
+        );
+        assert.equal(api.state.sessionCalls, 0,
+          'an insecure Windows parent is rejected before the credential is read or used');
+      } finally {
+        await api.close();
+        await rm(dir, { recursive: true, force: true });
+      }
+    }
+    return;
+  }
+
+  {
+    const api = await probeApi();
+    const dir = await privateTempDir('omerta-agent-alpha-mode-');
+    const sessionFile = join(dir, 'session.json');
+    const reportFile = join(dir, 'report.jsonl');
+    try {
+      await writeFile(sessionFile, JSON.stringify(sessionFor(api.baseUrl)), { mode: 0o644 });
+      await chmod(sessionFile, 0o644);
+      await assert.rejects(
+        runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1 }),
+        /permission|private|mode|session/i,
+        'a POSIX 0644 bearer session fails closed',
+      );
+      assert.equal(api.state.sessionCalls, 0,
+        'a permissive POSIX session is rejected before network use');
+    } finally {
+      await api.close();
+      await rm(dir, { recursive: true, force: true });
+    }
+  }
+
+  if (typeof process.geteuid === 'function' && process.geteuid() === 0) {
+    const api = await probeApi();
+    const dir = await privateTempDir('omerta-agent-alpha-owner-');
+    const sessionFile = join(dir, 'session.json');
+    const reportFile = join(dir, 'report.jsonl');
+    try {
+      await writeFile(sessionFile, JSON.stringify(sessionFor(api.baseUrl)), { mode: 0o600 });
+      await chown(sessionFile, 65534, 65534);
+      await assert.rejects(
+        runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1 }),
+        /owner|private|session/i,
+        'a POSIX session owned by a different principal fails closed',
+      );
+      assert.equal(api.state.sessionCalls, 0,
+        'a wrong-owner POSIX session is rejected before network use');
+    } finally {
+      await api.close();
+      await rm(dir, { recursive: true, force: true });
+    }
+  }
+}
 
 async function localApi() {
   const app = Fastify({ logger: false });
@@ -122,7 +511,7 @@ async function localApi() {
 }
 
 async function lifecycleTest() {
-  const dir = await mkdtemp(join(tmpdir(), 'omerta-agent-alpha-'));
+  const dir = await privateTempDir('omerta-agent-alpha-');
   const sessionFile = join(dir, 'session.json');
   const reportFile = join(dir, 'report.jsonl');
   const api = await localApi();
@@ -262,37 +651,38 @@ async function failClosedSessionTest() {
   const cases = [
     {
       name: 'corrupt JSON',
-      prepare: async (file) => writeFile(file, '{broken-json', 'utf8'),
+      prepare: async (file) => writePrivateSession(file, '{broken-json'),
       expected: /corrupt|session/i,
       sessionStatus: 200,
       expectedProbeCalls: 0,
     },
     {
       name: 'wrong origin',
-      prepare: async (file) => writeFile(file, JSON.stringify(sessionFor('https://wrong.example')), 'utf8'),
+      prepare: async (file) => writePrivateSession(file,
+        JSON.stringify(sessionFor('https://wrong.example'))),
       expected: /origin/i,
       sessionStatus: 200,
       expectedProbeCalls: 0,
     },
     {
       name: 'missing token',
-      prepare: async (file, base) => writeFile(file,
-        JSON.stringify(sessionFor(base, { token: undefined })), 'utf8'),
+      prepare: async (file, base) => writePrivateSession(file,
+        JSON.stringify(sessionFor(base, { token: undefined }))),
       expected: /token|session/i,
       sessionStatus: 200,
       expectedProbeCalls: 0,
     },
     {
       name: 'unexpected wallet field in session',
-      prepare: async (file, base) => writeFile(file,
-        JSON.stringify(sessionFor(base, { wallet: 'wallet-secret' })), 'utf8'),
+      prepare: async (file, base) => writePrivateSession(file,
+        JSON.stringify(sessionFor(base, { wallet: 'wallet-secret' }))),
       expected: /corrupt|session/i,
       sessionStatus: 200,
       expectedProbeCalls: 0,
     },
     {
       name: 'action body smuggled into pending journal',
-      prepare: async (file, base) => writeFile(file, JSON.stringify(sessionFor(base, {
+      prepare: async (file, base) => writePrivateSession(file, JSON.stringify(sessionFor(base, {
         pending: {
           operationId: 'operation-1',
           turnId: 'turn-1',
@@ -300,21 +690,21 @@ async function failClosedSessionTest() {
           startedAt: '2026-08-25T00:00:00.000Z',
           body: { prompt: 'authored-secret' },
         },
-      })), 'utf8'),
+      }))),
       expected: /corrupt|session/i,
       sessionStatus: 200,
       expectedProbeCalls: 0,
     },
     {
       name: 'expired token',
-      prepare: async (file, base) => writeFile(file, JSON.stringify(sessionFor(base)), 'utf8'),
+      prepare: async (file, base) => writePrivateSession(file, JSON.stringify(sessionFor(base))),
       expected: /401|unauthorized|expired/i,
       sessionStatus: 401,
       expectedProbeCalls: 1,
     },
     {
       name: 'transient probe failure',
-      prepare: async (file, base) => writeFile(file, JSON.stringify(sessionFor(base)), 'utf8'),
+      prepare: async (file, base) => writePrivateSession(file, JSON.stringify(sessionFor(base))),
       expected: /503|unavailable|verify/i,
       sessionStatus: 503,
       expectedProbeCalls: 1,
@@ -322,7 +712,7 @@ async function failClosedSessionTest() {
   ];
 
   for (const testCase of cases) {
-    const dir = await mkdtemp(join(tmpdir(), 'omerta-agent-alpha-session-'));
+    const dir = await privateTempDir('omerta-agent-alpha-session-');
     const sessionFile = join(dir, 'session.json');
     const reportFile = join(dir, 'report.jsonl');
     const api = await probeApi({ sessionStatus: testCase.sessionStatus });
@@ -358,12 +748,12 @@ async function failClosedSessionTest() {
 }
 
 async function orphanedLockMetadataTest() {
-  const dir = await mkdtemp(join(tmpdir(), 'omerta-agent-alpha-lock-'));
+  const dir = await privateTempDir('omerta-agent-alpha-lock-');
   const sessionFile = join(dir, 'session.json');
   const reportFile = join(dir, 'report.jsonl');
   const api = await probeApi();
   try {
-    await writeFile(sessionFile, JSON.stringify(sessionFor(api.baseUrl)), 'utf8');
+    await writePrivateSession(sessionFile, JSON.stringify(sessionFor(api.baseUrl)));
     await writeFile(`${sessionFile}.lock`, JSON.stringify({ pid: process.pid }), 'utf8');
     const summary = await runAgentAlpha({
       baseUrl: api.baseUrl,
@@ -438,10 +828,10 @@ async function actionApi({ kinds = ['crime'], policy = POLICY } = {}) {
 }
 
 async function withReadySession(api, prefix, callback) {
-  const dir = await mkdtemp(join(tmpdir(), prefix));
+  const dir = await privateTempDir(prefix);
   const sessionFile = join(dir, 'session.json');
   const reportFile = join(dir, 'report.jsonl');
-  await writeFile(sessionFile, JSON.stringify(sessionFor(api.baseUrl)), 'utf8');
+  await writePrivateSession(sessionFile, JSON.stringify(sessionFor(api.baseUrl)));
   try {
     return await callback({ sessionFile, reportFile });
   } finally {
@@ -861,7 +1251,7 @@ async function initialNameApi() {
 async function initialNameSafetyTest() {
   {
     const api = await localApi();
-    const dir = await mkdtemp(join(tmpdir(), 'omerta-agent-alpha-name-syntax-'));
+    const dir = await privateTempDir('omerta-agent-alpha-name-syntax-');
     const sessionFile = join(dir, 'session.json');
     const reportFile = join(dir, 'report.jsonl');
     try {
@@ -890,10 +1280,10 @@ async function initialNameSafetyTest() {
   {
     const api = await initialNameApi();
     await withReadySession(api, 'omerta-agent-alpha-name-correction-', async ({ sessionFile, reportFile }) => {
-      await writeFile(sessionFile, JSON.stringify(sessionFor(api.baseUrl, {
+      await writePrivateSession(sessionFile, JSON.stringify(sessionFor(api.baseUrl, {
         phase: 'initial_character_pending',
         characterName: 'Taken Name',
-      })), 'utf8');
+      })));
       await assert.rejects(
         runAgentAlpha({
           baseUrl: api.baseUrl,
@@ -936,10 +1326,10 @@ async function phaseRecoveryTest() {
   for (const phase of ['guest', 'initial_character_pending']) {
     const api = await phaseRecoveryApi({ initialPhase: phase });
     await withReadySession(api, 'omerta-agent-alpha-phase-', async ({ sessionFile, reportFile }) => {
-      await writeFile(sessionFile, JSON.stringify(sessionFor(api.baseUrl, {
+      await writePrivateSession(sessionFile, JSON.stringify(sessionFor(api.baseUrl, {
         phase,
         token: phase === 'guest' ? 'guest-token-secret' : 'agent-token-secret',
-      })), 'utf8');
+      })));
       const summary = await runAgentAlpha({
         baseUrl: api.baseUrl,
         sessionFile,
@@ -1053,10 +1443,10 @@ async function hardCrashReplayTest() {
   await app.listen({ port: 0, host: '127.0.0.1' });
   const address = app.server.address();
   const baseUrl = `http://127.0.0.1:${address.port}`;
-  const dir = await mkdtemp(join(tmpdir(), 'omerta-agent-alpha-hard-crash-'));
+  const dir = await privateTempDir('omerta-agent-alpha-hard-crash-');
   sessionFile = join(dir, 'session.json');
   const reportFile = join(dir, 'report.jsonl');
-  await writeFile(sessionFile, JSON.stringify(sessionFor(baseUrl)), 'utf8');
+  await writePrivateSession(sessionFile, JSON.stringify(sessionFor(baseUrl)));
 
   const runnerUrl = pathToFileURL(fileURLToPath(new URL('../tools/agent-alpha.js', import.meta.url))).href;
   const childCode = `
@@ -1193,10 +1583,10 @@ async function redirectOriginTest() {
   const originAddress = origin.server.address();
   const baseUrl = `http://127.0.0.1:${originAddress.port}`;
 
-  const dir = await mkdtemp(join(tmpdir(), 'omerta-agent-alpha-redirect-'));
+  const dir = await privateTempDir('omerta-agent-alpha-redirect-');
   const sessionFile = join(dir, 'session.json');
   const reportFile = join(dir, 'report.jsonl');
-  await writeFile(sessionFile, JSON.stringify(sessionFor(baseUrl)), 'utf8');
+  await writePrivateSession(sessionFile, JSON.stringify(sessionFor(baseUrl)));
   try {
     await assert.rejects(
       runAgentAlpha({
@@ -1220,10 +1610,11 @@ async function redirectOriginTest() {
 }
 
 async function physicalAliasLockTest() {
-  const dir = await mkdtemp(join(tmpdir(), 'omerta-agent-alpha-alias-lock-'));
+  const dir = await privateTempDir('omerta-agent-alpha-alias-lock-');
   const physicalDir = join(dir, 'physical');
   const aliasDir = join(dir, 'alias');
   await mkdir(physicalDir);
+  await secureWindowsDirectory(physicalDir);
   await symlink(physicalDir, aliasDir, process.platform === 'win32' ? 'junction' : 'dir');
   const sessionFile = join(physicalDir, 'session.json');
   const aliasSessionFile = join(aliasDir, 'session.json');
@@ -1253,7 +1644,7 @@ async function physicalAliasLockTest() {
   await app.listen({ port: 0, host: '127.0.0.1' });
   const address = app.server.address();
   const baseUrl = `http://127.0.0.1:${address.port}`;
-  await writeFile(sessionFile, JSON.stringify(sessionFor(baseUrl)), 'utf8');
+  await writePrivateSession(sessionFile, JSON.stringify(sessionFor(baseUrl)));
 
   let first;
   try {
@@ -1287,7 +1678,7 @@ async function physicalAliasLockTest() {
 }
 
 async function danglingSessionAliasCreateTest() {
-  const dir = await mkdtemp(join(tmpdir(), 'omerta-agent-alpha-dangling-session-'));
+  const dir = await privateTempDir('omerta-agent-alpha-dangling-session-');
   const sessionFile = join(dir, 'future-session.json');
   const aliasSessionFile = join(dir, 'dangling-session.json');
   await symlink(sessionFile, aliasSessionFile, 'file');
@@ -1328,8 +1719,8 @@ async function danglingSessionAliasCreateTest() {
         name: 'Alias Alpha',
         fetchImpl: aliasFetch,
       }),
-      /link|ENOENT|physical target/i,
-      'a dangling session alias fails closed instead of creating a second identity',
+      /link|ENOENT|physical target|locked.*live runner/i,
+      'a formerly dangling session alias fails closed on canonical identity or the live lock',
     );
     assert.equal(aliasCalls, 0,
       'the rejected dangling-alias invocation performs zero network work');
@@ -1343,12 +1734,12 @@ async function danglingSessionAliasCreateTest() {
 }
 
 async function danglingReportToFutureLockTest() {
-  const dir = await mkdtemp(join(tmpdir(), 'omerta-agent-alpha-dangling-report-'));
+  const dir = await privateTempDir('omerta-agent-alpha-dangling-report-');
   const sessionFile = join(dir, 'session.json');
   const reportFile = join(dir, 'report.jsonl');
   const lockFile = `${sessionFile}.lock`;
   const baseUrl = 'http://127.0.0.1:1';
-  await writeFile(sessionFile, JSON.stringify(sessionFor(baseUrl)), 'utf8');
+  await writePrivateSession(sessionFile, JSON.stringify(sessionFor(baseUrl)));
   await symlink(lockFile, reportFile, 'file');
   let networkCalls = 0;
   try {
@@ -1390,11 +1781,11 @@ async function distinctPhysicalTargetsTest() {
   await app.listen({ port: 0, host: '127.0.0.1' });
   const address = app.server.address();
   const baseUrl = `http://127.0.0.1:${address.port}`;
-  const dir = await mkdtemp(join(tmpdir(), 'omerta-agent-alpha-targets-'));
+  const dir = await privateTempDir('omerta-agent-alpha-targets-');
   try {
     for (const kind of ['equal', 'hardlink', 'lock']) {
       const sessionFile = join(dir, `${kind}-session.json`);
-      await writeFile(sessionFile, JSON.stringify(sessionFor(baseUrl)), 'utf8');
+      await writePrivateSession(sessionFile, JSON.stringify(sessionFor(baseUrl)));
       let reportFile = join(dir, `${kind}-report.jsonl`);
       if (kind === 'equal') reportFile = sessionFile;
       if (kind === 'hardlink') await link(sessionFile, reportFile);
@@ -1431,10 +1822,10 @@ async function unrelatedLegacyPortTest() {
   await app.listen({ port: 0, host: '127.0.0.1' });
   const address = app.server.address();
   const baseUrl = `http://127.0.0.1:${address.port}`;
-  const dir = await mkdtemp(join(tmpdir(), 'omerta-agent-alpha-port-'));
+  const dir = await privateTempDir('omerta-agent-alpha-port-');
   const sessionFile = join(dir, 'session.json');
   const reportFile = join(dir, 'report.jsonl');
-  await writeFile(sessionFile, JSON.stringify(sessionFor(baseUrl)), 'utf8');
+  await writePrivateSession(sessionFile, JSON.stringify(sessionFor(baseUrl)));
   const identity = process.platform === 'win32'
     ? resolve(sessionFile).toLowerCase()
     : resolve(sessionFile);
@@ -1461,10 +1852,10 @@ async function unrelatedLegacyPortTest() {
 
 async function realElapsedCadenceTest() {
   const api = await localApi();
-  const dir = await mkdtemp(join(tmpdir(), 'omerta-agent-alpha-real-cadence-'));
+  const dir = await privateTempDir('omerta-agent-alpha-real-cadence-');
   const sessionFile = join(dir, 'session.json');
   const reportFile = join(dir, 'report.jsonl');
-  await writeFile(sessionFile, JSON.stringify(sessionFor(api.baseUrl)), 'utf8');
+  await writePrivateSession(sessionFile, JSON.stringify(sessionFor(api.baseUrl)));
   api.state.agent = true;
   api.state.hasCharacter = true;
   api.state.characterName = 'Alpha Machine';
@@ -1499,6 +1890,9 @@ async function realElapsedCadenceTest() {
   }
 }
 
+await guestBootstrapServerRecoveryTest();
+await initialGuestCrashRecoveryTest();
+await credentialStorageConfidentialityTest();
 await lifecycleTest();
 await failClosedSessionTest();
 await orphanedLockMetadataTest();

@@ -14,6 +14,11 @@ CREATE TABLE IF NOT EXISTS accounts (
 -- CREATE TABLE IF NOT EXISTS is a no-op on a live DB, so an inline column would never land on the
 -- existing accounts table (the 2026-08-06 boot-crash lesson).
 ALTER TABLE accounts ADD COLUMN IF NOT EXISTS token_version INT NOT NULL DEFAULT 0;
+-- Agent Alpha's first request must be recoverable before any bearer exists. Only a domain-separated
+-- hash of its pre-written recovery credential is stored; the unique index is the database mutex that
+-- maps concurrent/replayed bootstrap requests to one account without using account-scoped idempotency.
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS guest_bootstrap_hash TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS ux_accounts_guest_bootstrap_hash ON accounts (guest_bootstrap_hash);
 CREATE TABLE IF NOT EXISTS account_persistent (
   account_id TEXT PRIMARY KEY,
   prestige INT NOT NULL DEFAULT 0,

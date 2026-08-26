@@ -2,6 +2,7 @@
 // A finite, conservative Agent Turn client. Identity state is deliberately local and reports are
 // deliberately lossy: the session owns the bearer token while telemetry owns no sensitive values.
 import crypto from 'node:crypto';
+import { execFile } from 'node:child_process';
 import {
   appendFile, lstat, mkdir, open, readFile, realpath, rename, stat, unlink,
 } from 'node:fs/promises';
@@ -9,6 +10,7 @@ import { createServer } from 'node:net';
 import { basename, dirname, join, resolve } from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
 
 const SESSION_VERSION = 1;
 const MIN_INTERVAL_MS = 3100;
@@ -26,6 +28,92 @@ const ALLOWED_KINDS = new Set([
 ]);
 
 const defaultSleep = (ms) => new Promise((resolveSleep) => setTimeout(resolveSleep, ms));
+const execFileAsync = promisify(execFile);
+
+const WINDOWS_ACL_CHECK = `
+  $ErrorActionPreference = 'Stop'
+  $target = $env:OMERTA_ALPHA_ACL_TARGET
+  $kind = $env:OMERTA_ALPHA_ACL_KIND
+  $userSid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+  $sections = [System.Security.AccessControl.AccessControlSections]::Access -bor
+    [System.Security.AccessControl.AccessControlSections]::Owner
+  if ($kind -eq 'directory') {
+    $item = New-Object System.IO.DirectoryInfo($target)
+  } else {
+    $item = New-Object System.IO.FileInfo($target)
+  }
+  if (-not $item.Exists) { exit 20 }
+  $acl = $item.GetAccessControl($sections)
+  $ownerSid = $acl.GetOwner([System.Security.Principal.SecurityIdentifier]).Value
+  if ($ownerSid -ne $userSid) { exit 21 }
+  if ($kind -eq 'directory' -and -not $acl.AreAccessRulesProtected) { exit 25 }
+  # SYSTEM and Administrators are the Windows security boundary: administrators can take ownership
+  # regardless of an ACE, while ordinary local users/groups must have no allow rule at all.
+  $trusted = @($userSid, 'S-1-5-18', 'S-1-5-32-544')
+  $ownerFullControl = $false
+  $rules = $acl.GetAccessRules(
+    $true,
+    $true,
+    [System.Security.Principal.SecurityIdentifier]
+  )
+  foreach ($rule in $rules) {
+    $sid = $rule.IdentityReference.Value
+    if ($rule.AccessControlType -ne [System.Security.AccessControl.AccessControlType]::Allow) {
+      exit 22
+    }
+    if ($trusted -notcontains $sid) { exit 23 }
+    if ($sid -eq $userSid) {
+      $rights = [int64]$rule.FileSystemRights
+      $full = [int64][System.Security.AccessControl.FileSystemRights]::FullControl
+      if (($rights -band $full) -eq $full) { $ownerFullControl = $true }
+    }
+  }
+  if (-not $ownerFullControl) { exit 24 }
+`;
+
+async function assertWindowsPrivateAcl(path, kind) {
+  const executable = process.env.SystemRoot
+    ? join(process.env.SystemRoot, 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe')
+    : 'powershell.exe';
+  try {
+    await execFileAsync(executable, [
+      '-NoLogo', '-NoProfile', '-NonInteractive', '-Command', WINDOWS_ACL_CHECK,
+    ], {
+      env: {
+        ...process.env,
+        OMERTA_ALPHA_ACL_TARGET: path,
+        OMERTA_ALPHA_ACL_KIND: kind,
+      },
+      timeout: 10000,
+      windowsHide: true,
+      maxBuffer: 1024,
+    });
+  } catch {
+    throw new Error('Agent Alpha credential storage ACL is not user-private');
+  }
+}
+
+async function assertPrivateStateParent(sessionFile) {
+  if (process.platform === 'win32') {
+    await assertWindowsPrivateAcl(dirname(sessionFile), 'directory');
+  }
+}
+
+async function assertPrivateStateFile(sessionFile) {
+  const info = await lstat(sessionFile);
+  if (!info.isFile()) throw new Error('Agent Alpha credential state must be a regular file');
+  if (info.nlink !== 1) throw new Error('Agent Alpha credential state must have one physical link');
+  if (process.platform === 'win32') {
+    await assertWindowsPrivateAcl(sessionFile, 'file');
+    return;
+  }
+  if (typeof process.geteuid !== 'function' || info.uid !== process.geteuid()) {
+    throw new Error('Agent Alpha credential state is owned by another principal');
+  }
+  if ((info.mode & 0o077) !== 0) {
+    throw new Error('Agent Alpha credential state permissions are not owner-private');
+  }
+}
 
 async function waitForCadence(timing, intervalMs) {
   const startedAt = timing.now();
@@ -63,7 +151,7 @@ function originOf(value) {
 
 async function pathExists(path) {
   try {
-    await readFile(path);
+    await lstat(path);
     return true;
   } catch (error) {
     if (error?.code === 'ENOENT') return false;
@@ -151,7 +239,23 @@ function validName(name) {
     name.length >= 2 && name.length <= 24 && /^[\w .,'&-]+$/.test(name);
 }
 
+async function writeIdentityState(path, value) {
+  await atomicJsonWrite(path, value);
+  await assertPrivateStateFile(path);
+}
+
+function validBootstrapSecret(value) {
+  if (typeof value !== 'string' || !/^[A-Za-z0-9_-]{43}$/.test(value)) return false;
+  const bytes = Buffer.from(value, 'base64url');
+  return bytes.length === 32 && bytes.toString('base64url') === value;
+}
+
+function validInviteCode(value) {
+  return value === null || (typeof value === 'string' && value.length > 0 && value.length <= 128);
+}
+
 async function readSession(sessionFile) {
+  await assertPrivateStateFile(sessionFile);
   let session;
   try { session = JSON.parse(await readFile(sessionFile, 'utf8')); }
   catch { throw new Error('Agent Alpha session is corrupt'); }
@@ -165,13 +269,16 @@ async function readSession(sessionFile) {
     typeof session.pending.actionId === 'string' && session.pending.actionId &&
     typeof session.pending.startedAt === 'string' && session.pending.startedAt
   );
-  if (!session || !exactKeys(session,
-      ['version', 'base', 'phase', 'token', 'characterName', 'pending']) ||
-      session.version !== SESSION_VERSION ||
-      !['guest', 'initial_character_pending', 'agent'].includes(session.phase) ||
-      typeof session.base !== 'string' ||
-      typeof session.token !== 'string' || !session.token ||
-      !validName(session.characterName) || !pendingValid) {
+  const bootstrapValid = session?.phase === 'bootstrap' &&
+    exactKeys(session, [
+      'version', 'base', 'phase', 'bootstrapSecret', 'inviteCode', 'characterName', 'pending',
+    ]) && validBootstrapSecret(session.bootstrapSecret) && validInviteCode(session.inviteCode) &&
+    session.pending === null;
+  const bearerValid = ['guest', 'initial_character_pending', 'agent'].includes(session?.phase) &&
+    exactKeys(session, ['version', 'base', 'phase', 'token', 'characterName', 'pending']) &&
+    typeof session.token === 'string' && !!session.token && pendingValid;
+  if (!session || session.version !== SESSION_VERSION || typeof session.base !== 'string' ||
+      !validName(session.characterName) || (!bootstrapValid && !bearerValid)) {
     throw new Error('Agent Alpha session is corrupt or missing required identity state');
   }
   return session;
@@ -216,6 +323,7 @@ async function canonicalRunnerPaths(sessionFile, reportFile) {
   if (new Set(keys).size !== keys.length) {
     throw new Error('Agent Alpha session, report, and lock targets must be physically distinct');
   }
+  await assertPrivateStateParent(session);
   return { sessionFile: session, reportFile: report, lockFile: lock };
 }
 
@@ -296,21 +404,46 @@ async function releaseLock(lock) {
   }
 }
 
-async function createIdentity({ base, sessionFile, name, fetchImpl }) {
-  if (!validName(name)) throw new Error('Explicit creation requires a valid 2-24 character name');
-  const guest = await requestJson(fetchImpl, base, '/v1/auth/guest', { method: 'POST' });
+async function recoverGuestBootstrap({ base, sessionFile, session, fetchImpl }) {
+  const guest = await requestJson(fetchImpl, base, '/v1/auth/guest', {
+    method: 'POST',
+    body: {
+      bootstrapSecret: session.bootstrapSecret,
+      ...(session.inviteCode === null ? {} : { inviteCode: session.inviteCode }),
+    },
+  });
   if (typeof guest?.token !== 'string' || !guest.token) {
     throw new Error('Guest creation returned no token');
   }
-  let session = {
+  const bearerSession = {
     version: SESSION_VERSION,
     base,
     phase: 'guest',
     token: guest.token,
+    characterName: session.characterName,
+    pending: null,
+  };
+  await writeIdentityState(sessionFile, bearerSession);
+  return bearerSession;
+}
+
+async function createIdentity({ base, sessionFile, name, inviteCode, fetchImpl }) {
+  if (!validName(name)) throw new Error('Explicit creation requires a valid 2-24 character name');
+  const storedInvite = inviteCode ?? null;
+  if (!validInviteCode(storedInvite)) {
+    throw new Error('Agent Alpha invite code must be a non-empty string of at most 128 characters');
+  }
+  let session = {
+    version: SESSION_VERSION,
+    base,
+    phase: 'bootstrap',
+    bootstrapSecret: crypto.randomBytes(32).toString('base64url'),
+    inviteCode: storedInvite,
     characterName: name,
     pending: null,
   };
-  await atomicJsonWrite(sessionFile, session);
+  await writeIdentityState(sessionFile, session);
+  session = await recoverGuestBootstrap({ base, sessionFile, session, fetchImpl });
 
   const agent = await requestJson(fetchImpl, base, '/v1/auth/agent-key', {
     method: 'POST', token: session.token,
@@ -320,7 +453,7 @@ async function createIdentity({ base, sessionFile, name, fetchImpl }) {
     throw new Error('Agent-key creation returned no token');
   }
   session = { ...session, phase: 'initial_character_pending', token: agent.token };
-  await atomicJsonWrite(sessionFile, session);
+  await writeIdentityState(sessionFile, session);
 
   await requestJson(fetchImpl, base, '/v1/character', {
     method: 'POST', token: session.token, body: { name },
@@ -330,6 +463,9 @@ async function createIdentity({ base, sessionFile, name, fetchImpl }) {
 }
 
 async function ensureIdentity({ base, fetchImpl, sessionFile, session, requestedName }) {
+  if (session.phase === 'bootstrap') {
+    session = await recoverGuestBootstrap({ base, fetchImpl, sessionFile, session });
+  }
   let probe = await requestJson(fetchImpl, base, '/v1/session', { token: session.token });
   if (!probe?.authed) throw new Error('Agent Alpha could not verify its bound session');
 
@@ -346,7 +482,7 @@ async function ensureIdentity({ base, fetchImpl, sessionFile, session, requested
       throw new Error('Agent-key creation returned no token');
     }
     session = { ...session, phase: 'initial_character_pending', token: agent.token };
-    await atomicJsonWrite(sessionFile, session);
+    await writeIdentityState(sessionFile, session);
     probe = { ...probe, agent: true, hasCharacter: false, character: null };
   }
 
@@ -357,7 +493,7 @@ async function ensureIdentity({ base, fetchImpl, sessionFile, session, requested
         throw new Error('Initial character does not match its pending bound name');
       }
       session = { ...session, phase: 'agent' };
-      await atomicJsonWrite(sessionFile, session);
+      await writeIdentityState(sessionFile, session);
       return session;
     }
     if (requestedName !== undefined) {
@@ -366,7 +502,7 @@ async function ensureIdentity({ base, fetchImpl, sessionFile, session, requested
       }
       if (requestedName !== session.characterName) {
         session = { ...session, characterName: requestedName };
-        await atomicJsonWrite(sessionFile, session);
+        await writeIdentityState(sessionFile, session);
       }
     }
     await requestJson(fetchImpl, base, '/v1/character', {
@@ -382,7 +518,7 @@ async function ensureIdentity({ base, fetchImpl, sessionFile, session, requested
       throw new Error('Initial character could not be confirmed under its bound name');
     }
     session = { ...session, phase: 'agent' };
-    await atomicJsonWrite(sessionFile, session);
+    await writeIdentityState(sessionFile, session);
     return session;
   }
 
@@ -430,7 +566,7 @@ async function settlePending({ base, fetchImpl, reportFile, sessionFile, session
   } catch (error) {
     if (error?.status !== 409 || error?.code !== 'stale_turn') throw error;
     session = { ...session, pending: null };
-    await atomicJsonWrite(sessionFile, session);
+    await writeIdentityState(sessionFile, session);
     await appendReport(reportFile, {
       timestamp: new Date().toISOString(),
       status: 'stale',
@@ -442,7 +578,7 @@ async function settlePending({ base, fetchImpl, reportFile, sessionFile, session
   }
 
   session = { ...session, pending: null };
-  await atomicJsonWrite(sessionFile, session);
+  await writeIdentityState(sessionFile, session);
   await appendReport(reportFile, {
     timestamp: new Date().toISOString(),
     status: 'executed',
@@ -473,7 +609,9 @@ async function runUnlocked(options, timing) {
     if (options.create !== true) {
       throw new Error('Agent Alpha session is missing; explicit --create is required');
     }
-    session = await createIdentity({ base, sessionFile, name: options.name, fetchImpl });
+    session = await createIdentity({
+      base, sessionFile, name: options.name, inviteCode: options.inviteCode, fetchImpl,
+    });
   }
 
   if (session.base !== base) throw new Error('Agent Alpha session belongs to a different origin');
@@ -534,7 +672,7 @@ async function runUnlocked(options, timing) {
         startedAt: new Date().toISOString(),
       },
     };
-    await atomicJsonWrite(sessionFile, session);
+    await writeIdentityState(sessionFile, session);
     attempts += 1;
     const settled = await settlePending({
       base, fetchImpl, reportFile, sessionFile, session, actionKind: action.kind,

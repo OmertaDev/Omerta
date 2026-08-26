@@ -121,6 +121,90 @@ export async function accountForIdentity(pool, { provider, subject }, ip, invite
   } finally { client.release(); }
 }
 
+const guestBootstrapLocks = new Map();
+async function withGuestBootstrapLock(recoveryHash, operation) {
+  const previous = guestBootstrapLocks.get(recoveryHash) || Promise.resolve();
+  let release;
+  const current = new Promise((resolveCurrent) => { release = resolveCurrent; });
+  guestBootstrapLocks.set(recoveryHash, current);
+  await previous;
+  try {
+    return await operation();
+  } finally {
+    release();
+    if (guestBootstrapLocks.get(recoveryHash) === current) guestBootstrapLocks.delete(recoveryHash);
+  }
+}
+
+// Agent Alpha cannot authenticate its first guest request with an account-scoped idempotency key:
+// no account or bearer exists yet, and auth routes are intentionally outside that hook. Instead the
+// client writes a random 256-bit recovery credential before network I/O. The server stores only its
+// domain-separated hash. A short process-local queue makes same-process retries deterministic (and
+// keeps pg-mem honest); the unique index is the cross-process backstop. Invite consumption, account,
+// and persistent state commit together, while every later proof adopts the committed account.
+export async function accountForGuestBootstrap(pool, recoverySecret, ip, invite) {
+  if (typeof recoverySecret !== 'string' || !/^[A-Za-z0-9_-]{43}$/.test(recoverySecret)) {
+    throw new GameError('bootstrap_credential', 'Invalid guest bootstrap credential.');
+  }
+  const secretBytes = Buffer.from(recoverySecret, 'base64url');
+  if (secretBytes.length !== 32 || secretBytes.toString('base64url') !== recoverySecret) {
+    throw new GameError('bootstrap_credential', 'Invalid guest bootstrap credential.');
+  }
+  const recoveryHash = crypto.createHash('sha256')
+    .update('omerta-agent-alpha-guest-bootstrap-v1\0')
+    .update(secretBytes)
+    .digest('hex');
+  return withGuestBootstrapLock(recoveryHash, async () => {
+    const existing = (await pool.query(
+      `SELECT a.id, a.status, ap.account_id AS persistent_account
+         FROM accounts a LEFT JOIN account_persistent ap ON ap.account_id=a.id
+        WHERE a.guest_bootstrap_hash=$1`,
+      [recoveryHash],
+    )).rows[0];
+    if (existing) {
+      if (existing.status === 'banned') throw new GameError('banned', 'This account is banned.');
+      if (!existing.persistent_account) {
+        throw new GameError('bootstrap_contention', 'Guest bootstrap is still committing.');
+      }
+      await pool.query('UPDATE accounts SET last_ip=$2 WHERE id=$1', [existing.id, ip]);
+      return { accountId: existing.id, created: false };
+    }
+
+    const id = crypto.randomUUID();
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      await consumeInvite(client, invite);
+      await client.query(
+        `INSERT INTO accounts
+           (id, auth_provider, auth_subject, created_ip, last_ip, guest_bootstrap_hash)
+         VALUES ($1, 'guest', $1, $2, $2, $3)`,
+        [id, ip, recoveryHash],
+      );
+      await client.query('INSERT INTO account_persistent (account_id) VALUES ($1)', [id]);
+      await client.query('COMMIT');
+      return { accountId: id, created: true };
+    } catch (error) {
+      await client.query('ROLLBACK');
+      // A different server process may have won the unique-index race. Its committed mapping is
+      // authoritative; adopting it is recovery, while an absent/incomplete row keeps us fail-closed.
+      const winner = (await pool.query(
+        `SELECT a.id, a.status, ap.account_id AS persistent_account
+           FROM accounts a LEFT JOIN account_persistent ap ON ap.account_id=a.id
+          WHERE a.guest_bootstrap_hash=$1`,
+        [recoveryHash],
+      )).rows[0];
+      if (winner?.persistent_account) {
+        if (winner.status === 'banned') throw new GameError('banned', 'This account is banned.');
+        return { accountId: winner.id, created: false };
+      }
+      throw error;
+    } finally {
+      client.release();
+    }
+  });
+}
+
 // Guest → provider upgrade: same account row, so possessions survive (§4). The
 // UNIQUE constraint is the real guard — the pre-check is just a friendlier error.
 export async function upgradeAccount(pool, accountId, { provider, subject }) {
