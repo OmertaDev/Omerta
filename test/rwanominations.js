@@ -21,7 +21,6 @@ const HOUR = 60 * 60 * 1000;
 const DAY = 24 * HOUR;
 const BASE_TIME = new Date('2026-01-01T00:00:00.000Z');
 const SCHEMA = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'schema.sql'), 'utf8');
-const SOURCE = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'src', 'rwanominations.js'), 'utf8');
 const hash = (byte) => `0x${byte.repeat(64)}`;
 const address = (byte) => getAddress(`0x${byte.repeat(40)}`);
 const iso = (value) => new Date(value).toISOString();
@@ -78,11 +77,12 @@ async function fixture(existingPool) {
   return { pool, actors };
 }
 
-function adaptedClient(client, { now = BASE_TIME, barrier, log, afterQuery } = {}) {
+function adaptedClient(client, { now = BASE_TIME, barrier, log, trace, afterQuery } = {}) {
   return {
     query: async (text, params) => {
       const sql = typeof text === 'string' ? text : text.text;
       log?.push(sql);
+      trace?.push({ sql, params: params ?? [] });
       if (sql.includes('rwa_wall_clock')) {
         return { rows: [{ wall_now: new Date(now) }], rowCount: 1 };
       }
@@ -204,6 +204,77 @@ function ownedPool(pool, log = []) {
       },
     },
   };
+}
+
+function ownedAdaptedPool(pool, options = {}) {
+  const counts = { connect: 0, release: 0 };
+  return {
+    counts,
+    db: {
+      connect: async () => {
+        counts.connect++;
+        const raw = await pool.connect();
+        const client = adaptedClient(raw, options);
+        client.release = () => {
+          counts.release++;
+          raw.release();
+        };
+        return client;
+      },
+    },
+  };
+}
+
+async function insertBulkNominations(pool, count, {
+  prefix = 'bulk', start = 0, ticker = (i) => `B${i}`, status = 'pending',
+  createdAt = (i) => new Date(BASE_TIME.getTime() + i),
+  pendingUntil = (i) => new Date(BASE_TIME.getTime() + 20 * DAY + i),
+} = {}) {
+  for (let batchStart = 0; batchStart < count; batchStart += 250) {
+    const values = [];
+    const params = [];
+    const batchEnd = Math.min(count, batchStart + 250);
+    for (let local = batchStart; local < batchEnd; local++) {
+      const i = start + local;
+      const offset = params.length;
+      values.push(`($${offset + 1},$${offset + 2},4663,$${offset + 3},$${offset + 4},$${offset + 5},18,
+        $${offset + 6},'Bulk','family-1','account-1',true,'Bulk rationale',$${offset + 7},NULL,
+        $${offset + 8},'not_applicable',$${offset + 9},$${offset + 10})`);
+      params.push(
+        `${prefix}-${String(i).padStart(5, '0')}`,
+        `${prefix}-key-${String(i).padStart(5, '0')}`,
+        ticker(i),
+        keccak256(toBytes(`${prefix}-ticker-${i}`)),
+        address(String((i % 9) + 1)),
+        keccak256(toBytes(`${prefix}-provider-${i}`)),
+        keccak256(toBytes(`${prefix}-evidence-${i}`)),
+        status,
+        createdAt(i),
+        pendingUntil(i),
+      );
+    }
+    await pool.query(`INSERT INTO rwa_nominations_v2
+      (id,asset_version_key,chain_id,ticker,ticker_hash,token_address,token_decimals,
+       robinhood_asset_id_hash,name,sponsor_family_id,sponsor_account_id,sponsor_support_active,
+       rationale,evidence_hash,evidence_uri,status,execution_status,created_at,pending_until)
+      VALUES ${values.join(',')}`, params);
+  }
+}
+
+async function insertBulkEndorsements(pool, nominationId, count, { active = true, prefix = 'old-family' } = {}) {
+  for (let batchStart = 0; batchStart < count; batchStart += 500) {
+    const values = [];
+    const params = [];
+    const batchEnd = Math.min(count, batchStart + 500);
+    for (let i = batchStart; i < batchEnd; i++) {
+      const offset = params.length;
+      values.push(`($${offset + 1},$${offset + 2},$${offset + 3},$${offset + 4},NULL,$${offset + 5})`);
+      params.push(nominationId, `${prefix}-${String(i).padStart(5, '0')}`,
+        `${prefix}-account-${i}`, active, BASE_TIME);
+    }
+    await pool.query(`INSERT INTO rwa_nomination_endorsements_v2
+      (nomination_id,family_id,account_id,active,rationale,updated_at) VALUES ${values.join(',')}`, params);
+  }
 }
 
 // Authority is re-read from membership + the current chamber in the mutation transaction. A stale
@@ -707,9 +778,9 @@ function ownedPool(pool, log = []) {
     'terminal history is outside the procedural board domain');
   assert.equal(oneSql.length, manySql.length,
     'batch enrichment keeps query count constant as page size grows without state transitions');
-  assert.equal(oneSql.length, 7, 'one mutation-free board page uses seven domain queries');
+  assert.equal(oneSql.length, 8, 'one mutation-free board page uses eight hard-bounded domain queries');
   assert.equal(maxSql.length, manySql.length, 'the accepted 500-row cap retains the constant query budget');
-  assert.match(manySql.find((sql) => /WITH\s+scores/i.test(sql)),
+  assert.match(manySql.find((sql) => sql.includes('rwa_board_candidates')),
     /status\s+IN\s*\('pending','review_requested','under_review'\)/i);
 
   const page1Sql = [];
@@ -729,6 +800,159 @@ function ownedPool(pool, log = []) {
   assert.equal(poolSql.filter((sql) => /^BEGIN\s+ISOLATION\s+LEVEL\s+REPEATABLE\s+READ$/i.test(sql.trim())).length, 1,
     'pool-owned public board uses one coherent repeatable-read transaction');
   assert.equal(poolSql.filter((sql) => /^COMMIT\b/i.test(sql.trim())).length, 1);
+  await pool.end();
+}
+
+// The public board has a reviewed, immutable 5,000-live-row work horizon. The 5,001st live
+// candidate fails closed before ranking or mutation; finalizedOnly applies to the lightweight
+// candidate probe itself, so unrelated nonfinalized live rows cannot overload a finalized view.
+{
+  const { pool } = await fixture();
+  await insertBulkNominations(pool, 5001, { prefix: 'wall', ticker: (i) => `W${i}` });
+  const sql = [];
+  const trace = [];
+  const beforeEvents = (await rows(pool, 'SELECT * FROM rwa_nomination_events_v2')).length;
+  await rejectsCode(rwaNominationBoard(adaptedClient(pool, { now: BASE_TIME, log: sql, trace }), { limit: 1 }),
+    'board_overloaded', 'the 5,001st live candidate fails the whole board closed');
+  const probe = trace.find((entry) => entry.sql.includes('rwa_board_candidates'));
+  assert(probe, 'board runs the lightweight candidate sentinel before ranking');
+  assert.equal(probe.params.at(-1), 5001, 'the reviewed candidate sentinel is exactly 5,001');
+  assert.equal(sql.some((query) => /WITH\s+scores/i.test(query)), false,
+    'overload performs no support aggregation');
+  assert.equal((await rows(pool, 'SELECT * FROM rwa_nomination_events_v2')).length, beforeEvents);
+  assert.equal((await rows(pool, "SELECT * FROM rwa_nominations_v2 WHERE status <> 'pending'")).length, 0,
+    'overload performs no partial expiry or cleanup mutation');
+
+  await pool.query(
+    `INSERT INTO stock_asset_versions_v2
+      (asset_version_key,chain_id,ticker_hash,ticker,name,token_address,token_decimals,
+       robinhood_asset_id_hash,registry_index,active,last_catalog_version,synced_at)
+     SELECT asset_version_key,chain_id,ticker_hash,ticker,name,token_address,token_decimals,
+       robinhood_asset_id_hash,0,true,1,$2::timestamptz FROM rwa_nominations_v2 WHERE id=$1`,
+    ['wall-00000', BASE_TIME],
+  );
+  const finalized = await rwaNominationBoard(adaptedClient(pool, { now: BASE_TIME }), {
+    finalizedOnly: true, limit: 1,
+  });
+  assert.deepEqual(finalized.items.map((item) => item.id), ['wall-00000']);
+  await pool.end();
+}
+
+// Ranking/enrichment work is restricted to the lightweight live universe and current seated active
+// slots. This fixture is materially larger than one page and carries terminal nomination history
+// plus inactive nonseated slot history, neither of which enters rank or item support.
+{
+  const { pool } = await fixture();
+  await insertBulkNominations(pool, 120, { prefix: 'live-work', ticker: (i) => `L${i}` });
+  await insertBulkNominations(pool, 300, {
+    prefix: 'terminal-history', ticker: (i) => `H${i}`, status: 'rejected',
+    createdAt: (i) => new Date(BASE_TIME.getTime() - DAY - i),
+    pendingUntil: (i) => new Date(BASE_TIME.getTime() + DAY + i),
+  });
+  await pool.query(
+    `INSERT INTO rwa_nomination_endorsements_v2
+      (nomination_id,family_id,account_id,active,rationale,updated_at)
+     SELECT id,'family-2','account-2',true,NULL,$1::timestamptz FROM rwa_nominations_v2 WHERE id LIKE 'live-work-%'`,
+    [BASE_TIME],
+  );
+  await pool.query(
+    `INSERT INTO rwa_nomination_endorsements_v2
+      (nomination_id,family_id,account_id,active,rationale,updated_at)
+     SELECT id,'departed-' || id,'departed-account',false,NULL,$1::timestamptz
+       FROM rwa_nominations_v2 WHERE id LIKE 'live-work-%'`,
+    [BASE_TIME],
+  );
+  let candidateRows;
+  let activeSlotRows;
+  const sql = [];
+  const board = await rwaNominationBoard(adaptedClient(pool, {
+    now: BASE_TIME,
+    log: sql,
+    afterQuery: (query, params, raw, result) => {
+      if (query.includes('rwa_board_candidates')) candidateRows = result.rows;
+      if (query.includes('rwa_board_active_slots')) activeSlotRows = result.rows;
+    },
+  }), { limit: 100 });
+  assert.equal(candidateRows.length, 120, 'the candidate universe excludes 300 terminal rows');
+  assert.equal(candidateRows[0].id, 'live-work-00000');
+  assert.equal(candidateRows.at(-1).id, 'live-work-00119',
+    'the lightweight universe has stable immutable created/id ordering');
+  assert.equal(activeSlotRows.length, 100, 'enrichment returns at most one current slot per selected nomination here');
+  assert.equal(activeSlotRows.every((slot) => slot.active && slot.family_id === 'family-2'), true,
+    'inactive and nonseated historical slots do not enter enrichment');
+  assert.equal(board.items.length, 100);
+  assert.equal(board.items.every((item) => item.support === 2 && item.id.startsWith('live-work-')), true);
+  assert.equal(sql.length, 8, 'query count is constant beyond one full page');
+  const ranking = sql.find((query) => /WITH\s+scores/i.test(query));
+  assert.match(ranking, /n\.id\s+IN\s*\(/i, 'support aggregation is restricted to candidate IDs');
+  assert.match(ranking, /e\.active[\s\S]*e\.family_id\s+IN/i,
+    'ranking joins only active current seated endorsement slots');
+  await pool.end();
+}
+
+// Stale-slot cleanup has its own 5,001-row preflight sentinel. Overflow is rejected before the
+// first sponsor/endorsement cleanup update or event, leaving every stored stale slot active.
+{
+  const { pool } = await fixture();
+  await insertBulkNominations(pool, 1, { prefix: 'stale-wall', ticker: () => 'STALE' });
+  await pool.query(
+    "UPDATE rwa_nominations_v2 SET sponsor_family_id='departed-sponsor' WHERE id='stale-wall-00000'",
+  );
+  await insertBulkEndorsements(pool, 'stale-wall-00000', 5001);
+  const trace = [];
+  await rejectsCode(rwaNominationBoard(adaptedClient(pool, {
+    now: BASE_TIME,
+    trace,
+  }), { limit: 1 }), 'board_overloaded', 'the stale-slot sentinel fails before cleanup');
+  const preflight = trace.find((entry) => entry.sql.includes('rwa_board_stale_preflight'));
+  assert.equal(preflight.params.at(-1), 5001, 'the reviewed stale-slot sentinel is exactly 5,001');
+  assert.equal((await rows(pool,
+    "SELECT sponsor_support_active FROM rwa_nominations_v2 WHERE id='stale-wall-00000'"))[0]
+    .sponsor_support_active, true);
+  assert.equal((await rows(pool,
+    "SELECT * FROM rwa_nomination_endorsements_v2 WHERE nomination_id='stale-wall-00000' AND active")).length,
+  5001, 'stale overflow performs no partial endorsement cleanup');
+  assert.equal((await rows(pool, 'SELECT * FROM rwa_nomination_events_v2')).length, 0,
+    'stale overflow appends no partial cleanup event');
+  await pool.end();
+}
+
+// One conflict algorithm serves PostgreSQL and pg-mem: the bounded live candidate universe is
+// grouped in memory by ticker, then filtered by different row + different key before the exact 20+1
+// sentinel. A dense early ticker cannot starve a later ticker on the same returned page.
+{
+  const { pool } = await fixture();
+  await insertBulkNominations(pool, 45, { prefix: 'aaa', ticker: () => 'AAA' });
+  await insertBulkNominations(pool, 22, {
+    prefix: 'bbb', ticker: () => 'BBB',
+    createdAt: (i) => new Date(BASE_TIME.getTime() + 500 + i),
+    pendingUntil: (i) => new Date(BASE_TIME.getTime() + 20 * DAY + 500 + i),
+  });
+  await insertBulkNominations(pool, 2, {
+    prefix: 'zzz', ticker: () => 'ZZZ',
+    createdAt: (i) => new Date(BASE_TIME.getTime() + 1000 + i),
+    pendingUntil: (i) => new Date(BASE_TIME.getTime() + 20 * DAY + 1000 + i),
+  });
+  const sql = [];
+  const board = await rwaNominationBoard(adaptedClient(pool, { now: BASE_TIME, log: sql }), { limit: 69 });
+  const aaa = board.items.filter((item) => item.ticker === 'AAA');
+  const bbb = board.items.filter((item) => item.ticker === 'BBB');
+  const zzz = board.items.filter((item) => item.ticker === 'ZZZ');
+  assert.equal(aaa.length, 45);
+  assert.equal(aaa.every((item) => item.tickerConflicts.length === 20 && item.tickerConflictsHasMore), true);
+  assert.deepEqual(aaa[0].tickerConflicts.map((item) => item.id),
+    Array.from({ length: 20 }, (_, i) => `aaa-${String(i + 1).padStart(5, '0')}`),
+  'an early self is removed before taking the 20+1 sentinel');
+  assert.equal(bbb.length, 22);
+  assert.equal(bbb[0].tickerConflicts.length, 20);
+  assert.equal(bbb[0].tickerConflictsHasMore, true,
+    'with exactly 22 versions, an early self is excluded before the exact 20+1 sentinel');
+  assert.equal(zzz.length, 2);
+  assert.deepEqual(zzz.map((item) => item.tickerConflicts.map((conflict) => conflict.id)),
+    [['zzz-00001'], ['zzz-00000']]);
+  assert.equal(zzz.every((item) => item.tickerConflictsHasMore === false), true);
+  assert.equal(sql.some((query) => /ROW_NUMBER\(\)|rwa_board_conflicts/i.test(query)), false,
+    'conflict context adds no divergent SQL query or per-item N+1');
   await pool.end();
 }
 
@@ -790,6 +1014,50 @@ function ownedPool(pool, log = []) {
   assert.deepEqual((await rows(pool, 'SELECT status FROM rwa_nominations_v2 ORDER BY status'))
     .map((r) => r.status).sort(),
   ['approved', 'expired', 'expired', 'expired', 'not_eligible', 'rejected'].sort());
+  await pool.end();
+}
+
+// Owned expiry uses one repeatable-read selection/lock snapshot. If another worker terminalizes B
+// after A,B,C were selected for a limit-2 page, C remains the sentinel and hasMore stays true; the
+// next cursor drains C,D instead of falsely declaring the worker empty.
+{
+  const { pool } = await fixture();
+  await insertBulkNominations(pool, 4, {
+    prefix: 'expiry-race', ticker: (i) => `ER${i}`,
+    createdAt: (i) => new Date(BASE_TIME.getTime() - 40 * DAY + i),
+    pendingUntil: (i) => new Date(BASE_TIME.getTime() - (4 - i) * HOUR),
+  });
+  let terminalized = false;
+  const sql = [];
+  const owner = ownedAdaptedPool(pool, {
+    now: BASE_TIME,
+    log: sql,
+    afterQuery: async (query, params, raw) => {
+      if (!terminalized && /SELECT\s+id,pending_until\s+FROM\s+rwa_nominations_v2/i.test(query)) {
+        terminalized = true;
+        await raw.query("UPDATE rwa_nominations_v2 SET status='rejected' WHERE id='expiry-race-00001'");
+      }
+    },
+  });
+  const first = await expireRwaNominations(owner.db, { limit: 2 });
+  assert.equal(first.processed, 1);
+  assert.equal(first.hasMore, true, 'the snapshot sentinel survives concurrent terminalization');
+  assert(first.nextCursor);
+  assert.equal(sql.filter((query) => /^BEGIN\s+ISOLATION\s+LEVEL\s+REPEATABLE\s+READ$/i.test(query.trim())).length, 1);
+  assert.equal(owner.counts.connect, 1);
+  assert.equal(owner.counts.release, 1);
+  const second = await expireRwaNominations(adaptedClient(pool, { now: BASE_TIME }), {
+    limit: 2, cursor: first.nextCursor,
+  });
+  assert.equal(second.processed, 2);
+  assert.equal(second.hasMore, false);
+  assert.deepEqual((await rows(pool, 'SELECT id,status FROM rwa_nominations_v2 ORDER BY id')),
+    [
+      { id: 'expiry-race-00000', status: 'expired' },
+      { id: 'expiry-race-00001', status: 'rejected' },
+      { id: 'expiry-race-00002', status: 'expired' },
+      { id: 'expiry-race-00003', status: 'expired' },
+    ]);
   await pool.end();
 }
 
@@ -883,7 +1151,5 @@ assert.match(SCHEMA, /ix_rwa_nominations_version_history_v2[\s\S]*asset_version_
 assert.match(SCHEMA, /ix_rwa_nominations_live_ticker_version_v2[\s\S]*ticker, asset_version_key, created_at, id[\s\S]*WHERE status IN/i);
 assert.match(SCHEMA, /ix_rwa_nominations_live_ticker_order_v2[\s\S]*ticker, created_at, id, asset_version_key[\s\S]*WHERE status IN/i);
 assert.match(SCHEMA, /ix_rwa_nominations_live_queue_v2[\s\S]*created_at, id[\s\S]*WHERE status IN/i);
-assert.match(SOURCE, /conflict\.asset_version_key\s*!==\s*row\.asset_version_key/,
-  'conflict context requires a different asset-version key as well as the same ticker');
 
 console.log('✅ RWA nominations v2 domain tests passed — immutable candidate identity, current-seat support, fixed threshold/review ownership, deadline precedence, PostgreSQL duplicate SQL, and bounded stable cursors.');

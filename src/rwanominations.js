@@ -16,6 +16,8 @@ const CADENCE_MS = 168 * 60 * 60 * 1000;
 const PENDING_MS = 30 * 24 * 60 * 60 * 1000;
 const DEFAULT_LIMIT = 100;
 const MAX_LIMIT = 500;
+const BOARD_LIVE_WORK_MAX = 5000;
+const BOARD_STALE_SLOT_WORK_MAX = 5000;
 const ZERO_HASH = `0x${'00'.repeat(32)}`;
 const SAFE_TEXT = /^[^<>"\x60\x00-\x1f\x7f]*$/;
 
@@ -232,14 +234,21 @@ async function endorsements(client, id) {
   )).rows;
 }
 
-async function endorsementsFor(client, ids) {
+async function endorsementsFor(client, ids, activeSeats) {
   if (!ids.length) return new Map();
   const params = [];
   const placeholders = inList(ids, params);
+  let activeWhere = '';
+  if (activeSeats) {
+    const seated = inList([...activeSeats], params);
+    activeWhere = `AND active AND family_id IN (${seated})`;
+  }
   const rows = (await client.query(
     `SELECT nomination_id,family_id,account_id,active,rationale,updated_at
        FROM rwa_nomination_endorsements_v2
-      WHERE nomination_id IN (${placeholders}) ORDER BY nomination_id ASC,family_id ASC`,
+      WHERE nomination_id IN (${placeholders}) ${activeWhere}
+      ORDER BY nomination_id ASC,family_id ASC
+      ${activeSeats ? '/* rwa_board_active_slots */' : ''}`,
     params,
   )).rows;
   const grouped = new Map(ids.map((id) => [String(id), []]));
@@ -670,20 +679,20 @@ export async function expireRwaNominations(db, options = {}) {
     const locked = await lockNominationsById(client, selected.map((row) => row.id));
     const byId = new Map(locked.map((row) => [String(row.id), row]));
     const at = await wallClock(client);
-    const due = selected.map((row) => byId.get(String(row.id)))
-      .filter((row) => row && OPEN.has(row.status)
-        && at.getTime() >= new Date(row.pending_until).getTime());
-    const hasMore = due.length > page.limit;
-    const work = due.slice(0, page.limit);
+    const dueRefs = selected.filter((row) => at.getTime() >= new Date(row.pending_until).getTime());
+    const hasMore = dueRefs.length > page.limit;
+    const pageRefs = dueRefs.slice(0, page.limit);
+    const work = pageRefs.map((row) => byId.get(String(row.id)))
+      .filter((row) => row && OPEN.has(row.status));
     for (const row of work) await expireLocked(client, row, at);
-    const last = work.at(-1);
+    const last = pageRefs.at(-1);
     return {
       processed: work.length,
       expired: work.length,
       hasMore,
       nextCursor: hasMore ? nextCursor('expiry', last) : null,
     };
-  });
+  }, { isolation: 'REPEATABLE READ' });
 }
 
 function inList(values, params) {
@@ -694,6 +703,61 @@ function inList(values, params) {
   }).join(',');
 }
 
+async function boundedBoardCandidates(client, finalizedOnly) {
+  const params = [BOARD_LIVE_WORK_MAX + 1];
+  const finalizedJoin = finalizedOnly
+    ? 'INNER JOIN stock_asset_versions_v2 v ON v.asset_version_key=n.asset_version_key'
+    : '';
+  const candidates = (await client.query(
+    `SELECT n.id,n.asset_version_key,n.ticker,n.status,n.created_at
+       FROM rwa_nominations_v2 n ${finalizedJoin}
+      WHERE n.status IN ('pending','review_requested','under_review')
+      ORDER BY n.created_at ASC,n.id ASC LIMIT $1
+      /* rwa_board_candidates */`,
+    params,
+  )).rows;
+  if (candidates.length > BOARD_LIVE_WORK_MAX) {
+    fail('board_overloaded', 'The live nomination board exceeds its reviewed work horizon; retry after cleanup.');
+  }
+  return candidates;
+}
+
+async function boundedBoardStaleSlots(client, ids, seats) {
+  const params = [];
+  const nominations = inList(ids, params);
+  let staleSponsor;
+  let staleEndorsement;
+  if (seats.size) {
+    const seated = inList([...seats], params);
+    staleSponsor = `n.sponsor_family_id NOT IN (${seated})`;
+    staleEndorsement = `e.family_id NOT IN (${seated})`;
+  } else {
+    staleSponsor = 'n.sponsor_family_id IS NOT NULL';
+    staleEndorsement = 'e.family_id IS NOT NULL';
+  }
+  params.push(BOARD_STALE_SLOT_WORK_MAX + 1);
+  const stale = (await client.query(
+    `WITH stale_support AS (
+       SELECT 'sponsor' AS stale_kind,n.id AS nomination_id,
+         n.sponsor_family_id AS family_id,n.sponsor_account_id AS account_id
+         FROM rwa_nominations_v2 n
+        WHERE n.id IN (${nominations}) AND n.sponsor_support_active AND ${staleSponsor}
+       UNION ALL
+       SELECT 'endorsement' AS stale_kind,e.nomination_id,e.family_id,e.account_id
+         FROM rwa_nomination_endorsements_v2 e
+        WHERE e.nomination_id IN (${nominations}) AND e.active AND ${staleEndorsement}
+     )
+     SELECT stale_kind,nomination_id,family_id,account_id FROM stale_support
+      ORDER BY nomination_id ASC,stale_kind ASC,family_id ASC LIMIT $${params.length}
+      /* rwa_board_stale_preflight */`,
+    params,
+  )).rows;
+  if (stale.length > BOARD_STALE_SLOT_WORK_MAX) {
+    fail('board_overloaded', 'The nomination board has too much stale support to clean safely.');
+  }
+  return stale;
+}
+
 export async function rwaNominationBoard(db, options = {}) {
   const page = pageOptions(options, 'board');
   if (options.finalizedOnly != null && typeof options.finalizedOnly !== 'boolean') {
@@ -702,12 +766,14 @@ export async function rwaNominationBoard(db, options = {}) {
   // Pool callers get one coherent snapshot. A caller-owned PoolClient/query adapter is deliberately
   // not given nested transaction control and must already belong to a coherent caller transaction.
   return inTransaction(db, async (client) => {
+    const candidates = await boundedBoardCandidates(client, Boolean(options.finalizedOnly));
+    if (!candidates.length) return { items: [], hasMore: false, nextCursor: null };
+    const candidateIds = candidates.map((row) => String(row.id));
     const seats = await seatSet(client);
     const seated = [...seats];
     const params = [];
-    const sponsorSeats = inList(seated, params);
-    const endorsementSeats = inList(seated, params);
-    const finalizedWhere = options.finalizedOnly ? 'AND v.asset_version_key IS NOT NULL' : '';
+    const candidateList = inList(candidateIds, params);
+    const currentSeats = inList(seated, params);
     let cursorClause = '';
     if (page.cursor) {
       params.push(page.cursor.support, new Date(page.cursor.at), page.cursor.id);
@@ -719,13 +785,12 @@ export async function rwaNominationBoard(db, options = {}) {
     const ranked = (await client.query(
       `WITH scores AS (
          SELECT n.id,n.created_at,
-           (CASE WHEN n.sponsor_support_active AND n.sponsor_family_id IN (${sponsorSeats}) THEN 1 ELSE 0 END
-            + COALESCE(SUM(CASE WHEN e.active AND e.family_id IN (${endorsementSeats})
-                AND e.family_id <> n.sponsor_family_id THEN 1 ELSE 0 END),0))::int AS support
+           (CASE WHEN n.sponsor_support_active AND n.sponsor_family_id IN (${currentSeats}) THEN 1 ELSE 0 END
+            + COALESCE(SUM(CASE WHEN e.family_id <> n.sponsor_family_id THEN 1 ELSE 0 END),0))::int AS support
            FROM rwa_nominations_v2 n
            LEFT JOIN rwa_nomination_endorsements_v2 e ON e.nomination_id=n.id
-           LEFT JOIN stock_asset_versions_v2 v ON v.asset_version_key=n.asset_version_key
-          WHERE n.status IN ('pending','review_requested','under_review') ${finalizedWhere}
+             AND e.active AND e.family_id IN (${currentSeats})
+          WHERE n.id IN (${candidateList})
           GROUP BY n.id,n.created_at,n.sponsor_support_active,n.sponsor_family_id
        )
        SELECT id,created_at,support FROM scores ${cursorClause}
@@ -741,39 +806,27 @@ export async function rwaNominationBoard(db, options = {}) {
     const locked = await lockNominationsById(client, ids);
     const byId = new Map(locked.map((row) => [String(row.id), row]));
     const at = await wallClock(client);
-    const slotMap = await endorsementsFor(client, ids);
+    const stale = await boundedBoardStaleSlots(client, ids, seats);
+    const staleSlotMap = new Map(ids.map((id) => [String(id), []]));
+    for (const slot of stale) {
+      if (slot.stale_kind === 'endorsement') {
+        staleSlotMap.get(String(slot.nomination_id))?.push({ ...slot, active: true });
+      }
+    }
+    const slotMap = await endorsementsFor(client, ids, seats);
     for (const rank of selected) {
       const row = byId.get(String(rank.id));
-      if (row) await refreshLocked(client, row, at, seats, slotMap.get(String(row.id)));
+      if (row) {
+        const slots = [...(slotMap.get(String(row.id)) ?? []), ...(staleSlotMap.get(String(row.id)) ?? [])];
+        await refreshLocked(client, row, at, seats, slots);
+      }
     }
 
-    const tickers = [...new Set(locked.map((row) => row.ticker))].sort();
-    const conflictParams = [];
-    const conflictTickers = inList(tickers, conflictParams);
-    // Real PostgreSQL caps each requested ticker independently. pg-mem cannot parse window
-    // functions, so its test adapter keeps the same total bound/query count with a global cap.
-    conflictParams.push(dbCaps.skipLocked ? 21 : tickers.length * 21);
-    const conflictSql = dbCaps.skipLocked
-      ? `WITH conflicts AS (
-           SELECT id,ticker,asset_version_key,status,created_at,
-             ROW_NUMBER() OVER (PARTITION BY ticker ORDER BY created_at ASC,id ASC) AS ticker_row
-             FROM rwa_nominations_v2
-            WHERE status IN ('pending','review_requested','under_review')
-              AND ticker IN (${conflictTickers})
-         )
-         SELECT id,ticker,asset_version_key,status,created_at FROM conflicts
-          WHERE ticker_row <= $${conflictParams.length}
-          ORDER BY ticker ASC,created_at ASC,id ASC`
-      : `SELECT id,ticker,asset_version_key,status,created_at FROM rwa_nominations_v2
-          WHERE status IN ('pending','review_requested','under_review')
-            AND ticker IN (${conflictTickers})
-          ORDER BY ticker ASC,created_at ASC,id ASC LIMIT $${conflictParams.length}`;
-    const conflicts = (await client.query(
-      conflictSql,
-      conflictParams,
-    )).rows;
-    const conflictsByTicker = new Map(tickers.map((ticker) => [ticker, []]));
-    for (const conflict of conflicts) conflictsByTicker.get(conflict.ticker)?.push(conflict);
+    const conflictsByTicker = new Map();
+    for (const candidate of candidates) {
+      if (!conflictsByTicker.has(candidate.ticker)) conflictsByTicker.set(candidate.ticker, []);
+      conflictsByTicker.get(candidate.ticker).push(candidate);
+    }
 
     const keys = [...new Set(locked.map((row) => row.asset_version_key))].sort();
     const mirrorParams = [];
