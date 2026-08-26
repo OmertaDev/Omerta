@@ -15,6 +15,8 @@
 | `IOmrHookObserver` | interface | [omerta-contracts/src/OmertaHook.sol:21](../../omerta-contracts/src/OmertaHook.sol#L21) | — |
 | `IOMRMintable` | interface | [omerta-contracts/src/OmertaBond.sol:15](../../omerta-contracts/src/OmertaBond.sol#L15) | — |
 | `IOmrOracle` | interface | [omerta-contracts/src/IOmrOracle.sol:18](../../omerta-contracts/src/IOmrOracle.sol#L18) | — |
+| `ISettlementDataFeeSource` | interface | [omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol:3](../../omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol#L3) | — |
+| `ISettlementGasPoolMigrationCandidate` | interface | [omerta-contracts/src/SettlementGasPool.sol:9](../../omerta-contracts/src/SettlementGasPool.sol#L9) | — |
 | `IStockQuoteOracle` | interface | [omerta-contracts/src/RwaStockBuyer.sol:28](../../omerta-contracts/src/RwaStockBuyer.sol#L28) | — |
 | `IStockSwapAdapter` | interface | [omerta-contracts/src/RwaStockBuyer.sol:20](../../omerta-contracts/src/RwaStockBuyer.sol#L20) | — |
 | `IStockTokenRegistry` | interface | [omerta-contracts/src/RwaStockBuyer.sol:9](../../omerta-contracts/src/RwaStockBuyer.sol#L9) | — |
@@ -27,6 +29,7 @@
 | `OMRStaking` | contract | [omerta-contracts/src/OMRStaking.sol:15](../../omerta-contracts/src/OMRStaking.sol#L15) | `Ownable2Step`, `ReentrancyGuard` |
 | `OmrTwapOracle` | contract | [omerta-contracts/src/OmrTwapOracle.sol:49](../../omerta-contracts/src/OmrTwapOracle.sol#L49) | `IOmrOracle`, `Ownable2Step` |
 | `RwaStockBuyer` | contract | [omerta-contracts/src/RwaStockBuyer.sol:43](../../omerta-contracts/src/RwaStockBuyer.sol#L43) | `Ownable2Step`, `Pausable`, `ReentrancyGuard` |
+| `SettlementGasPool` | contract | [omerta-contracts/src/SettlementGasPool.sol:24](../../omerta-contracts/src/SettlementGasPool.sol#L24) | `Ownable2Step`, `Pausable`, `ReentrancyGuard` |
 | `StockTokenRegistry` | contract | [omerta-contracts/src/StockTokenRegistry.sol:18](../../omerta-contracts/src/StockTokenRegistry.sol#L18) | `Ownable2Step` |
 | `StockVault` | contract | [omerta-contracts/src/StockVault.sol:44](../../omerta-contracts/src/StockVault.sol#L44) | `Ownable2Step`, `Pausable`, `ReentrancyGuard`, `EIP712` |
 | `StreetDeed` | contract | [omerta-contracts/src/StreetDeed.sol:37](../../omerta-contracts/src/StreetDeed.sol#L37) | `ERC721`, `EIP712`, `Ownable2Step`, `Pausable`, `ReentrancyGuard` |
