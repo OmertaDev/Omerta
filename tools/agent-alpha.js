@@ -324,11 +324,12 @@ async function assertReportAuthority(reportStore) {
 }
 
 async function openReportStore(path, stateStore, lock) {
-  const parent = await openStateParent(path);
   const appendFlags = fsConstants.O_WRONLY | fsConstants.O_APPEND |
     (fsConstants.O_NONBLOCK || 0) | (fsConstants.O_NOFOLLOW || 0);
+  let parent;
   let handle;
   try {
+    parent = await openStateParent(path);
     try {
       handle = await open(path, appendFlags);
     } catch (error) {
@@ -350,7 +351,7 @@ async function openReportStore(path, stateStore, lock) {
     return reportStore;
   } catch (error) {
     await handle?.close().catch(() => {});
-    await parent.handle.close().catch(() => {});
+    await parent?.handle.close().catch(() => {});
     throw new Error(`Agent Alpha report target is unsafe: ${error?.message || 'invalid target'}`);
   }
 }

@@ -2194,22 +2194,36 @@ async function reportTargetReplacementTest() {
 
 async function nonRegularReportTargetTest() {
   if (process.platform === 'win32') return;
-  for (const kind of ['fifo', 'device']) {
+  for (const kind of ['fifo', 'socket']) {
     const api = await probeApi();
     const dir = await privateTempDir(`omerta-agent-alpha-report-${kind}-`);
     const sessionFile = join(dir, 'session.json');
-    const reportFile = kind === 'device' ? '/dev/null' : join(dir, 'report.fifo');
+    const reportFile = join(dir, `report.${kind}`);
+    let socketServer = null;
     try {
       await writePrivateSession(sessionFile, JSON.stringify(sessionFor(api.baseUrl)));
       if (kind === 'fifo') await execFileAsync('mkfifo', [reportFile]);
+      else {
+        socketServer = createServer((socket) => socket.destroy());
+        await new Promise((resolveListen, rejectListen) => {
+          socketServer.once('error', rejectListen);
+          socketServer.listen(reportFile, () => {
+            socketServer.off('error', rejectListen);
+            resolveListen();
+          });
+        });
+      }
       await assert.rejects(
         runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1 }),
-        /report|regular|telemetry|device|fifo/i,
+        /^Agent Alpha report target is unsafe:/,
         `${kind} report targets fail closed instead of receiving an append`,
       );
       assert.equal(api.state.sessionCalls, 0,
         `${kind} report rejection happens before any credential-bearing network use`);
     } finally {
+      if (socketServer?.listening) {
+        await new Promise((resolveClose) => socketServer.close(resolveClose));
+      }
       await api.close();
       await rm(dir, { recursive: true, force: true });
     }
