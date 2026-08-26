@@ -33,6 +33,44 @@ const finalCallbackCases = [
     const arenaBoard = () => fallback;
     return arenaBoard(pool);
   }`, null, 'callback-local declaration shadows the imported identifier'],
+  [`async () => {
+    const { arenaBoard } = handlers;
+    return arenaBoard(pool);
+  }`, null, 'object shorthand destructuring shadows the imported identifier'],
+  [`async () => {
+    let { board: { handler: arenaBoard = fallback } } = handlers;
+    return arenaBoard(pool);
+  }`, null, 'nested aliased and defaulted object binding shadows the imported identifier'],
+  [`async () => {
+    var { other, ...arenaBoard } = handlers;
+    return arenaBoard(pool);
+  }`, null, 'object rest binding shadows the imported identifier'],
+  [`async () => {
+    const [first, [arenaBoard = fallback]] = handlers;
+    return arenaBoard(pool);
+  }`, null, 'nested defaulted array binding shadows the imported identifier'],
+  [`async () => {
+    let [first, ...arenaBoard] = handlers;
+    return arenaBoard(pool);
+  }`, null, 'array rest binding shadows the imported identifier'],
+  [`async () => {
+    const other = fallback, arenaBoard = handler;
+    return arenaBoard(pool);
+  }`, null, 'a later declarator shadows the imported identifier'],
+  [`async () => {
+    let other = fallback, [arenaBoard] = handlers;
+    return arenaBoard(pool);
+  }`, null, 'a later let destructuring declarator shadows the imported identifier'],
+  [`async () => {
+    var other, { [selected]: arenaBoard } = handlers;
+    return arenaBoard(pool);
+  }`, null, 'a later var computed-property declarator shadows the imported identifier'],
+  [`async () => {
+    const { arenaBoard: otherBoard, nested: { value = arenaBoard } } = handlers;
+    const descriptor = { arenaBoard };
+    const selected = handlers.arenaBoard;
+    return arenaBoard(pool);
+  }`, 'arenaBoard', 'property keys and initializer or member uses do not shadow the import'],
   ['async (arenaBoard) => arenaBoard(pool)', null,
     'callback parameter shadows the imported identifier'],
 ];

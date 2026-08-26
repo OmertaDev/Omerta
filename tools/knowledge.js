@@ -430,6 +430,123 @@ function directCallInRange(mask, start, end) {
   return matchingDelimiter(mask, open, '(', ')') === end - 1 ? call[1] : null;
 }
 
+function skipSpace(mask, index) {
+  while (index < mask.length && /\s/.test(mask[index])) index++;
+  return index;
+}
+
+function identifierAt(mask, index) {
+  const match = /^[A-Za-z_$][\w$]*/.exec(mask.slice(index));
+  return match ? { name: match[0], end: index + match[0].length } : null;
+}
+
+function skipExpression(mask, index, stops) {
+  let round = 0;
+  let square = 0;
+  let curly = 0;
+  for (; index < mask.length; index++) {
+    const char = mask[index];
+    if (round === 0 && square === 0 && curly === 0 && stops.has(char)) break;
+    if (char === '(') round++;
+    else if (char === ')') { if (round === 0) break; round--; }
+    else if (char === '[') square++;
+    else if (char === ']') { if (square === 0) break; square--; }
+    else if (char === '{') curly++;
+    else if (char === '}') { if (curly === 0) break; curly--; }
+  }
+  return index;
+}
+
+function bindingPattern(mask, index, candidate) {
+  index = skipSpace(mask, index);
+  if (mask.startsWith('...', index)) index = skipSpace(mask, index + 3);
+  const identifier = identifierAt(mask, index);
+  if (identifier) return { parsed: true, end: identifier.end, binds: identifier.name === candidate };
+
+  if (mask[index] === '[') {
+    let binds = false;
+    index++;
+    while (index < mask.length) {
+      index = skipSpace(mask, index);
+      if (mask[index] === ']') return { parsed: true, end: index + 1, binds };
+      if (mask[index] === ',') { index++; continue; }
+      const element = bindingPattern(mask, index, candidate);
+      if (!element.parsed) return { parsed: false, end: index, binds: false };
+      binds ||= element.binds;
+      index = skipSpace(mask, element.end);
+      if (mask[index] === '=') index = skipExpression(mask, index + 1, new Set([',', ']']));
+    }
+    return { parsed: false, end: index, binds: false };
+  }
+
+  if (mask[index] === '{') {
+    let binds = false;
+    index++;
+    while (index < mask.length) {
+      index = skipSpace(mask, index);
+      if (mask[index] === '}') return { parsed: true, end: index + 1, binds };
+      if (mask[index] === ',') { index++; continue; }
+      if (mask.startsWith('...', index)) {
+        const rest = bindingPattern(mask, index, candidate);
+        if (!rest.parsed) return { parsed: false, end: index, binds: false };
+        binds ||= rest.binds;
+        index = rest.end;
+        continue;
+      }
+
+      let key = null;
+      if (mask[index] === '[') {
+        const close = matchingDelimiter(mask, index, '[', ']');
+        if (close < 0) return { parsed: false, end: index, binds: false };
+        index = close + 1;
+      } else {
+        const property = identifierAt(mask, index);
+        if (property) {
+          key = property.name;
+          index = property.end;
+        } else {
+          index = skipExpression(mask, index, new Set([':', ',', '}']));
+        }
+      }
+
+      index = skipSpace(mask, index);
+      if (mask[index] === ':') {
+        const value = bindingPattern(mask, index + 1, candidate);
+        if (!value.parsed) return { parsed: false, end: index, binds: false };
+        binds ||= value.binds;
+        index = value.end;
+      } else if (key) {
+        binds ||= key === candidate;
+      } else {
+        return { parsed: false, end: index, binds: false };
+      }
+      index = skipSpace(mask, index);
+      if (mask[index] === '=') index = skipExpression(mask, index + 1, new Set([',', '}']));
+    }
+    return { parsed: false, end: index, binds: false };
+  }
+
+  return { parsed: false, end: index, binds: false };
+}
+
+function variableDeclarationBinds(mask, candidate) {
+  const declaration = /\b(?:const|let|var)\b/g;
+  for (const match of mask.matchAll(declaration)) {
+    let index = match.index + match[0].length;
+    while (index < mask.length) {
+      const pattern = bindingPattern(mask, index, candidate);
+      if (!pattern.parsed) break;
+      if (pattern.binds) return true;
+      index = skipSpace(mask, pattern.end);
+      if (mask[index] === '=') index = skipExpression(mask, index + 1, new Set([',', ';']));
+      index = skipSpace(mask, index);
+      if (mask[index] !== ',') break;
+      index++;
+    }
+  }
+  return false;
+}
+
 function finalCallbackCall(argument) {
   const mask = codeMask(argument);
   const callback = /^\s*(?:async\s*)?(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*=>\s*/.exec(mask);
@@ -474,7 +591,8 @@ function finalCallbackCall(argument) {
   const header = mask.slice(0, bodyStart);
   const body = mask.slice(bodyStart, bodyEnd);
   if (new RegExp(`\\b${esc(name)}\\b`).test(header)
-      || new RegExp(`\\b(?:const|let|var|function|class)\\s+${esc(name)}\\b`).test(body)) return null;
+      || variableDeclarationBinds(body, name)
+      || new RegExp(`\\b(?:function|class)\\s+${esc(name)}\\b`).test(body)) return null;
   return name;
 }
 
