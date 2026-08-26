@@ -1916,32 +1916,218 @@ const SCENERY_WAIVED = {
       return node.quasis.map((part) => part.value.cooked ?? part.value.raw).join('');
     return null;
   };
-  const boundBySqlTextArray = (params, param) => {
+  const makeScope = (parent, type) => ({ parent, type, bindings: new Map() });
+  const bindingScope = (scope, kind) => {
+    if (kind !== 'var') return scope;
+    while (scope.parent && scope.type !== 'function' && scope.type !== 'program') scope = scope.parent;
+    return scope;
+  };
+  const bindPattern = (pattern, scope, declaration, kind) => {
+    pattern = unwrap(pattern);
+    if (!pattern) return;
+    if (pattern.type === 'Identifier') {
+      bindingScope(scope, kind).bindings.set(pattern.name, { declaration, kind });
+      return;
+    }
+    if (pattern.type === 'RestElement') return bindPattern(pattern.argument, scope, declaration, kind);
+    if (pattern.type === 'AssignmentPattern') return bindPattern(pattern.left, scope, declaration, kind);
+    if (pattern.type === 'ArrayPattern') {
+      for (const element of pattern.elements) bindPattern(element, scope, declaration, kind);
+      return;
+    }
+    if (pattern.type === 'ObjectPattern') for (const property of pattern.properties)
+      bindPattern(property.type === 'RestElement' ? property.argument : property.value, scope, declaration, kind);
+  };
+  const lexicalBindings = (ast) => {
+    const scopeAt = new WeakMap();
+    const program = makeScope(null, 'program');
+    const visit = (node, scope) => {
+      if (!node || typeof node !== 'object') return;
+      if (node.type === 'Program') {
+        scopeAt.set(node, program);
+        for (const child of node.body) visit(child, program);
+        return;
+      }
+      if (node.type === 'BlockStatement') {
+        const block = makeScope(scope, 'block');
+        scopeAt.set(node, block);
+        for (const child of node.body) visit(child, block);
+        return;
+      }
+      if (node.type === 'FunctionDeclaration' || node.type === 'FunctionExpression'
+        || node.type === 'ArrowFunctionExpression') {
+        if (node.type === 'FunctionDeclaration' && node.id)
+          bindPattern(node.id, scope, node, 'function');
+        const fn = makeScope(scope, 'function');
+        scopeAt.set(node, fn);
+        if (node.type === 'FunctionExpression' && node.id) bindPattern(node.id, fn, node, 'function');
+        for (const parameter of node.params) bindPattern(parameter, fn, parameter, 'parameter');
+        for (const parameter of node.params) visit(parameter, fn);
+        visit(node.body, fn);
+        return;
+      }
+      if (node.type === 'CatchClause') {
+        const caught = makeScope(scope, 'block');
+        scopeAt.set(node, caught);
+        bindPattern(node.param, caught, node.param, 'catch');
+        visit(node.param, caught);
+        visit(node.body, caught);
+        return;
+      }
+      scopeAt.set(node, scope);
+      if (node.type === 'VariableDeclaration') {
+        for (const declaration of node.declarations)
+          bindPattern(declaration.id, scope, declaration, node.kind);
+      } else if (node.type === 'ImportDeclaration') {
+        for (const specifier of node.specifiers)
+          bindPattern(specifier.local, scope, specifier, 'import');
+      } else if ((node.type === 'ClassDeclaration' || node.type === 'ClassExpression') && node.id) {
+        bindPattern(node.id, scope, node, 'class');
+      }
+      for (const value of Object.values(node)) {
+        if (Array.isArray(value)) {
+          for (const child of value) if (child?.type) visit(child, scope);
+        } else if (value?.type) visit(value, scope);
+      }
+    };
+    visit(ast, program);
+    return { program, scopeAt };
+  };
+  const resolveBinding = (name, scope) => {
+    while (scope) {
+      if (scope.bindings.has(name)) return scope.bindings.get(name);
+      scope = scope.parent;
+    }
+    return null;
+  };
+  const boundBySqlTextArray = (params, param, lexical, canonicalBinding) => {
     const binding = unwrap(params?.type === 'ArrayExpression' ? params.elements[param - 1] : null);
     const callee = unwrap(binding?.type === 'CallExpression' ? binding.callee : null);
-    return callee?.type === 'Identifier' && callee.name === 'sqlTextArray';
+    return !!canonicalBinding && callee?.type === 'Identifier' && callee.name === 'sqlTextArray'
+      && resolveBinding(callee.name, lexical.scopeAt.get(callee)) === canonicalBinding;
+  };
+  // This is deliberately a small SQL lexer rather than a regex. PostgreSQL permits comments between
+  // a keyword and `(`, treats SOME as an ANY synonym, and permits both words inside comments/quoted
+  // values where they are not executable. Trivia is discarded before the membership shape is read.
+  const sqlTokens = (sql) => {
+    const tokens = [];
+    let index = 0;
+    while (index < sql.length) {
+      if (/\s/.test(sql[index])) { index += 1; continue; }
+      if (sql.startsWith('--', index)) {
+        const end = sql.indexOf('\n', index + 2);
+        index = end < 0 ? sql.length : end + 1;
+        continue;
+      }
+      if (sql.startsWith('/*', index)) {
+        let depth = 1;
+        index += 2;
+        while (index < sql.length && depth) {
+          if (sql.startsWith('/*', index)) { depth += 1; index += 2; }
+          else if (sql.startsWith('*/', index)) { depth -= 1; index += 2; }
+          else index += 1;
+        }
+        continue;
+      }
+      if (sql[index] === "'") {
+        index += 1;
+        while (index < sql.length) {
+          if (sql[index] !== "'") { index += 1; continue; }
+          if (sql[index + 1] === "'") { index += 2; continue; }
+          index += 1;
+          break;
+        }
+        continue;
+      }
+      if (sql[index] === '"') {
+        const start = index;
+        index += 1;
+        while (index < sql.length) {
+          if (sql[index] !== '"') { index += 1; continue; }
+          if (sql[index + 1] === '"') { index += 2; continue; }
+          index += 1;
+          break;
+        }
+        tokens.push({ type: 'quoted', value: sql.slice(start, index), start });
+        continue;
+      }
+      if (sql[index] === '$') {
+        const dollarQuote = sql.slice(index).match(/^\$(?:[A-Za-z_][A-Za-z0-9_]*)?\$/)?.[0];
+        if (dollarQuote) {
+          const end = sql.indexOf(dollarQuote, index + dollarQuote.length);
+          index = end < 0 ? sql.length : end + dollarQuote.length;
+          continue;
+        }
+        const parameter = sql.slice(index).match(/^\$(\d+)/);
+        if (parameter) {
+          tokens.push({ type: 'parameter', value: parameter[0], param: Number(parameter[1]), start: index });
+          index += parameter[0].length;
+          continue;
+        }
+      }
+      const word = sql.slice(index).match(/^[A-Za-z_][A-Za-z0-9_$]*/)?.[0];
+      if (word) {
+        tokens.push({ type: 'word', value: word, upper: word.toUpperCase(), start: index });
+        index += word.length;
+        continue;
+      }
+      const symbol = sql.startsWith('::', index) ? '::' : sql[index];
+      tokens.push({ type: 'symbol', value: symbol, start: index });
+      index += symbol.length;
+    }
+    return tokens;
+  };
+  const membershipExpressions = (sql) => {
+    const tokens = sqlTokens(sql), expressions = [];
+    for (let index = 0; index + 2 < tokens.length; index += 1) {
+      const operator = tokens[index + 1];
+      if (tokens[index].value !== '=' || operator.type !== 'word'
+        || !['ANY', 'SOME'].includes(operator.upper) || tokens[index + 2].value !== '(') continue;
+      let depth = 1, end = index + 3;
+      for (; end < tokens.length && depth; end += 1) {
+        if (tokens[end].value === '(') depth += 1;
+        else if (tokens[end].value === ')') depth -= 1;
+      }
+      const args = tokens.slice(index + 3, depth ? tokens.length : end - 1);
+      const scalarParameter = args[0]?.type === 'parameter' && (args.length === 1
+        || (args.length === 5 && args[1].value === '::' && args[2].type === 'word'
+          && args[3].value === '[' && args[4].value === ']'));
+      const prior = tokens[index - 1];
+      const qualified = tokens[index - 2]?.value === '.' && tokens[index - 3]?.type === 'word';
+      const column = prior?.type === 'word'
+        ? `${qualified ? `${tokens[index - 3].value}.` : ''}${prior.value}` : '<expression>';
+      expressions.push({ column, param: scalarParameter ? args[0].param : null,
+        operator: operator.upper, start: operator.start });
+    }
+    return expressions;
   };
   const collectAny = (source, sourceName = '<fixture>') => {
     const ast = parse(source, { ecmaVersion: 'latest', sourceType: 'module', locations: true });
+    const lexical = lexicalBindings(ast);
+    const moduleSerializer = lexical.program.bindings.get('sqlTextArray');
+    const canonicalBinding = moduleSerializer?.kind === 'const'
+      && moduleSerializer.declaration?.type === 'VariableDeclarator' ? moduleSerializer : null;
     const usages = [];
     const visit = (node, parent = null) => {
       if (!node || typeof node !== 'object') return;
       if (node.type === 'Literal' || node.type === 'TemplateLiteral') {
-        const text = staticText(node) ?? (node.type === 'TemplateLiteral'
-          ? node.quasis.map((part) => part.value.cooked ?? part.value.raw).join('<?>') : null);
+        const dynamic = node.type === 'TemplateLiteral' && node.expressions.length > 0;
+        const text = staticText(node) ?? (dynamic
+          ? node.quasis.map((part) => part.value.cooked ?? part.value.raw).join(' ') : null);
         if (text) {
           const call = parent?.type === 'CallExpression' && parent.arguments[0] === node && isQueryCall(parent)
             ? parent : null;
-          const expression = /=\s*ANY\s*\(\s*([^)]*?)\s*\)/gi;
-          let match;
-          while ((match = expression.exec(text))) {
-            const before = text.slice(0, match.index);
-            const column = before.match(/([A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)?)\s*$/)?.[1]
-              || '<expression>';
-            const placeholder = match[1].match(/^\$(\d+)(?:\s*::[A-Za-z_][A-Za-z0-9_]*(?:\[\])?)?$/);
-            const param = placeholder ? Number(placeholder[1]) : null;
-            usages.push({ source: sourceName, line: node.loc?.start.line || 0, sql: text, column, param,
-              scalarLiteral: !!call && !!param && boundBySqlTextArray(call.arguments[1], param) });
+          const dynamicReviewedQuery = dynamic && !!call && sourceName === 'explore.js'
+            && reviewedAny.some((site) => site.sql.test(text));
+          if (dynamicReviewedQuery) {
+            usages.push({ source: sourceName, line: node.loc?.start.line || 0, sql: text,
+              column: '<dynamic>', param: null, operator: 'ANY/SOME', dynamic: true, scalarLiteral: false });
+          } else {
+            for (const expression of membershipExpressions(text)) usages.push({ source: sourceName,
+              line: (node.loc?.start.line || 1) + text.slice(0, expression.start).split('\n').length - 1,
+              sql: text, ...expression, dynamic,
+              scalarLiteral: !dynamic && !!call && !!expression.param
+                && boundBySqlTextArray(call.arguments[1], expression.param, lexical, canonicalBinding) });
           }
         }
       }
@@ -1957,39 +2143,81 @@ const SCENERY_WAIVED = {
   const classifyAny = (usages, { complete = false } = {}) => {
     const seen = new Set(), bad = [], approved = [];
     for (const usage of usages) {
+      if (usage.dynamic) {
+        bad.push(`${usage.source}:${usage.line} interpolates a reviewed ANY/SOME SQL statement`);
+        continue;
+      }
       const matches = reviewedAny.map((site, index) => ({ site, index })).filter(({ site }) =>
         usage.source === 'explore.js' && usage.column === site.column && usage.param === site.param
           && site.sql.test(usage.sql));
       if (matches.length !== 1) {
-        bad.push(`${usage.source}:${usage.line} unreviewed ${usage.column}=ANY($${usage.param || '?'})`);
+        bad.push(`${usage.source}:${usage.line} unreviewed ${usage.column}=${usage.operator}($${usage.param || '?'})`);
         continue;
       }
       const [{ index }] = matches;
       if (!usage.scalarLiteral) {
-        bad.push(`${usage.source}:${usage.line} ${usage.column}=ANY($${usage.param}) is not bound by sqlTextArray(...)`);
+        bad.push(`${usage.source}:${usage.line} ${usage.column}=${usage.operator}($${usage.param}) is not bound by the module sqlTextArray(...)`);
         continue;
       }
       if (seen.has(index)) {
-        bad.push(`${usage.source}:${usage.line} duplicates reviewed occurrence ${usage.column}=ANY($${usage.param})`);
+        bad.push(`${usage.source}:${usage.line} duplicates reviewed occurrence ${usage.column}=${usage.operator}($${usage.param})`);
         continue;
       }
       seen.add(index);
       approved.push(usage);
     }
     if (complete) for (const [index, site] of reviewedAny.entries()) if (!seen.has(index))
-      bad.push(`explore.js missing reviewed occurrence ${site.column}=ANY($${site.param})`);
+      bad.push(`explore.js missing reviewed occurrence ${site.column}=ANY/SOME($${site.param})`);
     return { accepted: bad.length === 0, approved, bad };
   };
   const anyGuardAccepts = (source) => classifyAny(collectAny(source, 'explore.js')).accepted;
+  const canonicalSerializer = 'const sqlTextArray = (values) => String(values); ';
   const anyGuardCases = [
     {
       name: 'reviewed scalar literal',
-      source: "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [sqlTextArray(ids)])",
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [sqlTextArray(ids)])",
+      accepted: true,
+    },
+    {
+      name: 'unshadowed module serializer through a function scope',
+      source: canonicalSerializer
+        + "function run() { return db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [sqlTextArray(ids)]); }",
+      accepted: true,
+    },
+    {
+      name: 'reviewed SOME synonym with module serializer',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = SOME /* trivia */ ($1::text[])', [sqlTextArray(ids)])",
       accepted: true,
     },
     {
       name: 'same-line extra ANY',
       source: "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[]) OR role = ANY($2::text[])', [sqlTextArray(ids), ids])",
+      accepted: false,
+    },
+    {
+      name: 'block-comment-hidden extra ANY',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[]) OR role = ANY /* hidden */ ($2::text[])', [sqlTextArray(ids), ids])",
+      accepted: false,
+    },
+    {
+      name: 'line-comment-hidden extra ANY',
+      source: canonicalSerializer
+        + "db.query(`SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[]) OR role = ANY -- hidden\n ($2::text[])`, [sqlTextArray(ids), ids])",
+      accepted: false,
+    },
+    {
+      name: 'membership text inside a SQL comment is not executable',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[]) /* role = ANY($2::text[]) */', [sqlTextArray(ids)])",
+      accepted: true,
+    },
+    {
+      name: 'PostgreSQL SOME synonym with unsafe binding',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[]) OR role = SOME($2::text[])', [sqlTextArray(ids), ids])",
       accepted: false,
     },
     {
@@ -2005,13 +2233,76 @@ const SCENERY_WAIVED = {
       accepted: false,
     },
     {
+      name: 'duplicate reviewed SOME synonym occurrence',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[]) OR character_id = SOME($1::text[])', [sqlTextArray(ids)])",
+      accepted: false,
+    },
+    {
+      name: 'dynamic reviewed template suffix',
+      source: canonicalSerializer
+        + 'db.query(`SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[]) ${extra}`, [sqlTextArray(ids)])',
+      accepted: false,
+    },
+    {
+      name: 'dynamic reviewed template splitting the membership keyword',
+      source: canonicalSerializer
+        + 'db.query(`SELECT character_id, gang_id FROM gang_members WHERE character_id = A${middle}NY($1::text[])`, [sqlTextArray(ids)])',
+      accepted: false,
+    },
+    {
       name: 'JavaScript array at a reviewed placeholder',
       source: "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [ids])",
       accepted: false,
     },
+    {
+      name: 'function parameter shadows the module serializer',
+      source: canonicalSerializer
+        + "function run(sqlTextArray) { return db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [sqlTextArray(ids)]); }",
+      accepted: false,
+    },
+    {
+      name: 'block-local declaration shadows the module serializer',
+      source: canonicalSerializer
+        + "{ const sqlTextArray = (values) => values; db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [sqlTextArray(ids)]); }",
+      accepted: false,
+    },
+    {
+      name: 'serializer alias is not the reviewed binding',
+      source: canonicalSerializer
+        + "const serializer = sqlTextArray; db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [serializer(ids)])",
+      accepted: false,
+    },
+    {
+      name: 'import alias is not the reviewed binding',
+      source: canonicalSerializer
+        + "import { sqlTextArray as serializer } from './serializer.js'; db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [serializer(ids)])",
+      accepted: false,
+    },
+    {
+      name: 'serializer wrapper is not the reviewed binding',
+      source: canonicalSerializer
+        + "const wrapper = (values) => sqlTextArray(values); db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [wrapper(ids)])",
+      accepted: false,
+    },
+    {
+      name: 'computed serializer callee is not the reviewed binding',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [(0, sqlTextArray)(ids)])",
+      accepted: false,
+    },
+    {
+      name: 'computed-property serializer callee is not the reviewed binding',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [globalThis['sqlTextArray'](ids)])",
+      accepted: false,
+    },
   ];
-  for (const fixture of anyGuardCases)
-    assert.equal(anyGuardAccepts(fixture.source), fixture.accepted, `${fixture.name} is classified per ANY occurrence and binding`);
+  const misclassifiedAnyFixtures = anyGuardCases.map((fixture) => ({
+    name: fixture.name, expected: fixture.accepted, actual: anyGuardAccepts(fixture.source),
+  })).filter((fixture) => fixture.actual !== fixture.expected);
+  assert.deepEqual(misclassifiedAnyFixtures, [],
+    'every adversarial SQL occurrence and serializer-binding mutation is classified independently');
   const files = [];
   const walk = (d) => { for (const e of fs.readdirSync(d)) {
     const q = path.join(d, e);
@@ -2028,14 +2319,14 @@ const SCENERY_WAIVED = {
     });
   }
   const classified = classifyAny(usages, { complete: true });
-  assert(inForms.length >= 20, `THE JS-ARRAY ANY BAN sees only ${inForms.length} IN(…) sites — the `
+  assert(inForms.length >= 20, `THE JS-ARRAY ANY/SOME BAN sees only ${inForms.length} IN(…) sites — the `
     + 'extractor has stopped reading src/, and a sweep that reaches nothing reads exactly like a clean tree');
-  assert.deepEqual(classified.bad, [], 'each ANY expression must be an exact reviewed Explore occurrence '
+  assert.deepEqual(classified.bad, [], 'each ANY/SOME expression must be an exact reviewed Explore occurrence '
     + 'whose own placeholder is bound by sqlTextArray(...); same-line neighbours receive no waiver:\n   - '
     + classified.bad.join('\n   - '));
   assert.equal(classified.approved.length, reviewedAny.length,
-    'Explore must retain exactly six reviewed scalar-literal ANY expressions across five statements');
-  console.log(`  ✓ no query binds a JS array to ANY($n); ${classified.approved.length} exact scalar-literal `
+    'Explore must retain exactly six reviewed scalar-literal ANY/SOME expressions across five statements');
+  console.log(`  ✓ no query binds a JS array to ANY/SOME($n); ${classified.approved.length} exact scalar-literal `
     + `expressions and ${inForms.length} IN(…) sites govern the rule`);
 }
 
