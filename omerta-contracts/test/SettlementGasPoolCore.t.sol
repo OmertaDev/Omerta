@@ -169,6 +169,39 @@ contract SettlementGasPoolCoreTest is SettlementGasPoolTestBase {
         assertEq(pool.totalOutstandingCredits(), 0.0022 ether);
     }
 
+    // Catches charging basefee plus the priority cap when the actual transaction gas price is lower.
+    function test_credit_formula_uses_lower_actual_transaction_gas_price() public {
+        fund(1 ether);
+        unpause();
+        vm.fee(20 gwei);
+        vm.txGasPrice(10 gwei);
+
+        (
+            uint256 billableGas,
+            uint256 reimbursableGasPrice,
+            uint256 approvedDataFee,
+            uint256 verifiedGasCost,
+            uint256 available,
+            uint256 previewedCredit,
+            SettlementGasPool.CreditStatus previewedStatus
+        ) = pool.previewCredit(79_000);
+        assertEq(billableGas, 100_000);
+        assertEq(reimbursableGasPrice, 10 gwei);
+        assertEq(approvedDataFee, 0);
+        assertEq(verifiedGasCost, 0.001 ether);
+        assertEq(available, 1 ether);
+        assertEq(previewedCredit, 0.001 ether);
+        assertEq(uint256(previewedStatus), uint256(SettlementGasPool.CreditStatus.FULL));
+
+        vm.prank(vault);
+        (uint256 credit, SettlementGasPool.CreditStatus status) = pool.recordSettlementCredit(request(79_000));
+        assertEq(credit, 0.001 ether);
+        assertEq(uint256(status), uint256(SettlementGasPool.CreditStatus.FULL));
+        assertEq(pool.credits(executor), 0.001 ether);
+        assertEq(pool.totalCreditsRecorded(), 0.001 ether);
+        assertEq(pool.totalOutstandingCredits(), 0.001 ether);
+    }
+
     // Catches the per-settlement wei cap being ignored, including on overflow-sized gas input.
     function test_per_settlement_cap_limits_verified_cost() public {
         fund(1 ether);
@@ -261,6 +294,37 @@ contract SettlementGasPoolCoreTest is SettlementGasPoolTestBase {
         pool.recordSettlementCredit(req);
         assertTrue(pool.processedSettlements(first));
         assertTrue(pool.processedSettlements(second));
+    }
+
+    // Catches omitting the supported chain, immutable vault, event, victim, or nonce from the exact replay domain.
+    function test_settlement_key_binds_supported_chain_vault_event_victim_and_nonce() public view {
+        bytes32 expected = keccak256(abi.encode(uint256(31_337), vault, EVENT_ID, VICTIM_ID, uint256(7)));
+        assertEq(pool.settlementKey(EVENT_ID, VICTIM_ID, 7), expected);
+    }
+
+    // Catches removal or misclassification of the terminal ZERO_CAP branch and its replay write.
+    function test_zero_cap_processes_terminal_zero_and_cannot_backfill() public {
+        fund(1 ether);
+        vm.prank(safe);
+        pool.reduceCaps(PRIORITY_CAP, 0, 0);
+        unpause();
+        vm.fee(20 gwei);
+        vm.txGasPrice(30 gwei);
+        bytes32 key = pool.settlementKey(EVENT_ID, VICTIM_ID, VICTIM_NONCE);
+
+        vm.prank(vault);
+        (uint256 credit, SettlementGasPool.CreditStatus status) = pool.recordSettlementCredit(request(79_000));
+        assertEq(credit, 0);
+        assertEq(uint256(status), uint256(SettlementGasPool.CreditStatus.ZERO_CAP));
+        assertTrue(pool.processedSettlements(key));
+        assertEq(pool.credits(executor), 0);
+        assertEq(pool.totalCreditsRecorded(), 0);
+        assertEq(pool.totalOutstandingCredits(), 0);
+        assertEq(pool.unreservedBalance(), 1 ether);
+
+        vm.prank(vault);
+        vm.expectRevert(SettlementGasPool.AlreadyProcessed.selector);
+        pool.recordSettlementCredit(request(79_000));
     }
 
     // Catches liabilities omitted from availability or withdrawal totals/recipient accounting.
