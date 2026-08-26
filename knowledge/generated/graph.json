@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "f0fdb7748a33a2c665289922df60c720675b8052",
+  "sourceRevision": "8c0c9f8c41d472055baaf10f11dcc946f866141d",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 4479,
-    "edges": 21111,
+    "nodes": 4482,
+    "edges": 21113,
     "byNodeType": {
-      "Artifact": 1560,
+      "Artifact": 1561,
       "Command": 32,
-      "Commit": 959,
+      "Commit": 961,
       "Contract": 28,
       "Document": 403,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1815,
-      "CHANGED": 8132,
-      "CONTAINS": 1580,
+      "CHANGED": 8142,
+      "CONTAINS": 1581,
       "DECLARES": 32,
       "DEFINED_IN": 986,
       "DEPENDS_ON": 59,
       "EXECUTES": 149,
-      "HANDLED_BY": 672,
-      "HAS_COMMIT": 959,
+      "HANDLED_BY": 661,
+      "HAS_COMMIT": 961,
       "IMPLEMENTS": 124,
       "IMPORTS": 1445,
       "INHERITS": 4,
@@ -6431,6 +6431,29 @@
       "lastChangedAt": "2026-08-07T18:51:10Z",
       "lastChangedBy": "Claude",
       "lastChangedCommit": "95c0240e3b3dfb6b745236caad43eb53ba4d75b2"
+    },
+    {
+      "key": "Artifact:.gitattributes",
+      "type": "Artifact",
+      "id": ".gitattributes",
+      "label": ".gitattributes",
+      "path": ".gitattributes",
+      "kind": "artifact",
+      "extension": "(none)",
+      "bytes": 35,
+      "lines": 2,
+      "version": "40b504dc75338794",
+      "text": true,
+      "provenance": [
+        {
+          "file": ".gitattributes",
+          "line": 1,
+          "version": "40b504dc75338794"
+        }
+      ],
+      "lastChangedAt": "2026-08-25T21:19:33-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "8c0c9f8c41d472055baaf10f11dcc946f866141d"
     },
     {
       "key": "Artifact:.github/workflows/ci.yml",
@@ -35322,20 +35345,20 @@
       "path": "tools/knowledge-test.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 6451,
-      "lines": 112,
-      "version": "6aae853d0dd1f421",
+      "bytes": 7403,
+      "lines": 127,
+      "version": "8c29d2b24ebb3141",
       "text": true,
       "provenance": [
         {
           "file": "tools/knowledge-test.js",
           "line": 1,
-          "version": "6aae853d0dd1f421"
+          "version": "8c29d2b24ebb3141"
         }
       ],
-      "lastChangedAt": "2026-08-25T20:50:37-04:00",
+      "lastChangedAt": "2026-08-25T21:19:33-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f0fdb7748a33a2c665289922df60c720675b8052"
+      "lastChangedCommit": "8c0c9f8c41d472055baaf10f11dcc946f866141d"
     },
     {
       "key": "Artifact:tools/knowledge.js",
@@ -35345,20 +35368,20 @@
       "path": "tools/knowledge.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 46990,
-      "lines": 778,
-      "version": "017957a8e2af7152",
+      "bytes": 47218,
+      "lines": 780,
+      "version": "341b2dd72910d540",
       "text": true,
       "provenance": [
         {
           "file": "tools/knowledge.js",
           "line": 1,
-          "version": "017957a8e2af7152"
+          "version": "341b2dd72910d540"
         }
       ],
-      "lastChangedAt": "2026-08-25T20:50:37-04:00",
+      "lastChangedAt": "2026-08-25T21:19:33-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f0fdb7748a33a2c665289922df60c720675b8052"
+      "lastChangedCommit": "8c0c9f8c41d472055baaf10f11dcc946f866141d"
     },
     {
       "key": "Artifact:tools/loadtest.js",
@@ -37507,6 +37530,22 @@
         {
           "commit": "16e01cd4ca0268f0f3043dd929958b974519e2f2",
           "url": "https://github.com/OmertaDev/Omerta/commit/16e01cd4ca0268f0f3043dd929958b974519e2f2"
+        }
+      ]
+    },
+    {
+      "key": "Commit:16e24ac09a4dc7d2baeb5f75af3839844dca1876",
+      "type": "Commit",
+      "id": "16e24ac09a4dc7d2baeb5f75af3839844dca1876",
+      "label": "docs: refresh repository knowledge snapshot",
+      "title": "docs: refresh repository knowledge snapshot",
+      "date": "2026-08-25T20:51:40-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/16e24ac09a4dc7d2baeb5f75af3839844dca1876",
+      "provenance": [
+        {
+          "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876",
+          "url": "https://github.com/OmertaDev/Omerta/commit/16e24ac09a4dc7d2baeb5f75af3839844dca1876"
         }
       ]
     },
@@ -45059,6 +45098,22 @@
         {
           "commit": "8bfe65b1156ac09f5f8776b03df5054e005080b9",
           "url": "https://github.com/OmertaDev/Omerta/commit/8bfe65b1156ac09f5f8776b03df5054e005080b9"
+        }
+      ]
+    },
+    {
+      "key": "Commit:8c0c9f8c41d472055baaf10f11dcc946f866141d",
+      "type": "Commit",
+      "id": "8c0c9f8c41d472055baaf10f11dcc946f866141d",
+      "label": "fix: stabilize knowledge snapshots across Windows checkouts",
+      "title": "fix: stabilize knowledge snapshots across Windows checkouts",
+      "date": "2026-08-25T21:19:33-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8c0c9f8c41d472055baaf10f11dcc946f866141d",
+      "provenance": [
+        {
+          "commit": "8c0c9f8c41d472055baaf10f11dcc946f866141d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8c0c9f8c41d472055baaf10f11dcc946f866141d"
         }
       ]
     },
@@ -59705,6 +59760,9 @@
           "commit": "0a59554664bbf60a2f5d754c5718ea532208ba5f"
         },
         {
+          "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
+        },
+        {
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
         },
         {
@@ -59733,6 +59791,9 @@
         },
         {
           "commit": "0a59554664bbf60a2f5d754c5718ea532208ba5f"
+        },
+        {
+          "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
         },
         {
           "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
@@ -59783,6 +59844,9 @@
           "commit": "0a59554664bbf60a2f5d754c5718ea532208ba5f"
         },
         {
+          "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
+        },
+        {
           "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
         },
         {
@@ -59829,6 +59893,9 @@
         },
         {
           "commit": "0a59554664bbf60a2f5d754c5718ea532208ba5f"
+        },
+        {
+          "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
         },
         {
           "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
@@ -59900,6 +59967,9 @@
           "commit": "0a59554664bbf60a2f5d754c5718ea532208ba5f"
         },
         {
+          "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
+        },
+        {
           "commit": "25f3c5ba9fedc5a79b57377d30829d39cfac3240"
         },
         {
@@ -59945,6 +60015,9 @@
           "commit": "0a59554664bbf60a2f5d754c5718ea532208ba5f"
         },
         {
+          "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
+        },
+        {
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
         },
         {
@@ -59964,6 +60037,9 @@
       "provenance": [
         {
           "commit": "0a59554664bbf60a2f5d754c5718ea532208ba5f"
+        },
+        {
+          "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
         },
         {
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
@@ -65690,12 +65766,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "f0fdb7748a33a2c665289922df60c720675b8052",
+      "revision": "8c0c9f8c41d472055baaf10f11dcc946f866141d",
       "currentBranch": "codex/agent-alpha-deep-city",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 1561,
+      "currentArtifactCount": 1562,
       "provenance": [
         {
           "file": "README.md",
@@ -74977,7 +75053,7 @@
       "method": "POST",
       "url": "/v1/gangs/kick",
       "access": "authenticated",
-      "domain": "platform-core",
+      "domain": "social-combat",
       "definitions": [
         {
           "file": "src/server.js",
@@ -74999,7 +75075,7 @@
       "method": "POST",
       "url": "/v1/gangs/leave",
       "access": "authenticated",
-      "domain": "platform-core",
+      "domain": "social-combat",
       "definitions": [
         {
           "file": "src/server.js",
@@ -80125,7 +80201,7 @@
       "method": "POST",
       "url": "/v1/streets/:targetId/fire",
       "access": "authenticated",
-      "domain": "platform-core",
+      "domain": "social-combat",
       "definitions": [
         {
           "file": "src/server.js",
@@ -80169,7 +80245,7 @@
       "method": "POST",
       "url": "/v1/streets/:targetId/npchit",
       "access": "authenticated",
-      "domain": "platform-core",
+      "domain": "social-combat",
       "definitions": [
         {
           "file": "src/server.js",
@@ -102186,7 +102262,7 @@
     {
       "type": "BELONGS_TO",
       "from": "Route:POST /v1/gangs/kick",
-      "to": "Domain:platform-core",
+      "to": "Domain:social-combat",
       "provenance": {
         "file": "src/server.js",
         "line": 1466
@@ -102195,7 +102271,7 @@
     {
       "type": "BELONGS_TO",
       "from": "Route:POST /v1/gangs/leave",
-      "to": "Domain:platform-core",
+      "to": "Domain:social-combat",
       "provenance": {
         "file": "src/server.js",
         "line": 1457
@@ -104292,7 +104368,7 @@
     {
       "type": "BELONGS_TO",
       "from": "Route:POST /v1/streets/:targetId/fire",
-      "to": "Domain:platform-core",
+      "to": "Domain:social-combat",
       "provenance": {
         "file": "src/server.js",
         "line": 2486
@@ -104310,7 +104386,7 @@
     {
       "type": "BELONGS_TO",
       "from": "Route:POST /v1/streets/:targetId/npchit",
-      "to": "Domain:platform-core",
+      "to": "Domain:social-combat",
       "provenance": {
         "file": "src/server.js",
         "line": 2444
@@ -109536,6 +109612,62 @@
       "to": "Artifact:test/expansion.js",
       "provenance": {
         "commit": "16e01cd4ca0268f0f3043dd929958b974519e2f2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:16e24ac09a4dc7d2baeb5f75af3839844dca1876",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:16e24ac09a4dc7d2baeb5f75af3839844dca1876",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:16e24ac09a4dc7d2baeb5f75af3839844dca1876",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:16e24ac09a4dc7d2baeb5f75af3839844dca1876",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:16e24ac09a4dc7d2baeb5f75af3839844dca1876",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:16e24ac09a4dc7d2baeb5f75af3839844dca1876",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:16e24ac09a4dc7d2baeb5f75af3839844dca1876",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
       }
     },
     {
@@ -141944,6 +142076,30 @@
       "to": "Artifact:test/security.js",
       "provenance": {
         "commit": "8bfe65b1156ac09f5f8776b03df5054e005080b9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8c0c9f8c41d472055baaf10f11dcc946f866141d",
+      "to": "Artifact:.gitattributes",
+      "provenance": {
+        "commit": "8c0c9f8c41d472055baaf10f11dcc946f866141d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8c0c9f8c41d472055baaf10f11dcc946f866141d",
+      "to": "Artifact:tools/knowledge-test.js",
+      "provenance": {
+        "commit": "8c0c9f8c41d472055baaf10f11dcc946f866141d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8c0c9f8c41d472055baaf10f11dcc946f866141d",
+      "to": "Artifact:tools/knowledge.js",
+      "provenance": {
+        "commit": "8c0c9f8c41d472055baaf10f11dcc946f866141d"
       }
     },
     {
@@ -175108,6 +175264,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:.gitattributes",
+      "provenance": {
+        "file": ".gitattributes",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:.gitignore",
       "provenance": {
         "file": ".gitignore",
@@ -195047,36 +195212,6 @@
     },
     {
       "type": "HANDLED_BY",
-      "from": "Route:GET /",
-      "to": "Artifact:src/server.js",
-      "symbol": "servePage",
-      "provenance": {
-        "file": "src/server.js",
-        "line": 344
-      }
-    },
-    {
-      "type": "HANDLED_BY",
-      "from": "Route:GET /admin",
-      "to": "Artifact:src/server.js",
-      "symbol": "servePage",
-      "provenance": {
-        "file": "src/server.js",
-        "line": 350
-      }
-    },
-    {
-      "type": "HANDLED_BY",
-      "from": "Route:GET /arena",
-      "to": "Artifact:src/server.js",
-      "symbol": "servePage",
-      "provenance": {
-        "file": "src/server.js",
-        "line": 360
-      }
-    },
-    {
-      "type": "HANDLED_BY",
       "from": "Route:GET /art/:file",
       "to": "Artifact:src/server.js",
       "symbol": "sendVideo",
@@ -195098,8 +195233,8 @@
     {
       "type": "HANDLED_BY",
       "from": "Route:GET /beef/:a/:b",
-      "to": "Artifact:src/server.js",
-      "symbol": "clip",
+      "to": "Artifact:src/cards.js",
+      "symbol": "Cards.beefDossier",
       "provenance": {
         "file": "src/server.js",
         "line": 604
@@ -195108,8 +195243,8 @@
     {
       "type": "HANDLED_BY",
       "from": "Route:GET /card/:type/:name",
-      "to": "Artifact:src/server.js",
-      "symbol": "clip",
+      "to": "Artifact:src/cards.js",
+      "symbol": "Cards.publicDossier",
       "provenance": {
         "file": "src/server.js",
         "line": 568
@@ -195118,8 +195253,8 @@
     {
       "type": "HANDLED_BY",
       "from": "Route:GET /card/beef/:a/:b",
-      "to": "Artifact:src/server.js",
-      "symbol": "clip",
+      "to": "Artifact:src/cards.js",
+      "symbol": "Cards.beefDossier",
       "provenance": {
         "file": "src/server.js",
         "line": 584
@@ -195137,39 +195272,9 @@
     },
     {
       "type": "HANDLED_BY",
-      "from": "Route:GET /health",
-      "to": "Artifact:src/server.js",
-      "symbol": "healthTtl",
-      "provenance": {
-        "file": "src/server.js",
-        "line": 786
-      }
-    },
-    {
-      "type": "HANDLED_BY",
-      "from": "Route:GET /path",
-      "to": "Artifact:src/server.js",
-      "symbol": "servePage",
-      "provenance": {
-        "file": "src/server.js",
-        "line": 369
-      }
-    },
-    {
-      "type": "HANDLED_BY",
-      "from": "Route:GET /play",
-      "to": "Artifact:src/server.js",
-      "symbol": "servePage",
-      "provenance": {
-        "file": "src/server.js",
-        "line": 365
-      }
-    },
-    {
-      "type": "HANDLED_BY",
       "from": "Route:GET /u/:name",
-      "to": "Artifact:src/server.js",
-      "symbol": "clip",
+      "to": "Artifact:src/cards.js",
+      "symbol": "Cards.publicDossier",
       "provenance": {
         "file": "src/server.js",
         "line": 598
@@ -195198,8 +195303,8 @@
     {
       "type": "HANDLED_BY",
       "from": "Route:GET /v1/auth/x/callback",
-      "to": "Artifact:src/server.js",
-      "symbol": "cookieVal",
+      "to": "Artifact:src/auth.js",
+      "symbol": "A.xOAuthCallback",
       "provenance": {
         "file": "src/server.js",
         "line": 1166
@@ -196938,8 +197043,8 @@
     {
       "type": "HANDLED_BY",
       "from": "Route:GET /v1/u/:name",
-      "to": "Artifact:src/server.js",
-      "symbol": "clip",
+      "to": "Artifact:src/cards.js",
+      "symbol": "Cards.publicDossier",
       "provenance": {
         "file": "src/server.js",
         "line": 566
@@ -197043,16 +197148,6 @@
       "provenance": {
         "file": "src/server.js",
         "line": 1417
-      }
-    },
-    {
-      "type": "HANDLED_BY",
-      "from": "Route:GET /wiki",
-      "to": "Artifact:src/server.js",
-      "symbol": "servePage",
-      "provenance": {
-        "file": "src/server.js",
-        "line": 354
       }
     },
     {
@@ -197177,42 +197272,12 @@
     },
     {
       "type": "HANDLED_BY",
-      "from": "Route:POST /v1/auth/agent-key",
-      "to": "Artifact:src/server.js",
-      "symbol": "signFor",
-      "provenance": {
-        "file": "src/server.js",
-        "line": 1198
-      }
-    },
-    {
-      "type": "HANDLED_BY",
       "from": "Route:POST /v1/auth/guest",
-      "to": "Artifact:src/server.js",
-      "symbol": "signFor",
+      "to": "Artifact:src/auth.js",
+      "symbol": "A.consumeInvite",
       "provenance": {
         "file": "src/server.js",
         "line": 1108
-      }
-    },
-    {
-      "type": "HANDLED_BY",
-      "from": "Route:POST /v1/auth/logout-all",
-      "to": "Artifact:src/server.js",
-      "symbol": "closeAccountSockets",
-      "provenance": {
-        "file": "src/server.js",
-        "line": 1207
-      }
-    },
-    {
-      "type": "HANDLED_BY",
-      "from": "Route:POST /v1/auth/privy",
-      "to": "Artifact:src/server.js",
-      "symbol": "providerLogin",
-      "provenance": {
-        "file": "src/server.js",
-        "line": 1124
       }
     },
     {
@@ -197223,16 +197288,6 @@
       "provenance": {
         "file": "src/server.js",
         "line": 1189
-      }
-    },
-    {
-      "type": "HANDLED_BY",
-      "from": "Route:POST /v1/auth/x",
-      "to": "Artifact:src/server.js",
-      "symbol": "providerLogin",
-      "provenance": {
-        "file": "src/server.js",
-        "line": 1123
       }
     },
     {
@@ -198698,8 +198753,8 @@
     {
       "type": "HANDLED_BY",
       "from": "Route:POST /v1/gangs/kick",
-      "to": "Artifact:src/server.js",
-      "symbol": "closeAccountSockets",
+      "to": "Artifact:src/social.js",
+      "symbol": "S.kickMember",
       "provenance": {
         "file": "src/server.js",
         "line": 1466
@@ -198708,8 +198763,8 @@
     {
       "type": "HANDLED_BY",
       "from": "Route:POST /v1/gangs/leave",
-      "to": "Artifact:src/server.js",
-      "symbol": "closeAccountSockets",
+      "to": "Artifact:src/social.js",
+      "symbol": "S.leaveGang",
       "provenance": {
         "file": "src/server.js",
         "line": 1457
@@ -199978,8 +200033,8 @@
     {
       "type": "HANDLED_BY",
       "from": "Route:POST /v1/path-quiz",
-      "to": "Artifact:src/server.js",
-      "symbol": "validPathSession",
+      "to": "Artifact:src/game.js",
+      "symbol": "G.track",
       "provenance": {
         "file": "src/server.js",
         "line": 1049
@@ -201008,8 +201063,8 @@
     {
       "type": "HANDLED_BY",
       "from": "Route:POST /v1/streets/:targetId/fire",
-      "to": "Artifact:src/server.js",
-      "symbol": "closeSocketsOnKill",
+      "to": "Artifact:src/social.js",
+      "symbol": "S.fire",
       "provenance": {
         "file": "src/server.js",
         "line": 2486
@@ -201028,8 +201083,8 @@
     {
       "type": "HANDLED_BY",
       "from": "Route:POST /v1/streets/:targetId/npchit",
-      "to": "Artifact:src/server.js",
-      "symbol": "closeSocketsOnKill",
+      "to": "Artifact:src/social.js",
+      "symbol": "S.npcHit",
       "provenance": {
         "file": "src/server.js",
         "line": 2444
@@ -202141,6 +202196,14 @@
       "to": "Commit:16e01cd4ca0268f0f3043dd929958b974519e2f2",
       "provenance": {
         "commit": "16e01cd4ca0268f0f3043dd929958b974519e2f2"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:16e24ac09a4dc7d2baeb5f75af3839844dca1876",
+      "provenance": {
+        "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
       }
     },
     {
@@ -205917,6 +205980,14 @@
       "to": "Commit:8bfe65b1156ac09f5f8776b03df5054e005080b9",
       "provenance": {
         "commit": "8bfe65b1156ac09f5f8776b03df5054e005080b9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:8c0c9f8c41d472055baaf10f11dcc946f866141d",
+      "provenance": {
+        "commit": "8c0c9f8c41d472055baaf10f11dcc946f866141d"
       }
     },
     {
