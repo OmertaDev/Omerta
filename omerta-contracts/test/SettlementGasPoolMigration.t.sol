@@ -13,7 +13,11 @@ contract MutableMigrationCandidate {
     address public owner;
     bool public paused;
     bool public rejectReceipt;
+    bool public attemptWithdrawalReentry;
+    bool public withdrawalReentrySucceeded;
+    bytes4 public withdrawalReentryErrorSelector;
     bytes32 public lastMigrationProposalId;
+    uint256 public receiptCount;
     uint256 public totalMigrationReceived;
 
     error ReceiptRejected();
@@ -42,11 +46,30 @@ contract MutableMigrationCandidate {
         rejectReceipt = rejectReceipt_;
     }
 
+    function setAttemptWithdrawalReentry(bool attemptWithdrawalReentry_) external {
+        attemptWithdrawalReentry = attemptWithdrawalReentry_;
+    }
+
     function acceptMigration(bytes32 migrationProposalId) external payable {
         if (rejectReceipt) revert ReceiptRejected();
         lastMigrationProposalId = migrationProposalId;
+        receiptCount += 1;
         totalMigrationReceived += msg.value;
+        if (attemptWithdrawalReentry) {
+            bytes memory returnData;
+            (withdrawalReentrySucceeded, returnData) =
+                predecessor.call(abi.encodeCall(SettlementGasPool.withdrawCredit, ()));
+            if (!withdrawalReentrySucceeded && returnData.length >= 4) {
+                bytes4 selector;
+                assembly ("memory-safe") {
+                    selector := mload(add(returnData, 32))
+                }
+                withdrawalReentryErrorSelector = selector;
+            }
+        }
     }
+
+    receive() external payable {}
 }
 
 contract SettlementGasPoolMigrationTest is SettlementGasPoolTestBase {
@@ -257,6 +280,30 @@ contract SettlementGasPoolMigrationTest is SettlementGasPoolTestBase {
         assertEq(candidate.totalOutstandingCredits(), 0);
     }
 
+    // Catches migration spending the last wei reserved for exact old-pool executor liabilities.
+    function test_migration_never_reduces_old_balance_below_old_outstanding() public {
+        pool = deployPool(address(0), MIGRATION_PRIORITY_CAP, MIGRATION_SETTLEMENT_CAP);
+        fund(3 ether);
+        unpause();
+        vm.fee(0);
+        vm.txGasPrice(1_000 gwei);
+        vm.prank(vault);
+        (uint256 credit,) = pool.recordSettlementCredit(request(979_000));
+        assertEq(credit, 1 ether);
+        assertEq(pool.unreservedBalance(), 2 ether);
+        SettlementGasPool candidate = _deploySuccessor();
+
+        bytes32 proposalId = _proposeMigration(address(candidate), 2 ether, MIGRATION_REASON);
+        _executeMigrationAfterDelay(proposalId);
+
+        assertEq(address(pool).balance, 1 ether);
+        assertEq(pool.totalOutstandingCredits(), 1 ether);
+        assertEq(pool.credits(executor), 1 ether);
+        assertEq(pool.unreservedBalance(), 0);
+        assertEq(address(candidate).balance, 2 ether);
+        assertGe(address(pool).balance, pool.totalOutstandingCredits());
+    }
+
     // Catches reversible retirement, successor replacement, leaving credit creation live, or mutable config after cutover.
     function test_first_execution_latches_successor_retires_and_pauses_old_pool() public {
         pool = deployPool(address(0), MIGRATION_PRIORITY_CAP, MIGRATION_SETTLEMENT_CAP);
@@ -415,6 +462,40 @@ contract SettlementGasPoolMigrationTest is SettlementGasPoolTestBase {
         assertFalse(pool.paused());
         assertEq(address(pool).balance, 2 ether);
         assertEq(address(candidate).balance, 0);
+    }
+
+    // Catches removing the shared migration guard and permitting the successor callback to withdraw mid-transfer.
+    function test_successor_receipt_callback_cannot_reenter_and_migration_is_atomic() public {
+        pool = deployPool(address(0), MIGRATION_PRIORITY_CAP, MIGRATION_SETTLEMENT_CAP);
+        fund(3 ether);
+        unpause();
+        MutableMigrationCandidate candidate = _validMutableCandidate();
+        vm.fee(0);
+        vm.txGasPrice(1_000 gwei);
+        SettlementGasPool.CreditRequest memory candidateCredit = request(979_000);
+        candidateCredit.executor = address(candidate);
+        vm.prank(vault);
+        (uint256 credit,) = pool.recordSettlementCredit(candidateCredit);
+        assertEq(credit, 1 ether);
+        assertEq(pool.unreservedBalance(), 2 ether);
+
+        candidate.setAttemptWithdrawalReentry(true);
+        bytes32 proposalId = _proposeMigration(address(candidate), 2 ether, MIGRATION_REASON);
+        _executeMigrationAfterDelay(proposalId);
+
+        assertEq(candidate.receiptCount(), 1);
+        assertEq(candidate.lastMigrationProposalId(), proposalId);
+        assertEq(candidate.totalMigrationReceived(), 2 ether);
+        assertEq(address(candidate).balance, 2 ether);
+        assertFalse(candidate.withdrawalReentrySucceeded());
+        assertEq(candidate.withdrawalReentryErrorSelector(), bytes4(keccak256("ReentrancyGuardReentrantCall()")));
+        assertEq(pool.credits(address(candidate)), 1 ether);
+        assertEq(pool.totalOutstandingCredits(), 1 ether);
+        assertEq(pool.totalCreditsWithdrawn(), 0);
+        assertEq(address(pool).balance, 1 ether);
+        assertEq(uint256(pool.migrationProposalState(proposalId)), uint256(SettlementGasPool.ProposalState.EXECUTED));
+        assertTrue(pool.retired());
+        assertTrue(pool.paused());
     }
 
     function _deploySuccessor() private returns (SettlementGasPool candidate) {

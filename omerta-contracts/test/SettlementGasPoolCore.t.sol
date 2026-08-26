@@ -28,6 +28,37 @@ contract RejectingExecutor {
     }
 }
 
+contract ReentrantExecutor {
+    SettlementGasPool internal immutable pool;
+
+    uint256 public receiveCount;
+    uint256 public totalReceived;
+    bool public reentrySucceeded;
+    bytes4 public reentryErrorSelector;
+
+    constructor(SettlementGasPool pool_) {
+        pool = pool_;
+    }
+
+    function claim() external {
+        pool.withdrawCredit();
+    }
+
+    receive() external payable {
+        receiveCount += 1;
+        totalReceived += msg.value;
+        bytes memory returnData;
+        (reentrySucceeded, returnData) = address(pool).call(abi.encodeCall(SettlementGasPool.withdrawCredit, ()));
+        if (!reentrySucceeded && returnData.length >= 4) {
+            bytes4 selector;
+            assembly ("memory-safe") {
+                selector := mload(add(returnData, 32))
+            }
+            reentryErrorSelector = selector;
+        }
+    }
+}
+
 contract SettlementGasPoolCoreTest is SettlementGasPoolTestBase {
     event ContributionReceived(
         address indexed contributor,
@@ -35,6 +66,41 @@ contract SettlementGasPoolCoreTest is SettlementGasPoolTestBase {
         bytes32 indexed memo,
         uint256 poolBalance,
         uint256 unreservedBalance
+    );
+    event SettlementProcessed(
+        bytes32 indexed settlementKey,
+        bytes32 indexed eventId,
+        bytes32 indexed victimAccountId,
+        uint256 victimNonce,
+        address executor,
+        SettlementGasPool.CreditStatus status
+    );
+    event SettlementCreditCalculated(
+        bytes32 indexed settlementKey,
+        uint256 measuredSettlementGas,
+        uint256 billableGas,
+        uint256 reimbursableGasPrice,
+        uint256 approvedDataFee,
+        uint256 verifiedGasCost,
+        uint256 available,
+        uint256 credit
+    );
+    event CreditWithdrawn(
+        address indexed executor,
+        uint256 amount,
+        uint256 totalCreditsWithdrawn,
+        uint256 totalOutstandingCredits,
+        uint256 poolBalance
+    );
+    event CreditsPaused(bytes32 indexed reasonHash);
+    event CreditsUnpaused(bytes32 indexed reasonHash);
+    event CapsReduced(
+        uint128 oldPriorityFeeCapWei,
+        uint128 newPriorityFeeCapWei,
+        uint128 oldPerSettlementWeiCap,
+        uint128 newPerSettlementWeiCap,
+        uint128 oldDataFeeWeiCap,
+        uint128 newDataFeeWeiCap
     );
 
     // Catches constructor validation or immutable Safe/vault/chain/overhead authority being removed.
@@ -160,7 +226,12 @@ contract SettlementGasPoolCoreTest is SettlementGasPoolTestBase {
         assertEq(previewedCredit, 0.0022 ether);
         assertEq(uint256(previewedStatus), uint256(SettlementGasPool.CreditStatus.FULL));
 
+        bytes32 key = pool.settlementKey(EVENT_ID, VICTIM_ID, VICTIM_NONCE);
         vm.prank(vault);
+        vm.expectEmit(true, true, true, true, address(pool));
+        emit SettlementProcessed(key, EVENT_ID, VICTIM_ID, VICTIM_NONCE, executor, SettlementGasPool.CreditStatus.FULL);
+        vm.expectEmit(true, false, false, true, address(pool));
+        emit SettlementCreditCalculated(key, 79_000, 100_000, 22 gwei, 0, 0.0022 ether, 1 ether, 0.0022 ether);
         (uint256 credit, SettlementGasPool.CreditStatus status) = pool.recordSettlementCredit(request(79_000));
         assertEq(credit, 0.0022 ether);
         assertEq(uint256(status), uint256(SettlementGasPool.CreditStatus.FULL));
@@ -218,6 +289,41 @@ contract SettlementGasPoolCoreTest is SettlementGasPoolTestBase {
         assertEq(uint256(status), uint256(SettlementGasPool.CreditStatus.FULL));
     }
 
+    // Catches unchecked additions/multiplications or a cap applied only after overflow-sized inputs are evaluated.
+    function test_max_measured_gas_and_max_fee_caps_saturate_without_overflow() public {
+        pool = deployPool(address(0), type(uint128).max, type(uint128).max);
+        vm.deal(address(pool), type(uint128).max);
+        unpause();
+        vm.fee(type(uint64).max);
+        vm.txGasPrice(type(uint64).max);
+
+        (
+            uint256 billableGas,
+            uint256 reimbursableGasPrice,
+            uint256 approvedDataFee,
+            uint256 verifiedGasCost,
+            uint256 available,
+            uint256 previewedCredit,
+            SettlementGasPool.CreditStatus previewedStatus
+        ) = pool.previewCredit(type(uint256).max);
+        assertEq(billableGas, type(uint256).max);
+        assertEq(reimbursableGasPrice, type(uint64).max);
+        assertEq(approvedDataFee, 0);
+        assertEq(verifiedGasCost, type(uint128).max);
+        assertEq(available, type(uint128).max);
+        assertEq(previewedCredit, type(uint128).max);
+        assertEq(uint256(previewedStatus), uint256(SettlementGasPool.CreditStatus.FULL));
+
+        vm.prank(vault);
+        (uint256 credit, SettlementGasPool.CreditStatus status) =
+            pool.recordSettlementCredit(request(type(uint256).max));
+        assertEq(credit, type(uint128).max);
+        assertEq(pool.credits(executor), type(uint128).max);
+        assertEq(pool.totalCreditsRecorded(), type(uint128).max);
+        assertEq(pool.totalOutstandingCredits(), type(uint128).max);
+        assertEq(uint256(status), uint256(SettlementGasPool.CreditStatus.FULL));
+    }
+
     // Catches availability not being bounded by the exact unreserved pool balance.
     function test_insufficient_unreserved_balance_records_partial_credit() public {
         fund(0.001 ether);
@@ -267,6 +373,27 @@ contract SettlementGasPoolCoreTest is SettlementGasPoolTestBase {
         pool.recordSettlementCredit(request(79_000));
     }
 
+    // Catches a paused zero-credit key becoming payable after later sponsorship and an unpause.
+    function test_zero_credit_key_is_terminal_across_pause_fund_and_unpause() public {
+        bytes32 key = pool.settlementKey(EVENT_ID, VICTIM_ID, VICTIM_NONCE);
+
+        vm.prank(vault);
+        (uint256 credit, SettlementGasPool.CreditStatus status) = pool.recordSettlementCredit(request(79_000));
+        assertEq(credit, 0);
+        assertEq(uint256(status), uint256(SettlementGasPool.CreditStatus.ZERO_PAUSED));
+        assertTrue(pool.processedSettlements(key));
+
+        fund(1 ether);
+        unpause();
+        vm.prank(vault);
+        vm.expectRevert(SettlementGasPool.AlreadyProcessed.selector);
+        pool.recordSettlementCredit(request(79_000));
+        assertEq(pool.credits(executor), 0);
+        assertEq(pool.totalCreditsRecorded(), 0);
+        assertEq(pool.totalOutstandingCredits(), 0);
+        assertEq(pool.unreservedBalance(), 1 ether);
+    }
+
     // Catches the terminal replay write being removed from a positive credit record.
     function test_same_event_victim_nonce_key_cannot_be_processed_twice() public {
         fund(1 ether);
@@ -294,6 +421,31 @@ contract SettlementGasPoolCoreTest is SettlementGasPoolTestBase {
         pool.recordSettlementCredit(req);
         assertTrue(pool.processedSettlements(first));
         assertTrue(pool.processedSettlements(second));
+    }
+
+    // Catches the victim account ID being omitted from a replay key shared by equal event IDs and nonces.
+    function test_two_distinct_victims_with_same_nonce_do_not_collide() public {
+        fund(1 ether);
+        unpause();
+        vm.txGasPrice(1 gwei);
+        bytes32 secondVictimId = keccak256("victim-2");
+        bytes32 firstKey = pool.settlementKey(EVENT_ID, VICTIM_ID, VICTIM_NONCE);
+        bytes32 secondKey = pool.settlementKey(EVENT_ID, secondVictimId, VICTIM_NONCE);
+        assertTrue(firstKey != secondKey);
+
+        vm.prank(vault);
+        (uint256 firstCredit,) = pool.recordSettlementCredit(request(79_000));
+        SettlementGasPool.CreditRequest memory secondRequest = request(79_000);
+        secondRequest.victimAccountId = secondVictimId;
+        vm.prank(vault);
+        (uint256 secondCredit,) = pool.recordSettlementCredit(secondRequest);
+
+        assertEq(firstCredit, 0.0001 ether);
+        assertEq(secondCredit, 0.0001 ether);
+        assertTrue(pool.processedSettlements(firstKey));
+        assertTrue(pool.processedSettlements(secondKey));
+        assertEq(pool.credits(executor), 0.0002 ether);
+        assertEq(pool.totalOutstandingCredits(), 0.0002 ether);
     }
 
     // Catches omitting the supported chain, immutable vault, event, victim, or nonce from the exact replay domain.
@@ -350,6 +502,8 @@ contract SettlementGasPoolCoreTest is SettlementGasPoolTestBase {
 
         uint256 executorBefore = executor.balance;
         vm.prank(executor);
+        vm.expectEmit(true, false, false, true, address(pool));
+        emit CreditWithdrawn(executor, 0.003 ether, 0.003 ether, 0, 0);
         uint256 amount = pool.withdrawCredit();
         assertEq(amount, 0.003 ether);
         assertEq(executor.balance, executorBefore + 0.003 ether);
@@ -362,7 +516,7 @@ contract SettlementGasPoolCoreTest is SettlementGasPoolTestBase {
     }
 
     // Catches CEI/failure handling that loses the caller's credit when its native transfer fails.
-    function test_failed_withdrawal_restores_credit_and_liability() public {
+    function test_reverting_executor_keeps_exact_credit() public {
         RejectingExecutor rejecting = new RejectingExecutor(pool);
         fund(1 ether);
         unpause();
@@ -386,6 +540,97 @@ contract SettlementGasPoolCoreTest is SettlementGasPoolTestBase {
         assertEq(pool.credits(address(rejecting)), 0);
         assertEq(pool.totalOutstandingCredits(), 0);
         assertEq(pool.totalCreditsWithdrawn(), 0.0022 ether);
+    }
+
+    // Catches removing the withdrawal guard even though checks-effects-interactions also clears the credit first.
+    function test_reentrant_executor_cannot_double_withdraw() public {
+        ReentrantExecutor reentrant = new ReentrantExecutor(pool);
+        fund(1 ether);
+        unpause();
+        vm.fee(20 gwei);
+        vm.txGasPrice(30 gwei);
+        SettlementGasPool.CreditRequest memory req = request(79_000);
+        req.executor = address(reentrant);
+
+        vm.prank(vault);
+        pool.recordSettlementCredit(req);
+        assertEq(pool.credits(address(reentrant)), 0.0022 ether);
+        reentrant.claim();
+
+        assertEq(reentrant.receiveCount(), 1);
+        assertEq(reentrant.totalReceived(), 0.0022 ether);
+        assertFalse(reentrant.reentrySucceeded());
+        assertEq(reentrant.reentryErrorSelector(), bytes4(keccak256("ReentrancyGuardReentrantCall()")));
+        assertEq(pool.credits(address(reentrant)), 0);
+        assertEq(pool.totalCreditsRecorded(), 0.0022 ether);
+        assertEq(pool.totalOutstandingCredits(), 0);
+        assertEq(pool.totalCreditsWithdrawn(), 0.0022 ether);
+        assertEq(address(pool).balance, 1 ether - 0.0022 ether);
+    }
+
+    // Catches forcibly received ETH being treated as a sponsor refund or an unearned executor withdrawal balance.
+    function test_forced_eth_creates_unreserved_balance_but_no_sponsor_or_executor_right() public {
+        address forceSender = makeAddr("forceSender");
+        vm.etch(forceSender, abi.encodePacked(hex"73", address(pool), hex"ff"));
+        vm.deal(forceSender, 1 ether);
+        (bool forced,) = forceSender.call("");
+        assertTrue(forced);
+
+        assertEq(address(pool).balance, 1 ether);
+        assertEq(pool.unreservedBalance(), 1 ether);
+        assertEq(pool.credits(sponsor), 0);
+        assertEq(pool.credits(executor), 0);
+        assertEq(pool.credits(safe), 0);
+        assertEq(pool.totalCreditsRecorded(), 0);
+        assertEq(pool.totalOutstandingCredits(), 0);
+
+        vm.prank(sponsor);
+        vm.expectRevert(SettlementGasPool.NoCredit.selector);
+        pool.withdrawCredit();
+        vm.prank(executor);
+        vm.expectRevert(SettlementGasPool.NoCredit.selector);
+        pool.withdrawCredit();
+        vm.prank(safe);
+        vm.expectRevert(SettlementGasPool.NoCredit.selector);
+        pool.withdrawCredit();
+        assertEq(address(pool).balance, 1 ether);
+        assertEq(pool.unreservedBalance(), 1 ether);
+    }
+
+    // Catches a Safe-only sweep, arbitrary-recipient withdrawal, or owner bypass around immutable vault crediting.
+    function test_owner_cannot_sweep_redirect_or_manually_create_credit() public {
+        fund(1 ether);
+        unpause();
+        vm.txGasPrice(1 gwei);
+        vm.prank(vault);
+        pool.recordSettlementCredit(request(79_000));
+        uint256 poolBalance = address(pool).balance;
+        uint256 executorCredit = pool.credits(executor);
+
+        SettlementGasPool.CreditRequest memory ownerRequest = request(79_000);
+        ownerRequest.victimNonce = 8;
+        vm.prank(safe);
+        vm.expectRevert(SettlementGasPool.NotGameplayVault.selector);
+        pool.recordSettlementCredit(ownerRequest);
+        vm.prank(safe);
+        vm.expectRevert(SettlementGasPool.NoCredit.selector);
+        pool.withdrawCredit();
+
+        vm.prank(safe);
+        (bool swept,) = address(pool).call(abi.encodeWithSignature("sweep(address,uint256)", safe, 1 ether));
+        vm.prank(safe);
+        (bool redirected,) = address(pool).call(abi.encodeWithSignature("withdrawCredit(address)", safe));
+        vm.prank(safe);
+        (bool manuallyCredited,) =
+            address(pool).call(abi.encodeWithSignature("grantCredit(address,uint256)", safe, 1 ether));
+        assertFalse(swept);
+        assertFalse(redirected);
+        assertFalse(manuallyCredited);
+        assertEq(address(pool).balance, poolBalance);
+        assertEq(pool.credits(executor), executorCredit);
+        assertEq(pool.credits(safe), 0);
+        assertEq(pool.totalCreditsRecorded(), executorCredit);
+        assertEq(pool.totalOutstandingCredits(), executorCredit);
     }
 
     // Catches pause incorrectly blocking withdrawals of already-recorded liabilities.
@@ -416,10 +661,15 @@ contract SettlementGasPoolCoreTest is SettlementGasPoolTestBase {
         vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, sponsor));
         pool.pauseCredits(keccak256("unauthorized"));
         vm.prank(safe);
-        pool.pauseCredits(keccak256("incident"));
+        bytes32 pauseReason = keccak256("incident");
+        vm.expectEmit(true, false, false, true, address(pool));
+        emit CreditsPaused(pauseReason);
+        pool.pauseCredits(pauseReason);
         assertTrue(pool.paused());
 
         vm.prank(safe);
+        vm.expectEmit(false, false, false, true, address(pool));
+        emit CapsReduced(PRIORITY_CAP, 1 gwei, SETTLEMENT_CAP, 0.01 ether, 0, 0);
         pool.reduceCaps(1 gwei, 0.01 ether, 0);
         (uint128 priority, uint128 settlement, uint128 data,,) = pool.config();
         assertEq(priority, 1 gwei);
@@ -444,7 +694,11 @@ contract SettlementGasPoolCoreTest is SettlementGasPoolTestBase {
         pool.unpauseCredits(bytes32(0));
 
         fund(1 ether);
-        unpause();
+        bytes32 unpauseReason = keccak256("launch checks complete");
+        vm.prank(safe);
+        vm.expectEmit(true, false, false, true, address(pool));
+        emit CreditsUnpaused(unpauseReason);
+        pool.unpauseCredits(unpauseReason);
         vm.txGasPrice(1 gwei);
         vm.prank(vault);
         pool.recordSettlementCredit(request(79_000));

@@ -33,6 +33,69 @@ contract MalformedDataFeeSource {
     }
 }
 
+contract ReentrantDataFeeSource {
+    uint256 internal immutable fee;
+    SettlementGasPool internal targetPool;
+    SettlementGasPool internal probePool;
+    bool internal attemptCreditReentry;
+
+    constructor(uint256 fee_) {
+        fee = fee_;
+    }
+
+    function configure(SettlementGasPool targetPool_, SettlementGasPool probePool_, bool attemptCreditReentry_)
+        external
+    {
+        targetPool = targetPool_;
+        probePool = probePool_;
+        attemptCreditReentry = attemptCreditReentry_;
+    }
+
+    function currentTransactionNativeDataFee() external returns (uint256) {
+        SettlementGasPool.CreditRequest memory probeRequest = SettlementGasPool.CreditRequest({
+            eventId: keccak256("source-probe-event"),
+            victimAccountId: keccak256("source-probe-victim"),
+            victimNonce: 1,
+            executor: address(this),
+            measuredSettlementGas: 79_000
+        });
+        bool reentrySucceeded;
+        if (attemptCreditReentry) {
+            (reentrySucceeded,) =
+                address(probePool).call(abi.encodeCall(SettlementGasPool.recordSettlementCredit, (probeRequest)));
+        } else {
+            (reentrySucceeded,) = address(targetPool).call(abi.encodeCall(SettlementGasPool.withdrawCredit, ()));
+        }
+        if (reentrySucceeded) return type(uint256).max;
+        return fee;
+    }
+
+    receive() external payable {}
+}
+
+contract StaticContextMutationProbe {
+    bool public mutated;
+
+    function mutate() external {
+        mutated = true;
+    }
+}
+
+contract StaticContextDataFeeSource {
+    StaticContextMutationProbe internal immutable probe;
+    uint256 internal immutable fee;
+
+    constructor(StaticContextMutationProbe probe_, uint256 fee_) {
+        probe = probe_;
+        fee = fee_;
+    }
+
+    function currentTransactionNativeDataFee() external returns (uint256) {
+        (bool mutationSucceeded,) = address(probe).call(abi.encodeCall(StaticContextMutationProbe.mutate, ()));
+        return mutationSucceeded ? type(uint256).max : fee;
+    }
+}
+
 contract SettlementGasPoolConfigTest is SettlementGasPoolTestBase {
     bytes32 internal constant CONFIG_REASON = keccak256("reviewed settlement gas policy");
     bytes32 internal constant IMMEDIATE_REDUCTION_REASON = keccak256("immediate cap reduction");
@@ -274,6 +337,29 @@ contract SettlementGasPoolConfigTest is SettlementGasPoolTestBase {
         assertEq(pool.totalOutstandingCredits(), 0.0023 ether);
     }
 
+    // Catches applying the data fee after, rather than within, the exact per-settlement cap.
+    function test_data_fee_is_capped_inside_per_settlement_cap_at_boundary() public {
+        FixedDataFeeSource source = new FixedDataFeeSource(0.0004 ether);
+        _configureSource(address(source), address(source).codehash);
+        vm.prank(safe);
+        pool.reduceCaps(PRIORITY_CAP, uint128(0.0022 ether), uint128(0.0001 ether));
+        fund(1 ether);
+        unpause();
+        vm.fee(20 gwei);
+        vm.txGasPrice(30 gwei);
+
+        (,, uint256 approvedDataFee, uint256 verifiedGasCost,, uint256 previewedCredit,) = pool.previewCredit(79_000);
+        assertEq(approvedDataFee, 0.0001 ether);
+        assertEq(verifiedGasCost, 0.0022 ether);
+        assertEq(previewedCredit, 0.0022 ether);
+
+        vm.prank(vault);
+        (uint256 recorded,) = pool.recordSettlementCredit(request(79_000));
+        assertEq(recorded, 0.0022 ether);
+        assertEq(pool.credits(executor), 0.0022 ether);
+        assertEq(pool.totalOutstandingCredits(), 0.0022 ether);
+    }
+
     // Catches source failures, malformed ABI, or runtime drift bubbling up and stranding settlement replay processing.
     function test_reverting_malformed_or_drifted_source_returns_zero_fee_without_reverting_credit() public {
         RevertingDataFeeSource revertingSource = new RevertingDataFeeSource();
@@ -288,6 +374,104 @@ contract SettlementGasPoolConfigTest is SettlementGasPoolTestBase {
         _configureSource(address(driftedSource), address(driftedSource).codehash);
         vm.etch(address(driftedSource), hex"00");
         _assertGasOnlyPreviewAndRecord(9);
+    }
+
+    // Catches runtime drift being hidden behind a replacement that still returns a valid, nonzero ABI fee.
+    function test_runtime_code_hash_drift_alone_forces_valid_nonzero_source_fee_to_zero() public {
+        FixedDataFeeSource source = new FixedDataFeeSource(0.0004 ether);
+        _configureSource(address(source), address(source).codehash);
+        bytes memory replacementRuntime = hex"600760005260206000f3";
+        vm.etch(address(source), replacementRuntime);
+
+        (bool directSuccess, bytes memory directResult) = address(source)
+            .staticcall(abi.encodeWithSelector(ISettlementDataFeeSource.currentTransactionNativeDataFee.selector));
+        assertTrue(directSuccess);
+        assertEq(directResult.length, 32);
+        assertEq(abi.decode(directResult, (uint256)), 7);
+        assertTrue(address(source).codehash != currentConfig().dataFeeSourceRuntimeCodeHash);
+
+        fund(1 ether);
+        unpause();
+        vm.fee(20 gwei);
+        vm.txGasPrice(30 gwei);
+        (,, uint256 approvedDataFee, uint256 verifiedGasCost,, uint256 previewedCredit,) = pool.previewCredit(79_000);
+        assertEq(approvedDataFee, 0);
+        assertEq(verifiedGasCost, 0.0022 ether);
+        assertEq(previewedCredit, 0.0022 ether);
+    }
+
+    // Catches replacing STATICCALL with CALL, which would let a reviewed source mutate credit or withdrawal state.
+    function test_data_source_cannot_reenter_credit_or_withdraw_through_staticcall() public {
+        ReentrantDataFeeSource withdrawalSource = new ReentrantDataFeeSource(0.0001 ether);
+        withdrawalSource.configure(pool, SettlementGasPool(payable(address(0))), false);
+
+        fund(1 ether);
+        unpause();
+        vm.fee(20 gwei);
+        vm.txGasPrice(30 gwei);
+        SettlementGasPool.CreditRequest memory sourceCredit = request(79_000);
+        sourceCredit.executor = address(withdrawalSource);
+        vm.prank(vault);
+        pool.recordSettlementCredit(sourceCredit);
+        assertEq(pool.credits(address(withdrawalSource)), 0.0022 ether);
+        _configureSource(address(withdrawalSource), address(withdrawalSource).codehash);
+
+        (,, uint256 approvedDataFee, uint256 verifiedGasCost,, uint256 previewedCredit,) = pool.previewCredit(79_000);
+        assertEq(approvedDataFee, 0.0001 ether);
+        assertEq(verifiedGasCost, 0.0023 ether);
+        assertEq(previewedCredit, 0.0023 ether);
+        assertEq(pool.credits(address(withdrawalSource)), 0.0022 ether);
+        assertEq(pool.totalCreditsWithdrawn(), 0);
+
+        SettlementGasPool.CreditRequest memory outerRequest = request(79_000);
+        outerRequest.victimNonce = 8;
+        vm.prank(vault);
+        (uint256 recorded,) = pool.recordSettlementCredit(outerRequest);
+        assertEq(recorded, 0.0023 ether);
+        assertEq(pool.credits(address(withdrawalSource)), 0.0022 ether);
+        assertEq(pool.credits(executor), 0.0023 ether);
+        assertEq(pool.totalCreditsRecorded(), 0.0045 ether);
+        assertEq(pool.totalOutstandingCredits(), 0.0045 ether);
+        assertEq(pool.totalCreditsWithdrawn(), 0);
+
+        _resetPool();
+        ReentrantDataFeeSource creditSource = new ReentrantDataFeeSource(0.0001 ether);
+        SettlementGasPool probePool = new SettlementGasPool(
+            safe, address(creditSource), address(0), OVERHEAD_GAS, PRIORITY_CAP, SETTLEMENT_CAP, 0
+        );
+        creditSource.configure(pool, probePool, true);
+        _configureSource(address(creditSource), address(creditSource).codehash);
+        fund(1 ether);
+        unpause();
+        bytes32 probeKey = probePool.settlementKey(keccak256("source-probe-event"), keccak256("source-probe-victim"), 1);
+
+        (,, approvedDataFee, verifiedGasCost,, previewedCredit,) = pool.previewCredit(79_000);
+        assertEq(approvedDataFee, 0.0001 ether);
+        assertEq(verifiedGasCost, 0.0023 ether);
+        assertEq(previewedCredit, 0.0023 ether);
+        assertFalse(probePool.processedSettlements(probeKey));
+        assertEq(probePool.totalCreditsRecorded(), 0);
+
+        vm.prank(vault);
+        (recorded,) = pool.recordSettlementCredit(request(79_000));
+        assertEq(recorded, 0.0023 ether);
+        assertFalse(probePool.processedSettlements(probeKey));
+        assertEq(probePool.totalCreditsRecorded(), 0);
+        assertEq(pool.credits(executor), 0.0023 ether);
+        assertEq(pool.totalOutstandingCredits(), 0.0023 ether);
+
+        _resetPool();
+        StaticContextMutationProbe mutationProbe = new StaticContextMutationProbe();
+        StaticContextDataFeeSource contextSource = new StaticContextDataFeeSource(mutationProbe, 7);
+        _configureSource(address(contextSource), address(contextSource).codehash);
+        fund(1 ether);
+        unpause();
+
+        (,, approvedDataFee, verifiedGasCost,, previewedCredit,) = pool.previewCredit(79_000);
+        assertEq(approvedDataFee, 7);
+        assertEq(verifiedGasCost, 0.0022 ether + 7);
+        assertEq(previewedCredit, 0.0022 ether + 7);
+        assertFalse(mutationProbe.mutated());
     }
 
     // Catches delayed configuration rewriting existing executor balances or aggregate exact liabilities.
