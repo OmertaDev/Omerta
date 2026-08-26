@@ -430,9 +430,18 @@ for (const id of ['smugglers_moon', 'open_roads', 'blood_oath'])
   // daily table too) — F2's boss walks, the empty house dissolves, the pick dies with it. AFTER
   // the zero-ledger window: dissolving a funded family legitimately ledgers the treasury burn.
   await pool.query(`INSERT INTO commission_ticker_votes (day, gang_id, ticker, standing) VALUES (${day}, '${bosses[1].gang}', 'MSFT', 500)`);
+  await pool.query(
+    `INSERT INTO commission_ticker_votes_v2
+      (day,family_id,asset_version_key,ticker,standing)
+     VALUES ($1,$2,$3,'MSFT','900719925474099312345')`,
+    [String(day), bosses[1].gang, `0x${'1'.repeat(64)}`],
+  );
   assert.equal((await call('POST', '/v1/gangs/leave', { token: bosses[1].token })).code, 200, 'the second family dissolves');
   assert(!(await pool.query(`SELECT 1 FROM commission_ticker_votes WHERE gang_id='${bosses[1].gang}'`)).rows[0],
     "a dissolved family's ticker ballots die with it — board and tally always agree");
+  assert(!(await pool.query(
+    'SELECT 1 FROM commission_ticker_votes_v2 WHERE family_id=$1', [bosses[1].gang],
+  )).rows[0], "a dissolved family's current exact-version vote dies beside the legacy vote");
 }
 
 // ── econ pass: the chamber re-contests every season — the rollover zeroes the ladder ──

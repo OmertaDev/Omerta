@@ -533,6 +533,110 @@ function publicAsset(row) {
   };
 }
 
+const unavailableBallotCatalog = (reason, config) => ({
+  available: false,
+  reason,
+  source: 'registry_unavailable',
+  finality: null,
+  chainId: ROBINHOOD_CHAIN_ID_V2,
+  registryAddress: config?.registryAddress ?? ZERO_ADDRESS,
+  catalogVersion: '0',
+  snapshotHash: ZERO_HASH,
+  syncedAt: null,
+  activeAssets: [],
+});
+
+// Transaction-scoped Task 5 catalog seam. Unlike approvedStockTokenCatalogV2(), this helper never
+// connects, begins, commits, or releases: the caller supplies the checked-out query client so the
+// ballot day, immutable candidates, and catalog evidence share one transaction and one DB wall time.
+export async function finalizedStockCatalogForBallotV2(client, { canonicalClose, observedAt } = {}) {
+  if (!client || typeof client.query !== 'function') throw new Error('a checked-out query client is required');
+  const config = stockTokenRegistryV2ProductionConfig();
+  if (!config) return unavailableBallotCatalog('configuration', null);
+  const close = new Date(canonicalClose);
+  const at = new Date(observedAt);
+  if (!Number.isFinite(close.getTime()) || !Number.isFinite(at.getTime())) {
+    throw new Error('canonical ballot close and observed DB time are required');
+  }
+  const state = (await client.query(
+    `SELECT chain_id,registry_address,catalog_version::text AS catalog_version,
+            snapshot_hash,synced_at,$1::timestamptz > synced_at + interval '600 seconds' AS mirror_stale
+       FROM stock_catalog_sync_state_v2 WHERE id=1 /* ticker_ballot_v2_catalog_state */`,
+    [at],
+  )).rows[0];
+  if (!state) return unavailableBallotCatalog('unsynchronized', config);
+  if (String(state.chain_id) !== ROBINHOOD_CHAIN_ID_V2
+      || !sameAddress(state.registry_address, config.registryAddress)) {
+    return unavailableBallotCatalog('identity', config);
+  }
+  if (state.mirror_stale !== false) return unavailableBallotCatalog('stale', config);
+  let catalogVersion;
+  let snapshotHash;
+  try {
+    catalogVersion = canonicalUint(String(state.catalog_version), 256, 'catalog version');
+    snapshotHash = canonicalHash(state.snapshot_hash, 'catalog snapshot hash', { nonzero: true });
+  } catch {
+    return unavailableBallotCatalog('malformed', config);
+  }
+  const rows = (await client.query(
+    `SELECT a.asset_version_key,a.chain_id,a.ticker_hash,a.ticker,a.name,a.token_address,
+            a.token_decimals,a.robinhood_asset_id_hash,a.registry_index::text AS registry_index,
+            a.active,a.registered_at,a.activated_at,a.deactivated_at,
+            a.last_catalog_version::text AS last_catalog_version,a.synced_at
+       FROM stock_asset_versions_v2 a
+       JOIN stock_asset_active_heads_v2 ht
+         ON ht.dimension_type='tickerHash' AND ht.dimension_value=a.ticker_hash
+        AND ht.asset_version_key=a.asset_version_key
+       JOIN stock_asset_active_heads_v2 ha
+         ON ha.dimension_type='tokenAddress' AND lower(ha.dimension_value)=lower(a.token_address)
+        AND ha.asset_version_key=a.asset_version_key
+       JOIN stock_asset_active_heads_v2 hp
+         ON hp.dimension_type='robinhoodAssetIdHash'
+        AND hp.dimension_value=a.robinhood_asset_id_hash
+        AND hp.asset_version_key=a.asset_version_key
+      WHERE a.active AND a.chain_id=4663 AND a.activated_at IS NOT NULL AND a.activated_at < $1
+      ORDER BY a.registry_index ASC,a.asset_version_key ASC
+      /* ticker_ballot_v2_current_heads */`,
+    [close],
+  )).rows;
+  // A caller-owned transaction may intentionally be READ COMMITTED (the player mutation wrapper is).
+  // Re-read the immutable catalog identity after the active-head statement so a concurrent atomic
+  // mirror replacement can never combine old evidence with new rows. Catalog versions are monotonic;
+  // equality on version + snapshot + identity brackets the middle statement into one coherent view.
+  const confirmed = (await client.query(
+    `SELECT chain_id,registry_address,catalog_version::text AS catalog_version,
+            snapshot_hash,$1::timestamptz > synced_at + interval '600 seconds' AS mirror_stale
+       FROM stock_catalog_sync_state_v2 WHERE id=1 /* ticker_ballot_v2_catalog_confirm */`,
+    [at],
+  )).rows[0];
+  if (!confirmed
+      || String(confirmed.chain_id) !== ROBINHOOD_CHAIN_ID_V2
+      || !sameAddress(confirmed.registry_address, config.registryAddress)
+      || String(confirmed.catalog_version) !== catalogVersion
+      || String(confirmed.snapshot_hash).toLowerCase() !== snapshotHash
+      || confirmed.mirror_stale !== false) {
+    return unavailableBallotCatalog('changed', config);
+  }
+  const activeAssets = [];
+  try {
+    for (const row of rows) activeAssets.push(publicAsset(row));
+  } catch {
+    return unavailableBallotCatalog('malformed', config);
+  }
+  return {
+    available: true,
+    reason: null,
+    source: SOURCE,
+    finality: FINALITY,
+    chainId: ROBINHOOD_CHAIN_ID_V2,
+    registryAddress: config.registryAddress,
+    catalogVersion,
+    snapshotHash,
+    syncedAt: isoTimestamp(state.synced_at),
+    activeAssets,
+  };
+}
+
 export async function approvedStockTokenCatalogV2(db) {
   const client = await db.connect();
   let state;

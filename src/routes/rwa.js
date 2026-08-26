@@ -11,6 +11,7 @@ import {
   setRwaNominationEndorsement,
 } from '../rwanominations.js';
 import { GameError } from '../game.js';
+import { openTickerBallotV2 } from '../commission.js';
 import { checkAuthRateLimit, rateLimitsEnabled } from '../ratelimit.js';
 import { normalizeRwaReviewerConfig } from '../preflight.js';
 
@@ -163,7 +164,7 @@ function reviewerMutation(pool, handler) {
   };
 }
 
-export function registerRwa(app, { pool, auth, withCharacter, reviewerRouteTrust }) {
+export function registerRwa(app, { pool, auth, modAuth, withCharacter, reviewerRouteTrust }) {
   if (typeof reviewerRouteTrust !== 'symbol') throw new Error('Trusted reviewer route token is required.');
   const rwaReviewerAuth = async function rwaReviewerAuth(req, reply) {
     const configured = normalizeRwaReviewerConfig({
@@ -220,6 +221,18 @@ export function registerRwa(app, { pool, auth, withCharacter, reviewerRouteTrust
     }
     return publicResult(await withCharacter(pool, req.user.sub,
       (ch, client, h) => renewRwaNominationSponsorSupport(ch, req.params.id, client, h)));
+  });
+
+  // Dormant operational preparation only. Task 5 deliberately does not switch the public/player
+  // Commission route to V2; a later integration gate supplies health and custody provenance first.
+  app.post('/v1/rwa/ballots/:day/open', { preHandler: modAuth }, async (req) => {
+    const body = exactBody(req.body, ['maxEthWei', 'detailsHash']);
+    return openTickerBallotV2(pool, {
+      day: req.params.day,
+      maxEthWei: body.maxEthWei,
+      detailsHash: body.detailsHash,
+      actorId: 'mod',
+    });
   });
 
   const reviewerPost = (handler) => ({

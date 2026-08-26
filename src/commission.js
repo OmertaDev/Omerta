@@ -13,6 +13,9 @@
 import { GameError, bus, ledger } from './game.js';
 import { COMMISSION, decreeOf, weekOf, dayOf, statesmanRankOf, TICKER_BALLOT, usd } from './rules.js';
 import { approvedStockTokenCatalog } from './stockcatalog.js';
+import { encodeAbiParameters, getAddress, keccak256, toBytes } from 'viem';
+import { dbCaps } from './db.js';
+import { finalizedStockCatalogForBallotV2 } from './stockcatalogv2.js';
 
 // THE STATESMAN (Tier-4) — bump the account's lifetime political-capital legend by DIRECT SQL (additive,
 // NUMERIC → pg-mem-safe; OFF persistAccount's positional list → clobber-safe, the hitman_rep precedent).
@@ -430,4 +433,742 @@ export async function tickerBallotBoard(db) {
     // honest state: the buy keeper is Phase B — the record accrues now, nothing is bought yet
     buying: false,
   };
+}
+
+// ── VERSION-SNAPSHOT TICKER BALLOT V2 ──────────────────────────────────────────────────────────
+// Task 5 is database-authoritative preparation only. The existing player/public ticker routes stay
+// legacy until health and AcquisitionVault authority can cut every consumer over atomically.
+const BALLOT_CHAIN_ID_V2 = '4663';
+const BALLOT_ZERO_HASH = `0x${'00'.repeat(32)}`;
+const BALLOT_ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+const MAX_DAY_V2 = 2147483647n;
+const UINT256_LIMIT = 1n << 256n;
+const BALLOT_DECISION_V2 = Object.freeze({
+  chamber: 1,
+  default_silence: 2,
+  default_tie: 3,
+  skipped_catalog_unavailable: 4,
+  skipped_catalog_empty: 5,
+  skipped_no_valid_candidate: 6,
+});
+const BALLOT_TALLY_TYPES_V2 = [
+  { type: 'uint256' },
+  { type: 'uint256' },
+  { type: 'uint256' },
+  { type: 'bytes32' },
+  { type: 'uint256' },
+  { type: 'tuple[]', components: [
+    { name: 'familyIdHash', type: 'bytes32' },
+    { name: 'assetVersionKey', type: 'bytes32' },
+    { name: 'standing', type: 'uint256' },
+    { name: 'weight', type: 'uint8' },
+  ] },
+  { type: 'uint8' },
+  { type: 'bytes32' },
+];
+
+function ballotFail(code, message) {
+  throw new GameError(code, message);
+}
+
+function canonicalUnsignedV2(value, field, { positive = false, max = UINT256_LIMIT - 1n } = {}) {
+  if (typeof value !== 'string' || !/^(?:0|[1-9][0-9]*)$/.test(value)) {
+    throw new Error(`${field} must be a canonical unsigned decimal string`);
+  }
+  const parsed = BigInt(value);
+  if ((positive && parsed === 0n) || parsed > max) throw new Error(`${field} is outside its range`);
+  return value;
+}
+
+function ballotDayV2(value) {
+  try { return canonicalUnsignedV2(value, 'day', { max: MAX_DAY_V2 }); }
+  catch { ballotFail('bad_ballot_open', 'Ballot day must be a canonical nonnegative decimal string.'); }
+}
+
+function ballotBudgetV2(value) {
+  try { return canonicalUnsignedV2(value, 'maxEthWei', { positive: true }); }
+  catch { ballotFail('bad_ballot_open', 'maxEthWei must be a positive canonical uint256 decimal string.'); }
+}
+
+function ballotHashV2(value, field, { nonzero = false } = {}) {
+  const raw = String(value ?? '');
+  if (!/^0x[0-9a-f]{64}$/.test(raw) || (nonzero && raw === BALLOT_ZERO_HASH)) {
+    throw new Error(`${field} must be a canonical${nonzero ? ' nonzero' : ''} bytes32`);
+  }
+  return raw;
+}
+
+function ballotAssetKeyV2(value) {
+  try { return ballotHashV2(value, 'assetVersionKey', { nonzero: true }); }
+  catch { ballotFail('bad_candidate', 'The ballot requires an exact canonical assetVersionKey.'); }
+}
+
+function ballotActorV2(value) {
+  const actor = typeof value === 'string' ? value.trim() : '';
+  if (!actor || actor !== value || actor.length > 200 || /[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/u.test(actor)) {
+    ballotFail('bad_ballot_open', 'The server-derived ballot actor is invalid.');
+  }
+  return actor;
+}
+
+function ballotDetailsHashV2(value) {
+  try { return ballotHashV2(value, 'detailsHash', { nonzero: true }); }
+  catch { ballotFail('bad_ballot_open', 'detailsHash must be a canonical nonzero bytes32.'); }
+}
+
+function exactStandingV2(value) {
+  const raw = typeof value === 'string' ? value : String(value);
+  if (!/^(?:0|[1-9][0-9]*)$/.test(raw)) throw new Error('invalid standing');
+  return { text: raw, bigint: BigInt(raw) };
+}
+
+const familyBytesCompareV2 = (left, right) => Buffer.compare(
+  Buffer.from(String(left)), Buffer.from(String(right)),
+);
+
+function rankVoteTuplesV2(votes) {
+  if (!Array.isArray(votes)) throw new Error('votes must be an array');
+  return votes.map((vote) => {
+    const familyId = String(vote?.familyId ?? '');
+    if (!familyId) throw new Error('familyId is required');
+    const standing = exactStandingV2(vote?.standing);
+    const weight = vote?.weight;
+    if (!Number.isInteger(weight) || weight < 1 || weight > 5) throw new Error('weight must be 1 through 5');
+    return {
+      familyId,
+      familyIdHash: keccak256(toBytes(familyId)),
+      assetVersionKey: ballotHashV2(vote?.assetVersionKey, 'assetVersionKey', { nonzero: true }),
+      standing: standing.bigint,
+      weight,
+    };
+  }).sort((left, right) => (left.standing > right.standing ? -1 : left.standing < right.standing ? 1
+    : familyBytesCompareV2(left.familyId, right.familyId)));
+}
+
+export function canonicalTickerBallotTallyHashV2({
+  chainId, day, catalogVersion, catalogSnapshotHash, maxEthWei, votes,
+  decidedByCode, resultAssetVersionKey,
+}) {
+  if (chainId !== BALLOT_CHAIN_ID_V2) throw new Error(`ticker ballot chain must be ${BALLOT_CHAIN_ID_V2}`);
+  const canonicalDay = canonicalUnsignedV2(day, 'day', { max: MAX_DAY_V2 });
+  const canonicalCatalogVersion = canonicalUnsignedV2(catalogVersion, 'catalogVersion');
+  const snapshotHash = ballotHashV2(catalogSnapshotHash, 'catalogSnapshotHash');
+  const budget = canonicalUnsignedV2(maxEthWei, 'maxEthWei', { positive: true });
+  if (!Number.isInteger(decidedByCode) || decidedByCode < 1 || decidedByCode > 6) {
+    throw new Error('invalid decidedByCode');
+  }
+  const resultKey = resultAssetVersionKey == null
+    ? BALLOT_ZERO_HASH
+    : ballotHashV2(resultAssetVersionKey, 'resultAssetVersionKey', { nonzero: true });
+  const tuples = rankVoteTuplesV2(votes).map((vote) => ({
+    familyIdHash: vote.familyIdHash,
+    assetVersionKey: vote.assetVersionKey,
+    standing: vote.standing,
+    weight: vote.weight,
+  }));
+  return keccak256(encodeAbiParameters(BALLOT_TALLY_TYPES_V2, [
+    BigInt(chainId), BigInt(canonicalDay), BigInt(canonicalCatalogVersion), snapshotHash,
+    BigInt(budget), tuples, decidedByCode, resultKey,
+  ]));
+}
+
+function isoBallotTimeV2(value) {
+  if (value == null) return null;
+  const date = value instanceof Date ? value : new Date(value);
+  if (!Number.isFinite(date.getTime())) throw new Error('invalid stored ballot timestamp');
+  return date.toISOString();
+}
+
+async function ballotClockV2(client, day) {
+  const fn = dbCaps.skipLocked ? 'clock_timestamp()' : 'now()';
+  const row = (await client.query(
+    `SELECT wall_now,
+            EXTRACT(EPOCH FROM wall_now)::text AS epoch_seconds,
+            TIMESTAMPTZ '1970-01-01T00:00:00Z'
+              + (($1::text || ' days')::interval) + interval '1 day' AS closes_at
+       FROM (SELECT ${fn} AS wall_now) ballot_clock
+       /* ticker_ballot_v2_clock */`,
+    [day],
+  )).rows[0];
+  const wall = new Date(row?.wall_now);
+  const close = new Date(row?.closes_at);
+  const suppliedDay = row?.current_day == null ? null : String(row.current_day);
+  const epoch = row?.epoch_seconds == null ? null : String(row.epoch_seconds);
+  const epochMatch = epoch?.match(/^([0-9]+)(?:\.[0-9]+)?$/);
+  const currentDay = suppliedDay ?? (epochMatch ? (BigInt(epochMatch[1]) / 86400n).toString() : '');
+  if (!Number.isFinite(wall.getTime()) || !Number.isFinite(close.getTime())
+      || !/^(?:0|[1-9][0-9]*)$/.test(currentDay)) {
+    throw new Error('database ballot clock returned invalid authority');
+  }
+  return { wall, currentDay, close };
+}
+
+async function ballotTransactionV2(db, fn, { isolation } = {}) {
+  if (typeof db?.connect !== 'function' || typeof db?.release === 'function') return fn(db);
+  const client = await db.connect();
+  try {
+    await client.query(isolation ? `BEGIN ISOLATION LEVEL ${isolation}` : 'BEGIN');
+    const result = await fn(client);
+    await client.query('COMMIT');
+    return result;
+  } catch (error) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw error;
+  } finally { client.release(); }
+}
+
+function candidateViewV2(row, currentKeys) {
+  const key = String(row.asset_version_key).toLowerCase();
+  return {
+    assetVersionKey: key,
+    ticker: String(row.ticker),
+    tokenAddress: getAddress(row.token_address),
+    tokenDecimals: Number(row.token_decimals),
+    registryIndex: String(row.registry_index),
+    ...(currentKeys ? { valid: currentKeys.has(key) } : {}),
+  };
+}
+
+function resultViewV2(row) {
+  if (!row) return null;
+  return {
+    day: String(row.day),
+    status: row.status,
+    assetVersionKey: row.asset_version_key ? String(row.asset_version_key).toLowerCase() : null,
+    ticker: row.ticker ?? null,
+    tokenAddress: row.token_address ? getAddress(row.token_address) : null,
+    tokenDecimals: row.token_decimals == null ? null : Number(row.token_decimals),
+    registryIndex: row.registry_index == null ? null : String(row.registry_index),
+    catalogVersion: String(row.catalog_version),
+    catalogSnapshotHash: String(row.catalog_snapshot_hash).toLowerCase(),
+    maxEthWei: String(row.max_eth_wei),
+    votes: Number(row.votes),
+    weighted: Number(row.weighted),
+    decidedBy: row.decided_by,
+    decidedByCode: Number(row.decided_by_code),
+    skipReason: row.skip_reason ?? null,
+    tallyHash: String(row.tally_hash).toLowerCase(),
+    closedAt: isoBallotTimeV2(row.closed_at),
+    purchaseUntil: isoBallotTimeV2(row.purchase_until),
+    publicationStatus: row.publication_status,
+    registryTxHash: row.registry_tx_hash ?? null,
+    finalizedBlockNumber: row.finalized_block_number == null ? null : String(row.finalized_block_number),
+    finalizedBlockHash: row.finalized_block_hash ?? null,
+    finalizedAt: isoBallotTimeV2(row.finalized_at),
+  };
+}
+
+async function ballotDayViewV2(client, row) {
+  const candidates = (await client.query(
+    `SELECT day,asset_version_key,ticker,token_address,token_decimals,registry_index::text AS registry_index
+       FROM ticker_ballot_candidates_v2 WHERE day=$1
+      ORDER BY registry_index ASC,asset_version_key ASC`,
+    [row.day],
+  )).rows.map((candidate) => candidateViewV2(candidate));
+  const result = (await client.query(
+    'SELECT * FROM ticker_ballot_results_v2 WHERE day=$1', [row.day],
+  )).rows[0];
+  return {
+    day: String(row.day),
+    state: row.state,
+    closesAt: isoBallotTimeV2(row.closes_at),
+    maxEthWei: String(row.max_eth_wei),
+    openedBy: row.opened_by,
+    openDetailsHash: String(row.open_details_hash).toLowerCase(),
+    openedAt: isoBallotTimeV2(row.opened_at),
+    catalog: {
+      chainId: String(row.chain_id),
+      registryAddress: getAddress(row.registry_address),
+      catalogVersion: String(row.catalog_version),
+      snapshotHash: String(row.catalog_snapshot_hash).toLowerCase(),
+    },
+    candidates,
+    result: resultViewV2(result),
+  };
+}
+
+function exactOpenMatchesV2(row, { day, maxEthWei, detailsHash, actorId }) {
+  return String(row.day) === day
+    && String(row.max_eth_wei) === maxEthWei
+    && String(row.open_details_hash).toLowerCase() === detailsHash
+    && row.opened_by === actorId;
+}
+
+async function insertSkippedResultV2(client, dayRow, status, decisionCode, reason) {
+  const tallyHash = canonicalTickerBallotTallyHashV2({
+    chainId: BALLOT_CHAIN_ID_V2,
+    day: String(dayRow.day),
+    catalogVersion: String(dayRow.catalog_version),
+    catalogSnapshotHash: String(dayRow.catalog_snapshot_hash).toLowerCase(),
+    maxEthWei: String(dayRow.max_eth_wei),
+    votes: [],
+    decidedByCode: decisionCode,
+    resultAssetVersionKey: null,
+  });
+  await client.query(
+    `INSERT INTO ticker_ballot_results_v2
+      (day,status,catalog_version,catalog_snapshot_hash,max_eth_wei,votes,weighted,
+       decided_by,decided_by_code,skip_reason,tally_hash,closed_at,publication_status)
+     VALUES ($1,$2,$3,$4,$5,0,0,'skipped',$6,$7,$8,$9,'not_submitted')`,
+    [dayRow.day, status, String(dayRow.catalog_version), dayRow.catalog_snapshot_hash,
+      String(dayRow.max_eth_wei), decisionCode, reason, tallyHash, dayRow.closes_at],
+  );
+}
+
+export async function openTickerBallotV2(db, input = {}) {
+  const day = ballotDayV2(input.day);
+  const maxEthWei = ballotBudgetV2(input.maxEthWei);
+  const detailsHash = ballotDetailsHashV2(input.detailsHash);
+  const actorId = ballotActorV2(input.actorId);
+  return ballotTransactionV2(db, async (client) => {
+    const clock = await ballotClockV2(client, day);
+    if (BigInt(day) < BigInt(clock.currentDay)) ballotFail('past_day', 'A past ballot day cannot be opened.');
+    let existing = (await client.query(
+      'SELECT * FROM ticker_ballot_days_v2 WHERE day=$1 FOR UPDATE', [day],
+    )).rows[0];
+    if (existing) {
+      if (!exactOpenMatchesV2(existing, { day, maxEthWei, detailsHash, actorId })) {
+        ballotFail('ballot_conflict', 'That day already has different immutable ballot preparation.');
+      }
+      return ballotDayViewV2(client, existing);
+    }
+
+    const catalog = await finalizedStockCatalogForBallotV2(client, {
+      canonicalClose: clock.close,
+      observedAt: clock.wall,
+    });
+    const state = !catalog.available
+      ? 'skipped_catalog_unavailable'
+      : catalog.activeAssets.length ? 'open' : 'skipped_catalog_empty';
+    const inserted = (await client.query(
+      `INSERT INTO ticker_ballot_days_v2
+        (day,state,chain_id,registry_address,catalog_version,catalog_snapshot_hash,
+         max_eth_wei,opened_by,open_details_hash,opened_at,closes_at,closed_at,purchase_until)
+       VALUES ($1,$2,4663,$3,$4,$5,$6,$7,$8,$9,$10,$11,NULL)
+       ON CONFLICT (day) DO NOTHING RETURNING *`,
+      [day, state, catalog.registryAddress ?? BALLOT_ZERO_ADDRESS, catalog.catalogVersion,
+        catalog.snapshotHash, maxEthWei, actorId, detailsHash, clock.wall, clock.close,
+        state === 'open' ? null : clock.close],
+    )).rows[0];
+    if (!inserted) {
+      existing = (await client.query(
+        'SELECT * FROM ticker_ballot_days_v2 WHERE day=$1 FOR UPDATE', [day],
+      )).rows[0];
+      if (!existing || !exactOpenMatchesV2(existing, { day, maxEthWei, detailsHash, actorId })) {
+        ballotFail('ballot_conflict', 'That day already has different immutable ballot preparation.');
+      }
+      return ballotDayViewV2(client, existing);
+    }
+    if (state === 'open') {
+      for (const asset of catalog.activeAssets) {
+        await client.query(
+          `INSERT INTO ticker_ballot_candidates_v2
+            (day,asset_version_key,ticker,token_address,token_decimals,registry_index)
+           VALUES ($1,$2,$3,$4,$5,$6)`,
+          [day, asset.assetVersionKey, asset.ticker, asset.tokenAddress,
+            asset.tokenDecimals, asset.registryIndex],
+        );
+      }
+    } else {
+      const decision = state === 'skipped_catalog_unavailable'
+        ? BALLOT_DECISION_V2.skipped_catalog_unavailable
+        : BALLOT_DECISION_V2.skipped_catalog_empty;
+      await insertSkippedResultV2(
+        client, inserted, state, decision,
+        state === 'skipped_catalog_unavailable' ? 'catalog_unavailable' : 'catalog_empty',
+      );
+    }
+    return ballotDayViewV2(client, inserted);
+  }, { isolation: 'REPEATABLE READ' });
+}
+
+function normalizeTickerSelectionV2(value) {
+  const ticker = typeof value === 'string' ? value.trim().toUpperCase() : '';
+  if (!/^[A-Z0-9._-]{1,24}$/.test(ticker)) ballotFail('bad_candidate', 'Invalid ballot ticker.');
+  return ticker;
+}
+
+async function currentMemberV2(ch, client) {
+  return (await client.query(
+    'SELECT gang_id,role FROM gang_members WHERE character_id=$1', [ch.id],
+  )).rows[0];
+}
+
+export async function castTickerVoteV2(ch, selection, client, h) {
+  if (!selection || typeof selection !== 'object' || Array.isArray(selection)
+      || Object.keys(selection).some((key) => !['assetVersionKey', 'ticker'].includes(key))) {
+    ballotFail('bad_candidate', 'Choose one exact frozen ballot candidate.');
+  }
+  const member = await currentMemberV2(ch, client);
+  if (!member || !['boss', 'underboss'].includes(member.role)
+      || member.gang_id !== h?.owned?.gangId || member.role !== h?.owned?.gangRole) {
+    ballotFail('rank', 'Only the current boss or underboss speaks for the family.');
+  }
+  const clockProbe = await ballotClockV2(client, '0');
+  const day = clockProbe.currentDay;
+  const dayRow = (await client.query(
+    'SELECT * FROM ticker_ballot_days_v2 WHERE day=$1 FOR UPDATE', [day],
+  )).rows[0];
+  if (!dayRow) ballotFail('ballot_unopened', 'No exact-version ballot is open for this UTC day.');
+  if (dayRow.state !== 'open' || clockProbe.wall.getTime() >= new Date(dayRow.closes_at).getTime()) {
+    ballotFail('ballot_closed', 'The exact-version ballot is closed.');
+  }
+  const seats = await seatedGangs(client);
+  const seatIndex = seats.findIndex((seat) => String(seat.id) === String(member.gang_id));
+  if (seatIndex < 0) {
+    ballotFail('no_seat', `The Commission seats the top ${COMMISSION.SEATS} families. Earn the standing.`);
+  }
+  let standing;
+  try { standing = exactStandingV2(seats[seatIndex].standing).text; }
+  catch { throw new Error('database returned a non-integer Commission standing'); }
+
+  const suppliedKey = selection.assetVersionKey == null ? null : ballotAssetKeyV2(selection.assetVersionKey);
+  const suppliedTicker = selection.ticker == null ? null : normalizeTickerSelectionV2(selection.ticker);
+  if (!suppliedKey && !suppliedTicker) ballotFail('bad_candidate', 'Choose one exact frozen ballot candidate.');
+  let candidates;
+  if (suppliedTicker) {
+    candidates = (await client.query(
+      `SELECT day,asset_version_key,ticker,token_address,token_decimals,
+              registry_index::text AS registry_index
+         FROM ticker_ballot_candidates_v2 WHERE day=$1 AND ticker=$2
+        ORDER BY registry_index ASC,asset_version_key ASC`,
+      [day, suppliedTicker],
+    )).rows;
+    if (candidates.length > 1) ballotFail('ambiguous_ticker', 'That ticker identifies more than one frozen candidate.');
+  } else candidates = [];
+  let candidate;
+  if (suppliedKey) candidate = (await client.query(
+    `SELECT day,asset_version_key,ticker,token_address,token_decimals,
+            registry_index::text AS registry_index
+       FROM ticker_ballot_candidates_v2 WHERE day=$1 AND asset_version_key=$2`,
+    [day, suppliedKey],
+  )).rows[0];
+  else candidate = candidates[0];
+  if (!candidate) ballotFail('bad_candidate', 'That asset is not in the frozen day-local ballot.');
+  if (suppliedTicker && candidate.ticker !== suppliedTicker) {
+    ballotFail('candidate_mismatch', 'Ticker and assetVersionKey identify different candidates.');
+  }
+  if (suppliedTicker && suppliedKey && candidates[0]?.asset_version_key !== suppliedKey) {
+    ballotFail('candidate_mismatch', 'Ticker and assetVersionKey identify different candidates.');
+  }
+
+  const current = await finalizedStockCatalogForBallotV2(client, {
+    canonicalClose: dayRow.closes_at,
+    observedAt: clockProbe.wall,
+  });
+  if (!current.available) ballotFail('catalog_unavailable', 'The finalized catalog is unavailable.');
+  const live = current.activeAssets.find((asset) => asset.assetVersionKey === candidate.asset_version_key);
+  if (!live) ballotFail('candidate_inactive', 'That frozen candidate is no longer a current active head.');
+
+  const updated = await client.query(
+    `UPDATE commission_ticker_votes_v2
+        SET asset_version_key=$3,ticker=$4,standing=$5,updated_at=$6
+      WHERE day=$1 AND family_id=$2`,
+    [day, member.gang_id, candidate.asset_version_key, candidate.ticker, standing, clockProbe.wall],
+  );
+  if (!updated.rowCount) {
+    try {
+      await client.query(
+        `INSERT INTO commission_ticker_votes_v2
+          (day,family_id,asset_version_key,ticker,standing,created_at,updated_at)
+         VALUES ($1,$2,$3,$4,$5,$6,$6)`,
+        [day, member.gang_id, candidate.asset_version_key, candidate.ticker, standing, clockProbe.wall],
+      );
+    } catch { ballotFail('again', 'The family just spoke; cast again to change its exact-version vote.'); }
+  }
+  bus.emit(`gang:${member.gang_id}`, {
+    type: 'ticker_vote_v2', ticker: candidate.ticker, assetVersionKey: candidate.asset_version_key,
+  });
+  await h.track(client, ch.account_id, 'ticker_vote', {
+    ticker: candidate.ticker,
+    assetVersionKey: candidate.asset_version_key,
+    day,
+    standing,
+  });
+  return {
+    ok: true,
+    day,
+    assetVersionKey: candidate.asset_version_key,
+    ticker: candidate.ticker,
+    tokenAddress: getAddress(candidate.token_address),
+    tokenDecimals: Number(candidate.token_decimals),
+    standing,
+    weight: COMMISSION.SEATS - seatIndex,
+    buysOnDay: (BigInt(day) + 1n).toString(),
+  };
+}
+
+async function ballotTallyClientV2(client, day, suppliedClock) {
+  const dayRow = (await client.query(
+    'SELECT * FROM ticker_ballot_days_v2 WHERE day=$1', [day],
+  )).rows[0];
+  if (!dayRow) ballotFail('ballot_unopened', 'No exact-version ballot exists for that UTC day.');
+  const clock = suppliedClock ?? await ballotClockV2(client, day);
+  const candidates = (await client.query(
+    `SELECT day,asset_version_key,ticker,token_address,token_decimals,
+            registry_index::text AS registry_index
+       FROM ticker_ballot_candidates_v2 WHERE day=$1
+      ORDER BY registry_index ASC,asset_version_key ASC`,
+    [day],
+  )).rows;
+  const candidateByKey = new Map(candidates.map((candidate) => [String(candidate.asset_version_key), candidate]));
+  const current = await finalizedStockCatalogForBallotV2(client, {
+    canonicalClose: dayRow.closes_at,
+    observedAt: clock.wall,
+  });
+  const currentKeys = new Set(current.activeAssets.map((asset) => asset.assetVersionKey));
+  const rows = (await client.query(
+    `SELECT v.day,v.family_id,v.asset_version_key,v.ticker,v.standing::text AS standing,
+            v.created_at,v.updated_at,g.name,g.tag
+       FROM commission_ticker_votes_v2 v LEFT JOIN gangs g ON g.id=v.family_id
+      WHERE v.day=$1 ORDER BY v.family_id ASC`,
+    [day],
+  )).rows;
+  const votes = rows.map((row) => {
+    let exclusionReason = null;
+    if (!row.name) exclusionReason = 'family_dissolved';
+    else if (!current.available) exclusionReason = 'catalog_unavailable';
+    else if (!candidateByKey.has(String(row.asset_version_key))) exclusionReason = 'candidate_missing';
+    else if (!currentKeys.has(String(row.asset_version_key))) exclusionReason = 'candidate_inactive';
+    const standing = exactStandingV2(row.standing);
+    return {
+      familyId: String(row.family_id),
+      family: row.name || '(a family now dissolved)',
+      tag: row.tag || null,
+      assetVersionKey: String(row.asset_version_key),
+      ticker: String(row.ticker),
+      standing: standing.text,
+      standingBigInt: standing.bigint,
+      valid: exclusionReason === null,
+      counted: false,
+      weight: 0,
+      exclusionReason,
+      createdAt: isoBallotTimeV2(row.created_at),
+      updatedAt: isoBallotTimeV2(row.updated_at),
+    };
+  });
+  const ranked = votes.filter((vote) => vote.valid)
+    .sort((left, right) => (left.standingBigInt > right.standingBigInt ? -1
+      : left.standingBigInt < right.standingBigInt ? 1
+        : familyBytesCompareV2(left.familyId, right.familyId)));
+  ranked.forEach((vote, index) => {
+    if (index < COMMISSION.SEATS) {
+      vote.counted = true;
+      vote.weight = COMMISSION.SEATS - index;
+    } else vote.exclusionReason = 'outside_top_five';
+  });
+  const counted = ranked.slice(0, COMMISSION.SEATS);
+  const currentCandidates = candidates.filter((candidate) => currentKeys.has(String(candidate.asset_version_key)))
+    .sort((left, right) => {
+      const li = BigInt(String(left.registry_index)), ri = BigInt(String(right.registry_index));
+      return li < ri ? -1 : li > ri ? 1 : String(left.asset_version_key).localeCompare(String(right.asset_version_key));
+    });
+
+  let decidedBy;
+  let decidedByCode;
+  let selected = null;
+  let votesCount = 0;
+  let weighted = 0;
+  if (!current.available) {
+    decidedBy = 'skipped';
+    decidedByCode = BALLOT_DECISION_V2.skipped_catalog_unavailable;
+  } else if (!currentCandidates.length) {
+    decidedBy = 'skipped';
+    decidedByCode = BALLOT_DECISION_V2.skipped_no_valid_candidate;
+  } else if (!counted.length) {
+    decidedBy = 'default_silence';
+    decidedByCode = BALLOT_DECISION_V2.default_silence;
+    [selected] = currentCandidates;
+  } else {
+    const aggregates = new Map();
+    for (const vote of counted) {
+      const currentAggregate = aggregates.get(vote.assetVersionKey) ?? { weighted: 0, votes: 0 };
+      currentAggregate.weighted += vote.weight;
+      currentAggregate.votes += 1;
+      aggregates.set(vote.assetVersionKey, currentAggregate);
+    }
+    const rankedResults = [...aggregates].map(([key, aggregate]) => ({
+      key,
+      candidate: candidateByKey.get(key),
+      ...aggregate,
+    })).sort((left, right) => right.weighted - left.weighted || right.votes - left.votes
+      || (BigInt(String(left.candidate.registry_index)) < BigInt(String(right.candidate.registry_index)) ? -1
+        : BigInt(String(left.candidate.registry_index)) > BigInt(String(right.candidate.registry_index)) ? 1
+          : left.key.localeCompare(right.key)));
+    const tied = rankedResults.length > 1
+      && rankedResults[0].weighted === rankedResults[1].weighted
+      && rankedResults[0].votes === rankedResults[1].votes;
+    if (tied) {
+      decidedBy = 'default_tie';
+      decidedByCode = BALLOT_DECISION_V2.default_tie;
+      [selected] = currentCandidates;
+    } else {
+      decidedBy = 'chamber';
+      decidedByCode = BALLOT_DECISION_V2.chamber;
+      selected = rankedResults[0].candidate;
+      votesCount = rankedResults[0].votes;
+      weighted = rankedResults[0].weighted;
+    }
+  }
+  const resultAssetVersionKey = selected ? String(selected.asset_version_key) : null;
+  const tallyHash = canonicalTickerBallotTallyHashV2({
+    chainId: BALLOT_CHAIN_ID_V2,
+    day: String(dayRow.day),
+    catalogVersion: String(dayRow.catalog_version),
+    catalogSnapshotHash: String(dayRow.catalog_snapshot_hash).toLowerCase(),
+    maxEthWei: String(dayRow.max_eth_wei),
+    votes: counted.map((vote) => ({
+      familyId: vote.familyId,
+      assetVersionKey: vote.assetVersionKey,
+      standing: vote.standing,
+      weight: vote.weight,
+    })),
+    decidedByCode,
+    resultAssetVersionKey,
+  });
+  return {
+    day: String(dayRow.day),
+    state: dayRow.state,
+    catalogAvailable: current.available,
+    catalogReason: current.reason,
+    candidates: candidates.map((candidate) => candidateViewV2(candidate, currentKeys)),
+    votes: votes.map(({ standingBigInt, ...vote }) => vote),
+    resultAssetVersionKey,
+    ticker: selected?.ticker ?? null,
+    decidedBy,
+    decidedByCode,
+    votesCount,
+    weighted,
+    tallyHash,
+  };
+}
+
+export async function tallyTickerBallotV2(db, dayValue) {
+  const day = ballotDayV2(dayValue);
+  return ballotTransactionV2(db, (client) => ballotTallyClientV2(client, day), {
+    isolation: 'REPEATABLE READ',
+  });
+}
+
+export async function closeTickerBallotV2(db, dayValue) {
+  const day = ballotDayV2(dayValue);
+  return ballotTransactionV2(db, async (client) => {
+    const dayRow = (await client.query(
+      'SELECT * FROM ticker_ballot_days_v2 WHERE day=$1 FOR UPDATE', [day],
+    )).rows[0];
+    if (!dayRow) ballotFail('ballot_unopened', 'No exact-version ballot exists for that UTC day.');
+    const existing = (await client.query(
+      'SELECT * FROM ticker_ballot_results_v2 WHERE day=$1', [day],
+    )).rows[0];
+    if (existing) return resultViewV2(existing);
+    const clock = await ballotClockV2(client, day);
+    if (clock.wall.getTime() < new Date(dayRow.closes_at).getTime()) {
+      ballotFail('ballot_open', 'The canonical UTC ballot cutoff has not arrived.');
+    }
+    const tally = await ballotTallyClientV2(client, day, clock);
+    const ready = tally.resultAssetVersionKey !== null && tally.decidedByCode <= BALLOT_DECISION_V2.default_tie;
+    const status = ready ? 'closed_ready'
+      : tally.decidedByCode === BALLOT_DECISION_V2.skipped_catalog_unavailable
+        ? 'skipped_catalog_unavailable' : 'skipped_no_valid_candidate';
+    const selected = ready ? (await client.query(
+      `SELECT asset_version_key,ticker,token_address,token_decimals,
+              registry_index::text AS registry_index
+         FROM ticker_ballot_candidates_v2 WHERE day=$1 AND asset_version_key=$2`,
+      [day, tally.resultAssetVersionKey],
+    )).rows[0] : null;
+    const purchaseUntil = ready ? (await client.query(
+      "SELECT $1::timestamptz + interval '7200 seconds' AS purchase_until",
+      [dayRow.closes_at],
+    )).rows[0].purchase_until : null;
+    const inserted = (await client.query(
+      `INSERT INTO ticker_ballot_results_v2
+        (day,status,asset_version_key,ticker,token_address,token_decimals,registry_index,
+         catalog_version,catalog_snapshot_hash,max_eth_wei,votes,weighted,decided_by,
+         decided_by_code,skip_reason,tally_hash,closed_at,purchase_until,publication_status)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,'not_submitted')
+       ON CONFLICT (day) DO NOTHING RETURNING *`,
+      [day, status, selected?.asset_version_key ?? null, selected?.ticker ?? null,
+        selected?.token_address ?? null, selected?.token_decimals ?? null,
+        selected?.registry_index ?? null, String(dayRow.catalog_version), dayRow.catalog_snapshot_hash,
+        String(dayRow.max_eth_wei), ready ? tally.votesCount : 0, ready ? tally.weighted : 0,
+        ready ? tally.decidedBy : 'skipped', tally.decidedByCode,
+        ready ? null : status.replace(/^skipped_/, ''), tally.tallyHash,
+        dayRow.closes_at, purchaseUntil],
+    )).rows[0];
+    const result = inserted ?? (await client.query(
+      'SELECT * FROM ticker_ballot_results_v2 WHERE day=$1', [day],
+    )).rows[0];
+    await client.query(
+      `UPDATE ticker_ballot_days_v2
+          SET state=$2,closed_at=closes_at,purchase_until=$3
+        WHERE day=$1 AND state='open'`,
+      [day, status, purchaseUntil],
+    );
+    return resultViewV2(result);
+  }, { isolation: 'REPEATABLE READ' });
+}
+
+export async function tickerBallotBoardV2(db) {
+  return ballotTransactionV2(db, async (client) => {
+    const clock = await ballotClockV2(client, '0');
+    const day = clock.currentDay;
+    const dayRow = (await client.query(
+      'SELECT * FROM ticker_ballot_days_v2 WHERE day=$1', [day],
+    )).rows[0];
+    const lastRow = (await client.query(
+      'SELECT * FROM ticker_ballot_results_v2 ORDER BY day DESC LIMIT 1',
+    )).rows[0];
+    if (!dayRow) {
+      return {
+        day,
+        state: 'unopened',
+        tickers: [],
+        defaultTicker: null,
+        candidates: [],
+        catalog: null,
+        maxEthWei: null,
+        closesAt: null,
+        votes: [],
+        leading: null,
+        lastResult: resultViewV2(lastRow),
+        result: null,
+        buying: false,
+      };
+    }
+    const resultRow = (await client.query(
+      'SELECT * FROM ticker_ballot_results_v2 WHERE day=$1', [day],
+    )).rows[0];
+    const tally = dayRow.state === 'open'
+      ? await ballotTallyClientV2(client, day, clock)
+      : null;
+    const candidates = tally?.candidates ?? (await client.query(
+      `SELECT day,asset_version_key,ticker,token_address,token_decimals,
+              registry_index::text AS registry_index
+         FROM ticker_ballot_candidates_v2 WHERE day=$1
+        ORDER BY registry_index ASC,asset_version_key ASC`,
+      [day],
+    )).rows.map((candidate) => candidateViewV2(candidate));
+    return {
+      day,
+      state: dayRow.state,
+      tickers: candidates.map((candidate) => candidate.ticker),
+      defaultTicker: tally?.candidates.find((candidate) => candidate.valid)?.ticker ?? null,
+      candidates,
+      catalog: {
+        source: 'robinhood_chain_registry_v2',
+        finality: 'finalized',
+        chainId: String(dayRow.chain_id),
+        registryAddress: getAddress(dayRow.registry_address),
+        catalogVersion: String(dayRow.catalog_version),
+        snapshotHash: String(dayRow.catalog_snapshot_hash).toLowerCase(),
+      },
+      maxEthWei: String(dayRow.max_eth_wei),
+      closesAt: isoBallotTimeV2(dayRow.closes_at),
+      votes: tally?.votes ?? [],
+      leading: tally?.ticker ?? resultRow?.ticker ?? null,
+      lastResult: resultViewV2(lastRow),
+      result: resultViewV2(resultRow),
+      buying: false,
+    };
+  }, { isolation: 'REPEATABLE READ' });
 }

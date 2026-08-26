@@ -865,7 +865,7 @@ export async function buildServer() {
         .catch((e) => console.error('mod_actions audit write failed (non-fatal)', e?.message));
   };
   registerRwa(app, {
-    pool, auth, withCharacter: G.withCharacter, reviewerRouteTrust: rwaReviewerRouteTrust,
+    pool, auth, modAuth, withCharacter: G.withCharacter, reviewerRouteTrust: rwaReviewerRouteTrust,
   });
   // BLUE-TEAM M2: the audit log is readable back through the mod perimeter it records (the last N actions),
   // so the /admin dashboard can show who did what. A GET, so it doesn't log itself.

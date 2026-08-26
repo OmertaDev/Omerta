@@ -103,6 +103,7 @@ export async function removeMember(client, gangId, characterId) {
     // board's join). Its VETO record stays — the decree it killed was killed while it lived.
     await client.query('DELETE FROM commission_votes WHERE gang_id=$1', [gangId]);
     await client.query('DELETE FROM commission_ticker_votes WHERE gang_id=$1', [gangId]); // the ticker ballot follows the same rule: no ghost governance
+    await client.query('DELETE FROM commission_ticker_votes_v2 WHERE family_id=$1', [gangId]);
     // Tier-4 — its OVERRIDE ballots die with it too (a dead family can't muster against the head veto).
     // overrideWeightOf already filters by live seats so a stale row scores 0, but keep the table honest.
     await client.query('DELETE FROM commission_overrides WHERE gang_id=$1', [gangId]);

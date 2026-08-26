@@ -3595,6 +3595,95 @@ CREATE TABLE IF NOT EXISTS stock_catalog_evidence_v2 (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Version-snapshot Commission ballot preparation. These tables are additive to the legacy
+-- ticker-keyed ballot and remain dormant until the later health/custody cutover. Task 5 writes
+-- database-authoritative preparation evidence only: no RPC, funds, publication, or finality.
+CREATE TABLE IF NOT EXISTS ticker_ballot_days_v2 (
+  day INT PRIMARY KEY CHECK (day >= 0),
+  state TEXT NOT NULL CHECK (state IN
+    ('open','closed_ready','skipped_catalog_unavailable','skipped_catalog_empty',
+     'skipped_no_valid_candidate')),
+  chain_id INT NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL,
+  catalog_version NUMERIC(78,0) NOT NULL CHECK (catalog_version >= 0),
+  catalog_snapshot_hash TEXT NOT NULL,
+  max_eth_wei NUMERIC(78,0) NOT NULL CHECK (max_eth_wei > 0),
+  opened_by TEXT NOT NULL,
+  open_details_hash TEXT NOT NULL,
+  opened_at TIMESTAMPTZ NOT NULL,
+  closes_at TIMESTAMPTZ NOT NULL,
+  closed_at TIMESTAMPTZ,
+  purchase_until TIMESTAMPTZ,
+  CHECK (closes_at > opened_at),
+  CHECK ((state = 'closed_ready') = (purchase_until IS NOT NULL)),
+  CHECK (purchase_until IS NULL OR purchase_until = closes_at + interval '7200 seconds')
+);
+
+CREATE TABLE IF NOT EXISTS ticker_ballot_candidates_v2 (
+  day INT NOT NULL,
+  asset_version_key TEXT NOT NULL,
+  ticker TEXT NOT NULL,
+  token_address TEXT NOT NULL,
+  token_decimals INT NOT NULL CHECK (token_decimals >= 0 AND token_decimals <= 255),
+  registry_index NUMERIC(78,0) NOT NULL CHECK (registry_index >= 0),
+  PRIMARY KEY (day, asset_version_key)
+);
+CREATE INDEX IF NOT EXISTS ix_ticker_ballot_candidates_v2_ticker
+  ON ticker_ballot_candidates_v2(day, ticker, registry_index, asset_version_key);
+
+CREATE TABLE IF NOT EXISTS commission_ticker_votes_v2 (
+  day INT NOT NULL,
+  family_id TEXT NOT NULL,
+  asset_version_key TEXT NOT NULL,
+  ticker TEXT NOT NULL,
+  standing NUMERIC(78,0) NOT NULL CHECK (standing >= 0),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (day, family_id)
+);
+CREATE INDEX IF NOT EXISTS ix_commission_ticker_votes_v2_candidate
+  ON commission_ticker_votes_v2(day, asset_version_key, family_id);
+
+CREATE TABLE IF NOT EXISTS ticker_ballot_results_v2 (
+  day INT PRIMARY KEY CHECK (day >= 0),
+  status TEXT NOT NULL CHECK (status IN
+    ('closed_ready','skipped_catalog_unavailable','skipped_catalog_empty',
+     'skipped_no_valid_candidate')),
+  asset_version_key TEXT,
+  ticker TEXT,
+  token_address TEXT,
+  token_decimals INT CHECK (token_decimals >= 0 AND token_decimals <= 255),
+  registry_index NUMERIC(78,0),
+  catalog_version NUMERIC(78,0) NOT NULL CHECK (catalog_version >= 0),
+  catalog_snapshot_hash TEXT NOT NULL,
+  max_eth_wei NUMERIC(78,0) NOT NULL CHECK (max_eth_wei > 0),
+  votes INT NOT NULL DEFAULT 0 CHECK (votes >= 0 AND votes <= 5),
+  weighted INT NOT NULL DEFAULT 0 CHECK (weighted >= 0 AND weighted <= 15),
+  decided_by TEXT NOT NULL CHECK (decided_by IN
+    ('chamber','default_silence','default_tie','skipped')),
+  decided_by_code INT NOT NULL CHECK (decided_by_code >= 1 AND decided_by_code <= 6),
+  skip_reason TEXT,
+  tally_hash TEXT NOT NULL,
+  closed_at TIMESTAMPTZ NOT NULL,
+  purchase_until TIMESTAMPTZ,
+  publication_status TEXT NOT NULL DEFAULT 'not_submitted' CHECK (publication_status IN
+    ('not_submitted','publisher_submitted','published_pending_finality','finalized','reorged','failed')),
+  registry_tx_hash TEXT,
+  finalized_block_number NUMERIC(78,0),
+  finalized_block_hash TEXT,
+  finalized_at TIMESTAMPTZ,
+  CHECK ((status = 'closed_ready') = (asset_version_key IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (ticker IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (token_address IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (token_decimals IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (registry_index IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (purchase_until IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (skip_reason IS NULL)),
+  CHECK (publication_status = 'not_submitted' OR status = 'closed_ready')
+);
+CREATE INDEX IF NOT EXISTS ix_ticker_ballot_results_v2_publication
+  ON ticker_ballot_results_v2(publication_status, closed_at, day);
+
 -- Public family nomination/review state for immutable StockTokenRegistryV2 candidates. Candidate,
 -- sponsor, evidence, and deadline fields are written once by the domain layer; the current support
 -- slots live separately from the append-only event record. The partial unique index is the real
