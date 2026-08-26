@@ -625,9 +625,8 @@ async function acquireLock(sessionFile, path, stateStore) {
     throw error;
   }
 
-  const nonce = crypto.randomUUID();
-  let identity;
   try {
+    const nonce = crypto.randomUUID();
     // The kernel-owned loopback lease is released on hard process death. Once it is acquired, any
     // leftover metadata is necessarily orphaned and can be replaced without PID-reuse/delete races.
     await atomicJsonWrite(path, {
@@ -639,15 +638,15 @@ async function acquireLock(sessionFile, path, stateStore) {
     });
     await assertStableStateParent(stateStore.parent);
     await stateStore.lockBoundary?.('after_metadata_publish', { path });
-    identity = await pathIdentity(path);
+    const identity = await pathIdentity(path);
     if (!identity.isFile() || identity.nlink !== 1n) {
       throw new Error('Agent Alpha lock metadata is not a single regular file');
     }
+    return { path, nonce, server, identity, stateStore };
   } catch (error) {
     await closeLockServer(server).catch(() => {});
     throw error;
   }
-  return { path, nonce, server, identity, stateStore };
 }
 
 async function releaseLock(lock) {

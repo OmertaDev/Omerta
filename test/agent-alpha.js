@@ -6,7 +6,7 @@ import { execFile, spawn } from 'node:child_process';
 import {
   chmod, chown, link, mkdir, mkdtemp, readFile, readdir, rename, rm, symlink, writeFile,
 } from 'node:fs/promises';
-import { createServer } from 'node:net';
+import { createConnection, createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -136,6 +136,32 @@ async function privateTempDir(prefix) {
   const directory = await mkdtemp(join(tmpdir(), prefix));
   await secureWindowsDirectory(directory);
   return directory;
+}
+
+async function lockEndpointReachable(sessionFile) {
+  const identity = process.platform === 'win32'
+    ? resolve(sessionFile).toLowerCase()
+    : resolve(sessionFile);
+  const digest = crypto.createHash('sha256').update(identity).digest('hex');
+  const endpoint = process.platform === 'win32'
+    ? `\\\\.\\pipe\\omerta-agent-alpha-${digest}`
+    : `\0omerta-agent-alpha-${digest}`;
+  return new Promise((resolveReachable) => {
+    const socket = createConnection({ path: endpoint });
+    const timeout = setTimeout(() => {
+      socket.destroy();
+      resolveReachable(false);
+    }, 1000);
+    socket.once('connect', () => {
+      clearTimeout(timeout);
+      socket.destroy();
+      resolveReachable(true);
+    });
+    socket.once('error', () => {
+      clearTimeout(timeout);
+      resolveReachable(false);
+    });
+  });
 }
 
 async function writePrivateSession(file, contents) {
@@ -1427,6 +1453,55 @@ async function lockMetadataDeletionReleasesEndpointTest() {
   }
 }
 
+async function lockNonceEntropyFailureReleasesEndpointTest() {
+  const dir = await privateTempDir('omerta-agent-alpha-lock-entropy-');
+  const sessionFile = join(dir, 'session.json');
+  const reportFile = join(dir, 'report.jsonl');
+  const api = await probeApi();
+  const originalRandomUUID = crypto.randomUUID;
+  try {
+    await writePrivateSession(sessionFile, JSON.stringify(sessionFor(api.baseUrl)));
+    crypto.randomUUID = () => {
+      throw new Error('simulated lock nonce entropy failure');
+    };
+    await assert.rejects(
+      runAgentAlpha({
+        baseUrl: api.baseUrl,
+        sessionFile,
+        reportFile,
+        maxActions: 1,
+        intervalMs: 3100,
+      }),
+      /simulated lock nonce entropy failure/i,
+      'nonce entropy failure after endpoint publication fails acquisition closed',
+    );
+    crypto.randomUUID = originalRandomUUID;
+
+    assert.deepEqual(api.state, {
+      guestCalls: 0, sessionCalls: 0, turnCalls: 0, actCalls: 0,
+    }, 'lock nonce failure happens before any credential-bearing network work');
+    assert.equal(await lockEndpointReachable(sessionFile), false,
+      'the failed acquisition leaves no connectable OS-owned endpoint');
+
+    const retry = await runAgentAlpha({
+      baseUrl: api.baseUrl,
+      sessionFile,
+      reportFile,
+      maxActions: 1,
+      intervalMs: 3100,
+    });
+    assert.deepEqual(retry, { status: 'complete', actions: 0 },
+      'an immediate same-process retry reacquires after nonce entropy failure');
+    assert.deepEqual(api.state, {
+      guestCalls: 0, sessionCalls: 1, turnCalls: 1, actCalls: 0,
+    }, 'only the successful retry reaches the API');
+  } finally {
+    crypto.randomUUID = originalRandomUUID;
+    await api.close();
+    await rm(dir, { recursive: true, force: true });
+  }
+}
+
 async function bootstrapAcknowledgementCrashWindowTest() {
   const api = await phaseRecoveryApi({ initialPhase: 'guest_bootstrap_ack_pending' });
   await withReadySession(api, 'omerta-agent-alpha-bootstrap-ack-',
@@ -2275,6 +2350,7 @@ async function realElapsedCadenceTest() {
 await distinctPhysicalTargetsTest();
 await guestBootstrapServerRecoveryTest();
 await initialGuestCrashRecoveryTest();
+await lockNonceEntropyFailureReleasesEndpointTest();
 await lockMetadataDeletionReleasesEndpointTest();
 await credentialStorageConfidentialityTest();
 await credentialParentReplacementTest();
