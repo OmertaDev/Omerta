@@ -404,18 +404,13 @@ export async function marketExactAvailability(pool, ch, h = {}) {
   const cash = Number(ch.cash || 0);
   const load = cargoCount(h.owned?.cargo || {});
   const space = Math.max(0, trunkCap(h) - load);
-  const carried = Object.entries(h.owned?.cargo || {}).filter(([, qty]) => Number(qty) > 0).map(([good]) => good);
-  let canFillOrder = false;
-  if (carried.length) {
-    const params = [ch.id, ch.loc, ...carried];
-    const goods = carried.map((_, index) => `$${index + 3}`).join(',');
-    canFillOrder = !!(await pool.query(
+  const canFillOrder = !!(await pool.query(
       `SELECT 1 FROM market_listings l
+         JOIN character_cargo cargo ON cargo.character_id=$1
+          AND cargo.good_id=l.good_id AND cargo.qty > 0
         WHERE l.status='live' AND l.expires_at > now() AND l.kind='order'
           AND l.seller_character <> $1 AND l.district=$2 AND l.qty > 0
-          AND l.good_id IN (${goods})
-        LIMIT 1`, params)).rows[0];
-  }
+        LIMIT 1`, [ch.id, ch.loc])).rows[0];
   const canBuyGood = space > 0 && !!(await pool.query(
     `SELECT 1 FROM market_listings l JOIN characters seller ON seller.id=l.seller_character AND seller.alive
       WHERE l.status='live' AND l.expires_at > now() AND l.kind='good'

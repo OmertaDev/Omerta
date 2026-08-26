@@ -32,6 +32,11 @@ const districtName = (id) => (DISTRICTS.find((d) => d.id === id) || {}).name || 
 
 const uid = () => crypto.randomUUID();
 const cargoCount = (cargo) => Object.values(cargo).reduce((a, n) => a + (n || 0), 0);
+const SQL_BATCH = 50;
+const sqlBatches = (values) => Array.from({ length: Math.ceil(values.length / SQL_BATCH) }, (_, index) => {
+  const batch = values.slice(index * SQL_BATCH, (index + 1) * SQL_BATCH);
+  return [...batch, ...Array(SQL_BATCH - batch.length).fill(null)];
+});
 
 // (audit F2) the POSTER's trunk capacity, computed by the CANONICAL `trunkCap` rather than restated
 // here — a hand-rolled mirror is how the character view once lost the road_boss bonus. Two unlocked
@@ -49,15 +54,21 @@ async function runnableFavorRows(ch, client, h, rows) {
   const runnable = new Set();
   if (!h || !rows.length || jailed(ch)) return runnable;
   const posterIds = [...new Set(rows.map((row) => row.poster_character))];
-  const slots = posterIds.map((_, index) => `$${index + 1}`).join(',');
   // One transaction client, one query at a time (node-pg serializes this today and pg@9 rejects
   // concurrent use); all three reads stay in the caller's snapshot.
-  const loads = await client.query(`SELECT character_id, COALESCE(SUM(qty),0) n FROM character_cargo
-    WHERE character_id IN (${slots}) GROUP BY character_id`, posterIds);
-  const assets = await client.query(
-    `SELECT character_id, asset_id FROM character_assets WHERE character_id IN (${slots})`, posterIds);
-  const skills = await client.query(
-    `SELECT character_id, skill_id FROM character_skills WHERE character_id IN (${slots})`, posterIds);
+  const loads = { rows: [] }, assets = { rows: [] }, skills = { rows: [] };
+  for (const batch of sqlBatches(posterIds)) {
+    loads.rows.push(...(await client.query(
+      `SELECT character_id, COALESCE(SUM(qty),0) n FROM character_cargo
+        WHERE character_id IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50)
+        GROUP BY character_id`, batch)).rows);
+    assets.rows.push(...(await client.query(
+      `SELECT character_id, asset_id FROM character_assets
+        WHERE character_id IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50)`, batch)).rows);
+    skills.rows.push(...(await client.query(
+      `SELECT character_id, skill_id FROM character_skills
+        WHERE character_id IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50)`, batch)).rows);
+  }
   const loadByPoster = new Map(loads.rows.map((row) => [row.character_id, Number(row.n)]));
   const assetsByPoster = new Map(posterIds.map((id) => [id, []]));
   for (const row of assets.rows) assetsByPoster.get(row.character_id)?.push(row.asset_id);
@@ -178,20 +189,15 @@ export async function favorBoard(ch, client, h = null) {
 // capacity helper applies the poster's canonical trunk authority. Only a boolean is returned.
 export async function favorExactAvailability(ch, client, h = {}) {
   if (jailed(ch)) return { canRun: false };
-  const carried = Object.entries(h.owned?.cargo || {}).filter(([, qty]) => Number(qty) > 0);
-  if (!carried.length) return { canRun: false };
-  const params = [ch.account_id, ch.id, ch.loc];
-  const cargoClauses = carried.map(([good, qty]) => {
-    params.push(good, Number(qty));
-    return `(f.good_id=$${params.length - 1} AND f.qty <= $${params.length})`;
-  });
   const rows = (await client.query(
     `SELECT f.poster_character, f.good_id, f.qty, f.district, c.loc AS poster_loc
        FROM favors f
        JOIN characters c ON c.id=f.poster_character AND c.alive
        JOIN contacts ct ON ct.contact_account=c.account_id AND ct.owner_account=$1
+       JOIN character_cargo cargo ON cargo.character_id=$2
+        AND cargo.good_id=f.good_id AND cargo.qty >= f.qty
       WHERE f.status='open' AND f.expires_at > now() AND f.poster_character <> $2
-        AND f.district=$3 AND c.loc=f.district AND (${cargoClauses.join(' OR ')})`, params)).rows;
+        AND f.district=$3 AND c.loc=f.district`, [ch.account_id, ch.id, ch.loc])).rows;
   return { canRun: (await runnableFavorRows(ch, client, h, rows)).size > 0 };
 }
 
