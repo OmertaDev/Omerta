@@ -72,15 +72,83 @@ function sourceRevisionForSnapshot({ head, parent = '', changedPaths = [], workt
   return !worktreeDirty && parent && generatedOnly ? parent : head;
 }
 
+function repositorySnapshotFromState({
+  head,
+  parents = [],
+  headTree = '',
+  secondParentTree = '',
+  status = [],
+  changedPaths = [],
+  secondParentParent = '',
+  secondParentChangedPaths = [],
+  worktreeDirty,
+  eventName = '',
+  ref = '',
+}) {
+  const dirty = typeof worktreeDirty === 'boolean' ? worktreeDirty : status.length > 0;
+  const syntheticPullRequestMerge = eventName === 'pull_request'
+    && /^refs\/pull\/\d+\/merge$/.test(ref)
+    && parents.length === 2
+    && Boolean(headTree)
+    && headTree === secondParentTree;
+  const revisionHead = syntheticPullRequestMerge ? parents[1] : head;
+  const revisionParent = syntheticPullRequestMerge ? secondParentParent : (parents[0] || '');
+  const revisionChangedPaths = syntheticPullRequestMerge ? secondParentChangedPaths : changedPaths;
+  const sourceRevision = sourceRevisionForSnapshot({
+    head: revisionHead,
+    parent: revisionParent,
+    changedPaths: revisionChangedPaths,
+    worktreeDirty: dirty,
+  });
+  return {
+    head,
+    sourceRevision,
+    status,
+    worktreeDirty: dirty,
+    generatedOnly: sourceRevision !== head,
+    syntheticPullRequestMerge,
+  };
+}
+
+function currentBranchForSnapshot({ currentBranch = '', storedBranch = '', snapshot = {} }) {
+  const mayUseStoredBranch = snapshot.generatedOnly || snapshot.syntheticPullRequestMerge;
+  return currentBranch || (mayUseStoredBranch ? storedBranch : '') || '(detached)';
+}
+
 function repositorySnapshot() {
   const head = git(['rev-parse', 'HEAD']).trim();
   const status = git(['status', '--porcelain=v1']).split(/\r?\n/).filter(Boolean);
   const changedPaths = git(['diff-tree', '--no-commit-id', '--name-only', '-r', head])
     .split(/\r?\n/).filter(Boolean).map(posix);
-  const parent = git(['rev-parse', `${head}^`]).trim();
   const worktreeDirty = status.length > 0;
-  const sourceRevision = sourceRevisionForSnapshot({ head, parent, changedPaths, worktreeDirty });
-  return { head, sourceRevision, status, worktreeDirty, generatedOnly: sourceRevision !== head };
+  const lineage = git(['rev-list', '--parents', '-n', '1', head]).trim().split(/\s+/);
+  const parents = lineage[0] === head ? lineage.slice(1) : [];
+  const eventName = process.env.GITHUB_EVENT_NAME || '';
+  const ref = process.env.GITHUB_REF || '';
+  const pullRequestMergeCandidate = eventName === 'pull_request'
+    && /^refs\/pull\/\d+\/merge$/.test(ref)
+    && parents.length === 2;
+  const secondParent = pullRequestMergeCandidate ? parents[1] : '';
+  const headTree = pullRequestMergeCandidate ? git(['rev-parse', `${head}^{tree}`]).trim() : '';
+  const secondParentTree = secondParent ? git(['rev-parse', `${secondParent}^{tree}`]).trim() : '';
+  const secondParentParent = secondParent ? git(['rev-parse', `${secondParent}^`]).trim() : '';
+  const secondParentChangedPaths = secondParent
+    ? git(['diff-tree', '--no-commit-id', '--name-only', '-r', secondParent])
+      .split(/\r?\n/).filter(Boolean).map(posix)
+    : [];
+  return repositorySnapshotFromState({
+    head,
+    parents,
+    headTree,
+    secondParentTree,
+    status,
+    changedPaths,
+    secondParentParent,
+    secondParentChangedPaths,
+    worktreeDirty,
+    eventName,
+    ref,
+  });
 }
 
 function storedCurrentBranch() {
@@ -616,7 +684,13 @@ function build(options = {}) {
   const head = options.sourceRevision || snapshot.sourceRevision;
   const branch = git(['branch', '--show-current']).trim();
   const currentBranch = typeof options.currentBranch === 'string' ? options.currentBranch
-    : (branch || (snapshot.generatedOnly ? storedCurrentBranch() : '') || '(detached)');
+    : currentBranchForSnapshot({
+      currentBranch: branch,
+      storedBranch: !branch && (snapshot.generatedOnly || snapshot.syntheticPullRequestMerge)
+        ? storedCurrentBranch()
+        : '',
+      snapshot,
+    });
   const status = snapshot.status;
   const worktreeDirty = typeof options.worktreeDirty === 'boolean' ? options.worktreeDirty : snapshot.worktreeDirty;
   const githubPath = 'knowledge/github-snapshot.json';
@@ -1096,4 +1170,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
   }
 }
 
-export { build, buildForCheck, finalCallbackCall, sourceRevisionForSnapshot, validate, render };
+export {
+  build, buildForCheck, currentBranchForSnapshot, finalCallbackCall, repositorySnapshotFromState,
+  sourceRevisionForSnapshot, validate, render,
+};
