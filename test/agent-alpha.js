@@ -3,7 +3,9 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { execFile, spawn } from 'node:child_process';
-import { chmod, chown, link, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import {
+  chmod, chown, link, mkdir, mkdtemp, readFile, readdir, rename, rm, symlink, writeFile,
+} from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -99,6 +101,28 @@ async function grantWindowsDirectoryRead(directory) {
     $rule = New-Object System.Security.AccessControl.FileSystemAccessRule(
       $everyone,
       [System.Security.AccessControl.FileSystemRights]::ReadAndExecute,
+      $inherit,
+      [System.Security.AccessControl.PropagationFlags]::None,
+      [System.Security.AccessControl.AccessControlType]::Allow
+    )
+    [void]$acl.AddAccessRule($rule)
+    $item.SetAccessControl($acl)
+  `, directory);
+}
+
+async function grantWindowsDirectoryFullControl(directory) {
+  if (process.platform !== 'win32') return;
+  await runWindowsAclScript(`
+    $ErrorActionPreference = 'Stop'
+    $target = $env:OMERTA_ALPHA_TEST_ACL_TARGET
+    $item = New-Object System.IO.DirectoryInfo($target)
+    $acl = $item.GetAccessControl()
+    $everyone = New-Object System.Security.Principal.SecurityIdentifier('S-1-1-0')
+    $inherit = [System.Security.AccessControl.InheritanceFlags]::ContainerInherit -bor
+      [System.Security.AccessControl.InheritanceFlags]::ObjectInherit
+    $rule = New-Object System.Security.AccessControl.FileSystemAccessRule(
+      $everyone,
+      [System.Security.AccessControl.FileSystemRights]::FullControl,
       $inherit,
       [System.Security.AccessControl.PropagationFlags]::None,
       [System.Security.AccessControl.AccessControlType]::Allow
@@ -417,11 +441,154 @@ async function credentialStorageConfidentialityTest() {
   }
 }
 
+async function credentialParentReplacementTest() {
+  const root = await privateTempDir('omerta-agent-alpha-parent-swap-');
+  const stateDir = join(root, 'state');
+  const reportDir = join(root, 'reports');
+  const displacedDir = join(root, 'state-before-swap');
+  await mkdir(stateDir);
+  await mkdir(reportDir);
+  await secureWindowsDirectory(stateDir);
+  await secureWindowsDirectory(reportDir);
+  if (process.platform !== 'win32') {
+    await chmod(stateDir, 0o700);
+    await chmod(reportDir, 0o700);
+  }
+  const sessionFile = join(stateDir, 'session.json');
+  const reportFile = join(reportDir, 'report.jsonl');
+  const api = await phaseRecoveryApi({ initialPhase: 'guest' });
+  try {
+    await writePrivateSession(sessionFile, JSON.stringify(sessionFor(api.baseUrl, {
+      phase: 'guest', token: 'guest-token-secret',
+    })));
+    let swapped = false;
+    const swappingFetch = async (url, options) => {
+      const response = await fetch(url, options);
+      if (!swapped && new URL(url).pathname === '/v1/session') {
+        await rename(stateDir, displacedDir);
+        await mkdir(stateDir);
+        if (process.platform === 'win32') await grantWindowsDirectoryFullControl(stateDir);
+        else await chmod(stateDir, 0o777);
+        swapped = true;
+      }
+      return response;
+    };
+    let replacementError = null;
+    try {
+      await runAgentAlpha({
+        baseUrl: api.baseUrl,
+        sessionFile,
+        reportFile,
+        maxActions: 1,
+        intervalMs: 3100,
+        fetchImpl: swappingFetch,
+      });
+    } catch (error) { replacementError = error; }
+    assert.match(replacementError?.message || '', /parent|replaced|storage|private|identity/i,
+      'a state directory replaced after authorization fails closed at the next credential write',
+    );
+    assert.equal(swapped, true,
+      `the deterministic network boundary replaced the approved directory (${replacementError?.message})`);
+    let replacementPayload = '';
+    for (const name of await readdir(stateDir)) {
+      try { replacementPayload += await readFile(join(stateDir, name), 'utf8'); } catch { /* directory */ }
+    }
+    assert.equal(replacementPayload.includes('agent-token-secret'), false,
+      'the new credential is never written into the untrusted replacement before rejection');
+  } finally {
+    await api.close();
+    await rm(root, { recursive: true, force: true });
+  }
+}
+
+async function credentialWriteBoundaryReplacementTest() {
+  const boundaries = [
+    'before_temp_create',
+    'after_temp_verified',
+    'after_secret_fsync',
+    'after_publish',
+  ];
+  const outcomes = {};
+  for (const boundary of boundaries) {
+    const root = await privateTempDir(`omerta-agent-alpha-${boundary}-`);
+    const stateDir = join(root, 'state');
+    const reportDir = join(root, 'reports');
+    const displacedDir = join(root, 'state-before-swap');
+    await mkdir(stateDir);
+    await mkdir(reportDir);
+    await secureWindowsDirectory(stateDir);
+    await secureWindowsDirectory(reportDir);
+    if (process.platform !== 'win32') {
+      await chmod(stateDir, 0o700);
+      await chmod(reportDir, 0o700);
+    }
+    const sessionFile = join(stateDir, 'session.json');
+    const reportFile = join(reportDir, 'report.jsonl');
+    const api = await phaseRecoveryApi({ initialPhase: 'guest' });
+    try {
+      await writePrivateSession(sessionFile, JSON.stringify(sessionFor(api.baseUrl, {
+        phase: 'guest', token: 'guest-token-secret',
+      })));
+      let swapped = false;
+      let swapAttempted = false;
+      const boundaryRunner = createAgentAlphaTestRunner({
+        now: () => testNow,
+        sleep: async (ms) => { testNow += ms; },
+        credentialBoundary: async (reached) => {
+          if (swapped || reached !== boundary) return;
+          swapAttempted = true;
+          await rename(stateDir, displacedDir);
+          await mkdir(stateDir);
+          if (process.platform === 'win32') await grantWindowsDirectoryFullControl(stateDir);
+          else await chmod(stateDir, 0o777);
+          swapped = true;
+        },
+      });
+      let error = null;
+      try {
+        await boundaryRunner({
+          baseUrl: api.baseUrl,
+          sessionFile,
+          reportFile,
+          maxActions: 1,
+          intervalMs: 3100,
+        });
+      } catch (caught) { error = caught; }
+      let replacementPayload = '';
+      for (const name of await readdir(stateDir)) {
+        try { replacementPayload += await readFile(join(stateDir, name), 'utf8'); }
+        catch { /* directory or an attacker-controlled non-file */ }
+      }
+      outcomes[boundary] = {
+        swapAttempted,
+        swapped,
+        rejected: /parent|replaced|storage|private|identity|EPERM|EBUSY|access denied/i
+          .test(error?.message || ''),
+        replacementHasSecret: replacementPayload.includes('agent-token-secret'),
+      };
+    } finally {
+      await api.close();
+      await rm(root, { recursive: true, force: true });
+    }
+  }
+  assert.deepEqual(outcomes, Object.fromEntries(boundaries.map((boundary) => {
+    const windowsOpenHandleBoundary = process.platform === 'win32' &&
+      ['after_temp_verified', 'after_secret_fsync'].includes(boundary);
+    return [boundary, {
+      swapAttempted: true,
+      swapped: !windowsOpenHandleBoundary,
+      rejected: true,
+      replacementHasSecret: false,
+    }];
+  })), 'every credential-write boundary rejects a parent swap without exposing the new bearer');
+}
+
 async function localApi() {
   const app = Fastify({ logger: false });
   const requests = [];
   const state = {
     guestCalls: 0,
+    bootstrapAckCalls: 0,
     agentKeyCalls: 0,
     characterCalls: 0,
     actCalls: 0,
@@ -456,6 +623,11 @@ async function localApi() {
         : null,
       wallet: 'wallet-secret',
     };
+  });
+  app.post('/v1/auth/guest/bootstrap/ack', async (req) => {
+    assert.equal(req.headers.authorization, 'Bearer guest-token-secret');
+    state.bootstrapAckCalls += 1;
+    return { ok: true };
   });
   app.post('/v1/auth/agent-key', async (req) => {
     assert.equal(req.headers.authorization, 'Bearer guest-token-secret');
@@ -545,11 +717,13 @@ async function lifecycleTest() {
       'the finite runner stops after the caller action budget');
     assert.deepEqual({
       guestCalls: api.state.guestCalls,
+      bootstrapAckCalls: api.state.bootstrapAckCalls,
       agentKeyCalls: api.state.agentKeyCalls,
       characterCalls: api.state.characterCalls,
       actCalls: api.state.actCalls,
     }, {
       guestCalls: 1,
+      bootstrapAckCalls: 1,
       agentKeyCalls: 1,
       characterCalls: 1,
       actCalls: 2,
@@ -576,6 +750,8 @@ async function lifecycleTest() {
     assert.equal(second.actions, 1, 'a resumed run receives its own finite action budget');
     assert.equal(api.state.guestCalls, 1,
       'a second run resumes the original identity without guest creation');
+    assert.equal(api.state.bootstrapAckCalls, 1,
+      'a second run does not acknowledge an already-retired bootstrap proof again');
     assert.equal(api.state.agentKeyCalls, 1,
       'a second run does not issue another agent key');
     assert.equal(api.state.characterCalls, 1,
@@ -1145,8 +1321,9 @@ async function staleReplacementTest() {
 async function phaseRecoveryApi({ initialPhase }) {
   const app = Fastify({ logger: false });
   const state = {
-    agent: initialPhase !== 'guest',
+    agent: !['guest', 'guest_bootstrap_ack_pending'].includes(initialPhase),
     hasCharacter: false,
+    bootstrapAckCalls: 0,
     agentKeyCalls: 0,
     characterCalls: 0,
   };
@@ -1163,6 +1340,11 @@ async function phaseRecoveryApi({ initialPhase }) {
         ? { id: 'character-id-secret', name: 'Alpha Machine', generation: 1 }
         : null,
     };
+  });
+  app.post('/v1/auth/guest/bootstrap/ack', async (req) => {
+    assert.equal(req.headers.authorization, 'Bearer guest-token-secret');
+    state.bootstrapAckCalls += 1;
+    return { ok: true };
   });
   app.post('/v1/auth/agent-key', async (req) => {
     assert.equal(req.headers.authorization, 'Bearer guest-token-secret');
@@ -1187,6 +1369,61 @@ async function phaseRecoveryApi({ initialPhase }) {
     state,
     close: () => app.close(),
   };
+}
+
+async function bootstrapAcknowledgementCrashWindowTest() {
+  const api = await phaseRecoveryApi({ initialPhase: 'guest_bootstrap_ack_pending' });
+  await withReadySession(api, 'omerta-agent-alpha-bootstrap-ack-',
+    async ({ sessionFile, reportFile }) => {
+      await writePrivateSession(sessionFile, JSON.stringify(sessionFor(api.baseUrl, {
+        phase: 'guest_bootstrap_ack_pending',
+        token: 'guest-token-secret',
+      })));
+      let dropAckResponse = true;
+      const responseLossFetch = async (url, options) => {
+        const response = await fetch(url, options);
+        if (dropAckResponse && new URL(url).pathname === '/v1/auth/guest/bootstrap/ack') {
+          dropAckResponse = false;
+          throw new Error('simulated bootstrap acknowledgement response loss');
+        }
+        return response;
+      };
+      await assert.rejects(
+        runAgentAlpha({
+          baseUrl: api.baseUrl,
+          sessionFile,
+          reportFile,
+          maxActions: 1,
+          intervalMs: 3100,
+          fetchImpl: responseLossFetch,
+        }),
+        /bootstrap acknowledgement response loss/i,
+        'a lost ACK response leaves the durable acknowledgement-pending phase for retry',
+      );
+      assert.equal(api.state.bootstrapAckCalls, 1,
+        'the server committed the first acknowledgement whose response was lost');
+      assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).phase,
+        'guest_bootstrap_ack_pending',
+      'the client cannot advance to agent-key until ACK success is durably observed');
+
+      const summary = await runAgentAlpha({
+        baseUrl: api.baseUrl,
+        sessionFile,
+        reportFile,
+        maxActions: 1,
+        intervalMs: 3100,
+      });
+      assert.deepEqual(summary, { status: 'complete', actions: 0 },
+        'restart retries the idempotent ACK before finishing the original identity');
+      assert.equal(api.state.bootstrapAckCalls, 2,
+        'restart replays the same account-scoped acknowledgement exactly once');
+      assert.equal(api.state.agentKeyCalls, 1,
+        'agent progression begins only after the acknowledgement retry succeeds');
+      assert.equal(api.state.characterCalls, 1,
+        'the one bound character is created after bootstrap retirement');
+      assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).phase, 'agent',
+        'the completed restart leaves no pending bootstrap lifecycle state');
+    });
 }
 
 async function finalAgentWithoutCharacterTest() {
@@ -1763,6 +2000,91 @@ async function danglingReportToFutureLockTest() {
   }
 }
 
+async function reportTargetReplacementTest() {
+  const outcomes = {};
+  for (const kind of ['session-symlink', 'session-hardlink', 'lock-symlink']) {
+    const api = await actionApi({ kinds: ['report_swap_is_not_an_action'] });
+    await withReadySession(api, `omerta-agent-alpha-report-${kind}-`,
+      async ({ sessionFile, reportFile }) => {
+        let swapped = false;
+        let targetBefore = '';
+        let targetPath = '';
+        const displacedReport = `${reportFile}.approved`;
+        const swappingFetch = async (url, options) => {
+          const response = await fetch(url, options);
+          if (!swapped && new URL(url).pathname === '/v1/agent/turn') {
+            targetPath = kind === 'lock-symlink' ? `${sessionFile}.lock` : sessionFile;
+            targetBefore = await readFile(targetPath, 'utf8');
+            await rename(reportFile, displacedReport).catch((error) => {
+              if (error?.code !== 'ENOENT') throw error;
+            });
+            if (kind === 'session-hardlink') await link(targetPath, reportFile);
+            else await symlink(targetPath, reportFile, 'file');
+            swapped = true;
+          }
+          return response;
+        };
+        let error = null;
+        try {
+          await runAgentAlpha({
+            baseUrl: api.baseUrl,
+            sessionFile,
+            reportFile,
+            maxActions: 1,
+            intervalMs: 3100,
+            fetchImpl: swappingFetch,
+          });
+        } catch (caught) { error = caught; }
+        let targetAfter = null;
+        try { targetAfter = await readFile(targetPath, 'utf8'); }
+        catch (readError) {
+          if (readError?.code !== 'ENOENT') throw readError;
+        }
+        outcomes[kind] = {
+          swapped,
+          rejectedByReportAuthority: /report|telemetry|identity|link|regular/i.test(error?.message || ''),
+          targetUnchangedOrSafelyReleased: targetAfter === null || targetAfter === targetBefore,
+        };
+      });
+    await api.close();
+  }
+  assert.deepEqual(outcomes, {
+    'session-symlink': {
+      swapped: true, rejectedByReportAuthority: true, targetUnchangedOrSafelyReleased: true,
+    },
+    'session-hardlink': {
+      swapped: true, rejectedByReportAuthority: true, targetUnchangedOrSafelyReleased: true,
+    },
+    'lock-symlink': {
+      swapped: true, rejectedByReportAuthority: true, targetUnchangedOrSafelyReleased: true,
+    },
+  }, 'every post-preflight report replacement is rejected before session or lock bytes change');
+}
+
+async function nonRegularReportTargetTest() {
+  if (process.platform === 'win32') return;
+  for (const kind of ['fifo', 'device']) {
+    const api = await probeApi();
+    const dir = await privateTempDir(`omerta-agent-alpha-report-${kind}-`);
+    const sessionFile = join(dir, 'session.json');
+    const reportFile = kind === 'device' ? '/dev/null' : join(dir, 'report.fifo');
+    try {
+      await writePrivateSession(sessionFile, JSON.stringify(sessionFor(api.baseUrl)));
+      if (kind === 'fifo') await execFileAsync('mkfifo', [reportFile]);
+      await assert.rejects(
+        runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1 }),
+        /report|regular|telemetry|device|fifo/i,
+        `${kind} report targets fail closed instead of receiving an append`,
+      );
+      assert.equal(api.state.sessionCalls, 0,
+        `${kind} report rejection happens before any credential-bearing network use`);
+    } finally {
+      await api.close();
+      await rm(dir, { recursive: true, force: true });
+    }
+  }
+}
+
 async function distinctPhysicalTargetsTest() {
   const app = Fastify({ logger: false });
   let sessionCalls = 0;
@@ -1783,13 +2105,17 @@ async function distinctPhysicalTargetsTest() {
   const baseUrl = `http://127.0.0.1:${address.port}`;
   const dir = await privateTempDir('omerta-agent-alpha-targets-');
   try {
-    for (const kind of ['equal', 'hardlink', 'lock']) {
+    for (const kind of ['equal', 'hardlink', 'lock', 'orphan-temp']) {
       const sessionFile = join(dir, `${kind}-session.json`);
       await writePrivateSession(sessionFile, JSON.stringify(sessionFor(baseUrl)));
       let reportFile = join(dir, `${kind}-report.jsonl`);
       if (kind === 'equal') reportFile = sessionFile;
       if (kind === 'hardlink') await link(sessionFile, reportFile);
       if (kind === 'lock') reportFile = `${sessionFile}.lock`;
+      if (kind === 'orphan-temp') {
+        reportFile = `${sessionFile}.1234.${crypto.randomUUID()}.tmp`;
+        await writePrivateSession(reportFile, 'orphaned-credential-secret');
+      }
       await assert.rejects(
         runAgentAlpha({ baseUrl, sessionFile, reportFile, maxActions: 1, intervalMs: 3100 }),
         /session.*report.*lock|distinct|alias|target/i,
@@ -1890,9 +2216,14 @@ async function realElapsedCadenceTest() {
   }
 }
 
+await distinctPhysicalTargetsTest();
 await guestBootstrapServerRecoveryTest();
 await initialGuestCrashRecoveryTest();
 await credentialStorageConfidentialityTest();
+await credentialParentReplacementTest();
+await credentialWriteBoundaryReplacementTest();
+await reportTargetReplacementTest();
+await nonRegularReportTargetTest();
 await lifecycleTest();
 await failClosedSessionTest();
 await orphanedLockMetadataTest();
@@ -1903,6 +2234,7 @@ await ambiguousMutationRecoveryTest();
 await staleReplacementTest();
 await staleAttemptBoundTest();
 await finalAgentWithoutCharacterTest();
+await bootstrapAcknowledgementCrashWindowTest();
 await phaseRecoveryTest();
 await initialNameSafetyTest();
 await cliContractTest();
@@ -1911,7 +2243,6 @@ await hardCrashReplayTest();
 await physicalAliasLockTest();
 await danglingReportToFutureLockTest();
 await danglingSessionAliasCreateTest();
-await distinctPhysicalTargetsTest();
 await unrelatedLegacyPortTest();
 await realElapsedCadenceTest();
 console.log('agent-alpha tests passed');

@@ -3,9 +3,8 @@
 // deliberately lossy: the session owns the bearer token while telemetry owns no sensitive values.
 import crypto from 'node:crypto';
 import { execFile } from 'node:child_process';
-import {
-  appendFile, lstat, mkdir, open, readFile, realpath, rename, stat, unlink,
-} from 'node:fs/promises';
+import { constants as fsConstants } from 'node:fs';
+import { lstat, mkdir, open, readFile, realpath, rename, stat, unlink } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { basename, dirname, join, resolve } from 'node:path';
 import { performance } from 'node:perf_hooks';
@@ -71,25 +70,69 @@ const WINDOWS_ACL_CHECK = `
   if (-not $ownerFullControl) { exit 24 }
 `;
 
-async function assertWindowsPrivateAcl(path, kind) {
-  const executable = process.env.SystemRoot
+const WINDOWS_CREATE_PRIVATE_FILE = `
+  $ErrorActionPreference = 'Stop'
+  $target = $env:OMERTA_ALPHA_ACL_TARGET
+  $user = [System.Security.Principal.WindowsIdentity]::GetCurrent().User
+  $system = New-Object System.Security.Principal.SecurityIdentifier('S-1-5-18')
+  $admins = New-Object System.Security.Principal.SecurityIdentifier('S-1-5-32-544')
+  $security = New-Object System.Security.AccessControl.FileSecurity
+  $security.SetOwner($user)
+  $security.SetAccessRuleProtection($true, $false)
+  foreach ($sid in @($user, $system, $admins)) {
+    $rule = New-Object System.Security.AccessControl.FileSystemAccessRule(
+      $sid,
+      [System.Security.AccessControl.FileSystemRights]::FullControl,
+      [System.Security.AccessControl.AccessControlType]::Allow
+    )
+    [void]$security.AddAccessRule($rule)
+  }
+  $stream = New-Object System.IO.FileStream(
+    $target,
+    [System.IO.FileMode]::CreateNew,
+    [System.Security.AccessControl.FileSystemRights]::FullControl,
+    [System.IO.FileShare]::None,
+    4096,
+    [System.IO.FileOptions]::WriteThrough,
+    $security
+  )
+  $stream.Dispose()
+`;
+
+function windowsPowerShell() {
+  return process.env.SystemRoot
     ? join(process.env.SystemRoot, 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe')
     : 'powershell.exe';
+}
+
+async function runWindowsSecurityScript(script, path, kind) {
+  await execFileAsync(windowsPowerShell(), [
+    '-NoLogo', '-NoProfile', '-NonInteractive', '-Command', script,
+  ], {
+    env: {
+      ...process.env,
+      OMERTA_ALPHA_ACL_TARGET: path,
+      OMERTA_ALPHA_ACL_KIND: kind,
+    },
+    timeout: 10000,
+    windowsHide: true,
+    maxBuffer: 1024,
+  });
+}
+
+async function assertWindowsPrivateAcl(path, kind) {
   try {
-    await execFileAsync(executable, [
-      '-NoLogo', '-NoProfile', '-NonInteractive', '-Command', WINDOWS_ACL_CHECK,
-    ], {
-      env: {
-        ...process.env,
-        OMERTA_ALPHA_ACL_TARGET: path,
-        OMERTA_ALPHA_ACL_KIND: kind,
-      },
-      timeout: 10000,
-      windowsHide: true,
-      maxBuffer: 1024,
-    });
+    await runWindowsSecurityScript(WINDOWS_ACL_CHECK, path, kind);
   } catch {
     throw new Error('Agent Alpha credential storage ACL is not user-private');
+  }
+}
+
+async function createWindowsPrivateEmptyFile(path) {
+  try {
+    await runWindowsSecurityScript(WINDOWS_CREATE_PRIVATE_FILE, path, 'file');
+  } catch {
+    throw new Error('Agent Alpha could not create private credential storage');
   }
 }
 
@@ -99,19 +142,73 @@ async function assertPrivateStateParent(sessionFile) {
   }
 }
 
-async function assertPrivateStateFile(sessionFile) {
-  const info = await lstat(sessionFile);
-  if (!info.isFile()) throw new Error('Agent Alpha credential state must be a regular file');
-  if (info.nlink !== 1) throw new Error('Agent Alpha credential state must have one physical link');
+function sameFileIdentity(left, right) {
+  return left && right && BigInt(left.dev) === BigInt(right.dev) &&
+    BigInt(left.ino) !== 0n && BigInt(left.ino) === BigInt(right.ino);
+}
+
+async function pathIdentity(path) {
+  return lstat(path, { bigint: true });
+}
+
+async function assertPrivateStateHandle(handle, path) {
+  const opened = await handle.stat({ bigint: true });
+  if (!opened.isFile()) throw new Error('Agent Alpha credential state must be a regular file');
+  if (opened.nlink !== 1n) throw new Error('Agent Alpha credential state must have one physical link');
   if (process.platform === 'win32') {
-    await assertWindowsPrivateAcl(sessionFile, 'file');
-    return;
+    await assertWindowsPrivateAcl(path, 'file');
+  } else {
+    if (typeof process.geteuid !== 'function' || opened.uid !== BigInt(process.geteuid())) {
+      throw new Error('Agent Alpha credential state is owned by another principal');
+    }
+    if ((opened.mode & 0o77n) !== 0n) {
+      throw new Error('Agent Alpha credential state permissions are not owner-private');
+    }
   }
-  if (typeof process.geteuid !== 'function' || info.uid !== process.geteuid()) {
-    throw new Error('Agent Alpha credential state is owned by another principal');
+  const named = await pathIdentity(path);
+  const after = await handle.stat({ bigint: true });
+  if (!sameFileIdentity(opened, named) || !sameFileIdentity(opened, after)) {
+    throw new Error('Agent Alpha credential state identity changed during verification');
   }
-  if ((info.mode & 0o077) !== 0) {
-    throw new Error('Agent Alpha credential state permissions are not owner-private');
+  return opened;
+}
+
+async function assertStableStateParent(stateParent) {
+  const opened = await stateParent.handle.stat({ bigint: true });
+  if (!opened.isDirectory() || !sameFileIdentity(opened, stateParent.identity)) {
+    throw new Error('Agent Alpha credential parent identity is invalid');
+  }
+  const namedBefore = await pathIdentity(stateParent.path);
+  if (!namedBefore.isDirectory() || !sameFileIdentity(opened, namedBefore)) {
+    throw new Error('Agent Alpha credential parent was replaced');
+  }
+  if (process.platform === 'win32') {
+    await assertWindowsPrivateAcl(stateParent.path, 'directory');
+  } else {
+    if (typeof process.geteuid !== 'function' || opened.uid !== BigInt(process.geteuid())) {
+      throw new Error('Agent Alpha credential parent is owned by another principal');
+    }
+    if ((opened.mode & 0o22n) !== 0n) {
+      throw new Error('Agent Alpha credential parent is writable by another principal');
+    }
+  }
+  const namedAfter = await pathIdentity(stateParent.path);
+  if (!sameFileIdentity(opened, namedAfter)) {
+    throw new Error('Agent Alpha credential parent changed during verification');
+  }
+}
+
+async function openStateParent(sessionFile) {
+  const path = dirname(sessionFile);
+  const handle = await open(path, fsConstants.O_RDONLY | (fsConstants.O_NOFOLLOW || 0));
+  try {
+    const identity = await handle.stat({ bigint: true });
+    const stateParent = { path, handle, identity };
+    await assertStableStateParent(stateParent);
+    return stateParent;
+  } catch (error) {
+    await handle.close().catch(() => {});
+    throw error;
   }
 }
 
@@ -198,9 +295,71 @@ async function syncDirectory(directory) {
   }
 }
 
-async function appendReport(path, event) {
-  await mkdir(dirname(path), { recursive: true });
-  await appendFile(path, `${JSON.stringify(event)}\n`, { encoding: 'utf8', mode: 0o600 });
+async function currentIdentity(path) {
+  try { return await pathIdentity(path); }
+  catch (error) {
+    if (error?.code === 'ENOENT') return null;
+    throw error;
+  }
+}
+
+async function assertReportAuthority(reportStore) {
+  await assertStableStateParent(reportStore.parent);
+  const reportIdentity = await assertPrivateStateHandle(reportStore.handle, reportStore.path);
+  if (!sameFileIdentity(reportIdentity, reportStore.identity)) {
+    throw new Error('Agent Alpha report file identity changed');
+  }
+  const sessionIdentity = await currentIdentity(reportStore.stateStore.path);
+  if (sameFileIdentity(reportIdentity, sessionIdentity)) {
+    throw new Error('Agent Alpha report aliases credential state');
+  }
+  const lockIdentity = await currentIdentity(reportStore.lock.path);
+  if (!sameFileIdentity(lockIdentity, reportStore.lock.identity)) {
+    throw new Error('Agent Alpha lock identity changed before report append');
+  }
+  if (sameFileIdentity(reportIdentity, lockIdentity) ||
+      sameFileIdentity(reportIdentity, reportStore.stateStore.activeTempIdentity)) {
+    throw new Error('Agent Alpha report aliases protected runner state');
+  }
+}
+
+async function openReportStore(path, stateStore, lock) {
+  const parent = await openStateParent(path);
+  const appendFlags = fsConstants.O_WRONLY | fsConstants.O_APPEND |
+    (fsConstants.O_NONBLOCK || 0) | (fsConstants.O_NOFOLLOW || 0);
+  let handle;
+  try {
+    try {
+      handle = await open(path, appendFlags);
+    } catch (error) {
+      if (error?.code !== 'ENOENT') throw error;
+      if (process.platform === 'win32') {
+        await createWindowsPrivateEmptyFile(path);
+        handle = await open(path, appendFlags);
+      } else {
+        handle = await open(path,
+          fsConstants.O_WRONLY | fsConstants.O_APPEND | fsConstants.O_CREAT |
+            fsConstants.O_EXCL | (fsConstants.O_NONBLOCK || 0) |
+            (fsConstants.O_NOFOLLOW || 0),
+          0o600);
+      }
+    }
+    const identity = await assertPrivateStateHandle(handle, path);
+    const reportStore = { path, parent, handle, identity, stateStore, lock };
+    await assertReportAuthority(reportStore);
+    return reportStore;
+  } catch (error) {
+    await handle?.close().catch(() => {});
+    await parent.handle.close().catch(() => {});
+    throw new Error(`Agent Alpha report target is unsafe: ${error?.message || 'invalid target'}`);
+  }
+}
+
+async function appendReport(reportStore, event) {
+  await assertReportAuthority(reportStore);
+  await reportStore.handle.writeFile(`${JSON.stringify(event)}\n`, 'utf8');
+  await reportStore.handle.sync();
+  await assertReportAuthority(reportStore);
 }
 
 async function requestJson(fetchImpl, base, path, { token, method = 'GET', body, idempotencyKey } = {}) {
@@ -239,9 +398,82 @@ function validName(name) {
     name.length >= 2 && name.length <= 24 && /^[\w .,'&-]+$/.test(name);
 }
 
-async function writeIdentityState(path, value) {
-  await atomicJsonWrite(path, value);
-  await assertPrivateStateFile(path);
+async function safeRemovePrivateTemp(stateStore, temporary, identity) {
+  try {
+    await assertStableStateParent(stateStore.parent);
+    const named = await pathIdentity(temporary);
+    if (sameFileIdentity(named, identity)) await unlink(temporary);
+  } catch { /* a missing/replaced name is not authority to unlink anything else */ }
+}
+
+async function atomicPrivateJsonWrite(stateStore, value) {
+  const { path, parent } = stateStore;
+  await assertStableStateParent(parent);
+  await stateStore.credentialBoundary?.('before_temp_create');
+  const temporary = `${path}.${process.pid}.${crypto.randomUUID()}.tmp`;
+  let handle;
+  let tempIdentity;
+  let published = false;
+  try {
+    if (process.platform === 'win32') {
+      // FileSecurity is supplied to CreateNew, so even a directory swap cannot expose a permissively
+      // inherited empty file long enough for another principal to retain a readable handle.
+      await createWindowsPrivateEmptyFile(temporary);
+      handle = await open(temporary, fsConstants.O_RDWR | (fsConstants.O_NOFOLLOW || 0));
+    } else {
+      handle = await open(temporary,
+        fsConstants.O_RDWR | fsConstants.O_CREAT | fsConstants.O_EXCL |
+          (fsConstants.O_NOFOLLOW || 0),
+        0o600);
+    }
+    tempIdentity = await assertPrivateStateHandle(handle, temporary);
+    stateStore.activeTempIdentity = tempIdentity;
+    await stateStore.credentialBoundary?.('after_temp_verified');
+    await assertStableStateParent(parent);
+
+    // Secret bytes go only through the handle whose identity, owner, links and ACL were verified.
+    await handle.writeFile(`${JSON.stringify(value)}\n`, 'utf8');
+    await handle.sync();
+    await stateStore.credentialBoundary?.('after_secret_fsync');
+    await assertPrivateStateHandle(handle, temporary);
+    await assertStableStateParent(parent);
+    await handle.close();
+    handle = null;
+
+    const named = await pathIdentity(temporary);
+    if (!sameFileIdentity(named, tempIdentity)) {
+      throw new Error('Agent Alpha credential temporary identity changed before publish');
+    }
+    await assertStableStateParent(parent);
+    await rename(temporary, path);
+    published = true;
+    await stateStore.credentialBoundary?.('after_publish');
+    await assertStableStateParent(parent);
+    await syncDirectory(parent.path);
+    await assertStableStateParent(parent);
+
+    const finalHandle = await open(path, fsConstants.O_RDONLY | (fsConstants.O_NOFOLLOW || 0));
+    try {
+      const finalIdentity = await assertPrivateStateHandle(finalHandle, path);
+      if (!sameFileIdentity(finalIdentity, tempIdentity)) {
+        throw new Error('Agent Alpha credential publish changed file identity');
+      }
+    } finally {
+      await finalHandle.close();
+    }
+  } catch (error) {
+    await handle?.close().catch(() => {});
+    if (!published && tempIdentity) await safeRemovePrivateTemp(stateStore, temporary, tempIdentity);
+    throw error;
+  } finally {
+    if (sameFileIdentity(stateStore.activeTempIdentity, tempIdentity)) {
+      stateStore.activeTempIdentity = null;
+    }
+  }
+}
+
+async function writeIdentityState(stateStore, value) {
+  await atomicPrivateJsonWrite(stateStore, value);
 }
 
 function validBootstrapSecret(value) {
@@ -254,11 +486,21 @@ function validInviteCode(value) {
   return value === null || (typeof value === 'string' && value.length > 0 && value.length <= 128);
 }
 
-async function readSession(sessionFile) {
-  await assertPrivateStateFile(sessionFile);
+async function readSession(stateStore) {
+  await assertStableStateParent(stateStore.parent);
+  let handle;
   let session;
-  try { session = JSON.parse(await readFile(sessionFile, 'utf8')); }
-  catch { throw new Error('Agent Alpha session is corrupt'); }
+  try {
+    handle = await open(stateStore.path, fsConstants.O_RDONLY | (fsConstants.O_NOFOLLOW || 0));
+    await assertPrivateStateHandle(handle, stateStore.path);
+    session = JSON.parse(await handle.readFile('utf8'));
+    await assertPrivateStateHandle(handle, stateStore.path);
+    await assertStableStateParent(stateStore.parent);
+  } catch {
+    throw new Error('Agent Alpha session is corrupt or credential storage changed');
+  } finally {
+    await handle?.close().catch(() => {});
+  }
   const exactKeys = (value, keys) => value &&
     Object.keys(value).sort().join('\0') === [...keys].sort().join('\0');
   const pendingValid = session?.pending === null || (
@@ -274,7 +516,9 @@ async function readSession(sessionFile) {
       'version', 'base', 'phase', 'bootstrapSecret', 'inviteCode', 'characterName', 'pending',
     ]) && validBootstrapSecret(session.bootstrapSecret) && validInviteCode(session.inviteCode) &&
     session.pending === null;
-  const bearerValid = ['guest', 'initial_character_pending', 'agent'].includes(session?.phase) &&
+  const bearerValid = [
+    'guest_bootstrap_ack_pending', 'guest', 'initial_character_pending', 'agent',
+  ].includes(session?.phase) &&
     exactKeys(session, ['version', 'base', 'phase', 'token', 'characterName', 'pending']) &&
     typeof session.token === 'string' && !!session.token && pendingValid;
   if (!session || session.version !== SESSION_VERSION || typeof session.base !== 'string' ||
@@ -317,14 +561,23 @@ async function canonicalTarget(path, { rejectLink = false } = {}) {
 async function canonicalRunnerPaths(sessionFile, reportFile) {
   if (!reportFile) throw new Error('Agent Alpha requires a report file');
   const session = await canonicalTarget(sessionFile);
-  const report = await canonicalTarget(reportFile);
+  const report = await canonicalTarget(reportFile, { rejectLink: true });
   const lock = await canonicalTarget(`${session}.lock`, { rejectLink: true });
   const keys = [session, report, lock].map(physicalPathKey);
   if (new Set(keys).size !== keys.length) {
     throw new Error('Agent Alpha session, report, and lock targets must be physically distinct');
   }
+  if (keys[1].startsWith(`${keys[0]}.`) && keys[1].endsWith('.tmp')) {
+    throw new Error('Agent Alpha report target aliases the credential temporary namespace');
+  }
   await assertPrivateStateParent(session);
-  return { sessionFile: session, reportFile: report, lockFile: lock };
+  const stateParent = await openStateParent(session);
+  return {
+    sessionFile: session,
+    reportFile: report,
+    lockFile: lock,
+    stateStore: { path: session, parent: stateParent },
+  };
 }
 
 function lockEndpoint(sessionFile) {
@@ -358,7 +611,7 @@ async function closeLockServer(server) {
     error ? rejectClose(error) : resolveClose()));
 }
 
-async function acquireLock(sessionFile, path) {
+async function acquireLock(sessionFile, path, stateStore) {
   await mkdir(dirname(sessionFile), { recursive: true });
   const endpoint = lockEndpoint(sessionFile);
   const server = createServer((socket) => socket.destroy());
@@ -383,28 +636,50 @@ async function acquireLock(sessionFile, path) {
       pid: process.pid,
       nonce,
     });
+    await assertStableStateParent(stateStore.parent);
   } catch (error) {
     await closeLockServer(server).catch(() => {});
     throw error;
   }
-  return { path, nonce, server };
+  const identity = await pathIdentity(path);
+  if (!identity.isFile() || identity.nlink !== 1n) {
+    await closeLockServer(server).catch(() => {});
+    throw new Error('Agent Alpha lock metadata is not a single regular file');
+  }
+  return { path, nonce, server, identity, stateStore };
 }
 
 async function releaseLock(lock) {
+  let handle;
   try {
-    const current = JSON.parse(await readFile(lock.path, 'utf8'));
+    await assertStableStateParent(lock.stateStore.parent);
+    handle = await open(lock.path, fsConstants.O_RDONLY | (fsConstants.O_NOFOLLOW || 0));
+    const opened = await handle.stat({ bigint: true });
+    const named = await pathIdentity(lock.path);
+    if (!opened.isFile() || opened.nlink !== 1n || !sameFileIdentity(opened, lock.identity) ||
+        !sameFileIdentity(opened, named)) {
+      throw new Error('Agent Alpha lock identity changed before release');
+    }
+    const current = JSON.parse(await handle.readFile('utf8'));
+    await handle.close();
+    handle = null;
     if (current?.nonce === lock.nonce) {
+      await assertStableStateParent(lock.stateStore.parent);
+      if (!sameFileIdentity(await pathIdentity(lock.path), lock.identity)) {
+        throw new Error('Agent Alpha lock identity changed before unlink');
+      }
       await unlink(lock.path);
       await syncDirectory(dirname(lock.path));
     }
   } catch (error) {
     if (error?.code !== 'ENOENT') throw error;
   } finally {
+    await handle?.close().catch(() => {});
     await closeLockServer(lock.server);
   }
 }
 
-async function recoverGuestBootstrap({ base, sessionFile, session, fetchImpl }) {
+async function recoverGuestBootstrap({ base, stateStore, session, fetchImpl }) {
   const guest = await requestJson(fetchImpl, base, '/v1/auth/guest', {
     method: 'POST',
     body: {
@@ -418,16 +693,25 @@ async function recoverGuestBootstrap({ base, sessionFile, session, fetchImpl }) 
   const bearerSession = {
     version: SESSION_VERSION,
     base,
-    phase: 'guest',
+    phase: 'guest_bootstrap_ack_pending',
     token: guest.token,
     characterName: session.characterName,
     pending: null,
   };
-  await writeIdentityState(sessionFile, bearerSession);
+  await writeIdentityState(stateStore, bearerSession);
   return bearerSession;
 }
 
-async function createIdentity({ base, sessionFile, name, inviteCode, fetchImpl }) {
+async function acknowledgeGuestBootstrap({ base, stateStore, session, fetchImpl }) {
+  await requestJson(fetchImpl, base, '/v1/auth/guest/bootstrap/ack', {
+    method: 'POST', token: session.token,
+  });
+  const acknowledged = { ...session, phase: 'guest' };
+  await writeIdentityState(stateStore, acknowledged);
+  return acknowledged;
+}
+
+async function createIdentity({ base, stateStore, name, inviteCode, fetchImpl }) {
   if (!validName(name)) throw new Error('Explicit creation requires a valid 2-24 character name');
   const storedInvite = inviteCode ?? null;
   if (!validInviteCode(storedInvite)) {
@@ -442,8 +726,9 @@ async function createIdentity({ base, sessionFile, name, inviteCode, fetchImpl }
     characterName: name,
     pending: null,
   };
-  await writeIdentityState(sessionFile, session);
-  session = await recoverGuestBootstrap({ base, sessionFile, session, fetchImpl });
+  await writeIdentityState(stateStore, session);
+  session = await recoverGuestBootstrap({ base, stateStore, session, fetchImpl });
+  session = await acknowledgeGuestBootstrap({ base, stateStore, session, fetchImpl });
 
   const agent = await requestJson(fetchImpl, base, '/v1/auth/agent-key', {
     method: 'POST', token: session.token,
@@ -453,7 +738,7 @@ async function createIdentity({ base, sessionFile, name, inviteCode, fetchImpl }
     throw new Error('Agent-key creation returned no token');
   }
   session = { ...session, phase: 'initial_character_pending', token: agent.token };
-  await writeIdentityState(sessionFile, session);
+  await writeIdentityState(stateStore, session);
 
   await requestJson(fetchImpl, base, '/v1/character', {
     method: 'POST', token: session.token, body: { name },
@@ -462,9 +747,12 @@ async function createIdentity({ base, sessionFile, name, inviteCode, fetchImpl }
   return session;
 }
 
-async function ensureIdentity({ base, fetchImpl, sessionFile, session, requestedName }) {
+async function ensureIdentity({ base, fetchImpl, stateStore, session, requestedName }) {
   if (session.phase === 'bootstrap') {
-    session = await recoverGuestBootstrap({ base, fetchImpl, sessionFile, session });
+    session = await recoverGuestBootstrap({ base, fetchImpl, stateStore, session });
+  }
+  if (session.phase === 'guest_bootstrap_ack_pending') {
+    session = await acknowledgeGuestBootstrap({ base, fetchImpl, stateStore, session });
   }
   let probe = await requestJson(fetchImpl, base, '/v1/session', { token: session.token });
   if (!probe?.authed) throw new Error('Agent Alpha could not verify its bound session');
@@ -482,7 +770,7 @@ async function ensureIdentity({ base, fetchImpl, sessionFile, session, requested
       throw new Error('Agent-key creation returned no token');
     }
     session = { ...session, phase: 'initial_character_pending', token: agent.token };
-    await writeIdentityState(sessionFile, session);
+    await writeIdentityState(stateStore, session);
     probe = { ...probe, agent: true, hasCharacter: false, character: null };
   }
 
@@ -493,7 +781,7 @@ async function ensureIdentity({ base, fetchImpl, sessionFile, session, requested
         throw new Error('Initial character does not match its pending bound name');
       }
       session = { ...session, phase: 'agent' };
-      await writeIdentityState(sessionFile, session);
+      await writeIdentityState(stateStore, session);
       return session;
     }
     if (requestedName !== undefined) {
@@ -502,7 +790,7 @@ async function ensureIdentity({ base, fetchImpl, sessionFile, session, requested
       }
       if (requestedName !== session.characterName) {
         session = { ...session, characterName: requestedName };
-        await writeIdentityState(sessionFile, session);
+        await writeIdentityState(stateStore, session);
       }
     }
     await requestJson(fetchImpl, base, '/v1/character', {
@@ -518,7 +806,7 @@ async function ensureIdentity({ base, fetchImpl, sessionFile, session, requested
       throw new Error('Initial character could not be confirmed under its bound name');
     }
     session = { ...session, phase: 'agent' };
-    await writeIdentityState(sessionFile, session);
+    await writeIdentityState(stateStore, session);
     return session;
   }
 
@@ -553,7 +841,7 @@ function operationKey(operationId) {
   return crypto.createHash('sha256').update(operationId).digest('hex');
 }
 
-async function settlePending({ base, fetchImpl, reportFile, sessionFile, session, actionKind }) {
+async function settlePending({ base, fetchImpl, reportStore, stateStore, session, actionKind }) {
   const pending = session.pending;
   let result;
   try {
@@ -566,8 +854,8 @@ async function settlePending({ base, fetchImpl, reportFile, sessionFile, session
   } catch (error) {
     if (error?.status !== 409 || error?.code !== 'stale_turn') throw error;
     session = { ...session, pending: null };
-    await writeIdentityState(sessionFile, session);
-    await appendReport(reportFile, {
+    await writeIdentityState(stateStore, session);
+    await appendReport(reportStore, {
       timestamp: new Date().toISOString(),
       status: 'stale',
       errorCode: 'stale_turn',
@@ -578,8 +866,8 @@ async function settlePending({ base, fetchImpl, reportFile, sessionFile, session
   }
 
   session = { ...session, pending: null };
-  await writeIdentityState(sessionFile, session);
-  await appendReport(reportFile, {
+  await writeIdentityState(stateStore, session);
+  await appendReport(reportStore, {
     timestamp: new Date().toISOString(),
     status: 'executed',
     actionId: pending.actionId,
@@ -591,7 +879,8 @@ async function settlePending({ base, fetchImpl, reportFile, sessionFile, session
 async function runUnlocked(options, timing) {
   const base = originOf(options.baseUrl);
   const sessionFile = options.sessionFile;
-  const reportFile = options.reportFile;
+  const reportStore = options.reportStore;
+  const stateStore = options.stateStore;
   const fetchImpl = options.fetchImpl || globalThis.fetch;
   const maxActions = options.maxActions ?? 1;
   const intervalMs = options.intervalMs ?? MIN_INTERVAL_MS;
@@ -604,19 +893,19 @@ async function runUnlocked(options, timing) {
 
   let session;
   if (await pathExists(sessionFile)) {
-    session = await readSession(sessionFile);
+    session = await readSession(stateStore);
   } else {
     if (options.create !== true) {
       throw new Error('Agent Alpha session is missing; explicit --create is required');
     }
     session = await createIdentity({
-      base, sessionFile, name: options.name, inviteCode: options.inviteCode, fetchImpl,
+      base, stateStore, name: options.name, inviteCode: options.inviteCode, fetchImpl,
     });
   }
 
   if (session.base !== base) throw new Error('Agent Alpha session belongs to a different origin');
   session = await ensureIdentity({
-    base, fetchImpl, sessionFile, session, requestedName: options.name,
+    base, fetchImpl, stateStore, session, requestedName: options.name,
   });
 
   let actions = 0;
@@ -626,13 +915,13 @@ async function runUnlocked(options, timing) {
     await waitForCadence(timing, intervalMs);
     attempts += 1;
     const settled = await settlePending({
-      base, fetchImpl, reportFile, sessionFile, session,
+      base, fetchImpl, reportStore, stateStore, session,
     });
     session = settled.session;
     currentTurn = settled.turn;
     if (settled.status === 'executed') actions += 1;
     if (settled.status === 'stale' && attempts >= maxActions) {
-      await appendReport(reportFile, {
+      await appendReport(reportStore, {
         timestamp: new Date().toISOString(),
         status: 'attempt_limit',
         errorCode: 'max_attempts',
@@ -647,7 +936,7 @@ async function runUnlocked(options, timing) {
     const action = recommendation.action;
     if (!action) {
       if (recommendation.errorCode) {
-        await appendReport(reportFile, {
+        await appendReport(reportStore, {
           timestamp: new Date().toISOString(),
           status: 'refused',
           errorCode: recommendation.errorCode,
@@ -672,16 +961,16 @@ async function runUnlocked(options, timing) {
         startedAt: new Date().toISOString(),
       },
     };
-    await writeIdentityState(sessionFile, session);
+    await writeIdentityState(stateStore, session);
     attempts += 1;
     const settled = await settlePending({
-      base, fetchImpl, reportFile, sessionFile, session, actionKind: action.kind,
+      base, fetchImpl, reportStore, stateStore, session, actionKind: action.kind,
     });
     session = settled.session;
     currentTurn = settled.turn;
     if (settled.status === 'executed') actions += 1;
     if (settled.status === 'stale' && attempts >= maxActions) {
-      await appendReport(reportFile, {
+      await appendReport(reportStore, {
         timestamp: new Date().toISOString(),
         status: 'attempt_limit',
         errorCode: 'max_attempts',
@@ -696,11 +985,21 @@ async function runUnlocked(options, timing) {
 async function runWithTiming(options, timing) {
   if (!options.sessionFile) throw new Error('Agent Alpha requires a session file');
   const paths = await canonicalRunnerPaths(options.sessionFile, options.reportFile);
-  const lock = await acquireLock(paths.sessionFile, paths.lockFile);
+  paths.stateStore.credentialBoundary = timing.credentialBoundary;
+  let lock;
+  let reportStore;
   try {
-    return await runUnlocked({ ...options, ...paths }, timing);
+    lock = await acquireLock(paths.sessionFile, paths.lockFile, paths.stateStore);
+    reportStore = await openReportStore(paths.reportFile, paths.stateStore, lock);
+    return await runUnlocked({ ...options, ...paths, reportStore }, timing);
   } finally {
-    await releaseLock(lock);
+    await reportStore?.handle.close().catch(() => {});
+    await reportStore?.parent.handle.close().catch(() => {});
+    try {
+      if (lock) await releaseLock(lock);
+    } finally {
+      await paths.stateStore.parent.handle.close().catch(() => {});
+    }
   }
 }
 
@@ -711,11 +1010,14 @@ export async function runAgentAlpha(options = {}) {
 // This conspicuously named constructor is the only fast-clock seam. Production callers using
 // runAgentAlpha always receive the monotonic elapsed-time backstop above, even with an advisory
 // sleeper. Tests must opt into a clock whose sleep advances time rather than merely returning.
-export function createAgentAlphaTestRunner({ now, sleep }) {
+export function createAgentAlphaTestRunner({ now, sleep, credentialBoundary }) {
   if (typeof now !== 'function' || typeof sleep !== 'function') {
     throw new Error('Agent Alpha test timing requires now and sleep functions');
   }
-  return (options = {}) => runWithTiming(options, { now, sleep });
+  if (credentialBoundary !== undefined && typeof credentialBoundary !== 'function') {
+    throw new Error('Agent Alpha credential boundary test seam must be a function');
+  }
+  return (options = {}) => runWithTiming(options, { now, sleep, credentialBoundary });
 }
 
 function cliOptions(argv) {

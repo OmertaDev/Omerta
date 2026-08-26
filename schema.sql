@@ -18,6 +18,9 @@ ALTER TABLE accounts ADD COLUMN IF NOT EXISTS token_version INT NOT NULL DEFAULT
 -- hash of its pre-written recovery credential is stored; the unique index is the database mutex that
 -- maps concurrent/replayed bootstrap requests to one account without using account-scoped idempotency.
 ALTER TABLE accounts ADD COLUMN IF NOT EXISTS guest_bootstrap_hash TEXT;
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS guest_bootstrap_expires_at TIMESTAMPTZ;
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS guest_bootstrap_token_version INT;
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS guest_bootstrap_retired_at TIMESTAMPTZ;
 CREATE UNIQUE INDEX IF NOT EXISTS ux_accounts_guest_bootstrap_hash ON accounts (guest_bootstrap_hash);
 CREATE TABLE IF NOT EXISTS account_persistent (
   account_id TEXT PRIMARY KEY,

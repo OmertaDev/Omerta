@@ -52,7 +52,11 @@ export function register(app, { pool, auth, modAuth, closeAccountSockets }) {
     app.post('/v1/mod/revoke', { preHandler: modAuth }, async (req) => {
       const { accountId } = req.body || {};
       if (!accountId) throw new G.GameError('args', 'accountId required.');
-      await pool.query('UPDATE accounts SET token_version = token_version + 1 WHERE id=$1', [accountId]);
+      await pool.query(
+        `UPDATE accounts SET token_version=token_version+1,
+           guest_bootstrap_retired_at=COALESCE(guest_bootstrap_retired_at, now()) WHERE id=$1`,
+        [accountId],
+      );
       closeAccountSockets(accountId, 4008, 'token_revoked'); // cut any live socket too
       return { ok: true };
     });

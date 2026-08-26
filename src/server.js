@@ -1109,10 +1109,10 @@ export async function buildServer() {
   app.post('/v1/auth/guest', async (req) => {
     if (req.body && typeof req.body === 'object' && !Array.isArray(req.body) &&
         Object.prototype.hasOwnProperty.call(req.body, 'bootstrapSecret')) {
-      const { accountId } = await A.accountForGuestBootstrap(
+      const { accountId, tokenVersion } = await A.accountForGuestBootstrap(
         pool, req.body.bootstrapSecret, req.ip || '0.0.0.0', req.body.inviteCode,
       );
-      return { token: await signFor(accountId) };
+      return { token: await signFor(accountId, {}, '30d', tokenVersion) };
     }
     await A.consumeInvite(pool, req.body?.inviteCode);
     const id = uid();
@@ -1121,6 +1121,8 @@ export async function buildServer() {
     await pool.query('INSERT INTO account_persistent (account_id) VALUES ($1)', [id]);
     return { token: await signFor(id, {}, '30d', 0) };
   });
+  app.post('/v1/auth/guest/bootstrap/ack', { preHandler: auth }, async (req) =>
+    A.acknowledgeGuestBootstrap(pool, req.user.sub));
   const providerLogin = (verify) => async (req) => {
     const identity = await verify(req.body?.token);
     // (B2) the invite is consumed ATOMICALLY inside accountForIdentity's create txn — one invite per
@@ -1204,6 +1206,7 @@ export async function buildServer() {
   // §4/§10.2 agent API keys: flags the account permanently (🤖 badge, referral
   // exclusion) and mints a token the rate limiter throttles at 1 action / 3 s.
   app.post('/v1/auth/agent-key', { preHandler: auth }, async (req) => {
+    await A.acknowledgeGuestBootstrap(pool, req.user.sub);
     await pool.query('UPDATE account_persistent SET agent_flag=true WHERE account_id=$1', [req.user.sub]);
     const presence = wsCoverage.get(req.user.sub);
     if (presence) presence.agent = true;
@@ -1213,7 +1216,11 @@ export async function buildServer() {
   // every token issued before now (a stolen/lost device can no longer MOVE MONEY on this account). The
   // caller's own current token is invalidated too, so the client must sign in again; that is the point.
   app.post('/v1/auth/logout-all', { preHandler: auth }, async (req) => {
-    await pool.query('UPDATE accounts SET token_version = token_version + 1 WHERE id=$1', [req.user.sub]);
+    await pool.query(
+      `UPDATE accounts SET token_version=token_version+1,
+         guest_bootstrap_retired_at=COALESCE(guest_bootstrap_retired_at, now()) WHERE id=$1`,
+      [req.user.sub],
+    );
     // (red-team R30 F1) …and cut the live sockets NOW, matching `mod/revoke`. "Someone has my session"
     // is exactly the moment the intel feed must die rather than run until the thief closes the tab;
     // the connect-time `tv` check above is what stops them simply reconnecting.
