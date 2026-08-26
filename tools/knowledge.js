@@ -356,24 +356,126 @@ function routeRegistrationArguments(snippet) {
   return args;
 }
 
+function codeMask(source) {
+  const out = [...source];
+  const blank = (i) => { if (out[i] !== '\n' && out[i] !== '\r') out[i] = ' '; };
+  let state = 'code';
+  let quote = '';
+  let regexClass = false;
+  for (let i = 0; i < source.length; i++) {
+    const char = source[i];
+    const next = source[i + 1];
+    if (state === 'line-comment') {
+      if (char === '\n') state = 'code'; else blank(i);
+      continue;
+    }
+    if (state === 'block-comment') {
+      blank(i);
+      if (char === '*' && next === '/') { blank(++i); state = 'code'; }
+      continue;
+    }
+    if (state === 'string') {
+      blank(i);
+      if (char === '\\') { if (i + 1 < source.length) blank(++i); continue; }
+      if (char === quote) state = 'code';
+      continue;
+    }
+    if (state === 'regex') {
+      blank(i);
+      if (char === '\\') { if (i + 1 < source.length) blank(++i); continue; }
+      if (char === '[') regexClass = true;
+      else if (char === ']') regexClass = false;
+      else if (char === '/' && !regexClass) {
+        state = 'code';
+        while (/[a-z]/i.test(source[i + 1] || '')) blank(++i);
+      }
+      continue;
+    }
+    if (char === '/' && next === '/') { blank(i); blank(++i); state = 'line-comment'; continue; }
+    if (char === '/' && next === '*') { blank(i); blank(++i); state = 'block-comment'; continue; }
+    if (char === '"' || char === "'" || char === '`') { blank(i); quote = char; state = 'string'; continue; }
+    if (char === '/') {
+      let p = i - 1;
+      while (p >= 0 && /\s/.test(source[p])) p--;
+      if (p < 0 || /[=(:,!&|?{};\[]/.test(source[p])) { blank(i); state = 'regex'; regexClass = false; }
+    }
+  }
+  return out.join('');
+}
+
+function matchingDelimiter(mask, start, open, close) {
+  let depth = 0;
+  for (let i = start; i < mask.length; i++) {
+    if (mask[i] === open) depth++;
+    else if (mask[i] === close && --depth === 0) return i;
+  }
+  return -1;
+}
+
+function directCallInRange(mask, start, end) {
+  while (start < end && /\s/.test(mask[start])) start++;
+  while (end > start && /\s/.test(mask[end - 1])) end--;
+  while (mask[start] === '(' && matchingDelimiter(mask, start, '(', ')') === end - 1) {
+    start++;
+    end--;
+    while (start < end && /\s/.test(mask[start])) start++;
+    while (end > start && /\s/.test(mask[end - 1])) end--;
+  }
+  const awaited = /^await\b\s*/.exec(mask.slice(start, end));
+  if (awaited) start += awaited[0].length;
+  while (start < end && /\s/.test(mask[start])) start++;
+  const call = /^([A-Za-z_$][\w$]*)\s*\(/.exec(mask.slice(start, end));
+  if (!call) return null;
+  const open = start + call[0].lastIndexOf('(');
+  return matchingDelimiter(mask, open, '(', ')') === end - 1 ? call[1] : null;
+}
+
 function finalCallbackCall(argument) {
-  const callback = /^(?:async\s*)?(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*=>\s*/.exec(argument);
+  const mask = codeMask(argument);
+  const callback = /^\s*(?:async\s*)?(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*=>\s*/.exec(mask);
   if (!callback) return null;
-  const body = argument.slice(callback[0].length).trim();
-  const directCall = (expression) => {
-    const match = /^(?:await\s+)?([A-Za-z_$][\w$]*)\s*\(/.exec(expression);
-    if (!match) return null;
-    const callStart = expression.indexOf(match[1]);
-    const call = routeRegistrationSnippet(expression, callStart);
-    return expression.slice(callStart + call.length).trim() === '' ? match[1] : null;
-  };
-  if (!body.startsWith('{')) return directCall(body);
-  const returns = [...body.matchAll(/\breturn\s+(?:await\s+)?([A-Za-z_$][\w$]*)\s*\(/g)];
-  const returned = returns.at(-1);
-  if (!returned) return null;
-  const callStart = returned.index + returned[0].lastIndexOf(returned[1]);
-  const call = routeRegistrationSnippet(body, callStart);
-  return body.slice(callStart + call.length).trim() === '}' ? returned[1] : null;
+  const bodyStart = callback[0].length;
+  let bodyEnd = mask.length;
+  while (bodyEnd > bodyStart && /\s/.test(mask[bodyEnd - 1])) bodyEnd--;
+  let name = null;
+  if (mask[bodyStart] !== '{') {
+    name = directCallInRange(mask, bodyStart, bodyEnd);
+  } else {
+    const close = matchingDelimiter(mask, bodyStart, '{', '}');
+    if (close !== bodyEnd - 1) return null;
+    let curly = 0;
+    let round = 0;
+    let square = 0;
+    let statementStart = bodyStart + 1;
+    let returnedAt = -1;
+    for (let i = bodyStart + 1; i < close; i++) {
+      const char = mask[i];
+      if (curly === 0 && round === 0 && square === 0 && mask.startsWith('return', i)
+          && !/[\w$]/.test(mask[i - 1] || '') && !/[\w$]/.test(mask[i + 6] || '')) {
+        if (!mask.slice(statementStart, i).trim()) returnedAt = i + 6;
+        i += 5;
+        continue;
+      }
+      if (char === '(') round++;
+      else if (char === ')') round--;
+      else if (char === '[') square++;
+      else if (char === ']') square--;
+      else if (char === '{') curly++;
+      else if (char === '}') { curly--; if (curly === 0 && round === 0 && square === 0) statementStart = i + 1; }
+      else if (char === ';' && curly === 0 && round === 0 && square === 0) statementStart = i + 1;
+    }
+    if (returnedAt < 0) return null;
+    let returnedEnd = close;
+    while (returnedEnd > returnedAt && /\s/.test(mask[returnedEnd - 1])) returnedEnd--;
+    if (mask[returnedEnd - 1] === ';') returnedEnd--;
+    name = directCallInRange(mask, returnedAt, returnedEnd);
+  }
+  if (!name) return null;
+  const header = mask.slice(0, bodyStart);
+  const body = mask.slice(bodyStart, bodyEnd);
+  if (new RegExp(`\\b${esc(name)}\\b`).test(header)
+      || new RegExp(`\\b(?:const|let|var|function|class)\\s+${esc(name)}\\b`).test(body)) return null;
+  return name;
 }
 
 function parseCommits(revision = 'HEAD') {
@@ -876,4 +978,4 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
   }
 }
 
-export { build, buildForCheck, sourceRevisionForSnapshot, validate, render };
+export { build, buildForCheck, finalCallbackCall, sourceRevisionForSnapshot, validate, render };

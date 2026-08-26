@@ -396,6 +396,18 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
   assert(/GET `?\/v1\/arena`?[\s\S]{0,160}public/i.test(agentGuide)
     && /GET `?\/v1\/leaderboard\/agents`?[\s\S]{0,160}authenticated/i.test(agentGuide),
   'AGENTS.md must distinguish the public Arena snapshot from the authenticated detailed leaderboard');
+  const oldArenaModule = ['opportunities', '\\.js'].join('');
+  const staleArenaOwnershipPattern = `(${oldArenaModule}.{0,120}arenaBoard|arenaBoard.{0,120}${oldArenaModule})`;
+  let staleArenaOwnership = '';
+  try {
+    staleArenaOwnership = execFileSync('git', ['grep', '-n', '-I', '-E', staleArenaOwnershipPattern, '--', '.'], {
+      encoding: 'utf8',
+    });
+  } catch (error) {
+    if (error.status !== 1) throw error;
+  }
+  assert.equal(staleArenaOwnership.trim(), '',
+    `Arena ownership references must point to src/arena.js:\n${staleArenaOwnership}`);
   const dormantProduction = /(?:production[\s\S]{0,120}(?:dormant|no chain configured)|dormant[\s\S]{0,40}production)/i;
   assert(dormantProduction.test(agentGuide) && dormantProduction.test(mcpGuide),
   'both agent guides must keep production extraction explicitly dormant');

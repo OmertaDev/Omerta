@@ -3,7 +3,42 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildForCheck, sourceRevisionForSnapshot, validate, render } from './knowledge.js';
+import * as knowledge from './knowledge.js';
+
+const { buildForCheck, sourceRevisionForSnapshot, validate, render } = knowledge;
+assert.equal(typeof knowledge.finalCallbackCall, 'function',
+  'the final-callback parser must be directly regression-testable with controlled callback inputs');
+const finalCallbackCases = [
+  ['async () => arenaBoard(pool, { baseUrl })', 'arenaBoard', 'complete expression delegation'],
+  ['async () => (arenaBoard(pool, { baseUrl }))', 'arenaBoard', 'parenthesized expression delegation'],
+  ['async () => arenaBoard(pool) // final delegation', 'arenaBoard', 'expression trailing comment'],
+  [`async (req) => {
+    const ch = await loadCharacter(req);
+    return (opportunityBoard(pool, ch)); // final delegation
+  }`, 'opportunityBoard', 'parenthesized final top-level return with trailing comment'],
+  [`async () => {
+    if (!ready) return null;
+    return arenaBoard(pool);
+  }`, 'arenaBoard', 'final top-level return after an earlier guard'],
+  [`async () => {
+    if (ready) return arenaBoard(pool);
+  }`, null, 'conditional return is not a final top-level delegation'],
+  [`async () => {
+    while (ready) return arenaBoard(pool);
+  }`, null, 'loop return is not a final top-level delegation'],
+  [`async () => {
+    const nested = () => { return arenaBoard(pool); };
+  }`, null, 'nested return is not a callback delegation'],
+  [`async () => {
+    const arenaBoard = () => fallback;
+    return arenaBoard(pool);
+  }`, null, 'callback-local declaration shadows the imported identifier'],
+  ['async (arenaBoard) => arenaBoard(pool)', null,
+    'callback parameter shadows the imported identifier'],
+];
+for (const [source, expected, label] of finalCallbackCases) {
+  assert.equal(knowledge.finalCallbackCall(source), expected, label);
+}
 
 const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
 const generatedFiles = fs.readdirSync(path.join(root, 'knowledge', 'generated'))
