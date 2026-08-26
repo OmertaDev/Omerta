@@ -1153,34 +1153,40 @@ const SCENERY_WAIVED = {
 // pool-exhaustion shape this project has already been bitten by twice (`bankPosition`, `/v1/bank`).
 // Sequential is correct AND identical in speed.
 //
-// Scope, stated honestly: this matches every `Promise.all` inside a function whose PARAMETER is a
-// query-capable handle, plus the established direct-client form. It intentionally examines the
-// whole enclosing function, not only Promise.all's argument: `const tasks = { a: db.query(...) }`
-// starts work before `Promise.all(Object.values(tasks))`, so the call text contains neither `db`
-// nor `.query`. Conventional request-handle parameters (`db`, `tx`, `conn`, `connection`) are also
-// treated as shared even when they delegate all their queries to board helpers. A true `pool`
-// remains distinct: `pool.query()` acquires a connection per call, so parallel pool readers are safe
-// by design; a function that directly calls `pool.query` and also contains Promise.all is flagged
-// conservatively because that same board may be handed a request client at another call site.
+// Scope, stated honestly: every executable `Promise.all` in src/ is unsafe BY DEFAULT. JavaScript's
+// callable/alias forms make regex proof speculative: an async arrow, an object/class method, or a
+// helper-built task bag can close over the same checked-out client without naming it in the call.
+// The only passes are exact FILE + CONTENT site classifications below: a genuine pool fan-out or a
+// non-PG (viem RPC) batch. New concurrency therefore fails until somebody classifies that exact
+// call, and a moved/deleted/over-broad classification fails through the hit-count checks.
 {
-  // catalogue-or-declare: a `client` that is NOT a pg connection. viem batches real network reads
-  // concurrently and is the whole point of a Promise.all there, so each is waived BY SITE with the
-  // reason — a new one has to be classified rather than silently inheriting the exemption.
+  // catalogue-or-declare: safe concurrency earns a waiver BY SITE with a reason — a new one has to
+  // be classified rather than silently inheriting an exemption.
   // Keyed on FILE + a CONTENT mark inside the call's own argument, never a line number: the first
   // cut waived `src/chain.js:1533`, and a two-line COMMENT added 1,200 lines above it shifted the
   // site to :1535 and failed the build on an edit that changed nothing — a line-keyed waiver rots
   // on any edit above it (the preflight-restatement class, in a guard). Every waiver must MATCH
   // (the stale-waiver assert below), so a mark that stops matching fails loudly instead of leaving
   // a real pg site quietly waived.
-  const VIEM_CLIENTS = [
-    { file: 'src/bank.js', mark: 'readContract', why: 'viem, reading the Alchemist market' },
-    { file: 'src/watcher.js', mark: 'getLogs', why: 'viem, three fee-event streams over one range' },
+  const SAFE_CONCURRENT_SITES = [
+    { file: 'src/bank.js', mark: "'collateralOf', 'debtOf', 'maxDebtOf'",
+      why: 'viem, five independent Alchemist market RPC reads' },
+    { file: 'src/watcher.js', mark: 'event: mintEv, ...range(from, to)',
+      why: 'viem, three independent fee-event RPC streams over one range' },
     { file: 'src/chain.js', mark: "functionName: 'PERIOD'", why: "viem, the oracle's PERIOD + lastUpdate" },
+    { file: 'src/chain.js', mark: "opt(fees, 'mintFee'), opt(fees, 'respawnFee')",
+      why: 'viem, two independent fee-contract RPC reads through the local opt helper' },
+    { file: 'src/chain.js', mark: "opt(addr, 'sellTaxBps'), opt(addr, 'taxDevBps')",
+      why: 'viem, four independent sell-tax RPC reads through the local opt helper' },
     { file: 'src/chain.js', mark: "functionName: 'polBps'", why: "viem, OmertaBond's three immutable bps" },
-    { file: 'src/chainparams.js', mark: 'readContract', why: 'viem, the control-room live-value sweep' },
+    { file: 'src/chainparams.js', mark: 'abi: abiFor(p), functionName: p.read',
+      why: 'viem, independent control-room live-value RPC reads' },
+    { file: 'src/opportunities.js', mark: 'agentLeaderboard(pool, 25), agentEconomyStats(pool)',
+      why: 'a genuine app pool; each reader acquires its own connection and no request snapshot is shared' },
   ];
-  const waiverHits = new Map(VIEM_CLIENTS.map((w) => [`${w.file}#${w.mark}`, 0]));
+  const waiverHits = new Map(SAFE_CONCURRENT_SITES.map((w) => [`${w.file}#${w.mark}`, 0]));
   const offenders = [];
+  const ambiguous = [];
   let scanned = 0;
   // balanced-paren extraction, not a fixed window: a `.slice(+N)` runs past the call into the next
   // statement and reads as a finding, and a short one truncates the argument and reads as a pass.
@@ -1192,45 +1198,68 @@ const SCENERY_WAIVED = {
     }
     return '';
   };
-  const sharesPgClient = (src, at, arg) => {
-    const functions = [];
-    const re = /(?:export\s+)?(?:async\s+)?function\s+[A-Za-z_$][\w$]*\s*\(/g;
-    let match;
-    while ((match = re.exec(src))) {
-      const body = bodyOf(src, match.index);
-      functions.push({ at: match.index, end: match.index + body.length, body });
-    }
-    const enclosing = functions.filter((fn) => fn.at <= at && at < fn.end).sort((a, b) => b.at - a.at)[0];
-    if (!enclosing) return /\bclient\b/.test(arg);
-
-    const open = enclosing.body.indexOf('(');
-    let close = open;
-    for (let depth = 0; close < enclosing.body.length; close++) {
-      if (enclosing.body[close] === '(') depth++;
-      else if (enclosing.body[close] === ')' && --depth === 0) break;
-    }
-    const params = [...enclosing.body.slice(open + 1, close).matchAll(/\b[A-Za-z_$][\w$]*\b/g)]
-      .map((entry) => entry[0]);
-    const conventional = new Set(['db', 'tx', 'transaction', 'conn', 'connection']);
-    const queryCapable = params.some((param) => conventional.has(param)
-      || new RegExp(`\\b${param}\\s*\\.\\s*query\\s*\\(`).test(enclosing.body));
-    // Retain the explicit form for non-standard wrappers whose query capability lives in another
-    // module. Viem sites are catalogued below by exact content mark, so broadening this cannot make
-    // an RPC batch inherit a pg exemption accidentally.
-    return queryCapable || /\bclient\b/.test(arg);
+  // Function-form and indirection pressure tests. Safe concurrency is not inferred from a name: it
+  // earns one exact content-bound waiver, which the fixture must consume. This is the contract the
+  // live source scan below needs to enforce, rather than merely recognizing named declarations.
+  const auditFixture = (src, waiver = null) => {
+    const at = src.indexOf('Promise.all(');
+    const arg = argOf(src, at + 'Promise.all'.length);
+    const waived = waiver && waiver.file === 'fixture.js' && arg.includes(waiver.mark);
+    return { offenders: waived ? 0 : 1, waiverHits: waived ? 1 : 0 };
   };
-  // Regression fixture: the live failure used `db` and hid the started queries behind a task bag,
-  // so neither the shared handle nor `.query(` appears inside Promise.all's own argument. A guard
-  // tied to the spelling `client` (or only to the call argument) is cosmetic: this rename evades it.
-  const renamedFixture = `async function loadCoverage(db) {
-    const tasks = { first: db.query('SELECT 1'), second: db.query('SELECT 2') };
-    return Promise.all(Object.values(tasks));
-  }`;
-  const fixtureAt = renamedFixture.indexOf('Promise.all(');
-  assert.equal(sharesPgClient(renamedFixture, fixtureAt,
-    argOf(renamedFixture, fixtureAt + 'Promise.all'.length)), true,
-  'the shared-client guard must follow a request DB parameter into already-started task bags; '
-    + 'renaming client to db must not evade it');
+  const fixtureCases = [
+    {
+      name: 'async arrow db task bag',
+      src: `const load = async (db) => {
+        const tasks = { one: db.query('SELECT 1'), two: db.query('SELECT 2') };
+        return Promise.all(Object.values(tasks));
+      };`,
+      want: { offenders: 1, waiverHits: 0 },
+    },
+    {
+      name: 'object async method db task bag',
+      src: `const loader = { async load(db) {
+        const tasks = { one: db.query('SELECT 1'), two: db.query('SELECT 2') };
+        return Promise.all(Object.values(tasks));
+      } };`,
+      want: { offenders: 1, waiverHits: 0 },
+    },
+    {
+      name: 'class async method db task bag',
+      src: `class Loader { async load(db) {
+        const tasks = { one: db.query('SELECT 1'), two: db.query('SELECT 2') };
+        return Promise.all(Object.values(tasks));
+      } }`,
+      want: { offenders: 1, waiverHits: 0 },
+    },
+    {
+      name: 'renamed handle delegated to helper task builder',
+      src: `const buildTasks = (store) => ({ one: readOne(store), two: readTwo(store) });
+      async function loadCoverage(store) {
+        const tasks = buildTasks(store);
+        return Promise.all(Object.values(tasks));
+      }`,
+      want: { offenders: 1, waiverHits: 0 },
+    },
+    {
+      name: 'genuine pool batch with exact waiver',
+      src: `const loadArena = async (pool) => Promise.all([
+        agentLeaderboard(pool, 25), agentEconomyStats(pool)
+      ]);`,
+      waiver: { file: 'fixture.js', mark: 'agentLeaderboard(pool, 25), agentEconomyStats(pool)' },
+      want: { offenders: 0, waiverHits: 1 },
+    },
+    {
+      name: 'non-PG viem batch with exact waiver',
+      src: `const loadChain = async (rpc) => Promise.all([
+        rpc.readContract({ functionName: 'one' }), rpc.readContract({ functionName: 'two' })
+      ]);`,
+      waiver: { file: 'fixture.js', mark: "rpc.readContract({ functionName: 'one' })" },
+      want: { offenders: 0, waiverHits: 1 },
+    },
+  ];
+  for (const fixture of fixtureCases) assert.deepEqual(auditFixture(fixture.src, fixture.waiver), fixture.want,
+    `shared-client fixture failed: ${fixture.name}`);
   for (const f of files) {
     // deliberately NOT comment-stripped: a string-aware stripper is its own trap here (backticks in
     // SQL comments, `https://` inside a literal — both have bitten this repo), and the pattern being
@@ -1242,29 +1271,31 @@ const SCENERY_WAIVED = {
       scanned++;
       const arg = argOf(src, m.index + m[0].length - 1);
       const site = `${relPath(process.cwd(), f)}:${src.slice(0, m.index).split('\n').length}`;
-      // ANY mention of the identifier, not just `client.query(` or a literal `f(client, …)` argument.
-      // The narrow forms were the first cut and they had THREE false negatives — `roster.js` hands
-      // the client to a reader inside a `.map`, and `dynasty.js` calls a closure that captures it —
-      // and a guard that misses the sites it exists for is worse than no guard.
-      if (!sharesPgClient(src, m.index, arg)) continue;
       const shortFile = relPath(process.cwd(), f);
-      const waiver = VIEM_CLIENTS.find((w) => w.file === shortFile && arg.includes(w.mark));
-      if (waiver) { waiverHits.set(`${waiver.file}#${waiver.mark}`, waiverHits.get(`${waiver.file}#${waiver.mark}`) + 1); continue; }
+      const waivers = SAFE_CONCURRENT_SITES.filter((w) => w.file === shortFile && arg.includes(w.mark));
+      if (waivers.length > 1) { ambiguous.push(`${site} (${waivers.map((w) => w.mark).join(' | ')})`); continue; }
+      if (waivers.length === 1) {
+        const waiver = waivers[0];
+        waiverHits.set(`${waiver.file}#${waiver.mark}`, waiverHits.get(`${waiver.file}#${waiver.mark}`) + 1);
+        continue;
+      }
       offenders.push(site);
     }
   }
   assert(scanned >= 8, `the Promise.all scan found only ${scanned} sites — the extractor has stopped `
     + 'reading src/, so a green run here would mean nothing');
-  // a waiver that matches NOTHING is stale — either the site changed shape (re-classify it) or it
-  // is gone (delete the waiver); leaving it standing is how a future pg site inherits the exemption
-  for (const [key, hits] of waiverHits) assert(hits >= 1,
-    `the viem waiver "${key}" matched no Promise.all site — stale: the site moved or changed shape; re-classify or delete it`);
-  assert.deepEqual(offenders, [], 'a Promise.all issues CONCURRENT queries on a SHARED pg client. One '
+  assert.deepEqual(ambiguous, [], 'one Promise.all matched multiple safe-concurrency waivers; the content marks are too broad:\n   '
+    + ambiguous.join('\n   '));
+  // A waiver must match EXACTLY one call: zero is stale; two means its content mark is broad enough
+  // to let a future unrelated batch inherit the exemption.
+  for (const [key, hits] of waiverHits) assert.equal(hits, 1,
+    `the safe-concurrency waiver "${key}" matched ${hits} Promise.all sites — it must identify exactly one; re-classify, tighten, or delete it`);
+  assert.deepEqual(offenders, [], 'an UNCLASSIFIED Promise.all may issue concurrent queries on a SHARED pg client. One '
     + 'connection cannot do that: node-pg queues them behind a deprecation warning today and THROWS '
     + 'from pg@9, and the parallel form buys no speed because the connection serializes them either '
     + 'way. Await them in sequence — do NOT hand each one its own connection (it would read outside '
     + `the request's transaction, and N connections per request is the pool-exhaustion shape):\n   - ${offenders.join('\n   - ')}`);
-  console.log(`✓ no Promise.all shares one pg client across concurrent queries (${scanned} sites scanned)`);
+  console.log(`✓ all ${scanned} Promise.all sites are exact-classified as genuine-pool/non-PG concurrency; no shared pg client is waived by syntax inference`);
 }
 
 // ═══ THE WIRE LEDGER — a notification a player cannot read is a notification they never got ═══════
