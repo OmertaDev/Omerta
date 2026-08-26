@@ -1,4 +1,8 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { newDb } from 'pg-mem';
 import { getAddress, keccak256, toBytes } from 'viem';
 import { makeDb } from '../src/db.js';
 import { computeStockAssetVersionKey } from '../src/stockcatalogv2.js';
@@ -16,6 +20,8 @@ import {
 const HOUR = 60 * 60 * 1000;
 const DAY = 24 * HOUR;
 const BASE_TIME = new Date('2026-01-01T00:00:00.000Z');
+const SCHEMA = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'schema.sql'), 'utf8');
+const SOURCE = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'src', 'rwanominations.js'), 'utf8');
 const hash = (byte) => `0x${byte.repeat(64)}`;
 const address = (byte) => getAddress(`0x${byte.repeat(40)}`);
 const iso = (value) => new Date(value).toISOString();
@@ -48,8 +54,8 @@ function asset(n, overrides = {}) {
   return candidate;
 }
 
-async function fixture() {
-  const pool = await makeDb();
+async function fixture(existingPool) {
+  const pool = existingPool ?? await makeDb();
   const actors = [];
   for (let i = 1; i <= 6; i++) {
     const accountId = `account-${i}`;
@@ -72,7 +78,7 @@ async function fixture() {
   return { pool, actors };
 }
 
-function adaptedClient(client, { now = BASE_TIME, barrier, log } = {}) {
+function adaptedClient(client, { now = BASE_TIME, barrier, log, afterQuery } = {}) {
   return {
     query: async (text, params) => {
       const sql = typeof text === 'string' ? text : text.text;
@@ -81,7 +87,9 @@ function adaptedClient(client, { now = BASE_TIME, barrier, log } = {}) {
         return { rows: [{ wall_now: new Date(now) }], rowCount: 1 };
       }
       if (barrier && /^\s*INSERT\s+INTO\s+rwa_nominations_v2/i.test(sql)) await barrier();
-      return client.query(text, params);
+      const result = await client.query(text, params);
+      await afterQuery?.(sql, params, client, result);
+      return result;
     },
   };
 }
@@ -142,6 +150,62 @@ async function rejectsCode(promise, code, label) {
   await assert.rejects(promise, (error) => error?.code === code, label);
 }
 
+async function rollbackCapableFixture() {
+  const mem = newDb();
+  const { Pool } = mem.adapters.createPg();
+  const pool = new Pool();
+  await pool.query(SCHEMA);
+  await pool.query('CREATE TABLE task4_safe_package_probe (nomination_id TEXT PRIMARY KEY, payload TEXT NOT NULL)');
+  const seeded = await fixture(pool);
+  let backup = null;
+  const controls = [];
+  mem.public.interceptQueries((sql) => {
+    const command = sql.trim().toUpperCase();
+    if (command === 'BEGIN') {
+      controls.push('BEGIN');
+      backup = mem.backup();
+      return [];
+    }
+    if (command === 'COMMIT') {
+      controls.push('COMMIT');
+      backup = null;
+      return [];
+    }
+    if (command === 'ROLLBACK') {
+      controls.push('ROLLBACK');
+      backup?.restore();
+      backup = null;
+      return [];
+    }
+    return null;
+  });
+  return { ...seeded, controls };
+}
+
+function ownedPool(pool, log = []) {
+  const counts = { connect: 0, release: 0 };
+  return {
+    counts,
+    db: {
+      connect: async () => {
+        counts.connect++;
+        const client = await pool.connect();
+        const rawQuery = client.query.bind(client);
+        const rawRelease = client.release.bind(client);
+        client.query = async (text, params) => {
+          log.push(typeof text === 'string' ? text : text.text);
+          return rawQuery(text, params);
+        };
+        client.release = () => {
+          counts.release++;
+          return rawRelease();
+        };
+        return client;
+      },
+    },
+  };
+}
+
 // Authority is re-read from membership + the current chamber in the mutation transaction. A stale
 // h.owned snapshot must neither grant a soldier authority nor deny a real underboss authority.
 {
@@ -157,6 +221,33 @@ async function rejectsCode(promise, code, label) {
   assert.equal(made.duplicate, false);
   await rejectsCode(nominate(pool, actors[5], asset(2), BASE_TIME), 'no_seat',
     'the sixth family cannot nominate without a current seat');
+  await pool.end();
+}
+
+// Player mutations follow the repository's family-before-membership order, then lock the domain
+// row. Membership is re-read after the family lock, so a move at the seam cannot grant stale-family
+// authority. pg-mem proves the SQL/interleaving contract here, not real deadlock behavior.
+{
+  const { pool, actors } = await fixture();
+  const sql = [];
+  await nominate(pool, actors[0], asset(1), BASE_TIME, { log: sql });
+  const familyLock = sql.findIndex((query) => /FROM\s+gangs\s+WHERE\s+id=\$1\s+FOR UPDATE/i.test(query));
+  const membershipLock = sql.findIndex((query) => /FROM\s+gang_members.*FOR UPDATE/i.test(query));
+  const nominationLock = sql.findIndex((query) => /FROM\s+rwa_nominations_v2.*FOR UPDATE/is.test(query));
+  assert(familyLock >= 0 && membershipLock > familyLock && nominationLock > membershipLock,
+    'family, membership, and nomination locks are acquired in canonical order');
+
+  let moved = false;
+  await rejectsCode(nominate(pool, actors[1], asset(2), BASE_TIME, {
+    afterQuery: async (query, params, raw) => {
+      if (!moved && /FROM\s+gangs\s+WHERE\s+id=\$1\s+FOR UPDATE/i.test(query)) {
+        moved = true;
+        await raw.query('UPDATE gang_members SET gang_id=$2 WHERE character_id=$1',
+          [actors[1].id, actors[2].familyId]);
+      }
+    },
+  }), 'contention', 'membership change after the family lock never grants stale authority');
+  assert.equal((await rows(pool, 'SELECT * FROM rwa_nominations_v2')).length, 1);
   await pool.end();
 }
 
@@ -245,12 +336,58 @@ async function rejectsCode(promise, code, label) {
   const candidate = asset(1);
   const first = await nominate(pool, actors[0], candidate, BASE_TIME);
   const deadline = new Date(BASE_TIME.getTime() + 30 * DAY);
-  const fresh = await nominate(pool, actors[1], candidate, deadline);
+  const fresh = await nominate(pool, actors[1], asset(1, { evidenceHash: hash('b') }), deadline);
   assert.equal(fresh.duplicate, false);
   assert.equal(fresh.nomination.priorNominationId, first.nomination.id);
   assert.equal(fresh.nomination.createdAt, deadline.toISOString());
   assert.equal((await rows(pool, 'SELECT status FROM rwa_nominations_v2 WHERE id=$1',
     [first.nomination.id]))[0].status, 'expired');
+  await pool.end();
+}
+
+// A linked same-version nomination must carry genuinely new evidence. Reusing the predecessor's
+// nonzero hash fails without consuming cadence, writing a nomination, or appending an event; the
+// same URI remains acceptable when its content hash changes.
+{
+  const { pool, actors } = await fixture();
+  const original = asset(1);
+  const first = await nominate(pool, actors[0], original, BASE_TIME);
+  await claimRwaNominationReview(adaptedClient(pool, { now: BASE_TIME }), first.nomination.id, 'reviewer:freshness');
+  await disposeRwaNominationReview(adaptedClient(pool, { now: BASE_TIME }), first.nomination.id,
+    'reviewer:freshness', { disposition: 'rejected', reason: 'Superseded provider evidence.' });
+  assert.deepEqual((await rows(pool,
+    'SELECT status,evidence_hash,asset_version_key FROM rwa_nominations_v2 WHERE id=$1', [first.nomination.id]))[0], {
+    status: 'rejected', evidence_hash: original.evidenceHash, asset_version_key: original.assetVersionKey,
+  });
+  const attemptAt = new Date(BASE_TIME.getTime() + 7 * DAY);
+  const beforeEvents = (await rows(pool, 'SELECT * FROM rwa_nomination_events_v2')).length;
+  await rejectsCode(nominate(pool, actors[0], original, attemptAt), 'evidence_not_fresh',
+    'a direct predecessor hash cannot be reused');
+  assert.equal((await rows(pool, 'SELECT * FROM rwa_nominations_v2')).length, 1);
+  assert.equal((await rows(pool, 'SELECT * FROM rwa_nomination_events_v2')).length, beforeEvents);
+  const fresh = await nominate(pool, actors[0], asset(1, { evidenceHash: hash('b') }), attemptAt);
+  assert.equal(fresh.nomination.priorNominationId, first.nomination.id,
+    'failed freshness validation did not consume the exact seven-day cadence');
+  const board = await rwaNominationBoard(adaptedClient(pool, { now: attemptAt }));
+  assert.equal(board.items[0].tickerConflicts.some((conflict) => conflict.id === first.nomination.id), false,
+    'a same-key predecessor is history, not a ticker/version conflict');
+  await pool.end();
+}
+
+// The same freshness rule applies once expiry has already been durably observed by a worker.
+{
+  const { pool, actors } = await fixture();
+  const original = asset(1);
+  const first = await nominate(pool, actors[0], original, BASE_TIME);
+  const deadline = new Date(BASE_TIME.getTime() + 30 * DAY);
+  await expireRwaNominations(adaptedClient(pool, { now: deadline }), { limit: 1 });
+  const beforeEvents = (await rows(pool, 'SELECT * FROM rwa_nomination_events_v2')).length;
+  await rejectsCode(nominate(pool, actors[1], original, deadline), 'evidence_not_fresh',
+    'an expired direct predecessor still requires a new evidence hash');
+  assert.equal((await rows(pool, 'SELECT * FROM rwa_nominations_v2')).length, 1);
+  assert.equal((await rows(pool, 'SELECT status FROM rwa_nominations_v2 WHERE id=$1',
+    [first.nomination.id]))[0].status, 'expired');
+  assert.equal((await rows(pool, 'SELECT * FROM rwa_nomination_events_v2')).length, beforeEvents);
   await pool.end();
 }
 
@@ -443,6 +580,74 @@ async function rejectsCode(promise, code, label) {
   await pool.end();
 }
 
+// Domain helpers treat an actual checked-out PoolClient as caller-owned. They must not nest a
+// transaction, reconnect, commit, roll back, or release it: Task 4 composes the terminal fact and
+// Safe package in one outer transaction. pg-mem does not implement rollback, so this fixture uses
+// its documented backup/restore hook while still passing the actual adapter PoolClient.
+{
+  const { pool, actors, controls } = await rollbackCapableFixture();
+  const at = new Date();
+  const made = await nominate(pool, actors[0], asset(1), at);
+  await claimRwaNominationReview(adaptedClient(pool, { now: at }), made.nomination.id, 'reviewer:atomic');
+  const beforeEvents = (await rows(pool, 'SELECT * FROM rwa_nomination_events_v2 WHERE nomination_id=$1',
+    [made.nomination.id])).length;
+  controls.length = 0;
+  const client = await pool.connect();
+  let nestedConnects = 0;
+  let domainReleases = 0;
+  const rawConnect = client.connect.bind(client);
+  const rawRelease = client.release.bind(client);
+  client.connect = async (...args) => {
+    nestedConnects++;
+    return rawConnect(...args);
+  };
+  client.release = (...args) => {
+    domainReleases++;
+    return rawRelease(...args);
+  };
+  await client.query('BEGIN');
+  await assert.rejects(async () => {
+    await disposeRwaNominationReview(client, made.nomination.id, 'reviewer:atomic', {
+      disposition: 'approved', reason: 'Atomic package probe.',
+    });
+    await client.query(
+      'INSERT INTO task4_safe_package_probe (nomination_id,payload) VALUES ($1,NULL)',
+      [made.nomination.id],
+    );
+  });
+  await client.query('ROLLBACK');
+  assert.equal(nestedConnects, 0, 'caller-owned PoolClient is never reconnected');
+  assert.equal(domainReleases, 0, 'caller-owned PoolClient is never released by a domain helper');
+  assert.deepEqual(controls, ['BEGIN', 'ROLLBACK'], 'the domain emitted no nested transaction control');
+  assert.equal((await rows(pool, 'SELECT status FROM rwa_nominations_v2 WHERE id=$1',
+    [made.nomination.id]))[0].status, 'under_review');
+  assert.equal((await rows(pool, 'SELECT * FROM rwa_nomination_events_v2 WHERE nomination_id=$1',
+    [made.nomination.id])).length, beforeEvents, 'outer rollback removes the disposition event');
+  rawRelease();
+  await pool.end();
+}
+
+// A pool call owns exactly one checkout and transaction. This adapter is intentionally pool-shaped
+// (connect, no release); query-only adapters remain explicitly caller-owned elsewhere in this file.
+{
+  const { pool, actors } = await fixture();
+  const made = await nominate(pool, actors[0], asset(1), new Date());
+  const callerSql = [];
+  await claimRwaNominationReview(adaptedClient(pool, { now: new Date(), log: callerSql }),
+    made.nomination.id, 'reviewer:pool-owner');
+  assert.equal(callerSql.some((query) => /^(BEGIN|COMMIT|ROLLBACK)\b/i.test(query.trim())), false,
+    'a query-only adapter remains explicitly caller-owned');
+  const sql = [];
+  const owner = ownedPool(pool, sql);
+  await claimRwaNominationReview(owner.db, made.nomination.id, 'reviewer:pool-owner');
+  assert.equal(owner.counts.connect, 1);
+  assert.equal(owner.counts.release, 1);
+  assert.equal(sql.filter((query) => /^BEGIN\b/i.test(query.trim())).length, 1);
+  assert.equal(sql.filter((query) => /^COMMIT\b/i.test(query.trim())).length, 1);
+  assert.equal(sql.filter((query) => /^ROLLBACK\b/i.test(query.trim())).length, 0);
+  await pool.end();
+}
+
 // Queue/board ordering is support DESC, created_at ASC, id ASC. Cursors are stable and bounded;
 // same-ticker/different-key conflicts remain visible, and finalizedOnly is contextual filtering.
 {
@@ -476,6 +681,82 @@ async function rejectsCode(promise, code, label) {
   await rejectsCode(rwaNominationBoard(pool, { limit: 501 }), 'bad_limit', 'board hard-caps pages at 500');
   await rejectsCode(rwaNominationBoard(pool, { cursor: 'not-a-cursor' }), 'bad_cursor',
     'opaque cursor corruption fails closed');
+  await pool.end();
+}
+
+// Public board work is bounded by its live page, not historical cardinality or returned-item count.
+// Enrichment is batched, every owned pool read is one REPEATABLE READ snapshot, and pagination
+// support/cursor values come from the same generation.
+{
+  const { pool, actors } = await fixture();
+  const made = [];
+  for (let i = 0; i < 5; i++) {
+    made.push((await nominate(pool, actors[i], asset(i + 1), new Date(BASE_TIME.getTime() + i * HOUR))).nomination);
+  }
+  await pool.query("UPDATE rwa_nominations_v2 SET status='rejected',disposition_by='history',disposition_at=$2 WHERE id=$1",
+    [made[4].id, BASE_TIME]);
+  const oneSql = [];
+  const one = await rwaNominationBoard(adaptedClient(pool, { now: BASE_TIME, log: oneSql }), { limit: 1 });
+  const manySql = [];
+  const many = await rwaNominationBoard(adaptedClient(pool, { now: BASE_TIME, log: manySql }), { limit: 4 });
+  const maxSql = [];
+  await rwaNominationBoard(adaptedClient(pool, { now: BASE_TIME, log: maxSql }), { limit: 500 });
+  assert.equal(one.items.length, 1);
+  assert.equal(many.items.length, 4);
+  assert.equal(many.items.some((item) => item.id === made[4].id), false,
+    'terminal history is outside the procedural board domain');
+  assert.equal(oneSql.length, manySql.length,
+    'batch enrichment keeps query count constant as page size grows without state transitions');
+  assert.equal(oneSql.length, 7, 'one mutation-free board page uses seven domain queries');
+  assert.equal(maxSql.length, manySql.length, 'the accepted 500-row cap retains the constant query budget');
+  assert.match(manySql.find((sql) => /WITH\s+scores/i.test(sql)),
+    /status\s+IN\s*\('pending','review_requested','under_review'\)/i);
+
+  const page1Sql = [];
+  const page1 = await rwaNominationBoard(adaptedClient(pool, { now: BASE_TIME, log: page1Sql }), { limit: 2 });
+  const page2Sql = [];
+  const page2 = await rwaNominationBoard(adaptedClient(pool, { now: BASE_TIME, log: page2Sql }), {
+    limit: 2, cursor: page1.nextCursor,
+  });
+  assert.deepEqual([...page1.items, ...page2.items].map((item) => item.id), made.slice(0, 4).map((item) => item.id));
+  assert.equal(page1Sql.length, page2Sql.length, 'later keyset pages keep the same constant query budget');
+
+  const poolSql = [];
+  const poolOwner = ownedPool(pool, poolSql);
+  await rwaNominationBoard(poolOwner.db, { limit: 2 });
+  assert.equal(poolOwner.counts.connect, 1);
+  assert.equal(poolOwner.counts.release, 1);
+  assert.equal(poolSql.filter((sql) => /^BEGIN\s+ISOLATION\s+LEVEL\s+REPEATABLE\s+READ$/i.test(sql.trim())).length, 1,
+    'pool-owned public board uses one coherent repeatable-read transaction');
+  assert.equal(poolSql.filter((sql) => /^COMMIT\b/i.test(sql.trim())).length, 1);
+  await pool.end();
+}
+
+// Deterministic generation seam: an endorsement committed after ranking cannot be mixed into the
+// returned support or opaque cursor from that earlier rank generation. Real PostgreSQL supplies the
+// stronger repeatable-read visibility guarantee; pg-mem cannot prove MVCC behavior.
+{
+  const { pool, actors } = await fixture();
+  const n1 = await nominate(pool, actors[0], asset(1), BASE_TIME);
+  await nominate(pool, actors[1], asset(2), new Date(BASE_TIME.getTime() + HOUR));
+  let injected = false;
+  const board = await rwaNominationBoard(adaptedClient(pool, {
+    now: BASE_TIME,
+    afterQuery: async (sql, params, raw) => {
+      if (!injected && /WITH\s+scores/i.test(sql)) {
+        injected = true;
+        await raw.query(
+          `INSERT INTO rwa_nomination_endorsements_v2
+            (nomination_id,family_id,account_id,active,rationale,updated_at)
+           VALUES ($1,$2,$3,true,NULL,$4)`,
+          [n1.nomination.id, actors[2].familyId, actors[2].account_id, BASE_TIME],
+        );
+      }
+    },
+  }), { limit: 1 });
+  const cursor = JSON.parse(Buffer.from(board.nextCursor, 'base64url').toString('utf8'));
+  assert.equal(board.items[0].support, 1, 'returned support stays with the ranking generation');
+  assert.equal(cursor.support, board.items[0].support, 'cursor support exactly matches the returned row');
   await pool.end();
 }
 
@@ -574,5 +855,35 @@ async function rejectsCode(promise, code, label) {
     'refresh rejects nonpositive bounds');
   await pool.end();
 }
+
+// Every worker first selects in its public cursor order, then acquires the actual multi-row locks
+// in immutable nomination-id order. This SQL regression does not claim pg-mem deadlock proof.
+{
+  const { pool, actors } = await fixture();
+  for (let i = 0; i < 3; i++) {
+    await nominate(pool, actors[i], asset(i + 1), new Date(BASE_TIME.getTime() + i * HOUR));
+  }
+  const refreshSql = [];
+  await refreshRwaNominationSeatState(adaptedClient(pool, { now: BASE_TIME, log: refreshSql }), { limit: 3 });
+  const expirySql = [];
+  await expireRwaNominations(adaptedClient(pool, {
+    now: new Date(BASE_TIME.getTime() + 31 * DAY), log: expirySql,
+  }), { limit: 3 });
+  for (const [name, sql] of [['refresh', refreshSql], ['expiry', expirySql]]) {
+    const selection = sql.find((query) => /SELECT\s+id,(created_at|pending_until)\s+FROM\s+rwa_nominations_v2/i.test(query));
+    const lock = sql.find((query) => /SELECT\s+\*\s+FROM\s+rwa_nominations_v2.*FOR UPDATE/is.test(query));
+    assert(selection && !/FOR UPDATE/i.test(selection), `${name} cursor selection does not take locks out of ID order`);
+    assert.match(lock, /ORDER BY\s+id\s+ASC\s+FOR UPDATE/i,
+      `${name} multi-row lock acquisition is immutable ID ascending`);
+  }
+  await pool.end();
+}
+
+assert.match(SCHEMA, /ix_rwa_nominations_version_history_v2[\s\S]*asset_version_key, created_at DESC, id DESC/i);
+assert.match(SCHEMA, /ix_rwa_nominations_live_ticker_version_v2[\s\S]*ticker, asset_version_key, created_at, id[\s\S]*WHERE status IN/i);
+assert.match(SCHEMA, /ix_rwa_nominations_live_ticker_order_v2[\s\S]*ticker, created_at, id, asset_version_key[\s\S]*WHERE status IN/i);
+assert.match(SCHEMA, /ix_rwa_nominations_live_queue_v2[\s\S]*created_at, id[\s\S]*WHERE status IN/i);
+assert.match(SOURCE, /conflict\.asset_version_key\s*!==\s*row\.asset_version_key/,
+  'conflict context requires a different asset-version key as well as the same ticker');
 
 console.log('✅ RWA nominations v2 domain tests passed — immutable candidate identity, current-seat support, fixed threshold/review ownership, deadline precedence, PostgreSQL duplicate SQL, and bounded stable cursors.');

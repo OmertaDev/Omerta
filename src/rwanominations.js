@@ -147,11 +147,15 @@ async function wallClock(db) {
   return at;
 }
 
-async function inTransaction(db, fn) {
-  if (typeof db?.connect !== 'function') return fn(db);
+async function inTransaction(db, fn, { isolation } = {}) {
+  // A checked-out node-postgres PoolClient exposes both connect() and release(); the pool exposes
+  // connect() but not release(). Query-only adapters are also caller-owned. Only a pool-shaped
+  // capability may create/commit/release a transaction here, which lets Task 4 compose disposition
+  // and its Safe package atomically on one caller-owned client.
+  if (typeof db?.connect !== 'function' || typeof db?.release === 'function') return fn(db);
   const client = await db.connect();
   try {
-    await client.query('BEGIN');
+    await client.query(isolation ? `BEGIN ISOLATION LEVEL ${isolation}` : 'BEGIN');
     const result = await fn(client);
     await client.query('COMMIT');
     return result;
@@ -164,15 +168,20 @@ async function inTransaction(db, fn) {
 }
 
 async function lockCurrentFamily(ch, client) {
+  const hint = (await client.query(
+    'SELECT gang_id FROM gang_members WHERE character_id=$1', [ch.id],
+  )).rows[0];
+  if (!hint) return null;
+  const family = (await client.query('SELECT id FROM gangs WHERE id=$1 FOR UPDATE', [hint.gang_id])).rows[0];
   const member = (await client.query(
     'SELECT gang_id, role FROM gang_members WHERE character_id=$1 FOR UPDATE', [ch.id],
   )).rows[0];
-  if (!member) return null;
-  const family = (await client.query('SELECT id FROM gangs WHERE id=$1 FOR UPDATE', [member.gang_id])).rows[0];
+  if (!member || !sameId(member.gang_id, hint.gang_id)) return { error: 'contention' };
   return family ? member : null;
 }
 
 async function authorityState(member, client) {
+  if (member?.error === 'contention') return { error: 'contention' };
   if (!member || !['boss', 'underboss'].includes(member.role)) {
     return { error: 'rank' };
   }
@@ -185,6 +194,7 @@ async function authorityState(member, client) {
 
 async function requireAuthority(member, client) {
   const authority = await authorityState(member, client);
+  if (authority.error === 'contention') fail('contention', 'Family membership changed during the mutation; retry.');
   if (authority.error === 'rank') fail('rank', 'Only a current family boss or underboss may speak here.');
   if (authority.error === 'no_seat') fail('no_seat', 'Only a currently seated Commission family may speak here.');
   return authority;
@@ -222,6 +232,21 @@ async function endorsements(client, id) {
   )).rows;
 }
 
+async function endorsementsFor(client, ids) {
+  if (!ids.length) return new Map();
+  const params = [];
+  const placeholders = inList(ids, params);
+  const rows = (await client.query(
+    `SELECT nomination_id,family_id,account_id,active,rationale,updated_at
+       FROM rwa_nomination_endorsements_v2
+      WHERE nomination_id IN (${placeholders}) ORDER BY nomination_id ASC,family_id ASC`,
+    params,
+  )).rows;
+  const grouped = new Map(ids.map((id) => [String(id), []]));
+  for (const row of rows) grouped.get(String(row.nomination_id))?.push(row);
+  return grouped;
+}
+
 function supportOf(row, slots, seats) {
   let support = row.sponsor_support_active && seats.has(String(row.sponsor_family_id)) ? 1 : 0;
   for (const slot of slots) {
@@ -245,14 +270,14 @@ async function expireLocked(client, row, at, actor = { type: 'system', id: 'expi
   return true;
 }
 
-async function refreshLocked(client, row, at, suppliedSeats) {
+async function refreshLocked(client, row, at, suppliedSeats, suppliedSlots) {
   if (!OPEN.has(row.status)) {
     const seats = suppliedSeats ?? await seatSet(client);
-    return { row, slots: await endorsements(client, row.id), seats, changed: false };
+    return { row, slots: suppliedSlots ?? await endorsements(client, row.id), seats, changed: false };
   }
   if (await expireLocked(client, row, at)) {
     const seats = suppliedSeats ?? await seatSet(client);
-    return { row, slots: await endorsements(client, row.id), seats, changed: true };
+    return { row, slots: suppliedSlots ?? await endorsements(client, row.id), seats, changed: true };
   }
   const seats = suppliedSeats ?? await seatSet(client);
   let changed = false;
@@ -271,7 +296,7 @@ async function refreshLocked(client, row, at, suppliedSeats) {
       at,
     });
   }
-  const slots = await endorsements(client, row.id);
+  const slots = suppliedSlots ?? await endorsements(client, row.id);
   for (const slot of slots) {
     if (slot.active && !seats.has(String(slot.family_id))) {
       await client.query(
@@ -351,10 +376,13 @@ async function viewLocked(client, row, at, suppliedSeats, extras) {
 }
 
 async function openByKey(client, key) {
-  return (await client.query(
+  const rows = (await client.query(
     "SELECT * FROM rwa_nominations_v2 WHERE asset_version_key=$1 AND status IN ('pending','review_requested','under_review') FOR UPDATE",
     [key],
-  )).rows[0];
+  )).rows;
+  // pg-mem can retain a stale partial-index entry after a status update; PostgreSQL does not. The
+  // application predicate is cheap and keeps the test adapter from treating terminal history open.
+  return rows.find((row) => OPEN.has(row.status));
 }
 
 export async function createRwaNomination(ch, input, client, h) {
@@ -414,12 +442,24 @@ export async function createRwaNomination(ch, input, client, h) {
       eligibleAt,
     });
   }
+  // PostgreSQL uses the exact version-key history index. pg-mem can retain a stale partial-index
+  // lookup after a row leaves the open-state predicate, so its adapter selects by the four fields
+  // from which that same V2 key was independently recomputed.
   const prior = (await client.query(
-    `SELECT id FROM rwa_nominations_v2 WHERE asset_version_key=$1
-       AND status IN ('approved','rejected','not_eligible','expired')
-     ORDER BY created_at DESC,id DESC LIMIT 1`,
-    [candidate.assetVersionKey],
+    dbCaps.skipLocked
+      ? `SELECT id,evidence_hash FROM rwa_nominations_v2 WHERE asset_version_key=$1
+          ORDER BY created_at DESC,id DESC LIMIT 1`
+      : `SELECT id,evidence_hash FROM rwa_nominations_v2
+          WHERE chain_id=$1 AND ticker=$2 AND token_address=$3 AND robinhood_asset_id_hash=$4
+          ORDER BY created_at DESC,id DESC LIMIT 1`,
+    dbCaps.skipLocked
+      ? [candidate.assetVersionKey]
+      : [candidate.chainId, candidate.ticker, candidate.tokenAddress, candidate.robinhoodAssetIdHash],
   )).rows[0];
+  if (prior?.evidence_hash && prior.evidence_hash !== ZERO_HASH
+      && prior.evidence_hash === candidate.evidenceHash) {
+    fail('evidence_not_fresh', 'A linked nomination must provide evidence newer than its direct predecessor.');
+  }
   const id = crypto.randomUUID();
   const pendingUntil = new Date(at.getTime() + PENDING_MS);
   const inserted = (await client.query(
@@ -562,6 +602,15 @@ export async function renewRwaNominationSponsorSupport(ch, idValue, client, h) {
   return { nomination: await viewLocked(client, row, at, pre.seats), changed: true };
 }
 
+async function lockNominationsById(client, ids) {
+  if (!ids.length) return [];
+  const params = [];
+  const placeholders = inList([...ids].map(String).sort(), params);
+  return (await client.query(
+    `SELECT * FROM rwa_nominations_v2 WHERE id IN (${placeholders}) ORDER BY id ASC FOR UPDATE`, params,
+  )).rows;
+}
+
 export async function refreshRwaNominationSeatState(db, options = {}) {
   const page = pageOptions(options, 'refresh');
   return inTransaction(db, async (client) => {
@@ -573,20 +622,26 @@ export async function refreshRwaNominationSeatState(db, options = {}) {
     }
     params.push(page.limit + 1);
     const selected = (await client.query(
-      `SELECT * FROM rwa_nominations_v2
+      `SELECT id,created_at FROM rwa_nominations_v2
         WHERE status IN ('pending','review_requested','under_review') ${after}
-        ORDER BY created_at ASC,id ASC LIMIT $${params.length} FOR UPDATE`,
+        ORDER BY created_at ASC,id ASC LIMIT $${params.length}`,
       params,
     )).rows;
     const hasMore = selected.length > page.limit;
-    const work = selected.slice(0, page.limit);
+    const refs = selected.slice(0, page.limit);
+    const locked = await lockNominationsById(client, refs.map((row) => row.id));
+    const byId = new Map(locked.map((row) => [String(row.id), row]));
+    const work = refs.map((row) => byId.get(String(row.id))).filter((row) => row && OPEN.has(row.status));
     const at = await wallClock(client);
     const seats = await seatSet(client);
+    const slotMap = await endorsementsFor(client, work.map((row) => row.id));
     let updated = 0;
-    for (const row of work) if ((await refreshLocked(client, row, at, seats)).changed) updated++;
-    const last = work.at(-1);
+    for (const row of work) {
+      if ((await refreshLocked(client, row, at, seats, slotMap.get(String(row.id)))).changed) updated++;
+    }
+    const last = refs.at(-1);
     return {
-      processed: work.length,
+      processed: refs.length,
       updated,
       hasMore,
       nextCursor: hasMore ? nextCursor('refresh', last) : null,
@@ -607,13 +662,17 @@ export async function expireRwaNominations(db, options = {}) {
     // Lock before reading clock_timestamp(): a worker that waited across the boundary must see the
     // later wall time, not transaction-start time.
     const selected = (await client.query(
-      `SELECT * FROM rwa_nominations_v2
+      `SELECT id,pending_until FROM rwa_nominations_v2
         WHERE status IN ('pending','review_requested','under_review') ${after}
-        ORDER BY pending_until ASC,id ASC LIMIT $${params.length} FOR UPDATE`,
+        ORDER BY pending_until ASC,id ASC LIMIT $${params.length}`,
       params,
     )).rows;
+    const locked = await lockNominationsById(client, selected.map((row) => row.id));
+    const byId = new Map(locked.map((row) => [String(row.id), row]));
     const at = await wallClock(client);
-    const due = selected.filter((row) => at.getTime() >= new Date(row.pending_until).getTime());
+    const due = selected.map((row) => byId.get(String(row.id)))
+      .filter((row) => row && OPEN.has(row.status)
+        && at.getTime() >= new Date(row.pending_until).getTime());
     const hasMore = due.length > page.limit;
     const work = due.slice(0, page.limit);
     for (const row of work) await expireLocked(client, row, at);
@@ -640,13 +699,15 @@ export async function rwaNominationBoard(db, options = {}) {
   if (options.finalizedOnly != null && typeof options.finalizedOnly !== 'boolean') {
     fail('bad_finalized_filter', 'finalizedOnly must be a boolean.');
   }
+  // Pool callers get one coherent snapshot. A caller-owned PoolClient/query adapter is deliberately
+  // not given nested transaction control and must already belong to a coherent caller transaction.
   return inTransaction(db, async (client) => {
     const seats = await seatSet(client);
     const seated = [...seats];
     const params = [];
     const sponsorSeats = inList(seated, params);
     const endorsementSeats = inList(seated, params);
-    const finalizedWhere = options.finalizedOnly ? 'WHERE v.asset_version_key IS NOT NULL' : '';
+    const finalizedWhere = options.finalizedOnly ? 'AND v.asset_version_key IS NOT NULL' : '';
     let cursorClause = '';
     if (page.cursor) {
       params.push(page.cursor.support, new Date(page.cursor.at), page.cursor.id);
@@ -664,7 +725,7 @@ export async function rwaNominationBoard(db, options = {}) {
            FROM rwa_nominations_v2 n
            LEFT JOIN rwa_nomination_endorsements_v2 e ON e.nomination_id=n.id
            LEFT JOIN stock_asset_versions_v2 v ON v.asset_version_key=n.asset_version_key
-          ${finalizedWhere}
+          WHERE n.status IN ('pending','review_requested','under_review') ${finalizedWhere}
           GROUP BY n.id,n.created_at,n.sponsor_support_active,n.sponsor_family_id
        )
        SELECT id,created_at,support FROM scores ${cursorClause}
@@ -677,40 +738,75 @@ export async function rwaNominationBoard(db, options = {}) {
     if (!ids.length) return { items: [], hasMore: false, nextCursor: null };
     // Lock selected rows in immutable ID order, then take wall time. This keeps seat-loss/expiry
     // observations made by a public board durable without widening the page scan.
-    const lockParams = [];
-    const placeholders = inList([...ids].sort(), lockParams);
-    const locked = (await client.query(
-      `SELECT * FROM rwa_nominations_v2 WHERE id IN (${placeholders}) ORDER BY id ASC FOR UPDATE`, lockParams,
-    )).rows;
+    const locked = await lockNominationsById(client, ids);
     const byId = new Map(locked.map((row) => [String(row.id), row]));
     const at = await wallClock(client);
+    const slotMap = await endorsementsFor(client, ids);
+    for (const rank of selected) {
+      const row = byId.get(String(rank.id));
+      if (row) await refreshLocked(client, row, at, seats, slotMap.get(String(row.id)));
+    }
+
+    const tickers = [...new Set(locked.map((row) => row.ticker))].sort();
+    const conflictParams = [];
+    const conflictTickers = inList(tickers, conflictParams);
+    // Real PostgreSQL caps each requested ticker independently. pg-mem cannot parse window
+    // functions, so its test adapter keeps the same total bound/query count with a global cap.
+    conflictParams.push(dbCaps.skipLocked ? 21 : tickers.length * 21);
+    const conflictSql = dbCaps.skipLocked
+      ? `WITH conflicts AS (
+           SELECT id,ticker,asset_version_key,status,created_at,
+             ROW_NUMBER() OVER (PARTITION BY ticker ORDER BY created_at ASC,id ASC) AS ticker_row
+             FROM rwa_nominations_v2
+            WHERE status IN ('pending','review_requested','under_review')
+              AND ticker IN (${conflictTickers})
+         )
+         SELECT id,ticker,asset_version_key,status,created_at FROM conflicts
+          WHERE ticker_row <= $${conflictParams.length}
+          ORDER BY ticker ASC,created_at ASC,id ASC`
+      : `SELECT id,ticker,asset_version_key,status,created_at FROM rwa_nominations_v2
+          WHERE status IN ('pending','review_requested','under_review')
+            AND ticker IN (${conflictTickers})
+          ORDER BY ticker ASC,created_at ASC,id ASC LIMIT $${conflictParams.length}`;
+    const conflicts = (await client.query(
+      conflictSql,
+      conflictParams,
+    )).rows;
+    const conflictsByTicker = new Map(tickers.map((ticker) => [ticker, []]));
+    for (const conflict of conflicts) conflictsByTicker.get(conflict.ticker)?.push(conflict);
+
+    const keys = [...new Set(locked.map((row) => row.asset_version_key))].sort();
+    const mirrorParams = [];
+    const mirrorKeys = inList(keys, mirrorParams);
+    const mirrors = (await client.query(
+      `SELECT asset_version_key,active,registry_index,last_catalog_version
+         FROM stock_asset_versions_v2 WHERE asset_version_key IN (${mirrorKeys})`,
+      mirrorParams,
+    )).rows;
+    const mirrorByKey = new Map(mirrors.map((row) => [row.asset_version_key, row]));
+
     const items = [];
     for (const rank of selected) {
       const row = byId.get(String(rank.id));
-      const refreshed = await refreshLocked(client, row, at, seats);
-      const conflicts = (await client.query(
-        `SELECT id,asset_version_key,status,created_at FROM rwa_nominations_v2
-          WHERE ticker=$1 AND id<>$2 ORDER BY created_at ASC,id ASC LIMIT 21`,
-        [row.ticker, row.id],
-      )).rows;
-      const mirror = (await client.query(
-        'SELECT active,registry_index,last_catalog_version FROM stock_asset_versions_v2 WHERE asset_version_key=$1',
-        [row.asset_version_key],
-      )).rows[0];
-      items.push(nominationView(row, supportOf(row, refreshed.slots, seats), {
+      if (!row) continue;
+      const tickerConflicts = (conflictsByTicker.get(row.ticker) ?? [])
+        .filter((conflict) => !sameId(conflict.id, row.id)
+          && conflict.asset_version_key !== row.asset_version_key);
+      const mirror = mirrorByKey.get(row.asset_version_key);
+      items.push(nominationView(row, Number(rank.support), {
         finalizedCatalog: mirror ? {
           present: true,
           active: Boolean(mirror.active),
           registryIndex: String(mirror.registry_index),
           catalogVersion: String(mirror.last_catalog_version),
         } : { present: false, active: false, registryIndex: null, catalogVersion: null },
-        tickerConflicts: conflicts.slice(0, 20).map((conflict) => ({
+        tickerConflicts: tickerConflicts.slice(0, 20).map((conflict) => ({
           id: String(conflict.id),
           assetVersionKey: conflict.asset_version_key,
           status: conflict.status,
           createdAt: new Date(conflict.created_at).toISOString(),
         })),
-        tickerConflictsHasMore: conflicts.length > 20,
+        tickerConflictsHasMore: tickerConflicts.length > 20,
       }));
     }
     // Refresh may expire rows but cannot change their current seated support, so the selected order
@@ -721,7 +817,7 @@ export async function rwaNominationBoard(db, options = {}) {
       hasMore,
       nextCursor: hasMore ? nextCursor('board', { id: last.id, created_at: last.created_at }, Number(last.support)) : null,
     };
-  });
+  }, { isolation: 'REPEATABLE READ' });
 }
 
 export async function claimRwaNominationReview(db, idValue, reviewerValue) {

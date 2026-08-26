@@ -3639,10 +3639,23 @@ CREATE UNIQUE INDEX IF NOT EXISTS ux_rwa_nominations_open_key_v2
   WHERE status IN ('pending','review_requested','under_review');
 CREATE INDEX IF NOT EXISTS ix_rwa_nominations_sponsor_cadence_v2
   ON rwa_nominations_v2(sponsor_family_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS ix_rwa_nominations_version_history_v2
+  ON rwa_nominations_v2(asset_version_key, created_at DESC, id DESC);
+CREATE INDEX IF NOT EXISTS ix_rwa_nominations_identity_history_v2
+  ON rwa_nominations_v2(chain_id, ticker, token_address, robinhood_asset_id_hash, created_at DESC, id DESC);
 CREATE INDEX IF NOT EXISTS ix_rwa_nominations_expiry_v2
   ON rwa_nominations_v2(pending_until, id);
 CREATE INDEX IF NOT EXISTS ix_rwa_nominations_queue_v2
   ON rwa_nominations_v2(created_at, id);
+CREATE INDEX IF NOT EXISTS ix_rwa_nominations_live_queue_v2
+  ON rwa_nominations_v2(created_at, id)
+  WHERE status IN ('pending','review_requested','under_review');
+CREATE INDEX IF NOT EXISTS ix_rwa_nominations_live_ticker_version_v2
+  ON rwa_nominations_v2(ticker, asset_version_key, created_at, id)
+  WHERE status IN ('pending','review_requested','under_review');
+CREATE INDEX IF NOT EXISTS ix_rwa_nominations_live_ticker_order_v2
+  ON rwa_nominations_v2(ticker, created_at, id, asset_version_key)
+  WHERE status IN ('pending','review_requested','under_review');
 
 CREATE TABLE IF NOT EXISTS rwa_nomination_endorsements_v2 (
   nomination_id TEXT NOT NULL,
