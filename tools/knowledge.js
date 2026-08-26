@@ -63,6 +63,35 @@ function git(args, fallback = '') {
   }
 }
 
+// A generated-only commit is the durable snapshot of its authored parent. Building at that clean
+// snapshot commit therefore reads the parent's source/history revision and must reproduce the
+// committed generated files byte-for-byte. Mixed commits and dirty worktrees describe themselves.
+function sourceRevisionForSnapshot({ head, parent = '', changedPaths = [], worktreeDirty = false }) {
+  const generatedOnly = changedPaths.length > 0
+    && changedPaths.every((file) => posix(file).startsWith('knowledge/generated/'));
+  return !worktreeDirty && parent && generatedOnly ? parent : head;
+}
+
+function repositorySnapshot() {
+  const head = git(['rev-parse', 'HEAD']).trim();
+  const status = git(['status', '--porcelain=v1']).split(/\r?\n/).filter(Boolean);
+  const changedPaths = git(['diff-tree', '--no-commit-id', '--name-only', '-r', head])
+    .split(/\r?\n/).filter(Boolean).map(posix);
+  const parent = git(['rev-parse', `${head}^`]).trim();
+  const worktreeDirty = status.length > 0;
+  const sourceRevision = sourceRevisionForSnapshot({ head, parent, changedPaths, worktreeDirty });
+  return { head, sourceRevision, status, worktreeDirty, generatedOnly: sourceRevision !== head };
+}
+
+function storedCurrentBranch() {
+  try {
+    const stored = JSON.parse(fs.readFileSync(path.join(OUT, 'graph.json'), 'utf8'));
+    return stored.nodes?.find((node) => node.key === 'Repository:omerta')?.currentBranch || '';
+  } catch {
+    return '';
+  }
+}
+
 function read(rel) {
   return fs.readFileSync(path.join(ROOT, rel), 'utf8').replaceAll('\r\n', '\n');
 }
@@ -201,6 +230,69 @@ function relativeImport(from, spec, files) {
   return null;
 }
 
+function routeRegistrationSnippet(source, start) {
+  const open = source.indexOf('(', start);
+  if (open < 0) return source.slice(start, Math.min(source.length, start + 2400));
+  let depth = 0;
+  let state = 'code';
+  let quote = '';
+  let regexClass = false;
+  for (let i = open; i < source.length; i++) {
+    const char = source[i];
+    const next = source[i + 1];
+    if (state === 'line-comment') {
+      if (char === '\n') state = 'code';
+      continue;
+    }
+    if (state === 'block-comment') {
+      if (char === '*' && next === '/') { state = 'code'; i++; }
+      continue;
+    }
+    if (state === 'string') {
+      if (char === '\\') { i++; continue; }
+      if (char === quote) state = 'code';
+      continue;
+    }
+    if (state === 'regex') {
+      if (char === '\\') { i++; continue; }
+      if (char === '[') regexClass = true;
+      else if (char === ']') regexClass = false;
+      else if (char === '/' && !regexClass) {
+        state = 'code';
+        while (/[a-z]/i.test(source[i + 1] || '')) i++;
+      }
+      continue;
+    }
+    if (char === '/' && next === '/') { state = 'line-comment'; i++; continue; }
+    if (char === '/' && next === '*') { state = 'block-comment'; i++; continue; }
+    if (char === '"' || char === "'" || char === '`') { state = 'string'; quote = char; continue; }
+    if (char === '/') {
+      let p = i - 1;
+      while (p >= open && /\s/.test(source[p])) p--;
+      if (p < open || /[=(:,!&|?{};\[]/.test(source[p])) {
+        state = 'regex'; regexClass = false; continue;
+      }
+    }
+    if (char === '(') depth++;
+    else if (char === ')' && --depth === 0) {
+      const end = source[i + 1] === ';' ? i + 2 : i + 1;
+      return source.slice(start, end);
+    }
+  }
+  return source.slice(start, Math.min(source.length, start + 2400));
+}
+
+function localFunctionsBefore(source, start, indent) {
+  const before = source.slice(0, start);
+  const prefix = esc(indent);
+  const names = new Set();
+  for (const match of before.matchAll(new RegExp(`^${prefix}(?:const|let|var)\\s+([A-Za-z_$][\\w$]*)\\s*=`, 'gm')))
+    names.add(match[1]);
+  for (const match of before.matchAll(new RegExp(`^${prefix}(?:async\\s+)?function\\s+([A-Za-z_$][\\w$]*)\\s*\\(`, 'gm')))
+    names.add(match[1]);
+  return names;
+}
+
 function parseCommits(revision = 'HEAD') {
   const raw = git(['log', '--date=iso-strict', '--pretty=format:%x1e%H%x1f%ad%x1f%an%x1f%s', '--name-only', revision]);
   const commits = [];
@@ -217,12 +309,13 @@ function build(options = {}) {
   const paths = fileList();
   const fileSet = new Set(paths);
   const blobs = blobMetadata();
-  const head = options.sourceRevision || git(['rev-parse', 'HEAD']).trim();
-  const currentBranch = typeof options.currentBranch === 'string'
-    ? options.currentBranch
-    : (git(['branch', '--show-current']).trim() || '(detached)');
-  const status = git(['status', '--porcelain=v1']).split(/\r?\n/).filter(Boolean);
-  const worktreeDirty = typeof options.worktreeDirty === 'boolean' ? options.worktreeDirty : status.length > 0;
+  const snapshot = repositorySnapshot();
+  const head = options.sourceRevision || snapshot.sourceRevision;
+  const branch = git(['branch', '--show-current']).trim();
+  const currentBranch = typeof options.currentBranch === 'string' ? options.currentBranch
+    : (branch || (snapshot.generatedOnly ? storedCurrentBranch() : '') || '(detached)');
+  const status = snapshot.status;
+  const worktreeDirty = typeof options.worktreeDirty === 'boolean' ? options.worktreeDirty : snapshot.worktreeDirty;
   const githubPath = 'knowledge/github-snapshot.json';
   const github = fileSet.has(githubPath) ? JSON.parse(read(githubPath)) : { repository: {}, issues: [], pullRequests: [] };
   const nodes = new Map();
@@ -351,24 +444,30 @@ function build(options = {}) {
       const method = m[1].toUpperCase();
       const url = m[3];
       const line = lineAt(text, m.index);
-      const end = matches[i + 1]?.index ?? Math.min(text.length, m.index + 2400);
-      const snippet = text.slice(m.index, Math.min(end, m.index + 2400));
+      const snippet = routeRegistrationSnippet(text, m.index);
       const access = /preHandler:\s*modAuth/.test(snippet) ? 'moderator'
         : /preHandler:\s*auth/.test(snippet) ? 'authenticated'
         : /websocket:\s*true/.test(snippet) ? 'token-query'
         : 'public';
       const routeId = `${method} ${url}`;
       const handlerMatches = [...snippet.matchAll(/\b([A-Z][A-Za-z0-9_]*)\.([A-Za-z_$][\w$]*)\s*\(/g)];
+      const lineStart = text.lastIndexOf('\n', m.index) + 1;
+      const indent = text.slice(lineStart, m.index);
+      const localFunctions = localFunctionsBefore(text, m.index, indent);
+      const localHandler = [...localFunctions].map((name) => {
+        const call = new RegExp(`\\b${esc(name)}\\s*\\(`).exec(snippet);
+        return call ? { name, index: call.index } : null;
+      }).filter(Boolean).sort((a, b) => a.index - b.index)[0] || null;
       const handlerMatch = handlerMatches.find((x) => aliases.has(x[1]) && !/\/(?:game|rules)\.js$/.test(aliases.get(x[1])))
         || handlerMatches.find((x) => aliases.has(x[1])) || null;
-      const handlerFile = handlerMatch ? aliases.get(handlerMatch[1]) : null;
+      const handlerFile = localHandler ? rel : handlerMatch ? aliases.get(handlerMatch[1]) : null;
       const domain = url.startsWith('/v1/auth') ? 'platform-core'
         : url.startsWith('/v1/wallet') || url.startsWith('/v1/withdraw') || url.startsWith('/v1/gear') ? 'chain-economy'
         : url.startsWith('/v1/casino') || url.startsWith('/v1/races') || url.startsWith('/v1/boxing') || url.startsWith('/v1/speakeasy') ? 'vice-competition'
         : url.startsWith('/v1/law') || url.startsWith('/v1/pen') || url.startsWith('/v1/wire') ? 'law-intelligence'
         : url.startsWith('/v1/opportunities') || url.startsWith('/v1/discovery') || url.startsWith('/v1/coach') ? 'engagement-growth'
         : url.startsWith('/v1') ? domainFor(handlerFile || rel) || 'platform-core' : 'client-experience';
-      const handler = handlerMatch ? `${handlerMatch[1]}.${handlerMatch[2]}` : null;
+      const handler = localHandler?.name || (handlerMatch ? `${handlerMatch[1]}.${handlerMatch[2]}` : null);
       const n = node('Route', routeId, { label: routeId, method, url, access, domain, definitions: [] }, { file: rel, line });
       n.definitions.push({ file: rel, line });
       edge('DEFINED_IN', n.key, `Artifact:${rel}`, { file: rel, line });
@@ -530,20 +629,7 @@ function build(options = {}) {
 }
 
 function buildForCheck() {
-  const graphFile = path.join(OUT, 'graph.json');
-  if (!fs.existsSync(graphFile)) return build();
-  try {
-    const stored = JSON.parse(fs.readFileSync(graphFile, 'utf8'));
-    if (!/^[0-9a-f]{40}$/.test(stored.sourceRevision || '')) return build();
-    const repository = stored.nodes?.find((n) => n.key === 'Repository:omerta');
-    return build({
-      sourceRevision: stored.sourceRevision,
-      worktreeDirty: stored.worktreeDirty === true,
-      currentBranch: repository?.currentBranch,
-    });
-  } catch {
-    return build();
-  }
+  return build();
 }
 
 function validate(model) {
@@ -688,4 +774,4 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
   }
 }
 
-export { build, buildForCheck, validate, render };
+export { build, buildForCheck, sourceRevisionForSnapshot, validate, render };

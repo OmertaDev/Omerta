@@ -3,9 +3,21 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildForCheck, validate, render } from './knowledge.js';
+import { buildForCheck, sourceRevisionForSnapshot, validate, render } from './knowledge.js';
 
 const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
+assert.equal(sourceRevisionForSnapshot({
+  head: 'snapshot-commit', parent: 'authored-parent', worktreeDirty: false,
+  changedPaths: ['knowledge/generated/graph.json', 'knowledge/generated/routes.md'],
+}), 'authored-parent', 'a clean generated-only snapshot must describe its authored parent');
+assert.equal(sourceRevisionForSnapshot({
+  head: 'mixed-commit', parent: 'parent', worktreeDirty: false,
+  changedPaths: ['knowledge/generated/graph.json', 'tools/knowledge.js'],
+}), 'mixed-commit', 'a mixed authored/generated commit is not a reproducible snapshot commit');
+assert.equal(sourceRevisionForSnapshot({
+  head: 'dirty-checkout', parent: 'parent', worktreeDirty: true,
+  changedPaths: ['knowledge/generated/graph.json'],
+}), 'dirty-checkout', 'dirty worktrees must report the checked-out revision rather than hiding changes');
 const model = buildForCheck();
 const result = validate(model);
 assert.equal(result.ok, true, result.problems.join('\n'));
@@ -24,6 +36,12 @@ assert(graph.census.byNodeType.Table >= 240, 'the schema inventory unexpectedly 
 assert(graph.census.byNodeType.Contract >= 18, 'the contract inventory unexpectedly collapsed');
 assert(graph.census.byNodeType.Commit >= 800, 'the Git lineage unexpectedly collapsed');
 assert(graph.census.byNodeType.PullRequest >= 120, 'the GitHub snapshot unexpectedly collapsed');
+
+const routeById = new Map(model.routes.map((route) => [`${route.method} ${route.url}`, route]));
+assert.equal(routeById.get('GET /v1/agent/turn')?.handler, 'readAgentTurn',
+  'Agent Turn reads must resolve to their local readAgentTurn handler, not a later helper body');
+assert.equal(routeById.get('POST /v1/agent/act')?.handler, 'executeAgentAction',
+  'Agent Turn actions must resolve to their local executor, not a later namespaced call');
 
 for (const artifact of graph.nodes.filter((n) => n.type === 'Artifact')) {
   assert(artifact.version, `${artifact.key} has no version`);

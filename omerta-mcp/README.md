@@ -70,10 +70,12 @@ after an ambiguous result to retry with the same idempotency key. This makes int
 repeated actions distinct while keeping network retries safe. Errors come back as
 `{ error: <stable code>, message }`.
 
-Agent Turn v3 returns `exploration` with exactly one relevant unvisited eligible
-system from the canonical 40-system catalog, or `null`. Exploration is read-only,
-non-EV, non-executable, and outside actions and action authority; it cannot change
-`recommendedActionId` or be submitted through `omerta_act`.
+Agent Turn v3 returns the required `exploration` coverage object with `catalog`,
+`progress`, `next`, and `blocked`. Its `exploration.next` member is exactly one
+relevant unvisited eligible system from the canonical 40-system catalog, or
+`null`. Exploration is read-only, non-EV, non-executable, and outside actions and
+action authority; it cannot change `recommendedActionId` or be submitted through
+`omerta_act`.
 
 ## Agent Alpha runner
 

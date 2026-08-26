@@ -336,6 +336,10 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
   ];
   for (const [name, text] of requiredV3Surfaces) {
     assert(/Agent Turn v3/i.test(text), `${name} must name the shipped Agent Turn v3 contract`);
+    assert(/`exploration`[\s\S]{0,300}(?:coverage object|coverage payload)[\s\S]{0,300}`catalog`[\s\S]{0,100}`progress`[\s\S]{0,100}`next`[\s\S]{0,100}`blocked`/i.test(text),
+      `${name} must describe required exploration as the catalog/progress/next/blocked coverage object`);
+    assert(/`exploration\.next`[\s\S]{0,400}(?:one|exactly one)[\s\S]{0,120}(?:unvisited|new)[\s\S]{0,120}(?:eligible|actionable)[\s\S]{0,120}(?:40-system|40 system)[\s\S]{0,120}(?:null|none)/i.test(text),
+      `${name} must locate the one-of-40-or-null recommendation at literal exploration.next`);
     assert(/exploration[\s\S]{0,500}read-only/i.test(text),
       `${name} must describe exploration as read-only`);
     assert(/exploration[\s\S]{0,500}(?:non-EV|no EV|without EV)/i.test(text),

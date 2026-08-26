@@ -199,11 +199,13 @@ The response publishes its scoring assumptions and conservative policy (cash
 reserve, no autonomous PvP, no autonomous borrowing) instead of hiding them.
 `GET /v1/opportunities` remains the full economic board.
 
-Agent Turn v3 also returns `exploration`: exactly one relevant unvisited eligible
-system from the canonical 40-system catalog, or `null` when none is actionable.
-Exploration is read-only, non-EV, non-executable, and outside actions and action
-authority. It never changes action IDs, descriptors, ranks, scores, queue order,
-`recommendedActionId`, or what `POST /v1/agent/act` can execute.
+Agent Turn v3 also returns the required `exploration` coverage object with
+`catalog`, `progress`, `next`, and `blocked`. Its `exploration.next` member is
+exactly one relevant unvisited eligible system from the canonical 40-system
+catalog, or `null` when none is actionable. Exploration is read-only, non-EV,
+non-executable, and outside actions and action authority. It never changes action
+IDs, descriptors, ranks, scores, queue order, `recommendedActionId`, or what
+`POST /v1/agent/act` can execute.
 
 The planner currently coordinates crime, local buy-order fills, business and
 family-territory collections, fee/travel-aware deterministic arbitrage,
