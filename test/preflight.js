@@ -82,8 +82,22 @@ assert(preflight({
   ...GOOD, RWA_REVIEWER_KEY: GOOD.MOD_KEY, RWA_REVIEWER_ID: 'reviewer-public-id',
 }).errors.some((e) => /distinct from MOD_KEY/.test(e)),
   'reviewer and moderator authority cannot share one production secret');
+assert(preflight({
+  ...GOOD, RWA_REVIEWER_KEY: 'same-reviewer-secret', RWA_REVIEWER_ID: 'same-reviewer-secret',
+}).errors.some((e) => /public reviewer identity.*distinct from.*secret/i.test(e)),
+  'the public reviewer identity cannot publish the reviewer credential');
+assert(preflight({
+  ...GOOD, RWA_REVIEWER_KEY: 'distinct-reviewer-secret', RWA_REVIEWER_ID: `  ${GOOD.MOD_KEY}  `,
+}).errors.some((e) => /public reviewer identity.*distinct from MOD_KEY/i.test(e)),
+  'the canonical public reviewer identity cannot publish the moderator credential');
+for (const badId of ['   ', 'x'.repeat(201)]) {
+  assert(preflight({
+    ...GOOD, RWA_REVIEWER_KEY: 'distinct-reviewer-secret', RWA_REVIEWER_ID: badId,
+  }).errors.some((e) => /RWA_REVIEWER_ID.*1 through 200/i.test(e)),
+  'the canonical public reviewer identity is bounded to 1 through 200 characters');
+}
 assert.equal(preflight({
-  ...GOOD, RWA_REVIEWER_KEY: 'distinct-reviewer-secret', RWA_REVIEWER_ID: 'reviewer-public-id',
+  ...GOOD, RWA_REVIEWER_KEY: 'distinct-reviewer-secret', RWA_REVIEWER_ID: '  reviewer-public-id  ',
 }).errors.length, 0, 'a complete reviewer pair with a distinct secret is accepted');
 
 // BLUE-TEAM H1: the same floor on JWT_SECRET — the ONE secret that authenticates every session and

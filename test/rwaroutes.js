@@ -7,9 +7,48 @@ import { getAddress, keccak256 } from 'viem';
 import { newDb } from 'pg-mem';
 import { buildServer } from '../src/server.js';
 import { buildStockTokenActivationV2, computeStockAssetVersionKey } from '../src/stockcatalogv2.js';
-import { disposeRwaNominationReviewWithSafePackage, expireRwaApprovals } from '../src/rwanominations.js';
+import {
+  disposeRwaNominationReviewWithSafePackage, expireRwaApprovals, rwaNominationReviewQueue,
+} from '../src/rwanominations.js';
 
 const SCHEMA = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'schema.sql'), 'utf8');
+
+// Checked-in independent fixture: expected package, calldata, and raw-calldata hash are literals.
+// No production builder participates in constructing the expected side of this assertion.
+const LITERAL_ACTIVATION_DATA = '0xf87ca0a10000000000000000000000000000000000000000000000000000000000000020'
+  + '0000000000000000000000001111111111111111111111111111111111111111'
+  + '3333333333333333333333333333333333333333333333333333333333333333'
+  + '0000000000000000000000000000000000000000000000000000000000000120'
+  + '0000000000000000000000000000000000000000000000000000000000000160'
+  + '0000000000000000000000000000000000000000000000000000000000000012'
+  + '2222222222222222222222222222222222222222222222222222222222222222'
+  + '4444444444444444444444444444444444444444444444444444444444444444'
+  + '0000000000000000000000000000000000000000000000000000000077359400'
+  + '00000000000000000000000000000000000000000000000000000000773ece80'
+  + '0000000000000000000000000000000000000000000000000000000000000003'
+  + '5254450000000000000000000000000000000000000000000000000000000000'
+  + '000000000000000000000000000000000000000000000000000000000000000c'
+  + '526f757465204571756974790000000000000000000000000000000000000000';
+const LITERAL_ACTIVATION_PACKAGE = {
+  to: '0x9999999999999999999999999999999999999999', value: '0', operation: 0,
+  data: LITERAL_ACTIVATION_DATA,
+  assetVersionKey: '0x2776f4b4ae019e0b245c2d15891a3e2a193d5e4a8e40e4143f0b7e0e21edaa19',
+  chainId: '4663', ticker: 'RTE', name: 'Route Equity',
+  tokenAddress: '0x1111111111111111111111111111111111111111', tokenDecimals: 18,
+  robinhoodAssetIdHash: `0x${'3'.repeat(64)}`, evidenceHash: `0x${'2'.repeat(64)}`,
+  reviewId: `0x${'4'.repeat(64)}`, approvedAt: '2000000000', validUntil: '2000604800',
+};
+assert.deepEqual(buildStockTokenActivationV2({
+  asset: {
+    chainId: '4663', ticker: 'RTE', name: 'Route Equity',
+    tokenAddress: '0x1111111111111111111111111111111111111111', tokenDecimals: 18,
+    robinhoodAssetIdHash: `0x${'3'.repeat(64)}`,
+  },
+  registryAddress: '0x9999999999999999999999999999999999999999',
+  evidenceHash: `0x${'2'.repeat(64)}`, reviewId: `0x${'4'.repeat(64)}`, approvedAt: '2000000000',
+}), LITERAL_ACTIVATION_PACKAGE);
+assert.equal(keccak256(LITERAL_ACTIVATION_DATA),
+  '0x761ec9b204b5d4d5d9e1a65acb242785f5137bf2fe53c0e04742ec6ba986724c');
 
 const prior = {
   key: process.env.RWA_REVIEWER_KEY,
@@ -59,6 +98,254 @@ try {
 }
 
 console.log('✅ RWA HTTP routes passed');
+
+{
+  const mem = newDb();
+  const { Pool } = mem.adapters.createPg();
+  const pool = new Pool();
+  await pool.query(SCHEMA);
+  await pool.query(
+    "INSERT INTO gangs (id,name,tag,season_tribute) VALUES ('bigint-family','BigInt Family','BIG',1000)",
+  );
+  const bigintToken = getAddress(`0x${'3'.repeat(40)}`);
+  const bigintProvider = `0x${'3'.repeat(64)}`;
+  const bigintEvidence = `0x${'2'.repeat(64)}`;
+  await pool.query(
+    `INSERT INTO rwa_nominations_v2
+      (id,asset_version_key,chain_id,ticker,ticker_hash,token_address,token_decimals,
+       robinhood_asset_id_hash,name,sponsor_family_id,sponsor_account_id,rationale,evidence_hash,
+       status,execution_status,created_at,pending_until,claimed_by,claimed_at)
+     VALUES ('bigint-name',$1,4663,'BIG',$2,$3,18,$4,'BigInt Holdings','bigint-family',
+       'bigint-account','A string is not a bigint value.',$5,'under_review','not_applicable',
+       '2030-01-01T00:00:00Z','2030-02-01T00:00:00Z','bigint-reviewer','2030-01-01T00:00:00Z')`,
+    [computeStockAssetVersionKey({
+      chainId: '4663', ticker: 'BIG', tokenAddress: bigintToken,
+      robinhoodAssetIdHash: bigintProvider,
+    }), keccak256(Buffer.from('BIG')), bigintToken, bigintProvider, bigintEvidence],
+  );
+  const result = await disposeRwaNominationReviewWithSafePackage({
+    query: (sql, params) => sql.includes('rwa_wall_clock')
+      ? Promise.resolve({ rows: [{ wall_now: new Date('2030-01-02T00:00:00.900Z') }] })
+      : pool.query(sql, params),
+  }, 'bigint-name', 'bigint-reviewer', {
+    disposition: 'approved', reason: 'Literal text is valid.', evidenceHash: bigintEvidence,
+  }, { registryAddress: getAddress(`0x${'4'.repeat(40)}`) });
+  assert.equal(result.nomination.reviewStatus ?? result.nomination.status, 'approved');
+  assert.equal(result.proposal.safeTransaction.data.startsWith('0x'), true,
+    'a literal BigInt substring is valid when the package contains no bigint-typed value');
+  const typedBigintKey = computeStockAssetVersionKey({
+    chainId: '4663', ticker: 'BGV', tokenAddress: bigintToken,
+    robinhoodAssetIdHash: bigintProvider,
+  });
+  await pool.query(
+    `INSERT INTO rwa_nominations_v2
+      (id,asset_version_key,chain_id,ticker,ticker_hash,token_address,token_decimals,
+       robinhood_asset_id_hash,name,sponsor_family_id,sponsor_account_id,rationale,evidence_hash,
+       status,execution_status,created_at,pending_until,claimed_by,claimed_at)
+     VALUES ('typed-bigint',$1,4663,'BGV',$2,$3,18,$4,'Typed Value','bigint-family',
+       'bigint-account','A typed bigint cannot cross JSON.',$5,'under_review','not_applicable',
+       '2020-01-01T00:00:00Z','2030-02-01T00:00:00Z','bigint-reviewer','2020-01-01T00:00:00Z')`,
+    [typedBigintKey, keccak256(Buffer.from('BGV')), bigintToken, bigintProvider, bigintEvidence],
+  );
+  await assert.rejects(disposeRwaNominationReviewWithSafePackage(
+    pool, 'typed-bigint', 'bigint-reviewer', {
+      disposition: 'approved', reason: 'Typed bigints must fail.', evidenceHash: bigintEvidence,
+    }, {
+      registryAddress: getAddress(`0x${'4'.repeat(40)}`),
+      buildActivation: () => ({
+        assetVersionKey: typedBigintKey, data: '0x00', nested: { forbidden: 1n },
+      }),
+    },
+  ), (error) => error?.code === 'safe_package_failed');
+  await pool.end();
+}
+
+console.log('✅ RWA Safe package validation rejects types, not valid BigInt text');
+
+{
+  const mem = newDb();
+  const { Pool } = mem.adapters.createPg();
+  const pool = new Pool();
+  await pool.query(SCHEMA);
+  await pool.query(
+    "INSERT INTO gangs (id,name,tag,season_tribute) VALUES ('deadline-family','Deadline Family','DLN',1000)",
+  );
+  const deadlineToken = getAddress(`0x${'5'.repeat(40)}`);
+  const deadlineProvider = `0x${'5'.repeat(64)}`;
+  const deadlineEvidence = `0x${'4'.repeat(64)}`;
+  await pool.query(
+    `INSERT INTO rwa_nominations_v2
+      (id,asset_version_key,chain_id,ticker,ticker_hash,token_address,token_decimals,
+       robinhood_asset_id_hash,name,sponsor_family_id,sponsor_account_id,rationale,evidence_hash,
+       status,execution_status,created_at,pending_until,claimed_by,claimed_at)
+     VALUES ('deadline-subsecond',$1,4663,'DLN',$2,$3,18,$4,'Deadline Equity','deadline-family',
+       'deadline-account','Exact deadline evidence.',$5,'under_review','not_applicable',
+       '2030-01-01T00:00:00Z','2030-01-02T00:00:00.100Z','deadline-reviewer','2030-01-01T00:00:00Z')`,
+    [computeStockAssetVersionKey({
+      chainId: '4663', ticker: 'DLN', tokenAddress: deadlineToken,
+      robinhoodAssetIdHash: deadlineProvider,
+    }), keccak256(Buffer.from('DLN')), deadlineToken, deadlineProvider, deadlineEvidence],
+  );
+  const result = await disposeRwaNominationReviewWithSafePackage({
+    query: (sql, params) => sql.includes('rwa_wall_clock')
+      ? Promise.resolve({ rows: [{ wall_now: new Date('2030-01-02T00:00:00.900Z') }] })
+      : pool.query(sql, params),
+  }, 'deadline-subsecond', 'deadline-reviewer', {
+    disposition: 'approved', reason: 'The exact wall time decides.', evidenceHash: deadlineEvidence,
+  }, { registryAddress: getAddress(`0x${'6'.repeat(40)}`) });
+  assert.equal(result.expired, true,
+    'a .900 post-lock wall time expires a nomination whose exact deadline was .100');
+  assert.equal(result.proposal, null);
+  assert.equal((await pool.query(
+    "SELECT status FROM rwa_nominations_v2 WHERE id='deadline-subsecond'",
+  )).rows[0].status, 'expired');
+  await pool.end();
+}
+
+console.log('✅ RWA disposition compares exact DB wall time before whole-second packaging');
+
+{
+  const mem = newDb();
+  const { Pool } = mem.adapters.createPg();
+  const pool = new Pool();
+  await pool.query(SCHEMA);
+  for (let i = 1; i <= 4; i++) {
+    await pool.query(
+      'INSERT INTO gangs (id,name,tag,season_tribute) VALUES ($1,$2,$3,$4)',
+      [`queue-family-${i}`, `Queue Family ${i}`, `QF${i}`, 5000 - i],
+    );
+  }
+  const queueToken = getAddress(`0x${'7'.repeat(40)}`);
+  const queueProvider = `0x${'7'.repeat(64)}`;
+  const queueEvidence = `0x${'6'.repeat(64)}`;
+  const insertQueueNomination = async ({ id, ticker, name, status, createdAt, claimedBy = null }) => {
+    await pool.query(
+      `INSERT INTO rwa_nominations_v2
+        (id,asset_version_key,chain_id,ticker,ticker_hash,token_address,token_decimals,
+         robinhood_asset_id_hash,name,sponsor_family_id,sponsor_account_id,rationale,evidence_hash,
+         status,execution_status,created_at,pending_until,claimed_by,claimed_at)
+       VALUES ($1,$2,4663,$3,$4,$5,18,$6,$7,'queue-family-1','queue-account-1',
+         'Dense queue ordering evidence.',$8,$9,'not_applicable',$10,'2030-02-01T00:00:00Z',$11,$12)`,
+      [id, computeStockAssetVersionKey({
+        chainId: '4663', ticker, tokenAddress: queueToken, robinhoodAssetIdHash: queueProvider,
+      }), ticker, keccak256(Buffer.from(ticker)), queueToken, queueProvider, name, queueEvidence,
+      status, createdAt, claimedBy, claimedBy ? createdAt : null],
+    );
+  };
+  await insertQueueNomination({
+    id: 'queue-demoted', ticker: 'QDM', name: 'Queue Demoted', status: 'review_requested',
+    createdAt: '2030-01-01T00:00:00Z',
+  });
+  await insertQueueNomination({
+    id: 'queue-support-three-a', ticker: 'QTA', name: 'Queue Three A', status: 'review_requested',
+    createdAt: '2030-01-02T00:00:00Z',
+  });
+  await insertQueueNomination({
+    id: 'queue-support-three-b', ticker: 'QTB', name: 'Queue Three B', status: 'review_requested',
+    createdAt: '2030-01-02T00:00:00Z',
+  });
+  await insertQueueNomination({
+    id: 'queue-support-four', ticker: 'QFO', name: 'Queue Four', status: 'review_requested',
+    createdAt: '2030-01-03T00:00:00Z',
+  });
+  await insertQueueNomination({
+    id: 'queue-owned', ticker: 'QOW', name: 'Queue Owned', status: 'under_review',
+    createdAt: '2030-01-04T00:00:00Z', claimedBy: 'queue-reviewer',
+  });
+  const endorse = (nominationId, families) => Promise.all(families.map((family) => pool.query(
+    `INSERT INTO rwa_nomination_endorsements_v2
+      (nomination_id,family_id,account_id,active) VALUES ($1,$2,$3,true)`,
+    [nominationId, family, `account-${family}`],
+  )));
+  await endorse('queue-demoted', ['queue-family-2']);
+  await endorse('queue-support-three-a', ['queue-family-2', 'queue-family-3']);
+  await endorse('queue-support-three-b', ['queue-family-2', 'queue-family-3']);
+  await endorse('queue-support-four', ['queue-family-2', 'queue-family-3', 'queue-family-4']);
+
+  const queueSql = [];
+  const queueDb = {
+    query: (sql, params) => { queueSql.push(sql); return pool.query(sql, params); },
+  };
+  const firstPage = await rwaNominationReviewQueue(queueDb, { reviewerId: 'queue-reviewer', limit: 1 });
+  assert.deepEqual(firstPage.items.map((item) => [item.id, item.support]), [['queue-support-four', 4]],
+    'review queue ranks current support before creation time and demotes stale rows before paging');
+  assert.equal(firstPage.hasMore, true);
+  const decodedCursor = JSON.parse(Buffer.from(firstPage.nextCursor, 'base64url').toString('utf8'));
+  assert.deepEqual(decodedCursor, {
+    kind: 'review_queue', support: 4, at: '2030-01-03T00:00:00.000Z', id: 'queue-support-four',
+  }, 'review queue cursor carries every authoritative sort field');
+  assert.equal(queueSql.filter((sql) => sql.includes('rwa_board_active_slots')).length, 1,
+    'current support is fetched in one batch rather than once per nomination');
+  assert.equal(queueSql.filter((sql) => /WHERE id=\$1 FOR UPDATE/.test(sql)).length, 0,
+    'the dense live universe is locked in a batch, never with a per-row SELECT');
+  const secondPage = await rwaNominationReviewQueue(queueDb, {
+    reviewerId: 'queue-reviewer', limit: 1, cursor: firstPage.nextCursor,
+  });
+  const thirdPage = await rwaNominationReviewQueue(queueDb, {
+    reviewerId: 'queue-reviewer', limit: 1, cursor: secondPage.nextCursor,
+  });
+  const fourthPage = await rwaNominationReviewQueue(queueDb, {
+    reviewerId: 'queue-reviewer', limit: 1, cursor: thirdPage.nextCursor,
+  });
+  assert.deepEqual(secondPage.items.map((item) => [item.id, item.support]), [['queue-support-three-a', 3]]);
+  assert.deepEqual(thirdPage.items.map((item) => [item.id, item.support]), [['queue-support-three-b', 3]],
+    'equal support and creation time use ID as the final stable ordering field');
+  assert.deepEqual(fourthPage.items.map((item) => [item.id, item.support]), [['queue-owned', 1]],
+    'the current reviewer keeps a below-threshold under-review claim in the dense queue');
+  assert.equal((await pool.query(
+    "SELECT status FROM rwa_nominations_v2 WHERE id='queue-demoted'",
+  )).rows[0].status, 'pending');
+  await pool.end();
+}
+
+console.log('✅ RWA reviewer queue ranks a dense current-support snapshot without stale holes');
+
+process.env.RATE_LIMIT = 'off';
+process.env.MOD_KEY = 'test-moderator-key';
+process.env.RWA_REVIEWER_KEY = 'same-secret-and-public-id';
+process.env.RWA_REVIEWER_ID = 'same-secret-and-public-id';
+const collisionApp = await buildServer();
+try {
+  const collision = await collisionApp.inject({
+    method: 'GET', url: '/v1/rwa/reviewer/queue',
+    headers: { 'x-rwa-reviewer-key': 'same-secret-and-public-id' },
+  });
+  assert.equal(collision.statusCode, 503, collision.body);
+  assert.equal(collision.json().error, 'rwa_reviewer_disabled');
+  assert.equal(collision.body.includes('same-secret-and-public-id'), false,
+    'a credential/public-ID collision never returns the secret');
+  assert.equal((await collisionApp.pool.query(
+    'SELECT count(*)::int AS n FROM rwa_nomination_reviewer_state_v2',
+  )).rows[0].n, 0, 'a colliding secret is never persisted as the public reviewer ID');
+
+  for (const config of [
+    { key: 'same-secret-and-public-id', id: '  same-secret-and-public-id  ' },
+    { key: 'distinct-reviewer-secret', id: `  ${process.env.MOD_KEY}  ` },
+    { key: 'distinct-reviewer-secret', id: '   ' },
+    { key: 'distinct-reviewer-secret', id: 'x'.repeat(201) },
+  ]) {
+    process.env.RWA_REVIEWER_KEY = config.key;
+    process.env.RWA_REVIEWER_ID = config.id;
+    const disabled = await collisionApp.inject({
+      method: 'GET', url: '/v1/rwa/reviewer/queue',
+      headers: { 'x-rwa-reviewer-key': config.key },
+    });
+    assert.equal(disabled.statusCode, 503, disabled.body);
+    assert.equal(disabled.json().error, 'rwa_reviewer_disabled');
+  }
+  process.env.RWA_REVIEWER_KEY = 'trimmed-reviewer-secret';
+  process.env.RWA_REVIEWER_ID = '  trimmed-public-reviewer  ';
+  const canonical = await collisionApp.inject({
+    method: 'GET', url: '/v1/rwa/reviewer/queue',
+    headers: { 'x-rwa-reviewer-key': 'trimmed-reviewer-secret' },
+  });
+  assert.equal(canonical.statusCode, 200, canonical.body);
+  assert.deepEqual((await collisionApp.pool.query(
+    'SELECT reviewer_id FROM rwa_nomination_reviewer_state_v2 WHERE id=1',
+  )).rows[0], { reviewer_id: 'trimmed-public-reviewer' });
+} finally {
+  await collisionApp.close();
+}
 
 process.env.RATE_LIMIT = 'off';
 process.env.MOD_KEY = 'test-moderator-key';
@@ -166,13 +453,68 @@ try {
   });
   assert.equal(selfEndorse.statusCode, 400, selfEndorse.body);
   assert.equal(selfEndorse.json().error, 'sponsor_self');
+
+  const completionFailureId = 'rwa-completion-store-failure';
+  await live.pool.query(
+    `INSERT INTO rwa_nominations_v2
+      (id,asset_version_key,chain_id,ticker,ticker_hash,token_address,token_decimals,
+       robinhood_asset_id_hash,name,sponsor_family_id,sponsor_account_id,rationale,evidence_hash,
+       status,execution_status,created_at,pending_until)
+     VALUES ($1,$2,4663,'CSF',$3,$4,18,$5,'Completion Store Failure','family-public','private-account',
+       'Completion failure must fail closed.',$6,'review_requested','not_applicable',now(),now()+interval '1 day')`,
+    [completionFailureId, computeStockAssetVersionKey({
+      chainId: '4663', ticker: 'CSF', tokenAddress, robinhoodAssetIdHash: providerHash,
+    }), keccak256(Buffer.from('CSF')), tokenAddress, providerHash, evidenceHash],
+  );
+  const completionFailureUrl = `/v1/rwa/reviewer/nominations/${completionFailureId}/claim`;
+  const originalPoolQuery = live.pool.query.bind(live.pool);
+  let failedCompletionStore = false;
+  live.pool.query = async (sql, params) => {
+    if (!failedCompletionStore && /UPDATE\s+rwa_reviewer_idempotency_v2/i.test(sql)) {
+      failedCompletionStore = true;
+      throw new Error('injected reviewer completion-store failure');
+    }
+    return originalPoolQuery(sql, params);
+  };
+  const completionFailure = await live.inject({
+    method: 'POST', url: completionFailureUrl,
+    headers: { ...queueHeaders, 'idempotency-key': 'completion-store-failure' }, payload: {},
+  });
+  live.pool.query = originalPoolQuery;
+  assert.equal(completionFailure.statusCode, 500, completionFailure.body);
+  assert.equal((await live.pool.query(
+    'SELECT status FROM rwa_nominations_v2 WHERE id=$1', [completionFailureId],
+  )).rows[0].status, 'under_review', 'the domain transaction committed before completion storage failed');
+  assert.deepEqual((await live.pool.query(
+    `SELECT status FROM rwa_reviewer_idempotency_v2
+      WHERE reviewer_id=$1 AND key='completion-store-failure'`, [process.env.RWA_REVIEWER_ID],
+  )).rows[0], { status: 0 }, 'a post-commit failure leaves the owned reservation in progress');
+  const completionFailureRetry = await live.inject({
+    method: 'POST', url: completionFailureUrl,
+    headers: { ...queueHeaders, 'idempotency-key': 'completion-store-failure' }, payload: {},
+  });
+  assert.equal(completionFailureRetry.statusCode, 409, completionFailureRetry.body);
+  assert.equal(completionFailureRetry.json().error, 'in_progress');
+
   const claimedByRoute = await live.inject({
     method: 'POST', url: `/v1/rwa/reviewer/nominations/${playerNomination.json().nomination.id}/claim`,
-    headers: { ...queueHeaders, 'idempotency-key': 'claim-player-nomination' }, payload: {},
+    headers: {
+      ...queueHeaders, authorization: `Bearer ${guest}`, 'idempotency-key': 'claim-player-nomination',
+    },
+    payload: {},
   });
   assert.equal(claimedByRoute.statusCode, 200, claimedByRoute.body);
   assert.equal(claimedByRoute.json().nomination.reviewStatus, 'under_review');
   assert.equal(claimedByRoute.json().nomination.reviewerId, process.env.RWA_REVIEWER_ID);
+  const missingReviewerHeader = await live.inject({
+    method: 'POST', url: `/v1/rwa/reviewer/nominations/${playerNomination.json().nomination.id}/claim`,
+    headers: { authorization: `Bearer ${guest}`, 'idempotency-key': 'claim-player-nomination' },
+    payload: {},
+  });
+  assert.equal(missingReviewerHeader.statusCode, 401, missingReviewerHeader.body,
+    'reviewer authentication runs before any incidental player replay lookup');
+  assert.equal((await live.pool.query('SELECT count(*)::int AS n FROM idempotency')).rows[0].n, 0,
+    'reviewer mutations are categorically outside the player idempotency namespace');
   const sameClaim = await live.inject({
     method: 'POST', url: `/v1/rwa/reviewer/nominations/${playerNomination.json().nomination.id}/claim`,
     headers: { ...queueHeaders, 'idempotency-key': 'claim-player-nomination-again' }, payload: {},
@@ -467,17 +809,32 @@ process.env.RWA_REVIEWER_ID = 'bounded-reviewer';
 const limitedApp = await buildServer();
 try {
   const headers = { 'x-rwa-reviewer-key': process.env.RWA_REVIEWER_KEY };
+  const badHeaders = { 'x-rwa-reviewer-key': 'wrong-reviewer-key' };
+  const denied = await limitedApp.inject({
+    method: 'POST', url: '/v1/rwa/reviewer/nominations/missing/claim', remoteAddress: '198.51.100.10',
+    headers: { ...badHeaders, 'idempotency-key': 'preauth-rate-1' }, payload: {},
+  });
+  assert.equal(denied.statusCode, 401, denied.body);
+  const preauthLimited = await limitedApp.inject({
+    method: 'POST', url: '/v1/rwa/reviewer/nominations/missing/claim', remoteAddress: '198.51.100.10',
+    headers: { ...badHeaders, 'idempotency-key': 'preauth-rate-2' }, payload: {},
+  });
+  assert.equal(preauthLimited.statusCode, 429, preauthLimited.body);
+  assert.equal(preauthLimited.json().error, 'rate_limited', 'the pre-auth limiter is source-IP scoped');
   const first = await limitedApp.inject({
     method: 'POST', url: '/v1/rwa/reviewer/nominations/missing/claim',
+    remoteAddress: '198.51.100.20',
     headers: { ...headers, 'idempotency-key': 'rate-1' }, payload: {},
   });
   assert.equal(first.statusCode, 400, first.body);
   const second = await limitedApp.inject({
     method: 'POST', url: '/v1/rwa/reviewer/nominations/missing/claim',
+    remoteAddress: '198.51.100.21',
     headers: { ...headers, 'idempotency-key': 'rate-2' }, payload: {},
   });
   assert.equal(second.statusCode, 429, second.body);
-  assert.equal(second.json().error, 'rate_limited');
+  assert.equal(second.json().error, 'rate_limited',
+    'distinct source IPs prove the post-auth reviewer-ID bucket independently');
 } finally {
   await limitedApp.close();
   for (const key of ['RATE_LIMIT', 'RATE_AUTH_BURST', 'RATE_AUTH_PER_SEC', 'RWA_REVIEWER_KEY', 'RWA_REVIEWER_ID']) {

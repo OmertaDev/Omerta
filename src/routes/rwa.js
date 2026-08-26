@@ -18,9 +18,12 @@ const fail = (code, message) => { throw new GameError(code, message); };
 
 function configuredReviewer() {
   const key = process.env.RWA_REVIEWER_KEY;
-  const id = process.env.RWA_REVIEWER_ID;
-  if (typeof key !== 'string' || !key || typeof id !== 'string' || !id) return null;
-  if (typeof process.env.MOD_KEY === 'string' && process.env.MOD_KEY === key) return null;
+  const rawId = process.env.RWA_REVIEWER_ID;
+  if (typeof key !== 'string' || !key || typeof rawId !== 'string') return null;
+  const id = rawId.trim();
+  if (!id || id.length > 200 || id === key) return null;
+  if (typeof process.env.MOD_KEY === 'string'
+      && (process.env.MOD_KEY === key || process.env.MOD_KEY === id)) return null;
   return { key, id };
 }
 
@@ -140,8 +143,13 @@ function reviewerMutation(pool, handler) {
       reply.header('x-idempotent-replay', 'true').code(reservation.status);
       return reply.send(JSON.parse(reservation.response));
     }
+    let handlerReturned = false;
     try {
       const result = await handler(req, reply);
+      // Once the domain handler returns, its owned transaction may already be committed. From this
+      // point onward the reservation is an uncertainty latch: completion-storage failure must never
+      // release it and permit the side effect to execute again.
+      handlerReturned = true;
       const status = result?.rwaHttpStatus ?? 200;
       const body = result?.rwaHttpStatus ? result.body : result;
       const response = JSON.stringify(body);
@@ -154,10 +162,12 @@ function reviewerMutation(pool, handler) {
       if (status !== 200) return reply.code(status).send(body);
       return body;
     } catch (error) {
-      await pool.query(
-        'DELETE FROM rwa_reviewer_idempotency_v2 WHERE reviewer_id=$1 AND key=$2 AND status=0 AND response=$3',
-        [req.rwaReviewerId, reservation.key, reservation.token],
-      ).catch(() => {});
+      if (!handlerReturned) {
+        await pool.query(
+          'DELETE FROM rwa_reviewer_idempotency_v2 WHERE reviewer_id=$1 AND key=$2 AND status=0 AND response=$3',
+          [req.rwaReviewerId, reservation.key, reservation.token],
+        ).catch(() => {});
+      }
       throw error;
     }
   };
@@ -218,6 +228,7 @@ export function registerRwa(app, { pool, auth, withCharacter }) {
   });
 
   const reviewerPost = (handler) => ({
+    config: { authKind: 'rwaReviewerAuth' },
     preHandler: rwaReviewerAuth,
     handler: reviewerMutation(pool, handler),
   });
@@ -240,7 +251,9 @@ export function registerRwa(app, { pool, auth, withCharacter }) {
     if (result.stale) return { rwaHttpStatus: 409, body: { error: 'approval_stale' } };
     return result;
   }));
-  app.get('/v1/rwa/reviewer/queue', { preHandler: rwaReviewerAuth }, async (req) => publicResult(
+  app.get('/v1/rwa/reviewer/queue', {
+    config: { authKind: 'rwaReviewerAuth' }, preHandler: rwaReviewerAuth,
+  }, async (req) => publicResult(
     await rwaNominationReviewQueue(pool, {
       reviewerId: req.rwaReviewerId,
       limit: exactQuery(req.query, ['limit', 'cursor']).limit == null ? undefined : Number(req.query.limit),

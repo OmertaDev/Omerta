@@ -128,7 +128,8 @@ function pageOptions(options = {}, kind) {
         || !Number.isFinite(new Date(cursor.at).getTime())) {
       fail('bad_cursor', 'Invalid cursor.');
     }
-    if (kind === 'board' && (!Number.isInteger(cursor.support) || cursor.support < 0 || cursor.support > 5)) {
+    if (['board', 'review_queue'].includes(kind)
+        && (!Number.isInteger(cursor.support) || cursor.support < 0 || cursor.support > 5)) {
       fail('bad_cursor', 'Invalid cursor.');
     }
   }
@@ -138,7 +139,7 @@ function pageOptions(options = {}, kind) {
 function nextCursor(kind, row, support) {
   if (!row) return null;
   const payload = { kind, at: new Date(row.created_at ?? row.pending_until).toISOString(), id: String(row.id) };
-  if (kind === 'board') payload.support = support;
+  if (['board', 'review_queue'].includes(kind)) payload.support = support;
   return Buffer.from(JSON.stringify(payload), 'utf8').toString('base64url');
 }
 
@@ -1067,28 +1068,28 @@ export async function disposeRwaNominationReviewWithSafePackage(
       };
     }
 
-    const at = wholeSecond(await wallClock(client));
-    const refreshed = await refreshLocked(client, row, at);
+    const exactAt = await wallClock(client);
+    const refreshed = await refreshLocked(client, row, exactAt);
     if (row.status === 'expired') return { nomination: nominationView(row, 0), proposal: null, expired: true };
     if (row.status !== 'under_review') fail('review_unclaimed', 'Claim the review before disposing it.');
     if (row.claimed_by !== reviewer) fail('review_owner', 'Only the reviewer who owns the claim may dispose it.');
     if (row.evidence_hash !== disposition.evidenceHash) fail('evidence_conflict', 'Nomination evidence changed from the reviewed snapshot.');
 
     const approved = disposition.disposition === 'approved';
-    const approvedAt = approved ? at : null;
-    const validUntil = approved ? new Date(at.getTime() + 604800000) : null;
+    const approvedAt = approved ? wholeSecond(exactAt) : null;
+    const validUntil = approved ? new Date(approvedAt.getTime() + 604800000) : null;
     await client.query(
       `UPDATE rwa_nominations_v2
           SET status=$2,execution_status=$3,disposition_by=$4,disposition_at=$5,
               disposition_reason=$6,approved_at=$7,valid_until=$8
         WHERE id=$1`,
-      [id, disposition.disposition, approved ? 'safe_package_ready' : 'not_applicable', reviewer, at,
+      [id, disposition.disposition, approved ? 'safe_package_ready' : 'not_applicable', reviewer, exactAt,
         disposition.reason, approvedAt, validUntil],
     );
     row.status = disposition.disposition;
     row.execution_status = approved ? 'safe_package_ready' : 'not_applicable';
     row.disposition_by = reviewer;
-    row.disposition_at = at;
+    row.disposition_at = exactAt;
     row.disposition_reason = disposition.reason;
     row.approved_at = approvedAt;
     row.valid_until = validUntil;
@@ -1105,7 +1106,7 @@ export async function disposeRwaNominationReviewWithSafePackage(
             robinhoodAssetIdHash: row.robinhood_asset_id_hash,
           },
           registryAddress, evidenceHash: row.evidence_hash, reviewId,
-          approvedAt: String(Math.floor(at.getTime() / 1000)),
+          approvedAt: String(Math.floor(approvedAt.getTime() / 1000)),
         });
       } catch { fail('safe_package_failed', 'Could not build the activation package.'); }
       if (packageValue.assetVersionKey !== row.asset_version_key) {
@@ -1114,7 +1115,6 @@ export async function disposeRwaNominationReviewWithSafePackage(
       let exactJson;
       try { exactJson = JSON.stringify(packageValue); }
       catch { fail('safe_package_failed', 'Activation package is not JSON serializable.'); }
-      if (exactJson.includes('BigInt')) fail('safe_package_failed', 'Activation package is not JSON serializable.');
       const safeTransaction = JSON.parse(exactJson);
       const calldataHash = keccak256(packageValue.data);
       proposal = (await client.query(
@@ -1123,7 +1123,7 @@ export async function disposeRwaNominationReviewWithSafePackage(
            review_id,approved_at,valid_until,status,created_at,updated_at)
          VALUES ($1,$2,$3,$4::jsonb,$5,$6,$7,$8,$9,'safe_package_ready',$8,$8) RETURNING *`,
         [id, row.asset_version_key, registryAddress, exactJson, calldataHash, row.evidence_hash,
-          reviewId, at, validUntil],
+          reviewId, approvedAt, validUntil],
       )).rows[0];
     }
     await appendEvent(client, {
@@ -1132,7 +1132,7 @@ export async function disposeRwaNominationReviewWithSafePackage(
       actorType: 'reviewer', actorId: reviewer,
       details: { disposition: disposition.disposition, reason: disposition.reason,
         evidenceHash: disposition.evidenceHash, reviewId: proposal?.review_id ?? null },
-      at,
+      at: exactAt,
     });
     return {
       nomination: nominationView(row, supportOf(row, refreshed.slots, refreshed.seats)),
@@ -1184,43 +1184,38 @@ export async function rwaNominationReviewQueue(db, options = {}) {
     const ids = candidates.map((row) => String(row.id));
     const seats = await seatSet(client);
     const stale = await boundedBoardStaleSlots(client, ids, seats);
-    const params = [reviewer];
-    const list = inList(ids, params);
-    let cursor = '';
-    if (page.cursor) {
-      params.push(new Date(page.cursor.at), page.cursor.id);
-      cursor = `AND (created_at > $${params.length - 1} OR (created_at=$${params.length - 1} AND id>$${params.length}))`;
-    }
-    params.push(page.limit + 1);
-    const ranked = (await client.query(
-      `SELECT * FROM rwa_nominations_v2
-        WHERE id IN (${list}) AND (status='review_requested' OR (status='under_review' AND claimed_by=$1))
-          ${cursor} ORDER BY created_at ASC,id ASC LIMIT $${params.length}`,
-      params,
-    )).rows;
-    const hasMore = ranked.length > page.limit;
-    const selected = ranked.slice(0, page.limit);
-    const selectedIds = selected.map((row) => String(row.id));
-    const locked = await lockNominationsById(client, selectedIds);
-    const byId = new Map(locked.map((row) => [String(row.id), row]));
+    const locked = await lockNominationsById(client, ids);
     const at = await wallClock(client);
-    const slotMap = await endorsementsFor(client, selectedIds, seats);
-    const staleMap = new Map(selectedIds.map((id) => [id, []]));
+    const slotMap = await endorsementsFor(client, ids, seats);
+    const staleMap = new Map(ids.map((id) => [id, []]));
     for (const slot of stale) if (slot.stale_kind === 'endorsement') {
       staleMap.get(String(slot.nomination_id))?.push({ ...slot, active: true });
     }
-    const items = [];
-    for (const rank of selected) {
-      const row = byId.get(String(rank.id));
-      if (!row) continue;
+    const eligible = [];
+    for (const row of locked) {
       const slots = [...(slotMap.get(String(row.id)) ?? []), ...(staleMap.get(String(row.id)) ?? [])];
       const refreshed = await refreshLocked(client, row, at, seats, slots);
       if (row.status === 'review_requested' || (row.status === 'under_review' && row.claimed_by === reviewer)) {
-        items.push(nominationView(row, supportOf(row, refreshed.slots, refreshed.seats)));
+        eligible.push({ row, support: supportOf(row, refreshed.slots, refreshed.seats) });
       }
     }
+    eligible.sort((a, b) => b.support - a.support
+      || new Date(a.row.created_at).getTime() - new Date(b.row.created_at).getTime()
+      || (String(a.row.id) < String(b.row.id) ? -1 : String(a.row.id) > String(b.row.id) ? 1 : 0));
+    const afterCursor = !page.cursor ? eligible : eligible.filter(({ row, support }) => (
+      support < page.cursor.support || (support === page.cursor.support
+        && (new Date(row.created_at).getTime() > new Date(page.cursor.at).getTime()
+          || (new Date(row.created_at).getTime() === new Date(page.cursor.at).getTime()
+            && String(row.id) > page.cursor.id)))
+    ));
+    const hasMore = afterCursor.length > page.limit;
+    const selected = afterCursor.slice(0, page.limit);
     const last = selected.at(-1);
-    return { items, hasMore, nextCursor: hasMore ? nextCursor('review_queue', last) : null };
+    return {
+      items: selected.map(({ row, support }) => nominationView(row, support)),
+      hasMore,
+      nextCursor: hasMore && last ? nextCursor('review_queue', last.row, last.support) : null,
+    };
   }, { isolation: 'REPEATABLE READ' });
 }
 

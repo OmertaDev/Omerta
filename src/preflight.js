@@ -231,11 +231,18 @@ export function preflight(env = process.env) {
       errors.push('JWT_SECRET is too weak — HS256 over a low-entropy secret is offline-brute-forceable, after which anyone can forge a token for any account. Use a long, high-entropy random secret (≥24 chars, ≥8 distinct).');
   }
   const reviewerKey = typeof env.RWA_REVIEWER_KEY === 'string' && env.RWA_REVIEWER_KEY.length > 0;
-  const reviewerId = typeof env.RWA_REVIEWER_ID === 'string' && env.RWA_REVIEWER_ID.length > 0;
-  if (reviewerKey !== reviewerId)
+  const reviewerIdConfigured = typeof env.RWA_REVIEWER_ID === 'string' && env.RWA_REVIEWER_ID.length > 0;
+  const reviewerId = typeof env.RWA_REVIEWER_ID === 'string' ? env.RWA_REVIEWER_ID.trim() : '';
+  if (reviewerKey !== reviewerIdConfigured)
     errors.push('RWA_REVIEWER_KEY and RWA_REVIEWER_ID must be configured together; a partial reviewer perimeter is disabled.');
+  if (reviewerIdConfigured && (reviewerId.length < 1 || reviewerId.length > 200))
+    errors.push('RWA_REVIEWER_ID must contain 1 through 200 characters after trimming.');
   if (reviewerKey && env.MOD_KEY && env.RWA_REVIEWER_KEY === env.MOD_KEY)
     errors.push('RWA_REVIEWER_KEY must be distinct from MOD_KEY; reviewer and moderator authority cannot share a secret.');
+  if (reviewerKey && reviewerId && reviewerId === env.RWA_REVIEWER_KEY)
+    errors.push('The public reviewer identity must be distinct from the reviewer secret.');
+  if (reviewerId && env.MOD_KEY && reviewerId === env.MOD_KEY)
+    errors.push('The public reviewer identity must be distinct from MOD_KEY.');
   if (env.MARKET_SEED === 'omerta-server-seed')
     errors.push('MARKET_SEED is the public default, which makes every seeded draw (Numbers/Track/Fight/goods) predictable.');
   if (env.MARKET_SEED) {

@@ -259,7 +259,11 @@ export async function buildServer() {
     const pre = [].concat(r.preHandler || []);
     const names = pre.map((f) => (f && f.name) || '');
     const isMod = names.includes('modAuth');
-    const isRwaReviewer = names.includes('rwaReviewerAuth');
+    const declaredReviewer = r.config?.authKind === 'rwaReviewerAuth';
+    if (declaredReviewer !== names.includes('rwaReviewerAuth')) {
+      throw new Error(`RWA reviewer route metadata/auth mismatch: ${r.method} ${r.url}`);
+    }
+    const isRwaReviewer = declaredReviewer;
     const playerAuth = names.includes('auth');
     const hasAuth = playerAuth || isMod || isRwaReviewer;
     const authKind = isRwaReviewer ? 'rwaReviewerAuth' : isMod ? 'modAuth' : playerAuth ? 'auth' : null;
@@ -900,7 +904,8 @@ export async function buildServer() {
   await initRateLimiter();
   const guarded = (req) => (req.method === 'POST' || req.method === 'DELETE')
     && req.url.startsWith('/v1') && req.url !== '/v1/path-quiz'
-    && !req.url.startsWith('/v1/auth') && !req.url.startsWith('/v1/mod');
+    && !req.url.startsWith('/v1/auth') && !req.url.startsWith('/v1/mod')
+    && req.routeOptions?.config?.authKind !== 'rwaReviewerAuth';
   app.addHook('preHandler', async (req, reply) => {
     // E-M1: auth endpoints are excluded from the account-keyed limiter above (they're unauthenticated),
     // so throttle them per-IP — bounds guest-mint Sybil floods + X/Privy auth-fetch amplification.
