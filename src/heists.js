@@ -471,11 +471,38 @@ export async function heistBoard(pool, characterId) {
     caseEnergy: HEIST_CASE_ENERGY, ranks: HEIST_RANKS };
 }
 
+// The public board shows only the newest 30 plans. Explore needs exact actor eligibility across the
+// authoritative planning set, but never needs to reveal which plan supplied the witness. This query
+// projects only job/gate aggregates, excludes stale/own/busy candidates in SQL, and returns booleans.
+export async function heistExactAvailability(pool, ch, { agent = false, pulled = 0 } = {}) {
+  const none = { canJoin: false, policyJoinOnly: false };
+  if (jailed(ch) || hospitalized(ch) || safeHoused(ch) || cooling(ch)) return none;
+  const rows = (await pool.query(
+    `SELECT ch.job, COUNT(m.character_id) AS crew
+       FROM crew_heists ch
+       LEFT JOIN crew_heist_members m ON m.heist_id=ch.id
+       LEFT JOIN businesses b ON b.id=ch.target_business
+      WHERE ch.status='planning' AND ch.created_at >= $2
+        AND ch.id NOT IN (SELECT mine.heist_id FROM crew_heist_members mine WHERE mine.character_id=$1)
+        AND (b.character_id IS NULL OR b.character_id <> $1)
+      GROUP BY ch.id, ch.job`,
+    [ch.id, new Date(Date.now() - HEIST_PLAN_TTL_MS)])).rows;
+  const level = levelOf(Number(ch.respect || 0));
+  const eligible = rows.filter((row) => {
+    const job = heistJobOf(row.job);
+    return job && level >= job.lvl && (!job.minPulled || Number(pulled) >= job.minPulled)
+      && Number(row.crew) < job.crew;
+  });
+  const canJoin = eligible.some((row) => !agent || !heistJobOf(row.job).rateBps);
+  const policyJoinOnly = agent && !canJoin && eligible.some((row) => heistJobOf(row.job).rateBps);
+  return { canJoin, policyJoinOnly };
+}
+
 // Discovery and the heist screen read the same board vocabulary. A social Crew membership is not a
 // heist prerequisite: a player can front an eligible ordinary job, join an open role, or leave their
 // current plan. Keeping this beside gateJoiner/heistBoard prevents Explore from inventing a second
 // organization gate for a system whose authority is the score board itself.
-export function heistAvailability(ch, board = {}, { agent = false } = {}) {
+export function heistAvailability(ch, board = {}, { agent = false, exact = null } = {}) {
   if (board.mine) return { ready: true, blocker: null, canLeave: true, canPlan: false, canJoin: false };
   if (jailed(ch) || hospitalized(ch) || safeHoused(ch) || cooling(ch))
     return { ready: false, blocker: 'status', canLeave: false, canPlan: false, canJoin: false };
@@ -492,8 +519,10 @@ export function heistAvailability(ch, board = {}, { agent = false } = {}) {
     && Number(plan.crewNeeded || 0) > 0 && (plan.rolesOpen || []).length > 0);
   // The inside job redirects a real player's accrued front income. Agents may still plan/join the
   // ordinary co-op catalog, but the conservative autonomous policy keeps that selective PvP leg human.
-  const canJoin = joinable.some((plan) => !agent || !(byId.get(plan.job) || plan).rateBps);
-  const policyBlocked = agent && !canPlan && joinable.some((plan) => (byId.get(plan.job) || plan).rateBps);
+  const canJoin = exact && Object.hasOwn(exact, 'canJoin') ? !!exact.canJoin
+    : joinable.some((plan) => !agent || !(byId.get(plan.job) || plan).rateBps);
+  const policyBlocked = agent && !canPlan && (exact && Object.hasOwn(exact, 'policyJoinOnly')
+    ? !!exact.policyJoinOnly : joinable.some((plan) => (byId.get(plan.job) || plan).rateBps));
   const ready = canPlan || canJoin;
   return { ready, blocker: ready ? null : policyBlocked ? 'policy' : 'resource', canLeave: false, canPlan, canJoin };
 }

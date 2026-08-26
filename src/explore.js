@@ -18,11 +18,11 @@ import { convoyBoard } from './convoy.js';
 import { clueBoard } from './clues.js';
 import { cornerBoard } from './corner.js';
 import { contactsBoard } from './contacts.js';
-import { favorBoard } from './favors.js';
-import { heistAvailability, heistBoard } from './heists.js';
+import { favorBoard, favorExactAvailability } from './favors.js';
+import { heistAvailability, heistBoard, heistExactAvailability } from './heists.js';
 import { lawBoard } from './law.js';
-import { loanAvailability, loanBoard } from './loans.js';
-import { marketAvailability, marketBoard } from './market.js';
+import { loanAvailability, loanBoard, loanExactAvailability } from './loans.js';
+import { marketAvailability, marketBoard, marketExactAvailability } from './market.js';
 import { megaBoard } from './megaproject.js';
 import { warBoard } from './npcwar.js';
 import { portBoard } from './port.js';
@@ -243,7 +243,8 @@ export function systemEligibility(entry, ctx) {
       return stop('social');
     }
     case 'crew': {
-      const available = heistAvailability(ctx.ch, ctx.live.heistBoard, { agent: !!ctx.acct.agent_flag });
+      const available = heistAvailability(ctx.ch, ctx.live.heistBoard,
+        { agent: !!ctx.acct.agent_flag, exact: ctx.live.heistExact });
       if (available.canLeave) return op('heist:leave');
       if (available.canPlan) return op('heist:plan');
       if (available.canJoin) return op('heist:join');
@@ -350,14 +351,14 @@ export function systemEligibility(entry, ctx) {
     }
     case 'market': {
       const available = marketAvailability(ctx.ch, { acct: ctx.acct, owned: ctx.owned },
-        ctx.live.marketBoard, ctx.live.marketOwn);
+        ctx.live.marketBoard, ctx.live.marketOwn, ctx.live.marketExact);
       const witness = ['canCancel', 'canClaim', 'canList', 'canPostOrder', 'canFillOrder', 'canBuyGood', 'canBuyCar', 'canBidCar']
         .find((key) => available[key]);
       return witness ? op(`market:${witness.slice(3).toLowerCase()}`) : stop(available.blocker);
     }
     case 'loan': {
       const available = loanAvailability(ctx.ch, ctx.acct, ctx.owned, ctx.live.loanBoard,
-        { agent: !!ctx.acct.agent_flag });
+        { agent: !!ctx.acct.agent_flag, exact: ctx.live.loanExact });
       const witness = ['canRepay', 'canLend', ...(!ctx.acct.agent_flag
         ? ['canTakeHouse', 'canTakeOffer', 'canBuyPaper'] : [])].find((key) => available[key]);
       return witness ? op(`loan:${witness.slice(3).toLowerCase()}`) : stop(available.blocker);
@@ -489,6 +490,7 @@ export function systemEligibility(entry, ctx) {
           && (call.kind !== 'freight' || num(ctx.owned.cargo?.[call.good]) >= num(call.qty))) return op('contact:fulfill');
       const favor = (ctx.live.favorBoard?.open || []).find((candidate) => candidate.canRun === true);
       if (favor) return op(`favor:run:${favor.id}`);
+      if (ctx.live.favorExact?.canRun) return op('favor:run');
       if (ctx.live.favorBoard?.canPost) return op('favor:post');
       return stop('status');
     }
@@ -558,9 +560,12 @@ export async function systemCoverage(db, ch, acct = {}, owned = {}, options = {}
     collectionItems: live.collectionItems || [],
     landmarkMinDedicate: live.landmarkMinDedicate ?? LANDMARKS.MIN_DEDICATE,
     heistBoard: live.heistBoard || { jobs: [], open: [], mine: null, you: { pulled: 0 } },
+    heistExact: live.heistExact || null,
     loanBoard: live.loanBoard || { offers: [], active: [], paper: [], house: {}, terms: { min: LOAN.MIN } },
+    loanExact: live.loanExact || null,
     marketBoard: live.marketBoard || { listings: [], levers: {} },
     marketOwn: live.marketOwn || [],
+    marketExact: live.marketExact || null,
     socialTargets: Object.hasOwn(live, 'socialTargets') ? live.socialTargets : undefined,
     joinableFamilyIds: live.joinableFamilyIds || fallbackFamilies,
     convoyBoard: live.convoyBoard || { mine: null, inTransit: [] },
@@ -582,6 +587,7 @@ export async function systemCoverage(db, ch, acct = {}, owned = {}, options = {}
     cornerBoard: live.cornerBoard || { tasks: [] },
     contactsBoard: live.contactsBoard || { call: null },
     favorBoard: live.favorBoard || { open: [], mine: [] },
+    favorExact: live.favorExact || null,
     vouchBoard: live.vouchBoard || { slotsLeft: VOUCH.MAX_OUT, given: [] },
     clueBoard: live.clueBoard || { scroll: null },
     worldBoard: live.worldBoard || { npcs: WORLD_NPCS.map((npc) => ({ id: npc.id, coop: !!npc.coop,
@@ -702,10 +708,18 @@ async function coverageLiveContext(db, ch, acct, owned, onlineAccounts, needs) {
       SELECT 'boat' AS kind, id, rarity, minted_onchain, false AS listed, false AS pledged,
             kind AS kind_id, run_until FROM boats WHERE character_id=$1`, [ch.id]);
   if (wants('landmark')) tasks.landmarks = db.query('SELECT district_id, amount FROM landmarks');
-  if (wants('crew')) tasks.heists = heistBoard(db, ch.id);
-  if (wants('loan')) tasks.loans = loanBoard(db, ch);
+  if (wants('crew')) {
+    tasks.heists = heistBoard(db, ch.id);
+    tasks.heistExact = heistExactAvailability(db, ch,
+      { agent: !!acct.agent_flag, pulled: Number(acct.heists_pulled || 0) });
+  }
+  if (wants('loan')) {
+    tasks.loans = loanBoard(db, ch);
+    tasks.loanExact = loanExactAvailability(db, ch, acct, owned);
+  }
   if (wants('market')) {
     tasks.market = marketBoard(db);
+    tasks.marketExact = marketExactAvailability(db, ch, { acct, owned });
     tasks.marketOwn = db.query(
       `SELECT seller_character, kind, status, filled_qty, district, good_id, qty, price,
               bidder, bid, reserve
@@ -724,6 +738,7 @@ async function coverageLiveContext(db, ch, acct, owned, onlineAccounts, needs) {
     tasks.corner = cornerBoard(ch, db);
     tasks.contacts = contactsBoard(db, ch.account_id);
     tasks.favors = favorBoard(ch, db, { acct, owned });
+    tasks.favorExact = favorExactAvailability(ch, db, { acct, owned });
   }
   if (wants('clue')) tasks.clue = clueBoard(db, ch, acct);
   if (wants('family')) {
@@ -760,9 +775,12 @@ async function coverageLiveContext(db, ch, acct, owned, onlineAccounts, needs) {
     landmarkMinDedicate: Math.min(...Object.keys(LANDMARKS.PLACES).map((district) =>
       landmarkByDistrict.has(district) ? landmarkByDistrict.get(district) + 1 : LANDMARKS.MIN_DEDICATE)),
     heistBoard: loaded.heists,
+    heistExact: loaded.heistExact,
     loanBoard: loaded.loans,
+    loanExact: loaded.loanExact,
     marketBoard: loaded.market,
     marketOwn: loaded.marketOwn?.rows,
+    marketExact: loaded.marketExact,
     convoyBoard: loaded.convoy,
     portBoard: loaded.port,
     stableBoard: loaded.stable,
@@ -774,6 +792,7 @@ async function coverageLiveContext(db, ch, acct, owned, onlineAccounts, needs) {
     cornerBoard: loaded.corner,
     contactsBoard: loaded.contacts,
     favorBoard: loaded.favors,
+    favorExact: loaded.favorExact,
     vouchBoard: loaded.vouches,
     clueBoard: loaded.clue,
     worldBoard: loaded.world,

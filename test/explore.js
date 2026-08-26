@@ -906,6 +906,263 @@ const routeName = await call('POST', '/v1/vanity/name', {
 });
 assert.equal(routeName.code, 200, 'the name operation witnessed by the Vanity price passes its authoritative mutation');
 
+// Presentation caps may bound a public board, but they may never become an eligibility cap. One
+// hundred expired-but-unswept orders sort ahead of the live row here: the UI remains bounded and
+// empty after expiry filtering, while Explore must still find the actor-scoped fill operation.
+const { body: { token: cappedMarketToken } } = await call('POST', '/v1/auth/guest');
+await call('POST', '/v1/character', { token: cappedMarketToken, body: { name: 'Market Marcy' } });
+const cappedMarketMe = (await call('GET', '/v1/me', { token: cappedMarketToken })).body.character;
+const cappedMarketAccount = (await pool.query(
+  'SELECT account_id FROM characters WHERE id=$1', [cappedMarketMe.id])).rows[0].account_id;
+await pool.query('UPDATE characters SET respect=$2, cash=0, loc=$3 WHERE id=$1',
+  [cappedMarketMe.id, respectForLevel(30), 'brick']);
+await pool.query('INSERT INTO character_cargo (character_id,good_id,qty) VALUES ($1,$2,$3)',
+  [cappedMarketMe.id, 'booze', 1]);
+const { body: { token: marketBuyerToken } } = await call('POST', '/v1/auth/guest');
+await call('POST', '/v1/character', { token: marketBuyerToken, body: { name: 'Buyer Bruno' } });
+const marketBuyer = (await call('GET', '/v1/me', { token: marketBuyerToken })).body.character;
+for (let index = 0; index < 100; index++) {
+  await pool.query(
+    `INSERT INTO market_listings
+       (id,seller_character,kind,good_id,qty,district,price,status,expires_at)
+     VALUES ($1,$2,'order','booze',1,'brick',100,'live',$3)`,
+    [`capped-expired-order-${index}`, marketBuyer.id, new Date(Date.now() - (200 - index) * 1000)]);
+}
+const cappedMarketOrder = 'capped-live-order-101';
+await pool.query(
+  `INSERT INTO market_listings
+     (id,seller_character,kind,good_id,qty,district,price,status,expires_at)
+   VALUES ($1,$2,'order','booze',1,'brick',100,'live',$3)`,
+  [cappedMarketOrder, marketBuyer.id, new Date(Date.now() + 3600_000)]);
+const cappedMarketBoard = (await call('GET', '/v1/market')).body;
+assert.equal(cappedMarketBoard.listings.length, 0,
+  'the ordinary Market UI stays capped and filters its first 100 expired rows');
+await markVisitedExcept('the black market', cappedMarketAccount, 'coverage-market-cap');
+routeBoard = (await call('GET', '/v1/explore', { token: cappedMarketToken })).body;
+assert.equal(routeBoard.next?.systemId, 'black-market',
+  'a fillable order after the presentation cap remains exactly eligible');
+const cappedMarketFill = await call('POST', `/v1/market/${cappedMarketOrder}/fill`, {
+  token: cappedMarketToken, body: { qty: 1 },
+});
+assert.equal(cappedMarketFill.code, 200,
+  'the beyond-cap Market fill witnessed by Explore passes the authoritative mutation');
+
+// The loan market's 50 rows are likewise presentation, not authority. Newer self-authored offers
+// occupy the screen while an older public offer remains genuinely takeable.
+const { body: { token: cappedLoanToken } } = await call('POST', '/v1/auth/guest');
+await call('POST', '/v1/character', { token: cappedLoanToken, body: { name: 'Loan Lenny' } });
+const cappedLoanMe = (await call('GET', '/v1/me', { token: cappedLoanToken })).body.character;
+const cappedLoanAccount = (await pool.query(
+  'SELECT account_id FROM characters WHERE id=$1', [cappedLoanMe.id])).rows[0].account_id;
+await pool.query('UPDATE characters SET respect=$2, cash=0 WHERE id=$1',
+  [cappedLoanMe.id, respectForLevel(30)]);
+for (let index = 0; index < 50; index++) {
+  await pool.query(
+    `INSERT INTO loans (id,lender_character,principal,rate,hours,status,offered_at)
+     VALUES ($1,$2,$3,$4,24,'open',$5)`,
+    [`capped-own-offer-${index}`, cappedLoanMe.id, LOAN.MIN, 0.1,
+      new Date(Date.now() - index * 1000)]);
+}
+const cappedLoanOffer = 'capped-public-offer-51';
+await pool.query(
+  `INSERT INTO loans (id,lender_character,principal,rate,hours,status,offered_at)
+   VALUES ($1,$2,$3,$4,24,'open',$5)`,
+  [cappedLoanOffer, marketBuyer.id, LOAN.MIN, 0.1, new Date(Date.now() - 60_000)]);
+const cappedLoanBoard = (await call('GET', '/v1/loans', { token: cappedLoanToken })).body;
+assert.equal(cappedLoanBoard.offers.length, 50, 'the ordinary Loan UI keeps its 50-offer cap');
+assert.ok(cappedLoanBoard.offers.every((offer) => offer.mine),
+  'the takeable 51st offer does not leak into the capped UI board');
+await markVisitedExcept('loan sharking', cappedLoanAccount, 'coverage-loan-offer-cap');
+routeBoard = (await call('GET', '/v1/explore', { token: cappedLoanToken })).body;
+assert.equal(routeBoard.next?.systemId, 'loan-sharking',
+  'a takeable loan offer after the presentation cap remains exactly eligible');
+const cappedLoanTake = await call('POST', `/v1/loans/${cappedLoanOffer}/take`, { token: cappedLoanToken });
+assert.equal(cappedLoanTake.code, 200,
+  'the beyond-cap loan take witnessed by Explore passes the authoritative mutation');
+
+// Paper has an independent 50-row window. The first fifty asks are the actor's own paper (invalid
+// by buyPaper), followed by one affordable receivable from two other living players.
+await pool.query("UPDATE loans SET status='cancelled' WHERE status='open'");
+const { body: { token: cappedPaperToken } } = await call('POST', '/v1/auth/guest');
+await call('POST', '/v1/character', { token: cappedPaperToken, body: { name: 'Paper Penny' } });
+const cappedPaperMe = (await call('GET', '/v1/me', { token: cappedPaperToken })).body.character;
+const cappedPaperAccount = (await pool.query(
+  'SELECT account_id FROM characters WHERE id=$1', [cappedPaperMe.id])).rows[0].account_id;
+await pool.query('UPDATE characters SET respect=$2, cash=2 WHERE id=$1',
+  [cappedPaperMe.id, respectForLevel(30)]);
+for (let index = 0; index < 50; index++) {
+  await pool.query(
+    `INSERT INTO loans
+       (id,lender_character,borrower_character,principal,rate,hours,status,due_at,for_sale)
+     VALUES ($1,$2,$3,$4,$5,24,'active',$6,1)`,
+    [`capped-own-paper-${index}`, cappedPaperMe.id, marketBuyer.id, LOAN.MIN, 0.1,
+      new Date(Date.now() + 3600_000)]);
+}
+const cappedLoanPaper = 'capped-public-paper-51';
+await pool.query(
+  `INSERT INTO loans
+     (id,lender_character,borrower_character,principal,rate,hours,status,due_at,for_sale)
+   VALUES ($1,$2,$3,$4,$5,24,'active',$6,2)`,
+  [cappedLoanPaper, marketBuyer.id, cappedLoanMe.id, LOAN.MIN, 0.1,
+    new Date(Date.now() + 3600_000)]);
+const cappedPaperBoard = (await call('GET', '/v1/loans', { token: cappedPaperToken })).body;
+assert.equal(cappedPaperBoard.paper.length, 50, 'the ordinary Loan UI keeps its 50-paper cap');
+assert.ok(!cappedPaperBoard.paper.some((paper) => paper.id === cappedLoanPaper),
+  'the affordable 51st receivable does not leak into the capped UI board');
+assert.ok(cappedPaperBoard.paper.every((paper) => paper.mine),
+  'the capped rows are all paper the actor already owns');
+await markVisitedExcept('loan sharking', cappedPaperAccount, 'coverage-loan-paper-cap');
+routeBoard = (await call('GET', '/v1/explore', { token: cappedPaperToken })).body;
+assert.equal(routeBoard.next?.systemId, 'loan-sharking',
+  'an affordable loan paper after the presentation cap remains exactly eligible');
+const cappedPaperBuy = await call('POST', `/v1/loans/${cappedLoanPaper}/buy`, { token: cappedPaperToken });
+assert.equal(cappedPaperBuy.code, 200,
+  'the beyond-cap paper purchase witnessed by Explore passes the authoritative mutation');
+
+// Crew Heists shows thirty newest plans. Fill those seats completely, then put one ordinary PvE
+// plan at row 31 with a real open role: eligibility must search the authoritative planning set.
+const { body: { token: cappedHeistToken } } = await call('POST', '/v1/auth/guest');
+await call('POST', '/v1/character', { token: cappedHeistToken, body: { name: 'Heist Hattie' } });
+const cappedHeistMe = (await call('GET', '/v1/me', { token: cappedHeistToken })).body.character;
+const cappedHeistAccount = (await pool.query(
+  'SELECT account_id FROM characters WHERE id=$1', [cappedHeistMe.id])).rows[0].account_id;
+await pool.query('UPDATE characters SET respect=$2, cash=0 WHERE id=$1',
+  [cappedHeistMe.id, respectForLevel(30)]);
+for (let index = 0; index < 30; index++) {
+  const id = `capped-full-heist-${index}`;
+  await pool.query(
+    `INSERT INTO crew_heists (id,job,leader_character,status,created_at)
+     VALUES ($1,'corner',$2,'planning',$3)`,
+    [id, marketBuyer.id, new Date(Date.now() - index * 1000)]);
+  await pool.query(
+    `INSERT INTO crew_heist_members (heist_id,character_id,role) VALUES
+      ($1,$2,'muscle'),($1,$3,'wheelman')`, [id, marketBuyer.id, cappedLoanMe.id]);
+}
+const cappedHeistPlan = 'capped-open-heist-31';
+await pool.query(
+  `INSERT INTO crew_heists (id,job,leader_character,status,created_at)
+   VALUES ($1,'corner',$2,'planning',$3)`,
+  [cappedHeistPlan, marketBuyer.id, new Date(Date.now() - 60_000)]);
+await pool.query(
+  `INSERT INTO crew_heist_members (heist_id,character_id,role) VALUES ($1,$2,'muscle')`,
+  [cappedHeistPlan, marketBuyer.id]);
+const cappedHeistBoard = (await call('GET', '/v1/heists', { token: cappedHeistToken })).body;
+assert.equal(cappedHeistBoard.open.length, 30, 'the ordinary Heist UI keeps its 30-plan cap');
+assert.ok(!cappedHeistBoard.open.some((plan) => plan.id === cappedHeistPlan),
+  'the joinable 31st plan does not leak into the capped UI board');
+await markVisitedExcept('crew heists', cappedHeistAccount, 'coverage-heist-cap');
+routeBoard = (await call('GET', '/v1/explore', { token: cappedHeistToken })).body;
+assert.equal(routeBoard.next?.systemId, 'crew-heists',
+  'a joinable PvE heist after the presentation cap remains exactly eligible');
+const cappedHeistJoin = await call('POST', `/v1/heists/${cappedHeistPlan}/join`, {
+  token: cappedHeistToken, body: { role: 'wheelman' },
+});
+assert.equal(cappedHeistJoin.code, 200,
+  'the beyond-cap heist join witnessed by Explore passes the authoritative mutation');
+
+// The exact scan retains the same conservative agent policy as the capped board: ordinary PvE
+// co-op remains discoverable, while a player-front inside job is policy-only, never executable.
+const { body: { token: agentGuestToken } } = await call('POST', '/v1/auth/guest');
+const { body: { token: cappedHeistAgentToken } } = await call('POST', '/v1/auth/agent-key', {
+  token: agentGuestToken,
+});
+await call('POST', '/v1/character', { token: cappedHeistAgentToken, body: { name: 'Agent Angie' } });
+const cappedHeistAgent = (await call('GET', '/v1/me', { token: cappedHeistAgentToken })).body.character;
+const cappedHeistAgentAccount = (await pool.query(
+  'SELECT account_id FROM characters WHERE id=$1', [cappedHeistAgent.id])).rows[0].account_id;
+await pool.query('UPDATE characters SET respect=$2, cash=0 WHERE id=$1',
+  [cappedHeistAgent.id, respectForLevel(30)]);
+const cappedAgentPvePlan = 'capped-agent-pve-heist';
+await pool.query(
+  `INSERT INTO crew_heists (id,job,leader_character,status,created_at)
+   VALUES ($1,'corner',$2,'planning',$3)`,
+  [cappedAgentPvePlan, marketBuyer.id, new Date(Date.now() - 70_000)]);
+await pool.query(
+  `INSERT INTO crew_heist_members (heist_id,character_id,role) VALUES ($1,$2,'muscle')`,
+  [cappedAgentPvePlan, marketBuyer.id]);
+await markVisitedExcept('crew heists', cappedHeistAgentAccount, 'coverage-agent-heist-cap');
+routeBoard = (await call('GET', '/v1/explore', { token: cappedHeistAgentToken })).body;
+assert.equal(routeBoard.next?.systemId, 'crew-heists',
+  'agent exact eligibility preserves an ordinary beyond-cap PvE heist join');
+await pool.query("UPDATE crew_heists SET status='abandoned' WHERE id=$1", [cappedAgentPvePlan]);
+const cappedAgentTargetBusiness = 'capped-agent-inside-target';
+await pool.query(
+  `INSERT INTO businesses (id,character_id,kind) VALUES ($1,$2,'laundromat')`,
+  [cappedAgentTargetBusiness, marketBuyer.id]);
+const cappedAgentInsidePlan = 'capped-agent-inside-heist';
+await pool.query(
+  `INSERT INTO crew_heists (id,job,leader_character,target_business,status,created_at)
+   VALUES ($1,'inside',$2,$3,'planning',$4)`,
+  [cappedAgentInsidePlan, cappedLoanMe.id, cappedAgentTargetBusiness,
+    new Date(Date.now() - 80_000)]);
+await pool.query(
+  `INSERT INTO crew_heist_members (heist_id,character_id,role) VALUES ($1,$2,'brains')`,
+  [cappedAgentInsidePlan, cappedLoanMe.id]);
+routeBoard = (await call('GET', '/v1/explore', { token: cappedHeistAgentToken })).body;
+assert.equal(routeBoard.next, null,
+  'agent exact eligibility excludes a beyond-cap player-front inside-job join');
+assert.equal(routeBoard.blocked.policy, 1,
+  'an otherwise joinable exact inside-job witness is classified as agent policy');
+
+// Street Life's Favor board presents the forty richest reachable asks. Keep all forty invalid by
+// moving their poster away, then put a face-to-face, cargo-backed favor at row 41. Corner work is
+// already accepted (not completed) so the favor is the sole Street Life operation in this fixture.
+const { body: { token: cappedFavorToken } } = await call('POST', '/v1/auth/guest');
+await call('POST', '/v1/character', { token: cappedFavorToken, body: { name: 'Favor Fiona' } });
+const cappedFavorMe = (await call('GET', '/v1/me', { token: cappedFavorToken })).body.character;
+const cappedFavorAccount = (await pool.query(
+  'SELECT account_id FROM characters WHERE id=$1', [cappedFavorMe.id])).rows[0].account_id;
+await pool.query('UPDATE characters SET respect=$2, cash=0, loc=$3 WHERE id=$1',
+  [cappedFavorMe.id, respectForLevel(30), 'brick']);
+await pool.query('INSERT INTO character_cargo (character_id,good_id,qty) VALUES ($1,$2,1)',
+  [cappedFavorMe.id, 'booze']);
+for (let slot = 0; slot < CORNER.PER_DAY; slot++) {
+  await pool.query(
+    `INSERT INTO corner_jobs (character_id,day,district,slot,baseline)
+     VALUES ($1,$2,'brick',$3,'{}')`,
+    [cappedFavorMe.id, Math.floor(Date.now() / 86400000), slot]);
+}
+const { body: { token: awayPosterToken } } = await call('POST', '/v1/auth/guest');
+await call('POST', '/v1/character', { token: awayPosterToken, body: { name: 'Away Arnie' } });
+const awayPoster = (await call('GET', '/v1/me', { token: awayPosterToken })).body.character;
+const awayPosterAccount = (await pool.query(
+  'SELECT account_id FROM characters WHERE id=$1', [awayPoster.id])).rows[0].account_id;
+await pool.query("UPDATE characters SET loc='docks' WHERE id=$1", [awayPoster.id]);
+const { body: { token: herePosterToken } } = await call('POST', '/v1/auth/guest');
+await call('POST', '/v1/character', { token: herePosterToken, body: { name: 'Here Harry' } });
+const herePoster = (await call('GET', '/v1/me', { token: herePosterToken })).body.character;
+const herePosterAccount = (await pool.query(
+  'SELECT account_id FROM characters WHERE id=$1', [herePoster.id])).rows[0].account_id;
+await pool.query("UPDATE characters SET loc='brick' WHERE id=$1", [herePoster.id]);
+await pool.query(
+  `INSERT INTO contacts (owner_account,contact_account,how) VALUES
+    ($1,$2,'met'),($1,$3,'met')`, [cappedFavorAccount, awayPosterAccount, herePosterAccount]);
+for (let index = 0; index < 40; index++) {
+  await pool.query(
+    `INSERT INTO favors (id,poster_character,good_id,qty,pay,district,status,expires_at)
+     VALUES ($1,$2,'booze',1,$3,'brick','open',$4)`,
+    [`capped-away-favor-${index}`, awayPoster.id, 1000 + index,
+      new Date(Date.now() + 3600_000)]);
+}
+const cappedFavor = 'capped-runnable-favor-41';
+await pool.query(
+  `INSERT INTO favors (id,poster_character,good_id,qty,pay,district,status,expires_at)
+   VALUES ($1,$2,'booze',1,500,'brick','open',$3)`,
+  [cappedFavor, herePoster.id, new Date(Date.now() + 3600_000)]);
+const cappedFavorBoard = (await call('GET', '/v1/favors', { token: cappedFavorToken })).body;
+assert.equal(cappedFavorBoard.open.length, 40, 'the ordinary Favor UI keeps its 40-row cap');
+assert.ok(cappedFavorBoard.open.every((favor) => !favor.canRun),
+  'all presented favors remain authoritatively unrunnable');
+assert.ok(!cappedFavorBoard.open.some((favor) => favor.id === cappedFavor),
+  'the runnable 41st favor does not leak into the capped UI board');
+await markVisitedExcept('street life', cappedFavorAccount, 'coverage-favor-cap');
+routeBoard = (await call('GET', '/v1/explore', { token: cappedFavorToken })).body;
+assert.equal(routeBoard.next?.systemId, 'street-life',
+  'a runnable favor after the presentation cap remains exactly eligible');
+const cappedFavorRun = await call('POST', `/v1/favors/${cappedFavor}/run`, { token: cappedFavorToken });
+assert.equal(cappedFavorRun.code, 200,
+  'the beyond-cap favor run witnessed by Explore passes the authoritative mutation');
+
 console.log('explore: canonical 40-system coverage ok');
 await app.close();
 process.exit(0);

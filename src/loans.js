@@ -118,11 +118,31 @@ export async function loanBoard(pool, ch) {
   return { offers, active, paper, house, terms: { min: LOAN.MIN, max: LOAN.MAX, rateMax: LOAN.RATE_MAX, termMaxHours: LOAN.TERM_MAX_H, vigBps: LOAN.VIG_BPS, paperTakeBps: LOAN.PAPER_TAKE_BPS, collateralOmrMax: LOAN.COLLATERAL_OMR_MAX } };
 }
 
+// The board is a presentation window. Explore asks this actor-scoped existence query for the exact
+// borrowing answer across every open offer; only the boolean survives, so directed/private offer
+// details and candidate ids never enter its payload. The mutation still revalidates under lock.
+export async function loanExactAvailability(pool, ch, acct = {}, owned = {}) {
+  const maxCar = (owned.cars || []).filter((car) => !car.listed && !car.pledged)
+    .reduce((best, car) => Math.max(best, carCollateralValue(car.model_id, car.trim_id, car.dmg)), 0);
+  const canTakeOffer = !jailed(ch) && !ch.welsher && !!(await pool.query(
+    `SELECT 1 FROM loans l
+      WHERE l.status='open' AND l.lender_character <> $1
+        AND (l.offered_to IS NULL OR l.offered_to=$1)
+        AND l.collateral_min <= $2 AND l.collateral_omr <= $3
+      LIMIT 1`, [ch.id, maxCar, Number(acct.omr || 0)])).rows[0];
+  const canBuyPaper = !jailed(ch) && !safeHoused(ch) && !!(await pool.query(
+    `SELECT 1 FROM loans l JOIN characters seller ON seller.id=l.lender_character AND seller.alive
+      WHERE l.status='active' AND l.for_sale IS NOT NULL AND l.for_sale <= $2
+        AND l.lender_character <> $1 AND l.borrower_character <> $1
+      LIMIT 1`, [ch.id, Number(ch.cash || 0)])).rows[0];
+  return { canTakeOffer, canBuyPaper };
+}
+
 // One shared interpretation of the board for recommendation/discovery callers. This deliberately
 // names operations rather than reducing the whole loan house to a pocket-cash threshold: borrowing
 // brings cash IN, while lending and repayment move cash OUT. Agent callers opt into the conservative
 // policy used by Agent Turn — lend or repay only, never originate a borrow or buy somebody's paper.
-export function loanAvailability(ch, acct = {}, owned = {}, board = {}, { agent = false } = {}) {
+export function loanAvailability(ch, acct = {}, owned = {}, board = {}, { agent = false, exact = null } = {}) {
   const cash = Number(ch.cash || 0);
   const active = board.active || [];
   const hasBorrowerDebt = active.some((loan) => loan.role === 'borrower') || !!board.house?.yourMarker;
@@ -137,13 +157,15 @@ export function loanAvailability(ch, acct = {}, owned = {}, board = {}, { agent 
       && carCollateralValue(car.model_id, car.trim_id, car.dmg) >= minimum);
   };
   const canTakeOffer = !jailed(ch) && !ch.welsher && !hasBorrowerDebt
-    && (board.offers || []).some((offer) => !offer.mine && (!offer.directed || offer.forMe) && collateralFits(offer));
+    && (exact && Object.hasOwn(exact, 'canTakeOffer') ? !!exact.canTakeOffer
+      : (board.offers || []).some((offer) => !offer.mine && (!offer.directed || offer.forMe) && collateralFits(offer)));
   const house = board.house || {};
   const canTakeHouse = !jailed(ch) && !ch.welsher && !hasBorrowerDebt && !!house.eligible
     && Number(house.available || 0) >= Number(house.min || LOAN.HOUSE_MIN);
   const canBuyPaper = !jailed(ch) && !safeHoused(ch)
-    && (board.paper || []).some((paper) => !paper.mine && !paper.borrowerMe
-      && cash >= Number(paper.price || Infinity));
+    && (exact && Object.hasOwn(exact, 'canBuyPaper') ? !!exact.canBuyPaper
+      : (board.paper || []).some((paper) => !paper.mine && !paper.borrowerMe
+        && cash >= Number(paper.price || Infinity)));
   const canBorrow = canTakeHouse || canTakeOffer;
   const ready = canRepay || canLend || (!agent && (canBorrow || canBuyPaper));
   const policyOnly = agent && (canBorrow || canBuyPaper) && !canRepay && !canLend;

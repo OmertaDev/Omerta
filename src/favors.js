@@ -43,6 +43,39 @@ async function posterTrunkCap(client, charId) {
   return trunkCap({ owned: { assets, skills } });
 }
 
+// Shared by the capped board and Explore's exact existence scan. Rows are internal query objects;
+// the returned Set never crosses an API boundary.
+async function runnableFavorRows(ch, client, h, rows) {
+  const runnable = new Set();
+  if (!h || !rows.length || jailed(ch)) return runnable;
+  const posterIds = [...new Set(rows.map((row) => row.poster_character))];
+  const slots = posterIds.map((_, index) => `$${index + 1}`).join(',');
+  // One transaction client, one query at a time (node-pg serializes this today and pg@9 rejects
+  // concurrent use); all three reads stay in the caller's snapshot.
+  const loads = await client.query(`SELECT character_id, COALESCE(SUM(qty),0) n FROM character_cargo
+    WHERE character_id IN (${slots}) GROUP BY character_id`, posterIds);
+  const assets = await client.query(
+    `SELECT character_id, asset_id FROM character_assets WHERE character_id IN (${slots})`, posterIds);
+  const skills = await client.query(
+    `SELECT character_id, skill_id FROM character_skills WHERE character_id IN (${slots})`, posterIds);
+  const loadByPoster = new Map(loads.rows.map((row) => [row.character_id, Number(row.n)]));
+  const assetsByPoster = new Map(posterIds.map((id) => [id, []]));
+  for (const row of assets.rows) assetsByPoster.get(row.character_id)?.push(row.asset_id);
+  const skillsByPoster = new Map(posterIds.map((id) => [id, new Set()]));
+  for (const row of skills.rows) skillsByPoster.get(row.character_id)?.add(row.skill_id);
+  for (const row of rows) {
+    const cap = trunkCap({ owned: {
+      assets: assetsByPoster.get(row.poster_character) || [],
+      skills: skillsByPoster.get(row.poster_character) || new Set(),
+    } });
+    if (row.district === ch.loc && row.poster_loc === row.district
+        && Number(h.owned?.cargo?.[row.good_id] || 0) >= Number(row.qty)
+        && Number(loadByPoster.get(row.poster_character) || 0) + Number(row.qty) <= cap)
+      runnable.add(row);
+  }
+  return runnable;
+}
+
 // the house cut, carved FROM the pay (the market paySeller shape): half to the street tax that
 // funds the buyback, half burns. One NULL-character row is what closes the escrow identity.
 async function payRunner(client, h, ch, pay) {
@@ -125,33 +158,7 @@ export async function favorBoard(ch, client, h = null) {
     districtName: districtName(f.district), note: f.note || null,
     expiresSeconds: Math.max(0, Math.ceil((new Date(f.expires_at) - Date.now()) / 1000)),
   });
-  const canRun = new Map();
-  if (h && open.length) {
-    const posterIds = [...new Set(open.map((row) => row.poster_character))];
-    const slots = posterIds.map((_, index) => `$${index + 1}`).join(',');
-    // One transaction client, one query at a time (node-pg serializes this today and pg@9 rejects
-    // concurrent use); all three reads stay in the caller's snapshot.
-    const loads = await client.query(`SELECT character_id, COALESCE(SUM(qty),0) n FROM character_cargo
-      WHERE character_id IN (${slots}) GROUP BY character_id`, posterIds);
-    const assets = await client.query(
-      `SELECT character_id, asset_id FROM character_assets WHERE character_id IN (${slots})`, posterIds);
-    const skills = await client.query(
-      `SELECT character_id, skill_id FROM character_skills WHERE character_id IN (${slots})`, posterIds);
-    const loadByPoster = new Map(loads.rows.map((row) => [row.character_id, Number(row.n)]));
-    const assetsByPoster = new Map(posterIds.map((id) => [id, []]));
-    for (const row of assets.rows) assetsByPoster.get(row.character_id)?.push(row.asset_id);
-    const skillsByPoster = new Map(posterIds.map((id) => [id, new Set()]));
-    for (const row of skills.rows) skillsByPoster.get(row.character_id)?.add(row.skill_id);
-    for (const row of open) {
-      const cap = trunkCap({ owned: {
-        assets: assetsByPoster.get(row.poster_character) || [],
-        skills: skillsByPoster.get(row.poster_character) || new Set(),
-      } });
-      canRun.set(row.id, !jailed(ch) && row.district === ch.loc && row.poster_loc === row.district
-        && Number(h.owned?.cargo?.[row.good_id] || 0) >= Number(row.qty)
-        && Number(loadByPoster.get(row.poster_character) || 0) + Number(row.qty) <= cap);
-    }
-  }
+  const canRun = await runnableFavorRows(ch, client, h, open);
   const outstanding = mine.reduce((sum, row) => sum + Number(row.qty || 0), 0);
   const canPost = !!h && !jailed(ch) && !safeHoused(ch) && mine.length < FAVOR.MAX_OPEN
     && Number(ch.cash || 0) >= FAVOR.MIN_PAY
@@ -161,9 +168,31 @@ export async function favorBoard(ch, client, h = null) {
     maxQty: FAVOR.MAX_QTY,
     canPost,
     open: open.map((f) => ({ ...shape(f), from: f.poster_name, here: f.district === ch.loc,
-      ...(h ? { canRun: !!canRun.get(f.id) } : {}) })),
+      ...(h ? { canRun: canRun.has(f) } : {}) })),
     mine: mine.map(shape),
   };
+}
+
+// Exact actor-scoped Favor eligibility across every reachable open request. SQL applies visibility,
+// expiry, location, face-to-face, and actor-cargo gates without a presentation limit; the shared
+// capacity helper applies the poster's canonical trunk authority. Only a boolean is returned.
+export async function favorExactAvailability(ch, client, h = {}) {
+  if (jailed(ch)) return { canRun: false };
+  const carried = Object.entries(h.owned?.cargo || {}).filter(([, qty]) => Number(qty) > 0);
+  if (!carried.length) return { canRun: false };
+  const params = [ch.account_id, ch.id, ch.loc];
+  const cargoClauses = carried.map(([good, qty]) => {
+    params.push(good, Number(qty));
+    return `(f.good_id=$${params.length - 1} AND f.qty <= $${params.length})`;
+  });
+  const rows = (await client.query(
+    `SELECT f.poster_character, f.good_id, f.qty, f.district, c.loc AS poster_loc
+       FROM favors f
+       JOIN characters c ON c.id=f.poster_character AND c.alive
+       JOIN contacts ct ON ct.contact_account=c.account_id AND ct.owner_account=$1
+      WHERE f.status='open' AND f.expires_at > now() AND f.poster_character <> $2
+        AND f.district=$3 AND c.loc=f.district AND (${cargoClauses.join(' OR ')})`, params)).rows;
+  return { canRun: (await runnableFavorRows(ch, client, h, rows)).size > 0 };
 }
 
 // ── RUN IT — deliver the goods where they're wanted, take the money ──
