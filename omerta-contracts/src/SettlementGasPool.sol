@@ -5,12 +5,22 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Ownable2Step} from "@openzeppelin/contracts/access/Ownable2Step.sol";
 import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {ISettlementDataFeeSource} from "./interfaces/ISettlementDataFeeSource.sol";
 
 /// @title SettlementGasPool
 /// @notice Community-funded native-gas credits for successful gameplay settlements.
 /// @dev Credits are exact pull-payment liabilities. The immutable gameplay vault records them;
 ///      contributors and the owner acquire no withdrawal right over unreserved sponsorship.
 contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
+    enum ProposalState {
+        NONE,
+        WAITING,
+        EXECUTABLE,
+        EXECUTED,
+        CANCELLED,
+        EXPIRED
+    }
+
     enum CreditStatus {
         FULL,
         PARTIAL,
@@ -46,6 +56,23 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
         CreditStatus status;
     }
 
+    struct ConfigProposal {
+        bytes32 id;
+        bytes32 baseConfigHash;
+        Config nextConfig;
+        bytes32 reasonHash;
+        uint64 proposedAt;
+        uint64 executableAt;
+        uint64 expiresAt;
+        bool executed;
+        bool cancelled;
+    }
+
+    uint64 public constant CONFIG_DELAY = 48 hours;
+    uint64 public constant PROPOSAL_EXECUTION_WINDOW = 7 days;
+    uint256 private constant DATA_FEE_SOURCE_CALL_GAS = 30_000;
+    bytes32 private constant IMMEDIATE_CAP_REDUCTION_REASON = keccak256("immediate cap reduction");
+
     uint256 public immutable supportedChainId;
     address public immutable gameplayVault;
     address public immutable predecessor;
@@ -53,6 +80,9 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
 
     Config public config;
     bool public retired;
+    uint256 private proposalNonce;
+    bytes32 private liveConfigProposalId;
+    mapping(bytes32 proposalId => ConfigProposal proposal) private configProposals;
     mapping(bytes32 settlement => bool processed) public processedSettlements;
     mapping(address executor => uint256 amount) public credits;
     uint256 public totalCreditsRecorded;
@@ -74,6 +104,15 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
     error Insolvent();
     error PoolRetired();
     error OwnershipRenunciationDisabled();
+    error NoConfigChange();
+    error ConfigIncreaseRequired();
+    error InvalidDataFeeSourceConfig();
+    error InvalidDataFeeSource();
+    error DataFeeSourceCodeHashMismatch();
+    error LiveConfigProposalExists();
+    error ProposalNotCancellable();
+    error ProposalNotExecutable();
+    error BaseConfigChanged();
 
     event ContributionReceived(
         address indexed contributor,
@@ -117,6 +156,26 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
         uint128 oldDataFeeWeiCap,
         uint128 newDataFeeWeiCap
     );
+    event ConfigProposalCreated(
+        bytes32 indexed proposalId,
+        bytes32 indexed baseConfigHash,
+        bytes32 indexed nextConfigHash,
+        bytes32 reasonHash,
+        uint64 proposedAt,
+        uint64 executableAt,
+        uint64 expiresAt
+    );
+    event ConfigProposalCancelled(bytes32 indexed proposalId, bytes32 indexed cancellationReasonHash);
+    event ConfigProposalExecuted(
+        bytes32 indexed proposalId,
+        bytes32 indexed oldConfigHash,
+        bytes32 indexed newConfigHash,
+        bytes32 reasonHash,
+        uint64 proposedAt,
+        uint64 executableAt,
+        uint64 expiresAt,
+        uint64 executedAt
+    );
 
     constructor(
         address safeOwner,
@@ -130,6 +189,7 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
         if (gameplayVault_ == address(0)) revert ZeroAddress();
         if (auditedOverheadGas_ == 0) revert InvalidOverhead();
         if (initialPriorityFeeCapWei == 0 || initialPerSettlementWeiCap == 0) revert InvalidCap();
+        if (initialDataFeeWeiCap != 0) revert InvalidDataFeeSourceConfig();
         if (predecessor_ != address(0) && predecessor_.code.length == 0) revert InvalidPredecessor();
 
         supportedChainId = block.chainid;
@@ -267,6 +327,13 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
                 || dataFeeWeiCap > oldConfig.dataFeeWeiCap
         ) revert CapIncreaseNotAllowed();
 
+        if (
+            priorityFeeCapWei != oldConfig.priorityFeeCapWei || perSettlementWeiCap != oldConfig.perSettlementWeiCap
+                || dataFeeWeiCap != oldConfig.dataFeeWeiCap
+        ) {
+            _cancelLiveConfigProposal(IMMEDIATE_CAP_REDUCTION_REASON);
+        }
+
         config.priorityFeeCapWei = priorityFeeCapWei;
         config.perSettlementWeiCap = perSettlementWeiCap;
         config.dataFeeWeiCap = dataFeeWeiCap;
@@ -278,6 +345,84 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
             oldConfig.dataFeeWeiCap,
             dataFeeWeiCap
         );
+    }
+
+    function proposeConfig(Config calldata nextConfig, bytes32 reasonHash)
+        external
+        onlyOwner
+        returns (bytes32 proposalId)
+    {
+        if (retired) revert PoolRetired();
+        if (reasonHash == bytes32(0)) revert ZeroReason();
+
+        ProposalState liveState = configProposalState(liveConfigProposalId);
+        if (liveState == ProposalState.WAITING || liveState == ProposalState.EXECUTABLE) {
+            revert LiveConfigProposalExists();
+        }
+        (bytes32 baseConfigHash, bytes32 nextConfigHash) = _validateProposedConfig(nextConfig);
+
+        uint64 proposedAt = uint64(block.timestamp);
+        proposalId = _deriveProposalId(++proposalNonce, baseConfigHash, nextConfigHash, reasonHash);
+
+        ConfigProposal storage proposal = configProposals[proposalId];
+        proposal.id = proposalId;
+        proposal.baseConfigHash = baseConfigHash;
+        proposal.nextConfig = nextConfig;
+        proposal.reasonHash = reasonHash;
+        proposal.proposedAt = proposedAt;
+        proposal.executableAt = proposedAt + CONFIG_DELAY;
+        proposal.expiresAt = proposal.executableAt + PROPOSAL_EXECUTION_WINDOW;
+        liveConfigProposalId = proposalId;
+        _emitConfigProposalCreated(proposal, nextConfigHash);
+    }
+
+    function cancelConfigProposal(bytes32 proposalId) external onlyOwner {
+        ProposalState state = configProposalState(proposalId);
+        if (state != ProposalState.WAITING && state != ProposalState.EXECUTABLE) {
+            revert ProposalNotCancellable();
+        }
+        configProposals[proposalId].cancelled = true;
+        if (liveConfigProposalId == proposalId) liveConfigProposalId = bytes32(0);
+        emit ConfigProposalCancelled(proposalId, bytes32(0));
+    }
+
+    function executeConfigProposal(bytes32 proposalId) external onlyOwner {
+        if (configProposalState(proposalId) != ProposalState.EXECUTABLE) revert ProposalNotExecutable();
+
+        ConfigProposal storage proposal = configProposals[proposalId];
+        bytes32 oldConfigHash = _configHash(config);
+        if (oldConfigHash != proposal.baseConfigHash) revert BaseConfigChanged();
+        _validateDataFeeSourceConfig(proposal.nextConfig);
+
+        bytes32 newConfigHash = _configHash(proposal.nextConfig);
+        proposal.executed = true;
+        if (liveConfigProposalId == proposalId) liveConfigProposalId = bytes32(0);
+        config = proposal.nextConfig;
+
+        emit ConfigProposalExecuted(
+            proposalId,
+            oldConfigHash,
+            newConfigHash,
+            proposal.reasonHash,
+            proposal.proposedAt,
+            proposal.executableAt,
+            proposal.expiresAt,
+            uint64(block.timestamp)
+        );
+    }
+
+    function getConfigProposal(bytes32 proposalId) external view returns (ConfigProposal memory) {
+        return configProposals[proposalId];
+    }
+
+    function configProposalState(bytes32 proposalId) public view returns (ProposalState) {
+        ConfigProposal storage proposal = configProposals[proposalId];
+        if (proposal.id == bytes32(0)) return ProposalState.NONE;
+        if (proposal.executed) return ProposalState.EXECUTED;
+        if (proposal.cancelled) return ProposalState.CANCELLED;
+        if (block.timestamp < proposal.executableAt) return ProposalState.WAITING;
+        if (block.timestamp > proposal.expiresAt) return ProposalState.EXPIRED;
+        return ProposalState.EXECUTABLE;
     }
 
     function version() public pure returns (bytes32) {
@@ -332,8 +477,102 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
         calculation.status = calculation.credit < calculation.verifiedGasCost ? CreditStatus.PARTIAL : CreditStatus.FULL;
     }
 
-    function _approvedDataFee() private pure returns (uint256) {
-        return 0;
+    function _approvedDataFee() private view returns (uint256) {
+        Config memory currentConfig_ = config;
+        address source = currentConfig_.dataFeeSource;
+        if (source == address(0) || source.codehash != currentConfig_.dataFeeSourceRuntimeCodeHash) return 0;
+
+        bytes memory callData =
+            abi.encodeWithSelector(ISettlementDataFeeSource.currentTransactionNativeDataFee.selector);
+        bool success;
+        uint256 reportedFee;
+        assembly ("memory-safe") {
+            success := staticcall(DATA_FEE_SOURCE_CALL_GAS, source, add(callData, 32), mload(callData), 0, 0)
+            if and(success, eq(returndatasize(), 32)) {
+                returndatacopy(0, 0, 32)
+                reportedFee := mload(0)
+            }
+            if iszero(eq(returndatasize(), 32)) { success := 0 }
+        }
+        if (!success) return 0;
+        return reportedFee < currentConfig_.dataFeeWeiCap ? reportedFee : currentConfig_.dataFeeWeiCap;
+    }
+
+    function _cancelLiveConfigProposal(bytes32 cancellationReasonHash) private {
+        bytes32 proposalId = liveConfigProposalId;
+        ProposalState state = configProposalState(proposalId);
+        if (state != ProposalState.WAITING && state != ProposalState.EXECUTABLE) return;
+
+        configProposals[proposalId].cancelled = true;
+        liveConfigProposalId = bytes32(0);
+        emit ConfigProposalCancelled(proposalId, cancellationReasonHash);
+    }
+
+    function _validateDataFeeSourceConfig(Config memory config_) private view {
+        address source = config_.dataFeeSource;
+        if (source == address(0)) {
+            if (config_.dataFeeSourceRuntimeCodeHash != bytes32(0) || config_.dataFeeWeiCap != 0) {
+                revert InvalidDataFeeSourceConfig();
+            }
+            return;
+        }
+        if (config_.dataFeeWeiCap == 0) revert InvalidDataFeeSourceConfig();
+        if (source.code.length == 0) revert InvalidDataFeeSource();
+        if (source.codehash != config_.dataFeeSourceRuntimeCodeHash) revert DataFeeSourceCodeHashMismatch();
+    }
+
+    function _validateProposedConfig(Config calldata nextConfig)
+        private
+        view
+        returns (bytes32 baseConfigHash, bytes32 nextConfigHash)
+    {
+        _validateDataFeeSourceConfig(nextConfig);
+        Config memory oldConfig = config;
+        baseConfigHash = _configHash(oldConfig);
+        nextConfigHash = _configHash(nextConfig);
+        if (baseConfigHash == nextConfigHash) revert NoConfigChange();
+
+        bool sourceChanged = oldConfig.dataFeeSource != nextConfig.dataFeeSource
+            || oldConfig.dataFeeSourceRuntimeCodeHash != nextConfig.dataFeeSourceRuntimeCodeHash;
+        bool capIncreased = nextConfig.priorityFeeCapWei > oldConfig.priorityFeeCapWei
+            || nextConfig.perSettlementWeiCap > oldConfig.perSettlementWeiCap
+            || nextConfig.dataFeeWeiCap > oldConfig.dataFeeWeiCap;
+        if (!sourceChanged && !capIncreased) revert ConfigIncreaseRequired();
+    }
+
+    function _emitConfigProposalCreated(ConfigProposal storage proposal, bytes32 nextConfigHash) private {
+        emit ConfigProposalCreated(
+            proposal.id,
+            proposal.baseConfigHash,
+            nextConfigHash,
+            proposal.reasonHash,
+            proposal.proposedAt,
+            proposal.executableAt,
+            proposal.expiresAt
+        );
+    }
+
+    function _configHash(Config memory config_) private pure returns (bytes32) {
+        return keccak256(abi.encode(config_));
+    }
+
+    function _deriveProposalId(uint256 nonce, bytes32 baseConfigHash, bytes32 nextConfigHash, bytes32 reasonHash)
+        private
+        view
+        returns (bytes32)
+    {
+        return keccak256(
+            abi.encode(
+                "OMERTA_SETTLEMENT_GAS_POOL_CONFIG_V1",
+                supportedChainId,
+                address(this),
+                nonce,
+                baseConfigHash,
+                nextConfigHash,
+                reasonHash,
+                block.timestamp
+            )
+        );
     }
 
     function _addCapped(uint256 a, uint256 b, uint256 cap) private pure returns (uint256) {

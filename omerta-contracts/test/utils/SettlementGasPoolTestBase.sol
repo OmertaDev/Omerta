@@ -43,4 +43,32 @@ abstract contract SettlementGasPoolTestBase is Test {
         vm.prank(safe);
         pool.unpauseCredits(keccak256("launch checks complete"));
     }
+
+    function currentConfig() internal view returns (SettlementGasPool.Config memory config_) {
+        (
+            config_.priorityFeeCapWei,
+            config_.perSettlementWeiCap,
+            config_.dataFeeWeiCap,
+            config_.dataFeeSource,
+            config_.dataFeeSourceRuntimeCodeHash
+        ) = pool.config();
+    }
+
+    function configHash(SettlementGasPool.Config memory config_) internal pure returns (bytes32) {
+        return keccak256(abi.encode(config_));
+    }
+
+    function propose(SettlementGasPool.Config memory nextConfig, bytes32 reasonHash)
+        internal
+        returns (bytes32 proposalId)
+    {
+        vm.prank(safe);
+        proposalId = pool.proposeConfig(nextConfig, reasonHash);
+    }
+
+    function executeAfterDelay(bytes32 proposalId) internal {
+        vm.warp(block.timestamp + pool.CONFIG_DELAY());
+        vm.prank(safe);
+        pool.executeConfigProposal(proposalId);
+    }
 }
