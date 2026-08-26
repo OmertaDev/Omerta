@@ -144,27 +144,49 @@ These rulings are load-bearing and must be copied into every affected plan.
 
 ```mermaid
 flowchart TD
-  C["C: Versioned Stock Registry"] --> N["N: Nomination + Finalized Catalog Mirror"]
-  C --> A["A: Acquisition Vault + Intent Identity"]
-  N --> A
-  N --> H["H: Asset Health + Quarantine"]
-  A --> R["R: Attempts + Reconciliation + Incidents"]
+  F0["F0: Tracked requirement manifest + rulings"] --> C["C: Versioned Registry + Finalized Mirror"]
+  F0 --> N["N: Nomination + Reviewer Lifecycle"]
+  C --> N
+  C --> H["H: Health Overlay + Safe Clearance"]
+  N --> H
+  O1["O1: mainOperator Role + Typed Authority"] --> A1["A1: Acquisition Vault Buckets + Ingress"]
+  C --> A1
+  H --> CB["CB: Ballot + Event Finality + Budget Provenance"]
+  C --> CB
+  N --> CB
+  A1 --> CB
+  CB --> A3["A3: Purchase Intents + Reservations"]
+  H --> A3
+  A1 --> A3
+  A3 --> R["R: Attempts + Reconciliation + Incidents"]
   H --> R
-  C --> D["D: Exact Allocation + Deed-Bound Delivery"]
-  R --> D
-  G1["G1: OMRGameplayVault + Upgrade Governor"] --> G2["G2: Finalized Journal + Controller/Migration"]
+  R --> O2["O2: Integrated Arbitrary-ETH Debit"]
+  A3 --> O2
+  SGP["Reviewed standalone SettlementGasPool"] --> P0["P0: Pool/Vault Interface + Deployment Address"]
+  P0 --> G1["G1: OMRGameplayVault + Upgrade Governor"]
+  G1 --> G2["G2: Finalized Journal + Controller/Migration"]
+  FR["F: Settlement Finality Rules"] --> G2
   G2 --> B["B: Broker 7-day Stake TWA"]
   G1 --> P["P: SettlementGasPool Integration"]
-  SGP["Reviewed standalone SettlementGasPool"] --> P
+  P0 --> P
+  FR --> P
+  C --> D["D: Exact Allocation + Deed-Bound Delivery"]
+  CB --> D
+  H --> D
+  R --> D
+  B --> D
   C --> U["U: Operator/Public API + Graphical Console"]
   N --> U
   H --> U
-  A --> U
+  A1 --> U
+  A3 --> U
   R --> U
+  O2 --> U
   D --> U
   G2 --> U
   B --> U
   P --> U
+  FR --> U
   U --> X["X: Docs, Manifests, Rehearsals, Audits, Launch Gates"]
 ```
 
@@ -283,6 +305,10 @@ cutover.
 - Seat authority is checked in the same transaction as every write. Seat loss
   removes current support immediately without deleting event history; reseating
   does not restore support automatically.
+- Every Commission seat term has a monotonic generation. Current support binds
+  the observed generation, so a loss and rapid reseat cannot preserve an old
+  sponsor/endorsement through a refresh race. The existing generation-less
+  mirror remains a migration input only until this hook is implemented.
 - A valid nomination survives seat loss or family dissolution until ordinary
   terminal disposition/expiry, but the former family loses write authority.
 - Three distinct currently seated supporting families is a fixed, unscaled
@@ -326,9 +352,14 @@ cutover.
   It does not mutate the registry, confiscate holdings, expire allocations, or
   substitute another asset.
 - Clearing an overlay on a still-active registry version requires fresh evidence,
-  one reviewer, exact TTL-bound Safe clearance, finality, and sync. A
+  one reviewer, exact seven-day TTL-bound Safe clearance, finality, and sync. A
   Safe-deactivated version requires a fresh linked nomination with no carried
   support.
+- Because the immutable registry-v2 ABI is frozen, clearance authority lives in
+  an additive `RwaHealthOverlay` contract rather than an ABI mutation or mutable
+  server flag. The Safe action binds exact asset version, evidence, review,
+  approval time, seven-day deadline, and overlay generation; only its finalized
+  canonical event may clear the operational block.
 - If quarantine is known before purchase broadcast, the intent is skipped. If
   imposed after broadcast, preserve canonical results and record
   `purchase_at_risk`; an unprovable ordering is `ordering_uncertain`.
@@ -702,15 +733,18 @@ success.
 
 | Slice | Produces | Gate before dependents |
 |---|---|---|
-| 1. C+N | Registry v2 contract/tooling, nomination schema/routes/board, ballot invalidation/finality | Contract and server behavioral tests; immutable identity/TTL/seat concurrency review |
-| 2. A+O | Acquisition vault, main-operator governor/typed auth, ingress/deposit/intent core | Unit/fuzz/invariant tests for buckets, nonce/generation, arbitrary outflow, and intent walls |
-| 3. H+R | Health watcher, quarantine, attempts, reconciliation, deficits/incidents, hold-only stock | Reorg/stale/spam/repair and bounded-index behavioral tests |
-| 4. D | Atomic allocation and permanent deed delivery | Conservation/property-binding/per-item isolation tests |
-| 5. G1 | Gameplay vault plus upgrade governor | Full unit/fuzz/invariant suite and size/storage-layout evidence |
-| 6. G2+B | Finalized journal, recovery/migration, stake checkpoints, Broker multiplier | Reorg/crash/migration/TWA epoch tests |
-| 7. P | Gas-pool settlement integration | Hook failure isolation, replay, winner identity, zero-loot, partial/empty tests |
-| 8. U | APIs/workers/alerts/exports/operator UI | Auth/idempotency/accessibility/UI behavioral tests and honest authority labels |
-| 9. X | Docs/manifests/rehearsals/knowledge/security review | Full green suites, audit triage, generated artifacts clean, no unsupported launch claims |
+| 0. F0 | Tracked requirement manifest, override ledger, corrected DAG, dormant/deployment truth | Every master section maps to a task/review/deployment state; no load-bearing ruling remains ignored-only |
+| 1. C+N foundation | Registry v2, getter mirror, nomination/reviewer domain | Contract/server behavioral tests; immutable identity/TTL/reviewer/concurrency review |
+| 2. H | Health watcher, additive Safe-clearance overlay, quarantine/readiness seam | Five/ten-minute, seven-day clearance, reorg/stale/spam and fail-closed action tests |
+| 3. O1+A1 | Operator role/typed authority, vault buckets, ingress/deposits/caps | Unit/fuzz/invariant tests for role generation, nonces, buckets and exact receipts |
+| 4. CB | Version ballot, event finality, and AcquisitionVault budget-authority bridge | Exact frozen identity/tally/budget tests; H and vault provenance required before non-dormant cutover |
+| 5. A3+R | Intents/reservations, attempts, reconciliation, incidents, hold-only stock | Oracle/adapter/reorg/stale/repair/bounded-index behavioral tests |
+| 6. O2 | Integrated arbitrary-ETH debit over all final buckets | Whole-reservation cancellation and reconciliation-liability/shortfall invariants |
+| 7. P0+G1+F | Pool/vault interface, gameplay vault/governor, finality-rules authority | Full unit/fuzz/invariant/size/storage-layout and future-effective-threshold evidence |
+| 8. G2+B+P | Finalized journal/recovery/migration/checkpoints, Broker TWA, gas-pool hook | Reorg/crash/migration/TWA and hook isolation/replay/zero-loot/partial-credit tests |
+| 9. D | Atomic allocation and permanent deed delivery after B/H/R authority | Atomic-unit conservation, property binding, FIFO/hold and per-item isolation tests |
+| 10. U | All APIs/workers/alerts/exports and graphical operator UI | Auth/idempotency/accessibility/browser tests, exact previews and honest authority labels |
+| 11. X | Per-slice plus global docs/manifests/rehearsals/knowledge/security review | Full green suites, real-PostgreSQL evidence, audit triage, generated artifacts clean, no unsupported launch claims |
 
 ## Recorded rulings
 
