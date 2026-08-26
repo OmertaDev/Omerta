@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `407229e48a4a`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `69d232bdc9c0`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 963 |
+| Commits in clone | 965 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-25 — fix: recognize direct route handler factories |
+| Latest commit | 2026-08-25 — docs: correct final Markdown census |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 162 |
+| OmertaDev | 164 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -33,7 +33,7 @@
 | [src/server.js](../../src/server.js) | 338 | yes |
 | [schema.sql](../../schema.sql) | 253 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
-| [SPEC.md](../../SPEC.md) | 234 | yes |
+| [SPEC.md](../../SPEC.md) | 235 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 169 | yes |
 | [package.json](../../package.json) | 128 | yes |
