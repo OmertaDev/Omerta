@@ -2195,7 +2195,8 @@ const SCENERY_WAIVED = {
   };
   const anyGuardAccepts = (source) => classifyAny(collectAny(source, 'explore.js')).accepted;
   const canonicalSerializer = 'const sqlTextArray = (values) => String(values); ';
-  const exploreSourceForSeal = fs.readFileSync(path.join(SRC, 'explore.js'), 'utf8');
+  const exploreBytesForSeal = fs.readFileSync(path.join(SRC, 'explore.js'));
+  const exploreSourceForSeal = exploreBytesForSeal.toString('utf8');
   const scopedDeclarationIn = (source) => {
     const ast = parse(source, { ecmaVersion: 'latest', sourceType: 'module' });
     const declarations = ast.body.filter((node) => node.type === 'FunctionDeclaration'
@@ -2245,6 +2246,60 @@ const SCENERY_WAIVED = {
   'the canonical-AST helper retains its independently recomputed fixture digest');
   const scopedSocialContextSealAccepts = (source) =>
     scopedSocialContextDigest(source) === REVIEWED_SCOPED_SOCIAL_CONTEXT_SHA256;
+  // Authoritative boundary: exact tracked bytes, with CRLF normalized to LF solely so Git's Windows
+  // checkout policy cannot false-fail the review. Comments, whitespace and every other byte remain
+  // sealed. This literal was independently recomputed with PowerShell SHA256.HashData over the same
+  // byte-level CRLF normalization; it is never derived from the checked-out source at assertion time.
+  const REVIEWED_EXPLORE_FILE_SHA256 = 'd56b18801cd3109f84bae8caaa3ba7478c773eda4b223f4504e6f5ad8e871ffd';
+  const normalizeCrlfBytes = (value) => {
+    const bytes = Buffer.isBuffer(value) ? value : Buffer.from(value);
+    const normalized = Buffer.allocUnsafe(bytes.length);
+    let written = 0;
+    for (let index = 0; index < bytes.length; index += 1) {
+      if (bytes[index] === 13 && bytes[index + 1] === 10) index += 1;
+      normalized[written] = bytes[index];
+      written += 1;
+    }
+    return normalized.subarray(0, written);
+  };
+  const wholeExploreFileDigest = (bytes) =>
+    createHash('sha256').update(normalizeCrlfBytes(bytes)).digest('hex');
+  assert.equal(wholeExploreFileDigest(Buffer.from('seal\nfixture\n')),
+    'ab40ee53bd51c029356ee1b88f352c14760961e5c81db10cc550902f6aeab4ef',
+    'the whole-file hash helper retains its independently recomputed fixture digest');
+  assert.equal(wholeExploreFileDigest(Buffer.from('seal\r\nfixture\r\n')),
+    'ab40ee53bd51c029356ee1b88f352c14760961e5c81db10cc550902f6aeab4ef',
+    'CRLF and LF checkouts normalize to the same reviewed bytes');
+  const wholeExploreFileSealAccepts = (bytes) =>
+    wholeExploreFileDigest(bytes) === REVIEWED_EXPLORE_FILE_SHA256;
+  const normalizedExploreSource = exploreSourceForSeal.replace(/\r\n/g, '\n');
+  const reassignment = `
+scopedSocialContext = async function(db) {
+  const ids = [];
+  return db['que' + 'ry']('SELECT character_id FROM gang_' + 'members WHERE character_id = A' + 'NY($1::text[])', [ids]);
+};
+`;
+  const wholeFileSealCases = [
+    { name: 'reviewed tracked bytes', bytes: exploreBytesForSeal, accepted: true },
+    { name: 'LF checkout', bytes: Buffer.from(normalizedExploreSource), accepted: true },
+    { name: 'CRLF checkout', bytes: Buffer.from(normalizedExploreSource.replace(/\n/g, '\r\n')), accepted: true },
+    { name: 'appended computed double-obscured reassignment',
+      bytes: Buffer.from(exploreSourceForSeal + reassignment), accepted: false },
+    { name: 'prepended computed double-obscured reassignment',
+      bytes: Buffer.from(reassignment + exploreSourceForSeal), accepted: false },
+    { name: 'export alias and rebinding', bytes: Buffer.from(exploreSourceForSeal
+      + `\nexport { scopedSocialContext as reviewedSocialContext };${reassignment}`), accepted: false },
+    { name: 'indirect eval statement', bytes: Buffer.from(exploreSourceForSeal
+      + "\n(0, eval)('scopedSocialContext = async function () { return null; }');\n"), accepted: false },
+    { name: 'new Function rebinding', bytes: Buffer.from(exploreSourceForSeal
+      + "\nscopedSocialContext = new Function('return async function scopedSocialContext() { return null; }')();\n"),
+    accepted: false },
+    { name: 'added executable statement', bytes: Buffer.from(exploreSourceForSeal
+      + '\nvoid scopedSocialContext;\n'), accepted: false },
+    { name: 'added comment byte', bytes: Buffer.from(exploreSourceForSeal
+      + '\n// review seal bypass\n'), accepted: false },
+    { name: 'added whitespace byte', bytes: Buffer.from(exploreSourceForSeal + ' '), accepted: false },
+  ];
   const currentScopedDeclaration = scopedDeclarationIn(exploreSourceForSeal);
   const currentScopedSource = exploreSourceForSeal.slice(currentScopedDeclaration.start, currentScopedDeclaration.end);
   const sealCases = [
@@ -2468,6 +2523,11 @@ const SCENERY_WAIVED = {
     .filter((fixture) => fixture.actual !== fixture.expected);
   assert.deepEqual(misclassifiedSealFixtures, [],
     'the scopedSocialContext review seal changes or fails for every syntactic mutation');
+  const misclassifiedWholeFileSealFixtures = wholeFileSealCases.map((fixture) => ({ name: fixture.name,
+    expected: fixture.accepted, actual: wholeExploreFileSealAccepts(fixture.bytes) }))
+    .filter((fixture) => fixture.actual !== fixture.expected);
+  assert.deepEqual(misclassifiedWholeFileSealFixtures, [],
+    'the authoritative explore.js byte seal rejects every change outside or inside the function');
   const files = [];
   const walk = (d) => { for (const e of fs.readdirSync(d)) {
     const q = path.join(d, e);
