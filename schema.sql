@@ -3527,6 +3527,69 @@ CREATE TABLE IF NOT EXISTS stock_token_catalog (
 );
 ALTER TABLE stock_token_catalog ADD COLUMN IF NOT EXISTS registry_index INT NOT NULL DEFAULT 0;
 
+-- Immutable StockTokenRegistryV2 history and its finalized, complete reverse-head mirror. This is
+-- additive: the legacy ticker-key catalog remains untouched as an explicit migration input.
+CREATE TABLE IF NOT EXISTS stock_catalog_sync_state_v2 (
+  id INT PRIMARY KEY,
+  chain_id INT NOT NULL,
+  registry_address TEXT NOT NULL,
+  catalog_version NUMERIC(78,0) NOT NULL,
+  finalized_block_number NUMERIC(78,0) NOT NULL,
+  finalized_block_hash TEXT NOT NULL,
+  snapshot_hash TEXT NOT NULL,
+  synced_at TIMESTAMPTZ NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS stock_asset_versions_v2 (
+  asset_version_key TEXT PRIMARY KEY,
+  chain_id INT NOT NULL,
+  ticker_hash TEXT NOT NULL,
+  ticker TEXT NOT NULL,
+  name TEXT NOT NULL,
+  token_address TEXT NOT NULL,
+  token_decimals INT NOT NULL,
+  robinhood_asset_id_hash TEXT NOT NULL,
+  registry_index NUMERIC(78,0) NOT NULL,
+  active BOOLEAN NOT NULL,
+  registered_at TIMESTAMPTZ,
+  activated_at TIMESTAMPTZ,
+  deactivated_at TIMESTAMPTZ,
+  last_catalog_version NUMERIC(78,0) NOT NULL,
+  synced_at TIMESTAMPTZ NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS stock_asset_active_heads_v2 (
+  dimension_type TEXT NOT NULL,
+  dimension_value TEXT NOT NULL,
+  asset_version_key TEXT NOT NULL,
+  PRIMARY KEY (dimension_type, dimension_value),
+  UNIQUE (dimension_type, asset_version_key)
+);
+
+CREATE TABLE IF NOT EXISTS stock_catalog_sync_runs_v2 (
+  sync_id TEXT PRIMARY KEY,
+  chain_id INT NOT NULL,
+  registry_address TEXT NOT NULL,
+  catalog_version NUMERIC(78,0) NOT NULL,
+  finalized_block_number NUMERIC(78,0) NOT NULL,
+  finalized_block_hash TEXT NOT NULL,
+  snapshot_hash TEXT NOT NULL,
+  asset_count INT NOT NULL,
+  observed_at TIMESTAMPTZ NOT NULL,
+  synced_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- DDL only in this slice. A finalized getter snapshot cannot prove activation-event evidence
+-- provenance; the authenticated proposal/finality lifecycle populates this table later.
+CREATE TABLE IF NOT EXISTS stock_catalog_evidence_v2 (
+  evidence_hash TEXT PRIMARY KEY,
+  asset_version_key TEXT NOT NULL,
+  evidence_uri TEXT,
+  observed_at TIMESTAMPTZ NOT NULL,
+  payload_hash TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 -- ── THE BROKERS (omerta-brokers-design.md) ───────────────────────────────────────────────────────
 -- All ACCOUNT-keyed and all NEW tables, so `CREATE TABLE IF NOT EXISTS` is live-DB-safe (a new
 -- COLUMN on an existing table would need an ALTER — the 2026-08-06 boot-crash lesson).
