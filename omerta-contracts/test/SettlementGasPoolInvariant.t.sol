@@ -16,7 +16,7 @@ contract SettlementGasPoolHandler is Test {
     address[4] public executors;
 
     uint256 public settlementNonce;
-    uint256 public sumKnownCredits;
+    uint256 public modeledOutstandingCredits;
     uint256 public successfulWithdrawals;
     uint256 public creditsRecorded;
 
@@ -48,7 +48,7 @@ contract SettlementGasPoolHandler is Test {
 
         vm.prank(vault);
         (uint256 credit,) = pool.recordSettlementCredit(request);
-        sumKnownCredits += credit;
+        modeledOutstandingCredits += credit;
         creditsRecorded += credit;
     }
 
@@ -60,7 +60,7 @@ contract SettlementGasPoolHandler is Test {
         vm.prank(selectedExecutor);
         uint256 withdrawn = pool.withdrawCredit();
         assertEq(withdrawn, expectedAmount);
-        sumKnownCredits -= withdrawn;
+        modeledOutstandingCredits -= withdrawn;
         successfulWithdrawals += withdrawn;
     }
 
@@ -84,6 +84,12 @@ contract SettlementGasPoolHandler is Test {
 
         vm.prank(safe);
         pool.reduceCaps(nextPriorityFeeCapWei, nextPerSettlementWeiCap, nextDataFeeWeiCap);
+    }
+
+    function sumKnownCredits() external view returns (uint256 total) {
+        for (uint256 i; i < executors.length; ++i) {
+            total += pool.credits(executors[i]);
+        }
     }
 }
 
@@ -142,7 +148,7 @@ contract SettlementGasPoolInvariantTest is StdInvariant, Test {
     }
 
     function invariant_recorded_ghost_conserves_live_and_withdrawn_credits() public view {
-        assertEq(handler.creditsRecorded(), handler.sumKnownCredits() + handler.successfulWithdrawals());
+        assertEq(handler.creditsRecorded(), handler.modeledOutstandingCredits() + handler.successfulWithdrawals());
         assertEq(handler.creditsRecorded(), pool.totalCreditsRecorded());
     }
 }
