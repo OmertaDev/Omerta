@@ -90,9 +90,13 @@ These rulings are load-bearing and must be copied into every affected plan.
   pre/post totals plus stable component/event identifiers.
 - Canonical deposits are unique by chain, approved ingress version, and source
   reference. Unexplained native balance is `unattributed`, not available.
-- RWA liability, backing, and shortfall remain explicit even after the operator
-  transfers the underlying ETH. Moving value never erases what the protocol
-  owes.
+- Reconciliation-pending RWA liability, backing, and shortfall remain explicit
+  even after the operator transfers the underlying ETH. Moving value never
+  erases an unresolved post-attempt obligation. An ordinary pre-attempt
+  reservation reached by operator outflow is instead cancelled under the
+  deterministic whole-reservation rule: its terminal tombstone remains public,
+  the full reservation backing is released, only the required ETH is consumed,
+  and any excess becomes available without creating a financial shortfall.
 - Purchased Stock Token success is the exact positive custody delta of the
   immutable ballot-selected token. A positive fill is terminal; there is no
   top-up or substitution.
@@ -372,8 +376,15 @@ cutover.
   ERC-20, approval, `delegatecall`, or burn surface.
 - Debit accounting order is exactly `available -> unattributed -> reserved ->
   reconciliationPending`. The operator may transfer up to actual ETH even when
-  accounting is already in deficit. Impacted reservations and liabilities remain
-  public; outflow does not manufacture resolution.
+  accounting is already in deficit. When debit reaches ordinary `reserved`,
+  cancel the fewest whole reservations under the deterministic ordering, retain
+  their terminal audit/tombstones, release all backing for each cancelled
+  reservation, consume only the ETH required by the outflow, and return excess
+  to `available`; these cancellations create no liability or shortfall and can
+  never revive. When debit reaches `reconciliationPending`, the unresolved
+  liability survives, its backing falls, and shortfall rises until canonical
+  reconciliation plus actual repair resolves it. Outflow never manufactures a
+  resolution for an uncertain post-attempt obligation.
 - Every Safe/operator role transition binds a public reason code and nonzero
   details hash. Wallet health/code/module changes produce advisory warnings but
   do not silently revoke a valid operator address.

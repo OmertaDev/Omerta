@@ -788,7 +788,7 @@ CREATE TABLE IF NOT EXISTS rwa_nomination_safe_proposals_v2 (
 );
 ```
 
-- [ ] **Step 1: Write RED route tests**
+- [x] **Step 1: Write RED route tests**
 
 Use the real Fastify server/test DB. Cover keyless public board, player auth,
 boss/seat errors, request/body bounds, stable codes, duplicate response with
@@ -798,13 +798,13 @@ terminal disposition permissions, exact approval package/TTL/calldata, deadline
 race rollback, no package for rejection/not-eligible, no secret in responses or
 events, and public separation of review versus execution/sync status.
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 ```powershell
 node test/rwaroutes.js
 ```
 
-- [ ] **Step 3: Implement thin routes and reviewer boundary**
+- [x] **Step 3: Implement thin routes and reviewer boundary**
 
 Put business logic in `rwanominations.js`; `server.js` adds only
 `registerRwa(app, { pool, auth, withCharacter: G.withCharacter })`. Apply a
@@ -816,7 +816,7 @@ evidence. A submitted tx hash alone never marks active. `expireRwaApprovals`
 sets `approval_stale` at `validUntil` without changing terminal nomination
 status.
 
-- [ ] **Step 4: Run GREEN and auth/routes baselines**
+- [x] **Step 4: Run GREEN and auth/routes baselines**
 
 ```powershell
 node test/rwaroutes.js
