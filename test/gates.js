@@ -24,6 +24,7 @@
 // Scope, honestly: this checks that a gate is REACHED, not that it is correct. `fire` calling
 // `safeHoused(ch)` proves the shield is consulted, not that the comparison is the right way round.
 import assert from 'node:assert';
+import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -2194,6 +2195,89 @@ const SCENERY_WAIVED = {
   };
   const anyGuardAccepts = (source) => classifyAny(collectAny(source, 'explore.js')).accepted;
   const canonicalSerializer = 'const sqlTextArray = (values) => String(values); ';
+  const exploreSourceForSeal = fs.readFileSync(path.join(SRC, 'explore.js'), 'utf8');
+  const scopedDeclarationIn = (source) => {
+    const ast = parse(source, { ecmaVersion: 'latest', sourceType: 'module' });
+    const declarations = ast.body.filter((node) => node.type === 'FunctionDeclaration'
+      && node.id?.name === 'scopedSocialContext');
+    assert.equal(declarations.length, 1, 'seal mutation fixture starts from one top-level scopedSocialContext declaration');
+    return declarations[0];
+  };
+  const mutateScopedDeclaration = (mutate) => {
+    const declaration = scopedDeclarationIn(exploreSourceForSeal);
+    const original = exploreSourceForSeal.slice(declaration.start, declaration.end);
+    const changed = mutate(original);
+    assert.notEqual(changed, original, 'seal mutation fixture must actually change scopedSocialContext');
+    return exploreSourceForSeal.slice(0, declaration.start) + changed + exploreSourceForSeal.slice(declaration.end);
+  };
+  const replaceScopedOnce = (before, after) => mutateScopedDeclaration((source) => {
+    assert(source.includes(before), `seal mutation fixture cannot find ${before}`);
+    return source.replace(before, after);
+  });
+  // This is a review seal, not a generated snapshot. Updating the digest requires reviewing the whole
+  // function and deliberately replacing this literal. Canonical AST ignores comments, whitespace,
+  // quote style and source locations, while every syntactic callee/query/SQL/parameter/body change is
+  // semantic and therefore changes the digest. See the independently pinned canonicalizer fixture.
+  const REVIEWED_SCOPED_SOCIAL_CONTEXT_SHA256 = '54497b859d3ff1be3ddb06cb4b8d33b36b6a9e72290a84ed8205b0d912bb3c54';
+  const AST_SEAL_METADATA = new Set(['start', 'end', 'loc', 'raw']);
+  const canonicalAst = (value) => {
+    if (value === null || typeof value !== 'object') return value;
+    if (Array.isArray(value)) return value.map(canonicalAst);
+    const canonical = {};
+    for (const key of Object.keys(value).sort()) if (!AST_SEAL_METADATA.has(key)) {
+      const child = canonicalAst(value[key]);
+      if (child !== undefined) canonical[key] = child;
+    }
+    return canonical;
+  };
+  const scopedSocialContextDigest = (source) => {
+    let ast;
+    try { ast = parse(source, { ecmaVersion: 'latest', sourceType: 'module' }); }
+    catch { return null; }
+    const declarations = ast.body.filter((node) => node.type === 'FunctionDeclaration'
+      && node.id?.name === 'scopedSocialContext');
+    if (declarations.length !== 1) return null;
+    return createHash('sha256').update(JSON.stringify(canonicalAst(declarations[0]))).digest('hex');
+  };
+  assert.equal(scopedSocialContextDigest(
+    "function scopedSocialContext(db) { return db.query('SELECT 1', []); }"),
+  'b6239d1ec76f2cd76b1a3ce97b5f4599b60ba9d2a121ebdc917d46cd2446e00b',
+  'the canonical-AST helper retains its independently recomputed fixture digest');
+  const scopedSocialContextSealAccepts = (source) =>
+    scopedSocialContextDigest(source) === REVIEWED_SCOPED_SOCIAL_CONTEXT_SHA256;
+  const currentScopedDeclaration = scopedDeclarationIn(exploreSourceForSeal);
+  const currentScopedSource = exploreSourceForSeal.slice(currentScopedDeclaration.start, currentScopedDeclaration.end);
+  const sealCases = [
+    { name: 'reviewed declaration', source: exploreSourceForSeal, accepted: true },
+    { name: 'whitespace is not semantic', source: replaceScopedOnce('async function scopedSocialContext',
+      'async   function   scopedSocialContext'), accepted: true },
+    { name: 'comments are not semantic', source: mutateScopedDeclaration((source) =>
+      source.replace('{', '{\n  /* review-seal ignores comments */')), accepted: true },
+    { name: 'computed template query member', source: replaceScopedOnce('db.query(', 'db[`query`]('), accepted: false },
+    { name: 'concatenated query member', source: replaceScopedOnce('db.query(', "db['que' + 'ry']("), accepted: false },
+    { name: 'destructured query alias', source: mutateScopedDeclaration((source) => source.replace('{',
+      '{\n  const { query } = db;').replace('db.query(', 'query.call(db,')), accepted: false },
+    { name: 'bound query alias', source: mutateScopedDeclaration((source) => source.replace('{',
+      '{\n  const query = db.query.bind(db);').replace('db.query(', 'query(')), accepted: false },
+    { name: 'Function.call query invocation', source: replaceScopedOnce('db.query(', 'db.query.call(db,'), accepted: false },
+    { name: 'sequence query invocation', source: replaceScopedOnce('db.query(', '(0, db.query).call(db,'), accepted: false },
+    { name: 'composite literal LHS', source: replaceScopedOnce('character_id = ANY($1::text[])',
+      "'' || character_id = ANY($1::text[])"), accepted: false },
+    { name: 'composite identifier LHS', source: replaceScopedOnce('character_id = ANY($1::text[])',
+      'role || character_id = ANY($1::text[])'), accepted: false },
+    { name: 'raw JavaScript array parameter', source: replaceScopedOnce('[sqlTextArray(ids)]', '[ids]'), accepted: false },
+    { name: 'alternate variable function form', source: mutateScopedDeclaration((source) =>
+      source.replace('async function scopedSocialContext', 'const scopedSocialContext = async function') + ';'),
+    accepted: false },
+    { name: 'alternate object method form', source: mutateScopedDeclaration(() =>
+      'const scopedHolder = { async scopedSocialContext(db, ch, onlineAccounts) { return null; } };'), accepted: false },
+    { name: 'alternate assignment function form', source: mutateScopedDeclaration(() =>
+      'let scopedSocialContext; scopedSocialContext = async function(db, ch, onlineAccounts) { return null; };'),
+    accepted: false },
+    { name: 'missing declaration', source: exploreSourceForSeal.slice(0, currentScopedDeclaration.start)
+      + exploreSourceForSeal.slice(currentScopedDeclaration.end), accepted: false },
+    { name: 'duplicate declaration', source: `${exploreSourceForSeal}\n${currentScopedSource}`, accepted: false },
+  ];
   const anyGuardCases = [
     {
       name: 'reviewed scalar literal',
@@ -2379,6 +2463,11 @@ const SCENERY_WAIVED = {
   })).filter((fixture) => fixture.actual !== fixture.expected);
   assert.deepEqual(misclassifiedAnyFixtures, [],
     'every adversarial SQL occurrence and serializer-binding mutation is classified independently');
+  const misclassifiedSealFixtures = sealCases.map((fixture) => ({ name: fixture.name,
+    expected: fixture.accepted, actual: scopedSocialContextSealAccepts(fixture.source) }))
+    .filter((fixture) => fixture.actual !== fixture.expected);
+  assert.deepEqual(misclassifiedSealFixtures, [],
+    'the scopedSocialContext review seal changes or fails for every syntactic mutation');
   const files = [];
   const walk = (d) => { for (const e of fs.readdirSync(d)) {
     const q = path.join(d, e);
