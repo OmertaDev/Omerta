@@ -223,6 +223,29 @@ cutover.
   Safe activation package. It never automatically rotates the live catalog when
   later volume rankings change.
 
+### C3. Finalized mirror authority
+
+- Every registry getter is pinned to one finalized block number, and that exact
+  numbered block hash is rechecked after complete history/head enumeration.
+  Same-height drift rejects before database work.
+- A seeded singleton row serializes every mirror update, including first sync.
+  An unchanged catalog version may advance only finalized block/freshness; the
+  complete ordered history, lifecycle, active flags, and reverse heads are
+  otherwise frozen.
+- Public state, ordered history, and the database clock are read on one
+  connection in one read-only repeatable-read transaction. PostgreSQL decides
+  the strict ten-minute boundary; exactly ten minutes is fresh and the first
+  database instant after it is stale.
+- Worker configuration and public authorization are separate. Public readiness
+  requires a normalized absolute HTTP(S) RPC URL, canonical nonzero configured
+  V2 registry, and a fresh, nonempty, coherent mirror from that exact address.
+  Test/injected readers cannot weaken the production gate, and the default
+  reader, observation validator, and synchronizer share the same normalized
+  configuration.
+- Getter snapshots do not prove activation-event evidence/review identity.
+  Event-aware lifecycle sync remains a later graph node; Task 2's evidence table
+  is deliberately DDL-only.
+
 ## N — Public family nomination and review lifecycle
 
 ### N1. Nomination identity and cadence
@@ -239,6 +262,13 @@ cutover.
   the weekly nomination allowance.
 - Same-ticker/different-version nominations may coexist and are visibly marked
   as conflicts.
+- A nomination may bind a newly discovered provider asset not yet present in the
+  finalized registry mirror. It stores the complete immutable identity/evidence
+  and independently recomputes the C-version key; mirror membership is context,
+  not a prerequisite that would make nomination circular.
+- Concurrent same-key creation yields exactly one open row. The losing submitter
+  receives that row in the same transaction, with no endorsement or cadence
+  consumption.
 
 ### N2. Support and seats
 
@@ -270,6 +300,11 @@ cutover.
   non-voteable until C's Safe execution, finality, and sync finish.
 - A stale/missed activation needs a fresh linked nomination and evidence; old
   approval calldata cannot be regenerated.
+- All cadence/deadline transitions use post-lock database wall clock. Exactly
+  168 hours permits a new nomination; at or after `pendingUntil`, expiry wins
+  before every nonterminal mutation. Bounded refresh/expiry/board scans default
+  to 100 rows, cap at 500, and expose stable cursors rather than scanning all
+  history.
 
 ## H — Asset health and operational quarantine
 

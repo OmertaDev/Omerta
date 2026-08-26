@@ -271,7 +271,7 @@ function setPublisher(address publisher_) external;
 function getBallot(uint256 day) external view returns (Ballot memory);
 ```
 
-- [ ] **Step 1: Write contract tests first and record the production mutation each catches**
+- [x] **Step 1: Write contract tests first and record the production mutation each catches**
 
 Tests use a real 18-decimal mock ERC-20 and literal expected hashes independently
 calculated with `keccak256(abi.encode(...))`. Cover:
@@ -302,7 +302,7 @@ of at least six real mock tokens and asserts after every call:
 - `catalogVersion` increases exactly once for every successful activation or deactivation and never on revert;
 - a published ballot's key/token/decimals/tally/catalog values never change.
 
-- [ ] **Step 2: Run the focused suites and preserve expected RED**
+- [x] **Step 2: Run the focused suites and preserve expected RED**
 
 ```powershell
 & 'C:\Users\Jorge\AppData\Local\Temp\omerta-foundry-npm\node_modules\@foundry-rs\forge-win32-amd64\bin\forge.exe' test --match-path 'test/StockTokenRegistryV2*.t.sol' -vv
@@ -312,7 +312,7 @@ Expected RED: compilation fails because the v2 interface/contract and required
 selectors do not exist. Fix test syntax only until the failure names the missing
 production feature.
 
-- [ ] **Step 3: Implement minimum secure contract**
+- [x] **Step 3: Implement minimum secure contract**
 
 Use custom errors and complete events. Store every key once in `_versionKeys`.
 On first registration, read `IERC20Metadata(token).decimals()` and require it
@@ -326,7 +326,7 @@ activation. Explicit deactivation increments once only when state changes.
 that is true only when the exact version remains active and all three reverse
 heads still point to it.
 
-- [ ] **Step 4: Run GREEN, full contract baseline, size, and self-review**
+- [x] **Step 4: Run GREEN, full contract baseline, size, and self-review**
 
 ```powershell
 & 'C:\Users\Jorge\AppData\Local\Temp\omerta-foundry-npm\node_modules\@foundry-rs\forge-win32-amd64\bin\forge.exe' test --match-path 'test/StockTokenRegistryV2*.t.sol' -vv
@@ -360,7 +360,8 @@ buildStockTokenActivationV2({ asset, registryAddress, evidenceHash, reviewId, ap
 buildStockTokenDeactivationV2({ assetVersionKey, registryAddress, reasonHash })
 syncFinalizedStockCatalogV2(pool)
 approvedStockTokenCatalogV2(db)
-stockTokenCatalogV2Ready()
+stockTokenRegistryV2ReaderConfigured()
+stockTokenCatalogV2Ready(db)
 __setStockTokenRegistryV2Reader(fn)
 ```
 
@@ -390,9 +391,10 @@ The injected/real reader returns one complete object:
 ```
 
 The real reader obtains one finalized block and pins every registry getter to
-that exact block number. Literal `finality: 'finalized'` and the complete
-reverse-head proof are mandatory; latest-block or confirmation-count fallbacks
-are rejected.
+that exact block number. After every version and reverse-head getter completes,
+it re-reads that numbered block and rejects a same-height hash change. Literal
+`finality: 'finalized'` and the complete reverse-head proof are mandatory;
+latest-block or confirmation-count fallbacks are rejected.
 
 `snapshotHash` is the v1 hash
 `keccak256(abi.encode(chainId, registryAddress, catalogVersion,
@@ -405,6 +407,13 @@ all three lifecycle timestamps. `sync_id` equals this snapshot hash;
 **Additive schema:**
 
 ```sql
+CREATE TABLE IF NOT EXISTS stock_catalog_sync_lock_v2 (
+  id INT PRIMARY KEY
+);
+INSERT INTO stock_catalog_sync_lock_v2 (id)
+VALUES (1)
+ON CONFLICT (id) DO NOTHING;
+
 CREATE TABLE IF NOT EXISTS stock_catalog_sync_state_v2 (
   id INT PRIMARY KEY,
   chain_id INT NOT NULL,
@@ -465,7 +474,27 @@ CREATE TABLE IF NOT EXISTS stock_catalog_evidence_v2 (
 );
 ```
 
-- [ ] **Step 1: Write RED tests**
+Every sync unconditionally locks the seeded row before reading singleton state,
+including the first sync. An unchanged `catalogVersion` freezes the complete
+ordered history, lifecycle state, active flags, and reverse heads; only finalized
+block identity and freshness may advance. All observation/lifecycle timestamps
+must be nonzero where required, coherent, and within the shared PostgreSQL/
+JavaScript supported epoch before any database connection.
+
+`approvedStockTokenCatalogV2(db)` reads singleton state, the PostgreSQL clock,
+and ordered history on one dedicated connection in one read-only repeatable-read
+transaction. PostgreSQL computes the strict stale predicate as
+`now() > synced_at + interval '600 seconds'`; exactly 600 seconds remains fresh.
+`stockTokenRegistryV2ReaderConfigured()` is the worker/test-reader predicate.
+The public `stockTokenCatalogV2Ready(db)` is stricter: before any database read,
+it requires one normalized production configuration consisting of an absolute
+HTTP(S) RPC URL and canonical nonzero V2 registry address; then the coherent
+snapshot must be synchronized, nonempty, fresh/voteable, and from that exact
+configured registry. Injected readers cannot weaken public readiness. The same
+normalized configuration is consumed by the default reader and observation
+validation, so configured/ready state cannot disagree with synchronization.
+
+- [x] **Step 1: Write RED tests**
 
 Cover hand-derived ABI key equality with Task 1, uppercase normalization,
 rejection of malformed base-10/address/hash/decimals values, exact TTL calldata,
@@ -483,7 +512,7 @@ catalog version/block to `Number`, deleting inactive rows, writing before full
 validation, clearing last known state on RPC failure, or accepting two active
 heads for one dimension must each break a named test.
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 ```powershell
 node test/stockcatalogv2.js
@@ -492,7 +521,7 @@ node test/stockcatalogv2.js
 Expected: module/schema/functions are missing. Preserve the exact expected
 failure before implementation.
 
-- [ ] **Step 3: Implement mirror and CLI**
+- [x] **Step 3: Implement mirror and CLI**
 
 Use `viem.encodeAbiParameters` plus `keccak256`, never packed encoding. Validate
 the full observation and independently recompute every key before `BEGIN`.
@@ -513,7 +542,7 @@ The CLI supports explicit `--activate`, `--deactivate-key`, `--evidence-hash`,
 `--review-id`, `--approved-at`, `--registry`, and existing
 `--initial-top-volume`. It prints JSON only; it never reads a wallet or sends.
 
-- [ ] **Step 4: Run GREEN and relevant baseline**
+- [x] **Step 4: Run GREEN and relevant baseline**
 
 ```powershell
 node test/stockcatalogv2.js
@@ -553,6 +582,12 @@ disposeRwaNominationReview(db, nominationId, reviewer, disposition)
 
 `disposeRwaNominationReview` in this task records only the terminal review fact;
 Task 4 builds/persists the exact Safe package for `approved`.
+
+A nomination may introduce a newly discovered provider asset before it exists
+in the finalized registry mirror; otherwise nomination-to-activation would be
+circular. It must persist the full immutable candidate identity and evidence,
+independently recompute the V2 key, and use the mirror only for contextual
+conflict/board data.
 
 **Additive schema:**
 
@@ -623,6 +658,21 @@ CREATE TABLE IF NOT EXISTS rwa_nomination_reviewer_state_v2 (
 If pg-mem does not support the partial unique index, preserve the PostgreSQL
 index in schema and use a test adapter or an additional open-key lock table; do
 not weaken production race safety.
+
+Concurrent same-key creation uses `INSERT ... ON CONFLICT DO NOTHING RETURNING`
+without a conflict target, followed by a same-transaction read of the existing
+open nomination when no row was inserted. The loser creates no implicit
+endorsement and consumes no cadence. Domain scans/workers use an optional
+bounded options object: default limit 100, hard maximum 500, stable cursor,
+`hasMore`, and next cursor; they never scan all history in one tick.
+
+The reviewer-state DDL is forward-compatible only in Task 3. Task 3 accepts a
+nonempty opaque reviewer identity for atomic claim ownership but does not seed
+or treat the table as authentication authority; Task 4 owns that perimeter.
+All standing mutations take a post-lock database wall-clock reading equivalent
+to `clock_timestamp()`: exactly 168 hours permits a fresh family nomination,
+and at or after immutable `pending_until`, expiry wins before endorsement,
+renewal, claim, or disposition.
 
 - [ ] **Step 1: Write RED domain tests**
 

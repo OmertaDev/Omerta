@@ -83,6 +83,20 @@ touches mainnet** until §0 is satisfied.
    | the stock machine | `StockTokenRegistry`, `StockTokenRegistryV2`, `RwaStockBuyer`, `StockVault` | legacy compatibility plus additive immutable version identity; atomic ticker/token/provider conflict replacement; activation TTL; monotonic ballot eligibility that cannot revive after same-key reactivation; one immutable closed-day family result and frozen purchase budget/deadline; ballot-bound exact-token purchase through a Safe-approved adapter; daily ETH/slippage/one-shot walls; pre-held transfer only; EIP-712 allocation authorization; per-token delivery caps, pause, rotation, and sweep |
    | gameplay settlement gas | `SettlementGasPool` | immutable gameplay-vault credit authority; terminal replay keys; exact executor liabilities and self-only pull withdrawals; bounded gas/data-fee accounting; delayed configuration; and migration of unreserved ETH only to one exact successor while old credits stay backed |
 
+   **V2 catalog mirror gate (built, not deployed/configured here):** configure a
+   syntactically valid absolute HTTP(S) `CHAIN_RPC_URL` and the canonical nonzero
+   `STOCK_TOKEN_REGISTRY_V2_ADDRESS` together. The worker must complete one full
+   finalized snapshot—every getter pinned to one block, the numbered block hash
+   rechecked after enumeration, all three reverse heads proven, and the seeded
+   sync lock held—before any downstream surface treats the catalog as ready.
+   Public readiness additionally requires a nonempty matching registry snapshot
+   no more than ten minutes old; exactly ten minutes remains fresh, the first
+   database instant after it fails closed. A registry-address cutover makes the
+   old mirror unready immediately. Test-reader injection, a receipt, or a
+   provider/indexer claim is never production authorization. Do not seed the V2
+   evidence table from getter state: exact activation review/evidence finality is
+   proven only by the later finalized event-aware lifecycle sync.
+
    **NOW IN THE BATCH (added 2026-08-14, founder-directed).** `DynastyNFT`, `StockVault` and
    `OmertaFees.payForPackage` were previously held out; the founder cleared every design choice and lifted
    the launch-schedule constraint ("we will launch when I feel we are complete"), which removed each hold:

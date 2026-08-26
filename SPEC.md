@@ -10,15 +10,15 @@ Written 2026-07-25. Every number below was measured from the tree, not recalled.
 
 | | |
 |---|---|
-| Backend modules | **163** files, **56730** lines (`src/`, incl. `src/routes/` and `src/social/`) |
-| Test suites | **119** files, **48118** lines (`test/`) — ratio 0.85 test:src |
+| Backend modules | **164** files, **57447** lines (`src/`, incl. `src/routes/` and `src/social/`) |
+| Test suites | **120** files, **49415** lines (`test/`) — ratio 0.86 test:src |
 | HTTP routes | **716** registrations |
-| Database tables | **245** (`schema.sql`, 3715 lines) |
+| Database tables | **251** (`schema.sql`, 3783 lines) |
 | Client | **11415** lines (`public/index.html`, single file, zero dependencies) |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **22** contracts, **5611** lines Solidity, **428** Foundry tests passing |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/bond-dials.js` (sizing the on-chain mint walls), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres) |
-| Design + audit docs | **417** markdown files, **90724** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
+| Design + audit docs | **417** markdown files, **90809** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
 | Ledger invariants | 18 named escrow/identity checks + per-currency conservation, **drift-0** |
 
 Roughly **55,000 lines** of code, tests, schema and contracts.
