@@ -18,6 +18,20 @@ contract FixedDataFeeSource is ISettlementDataFeeSource {
     }
 }
 
+contract EntryGasBudgetDataFeeSource is ISettlementDataFeeSource {
+    uint256 internal immutable maximumCanonicalEntryGas;
+    uint256 internal immutable canonicalFee;
+
+    constructor(uint256 maximumCanonicalEntryGas_, uint256 canonicalFee_) {
+        maximumCanonicalEntryGas = maximumCanonicalEntryGas_;
+        canonicalFee = canonicalFee_;
+    }
+
+    function currentTransactionNativeDataFee() external view returns (uint256) {
+        return gasleft() <= maximumCanonicalEntryGas ? canonicalFee : type(uint256).max;
+    }
+}
+
 contract RevertingDataFeeSource is ISettlementDataFeeSource {
     function currentTransactionNativeDataFee() external pure returns (uint256) {
         revert("source unavailable");
@@ -333,6 +347,39 @@ contract SettlementGasPoolConfigTest is SettlementGasPoolTestBase {
         vm.prank(vault);
         (uint256 recorded,) = pool.recordSettlementCredit(request(79_000));
         assertEq(recorded, 0.0023 ether);
+        assertEq(pool.credits(executor), 0.0023 ether);
+        assertEq(pool.totalOutstandingCredits(), 0.0023 ether);
+    }
+
+    // Catches forwarding materially more than the reviewed 30,000-gas data-source budget.
+    function test_data_source_entry_gas_budget_preserves_canonical_preview_and_record() public {
+        EntryGasBudgetDataFeeSource source = new EntryGasBudgetDataFeeSource(30_000, 0.0001 ether);
+        SettlementGasPool.Config memory nextConfig = currentConfig();
+        nextConfig.dataFeeWeiCap = 0.0002 ether;
+        nextConfig.dataFeeSource = address(source);
+        nextConfig.dataFeeSourceRuntimeCodeHash = address(source).codehash;
+        executeAfterDelay(propose(nextConfig, CONFIG_REASON));
+        fund(1 ether);
+        unpause();
+        vm.fee(20 gwei);
+        vm.txGasPrice(30 gwei);
+
+        (
+            ,,
+            uint256 approvedDataFee,
+            uint256 verifiedGasCost,,
+            uint256 previewedCredit,
+            SettlementGasPool.CreditStatus previewedStatus
+        ) = pool.previewCredit(79_000);
+        assertEq(approvedDataFee, 0.0001 ether);
+        assertEq(verifiedGasCost, 0.0023 ether);
+        assertEq(previewedCredit, 0.0023 ether);
+        assertEq(uint256(previewedStatus), uint256(SettlementGasPool.CreditStatus.FULL));
+
+        vm.prank(vault);
+        (uint256 recorded, SettlementGasPool.CreditStatus recordedStatus) = pool.recordSettlementCredit(request(79_000));
+        assertEq(recorded, 0.0023 ether);
+        assertEq(uint256(recordedStatus), uint256(SettlementGasPool.CreditStatus.FULL));
         assertEq(pool.credits(executor), 0.0023 ether);
         assertEq(pool.totalOutstandingCredits(), 0.0023 ether);
     }

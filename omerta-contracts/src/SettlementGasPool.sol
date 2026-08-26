@@ -492,6 +492,8 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
         return ProposalState.EXECUTABLE;
     }
 
+    /// @dev The Safe-selected runtime hash and identity getters prove consistency, not semantic provenance.
+    ///      Before proposing, the Safe launch ceremony must independently reproduce and review the successor.
     function proposeMigration(address successor_, uint256 amount, bytes32 reasonHash)
         external
         onlyOwner
@@ -737,6 +739,9 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
         );
     }
 
+    /// @dev This on-chain check cannot protect against Byzantine Safe semantics or a purpose-built facade.
+    ///      Off-chain review must cover source/compiler/settings/runtime, non-delegation, immutable identity,
+    ///      current and pending ownership, paused state, and the exact acceptMigration behavior.
     function _validateMigrationSuccessor(address candidateAddress) private view {
         address latchedSuccessor = successor;
         if (latchedSuccessor != address(0) && candidateAddress != latchedSuccessor) {
