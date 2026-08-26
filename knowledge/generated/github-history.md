@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `3d8df777e186`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `3996c1c3f06c`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 996 |
+| Commits in clone | 998 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-26 — fix: stabilize PR merge knowledge provenance |
+| Latest commit | 2026-08-26 — chore: remove stale onboarding worktree gitlink |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 195 |
+| OmertaDev | 197 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
