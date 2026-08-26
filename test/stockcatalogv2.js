@@ -445,6 +445,22 @@ assert.deepEqual(stableReaderClient.callLog, [
   'readContract:activeVersionForProviderIdHash@99',
   'getBlock:99',
 ], 'the exact numbered-block hash recheck occurs after every pinned registry getter');
+process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = `  ${CASED_REGISTRY.toLowerCase()}  `;
+assert.equal(stockCatalogV2.stockTokenRegistryV2ReaderConfigured(), true,
+  'a padded valid registry address configures the default production reader');
+assert.equal(await stockCatalogV2.stockTokenCatalogV2Ready(readerPool), true,
+  'the canonical mirror is ready under the same padded production registry configuration');
+let paddedRegistryRetry;
+await assert.doesNotReject(async () => {
+  paddedRegistryRetry = await syncFinalizedStockCatalogV2(readerPool);
+}, 'configured:true and ready:true cannot split from default-reader synchronization');
+assert.equal(paddedRegistryRetry.replayed, true,
+  'the padded registry observation completes as the same canonical finalized snapshot');
+assert.equal((await readerPool.query(
+  'SELECT registry_address FROM stock_catalog_sync_state_v2 WHERE id=1')).rows[0].registry_address,
+CASED_REGISTRY, 'the mirrored registry identity remains canonical after padded-config sync');
+assert.equal(await stockCatalogV2.stockTokenCatalogV2Ready(readerPool), true,
+  'successful padded-config synchronization remains publicly ready');
 
 const driftingReaderClient = finalizedReaderClient({ postReadHash: hash('e') });
 stockCatalogV2.__setStockTokenRegistryV2ClientFactory(() => driftingReaderClient);
@@ -477,6 +493,24 @@ await readerPool.end?.();
 __setStockTokenRegistryV2Reader(async () => observation());
 
 const beforeFailure = JSON.stringify(await approvedStockTokenCatalogV2(pool));
+const mismatchEnvironment = {
+  rpc: process.env.CHAIN_RPC_URL, registry: process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS,
+};
+process.env.CHAIN_RPC_URL = 'https://configured-rpc.invalid';
+process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = `  ${CASED_REGISTRY.toLowerCase()}  `;
+__setStockTokenRegistryV2Reader(async () => observation());
+let mismatchConnects = 0;
+await assert.rejects(() => syncFinalizedStockCatalogV2({
+  connect: async () => { mismatchConnects++; return pool.connect(); },
+}), /registry address conflicts/i,
+'an injected observation must match the canonical normalized production registry identity');
+assert.equal(mismatchConnects, 0, 'canonical registry mismatch rejects before a database connection');
+assert.equal(JSON.stringify(await approvedStockTokenCatalogV2(pool)), beforeFailure,
+  'canonical registry mismatch preserves the last-known-good catalog');
+if (mismatchEnvironment.rpc === undefined) delete process.env.CHAIN_RPC_URL;
+else process.env.CHAIN_RPC_URL = mismatchEnvironment.rpc;
+if (mismatchEnvironment.registry === undefined) delete process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
+else process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = mismatchEnvironment.registry;
 for (const [label, mutate, message] of [
   ['wrong source', (o) => { o.source = 'legacy'; }, /source/],
   ['non-finalized observation', (o) => { o.finality = 'latest'; }, /finalized/],

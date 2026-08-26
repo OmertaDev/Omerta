@@ -279,8 +279,8 @@ function validateObservation(raw) {
   const chainId = canonicalUint(raw.chainId, 256, 'chainId');
   if (chainId !== ROBINHOOD_CHAIN_ID_V2) throw new Error(`wrong registry chain: expected ${ROBINHOOD_CHAIN_ID_V2}`);
   const registryAddress = canonicalAddress(raw.registryAddress, 'registry address');
-  const configured = process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
-  if (configured && canonicalAddress(configured, 'configured registry address') !== registryAddress) {
+  const productionConfig = stockTokenRegistryV2ProductionConfig();
+  if (productionConfig && productionConfig.registryAddress !== registryAddress) {
     throw new Error('registry address conflicts with STOCK_TOKEN_REGISTRY_V2_ADDRESS');
   }
   const catalogVersion = canonicalUint(raw.catalogVersion, 256, 'catalog version');
