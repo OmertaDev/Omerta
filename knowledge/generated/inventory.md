@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `d3f40843a052`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `15f3433a6b69`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,562 |
-| Text lines | 387,919 |
-| Repository bytes inventoried | 273,962,405 |
+| Text lines | 387,930 |
+| Repository bytes inventoried | 273,963,133 |
 | Backend/route modules | 164 |
 | HTTP route registrations / unique routes | 713 / 713 |
 | Database tables | 245 |
 | Solidity declarations | 28 |
-| Git commits | 990 |
+| Git commits | 993 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 4,515 / 21,327 |
+| Graph nodes / edges | 4,518 / 21,339 |
 
 ## Artifact kinds
 
@@ -63,7 +63,7 @@
 | [omerta-contracts/fizz_data/contracts.json](../../omerta-contracts/fizz_data/contracts.json) | 2,739 | contract-project | 2026-08-25 |
 | [public/art/manifest.json](../../public/art/manifest.json) | 2,700 | media-asset | 2026-08-09 |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 2,619 | audit | 2026-08-12 |
-| [test/gates.js](../../test/gates.js) | 2,559 | test-suite | 2026-08-26 |
+| [test/gates.js](../../test/gates.js) | 2,570 | test-suite | 2026-08-26 |
 | [src/game.js](../../src/game.js) | 2,540 | backend-module | 2026-08-24 |
 | [omerta-contracts/x-ray/slither-function-summary.json](../../omerta-contracts/x-ray/slither-function-summary.json) | 2,449 | contract-project | 2026-08-25 |
 | [test/social.js](../../test/social.js) | 2,431 | test-suite | 2026-08-24 |

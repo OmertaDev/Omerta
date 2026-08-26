@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `d3f40843a052`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `15f3433a6b69`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 990 |
+| Commits in clone | 993 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-26 — docs: reconcile final project census |
+| Latest commit | 2026-08-26 — docs: reconcile final test census |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 189 |
+| OmertaDev | 192 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -33,7 +33,7 @@
 | [src/server.js](../../src/server.js) | 343 | yes |
 | [schema.sql](../../schema.sql) | 256 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
-| [SPEC.md](../../SPEC.md) | 238 | yes |
+| [SPEC.md](../../SPEC.md) | 239 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 169 | yes |
 | [package.json](../../package.json) | 129 | yes |
@@ -59,8 +59,8 @@
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 42 | yes |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
 | [src/business.js](../../src/business.js) | 39 | yes |
+| [test/gates.js](../../test/gates.js) | 36 | yes |
 | [src/chain.js](../../src/chain.js) | 36 | yes |
-| [test/gates.js](../../test/gates.js) | 35 | yes |
 | [DEPLOY.md](../../DEPLOY.md) | 30 | yes |
 | [public/admin.html](../../public/admin.html) | 30 | yes |
 | [src/loans.js](../../src/loans.js) | 29 | yes |
