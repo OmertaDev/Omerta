@@ -39,8 +39,6 @@ assert(keys.has('Repository:omerta'));
 const storedGraph = JSON.parse(fs.readFileSync(path.join(root, 'knowledge', 'generated', 'graph.json'), 'utf8'));
 const storedRepository = storedGraph.nodes.find((n) => n.key === 'Repository:omerta');
 const repository = graph.nodes.find((n) => n.key === 'Repository:omerta');
-assert.equal(repository.currentBranch, storedRepository.currentBranch,
-  'knowledge checks must not drift when the same revision is checked from a named or detached branch');
 assert(graph.census.byNodeType.Artifact >= 1000, 'the repository inventory unexpectedly collapsed');
 assert(graph.census.byNodeType.Route >= 700, 'the HTTP surface unexpectedly collapsed');
 assert(graph.census.byNodeType.Table >= 240, 'the schema inventory unexpectedly collapsed');
@@ -49,12 +47,44 @@ assert(graph.census.byNodeType.Commit >= 800, 'the Git lineage unexpectedly coll
 assert(graph.census.byNodeType.PullRequest >= 120, 'the GitHub snapshot unexpectedly collapsed');
 
 const routeById = new Map(model.routes.map((route) => [`${route.method} ${route.url}`, route]));
+const namedImportProvenance = [
+  {
+    id: 'GET /v1/arena', handler: 'arenaBoard', handlerFile: 'src/arena.js',
+    definitionFile: 'src/server.js', domain: 'engagement-growth',
+  },
+  {
+    id: 'GET /v1/opportunities', handler: 'opportunityBoard', handlerFile: 'src/opportunities.js',
+    definitionFile: 'src/server.js', domain: 'engagement-growth',
+  },
+];
+for (const expected of namedImportProvenance) {
+  const route = routeById.get(expected.id);
+  assert.deepEqual({
+    handler: route?.handler,
+    handlerFile: route?.handlerFile,
+    definitionFile: route?.file,
+    domain: route?.domain,
+  }, {
+    handler: expected.handler,
+    handlerFile: expected.handlerFile,
+    definitionFile: expected.definitionFile,
+    domain: expected.domain,
+  }, `${expected.id} must resolve its final named-import delegation exactly`);
+  const handledBy = graph.edges.filter((edge) => edge.type === 'HANDLED_BY'
+    && edge.from === `Route:${expected.id}`);
+  assert.deepEqual(handledBy.map((edge) => ({ to: edge.to, symbol: edge.symbol })), [{
+    to: `Artifact:${expected.handlerFile}`,
+    symbol: expected.handler,
+  }], `${expected.id} must have exactly one HANDLED_BY edge to its named-import handler`);
+}
 assert.equal(routeById.get('GET /v1/agent/turn')?.handler, 'readAgentTurn',
   'Agent Turn reads must resolve to their local readAgentTurn handler, not a later helper body');
 assert.equal(routeById.get('POST /v1/agent/act')?.handler, 'executeAgentAction',
   'Agent Turn actions must resolve to their local executor, not a later namespaced call');
 assert.equal(routeById.get('GET /u/:name')?.handler, 'Cards.publicDossier',
   'public profiles must keep their domain handler rather than promoting the incidental clip helper');
+assert.equal(routeById.get('GET /card/:type/:name')?.handler, 'Cards.publicDossier',
+  'card routes must not promote the incidental named-import renderPng call over their domain handler');
 assert.equal(routeById.get('GET /v1/auth/x/callback')?.handler, 'A.xOAuthCallback',
   'X callbacks must keep their domain handler rather than promoting the incidental cookie parser');
 for (const route of ['GET /', 'GET /admin', 'GET /wiki', 'GET /arena', 'GET /play', 'GET /path']) {
@@ -65,6 +95,10 @@ for (const route of ['POST /v1/auth/x', 'POST /v1/auth/privy']) {
   assert.equal(routeById.get(route)?.handler, 'providerLogin',
     `${route} must resolve its direct callback-factory handler argument`);
 }
+assert.equal(model.routes.filter((route) => route.method === 'GET' && route.url === '/').length, 1,
+  'dynamic route concatenations must not be coerced into an additional literal GET / registration');
+assert.equal(repository.currentBranch, storedRepository.currentBranch,
+  'knowledge checks must not drift when the same revision is checked from a named or detached branch');
 
 for (const artifact of graph.nodes.filter((n) => n.type === 'Artifact')) {
   assert(artifact.version, `${artifact.key} has no version`);

@@ -329,6 +329,32 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
   // or policy expansion.
   const agentGuide = read('AGENTS.md');
   const mcpGuide = read('omerta-mcp/README.md');
+  const publicDiscoverySurfaces = [
+    ['GET /agents', agentGuide],
+    ['GET /wiki', read('public/wiki.html')],
+    ['docs/WIKI.md (Wiki source)', read('docs/WIKI.md')],
+    ['GET /arena', read('public/arena.html')],
+    ['GET /llms.txt', llms],
+  ];
+  const discoveryBoundaryFailures = [];
+  for (const [name, text] of publicDiscoverySurfaces) {
+    const arenaIndex = text.indexOf('/v1/arena');
+    const detailedIndex = text.indexOf('/v1/leaderboard/agents');
+    if (arenaIndex < 0 || !/\/v1\/arena[\s\S]{0,180}\bpublic\b/i.test(text.slice(arenaIndex))) {
+      discoveryBoundaryFailures.push(`${name}: must identify /v1/arena as the public Arena snapshot`);
+    }
+    if (detailedIndex >= 0) {
+      if (arenaIndex < 0 || arenaIndex > detailedIndex) {
+        discoveryBoundaryFailures.push(`${name}: must lead discovery with /v1/arena before the detailed leaderboard`);
+      }
+      const boundary = text.slice(Math.max(0, detailedIndex - 80), detailedIndex + 220);
+      if (!/authenticated/i.test(boundary)) {
+        discoveryBoundaryFailures.push(`${name}: must label /v1/leaderboard/agents authenticated`);
+      }
+    }
+  }
+  assert.deepEqual(discoveryBoundaryFailures, [],
+    `every public agent-discovery surface must preserve the public Arena/authenticated leaderboard boundary:\n  ${discoveryBoundaryFailures.join('\n  ')}`);
   const requiredV3Surfaces = [
     ['AGENTS.md', agentGuide],
     ['omerta-mcp/README.md', mcpGuide],

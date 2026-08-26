@@ -192,7 +192,7 @@ const DOMAIN_MODULES = {
   'vice-competition': new Set(['casino','boxing','races','ring','speakeasy','stable']),
   'law-intelligence': new Set(['collection','law','pen','secrets','wire']),
   'chain-economy': new Set(['chain','deeds','dexbot','dynasty','fees','nft','stockdeliver','tokenhealth','treasury','vig','walletforge','watcher']),
-  'engagement-growth': new Set(['activity','bulletin','career','circle','collision','community','contacts','dispatch','drop','engagement','favors','growth','home','opportunities','people','portrait','primetime','push','results','social','vanity']),
+  'engagement-growth': new Set(['activity','arena','bulletin','career','circle','collision','community','contacts','dispatch','drop','engagement','favors','growth','home','opportunities','people','portrait','primetime','push','results','social','vanity']),
 };
 
 function moduleStem(rel) {
@@ -356,6 +356,26 @@ function routeRegistrationArguments(snippet) {
   return args;
 }
 
+function finalCallbackCall(argument) {
+  const callback = /^(?:async\s*)?(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*=>\s*/.exec(argument);
+  if (!callback) return null;
+  const body = argument.slice(callback[0].length).trim();
+  const directCall = (expression) => {
+    const match = /^(?:await\s+)?([A-Za-z_$][\w$]*)\s*\(/.exec(expression);
+    if (!match) return null;
+    const callStart = expression.indexOf(match[1]);
+    const call = routeRegistrationSnippet(expression, callStart);
+    return expression.slice(callStart + call.length).trim() === '' ? match[1] : null;
+  };
+  if (!body.startsWith('{')) return directCall(body);
+  const returns = [...body.matchAll(/\breturn\s+(?:await\s+)?([A-Za-z_$][\w$]*)\s*\(/g)];
+  const returned = returns.at(-1);
+  if (!returned) return null;
+  const callStart = returned.index + returned[0].lastIndexOf(returned[1]);
+  const call = routeRegistrationSnippet(body, callStart);
+  return body.slice(callStart + call.length).trim() === '}' ? returned[1] : null;
+}
+
 function parseCommits(revision = 'HEAD') {
   const raw = git(['log', '--date=iso-strict', '--pretty=format:%x1e%H%x1f%ad%x1f%an%x1f%s', '--name-only', revision]);
   const commits = [];
@@ -492,7 +512,7 @@ function build(options = {}) {
     }
   }
 
-  // HTTP routes, their access mode and the first namespaced handler called from each registration.
+  // HTTP routes, their access mode and their direct local/imported or namespaced domain handler.
   const routes = [];
   for (const [rel, text] of textCache) {
     if (!(rel === 'src/server.js' || rel.startsWith('src/routes/'))) continue;
@@ -500,6 +520,16 @@ function build(options = {}) {
     for (const m of text.matchAll(/import\s+\*\s+as\s+(\w+)\s+from\s+['"]([^'"]+)['"]/g)) {
       const target = relativeImport(rel, m[2], fileSet);
       if (target) aliases.set(m[1], target);
+    }
+    const namedImports = new Map();
+    for (const m of text.matchAll(/import\s*\{([\s\S]*?)\}\s*from\s*['"]([^'"]+)['"]/g)) {
+      const target = relativeImport(rel, m[2], fileSet);
+      if (!target) continue;
+      for (const rawBinding of m[1].split(',')) {
+        const binding = rawBinding.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '').trim();
+        const imported = /^(?:type\s+)?([A-Za-z_$][\w$]*)(?:\s+as\s+([A-Za-z_$][\w$]*))?$/.exec(binding);
+        if (imported) namedImports.set(imported[2] || imported[1], { name: imported[1], file: target });
+      }
     }
     const matches = [...text.matchAll(/\bapp\.(get|post|put|patch|delete|options|head)\(\s*(['"])([^'"]+)\2\s*,/g)];
     for (let i = 0; i < matches.length; i++) {
@@ -529,22 +559,23 @@ function build(options = {}) {
         return call ? { name, index: call.index } : null;
       }).filter(Boolean).sort((a, b) => a.index - b.index)[0] || null;
       const localHandler = directFactory || returnedLocal;
+      const returnedImport = namedImports.get(finalCallbackCall(directHandlerArgument)) || null;
       const handlerMatch = handlerMatches.find((x) => aliases.has(x[1]) && !/\/(?:game|rules)\.js$/.test(aliases.get(x[1])))
         || handlerMatches.find((x) => aliases.has(x[1])) || null;
-      const handlerFile = localHandler ? rel : handlerMatch ? aliases.get(handlerMatch[1]) : null;
+      const handlerFile = localHandler ? rel : returnedImport?.file || (handlerMatch ? aliases.get(handlerMatch[1]) : null);
       const domain = url.startsWith('/v1/auth') ? 'platform-core'
         : url.startsWith('/v1/wallet') || url.startsWith('/v1/withdraw') || url.startsWith('/v1/gear') ? 'chain-economy'
         : url.startsWith('/v1/casino') || url.startsWith('/v1/races') || url.startsWith('/v1/boxing') || url.startsWith('/v1/speakeasy') ? 'vice-competition'
         : url.startsWith('/v1/law') || url.startsWith('/v1/pen') || url.startsWith('/v1/wire') ? 'law-intelligence'
         : url.startsWith('/v1/opportunities') || url.startsWith('/v1/discovery') || url.startsWith('/v1/coach') ? 'engagement-growth'
         : url.startsWith('/v1') ? domainFor(handlerFile || rel) || 'platform-core' : 'client-experience';
-      const handler = localHandler?.name || (handlerMatch ? `${handlerMatch[1]}.${handlerMatch[2]}` : null);
+      const handler = localHandler?.name || returnedImport?.name || (handlerMatch ? `${handlerMatch[1]}.${handlerMatch[2]}` : null);
       const n = node('Route', routeId, { label: routeId, method, url, access, domain, definitions: [] }, { file: rel, line });
       n.definitions.push({ file: rel, line });
       edge('DEFINED_IN', n.key, `Artifact:${rel}`, { file: rel, line });
       edge('BELONGS_TO', n.key, `Domain:${domain}`, { file: rel, line });
       if (handlerFile) edge('HANDLED_BY', n.key, `Artifact:${handlerFile}`, { file: rel, line }, { symbol: handler });
-      routes.push({ method, url, access, domain, file: rel, line, handler });
+      routes.push({ method, url, access, domain, file: rel, line, handler, handlerFile });
     }
   }
 
