@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `26ca8d7592c5`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `eb103802efdd`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 942 |
+| Commits in clone | 944 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-25 — ci: publish MCP with trusted OIDC |
+| Latest commit | 2026-08-25 — Merge pull request #136 from OmertaDev/codex/npm-oidc-release |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 141 |
+| OmertaDev | 143 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
