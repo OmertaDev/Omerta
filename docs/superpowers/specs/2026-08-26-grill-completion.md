@@ -125,6 +125,13 @@ These rulings are load-bearing and must be copied into every affected plan.
 - Public audit views distinguish provisional from finalized state; finalized is
   the default. Recent pages are bounded; complete exports are checksummed and
   reconstructable in `accountingSequence`, `componentIndex`, stable-event order.
+- One shared finalized-observation kernel reads an exact numbered block and hash,
+  verifies every consumed event's canonical block hash, requires a complete
+  contiguous bounded log delta, pins all accompanying getters to that same head,
+  and rechecks the numbered block/hash after every RPC read. It publishes no
+  domain authority by itself. Registry activation, health clearance, acquisition,
+  and later gameplay consumers keep separate typed inboxes/checkpoints and apply
+  the observation idempotently; no domain borrows another domain's cursor.
 
 ### Product posture
 
@@ -147,11 +154,13 @@ flowchart TD
   F0["F0: Tracked requirement manifest + rulings"] --> C["C: Versioned Registry + Finalized Mirror"]
   F0 --> N["N: Nomination + Reviewer Lifecycle"]
   C --> N
-  C --> H["H: Health Overlay + Safe Clearance"]
-  N --> H
+  C --> FO["FO: Shared Finalized-Observation Kernel"]
+  N --> FO
+  FO --> H["H: Health Overlay + Safe Clearance"]
   O1["O1: mainOperator Role + Typed Authority"] --> A1["A1: Acquisition Vault Buckets + Ingress"]
   C --> A1
   H --> CB["CB: Ballot + Event Finality + Budget Provenance"]
+  FO --> CB
   C --> CB
   N --> CB
   A1 --> CB
@@ -271,6 +280,30 @@ cutover.
 - Getter snapshots do not prove activation-event evidence/review identity.
   Event-aware lifecycle sync remains a later graph node; Task 2's evidence table
   is deliberately DDL-only.
+
+### C4. Shared finalized-observation kernel
+
+- The kernel is implemented before H and before the registry activation/event
+  consumer. It owns canonical RPC observation mechanics, not registry, health,
+  ballot, purchase, or gameplay policy.
+- An observation binds chain ID `4663`, normalized contract identity and start
+  block, exact finalized block number/hash/timestamp, a complete contiguous event
+  delta, and all requested getter outputs at that exact block tag. Removed logs,
+  wrong addresses/topics, a log outside the requested interval, an unavailable
+  block hash, gaps, oversized work, or any before/after head mismatch reject the
+  entire observation before derived state changes.
+- Contract-specific consumers maintain independent immutable inbox identities
+  `(chainId, contractAddress, blockHash, transactionHash, logIndex)` and separate
+  checkpoint rows that bind deployment/start block plus last applied finalized
+  block number/hash. Inbox insert and consumer checkpoint advance are atomic;
+  replay is exact-idempotent.
+- The registry consumer derives activation generation and review provenance from
+  its own event inbox. The health consumer derives Safe clearance generations
+  from the separate overlay inbox. Neither consumer can advance or clear the
+  other, and an off-chain watcher snapshot is never fabricated as chain finality.
+- Provisional observations may be displayed categorically but cannot authorize a
+  ballot, clear quarantine, create a purchase intent, deliver Stock Tokens, or
+  become a finalized accounting fact.
 
 ## N — Public family nomination and review lifecycle
 
@@ -735,7 +768,8 @@ success.
 |---|---|---|
 | 0. F0 | Tracked requirement manifest, override ledger, corrected DAG, dormant/deployment truth | Every master section maps to a task/review/deployment state; no load-bearing ruling remains ignored-only |
 | 1. C+N foundation | Registry v2, getter mirror, nomination/reviewer domain | Contract/server behavioral tests; immutable identity/TTL/reviewer/concurrency review |
-| 2. H | Health watcher, additive Safe-clearance overlay, quarantine/readiness seam | Five/ten-minute, seven-day clearance, reorg/stale/spam and fail-closed action tests |
+| 1a. FO | Shared exact-head finalized-observation kernel and consumer checkpoint/inbox contract | Pinned-head/getter/log completeness, hash-recheck, reorg, crash, gap, bound, and exact-replay tests |
+| 2. H | Health watcher, additive Safe-clearance overlay, quarantine/readiness seam consuming FO | Five/ten-minute, seven-day clearance, reorg/stale/spam and fail-closed action tests |
 | 3. O1+A1 | Operator role/typed authority, vault buckets, ingress/deposits/caps | Unit/fuzz/invariant tests for role generation, nonces, buckets and exact receipts |
 | 4. CB | Version ballot, event finality, and AcquisitionVault budget-authority bridge | Exact frozen identity/tally/budget tests; H and vault provenance required before non-dormant cutover |
 | 5. A3+R | Intents/reservations, attempts, reconciliation, incidents, hold-only stock | Oracle/adapter/reorg/stale/repair/bounded-index behavioral tests |
