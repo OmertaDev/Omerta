@@ -11,7 +11,6 @@ export const ROBINHOOD_CHAIN_ID_V2 = '4663';
 const FINALITY = 'finalized';
 const SOURCE = 'robinhood_chain_registry_v2';
 const ACTIVATION_TTL_SECONDS = 604800n;
-const MAX_MIRROR_AGE_MS = 10 * 60 * 1000;
 const MAX_TIMESTAMP_SECONDS = 253402300799n;
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 const ZERO_HASH = `0x${'00'.repeat(32)}`;
@@ -521,7 +520,8 @@ export async function approvedStockTokenCatalogV2(db) {
     await client.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
     state = (await client.query(
       `SELECT chain_id, registry_address, catalog_version, finalized_block_number,
-              finalized_block_hash, snapshot_hash, synced_at, now() AS db_now
+              finalized_block_hash, snapshot_hash, synced_at,
+              now() > synced_at + interval '600 seconds' AS mirror_stale
          FROM stock_catalog_sync_state_v2 WHERE id=1`)).rows[0];
     if (state) rows = (await client.query(
       `SELECT asset_version_key, chain_id, ticker_hash, ticker, name, token_address,
@@ -545,9 +545,7 @@ export async function approvedStockTokenCatalogV2(db) {
   }
   const assets = rows.map(publicAsset);
   const syncedAt = isoTimestamp(state.synced_at);
-  const dbNow = isoTimestamp(state.db_now);
-  const stale = !syncedAt || !dbNow
-    || new Date(dbNow).getTime() - new Date(syncedAt).getTime() > MAX_MIRROR_AGE_MS;
+  const stale = !syncedAt || state.mirror_stale !== false;
   const activeAssets = stale ? [] : assets.filter((asset) => asset.active);
   return {
     source: SOURCE, finality: FINALITY, chainId: String(state.chain_id),
@@ -560,8 +558,18 @@ export async function approvedStockTokenCatalogV2(db) {
 }
 
 export async function stockTokenCatalogV2Ready(db) {
-  if (!stockTokenRegistryV2ReaderConfigured()) return false;
-  return (await approvedStockTokenCatalogV2(db)).voteable;
+  if (!process.env.CHAIN_RPC_URL || !stockTokenRegistryV2ReaderConfigured()) return false;
+  let configuredAddress;
+  try {
+    configuredAddress = canonicalAddress(
+      process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS,
+      'configured registry address',
+    );
+  } catch {
+    return false;
+  }
+  const catalog = await approvedStockTokenCatalogV2(db);
+  return catalog.voteable && sameAddress(catalog.registryAddress, configuredAddress);
 }
 
 async function readStockTokenRegistryV2Onchain() {

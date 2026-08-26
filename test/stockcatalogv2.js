@@ -372,19 +372,23 @@ function finalizedReaderClient({ postReadHash = hash('d') } = {}) {
     registeredAt: '100', activatedAt: '200' });
   const blockCalls = [];
   const contractCalls = [];
+  const callLog = [];
   return {
-    one, blockCalls, contractCalls,
-    async getChainId() { return 4663; },
+    one, blockCalls, contractCalls, callLog,
+    async getChainId() { callLog.push('getChainId'); return 4663; },
     async getBlock(request) {
       blockCalls.push(request);
       if (request.blockTag === 'finalized') {
+        callLog.push('getBlock:finalized');
         return { number: 99n, hash: hash('d'), timestamp: 300n };
       }
       assert.deepEqual(request, { blockNumber: 99n });
+      callLog.push('getBlock:99');
       return { number: 99n, hash: postReadHash, timestamp: 300n };
     },
     async readContract(request) {
       contractCalls.push(request);
+      callLog.push(`readContract:${request.functionName}@${String(request.blockNumber)}`);
       switch (request.functionName) {
         case 'catalogVersion': return 1n;
         case 'versionCount': return 1n;
@@ -420,6 +424,18 @@ assert.deepEqual(stableReaderClient.blockCalls,
 assert.equal(stableReaderClient.contractCalls.length, 7);
 assert(stableReaderClient.contractCalls.every((call) => call.blockNumber === 99n),
   'every registry getter is pinned to the one finalized block number');
+assert.deepEqual(stableReaderClient.callLog, [
+  'getChainId',
+  'getBlock:finalized',
+  'readContract:catalogVersion@99',
+  'readContract:versionCount@99',
+  'readContract:versionKeyAt@99',
+  'readContract:getVersion@99',
+  'readContract:activeVersionForTickerHash@99',
+  'readContract:activeVersionForToken@99',
+  'readContract:activeVersionForProviderIdHash@99',
+  'getBlock:99',
+], 'the exact numbered-block hash recheck occurs after every pinned registry getter');
 
 const driftingReaderClient = finalizedReaderClient({ postReadHash: hash('e') });
 stockCatalogV2.__setStockTokenRegistryV2ClientFactory(() => driftingReaderClient);
@@ -641,21 +657,23 @@ assert.equal(catalog.stale, true);
 // Public metadata, history, and DB clock must come from one repeatable-read snapshot. The simulated
 // concurrent commit occurs between the metadata and history statements; a split-pool read mixes them.
 const DB_NOW = new Date('2026-08-26T18:00:00.000Z');
-const readState = (catalogVersion, syncedAt) => ({
-  chain_id: 4663, registry_address: REGISTRY, catalog_version: catalogVersion,
+const readState = (catalogVersion, syncedAt, registryAddress = REGISTRY, mirrorStale = false) => ({
+  chain_id: 4663, registry_address: registryAddress, catalog_version: catalogVersion,
   finalized_block_number: catalogVersion === '12' ? '123456' : '123457',
   finalized_block_hash: catalogVersion === '12' ? hash('f') : hash('e'),
   snapshot_hash: catalogVersion === '12' ? firstSync.snapshotHash : hash('d'),
-  synced_at: syncedAt, db_now: DB_NOW,
+  synced_at: syncedAt, db_now: DB_NOW, mirror_stale: mirrorStale,
 });
 const oldReadRows = storedRows.map((row) => ({ ...row }));
 const newReadRows = storedRows.map((row, index) => ({
   ...row, active: index === 4, last_catalog_version: 13,
 }));
-function coherentReadDb({ ageSeconds = 0, rows = oldReadRows, stateRow = undefined, interleave = false } = {}) {
+function coherentReadDb({ ageSeconds = 0, rows = oldReadRows, stateRow = undefined,
+  registryAddress = REGISTRY, interleave = false } = {}) {
   let liveGeneration = 'old';
   const oldState = stateRow === undefined
-    ? readState('12', new Date(DB_NOW.getTime() - ageSeconds * 1000)) : stateRow;
+    ? readState('12', new Date(DB_NOW.getTime() - ageSeconds * 1000), registryAddress,
+      ageSeconds > 600) : stateRow;
   const newState = readState('13', DB_NOW);
   return {
     async connect() {
@@ -667,6 +685,9 @@ function coherentReadDb({ ageSeconds = 0, rows = oldReadRows, stateRow = undefin
             return { rows: [] };
           }
           if (/FROM stock_catalog_sync_state_v2/i.test(sql)) {
+            assert.match(sql,
+              /now\(\)\s*>\s*synced_at\s*\+\s*interval\s*'600 seconds'\s+AS\s+mirror_stale/i,
+              'PostgreSQL computes the strict ten-minute boundary inside the coherent snapshot');
             const selected = snapshotGeneration === 'new' ? newState : oldState;
             if (interleave) liveGeneration = 'new';
             return { rows: selected ? [selected] : [] };
@@ -693,12 +714,46 @@ assert.equal(exactlyFresh.stale, false, 'exactly 600 database-clock seconds is f
 const strictlyStaleDb = coherentReadDb({ ageSeconds: 601 });
 const strictlyStale = await approvedStockTokenCatalogV2(strictlyStaleDb);
 assert.equal(strictlyStale.stale, true, 'strictly greater than 600 database-clock seconds is stale');
+const firstPostgresInstantPastLimit = await approvedStockTokenCatalogV2(coherentReadDb({
+  stateRow: {
+    ...readState('12', '2026-08-26T17:50:00.000000Z'),
+    db_now: '2026-08-26T18:00:00.000001Z', mirror_stale: true,
+  },
+}));
+assert.equal(firstPostgresInstantPastLimit.stale, true,
+  'the first PostgreSQL microsecond after 600 seconds is stale even though JS Date rounds it away');
 
 __setStockTokenRegistryV2Reader(async () => observation());
 assert.equal(stockCatalogV2.stockTokenRegistryV2ReaderConfigured(), true,
   'worker configuration is a separate explicit predicate');
+const readinessEnvironment = {
+  rpc: process.env.CHAIN_RPC_URL, registry: process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS,
+};
+process.env.CHAIN_RPC_URL = 'https://configured-rpc.invalid';
+process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = REGISTRY;
 assert.equal(await stockCatalogV2.stockTokenCatalogV2Ready(exactlyFreshDb), true,
   'fresh configured synchronized nonempty catalog is ready');
+delete process.env.CHAIN_RPC_URL;
+assert.equal(stockCatalogV2.stockTokenRegistryV2ReaderConfigured(), true,
+  'the injected reader remains a configured worker seam without a production RPC');
+assert.equal(await stockCatalogV2.stockTokenCatalogV2Ready(exactlyFreshDb), false,
+  'the worker reader seam cannot weaken the production readiness configuration gate');
+process.env.CHAIN_RPC_URL = 'https://configured-rpc.invalid';
+const CUTOVER_REGISTRY = address('8');
+process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = CUTOVER_REGISTRY;
+assert.equal(stockCatalogV2.stockTokenRegistryV2ReaderConfigured(), true,
+  'the injected worker reader remains configured during a registry cutover');
+assert.equal(await stockCatalogV2.stockTokenCatalogV2Ready(exactlyFreshDb), false,
+  'registry A becomes unready immediately when configuration cuts over to registry B');
+assert.equal(await stockCatalogV2.stockTokenCatalogV2Ready(coherentReadDb({
+  registryAddress: CUTOVER_REGISTRY,
+})), true, 'registry B becomes ready only after its own fresh coherent snapshot is mirrored');
+delete process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
+assert.equal(stockCatalogV2.stockTokenRegistryV2ReaderConfigured(), true,
+  'the injected reader remains available as a worker test seam without production configuration');
+assert.equal(await stockCatalogV2.stockTokenCatalogV2Ready(exactlyFreshDb), false,
+  'an injected reader cannot bypass the configured registry identity readiness gate');
+process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = REGISTRY;
 assert.equal(await stockCatalogV2.stockTokenCatalogV2Ready(coherentReadDb({ ageSeconds: 601 })), false,
   'stale catalog is not ready');
 assert.equal(await stockCatalogV2.stockTokenCatalogV2Ready(coherentReadDb({ rows: [],
@@ -716,6 +771,10 @@ assert.equal(await stockCatalogV2.stockTokenCatalogV2Ready(exactlyFreshDb), fals
 if (savedRpc === undefined) delete process.env.CHAIN_RPC_URL; else process.env.CHAIN_RPC_URL = savedRpc;
 if (savedV2Registry === undefined) delete process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
 else process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = savedV2Registry;
+if (readinessEnvironment.rpc === undefined) delete process.env.CHAIN_RPC_URL;
+else process.env.CHAIN_RPC_URL = readinessEnvironment.rpc;
+if (readinessEnvironment.registry === undefined) delete process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
+else process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = readinessEnvironment.registry;
 
 const emptyPool = await makeDb();
 const previousAddress = process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
