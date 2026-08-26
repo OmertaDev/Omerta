@@ -12,20 +12,10 @@ import {
 } from '../rwanominations.js';
 import { GameError } from '../game.js';
 import { checkAuthRateLimit, rateLimitsEnabled } from '../ratelimit.js';
+import { normalizeRwaReviewerConfig } from '../preflight.js';
 
 const ZERO_ADDRESS = /^0x0{40}$/i;
 const fail = (code, message) => { throw new GameError(code, message); };
-
-function configuredReviewer() {
-  const key = process.env.RWA_REVIEWER_KEY;
-  const rawId = process.env.RWA_REVIEWER_ID;
-  if (typeof key !== 'string' || !key || typeof rawId !== 'string') return null;
-  const id = rawId.trim();
-  if (!id || id.length > 200 || id === key) return null;
-  if (typeof process.env.MOD_KEY === 'string'
-      && (process.env.MOD_KEY === key || process.env.MOD_KEY === id)) return null;
-  return { key, id };
-}
 
 function reviewerKeyMatches(expected, supplied) {
   if (typeof supplied !== 'string') return false;
@@ -173,20 +163,25 @@ function reviewerMutation(pool, handler) {
   };
 }
 
-export function registerRwa(app, { pool, auth, withCharacter }) {
+export function registerRwa(app, { pool, auth, withCharacter, reviewerRouteTrust }) {
+  if (typeof reviewerRouteTrust !== 'symbol') throw new Error('Trusted reviewer route token is required.');
   const rwaReviewerAuth = async function rwaReviewerAuth(req, reply) {
-    const configured = configuredReviewer();
-    if (!configured) return reply.code(503).send({ error: 'rwa_reviewer_disabled' });
-    if (rateLimitsEnabled() && req.method === 'POST') {
-      const limited = await checkAuthRateLimit({ ip: `rwa-reviewer-auth:${req.ip}` });
+    const configured = normalizeRwaReviewerConfig({
+      RWA_REVIEWER_KEY: process.env.RWA_REVIEWER_KEY,
+      RWA_REVIEWER_ID: process.env.RWA_REVIEWER_ID,
+      MOD_KEY: process.env.MOD_KEY,
+    });
+    if (!configured.enabled) return reply.code(503).send({ error: 'rwa_reviewer_disabled' });
+    if (rateLimitsEnabled()) {
+      const limited = await checkAuthRateLimit({ ip: `rwa-reviewer-auth:${req.method}:${req.ip}` });
       if (limited) return reply.code(429).header('retry-after', limited.retryAfter)
         .send({ error: 'rate_limited', retryAfter: limited.retryAfter });
     }
     if (!reviewerKeyMatches(configured.key, req.headers['x-rwa-reviewer-key'])) {
       return reply.code(401).send({ error: 'rwa_reviewer_auth' });
     }
-    if (rateLimitsEnabled() && req.method === 'POST') {
-      const limited = await checkAuthRateLimit({ ip: `rwa-reviewer-action:${configured.id}` });
+    if (rateLimitsEnabled()) {
+      const limited = await checkAuthRateLimit({ ip: `rwa-reviewer-action:${req.method}:${configured.id}` });
       if (limited) return reply.code(429).header('retry-after', limited.retryAfter)
         .send({ error: 'rate_limited', retryAfter: limited.retryAfter });
     }
@@ -228,7 +223,7 @@ export function registerRwa(app, { pool, auth, withCharacter }) {
   });
 
   const reviewerPost = (handler) => ({
-    config: { authKind: 'rwaReviewerAuth' },
+    config: { authKind: 'rwaReviewerAuth', rwaReviewerTrust: reviewerRouteTrust },
     preHandler: rwaReviewerAuth,
     handler: reviewerMutation(pool, handler),
   });
@@ -252,7 +247,7 @@ export function registerRwa(app, { pool, auth, withCharacter }) {
     return result;
   }));
   app.get('/v1/rwa/reviewer/queue', {
-    config: { authKind: 'rwaReviewerAuth' }, preHandler: rwaReviewerAuth,
+    config: { authKind: 'rwaReviewerAuth', rwaReviewerTrust: reviewerRouteTrust }, preHandler: rwaReviewerAuth,
   }, async (req) => publicResult(
     await rwaNominationReviewQueue(pool, {
       reviewerId: req.rwaReviewerId,

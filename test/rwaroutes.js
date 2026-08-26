@@ -99,6 +99,33 @@ try {
 
 console.log('✅ RWA HTTP routes passed');
 
+for (const [label, counterfeitTrust] of [
+  ['missing token', undefined],
+  ['token string', 'rwa-reviewer-route-trust'],
+  ['different symbol', Symbol('rwa-reviewer-route-trust')],
+]) {
+  const counterfeitApp = await buildServer();
+  let rejected = false;
+  try {
+    const counterfeitAuth = async function rwaReviewerAuth() {};
+    counterfeitApp.get(`/v1/counterfeit-reviewer-${label.replace(' ', '-')}`, {
+      config: {
+        authKind: 'rwaReviewerAuth',
+        ...(counterfeitTrust === undefined ? {} : { rwaReviewerTrust: counterfeitTrust }),
+      },
+      preHandler: counterfeitAuth,
+    }, async () => ({ unsafe: true }));
+  } catch (error) {
+    rejected = /reviewer route trust|trusted reviewer/i.test(String(error?.message));
+  } finally {
+    await counterfeitApp.close();
+  }
+  assert.equal(rejected, true,
+    `a counterfeit same-name reviewer prehandler with ${label} cannot gain trusted classification`);
+}
+
+console.log('✅ RWA reviewer classification requires an unforgeable server-created trust token');
+
 {
   const mem = newDb();
   const { Pool } = mem.adapters.createPg();
@@ -300,6 +327,281 @@ console.log('✅ RWA disposition compares exact DB wall time before whole-second
 
 console.log('✅ RWA reviewer queue ranks a dense current-support snapshot without stale holes');
 
+{
+  const createdAt = new Date('2020-01-01T00:00:00.000Z');
+  const pendingUntil = new Date('2021-01-01T00:00:00.000Z');
+  const syntheticRows = Array.from({ length: 5000 }, (_, i) => ({
+    id: `synthetic-expired-${String(i).padStart(4, '0')}`,
+    asset_version_key: `0x${(i + 1).toString(16).padStart(64, '0')}`,
+    chain_id: 4663,
+    ticker: 'SYN',
+    ticker_hash: `0x${'1'.repeat(64)}`,
+    token_address: getAddress(`0x${'2'.repeat(40)}`),
+    token_decimals: 18,
+    robinhood_asset_id_hash: `0x${'3'.repeat(64)}`,
+    name: 'Synthetic Expired',
+    sponsor_family_id: 'synthetic-family',
+    sponsor_account_id: 'synthetic-account',
+    sponsor_support_active: false,
+    rationale: 'Synthetic cleanup bound.',
+    evidence_hash: `0x${'4'.repeat(64)}`,
+    evidence_uri: null,
+    prior_nomination_id: null,
+    status: 'review_requested',
+    execution_status: 'not_applicable',
+    created_at: createdAt,
+    pending_until: pendingUntil,
+    claimed_by: null,
+    claimed_at: null,
+    disposition_by: null,
+    disposition_at: null,
+    disposition_reason: null,
+    approved_at: null,
+    valid_until: null,
+  }));
+  const syntheticQueries = [];
+  const syntheticDb = {
+    query: async (sql, params = []) => {
+      syntheticQueries.push({ sql, params });
+      if (sql.includes('rwa_board_candidates')) {
+        assert.deepEqual(params, [5001]);
+        return { rows: syntheticRows.map(({ id, asset_version_key, ticker, status, created_at }) => ({
+          id, asset_version_key, ticker, status, created_at,
+        })) };
+      }
+      if (sql.includes('rwa_board_stale_preflight')) return { rows: [] };
+      if (/FROM gangs/.test(sql)) return { rows: [] };
+      if (/SELECT \* FROM rwa_nominations_v2/.test(sql)) return { rows: syntheticRows };
+      if (sql.includes('rwa_wall_clock')) {
+        return { rows: [{ wall_now: new Date('2026-01-01T00:00:00.500Z') }] };
+      }
+      if (sql.includes('rwa_board_active_slots')) return { rows: [] };
+      if (/^\s*UPDATE rwa_nominations_v2/.test(sql)) return { rows: [], rowCount: params.length };
+      if (/^\s*INSERT INTO rwa_nomination_events_v2/.test(sql)) return { rows: [], rowCount: 1 };
+      throw new Error(`unexpected synthetic queue query: ${sql}`);
+    },
+  };
+  const result = await rwaNominationReviewQueue(syntheticDb, { reviewerId: 'synthetic-reviewer', limit: 10 });
+  assert.deepEqual(result, { items: [], hasMore: false, nextCursor: null });
+  assert(syntheticQueries.length <= 50,
+    `5,000 cleanup transitions must grow by fixed chunks, observed ${syntheticQueries.length} queries`);
+  const expiryBatches = syntheticQueries.filter(({ sql }) => sql.includes('rwa_queue_expiry_batch'));
+  const eventBatches = syntheticQueries.filter(({ sql }) => sql.includes('rwa_queue_event_batch'));
+  assert.equal(expiryBatches.length, 20, '5,000 expiries use the reviewed 250-row chunk size');
+  assert.equal(eventBatches.length, 20, '5,000 append-only events use the reviewed 250-row chunk size');
+  assert(expiryBatches.every(({ params }) => params.length === 250));
+  assert(eventBatches.every(({ params }) => params.length === 2500));
+}
+
+console.log('✅ RWA reviewer queue cleanup remains chunk-bounded at the 5,000-row wall');
+
+{
+  const mem = newDb();
+  const { Pool } = mem.adapters.createPg();
+  const pool = new Pool();
+  await pool.query(SCHEMA);
+  for (let i = 1; i <= 3; i++) {
+    await pool.query(
+      'INSERT INTO gangs (id,name,tag,season_tribute) VALUES ($1,$2,$3,$4)',
+      [`mixed-family-${i}`, `Mixed Family ${i}`, `MX${i}`, 4000 - i],
+    );
+  }
+  let sequence = 0;
+  const insertMixed = async ({ kind, sponsorFamily, sponsorActive, status }) => {
+    const i = sequence++;
+    const id = `mixed-${kind}-${String(i).padStart(3, '0')}`;
+    await pool.query(
+      `INSERT INTO rwa_nominations_v2
+        (id,asset_version_key,chain_id,ticker,ticker_hash,token_address,token_decimals,
+         robinhood_asset_id_hash,name,sponsor_family_id,sponsor_account_id,sponsor_support_active,
+         rationale,evidence_hash,status,execution_status,created_at,pending_until)
+       VALUES ($1,$2,4663,'MIX',$3,$4,18,$5,'Mixed Queue Row',$6,$7,$8,
+         'Mixed batch evidence.',$9,$10,'not_applicable','2020-01-01T00:00:00Z','2030-01-01T00:00:00Z')`,
+      [id, `0x${(i + 1000).toString(16).padStart(64, '0')}`, `0x${'5'.repeat(64)}`,
+        getAddress(`0x${'6'.repeat(40)}`), `0x${'7'.repeat(64)}`, sponsorFamily,
+        `account-${sponsorFamily}`, sponsorActive, `0x${'8'.repeat(64)}`, status],
+    );
+    return id;
+  };
+  for (let i = 0; i < 20; i++) {
+    await insertMixed({
+      kind: 'sponsor', sponsorFamily: 'stale-family', sponsorActive: true, status: 'pending',
+    });
+    const endorsementId = await insertMixed({
+      kind: 'endorsement', sponsorFamily: 'mixed-family-1', sponsorActive: false, status: 'pending',
+    });
+    await pool.query(
+      `INSERT INTO rwa_nomination_endorsements_v2
+        (nomination_id,family_id,account_id,active) VALUES ($1,'stale-family','stale-account',true)`,
+      [endorsementId],
+    );
+    const promotionId = await insertMixed({
+      kind: 'promotion', sponsorFamily: 'mixed-family-1', sponsorActive: true, status: 'pending',
+    });
+    for (const family of ['mixed-family-2', 'mixed-family-3']) {
+      await pool.query(
+        `INSERT INTO rwa_nomination_endorsements_v2
+          (nomination_id,family_id,account_id,active) VALUES ($1,$2,$3,true)`,
+        [promotionId, family, `account-${family}`],
+      );
+    }
+    await insertMixed({
+      kind: 'demotion', sponsorFamily: 'mixed-family-1', sponsorActive: false,
+      status: 'review_requested',
+    });
+  }
+  const mixedQueries = [];
+  const mixedDb = { query: (sql, params) => { mixedQueries.push(sql); return pool.query(sql, params); } };
+  const result = await rwaNominationReviewQueue(mixedDb, { reviewerId: 'mixed-reviewer', limit: 10 });
+  assert.equal(result.items.length, 10);
+  assert(result.items.every((item) => item.support === 3 && item.status === 'review_requested'));
+  assert.equal(result.hasMore, true);
+  assert(mixedQueries.length <= 12,
+    `80 sponsor/endorsement/promotion/demotion transitions must be batched, observed ${mixedQueries.length}`);
+  for (const marker of [
+    'rwa_queue_sponsor_batch', 'rwa_queue_endorsement_batch',
+    'rwa_queue_promotion_batch', 'rwa_queue_demotion_batch',
+  ]) assert.equal(mixedQueries.filter((sql) => sql.includes(marker)).length, 1, `${marker} uses one chunk`);
+
+  const stateCounts = (await pool.query(
+    `SELECT status,sponsor_support_active,count(*)::int AS n FROM rwa_nominations_v2
+      GROUP BY status,sponsor_support_active ORDER BY status,sponsor_support_active`,
+  )).rows;
+  assert.deepEqual(stateCounts, [
+    { status: 'pending', sponsor_support_active: false, n: 60 },
+    { status: 'review_requested', sponsor_support_active: true, n: 20 },
+  ]);
+  assert.equal((await pool.query(
+    "SELECT count(*)::int AS n FROM rwa_nomination_endorsements_v2 WHERE family_id='stale-family' AND active",
+  )).rows[0].n, 0);
+  const eventGroups = (await pool.query(
+    `SELECT event_type,actor_id,details,count(*)::int AS n FROM rwa_nomination_events_v2
+      GROUP BY event_type,actor_id,details ORDER BY event_type`,
+  )).rows;
+  assert.deepEqual(eventGroups, [
+    { event_type: 'endorsement_seat_lost', actor_id: 'seat-refresh', details: {}, n: 20 },
+    { event_type: 'review_request_demoted', actor_id: 'support-threshold',
+      details: { from: 'review_requested', support: 0, threshold: 3 }, n: 20 },
+    { event_type: 'review_requested', actor_id: 'support-threshold',
+      details: { from: 'pending', support: 3, threshold: 3 }, n: 20 },
+    { event_type: 'sponsor_seat_lost', actor_id: 'seat-refresh', details: {}, n: 20 },
+  ]);
+  await pool.end();
+}
+
+console.log('✅ RWA reviewer queue batches every cleanup transition with exact event payloads');
+
+{
+  const mem = newDb();
+  const { Pool } = mem.adapters.createPg();
+  const pool = new Pool();
+  await pool.query(SCHEMA);
+  const expiryTickerHash = `0x${'1'.repeat(64)}`;
+  const expiryToken = getAddress(`0x${'2'.repeat(40)}`);
+  const expiryProvider = `0x${'3'.repeat(64)}`;
+  const expiryEvidence = `0x${'4'.repeat(64)}`;
+  for (let i = 0; i < 100; i++) {
+    await pool.query(
+      `INSERT INTO rwa_nominations_v2
+        (id,asset_version_key,chain_id,ticker,ticker_hash,token_address,token_decimals,
+         robinhood_asset_id_hash,name,sponsor_family_id,sponsor_account_id,sponsor_support_active,
+         rationale,evidence_hash,status,execution_status,created_at,pending_until)
+       VALUES ($1,$2,4663,'EXP',$3,$4,18,$5,'Expired Queue Row','expired-family','expired-account',
+         false,'Expired batch evidence.',$6,'review_requested','not_applicable',
+         '2020-01-01T00:00:00Z','2021-01-01T00:00:00Z')`,
+      [`expired-${String(i).padStart(3, '0')}`, `0x${(i + 1).toString(16).padStart(64, '0')}`,
+        expiryTickerHash, expiryToken, expiryProvider, expiryEvidence],
+    );
+  }
+  const cleanupSql = [];
+  const cleanupDb = {
+    query: (sql, params) => { cleanupSql.push(sql); return pool.query(sql, params); },
+  };
+  const cleaned = await rwaNominationReviewQueue(cleanupDb, { reviewerId: 'batch-reviewer', limit: 10 });
+  assert.deepEqual(cleaned, { items: [], hasMore: false, nextCursor: null });
+  assert(cleanupSql.length <= 10,
+    `100 cleanup transitions must be batch-bounded, observed ${cleanupSql.length} queries`);
+  assert.equal((await pool.query(
+    "SELECT count(*)::int AS n FROM rwa_nominations_v2 WHERE status='expired'",
+  )).rows[0].n, 100);
+  const expiryEvents = (await pool.query(
+    `SELECT event_id,event_type,actor_type,actor_id,details,created_at
+       FROM rwa_nomination_events_v2 ORDER BY nomination_id`,
+  )).rows;
+  assert.equal(expiryEvents.length, 100);
+  assert.equal(new Set(expiryEvents.map((event) => event.event_id)).size, 100);
+  for (const event of expiryEvents) {
+    assert.match(event.event_id, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+    assert.deepEqual({
+      eventType: event.event_type, actorType: event.actor_type, actorId: event.actor_id,
+      details: event.details,
+    }, {
+      eventType: 'expired', actorType: 'system', actorId: 'expiry',
+      details: { pendingUntil: '2021-01-01T00:00:00.000Z' },
+    });
+  }
+  assert(expiryEvents.every((event) => new Date(event.created_at).getTime()
+    === new Date(expiryEvents[0].created_at).getTime()), 'one DB wall time stamps the whole cleanup batch');
+  await pool.end();
+}
+
+console.log('✅ RWA reviewer queue batches 100 cleanup transitions with exact events');
+
+process.env.RATE_LIMIT = 'off';
+process.env.MOD_KEY = 'get-limit-moderator-key';
+process.env.RWA_REVIEWER_KEY = 'get-limit-reviewer-key';
+process.env.RWA_REVIEWER_ID = 'get-limit-reviewer';
+process.env.RATE_READ_BURST = '1';
+process.env.RATE_READ_PER_SEC = '0.001';
+process.env.RATE_AUTH_BURST = '2';
+process.env.RATE_AUTH_PER_SEC = '0.001';
+const reviewerGetLimitedApp = await buildServer();
+try {
+  const incidentalJwt = (await reviewerGetLimitedApp.inject({
+    method: 'POST', url: '/v1/auth/guest', remoteAddress: '198.51.100.30',
+  })).json().token;
+  process.env.RATE_LIMIT = 'on';
+  const missingGet = async () => reviewerGetLimitedApp.inject({
+    method: 'GET', url: '/v1/rwa/reviewer/queue', remoteAddress: '198.51.100.31',
+    headers: { authorization: `Bearer ${incidentalJwt}` },
+  });
+  const missingGetFirst = await missingGet();
+  const missingGetSecond = await missingGet();
+  assert.equal(missingGetFirst.statusCode, 401, missingGetFirst.body);
+  assert.equal(missingGetSecond.statusCode, 401, missingGetSecond.body,
+    'an incidental JWT never routes reviewer GET through the player-read bucket');
+  const missingGetThird = await missingGet();
+  assert.equal(missingGetThird.statusCode, 429, missingGetThird.body);
+  assert.equal(missingGetThird.json().error, 'rate_limited',
+    'reviewer GET pre-auth limiting is deliberately source-IP scoped');
+  const untouchedPlayerRead = await reviewerGetLimitedApp.inject({
+    method: 'GET', url: '/v1/me', remoteAddress: '198.51.100.32',
+    headers: { authorization: `Bearer ${incidentalJwt}` },
+  });
+  assert.notEqual(untouchedPlayerRead.statusCode, 429,
+    'reviewer GETs consume no player account read tokens');
+
+  process.env.RATE_AUTH_BURST = '1';
+  const authorizedGet = (remoteAddress) => reviewerGetLimitedApp.inject({
+    method: 'GET', url: '/v1/rwa/reviewer/queue', remoteAddress,
+    headers: { 'x-rwa-reviewer-key': process.env.RWA_REVIEWER_KEY },
+  });
+  const authorizedGetFirst = await authorizedGet('198.51.100.33');
+  const authorizedGetSecond = await authorizedGet('198.51.100.34');
+  assert.equal(authorizedGetFirst.statusCode, 200, authorizedGetFirst.body);
+  assert.equal(authorizedGetSecond.statusCode, 429, authorizedGetSecond.body);
+  assert.equal(authorizedGetSecond.json().error, 'rate_limited',
+    'distinct source IPs prove the reviewer GET post-auth public-ID bucket');
+} finally {
+  await reviewerGetLimitedApp.close();
+  for (const key of [
+    'RATE_LIMIT', 'RATE_READ_BURST', 'RATE_READ_PER_SEC', 'RATE_AUTH_BURST', 'RATE_AUTH_PER_SEC',
+    'RWA_REVIEWER_KEY', 'RWA_REVIEWER_ID',
+  ]) delete process.env[key];
+}
+
+console.log('✅ RWA reviewer GETs have their own pre/post-auth limiter and no player-read path');
+
 process.env.RATE_LIMIT = 'off';
 process.env.MOD_KEY = 'test-moderator-key';
 process.env.RWA_REVIEWER_KEY = 'same-secret-and-public-id';
@@ -319,9 +621,13 @@ try {
   )).rows[0].n, 0, 'a colliding secret is never persisted as the public reviewer ID');
 
   for (const config of [
+    { key: '   ', id: 'whitespace-key-reviewer' },
+    { key: '  padded-secret-core  ', id: 'padded-secret-core' },
     { key: 'same-secret-and-public-id', id: '  same-secret-and-public-id  ' },
     { key: 'distinct-reviewer-secret', id: `  ${process.env.MOD_KEY}  ` },
     { key: 'distinct-reviewer-secret', id: '   ' },
+    { key: 'distinct-reviewer-secret', id: 'control\u0007reviewer' },
+    { key: 'distinct-reviewer-secret', id: 'line\u2028reviewer' },
     { key: 'distinct-reviewer-secret', id: 'x'.repeat(201) },
   ]) {
     process.env.RWA_REVIEWER_KEY = config.key;
@@ -332,6 +638,9 @@ try {
     });
     assert.equal(disabled.statusCode, 503, disabled.body);
     assert.equal(disabled.json().error, 'rwa_reviewer_disabled');
+    assert.equal((await collisionApp.pool.query(
+      'SELECT count(*)::int AS n FROM rwa_nomination_reviewer_state_v2',
+    )).rows[0].n, 0, 'invalid reviewer configuration never poisons the irreversible latch');
   }
   process.env.RWA_REVIEWER_KEY = 'trimmed-reviewer-secret';
   process.env.RWA_REVIEWER_ID = '  trimmed-public-reviewer  ';

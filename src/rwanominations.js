@@ -22,6 +22,7 @@ const DEFAULT_LIMIT = 100;
 const MAX_LIMIT = 500;
 const BOARD_LIVE_WORK_MAX = 5000;
 const BOARD_STALE_SLOT_WORK_MAX = 5000;
+const QUEUE_CLEANUP_CHUNK_SIZE = 250;
 const ZERO_HASH = `0x${'00'.repeat(32)}`;
 const SAFE_TEXT = /^[^<>"\x60\x00-\x1f\x7f]*$/;
 
@@ -217,19 +218,73 @@ function stable(value) {
   return Object.fromEntries(Object.keys(value).sort().map((key) => [key, stable(value[key])]));
 }
 
-async function appendEvent(client, {
+function eventRecord({
   nominationId: id, eventType, familyId = null, accountId = null,
   actorType, actorId, details = {}, at,
 }) {
   const publicDetails = stable(details);
   const detailsHash = keccak256(toBytes(JSON.stringify(publicDetails)));
+  return [crypto.randomUUID(), id, eventType, familyId, accountId, actorType, actorId,
+    detailsHash, JSON.stringify(publicDetails), at];
+}
+
+async function appendEvent(client, event) {
   await client.query(
     `INSERT INTO rwa_nomination_events_v2
       (event_id,nomination_id,event_type,family_id,account_id,actor_type,actor_id,details_hash,details,created_at)
      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
-    [crypto.randomUUID(), id, eventType, familyId, accountId, actorType, actorId,
-      detailsHash, JSON.stringify(publicDetails), at],
+    eventRecord(event),
   );
+}
+
+function chunks(values, size = QUEUE_CLEANUP_CHUNK_SIZE) {
+  const result = [];
+  for (let i = 0; i < values.length; i += size) result.push(values.slice(i, i + size));
+  return result;
+}
+
+async function appendQueueEvents(client, events) {
+  for (const batch of chunks(events)) {
+    const params = [];
+    const values = batch.map((event) => {
+      const record = eventRecord(event);
+      const placeholders = record.map((value) => {
+        params.push(value);
+        return `$${params.length}`;
+      });
+      return `(${placeholders.join(',')})`;
+    });
+    await client.query(
+      `INSERT INTO rwa_nomination_events_v2
+        (event_id,nomination_id,event_type,family_id,account_id,actor_type,actor_id,details_hash,details,created_at)
+       VALUES ${values.join(',')} /* rwa_queue_event_batch */`,
+      params,
+    );
+  }
+}
+
+async function updateQueueNominationIds(client, ids, setClause, marker) {
+  for (const batch of chunks(ids)) {
+    const params = [];
+    const list = inList(batch, params);
+    await client.query(
+      `UPDATE rwa_nominations_v2 SET ${setClause} WHERE id IN (${list}) /* ${marker} */`, params,
+    );
+  }
+}
+
+async function clearQueueEndorsements(client, slots, at) {
+  for (const batch of chunks(slots)) {
+    const params = [at];
+    const conditions = batch.map((slot) => {
+      params.push(slot.nomination_id, slot.family_id);
+      return `(nomination_id=$${params.length - 1} AND family_id=$${params.length})`;
+    });
+    await client.query(
+      `UPDATE rwa_nomination_endorsements_v2 SET active=false,updated_at=$1
+        WHERE ${conditions.join(' OR ')} /* rwa_queue_endorsement_batch */`, params,
+    );
+  }
 }
 
 async function seatSet(client) {
@@ -352,6 +407,93 @@ async function refreshLocked(client, row, at, suppliedSeats, suppliedSlots) {
     });
   }
   return { row, slots, seats, changed };
+}
+
+async function refreshQueueLockedBatch(client, rows, at, seats, slotMap, staleMap) {
+  const expired = [];
+  const staleSponsors = [];
+  const staleEndorsements = [];
+  const promoted = [];
+  const demoted = [];
+  const events = [];
+  const refreshed = new Map();
+
+  for (const row of rows) {
+    const id = String(row.id);
+    const slots = [...(slotMap.get(id) ?? []), ...(staleMap.get(id) ?? [])];
+    if (!OPEN.has(row.status)) {
+      refreshed.set(id, { row, slots, seats, support: supportOf(row, slots, seats) });
+      continue;
+    }
+    if (at.getTime() >= new Date(row.pending_until).getTime()) {
+      expired.push(id);
+      row.status = 'expired';
+      events.push({
+        nominationId: id, eventType: 'expired', actorType: 'system', actorId: 'expiry',
+        details: { pendingUntil: new Date(row.pending_until).toISOString() }, at,
+      });
+      refreshed.set(id, { row, slots, seats, support: supportOf(row, slots, seats) });
+      continue;
+    }
+    if (row.sponsor_support_active && !seats.has(String(row.sponsor_family_id))) {
+      staleSponsors.push(id);
+      row.sponsor_support_active = false;
+      events.push({
+        nominationId: id,
+        eventType: 'sponsor_seat_lost',
+        familyId: row.sponsor_family_id,
+        accountId: row.sponsor_account_id,
+        actorType: 'system',
+        actorId: 'seat-refresh',
+        details: {},
+        at,
+      });
+    }
+    for (const slot of slots) {
+      if (slot.active && !seats.has(String(slot.family_id))) {
+        staleEndorsements.push(slot);
+        slot.active = false;
+        events.push({
+          nominationId: id,
+          eventType: 'endorsement_seat_lost',
+          familyId: slot.family_id,
+          accountId: slot.account_id,
+          actorType: 'system',
+          actorId: 'seat-refresh',
+          details: {},
+          at,
+        });
+      }
+    }
+    const support = supportOf(row, slots, seats);
+    const wanted = support >= SUPPORT_THRESHOLD ? 'review_requested' : 'pending';
+    if (['pending', 'review_requested'].includes(row.status) && row.status !== wanted) {
+      const prior = row.status;
+      (wanted === 'review_requested' ? promoted : demoted).push(id);
+      row.status = wanted;
+      events.push({
+        nominationId: id,
+        eventType: wanted === 'review_requested' ? 'review_requested' : 'review_request_demoted',
+        actorType: 'system',
+        actorId: 'support-threshold',
+        details: { from: prior, support, threshold: SUPPORT_THRESHOLD },
+        at,
+      });
+    }
+    refreshed.set(id, { row, slots, seats, support });
+  }
+
+  await updateQueueNominationIds(client, expired, "status='expired'", 'rwa_queue_expiry_batch');
+  await updateQueueNominationIds(
+    client, staleSponsors, 'sponsor_support_active=false', 'rwa_queue_sponsor_batch',
+  );
+  await clearQueueEndorsements(client, staleEndorsements, at);
+  await updateQueueNominationIds(
+    client, promoted, "status='review_requested'", 'rwa_queue_promotion_batch',
+  );
+  await updateQueueNominationIds(client, demoted, "status='pending'", 'rwa_queue_demotion_batch');
+  await appendQueueEvents(client, events);
+  return refreshed;
 }
 
 function nominationView(row, support, extras = {}) {
@@ -1191,12 +1333,12 @@ export async function rwaNominationReviewQueue(db, options = {}) {
     for (const slot of stale) if (slot.stale_kind === 'endorsement') {
       staleMap.get(String(slot.nomination_id))?.push({ ...slot, active: true });
     }
+    const refreshed = await refreshQueueLockedBatch(client, locked, at, seats, slotMap, staleMap);
     const eligible = [];
     for (const row of locked) {
-      const slots = [...(slotMap.get(String(row.id)) ?? []), ...(staleMap.get(String(row.id)) ?? [])];
-      const refreshed = await refreshLocked(client, row, at, seats, slots);
+      const state = refreshed.get(String(row.id));
       if (row.status === 'review_requested' || (row.status === 'under_review' && row.claimed_by === reviewer)) {
-        eligible.push({ row, support: supportOf(row, refreshed.slots, refreshed.seats) });
+        eligible.push({ row, support: state.support });
       }
     }
     eligible.sort((a, b) => b.support - a.support

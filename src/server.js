@@ -251,6 +251,9 @@ export async function buildServer() {
 
   // THE AGENT GATEWAY — collect every mounted route (this hook fires per registration) so the
   // OpenAPI 3.1 contract at /openapi.json is auto-derived and never drifts from what's live.
+  const rwaReviewerRouteTrust = Symbol('rwa-reviewer-route-trust');
+  const isTrustedReviewerConfig = (config) => config?.authKind === 'rwaReviewerAuth'
+    && config?.rwaReviewerTrust === rwaReviewerRouteTrust;
   const routeRegistry = [];
   app.addHook('onRoute', (r) => {
     // Capture the REAL enforcement from the route's preHandler (by function name) so the OpenAPI
@@ -260,10 +263,10 @@ export async function buildServer() {
     const names = pre.map((f) => (f && f.name) || '');
     const isMod = names.includes('modAuth');
     const declaredReviewer = r.config?.authKind === 'rwaReviewerAuth';
-    if (declaredReviewer !== names.includes('rwaReviewerAuth')) {
-      throw new Error(`RWA reviewer route metadata/auth mismatch: ${r.method} ${r.url}`);
+    const isRwaReviewer = isTrustedReviewerConfig(r.config);
+    if (declaredReviewer && !isRwaReviewer) {
+      throw new Error(`Untrusted reviewer route trust metadata: ${r.method} ${r.url}`);
     }
-    const isRwaReviewer = declaredReviewer;
     const playerAuth = names.includes('auth');
     const hasAuth = playerAuth || isMod || isRwaReviewer;
     const authKind = isRwaReviewer ? 'rwaReviewerAuth' : isMod ? 'modAuth' : playerAuth ? 'auth' : null;
@@ -861,7 +864,9 @@ export async function buildServer() {
         [uid(), req.ip, req.method, req.routeOptions?.url || req.url])
         .catch((e) => console.error('mod_actions audit write failed (non-fatal)', e?.message));
   };
-  registerRwa(app, { pool, auth, withCharacter: G.withCharacter });
+  registerRwa(app, {
+    pool, auth, withCharacter: G.withCharacter, reviewerRouteTrust: rwaReviewerRouteTrust,
+  });
   // BLUE-TEAM M2: the audit log is readable back through the mod perimeter it records (the last N actions),
   // so the /admin dashboard can show who did what. A GET, so it doesn't log itself.
   app.get('/v1/mod/actions', { preHandler: modAuth }, async (req) => {
@@ -905,7 +910,7 @@ export async function buildServer() {
   const guarded = (req) => (req.method === 'POST' || req.method === 'DELETE')
     && req.url.startsWith('/v1') && req.url !== '/v1/path-quiz'
     && !req.url.startsWith('/v1/auth') && !req.url.startsWith('/v1/mod')
-    && req.routeOptions?.config?.authKind !== 'rwaReviewerAuth';
+    && !isTrustedReviewerConfig(req.routeOptions?.config);
   app.addHook('preHandler', async (req, reply) => {
     // E-M1: auth endpoints are excluded from the account-keyed limiter above (they're unauthenticated),
     // so throttle them per-IP — bounds guest-mint Sybil floods + X/Privy auth-fetch amplification.
@@ -936,7 +941,8 @@ export async function buildServer() {
     // exhaustion. Route every keyless /v1 GET to the per-IP public limiter, so a new keyless route can
     // never ship unthrottled by omission (a denylist-by-default, not an allowlist).
     if (rateLimitsEnabled() && (req.method === 'GET' || req.method === 'HEAD')
-      && req.url.startsWith('/v1') && !req.url.startsWith('/v1/mod')) {
+      && req.url.startsWith('/v1') && !req.url.startsWith('/v1/mod')
+      && !isTrustedReviewerConfig(req.routeOptions?.config)) {
       let authed = true;
       try { await req.jwtVerify(); } catch { authed = false; }
       const limited = authed
