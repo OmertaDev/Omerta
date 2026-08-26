@@ -6,8 +6,17 @@ import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
 import * as Engagement from '../src/engagement.js';
 import * as Explore from '../src/explore.js';
+import { convoyBoard as liveConvoyBoard } from '../src/convoy.js';
+import { cornerBoard as liveCornerBoard } from '../src/corner.js';
+import { favorBoard } from '../src/favors.js';
+import { heistBoard as liveHeistBoard } from '../src/heists.js';
 import { upgradeRarity } from '../src/nft.js';
-import { auctionLotsOf, CARS, DISTRICTS, levelOf, PORT, weekOf } from '../src/rules.js';
+import { vouchBoard } from '../src/vouch.js';
+import {
+  auctionLotsOf, BOXING, CARS, CASINO, CLUES, CONVOY, CORNER, CRIMES, DISTRICTS, ESTATE, HEIST_JOBS, KITCHENS,
+  LANDMARKS, levelOf, LOAN, MADE, MEGAPROJECT, PORT, RACKETS, RACES, SKILLS, SPEAKEASY, STABLE,
+  VANITY, VOUCH, WIRE, weekOf,
+} from '../src/rules.js';
 
 const { SYSTEMS } = Explore;
 const ENGAGEMENT_SYSTEMS = Engagement.SYSTEMS;
@@ -67,7 +76,8 @@ assert.equal(new Set(SYSTEMS.map((entry) => entry.systemId)).size, 40,
 
 const respectForLevel = (level) => { let respect = 0; while (levelOf(respect) < level) respect += 25; return respect; };
 const ch = (level, extra = {}) => ({ id: 'char-me', account_id: 'acct-me', respect: respectForLevel(level),
-  cash: 0, loc: 'brick', lab: null, jail_until: null, wanted_until: null, indicted_at: null, ...extra });
+  cash: 0, nerve: 10, energy: 50, ammo: 10, health: 100, loc: 'brick', lab: null,
+  jail_until: null, wanted_until: null, indicted_at: null, ...extra });
 const owned = (extra = {}) => ({ rackets: [], assets: [], businesses: [], fighters: [], cars: [], cargo: {},
   skills: new Set(), mastery: {}, npc: {}, work: {}, held: [], ...extra });
 const acct = (extra = {}) => ({ agent_flag: false, omr: 0, ...extra });
@@ -96,6 +106,14 @@ const liveDb = (target, live = {}) => {
       if (/FROM auctions/i.test(sql)) return { rows: live.auctions || [] };
       if (/FROM cars/i.test(sql) && /FROM boats/i.test(sql)) return { rows: live.collectionItems || [] };
       if (/FROM landmarks/i.test(sql)) return { rows: live.landmarks || [] };
+      if (/FROM crew_heists|FROM crew_heist_members/i.test(sql)) return { rows: [] };
+      if (/SELECT c\.heist_loot/i.test(sql)) return { rows: [{ heist_loot: 0, heists_pulled: 0 }] };
+      if (/FROM loans l/i.test(sql)) return { rows: [] };
+      if (/FROM loan_house/i.test(sql)) return { rows: [{ pool: 0 }] };
+      if (/FROM loans WHERE borrower_character/i.test(sql)) return { rows: [] };
+      if (/FROM market_listings l/i.test(sql)) return { rows: [] };
+      if (/FROM cars WHERE listed/i.test(sql)) return { rows: [] };
+      if (/FROM market_listings/i.test(sql)) return { rows: [] };
       throw new Error(`unexpected live coverage query: ${sql}`);
     },
   };
@@ -106,7 +124,7 @@ const liveDb = (target, live = {}) => {
 let db = fakeDb();
 let coverage = await Explore.systemCoverage(db, ch(3, { cash: 12500 }), acct(), owned());
 assert.deepEqual(coverage.catalog, { scope: 'engagement_systems', version: 1, count: 40 });
-assert.deepEqual(coverage.progress, { visited: 0, eligible: 2, remaining: 40 });
+assert.deepEqual(coverage.progress, { visited: 0, eligible: 3, remaining: 40 });
 assert.deepEqual(coverage.next, {
   systemId: 'streets-crime', system: 'streets / crime', name: 'The Streets', tab: 'streets',
   hook: 'Work a street crime — the city\'s first cash-and-respect loop.', at: 1, mode: 'solo',
@@ -157,6 +175,12 @@ coverage = await Explore.systemCoverage(fakeDb(eventsExcept('territory')), ch(30
 assert.equal(coverage.next, null);
 assert.equal(coverage.blocked.social, 1);
 coverage = await Explore.systemCoverage(fakeDb(eventsExcept('territory')), ch(30), acct(), owned({ gangId: 'gang-1' }));
+assert.equal(coverage.next, null, 'family membership alone is not an actionable territory operation');
+assert.equal(coverage.blocked.resource, 1);
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('territory')), ch(30), acct(),
+  owned({ gangId: 'gang-1', gangRole: 'soldier' }), {
+    live: { territoryBoard: { own: [{ district: 'brick', pending: 1, cold: false }], rival: null } },
+  });
 assert.equal(coverage.next.systemId, 'territory');
 assert.equal(coverage.next.mode, 'organization');
 
@@ -223,6 +247,507 @@ for (const [message, item, omr] of [
   assert.equal(coverage.next, null, message);
 }
 
+// The three market-shaped systems use their authoritative boards, not ownership/balance stand-ins.
+// Each case isolates the target as the sole unvisited row so a fallback card cannot hide a mismatch.
+const loanBoard = (overrides = {}) => ({
+  offers: [], active: [], paper: [],
+  house: { min: LOAN.HOUSE_MIN, minLevel: LOAN.HOUSE_MIN_LVL, cap: LOAN.HOUSE_MAX,
+    available: 0, eligible: true, yourMarker: null },
+  terms: { min: LOAN.MIN },
+  ...overrides,
+});
+
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('loan sharking')), ch(30), acct(), owned(), {
+  live: { loanBoard: loanBoard({ house: { min: LOAN.HOUSE_MIN, minLevel: LOAN.HOUSE_MIN_LVL,
+    cap: LOAN.HOUSE_MAX, available: LOAN.HOUSE_MIN, eligible: true, yourMarker: null } }) },
+});
+assert.equal(coverage.next?.systemId, 'loan-sharking',
+  'a qualified human can use a funded Loan House window without already holding lender cash');
+
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('loan sharking')), ch(30), acct(), owned(), {
+  live: { loanBoard: loanBoard({ offers: [{ id: 'offer', mine: false, principal: LOAN.MIN,
+    directed: false, forMe: false, collateralMin: 0, collateralOmr: 0 }] }) },
+});
+assert.equal(coverage.next?.systemId, 'loan-sharking',
+  'a human with no active debt can take an open unsecured player offer without lender cash');
+
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('loan sharking')), ch(30, { cash: 900 }),
+  acct({ agent_flag: true }), owned(), {
+    live: { loanBoard: loanBoard({ active: [{ id: 'mine', role: 'borrower', owed: 900 }] }) },
+  });
+assert.equal(coverage.next?.systemId, 'loan-sharking',
+  'an agent may square an existing marker even below the lending minimum');
+
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('loan sharking')),
+  ch(30, { cash: LOAN.MIN, safe_until: new Date(Date.now() + 60_000) }), acct({ agent_flag: true }), owned(), {
+    live: { loanBoard: loanBoard({ house: { min: LOAN.HOUSE_MIN, minLevel: LOAN.HOUSE_MIN_LVL,
+      cap: LOAN.HOUSE_MAX, available: LOAN.HOUSE_MIN, eligible: true, yourMarker: null } }) },
+  });
+assert.equal(coverage.next, null,
+  'an agent never receives borrowing as Explore readiness, and a safehouse blocks creating a loan offer');
+
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('vanity')), ch(30), acct({ omr: VANITY.TITLE_OMR }), owned());
+assert.equal(coverage.next?.systemId, 'vanity',
+  'a living character can buy a title with the published $OMR price and no car, family, or deed');
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('vanity')), ch(30), acct({ omr: VANITY.NAME_CHANGE_OMR }), owned());
+assert.equal(coverage.next?.systemId, 'vanity',
+  'a living character can change their name with the published $OMR price and no renameable holding');
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('vanity')), ch(30), acct(),
+  owned({ cars: [{ id: 'pledged', listed: true, pledged: true }] }));
+assert.equal(coverage.next, null, 'a holding with no affordable vanity operation is not a readiness proxy');
+
+const marketBoard = (listings = []) => ({
+  levers: { minPrice: 50, listFeeBps: 100, maxListings: 3 }, listings,
+});
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('the black market')), ch(30), acct(),
+  owned({ cars: [{ id: 'locked-iron', listed: true, pledged: true }] }), {
+    live: { marketBoard: marketBoard(), marketOwn: [] },
+  });
+assert.equal(coverage.next, null,
+  'broke inventory that is listed and pledged cannot be offered as a valid Black Market operation');
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('the black market')), ch(30, { loc: 'brick' }), acct(),
+  owned({ cargo: { booze: 2 } }), {
+    live: { marketBoard: marketBoard([{ id: 'wtb', kind: 'order', sellerId: 'other', good: 'booze',
+      wanted: 2, unitPrice: 100, district: 'brick', expiresSeconds: 600 }]), marketOwn: [] },
+  });
+assert.equal(coverage.next?.systemId, 'black-market',
+  'matching cargo at a live buy-order dock is fillable with no cash or listing fee');
+
+const heistBoard = (overrides = {}) => ({
+  jobs: HEIST_JOBS.map((job) => ({ ...job, locked: false })), open: [], mine: null,
+  you: { pulled: 0 }, ...overrides,
+});
+const firstHeist = HEIST_JOBS.find((job) => !job.rateBps);
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('crew heists')),
+  ch(30, { cash: firstHeist.stake }), acct(), owned(), { live: { heistBoard: heistBoard() } });
+assert.equal(coverage.next?.systemId, 'crew-heists',
+  'planning an eligible score uses the heist stake/status gates and does not require social-crew membership');
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('crew heists')), ch(30), acct(), owned(), {
+  live: { heistBoard: heistBoard({ open: [{ id: 'open-score', job: firstHeist.id, lvl: firstHeist.lvl,
+    crewNeeded: 1, rolesOpen: [firstHeist.roles[0]] }] }) },
+});
+assert.equal(coverage.next?.systemId, 'crew-heists',
+  'an open role-matched heist can be joined without stake cash or social-crew membership');
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('crew heists')), ch(30), acct(), owned(), {
+  live: { heistBoard: heistBoard({ open: [{ id: 'own-mark-score', job: firstHeist.id, lvl: firstHeist.lvl,
+    crewNeeded: 1, rolesOpen: [firstHeist.roles[0]], canJoin: false }] }) },
+});
+assert.equal(coverage.next, null,
+  'an open inside-job row is not joinable by the character who owns its business mark');
+
+const insideHeist = HEIST_JOBS.find((job) => job.rateBps);
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('crew heists')), ch(30), acct({ agent_flag: true }), owned(), {
+  live: { heistBoard: heistBoard({ jobs: [{ ...insideHeist, locked: false }], open: [{
+    id: 'inside-score', job: insideHeist.id, lvl: insideHeist.lvl, crewNeeded: 1,
+    rolesOpen: [insideHeist.roles[0]], canJoin: true,
+  }] }) },
+});
+assert.equal(coverage.next, null, 'agent policy never joins a player-targeted inside-job heist');
+assert.equal(coverage.blocked.policy, 1, 'an otherwise joinable inside job is policy-blocked for an agent');
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('crew heists')), ch(30), acct({ agent_flag: true }), owned(), {
+  live: { heistBoard: heistBoard({ jobs: [{ ...firstHeist, locked: false }], open: [{
+    id: 'ordinary-score', job: firstHeist.id, lvl: firstHeist.lvl, crewNeeded: 1,
+    rolesOpen: [firstHeist.roles[0]], canJoin: true,
+  }] }) },
+});
+assert.equal(coverage.next?.systemId, 'crew-heists', 'agent policy preserves ordinary co-op heist joins');
+
+// Shared boards must close the less-obvious proxy gaps too: a family badge, an apparently open
+// corner, warehouse slots, or stale dirt cannot stand in for an operation that the mutation accepts.
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('territory')), ch(30), acct(),
+  owned({ gangId: 'gang-1', gangRole: 'soldier' }), { live: { territoryBoard: { own: [], rival: null } } });
+assert.equal(coverage.next, null, 'family membership alone is not an actionable territory operation');
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('territory')), ch(30), acct(),
+  owned({ gangId: 'gang-1', gangRole: 'soldier' }), { live: { territoryBoard: {
+    own: [{ district: 'brick', pending: 1, cold: false }], rival: null,
+  } } });
+assert.equal(coverage.next?.systemId, 'territory', 'a warm family operation with a real pending take is collectible');
+
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('territory')), ch(30, {
+  energy: 100, ammo: 100,
+}), acct({ agent_flag: true }), owned({ gangId: 'gang-1', gangRole: 'soldier' }), { live: {
+  territoryBoard: { own: [], rival: { district: 'brick', pending: 1000, raidable: true } },
+} });
+assert.equal(coverage.next, null, 'agent policy never turns a rival territory raid into an autonomous operation');
+assert.equal(coverage.blocked.policy, 1, 'an otherwise executable territory raid is classified as policy-blocked for agents');
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('territory')), ch(30), acct({ agent_flag: true }),
+  owned({ gangId: 'gang-1', gangRole: 'soldier' }), { live: { territoryBoard: {
+    own: [{ district: 'brick', pending: 1, cold: false }], rival: null,
+  } } });
+assert.equal(coverage.next?.systemId, 'territory', 'agent policy preserves non-PvP family territory collection');
+
+const mintedBoat = { ...commonBoat, id: 'on-chain-boat', minted_onchain: true };
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('the port')), ch(30, {
+  loc: PORT.DISTRICT, cash: Math.min(...PORT.BOATS.map((boat) => boat.cost)),
+}), acct(), owned(), { live: {
+  collectionItems: [mintedBoat],
+  portBoard: { atDocks: true, fleet: [{ ...mintedBoat, status: 'docked' }], catalog: PORT.BOATS, fleetMax: 1,
+    contraband: { book: 0 } },
+} });
+assert.equal(coverage.next?.systemId, 'port',
+  'an extracted trophy boat does not consume the in-game berth counted by the buy mutation');
+
+const arrivedBoat = { ...commonBoat, id: 'arrived-boat', run_until: new Date(Date.now() - 60_000) };
+const arrivedPortWitness = Explore.systemEligibility(SYSTEMS.find((entry) => entry.systemId === 'port'), {
+  ch: ch(30, { loc: PORT.DISTRICT }), acct: acct(), owned: owned(), level: 30, onlineAccounts: [], live: {
+    collectionItems: [arrivedBoat],
+    portBoard: { atDocks: true, fleet: [{ ...arrivedBoat, status: 'arrived' }], catalog: PORT.BOATS,
+      fleetMax: 1, contraband: { book: 0 } },
+  },
+});
+assert.equal(arrivedPortWitness.operation, 'port:collect',
+  'an uncollected arrival is still at sea and must witness collection, never the rejecting boat-sale route');
+
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('the black market')), ch(30, { cash: 100 }), acct(),
+  owned({ cargo: { booze: 1 } }), { live: { marketBoard: marketBoard(), marketOwn: [0, 1, 2].map((n) => ({
+    kind: 'order', status: 'cancelled', seller_character: 'char-me', filled_qty: 1, district: 'neon', id: `warehouse-${n}`,
+  })) } });
+assert.equal(coverage.next, null, 'unclaimed order warehouses consume every market slot just like the mutation count');
+
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('loan sharking')), ch(30, { cash: 1 }), acct(), owned(), {
+  live: { loanBoard: loanBoard({ paper: [{ id: 'own-marker', mine: false, borrowerMe: true, price: 1 }] }) },
+});
+assert.equal(coverage.next, null, 'a borrower cannot buy the paper on their own debt');
+
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('secrets')), ch(30), acct(), owned(), {
+  live: { secretsBoard: { held: [{ id: 'stale', exposable: false }], onMe: [] } },
+});
+assert.equal(coverage.next, null, 'stale dirt with no living target is not an exposable secret operation');
+
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('the wire')), ch(30), acct({ omr: WIRE.TAP_OMR }), owned(), {
+  live: { wireBoard: { costs: { tap: WIRE.TAP_OMR }, watches: [],
+    taps: [{ target: 'live-target' }], tapMax: 1, informants: [], informantMax: 1,
+    bugsOnYou: 0, subTiers: [] } },
+});
+assert.equal(coverage.next?.systemId, 'wire',
+  'a live tap can be refreshed at the slot cap without rediscovering its target on a social board');
+
+const cappedVouchDb = {
+  async query(sql) {
+    if (/SELECT v\.target_account/i.test(sql) || /SELECT v\.voucher_account/i.test(sql)) return { rows: [] };
+    if (/COUNT\(\*\).*voucher_account/i.test(sql)) return { rows: [{ n: VOUCH.MAX_OUT }] };
+    if (/COUNT\(\*\).*target_account/i.test(sql)) return { rows: [{ n: 0 }] };
+    throw new Error(`unexpected vouch board query: ${sql}`);
+  },
+};
+const cappedVouches = await vouchBoard(cappedVouchDb, ch(30));
+assert.equal(cappedVouches.slotsLeft, 0,
+  'vouch capacity counts durable outbound rows even when their current streets are no longer living');
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('growth / social')), ch(30), acct(), owned(), {
+  onlineAccounts: [{ accountId: 'other', characterId: 'target' }], live: { vouchBoard: cappedVouches },
+});
+assert.equal(coverage.next, null, 'a hidden dead-street vouch cannot manufacture a free growth/social slot');
+
+const expiredFavor = {
+  id: 'expired-open', good_id: 'booze', qty: 1, pay: 600, district: 'brick', note: null,
+  expires_at: new Date(Date.now() - 60_000),
+};
+const expiredFavors = Array.from({ length: 3 }, (_, index) => ({ ...expiredFavor, id: `expired-open-${index}` }));
+const expiredFavorDb = {
+  async query(sql) {
+    if (/SELECT account_id FROM characters/i.test(sql)) return { rows: [{ account_id: 'acct-me' }] };
+    if (/JOIN contacts/i.test(sql)) return { rows: [] };
+    if (/FROM favors WHERE poster_character/i.test(sql)) {
+      return { rows: /expires_at\s*>\s*now\(\)/i.test(sql) ? [] : expiredFavors };
+    }
+    throw new Error(`unexpected favor board query: ${sql}`);
+  },
+};
+const expiredFavorBoard = await favorBoard(ch(30, { cash: 10_000 }), expiredFavorDb, {
+  owned: owned(),
+});
+assert.equal(expiredFavorBoard.canPost, false,
+  'an expired-but-unswept open favor still consumes the authoritative posting cap');
+assert.deepEqual(expiredFavorBoard.mine.map((row) => row.id), expiredFavors.map((row) => row.id),
+  'the board preserves an expired open favor because the cancellation mutation can still refund it');
+
+// The personalized can* fields are rendered by the human UI as well as consumed by Explore. They
+// must include actor gates, or the card advertises a mutation guaranteed to refuse. Each fixture
+// supplies an otherwise valid target behind one actor blocker.
+const jailedUntil = new Date(Date.now() + 60_000);
+const runnableFavorDb = {
+  async query(sql) {
+    if (/SELECT account_id FROM characters/i.test(sql)) return { rows: [{ account_id: 'acct-me' }] };
+    if (/JOIN contacts/i.test(sql)) return { rows: [{
+      id: 'favor-live', poster_character: 'poster', poster_name: 'Poster', poster_loc: 'brick',
+      good_id: 'booze', qty: 1, pay: 600, district: 'brick', expires_at: new Date(Date.now() + 60_000),
+    }] };
+    if (/FROM favors WHERE poster_character/i.test(sql)) return { rows: [] };
+    if (/FROM character_cargo/i.test(sql)) return { rows: [{ character_id: 'poster', n: 0 }] };
+    if (/FROM character_assets|FROM character_skills/i.test(sql)) return { rows: [] };
+    throw new Error(`unexpected runnable-favor query: ${sql}`);
+  },
+};
+const jailedFavorBoard = await favorBoard(ch(30, { jail_until: jailedUntil }), runnableFavorDb, {
+  owned: owned({ cargo: { booze: 1 } }),
+});
+assert.equal(jailedFavorBoard.open[0].canRun, false,
+  'a jailed runner never receives an enabled favor operation');
+assert.equal(Object.hasOwn(jailedFavorBoard.open[0], 'posterHere'), false,
+  'the favor board exposes only the action boolean, not a separate poster-location predicate');
+
+const emptyCornerDb = {
+  async query(sql) {
+    if (/FROM corner_jobs/i.test(sql) || /FROM corner_chains/i.test(sql)
+        || /FROM daily_progress/i.test(sql)) return { rows: [] };
+    throw new Error(`unexpected corner-gate query: ${sql}`);
+  },
+};
+const jailedCornerBoard = await liveCornerBoard(ch(30, { jail_until: jailedUntil }), emptyCornerDb);
+assert.equal(jailedCornerBoard.tasks.some((task) => task.canAccept || task.canClaim), false,
+  'a jailed street never receives an enabled corner operation');
+const fullCornerDb = {
+  async query(sql) {
+    if (/FROM corner_jobs/i.test(sql)) return { rows: Array.from({ length: CORNER.MAX_DAY }, (_, index) => ({
+      district: 'canal', slot: 90 + index, claimed: true, baseline: '{}',
+    })) };
+    if (/FROM corner_chains/i.test(sql) || /FROM daily_progress/i.test(sql)) return { rows: [] };
+    throw new Error(`unexpected full-corner query: ${sql}`);
+  },
+};
+const fullCornerBoard = await liveCornerBoard(ch(30), fullCornerDb);
+assert.equal(fullCornerBoard.tasks.some((task) => task.canAccept), true,
+  'accept remains enabled after the claim allowance is spent because acceptCorner still commits');
+
+const actorBlockedConvoyDb = {
+  async query(sql) {
+    if (/NOT c\.is_npc/i.test(sql)) return { rows: [{
+      id: 'road', owner_character: 'other', owner_gang: null, owner: 'Other', is_npc: false,
+      origin: 'docks', destination: 'brick', status: 'transit', ambushes: 0,
+      arrives_at: new Date(Date.now() + 60_000),
+    }] };
+    if (/is_npc AND status='transit'/i.test(sql) || /FROM convoy_cargo/i.test(sql)
+        || /FROM gang_members/i.test(sql) || /FROM convoy_ambushes/i.test(sql)
+        || /WHERE owner_character/i.test(sql) || /FROM rigs/i.test(sql)
+        || /FROM convoy_hauls/i.test(sql)) return { rows: [] };
+    if (/freight_delivered/i.test(sql)) return { rows: [] };
+    throw new Error(`unexpected convoy-gate query: ${sql}`);
+  },
+};
+const blockedConvoys = await liveConvoyBoard(actorBlockedConvoyDb, 'char-me',
+  ch(30, { jail_until: jailedUntil, energy: 0, ammo: 0 }));
+assert.equal(blockedConvoys.inTransit[0].canAmbush, false,
+  'the personalized road board includes actor status and resource gates');
+
+const boardHeist = HEIST_JOBS.find((job) => !job.rateBps);
+const actorBlockedHeistDb = {
+  async query(sql) {
+    if (/FROM crew_heists ch JOIN characters c/i.test(sql)) return { rows: [{
+      id: 'open-job', job: boardHeist.id, created_at: new Date(), target_business: null,
+      target_character: null, leader: 'Leader',
+    }] };
+    if (/SELECT m\.heist_id, m\.role/i.test(sql)) return { rows: [{ heist_id: 'open-job', role: boardHeist.roles[0] }] };
+    if (/WHERE m\.character_id/i.test(sql)) return { rows: [] };
+    if (/SELECT c\.heist_loot/i.test(sql)) return { rows: [{
+      heist_loot: 0, heists_pulled: 100, respect: respectForLevel(30), cash: 100_000,
+      jail_until: jailedUntil, hosp_until: null, safe_until: null, heist_at: null,
+    }] };
+    throw new Error(`unexpected heist-gate query: ${sql}`);
+  },
+};
+const blockedHeists = await liveHeistBoard(actorBlockedHeistDb, 'char-me');
+assert.equal(blockedHeists.open[0].canJoin, false,
+  'the personalized heist board includes actor status and notoriety gates');
+
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('street life')), ch(30), acct(), owned(), {
+  live: { cornerBoard: { tasks: [], leftToday: 0 }, favorBoard: expiredFavorBoard },
+});
+assert.equal(coverage.next?.systemId, 'street-life',
+  'an expired-but-unswept own favor exposes the valid cancellation operation');
+
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('street life')), ch(30), acct(), owned(), {
+  live: { cornerBoard: { leftToday: 0, tasks: [{ slot: 0, accepted: false, canAccept: false, canClaim: false }] },
+    contactsBoard: { call: null }, favorBoard: { open: [], mine: [], canPost: false } },
+});
+assert.equal(coverage.next, null, 'an exhausted daily corner cannot accept an envelope that can never be claimed');
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('street life')), ch(30), acct(), owned(), {
+  live: { cornerBoard: { leftToday: 1, tasks: [{ slot: 0, accepted: true, canAccept: false, canClaim: true }] },
+    contactsBoard: { call: null }, favorBoard: { open: [], mine: [], canPost: false } },
+});
+assert.equal(coverage.next?.systemId, 'street-life', 'completed accepted corner work is a live claim operation');
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('street life')), ch(30), acct(), owned(), {
+  live: { cornerBoard: { leftToday: 0, tasks: [] }, contactsBoard: { call: null },
+    favorBoard: { open: [{ id: 'away', good: 'booze', qty: 1, here: true, canRun: false }], mine: [], canPost: false } },
+});
+assert.equal(coverage.next, null, 'a favor whose poster is away or full is not a runnable handoff');
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('street life')), ch(30, { cash: 1000 }), acct(), owned(), {
+  live: { cornerBoard: { leftToday: 0, tasks: [] }, contactsBoard: { call: null },
+    favorBoard: { open: [], mine: [], canPost: true } },
+});
+assert.equal(coverage.next?.systemId, 'street-life', 'a board-proved favor post is a live Street Life operation');
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('street life')),
+  ch(30, { jail_until: new Date(Date.now() + 60_000) }), acct(), owned(), {
+    live: { cornerBoard: { leftToday: 0, tasks: [] }, contactsBoard: { call: null },
+      favorBoard: { open: [], mine: [{ id: 'mine' }], canPost: false } },
+  });
+assert.equal(coverage.next?.systemId, 'street-life',
+  'a jailed poster can still cancel an open favor and reclaim its escrow');
+
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('the megaproject')), ch(30), acct(),
+  owned({ cargo: { booze: Math.ceil(MEGAPROJECT.MIN_CASH / 40) } }), {
+    live: { megaBoard: { current: { remaining: 1 } } },
+  });
+assert.equal(coverage.next, null, 'freight cannot satisfy the contribution floor when only sub-floor wall dust remains');
+
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('convoys')),
+  ch(30, { energy: CONVOY.AMBUSH_ENERGY, ammo: CONVOY.AMBUSH_AMMO }), acct(), owned(), {
+    live: { convoyBoard: { mine: null, inTransit: [{ id: 'live-road', canAmbush: true }] } },
+  });
+assert.equal(coverage.next?.systemId, 'convoys',
+  'a board-authorized live road ambush is a human Convoy operation without owning cargo or a shipment');
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('convoys')),
+  ch(30, { energy: CONVOY.AMBUSH_ENERGY, ammo: CONVOY.AMBUSH_AMMO }), acct({ agent_flag: true }), owned(), {
+    live: { convoyBoard: { mine: null, inTransit: [{ id: 'live-road', canAmbush: true }] } },
+  });
+assert.equal(coverage.next, null, 'the same live road is not an autonomous PvP recommendation for an agent');
+assert.equal(coverage.blocked.policy, 1, 'an otherwise executable agent road ambush is classified as policy');
+
+// Full catalog parity: every row is isolated as the sole unvisited system. Each positive fixture names
+// one representative authoritative mutation whose published gates the fixture satisfies. The two
+// intentionally non-proactive rows are proved policy-blocked instead of being given a fake operation.
+const minRacket = RACKETS.filter((racket) => racket.lvl <= 30).sort((a, b) => a.cost - b.cost)[0];
+const minRace = RACES.TIERS.filter((tier) => tier.minLvl <= 30).sort((a, b) => a.fee - b.fee)[0];
+const minRacer = Math.min(...Object.values(STABLE.KINDS).map((kind) => kind.cost));
+const baseReady = () => ({ ch: ch(30), acct: acct(), owned: owned(), options: {} });
+const operationCases = [
+  ['streets / crime', 'streets-crime', 'POST /v1/crimes/:id', { ch: ch(30, { nerve: 2 }) }],
+  ['the kitchen', 'kitchen', 'POST /v1/kitchen/lab', { ch: ch(30, { cash: KITCHENS[0].cost }) }],
+  ['wet work', 'wet-work', 'POST /v1/jump/:targetId', { ch: ch(30, { health: 100, energy: 30, ammo: 10 }),
+    options: { onlineAccounts: [{ accountId: 'other', characterId: 'target', loc: 'brick' }] } }],
+  ['contracts', 'contracts', 'POST /v1/contracts/:targetId', { ch: ch(30, { cash: 1000 }),
+    options: { onlineAccounts: [{ accountId: 'other', characterId: 'target', loc: 'brick' }] } }],
+  ['the dueling ladder', 'dueling-ladder', 'POST /v1/duels/:targetId', { ch: ch(30, { cash: 2000 }),
+    options: { onlineAccounts: [{ accountId: 'other', characterId: 'target', loc: 'brick',
+      respect: respectForLevel(30), cash: 2000, duelLimit: 2000 }] } }],
+  ['crew heists', 'crew-heists', 'POST /v1/heists/plan', { ch: ch(30, { cash: firstHeist.stake }),
+    options: { live: { heistBoard: heistBoard() } } }],
+  ['clue scrolls', 'clue-scrolls', 'POST /v1/clues/dig', { ch: ch(30, { energy: CLUES.DIG_ENERGY }),
+    owned: owned({ work: { clue: { step: 0, steps: 3 } } }) }],
+  ['the family', 'family', 'POST /v1/gangs/:id/join', { options: { onlineAccounts: [{ accountId: 'other', gangId: 'gang-1' }] } }],
+  ['the commission', 'commission', 'POST /v1/commission/vote', { owned: owned({ gangId: 'gang-1', gangRole: 'boss' }),
+    options: { live: { commissionSeatGangIds: ['gang-1'] } } }],
+  ['territory', 'territory', 'POST /v1/territory/collect', { owned: owned({ gangId: 'gang-1' }),
+    options: { live: { territoryBoard: { own: [{ district: 'brick', pending: 1, cold: false }], rival: null } } } }],
+  ['the world', 'world', 'POST /v1/world/:npcId/raid', { ch: ch(30, { energy: 100, ammo: 100 }) }],
+  ['the blood war', 'blood-war', 'POST /v1/family-war/:gangId/raid', { ch: ch(30, { energy: 100, ammo: 100 }),
+    options: { live: { warBoard: { families: [{ id: 'npc-family', canRaid: true, heldBy: null, pact: null }] } } } }],
+  ['business empire', 'business-empire', 'POST /v1/rackets/:id', { ch: ch(30, { cash: minRacket.cost }) }],
+  ['convoys', 'convoys', 'POST /v1/convoy', { owned: owned({ cargo: { booze: CONVOY.MIN_QTY } }) }],
+  ['the port', 'port', 'POST /v1/port/boat/:kind', { ch: ch(30, { loc: PORT.DISTRICT,
+    cash: Math.min(...PORT.BOATS.map((boat) => boat.cost)) }) }],
+  ['the black market', 'black-market', 'POST /v1/market/orders/:id/fill', { ch: ch(30, { loc: 'brick' }),
+    owned: owned({ cargo: { booze: 2 } }), options: { live: { marketBoard: marketBoard([{
+      id: 'wtb', kind: 'order', sellerId: 'other', good: 'booze', wanted: 2, unitPrice: 100, district: 'brick',
+    }]) } } }],
+  ['loan sharking', 'loan-sharking', 'POST /v1/loans/house', { options: { live: { loanBoard: loanBoard({
+    house: { min: LOAN.HOUSE_MIN, available: LOAN.HOUSE_MIN, eligible: true, yourMarker: null },
+  }) } } }],
+  ['the casino', 'casino', 'POST /v1/casino/dice', { ch: ch(30, { loc: CASINO.DISTRICT,
+    cash: CASINO.MIN_BET, nerve: CASINO.DICE_NERVE }) }],
+  ['the speakeasy', 'speakeasy', 'POST /v1/speakeasy', { ch: ch(30, { cash: SPEAKEASY.OPEN_COST }),
+    acct: acct({ made_until: new Date(Date.now() + 60_000) }), options: { live: { freeSpeakeasyDistricts: ['brick'] } } }],
+  ['boxing', 'boxing', 'POST /v1/boxing/fighters', { ch: ch(30, { cash: BOXING.RECRUIT_COST }) }],
+  ['street races', 'street-races', 'POST /v1/races/npc', { ch: ch(30, { cash: minRace.fee }),
+    owned: owned({ cars: [raceCar()] }) }],
+  ['the stable', 'stable', 'POST /v1/stable/racers', { ch: ch(30, { cash: minRacer }) }],
+  ['the law', 'law', 'POST /v1/law/bribe', { ch: ch(30, { heat_exposure: 100, cash: 1_000_000 }) }],
+  ['the pen', 'pen', 'POST /v1/pen/faction/:id', { ch: ch(30, { jail_until: new Date(Date.now() + 60_000) }) }],
+  ['the wire', 'wire', 'POST /v1/wire/tap/:targetId', { acct: acct({ omr: WIRE.TAP_OMR }),
+    options: { onlineAccounts: [{ accountId: 'other', characterId: 'target' }] } }],
+  ['secrets', 'secrets', 'POST /v1/secrets/:id/expose', {
+    options: { live: { secretsBoard: { held: [{ id: 'secret', on: 'target' }], onMe: [] } } } }],
+  ['skills', 'skills', 'POST /v1/skills/:id', { ch: ch(4) }],
+  ['the underworld', 'underworld', 'POST /v1/underworld/:npcId/errand', { owned: owned({ npc: { doc: 25 } }) }],
+  ['the estate', 'estate', 'POST /v1/estate/tier', { acct: acct({ omr: ESTATE.TIERS[0].omr }) }],
+  ['the made man', 'made-man', 'POST /v1/made/dues', { acct: acct({ omr: MADE.OMR }) }],
+  ['the auction house', 'auction-house', 'POST /v1/auction/:lotId/bid', { acct: acct({ omr: 100 }),
+    options: { live: { auctionMinBid: 100 } } }],
+  ['the collection', 'collection', 'POST /v1/collection/:kind/:id/rarity', { acct: acct({ omr: 150 }),
+    options: { live: { collectionItems: [commonCar] } } }],
+  ['going legit', 'going-legit', 'POST /v1/stake', { acct: acct({ omr: 1 }) }],
+  ['the megaproject', 'megaproject', 'POST /v1/megaproject/cash', { ch: ch(30, { cash: MEGAPROJECT.MIN_CASH }),
+    options: { live: { megaBoard: { current: { remaining: 1000 } } } } }],
+  ['street life', 'street-life', 'POST /v1/corner/:slot', {
+    options: { live: { cornerBoard: { tasks: [{ slot: 0, accepted: false, canAccept: true }] } } } }],
+  ['landmarks', 'landmarks', 'POST /v1/landmarks/:districtId', { acct: acct({ omr: LANDMARKS.MIN_DEDICATE }),
+    options: { live: { landmarkMinDedicate: LANDMARKS.MIN_DEDICATE } } }],
+  ['street deeds', 'street-deeds', 'POST /v1/deeds/claim', {}],
+  ['vanity', 'vanity', 'POST /v1/vanity/name', { acct: acct({ omr: VANITY.NAME_CHANGE_OMR }) }],
+  ['the store / pass', null, 'policy: never proactive', {}],
+  ['growth / social', 'growth-social', 'POST /v1/vouch/:characterId', {
+    options: { onlineAccounts: [{ accountId: 'other', characterId: 'target' }] } }],
+];
+assert.equal(operationCases.length, 40, 'the operation-parity table covers every canonical system exactly once');
+assert.deepEqual(operationCases.map(([system]) => system), Object.keys(ENGAGEMENT_SYSTEMS),
+  'the operation-parity table follows the canonical 40-system order');
+for (const [system, expectedId, operation, patch] of operationCases) {
+  const base = baseReady();
+  const input = { ...base, ...patch, options: { ...base.options, ...(patch.options || {}) } };
+  const result = await Explore.systemCoverage(fakeDb(eventsExcept(system)), input.ch, input.acct, input.owned, input.options);
+  assert.equal(result.next?.systemId || null, expectedId, `${system}: ${operation} parity`);
+  if (!expectedId) assert.equal(result.blocked.policy, 1, `${system}: the sole row is policy-blocked`);
+}
+
+// Reverse parity: each fixture deliberately leaves the target as the sole unvisited row but gives
+// the character no operation that can pass the corresponding authoritative mutation. These are the
+// coarse-proxy failures most likely to create a one-card dead end. A later system cannot hide one,
+// because account telemetry marks every sibling visited.
+const noOperationCases = [
+  ['streets / crime', ch(30, { nerve: Math.min(...CRIMES.map((crime) => crime.nerve)) - 1 }), acct(), owned(), {},
+    'no crime is executable without the cheapest nerve cost'],
+  ['clue scrolls', ch(30, { energy: CLUES.DIG_ENERGY, jail_until: new Date(Date.now() + 60_000) }), acct(),
+    owned({ work: { clue: { step: 0, steps: 3 } } }), {}, 'a scroll cannot be dug from lockup'],
+  ['territory', ch(30, { safe_until: new Date(Date.now() + 60_000) }), acct(), owned({ gangId: 'gang-1' }), {},
+    'family membership is not a usable territory operation while collection is safehouse-blocked'],
+  ['convoys', ch(30, { jail_until: new Date(Date.now() + 60_000) }), acct(),
+    owned({ cargo: { booze: CONVOY.MIN_QTY } }), {}, 'freight cannot be opened or loaded from lockup'],
+  ['the port', ch(30, { loc: 'brick', cash: Math.min(...PORT.BOATS.map((boat) => boat.cost)) }), acct(), owned(),
+    { live: { portBoard: { atDocks: false, fleet: [], catalog: PORT.BOATS, fleetMax: 1 } } },
+    'cash alone does not move the boatyard out of the docks'],
+  ['the casino', ch(30, { loc: 'brick', cash: CASINO.MIN_BET, nerve: CASINO.DICE_NERVE }), acct(), owned(), {},
+    'the table is only actionable in the casino district'],
+  ['the speakeasy', ch(30, { cash: SPEAKEASY.OPEN_COST, jail_until: new Date(Date.now() + 60_000) }),
+    acct({ made_until: new Date(Date.now() + 60_000) }), owned(), { live: { freeSpeakeasyDistricts: ['brick'] } },
+    'a made player cannot open a club from lockup'],
+  ['boxing', ch(30, { cash: BOXING.RECRUIT_COST, jail_until: new Date(Date.now() + 60_000) }), acct(), owned(), {},
+    'fighter cash is not an executable signing from lockup'],
+  ['the stable', ch(30, { cash: minRacer, jail_until: new Date(Date.now() + 60_000) }), acct(), owned(),
+    { live: { stableBoard: { stable: [], stableMax: STABLE.STABLE_MAX, kinds: STABLE.KINDS } } },
+    'racing stock cannot be bought from lockup'],
+  ['the law', ch(30, { wanted_until: new Date(Date.now() + 60_000) }), acct(), owned(), {},
+    'wanted status is not itself a Law-board operation'],
+  ['the pen', ch(30, { jail_until: new Date(Date.now() + 60_000), hole_until: new Date(Date.now() + 60_000) }),
+    acct(), owned(), {}, 'the hole blocks every Pen operation'],
+  ['the wire', ch(30), acct({ omr: 1 }), owned(),
+    { onlineAccounts: [{ accountId: 'other', characterId: 'target' }], live: { wireBoard: {
+      costs: { tap: WIRE.TAP_OMR, sub: WIRE.SUB_OMR, disinfo: WIRE.DISINFO_OMR }, watches: [],
+      taps: [], informants: [], bugsOnYou: 0, subTiers: [],
+    } } }, 'a token below every live Wire quote buys no operation'],
+  ['secrets', ch(30), acct(), owned({ hunt: { target: 'target' } }),
+    { onlineAccounts: [{ accountId: 'other', characterId: 'target' }], live: { secretsBoard: { held: [], onMe: [] } } },
+    'an unrelated active search is not a Secrets operation'],
+  ['the underworld', ch(30), acct(), owned({ npc: { doc: 1 } }),
+    { live: { underworldBoard: { errand: null, gift: { cost: 5000, cap: 50 }, penance: 5000,
+      npcs: [{ id: 'doc', standing: 1, grudge: 0 }] } } }, 'standing with no affordable or unlocked action is not readiness'],
+  ['the made man', ch(30, { jail_until: new Date(Date.now() + 60_000) }), acct({ omr: MADE.OMR }), owned(), {},
+    'dues cannot be paid from lockup'],
+  ['the megaproject', ch(30, { cash: MEGAPROJECT.MIN_CASH, jail_until: new Date(Date.now() + 60_000) }), acct(), owned(),
+    { live: { megaBoard: { current: { remaining: 1000 } } } }, 'no monument contribution leaves lockup'],
+  ['street life', ch(30, { jail_until: new Date(Date.now() + 60_000) }), acct(),
+    owned({ work: { cornerOpen: [{ slot: 0 }] } }),
+    { live: { cornerBoard: { leftToday: 1, tasks: [{ slot: 0, accepted: false, claimed: false }] },
+      contactsBoard: { call: null }, favorBoard: { open: [], mine: [] } } }, 'corner work cannot be accepted from lockup'],
+  ['growth / social', ch(30), acct(), owned(), {
+    onlineAccounts: [{ accountId: 'other', characterId: 'target' }],
+    live: { vouchBoard: { slotsLeft: 0, given: [] } },
+  }, 'an online player does not create a vouch slot'],
+];
+for (const [system, character, account, holdings, options, message] of noOperationCases) {
+  const result = await Explore.systemCoverage(fakeDb(eventsExcept(system)), character, account, holdings, options);
+  assert.equal(result.next, null, `${system}: ${message}`);
+  assert.equal(result.progress.eligible, 0, `${system}: no authoritative operation means no ready row`);
+}
+
 // Pin coverage to the authoritative mutation itself: unlike NFT extraction, rarity upgrades do not
 // reject market/collateral or at-sea state. Both encumbered rows must pass the real upgrade function.
 const assertAuthoritativeUpgrade = async (kind, row) => {
@@ -271,6 +796,47 @@ coverage = await Explore.systemCoverage(fakeDb(eventsExcept('wet work')), ch(30,
 assert.equal(coverage.next, null, 'agent policy never substitutes a forbidden proactive system');
 assert.deepEqual(coverage.blocked, { level: 0, resource: 0, status: 0, social: 0, policy: 1 });
 
+coverage = await Explore.systemCoverage(fakeDb(eventsExcept('contracts')), ch(30, { cash: 10_000 }), acct(), owned(), {
+  onlineAccounts: [{ accountId: 'dead-presence', characterId: 'dead-target' }],
+  live: { socialTargets: [] },
+});
+assert.equal(coverage.next, null,
+  'an authoritative empty social slice never falls back to stale raw websocket presence');
+assert.equal(coverage.blocked.social, 1, 'a just-dead presence is classified as no reachable counterparty');
+
+// Presence is an internal routing hint, not an eligibility budget. A city can have more than one
+// screenful online; the authoritative character query must still reach a valid operation after any
+// number of stale/dead presence entries without returning those identities in the Explore payload.
+const crowdedPresence = Array.from({ length: 100 }, (_, index) => ({
+  accountId: `stale-account-${index}`,
+  characterId: `stale-character-${index}`,
+}));
+crowdedPresence.push({ accountId: 'reachable-account', characterId: 'reachable-character' });
+const crowdedSocialDb = {
+  async query(sql, params = []) {
+    if (/FROM telemetry/i.test(sql)) return { rows: eventsExcept('contracts') };
+    if (/FROM vouches v/i.test(sql)) return { rows: [] };
+    if (/COUNT\(\*\).*FROM vouches/i.test(sql)) return { rows: [{ n: 0 }] };
+    if (/FROM characters c JOIN account_persistent ap/i.test(sql)) return {
+      rows: params.includes('reachable-account') || params.includes('reachable-character') ? [{
+        id: 'reachable-character', account_id: 'reachable-account', respect: respectForLevel(30),
+        cash: 10_000, jail_until: null, hosp_until: null, witpro_until: null, pen_safe_until: null,
+        hole_until: null, duel_limit: 10_000, wanted_until: null, rat: false,
+      }] : [],
+    };
+    if (/FROM gang_members WHERE character_id/i.test(sql)
+        || /FROM crew_members WHERE account_id/i.test(sql)
+        || /FROM secrets WHERE holder_character/i.test(sql)
+        || /FROM digs WHERE character_id/i.test(sql)) return { rows: [] };
+    throw new Error(`unexpected crowded-social query: ${sql}`);
+  },
+};
+coverage = await Explore.exploreBoard(crowdedSocialDb, ch(30, { cash: 10_000 }), acct(), owned(), {
+  onlineAccounts: crowdedPresence,
+});
+assert.equal(coverage.next?.systemId, 'contracts',
+  'an authoritative operation after the first 100 presence hints remains exactly discoverable');
+
 // Route integration: account telemetry changes the recommendation, the response never becomes a grid,
 // and repeated reads append no economic ledger rows.
 const app = await buildServer();
@@ -295,6 +861,50 @@ await call('GET', '/v1/explore', { token });
 await call('GET', '/v1/explore', { token });
 const after = Number((await pool.query('SELECT count(*) c FROM transactions')).rows[0].c);
 assert.equal(after, before, 'reading coverage writes zero ledger rows');
+
+// Route parity for the two Finding-3 seams: the real board makes the sole unvisited row ready, then
+// the exact mutation named by the fixture succeeds. These use the in-memory test database only.
+const markVisitedExcept = async (targetSystem, targetAccountId, prefix) => {
+  let n = 0;
+  for (const [system, events] of Object.entries(ENGAGEMENT_SYSTEMS)) {
+    if (system === targetSystem) continue;
+    await pool.query('INSERT INTO telemetry (id,account_id,event,props) VALUES ($1,$2,$3,$4)',
+      [`${prefix}-${n++}`, targetAccountId, events[0], '{}']);
+  }
+};
+
+const { body: { token: loanToken } } = await call('POST', '/v1/auth/guest');
+await call('POST', '/v1/character', { token: loanToken, body: { name: 'Window Lou' } });
+const loanMe = (await call('GET', '/v1/me', { token: loanToken })).body.character;
+const loanAccountId = (await pool.query('SELECT account_id FROM characters WHERE id=$1', [loanMe.id])).rows[0].account_id;
+await pool.query('UPDATE characters SET respect=$2 WHERE id=$1', [loanMe.id, respectForLevel(30)]);
+await pool.query('UPDATE loan_house SET pool=$1 WHERE id=1', [LOAN.HOUSE_MIN]);
+await markVisitedExcept('loan sharking', loanAccountId, 'coverage-loan');
+routeBoard = (await call('GET', '/v1/explore', { token: loanToken })).body;
+assert.equal(routeBoard.next?.systemId, 'loan-sharking',
+  'the production Loan House board makes borrowing the sole unvisited ready system for a human');
+const routeLoan = await call('POST', '/v1/loans/house', { token: loanToken, body: { amount: LOAN.HOUSE_MIN } });
+assert.equal(routeLoan.code, 200, 'the human borrowing operation witnessed by Explore passes the authoritative mutation');
+
+const { body: { token: vanityToken } } = await call('POST', '/v1/auth/guest');
+await call('POST', '/v1/character', { token: vanityToken, body: { name: 'Vanity Vera' } });
+const vanityMe = (await call('GET', '/v1/me', { token: vanityToken })).body.character;
+const vanityAccountId = (await pool.query('SELECT account_id FROM characters WHERE id=$1', [vanityMe.id])).rows[0].account_id;
+await pool.query('UPDATE characters SET respect=$2 WHERE id=$1', [vanityMe.id, respectForLevel(30)]);
+await pool.query('UPDATE account_persistent SET omr=$2 WHERE account_id=$1', [vanityAccountId, VANITY.TITLE_OMR]);
+await markVisitedExcept('vanity', vanityAccountId, 'coverage-vanity');
+routeBoard = (await call('GET', '/v1/explore', { token: vanityToken })).body;
+assert.equal(routeBoard.next?.systemId, 'vanity',
+  'published identity-shop $OMR alone makes Vanity the sole unvisited ready system');
+const routeTitle = await call('POST', '/v1/vanity/title', {
+  token: vanityToken, body: { title: 'The Exacting' },
+});
+assert.equal(routeTitle.code, 200, 'the title operation witnessed by the Vanity price passes its authoritative mutation');
+await pool.query('UPDATE account_persistent SET omr=$2 WHERE account_id=$1', [vanityAccountId, VANITY.NAME_CHANGE_OMR]);
+const routeName = await call('POST', '/v1/vanity/name', {
+  token: vanityToken, body: { name: 'Vera Exacting' },
+});
+assert.equal(routeName.code, 200, 'the name operation witnessed by the Vanity price passes its authoritative mutation');
 
 console.log('explore: canonical 40-system coverage ok');
 await app.close();

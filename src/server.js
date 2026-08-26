@@ -2803,7 +2803,7 @@ export async function buildServer() {
   // THE FAVOR (step two) — the PLAYER-posted call. Single-party throughout: the pay is escrowed on
   // the row at post, so a runner never locks the poster's character (no two-party lock surface).
   app.get('/v1/favors', { preHandler: auth }, async (req) =>
-    G.readCharacter(pool, req.user.sub, (ch, client) => Favors.favorBoard(ch, client)));
+    G.readCharacter(pool, req.user.sub, (ch, client, h) => Favors.favorBoard(ch, client, h)));
   app.post('/v1/favors', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Favors.postFavor(ch, req.body || {}, client, h)));
   app.post('/v1/favors/:id/run', { preHandler: auth }, async (req) =>

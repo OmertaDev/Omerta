@@ -24,20 +24,35 @@ export async function cornerBoard(ch, client) {
   const day = dayOf();
   const tasks = cornerTasksOf(ch.loc, day);
   const jobs = (await client.query(
-    'SELECT district, slot, claimed FROM corner_jobs WHERE character_id=$1 AND day=$2', [ch.id, day])).rows;
+    'SELECT district, slot, claimed, baseline FROM corner_jobs WHERE character_id=$1 AND day=$2', [ch.id, day])).rows;
   const here = new Map(jobs.filter((j) => j.district === ch.loc).map((j) => [Number(j.slot), j]));
   const claimedToday = jobs.filter((j) => j.claimed).length;
+  const claimedKinds = new Set(jobs.filter((j) => j.claimed).map((job) =>
+    cornerTasksOf(job.district, day).find((task) => task.slot === Number(job.slot))?.kind).filter(Boolean));
+  const counters = await countersOf(client, ch.id, day);
   const chain = (await client.query(
     'SELECT step, last_day FROM corner_chains WHERE character_id=$1 AND district=$2', [ch.id, ch.loc])).rows[0];
   return {
     district: ch.loc, districtName: districtName(ch.loc),
     cash: CORNER.CASH, respect: CORNER.RESPECT,
     maxDay: CORNER.MAX_DAY, claimedToday, leftToday: Math.max(0, CORNER.MAX_DAY - claimedToday),
-    tasks: tasks.map((t) => ({
-      ...t,
-      accepted: here.has(t.slot),
-      claimed: !!here.get(t.slot)?.claimed,
-    })),
+    tasks: tasks.map((t) => {
+      const job = here.get(t.slot);
+      const accepted = !!job;
+      const claimed = !!job?.claimed;
+      const actorOpen = !jailed(ch);
+      const claimOpen = actorOpen && claimedToday < CORNER.MAX_DAY && !claimedKinds.has(t.kind);
+      let baseline = {};
+      try { baseline = job?.baseline ? JSON.parse(job.baseline) : {}; } catch { baseline = {}; }
+      return {
+        ...t, accepted, claimed,
+        // Accept snapshots work even after today's payout allowance is spent; claim is where the
+        // mutation enforces the allowance, one-kind rule, and counter delta.
+        canAccept: !accepted && actorOpen,
+        canClaim: accepted && !claimed && claimOpen
+          && Number(counters[t.kind] || 0) > Number(baseline[t.kind] || 0),
+      };
+    }),
     // THE CHAIN — the block's standing job here. `advancedToday` is why a second envelope in the
     // same district today does not move it: a chain is DAYS of showing up, not a busy afternoon.
     chain: {

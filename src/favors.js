@@ -108,27 +108,60 @@ export async function postFavor(ch, opts, client, h) {
 }
 
 // ── THE BOARD — what the people whose numbers you hold are asking for, plus your own book ──
-export async function favorBoard(ch, client) {
+export async function favorBoard(ch, client, h = null) {
   const acct = (await client.query('SELECT account_id FROM characters WHERE id=$1', [ch.id])).rows[0]?.account_id;
   // you see a favor if YOU hold the POSTER's number (the book is the reach). Flat query + JOIN —
   // never `= ANY($1::uuid[])` (pg-mem returns zero rows for it — the rivalsBoard lesson).
   const open = (await client.query(
-    `SELECT f.*, c.name AS poster_name FROM favors f
+    `SELECT f.*, c.name AS poster_name, c.loc AS poster_loc FROM favors f
        JOIN characters c ON c.id = f.poster_character AND c.alive
        JOIN contacts ct ON ct.contact_account = c.account_id AND ct.owner_account = $1
       WHERE f.status='open' AND f.expires_at > now() AND f.poster_character <> $2
       ORDER BY f.pay DESC LIMIT 40`, [acct, ch.id])).rows;
   const mine = (await client.query(
-    "SELECT * FROM favors WHERE poster_character=$1 AND status='open' AND expires_at > now() ORDER BY posted_at DESC", [ch.id])).rows;
+    "SELECT * FROM favors WHERE poster_character=$1 AND status='open' ORDER BY posted_at DESC", [ch.id])).rows;
   const shape = (f) => ({
     id: f.id, good: f.good_id, qty: Number(f.qty), pay: Number(f.pay), district: f.district,
     districtName: districtName(f.district), note: f.note || null,
     expiresSeconds: Math.max(0, Math.ceil((new Date(f.expires_at) - Date.now()) / 1000)),
   });
+  const canRun = new Map();
+  if (h && open.length) {
+    const posterIds = [...new Set(open.map((row) => row.poster_character))];
+    const slots = posterIds.map((_, index) => `$${index + 1}`).join(',');
+    // One transaction client, one query at a time (node-pg serializes this today and pg@9 rejects
+    // concurrent use); all three reads stay in the caller's snapshot.
+    const loads = await client.query(`SELECT character_id, COALESCE(SUM(qty),0) n FROM character_cargo
+      WHERE character_id IN (${slots}) GROUP BY character_id`, posterIds);
+    const assets = await client.query(
+      `SELECT character_id, asset_id FROM character_assets WHERE character_id IN (${slots})`, posterIds);
+    const skills = await client.query(
+      `SELECT character_id, skill_id FROM character_skills WHERE character_id IN (${slots})`, posterIds);
+    const loadByPoster = new Map(loads.rows.map((row) => [row.character_id, Number(row.n)]));
+    const assetsByPoster = new Map(posterIds.map((id) => [id, []]));
+    for (const row of assets.rows) assetsByPoster.get(row.character_id)?.push(row.asset_id);
+    const skillsByPoster = new Map(posterIds.map((id) => [id, new Set()]));
+    for (const row of skills.rows) skillsByPoster.get(row.character_id)?.add(row.skill_id);
+    for (const row of open) {
+      const cap = trunkCap({ owned: {
+        assets: assetsByPoster.get(row.poster_character) || [],
+        skills: skillsByPoster.get(row.poster_character) || new Set(),
+      } });
+      canRun.set(row.id, !jailed(ch) && row.district === ch.loc && row.poster_loc === row.district
+        && Number(h.owned?.cargo?.[row.good_id] || 0) >= Number(row.qty)
+        && Number(loadByPoster.get(row.poster_character) || 0) + Number(row.qty) <= cap);
+    }
+  }
+  const outstanding = mine.reduce((sum, row) => sum + Number(row.qty || 0), 0);
+  const canPost = !!h && !jailed(ch) && !safeHoused(ch) && mine.length < FAVOR.MAX_OPEN
+    && Number(ch.cash || 0) >= FAVOR.MIN_PAY
+    && trunkCap(h) - cargoCount(h.owned?.cargo || {}) - outstanding >= 1;
   return {
     takeBps: FAVOR.TAKE_BPS, maxOpen: FAVOR.MAX_OPEN, minPay: FAVOR.MIN_PAY, maxPay: FAVOR.MAX_PAY,
     maxQty: FAVOR.MAX_QTY,
-    open: open.map((f) => ({ ...shape(f), from: f.poster_name, here: f.district === ch.loc })),
+    canPost,
+    open: open.map((f) => ({ ...shape(f), from: f.poster_name, here: f.district === ch.loc,
+      ...(h ? { canRun: !!canRun.get(f.id) } : {}) })),
     mine: mine.map(shape),
   };
 }

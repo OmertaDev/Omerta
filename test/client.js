@@ -1820,7 +1820,7 @@ const listMissing = [], listEmpty = [], listUngated = [];
 //   attribute" is rendering semantics this guard deliberately does not model); it needs eyes, or a
 //   behavioural probe that presses each control against a seeded mark and compares.
 const GATE_FIELDS = new Set(['minLvl', 'minLevel', 'locked', 'canRaid', 'eligible', 'unlocked',
-  'jailed', 'hospitalized']);
+  'canAccept', 'canAmbush', 'canClaim', 'canJoin', 'canPost', 'canRun', 'jailed', 'hospitalized']);
 // …and the waiver, because those last two are not gates the way the others are. `minLvl` gates ANY
 // control on the row; `jailed`/`hospitalized` gate only controls that REACH THE PERSON. A picker
 // that merely NAMES somebody is not reaching them, and gating it would hide a legitimate move — the

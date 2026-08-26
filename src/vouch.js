@@ -74,9 +74,13 @@ export async function vouchBoard(client, ch) {
   const mutuals = out.filter((r) => inSet.has(r.target_account)).map((r) => ({ id: r.id, name: r.name }));
   // the true inbound COUNT (the reputation) counts every voucher, living or dead — a vouch you earned
   // stands even if that street fell; only the actionable lists JOIN on alive.
-  const vouchedBy = Number((await client.query('SELECT COUNT(*) n FROM vouches WHERE target_account=$1', [ch.account_id])).rows[0].n);
+  const vouchedBy = await client.query('SELECT COUNT(*) n FROM vouches WHERE target_account=$1', [ch.account_id]);
+  const vouched = await client.query('SELECT COUNT(*) n FROM vouches WHERE voucher_account=$1', [ch.account_id]);
+  const inboundCount = Number(vouchedBy.rows[0].n);
+  const outboundCount = Number(vouched.rows[0].n);
   return {
-    vouchedBy, rank: vouchRankOf(vouchedBy).name, cap: VOUCH.MAX_OUT, slotsLeft: VOUCH.MAX_OUT - out.length,
+    vouchedBy: inboundCount, rank: vouchRankOf(inboundCount).name, cap: VOUCH.MAX_OUT,
+    slotsLeft: Math.max(0, VOUCH.MAX_OUT - outboundCount),
     given: out.map((r) => ({ id: r.id, name: r.name, mutual: inSet.has(r.target_account) })),
     vouchers: inn.map((r) => ({ id: r.id, name: r.name, mutual: outSet.has(r.voucher_account) })),
     mutuals,
