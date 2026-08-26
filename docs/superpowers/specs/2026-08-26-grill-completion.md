@@ -213,6 +213,11 @@ cutover.
 - A winner that becomes ineligible after close is skipped without substitution,
   republishing, replay, or ticker redirection. Its ETH remains in the general
   non-expiring acquisition pool.
+- The registry enforces that non-revival with a monotonic activation generation:
+  publication snapshots the selected version's generation and requires its
+  current activation to predate the UTC close boundary. Live resolution requires
+  the exact snapshot. Deactivation followed by same-key reactivation can never
+  restore that ballot's purchase authority.
 - The one-time launch catalog tooling ranks eligible RHJ assets by official
   underlying `dailyTradingVolume`, selects the top 15, and generates an unsigned
   Safe activation package. It never automatically rotates the live catalog when

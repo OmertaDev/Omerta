@@ -70,7 +70,7 @@ touches mainnet** until §0 is satisfied.
    caps, RT#8's two-step ownership, the four-way sell tax — so re-measure rather than quoting this
    figure, and if the two disagree the tree is right and this line is stale.)*
 
-   **In the batch — 20 contracts + 1 interface, every one carrying tests:**
+   **In the batch — 21 contracts + 1 interface, every one carrying tests:**
 
    | subsystem | contracts | the thing to attack |
    |---|---|---|
@@ -80,7 +80,7 @@ touches mainnet** until §0 is satisfied.
    | THE BANK | `Denari` (the DNR debt token, né `nUSD`), `CollateralEscrow`, `Alchemist`, `Transmuter`, `FlashGuard` | that no oracle sits on the borrow path and no `liquidate()` exists anywhere — the design's central claim, and the class that cost Inverse ~$21M twice |
    | Street Deeds | `StreetDeed` | the EIP-712 self-mint (name↔tokenId bijection, the daily cap, replay/deadline; NO owner mint), that `redeem` (the burn-to-re-import) is never pausable so a paused contract can never trap a holder's asset, and the **default-ON per-token transfer lock** (added 2026-08-14, the drain-before-sale mitigation): mint locks, every transfer arrival RE-LOCKS, only the OWNER may unlock (an approved operator deliberately cannot — operator-unlock IS the drain vector), `redeem` is never blocked by it, and the unlock emits `TransferLockSet` — the public "listing" act a buyer anchors TBA-content checks on |
    | the identity NFT | `DynastyNFT` | the EIP-712 self-mint (NO owner mint, nonce/deadline/daily-cap walls), that it gates **NOTHING on `balanceOf`** (the entitlement is account-bound off-chain — the token is a transferable trophy), and the uncapped sequential supply + EIP-2981 royalty |
-   | the stock machine | `StockTokenRegistry`, `RwaStockBuyer`, `StockVault` | Safe-curated provider identity/address; one immutable closed-day family result; ballot-bound exact-token purchase through a Safe-approved adapter; daily ETH/slippage/one-shot walls; pre-held transfer only; EIP-712 allocation authorization; per-token delivery caps, pause, rotation, and sweep |
+   | the stock machine | `StockTokenRegistry`, `StockTokenRegistryV2`, `RwaStockBuyer`, `StockVault` | legacy compatibility plus additive immutable version identity; atomic ticker/token/provider conflict replacement; activation TTL; monotonic ballot eligibility that cannot revive after same-key reactivation; one immutable closed-day family result and frozen purchase budget/deadline; ballot-bound exact-token purchase through a Safe-approved adapter; daily ETH/slippage/one-shot walls; pre-held transfer only; EIP-712 allocation authorization; per-token delivery caps, pause, rotation, and sweep |
    | gameplay settlement gas | `SettlementGasPool` | immutable gameplay-vault credit authority; terminal replay keys; exact executor liabilities and self-only pull withdrawals; bounded gas/data-fee accounting; delayed configuration; and migration of unreserved ETH only to one exact successor while old credits stay backed |
 
    **NOW IN THE BATCH (added 2026-08-14, founder-directed).** `DynastyNFT`, `StockVault` and

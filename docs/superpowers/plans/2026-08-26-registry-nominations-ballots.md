@@ -136,6 +136,8 @@ interface IStockTokenRegistryV2 {
         uint8 tokenDecimals;
         bytes32 tallyHash;
         uint256 catalogVersion;
+        uint256 maxEthWei;
+        uint64 purchaseUntil;
         uint64 publishedAt;
     }
 
@@ -150,7 +152,9 @@ interface IStockTokenRegistryV2 {
         uint256 day,
         bytes32 versionKey,
         bytes32 tallyHash,
-        uint256 catalogVersion
+        uint256 catalogVersion,
+        uint256 maxEthWei,
+        uint64 purchaseUntil
     ) external;
     function resolveBallot(uint256 day)
         external
@@ -161,28 +165,45 @@ interface IStockTokenRegistryV2 {
             uint8 tokenDecimals,
             bytes32 tallyHash,
             uint256 catalogVersion,
+            uint256 maxEthWei,
+            uint64 purchaseUntil,
             bool active
         );
+
+    function activationGeneration(bytes32 versionKey) external view returns (uint256);
+    function ballotActivationGeneration(uint256 day) external view returns (uint256);
 }
 ```
+
+Every successful activation advances the version's monotonic activation
+generation. Publication snapshots that generation separately from the frozen
+`Ballot` fields and rejects a version whose current activation occurred at or
+after `(day + 1) * 1 days`. `resolveBallot(...).active` requires the exact
+snapshotted generation as well as all three active reverse heads. A winner that
+is deactivated after close can therefore never regain purchase authority after
+same-key reactivation.
 
 ### Finalized catalog read model
 
 ```js
 {
   source: 'robinhood_chain_registry_v2',
-  chainId: 4663,
+  finality: 'finalized',
+  chainId: '4663',
   registryAddress: '0x...',
   catalogVersion: '12',
   finalizedBlockNumber: '123456',
   finalizedBlockHash: '0x...',
   syncedAt: 'ISO-8601',
   snapshotHash: '0x...',
+  voteable: true,
+  stale: false,
   assets: [{
     assetVersionKey: '0x...', tickerHash: '0x...', ticker: 'AAPL', name: '...',
     tokenAddress: '0x...', tokenDecimals: 18,
     robinhoodAssetIdHash: '0x...', registryIndex: '0', active: true
-  }]
+  }],
+  activeAssets: [/* current finalized active projection; empty while stale */]
 }
 ```
 
@@ -238,6 +259,8 @@ the Safe and publisher is a separately configured address or zero.
 function supportedChainId() external view returns (uint256);
 function publisher() external view returns (address);
 function catalogVersion() external view returns (uint256);
+function activationGeneration(bytes32 versionKey) external view returns (uint256);
+function ballotActivationGeneration(uint256 day) external view returns (uint256);
 function versionCount() external view returns (uint256);
 function versionKeyAt(uint256 index) external view returns (bytes32);
 function getVersion(bytes32 versionKey) external view returns (AssetVersion memory);
@@ -349,15 +372,35 @@ The injected/real reader returns one complete object:
 
 ```js
 {
-  chainId: 4663,
+  source: 'robinhood_chain_registry_v2',
+  finality: 'finalized',
+  chainId: '4663',
   registryAddress,
   catalogVersion: '12',
   finalizedBlockNumber: '123456',
   finalizedBlockHash,
   observedAt,
+  activeHeads: {
+    tickerHash: [/* exact dimension/key pairs */],
+    tokenAddress: [/* exact dimension/key pairs */],
+    robinhoodAssetIdHash: [/* exact dimension/key pairs */]
+  },
   assets: [/* all historical AssetVersion rows in registry order */]
 }
 ```
+
+The real reader obtains one finalized block and pins every registry getter to
+that exact block number. Literal `finality: 'finalized'` and the complete
+reverse-head proof are mandatory; latest-block or confirmation-count fallbacks
+are rejected.
+
+`snapshotHash` is the v1 hash
+`keccak256(abi.encode(chainId, registryAddress, catalogVersion,
+finalizedBlockNumber, finalizedBlockHash, normalizedHistoricalAssetTupleArray))`.
+The array is in exact registry-index order. Each tuple includes key, chain,
+ticker hash/text, name, token, decimals, provider hash, index, active flag, and
+all three lifecycle timestamps. `sync_id` equals this snapshot hash;
+`observedAt`/`syncedAt` are excluded.
 
 **Additive schema:**
 
@@ -431,7 +474,9 @@ commit, current active heads for all three dimensions, multiple historical rows
 sharing inactive fields, gap/duplicate/head-conflict rejection, wrong chain or
 non-finalized/malformed reader rejection, last-known-good preservation after
 read or validation failure, monotonic catalog/block rejection, idempotent exact
-same snapshot, and fail-closed empty/unsynchronized production catalog.
+same snapshot, fail-closed empty/unsynchronized production catalog, and a
+greater-than-ten-minute critical-mirror age that retains auditable history but
+sets `stale:true`, `voteable:false`, and returns no `activeAssets`.
 
 Mutation targets: replacing `encodeAbiParameters` with packed encoding, coercing
 catalog version/block to `Number`, deleting inactive rows, writing before full
@@ -455,6 +500,14 @@ Inside one transaction, upsert all historical rows, mark observed state exactly,
 rebuild the three-dimension active-head table, insert a deterministic sync-run
 row, and update singleton state last. Any error rolls back. Do not delete legacy
 tables or v2 historical versions.
+
+Use a distinct `STOCK_TOKEN_REGISTRY_V2_ADDRESS`; never reinterpret the legacy
+registry address. Public reads return all ordered history plus `activeAssets`
+and explicit `voteable/stale`. Reader uint64 timestamps remain canonical decimal
+seconds through JavaScript and are converted by parameterized SQL, never a
+JavaScript `Number`. `stock_catalog_evidence_v2` is intentionally not written
+in Task 2 because the getter snapshot has no finalized activation-event evidence
+provenance; Tasks 4 and 6 own that evidence lifecycle.
 
 The CLI supports explicit `--activate`, `--deactivate-key`, `--evidence-hash`,
 `--review-id`, `--approved-at`, `--registry`, and existing
