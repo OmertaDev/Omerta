@@ -309,6 +309,7 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
     'omr-03-money-router.png',
     'omr-04-reserve-rwa.png',
     'omr-05-ohm-contrast.png',
+    'omr-06-the-omr-machine-1080x1350.png',
   ];
   const gameplayDiagrams = [
     'gameplay-01-choose-your-path.png',

@@ -15,6 +15,7 @@ const result = spawnSync(process.execPath, ['tools/render-omr-excalidraw.mjs', '
 assert.equal(result.status, 0, result.stderr || 'diagram renderer --list should exit cleanly');
 const files = result.stdout.trim().split(/\r?\n/).filter(Boolean);
 assert.ok(files.includes('omr-01-severance.excalidraw'), 'the OMR research-sheet family remains discoverable');
+assert.ok(files.includes('omr-06-the-omr-machine-1080x1350.excalidraw'), 'the OMR portrait campaign card is discoverable');
 assert.ok(files.includes('gameplay-01-choose-your-path.excalidraw'), 'the gameplay research-sheet family is discoverable');
 assert.ok(files.includes('path-gun-1200x630.excalidraw'), 'the Path share-card family is discoverable');
 
@@ -53,6 +54,21 @@ for (const id of ['gun', 'ledger', 'kitchen', 'wheel', 'shadow', 'ring']) {
     assert.equal(format.url, `/art/${filename}.png?v=${fingerprint}`,
       `${id} ${format.kind} URL is versioned by the current PNG bytes`);
   }
+}
+
+{
+  const filename = 'omr-06-the-omr-machine-1080x1350';
+  const source = JSON.parse(readFileSync(new URL(`../docs/diagrams/${filename}.excalidraw`, import.meta.url), 'utf8'));
+  const canvas = source.elements.find((element) => element.id === 'omr6-canvas');
+  assert.deepEqual([canvas?.width, canvas?.height], [1080, 1350], 'the OMR machine has an explicit 1080x1350 artboard');
+  const copy = source.elements.filter((element) => element.type === 'text').map((element) => element.text).join(' ');
+  for (const claim of ['25% VIG', '75% POL', '50% reserve', 'hard max 3% float', 'chain_unconfigured'])
+    assert(copy.includes(claim), `the OMR machine publishes ${claim}`);
+  const card = readFileSync(new URL(`../public/art/${filename}.png`, import.meta.url));
+  assert.equal(card.toString('ascii', 1, 4), 'PNG', 'the OMR machine export is a PNG');
+  assert.deepEqual([card.readUInt32BE(16), card.readUInt32BE(20)], [1080, 1350], 'the OMR machine pixels match 1080x1350');
+  const fingerprint = createHash('sha256').update(card).digest('hex').slice(0, 12);
+  assert.equal(fingerprint, 'f8d21f2a315f', 'the Codex OMR machine URL fingerprint tracks the rendered bytes');
 }
 
 console.log('✅ the diagram renderer discovers every supported research-sheet family');
