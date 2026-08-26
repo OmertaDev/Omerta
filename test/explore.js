@@ -888,6 +888,41 @@ const scaledSocialDb = (size, { gangs = false, injectionHint = null } = {}) => {
 };
 
 const injectionHint = "scale-probe-'); DROP TABLE accounts; --";
+const assertIndexedSocialSql = (queries) => {
+  const query = (pattern) => queries.find(({ sql }) => pattern.test(sql));
+  const membership = [
+    [query(/FROM characters c JOIN account_persistent ap/i), [
+      [/c\.id\s*=\s*ANY\(\$1::text\[\]\)/i, 0],
+      [/c\.account_id\s*=\s*ANY\(\$2::text\[\]\)/i, 1],
+    ]],
+    [query(/SELECT character_id, gang_id FROM gang_members/i), [
+      [/character_id\s*=\s*ANY\(\$1::text\[\]\)/i, 0],
+    ]],
+    [query(/SELECT account_id, crew_id FROM crew_members/i), [
+      [/account_id\s*=\s*ANY\(\$1::text\[\]\)/i, 0],
+    ]],
+    [query(/FROM digs WHERE character_id/i), [
+      [/target_account\s*=\s*ANY\(\$2::text\[\]\)/i, 1],
+    ]],
+  ];
+  const gangCount = query(/SELECT gang_id, COUNT\(\*\) n FROM gang_members/i);
+  if (gangCount) membership.push([gangCount, [[/gang_id\s*=\s*ANY\(\$1::text\[\]\)/i, 0]]]);
+  for (const { sql } of queries) {
+    assert.doesNotMatch(sql, /\$\d+::text\[\]\s*&&\s*ARRAY\s*\[/i,
+      'set-valued Explore filters never put the indexed column inside an array-overlap expression');
+  }
+  for (const [entry, predicates] of membership) {
+    assert.ok(entry, 'every set-valued social enrichment query remains present');
+    for (const [predicate, paramIndex] of predicates) {
+      assert.match(entry.sql, predicate,
+        'set-valued Explore filters use scalar-array membership on the indexed column');
+      assert.equal(Array.isArray(entry.params[paramIndex]), false,
+        'ANY receives an escaped scalar Postgres array literal, never a JavaScript array');
+      assert.match(entry.params[paramIndex], /^\{.*\}$/s,
+        'ANY receives a bound Postgres array literal rather than interpolated SQL');
+    }
+  }
+};
 const scaleCases = [
   { size: 101, gangs: false, expectedSocialQueries: 5, injectionHint },
   { size: 4_350, gangs: true, expectedSocialQueries: 6, injectionHint: null },
@@ -899,6 +934,7 @@ for (const fixture of scaleCases) {
     onlineAccounts: scaled.onlineAccounts,
   });
   const socialQueries = scaled.socialQueries();
+  assertIndexedSocialSql(socialQueries);
   scaleResults.push(socialQueries.length);
   assert.equal(board.next?.systemId, 'contracts',
     `${fixture.size} visible humans preserve the authoritative social operation`);

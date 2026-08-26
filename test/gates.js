@@ -1870,7 +1870,7 @@ const SCENERY_WAIVED = {
   }
 
 
-// ═══ THE ANY-OF-ARRAY BAN — a query shape that arms itself when somebody adds an index ═══════════
+// ═══ THE JS-ARRAY ANY BAN — a query shape that arms itself when somebody adds an index ═══════════
 // `WHERE col = ANY($1)` with a JS array bound to $1 is CORRECT SQL and correct on production
 // Postgres. pg-mem returns ZERO ROWS for it — silently, no error — so the suites go green over a
 // query that found nothing. src/game.js states the rule in its own comments twice and src/growth.js
@@ -1886,7 +1886,18 @@ const SCENERY_WAIVED = {
 // THE CORPUS IS THE `IN (…)` SITES, not the violations — a rule counted by its own violations floors
 // at zero the moment the tree is clean and then measures nothing forever (the ARTICLE LEDGER lesson).
 {
-  const bad = [], inForms = [];
+  const bad = [], inForms = [], scalarLiteralAny = [];
+  // Explore's global-presence query needs a static, indexed membership predicate. These five exact
+  // sites bind sqlTextArray(...) strings, not JavaScript arrays; test/explore.js asserts that at the
+  // query boundary (including quoted/injection-shaped values) while this allowlist stays deliberately
+  // narrow enough that any new ANY site remains banned by default.
+  const exploreScalarLiteralSites = [
+    /AND \(c\.id\s*=\s*ANY\(\$1::text\[\]\) OR c\.account_id\s*=\s*ANY\(\$2::text\[\]\)\)/,
+    /SELECT character_id, gang_id FROM gang_members WHERE character_id\s*=\s*ANY\(\$1::text\[\]\)/,
+    /SELECT account_id, crew_id FROM crew_members WHERE account_id\s*=\s*ANY\(\$1::text\[\]\)/,
+    /FROM digs WHERE character_id=\$1 AND target_account\s*=\s*ANY\(\$2::text\[\]\)/,
+    /WHERE gang_id\s*=\s*ANY\(\$1::text\[\]\)/,
+  ];
   const files = [];
   const walk = (d) => { for (const e of fs.readdirSync(d)) {
     const q = path.join(d, e);
@@ -1899,17 +1910,25 @@ const SCENERY_WAIVED = {
     // of them as a violation — a mostly-wrong advisory is one people route around.
     const txt = fs.readFileSync(f, 'utf8').split(/\r?\n/).map((l) => l.replace(/\/\/.*$/, '')).join('\n');
     txt.split('\n').forEach((line, i) => {
-      if (/=\s*ANY\(\$\d/.test(line)) bad.push(`${f}:${i + 1}  ${line.trim().slice(0, 90)}`);
+      if (/=\s*ANY\(\$\d/.test(line)) {
+        const isExploreScalarLiteral = path.relative(SRC, f).replace(/\\/g, '/') === 'explore.js'
+          && exploreScalarLiteralSites.some((pattern) => pattern.test(line));
+        if (isExploreScalarLiteral) scalarLiteralAny.push(`${f}:${i + 1}`);
+        else bad.push(`${f}:${i + 1}  ${line.trim().slice(0, 90)}`);
+      }
       if (/IN \(\$\d|IN \(\$\{/.test(line)) inForms.push(f);
     });
   }
-  assert(inForms.length >= 20, `THE ANY-OF-ARRAY BAN sees only ${inForms.length} IN(…) sites — the `
+  assert(inForms.length >= 20, `THE JS-ARRAY ANY BAN sees only ${inForms.length} IN(…) sites — the `
     + 'extractor has stopped reading src/, and a sweep that reaches nothing reads exactly like a clean tree');
+  assert.equal(scalarLiteralAny.length, exploreScalarLiteralSites.length,
+    'Explore must retain exactly five reviewed scalar-literal ANY sites; add no blanket ANY waiver');
   assert.deepEqual(bad, [], 'a query binds a JS array to ANY($n). pg-mem returns ZERO rows for that '
     + 'shape, silently, so the suites pass over a query that found nothing — and it only shows up once '
     + 'the filtered column gets an index. Use IN ($1,$2) (fixed arity) or a generated placeholder list:\n   - '
     + bad.join('\n   - '));
-  console.log(`  ✓ no query binds an array to ANY($n) (${inForms.length} IN(…) sites govern the rule)`);
+  console.log(`  ✓ no query binds a JS array to ANY($n); ${scalarLiteralAny.length} exact scalar-literal `
+    + `sites and ${inForms.length} IN(…) sites govern the rule`);
 }
 
 }

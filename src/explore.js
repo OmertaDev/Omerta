@@ -647,21 +647,21 @@ async function scopedSocialContext(db, ch, onlineAccounts) {
             c.pen_safe_until, c.hole_until, c.duel_limit, c.wanted_until, ap.rat
        FROM characters c JOIN account_persistent ap ON ap.account_id=c.account_id
       WHERE c.alive AND NOT c.is_npc AND NOT ap.agent_flag
-        AND ($1::text[] && ARRAY[c.id] OR $2::text[] && ARRAY[c.account_id])`,
+        AND (c.id = ANY($1::text[]) OR c.account_id = ANY($2::text[]))`,
     [sqlTextArray(charIds), sqlTextArray(accountIds)])).rows;
   if (!characters.length) return { socialTargets: [], joinableFamilyIds: [] };
   const ids = characters.map((row) => row.id);
   const accounts = characters.map((row) => row.account_id);
   const gangRows = await db.query(
-    'SELECT character_id, gang_id FROM gang_members WHERE $1::text[] && ARRAY[character_id]',
+    'SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])',
     [sqlTextArray(ids)]);
   const crewRows = await db.query(
-    'SELECT account_id, crew_id FROM crew_members WHERE $1::text[] && ARRAY[account_id]',
+    'SELECT account_id, crew_id FROM crew_members WHERE account_id = ANY($1::text[])',
     [sqlTextArray(accounts)]);
   const heldRows = await db.query(
     'SELECT target_account FROM secrets WHERE holder_character=$1 AND expires_at > now()', [ch.id]);
   const digRows = await db.query(
-    'SELECT target_account, at FROM digs WHERE character_id=$1 AND $2::text[] && ARRAY[target_account]',
+    'SELECT target_account, at FROM digs WHERE character_id=$1 AND target_account = ANY($2::text[])',
     [ch.id, sqlTextArray(accounts)]);
   const gangByCharacter = new Map(gangRows.rows.map((row) => [row.character_id, row.gang_id]));
   const crewByAccount = new Map(crewRows.rows.map((row) => [row.account_id, row.crew_id]));
@@ -672,7 +672,7 @@ async function scopedSocialContext(db, ch, onlineAccounts) {
   if (gangIds.length) {
     const counts = (await db.query(
       `SELECT gang_id, COUNT(*) n FROM gang_members
-        WHERE $1::text[] && ARRAY[gang_id]
+        WHERE gang_id = ANY($1::text[])
         GROUP BY gang_id`, [sqlTextArray(gangIds)])).rows;
     const byGang = new Map(counts.map((row) => [row.gang_id, num(row.n)]));
     joinableFamilyIds = gangIds.filter((id) => num(byGang.get(id)) < M3.GANG_MAX_MEMBERS);
