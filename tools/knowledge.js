@@ -455,7 +455,9 @@ function build(options = {}) {
       const indent = text.slice(lineStart, m.index);
       const localFunctions = localFunctionsBefore(text, m.index, indent);
       const localHandler = [...localFunctions].map((name) => {
-        const call = new RegExp(`\\b${esc(name)}\\s*\\(`).exec(snippet);
+        // A local helper owns the route only when the callback delegates directly to it. Merely
+        // using a utility to parse/clip input must not outrank the namespaced domain operation.
+        const call = new RegExp(`(?:=>|\\breturn\\b)\\s*(?:await\\s+)?${esc(name)}\\s*\\(`).exec(snippet);
         return call ? { name, index: call.index } : null;
       }).filter(Boolean).sort((a, b) => a.index - b.index)[0] || null;
       const handlerMatch = handlerMatches.find((x) => aliases.has(x[1]) && !/\/(?:game|rules)\.js$/.test(aliases.get(x[1])))

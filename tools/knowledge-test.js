@@ -6,6 +6,17 @@ import { fileURLToPath } from 'node:url';
 import { buildForCheck, sourceRevisionForSnapshot, validate, render } from './knowledge.js';
 
 const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
+const generatedFiles = fs.readdirSync(path.join(root, 'knowledge', 'generated'))
+  .map((name) => `knowledge/generated/${name}`).sort();
+const generatedAttributes = execFileSync('git', [
+  'check-attr', 'text', 'eol', '--', ...generatedFiles,
+], { cwd: root, encoding: 'utf8' });
+for (const file of generatedFiles) {
+  assert(generatedAttributes.includes(`${file}: text: set`),
+    `${file} must be normalized as text in every checkout`);
+  assert(generatedAttributes.includes(`${file}: eol: lf`),
+    `${file} must check out as LF so an ordinary build cannot manufacture dirty status`);
+}
 assert.equal(sourceRevisionForSnapshot({
   head: 'snapshot-commit', parent: 'authored-parent', worktreeDirty: false,
   changedPaths: ['knowledge/generated/graph.json', 'knowledge/generated/routes.md'],
@@ -42,6 +53,10 @@ assert.equal(routeById.get('GET /v1/agent/turn')?.handler, 'readAgentTurn',
   'Agent Turn reads must resolve to their local readAgentTurn handler, not a later helper body');
 assert.equal(routeById.get('POST /v1/agent/act')?.handler, 'executeAgentAction',
   'Agent Turn actions must resolve to their local executor, not a later namespaced call');
+assert.equal(routeById.get('GET /u/:name')?.handler, 'Cards.publicDossier',
+  'public profiles must keep their domain handler rather than promoting the incidental clip helper');
+assert.equal(routeById.get('GET /v1/auth/x/callback')?.handler, 'A.xOAuthCallback',
+  'X callbacks must keep their domain handler rather than promoting the incidental cookie parser');
 
 for (const artifact of graph.nodes.filter((n) => n.type === 'Artifact')) {
   assert(artifact.version, `${artifact.key} has no version`);
