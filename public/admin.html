@@ -19,9 +19,10 @@
   button { background:#1d1d25; border:1px solid var(--line); color:var(--ink); padding:7px 12px;
     border-radius:4px; cursor:pointer; font-size:12px; min-height:44px; }
   button:hover { border-color:var(--neon); }
+  button:disabled { cursor:not-allowed; opacity:.5; border-color:var(--line); }
   button.danger { border-color:var(--blood); color:var(--bad); }
-  button:focus-visible,input:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
-  input { background:#0e0e12; border:1px solid var(--line); color:var(--ink); padding:7px 8px; border-radius:4px; font-size:12px; min-height:44px; }
+  button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
+  input,select { background:#0e0e12; border:1px solid var(--line); color:var(--ink); padding:7px 8px; border-radius:4px; font-size:12px; min-height:44px; }
   .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:12px; padding:12px 16px; }
   .panel { background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:12px; }
   .panel h2 { margin:0 0 10px; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--dim); font-weight:normal; }
@@ -58,7 +59,58 @@
   .confirm-body{padding:16px 18px;color:var(--ink);font-size:14px;line-height:1.55}
   .confirm-body p{margin:0 0 12px}.confirm-body label{display:block;color:var(--dim);font:11px/1.4 var(--mono);margin-bottom:5px}
   .confirm-body input{width:100%}.confirm-foot{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid var(--line)}
-  @media(max-width:560px){.grid{grid-template-columns:1fr;padding:8px}.center{margin:10vh auto}.login-actions{flex-direction:column}.mod-row{align-items:stretch}.mod-field{flex-basis:100%}}
+  .top-jump{color:var(--neon);font:11px/1 'Courier New',monospace;letter-spacing:.08em;text-decoration:none;text-transform:uppercase}
+  .top-jump:hover{text-decoration:underline}
+  .panel--wide{grid-column:1/-1;padding:0;overflow:hidden;scroll-margin-top:76px}
+  .rwa-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:18px;border-bottom:1px solid var(--line);background:#101016}
+  .rwa-kicker{color:var(--neon);font:11px/1.3 'Courier New',monospace;letter-spacing:.18em;text-transform:uppercase}
+  .rwa-head h2{margin:5px 0 4px;color:var(--ink);font-size:clamp(20px,3vw,30px);letter-spacing:.05em;text-transform:none}
+  .rwa-status{display:inline-flex;align-items:center;gap:7px;white-space:nowrap;border:1px solid var(--line);border-radius:999px;padding:8px 11px;font:11px/1 'Courier New',monospace;letter-spacing:.08em;text-transform:uppercase}
+  .rwa-status::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--dim)}
+  .rwa-status.ok{color:var(--ok);border-color:#315d39}.rwa-status.ok::before{background:var(--ok)}
+  .rwa-status.warn{color:var(--warn);border-color:#66502a}.rwa-status.warn::before{background:var(--warn)}
+  .rwa-status.bad{color:var(--bad);border-color:#71362f}.rwa-status.bad::before{background:var(--bad)}
+  .rwa-shell{padding:16px}
+  .rwa-metrics{display:grid;grid-template-columns:repeat(5,minmax(135px,1fr));gap:8px;margin-bottom:14px}
+  .rwa-metric{min-height:94px;padding:11px;border:1px solid var(--line);border-radius:6px;background:var(--panel2)}
+  .rwa-metric .k{color:var(--dim);font:10px/1.3 'Courier New',monospace;letter-spacing:.1em;text-transform:uppercase}
+  .rwa-metric .v{margin-top:8px;color:var(--ink);font-size:20px;overflow-wrap:anywhere}
+  .rwa-metric .s{margin-top:4px;color:var(--dim);font-size:10px;line-height:1.35}
+  .rwa-pipeline{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;margin:0 0 14px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;counter-reset:rwa-step}
+  .rwa-step{position:relative;min-height:82px;padding:10px 10px 10px 38px;background:var(--panel);counter-increment:rwa-step}
+  .rwa-step::before{content:counter(rwa-step);position:absolute;left:10px;top:10px;width:20px;height:20px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;color:var(--dim);font:10px/1 'Courier New',monospace}
+  .rwa-step b{display:block;font-size:12px;font-weight:normal}.rwa-step span{display:block;margin-top:4px;color:var(--dim);font-size:10px;line-height:1.35}
+  .rwa-step.ready::before{color:var(--ok);border-color:var(--ok)}.rwa-step.ready b{color:var(--ok)}
+  .rwa-step.attn::before{color:var(--warn);border-color:var(--warn)}.rwa-step.attn b{color:var(--warn)}
+  .rwa-columns{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:12px}
+  .rwa-card{border:1px solid var(--line);border-radius:6px;background:#111117;overflow:hidden}
+  .rwa-card+.rwa-card{margin-top:12px}
+  .rwa-card-head{display:flex;justify-content:space-between;gap:12px;align-items:baseline;padding:11px 12px;border-bottom:1px solid var(--line)}
+  .rwa-card-head h3{margin:0;color:var(--ink);font:12px/1.3 'Courier New',monospace;letter-spacing:.1em;text-transform:uppercase}
+  .rwa-card-head span{color:var(--dim);font-size:10px;text-align:right}
+  .rwa-card-body{padding:12px}
+  .rwa-table-wrap{overflow-x:auto}
+  .rwa-table{width:100%;border-collapse:collapse;font-size:11px}
+  .rwa-table th{padding:6px;text-align:left;color:var(--dim);font:9px/1.3 'Courier New',monospace;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--line)}
+  .rwa-table td{padding:7px 6px;border-bottom:1px solid #1d1d24;vertical-align:top}.rwa-table tr:last-child td{border-bottom:0}
+  .rwa-table code{font-size:10px;color:var(--dim)}
+  .rwa-actions{display:grid;gap:10px}.rwa-action{padding:11px;border:1px solid var(--line);border-radius:5px;background:var(--panel)}
+  .rwa-action h4{margin:0 0 3px;font-size:13px;font-weight:normal;color:var(--neon)}
+  .rwa-action p{margin:0 0 8px;color:var(--dim);font-size:10px;line-height:1.45}
+  .rwa-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.rwa-form .wide{grid-column:1/-1}
+  .rwa-form label{display:grid;gap:3px;color:var(--dim);font:9px/1.3 'Courier New',monospace;letter-spacing:.06em;text-transform:uppercase}
+  .rwa-form button{align-self:end}.rwa-form input,.rwa-form select{width:100%;min-width:0}
+  .rwa-check{display:flex!important;grid-column:1/-1;align-items:center;gap:7px;text-transform:none!important;letter-spacing:0!important;font-size:10px!important}
+  .rwa-check input{width:auto;min-height:auto}
+  .rwa-out{min-height:18px;margin:10px 0 0;padding:8px;border-left:2px solid var(--line);color:var(--dim);font:11px/1.45 'Courier New',monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+  .rwa-out.ok{border-color:var(--ok);color:var(--ok)}.rwa-out.bad{border-color:var(--bad);color:var(--bad)}
+  .rwa-locked{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  .rwa-locked button{text-align:left;min-height:54px}
+  .rwa-locked button small{display:block;margin-top:3px;color:var(--dim);font-size:9px}
+  .rwa-card details{border-top:1px solid var(--line)}.rwa-card summary{cursor:pointer;padding:11px 12px;color:var(--dim);font:10px/1.3 'Courier New',monospace;letter-spacing:.08em;text-transform:uppercase}
+  .rwa-card details[open] summary{color:var(--neon);border-bottom:1px solid var(--line)}
+  @media(max-width:980px){.rwa-metrics{grid-template-columns:repeat(3,1fr)}.rwa-pipeline{grid-template-columns:1fr}.rwa-columns{grid-template-columns:1fr}}
+  @media(max-width:560px){.grid{grid-template-columns:1fr;padding:8px}.center{margin:10vh auto}.login-actions{flex-direction:column}.mod-row{align-items:stretch}.mod-field{flex-basis:100%}.rwa-head{flex-direction:column}.rwa-metrics{grid-template-columns:repeat(2,1fr)}.rwa-form,.rwa-locked{grid-template-columns:1fr}.rwa-form .wide{grid-column:auto}}
 </style>
 <link rel="stylesheet" href="/omerta-ui.css?v=20260824">
 </head>
@@ -81,11 +133,20 @@
   <div id="banner" class="banner" role="status" aria-live="polite">…</div>
   <div id="top">
     <h1>THE BOOKS</h1><span class="sub" id="stamp">—</span>
+    <a class="top-jump" href="#p-rwa">RWA control</a>
     <span id="status" role="status" aria-live="polite"></span>
     <button id="refresh">refresh</button>
     <button id="logout" class="danger">lock up</button>
   </div>
   <div class="grid">
+    <section class="panel panel--wide" id="p-rwa" aria-labelledby="rwa-title">
+      <header class="rwa-head">
+        <div><div class="rwa-kicker">Real-world assets · operator console</div><h2 id="rwa-title">The Acquisition Desk</h2>
+          <div class="note">One view from approved catalog to Street Deed delivery. Safe authority stays outside this browser.</div></div>
+        <span class="rwa-status" id="rwa-health">loading</span>
+      </header>
+      <div class="body">…</div>
+    </section>
     <div class="panel" id="p-integrations"><h2>Integrations</h2><div class="body">…</div></div>
     <div class="panel" id="p-chainparams"><h2>The Control Room — on-chain parameters</h2><div class="body">…</div></div>
     <div class="panel" id="p-backups"><h2>Backups</h2><div class="body">…</div></div>
@@ -207,14 +268,17 @@
   async function refreshAll() {
     $('#dash').setAttribute('aria-busy', 'true');
     $('#status').textContent = 'refreshing…';
-    const [ov, inv, fn, res, vig, em, act, rev, eng, bnd, tre, coa, intg, rtr, cpar, bkv, com, thl] = await Promise.all([
+    const [ov, inv, fn, res, vig, em, act, rev, eng, bnd, tre, coa, intg, rtr, cpar, bkv, com, thl,
+      rwaBallot, rwaEpochs, rwaBudget, rwaDeliveries] = await Promise.all([
       j('GET', '/v1/mod/overview'), j('GET', '/v1/mod/invariants'), j('GET', '/v1/mod/funnel'),
       j('GET', '/v1/mod/reserve'), j('GET', '/v1/mod/vig'), j('GET', '/v1/mod/emission'),
       j('GET', '/v1/mod/activity?limit=60'), j('GET', '/v1/mod/revenue'),
       j('GET', '/v1/mod/engagement'), j('GET', '/v1/mod/bonds'), j('GET', '/v1/mod/treasury'),
       j('GET', '/v1/mod/coach'), j('GET', '/v1/mod/integrations'), j('GET', '/v1/mod/router'),
       j('GET', '/v1/mod/chain/params'), j('GET', '/v1/mod/bank'), j('GET', '/v1/mod/community'),
-      j('GET', '/v1/mod/tokenhealth'),
+      j('GET', '/v1/mod/tokenhealth'), j('GET', '/v1/commission/ticker'),
+      j('GET', '/v1/mod/brokers'), j('GET', '/v1/mod/treasury/budget'),
+      j('GET', '/v1/mod/treasury/deliveries'),
     ]);
     $('#dash').removeAttribute('aria-busy');
     if (ov.code === 401) return $('#logout').onclick();
@@ -246,6 +310,7 @@
     renderFunnel(fn.body); renderTop(ov.body); renderChain(res.body, vig.body, em.body, rev.body, bnd.body, tre, ov.body, bkv.body, com.body); renderRouter(rtr.body); renderTokenHealth(thl.body);
     renderBackups(ov.body); renderSocial(ov.body); renderCoach(coa.body);
     renderIntegrations(intg.body); window.__cpar = (cpar.body && cpar.body.rows) || []; renderChainParams(cpar.body);
+    renderRwa(rwaBallot, rwaEpochs, rwaBudget, rwaDeliveries, tre);
     renderActivity(act.body); renderMod();
     $('#status').textContent = 'live';
   }
@@ -725,6 +790,272 @@
           + rowHtml('lifetime', `${lf.gross !== undefined ? `gross ${unit}${fmt(lf.gross)} → ` : ''}${nums || '—'}`);
       }).join('')
       + `<div class="note" style="margin-top:8px">* implicit remainder — computed, never stored (the on-chain wallet holds it)</div>`;
+  }
+
+  // THE ACQUISITION DESK — a graphical operator layer over the RWA routes that already exist.
+  // It intentionally does not invent endpoints for the founder-approved acquisition-vault controls:
+  // those buttons stay visibly locked until the contract and server surface really exist. The same
+  // boundary applies to Safe authority — this session may inspect and drive mounted keeper/accounting
+  // routes, but it cannot sign a Safe transaction or cast a family's vote.
+  function wireRwaOps() {
+    const body = $('#p-rwa').querySelector('.body');
+    if (body.dataset.wired) return;
+    body.dataset.wired = '1';
+    body.innerHTML = `<div class="rwa-shell">
+      <div class="rwa-metrics" id="rwa-metrics" aria-label="RWA operating metrics"></div>
+      <div class="rwa-pipeline" id="rwa-pipeline" aria-label="RWA acquisition pipeline"></div>
+      <div class="rwa-columns">
+        <div>
+          <section class="rwa-card" aria-labelledby="rwa-catalog-title">
+            <div class="rwa-card-head"><h3 id="rwa-catalog-title">Catalog &amp; Commission ballot</h3><span id="rwa-catalog-meta">—</span></div>
+            <div class="rwa-card-body"><div class="note" style="margin-bottom:8px">Only registry-approved Stock Tokens appear here. Seated families vote from the Commission screen; this console cannot create a candidate or impersonate a vote.</div><div id="rwa-catalog"></div></div>
+          </section>
+          <section class="rwa-card" aria-labelledby="rwa-epochs-title">
+            <div class="rwa-card-head"><h3 id="rwa-epochs-title">Frozen broker weights</h3><span>publish before acquisition</span></div>
+            <div class="rwa-card-body" id="rwa-epochs"></div>
+          </section>
+          <section class="rwa-card" aria-labelledby="rwa-delivery-title">
+            <div class="rwa-card-head"><h3 id="rwa-delivery-title">Street Deed deliveries</h3><span id="rwa-delivery-meta">—</span></div>
+            <div class="rwa-card-body" id="rwa-deliveries"></div>
+          </section>
+        </div>
+        <div>
+          <section class="rwa-card" aria-labelledby="rwa-actions-title">
+            <div class="rwa-card-head"><h3 id="rwa-actions-title">Live operating actions</h3><span>existing authenticated routes</span></div>
+            <div class="rwa-card-body rwa-actions">
+              <div class="rwa-action"><h4>1 · Freeze a broker epoch</h4><p>Publishes play-weighted ownership for a closed window. Re-running the same window is idempotent.</p>
+                <div class="rwa-form"><label>End day · UTC integer<input id="rwa-epoch-day" inputmode="numeric" placeholder="blank = yesterday"></label><button id="rwa-epoch-go">publish weights</button></div></div>
+              <div class="rwa-action"><h4>2 · Record the keeper acquisition</h4><p>Applies the spendable-budget and price-continuity walls. A tx hash is accepted as real only when the server's explicit real-revenue gate is on; otherwise this is a zero-value QA record.</p>
+                <div class="rwa-form"><label>Ticker<select id="rwa-buy-ticker"></select></label><label>Achieved ETH / unit<input id="rwa-buy-price" inputmode="decimal" placeholder="0.0001"></label><label>Maximum ETH<input id="rwa-buy-max" inputmode="decimal" placeholder="blank = budget"></label><label>Reference<input id="rwa-buy-ref" placeholder="optional idempotent ref"></label><label class="wide">Observed transaction hash<input id="rwa-buy-tx" placeholder="optional · 0x…" autocomplete="off"></label><button class="wide danger" id="rwa-buy-go">run acquisition keeper</button></div></div>
+              <div class="rwa-action"><h4>3 · Distribute an acquisition</h4><p>Splits one real acquisition across the latest epoch published before that acquisition. The reference latch is consumed once.</p>
+                <div class="rwa-form"><label>Acquisition reference<input id="rwa-dist-ref" placeholder="txHash:logIndex" autocomplete="off"></label><button class="danger" id="rwa-dist-go">distribute units</button></div></div>
+              <div class="rwa-action"><h4>4 · Run the delivery keeper</h4><p>Stages and sends every currently deliverable allocation to its Street Deed TBA. Accounts without a deed remain owed and wait.</p>
+                <button class="danger" id="rwa-deliveries-go">run delivery keeper</button></div>
+              <div id="rwa-out" class="rwa-out" role="status" aria-live="polite">No RWA action sent in this session.</div>
+            </div>
+            <details><summary>Advanced ingest &amp; single-delivery controls</summary><div class="rwa-card-body rwa-actions">
+              <div class="rwa-action"><h4>Record a fill directly</h4><p>Backstop ingest for an observed acquisition. The first real print for a ticker requires the explicit bootstrap flag.</p>
+                <div class="rwa-form"><label>Reference<input id="rwa-fill-ref" placeholder="txHash:logIndex"></label><label>Ticker<select id="rwa-fill-ticker"></select></label><label>Units<input id="rwa-fill-units" inputmode="decimal"></label><label>ETH spent<input id="rwa-fill-eth" inputmode="decimal"></label><label class="wide">Observed transaction hash<input id="rwa-fill-tx" placeholder="optional · 0x…"></label><label class="rwa-check"><input id="rwa-fill-bootstrap" type="checkbox">Seed the first real price anchor deliberately</label><button class="wide danger" id="rwa-fill-go">record observed fill</button></div></div>
+              <div class="rwa-action"><h4>Record one delivery</h4><p>Targets one allocation. Without a gated real transaction hash the server records a simulation and does not settle the allocation.</p>
+                <div class="rwa-form"><label>Epoch ID<input id="rwa-one-epoch" autocomplete="off"></label><label>Account ID<input id="rwa-one-account" autocomplete="off"></label><label>Ticker<select id="rwa-deliver-ticker"></select></label><label>Units<input id="rwa-one-units" inputmode="decimal"></label><label class="wide">Observed transaction hash<input id="rwa-one-tx" placeholder="optional · 0x…"></label><button class="wide danger" id="rwa-one-go">record single delivery</button></div></div>
+            </div></details>
+          </section>
+          <section class="rwa-card" aria-labelledby="rwa-vault-title">
+            <div class="rwa-card-head"><h3 id="rwa-vault-title">Acquisition vault controls</h3><span style="color:var(--warn)">designed · not mounted</span></div>
+            <div class="rwa-card-body"><div class="note" style="margin-bottom:9px">These controls reflect the approved architecture, including deterministic reconciliation accounting and incident disclosure. Quarantined Stock Tokens default to hold-only; recovery is an optional future edge feature, not an RWA launch dependency, and no recovery capability is deployed.</div>
+              <div class="rwa-locked">
+                <button disabled>Pause new purchases<small>Safe or current mainOperator</small></button>
+                <button disabled>Resume purchases<small>Safe only</small></button>
+                <button disabled>Cancel purchase intent<small>direct or EIP-712 cancellation nonce</small></button>
+                <button disabled>Reconcile adapter attempt<small>Safe finalizes · contract-bounded values</small></button>
+                <button disabled>Move ETH as operator<small>fixed order · quarantine last · dedicated reason</small></button>
+                <button disabled>Reconciliation incident board<small>immutable incident ID · red through finalized synced zero</small></button>
+                <button disabled>Acknowledge incident alerts<small>Safe or current operator · silences repeats only</small></button>
+                <button disabled>Quarantined Stock Tokens<small>hold-only default · conditional future recovery</small></button>
+                <button disabled>Incident state freshness<small>red / unknown after 10 minutes or sequence gap</small></button>
+                <button disabled>Purchase blocker set<small>independent reasons · resume only when empty</small></button>
+                <button disabled>Rebuild accounting index<small>permissionless chunks · immutable-record root</small></button>
+                <button disabled>Export incident history<small>finalized default · checksummed cursor pages</small></button>
+                <button disabled>OMRGameplayVault control room<small>design approved · implementation, audit, and funded migration pending</small></button>
+                <button disabled>Gameplay settlement health<small>signer generation · mirror freshness · canonical submission · pending outcomes</small></button>
+                <button disabled>Legacy stake backing report<small>claims · deposited OMR · imports · unfunded liability</small></button>
+                <button disabled>Gameplay-vault controller binding<small>account ID · verified wallet · recovery state · unattributed OMR</small></button>
+                <button disabled>Gameplay risk ruleset<small>consent version · 20%/50% ceilings · Safe reductions</small></button>
+                <button disabled>Settlement recovery queue<small>prepared · submitted · finalized · game committed</small></button>
+                <button disabled>Gameplay-vault checkpoints<small>Made Ladder latest · Broker seven-day TWA</small></button>
+                <button disabled>Gameplay-vault upgrade control<small>Transparent Proxy · non-upgradeable governor · Safe only</small></button>
+                <button disabled>Gameplay-vault upgrade queue<small>exact package · 48-hour delay · cancel / execute / expire</small></button>
+                <button disabled>Gameplay-vault implementation monitor<small>address · code hash · version · admin/governor drift</small></button>
+                <button disabled>Gameplay-vault upgrade validation<small>OMR · liabilities · ruleset · nonces · pauses · bindings</small></button>
+                <button disabled>Gameplay-vault rollback proposal<small>same evidence, delay, validation, and history</small></button>
+                <button disabled>Gameplay-vault controller rotation<small>current release · new acceptance · controller generation</small></button>
+                <button disabled>Lost-wallet recovery board<small>seven days · notifications · contest · Safe evidence review</small></button>
+                <button disabled>Gameplay-vault withdrawal state<small>controller-only pull · server-independent · scoped pause</small></button>
+                <button disabled>Gameplay-vault unbonding tranches<small>partial amounts · independent six-hour clocks · exposure</small></button>
+                <button disabled>Gameplay-vault OMR solvency<small>actual receipt · liabilities · unattributed surplus · deficit incident</small></button>
+                <button disabled>Unbonding tranche policy<small>earliest unlock first · max 16 · 0.01 OMR</small></button>
+                <button disabled>Withdrawable aggregation<small>matured tranches · one balance · history preserved</small></button>
+                <button disabled>Unattributed OMR recovery<small>Safe · fixed treasury · 48-hour proposal</small></button>
+                <button disabled>Fund gameplay-vault deficit<small>permissionless · no player credit · excess unattributed</small></button>
+                <button disabled>Gameplay-vault deficit incident<small>full liabilities · withdrawals paused · no haircut</small></button>
+                <button disabled>Gameplay-vault solvency sync<small>pre/post checks · permissionless sync · incident generations</small></button>
+                <button disabled>Gameplay loss calculator<small>execution-time buckets · floor rounding · signer ceilings</small></button>
+                <button disabled>Atomic gameplay settlement<small>all buckets · one killer credit · full rollback</small></button>
+                <button disabled>Gameplay loot state<small>idle balance · idle exposure · no automatic Broker weight</small></button>
+                <button disabled>Settlement authorization clock<small>five-minute inclusion · future time rejected · finality may follow</small></button>
+                <button disabled>Prepared settlement journal<small>off-chain · expiring · no victim or custody lock</small></button>
+                <button disabled>Gameplay settlement sequence<small>unique event · exact victim nonce · zero loot consumes</small></button>
+                <button disabled>Settlement batching policy<small>MVP one outcome · one transaction · one record</small></button>
+                <button disabled>Signer rotation policy<small>routine five-minute overlap · emergency zero-grace revocation</small></button>
+                <button disabled>Permissionless settlement submission<small>typed authorization · no submitter authority · no relayer registry</small></button>
+                <button disabled>Settlement spam defense<small>caller-funded invalid calls · no mutation · no incident</small></button>
+                <button disabled>Community gas pool<small>native-only non-upgradeable contract · separate from OMR/RWA custody</small></button>
+                <button disabled>Sponsor contribution terms<small>final contribution · no refund, yield, priority, allocation, or governance</small></button>
+                <button disabled>Executor gas eligibility<small>canonical event/nonce winner only · failed and losing calls zero</small></button>
+                <button disabled>Executor credit withdrawal<small>pull-to-self · CEI/reentrancy guard · exact reserved liability</small></button>
+                <button disabled>Gas reimbursement formula<small>measured audited cost · gas/data/wei caps · unreserved ETH</small></button>
+                <button disabled>Gas-pool depletion<small>partial or zero credit · permissionless settlement remains open</small></button>
+                <button disabled>Gas-pool governance<small>risk reductions immediate · increases, fee source, migration wait 48h</small></button>
+                <button disabled>Settlement finality threshold<small>one public block count per chain · no per-action discretion</small></button>
+                <button disabled>Finality change policy<small>every increase/decrease · Safe-only 48h · prospective effective block</small></button>
+                <button disabled>Settlement reorg recovery<small>same event and nonce · canonical-absence proof</small></button>
+                <button disabled>Settlement evidence record<small>bucket math · tranche use · killer credit · solvency</small></button>
+                <button disabled>Broker stake multiplier<small>1.50× cap · 300 / 1k / 5k / 20k tiers</small></button>
+                <button disabled>Broker eligible stake<small>active + committed only · finalized seven-day TWA</small></button>
+                <button disabled>Broker wallet uniqueness<small>one wallet · one account · collisions score zero</small></button>
+                <button disabled>Broker stake checkpoints<small>canonical prospective changes · no backfill</small></button>
+                <button disabled>Broker tier governance<small>Safe only · seven-day notice · later full epoch</small></button>
+                <button disabled>Broker epoch ruleset<small>frozen inputs · pause or cancel · never rewrite</small></button>
+                <button disabled>Sync unattributed ETH<small>permissionless accounting only</small></button>
+                <button disabled>Reclassify unattributed ETH<small>Safe only</small></button>
+                <button disabled>Approve / rotate ingress<small>Safe registry authority</small></button>
+                <button disabled>Approve a new candidate<small>Safe catalog transaction required</small></button>
+                <button disabled>Repair accounting deficit<small>canonical deposit split</small></button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>`;
+
+    const out = (message, bad = false) => {
+      const el = $('#rwa-out'); el.textContent = message;
+      el.className = 'rwa-out ' + (bad ? 'bad' : 'ok');
+    };
+    const busy = (button, label) => { button.disabled = true; button.setAttribute('aria-busy', 'true'); out(label); };
+    const done = (button) => { button.disabled = false; button.removeAttribute('aria-busy'); };
+    const resultText = (r, success) => r.code === 200
+      ? `${success}\n${JSON.stringify(r.body, null, 2)}`
+      : `REFUSED (${r.code || 'offline'}): ${r.body?.message || r.body?.error || 'unknown error'}`;
+
+    $('#rwa-epoch-go').onclick = async () => {
+      const button = $('#rwa-epoch-go'); const raw = $('#rwa-epoch-day').value.trim();
+      if (raw && !Number.isInteger(Number(raw))) return out('End day must be a UTC day integer.', true);
+      if (!await confirmAction({ title: 'Publish frozen broker weights?', body: raw
+        ? `The broker epoch ending on UTC day ${raw} will be published. The same window cannot be published twice.`
+        : 'The broker epoch ending yesterday will be published. The same window cannot be published twice.', yes: 'publish epoch' })) return;
+      busy(button, 'Publishing broker weights…');
+      const r = await j('POST', '/v1/mod/brokers/allocate', raw ? { endDay: Number(raw) } : {});
+      out(resultText(r, r.body?.already ? 'That epoch was already published; nothing changed.' : 'Broker epoch published.'), r.code !== 200);
+      done(button); if (r.code === 200) refreshAll();
+    };
+    $('#rwa-buy-go').onclick = async () => {
+      const button = $('#rwa-buy-go'); const ticker = $('#rwa-buy-ticker').value;
+      const price = Number($('#rwa-buy-price').value); const maxRaw = $('#rwa-buy-max').value.trim();
+      const ref = $('#rwa-buy-ref').value.trim(); const txHash = $('#rwa-buy-tx').value.trim();
+      if (!ticker || !(price > 0) || (maxRaw && !(Number(maxRaw) > 0))) return out('Ticker and a positive achieved price are required; max ETH must be positive when supplied.', true);
+      if (!await confirmAction({ title: 'Run the acquisition accounting keeper?',
+        body: `${ticker} at Ξ${price} per unit${maxRaw ? `, capped at Ξ${maxRaw}` : ', using the full spendable budget'}. ${txHash ? 'A real transaction hash is present and may book value when the server gate permits it.' : 'No transaction hash is present, so this cannot book real units or spend.'}`,
+        confirmText: ticker, yes: 'run keeper' })) return;
+      busy(button, 'Checking budget and price walls…');
+      const r = await j('POST', '/v1/mod/treasury/keeper', { ticker, price,
+        ...(maxRaw ? { maxEth: Number(maxRaw) } : {}), ...(ref ? { ref } : {}), ...(txHash ? { txHash } : {}) });
+      out(resultText(r, r.body?.bought ? (r.body?.real ? 'Real acquisition recorded.' : 'QA acquisition recorded with zero booked value.') : `No acquisition recorded: ${r.body?.reason || 'refused'}.`), r.code !== 200 || !r.body?.bought);
+      done(button); if (r.code === 200) refreshAll();
+    };
+    $('#rwa-dist-go').onclick = async () => {
+      const button = $('#rwa-dist-go'); const ref = $('#rwa-dist-ref').value.trim();
+      if (!ref) return out('An acquisition reference is required.', true);
+      if (!await confirmAction({ title: 'Distribute acquired units?', body: `Acquisition ${ref} will be latched and split against the latest eligible frozen epoch. A missing epoch consumes the latch with zero allocation.`, confirmText: ref, yes: 'distribute' })) return;
+      busy(button, 'Distributing the acquisition…');
+      const r = await j('POST', '/v1/mod/treasury/distribute', { ref });
+      out(resultText(r, `Distribution complete: ${fmt(r.body?.allocated)} units across ${fmt(r.body?.holders)} holder(s).`), r.code !== 200);
+      done(button); if (r.code === 200) refreshAll();
+    };
+    $('#rwa-deliveries-go').onclick = async () => {
+      const button = $('#rwa-deliveries-go');
+      if (!await confirmAction({ title: 'Run the on-chain delivery keeper?', body: 'Every currently deliverable allocation may be staged and sent to its resolved Street Deed TBA. Pending accounts without a target remain owed.', confirmText: 'DELIVER', yes: 'run deliveries' })) return;
+      busy(button, 'Running the delivery keeper…');
+      const r = await j('POST', '/v1/mod/treasury/deliveries/run');
+      out(resultText(r, r.body?.dormant ? 'Delivery rail is dormant; nothing was sent.' : `Delivery run complete: ${fmt(r.body?.sent?.length)} sent, ${fmt(r.body?.skipped?.length)} skipped.`), r.code !== 200);
+      done(button); if (r.code === 200) refreshAll();
+    };
+    $('#rwa-fill-go').onclick = async () => {
+      const button = $('#rwa-fill-go'); const ref = $('#rwa-fill-ref').value.trim();
+      const ticker = $('#rwa-fill-ticker').value; const units = Number($('#rwa-fill-units').value);
+      const ethSpent = Number($('#rwa-fill-eth').value); const txHash = $('#rwa-fill-tx').value.trim();
+      const bootstrap = $('#rwa-fill-bootstrap').checked;
+      if (!ref || !ticker || !(units > 0) || !(ethSpent > 0)) return out('Reference, ticker, positive units, and positive ETH spent are required.', true);
+      if (!await confirmAction({ title: 'Record an observed acquisition fill?', body: `${units} ${ticker} for Ξ${ethSpent} will be ingested under ${ref}. ${txHash ? 'The supplied transaction hash may make this a real accounting record.' : 'Without a transaction hash the comp gate books zero units and zero spend.'}`, confirmText: ticker, yes: 'record fill' })) return;
+      busy(button, 'Recording acquisition fill…');
+      const r = await j('POST', '/v1/mod/treasury/buy', { ref, ticker, units, ethSpent,
+        ...(txHash ? { txHash } : {}), bootstrap });
+      out(resultText(r, r.body?.duplicate ? 'That reference was already recorded; nothing changed.' : (r.body?.real ? 'Real fill recorded.' : 'QA fill recorded with zero booked value.')), r.code !== 200);
+      done(button); if (r.code === 200) refreshAll();
+    };
+    $('#rwa-one-go').onclick = async () => {
+      const button = $('#rwa-one-go'); const epochId = $('#rwa-one-epoch').value.trim();
+      const accountId = $('#rwa-one-account').value.trim(); const ticker = $('#rwa-deliver-ticker').value;
+      const units = Number($('#rwa-one-units').value); const txHash = $('#rwa-one-tx').value.trim();
+      if (!epochId || !accountId || !ticker || !(units > 0)) return out('Epoch ID, account ID, ticker, and positive units are required.', true);
+      if (!await confirmAction({ title: 'Record one stock delivery?', body: `${units} ${ticker} from epoch ${epochId} targets account ${accountId}. ${txHash ? 'The observed transaction hash may settle the allocation.' : 'Without a transaction hash this remains a simulation.'}`, confirmText: accountId, yes: 'record delivery' })) return;
+      busy(button, 'Recording single delivery…');
+      const r = await j('POST', '/v1/mod/treasury/deliver', { epochId, accountId, ticker, units,
+        ...(txHash ? { txHash } : {}) });
+      out(resultText(r, r.body?.delivered ? 'Delivery recorded and allocation advanced.' : 'Simulation recorded; allocation remains owed.'), r.code !== 200);
+      done(button); if (r.code === 200) refreshAll();
+    };
+  }
+
+  function renderRwa(ballotRes, epochsRes, budgetRes, deliveriesRes, treasuryRes) {
+    wireRwaOps();
+    const ballot = ballotRes?.body || {}, epochs = epochsRes?.body || {}, budget = budgetRes?.body || {};
+    const delivery = deliveriesRes?.body || {}, treasury = treasuryRes?.body || {};
+    const board = delivery.board || {}, plan = delivery.plan || [];
+    const responsesOk = [ballotRes, epochsRes, budgetRes, deliveriesRes, treasuryRes].every((r) => r?.code === 200);
+    const broken = (treasury.checks || []).filter((c) => !c.ok);
+    const chainReady = !!(ballot.catalog?.registryAddress && board.chain);
+    const health = $('#rwa-health');
+    health.className = 'rwa-status ' + (!responsesOk || broken.length ? 'bad' : chainReady ? 'ok' : 'warn');
+    health.textContent = !responsesOk ? 'read failure' : broken.length ? 'invariant alert' : chainReady ? 'current rail ready' : 'chain dormant';
+
+    const tickerRows = board.tickers || [];
+    const pendingUnits = tickerRows.reduce((sum, t) => sum + Number(t.pending || 0), 0);
+    const candidates = ballot.candidates || [];
+    const activeCandidates = candidates.filter((a) => a.active !== false);
+    const latest = (epochs.epochs || [])[0];
+    $('#rwa-metrics').innerHTML = [
+      ['Ballot lead', ballot.leading || ballot.defaultTicker || '—', ballot.leading ? `UTC day ${fmt(ballot.day)}` : 'default until a family leads'],
+      ['Approved assets', fmt(activeCandidates.length || ballot.tickers?.length), esc(ballot.catalog?.source || 'catalog unavailable')],
+      ['Spendable ETH', `Ξ${fmt(budget.spendableEth)}`, `held Ξ${fmt(budget.heldEth)} · promised Ξ${fmt(budget.allocatedEth)}`],
+      ['Pending stock', fmt(pendingUnits), `${fmt(plan.length)} deliverable line(s) · ${fmt(board.waitingOnADeed)} account(s) need a deed`],
+      ['Safe attestation', `Ξ${fmt(treasury.safeMustHold)}`, broken.length ? `${broken.length} failed treasury check(s)` : 'books report every treasury wall holding'],
+    ].map(([k, v, s]) => `<div class="rwa-metric"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join('');
+
+    const step = (name, detail, state = '') => `<div class="rwa-step ${state}"><b>${name}</b><span>${detail}</span></div>`;
+    $('#rwa-pipeline').innerHTML = step('Approve & vote', ballot.leading ? `${esc(ballot.leading)} leads today's Commission ballot` : `${esc(ballot.defaultTicker || 'No ticker')} is the current default`, ballot.tickers?.length ? 'ready' : 'attn')
+      + step('Freeze weights', latest ? `Epoch ${esc(latest.id)} closes day ${fmt(latest.endDay)}` : 'No broker epoch has been published yet', latest ? 'ready' : 'attn')
+      + step('Acquire', Number(budget.spendableEth) > 0 ? `Up to Ξ${fmt(budget.spendableEth)} is unreserved` : 'No unreserved acquisition ETH', Number(budget.spendableEth) > 0 ? 'ready' : 'attn')
+      + step('Distribute', 'One real fill reference, one frozen pre-buy epoch', 'ready')
+      + step('Deliver', plan.length ? `${fmt(plan.length)} line(s) can move now` : pendingUnits ? 'Outstanding units are waiting on targets or configuration' : 'No stock delivery debt', plan.length || pendingUnits ? 'attn' : 'ready');
+
+    const voteByTicker = new Map();
+    for (const vote of ballot.votes || []) {
+      const ticker = String(vote.ticker || '').toUpperCase(); const current = voteByTicker.get(ticker) || { families: 0, standing: 0 };
+      current.families += 1; current.standing += Number(vote.standing || 0); voteByTicker.set(ticker, current);
+    }
+    $('#rwa-catalog-meta').textContent = ballot.catalog?.syncedAt
+      ? `synced ${new Date(ballot.catalog.syncedAt).toLocaleString()}` : esc(ballot.catalog?.source || 'unavailable');
+    $('#rwa-catalog').innerHTML = candidates.length ? `<div class="rwa-table-wrap"><table class="rwa-table"><thead><tr><th>Ticker</th><th>Asset</th><th>Family votes</th><th>Token</th></tr></thead><tbody>${candidates.map((a) => {
+      const tally = voteByTicker.get(String(a.ticker).toUpperCase()) || { families: 0, standing: 0 };
+      const address = String(a.tokenAddress || 'not mirrored'); const short = address.length > 20 ? `${address.slice(0, 8)}…${address.slice(-6)}` : address;
+      return `<tr><td><b style="color:${a.ticker === ballot.leading ? 'var(--neon)' : 'inherit'}">${esc(a.ticker)}</b>${a.active === false ? '<br><span style="color:var(--bad)">inactive</span>' : ''}</td><td>${esc(a.name || '—')}</td><td>${fmt(tally.families)} <span class="note">· ${fmt(tally.standing)} standing</span></td><td><code title="${esc(address)}">${esc(short)}</code></td></tr>`;
+    }).join('')}</tbody></table></div>` : '<div class="note" style="color:var(--warn)">No approved Stock Token candidate is available. The purchase rail must fail closed.</div>';
+
+    const options = (ballot.tickers || candidates.filter((a) => a.active !== false).map((a) => a.ticker)).map((t) => String(t).toUpperCase());
+    const optionSig = options.join('|');
+    for (const id of ['rwa-buy-ticker', 'rwa-fill-ticker', 'rwa-deliver-ticker']) {
+      const select = document.getElementById(id); if (!select || select.dataset.options === optionSig) continue;
+      const prior = select.value; select.innerHTML = options.length ? options.map((t) => `<option value="${esc(t)}">${esc(t)}</option>`).join('') : '<option value="">No approved ticker</option>';
+      select.dataset.options = optionSig; if (options.includes(prior)) select.value = prior;
+    }
+
+    $('#rwa-epochs').innerHTML = (epochs.epochs || []).length ? `<div class="rwa-table-wrap"><table class="rwa-table"><thead><tr><th>Window</th><th>Weight</th><th>Published</th><th>Epoch ID</th></tr></thead><tbody>${epochs.epochs.slice(0, 8).map((e) => `<tr><td>${fmt(e.startDay)} → ${fmt(e.endDay)}</td><td>${fmt(e.totalWeight)}</td><td>${e.computedAt ? new Date(e.computedAt).toLocaleString() : '—'}</td><td><code>${esc(e.id)}</code></td></tr>`).join('')}</tbody></table></div><div class="note" style="margin-top:7px">${esc(epochs.note || '')}</div>` : '<div class="note">No published broker weights yet.</div>';
+
+    $('#rwa-delivery-meta').textContent = board.chain ? 'chain target resolution configured' : 'chain target resolution dormant';
+    const deliverySummary = tickerRows.length ? `<div class="rwa-table-wrap"><table class="rwa-table"><thead><tr><th>Ticker</th><th>Allocated</th><th>Delivered</th><th>Pending</th></tr></thead><tbody>${tickerRows.map((t) => `<tr><td><b>${esc(t.ticker)}</b></td><td>${fmt(t.allocated)}</td><td>${fmt(t.delivered)}</td><td style="color:${Number(t.pending) > 0 ? 'var(--warn)' : 'var(--ok)'}">${fmt(t.pending)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="note">No stock has been allocated.</div>';
+    const planned = plan.length ? `<div class="note" style="margin:10px 0 4px;color:var(--neon)">NEXT DELIVERABLE LINES</div><div class="rwa-table-wrap"><table class="rwa-table"><thead><tr><th>Deed</th><th>Ticker</th><th>Units</th><th>Account</th></tr></thead><tbody>${plan.slice(0, 12).map((p) => `<tr><td>${esc(p.deedName || p.deedTokenId || '—')}</td><td>${esc(p.ticker)}</td><td>${fmt(p.units)}</td><td><code>${esc(p.accountId)}</code></td></tr>`).join('')}</tbody></table></div>${plan.length > 12 ? `<div class="note">plus ${fmt(plan.length - 12)} more line(s)</div>` : ''}` : '';
+    $('#rwa-deliveries').innerHTML = deliverySummary + planned + (board.waitingOnADeed ? `<div class="note" style="margin-top:8px;color:var(--warn)">${fmt(board.waitingOnADeed)} account(s) remain owed but have no extracted Street Deed target.</div>` : '');
   }
 
   function renderActivity(act) {

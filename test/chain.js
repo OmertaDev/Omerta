@@ -40,7 +40,8 @@ const player = privateKeyToAccount(PLAYER_PK);
 const player2 = privateKeyToAccount('0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a'); // anvil #2
 
 // ── bootstrap: a character that EARNS $OMR through the AMM (never SQL-seeded) ──
-const { body: { token } } = await call('POST', '/v1/auth/guest');
+const guestToken = (await call('POST', '/v1/auth/guest')).body.token;
+const { body: { token } } = await call('POST', '/v1/auth/agent-key', { token: guestToken });
 await call('POST', '/v1/character', { token, body: { name: 'Cash Out Carl' } });
 const cid = (await meOf(token)).id;
 await seedCh(cid, 'cash = 2000000'); // cash isn't the currency under test; $OMR is earned below

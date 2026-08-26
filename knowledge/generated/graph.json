@@ -1,7 +1,7 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "aa0265317d9973c6f887d13ca2d62307ce057d91",
-  "worktreeDirty": false,
+  "sourceRevision": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c",
+  "worktreeDirty": true,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
     "nodeTypes": [
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 4451,
-    "edges": 20943,
+    "nodes": 4453,
+    "edges": 20949,
     "byNodeType": {
-      "Artifact": 1556,
+      "Artifact": 1557,
       "Command": 32,
-      "Commit": 938,
+      "Commit": 939,
       "Contract": 28,
       "Document": 401,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1813,
-      "CHANGED": 8061,
-      "CONTAINS": 1576,
+      "CHANGED": 8065,
+      "CONTAINS": 1577,
       "DECLARES": 32,
       "DEFINED_IN": 986,
       "DEPENDS_ON": 59,
       "EXECUTES": 148,
       "HANDLED_BY": 653,
-      "HAS_COMMIT": 938,
+      "HAS_COMMIT": 939,
       "IMPLEMENTS": 124,
       "IMPORTS": 1440,
       "INHERITS": 4,
@@ -6601,15 +6601,15 @@
       "path": "AGENTS.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 24025,
-      "lines": 447,
-      "version": "ceae5d5a24127eb6",
+      "bytes": 24237,
+      "lines": 449,
+      "version": "c264d8eb8ba76427",
       "text": true,
       "provenance": [
         {
           "file": "AGENTS.md",
           "line": 1,
-          "version": "ceae5d5a24127eb6"
+          "version": "c264d8eb8ba76427"
         }
       ],
       "lastChangedAt": "2026-08-25T01:30:47-04:00",
@@ -9062,15 +9062,15 @@
       "path": "CHAIN-DEPLOY.md",
       "kind": "operations",
       "extension": ".md",
-      "bytes": 75701,
-      "lines": 797,
-      "version": "d8f706e56e9fab0c",
+      "bytes": 202056,
+      "lines": 1962,
+      "version": "a532348cee2d694b",
       "text": true,
       "provenance": [
         {
           "file": "CHAIN-DEPLOY.md",
           "line": 1,
-          "version": "d8f706e56e9fab0c"
+          "version": "a532348cee2d694b"
         }
       ],
       "lastChangedAt": "2026-08-25T01:16:12-04:00",
@@ -10067,6 +10067,26 @@
       "lastChangedCommit": "110e1671ed4155e7fda2854ed5a4d9e19e20fe9c"
     },
     {
+      "key": "Artifact:docs/OMERTA-Whitepaper.docx",
+      "type": "Artifact",
+      "id": "docs/OMERTA-Whitepaper.docx",
+      "label": "OMERTA-Whitepaper.docx",
+      "path": "docs/OMERTA-Whitepaper.docx",
+      "kind": "artifact",
+      "extension": ".docx",
+      "bytes": 107295,
+      "lines": null,
+      "version": "3abe7d23d092add9",
+      "text": false,
+      "provenance": [
+        {
+          "file": "docs/OMERTA-Whitepaper.docx",
+          "line": 1,
+          "version": "3abe7d23d092add9"
+        }
+      ]
+    },
+    {
       "key": "Artifact:docs/OMR-MARKETING-PACK.md",
       "type": "Artifact",
       "id": "docs/OMR-MARKETING-PACK.md",
@@ -10258,15 +10278,15 @@
       "path": "docs/WIKI.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 103533,
-      "lines": 1439,
-      "version": "3390b9b73ee26b96",
+      "bytes": 205722,
+      "lines": 2539,
+      "version": "e98e4edecbcecfa8",
       "text": true,
       "provenance": [
         {
           "file": "docs/WIKI.md",
           "line": 1,
-          "version": "3390b9b73ee26b96"
+          "version": "e98e4edecbcecfa8"
         }
       ],
       "lastChangedAt": "2026-08-25T01:16:12-04:00",
@@ -10787,15 +10807,15 @@
       "path": "omerta-bank-protocol-design.md",
       "kind": "design",
       "extension": ".md",
-      "bytes": 45600,
-      "lines": 692,
-      "version": "6fa8eca7a43d0a90",
+      "bytes": 45817,
+      "lines": 694,
+      "version": "7b44f37a150b90b3",
       "text": true,
       "provenance": [
         {
           "file": "omerta-bank-protocol-design.md",
           "line": 1,
-          "version": "6fa8eca7a43d0a90"
+          "version": "7b44f37a150b90b3"
         }
       ],
       "lastChangedAt": "2026-08-13T08:48:16-04:00",
@@ -10833,15 +10853,15 @@
       "path": "omerta-brokers-design.md",
       "kind": "design",
       "extension": ".md",
-      "bytes": 42292,
-      "lines": 565,
-      "version": "1cf4226f85159b70",
+      "bytes": 179963,
+      "lines": 2026,
+      "version": "29750df88cc4e2f5",
       "text": true,
       "provenance": [
         {
           "file": "omerta-brokers-design.md",
           "line": 1,
-          "version": "1cf4226f85159b70"
+          "version": "29750df88cc4e2f5"
         }
       ],
       "lastChangedAt": "2026-08-25T01:16:12-04:00",
@@ -15082,15 +15102,15 @@
       "path": "omerta-rwa-stock-machine-design.md",
       "kind": "design",
       "extension": ".md",
-      "bytes": 16827,
-      "lines": 228,
-      "version": "ca3198439aa42d26",
+      "bytes": 66497,
+      "lines": 682,
+      "version": "61de81460cb2e0a8",
       "text": true,
       "provenance": [
         {
           "file": "omerta-rwa-stock-machine-design.md",
           "line": 1,
-          "version": "ca3198439aa42d26"
+          "version": "61de81460cb2e0a8"
         }
       ],
       "lastChangedAt": "2026-08-25T01:16:12-04:00",
@@ -15795,15 +15815,15 @@
       "path": "public/admin.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 61394,
-      "lines": 817,
-      "version": "b0ce5b85b676b2e2",
+      "bytes": 98955,
+      "lines": 1148,
+      "version": "5e6b5b7bed9c9f25",
       "text": true,
       "provenance": [
         {
           "file": "public/admin.html",
           "line": 1,
-          "version": "b0ce5b85b676b2e2"
+          "version": "5e6b5b7bed9c9f25"
         }
       ],
       "lastChangedAt": "2026-08-23T21:51:20-04:00",
@@ -28077,15 +28097,15 @@
       "path": "public/wiki.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 105103,
-      "lines": 1074,
-      "version": "65d35937c4737ae4",
+      "bytes": 206373,
+      "lines": 2024,
+      "version": "f7e0eaa2b9a80abf",
       "text": true,
       "provenance": [
         {
           "file": "public/wiki.html",
           "line": 1,
-          "version": "65d35937c4737ae4"
+          "version": "f7e0eaa2b9a80abf"
         }
       ],
       "lastChangedAt": "2026-08-25T01:16:12-04:00",
@@ -28238,15 +28258,15 @@
       "path": "SPEC.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 46570,
-      "lines": 647,
-      "version": "3cc9ec07a85615c7",
+      "bytes": 46682,
+      "lines": 648,
+      "version": "89959b4bf8257d8a",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "3cc9ec07a85615c7"
+          "version": "89959b4bf8257d8a"
         }
       ],
       "lastChangedAt": "2026-08-25T01:16:12-04:00",
@@ -28445,15 +28465,15 @@
       "path": "src/bank.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 32173,
-      "lines": 520,
-      "version": "449bf985cf15221c",
+      "bytes": 32109,
+      "lines": 519,
+      "version": "be159b75350911fe",
       "text": true,
       "provenance": [
         {
           "file": "src/bank.js",
           "line": 1,
-          "version": "449bf985cf15221c"
+          "version": "be159b75350911fe"
         }
       ],
       "lastChangedAt": "2026-08-17T03:22:06-04:00",
@@ -28537,15 +28557,15 @@
       "path": "src/brokers.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 16286,
+      "bytes": 16276,
       "lines": 298,
-      "version": "74e8ea36fc8aa45c",
+      "version": "1568672318201ddc",
       "text": true,
       "provenance": [
         {
           "file": "src/brokers.js",
           "line": 1,
-          "version": "74e8ea36fc8aa45c"
+          "version": "1568672318201ddc"
         }
       ],
       "lastChangedAt": "2026-08-25T00:11:25-04:00",
@@ -31090,15 +31110,15 @@
       "path": "src/rules.tail.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 487533,
-      "lines": 6045,
-      "version": "35b03a7bdeaa6eb7",
+      "bytes": 487658,
+      "lines": 6047,
+      "version": "bdfffd5c649c3e33",
       "text": true,
       "provenance": [
         {
           "file": "src/rules.tail.js",
           "line": 1,
-          "version": "35b03a7bdeaa6eb7"
+          "version": "bdfffd5c649c3e33"
         }
       ],
       "lastChangedAt": "2026-08-24T16:20:04-04:00",
@@ -32010,15 +32030,15 @@
       "path": "test/activity.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 6501,
-      "lines": 109,
-      "version": "cbaaad9e71d5123e",
+      "bytes": 6628,
+      "lines": 111,
+      "version": "e0e46175d56c203a",
       "text": true,
       "provenance": [
         {
           "file": "test/activity.js",
           "line": 1,
-          "version": "cbaaad9e71d5123e"
+          "version": "e0e46175d56c203a"
         }
       ],
       "lastChangedAt": "2026-08-12T21:32:44-04:00",
@@ -32125,15 +32145,15 @@
       "path": "test/bank.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 27355,
+      "bytes": 27374,
       "lines": 417,
-      "version": "136f6b54952fd388",
+      "version": "e3a3bc0962dc259f",
       "text": true,
       "provenance": [
         {
           "file": "test/bank.js",
           "line": 1,
-          "version": "136f6b54952fd388"
+          "version": "e3a3bc0962dc259f"
         }
       ],
       "lastChangedAt": "2026-08-17T03:22:06-04:00",
@@ -32194,15 +32214,15 @@
       "path": "test/brokers.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 19558,
-      "lines": 320,
-      "version": "d5a4b61e76fd42a3",
+      "bytes": 19478,
+      "lines": 319,
+      "version": "9810207310880d6e",
       "text": true,
       "provenance": [
         {
           "file": "test/brokers.js",
           "line": 1,
-          "version": "d5a4b61e76fd42a3"
+          "version": "9810207310880d6e"
         }
       ],
       "lastChangedAt": "2026-08-25T00:11:25-04:00",
@@ -32286,15 +32306,15 @@
       "path": "test/chain.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 67311,
-      "lines": 830,
-      "version": "5c021e9ac876117a",
+      "bytes": 67408,
+      "lines": 831,
+      "version": "5153a920695ffdd9",
       "text": true,
       "provenance": [
         {
           "file": "test/chain.js",
           "line": 1,
-          "version": "5c021e9ac876117a"
+          "version": "5153a920695ffdd9"
         }
       ],
       "lastChangedAt": "2026-08-21T18:28:23-04:00",
@@ -32769,15 +32789,15 @@
       "path": "test/docs.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 58744,
-      "lines": 831,
-      "version": "fc9759a2dd9dfa6b",
+      "bytes": 243258,
+      "lines": 3238,
+      "version": "635e85b82cb77222",
       "text": true,
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "fc9759a2dd9dfa6b"
+          "version": "635e85b82cb77222"
         }
       ],
       "lastChangedAt": "2026-08-25T01:16:12-04:00",
@@ -33367,15 +33387,15 @@
       "path": "test/made.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 32596,
-      "lines": 402,
-      "version": "7589d9ebe0f901ba",
+      "bytes": 32819,
+      "lines": 405,
+      "version": "c41fbab8570101d2",
       "text": true,
       "provenance": [
         {
           "file": "test/made.js",
           "line": 1,
-          "version": "7589d9ebe0f901ba"
+          "version": "c41fbab8570101d2"
         }
       ],
       "lastChangedAt": "2026-08-21T16:44:39-04:00",
@@ -34264,15 +34284,15 @@
       "path": "test/social.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 218512,
-      "lines": 2431,
-      "version": "5336414d42ba2970",
+      "bytes": 219204,
+      "lines": 2440,
+      "version": "ea5e450ce7b8bd41",
       "text": true,
       "provenance": [
         {
           "file": "test/social.js",
           "line": 1,
-          "version": "5336414d42ba2970"
+          "version": "ea5e450ce7b8bd41"
         }
       ],
       "lastChangedAt": "2026-08-24T14:49:55-04:00",
@@ -50283,6 +50303,22 @@
       ]
     },
     {
+      "key": "Commit:ec4a13c4df03341df744d4c73e9c2ec2f531ac6c",
+      "type": "Commit",
+      "id": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c",
+      "label": "docs: refresh branch-stable knowledge snapshot",
+      "title": "docs: refresh branch-stable knowledge snapshot",
+      "date": "2026-08-25T02:47:06-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ec4a13c4df03341df744d4c73e9c2ec2f531ac6c",
+      "provenance": [
+        {
+          "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
+        }
+      ]
+    },
+    {
       "key": "Commit:ec784e0f9c0155b91dd13d8e9db6442722407b27",
       "type": "Commit",
       "id": "ec784e0f9c0155b91dd13d8e9db6442722407b27",
@@ -54391,13 +54427,13 @@
       "id": "AGENTS.md",
       "label": "AGENTS.md",
       "documentType": "documentation",
-      "lines": 447,
-      "version": "ceae5d5a24127eb6",
+      "lines": 449,
+      "version": "c264d8eb8ba76427",
       "provenance": [
         {
           "file": "AGENTS.md",
           "line": 1,
-          "version": "ceae5d5a24127eb6"
+          "version": "c264d8eb8ba76427"
         }
       ]
     },
@@ -56007,13 +56043,13 @@
       "id": "CHAIN-DEPLOY.md",
       "label": "CHAIN-DEPLOY.md",
       "documentType": "operations",
-      "lines": 797,
-      "version": "d8f706e56e9fab0c",
+      "lines": 1962,
+      "version": "a532348cee2d694b",
       "provenance": [
         {
           "file": "CHAIN-DEPLOY.md",
           "line": 1,
-          "version": "d8f706e56e9fab0c"
+          "version": "a532348cee2d694b"
         }
       ]
     },
@@ -56295,13 +56331,13 @@
       "id": "docs/WIKI.md",
       "label": "docs/WIKI.md",
       "documentType": "documentation",
-      "lines": 1439,
-      "version": "3390b9b73ee26b96",
+      "lines": 2539,
+      "version": "e98e4edecbcecfa8",
       "provenance": [
         {
           "file": "docs/WIKI.md",
           "line": 1,
-          "version": "3390b9b73ee26b96"
+          "version": "e98e4edecbcecfa8"
         }
       ]
     },
@@ -56647,13 +56683,13 @@
       "id": "omerta-bank-protocol-design.md",
       "label": "omerta-bank-protocol-design.md",
       "documentType": "design",
-      "lines": 692,
-      "version": "6fa8eca7a43d0a90",
+      "lines": 694,
+      "version": "7b44f37a150b90b3",
       "provenance": [
         {
           "file": "omerta-bank-protocol-design.md",
           "line": 1,
-          "version": "6fa8eca7a43d0a90"
+          "version": "7b44f37a150b90b3"
         }
       ]
     },
@@ -56679,13 +56715,13 @@
       "id": "omerta-brokers-design.md",
       "label": "omerta-brokers-design.md",
       "documentType": "design",
-      "lines": 565,
-      "version": "1cf4226f85159b70",
+      "lines": 2026,
+      "version": "29750df88cc4e2f5",
       "provenance": [
         {
           "file": "omerta-brokers-design.md",
           "line": 1,
-          "version": "1cf4226f85159b70"
+          "version": "29750df88cc4e2f5"
         }
       ]
     },
@@ -57655,13 +57691,13 @@
       "id": "omerta-rwa-stock-machine-design.md",
       "label": "omerta-rwa-stock-machine-design.md",
       "documentType": "design",
-      "lines": 228,
-      "version": "ca3198439aa42d26",
+      "lines": 682,
+      "version": "61de81460cb2e0a8",
       "provenance": [
         {
           "file": "omerta-rwa-stock-machine-design.md",
           "line": 1,
-          "version": "ca3198439aa42d26"
+          "version": "61de81460cb2e0a8"
         }
       ]
     },
@@ -58151,13 +58187,13 @@
       "id": "SPEC.md",
       "label": "SPEC.md",
       "documentType": "documentation",
-      "lines": 647,
-      "version": "3cc9ec07a85615c7",
+      "lines": 648,
+      "version": "89959b4bf8257d8a",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "3cc9ec07a85615c7"
+          "version": "89959b4bf8257d8a"
         }
       ]
     },
@@ -58729,7 +58765,7 @@
       "provenance": [
         {
           "file": "src/bank.js",
-          "line": 376
+          "line": 375
         },
         {
           "file": "src/bonds.js",
@@ -58857,7 +58893,7 @@
         },
         {
           "file": "test/chain.js",
-          "line": 402
+          "line": 403
         },
         {
           "file": "test/chain.js",
@@ -59290,6 +59326,9 @@
         },
         {
           "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
+        },
+        {
+          "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
         }
       ]
     },
@@ -59329,6 +59368,9 @@
         },
         {
           "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
+        },
+        {
+          "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
         }
       ]
     },
@@ -59368,6 +59410,9 @@
         },
         {
           "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
+        },
+        {
+          "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
         }
       ]
     },
@@ -59425,6 +59470,9 @@
         },
         {
           "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
+        },
+        {
+          "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
         }
       ]
     },
@@ -59700,13 +59748,13 @@
       "type": "Module",
       "id": "src/bank.js",
       "label": "src/bank.js",
-      "lines": 520,
-      "version": "449bf985cf15221c",
+      "lines": 519,
+      "version": "be159b75350911fe",
       "provenance": [
         {
           "file": "src/bank.js",
           "line": 1,
-          "version": "449bf985cf15221c"
+          "version": "be159b75350911fe"
         }
       ]
     },
@@ -59761,12 +59809,12 @@
       "id": "src/brokers.js",
       "label": "src/brokers.js",
       "lines": 298,
-      "version": "74e8ea36fc8aa45c",
+      "version": "1568672318201ddc",
       "provenance": [
         {
           "file": "src/brokers.js",
           "line": 1,
-          "version": "74e8ea36fc8aa45c"
+          "version": "1568672318201ddc"
         }
       ]
     },
@@ -61425,13 +61473,13 @@
       "type": "Module",
       "id": "src/rules.tail.js",
       "label": "src/rules.tail.js",
-      "lines": 6045,
-      "version": "35b03a7bdeaa6eb7",
+      "lines": 6047,
+      "version": "bdfffd5c649c3e33",
       "provenance": [
         {
           "file": "src/rules.tail.js",
           "line": 1,
-          "version": "35b03a7bdeaa6eb7"
+          "version": "bdfffd5c649c3e33"
         }
       ]
     },
@@ -65175,12 +65223,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "aa0265317d9973c6f887d13ca2d62307ce057d91",
-      "currentBranch": "(detached)",
+      "revision": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c",
+      "currentBranch": "codex/site-copy-ui-upgrade",
       "defaultBranch": "main",
       "visibility": "public",
-      "worktreeDirty": false,
-      "currentArtifactCount": 1557,
+      "worktreeDirty": true,
+      "currentArtifactCount": 1558,
       "provenance": [
         {
           "file": "README.md",
@@ -86110,13 +86158,13 @@
       "type": "TestSuite",
       "id": "test/activity.js",
       "label": "test/activity.js",
-      "lines": 109,
-      "version": "cbaaad9e71d5123e",
+      "lines": 111,
+      "version": "e0e46175d56c203a",
       "provenance": [
         {
           "file": "test/activity.js",
           "line": 1,
-          "version": "cbaaad9e71d5123e"
+          "version": "e0e46175d56c203a"
         }
       ]
     },
@@ -86186,12 +86234,12 @@
       "id": "test/bank.js",
       "label": "test/bank.js",
       "lines": 417,
-      "version": "136f6b54952fd388",
+      "version": "e3a3bc0962dc259f",
       "provenance": [
         {
           "file": "test/bank.js",
           "line": 1,
-          "version": "136f6b54952fd388"
+          "version": "e3a3bc0962dc259f"
         }
       ]
     },
@@ -86230,13 +86278,13 @@
       "type": "TestSuite",
       "id": "test/brokers.js",
       "label": "test/brokers.js",
-      "lines": 320,
-      "version": "d5a4b61e76fd42a3",
+      "lines": 319,
+      "version": "9810207310880d6e",
       "provenance": [
         {
           "file": "test/brokers.js",
           "line": 1,
-          "version": "d5a4b61e76fd42a3"
+          "version": "9810207310880d6e"
         }
       ]
     },
@@ -86290,13 +86338,13 @@
       "type": "TestSuite",
       "id": "test/chain.js",
       "label": "test/chain.js",
-      "lines": 830,
-      "version": "5c021e9ac876117a",
+      "lines": 831,
+      "version": "5153a920695ffdd9",
       "provenance": [
         {
           "file": "test/chain.js",
           "line": 1,
-          "version": "5c021e9ac876117a"
+          "version": "5153a920695ffdd9"
         }
       ]
     },
@@ -86605,13 +86653,13 @@
       "type": "TestSuite",
       "id": "test/docs.js",
       "label": "test/docs.js",
-      "lines": 831,
-      "version": "fc9759a2dd9dfa6b",
+      "lines": 3238,
+      "version": "635e85b82cb77222",
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "fc9759a2dd9dfa6b"
+          "version": "635e85b82cb77222"
         }
       ]
     },
@@ -86995,13 +87043,13 @@
       "type": "TestSuite",
       "id": "test/made.js",
       "label": "test/made.js",
-      "lines": 402,
-      "version": "7589d9ebe0f901ba",
+      "lines": 405,
+      "version": "c41fbab8570101d2",
       "provenance": [
         {
           "file": "test/made.js",
           "line": 1,
-          "version": "7589d9ebe0f901ba"
+          "version": "c41fbab8570101d2"
         }
       ]
     },
@@ -87580,13 +87628,13 @@
       "type": "TestSuite",
       "id": "test/social.js",
       "label": "test/social.js",
-      "lines": 2431,
-      "version": "5336414d42ba2970",
+      "lines": 2440,
+      "version": "ea5e450ce7b8bd41",
       "provenance": [
         {
           "file": "test/social.js",
           "line": 1,
-          "version": "5336414d42ba2970"
+          "version": "ea5e450ce7b8bd41"
         }
       ]
     },
@@ -164648,6 +164696,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:ec4a13c4df03341df744d4c73e9c2ec2f531ac6c",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ec4a13c4df03341df744d4c73e9c2ec2f531ac6c",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ec4a13c4df03341df744d4c73e9c2ec2f531ac6c",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ec4a13c4df03341df744d4c73e9c2ec2f531ac6c",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:ec784e0f9c0155b91dd13d8e9db6442722407b27",
       "to": "Artifact:public/index.html",
       "provenance": {
@@ -174391,6 +174471,15 @@
       "to": "Artifact:docs/LAUNCH-TWEETS.md",
       "provenance": {
         "file": "docs/LAUNCH-TWEETS.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/OMERTA-Whitepaper.docx",
+      "provenance": {
+        "file": "docs/OMERTA-Whitepaper.docx",
         "line": 1
       }
     },
@@ -207227,6 +207316,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:ec4a13c4df03341df744d4c73e9c2ec2f531ac6c",
+      "provenance": {
+        "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:ec784e0f9c0155b91dd13d8e9db6442722407b27",
       "provenance": {
         "commit": "ec784e0f9c0155b91dd13d8e9db6442722407b27"
@@ -209185,7 +209282,7 @@
       "to": "ExternalDependency:viem",
       "provenance": {
         "file": "src/bank.js",
-        "line": 376
+        "line": 375
       }
     },
     {
@@ -216124,7 +216221,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 227
+        "line": 228
       }
     },
     {
@@ -216133,7 +216230,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 292
+        "line": 293
       }
     },
     {
@@ -216142,7 +216239,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 326
+        "line": 327
       }
     },
     {
@@ -216151,7 +216248,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 611
+        "line": 612
       }
     },
     {
@@ -216160,7 +216257,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 686
+        "line": 687
       }
     },
     {
@@ -216169,7 +216266,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 716
+        "line": 717
       }
     },
     {
@@ -216196,7 +216293,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 346
+        "line": 347
       }
     },
     {
@@ -216205,7 +216302,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 357
+        "line": 358
       }
     },
     {
@@ -216214,7 +216311,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 742
+        "line": 743
       }
     },
     {
@@ -216223,7 +216320,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 777
+        "line": 778
       }
     },
     {
@@ -216241,7 +216338,7 @@
       "to": "Artifact:src/vig.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 741
+        "line": 742
       }
     },
     {
@@ -216250,7 +216347,7 @@
       "to": "ExternalDependency:viem",
       "provenance": {
         "file": "test/chain.js",
-        "line": 402
+        "line": 403
       }
     },
     {
@@ -219499,7 +219596,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/social.js",
-        "line": 1087
+        "line": 1093
       }
     },
     {
@@ -226897,7 +226994,7 @@
       "to": "Artifact:src/dexbot.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 667
+        "line": 1832
       }
     },
     {
@@ -226906,7 +227003,7 @@
       "to": "Artifact:src/dexbot.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 692
+        "line": 1857
       }
     },
     {
@@ -240604,7 +240701,7 @@
       "to": "Artifact:src/bank.js",
       "provenance": {
         "file": "omerta-bank-protocol-design.md",
-        "line": 589
+        "line": 591
       }
     },
     {
@@ -240649,7 +240746,7 @@
       "to": "Artifact:test/bank.js",
       "provenance": {
         "file": "omerta-bank-protocol-design.md",
-        "line": 589
+        "line": 591
       }
     },
     {
@@ -240658,7 +240755,7 @@
       "to": "Artifact:test/bank.js",
       "provenance": {
         "file": "omerta-bank-protocol-design.md",
-        "line": 617
+        "line": 619
       }
     },
     {
@@ -240730,7 +240827,7 @@
       "to": "Artifact:src/portrait.js",
       "provenance": {
         "file": "omerta-brokers-design.md",
-        "line": 444
+        "line": 1905
       }
     },
     {
@@ -240739,7 +240836,7 @@
       "to": "Artifact:src/stockdeliver.js",
       "provenance": {
         "file": "omerta-brokers-design.md",
-        "line": 332
+        "line": 1793
       }
     },
     {
@@ -240748,7 +240845,7 @@
       "to": "Artifact:src/stockdeliver.js",
       "provenance": {
         "file": "omerta-brokers-design.md",
-        "line": 473
+        "line": 1934
       }
     },
     {
@@ -240757,7 +240854,7 @@
       "to": "Artifact:src/treasury.js",
       "provenance": {
         "file": "omerta-brokers-design.md",
-        "line": 480
+        "line": 1941
       }
     },
     {
@@ -240766,7 +240863,7 @@
       "to": "Artifact:test/portrait.js",
       "provenance": {
         "file": "omerta-brokers-design.md",
-        "line": 445
+        "line": 1906
       }
     },
     {
@@ -240775,7 +240872,7 @@
       "to": "Artifact:test/tokenomics.js",
       "provenance": {
         "file": "omerta-brokers-design.md",
-        "line": 516
+        "line": 1977
       }
     },
     {
@@ -242935,7 +243032,7 @@
       "to": "Artifact:.github/workflows/ci.yml",
       "provenance": {
         "file": "SPEC.md",
-        "line": 282
+        "line": 283
       }
     },
     {
@@ -242944,7 +243041,7 @@
       "to": "Artifact:.github/workflows/ci.yml",
       "provenance": {
         "file": "SPEC.md",
-        "line": 610
+        "line": 611
       }
     },
     {
@@ -242962,7 +243059,7 @@
       "to": "Artifact:docs/AUDITS.md",
       "provenance": {
         "file": "SPEC.md",
-        "line": 426
+        "line": 427
       }
     },
     {
@@ -242971,7 +243068,7 @@
       "to": "Artifact:docs/AUDITS.md",
       "provenance": {
         "file": "SPEC.md",
-        "line": 431
+        "line": 432
       }
     },
     {
@@ -242980,7 +243077,7 @@
       "to": "Artifact:docs/AUDITS.md",
       "provenance": {
         "file": "SPEC.md",
-        "line": 625
+        "line": 626
       }
     },
     {
@@ -243016,7 +243113,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 476
+        "line": 477
       }
     },
     {
@@ -243025,7 +243122,7 @@
       "to": "Artifact:src/rules.generated.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 369
+        "line": 370
       }
     },
     {
@@ -243034,7 +243131,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 370
+        "line": 371
       }
     },
     {
@@ -243043,7 +243140,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 370
+        "line": 371
       }
     },
     {
@@ -243052,7 +243149,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 424
+        "line": 425
       }
     },
     {
@@ -243061,7 +243158,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 488
+        "line": 489
       }
     },
     {
@@ -243070,7 +243167,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 614
+        "line": 615
       }
     },
     {
@@ -243079,7 +243176,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 626
+        "line": 627
       }
     },
     {
@@ -243088,7 +243185,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 254
+        "line": 255
       }
     },
     {
@@ -243097,7 +243194,7 @@
       "to": "Artifact:test/intrigue.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 267
+        "line": 268
       }
     },
     {
@@ -243106,7 +243203,7 @@
       "to": "Artifact:test/lib/srcfiles.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 365
+        "line": 366
       }
     },
     {
@@ -243115,7 +243212,7 @@
       "to": "Artifact:test/migrate.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 361
+        "line": 362
       }
     },
     {
@@ -243124,7 +243221,7 @@
       "to": "Artifact:test/migrate.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 446
+        "line": 447
       }
     },
     {
@@ -243133,7 +243230,7 @@
       "to": "Artifact:test/port.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 268
+        "line": 269
       }
     },
     {
@@ -243142,7 +243239,7 @@
       "to": "Artifact:test/preflight.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 331
+        "line": 332
       }
     },
     {
@@ -243151,7 +243248,7 @@
       "to": "Artifact:test/preflight.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 364
+        "line": 365
       }
     },
     {
@@ -243160,7 +243257,7 @@
       "to": "Artifact:test/routes.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 328
+        "line": 329
       }
     },
     {
@@ -243169,7 +243266,7 @@
       "to": "Artifact:test/routes.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 427
+        "line": 428
       }
     },
     {
@@ -243178,7 +243275,7 @@
       "to": "Artifact:test/routes.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 626
+        "line": 627
       }
     },
     {
@@ -243187,7 +243284,7 @@
       "to": "Artifact:test/rules.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 372
+        "line": 373
       }
     },
     {
@@ -243196,7 +243293,7 @@
       "to": "Artifact:test/rules.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 396
+        "line": 397
       }
     },
     {
@@ -243205,7 +243302,7 @@
       "to": "Artifact:test/rules.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 619
+        "line": 620
       }
     },
     {
@@ -243232,7 +243329,7 @@
       "to": "Artifact:tools/chaos.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 465
+        "line": 466
       }
     },
     {
@@ -243250,7 +243347,7 @@
       "to": "Artifact:tools/extract-rules.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 371
+        "line": 372
       }
     },
     {
@@ -243277,7 +243374,7 @@
       "to": "Artifact:tools/loadtest.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 403
+        "line": 404
       }
     },
     {
@@ -243304,7 +243401,7 @@
       "to": "Artifact:tools/pgcheck.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 282
+        "line": 283
       }
     },
     {
@@ -243340,7 +243437,7 @@
       "to": "Artifact:tools/scale.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 309
+        "line": 310
       }
     },
     {
@@ -243349,7 +243446,7 @@
       "to": "Artifact:tools/scale.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 517
+        "line": 518
       }
     },
     {
@@ -250405,7 +250502,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 227
+        "line": 228
       }
     },
     {
@@ -250414,7 +250511,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 292
+        "line": 293
       }
     },
     {
@@ -250423,7 +250520,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 326
+        "line": 327
       }
     },
     {
@@ -250432,7 +250529,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 611
+        "line": 612
       }
     },
     {
@@ -250441,7 +250538,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 686
+        "line": 687
       }
     },
     {
@@ -250450,7 +250547,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 716
+        "line": 717
       }
     },
     {
@@ -250477,7 +250574,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 346
+        "line": 347
       }
     },
     {
@@ -250486,7 +250583,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 357
+        "line": 358
       }
     },
     {
@@ -250495,7 +250592,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 742
+        "line": 743
       }
     },
     {
@@ -250504,7 +250601,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 777
+        "line": 778
       }
     },
     {
@@ -250522,7 +250619,7 @@
       "to": "Artifact:src/vig.js",
       "provenance": {
         "file": "test/chain.js",
-        "line": 741
+        "line": 742
       }
     },
     {
@@ -253546,7 +253643,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/social.js",
-        "line": 1087
+        "line": 1093
       }
     },
     {
@@ -255877,7 +255974,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/bank.js",
-        "line": 267
+        "line": 266
       }
     },
     {
@@ -255931,7 +256028,7 @@
       "to": "Table:bank_payouts",
       "provenance": {
         "file": "src/bank.js",
-        "line": 315
+        "line": 314
       }
     },
     {
@@ -255976,7 +256073,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/bank.js",
-        "line": 351
+        "line": 350
       }
     },
     {
@@ -256255,7 +256352,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/brokers.js",
-        "line": 145
+        "line": 144
       }
     },
     {
@@ -263455,7 +263552,7 @@
       "to": "Table:bank_revenue",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 5902
+        "line": 5904
       }
     },
     {

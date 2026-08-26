@@ -70,8 +70,10 @@ test('the activity metric', async (t) => {
       if (tag === 'yardtale') { assert.ok(!tr, 'yardtale must stay unmapped'); continue; }
       assert.ok(tracks.has(tr), `${tag} maps to '${tr}', which is not a trade`);
     }
-    assert.ok(ACTIVITY.EXCLUDE_AGENTS && ACTIVITY.EXCLUDE_NPC,
-      'agents and NPC residents are excluded from every legend surface, and from this one');
+    assert.equal(ACTIVITY.EXCLUDE_AGENTS, false,
+      'agent flags affect human faucets and cadence, not skill-based economic distributions');
+    assert.equal(ACTIVITY.EXCLUDE_NPC, true,
+      'NPC residents remain excluded because scenery cannot receive economic distributions');
   });
 
   await t.test('THE STAKING WALL: a multiplier may not reach the distribution key', () => {
