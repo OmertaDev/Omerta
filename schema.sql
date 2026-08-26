@@ -3529,6 +3529,11 @@ ALTER TABLE stock_token_catalog ADD COLUMN IF NOT EXISTS registry_index INT NOT 
 
 -- Immutable StockTokenRegistryV2 history and its finalized, complete reverse-head mirror. This is
 -- additive: the legacy ticker-key catalog remains untouched as an explicit migration input.
+CREATE TABLE IF NOT EXISTS stock_catalog_sync_lock_v2 (
+  id INT PRIMARY KEY
+);
+INSERT INTO stock_catalog_sync_lock_v2 (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
+
 CREATE TABLE IF NOT EXISTS stock_catalog_sync_state_v2 (
   id INT PRIMARY KEY,
   chain_id INT NOT NULL,

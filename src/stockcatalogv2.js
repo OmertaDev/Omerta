@@ -12,6 +12,7 @@ const FINALITY = 'finalized';
 const SOURCE = 'robinhood_chain_registry_v2';
 const ACTIVATION_TTL_SECONDS = 604800n;
 const MAX_MIRROR_AGE_MS = 10 * 60 * 1000;
+const MAX_TIMESTAMP_SECONDS = 253402300799n;
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 const ZERO_HASH = `0x${'00'.repeat(32)}`;
 const DIMENSIONS = ['tickerHash', 'tokenAddress', 'robinhoodAssetIdHash'];
@@ -80,6 +81,15 @@ function canonicalUint(value, bits, field) {
   if (!/^(?:0|[1-9][0-9]*)$/.test(raw)) throw new Error(`invalid ${field}: noncanonical decimal`);
   const parsed = BigInt(raw);
   if (parsed >= 1n << BigInt(bits)) throw new Error(`invalid ${field}: uint${bits} overflow`);
+  return raw;
+}
+
+function canonicalTimestamp(value, field, { required = false } = {}) {
+  const raw = canonicalUint(value, 64, field);
+  const parsed = BigInt(raw);
+  if ((required && parsed === 0n) || parsed > MAX_TIMESTAMP_SECONDS) {
+    throw new Error(`invalid ${field}: timestamp outside supported range`);
+  }
   return raw;
 }
 
@@ -191,11 +201,13 @@ function normalizeAsset(raw, expectedIndex) {
   const recomputedKey = computeStockAssetVersionKey({ chainId, ticker, tokenAddress, robinhoodAssetIdHash: providerHash });
   if (assetVersionKey !== recomputedKey) throw new Error(`asset version key mismatch for ${ticker}`);
   if (typeof raw.active !== 'boolean') throw new Error(`invalid active flag for ${ticker}`);
-  const registeredAt = canonicalUint(raw.registeredAt, 64, `registered timestamp for ${ticker}`);
-  const activatedAt = canonicalUint(raw.activatedAt, 64, `activated timestamp for ${ticker}`);
-  const deactivatedAt = canonicalUint(raw.deactivatedAt, 64, `deactivated timestamp for ${ticker}`);
-  if (raw.active && (activatedAt === '0' || deactivatedAt !== '0')) {
-    throw new Error(`invalid active lifecycle timestamps for ${ticker}`);
+  const registeredAt = canonicalTimestamp(raw.registeredAt, `registered timestamp for ${ticker}`, { required: true });
+  const activatedAt = canonicalTimestamp(raw.activatedAt, `activated timestamp for ${ticker}`, { required: true });
+  const deactivatedAt = canonicalTimestamp(raw.deactivatedAt, `deactivated timestamp for ${ticker}`);
+  if (BigInt(registeredAt) > BigInt(activatedAt)
+    || (raw.active && deactivatedAt !== '0')
+    || (!raw.active && (deactivatedAt === '0' || BigInt(deactivatedAt) < BigInt(activatedAt)))) {
+    throw new Error(`invalid lifecycle timestamps for ${ticker}`);
   }
   return {
     assetVersionKey, chainId, tickerHash: suppliedTickerHash, ticker, name, tokenAddress,
@@ -254,9 +266,13 @@ function validateObservation(raw) {
   const catalogVersion = canonicalUint(raw.catalogVersion, 256, 'catalog version');
   const finalizedBlockNumber = canonicalUint(raw.finalizedBlockNumber, 256, 'finalized block number');
   const finalizedBlockHash = canonicalHash(raw.finalizedBlockHash, 'finalized block hash', { nonzero: true });
-  const observedAt = canonicalUint(raw.observedAt, 64, 'observed timestamp');
+  const observedAt = canonicalTimestamp(raw.observedAt, 'observed timestamp', { required: true });
   if (!Array.isArray(raw.assets)) throw new Error('complete historical asset array is required');
   const assets = raw.assets.map((asset, index) => normalizeAsset(asset, index));
+  if ((assets.length === 0 && catalogVersion !== '0')
+    || (assets.length > 0 && (catalogVersion === '0' || BigInt(catalogVersion) < BigInt(assets.length)))) {
+    throw new Error('catalog version is inconsistent with complete history/version count');
+  }
   const keys = new Set();
   for (const asset of assets) {
     if (keys.has(asset.assetVersionKey)) throw new Error(`duplicate asset version key ${asset.assetVersionKey}`);
@@ -279,11 +295,17 @@ function validateObservation(raw) {
 }
 
 let _registryReaderV2 = readStockTokenRegistryV2Onchain;
+const defaultRegistryV2ClientFactory = (rpc) => createPublicClient({ transport: http(rpc) });
+let _registryV2ClientFactory = defaultRegistryV2ClientFactory;
 export function __setStockTokenRegistryV2Reader(fn) {
   _registryReaderV2 = fn || readStockTokenRegistryV2Onchain;
 }
 
-export const stockTokenCatalogV2Ready = () => _registryReaderV2 !== readStockTokenRegistryV2Onchain
+export function __setStockTokenRegistryV2ClientFactory(fn) {
+  _registryV2ClientFactory = fn || defaultRegistryV2ClientFactory;
+}
+
+export const stockTokenRegistryV2ReaderConfigured = () => _registryReaderV2 !== readStockTokenRegistryV2Onchain
   || !!(process.env.CHAIN_RPC_URL && process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS);
 
 const epochTimestampSql = (parameter) => `CASE WHEN ${parameter}='0' THEN NULL ELSE
@@ -293,6 +315,26 @@ function sameAddress(left, right) {
   return String(left).toLowerCase() === String(right).toLowerCase();
 }
 
+function storedTimestamp(value) {
+  return value == null ? '0' : String(value);
+}
+
+function storedAssetMatches(row, asset) {
+  return String(row.asset_version_key).toLowerCase() === asset.assetVersionKey
+    && String(row.chain_id) === asset.chainId
+    && String(row.ticker_hash).toLowerCase() === asset.tickerHash
+    && String(row.ticker) === asset.ticker
+    && String(row.name) === asset.name
+    && sameAddress(row.token_address, asset.tokenAddress)
+    && Number(row.token_decimals) === asset.tokenDecimals
+    && String(row.robinhood_asset_id_hash).toLowerCase() === asset.robinhoodAssetIdHash
+    && String(row.registry_index) === asset.registryIndex
+    && row.active === asset.active
+    && storedTimestamp(row.registered_at_seconds) === asset.registeredAt
+    && storedTimestamp(row.activated_at_seconds) === asset.activatedAt
+    && storedTimestamp(row.deactivated_at_seconds) === asset.deactivatedAt;
+}
+
 export async function syncFinalizedStockCatalogV2(pool) {
   // RPC and complete structural validation happen before BEGIN. A malformed/partial observation can
   // therefore neither wait on nor mutate the database's last-known-good snapshot.
@@ -300,12 +342,9 @@ export async function syncFinalizedStockCatalogV2(pool) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    // The singleton row supplies the steady-state lock. On the first-ever sync no row exists yet,
-    // so real Postgres also takes one transaction-scoped namespace lock to serialize bootstrap.
-    // pg-mem has no advisory-lock builtin and is single-process, hence the production-only call.
-    if (process.env.DATABASE_URL) {
-      await client.query('SELECT pg_advisory_xact_lock($1)', [46630002]);
-    }
+    // A permanent seeded row serializes both bootstrap (when state does not exist yet) and every
+    // steady-state comparison. Lock correctness is database-protocol authority, never env-dependent.
+    await client.query('SELECT id FROM stock_catalog_sync_lock_v2 WHERE id=1 FOR UPDATE');
     const state = (await client.query(
       `SELECT chain_id, registry_address, catalog_version, finalized_block_number,
               finalized_block_hash, snapshot_hash, synced_at
@@ -329,6 +368,32 @@ export async function syncFinalizedStockCatalogV2(pool) {
       if (nextCatalog < previousCatalog) throw new Error('catalog version regression');
       if (nextBlock < previousBlock) throw new Error('finalized block regression');
       if (nextBlock === previousBlock) throw new Error('same finalized block has a conflicting snapshot');
+      if (nextCatalog === previousCatalog) {
+        const storedAssets = (await client.query(
+          `SELECT asset_version_key, chain_id, ticker_hash, ticker, name, token_address,
+                  token_decimals, robinhood_asset_id_hash, registry_index, active,
+                  EXTRACT(EPOCH FROM registered_at)::NUMERIC(78,0) AS registered_at_seconds,
+                  EXTRACT(EPOCH FROM activated_at)::NUMERIC(78,0) AS activated_at_seconds,
+                  EXTRACT(EPOCH FROM deactivated_at)::NUMERIC(78,0) AS deactivated_at_seconds
+             FROM stock_asset_versions_v2 ORDER BY registry_index FOR UPDATE`)).rows;
+        if (storedAssets.length !== observed.assets.length
+          || storedAssets.some((row, index) => !storedAssetMatches(row, observed.assets[index]))) {
+          throw new Error('same catalog version requires unchanged catalog history and lifecycle state');
+        }
+        const storedHeads = (await client.query(
+          `SELECT dimension_type, dimension_value, asset_version_key
+             FROM stock_asset_active_heads_v2 ORDER BY dimension_type, dimension_value FOR UPDATE`)).rows;
+        const observedHeads = DIMENSIONS.flatMap((dimension) => observed.activeHeads[dimension]
+          .map((head) => ({ dimension, ...head })))
+          .sort((left, right) => left.dimension.localeCompare(right.dimension)
+            || left.dimensionValue.toLowerCase().localeCompare(right.dimensionValue.toLowerCase()));
+        if (storedHeads.length !== observedHeads.length || storedHeads.some((row, index) => {
+          const expected = observedHeads[index];
+          return row.dimension_type !== expected.dimension
+            || String(row.dimension_value).toLowerCase() !== expected.dimensionValue.toLowerCase()
+            || String(row.asset_version_key).toLowerCase() !== expected.assetVersionKey;
+        })) throw new Error('same catalog version requires unchanged active heads');
+      }
     }
 
     const historicalPrefix = (await client.query(
@@ -449,10 +514,27 @@ function publicAsset(row) {
 }
 
 export async function approvedStockTokenCatalogV2(db) {
-  const state = (await db.query(
-    `SELECT chain_id, registry_address, catalog_version, finalized_block_number,
-            finalized_block_hash, snapshot_hash, synced_at
-       FROM stock_catalog_sync_state_v2 WHERE id=1`)).rows[0];
+  const client = await db.connect();
+  let state;
+  let rows = [];
+  try {
+    await client.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
+    state = (await client.query(
+      `SELECT chain_id, registry_address, catalog_version, finalized_block_number,
+              finalized_block_hash, snapshot_hash, synced_at, now() AS db_now
+         FROM stock_catalog_sync_state_v2 WHERE id=1`)).rows[0];
+    if (state) rows = (await client.query(
+      `SELECT asset_version_key, chain_id, ticker_hash, ticker, name, token_address,
+              token_decimals, robinhood_asset_id_hash, registry_index, active, registered_at,
+              activated_at, deactivated_at, last_catalog_version, synced_at
+         FROM stock_asset_versions_v2 ORDER BY registry_index`)).rows;
+    await client.query('COMMIT');
+  } catch (error) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw error;
+  } finally {
+    client.release();
+  }
   if (!state) {
     return {
       source: 'registry_unavailable', finality: null, chainId: ROBINHOOD_CHAIN_ID_V2,
@@ -461,14 +543,11 @@ export async function approvedStockTokenCatalogV2(db) {
       snapshotHash: null, syncedAt: null, assets: [], activeAssets: [], voteable: false, stale: true,
     };
   }
-  const rows = (await db.query(
-    `SELECT asset_version_key, chain_id, ticker_hash, ticker, name, token_address,
-            token_decimals, robinhood_asset_id_hash, registry_index, active, registered_at,
-            activated_at, deactivated_at, last_catalog_version, synced_at
-       FROM stock_asset_versions_v2 ORDER BY registry_index`)).rows;
   const assets = rows.map(publicAsset);
   const syncedAt = isoTimestamp(state.synced_at);
-  const stale = !syncedAt || Date.now() - new Date(syncedAt).getTime() > MAX_MIRROR_AGE_MS;
+  const dbNow = isoTimestamp(state.db_now);
+  const stale = !syncedAt || !dbNow
+    || new Date(dbNow).getTime() - new Date(syncedAt).getTime() > MAX_MIRROR_AGE_MS;
   const activeAssets = stale ? [] : assets.filter((asset) => asset.active);
   return {
     source: SOURCE, finality: FINALITY, chainId: String(state.chain_id),
@@ -480,12 +559,17 @@ export async function approvedStockTokenCatalogV2(db) {
   };
 }
 
+export async function stockTokenCatalogV2Ready(db) {
+  if (!stockTokenRegistryV2ReaderConfigured()) return false;
+  return (await approvedStockTokenCatalogV2(db)).voteable;
+}
+
 async function readStockTokenRegistryV2Onchain() {
   const rpc = process.env.CHAIN_RPC_URL;
   const configuredAddress = process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
   if (!rpc || !configuredAddress) throw new Error('stock token registry v2 unconfigured');
   const registryAddress = canonicalAddress(configuredAddress, 'registry address');
-  const client = createPublicClient({ transport: http(rpc) });
+  const client = _registryV2ClientFactory(rpc);
   const liveChainId = String(await client.getChainId());
   if (liveChainId !== ROBINHOOD_CHAIN_ID_V2) {
     throw new Error(`stock token registry v2 requires Robinhood Chain ${ROBINHOOD_CHAIN_ID_V2}; RPC is ${liveChainId}`);
@@ -525,6 +609,11 @@ async function readStockTokenRegistryV2Onchain() {
         activeHeads[dimension].push({ dimensionValue: sourceValue, assetVersionKey: head });
       }
     }
+  }
+  const verifiedBlock = await client.getBlock({ blockNumber });
+  if (!verifiedBlock?.hash
+    || String(verifiedBlock.hash).toLowerCase() !== String(finalizedBlock.hash).toLowerCase()) {
+    throw new Error('finalized block hash changed during registry read');
   }
   return {
     source: SOURCE, finality: FINALITY, chainId: liveChainId, registryAddress,
