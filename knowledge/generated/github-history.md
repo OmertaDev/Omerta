@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `2fee34e141fc`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f0fdb7748a33`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 957 |
+| Commits in clone | 959 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-25 — test: wait for Deep City readiness |
+| Latest commit | 2026-08-25 — fix: make Agent Turn docs and knowledge snapshots exact |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 156 |
+| OmertaDev | 158 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -33,7 +33,7 @@
 | [src/server.js](../../src/server.js) | 338 | yes |
 | [schema.sql](../../schema.sql) | 253 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
-| [SPEC.md](../../SPEC.md) | 232 | yes |
+| [SPEC.md](../../SPEC.md) | 234 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 169 | yes |
 | [package.json](../../package.json) | 128 | yes |
@@ -65,9 +65,9 @@
 | [src/kitchen.js](../../src/kitchen.js) | 28 | yes |
 | [src/world.js](../../src/world.js) | 28 | yes |
 | [test/migrate.js](../../test/migrate.js) | 28 | yes |
+| [test/docs.js](../../test/docs.js) | 27 | yes |
 | [src/loans.js](../../src/loans.js) | 27 | yes |
 | [src/social/combat.js](../../src/social/combat.js) | 27 | yes |
-| [test/casino.js](../../test/casino.js) | 27 | yes |
 
 ## Pull requests
 
