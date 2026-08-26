@@ -3690,6 +3690,51 @@ CREATE TABLE IF NOT EXISTS rwa_nomination_reviewer_state_v2 (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Reviewer mutations never borrow a player account identity. Their replay ledger is deliberately
+-- separate from the account-keyed `idempotency` table and binds a key to the whole request surface.
+CREATE TABLE IF NOT EXISTS rwa_reviewer_idempotency_v2 (
+  reviewer_id TEXT NOT NULL,
+  key TEXT NOT NULL,
+  method TEXT NOT NULL,
+  path TEXT NOT NULL,
+  body_hash TEXT NOT NULL,
+  status INT NOT NULL,
+  response TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (reviewer_id, key)
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_reviewer_idempotency_created_v2
+  ON rwa_reviewer_idempotency_v2(created_at);
+
+-- Exact unsigned Safe packages created by an approved review. Task 4 may only prepare, submit, or
+-- stale an unsigned package; execution and finalized catalog evidence belong to the finality worker.
+CREATE TABLE IF NOT EXISTS rwa_nomination_safe_proposals_v2 (
+  nomination_id TEXT PRIMARY KEY,
+  asset_version_key TEXT NOT NULL,
+  registry_address TEXT NOT NULL,
+  safe_transaction JSONB NOT NULL,
+  calldata_hash TEXT NOT NULL,
+  evidence_hash TEXT NOT NULL,
+  review_id TEXT NOT NULL UNIQUE,
+  approved_at TIMESTAMPTZ NOT NULL,
+  valid_until TIMESTAMPTZ NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('safe_package_ready','safe_submitted','approval_stale')),
+  safe_tx_hash TEXT,
+  execution_tx_hash TEXT,
+  execution_block_number NUMERIC(78,0),
+  execution_block_hash TEXT,
+  finalized_at TIMESTAMPTZ,
+  synced_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CHECK ((status = 'safe_submitted') = (safe_tx_hash IS NOT NULL)),
+  CHECK (execution_tx_hash IS NULL AND execution_block_number IS NULL
+    AND execution_block_hash IS NULL AND finalized_at IS NULL AND synced_at IS NULL)
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_safe_proposals_expiry_v2
+  ON rwa_nomination_safe_proposals_v2(valid_until, nomination_id)
+  WHERE status = 'safe_package_ready';
+
 -- ── THE BROKERS (omerta-brokers-design.md) ───────────────────────────────────────────────────────
 -- All ACCOUNT-keyed and all NEW tables, so `CREATE TABLE IF NOT EXISTS` is live-DB-safe (a new
 -- COLUMN on an existing table would need an ALTER — the 2026-08-06 boot-crash lesson).

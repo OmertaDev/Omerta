@@ -74,6 +74,18 @@ assert(preflight({ ...GOOD, MARKET_SEED: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaa' }).error
 assert(preflight({ ...GOOD, MARKET_SEED: 'short' }).errors.some((e) => /too weak/.test(e)),
   'a short seed is refused');
 
+assert(preflight({ ...GOOD, RWA_REVIEWER_KEY: 'reviewer-secret' }).errors.some((e) => /configured together/.test(e)),
+  'a reviewer key without its public reviewer identity fails closed in production');
+assert(preflight({ ...GOOD, RWA_REVIEWER_ID: 'reviewer-public-id' }).errors.some((e) => /configured together/.test(e)),
+  'a reviewer identity without its key fails closed in production');
+assert(preflight({
+  ...GOOD, RWA_REVIEWER_KEY: GOOD.MOD_KEY, RWA_REVIEWER_ID: 'reviewer-public-id',
+}).errors.some((e) => /distinct from MOD_KEY/.test(e)),
+  'reviewer and moderator authority cannot share one production secret');
+assert.equal(preflight({
+  ...GOOD, RWA_REVIEWER_KEY: 'distinct-reviewer-secret', RWA_REVIEWER_ID: 'reviewer-public-id',
+}).errors.length, 0, 'a complete reviewer pair with a distinct secret is accepted');
+
 // BLUE-TEAM H1: the same floor on JWT_SECRET — the ONE secret that authenticates every session and
 // had no entropy check. HS256 over a weak-but-non-default secret is offline-forgeable → any account.
 assert(preflight({ ...GOOD, JWT_SECRET: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaa' }).errors.some((e) => /JWT_SECRET is too weak/.test(e)),

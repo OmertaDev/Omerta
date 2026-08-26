@@ -106,6 +106,7 @@ import { register as registerDiplomacy } from './routes/diplomacy.js';
 import { register as registerSov } from './routes/sov.js';
 import { register as registerLeaderboards } from './routes/leaderboards.js';
 import { register as registerModTools } from './routes/modtools.js';
+import { registerRwa } from './routes/rwa.js';
 import * as Phone from './phone.js';
 import * as Mega from './megaproject.js';
 import * as Duels from './duels.js';
@@ -258,9 +259,14 @@ export async function buildServer() {
     const pre = [].concat(r.preHandler || []);
     const names = pre.map((f) => (f && f.name) || '');
     const isMod = names.includes('modAuth');
-    const hasAuth = names.includes('auth') || isMod;
+    const isRwaReviewer = names.includes('rwaReviewerAuth');
+    const playerAuth = names.includes('auth');
+    const hasAuth = playerAuth || isMod || isRwaReviewer;
+    const authKind = isRwaReviewer ? 'rwaReviewerAuth' : isMod ? 'modAuth' : playerAuth ? 'auth' : null;
     const methods = Array.isArray(r.method) ? r.method : [r.method];
-    for (const m of methods) if (m !== 'HEAD' && m !== 'OPTIONS') routeRegistry.push({ method: m, url: r.url, hasAuth, isMod });
+    for (const m of methods) if (m !== 'HEAD' && m !== 'OPTIONS') routeRegistry.push({
+      method: m, url: r.url, hasAuth, isMod, isRwaReviewer, authKind,
+    });
   });
   // Exposed so tests can assert the mounted surface directly. /openapi.json is derived from the same
   // registry but deliberately omits /v1/mod, so it cannot stand in for the whole table — and the one
@@ -851,6 +857,7 @@ export async function buildServer() {
         [uid(), req.ip, req.method, req.routeOptions?.url || req.url])
         .catch((e) => console.error('mod_actions audit write failed (non-fatal)', e?.message));
   };
+  registerRwa(app, { pool, auth, withCharacter: G.withCharacter });
   // BLUE-TEAM M2: the audit log is readable back through the mod perimeter it records (the last N actions),
   // so the /admin dashboard can show who did what. A GET, so it doesn't log itself.
   app.get('/v1/mod/actions', { preHandler: modAuth }, async (req) => {

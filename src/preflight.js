@@ -121,7 +121,8 @@ export const OPERATIONAL_ENV = [
   // keeper (pre-held-only); the allocation signer independently attests frozen active-play eligibility.
   // STOCK_TOKEN_ADDRESSES remains a read-only legacy display fallback for vault-balance views and is
   // never used by the purchase or delivery value-moving paths.
-  'STOCK_TOKEN_REGISTRY_ADDRESS', 'RWA_BALLOT_PUBLISHER_PK', 'STOCK_KEEPER_PK',
+  'STOCK_TOKEN_REGISTRY_ADDRESS', 'STOCK_TOKEN_REGISTRY_V2_ADDRESS',
+  'RWA_REVIEWER_KEY', 'RWA_REVIEWER_ID', 'RWA_BALLOT_PUBLISHER_PK', 'STOCK_KEEPER_PK',
   'STOCK_ALLOCATION_SIGNER_PK', 'STOCK_AUTH_TTL_SEC', 'STOCK_TOKEN_ADDRESSES',
   // THE TWO DEX BOTS (src/dexbot.js) — the buyback bot (swaps unspent Vig revenue for hard OMR on
   // the canonical v4 pool, books the ACHIEVED price through the audited runVigBuyback) + the
@@ -229,6 +230,12 @@ export function preflight(env = process.env) {
     if (s.length < 24 || new Set(s).size < 8)
       errors.push('JWT_SECRET is too weak — HS256 over a low-entropy secret is offline-brute-forceable, after which anyone can forge a token for any account. Use a long, high-entropy random secret (≥24 chars, ≥8 distinct).');
   }
+  const reviewerKey = typeof env.RWA_REVIEWER_KEY === 'string' && env.RWA_REVIEWER_KEY.length > 0;
+  const reviewerId = typeof env.RWA_REVIEWER_ID === 'string' && env.RWA_REVIEWER_ID.length > 0;
+  if (reviewerKey !== reviewerId)
+    errors.push('RWA_REVIEWER_KEY and RWA_REVIEWER_ID must be configured together; a partial reviewer perimeter is disabled.');
+  if (reviewerKey && env.MOD_KEY && env.RWA_REVIEWER_KEY === env.MOD_KEY)
+    errors.push('RWA_REVIEWER_KEY must be distinct from MOD_KEY; reviewer and moderator authority cannot share a secret.');
   if (env.MARKET_SEED === 'omerta-server-seed')
     errors.push('MARKET_SEED is the public default, which makes every seeded draw (Numbers/Track/Fight/goods) predictable.');
   if (env.MARKET_SEED) {

@@ -212,6 +212,9 @@ export function buildOpenApi(routes, { baseUrl = 'https://www.omerta.fun', versi
     // no use for it, and enumerating mod routes + the x-mod-key header only maps the admin surface.
     const isMod = (r.isMod !== undefined) ? r.isMod : url.startsWith('/v1/mod/');
     if (isMod) continue;
+    // The single RWA reviewer is a separate operational perimeter, never a player bearer token.
+    // Keep privileged reviewer routes out of the public agent contract, like moderator routes.
+    if (r.isRwaReviewer) continue;
     const p = oapiPath(url);
     const tag = tagOf(url);
     tagsSeen.add(tag);
