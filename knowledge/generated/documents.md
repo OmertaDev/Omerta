@@ -267,7 +267,7 @@
 | [AUDIT.md](../../AUDIT.md) | audit | 52 | 2026-07-14 |
 | [BALANCE.md](../../BALANCE.md) | documentation | 6472 | 2026-08-24 |
 | [CHAIN-AUDIT-PACKET.md](../../CHAIN-AUDIT-PACKET.md) | documentation | 273 | 2026-08-21 |
-| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 798 | 2026-08-26 |
+| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 812 | 2026-08-26 |
 | [CLAUDE.md](../../CLAUDE.md) | documentation | 17225 | 2026-08-23 |
 | [DEPLOY-CHECKLIST.md](../../DEPLOY-CHECKLIST.md) | operations | 147 | 2026-08-13 |
 | [DEPLOY.md](../../DEPLOY.md) | operations | 543 | 2026-08-24 |
@@ -284,8 +284,11 @@
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-core-deployment.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-core-deployment.md) | documentation | 151 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-hook-rehearsal.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-hook-rehearsal.md) | documentation | 146 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-twap-rehearsal.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-twap-rehearsal.md) | documentation | 156 | 2026-08-24 |
+| [docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md](../../docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md) | documentation | 200 | 2026-08-26 |
+| [docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md](../../docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md) | documentation | 1144 | 2026-08-26 |
 | [docs/superpowers/plans/2026-08-26-settlement-gas-pool.md](../../docs/superpowers/plans/2026-08-26-settlement-gas-pool.md) | documentation | 600 | 2026-08-26 |
 | [docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md](../../docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md) | design | 124 | 2026-08-23 |
+| [docs/superpowers/specs/2026-08-26-grill-completion.md](../../docs/superpowers/specs/2026-08-26-grill-completion.md) | documentation | 774 | 2026-08-26 |
 | [docs/WIKI.md](../../docs/WIKI.md) | documentation | 1439 | 2026-08-25 |
 | [GRAPH.md](../../GRAPH.md) | documentation | 259 | 2026-07-27 |
 | [GTM.md](../../GTM.md) | documentation | 295 | 2026-08-13 |

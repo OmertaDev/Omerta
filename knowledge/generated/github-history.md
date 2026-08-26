@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `e3ea30ce3b21`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `3419333c76e5`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 948 |
+| Commits in clone | 970 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-26 — docs: register settlement gas pool audit scope |
+| Latest commit | 2026-08-26 — feat: add dormant version-snapshot stock ballot |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 147 |
+| OmertaDev | 169 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -30,13 +30,13 @@
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 491 | yes |
 | [public/index.html](../../public/index.html) | 378 | yes |
-| [src/server.js](../../src/server.js) | 336 | yes |
-| [schema.sql](../../schema.sql) | 252 | yes |
+| [src/server.js](../../src/server.js) | 340 | yes |
+| [schema.sql](../../schema.sql) | 258 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
-| [SPEC.md](../../SPEC.md) | 232 | yes |
+| [SPEC.md](../../SPEC.md) | 238 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 169 | yes |
-| [package.json](../../package.json) | 127 | yes |
+| [package.json](../../package.json) | 131 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 118 | yes |
 | [src/invariants.js](../../src/invariants.js) | 113 | yes |
@@ -52,10 +52,10 @@
 | [README.md](../../README.md) | 54 | yes |
 | [src/growth.js](../../src/growth.js) | 51 | yes |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
-| [src/preflight.js](../../src/preflight.js) | 47 | yes |
+| [src/preflight.js](../../src/preflight.js) | 50 | yes |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
+| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 45 | yes |
 | [src/economy.js](../../src/economy.js) | 44 | yes |
-| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 43 | yes |
 | [src/casino.js](../../src/casino.js) | 43 | yes |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
 | [src/business.js](../../src/business.js) | 39 | yes |
@@ -65,9 +65,9 @@
 | [src/kitchen.js](../../src/kitchen.js) | 28 | yes |
 | [src/world.js](../../src/world.js) | 28 | yes |
 | [test/migrate.js](../../test/migrate.js) | 28 | yes |
+| [test/routes.js](../../test/routes.js) | 27 | yes |
 | [src/loans.js](../../src/loans.js) | 27 | yes |
 | [src/social/combat.js](../../src/social/combat.js) | 27 | yes |
-| [test/casino.js](../../test/casino.js) | 27 | yes |
 
 ## Pull requests
 

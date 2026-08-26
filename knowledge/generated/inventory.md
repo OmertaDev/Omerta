@@ -1,39 +1,39 @@
 # Generated repository inventory
 
-> Source: worktree at `e3ea30ce3b21`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `3419333c76e5`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 1,564 |
-| Text lines | 382,796 |
-| Repository bytes inventoried | 273,701,010 |
-| Backend/route modules | 163 |
-| HTTP route registrations / unique routes | 713 / 712 |
-| Database tables | 245 |
-| Solidity declarations | 31 |
-| Git commits | 948 |
+| Current artifacts | 1,579 |
+| Text lines | 394,366 |
+| Repository bytes inventoried | 274,264,480 |
+| Backend/route modules | 166 |
+| HTTP route registrations / unique routes | 722 / 721 |
+| Database tables | 261 |
+| Solidity declarations | 33 |
+| Git commits | 970 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 4,478 / 21,025 |
+| Graph nodes / edges | 4,556 / 21,329 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
 | media-asset | 529 |
-| documentation | 200 |
+| documentation | 203 |
 | artifact | 149 |
-| backend-module | 144 |
-| test-suite | 119 |
+| backend-module | 146 |
+| test-suite | 123 |
 | audit | 98 |
 | design | 75 |
 | contract-project | 61 |
-| contract-test | 54 |
-| engineering-harness | 48 |
-| contract-source | 22 |
-| route-module | 19 |
+| contract-test | 56 |
+| engineering-harness | 49 |
+| contract-source | 24 |
+| route-module | 20 |
 | web-surface | 13 |
 | operations | 11 |
 | knowledge-base | 11 |
@@ -58,8 +58,8 @@
 | [BALANCE.md](../../BALANCE.md) | 6,472 | documentation | 2026-08-24 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6,045 | backend-module | 2026-08-24 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
-| [schema.sql](../../schema.sql) | 3,716 | data-schema | 2026-08-25 |
-| [src/server.js](../../src/server.js) | 3,325 | backend-module | 2026-08-25 |
+| [schema.sql](../../schema.sql) | 4,013 | data-schema | 2026-08-26 |
+| [src/server.js](../../src/server.js) | 3,343 | backend-module | 2026-08-26 |
 | [omerta-contracts/fizz_data/contracts.json](../../omerta-contracts/fizz_data/contracts.json) | 2,739 | contract-project | 2026-08-25 |
 | [public/art/manifest.json](../../public/art/manifest.json) | 2,700 | media-asset | 2026-08-09 |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 2,619 | audit | 2026-08-12 |
@@ -75,7 +75,7 @@
 | [tools/sim.js](../../tools/sim.js) | 1,681 | engineering-harness | 2026-08-16 |
 | [src/casino.js](../../src/casino.js) | 1,468 | backend-module | 2026-08-23 |
 | [docs/WIKI.md](../../docs/WIKI.md) | 1,439 | documentation | 2026-08-25 |
-| [test/economy.js](../../test/economy.js) | 1,402 | test-suite | 2026-08-21 |
+| [src/rwanominations.js](../../src/rwanominations.js) | 1,420 | backend-module | 2026-08-26 |
 
 ## Media estate
 

@@ -20,6 +20,7 @@
 | `IStockQuoteOracle` | interface | [omerta-contracts/src/RwaStockBuyer.sol:28](../../omerta-contracts/src/RwaStockBuyer.sol#L28) | — |
 | `IStockSwapAdapter` | interface | [omerta-contracts/src/RwaStockBuyer.sol:20](../../omerta-contracts/src/RwaStockBuyer.sol#L20) | — |
 | `IStockTokenRegistry` | interface | [omerta-contracts/src/RwaStockBuyer.sol:9](../../omerta-contracts/src/RwaStockBuyer.sol#L9) | — |
+| `IStockTokenRegistryV2` | interface | [omerta-contracts/src/interfaces/IStockTokenRegistryV2.sol:3](../../omerta-contracts/src/interfaces/IStockTokenRegistryV2.sol#L3) | — |
 | `IUniswapV2Factory` | interface | [omerta-contracts/src/OmrTwapOracle.sol:8](../../omerta-contracts/src/OmrTwapOracle.sol#L8) | — |
 | `IUniswapV2Pair` | interface | [omerta-contracts/src/OmrTwapOracle.sol:12](../../omerta-contracts/src/OmrTwapOracle.sol#L12) | — |
 | `OmertaBond` | contract | [omerta-contracts/src/OmertaBond.sol:73](../../omerta-contracts/src/OmertaBond.sol#L73) | `EIP712`, `Ownable2Step`, `Pausable`, `ReentrancyGuard` |
@@ -31,6 +32,7 @@
 | `RwaStockBuyer` | contract | [omerta-contracts/src/RwaStockBuyer.sol:43](../../omerta-contracts/src/RwaStockBuyer.sol#L43) | `Ownable2Step`, `Pausable`, `ReentrancyGuard` |
 | `SettlementGasPool` | contract | [omerta-contracts/src/SettlementGasPool.sol:24](../../omerta-contracts/src/SettlementGasPool.sol#L24) | `Ownable2Step`, `Pausable`, `ReentrancyGuard` |
 | `StockTokenRegistry` | contract | [omerta-contracts/src/StockTokenRegistry.sol:18](../../omerta-contracts/src/StockTokenRegistry.sol#L18) | `Ownable2Step` |
+| `StockTokenRegistryV2` | contract | [omerta-contracts/src/StockTokenRegistryV2.sol:10](../../omerta-contracts/src/StockTokenRegistryV2.sol#L10) | `IStockTokenRegistryV2`, `Ownable2Step` |
 | `StockVault` | contract | [omerta-contracts/src/StockVault.sol:44](../../omerta-contracts/src/StockVault.sol#L44) | `Ownable2Step`, `Pausable`, `ReentrancyGuard`, `EIP712` |
 | `StreetDeed` | contract | [omerta-contracts/src/StreetDeed.sol:37](../../omerta-contracts/src/StreetDeed.sol#L37) | `ERC721`, `EIP712`, `Ownable2Step`, `Pausable`, `ReentrancyGuard` |
 | `Transmuter` | contract | [omerta-contracts/src/Transmuter.sol:58](../../omerta-contracts/src/Transmuter.sol#L58) | `Ownable2Step`, `ReentrancyGuard`, `FlashGuard` |
