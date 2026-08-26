@@ -674,7 +674,7 @@ to `clock_timestamp()`: exactly 168 hours permits a fresh family nomination,
 and at or after immutable `pending_until`, expiry wins before endorsement,
 renewal, claim, or disposition.
 
-- [ ] **Step 1: Write RED domain tests**
+- [x] **Step 1: Write RED domain tests**
 
 Cover boss/underboss and current-seat requirements, exact version-key
 recomputation, bounded rationale/evidence URI, 168-hour rolling cooldown,
@@ -691,13 +691,13 @@ Include a concurrency test with two simultaneous same-key submissions proving
 one row and no cooldown consumption for the loser. Include an expiry-versus-
 endorsement race proving expiry wins at the boundary.
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 ```powershell
 node test/rwanominations.js
 ```
 
-- [ ] **Step 3: Implement minimal domain model**
+- [x] **Step 3: Implement minimal domain model**
 
 All writes run inside their existing transaction/client and re-read seats and
 current nomination state immediately before mutation. Use UTC database time for
@@ -709,7 +709,7 @@ renewal requires the currently seated original sponsor's boss/underboss.
 Compute current support from current seats, sponsor state, and active current
 endorsements; never trust a cached support integer as authority.
 
-- [ ] **Step 4: Run GREEN and Commission baseline**
+- [x] **Step 4: Run GREEN and Commission baseline**
 
 ```powershell
 node test/rwanominations.js
