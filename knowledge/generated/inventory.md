@@ -1,30 +1,30 @@
 # Generated repository inventory
 
-> Source: worktree at `eb103802efdd`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `d5a0cf325d1f`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 1,557 |
-| Text lines | 379,184 |
-| Repository bytes inventoried | 273,638,631 |
+| Current artifacts | 1,560 |
+| Text lines | 379,527 |
+| Repository bytes inventoried | 273,987,155 |
 | Backend/route modules | 163 |
 | HTTP route registrations / unique routes | 713 / 712 |
 | Database tables | 245 |
 | Solidity declarations | 28 |
-| Git commits | 944 |
+| Git commits | 948 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 4,458 / 20,959 |
+| Graph nodes / edges | 4,466 / 20,988 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
-| media-asset | 529 |
-| documentation | 199 |
-| artifact | 150 |
+| media-asset | 530 |
+| documentation | 200 |
+| artifact | 151 |
 | backend-module | 144 |
 | test-suite | 119 |
 | audit | 98 |
@@ -48,7 +48,7 @@
 |---|---:|---|---|
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
 | [CLAUDE.md](../../CLAUDE.md) | 17,225 | documentation | 2026-08-23 |
-| [public/index.html](../../public/index.html) | 11,416 | web-surface | 2026-08-24 |
+| [public/index.html](../../public/index.html) | 11,416 | web-surface | 2026-08-26 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
@@ -83,7 +83,7 @@
 |---|---:|---:|
 | .mp4 | 194 | 181,112,647 |
 | .jpg | 246 | 43,649,264 |
-| .png | 36 | 14,227,044 |
+| .png | 37 | 14,517,478 |
 | .m4a | 10 | 6,069,278 |
 | .mp3 | 5 | 1,316,338 |
 | .webp | 25 | 998,028 |

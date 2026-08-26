@@ -277,6 +277,7 @@
 | [docs/BULLETPROOF.md](../../docs/BULLETPROOF.md) | documentation | 272 | 2026-08-21 |
 | [docs/GAMEPLAY-MARKETING-PACK.md](../../docs/GAMEPLAY-MARKETING-PACK.md) | documentation | 55 | 2026-08-24 |
 | [docs/LAUNCH-TWEETS.md](../../docs/LAUNCH-TWEETS.md) | documentation | 125 | 2026-08-14 |
+| [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 249 | 2026-08-26 |
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 346 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-23-discovery-integrity.md](../../docs/superpowers/plans/2026-08-23-discovery-integrity.md) | documentation | 65 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-23-first-action-onboarding.md](../../docs/superpowers/plans/2026-08-23-first-action-onboarding.md) | documentation | 311 | 2026-08-23 |
@@ -390,5 +391,5 @@
 | [PRODUCT.md](../../PRODUCT.md) | documentation | 50 | 2026-08-24 |
 | [README.md](../../README.md) | documentation | 166 | 2026-08-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 875 | 2026-08-21 |
-| [SPEC.md](../../SPEC.md) | documentation | 647 | 2026-08-25 |
+| [SPEC.md](../../SPEC.md) | documentation | 647 | 2026-08-26 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |

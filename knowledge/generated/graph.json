@@ -1,7 +1,7 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "eb103802efdd56ff3cecc0de23709ae337c19fa1",
-  "worktreeDirty": true,
+  "sourceRevision": "d5a0cf325d1fe38396828df966227e0b5b29e4af",
+  "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
     "nodeTypes": [
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 4458,
-    "edges": 20959,
+    "nodes": 4466,
+    "edges": 20988,
     "byNodeType": {
-      "Artifact": 1557,
+      "Artifact": 1560,
       "Command": 32,
-      "Commit": 944,
+      "Commit": 948,
       "Contract": 28,
-      "Document": 401,
+      "Document": 402,
       "Domain": 12,
       "ExternalDependency": 23,
       "HistoricalArtifact": 35,
@@ -64,20 +64,20 @@
       "Workflow": 3
     },
     "byEdgeType": {
-      "BELONGS_TO": 1813,
-      "CHANGED": 8070,
-      "CONTAINS": 1577,
+      "BELONGS_TO": 1814,
+      "CHANGED": 8088,
+      "CONTAINS": 1580,
       "DECLARES": 32,
       "DEFINED_IN": 986,
       "DEPENDS_ON": 59,
       "EXECUTES": 148,
       "HANDLED_BY": 653,
-      "HAS_COMMIT": 944,
+      "HAS_COMMIT": 948,
       "IMPLEMENTS": 124,
       "IMPORTS": 1440,
       "INHERITS": 4,
-      "REFERENCES": 2405,
-      "REPRESENTS": 735,
+      "REFERENCES": 2407,
+      "REPRESENTS": 736,
       "TESTS": 510,
       "TRACKS": 126,
       "USES_TABLE": 1333
@@ -9607,6 +9607,29 @@
       "lastChangedCommit": "dee7593a66b955d677656afab4516cb68edb918d"
     },
     {
+      "key": "Artifact:docs/diagrams/omr-06-the-omr-machine-1080x1350.excalidraw",
+      "type": "Artifact",
+      "id": "docs/diagrams/omr-06-the-omr-machine-1080x1350.excalidraw",
+      "label": "omr-06-the-omr-machine-1080x1350.excalidraw",
+      "path": "docs/diagrams/omr-06-the-omr-machine-1080x1350.excalidraw",
+      "kind": "artifact",
+      "extension": ".excalidraw",
+      "bytes": 43524,
+      "lines": 75,
+      "version": "4c4c0e8605ce37d0",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/diagrams/omr-06-the-omr-machine-1080x1350.excalidraw",
+          "line": 1,
+          "version": "4c4c0e8605ce37d0"
+        }
+      ],
+      "lastChangedAt": "2026-08-26T11:59:36-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "d5a0cf325d1fe38396828df966227e0b5b29e4af"
+    },
+    {
       "key": "Artifact:docs/diagrams/path-gun-1080x1350.excalidraw",
       "type": "Artifact",
       "id": "docs/diagrams/path-gun-1080x1350.excalidraw",
@@ -10084,7 +10107,33 @@
           "line": 1,
           "version": "9e478687cddb0b72"
         }
-      ]
+      ],
+      "lastChangedAt": "2026-08-26T04:15:54-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "8da1ac08e7365552192613cd3d631d963b710e7b"
+    },
+    {
+      "key": "Artifact:docs/OMR-MACHINE-CAMPAIGN.md",
+      "type": "Artifact",
+      "id": "docs/OMR-MACHINE-CAMPAIGN.md",
+      "label": "OMR-MACHINE-CAMPAIGN.md",
+      "path": "docs/OMR-MACHINE-CAMPAIGN.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 12392,
+      "lines": 249,
+      "version": "9522e273c67ca68c",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/OMR-MACHINE-CAMPAIGN.md",
+          "line": 1,
+          "version": "9522e273c67ca68c"
+        }
+      ],
+      "lastChangedAt": "2026-08-26T11:59:36-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "d5a0cf325d1fe38396828df966227e0b5b29e4af"
     },
     {
       "key": "Artifact:docs/OMR-MARKETING-PACK.md",
@@ -27078,6 +27127,29 @@
       "lastChangedCommit": "dee7593a66b955d677656afab4516cb68edb918d"
     },
     {
+      "key": "Artifact:public/art/omr-06-the-omr-machine-1080x1350.png",
+      "type": "Artifact",
+      "id": "public/art/omr-06-the-omr-machine-1080x1350.png",
+      "label": "omr-06-the-omr-machine-1080x1350.png",
+      "path": "public/art/omr-06-the-omr-machine-1080x1350.png",
+      "kind": "media-asset",
+      "extension": ".png",
+      "bytes": 290434,
+      "lines": null,
+      "version": "9fa2a4a0760ac4f7",
+      "text": false,
+      "provenance": [
+        {
+          "file": "public/art/omr-06-the-omr-machine-1080x1350.png",
+          "line": 1,
+          "version": "9fa2a4a0760ac4f7"
+        }
+      ],
+      "lastChangedAt": "2026-08-26T11:59:36-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "d5a0cf325d1fe38396828df966227e0b5b29e4af"
+    },
+    {
       "key": "Artifact:public/art/omr-vs-ohm.png",
       "type": "Artifact",
       "id": "public/art/omr-vs-ohm.png",
@@ -27982,20 +28054,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1109027,
+      "bytes": 1109026,
       "lines": 11416,
-      "version": "0092613ad1948276",
+      "version": "9adf4f3d47dd828f",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "0092613ad1948276"
+          "version": "9adf4f3d47dd828f"
         }
       ],
-      "lastChangedAt": "2026-08-24T22:21:14-04:00",
+      "lastChangedAt": "2026-08-26T11:59:36-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d8090505671f75ff1aa577359152153ee92698d3"
+      "lastChangedCommit": "d5a0cf325d1fe38396828df966227e0b5b29e4af"
     },
     {
       "key": "Artifact:public/manifest.json",
@@ -28097,20 +28169,20 @@
       "path": "public/wiki.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 105103,
-      "lines": 1074,
-      "version": "65d35937c4737ae4",
+      "bytes": 105931,
+      "lines": 1076,
+      "version": "732b2840ce440f28",
       "text": true,
       "provenance": [
         {
           "file": "public/wiki.html",
           "line": 1,
-          "version": "65d35937c4737ae4"
+          "version": "732b2840ce440f28"
         }
       ],
-      "lastChangedAt": "2026-08-25T01:16:12-04:00",
+      "lastChangedAt": "2026-08-26T11:59:36-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
+      "lastChangedCommit": "d5a0cf325d1fe38396828df966227e0b5b29e4af"
     },
     {
       "key": "Artifact:README.md",
@@ -28260,18 +28332,18 @@
       "extension": ".md",
       "bytes": 46570,
       "lines": 647,
-      "version": "3cc9ec07a85615c7",
+      "version": "7434c6561f9e1a94",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "3cc9ec07a85615c7"
+          "version": "7434c6561f9e1a94"
         }
       ],
-      "lastChangedAt": "2026-08-25T01:16:12-04:00",
+      "lastChangedAt": "2026-08-26T11:59:36-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
+      "lastChangedCommit": "d5a0cf325d1fe38396828df966227e0b5b29e4af"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -32720,20 +32792,20 @@
       "path": "test/diagram-renderer.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 3857,
-      "lines": 59,
-      "version": "37f811e480ecd043",
+      "bytes": 5154,
+      "lines": 75,
+      "version": "9eba41c00a18725f",
       "text": true,
       "provenance": [
         {
           "file": "test/diagram-renderer.js",
           "line": 1,
-          "version": "37f811e480ecd043"
+          "version": "9eba41c00a18725f"
         }
       ],
-      "lastChangedAt": "2026-08-24T23:58:11-04:00",
+      "lastChangedAt": "2026-08-26T11:59:36-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "65ff55846667710f748c6ab91403428ecd4cea03"
+      "lastChangedCommit": "d5a0cf325d1fe38396828df966227e0b5b29e4af"
     },
     {
       "key": "Artifact:test/discovery.js",
@@ -34054,20 +34126,20 @@
       "path": "test/routes.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 34443,
-      "lines": 456,
-      "version": "3b88350daac8a669",
+      "bytes": 34487,
+      "lines": 457,
+      "version": "5cdffc07f201a85b",
       "text": true,
       "provenance": [
         {
           "file": "test/routes.js",
           "line": 1,
-          "version": "3b88350daac8a669"
+          "version": "5cdffc07f201a85b"
         }
       ],
-      "lastChangedAt": "2026-08-24T22:21:14-04:00",
+      "lastChangedAt": "2026-08-26T11:59:36-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d8090505671f75ff1aa577359152153ee92698d3"
+      "lastChangedCommit": "d5a0cf325d1fe38396828df966227e0b5b29e4af"
     },
     {
       "key": "Artifact:test/rules.js",
@@ -35595,20 +35667,20 @@
       "path": "tools/render-omr-excalidraw.mjs",
       "kind": "engineering-harness",
       "extension": ".mjs",
-      "bytes": 4543,
+      "bytes": 4549,
       "lines": 77,
-      "version": "6493d36c305f1d56",
+      "version": "785b9f68da34d670",
       "text": true,
       "provenance": [
         {
           "file": "tools/render-omr-excalidraw.mjs",
           "line": 1,
-          "version": "6493d36c305f1d56"
+          "version": "785b9f68da34d670"
         }
       ],
-      "lastChangedAt": "2026-08-24T23:58:11-04:00",
+      "lastChangedAt": "2026-08-26T11:59:36-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "65ff55846667710f748c6ab91403428ecd4cea03"
+      "lastChangedCommit": "d5a0cf325d1fe38396828df966227e0b5b29e4af"
     },
     {
       "key": "Artifact:tools/responsive-art.mjs",
@@ -44751,6 +44823,22 @@
       ]
     },
     {
+      "key": "Commit:892587b0463441ef6dda39b94119e9dc588dc83e",
+      "type": "Commit",
+      "id": "892587b0463441ef6dda39b94119e9dc588dc83e",
+      "label": "docs: refresh whitepaper knowledge snapshot",
+      "title": "docs: refresh whitepaper knowledge snapshot",
+      "date": "2026-08-26T04:17:05-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/892587b0463441ef6dda39b94119e9dc588dc83e",
+      "provenance": [
+        {
+          "commit": "892587b0463441ef6dda39b94119e9dc588dc83e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/892587b0463441ef6dda39b94119e9dc588dc83e"
+        }
+      ]
+    },
+    {
       "key": "Commit:895d1cecc8dea064a78978467b7f6a5f48ed16a9",
       "type": "Commit",
       "id": "895d1cecc8dea064a78978467b7f6a5f48ed16a9",
@@ -45019,6 +45107,22 @@
         {
           "commit": "8d8701bb5987f9ff51636492e24f09938125e169",
           "url": "https://github.com/OmertaDev/Omerta/commit/8d8701bb5987f9ff51636492e24f09938125e169"
+        }
+      ]
+    },
+    {
+      "key": "Commit:8da1ac08e7365552192613cd3d631d963b710e7b",
+      "type": "Commit",
+      "id": "8da1ac08e7365552192613cd3d631d963b710e7b",
+      "label": "docs: add project whitepaper",
+      "title": "docs: add project whitepaper",
+      "date": "2026-08-26T04:15:54-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8da1ac08e7365552192613cd3d631d963b710e7b",
+      "provenance": [
+        {
+          "commit": "8da1ac08e7365552192613cd3d631d963b710e7b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8da1ac08e7365552192613cd3d631d963b710e7b"
         }
       ]
     },
@@ -48351,6 +48455,22 @@
       ]
     },
     {
+      "key": "Commit:c39f5df2ba77f7580ad7ea914660666fe182dd6e",
+      "type": "Commit",
+      "id": "c39f5df2ba77f7580ad7ea914660666fe182dd6e",
+      "label": "Merge whitepaper into main",
+      "title": "Merge whitepaper into main",
+      "date": "2026-08-26T04:20:08-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c39f5df2ba77f7580ad7ea914660666fe182dd6e",
+      "provenance": [
+        {
+          "commit": "c39f5df2ba77f7580ad7ea914660666fe182dd6e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c39f5df2ba77f7580ad7ea914660666fe182dd6e"
+        }
+      ]
+    },
+    {
       "key": "Commit:c3c2668981a24ad2f660defd544f0e6bf261ace3",
       "type": "Commit",
       "id": "c3c2668981a24ad2f660defd544f0e6bf261ace3",
@@ -49131,6 +49251,22 @@
         {
           "commit": "d55353b9bdfdc3298031fae470757f56948d2724",
           "url": "https://github.com/OmertaDev/Omerta/commit/d55353b9bdfdc3298031fae470757f56948d2724"
+        }
+      ]
+    },
+    {
+      "key": "Commit:d5a0cf325d1fe38396828df966227e0b5b29e4af",
+      "type": "Commit",
+      "id": "d5a0cf325d1fe38396828df966227e0b5b29e4af",
+      "label": "Add OMR machine campaign explainer",
+      "title": "Add OMR machine campaign explainer",
+      "date": "2026-08-26T11:59:36-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d5a0cf325d1fe38396828df966227e0b5b29e4af",
+      "provenance": [
+        {
+          "commit": "d5a0cf325d1fe38396828df966227e0b5b29e4af",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d5a0cf325d1fe38396828df966227e0b5b29e4af"
         }
       ]
     },
@@ -56278,6 +56414,22 @@
       ]
     },
     {
+      "key": "Document:docs/OMR-MACHINE-CAMPAIGN.md",
+      "type": "Document",
+      "id": "docs/OMR-MACHINE-CAMPAIGN.md",
+      "label": "docs/OMR-MACHINE-CAMPAIGN.md",
+      "documentType": "documentation",
+      "lines": 249,
+      "version": "9522e273c67ca68c",
+      "provenance": [
+        {
+          "file": "docs/OMR-MACHINE-CAMPAIGN.md",
+          "line": 1,
+          "version": "9522e273c67ca68c"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/OMR-MARKETING-PACK.md",
       "type": "Document",
       "id": "docs/OMR-MARKETING-PACK.md",
@@ -58268,12 +58420,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 647,
-      "version": "3cc9ec07a85615c7",
+      "version": "7434c6561f9e1a94",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "3cc9ec07a85615c7"
+          "version": "7434c6561f9e1a94"
         }
       ]
     },
@@ -59393,7 +59545,13 @@
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
+          "commit": "892587b0463441ef6dda39b94119e9dc588dc83e"
+        },
+        {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
+        },
+        {
+          "commit": "8da1ac08e7365552192613cd3d631d963b710e7b"
         },
         {
           "commit": "bc03455c615ae3f5bab067543fb9c0a5a49f4ae4"
@@ -59438,7 +59596,13 @@
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
+          "commit": "892587b0463441ef6dda39b94119e9dc588dc83e"
+        },
+        {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
+        },
+        {
+          "commit": "8da1ac08e7365552192613cd3d631d963b710e7b"
         },
         {
           "commit": "bc03455c615ae3f5bab067543fb9c0a5a49f4ae4"
@@ -59483,7 +59647,13 @@
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
+          "commit": "892587b0463441ef6dda39b94119e9dc588dc83e"
+        },
+        {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
+        },
+        {
+          "commit": "8da1ac08e7365552192613cd3d631d963b710e7b"
         },
         {
           "commit": "bc03455c615ae3f5bab067543fb9c0a5a49f4ae4"
@@ -59546,7 +59716,13 @@
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
+          "commit": "892587b0463441ef6dda39b94119e9dc588dc83e"
+        },
+        {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
+        },
+        {
+          "commit": "8da1ac08e7365552192613cd3d631d963b710e7b"
         },
         {
           "commit": "bc03455c615ae3f5bab067543fb9c0a5a49f4ae4"
@@ -65315,12 +65491,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "eb103802efdd56ff3cecc0de23709ae337c19fa1",
+      "revision": "d5a0cf325d1fe38396828df966227e0b5b29e4af",
       "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
-      "worktreeDirty": true,
-      "currentArtifactCount": 1558,
+      "worktreeDirty": false,
+      "currentArtifactCount": 1561,
       "provenance": [
         {
           "file": "README.md",
@@ -86700,13 +86876,13 @@
       "type": "TestSuite",
       "id": "test/diagram-renderer.js",
       "label": "test/diagram-renderer.js",
-      "lines": 59,
-      "version": "37f811e480ecd043",
+      "lines": 75,
+      "version": "9eba41c00a18725f",
       "provenance": [
         {
           "file": "test/diagram-renderer.js",
           "line": 1,
-          "version": "37f811e480ecd043"
+          "version": "9eba41c00a18725f"
         }
       ]
     },
@@ -87570,13 +87746,13 @@
       "type": "TestSuite",
       "id": "test/routes.js",
       "label": "test/routes.js",
-      "lines": 456,
-      "version": "3b88350daac8a669",
+      "lines": 457,
+      "version": "5cdffc07f201a85b",
       "provenance": [
         {
           "file": "test/routes.js",
           "line": 1,
-          "version": "3b88350daac8a669"
+          "version": "5cdffc07f201a85b"
         }
       ]
     },
@@ -94599,6 +94775,15 @@
       "to": "Domain:client-experience",
       "provenance": {
         "file": "public/art/omr-05-ohm-contrast.png",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:public/art/omr-06-the-omr-machine-1080x1350.png",
+      "to": "Domain:client-experience",
+      "provenance": {
+        "file": "public/art/omr-06-the-omr-machine-1080x1350.png",
         "line": 1
       }
     },
@@ -141092,6 +141277,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:892587b0463441ef6dda39b94119e9dc588dc83e",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "892587b0463441ef6dda39b94119e9dc588dc83e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:892587b0463441ef6dda39b94119e9dc588dc83e",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "892587b0463441ef6dda39b94119e9dc588dc83e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:892587b0463441ef6dda39b94119e9dc588dc83e",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "892587b0463441ef6dda39b94119e9dc588dc83e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:892587b0463441ef6dda39b94119e9dc588dc83e",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "892587b0463441ef6dda39b94119e9dc588dc83e"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:895d1cecc8dea064a78978467b7f6a5f48ed16a9",
       "to": "Artifact:PRODUCT.md",
       "provenance": {
@@ -141744,6 +141961,46 @@
       "to": "Artifact:test/security.js",
       "provenance": {
         "commit": "8d8701bb5987f9ff51636492e24f09938125e169"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8da1ac08e7365552192613cd3d631d963b710e7b",
+      "to": "Artifact:docs/OMERTA-Whitepaper.docx",
+      "provenance": {
+        "commit": "8da1ac08e7365552192613cd3d631d963b710e7b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8da1ac08e7365552192613cd3d631d963b710e7b",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "8da1ac08e7365552192613cd3d631d963b710e7b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8da1ac08e7365552192613cd3d631d963b710e7b",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "8da1ac08e7365552192613cd3d631d963b710e7b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8da1ac08e7365552192613cd3d631d963b710e7b",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "8da1ac08e7365552192613cd3d631d963b710e7b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8da1ac08e7365552192613cd3d631d963b710e7b",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "8da1ac08e7365552192613cd3d631d963b710e7b"
       }
     },
     {
@@ -157304,6 +157561,78 @@
       "to": "Artifact:test/migrate.js",
       "provenance": {
         "commit": "d55353b9bdfdc3298031fae470757f56948d2724"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d5a0cf325d1fe38396828df966227e0b5b29e4af",
+      "to": "Artifact:docs/diagrams/omr-06-the-omr-machine-1080x1350.excalidraw",
+      "provenance": {
+        "commit": "d5a0cf325d1fe38396828df966227e0b5b29e4af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d5a0cf325d1fe38396828df966227e0b5b29e4af",
+      "to": "Artifact:docs/OMR-MACHINE-CAMPAIGN.md",
+      "provenance": {
+        "commit": "d5a0cf325d1fe38396828df966227e0b5b29e4af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d5a0cf325d1fe38396828df966227e0b5b29e4af",
+      "to": "Artifact:public/art/omr-06-the-omr-machine-1080x1350.png",
+      "provenance": {
+        "commit": "d5a0cf325d1fe38396828df966227e0b5b29e4af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d5a0cf325d1fe38396828df966227e0b5b29e4af",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "d5a0cf325d1fe38396828df966227e0b5b29e4af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d5a0cf325d1fe38396828df966227e0b5b29e4af",
+      "to": "Artifact:public/wiki.html",
+      "provenance": {
+        "commit": "d5a0cf325d1fe38396828df966227e0b5b29e4af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d5a0cf325d1fe38396828df966227e0b5b29e4af",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "d5a0cf325d1fe38396828df966227e0b5b29e4af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d5a0cf325d1fe38396828df966227e0b5b29e4af",
+      "to": "Artifact:test/diagram-renderer.js",
+      "provenance": {
+        "commit": "d5a0cf325d1fe38396828df966227e0b5b29e4af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d5a0cf325d1fe38396828df966227e0b5b29e4af",
+      "to": "Artifact:test/routes.js",
+      "provenance": {
+        "commit": "d5a0cf325d1fe38396828df966227e0b5b29e4af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d5a0cf325d1fe38396828df966227e0b5b29e4af",
+      "to": "Artifact:tools/render-omr-excalidraw.mjs",
+      "provenance": {
+        "commit": "d5a0cf325d1fe38396828df966227e0b5b29e4af"
       }
     },
     {
@@ -174429,6 +174758,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/diagrams/omr-06-the-omr-machine-1080x1350.excalidraw",
+      "provenance": {
+        "file": "docs/diagrams/omr-06-the-omr-machine-1080x1350.excalidraw",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/diagrams/path-gun-1080x1350.excalidraw",
       "provenance": {
         "file": "docs/diagrams/path-gun-1080x1350.excalidraw",
@@ -174612,6 +174950,15 @@
       "to": "Artifact:docs/OMERTA-Whitepaper.docx",
       "provenance": {
         "file": "docs/OMERTA-Whitepaper.docx",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/OMR-MACHINE-CAMPAIGN.md",
+      "provenance": {
+        "file": "docs/OMR-MACHINE-CAMPAIGN.md",
         "line": 1
       }
     },
@@ -182654,6 +183001,15 @@
       "to": "Artifact:public/art/omr-05-ohm-contrast.png",
       "provenance": {
         "file": "public/art/omr-05-ohm-contrast.png",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:public/art/omr-06-the-omr-machine-1080x1350.png",
+      "provenance": {
+        "file": "public/art/omr-06-the-omr-machine-1080x1350.png",
         "line": 1
       }
     },
@@ -204672,6 +205028,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:892587b0463441ef6dda39b94119e9dc588dc83e",
+      "provenance": {
+        "commit": "892587b0463441ef6dda39b94119e9dc588dc83e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:895d1cecc8dea064a78978467b7f6a5f48ed16a9",
       "provenance": {
         "commit": "895d1cecc8dea064a78978467b7f6a5f48ed16a9"
@@ -204803,6 +205167,14 @@
       "to": "Commit:8d8701bb5987f9ff51636492e24f09938125e169",
       "provenance": {
         "commit": "8d8701bb5987f9ff51636492e24f09938125e169"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:8da1ac08e7365552192613cd3d631d963b710e7b",
+      "provenance": {
+        "commit": "8da1ac08e7365552192613cd3d631d963b710e7b"
       }
     },
     {
@@ -206472,6 +206844,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:c39f5df2ba77f7580ad7ea914660666fe182dd6e",
+      "provenance": {
+        "commit": "c39f5df2ba77f7580ad7ea914660666fe182dd6e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:c3c2668981a24ad2f660defd544f0e6bf261ace3",
       "provenance": {
         "commit": "c3c2668981a24ad2f660defd544f0e6bf261ace3"
@@ -206859,6 +207239,14 @@
       "to": "Commit:d55353b9bdfdc3298031fae470757f56948d2724",
       "provenance": {
         "commit": "d55353b9bdfdc3298031fae470757f56948d2724"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:d5a0cf325d1fe38396828df966227e0b5b29e4af",
+      "provenance": {
+        "commit": "d5a0cf325d1fe38396828df966227e0b5b29e4af"
       }
     },
     {
@@ -239069,6 +239457,24 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/OMR-MACHINE-CAMPAIGN.md",
+      "to": "Artifact:docs/diagrams/omr-06-the-omr-machine-1080x1350.excalidraw",
+      "provenance": {
+        "file": "docs/OMR-MACHINE-CAMPAIGN.md",
+        "line": 4
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/OMR-MACHINE-CAMPAIGN.md",
+      "to": "Artifact:public/art/omr-06-the-omr-machine-1080x1350.png",
+      "provenance": {
+        "file": "docs/OMR-MACHINE-CAMPAIGN.md",
+        "line": 3
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/OMR-MARKETING-PACK.md",
       "to": "Artifact:omerta-contracts/src/OmertaBond.sol",
       "provenance": {
@@ -246093,6 +246499,15 @@
       "to": "Artifact:docs/LAUNCH-TWEETS.md",
       "provenance": {
         "file": "docs/LAUNCH-TWEETS.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/OMR-MACHINE-CAMPAIGN.md",
+      "to": "Artifact:docs/OMR-MACHINE-CAMPAIGN.md",
+      "provenance": {
+        "file": "docs/OMR-MACHINE-CAMPAIGN.md",
         "line": 1
       }
     },
