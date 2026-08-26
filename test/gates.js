@@ -1886,49 +1886,157 @@ const SCENERY_WAIVED = {
 // THE CORPUS IS THE `IN (…)` SITES, not the violations — a rule counted by its own violations floors
 // at zero the moment the tree is clean and then measures nothing forever (the ARTICLE LEDGER lesson).
 {
-  const bad = [], inForms = [], scalarLiteralAny = [];
-  // Explore's global-presence query needs a static, indexed membership predicate. These five exact
-  // sites bind sqlTextArray(...) strings, not JavaScript arrays; test/explore.js asserts that at the
-  // query boundary (including quoted/injection-shaped values) while this allowlist stays deliberately
-  // narrow enough that any new ANY site remains banned by default.
-  const exploreScalarLiteralSites = [
-    /AND \(c\.id\s*=\s*ANY\(\$1::text\[\]\) OR c\.account_id\s*=\s*ANY\(\$2::text\[\]\)\)/,
-    /SELECT character_id, gang_id FROM gang_members WHERE character_id\s*=\s*ANY\(\$1::text\[\]\)/,
-    /SELECT account_id, crew_id FROM crew_members WHERE account_id\s*=\s*ANY\(\$1::text\[\]\)/,
-    /FROM digs WHERE character_id=\$1 AND target_account\s*=\s*ANY\(\$2::text\[\]\)/,
-    /WHERE gang_id\s*=\s*ANY\(\$1::text\[\]\)/,
+  const inForms = [];
+  // Each reviewed expression is identified independently by source, SQL statement, indexed column,
+  // and placeholder. The binding is checked from the query CallExpression's params ArrayExpression;
+  // approving one expression can never approve a neighbour that happens to share its source line.
+  const reviewedAny = [
+    { column: 'c.id', param: 1, sql: /FROM characters c JOIN account_persistent ap/i },
+    { column: 'c.account_id', param: 2, sql: /FROM characters c JOIN account_persistent ap/i },
+    { column: 'character_id', param: 1, sql: /SELECT character_id, gang_id FROM gang_members/i },
+    { column: 'account_id', param: 1, sql: /SELECT account_id, crew_id FROM crew_members/i },
+    { column: 'target_account', param: 2, sql: /FROM digs WHERE character_id=\$1/i },
+    { column: 'gang_id', param: 1, sql: /SELECT gang_id, COUNT\(\*\) n FROM gang_members/i },
   ];
+  const unwrap = (node) => {
+    while (node && (node.type === 'ChainExpression' || node.type === 'ParenthesizedExpression'))
+      node = node.expression;
+    return node;
+  };
+  const isQueryCall = (node) => {
+    const callee = unwrap(node?.callee);
+    if (callee?.type !== 'MemberExpression') return false;
+    if (!callee.computed) return callee.property?.type === 'Identifier' && callee.property.name === 'query';
+    const property = unwrap(callee.property);
+    return property?.type === 'Literal' && property.value === 'query';
+  };
+  const staticText = (node) => {
+    if (node?.type === 'Literal' && typeof node.value === 'string') return node.value;
+    if (node?.type === 'TemplateLiteral' && node.expressions.length === 0)
+      return node.quasis.map((part) => part.value.cooked ?? part.value.raw).join('');
+    return null;
+  };
+  const boundBySqlTextArray = (params, param) => {
+    const binding = unwrap(params?.type === 'ArrayExpression' ? params.elements[param - 1] : null);
+    const callee = unwrap(binding?.type === 'CallExpression' ? binding.callee : null);
+    return callee?.type === 'Identifier' && callee.name === 'sqlTextArray';
+  };
+  const collectAny = (source, sourceName = '<fixture>') => {
+    const ast = parse(source, { ecmaVersion: 'latest', sourceType: 'module', locations: true });
+    const usages = [];
+    const visit = (node, parent = null) => {
+      if (!node || typeof node !== 'object') return;
+      if (node.type === 'Literal' || node.type === 'TemplateLiteral') {
+        const text = staticText(node) ?? (node.type === 'TemplateLiteral'
+          ? node.quasis.map((part) => part.value.cooked ?? part.value.raw).join('<?>') : null);
+        if (text) {
+          const call = parent?.type === 'CallExpression' && parent.arguments[0] === node && isQueryCall(parent)
+            ? parent : null;
+          const expression = /=\s*ANY\s*\(\s*([^)]*?)\s*\)/gi;
+          let match;
+          while ((match = expression.exec(text))) {
+            const before = text.slice(0, match.index);
+            const column = before.match(/([A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)?)\s*$/)?.[1]
+              || '<expression>';
+            const placeholder = match[1].match(/^\$(\d+)(?:\s*::[A-Za-z_][A-Za-z0-9_]*(?:\[\])?)?$/);
+            const param = placeholder ? Number(placeholder[1]) : null;
+            usages.push({ source: sourceName, line: node.loc?.start.line || 0, sql: text, column, param,
+              scalarLiteral: !!call && !!param && boundBySqlTextArray(call.arguments[1], param) });
+          }
+        }
+      }
+      for (const value of Object.values(node)) {
+        if (Array.isArray(value)) {
+          for (const child of value) if (child?.type) visit(child, node);
+        } else if (value?.type) visit(value, node);
+      }
+    };
+    visit(ast);
+    return usages;
+  };
+  const classifyAny = (usages, { complete = false } = {}) => {
+    const seen = new Set(), bad = [], approved = [];
+    for (const usage of usages) {
+      const matches = reviewedAny.map((site, index) => ({ site, index })).filter(({ site }) =>
+        usage.source === 'explore.js' && usage.column === site.column && usage.param === site.param
+          && site.sql.test(usage.sql));
+      if (matches.length !== 1) {
+        bad.push(`${usage.source}:${usage.line} unreviewed ${usage.column}=ANY($${usage.param || '?'})`);
+        continue;
+      }
+      const [{ index }] = matches;
+      if (!usage.scalarLiteral) {
+        bad.push(`${usage.source}:${usage.line} ${usage.column}=ANY($${usage.param}) is not bound by sqlTextArray(...)`);
+        continue;
+      }
+      if (seen.has(index)) {
+        bad.push(`${usage.source}:${usage.line} duplicates reviewed occurrence ${usage.column}=ANY($${usage.param})`);
+        continue;
+      }
+      seen.add(index);
+      approved.push(usage);
+    }
+    if (complete) for (const [index, site] of reviewedAny.entries()) if (!seen.has(index))
+      bad.push(`explore.js missing reviewed occurrence ${site.column}=ANY($${site.param})`);
+    return { accepted: bad.length === 0, approved, bad };
+  };
+  const anyGuardAccepts = (source) => classifyAny(collectAny(source, 'explore.js')).accepted;
+  const anyGuardCases = [
+    {
+      name: 'reviewed scalar literal',
+      source: "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [sqlTextArray(ids)])",
+      accepted: true,
+    },
+    {
+      name: 'same-line extra ANY',
+      source: "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[]) OR role = ANY($2::text[])', [sqlTextArray(ids), ids])",
+      accepted: false,
+    },
+    {
+      name: 'multiline extra ANY',
+      source: `db.query(\`SELECT character_id, gang_id FROM gang_members
+        WHERE character_id = ANY($1::text[])
+           OR role = ANY($2::text[])\`, [sqlTextArray(ids), ids])`,
+      accepted: false,
+    },
+    {
+      name: 'duplicate reviewed occurrence',
+      source: "db.query('SELECT character_id FROM gang_members WHERE character_id = ANY($1::text[]) OR character_id = ANY($1::text[])', [sqlTextArray(ids)])",
+      accepted: false,
+    },
+    {
+      name: 'JavaScript array at a reviewed placeholder',
+      source: "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [ids])",
+      accepted: false,
+    },
+  ];
+  for (const fixture of anyGuardCases)
+    assert.equal(anyGuardAccepts(fixture.source), fixture.accepted, `${fixture.name} is classified per ANY occurrence and binding`);
   const files = [];
   const walk = (d) => { for (const e of fs.readdirSync(d)) {
     const q = path.join(d, e);
     if (fs.statSync(q).isDirectory()) walk(q); else if (q.endsWith('.js')) files.push(q);
   } };
   walk(SRC);
+  const usages = [];
   for (const f of files) {
-    // comments are STRIPPED first: the rule is cited by name in fifteen comments across src/ (that is
-    // how well known it is and how unenforced it was), and a scanner that reads prose reports every one
-    // of them as a violation — a mostly-wrong advisory is one people route around.
-    const txt = fs.readFileSync(f, 'utf8').split(/\r?\n/).map((l) => l.replace(/\/\/.*$/, '')).join('\n');
-    txt.split('\n').forEach((line, i) => {
-      if (/=\s*ANY\(\$\d/.test(line)) {
-        const isExploreScalarLiteral = path.relative(SRC, f).replace(/\\/g, '/') === 'explore.js'
-          && exploreScalarLiteralSites.some((pattern) => pattern.test(line));
-        if (isExploreScalarLiteral) scalarLiteralAny.push(`${f}:${i + 1}`);
-        else bad.push(`${f}:${i + 1}  ${line.trim().slice(0, 90)}`);
-      }
+    const source = fs.readFileSync(f, 'utf8');
+    usages.push(...collectAny(source, path.relative(SRC, f).replace(/\\/g, '/')));
+    const txt = source.split(/\r?\n/).map((line) => line.replace(/\/\/.*$/, '')).join('\n');
+    txt.split('\n').forEach((line) => {
       if (/IN \(\$\d|IN \(\$\{/.test(line)) inForms.push(f);
     });
   }
+  const classified = classifyAny(usages, { complete: true });
   assert(inForms.length >= 20, `THE JS-ARRAY ANY BAN sees only ${inForms.length} IN(…) sites — the `
     + 'extractor has stopped reading src/, and a sweep that reaches nothing reads exactly like a clean tree');
-  assert.equal(scalarLiteralAny.length, exploreScalarLiteralSites.length,
-    'Explore must retain exactly five reviewed scalar-literal ANY sites; add no blanket ANY waiver');
-  assert.deepEqual(bad, [], 'a query binds a JS array to ANY($n). pg-mem returns ZERO rows for that '
-    + 'shape, silently, so the suites pass over a query that found nothing — and it only shows up once '
-    + 'the filtered column gets an index. Use IN ($1,$2) (fixed arity) or a generated placeholder list:\n   - '
-    + bad.join('\n   - '));
-  console.log(`  ✓ no query binds a JS array to ANY($n); ${scalarLiteralAny.length} exact scalar-literal `
-    + `sites and ${inForms.length} IN(…) sites govern the rule`);
+  assert.deepEqual(classified.bad, [], 'each ANY expression must be an exact reviewed Explore occurrence '
+    + 'whose own placeholder is bound by sqlTextArray(...); same-line neighbours receive no waiver:\n   - '
+    + classified.bad.join('\n   - '));
+  assert.equal(classified.approved.length, reviewedAny.length,
+    'Explore must retain exactly six reviewed scalar-literal ANY expressions across five statements');
+  console.log(`  ✓ no query binds a JS array to ANY($n); ${classified.approved.length} exact scalar-literal `
+    + `expressions and ${inForms.length} IN(…) sites govern the rule`);
 }
 
 }

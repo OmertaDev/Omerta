@@ -4,6 +4,7 @@
 // telemetry reads, lost account-history evidence, dishonest eligibility, or a read that moves value.
 import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
+import { dbCaps, makeDb } from '../src/db.js';
 import * as Engagement from '../src/engagement.js';
 import * as Explore from '../src/explore.js';
 import { convoyBoard as liveConvoyBoard } from '../src/convoy.js';
@@ -928,26 +929,32 @@ const scaleCases = [
   { size: 4_350, gangs: true, expectedSocialQueries: 6, injectionHint: null },
 ];
 const scaleResults = [];
-for (const fixture of scaleCases) {
-  const scaled = scaledSocialDb(fixture.size, fixture);
-  const board = await Explore.exploreBoard(scaled.db, ch(30, { cash: 10_000 }), acct(), owned(), {
-    onlineAccounts: scaled.onlineAccounts,
-  });
-  const socialQueries = scaled.socialQueries();
-  assertIndexedSocialSql(socialQueries);
-  scaleResults.push(socialQueries.length);
-  assert.equal(board.next?.systemId, 'contracts',
-    `${fixture.size} visible humans preserve the authoritative social operation`);
-  assert.equal(Object.hasOwn(board, 'socialTargets'), false,
-    'internal social target enrichment never enters the Explore payload');
-  assert.equal(Object.hasOwn(board, 'joinableFamilyIds'), false,
-    'internal family reachability never enters the Explore payload');
-  if (fixture.injectionHint) {
-    assert.ok(socialQueries.every(({ sql }) => !sql.includes(fixture.injectionHint)),
-      'presence identifiers remain bound data, never SQL text');
-    assert.ok(socialQueries.some(({ params }) => params.some((value) => String(value).includes(fixture.injectionHint))),
-      'the injection-shaped hint reaches the database only through a bound parameter');
+const priorIndexedTextArrayAny = dbCaps.indexedTextArrayAny;
+dbCaps.indexedTextArrayAny = true;
+try {
+  for (const fixture of scaleCases) {
+    const scaled = scaledSocialDb(fixture.size, fixture);
+    const board = await Explore.exploreBoard(scaled.db, ch(30, { cash: 10_000 }), acct(), owned(), {
+      onlineAccounts: scaled.onlineAccounts,
+    });
+    const socialQueries = scaled.socialQueries();
+    assertIndexedSocialSql(socialQueries);
+    scaleResults.push(socialQueries.length);
+    assert.equal(board.next?.systemId, 'contracts',
+      `${fixture.size} visible humans preserve the authoritative social operation`);
+    assert.equal(Object.hasOwn(board, 'socialTargets'), false,
+      'internal social target enrichment never enters the Explore payload');
+    assert.equal(Object.hasOwn(board, 'joinableFamilyIds'), false,
+      'internal family reachability never enters the Explore payload');
+    if (fixture.injectionHint) {
+      assert.ok(socialQueries.every(({ sql }) => !sql.includes(fixture.injectionHint)),
+        'presence identifiers remain bound data, never SQL text');
+      assert.ok(socialQueries.some(({ params }) => params.some((value) => String(value).includes(fixture.injectionHint))),
+        'the injection-shaped hint reaches the database only through a bound parameter');
+    }
   }
+} finally {
+  dbCaps.indexedTextArrayAny = priorIndexedTextArrayAny;
 }
 assert.deepEqual(scaleResults, scaleCases.map((fixture) => fixture.expectedSocialQueries),
   'social eligibility SQL stays set-oriented and constant-round-trip at 101 and 4,350 visible users');
@@ -958,6 +965,69 @@ const emptyScaleBoard = await Explore.exploreBoard(emptyScaled.db, ch(30, { cash
 });
 assert.equal(emptyScaleBoard.next, null, 'empty presence preserves an empty authoritative social slice');
 assert.equal(emptyScaled.socialQueries().length, 0, 'empty presence performs no social enrichment SQL');
+
+// This must be a real pg-mem execution, not another SQL-aware fake: pg-mem changes `= ANY($n)`
+// semantics when the filtered TEXT column has a B-tree index. The production schema supplies all of
+// those indexes, and putting both targets in families forces every set-valued social query to run.
+const indexedMem = await makeDb();
+try {
+  const indexedTargets = [
+    { accountId: 'indexed-account-one', characterId: 'indexed-character-one', name: 'Indexed One' },
+    { accountId: 'indexed-account-two,brace{"value}\\slash',
+      characterId: 'indexed-character-two,brace{"value}\\slash', name: 'Indexed Two' },
+  ];
+  for (const identity of [{ accountId: 'acct-me', characterId: 'char-me', name: 'Indexed Self' },
+    ...indexedTargets]) {
+    await indexedMem.query('INSERT INTO accounts (id, auth_provider, auth_subject) VALUES ($1,$2,$3)',
+      [identity.accountId, 'guest', identity.accountId]);
+    await indexedMem.query('INSERT INTO account_persistent (account_id) VALUES ($1)', [identity.accountId]);
+    await indexedMem.query(
+      'INSERT INTO characters (id, account_id, name, respect, season) VALUES ($1,$2,$3,$4,1)',
+      [identity.characterId, identity.accountId, identity.name, respectForLevel(30)]);
+  }
+  for (const [index, identity] of indexedTargets.entries()) {
+    await indexedMem.query('INSERT INTO gang_members (gang_id, character_id) VALUES ($1,$2)',
+      [`indexed-gang-${index}`, identity.characterId]);
+    await indexedMem.query('INSERT INTO crew_members (crew_id, account_id, name) VALUES ($1,$2,$3)',
+      [`indexed-crew-${index}`, identity.accountId, identity.name]);
+    await indexedMem.query('INSERT INTO digs (character_id, target_account) VALUES ($1,$2)',
+      ['char-me', identity.accountId]);
+  }
+  for (const [index, { event }] of eventsExcept('contracts').entries()) {
+    await indexedMem.query('INSERT INTO telemetry (id, account_id, event, props) VALUES ($1,$2,$3,$4)',
+      [`indexed-telemetry-${index}`, 'acct-me', event, '{}']);
+  }
+  const actualSocialSql = [];
+  const indexedMemObserved = { async query(sql, params) {
+    const result = await indexedMem.query(sql, params);
+    if (/FROM characters c JOIN account_persistent ap|FROM gang_members|FROM crew_members|FROM secrets|FROM digs/i.test(sql))
+      actualSocialSql.push({ sql, params, rows: result.rows });
+    return result;
+  } };
+  const indexedBoard = await Explore.exploreBoard(indexedMemObserved,
+    ch(30, { cash: 10_000 }), acct(), owned(), { onlineAccounts: indexedTargets });
+  assert.equal(indexedBoard.next?.systemId, 'contracts',
+    'indexed pg-mem executes the real social SQL and finds both reachable human targets');
+  assert.equal(actualSocialSql.length, 6,
+    'the real indexed pg-mem path executes the same bounded six social queries as PostgreSQL');
+  const rowsFor = (pattern) => actualSocialSql.find(({ sql }) => pattern.test(sql))?.rows || [];
+  assert.deepEqual(rowsFor(/FROM characters c JOIN account_persistent ap/i).map((row) => row.id).sort(),
+    indexedTargets.map((row) => row.characterId).sort(),
+    'indexed pg-mem returns both exact human character rows rather than an inferred non-empty result');
+  assert.equal(rowsFor(/SELECT character_id, gang_id FROM gang_members/i).length, 2,
+    'indexed pg-mem executes the real family membership query for both humans');
+  assert.equal(rowsFor(/SELECT account_id, crew_id FROM crew_members/i).length, 2,
+    'indexed pg-mem executes the real crew membership query for both humans');
+  assert.equal(rowsFor(/FROM digs WHERE character_id/i).length, 2,
+    'indexed pg-mem executes the real dig-cooldown query for both humans');
+  assert.equal(rowsFor(/SELECT gang_id, COUNT\(\*\) n FROM gang_members/i).length, 2,
+    'indexed pg-mem executes the real family-count query for both families');
+  assert.ok(actualSocialSql.filter(({ sql }) => /::text\[\]/i.test(sql))
+    .every(({ sql }) => !/=\s*ANY\s*\(/i.test(sql)),
+  'the pg-mem capability selects only the portable static overlap expressions');
+} finally {
+  await indexedMem.end();
+}
 
 // Route integration: account telemetry changes the recommendation, the response never becomes a grid,
 // and repeated reads append no economic ledger rows.

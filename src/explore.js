@@ -13,6 +13,7 @@ import {
   opSlotsOf, penSafe, rarityIdx, safeHoused, weekOf, witproActive,
 } from './rules.js';
 import { npcTier, trunkCap } from './game.js';
+import { dbCaps } from './db.js';
 import { seatedGangs } from './commission.js';
 import { convoyBoard } from './convoy.js';
 import { clueBoard } from './clues.js';
@@ -36,9 +37,10 @@ import { wireBoard } from './wire.js';
 import { worldBoard } from './world.js';
 
 const num = (value) => Number(value || 0);
-// pg-mem silently misses indexed `= ANY($1)` when pg binds a JavaScript array. A scalar Postgres
-// array literal keeps the statement static/preparable and evaluates correctly on both engines; every
-// element is quoted and the two array metacharacters are escaped before the whole value is bound.
+// Every element is quoted and the two Postgres-array metacharacters are escaped before the whole
+// value is bound. Real Postgres uses this with indexed `column = ANY($n)`; pg-mem returns zero for
+// that indexed shape even with a scalar literal, so scopedSocialContext selects its portable overlap
+// equivalent only when db.js explicitly reports the in-memory engine.
 const sqlTextArray = (values) => `{${values.map((value) =>
   `"${String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`).join(',')}}`;
 const mastery = (owned, id) => num(owned?.mastery?.[id]);
@@ -642,26 +644,37 @@ async function scopedSocialContext(db, ch, onlineAccounts) {
   const accountIds = [...new Set(visible.map((row) => typeof row === 'string' ? row : targetAccount(row)).filter(Boolean))];
   if (!charIds.length && !accountIds.length) return { socialTargets: [], joinableFamilyIds: [] };
 
-  const characters = (await db.query(
+  const characters = (dbCaps.indexedTextArrayAny ? await db.query(
     `SELECT c.id, c.account_id, c.respect, c.cash, c.jail_until, c.hosp_until, c.witpro_until,
             c.pen_safe_until, c.hole_until, c.duel_limit, c.wanted_until, ap.rat
        FROM characters c JOIN account_persistent ap ON ap.account_id=c.account_id
       WHERE c.alive AND NOT c.is_npc AND NOT ap.agent_flag
         AND (c.id = ANY($1::text[]) OR c.account_id = ANY($2::text[]))`,
-    [sqlTextArray(charIds), sqlTextArray(accountIds)])).rows;
+    [sqlTextArray(charIds), sqlTextArray(accountIds)])
+    : await db.query(
+      `SELECT c.id, c.account_id, c.respect, c.cash, c.jail_until, c.hosp_until, c.witpro_until,
+              c.pen_safe_until, c.hole_until, c.duel_limit, c.wanted_until, ap.rat
+        FROM characters c JOIN account_persistent ap ON ap.account_id=c.account_id
+        WHERE c.alive AND NOT c.is_npc AND NOT ap.agent_flag
+          AND ($1::text[] && ARRAY[c.id] OR $2::text[] && ARRAY[c.account_id])`,
+      [sqlTextArray(charIds), sqlTextArray(accountIds)])).rows;
   if (!characters.length) return { socialTargets: [], joinableFamilyIds: [] };
   const ids = characters.map((row) => row.id);
   const accounts = characters.map((row) => row.account_id);
-  const gangRows = await db.query(
-    'SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])',
-    [sqlTextArray(ids)]);
-  const crewRows = await db.query(
-    'SELECT account_id, crew_id FROM crew_members WHERE account_id = ANY($1::text[])',
-    [sqlTextArray(accounts)]);
+  const gangRows = dbCaps.indexedTextArrayAny ? await db.query(
+    'SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [sqlTextArray(ids)])
+    : await db.query('SELECT character_id, gang_id FROM gang_members WHERE $1::text[] && ARRAY[character_id]',
+      [sqlTextArray(ids)]);
+  const crewRows = dbCaps.indexedTextArrayAny ? await db.query(
+    'SELECT account_id, crew_id FROM crew_members WHERE account_id = ANY($1::text[])', [sqlTextArray(accounts)])
+    : await db.query('SELECT account_id, crew_id FROM crew_members WHERE $1::text[] && ARRAY[account_id]',
+      [sqlTextArray(accounts)]);
   const heldRows = await db.query(
     'SELECT target_account FROM secrets WHERE holder_character=$1 AND expires_at > now()', [ch.id]);
-  const digRows = await db.query(
+  const digRows = dbCaps.indexedTextArrayAny ? await db.query(
     'SELECT target_account, at FROM digs WHERE character_id=$1 AND target_account = ANY($2::text[])',
+    [ch.id, sqlTextArray(accounts)]) : await db.query(
+    'SELECT target_account, at FROM digs WHERE character_id=$1 AND $2::text[] && ARRAY[target_account]',
     [ch.id, sqlTextArray(accounts)]);
   const gangByCharacter = new Map(gangRows.rows.map((row) => [row.character_id, row.gang_id]));
   const crewByAccount = new Map(crewRows.rows.map((row) => [row.account_id, row.crew_id]));
@@ -670,9 +683,12 @@ async function scopedSocialContext(db, ch, onlineAccounts) {
   const gangIds = [...new Set(gangRows.rows.map((row) => row.gang_id).filter(Boolean))];
   let joinableFamilyIds = [];
   if (gangIds.length) {
-    const counts = (await db.query(
+    const counts = (dbCaps.indexedTextArrayAny ? await db.query(
       `SELECT gang_id, COUNT(*) n FROM gang_members
         WHERE gang_id = ANY($1::text[])
+        GROUP BY gang_id`, [sqlTextArray(gangIds)]) : await db.query(
+      `SELECT gang_id, COUNT(*) n FROM gang_members
+        WHERE $1::text[] && ARRAY[gang_id]
         GROUP BY gang_id`, [sqlTextArray(gangIds)])).rows;
     const byGang = new Map(counts.map((row) => [row.gang_id, num(row.n)]));
     joinableFamilyIds = gangIds.filter((id) => num(byGang.get(id)) < M3.GANG_MAX_MEMBERS);
