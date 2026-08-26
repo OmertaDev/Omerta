@@ -19,9 +19,18 @@ abstract contract SettlementGasPoolTestBase is Test {
     SettlementGasPool internal pool;
 
     function setUp() public virtual {
-        pool = new SettlementGasPool(safe, vault, address(0), OVERHEAD_GAS, PRIORITY_CAP, SETTLEMENT_CAP, 0);
+        pool = deployPool(address(0), PRIORITY_CAP, SETTLEMENT_CAP);
         vm.deal(sponsor, 100 ether);
         vm.deal(vault, 1 ether);
+    }
+
+    function deployPool(address predecessor_, uint128 priorityFeeCapWei, uint128 perSettlementWeiCap)
+        internal
+        returns (SettlementGasPool deployed)
+    {
+        deployed = new SettlementGasPool(
+            safe, vault, predecessor_, OVERHEAD_GAS, priorityFeeCapWei, perSettlementWeiCap, 0
+        );
     }
 
     function request(uint256 measuredGas) internal view returns (SettlementGasPool.CreditRequest memory) {

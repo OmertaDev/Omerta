@@ -7,6 +7,16 @@ import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {ISettlementDataFeeSource} from "./interfaces/ISettlementDataFeeSource.sol";
 
+interface ISettlementGasPoolMigrationCandidate {
+    function version() external view returns (bytes32);
+    function supportedChainId() external view returns (uint256);
+    function gameplayVault() external view returns (address);
+    function predecessor() external view returns (address);
+    function owner() external view returns (address);
+    function paused() external view returns (bool);
+    function acceptMigration(bytes32 migrationProposalId) external payable;
+}
+
 /// @title SettlementGasPool
 /// @notice Community-funded native-gas credits for successful gameplay settlements.
 /// @dev Credits are exact pull-payment liabilities. The immutable gameplay vault records them;
@@ -68,6 +78,19 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
         bool cancelled;
     }
 
+    struct MigrationProposal {
+        bytes32 id;
+        address successor;
+        bytes32 successorRuntimeCodeHash;
+        uint256 amount;
+        bytes32 reasonHash;
+        uint64 proposedAt;
+        uint64 executableAt;
+        uint64 expiresAt;
+        bool executed;
+        bool cancelled;
+    }
+
     uint64 public constant CONFIG_DELAY = 48 hours;
     uint64 public constant PROPOSAL_EXECUTION_WINDOW = 7 days;
     uint256 private constant DATA_FEE_SOURCE_CALL_GAS = 30_000;
@@ -79,10 +102,13 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
     uint64 public immutable auditedOverheadGas;
 
     Config public config;
+    address public successor;
     bool public retired;
     uint256 private proposalNonce;
+    uint256 private migrationProposalNonce;
     bytes32 private liveConfigProposalId;
     mapping(bytes32 proposalId => ConfigProposal proposal) private configProposals;
+    mapping(bytes32 proposalId => MigrationProposal proposal) private migrationProposals;
     mapping(bytes32 settlement => bool processed) public processedSettlements;
     mapping(address executor => uint256 amount) public credits;
     uint256 public totalCreditsRecorded;
@@ -113,6 +139,11 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
     error ProposalNotCancellable();
     error ProposalNotExecutable();
     error BaseConfigChanged();
+    error InsufficientUnreservedBalance();
+    error InvalidMigrationSuccessor();
+    error SuccessorCodeHashMismatch();
+    error SuccessorAlreadyLatched();
+    error NotPredecessor();
 
     event ContributionReceived(
         address indexed contributor,
@@ -176,6 +207,33 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
         uint64 expiresAt,
         uint64 executedAt
     );
+    event MigrationProposalCreated(
+        bytes32 indexed proposalId,
+        address indexed successor,
+        bytes32 indexed successorRuntimeCodeHash,
+        uint256 amount,
+        bytes32 reasonHash,
+        uint64 proposedAt,
+        uint64 executableAt,
+        uint64 expiresAt
+    );
+    event MigrationProposalCancelled(bytes32 indexed proposalId);
+    event MigrationExecuted(
+        bytes32 indexed proposalId,
+        address indexed successor,
+        uint256 amount,
+        uint64 proposedAt,
+        uint64 executableAt,
+        uint64 expiresAt,
+        uint64 executedAt
+    );
+    event MigrationReceived(
+        bytes32 indexed proposalId,
+        address indexed predecessor,
+        uint256 amount,
+        uint256 poolBalance,
+        uint256 unreservedBalance
+    );
 
     constructor(
         address safeOwner,
@@ -212,6 +270,13 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
 
     function contribute(bytes32 memo) external payable {
         _recordContribution(memo);
+    }
+
+    function acceptMigration(bytes32 migrationProposalId) external payable {
+        if (predecessor == address(0)) revert InvalidPredecessor();
+        if (msg.sender != predecessor) revert NotPredecessor();
+        if (msg.value == 0) revert ZeroValue();
+        emit MigrationReceived(migrationProposalId, msg.sender, msg.value, address(this).balance, unreservedBalance());
     }
 
     function recordSettlementCredit(CreditRequest calldata request)
@@ -321,6 +386,7 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
         external
         onlyOwner
     {
+        if (retired) revert PoolRetired();
         Config memory oldConfig = config;
         if (
             priorityFeeCapWei > oldConfig.priorityFeeCapWei || perSettlementWeiCap > oldConfig.perSettlementWeiCap
@@ -387,6 +453,7 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
     }
 
     function executeConfigProposal(bytes32 proposalId) external onlyOwner {
+        if (retired) revert PoolRetired();
         if (configProposalState(proposalId) != ProposalState.EXECUTABLE) revert ProposalNotExecutable();
 
         ConfigProposal storage proposal = configProposals[proposalId];
@@ -425,6 +492,100 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
         return ProposalState.EXECUTABLE;
     }
 
+    function proposeMigration(address successor_, uint256 amount, bytes32 reasonHash)
+        external
+        onlyOwner
+        returns (bytes32 proposalId)
+    {
+        if (amount == 0) revert ZeroValue();
+        if (reasonHash == bytes32(0)) revert ZeroReason();
+        if (amount > unreservedBalance()) revert InsufficientUnreservedBalance();
+        _validateMigrationSuccessor(successor_);
+
+        bytes32 successorRuntimeCodeHash = successor_.codehash;
+        uint64 proposedAt = uint64(block.timestamp);
+        uint64 executableAt = proposedAt + CONFIG_DELAY;
+        uint64 expiresAt = executableAt + PROPOSAL_EXECUTION_WINDOW;
+        proposalId = _deriveMigrationProposalId(
+            ++migrationProposalNonce,
+            successor_,
+            successorRuntimeCodeHash,
+            amount,
+            reasonHash,
+            proposedAt,
+            executableAt,
+            expiresAt
+        );
+
+        migrationProposals[proposalId] = MigrationProposal({
+            id: proposalId,
+            successor: successor_,
+            successorRuntimeCodeHash: successorRuntimeCodeHash,
+            amount: amount,
+            reasonHash: reasonHash,
+            proposedAt: proposedAt,
+            executableAt: executableAt,
+            expiresAt: expiresAt,
+            executed: false,
+            cancelled: false
+        });
+
+        emit MigrationProposalCreated(
+            proposalId, successor_, successorRuntimeCodeHash, amount, reasonHash, proposedAt, executableAt, expiresAt
+        );
+    }
+
+    function cancelMigrationProposal(bytes32 proposalId) external onlyOwner {
+        ProposalState state = migrationProposalState(proposalId);
+        if (state != ProposalState.WAITING && state != ProposalState.EXECUTABLE) {
+            revert ProposalNotCancellable();
+        }
+        migrationProposals[proposalId].cancelled = true;
+        emit MigrationProposalCancelled(proposalId);
+    }
+
+    function executeMigration(bytes32 proposalId) external onlyOwner nonReentrant {
+        if (migrationProposalState(proposalId) != ProposalState.EXECUTABLE) revert ProposalNotExecutable();
+
+        MigrationProposal storage proposal = migrationProposals[proposalId];
+        if (proposal.amount > unreservedBalance()) revert InsufficientUnreservedBalance();
+        if (proposal.successor.code.length == 0 || proposal.successor.codehash != proposal.successorRuntimeCodeHash) {
+            revert SuccessorCodeHashMismatch();
+        }
+        _validateMigrationSuccessor(proposal.successor);
+
+        proposal.executed = true;
+        if (successor == address(0)) successor = proposal.successor;
+        retired = true;
+        if (!paused()) _pause();
+
+        ISettlementGasPoolMigrationCandidate(proposal.successor).acceptMigration{value: proposal.amount}(proposalId);
+
+        emit MigrationExecuted(
+            proposalId,
+            proposal.successor,
+            proposal.amount,
+            proposal.proposedAt,
+            proposal.executableAt,
+            proposal.expiresAt,
+            uint64(block.timestamp)
+        );
+    }
+
+    function getMigrationProposal(bytes32 proposalId) external view returns (MigrationProposal memory) {
+        return migrationProposals[proposalId];
+    }
+
+    function migrationProposalState(bytes32 proposalId) public view returns (ProposalState) {
+        MigrationProposal storage proposal = migrationProposals[proposalId];
+        if (proposal.id == bytes32(0)) return ProposalState.NONE;
+        if (proposal.executed) return ProposalState.EXECUTED;
+        if (proposal.cancelled) return ProposalState.CANCELLED;
+        if (block.timestamp < proposal.executableAt) return ProposalState.WAITING;
+        if (block.timestamp > proposal.expiresAt) return ProposalState.EXPIRED;
+        return ProposalState.EXECUTABLE;
+    }
+
     function version() public pure returns (bytes32) {
         return keccak256("OMERTA_SETTLEMENT_GAS_POOL_V1");
     }
@@ -444,6 +605,11 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
         view
         returns (CreditCalculation memory calculation)
     {
+        if (retired) {
+            calculation.status = CreditStatus.ZERO_RETIRED;
+            return calculation;
+        }
+
         uint256 perSettlementCap = config.perSettlementWeiCap;
         calculation.billableGas = _addCapped(measuredSettlementGas, auditedOverheadGas, type(uint256).max);
         uint256 baseAndPriority = _addCapped(block.basefee, config.priorityFeeCapWei, type(uint256).max);
@@ -455,10 +621,6 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
             _addCapped(calculation.verifiedGasCost, calculation.approvedDataFee, perSettlementCap);
         calculation.available = unreservedBalance();
 
-        if (retired) {
-            calculation.status = CreditStatus.ZERO_RETIRED;
-            return calculation;
-        }
         if (paused()) {
             calculation.status = CreditStatus.ZERO_PAUSED;
             return calculation;
@@ -571,6 +733,48 @@ contract SettlementGasPool is Ownable2Step, Pausable, ReentrancyGuard {
                 nextConfigHash,
                 reasonHash,
                 block.timestamp
+            )
+        );
+    }
+
+    function _validateMigrationSuccessor(address candidateAddress) private view {
+        address latchedSuccessor = successor;
+        if (latchedSuccessor != address(0) && candidateAddress != latchedSuccessor) {
+            revert SuccessorAlreadyLatched();
+        }
+        if (candidateAddress.code.length == 0) revert InvalidMigrationSuccessor();
+
+        ISettlementGasPoolMigrationCandidate candidate = ISettlementGasPoolMigrationCandidate(candidateAddress);
+        if (
+            candidate.version() != version() || candidate.supportedChainId() != supportedChainId
+                || candidate.gameplayVault() != gameplayVault || candidate.predecessor() != address(this)
+                || candidate.owner() != owner() || !candidate.paused()
+        ) revert InvalidMigrationSuccessor();
+    }
+
+    function _deriveMigrationProposalId(
+        uint256 nonce,
+        address successor_,
+        bytes32 successorRuntimeCodeHash,
+        uint256 amount,
+        bytes32 reasonHash,
+        uint64 proposedAt,
+        uint64 executableAt,
+        uint64 expiresAt
+    ) private view returns (bytes32) {
+        return keccak256(
+            abi.encode(
+                "OMERTA_SETTLEMENT_GAS_POOL_MIGRATION_V1",
+                supportedChainId,
+                address(this),
+                nonce,
+                successor_,
+                successorRuntimeCodeHash,
+                amount,
+                reasonHash,
+                proposedAt,
+                executableAt,
+                expiresAt
             )
         );
     }
