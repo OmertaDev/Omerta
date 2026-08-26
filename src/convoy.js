@@ -554,7 +554,10 @@ export async function convoyBoard(pool, characterId, actor = null) {
       nextArmorCost: Number(rigRow.armor_lvl || 0) < CONVOY.RIG_UPGRADE_MAX ? rigUpgradeCost(cfg, Number(rigRow.armor_lvl || 0)) : null,
       nextEngineCost: Number(rigRow.engine_lvl || 0) < CONVOY.RIG_UPGRADE_MAX ? rigUpgradeCost(cfg, Number(rigRow.engine_lvl || 0)) : null };
   }
-  const [roadBoss, teamsterOfWeek] = await Promise.all([topWeek(pool, 'hijack'), topWeek(pool, 'deliver')]);
+  // convoyBoard is also called with Agent Turn's transaction client, despite this parameter's
+  // historical `pool` name. One physical connection cannot run both contest reads concurrently.
+  const roadBoss = await topWeek(pool, 'hijack');
+  const teamsterOfWeek = await topWeek(pool, 'deliver');
   const delivered = Number(acct.freight_delivered || 0), hijacked = Number(acct.freight_hijacked || 0);
   // TIER C — the hauler's reputation + this shipment's LANE heat (so the player can see a lane going hot
   // and rotate). The heat sheds guard def on THIS lane; reputation manages it (cools/quiets) + halves the toll.

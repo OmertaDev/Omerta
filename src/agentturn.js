@@ -466,9 +466,9 @@ function careerRewardActions(career) {
 
 async function rewardActions(db, ch, acct, owned) {
   const h = { accountId: ch.account_id, acct, owned };
-  const [onboard, daily, career] = await Promise.all([
-    onboardBoard(ch, h, db), getDaily(db, ch.id), careerBoard(ch, db, h),
-  ]);
+  const onboard = await onboardBoard(ch, h, db);
+  const daily = await getDaily(db, ch.id);
+  const career = await careerBoard(ch, db, h);
   return [
     ...onboardingRewardActions(onboard),
     ...dailyRewardActions(daily, levelOf(Number(ch.respect))),
@@ -478,11 +478,15 @@ async function rewardActions(db, ch, acct, owned) {
 
 export async function agentTurn(db, ch, acct, owned, { onlineAccounts = [] } = {}) {
   const sheet = view(ch, acct, owned);
-  const [opportunities, convoyBoardState, loanBoardState, crewBoardState, rewards, exploration] = await Promise.all([
-    opportunityBoard(db, ch), convoyBoard(db, ch.id), loanBoard(db, ch), crewBoard(ch, db),
-    rewardActions(db, ch, acct, owned),
-    exploreBoard(db, ch, acct, owned, { onlineAccounts }),
-  ]);
+  // GET Agent Turn may receive a pool, but locked action authorization receives one transaction
+  // client. Keep the shared implementation valid for the stricter context: one loader at a time on
+  // the same authoritative snapshot, with no out-of-band pool connections.
+  const opportunities = await opportunityBoard(db, ch);
+  const convoyBoardState = await convoyBoard(db, ch.id);
+  const loanBoardState = await loanBoard(db, ch);
+  const crewBoardState = await crewBoard(ch, db);
+  const rewards = await rewardActions(db, ch, acct, owned);
+  const exploration = await exploreBoard(db, ch, acct, owned, { onlineAccounts });
   const crime = crimePlan(ch, owned);
   const passive = [...await businessActions(db, ch), ...await territoryActions(db, ch, owned)];
   const arbitrage = arbitragePlans(ch, sheet, owned, opportunities.niches.arbitrage);

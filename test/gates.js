@@ -1153,10 +1153,15 @@ const SCENERY_WAIVED = {
 // pool-exhaustion shape this project has already been bitten by twice (`bankPosition`, `/v1/bank`).
 // Sequential is correct AND identical in speed.
 //
-// Scope, stated honestly: this matches a `Promise.all` whose ELEMENTS mention an identifier the
-// enclosing function takes as a pg client. A viem client (`watcher.js`'s `getLogs` batch) is
-// genuinely concurrent and is not matched — it is not a pg connection. A `pool` is not matched
-// either: `pool.query()` acquires its own connection per call, so that form is safe by design.
+// Scope, stated honestly: this matches every `Promise.all` inside a function whose PARAMETER is a
+// query-capable handle, plus the established direct-client form. It intentionally examines the
+// whole enclosing function, not only Promise.all's argument: `const tasks = { a: db.query(...) }`
+// starts work before `Promise.all(Object.values(tasks))`, so the call text contains neither `db`
+// nor `.query`. Conventional request-handle parameters (`db`, `tx`, `conn`, `connection`) are also
+// treated as shared even when they delegate all their queries to board helpers. A true `pool`
+// remains distinct: `pool.query()` acquires a connection per call, so parallel pool readers are safe
+// by design; a function that directly calls `pool.query` and also contains Promise.all is flagged
+// conservatively because that same board may be handed a request client at another call site.
 {
   // catalogue-or-declare: a `client` that is NOT a pg connection. viem batches real network reads
   // concurrently and is the whole point of a Promise.all there, so each is waived BY SITE with the
@@ -1187,6 +1192,45 @@ const SCENERY_WAIVED = {
     }
     return '';
   };
+  const sharesPgClient = (src, at, arg) => {
+    const functions = [];
+    const re = /(?:export\s+)?(?:async\s+)?function\s+[A-Za-z_$][\w$]*\s*\(/g;
+    let match;
+    while ((match = re.exec(src))) {
+      const body = bodyOf(src, match.index);
+      functions.push({ at: match.index, end: match.index + body.length, body });
+    }
+    const enclosing = functions.filter((fn) => fn.at <= at && at < fn.end).sort((a, b) => b.at - a.at)[0];
+    if (!enclosing) return /\bclient\b/.test(arg);
+
+    const open = enclosing.body.indexOf('(');
+    let close = open;
+    for (let depth = 0; close < enclosing.body.length; close++) {
+      if (enclosing.body[close] === '(') depth++;
+      else if (enclosing.body[close] === ')' && --depth === 0) break;
+    }
+    const params = [...enclosing.body.slice(open + 1, close).matchAll(/\b[A-Za-z_$][\w$]*\b/g)]
+      .map((entry) => entry[0]);
+    const conventional = new Set(['db', 'tx', 'transaction', 'conn', 'connection']);
+    const queryCapable = params.some((param) => conventional.has(param)
+      || new RegExp(`\\b${param}\\s*\\.\\s*query\\s*\\(`).test(enclosing.body));
+    // Retain the explicit form for non-standard wrappers whose query capability lives in another
+    // module. Viem sites are catalogued below by exact content mark, so broadening this cannot make
+    // an RPC batch inherit a pg exemption accidentally.
+    return queryCapable || /\bclient\b/.test(arg);
+  };
+  // Regression fixture: the live failure used `db` and hid the started queries behind a task bag,
+  // so neither the shared handle nor `.query(` appears inside Promise.all's own argument. A guard
+  // tied to the spelling `client` (or only to the call argument) is cosmetic: this rename evades it.
+  const renamedFixture = `async function loadCoverage(db) {
+    const tasks = { first: db.query('SELECT 1'), second: db.query('SELECT 2') };
+    return Promise.all(Object.values(tasks));
+  }`;
+  const fixtureAt = renamedFixture.indexOf('Promise.all(');
+  assert.equal(sharesPgClient(renamedFixture, fixtureAt,
+    argOf(renamedFixture, fixtureAt + 'Promise.all'.length)), true,
+  'the shared-client guard must follow a request DB parameter into already-started task bags; '
+    + 'renaming client to db must not evade it');
   for (const f of files) {
     // deliberately NOT comment-stripped: a string-aware stripper is its own trap here (backticks in
     // SQL comments, `https://` inside a literal — both have bitten this repo), and the pattern being
@@ -1202,7 +1246,7 @@ const SCENERY_WAIVED = {
       // The narrow forms were the first cut and they had THREE false negatives — `roster.js` hands
       // the client to a reader inside a `.map`, and `dynasty.js` calls a closure that captures it —
       // and a guard that misses the sites it exists for is worse than no guard.
-      if (!/\bclient\b/.test(arg)) continue;
+      if (!sharesPgClient(src, m.index, arg)) continue;
       const shortFile = relPath(process.cwd(), f);
       const waiver = VIEM_CLIENTS.find((w) => w.file === shortFile && arg.includes(w.mark));
       if (waiver) { waiverHits.set(`${waiver.file}#${waiver.mark}`, waiverHits.get(`${waiver.file}#${waiver.mark}`) + 1); continue; }

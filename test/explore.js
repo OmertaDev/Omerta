@@ -841,8 +841,11 @@ assert.equal(coverage.next?.systemId, 'contracts',
 // and repeated reads append no economic ledger rows.
 const app = await buildServer();
 const pool = app.pool;
-const call = async (method, url, { token, body } = {}) => {
-  const res = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
+const call = async (method, url, { token, body, idempotencyKey } = {}) => {
+  const res = await app.inject({ method, url, headers: {
+    ...(token ? { authorization: `Bearer ${token}` } : {}),
+    ...(idempotencyKey ? { 'idempotency-key': idempotencyKey } : {}),
+  }, payload: body });
   return { code: res.statusCode, body: res.json() };
 };
 const { body: { token } } = await call('POST', '/v1/auth/guest');
@@ -1162,6 +1165,88 @@ assert.equal(routeBoard.next?.systemId, 'street-life',
 const cappedFavorRun = await call('POST', `/v1/favors/${cappedFavor}/run`, { token: cappedFavorToken });
 assert.equal(cappedFavorRun.code, 200,
   'the beyond-cap favor run witnessed by Explore passes the authoritative mutation');
+
+// A request/transaction client is one wire: pg@9 refuses a second query while the first is in
+// flight. Delay each checked-out client's query by one turn so already-started sibling promises
+// overlap deterministically instead of relying on pg-mem's normally immediate resolution. Exercise
+// every route that can hand Explore that shared handle: standalone Explore, Home's aggregate, and
+// the locked authorization phase of Agent Turn (the ordinary GET uses the pool intentionally).
+{
+  const { body: { token: strictHuman } } = await call('POST', '/v1/auth/guest');
+  await call('POST', '/v1/character', { token: strictHuman, body: { name: 'Serial Serena' } });
+  const strictHumanCharacter = (await call('GET', '/v1/me', { token: strictHuman })).body.character;
+  await pool.query('UPDATE characters SET respect=$2, cash=15000 WHERE id=$1',
+    [strictHumanCharacter.id, respectForLevel(30)]);
+  const strictBaseline = (await call('GET', '/v1/explore', { token: strictHuman })).body;
+  const rawConnect = pool.connect;
+  const wrapped = new Map();
+  let overlaps = 0;
+  pool.connect = async (...args) => {
+    const client = await rawConnect.call(pool, ...args);
+    if (wrapped.has(client)) return client;
+    const rawQuery = client.query;
+    wrapped.set(client, rawQuery);
+    let active = false;
+    client.query = (...queryArgs) => {
+      const callback = typeof queryArgs.at(-1) === 'function' ? queryArgs.pop() : null;
+      const run = (async () => {
+        if (active) {
+          overlaps++;
+          const error = new Error('strict single-client wrapper rejected overlapping queries');
+          error.code = 'strict_single_client_overlap';
+          throw error;
+        }
+        active = true;
+        try {
+          await new Promise((resolve) => setImmediate(resolve));
+          return await rawQuery.apply(client, queryArgs);
+        } finally { active = false; }
+      })();
+      if (callback) { run.then((result) => callback(null, result), callback); return undefined; }
+      return run;
+    };
+    return client;
+  };
+  try {
+    const strictExplore = await call('GET', '/v1/explore', { token: strictHuman });
+    assert.equal(strictExplore.code, 200,
+      'standalone Explore never overlaps queries on its request-scoped read client');
+    assert.deepEqual({ catalog: strictExplore.body.catalog, progress: strictExplore.body.progress,
+      next: strictExplore.body.next, blocked: strictExplore.body.blocked },
+    { catalog: strictBaseline.catalog, progress: strictBaseline.progress,
+      next: strictBaseline.next, blocked: strictBaseline.blocked },
+    'standalone Explore preserves its exact recommendation under a strict single client');
+
+    const strictHome = await call('GET', '/v1/home', { token: strictHuman });
+    assert.equal(strictHome.code, 200, 'Home answers under a strict single request client');
+    assert.equal(strictHome.body.failed.includes('explore'), false,
+      'Home does not hide a shared-client Explore failure behind per-board isolation');
+    assert.deepEqual(strictHome.body.explore, {
+      catalog: strictBaseline.catalog, progress: strictBaseline.progress,
+      next: strictBaseline.next, blocked: strictBaseline.blocked,
+    }, 'Home preserves the canonical Explore payload under a strict single client');
+
+    const { body: { token: strictGuest } } = await call('POST', '/v1/auth/guest');
+    const { body: { token: strictAgent } } = await call('POST', '/v1/auth/agent-key', { token: strictGuest });
+    await call('POST', '/v1/character', { token: strictAgent, body: { name: 'Serial Sally' } });
+    const strictTurn = (await call('GET', '/v1/agent/turn', { token: strictAgent })).body;
+    const strictCrime = strictTurn.actions.find((action) => action.kind === 'crime');
+    assert.ok(strictCrime, 'the strict-client Agent Turn fixture has one executable mutation');
+    const strictAct = await call('POST', '/v1/agent/act', {
+      token: strictAgent, idempotencyKey: 'explore-strict-client-agent-act',
+      body: { turnId: strictTurn.turnId, actionId: strictCrime.id },
+    });
+    assert.equal(strictAct.code, 200,
+      'Agent Turn authorization and its post-action response never overlap one transaction client');
+    assert.ok(strictAct.body.turn?.turnId,
+      'Agent Turn still returns its fresh post-action snapshot under the strict wrapper');
+    assert.equal(overlaps, 0,
+      'all Explore consumers issue at most one in-flight query per checked-out request client');
+  } finally {
+    pool.connect = rawConnect;
+    for (const [client, rawQuery] of wrapped) client.query = rawQuery;
+  }
+}
 
 console.log('explore: canonical 40-system coverage ok');
 await app.close();

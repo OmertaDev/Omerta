@@ -657,13 +657,15 @@ async function scopedSocialContext(db, ch, onlineAccounts) {
   const accounts = characters.map((row) => row.account_id);
   const idSlots = ids.map((_, index) => `$${index + 1}`).join(',');
   const accountSlots = accounts.map((_, index) => `$${index + 1}`).join(',');
-  const [gangRows, crewRows, heldRows, digRows] = await Promise.all([
-    db.query(`SELECT character_id, gang_id FROM gang_members WHERE character_id IN (${idSlots})`, ids),
-    db.query(`SELECT account_id, crew_id FROM crew_members WHERE account_id IN (${accountSlots})`, accounts),
-    db.query('SELECT target_account FROM secrets WHERE holder_character=$1 AND expires_at > now()', [ch.id]),
-    db.query(`SELECT target_account, at FROM digs WHERE character_id=$1 AND target_account IN (${accounts
-      .map((_, index) => `$${index + 2}`).join(',')})`, [ch.id, ...accounts]),
-  ]);
+  const gangRows = await db.query(
+    `SELECT character_id, gang_id FROM gang_members WHERE character_id IN (${idSlots})`, ids);
+  const crewRows = await db.query(
+    `SELECT account_id, crew_id FROM crew_members WHERE account_id IN (${accountSlots})`, accounts);
+  const heldRows = await db.query(
+    'SELECT target_account FROM secrets WHERE holder_character=$1 AND expires_at > now()', [ch.id]);
+  const digRows = await db.query(
+    `SELECT target_account, at FROM digs WHERE character_id=$1 AND target_account IN (${accounts
+      .map((_, index) => `$${index + 2}`).join(',')})`, [ch.id, ...accounts]);
   const gangByCharacter = new Map(gangRows.rows.map((row) => [row.character_id, row.gang_id]));
   const crewByAccount = new Map(crewRows.rows.map((row) => [row.account_id, row.crew_id]));
   const held = new Set(heldRows.rows.map((row) => row.target_account));
@@ -697,61 +699,64 @@ async function coverageLiveContext(db, ch, acct, owned, onlineAccounts, needs) {
   const week = weekOf();
   const wants = (...keys) => keys.some((key) => needs.has(key));
   const tasks = {};
-  if (wants('familySeat')) tasks.seats = seatedGangs(db);
-  if (wants('speakeasy')) tasks.speakeasies = db.query('SELECT district_id FROM speakeasies');
-  if (wants('auction')) tasks.auctions = db.query(
+  // Loaders stay lazy until their turn. Explore runs under a request/transaction client on the
+  // standalone route and Home, so assigning already-started promises here overlaps one physical
+  // connection before Promise.all even sees them. Sequential thunks preserve the same snapshot,
+  // exact conditional query set, and query count without borrowing unrelated pool connections.
+  if (wants('familySeat')) tasks.seats = () => seatedGangs(db);
+  if (wants('speakeasy')) tasks.speakeasies = () => db.query('SELECT district_id FROM speakeasies');
+  if (wants('auction')) tasks.auctions = () => db.query(
     'SELECT lot_id, current_bid, bidder, status FROM auctions WHERE week=$1', [week]);
-  if (wants('collection', 'port')) tasks.collection = db.query(
+  if (wants('collection', 'port')) tasks.collection = () => db.query(
     `SELECT 'car' AS kind, id, rarity, minted_onchain, listed, pledged,
             NULL::text AS kind_id, NULL::timestamptz AS run_until FROM cars WHERE character_id=$1
       UNION ALL
       SELECT 'boat' AS kind, id, rarity, minted_onchain, false AS listed, false AS pledged,
             kind AS kind_id, run_until FROM boats WHERE character_id=$1`, [ch.id]);
-  if (wants('landmark')) tasks.landmarks = db.query('SELECT district_id, amount FROM landmarks');
+  if (wants('landmark')) tasks.landmarks = () => db.query('SELECT district_id, amount FROM landmarks');
   if (wants('crew')) {
-    tasks.heists = heistBoard(db, ch.id);
-    tasks.heistExact = heistExactAvailability(db, ch,
+    tasks.heists = () => heistBoard(db, ch.id);
+    tasks.heistExact = () => heistExactAvailability(db, ch,
       { agent: !!acct.agent_flag, pulled: Number(acct.heists_pulled || 0) });
   }
   if (wants('loan')) {
-    tasks.loans = loanBoard(db, ch);
-    tasks.loanExact = loanExactAvailability(db, ch, acct, owned);
+    tasks.loans = () => loanBoard(db, ch);
+    tasks.loanExact = () => loanExactAvailability(db, ch, acct, owned);
   }
   if (wants('market')) {
-    tasks.market = marketBoard(db);
-    tasks.marketExact = marketExactAvailability(db, ch, { acct, owned });
-    tasks.marketOwn = db.query(
+    tasks.market = () => marketBoard(db);
+    tasks.marketExact = () => marketExactAvailability(db, ch, { acct, owned });
+    tasks.marketOwn = () => db.query(
       `SELECT seller_character, kind, status, filled_qty, district, good_id, qty, price,
               bidder, bid, reserve
          FROM market_listings
         WHERE seller_character=$1
           AND (status IN ('live','expired') OR (kind='order' AND filled_qty > 0))`, [ch.id]);
   }
-  if (wants('convoy')) tasks.convoy = convoyBoard(db, ch.id);
-  if (wants('port')) tasks.port = portBoard(ch, db, { acct, owned });
-  if (wants('stable')) tasks.stable = stableBoard(db, ch.id);
-  if (wants('wire')) tasks.wire = wireBoard(ch, db, { acct, owned });
-  if (wants('intel')) tasks.secrets = secretsBoard(ch, db);
-  if (wants('underworld')) tasks.underworld = underworldBoard(ch, db, { acct, owned });
-  if (wants('megaproject')) tasks.mega = megaBoard(db, ch.account_id);
+  if (wants('convoy')) tasks.convoy = () => convoyBoard(db, ch.id);
+  if (wants('port')) tasks.port = () => portBoard(ch, db, { acct, owned });
+  if (wants('stable')) tasks.stable = () => stableBoard(db, ch.id);
+  if (wants('wire')) tasks.wire = () => wireBoard(ch, db, { acct, owned });
+  if (wants('intel')) tasks.secrets = () => secretsBoard(ch, db);
+  if (wants('underworld')) tasks.underworld = () => underworldBoard(ch, db, { acct, owned });
+  if (wants('megaproject')) tasks.mega = () => megaBoard(db, ch.account_id);
   if (wants('streetLife')) {
-    tasks.corner = cornerBoard(ch, db);
-    tasks.contacts = contactsBoard(db, ch.account_id);
-    tasks.favors = favorBoard(ch, db, { acct, owned });
-    tasks.favorExact = favorExactAvailability(ch, db, { acct, owned });
+    tasks.corner = () => cornerBoard(ch, db);
+    tasks.contacts = () => contactsBoard(db, ch.account_id);
+    tasks.favors = () => favorBoard(ch, db, { acct, owned });
+    tasks.favorExact = () => favorExactAvailability(ch, db, { acct, owned });
   }
-  if (wants('clue')) tasks.clue = clueBoard(db, ch, acct);
+  if (wants('clue')) tasks.clue = () => clueBoard(db, ch, acct);
   if (wants('family')) {
-    tasks.territory = territoryExploreBoard(db, ch, owned.gangId);
-    tasks.world = worldBoard(db, ch, { acct, owned });
-    tasks.war = warBoard(db, ch);
+    tasks.territory = () => territoryExploreBoard(db, ch, owned.gangId);
+    tasks.world = () => worldBoard(db, ch, { acct, owned });
+    tasks.war = () => warBoard(db, ch);
   }
-  if (wants('counterparty')) tasks.vouches = vouchBoard(db, ch);
+  if (wants('counterparty')) tasks.vouches = () => vouchBoard(db, ch);
   if (wants('counterparty', 'reachableFamily', 'wire', 'intel'))
-    tasks.social = scopedSocialContext(db, ch, onlineAccounts);
-  const keys = Object.keys(tasks);
-  const values = await Promise.all(Object.values(tasks));
-  const loaded = Object.fromEntries(keys.map((key, index) => [key, values[index]]));
+    tasks.social = () => scopedSocialContext(db, ch, onlineAccounts);
+  const loaded = {};
+  for (const [key, load] of Object.entries(tasks)) loaded[key] = await load();
   const seats = loaded.seats || [];
   const speakeasies = loaded.speakeasies || { rows: [] };
   const auctionRows = loaded.auctions || { rows: [] };
