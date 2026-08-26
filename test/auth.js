@@ -159,21 +159,26 @@ console.log('✅ consumeInvite: off passes, on consumes one use, exhaustion refu
     const afterAck = await replay(acknowledged.secret);
     outcome.recoveryAfterAck = `${afterAck.code}:${afterAck.body.error || 'none'}`;
 
-    const expired = await bootstrap();
-    const columns = (await app.pool.query(
-      `SELECT column_name FROM information_schema.columns
-        WHERE table_name='accounts' AND column_name='guest_bootstrap_expires_at'`,
-    )).rows;
-    if (columns.length === 0) {
-      outcome.recoveryAfterExpiry = 'schema_missing';
-    } else {
-      await app.pool.query(
-        `UPDATE accounts SET guest_bootstrap_expires_at=$2 WHERE id=$1`,
-        [expired.accountId, new Date(Date.now() - 60_000)],
-      );
-      const afterExpiry = await replay(expired.secret);
-      outcome.recoveryAfterExpiry = `${afterExpiry.code}:${afterExpiry.body.error || 'none'}`;
-    }
+    const delayed = await bootstrap();
+    outcome.newMappingHasNoExpiry = (await app.pool.query(
+      'SELECT guest_bootstrap_expires_at IS NULL AS no_expiry FROM accounts WHERE id=$1',
+      [delayed.accountId],
+    )).rows[0]?.no_expiry === true;
+    await app.pool.query(
+      `UPDATE accounts SET guest_bootstrap_expires_at=$2 WHERE id=$1`,
+      [delayed.accountId, new Date(Date.now() - 24 * 60 * 60 * 1000)],
+    );
+    const afterFormerExpiry = await replay(delayed.secret);
+    outcome.delayedRecovery = afterFormerExpiry.code;
+    outcome.delayedRecoverySameAccount = afterFormerExpiry.code === 200 &&
+      app.jwt.verify(afterFormerExpiry.body.token).sub === delayed.accountId;
+
+    const versionChanged = await bootstrap();
+    await app.pool.query('UPDATE accounts SET token_version=token_version+1 WHERE id=$1',
+      [versionChanged.accountId]);
+    const afterVersionChange = await replay(versionChanged.secret);
+    outcome.recoveryAfterVersionChange =
+      `${afterVersionChange.code}:${afterVersionChange.body.error || 'none'}`;
 
     const progressed = await bootstrap();
     outcome.agentProgression = (await call('POST', '/v1/auth/agent-key', {
@@ -181,6 +186,22 @@ console.log('✅ consumeInvite: off passes, on consumes one use, exhaustion refu
     })).code;
     const afterAgent = await replay(progressed.secret);
     outcome.recoveryAfterAgent = `${afterAgent.code}:${afterAgent.body.error || 'none'}`;
+
+    const characterized = await bootstrap();
+    outcome.characterProgression = (await call('POST', '/v1/character', {
+      token: characterized.token,
+      body: { name: 'Bootstrap Mortal' },
+    })).code;
+    const characterState = (await app.pool.query(
+      `SELECT c.account_id, a.guest_bootstrap_retired_at IS NOT NULL AS retired
+         FROM characters c JOIN accounts a ON a.id=c.account_id WHERE c.name=$1`,
+      ['Bootstrap Mortal'],
+    )).rows[0];
+    outcome.characterAccountMatches = characterState?.account_id === characterized.accountId;
+    outcome.characterRetiredMapping = characterState?.retired === true;
+    const afterCharacter = await replay(characterized.secret);
+    outcome.recoveryAfterCharacter =
+      `${afterCharacter.code}:${afterCharacter.body.error || 'none'}`;
 
     const loggedOut = await bootstrap();
     outcome.logoutAll = (await call('POST', '/v1/auth/logout-all', {
@@ -216,16 +237,23 @@ console.log('✅ consumeInvite: off passes, on consumes one use, exhaustion refu
       ack: 200,
       ackReplay: 200,
       recoveryAfterAck: '400:bootstrap_retired',
-      recoveryAfterExpiry: '400:bootstrap_expired',
+      newMappingHasNoExpiry: true,
+      delayedRecovery: 200,
+      delayedRecoverySameAccount: true,
+      recoveryAfterVersionChange: '400:bootstrap_retired',
       agentProgression: 200,
       recoveryAfterAgent: '400:bootstrap_retired',
+      characterProgression: 200,
+      characterAccountMatches: true,
+      characterRetiredMapping: true,
+      recoveryAfterCharacter: '400:bootstrap_retired',
       logoutAll: 200,
       recoveryAfterLogout: '400:bootstrap_retired',
       modRevoke: 200,
       recoveryAfterModRevoke: '400:bootstrap_retired',
       providerUpgrade: 200,
       recoveryAfterProviderUpgrade: '400:bootstrap_retired',
-    }, 'a bootstrap proof authenticates only the finite original guest bootstrap window');
+    }, 'a bootstrap proof authenticates only the untouched original guest lifecycle state');
   } finally {
     await app.close();
   }

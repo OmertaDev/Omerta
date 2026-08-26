@@ -122,7 +122,6 @@ export async function accountForIdentity(pool, { provider, subject }, ip, invite
 }
 
 const guestBootstrapLocks = new Map();
-const GUEST_BOOTSTRAP_TTL_MS = 10 * 60 * 1000;
 async function withGuestBootstrapLock(recoveryHash, operation) {
   const previous = guestBootstrapLocks.get(recoveryHash) || Promise.resolve();
   let release;
@@ -142,15 +141,16 @@ async function withGuestBootstrapLock(recoveryHash, operation) {
 // client writes a random 256-bit recovery credential before network I/O. The server stores only its
 // domain-separated hash. A short process-local queue makes same-process retries deterministic (and
 // keeps pg-mem honest); the unique index is the cross-process backstop. Invite consumption, account,
-// and persistent state commit together. Recovery is deliberately finite: only the unretired original
-// guest/token-version/no-character/no-agent state may use the proof, and it expires after ten minutes.
+// and persistent state commit together. Recovery is deliberately event-bounded: only the unretired
+// original guest/token-version/no-character/no-agent state may use the proof. Elapsed wall time cannot
+// destroy the sole credential of an otherwise untouched identity.
 async function recoverCommittedGuestBootstrap(pool, recoveryHash, ip) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
     const row = (await client.query(
-      `SELECT id, status, auth_provider, token_version, guest_bootstrap_expires_at,
-              guest_bootstrap_token_version, guest_bootstrap_retired_at
+      `SELECT id, status, auth_provider, token_version, guest_bootstrap_token_version,
+              guest_bootstrap_retired_at
          FROM accounts WHERE guest_bootstrap_hash=$1 FOR UPDATE`,
       [recoveryHash],
     )).rows[0];
@@ -174,10 +174,6 @@ async function recoverCommittedGuestBootstrap(pool, recoveryHash, ip) {
         hasCharacter || originalVersion === null || originalVersion === undefined ||
         Number(row.token_version) !== Number(originalVersion)) {
       throw new GameError('bootstrap_retired', 'Guest bootstrap recovery is retired.');
-    }
-    const expiresAt = new Date(row.guest_bootstrap_expires_at).getTime();
-    if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
-      throw new GameError('bootstrap_expired', 'Guest bootstrap recovery has expired.');
     }
     await client.query('UPDATE accounts SET last_ip=$2 WHERE id=$1', [row.id, ip]);
     await client.query('COMMIT');
@@ -208,7 +204,6 @@ export async function accountForGuestBootstrap(pool, recoverySecret, ip, invite)
 
     const id = crypto.randomUUID();
     const tokenVersion = 0;
-    const expiresAt = new Date(Date.now() + GUEST_BOOTSTRAP_TTL_MS);
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
@@ -216,9 +211,9 @@ export async function accountForGuestBootstrap(pool, recoverySecret, ip, invite)
       await client.query(
         `INSERT INTO accounts
            (id, auth_provider, auth_subject, created_ip, last_ip, guest_bootstrap_hash,
-            guest_bootstrap_expires_at, guest_bootstrap_token_version)
-         VALUES ($1, 'guest', $1, $2, $2, $3, $4, $5)`,
-        [id, ip, recoveryHash, expiresAt, tokenVersion],
+            guest_bootstrap_token_version)
+         VALUES ($1, 'guest', $1, $2, $2, $3, $4)`,
+        [id, ip, recoveryHash, tokenVersion],
       );
       await client.query('INSERT INTO account_persistent (account_id) VALUES ($1)', [id]);
       await client.query('COMMIT');

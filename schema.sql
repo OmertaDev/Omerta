@@ -18,6 +18,8 @@ ALTER TABLE accounts ADD COLUMN IF NOT EXISTS token_version INT NOT NULL DEFAULT
 -- hash of its pre-written recovery credential is stored; the unique index is the database mutex that
 -- maps concurrent/replayed bootstrap requests to one account without using account-scoped idempotency.
 ALTER TABLE accounts ADD COLUMN IF NOT EXISTS guest_bootstrap_hash TEXT;
+-- Legacy additive compatibility only: elapsed wall time is not recovery authority because an
+-- untouched guest in bootstrap state has no other credential. Lifecycle events retire the mapping.
 ALTER TABLE accounts ADD COLUMN IF NOT EXISTS guest_bootstrap_expires_at TIMESTAMPTZ;
 ALTER TABLE accounts ADD COLUMN IF NOT EXISTS guest_bootstrap_token_version INT;
 ALTER TABLE accounts ADD COLUMN IF NOT EXISTS guest_bootstrap_retired_at TIMESTAMPTZ;

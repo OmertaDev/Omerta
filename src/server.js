@@ -1263,6 +1263,13 @@ export async function buildServer() {
         [id, req.user.sub, name, season, st.muscle, st.cunning, st.speed]);
       await client.query('INSERT INTO rng_audit (id, character_id, action, roll, outcome) VALUES ($1,$2,$3,$4,$5)',
         [uid(), id, 'roll_stats', Math.random(), `${st.muscle}/${st.cunning}/${st.speed}`]);
+      // Character progression is an authoritative bootstrap lifecycle boundary. Retire in the same
+      // transaction as the character so a later administrative row removal cannot revive the proof.
+      await client.query(
+        `UPDATE accounts SET guest_bootstrap_retired_at=COALESCE(guest_bootstrap_retired_at, now())
+          WHERE id=$1`,
+        [req.user.sub],
+      );
       // apply any Store Street-Wire window parked while the account had no living character (audit)
       await Store.claimPendingWire(client, req.user.sub, id);
       if (req.body?.referralCode) {

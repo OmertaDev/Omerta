@@ -302,6 +302,14 @@ async function initialGuestCrashRecoveryTest() {
     assert.notEqual(child.exitCode, 0,
       'the first runner dies before its normal response/session persistence path');
 
+    const committedAccount = (await app.pool.query(
+      "SELECT id FROM accounts WHERE auth_provider='guest'",
+    )).rows[0];
+    await app.pool.query(
+      'UPDATE accounts SET guest_bootstrap_expires_at=$2 WHERE id=$1',
+      [committedAccount.id, new Date(Date.now() - 24 * 60 * 60 * 1000)],
+    );
+
     const summary = await runAgentAlpha({
       baseUrl,
       sessionFile,
@@ -318,7 +326,7 @@ async function initialGuestCrashRecoveryTest() {
       },
     });
     assert.deepEqual(summary, { status: 'complete', actions: 0 },
-      'restart recovers the committed identity and reaches a bounded idle turn');
+      'restart recovers the committed identity after the former expiry window and reaches a bounded idle turn');
     const recovered = JSON.parse(await readFile(sessionFile, 'utf8'));
     assert.equal(recovered.phase, 'agent', 'recovery completes the original agent identity');
     assert.equal(typeof recovered.token === 'string' && recovered.token.length > 0, true,
@@ -1371,6 +1379,54 @@ async function phaseRecoveryApi({ initialPhase }) {
   };
 }
 
+async function lockMetadataDeletionReleasesEndpointTest() {
+  const dir = await privateTempDir('omerta-agent-alpha-lock-delete-');
+  const sessionFile = join(dir, 'session.json');
+  const reportFile = join(dir, 'report.jsonl');
+  const api = await probeApi();
+  try {
+    await writePrivateSession(sessionFile, JSON.stringify(sessionFor(api.baseUrl)));
+    let metadataRemoved = false;
+    const deletingRunner = createAgentAlphaTestRunner({
+      now: () => testNow,
+      sleep: async (ms) => { testNow += ms; },
+      lockBoundary: async (boundary, { path }) => {
+        if (boundary !== 'after_metadata_publish' || metadataRemoved) return;
+        await rm(path);
+        metadataRemoved = true;
+      },
+    });
+    await assert.rejects(
+      deletingRunner({
+        baseUrl: api.baseUrl,
+        sessionFile,
+        reportFile,
+        maxActions: 1,
+        intervalMs: 3100,
+      }),
+      /ENOENT|lock.*metadata|identity/i,
+      'metadata deletion after endpoint publication fails the first acquisition closed',
+    );
+    assert.equal(metadataRemoved, true,
+      'the deterministic boundary removed the newly published lock metadata');
+
+    const retry = await runAgentAlpha({
+      baseUrl: api.baseUrl,
+      sessionFile,
+      reportFile,
+      maxActions: 1,
+      intervalMs: 3100,
+    });
+    assert.deepEqual(retry, { status: 'complete', actions: 0 },
+      'a same-process retry can reacquire after the failed metadata identity read');
+    assert.equal(api.state.sessionCalls, 1,
+      'the failed acquisition performs no network work and only the successful retry probes');
+  } finally {
+    await api.close();
+    await rm(dir, { recursive: true, force: true });
+  }
+}
+
 async function bootstrapAcknowledgementCrashWindowTest() {
   const api = await phaseRecoveryApi({ initialPhase: 'guest_bootstrap_ack_pending' });
   await withReadySession(api, 'omerta-agent-alpha-bootstrap-ack-',
@@ -2219,6 +2275,7 @@ async function realElapsedCadenceTest() {
 await distinctPhysicalTargetsTest();
 await guestBootstrapServerRecoveryTest();
 await initialGuestCrashRecoveryTest();
+await lockMetadataDeletionReleasesEndpointTest();
 await credentialStorageConfidentialityTest();
 await credentialParentReplacementTest();
 await credentialWriteBoundaryReplacementTest();

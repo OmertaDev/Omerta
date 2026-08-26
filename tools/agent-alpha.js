@@ -626,6 +626,7 @@ async function acquireLock(sessionFile, path, stateStore) {
   }
 
   const nonce = crypto.randomUUID();
+  let identity;
   try {
     // The kernel-owned loopback lease is released on hard process death. Once it is acquired, any
     // leftover metadata is necessarily orphaned and can be replaced without PID-reuse/delete races.
@@ -637,14 +638,14 @@ async function acquireLock(sessionFile, path, stateStore) {
       nonce,
     });
     await assertStableStateParent(stateStore.parent);
+    await stateStore.lockBoundary?.('after_metadata_publish', { path });
+    identity = await pathIdentity(path);
+    if (!identity.isFile() || identity.nlink !== 1n) {
+      throw new Error('Agent Alpha lock metadata is not a single regular file');
+    }
   } catch (error) {
     await closeLockServer(server).catch(() => {});
     throw error;
-  }
-  const identity = await pathIdentity(path);
-  if (!identity.isFile() || identity.nlink !== 1n) {
-    await closeLockServer(server).catch(() => {});
-    throw new Error('Agent Alpha lock metadata is not a single regular file');
   }
   return { path, nonce, server, identity, stateStore };
 }
@@ -986,6 +987,7 @@ async function runWithTiming(options, timing) {
   if (!options.sessionFile) throw new Error('Agent Alpha requires a session file');
   const paths = await canonicalRunnerPaths(options.sessionFile, options.reportFile);
   paths.stateStore.credentialBoundary = timing.credentialBoundary;
+  paths.stateStore.lockBoundary = timing.lockBoundary;
   let lock;
   let reportStore;
   try {
@@ -1010,14 +1012,19 @@ export async function runAgentAlpha(options = {}) {
 // This conspicuously named constructor is the only fast-clock seam. Production callers using
 // runAgentAlpha always receive the monotonic elapsed-time backstop above, even with an advisory
 // sleeper. Tests must opt into a clock whose sleep advances time rather than merely returning.
-export function createAgentAlphaTestRunner({ now, sleep, credentialBoundary }) {
+export function createAgentAlphaTestRunner({ now, sleep, credentialBoundary, lockBoundary }) {
   if (typeof now !== 'function' || typeof sleep !== 'function') {
     throw new Error('Agent Alpha test timing requires now and sleep functions');
   }
   if (credentialBoundary !== undefined && typeof credentialBoundary !== 'function') {
     throw new Error('Agent Alpha credential boundary test seam must be a function');
   }
-  return (options = {}) => runWithTiming(options, { now, sleep, credentialBoundary });
+  if (lockBoundary !== undefined && typeof lockBoundary !== 'function') {
+    throw new Error('Agent Alpha lock boundary test seam must be a function');
+  }
+  return (options = {}) => runWithTiming(options, {
+    now, sleep, credentialBoundary, lockBoundary,
+  });
 }
 
 function cliOptions(argv) {
