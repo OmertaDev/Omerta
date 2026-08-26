@@ -11,6 +11,44 @@ contract RegistryStockToken is ERC20 {
     constructor(string memory name_, string memory symbol_) ERC20(name_, symbol_) {}
 }
 
+contract RevertingDecimalsToken {
+    function decimals() external pure returns (uint8) {
+        revert("decimals unavailable");
+    }
+}
+
+contract ShortDecimalsToken {
+    fallback() external {
+        assembly ("memory-safe") {
+            mstore(0, 18)
+            return(31, 1)
+        }
+    }
+}
+
+contract OutOfRangeDecimalsToken {
+    fallback() external {
+        assembly ("memory-safe") {
+            mstore(0, 256)
+            return(0, 32)
+        }
+    }
+}
+
+contract MutableDecimalsStockToken is ERC20 {
+    uint8 private _liveDecimals = 18;
+
+    constructor() ERC20("Mutable Decimals Stock", "MDS") {}
+
+    function setDecimals(uint8 decimals_) external {
+        _liveDecimals = decimals_;
+    }
+
+    function decimals() public view override returns (uint8) {
+        return _liveDecimals;
+    }
+}
+
 contract StockTokenRegistryV2Test is Test {
     uint256 internal constant CHAIN_ID = 4663;
     uint64 internal constant TTL = 7 days;
@@ -20,7 +58,42 @@ contract StockTokenRegistryV2Test is Test {
     bytes32 internal constant REVIEW_ID = keccak256("review-42");
     bytes32 internal constant TALLY = keccak256("closed-public-tally");
     bytes32 internal constant REASON = keccak256("provider-rotation");
+    bytes32 internal constant CONFLICT_REASON = keccak256("ASSET_VERSION_CONFLICT");
     uint256 internal constant MAX_ETH_WEI = 3 ether;
+
+    event PublisherSet(address indexed publisher_);
+    event AssetVersionRegistered(
+        bytes32 indexed versionKey,
+        bytes32 indexed tickerHash,
+        address indexed token,
+        bytes32 robinhoodAssetIdHash,
+        string ticker,
+        string name,
+        uint8 tokenDecimals,
+        uint64 registeredAt
+    );
+    event AssetVersionActivated(
+        bytes32 indexed versionKey,
+        bytes32 indexed evidenceHash,
+        bytes32 indexed reviewId,
+        uint64 approvedAt,
+        uint64 validUntil,
+        uint256 catalogVersion
+    );
+    event AssetVersionDeactivated(
+        bytes32 indexed versionKey, bytes32 indexed reasonHash, uint64 deactivatedAt, uint256 catalogVersion
+    );
+    event BallotPublished(
+        uint256 indexed day,
+        bytes32 indexed versionKey,
+        address indexed token,
+        uint8 tokenDecimals,
+        bytes32 tallyHash,
+        uint256 catalogVersion,
+        uint256 maxEthWei,
+        uint64 purchaseUntil,
+        uint64 publishedAt
+    );
 
     address internal safe = makeAddr("safe");
     address internal publisher = makeAddr("publisher");
@@ -128,6 +201,19 @@ contract StockTokenRegistryV2Test is Test {
         bytes32 expected =
             keccak256(abi.encode(uint256(4663), keccak256(bytes("AAPL")), address(apple), bytes32(AAPL_PROVIDER)));
 
+        vm.expectEmit(true, true, true, true, address(registry));
+        emit AssetVersionRegistered(
+            expected,
+            keccak256(bytes("AAPL")),
+            address(apple),
+            AAPL_PROVIDER,
+            "AAPL",
+            "Apple Inc.",
+            18,
+            uint64(block.timestamp)
+        );
+        vm.expectEmit(true, true, true, true, address(registry));
+        emit AssetVersionActivated(expected, EVIDENCE, REVIEW_ID, request.approvedAt, request.validUntil, 1);
         vm.prank(safe);
         bytes32 key = registry.activateVersion(request);
 
@@ -147,6 +233,7 @@ contract StockTokenRegistryV2Test is Test {
         assertEq(version.registeredAt, block.timestamp);
         assertEq(version.activatedAt, block.timestamp);
         assertEq(version.deactivatedAt, 0);
+        assertEq(registry.activationGeneration(key), 1);
     }
 
     // Mutation caught: reactivation appends a duplicate key or permits immutable metadata drift.
@@ -164,6 +251,7 @@ contract StockTokenRegistryV2Test is Test {
         assertEq(registry.versionCount(), 1);
         assertEq(registry.getVersion(key).registeredAt, registeredAt);
         assertEq(registry.catalogVersion(), 3);
+        assertEq(registry.activationGeneration(key), 2);
 
         _deactivate(key, REASON);
         request = _fresh(request);
@@ -175,17 +263,42 @@ contract StockTokenRegistryV2Test is Test {
         _expectActivationError(request, IStockTokenRegistryV2.ImmutableVersionMismatch.selector);
     }
 
-    // Mutation caught: changed identity overwrites the old record rather than creating a distinct key.
-    function test_changedIdentityCreatesNewHistoryInsteadOfOverwrite() public {
-        bytes32 first = _activate(_activation(address(apple), AAPL_PROVIDER, "AAPL", "Apple"));
-        bytes32 second = _activate(_activation(address(tesla), TSLA_PROVIDER, "TSLA", "Tesla"));
+    // Mutation caught: any one changed identity dimension overwrites or aliases the original record.
+    function test_eachSingleIdentityChangeCreatesLiteralDistinctHistoryAndCorrectHeads() public {
+        bytes32 providerOnly = keccak256("rhj-provider-only");
+        bytes32 baseExpected = keccak256(
+            abi.encode(uint256(4663), keccak256(bytes("AAPL")), address(apple), bytes32(AAPL_PROVIDER))
+        );
+        bytes32 tokenOnlyExpected = keccak256(
+            abi.encode(uint256(4663), keccak256(bytes("AAPL")), address(tesla), bytes32(AAPL_PROVIDER))
+        );
+        bytes32 providerOnlyExpected = keccak256(
+            abi.encode(uint256(4663), keccak256(bytes("AAPL")), address(apple), bytes32(providerOnly))
+        );
+        bytes32 tickerOnlyExpected = keccak256(
+            abi.encode(uint256(4663), keccak256(bytes("TSLA")), address(apple), bytes32(AAPL_PROVIDER))
+        );
 
-        assertNotEq(first, second);
-        assertEq(registry.versionCount(), 2);
-        assertEq(registry.versionKeyAt(0), first);
-        assertEq(registry.versionKeyAt(1), second);
-        assertEq(registry.getVersion(first).token, address(apple));
-        assertEq(registry.getVersion(second).token, address(tesla));
+        assertEq(_activate(_activation(address(apple), AAPL_PROVIDER, "AAPL", "Apple")), baseExpected);
+        assertEq(_activate(_activation(address(tesla), AAPL_PROVIDER, "AAPL", "Token only")), tokenOnlyExpected);
+        assertEq(_activate(_activation(address(apple), providerOnly, "AAPL", "Provider only")), providerOnlyExpected);
+        assertEq(_activate(_activation(address(apple), AAPL_PROVIDER, "TSLA", "Ticker only")), tickerOnlyExpected);
+
+        assertEq(registry.versionCount(), 4);
+        assertEq(registry.versionKeyAt(0), baseExpected);
+        assertEq(registry.versionKeyAt(1), tokenOnlyExpected);
+        assertEq(registry.versionKeyAt(2), providerOnlyExpected);
+        assertEq(registry.versionKeyAt(3), tickerOnlyExpected);
+        assertFalse(registry.getVersion(baseExpected).active);
+        assertFalse(registry.getVersion(tokenOnlyExpected).active);
+        assertFalse(registry.getVersion(providerOnlyExpected).active);
+        assertTrue(registry.getVersion(tickerOnlyExpected).active);
+        assertEq(registry.activeVersionForTickerHash(keccak256(bytes("AAPL"))), bytes32(0));
+        assertEq(registry.activeVersionForTickerHash(keccak256(bytes("TSLA"))), tickerOnlyExpected);
+        assertEq(registry.activeVersionForToken(address(apple)), tickerOnlyExpected);
+        assertEq(registry.activeVersionForToken(address(tesla)), bytes32(0));
+        assertEq(registry.activeVersionForProviderIdHash(AAPL_PROVIDER), tickerOnlyExpected);
+        assertEq(registry.activeVersionForProviderIdHash(providerOnly), bytes32(0));
     }
 
     // Mutation caught: conflict replacement handles only one reverse dimension or increments per conflict.
@@ -201,7 +314,20 @@ contract StockTokenRegistryV2Test is Test {
 
         IStockTokenRegistryV2.Activation memory target =
             _activation(address(targetToken), thirdProvider, "AAPL", "Target");
-        bytes32 targetKey = _activate(target);
+        bytes32 targetKey = keccak256(
+            abi.encode(uint256(4663), keccak256(bytes("AAPL")), address(targetToken), bytes32(thirdProvider))
+        );
+        vm.expectEmit(true, true, false, true, address(registry));
+        emit AssetVersionDeactivated(tickerConflict, CONFLICT_REASON, uint64(block.timestamp), beforeVersion + 1);
+        vm.expectEmit(true, true, false, true, address(registry));
+        emit AssetVersionDeactivated(tokenConflict, CONFLICT_REASON, uint64(block.timestamp), beforeVersion + 1);
+        vm.expectEmit(true, true, false, true, address(registry));
+        emit AssetVersionDeactivated(providerConflict, CONFLICT_REASON, uint64(block.timestamp), beforeVersion + 1);
+        vm.expectEmit(true, true, true, true, address(registry));
+        emit AssetVersionActivated(
+            targetKey, EVIDENCE, REVIEW_ID, target.approvedAt, target.validUntil, beforeVersion + 1
+        );
+        assertEq(_activate(target), targetKey);
 
         assertEq(registry.catalogVersion(), beforeVersion + 1);
         assertFalse(registry.getVersion(tickerConflict).active);
@@ -221,6 +347,8 @@ contract StockTokenRegistryV2Test is Test {
         vm.prank(safe);
         registry.deactivateVersion(key, bytes32(0));
 
+        vm.expectEmit(true, true, false, true, address(registry));
+        emit AssetVersionDeactivated(key, REASON, uint64(block.timestamp), 2);
         _deactivate(key, REASON);
         assertEq(registry.catalogVersion(), 2);
         assertEq(registry.activeVersionForTickerHash(keccak256(bytes("AAPL"))), bytes32(0));
@@ -235,6 +363,16 @@ contract StockTokenRegistryV2Test is Test {
         vm.prank(safe);
         registry.deactivateVersion(key, keccak256("second-no-op"));
         assertEq(registry.catalogVersion(), 2);
+    }
+
+    // Mutation caught: publisher rotation omits or corrupts the configured-address event.
+    function test_setPublisherEmitsCompleteEvent() public {
+        address nextPublisher = makeAddr("nextPublisher");
+        vm.expectEmit(true, false, false, true, address(registry));
+        emit PublisherSet(nextPublisher);
+        vm.prank(safe);
+        registry.setPublisher(nextPublisher);
+        assertEq(registry.publisher(), nextPublisher);
     }
 
     // Mutation caught: owner/publisher boundaries permit an unauthorized mutation.
@@ -266,9 +404,52 @@ contract StockTokenRegistryV2Test is Test {
         );
     }
 
+    // Mutation caught: owner, publisher, pending-owner, and former-owner capabilities bleed across roles.
+    function test_privilegedRolesRemainSeparatedAcrossTwoStepOwnership() public {
+        IStockTokenRegistryV2.Activation memory request = _activation(address(apple), AAPL_PROVIDER, "AAPL", "Apple");
+        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, publisher));
+        vm.prank(publisher);
+        registry.activateVersion(request);
+        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, publisher));
+        vm.prank(publisher);
+        registry.setPublisher(stranger);
+
+        bytes32 key = _activateEligibleForYesterday(address(apple), AAPL_PROVIDER, "AAPL", "Apple");
+        uint256 day = block.timestamp / 1 days - 1;
+        uint256 currentCatalogVersion = registry.catalogVersion();
+        vm.expectRevert(IStockTokenRegistryV2.NotPublisher.selector);
+        vm.prank(safe);
+        registry.publishBallot(
+            day, key, TALLY, currentCatalogVersion, MAX_ETH_WEI, uint64(block.timestamp + 2 days)
+        );
+
+        address nextSafe = makeAddr("roleNextSafe");
+        vm.prank(safe);
+        registry.transferOwnership(nextSafe);
+        request = _fresh(request);
+        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, nextSafe));
+        vm.prank(nextSafe);
+        registry.activateVersion(request);
+        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, nextSafe));
+        vm.prank(nextSafe);
+        registry.setPublisher(nextSafe);
+
+        vm.prank(nextSafe);
+        registry.acceptOwnership();
+        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, safe));
+        vm.prank(safe);
+        registry.deactivateVersion(key, REASON);
+        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, safe));
+        vm.prank(safe);
+        registry.setPublisher(safe);
+        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, safe));
+        vm.prank(safe);
+        registry.activateVersion(request);
+    }
+
     // Mutation caught: publication accepts current/future days, replay, inactive keys, or absent catalog entries.
     function test_publisherCanPublishOnlyPriorDayOnceAndOnlyActiveVersion() public {
-        bytes32 key = _activate(_activation(address(apple), AAPL_PROVIDER, "AAPL", "Apple"));
+        bytes32 key = _activateEligibleForYesterday(address(apple), AAPL_PROVIDER, "AAPL", "Apple");
         uint256 today = block.timestamp / 1 days;
         uint256 currentCatalogVersion = registry.catalogVersion();
 
@@ -295,6 +476,14 @@ contract StockTokenRegistryV2Test is Test {
         vm.prank(publisher);
         registry.publishBallot(today - 1, key, TALLY, currentCatalogVersion, MAX_ETH_WEI, uint64(block.timestamp));
 
+        vm.expectRevert(IStockTokenRegistryV2.InvalidPurchaseUntil.selector);
+        vm.prank(publisher);
+        registry.publishBallot(
+            today - 1, key, TALLY, currentCatalogVersion, MAX_ETH_WEI, uint64(block.timestamp - 1)
+        );
+        vm.expectRevert(IStockTokenRegistryV2.BallotNotFound.selector);
+        registry.getBallot(today - 1);
+
         vm.prank(publisher);
         registry.publishBallot(
             today - 1, key, TALLY, currentCatalogVersion, MAX_ETH_WEI, uint64(block.timestamp + 2 days)
@@ -314,10 +503,22 @@ contract StockTokenRegistryV2Test is Test {
 
     // Mutation caught: ballot stores a live pointer or resolve redirects after deactivation/replacement.
     function test_ballotSnapshotsExactVersionAndNeverRedirects() public {
-        bytes32 key = _activate(_activation(address(apple), AAPL_PROVIDER, "AAPL", "Apple"));
+        bytes32 key = _activateEligibleForYesterday(address(apple), AAPL_PROVIDER, "AAPL", "Apple");
         uint256 day = block.timestamp / 1 days - 1;
         uint256 snapshotCatalog = 777;
         uint64 purchaseUntil = uint64(block.timestamp + 2 days);
+        vm.expectEmit(true, true, true, true, address(registry));
+        emit BallotPublished(
+            day,
+            key,
+            address(apple),
+            18,
+            TALLY,
+            snapshotCatalog,
+            MAX_ETH_WEI,
+            purchaseUntil,
+            uint64(block.timestamp)
+        );
         vm.prank(publisher);
         registry.publishBallot(day, key, TALLY, snapshotCatalog, MAX_ETH_WEI, purchaseUntil);
 
@@ -330,6 +531,7 @@ contract StockTokenRegistryV2Test is Test {
         assertEq(ballot.maxEthWei, MAX_ETH_WEI);
         assertEq(ballot.purchaseUntil, purchaseUntil);
         assertEq(ballot.publishedAt, block.timestamp);
+        assertEq(registry.ballotActivationGeneration(day), registry.activationGeneration(key));
 
         _deactivate(key, REASON);
         _activate(_fresh(_activation(address(tesla), AAPL_PROVIDER, "AAPL", "Replacement")));
@@ -361,6 +563,87 @@ contract StockTokenRegistryV2Test is Test {
         assertEq(ballot.catalogVersion, snapshotCatalog);
         assertEq(ballot.maxEthWei, MAX_ETH_WEI);
         assertEq(ballot.purchaseUntil, purchaseUntil);
+    }
+
+    // Mutation caught: post-close same-key reactivation is accepted for a ballot that has not yet published.
+    function test_prePublicationSameKeyReactivationAfterCloseIsIneligible() public {
+        bytes32 key = _activateEligibleForYesterday(address(apple), AAPL_PROVIDER, "AAPL", "Apple");
+        uint256 day = block.timestamp / 1 days - 1;
+        _deactivate(key, REASON);
+        _activate(_fresh(_activation(address(apple), AAPL_PROVIDER, "AAPL", "Apple")));
+        assertEq(registry.activationGeneration(key), 2);
+
+        uint256 currentCatalogVersion = registry.catalogVersion();
+        vm.expectRevert(IStockTokenRegistryV2.VersionActivatedAfterDayClose.selector);
+        vm.prank(publisher);
+        registry.publishBallot(
+            day, key, TALLY, currentCatalogVersion, MAX_ETH_WEI, uint64(block.timestamp + 2 days)
+        );
+        vm.expectRevert(IStockTokenRegistryV2.BallotNotFound.selector);
+        registry.getBallot(day);
+    }
+
+    // Mutation caught: current active heads alone revive a published ballot after same-key reactivation.
+    function test_postPublicationSameKeyReactivationNeverRevivesBallot() public {
+        bytes32 key = _activateEligibleForYesterday(address(apple), AAPL_PROVIDER, "AAPL", "Apple");
+        uint256 day = block.timestamp / 1 days - 1;
+        uint256 generationAtPublication = registry.activationGeneration(key);
+        uint256 currentCatalogVersion = registry.catalogVersion();
+        vm.prank(publisher);
+        registry.publishBallot(
+            day, key, TALLY, currentCatalogVersion, MAX_ETH_WEI, uint64(block.timestamp + 2 days)
+        );
+        assertEq(registry.ballotActivationGeneration(day), generationAtPublication);
+
+        _deactivate(key, REASON);
+        (,,,,,,, bool inactiveAfterDeactivation) = registry.resolveBallot(day);
+        assertFalse(inactiveAfterDeactivation);
+        _activate(_fresh(_activation(address(apple), AAPL_PROVIDER, "AAPL", "Apple")));
+
+        assertEq(registry.activationGeneration(key), generationAtPublication + 1);
+        assertEq(registry.ballotActivationGeneration(day), generationAtPublication);
+        (,,,,,,, bool inactiveAfterReactivation) = registry.resolveBallot(day);
+        assertFalse(inactiveAfterReactivation);
+    }
+
+    // Mutation caught: the close comparison uses `>` rather than rejecting activation exactly at the boundary.
+    function test_versionActivatedAtExactDayCloseCannotPublish() public {
+        uint256 closeBoundary = (block.timestamp / 1 days) * 1 days;
+        uint256 day = closeBoundary / 1 days - 1;
+        vm.warp(closeBoundary);
+        bytes32 key = _activate(_activation(address(apple), AAPL_PROVIDER, "AAPL", "Apple"));
+        vm.warp(closeBoundary + 1);
+        uint256 currentCatalogVersion = registry.catalogVersion();
+
+        vm.expectRevert(IStockTokenRegistryV2.VersionActivatedAfterDayClose.selector);
+        vm.prank(publisher);
+        registry.publishBallot(
+            day, key, TALLY, currentCatalogVersion, MAX_ETH_WEI, uint64(block.timestamp + 2 days)
+        );
+    }
+
+    // Mutation caught: malformed token metadata partially registers identity or advances catalog state.
+    function test_adversarialDecimalsResponsesRevertWithoutAnyRegistryWrite() public {
+        _assertMetadataFailure(address(new RevertingDecimalsToken()), keccak256("reverting-provider"), "RVT");
+        _assertMetadataFailure(address(new ShortDecimalsToken()), keccak256("short-provider"), "SHT");
+        _assertMetadataFailure(address(new OutOfRangeDecimalsToken()), keccak256("range-provider"), "RNG");
+    }
+
+    // Mutation caught: reactivation re-reads mutable live metadata instead of relying on registered immutable decimals.
+    function test_tokenDecimalsAreReadOnFirstRegistrationOnly() public {
+        MutableDecimalsStockToken mutableToken = new MutableDecimalsStockToken();
+        bytes32 providerId = keccak256("mutable-decimals-provider");
+        IStockTokenRegistryV2.Activation memory request =
+            _activation(address(mutableToken), providerId, "MDS", "Mutable Decimals");
+        bytes32 key = _activate(request);
+        _deactivate(key, REASON);
+        mutableToken.setDecimals(6);
+
+        request = _fresh(request);
+        assertEq(_activate(request), key);
+        assertEq(registry.getVersion(key).tokenDecimals, 18);
+        assertEq(registry.activationGeneration(key), 2);
+        assertTrue(registry.getVersion(key).active);
     }
 
     // Mutation caught: an empty catalog resolves/publishes a phantom candidate instead of failing closed.
@@ -435,6 +718,18 @@ contract StockTokenRegistryV2Test is Test {
         key = registry.activateVersion(request);
     }
 
+    function _activateEligibleForYesterday(address token, bytes32 providerId, string memory ticker, string memory name)
+        internal
+        returns (bytes32 key)
+    {
+        uint256 publicationTime = block.timestamp;
+        uint256 day = publicationTime / 1 days - 1;
+        uint256 closeBoundary = (day + 1) * 1 days;
+        vm.warp(closeBoundary - 1);
+        key = _activate(_activation(token, providerId, ticker, name));
+        vm.warp(publicationTime);
+    }
+
     function _deactivate(bytes32 key, bytes32 reason) internal {
         vm.prank(safe);
         registry.deactivateVersion(key, reason);
@@ -444,5 +739,25 @@ contract StockTokenRegistryV2Test is Test {
         vm.expectRevert(selector);
         vm.prank(safe);
         registry.activateVersion(request);
+    }
+
+    function _assertMetadataFailure(address token, bytes32 providerId, string memory ticker) internal {
+        IStockTokenRegistryV2.Activation memory request = _activation(token, providerId, ticker, "Bad Metadata");
+        bytes32 expectedKey = keccak256(
+            abi.encode(uint256(4663), keccak256(bytes(ticker)), token, bytes32(providerId))
+        );
+
+        vm.expectRevert();
+        vm.prank(safe);
+        registry.activateVersion(request);
+
+        assertEq(registry.versionCount(), 0);
+        assertEq(registry.catalogVersion(), 0);
+        assertEq(registry.activeVersionForTickerHash(keccak256(bytes(ticker))), bytes32(0));
+        assertEq(registry.activeVersionForToken(token), bytes32(0));
+        assertEq(registry.activeVersionForProviderIdHash(providerId), bytes32(0));
+        assertEq(registry.activationGeneration(expectedKey), 0);
+        vm.expectRevert(IStockTokenRegistryV2.VersionNotFound.selector);
+        registry.getVersion(expectedKey);
     }
 }

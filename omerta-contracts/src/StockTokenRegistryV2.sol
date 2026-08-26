@@ -14,6 +14,8 @@ contract StockTokenRegistryV2 is IStockTokenRegistryV2, Ownable2Step {
 
     address public override publisher;
     uint256 public override catalogVersion;
+    mapping(bytes32 => uint256) public override activationGeneration;
+    mapping(uint256 => uint256) public override ballotActivationGeneration;
 
     bytes32[] private _versionKeys;
     mapping(bytes32 => AssetVersion) private _versions;
@@ -99,6 +101,7 @@ contract StockTokenRegistryV2 is IStockTokenRegistryV2, Ownable2Step {
         target.active = true;
         target.activatedAt = uint64(block.timestamp);
         target.deactivatedAt = 0;
+        ++activationGeneration[versionKey];
         activeVersionForTickerHash[tickerHash] = versionKey;
         activeVersionForToken[activation.token] = versionKey;
         activeVersionForProviderIdHash[activation.robinhoodAssetIdHash] = versionKey;
@@ -137,6 +140,8 @@ contract StockTokenRegistryV2 is IStockTokenRegistryV2, Ownable2Step {
         if (_ballots[day].assetVersionKey != bytes32(0)) revert BallotAlreadyPublished();
         AssetVersion storage version = _versions[versionKey];
         if (!_isExactlyActive(versionKey, version)) revert VersionNotActive();
+        uint256 closeBoundary = (day + 1) * 1 days;
+        if (uint256(version.activatedAt) >= closeBoundary) revert VersionActivatedAfterDayClose();
         if (maxEthWei == 0) revert EmptyMaxEthWei();
         if (purchaseUntil <= block.timestamp) revert InvalidPurchaseUntil();
 
@@ -151,6 +156,7 @@ contract StockTokenRegistryV2 is IStockTokenRegistryV2, Ownable2Step {
             purchaseUntil: purchaseUntil,
             publishedAt: publishedAt
         });
+        ballotActivationGeneration[day] = activationGeneration[versionKey];
         emit BallotPublished(
             day,
             versionKey,
@@ -182,16 +188,14 @@ contract StockTokenRegistryV2 is IStockTokenRegistryV2, Ownable2Step {
         Ballot memory ballot = _ballots[day];
         if (ballot.assetVersionKey == bytes32(0)) revert BallotNotFound();
         AssetVersion storage version = _versions[ballot.assetVersionKey];
-        return (
-            ballot.assetVersionKey,
-            ballot.token,
-            ballot.tokenDecimals,
-            ballot.tallyHash,
-            ballot.catalogVersion,
-            ballot.maxEthWei,
-            ballot.purchaseUntil,
-            _isExactlyActive(ballot.assetVersionKey, version)
-        );
+        versionKey = ballot.assetVersionKey;
+        token = ballot.token;
+        tokenDecimals = ballot.tokenDecimals;
+        tallyHash = ballot.tallyHash;
+        catalogVersion_ = ballot.catalogVersion;
+        maxEthWei = ballot.maxEthWei;
+        purchaseUntil = ballot.purchaseUntil;
+        active = _isLiveBallot(day, ballot.assetVersionKey, version);
     }
 
     function setPublisher(address publisher_) external override onlyOwner {
@@ -273,5 +277,10 @@ contract StockTokenRegistryV2 is IStockTokenRegistryV2, Ownable2Step {
         return version.active && activeVersionForTickerHash[version.tickerHash] == versionKey
             && activeVersionForToken[version.token] == versionKey
             && activeVersionForProviderIdHash[version.robinhoodAssetIdHash] == versionKey;
+    }
+
+    function _isLiveBallot(uint256 day, bytes32 versionKey, AssetVersion storage version) private view returns (bool) {
+        return _isExactlyActive(versionKey, version)
+            && activationGeneration[versionKey] == ballotActivationGeneration[day];
     }
 }

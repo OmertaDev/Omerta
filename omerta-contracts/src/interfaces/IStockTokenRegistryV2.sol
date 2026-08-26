@@ -89,6 +89,7 @@ interface IStockTokenRegistryV2 {
     error ImmutableVersionMismatch();
     error VersionNotFound();
     error VersionNotActive();
+    error VersionActivatedAfterDayClose();
     error DayNotClosed();
     error BallotAlreadyPublished();
     error BallotNotFound();
@@ -126,6 +127,8 @@ interface IStockTokenRegistryV2 {
     function supportedChainId() external view returns (uint256);
     function publisher() external view returns (address);
     function catalogVersion() external view returns (uint256);
+    function activationGeneration(bytes32 versionKey) external view returns (uint256);
+    function ballotActivationGeneration(uint256 day) external view returns (uint256);
     function versionCount() external view returns (uint256);
     function versionKeyAt(uint256 index) external view returns (bytes32);
     function getVersion(bytes32 versionKey) external view returns (AssetVersion memory);
