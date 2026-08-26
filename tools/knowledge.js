@@ -293,6 +293,69 @@ function localFunctionsBefore(source, start, indent) {
   return names;
 }
 
+function routeRegistrationArguments(snippet) {
+  const open = snippet.indexOf('(');
+  if (open < 0) return [];
+  const args = [];
+  let start = open + 1;
+  let round = 1;
+  let square = 0;
+  let curly = 0;
+  let state = 'code';
+  let quote = '';
+  let regexClass = false;
+  for (let i = open + 1; i < snippet.length; i++) {
+    const char = snippet[i];
+    const next = snippet[i + 1];
+    if (state === 'line-comment') {
+      if (char === '\n') state = 'code';
+      continue;
+    }
+    if (state === 'block-comment') {
+      if (char === '*' && next === '/') { state = 'code'; i++; }
+      continue;
+    }
+    if (state === 'string') {
+      if (char === '\\') { i++; continue; }
+      if (char === quote) state = 'code';
+      continue;
+    }
+    if (state === 'regex') {
+      if (char === '\\') { i++; continue; }
+      if (char === '[') regexClass = true;
+      else if (char === ']') regexClass = false;
+      else if (char === '/' && !regexClass) {
+        state = 'code';
+        while (/[a-z]/i.test(snippet[i + 1] || '')) i++;
+      }
+      continue;
+    }
+    if (char === '/' && next === '/') { state = 'line-comment'; i++; continue; }
+    if (char === '/' && next === '*') { state = 'block-comment'; i++; continue; }
+    if (char === '"' || char === "'" || char === '`') { state = 'string'; quote = char; continue; }
+    if (char === '/') {
+      let p = i - 1;
+      while (p > open && /\s/.test(snippet[p])) p--;
+      if (p === open || /[=(:,!&|?{};\[]/.test(snippet[p])) {
+        state = 'regex'; regexClass = false; continue;
+      }
+    }
+    if (char === '(') round++;
+    else if (char === ')' && --round === 0) {
+      args.push(snippet.slice(start, i).trim());
+      return args;
+    } else if (char === '[') square++;
+    else if (char === ']') square--;
+    else if (char === '{') curly++;
+    else if (char === '}') curly--;
+    else if (char === ',' && round === 1 && square === 0 && curly === 0) {
+      args.push(snippet.slice(start, i).trim());
+      start = i + 1;
+    }
+  }
+  return args;
+}
+
 function parseCommits(revision = 'HEAD') {
   const raw = git(['log', '--date=iso-strict', '--pretty=format:%x1e%H%x1f%ad%x1f%an%x1f%s', '--name-only', revision]);
   const commits = [];
@@ -438,7 +501,7 @@ function build(options = {}) {
       const target = relativeImport(rel, m[2], fileSet);
       if (target) aliases.set(m[1], target);
     }
-    const matches = [...text.matchAll(/\bapp\.(get|post|put|patch|delete|options|head)\(\s*(['"])([^'"]+)\2/g)];
+    const matches = [...text.matchAll(/\bapp\.(get|post|put|patch|delete|options|head)\(\s*(['"])([^'"]+)\2\s*,/g)];
     for (let i = 0; i < matches.length; i++) {
       const m = matches[i];
       const method = m[1].toUpperCase();
@@ -454,12 +517,18 @@ function build(options = {}) {
       const lineStart = text.lastIndexOf('\n', m.index) + 1;
       const indent = text.slice(lineStart, m.index);
       const localFunctions = localFunctionsBefore(text, m.index, indent);
-      const localHandler = [...localFunctions].map((name) => {
+      const directHandlerArgument = routeRegistrationArguments(snippet).at(-1) || '';
+      const directFactoryMatch = /^([A-Za-z_$][\w$]*)\s*\(/.exec(directHandlerArgument);
+      const directFactory = directFactoryMatch && localFunctions.has(directFactoryMatch[1])
+        ? { name: directFactoryMatch[1], index: snippet.lastIndexOf(directHandlerArgument) }
+        : null;
+      const returnedLocal = [...localFunctions].map((name) => {
         // A local helper owns the route only when the callback delegates directly to it. Merely
         // using a utility to parse/clip input must not outrank the namespaced domain operation.
         const call = new RegExp(`(?:=>|\\breturn\\b)\\s*(?:await\\s+)?${esc(name)}\\s*\\(`).exec(snippet);
         return call ? { name, index: call.index } : null;
       }).filter(Boolean).sort((a, b) => a.index - b.index)[0] || null;
+      const localHandler = directFactory || returnedLocal;
       const handlerMatch = handlerMatches.find((x) => aliases.has(x[1]) && !/\/(?:game|rules)\.js$/.test(aliases.get(x[1])))
         || handlerMatches.find((x) => aliases.has(x[1])) || null;
       const handlerFile = localHandler ? rel : handlerMatch ? aliases.get(handlerMatch[1]) : null;

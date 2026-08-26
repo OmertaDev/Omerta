@@ -57,6 +57,14 @@ assert.equal(routeById.get('GET /u/:name')?.handler, 'Cards.publicDossier',
   'public profiles must keep their domain handler rather than promoting the incidental clip helper');
 assert.equal(routeById.get('GET /v1/auth/x/callback')?.handler, 'A.xOAuthCallback',
   'X callbacks must keep their domain handler rather than promoting the incidental cookie parser');
+for (const route of ['GET /', 'GET /admin', 'GET /wiki', 'GET /arena', 'GET /play', 'GET /path']) {
+  assert.equal(routeById.get(route)?.handler, 'servePage',
+    `${route} must resolve its direct callback-factory handler argument`);
+}
+for (const route of ['POST /v1/auth/x', 'POST /v1/auth/privy']) {
+  assert.equal(routeById.get(route)?.handler, 'providerLogin',
+    `${route} must resolve its direct callback-factory handler argument`);
+}
 
 for (const artifact of graph.nodes.filter((n) => n.type === 'Artifact')) {
   assert(artifact.version, `${artifact.key} has no version`);
