@@ -14,6 +14,12 @@
 import { GameError, notifyOnce } from './game.js';
 import { VOUCH, vouchRankOf } from './rules.js';
 
+const SQL_BATCH = 50;
+const sqlBatches = (values) => Array.from({ length: Math.ceil(values.length / SQL_BATCH) }, (_, index) => {
+  const batch = values.slice(index * SQL_BATCH, (index + 1) * SQL_BATCH);
+  return [...batch, ...Array(SQL_BATCH - batch.length).fill(null)];
+});
+
 // resolve a character id → { account_id, name, human }. A plain read (the mentor.js pattern).
 async function resolveTarget(client, charId) {
   const r = (await client.query(
@@ -74,9 +80,13 @@ export async function vouchBoard(client, ch) {
   const mutuals = out.filter((r) => inSet.has(r.target_account)).map((r) => ({ id: r.id, name: r.name }));
   // the true inbound COUNT (the reputation) counts every voucher, living or dead — a vouch you earned
   // stands even if that street fell; only the actionable lists JOIN on alive.
-  const vouchedBy = Number((await client.query('SELECT COUNT(*) n FROM vouches WHERE target_account=$1', [ch.account_id])).rows[0].n);
+  const vouchedBy = await client.query('SELECT COUNT(*) n FROM vouches WHERE target_account=$1', [ch.account_id]);
+  const vouched = await client.query('SELECT COUNT(*) n FROM vouches WHERE voucher_account=$1', [ch.account_id]);
+  const inboundCount = Number(vouchedBy.rows[0].n);
+  const outboundCount = Number(vouched.rows[0].n);
   return {
-    vouchedBy, rank: vouchRankOf(vouchedBy).name, cap: VOUCH.MAX_OUT, slotsLeft: VOUCH.MAX_OUT - out.length,
+    vouchedBy: inboundCount, rank: vouchRankOf(inboundCount).name, cap: VOUCH.MAX_OUT,
+    slotsLeft: Math.max(0, VOUCH.MAX_OUT - outboundCount),
     given: out.map((r) => ({ id: r.id, name: r.name, mutual: inSet.has(r.target_account) })),
     vouchers: inn.map((r) => ({ id: r.id, name: r.name, mutual: outSet.has(r.voucher_account) })),
     mutuals,
@@ -87,34 +97,29 @@ export async function vouchBoard(client, ch) {
 // account so a list render is one query (pass the character ids; returns a Map keyed by characterId).
 export async function vouchCounts(client, charIds) {
   if (!charIds.length) return new Map();
-  // two flat queries + a JS join — pg-mem chokes on both `= ANY($1::text[])` AND a correlated subquery,
-  // so map charId → account → count in JS (the /v1/gangs posture).
-  const inList = charIds.map((_, i) => `$${i + 1}`).join(',');
-  const chars = (await client.query(`SELECT id, account_id FROM characters WHERE id IN (${inList})`, charIds)).rows;
-  const accts = [...new Set(chars.map((r) => r.account_id))];
-  if (!accts.length) return new Map();
-  const aList = accts.map((_, i) => `$${i + 1}`).join(',');
-  const counts = (await client.query(
-    `SELECT target_account, COUNT(*) n FROM vouches WHERE target_account IN (${aList}) GROUP BY target_account`, accts)).rows;
-  const byAcct = new Map(counts.map((r) => [r.target_account, Number(r.n)]));
-  return new Map(chars.map((r) => [r.id, byAcct.get(r.account_id) || 0]));
+  const counts = new Map();
+  for (const batch of sqlBatches([...new Set(charIds)])) {
+    const rows = (await client.query(
+      `SELECT c.id, COUNT(v.target_account) n
+         FROM characters c LEFT JOIN vouches v ON v.target_account=c.account_id
+        WHERE c.id IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50)
+        GROUP BY c.id`, batch)).rows;
+    for (const row of rows) counts.set(row.id, Number(row.n));
+  }
+  return counts;
 }
 
 // THE LEADERBOARD — the most-vouched players (the trusted). Pure status, agents + residents excluded (the
 // hitmen/portfolio board precedent); a bloodline with no living street is skipped.
 export async function vouchLeaderboard(pool, limit = 20) {
-  // two flat queries + a JS join (pg-mem can't parse the derived-table join — the /v1/gangs posture).
-  const counts = (await pool.query('SELECT target_account, COUNT(*) n FROM vouches GROUP BY target_account')).rows;
-  if (!counts.length) return [];
-  const byAcct = new Map(counts.map((r) => [r.target_account, Number(r.n)]));
-  const accts = [...byAcct.keys()];
-  const inList = accts.map((_, i) => `$${i + 1}`).join(',');
   const rows = (await pool.query(
-    `SELECT c.id, c.name, c.account_id FROM characters c
+    `SELECT c.id, c.name, c.account_id, COUNT(v.voucher_account) n
+       FROM vouches v JOIN characters c ON c.account_id=v.target_account
        JOIN account_persistent a ON a.account_id=c.account_id
-      WHERE c.account_id IN (${inList}) AND c.alive AND NOT c.is_npc AND NOT a.agent_flag`, accts)).rows;
+      WHERE c.alive AND NOT c.is_npc AND NOT a.agent_flag
+      GROUP BY c.id, c.name, c.account_id`)).rows;
   return rows
-    .map((r) => ({ id: r.id, name: r.name, vouches: byAcct.get(r.account_id) || 0 }))
+    .map((r) => ({ id: r.id, name: r.name, vouches: Number(r.n) }))
     .sort((x, y) => y.vouches - x.vouches || x.name.localeCompare(y.name))
     .slice(0, limit)
     .map((r, i) => ({ rank: i + 1, id: r.id, name: r.name, vouches: r.vouches }));

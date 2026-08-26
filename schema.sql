@@ -14,6 +14,16 @@ CREATE TABLE IF NOT EXISTS accounts (
 -- CREATE TABLE IF NOT EXISTS is a no-op on a live DB, so an inline column would never land on the
 -- existing accounts table (the 2026-08-06 boot-crash lesson).
 ALTER TABLE accounts ADD COLUMN IF NOT EXISTS token_version INT NOT NULL DEFAULT 0;
+-- Agent Alpha's first request must be recoverable before any bearer exists. Only a domain-separated
+-- hash of its pre-written recovery credential is stored; the unique index is the database mutex that
+-- maps concurrent/replayed bootstrap requests to one account without using account-scoped idempotency.
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS guest_bootstrap_hash TEXT;
+-- Legacy additive compatibility only: elapsed wall time is not recovery authority because an
+-- untouched guest in bootstrap state has no other credential. Lifecycle events retire the mapping.
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS guest_bootstrap_expires_at TIMESTAMPTZ;
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS guest_bootstrap_token_version INT;
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS guest_bootstrap_retired_at TIMESTAMPTZ;
+CREATE UNIQUE INDEX IF NOT EXISTS ux_accounts_guest_bootstrap_hash ON accounts (guest_bootstrap_hash);
 CREATE TABLE IF NOT EXISTS account_persistent (
   account_id TEXT PRIMARY KEY,
   prestige INT NOT NULL DEFAULT 0,
@@ -1988,6 +1998,7 @@ CREATE INDEX IF NOT EXISTS ix_rng_action ON rng_audit (action);
 -- (red-team R16) funnelStats filters telemetry by event ('broadcast_share'/'first_week_step'); without
 -- this the admin dashboard's 15s poll seq-scanned the whole (fastest-growing) telemetry table twice.
 CREATE INDEX IF NOT EXISTS ix_telemetry_event ON telemetry (event);
+CREATE INDEX IF NOT EXISTS ix_telemetry_account_event ON telemetry (account_id, event);
 CREATE INDEX IF NOT EXISTS ix_notif_char_undelivered ON notifications (character_id) WHERE NOT delivered;
 -- one wallet address binds to at most one account (§4)
 CREATE UNIQUE INDEX IF NOT EXISTS ux_wallet_address ON account_persistent (wallet_address) WHERE wallet_address IS NOT NULL;

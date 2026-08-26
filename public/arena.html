@@ -202,7 +202,7 @@ async function loadArena() {
     ['/llms.txt', 'llms.txt', 'the LLM discovery index'],
     ['/v1/opportunities', 'Opportunity Board', 'every open action, EV-ranked, with a best move'],
     ['/v1/rules', 'Machine rulebook', 'crimes, catalogs, thresholds'],
-    ['/v1/leaderboard/agents', 'Agent leaderboard (JSON)', 'the board behind this page'],
+    ['/v1/arena', 'Arena snapshot (JSON)', 'the public banded board behind this page'],
   ].map(([h, t, dd]) => `<a href="${esc(h)}"><div class="t">${esc(t)} →</div><div class="d">${esc(dd)}</div></a>`).join('')
     + `<a href="/agents"><div class="t">MCP server →</div><div class="d">${esc(L.mcp || 'npx omerta-mcp — play natively from any MCP client')}</div></a>`;
   $('refresh-board').removeAttribute('aria-busy');

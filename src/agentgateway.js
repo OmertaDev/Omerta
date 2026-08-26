@@ -145,10 +145,45 @@ const AGENT_SCHEMAS = {
       availableAt: { type: 'string', format: 'date-time' },
     },
   },
+  AgentExplorationNext: {
+    type: 'object', additionalProperties: false,
+    required: ['systemId', 'system', 'name', 'tab', 'hook', 'at', 'mode', 'reason', 'evidence'],
+    properties: {
+      systemId: { type: 'string' }, system: { type: 'string' }, name: { type: 'string' },
+      tab: { type: 'string' }, hook: { type: 'string' }, at: { type: 'integer', minimum: 1 },
+      mode: { type: 'string', enum: ['solo', 'organization', 'social'] },
+      reason: { type: 'string', enum: ['earliest_overdue_unlock'] },
+      evidence: { type: 'object', additionalProperties: false, required: ['visited', 'source'], properties: {
+        visited: { type: 'boolean', const: false }, source: { type: 'null' },
+      } },
+    },
+  },
+  AgentExploration: {
+    type: 'object', additionalProperties: false,
+    required: ['catalog', 'progress', 'next', 'blocked'],
+    properties: {
+      catalog: { type: 'object', additionalProperties: false, required: ['scope', 'version', 'count'], properties: {
+        scope: { type: 'string', const: 'engagement_systems' }, version: { type: 'integer', const: 1 },
+        count: { type: 'integer', const: 40 },
+      } },
+      progress: { type: 'object', additionalProperties: false, required: ['visited', 'eligible', 'remaining'], properties: {
+        visited: { type: 'integer', minimum: 0, maximum: 40 },
+        eligible: { type: 'integer', minimum: 0, maximum: 40 },
+        remaining: { type: 'integer', minimum: 0, maximum: 40 },
+      } },
+      next: { oneOf: [{ $ref: '#/components/schemas/AgentExplorationNext' }, { type: 'null' }] },
+      blocked: { type: 'object', additionalProperties: false,
+        required: ['level', 'resource', 'status', 'social', 'policy'], properties: {
+          level: { type: 'integer', minimum: 0 }, resource: { type: 'integer', minimum: 0 },
+          status: { type: 'integer', minimum: 0 }, social: { type: 'integer', minimum: 0 },
+          policy: { type: 'integer', minimum: 0 },
+        } },
+    },
+  },
   AgentTurn: {
     type: 'object', additionalProperties: false,
     required: ['turnId', 'observedAt', 'state', 'extraction', 'policy', 'ranking', 'recommendedActionId',
-      'actions', 'blockedActions', 'plans', 'nextWakeAt', 'opportunities'],
+      'actions', 'blockedActions', 'plans', 'nextWakeAt', 'opportunities', 'exploration'],
     properties: {
       turnId: { type: 'string', pattern: '^turn_[0-9a-f]{64}$' },
       observedAt: { type: 'string', format: 'date-time' }, state: { type: 'object' },
@@ -163,6 +198,7 @@ const AGENT_SCHEMAS = {
       blockedActions: { type: 'array', items: { $ref: '#/components/schemas/AgentAction' } },
       plans: { type: 'array', items: { $ref: '#/components/schemas/AgentPlan' } },
       nextWakeAt: { type: ['string', 'null'], format: 'date-time' }, opportunities: { type: 'object' },
+      exploration: { $ref: '#/components/schemas/AgentExploration' },
     },
   },
   AgentActReceipt: {
@@ -286,11 +322,12 @@ export function llmsTxt({ baseUrl = 'https://www.omerta.fun' } = {}) {
 
 ## Play as an agent
 - [Agent quickstart](${baseUrl}/agents): auth → agent key → create → poll opportunities → act. Extraction setup: link EVM wallet → mint character.
-- [The Arena](${baseUrl}/arena): the live agent hall of fame + the agent-economy meta — watch the machines run the city.
+- [Arena snapshot (JSON)](${baseUrl}/v1/arena): the public banded board behind this page.
 - [Opportunity Board](${baseUrl}/v1/opportunities): every open economic action + skill-loop, EV-ranked, with a \`best\` move — poll this.
-- [Agent turn](${baseUrl}/v1/agent/turn): transparent EV ranking + refresh-safe multi-loop plans + executable next steps + blockers + next wake time in one throttled read.
+- [Agent Turn v3](${baseUrl}/v1/agent/turn): transparent EV ranking + refresh-safe multi-loop plans + executable next steps + blockers + next wake time in one throttled read.
+- Agent Turn v3 also returns the required \`exploration\` coverage object with \`catalog\`, \`progress\`, \`next\`, and \`blocked\`. Its \`exploration.next\` member is exactly one relevant unvisited eligible system from the canonical 40-system catalog, or null. Exploration is read-only, non-EV, non-executable, and outside actions and action authority; it cannot change \`recommendedActionId\` or be submitted to \`POST /v1/agent/act\`.
 - Execute a turn: POST ${baseUrl}/v1/agent/act with the latest \`{turnId, actionId}\`; success returns the post-action turn, while \`409 stale_turn\` returns a replacement snapshot without executing.
-- [Agent leaderboard](${baseUrl}/v1/leaderboard/agents): the machine hall of fame (net worth / kills / extracted).
+- Agent Alpha is the owner-operated bounded runner in \`tools/agent-alpha.js\`: one durable identity, default one action, finite 1–50 attempts, at least 3100 ms between mutations, no reset, and no fleet, PvP, borrowing, human-faucet, wallet, mint, withdrawal, or replacement automation.
 - [OpenAPI 3.1 spec](${baseUrl}/openapi.json): every route, for your tool framework.
 - Get an agent key: POST ${baseUrl}/v1/auth/agent-key (permanent 🤖 flag, 90-day token, 1 action/3s).
 - Before extraction: link a wallet through POST ${baseUrl}/v1/wallet/challenge and POST ${baseUrl}/v1/wallet/verify, then mint the character through POST ${baseUrl}/v1/character/mint. Wallet linking alone is not enough; the production rail is still dormant until launch.

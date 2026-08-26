@@ -121,6 +121,128 @@ export async function accountForIdentity(pool, { provider, subject }, ip, invite
   } finally { client.release(); }
 }
 
+const guestBootstrapLocks = new Map();
+async function withGuestBootstrapLock(recoveryHash, operation) {
+  const previous = guestBootstrapLocks.get(recoveryHash) || Promise.resolve();
+  let release;
+  const current = new Promise((resolveCurrent) => { release = resolveCurrent; });
+  guestBootstrapLocks.set(recoveryHash, current);
+  await previous;
+  try {
+    return await operation();
+  } finally {
+    release();
+    if (guestBootstrapLocks.get(recoveryHash) === current) guestBootstrapLocks.delete(recoveryHash);
+  }
+}
+
+// Agent Alpha cannot authenticate its first guest request with an account-scoped idempotency key:
+// no account or bearer exists yet, and auth routes are intentionally outside that hook. Instead the
+// client writes a random 256-bit recovery credential before network I/O. The server stores only its
+// domain-separated hash. A short process-local queue makes same-process retries deterministic (and
+// keeps pg-mem honest); the unique index is the cross-process backstop. Invite consumption, account,
+// and persistent state commit together. Recovery is deliberately event-bounded: only the unretired
+// original guest/token-version/no-character/no-agent state may use the proof. Elapsed wall time cannot
+// destroy the sole credential of an otherwise untouched identity.
+async function recoverCommittedGuestBootstrap(pool, recoveryHash, ip) {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const row = (await client.query(
+      `SELECT id, status, auth_provider, token_version, guest_bootstrap_token_version,
+              guest_bootstrap_retired_at
+         FROM accounts WHERE guest_bootstrap_hash=$1 FOR UPDATE`,
+      [recoveryHash],
+    )).rows[0];
+    if (!row) {
+      await client.query('ROLLBACK');
+      return null;
+    }
+    if (row.status === 'banned') throw new GameError('banned', 'This account is banned.');
+    const persistent = (await client.query(
+      'SELECT COALESCE(agent_flag,false) AS agent FROM account_persistent WHERE account_id=$1',
+      [row.id],
+    )).rows[0];
+    if (!persistent) {
+      throw new GameError('bootstrap_contention', 'Guest bootstrap is still committing.');
+    }
+    const hasCharacter = (await client.query(
+      'SELECT 1 FROM characters WHERE account_id=$1 LIMIT 1', [row.id],
+    )).rowCount > 0;
+    const originalVersion = row.guest_bootstrap_token_version;
+    if (row.guest_bootstrap_retired_at || row.auth_provider !== 'guest' || persistent.agent ||
+        hasCharacter || originalVersion === null || originalVersion === undefined ||
+        Number(row.token_version) !== Number(originalVersion)) {
+      throw new GameError('bootstrap_retired', 'Guest bootstrap recovery is retired.');
+    }
+    await client.query('UPDATE accounts SET last_ip=$2 WHERE id=$1', [row.id, ip]);
+    await client.query('COMMIT');
+    return { accountId: row.id, created: false, tokenVersion: Number(originalVersion) };
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+export async function accountForGuestBootstrap(pool, recoverySecret, ip, invite) {
+  if (typeof recoverySecret !== 'string' || !/^[A-Za-z0-9_-]{43}$/.test(recoverySecret)) {
+    throw new GameError('bootstrap_credential', 'Invalid guest bootstrap credential.');
+  }
+  const secretBytes = Buffer.from(recoverySecret, 'base64url');
+  if (secretBytes.length !== 32 || secretBytes.toString('base64url') !== recoverySecret) {
+    throw new GameError('bootstrap_credential', 'Invalid guest bootstrap credential.');
+  }
+  const recoveryHash = crypto.createHash('sha256')
+    .update('omerta-agent-alpha-guest-bootstrap-v1\0')
+    .update(secretBytes)
+    .digest('hex');
+  return withGuestBootstrapLock(recoveryHash, async () => {
+    const existing = await recoverCommittedGuestBootstrap(pool, recoveryHash, ip);
+    if (existing) return existing;
+
+    const id = crypto.randomUUID();
+    const tokenVersion = 0;
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      await consumeInvite(client, invite);
+      await client.query(
+        `INSERT INTO accounts
+           (id, auth_provider, auth_subject, created_ip, last_ip, guest_bootstrap_hash,
+            guest_bootstrap_token_version)
+         VALUES ($1, 'guest', $1, $2, $2, $3, $4)`,
+        [id, ip, recoveryHash, tokenVersion],
+      );
+      await client.query('INSERT INTO account_persistent (account_id) VALUES ($1)', [id]);
+      await client.query('COMMIT');
+      return { accountId: id, created: true, tokenVersion };
+    } catch (error) {
+      await client.query('ROLLBACK');
+      // A different server process may have won the unique-index race. Its committed mapping is
+      // authoritative; adopting it is recovery, while an absent/incomplete row keeps us fail-closed.
+      const winner = await recoverCommittedGuestBootstrap(pool, recoveryHash, ip);
+      if (winner) return winner;
+      throw error;
+    } finally {
+      client.release();
+    }
+  });
+}
+
+// The bearer is already durable before Agent Alpha calls this route. Keep the hash as a one-way
+// consumed-proof tombstone so the same stale proof can never create a second account after retirement.
+export async function acknowledgeGuestBootstrap(pool, accountId) {
+  await pool.query(
+    `UPDATE accounts
+        SET guest_bootstrap_retired_at=COALESCE(guest_bootstrap_retired_at, now())
+      WHERE id=$1 AND guest_bootstrap_hash IS NOT NULL`,
+    [accountId],
+  );
+  return { ok: true };
+}
+
 // Guest → provider upgrade: same account row, so possessions survive (§4). The
 // UNIQUE constraint is the real guard — the pre-check is just a friendlier error.
 export async function upgradeAccount(pool, accountId, { provider, subject }) {
@@ -130,7 +252,11 @@ export async function upgradeAccount(pool, accountId, { provider, subject }) {
   const taken = (await pool.query('SELECT id FROM accounts WHERE auth_provider=$1 AND auth_subject=$2', [provider, subject])).rows[0];
   if (taken) throw new GameError('linked_elsewhere', 'That identity already has an account.');
   try {
-    await pool.query('UPDATE accounts SET auth_provider=$2, auth_subject=$3 WHERE id=$1', [accountId, provider, subject]);
+    await pool.query(
+      `UPDATE accounts SET auth_provider=$2, auth_subject=$3,
+         guest_bootstrap_retired_at=COALESCE(guest_bootstrap_retired_at, now()) WHERE id=$1`,
+      [accountId, provider, subject],
+    );
   } catch { // lost the race to another upgrade/sign-in for the same identity
     throw new GameError('linked_elsewhere', 'That identity already has an account.');
   }

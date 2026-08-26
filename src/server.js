@@ -127,7 +127,8 @@ import { renderPng } from './cardpng.js';
 import { renderPathQuizPage, renderPathResultPage } from './path-pages.js';
 import { PATH_IDS, PATH_QUIZ_QUESTIONS, scorePathQuiz } from './path-funnel.js';
 import { buildOpenApi, llmsTxt } from './agentgateway.js';
-import { opportunityBoard, arenaBoard } from './opportunities.js';
+import { opportunityBoard } from './opportunities.js';
+import { arenaBoard } from './arena.js';
 import { agentTurn } from './agentturn.js';
 import { postCityWire } from './citywire.js';
 import { bulletinPublic, bulletinBoard, claimBulletin } from './bulletin.js';
@@ -868,6 +869,10 @@ export async function buildServer() {
   // ban left an already-open socket feeding streets/gang chatter until the client chose to disconnect,
   // falsifying the documented "banned-WS close" guarantee. The ban handler closes every open socket.
   const wsClients = new Map(); // accountId -> Set<socket>
+  // Coverage needs the same human-only presence boundary as Collision/Discovery. Keep only the
+  // already-read classification/context beside the socket registry; no new presence query enters
+  // the Agent Turn polling path and no account/character id is returned to a client.
+  const wsCoverage = new Map(); // accountId -> { accountId, characterId, loc, gangId, agent, npc }
   // close every live socket for an account (its own 'close' handler tears down the bus subs + registry)
   const closeAccountSockets = (accountId, code, reason) => {
     const s = wsClients.get(accountId); if (!s) return;
@@ -1102,6 +1107,13 @@ export async function buildServer() {
   });
 
   app.post('/v1/auth/guest', async (req) => {
+    if (req.body && typeof req.body === 'object' && !Array.isArray(req.body) &&
+        Object.prototype.hasOwnProperty.call(req.body, 'bootstrapSecret')) {
+      const { accountId, tokenVersion } = await A.accountForGuestBootstrap(
+        pool, req.body.bootstrapSecret, req.ip || '0.0.0.0', req.body.inviteCode,
+      );
+      return { token: await signFor(accountId, {}, '30d', tokenVersion) };
+    }
     await A.consumeInvite(pool, req.body?.inviteCode);
     const id = uid();
     await pool.query('INSERT INTO accounts (id, auth_provider, auth_subject, created_ip, last_ip) VALUES ($1,$2,$3,$4,$4)',
@@ -1109,6 +1121,8 @@ export async function buildServer() {
     await pool.query('INSERT INTO account_persistent (account_id) VALUES ($1)', [id]);
     return { token: await signFor(id, {}, '30d', 0) };
   });
+  app.post('/v1/auth/guest/bootstrap/ack', { preHandler: auth }, async (req) =>
+    A.acknowledgeGuestBootstrap(pool, req.user.sub));
   const providerLogin = (verify) => async (req) => {
     const identity = await verify(req.body?.token);
     // (B2) the invite is consumed ATOMICALLY inside accountForIdentity's create txn — one invite per
@@ -1192,14 +1206,21 @@ export async function buildServer() {
   // §4/§10.2 agent API keys: flags the account permanently (🤖 badge, referral
   // exclusion) and mints a token the rate limiter throttles at 1 action / 3 s.
   app.post('/v1/auth/agent-key', { preHandler: auth }, async (req) => {
+    await A.acknowledgeGuestBootstrap(pool, req.user.sub);
     await pool.query('UPDATE account_persistent SET agent_flag=true WHERE account_id=$1', [req.user.sub]);
+    const presence = wsCoverage.get(req.user.sub);
+    if (presence) presence.agent = true;
     return { token: await signFor(req.user.sub, { agent: true }, '90d'), agent: true };
   });
   // BLUE-TEAM M3: self-serve "log out everywhere" — bump the account's token_version, which invalidates
   // every token issued before now (a stolen/lost device can no longer MOVE MONEY on this account). The
   // caller's own current token is invalidated too, so the client must sign in again; that is the point.
   app.post('/v1/auth/logout-all', { preHandler: auth }, async (req) => {
-    await pool.query('UPDATE accounts SET token_version = token_version + 1 WHERE id=$1', [req.user.sub]);
+    await pool.query(
+      `UPDATE accounts SET token_version=token_version+1,
+         guest_bootstrap_retired_at=COALESCE(guest_bootstrap_retired_at, now()) WHERE id=$1`,
+      [req.user.sub],
+    );
     // (red-team R30 F1) …and cut the live sockets NOW, matching `mod/revoke`. "Someone has my session"
     // is exactly the moment the intel feed must die rather than run until the thief closes the tab;
     // the connect-time `tv` check above is what stops them simply reconnecting.
@@ -1242,6 +1263,13 @@ export async function buildServer() {
         [id, req.user.sub, name, season, st.muscle, st.cunning, st.speed]);
       await client.query('INSERT INTO rng_audit (id, character_id, action, roll, outcome) VALUES ($1,$2,$3,$4,$5)',
         [uid(), id, 'roll_stats', Math.random(), `${st.muscle}/${st.cunning}/${st.speed}`]);
+      // Character progression is an authoritative bootstrap lifecycle boundary. Retire in the same
+      // transaction as the character so a later administrative row removal cannot revive the proof.
+      await client.query(
+        `UPDATE accounts SET guest_bootstrap_retired_at=COALESCE(guest_bootstrap_retired_at, now())
+          WHERE id=$1`,
+        [req.user.sub],
+      );
       // apply any Store Street-Wire window parked while the account had no living character (audit)
       await Store.claimPendingWire(client, req.user.sub, id);
       if (req.body?.referralCode) {
@@ -2175,7 +2203,10 @@ export async function buildServer() {
   // `/v1/bulletin` is deliberately NOT here because it WRITES and the read path refuses writes.
   app.get('/v1/home', { preHandler: auth }, async (req) =>
     G.readCharacter(pool, req.user.sub, (ch, client, h) =>
-      Home.homeBoard(ch, client, h, { online: [...wsClients.keys()] })));
+      Home.homeBoard(ch, client, h, {
+        online: [...wsClients.keys()],
+        onlineAccounts: [...wsCoverage.values()],
+      })));
   // THE BLOCK — the streets screen's own boards in one read (see src/streets.js for why it is not
   // hung under /v1/streets, which is the ROSTER and a different thing entirely).
   app.get('/v1/block', { preHandler: auth }, async (req) =>
@@ -2294,7 +2325,7 @@ export async function buildServer() {
       turnContext: { ch, acct: h.acct, owned: h.owned },
     }));
     const { ch, acct, owned } = observed.turnContext;
-    return agentTurn(pool, ch, acct, owned);
+    return agentTurn(pool, ch, acct, owned, { onlineAccounts: [...wsCoverage.values()] });
   };
   app.get('/v1/agent/turn', { preHandler: auth }, async (req) => readAgentTurn(req.user.sub));
 
@@ -2330,12 +2361,30 @@ export async function buildServer() {
     }
   };
   const authorizeAgentAction = async (client, ch, h, turnId, actionId) => {
-    const current = await agentTurn(client, ch, h.acct, h.owned);
+    const current = await agentTurn(client, ch, h.acct, h.owned, { onlineAccounts: [...wsCoverage.values()] });
     if (current.turnId !== turnId) throw new AgentTurnConflict();
     const action = current.actions.find((candidate) => candidate.id === actionId);
     if (!action) throw new G.GameError('unknown_action',
       'That action was not issued by this turn. Refresh and choose a current executable action.');
-    return action;
+    return { action, current };
+  };
+  const executeAgentAction = async (client, ch, h, turnId, actionId, lender = null) => {
+    const { action, current } = await authorizeAgentAction(client, ch, h, turnId, actionId);
+    const result = await performAgentAction(action, ch, client, h, lender);
+    const blockerCodes = [...new Set(current.blockedActions.flatMap((candidate) =>
+      (candidate.blockedBy || []).map((blocker) => blocker.code)).filter(Boolean))].sort();
+    // Operational evidence belongs to the same transaction as the canonical mutation. A thrown
+    // domain action, stale turn, or unknown id never reaches this write; any later rollback removes
+    // both. Props are a fixed server-authored vocabulary with no ids, descriptors, or authored data.
+    await G.track(client, ch.account_id, 'agent_turn_action', {
+      actionKind: action.kind,
+      recommended: current.recommendedActionId === action.id,
+      explorationSystemId: current.exploration.next?.systemId || null,
+      visited: current.exploration.progress.visited,
+      remaining: current.exploration.progress.remaining,
+      blockerCodes,
+    });
+    return result;
   };
   app.post('/v1/agent/act', { preHandler: auth }, async (req, reply) => {
     const turnId = typeof req.body?.turnId === 'string' ? req.body.turnId : '';
@@ -2352,21 +2401,18 @@ export async function buildServer() {
           "SELECT lender_character FROM loans WHERE id=$1 AND status='active'", [loanMatch[1]])).rows[0]?.lender_character;
         if (lenderId) {
           result = await G.withTwoCharacters(pool, req.user.sub, lenderId, async (ch, lender, client, h) => {
-            const action = await authorizeAgentAction(client, ch, h, turnId, actionId);
-            return performAgentAction(action, ch, client, h, lender);
+            return executeAgentAction(client, ch, h, turnId, actionId, lender);
           });
         } else {
           // Re-enter the normal locked validator so a disappeared loan reports stale_turn (or an
           // invented id reports unknown_action), rather than leaking an unrelated lookup result.
           result = await G.withCharacter(pool, req.user.sub, async (ch, client, h) => {
-            const action = await authorizeAgentAction(client, ch, h, turnId, actionId);
-            return performAgentAction(action, ch, client, h);
+            return executeAgentAction(client, ch, h, turnId, actionId);
           });
         }
       } else {
         result = await G.withCharacter(pool, req.user.sub, async (ch, client, h) => {
-          const action = await authorizeAgentAction(client, ch, h, turnId, actionId);
-          return performAgentAction(action, ch, client, h);
+          return executeAgentAction(client, ch, h, turnId, actionId);
         });
       }
     } catch (e) {
@@ -2547,10 +2593,13 @@ export async function buildServer() {
       // the same token reconnected instantly, so that half was defeated by one reconnect. Same
       // grandfathering rule as both preHandlers — a token with NO `tv` claim predates the feature and
       // ages out within its TTL, so a deploy never mass-disconnects.
-      const acct = (await pool.query('SELECT status, token_version FROM accounts WHERE id=$1', [accountId])).rows[0];
+      const acct = (await pool.query(
+        `SELECT a.status, a.token_version, COALESCE(ap.agent_flag,false) AS agent,
+                COALESCE(ap.npc_flag,false) AS npc
+           FROM accounts a LEFT JOIN account_persistent ap ON ap.account_id=a.id WHERE a.id=$1`, [accountId])).rows[0];
       if (!acct || acct.status === 'banned') { socket.close(4003, 'banned'); return; }
       if (tokenTv !== undefined && Number(tokenTv) !== Number(acct.token_version)) { socket.close(4008, 'token_revoked'); return; }
-      const me = (await pool.query('SELECT id FROM characters WHERE account_id=$1 AND alive', [accountId])).rows[0];
+      const me = (await pool.query('SELECT id, loc, is_npc FROM characters WHERE account_id=$1 AND alive', [accountId])).rows[0];
       if (!me) { socket.close(4004, 'no_character'); return; }
       const gm = (await pool.query('SELECT gang_id FROM gang_members WHERE character_id=$1', [me.id])).rows[0];
       const cm = (await pool.query('SELECT crew_id FROM crew_members WHERE account_id=$1', [accountId])).rows[0];
@@ -2564,6 +2613,8 @@ export async function buildServer() {
       if (cm?.crew_id) subs.push([`crew:${cm.crew_id}`, send('crew')]); // THE CREW ROOM — the small-group live feed
       for (const [ev, fn] of subs) G.bus.on(ev, fn);
       let set = wsClients.get(accountId); if (!set) wsClients.set(accountId, set = new Set()); set.add(socket);
+      wsCoverage.set(accountId, { accountId, characterId: me.id, loc: me.loc, gangId: gm?.gang_id || null,
+        agent: !!acct.agent, npc: !!acct.npc || !!me.is_npc });
       // (red-team R9 WS) `app.register(websocket)` sets no keepalive, so half-open/dead sockets never get
       // reaped and their bus listeners accumulate forever. Standard heartbeat: ping every WS_PING_MS; a
       // browser auto-pongs (so legit idle viewers stay connected), a dead/half-open socket misses two
@@ -2578,7 +2629,11 @@ export async function buildServer() {
       socket.on('close', () => {
         clearInterval(hb);
         for (const [ev, fn] of subs) G.bus.off(ev, fn);
-        const s = wsClients.get(accountId); if (s) { s.delete(socket); if (!s.size) wsClients.delete(accountId); }
+        const s = wsClients.get(accountId);
+        if (s) {
+          s.delete(socket);
+          if (!s.size) { wsClients.delete(accountId); wsCoverage.delete(accountId); }
+        }
       });
       socket.send(JSON.stringify({ channel: 'hello', characterId: me.id }));
     } finally {
@@ -2748,7 +2803,7 @@ export async function buildServer() {
   // THE FAVOR (step two) — the PLAYER-posted call. Single-party throughout: the pay is escrowed on
   // the row at post, so a runner never locks the poster's character (no two-party lock surface).
   app.get('/v1/favors', { preHandler: auth }, async (req) =>
-    G.readCharacter(pool, req.user.sub, (ch, client) => Favors.favorBoard(ch, client)));
+    G.readCharacter(pool, req.user.sub, (ch, client, h) => Favors.favorBoard(ch, client, h)));
   app.post('/v1/favors', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Favors.postFavor(ch, req.body || {}, client, h)));
   app.post('/v1/favors/:id/run', { preHandler: auth }, async (req) =>
@@ -2844,10 +2899,12 @@ export async function buildServer() {
   // rare moment visible the second it exists. Pure read, §10.4-free. ──
   app.get('/v1/live', { preHandler: auth }, async (req) =>
     G.readCharacter(pool, req.user.sub, (ch, client) => Collision.collisionBoard(client, ch, [...wsClients.keys()])));
-  // ── STILL ON THE TABLE — the featured-systems catalog the coach's queue-of-5 can't carry: level-unlocked
-  // entries this player has never touched, plus an explorer tally. Pure read, §10.4-free; not a census. ──
+  // ── DEEP CITY — one canonical, presently actionable unvisited system, or an honest null. Home
+  // receives this same async resolver and the same human-only presence context; neither path ranks
+  // or queries a private second catalog. Pure read, §10.4-free; not a census. ──
   app.get('/v1/explore', { preHandler: auth }, async (req) =>
-    G.readCharacter(pool, req.user.sub, (ch, client, h) => Explore.exploreBoard(ch, h.acct, h.owned)));
+    G.readCharacter(pool, req.user.sub, (ch, client, h) =>
+      Explore.exploreBoard(client, ch, h.acct, h.owned, { onlineAccounts: [...wsCoverage.values()] })));
   // ── PRIME TIME — the nightly synchronous window: answer the call during tonight's hour. Co-present
   // (the value reward scales with turnout, settled at close); the mechanic + mode rotate by the seed. ──
   app.get('/v1/primetime', { preHandler: auth }, async (req) =>

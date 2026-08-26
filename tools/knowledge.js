@@ -63,6 +63,103 @@ function git(args, fallback = '') {
   }
 }
 
+// A generated-only commit is the durable snapshot of its authored parent. Building at that clean
+// snapshot commit therefore reads the parent's source/history revision and must reproduce the
+// committed generated files byte-for-byte. Mixed commits and dirty worktrees describe themselves.
+function sourceRevisionForSnapshot({ head, parent = '', changedPaths = [], worktreeDirty = false }) {
+  const generatedOnly = changedPaths.length > 0
+    && changedPaths.every((file) => posix(file).startsWith('knowledge/generated/'));
+  return !worktreeDirty && parent && generatedOnly ? parent : head;
+}
+
+function repositorySnapshotFromState({
+  head,
+  parents = [],
+  headTree = '',
+  secondParentTree = '',
+  status = [],
+  changedPaths = [],
+  secondParentParent = '',
+  secondParentChangedPaths = [],
+  worktreeDirty,
+  eventName = '',
+  ref = '',
+}) {
+  const dirty = typeof worktreeDirty === 'boolean' ? worktreeDirty : status.length > 0;
+  const syntheticPullRequestMerge = eventName === 'pull_request'
+    && /^refs\/pull\/\d+\/merge$/.test(ref)
+    && parents.length === 2
+    && Boolean(headTree)
+    && headTree === secondParentTree;
+  const revisionHead = syntheticPullRequestMerge ? parents[1] : head;
+  const revisionParent = syntheticPullRequestMerge ? secondParentParent : (parents[0] || '');
+  const revisionChangedPaths = syntheticPullRequestMerge ? secondParentChangedPaths : changedPaths;
+  const sourceRevision = sourceRevisionForSnapshot({
+    head: revisionHead,
+    parent: revisionParent,
+    changedPaths: revisionChangedPaths,
+    worktreeDirty: dirty,
+  });
+  return {
+    head,
+    sourceRevision,
+    status,
+    worktreeDirty: dirty,
+    generatedOnly: sourceRevision !== head,
+    syntheticPullRequestMerge,
+  };
+}
+
+function currentBranchForSnapshot({ currentBranch = '', storedBranch = '', snapshot = {} }) {
+  const mayUseStoredBranch = snapshot.generatedOnly || snapshot.syntheticPullRequestMerge;
+  return currentBranch || (mayUseStoredBranch ? storedBranch : '') || '(detached)';
+}
+
+function repositorySnapshot() {
+  const head = git(['rev-parse', 'HEAD']).trim();
+  const status = git(['status', '--porcelain=v1']).split(/\r?\n/).filter(Boolean);
+  const changedPaths = git(['diff-tree', '--no-commit-id', '--name-only', '-r', head])
+    .split(/\r?\n/).filter(Boolean).map(posix);
+  const worktreeDirty = status.length > 0;
+  const lineage = git(['rev-list', '--parents', '-n', '1', head]).trim().split(/\s+/);
+  const parents = lineage[0] === head ? lineage.slice(1) : [];
+  const eventName = process.env.GITHUB_EVENT_NAME || '';
+  const ref = process.env.GITHUB_REF || '';
+  const pullRequestMergeCandidate = eventName === 'pull_request'
+    && /^refs\/pull\/\d+\/merge$/.test(ref)
+    && parents.length === 2;
+  const secondParent = pullRequestMergeCandidate ? parents[1] : '';
+  const headTree = pullRequestMergeCandidate ? git(['rev-parse', `${head}^{tree}`]).trim() : '';
+  const secondParentTree = secondParent ? git(['rev-parse', `${secondParent}^{tree}`]).trim() : '';
+  const secondParentParent = secondParent ? git(['rev-parse', `${secondParent}^`]).trim() : '';
+  const secondParentChangedPaths = secondParent
+    ? git(['diff-tree', '--no-commit-id', '--name-only', '-r', secondParent])
+      .split(/\r?\n/).filter(Boolean).map(posix)
+    : [];
+  return repositorySnapshotFromState({
+    head,
+    parents,
+    headTree,
+    secondParentTree,
+    status,
+    changedPaths,
+    secondParentParent,
+    secondParentChangedPaths,
+    worktreeDirty,
+    eventName,
+    ref,
+  });
+}
+
+function storedCurrentBranch() {
+  try {
+    const stored = JSON.parse(fs.readFileSync(path.join(OUT, 'graph.json'), 'utf8'));
+    return stored.nodes?.find((node) => node.key === 'Repository:omerta')?.currentBranch || '';
+  } catch {
+    return '';
+  }
+}
+
 function read(rel) {
   return fs.readFileSync(path.join(ROOT, rel), 'utf8').replaceAll('\r\n', '\n');
 }
@@ -163,7 +260,7 @@ const DOMAIN_MODULES = {
   'vice-competition': new Set(['casino','boxing','races','ring','speakeasy','stable']),
   'law-intelligence': new Set(['collection','law','pen','secrets','wire']),
   'chain-economy': new Set(['chain','deeds','dexbot','dynasty','fees','nft','stockdeliver','tokenhealth','treasury','vig','walletforge','watcher']),
-  'engagement-growth': new Set(['activity','bulletin','career','circle','collision','community','contacts','dispatch','drop','engagement','favors','growth','home','opportunities','people','portrait','primetime','push','results','social','vanity']),
+  'engagement-growth': new Set(['activity','arena','bulletin','career','circle','collision','community','contacts','dispatch','drop','engagement','favors','growth','home','opportunities','people','portrait','primetime','push','results','social','vanity']),
 };
 
 function moduleStem(rel) {
@@ -201,6 +298,372 @@ function relativeImport(from, spec, files) {
   return null;
 }
 
+function routeRegistrationSnippet(source, start) {
+  const open = source.indexOf('(', start);
+  if (open < 0) return source.slice(start, Math.min(source.length, start + 2400));
+  let depth = 0;
+  let state = 'code';
+  let quote = '';
+  let regexClass = false;
+  for (let i = open; i < source.length; i++) {
+    const char = source[i];
+    const next = source[i + 1];
+    if (state === 'line-comment') {
+      if (char === '\n') state = 'code';
+      continue;
+    }
+    if (state === 'block-comment') {
+      if (char === '*' && next === '/') { state = 'code'; i++; }
+      continue;
+    }
+    if (state === 'string') {
+      if (char === '\\') { i++; continue; }
+      if (char === quote) state = 'code';
+      continue;
+    }
+    if (state === 'regex') {
+      if (char === '\\') { i++; continue; }
+      if (char === '[') regexClass = true;
+      else if (char === ']') regexClass = false;
+      else if (char === '/' && !regexClass) {
+        state = 'code';
+        while (/[a-z]/i.test(source[i + 1] || '')) i++;
+      }
+      continue;
+    }
+    if (char === '/' && next === '/') { state = 'line-comment'; i++; continue; }
+    if (char === '/' && next === '*') { state = 'block-comment'; i++; continue; }
+    if (char === '"' || char === "'" || char === '`') { state = 'string'; quote = char; continue; }
+    if (char === '/') {
+      let p = i - 1;
+      while (p >= open && /\s/.test(source[p])) p--;
+      if (p < open || /[=(:,!&|?{};\[]/.test(source[p])) {
+        state = 'regex'; regexClass = false; continue;
+      }
+    }
+    if (char === '(') depth++;
+    else if (char === ')' && --depth === 0) {
+      const end = source[i + 1] === ';' ? i + 2 : i + 1;
+      return source.slice(start, end);
+    }
+  }
+  return source.slice(start, Math.min(source.length, start + 2400));
+}
+
+function localFunctionsBefore(source, start, indent) {
+  const before = source.slice(0, start);
+  const prefix = esc(indent);
+  const names = new Set();
+  for (const match of before.matchAll(new RegExp(`^${prefix}(?:const|let|var)\\s+([A-Za-z_$][\\w$]*)\\s*=`, 'gm')))
+    names.add(match[1]);
+  for (const match of before.matchAll(new RegExp(`^${prefix}(?:async\\s+)?function\\s+([A-Za-z_$][\\w$]*)\\s*\\(`, 'gm')))
+    names.add(match[1]);
+  return names;
+}
+
+function routeRegistrationArguments(snippet) {
+  const open = snippet.indexOf('(');
+  if (open < 0) return [];
+  const args = [];
+  let start = open + 1;
+  let round = 1;
+  let square = 0;
+  let curly = 0;
+  let state = 'code';
+  let quote = '';
+  let regexClass = false;
+  for (let i = open + 1; i < snippet.length; i++) {
+    const char = snippet[i];
+    const next = snippet[i + 1];
+    if (state === 'line-comment') {
+      if (char === '\n') state = 'code';
+      continue;
+    }
+    if (state === 'block-comment') {
+      if (char === '*' && next === '/') { state = 'code'; i++; }
+      continue;
+    }
+    if (state === 'string') {
+      if (char === '\\') { i++; continue; }
+      if (char === quote) state = 'code';
+      continue;
+    }
+    if (state === 'regex') {
+      if (char === '\\') { i++; continue; }
+      if (char === '[') regexClass = true;
+      else if (char === ']') regexClass = false;
+      else if (char === '/' && !regexClass) {
+        state = 'code';
+        while (/[a-z]/i.test(snippet[i + 1] || '')) i++;
+      }
+      continue;
+    }
+    if (char === '/' && next === '/') { state = 'line-comment'; i++; continue; }
+    if (char === '/' && next === '*') { state = 'block-comment'; i++; continue; }
+    if (char === '"' || char === "'" || char === '`') { state = 'string'; quote = char; continue; }
+    if (char === '/') {
+      let p = i - 1;
+      while (p > open && /\s/.test(snippet[p])) p--;
+      if (p === open || /[=(:,!&|?{};\[]/.test(snippet[p])) {
+        state = 'regex'; regexClass = false; continue;
+      }
+    }
+    if (char === '(') round++;
+    else if (char === ')' && --round === 0) {
+      args.push(snippet.slice(start, i).trim());
+      return args;
+    } else if (char === '[') square++;
+    else if (char === ']') square--;
+    else if (char === '{') curly++;
+    else if (char === '}') curly--;
+    else if (char === ',' && round === 1 && square === 0 && curly === 0) {
+      args.push(snippet.slice(start, i).trim());
+      start = i + 1;
+    }
+  }
+  return args;
+}
+
+function codeMask(source) {
+  const out = [...source];
+  const blank = (i) => { if (out[i] !== '\n' && out[i] !== '\r') out[i] = ' '; };
+  let state = 'code';
+  let quote = '';
+  let regexClass = false;
+  for (let i = 0; i < source.length; i++) {
+    const char = source[i];
+    const next = source[i + 1];
+    if (state === 'line-comment') {
+      if (char === '\n') state = 'code'; else blank(i);
+      continue;
+    }
+    if (state === 'block-comment') {
+      blank(i);
+      if (char === '*' && next === '/') { blank(++i); state = 'code'; }
+      continue;
+    }
+    if (state === 'string') {
+      blank(i);
+      if (char === '\\') { if (i + 1 < source.length) blank(++i); continue; }
+      if (char === quote) state = 'code';
+      continue;
+    }
+    if (state === 'regex') {
+      blank(i);
+      if (char === '\\') { if (i + 1 < source.length) blank(++i); continue; }
+      if (char === '[') regexClass = true;
+      else if (char === ']') regexClass = false;
+      else if (char === '/' && !regexClass) {
+        state = 'code';
+        while (/[a-z]/i.test(source[i + 1] || '')) blank(++i);
+      }
+      continue;
+    }
+    if (char === '/' && next === '/') { blank(i); blank(++i); state = 'line-comment'; continue; }
+    if (char === '/' && next === '*') { blank(i); blank(++i); state = 'block-comment'; continue; }
+    if (char === '"' || char === "'" || char === '`') { blank(i); quote = char; state = 'string'; continue; }
+    if (char === '/') {
+      let p = i - 1;
+      while (p >= 0 && /\s/.test(source[p])) p--;
+      if (p < 0 || /[=(:,!&|?{};\[]/.test(source[p])) { blank(i); state = 'regex'; regexClass = false; }
+    }
+  }
+  return out.join('');
+}
+
+function matchingDelimiter(mask, start, open, close) {
+  let depth = 0;
+  for (let i = start; i < mask.length; i++) {
+    if (mask[i] === open) depth++;
+    else if (mask[i] === close && --depth === 0) return i;
+  }
+  return -1;
+}
+
+function directCallInRange(mask, start, end) {
+  while (start < end && /\s/.test(mask[start])) start++;
+  while (end > start && /\s/.test(mask[end - 1])) end--;
+  while (mask[start] === '(' && matchingDelimiter(mask, start, '(', ')') === end - 1) {
+    start++;
+    end--;
+    while (start < end && /\s/.test(mask[start])) start++;
+    while (end > start && /\s/.test(mask[end - 1])) end--;
+  }
+  const awaited = /^await\b\s*/.exec(mask.slice(start, end));
+  if (awaited) start += awaited[0].length;
+  while (start < end && /\s/.test(mask[start])) start++;
+  const call = /^([A-Za-z_$][\w$]*)\s*\(/.exec(mask.slice(start, end));
+  if (!call) return null;
+  const open = start + call[0].lastIndexOf('(');
+  return matchingDelimiter(mask, open, '(', ')') === end - 1 ? call[1] : null;
+}
+
+function skipSpace(mask, index) {
+  while (index < mask.length && /\s/.test(mask[index])) index++;
+  return index;
+}
+
+function identifierAt(mask, index) {
+  const match = /^[A-Za-z_$][\w$]*/.exec(mask.slice(index));
+  return match ? { name: match[0], end: index + match[0].length } : null;
+}
+
+function skipExpression(mask, index, stops) {
+  let round = 0;
+  let square = 0;
+  let curly = 0;
+  for (; index < mask.length; index++) {
+    const char = mask[index];
+    if (round === 0 && square === 0 && curly === 0 && stops.has(char)) break;
+    if (char === '(') round++;
+    else if (char === ')') { if (round === 0) break; round--; }
+    else if (char === '[') square++;
+    else if (char === ']') { if (square === 0) break; square--; }
+    else if (char === '{') curly++;
+    else if (char === '}') { if (curly === 0) break; curly--; }
+  }
+  return index;
+}
+
+function bindingPattern(mask, index, candidate) {
+  index = skipSpace(mask, index);
+  if (mask.startsWith('...', index)) index = skipSpace(mask, index + 3);
+  const identifier = identifierAt(mask, index);
+  if (identifier) return { parsed: true, end: identifier.end, binds: identifier.name === candidate };
+
+  if (mask[index] === '[') {
+    let binds = false;
+    index++;
+    while (index < mask.length) {
+      index = skipSpace(mask, index);
+      if (mask[index] === ']') return { parsed: true, end: index + 1, binds };
+      if (mask[index] === ',') { index++; continue; }
+      const element = bindingPattern(mask, index, candidate);
+      if (!element.parsed) return { parsed: false, end: index, binds: false };
+      binds ||= element.binds;
+      index = skipSpace(mask, element.end);
+      if (mask[index] === '=') index = skipExpression(mask, index + 1, new Set([',', ']']));
+    }
+    return { parsed: false, end: index, binds: false };
+  }
+
+  if (mask[index] === '{') {
+    let binds = false;
+    index++;
+    while (index < mask.length) {
+      index = skipSpace(mask, index);
+      if (mask[index] === '}') return { parsed: true, end: index + 1, binds };
+      if (mask[index] === ',') { index++; continue; }
+      if (mask.startsWith('...', index)) {
+        const rest = bindingPattern(mask, index, candidate);
+        if (!rest.parsed) return { parsed: false, end: index, binds: false };
+        binds ||= rest.binds;
+        index = rest.end;
+        continue;
+      }
+
+      let key = null;
+      if (mask[index] === '[') {
+        const close = matchingDelimiter(mask, index, '[', ']');
+        if (close < 0) return { parsed: false, end: index, binds: false };
+        index = close + 1;
+      } else {
+        const property = identifierAt(mask, index);
+        if (property) {
+          key = property.name;
+          index = property.end;
+        } else {
+          index = skipExpression(mask, index, new Set([':', ',', '}']));
+        }
+      }
+
+      index = skipSpace(mask, index);
+      if (mask[index] === ':') {
+        const value = bindingPattern(mask, index + 1, candidate);
+        if (!value.parsed) return { parsed: false, end: index, binds: false };
+        binds ||= value.binds;
+        index = value.end;
+      } else if (key) {
+        binds ||= key === candidate;
+      } else {
+        return { parsed: false, end: index, binds: false };
+      }
+      index = skipSpace(mask, index);
+      if (mask[index] === '=') index = skipExpression(mask, index + 1, new Set([',', '}']));
+    }
+    return { parsed: false, end: index, binds: false };
+  }
+
+  return { parsed: false, end: index, binds: false };
+}
+
+function variableDeclarationBinds(mask, candidate) {
+  const declaration = /\b(?:const|let|var)\b/g;
+  for (const match of mask.matchAll(declaration)) {
+    let index = match.index + match[0].length;
+    while (index < mask.length) {
+      const pattern = bindingPattern(mask, index, candidate);
+      if (!pattern.parsed) break;
+      if (pattern.binds) return true;
+      index = skipSpace(mask, pattern.end);
+      if (mask[index] === '=') index = skipExpression(mask, index + 1, new Set([',', ';']));
+      index = skipSpace(mask, index);
+      if (mask[index] !== ',') break;
+      index++;
+    }
+  }
+  return false;
+}
+
+function finalCallbackCall(argument) {
+  const mask = codeMask(argument);
+  const callback = /^\s*(?:async\s*)?(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*=>\s*/.exec(mask);
+  if (!callback) return null;
+  const bodyStart = callback[0].length;
+  let bodyEnd = mask.length;
+  while (bodyEnd > bodyStart && /\s/.test(mask[bodyEnd - 1])) bodyEnd--;
+  let name = null;
+  if (mask[bodyStart] !== '{') {
+    name = directCallInRange(mask, bodyStart, bodyEnd);
+  } else {
+    const close = matchingDelimiter(mask, bodyStart, '{', '}');
+    if (close !== bodyEnd - 1) return null;
+    let curly = 0;
+    let round = 0;
+    let square = 0;
+    let statementStart = bodyStart + 1;
+    let returnedAt = -1;
+    for (let i = bodyStart + 1; i < close; i++) {
+      const char = mask[i];
+      if (curly === 0 && round === 0 && square === 0 && mask.startsWith('return', i)
+          && !/[\w$]/.test(mask[i - 1] || '') && !/[\w$]/.test(mask[i + 6] || '')) {
+        if (!mask.slice(statementStart, i).trim()) returnedAt = i + 6;
+        i += 5;
+        continue;
+      }
+      if (char === '(') round++;
+      else if (char === ')') round--;
+      else if (char === '[') square++;
+      else if (char === ']') square--;
+      else if (char === '{') curly++;
+      else if (char === '}') { curly--; if (curly === 0 && round === 0 && square === 0) statementStart = i + 1; }
+      else if (char === ';' && curly === 0 && round === 0 && square === 0) statementStart = i + 1;
+    }
+    if (returnedAt < 0) return null;
+    let returnedEnd = close;
+    while (returnedEnd > returnedAt && /\s/.test(mask[returnedEnd - 1])) returnedEnd--;
+    if (mask[returnedEnd - 1] === ';') returnedEnd--;
+    name = directCallInRange(mask, returnedAt, returnedEnd);
+  }
+  if (!name) return null;
+  const header = mask.slice(0, bodyStart);
+  const body = mask.slice(bodyStart, bodyEnd);
+  if (new RegExp(`\\b${esc(name)}\\b`).test(header)
+      || variableDeclarationBinds(body, name)
+      || new RegExp(`\\b(?:function|class)\\s+${esc(name)}\\b`).test(body)) return null;
+  return name;
+}
+
 function parseCommits(revision = 'HEAD') {
   const raw = git(['log', '--date=iso-strict', '--pretty=format:%x1e%H%x1f%ad%x1f%an%x1f%s', '--name-only', revision]);
   const commits = [];
@@ -217,12 +680,19 @@ function build(options = {}) {
   const paths = fileList();
   const fileSet = new Set(paths);
   const blobs = blobMetadata();
-  const head = options.sourceRevision || git(['rev-parse', 'HEAD']).trim();
-  const currentBranch = typeof options.currentBranch === 'string'
-    ? options.currentBranch
-    : (git(['branch', '--show-current']).trim() || '(detached)');
-  const status = git(['status', '--porcelain=v1']).split(/\r?\n/).filter(Boolean);
-  const worktreeDirty = typeof options.worktreeDirty === 'boolean' ? options.worktreeDirty : status.length > 0;
+  const snapshot = repositorySnapshot();
+  const head = options.sourceRevision || snapshot.sourceRevision;
+  const branch = git(['branch', '--show-current']).trim();
+  const currentBranch = typeof options.currentBranch === 'string' ? options.currentBranch
+    : currentBranchForSnapshot({
+      currentBranch: branch,
+      storedBranch: !branch && (snapshot.generatedOnly || snapshot.syntheticPullRequestMerge)
+        ? storedCurrentBranch()
+        : '',
+      snapshot,
+    });
+  const status = snapshot.status;
+  const worktreeDirty = typeof options.worktreeDirty === 'boolean' ? options.worktreeDirty : snapshot.worktreeDirty;
   const githubPath = 'knowledge/github-snapshot.json';
   const github = fileSet.has(githubPath) ? JSON.parse(read(githubPath)) : { repository: {}, issues: [], pullRequests: [] };
   const nodes = new Map();
@@ -336,7 +806,7 @@ function build(options = {}) {
     }
   }
 
-  // HTTP routes, their access mode and the first namespaced handler called from each registration.
+  // HTTP routes, their access mode and their direct local/imported or namespaced domain handler.
   const routes = [];
   for (const [rel, text] of textCache) {
     if (!(rel === 'src/server.js' || rel.startsWith('src/routes/'))) continue;
@@ -345,36 +815,61 @@ function build(options = {}) {
       const target = relativeImport(rel, m[2], fileSet);
       if (target) aliases.set(m[1], target);
     }
-    const matches = [...text.matchAll(/\bapp\.(get|post|put|patch|delete|options|head)\(\s*(['"])([^'"]+)\2/g)];
+    const namedImports = new Map();
+    for (const m of text.matchAll(/import\s*\{([\s\S]*?)\}\s*from\s*['"]([^'"]+)['"]/g)) {
+      const target = relativeImport(rel, m[2], fileSet);
+      if (!target) continue;
+      for (const rawBinding of m[1].split(',')) {
+        const binding = rawBinding.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '').trim();
+        const imported = /^(?:type\s+)?([A-Za-z_$][\w$]*)(?:\s+as\s+([A-Za-z_$][\w$]*))?$/.exec(binding);
+        if (imported) namedImports.set(imported[2] || imported[1], { name: imported[1], file: target });
+      }
+    }
+    const matches = [...text.matchAll(/\bapp\.(get|post|put|patch|delete|options|head)\(\s*(['"])([^'"]+)\2\s*,/g)];
     for (let i = 0; i < matches.length; i++) {
       const m = matches[i];
       const method = m[1].toUpperCase();
       const url = m[3];
       const line = lineAt(text, m.index);
-      const end = matches[i + 1]?.index ?? Math.min(text.length, m.index + 2400);
-      const snippet = text.slice(m.index, Math.min(end, m.index + 2400));
+      const snippet = routeRegistrationSnippet(text, m.index);
       const access = /preHandler:\s*modAuth/.test(snippet) ? 'moderator'
         : /preHandler:\s*auth/.test(snippet) ? 'authenticated'
         : /websocket:\s*true/.test(snippet) ? 'token-query'
         : 'public';
       const routeId = `${method} ${url}`;
       const handlerMatches = [...snippet.matchAll(/\b([A-Z][A-Za-z0-9_]*)\.([A-Za-z_$][\w$]*)\s*\(/g)];
+      const lineStart = text.lastIndexOf('\n', m.index) + 1;
+      const indent = text.slice(lineStart, m.index);
+      const localFunctions = localFunctionsBefore(text, m.index, indent);
+      const directHandlerArgument = routeRegistrationArguments(snippet).at(-1) || '';
+      const directFactoryMatch = /^([A-Za-z_$][\w$]*)\s*\(/.exec(directHandlerArgument);
+      const directFactory = directFactoryMatch && localFunctions.has(directFactoryMatch[1])
+        ? { name: directFactoryMatch[1], index: snippet.lastIndexOf(directHandlerArgument) }
+        : null;
+      const returnedLocal = [...localFunctions].map((name) => {
+        // A local helper owns the route only when the callback delegates directly to it. Merely
+        // using a utility to parse/clip input must not outrank the namespaced domain operation.
+        const call = new RegExp(`(?:=>|\\breturn\\b)\\s*(?:await\\s+)?${esc(name)}\\s*\\(`).exec(snippet);
+        return call ? { name, index: call.index } : null;
+      }).filter(Boolean).sort((a, b) => a.index - b.index)[0] || null;
+      const localHandler = directFactory || returnedLocal;
+      const returnedImport = namedImports.get(finalCallbackCall(directHandlerArgument)) || null;
       const handlerMatch = handlerMatches.find((x) => aliases.has(x[1]) && !/\/(?:game|rules)\.js$/.test(aliases.get(x[1])))
         || handlerMatches.find((x) => aliases.has(x[1])) || null;
-      const handlerFile = handlerMatch ? aliases.get(handlerMatch[1]) : null;
+      const handlerFile = localHandler ? rel : returnedImport?.file || (handlerMatch ? aliases.get(handlerMatch[1]) : null);
       const domain = url.startsWith('/v1/auth') ? 'platform-core'
         : url.startsWith('/v1/wallet') || url.startsWith('/v1/withdraw') || url.startsWith('/v1/gear') ? 'chain-economy'
         : url.startsWith('/v1/casino') || url.startsWith('/v1/races') || url.startsWith('/v1/boxing') || url.startsWith('/v1/speakeasy') ? 'vice-competition'
         : url.startsWith('/v1/law') || url.startsWith('/v1/pen') || url.startsWith('/v1/wire') ? 'law-intelligence'
         : url.startsWith('/v1/opportunities') || url.startsWith('/v1/discovery') || url.startsWith('/v1/coach') ? 'engagement-growth'
         : url.startsWith('/v1') ? domainFor(handlerFile || rel) || 'platform-core' : 'client-experience';
-      const handler = handlerMatch ? `${handlerMatch[1]}.${handlerMatch[2]}` : null;
+      const handler = localHandler?.name || returnedImport?.name || (handlerMatch ? `${handlerMatch[1]}.${handlerMatch[2]}` : null);
       const n = node('Route', routeId, { label: routeId, method, url, access, domain, definitions: [] }, { file: rel, line });
       n.definitions.push({ file: rel, line });
       edge('DEFINED_IN', n.key, `Artifact:${rel}`, { file: rel, line });
       edge('BELONGS_TO', n.key, `Domain:${domain}`, { file: rel, line });
       if (handlerFile) edge('HANDLED_BY', n.key, `Artifact:${handlerFile}`, { file: rel, line }, { symbol: handler });
-      routes.push({ method, url, access, domain, file: rel, line, handler });
+      routes.push({ method, url, access, domain, file: rel, line, handler, handlerFile });
     }
   }
 
@@ -530,20 +1025,7 @@ function build(options = {}) {
 }
 
 function buildForCheck() {
-  const graphFile = path.join(OUT, 'graph.json');
-  if (!fs.existsSync(graphFile)) return build();
-  try {
-    const stored = JSON.parse(fs.readFileSync(graphFile, 'utf8'));
-    if (!/^[0-9a-f]{40}$/.test(stored.sourceRevision || '')) return build();
-    const repository = stored.nodes?.find((n) => n.key === 'Repository:omerta');
-    return build({
-      sourceRevision: stored.sourceRevision,
-      worktreeDirty: stored.worktreeDirty === true,
-      currentBranch: repository?.currentBranch,
-    });
-  } catch {
-    return build();
-  }
+  return build();
 }
 
 function validate(model) {
@@ -688,4 +1170,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
   }
 }
 
-export { build, buildForCheck, validate, render };
+export {
+  build, buildForCheck, currentBranchForSnapshot, finalCallbackCall, repositorySnapshotFromState,
+  sourceRevisionForSnapshot, validate, render,
+};

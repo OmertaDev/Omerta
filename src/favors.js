@@ -32,6 +32,11 @@ const districtName = (id) => (DISTRICTS.find((d) => d.id === id) || {}).name || 
 
 const uid = () => crypto.randomUUID();
 const cargoCount = (cargo) => Object.values(cargo).reduce((a, n) => a + (n || 0), 0);
+const SQL_BATCH = 50;
+const sqlBatches = (values) => Array.from({ length: Math.ceil(values.length / SQL_BATCH) }, (_, index) => {
+  const batch = values.slice(index * SQL_BATCH, (index + 1) * SQL_BATCH);
+  return [...batch, ...Array(SQL_BATCH - batch.length).fill(null)];
+});
 
 // (audit F2) the POSTER's trunk capacity, computed by the CANONICAL `trunkCap` rather than restated
 // here — a hand-rolled mirror is how the character view once lost the road_boss bonus. Two unlocked
@@ -41,6 +46,45 @@ async function posterTrunkCap(client, charId) {
   const assets = (await client.query('SELECT asset_id FROM character_assets WHERE character_id=$1', [charId])).rows.map((r) => r.asset_id);
   const skills = new Set((await client.query('SELECT skill_id FROM character_skills WHERE character_id=$1', [charId])).rows.map((r) => r.skill_id));
   return trunkCap({ owned: { assets, skills } });
+}
+
+// Shared by the capped board and Explore's exact existence scan. Rows are internal query objects;
+// the returned Set never crosses an API boundary.
+async function runnableFavorRows(ch, client, h, rows) {
+  const runnable = new Set();
+  if (!h || !rows.length || jailed(ch)) return runnable;
+  const posterIds = [...new Set(rows.map((row) => row.poster_character))];
+  // One transaction client, one query at a time (node-pg serializes this today and pg@9 rejects
+  // concurrent use); all three reads stay in the caller's snapshot.
+  const loads = { rows: [] }, assets = { rows: [] }, skills = { rows: [] };
+  for (const batch of sqlBatches(posterIds)) {
+    loads.rows.push(...(await client.query(
+      `SELECT character_id, COALESCE(SUM(qty),0) n FROM character_cargo
+        WHERE character_id IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50)
+        GROUP BY character_id`, batch)).rows);
+    assets.rows.push(...(await client.query(
+      `SELECT character_id, asset_id FROM character_assets
+        WHERE character_id IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50)`, batch)).rows);
+    skills.rows.push(...(await client.query(
+      `SELECT character_id, skill_id FROM character_skills
+        WHERE character_id IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50)`, batch)).rows);
+  }
+  const loadByPoster = new Map(loads.rows.map((row) => [row.character_id, Number(row.n)]));
+  const assetsByPoster = new Map(posterIds.map((id) => [id, []]));
+  for (const row of assets.rows) assetsByPoster.get(row.character_id)?.push(row.asset_id);
+  const skillsByPoster = new Map(posterIds.map((id) => [id, new Set()]));
+  for (const row of skills.rows) skillsByPoster.get(row.character_id)?.add(row.skill_id);
+  for (const row of rows) {
+    const cap = trunkCap({ owned: {
+      assets: assetsByPoster.get(row.poster_character) || [],
+      skills: skillsByPoster.get(row.poster_character) || new Set(),
+    } });
+    if (row.district === ch.loc && row.poster_loc === row.district
+        && Number(h.owned?.cargo?.[row.good_id] || 0) >= Number(row.qty)
+        && Number(loadByPoster.get(row.poster_character) || 0) + Number(row.qty) <= cap)
+      runnable.add(row);
+  }
+  return runnable;
 }
 
 // the house cut, carved FROM the pay (the market paySeller shape): half to the street tax that
@@ -108,29 +152,53 @@ export async function postFavor(ch, opts, client, h) {
 }
 
 // ── THE BOARD — what the people whose numbers you hold are asking for, plus your own book ──
-export async function favorBoard(ch, client) {
+export async function favorBoard(ch, client, h = null) {
   const acct = (await client.query('SELECT account_id FROM characters WHERE id=$1', [ch.id])).rows[0]?.account_id;
   // you see a favor if YOU hold the POSTER's number (the book is the reach). Flat query + JOIN —
   // never `= ANY($1::uuid[])` (pg-mem returns zero rows for it — the rivalsBoard lesson).
   const open = (await client.query(
-    `SELECT f.*, c.name AS poster_name FROM favors f
+    `SELECT f.*, c.name AS poster_name, c.loc AS poster_loc FROM favors f
        JOIN characters c ON c.id = f.poster_character AND c.alive
        JOIN contacts ct ON ct.contact_account = c.account_id AND ct.owner_account = $1
       WHERE f.status='open' AND f.expires_at > now() AND f.poster_character <> $2
       ORDER BY f.pay DESC LIMIT 40`, [acct, ch.id])).rows;
   const mine = (await client.query(
-    "SELECT * FROM favors WHERE poster_character=$1 AND status='open' AND expires_at > now() ORDER BY posted_at DESC", [ch.id])).rows;
+    "SELECT * FROM favors WHERE poster_character=$1 AND status='open' ORDER BY posted_at DESC", [ch.id])).rows;
   const shape = (f) => ({
     id: f.id, good: f.good_id, qty: Number(f.qty), pay: Number(f.pay), district: f.district,
     districtName: districtName(f.district), note: f.note || null,
     expiresSeconds: Math.max(0, Math.ceil((new Date(f.expires_at) - Date.now()) / 1000)),
   });
+  const canRun = await runnableFavorRows(ch, client, h, open);
+  const outstanding = mine.reduce((sum, row) => sum + Number(row.qty || 0), 0);
+  const canPost = !!h && !jailed(ch) && !safeHoused(ch) && mine.length < FAVOR.MAX_OPEN
+    && Number(ch.cash || 0) >= FAVOR.MIN_PAY
+    && trunkCap(h) - cargoCount(h.owned?.cargo || {}) - outstanding >= 1;
   return {
     takeBps: FAVOR.TAKE_BPS, maxOpen: FAVOR.MAX_OPEN, minPay: FAVOR.MIN_PAY, maxPay: FAVOR.MAX_PAY,
     maxQty: FAVOR.MAX_QTY,
-    open: open.map((f) => ({ ...shape(f), from: f.poster_name, here: f.district === ch.loc })),
+    canPost,
+    open: open.map((f) => ({ ...shape(f), from: f.poster_name, here: f.district === ch.loc,
+      ...(h ? { canRun: canRun.has(f) } : {}) })),
     mine: mine.map(shape),
   };
+}
+
+// Exact actor-scoped Favor eligibility across every reachable open request. SQL applies visibility,
+// expiry, location, face-to-face, and actor-cargo gates without a presentation limit; the shared
+// capacity helper applies the poster's canonical trunk authority. Only a boolean is returned.
+export async function favorExactAvailability(ch, client, h = {}) {
+  if (jailed(ch)) return { canRun: false };
+  const rows = (await client.query(
+    `SELECT f.poster_character, f.good_id, f.qty, f.district, c.loc AS poster_loc
+       FROM favors f
+       JOIN characters c ON c.id=f.poster_character AND c.alive
+       JOIN contacts ct ON ct.contact_account=c.account_id AND ct.owner_account=$1
+       JOIN character_cargo cargo ON cargo.character_id=$2
+        AND cargo.good_id=f.good_id AND cargo.qty >= f.qty
+      WHERE f.status='open' AND f.expires_at > now() AND f.poster_character <> $2
+        AND f.district=$3 AND c.loc=f.district`, [ch.account_id, ch.id, ch.loc])).rows;
+  return { canRun: (await runnableFavorRows(ch, client, h, rows)).size > 0 };
 }
 
 // ── RUN IT — deliver the goods where they're wanted, take the money ──

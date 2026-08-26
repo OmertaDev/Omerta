@@ -110,7 +110,153 @@ const pool = await makeDb();
   await assert.rejects(() => consumeInvite(pool, 'ONESHOT'), (e) => e.code === 'invite', 'the exhausted code is refused');
   assert.equal(Number((await pool.query("SELECT uses_left FROM invite_codes WHERE code='ONESHOT'")).rows[0].uses_left), 0, 'uses_left never went negative');
   process.env.INVITE_MODE = 'off';
-  console.log('✅ consumeInvite: off passes, on consumes one use, exhaustion refuses without going negative');
+console.log('✅ consumeInvite: off passes, on consumes one use, exhaustion refuses without going negative');
+}
+
+// ── Agent Alpha's bootstrap proof is a short recovery bridge, not another auth provider. Exercise
+// every transition through the mounted routes so a helper-only fix cannot leave a bypass at the HTTP
+// boundary. The literal outcome table is independent of the implementation and intentionally contains
+// no token, proof, account id, or provider credential.
+{
+  process.env.MOD_KEY = 'bootstrap-lifecycle-mod-key';
+  const app = await buildServer();
+  const call = async (method, url, { token, body, modKey } = {}) => {
+    const headers = {};
+    if (token) headers.authorization = `Bearer ${token}`;
+    if (modKey) headers['x-mod-key'] = modKey;
+    const response = await app.inject({ method, url, headers, payload: body });
+    let payload; try { payload = response.json(); } catch { payload = {}; }
+    return { code: response.statusCode, body: payload };
+  };
+  const bootstrap = async () => {
+    const secret = crypto.randomBytes(32).toString('base64url');
+    const response = await call('POST', '/v1/auth/guest', { body: { bootstrapSecret: secret } });
+    assert.equal(response.code, 200, 'bootstrap setup succeeds before its lifecycle boundary is tested');
+    return { secret, token: response.body.token, accountId: app.jwt.verify(response.body.token).sub };
+  };
+  const replay = (secret) => call('POST', '/v1/auth/guest', { body: { bootstrapSecret: secret } });
+  const outcome = {};
+  try {
+    const ordinary = await call('POST', '/v1/auth/guest', { body: {} });
+    outcome.ordinaryGuest = ordinary.code;
+    const ordinaryAccount = app.jwt.verify(ordinary.body.token).sub;
+    outcome.ordinaryHasNoBootstrap = (await app.pool.query(
+      'SELECT guest_bootstrap_hash IS NULL AS clean FROM accounts WHERE id=$1',
+      [ordinaryAccount],
+    )).rows[0]?.clean === true;
+
+    const acknowledged = await bootstrap();
+    const beforeAck = await replay(acknowledged.secret);
+    outcome.recoveryBeforeAck = beforeAck.code;
+    outcome.recoveryBeforeAckSameAccount = beforeAck.code === 200 &&
+      app.jwt.verify(beforeAck.body.token).sub === acknowledged.accountId;
+    outcome.ack = (await call('POST', '/v1/auth/guest/bootstrap/ack', {
+      token: acknowledged.token,
+    })).code;
+    outcome.ackReplay = (await call('POST', '/v1/auth/guest/bootstrap/ack', {
+      token: acknowledged.token,
+    })).code;
+    const afterAck = await replay(acknowledged.secret);
+    outcome.recoveryAfterAck = `${afterAck.code}:${afterAck.body.error || 'none'}`;
+
+    const delayed = await bootstrap();
+    outcome.newMappingHasNoExpiry = (await app.pool.query(
+      'SELECT guest_bootstrap_expires_at IS NULL AS no_expiry FROM accounts WHERE id=$1',
+      [delayed.accountId],
+    )).rows[0]?.no_expiry === true;
+    await app.pool.query(
+      `UPDATE accounts SET guest_bootstrap_expires_at=$2 WHERE id=$1`,
+      [delayed.accountId, new Date(Date.now() - 24 * 60 * 60 * 1000)],
+    );
+    const afterFormerExpiry = await replay(delayed.secret);
+    outcome.delayedRecovery = afterFormerExpiry.code;
+    outcome.delayedRecoverySameAccount = afterFormerExpiry.code === 200 &&
+      app.jwt.verify(afterFormerExpiry.body.token).sub === delayed.accountId;
+
+    const versionChanged = await bootstrap();
+    await app.pool.query('UPDATE accounts SET token_version=token_version+1 WHERE id=$1',
+      [versionChanged.accountId]);
+    const afterVersionChange = await replay(versionChanged.secret);
+    outcome.recoveryAfterVersionChange =
+      `${afterVersionChange.code}:${afterVersionChange.body.error || 'none'}`;
+
+    const progressed = await bootstrap();
+    outcome.agentProgression = (await call('POST', '/v1/auth/agent-key', {
+      token: progressed.token,
+    })).code;
+    const afterAgent = await replay(progressed.secret);
+    outcome.recoveryAfterAgent = `${afterAgent.code}:${afterAgent.body.error || 'none'}`;
+
+    const characterized = await bootstrap();
+    outcome.characterProgression = (await call('POST', '/v1/character', {
+      token: characterized.token,
+      body: { name: 'Bootstrap Mortal' },
+    })).code;
+    const characterState = (await app.pool.query(
+      `SELECT c.account_id, a.guest_bootstrap_retired_at IS NOT NULL AS retired
+         FROM characters c JOIN accounts a ON a.id=c.account_id WHERE c.name=$1`,
+      ['Bootstrap Mortal'],
+    )).rows[0];
+    outcome.characterAccountMatches = characterState?.account_id === characterized.accountId;
+    outcome.characterRetiredMapping = characterState?.retired === true;
+    const afterCharacter = await replay(characterized.secret);
+    outcome.recoveryAfterCharacter =
+      `${afterCharacter.code}:${afterCharacter.body.error || 'none'}`;
+
+    const loggedOut = await bootstrap();
+    outcome.logoutAll = (await call('POST', '/v1/auth/logout-all', {
+      token: loggedOut.token,
+    })).code;
+    const afterLogout = await replay(loggedOut.secret);
+    outcome.recoveryAfterLogout = `${afterLogout.code}:${afterLogout.body.error || 'none'}`;
+
+    const modRevoked = await bootstrap();
+    outcome.modRevoke = (await call('POST', '/v1/mod/revoke', {
+      modKey: 'bootstrap-lifecycle-mod-key', body: { accountId: modRevoked.accountId },
+    })).code;
+    const afterModRevoke = await replay(modRevoked.secret);
+    outcome.recoveryAfterModRevoke = `${afterModRevoke.code}:${afterModRevoke.body.error || 'none'}`;
+
+    const upgraded = await bootstrap();
+    outcome.providerUpgrade = (await call('POST', '/v1/auth/upgrade', {
+      token: upgraded.token,
+      body: {
+        provider: 'privy',
+        token: signPrivy({ sub: `bootstrap-upgrade-${crypto.randomUUID()}`, aud: APP }),
+      },
+    })).code;
+    const afterUpgrade = await replay(upgraded.secret);
+    outcome.recoveryAfterProviderUpgrade =
+      `${afterUpgrade.code}:${afterUpgrade.body.error || 'none'}`;
+
+    assert.deepEqual(outcome, {
+      ordinaryGuest: 200,
+      ordinaryHasNoBootstrap: true,
+      recoveryBeforeAck: 200,
+      recoveryBeforeAckSameAccount: true,
+      ack: 200,
+      ackReplay: 200,
+      recoveryAfterAck: '400:bootstrap_retired',
+      newMappingHasNoExpiry: true,
+      delayedRecovery: 200,
+      delayedRecoverySameAccount: true,
+      recoveryAfterVersionChange: '400:bootstrap_retired',
+      agentProgression: 200,
+      recoveryAfterAgent: '400:bootstrap_retired',
+      characterProgression: 200,
+      characterAccountMatches: true,
+      characterRetiredMapping: true,
+      recoveryAfterCharacter: '400:bootstrap_retired',
+      logoutAll: 200,
+      recoveryAfterLogout: '400:bootstrap_retired',
+      modRevoke: 200,
+      recoveryAfterModRevoke: '400:bootstrap_retired',
+      providerUpgrade: 200,
+      recoveryAfterProviderUpgrade: '400:bootstrap_retired',
+    }, 'a bootstrap proof authenticates only the untouched original guest lifecycle state');
+  } finally {
+    await app.close();
+  }
 }
 
 // ── the guest → provider UPGRADE preserves the account row and its possessions (§4). Tested end to

@@ -394,6 +394,106 @@ export async function marketBoard(pool) {
   };
 }
 
+// Explore needs an exact actor-scoped answer, not a second public board. The UI's 100-row window is
+// deliberately unchanged; these existence reads range over every still-live candidate while
+// projecting only booleans. Candidate ids, sellers, prices, and hidden auction state never leave
+// this helper. Each predicate mirrors a public mutation gate that can be decided before its lock.
+export async function marketExactAvailability(pool, ch, h = {}) {
+  const none = { canFillOrder: false, canBuyGood: false, canBuyCar: false, canBidCar: false };
+  if (jailed(ch)) return none;
+  const cash = Number(ch.cash || 0);
+  const load = cargoCount(h.owned?.cargo || {});
+  const space = Math.max(0, trunkCap(h) - load);
+  const canFillOrder = !!(await pool.query(
+      `SELECT 1 FROM market_listings l
+         JOIN character_cargo cargo ON cargo.character_id=$1
+          AND cargo.good_id=l.good_id AND cargo.qty > 0
+        WHERE l.status='live' AND l.expires_at > now() AND l.kind='order'
+          AND l.seller_character <> $1 AND l.district=$2 AND l.qty > 0
+        LIMIT 1`, [ch.id, ch.loc])).rows[0];
+  const canBuyGood = space > 0 && !!(await pool.query(
+    `SELECT 1 FROM market_listings l JOIN characters seller ON seller.id=l.seller_character AND seller.alive
+      WHERE l.status='live' AND l.expires_at > now() AND l.kind='good'
+        AND l.seller_character <> $1 AND l.district=$2 AND l.qty > 0 AND l.price <= $3
+      LIMIT 1`, [ch.id, ch.loc, cash])).rows[0];
+  const canBuyCar = !!(await pool.query(
+    `SELECT 1 FROM market_listings l
+       JOIN characters seller ON seller.id=l.seller_character AND seller.alive
+       JOIN cars car ON car.id=l.car_id
+       LEFT JOIN characters bidder ON bidder.id=l.bidder
+      WHERE l.status='live' AND l.expires_at > now() AND l.kind='car'
+        AND l.seller_character <> $1 AND l.buy_now IS NOT NULL AND l.buy_now <= $2
+        AND (l.bidder IS NULL OR l.bidder=$1 OR bidder.alive)
+      LIMIT 1`, [ch.id, cash])).rows[0];
+  const canBidCar = !!(await pool.query(
+    `SELECT 1 FROM market_listings l LEFT JOIN characters bidder ON bidder.id=l.bidder
+      WHERE l.status='live' AND l.expires_at > now() AND l.kind='car'
+        AND l.seller_character <> $1
+        AND ((l.bid IS NULL AND l.price <= $2)
+          OR (l.bid IS NOT NULL AND l.bid * $3 <= $2 * 10000))
+        AND (l.bidder IS NULL OR l.bidder=$1 OR bidder.alive)
+      LIMIT 1`, [ch.id, cash, 10000 + MARKET.MIN_RAISE_BPS])).rows[0];
+  return { canFillOrder, canBuyGood, canBuyCar, canBidCar };
+}
+
+// Minimal, authoritative action parity for callers that need to answer "can this street use the
+// Market now?" without replaying a mutation. `ownRows` is the actor-scoped warehouse/slot slice (it
+// includes cancelled/expired orders that still hold delivered goods); public listings stay on the
+// existing board. No identifiers from either input are returned by Explore.
+export function marketAvailability(ch, h = {}, board = {}, ownRows = [], exact = null) {
+  const owned = h.owned || {};
+  const listings = board.listings || [];
+  const cash = Number(ch.cash || 0);
+  const load = cargoCount(owned.cargo || {});
+  const space = Math.max(0, trunkCap(h) - load);
+  // The actor-scoped rows are authoritative for the listing cap. The public board is deliberately
+  // bounded to 100 city-wide rows and therefore cannot prove how many slots this seller uses.
+  const liveCount = ownRows.filter((row) => row.status === 'live'
+    || (row.kind === 'order' && Number(row.filled_qty || row.filledQty || 0) > 0)).length;
+  const hasSlot = liveCount < maxListings(h);
+  const representativeFee = Math.max(MARKET.LIST_FEE_MIN,
+    Math.floor(listFee(MARKET.MIN_PRICE) * skillMult(h, 'broker', SKILLS.FX.BROKER_FEE_MULT) * masteryFx(h, 'commerce')));
+
+  // cancelListing shares the common jail gate. Goods also have to fit back in the trunk, while a car
+  // with a standing winning bid stays under the hammer (an unmet hidden reserve is the one exception).
+  const canCancel = !jailed(ch) && ownRows.some((row) => {
+    if (!['live', 'expired'].includes(row.status)) return false;
+    if (row.kind === 'order') return true;
+    if (row.kind === 'good') return load + Number(row.qty || 0) <= trunkCap(h);
+    if (row.kind !== 'car') return false;
+    const bidder = row.bidder != null;
+    return !bidder || (row.reserve != null && Number(row.bid || 0) < Number(row.reserve));
+  });
+  const canClaim = !jailed(ch) && space > 0 && ownRows.some((row) => row.kind === 'order'
+    && row.seller_character === ch.id && row.district === ch.loc && Number(row.filled_qty || row.filledQty || 0) > 0);
+  const canList = !jailed(ch) && hasSlot && cash >= representativeFee
+    && ((owned.cars || []).some((car) => !car.listed && !car.pledged)
+      || Object.values(owned.cargo || {}).some((qty) => Number(qty) > 0));
+  const canPostOrder = !jailed(ch) && !safeHoused(ch) && hasSlot
+    && cash >= MARKET.MIN_PRICE + representativeFee;
+  const canFillOrder = exact && Object.hasOwn(exact, 'canFillOrder') ? !!exact.canFillOrder
+    : !jailed(ch) && listings.some((listing) => listing.kind === 'order'
+    && listing.sellerId !== ch.id && listing.district === ch.loc && Number(listing.wanted || 0) > 0
+    && Number(owned.cargo?.[listing.good] || 0) > 0);
+  const canBuyGood = exact && Object.hasOwn(exact, 'canBuyGood') ? !!exact.canBuyGood
+    : !jailed(ch) && space > 0 && listings.some((listing) => listing.kind === 'good'
+    && listing.sellerId !== ch.id && listing.district === ch.loc && Number(listing.qty || 0) > 0
+    && cash >= Number(listing.unitPrice || Infinity));
+  const canBuyCar = exact && Object.hasOwn(exact, 'canBuyCar') ? !!exact.canBuyCar
+    : !jailed(ch) && listings.some((listing) => listing.kind === 'car'
+    && listing.sellerId !== ch.id && listing.buyNow != null && cash >= Number(listing.buyNow));
+  const canBidCar = exact && Object.hasOwn(exact, 'canBidCar') ? !!exact.canBidCar
+    : !jailed(ch) && listings.some((listing) => {
+    if (listing.kind !== 'car' || listing.sellerId === ch.id) return false;
+    const floor = listing.bid == null ? Number(listing.minBid || Infinity)
+      : Math.ceil(Number(listing.bid) * (1 + Number(board.levers?.minRaiseBps || MARKET.MIN_RAISE_BPS) / 10000));
+    return cash >= floor;
+  });
+  const ready = canCancel || canClaim || canList || canPostOrder || canFillOrder || canBuyGood || canBuyCar || canBidCar;
+  return { ready, blocker: ready ? null : jailed(ch) ? 'status' : 'resource',
+    canCancel, canClaim, canList, canPostOrder, canFillOrder, canBuyGood, canBuyCar, canBidCar };
+}
+
 // ── Worker sweep — settle expired car auctions; unlist everything else past its clock ──
 // Per-listing txn: counterparty characters sorted FOR UPDATE → the listing (chars before pots).
 export async function sweepMarket(pool) {

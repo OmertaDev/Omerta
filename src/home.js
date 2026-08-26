@@ -42,7 +42,8 @@ export const HOME_BOARDS = [
   ['cityEvents', '/v1/events',   (ch, client) => cityEventBoard(client)],
   ['streak',    '/v1/streak',    (ch, client) => Streak.streakBoard(ch, client)],
   ['results',   '/v1/results',   async (ch, client) => ({ results: await resultsBoard(client) })],
-  ['explore',   '/v1/explore',   (ch, client, h) => Explore.exploreBoard(ch, h.acct, h.owned)],
+  ['explore',   '/v1/explore',   (ch, client, h, ctx) =>
+    Explore.exploreBoard(client, ch, h.acct, h.owned, { onlineAccounts: ctx.onlineAccounts || [] })],
   ['primetime', '/v1/primetime', (ch, client) => Prime.primeTimeBoard(client, ch)],
   ['day',       '/v1/day',       (ch, client, h) => Day.dayBoard(client, ch, h)],
   ['live',      '/v1/live',      (ch, client, h, ctx) => Collision.collisionBoard(client, ch, ctx.online)],
