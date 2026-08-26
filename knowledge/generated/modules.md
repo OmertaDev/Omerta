@@ -5,8 +5,8 @@
 | Module | Lines | Domain | Imports | Routes | Tables | Direct test imports |
 |---|---:|---|---:|---:|---:|---:|
 | [src/accrual.js](../../src/accrual.js) | 200 | platform-core | 0 / 3 | 0 | 3 | 4 |
-| [src/agentgateway.js](../../src/agentgateway.js) | 322 | platform-core | 0 / 2 | 0 | 15 | 1 |
-| [src/agentturn.js](../../src/agentturn.js) | 541 | platform-core | 11 / 1 | 0 | 2 | 0 |
+| [src/agentgateway.js](../../src/agentgateway.js) | 359 | platform-core | 0 / 2 | 0 | 15 | 1 |
+| [src/agentturn.js](../../src/agentturn.js) | 544 | platform-core | 12 / 1 | 0 | 2 | 0 |
 | [src/aggregate.js](../../src/aggregate.js) | 96 | platform-core | 0 / 4 | 0 | 1 | 1 |
 | [src/assets.js](../../src/assets.js) | 316 | platform-core | 0 / 4 | 0 | 2 | 0 |
 | [src/auction.js](../../src/auction.js) | 248 | platform-core | 4 / 5 | 5 | 6 | 3 |
@@ -33,7 +33,7 @@
 | [src/clues.js](../../src/clues.js) | 114 | platform-core | 4 / 3 | 3 | 5 | 0 |
 | [src/collection.js](../../src/collection.js) | 112 | law-intelligence | 2 / 13 | 2 | 7 | 1 |
 | [src/collision.js](../../src/collision.js) | 98 | engagement-growth | 1 / 3 | 1 | 7 | 1 |
-| [src/commission.js](../../src/commission.js) | 434 | platform-core | 3 / 13 | 9 | 11 | 4 |
+| [src/commission.js](../../src/commission.js) | 434 | platform-core | 3 / 14 | 9 | 11 | 4 |
 | [src/community.js](../../src/community.js) | 220 | engagement-growth | 3 / 7 | 2 | 8 | 1 |
 | [src/contacts.js](../../src/contacts.js) | 248 | engagement-growth | 2 / 8 | 3 | 10 | 2 |
 | [src/convoy.js](../../src/convoy.js) | 561 | enterprise-logistics | 4 / 9 | 10 | 14 | 2 |
@@ -53,11 +53,11 @@
 | [src/dynasty.js](../../src/dynasty.js) | 249 | chain-economy | 3 / 4 | 7 | 10 | 1 |
 | [src/economy.js](../../src/economy.js) | 632 | economy-ledger | 3 / 4 | 26 | 18 | 2 |
 | [src/emission.js](../../src/emission.js) | 34 | economy-ledger | 1 / 2 | 1 | 0 | 1 |
-| [src/engagement.js](../../src/engagement.js) | 290 | engagement-growth | 1 / 3 | 0 | 8 | 1 |
+| [src/engagement.js](../../src/engagement.js) | 372 | engagement-growth | 1 / 5 | 0 | 8 | 2 |
 | [src/estate.js](../../src/estate.js) | 387 | enterprise-logistics | 3 / 7 | 11 | 8 | 2 |
 | [src/events.js](../../src/events.js) | 103 | world-progression | 2 / 8 | 0 | 9 | 1 |
 | [src/exchange.js](../../src/exchange.js) | 355 | economy-ledger | 4 / 10 | 4 | 11 | 5 |
-| [src/explore.js](../../src/explore.js) | 85 | world-progression | 1 / 3 | 1 | 4 | 1 |
+| [src/explore.js](../../src/explore.js) | 310 | world-progression | 2 / 4 | 1 | 14 | 1 |
 | [src/fairness.js](../../src/fairness.js) | 92 | economy-ledger | 1 / 5 | 0 | 1 | 1 |
 | [src/favors.js](../../src/favors.js) | 264 | engagement-growth | 2 / 6 | 4 | 9 | 2 |
 | [src/fees.js](../../src/fees.js) | 225 | economy-ledger | 4 / 9 | 4 | 10 | 3 |
@@ -66,7 +66,7 @@
 | [src/game.js](../../src/game.js) | 2540 | platform-core | 9 / 122 | 24 | 62 | 11 |
 | [src/growth.js](../../src/growth.js) | 980 | engagement-growth | 4 / 15 | 16 | 15 | 6 |
 | [src/heists.js](../../src/heists.js) | 502 | social-combat | 3 / 7 | 10 | 10 | 2 |
-| [src/home.js](../../src/home.js) | 53 | engagement-growth | 13 / 3 | 1 | 0 | 1 |
+| [src/home.js](../../src/home.js) | 54 | engagement-growth | 13 / 3 | 1 | 0 | 1 |
 | [src/honor.js](../../src/honor.js) | 74 | social-combat | 1 / 12 | 1 | 5 | 1 |
 | [src/hustle.js](../../src/hustle.js) | 104 | platform-core | 2 / 3 | 2 | 3 | 0 |
 | [src/invariants.js](../../src/invariants.js) | 736 | economy-ledger | 1 / 84 | 0 | 42 | 78 |
@@ -80,7 +80,7 @@
 | [src/megaproject.js](../../src/megaproject.js) | 296 | enterprise-logistics | 4 / 3 | 6 | 7 | 0 |
 | [src/memo.js](../../src/memo.js) | 39 | economy-ledger | 0 / 3 | 0 | 0 | 1 |
 | [src/mentor.js](../../src/mentor.js) | 232 | social-combat | 2 / 5 | 7 | 7 | 1 |
-| [src/nft.js](../../src/nft.js) | 123 | chain-economy | 3 / 2 | 0 | 2 | 0 |
+| [src/nft.js](../../src/nft.js) | 123 | chain-economy | 3 / 3 | 0 | 2 | 1 |
 | [src/notoriety.js](../../src/notoriety.js) | 31 | world-progression | 1 / 2 | 0 | 2 | 0 |
 | [src/npcwar.js](../../src/npcwar.js) | 575 | world-progression | 2 / 7 | 7 | 8 | 1 |
 | [src/opportunities.js](../../src/opportunities.js) | 184 | engagement-growth | 7 / 2 | 0 | 6 | 0 |
@@ -126,12 +126,12 @@
 | [src/routes/territory.js](../../src/routes/territory.js) | 38 | enterprise-logistics | 2 / 1 | 10 | 2 | 0 |
 | [src/routes/underworld.js](../../src/routes/underworld.js) | 27 | world-progression | 2 / 1 | 7 | 1 | 0 |
 | [src/rules.generated.js](../../src/rules.generated.js) | 480 | platform-core | 0 / 2 | 0 | 10 | 1 |
-| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 196 | 0 | 0 | 109 |
+| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 195 | 0 | 0 | 109 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6045 | platform-core | 0 / 1 | 0 | 53 | 0 |
 | [src/rwastockkeeper.js](../../src/rwastockkeeper.js) | 125 | platform-core | 0 / 1 | 0 | 5 | 0 |
 | [src/season.js](../../src/season.js) | 141 | world-progression | 1 / 2 | 2 | 8 | 0 |
 | [src/secrets.js](../../src/secrets.js) | 197 | law-intelligence | 3 / 5 | 5 | 6 | 2 |
-| [src/server.js](../../src/server.js) | 3325 | platform-core | 130 / 115 | 418 | 43 | 102 |
+| [src/server.js](../../src/server.js) | 3360 | platform-core | 130 / 115 | 418 | 43 | 102 |
 | [src/shipment.js](../../src/shipment.js) | 176 | enterprise-logistics | 2 / 2 | 3 | 8 | 0 |
 | [src/skills.js](../../src/skills.js) | 164 | world-progression | 4 / 2 | 5 | 4 | 0 |
 | [src/social.js](../../src/social.js) | 27 | social-combat | 6 / 12 | 44 | 3 | 6 |

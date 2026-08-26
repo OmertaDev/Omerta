@@ -167,7 +167,7 @@
 | [.agents/skills/remotion-saas/SKILL.md](../../.agents/skills/remotion-saas/SKILL.md) | documentation | 34 | 2026-08-24 |
 | [.agents/skills/remotion-studio/SKILL.md](../../.agents/skills/remotion-studio/SKILL.md) | documentation | 25 | 2026-08-24 |
 | [.agents/skills/remotion-upgrade/SKILL.md](../../.agents/skills/remotion-upgrade/SKILL.md) | documentation | 32 | 2026-08-24 |
-| [AGENTS.md](../../AGENTS.md) | documentation | 447 | 2026-08-25 |
+| [AGENTS.md](../../AGENTS.md) | documentation | 471 | 2026-08-25 |
 | [AUDIT-bank-city-leg.md](../../AUDIT-bank-city-leg.md) | audit | 119 | 2026-08-12 |
 | [AUDIT-blood-war.md](../../AUDIT-blood-war.md) | audit | 95 | 2026-08-05 |
 | [AUDIT-blue-team.md](../../AUDIT-blue-team.md) | audit | 178 | 2026-08-12 |
@@ -284,7 +284,9 @@
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-core-deployment.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-core-deployment.md) | documentation | 151 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-hook-rehearsal.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-hook-rehearsal.md) | documentation | 146 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-twap-rehearsal.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-twap-rehearsal.md) | documentation | 156 | 2026-08-24 |
+| [docs/superpowers/plans/2026-08-25-agent-alpha-deep-city.md](../../docs/superpowers/plans/2026-08-25-agent-alpha-deep-city.md) | documentation | 274 | 2026-08-25 |
 | [docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md](../../docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md) | design | 124 | 2026-08-23 |
+| [docs/superpowers/specs/2026-08-25-agent-alpha-deep-city-design.md](../../docs/superpowers/specs/2026-08-25-agent-alpha-deep-city-design.md) | design | 177 | 2026-08-25 |
 | [docs/WIKI.md](../../docs/WIKI.md) | documentation | 1439 | 2026-08-25 |
 | [GRAPH.md](../../GRAPH.md) | documentation | 259 | 2026-07-27 |
 | [GTM.md](../../GTM.md) | documentation | 295 | 2026-08-13 |
@@ -390,5 +392,5 @@
 | [PRODUCT.md](../../PRODUCT.md) | documentation | 50 | 2026-08-24 |
 | [README.md](../../README.md) | documentation | 166 | 2026-08-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 875 | 2026-08-21 |
-| [SPEC.md](../../SPEC.md) | documentation | 647 | 2026-08-25 |
+| [SPEC.md](../../SPEC.md) | documentation | 663 | 2026-08-25 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |

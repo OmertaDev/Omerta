@@ -10,18 +10,18 @@ Written 2026-07-25. Every number below was measured from the tree, not recalled.
 
 | | |
 |---|---|
-| Backend modules | **163** files, **56730** lines (`src/`, incl. `src/routes/` and `src/social/`) |
-| Test suites | **119** files, **48118** lines (`test/`) — ratio 0.85 test:src |
+| Backend modules | **163** files, **57186** lines (`src/`, incl. `src/routes/` and `src/social/`) |
+| Test suites | **120** files, **50399** lines (`test/`) — ratio 0.88 test:src |
 | HTTP routes | **716** registrations |
-| Database tables | **245** (`schema.sql`, 3715 lines) |
-| Client | **11415** lines (`public/index.html`, single file, zero dependencies) |
+| Database tables | **245** (`schema.sql`, 3716 lines) |
+| Client | **11429** lines (`public/index.html`, single file, zero dependencies) |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
-| Smart contracts | **20** contracts, **4476** lines Solidity, **347** Foundry tests passing |
+| Smart contracts | **20** contracts, **4527** lines Solidity, **347** Foundry tests passing |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/bond-dials.js` (sizing the on-chain mint walls), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres) |
-| Design + audit docs | **416** markdown files, **88783** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
+| Design + audit docs | **416** markdown files, **88839** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
 | Ledger invariants | 18 named escrow/identity checks + per-currency conservation, **drift-0** |
 
-Roughly **55,000 lines** of code, tests, schema and contracts.
+Roughly **116,000 lines** of code, tests, schema and contracts.
 
 ---
 
@@ -147,8 +147,24 @@ metric) · **THE CELLPHONE** (inbox, DMs, blocked lines).
 ### 3.9 Surfaces
 The playable console (22 tabs, progressive disclosure, 15 language packs, live feed, atmosphere layer) ·
 `/admin` live-ops dashboard · `/wiki` codex · the Agent Gateway (`AGENTS.md`, OpenAPI, `llms.txt`, the
-Opportunity Board, the agent leaderboard, `omerta-mcp`) · THE BROADCAST cards and profiles ·
+Opportunity Board, public banded `/v1/arena`, authenticated detailed agent leaderboard, `omerta-mcp`) ·
+THE BROADCAST cards and profiles ·
 `/health` and the backup watchdog.
+
+### 3.10 Agent Turn v3 and Deep City
+
+Agent Turn v3 preserves the server-authoritative EV lane: `recommendedActionId` and `actions` are the
+only turn-issued execution authority, and `/v1/agent/act` accepts only the latest server-issued
+`{turnId, actionId}`. Its `exploration` sibling is read-only, non-EV, non-executable, and outside the
+authority fingerprint. It recommends exactly one relevant unvisited eligible system from the exact
+40-key engagement catalog, or `null`; Home and `GET /v1/explore` consume the same resolver.
+
+`tools/agent-alpha.js` is an owner-operated bounded canary runner for one durable origin-bound identity,
+not a fleet service. It has no reset, defaults to one action, permits 1–50 mutation attempts, and
+enforces at least 3100 ms between them. It accepts only the shipped allowlist under the exact
+conservative policy and never autonomously performs PvP, borrowing, human faucets, wallet/mint/
+withdrawal, replacement-character, or arbitrary mutation flows. Production extraction remains dormant
+with no chain configured.
 
 ---
 

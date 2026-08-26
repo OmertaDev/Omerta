@@ -320,6 +320,55 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
     'llms.txt identifies the public Arena JSON snapshot as the public banded board behind this page');
   assert(!llms.includes('/v1/leaderboard/agents'),
     'llms.txt does not direct unauthenticated discovery to the authenticated agent leaderboard');
+
+  // Agent Turn v3 deliberately has two lanes: existing EV-ranked action authority and one
+  // read-only Deep City recommendation. These discovery surfaces are the boundary most likely to
+  // collapse the two into an unsafe promise ("the agent can execute exploration"), so require each
+  // machine-facing guide to state the separation and the exact 40-system scope. The bounded runner
+  // is a different boundary again: one owner-operated identity, finite cadence, and no fleet/reset
+  // or policy expansion.
+  const agentGuide = read('AGENTS.md');
+  const mcpGuide = read('omerta-mcp/README.md');
+  const requiredV3Surfaces = [
+    ['AGENTS.md', agentGuide],
+    ['omerta-mcp/README.md', mcpGuide],
+    ['<llms.txt>', llms],
+  ];
+  for (const [name, text] of requiredV3Surfaces) {
+    assert(/Agent Turn v3/i.test(text), `${name} must name the shipped Agent Turn v3 contract`);
+    assert(/exploration[\s\S]{0,500}read-only/i.test(text),
+      `${name} must describe exploration as read-only`);
+    assert(/exploration[\s\S]{0,500}(?:non-EV|no EV|without EV)/i.test(text),
+      `${name} must say exploration is outside EV scoring/ranking`);
+    assert(/exploration[\s\S]{0,500}(?:non-executable|not executable|cannot be executed)/i.test(text),
+      `${name} must say exploration cannot be executed`);
+    assert(/exploration[\s\S]{0,700}(?:outside|separate from)[\s\S]{0,120}(?:authority|actions)/i.test(text),
+      `${name} must keep exploration outside Agent Turn action authority`);
+    assert(/(?:one|exactly one)[\s\S]{0,120}(?:unvisited|new)[\s\S]{0,120}(?:eligible|actionable)[\s\S]{0,120}(?:40-system|40 system)/i.test(text),
+      `${name} must describe one relevant unvisited eligible system from the canonical 40`);
+  }
+
+  for (const [name, text] of [['AGENTS.md', agentGuide], ['omerta-mcp/README.md', mcpGuide]]) {
+    assert(/Agent Alpha[\s\S]{0,1800}owner-operated/i.test(text),
+      `${name} must identify Agent Alpha as owner-operated`);
+    assert(/Agent Alpha[\s\S]{0,1800}one durable\s+(?:origin-bound\s+)?identity/i.test(text),
+      `${name} must bind Agent Alpha to one durable identity`);
+    assert(/Agent Alpha[\s\S]{0,1800}no reset/i.test(text),
+      `${name} must say Agent Alpha has no reset path`);
+    assert(/Agent Alpha[\s\S]{0,1800}(?:not a fleet|no fleet)/i.test(text),
+      `${name} must not present Agent Alpha as a fleet runner`);
+    assert(/Agent Alpha[\s\S]{0,1800}(?:1–50|1-50)[\s\S]{0,300}3100 ms/i.test(text),
+      `${name} must publish Agent Alpha's finite action and cadence bounds`);
+    assert(/Agent Alpha[\s\S]{0,1800}(?:never|no autonomous)[\s\S]{0,100}PvP[\s\S]{0,160}borrowing[\s\S]{0,180}human\s+(?:anti-Sybil\s+)?faucets/i.test(text),
+      `${name} must preserve the runner's no-PvP, no-borrowing, no-human-faucet policy`);
+  }
+
+  assert(/GET `?\/v1\/arena`?[\s\S]{0,160}public/i.test(agentGuide)
+    && /GET `?\/v1\/leaderboard\/agents`?[\s\S]{0,160}authenticated/i.test(agentGuide),
+  'AGENTS.md must distinguish the public Arena snapshot from the authenticated detailed leaderboard');
+  const dormantProduction = /(?:production[\s\S]{0,120}(?:dormant|no chain configured)|dormant[\s\S]{0,40}production)/i;
+  assert(dormantProduction.test(agentGuide) && dormantProduction.test(mcpGuide),
+  'both agent guides must keep production extraction explicitly dormant');
   const bad = [];
   for (const f of ALL_SURFACES) {
     let text;

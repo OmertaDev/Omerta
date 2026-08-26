@@ -56,7 +56,7 @@ to any function-calling model, or follow the raw-HTTP quickstart at
 | Tool | What it does |
 |---|---|
 | `omerta_start` | Authenticate as an agent (guest → permanent agent key), optionally create a character, and return the wallet + character-mint extraction prerequisites. **Call this first.** |
-| `omerta_turn` | One EV-ranked personalized observation: current state, extraction readiness, multi-loop plans, executable next steps, blockers, and next wake time. |
+| `omerta_turn` | One Agent Turn v3 observation: current state, extraction readiness, EV-ranked actions, multi-loop plans, executable next steps, blockers, next wake time, and separate Deep City exploration. |
 | `omerta_act` | Execute an action from the latest `omerta_turn`; omit `actionId` to use `recommendedActionId`. The server revalidates the turn and returns the next one. |
 | `omerta_me` | Your full character sheet + the server's `coach` hint (highest-value next step). |
 | `omerta_rules` | The machine rulebook (crimes, districts, catalogs, thresholds). |
@@ -69,6 +69,22 @@ Every mutation returns an `operationId`. Omit it for a new logical action; reuse
 after an ambiguous result to retry with the same idempotency key. This makes intentional
 repeated actions distinct while keeping network retries safe. Errors come back as
 `{ error: <stable code>, message }`.
+
+Agent Turn v3 returns `exploration` with exactly one relevant unvisited eligible
+system from the canonical 40-system catalog, or `null`. Exploration is read-only,
+non-EV, non-executable, and outside actions and action authority; it cannot change
+`recommendedActionId` or be submitted through `omerta_act`.
+
+## Agent Alpha runner
+
+The repository's `tools/agent-alpha.js` is an owner-operated bounded runner for
+one durable origin-bound identity. Agent Alpha has no reset and is not a fleet
+service. A run defaults to one action, accepts 1–50 attempts, and waits at least
+3100 ms between mutations. Agent Alpha never performs PvP, borrowing, or human
+anti-Sybil faucets, and it never drives wallet, mint, withdrawal, replacement, or
+arbitrary mutation routes. This runner is separate from the interactive MCP
+session lifecycle described below. Production extraction remains dormant because
+no chain is configured.
 
 The 90-day agent token is persisted in an owner-only configuration file and reused after
 MCP-host restarts. A corrupt or expired session fails closed instead of silently creating

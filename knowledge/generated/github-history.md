@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `26ca8d7592c5`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `2fee34e141fc`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 942 |
+| Commits in clone | 957 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-25 — ci: publish MCP with trusted OIDC |
+| Latest commit | 2026-08-25 — test: wait for Deep City readiness |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 141 |
+| OmertaDev | 156 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -29,25 +29,25 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 491 | yes |
-| [public/index.html](../../public/index.html) | 378 | yes |
-| [src/server.js](../../src/server.js) | 336 | yes |
-| [schema.sql](../../schema.sql) | 252 | yes |
+| [public/index.html](../../public/index.html) | 380 | yes |
+| [src/server.js](../../src/server.js) | 338 | yes |
+| [schema.sql](../../schema.sql) | 253 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
-| [SPEC.md](../../SPEC.md) | 231 | yes |
+| [SPEC.md](../../SPEC.md) | 232 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 169 | yes |
-| [package.json](../../package.json) | 127 | yes |
+| [package.json](../../package.json) | 128 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 118 | yes |
 | [src/invariants.js](../../src/invariants.js) | 113 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 111 | yes |
-| [test/client.js](../../test/client.js) | 98 | yes |
+| [test/client.js](../../test/client.js) | 100 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
 | [test/social.js](../../test/social.js) | 83 | yes |
 | [test/growth.js](../../test/growth.js) | 78 | yes |
 | [public/wiki.html](../../public/wiki.html) | 74 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 65 | yes |
-| [test/hardening.js](../../test/hardening.js) | 63 | yes |
+| [test/hardening.js](../../test/hardening.js) | 64 | yes |
 | [tools/sim.js](../../tools/sim.js) | 58 | yes |
 | [README.md](../../README.md) | 54 | yes |
 | [src/growth.js](../../src/growth.js) | 51 | yes |

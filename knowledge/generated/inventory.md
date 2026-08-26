@@ -1,37 +1,37 @@
 # Generated repository inventory
 
-> Source: worktree at `26ca8d7592c5`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `2fee34e141fc`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 1,556 |
-| Text lines | 379,184 |
-| Repository bytes inventoried | 273,531,336 |
+| Current artifacts | 1,560 |
+| Text lines | 382,801 |
+| Repository bytes inventoried | 273,693,447 |
 | Backend/route modules | 163 |
 | HTTP route registrations / unique routes | 713 / 712 |
 | Database tables | 245 |
 | Solidity declarations | 28 |
-| Git commits | 942 |
+| Git commits | 957 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 4,455 / 20,952 |
+| Graph nodes / edges | 4,477 / 21,069 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
 | media-asset | 529 |
-| documentation | 199 |
+| documentation | 200 |
 | artifact | 149 |
 | backend-module | 144 |
-| test-suite | 119 |
+| test-suite | 120 |
 | audit | 98 |
-| design | 75 |
+| design | 76 |
 | contract-project | 61 |
 | contract-test | 49 |
-| engineering-harness | 48 |
+| engineering-harness | 49 |
 | contract-source | 20 |
 | route-module | 19 |
 | web-surface | 13 |
@@ -48,18 +48,18 @@
 |---|---:|---|---|
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
 | [CLAUDE.md](../../CLAUDE.md) | 17,225 | documentation | 2026-08-23 |
-| [public/index.html](../../public/index.html) | 11,416 | web-surface | 2026-08-24 |
+| [public/index.html](../../public/index.html) | 11,430 | web-surface | 2026-08-25 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
-| [test/client.js](../../test/client.js) | 6,912 | test-suite | 2026-08-24 |
+| [test/client.js](../../test/client.js) | 6,997 | test-suite | 2026-08-25 |
 | [BALANCE.md](../../BALANCE.md) | 6,472 | documentation | 2026-08-24 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6,045 | backend-module | 2026-08-24 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
-| [schema.sql](../../schema.sql) | 3,716 | data-schema | 2026-08-25 |
-| [src/server.js](../../src/server.js) | 3,325 | backend-module | 2026-08-25 |
+| [schema.sql](../../schema.sql) | 3,717 | data-schema | 2026-08-25 |
+| [src/server.js](../../src/server.js) | 3,360 | backend-module | 2026-08-25 |
 | [omerta-contracts/fizz_data/contracts.json](../../omerta-contracts/fizz_data/contracts.json) | 2,739 | contract-project | 2026-08-25 |
 | [public/art/manifest.json](../../public/art/manifest.json) | 2,700 | media-asset | 2026-08-09 |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 2,619 | audit | 2026-08-12 |
@@ -70,12 +70,12 @@
 | [package-lock.json](../../package-lock.json) | 2,152 | package-config | 2026-08-21 |
 | [knowledge/github-snapshot.json](../../knowledge/github-snapshot.json) | 2,048 | knowledge-base | 2026-08-24 |
 | [test/gates.js](../../test/gates.js) | 1,747 | test-suite | 2026-08-24 |
-| [test/hardening.js](../../test/hardening.js) | 1,712 | test-suite | 2026-08-24 |
+| [test/hardening.js](../../test/hardening.js) | 1,716 | test-suite | 2026-08-25 |
 | [src/chain.js](../../src/chain.js) | 1,703 | backend-module | 2026-08-22 |
 | [tools/sim.js](../../tools/sim.js) | 1,681 | engineering-harness | 2026-08-16 |
+| [test/agent-alpha.js](../../test/agent-alpha.js) | 1,524 | test-suite | 2026-08-25 |
 | [src/casino.js](../../src/casino.js) | 1,468 | backend-module | 2026-08-23 |
 | [docs/WIKI.md](../../docs/WIKI.md) | 1,439 | documentation | 2026-08-25 |
-| [test/economy.js](../../test/economy.js) | 1,402 | test-suite | 2026-08-21 |
 
 ## Media estate
 
