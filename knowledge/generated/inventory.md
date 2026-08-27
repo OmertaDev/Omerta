@@ -1,29 +1,29 @@
 # Generated repository inventory
 
-> Source: worktree at `711e005409b6`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `c7a3643f6b5a`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 1,579 |
-| Text lines | 394,366 |
-| Repository bytes inventoried | 274,264,480 |
+| Current artifacts | 1,580 |
+| Text lines | 395,512 |
+| Repository bytes inventoried | 274,317,532 |
 | Backend/route modules | 166 |
 | HTTP route registrations / unique routes | 722 / 721 |
 | Database tables | 261 |
 | Solidity declarations | 33 |
-| Git commits | 971 |
+| Git commits | 975 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 4,557 / 21,340 |
+| Graph nodes / edges | 4,563 / 21,370 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
 | media-asset | 529 |
-| documentation | 203 |
+| documentation | 204 |
 | artifact | 149 |
 | backend-module | 146 |
 | test-suite | 123 |
@@ -58,7 +58,7 @@
 | [BALANCE.md](../../BALANCE.md) | 6,472 | documentation | 2026-08-24 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6,045 | backend-module | 2026-08-24 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
-| [schema.sql](../../schema.sql) | 4,013 | data-schema | 2026-08-26 |
+| [schema.sql](../../schema.sql) | 4,058 | data-schema | 2026-08-26 |
 | [src/server.js](../../src/server.js) | 3,343 | backend-module | 2026-08-26 |
 | [omerta-contracts/fizz_data/contracts.json](../../omerta-contracts/fizz_data/contracts.json) | 2,739 | contract-project | 2026-08-25 |
 | [public/art/manifest.json](../../public/art/manifest.json) | 2,700 | media-asset | 2026-08-09 |

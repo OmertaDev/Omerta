@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `711e005409b6`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `c7a3643f6b5a`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 971 |
+| Commits in clone | 975 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-26 — docs: refresh ballot v2 knowledge graph |
+| Latest commit | 2026-08-26 — fix: harden version-snapshot stock ballot |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 170 |
+| OmertaDev | 174 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -31,9 +31,9 @@
 | [CLAUDE.md](../../CLAUDE.md) | 491 | yes |
 | [public/index.html](../../public/index.html) | 378 | yes |
 | [src/server.js](../../src/server.js) | 340 | yes |
-| [schema.sql](../../schema.sql) | 258 | yes |
+| [schema.sql](../../schema.sql) | 259 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
-| [SPEC.md](../../SPEC.md) | 238 | yes |
+| [SPEC.md](../../SPEC.md) | 239 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 169 | yes |
 | [package.json](../../package.json) | 131 | yes |

@@ -1,7 +1,7 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "711e005409b67e48860b62656965aa6430cbcd50",
-  "worktreeDirty": false,
+  "sourceRevision": "c7a3643f6b5a6a675b46062930e07a53fd5b0be2",
+  "worktreeDirty": true,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
     "nodeTypes": [
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 4557,
-    "edges": 21340,
+    "nodes": 4563,
+    "edges": 21370,
     "byNodeType": {
-      "Artifact": 1579,
+      "Artifact": 1580,
       "Command": 34,
-      "Commit": 971,
+      "Commit": 975,
       "Contract": 33,
-      "Document": 405,
+      "Document": 406,
       "Domain": 12,
       "ExternalDependency": 23,
       "HistoricalArtifact": 35,
@@ -65,22 +65,22 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1841,
-      "CHANGED": 8185,
-      "CONTAINS": 1599,
+      "CHANGED": 8202,
+      "CONTAINS": 1600,
       "DECLARES": 34,
       "DEFINED_IN": 1016,
       "DEPENDS_ON": 59,
       "EXECUTES": 153,
       "HANDLED_BY": 653,
-      "HAS_COMMIT": 971,
+      "HAS_COMMIT": 975,
       "IMPLEMENTS": 124,
-      "IMPORTS": 1471,
+      "IMPORTS": 1472,
       "INHERITS": 5,
-      "REFERENCES": 2474,
-      "REPRESENTS": 753,
+      "REFERENCES": 2478,
+      "REPRESENTS": 754,
       "TESTS": 520,
       "TRACKS": 126,
-      "USES_TABLE": 1356
+      "USES_TABLE": 1358
     }
   },
   "nodes": [
@@ -10228,6 +10228,29 @@
       "lastChangedCommit": "dee7593a66b955d677656afab4516cb68edb918d"
     },
     {
+      "key": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "type": "Artifact",
+      "id": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "label": "2026-08-26-finalized-observation-kernel.md",
+      "path": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 16092,
+      "lines": 390,
+      "version": "f77cedd3e2a00c0b",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+          "line": 1,
+          "version": "f77cedd3e2a00c0b"
+        }
+      ],
+      "lastChangedAt": "2026-08-26T20:01:38-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "e1047306ab3a2439e928d10cd5b237af1694f996"
+    },
+    {
       "key": "Artifact:docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
       "type": "Artifact",
       "id": "docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
@@ -10235,20 +10258,20 @@
       "path": "docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 12733,
-      "lines": 200,
-      "version": "d02e9146932a1cf1",
+      "bytes": 14151,
+      "lines": 218,
+      "version": "f6c9002f8f6df9fc",
       "text": true,
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
           "line": 1,
-          "version": "d02e9146932a1cf1"
+          "version": "f6c9002f8f6df9fc"
         }
       ],
-      "lastChangedAt": "2026-08-26T18:01:35-04:00",
+      "lastChangedAt": "2026-08-26T20:01:38-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "60dfc8f6719a146199bd38dcce5c35e8202c6645"
+      "lastChangedCommit": "e1047306ab3a2439e928d10cd5b237af1694f996"
     },
     {
       "key": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
@@ -10258,20 +10281,20 @@
       "path": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 46838,
-      "lines": 1144,
-      "version": "2857c498f1d9b2aa",
+      "bytes": 47521,
+      "lines": 1152,
+      "version": "ac77f038a246d02f",
       "text": true,
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
           "line": 1,
-          "version": "2857c498f1d9b2aa"
+          "version": "ac77f038a246d02f"
         }
       ],
-      "lastChangedAt": "2026-08-26T17:57:34-04:00",
+      "lastChangedAt": "2026-08-26T20:01:38-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1b5e69dee44558e1d7164effd95db8facbf9edbd"
+      "lastChangedCommit": "e1047306ab3a2439e928d10cd5b237af1694f996"
     },
     {
       "key": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
@@ -10327,20 +10350,20 @@
       "path": "docs/superpowers/specs/2026-08-26-grill-completion.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 47229,
-      "lines": 774,
-      "version": "3f978b3e3192ffb0",
+      "bytes": 50825,
+      "lines": 824,
+      "version": "c42c7dea001cbfed",
       "text": true,
       "provenance": [
         {
           "file": "docs/superpowers/specs/2026-08-26-grill-completion.md",
           "line": 1,
-          "version": "3f978b3e3192ffb0"
+          "version": "c42c7dea001cbfed"
         }
       ],
-      "lastChangedAt": "2026-08-26T18:01:35-04:00",
+      "lastChangedAt": "2026-08-26T20:01:38-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "60dfc8f6719a146199bd38dcce5c35e8202c6645"
+      "lastChangedCommit": "e1047306ab3a2439e928d10cd5b237af1694f996"
     },
     {
       "key": "Artifact:docs/WIKI.md",
@@ -28514,20 +28537,20 @@
       "path": "schema.sql",
       "kind": "data-schema",
       "extension": ".sql",
-      "bytes": 249398,
-      "lines": 4013,
-      "version": "00e0f62c2c2b8a6e",
+      "bytes": 251289,
+      "lines": 4058,
+      "version": "dfab2bc55bc0d709",
       "text": true,
       "provenance": [
         {
           "file": "schema.sql",
           "line": 1,
-          "version": "00e0f62c2c2b8a6e"
+          "version": "dfab2bc55bc0d709"
         }
       ],
-      "lastChangedAt": "2026-08-26T19:14:16-04:00",
+      "lastChangedAt": "2026-08-26T20:33:12-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3419333c76e516bb547a68d3f4e339519a42ca6b"
+      "lastChangedCommit": "c7a3643f6b5a6a675b46062930e07a53fd5b0be2"
     },
     {
       "key": "Artifact:SIGN-OFF.md",
@@ -28585,18 +28608,18 @@
       "extension": ".md",
       "bytes": 46570,
       "lines": 647,
-      "version": "ae5e5fa1bcfc279f",
+      "version": "f7c563d9d015b924",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "ae5e5fa1bcfc279f"
+          "version": "f7c563d9d015b924"
         }
       ],
-      "lastChangedAt": "2026-08-26T18:50:08-04:00",
+      "lastChangedAt": "2026-08-26T20:01:38-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "72bef8f9fceb5014833e98fd66104d311261cb96"
+      "lastChangedCommit": "e1047306ab3a2439e928d10cd5b237af1694f996"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -29273,20 +29296,20 @@
       "path": "src/commission.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 62834,
-      "lines": 1175,
-      "version": "16ad6c61efd5dc88",
+      "bytes": 69939,
+      "lines": 1326,
+      "version": "8539dd45c00c4211",
       "text": true,
       "provenance": [
         {
           "file": "src/commission.js",
           "line": 1,
-          "version": "16ad6c61efd5dc88"
+          "version": "8539dd45c00c4211"
         }
       ],
-      "lastChangedAt": "2026-08-26T19:14:16-04:00",
+      "lastChangedAt": "2026-08-26T20:33:12-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3419333c76e516bb547a68d3f4e339519a42ca6b"
+      "lastChangedCommit": "c7a3643f6b5a6a675b46062930e07a53fd5b0be2"
     },
     {
       "key": "Artifact:src/community.js",
@@ -31780,20 +31803,20 @@
       "path": "src/social/gangs.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 58362,
-      "lines": 768,
-      "version": "662b7361d9237474",
+      "bytes": 58887,
+      "lines": 782,
+      "version": "e9c31f0f297db38c",
       "text": true,
       "provenance": [
         {
           "file": "src/social/gangs.js",
           "line": 1,
-          "version": "662b7361d9237474"
+          "version": "e9c31f0f297db38c"
         }
       ],
-      "lastChangedAt": "2026-08-26T19:14:16-04:00",
+      "lastChangedAt": "2026-08-26T20:33:12-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3419333c76e516bb547a68d3f4e339519a42ca6b"
+      "lastChangedCommit": "c7a3643f6b5a6a675b46062930e07a53fd5b0be2"
     },
     {
       "key": "Artifact:src/social/shared.js",
@@ -31987,20 +32010,20 @@
       "path": "src/stockcatalogv2.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 39299,
-      "lines": 749,
-      "version": "03e96399274e1a14",
+      "bytes": 39447,
+      "lines": 753,
+      "version": "3d1714dc958db8e2",
       "text": true,
       "provenance": [
         {
           "file": "src/stockcatalogv2.js",
           "line": 1,
-          "version": "03e96399274e1a14"
+          "version": "3d1714dc958db8e2"
         }
       ],
-      "lastChangedAt": "2026-08-26T19:14:16-04:00",
+      "lastChangedAt": "2026-08-26T20:33:12-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3419333c76e516bb547a68d3f4e339519a42ca6b"
+      "lastChangedCommit": "c7a3643f6b5a6a675b46062930e07a53fd5b0be2"
     },
     {
       "key": "Artifact:src/stockdeliver.js",
@@ -32930,20 +32953,20 @@
       "path": "test/commission.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 38051,
-      "lines": 459,
-      "version": "8b687b90d2859cfa",
+      "bytes": 38523,
+      "lines": 467,
+      "version": "6d6691f60069086e",
       "text": true,
       "provenance": [
         {
           "file": "test/commission.js",
           "line": 1,
-          "version": "8b687b90d2859cfa"
+          "version": "6d6691f60069086e"
         }
       ],
-      "lastChangedAt": "2026-08-26T19:14:16-04:00",
+      "lastChangedAt": "2026-08-26T20:33:12-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3419333c76e516bb547a68d3f4e339519a42ca6b"
+      "lastChangedCommit": "c7a3643f6b5a6a675b46062930e07a53fd5b0be2"
     },
     {
       "key": "Artifact:test/community.js",
@@ -34816,20 +34839,20 @@
       "path": "test/stockballotv2.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 33645,
-      "lines": 757,
-      "version": "2c8f2d735697becd",
+      "bytes": 54767,
+      "lines": 1215,
+      "version": "0e14641693132e0a",
       "text": true,
       "provenance": [
         {
           "file": "test/stockballotv2.js",
           "line": 1,
-          "version": "2c8f2d735697becd"
+          "version": "0e14641693132e0a"
         }
       ],
-      "lastChangedAt": "2026-08-26T19:14:16-04:00",
+      "lastChangedAt": "2026-08-26T20:33:12-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3419333c76e516bb547a68d3f4e339519a42ca6b"
+      "lastChangedCommit": "c7a3643f6b5a6a675b46062930e07a53fd5b0be2"
     },
     {
       "key": "Artifact:test/stockcatalog.js",
@@ -45494,6 +45517,22 @@
       ]
     },
     {
+      "key": "Commit:87dcba16b25eeab66b51432844acf1d4e8a5db0b",
+      "type": "Commit",
+      "id": "87dcba16b25eeab66b51432844acf1d4e8a5db0b",
+      "label": "docs: finalize ballot v2 knowledge provenance",
+      "title": "docs: finalize ballot v2 knowledge provenance",
+      "date": "2026-08-26T19:16:36-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/87dcba16b25eeab66b51432844acf1d4e8a5db0b",
+      "provenance": [
+        {
+          "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/87dcba16b25eeab66b51432844acf1d4e8a5db0b"
+        }
+      ]
+    },
+    {
       "key": "Commit:88342b62ec4930daf2af1dd8ccf8e9b503a1b2af",
       "type": "Commit",
       "id": "88342b62ec4930daf2af1dd8ccf8e9b503a1b2af",
@@ -48150,6 +48189,22 @@
       ]
     },
     {
+      "key": "Commit:b1ac695a5bf62bfc41d2bc26fca5ecce03a130e5",
+      "type": "Commit",
+      "id": "b1ac695a5bf62bfc41d2bc26fca5ecce03a130e5",
+      "label": "docs: split shared finalized observation kernel",
+      "title": "docs: split shared finalized observation kernel",
+      "date": "2026-08-26T19:47:06-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b1ac695a5bf62bfc41d2bc26fca5ecce03a130e5",
+      "provenance": [
+        {
+          "commit": "b1ac695a5bf62bfc41d2bc26fca5ecce03a130e5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b1ac695a5bf62bfc41d2bc26fca5ecce03a130e5"
+        }
+      ]
+    },
+    {
       "key": "Commit:b1c777cc1dfe408c3aae48b1286a41428d259b7b",
       "type": "Commit",
       "id": "b1c777cc1dfe408c3aae48b1286a41428d259b7b",
@@ -49462,6 +49517,22 @@
       ]
     },
     {
+      "key": "Commit:c7a3643f6b5a6a675b46062930e07a53fd5b0be2",
+      "type": "Commit",
+      "id": "c7a3643f6b5a6a675b46062930e07a53fd5b0be2",
+      "label": "fix: harden version-snapshot stock ballot",
+      "title": "fix: harden version-snapshot stock ballot",
+      "date": "2026-08-26T20:33:12-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c7a3643f6b5a6a675b46062930e07a53fd5b0be2",
+      "provenance": [
+        {
+          "commit": "c7a3643f6b5a6a675b46062930e07a53fd5b0be2",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c7a3643f6b5a6a675b46062930e07a53fd5b0be2"
+        }
+      ]
+    },
+    {
       "key": "Commit:c7c58a03b4b5b0c0b6ec65bb3a3af1d26786aeb2",
       "type": "Commit",
       "id": "c7c58a03b4b5b0c0b6ec65bb3a3af1d26786aeb2",
@@ -50738,6 +50809,22 @@
         {
           "commit": "e0fcc633b015246f6c89044927fa57e9a7e39e67",
           "url": "https://github.com/OmertaDev/Omerta/commit/e0fcc633b015246f6c89044927fa57e9a7e39e67"
+        }
+      ]
+    },
+    {
+      "key": "Commit:e1047306ab3a2439e928d10cd5b237af1694f996",
+      "type": "Commit",
+      "id": "e1047306ab3a2439e928d10cd5b237af1694f996",
+      "label": "docs: plan shared finalized observation kernel",
+      "title": "docs: plan shared finalized observation kernel",
+      "date": "2026-08-26T20:01:38-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e1047306ab3a2439e928d10cd5b237af1694f996",
+      "provenance": [
+        {
+          "commit": "e1047306ab3a2439e928d10cd5b237af1694f996",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e1047306ab3a2439e928d10cd5b237af1694f996"
         }
       ]
     },
@@ -57439,18 +57526,34 @@
       ]
     },
     {
+      "key": "Document:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "type": "Document",
+      "id": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "label": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "documentType": "documentation",
+      "lines": 390,
+      "version": "f77cedd3e2a00c0b",
+      "provenance": [
+        {
+          "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+          "line": 1,
+          "version": "f77cedd3e2a00c0b"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
       "type": "Document",
       "id": "docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
       "label": "docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
       "documentType": "documentation",
-      "lines": 200,
-      "version": "d02e9146932a1cf1",
+      "lines": 218,
+      "version": "f6c9002f8f6df9fc",
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
           "line": 1,
-          "version": "d02e9146932a1cf1"
+          "version": "f6c9002f8f6df9fc"
         }
       ]
     },
@@ -57460,13 +57563,13 @@
       "id": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
       "label": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
       "documentType": "documentation",
-      "lines": 1144,
-      "version": "2857c498f1d9b2aa",
+      "lines": 1152,
+      "version": "ac77f038a246d02f",
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
           "line": 1,
-          "version": "2857c498f1d9b2aa"
+          "version": "ac77f038a246d02f"
         }
       ]
     },
@@ -57508,13 +57611,13 @@
       "id": "docs/superpowers/specs/2026-08-26-grill-completion.md",
       "label": "docs/superpowers/specs/2026-08-26-grill-completion.md",
       "documentType": "documentation",
-      "lines": 774,
-      "version": "3f978b3e3192ffb0",
+      "lines": 824,
+      "version": "c42c7dea001cbfed",
       "provenance": [
         {
           "file": "docs/superpowers/specs/2026-08-26-grill-completion.md",
           "line": 1,
-          "version": "3f978b3e3192ffb0"
+          "version": "c42c7dea001cbfed"
         }
       ]
     },
@@ -59381,12 +59484,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 647,
-      "version": "ae5e5fa1bcfc279f",
+      "version": "f7c563d9d015b924",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "ae5e5fa1bcfc279f"
+          "version": "f7c563d9d015b924"
         }
       ]
     },
@@ -60561,6 +60664,9 @@
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
+          "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
+        },
+        {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
         },
         {
@@ -60609,6 +60715,9 @@
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
+          "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
+        },
+        {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
         },
         {
@@ -60655,6 +60764,9 @@
         },
         {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
+        },
+        {
+          "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
         },
         {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
@@ -60724,6 +60836,9 @@
         },
         {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
+        },
+        {
+          "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
         },
         {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
@@ -61344,13 +61459,13 @@
       "type": "Module",
       "id": "src/commission.js",
       "label": "src/commission.js",
-      "lines": 1175,
-      "version": "16ad6c61efd5dc88",
+      "lines": 1326,
+      "version": "8539dd45c00c4211",
       "provenance": [
         {
           "file": "src/commission.js",
           "line": 1,
-          "version": "16ad6c61efd5dc88"
+          "version": "8539dd45c00c4211"
         }
       ]
     },
@@ -62979,13 +63094,13 @@
       "type": "Module",
       "id": "src/social/gangs.js",
       "label": "src/social/gangs.js",
-      "lines": 768,
-      "version": "662b7361d9237474",
+      "lines": 782,
+      "version": "e9c31f0f297db38c",
       "provenance": [
         {
           "file": "src/social/gangs.js",
           "line": 1,
-          "version": "662b7361d9237474"
+          "version": "e9c31f0f297db38c"
         }
       ]
     },
@@ -63114,13 +63229,13 @@
       "type": "Module",
       "id": "src/stockcatalogv2.js",
       "label": "src/stockcatalogv2.js",
-      "lines": 749,
-      "version": "03e96399274e1a14",
+      "lines": 753,
+      "version": "3d1714dc958db8e2",
       "provenance": [
         {
           "file": "src/stockcatalogv2.js",
           "line": 1,
-          "version": "03e96399274e1a14"
+          "version": "3d1714dc958db8e2"
         }
       ]
     },
@@ -66549,12 +66664,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "711e005409b67e48860b62656965aa6430cbcd50",
+      "revision": "c7a3643f6b5a6a675b46062930e07a53fd5b0be2",
       "currentBranch": "codex/grill-completion",
       "defaultBranch": "main",
       "visibility": "public",
-      "worktreeDirty": false,
-      "currentArtifactCount": 1580,
+      "worktreeDirty": true,
+      "currentArtifactCount": 1581,
       "provenance": [
         {
           "file": "README.md",
@@ -82594,13 +82709,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3836
+          "line": 3881
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3836
+          "line": 3881
         }
       ]
     },
@@ -83080,13 +83195,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3846
+          "line": 3891
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3846
+          "line": 3891
         }
       ]
     },
@@ -83098,13 +83213,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3856
+          "line": 3901
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3856
+          "line": 3901
         }
       ]
     },
@@ -83116,13 +83231,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3864
+          "line": 3909
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3864
+          "line": 3909
         }
       ]
     },
@@ -83548,13 +83663,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3633
+          "line": 3634
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3633
+          "line": 3634
         }
       ]
     },
@@ -83602,13 +83717,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3885
+          "line": 3930
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3885
+          "line": 3930
         }
       ]
     },
@@ -84214,13 +84329,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3923
+          "line": 3968
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3923
+          "line": 3968
         }
       ]
     },
@@ -84232,13 +84347,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3939
+          "line": 3984
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3939
+          "line": 3984
         }
       ]
     },
@@ -84430,13 +84545,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3996
+          "line": 4041
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3996
+          "line": 4041
         }
       ]
     },
@@ -84466,13 +84581,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3899
+          "line": 3944
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3899
+          "line": 3944
         }
       ]
     },
@@ -85960,13 +86075,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3748
+          "line": 3793
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3748
+          "line": 3793
         }
       ]
     },
@@ -85978,13 +86093,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3758
+          "line": 3803
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3758
+          "line": 3803
         }
       ]
     },
@@ -85996,13 +86111,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3776
+          "line": 3821
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3776
+          "line": 3821
         }
       ]
     },
@@ -86014,13 +86129,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3800
+          "line": 3845
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3800
+          "line": 3845
         }
       ]
     },
@@ -86032,13 +86147,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3691
+          "line": 3736
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3691
+          "line": 3736
         }
       ]
     },
@@ -86068,13 +86183,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3784
+          "line": 3829
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3784
+          "line": 3829
         }
       ]
     },
@@ -86086,13 +86201,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4007
+          "line": 4052
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4007
+          "line": 4052
         }
       ]
     },
@@ -86824,13 +86939,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3646
+          "line": 3667
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3646
+          "line": 3667
         }
       ]
     },
@@ -87040,13 +87155,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3963
+          "line": 4008
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3963
+          "line": 4008
         }
       ]
     },
@@ -88405,13 +88520,13 @@
       "type": "TestSuite",
       "id": "test/commission.js",
       "label": "test/commission.js",
-      "lines": 459,
-      "version": "8b687b90d2859cfa",
+      "lines": 467,
+      "version": "6d6691f60069086e",
       "provenance": [
         {
           "file": "test/commission.js",
           "line": 1,
-          "version": "8b687b90d2859cfa"
+          "version": "6d6691f60069086e"
         }
       ]
     },
@@ -89635,13 +89750,13 @@
       "type": "TestSuite",
       "id": "test/stockballotv2.js",
       "label": "test/stockballotv2.js",
-      "lines": 757,
-      "version": "2c8f2d735697becd",
+      "lines": 1215,
+      "version": "0e14641693132e0a",
       "provenance": [
         {
           "file": "test/stockballotv2.js",
           "line": 1,
-          "version": "2c8f2d735697becd"
+          "version": "0e14641693132e0a"
         }
       ]
     },
@@ -143557,6 +143672,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:87dcba16b25eeab66b51432844acf1d4e8a5db0b",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:87dcba16b25eeab66b51432844acf1d4e8a5db0b",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:87dcba16b25eeab66b51432844acf1d4e8a5db0b",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:87dcba16b25eeab66b51432844acf1d4e8a5db0b",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:88342b62ec4930daf2af1dd8ccf8e9b503a1b2af",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -152317,6 +152464,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:b1ac695a5bf62bfc41d2bc26fca5ecce03a130e5",
+      "to": "Artifact:docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
+      "provenance": {
+        "commit": "b1ac695a5bf62bfc41d2bc26fca5ecce03a130e5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b1ac695a5bf62bfc41d2bc26fca5ecce03a130e5",
+      "to": "Artifact:docs/superpowers/specs/2026-08-26-grill-completion.md",
+      "provenance": {
+        "commit": "b1ac695a5bf62bfc41d2bc26fca5ecce03a130e5"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:b1c777cc1dfe408c3aae48b1286a41428d259b7b",
       "to": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
       "provenance": {
@@ -158073,6 +158236,54 @@
       "to": "Artifact:test/emission.js",
       "provenance": {
         "commit": "c78afb645136845c73f261c625f4d253d284edf4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c7a3643f6b5a6a675b46062930e07a53fd5b0be2",
+      "to": "Artifact:schema.sql",
+      "provenance": {
+        "commit": "c7a3643f6b5a6a675b46062930e07a53fd5b0be2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c7a3643f6b5a6a675b46062930e07a53fd5b0be2",
+      "to": "Artifact:src/commission.js",
+      "provenance": {
+        "commit": "c7a3643f6b5a6a675b46062930e07a53fd5b0be2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c7a3643f6b5a6a675b46062930e07a53fd5b0be2",
+      "to": "Artifact:src/social/gangs.js",
+      "provenance": {
+        "commit": "c7a3643f6b5a6a675b46062930e07a53fd5b0be2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c7a3643f6b5a6a675b46062930e07a53fd5b0be2",
+      "to": "Artifact:src/stockcatalogv2.js",
+      "provenance": {
+        "commit": "c7a3643f6b5a6a675b46062930e07a53fd5b0be2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c7a3643f6b5a6a675b46062930e07a53fd5b0be2",
+      "to": "Artifact:test/commission.js",
+      "provenance": {
+        "commit": "c7a3643f6b5a6a675b46062930e07a53fd5b0be2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c7a3643f6b5a6a675b46062930e07a53fd5b0be2",
+      "to": "Artifact:test/stockballotv2.js",
+      "provenance": {
+        "commit": "c7a3643f6b5a6a675b46062930e07a53fd5b0be2"
       }
     },
     {
@@ -166177,6 +166388,46 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "commit": "e0fcc633b015246f6c89044927fa57e9a7e39e67"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e1047306ab3a2439e928d10cd5b237af1694f996",
+      "to": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "provenance": {
+        "commit": "e1047306ab3a2439e928d10cd5b237af1694f996"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e1047306ab3a2439e928d10cd5b237af1694f996",
+      "to": "Artifact:docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
+      "provenance": {
+        "commit": "e1047306ab3a2439e928d10cd5b237af1694f996"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e1047306ab3a2439e928d10cd5b237af1694f996",
+      "to": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "provenance": {
+        "commit": "e1047306ab3a2439e928d10cd5b237af1694f996"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e1047306ab3a2439e928d10cd5b237af1694f996",
+      "to": "Artifact:docs/superpowers/specs/2026-08-26-grill-completion.md",
+      "provenance": {
+        "commit": "e1047306ab3a2439e928d10cd5b237af1694f996"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e1047306ab3a2439e928d10cd5b237af1694f996",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "e1047306ab3a2439e928d10cd5b237af1694f996"
       }
     },
     {
@@ -177849,6 +178100,15 @@
       "to": "Artifact:docs/superpowers/plans/2026-08-24-robinhood-testnet-twap-rehearsal.md",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-24-robinhood-testnet-twap-rehearsal.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
         "line": 1
       }
     },
@@ -193456,7 +193716,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3836
+        "line": 3881
       }
     },
     {
@@ -193699,7 +193959,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3846
+        "line": 3891
       }
     },
     {
@@ -193708,7 +193968,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3856
+        "line": 3901
       }
     },
     {
@@ -193717,7 +193977,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3864
+        "line": 3909
       }
     },
     {
@@ -193924,7 +194184,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3633
+        "line": 3634
       }
     },
     {
@@ -193960,7 +194220,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3885
+        "line": 3930
       }
     },
     {
@@ -194266,7 +194526,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3923
+        "line": 3968
       }
     },
     {
@@ -194275,7 +194535,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3939
+        "line": 3984
       }
     },
     {
@@ -194374,7 +194634,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3996
+        "line": 4041
       }
     },
     {
@@ -194392,7 +194652,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3899
+        "line": 3944
       }
     },
     {
@@ -195139,7 +195399,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3748
+        "line": 3793
       }
     },
     {
@@ -195148,7 +195408,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3758
+        "line": 3803
       }
     },
     {
@@ -195157,7 +195417,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3776
+        "line": 3821
       }
     },
     {
@@ -195166,7 +195426,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3800
+        "line": 3845
       }
     },
     {
@@ -195175,7 +195435,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3691
+        "line": 3736
       }
     },
     {
@@ -195193,7 +195453,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3784
+        "line": 3829
       }
     },
     {
@@ -195202,7 +195462,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4007
+        "line": 4052
       }
     },
     {
@@ -195562,7 +195822,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3646
+        "line": 3667
       }
     },
     {
@@ -195679,7 +195939,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3963
+        "line": 4008
       }
     },
     {
@@ -208364,6 +208624,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:87dcba16b25eeab66b51432844acf1d4e8a5db0b",
+      "provenance": {
+        "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:88342b62ec4930daf2af1dd8ccf8e9b503a1b2af",
       "provenance": {
         "commit": "88342b62ec4930daf2af1dd8ccf8e9b503a1b2af"
@@ -209692,6 +209960,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:b1ac695a5bf62bfc41d2bc26fca5ecce03a130e5",
+      "provenance": {
+        "commit": "b1ac695a5bf62bfc41d2bc26fca5ecce03a130e5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:b1c777cc1dfe408c3aae48b1286a41428d259b7b",
       "provenance": {
         "commit": "b1c777cc1dfe408c3aae48b1286a41428d259b7b"
@@ -210348,6 +210624,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:c7a3643f6b5a6a675b46062930e07a53fd5b0be2",
+      "provenance": {
+        "commit": "c7a3643f6b5a6a675b46062930e07a53fd5b0be2"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:c7c58a03b4b5b0c0b6ec65bb3a3af1d26786aeb2",
       "provenance": {
         "commit": "c7c58a03b4b5b0c0b6ec65bb3a3af1d26786aeb2"
@@ -210983,6 +211267,14 @@
       "to": "Commit:e0fcc633b015246f6c89044927fa57e9a7e39e67",
       "provenance": {
         "commit": "e0fcc633b015246f6c89044927fa57e9a7e39e67"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:e1047306ab3a2439e928d10cd5b237af1694f996",
+      "provenance": {
+        "commit": "e1047306ab3a2439e928d10cd5b237af1694f996"
       }
     },
     {
@@ -218583,6 +218875,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/social/gangs.js",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "src/social/gangs.js",
+        "line": 20
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/social/gangs.js",
       "to": "Artifact:src/diplomacy.js",
       "provenance": {
         "file": "src/social/gangs.js",
@@ -220818,7 +221119,7 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "test/commission.js",
-        "line": 449
+        "line": 457
       }
     },
     {
@@ -243755,6 +244056,42 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "to": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+        "line": 344
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "to": "Artifact:src/stockcatalogv2.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+        "line": 296
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "to": "Artifact:src/watcher.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+        "line": 55
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "to": "Artifact:test/stockcatalogv2.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+        "line": 297
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
       "to": "Artifact:docs/superpowers/specs/2026-08-26-grill-completion.md",
       "provenance": {
@@ -243777,7 +244114,7 @@
       "to": "Artifact:docs/WIKI.md",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 1066
+        "line": 1074
       }
     },
     {
@@ -243930,7 +244267,7 @@
       "to": "Artifact:src/rwanominations.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 986
+        "line": 987
       }
     },
     {
@@ -243948,7 +244285,7 @@
       "to": "Artifact:src/rwastockkeeper.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 984
+        "line": 985
       }
     },
     {
@@ -244011,7 +244348,7 @@
       "to": "Artifact:src/stockcatalogv2.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 985
+        "line": 986
       }
     },
     {
@@ -244029,7 +244366,7 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 987
+        "line": 988
       }
     },
     {
@@ -244056,7 +244393,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 1067
+        "line": 1075
       }
     },
     {
@@ -244083,7 +244420,7 @@
       "to": "Artifact:test/rwanominations.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 990
+        "line": 991
       }
     },
     {
@@ -244128,7 +244465,7 @@
       "to": "Artifact:test/stockballotv2.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 988
+        "line": 989
       }
     },
     {
@@ -244155,7 +244492,7 @@
       "to": "Artifact:test/stockcatalogv2.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 989
+        "line": 990
       }
     },
     {
@@ -250874,6 +251211,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "to": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
       "to": "Artifact:docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
       "provenance": {
@@ -255999,7 +256345,7 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "test/commission.js",
-        "line": 449
+        "line": 457
       }
     },
     {
@@ -262632,7 +262978,7 @@
       "to": "Table:commission_ticker_votes_v2",
       "provenance": {
         "file": "src/commission.js",
-        "line": 864
+        "line": 907
       }
     },
     {
@@ -262668,7 +263014,7 @@
       "to": "Table:gang_members",
       "provenance": {
         "file": "src/commission.js",
-        "line": 793
+        "line": 834
       }
     },
     {
@@ -262678,6 +263024,15 @@
       "provenance": {
         "file": "src/commission.js",
         "line": 29
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/commission.js",
+      "to": "Table:stock_asset_versions_v2",
+      "provenance": {
+        "file": "src/commission.js",
+        "line": 1027
       }
     },
     {
@@ -262695,7 +263050,7 @@
       "to": "Table:ticker_ballot_candidates_v2",
       "provenance": {
         "file": "src/commission.js",
-        "line": 664
+        "line": 710
       }
     },
     {
@@ -262704,7 +263059,7 @@
       "to": "Table:ticker_ballot_days_v2",
       "provenance": {
         "file": "src/commission.js",
-        "line": 727
+        "line": 767
       }
     },
     {
@@ -262713,7 +263068,7 @@
       "to": "Table:ticker_ballot_results_v2",
       "provenance": {
         "file": "src/commission.js",
-        "line": 669
+        "line": 715
       }
     },
     {
@@ -271056,7 +271411,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/social/gangs.js",
-        "line": 49
+        "line": 50
       }
     },
     {
@@ -271065,7 +271420,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/social/gangs.js",
-        "line": 26
+        "line": 27
       }
     },
     {
@@ -271074,7 +271429,7 @@
       "to": "Table:coalitions",
       "provenance": {
         "file": "src/social/gangs.js",
-        "line": 448
+        "line": 462
       }
     },
     {
@@ -271083,7 +271438,7 @@
       "to": "Table:commission_overrides",
       "provenance": {
         "file": "src/social/gangs.js",
-        "line": 109
+        "line": 123
       }
     },
     {
@@ -271092,7 +271447,7 @@
       "to": "Table:commission_ticker_votes_v2",
       "provenance": {
         "file": "src/social/gangs.js",
-        "line": 106
+        "line": 113
       }
     },
     {
@@ -271101,7 +271456,7 @@
       "to": "Table:commission_ticker_votes",
       "provenance": {
         "file": "src/social/gangs.js",
-        "line": 105
+        "line": 106
       }
     },
     {
@@ -271110,7 +271465,7 @@
       "to": "Table:commission_votes",
       "provenance": {
         "file": "src/social/gangs.js",
-        "line": 104
+        "line": 105
       }
     },
     {
@@ -271119,7 +271474,7 @@
       "to": "Table:district_bids",
       "provenance": {
         "file": "src/social/gangs.js",
-        "line": 616
+        "line": 630
       }
     },
     {
@@ -271137,7 +271492,7 @@
       "to": "Table:gang_members",
       "provenance": {
         "file": "src/social/gangs.js",
-        "line": 38
+        "line": 39
       }
     },
     {
@@ -271146,7 +271501,7 @@
       "to": "Table:gang_portfolios",
       "provenance": {
         "file": "src/social/gangs.js",
-        "line": 112
+        "line": 126
       }
     },
     {
@@ -271155,7 +271510,7 @@
       "to": "Table:gangs",
       "provenance": {
         "file": "src/social/gangs.js",
-        "line": 21
+        "line": 22
       }
     },
     {
@@ -271164,7 +271519,7 @@
       "to": "Table:soldiers",
       "provenance": {
         "file": "src/social/gangs.js",
-        "line": 147
+        "line": 161
       }
     },
     {
@@ -271173,7 +271528,16 @@
       "to": "Table:territory_rackets",
       "provenance": {
         "file": "src/social/gangs.js",
-        "line": 78
+        "line": 79
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/social/gangs.js",
+      "to": "Table:ticker_ballot_days_v2",
+      "provenance": {
+        "file": "src/social/gangs.js",
+        "line": 116
       }
     },
     {
