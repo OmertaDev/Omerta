@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `cb59712a5e20`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `0d0a38fc4d42`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 987 |
+| Commits in clone | 989 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-26 — docs: amend finalized registry consumer plan |
+| Latest commit | 2026-08-27 — fix: seal finalized observation error provenance |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 186 |
+| OmertaDev | 188 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 

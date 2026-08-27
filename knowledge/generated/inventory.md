@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `cb59712a5e20`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `0d0a38fc4d42`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,582 |
-| Text lines | 399,092 |
-| Repository bytes inventoried | 274,484,793 |
+| Text lines | 399,255 |
+| Repository bytes inventoried | 274,492,017 |
 | Backend/route modules | 167 |
 | HTTP route registrations / unique routes | 722 / 721 |
 | Database tables | 261 |
 | Solidity declarations | 33 |
-| Git commits | 987 |
+| Git commits | 989 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 4,579 / 21,467 |
+| Graph nodes / edges | 4,581 / 21,476 |
 
 ## Artifact kinds
 
@@ -73,8 +73,8 @@
 | [test/hardening.js](../../test/hardening.js) | 1,712 | test-suite | 2026-08-24 |
 | [src/chain.js](../../src/chain.js) | 1,703 | backend-module | 2026-08-22 |
 | [tools/sim.js](../../tools/sim.js) | 1,681 | engineering-harness | 2026-08-16 |
+| [test/finalizedobservation.js](../../test/finalizedobservation.js) | 1,670 | test-suite | 2026-08-27 |
 | [test/stockballotv2.js](../../test/stockballotv2.js) | 1,643 | test-suite | 2026-08-26 |
-| [test/finalizedobservation.js](../../test/finalizedobservation.js) | 1,521 | test-suite | 2026-08-26 |
 | [src/casino.js](../../src/casino.js) | 1,468 | backend-module | 2026-08-23 |
 
 ## Media estate
