@@ -9,10 +9,12 @@
 
 ## 1. Decision and invariants
 
-A1/A3/R/O2 are implemented as an immutable, non-proxy constellation. No child
-uses a proxy, fallback, receive, `delegatecall`, generic executor, upgrade hook,
-mutable library pointer, or role mirror. The deploy graph contains one manifest
-factory and exactly five children:
+The approved target architecture implements A1/A3/R/O2 as an immutable,
+non-proxy constellation. The repository has closed only Tasks 0–2; Core and the
+business nodes remain Tasks 3–9. Under the target architecture, no child uses a
+proxy, fallback, receive, `delegatecall`, generic executor, upgrade hook, mutable
+library pointer, or role mirror. The deploy graph contains one manifest factory
+and exactly five children:
 
 1. `AcquisitionConstellationFactory` — manifest and phased deployer only.
 2. `AcquisitionAuthority` — Safe ownership, pause, operator and ingress authority.

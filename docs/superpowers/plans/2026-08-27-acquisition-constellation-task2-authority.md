@@ -262,7 +262,7 @@ Factory snapshot preflight and Authority’s independent finalizer checks are bo
 
 ## 11. RED/GREEN evidence matrix
 
-Task 2 implementation is incomplete until focused tests and the machine verifier cover at least:
+Task 2 closure required—and the approved implementation and machine verifier now preserve—focused evidence for at least:
 
 1. fresh Factory/configuration/manifest/deployment commitments and proof that Task 1 addresses cannot be reused, upgraded, migrated, or refinalized;
 2. every constructor zero/code/address/peer/collision case in the literal ladder, all overlapping-first-failure mutations, no peer calls, initial pause/zero state, and Safe proxy exception versus Factory-only Registry runtime pinning;
@@ -303,4 +303,4 @@ This freeze resolves the previously open choices as follows:
 - Task 2’s unpause selector is deliberately nonfunctional and fail-closed rather than performing an incomplete local readiness check.
 - Historical Task 1 verification remains available through an explicit verifier phase; it is not treated as Task 2 conformance.
 
-No selector, semantic-error selector, event topic, storage-owner collision, or EVM impossibility is knowingly accepted by this document. Actual compiler-derived collision and layout evidence remains a mandatory RED gate before Solidity implementation.
+No selector, semantic-error selector, event topic, storage-owner collision, or EVM impossibility is knowingly accepted by this document. Compiler-derived collision and layout evidence was a mandatory RED gate before Solidity implementation and remains an enforced machine-verifier gate after closure.
