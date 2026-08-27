@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `39525c154a7c`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `5ee68c063ea8`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 998 |
+| Commits in clone | 999 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-27 — docs: plan finalized event time evidence |
+| Latest commit | 2026-08-27 — docs: refresh event time plan knowledge |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 197 |
+| OmertaDev | 198 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -60,12 +60,12 @@
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
 | [src/business.js](../../src/business.js) | 39 | yes |
 | [src/chain.js](../../src/chain.js) | 36 | yes |
+| knowledge/generated/github-history.md | 30 | historical |
+| knowledge/generated/graph-summary.md | 30 | historical |
+| knowledge/generated/graph.json | 30 | historical |
+| knowledge/generated/inventory.md | 30 | historical |
 | [DEPLOY.md](../../DEPLOY.md) | 30 | yes |
 | [public/admin.html](../../public/admin.html) | 30 | yes |
-| knowledge/generated/github-history.md | 29 | historical |
-| knowledge/generated/graph-summary.md | 29 | historical |
-| knowledge/generated/graph.json | 29 | historical |
-| knowledge/generated/inventory.md | 29 | historical |
 | [test/migrate.js](../../test/migrate.js) | 29 | yes |
 | [src/kitchen.js](../../src/kitchen.js) | 28 | yes |
 
