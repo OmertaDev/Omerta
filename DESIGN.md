@@ -27,6 +27,7 @@ The source of truth is `public/omerta-ui.css`. New work uses `--om-*` tokens. Ex
 | `--om-text-muted` | `#9f9688` | Metadata; never essential information by itself |
 | `--om-action-primary` | `#cda653` | Primary action and active location |
 | `--om-status-danger` | `#d36b61` | Irreversible action, loss, blocking error |
+| `--om-status-warning` | `#e0bd72` | Caution and a reversible risk state |
 | `--om-status-success` | `#78ae8a` | Confirmed success |
 | `--om-status-info` | `#80a6c1` | Neutral system status |
 
@@ -45,6 +46,19 @@ Display type is identity, not body copy. Dense operational copy should be at lea
 ### Spacing and shape
 
 The spacing scale is 4, 8, 12, 16, 24, 32, 48, and 64px. Use 3–6px radii for ledgers and controls; reserve 10px for large overlays or cinematic panels. Target size is 44×44px on touch surfaces.
+
+### Motion
+
+Motion explains where an interface object came from, what just changed, or what completed. It is not ambient decoration.
+
+| Timing | Token | Use |
+|---|---|---|
+| 80ms | `--duration-micro` | Press and direct feedback |
+| 150ms | `--duration-quick` | Dismissal, hover, colour, and border changes |
+| 250ms | `--duration-fast` | Menus, panels, modals, and operation receipts |
+| 350–400ms | `--duration-medium` / `--duration-slow` | Toasts and larger public artifacts |
+
+Entrances use `--ease-smooth-out`; direct state changes use `--ease-out`. Menus animate from their trigger edge, and closing is faster than opening. Avoid elastic or bouncing motion. All new animation must remain legible when `prefers-reduced-motion: reduce` collapses its duration.
 
 ## Navigation
 
