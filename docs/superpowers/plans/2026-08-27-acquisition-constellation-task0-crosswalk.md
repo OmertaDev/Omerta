@@ -1,8 +1,10 @@
 # Acquisition Constellation Task 0 Crosswalk
 
-**Status:** normative Task 0 crosswalk; Task 1 topology/deployment node implemented and locally verified, later business nodes pending independent review
+**Status:** normative Task 0 crosswalk; Task 1 topology/deployment development proof independently approved at `f6a21dcc` (C0/I0/M0); Task 2 Authority architecture freeze pending independent approval and implementation
 
 **Architecture source:** `2026-08-27-acquisition-constellation.md`
+
+**Task 2 Authority source:** `2026-08-27-acquisition-constellation-task2-authority.md`. It preserves the 47 Authority `MOVE` rows, adds only the frozen topology/finalizer/snapshot surface, and requires fresh pre-production deployment rather than migration from a Task 1 shell.
 
 **Frozen oracle:** Task 5 `AcquisitionVault` at runtime 23,212 bytes. Its ABI census is exactly 67 functions, 55 errors, 21 events, one constructor, and 144 total entries. Its semantic storage ends at mapping root 39. It has one payable function, `depositCanonical(bytes32)`, and no receive or fallback.
 

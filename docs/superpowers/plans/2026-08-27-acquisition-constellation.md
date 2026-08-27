@@ -1,9 +1,11 @@
 # Acquisition Constellation Architecture Amendment
 
-**Status:** normative architecture amendment; Task 1 topology/deployment node implemented and locally verified, later business nodes and independent review pending
+**Status:** normative architecture amendment; Task 1 topology/deployment development proof independently approved at `f6a21dcc` (C0/I0/M0); Task 2 Authority architecture freeze pending independent approval and implementation
 
 **Supersedes:** the final-monolithic `AcquisitionVault`, inline Task 6, no-intermediate-deployment, aggregate-constructor, `deployAll`, proxy, and recursive runtime-hash assumptions in the O1/A1 plan
 **Historical reference:** Task 5 commit `6e066ffabab0b0f63ac06be141d501474588aace`, runtime 23,212 bytes, is a dormant and nondeployable behavioral oracle. Independent review found no production exploit, while constellation remediation and rereview remain open. It is not final A1 approval.
+
+**Task 2 freeze:** `2026-08-27-acquisition-constellation-task2-authority.md` is the exact proposed Authority extraction boundary. Task 1 is a development proof only; Task 2 requires a fresh Factory and five fresh children and makes no upgrade, refinalization, or migration claim.
 
 ## 1. Decision and invariants
 
