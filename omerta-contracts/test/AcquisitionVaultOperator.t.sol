@@ -1726,16 +1726,17 @@ contract AcquisitionVaultOperatorTest is Test {
         assertLt(metadataLength + 2, runtime.length, "invalid Solidity metadata trailer length");
         uint256 executableLength = runtime.length - metadataLength - 2;
         assertEq(uint8(runtime[executableLength]), 0xa2, "unexpected Solidity CBOR metadata prefix");
-
         uint256 staticcallSites;
         // The CBOR payload is compiler metadata rather than executable code and
         // may contain arbitrary bytes that resemble opcodes. Disassemble only
         // the validated executable prefix so every opcode assertion is real.
         for (uint256 pc; pc < executableLength;) {
             uint8 opcode = uint8(runtime[pc]);
+            assertTrue(opcode != 0xf0, "runtime contains CREATE");
             assertTrue(opcode != 0xf1, "runtime contains CALL");
             assertTrue(opcode != 0xf2, "runtime contains CALLCODE");
             assertTrue(opcode != 0xf4, "runtime contains DELEGATECALL");
+            assertTrue(opcode != 0xf5, "runtime contains CREATE2");
             assertTrue(opcode != 0xff, "runtime contains SELFDESTRUCT");
             if (opcode == 0xfa) ++staticcallSites;
             if (opcode >= 0x60 && opcode <= 0x7f) {
@@ -1784,6 +1785,8 @@ contract AcquisitionVaultOperatorTest is Test {
         assertEq(_count(code, bytes("call(")), 2, "non-STATICCALL external call in vault source");
         assertEq(_count(code, bytes("delegatecall")), 0, "vault source contains DELEGATECALL");
         assertEq(_count(code, bytes("callcode")), 0, "vault source contains CALLCODE");
+        assertEq(_count(code, bytes("create(")), 0, "vault source contains CREATE");
+        assertEq(_count(code, bytes("create2(")), 0, "vault source contains CREATE2");
         assertEq(_count(code, bytes("selfdestruct")), 0, "vault source contains SELFDESTRUCT");
         assertEq(_count(code, bytes(".call")), 0, "vault source contains high-level CALL");
         assertEq(_count(code, bytes(".transfer")), 0, "vault source contains native transfer");

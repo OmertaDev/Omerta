@@ -244,6 +244,27 @@ contract AcquisitionVaultAccountingTest is Test {
         return type(uint256).max;
     }
 
+    function _findBetween(bytes memory haystack, bytes memory needle, uint256 from, uint256 to)
+        internal
+        pure
+        returns (uint256)
+    {
+        if (needle.length == 0 || from > to || to > haystack.length || to - from < needle.length) {
+            return type(uint256).max;
+        }
+        for (uint256 i = from; i + needle.length <= to; ++i) {
+            bool matches = true;
+            for (uint256 j; j < needle.length; ++j) {
+                if (haystack[i + j] != needle[j]) {
+                    matches = false;
+                    break;
+                }
+            }
+            if (matches) return i;
+        }
+        return type(uint256).max;
+    }
+
     function _matchingDelimiter(bytes memory json, uint256 opening, bytes1 open, bytes1 close)
         internal
         pure
@@ -279,8 +300,8 @@ contract AcquisitionVaultAccountingTest is Test {
     {
         uint256 cursor = from;
         while (cursor < to) {
-            uint256 found = _find(value, needle, cursor);
-            if (found == type(uint256).max || found >= to) break;
+            uint256 found = _findBetween(value, needle, cursor, to);
+            if (found == type(uint256).max) break;
             ++count;
             cursor = found + needle.length;
         }
@@ -334,7 +355,7 @@ contract AcquisitionVaultAccountingTest is Test {
         }
     }
 
-    function _assertTask4ErrorAndEventNames(bytes memory json, uint256 opening) internal pure {
+    function _assertTask4ErrorAndEventNames(bytes memory json, uint256 opening, uint256 closing) internal pure {
         string[6] memory addedErrors = [
             "InvalidGlobalLifetimeCap",
             "NoBalanceDelta",
@@ -345,7 +366,9 @@ contract AcquisitionVaultAccountingTest is Test {
         ];
         for (uint256 i; i < addedErrors.length; ++i) {
             assertNotEq(
-                _find(json, bytes(string.concat('"type":"error","name":"', addedErrors[i], '"')), opening),
+                _findBetween(
+                    json, bytes(string.concat('"type":"error","name":"', addedErrors[i], '"')), opening, closing
+                ),
                 type(uint256).max,
                 string.concat("missing Task-4 error: ", addedErrors[i])
             );
@@ -354,11 +377,40 @@ contract AcquisitionVaultAccountingTest is Test {
         string[3] memory addedEvents = ["AccountingMutation", "AccountingComponent", "UnattributedReclassified"];
         for (uint256 i; i < addedEvents.length; ++i) {
             assertNotEq(
-                _find(json, bytes(string.concat('"type":"event","name":"', addedEvents[i], '"')), opening),
+                _findBetween(
+                    json, bytes(string.concat('"type":"event","name":"', addedEvents[i], '"')), opening, closing
+                ),
                 type(uint256).max,
                 string.concat("missing Task-4 event: ", addedEvents[i])
             );
         }
+    }
+
+    function _assertTask4ConstructorDescriptor(bytes memory json, uint256 opening, uint256 closing) internal pure {
+        uint256 constructorOpening = _findBetween(json, bytes('{"type":"constructor"'), opening, closing);
+        assertNotEq(constructorOpening, type(uint256).max, "Task-4 constructor missing");
+        uint256 constructorClosing = _matchingDelimiter(json, constructorOpening, bytes1("{"), bytes1("}"));
+        assertLt(constructorClosing, closing, "Task-4 constructor escaped ABI bounds");
+        assertEq(
+            _countBetween(json, bytes('"type":"address"'), constructorOpening, constructorClosing),
+            2,
+            "Task-4 constructor address input drift"
+        );
+        assertEq(
+            _countBetween(json, bytes('"type":"uint256"'), constructorOpening, constructorClosing),
+            1,
+            "Task-4 constructor uint256 input drift"
+        );
+        assertEq(
+            _countBetween(json, bytes('"stateMutability":"nonpayable"'), constructorOpening, constructorClosing),
+            1,
+            "Task-4 constructor mutability drift"
+        );
+        uint256 firstAddress = _findBetween(json, bytes('"type":"address"'), constructorOpening, constructorClosing);
+        uint256 secondAddress = _findBetween(json, bytes('"type":"address"'), firstAddress + 1, constructorClosing);
+        uint256 cap = _findBetween(json, bytes('"type":"uint256"'), secondAddress + 1, constructorClosing);
+        assertLt(firstAddress, secondAddress, "Task-4 constructor first two inputs are not address,address");
+        assertLt(secondAddress, cap, "Task-4 constructor third input is not uint256");
     }
 
     function _assertMutationLog(
@@ -398,7 +450,7 @@ contract AcquisitionVaultAccountingTest is Test {
         assertTrue(kind != 0, "NONE component forbidden");
     }
 
-    function test_RED_task4CapAndAccountingSurfaceExists() public view {
+    function test_task4CapAndAccountingSurfaceExists() public view {
         (bool ok, bytes memory returndata) = address(vault).staticcall(abi.encodeWithSelector(CAP_SELECTOR));
         assertTrue(ok, "Task-4 immutable cap getter is missing");
         assertEq(abi.decode(returndata, (uint256)), GLOBAL_CAP);
@@ -426,7 +478,8 @@ contract AcquisitionVaultAccountingTest is Test {
         uint256 closing = _matchingDelimiter(json, opening, bytes1("["), bytes1("]"));
         _assertTask4AbiCounts(json, opening, closing);
         _assertTask4MethodMembers(artifact);
-        _assertTask4ErrorAndEventNames(json, opening);
+        _assertTask4ErrorAndEventNames(json, opening, closing);
+        _assertTask4ConstructorDescriptor(json, opening, closing);
 
         assertEq(A1Task4Errors.InvalidGlobalLifetimeCap.selector, bytes4(keccak256("InvalidGlobalLifetimeCap()")));
         assertEq(A1Task4Errors.NoBalanceDelta.selector, bytes4(keccak256("NoBalanceDelta()")));
@@ -450,18 +503,6 @@ contract AcquisitionVaultAccountingTest is Test {
             ACCOUNTING_COMPONENT_SIG, keccak256("AccountingComponent(uint256,uint256,bytes32,uint8,bytes32,uint256)")
         );
         assertEq(RECLASSIFIED_SIG, keccak256("UnattributedReclassified(bytes32,uint256,address,uint256,uint8,bytes32)"));
-        assertNotEq(
-            _find(
-                json,
-                bytes(
-                    '"type":"constructor","inputs":[{"name":"safeOwner","type":"address","internalType":"address"},{"name":"registry","type":"address","internalType":"address"},{"name":"globalLifetimeCanonicalDepositCapWei_","type":"uint256","internalType":"uint256"}],"stateMutability":"nonpayable"'
-                ),
-                opening
-            ),
-            type(uint256).max,
-            "Task-4 constructor descriptor drift"
-        );
-
         _assertGetterSlot(AVAILABLE_SELECTOR, 14);
         _assertGetterSlot(UNATTRIBUTED_SELECTOR, 15);
         _assertGetterSlot(ORDINARY_RESERVED_SELECTOR, 16);
