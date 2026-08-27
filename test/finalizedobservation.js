@@ -54,6 +54,7 @@ const OTHER_CONTRACT = getAddress(`0x${'9'.repeat(40)}`);
 const START = 9007199254740993n;
 const TOPICS = Object.freeze([hash('1'), hash('2')]);
 const LIMITS = Object.freeze({ maxBlockSpan: 3n, maxLogs: 4, maxBytes: 4096 });
+const REFLECTED_SECRET = 'postgres://user:password@host/private-request-body';
 const IDENTITY = Object.freeze({
   chainId: 4663n,
   contractAddress: CONTRACT.toLowerCase(),
@@ -431,6 +432,67 @@ await test('provider causes stay non-enumerable and secret-safe', async () => {
   assert.doesNotMatch(JSON.stringify(error), /rpc\.invalid|secret|private/i);
 });
 
+await test('private published codes prevent public CODES replacement from preserving provider secrets', async () => {
+  const originalDescriptor = Object.getOwnPropertyDescriptor(FinalizedObservationError, 'CODES');
+  const secret = 'postgres://user:password@host private provider payload';
+  let replacementError;
+  let forged;
+  let caught;
+  try {
+    try { FinalizedObservationError.CODES = Object.freeze(['domain_error']); }
+    catch (error) { replacementError = error; }
+    if (!replacementError) {
+      forged = new FinalizedObservationError('domain_error', secret);
+      try { await observe(new FakePublicClient({ chainError: forged })); }
+      catch (error) { caught = error; }
+    }
+  } finally {
+    if (Object.getOwnPropertyDescriptor(FinalizedObservationError, 'CODES')?.configurable !== false) {
+      Object.defineProperty(FinalizedObservationError, 'CODES', originalDescriptor);
+    }
+  }
+  assert(replacementError instanceof TypeError);
+  assert.equal(forged, undefined);
+  assert.equal(caught, undefined);
+  assert.throws(() => new FinalizedObservationError('domain_error', secret), TypeError);
+});
+
+await test('public CODES cannot be replaced, deleted, extended, or element-mutated', () => {
+  const originalDescriptor = Object.getOwnPropertyDescriptor(FinalizedObservationError, 'CODES');
+  const codes = FinalizedObservationError.CODES;
+  const mutationErrors = [];
+  for (const mutate of [
+    () => { FinalizedObservationError.CODES = Object.freeze(['domain_error']); },
+    () => { delete FinalizedObservationError.CODES; },
+  ]) {
+    let mutationError;
+    try { mutate(); }
+    catch (error) { mutationError = error; }
+    finally {
+      if (Object.getOwnPropertyDescriptor(FinalizedObservationError, 'CODES')?.configurable !== false) {
+        Object.defineProperty(FinalizedObservationError, 'CODES', originalDescriptor);
+      }
+    }
+    mutationErrors.push(mutationError);
+  }
+  for (const mutate of [
+    () => { codes[0] = 'domain_error'; },
+    () => { codes.push('domain_error'); },
+  ]) {
+    let mutationError;
+    try { mutate(); }
+    catch (error) { mutationError = error; }
+    mutationErrors.push(mutationError);
+  }
+  assert(mutationErrors.every((error) => error instanceof TypeError));
+  assert.equal(FinalizedObservationError.CODES, codes);
+  assert.deepEqual(FinalizedObservationError.CODES, STABLE_ERROR_CODES);
+  assert.deepEqual(Object.getOwnPropertyDescriptor(FinalizedObservationError, 'CODES'), {
+    value: codes, writable: false, enumerable: true, configurable: false,
+  });
+  assert.throws(() => new FinalizedObservationError('domain_error', 'private'), TypeError);
+});
+
 for (const [name, makeLogs, code] of [
   ['removed log', () => [eventLog(START, { removed: true })], 'fo_log_removed'],
   ['wrong address', () => [eventLog(START, { address: OTHER_CONTRACT })], 'fo_log_address'],
@@ -619,6 +681,20 @@ await test('pinned getter rejects non-enumerable and symbol request capabilities
   }
 });
 
+await test('pinned getter nested validation uses a fixed message, never its reflected secret key', async () => {
+  const client = new FakePublicClient({ logs: [] });
+  const error = await rejectsCode(() => observe(client, {
+    readGetters: ({ readContract }) => readContract({
+      abi: [], functionName: 'value', args: [{ [REFLECTED_SECRET]: () => true }],
+    }),
+  }), 'fo_bad_config');
+  assert.equal(error.message, 'pinned getter arguments contains unsupported data');
+  assert.doesNotMatch(error.message, /password|private|postgres|request-body/i);
+  assert.doesNotMatch(JSON.stringify(error), /password|private|postgres|request-body/i);
+  assert.equal(Object.hasOwn(error, 'cause'), false);
+  assert.equal(client.readContractCalls.length, 0);
+});
+
 for (const [name, args] of [
   ['Number argument', [1]],
   ['function argument', [() => true]],
@@ -718,6 +794,22 @@ await test('getter evidence rejects symbol and non-enumerable properties', async
     const client = new FakePublicClient({ logs: [] });
     await rejectsCode(() => observe(client, { readGetters: async () => evidence }), 'fo_bad_config');
   }
+});
+
+await test('getter evidence validation uses a fixed message, never its reflected secret key', async () => {
+  const client = new FakePublicClient({ logs: [] });
+  let callsAtReturn;
+  const error = await rejectsCode(() => observe(client, {
+    readGetters: async () => {
+      callsAtReturn = client.calls.length;
+      return { [REFLECTED_SECRET]: () => true };
+    },
+  }), 'fo_bad_config');
+  assert.equal(error.message, 'getter evidence contains unsupported data');
+  assert.doesNotMatch(error.message, /password|private|postgres|request-body/i);
+  assert.doesNotMatch(JSON.stringify(error), /password|private|postgres|request-body/i);
+  assert.equal(Object.hasOwn(error, 'cause'), false);
+  assert.equal(client.calls.length, callsAtReturn);
 });
 
 await test('getter evidence rejects sparse arrays instead of hashing them like dense arrays', async () => {
@@ -1437,6 +1529,50 @@ await test('safe domain factory validates its code and cannot be forged by marke
   assert.doesNotMatch(JSON.stringify(caught), /password|private|postgres|forged/i);
 });
 
+await test('public safeDomain cannot be replaced or deleted and internal fallback stays private', async () => {
+  const originalDescriptor = Object.getOwnPropertyDescriptor(FinalizedObservationError, 'safeDomain');
+  const safeDomain = FinalizedObservationError.safeDomain;
+  const failure = Object.assign(new Error('postgres://user:password@host private adapter payload'), {
+    code: 'domain_error',
+  });
+  let replacementError;
+  let caught;
+  try {
+    try { FinalizedObservationError.safeDomain = () => failure; }
+    catch (error) { replacementError = error; }
+    try {
+      await commitFinalizedObservation(
+        new AtomicTestPool(), await transactionObservation(),
+        adapterFor({ failAt: 'afterInbox', failure }),
+      );
+    } catch (error) { caught = error; }
+  } finally {
+    if (Object.getOwnPropertyDescriptor(FinalizedObservationError, 'safeDomain')?.configurable !== false) {
+      Object.defineProperty(FinalizedObservationError, 'safeDomain', originalDescriptor);
+    }
+  }
+  let deletionError;
+  try { delete FinalizedObservationError.safeDomain; }
+  catch (error) { deletionError = error; }
+  finally {
+    if (Object.getOwnPropertyDescriptor(FinalizedObservationError, 'safeDomain')?.configurable !== false) {
+      Object.defineProperty(FinalizedObservationError, 'safeDomain', originalDescriptor);
+    }
+  }
+  assert(replacementError instanceof TypeError);
+  assert(deletionError instanceof TypeError);
+  assert.equal(FinalizedObservationError.safeDomain, safeDomain);
+  assert.deepEqual(Object.getOwnPropertyDescriptor(FinalizedObservationError, 'safeDomain'), {
+    value: safeDomain, writable: false, enumerable: false, configurable: false,
+  });
+  assert.notEqual(caught, failure);
+  assert.equal(caught?.code, 'consumer_failed');
+  assert.equal(caught?.cause, failure);
+  assert.equal(Object.prototype.propertyIsEnumerable.call(caught, 'cause'), false);
+  assert.doesNotMatch(caught?.message || '', /password|private|postgres|adapter/i);
+  assert.doesNotMatch(JSON.stringify(caught), /password|private|postgres|adapter/i);
+});
+
 await test('arbitrary coded adapter errors are always wrapped without exposing their message', async () => {
   const observation = await transactionObservation();
   for (const code of ['domain_error', '23505', 'ECONNRESET']) {
@@ -1501,6 +1637,19 @@ await test('commit rejects live accessor evidence before post-validation mutatio
     () => commitFinalizedObservation(pool, forged, adapterFor()), 'fo_bad_config');
   assert.equal(pool.connectCount, 0);
   assert.equal(live, '1');
+});
+
+await test('commit evidence validation uses a fixed message, never its reflected secret key', async () => {
+  const observation = await transactionObservation();
+  const forged = Object.freeze({ ...observation, [REFLECTED_SECRET]: () => true });
+  const pool = new AtomicTestPool();
+  const error = await rejectsCode(
+    () => commitFinalizedObservation(pool, forged, adapterFor()), 'fo_bad_config');
+  assert.equal(error.message, 'commit evidence contains unsupported data');
+  assert.doesNotMatch(error.message, /password|private|postgres|request-body/i);
+  assert.doesNotMatch(JSON.stringify(error), /password|private|postgres|request-body/i);
+  assert.equal(Object.hasOwn(error, 'cause'), false);
+  assert.equal(pool.connectCount, 0);
 });
 
 await test('caller cannot pass a promise, mutable evidence, or a pre-opened client', async () => {

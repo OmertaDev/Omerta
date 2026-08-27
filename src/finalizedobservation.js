@@ -8,33 +8,32 @@ const MAX_LOGS = 10_000;
 const MAX_BYTES = 10_000_000;
 const PUBLISHED_FO_ERRORS = new WeakSet();
 const SAFE_DOMAIN_ERRORS = new WeakSet();
+const PUBLISHED_FO_CODES = Object.freeze([
+  'fo_unconfigured',
+  'fo_bad_config',
+  'fo_wrong_chain',
+  'fo_head_unavailable',
+  'fo_checkpoint_identity',
+  'fo_checkpoint_reorg',
+  'fo_head_regression',
+  'fo_range_gap',
+  'fo_work_oversized',
+  'fo_rpc_unavailable',
+  'fo_log_removed',
+  'fo_log_address',
+  'fo_log_topic',
+  'fo_log_range',
+  'fo_log_identity',
+  'fo_log_order',
+  'fo_log_duplicate',
+  'fo_log_block_hash',
+  'fo_head_mismatch',
+  'fo_checkpoint_advanced',
+]);
 
 export class FinalizedObservationError extends Error {
-  static CODES = Object.freeze([
-    'fo_unconfigured',
-    'fo_bad_config',
-    'fo_wrong_chain',
-    'fo_head_unavailable',
-    'fo_checkpoint_identity',
-    'fo_checkpoint_reorg',
-    'fo_head_regression',
-    'fo_range_gap',
-    'fo_work_oversized',
-    'fo_rpc_unavailable',
-    'fo_log_removed',
-    'fo_log_address',
-    'fo_log_topic',
-    'fo_log_range',
-    'fo_log_identity',
-    'fo_log_order',
-    'fo_log_duplicate',
-    'fo_log_block_hash',
-    'fo_head_mismatch',
-    'fo_checkpoint_advanced',
-  ]);
-
   constructor(code, message, cause) {
-    if (!FinalizedObservationError.CODES.includes(code)) {
+    if (!PUBLISHED_FO_CODES.includes(code)) {
       throw new TypeError('unpublished finalized observation error code');
     }
     super(message);
@@ -43,23 +42,38 @@ export class FinalizedObservationError extends Error {
     if (cause !== undefined) Object.defineProperty(this, 'cause', { value: cause, enumerable: false });
     PUBLISHED_FO_ERRORS.add(this);
   }
-
-  static safeDomain(code, cause) {
-    if (typeof code !== 'string' || !/^[a-z][a-z0-9_]{0,63}$/.test(code) || code.startsWith('fo_')) {
-      throw new TypeError('invalid finalized observation domain error code');
-    }
-    const error = new Error(`finalized observation consumer error: ${code}`);
-    error.name = 'FinalizedObservationDomainError';
-    Object.defineProperty(error, 'code', { value: code, enumerable: true });
-    if (cause !== undefined) Object.defineProperty(error, 'cause', { value: cause, enumerable: false });
-    SAFE_DOMAIN_ERRORS.add(error);
-    return Object.freeze(error);
-  }
 }
+
+function safeDomainError(code, cause) {
+  if (typeof code !== 'string' || !/^[a-z][a-z0-9_]{0,63}$/.test(code) || code.startsWith('fo_')) {
+    throw new TypeError('invalid finalized observation domain error code');
+  }
+  const error = new Error(`finalized observation consumer error: ${code}`);
+  error.name = 'FinalizedObservationDomainError';
+  Object.defineProperty(error, 'code', { value: code, enumerable: true });
+  if (cause !== undefined) Object.defineProperty(error, 'cause', { value: cause, enumerable: false });
+  SAFE_DOMAIN_ERRORS.add(error);
+  return Object.freeze(error);
+}
+
+Object.defineProperties(FinalizedObservationError, {
+  CODES: {
+    value: Object.freeze([...PUBLISHED_FO_CODES]),
+    writable: false,
+    enumerable: true,
+    configurable: false,
+  },
+  safeDomain: {
+    value: safeDomainError,
+    writable: false,
+    enumerable: false,
+    configurable: false,
+  },
+});
 
 function isPublishedFoError(error) {
   return PUBLISHED_FO_ERRORS.has(error)
-    && FinalizedObservationError.CODES.includes(error.code);
+    && PUBLISHED_FO_CODES.includes(error.code);
 }
 
 function isSafeDomainError(error) {
@@ -414,7 +428,7 @@ function copyDataSnapshot(value, field, { allowBigInt = false, requireFrozen = f
         fail('fo_bad_config', `${field} arrays must contain enumerable data entries`);
       }
       copy.push(copyDataSnapshot(
-        descriptor.value, `${field}[${index}]`, { allowBigInt, requireFrozen }, active));
+        descriptor.value, field, { allowBigInt, requireFrozen }, active));
     }
   } else {
     if (prototype !== Object.prototype && prototype !== null) {
@@ -428,7 +442,7 @@ function copyDataSnapshot(value, field, { allowBigInt = false, requireFrozen = f
       }
       Object.defineProperty(copy, key, {
         value: copyDataSnapshot(
-          descriptor.value, `${field}.${key}`, { allowBigInt, requireFrozen }, active),
+          descriptor.value, field, { allowBigInt, requireFrozen }, active),
         enumerable: true,
         writable: true,
         configurable: true,
@@ -695,7 +709,7 @@ function matchesCheckpoint(current, expected) {
 
 function safeConsumerCause(cause) {
   if (isPublishedFoError(cause) || isSafeDomainError(cause)) return cause;
-  return FinalizedObservationError.safeDomain('consumer_failed', cause);
+  return safeDomainError('consumer_failed', cause);
 }
 
 /**
