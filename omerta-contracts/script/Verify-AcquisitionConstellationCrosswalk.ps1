@@ -357,6 +357,37 @@ function Assert-IsolatedArtifactMatch($Canonical, $Isolated, [string]$ExpectedAb
   }
 }
 
+function Get-PortableExecutableIdentity($Artifact, [string]$Name) {
+  $creation = [string]$Artifact.bytecode.object
+  $runtime = [string]$Artifact.deployedBytecode.object
+  if (-not $creation.StartsWith('0x') -or -not $runtime.StartsWith('0x')) {
+    throw "$Name malformed executable bytecode."
+  }
+  $creationBody = $creation.Substring(2)
+  $runtimeBody = $runtime.Substring(2)
+  $offset = $creationBody.IndexOf($runtimeBody,[StringComparison]::OrdinalIgnoreCase)
+  if ($offset -lt 0 -or $offset -ne $creationBody.LastIndexOf($runtimeBody,[StringComparison]::OrdinalIgnoreCase)) {
+    throw "$Name runtime suffix occurrence drift."
+  }
+  if (-not [string]::Equals($creationBody.Substring($offset),$runtimeBody,[StringComparison]::OrdinalIgnoreCase)) {
+    throw "$Name runtime suffix mismatch."
+  }
+  return [pscustomobject]@{
+    CreationPrefix = $creationBody.Substring(0,$offset).ToLowerInvariant()
+    Runtime = (Strip-SolidityMetadata $runtime).Substring(2).ToLowerInvariant()
+  }
+}
+
+function Assert-PortableIsolatedArtifactMatch($Canonical, $Isolated, [string]$Name) {
+  $canonicalIdentity = Get-PortableExecutableIdentity $Canonical $Name
+  $isolatedIdentity = Get-PortableExecutableIdentity $Isolated "$Name isolated"
+  if (-not [string]::Equals($canonicalIdentity.CreationPrefix,$isolatedIdentity.CreationPrefix,[StringComparison]::Ordinal) -or
+      -not [string]::Equals($canonicalIdentity.Runtime,$isolatedIdentity.Runtime,[StringComparison]::Ordinal) -or
+      -not [string]::Equals((Get-AbiFingerprint $Canonical),(Get-AbiFingerprint $Isolated),[StringComparison]::Ordinal)) {
+    throw "$Name canonical artifact does not match portable isolated compiler output."
+  }
+}
+
 function Get-SourceSetFingerprint($Metadata) {
   $rows = @($Metadata.sources.psobject.Properties | ForEach-Object { "$($_.Name)=$($_.Value.keccak256)" } | Sort-Object)
   return Get-TextSha256 ($rows -join "`n")
@@ -506,10 +537,36 @@ function Assert-StorageRows($Layout, $ExpectedRows, [string]$Name) {
     if (-not [string]::Equals([string]$actual.label,[string]$expected.Label,[StringComparison]::Ordinal) -or
         -not [string]::Equals([string]$actual.slot,[string]$expected.Slot,[StringComparison]::Ordinal) -or
         [int]$actual.offset -ne [int]$expected.Offset -or
+        -not [string]::Equals([string]$actual.type,[string]$expected.TypeId,[StringComparison]::Ordinal) -or
         -not [string]::Equals([string]$type.label,[string]$expected.Type,[StringComparison]::Ordinal) -or
         -not [string]::Equals([string]$type.encoding,[string]$expected.Encoding,[StringComparison]::Ordinal) -or
         -not [string]::Equals([string]$type.numberOfBytes,[string]$expected.Bytes,[StringComparison]::Ordinal)) {
       throw "$Name storage schema drift at row $i."
+    }
+  }
+}
+
+function Assert-StorageTypeSchema($Layout, $Expected, [string]$Name) {
+  $property = $Layout.types.psobject.Properties[[string]$Expected.TypeId]
+  if ($null -eq $property) { throw "$Name storage type missing: $($Expected.TypeId)." }
+  $type = $property.Value
+  if (-not [string]::Equals([string]$type.label,[string]$Expected.Label,[StringComparison]::Ordinal) -or
+      -not [string]::Equals([string]$type.encoding,[string]$Expected.Encoding,[StringComparison]::Ordinal) -or
+      -not [string]::Equals([string]$type.numberOfBytes,[string]$Expected.Bytes,[StringComparison]::Ordinal) -or
+      -not [string]::Equals([string]$type.key,[string]$Expected.Key,[StringComparison]::Ordinal) -or
+      -not [string]::Equals([string]$type.value,[string]$Expected.Value,[StringComparison]::Ordinal)) {
+    throw "$Name storage type header drift: $($Expected.TypeId)."
+  }
+  $actualMembers = if ($null -eq $type.members) { @() } else { @($type.members) }
+  $expectedMembers = if ($null -eq $Expected.Members) { @() } else { @($Expected.Members) }
+  if ($actualMembers.Count -ne $expectedMembers.Count) { throw "$Name storage member count drift: $($Expected.TypeId)." }
+  for ($i=0;$i-lt$expectedMembers.Count;$i++) {
+    $actual = $actualMembers[$i]; $expectedMember = $expectedMembers[$i]
+    if (-not [string]::Equals([string]$actual.label,[string]$expectedMember.Label,[StringComparison]::Ordinal) -or
+        -not [string]::Equals([string]$actual.type,[string]$expectedMember.TypeId,[StringComparison]::Ordinal) -or
+        -not [string]::Equals([string]$actual.slot,[string]$expectedMember.Slot,[StringComparison]::Ordinal) -or
+        [int]$actual.offset -ne [int]$expectedMember.Offset) {
+      throw "$Name storage member schema drift at $($Expected.TypeId)[$i]."
     }
   }
 }
@@ -659,6 +716,24 @@ try {
   }
   $assembly = Invoke-IsolatedForgeInspect 'AcquisitionVault' 'assembly'
   if ([regex]::Matches($assembly,'sub_0:\s+assembly\s*\{').Count -ne 1) { Fail 'Expected one top-level sub_0 assembly boundary.' }
+  $isolatedLegacyPath = Join-Path (Join-Path $script:isolatedRoot 'out') 'AcquisitionVault.sol/AcquisitionVault.json'
+  $isolatedLegacy = Get-Content -LiteralPath $isolatedLegacyPath -Raw | ConvertFrom-Json -Depth 100
+  Assert-PortableIsolatedArtifactMatch $legacy $isolatedLegacy 'Task5 AcquisitionVault'
+
+  $mutatedLegacy = $legacy | ConvertTo-Json -Depth 100 | ConvertFrom-Json -Depth 100
+  $mutatedRuntimeBody = $mutatedLegacy.deployedBytecode.object.Substring(2)
+  $replacementByte = if ($mutatedRuntimeBody.Substring(2,2) -eq '00') { '01' } else { '00' }
+  $mutatedRuntimeBody = $mutatedRuntimeBody.Substring(0,2) + $replacementByte + $mutatedRuntimeBody.Substring(4)
+  $mutatedCreationBody = $mutatedLegacy.bytecode.object.Substring(2)
+  $mutatedRuntimeOffset = $mutatedCreationBody.IndexOf(
+    $mutatedLegacy.deployedBytecode.object.Substring(2),[StringComparison]::OrdinalIgnoreCase
+  )
+  $mutatedLegacy.deployedBytecode.object = '0x' + $mutatedRuntimeBody
+  $mutatedLegacy.bytecode.object = '0x' + $mutatedCreationBody.Substring(0,$mutatedRuntimeOffset) + $mutatedRuntimeBody
+  $legacyExecutableMutationRejected = $false
+  try { Assert-PortableIsolatedArtifactMatch $mutatedLegacy $isolatedLegacy 'mutated Task5 AcquisitionVault' }
+  catch { $legacyExecutableMutationRejected = $true }
+  if (-not $legacyExecutableMutationRejected) { throw 'Task5 executable-byte negative selftest failed.' }
 } catch { Fail $_.Exception.Message }
 Write-Output "Task5 bytecode: initcode=$initcode constructorPrefix=$creationOffsetBytes runtime=$runtime"
 Write-Output "Constructor inventory: STATICCALL=1 prohibited=0; runtime inventory: STATICCALL=2 prohibited=0"
@@ -804,33 +879,61 @@ function Invoke-Task2Validation {
   $factoryLayout=(Invoke-IsolatedForgeInspect 'AcquisitionConstellationFactory' 'storageLayout' -Json -Ast)|ConvertFrom-Json -Depth 100
   $authorityLayout=(Invoke-IsolatedForgeInspect 'AcquisitionAuthority' 'storageLayout' -Json -Ast)|ConvertFrom-Json -Depth 100
   $factoryRows=@(
-    @{Label='_childInitcodeHashes';Slot='0';Offset=0;Type='bytes32[5]';Encoding='inplace';Bytes='160'},
-    @{Label='_childRuntimeHashes';Slot='5';Offset=0;Type='bytes32[5]';Encoding='inplace';Bytes='160'},
-    @{Label='_children';Slot='10';Offset=0;Type='address[5]';Encoding='inplace';Bytes='160'},
-    @{Label='_phase';Slot='15';Offset=0;Type='enum AcquisitionConstellationFactory.Phase';Encoding='inplace';Bytes='1'},
-    @{Label='_nextChildIndex';Slot='15';Offset=1;Type='uint8';Encoding='inplace';Bytes='1'}
+    @{Label='_childInitcodeHashes';Slot='0';Offset=0;TypeId='t_array(t_bytes32)5_storage';Type='bytes32[5]';Encoding='inplace';Bytes='160'},
+    @{Label='_childRuntimeHashes';Slot='5';Offset=0;TypeId='t_array(t_bytes32)5_storage';Type='bytes32[5]';Encoding='inplace';Bytes='160'},
+    @{Label='_children';Slot='10';Offset=0;TypeId='t_array(t_address)5_storage';Type='address[5]';Encoding='inplace';Bytes='160'},
+    @{Label='_phase';Slot='15';Offset=0;TypeId='t_enum(Phase)54';Type='enum AcquisitionConstellationFactory.Phase';Encoding='inplace';Bytes='1'},
+    @{Label='_nextChildIndex';Slot='15';Offset=1;TypeId='t_uint8';Type='uint8';Encoding='inplace';Bytes='1'}
   )
   $authorityRows=@(
-    @{Label='_nameFallback';Slot='0';Offset=0;Type='string';Encoding='bytes';Bytes='32'},
-    @{Label='_versionFallback';Slot='1';Offset=0;Type='string';Encoding='bytes';Bytes='32'},
-    @{Label='_owner';Slot='2';Offset=0;Type='address';Encoding='inplace';Bytes='20'},
-    @{Label='_pendingOwner';Slot='3';Offset=0;Type='address';Encoding='inplace';Bytes='20'},
-    @{Label='_paused';Slot='3';Offset=20;Type='bool';Encoding='inplace';Bytes='1'},
-    @{Label='mainOperator';Slot='4';Offset=0;Type='address';Encoding='inplace';Bytes='20'},
-    @{Label='_finalized';Slot='4';Offset=20;Type='bool';Encoding='inplace';Bytes='1'},
-    @{Label='operatorGeneration';Slot='5';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
-    @{Label='_sharedO2Nonce';Slot='6';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
-    @{Label='_cancelNonce';Slot='7';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
-    @{Label='nominationNonce';Slot='8';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
-    @{Label='_pendingMainOperatorNomination';Slot='9';Offset=0;Type='struct IAcquisitionAuthorityV2.PendingOperatorNomination';Encoding='inplace';Bytes='192'},
-    @{Label='ingressProposalNonce';Slot='15';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
-    @{Label='ingressGeneration';Slot='16';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
-    @{Label='activeIngressGeneration';Slot='17';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
-    @{Label='_pendingIngressProposal';Slot='18';Offset=0;Type='struct IAcquisitionAuthorityV2.PendingIngressProposal';Encoding='inplace';Bytes='352'},
-    @{Label='_ingressRecords';Slot='29';Offset=0;Type='mapping(uint256 => struct IAcquisitionAuthorityV2.IngressRecord)';Encoding='mapping';Bytes='32'}
+    @{Label='_nameFallback';Slot='0';Offset=0;TypeId='t_string_storage';Type='string';Encoding='bytes';Bytes='32'},
+    @{Label='_versionFallback';Slot='1';Offset=0;TypeId='t_string_storage';Type='string';Encoding='bytes';Bytes='32'},
+    @{Label='_owner';Slot='2';Offset=0;TypeId='t_address';Type='address';Encoding='inplace';Bytes='20'},
+    @{Label='_pendingOwner';Slot='3';Offset=0;TypeId='t_address';Type='address';Encoding='inplace';Bytes='20'},
+    @{Label='_paused';Slot='3';Offset=20;TypeId='t_bool';Type='bool';Encoding='inplace';Bytes='1'},
+    @{Label='mainOperator';Slot='4';Offset=0;TypeId='t_address';Type='address';Encoding='inplace';Bytes='20'},
+    @{Label='_finalized';Slot='4';Offset=20;TypeId='t_bool';Type='bool';Encoding='inplace';Bytes='1'},
+    @{Label='operatorGeneration';Slot='5';Offset=0;TypeId='t_uint256';Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='_sharedO2Nonce';Slot='6';Offset=0;TypeId='t_uint256';Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='_cancelNonce';Slot='7';Offset=0;TypeId='t_uint256';Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='nominationNonce';Slot='8';Offset=0;TypeId='t_uint256';Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='_pendingMainOperatorNomination';Slot='9';Offset=0;TypeId='t_struct(PendingOperatorNomination)10777_storage';Type='struct IAcquisitionAuthorityV2.PendingOperatorNomination';Encoding='inplace';Bytes='192'},
+    @{Label='ingressProposalNonce';Slot='15';Offset=0;TypeId='t_uint256';Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='ingressGeneration';Slot='16';Offset=0;TypeId='t_uint256';Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='activeIngressGeneration';Slot='17';Offset=0;TypeId='t_uint256';Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='_pendingIngressProposal';Slot='18';Offset=0;TypeId='t_struct(PendingIngressProposal)10844_storage';Type='struct IAcquisitionAuthorityV2.PendingIngressProposal';Encoding='inplace';Bytes='352'},
+    @{Label='_ingressRecords';Slot='29';Offset=0;TypeId='t_mapping(t_uint256,t_struct(IngressRecord)10861_storage)';Type='mapping(uint256 => struct IAcquisitionAuthorityV2.IngressRecord)';Encoding='mapping';Bytes='32'}
   )
   Assert-StorageRows $factoryLayout $factoryRows 'Factory'
   Assert-StorageRows $authorityLayout $authorityRows 'Authority'
+  $authorityTypeSchemas=@(
+    @{TypeId='t_struct(PendingOperatorNomination)10777_storage';Label='struct IAcquisitionAuthorityV2.PendingOperatorNomination';Encoding='inplace';Bytes='192';Key='';Value='';Members=@(
+      @{Label='proposalId';TypeId='t_bytes32';Slot='0';Offset=0},@{Label='proposalNumber';TypeId='t_uint256';Slot='1';Offset=0},
+      @{Label='nominee';TypeId='t_address';Slot='2';Offset=0},@{Label='proposedBy';TypeId='t_address';Slot='3';Offset=0},
+      @{Label='proposedAt';TypeId='t_uint64';Slot='3';Offset=20},@{Label='validAfter';TypeId='t_uint64';Slot='4';Offset=0},
+      @{Label='expiresAt';TypeId='t_uint64';Slot='4';Offset=8},@{Label='detailsHash';TypeId='t_bytes32';Slot='5';Offset=0}
+    )},
+    @{TypeId='t_struct(IngressConfig)10824_storage';Label='struct IAcquisitionAuthorityV2.IngressConfig';Encoding='inplace';Bytes='160';Key='';Value='';Members=@(
+      @{Label='ingress';TypeId='t_address';Slot='0';Offset=0},@{Label='runtimeCodeHash';TypeId='t_bytes32';Slot='1';Offset=0},
+      @{Label='perDepositCapWei';TypeId='t_uint256';Slot='2';Offset=0},@{Label='epochDepositCapWei';TypeId='t_uint256';Slot='3';Offset=0},
+      @{Label='lifetimeDepositCapWei';TypeId='t_uint256';Slot='4';Offset=0}
+    )},
+    @{TypeId='t_struct(PendingIngressProposal)10844_storage';Label='struct IAcquisitionAuthorityV2.PendingIngressProposal';Encoding='inplace';Bytes='352';Key='';Value='';Members=@(
+      @{Label='proposalId';TypeId='t_bytes32';Slot='0';Offset=0},@{Label='proposalNumber';TypeId='t_uint256';Slot='1';Offset=0},
+      @{Label='proposedBy';TypeId='t_address';Slot='2';Offset=0},@{Label='config';TypeId='t_struct(IngressConfig)10824_storage';Slot='3';Offset=0},
+      @{Label='configHash';TypeId='t_bytes32';Slot='8';Offset=0},@{Label='proposedAt';TypeId='t_uint64';Slot='9';Offset=0},
+      @{Label='validAfter';TypeId='t_uint64';Slot='9';Offset=8},@{Label='expiresAt';TypeId='t_uint64';Slot='9';Offset=16},
+      @{Label='detailsHash';TypeId='t_bytes32';Slot='10';Offset=0}
+    )},
+    @{TypeId='t_struct(IngressRecord)10861_storage';Label='struct IAcquisitionAuthorityV2.IngressRecord';Encoding='inplace';Bytes='224';Key='';Value='';Members=@(
+      @{Label='generation';TypeId='t_uint256';Slot='0';Offset=0},@{Label='ingress';TypeId='t_address';Slot='1';Offset=0},
+      @{Label='runtimeCodeHash';TypeId='t_bytes32';Slot='2';Offset=0},@{Label='perDepositCapWei';TypeId='t_uint256';Slot='3';Offset=0},
+      @{Label='epochDepositCapWei';TypeId='t_uint256';Slot='4';Offset=0},@{Label='lifetimeDepositCapWei';TypeId='t_uint256';Slot='5';Offset=0},
+      @{Label='activatedAt';TypeId='t_uint64';Slot='6';Offset=0},@{Label='disabledAt';TypeId='t_uint64';Slot='6';Offset=8}
+    )},
+    @{TypeId='t_mapping(t_uint256,t_struct(IngressRecord)10861_storage)';Label='mapping(uint256 => struct IAcquisitionAuthorityV2.IngressRecord)';Encoding='mapping';Bytes='32';Key='t_uint256';Value='t_struct(IngressRecord)10861_storage';Members=@()}
+  )
+  foreach($schema in $authorityTypeSchemas){Assert-StorageTypeSchema $authorityLayout $schema 'Authority'}
 
   $isolatedOut=Join-Path $script:isolatedRoot 'out'
   $isolatedFactory=Get-Content -LiteralPath (Join-Path $isolatedOut 'AcquisitionConstellationFactory.sol/AcquisitionConstellationFactory.json') -Raw|ConvertFrom-Json -Depth 100
@@ -924,6 +1027,8 @@ function Invoke-Task2Validation {
   Assert-Rejected 'storage label' { Assert-StorageRows $mutatedLayout $authorityRows 'mutated Authority' }
   $mutatedLayout=$authorityLayout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutatedLayout.storage[4].offset=19
   Assert-Rejected 'storage packing offset' { Assert-StorageRows $mutatedLayout $authorityRows 'mutated Authority' }
+  $mutatedLayout=$authorityLayout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutatedLayout.storage[0].type='t_bytes32'
+  Assert-Rejected 'storage compiler type id' { Assert-StorageRows $mutatedLayout $authorityRows 'mutated Authority' }
   $mutatedLayout=$authorityLayout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutatedLayout.types.psobject.Properties[$mutatedLayout.storage[0].type].Value.numberOfBytes='31'
   Assert-Rejected 'storage byte width' { Assert-StorageRows $mutatedLayout $authorityRows 'mutated Authority' }
   $mutatedLayout=$authorityLayout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutatedLayout.types.psobject.Properties[$mutatedLayout.storage[0].type].Value.encoding='inplace'
@@ -932,6 +1037,16 @@ function Invoke-Task2Validation {
   Assert-Rejected 'unexpected storage row' { Assert-StorageRows $mutatedLayout $authorityRows 'mutated Authority' }
   $mutatedLayout=$authorityLayout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutatedLayout.storage=@($mutatedLayout.storage|Select-Object -Skip 1)
   Assert-Rejected 'missing storage row' { Assert-StorageRows $mutatedLayout $authorityRows 'mutated Authority' }
+  $mutatedLayout=$authorityLayout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100
+  $mutatedLayout.types.psobject.Properties['t_struct(PendingIngressProposal)10844_storage'].Value.members[3].type='t_bytes32'
+  Assert-Rejected 'recursive storage member type' {
+    Assert-StorageTypeSchema $mutatedLayout $authorityTypeSchemas[2] 'mutated Authority'
+  }
+  $mutatedLayout=$authorityLayout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100
+  $mutatedLayout.types.psobject.Properties['t_mapping(t_uint256,t_struct(IngressRecord)10861_storage)'].Value.value='t_bytes32'
+  Assert-Rejected 'storage mapping value type' {
+    Assert-StorageTypeSchema $mutatedLayout $authorityTypeSchemas[4] 'mutated Authority'
+  }
   Assert-Rejected 'function selector collision' { Assert-DescriptorUniverse @('burn(uint256)','collate_propagate_storage(bytes16)') 'function-selftest' 2 }
   Assert-Rejected 'error selector collision' { Assert-DescriptorUniverse @('burn(uint256)','collate_propagate_storage(bytes16)') 'error-selftest' 2 }
   Assert-Rejected 'event duplicate' { Assert-DescriptorUniverse @('X(uint256)','X(uint256)') 'event' 2 }
@@ -977,14 +1092,25 @@ function Invoke-Task2Validation {
   Write-Output 'Task2 bytecode: Factory=7196/5484 Authority=18629/16068 leaves<=676/473; isolated IR/opcode/source/profile checks passed'
 }
 
-$present = @($finalArtifacts | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf })
-if ($present.Count -eq 0) {
+$constellationArtifactNames = @(
+  'AcquisitionConstellationFactory','AcquisitionAuthority','AcquisitionVaultCore','PreVoteBudgetBook',
+  'AcquisitionIntentExecution','AcquisitionReconciliation'
+)
+$candidateKinds = @()
+if (Test-Path -LiteralPath $ArtifactsRoot -PathType Container) {
+  foreach ($name in $constellationArtifactNames) {
+    if (@(Get-ChildItem -LiteralPath $ArtifactsRoot -Recurse -File -Filter ($name + '.json')).Count -gt 0) {
+      $candidateKinds += $name
+    }
+  }
+}
+if ($candidateKinds.Count -eq 0) {
   if ($ExpectTask0Red) { Write-Output 'Task 0 RED verified: exact six final artifacts absent; legacy/self checks passed.'; Exit-Verified 0 }
   [Console]::Error.WriteLine('Task 0 RED: exact six final artifacts are absent. Re-run with -ExpectTask0Red only at the Task 0 boundary.')
   Exit-Verified $redExitCode
 }
-if ($present.Count -ne 6) {
-  [Console]::Error.WriteLine("Partial constellation artifact set: $($present.Count) of 6.")
+if ($candidateKinds.Count -ne 6) {
+  [Console]::Error.WriteLine("Partial constellation artifact set: $($candidateKinds.Count) of 6 contract kinds.")
   Exit-Verified 43
 }
 try { Assert-CanonicalArtifactLayout $finalArtifacts } catch { Fail $_.Exception.Message 1 }
@@ -1128,6 +1254,9 @@ try {
   Assert-AbiNames $factory 'finalizeConstellation' @() @()
   $factoryIr=Invoke-IsolatedForgeInspect 'AcquisitionConstellationFactory' 'irOptimized'
   Assert-FactoryCompilerPolicy $factoryIr
+  $isolatedFactoryPath=Join-Path (Join-Path $script:isolatedRoot 'out') 'AcquisitionConstellationFactory.sol/AcquisitionConstellationFactory.json'
+  $isolatedFactory=Get-Content -LiteralPath $isolatedFactoryPath -Raw|ConvertFrom-Json -Depth 100
+  Assert-PortableIsolatedArtifactMatch $factory $isolatedFactory 'Task1 AcquisitionConstellationFactory'
   function Assert-RejectedIrMutation([string]$Label,[string]$MutatedIr){$rejected=$false;try{Assert-FactoryCompilerPolicy $MutatedIr}catch{$rejected=$true};if(-not$rejected){throw "Compiler-policy negative selftest failed: $Label"}}
   Assert-RejectedIrMutation 'phase-after-CREATE' ($factoryIr.Replace('0:7068:7074  "_phase"','0:99999:99999  "movedPhase"')+' 0:7068:7074  "_phase"')
   Assert-RejectedIrMutation 'nonzero-CREATE-value' ($factoryIr.Replace('let var_child := create(','let var_child := create(1, pop('))
@@ -1169,6 +1298,9 @@ try {
     Assert-ImmutableReferences $artifact $childImmutable[$i] $spec.Name
     $layoutText=Invoke-IsolatedForgeInspect $spec.Name 'storageLayout' -Json
     $layout=$layoutText|ConvertFrom-Json -Depth 100
+    $isolatedChildPath=Join-Path (Join-Path $script:isolatedRoot 'out') ($spec.Name+'.sol/'+$spec.Name+'.json')
+    $isolatedChild=Get-Content -LiteralPath $isolatedChildPath -Raw|ConvertFrom-Json -Depth 100
+    Assert-PortableIsolatedArtifactMatch $artifact $isolatedChild ('Task1 '+$spec.Name)
     $childRows=@($layout.storage)
     if($childRows.Count-ne1){throw "$($spec.Name) storage count drift."}
     $childRow=$childRows[0];$childType=$layout.types.psobject.Properties[$childRow.type].Value
