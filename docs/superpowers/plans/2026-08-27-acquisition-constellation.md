@@ -53,7 +53,7 @@ The pause matrix is exact:
 | Operation | Pause rule |
 |---|---|
 | create intent, execute attempt, authorize budget, relayed O2 | unpaused |
-| direct O2 | allowed while paused, but only with live `D == 0` and `S == 0` |
+| direct O2 | allowed while paused and while live `D` and/or `S` exists; limited only by the actual-balance ceiling and its frozen authorization/accounting rules |
 | deposit, refund, repair, balance sync | pause-independent |
 | proposal expiry, direct/relayed cancellation | pause-independent |
 | reconciliation evidence and final disposition | pause-independent |
@@ -75,8 +75,11 @@ totals or custody.
 
 ### 2.3 PreVoteBudgetBook
 
-BudgetBook owns immutable pre-vote budget evidence, consumption evidence, and
-tombstones. It never holds funds and never writes Core bucket totals.
+BudgetBook owns immutable pre-vote authorization records only, exactly one per
+`ballotDay`. It has no consumption state, tombstone, cancellation, rewrite,
+replacement, or reservation behavior. It never holds funds and never writes
+Core bucket totals. Intent and the finalized CB consumer separately prove and
+join use of the immutable authorization; neither may rewrite BudgetBook.
 
 ### 2.4 AcquisitionIntentExecution
 
@@ -165,10 +168,11 @@ amounts are never trusted.
 | zero token delta and native unchanged | failed/no-fill outcome |
 | zero token delta and native spent | unexplained state enters reconciliation |
 | positive token delta and malformed result | token delta preserved as evidence; malformed result incident |
-| post-observation failure | whole transaction reverts unless the frozen disposition explicitly records an unexplained committed state |
+| downstream journal/leaf failure after observation | the outer transaction may revert atomically, reverting the adapter call and all of its effects |
 
-State and evidence are committed before the final untrusted destination call.
-That destination call is last, has empty calldata, and copies zero returndata.
+Once the adapter `CALL` is issued, false, malformed, zero-delta, and unexplained
+results are journaled. An unexplained or otherwise failed post-observation enters
+Reconciliation and can never be converted into success by adapter returndata.
 
 ### 5.2 O2 literal algorithm
 
@@ -179,6 +183,11 @@ oldest sequence, then ID. Excess canceled backing credits `A`. It then reduces
 Components are exactly `F,A,U,R,P`, with maximum count
 `1 + 1 + 1 + 32 + 32 = 67`. Leaf batches enforce ordering, uniqueness,
 freshness, and generation. Target-chain cold-storage and gas evidence is required.
+The direct path remains callable during pause and live deficit/shortfall. It may
+move no more than actual Core ETH; any resulting or enlarged `D`/`S`, liability,
+backing loss, reservation cancellation, and component evidence remains public.
+The destination `CALL` is the last action in O2, uses empty calldata, and copies
+zero returndata.
 
 ### 5.3 Repair classification
 
@@ -235,8 +244,7 @@ means `keccak256(abi.encode(x))`, never packed encoding:
 |---|---|
 | operator proposal | `AUTH_OPERATOR_PROPOSAL_V2, chainId, core, authority, operatorGeneration, proposalNonce, proposedBy, nominee, proposedAt, validAfter, expiresAt, detailsHash` |
 | ingress proposal | `AUTH_INGRESS_PROPOSAL_V2, chainId, core, authority, ingressGeneration, ingressProposalNonce, proposedBy, ingress, runtimeCodeHash, perDepositCapWei, epochCapWei, lifetimeCapWei, proposedAt, validAfter, expiresAt, detailsHash` |
-| budget | `BUDGET_AUTHORIZATION_V2, chainId, core, budgetBook, authorityGeneration, budgetNonce, ballotId, assetVersionKey, amountWei, authorizedAt, detailsHash` |
-| budget consumption | `BUDGET_CONSUMPTION_V2, chainId, core, budgetBook, authorityGeneration, consumptionSequence, budgetId, intentId, amountWei` |
+| budget authorization | `BUDGET_AUTHORIZATION_V2, chainId, core, budgetBook, RegistryV2, ballotDay, maxEthWei, purchaseUntil, accountingSequence` |
 | attempt | `INTENT_ATTEMPT_V2, chainId, core, intentModule, authorityGeneration, attemptIndex, intentId, adapter, runtimeCodeHash, routeHash` |
 | cancellation | `INTENT_CANCELLATION_V2, chainId, core, intentModule, authorityGeneration, cancelNonce, intentId, actor, reasonCode, detailsHash` |
 | reconciliation | `RECONCILIATION_CASE_V2, chainId, core, reconciliationModule, authorityGeneration, reconciliationSequence, intentId, attemptId, observationHash` |
@@ -244,26 +252,34 @@ means `keccak256(abi.encode(x))`, never packed encoding:
 | repair | `REPAIR_CAUSE_V2, chainId, core, reconciliationModule, authorityGeneration, repairSequence, reconciliationId, sourceIdentity, amountWei` |
 | O2 authorization | `O2_AUTHORIZATION_V2, chainId, core, authority, operatorGeneration, sharedO2Nonce, destination, amountWei, issuedAt, deadline, reasonCode, detailsHash` |
 | O2 accounting mutation | `O2_ACCOUNTING_MUTATION_V2, chainId, core, core, operatorGeneration, accountingSequence, authorizationId, preTotalsHash, postTotalsHash` |
-| Stock Token observation | `STOCK_OBSERVATION_V2, chainId, core, reconciliationModule, ingressGeneration, stockSequence, assetVersionKey, token, preBalance, postBalance, attemptId` |
+| Stock Token observation | `STOCK_OBSERVATION_V2, chainId, core, core, ingressGeneration, stockSequence, assetVersionKey, token, preBalance, postBalance, attemptId` |
 
 No V2 family may be added implicitly. A later family requires a tracked amendment
 that adds its literal tag, owner/emitter, exact ordered fields, replay tests, and
 consumer binding before implementation.
 
+The budget authorization ID is deliberately result-independent. It contains no
+authority generation, budget nonce, ballot ID, asset version key, winner, token,
+result, tally, authorized-at timestamp, or details hash. The immutable record may
+store `authorizedAt` and `detailsHash` as evidence, but those fields never alter
+the exact ID above.
+
 Global success-event order is also closed:
 
 | Flow | Exact emitter/order |
 |---|---|
-| deposit | Authority ingress-read evidence (only if state-changing) -> Core accounting mutation -> Core accounting components -> Core canonical deposit |
-| budget | Authority authorization evidence -> BudgetBook authorization/consumption evidence |
-| create | Authority nonce evidence -> BudgetBook consumption -> Core reservation mutation/components -> Intent creation |
-| cancel/expire | Authority authorization/expiry evidence -> Intent phase evidence -> Core release mutation/components -> Intent terminal evidence |
+| deposit | Core `AccountingMutation` -> Core accounting components -> Core `CanonicalDeposit` |
+| budget | BudgetBook `PreVoteBudgetAuthorized` only |
+| create | Intent `IntentCreationStarted` -> Core reservation mutation/components -> Intent `IntentCreated` |
+| direct cancel/expiry | Intent phase evidence -> Core release mutation/components -> Intent terminal evidence |
+| relayed cancel | Authority cancellation-nonce evidence -> Intent phase evidence -> Core release mutation/components -> Intent terminal evidence |
 | execute | Intent attempt-consumed -> Core pre-call mutation -> adapter call -> Intent observation -> Core delta mutation/components -> Reconciliation case if required -> Intent terminal/attempt result |
 | disposition/repair | Reconciliation phase/cause -> Core mutation/components -> Reconciliation leaf evidence -> Reconciliation final evidence |
 | O2 | Authority shared-nonce evidence -> Core mutation -> Core `F,A,U,R,P` components -> affected Intent/Reconciliation leaves -> Core transfer evidence; destination call is last and emits no trusted protocol evidence |
 
 An omitted zero-value accounting component emits nothing; remaining component
 indexes are contiguous. A failure at any point reverts every earlier event.
+Static Authority reads never emit events.
 
 ## 7. TDD implementation graph
 
@@ -277,7 +293,9 @@ indexes are contiguous. A failure at any point reverts every earlier event.
    reciprocal collision/nonce/replay matrix.
 3. **Core extraction:** canonical ingress accounting, caps, deposits, sync, minimal
    records/tombstones, ETH custody, and hold-only Stock Token custody/aggregates.
-4. **BudgetBook:** immutable authorization and consumption evidence without funds.
+4. **BudgetBook:** exactly one immutable pre-vote authorization record per
+   `ballotDay`, without funds, consumption, tombstones, cancellation, rewrite,
+   replacement, or reservation state.
 5. **Intent:** IDs, oracle/adapter/route commitments, attempt consumption, outcome table.
 6. **Reconciliation:** phases, evidence, repair causes, dispositions, incidents, typed leaves.
 7. **O2 integration:** direct/relayed authority, cancellation nonce, 0/1/32/67 components,
