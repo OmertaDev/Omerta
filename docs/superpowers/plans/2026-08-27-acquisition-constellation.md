@@ -1,11 +1,11 @@
 # Acquisition Constellation Architecture Amendment
 
-**Status:** normative architecture amendment; Task 1 topology/deployment development proof independently approved at `f6a21dcc` (C0/I0/M0); Task 2 Authority architecture freeze independently approved at `85081946` (C0/I0/M0) and implementation pending
+**Status:** normative architecture amendment; Task 1 topology/deployment development proof independently approved at `f6a21dcc` (C0/I0/M0); Task 2 Authority implementation/evidence independently approved through `0a46d048`, `03efc11a`, and integrated verifier `77c7359c` (C0/I0/M0), dormant and undeployed; Tasks 3–9 pending
 
 **Supersedes:** the final-monolithic `AcquisitionVault`, inline Task 6, no-intermediate-deployment, aggregate-constructor, `deployAll`, proxy, and recursive runtime-hash assumptions in the O1/A1 plan
-**Historical reference:** Task 5 commit `6e066ffabab0b0f63ac06be141d501474588aace`, runtime 23,212 bytes, is a dormant and nondeployable behavioral oracle. Independent review found no production exploit, while constellation remediation and rereview remain open. It is not final A1 approval.
+**Historical reference:** Task 5 oracle head `ee8574368bc8f9363a844b8783a85de542b19fc0`, runtime 23,212 bytes, is independently approved, dormant, and nondeployable. Task 2 closes the Authority extraction/remediation slice; Core and business behavior still require Tasks 3–9, so this remains evidence rather than final A1 approval.
 
-**Task 2 freeze:** `2026-08-27-acquisition-constellation-task2-authority.md` is the exact proposed Authority extraction boundary. Task 1 is a development proof only; Task 2 requires a fresh Factory and five fresh children and makes no upgrade, refinalization, or migration claim.
+**Task 2 closure:** `2026-08-27-acquisition-constellation-task2-authority.md` is the exact implemented Authority extraction boundary and records its independent implementation, adversarial-snapshot, and machine-verifier approvals. Task 1 remains a development proof only; Task 2 uses a fresh Factory and five fresh children and makes no upgrade, refinalization, migration, deployment, funding, or activation claim.
 
 ## 1. Decision and invariants
 
@@ -634,8 +634,9 @@ fallback, delegatecall, proxy, transfer, approval, sweep, and size-limit breach.
 ## 8. Historical preservation and closure truth
 
 O1, Task 4, and Task 5 tests and evidence remain historical behavioral oracles.
-Task 5 commit `6e066ffa` proves a focused monolithic reference with 23,212-byte
-runtime, not a deployable architecture. Its independent review is pending. Task 6
-must not modify that monolith. No A1 implemented/approved/deployed/funded/active
-closure field may be set until Tasks 0–9 above complete and independent review
-accepts the constellation.
+Task 5 oracle `ee857436` proves an independently approved focused monolithic
+reference with 23,212-byte runtime, not a deployable architecture. Task 2 closes
+only the fresh Authority extraction and its verifier; Tasks 3–9 must not modify
+the monolith and must each use their required fresh constellation. No final A1
+implemented/approved/deployed/funded/active closure field may be set until all
+Tasks 0–9 complete and independent review accepts the complete constellation.

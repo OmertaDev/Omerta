@@ -27,11 +27,12 @@ Every node carries four independent states:
 No earlier state implies a later one. Current global deployment state is
 **undeployed/unfunded/unsigned/unconfigured** for every Grill-v2 addition.
 
-As of 2026-08-27, CN-5, FO Tasks 1–5, and FO's follow-on `eventBlocks`
-evidence extension are implemented, independently approved, and dormant. That
-status proves no production configuration, deployment, Safe execution, chain
-finality, funding, or activation. H2 and CN-6 remain planned acceptance
-contracts rather than implemented consumers.
+As of 2026-08-27, CN-5, FO Tasks 1–5, FO's follow-on `eventBlocks`
+evidence extension, and Acquisition Constellation Task 2 Authority are
+implemented, independently approved, and dormant. That status proves no
+production configuration, deployment, Safe execution, chain finality, funding,
+or activation. Acquisition Constellation Tasks 3–9, H2, and CN-6 remain planned
+acceptance/implementation nodes rather than active production consumers.
 
 ## Requirement manifest
 
@@ -54,7 +55,7 @@ partial legacy behavior and dirty documentation do not count.
 | N2 | Support and seat authority | C/N Task 3; Commission seat-generation integration | Domain approved; rapid loss/reseat generation hook pending |
 | N3 | Review and expiry | C/N Tasks 3–4, 6–7 | Domain/routes/package approved; finalized activation lifecycle pending |
 | H | Health and operational quarantine | H1 watcher/domain; H2 additive overlay/finality; U | Pending; mandatory before non-dormant ballot/purchase/delivery |
-| A1 | Native-ETH buckets/deposits | O1, AC-0..9 | O1/Task4 approved; Task5 `6e066ffa` dormant nondeployable reference at 23,212B, independent review pending; constellation extraction pending |
+| A1 | Native-ETH buckets/deposits | O1, AC-0..9 | O1/Task4 approved; Task5 `ee857436` is the approved dormant/nondeployable 23,212B oracle; AC Task 2 Authority implemented/approved/dormant through `77c7359c`; fresh Core and AC Tasks 3–9 pending |
 | A2 | mainOperator | O1 role/typed authority; O2 final debit integration | Pending; A2 cannot complete before A3/R |
 | A3 | Purchase intents | CB budget bridge, A3 | Pending |
 | A4 | Pause and deficit | AC, R, O2, U | Pending |
@@ -190,7 +191,7 @@ flowchart TD
 | H1 | Predicate taxonomy, watcher, snapshots, operational overlay domain/API | FO, CN-1..4 | 5-minute poll, 10-minute freshness, bounded work, spam/stale tests | Pending |
 | H2 | `RwaHealthOverlay`, seven-day Safe clearance package/finality | H1, FO, CN-1..4 | Contract tests, exact event/finality/reorg proof | Pending |
 | O1 | mainOperator role state machine and EIP-712 authority | F0 | Unit/fuzz/invariant/1271/generation/nonce tests | Complete/independently approved/dormant at remediation head `82001b6e8ac54c46dda6eb185cda550e8a73a3de`; no outflow or deployment |
-| A1-ref | Monolithic behavioral oracle for authority, buckets, ingress, deposits and caps | O1, CN | Preserve O1/Task4/Task5 evidence; never deploy | Task5 head `6e066ffa`, runtime 23,212B; dormant/nondeployable; independent review pending, not final A1 approval |
+| A1-ref | Monolithic behavioral oracle for authority, buckets, ingress, deposits and caps | O1, CN | Preserve O1/Task4/Task5 evidence; never deploy | Task5 oracle `ee857436`, runtime 23,212B, independently approved and dormant/nondeployable; Task 2 Authority extraction closed, Tasks 3–9 pending, not final A1 approval |
 | AC-0..9 | Immutable acquisition constellation: manifest factory, Authority, Core, BudgetBook, Intent, Reconciliation, O2 integration and review | A1-ref, O1, CN | Exact crosswalk; phased CREATE/finalization; typed-call/stateful/size/replay/gas tests; independent Wildcat/controller approval | Pending; normative successor to inline A1 Tasks 6–8, A3, R and O2 composition |
 | CB-bridge | Core/BudgetBook provenance into ballot opener/cutover gate | CN-5, AC-0..4, H2 | No manual production budget, no fallback/double authority | Pending |
 | CN-6 | One-cursor RegistryV2 finalized lifecycle consumer plus dormant exact-byte publisher | FO, CN-5, H2, CB-bridge | Event-time/reorg/crash/exact-match/drift/exact-byte rebroadcast tests; no duplicate observation kernel | Pending; publisher unreachable until H2 and AcquisitionVault provenance are approved |

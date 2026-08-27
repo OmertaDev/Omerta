@@ -1,6 +1,6 @@
 # Acquisition Constellation Task 0 Crosswalk
 
-**Status:** normative Task 0 crosswalk; Task 1 topology/deployment development proof independently approved at `f6a21dcc` (C0/I0/M0); Task 2 Authority architecture freeze independently approved at `85081946` (C0/I0/M0) and implementation pending
+**Status:** normative Task 0 crosswalk; Task 1 topology/deployment development proof independently approved at `f6a21dcc` (C0/I0/M0); Task 2 Authority implementation/evidence independently approved through `0a46d048`, `03efc11a`, and integrated verifier `77c7359c` (C0/I0/M0), dormant and undeployed; Task 3 fresh-Core constellation pending
 
 **Architecture source:** `2026-08-27-acquisition-constellation.md`
 

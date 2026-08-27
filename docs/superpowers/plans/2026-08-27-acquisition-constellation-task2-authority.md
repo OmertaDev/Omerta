@@ -1,14 +1,26 @@
 # Acquisition Constellation Task 2 — Authority Architecture Freeze
 
-**Status:** architecture freeze independently approved at `85081946` (C0/I0/M0); Task 2 implementation and production approval are not claimed
+**Status:** architecture freeze independently approved at `85081946` (C0/I0/M0); Task 2 implementation, adversarial snapshot evidence, and phase-aware machine verifier independently approved through `0a46d048`, `03efc11a`, and integrated verifier head `77c7359c` (C0/I0/M0); dormant and undeployed, with no production approval or activation claim
 
 ### Compiler-feasibility amendment — independently approved
 
 Solc 0.8.26 legacy code generation cannot compile the frozen `authoritySnapshot()` surface with 27 top-level static outputs: the signature itself reaches the legacy stack limit even when the outputs are unnamed and the implementation terminates with a direct 864-byte assembly return. Task 2 therefore uses the named `constellation-via-ir` compiler profile for exactly the six canonical deployables plus the type-only `IAcquisitionAuthorityV2`. That profile is frozen to solc 0.8.26, optimizer enabled with 800 runs, Cancun, and `viaIR = true`. The default profile and historical `AcquisitionVault` oracle remain `viaIR = false` with otherwise identical solc/optimizer/EVM settings.
 
-Canonical Task 2 hashes, sizes, immutable references, source provenance, and verifier inputs must come only from the explicitly selected `constellation-via-ir` artifacts. A legacy/default artifact, a profile-suffixed duplicate, or values mixed across profiles are noncanonical and must fail closed. The feasibility probe measured Authority runtime/initcode at 15,935/18,496 bytes; those figures are pre-final evidence only, not a bytecode commitment. This amendment is independently approved; it does not claim Task 2 implementation or production approval.
+Canonical Task 2 hashes, sizes, immutable references, source provenance, and verifier inputs must come only from the explicitly selected `constellation-via-ir` artifacts. A legacy/default artifact, a profile-suffixed duplicate, or values mixed across profiles are noncanonical and must fail closed. The feasibility probe measured Authority runtime/initcode at 15,935/18,496 bytes; those figures remain historical pre-final evidence rather than a bytecode commitment. The closure evidence below supersedes the amendment's former implementation-pending status, but does not claim production approval.
 
 **Inputs:** the approved constellation architecture, the Task 0 ownership/collision crosswalk, historical O1 Tasks 1–3A, and the Task 1 deployment proof at `f6a21dcc` (independently approved C0/I0/M0 as a development proof only).
+
+## 0. Implementation closure evidence
+
+Task 2 is closed as an implemented, reviewed, dormant pre-production graph node:
+
+- the exact Authority/Factory implementation and frozen behavior close at `0a46d048` and were independently approved C0/I0/M0;
+- the malicious snapshot, exact 160,000-gas Factory binding, cold real-Authority snapshot, all 27 invalid-field ordinals, all 26 adjacent precedence edges, atomic rollback, and repair/retry evidence close at `03efc11a` and were independently approved C0/I0/M0;
+- the phase-aware verifier was independently security- and specification-reviewed at `c25fc8e4` and integrated without semantic change through main-branch head `77c7359c`; both final reviews reported C0/I0/M0;
+- default Task 2 and explicit historical Task 1 verification both exit `0`; the frozen `0/1/42/43/44` phase matrix, exact artifact layout, ABI/collision universe, storage/type graph, immutable references, source/compiler provenance, portable executable identity, sizes, and bounded IR/opcode policies are mutation-sensitive;
+- the integrated snapshot, Authority, Task 1 topology, crosswalk, Accounting, Operator, and Registry V2 suites pass the established 306-test closure set.
+
+This closure deploys, funds, signs, migrates, or activates nothing. Task 3 must still build another fresh Factory and five-child constellation with the Core-owned global lifetime cap enforced at both ingress proposal and activation. No Task 2 address or mutable state may be reused.
 
 ## 1. Replacement boundary and graph edge
 
