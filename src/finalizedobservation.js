@@ -129,7 +129,8 @@ function canonicalJson(value, seen = new Set()) {
   if (typeof value === 'number') {
     fail('fo_bad_config', 'evidence numbers must be canonical decimal strings');
   }
-  if (typeof value === 'bigint' || typeof value === 'undefined' || typeof value === 'function'
+  if (typeof value === 'bigint') return JSON.stringify(value.toString());
+  if (typeof value === 'undefined' || typeof value === 'function'
     || typeof value === 'symbol') fail('fo_bad_config', 'evidence must be plain serializable data');
   if (value !== null && typeof value === 'object' && seen.has(value)) {
     fail('fo_bad_config', 'evidence must not contain cycles');
@@ -238,6 +239,47 @@ async function exactBlock(client, number, missingCode = 'fo_head_unavailable') {
     fail('fo_head_mismatch', 'numbered block returned another height');
   }
   return normalized;
+}
+
+async function exactEventBlock(client, number) {
+  const raw = await rpc(() => client.getBlock({ blockNumber: number }));
+  if (!raw || typeof raw !== 'object') {
+    fail('fo_log_block_hash', 'event block identity is unavailable');
+  }
+  let prototype;
+  let descriptors;
+  try {
+    prototype = Object.getPrototypeOf(raw);
+    descriptors = Object.getOwnPropertyDescriptors(raw);
+  } catch (cause) {
+    fail('fo_log_block_hash', 'event block identity is unavailable or malformed', cause);
+  }
+  if (prototype !== Object.prototype && prototype !== null) {
+    fail('fo_log_block_hash', 'event block identity is unavailable or malformed');
+  }
+  const numberDescriptor = descriptors.number;
+  const hashDescriptor = descriptors.hash;
+  const timestampDescriptor = descriptors.timestamp;
+  if (!numberDescriptor?.enumerable || !Object.hasOwn(numberDescriptor, 'value')) {
+    fail('fo_log_block_hash', 'event block number is unavailable or malformed');
+  }
+  if (!hashDescriptor?.enumerable || !Object.hasOwn(hashDescriptor, 'value')) {
+    fail('fo_log_block_hash', 'event block hash is unavailable or malformed');
+  }
+  if (!timestampDescriptor?.enumerable || !Object.hasOwn(timestampDescriptor, 'value')
+    || typeof timestampDescriptor.value !== 'bigint' || timestampDescriptor.value < 0n) {
+    fail('fo_log_block_hash', 'event block timestamp is unavailable or malformed');
+  }
+  const blockNumber = mappedDecimal(
+    numberDescriptor.value, 'event block number', 'fo_log_block_hash');
+  if (BigInt(blockNumber) !== number) {
+    fail('fo_log_block_hash', 'event block returned another height');
+  }
+  return deepFreeze({
+    blockNumber: BigInt(blockNumber),
+    blockHash: mappedBytes32(hashDescriptor.value, 'event block hash', 'fo_log_block_hash'),
+    blockTimestamp: timestampDescriptor.value,
+  });
 }
 
 function sameBlock(left, right) {
@@ -358,21 +400,23 @@ async function normalizedLogs(client, rawLogs, config, fromBlock, toBlock) {
   for (const log of logs) {
     if (!eventBlocks.has(log.blockNumber)) {
       let block;
-      try { block = await exactBlock(client, BigInt(log.blockNumber), 'fo_log_block_hash'); }
+      try { block = await exactEventBlock(client, BigInt(log.blockNumber)); }
       catch (cause) {
         if (isPublishedFoError(cause) && cause.code === 'fo_rpc_unavailable') throw cause;
-        if (isPublishedFoError(cause) && cause.code === 'fo_head_mismatch') {
-          fail('fo_log_block_hash', 'event block returned another height', cause);
-        }
         throw cause;
       }
-      eventBlocks.set(log.blockNumber, block.blockHash);
+      eventBlocks.set(log.blockNumber, block);
     }
-    if (eventBlocks.get(log.blockNumber) !== log.blockHash) {
+    if (eventBlocks.get(log.blockNumber).blockHash !== log.blockHash) {
       fail('fo_log_block_hash', 'event block hash does not match its exact numbered block');
     }
   }
-  return logs;
+  const eventBlockEvidence = deepFreeze([...eventBlocks.values()]);
+  if (Buffer.byteLength(canonicalJson({ logs, eventBlocks: eventBlockEvidence }))
+    > config.limits.maxBytes) {
+    fail('fo_work_oversized', 'serialized log evidence exceeds the configured byte bound');
+  }
+  return { logs, eventBlocks: eventBlockEvidence };
 }
 
 async function recheckExact(client, number, expected) {
@@ -391,10 +435,12 @@ function descriptorView(value, field) {
   }
 }
 
-function copyDataSnapshot(value, field, { allowBigInt = false, requireFrozen = false } = {},
-  active = new Set()) {
+function copyDataSnapshot(value, field,
+  { allowBigInt = false, allowBigIntAt = null, requireFrozen = false } = {},
+  active = new Set(), path = []) {
+  const bigIntAllowed = allowBigInt || (allowBigIntAt && allowBigIntAt(path));
   if (value === null || typeof value === 'string' || typeof value === 'boolean'
-    || (allowBigInt && typeof value === 'bigint')) return value;
+    || (bigIntAllowed && typeof value === 'bigint')) return value;
   if (typeof value !== 'object') fail('fo_bad_config', `${field} contains unsupported data`);
   if (active.has(value)) fail('fo_bad_config', `${field} must not contain cycles`);
   if (requireFrozen) {
@@ -428,7 +474,8 @@ function copyDataSnapshot(value, field, { allowBigInt = false, requireFrozen = f
         fail('fo_bad_config', `${field} arrays must contain enumerable data entries`);
       }
       copy.push(copyDataSnapshot(
-        descriptor.value, field, { allowBigInt, requireFrozen }, active));
+        descriptor.value, field, { allowBigInt, allowBigIntAt, requireFrozen },
+        active, [...path, index]));
     }
   } else {
     if (prototype !== Object.prototype && prototype !== null) {
@@ -442,7 +489,8 @@ function copyDataSnapshot(value, field, { allowBigInt = false, requireFrozen = f
       }
       Object.defineProperty(copy, key, {
         value: copyDataSnapshot(
-          descriptor.value, field, { allowBigInt, requireFrozen }, active),
+          descriptor.value, field, { allowBigInt, allowBigIntAt, requireFrozen },
+          active, [...path, key]),
         enumerable: true,
         writable: true,
         configurable: true,
@@ -535,6 +583,7 @@ export async function observeFinalized({ client, identity, checkpoint = null, to
   const rangeFrom = baseNumber === null ? startBlock : baseNumber + 1n;
   const range = rangeFrom <= targetNumber ? { fromBlock: rangeFrom, toBlock: targetNumber } : null;
   let logs = [];
+  let eventBlocks = deepFreeze([]);
   if (range) {
     const rawLogs = await rpc(() => client.getLogs({
       address: config.identity.contractAddress,
@@ -542,7 +591,8 @@ export async function observeFinalized({ client, identity, checkpoint = null, to
       toBlock: range.toBlock,
       topics: [config.topics],
     }));
-    logs = await normalizedLogs(client, rawLogs, config, range.fromBlock, range.toBlock);
+    ({ logs, eventBlocks } = await normalizedLogs(
+      client, rawLogs, config, range.fromBlock, range.toBlock));
   }
   await recheckExact(client, targetNumber, target);
 
@@ -595,6 +645,7 @@ export async function observeFinalized({ client, identity, checkpoint = null, to
       toBlock: range.toBlock.toString(),
     } : null,
     logs,
+    eventBlocks,
     getters,
     caughtUp: targetNumber === horizonNumber,
   };
@@ -606,8 +657,12 @@ function validateCommitObservation(observation) {
   if (!observation || typeof observation !== 'object') {
     fail('fo_bad_config', 'commit requires completed immutable finalized evidence');
   }
-  const snapshot = deepFreeze(copyDataSnapshot(
-    observation, 'commit evidence', { requireFrozen: true }));
+  const snapshot = deepFreeze(copyDataSnapshot(observation, 'commit evidence', {
+    allowBigIntAt: (path) => path.length === 3 && path[0] === 'eventBlocks'
+      && Number.isSafeInteger(path[1])
+      && (path[2] === 'blockNumber' || path[2] === 'blockTimestamp'),
+    requireFrozen: true,
+  }));
   let identity;
   let head;
   let horizon;

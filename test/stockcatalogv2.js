@@ -627,7 +627,40 @@ const inboxLog = {
 const inboxReaderClient = finalizedReaderClient({ rawLogs: [inboxLog] });
 stockCatalogV2.__setStockTokenRegistryV2ClientFactory(() => inboxReaderClient);
 const inboxPool = await makeDb();
+const getterForbiddenAuthorityTables = [
+  'stock_catalog_evidence_v2',
+  'ticker_ballot_days_v2',
+  'ticker_ballot_candidates_v2',
+  'commission_ticker_votes_v2',
+  'ticker_ballot_results_v2',
+  'rwa_nominations_v2',
+  'rwa_nomination_events_v2',
+  'rwa_nomination_reviewer_state_v2',
+  'rwa_nomination_safe_proposals_v2',
+];
+async function authorityRowCounts(db) {
+  const counts = {};
+  for (const table of getterForbiddenAuthorityTables) {
+    counts[table] = (await db.query(`SELECT COUNT(*)::INT AS count FROM ${table}`)).rows[0].count;
+  }
+  return counts;
+}
+const authorityBeforeGetterSync = await authorityRowCounts(inboxPool);
 await syncFinalizedStockCatalogV2(inboxPool);
+assert.equal(inboxReaderClient.rawRequests.length, 1,
+  'the production getter consumer still performs exactly one bounded raw log request');
+assert.equal(inboxReaderClient.contractCalls.length, 7,
+  'event-block timestamp evidence does not add, remove, or escape the complete getter snapshot');
+const inboxCatalog = await approvedStockTokenCatalogV2(inboxPool);
+assert.deepEqual(inboxCatalog.assets.map((asset) => ({
+  assetVersionKey: asset.assetVersionKey,
+  ticker: asset.ticker,
+  active: asset.active,
+})), [{
+  assetVersionKey: inboxReaderClient.one.assetVersionKey,
+  ticker: 'AAPL',
+  active: true,
+}], 'the timestamp-bearing FO observation applies the same complete getter snapshot');
 const storedInbox = (await inboxPool.query(
   `SELECT chain_id,contract_address,block_number,block_hash,transaction_hash,
           transaction_index,log_index,topic0,topics_json,data_hex,observation_hash
@@ -672,6 +705,8 @@ assert.deepEqual({
 }, 'the immutable sync run records the FO commitment and horizon that produced its getter snapshot');
 assert.equal((await inboxPool.query('SELECT COUNT(*)::INT AS count FROM stock_catalog_evidence_v2')).rows[0].count, 0,
   'getter observation logs never populate activation/reviewer evidence authority');
+assert.deepEqual(await authorityRowCounts(inboxPool), authorityBeforeGetterSync,
+  'getter synchronization writes no lifecycle, reviewer, publisher, Safe, or ballot authority');
 await inboxPool.end?.();
 stockCatalogV2.__setStockTokenRegistryV2ClientFactory(() => stableReaderClient);
 let paddedRegistryRetry;

@@ -557,6 +557,137 @@ await test('every unique event block is independently checked and cached', async
   assert.equal(client.getBlockCalls.filter((call) => call.blockNumber === START + 1n).length, 1);
 });
 
+await test('eventBlocks retain literal provider-order timestamps with one fetch per unique log block', async () => {
+  const BLOCK_101_HASH = `0x${'a'.repeat(64)}`;
+  const BLOCK_102_HASH = `0x${'b'.repeat(64)}`;
+  const client = new FakePublicClient({ finalized: 110n, logs: [
+    eventLog(101n, { blockHash: BLOCK_101_HASH }),
+    eventLog(101n, { blockHash: BLOCK_101_HASH, transactionHash: hash('c'), logIndex: 1n }),
+    eventLog(102n, {
+      blockHash: BLOCK_102_HASH, transactionHash: hash('d'), transactionIndex: 1n,
+    }),
+  ] })
+    .setExact(101n, [{ number: 101n, hash: BLOCK_101_HASH, timestamp: 1_700_000_101n }])
+    .setExact(102n, [{ number: 102n, hash: BLOCK_102_HASH, timestamp: 1_700_000_102n }]);
+  const observation = await observe(client, {
+    identity: { startBlock: 101n }, limits: { maxBlockSpan: 3n }, readGetters: async () => ({}),
+  });
+  assert.deepEqual(observation.eventBlocks, [
+    { blockNumber: 101n, blockHash: BLOCK_101_HASH, blockTimestamp: 1_700_000_101n },
+    { blockNumber: 102n, blockHash: BLOCK_102_HASH, blockTimestamp: 1_700_000_102n },
+  ]);
+  assert.equal(client.getBlockCalls.filter((call) => call.blockNumber === 101n).length, 1);
+  assert.equal(client.getBlockCalls.filter((call) => call.blockNumber === 102n).length, 1);
+  assert(Object.isFrozen(observation.eventBlocks));
+  assert(Object.isFrozen(observation.eventBlocks[0]));
+});
+
+await test('a log-free observation publishes a frozen empty eventBlocks array', async () => {
+  const observation = await observe(new FakePublicClient({ logs: [] }), {
+    readGetters: async () => ({}),
+  });
+  assert.deepEqual(observation.eventBlocks, []);
+  assert(Object.isFrozen(observation.eventBlocks));
+});
+
+const cyclicTimestamp = {};
+cyclicTimestamp.self = cyclicTimestamp;
+await test('event block timestamps must be present as own data properties', async () => {
+  const block = chainBlock(START);
+  delete block.timestamp;
+  const client = new FakePublicClient({ logs: [eventLog(START)] }).setExact(START, [block]);
+  const error = await rejectsCode(
+    () => observe(client, { readGetters: async () => ({}) }), 'fo_log_block_hash');
+  assert.equal(error.message, 'event block timestamp is unavailable or malformed');
+  assert.equal(client.readContractCalls.length, 0);
+});
+
+for (const [name, timestamp] of [
+  ['undefined value', undefined],
+  ['Number', 1_700_000_101],
+  ['decimal string', '1700000101'],
+  ['float', 1.5],
+  ['negative BigInt', -1n],
+  ['symbol', Symbol('private timestamp')],
+  ['sparse array', Array(1)],
+  ['cycle', cyclicTimestamp],
+  ['live function capability', () => 1_700_000_101n],
+  ['attacker-reflected value', { [REFLECTED_SECRET]: 'private timestamp' }],
+]) {
+  await test(`event block timestamp rejects ${name} with one fixed secret-safe error`, async () => {
+    const client = new FakePublicClient({ logs: [eventLog(START)] })
+      .setExact(START, [chainBlock(START, { timestamp })]);
+    let getterCalled = false;
+    const error = await rejectsCode(() => observe(client, {
+      readGetters: async () => { getterCalled = true; return {}; },
+    }), 'fo_log_block_hash');
+    assert.equal(error.message, 'event block timestamp is unavailable or malformed');
+    assert.doesNotMatch(error.message, /password|private|postgres|request-body|1700000101/i);
+    assert.doesNotMatch(JSON.stringify(error), /password|private|postgres|request-body|1700000101/i);
+    if (Object.hasOwn(error, 'cause')) {
+      assert.equal(Object.prototype.propertyIsEnumerable.call(error, 'cause'), false);
+    }
+    assert.equal(getterCalled, false);
+    assert.equal(client.readContractCalls.length, 0);
+  });
+}
+
+await test('event block timestamp accessors are rejected without invocation', async () => {
+  let invoked = 0;
+  const block = chainBlock(START);
+  Object.defineProperty(block, 'timestamp', {
+    enumerable: true,
+    get() { invoked += 1; return 1_700_000_101n; },
+  });
+  const client = new FakePublicClient({ logs: [eventLog(START)] }).setExact(START, [block]);
+  const error = await rejectsCode(
+    () => observe(client, { readGetters: async () => ({}) }), 'fo_log_block_hash');
+  assert.equal(error.message, 'event block timestamp is unavailable or malformed');
+  assert.equal(invoked, 0);
+  assert.equal(client.readContractCalls.length, 0);
+});
+
+await test('eventBlocks remain inside the bounded serialized log-evidence budget', async () => {
+  const BLOCK_101_HASH = `0x${'a'.repeat(64)}`;
+  const client = new FakePublicClient({ finalized: 110n, logs: [
+    eventLog(101n, { blockHash: BLOCK_101_HASH }),
+  ] }).setExact(101n, [{
+    number: 101n, hash: BLOCK_101_HASH, timestamp: 1_700_000_101n,
+  }]);
+  await rejectsCode(() => observe(client, {
+    identity: { startBlock: 101n },
+    limits: { maxBlockSpan: 3n, maxBytes: 450 },
+    readGetters: async () => ({}),
+  }), 'fo_work_oversized');
+});
+
+await test('changing only one event-block timestamp changes the complete evidence commitment', async () => {
+  const firstClient = new FakePublicClient({ logs: [eventLog(START)] })
+    .setExact(START, [chainBlock(START, { timestamp: 1_700_000_101n })]);
+  const secondClient = new FakePublicClient({ logs: [eventLog(START)] })
+    .setExact(START, [chainBlock(START, { timestamp: 1_700_000_102n })]);
+  const first = await observe(firstClient, { readGetters: async () => ({}) });
+  const second = await observe(secondClient, { readGetters: async () => ({}) });
+  assert.deepEqual(first.logs, second.logs);
+  assert.deepEqual(first.getters, second.getters);
+  assert.notEqual(first.eventBlocks[0].blockTimestamp, second.eventBlocks[0].blockTimestamp);
+  assert.notEqual(first.evidenceHash, second.evidenceHash);
+});
+
+await test('returned event-block time evidence rejects post-return mutation', async () => {
+  const observation = await observe(new FakePublicClient({ logs: [eventLog(START)] }), {
+    readGetters: async () => ({}),
+  });
+  const timestamp = observation.eventBlocks[0].blockTimestamp;
+  const evidenceHash = observation.evidenceHash;
+  assert.throws(() => observation.eventBlocks.push({
+    blockNumber: START + 1n, blockHash: hash('e'), blockTimestamp: 1n,
+  }));
+  assert.throws(() => { observation.eventBlocks[0].blockTimestamp += 1n; });
+  assert.equal(observation.eventBlocks[0].blockTimestamp, timestamp);
+  assert.equal(observation.evidenceHash, evidenceHash);
+});
+
 await test('an event block hash mismatch fails closed', async () => {
   const client = new FakePublicClient({ logs: [eventLog(START, { blockHash: hash('f') })] });
   await rejectsCode(() => observe(client, { readGetters: async () => ({}) }), 'fo_log_block_hash');
@@ -1649,6 +1780,19 @@ await test('commit evidence validation uses a fixed message, never its reflected
   assert.doesNotMatch(error.message, /password|private|postgres|request-body/i);
   assert.doesNotMatch(JSON.stringify(error), /password|private|postgres|request-body/i);
   assert.equal(Object.hasOwn(error, 'cause'), false);
+  assert.equal(pool.connectCount, 0);
+});
+
+await test('commit evidence permits BigInt only in typed event-block authority fields', async () => {
+  const observation = await transactionObservation();
+  const forged = Object.freeze({
+    ...observation,
+    getters: Object.freeze({ forgedAuthority: 1n }),
+  });
+  const pool = new AtomicTestPool();
+  const error = await rejectsCode(
+    () => commitFinalizedObservation(pool, forged, adapterFor()), 'fo_bad_config');
+  assert.equal(error.message, 'commit evidence contains unsupported data');
   assert.equal(pool.connectCount, 0);
 });
 
