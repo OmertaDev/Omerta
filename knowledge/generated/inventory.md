@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `021a50f9bb25`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `bffe43b33672`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,574 |
-| Text lines | 390,764 |
-| Repository bytes inventoried | 274,520,873 |
+| Text lines | 391,159 |
+| Repository bytes inventoried | 274,547,303 |
 | Backend/route modules | 166 |
 | HTTP route registrations / unique routes | 713 / 713 |
 | Database tables | 247 |
 | Solidity declarations | 28 |
-| Git commits | 1,024 |
+| Git commits | 1,026 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 4,572 / 21,544 |
+| Graph nodes / edges | 4,574 / 21,552 |
 
 ## Artifact kinds
 
@@ -48,7 +48,7 @@
 |---|---:|---|---|
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
 | [CLAUDE.md](../../CLAUDE.md) | 17,225 | documentation | 2026-08-26 |
-| [public/index.html](../../public/index.html) | 11,440 | web-surface | 2026-08-27 |
+| [public/index.html](../../public/index.html) | 11,617 | web-surface | 2026-08-27 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
