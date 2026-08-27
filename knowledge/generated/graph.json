@@ -1,7 +1,7 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "5ee68c063ea851c97d273aaa2e426e017c88e677",
-  "worktreeDirty": false,
+  "sourceRevision": "a82cad4c52510eb8114ff1da4f6ec6753ff81e79",
+  "worktreeDirty": true,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
     "nodeTypes": [
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 4598,
-    "edges": 21559,
+    "nodes": 4600,
+    "edges": 21568,
     "byNodeType": {
       "Artifact": 1584,
       "Command": 35,
-      "Commit": 999,
+      "Commit": 1001,
       "Contract": 33,
       "Document": 407,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1844,
-      "CHANGED": 8317,
+      "CHANGED": 8324,
       "CONTAINS": 1604,
       "DECLARES": 35,
       "DEFINED_IN": 1018,
       "DEPENDS_ON": 59,
       "EXECUTES": 156,
       "HANDLED_BY": 653,
-      "HAS_COMMIT": 999,
+      "HAS_COMMIT": 1001,
       "IMPLEMENTS": 124,
       "IMPORTS": 1477,
       "INHERITS": 5,
@@ -28631,13 +28631,13 @@
       "extension": ".md",
       "bytes": 46570,
       "lines": 647,
-      "version": "0bda573f691a350a",
+      "version": "f544cf5fb9efb9cd",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "0bda573f691a350a"
+          "version": "f544cf5fb9efb9cd"
         }
       ],
       "lastChangedAt": "2026-08-27T01:34:48-04:00",
@@ -29963,20 +29963,20 @@
       "path": "src/finalizedobservation.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 32981,
-      "lines": 764,
-      "version": "1c54e25d5c5fa38f",
+      "bytes": 35435,
+      "lines": 819,
+      "version": "9b5072ec0e6ac689",
       "text": true,
       "provenance": [
         {
           "file": "src/finalizedobservation.js",
           "line": 1,
-          "version": "1c54e25d5c5fa38f"
+          "version": "9b5072ec0e6ac689"
         }
       ],
-      "lastChangedAt": "2026-08-27T00:24:28-04:00",
+      "lastChangedAt": "2026-08-27T02:01:49-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0d0a38fc4d42f2f982dc80e596cf7eb30f3e1ade"
+      "lastChangedCommit": "a82cad4c52510eb8114ff1da4f6ec6753ff81e79"
     },
     {
       "key": "Artifact:src/firstblood.js",
@@ -33528,20 +33528,20 @@
       "path": "test/finalizedobservation.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 69625,
-      "lines": 1670,
-      "version": "01cf63c9e6d74d8c",
+      "bytes": 76498,
+      "lines": 1814,
+      "version": "7c9136360ce48f8c",
       "text": true,
       "provenance": [
         {
           "file": "test/finalizedobservation.js",
           "line": 1,
-          "version": "01cf63c9e6d74d8c"
+          "version": "7c9136360ce48f8c"
         }
       ],
-      "lastChangedAt": "2026-08-27T00:24:28-04:00",
+      "lastChangedAt": "2026-08-27T02:01:49-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0d0a38fc4d42f2f982dc80e596cf7eb30f3e1ade"
+      "lastChangedCommit": "a82cad4c52510eb8114ff1da4f6ec6753ff81e79"
     },
     {
       "key": "Artifact:test/firstblood.js",
@@ -34954,20 +34954,20 @@
       "path": "test/stockcatalogv2.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 73249,
-      "lines": 1297,
-      "version": "1b8e6ff7a97bc322",
+      "bytes": 74759,
+      "lines": 1332,
+      "version": "6acc93b2a14a6023",
       "text": true,
       "provenance": [
         {
           "file": "test/stockcatalogv2.js",
           "line": 1,
-          "version": "1b8e6ff7a97bc322"
+          "version": "6acc93b2a14a6023"
         }
       ],
-      "lastChangedAt": "2026-08-27T01:33:02-04:00",
+      "lastChangedAt": "2026-08-27T02:01:49-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fb0c18d3af446d1fa00fa548c65e80f9b2746b2f"
+      "lastChangedCommit": "a82cad4c52510eb8114ff1da4f6ec6753ff81e79"
     },
     {
       "key": "Artifact:test/stockcatalogv2.postgres.js",
@@ -45222,6 +45222,22 @@
       ]
     },
     {
+      "key": "Commit:7eb3399336734357d23791d6dfa776edb2480d3f",
+      "type": "Commit",
+      "id": "7eb3399336734357d23791d6dfa776edb2480d3f",
+      "label": "docs: record event time plan provenance",
+      "title": "docs: record event time plan provenance",
+      "date": "2026-08-27T01:45:58-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7eb3399336734357d23791d6dfa776edb2480d3f",
+      "provenance": [
+        {
+          "commit": "7eb3399336734357d23791d6dfa776edb2480d3f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7eb3399336734357d23791d6dfa776edb2480d3f"
+        }
+      ]
+    },
+    {
       "key": "Commit:7feb393915616ed8b9c1beae44107dc984026be9",
       "type": "Commit",
       "id": "7feb393915616ed8b9c1beae44107dc984026be9",
@@ -47922,6 +47938,22 @@
         {
           "commit": "a7fc9ce5b081a97c0f687cb00a8ad31282441641",
           "url": "https://github.com/OmertaDev/Omerta/commit/a7fc9ce5b081a97c0f687cb00a8ad31282441641"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a82cad4c52510eb8114ff1da4f6ec6753ff81e79",
+      "type": "Commit",
+      "id": "a82cad4c52510eb8114ff1da4f6ec6753ff81e79",
+      "label": "feat: add finalized event time evidence",
+      "title": "feat: add finalized event time evidence",
+      "date": "2026-08-27T02:01:49-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a82cad4c52510eb8114ff1da4f6ec6753ff81e79",
+      "provenance": [
+        {
+          "commit": "a82cad4c52510eb8114ff1da4f6ec6753ff81e79",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a82cad4c52510eb8114ff1da4f6ec6753ff81e79"
         }
       ]
     },
@@ -59989,12 +60021,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 647,
-      "version": "0bda573f691a350a",
+      "version": "f544cf5fb9efb9cd",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "0bda573f691a350a"
+          "version": "f544cf5fb9efb9cd"
         }
       ]
     },
@@ -60762,7 +60794,7 @@
         },
         {
           "file": "test/stockcatalogv2.js",
-          "line": 1268
+          "line": 1303
         },
         {
           "file": "test/stockdeliver.js",
@@ -61224,6 +61256,9 @@
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
+          "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
+        },
+        {
           "commit": "83d19c0f0a798b0b59bed8d79b856659f08bba83"
         },
         {
@@ -61323,6 +61358,9 @@
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
+          "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
+        },
+        {
           "commit": "83d19c0f0a798b0b59bed8d79b856659f08bba83"
         },
         {
@@ -61420,6 +61458,9 @@
         },
         {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
+        },
+        {
+          "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
         },
         {
           "commit": "83d19c0f0a798b0b59bed8d79b856659f08bba83"
@@ -61543,6 +61584,9 @@
         },
         {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
+        },
+        {
+          "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
         },
         {
           "commit": "83d19c0f0a798b0b59bed8d79b856659f08bba83"
@@ -62640,13 +62684,13 @@
       "type": "Module",
       "id": "src/finalizedobservation.js",
       "label": "src/finalizedobservation.js",
-      "lines": 764,
-      "version": "1c54e25d5c5fa38f",
+      "lines": 819,
+      "version": "9b5072ec0e6ac689",
       "provenance": [
         {
           "file": "src/finalizedobservation.js",
           "line": 1,
-          "version": "1c54e25d5c5fa38f"
+          "version": "9b5072ec0e6ac689"
         }
       ]
     },
@@ -67440,11 +67484,11 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "5ee68c063ea851c97d273aaa2e426e017c88e677",
+      "revision": "a82cad4c52510eb8114ff1da4f6ec6753ff81e79",
       "currentBranch": "codex/grill-completion",
       "defaultBranch": "main",
       "visibility": "public",
-      "worktreeDirty": false,
+      "worktreeDirty": true,
       "currentArtifactCount": 1585,
       "provenance": [
         {
@@ -89677,13 +89721,13 @@
       "type": "TestSuite",
       "id": "test/finalizedobservation.js",
       "label": "test/finalizedobservation.js",
-      "lines": 1670,
-      "version": "01cf63c9e6d74d8c",
+      "lines": 1814,
+      "version": "7c9136360ce48f8c",
       "provenance": [
         {
           "file": "test/finalizedobservation.js",
           "line": 1,
-          "version": "01cf63c9e6d74d8c"
+          "version": "7c9136360ce48f8c"
         }
       ]
     },
@@ -90607,13 +90651,13 @@
       "type": "TestSuite",
       "id": "test/stockcatalogv2.js",
       "label": "test/stockcatalogv2.js",
-      "lines": 1297,
-      "version": "1b8e6ff7a97bc322",
+      "lines": 1332,
+      "version": "6acc93b2a14a6023",
       "provenance": [
         {
           "file": "test/stockcatalogv2.js",
           "line": 1,
-          "version": "1b8e6ff7a97bc322"
+          "version": "6acc93b2a14a6023"
         }
       ]
     },
@@ -142533,6 +142577,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:7eb3399336734357d23791d6dfa776edb2480d3f",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7eb3399336734357d23791d6dfa776edb2480d3f",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7eb3399336734357d23791d6dfa776edb2480d3f",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7eb3399336734357d23791d6dfa776edb2480d3f",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:7feb393915616ed8b9c1beae44107dc984026be9",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -151825,6 +151901,30 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "commit": "a7fc9ce5b081a97c0f687cb00a8ad31282441641"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a82cad4c52510eb8114ff1da4f6ec6753ff81e79",
+      "to": "Artifact:src/finalizedobservation.js",
+      "provenance": {
+        "commit": "a82cad4c52510eb8114ff1da4f6ec6753ff81e79"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a82cad4c52510eb8114ff1da4f6ec6753ff81e79",
+      "to": "Artifact:test/finalizedobservation.js",
+      "provenance": {
+        "commit": "a82cad4c52510eb8114ff1da4f6ec6753ff81e79"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a82cad4c52510eb8114ff1da4f6ec6753ff81e79",
+      "to": "Artifact:test/stockcatalogv2.js",
+      "provenance": {
+        "commit": "a82cad4c52510eb8114ff1da4f6ec6753ff81e79"
       }
     },
     {
@@ -210303,6 +210403,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:7eb3399336734357d23791d6dfa776edb2480d3f",
+      "provenance": {
+        "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:7feb393915616ed8b9c1beae44107dc984026be9",
       "provenance": {
         "commit": "7feb393915616ed8b9c1beae44107dc984026be9"
@@ -211650,6 +211758,14 @@
       "to": "Commit:a7fc9ce5b081a97c0f687cb00a8ad31282441641",
       "provenance": {
         "commit": "a7fc9ce5b081a97c0f687cb00a8ad31282441641"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a82cad4c52510eb8114ff1da4f6ec6753ff81e79",
+      "provenance": {
+        "commit": "a82cad4c52510eb8114ff1da4f6ec6753ff81e79"
       }
     },
     {
@@ -226412,7 +226528,7 @@
       "to": "ExternalDependency:viem",
       "provenance": {
         "file": "test/stockcatalogv2.js",
-        "line": 1268
+        "line": 1303
       }
     },
     {
