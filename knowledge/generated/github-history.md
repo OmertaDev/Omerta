@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `c7a3643f6b5a`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `45a5bb46c890`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 975 |
+| Commits in clone | 976 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-26 — fix: harden version-snapshot stock ballot |
+| Latest commit | 2026-08-26 — docs: refresh hardened ballot knowledge graph |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 174 |
+| OmertaDev | 175 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -33,7 +33,7 @@
 | [src/server.js](../../src/server.js) | 340 | yes |
 | [schema.sql](../../schema.sql) | 259 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
-| [SPEC.md](../../SPEC.md) | 239 | yes |
+| [SPEC.md](../../SPEC.md) | 240 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 169 | yes |
 | [package.json](../../package.json) | 131 | yes |
