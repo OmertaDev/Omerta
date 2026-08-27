@@ -111,6 +111,229 @@ export async function migrateColumns(pool, schemaText = SCHEMA) {
   return { total: stmts.length, failed };
 }
 
+const TASK5_DECISION_TUPLE_SQL = `(
+  (status = 'closed_ready' AND (
+    (decided_by = 'chamber' AND decided_by_code = 1
+      AND votes BETWEEN 1 AND 5 AND weighted BETWEEN 1 AND 15)
+    OR (decided_by = 'default_silence' AND decided_by_code = 2
+      AND votes = 0 AND weighted = 0)
+    OR (decided_by = 'default_tie' AND decided_by_code = 3
+      AND votes = 0 AND weighted = 0)
+  ))
+  OR (status = 'skipped_catalog_unavailable' AND decided_by = 'skipped'
+    AND decided_by_code = 4 AND skip_reason = 'catalog_unavailable'
+    AND votes = 0 AND weighted = 0)
+  OR (status = 'skipped_catalog_empty' AND decided_by = 'skipped'
+    AND decided_by_code = 5 AND skip_reason = 'catalog_empty'
+    AND votes = 0 AND weighted = 0)
+  OR (status = 'skipped_no_valid_candidate' AND decided_by = 'skipped'
+    AND decided_by_code = 6 AND skip_reason = 'no_valid_candidate'
+    AND votes = 0 AND weighted = 0)
+)`;
+
+const TASK5_CLOSED_TUPLE_SQL = `(
+  (closed_valid IS NULL AND closed_counted IS NULL AND closed_weight IS NULL
+    AND closed_exclusion_reason IS NULL)
+  OR
+  (closed_valid IS NOT NULL AND closed_counted IS NOT NULL AND closed_weight IS NOT NULL
+    AND (
+      (closed_valid AND closed_counted AND closed_weight BETWEEN 1 AND 5
+        AND closed_exclusion_reason IS NULL)
+      OR (closed_valid AND NOT closed_counted AND closed_weight = 0
+        AND closed_exclusion_reason = 'outside_top_five')
+      OR (NOT closed_valid AND NOT closed_counted AND closed_weight = 0
+        AND closed_exclusion_reason IS NOT NULL)
+    ))
+)`;
+
+const canonicalBytes32Sql = (column) => `(${column} LIKE '0x${'_'.repeat(64)}'
+  AND ${Array.from({ length: 64 }, (_, index) => (
+    `substring(${column},${index + 3},1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')`
+  )).join('\n  AND ')})`;
+
+const TASK5_PUBLICATION_TUPLE_SQL = `(
+  (registry_tx_hash IS NULL OR ${canonicalBytes32Sql('registry_tx_hash')})
+  AND (finalized_block_number IS NULL OR finalized_block_number >= 0)
+  AND (finalized_block_hash IS NULL OR ${canonicalBytes32Sql('finalized_block_hash')})
+  AND (
+    (status <> 'closed_ready'
+      AND publication_status = 'not_submitted'
+      AND registry_tx_hash IS NULL
+      AND finalized_block_number IS NULL
+      AND finalized_block_hash IS NULL
+      AND finalized_at IS NULL)
+    OR
+    (status = 'closed_ready' AND (
+      (publication_status = 'not_submitted'
+        AND registry_tx_hash IS NULL
+        AND finalized_block_number IS NULL
+        AND finalized_block_hash IS NULL
+        AND finalized_at IS NULL)
+      OR (publication_status IN ('publisher_submitted','published_pending_finality')
+        AND registry_tx_hash IS NOT NULL
+        AND finalized_block_number IS NULL
+        AND finalized_block_hash IS NULL
+        AND finalized_at IS NULL)
+      OR (publication_status = 'finalized'
+        AND registry_tx_hash IS NOT NULL
+        AND finalized_block_number IS NOT NULL
+        AND finalized_block_hash IS NOT NULL
+        AND finalized_at IS NOT NULL)
+      OR (publication_status = 'reorged'
+        AND registry_tx_hash IS NOT NULL
+        AND finalized_block_number IS NULL
+        AND finalized_block_hash IS NULL
+        AND finalized_at IS NULL)
+      OR (publication_status = 'failed'
+        AND finalized_block_number IS NULL
+        AND finalized_block_hash IS NULL
+        AND finalized_at IS NULL)
+    ))
+  )
+)`;
+
+const TASK5_BALLOT_CONSTRAINTS = [
+  ['ticker_ballot_days_v2', 'ck_ticker_ballot_days_v2_day_range',
+    'day >= 0 AND day <= 99999999'],
+  ['ticker_ballot_candidates_v2', 'ck_ticker_ballot_candidates_v2_day_range',
+    'day >= 0 AND day <= 99999999'],
+  ['commission_ticker_votes_v2', 'ck_commission_ticker_votes_v2_day_range',
+    'day >= 0 AND day <= 99999999'],
+  ['ticker_ballot_results_v2', 'ck_ticker_ballot_results_v2_day_range',
+    'day >= 0 AND day <= 99999999'],
+  ['ticker_ballot_candidates_v2', 'ck_ticker_ballot_candidates_v2_activation_evidence',
+    "activation_evidence_version = 0 OR (activation_evidence_version = 1 AND activated_at IS NOT NULL)"],
+  ['commission_ticker_votes_v2', 'ck_commission_ticker_votes_v2_closed_tuple',
+    TASK5_CLOSED_TUPLE_SQL],
+  ['ticker_ballot_results_v2', 'ck_ticker_ballot_results_v2_vote_evidence_version',
+    'vote_evidence_version IN (0,1)'],
+  ['ticker_ballot_results_v2', 'ck_ticker_ballot_results_v2_decision_tuple',
+    TASK5_DECISION_TUPLE_SQL],
+  ['ticker_ballot_results_v2', 'ck_ticker_ballot_results_v2_publication_tuple',
+    TASK5_PUBLICATION_TUPLE_SQL],
+];
+
+async function task5BallotColumns(q) {
+  const rows = (await q.query(
+    `SELECT table_name,column_name FROM information_schema.columns
+      WHERE table_name IN ('ticker_ballot_candidates_v2','commission_ticker_votes_v2',
+                           'ticker_ballot_results_v2')`,
+  )).rows;
+  return new Set(rows.map((row) => `${row.table_name}.${row.column_name}`));
+}
+
+async function rejectInvalidTask5BallotAuthority(q, columns) {
+  const checks = [
+    ...['ticker_ballot_days_v2', 'ticker_ballot_candidates_v2',
+      'commission_ticker_votes_v2', 'ticker_ballot_results_v2'].map((table) => ({
+      label: `${table} day range`,
+      sql: `SELECT 1 FROM ${table} WHERE day < 0 OR day > 99999999 LIMIT 1`,
+    })),
+    {
+      label: 'result decision tuple',
+      sql: `SELECT 1 FROM ticker_ballot_results_v2 WHERE NOT ${TASK5_DECISION_TUPLE_SQL} LIMIT 1`,
+    },
+    {
+      label: 'result publication tuple',
+      sql: `SELECT 1 FROM ticker_ballot_results_v2 WHERE NOT ${TASK5_PUBLICATION_TUPLE_SQL} LIMIT 1`,
+    },
+  ];
+  if (columns.has('ticker_ballot_candidates_v2.activation_evidence_version')
+      && columns.has('ticker_ballot_candidates_v2.activated_at')) checks.push({
+    label: 'candidate activation evidence tuple',
+    sql: `SELECT 1 FROM ticker_ballot_candidates_v2
+           WHERE NOT (activation_evidence_version = 0
+             OR (activation_evidence_version = 1 AND activated_at IS NOT NULL)) LIMIT 1`,
+  });
+  if (['closed_valid', 'closed_counted', 'closed_weight', 'closed_exclusion_reason'].every(
+    (column) => columns.has(`commission_ticker_votes_v2.${column}`),
+  )) checks.push({
+    label: 'closed vote tuple',
+    sql: `SELECT 1 FROM commission_ticker_votes_v2 WHERE NOT ${TASK5_CLOSED_TUPLE_SQL} LIMIT 1`,
+  });
+  if (columns.has('ticker_ballot_results_v2.vote_evidence_version')) checks.push({
+    label: 'result vote evidence version',
+    sql: `SELECT 1 FROM ticker_ballot_results_v2
+           WHERE vote_evidence_version NOT IN (0,1) LIMIT 1`,
+  });
+  for (const check of checks) {
+    if ((await q.query(check.sql)).rows.length) {
+      const error = new Error(`Task 5 authority migration rejected invalid legacy ${check.label}`);
+      error.code = 'task5_migration_invalid';
+      throw error;
+    }
+  }
+}
+
+async function addTask5BallotConstraint(q, table, name, expression, compatibility) {
+  if (compatibility === 'pg-mem') {
+    try {
+      await q.query(`ALTER TABLE ${table} ADD CONSTRAINT ${name} CHECK (${expression})`);
+    }
+    catch (error) {
+      if (error?.code !== '42P07') throw error;
+    }
+    return;
+  }
+  const exists = (await q.query(
+    'SELECT 1 FROM pg_constraint WHERE conname=$1 AND conrelid=$2::regclass', [name, table],
+  )).rows.length > 0;
+  if (!exists) await q.query(
+    `ALTER TABLE ${table} ADD CONSTRAINT ${name} CHECK (${expression}) NOT VALID`,
+  );
+  await q.query(`ALTER TABLE ${table} VALIDATE CONSTRAINT ${name}`);
+}
+
+// Targeted authority migration for the four already-shipped Task 5 tables. Unlike the generic
+// log-and-skip column pass, this transaction is deliberately fail-closed: version-zero is the only
+// truthful interpretation of legacy candidate/result evidence, and every authority constraint must
+// validate before startup may stamp the schema. `pg-mem` lacks NOT VALID/VALIDATE and transactional
+// DDL; its narrow adapter uses the same CHECK expressions while production retains PostgreSQL DDL.
+export async function migrateTask5BallotV2(q, { compatibility = 'postgres' } = {}) {
+  await q.query('BEGIN');
+  try {
+    await q.query('SELECT 1 AS ok /* task5_ballot_v2_targeted_migration */');
+    if (compatibility === 'postgres') await q.query(
+      `LOCK TABLE ticker_ballot_days_v2,ticker_ballot_candidates_v2,
+                  commission_ticker_votes_v2,ticker_ballot_results_v2
+         IN ACCESS EXCLUSIVE MODE`,
+    );
+    const before = await task5BallotColumns(q);
+    await rejectInvalidTask5BallotAuthority(q, before);
+    for (const statement of [
+      'ALTER TABLE ticker_ballot_candidates_v2 ADD COLUMN IF NOT EXISTS activation_evidence_version SMALLINT NOT NULL DEFAULT 0',
+      'ALTER TABLE ticker_ballot_candidates_v2 ADD COLUMN IF NOT EXISTS activated_at TIMESTAMPTZ',
+      'ALTER TABLE commission_ticker_votes_v2 ADD COLUMN IF NOT EXISTS closed_valid BOOLEAN',
+      'ALTER TABLE commission_ticker_votes_v2 ADD COLUMN IF NOT EXISTS closed_counted BOOLEAN',
+      'ALTER TABLE commission_ticker_votes_v2 ADD COLUMN IF NOT EXISTS closed_weight INT',
+      'ALTER TABLE commission_ticker_votes_v2 ADD COLUMN IF NOT EXISTS closed_exclusion_reason TEXT',
+      'ALTER TABLE ticker_ballot_results_v2 ADD COLUMN IF NOT EXISTS vote_evidence_version SMALLINT NOT NULL DEFAULT 0',
+    ]) await q.query(statement);
+    const after = await task5BallotColumns(q);
+    await rejectInvalidTask5BallotAuthority(q, after);
+    for (const constraint of TASK5_BALLOT_CONSTRAINTS) {
+      await addTask5BallotConstraint(q, ...constraint, compatibility);
+    }
+    await q.query('COMMIT');
+  } catch (error) {
+    await q.query('ROLLBACK').catch(() => {});
+    throw error;
+  }
+}
+
+// Called only while makeDb holds the existing session advisory lock. Keeping the sequence in one
+// tested seam prevents a future boot edit from stamping a build before its fail-closed authority
+// migration completed.
+export async function migrateSchemaUnderLock(
+  boot, { schemaText = SCHEMA, compatibility = 'postgres' } = {},
+) {
+  await boot.query(schemaText);
+  const migration = await migrateColumns(boot, schemaText);
+  await migrateTask5BallotV2(boot, { compatibility });
+  const stamp = await stampSchema(boot);
+  return { migration, stamp };
+}
+
 export async function makeDb() {
   if (process.env.DATABASE_URL) {
     const { Pool } = await import('pg');
@@ -215,10 +438,7 @@ export async function makeDb() {
     const boot = await pool.connect();
     try {
       await boot.query('SELECT pg_advisory_lock($1)', [SCHEMA_LOCK_KEY]);
-      await boot.query(SCHEMA);
-      // in-place upgrade: add any columns that a pre-existing table is missing (a fresh DB → all no-ops).
-      const mig = await migrateColumns(boot, SCHEMA);
-      await stampSchema(boot); // which build applied this schema — see stampSchema above
+      const { migration: mig } = await migrateSchemaUnderLock(boot);
       console.log(`[db] Postgres ready — column migration ran ${mig.total} ADD COLUMN IF NOT EXISTS statements${mig.failed ? ` (${mig.failed} skipped — see above)` : ''}.`);
     } finally {
       await boot.query('SELECT pg_advisory_unlock($1)', [SCHEMA_LOCK_KEY]).catch(() => {});

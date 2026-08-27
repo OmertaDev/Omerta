@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { getAddress } from 'viem';
-import { makeDb } from '../src/db.js';
+import { dbCaps, makeDb } from '../src/db.js';
 import { buildServer } from '../src/server.js';
 import {
   canonicalTickerBallotTallyHashV2,
@@ -194,6 +194,21 @@ async function withClockedClient(pool, wall, fn) {
 async function expectCode(promise, code) {
   await assert.rejects(promise, (error) => error?.code === code,
     `expected stable error code ${code}`);
+}
+
+async function plantBallotVotes(pool, day, assetVersionKey, count, { prefix = 'planted' } = {}) {
+  const params = [];
+  const values = [];
+  for (let i = 0; i < count; i++) {
+    const at = params.length;
+    params.push(day, `${prefix}-${String(i).padStart(3, '0')}`, assetVersionKey, 'T1', String(1000 + i));
+    values.push(`($${at + 1},$${at + 2},$${at + 3},$${at + 4},$${at + 5})`);
+  }
+  if (values.length) await pool.query(
+    `INSERT INTO commission_ticker_votes_v2
+      (day,family_id,asset_version_key,ticker,standing) VALUES ${values.join(',')}`,
+    params,
+  );
 }
 
 function sqlStateError(code, message) {
@@ -663,6 +678,419 @@ await fixRegression('ballot day caps at the shared PostgreSQL-JavaScript timesta
   await expectCode(openTickerBallotV2(untouched, {
     day: '100000000', maxEthWei: '1', detailsHash: DETAILS, actorId: 'mod',
   }), 'bad_ballot_open');
+});
+
+// Round-2 review RED matrix. The production change each case kills is named in the assertion:
+// stale pre-lock time, unbounded work, broad insert-error swallowing, false migrated evidence,
+// incomplete publication tuples, or empty-current-projection misclassification.
+await fixRegression('cast samples cutoff authority after the day lock, including exact equality', async () => {
+  const pool = await makeDb();
+  try {
+    const [asset] = await seedCatalog(pool, { assets: [candidate(1)] });
+    const [family] = await seedFamilies(pool, ['500']);
+    await openTickerBallotV2(clockedPool(pool, WALL), {
+      day: DAY, maxEthWei: '61', detailsHash: DETAILS, actorId: 'mod',
+    });
+    let dayLocked = false;
+    let clockReads = 0;
+    const raw = await pool.connect();
+    const client = {
+      async query(sql, params = []) {
+        if (sql.includes('ticker_ballot_v2_clock')) {
+          clockReads++;
+          const wall = dayLocked ? CLOSE : '2026-09-04T23:59:59.999Z';
+          return { rows: [{
+            wall_now: new Date(wall), current_day: DAY, closes_at: new Date(CLOSE),
+            epoch_seconds: epochSeconds(wall),
+          }] };
+        }
+        if (sql.includes('FROM ticker_ballot_days_v2') && sql.includes('FOR UPDATE')) dayLocked = true;
+        return raw.query(sql, params);
+      },
+    };
+    try {
+      await expectCode(castTickerVoteV2(
+        family.ch, { assetVersionKey: asset.assetVersionKey }, client, family.h,
+      ), 'ballot_closed');
+    } finally { raw.release(); }
+    assert.equal(dayLocked, true, 'the immutable day is locked before cutoff authority is sampled');
+    assert.equal(clockReads, 2, 'the first clock selects a day and a second post-lock clock authorizes mutation');
+    assert.equal((await pool.query(
+      'SELECT count(*)::int AS n FROM commission_ticker_votes_v2 WHERE day=$1', [DAY],
+    )).rows[0].n, 0, 'a lock wait crossing exact cutoff creates no vote');
+  } finally { await pool.end(); }
+});
+
+await fixRegression('dissolution locks family then ballot days before exact cutoff authority', async () => {
+  const pool = await makeDb();
+  try {
+    const [asset] = await seedCatalog(pool, { assets: [candidate(1)] });
+    const [family] = await seedFamilies(pool, ['500']);
+    await openTickerBallotV2(clockedPool(pool, WALL), {
+      day: DAY, maxEthWei: '62', detailsHash: DETAILS, actorId: 'mod',
+    });
+    await withClockedClient(pool, WALL, (client) => castTickerVoteV2(
+      family.ch, { assetVersionKey: asset.assetVersionKey }, client, family.h,
+    ));
+    const order = [];
+    let ballotDaysLocked = false;
+    const raw = await pool.connect();
+    const client = {
+      async query(sql, params = []) {
+        if (sql.includes('SELECT 1 FROM gangs') && sql.includes('FOR UPDATE')) order.push('family');
+        if (sql.includes('ticker_ballot_v2_dissolution_days')) {
+          ballotDaysLocked = true;
+          order.push('days');
+        }
+        if (sql.includes('ticker_ballot_v2_dissolution_clock')) {
+          order.push('clock');
+          const wall = ballotDaysLocked ? CLOSE : '2026-09-04T23:59:59.999Z';
+          return { rows: [{ epoch_seconds: epochSeconds(wall) }] };
+        }
+        return raw.query(sql, params);
+      },
+    };
+    try {
+      await client.query('BEGIN');
+      await removeMember(client, family.familyId, family.ch.id);
+      await client.query('COMMIT');
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally { raw.release(); }
+    assert.deepEqual(order.slice(0, 3), ['family', 'days', 'clock'],
+      'global order is family then ascending ballot-day locks then authoritative DB time');
+    assert.equal((await pool.query(
+      'SELECT count(*)::int AS n FROM commission_ticker_votes_v2 WHERE day=$1', [DAY],
+    )).rows[0].n, 1, 'exact cutoff equality preserves the frozen vote');
+  } finally { await pool.end(); }
+});
+
+await fixRegression('the 100-slot wall admits 99 to 100, updates at capacity, and rejects slot 101', async () => {
+  const pool = await makeDb();
+  try {
+    const assets = await seedCatalog(pool);
+    const families = await seedFamilies(pool, ['500', '400']);
+    await openTickerBallotV2(clockedPool(pool, WALL), {
+      day: DAY, maxEthWei: '63', detailsHash: DETAILS, actorId: 'mod',
+    });
+    await plantBallotVotes(pool, DAY, assets[0].assetVersionKey, 99);
+    await withClockedClient(pool, WALL, (client) => castTickerVoteV2(
+      families[0].ch, { assetVersionKey: assets[0].assetVersionKey }, client, families[0].h,
+    ));
+    assert.equal((await pool.query(
+      'SELECT count(*)::int AS n FROM commission_ticker_votes_v2 WHERE day=$1', [DAY],
+    )).rows[0].n, 100, 'the 100th distinct family slot is admitted');
+    await withClockedClient(pool, WALL, (client) => castTickerVoteV2(
+      families[0].ch, { assetVersionKey: assets[1].assetVersionKey }, client, families[0].h,
+    ));
+    await expectCode(withClockedClient(pool, WALL, (client) => castTickerVoteV2(
+      families[1].ch, { assetVersionKey: assets[0].assetVersionKey }, client, families[1].h,
+    )), 'ballot_overloaded');
+    assert.equal((await pool.query(
+      'SELECT count(*)::int AS n FROM commission_ticker_votes_v2 WHERE day=$1', [DAY],
+    )).rows[0].n, 100, 'capacity rejection neither evicts nor overwrites prior evidence');
+  } finally { await pool.end(); }
+});
+
+async function overloadedBallotFixture() {
+  const pool = await makeDb();
+  const [asset] = await seedCatalog(pool, { assets: [candidate(1)] });
+  await openTickerBallotV2(clockedPool(pool, WALL), {
+    day: DAY, maxEthWei: '64', detailsHash: DETAILS, actorId: 'mod',
+  });
+  await plantBallotVotes(pool, DAY, asset.assetVersionKey, 101, { prefix: 'overflow' });
+  return { pool, asset };
+}
+
+await fixRegression('tally reads at most limit plus one and fails closed on planted row 101', async () => {
+  const { pool } = await overloadedBallotFixture();
+  try {
+    const statements = [];
+    await expectCode(tallyTickerBallotV2(clockedPool(pool, WALL, statements), DAY), 'ballot_overloaded');
+    assert(statements.some((sql) => sql.includes('commission_ticker_votes_v2') && /LIMIT\s+101/i.test(sql)),
+      'the tally authority query carries the literal limit+1 sentinel');
+  } finally { await pool.end(); }
+});
+
+await fixRegression('close refuses planted row 101 before any tuple freeze or result', async () => {
+  const { pool } = await overloadedBallotFixture();
+  try {
+    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z' WHERE id=1");
+    await expectCode(closeTickerBallotV2(clockedPool(pool, CLOSE), DAY), 'ballot_overloaded');
+    assert.equal((await pool.query(
+      'SELECT count(*)::int AS n FROM commission_ticker_votes_v2 WHERE day=$1 AND closed_valid IS NOT NULL',
+      [DAY],
+    )).rows[0].n, 0, 'overflow closes no partial tuple commitment');
+    assert.equal((await pool.query(
+      'SELECT count(*)::int AS n FROM ticker_ballot_results_v2 WHERE day=$1', [DAY],
+    )).rows[0].n, 0, 'overflow writes no partial result');
+  } finally { await pool.end(); }
+});
+
+await fixRegression('close freezes exactly 100 tuples with a 100-statement ceiling', async () => {
+  const pool = await makeDb();
+  try {
+    const [asset] = await seedCatalog(pool, { assets: [candidate(1)] });
+    await openTickerBallotV2(clockedPool(pool, WALL), {
+      day: DAY, maxEthWei: '640', detailsHash: DETAILS, actorId: 'mod',
+    });
+    await plantBallotVotes(pool, DAY, asset.assetVersionKey, 100, { prefix: 'ceiling' });
+    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z' WHERE id=1");
+    const statements = [];
+    const result = await closeTickerBallotV2(clockedPool(pool, CLOSE, statements), DAY);
+    assert.equal(result.voteEvidenceVersion, 1);
+    assert.equal(statements.filter((sql) => /^UPDATE commission_ticker_votes_v2/i.test(
+      sql.trim(),
+    )).length, 100, 'the per-row compatibility freeze loop cannot exceed the reviewed work cap');
+    assert.equal((await pool.query(
+      'SELECT count(*)::int AS n FROM commission_ticker_votes_v2 WHERE closed_valid IS NOT NULL',
+    )).rows[0].n, 100);
+  } finally { await pool.end(); }
+});
+
+await fixRegression('current board refuses planted row 101 and publishes the fixed work limit', async () => {
+  const { pool } = await overloadedBallotFixture();
+  try {
+    await expectCode(tickerBallotBoardV2(clockedPool(pool, WALL)), 'ballot_overloaded');
+    await pool.query('DELETE FROM commission_ticker_votes_v2 WHERE family_id=$1', ['overflow-100']);
+    const bounded = await tickerBallotBoardV2(clockedPool(pool, WALL));
+    assert.equal(bounded.voteWorkLimit, 100);
+    assert.equal(bounded.votes.length, 100, 'bounded public evidence is complete rather than truncated');
+  } finally { await pool.end(); }
+});
+
+await fixRegression('rolled last-result evidence keeps the same limit plus one fail-closed wall', async () => {
+  const pool = await makeDb();
+  try {
+    await seedCatalog(pool, { assets: [candidate(1)] });
+    await openTickerBallotV2(clockedPool(pool, WALL), {
+      day: DAY, maxEthWei: '641', detailsHash: DETAILS, actorId: 'mod',
+    });
+    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z' WHERE id=1");
+    await closeTickerBallotV2(clockedPool(pool, CLOSE), DAY);
+    await plantBallotVotes(pool, DAY, hash('1'), 101, { prefix: 'rolled-overflow' });
+    const statements = [];
+    await expectCode(
+      tickerBallotBoardV2(clockedPool(pool, '2026-09-06T00:00:00Z', statements)),
+      'ballot_overloaded',
+    );
+    assert(statements.some((sql) => sql.includes('commission_ticker_votes_v2')
+      && /LIMIT\s+101/i.test(sql)), 'rolled evidence uses the literal limit+1 sentinel');
+  } finally { await pool.end(); }
+});
+
+await fixRegression('first-cast maps only the expected vote primary-key conflict', async () => {
+  const errors = [
+    Object.assign(new Error('serialization'), { code: '40001' }),
+    Object.assign(new Error('deadlock'), { code: '40P01' }),
+    Object.assign(new Error('another unique wall'), { code: '23505', constraint: 'other_unique' }),
+    Object.assign(new Error('schema missing'), { code: '42703' }),
+    new Error('arbitrary insert failure'),
+  ];
+  for (const injected of errors) {
+    const pool = await makeDb();
+    try {
+      const [asset] = await seedCatalog(pool, { assets: [candidate(1)] });
+      const [family] = await seedFamilies(pool, ['500']);
+      await openTickerBallotV2(clockedPool(pool, WALL), {
+        day: DAY, maxEthWei: '65', detailsHash: DETAILS, actorId: 'mod',
+      });
+      const raw = await pool.connect();
+      const client = {
+        query: async (sql, params = []) => {
+          if (sql.includes('INSERT INTO commission_ticker_votes_v2')) throw injected;
+          return clockedQuery(raw.query.bind(raw), WALL)(sql, params);
+        },
+      };
+      try {
+        await assert.rejects(castTickerVoteV2(
+          family.ch, { assetVersionKey: asset.assetVersionKey }, client, family.h,
+        ), (error) => error === injected, `${injected.code ?? 'arbitrary'} is rethrown by identity`);
+      } finally { raw.release(); }
+    } finally { await pool.end(); }
+  }
+  for (const constraint of ['commission_ticker_votes_v2_pkey', undefined]) {
+    const pool = await makeDb();
+    try {
+      const [asset] = await seedCatalog(pool, { assets: [candidate(1)] });
+      const [family] = await seedFamilies(pool, ['500']);
+      await openTickerBallotV2(clockedPool(pool, WALL), {
+        day: DAY, maxEthWei: '66', detailsHash: DETAILS, actorId: 'mod',
+      });
+      const duplicate = Object.assign(new Error('duplicate family slot'), {
+        code: '23505', ...(constraint ? { constraint } : {}),
+      });
+      const raw = await pool.connect();
+      const client = {
+        query: async (sql, params = []) => {
+          if (sql.includes('INSERT INTO commission_ticker_votes_v2')) throw duplicate;
+          return clockedQuery(raw.query.bind(raw), WALL)(sql, params);
+        },
+      };
+      try {
+        await expectCode(castTickerVoteV2(
+          family.ch, { assetVersionKey: asset.assetVersionKey }, client, family.h,
+        ), 'again');
+      } finally { raw.release(); }
+    } finally { await pool.end(); }
+  }
+  const pool = await makeDb();
+  try {
+    const [asset] = await seedCatalog(pool, { assets: [candidate(1)] });
+    const [family] = await seedFamilies(pool, ['500']);
+    await openTickerBallotV2(clockedPool(pool, WALL), {
+      day: DAY, maxEthWei: '660', detailsHash: DETAILS, actorId: 'mod',
+    });
+    const unnamed = Object.assign(new Error('unnamed production duplicate'), { code: '23505' });
+    const raw = await pool.connect();
+    const client = {
+      query: async (sql, params = []) => {
+        if (sql.includes('INSERT INTO commission_ticker_votes_v2')) throw unnamed;
+        return clockedQuery(raw.query.bind(raw), WALL)(sql, params);
+      },
+    };
+    const previous = dbCaps.skipLocked;
+    dbCaps.skipLocked = true;
+    try {
+      await assert.rejects(castTickerVoteV2(
+        family.ch, { assetVersionKey: asset.assetVersionKey }, client, family.h,
+      ), (error) => error === unnamed,
+      'an absent constraint name is accepted only by the pg-mem compatibility seam');
+    } finally {
+      dbCaps.skipLocked = previous;
+      raw.release();
+    }
+  } finally { await pool.end(); }
+});
+
+await fixRegression('fresh result DDL enforces every publication/finality tuple shape', async () => {
+  const pool = await makeDb();
+  try {
+    const tx = hash('a');
+    const blockHash = hash('b');
+    const insert = (day, publicationStatus, fields = {}, status = 'closed_ready') => {
+      const ready = status === 'closed_ready';
+      const decided = ready ? ['chamber', 1, null, 1, 5] : ['skipped', 6, 'no_valid_candidate', 0, 0];
+      return pool.query(
+        `INSERT INTO ticker_ballot_results_v2
+          (day,status,asset_version_key,ticker,token_address,token_decimals,registry_index,
+           catalog_version,catalog_snapshot_hash,max_eth_wei,votes,weighted,decided_by,
+           decided_by_code,skip_reason,tally_hash,closed_at,purchase_until,publication_status,
+           registry_tx_hash,finalized_block_number,finalized_block_hash,finalized_at)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,'1',$8,'1',$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)`,
+        [day, status, ready ? hash('1') : null, ready ? 'T1' : null,
+          ready ? address('1') : null, ready ? 18 : null, ready ? '0' : null,
+          hash('c'), decided[3], decided[4], decided[0], decided[1], decided[2], hash('f'), CLOSE,
+          ready ? PURCHASE_UNTIL : null, publicationStatus, fields.tx ?? null,
+          fields.number ?? null, fields.blockHash ?? null, fields.at ?? null],
+      );
+    };
+    let day = 92000;
+    for (const [state, fields] of [
+      ['not_submitted', {}],
+      ['publisher_submitted', { tx }],
+      ['published_pending_finality', { tx }],
+      ['finalized', { tx, number: '7', blockHash, at: CLOSE }],
+      ['reorged', { tx }],
+      ['failed', {}],
+      ['failed', { tx }],
+    ]) await insert(day++, state, fields);
+    for (const [state, fields] of [
+      ['not_submitted', { tx }],
+      ['publisher_submitted', {}],
+      ['publisher_submitted', { tx: `0x${'A'.repeat(64)}` }],
+      ['publisher_submitted', { tx: `0x${'z'.repeat(64)}` }],
+      ['publisher_submitted', { tx: `0x${'a'.repeat(63)}` }],
+      ['publisher_submitted', { tx, number: '7' }],
+      ['published_pending_finality', { tx, blockHash }],
+      ['finalized', { tx, number: '7', blockHash }],
+      ['finalized', { tx, number: '7', blockHash: 'not-a-hash', at: CLOSE }],
+      ['finalized', { tx, number: '7', blockHash: `0x${'B'.repeat(64)}`, at: CLOSE }],
+      ['reorged', {}],
+      ['reorged', { tx, at: CLOSE }],
+      ['failed', { tx, number: '7' }],
+    ]) await assert.rejects(insert(day++, state, fields), undefined,
+      `${state} rejects publication fields ${JSON.stringify(fields)}`);
+    await assert.rejects(insert(day++, 'not_submitted', { tx }, 'skipped_no_valid_candidate'));
+    await assert.rejects(insert(day++, 'failed', {}, 'skipped_no_valid_candidate'));
+  } finally { await pool.end(); }
+});
+
+await fixRegression('legacy result version zero is public as unavailable evidence, never a null tuple commitment', async () => {
+  const pool = await makeDb();
+  try {
+    await pool.query(
+      `INSERT INTO ticker_ballot_days_v2
+        (day,state,chain_id,registry_address,catalog_version,catalog_snapshot_hash,max_eth_wei,
+         opened_by,open_details_hash,opened_at,closes_at,closed_at,purchase_until)
+       VALUES ($1,'closed_ready',4663,$2,'1',$3,'1','legacy',$4,$5,$6,$6,$7)`,
+      [DAY, REGISTRY, hash('c'), DETAILS, WALL, CLOSE, PURCHASE_UNTIL],
+    );
+    await pool.query(
+      `INSERT INTO ticker_ballot_candidates_v2
+        (day,asset_version_key,ticker,token_address,token_decimals,registry_index,
+         activation_evidence_version,activated_at)
+       VALUES ($1,$2,'T1',$3,18,'0',0,NULL)`,
+      [DAY, hash('1'), address('1')],
+    );
+    await pool.query(
+      `INSERT INTO commission_ticker_votes_v2
+        (day,family_id,asset_version_key,ticker,standing) VALUES ($1,'legacy-family',$2,'T1','500')`,
+      [DAY, hash('1')],
+    );
+    await pool.query(
+      `INSERT INTO ticker_ballot_results_v2
+        (day,status,asset_version_key,ticker,token_address,token_decimals,registry_index,
+         catalog_version,catalog_snapshot_hash,max_eth_wei,votes,weighted,decided_by,
+         decided_by_code,skip_reason,tally_hash,closed_at,purchase_until,publication_status,
+         vote_evidence_version)
+       VALUES ($1,'closed_ready',$2,'T1',$3,18,'0','1',$4,'1',1,5,'chamber',1,NULL,$5,$6,$7,
+         'not_submitted',0)`,
+      [DAY, hash('1'), address('1'), hash('c'), hash('f'), CLOSE, PURCHASE_UNTIL],
+    );
+    const board = await tickerBallotBoardV2(clockedPool(pool, '2026-09-05T00:00:01Z'));
+    assert.equal(board.voteEvidenceAvailable, false);
+    assert.equal(board.voteEvidenceStatus, 'legacy_unproven');
+    assert.deepEqual(board.votes, [], 'nullable legacy vote fields are not mapped into a fake commitment');
+    assert.equal(board.result.voteEvidenceVersion, 0);
+    assert.equal(board.result.voteEvidenceAvailable, false);
+  } finally { await pool.end(); }
+});
+
+await fixRegression('sole cutoff winner survives an empty current active projection after close', async () => {
+  const pool = await makeDb();
+  try {
+    const [asset] = await seedCatalog(pool, { assets: [candidate(1)] });
+    const [family] = await seedFamilies(pool, ['500']);
+    await openTickerBallotV2(clockedPool(pool, WALL), {
+      day: DAY, maxEthWei: '67', detailsHash: DETAILS, actorId: 'mod',
+    });
+    await withClockedClient(pool, WALL, (client) => castTickerVoteV2(
+      family.ch, { assetVersionKey: asset.assetVersionKey }, client, family.h,
+    ));
+    await pool.query('DELETE FROM stock_asset_active_heads_v2');
+    await pool.query(
+      `UPDATE stock_asset_versions_v2
+          SET active=false,deactivated_at='2026-09-05T00:00:00.001Z'
+        WHERE asset_version_key=$1`, [asset.assetVersionKey],
+    );
+    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-05T00:00:01Z' WHERE id=1");
+    const closed = await closeTickerBallotV2(
+      clockedPool(pool, '2026-09-05T00:00:02Z'), DAY,
+    );
+    assert.deepEqual({
+      status: closed.status,
+      assetVersionKey: closed.assetVersionKey,
+      catalogAvailable: closed.catalogAvailable,
+      voteEvidenceVersion: closed.voteEvidenceVersion,
+    }, {
+      status: 'closed_ready',
+      assetVersionKey: asset.assetVersionKey,
+      catalogAvailable: true,
+      voteEvidenceVersion: 1,
+    }, 'empty current heads stay an available finalized projection and preserve the cutoff winner');
+  } finally { await pool.end(); }
 });
 
 if (fixRegressionFailures.length) {

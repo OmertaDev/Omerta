@@ -11,9 +11,310 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { newDb } from 'pg-mem';
 import { columnMigrations, migrateColumns } from '../src/db.js';
+import * as dbModule from '../src/db.js';
 import { srcText } from './lib/srcfiles.js';
 
 const SCHEMA = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'schema.sql'), 'utf8');
+
+const LEGACY_TASK5_SCHEMA = `
+CREATE TABLE ticker_ballot_days_v2 (
+  day INT PRIMARY KEY CHECK (day >= 0),
+  state TEXT NOT NULL CHECK (state IN
+    ('open','closed_ready','skipped_catalog_unavailable','skipped_catalog_empty',
+     'skipped_no_valid_candidate')),
+  chain_id INT NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL,
+  catalog_version NUMERIC(78,0) NOT NULL CHECK (catalog_version >= 0),
+  catalog_snapshot_hash TEXT NOT NULL,
+  max_eth_wei NUMERIC(78,0) NOT NULL CHECK (max_eth_wei > 0),
+  opened_by TEXT NOT NULL,
+  open_details_hash TEXT NOT NULL,
+  opened_at TIMESTAMPTZ NOT NULL,
+  closes_at TIMESTAMPTZ NOT NULL,
+  closed_at TIMESTAMPTZ,
+  purchase_until TIMESTAMPTZ,
+  CHECK (closes_at > opened_at),
+  CHECK ((state = 'closed_ready') = (purchase_until IS NOT NULL)),
+  CHECK (purchase_until IS NULL OR purchase_until = closes_at + interval '7200 seconds')
+);
+CREATE TABLE ticker_ballot_candidates_v2 (
+  day INT NOT NULL,
+  asset_version_key TEXT NOT NULL,
+  ticker TEXT NOT NULL,
+  token_address TEXT NOT NULL,
+  token_decimals INT NOT NULL CHECK (token_decimals >= 0 AND token_decimals <= 255),
+  registry_index NUMERIC(78,0) NOT NULL CHECK (registry_index >= 0),
+  PRIMARY KEY (day, asset_version_key)
+);
+CREATE TABLE commission_ticker_votes_v2 (
+  day INT NOT NULL,
+  family_id TEXT NOT NULL,
+  asset_version_key TEXT NOT NULL,
+  ticker TEXT NOT NULL,
+  standing NUMERIC(78,0) NOT NULL CHECK (standing >= 0),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (day, family_id)
+);
+CREATE TABLE ticker_ballot_results_v2 (
+  day INT PRIMARY KEY CHECK (day >= 0),
+  status TEXT NOT NULL CHECK (status IN
+    ('closed_ready','skipped_catalog_unavailable','skipped_catalog_empty',
+     'skipped_no_valid_candidate')),
+  asset_version_key TEXT,
+  ticker TEXT,
+  token_address TEXT,
+  token_decimals INT CHECK (token_decimals >= 0 AND token_decimals <= 255),
+  registry_index NUMERIC(78,0),
+  catalog_version NUMERIC(78,0) NOT NULL CHECK (catalog_version >= 0),
+  catalog_snapshot_hash TEXT NOT NULL,
+  max_eth_wei NUMERIC(78,0) NOT NULL CHECK (max_eth_wei > 0),
+  votes INT NOT NULL DEFAULT 0 CHECK (votes >= 0 AND votes <= 5),
+  weighted INT NOT NULL DEFAULT 0 CHECK (weighted >= 0 AND weighted <= 15),
+  decided_by TEXT NOT NULL CHECK (decided_by IN
+    ('chamber','default_silence','default_tie','skipped')),
+  decided_by_code INT NOT NULL CHECK (decided_by_code >= 1 AND decided_by_code <= 6),
+  skip_reason TEXT,
+  tally_hash TEXT NOT NULL,
+  closed_at TIMESTAMPTZ NOT NULL,
+  purchase_until TIMESTAMPTZ,
+  publication_status TEXT NOT NULL DEFAULT 'not_submitted' CHECK (publication_status IN
+    ('not_submitted','publisher_submitted','published_pending_finality','finalized','reorged','failed')),
+  registry_tx_hash TEXT,
+  finalized_block_number NUMERIC(78,0),
+  finalized_block_hash TEXT,
+  finalized_at TIMESTAMPTZ,
+  CHECK ((status = 'closed_ready') = (asset_version_key IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (ticker IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (token_address IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (token_decimals IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (registry_index IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (purchase_until IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (skip_reason IS NULL)),
+  CHECK (publication_status = 'not_submitted' OR status = 'closed_ready')
+);`;
+
+// A populated database with exactly the original four Task 5 tables is the migration authority.
+// It must not gain invented activation or closed-vote evidence merely because a new binary booted.
+{
+  const legacy = newDb();
+  const { Pool: LegacyPool } = legacy.adapters.createPg();
+  const legacyPool = new LegacyPool();
+  await legacyPool.query(LEGACY_TASK5_SCHEMA);
+  const key = `0x${'1'.repeat(64)}`;
+  const address = `0x${'1'.repeat(40)}`;
+  const snapshot = `0x${'c'.repeat(64)}`;
+  const tally = `0x${'f'.repeat(64)}`;
+  await legacyPool.query(
+    `INSERT INTO ticker_ballot_days_v2
+      (day,state,chain_id,registry_address,catalog_version,catalog_snapshot_hash,max_eth_wei,
+       opened_by,open_details_hash,opened_at,closes_at,closed_at,purchase_until)
+     VALUES (20700,'closed_ready',4663,$1,'1',$2,'1','legacy',$3,$4,$5,$5,$6)`,
+    [address, snapshot, snapshot, '2026-09-04T00:00:00Z', '2026-09-05T00:00:00Z',
+      '2026-09-05T02:00:00Z'],
+  );
+  await legacyPool.query(
+    `INSERT INTO ticker_ballot_candidates_v2
+      (day,asset_version_key,ticker,token_address,token_decimals,registry_index)
+     VALUES (20700,$1,'T1',$2,18,'0')`, [key, address],
+  );
+  await legacyPool.query(
+    `INSERT INTO commission_ticker_votes_v2
+      (day,family_id,asset_version_key,ticker,standing) VALUES (20700,'family-old',$1,'T1','500')`,
+    [key],
+  );
+  await legacyPool.query(
+    `INSERT INTO ticker_ballot_results_v2
+      (day,status,asset_version_key,ticker,token_address,token_decimals,registry_index,
+       catalog_version,catalog_snapshot_hash,max_eth_wei,votes,weighted,decided_by,
+       decided_by_code,skip_reason,tally_hash,closed_at,purchase_until,publication_status)
+     VALUES (20700,'closed_ready',$1,'T1',$2,18,'0','1',$3,'1',1,5,'chamber',1,NULL,$4,
+       '2026-09-05T00:00:00Z','2026-09-05T02:00:00Z','not_submitted')`,
+    [key, address, snapshot, tally],
+  );
+  assert.equal(typeof dbModule.migrateTask5BallotV2, 'function',
+    'boot exposes the targeted fail-closed Task 5 authority migration');
+  await dbModule.migrateTask5BallotV2(legacyPool, { compatibility: 'pg-mem' });
+  const migratedCandidate = (await legacyPool.query(
+    'SELECT activation_evidence_version,activated_at FROM ticker_ballot_candidates_v2',
+  )).rows[0];
+  assert.equal(Number(migratedCandidate.activation_evidence_version), 0);
+  assert.equal(migratedCandidate.activated_at, null,
+    'a legacy candidate remains version-zero with no invented opening activation');
+  const migratedVote = (await legacyPool.query(
+    `SELECT closed_valid,closed_counted,closed_weight,closed_exclusion_reason
+       FROM commission_ticker_votes_v2`,
+  )).rows[0];
+  assert.deepEqual(migratedVote, {
+    closed_valid: null, closed_counted: null, closed_weight: null, closed_exclusion_reason: null,
+  });
+  const migratedResult = (await legacyPool.query(
+    'SELECT vote_evidence_version FROM ticker_ballot_results_v2',
+  )).rows[0];
+  assert.equal(Number(migratedResult.vote_evidence_version), 0,
+    'already-closed legacy results remain explicitly unproven');
+  assert.equal((await legacyPool.query(
+    'SELECT count(*)::int AS n FROM ticker_ballot_candidates_v2',
+  )).rows[0].n, 1, 'migration preserves populated legacy rows');
+  await assert.rejects(legacyPool.query(
+    `INSERT INTO ticker_ballot_days_v2
+      (day,state,chain_id,registry_address,catalog_version,catalog_snapshot_hash,max_eth_wei,
+       opened_by,open_details_hash,opened_at,closes_at)
+     VALUES (100000000,'open',4663,$1,'1',$2,'1','bad',$3,$4,$5)`,
+    [address, snapshot, snapshot, '2026-09-04T00:00:00Z', '2026-09-05T00:00:00Z'],
+  ), undefined, 'migrated day constraint rejects the first unrepresentable day');
+  await assert.rejects(legacyPool.query(
+    `INSERT INTO ticker_ballot_candidates_v2
+      (day,asset_version_key,ticker,token_address,token_decimals,registry_index,
+       activation_evidence_version,activated_at)
+     VALUES (20700,$1,'BAD',$2,18,'1',1,NULL)`,
+    [`0x${'2'.repeat(64)}`, `0x${'2'.repeat(40)}`],
+  ), undefined, 'current candidate evidence cannot omit its frozen activation');
+  await assert.rejects(legacyPool.query(
+    `UPDATE commission_ticker_votes_v2
+        SET closed_valid=true,closed_counted=true,closed_weight=0
+      WHERE day=20700 AND family_id='family-old'`,
+  ), undefined, 'migrated frozen tuple constraint rejects an incoherent counted weight');
+  await assert.rejects(legacyPool.query(
+    `UPDATE ticker_ballot_results_v2
+        SET publication_status='not_submitted',registry_tx_hash=$1
+      WHERE day=20700`, [tally],
+  ), undefined, 'migrated result publication tuple rejects false not-submitted evidence');
+
+  // The populated migration receives the same complete publication/finality state machine as a
+  // fresh table. Task 6 does not perform these transitions yet; this is storage-shape authority only.
+  let publicationDay = 20800;
+  const migratedPublication = (publicationStatus, fields = {}, status = 'closed_ready') => {
+    const ready = status === 'closed_ready';
+    return legacyPool.query(
+      `INSERT INTO ticker_ballot_results_v2
+        (day,status,asset_version_key,ticker,token_address,token_decimals,registry_index,
+         catalog_version,catalog_snapshot_hash,max_eth_wei,votes,weighted,decided_by,
+         decided_by_code,skip_reason,tally_hash,closed_at,purchase_until,publication_status,
+         registry_tx_hash,finalized_block_number,finalized_block_hash,finalized_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,'1',$8,'1',$9,$10,$11,$12,$13,$14,$15,$16,$17,
+         $18,$19,$20,$21)`,
+      [publicationDay++, status, ready ? key : null, ready ? 'T1' : null,
+        ready ? address : null, ready ? 18 : null, ready ? '0' : null, snapshot,
+        ready ? 1 : 0, ready ? 5 : 0, ready ? 'chamber' : 'skipped', ready ? 1 : 6,
+        ready ? null : 'no_valid_candidate', tally, '2026-09-05T00:00:00Z',
+        ready ? '2026-09-05T02:00:00Z' : null, publicationStatus, fields.tx ?? null,
+        fields.number ?? null, fields.blockHash ?? null, fields.at ?? null],
+    );
+  };
+  const blockHash = `0x${'b'.repeat(64)}`;
+  for (const [state, fields] of [
+    ['not_submitted', {}],
+    ['publisher_submitted', { tx: tally }],
+    ['published_pending_finality', { tx: tally }],
+    ['finalized', { tx: tally, number: '7', blockHash, at: '2026-09-05T00:00:01Z' }],
+    ['reorged', { tx: tally }],
+    ['failed', {}],
+    ['failed', { tx: tally }],
+  ]) await migratedPublication(state, fields);
+  await migratedPublication('not_submitted', {}, 'skipped_no_valid_candidate');
+  for (const [state, fields] of [
+    ['not_submitted', { tx: tally }],
+    ['publisher_submitted', {}],
+    ['publisher_submitted', { tx: `0x${'A'.repeat(64)}` }],
+    ['publisher_submitted', { tx: `0x${'z'.repeat(64)}` }],
+    ['publisher_submitted', { tx: `0x${'a'.repeat(63)}` }],
+    ['publisher_submitted', { tx: tally, number: '7' }],
+    ['published_pending_finality', { tx: tally, blockHash }],
+    ['finalized', { tx: tally, number: '7', blockHash }],
+    ['finalized', { tx: tally, number: '7', blockHash: 'not-a-hash', at: '2026-09-05T00:00:01Z' }],
+    ['finalized', { tx: tally, number: '7', blockHash: `0x${'B'.repeat(64)}`,
+      at: '2026-09-05T00:00:01Z' }],
+    ['reorged', {}],
+    ['reorged', { tx: tally, at: '2026-09-05T00:00:01Z' }],
+    ['failed', { tx: tally, number: '7' }],
+  ]) await assert.rejects(migratedPublication(state, fields), undefined,
+    `migrated ${state} rejects publication fields ${JSON.stringify(fields)}`);
+  await assert.rejects(migratedPublication(
+    'not_submitted', { tx: tally }, 'skipped_no_valid_candidate',
+  ));
+  await assert.rejects(migratedPublication('failed', {}, 'skipped_no_valid_candidate'));
+  await dbModule.migrateTask5BallotV2(legacyPool, { compatibility: 'pg-mem' });
+  assert.equal((await legacyPool.query(
+    'SELECT count(*)::int AS n FROM ticker_ballot_results_v2',
+  )).rows[0].n, 9, 'targeted migration is exact-idempotent on a populated schema');
+  await legacyPool.end();
+}
+
+// Invalid pre-existing authority must abort before adding even the compatibility columns. Real
+// PostgreSQL additionally supplies transactional DDL rollback for any later constraint failure.
+{
+  const invalid = newDb();
+  const { Pool: InvalidPool } = invalid.adapters.createPg();
+  const invalidPool = new InvalidPool();
+  await invalidPool.query(LEGACY_TASK5_SCHEMA);
+  const zero = `0x${'0'.repeat(64)}`;
+  await invalidPool.query(
+    `INSERT INTO ticker_ballot_days_v2
+      (day,state,chain_id,registry_address,catalog_version,catalog_snapshot_hash,max_eth_wei,
+       opened_by,open_details_hash,opened_at,closes_at)
+     VALUES (100000000,'open',4663,$1,'1',$2,'1','legacy',$3,$4,$5)`,
+    [`0x${'1'.repeat(40)}`, zero, zero, '2026-09-04T00:00:00Z', '2026-09-05T00:00:00Z'],
+  );
+  let failure;
+  try { await dbModule.migrateTask5BallotV2(invalidPool, { compatibility: 'pg-mem' }); }
+  catch (error) { failure = error; }
+  assert(failure, 'invalid legacy authority stops the targeted migration');
+  let gainedColumn = true;
+  try { await invalidPool.query('SELECT activation_evidence_version FROM ticker_ballot_candidates_v2'); }
+  catch { gainedColumn = false; }
+  assert.equal(gainedColumn, false, 'invalid legacy data leaves the pre-migration schema untouched');
+  await invalidPool.end();
+}
+
+// The targeted lane owns one transaction and preserves the exact failing database error. pg-mem
+// does not roll transactional DDL back, so this narrow adapter asserts the production BEGIN/ROLLBACK
+// boundary while the invalid-data case above proves no compatibility DDL is reached at all.
+{
+  const injected = Object.assign(new Error('injected production authority-lock failure'), {
+    code: '55P03',
+  });
+  const statements = [];
+  const client = {
+    async query(sql) {
+      statements.push(sql);
+      if (sql.startsWith('LOCK TABLE')) throw injected;
+      return { rows: [] };
+    },
+  };
+  await assert.rejects(dbModule.migrateTask5BallotV2(client), (error) => error === injected);
+  assert.equal(statements[0], 'BEGIN');
+  assert(statements[1].includes('task5_ballot_v2_targeted_migration'));
+  assert.match(statements[2], /LOCK TABLE ticker_ballot_days_v2,ticker_ballot_candidates_v2,[\s\S]*commission_ticker_votes_v2,ticker_ballot_results_v2[\s\S]*ACCESS EXCLUSIVE/i,
+    'production freezes all four authority tables before it validates or alters legacy data');
+  assert.equal(statements.at(-1), 'ROLLBACK');
+}
+
+{
+  const broken = newDb();
+  const { Pool: BrokenPool } = broken.adapters.createPg();
+  const brokenPool = new BrokenPool();
+  await brokenPool.query(LEGACY_TASK5_SCHEMA);
+  const injected = Object.assign(new Error('injected Task 5 constraint failure'), { code: 'XXT51' });
+  const statements = [];
+  const query = brokenPool.query.bind(brokenPool);
+  const client = {
+    async query(sql, params = []) {
+      statements.push(sql);
+      if (sql.includes('ADD CONSTRAINT ck_ticker_ballot_days_v2_day_range')) throw injected;
+      return query(sql, params);
+    },
+  };
+  await assert.rejects(
+    dbModule.migrateTask5BallotV2(client, { compatibility: 'pg-mem' }),
+    (error) => error === injected,
+  );
+  assert.equal(statements[0], 'BEGIN');
+  assert.equal(statements.at(-1), 'ROLLBACK');
+  assert.equal(statements.includes('COMMIT'), false,
+    'a targeted authority constraint failure never commits a partial migration');
+  await brokenPool.end();
+}
 
 // ── 1. the derived statement set is well-formed ──
 const stmts = columnMigrations(SCHEMA);
@@ -25,6 +326,11 @@ assert.equal(stmts.filter((s) => /ADD COLUMN IF NOT EXISTS (PRIMARY|UNIQUE|FOREI
 // no statement carries a stray TOP-LEVEL comma (i.e. multiple columns crammed into one ALTER)
 const hasTopComma = (s) => { const d = s.replace(/^ALTER TABLE \w+ ADD COLUMN IF NOT EXISTS \w+ /, ''); let dp = 0; for (const c of d) { if (c === '(') dp++; else if (c === ')') dp--; else if (c === ',' && dp === 0) return true; } return false; };
 assert.equal(stmts.filter(hasTopComma).length, 0, 'each statement adds exactly ONE column (multi-column lines split on depth-0 commas)');
+const task5ActivationColumn = stmts.find((statement) => statement.startsWith(
+  'ALTER TABLE ticker_ballot_candidates_v2 ADD COLUMN IF NOT EXISTS activated_at ',
+));
+assert(task5ActivationColumn && !/\bNOT NULL\b/i.test(task5ActivationColumn),
+  'generic migration never attempts a populated NOT NULL/no-default Task 5 activation column');
 // known later-added columns are covered (these are exactly the ones an in-place upgrade would miss)
 for (const need of [
   'ALTER TABLE track_bets ADD COLUMN IF NOT EXISTS odds NUMERIC',
@@ -47,6 +353,37 @@ await pool.query(SCHEMA);
 const fresh = await migrateColumns(pool, SCHEMA);
 assert.equal(fresh.total, stmts.length, 'runs every derived statement');
 assert.equal(fresh.failed, 0, `a fresh DB is a clean no-op — 0 statements should fail (got ${fresh.failed})`);
+await dbModule.migrateTask5BallotV2(pool, { compatibility: 'pg-mem' });
+await dbModule.migrateTask5BallotV2(pool, { compatibility: 'pg-mem' });
+
+// The production orchestration seam is what runs while makeDb holds the existing advisory lock:
+// schema -> generic safe columns -> targeted fail-closed authority -> schema stamp.
+{
+  const bootMem = newDb();
+  const { Pool: BootPool } = bootMem.adapters.createPg();
+  const bootPool = new BootPool();
+  const statements = [];
+  const query = bootPool.query.bind(bootPool);
+  const client = {
+    async query(sql, params = []) {
+      statements.push(sql);
+      return query(sql, params);
+    },
+  };
+  assert.equal(typeof dbModule.migrateSchemaUnderLock, 'function',
+    'boot exposes one tested schema ordering seam for the existing advisory lock');
+  await dbModule.migrateSchemaUnderLock(client, {
+    schemaText: SCHEMA, compatibility: 'pg-mem',
+  });
+  const targeted = statements.findIndex((sql) => sql.includes('task5_ballot_v2_targeted_migration'));
+  const lastGeneric = statements
+    .slice(0, targeted)
+    .findLastIndex((sql) => /^ALTER TABLE .* ADD COLUMN IF NOT EXISTS /i.test(sql));
+  const stamp = statements.findIndex((sql) => sql.includes('SELECT app_version FROM schema_meta'));
+  assert(lastGeneric >= 0 && targeted > lastGeneric && stamp > targeted,
+    'generic safe columns run before targeted authority and the stamp records only the completed migration');
+  await bootPool.end();
+}
 
 // ── 3. the actual fix: an "old" DB missing a later-added column gets it back ──
 const has = async (t, c) => { try { await pool.query(`SELECT ${c} FROM ${t} LIMIT 0`); return true; } catch { return false; } };

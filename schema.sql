@@ -3599,7 +3599,8 @@ CREATE TABLE IF NOT EXISTS stock_catalog_evidence_v2 (
 -- ticker-keyed ballot and remain dormant until the later health/custody cutover. Task 5 writes
 -- database-authoritative preparation evidence only: no RPC, funds, publication, or finality.
 CREATE TABLE IF NOT EXISTS ticker_ballot_days_v2 (
-  day INT PRIMARY KEY CHECK (day >= 0 AND day <= 99999999),
+  day INT PRIMARY KEY CONSTRAINT ck_ticker_ballot_days_v2_day_range
+    CHECK (day >= 0 AND day <= 99999999),
   state TEXT NOT NULL CHECK (state IN
     ('open','closed_ready','skipped_catalog_unavailable','skipped_catalog_empty',
      'skipped_no_valid_candidate')),
@@ -3620,20 +3621,27 @@ CREATE TABLE IF NOT EXISTS ticker_ballot_days_v2 (
 );
 
 CREATE TABLE IF NOT EXISTS ticker_ballot_candidates_v2 (
-  day INT NOT NULL CHECK (day >= 0 AND day <= 99999999),
+  day INT NOT NULL CONSTRAINT ck_ticker_ballot_candidates_v2_day_range
+    CHECK (day >= 0 AND day <= 99999999),
   asset_version_key TEXT NOT NULL,
   ticker TEXT NOT NULL,
   token_address TEXT NOT NULL,
   token_decimals INT NOT NULL CHECK (token_decimals >= 0 AND token_decimals <= 255),
   registry_index NUMERIC(78,0) NOT NULL CHECK (registry_index >= 0),
-  activated_at TIMESTAMPTZ NOT NULL,
-  PRIMARY KEY (day, asset_version_key)
+  activation_evidence_version SMALLINT NOT NULL DEFAULT 0,
+  activated_at TIMESTAMPTZ,
+  PRIMARY KEY (day, asset_version_key),
+  CONSTRAINT ck_ticker_ballot_candidates_v2_activation_evidence CHECK (
+    activation_evidence_version = 0
+    OR (activation_evidence_version = 1 AND activated_at IS NOT NULL)
+  )
 );
 CREATE INDEX IF NOT EXISTS ix_ticker_ballot_candidates_v2_ticker
   ON ticker_ballot_candidates_v2(day, ticker, registry_index, asset_version_key);
 
 CREATE TABLE IF NOT EXISTS commission_ticker_votes_v2 (
-  day INT NOT NULL CHECK (day >= 0 AND day <= 99999999),
+  day INT NOT NULL CONSTRAINT ck_commission_ticker_votes_v2_day_range
+    CHECK (day >= 0 AND day <= 99999999),
   family_id TEXT NOT NULL,
   asset_version_key TEXT NOT NULL,
   ticker TEXT NOT NULL,
@@ -3645,7 +3653,7 @@ CREATE TABLE IF NOT EXISTS commission_ticker_votes_v2 (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   PRIMARY KEY (day, family_id),
-  CHECK (
+  CONSTRAINT ck_commission_ticker_votes_v2_closed_tuple CHECK (
     (closed_valid IS NULL AND closed_counted IS NULL AND closed_weight IS NULL
       AND closed_exclusion_reason IS NULL)
     OR
@@ -3664,9 +3672,12 @@ CREATE TABLE IF NOT EXISTS commission_ticker_votes_v2 (
 );
 CREATE INDEX IF NOT EXISTS ix_commission_ticker_votes_v2_candidate
   ON commission_ticker_votes_v2(day, asset_version_key, family_id);
+CREATE INDEX IF NOT EXISTS ix_commission_ticker_votes_v2_family_day
+  ON commission_ticker_votes_v2(family_id, day);
 
 CREATE TABLE IF NOT EXISTS ticker_ballot_results_v2 (
-  day INT PRIMARY KEY CHECK (day >= 0 AND day <= 99999999),
+  day INT PRIMARY KEY CONSTRAINT ck_ticker_ballot_results_v2_day_range
+    CHECK (day >= 0 AND day <= 99999999),
   status TEXT NOT NULL CHECK (status IN
     ('closed_ready','skipped_catalog_unavailable','skipped_catalog_empty',
      'skipped_no_valid_candidate')),
@@ -3693,6 +3704,9 @@ CREATE TABLE IF NOT EXISTS ticker_ballot_results_v2 (
   finalized_block_number NUMERIC(78,0),
   finalized_block_hash TEXT,
   finalized_at TIMESTAMPTZ,
+  vote_evidence_version SMALLINT NOT NULL DEFAULT 0
+    CONSTRAINT ck_ticker_ballot_results_v2_vote_evidence_version
+    CHECK (vote_evidence_version IN (0,1)),
   CHECK ((status = 'closed_ready') = (asset_version_key IS NOT NULL)),
   CHECK ((status = 'closed_ready') = (ticker IS NOT NULL)),
   CHECK ((status = 'closed_ready') = (token_address IS NOT NULL)),
@@ -3700,7 +3714,7 @@ CREATE TABLE IF NOT EXISTS ticker_ballot_results_v2 (
   CHECK ((status = 'closed_ready') = (registry_index IS NOT NULL)),
   CHECK ((status = 'closed_ready') = (purchase_until IS NOT NULL)),
   CHECK ((status = 'closed_ready') = (skip_reason IS NULL)),
-  CHECK (
+  CONSTRAINT ck_ticker_ballot_results_v2_decision_tuple CHECK (
     (status = 'closed_ready' AND (
       (decided_by = 'chamber' AND decided_by_code = 1
         AND votes BETWEEN 1 AND 5 AND weighted BETWEEN 1 AND 15)
@@ -3724,7 +3738,181 @@ CREATE TABLE IF NOT EXISTS ticker_ballot_results_v2 (
       AND decided_by_code = 6 AND skip_reason = 'no_valid_candidate'
       AND votes = 0 AND weighted = 0)
   ),
-  CHECK (publication_status = 'not_submitted' OR status = 'closed_ready')
+  CONSTRAINT ck_ticker_ballot_results_v2_publication_tuple CHECK (
+    (registry_tx_hash IS NULL OR (registry_tx_hash LIKE '0x________________________________________________________________'
+      AND substring(registry_tx_hash,3,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,4,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,5,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,6,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,7,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,8,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,9,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,10,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,11,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,12,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,13,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,14,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,15,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,16,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,17,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,18,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,19,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,20,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,21,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,22,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,23,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,24,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,25,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,26,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,27,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,28,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,29,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,30,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,31,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,32,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,33,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,34,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,35,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,36,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,37,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,38,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,39,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,40,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,41,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,42,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,43,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,44,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,45,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,46,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,47,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,48,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,49,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,50,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,51,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,52,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,53,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,54,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,55,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,56,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,57,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,58,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,59,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,60,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,61,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,62,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,63,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,64,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,65,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,66,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+    ))
+    AND (finalized_block_number IS NULL OR finalized_block_number >= 0)
+    AND
+    (finalized_block_hash IS NULL OR (finalized_block_hash LIKE '0x________________________________________________________________'
+      AND substring(finalized_block_hash,3,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,4,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,5,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,6,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,7,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,8,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,9,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,10,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,11,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,12,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,13,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,14,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,15,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,16,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,17,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,18,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,19,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,20,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,21,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,22,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,23,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,24,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,25,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,26,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,27,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,28,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,29,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,30,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,31,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,32,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,33,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,34,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,35,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,36,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,37,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,38,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,39,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,40,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,41,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,42,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,43,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,44,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,45,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,46,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,47,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,48,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,49,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,50,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,51,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,52,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,53,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,54,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,55,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,56,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,57,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,58,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,59,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,60,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,61,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,62,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,63,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,64,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,65,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,66,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+    ))
+    AND (
+      (status <> 'closed_ready'
+        AND publication_status = 'not_submitted'
+        AND registry_tx_hash IS NULL
+        AND finalized_block_number IS NULL
+        AND finalized_block_hash IS NULL
+        AND finalized_at IS NULL)
+      OR
+      (status = 'closed_ready' AND (
+        (publication_status = 'not_submitted'
+          AND registry_tx_hash IS NULL
+          AND finalized_block_number IS NULL
+          AND finalized_block_hash IS NULL
+          AND finalized_at IS NULL)
+        OR
+        (publication_status IN ('publisher_submitted','published_pending_finality')
+          AND registry_tx_hash IS NOT NULL
+          AND finalized_block_number IS NULL
+          AND finalized_block_hash IS NULL
+          AND finalized_at IS NULL)
+        OR
+        (publication_status = 'finalized'
+          AND registry_tx_hash IS NOT NULL
+          AND finalized_block_number IS NOT NULL
+          AND finalized_block_hash IS NOT NULL
+          AND finalized_at IS NOT NULL)
+        OR
+        (publication_status = 'reorged'
+          AND registry_tx_hash IS NOT NULL
+          AND finalized_block_number IS NULL
+          AND finalized_block_hash IS NULL
+          AND finalized_at IS NULL)
+        OR
+        (publication_status = 'failed'
+          AND finalized_block_number IS NULL
+          AND finalized_block_hash IS NULL
+          AND finalized_at IS NULL)
+      ))
+    )
+  )
 );
 CREATE INDEX IF NOT EXISTS ix_ticker_ballot_results_v2_publication
   ON ticker_ballot_results_v2(publication_status, closed_at, day);
