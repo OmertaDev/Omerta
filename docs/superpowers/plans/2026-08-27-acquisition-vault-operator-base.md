@@ -6,9 +6,10 @@
 > `superpowers:test-driven-development` for every source task. Do not begin a
 > dependent task until the preceding independent review gate is approved.
 
-**Goal:** Implement and independently approve the dormant O1 operator-authority
-and A1 native-ETH custody/provenance base of one final, non-upgradeable
-`AcquisitionVault`, without exposing any native-ETH outflow, purchase,
+**Goal:** Preserve and independently review the dormant O1/Task-4/Task-5
+behavioral reference, then extract A1 into the immutable non-proxy acquisition
+constellation frozen by
+`docs/superpowers/plans/2026-08-27-acquisition-constellation.md`, without exposing any native-ETH outflow, purchase,
 reservation, reconciliation disposition, token movement, deployment, funding,
 signing, or production reachability.
 
@@ -18,10 +19,11 @@ EOA/ERC-1271 successor consent while exposing no financial transfer. Only after
 O1 is independently approved does A1 add exact scalar native-ETH accounting,
 forced-surplus classification, Safe reclassification, one delayed code-pinned
 canonical ingress, capped replay-safe deposits, and immutable pre-vote budget
-evidence. A1 keeps all future reservation/reconciliation totals at zero and
-exposes no purchase or outflow path. A3, R, and O2 later add bounded records and
-the only operator ETH-transfer surface; no intermediate source milestone is a
-deployable release.
+evidence. Those milestones remain behavioral oracles only. Before Task 6, the
+size-triggered constellation amendment supersedes inline monolithic expansion:
+Authority, Core, BudgetBook, Intent, and Reconciliation become immutable children
+of a manifest factory. A3, R, and O2 compose through typed bounded calls; no
+intermediate source milestone is a deployable release.
 
 **Tech Stack:** Solidity `0.8.26`, OpenZeppelin `Ownable2Step`, `EIP712`,
 `Pausable`, `ReentrancyGuard`, `ECDSA`, `IERC1271`, Foundry unit/fuzz/stateful
@@ -35,14 +37,18 @@ evidence:
 
 ## Completion and deployment truth
 
-- The production artifact is one final, immutable-code `AcquisitionVault`.
-  There is no proxy, initializer, upgrade hook, storage gap, wrapper fallback,
-  delegate target, linked mutable library, or intermediate deployment.
+- The former one-final-`AcquisitionVault` assumption is superseded. The intended
+  production artifact is the immutable, non-proxy six-contract acquisition
+  constellation defined in `2026-08-27-acquisition-constellation.md`. There is
+  no proxy, initializer, upgrade hook, storage gap, wrapper fallback, delegate
+  target, linked mutable library, aggregate `deployAll`, or recursive hash graph.
 - O1 is implemented and independently approved at remediation head
   `82001b6e8ac54c46dda6eb185cda550e8a73a3de`. A1 Task 4 is implemented and
   independently approved at remediation head
-  `48b4a78605c9f21abca27d702923a501200b83bb`; A1 as a whole remains incomplete
-  until Tasks 5–8 land. O1 and the partial A1 artifact remain undeployed,
+  `48b4a78605c9f21abca27d702923a501200b83bb`. Task 5 is implemented at
+  `6e066ffabab0b0f63ac06be141d501474588aace` as a 23,212-byte dormant,
+  nondeployable reference; independent review is pending. A1 remains incomplete
+  until constellation Tasks 0–9 land. O1 and the partial A1 artifacts remain undeployed,
   unfunded, unsigned, unconfigured, unactivated, and unreachable from production.
 - This plan adds no deploy script, address manifest, Safe transaction, signature,
   funding operation, private key, provider credential, RPC worker, backend route,
@@ -74,8 +80,8 @@ heads.
 ### Interim A1 Task-4 milestone truth
 
 This is another current task-status note, not the controller-owned Task-8 closure
-record. The closure record remains entirely `UNSET` until Tasks 5–8 have stable
-reviewed heads.
+record. The closure record remains entirely `UNSET` until constellation Tasks
+0–9 have stable reviewed heads.
 
 - Initial Task-4 accounting implementation:
   `d66166aac628973b84f4864ee6bd1a367adcbade`.
@@ -88,8 +94,23 @@ reviewed heads.
   reclassification, immutable RegistryV2/global-cap context, and local readiness
   stubs, but no payable ingress, native-ETH outflow, purchase, reservation,
   reconciliation disposition, deployment, backend, UI, or cutover surface.
-- Tasks 5–8 remain pending; this interim status does not populate or substitute
-  for the controller-owned Task-8 closure evidence.
+- Task 5 later landed as the dormant reference described below; constellation
+  Tasks 0–9 remain pending. This interim status does not populate or substitute
+  for controller-owned closure evidence.
+
+### Interim A1 Task-5 milestone truth and size trigger
+
+- Task 5 is implemented at
+  `6e066ffabab0b0f63ac06be141d501474588aace`. Its focused monolithic reference
+  runtime is 23,212 bytes with 1,364 bytes of EIP-170 headroom.
+- It is dormant, undeployed, nondeployable, and not final A1 approval. Independent
+  review is pending; no controller closure field is populated by this note.
+- The artifact preserves the delayed code-pinned ingress, canonical deposit,
+  cap, repair-first accounting, role-collision, and readiness behavior that the
+  constellation must reproduce. It is a behavioral oracle, not a deploy target.
+- The measured size supersedes the one-final-monolith, inline Task-6, and
+  no-intermediate-deployment assumptions before Task 6. All further work follows
+  `2026-08-27-acquisition-constellation.md`; the monolith must not acquire Task 6.
 
 ## Frozen authority boundary
 
@@ -2014,7 +2035,13 @@ family. These are Task-5 closure tests, not new production capabilities.
 
 ---
 
-### Task 6: Add immutable pre-vote budget evidence
+### Task 6: Add immutable pre-vote budget evidence — SUPERSEDED
+
+**Do not execute the inline monolithic steps below.** They are retained only as
+historical requirement evidence. The size-triggered constellation amendment
+reassigns this work to `PreVoteBudgetBook` after the mandatory Task-0 crosswalk,
+factory, Authority, and Core extraction tasks. The new dependency-ordered Tasks
+0–9 in `2026-08-27-acquisition-constellation.md` are normative.
 
 **Files:**
 

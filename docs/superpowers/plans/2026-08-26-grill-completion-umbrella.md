@@ -54,10 +54,10 @@ partial legacy behavior and dirty documentation do not count.
 | N2 | Support and seat authority | C/N Task 3; Commission seat-generation integration | Domain approved; rapid loss/reseat generation hook pending |
 | N3 | Review and expiry | C/N Tasks 3–4, 6–7 | Domain/routes/package approved; finalized activation lifecycle pending |
 | H | Health and operational quarantine | H1 watcher/domain; H2 additive overlay/finality; U | Pending; mandatory before non-dormant ballot/purchase/delivery |
-| A1 | Native-ETH buckets/deposits | O1, A1 | Pending |
+| A1 | Native-ETH buckets/deposits | O1, AC-0..9 | O1/Task4 approved; Task5 `6e066ffa` dormant nondeployable reference at 23,212B, independent review pending; constellation extraction pending |
 | A2 | mainOperator | O1 role/typed authority; O2 final debit integration | Pending; A2 cannot complete before A3/R |
 | A3 | Purchase intents | CB budget bridge, A3 | Pending |
-| A4 | Pause and deficit | A1, R, O2, U | Pending |
+| A4 | Pause and deficit | AC, R, O2, U | Pending |
 | R | Attempts/reconciliation/incidents/hold-only Stock Token | R1/R2, O2, D, U | Pending; no callable token sale/recovery path in MVP |
 | D | Allocation/permanent deed delivery | D after CB/H/R/B | Pending; legacy Broker delivery is migration input only |
 | G1.1 | Gameplay vault shape/buckets | P0, G1-core | Pending |
@@ -129,17 +129,24 @@ partial legacy behavior and dirty documentation do not count.
 
 ## Executable dependency graph
 
+The size-triggered amendment
+`docs/superpowers/plans/2026-08-27-acquisition-constellation.md` supersedes the
+single-vault implementation node. In this graph `AC` means the phase-deployed,
+atomically finalized immutable constellation: Factory, Authority, Core,
+BudgetBook, Intent, and Reconciliation. The historical `A1` monolith is only a
+behavioral oracle and is not a deploy node.
+
 ```mermaid
 flowchart TD
   F0 --> CN
   CN --> FO
   FO --> H
-  O1 --> A1
-  CN --> A1
+  O1 --> AC
+  CN --> AC
   CN --> CB
   FO --> CB
   H --> CB
-  A1 --> CB
+  AC --> CB
   CB --> A3
   H --> A3
   A3 --> R
@@ -160,7 +167,7 @@ flowchart TD
   B --> D
   CN --> U
   H --> U
-  A1 --> U
+  AC --> U
   A3 --> U
   R --> U
   O2 --> U
@@ -183,13 +190,14 @@ flowchart TD
 | H1 | Predicate taxonomy, watcher, snapshots, operational overlay domain/API | FO, CN-1..4 | 5-minute poll, 10-minute freshness, bounded work, spam/stale tests | Pending |
 | H2 | `RwaHealthOverlay`, seven-day Safe clearance package/finality | H1, FO, CN-1..4 | Contract tests, exact event/finality/reorg proof | Pending |
 | O1 | mainOperator role state machine and EIP-712 authority | F0 | Unit/fuzz/invariant/1271/generation/nonce tests | Complete/independently approved/dormant at remediation head `82001b6e8ac54c46dda6eb185cda550e8a73a3de`; no outflow or deployment |
-| A1 | AcquisitionVault buckets, ingress, deposits, caps, pause/deficit base | O1, CN | Conservation/receipt/cap/migration/size tests | Pending; unblocked by approved O1, implementation Tasks 4–8 remain |
-| CB-bridge | Vault budget provenance into ballot opener/cutover gate | CN-5, A1, H2 | No manual production budget, no fallback/double authority | Pending |
+| A1-ref | Monolithic behavioral oracle for authority, buckets, ingress, deposits and caps | O1, CN | Preserve O1/Task4/Task5 evidence; never deploy | Task5 head `6e066ffa`, runtime 23,212B; dormant/nondeployable; independent review pending, not final A1 approval |
+| AC-0..9 | Immutable acquisition constellation: manifest factory, Authority, Core, BudgetBook, Intent, Reconciliation, O2 integration and review | A1-ref, O1, CN | Exact crosswalk; phased CREATE/finalization; typed-call/stateful/size/replay/gas tests; independent Wildcat/controller approval | Pending; normative successor to inline A1 Tasks 6–8, A3, R and O2 composition |
+| CB-bridge | Core/BudgetBook provenance into ballot opener/cutover gate | CN-5, AC-0..4, H2 | No manual production budget, no fallback/double authority | Pending |
 | CN-6 | One-cursor RegistryV2 finalized lifecycle consumer plus dormant exact-byte publisher | FO, CN-5, H2, CB-bridge | Event-time/reorg/crash/exact-match/drift/exact-byte rebroadcast tests; no duplicate observation kernel | Pending; publisher unreachable until H2 and AcquisitionVault provenance are approved |
 | CN-7 / X-CN | Real-PG harness, machine surfaces, C/N runbook/deploy package/review | CN-6 | MVCC/deadlock evidence; honest dormant manifest; whole-slice review | Pending |
-| A3 | Purchase intent/reservation/oracle/adapter/expiry/cancel execution | A1, CN-6, H2 | Unit/fuzz/invariant/oracle/route/replay tests | Pending |
-| R | Attempt journal, reconciliation, incidents, hold-only unmatched Stock Token | A3, H2 | Finality/reorg/repair/shortfall/bounded-index tests | Pending |
-| O2 | Fully integrated arbitrary ETH debit | A3, R | Whole-reservation cancellation and surviving reconciliation invariants | Pending |
+| A3 | Purchase intent/reservation/oracle/adapter/expiry/cancel execution | AC-0..5, CN-6, H2 | Constellation typed-call/unit/fuzz/invariant/oracle/route/replay tests | Pending within Intent/Core extraction |
+| R | Attempt journal, reconciliation, incidents, hold-only unmatched Stock Token | AC-0..6, H2 | Phase-hook/finality/reorg/repair/shortfall/bounded-index tests | Pending within Recon/Core extraction |
+| O2 | Fully integrated arbitrary ETH debit | AC-0..7 | Shared-nonce, 0/1/32/67, whole-reservation cancellation and surviving reconciliation invariants | Pending within constellation integration |
 | P0 | Pool/vault interface and deterministic address/latch ceremony | approved SGP | ABI/circular-deployment and code-pin review | Pending |
 | G1 | Gameplay vault core/risk/settlement/solvency + governor/proxy | P0 | Unit/fuzz/stateful invariant/size/storage/upgrade tests | Pending |
 | F | Settlement finality rules contract/mirror/packages | G1 interface | 48-hour proposal, future effective block, symmetric change tests | Pending |

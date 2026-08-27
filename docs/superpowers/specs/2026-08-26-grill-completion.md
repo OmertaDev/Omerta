@@ -157,16 +157,16 @@ flowchart TD
   C --> FO["FO: Shared Finalized-Observation Kernel"]
   N --> FO
   FO --> H["H: Health Overlay + Safe Clearance"]
-  O1["O1: mainOperator Role + Typed Authority"] --> A1["A1: Acquisition Vault Buckets + Ingress"]
-  C --> A1
+  O1["O1: mainOperator Role + Typed Authority"] --> AC["AC: Immutable Acquisition Constellation"]
+  C --> AC
   H --> CB["CB: Ballot + Event Finality + Budget Provenance"]
   FO --> CB
   C --> CB
   N --> CB
-  A1 --> CB
+  AC --> CB
   CB --> A3["A3: Purchase Intents + Reservations"]
   H --> A3
-  A1 --> A3
+  AC --> A3
   A3 --> R["R: Attempts + Reconciliation + Incidents"]
   H --> R
   R --> O2["O2: Integrated Arbitrary-ETH Debit"]
@@ -187,7 +187,7 @@ flowchart TD
   C --> U["U: Operator/Public API + Graphical Console"]
   N --> U
   H --> U
-  A1 --> U
+  AC --> U
   A3 --> U
   R --> U
   O2 --> U
@@ -415,13 +415,48 @@ cutover.
 
 ## A — RWA acquisition vault, main operator, and purchase intents
 
+### A0. Size-triggered immutable acquisition constellation
+
+The normative implementation architecture is
+`docs/superpowers/plans/2026-08-27-acquisition-constellation.md`. It supersedes
+the one-final-monolith, inline Task-6, proxy, aggregate-constructor/`deployAll`,
+and no-intermediate-deployment assumptions without erasing the user requirements
+below. Task 5 commit `6e066ffa` is a dormant, undeployed, nondeployable
+behavioral reference with 23,212-byte runtime and independent review pending. It
+is not final A1 approval and is not part of the deploy graph.
+
+The deploy graph is one immutable non-proxy manifest factory plus five children:
+Authority, Core, BudgetBook, Intent, and Reconciliation. Authority alone owns
+Safe/operator/pause/ingress state; Core alone owns ETH, `A/U/R/L/P`, sequence,
+caps, minimal records, and hold-only Stock Token custody/aggregates; BudgetBook
+owns evidence only; Intent owns rich intent/oracle/adapter/attempt metadata;
+Reconciliation owns rich evidence/dispositions/incidents. No module mirrors
+roles or Core totals.
+
+The factory is created from a known deployer/nonce and commits ordered initcode
+hashes, expected sequential CREATE addresses, runtime hashes, chain, Safe, and
+configuration root. Permissionless `deployNext` accepts only the exact next
+initcode and value zero. Child constructors make no peer calls and remain dormant.
+One atomic finalization verifies all addresses, hashes, topology, immutables, and
+logical zero state before activating every child. Wrong/incomplete constellations
+remain inert; the finalized factory has no economic/config/redeploy power. Each
+child independently satisfies EIP-170 and EIP-3860.
+
+Cross-contract calls are typed, selector/length/gas/returndata bounded, and
+phase guarded. There is no fallback, receive, proxy, delegatecall, or generic
+execute. Core is the sole native-transfer origin and sole mutation-guard owner.
+The exact pause matrix, shared O2 nonce/separate cancel nonce, phase-leaf protocol,
+adapter outcome table, 67-component O2 bound, repair provenance/classification,
+V1/V2 IDs, EIP-712 Authority domain, emitter ordering, and Task-0..9 TDD graph are
+frozen in the constellation plan and incorporated here by reference.
+
 ### A1. Native-ETH buckets and deposits
 
-- One dedicated acquisition vault accounts native ETH as `available`,
+- One dedicated `AcquisitionVaultCore` accounts native ETH as `available`,
   `unattributed`, `reserved`, and `reconciliationPending`, plus explicit
   liability, backed liability, and shortfall totals.
-- Approved ingress versions are pinned to address, runtime code hash, and, where
-  applicable, proxy implementation address/code hash. Exactly one ingress
+- Approved ingress versions are pinned to address and runtime code hash. The
+  acquisition constellation itself is never proxied. Exactly one ingress
   version is active with no overlap.
 - Only an approved ingress may create a canonical deposit, unique by chain,
   ingress version, and source reference. Forced/unmatched ETH is unattributed.
