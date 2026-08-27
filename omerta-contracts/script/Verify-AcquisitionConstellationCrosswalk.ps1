@@ -443,34 +443,47 @@ function Assert-MetadataProvenance(
   }
 }
 
-function Assert-Task2CompilerConfiguration([string]$Toml, $LegacyArtifact) {
-  if ($Toml -notmatch 'solc_version\s*=\s*"0\.8\.26"' -or $Toml -notmatch 'optimizer\s*=\s*true' -or
-      $Toml -notmatch 'optimizer_runs\s*=\s*800' -or $Toml -notmatch 'evm_version\s*=\s*"cancun"') {
+function Get-EffectiveForgeConfig {
+  $text = (& $ForgePath config --json --root $artifactProjectRoot 2>&1) -join "`n"
+  if ($LASTEXITCODE -ne 0) { throw "forge config --json failed closed: $text" }
+  return $text | ConvertFrom-Json -Depth 100
+}
+
+function Assert-Task2CompilerConfiguration($EffectiveConfig, $LegacyArtifact) {
+  if (-not [string]::Equals([string]$EffectiveConfig.solc,'0.8.26',[StringComparison]::Ordinal) -or
+      $EffectiveConfig.optimizer -ne $true -or [int]$EffectiveConfig.optimizer_runs -ne 800 -or
+      -not [string]::Equals([string]$EffectiveConfig.evm_version,'cancun',[StringComparison]::Ordinal) -or
+      $EffectiveConfig.via_ir -eq $true) {
     throw 'Task2 default compiler profile drift.'
+  }
+  $profiles = @($EffectiveConfig.additional_compiler_profiles)
+  if ($profiles.Count -ne 1) { throw 'Task2 additional compiler profile count drift.' }
+  $profile = $profiles[0]
+  if (-not [string]::Equals([string]$profile.name,'constellation-via-ir',[StringComparison]::Ordinal) -or
+      $profile.via_ir -ne $true -or $profile.optimizer -ne $true -or [int]$profile.optimizer_runs -ne 800 -or
+      -not [string]::Equals([string]$profile.evm_version,'cancun',[StringComparison]::Ordinal) -or
+      $null -ne $profile.bytecode_hash) {
+    throw 'Task2 named compiler profile drift.'
   }
   $expectedPaths = @(
     'src/AcquisitionConstellationFactory.sol','src/AcquisitionAuthority.sol','src/AcquisitionVaultCore.sol',
     'src/PreVoteBudgetBook.sol','src/AcquisitionIntentExecution.sol','src/AcquisitionReconciliation.sol',
     'src/interfaces/IAcquisitionAuthorityV2.sol'
   )
-  $restrictionMatches = [regex]::Matches($Toml,'\{\s*paths\s*=\s*"([^"]+)"[^\r\n]+\}')
-  if ($restrictionMatches.Count -ne 7) { throw 'Task2 compiler restriction count drift.' }
-  $actualPaths = @($restrictionMatches | ForEach-Object { $_.Groups[1].Value } | Sort-Object)
-  $expectedSorted = @($expectedPaths | Sort-Object)
-  for ($i=0;$i-lt$expectedSorted.Count;$i++) {
-    if (-not [string]::Equals($actualPaths[$i],$expectedSorted[$i],[StringComparison]::Ordinal)) {
-      throw 'Task2 compiler restriction path drift.'
+  $restrictions = @($EffectiveConfig.compilation_restrictions)
+  if ($restrictions.Count -ne 7) { throw 'Task2 compiler restriction count drift.' }
+  foreach ($path in $expectedPaths) {
+    $matches = @($restrictions | Where-Object { [string]::Equals([string]$_.paths,$path,[StringComparison]::Ordinal) })
+    if ($matches.Count -ne 1) { throw "Task2 compiler restriction path drift: $path" }
+    $restriction = $matches[0]
+    if (-not [string]::Equals([string]$restriction.version,'=0.8.26',[StringComparison]::Ordinal) -or
+        $restriction.via_ir -ne $true -or [int]$restriction.optimizer_runs -ne 800 -or
+        -not [string]::Equals([string]$restriction.evm_version,'cancun',[StringComparison]::Ordinal) -or
+        $null -ne $restriction.bytecode_hash -or $null -ne $restriction.min_optimizer_runs -or
+        $null -ne $restriction.max_optimizer_runs -or $null -ne $restriction.min_evm_version -or
+        $null -ne $restriction.max_evm_version) {
+      throw "Task2 compiler restriction settings drift: $path"
     }
-  }
-  foreach ($match in $restrictionMatches) {
-    $line = $match.Value
-    if ($line -notmatch 'version\s*=\s*"=0\.8\.26"' -or $line -notmatch 'via_ir\s*=\s*true' -or
-        $line -notmatch 'optimizer_runs\s*=\s*800' -or $line -notmatch 'evm_version\s*=\s*"cancun"') {
-      throw "Task2 compiler restriction settings drift: $line"
-    }
-  }
-  if ($Toml -notmatch 'name\s*=\s*"constellation-via-ir"[^\r\n]+via_ir\s*=\s*true[^\r\n]+optimizer\s*=\s*true[^\r\n]+optimizer_runs\s*=\s*800[^\r\n]+evm_version\s*=\s*"cancun"') {
-    throw 'Task2 named compiler profile drift.'
   }
   $legacyMetadata = $LegacyArtifact.metadata
   if ($legacyMetadata -is [string]) { $legacyMetadata = $legacyMetadata | ConvertFrom-Json -Depth 100 }
@@ -841,7 +854,8 @@ function Invoke-Task2Validation {
     Assert-MetadataProvenance $artifact $sources[$i] $contracts[$i] $sourceHashes[$i] $true $true
     $artifacts+=$artifact
   }
-  Assert-Task2CompilerConfiguration (Get-Content -LiteralPath $config -Raw) $legacy
+  $effectiveConfig=Get-EffectiveForgeConfig
+  Assert-Task2CompilerConfiguration $effectiveConfig $legacy
 
   $allAbi=@($artifacts|ForEach-Object { $_.abi })
   $functions=@($allAbi|Where-Object type -eq 'function')
@@ -1062,12 +1076,20 @@ function Invoke-Task2Validation {
   Assert-Rejected 'compilationTarget' { Assert-MetadataProvenance $mutated $sources[0] $contracts[0] $sourceHashes[0] $true $false }
   $mutated=$artifacts[0]|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$sourceProperty=@($mutated.metadata.sources.psobject.Properties)[0];$sourceProperty.Value.keccak256='0x'+('00'*32)
   Assert-Rejected 'source hash/set' { Assert-MetadataProvenance $mutated $sources[0] $contracts[0] $sourceHashes[0] $true $false }
-  $toml=Get-Content -LiteralPath $config -Raw
-  Assert-Rejected 'compiler restriction setting' { Assert-Task2CompilerConfiguration ($toml -replace 'via_ir = true','via_ir = false') $legacy }
-  Assert-Rejected 'compiler restriction path' { Assert-Task2CompilerConfiguration ($toml -replace 'src/AcquisitionVaultCore.sol','src/WrongCore.sol') $legacy }
+  $mutatedConfig=$effectiveConfig|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutatedConfig.compilation_restrictions[0].via_ir=$false
+  Assert-Rejected 'compiler restriction setting' { Assert-Task2CompilerConfiguration $mutatedConfig $legacy }
+  $mutatedConfig=$effectiveConfig|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutatedConfig.compilation_restrictions[2].paths='src/WrongCore.sol'
+  Assert-Rejected 'compiler restriction path' { Assert-Task2CompilerConfiguration $mutatedConfig $legacy }
+  $mutatedConfig=$effectiveConfig|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100
+  $extraRestriction=$mutatedConfig.compilation_restrictions[0]|ConvertTo-Json -Depth 20|ConvertFrom-Json -Depth 20
+  $extraRestriction.paths='src/OmertaFees.sol'
+  $mutatedConfig.compilation_restrictions=@($mutatedConfig.compilation_restrictions)+@($extraRestriction)
+  Assert-Rejected 'extra reordered compiler restriction' { Assert-Task2CompilerConfiguration $mutatedConfig $legacy }
+  $mutatedConfig=$effectiveConfig|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutatedConfig.additional_compiler_profiles[0].optimizer_runs=801
+  Assert-Rejected 'named compiler profile setting' { Assert-Task2CompilerConfiguration $mutatedConfig $legacy }
   $legacyViaIr=$legacy|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100
   $legacyViaIr.metadata.settings|Add-Member -NotePropertyName viaIR -NotePropertyValue $true -Force
-  Assert-Rejected 'legacy Vault viaIR' { Assert-Task2CompilerConfiguration $toml $legacyViaIr }
+  Assert-Rejected 'legacy Vault viaIR' { Assert-Task2CompilerConfiguration $effectiveConfig $legacyViaIr }
   Assert-Rejected 'Factory snapshot gas mutation' { Assert-Task2FactoryIr ($factoryIr -replace 'staticcall\(160000','staticcall(160001') }
   Assert-Rejected 'Factory returndata-copy mutation' { Assert-Task2FactoryIr ($factoryIr+' returndatacopy(0,0,returndatasize())') }
   Assert-Rejected 'Authority CALL mutation' { Assert-Task2AuthorityIr ($authorityIr+' call(1,2,3,4,5,6,7)') }
@@ -1217,7 +1239,7 @@ function Assert-SourceProvenance($Artifact,[string]$Source,[string]$Name,[string
   if($nodeExit-ne0-or-not[string]::Equals($localHash,$FrozenHash,[StringComparison]::OrdinalIgnoreCase)){throw "$Name local source hash provenance drift."}
   $sourceNames=@($metadata.sources.psobject.Properties.Name)
   if($sourceNames.Count-ne1-or-not [string]::Equals($sourceNames[0],$Source,[StringComparison]::Ordinal)){throw "$Name reviewed production source set drift."}
-  if($metadata.compiler.version-notmatch'^0.8.26\+commit\.'){throw "$Name compiler provenance drift."}
+  if(-not[string]::Equals([string]$metadata.compiler.version,'0.8.26+commit.8a97fa7a',[StringComparison]::Ordinal)){throw "$Name compiler provenance drift."}
   if($metadata.settings.optimizer.enabled-ne$true-or$metadata.settings.optimizer.runs-ne800-or$metadata.settings.evmVersion-ne'cancun'-or$metadata.settings.viaIR-eq$true){throw "$Name build settings provenance drift."}
   $targets=@($metadata.settings.compilationTarget.psobject.Properties)
   $targetContract=[IO.Path]::GetFileNameWithoutExtension($Source)
