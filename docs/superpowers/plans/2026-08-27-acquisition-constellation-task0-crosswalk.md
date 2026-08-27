@@ -157,6 +157,10 @@ Task 1 conformance binds the exact reviewed six-file production source set and
 Keccak hashes, ABI parameter/output names, storage layout, immutable reference
 identity and positions, executable opcode inventories, and optimized-IR call
 shapes. Raw source substring matches are not acceptance evidence. The focused
-Task 1 harness separately executes the pre/post gas thresholds and finalizer
-CALL precedence for insufficient reserve, failed calls, nonzero return data,
-and post-call topology.
+Task 1 harness separately proves the pure pre/post gas decision thresholds and
+executes the shared production finalizer CALL path for cold access, full-cap
+consumption, failed calls, nonzero return data, and post-call topology. The
+postcheck is defense-in-depth: the frozen conservative inequality
+`211,588 - 10,000 - 100,000 >= 100,000` yields a reachable-path lower bound of
+101,588, so pure 99,999/100,000 tests are logical boundary evidence rather than
+claims about actual production observations.

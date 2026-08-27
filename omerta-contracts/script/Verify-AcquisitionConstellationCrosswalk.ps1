@@ -514,7 +514,7 @@ function Assert-FactoryCompilerPolicy([string]$Ir) {
   if(([regex]::Matches($clean,'(?<!static)call\( 100000, [^,]+, 0, [^,]+, [^,]+, 0, 0\)')).Count-ne5){throw 'Factory compiler finalizer CALL schema/count drift.'}
   if(([regex]::Matches($clean,'staticcall\(100000, [^,]+, 0, (0x04|4), 0, (0x20|32)\)')).Count-ne2){throw 'Factory compiler Registry STATICCALL schema/count drift.'}
   if(([regex]::Matches($clean,'staticcall\(50000, [^,]+, usr\$buffer, 0x04, usr\$buffer, 0x60\)')).Count-ne2){throw 'Factory compiler topology STATICCALL schema/count drift.'}
-  if(([regex]::Matches($clean,'let _[0-9]+ := gas\(\)')).Count-lt10){throw 'Factory compiler immediate gas checkpoint drift.'}
+  if(([regex]::Matches($clean,'let _[0-9]+ := gas\(\)')).Count-ne5-or([regex]::Matches($clean,'let var_afterGas(_[0-9]+)? := gas\(\)')).Count-ne5){throw 'Factory compiler immediate gas checkpoint drift.'}
   if(([regex]::Matches($clean,'returndatasize\(\)')).Count-ne9){throw 'Factory compiler bounded returndata observation drift.'}
   if($Ir-match'(?im)\breturndatacopy\s*\('){throw 'Factory dynamic returndata copying drift.'}
   if($Ir-match'(?im)\b(delegatecall|callcode|create2|selfdestruct)\s*\('){throw 'Factory prohibited compiler callsite.'}
@@ -539,7 +539,7 @@ try {
   Assert-FunctionSchema $factory 'finalizeConstellation' 'nonpayable' @()
   Assert-EventSchema $factory 'ChildDeployed' @($true,$true,$true,$false)
   Assert-EventSchema $factory 'ConstellationFinalized' @($true,$true)
-  Assert-SourceProvenance $factory 'src/AcquisitionConstellationFactory.sol' 'Factory' '0xb2d5787777243b4c1308877b186eb5c1c112accf628be9c7b85e4d709acf74c0'
+  Assert-SourceProvenance $factory 'src/AcquisitionConstellationFactory.sol' 'Factory' '0xa2b8fb06ca07ba5ad29e9ed05654174fc73c74b7cd2729ea57ae56997071d742'
   Assert-AbiNames $factory 'factoryState' @() @('manifestHash','deploymentCommitment','phase','nextChildIndex','safe','configurationRoot','registry','registryRuntimeHash')
   Assert-AbiNames $factory 'childCommitment' @('index') @('child','initcodeHash','runtimeHash')
   Assert-AbiNames $factory 'deployNext' @('initcode') @('child')
@@ -551,11 +551,11 @@ try {
   function Assert-RejectedIrMutation([string]$Label,[string]$MutatedIr){$rejected=$false;try{Assert-FactoryCompilerPolicy $MutatedIr}catch{$rejected=$true};if(-not$rejected){throw "Compiler-policy negative selftest failed: $Label"}}
   Assert-RejectedIrMutation 'phase-after-CREATE' ($factoryIr.Replace('0:7068:7074  "_phase"','0:99999:99999  "movedPhase"')+' 0:7068:7074  "_phase"')
   Assert-RejectedIrMutation 'nonzero-CREATE-value' ($factoryIr.Replace('let var_child := create(','let var_child := create(1, pop('))
-  Assert-RejectedIrMutation 'wrong-finalizer-gas' ($factoryIr.Replace('call(/** @src 0:11084:11304  "assembly (\"memory-safe\") {..." */ 100000','call(/** @src 0:11084:11304  "assembly (\"memory-safe\") {..." */ 99999'))
+  Assert-RejectedIrMutation 'wrong-finalizer-gas' ($factoryIr.Replace('call(/** @src 0:10965:11185  "assembly (\"memory-safe\") {..." */ 100000','call(/** @src 0:10965:11185  "assembly (\"memory-safe\") {..." */ 99999'))
   Assert-RejectedIrMutation 'wrong-topology-gas' ($factoryIr.Replace('staticcall(50000','staticcall(49999'))
   Assert-RejectedIrMutation 'dynamic-returndata-copy' ($factoryIr+' returndatacopy(0,0,returndatasize())')
   Assert-RejectedIrMutation 'prohibited-delegatecall' ($factoryIr+' delegatecall(1,2,3,4,5,6)')
-  Assert-ImmutableReferences $factory '1262:32;470:32,540:32,595:32,738:32,1332:32;630:32,682:32,1367:32;1297:32;924:32,1143:32,2846:32,3404:32;890:32,1176:32' 'Factory'
+  Assert-ImmutableReferences $factory '1262:32;470:32,540:32,595:32,738:32,1332:32;630:32,682:32,1367:32;1297:32;924:32,1143:32,2720:32,3158:32;890:32,1176:32' 'Factory'
   $factoryLayoutText=& $ForgePath inspect AcquisitionConstellationFactory storageLayout --json 2>&1
   if($LASTEXITCODE-ne0){throw "Factory storage inspect failed: $factoryLayoutText"}
   $factoryLayout=$factoryLayoutText|ConvertFrom-Json -Depth 100

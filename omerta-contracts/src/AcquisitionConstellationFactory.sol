@@ -186,14 +186,14 @@ contract AcquisitionConstellationFactory {
         }
         if (child == address(0)) revert FactoryCreateFailed(index);
         address expectedChild = _children[index];
-        if (child != expectedChild) revert FactoryChildAddressMismatch(index, expectedChild, child);
+        _requireChildAddress(index, expectedChild, child);
         bytes32 actualRuntimeHash = child.codehash;
         bytes32 expectedRuntimeHash = _childRuntimeHashes[index];
         if (actualRuntimeHash == bytes32(0) || actualRuntimeHash == _EMPTY_CODE_HASH) {
             revert FactoryRuntimeHashMismatch(index, expectedRuntimeHash, actualRuntimeHash);
         }
         uint256 runtimeSize = child.code.length;
-        if (runtimeSize > _MAX_RUNTIME) revert FactoryRuntimeTooLarge(index, runtimeSize);
+        _requireRuntimeSize(index, runtimeSize);
         if (actualRuntimeHash != expectedRuntimeHash) {
             revert FactoryRuntimeHashMismatch(index, expectedRuntimeHash, actualRuntimeHash);
         }
@@ -240,7 +240,7 @@ contract AcquisitionConstellationFactory {
             revert FactoryRuntimeHashMismatch(index, expectedHash, actualHash);
         }
         uint256 size = child.code.length;
-        if (size > _MAX_RUNTIME) revert FactoryRuntimeTooLarge(index, size);
+        _requireRuntimeSize(index, size);
         if (actualHash != expectedHash) revert FactoryRuntimeHashMismatch(index, expectedHash, actualHash);
         _checkTopology(index, finalized, finalized);
     }
@@ -293,11 +293,15 @@ contract AcquisitionConstellationFactory {
     function _finalize(uint8 index) private {
         bytes memory input = abi.encodeWithSelector(_finalizerSelector(index), _manifestHash);
         address child = _children[index];
+        _callFinalizer(index, child, input);
+        _checkTopology(index, true, true);
+    }
+
+    function _callFinalizer(uint8 index, address child, bytes memory input) internal returns (uint256 afterGas) {
         uint256 beforeGas = gasleft();
         _requireFinalizerPrecheck(index, beforeGas);
         bool ok;
         uint256 size;
-        uint256 afterGas;
         assembly ("memory-safe") {
             ok := call(_FINALIZER_GAS, child, 0, add(input, 0x20), mload(input), 0, 0)
             afterGas := gas()
@@ -308,7 +312,14 @@ contract AcquisitionConstellationFactory {
         }
         if (!ok) revert FactoryFinalizerCallFailed(index);
         if (size != 0) revert FactoryFinalizerReturnLength(index, size);
-        _checkTopology(index, true, true);
+    }
+
+    function _requireChildAddress(uint8 index, address expected, address actual) internal pure {
+        if (actual != expected) revert FactoryChildAddressMismatch(index, expected, actual);
+    }
+
+    function _requireRuntimeSize(uint8 index, uint256 actual) internal pure {
+        if (actual > _MAX_RUNTIME) revert FactoryRuntimeTooLarge(index, actual);
     }
 
     function _topologySelector(uint8 index) private pure returns (bytes4) {

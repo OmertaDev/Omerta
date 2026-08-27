@@ -137,6 +137,18 @@ contract FactoryGasHarness is AcquisitionConstellationFactory {
     function requirePost(uint8 index, uint256 available) external pure {
         _requireFinalizerPostcheck(index, available);
     }
+
+    function sharedCall(uint8 index, address target, bytes calldata input) external returns (uint256) {
+        return _callFinalizer(index, target, input);
+    }
+
+    function requireChildAddress(uint8 index, address expected, address actual) external pure {
+        _requireChildAddress(index, expected, actual);
+    }
+
+    function requireRuntimeSize(uint8 index, uint256 actual) external pure {
+        _requireRuntimeSize(index, actual);
+    }
 }
 
 contract FinalizerGasTarget {
@@ -172,24 +184,66 @@ contract FinalizerGasTarget {
     }
 }
 
-/// Test-only executable model of the production CALL checkpoint and precedence.
-contract FinalizerCallSeamHarness {
-    error Post(uint256 available);
-    error Failed();
-    error Length(uint256 actual);
+contract MatrixChild {
+    address internal _factory;
+    bytes32 internal _manifest;
+    uint8 internal _index;
+    uint8 internal _mode;
+    address internal _poisonTarget;
+    bool internal _finalized;
 
-    function run(address target, uint256 injectedPost) external returns (uint256 observedPost) {
-        bool ok;
-        assembly ("memory-safe") {
-            ok := call(100000, target, 0, 0, 0, 0, 0)
-            observedPost := gas()
+    constructor(address factory, bytes32 manifest, uint8 index, uint8 mode, address poisonTarget) {
+        _factory = factory;
+        _manifest = manifest;
+        _index = index;
+        _mode = mode;
+        _poisonTarget = poisonTarget;
+    }
+
+    function poison() external {
+        require(msg.sender == _poisonTarget);
+        _finalized = false;
+    }
+
+    fallback() external {
+        if (msg.sig == _topologySelector(_index)) {
+            if (_mode == 1 && _finalized) revert();
+            if (_mode == 2 && _finalized) {
+                assembly { return(0, 95) }
+            }
+            address reportedFactory = _mode == 3 && _finalized ? address(0xBAD) : _factory;
+            bytes memory result = abi.encode(reportedFactory, _manifest, _finalized);
+            assembly { return(add(result, 0x20), mload(result)) }
         }
-        uint256 decisionGas = injectedPost == type(uint256).max ? observedPost : injectedPost;
-        if (decisionGas < 100_000) revert Post(decisionGas);
-        uint256 size;
-        assembly ("memory-safe") { size := returndatasize() }
-        if (!ok) revert Failed();
-        if (size != 0) revert Length(size);
+        if (msg.sig != _finalizerSelector(_index)) revert();
+        require(msg.sender == _factory);
+        _finalized = true;
+        if (_mode == 4) {
+            MatrixChild(_poisonTarget).poison();
+        } else if (_mode == 5) {
+            assembly {
+                mstore(0, 1)
+                return(0, 1)
+            }
+        } else if (_mode == 6) {
+            assembly { return(0, 4096) }
+        }
+    }
+
+    function _topologySelector(uint8 index) private pure returns (bytes4) {
+        if (index == 0) return AcquisitionAuthority.authorityTopology.selector;
+        if (index == 1) return AcquisitionVaultCore.coreTopology.selector;
+        if (index == 2) return PreVoteBudgetBook.budgetBookTopology.selector;
+        if (index == 3) return AcquisitionIntentExecution.intentExecutionTopology.selector;
+        return AcquisitionReconciliation.reconciliationTopology.selector;
+    }
+
+    function _finalizerSelector(uint8 index) private pure returns (bytes4) {
+        if (index == 0) return AcquisitionAuthority.finalizeAuthority.selector;
+        if (index == 1) return AcquisitionVaultCore.finalizeCore.selector;
+        if (index == 2) return PreVoteBudgetBook.finalizeBudgetBook.selector;
+        if (index == 3) return AcquisitionIntentExecution.finalizeIntentExecution.selector;
+        return AcquisitionReconciliation.finalizeReconciliation.selector;
     }
 }
 
@@ -378,25 +432,54 @@ contract AcquisitionConstellationTask1Test is Test {
     }
 
     function test_actualFinalizerCallCheckpointAndFailurePrecedence() public {
-        FinalizerCallSeamHarness seam = new FinalizerCallSeamHarness();
+        FactoryGasHarness seam = _gasHarness();
         FinalizerGasTarget empty = new FinalizerGasTarget(FinalizerGasTarget.Mode.SuccessEmpty);
         FinalizerGasTarget one = new FinalizerGasTarget(FinalizerGasTarget.Mode.SuccessOne);
         FinalizerGasTarget large = new FinalizerGasTarget(FinalizerGasTarget.Mode.SuccessLarge);
         FinalizerGasTarget reverting = new FinalizerGasTarget(FinalizerGasTarget.Mode.RevertLarge);
         FinalizerGasTarget consuming = new FinalizerGasTarget(FinalizerGasTarget.Mode.ConsumeAllowance);
 
-        vm.expectRevert(abi.encodeWithSelector(FinalizerCallSeamHarness.Post.selector, uint256(99_999)));
-        seam.run(address(reverting), 99_999);
-        vm.expectRevert(FinalizerCallSeamHarness.Failed.selector);
-        seam.run(address(reverting), 100_000);
-        vm.expectRevert(abi.encodeWithSelector(FinalizerCallSeamHarness.Length.selector, uint256(1)));
-        seam.run(address(one), 100_000);
-        vm.expectRevert(abi.encodeWithSelector(FinalizerCallSeamHarness.Length.selector, uint256(4096)));
-        seam.run(address(large), 100_000);
-        assertGe(seam.run(address(empty), type(uint256).max), 100_000);
+        vm.expectRevert(
+            abi.encodeWithSelector(AcquisitionConstellationFactory.FactoryFinalizerCallFailed.selector, uint8(2))
+        );
+        seam.sharedCall(2, address(reverting), bytes(""));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                AcquisitionConstellationFactory.FactoryFinalizerReturnLength.selector, uint8(3), uint256(1)
+            )
+        );
+        seam.sharedCall(3, address(one), bytes(""));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                AcquisitionConstellationFactory.FactoryFinalizerReturnLength.selector, uint8(4), uint256(4096)
+            )
+        );
+        seam.sharedCall(4, address(large), bytes(""));
+        assertGe(seam.sharedCall(0, address(empty), bytes("")), 101_588);
         // A cold target that deliberately consumes essentially the complete CALL allowance
         // cannot make the checkpoint silently bypass the reserve rule.
-        assertGe(seam.run{gas: 211_588}(address(consuming), type(uint256).max), 100_000);
+        assertGe(seam.sharedCall{gas: 215_000}(1, address(consuming), bytes("")), 101_588);
+    }
+
+    function test_invariantValidationHelpersUseExactProductionErrors() public {
+        FactoryGasHarness harness = _gasHarness();
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                AcquisitionConstellationFactory.FactoryChildAddressMismatch.selector,
+                uint8(3),
+                address(0x1111),
+                address(0x2222)
+            )
+        );
+        harness.requireChildAddress(3, address(0x1111), address(0x2222));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                AcquisitionConstellationFactory.FactoryRuntimeTooLarge.selector, uint8(4), uint256(24_577)
+            )
+        );
+        harness.requireRuntimeSize(4, 24_577);
+        harness.requireChildAddress(0, address(0x1111), address(0x1111));
+        harness.requireRuntimeSize(0, 24_576);
     }
 
     function test_absentAndExistingEmptyCodeHashesAreDistinct() public {
@@ -552,6 +635,194 @@ contract AcquisitionConstellationTask1Test is Test {
         assertEq(phase, 2);
     }
 
+    function test_readyCountCorruptionUsesExactChildIndexPrecedence() public {
+        (AcquisitionConstellationFactory factory, bytes[5] memory initcodes,) = _configured();
+        for (uint8 i; i < 5; ++i) {
+            factory.deployNext(initcodes[i]);
+        }
+        // slot 15 packs Phase at byte 0 and nextChildIndex at byte 1.
+        vm.store(address(factory), bytes32(uint256(15)), bytes32(uint256(2) | (uint256(4) << 8)));
+        vm.expectRevert(abi.encodeWithSelector(AcquisitionConstellationFactory.FactoryChildIndex.selector, uint8(4)));
+        factory.finalizeConstellation();
+    }
+
+    function test_absentChildFinalizationReportsZeroExtcodehash() public {
+        (AcquisitionConstellationFactory factory, bytes[5] memory initcodes, address[5] memory predicted) =
+            _configured();
+        for (uint8 i; i < 5; ++i) {
+            factory.deployNext(initcodes[i]);
+        }
+        (, bytes32 expectedHash) = _runtimeCommitment(factory, 3);
+        vm.etch(predicted[3], bytes(""));
+        vm.resetNonce(predicted[3]);
+        bytes32 actual;
+        address child = predicted[3];
+        assembly { actual := extcodehash(child) }
+        assertEq(actual, bytes32(0));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                AcquisitionConstellationFactory.FactoryRuntimeHashMismatch.selector, uint8(3), expectedHash, bytes32(0)
+            )
+        );
+        factory.finalizeConstellation();
+    }
+
+    function test_preflightFailureAtEveryChildIndexRollsBackPhaseAndFlags() public {
+        for (uint8 failing; failing < 5; ++failing) {
+            (AcquisitionConstellationFactory factory, bytes[5] memory initcodes, address[5] memory predicted) =
+                _configured();
+            for (uint8 i; i < 5; ++i) {
+                factory.deployNext(initcodes[i]);
+            }
+            (bytes32 manifest,,,,,,,) = factory.factoryState();
+            (, bytes32 expectedHash) = _runtimeCommitment(factory, failing);
+            vm.etch(predicted[failing], bytes(""));
+            vm.expectRevert(
+                abi.encodeWithSelector(
+                    AcquisitionConstellationFactory.FactoryRuntimeHashMismatch.selector,
+                    failing,
+                    expectedHash,
+                    keccak256(bytes(""))
+                )
+            );
+            factory.finalizeConstellation();
+            (,, uint8 phase,,,,,) = factory.factoryState();
+            assertEq(phase, 2);
+            for (uint8 i; i < failing; ++i) {
+                (address actualFactory, bytes32 actualManifest, bool finalized) = _topology(predicted[i], i);
+                assertEq(actualFactory, address(factory));
+                assertEq(actualManifest, manifest);
+                assertFalse(finalized);
+            }
+        }
+    }
+
+    function test_registryFinalizationRecheckOrderingAndRollback() public {
+        (AcquisitionConstellationFactory factory, bytes[5] memory initcodes, address[5] memory predicted) =
+            _configured();
+        for (uint8 i; i < 5; ++i) {
+            factory.deployNext(initcodes[i]);
+        }
+        bytes memory selector = abi.encodeWithSelector(Task1Registry.supportedChainId.selector);
+        vm.mockCallRevert(address(registry), selector, _bytes(4096));
+        vm.expectRevert(AcquisitionConstellationFactory.FactoryRegistryCallFailed.selector);
+        factory.finalizeConstellation();
+        vm.clearMockedCalls();
+        vm.mockCall(address(registry), selector, _bytes(31));
+        vm.expectRevert(
+            abi.encodeWithSelector(AcquisitionConstellationFactory.FactoryRegistryReturnLength.selector, uint256(31))
+        );
+        factory.finalizeConstellation();
+        vm.clearMockedCalls();
+        vm.mockCall(address(registry), selector, abi.encode(1));
+        vm.expectRevert(
+            abi.encodeWithSelector(AcquisitionConstellationFactory.RegistryChainMismatch.selector, uint256(1))
+        );
+        factory.finalizeConstellation();
+        vm.clearMockedCalls();
+        (bytes32 manifest,, uint8 phase,,,,,) = factory.factoryState();
+        assertEq(phase, 2);
+        _assertTopology(predicted, address(factory), manifest, false);
+
+        bytes32 expected = address(registry).codehash;
+        bytes memory registryCode = address(registry).code;
+        vm.etch(address(registry), bytes(""));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                AcquisitionConstellationFactory.FactoryRegistryCodeMissing.selector, address(registry)
+            )
+        );
+        factory.finalizeConstellation();
+        vm.etch(address(registry), registryCode);
+        vm.etch(address(registry), hex"00");
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                AcquisitionConstellationFactory.FactoryRegistryRuntimeHashMismatch.selector,
+                expected,
+                address(registry).codehash
+            )
+        );
+        factory.finalizeConstellation();
+    }
+
+    function test_postFinalizerTopologyFailureAtEveryPositionRollsBack() public {
+        uint8[5] memory order = [uint8(2), uint8(4), uint8(3), uint8(1), uint8(0)];
+        for (uint8 kind = 1; kind <= 3; ++kind) {
+            for (uint8 position; position < 5; ++position) {
+                uint8[5] memory modes;
+                uint8 failing = order[position];
+                modes[failing] = kind;
+                (AcquisitionConstellationFactory factory, bytes[5] memory initcodes, address[5] memory children) =
+                    _matrixConfigured(modes, false);
+                for (uint8 i; i < 5; ++i) {
+                    factory.deployNext(initcodes[i]);
+                }
+                bytes memory expected;
+                if (kind == 1) {
+                    expected = abi.encodeWithSelector(
+                        AcquisitionConstellationFactory.FactoryTopologyCallFailed.selector, failing
+                    );
+                } else if (kind == 2) {
+                    expected = abi.encodeWithSelector(
+                        AcquisitionConstellationFactory.FactoryTopologyReturnLength.selector, failing, uint256(95)
+                    );
+                } else {
+                    expected = abi.encodeWithSelector(
+                        AcquisitionConstellationFactory.FactoryFinalizerSemanticMismatch.selector, failing
+                    );
+                }
+                vm.expectRevert(expected);
+                factory.finalizeConstellation();
+                (bytes32 manifest,, uint8 phase,,,,,) = factory.factoryState();
+                assertEq(phase, 2);
+                for (uint8 i; i < 5; ++i) {
+                    (address actualFactory, bytes32 actualManifest, bool finalized) = _topology(children[i], i);
+                    assertEq(actualFactory, address(factory));
+                    assertEq(actualManifest, manifest);
+                    assertFalse(finalized);
+                }
+            }
+        }
+    }
+
+    function test_actualFinalizerNonzeroReturnLengthsAndRollback() public {
+        for (uint8 mode = 5; mode <= 6; ++mode) {
+            uint8[5] memory modes;
+            modes[2] = mode;
+            (AcquisitionConstellationFactory factory, bytes[5] memory initcodes, address[5] memory children) =
+                _matrixConfigured(modes, false);
+            for (uint8 i; i < 5; ++i) {
+                factory.deployNext(initcodes[i]);
+            }
+            uint256 length = mode == 5 ? 1 : 4096;
+            vm.expectRevert(
+                abi.encodeWithSelector(
+                    AcquisitionConstellationFactory.FactoryFinalizerReturnLength.selector, uint8(2), length
+                )
+            );
+            factory.finalizeConstellation();
+            (bytes32 manifest,, uint8 phase,,,,,) = factory.factoryState();
+            assertEq(phase, 2);
+            _assertTopology(children, address(factory), manifest, false);
+        }
+    }
+
+    function test_finalAllFlagsRecheckFailureRollsBackPoisonAndFlags() public {
+        uint8[5] memory modes;
+        (AcquisitionConstellationFactory factory, bytes[5] memory initcodes, address[5] memory children) =
+            _matrixConfigured(modes, true);
+        for (uint8 i; i < 5; ++i) {
+            factory.deployNext(initcodes[i]);
+        }
+        vm.expectRevert(
+            abi.encodeWithSelector(AcquisitionConstellationFactory.FactoryFinalizerSemanticMismatch.selector, uint8(2))
+        );
+        factory.finalizeConstellation();
+        (bytes32 manifest,, uint8 phase,,,,,) = factory.factoryState();
+        assertEq(phase, 2);
+        _assertTopology(children, address(factory), manifest, false);
+    }
+
     function test_finalizerFailureAtomicallyRollsBackEveryFlag() public {
         (AcquisitionConstellationFactory factory, bytes[5] memory initcodes, address[5] memory predicted) =
             _configured();
@@ -705,8 +976,51 @@ contract AcquisitionConstellationTask1Test is Test {
         callbackChild = predicted[0];
     }
 
+    function _matrixConfigured(uint8[5] memory modes, bool poison)
+        internal
+        returns (AcquisitionConstellationFactory factory, bytes[5] memory initcodes, address[5] memory predicted)
+    {
+        uint64 factoryNonce = vm.getNonce(address(this));
+        address predictedFactory = vm.computeCreateAddress(address(this), factoryNonce);
+        for (uint8 i; i < 5; ++i) {
+            predicted[i] = vm.computeCreateAddress(predictedFactory, uint256(i) + 1);
+        }
+        bytes32 config = keccak256(abi.encode(CONFIG_TAG, uint256(1), address(registry), address(registry).codehash));
+        bytes32 manifest = _manifest(predictedFactory, config, predicted);
+        if (poison) modes[4] = 4;
+        for (uint8 i; i < 5; ++i) {
+            address poisonTarget = i == 2 ? predicted[4] : (i == 4 ? predicted[2] : address(0));
+            initcodes[i] = abi.encodePacked(
+                type(MatrixChild).creationCode, abi.encode(predictedFactory, manifest, i, modes[i], poisonTarget)
+            );
+        }
+        bytes32[5] memory ih;
+        bytes32[5] memory rh;
+        bytes32 runtimeHash = keccak256(type(MatrixChild).runtimeCode);
+        for (uint8 i; i < 5; ++i) {
+            ih[i] = keccak256(initcodes[i]);
+            rh[i] = runtimeHash;
+        }
+        factory =
+            new AcquisitionConstellationFactory(address(safe), address(registry), address(registry).codehash, ih, rh);
+        assertEq(address(factory), predictedFactory);
+    }
+
     function _nonzeroHashes() internal pure returns (bytes32[5] memory h) {
         h = [bytes32(uint256(1)), bytes32(uint256(2)), bytes32(uint256(3)), bytes32(uint256(4)), bytes32(uint256(5))];
+    }
+
+    function _gasHarness() internal returns (FactoryGasHarness harness) {
+        bytes32[5] memory h = _nonzeroHashes();
+        harness = new FactoryGasHarness(address(safe), address(registry), address(registry).codehash, h, h);
+    }
+
+    function _topology(address child, uint8 index) internal view returns (address, bytes32, bool) {
+        if (index == 0) return AcquisitionAuthority(child).authorityTopology();
+        if (index == 1) return AcquisitionVaultCore(child).coreTopology();
+        if (index == 2) return PreVoteBudgetBook(child).budgetBookTopology();
+        if (index == 3) return AcquisitionIntentExecution(child).intentExecutionTopology();
+        return AcquisitionReconciliation(child).reconciliationTopology();
     }
 
     function _runtimeCommitment(AcquisitionConstellationFactory factory, uint8 index)

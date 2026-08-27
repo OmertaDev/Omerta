@@ -289,11 +289,16 @@ after CALL returns—and before checking its success bit, returndata size, or an
 semantic result—Factory independently requires `gasleft() >= 100_000`.
 Both failures use `FactoryPostCallGasInsufficient(index, available, required)`,
 with `required=211_588` at the precheck and `required=100_000` at the postcheck.
-Boundary and mutation tests cover 211,587/211,588 as `gasleft()` observed
-immediately at the precheck, 99,999/100,000 on return, maximum
-cold-access/intervening overhead, EIP-150 forwarding, child
-consumption of its complete cap, and the precedence of postcheck over CALL
-failure/returndata interpretation.
+Pure boundary and mutation tests cover the exact 211,587/211,588 precheck and
+99,999/100,000 postcheck decisions and payloads. The postcheck failure is
+defense-in-depth and is unreachable after a valid precheck under the frozen
+CALL schema: `211,588 - 10,000 - 100,000 = 101,588`, so the conservative
+minimum surviving reserve remains above 100,000. Executable shared-helper tests
+therefore cover the real minimum-passing precheck, cold-account access,
+EIP-150 non-clipping, child consumption of the complete 100,000 cap, and assert
+the actual post-CALL observation is at least 101,588. Optimized IR and opcode
+checks bind zero value/output, bounded call gas, no unbounded intervening
+operation, and immediate post-CALL gas capture.
 
 Compiler-stable seam tests use internal pure predicates
 `_hasFinalizerPrecheckGas(uint256 available)` (`available >= 211_588`) and
@@ -302,10 +307,9 @@ test-only derived harness may expose those predicates, but neither selector is
 present in production ABI. Production still snapshots `gasleft()` immediately
 at the pre-CALL assembly checkpoint and immediately after CALL at the post-CALL
 assembly checkpoint, then applies the corresponding predicate with no external
-operation between observation and decision. The post-call boundary additionally
-uses a bounded injected/capped-call harness that can leave exactly 99,999 or
-100,000 gas at that checkpoint. Tests assert the exact `available` and `required`
-payloads, not only the error selector; harness code is excluded from production.
+operation between observation and decision. Logical boundary tests assert the
+exact `available` and `required` payloads, not only the error selector; they do
+not claim that 99,999 or 100,000 is an executable production observation.
 
 Task 1 children are topology shells. Every constructor is exactly
 `(address factory, bytes32 manifestHash)`, makes no peer call, and stores no peer,
