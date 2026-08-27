@@ -862,8 +862,13 @@ failing check determines the error and implementations may not reorder it:
    `OwnableUnauthorizedAccount(msg.sender)`.
 3. Require successor nonzero, different from the current operator, and
    role-disjoint or revert `InvalidOperatorReplacement()`.
-4. Require consent `currentOperator`, `successor`, `generation`, and
-   `outflowNonce` to match exactly or revert `InvalidAuthorizationFields()`.
+4. Require consent `currentOperator`, `generation`, and `outflowNonce` to match
+   exactly or revert `InvalidAuthorizationFields()`. The consent's `successor`
+   is the action's sole successor input and was already validated for identity
+   and role separation at stage 3; there is no independent successor argument
+   against which it could mismatch. A different otherwise-valid successor is
+   therefore bound at stage 8 by that successor's signature, not rejected as a
+   stage-4 field mismatch.
 5. Require reason exactly `OPERATOR_REPLACED` or revert
    `InvalidActionReason(supplied)`.
 6. Require nonzero `detailsHash` or revert `EmptyDetailsHash()`.
@@ -883,6 +888,13 @@ after validation require `gasleft() >= 50_000`. Either gas-guard failure reverts
 `InsufficientSignatureValidationGas()`. Wallet-controlled revert, wrong magic,
 or malformed return remains `InvalidSignature()`. Every failure restores the
 reentrancy guard and leaves all domain state, counters, and logs unchanged.
+Because the exact `160_000` pre-call guard exceeds the `100_000` wallet stipend
+plus the `50_000` reserve by the explicit 10,000 overhead allowance, a correctly
+bounded wallet call cannot normally drive the production path below the
+post-call reserve. The post-call guard remains a required defensive assertion,
+but its exact `49_999`/`50_000` boundary is proven through the same internal
+production helper exposed only by a test-derived harness; tests must not require
+an arithmetically unreachable full replacement call to trigger that guard.
 
 Runtime `STATICCALL` evidence is target-family based, never an optimizer-dependent
 raw opcode count. Exactly two runtime families are allowed: compiler-emitted
@@ -1025,7 +1037,9 @@ proves the permitted targets, calldata, gas, and return handling.
   identities immediately before consent validation and atomically installs one
   successor with no overlap. Freeze replacement failures exactly: zero/same/
   role-colliding successor is `InvalidOperatorReplacement`; mismatched consent
-  operator/successor/generation/outflow nonce is `InvalidAuthorizationFields`;
+  current-operator/generation/outflow nonce is `InvalidAuthorizationFields`;
+  the consent's successor is the sole successor input and a different valid
+  value proceeds to that value's stage-8 signature validation;
   wrong reason is `InvalidActionReason`; zero details is `EmptyDetailsHash`;
   time/signature failures retain their appendix errors. Both increment
   generation exactly once and preserve the next nonce.
@@ -1033,7 +1047,8 @@ proves the permitted targets, calldata, gas, and return handling.
   Add compound-invalid RED cases that correct one stage at a time and assert the
   first failure: all-invalid with no active operator proves stage 1; then active
   operator/wrong caller proves stage 2; correct caller/invalid successor proves
-  stage 3; corrected successor/mismatched consent fields proves stage 4; then
+  stage 3; corrected successor with mismatched current-operator/generation/
+  outflow-nonce fields proves stage 4; then
   wrong reason, zero details, invalid time, and invalid signature prove stages
   5 through 8 respectively. Each failure leaves all state and logs unchanged.
 
@@ -1078,6 +1093,17 @@ proves the permitted targets, calldata, gas, and return handling.
   - signature-consuming mutators are `nonReentrant`, validate before their first
     **domain/application-state** write (the guard writes and reverts atomically),
     and call a private transition core afterward.
+
+  The exact pre/post thresholds are implemented by internal pure production
+  seams `_requireErc1271PrecallGas(uint256 observedGas)` and
+  `_requireErc1271PostcallGas(uint256 observedGas)`. A test-derived harness calls
+  those same seams with literal observations to prove `159_999/160_000` and
+  `49_999/50_000`. The production validator calls each seam exactly once with
+  `gasleft()` at the specified point. Because the pre-call threshold, bounded
+  stipend, and overhead allowance make a sub-50,000 post-call result unreachable
+  in an otherwise conforming full call, the suite must not demand such a full
+  replacement transaction; source/AST/IR plus the shared-seam test prove that
+  defensive guard instead.
 
   Assert every failure leaves operator, generation, nonce, nomination, pause
   state, and event history unchanged.
@@ -1131,6 +1157,10 @@ proves the permitted targets, calldata, gas, and return handling.
 
 - Add: `omerta-contracts/src/AcquisitionVault.sol`
 - Add: `omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol`
+- Modify: `omerta-contracts/foundry.toml` only to add read-only
+  `fs_permissions` for `./out` and `./src`, which the exact artifact-ABI and
+  source/hash evidence tests read. Do not grant write access, FFI, or broader
+  filesystem access.
 - Modify: `omerta-contracts/test/AcquisitionVaultOperator.t.sol` only for a
   test defect proven independently of production behavior.
 
@@ -1161,6 +1191,18 @@ any deployment.
   their implementations. Do not add convenience aliases, generic execution,
   payable functions, token interfaces, admin sweeps, recovery, or future A1/A3/
   R/O2 selectors.
+
+  Configure Foundry with exactly:
+
+  ```toml
+  fs_permissions = [
+    { access = "read", path = "./out" },
+    { access = "read", path = "./src" },
+  ]
+  ```
+
+  This enables only the RED suite's compiled-artifact and source provenance
+  reads. FFI remains disabled and no test receives filesystem write authority.
 
 - [ ] **Step 2: Implement immutable ownership/domain construction**
 
@@ -1231,6 +1273,14 @@ any deployment.
   domain/application-state write before validation. The `nonReentrant` guard's
   own entry write is explicitly not misclassified as domain state and reverts
   atomically on failure.
+
+  Implement the exact internal pure seams
+  `_requireErc1271PrecallGas(uint256)` and
+  `_requireErc1271PostcallGas(uint256)`. The production validator invokes each
+  exactly once with `gasleft()`; the test-only derived harness exposes them
+  without adding a selector to `AcquisitionVault`. The post-call seam remains a
+  defensive assertion even though the preceding 160,000/100,000/10,000 bounds
+  make its failure arithmetically unreachable on the conforming full path.
 
 - [ ] **Step 5: Make the O1 RED suite GREEN**
 
