@@ -218,21 +218,57 @@ result; commitment construction.
 `deployNext` checks phase, index, nonempty initcode, size, hash, then enters
 `DEPLOYING_CHILD`, CREATEs, and checks create success, expected address, runtime
 size/hash, topology call, exact 96-byte return, and tuple semantics before phase
-advance/event. `finalizeConstellation` checks READY and count, then every child
-address/runtime/topology plus Registry health before `FINALIZING`; each fixed
-finalizer call first requires available gas at least the 100,000 call cap plus
-the 100,000 post-call reserve, then checks call success, exact
-zero return, then the 50,000-gas topology call's exact 96-byte semantic result.
+advance/event.
+
+`finalizeConstellation` has one exact validation order. It checks phase equals
+`READY_TO_FINALIZE`; checks `nextChildIndex == 5`, with any count inconsistency
+reported as `FactoryChildIndex(nextChildIndex)`; then checks children 0..4 in
+index order for exact predicted address, nonzero code, runtime size, runtime
+hash, topology call success, exact 96-byte return, and exact tuple semantics.
+It next checks Registry code, runtime hash, STATICCALL success, exact 32-byte
+return, and chain result. Only then does it set `FINALIZING`. It invokes
+finalizers in indices `2,4,3,1,0` (BudgetBook, Reconciliation, Intent, Core,
+Authority). For each it applies the exact gas precheck below, performs the CALL,
+immediately applies the post-call reserve check before interpreting CALL success
+or returndata, then checks success, exact zero-length returndata, and the
+post-finalizer topology call/length/tuple with `finalized=true`. After all five,
+it rechecks all five finalized flags, sets `FINALIZED`, and emits
+`ConstellationFinalized`. This ordering is normative error precedence; any
+failure atomically rolls back phase and every child finalization.
+
 Failures are normalized to the distinct errors above and never bubble or copy
-peer returndata. Every error has a reachable branch except runtime oversize,
-which is retained as an explicit injected-code EIP-170 invariant harness.
+dynamic peer revert data. `FactoryChildAddressMismatch` is a deterministic
+ordinary-CREATE-address invariant harness, `FactoryRuntimeTooLarge` is an
+EIP-170 invariant harness, and the READY/count use of `FactoryChildIndex` covers
+an otherwise unreachable phase/count-corruption fixture (the same error remains
+normally reachable from an out-of-range `childCommitment` query). Other declared
+errors have direct input, dependency, child-behavior, timing, or injected
+committed-code branches; tests must not mislabel the two invariant-only errors
+or the count-corruption branch as ordinary production reachability.
 
 Registry construction/finalization STATICCALL uses 100,000 gas and exact 32-byte
-return. Topology STATICCALL uses 50,000 gas and exact 96-byte return. Finalizer
-CALL uses 100,000 gas, value zero, zero output area, zero returndata copying,
-no bubbling, plus an explicit 100,000-gas post-call reserve. Insufficient gas
-uses `(index, available, required)`. Boundary tests must
-measure all four gas seams.
+return. Topology STATICCALL uses 50,000 gas and a fixed 96-byte output area.
+Finalizer CALL uses `FINALIZER_CALL_GAS = 100_000`, value zero, and a zero-length
+output area. “Zero returndata copying” applies only to that CALL: there is no
+dynamic `RETURNDATACOPY` and no revert-data copy or bubbling. It does not apply
+to the topology STATICCALL's necessary fixed 96-byte output.
+
+The frozen reserve constants are `FINALIZER_POST_CALL_RESERVE = 100_000`,
+`FINALIZER_PRECALL_OVERHEAD = 10_000`, and
+`FINALIZER_EIP150_HEADROOM = ceil(100_000 / 63) = 1_588`. Immediately before
+each finalizer CALL, Factory requires
+`gasleft() >= 100_000 + 100_000 + 10_000 + 1_588 = 211_588`; the 10,000 allowance
+conservatively includes CALL base cost, cold-account access, memory, argument,
+and intervening opcode costs. The EIP-150 headroom is separately explicit.
+This precheck is not treated as proof that the reserve survived. Immediately
+after CALL returns—and before checking its success bit, returndata size, or any
+semantic result—Factory independently requires `gasleft() >= 100_000`.
+Both failures use `FactoryPostCallGasInsufficient(index, available, required)`,
+with `required=211_588` at the precheck and `required=100_000` at the postcheck.
+Boundary and mutation tests cover 211,587/211,588 at entry, 99,999/100,000 on
+return, maximum cold-access/intervening overhead, EIP-150 forwarding, child
+consumption of its complete cap, and the precedence of postcheck over CALL
+failure/returndata interpretation.
 
 Task 1 children are topology shells. Every constructor is exactly
 `(address factory, bytes32 manifestHash)`, makes no peer call, and stores no peer,
@@ -289,17 +325,23 @@ Child constructors store immutables only, make zero peer calls, and remain
 dormant. No runtime-affecting child immutable, constructor commitment, or child
 initcode branch may derive from mutable block context such as timestamp, block
 number, coinbase, base fee, gas price, or prevrandao. After all five exist, one
-atomic finalization rechecks every committed initcode hash, exact address,
-runtime hash, runtime/initcode size bound, topology edge, immutable manifest
-binding, and logical zero state, then activates all children. Any verification
-or activation failure rolls back the entire activation. A wrong or incomplete
-already-created constellation stays inert. After finalization, the factory has
-no configuration, economic, role, redeployment, or recovery power.
+atomic Task 1 finalization relies on the successful deploy phase/index transition
+plus tracked build provenance for the already consumed initcode; vanished
+initcode cannot be reread, rehashed, or remeasured. Onchain finalization rechecks
+only each exact address, extcodesize/runtime bound, extcodehash/runtime hash, and
+topology tuple/manifest binding before activating the topology shells. Task 1
+does not claim or inspect nonexistent logical, accounting, owner, pause,
+operator, ingress, or other business-zero state. Those are future
+production-node obligations with their own versioned ABI and tests. Any
+verification or activation failure rolls back the entire activation. A wrong or
+incomplete already-created constellation stays inert. After finalization, the
+factory has no configuration, economic, role, redeployment, or recovery power.
 
-Forced ETH cannot block deployment or finalization. Core begins with stored
-buckets, sequence, and records equal to zero while `V == F`; its first sync maps
-all `F -> U`. Forced balances at noncustodial children are inert and permanently
-unrecoverable.
+Forced ETH cannot block deployment or finalization. Task 1 Core is only a
+topology shell and has no buckets, sequence, records, or `V/F/U` accounting. The
+future Core accounting node must begin its introduced stored buckets, sequence,
+and records at zero while `V == F`, with its first sync mapping all `F -> U`.
+Forced balances at noncustodial children are inert and permanently unrecoverable.
 
 Peer authenticity uses exact addresses, the finalized factory manifest/codehash,
 and launch-attested nonproxy/nondelegating source. It does not recursively embed
