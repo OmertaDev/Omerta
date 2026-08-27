@@ -1,7 +1,7 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "83d19c0f0a798b0b59bed8d79b856659f08bba83",
-  "worktreeDirty": false,
+  "sourceRevision": "1601cb2542ca6d8be1f075a8d2673f68414ca7af",
+  "worktreeDirty": true,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
     "nodeTypes": [
@@ -43,41 +43,41 @@
     ]
   },
   "census": {
-    "nodes": 4567,
-    "edges": 21406,
+    "nodes": 4573,
+    "edges": 21437,
     "byNodeType": {
-      "Artifact": 1580,
+      "Artifact": 1582,
       "Command": 34,
-      "Commit": 979,
+      "Commit": 981,
       "Contract": 33,
       "Document": 406,
       "Domain": 12,
       "ExternalDependency": 23,
       "HistoricalArtifact": 35,
-      "Module": 166,
+      "Module": 167,
       "PullRequest": 126,
       "Repository": 1,
       "Route": 721,
       "Subsystem": 8,
       "Table": 261,
-      "TestSuite": 179,
+      "TestSuite": 180,
       "Workflow": 3
     },
     "byEdgeType": {
-      "BELONGS_TO": 1841,
-      "CHANGED": 8228,
-      "CONTAINS": 1600,
+      "BELONGS_TO": 1843,
+      "CHANGED": 8235,
+      "CONTAINS": 1602,
       "DECLARES": 34,
       "DEFINED_IN": 1016,
       "DEPENDS_ON": 59,
-      "EXECUTES": 153,
+      "EXECUTES": 155,
       "HANDLED_BY": 653,
-      "HAS_COMMIT": 979,
+      "HAS_COMMIT": 981,
       "IMPLEMENTS": 124,
-      "IMPORTS": 1473,
+      "IMPORTS": 1476,
       "INHERITS": 5,
-      "REFERENCES": 2478,
-      "REPRESENTS": 754,
+      "REFERENCES": 2489,
+      "REPRESENTS": 756,
       "TESTS": 521,
       "TRACKS": 126,
       "USES_TABLE": 1362
@@ -16094,20 +16094,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 5101,
+      "bytes": 5175,
       "lines": 61,
-      "version": "afe422ea969d455f",
+      "version": "fea8cc6780b72851",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "afe422ea969d455f"
+          "version": "fea8cc6780b72851"
         }
       ],
-      "lastChangedAt": "2026-08-26T19:14:16-04:00",
+      "lastChangedAt": "2026-08-26T22:55:55-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3419333c76e516bb547a68d3f4e339519a42ca6b"
+      "lastChangedCommit": "1601cb2542ca6d8be1f075a8d2673f68414ca7af"
     },
     {
       "key": "Artifact:Procfile",
@@ -28608,13 +28608,13 @@
       "extension": ".md",
       "bytes": 46570,
       "lines": 647,
-      "version": "a66a679fb744c6bd",
+      "version": "494149c9c02fe695",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "a66a679fb744c6bd"
+          "version": "494149c9c02fe695"
         }
       ],
       "lastChangedAt": "2026-08-26T21:47:39-04:00",
@@ -29931,6 +29931,29 @@
       "lastChangedAt": "2026-08-21T18:28:23-04:00",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "fa01f1c4e7da901fc2fb51080678fa743ec6ba3e"
+    },
+    {
+      "key": "Artifact:src/finalizedobservation.js",
+      "type": "Artifact",
+      "id": "src/finalizedobservation.js",
+      "label": "finalizedobservation.js",
+      "path": "src/finalizedobservation.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 26568,
+      "lines": 606,
+      "version": "678119da33bb79fc",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/finalizedobservation.js",
+          "line": 1,
+          "version": "678119da33bb79fc"
+        }
+      ],
+      "lastChangedAt": "2026-08-26T22:55:55-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1601cb2542ca6d8be1f075a8d2673f68414ca7af"
     },
     {
       "key": "Artifact:src/firstblood.js",
@@ -33475,6 +33498,29 @@
       "lastChangedCommit": "b7172180d6b917a7d433513e144d55b67ad4697b"
     },
     {
+      "key": "Artifact:test/finalizedobservation.js",
+      "type": "Artifact",
+      "id": "test/finalizedobservation.js",
+      "label": "finalizedobservation.js",
+      "path": "test/finalizedobservation.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 45414,
+      "lines": 1131,
+      "version": "20ac7768ce17d961",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/finalizedobservation.js",
+          "line": 1,
+          "version": "20ac7768ce17d961"
+        }
+      ],
+      "lastChangedAt": "2026-08-26T22:55:55-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1601cb2542ca6d8be1f075a8d2673f68414ca7af"
+    },
+    {
       "key": "Artifact:test/firstblood.js",
       "type": "Artifact",
       "id": "test/firstblood.js",
@@ -36709,7 +36755,7 @@
       "type": "Command",
       "id": "npm:pretest",
       "label": "npm run pretest",
-      "command": "node test/stockballotv2.js",
+      "command": "node test/finalizedobservation.js && node test/stockballotv2.js",
       "provenance": [
         {
           "file": "package.json",
@@ -36800,7 +36846,7 @@
       "type": "Command",
       "id": "npm:test",
       "label": "npm run test",
-      "command": "node test/smoke.js && node test/economy.js && node test/social.js && node test/growth.js && node test/hardening.js && node test/agentturn.js && node test/security.js && node test/chain.js && node test/watcher.js && node test/vig.js && node test/casino.js && node test/heists.js && node test/convoy.js && node test/commission.js && node test/stockcatalog.js && node test/stockcatalogv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/market.js && node test/skills.js && node test/underworld.js && node test/law.js && node test/world.js && node test/npcwar.js && node test/pen.js && node test/loans.js && node test/portfolio.js && node test/estate.js && node test/deeds.js && node test/auction.js && node test/wire.js && node test/store.js && node test/pass.js && node test/landmarks.js && node test/speakeasy.js && node test/boxing.js && node test/bonds.js && node test/races.js && node test/port.js && node test/stable.js && node test/migrate.js && node test/emission.js && node test/desk.js && node test/made.js && node test/nft.js && node test/reimport.js && node test/walletforge.js && node test/expansion.js && node test/dynasty.js && node test/intrigue.js && node test/megaproject.js && node test/duels.js && node test/clues.js && node test/seasons.js && node test/ring.js && node test/standing.js && node test/sacking.js && node test/shields.js && node test/population.js && node test/tokenomics.js && node test/treasury.js && node test/stockdeliver.js && node test/dexbot.js && node test/mastery.js && node test/activity.js && node test/brokers.js && node test/bank.js && node test/community.js && node test/tokenhealth.js && node test/regimen.js && node test/career.js && node test/favors.js && node test/crew.js && node test/firstblood.js && node test/discovery.js && node test/mentor.js && node test/events.js && node test/results.js && node test/vouch.js && node test/streak.js && node test/circle.js && node test/collision.js && node test/firsts.js && node test/runs.js && node test/shipment.js && node test/avatar.js && node test/portrait.js && node test/push.js && node test/dispatch.js && node test/pwa.js && node test/people.js && node test/citywire.js && node test/bulletin.js && node test/explore.js && node test/primetime.js && node test/citymap.js && node test/day.js && node test/payroll.js && node test/home.js && node test/streets.js && node test/citywide.js && node test/drop.js && node test/sweeps.js && node test/tax.js && node test/router.js && node test/auth.js && node test/rules.js && node test/path-funnel.js && node test/routes.js && node test/diagram-renderer.js && node test/coldstart.js && node test/preflight.js && node test/client.js && node test/engagement.js && node test/levers.js && node test/graph.js && node test/gates.js && node test/chainparams.js && node test/docs.js && node test/playthrough-truth.js && node tools/knowledge-test.js",
+      "command": "node test/finalizedobservation.js && node test/smoke.js && node test/economy.js && node test/social.js && node test/growth.js && node test/hardening.js && node test/agentturn.js && node test/security.js && node test/chain.js && node test/watcher.js && node test/vig.js && node test/casino.js && node test/heists.js && node test/convoy.js && node test/commission.js && node test/stockcatalog.js && node test/stockcatalogv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/market.js && node test/skills.js && node test/underworld.js && node test/law.js && node test/world.js && node test/npcwar.js && node test/pen.js && node test/loans.js && node test/portfolio.js && node test/estate.js && node test/deeds.js && node test/auction.js && node test/wire.js && node test/store.js && node test/pass.js && node test/landmarks.js && node test/speakeasy.js && node test/boxing.js && node test/bonds.js && node test/races.js && node test/port.js && node test/stable.js && node test/migrate.js && node test/emission.js && node test/desk.js && node test/made.js && node test/nft.js && node test/reimport.js && node test/walletforge.js && node test/expansion.js && node test/dynasty.js && node test/intrigue.js && node test/megaproject.js && node test/duels.js && node test/clues.js && node test/seasons.js && node test/ring.js && node test/standing.js && node test/sacking.js && node test/shields.js && node test/population.js && node test/tokenomics.js && node test/treasury.js && node test/stockdeliver.js && node test/dexbot.js && node test/mastery.js && node test/activity.js && node test/brokers.js && node test/bank.js && node test/community.js && node test/tokenhealth.js && node test/regimen.js && node test/career.js && node test/favors.js && node test/crew.js && node test/firstblood.js && node test/discovery.js && node test/mentor.js && node test/events.js && node test/results.js && node test/vouch.js && node test/streak.js && node test/circle.js && node test/collision.js && node test/firsts.js && node test/runs.js && node test/shipment.js && node test/avatar.js && node test/portrait.js && node test/push.js && node test/dispatch.js && node test/pwa.js && node test/people.js && node test/citywire.js && node test/bulletin.js && node test/explore.js && node test/primetime.js && node test/citymap.js && node test/day.js && node test/payroll.js && node test/home.js && node test/streets.js && node test/citywide.js && node test/drop.js && node test/sweeps.js && node test/tax.js && node test/router.js && node test/auth.js && node test/rules.js && node test/path-funnel.js && node test/routes.js && node test/diagram-renderer.js && node test/coldstart.js && node test/preflight.js && node test/client.js && node test/engagement.js && node test/levers.js && node test/graph.js && node test/gates.js && node test/chainparams.js && node test/docs.js && node test/playthrough-truth.js && node tools/knowledge-test.js",
       "provenance": [
         {
           "file": "package.json",
@@ -37913,6 +37959,22 @@
         {
           "commit": "15f2dce81712e514e4809bd9b3974a58e868d5ab",
           "url": "https://github.com/OmertaDev/Omerta/commit/15f2dce81712e514e4809bd9b3974a58e868d5ab"
+        }
+      ]
+    },
+    {
+      "key": "Commit:1601cb2542ca6d8be1f075a8d2673f68414ca7af",
+      "type": "Commit",
+      "id": "1601cb2542ca6d8be1f075a8d2673f68414ca7af",
+      "label": "feat: add finalized observation kernel",
+      "title": "feat: add finalized observation kernel",
+      "date": "2026-08-26T22:55:55-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1601cb2542ca6d8be1f075a8d2673f68414ca7af",
+      "provenance": [
+        {
+          "commit": "1601cb2542ca6d8be1f075a8d2673f68414ca7af",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1601cb2542ca6d8be1f075a8d2673f68414ca7af"
         }
       ]
     },
@@ -47321,6 +47383,22 @@
         {
           "commit": "a4116db2db04316a6571de4e8032f8e64a7845e0",
           "url": "https://github.com/OmertaDev/Omerta/commit/a4116db2db04316a6571de4e8032f8e64a7845e0"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a44fa132d4b79b316022cddf6d6a78eb41341fbe",
+      "type": "Commit",
+      "id": "a44fa132d4b79b316022cddf6d6a78eb41341fbe",
+      "label": "docs: finalize ballot migration knowledge provenance",
+      "title": "docs: finalize ballot migration knowledge provenance",
+      "date": "2026-08-26T21:48:48-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a44fa132d4b79b316022cddf6d6a78eb41341fbe",
+      "provenance": [
+        {
+          "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a44fa132d4b79b316022cddf6d6a78eb41341fbe"
         }
       ]
     },
@@ -59548,12 +59626,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 647,
-      "version": "a66a679fb744c6bd",
+      "version": "494149c9c02fe695",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "a66a679fb744c6bd"
+          "version": "494149c9c02fe695"
         }
       ]
     },
@@ -60040,6 +60118,10 @@
           "line": 456
         },
         {
+          "file": "test/finalizedobservation.js",
+          "line": 2
+        },
+        {
           "file": "test/migrate.js",
           "line": 12
         },
@@ -60208,6 +60290,10 @@
           "line": 16
         },
         {
+          "file": "src/finalizedobservation.js",
+          "line": 1
+        },
+        {
           "file": "src/routes/rwa.js",
           "line": 2
         },
@@ -60286,6 +60372,10 @@
         {
           "file": "test/deeds.js",
           "line": 11
+        },
+        {
+          "file": "test/finalizedobservation.js",
+          "line": 3
         },
         {
           "file": "test/pass.js",
@@ -60746,6 +60836,9 @@
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
         },
         {
+          "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
+        },
+        {
           "commit": "bc03455c615ae3f5bab067543fb9c0a5a49f4ae4"
         },
         {
@@ -60806,6 +60899,9 @@
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
         },
         {
+          "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
+        },
+        {
           "commit": "bc03455c615ae3f5bab067543fb9c0a5a49f4ae4"
         },
         {
@@ -60864,6 +60960,9 @@
         },
         {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
+        },
+        {
+          "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
         },
         {
           "commit": "bc03455c615ae3f5bab067543fb9c0a5a49f4ae4"
@@ -60948,6 +61047,9 @@
         },
         {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
+        },
+        {
+          "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
         },
         {
           "commit": "bc03455c615ae3f5bab067543fb9c0a5a49f4ae4"
@@ -61989,6 +62091,21 @@
           "file": "src/fees.js",
           "line": 1,
           "version": "dcd2867ba9391771"
+        }
+      ]
+    },
+    {
+      "key": "Module:src/finalizedobservation.js",
+      "type": "Module",
+      "id": "src/finalizedobservation.js",
+      "label": "src/finalizedobservation.js",
+      "lines": 606,
+      "version": "678119da33bb79fc",
+      "provenance": [
+        {
+          "file": "src/finalizedobservation.js",
+          "line": 1,
+          "version": "678119da33bb79fc"
         }
       ]
     },
@@ -66782,12 +66899,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "83d19c0f0a798b0b59bed8d79b856659f08bba83",
+      "revision": "1601cb2542ca6d8be1f075a8d2673f68414ca7af",
       "currentBranch": "codex/grill-completion",
       "defaultBranch": "main",
       "visibility": "public",
-      "worktreeDirty": false,
-      "currentArtifactCount": 1581,
+      "worktreeDirty": true,
+      "currentArtifactCount": 1583,
       "provenance": [
         {
           "file": "README.md",
@@ -88979,6 +89096,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/finalizedobservation.js",
+      "type": "TestSuite",
+      "id": "test/finalizedobservation.js",
+      "label": "test/finalizedobservation.js",
+      "lines": 1131,
+      "version": "20ac7768ce17d961",
+      "provenance": [
+        {
+          "file": "test/finalizedobservation.js",
+          "line": 1,
+          "version": "20ac7768ce17d961"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/firstblood.js",
       "type": "TestSuite",
       "id": "test/firstblood.js",
@@ -97739,6 +97871,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:src/finalizedobservation.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/finalizedobservation.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:src/firstblood.js",
       "to": "Domain:social-combat",
       "provenance": {
@@ -99120,6 +99261,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/favors.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/finalizedobservation.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/finalizedobservation.js",
         "line": 1
       }
     },
@@ -111122,6 +111272,30 @@
       "to": "Artifact:test/races.js",
       "provenance": {
         "commit": "15f2dce81712e514e4809bd9b3974a58e868d5ab"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1601cb2542ca6d8be1f075a8d2673f68414ca7af",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "1601cb2542ca6d8be1f075a8d2673f68414ca7af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1601cb2542ca6d8be1f075a8d2673f68414ca7af",
+      "to": "Artifact:src/finalizedobservation.js",
+      "provenance": {
+        "commit": "1601cb2542ca6d8be1f075a8d2673f68414ca7af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1601cb2542ca6d8be1f075a8d2673f68414ca7af",
+      "to": "Artifact:test/finalizedobservation.js",
+      "provenance": {
+        "commit": "1601cb2542ca6d8be1f075a8d2673f68414ca7af"
       }
     },
     {
@@ -149750,6 +149924,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:a44fa132d4b79b316022cddf6d6a78eb41341fbe",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a44fa132d4b79b316022cddf6d6a78eb41341fbe",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a44fa132d4b79b316022cddf6d6a78eb41341fbe",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a44fa132d4b79b316022cddf6d6a78eb41341fbe",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:a4952992803e6f40ee2ccef240c7ba80d7a28f6b",
       "to": "Artifact:GRAPH.md",
       "provenance": {
@@ -173185,6 +173391,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:backend",
+      "to": "Artifact:src/finalizedobservation.js",
+      "provenance": {
+        "file": "src/finalizedobservation.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
       "to": "Artifact:src/firstblood.js",
       "provenance": {
         "file": "src/firstblood.js",
@@ -180874,6 +181089,15 @@
       "to": "Artifact:test/favors.js",
       "provenance": {
         "file": "test/favors.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/finalizedobservation.js",
+      "provenance": {
+        "file": "test/finalizedobservation.js",
         "line": 1
       }
     },
@@ -196904,6 +197128,15 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:pretest",
+      "to": "Artifact:test/finalizedobservation.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
       "to": "Artifact:test/stockballotv2.js",
       "provenance": {
         "file": "package.json",
@@ -197364,6 +197597,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test",
       "to": "Artifact:test/favors.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test",
+      "to": "Artifact:test/finalizedobservation.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -205150,6 +205392,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:1601cb2542ca6d8be1f075a8d2673f68414ca7af",
+      "provenance": {
+        "commit": "1601cb2542ca6d8be1f075a8d2673f68414ca7af"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:16a74ee507250e31771eb2c90bd26e382391f3c4",
       "provenance": {
         "commit": "16a74ee507250e31771eb2c90bd26e382391f3c4"
@@ -209849,6 +210099,14 @@
       "to": "Commit:a4116db2db04316a6571de4e8032f8e64a7845e0",
       "provenance": {
         "commit": "a4116db2db04316a6571de4e8032f8e64a7845e0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a44fa132d4b79b316022cddf6d6a78eb41341fbe",
+      "provenance": {
+        "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
       }
     },
     {
@@ -215223,6 +215481,15 @@
       "provenance": {
         "file": "src/fees.js",
         "line": 16
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/finalizedobservation.js",
+      "to": "ExternalDependency:viem",
+      "provenance": {
+        "file": "src/finalizedobservation.js",
+        "line": 1
       }
     },
     {
@@ -222306,6 +222573,24 @@
       "provenance": {
         "file": "test/favors.js",
         "line": 16
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/finalizedobservation.js",
+      "to": "ExternalDependency:pg-mem",
+      "provenance": {
+        "file": "test/finalizedobservation.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/finalizedobservation.js",
+      "to": "ExternalDependency:viem",
+      "provenance": {
+        "file": "test/finalizedobservation.js",
+        "line": 3
       }
     },
     {
@@ -244433,6 +244718,51 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "to": "Artifact:src/finalizedobservation.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+        "line": 11
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "to": "Artifact:src/finalizedobservation.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+        "line": 165
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "to": "Artifact:src/finalizedobservation.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+        "line": 202
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "to": "Artifact:src/finalizedobservation.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+        "line": 247
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "to": "Artifact:src/finalizedobservation.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+        "line": 284
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
       "to": "Artifact:src/stockcatalogv2.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
@@ -244446,6 +244776,60 @@
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
         "line": 55
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "to": "Artifact:test/finalizedobservation.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+        "line": 114
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "to": "Artifact:test/finalizedobservation.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+        "line": 166
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "to": "Artifact:test/finalizedobservation.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+        "line": 203
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "to": "Artifact:test/finalizedobservation.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+        "line": 248
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "to": "Artifact:test/finalizedobservation.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+        "line": 284
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "to": "Artifact:test/finalizedobservation.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+        "line": 298
       }
     },
     {
@@ -253216,6 +253600,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Module:src/finalizedobservation.js",
+      "to": "Artifact:src/finalizedobservation.js",
+      "provenance": {
+        "file": "src/finalizedobservation.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Module:src/firstblood.js",
       "to": "Artifact:src/firstblood.js",
       "provenance": {
@@ -255101,6 +255494,15 @@
       "to": "Artifact:test/favors.js",
       "provenance": {
         "file": "test/favors.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/finalizedobservation.js",
+      "to": "Artifact:test/finalizedobservation.js",
+      "provenance": {
+        "file": "test/finalizedobservation.js",
         "line": 1
       }
     },

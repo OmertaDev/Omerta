@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `83d19c0f0a79`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `1601cb2542ca`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 979 |
+| Commits in clone | 981 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-26 — docs: refresh ballot migration knowledge graph |
+| Latest commit | 2026-08-26 — feat: add finalized observation kernel |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 178 |
+| OmertaDev | 180 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -36,7 +36,7 @@
 | [SPEC.md](../../SPEC.md) | 241 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 169 | yes |
-| [package.json](../../package.json) | 131 | yes |
+| [package.json](../../package.json) | 132 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 118 | yes |
 | [src/invariants.js](../../src/invariants.js) | 113 | yes |
