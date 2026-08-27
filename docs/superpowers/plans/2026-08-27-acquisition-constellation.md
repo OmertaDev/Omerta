@@ -640,9 +640,10 @@ reverts every earlier event. Static Authority reads never emit events.
 6. **Reconciliation:** phases, evidence, repair causes, dispositions, incidents,
    typed leaves, actual attempt consumption immediately before the adapter call,
    adapter invocation, authoritative post-call Core native/Stock Token
-   observation, outcome journaling, and any required Reconciliation case in one
-   atomic path; this first callable execution path completes master slice 5
-   (A3+R).
+   observation, Core delta mutation/components, any required Reconciliation case,
+   Intent outcome journal and `AttemptResultRecorded` receipt, then terminal
+   evidence in one atomic path; this first callable execution path completes
+   master slice 5 (A3+R).
 7. **O2 integration:** direct/relayed authority, cancellation nonce, 0/1/32/67 components,
    exact ordering and batch rejection.
 8. **Stateful integration:** conservation, nonce rollback, phase deadlock resistance,
