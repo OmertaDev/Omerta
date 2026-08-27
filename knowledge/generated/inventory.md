@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `3c99e325d7e9`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `ce4b87e82aab`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,582 |
-| Text lines | 398,505 |
-| Repository bytes inventoried | 274,458,037 |
+| Text lines | 399,039 |
+| Repository bytes inventoried | 274,481,437 |
 | Backend/route modules | 167 |
 | HTTP route registrations / unique routes | 722 / 721 |
 | Database tables | 261 |
 | Solidity declarations | 33 |
-| Git commits | 982 |
+| Git commits | 984 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 4,574 / 21,444 |
+| Graph nodes / edges | 4,576 / 21,452 |
 
 ## Artifact kinds
 
@@ -74,8 +74,8 @@
 | [src/chain.js](../../src/chain.js) | 1,703 | backend-module | 2026-08-22 |
 | [tools/sim.js](../../tools/sim.js) | 1,681 | engineering-harness | 2026-08-16 |
 | [test/stockballotv2.js](../../test/stockballotv2.js) | 1,643 | test-suite | 2026-08-26 |
+| [test/finalizedobservation.js](../../test/finalizedobservation.js) | 1,521 | test-suite | 2026-08-26 |
 | [src/casino.js](../../src/casino.js) | 1,468 | backend-module | 2026-08-23 |
-| [docs/WIKI.md](../../docs/WIKI.md) | 1,439 | documentation | 2026-08-25 |
 
 ## Media estate
 

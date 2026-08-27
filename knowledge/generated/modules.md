@@ -61,7 +61,7 @@
 | [src/fairness.js](../../src/fairness.js) | 92 | economy-ledger | 1 / 5 | 0 | 1 | 1 |
 | [src/favors.js](../../src/favors.js) | 264 | engagement-growth | 2 / 6 | 4 | 9 | 2 |
 | [src/fees.js](../../src/fees.js) | 225 | economy-ledger | 4 / 9 | 4 | 10 | 3 |
-| [src/finalizedobservation.js](../../src/finalizedobservation.js) | 606 | platform-core | 0 / 0 | 0 | 0 | 0 |
+| [src/finalizedobservation.js](../../src/finalizedobservation.js) | 750 | platform-core | 0 / 0 | 0 | 0 | 0 |
 | [src/firstblood.js](../../src/firstblood.js) | 85 | social-combat | 1 / 2 | 0 | 3 | 0 |
 | [src/firsts.js](../../src/firsts.js) | 144 | world-progression | 1 / 6 | 1 | 7 | 1 |
 | [src/game.js](../../src/game.js) | 2540 | platform-core | 9 / 124 | 24 | 62 | 11 |
