@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "b568727a8eadd1d457fb0fb05725ce56ddf9c66f",
+  "sourceRevision": "12a3b43ae005a6ab89471f5a5d2299907f3613dc",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 5003,
-    "edges": 22412,
+    "nodes": 5054,
+    "edges": 22539,
     "byNodeType": {
-      "Artifact": 1648,
+      "Artifact": 1694,
       "Command": 42,
-      "Commit": 1038,
+      "Commit": 1041,
       "Contract": 32,
-      "Document": 453,
+      "Document": 455,
       "Domain": 12,
       "ExternalDependency": 24,
       "HistoricalArtifact": 306,
@@ -64,20 +64,20 @@
       "Workflow": 3
     },
     "byEdgeType": {
-      "BELONGS_TO": 1851,
-      "CHANGED": 8842,
-      "CONTAINS": 1668,
+      "BELONGS_TO": 1863,
+      "CHANGED": 8897,
+      "CONTAINS": 1714,
       "DECLARES": 42,
       "DEFINED_IN": 993,
       "DEPENDS_ON": 60,
       "EXECUTES": 166,
       "HANDLED_BY": 678,
-      "HAS_COMMIT": 1038,
+      "HAS_COMMIT": 1041,
       "IMPLEMENTS": 124,
-      "IMPORTS": 1509,
+      "IMPORTS": 1510,
       "INHERITS": 8,
-      "REFERENCES": 2604,
-      "REPRESENTS": 805,
+      "REFERENCES": 2612,
+      "REPRESENTS": 807,
       "TESTS": 530,
       "TRACKS": 126,
       "USES_TABLE": 1368
@@ -9998,6 +9998,788 @@
       "lastChangedCommit": "dee7593a66b955d677656afab4516cb68edb918d"
     },
     {
+      "key": "Artifact:brand/agent-campaign/art/dormant-vault.png",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/art/dormant-vault.png",
+      "label": "dormant-vault.png",
+      "path": "brand/agent-campaign/art/dormant-vault.png",
+      "kind": "media-asset",
+      "extension": ".png",
+      "bytes": 2273435,
+      "lines": null,
+      "version": "ce79c89d3e0ccb7d",
+      "text": false,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/art/dormant-vault.png",
+          "line": 1,
+          "version": "ce79c89d3e0ccb7d"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/art/economy-table.png",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/art/economy-table.png",
+      "label": "economy-table.png",
+      "path": "brand/agent-campaign/art/economy-table.png",
+      "kind": "media-asset",
+      "extension": ".png",
+      "bytes": 2508970,
+      "lines": null,
+      "version": "5ca7e9cac0f035c4",
+      "text": false,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/art/economy-table.png",
+          "line": 1,
+          "version": "5ca7e9cac0f035c4"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/art/machine-city.png",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/art/machine-city.png",
+      "label": "machine-city.png",
+      "path": "brand/agent-campaign/art/machine-city.png",
+      "kind": "media-asset",
+      "extension": ".png",
+      "bytes": 1956704,
+      "lines": null,
+      "version": "ed338de4f97ccc6d",
+      "text": false,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/art/machine-city.png",
+          "line": 1,
+          "version": "ed338de4f97ccc6d"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/art/organization-room.png",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/art/organization-room.png",
+      "label": "organization-room.png",
+      "path": "brand/agent-campaign/art/organization-room.png",
+      "kind": "media-asset",
+      "extension": ".png",
+      "bytes": 1562312,
+      "lines": null,
+      "version": "03e8a5b0fc89ab79",
+      "text": false,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/art/organization-room.png",
+          "line": 1,
+          "version": "03e8a5b0fc89ab79"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/build.mjs",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/build.mjs",
+      "label": "build.mjs",
+      "path": "brand/agent-campaign/build.mjs",
+      "kind": "media-asset",
+      "extension": ".mjs",
+      "bytes": 24885,
+      "lines": 212,
+      "version": "d3fe2c1b5f40af72",
+      "text": true,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/build.mjs",
+          "line": 1,
+          "version": "d3fe2c1b5f40af72"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/png/00-overview-16x9.png",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/png/00-overview-16x9.png",
+      "label": "00-overview-16x9.png",
+      "path": "brand/agent-campaign/png/00-overview-16x9.png",
+      "kind": "media-asset",
+      "extension": ".png",
+      "bytes": 2331649,
+      "lines": null,
+      "version": "3f48cb15e7871b72",
+      "text": false,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/png/00-overview-16x9.png",
+          "line": 1,
+          "version": "3f48cb15e7871b72"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/png/01-cover.png",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/png/01-cover.png",
+      "label": "01-cover.png",
+      "path": "brand/agent-campaign/png/01-cover.png",
+      "kind": "media-asset",
+      "extension": ".png",
+      "bytes": 2029846,
+      "lines": null,
+      "version": "dfe399b6ee13d801",
+      "text": false,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/png/01-cover.png",
+          "line": 1,
+          "version": "dfe399b6ee13d801"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/png/02-turn.png",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/png/02-turn.png",
+      "label": "02-turn.png",
+      "path": "brand/agent-campaign/png/02-turn.png",
+      "kind": "media-asset",
+      "extension": ".png",
+      "bytes": 1635444,
+      "lines": null,
+      "version": "0d755ed2304bf726",
+      "text": false,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/png/02-turn.png",
+          "line": 1,
+          "version": "0d755ed2304bf726"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/png/03-economy.png",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/png/03-economy.png",
+      "label": "03-economy.png",
+      "path": "brand/agent-campaign/png/03-economy.png",
+      "kind": "media-asset",
+      "extension": ".png",
+      "bytes": 1966908,
+      "lines": null,
+      "version": "157e043df70e5eca",
+      "text": false,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/png/03-economy.png",
+          "line": 1,
+          "version": "157e043df70e5eca"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/png/04-capability-map.png",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/png/04-capability-map.png",
+      "label": "04-capability-map.png",
+      "path": "brand/agent-campaign/png/04-capability-map.png",
+      "kind": "media-asset",
+      "extension": ".png",
+      "bytes": 1181216,
+      "lines": null,
+      "version": "e0ec55aded63a295",
+      "text": false,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/png/04-capability-map.png",
+          "line": 1,
+          "version": "e0ec55aded63a295"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/png/05-organization.png",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/png/05-organization.png",
+      "label": "05-organization.png",
+      "path": "brand/agent-campaign/png/05-organization.png",
+      "kind": "media-asset",
+      "extension": ".png",
+      "bytes": 1508236,
+      "lines": null,
+      "version": "ef3191e7ae9d698c",
+      "text": false,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/png/05-organization.png",
+          "line": 1,
+          "version": "ef3191e7ae9d698c"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/png/06-exploration.png",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/png/06-exploration.png",
+      "label": "06-exploration.png",
+      "path": "brand/agent-campaign/png/06-exploration.png",
+      "kind": "media-asset",
+      "extension": ".png",
+      "bytes": 1716860,
+      "lines": null,
+      "version": "49702ceae3d4ed07",
+      "text": false,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/png/06-exploration.png",
+          "line": 1,
+          "version": "49702ceae3d4ed07"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/png/07-stack.png",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/png/07-stack.png",
+      "label": "07-stack.png",
+      "path": "brand/agent-campaign/png/07-stack.png",
+      "kind": "media-asset",
+      "extension": ".png",
+      "bytes": 1490314,
+      "lines": null,
+      "version": "a7d2f71dbae3e411",
+      "text": false,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/png/07-stack.png",
+          "line": 1,
+          "version": "a7d2f71dbae3e411"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/png/08-fair-play.png",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/png/08-fair-play.png",
+      "label": "08-fair-play.png",
+      "path": "brand/agent-campaign/png/08-fair-play.png",
+      "kind": "media-asset",
+      "extension": ".png",
+      "bytes": 1217879,
+      "lines": null,
+      "version": "c6d765ea09cc107c",
+      "text": false,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/png/08-fair-play.png",
+          "line": 1,
+          "version": "c6d765ea09cc107c"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/png/09-arena.png",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/png/09-arena.png",
+      "label": "09-arena.png",
+      "path": "brand/agent-campaign/png/09-arena.png",
+      "kind": "media-asset",
+      "extension": ".png",
+      "bytes": 1350389,
+      "lines": null,
+      "version": "a186966e6b5e74cb",
+      "text": false,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/png/09-arena.png",
+          "line": 1,
+          "version": "a186966e6b5e74cb"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/png/10-extraction.png",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/png/10-extraction.png",
+      "label": "10-extraction.png",
+      "path": "brand/agent-campaign/png/10-extraction.png",
+      "kind": "media-asset",
+      "extension": ".png",
+      "bytes": 1875728,
+      "lines": null,
+      "version": "bb68f2664a008827",
+      "text": false,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/png/10-extraction.png",
+          "line": 1,
+          "version": "bb68f2664a008827"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/png/11-quickstart.png",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/png/11-quickstart.png",
+      "label": "11-quickstart.png",
+      "path": "brand/agent-campaign/png/11-quickstart.png",
+      "kind": "media-asset",
+      "extension": ".png",
+      "bytes": 1347754,
+      "lines": null,
+      "version": "df6332b196991a1d",
+      "text": false,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/png/11-quickstart.png",
+          "line": 1,
+          "version": "df6332b196991a1d"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/png/12-closer.png",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/png/12-closer.png",
+      "label": "12-closer.png",
+      "path": "brand/agent-campaign/png/12-closer.png",
+      "kind": "media-asset",
+      "extension": ".png",
+      "bytes": 1634247,
+      "lines": null,
+      "version": "1f18aad0f8665f97",
+      "text": false,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/png/12-closer.png",
+          "line": 1,
+          "version": "1f18aad0f8665f97"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/png/contact-sheet.png",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/png/contact-sheet.png",
+      "label": "contact-sheet.png",
+      "path": "brand/agent-campaign/png/contact-sheet.png",
+      "kind": "media-asset",
+      "extension": ".png",
+      "bytes": 1921118,
+      "lines": null,
+      "version": "d5c4f871846ceca6",
+      "text": false,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/png/contact-sheet.png",
+          "line": 1,
+          "version": "d5c4f871846ceca6"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/PROMPTS.md",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/PROMPTS.md",
+      "label": "PROMPTS.md",
+      "path": "brand/agent-campaign/PROMPTS.md",
+      "kind": "media-asset",
+      "extension": ".md",
+      "bytes": 6523,
+      "lines": 76,
+      "version": "f353896f08aa16d0",
+      "text": true,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/PROMPTS.md",
+          "line": 1,
+          "version": "f353896f08aa16d0"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/README.md",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/README.md",
+      "label": "README.md",
+      "path": "brand/agent-campaign/README.md",
+      "kind": "media-asset",
+      "extension": ".md",
+      "bytes": 2450,
+      "lines": 39,
+      "version": "5905aacda796b78b",
+      "text": true,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/README.md",
+          "line": 1,
+          "version": "5905aacda796b78b"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/svg/00-overview-16x9.svg",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/svg/00-overview-16x9.svg",
+      "label": "00-overview-16x9.svg",
+      "path": "brand/agent-campaign/svg/00-overview-16x9.svg",
+      "kind": "media-asset",
+      "extension": ".svg",
+      "bytes": 7142,
+      "lines": 1,
+      "version": "dcae4aa2cbf500d5",
+      "text": true,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/svg/00-overview-16x9.svg",
+          "line": 1,
+          "version": "dcae4aa2cbf500d5"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/svg/01-cover.svg",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/svg/01-cover.svg",
+      "label": "01-cover.svg",
+      "path": "brand/agent-campaign/svg/01-cover.svg",
+      "kind": "media-asset",
+      "extension": ".svg",
+      "bytes": 4336,
+      "lines": 18,
+      "version": "e19085140bec6acb",
+      "text": true,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/svg/01-cover.svg",
+          "line": 1,
+          "version": "e19085140bec6acb"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/svg/02-turn.svg",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/svg/02-turn.svg",
+      "label": "02-turn.svg",
+      "path": "brand/agent-campaign/svg/02-turn.svg",
+      "kind": "media-asset",
+      "extension": ".svg",
+      "bytes": 5634,
+      "lines": 18,
+      "version": "98d9cba3e852d484",
+      "text": true,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/svg/02-turn.svg",
+          "line": 1,
+          "version": "98d9cba3e852d484"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/svg/03-economy.svg",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/svg/03-economy.svg",
+      "label": "03-economy.svg",
+      "path": "brand/agent-campaign/svg/03-economy.svg",
+      "kind": "media-asset",
+      "extension": ".svg",
+      "bytes": 6523,
+      "lines": 18,
+      "version": "683bda2762f3ee93",
+      "text": true,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/svg/03-economy.svg",
+          "line": 1,
+          "version": "683bda2762f3ee93"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/svg/04-capability-map.svg",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/svg/04-capability-map.svg",
+      "label": "04-capability-map.svg",
+      "path": "brand/agent-campaign/svg/04-capability-map.svg",
+      "kind": "media-asset",
+      "extension": ".svg",
+      "bytes": 10802,
+      "lines": 18,
+      "version": "d69dcb201b13f05e",
+      "text": true,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/svg/04-capability-map.svg",
+          "line": 1,
+          "version": "d69dcb201b13f05e"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/svg/05-organization.svg",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/svg/05-organization.svg",
+      "label": "05-organization.svg",
+      "path": "brand/agent-campaign/svg/05-organization.svg",
+      "kind": "media-asset",
+      "extension": ".svg",
+      "bytes": 5807,
+      "lines": 18,
+      "version": "992c822077a89adf",
+      "text": true,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/svg/05-organization.svg",
+          "line": 1,
+          "version": "992c822077a89adf"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/svg/06-exploration.svg",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/svg/06-exploration.svg",
+      "label": "06-exploration.svg",
+      "path": "brand/agent-campaign/svg/06-exploration.svg",
+      "kind": "media-asset",
+      "extension": ".svg",
+      "bytes": 4299,
+      "lines": 18,
+      "version": "1f5a92effa0a636b",
+      "text": true,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/svg/06-exploration.svg",
+          "line": 1,
+          "version": "1f5a92effa0a636b"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/svg/07-stack.svg",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/svg/07-stack.svg",
+      "label": "07-stack.svg",
+      "path": "brand/agent-campaign/svg/07-stack.svg",
+      "kind": "media-asset",
+      "extension": ".svg",
+      "bytes": 5497,
+      "lines": 18,
+      "version": "2fafebc37f0e7885",
+      "text": true,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/svg/07-stack.svg",
+          "line": 1,
+          "version": "2fafebc37f0e7885"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/svg/08-fair-play.svg",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/svg/08-fair-play.svg",
+      "label": "08-fair-play.svg",
+      "path": "brand/agent-campaign/svg/08-fair-play.svg",
+      "kind": "media-asset",
+      "extension": ".svg",
+      "bytes": 5629,
+      "lines": 18,
+      "version": "545298fe87a1627a",
+      "text": true,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/svg/08-fair-play.svg",
+          "line": 1,
+          "version": "545298fe87a1627a"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/svg/09-arena.svg",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/svg/09-arena.svg",
+      "label": "09-arena.svg",
+      "path": "brand/agent-campaign/svg/09-arena.svg",
+      "kind": "media-asset",
+      "extension": ".svg",
+      "bytes": 5332,
+      "lines": 18,
+      "version": "081576688e48929c",
+      "text": true,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/svg/09-arena.svg",
+          "line": 1,
+          "version": "081576688e48929c"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/svg/10-extraction.svg",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/svg/10-extraction.svg",
+      "label": "10-extraction.svg",
+      "path": "brand/agent-campaign/svg/10-extraction.svg",
+      "kind": "media-asset",
+      "extension": ".svg",
+      "bytes": 4840,
+      "lines": 18,
+      "version": "ea427365c1c74e91",
+      "text": true,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/svg/10-extraction.svg",
+          "line": 1,
+          "version": "ea427365c1c74e91"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/svg/11-quickstart.svg",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/svg/11-quickstart.svg",
+      "label": "11-quickstart.svg",
+      "path": "brand/agent-campaign/svg/11-quickstart.svg",
+      "kind": "media-asset",
+      "extension": ".svg",
+      "bytes": 5702,
+      "lines": 18,
+      "version": "7e6e84093b3b070e",
+      "text": true,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/svg/11-quickstart.svg",
+          "line": 1,
+          "version": "7e6e84093b3b070e"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:brand/agent-campaign/svg/12-closer.svg",
+      "type": "Artifact",
+      "id": "brand/agent-campaign/svg/12-closer.svg",
+      "label": "12-closer.svg",
+      "path": "brand/agent-campaign/svg/12-closer.svg",
+      "kind": "media-asset",
+      "extension": ".svg",
+      "bytes": 3722,
+      "lines": 18,
+      "version": "586cac0b2c81d473",
+      "text": true,
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/svg/12-closer.svg",
+          "line": 1,
+          "version": "586cac0b2c81d473"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
       "key": "Artifact:brand/banner.svg",
       "type": "Artifact",
       "id": "brand/banner.svg",
@@ -17350,6 +18132,282 @@
       "lastChangedAt": "2026-08-27T04:25:58-04:00",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "18738f0238abac2204c0d201ea4ce93acefcd781"
+    },
+    {
+      "key": "Artifact:public/art/agent-cover-1080.webp",
+      "type": "Artifact",
+      "id": "public/art/agent-cover-1080.webp",
+      "label": "agent-cover-1080.webp",
+      "path": "public/art/agent-cover-1080.webp",
+      "kind": "media-asset",
+      "extension": ".webp",
+      "bytes": 167612,
+      "lines": null,
+      "version": "f933a2335796feec",
+      "text": false,
+      "provenance": [
+        {
+          "file": "public/art/agent-cover-1080.webp",
+          "line": 1,
+          "version": "f933a2335796feec"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:public/art/agent-cover-480.webp",
+      "type": "Artifact",
+      "id": "public/art/agent-cover-480.webp",
+      "label": "agent-cover-480.webp",
+      "path": "public/art/agent-cover-480.webp",
+      "kind": "media-asset",
+      "extension": ".webp",
+      "bytes": 47672,
+      "lines": null,
+      "version": "51b5c4f4bf4b2088",
+      "text": false,
+      "provenance": [
+        {
+          "file": "public/art/agent-cover-480.webp",
+          "line": 1,
+          "version": "51b5c4f4bf4b2088"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:public/art/agent-cover-720.webp",
+      "type": "Artifact",
+      "id": "public/art/agent-cover-720.webp",
+      "label": "agent-cover-720.webp",
+      "path": "public/art/agent-cover-720.webp",
+      "kind": "media-asset",
+      "extension": ".webp",
+      "bytes": 91404,
+      "lines": null,
+      "version": "a827a9b9aef80fcb",
+      "text": false,
+      "provenance": [
+        {
+          "file": "public/art/agent-cover-720.webp",
+          "line": 1,
+          "version": "a827a9b9aef80fcb"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:public/art/agent-economy-1080.webp",
+      "type": "Artifact",
+      "id": "public/art/agent-economy-1080.webp",
+      "label": "agent-economy-1080.webp",
+      "path": "public/art/agent-economy-1080.webp",
+      "kind": "media-asset",
+      "extension": ".webp",
+      "bytes": 208084,
+      "lines": null,
+      "version": "5fc9c012bd392a32",
+      "text": false,
+      "provenance": [
+        {
+          "file": "public/art/agent-economy-1080.webp",
+          "line": 1,
+          "version": "5fc9c012bd392a32"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:public/art/agent-economy-480.webp",
+      "type": "Artifact",
+      "id": "public/art/agent-economy-480.webp",
+      "label": "agent-economy-480.webp",
+      "path": "public/art/agent-economy-480.webp",
+      "kind": "media-asset",
+      "extension": ".webp",
+      "bytes": 50960,
+      "lines": null,
+      "version": "f8a8a163525579df",
+      "text": false,
+      "provenance": [
+        {
+          "file": "public/art/agent-economy-480.webp",
+          "line": 1,
+          "version": "f8a8a163525579df"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:public/art/agent-economy-720.webp",
+      "type": "Artifact",
+      "id": "public/art/agent-economy-720.webp",
+      "label": "agent-economy-720.webp",
+      "path": "public/art/agent-economy-720.webp",
+      "kind": "media-asset",
+      "extension": ".webp",
+      "bytes": 106576,
+      "lines": null,
+      "version": "2a73fe63b9cec6d5",
+      "text": false,
+      "provenance": [
+        {
+          "file": "public/art/agent-economy-720.webp",
+          "line": 1,
+          "version": "2a73fe63b9cec6d5"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:public/art/agent-overview-1080.webp",
+      "type": "Artifact",
+      "id": "public/art/agent-overview-1080.webp",
+      "label": "agent-overview-1080.webp",
+      "path": "public/art/agent-overview-1080.webp",
+      "kind": "media-asset",
+      "extension": ".webp",
+      "bytes": 76900,
+      "lines": null,
+      "version": "546a776eda9d7a3a",
+      "text": false,
+      "provenance": [
+        {
+          "file": "public/art/agent-overview-1080.webp",
+          "line": 1,
+          "version": "546a776eda9d7a3a"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:public/art/agent-overview-1600.webp",
+      "type": "Artifact",
+      "id": "public/art/agent-overview-1600.webp",
+      "label": "agent-overview-1600.webp",
+      "path": "public/art/agent-overview-1600.webp",
+      "kind": "media-asset",
+      "extension": ".webp",
+      "bytes": 126666,
+      "lines": null,
+      "version": "ac4a612dbb232f45",
+      "text": false,
+      "provenance": [
+        {
+          "file": "public/art/agent-overview-1600.webp",
+          "line": 1,
+          "version": "ac4a612dbb232f45"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:public/art/agent-overview-640.webp",
+      "type": "Artifact",
+      "id": "public/art/agent-overview-640.webp",
+      "label": "agent-overview-640.webp",
+      "path": "public/art/agent-overview-640.webp",
+      "kind": "media-asset",
+      "extension": ".webp",
+      "bytes": 35990,
+      "lines": null,
+      "version": "c0dd2c2234630eb0",
+      "text": false,
+      "provenance": [
+        {
+          "file": "public/art/agent-overview-640.webp",
+          "line": 1,
+          "version": "c0dd2c2234630eb0"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:public/art/agent-turn-1080.webp",
+      "type": "Artifact",
+      "id": "public/art/agent-turn-1080.webp",
+      "label": "agent-turn-1080.webp",
+      "path": "public/art/agent-turn-1080.webp",
+      "kind": "media-asset",
+      "extension": ".webp",
+      "bytes": 137668,
+      "lines": null,
+      "version": "1cfeef4b758f6b23",
+      "text": false,
+      "provenance": [
+        {
+          "file": "public/art/agent-turn-1080.webp",
+          "line": 1,
+          "version": "1cfeef4b758f6b23"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:public/art/agent-turn-480.webp",
+      "type": "Artifact",
+      "id": "public/art/agent-turn-480.webp",
+      "label": "agent-turn-480.webp",
+      "path": "public/art/agent-turn-480.webp",
+      "kind": "media-asset",
+      "extension": ".webp",
+      "bytes": 39598,
+      "lines": null,
+      "version": "1d216dc640264bef",
+      "text": false,
+      "provenance": [
+        {
+          "file": "public/art/agent-turn-480.webp",
+          "line": 1,
+          "version": "1d216dc640264bef"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+    },
+    {
+      "key": "Artifact:public/art/agent-turn-720.webp",
+      "type": "Artifact",
+      "id": "public/art/agent-turn-720.webp",
+      "label": "agent-turn-720.webp",
+      "path": "public/art/agent-turn-720.webp",
+      "kind": "media-asset",
+      "extension": ".webp",
+      "bytes": 76700,
+      "lines": null,
+      "version": "607f2e12d3cd486d",
+      "text": false,
+      "provenance": [
+        {
+          "file": "public/art/agent-turn-720.webp",
+          "line": 1,
+          "version": "607f2e12d3cd486d"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
     },
     {
       "key": "Artifact:public/art/boat-cigarette.jpg",
@@ -29480,20 +30538,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1137380,
-      "lines": 11700,
-      "version": "d119ffdec64692d4",
+      "bytes": 1141529,
+      "lines": 11753,
+      "version": "de0fc5432ad4da82",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "d119ffdec64692d4"
+          "version": "de0fc5432ad4da82"
         }
       ],
-      "lastChangedAt": "2026-08-27T12:03:30-04:00",
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b568727a8eadd1d457fb0fb05725ce56ddf9c66f"
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
     },
     {
       "key": "Artifact:public/manifest.json",
@@ -29526,20 +30584,20 @@
       "path": "public/omerta-ui.css",
       "kind": "web-surface",
       "extension": ".css",
-      "bytes": 45145,
-      "lines": 1163,
-      "version": "d0abfb7e7ef9c474",
+      "bytes": 49574,
+      "lines": 1264,
+      "version": "eb7540aa34ca3101",
       "text": true,
       "provenance": [
         {
           "file": "public/omerta-ui.css",
           "line": 1,
-          "version": "d0abfb7e7ef9c474"
+          "version": "eb7540aa34ca3101"
         }
       ],
-      "lastChangedAt": "2026-08-27T12:03:30-04:00",
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b568727a8eadd1d457fb0fb05725ce56ddf9c66f"
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
     },
     {
       "key": "Artifact:public/play.html",
@@ -29758,18 +30816,18 @@
       "extension": ".md",
       "bytes": 47800,
       "lines": 664,
-      "version": "28c8e743dda2eee9",
+      "version": "5250d55239220f0a",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "28c8e743dda2eee9"
+          "version": "5250d55239220f0a"
         }
       ],
-      "lastChangedAt": "2026-08-27T05:21:20-04:00",
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9b5e1f54d084547bb33600f5934391191726a3c1"
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -37622,20 +38680,20 @@
       "path": "tools/public-ui.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 22946,
-      "lines": 362,
-      "version": "f7967e08ef9969a5",
+      "bytes": 25856,
+      "lines": 400,
+      "version": "d02dbfc0e5991861",
       "text": true,
       "provenance": [
         {
           "file": "tools/public-ui.js",
           "line": 1,
-          "version": "f7967e08ef9969a5"
+          "version": "d02dbfc0e5991861"
         }
       ],
-      "lastChangedAt": "2026-08-27T12:03:30-04:00",
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b568727a8eadd1d457fb0fb05725ce56ddf9c66f"
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
     },
     {
       "key": "Artifact:tools/render-omr-excalidraw.html",
@@ -37691,20 +38749,20 @@
       "path": "tools/responsive-art.mjs",
       "kind": "engineering-harness",
       "extension": ".mjs",
-      "bytes": 4151,
-      "lines": 89,
-      "version": "60187c189aea6cf0",
+      "bytes": 5180,
+      "lines": 102,
+      "version": "3b414532a2dc5cfd",
       "text": true,
       "provenance": [
         {
           "file": "tools/responsive-art.mjs",
           "line": 1,
-          "version": "60187c189aea6cf0"
+          "version": "3b414532a2dc5cfd"
         }
       ],
-      "lastChangedAt": "2026-08-24T21:02:42-04:00",
+      "lastChangedAt": "2026-08-27T12:35:08-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "76932b2bf846a382e46541c3c665200f567ad6d3"
+      "lastChangedCommit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
     },
     {
       "key": "Artifact:tools/robinhood-stock-catalog.js",
@@ -39473,6 +40531,22 @@
       ]
     },
     {
+      "key": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "type": "Commit",
+      "id": "12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "label": "feat: launch agent marketing graphics",
+      "title": "feat: launch agent marketing graphics",
+      "date": "2026-08-27T12:35:08-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "provenance": [
+        {
+          "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+          "url": "https://github.com/OmertaDev/Omerta/commit/12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+        }
+      ]
+    },
+    {
       "key": "Commit:12ac6b6f26f1808f74c84b6fddb7d6f8b556c7d9",
       "type": "Commit",
       "id": "12ac6b6f26f1808f74c84b6fddb7d6f8b556c7d9",
@@ -39521,6 +40595,22 @@
       ]
     },
     {
+      "key": "Commit:13ece0e060505cbf7287aacf38ddbe74b7222574",
+      "type": "Commit",
+      "id": "13ece0e060505cbf7287aacf38ddbe74b7222574",
+      "label": "Merge pull request #141 from OmertaDev/codex/site-copy-ui-upgrade",
+      "title": "Merge pull request #141 from OmertaDev/codex/site-copy-ui-upgrade",
+      "date": "2026-08-27T12:04:11-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/13ece0e060505cbf7287aacf38ddbe74b7222574",
+      "provenance": [
+        {
+          "commit": "13ece0e060505cbf7287aacf38ddbe74b7222574",
+          "url": "https://github.com/OmertaDev/Omerta/commit/13ece0e060505cbf7287aacf38ddbe74b7222574"
+        }
+      ]
+    },
+    {
       "key": "Commit:13f29e6863221b1daf5c95cd2205bda1fe1fcc75",
       "type": "Commit",
       "id": "13f29e6863221b1daf5c95cd2205bda1fe1fcc75",
@@ -39549,6 +40639,22 @@
         {
           "commit": "1414fc8bf2d71bb7b493a457d73ddc14af4d61f0",
           "url": "https://github.com/OmertaDev/Omerta/commit/1414fc8bf2d71bb7b493a457d73ddc14af4d61f0"
+        }
+      ]
+    },
+    {
+      "key": "Commit:146571fb6896bb6aa779efb3c5de8339b30dfdaa",
+      "type": "Commit",
+      "id": "146571fb6896bb6aa779efb3c5de8339b30dfdaa",
+      "label": "docs: refresh knowledge graph for OMR landing release",
+      "title": "docs: refresh knowledge graph for OMR landing release",
+      "date": "2026-08-27T12:16:02-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/146571fb6896bb6aa779efb3c5de8339b30dfdaa",
+      "provenance": [
+        {
+          "commit": "146571fb6896bb6aa779efb3c5de8339b30dfdaa",
+          "url": "https://github.com/OmertaDev/Omerta/commit/146571fb6896bb6aa779efb3c5de8339b30dfdaa"
         }
       ]
     },
@@ -60637,6 +61743,38 @@
       ]
     },
     {
+      "key": "Document:brand/agent-campaign/PROMPTS.md",
+      "type": "Document",
+      "id": "brand/agent-campaign/PROMPTS.md",
+      "label": "brand/agent-campaign/PROMPTS.md",
+      "documentType": "media-asset",
+      "lines": 76,
+      "version": "f353896f08aa16d0",
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/PROMPTS.md",
+          "line": 1,
+          "version": "f353896f08aa16d0"
+        }
+      ]
+    },
+    {
+      "key": "Document:brand/agent-campaign/README.md",
+      "type": "Document",
+      "id": "brand/agent-campaign/README.md",
+      "label": "brand/agent-campaign/README.md",
+      "documentType": "media-asset",
+      "lines": 39,
+      "version": "5905aacda796b78b",
+      "provenance": [
+        {
+          "file": "brand/agent-campaign/README.md",
+          "line": 1,
+          "version": "5905aacda796b78b"
+        }
+      ]
+    },
+    {
       "key": "Document:CHAIN-AUDIT-PACKET.md",
       "type": "Document",
       "id": "CHAIN-AUDIT-PACKET.md",
@@ -62899,12 +64037,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 664,
-      "version": "28c8e743dda2eee9",
+      "version": "5250d55239220f0a",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "28c8e743dda2eee9"
+          "version": "5250d55239220f0a"
         }
       ]
     },
@@ -63162,6 +64300,10 @@
       "id": "@resvg/resvg-js",
       "label": "@resvg/resvg-js",
       "provenance": [
+        {
+          "file": "brand/agent-campaign/build.mjs",
+          "line": 4
+        },
         {
           "file": "src/cardpng.js",
           "line": 15
@@ -67361,6 +68503,9 @@
           "commit": "0f643f3fdccffbdacdd31dc603e2093bf618b25e"
         },
         {
+          "commit": "146571fb6896bb6aa779efb3c5de8339b30dfdaa"
+        },
+        {
           "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
         },
         {
@@ -67493,6 +68638,9 @@
           "commit": "0f643f3fdccffbdacdd31dc603e2093bf618b25e"
         },
         {
+          "commit": "146571fb6896bb6aa779efb3c5de8339b30dfdaa"
+        },
+        {
           "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
         },
         {
@@ -67623,6 +68771,9 @@
         },
         {
           "commit": "0f643f3fdccffbdacdd31dc603e2093bf618b25e"
+        },
+        {
+          "commit": "146571fb6896bb6aa779efb3c5de8339b30dfdaa"
         },
         {
           "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
@@ -67791,6 +68942,9 @@
         },
         {
           "commit": "0f643f3fdccffbdacdd31dc603e2093bf618b25e"
+        },
+        {
+          "commit": "146571fb6896bb6aa779efb3c5de8339b30dfdaa"
         },
         {
           "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
@@ -73841,12 +74995,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "b568727a8eadd1d457fb0fb05725ce56ddf9c66f",
-      "currentBranch": "(detached)",
+      "revision": "12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "currentBranch": "codex/site-copy-ui-upgrade",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 1648,
+      "currentArtifactCount": 1694,
       "provenance": [
         {
           "file": "README.md",
@@ -99068,6 +100222,114 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:public/art/agent-cover-1080.webp",
+      "to": "Domain:client-experience",
+      "provenance": {
+        "file": "public/art/agent-cover-1080.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:public/art/agent-cover-480.webp",
+      "to": "Domain:client-experience",
+      "provenance": {
+        "file": "public/art/agent-cover-480.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:public/art/agent-cover-720.webp",
+      "to": "Domain:client-experience",
+      "provenance": {
+        "file": "public/art/agent-cover-720.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:public/art/agent-economy-1080.webp",
+      "to": "Domain:client-experience",
+      "provenance": {
+        "file": "public/art/agent-economy-1080.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:public/art/agent-economy-480.webp",
+      "to": "Domain:client-experience",
+      "provenance": {
+        "file": "public/art/agent-economy-480.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:public/art/agent-economy-720.webp",
+      "to": "Domain:client-experience",
+      "provenance": {
+        "file": "public/art/agent-economy-720.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:public/art/agent-overview-1080.webp",
+      "to": "Domain:client-experience",
+      "provenance": {
+        "file": "public/art/agent-overview-1080.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:public/art/agent-overview-1600.webp",
+      "to": "Domain:client-experience",
+      "provenance": {
+        "file": "public/art/agent-overview-1600.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:public/art/agent-overview-640.webp",
+      "to": "Domain:client-experience",
+      "provenance": {
+        "file": "public/art/agent-overview-640.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:public/art/agent-turn-1080.webp",
+      "to": "Domain:client-experience",
+      "provenance": {
+        "file": "public/art/agent-turn-1080.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:public/art/agent-turn-480.webp",
+      "to": "Domain:client-experience",
+      "provenance": {
+        "file": "public/art/agent-turn-480.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:public/art/agent-turn-720.webp",
+      "to": "Domain:client-experience",
+      "provenance": {
+        "file": "public/art/agent-turn-720.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:public/art/boat-cigarette.jpg",
       "to": "Domain:client-experience",
       "provenance": {
@@ -117454,6 +118716,414 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/art/dormant-vault.png",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/art/economy-table.png",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/art/machine-city.png",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/art/organization-room.png",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/build.mjs",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/png/00-overview-16x9.png",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/png/01-cover.png",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/png/02-turn.png",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/png/03-economy.png",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/png/04-capability-map.png",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/png/05-organization.png",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/png/06-exploration.png",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/png/07-stack.png",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/png/08-fair-play.png",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/png/09-arena.png",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/png/10-extraction.png",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/png/11-quickstart.png",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/png/12-closer.png",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/png/contact-sheet.png",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/PROMPTS.md",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/README.md",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/svg/00-overview-16x9.svg",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/svg/01-cover.svg",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/svg/02-turn.svg",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/svg/03-economy.svg",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/svg/04-capability-map.svg",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/svg/05-organization.svg",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/svg/06-exploration.svg",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/svg/07-stack.svg",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/svg/08-fair-play.svg",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/svg/09-arena.svg",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/svg/10-extraction.svg",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/svg/11-quickstart.svg",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:brand/agent-campaign/svg/12-closer.svg",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:public/art/agent-cover-1080.webp",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:public/art/agent-cover-480.webp",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:public/art/agent-cover-720.webp",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:public/art/agent-economy-1080.webp",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:public/art/agent-economy-480.webp",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:public/art/agent-economy-720.webp",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:public/art/agent-overview-1080.webp",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:public/art/agent-overview-1600.webp",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:public/art/agent-overview-640.webp",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:public/art/agent-turn-1080.webp",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:public/art/agent-turn-480.webp",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:public/art/agent-turn-720.webp",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:public/omerta-ui.css",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:tools/public-ui.js",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "to": "Artifact:tools/responsive-art.mjs",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:12ac6b6f26f1808f74c84b6fddb7d6f8b556c7d9",
       "to": "Artifact:AUDIT-redteam-loop.md",
       "provenance": {
@@ -117714,6 +119384,38 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "commit": "1414fc8bf2d71bb7b493a457d73ddc14af4d61f0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:146571fb6896bb6aa779efb3c5de8339b30dfdaa",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "146571fb6896bb6aa779efb3c5de8339b30dfdaa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:146571fb6896bb6aa779efb3c5de8339b30dfdaa",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "146571fb6896bb6aa779efb3c5de8339b30dfdaa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:146571fb6896bb6aa779efb3c5de8339b30dfdaa",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "146571fb6896bb6aa779efb3c5de8339b30dfdaa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:146571fb6896bb6aa779efb3c5de8339b30dfdaa",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "146571fb6896bb6aa779efb3c5de8339b30dfdaa"
       }
     },
     {
@@ -194281,6 +195983,312 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/art/dormant-vault.png",
+      "provenance": {
+        "file": "brand/agent-campaign/art/dormant-vault.png",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/art/economy-table.png",
+      "provenance": {
+        "file": "brand/agent-campaign/art/economy-table.png",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/art/machine-city.png",
+      "provenance": {
+        "file": "brand/agent-campaign/art/machine-city.png",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/art/organization-room.png",
+      "provenance": {
+        "file": "brand/agent-campaign/art/organization-room.png",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/build.mjs",
+      "provenance": {
+        "file": "brand/agent-campaign/build.mjs",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/png/00-overview-16x9.png",
+      "provenance": {
+        "file": "brand/agent-campaign/png/00-overview-16x9.png",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/png/01-cover.png",
+      "provenance": {
+        "file": "brand/agent-campaign/png/01-cover.png",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/png/02-turn.png",
+      "provenance": {
+        "file": "brand/agent-campaign/png/02-turn.png",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/png/03-economy.png",
+      "provenance": {
+        "file": "brand/agent-campaign/png/03-economy.png",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/png/04-capability-map.png",
+      "provenance": {
+        "file": "brand/agent-campaign/png/04-capability-map.png",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/png/05-organization.png",
+      "provenance": {
+        "file": "brand/agent-campaign/png/05-organization.png",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/png/06-exploration.png",
+      "provenance": {
+        "file": "brand/agent-campaign/png/06-exploration.png",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/png/07-stack.png",
+      "provenance": {
+        "file": "brand/agent-campaign/png/07-stack.png",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/png/08-fair-play.png",
+      "provenance": {
+        "file": "brand/agent-campaign/png/08-fair-play.png",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/png/09-arena.png",
+      "provenance": {
+        "file": "brand/agent-campaign/png/09-arena.png",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/png/10-extraction.png",
+      "provenance": {
+        "file": "brand/agent-campaign/png/10-extraction.png",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/png/11-quickstart.png",
+      "provenance": {
+        "file": "brand/agent-campaign/png/11-quickstart.png",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/png/12-closer.png",
+      "provenance": {
+        "file": "brand/agent-campaign/png/12-closer.png",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/png/contact-sheet.png",
+      "provenance": {
+        "file": "brand/agent-campaign/png/contact-sheet.png",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/PROMPTS.md",
+      "provenance": {
+        "file": "brand/agent-campaign/PROMPTS.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/README.md",
+      "provenance": {
+        "file": "brand/agent-campaign/README.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/svg/00-overview-16x9.svg",
+      "provenance": {
+        "file": "brand/agent-campaign/svg/00-overview-16x9.svg",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/svg/01-cover.svg",
+      "provenance": {
+        "file": "brand/agent-campaign/svg/01-cover.svg",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/svg/02-turn.svg",
+      "provenance": {
+        "file": "brand/agent-campaign/svg/02-turn.svg",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/svg/03-economy.svg",
+      "provenance": {
+        "file": "brand/agent-campaign/svg/03-economy.svg",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/svg/04-capability-map.svg",
+      "provenance": {
+        "file": "brand/agent-campaign/svg/04-capability-map.svg",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/svg/05-organization.svg",
+      "provenance": {
+        "file": "brand/agent-campaign/svg/05-organization.svg",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/svg/06-exploration.svg",
+      "provenance": {
+        "file": "brand/agent-campaign/svg/06-exploration.svg",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/svg/07-stack.svg",
+      "provenance": {
+        "file": "brand/agent-campaign/svg/07-stack.svg",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/svg/08-fair-play.svg",
+      "provenance": {
+        "file": "brand/agent-campaign/svg/08-fair-play.svg",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/svg/09-arena.svg",
+      "provenance": {
+        "file": "brand/agent-campaign/svg/09-arena.svg",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/svg/10-extraction.svg",
+      "provenance": {
+        "file": "brand/agent-campaign/svg/10-extraction.svg",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/svg/11-quickstart.svg",
+      "provenance": {
+        "file": "brand/agent-campaign/svg/11-quickstart.svg",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:brand/agent-campaign/svg/12-closer.svg",
+      "provenance": {
+        "file": "brand/agent-campaign/svg/12-closer.svg",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
       "to": "Artifact:brand/banner.svg",
       "provenance": {
         "file": "brand/banner.svg",
@@ -194347,6 +196355,114 @@
       "to": "Artifact:public/arena.html",
       "provenance": {
         "file": "public/arena.html",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:public/art/agent-cover-1080.webp",
+      "provenance": {
+        "file": "public/art/agent-cover-1080.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:public/art/agent-cover-480.webp",
+      "provenance": {
+        "file": "public/art/agent-cover-480.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:public/art/agent-cover-720.webp",
+      "provenance": {
+        "file": "public/art/agent-cover-720.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:public/art/agent-economy-1080.webp",
+      "provenance": {
+        "file": "public/art/agent-economy-1080.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:public/art/agent-economy-480.webp",
+      "provenance": {
+        "file": "public/art/agent-economy-480.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:public/art/agent-economy-720.webp",
+      "provenance": {
+        "file": "public/art/agent-economy-720.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:public/art/agent-overview-1080.webp",
+      "provenance": {
+        "file": "public/art/agent-overview-1080.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:public/art/agent-overview-1600.webp",
+      "provenance": {
+        "file": "public/art/agent-overview-1600.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:public/art/agent-overview-640.webp",
+      "provenance": {
+        "file": "public/art/agent-overview-640.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:public/art/agent-turn-1080.webp",
+      "provenance": {
+        "file": "public/art/agent-turn-1080.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:public/art/agent-turn-480.webp",
+      "provenance": {
+        "file": "public/art/agent-turn-480.webp",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
+      "to": "Artifact:public/art/agent-turn-720.webp",
+      "provenance": {
+        "file": "public/art/agent-turn-720.webp",
         "line": 1
       }
     },
@@ -217576,6 +219692,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:12a3b43ae005a6ab89471f5a5d2299907f3613dc",
+      "provenance": {
+        "commit": "12a3b43ae005a6ab89471f5a5d2299907f3613dc"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:12ac6b6f26f1808f74c84b6fddb7d6f8b556c7d9",
       "provenance": {
         "commit": "12ac6b6f26f1808f74c84b6fddb7d6f8b556c7d9"
@@ -217600,6 +219724,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:13ece0e060505cbf7287aacf38ddbe74b7222574",
+      "provenance": {
+        "commit": "13ece0e060505cbf7287aacf38ddbe74b7222574"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:13f29e6863221b1daf5c95cd2205bda1fe1fcc75",
       "provenance": {
         "commit": "13f29e6863221b1daf5c95cd2205bda1fe1fcc75"
@@ -217611,6 +219743,14 @@
       "to": "Commit:1414fc8bf2d71bb7b493a457d73ddc14af4d61f0",
       "provenance": {
         "commit": "1414fc8bf2d71bb7b493a457d73ddc14af4d61f0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:146571fb6896bb6aa779efb3c5de8339b30dfdaa",
+      "provenance": {
+        "commit": "146571fb6896bb6aa779efb3c5de8339b30dfdaa"
       }
     },
     {
@@ -226647,6 +228787,15 @@
       "provenance": {
         "file": ".agents/skills/remotion-markup/remotion-maps/techniques/maptiler/scripts/prep-geo.mjs",
         "line": 16
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:brand/agent-campaign/build.mjs",
+      "to": "ExternalDependency:@resvg/resvg-js",
+      "provenance": {
+        "file": "brand/agent-campaign/build.mjs",
+        "line": 4
       }
     },
     {
@@ -246622,6 +248771,78 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:brand/agent-campaign/PROMPTS.md",
+      "to": "Artifact:public/art/hero-poster.jpg",
+      "provenance": {
+        "file": "brand/agent-campaign/PROMPTS.md",
+        "line": 7
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:brand/agent-campaign/PROMPTS.md",
+      "to": "Artifact:public/art/hype-money-poster.jpg",
+      "provenance": {
+        "file": "brand/agent-campaign/PROMPTS.md",
+        "line": 25
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:brand/agent-campaign/PROMPTS.md",
+      "to": "Artifact:public/art/interior-family.jpg",
+      "provenance": {
+        "file": "brand/agent-campaign/PROMPTS.md",
+        "line": 43
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:brand/agent-campaign/PROMPTS.md",
+      "to": "Artifact:public/art/interior-market.jpg",
+      "provenance": {
+        "file": "brand/agent-campaign/PROMPTS.md",
+        "line": 25
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:brand/agent-campaign/PROMPTS.md",
+      "to": "Artifact:public/art/interior-scores.jpg",
+      "provenance": {
+        "file": "brand/agent-campaign/PROMPTS.md",
+        "line": 61
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:brand/agent-campaign/PROMPTS.md",
+      "to": "Artifact:public/art/pill-agents.jpg",
+      "provenance": {
+        "file": "brand/agent-campaign/PROMPTS.md",
+        "line": 43
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:brand/agent-campaign/PROMPTS.md",
+      "to": "Artifact:public/art/pill-agents.jpg",
+      "provenance": {
+        "file": "brand/agent-campaign/PROMPTS.md",
+        "line": 61
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:brand/agent-campaign/PROMPTS.md",
+      "to": "Artifact:public/art/pill-agents.jpg",
+      "provenance": {
+        "file": "brand/agent-campaign/PROMPTS.md",
+        "line": 7
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:CHAIN-AUDIT-PACKET.md",
       "to": "Artifact:src/dexbot.js",
       "provenance": {
@@ -266264,6 +268485,24 @@
       "to": "Artifact:BALANCE.md",
       "provenance": {
         "file": "BALANCE.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:brand/agent-campaign/PROMPTS.md",
+      "to": "Artifact:brand/agent-campaign/PROMPTS.md",
+      "provenance": {
+        "file": "brand/agent-campaign/PROMPTS.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:brand/agent-campaign/README.md",
+      "to": "Artifact:brand/agent-campaign/README.md",
+      "provenance": {
+        "file": "brand/agent-campaign/README.md",
         "line": 1
       }
     },
