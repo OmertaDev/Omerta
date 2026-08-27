@@ -47,6 +47,25 @@ try {
   check(firstFrame.over <= 1, `desktop landing scrolls sideways by ${firstFrame.over}px`);
   check(firstFrame.editorial && !firstFrame.announcesLive,
     'the fictional landing feed is not programmatically identified as editorial flavor');
+  // A 1728px MacBook Pro report exposed the hero's right edge as black while the animated layer played.
+  // Both the first-paint still and the progressively-mounted video must be centered on the VIEWPORT,
+  // not sized from the 1080px copy column that happens to own them in the DOM.
+  await desktop.setViewportSize({ width: 1728, height: 1117 });
+  const wideHero = await desktop.evaluate(() => {
+    const hero = document.querySelector('#screen-auth .hero');
+    const still = document.querySelector('#screen-auth .hero-art').getBoundingClientRect();
+    const probe = document.createElement('div');
+    probe.className = 'herovid';
+    hero.prepend(probe);
+    const motion = probe.getBoundingClientRect();
+    probe.remove();
+    const shape = (rect) => ({ left: Math.round(rect.left), right: Math.round(rect.right), width: Math.round(rect.width) });
+    return { viewport: innerWidth, still: shape(still), motion: shape(motion) };
+  });
+  check(wideHero.still.left === 0 && wideHero.still.right === wideHero.viewport
+    && wideHero.motion.left === 0 && wideHero.motion.right === wideHero.viewport,
+  `1728px landing hero media does not cover both viewport edges — ${JSON.stringify(wideHero)}`);
+  await desktop.setViewportSize({ width: 1440, height: 900 });
   const gameProof = await desktop.evaluate(() => ({
     approaches: document.querySelectorAll('.operation-proof .operation-approach').length,
     receipt: document.querySelectorAll('.operation-proof .operation-receipt').length,
