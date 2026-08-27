@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `ee6d119f0c86`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `0fe33ebb51f3`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1021 |
+| Commits in clone | 1022 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-27 — docs: freeze replacement validation order |
+| Latest commit | 2026-08-27 — docs: normalize acquisition authority knowledge |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 220 |
+| OmertaDev | 221 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -54,11 +54,11 @@
 | [src/growth.js](../../src/growth.js) | 51 | yes |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
+| knowledge/generated/github-history.md | 45 | historical |
+| knowledge/generated/graph-summary.md | 45 | historical |
+| knowledge/generated/graph.json | 45 | historical |
+| knowledge/generated/inventory.md | 45 | historical |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 45 | yes |
-| knowledge/generated/github-history.md | 44 | historical |
-| knowledge/generated/graph-summary.md | 44 | historical |
-| knowledge/generated/graph.json | 44 | historical |
-| knowledge/generated/inventory.md | 44 | historical |
 | [src/economy.js](../../src/economy.js) | 44 | yes |
 | [src/casino.js](../../src/casino.js) | 43 | yes |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
