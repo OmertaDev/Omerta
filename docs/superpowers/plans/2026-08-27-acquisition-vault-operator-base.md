@@ -527,6 +527,7 @@ UTF-8 labels; no public label getter is added:
 | `operatorGeneration` | `keccak256(bytes("operatorGeneration"))` |
 | `ingressProposalNonce` | `keccak256(bytes("ingressProposalNonce"))` |
 | `ingressGeneration` | `keccak256(bytes("ingressGeneration"))` |
+| `accountingSequence` | `keccak256(bytes("accountingSequence"))` |
 
 ```text
 nominationId = keccak256(abi.encode(
@@ -792,6 +793,7 @@ error IngressProposalPending(bytes32 proposalId);
 error IngressProposalMissing();
 error InvalidIngressConfig();
 error IngressCodeHashMismatch(address ingress, bytes32 expected, bytes32 actual);
+error IngressActive(address ingress);
 error NoActiveIngress();
 error IngressNotFound(uint256 generation);
 error NotActiveIngress(address caller);
@@ -1398,12 +1400,195 @@ separate focused implementation commit followed by a fresh independent review.
 
 ---
 
+### Task 3A: Close the post-O1 ownership-epoch audit lead
+
+The twelve-lens Wildcat review found no present O1 exploit, but seven lenses
+independently reproduced one composition hazard: a delayed operator nomination
+authorized by an outgoing Safe remains acceptable after a successor Safe accepts
+ownership. O1 has no outflow, so this was a lead rather than a current monetary
+finding; O2 will add operator-authorized outflow, so the seam must close before
+A1/O2 composition.
+
+**Frozen decision:** an already-active operator intentionally survives an owner
+handoff and remains immediately disableable by the new Safe. A merely pending
+operator nomination does **not** cross the ownership epoch. Successful ownership
+acceptance atomically cancels any pending operator nomination; starting or
+cancelling an ownership transfer does not. This prevents both a stale grant under
+Safe B and an `A -> B -> A` revival without an ownership counter or transfer
+block.
+
+**Files:**
+
+- Modify: `omerta-contracts/src/AcquisitionVault.sol`
+- Modify: `omerta-contracts/test/AcquisitionVaultOperator.t.sol`
+
+- [ ] **Step 1: Write the ownership-epoch RED test**
+
+  Prove Safe A can nominate N and start/cancel an ownership transfer without
+  changing that nomination. Successful A-to-B ownership acceptance must emit the
+  inherited `OwnershipTransferred(A, B)` event first, followed by exactly:
+
+  ```text
+  MainOperatorNominationCancelled(
+    proposalId, nominee, B,
+    uint8(ReasonCode.OPERATOR_NOMINATION_CANCELLED),
+    keccak256(abi.encode(
+      keccak256("OMERTA_ACQUISITION_OPERATOR_OWNERSHIP_ACCEPTANCE_CANCEL_V1"),
+      proposalId, A, B
+    ))
+  )
+  ```
+
+  Derive the details hash independently. The nomination is then missing before,
+  during, and after its former acceptance window; `A -> B -> A` cannot revive it.
+  Failed ownership acceptance preserves the nomination and emits nothing. A
+  control trace proves an active operator survives the same ownership handoff
+  with generation/nonce/pause state unchanged and Safe B can disable it
+  immediately. The pending-nomination trace separately proves `nominationNonce`
+  remains the issued proposal number; `operatorGeneration`, `outflowNonce`,
+  `mainOperator`, and pause state remain unchanged; and only ownership/pending-
+  owner plus pending-nomination state changes.
+
+- [ ] **Step 2: Implement the minimum atomic cancellation**
+
+  In `acceptOwnership`, snapshot `previousOwner`, `candidate`, and the pending
+  nomination; run the existing caller/candidate checks; call
+  `super.acceptOwnership()`; then, if a nomination existed, delete it and emit the
+  exact cancellation evidence above. Preserve `nominationNonce`,
+  `operatorGeneration`, `outflowNonce`, pause state, and any active operator. Do
+  not add an ownership epoch counter, interface change, transfer block, or
+  automatic generation advancement.
+
+- [ ] **Step 3: Regenerate exact O1 artifact evidence**
+
+  Prove no ABI function/event/error or storage-layout count changes. Rerun the
+  focused O1 suite, full Forge suite, targeted format, runtime/storage/IR/call-
+  site checks, and `git diff --check`. Mutate away the pending clear, cancellation
+  event, exact derived-details field/order, event order, generation preservation,
+  nonce preservation, and pause preservation; named tests or static gates must
+  kill every mutation.
+
+- [ ] **Step 4: Commit the focused remediation**
+
+  Commit only `AcquisitionVault.sol` and `AcquisitionVaultOperator.t.sol`, record
+  the exact immutable head, and keep detailed working evidence ignored. Do not
+  include interface, A1, deployment, backend, UI, or generated-knowledge changes.
+
+- [ ] **Step 5: Fresh independent review**
+
+  The original O1 approval is superseded when this fix lands. Freeze the exact
+  remediation head and obtain a fresh independent review of the two-file delta,
+  focused/full results, mutations, unchanged ABI/storage, and unchanged no-
+  outflow/dormant posture before Task 4. Every review fix is a later focused
+  commit followed by a newly frozen package and independent re-review.
+
+---
+
+### A1 implementation-readiness amendment
+
+The following clauses resolve the pre-implementation readiness review and are
+normative for Tasks 4-8:
+
+1. `AcquisitionVaultOperator.t.sol` changes in Tasks 4-5 because the constructor,
+   deployment fixtures, payable policy, role-collision matrix, and unpause tests
+   change. Later A1 declarations land only with their implementing task; no future
+   selector is exposed early. `AcquisitionVaultAccounting.t.sol` owns exact whole-
+   artifact equality at each progressive milestone: O1+Task 4, then +Task 5, then
+   +Task 6. The operator suite switches to exact membership checks for every
+   frozen O1 function/error/event descriptor and tuple/mutability/indexing rule,
+   but stops asserting whole-artifact counts after A1 begins. It proves every O1
+   function remains nonpayable and no receive/fallback exists; the accounting
+   suite proves Task 4 has no payable entry and Tasks 5-6 have exactly one,
+   `depositCanonical`.
+2. Task 4 cannot successfully unpause before ingress exists. Tests that require an
+   unpaused scalar fixture may use a test-only Pausable storage helper; Task 5 must
+   restore the only end-to-end activation-to-unpause success trace.
+3. Active ingress overlap reverts the explicit closed error
+   `IngressActive(address ingress)` carrying the currently active record's ingress
+   address; it is not mislabeled as invalid config.
+4. The ingress pause matrix is exact: propose/cancel/expire are allowed paused or
+   unpaused; activation is Safe-only and paused-only; disable is Safe-only and
+   pause-independent; canonical deposit, sync, and Safe reclassification are
+   pause-independent; budget authorization is Safe-only and unpaused. Task 4
+   proves sync and reclassification both paused and test-harness-unpaused. Task 5
+   proves propose/cancel/expire/deposit in both states, activation only by the Safe
+   while paused, disable by the Safe in both states, and exactly one production
+   activation-to-unpause success trace. Task 6 proves budget authorization only by
+   the Safe while unpaused and rejects the paused state.
+5. `disableIngress` writes exactly the active record's checked `disabledAt`, clears
+   `activeIngressGeneration`, emits `IngressDisabled`, and preserves ingress
+   generation/proposal counters, pending proposal, immutable caps, deposit totals,
+   accounting, and unrelated records. With active A and pending B, activating B
+   reverts exactly `IngressActive(A)` with no change/log; disabling A preserves B;
+   pending-only disable then reverts `NoActiveIngress`; B activates only while
+   paused. Disable remains available despite missing/drifted code or injected
+   identity-health failure.
+6. A nonpayable constructor accepts no `msg.value`, but predictable-address forced
+   prefunding is not rejected because that would permit a one-wei deployment DoS.
+   Ordinary deployment proves `V == 0`. A genuine predicted-address/force-send
+   trace proves counterfactual prefunding leaves every stored bucket, counter, and
+   deficit-observation scalar zero while `accountingTotals()` reports
+   `V == F == prefundedWei`, `A == U == R == L == P == S == B == D == 0`, and
+   `accountingSequence == lastObservedBalanceDeficitWei == 0`. The first
+   successful `syncBalance()` classifies exactly F to U, never directly to A.
+7. `accountingSequence` exhaustion reuses `CounterExhausted` with the literal label
+   `keccak256(bytes("accountingSequence"))` and fails before every write or log.
+   Independently derived exact-error tests set the sequence to `uint256.max` for
+   sync with actionable F, sync with only an actionable observation change,
+   reclassification, and canonical deposit. Each proves rollback of incoming ETH
+   where applicable and no bucket, record, replay ID, cap total, observation,
+   event, or log change; expected hashes never use production helpers.
+8. Every successful financial mutation sets `lastObservedBalanceDeficitWei` to its
+   post-state live `D`. Only `SYNC_BALANCE` emits a
+   `BALANCE_DEFICIT_OBSERVATION_SET` component; deposit and reclassification show
+   deficit movement only through their exact pre/post totals and economic
+   components.
+9. Financial event order is deterministic: apply effects; emit
+   `AccountingMutation`; emit contiguous `AccountingComponent` entries; then emit
+   the action-specific `UnattributedReclassified` or `CanonicalDeposit` event.
+10. Ingress errors partition exactly: zero address -> `ZeroAddress`; no code ->
+    `ContractRequired`; zero code hash or invalid caps -> `InvalidIngressConfig`;
+    hash mismatch -> `IngressCodeHashMismatch`; identity collision ->
+    `RoleIdentityCollision`; occupied active slot -> `IngressActive`; missing
+    active -> `NoActiveIngress`; wrong depositor -> `NotActiveIngress`. Emergency
+    disable never depends on current code/hash or identity health.
+11. Budget errors partition exactly: unrepresentable current timestamp ->
+    `TimestampOverflow`; uncomputable/unrepresentable deadline ->
+    `BudgetDeadlineOverflow`; past day -> `BudgetDayClosed`; and only a safely
+    derived unequal supplied deadline -> `InvalidPurchaseUntil`.
+    Clauses 10-11 are isolated predicate-to-error mappings, not compound-invalid
+    precedence, except where the appendix expressly freezes ordering, including
+    missing/exact proposal ID before time and safely derived budget-deadline
+    checks. Tests isolate every other predicate.
+12. Arithmetic is checked and cap checks prefer subtraction form. A genuinely
+    unrepresentable injected state may revert with panic `0x11`; no saturation,
+    wrapping, or fabricated attempted total is permitted.
+13. Detailed task reports/review packages remain ignored under
+    `.superpowers/sdd/`. Implementation commits never add tracked reports or edit
+    the closure record. The controller fills the tracked `O1/A1 closure record`
+    in this plan once exact reviewed heads are stable in Task 8.
+14. Task 7's native-value invariant means each handler wrapper snapshots V around
+    every vault call and proves `postV >= preV` for every successful O1/A1 vault
+    call. Forced ETH and test-only deficit injection are explicitly tagged
+    environment disturbances and excluded from that call-monotonicity assertion;
+    conservation still holds after every disturbance. No O1/A1 action moves ERC-
+    20, OMR, or Stock Tokens.
+
+Task 3A leaves O1 at exactly 37 compiled errors: 30 contract/interface custom
+errors plus seven inherited errors. `IngressActive` alone increases the pre-
+amendment final A1 count by one, to exactly 61 compiled errors: 54 custom plus the
+same seven inherited errors. Task 3A changes no ABI function/event/error or
+storage count; Tasks 4-6 otherwise preserve their planned function/event counts.
+
+---
+
 ### Task 4: Add A1 scalar accounting and forced-balance classification
 
 **Files:**
 
 - Modify: `omerta-contracts/src/AcquisitionVault.sol`
 - Modify: `omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol`
+- Modify: `omerta-contracts/test/AcquisitionVaultOperator.t.sol`
 - Add: `omerta-contracts/test/AcquisitionVaultAccounting.t.sol`
 
 **Final constructor:**
@@ -1422,17 +1607,17 @@ constructor(
   isolated `Ownable(safeOwner)` zero-owner result and the low-level exact-selector
   RegistryV2 response-length/sentinel rules; add only a nonzero global lifetime
   cap predicate. Compound-invalid precedence remains outside the API. Require
-  paused, zero-funded, zero operator/nomination/ingress/budget, and all accounting
-  scalars zero. Use test contract fixtures, not invented production addresses.
+  paused, ordinary-deployment `V == 0`, zero operator/nomination state, no A1-only
+  ingress or budget selector/struct/error/event/storage before its implementing
+  task, every stored accounting bucket/counter/observation zero, and the exact
+  Task-4-only A1 ABI. Add the counterfactual forced-prefunding trace from the
+  readiness amendment. Use test contract fixtures, not invented production
+  addresses.
 
-  Extend `IAcquisitionVaultV1` only with the A1 structs/enums/mutators/views/
-  errors/events introduced by Tasks 4-6. Preserve O1's already-declared complete
-  reason/readiness enums and constants without duplicate or speculative ABI.
-
-  Re-run the O1 ownership/operator collision suite after A1 adds active/pending
-  ingress. Prove a pending ownership or operator proposal cannot be made
-  colliding by a later ingress proposal/activation, and every owner/operator
-  acceptance/replacement rechecks active and pending ingress identities.
+  In each of Tasks 4-6, extend `IAcquisitionVaultV1` only with the declarations
+  implemented by that task. Task 4 adds no Task-5 ingress/deposit or Task-6 budget
+  declaration. Preserve O1's already-declared complete reason/readiness enums and
+  constants without duplicate or speculative ABI.
 
   Freeze `accountingTotals()` fields for `A/U/R/L/P/S/B/V/D/F`,
   `accountingSequence`, immutable registry, immutable global cap, and the public
@@ -1452,22 +1637,28 @@ constructor(
     derived deficit observation under one sequence/evidence record.
   - If neither totals nor recorded deficit observation changes, it reverts
     `NoBalanceDelta` and creates no spam history.
-  - A later valid financial mutation that repairs a recorded deficit emits the
-    coherent changed/zero observation under that mutation's sequence.
+  - Every successful Task-4 financial mutation stores
+    `lastObservedBalanceDeficitWei = postTotals.balanceDeficitWei`. Only
+    `SYNC_BALANCE` emits `BALANCE_DEFICIT_OBSERVATION_SET`, including zero when a
+    sync observes clearing; reclassification emits no observation component.
   - Safe reclassification transfers no ETH: `U -= x`, `A += x`, one sequence,
     reason 18, nonzero details, nonzero in-range amount, and requires `D == 0`
     and `S == 0`.
 
-  Each financial event carries pre/post totals and contiguous typed component
-  indexes. Role/pause/nonce/proposal/budget evidence is nonfinancial and does not
-  increment `accountingSequence`.
+  Each successful financial mutation emits one `AccountingMutation` carrying
+  exact pre/post totals and `componentCount`, followed by exactly that many
+  contiguous indexed `AccountingComponent` events and, where applicable, its
+  action-specific event. Role/pause/nonce/proposal/budget evidence is
+  nonfinancial and does not increment `accountingSequence`. Task-4 log-order tests
+  cover sync ending after its components and reclassification ending with
+  `UnattributedReclassified`.
 
   Independently derive literal mutation and component IDs for every non-`NONE`
   component kind from the appendix preimages/table. Cover both nonzero and zero
   `BALANCE_DEFICIT_OBSERVATION_SET`, prove the sync kinds use the parent sync
-  subject, reclassification uses exact `detailsHash`, and both deposit kinds use
-  exact `depositId`. Never use production hash/ID helpers for expected values;
-  reject `AccountingComponentKind.NONE` without sequence or history.
+  subject, and reclassification uses exact `detailsHash`. Never use production
+  hash/ID helpers for expected values; reject `AccountingComponentKind.NONE`
+  without sequence or history.
 
   Freeze A1 `unpause` as Safe-only with the O1 local identity/chain predicates
   plus `D == 0`, `S == 0`, one live active ingress, unchanged nonzero ingress
@@ -1529,6 +1720,7 @@ constructor(
 
 - Modify: `omerta-contracts/src/AcquisitionVault.sol`
 - Modify: `omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol`
+- Modify: `omerta-contracts/test/AcquisitionVaultOperator.t.sol`
 - Modify: `omerta-contracts/test/AcquisitionVaultAccounting.t.sol`
 
 **Ingress interface:**
@@ -1551,8 +1743,10 @@ depositCanonical(bytes32 sourceEventId)
   Add one pending proposal and one active ingress generation. Proposal and
   activation use the same 48-hour delay and seven-day half-open acceptance
   window as operator nomination: no overwrite, exact ID, Safe cancel, public
-  expiry, Safe activation while paused, immediate Safe disable, and no active
-  overlap. Activated generation caps are immutable.
+  expiry, Safe activation only while paused, immediate pause-independent Safe
+  disable, and no active overlap. Active overlap reverts `IngressActive`.
+  Disable preserves an unrelated pending proposal. Activated generation caps are
+  immutable.
   Missing proposal and wrong-ID checks precede time; early permissionless expiry
   of an exact live proposal reverts `ProposalNotReady(expiresAt)`.
 
@@ -1561,6 +1755,10 @@ depositCanonical(bytes32 sourceEventId)
   owner, pending owner, main operator, and pending operator, plus the other
   active/pending ingress identity where applicable. Recheck at activation and
   deposit so delayed role changes cannot collapse authority.
+  Re-run the O1 ownership/operator collision suite after active/pending ingress
+  exists. Prove a pending ownership or operator proposal cannot be made colliding
+  by a later ingress proposal/activation, and every owner/operator acceptance or
+  replacement rechecks both ingress identities.
 
   The contract makes **no** mechanical proxy-detection claim. A correctly pinned
   proxy has code and matches its own runtime hash, so these checks alone accept
@@ -1624,6 +1822,12 @@ depositCanonical(bytes32 sourceEventId)
   them under one deposit ID and one accounting sequence, and prove conservation.
   Deposits remain permitted while paused or in deficit because they repair
   custody.
+  A deposit that partially or fully repairs a recorded deficit stores the post-
+  state observation and exposes the change only through `AccountingMutation` pre/
+  post totals and its nonzero deposit-repair/available-credit components; it emits
+  no `BALANCE_DEFICIT_OBSERVATION_SET`. Independently prove both deposit component
+  IDs use exact `depositId`, and exact log order is `AccountingMutation`,
+  contiguous components, then `CanonicalDeposit`.
 
   Do not add `depositCausalRefund`. Future R adds it only after exact
   reconciliation identities exist. Unknown/unmatched ETH remains U through
@@ -1659,7 +1863,10 @@ depositCanonical(bytes32 sourceEventId)
 
 - [ ] **Step 6: Commit the ingress/deposit slice**
 
-  Commit only the focused contract/interface/test delta and evidence report.
+  Commit only the focused contract/interface/test delta. Keep the detailed
+  working report ignored under `.superpowers/sdd/`; do not edit the tracked
+  closure record. The controller records exact stable-head outcomes only after
+  Task 8 approval.
 
 ---
 
@@ -1796,7 +2003,9 @@ depositCanonical(bytes32 sourceEventId)
     generation once, and preserves outflowNonce
   forced ETH never becomes A without Safe reclassification
   pre-vote budgets move no funds and contain no result authority
-  no O1/A1 actor can move native ETH, ERC-20, OMR, or Stock Tokens
+  no O1/A1 vault function originates native-ETH outflow or decreases vault
+    balance; canonical deposits and forced ETH may increase it; no O1/A1 action moves
+    ERC-20, OMR, or Stock Tokens
   every compound-invalid replacement returns the error from the earliest failing
     stage in the frozen eight-step order and changes no state/logs
   successful unpause satisfies the exact milestone-local predicate
@@ -1857,9 +2066,10 @@ depositCanonical(bytes32 sourceEventId)
 
 - [ ] **Step 7: Commit invariant/integration evidence**
 
-  Commit only the invariant suite and any smallest test-first fixes. Record
-  exact suite counts/results, fuzz/invariant runs, runtime bytes, ABI-negative
-  proof, and storage-layout hash in the task report.
+  Commit only the invariant suite and any smallest test-first fixes. Put detailed
+  suite counts/results, fuzz/invariant runs, runtime bytes, ABI-negative proof,
+  and storage-layout hash in the ignored task report; the controller transfers
+  exact stable-head outcomes into the closure record only after Task 8 approval.
 
 ---
 
@@ -1935,6 +2145,43 @@ Fixes use separate focused commits and new independent re-reviews.
   Mark configured, deployed, Safe-executed, finalized, funded, and active as
   false unless separately supplied external evidence proves otherwise. State
   that CB, A3, R, and O2 remain pending and no transfer surface exists.
+
+---
+
+## O1/A1 closure record
+
+This block is controller-owned. Implementation agents do not edit it. Detailed
+task reports, mutation transcripts, generated inspection files, and review
+packages remain ignored under `.superpowers/sdd/`. The controller replaces each
+`UNSET` value only after Task 8 approves stable immutable heads; a missing value
+cannot be inferred from a passing working tree. The named plan blob is the exact
+pre-closure artifact reviewed in Task 8. Controller-only population of this table
+is administrative evidence recording, not a claim that the resulting self-
+modified plan blob was itself the reviewed artifact.
+
+| Evidence | Exact stable value |
+|---|---|
+| O1 baseline head/tree | `UNSET` |
+| Task 3A remediation head/tree | `UNSET` |
+| Task 4 accounting head | `UNSET` |
+| Task 5 ingress/deposit head | `UNSET` |
+| Task 6 budget head | `UNSET` |
+| Task 7 invariant/integration head | `UNSET` |
+| Task 8 independently approved head | `UNSET` |
+| Task-8-reviewed pre-closure plan blob | `UNSET` |
+| Focused O1/A1 command outcomes and exact counts | `UNSET` |
+| Full Forge command outcome and exact suite/test counts | `UNSET` |
+| Fuzz/invariant run and call counts | `UNSET` |
+| Required mutation disposition | `UNSET` |
+| ABI/method/error/event counts and hashes | `UNSET` |
+| Runtime/initcode bytes and runtime hash | `UNSET` |
+| Storage-layout hash | `UNSET` |
+| Independent reviewer and Critical/Important/Minor disposition | `UNSET` |
+| Controller verification disposition | `UNSET` |
+| O1 implemented / independently approved / dormant | `UNSET / UNSET / true` |
+| A1 implemented / independently approved / dormant | `UNSET / UNSET / true` |
+| configured / deployed / Safe-executed / finalized / funded / active | `false / false / false / false / false / false` |
+| CB / A3 / R / O2 | `pending / pending / pending / pending` |
 
 ---
 
