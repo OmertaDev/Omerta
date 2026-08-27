@@ -479,6 +479,99 @@ assert.equal(stockCatalogV2.stockTokenRegistryV2ReaderConfigured(), true,
 assert.equal(await stockCatalogV2.stockTokenCatalogV2Ready(readerPool), true,
   'the canonical mirror is ready under the same padded production registry configuration');
 
+async function currentBallotCatalogAvailable(db) {
+  const client = await db.connect();
+  try {
+    const catalog = await stockCatalogV2.finalizedStockCatalogForBallotV2(client, {
+      canonicalClose: '2100-01-01T00:00:00.000Z',
+      observedEpochSeconds: String(Math.floor(Date.now() / 1000)),
+    });
+    return catalog.available;
+  } finally {
+    client.release();
+  }
+}
+
+assert.equal(await currentBallotCatalogAvailable(readerPool), true,
+  'a matching getter checkpoint authorizes the caught-up ballot catalog');
+const matchingGetterCheckpoint = (await readerPool.query(
+  `SELECT consumer_key,chain_id,contract_address,start_block_number,last_applied_block_number,
+          last_applied_block_hash,last_observation_hash,finalized_horizon_number,
+          finalized_horizon_hash,caught_up,verified_at,ready_verified_at
+     FROM stock_catalog_getter_checkpoint_v2 WHERE consumer_key='stock_catalog_getter_v2'`)).rows[0];
+
+process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK = '98';
+assert.deepEqual({
+  ready: await stockCatalogV2.stockTokenCatalogV2Ready(readerPool),
+  ballotAvailable: await currentBallotCatalogAvailable(readerPool),
+}, { ready: false, ballotAvailable: false },
+'a configured start-block cutover fails closed until that exact getter identity is synchronized');
+
+process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK = '97';
+await readerPool.query(
+  "UPDATE stock_catalog_getter_checkpoint_v2 SET start_block_number=98 WHERE consumer_key='stock_catalog_getter_v2'",
+);
+assert.deepEqual({
+  ready: await stockCatalogV2.stockTokenCatalogV2Ready(readerPool),
+  ballotAvailable: await currentBallotCatalogAvailable(readerPool),
+}, { ready: false, ballotAvailable: false },
+'a checkpoint identity mismatch cannot borrow a fresh catalog singleton');
+
+await readerPool.query(
+  "DELETE FROM stock_catalog_getter_checkpoint_v2 WHERE consumer_key='stock_catalog_getter_v2'",
+);
+assert.deepEqual({
+  ready: await stockCatalogV2.stockTokenCatalogV2Ready(readerPool),
+  ballotAvailable: await currentBallotCatalogAvailable(readerPool),
+}, { ready: false, ballotAvailable: false },
+'an absent getter checkpoint cannot authorize public readiness or a ballot catalog');
+
+await readerPool.query(
+  `INSERT INTO stock_catalog_getter_checkpoint_v2
+     (consumer_key,chain_id,contract_address,start_block_number,last_applied_block_number,
+      last_applied_block_hash,last_observation_hash,finalized_horizon_number,
+      finalized_horizon_hash,caught_up,verified_at,ready_verified_at)
+   VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
+  [matchingGetterCheckpoint.consumer_key, matchingGetterCheckpoint.chain_id,
+    matchingGetterCheckpoint.contract_address, matchingGetterCheckpoint.start_block_number,
+    matchingGetterCheckpoint.last_applied_block_number, matchingGetterCheckpoint.last_applied_block_hash,
+    matchingGetterCheckpoint.last_observation_hash, matchingGetterCheckpoint.finalized_horizon_number,
+    matchingGetterCheckpoint.finalized_horizon_hash, matchingGetterCheckpoint.caught_up,
+    matchingGetterCheckpoint.verified_at, matchingGetterCheckpoint.ready_verified_at],
+);
+assert.deepEqual({
+  ready: await stockCatalogV2.stockTokenCatalogV2Ready(readerPool),
+  ballotAvailable: await currentBallotCatalogAvailable(readerPool),
+}, { ready: true, ballotAvailable: true },
+'restoring the exact configured getter checkpoint restores both authority surfaces');
+
+let checkpointShiftedDuringBallotRead = false;
+const shiftingCheckpointClient = {
+  async query(sql, params) {
+    const result = await readerPool.query(sql, params);
+    if (!checkpointShiftedDuringBallotRead && sql.includes('ticker_ballot_v2_current_heads')) {
+      checkpointShiftedDuringBallotRead = true;
+      await readerPool.query(
+        "UPDATE stock_catalog_getter_checkpoint_v2 SET start_block_number=98 WHERE consumer_key='stock_catalog_getter_v2'",
+      );
+    }
+    return result;
+  },
+};
+const bracketedIdentityChange = await stockCatalogV2.finalizedStockCatalogForBallotV2(
+  shiftingCheckpointClient,
+  {
+    canonicalClose: '2100-01-01T00:00:00.000Z',
+    observedEpochSeconds: String(Math.floor(Date.now() / 1000)),
+  },
+);
+assert.equal(bracketedIdentityChange.available, false,
+  'the ballot confirmation read detects a getter identity change after the first bracket');
+assert.equal(bracketedIdentityChange.reason, 'changed');
+await readerPool.query(
+  "UPDATE stock_catalog_getter_checkpoint_v2 SET start_block_number=97 WHERE consumer_key='stock_catalog_getter_v2'",
+);
+
 const partialReaderClient = finalizedReaderClient({ finalized: 20_000n });
 stockCatalogV2.__setStockTokenRegistryV2ClientFactory(() => partialReaderClient);
 const partialReaderPool = await makeDb();
@@ -859,7 +952,7 @@ const readState = (catalogVersion, syncedAt, registryAddress = REGISTRY, mirrorS
   finalized_block_hash: catalogVersion === '12' ? hash('f') : hash('e'),
   snapshot_hash: catalogVersion === '12' ? firstSync.snapshotHash : hash('d'),
   synced_at: syncedAt, ready_verified_at: syncedAt, caught_up: true,
-  db_now: DB_NOW, mirror_stale: mirrorStale,
+  db_now: DB_NOW, mirror_stale: mirrorStale, getter_identity_matches: true,
 });
 const oldReadRows = storedRows.map((row) => ({ ...row }));
 const newReadRows = storedRows.map((row, index) => ({

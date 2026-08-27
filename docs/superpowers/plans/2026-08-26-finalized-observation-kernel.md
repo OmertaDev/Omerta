@@ -359,8 +359,13 @@ bootstrap and same-base alternatives, exact replay, inbox conflicts, failure
 after each atomic stage, values beyond `2^53`, deterministic lock order/deadlock
 bounds, partial-versus-caught-up readiness, the exact 600-second-plus-one-
 microsecond boundary, coherent repeatable-read public views, and proof that all
-RPC completed before checkout/`BEGIN`. Wire this lane into the real-PostgreSQL CI
-job; pg-mem remains fast shape coverage and is not concurrency evidence.
+RPC completed before the mutation coordinator's explicit `pool.connect()` and
+`BEGIN`. One optimistic read-only checkpoint query may acquire and release a
+pooled client before RPC to determine FO's base; it must open no transaction or
+lock, must finish before RPC begins, and no mutation client or database lock may
+span RPC. Trace both `pool.query` and explicit checkout/transaction events so
+this boundary is non-vacuous. Wire this lane into the real-PostgreSQL CI job;
+pg-mem remains fast shape coverage and is not concurrency evidence.
 
 **Step 5: Run focused and coupled suites**
 

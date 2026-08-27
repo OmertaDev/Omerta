@@ -808,13 +808,21 @@ export async function finalizedStockCatalogForBallotV2(
     `SELECT chain_id,registry_address,catalog_version::text AS catalog_version,
             snapshot_hash,synced_at,ready_verified_at,caught_up,
             (NOT caught_up OR ready_verified_at IS NULL
-             OR $1::numeric > EXTRACT(EPOCH FROM ready_verified_at) + 600) AS mirror_stale
+             OR $1::numeric > EXTRACT(EPOCH FROM ready_verified_at) + 600) AS mirror_stale,
+            EXISTS (
+              SELECT 1 FROM stock_catalog_getter_checkpoint_v2 c
+               WHERE c.consumer_key=$2 AND c.chain_id::text=$3
+                 AND lower(c.contract_address)=lower($4)
+                 AND c.start_block_number::text=$5
+            ) AS getter_identity_matches
        FROM stock_catalog_sync_state_v2 WHERE id=1 /* ticker_ballot_v2_catalog_state */`,
-    [observedEpoch],
+    [observedEpoch, GETTER_CONSUMER_KEY, ROBINHOOD_CHAIN_ID_V2,
+      config.registryAddress, config.startBlock],
   )).rows[0];
   if (!state) return unavailableBallotCatalog('unsynchronized', config);
   if (String(state.chain_id) !== ROBINHOOD_CHAIN_ID_V2
-      || !sameAddress(state.registry_address, config.registryAddress)) {
+      || !sameAddress(state.registry_address, config.registryAddress)
+      || state.getter_identity_matches !== true) {
     return unavailableBallotCatalog('identity', config);
   }
   if (state.mirror_stale !== false) return unavailableBallotCatalog('stale', config);
@@ -855,16 +863,24 @@ export async function finalizedStockCatalogForBallotV2(
     `SELECT chain_id,registry_address,catalog_version::text AS catalog_version,
             snapshot_hash,
             (NOT caught_up OR ready_verified_at IS NULL
-             OR $1::numeric > EXTRACT(EPOCH FROM ready_verified_at) + 600) AS mirror_stale
+             OR $1::numeric > EXTRACT(EPOCH FROM ready_verified_at) + 600) AS mirror_stale,
+            EXISTS (
+              SELECT 1 FROM stock_catalog_getter_checkpoint_v2 c
+               WHERE c.consumer_key=$2 AND c.chain_id::text=$3
+                 AND lower(c.contract_address)=lower($4)
+                 AND c.start_block_number::text=$5
+            ) AS getter_identity_matches
        FROM stock_catalog_sync_state_v2 WHERE id=1 /* ticker_ballot_v2_catalog_confirm */`,
-    [observedEpoch],
+    [observedEpoch, GETTER_CONSUMER_KEY, ROBINHOOD_CHAIN_ID_V2,
+      config.registryAddress, config.startBlock],
   )).rows[0];
   if (!confirmed
       || String(confirmed.chain_id) !== ROBINHOOD_CHAIN_ID_V2
       || !sameAddress(confirmed.registry_address, config.registryAddress)
       || String(confirmed.catalog_version) !== catalogVersion
       || String(confirmed.snapshot_hash).toLowerCase() !== snapshotHash
-      || confirmed.mirror_stale !== false) {
+      || confirmed.mirror_stale !== false
+      || confirmed.getter_identity_matches !== true) {
     return unavailableBallotCatalog('changed', config);
   }
   const activeAssets = [];
@@ -887,7 +903,7 @@ export async function finalizedStockCatalogForBallotV2(
   };
 }
 
-export async function approvedStockTokenCatalogV2(db) {
+export async function approvedStockTokenCatalogV2(db, { expectedGetterIdentity = null } = {}) {
   const client = await db.connect();
   let state;
   let rows = [];
@@ -897,8 +913,17 @@ export async function approvedStockTokenCatalogV2(db) {
       `SELECT chain_id, registry_address, catalog_version, finalized_block_number,
               finalized_block_hash, snapshot_hash, synced_at,ready_verified_at,caught_up,
               (NOT caught_up OR ready_verified_at IS NULL
-               OR now() > ready_verified_at + interval '600 seconds') AS mirror_stale
-         FROM stock_catalog_sync_state_v2 WHERE id=1`)).rows[0];
+               OR now() > ready_verified_at + interval '600 seconds') AS mirror_stale,
+              CASE WHEN $1::text IS NULL THEN true ELSE EXISTS (
+                SELECT 1 FROM stock_catalog_getter_checkpoint_v2 c
+                 WHERE c.consumer_key=$2 AND c.chain_id::text=$3
+                   AND lower(c.contract_address)=lower($4)
+                   AND c.start_block_number::text=$1
+              ) END AS getter_identity_matches
+         FROM stock_catalog_sync_state_v2 WHERE id=1`,
+      [expectedGetterIdentity?.startBlock ?? null, GETTER_CONSUMER_KEY,
+        expectedGetterIdentity?.chainId ?? ROBINHOOD_CHAIN_ID_V2,
+        expectedGetterIdentity?.registryAddress ?? ZERO_ADDRESS])).rows[0];
     if (state) rows = (await client.query(
       `SELECT asset_version_key, chain_id, ticker_hash, ticker, name, token_address,
               token_decimals, robinhood_asset_id_hash, registry_index, active, registered_at,
@@ -921,7 +946,8 @@ export async function approvedStockTokenCatalogV2(db) {
   }
   const assets = rows.map(publicAsset);
   const syncedAt = isoTimestamp(state.synced_at);
-  const stale = !syncedAt || state.mirror_stale !== false;
+  const stale = !syncedAt || state.mirror_stale !== false
+    || (expectedGetterIdentity != null && state.getter_identity_matches !== true);
   const activeAssets = stale ? [] : assets.filter((asset) => asset.active);
   return {
     source: SOURCE, finality: FINALITY, chainId: String(state.chain_id),
@@ -936,7 +962,11 @@ export async function approvedStockTokenCatalogV2(db) {
 export async function stockTokenCatalogV2Ready(db) {
   const config = stockTokenRegistryV2ProductionConfig();
   if (!config) return false;
-  const catalog = await approvedStockTokenCatalogV2(db);
+  const catalog = await approvedStockTokenCatalogV2(db, { expectedGetterIdentity: {
+    chainId: ROBINHOOD_CHAIN_ID_V2,
+    registryAddress: config.registryAddress,
+    startBlock: config.startBlock,
+  } });
   return catalog.voteable && sameAddress(catalog.registryAddress, config.registryAddress);
 }
 

@@ -37,58 +37,78 @@ const adminPool = new Pool({ connectionString: testDatabaseUrl, max: 4 });
 let pool;
 
 class RegistryClient {
-  constructor({ finalized = 99n, catalogVersion = 1n, logs = [], barrier = null, trace = [] } = {}) {
+  constructor({
+    finalized = 99n, catalogVersion = 1n, logs = [], barrier = null, trace = [], activity = null,
+  } = {}) {
     this.finalized = finalized;
     this.catalogVersion = catalogVersion;
     this.logs = logs;
     this.barrier = barrier;
     this.trace = trace;
+    this.activity = activity;
+  }
+
+  async tracedRpc(label, operation) {
+    if (this.activity) {
+      this.activity.rpcStarted = true;
+      this.activity.rpcActive += 1;
+    }
+    this.trace.push(`rpc:start:${label}`);
+    try {
+      return await operation();
+    } finally {
+      this.trace.push(`rpc:end:${label}`);
+      if (this.activity) this.activity.rpcActive -= 1;
+    }
   }
 
   async getChainId() {
-    this.trace.push('rpc:getChainId');
-    if (this.barrier) await this.barrier();
-    return 4663;
+    return this.tracedRpc('getChainId', async () => {
+      if (this.barrier) await this.barrier();
+      return 4663;
+    });
   }
 
   async getBlock(request) {
     const number = request.blockTag === 'finalized' ? this.finalized : BigInt(request.blockNumber);
-    this.trace.push(request.blockTag === 'finalized'
-      ? 'rpc:getBlock:finalized' : `rpc:getBlock:${number}`);
-    return { number, hash: blockHash(number), timestamp: 300n };
+    const label = request.blockTag === 'finalized' ? 'getBlock:finalized' : `getBlock:${number}`;
+    return this.tracedRpc(label,
+      async () => ({ number, hash: blockHash(number), timestamp: 300n }));
   }
 
   async request({ method, params }) {
-    assert.equal(method, 'eth_getLogs');
-    assert.equal(params.length, 1);
-    this.trace.push('rpc:getLogs');
-    return this.logs;
+    return this.tracedRpc('getLogs', async () => {
+      assert.equal(method, 'eth_getLogs');
+      assert.equal(params.length, 1);
+      return this.logs;
+    });
   }
 
   async readContract({ functionName, blockNumber }) {
-    this.trace.push(`rpc:read:${functionName}@${blockNumber}`);
-    switch (functionName) {
-      case 'catalogVersion': return this.catalogVersion;
-      case 'versionCount': return 1n;
-      case 'versionKeyAt': return VERSION_KEY;
-      case 'getVersion': return {
-        chainId: 4663n,
-        tickerHash: TICKER_HASH,
-        token: TOKEN,
-        robinhoodAssetIdHash: PROVIDER_HASH,
-        ticker: 'AAPL',
-        name: 'Apple Stock Token',
-        tokenDecimals: 18,
-        active: true,
-        registeredAt: 100n,
-        activatedAt: 200n,
-        deactivatedAt: 0n,
-      };
-      case 'activeVersionForTickerHash':
-      case 'activeVersionForToken':
-      case 'activeVersionForProviderIdHash': return VERSION_KEY;
-      default: throw new Error(`unexpected registry getter ${functionName}`);
-    }
+    return this.tracedRpc(`read:${functionName}@${blockNumber}`, async () => {
+      switch (functionName) {
+        case 'catalogVersion': return this.catalogVersion;
+        case 'versionCount': return 1n;
+        case 'versionKeyAt': return VERSION_KEY;
+        case 'getVersion': return {
+          chainId: 4663n,
+          tickerHash: TICKER_HASH,
+          token: TOKEN,
+          robinhoodAssetIdHash: PROVIDER_HASH,
+          ticker: 'AAPL',
+          name: 'Apple Stock Token',
+          tokenDecimals: 18,
+          active: true,
+          registeredAt: 100n,
+          activatedAt: 200n,
+          deactivatedAt: 0n,
+        };
+        case 'activeVersionForTickerHash':
+        case 'activeVersionForToken':
+        case 'activeVersionForProviderIdHash': return VERSION_KEY;
+        default: throw new Error(`unexpected registry getter ${functionName}`);
+      }
+    });
   }
 }
 
@@ -116,17 +136,46 @@ function configure({ startBlock = 97n, clients }) {
   });
 }
 
-function wrapPool(base, { trace = null, failAfter = null, counts = null, interleave = null } = {}) {
+function wrapPool(base, {
+  trace = null, failAfter = null, counts = null, interleave = null, observationGuard = null,
+} = {}) {
   let failed = false;
+  const normalizedSql = (statement) => String(statement).replace(/\s+/g, ' ').trim();
   return {
-    query: (...args) => base.query(...args),
+    async query(statement, params) {
+      const sql = normalizedSql(statement);
+      const isPreRpc = observationGuard && !observationGuard.rpcStarted;
+      if (isPreRpc) {
+        observationGuard.preRpcSql.push(sql);
+        if (!/^SELECT\b/i.test(sql)
+            || !/FROM stock_catalog_getter_checkpoint_v2\b/i.test(sql)
+            || /\b(?:BEGIN|FOR UPDATE|INSERT|UPDATE|DELETE)\b/i.test(sql)) {
+          throw new Error(`unexpected pre-RPC database query: ${sql}`);
+        }
+      }
+      if (observationGuard?.rpcActive) {
+        throw new Error('database query overlapped registry RPC');
+      }
+      if (trace) trace.push('db:pool.query:start:checkpoint');
+      const result = await base.query(statement, params);
+      if (trace) trace.push('db:pool.query:end:checkpoint');
+      return result;
+    },
     async connect() {
-      if (trace) trace.push('db:connect');
+      if (observationGuard && !observationGuard.rpcStarted) {
+        throw new Error('explicit mutation checkout occurred before registry RPC');
+      }
+      if (observationGuard?.rpcActive) {
+        throw new Error('explicit mutation checkout overlapped registry RPC');
+      }
+      if (trace) trace.push('db:connect:start');
       const client = await base.connect();
+      if (trace) trace.push('db:connect:end');
       return {
         async query(statement, params) {
-          const sql = String(statement).replace(/\s+/g, ' ').trim();
-          if (trace) trace.push(`db:${sql.split(' ')[0]}`);
+          const sql = normalizedSql(statement);
+          const verb = sql.split(' ')[0].toUpperCase();
+          if (trace) trace.push(`db:client.query:start:${verb}`);
           if (counts) {
             if (/UPDATE stock_catalog_getter_checkpoint_v2/i.test(sql)) counts.checkpointUpdates += 1;
             if (/INSERT INTO stock_catalog_getter_inbox_v2/i.test(sql)) counts.inboxInserts += 1;
@@ -137,6 +186,7 @@ function wrapPool(base, { trace = null, failAfter = null, counts = null, interle
             failed = true;
             throw new Error(`injected real-PG failure after ${failAfter}`);
           }
+          if (trace) trace.push(`db:client.query:end:${verb}`);
           return result;
         },
         release: () => client.release(),
@@ -182,13 +232,44 @@ try {
   const schemaSql = await readFile(new URL('../schema.sql', import.meta.url), 'utf8');
   await pool.query(schemaSql);
 
-  // RPC evidence is fully assembled before the coordinator checks out its transaction client.
+  // The only database work before RPC is the optimistic, read-only checkpoint query. It releases
+  // its implicit Pool.query checkout before RPC; mutation checkout/BEGIN happen only after all RPC.
   await resetDomain();
+  await assert.rejects(() => wrapPool(pool, { observationGuard: {
+    rpcStarted: false, rpcActive: 0, preRpcSql: [],
+  } }).query('SELECT 1'), /unexpected pre-RPC database query/,
+  'the trace harness itself rejects a new pre-RPC query outside the checkpoint boundary');
+  await assert.rejects(() => wrapPool(pool, { observationGuard: {
+    rpcStarted: false, rpcActive: 0, preRpcSql: [],
+  } }).connect(), /explicit mutation checkout occurred before registry RPC/,
+  'the trace harness itself rejects an early explicit mutation checkout');
   const order = [];
-  configure({ clients: [new RegistryClient({ trace: order })] });
-  await syncFinalizedStockCatalogV2(wrapPool(pool, { trace: order }));
-  assert(order.lastIndexOf('rpc:getBlock:99') < order.indexOf('db:connect'),
-    `RPC must finish before transaction checkout: ${order.join(' -> ')}`);
+  const observationActivity = { rpcStarted: false, rpcActive: 0, preRpcSql: [] };
+  configure({ clients: [new RegistryClient({ trace: order, activity: observationActivity })] });
+  await syncFinalizedStockCatalogV2(wrapPool(pool, {
+    trace: order, observationGuard: observationActivity,
+  }));
+  assert.equal(observationActivity.preRpcSql.length, 1);
+  assert.match(observationActivity.preRpcSql[0], /^SELECT\b/i);
+  assert.match(observationActivity.preRpcSql[0], /FROM stock_catalog_getter_checkpoint_v2\b/i);
+  assert.doesNotMatch(observationActivity.preRpcSql[0], /\b(?:BEGIN|FOR UPDATE|INSERT|UPDATE|DELETE)\b/i,
+    'the optimistic checkpoint read opens no transaction, lock, or mutation before RPC');
+  const firstRpc = order.findIndex((event) => event.startsWith('rpc:start:'));
+  const lastRpc = order.findLastIndex((event) => event.startsWith('rpc:end:'));
+  const mutationConnect = order.indexOf('db:connect:start');
+  const mutationBegin = order.indexOf('db:client.query:start:BEGIN');
+  assert.deepEqual(order.slice(0, firstRpc), [
+    'db:pool.query:start:checkpoint',
+    'db:pool.query:end:checkpoint',
+  ], `only the completed optimistic checkpoint query may precede RPC: ${order.join(' -> ')}`);
+  assert(order.slice(firstRpc, lastRpc + 1).every((event) => event.startsWith('rpc:')),
+    `no database client or lock may span registry RPC: ${order.join(' -> ')}`);
+  assert.equal(order.slice(lastRpc + 1, mutationConnect).length, 0,
+    `no untraced database work may occur between RPC and mutation checkout: ${order.join(' -> ')}`);
+  assert(lastRpc < mutationConnect && mutationConnect < mutationBegin,
+    `all RPC must finish before explicit mutation checkout and BEGIN: ${order.join(' -> ')}`);
+  assert.equal(order.slice(mutationConnect).some((event) => event.startsWith('rpc:')), false,
+    `no registry RPC may occur after mutation checkout: ${order.join(' -> ')}`);
 
   // Two first workers observe the same empty base. One applies; the other is an exact immutable replay.
   await resetDomain();

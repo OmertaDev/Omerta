@@ -66,6 +66,8 @@ async function seedCatalog(pool, {
   syncedAt = WALL,
   foReady = true,
 } = {}) {
+  await pool.query('DELETE FROM stock_catalog_getter_inbox_v2');
+  await pool.query('DELETE FROM stock_catalog_getter_checkpoint_v2');
   await pool.query('DELETE FROM stock_asset_active_heads_v2');
   await pool.query('DELETE FROM stock_asset_versions_v2');
   await pool.query('DELETE FROM stock_catalog_sync_state_v2');
@@ -80,6 +82,17 @@ async function seedCatalog(pool, {
       foReady ? hash('f') : null, foReady, foReady ? syncedAt : null,
       foReady ? syncedAt : null, syncedAt],
   );
+  if (foReady) {
+    await pool.query(
+      `INSERT INTO stock_catalog_getter_checkpoint_v2
+        (consumer_key,chain_id,contract_address,start_block_number,last_applied_block_number,
+         last_applied_block_hash,last_observation_hash,finalized_horizon_number,
+         finalized_horizon_hash,caught_up,verified_at,ready_verified_at)
+       VALUES ('stock_catalog_getter_v2',4663,$1,$2,$3,$4,$5,$6,$7,true,$8,$8)`,
+      [registryAddress, process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK,
+        '9007199254743040', hash('f'), hash('e'), '9007199254743040', hash('f'), syncedAt],
+    );
+  }
   for (const asset of assets) {
     await pool.query(
       `INSERT INTO stock_asset_versions_v2
@@ -271,7 +284,7 @@ await fixRegression('pre-FO catalog fixtures fail closed until explicitly caught
         observedEpochSeconds: epochSeconds(WALL),
       }));
     assert.equal(unavailable.available, false);
-    assert.equal(unavailable.reason, 'stale');
+    assert.equal(unavailable.reason, 'identity');
 
     await seedCatalog(pool, { foReady: true });
     const ready = await withClockedClient(pool, WALL, (client) =>
