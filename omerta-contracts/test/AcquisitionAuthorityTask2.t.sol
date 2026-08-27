@@ -173,7 +173,7 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
         bytes memory initcode = vm.getCode("AcquisitionAuthority.sol:AcquisitionAuthority");
         assertLe(runtime.length, 20_000);
         assertLe(initcode.length, 49_152);
-        assertEq(runtime.length, 16_076);
+        assertEq(runtime.length, 16_068);
         string memory artifact = vm.readFile("out/AcquisitionAuthority.sol/AcquisitionAuthority.json");
         assertEq(vm.parseJsonString(artifact, ".abi[16].name"), "authoritySnapshot");
         for (uint256 i; i < 27; ++i) {
@@ -565,8 +565,8 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
         assertEq(chainId, 4663);
         assertEq(verifyingContract, address(authority));
         string memory artifact = vm.readFile("out/AcquisitionAuthority.sol/AcquisitionAuthority.json");
-        assertEq((vm.parseJsonBytes(artifact, ".bytecode.object")).length, 18_637);
-        assertEq((vm.parseJsonBytes(artifact, ".deployedBytecode.object")).length, 16_076);
+        assertEq((vm.parseJsonBytes(artifact, ".bytecode.object")).length, 18_629);
+        assertEq((vm.parseJsonBytes(artifact, ".deployedBytecode.object")).length, 16_068);
     }
 
     function test_task2FreshFactoriesCannotReuseTask1AddressesOrCommitments() public {
@@ -726,6 +726,93 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
             bytes32(uint256(1)), address(proxySafe), address(registry), peers[0], peers[1], peers[2], peers[3]
         );
         assertEq(proxyOwned.owner(), address(proxySafe));
+    }
+
+    function test_task2AuthorityConstructorOverlappingFirstFailureTable() public {
+        address[4] memory peers;
+        vm.expectRevert(AcquisitionAuthority.AuthorityFactoryZero.selector);
+        new AcquisitionAuthority(
+            address(0), bytes32(0), address(0), address(0), address(0), address(0), address(0), address(0)
+        );
+
+        Task2AuthorityDeployer manifestFirst = new Task2AuthorityDeployer();
+        for (uint8 i; i < 4; ++i) {
+            peers[i] = vm.computeCreateAddress(address(manifestFirst), uint256(i + 2));
+        }
+        vm.expectRevert(AcquisitionAuthority.AuthorityManifestHashZero.selector);
+        manifestFirst.deploy(bytes32(0), address(0), address(registry), peers[0], peers[1], peers[2], peers[3]);
+
+        Task2AuthorityDeployer safeCodeFirst = new Task2AuthorityDeployer();
+        for (uint8 i; i < 4; ++i) {
+            peers[i] = vm.computeCreateAddress(address(safeCodeFirst), uint256(i + 2));
+        }
+        vm.expectRevert(abi.encodeWithSelector(IAcquisitionAuthorityV2.ContractRequired.selector, address(0xA11CE)));
+        safeCodeFirst.deploy(
+            bytes32(uint256(1)), address(0xA11CE), address(0xB0B), peers[0], peers[1], peers[2], peers[3]
+        );
+
+        Task2AuthorityDeployer addressFirst = new Task2AuthorityDeployer();
+        addressFirst.consumeNonce();
+        for (uint8 i; i < 4; ++i) {
+            peers[i] = address(0xDEAD);
+        }
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                AcquisitionAuthority.AuthorityAddressMismatch.selector,
+                vm.computeCreateAddress(address(addressFirst), 1),
+                vm.computeCreateAddress(address(addressFirst), 2)
+            )
+        );
+        addressFirst.deploy(
+            bytes32(uint256(1)), address(safe), address(registry), peers[0], peers[1], peers[2], peers[3]
+        );
+
+        for (uint8 firstMismatch = 1; firstMismatch <= 3; ++firstMismatch) {
+            Task2AuthorityDeployer peerFirst = new Task2AuthorityDeployer();
+            for (uint8 i; i < 4; ++i) {
+                peers[i] = vm.computeCreateAddress(address(peerFirst), uint256(i + 2));
+            }
+            address expected = peers[firstMismatch - 1];
+            peers[firstMismatch - 1] = address(uint160(0xD000 + firstMismatch));
+            peers[firstMismatch] = address(uint160(0xE000 + firstMismatch));
+            vm.expectRevert(
+                abi.encodeWithSelector(
+                    AcquisitionAuthority.AuthorityPeerMismatch.selector,
+                    firstMismatch,
+                    expected,
+                    address(uint160(0xD000 + firstMismatch))
+                )
+            );
+            peerFirst.deploy(
+                bytes32(uint256(1)), address(safe), address(registry), peers[0], peers[1], peers[2], peers[3]
+            );
+        }
+
+        for (uint8 overlap; overlap < 3; ++overlap) {
+            Task2AuthorityDeployer collision = new Task2AuthorityDeployer();
+            for (uint8 i; i < 4; ++i) {
+                peers[i] = vm.computeCreateAddress(address(collision), uint256(i + 2));
+            }
+            address candidate = overlap == 1 ? peers[0] : address(collision);
+            if (overlap == 1) vm.etch(candidate, hex"60006000f3");
+            vm.expectRevert(abi.encodeWithSelector(IAcquisitionAuthorityV2.RoleIdentityCollision.selector, candidate));
+            collision.deploy(bytes32(uint256(1)), candidate, candidate, peers[0], peers[1], peers[2], peers[3]);
+        }
+
+        Task2AuthorityDeployer childZero = new Task2AuthorityDeployer();
+        address predictedAuthority = vm.computeCreateAddress(address(childZero), 1);
+        for (uint8 i; i < 4; ++i) {
+            peers[i] = vm.computeCreateAddress(address(childZero), uint256(i + 2));
+        }
+        vm.etch(predictedAuthority, hex"60006000f3");
+        (bool created,) = address(childZero)
+            .call(
+                abi.encodeCall(
+                    childZero.deploy,
+                    (bytes32(uint256(1)), predictedAuthority, address(registry), peers[0], peers[1], peers[2], peers[3])
+                )
+            );
+        assertFalse(created, "prefunded-code child0 blocks CREATE before any late collision branch");
     }
 
     function test_task2FinalizerCallerManifestAlreadyPrecedenceAndRollback() public {
@@ -1302,7 +1389,6 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
             config.perDepositCapWei,
             config.epochDepositCapWei,
             config.lifetimeDepositCapWei,
-            expectedConfigHash,
             pending.proposedAt,
             pending.validAfter,
             pending.expiresAt,
@@ -1310,10 +1396,15 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
         );
         bytes32 expectedProposalId = keccak256(proposalPreimage);
         assertEq(proposalId, expectedProposalId, "independent proposal id");
-        assembly {
-            mstore(add(proposalPreimage, 0x200), add(mload(add(proposalPreimage, 0x200)), 1))
+        assertEq(proposalPreimage.length, 0x200, "exact sixteen-word proposal preimage");
+        for (uint256 field; field < 16; ++field) {
+            bytes memory mutated = bytes.concat(proposalPreimage);
+            assembly {
+                let fieldPtr := add(add(mutated, 0x20), mul(field, 0x20))
+                mstore(fieldPtr, xor(mload(fieldPtr), 1))
+            }
+            assertTrue(keccak256(mutated) != proposalId, "one-field proposal sensitivity");
         }
-        assertTrue(keccak256(proposalPreimage) != proposalId, "expiresAt sensitivity");
 
         (AcquisitionAuthority tooLate,) = _authority();
         vm.warp(last + 1);
