@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `36b737e4e282`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `fb0c18d3af44`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 993 |
+| Commits in clone | 995 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-27 — docs: refresh finalized catalog knowledge |
+| Latest commit | 2026-08-27 — fix: bind catalog readiness to getter identity |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 192 |
+| OmertaDev | 194 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -65,9 +65,9 @@
 | [test/migrate.js](../../test/migrate.js) | 29 | yes |
 | [src/kitchen.js](../../src/kitchen.js) | 28 | yes |
 | [src/world.js](../../src/world.js) | 28 | yes |
-| [test/routes.js](../../test/routes.js) | 27 | yes |
-| [src/loans.js](../../src/loans.js) | 27 | yes |
-| [src/social/combat.js](../../src/social/combat.js) | 27 | yes |
+| knowledge/generated/github-history.md | 27 | historical |
+| knowledge/generated/graph-summary.md | 27 | historical |
+| knowledge/generated/graph.json | 27 | historical |
 
 ## Pull requests
 

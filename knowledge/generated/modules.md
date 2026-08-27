@@ -152,7 +152,7 @@
 | [src/stable.js](../../src/stable.js) | 434 | vice-competition | 3 / 9 | 9 | 8 | 3 |
 | [src/standing.js](../../src/standing.js) | 119 | world-progression | 2 / 6 | 1 | 4 | 2 |
 | [src/stockcatalog.js](../../src/stockcatalog.js) | 388 | platform-core | 1 / 4 | 0 | 2 | 0 |
-| [src/stockcatalogv2.js](../../src/stockcatalogv2.js) | 1044 | platform-core | 0 / 5 | 0 | 7 | 4 |
+| [src/stockcatalogv2.js](../../src/stockcatalogv2.js) | 1074 | platform-core | 0 / 5 | 0 | 7 | 4 |
 | [src/stockdeliver.js](../../src/stockdeliver.js) | 579 | economy-ledger | 2 / 7 | 3 | 6 | 4 |
 | [src/store.js](../../src/store.js) | 435 | platform-core | 4 / 11 | 5 | 14 | 4 |
 | [src/streak.js](../../src/streak.js) | 108 | world-progression | 2 / 3 | 3 | 3 | 0 |
