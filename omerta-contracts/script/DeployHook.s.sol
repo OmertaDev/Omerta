@@ -24,11 +24,12 @@ contract DeployHook is Script {
         address safe = _requiredAddress("SAFE");
         address omr = _requiredContract("OMR_ADDRESS");
         address poolManager = _requiredContract("V4_POOL_MANAGER");
+        address lbpStrategy = _requiredContract("LBP_STRATEGY");
 
         require(block.chainid == expectedChainId, "DeployHook: RPC chain id mismatch");
         require(CREATE2_DEPLOYER.code.length != 0, "DeployHook: canonical CREATE2 proxy is not deployed");
 
-        bytes memory constructorArgs = abi.encode(IPoolManager(poolManager), omr, safe);
+        bytes memory constructorArgs = abi.encode(IPoolManager(poolManager), omr, safe, lbpStrategy);
         (address predicted, bytes32 salt) =
             _findSalt(CREATE2_DEPLOYER, REQUIRED_FLAGS, type(OmertaHook).creationCode, constructorArgs);
 
@@ -36,15 +37,17 @@ contract DeployHook is Script {
         console.logBytes32(salt);
 
         vm.startBroadcast();
-        hook = new OmertaHook{salt: salt}(IPoolManager(poolManager), omr, safe);
+        hook = new OmertaHook{salt: salt}(IPoolManager(poolManager), omr, safe, lbpStrategy);
         vm.stopBroadcast();
 
         require(address(hook) == predicted, "DeployHook: hook landed at the wrong address");
         require(uint160(address(hook)) >> 152 != LABS_REVIEW_PREFIX, "DeployHook: 0x91 routing-review prefix");
         require((uint160(address(hook)) & FLAG_MASK) == REQUIRED_FLAGS, "DeployHook: permission bits mismatch");
         require(hook.HOOK_FLAGS() == REQUIRED_FLAGS, "DeployHook: contract flag declaration drifted");
+        require(hook.authorized() == lbpStrategy, "DeployHook: wrong authorized initializer");
 
         console.log("OmertaHook:    ", address(hook));
+        console.log("Authorized LBP:", lbpStrategy);
         console.log("Hook is unarmed: no quote currency, recipients, tax, anti-snipe window, or surge is set.");
     }
 

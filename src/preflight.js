@@ -105,7 +105,16 @@ export const OPERATIONAL_ENV = [
   'SOCIAL_GAME_URL', 'SOCIAL_X_HANDLE', 'WALLETCONNECT_PROJECT_ID', 'X_CHECK_CD_MS', 'X_FOLLOW_PAGES',
   // the chain layer — every one dormant unless set (mainnet is launch + audit gated regardless)
   'CHAIN_CONFIRMATIONS', 'CHAIN_ID', 'CHAIN_POLL_MS', 'CHAIN_RPC_URL', 'CHAIN_START_BLOCK',
+  // Genesis lifecycle interlock. `legacy` preserves the pre-launch server; prepare/auction/migration/
+  // oracle_warmup close the Desk and reserve bonds; only `live` reopens them after oracle sign-off.
+  'GENESIS_LAUNCH_PHASE',
   'DAILY_CAP_OMR', 'OMERTA_BOND_ADDRESS', 'OMERTA_FEES_ADDRESS',
+  // THE v4 BOND-ORACLE KEEPER. The direct address exists because warmup deliberately precedes
+  // OmertaBond.setOracle; after activation the watchdog cross-checks both. Its dedicated low-balance
+  // key has no contract role — update() is permissionless. The remaining values tune receipt wait
+  // and the crash-recovery lease, never oracle arithmetic.
+  'OMR_V4_ORACLE_ADDRESS', 'V4_ORACLE_KEEPER_PK', 'V4_ORACLE_CONFIRMATIONS',
+  'V4_ORACLE_TX_TIMEOUT_MS', 'V4_ORACLE_LEASE_MS',
   // GearVault (Redeemed events) — the NFT re-import watcher (Option A). Dormant unless set on the worker.
   'GEARVAULT_ADDRESS',
   // StreetDeed (Extracted/Redeemed events) — the on-chain tradeable deed NFT. Dormant unless set.
@@ -248,6 +257,14 @@ export function preflight(env = process.env) {
       errors.push(`${key} must be set explicitly in production — ${spec.why}. Valid: ${spec.values.join(' | ')}.`);
     else if (!spec.values.includes(env[key]))
       errors.push(`${key}="${env[key]}" is not valid. Valid: ${spec.values.join(' | ')}.`);
+  }
+
+  if (
+    env.GENESIS_LAUNCH_PHASE != null
+      && !['legacy', 'prepare', 'auction', 'migration', 'oracle_warmup', 'live', 'failed']
+        .includes(String(env.GENESIS_LAUNCH_PHASE).trim().toLowerCase())
+  ) {
+    errors.push('GENESIS_LAUNCH_PHASE is invalid. Valid: legacy | prepare | auction | migration | oracle_warmup | live | failed.');
   }
 
   // warnings: not wrong, but the operator probably didn't mean it

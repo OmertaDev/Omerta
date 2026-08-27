@@ -70,13 +70,18 @@ touches mainnet** until §0 is satisfied.
    caps, RT#8's two-step ownership, the four-way sell tax — so re-measure rather than quoting this
    figure, and if the two disagree the tree is right and this line is stale.)*
 
-   **In the batch — 19 contracts + 1 interface, every one carrying tests:**
+   **In the batch — 21 contracts + 1 interface, every contract carrying tests:**
+
+   The count follows the audit packet's runtime/consumer convention: `IOmrOracle` is the standalone
+   consumer interface. The two exact compatibility-only surfaces under `src/interfaces/`
+   (`IInitializerHook`, `IOmrV4ObservationSource`) are included with `OmertaHook` rather than counted
+   as independently deployable audit subjects; their source files and ERC-165 IDs remain in scope.
 
    | subsystem | contracts | the thing to attack |
    |---|---|---|
    | the $OMR rail | `OMR`, `VoucherClaim`, `GearVault`, `OMRStaking`, `OmertaFees` | the mint path (rule 2) and the two supply caps that survive a minter swap; **plus `OmertaFees.payForPackage`** — the on-chain Store leg: fail-closed on an unpriced sku, exact-value, forwards dev/Vig, custodies nothing |
-   | issuance | `OmertaBond`, `OmrTwapOracle`, `GenesisOracle`, `IOmrOracle` | the four walls, and specifically that 3 and 4 COMPOSE rather than substitute |
-   | the market | `OmertaHook` | the pool gate, the `afterSwap` delta, the absence of a pause |
+   | issuance | `OmertaBond`, `OmrTwapOracle`, `OmrV4TwapOracle`, `GenesisOracle`, `IOmrOracle` | the four walls, specifically that 3 and 4 COMPOSE rather than substitute, and that both V2 arithmetic-price and v4 geometric-tick windows fail closed on early/late/stale input |
+   | the market | `OmertaHook`, `GenesisProceedsSplitter` (including the top-level `IInitializerHook` and `IOmrV4ObservationSource` compatibility surfaces) | the singleton-LBP initialization gate, the `afterSwap` delta, exact tick-time accumulation without an external callback inside settlement, the absence of a pause, and the success-vs-failure proceeds branch bound to canonical PoolManager state |
    | THE BANK | `Denari` (the DNR debt token, né `nUSD`), `CollateralEscrow`, `Alchemist`, `Transmuter`, `FlashGuard` | that no oracle sits on the borrow path and no `liquidate()` exists anywhere — the design's central claim, and the class that cost Inverse ~$21M twice |
    | Street Deeds | `StreetDeed` | the EIP-712 self-mint (name↔tokenId bijection, the daily cap, replay/deadline; NO owner mint), that `redeem` (the burn-to-re-import) is never pausable so a paused contract can never trap a holder's asset, and the **default-ON per-token transfer lock** (added 2026-08-14, the drain-before-sale mitigation): mint locks, every transfer arrival RE-LOCKS, only the OWNER may unlock (an approved operator deliberately cannot — operator-unlock IS the drain vector), `redeem` is never blocked by it, and the unlock emits `TransferLockSet` — the public "listing" act a buyer anchors TBA-content checks on |
    | the identity NFT | `DynastyNFT` | the EIP-712 self-mint (NO owner mint, nonce/deadline/daily-cap walls), that it gates **NOTHING on `balanceOf`** (the entitlement is account-bound off-chain — the token is a transferable trophy), and the uncapped sequential supply + EIP-2981 royalty |
@@ -285,14 +290,17 @@ from the first block. Use `omerta-contracts/DEPLOYMENT.md` and its Foundry scrip
       consecutive misses and no more). Tolerance is how far a signed quote may sit ABOVE the TWAP —
       non-zero because a TWAP lags spot, so 0 rejects honest quotes exactly when the market moves; 0 is
       nonetheless a legitimate choice if you would rather bonding stall than drift. Hard-capped at 2000.
-- [ ] **Start the oracle keeper.** `OmrTwapOracle.update()` is permissionless and must be poked at least
-      once per `maxOracleAge`, or the feed goes stale and bonding halts. That failure direction is
-      deliberate — a dead keeper must stop the mint, never leave it running on an unmaintained price —
-      but it does mean **the keeper is a production dependency, not a nice-to-have**. The backend
-      WATCHES it: the worker's `bondOracleHealth` check (hourly, dormant without a bond chain) flags
-      `keeper-late` at 2× PERIOD — while bonding still works, so there is lead time — and `down` when
-      `priceCeiling()` starts reverting, alerting through the same latched channel as a §10.4 drift
-      and surfacing on `/admin` (Chain panel) + `GET /v1/mod/bonds`.
+- [ ] **Start the oracle keeper.** The committed genesis path uses the v4 keeper in
+      `src/v4oraclekeeper.js`: it polls the oracle baseline, simulates `update()`, durably stores the
+      signed raw transaction before broadcast, and confirms the receipt. One database row per
+      `(oracle, baseline)` prevents deployment overlap from independently signing the same window;
+      a send/receipt retry uses the exact stored bytes. Configure `OMR_V4_ORACLE_ADDRESS` during
+      warmup and a dedicated, low-balance `V4_ORACLE_KEEPER_PK`; after cutover, the watchdog also
+      cross-checks `OmertaBond.oracle()`. The health surface distinguishes `warming`, `due`,
+      `keeper_late`, `rebaselining`, `stale`, `tx_pending`, `tx_failed`, `rpc_down`, and
+      `misconfigured`, alerts through the normal latched drift channel, and appears in `/admin` plus
+      `GET /v1/mod/bonds`. A legacy V2 deployment still needs its own `OmrTwapOracle.update()` sender.
+      In both designs, keeper failure halts bonds fail-closed rather than preserving an old price.
 - [ ] **Arm the mint — the step that turns issuance on.** `OMR.setMinter(omertaBond)`. Do this LAST, and
       only after `dailyCapOMR`, `maxOmrPerEth` AND the oracle are all set to real values: those, plus the
       compile-time `MAX_DISCOUNT_BPS`, are the entire wall between a leaked quote-signer and unbounded
@@ -1711,6 +1719,9 @@ Each rail is OFF until its address/config is present. Set on BOTH processes.
 | `DAILY_CAP_OMR` | per-day withdrawal cap (wei) | mirrors the contract's `dailyCapOMR` |
 | `OMERTA_FEES_ADDRESS` | fee sync (`MintFeePaid`/`RespawnFeePaid`/`RerollFeePaid` → credits) | — |
 | `OMERTA_BOND_ADDRESS` | **the `Bonded` → `recordBond` bond sync (NEW — now wired)** | books the event's authoritative payout + POL/Vig split; idempotent on nonce |
+| `OMR_V4_ORACLE_ADDRESS` | direct ownerless v4 TWAP target for warmup + watchdog | set before `OmertaBond.setOracle`; afterward the worker cross-checks it against `bond.oracle()` and alarms on drift |
+| `V4_ORACLE_KEEPER_PK` | permissionless v4 oracle `update()` sender | dedicated low-balance key with no contract role; worker simulates, persists the signed raw tx, broadcasts, and confirms it |
+| `V4_ORACLE_CONFIRMATIONS` / `V4_ORACLE_TX_TIMEOUT_MS` / `V4_ORACLE_LEASE_MS` | keeper receipt depth, per-poll wait, and crashed-claim retry lease | defaults 1 / 20s / 10m; operational only, never changes the TWAP window or bond arithmetic |
 | `STREET_DEED_ADDRESS` | API: `POST /v1/deeds/extract` signs the DeedVoucher (needs `CHAIN_ID` + `VOUCHER_SIGNER_PK`) + it's the deed `verifyingContract`. WORKER: `Extracted` → `markDeedExtracted` (frees the extractor) + `Redeemed` → `reimportDeed` (burn brings the deed back) | set on BOTH processes; dormant until set. §10.4-neutral (ownership, not currency) |
 | `ALCHEMIST_ADDRESS` (+ `ALCHEMIST_ASSET`, the label only — decimals come from the chain) | THE BANK's harvest-fee sync → `bank_revenue` | only when the bank market ships |
 | `MINT_FEE_ETH` / `RESPAWN_FEE_ETH` | the PLEX price quote | ETH-denominated; keep == the contract fees |
@@ -1773,11 +1784,15 @@ The backend keeps its own reserve records; they must track the on-chain balances
   `MAX_QUOTE_TTL`). **The in-browser wallet flow is BUILT**: the console (EIP-6963 multi-wallet discovery —
   MetaMask / Robinhood Wallet / any injected wallet, with a picker) requests a quote, then `POST /v1/bond/calldata`
   server-encodes `bond(quote, sig)` (viem) and the connected wallet `eth_sendTransaction`s it after switching to
-  the quote's chain. It is DORMANT until this rail is configured. Still deferred: the DEX-TWAP oracle below (for a
-  live quote board) — today the oracle is the latest manual Vig-buyback print.
+  the quote's chain. It is DORMANT until this rail is configured. The v4 DEX-TWAP implementation below is now
+  built, and the exact-stack disposable chain-4663 fork rehearsal passed on 2026-08-27; audit, production
+  deployment, warmup, and Safe cutover remain deferred. Until cutover, the quote board remains on the latest
+  manual Vig-buyback print.
 - **The Uniswap v4 migration** (`omerta-v4-hook-design.md`) — `OmertaHook.sol` is BUILT, tested, and
-  rehearsed unarmed on testnet, but **not deployed on mainnet and not launchable yet**. The remaining
-  work is deliberately ordered. `UNISWAP-ROUTING.md` is the routing-specific release gate:
+  now includes the cumulative source consumed by the BUILT `OmrV4TwapOracle`; neither is deployed on
+  mainnet or launchable before audit and the production ceremony. The exact chain-4663 fork rehearsal is
+  archived at `.audit/genesis-fork-rehearsal/2026-08-27T08-01-00-765Z/`. The remaining work is
+  deliberately ordered. `UNISWAP-ROUTING.md` is the routing-specific release gate:
   - **The address must be MINED.** v4 encodes a hook's permissions in the low 14 bits of its address, and
     the constructor refuses to exist anywhere that does not carry exactly `HOOK_FLAGS` (`0x30CC`). So the
     deploy is a CREATE2 salt search, and the permission set can NEVER be extended afterwards — a missing
@@ -1797,9 +1812,11 @@ The backend keeps its own reserve records; they must track the on-chain balances
     and can never be extended) → `initialize` the pool →
     `setSellTax(900, 200, 160, 240)` (Path A — rwa 400→160 with the 240-bps community slice a 4th ON-CHAIN
     recipient; the community wallet is the family-buyback keeper's, per the OMR sell-tax step above).
-    `setObserver` once the hook-native oracle exists. The observer is event-driven: listen for
-    `ObservationRequested(poolId)` and call `pokeObserver(poolKey)` after PoolManager settlement; it is
-    deliberately never entered synchronously from `afterSwap`.
+    Keep `setSellTax` at zero through genesis migration and oracle warmup unless a separate signed
+    ceremony says otherwise. Deploy `OmrV4TwapOracle` only after the canonical pool is initialized,
+    then call `setObserver`. The hook integrates the tick path itself; the observer is event-driven:
+    listen for `ObservationRequested(poolId)` and call `pokeObserver(poolKey)` after PoolManager
+    settlement. External observer code is deliberately never entered synchronously from `afterSwap`.
   - **✅ THE LP LEAGUE reader is BUILT AND PROVEN (2026-08-16)** — `src/dexbot.js:readLpPositions`,
     installed at worker boot (`lpReaderReady()`, a WEAKER condition than the bots': it is read-only
     and needs no `DEX_BOT_PK`, so a box that never sends a transaction still accrues the league).
@@ -1816,10 +1833,12 @@ The backend keeps its own reserve records; they must track the on-chain balances
     12h tick). Then size `BOND_LP_SCORE_PER_ETH_DAY` (BALANCE.md § THE LP LEAGUE — the shipped 300
     is a proposed default; the ratio depends on LP fee income and impermanent loss at the live
     volatility, so it cannot be sized before there are real LPs).
-  - **Sequencing that is not optional** (§9.2): deploy the hook-native oracle → let it accumulate a FULL
-    window → `OmertaBond.setOracle` → *then* migrate liquidity. Doing the migration first points wall 4 at
-    a pool where price is no longer discovered, which is worse than an outage because it still returns a
-    number. And re-derive `dailyCapOMR` (`npm run dials`) against the new depth afterwards.
+  - **Sequencing that is not optional** (§9.2): close bonds and the Desk → initialize/seed the canonical
+    pool through the reviewed CCA/LBP migration → deploy `OmrV4TwapOracle` against that exact pool → set
+    the observer and let it accumulate a FULL bounded window → start the keeper and alerts →
+    `OmertaBond.setOracle` → re-derive `dailyCapOMR` (`npm run dials`) against the new depth → arm minting
+    last → reopen. The oracle constructor intentionally requires an initialized pool and starts with no
+    reading, so there is no safe way to cut the bond over before migration.
   - **Seed POL into the hooked pool BEFORE migrating** (§4b). Pool-local enforcement means the moat is
     depth; it is thinnest at launch, which is exactly when a rival untaxed pool is cheapest to stand up.
   - **CLOSED 2026-08-11 (founder: "get rid of the Vig trade fee") — the sell tax is the canonical

@@ -84,7 +84,7 @@ contract OmertaHookObserverDoSTest is Test {
         omrCurrency = Currency.wrap(address(omr));
 
         address hookAddress = address(uint160((uint256(0xBEEF) << 144) | uint256(FLAGS)));
-        deployCodeTo("OmertaHook.sol:OmertaHook", abi.encode(manager, address(omr), safe), hookAddress);
+        deployCodeTo("OmertaHook.sol:OmertaHook", abi.encode(manager, address(omr), safe, address(this)), hookAddress);
         hook = OmertaHook(payable(hookAddress));
 
         vm.startPrank(safe);

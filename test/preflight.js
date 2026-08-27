@@ -116,6 +116,13 @@ assert(preflight({ ...GOOD, SOCIAL_VERIFY_MODE: 'nonsense' }).errors.some((e) =>
   'an invalid value is refused, not silently treated as off');
 assert.deepEqual(preflight({ ...GOOD, SOCIAL_VERIFY_MODE: 'off' }).errors, [],
   "…but 'off' stays a legitimate CHOICE — the requirement is that a human made it");
+assert(preflight({ ...GOOD, GENESIS_LAUNCH_PHASE: 'typo' }).errors.some((e) => /GENESIS_LAUNCH_PHASE is invalid/.test(e)),
+  'an invalid genesis phase is refused instead of silently reopening a launch rail');
+assert.deepEqual(
+  preflight({ ...GOOD, GENESIS_LAUNCH_PHASE: 'auction' }).errors,
+  [],
+  'a valid genesis lifecycle phase boots clean',
+);
 
 // warnings inform without blocking
 const warn = preflight({ ...GOOD, SOCIAL_VERIFY_MODE: 'trust', WS_ALLOW_QUERY_TOKEN: 'on', MOD_KEY: 'short' });

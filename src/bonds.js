@@ -12,6 +12,7 @@ import { getAddress } from 'viem';
 import { GameError } from './game.js';
 import { BONDS, bondPayout, underwriterScore, backerTierOf, nextBackerTier, charterOf, dayOf } from './rules.js';
 import { spendOmr } from './vanity.js';
+import { assertGenesisBondsOpen, genesisLaunchStatus } from './genesislaunch.js';
 
 const uid = () => crypto.randomUUID();
 const round6 = (x) => Math.round(Number(x) * 1e6) / 1e6;
@@ -345,6 +346,7 @@ export async function underwriterLeaderboard(pool, limit = 25) {
 // one expresses intent). Setting an offering moves no value and writes no ledger row (bonds are
 // out-of-band real-value plumbing — the §10.4 posture of the whole module).
 export async function setBondOffering(pool, omr, day = null) {
+  assertGenesisBondsOpen();
   const amt = Math.round(Number(omr));
   if (!Number.isFinite(amt) || amt < 0) throw new GameError('amount', 'A non-negative whole-OMR offering.');
   const d = day == null ? dayOf() : Math.floor(Number(day));
@@ -382,6 +384,7 @@ export async function bondBoard(pool, accountId) {
   const oracle = await oraclePrice(pool);
   const mine = accountId ? (await pool.query('SELECT * FROM bonds WHERE account_id=$1 ORDER BY opened_at DESC', [accountId])).rows : [];
   const daily = await offeringOf(pool);
+  const genesis = genesisLaunchStatus();
   const now = Date.now();
   return {
     offering: { discountBps: BONDS.DISCOUNT_BPS, vestHours: BONDS.VEST_HOURS, polBps: BONDS.POL_BPS, vigBps: BONDS.VIG_BPS, rwaBps: BONDS.RWA_BPS, devBps: BONDS.DEV_BPS, minEth: BONDS.MIN_PRINCIPAL_ETH },
@@ -390,7 +393,10 @@ export async function bondBoard(pool, accountId) {
     // an illustrative quote for 1 ETH at the current oracle + discount (display only)
     // THE DAILY OFFERING — null = the desk is CLOSED today (fail-closed; the GM opens it)
     daily,
-    quote: oracle ? { forEth: 1, payoutOmr: bondPayout(1, oracle, BONDS.DISCOUNT_BPS) } : null,
+    genesis,
+    quote: oracle && genesis.bondQuotesOpen
+      ? { forEth: 1, payoutOmr: bondPayout(1, oracle, BONDS.DISCOUNT_BPS) }
+      : null,
     yours: mine.map((b) => {
       const vested = vestedOf(b, now);
       return { id: b.id, principalEth: round6(Number(b.principal_eth)), payoutOmr: round6(Number(b.payout_omr)),
@@ -415,6 +421,7 @@ export async function bondStatus(pool) {
   const vigEth = round6(Number((await pool.query("SELECT COALESCE(SUM(vig_eth),0) s FROM vig_revenue WHERE source='bond'")).rows[0].s));
   const inv = await runBondInvariants(pool);
   return {
+    genesis: genesisLaunchStatus(),
     daily, // THE DAILY OFFERING — null = closed today (the GM opens it via POST /v1/mod/bond/offer)
     capacityOmr: round6(Number(r.capacity_omr || 0)), committedOmr: round6(Number(r.committed_omr || 0)),
     remainingOmr: round6(Math.max(0, Number(r.capacity_omr || 0) - Number(r.committed_omr || 0))),

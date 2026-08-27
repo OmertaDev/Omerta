@@ -6,6 +6,7 @@ import {PoolManager} from "v4-core/PoolManager.sol";
 import {IPoolManager} from "v4-core/interfaces/IPoolManager.sol";
 import {IHooks} from "v4-core/interfaces/IHooks.sol";
 import {Hooks} from "v4-core/libraries/Hooks.sol";
+import {StateLibrary} from "v4-core/libraries/StateLibrary.sol";
 import {PoolKey} from "v4-core/types/PoolKey.sol";
 import {PoolId} from "v4-core/types/PoolId.sol";
 import {Currency} from "v4-core/types/Currency.sol";
@@ -15,6 +16,7 @@ import {PoolSwapTest} from "v4-core/test/PoolSwapTest.sol";
 import {PoolModifyLiquidityTest} from "v4-core/test/PoolModifyLiquidityTest.sol";
 import {OMR} from "../src/OMR.sol";
 import {OmertaHook, IOmrHookObserver} from "../src/OmertaHook.sol";
+import {OmrV4TwapOracle} from "../src/OmrV4TwapOracle.sol";
 
 interface IOpeningDeadlineHook {
     function openingEndsAt(PoolId poolId) external view returns (uint256);
@@ -22,6 +24,9 @@ interface IOpeningDeadlineHook {
 
 /// A quote token that is NOT on the hook's allow-list, for the pool gate.
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import {IInitializerHook} from "../src/interfaces/IInitializerHook.sol";
+import {IOmrV4ObservationSource} from "../src/interfaces/IOmrV4ObservationSource.sol";
 
 contract Junk is ERC20 {
     constructor() ERC20("Junk", "JUNK") {
@@ -119,7 +124,7 @@ contract OmertaHookTest is Test {
         omrC = Currency.wrap(address(omr));
 
         address hookAddr = address(uint160((uint256(0xBEEF) << 144) | uint256(FLAGS)));
-        deployCodeTo("OmertaHook.sol:OmertaHook", abi.encode(manager, address(omr), safe), hookAddr);
+        deployCodeTo("OmertaHook.sol:OmertaHook", abi.encode(manager, address(omr), safe, address(this)), hookAddr);
         hook = OmertaHook(payable(hookAddr));
 
         vm.startPrank(safe);
@@ -205,12 +210,23 @@ contract OmertaHookTest is Test {
         // An ordinary `new` lands wherever CREATE puts it, which will not carry the mined bits. This
         // is why deployment needs a CREATE2 salt search rather than an assumption.
         vm.expectRevert(OmertaHook.HookAddressMismatch.selector);
-        new OmertaHook(manager, address(omr), safe);
+        new OmertaHook(manager, address(omr), safe, address(this));
     }
 
     function test_the_deployed_address_carries_exactly_the_permissions_it_implements() public view {
         assertEq(uint160(address(hook)) & Hooks.ALL_HOOK_MASK, FLAGS, "flag set drifted from the address");
         assertEq(hook.HOOK_FLAGS(), FLAGS, "HOOK_FLAGS drifted from what this suite permits");
+    }
+
+    function test_liquidity_launcher_initializer_interface_is_pinned() public view {
+        assertEq(hook.authorized(), address(this), "wrong LBP initializer");
+        assertTrue(hook.supportsInterface(type(IInitializerHook).interfaceId), "initializer ERC-165 signal missing");
+        assertTrue(
+            hook.supportsInterface(type(IOmrV4ObservationSource).interfaceId),
+            "v4 cumulative observation source signal missing"
+        );
+        assertTrue(hook.supportsInterface(type(IERC165).interfaceId), "ERC-165 signal missing");
+        assertFalse(hook.supportsInterface(0xffffffff), "invalid interface reported as supported");
     }
 
     /// Uniswap Labs requires manual routing review for the four return-delta flags. Omerta uses the
@@ -253,6 +269,23 @@ contract OmertaHookTest is Test {
         vm.prank(safe);
         hook.setAllowedQuote(Currency.wrap(address(j)), true);
         manager.initialize(bad, SQRT_PRICE_1_1);
+    }
+
+    function test_only_the_committed_lbp_strategy_can_initialize_an_allowed_pool() public {
+        PoolKey memory second = PoolKey(eth, omrC, 500, 10, IHooks(address(hook)));
+        address outsider = address(0xBAD);
+
+        vm.prank(address(manager));
+        vm.expectRevert(abi.encodeWithSelector(OmertaHook.InvalidInitializer.selector, outsider, address(this)));
+        hook.beforeInitialize(outsider, second, SQRT_PRICE_1_1);
+
+        vm.prank(outsider);
+        vm.expectRevert(); // PoolManager wraps the hook's exact error; the direct callback above pins it.
+        manager.initialize(second, SQRT_PRICE_1_1);
+
+        // The failed attempt did not consume the pool key. The configured initializer can still
+        // establish the exact pool committed in the launch parameters.
+        manager.initialize(second, SQRT_PRICE_1_1);
     }
 
     // ── the fee ──────────────────────────────────────────────────────────────────────────────────
@@ -465,7 +498,7 @@ contract OmertaHookTest is Test {
     function test_arming_a_community_slice_needs_a_community_wallet() public {
         // a fresh hook with no recipients set: arming any rate fails closed on the zero address
         address bare = address(uint160((uint256(0xBEE0) << 144) | uint256(FLAGS)));
-        deployCodeTo("OmertaHook.sol:OmertaHook", abi.encode(manager, address(omr), safe), bare);
+        deployCodeTo("OmertaHook.sol:OmertaHook", abi.encode(manager, address(omr), safe, address(this)), bare);
         vm.prank(safe);
         vm.expectRevert(OmertaHook.ZeroAddress.selector);
         OmertaHook(payable(bare)).setSellTax(900, 200, 160, 240);
@@ -544,6 +577,73 @@ contract OmertaHookTest is Test {
         assertEq(obs.calls(), 2, "initialize synchronously entered the observer");
         hook.pokeObserver(k2);
         assertEq(obs.calls(), 3, "the oracle seam was not poked after initialize");
+    }
+
+    function test_tick_accumulator_preserves_the_price_path_between_keeper_pokes() public {
+        PoolId id = key.toId();
+        (int56 initialCumulative, uint32 initializedAt, bool initialized) = hook.currentTickCumulative(id);
+        assertTrue(initialized);
+        assertEq(initialCumulative, 0);
+        assertEq(initializedAt, uint32(block.timestamp));
+
+        vm.warp(block.timestamp + 10);
+        _sellExactIn(100e18);
+        (, int24 sellTick,,) = StateLibrary.getSlot0(manager, id);
+        assertTrue(sellTick != 0, "the sell did not move the v4 tick");
+
+        // The first ten seconds belonged to tick zero, so their contribution is exactly zero.
+        (int56 afterSell, uint32 sellAt,) = hook.currentTickCumulative(id);
+        assertEq(afterSell, 0);
+        assertEq(sellAt, uint32(block.timestamp));
+
+        vm.warp(block.timestamp + 7);
+        (int56 beforeBuy,,) = hook.currentTickCumulative(id);
+        assertEq(beforeBuy, int56(sellTick) * 7, "idle time did not accrue at the active sell tick");
+
+        _buyExactIn(1 ether);
+        (, int24 buyTick,,) = StateLibrary.getSlot0(manager, id);
+        (int56 storedAfterBuy,,) = hook.currentTickCumulative(id);
+        assertEq(storedAfterBuy, beforeBuy, "a same-timestamp swap double-counted elapsed time");
+
+        vm.warp(block.timestamp + 11);
+        (int56 finalCumulative,,) = hook.currentTickCumulative(id);
+        assertEq(
+            finalCumulative,
+            beforeBuy + int56(buyTick) * 11,
+            "the post-buy tick was not integrated through the next quiet interval"
+        );
+    }
+
+    function test_tick_accumulator_refuses_to_invent_an_unopened_pool() public view {
+        PoolId unknown = PoolId.wrap(keccak256("unopened"));
+        (int56 cumulative, uint32 timestamp, bool initialized) = hook.currentTickCumulative(unknown);
+        assertEq(cumulative, 0);
+        assertEq(timestamp, 0);
+        assertFalse(initialized);
+    }
+
+    function test_real_hook_and_oracle_close_a_window_without_a_poke_after_every_swap() public {
+        uint32 period = 10 minutes;
+        OmrV4TwapOracle oracle =
+            new OmrV4TwapOracle(IOmrV4ObservationSource(address(hook)), address(omr), 3000, TICK_SPACING, period);
+        vm.prank(safe);
+        hook.setObserver(oracle);
+
+        // Nine minutes at tick zero, then a sell changes the tick. No observer poke follows the
+        // swap: the source accumulator, not keeper timing, must retain the transition.
+        vm.warp(block.timestamp + 9 minutes);
+        _sellExactIn(100e18);
+        (, int24 spotTick,,) = StateLibrary.getSlot0(manager, key.toId());
+        assertTrue(spotTick != 0);
+
+        vm.warp(block.timestamp + 1 minutes);
+        hook.pokeObserver(key);
+
+        (uint256 price, uint256 updatedAt) = oracle.consult();
+        assertGt(price, 1e18, "the unpoked swap disappeared from the cumulative price path");
+        assertEq(updatedAt, block.timestamp);
+        assertTrue(oracle.arithmeticMeanTick() != 0);
+        assertLt(oracle.arithmeticMeanTick(), spotTick, "the oracle adopted spot instead of averaging the window");
     }
 
     function test_an_observer_poke_only_accepts_a_pool_this_hook_opened() public {
@@ -810,7 +910,9 @@ contract OmertaHookTest is Test {
     /// the fees there, because that is the wall at the point of irreversible loss.
     function test_a_fee_cannot_be_armed_into_unset_wallets_and_a_sweep_cannot_burn() public {
         OmertaHook fresh = OmertaHook(payable(address(uint160((uint256(0xFEED) << 144) | uint256(FLAGS)))));
-        deployCodeTo("OmertaHook.sol:OmertaHook", abi.encode(manager, address(omr), safe), address(fresh));
+        deployCodeTo(
+            "OmertaHook.sol:OmertaHook", abi.encode(manager, address(omr), safe, address(this)), address(fresh)
+        );
         assertEq(fresh.lpRecipient(), address(0), "precondition: a fresh hook has no wallets set");
 
         vm.startPrank(safe);

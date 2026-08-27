@@ -175,7 +175,7 @@ for (;;) {
 }
 await rpc('anvil_setBalance', [privateKeyToAccount(minerPk).address, '0x' + parseEther('10').toString(16)]);
 const miner = createWalletClient({ chain, transport: http(RPC), account: privateKeyToAccount(minerPk) });
-const deployed = await deploy(hookArt, [poolManager, omr, SAFE], miner);
+const deployed = await deploy(hookArt, [poolManager, omr, SAFE, deployer.account.address], miner);
 assert(deployed === hookAddr, 'hook landed at an unexpected address');
 step('OmertaHook mined + deployed', `${hookAddr} (flags 0x${(BigInt(hookAddr) & FLAG_MASK).toString(16)}, ${tries} tries)`);
 

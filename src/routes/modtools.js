@@ -167,7 +167,7 @@ export function register(app, { pool, auth, modAuth, closeAccountSockets }) {
     // the ops/invariant view + the oracle keeper watchdog's live verdict (the /admin surface —
     // a silent keeper halt must read as a state on the founder's screen, not just a webhook)
     app.get('/v1/mod/bonds', { preHandler: modAuth }, async () =>
-      ({ ...(await Bonds.bondStatus(pool)), oracle: await Chain.bondOracleHealth() }));
+      ({ ...(await Bonds.bondStatus(pool)), oracle: await Chain.bondOracleHealth(pool) }));
     // THE TREASURY. The ETH inflow ledger and the sell-tax ingest that feeds it — plus, since the
     // founder reopened stock acquisition on 2026-08-10 (omerta-brokers-design.md), the STOCK reserve
     // and the per-ticker `allocated <= held` wall. That wall had been deleted along with the buy bot

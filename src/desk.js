@@ -54,6 +54,7 @@ import crypto from 'node:crypto';
 import { GameError } from './game.js';
 import { drainQueue } from './chain.js';
 import { BAND, DESK, DESK_AUCTION, DESK_BUYBACK, DESK_SURGE, DESK_RECYCLE_REASON, COMMUNITY, auctionPriceAt, dayOf } from './rules.js';
+import { assertExistingDeskFillOpen, genesisLaunchStatus } from './genesislaunch.js';
 
 const round6 = (n) => Math.round(n * 1e6) / 1e6;
 const round8 = (n) => Math.round(n * 1e8) / 1e8;
@@ -153,6 +154,8 @@ export async function lotSize(db, now = Date.now()) {
 // same shelf. The anchor is SNAPSHOTTED here: the whole session prices off one reading, and a
 // mid-auction oracle move cannot re-price a lot somebody is already bidding into.
 export async function openAuction(pool, now = Date.now()) {
+  const genesis = genesisLaunchStatus();
+  if (!genesis.deskAuctionsOpen) return { opened: false, reason: 'genesis_launch', phase: genesis.phase };
   const day = dayOf(now);
   if ((await pool.query('SELECT 1 FROM desk_auctions WHERE day=$1', [day])).rows[0]) return { opened: false, reason: 'already' };
   const band = await bandAnchor(pool, now);
@@ -187,6 +190,7 @@ export async function closeExpired(pool, now = Date.now()) {
 // ETH follows from the two. Idempotent on `ref` (a re-delivered log is a clean no-op); `txHash` marks
 // a REAL payment and is what gates the ETH accounting.
 export async function recordAuctionBuy(pool, { ref, accountId, omr, txHash = null, now = Date.now() } = {}) {
+  assertExistingDeskFillOpen();
   const key = String(ref || '').trim();
   if (!key) throw new GameError('ref', 'A fill needs a ref (mainnet: txHash:logIndex).');
   const want = Number(omr);
@@ -439,6 +443,7 @@ export async function runDeskInvariants(pool) {
 // read the shelf, the clock and the price. `sinks` names WHICH spends feed it, so the claim is
 // checkable and not just stated.
 export async function deskBoard(pool, now = Date.now()) {
+  const genesis = genesisLaunchStatus();
   const d = await deskInventory(pool);
   const recycledToday = Number((await pool.query(
     `SELECT COALESCE(SUM(amount),0) s FROM transactions WHERE currency='omr' AND reason=$1 AND at >= now() - interval '1 day'`,
@@ -459,6 +464,7 @@ export async function deskBoard(pool, now = Date.now()) {
   const budget = await polBudget(pool);
   const surgeNow = await deskSurge(pool, now);
   return {
+    genesis,
     inventory: Number(d.balance),
     lifetimeIn: Number(d.lifetime_in),
     lifetimeSold: Number(d.lifetime_sold),
@@ -474,7 +480,8 @@ export async function deskBoard(pool, now = Date.now()) {
     },
     // why there ISN'T one, when there isn't — the board must never read as "broken" when it is
     // fail-closed on purpose, and must never read as "closed for price reasons" when the oracle died.
-    closed: auction ? null : (band.stale ? band.reason : 'between_auctions'),
+    closed: auction ? null
+      : (!genesis.deskAuctionsOpen ? 'genesis_launch' : (band.stale ? band.reason : 'between_auctions')),
     band: {
       anchorEthPerOmr: band.anchor,
       windowDays: BAND.ANCHOR_DAYS,

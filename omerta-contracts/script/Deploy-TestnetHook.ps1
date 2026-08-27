@@ -7,6 +7,16 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+throw @'
+This helper is retired for the CCA/LBP launch release. It pins the pre-launch three-argument
+OmertaHook bytecode, salt, and address, while the current hook requires an authorized LBPStrategy
+constructor argument. Robinhood testnet currently has no reviewed official LiquidityLauncher/LBP
+deployment to authorize. Use a chain-4663 fork for exact-stack rehearsal, or first deploy and review
+the complete launcher/CCA/LBP testnet stack; then mine a new hook salt and replace this helper with a
+new manifest-pinned release. Never substitute a chain-4663 strategy address that has no code on 46630.
+No transaction was sent.
+'@
+
 $contractsRoot = Split-Path -Parent $PSScriptRoot
 $forge = Join-Path $contractsRoot 'cache\verify\node_modules\@foundry-rs\forge-win32-amd64\bin\forge.exe'
 $cast = Join-Path $contractsRoot 'cache\verify\node_modules\@foundry-rs\cast-win32-amd64\bin\cast.exe'

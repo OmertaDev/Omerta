@@ -136,7 +136,9 @@ assert.match(workerSource, /safe\('broker epoch',\s*\(\)\s*=>\s*allocateEpoch\(p
   const npc = await mk('Broker Resident');
   const exclusionDay = today - 4;
 
-  await pool.query('UPDATE account_persistent SET agent_flag=true WHERE account_id=$1', [agent.aid]);
+  const agentKey = await call('POST', '/v1/auth/agent-key', { token: agent.token });
+  assert.equal(agentKey.code, 200, 'Broker activation is exercised through a real agent token');
+  agent.token = agentKey.body.token;
   await pool.query('UPDATE account_persistent SET npc_flag=true WHERE account_id=$1', [npc.aid]);
   for (const x of [human, agent, npc]) {
     await pool.query('UPDATE account_persistent SET omr=6000 WHERE account_id=$1', [x.aid]);

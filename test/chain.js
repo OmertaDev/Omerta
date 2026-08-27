@@ -601,46 +601,41 @@ const d0Toll = await driftOf('$OMR conservation');
 }
 
 
-// ══════════ THE ORACLE KEEPER WATCHDOG (AUDIT-oracle.md's open flag, closed) ══════════
-// The keeper poking `update()` was an operational dependency with NO in-repo monitor — a silent
-// halt reads as low demand right up until bonds start refusing, which is also the F2 attack
-// window. HONEST SCOPE (the watcher-fake posture): the PURE classifier is exercised exhaustively
-// here; the RPC plumbing (resolve the oracle off the bond's own `oracle()` getter, read
-// PERIOD/lastUpdate, probe priceCeiling) runs only against a configured chain — tools/chain-e2e.js
-// is where real-RPC behaviour is proven. `dormant` IS proven end-to-end here (no env → no check).
+// ══════════ THE v4 ORACLE KEEPER WATCHDOG ══════════
+// The exhaustive keeper/journal suite is test/v4oraclekeeper.js. This chain-surface regression pins
+// the established exports, the dormant read, and the /admin envelope that consumes the richer state.
 {
   const { classifyOracleHealth, bondOracleHealth, ORACLE_LATE_MULT } = await import('../src/chain.js');
   const ORACLE = '0x' + '1'.repeat(40);
   const nowS = 1_800_000_000, period = 3600;
-  // no oracle set on the bond → config, not weather
-  assert.equal(classifyOracleHealth({ oracleAddr: '0x' + '0'.repeat(40) }).state, 'unset', 'a zero oracle address is UNSET');
-  // fresh poke + a working ceiling → ok
-  const ok = classifyOracleHealth({ oracleAddr: ORACLE, periodS: period, lastUpdateS: nowS - 600, ceilingOk: true, nowS });
-  assert.equal(ok.state, 'ok', 'a fresh poke with a working ceiling is OK');
+  const snap = { oracleAddress: ORACLE, bondOracleAddress: ORACLE, periodS: period,
+    maxWindowMult: 4, baselineS: nowS - 600, priceAverage: 2000n * 10n ** 18n,
+    lastUpdateS: nowS - 600, maxOracleAgeS: period * 2, chainNowS: nowS, keeperConfigured: true };
+  assert.equal(classifyOracleHealth({ state: 'unset' }).state, 'unset', 'no configured oracle is UNSET');
+  const ok = classifyOracleHealth(snap);
+  assert.equal(ok.state, 'healthy', 'a fresh published price inside its next window is HEALTHY');
   assert.equal(ok.lateAfterS, period * ORACLE_LATE_MULT, 'the late line is ORACLE_LATE_MULT × PERIOD');
-  // the boundary: exactly at the line is still ok; one second past it is the alarm WITH LEAD TIME
-  assert.equal(classifyOracleHealth({ oracleAddr: ORACLE, periodS: period, lastUpdateS: nowS - period * ORACLE_LATE_MULT, ceilingOk: true, nowS }).state,
-    'ok', 'exactly at the late line is still ok');
-  const late = classifyOracleHealth({ oracleAddr: ORACLE, periodS: period, lastUpdateS: nowS - period * ORACLE_LATE_MULT - 1, ceilingOk: true, nowS });
-  assert.equal(late.state, 'keeper-late', 'one second past the line is KEEPER-LATE — the ceiling still answers, so this is the alarm with lead time');
-  assert.equal(late.ageS, period * ORACLE_LATE_MULT + 1, 'and it reports the real age');
-  // priceCeiling() reverting outranks freshness — bonding is refusing RIGHT NOW
-  assert.equal(classifyOracleHealth({ oracleAddr: ORACLE, periodS: period, lastUpdateS: nowS - 600, ceilingOk: false, nowS }).state,
-    'down', 'a reverting ceiling is DOWN even with a fresh poke (rebaselined/zero-average reads exactly like this)');
+  assert.equal(classifyOracleHealth({ ...snap, baselineS: nowS - period * ORACLE_LATE_MULT }).state,
+    'due', 'exactly at the late line is still DUE, not late');
+  const late = classifyOracleHealth({ ...snap, baselineS: nowS - period * ORACLE_LATE_MULT - 1 });
+  assert.equal(late.state, 'keeper_late', 'one second past the line is KEEPER_LATE with lead time');
+  assert.equal(late.elapsedS, period * ORACLE_LATE_MULT + 1, 'and it reports the real open-window age');
+  assert.equal(classifyOracleHealth({ ...snap, baselineS: nowS - period * 4 - 1 }).state,
+    'rebaselining', 'an overlong window is REBASELINING, never averaged');
   // clock skew: a lastUpdate slightly in the future must clamp to age 0, never go negative
-  assert.equal(classifyOracleHealth({ oracleAddr: ORACLE, periodS: period, lastUpdateS: nowS + 30, ceilingOk: true, nowS }).ageS, 0,
+  assert.equal(classifyOracleHealth({ ...snap, lastUpdateS: nowS + 30 }).ageS, 0,
     'clock skew clamps the age at zero (the decayedGrudges phantom-negative lesson)');
   // dormant end-to-end: with no bond chain configured the watchdog watches nothing and never alerts
   const envSnap = {};
-  for (const k of ['CHAIN_RPC_URL', 'OMERTA_BOND_ADDRESS', 'CHAIN_ID']) { envSnap[k] = process.env[k]; delete process.env[k]; }
-  assert.equal((await bondOracleHealth()).state, 'dormant', 'no bond chain → dormant, nothing to watch');
+  for (const k of ['CHAIN_RPC_URL', 'OMERTA_BOND_ADDRESS', 'OMR_V4_ORACLE_ADDRESS', 'CHAIN_ID']) { envSnap[k] = process.env[k]; delete process.env[k]; }
+  assert.equal((await bondOracleHealth(pool)).state, 'dormant', 'no oracle chain → dormant, nothing to watch');
   for (const [k, v] of Object.entries(envSnap)) if (v !== undefined) process.env[k] = v;
   // the /admin surface: GET /v1/mod/bonds carries the live verdict alongside the bond status
   const bs = await call('GET', '/v1/mod/bonds', { headers: modH });
   assert.equal(bs.code, 200, 'the mod bonds view answers');
   assert(bs.body.oracle && bs.body.oracle.state, 'and carries the oracle keeper verdict (dormant here — pg-mem has no chain)');
   assert.equal(bs.body.oracle.state, 'dormant', 'which is dormant on an unconfigured server');
-  console.log('  ✓ oracle keeper watchdog: unset/ok/boundary/keeper-late/down/skew classified + dormant end-to-end + the mod view carries it');
+  console.log('  ✓ v4 oracle watchdog: unset/healthy/due/keeper_late/rebaselining/skew classified + dormant end-to-end + mod view');
 }
 
 // ════════ THE ORACLE READ STAYS OUTSIDE THE TRANSACTION (RED TEAM 2026-08-16) ════════

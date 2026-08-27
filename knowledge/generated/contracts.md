@@ -11,10 +11,13 @@
 | `FlashGuard` | abstract contract | [omerta-contracts/src/FlashGuard.sol:52](../../omerta-contracts/src/FlashGuard.sol#L52) | — |
 | `GearVault` | contract | [omerta-contracts/src/GearVault.sol:24](../../omerta-contracts/src/GearVault.sol#L24) | `ERC1155`, `Ownable2Step` |
 | `GenesisOracle` | contract | [omerta-contracts/src/GenesisOracle.sol:49](../../omerta-contracts/src/GenesisOracle.sol#L49) | `IOmrOracle`, `Ownable2Step` |
+| `GenesisProceedsSplitter` | contract | [omerta-contracts/src/GenesisProceedsSplitter.sol:28](../../omerta-contracts/src/GenesisProceedsSplitter.sol#L28) | `ReentrancyGuard` |
 | `IGearVault` | interface | [omerta-contracts/src/VoucherClaim.sol:11](../../omerta-contracts/src/VoucherClaim.sol#L11) | — |
-| `IOmrHookObserver` | interface | [omerta-contracts/src/OmertaHook.sol:21](../../omerta-contracts/src/OmertaHook.sol#L21) | — |
+| `IInitializerHook` | interface | [omerta-contracts/src/interfaces/IInitializerHook.sol:10](../../omerta-contracts/src/interfaces/IInitializerHook.sol#L10) | `IERC165` |
+| `IOmrHookObserver` | interface | [omerta-contracts/src/OmertaHook.sol:24](../../omerta-contracts/src/OmertaHook.sol#L24) | — |
 | `IOMRMintable` | interface | [omerta-contracts/src/OmertaBond.sol:15](../../omerta-contracts/src/OmertaBond.sol#L15) | — |
 | `IOmrOracle` | interface | [omerta-contracts/src/IOmrOracle.sol:18](../../omerta-contracts/src/IOmrOracle.sol#L18) | — |
+| `IOmrV4ObservationSource` | interface | [omerta-contracts/src/interfaces/IOmrV4ObservationSource.sol:10](../../omerta-contracts/src/interfaces/IOmrV4ObservationSource.sol#L10) | — |
 | `IStockQuoteOracle` | interface | [omerta-contracts/src/RwaStockBuyer.sol:28](../../omerta-contracts/src/RwaStockBuyer.sol#L28) | — |
 | `IStockSwapAdapter` | interface | [omerta-contracts/src/RwaStockBuyer.sol:20](../../omerta-contracts/src/RwaStockBuyer.sol#L20) | — |
 | `IStockTokenRegistry` | interface | [omerta-contracts/src/RwaStockBuyer.sol:9](../../omerta-contracts/src/RwaStockBuyer.sol#L9) | — |
@@ -22,10 +25,11 @@
 | `IUniswapV2Pair` | interface | [omerta-contracts/src/OmrTwapOracle.sol:12](../../omerta-contracts/src/OmrTwapOracle.sol#L12) | — |
 | `OmertaBond` | contract | [omerta-contracts/src/OmertaBond.sol:73](../../omerta-contracts/src/OmertaBond.sol#L73) | `EIP712`, `Ownable2Step`, `Pausable`, `ReentrancyGuard` |
 | `OmertaFees` | contract | [omerta-contracts/src/OmertaFees.sol:18](../../omerta-contracts/src/OmertaFees.sol#L18) | `Ownable2Step`, `ReentrancyGuard` |
-| `OmertaHook` | contract | [omerta-contracts/src/OmertaHook.sol:116](../../omerta-contracts/src/OmertaHook.sol#L116) | `IHooks`, `Ownable2Step` |
+| `OmertaHook` | contract | [omerta-contracts/src/OmertaHook.sol:118](../../omerta-contracts/src/OmertaHook.sol#L118) | `IHooks`, `IInitializerHook`, `IOmrV4ObservationSource`, `Ownable2Step` |
 | `OMR` | contract | [omerta-contracts/src/OMR.sol:76](../../omerta-contracts/src/OMR.sol#L76) | `ERC20Permit`, `Ownable2Step` |
 | `OMRStaking` | contract | [omerta-contracts/src/OMRStaking.sol:15](../../omerta-contracts/src/OMRStaking.sol#L15) | `Ownable2Step`, `ReentrancyGuard` |
 | `OmrTwapOracle` | contract | [omerta-contracts/src/OmrTwapOracle.sol:49](../../omerta-contracts/src/OmrTwapOracle.sol#L49) | `IOmrOracle`, `Ownable2Step` |
+| `OmrV4TwapOracle` | contract | [omerta-contracts/src/OmrV4TwapOracle.sol:39](../../omerta-contracts/src/OmrV4TwapOracle.sol#L39) | `IOmrOracle`, `IOmrHookObserver` |
 | `RwaStockBuyer` | contract | [omerta-contracts/src/RwaStockBuyer.sol:43](../../omerta-contracts/src/RwaStockBuyer.sol#L43) | `Ownable2Step`, `Pausable`, `ReentrancyGuard` |
 | `StockTokenRegistry` | contract | [omerta-contracts/src/StockTokenRegistry.sol:18](../../omerta-contracts/src/StockTokenRegistry.sol#L18) | `Ownable2Step` |
 | `StockVault` | contract | [omerta-contracts/src/StockVault.sol:44](../../omerta-contracts/src/StockVault.sol#L44) | `Ownable2Step`, `Pausable`, `ReentrancyGuard`, `EIP712` |

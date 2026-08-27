@@ -45,7 +45,7 @@ function sharedHead({ title, description, canonical, image, accent = '#cda653' }
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(description)}">
 <meta name="twitter:image" content="${esc(image)}">
-<link rel="stylesheet" href="/omerta-ui.css">
+<link rel="stylesheet" href="/omerta-ui.css?v=20260826">
 <style>:root{--path-accent:${esc(accent)}}</style>`;
 }
 

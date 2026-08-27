@@ -112,7 +112,7 @@
   @media(max-width:980px){.rwa-metrics{grid-template-columns:repeat(3,1fr)}.rwa-pipeline{grid-template-columns:1fr}.rwa-columns{grid-template-columns:1fr}}
   @media(max-width:560px){.grid{grid-template-columns:1fr;padding:8px}.center{margin:10vh auto}.login-actions{flex-direction:column}.mod-row{align-items:stretch}.mod-field{flex-basis:100%}.rwa-head{flex-direction:column}.rwa-metrics{grid-template-columns:repeat(2,1fr)}.rwa-form,.rwa-locked{grid-template-columns:1fr}.rwa-form .wide{grid-column:auto}}
 </style>
-<link rel="stylesheet" href="/omerta-ui.css?v=20260824">
+<link rel="stylesheet" href="/omerta-ui.css?v=20260826">
 </head>
 <body>
 
@@ -647,6 +647,8 @@
   function renderChain(res, vig, em, rev, bnd, tre, ov, bk, com) {
     const v = vig?.invariants || {}, vs = vig?.status || {};
     const extractOk = v.ok !== false;
+    const oracleState = bnd?.oracle?.state;
+    const oracleSoft = ['warming', 'due', 'tx_pending'].includes(oracleState);
     $('#p-chain').querySelector('.body').innerHTML =
       `<div class="note">withdrawal reserve (full-reserve queue)</div>`
       + rowHtml('funded', `${fmt(res?.fundedOmr)} $OMR`)
@@ -691,9 +693,9 @@
           : '') : '')
       + (bnd && bnd.oracle && bnd.oracle.state !== 'dormant'
         ? `<div class="note" style="margin-top:8px">the bond oracle keeper</div>`
-          + rowHtml('keeper', bnd.oracle.state === 'ok'
-            ? `<span style="color:var(--ok)">✓ alive</span> <span class="note">poked ${fmt(bnd.oracle.ageS)}s ago (period ${fmt(bnd.oracle.periodS)}s)</span>`
-            : `<span style="color:var(--bad)">⚠ ${bnd.oracle.state.toUpperCase()}</span> <span class="note">${bnd.oracle.note || ''}</span>`)
+          + rowHtml('keeper', bnd.oracle.state === 'healthy'
+            ? `<span style="color:var(--ok)">✓ healthy</span> <span class="note">price ${fmt(bnd.oracle.ageS)}s old · next window in ${fmt(bnd.oracle.dueInS)}s</span>`
+            : `<span style="color:${oracleSoft ? 'var(--warn)' : 'var(--bad)'}">${oracleSoft ? '◌' : '⚠'} ${bnd.oracle.state.toUpperCase()}</span> <span class="note">${bnd.oracle.note || ''}</span>`)
         : '')
       // THE DAILY OFFERING — the GM's issuance window (fail-closed: closed reads CLOSED, not zero)
       + (bnd ? (`<div class="note" style="margin-top:8px">the daily bond offering</div>`

@@ -63,6 +63,7 @@ import { syncApprovedStockTokenCatalog, stockTokenCatalogReady } from './stockca
 import { publishResolvedStockBallot, resolvedBallotPublisherReady } from './rwastockkeeper.js';
 import { runDexBuyback, runPolPairing, runDexBotInvariants, dexBuybackReady, polPairingReady,
   readLpPositions, lpReaderReady } from './dexbot.js';
+import { runV4OracleKeeper, v4OracleKeeperReady } from './v4oraclekeeper.js';
 
 // THE LP LEAGUE reader — installed once at boot, and on a WEAKER condition than the bots: it is a
 // read-only path that needs no bot key, so a box that never sends a transaction can still accrue
@@ -582,22 +583,23 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
     // chain-side twin.) The TWAP only moves when someone pokes update(), and a silent keeper halt
     // is indistinguishable from low demand right up until bonds start refusing — which is also
     // exactly the F2 attack window. Checked hourly, dormant without a bond chain, latched per
-    // episode; 'unreachable' never alarms (not knowing is not the same as broken — a dead RPC
-    // already fails the chain sync loudly).
-    const oh = await safe('oracle keeper health', () => bondOracleHealth());
-    if (oh && oh.state !== 'dormant' && oh.state !== 'unreachable') {
-      const ohBad = oh.state !== 'ok';
+    // episode. RPC failure and bad configuration alarm explicitly: a read failure is itself an
+    // inability to prove that the bond feed remains safe.
+    const oh = await safe('oracle keeper health', () => bondOracleHealth(pool));
+    if (oh && oh.state !== 'dormant') {
+      const ohBad = oh.alert === true;
       if (ohBad && !oracleKeeperAlerted) {
         oracleKeeperAlerted = true;
-        console.error(`🚨 BOND ORACLE ${oh.state.toUpperCase()} — ${oh.note || ''} (age ${oh.ageS ?? '?'}s, period ${oh.periodS ?? '?'}s). Poke the keeper; bonding degrades from here.`);
+        console.error(`🚨 BOND ORACLE ${oh.state.toUpperCase()} — ${oh.note || ''} (age ${oh.ageS ?? '?'}s, elapsed window ${oh.elapsedS ?? '?'}s, period ${oh.periodS ?? '?'}s).`);
         await safe('oracle alert', () => alertDrift(pool, [{
-          name: `bond oracle ${oh.state}`, oracle: oh.oracleAddr, ageSeconds: oh.ageS,
-          periodSeconds: oh.periodS, lateAfterSeconds: oh.lateAfterS,
-          note: oh.note || 'The TWAP keeper looks halted. Bonding will refuse quotes when staleness bites.',
+          name: `bond oracle ${oh.state}`, oracle: oh.oracleAddress, ageSeconds: oh.ageS,
+          elapsedSeconds: oh.elapsedS, periodSeconds: oh.periodS, lateAfterSeconds: oh.lateAfterS,
+          maxWindowSeconds: oh.maxWindowS,
+          note: oh.note || 'The v4 TWAP keeper is unhealthy. Bonding remains fail-closed.',
         }], 'oracle'));
       } else if (!ohBad && oracleKeeperAlerted) {
         oracleKeeperAlerted = false;
-        console.log(`✅ bond oracle recovered — keeper poked ${oh.ageS}s ago (period ${oh.periodS}s)`);
+        console.log(`✅ bond oracle recovered — ${oh.state} (price age ${oh.ageS ?? 'unpublished'}s, window ${oh.elapsedS ?? '?'}s/${oh.periodS ?? '?'}s)`);
       }
     }
     // CHAIN PARITY (red team #9 F1, widened by #10) — every value the chain holds authoritatively
@@ -748,6 +750,17 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
           if (process.env.OMERTA_BOND_ADDRESS) {
             const b = await safe('bond sync', () => syncBondEvents(pool, source, { startBlock }));
             if (b?.processed) console.log(`🏦 bond sync: booked ${b.processed} bond(s) → reserve/POL/Vig (blocks ${b.from}–${b.to})`);
+          }
+          // THE v4 ORACLE KEEPER — permissionless update(), driven from the oracle's own baseline
+          // rather than swap-event timing. The hook has already retained the full tick path, so this
+          // poll closes one complete window and the durable journal makes process/deploy overlap send
+          // the same signed transaction, never two independently-priced attempts.
+          if (v4OracleKeeperReady()) {
+            const ok = await safe('v4 oracle keeper', () => runV4OracleKeeper(pool));
+            if (ok?.action === 'confirmed')
+              console.log(`🔭 v4 oracle keeper: update confirmed (${ok.txHash}); state ${ok.health?.state}`);
+            else if (['failed', 'reverted'].includes(ok?.action))
+              console.error(`🔭 v4 oracle keeper: ${ok.action} — ${ok.health?.note || 'update did not confirm'}`);
           }
           // NFT RE-IMPORT (Option A): GearVault Redeemed → re-create the burned car/boat in-game.
           // Dormant unless GEARVAULT_ADDRESS is set; idempotent on the log ref; applies now or waits.

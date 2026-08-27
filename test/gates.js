@@ -1170,7 +1170,6 @@ const SCENERY_WAIVED = {
   const VIEM_CLIENTS = [
     { file: 'src/bank.js', mark: 'readContract', why: 'viem, reading the Alchemist market' },
     { file: 'src/watcher.js', mark: 'getLogs', why: 'viem, three fee-event streams over one range' },
-    { file: 'src/chain.js', mark: "functionName: 'PERIOD'", why: "viem, the oracle's PERIOD + lastUpdate" },
     { file: 'src/chain.js', mark: "functionName: 'polBps'", why: "viem, OmertaBond's three immutable bps" },
     { file: 'src/chainparams.js', mark: 'readContract', why: 'viem, the control-room live-value sweep' },
   ];

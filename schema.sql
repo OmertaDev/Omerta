@@ -757,6 +757,27 @@ CREATE TABLE IF NOT EXISTS chain_cursor (
   last_block BIGINT NOT NULL DEFAULT 0
 );
 
+-- THE v4 BOND-ORACLE KEEPER — one durable attempt per oracle baseline. The baseline timestamp is
+-- the window identity: after a successful update the contract changes it, so two workers racing on
+-- the same due window collide on this PK instead of sending two transactions. `raw_tx` is persisted
+-- BEFORE broadcast; it contains no secret and can be safely rebroadcast after a process crash.
+CREATE TABLE IF NOT EXISTS v4_oracle_keeper_attempts (
+  oracle_address      TEXT NOT NULL,
+  baseline_timestamp  BIGINT NOT NULL,
+  status              TEXT NOT NULL,
+  tx_hash             TEXT,
+  raw_tx              TEXT,
+  nonce               BIGINT,
+  claimed_at          TIMESTAMPTZ NOT NULL DEFAULT now(),
+  sent_at             TIMESTAMPTZ,
+  confirmed_at        TIMESTAMPTZ,
+  last_error          TEXT,
+  PRIMARY KEY (oracle_address, baseline_timestamp),
+  CONSTRAINT v4_oracle_keeper_status CHECK (
+    status IN ('claimed','prepared','submitted','confirmed','reverted','failed','superseded','replaced')
+  )
+);
+
 -- NFT RE-IMPORT (Option A, omerta-nft-reimport-design.md) — the inverse of extraction: a GearVault
 -- Redeemed(from, tokenId, amount) burn re-created as a live in-game car/boat row on the burner's
 -- LIVING character. Keyed by the chain-event log ref (txHash:logIndex) for exactly-once. 'pending'
