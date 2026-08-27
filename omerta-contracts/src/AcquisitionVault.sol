@@ -33,6 +33,8 @@ contract AcquisitionVault is IAcquisitionVaultV1, EIP712, Ownable2Step, Pausable
 
     bytes32 private constant _NOMINATION_KIND = keccak256("OMERTA_ACQUISITION_OPERATOR_NOMINATION_V1");
     bytes32 private constant _EXPIRY_KIND = keccak256("OMERTA_ACQUISITION_OPERATOR_EXPIRY_DETAILS_V1");
+    bytes32 private constant _OWNERSHIP_ACCEPTANCE_CANCEL_KIND =
+        keccak256("OMERTA_ACQUISITION_OPERATOR_OWNERSHIP_ACCEPTANCE_CANCEL_V1");
     bytes32 private constant _NOMINATION_COUNTER = keccak256("nominationNonce");
     bytes32 private constant _GENERATION_COUNTER = keccak256("operatorGeneration");
     bytes4 private constant _ERC1271_MAGIC = 0x1626ba7e;
@@ -86,10 +88,20 @@ contract AcquisitionVault is IAcquisitionVaultV1, EIP712, Ownable2Step, Pausable
     }
 
     function acceptOwnership() public override {
+        address previousOwner = owner();
         address candidate = pendingOwner();
+        PendingOperatorNomination memory p = _pendingMainOperatorNomination;
         if (_msgSender() != candidate || candidate == address(0)) revert OwnableUnauthorizedAccount(_msgSender());
         _checkOwnerCandidate(candidate);
         super.acceptOwnership();
+        if (p.proposalId != bytes32(0)) {
+            delete _pendingMainOperatorNomination;
+            bytes32 details =
+                keccak256(abi.encode(_OWNERSHIP_ACCEPTANCE_CANCEL_KIND, p.proposalId, previousOwner, candidate));
+            emit MainOperatorNominationCancelled(
+                p.proposalId, p.nominee, candidate, uint8(ReasonCode.OPERATOR_NOMINATION_CANCELLED), details
+            );
+        }
     }
 
     function renounceOwnership() public override onlyOwner {

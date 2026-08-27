@@ -335,6 +335,8 @@ contract AcquisitionVaultOperatorTest is Test {
 
     bytes32 internal constant NOMINATION_TYPE_TAG = keccak256("OMERTA_ACQUISITION_OPERATOR_NOMINATION_V1");
     bytes32 internal constant EXPIRY_DETAILS_TYPE_TAG = keccak256("OMERTA_ACQUISITION_OPERATOR_EXPIRY_DETAILS_V1");
+    bytes32 internal constant OWNERSHIP_ACCEPTANCE_CANCEL_TYPE_TAG =
+        keccak256("OMERTA_ACQUISITION_OPERATOR_OWNERSHIP_ACCEPTANCE_CANCEL_V1");
     bytes32 internal constant EIP712_DOMAIN_TYPEHASH =
         keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
     bytes32 internal constant OUTFLOW_TYPEHASH = keccak256(
@@ -1400,6 +1402,132 @@ contract AcquisitionVaultOperatorTest is Test {
         _assertStateEq(_state(), expected);
         assertEq(vault.operatorGeneration(), 0);
         assertEq(vault.outflowNonce(), 0);
+    }
+
+    function test_successfulOwnershipAcceptanceAtomicallyCancelsPendingNominationAndCannotRevive() public {
+        O1SafeActor candidate = new O1SafeActor();
+        bytes32 proposalId = _nominate(operator, DETAILS);
+        IAcquisitionVaultV1.PendingOperatorNomination memory pending = _pending();
+        O1State memory expected = _state();
+        assertEq(vault.nominationNonce(), pending.proposalNumber);
+
+        _safeCall(abi.encodeCall(vault.transferOwnership, (address(candidate))));
+        expected.pendingOwner = address(candidate);
+        _assertStateEq(_state(), expected);
+
+        _safeCall(abi.encodeCall(vault.transferOwnership, (address(0))));
+        expected.pendingOwner = address(0);
+        _assertStateEq(_state(), expected);
+
+        _safeCall(abi.encodeCall(vault.transferOwnership, (address(candidate))));
+        expected.pendingOwner = address(candidate);
+        _assertStateEq(_state(), expected);
+
+        bytes32 cancellationDetails =
+            keccak256(abi.encode(OWNERSHIP_ACCEPTANCE_CANCEL_TYPE_TAG, proposalId, address(safe), address(candidate)));
+        vm.recordLogs();
+        candidate.execute(address(vault), abi.encodeCall(vault.acceptOwnership, ()));
+        Vm.Log[] memory logs = vm.getRecordedLogs();
+        assertEq(logs.length, 2, "ownership acceptance must emit exactly two events");
+        assertEq(logs[0].emitter, address(vault));
+        assertEq(logs[0].topics.length, 3);
+        assertEq(logs[0].topics[0], keccak256("OwnershipTransferred(address,address)"));
+        assertEq(logs[0].topics[1], bytes32(uint256(uint160(address(safe)))));
+        assertEq(logs[0].topics[2], bytes32(uint256(uint160(address(candidate)))));
+        assertEq(logs[0].data.length, 0);
+        assertEq(logs[1].emitter, address(vault));
+        assertEq(logs[1].topics.length, 4);
+        assertEq(logs[1].topics[0], keccak256("MainOperatorNominationCancelled(bytes32,address,address,uint8,bytes32)"));
+        assertEq(logs[1].topics[1], proposalId);
+        assertEq(logs[1].topics[2], bytes32(uint256(uint160(operator))));
+        assertEq(logs[1].topics[3], bytes32(uint256(uint160(address(candidate)))));
+        assertEq(logs[1].data, abi.encode(REASON_CANCELLED, cancellationDetails));
+
+        expected.owner = address(candidate);
+        expected.pendingOwner = address(0);
+        expected.proposalId = bytes32(0);
+        expected.proposalNumber = 0;
+        expected.nominee = address(0);
+        expected.proposedBy = address(0);
+        expected.proposedAt = 0;
+        expected.validAfter = 0;
+        expected.expiresAt = 0;
+        expected.detailsHash = bytes32(0);
+        _assertStateEq(_state(), expected);
+        assertEq(vault.nominationNonce(), pending.proposalNumber, "issued proposal number changed");
+
+        _assertCallFailureUnchanged(
+            operator,
+            abi.encodeCall(vault.acceptMainOperatorNomination, (proposalId)),
+            abi.encodeWithSelector(O1LiteralErrors.OperatorNominationMissing.selector)
+        );
+
+        candidate.execute(address(vault), abi.encodeCall(vault.transferOwnership, (address(safe))));
+        safe.execute(address(vault), abi.encodeCall(vault.acceptOwnership, ()));
+        expected.owner = address(safe);
+        _assertStateEq(_state(), expected);
+
+        vm.warp(pending.validAfter);
+        _assertCallFailureUnchanged(
+            operator,
+            abi.encodeCall(vault.acceptMainOperatorNomination, (proposalId)),
+            abi.encodeWithSelector(O1LiteralErrors.OperatorNominationMissing.selector)
+        );
+        vm.warp(uint256(pending.expiresAt) + 1);
+        _assertCallFailureUnchanged(
+            operator,
+            abi.encodeCall(vault.acceptMainOperatorNomination, (proposalId)),
+            abi.encodeWithSelector(O1LiteralErrors.OperatorNominationMissing.selector)
+        );
+    }
+
+    function test_failedOwnershipAcceptancePreservesPendingNominationAndEmitsNothing() public {
+        O1SafeActor candidate = new O1SafeActor();
+        bytes32 proposalId = _nominate(operator, DETAILS);
+        _safeCall(abi.encodeCall(vault.transferOwnership, (address(candidate))));
+        O1State memory beforeState = _state();
+
+        vm.etch(address(candidate), "");
+        vm.recordLogs();
+        vm.prank(address(candidate));
+        (bool ok, bytes memory returndata) = address(vault).call(abi.encodeCall(vault.acceptOwnership, ()));
+        assertFalse(ok, "ownership acceptance unexpectedly succeeded");
+        _assertRevertData(
+            returndata, abi.encodeWithSelector(O1LiteralErrors.ContractRequired.selector, address(candidate))
+        );
+        assertEq(vm.getRecordedLogs().length, 0, "failed ownership acceptance emitted evidence");
+        _assertStateEq(_state(), beforeState);
+        assertEq(_pending().proposalId, proposalId);
+    }
+
+    function test_activeOperatorSurvivesOwnershipAcceptanceAndNewSafeCanDisableImmediately() public {
+        _appoint(operator);
+        vm.prank(operator);
+        vault.invalidateOutflowNonce(1, DETAILS);
+        O1SafeActor candidate = new O1SafeActor();
+        _safeCall(abi.encodeCall(vault.transferOwnership, (address(candidate))));
+        O1State memory expected = _state();
+
+        vm.recordLogs();
+        candidate.execute(address(vault), abi.encodeCall(vault.acceptOwnership, ()));
+        Vm.Log[] memory logs = vm.getRecordedLogs();
+        assertEq(logs.length, 1, "active-operator handoff emitted extra evidence");
+        assertEq(logs[0].topics[0], keccak256("OwnershipTransferred(address,address)"));
+        expected.owner = address(candidate);
+        expected.pendingOwner = address(0);
+        _assertStateEq(_state(), expected);
+        assertEq(vault.mainOperator(), operator);
+        assertEq(vault.operatorGeneration(), 1);
+        assertEq(vault.outflowNonce(), 1);
+        assertTrue(vault.paused());
+
+        vm.expectEmit(true, true, true, true, address(vault));
+        emit MainOperatorChanged(operator, address(0), 2, 1, REASON_DISABLED, SECOND_DETAILS);
+        candidate.execute(address(vault), abi.encodeCall(vault.disableMainOperator, (SECOND_DETAILS)));
+        assertEq(vault.mainOperator(), address(0));
+        assertEq(vault.operatorGeneration(), 2);
+        assertEq(vault.outflowNonce(), 1);
+        assertTrue(vault.paused());
     }
 
     function test_safeOnlyAuthorityRejectsActiveOperatorPendingNomineeAndStrangersAcrossSurface() public {
