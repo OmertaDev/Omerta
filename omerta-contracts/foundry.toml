@@ -6,6 +6,18 @@ solc_version = "0.8.26"
 optimizer = true
 optimizer_runs = 800
 evm_version = "cancun"
+additional_compiler_profiles = [
+  { name = "constellation-via-ir", via_ir = true, optimizer = true, optimizer_runs = 800, evm_version = "cancun" },
+]
+compilation_restrictions = [
+  { paths = "src/AcquisitionConstellationFactory.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/AcquisitionAuthority.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/AcquisitionVaultCore.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/PreVoteBudgetBook.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/AcquisitionIntentExecution.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/AcquisitionReconciliation.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/interfaces/IAcquisitionAuthorityV2.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+]
 fs_permissions = [
   { access = "read", path = "./out" },
   { access = "read", path = "./src" },

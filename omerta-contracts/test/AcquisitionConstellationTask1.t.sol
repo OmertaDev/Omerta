@@ -1050,17 +1050,13 @@ contract AcquisitionConstellationTask1Test is Test {
                 predicted[0]
             )
         );
-        _writeWord(runtime, 17_307, domain);
-        _writeWord(runtime, 17_265, bytes32(uint256(4663)));
-        _writeWord(runtime, 17_223, bytes32(uint256(uint160(predicted[0]))));
-        _writeWord(runtime, 17_388, nameHash);
-        _writeWord(runtime, 17_428, versionHash);
-        _writeWord(runtime, 15_559, bytes32("OMERTA AcquisitionAuthority") | bytes32(uint256(27)));
-        _writeWord(runtime, 15_608, bytes32("2") | bytes32(uint256(1)));
-        _writeWord(runtime, 953, bytes32(uint256(uint160(predictedFactory))));
-        _writeWord(runtime, 7_102, bytes32(uint256(uint160(predictedFactory))));
-        _writeWord(runtime, 10_165, bytes32(uint256(uint160(predictedFactory))));
-        _writeWord(runtime, 16_660, bytes32(uint256(uint160(predictedFactory))));
+        _writeWord(runtime, 15_622, domain);
+        _writeWord(runtime, 15_811, bytes32(uint256(4663)));
+        _writeWord(runtime, 15_575, bytes32(uint256(uint160(predicted[0]))));
+        _writeWord(runtime, 15_701, nameHash);
+        _writeWord(runtime, 15_739, versionHash);
+        _writeWord(runtime, 5_727, bytes32("OMERTA AcquisitionAuthority") | bytes32(uint256(27)));
+        _writeWord(runtime, 5_768, bytes32("2") | bytes32(uint256(1)));
         uint256[8] memory values = [
             uint256(uint160(predictedFactory)),
             uint256(manifest),
@@ -1071,23 +1067,36 @@ contract AcquisitionConstellationTask1Test is Test {
             uint256(uint160(predicted[3])),
             uint256(uint160(predicted[4]))
         ];
-        uint256[8] memory firstOffsets = [uint256(953), 997, 7_319, 10_243, 2_480, 10_323, 10_363, 10_403];
-        for (uint256 i; i < 8; ++i) {
-            _writeWord(runtime, firstOffsets[i], bytes32(values[i]));
+        uint256[5] memory factoryOffsets = [uint256(2_854), 4_501, 7_492, 11_830, 14_222];
+        uint256[3] memory manifestOffsets = [uint256(2_893), 4_541, 11_866];
+        uint256[3] memory registryOffsets = [uint256(2_932), 7_442, 14_171];
+        uint256[12] memory coreOffsets =
+            [uint256(1_940), 2_972, 3_729, 6_269, 7_392, 8_002, 10_905, 11_578, 13_038, 13_738, 14_120, 14_950];
+        uint256[3] memory budgetOffsets = [uint256(3_012), 7_342, 14_069];
+        uint256[3] memory intentOffsets = [uint256(3_052), 7_292, 14_018];
+        uint256[3] memory reconOffsets = [uint256(3_092), 7_242, 13_980];
+        for (uint256 i; i < factoryOffsets.length; ++i) {
+            _writeWord(runtime, factoryOffsets[i], bytes32(values[0]));
         }
-        uint256[10] memory coreOffsets =
-            [uint256(5_660), 6_857, 9_187, 10_283, 11_868, 12_944, 13_948, 15_778, 15_950, 16_780];
+        for (uint256 i; i < manifestOffsets.length; ++i) {
+            _writeWord(runtime, manifestOffsets[i], bytes32(values[1]));
+        }
+        _writeWord(runtime, 4_617, bytes32(values[2]));
+        for (uint256 i; i < registryOffsets.length; ++i) {
+            _writeWord(runtime, registryOffsets[i], bytes32(values[3]));
+        }
         for (uint256 i; i < coreOffsets.length; ++i) {
             _writeWord(runtime, coreOffsets[i], bytes32(values[4]));
         }
-        _writeWord(runtime, 7_168, bytes32(values[1]));
-        _writeWord(runtime, 7_220, bytes32(values[1]));
-        _writeWord(runtime, 8_742, bytes32(values[1]));
-        _writeWord(runtime, 10_205, bytes32(values[1]));
-        _writeWord(runtime, 16_720, bytes32(values[3]));
-        _writeWord(runtime, 16_840, bytes32(values[5]));
-        _writeWord(runtime, 16_900, bytes32(values[6]));
-        _writeWord(runtime, 16_960, bytes32(values[7]));
+        for (uint256 i; i < budgetOffsets.length; ++i) {
+            _writeWord(runtime, budgetOffsets[i], bytes32(values[5]));
+        }
+        for (uint256 i; i < intentOffsets.length; ++i) {
+            _writeWord(runtime, intentOffsets[i], bytes32(values[6]));
+        }
+        for (uint256 i; i < reconOffsets.length; ++i) {
+            _writeWord(runtime, reconOffsets[i], bytes32(values[7]));
+        }
         return keccak256(runtime);
     }
 

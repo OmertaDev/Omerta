@@ -9,35 +9,6 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol
 import {IAcquisitionAuthorityV2} from "./interfaces/IAcquisitionAuthorityV2.sol";
 
 contract AcquisitionAuthority is IAcquisitionAuthorityV2, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
-    struct AuthoritySnapshot {
-        uint256 snapshotVersion;
-        address factory;
-        bytes32 manifestHash;
-        address registry;
-        address core;
-        address budgetBook;
-        address intentExecution;
-        address reconciliation;
-        bool finalized;
-        address currentOwner;
-        address currentPendingOwner;
-        bool isPaused;
-        address currentOperator;
-        address pendingOperator;
-        uint256 currentOperatorGeneration;
-        uint256 sharedO2Nonce;
-        uint256 cancelNonce;
-        uint256 currentIngressGeneration;
-        uint256 currentActiveIngressGeneration;
-        address activeIngress;
-        bytes32 activeIngressConfigHash;
-        address pendingIngress;
-        bytes32 pendingIngressConfigHash;
-        uint256 currentNominationNonce;
-        bytes32 pendingOperatorStateHash;
-        uint256 currentIngressProposalNonce;
-        bytes32 pendingIngressStateHash;
-    }
     uint256 public constant supportedChainId = 4663;
     uint64 public constant OPERATOR_NOMINATION_DELAY = 48 hours;
     uint64 public constant OPERATOR_ACCEPTANCE_WINDOW = 7 days;
@@ -151,11 +122,12 @@ contract AcquisitionAuthority is IAcquisitionAuthorityV2, EIP712, Ownable2Step, 
         _;
     }
 
-    function version() external pure returns (string memory result) {
+    function version() external pure returns (string memory) {
         assembly ("memory-safe") {
-            result := mload(0x40)
-            mstore(result, 1)
-            mstore(add(result, 0x20), shl(248, 0x32))
+            mstore(0, 0x20)
+            mstore(0x20, 1)
+            mstore(0x40, shl(248, 0x32))
+            return(0, 0x60)
         }
     }
 
@@ -212,7 +184,39 @@ contract AcquisitionAuthority is IAcquisitionAuthorityV2, EIP712, Ownable2Step, 
         return (_factory, _manifestHash, _finalized);
     }
 
-    function authoritySnapshot() external view returns (AuthoritySnapshot memory) {
+    function authoritySnapshot()
+        external
+        view
+        returns (
+            uint256,
+            address,
+            bytes32,
+            address,
+            address,
+            address,
+            address,
+            address,
+            bool,
+            address,
+            address,
+            bool,
+            address,
+            address,
+            uint256,
+            uint256,
+            uint256,
+            uint256,
+            uint256,
+            address,
+            bytes32,
+            address,
+            bytes32,
+            uint256,
+            bytes32,
+            uint256,
+            bytes32
+        )
+    {
         PendingOperatorNomination memory p = _pendingMainOperatorNomination;
         PendingIngressProposal memory q = _pendingIngressProposal;
         IngressRecord memory active = _ingressRecords[activeIngressGeneration];
@@ -280,16 +284,63 @@ contract AcquisitionAuthority is IAcquisitionAuthorityV2, EIP712, Ownable2Step, 
     }
 
     function pendingMainOperatorNomination() external view returns (PendingOperatorNomination memory) {
-        return _pendingMainOperatorNomination;
+        assembly ("memory-safe") {
+            let packedActorAndTime := sload(12)
+            let packedWindow := sload(13)
+            mstore(0, sload(9))
+            mstore(0x20, sload(10))
+            mstore(0x40, and(sload(11), 0xffffffffffffffffffffffffffffffffffffffff))
+            mstore(0x60, and(packedActorAndTime, 0xffffffffffffffffffffffffffffffffffffffff))
+            mstore(0x80, and(shr(160, packedActorAndTime), 0xffffffffffffffff))
+            mstore(0xa0, and(packedWindow, 0xffffffffffffffff))
+            mstore(0xc0, and(shr(64, packedWindow), 0xffffffffffffffff))
+            mstore(0xe0, sload(14))
+            return(0, 0x100)
+        }
     }
 
     function pendingIngressProposal() external view returns (PendingIngressProposal memory) {
-        return _pendingIngressProposal;
+        assembly ("memory-safe") {
+            let packedWindow := sload(27)
+            mstore(0, sload(18))
+            mstore(0x20, sload(19))
+            mstore(0x40, and(sload(20), 0xffffffffffffffffffffffffffffffffffffffff))
+            mstore(0x60, and(sload(21), 0xffffffffffffffffffffffffffffffffffffffff))
+            mstore(0x80, sload(22))
+            mstore(0xa0, sload(23))
+            mstore(0xc0, sload(24))
+            mstore(0xe0, sload(25))
+            mstore(0x100, sload(26))
+            mstore(0x120, and(packedWindow, 0xffffffffffffffff))
+            mstore(0x140, and(shr(64, packedWindow), 0xffffffffffffffff))
+            mstore(0x160, and(shr(128, packedWindow), 0xffffffffffffffff))
+            mstore(0x180, sload(28))
+            return(0, 0x1a0)
+        }
     }
 
-    function getIngress(uint256 generation) external view returns (IngressRecord memory record) {
-        record = _ingressRecords[generation];
-        if (record.generation == 0) revert IngressNotFound(generation);
+    function getIngress(uint256 generation) external view returns (IngressRecord memory) {
+        uint256 base;
+        uint256 storedGeneration;
+        assembly ("memory-safe") {
+            mstore(0, generation)
+            mstore(0x20, 29)
+            base := keccak256(0, 0x40)
+            storedGeneration := sload(base)
+        }
+        if (storedGeneration == 0) revert IngressNotFound(generation);
+        assembly ("memory-safe") {
+            let packedTimes := sload(add(base, 6))
+            mstore(0, storedGeneration)
+            mstore(0x20, and(sload(add(base, 1)), 0xffffffffffffffffffffffffffffffffffffffff))
+            mstore(0x40, sload(add(base, 2)))
+            mstore(0x60, sload(add(base, 3)))
+            mstore(0x80, sload(add(base, 4)))
+            mstore(0xa0, sload(add(base, 5)))
+            mstore(0xc0, and(packedTimes, 0xffffffffffffffff))
+            mstore(0xe0, and(shr(64, packedTimes), 0xffffffffffffffff))
+            return(0, 0x100)
+        }
     }
 
     function transferOwnership(address newOwner) public override finalizedState nonReentrant onlyOwner {
@@ -502,11 +553,12 @@ contract AcquisitionAuthority is IAcquisitionAuthorityV2, EIP712, Ownable2Step, 
         _sharedO2Nonce = newNextNonce;
         bytes32 topic = _OUTFLOW_NONCE_INVALIDATED_TOPIC;
         uint256 generation = operatorGeneration;
+        ReasonCode reason = ReasonCode.OUTFLOW_NONCE_INVALIDATED;
         assembly ("memory-safe") {
             let data := mload(0x40)
             mstore(data, current)
             mstore(add(data, 0x20), newNextNonce)
-            mstore(add(data, 0x40), 11)
+            mstore(add(data, 0x40), reason)
             mstore(add(data, 0x60), detailsHash)
             log3(data, 0x80, topic, operator, generation)
         }
@@ -521,9 +573,10 @@ contract AcquisitionAuthority is IAcquisitionAuthorityV2, EIP712, Ownable2Step, 
         _pause();
         bytes32 topic = _RISK_PAUSED_TOPIC;
         address actor = _msgSender();
+        ReasonCode reason = ReasonCode.RISK_PAUSED;
         assembly ("memory-safe") {
             let data := mload(0x40)
-            mstore(data, 7)
+            mstore(data, reason)
             mstore(add(data, 0x20), detailsHash)
             log2(data, 0x40, topic, actor)
         }
@@ -723,10 +776,11 @@ contract AcquisitionAuthority is IAcquisitionAuthorityV2, EIP712, Ownable2Step, 
         bytes32 topic = _INGRESS_DISABLED_TOPIC;
         address ingress = record.ingress;
         address actor = _msgSender();
+        ReasonCode reason = ReasonCode.INGRESS_DISABLED;
         assembly ("memory-safe") {
             let data := mload(0x40)
             mstore(data, disabledAt)
-            mstore(add(data, 0x20), 18)
+            mstore(add(data, 0x20), reason)
             mstore(add(data, 0x40), detailsHash)
             log4(data, 0x60, topic, generation, ingress, actor)
         }
