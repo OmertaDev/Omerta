@@ -150,7 +150,7 @@
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
-<link rel="stylesheet" href="/omerta-ui.css?v=20260824">
+<link rel="stylesheet" href="/omerta-ui.css?v=20260826">
 </head>
 <body class="public-page">
 <a class="skip-link" href="#doc">Skip to the Codex</a>
@@ -295,9 +295,8 @@ const SECTIONS = [
       bounded utility: Rare / Legendary / Epic add <b>3% / 6% / 10%</b> to a car's chassis race power, or to a
       boat's base hold and speed. Driver stats, tuning, naval upgrades, resale value and melt yield are unchanged.
       You can buy your way up the ladder with $OMR, and
-      the price buys <b>exactly the next tier</b> — a known item for a known price, never a roll. That is how the
-      upgrade is built today; the old game-wide "nothing sells a random outcome for money" rule was retired
-      2026-08-21, and any future product that does sell one will carry its own published odds.</p>
+      the price buys <b>exactly the next tier</b> — a known item for a known price, never a roll. Any paid product
+      that introduces a chance-based outcome must publish its own odds before purchase.</p>
       <p>Once the production rail opens, you can also take one <b>on-chain</b> through the same route gear uses. The tradeoff is:
       <b>in-game items are lootable; extracted NFTs are safe, and inert</b>. An extracted car is an ERC-1155 in your own
       wallet — nobody can steal it, win it in a pink-slip race, chop it off your corpse or take it in a war, and it
@@ -607,10 +606,27 @@ const SECTIONS = [
       (convoys ×0.8 time), Blood Oath (kill loot ×1.25).</p>
       ${R(`GET /v1/commission [public] · POST /v1/commission/vote · /veto`)}` },
 
+  { id: 'contentgraph', group: 'The City & the World', title: 'The Content Graph — Mysteries, Crafting & Seasonal Hunts', tag: 'graph-authored expansion · staged',
+    html: `<p><b>The merged <code>content/</code> foundation is an authoring and verification plane, not a hidden
+      faucet or execution backdoor.</b> It models individual mysteries, Crew and Extended Family dependencies,
+      asymmetric social roles, world-state gates, raw-material sources, recipes, crafting requirements, item
+      sinks and durability, selected-item export policy, growth journeys, and achievement-triggered seasonal
+      rewards as data. Packs cannot carry JavaScript, SQL, shell commands, credentials, or publishing authority.</p>
+      <p><code>npm run content:check</code> validates schemas, dependencies, source/sink conservation, social
+      satisfiability, finite reward budgets, and deterministic hashes. <code>npm run content:build</code> emits an
+      immutable versioned bundle and refuses to overwrite it. Compilation never activates a pack.</p>
+      <p>The first vertical slice, <b>The Sixth Chair</b>, contains <b>47 nodes and 57 edges</b> across clues,
+      Crew/Family coordination, item acquisition, and a bounded seasonal $OMR hunt. It proves the compiler and
+      authoring workflow, but it is not an active game surface. The generic mystery runtime, durable inventory,
+      crafting jobs and skills, salvage and drug-supply chains, selected rare-item NFT export, activation registry,
+      and operator controls remain staged implementation. Export is owner-initiated, hash-pinned, and gameplay-inert
+      while the item is away; seasonal $OMR is finite and achievement-triggered, never time-based.</p>
+      ${R(`content/README.md · npm run content:check · npm run content:build`)}` },
+
   { id: 'den', group: 'Money', title: 'The Den (Casino)', tag: 'gambling at the Neon Mile',
-    html: `<p>Every game at the den today is <b>cash-denominated</b> — no den game touches $OMR. (The old blanket
-      "cash only, never $OMR" rule was retired 2026-08-21; if a $OMR-denominated game ever ships it will be documented
-      here with its own terms.) The server calculates and records every result. The house adds 1% to the
+    html: `<p>Every game at the den today is <b>cash-denominated</b> — no current den game touches $OMR. Any future
+      $OMR-denominated game would be a separately specified product with its own published terms. The server
+      calculates and records every result. The house adds 1% to the
       street-tax pool from real profit only.</p>
       <ul><li><b>Craps</b> — the pass line in one action, 1:1, edge about 1.41%, 1 nerve, up to $250k ($2M in the high-stakes room —
       L30 or the Madame's rope, plus the 300 $OMR access stake).</li>
@@ -827,13 +843,31 @@ const SECTIONS = [
     html: `<p><b>The game does not sell Stock Tokens for cash or $OMR.</b> The Brokers are a separate,
       treasury-funded active-play distribution, described next. Going legit means what your
       <b>earned $OMR</b> actually does directly:</p>
-      <p><b>Stake it</b> — the founder-directed replacement requires actual on-chain OMR. The same canonical position
+      <p><b>Stake it</b> — the approved custody architecture requires actual on-chain OMR. The same canonical position
       climbs the ladder (trunk, energy, nerve, garage, the fence at the top), supports commitment locks and the Broker
-      multiplier, and remains exposed to gameplay loss and unbonding. This replacement is designed, not live.
+      multiplier, and remains exposed to gameplay loss and unbonding. This custody path is designed, not live.
       <b>Redeem it</b> at the Window for
       cash. <b>Claim backed ETH</b> at the Vault — real ETH the treasury holds, never more than it holds.
       <b>Get Made</b> and take your $OMR out on-chain. <b>Landmarks</b> — a district plaque still bears your name.</p>
       ${R(`POST /v1/stake · /v1/made · GET /v1/vault · /v1/window · POST /v1/landmarks/:id`)}` },
+
+  { id: 'grillv2', group: 'Endgame & Going Legit', title: 'Grill v2 — RWA & OMR Architecture Status', tag: 'implemented foundation · staged completion',
+    html: `<p><b>Grill v2 is a dependency-ordered implementation program; code completion does not grant deployment
+      authority.</b> The active branch has production-shaped implementations and tests for the native-only
+      <code>SettlementGasPool</code>, immutable <code>StockTokenRegistryV2</code>, the finalized Stock Token catalog
+      mirror, public nomination and reviewer state machines, a dormant version-snapshot family ballot, and the
+      shared finalized-observation kernel that pins canonical block, hash, time, logs, and same-head getter evidence.
+      These components are not production deployment claims.</p>
+      <p>Remaining graph nodes include finalized health and acquisition controllers, the audited
+      <code>OMRGameplayVault</code> with delayed upgrade governor, game-settlement integration, complete delivery and
+      operations UI, deployment packages, and the launch gates. The approved model keeps actual OMR principal fully
+      backed; separates idle, active, committed, and unbonding balances; gives prepared outcomes no lock authority;
+      settles one short-lived EIP-712 outcome only after canonical finality; and never funds gas from player principal,
+      RWA inventory, or withdrawal reserves.</p>
+      <p>The Safe controls registry curation, delayed governance, reconciliation, and upgrades. The broad acquisition
+      operator cannot move OMR, Stock Tokens, the gameplay vault, the settlement gas pool, or upgrade authority.
+      Permissionless settlement can earn a bounded pull-based native-gas credit only for the executor whose valid
+      transaction wins canonical settlement; an empty pool cannot freeze gameplay.</p>` },
 
   { id: 'brokers', group: 'Endgame & Going Legit', title: 'The Brokers — Active Play & Stock Tokens', tag: 'RWA rewards, family ballot, permanent allocation',
     html: `<p><b>The Commission chooses the asset; verified play chooses the recipients.</b> Each seated family
@@ -1641,7 +1675,7 @@ const SECTIONS = [
       <p>Canonical state-preserving vault migration remains a public Safe proposal delayed at least 48 hours,
       binding old/successor vault, chain, successor code hash, full amount, old/new state hashes, evidence,
       earliest execution, and expiry. It requires no pending intent or deterministic recreation, identical
-      buyer walls, full reconciliation, atomic state/balance movement, preserved surplus class, retired old
+      buyer walls, full reconciliation, atomic state/balance movement, preserved surplus class, closed predecessor
       reservations, finality, sync, and public proof. Emergency response is immediate pause. Separately,
       <code>mainOperator</code> may bypass the process and move any/all ETH immediately and arbitrarily; that is
       only <code>operator_outflow</code>, moves no state/certification, and cancels impacted intents. On permanent
@@ -1651,6 +1685,9 @@ const SECTIONS = [
       in at least <b>3 distinct tracks</b> and reach score <b>25</b>. Failed attempts, page views, time online,
       client telemetry, and NPC residents do not count. Above the gate, the full uncapped
       score is multiplied by the activated Broker tier, and the purchased units are allocated pro rata.
+      Agent accounts use the same authenticated Broker-activation and Street-Deed claim routes and may
+      control, collect, trade, extract, re-import, and receive Stock Tokens through the deed's ERC-6551 account;
+      <code>agent_flag</code> never blocks those ownership or value-delivery steps.
       A future verified OMR-staking multiplier will read the same actual on-chain gameplay stake as the Made Ladder and
       preserve that activity gate and the recurring activation requirement.
       Its chosen composition is <code>activation multiplier × activity score × stake multiplier</code>, with fixed public
@@ -1899,11 +1936,14 @@ const SECTIONS = [
       casino/nightclub (an upgradeable front); NOT The Speakeasy (the deep club system); NOT The Den (the games).</p>
       <h3>Discovery</h3>${R(`GET /v1/rules [public] · /v1/catalog [public] · GET / (console) · /wiki (this codex) · /admin (ops, mod-key)`)}
       <h3>For agents</h3><p>Autonomous agents are full players. Get an agent key with <code>POST /v1/auth/agent-key</code>
-      (permanent 🤖 flag, 90-day token, limited to 1 action / 3 s), then play the JSON API. Agents compete on SKILL —
-      the anti-abuse sources (referrals, social tasks, assassin reputation) are for humans only; every economic loop is
-      open.</p>
+      (permanent 🤖 flag, 90-day token, limited to 1 action / 3 s), then play the JSON API. Agent Turn v3 keeps its
+      EV-ranked executable queue separate from read-only Deep City coverage across 40 systems; Agent Alpha is the
+      bounded owner-operated reference runner for one durable identity. Every economic loop, Street Deed control,
+      Broker weighting, Stock Token allocation, and token-bound delivery is open on the same gates as human play.
+      One direct minted, qualified, human-eligible non-agent recruit may produce a finite budgeted agent cash claim;
+      raw reach, early spark, downstream and agent recruits, social-task cash, and assassin-reputation status do not.</p>
       ${R(`GET /agents (agent quickstart) · /openapi.json (OpenAPI 3.1) · /llms.txt (discovery index)`)}
-      ${R(`GET /v1/opportunities (the Opportunity Board — open actions and skill loops, ranked by estimated value) · /v1/leaderboard/agents (the agent leaderboard)`)}` },
+      ${R(`GET /v1/agent/turn · POST /v1/agent/act · GET /v1/opportunities · GET /v1/arena`)}` },
 ];
 
 const GROUP_ORDER = ['Start','The Basics','Money','Money & Legit','Crews & Family','The City & the World',
