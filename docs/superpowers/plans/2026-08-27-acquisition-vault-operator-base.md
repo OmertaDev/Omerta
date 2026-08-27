@@ -1748,10 +1748,13 @@ depositCanonical(bytes32 sourceEventId)
   ingress rotations so every invariant run terminates with useful coverage. Add
   adversarial attempts to jump the nonce directly to max-1/max and role changes
   between proposal and acceptance/activation.
-  Include insufficient-gas ERC-1271 traces at both exact guards, wrong-caller/no-
-  active direct actions, early exact-ID proposal expiry, pending-only Safe
-  disable, and counter-exhaustion fixtures with independently derived literal
-  label hashes.
+  Include a full replacement-path insufficient-gas trace for the reachable
+  pre-call guard, plus direct test-derived-harness boundary traces for both
+  shared internal gas seams, including the defensive post-call seam's exact
+  `49_999/50_000` boundary. Do not require or manufacture an arithmetically
+  unreachable full-path post-call failure. Also include wrong-caller/no-active
+  direct actions, early exact-ID proposal expiry, pending-only Safe disable, and
+  counter-exhaustion fixtures with independently derived literal label hashes.
 
 - [ ] **Step 2: Add reference-model fuzz tests**
 
@@ -1784,8 +1787,11 @@ depositCanonical(bytes32 sourceEventId)
   accountingSequence increments exactly once per successful financial mutation
   every component kind is non-NONE and its subject/id matches the exact table
   failed actions change no nonce/sequence/ID/cap/bucket/event state
-  signature gas-guard failures are InsufficientSignatureValidationGas and
-    wallet-controlled validation failures are InvalidSignature
+  reachable full-path pre-call gas-guard failures are
+    InsufficientSignatureValidationGas; both shared seam boundaries are proven
+    directly by the test-derived harness, the defensive post-call seam is not
+    required to fail through a conforming full path, and wallet-controlled
+    validation failures are InvalidSignature
   pending-only operator disable emits cancellation then 0->0 change, increments
     generation once, and preserves outflowNonce
   forced ETH never becomes A without Safe reclassification
@@ -2014,7 +2020,10 @@ This plan is complete only when:
 - ERC-1271 uses the exact post-calldata `160_000` pre-call threshold, exact
   `100_000` requested gas, and `50_000` post-validation guard; gas-guard failures
   are `InsufficientSignatureValidationGas`, wallet failures are
-  `InvalidSignature`, and every failure leaves state/logs unchanged;
+  `InvalidSignature`, and every failure leaves state/logs unchanged. The
+  production pre-call failure is exercised through the full path; both exact
+  helper boundaries are exercised through the shared test-derived harness, and
+  completion must not require an unreachable full-path post-call failure;
 - conservation, unique capped repair-first deposits, sequence continuity,
   32/32 future bounds, and the future 67-component ceiling are proven exactly;
 - the pre-vote record is proven finalized-before-open only by the later dedicated
