@@ -809,9 +809,15 @@ error BudgetNotFound(uint256 ballotDay);
 
 Inherited errors reachable through the allowlisted functions are exactly
 `OwnableUnauthorizedAccount(address)`, `OwnableInvalidOwner(address)`,
-`EnforcedPause()`, `ExpectedPause()`, and
-`ReentrancyGuardReentrantCall()`. ECDSA and wallet-controlled errors never
-escape the closed `InvalidSignature` boundary.
+`EnforcedPause()`, `ExpectedPause()`, `ReentrancyGuardReentrantCall()`,
+`InvalidShortString()`, and `StringTooLong(string)`. The last two are emitted
+into the compiled ABI by the mandated OpenZeppelin `EIP712`/`ShortStrings`
+inheritance even though the fixed constructor literals cannot trigger them in
+normal O1 operation; omitting them would make the exact compiled-ABI gate
+incompatible with the required inheritance. ECDSA and wallet-controlled errors
+never escape the closed `InvalidSignature` boundary, and no OpenZeppelin ECDSA
+custom error is part of the compiled O1 ABI because the implementation uses the
+non-reverting `tryRecoverCalldata` path.
 
 ### Exact validation and error partition
 
