@@ -1,6 +1,6 @@
 # Acquisition Constellation Task 3 — Core and Cap-Bridge Architecture Freeze
 
-**Status:** proposed architecture freeze; implementation, independent review, production approval, deployment, funding, migration, and activation are all pending
+**Status:** architecture freeze independently approved at 23b58923 (security C0/I0/M0; specification C0/I0/M0); implementation, production approval, deployment, funding, migration, and activation remain pending
 
 **Inputs:** the independently approved Task 0 ownership/collision crosswalk, the approved constellation architecture, the independently approved Task 2 closure at e89370b2, the approved historical Task 5 behavioral oracle at ee857436, and the grill-completion acceptance graph.
 
