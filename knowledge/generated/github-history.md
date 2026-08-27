@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `86675fa77e32`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `021a50f9bb25`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1022 |
+| Commits in clone | 1024 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-27 — fix: preserve authored branch in named CI checkout |
+| Latest commit | 2026-08-27 — fix: respect iPhone PWA header safe area |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 221 |
+| OmertaDev | 223 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -29,7 +29,7 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 492 | yes |
-| [public/index.html](../../public/index.html) | 383 | yes |
+| [public/index.html](../../public/index.html) | 384 | yes |
 | [src/server.js](../../src/server.js) | 343 | yes |
 | [schema.sql](../../schema.sql) | 257 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
@@ -61,10 +61,10 @@
 | [src/business.js](../../src/business.js) | 39 | yes |
 | [test/gates.js](../../test/gates.js) | 36 | yes |
 | [src/chain.js](../../src/chain.js) | 36 | yes |
-| knowledge/generated/github-history.md | 33 | historical |
-| knowledge/generated/graph-summary.md | 33 | historical |
-| knowledge/generated/graph.json | 33 | historical |
-| knowledge/generated/inventory.md | 33 | historical |
+| knowledge/generated/github-history.md | 34 | historical |
+| knowledge/generated/graph-summary.md | 34 | historical |
+| knowledge/generated/graph.json | 34 | historical |
+| knowledge/generated/inventory.md | 34 | historical |
 | [public/admin.html](../../public/admin.html) | 31 | yes |
 | [DEPLOY.md](../../DEPLOY.md) | 30 | yes |
 | [src/loans.js](../../src/loans.js) | 29 | yes |
