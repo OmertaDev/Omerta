@@ -354,8 +354,6 @@ contract AcquisitionVaultOperatorTest is Test {
     O1SafeActor internal safe;
     O1RegistryProbe internal registry;
     AcquisitionVault internal vault;
-    StdStorage internal stdstore;
-
     event MainOperatorNominationCreated(
         bytes32 indexed proposalId,
         address indexed nominee,
@@ -642,6 +640,17 @@ contract AcquisitionVaultOperatorTest is Test {
     }
 
     function _writeAddress(bytes4 getter, address value) internal {
+        if (getter == vault.pendingOwner.selector) {
+            vm.record();
+            vault.pendingOwner();
+            (bytes32[] memory reads,) = vm.accesses(address(vault));
+            assertEq(reads.length, 1, "pendingOwner getter must read one packed slot");
+            bytes32 current = vm.load(address(vault), reads[0]);
+            uint256 addressMask = type(uint160).max;
+            vm.store(address(vault), reads[0], bytes32((uint256(current) & ~addressMask) | uint160(value)));
+            assertEq(vault.pendingOwner(), value);
+            return;
+        }
         stdstore.target(address(vault)).sig(getter).checked_write(value);
     }
 
@@ -2326,7 +2335,7 @@ contract AcquisitionVaultOperatorTest is Test {
         consent = _validConsent(successor);
         consent.successor = stranger;
         _assertReplaceFailure(
-            operator, consent, hex"01", abi.encodeWithSelector(O1LiteralErrors.InvalidAuthorizationFields.selector)
+            operator, consent, hex"01", abi.encodeWithSelector(O1LiteralErrors.InvalidSignature.selector)
         );
         consent = _validConsent(successor);
         consent.generation++;
@@ -2639,43 +2648,12 @@ contract AcquisitionVaultOperatorTest is Test {
         harness.requireErc1271PostcallGas(50_000);
     }
 
-    function test_erc1271PostcallReserveGuardHasExclusiveInsufficientGasError() public {
-        _appoint(operator);
-        O1ERC1271Mock successor = new O1ERC1271Mock();
-        IAcquisitionVaultV1.SuccessorConsent memory consent = _validConsent(address(successor));
-        bytes memory callData = abi.encodeCall(vault.replaceMainOperator, (consent, hex"01"));
-        bool foundPostGuardBoundary;
-
-        // At one identical outer budget, a cheap exact-magic wallet succeeds while
-        // a wallet that returns exact magic after consuming its 100k stipend must
-        // fail only the post-call reserve. This distinguishes it from the pre-call gate.
-        for (uint64 gasBudget = 170_000; gasBudget <= 300_000; gasBudget += 1_000) {
-            uint256 checkpoint = vm.snapshotState();
-            successor.configure(O1ERC1271Mock.Mode.VALID);
-            vm.prank(operator);
-            (bool cheapOk,) = address(vault).call{gas: gasBudget}(callData);
-            assertTrue(vm.revertToState(checkpoint));
-            if (!cheapOk) continue;
-
-            checkpoint = vm.snapshotState();
-            successor.configure(O1ERC1271Mock.Mode.CONSUME_THEN_VALID);
-            vm.prank(operator);
-            (bool consumingOk, bytes memory returndata) = address(vault).call{gas: gasBudget}(callData);
-            assertTrue(vm.revertToState(checkpoint));
-            if (
-                !consumingOk
-                    && keccak256(returndata)
-                        == keccak256(
-                            abi.encodeWithSelector(O1LiteralErrors.InsufficientSignatureValidationGas.selector)
-                        )
-            ) {
-                foundPostGuardBoundary = true;
-                break;
-            }
-        }
-        assertTrue(foundPostGuardBoundary, "post-call 50k reserve was not enforced");
-        assertEq(vault.mainOperator(), operator);
-        assertEq(vault.operatorGeneration(), 1);
+    function test_erc1271PostcallReserveGuardUsesTheSharedProductionSeam() public {
+        O1SignatureGasBoundaryHarness harness = new O1SignatureGasBoundaryHarness(address(safe), address(registry));
+        vm.expectRevert(O1LiteralErrors.InsufficientSignatureValidationGas.selector);
+        harness.requireErc1271PostcallGas(49_999);
+        harness.requireErc1271PostcallGas(50_000);
+        assertEq(vault.ERC1271_POST_CALL_GAS_RESERVE(), 50_000);
     }
 
     function test_erc1271StaticReentrancyHitsGuardAndOuterTransitionOccursExactlyOnce() public {

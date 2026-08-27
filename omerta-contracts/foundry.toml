@@ -6,6 +6,10 @@ solc_version = "0.8.26"
 optimizer = true
 optimizer_runs = 800
 evm_version = "cancun"
+fs_permissions = [
+  { access = "read", path = "./out" },
+  { access = "read", path = "./src" },
+]
 remappings = [
   "@openzeppelin/=lib/openzeppelin-contracts/",
   "v4-core/=lib/v4-core/src/",
