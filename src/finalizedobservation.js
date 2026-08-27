@@ -129,7 +129,11 @@ function canonicalJson(value, seen = new Set()) {
   if (typeof value === 'number') {
     fail('fo_bad_config', 'evidence numbers must be canonical decimal strings');
   }
-  if (typeof value === 'bigint') return JSON.stringify(value.toString());
+  if (typeof value === 'bigint') {
+    // The unquoted marker is outside JSON's string/object/array/boolean/null grammar, so
+    // no accepted plain evidence value can share commitment bytes with a BigInt.
+    return `bigint:${value.toString()};`;
+  }
   if (typeof value === 'undefined' || typeof value === 'function'
     || typeof value === 'symbol') fail('fo_bad_config', 'evidence must be plain serializable data');
   if (value !== null && typeof value === 'object' && seen.has(value)) {
@@ -653,6 +657,56 @@ export async function observeFinalized({ client, identity, checkpoint = null, to
   return deepFreeze({ ...payload, evidenceHash });
 }
 
+function validateCommitEventBlocks(eventBlocks, logs) {
+  const malformed = () => fail('fo_bad_config', 'commit event-block evidence is malformed');
+  if (!Array.isArray(eventBlocks) || !Array.isArray(logs)) malformed();
+
+  const expectedBlocks = [];
+  const expectedByNumber = new Map();
+  for (const log of logs) {
+    if (!log || typeof log !== 'object'
+      || typeof log.blockNumber !== 'string' || !DECIMAL_RE.test(log.blockNumber)
+      || typeof log.blockHash !== 'string' || !BYTES32_RE.test(log.blockHash)) {
+      malformed();
+    }
+    const priorHash = expectedByNumber.get(log.blockNumber);
+    if (priorHash !== undefined) {
+      if (priorHash !== log.blockHash) malformed();
+      continue;
+    }
+    expectedByNumber.set(log.blockNumber, log.blockHash);
+    expectedBlocks.push({ blockNumber: log.blockNumber, blockHash: log.blockHash });
+  }
+
+  if (eventBlocks.length !== expectedBlocks.length) malformed();
+  const seenNumbers = new Set();
+  const exactKeys = ['blockHash', 'blockNumber', 'blockTimestamp'];
+  for (let index = 0; index < eventBlocks.length; index++) {
+    const eventBlock = eventBlocks[index];
+    if (!eventBlock || typeof eventBlock !== 'object'
+      || Object.getPrototypeOf(eventBlock) !== Object.prototype) {
+      malformed();
+    }
+    const keys = Reflect.ownKeys(eventBlock).sort();
+    if (keys.length !== exactKeys.length
+      || keys.some((key, keyIndex) => key !== exactKeys[keyIndex])) {
+      malformed();
+    }
+    if (typeof eventBlock.blockNumber !== 'bigint' || eventBlock.blockNumber < 0n
+      || typeof eventBlock.blockTimestamp !== 'bigint' || eventBlock.blockTimestamp < 0n
+      || typeof eventBlock.blockHash !== 'string' || !BYTES32_RE.test(eventBlock.blockHash)) {
+      malformed();
+    }
+    const blockNumber = eventBlock.blockNumber.toString();
+    if (seenNumbers.has(blockNumber)) malformed();
+    seenNumbers.add(blockNumber);
+    const expected = expectedBlocks[index];
+    if (blockNumber !== expected.blockNumber || eventBlock.blockHash !== expected.blockHash) {
+      malformed();
+    }
+  }
+}
+
 function validateCommitObservation(observation) {
   if (!observation || typeof observation !== 'object') {
     fail('fo_bad_config', 'commit requires completed immutable finalized evidence');
@@ -663,6 +717,7 @@ function validateCommitObservation(observation) {
       && (path[2] === 'blockNumber' || path[2] === 'blockTimestamp'),
     requireFrozen: true,
   }));
+  validateCommitEventBlocks(snapshot.eventBlocks, snapshot.logs);
   let identity;
   let head;
   let horizon;

@@ -674,6 +674,23 @@ await test('changing only one event-block timestamp changes the complete evidenc
   assert.notEqual(first.evidenceHash, second.evidenceHash);
 });
 
+await test('event-block BigInts use the checked-in type-disjoint commitment vector', async () => {
+  const TYPE_DISJOINT_COMMITMENT = '0xe05c04edc127cb81c68faed9facee1a4d5cdb5465af79fb69846634aa87a58fa';
+  const LEGACY_STRING_COLLISION = '0xc1131d3847cdf761cc8f08c14add0fd396c018f6eb3233fcaa8bbe26210b2f56';
+  const observation = await observe(new FakePublicClient({
+    finalized: 101n,
+    logs: [eventLog(101n)],
+  }), {
+    identity: { startBlock: 101n },
+    limits: { maxBlockSpan: 3n },
+    readGetters: async () => ({}),
+  });
+  assert.equal(observation.evidenceHash, TYPE_DISJOINT_COMMITMENT,
+    'the hand-checked vector tags BigInt values outside JSON string/object grammar');
+  assert.notEqual(observation.evidenceHash, LEGACY_STRING_COLLISION,
+    'a BigInt commitment cannot equal the equivalent decimal-string commitment');
+});
+
 await test('returned event-block time evidence rejects post-return mutation', async () => {
   const observation = await observe(new FakePublicClient({ logs: [eventLog(START)] }), {
     readGetters: async () => ({}),
@@ -1344,6 +1361,14 @@ const transactionObservation = () => observe(new FakePublicClient({
   logs: [eventLog(START)],
 }), { readGetters: async () => ({ version: '1' }) });
 
+const twoEventBlockTransactionObservation = () => observe(new FakePublicClient({
+  finalized: START + 1n,
+  logs: [
+    eventLog(START),
+    eventLog(START + 1n, { transactionHash: hash('c') }),
+  ],
+}), { readGetters: async () => ({ version: '1' }) });
+
 await test('all RPC finishes before pool connection and BEGIN', async () => {
   const trace = [];
   const client = new FakePublicClient({
@@ -1795,6 +1820,87 @@ await test('commit evidence permits BigInt only in typed event-block authority f
   assert.equal(error.message, 'commit evidence contains unsupported data');
   assert.equal(pool.connectCount, 0);
 });
+
+for (const field of ['blockNumber', 'blockTimestamp']) {
+  await test(`commit rejects same-hash decimal-string ${field} forgery before pool acquisition`, async () => {
+    const observation = await transactionObservation();
+    const originalEventBlock = observation.eventBlocks[0];
+    const forgedEventBlock = Object.freeze({
+      ...originalEventBlock,
+      [field]: originalEventBlock[field].toString(),
+    });
+    const forged = Object.freeze({
+      ...observation,
+      eventBlocks: Object.freeze([forgedEventBlock]),
+    });
+    assert.equal(forged.evidenceHash, observation.evidenceHash,
+      'the adversary retains the original observation commitment');
+    assert.equal(typeof forged.eventBlocks[0][field], 'string');
+    assert(Object.isFrozen(forged));
+    assert(Object.isFrozen(forged.eventBlocks));
+    assert(Object.isFrozen(forged.eventBlocks[0]));
+    const trace = [];
+    const pool = new AtomicTestPool(trace);
+    const error = await rejectsCode(
+      () => commitFinalizedObservation(pool, forged, adapterFor()), 'fo_bad_config');
+    assert.equal(error.message, 'commit event-block evidence is malformed');
+    assert.equal(pool.connectCount, 0);
+    assert.deepEqual(trace, [], 'commit validation rejects before pool.connect or BEGIN');
+  });
+}
+
+for (const [name, mutateRecord] of [
+  ['an extra reflected key', (record) => ({ ...record, [REFLECTED_SECRET]: 'hidden' })],
+  ['a missing timestamp key', (record) => {
+    const { blockTimestamp, ...missingTimestamp } = record;
+    return missingTimestamp;
+  }],
+  ['a negative block number', (record) => ({ ...record, blockNumber: -1n })],
+  ['a negative block timestamp', (record) => ({ ...record, blockTimestamp: -1n })],
+  ['a noncanonical block hash', (record) => ({ ...record, blockHash: `0x${'A'.repeat(64)}` })],
+  ['a log/block hash disagreement', (record) => ({ ...record, blockHash: hash('f') })],
+]) {
+  await test(`commit rejects event-block evidence with ${name} before pool acquisition`, async () => {
+    const observation = await transactionObservation();
+    const forged = Object.freeze({
+      ...observation,
+      eventBlocks: Object.freeze([Object.freeze(mutateRecord(observation.eventBlocks[0]))]),
+    });
+    assert.equal(forged.evidenceHash, observation.evidenceHash,
+      'the malformed record retains the original observation commitment');
+    const trace = [];
+    const pool = new AtomicTestPool(trace);
+    const error = await rejectsCode(
+      () => commitFinalizedObservation(pool, forged, adapterFor()), 'fo_bad_config');
+    assert.equal(error.message, 'commit event-block evidence is malformed');
+    assert.doesNotMatch(error.message, /password|private|postgres|request-body|hidden/i);
+    assert.doesNotMatch(JSON.stringify(error), /password|private|postgres|request-body|hidden/i);
+    assert.equal(pool.connectCount, 0);
+    assert.deepEqual(trace, [], 'commit validation rejects before pool.connect or BEGIN');
+  });
+}
+
+for (const [name, mutateRecords] of [
+  ['duplicate entries', (records) => [records[0], records[0]]],
+  ['non-provider order', (records) => [records[1], records[0]]],
+]) {
+  await test(`commit rejects eventBlocks with ${name} before pool acquisition`, async () => {
+    const observation = await twoEventBlockTransactionObservation();
+    const forged = Object.freeze({
+      ...observation,
+      eventBlocks: Object.freeze(mutateRecords(observation.eventBlocks)),
+    });
+    assert.equal(forged.evidenceHash, observation.evidenceHash,
+      'the malformed event-block array retains the original observation commitment');
+    const trace = [];
+    const pool = new AtomicTestPool(trace);
+    const error = await rejectsCode(
+      () => commitFinalizedObservation(pool, forged, adapterFor()), 'fo_bad_config');
+    assert.equal(error.message, 'commit event-block evidence is malformed');
+    assert.equal(pool.connectCount, 0);
+    assert.deepEqual(trace, [], 'commit validation rejects before pool.connect or BEGIN');
+  });
+}
 
 await test('caller cannot pass a promise, mutable evidence, or a pre-opened client', async () => {
   const observation = await transactionObservation();
