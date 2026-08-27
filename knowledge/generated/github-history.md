@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `fb0c18d3af44`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `982ba81b2db3`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 995 |
+| Commits in clone | 996 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-27 — fix: bind catalog readiness to getter identity |
+| Latest commit | 2026-08-27 — docs: refresh catalog fix knowledge |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 194 |
+| OmertaDev | 195 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -33,7 +33,7 @@
 | [src/server.js](../../src/server.js) | 340 | yes |
 | [schema.sql](../../schema.sql) | 261 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
-| [SPEC.md](../../SPEC.md) | 245 | yes |
+| [SPEC.md](../../SPEC.md) | 246 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 169 | yes |
 | [package.json](../../package.json) | 133 | yes |
@@ -63,11 +63,11 @@
 | [DEPLOY.md](../../DEPLOY.md) | 30 | yes |
 | [public/admin.html](../../public/admin.html) | 30 | yes |
 | [test/migrate.js](../../test/migrate.js) | 29 | yes |
+| knowledge/generated/github-history.md | 28 | historical |
+| knowledge/generated/graph-summary.md | 28 | historical |
+| knowledge/generated/graph.json | 28 | historical |
+| knowledge/generated/inventory.md | 28 | historical |
 | [src/kitchen.js](../../src/kitchen.js) | 28 | yes |
-| [src/world.js](../../src/world.js) | 28 | yes |
-| knowledge/generated/github-history.md | 27 | historical |
-| knowledge/generated/graph-summary.md | 27 | historical |
-| knowledge/generated/graph.json | 27 | historical |
 
 ## Pull requests
 
