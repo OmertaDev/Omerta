@@ -634,11 +634,15 @@ reverts every earlier event. Static Authority reads never emit events.
 4. **BudgetBook:** exactly one immutable pre-vote authorization record per
    `ballotDay`, without funds, consumption, tombstones, cancellation, rewrite,
    replacement, or reservation state.
-5. **Intent:** IDs, oracle/adapter/route commitments, and attempt consumption;
-   freeze Stock Token observation bindings but keep every stock mutation dormant.
+5. **Intent:** intent/attempt schemas and identities plus oracle/adapter/route
+   commitments; freeze dormant interfaces only. Every execution or consumption
+   entry point is absent or fails before state change and before any adapter call.
 6. **Reconciliation:** phases, evidence, repair causes, dispositions, incidents,
-   typed leaves, and the first callable Core Stock Token observation/accounting
-   path with atomic outcome handling; this completes master slice 5 (A3+R).
+   typed leaves, actual attempt consumption immediately before the adapter call,
+   adapter invocation, authoritative post-call Core native/Stock Token
+   observation, outcome journaling, and any required Reconciliation case in one
+   atomic path; this first callable execution path completes master slice 5
+   (A3+R).
 7. **O2 integration:** direct/relayed authority, cancellation nonce, 0/1/32/67 components,
    exact ordering and batch rejection.
 8. **Stateful integration:** conservation, nonce rollback, phase deadlock resistance,
