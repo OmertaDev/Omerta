@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `d892bd31323b`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `db725ffb4fde`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1012 |
+| Commits in clone | 1014 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-27 — feat(ui): upgrade site-wide experience |
+| Latest commit | 2026-08-27 — test(agent-alpha): make unsafe-target assertion portable |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 211 |
+| OmertaDev | 213 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -63,11 +63,11 @@
 | [src/chain.js](../../src/chain.js) | 36 | yes |
 | [public/admin.html](../../public/admin.html) | 31 | yes |
 | [DEPLOY.md](../../DEPLOY.md) | 30 | yes |
+| knowledge/generated/github-history.md | 29 | historical |
+| knowledge/generated/graph-summary.md | 29 | historical |
+| knowledge/generated/graph.json | 29 | historical |
+| knowledge/generated/inventory.md | 29 | historical |
 | [src/loans.js](../../src/loans.js) | 29 | yes |
-| [test/docs.js](../../test/docs.js) | 29 | yes |
-| knowledge/generated/github-history.md | 28 | historical |
-| knowledge/generated/graph-summary.md | 28 | historical |
-| knowledge/generated/graph.json | 28 | historical |
 
 ## Pull requests
 

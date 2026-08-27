@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "d892bd31323bcaf29f7af0129b3f94d812e8730d",
+  "sourceRevision": "db725ffb4fde8d2977646dce2871617be15b8c9a",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 4542,
-    "edges": 21428,
+    "nodes": 4544,
+    "edges": 21437,
     "byNodeType": {
       "Artifact": 1566,
       "Command": 32,
-      "Commit": 1012,
+      "Commit": 1014,
       "Contract": 28,
       "Document": 404,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1817,
-      "CHANGED": 8326,
+      "CHANGED": 8333,
       "CONTAINS": 1586,
       "DECLARES": 32,
       "DEFINED_IN": 986,
       "DEPENDS_ON": 60,
       "EXECUTES": 149,
       "HANDLED_BY": 678,
-      "HAS_COMMIT": 1012,
+      "HAS_COMMIT": 1014,
       "IMPLEMENTS": 124,
       "IMPORTS": 1475,
       "INHERITS": 4,
@@ -32217,20 +32217,20 @@
       "path": "test/agent-alpha.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 90223,
-      "lines": 2396,
-      "version": "cb82309f9f181ad4",
+      "bytes": 90290,
+      "lines": 2397,
+      "version": "d48677f244e509d9",
       "text": true,
       "provenance": [
         {
           "file": "test/agent-alpha.js",
           "line": 1,
-          "version": "cb82309f9f181ad4"
+          "version": "d48677f244e509d9"
         }
       ],
-      "lastChangedAt": "2026-08-26T10:47:32-04:00",
+      "lastChangedAt": "2026-08-27T01:13:13-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e23394b42b13936567403bfba403d6f38d13a06f"
+      "lastChangedCommit": "db725ffb4fde8d2977646dce2871617be15b8c9a"
     },
     {
       "key": "Artifact:test/agentturn.js",
@@ -50705,6 +50705,22 @@
       ]
     },
     {
+      "key": "Commit:db725ffb4fde8d2977646dce2871617be15b8c9a",
+      "type": "Commit",
+      "id": "db725ffb4fde8d2977646dce2871617be15b8c9a",
+      "label": "test(agent-alpha): make unsafe-target assertion portable",
+      "title": "test(agent-alpha): make unsafe-target assertion portable",
+      "date": "2026-08-27T01:13:13-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/db725ffb4fde8d2977646dce2871617be15b8c9a",
+      "provenance": [
+        {
+          "commit": "db725ffb4fde8d2977646dce2871617be15b8c9a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/db725ffb4fde8d2977646dce2871617be15b8c9a"
+        }
+      ]
+    },
+    {
       "key": "Commit:dbd3bd097ad0c0f652e4b0577d66efe5107f9c69",
       "type": "Commit",
       "id": "dbd3bd097ad0c0f652e4b0577d66efe5107f9c69",
@@ -50877,6 +50893,22 @@
         {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d",
           "url": "https://github.com/OmertaDev/Omerta/commit/dee7593a66b955d677656afab4516cb68edb918d"
+        }
+      ]
+    },
+    {
+      "key": "Commit:df5da0f699531d76ac8c4458a920e51dccbc5824",
+      "type": "Commit",
+      "id": "df5da0f699531d76ac8c4458a920e51dccbc5824",
+      "label": "chore(knowledge): refresh repository snapshot",
+      "title": "chore(knowledge): refresh repository snapshot",
+      "date": "2026-08-27T01:03:04-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/df5da0f699531d76ac8c4458a920e51dccbc5824",
+      "provenance": [
+        {
+          "commit": "df5da0f699531d76ac8c4458a920e51dccbc5824",
+          "url": "https://github.com/OmertaDev/Omerta/commit/df5da0f699531d76ac8c4458a920e51dccbc5824"
         }
       ]
     },
@@ -60740,6 +60772,9 @@
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
         },
         {
+          "commit": "df5da0f699531d76ac8c4458a920e51dccbc5824"
+        },
+        {
           "commit": "e2781799de5980d960210a7000d2167814507de4"
         },
         {
@@ -60828,6 +60863,9 @@
         },
         {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
+        },
+        {
+          "commit": "df5da0f699531d76ac8c4458a920e51dccbc5824"
         },
         {
           "commit": "e2781799de5980d960210a7000d2167814507de4"
@@ -60923,6 +60961,9 @@
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
         },
         {
+          "commit": "df5da0f699531d76ac8c4458a920e51dccbc5824"
+        },
+        {
           "commit": "e2781799de5980d960210a7000d2167814507de4"
         },
         {
@@ -61014,6 +61055,9 @@
         },
         {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
+        },
+        {
+          "commit": "df5da0f699531d76ac8c4458a920e51dccbc5824"
         },
         {
           "commit": "e2781799de5980d960210a7000d2167814507de4"
@@ -61136,6 +61180,9 @@
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
         },
         {
+          "commit": "df5da0f699531d76ac8c4458a920e51dccbc5824"
+        },
+        {
           "commit": "e2781799de5980d960210a7000d2167814507de4"
         },
         {
@@ -61179,6 +61226,9 @@
         },
         {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
+        },
+        {
+          "commit": "df5da0f699531d76ac8c4458a920e51dccbc5824"
         },
         {
           "commit": "ff0ff3aaf31e9d9473ea2437e10f26cbfd46a70d"
@@ -66953,7 +67003,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "d892bd31323bcaf29f7af0129b3f94d812e8730d",
+      "revision": "db725ffb4fde8d2977646dce2871617be15b8c9a",
       "currentBranch": "codex/site-ui-live-20260827",
       "defaultBranch": "main",
       "visibility": "public",
@@ -87921,13 +87971,13 @@
       "type": "TestSuite",
       "id": "test/agent-alpha.js",
       "label": "test/agent-alpha.js",
-      "lines": 2396,
-      "version": "cb82309f9f181ad4",
+      "lines": 2397,
+      "version": "d48677f244e509d9",
       "provenance": [
         {
           "file": "test/agent-alpha.js",
           "line": 1,
-          "version": "cb82309f9f181ad4"
+          "version": "d48677f244e509d9"
         }
       ]
     },
@@ -162567,6 +162617,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:db725ffb4fde8d2977646dce2871617be15b8c9a",
+      "to": "Artifact:test/agent-alpha.js",
+      "provenance": {
+        "commit": "db725ffb4fde8d2977646dce2871617be15b8c9a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:dbd3bd097ad0c0f652e4b0577d66efe5107f9c69",
       "to": "Artifact:AUDIT-session-races-convoy-vendetta.md",
       "provenance": {
@@ -166467,6 +166525,54 @@
       "to": "HistoricalArtifact:knowledge/generated/schema.md",
       "provenance": {
         "commit": "dee7593a66b955d677656afab4516cb68edb918d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:df5da0f699531d76ac8c4458a920e51dccbc5824",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "df5da0f699531d76ac8c4458a920e51dccbc5824"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:df5da0f699531d76ac8c4458a920e51dccbc5824",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "df5da0f699531d76ac8c4458a920e51dccbc5824"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:df5da0f699531d76ac8c4458a920e51dccbc5824",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "df5da0f699531d76ac8c4458a920e51dccbc5824"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:df5da0f699531d76ac8c4458a920e51dccbc5824",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "df5da0f699531d76ac8c4458a920e51dccbc5824"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:df5da0f699531d76ac8c4458a920e51dccbc5824",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "df5da0f699531d76ac8c4458a920e51dccbc5824"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:df5da0f699531d76ac8c4458a920e51dccbc5824",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "df5da0f699531d76ac8c4458a920e51dccbc5824"
       }
     },
     {
@@ -211645,6 +211751,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:db725ffb4fde8d2977646dce2871617be15b8c9a",
+      "provenance": {
+        "commit": "db725ffb4fde8d2977646dce2871617be15b8c9a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:dbd3bd097ad0c0f652e4b0577d66efe5107f9c69",
       "provenance": {
         "commit": "dbd3bd097ad0c0f652e4b0577d66efe5107f9c69"
@@ -211728,6 +211842,14 @@
       "to": "Commit:dee7593a66b955d677656afab4516cb68edb918d",
       "provenance": {
         "commit": "dee7593a66b955d677656afab4516cb68edb918d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:df5da0f699531d76ac8c4458a920e51dccbc5824",
+      "provenance": {
+        "commit": "df5da0f699531d76ac8c4458a920e51dccbc5824"
       }
     },
     {

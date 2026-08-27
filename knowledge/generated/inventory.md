@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `d892bd31323b`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `db725ffb4fde`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,566 |
-| Text lines | 388,722 |
-| Repository bytes inventoried | 274,434,492 |
+| Text lines | 388,723 |
+| Repository bytes inventoried | 274,434,559 |
 | Backend/route modules | 164 |
 | HTTP route registrations / unique routes | 713 / 713 |
 | Database tables | 245 |
 | Solidity declarations | 28 |
-| Git commits | 1,012 |
+| Git commits | 1,014 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 4,542 / 21,428 |
+| Graph nodes / edges | 4,544 / 21,437 |
 
 ## Artifact kinds
 
@@ -67,7 +67,7 @@
 | [src/game.js](../../src/game.js) | 2,540 | backend-module | 2026-08-24 |
 | [omerta-contracts/x-ray/slither-function-summary.json](../../omerta-contracts/x-ray/slither-function-summary.json) | 2,449 | contract-project | 2026-08-25 |
 | [test/social.js](../../test/social.js) | 2,431 | test-suite | 2026-08-24 |
-| [test/agent-alpha.js](../../test/agent-alpha.js) | 2,396 | test-suite | 2026-08-26 |
+| [test/agent-alpha.js](../../test/agent-alpha.js) | 2,397 | test-suite | 2026-08-27 |
 | [test/growth.js](../../test/growth.js) | 2,212 | test-suite | 2026-08-24 |
 | [package-lock.json](../../package-lock.json) | 2,166 | package-config | 2026-08-26 |
 | [knowledge/github-snapshot.json](../../knowledge/github-snapshot.json) | 2,048 | knowledge-base | 2026-08-24 |
