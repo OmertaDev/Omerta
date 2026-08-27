@@ -1048,8 +1048,9 @@ contract AcquisitionAuthority is IAcquisitionAuthorityV2, EIP712, Ownable2Step, 
             mstore(add(p, 0x180), mload(add(pending, 0x80)))
             mstore(add(p, 0x1a0), mload(add(pending, 0xa0)))
             mstore(add(p, 0x1c0), mload(add(pending, 0xc0)))
-            mstore(add(p, 0x1e0), mload(add(pending, 0x100)))
-            result := keccak256(p, 0x200)
+            mstore(add(p, 0x1e0), mload(add(pending, 0xe0)))
+            mstore(add(p, 0x200), mload(add(pending, 0x100)))
+            result := keccak256(p, 0x220)
         }
     }
 

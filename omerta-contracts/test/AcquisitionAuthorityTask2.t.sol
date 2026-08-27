@@ -5,11 +5,30 @@ import {AcquisitionConstellationTask1Test} from "./AcquisitionConstellationTask1
 import {AcquisitionConstellationFactory} from "../src/AcquisitionConstellationFactory.sol";
 import {AcquisitionAuthority} from "../src/AcquisitionAuthority.sol";
 import {IAcquisitionAuthorityV2} from "../src/interfaces/IAcquisitionAuthorityV2.sol";
-import {Vm} from "forge-std/Vm.sol";
+import {Vm, VmSafe} from "forge-std/Vm.sol";
 
 contract Task2SafeCandidate {}
 
 contract Task2Ingress {}
+
+contract Task2SafeProxy {
+    address internal immutable _implementation;
+
+    constructor(address implementation) {
+        _implementation = implementation;
+    }
+
+    fallback() external payable {
+        address implementation = _implementation;
+        assembly {
+            calldatacopy(0, 0, calldatasize())
+            let ok := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
+            returndatacopy(0, 0, returndatasize())
+            if iszero(ok) { revert(0, returndatasize()) }
+            return(0, returndatasize())
+        }
+    }
+}
 
 contract Task2ForceEther {
     constructor(address payable target) payable {
@@ -24,6 +43,8 @@ contract Task2ERC1271Fixture {
     uint256 internal _mode;
     address internal _callbackTarget;
     bytes internal _callbackData;
+    bytes4 internal _callbackError;
+    address internal _callbackSender;
 
     function configure(
         bytes32 digest,
@@ -38,6 +59,15 @@ contract Task2ERC1271Fixture {
         _mode = mode;
         _callbackTarget = callbackTarget;
         _callbackData = callbackData;
+        _callbackError = bytes4(keccak256("ReentrancyGuardReentrantCall()"));
+    }
+
+    function setCallbackError(bytes4 callbackError) external {
+        _callbackError = callbackError;
+    }
+
+    function setCallbackSender(address callbackSender) external {
+        _callbackSender = callbackSender;
     }
 
     fallback() external {
@@ -55,21 +85,23 @@ contract Task2ERC1271Fixture {
         uint256 padded = (length + 31) & ~uint256(31);
         require(msg.data.length == 100 + padded);
         bytes32 signatureHash;
-        assembly {
-            calldatacopy(0, 100, length)
-            signatureHash := keccak256(0, length)
+        assembly ("memory-safe") {
+            let signaturePtr := mload(0x40)
+            calldatacopy(signaturePtr, 100, length)
+            signatureHash := keccak256(signaturePtr, length)
+            mstore(0x40, add(signaturePtr, padded))
         }
         require(signatureHash == _signatureHash);
         for (uint256 i = length; i < padded; ++i) {
             require(msg.data[100 + i] == 0);
         }
         if (_callbackTarget != address(0)) {
+            if (_callbackSender != address(0)) {
+                Vm(address(uint160(uint256(keccak256("hevm cheat code"))))).prank(_callbackSender);
+            }
             (bool callbackOk, bytes memory callbackResult) = _callbackTarget.staticcall(_callbackData);
             require(!callbackOk);
-            require(
-                callbackResult.length >= 4
-                    && bytes4(callbackResult) == bytes4(keccak256("ReentrancyGuardReentrantCall()"))
-            );
+            require(callbackResult.length >= 4 && bytes4(callbackResult) == _callbackError);
         }
         uint256 mode = _mode;
         if (mode == 7) revert();
@@ -141,7 +173,7 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
         bytes memory initcode = vm.getCode("AcquisitionAuthority.sol:AcquisitionAuthority");
         assertLe(runtime.length, 20_000);
         assertLe(initcode.length, 49_152);
-        assertEq(runtime.length, 16_068);
+        assertEq(runtime.length, 16_076);
         string memory artifact = vm.readFile("out/AcquisitionAuthority.sol/AcquisitionAuthority.json");
         assertEq(vm.parseJsonString(artifact, ".abi[16].name"), "authoritySnapshot");
         for (uint256 i; i < 27; ++i) {
@@ -533,8 +565,8 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
         assertEq(chainId, 4663);
         assertEq(verifyingContract, address(authority));
         string memory artifact = vm.readFile("out/AcquisitionAuthority.sol/AcquisitionAuthority.json");
-        assertEq((vm.parseJsonBytes(artifact, ".bytecode.object")).length, 18_629);
-        assertEq((vm.parseJsonBytes(artifact, ".deployedBytecode.object")).length, 16_068);
+        assertEq((vm.parseJsonBytes(artifact, ".bytecode.object")).length, 18_637);
+        assertEq((vm.parseJsonBytes(artifact, ".deployedBytecode.object")).length, 16_076);
     }
 
     function test_task2FreshFactoriesCannotReuseTask1AddressesOrCommitments() public {
@@ -657,6 +689,43 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
         safeFactory.deploy(
             bytes32(uint256(1)), address(safeFactory), address(registry), peers[0], peers[1], peers[2], peers[3]
         );
+
+        Task2AuthorityDeployer registryFactory = new Task2AuthorityDeployer();
+        for (uint8 i; i < 4; ++i) {
+            peers[i] = vm.computeCreateAddress(address(registryFactory), uint256(i + 2));
+        }
+        vm.expectRevert(
+            abi.encodeWithSelector(IAcquisitionAuthorityV2.RoleIdentityCollision.selector, address(registryFactory))
+        );
+        registryFactory.deploy(
+            bytes32(uint256(1)), address(safe), address(registryFactory), peers[0], peers[1], peers[2], peers[3]
+        );
+
+        for (uint8 role; role < 2; ++role) {
+            for (uint8 peer; peer < 4; ++peer) {
+                Task2AuthorityDeployer fresh = new Task2AuthorityDeployer();
+                for (uint8 i; i < 4; ++i) {
+                    peers[i] = vm.computeCreateAddress(address(fresh), uint256(i + 2));
+                }
+                vm.etch(peers[peer], hex"60006000f3");
+                address safe_ = role == 0 ? peers[peer] : address(safe);
+                address registry_ = role == 1 ? peers[peer] : address(registry);
+                vm.expectRevert(
+                    abi.encodeWithSelector(IAcquisitionAuthorityV2.RoleIdentityCollision.selector, peers[peer])
+                );
+                fresh.deploy(bytes32(uint256(1)), safe_, registry_, peers[0], peers[1], peers[2], peers[3]);
+            }
+        }
+
+        Task2SafeProxy proxySafe = new Task2SafeProxy(address(new Task2Ingress()));
+        Task2AuthorityDeployer proxyDeployer = new Task2AuthorityDeployer();
+        for (uint8 i; i < 4; ++i) {
+            peers[i] = vm.computeCreateAddress(address(proxyDeployer), uint256(i + 2));
+        }
+        AcquisitionAuthority proxyOwned = proxyDeployer.deploy(
+            bytes32(uint256(1)), address(proxySafe), address(registry), peers[0], peers[1], peers[2], peers[3]
+        );
+        assertEq(proxyOwned.owner(), address(proxySafe));
     }
 
     function test_task2FinalizerCallerManifestAlreadyPrecedenceAndRollback() public {
@@ -847,7 +916,7 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
             _signedConsent(authority, operator, 0xA11CE);
         bytes memory highS = bytes.concat(bytes32(valid), bytes32(type(uint256).max), bytes1(uint8(27)));
         bytes memory invalidV = bytes.concat(bytes32(valid), bytes32(uint256(1)), bytes1(uint8(29)));
-        bytes memory zeroRecovery = new bytes(65);
+        bytes memory zeroRecovery = bytes.concat(bytes32(0), bytes32(uint256(1)), bytes1(uint8(27)));
         (, bytes memory wrongSigner) = _signedConsent(authority, operator, 0xB0B);
         bytes[] memory invalid = new bytes[](7);
         invalid[0] = bytes("");
@@ -894,9 +963,17 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
             bytes memory signature = new bytes(length);
             IAcquisitionAuthorityV2.SuccessorConsent memory consent =
                 _walletConsent(authority, operator, address(wallet));
+            vm.startStateDiffRecording();
             vm.prank(operator);
             vm.expectRevert(IAcquisitionAuthorityV2.InvalidSignature.selector);
             authority.replaceMainOperator(consent, signature);
+            Vm.AccountAccess[] memory accesses = vm.stopAndReturnStateDiff();
+            for (uint256 i; i < accesses.length; ++i) {
+                assertFalse(
+                    accesses[i].kind == VmSafe.AccountAccessKind.StaticCall && accesses[i].account == address(wallet),
+                    "invalid signature length reached ERC1271 wallet"
+                );
+            }
             assertEq(authority.mainOperator(), operator);
         }
     }
@@ -918,40 +995,136 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
         }
     }
 
-    function test_task2Erc1271CallbackHitsSharedGuardAndOuterReplacementIsAtomic() public {
-        for (uint8 family; family < 8; ++family) {
+    function test_task2Erc1271GasBoundariesAndActualCallTracePrecedence() public {
+        (AcquisitionAuthority authority,) = _authority();
+        address operator = _installOperator(authority, address(0xBEEF));
+        Task2ERC1271Fixture wallet = new Task2ERC1271Fixture();
+        bytes memory signature = hex"010203";
+        IAcquisitionAuthorityV2.SuccessorConsent memory consent = _walletConsent(authority, operator, address(wallet));
+        bytes32 digest = authority.hashSuccessorConsent(consent);
+        bytes memory callData = abi.encodeWithSelector(authority.replaceMainOperator.selector, consent, signature);
+        assertFalse(_signatureGasAllowed(159_999, authority.ERC1271_MIN_PRECALL_GAS()));
+        assertTrue(_signatureGasAllowed(160_000, authority.ERC1271_MIN_PRECALL_GAS()));
+        assertFalse(_signatureGasAllowed(49_999, authority.ERC1271_POST_CALL_GAS_RESERVE()));
+        assertTrue(_signatureGasAllowed(50_000, authority.ERC1271_POST_CALL_GAS_RESERVE()));
+        string memory source = vm.readFile("src/AcquisitionAuthority.sol");
+        assertTrue(_contains(bytes(source), bytes("gasleft() < ERC1271_MIN_PRECALL_GAS")));
+        assertTrue(_contains(bytes(source), bytes("gasleft() < ERC1271_POST_CALL_GAS_RESERVE")));
+
+        wallet.configure(digest, signature, 0, address(0), "");
+        uint256 preGas = _findSignatureGasFailure(authority, wallet, operator, callData, 120_000, 260_000, 500, false);
+        assertTrue(preGas != 0);
+
+        wallet.configure(digest, signature, 9, address(0), "");
+        _cool(address(wallet));
+        vm.startStateDiffRecording();
+        vm.prank(operator);
+        (bool ok, bytes memory result) = address(authority).call{gas: 500_000}(callData);
+        Vm.AccountAccess[] memory accesses = vm.stopAndReturnStateDiff();
+        assertFalse(ok);
+        assertEq(bytes4(result), IAcquisitionAuthorityV2.InvalidSignature.selector);
+        assertTrue(_sawStaticCall(accesses, address(wallet)));
+        assertEq(authority.mainOperator(), operator);
+        assertEq(authority.operatorGeneration(), 1);
+    }
+
+    function _signatureGasAllowed(uint256 available, uint256 required) internal pure returns (bool) {
+        return available >= required;
+    }
+
+    function _findSignatureGasFailure(
+        AcquisitionAuthority authority,
+        Task2ERC1271Fixture wallet,
+        address operator,
+        bytes memory callData,
+        uint256 from,
+        uint256 to,
+        uint256 step,
+        bool requireWalletCall
+    ) internal returns (uint256 found) {
+        bytes4 expected = IAcquisitionAuthorityV2.InsufficientSignatureValidationGas.selector;
+        for (uint256 supplied = from; supplied <= to; supplied += step) {
+            _cool(address(wallet));
+            vm.startStateDiffRecording();
+            vm.prank(operator);
+            (bool ok, bytes memory result) = address(authority).call{gas: supplied}(callData);
+            Vm.AccountAccess[] memory accesses = vm.stopAndReturnStateDiff();
+            bool sawWallet = _sawStaticCall(accesses, address(wallet));
+            if (!ok && result.length >= 4 && bytes4(result) == expected && sawWallet == requireWalletCall) {
+                return supplied;
+            }
+        }
+        fail();
+    }
+
+    function _sawStaticCall(Vm.AccountAccess[] memory accesses, address target) internal pure returns (bool) {
+        for (uint256 i; i < accesses.length; ++i) {
+            if (accesses[i].kind == VmSafe.AccountAccessKind.StaticCall && accesses[i].account == target) return true;
+        }
+        return false;
+    }
+
+    function _cool(address target) internal {
+        (bool ok,) = address(vm).call(abi.encodeWithSignature("cool(address)", target));
+        assertTrue(ok);
+    }
+
+    function test_task2Erc1271CallbackCoversAllGuardedMutatorsAndFinalizerException() public {
+        for (uint8 family; family < 19; ++family) {
             (AcquisitionAuthority authority,) = _authority();
             address operator = _installOperator(authority, address(uint160(0xBEEF + family)));
             Task2ERC1271Fixture wallet = new Task2ERC1271Fixture();
             bytes memory signature = hex"0102030405";
             IAcquisitionAuthorityV2.SuccessorConsent memory consent =
                 _walletConsent(authority, operator, address(wallet));
-            bytes memory callback;
-            if (family == 0) {
-                callback = abi.encodeWithSelector(authority.transferOwnership.selector, address(0xCAFE));
-            } else if (family == 1) {
-                callback = abi.encodeWithSelector(authority.acceptOwnership.selector);
-            } else if (family == 2) {
-                callback =
-                    abi.encodeWithSelector(authority.nominateMainOperator.selector, address(1), bytes32(uint256(1)));
-            } else if (family == 3) {
-                callback = abi.encodeWithSelector(authority.disableMainOperator.selector, bytes32(uint256(1)));
-            } else if (family == 4) {
-                callback = abi.encodeWithSelector(authority.invalidateOutflowNonce.selector, 1, bytes32(uint256(1)));
-            } else if (family == 5) {
-                callback = abi.encodeWithSelector(authority.pause.selector, bytes32(uint256(1)));
-            } else if (family == 6) {
-                callback = abi.encodeWithSelector(authority.disableIngress.selector, bytes32(uint256(1)));
-            } else {
-                callback = abi.encodeWithSelector(authority.expireIngressProposal.selector, bytes32(uint256(1)));
-            }
+            bytes memory callback = _mutatorCallback(authority, family);
             wallet.configure(authority.hashSuccessorConsent(consent), signature, 0, address(authority), callback);
+            if (family == 18) {
+                (address factory,,) = authority.authorityTopology();
+                wallet.setCallbackSender(factory);
+                wallet.setCallbackError(AcquisitionAuthority.AuthorityAlreadyFinalized.selector);
+            }
             vm.prank(operator);
             authority.replaceMainOperator(consent, signature);
             assertEq(authority.mainOperator(), address(wallet));
             assertEq(authority.operatorGeneration(), 2);
             assertEq(authority.outflowNonce(), 0);
         }
+    }
+
+    function _mutatorCallback(AcquisitionAuthority authority, uint8 family) internal view returns (bytes memory) {
+        if (family == 0) return abi.encodeWithSelector(authority.transferOwnership.selector, address(0xCAFE));
+        if (family == 1) return abi.encodeWithSelector(authority.acceptOwnership.selector);
+        if (family == 2) return abi.encodeWithSelector(authority.renounceOwnership.selector);
+        if (family == 3) {
+            return abi.encodeWithSelector(authority.nominateMainOperator.selector, address(1), bytes32(uint256(1)));
+        }
+        if (family == 4) {
+            return abi.encodeWithSelector(authority.cancelMainOperatorNomination.selector, bytes32(0), bytes32(0));
+        }
+        if (family == 5) return abi.encodeWithSelector(authority.expireMainOperatorNomination.selector, bytes32(0));
+        if (family == 6) return abi.encodeWithSelector(authority.acceptMainOperatorNomination.selector, bytes32(0));
+        if (family == 7) return abi.encodeWithSelector(authority.disableMainOperator.selector, bytes32(0));
+        if (family == 8) return abi.encodeWithSelector(authority.renounceMainOperator.selector, bytes32(0));
+        if (family == 9) {
+            IAcquisitionAuthorityV2.SuccessorConsent memory empty;
+            return abi.encodeWithSelector(authority.replaceMainOperator.selector, empty, bytes(""));
+        }
+        if (family == 10) return abi.encodeWithSelector(authority.invalidateOutflowNonce.selector, 1, bytes32(0));
+        if (family == 11) return abi.encodeWithSelector(authority.pause.selector, bytes32(0));
+        if (family == 12) return abi.encodeWithSelector(authority.unpause.selector, bytes32(0));
+        if (family == 13) {
+            IAcquisitionAuthorityV2.IngressConfig memory empty;
+            return abi.encodeWithSelector(authority.proposeIngress.selector, empty, bytes32(0));
+        }
+        if (family == 14) {
+            return abi.encodeWithSelector(authority.cancelIngressProposal.selector, bytes32(0), bytes32(0));
+        }
+        if (family == 15) return abi.encodeWithSelector(authority.expireIngressProposal.selector, bytes32(0));
+        if (family == 16) return abi.encodeWithSelector(authority.activateIngress.selector, bytes32(0));
+        if (family == 17) return abi.encodeWithSelector(authority.disableIngress.selector, bytes32(0));
+        (, bytes32 manifestHash,) = authority.authorityTopology();
+        return abi.encodeWithSelector(authority.finalizeAuthority.selector, manifestHash);
     }
 
     function test_task2Erc1271Exact32DirtyLowBytesAreAcceptedByFrozenBytes4Comparison() public {
@@ -1020,6 +1193,15 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
         vm.prank(address(safe));
         vm.expectRevert(abi.encodeWithSelector(IAcquisitionAuthorityV2.ProposalExpired.selector, pending.expiresAt));
         authority.activateIngress(proposal);
+
+        (AcquisitionAuthority lastAuthority,) = _authority();
+        Task2Ingress lastIngress = new Task2Ingress();
+        vm.prank(address(safe));
+        bytes32 lastProposal = lastAuthority.proposeIngress(_config(address(lastIngress)), keccak256("last"));
+        IAcquisitionAuthorityV2.PendingIngressProposal memory lastPending = lastAuthority.pendingIngressProposal();
+        vm.warp(lastPending.expiresAt - 1);
+        vm.prank(address(safe));
+        assertEq(lastAuthority.activateIngress(lastProposal), 1);
     }
 
     function test_task2IngressCancellationAndExpiryIgnoreCodeDrift() public {
@@ -1047,16 +1229,98 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
             vm.prank(address(safe));
             bytes32 proposal = authority.proposeIngress(_config(address(ingress)), keccak256("ingress"));
             IAcquisitionAuthorityV2.PendingIngressProposal memory beforeState = authority.pendingIngressProposal();
+            bytes32 beforeHash = keccak256(abi.encode(beforeState));
+            uint256 beforeBalance = address(authority).balance;
+            bool beforePaused = authority.paused();
             vm.warp(beforeState.validAfter);
-            if (mode == 0) vm.etch(address(ingress), hex"");
-            else vm.etch(address(ingress), hex"60006000fd");
-            vm.expectRevert();
+            if (mode == 0) {
+                vm.etch(address(ingress), hex"");
+                vm.expectRevert(
+                    abi.encodeWithSelector(IAcquisitionAuthorityV2.ContractRequired.selector, address(ingress))
+                );
+            } else {
+                vm.etch(address(ingress), hex"60006000fd");
+                vm.expectRevert(
+                    abi.encodeWithSelector(
+                        IAcquisitionAuthorityV2.IngressCodeHashMismatch.selector,
+                        address(ingress),
+                        beforeState.config.runtimeCodeHash,
+                        address(ingress).codehash
+                    )
+                );
+            }
+            vm.recordLogs();
             vm.prank(address(safe));
             authority.activateIngress(proposal);
-            assertEq(authority.pendingIngressProposal().proposalId, proposal);
+            assertEq(vm.getRecordedLogs().length, 0);
+            assertEq(keccak256(abi.encode(authority.pendingIngressProposal())), beforeHash);
             assertEq(authority.ingressGeneration(), 0);
             assertEq(authority.activeIngressGeneration(), 0);
+            assertEq(authority.ingressProposalNonce(), 1);
+            assertEq(authority.paused(), beforePaused);
+            assertEq(address(authority).balance, beforeBalance);
         }
+    }
+
+    function test_task2IngressLastProposalTimestampAndIndependentHashPreimages() public {
+        (AcquisitionAuthority authority,) = _authority();
+        Task2Ingress ingress = new Task2Ingress();
+        uint256 last = type(uint64).max - authority.OPERATOR_NOMINATION_DELAY() - authority.OPERATOR_ACCEPTANCE_WINDOW();
+        vm.warp(last);
+        bytes32 details = keccak256("last-valid");
+        IAcquisitionAuthorityV2.IngressConfig memory config = _config(address(ingress));
+        vm.prank(address(safe));
+        bytes32 proposalId = authority.proposeIngress(config, details);
+        IAcquisitionAuthorityV2.PendingIngressProposal memory pending = authority.pendingIngressProposal();
+        (, bytes memory snapshot) =
+            address(authority).staticcall(abi.encodeWithSelector(authority.authoritySnapshot.selector));
+        address core = address(uint160(_word(snapshot, 4)));
+        bytes32 expectedConfigHash = keccak256(
+            abi.encode(
+                keccak256("OMERTA_AUTH_INGRESS_CONFIG_V2"),
+                uint256(4663),
+                core,
+                address(authority),
+                config.ingress,
+                config.runtimeCodeHash,
+                config.perDepositCapWei,
+                config.epochDepositCapWei,
+                config.lifetimeDepositCapWei
+            )
+        );
+        assertEq(pending.configHash, expectedConfigHash, "independent config hash");
+        bytes memory proposalPreimage = abi.encode(
+            keccak256("OMERTA_AUTH_INGRESS_PROPOSAL_V2"),
+            uint256(4663),
+            core,
+            address(authority),
+            uint256(0),
+            uint256(1),
+            address(safe),
+            config.ingress,
+            config.runtimeCodeHash,
+            config.perDepositCapWei,
+            config.epochDepositCapWei,
+            config.lifetimeDepositCapWei,
+            expectedConfigHash,
+            pending.proposedAt,
+            pending.validAfter,
+            pending.expiresAt,
+            details
+        );
+        bytes32 expectedProposalId = keccak256(proposalPreimage);
+        assertEq(proposalId, expectedProposalId, "independent proposal id");
+        assembly {
+            mstore(add(proposalPreimage, 0x200), add(mload(add(proposalPreimage, 0x200)), 1))
+        }
+        assertTrue(keccak256(proposalPreimage) != proposalId, "expiresAt sensitivity");
+
+        (AcquisitionAuthority tooLate,) = _authority();
+        vm.warp(last + 1);
+        Task2Ingress tooLateIngress = new Task2Ingress();
+        vm.expectRevert(IAcquisitionAuthorityV2.TimestampOverflow.selector);
+        vm.prank(address(safe));
+        tooLate.proposeIngress(_config(address(tooLateIngress)), keccak256("too-late"));
     }
 
     function test_task2OperatorAndIngressCounterAndTimestampExhaustionAreAtomic() public {
@@ -1161,6 +1425,31 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
         );
         vm.prank(address(safe));
         authority.activateIngress(proposal);
+    }
+
+    function test_task2PendingIngressBlocksReachableOwnershipAndOperatorTransitions() public {
+        (AcquisitionAuthority authority,) = _authority();
+        Task2Ingress ingress = new Task2Ingress();
+        vm.prank(address(safe));
+        bytes32 proposal = authority.proposeIngress(_config(address(ingress)), keccak256("pending"));
+        bytes32 beforeHash = keccak256(abi.encode(authority.pendingIngressProposal()));
+
+        vm.expectRevert(
+            abi.encodeWithSelector(IAcquisitionAuthorityV2.RoleIdentityCollision.selector, address(ingress))
+        );
+        vm.prank(address(safe));
+        authority.transferOwnership(address(ingress));
+        assertEq(authority.pendingOwner(), address(0));
+        assertEq(keccak256(abi.encode(authority.pendingIngressProposal())), beforeHash);
+
+        vm.expectRevert(
+            abi.encodeWithSelector(IAcquisitionAuthorityV2.RoleIdentityCollision.selector, address(ingress))
+        );
+        vm.prank(address(safe));
+        authority.nominateMainOperator(address(ingress), keccak256("operator"));
+        assertEq(authority.pendingMainOperatorNomination().proposalId, bytes32(0));
+        assertEq(authority.pendingIngressProposal().proposalId, proposal);
+        assertEq(keccak256(abi.encode(authority.pendingIngressProposal())), beforeHash);
     }
 
     function test_task2IngressProposalAndSyntheticActivationCollisionUniverse() public {
