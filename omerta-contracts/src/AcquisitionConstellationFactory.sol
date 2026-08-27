@@ -5,13 +5,14 @@ contract AcquisitionConstellationFactory {
     uint256 private constant _SUPPORTED_CHAIN_ID = 4663;
     uint256 private constant _REGISTRY_GAS = 100_000;
     uint256 private constant _TOPOLOGY_GAS = 50_000;
+    uint256 private constant _AUTHORITY_SNAPSHOT_GAS = 160_000;
     uint256 private constant _FINALIZER_GAS = 100_000;
     uint256 private constant _FINALIZER_PRECHECK = 211_588;
     uint256 private constant _FINALIZER_POSTCHECK = 100_000;
     uint256 private constant _MAX_INITCODE = 49_152;
     uint256 private constant _MAX_RUNTIME = 24_576;
     bytes32 private constant _EMPTY_CODE_HASH = keccak256("");
-    bytes32 private constant _CONFIG_TAG = keccak256("OMERTA_ACQUISITION_TASK1_CONFIG_V1");
+    bytes32 private constant _CONFIG_TAG = keccak256("OMERTA_ACQUISITION_TASK2_CONFIG_V1");
     bytes32 private constant _CONSTELLATION_TAG = keccak256("OMERTA_ACQUISITION_CONSTELLATION_V1");
     bytes32 private constant _DEPLOYMENT_TAG = keccak256("OMERTA_ACQUISITION_DEPLOYMENT_V1");
 
@@ -51,6 +52,9 @@ contract AcquisitionConstellationFactory {
     error FactoryFinalizerCallFailed(uint8 index);
     error FactoryFinalizerReturnLength(uint8 index, uint256 actual);
     error FactoryFinalizerSemanticMismatch(uint8 index);
+    error FactoryAuthoritySnapshotCallFailed();
+    error FactoryAuthoritySnapshotReturnLength(uint256 actualLength);
+    error FactoryAuthoritySnapshotSemanticMismatch(uint8 field);
 
     event ChildDeployed(uint8 indexed index, address indexed child, bytes32 indexed initcodeHash, bytes32 runtimeHash);
     event ConstellationFinalized(bytes32 indexed manifestHash, bytes32 indexed deploymentCommitment);
@@ -104,7 +108,7 @@ contract AcquisitionConstellationFactory {
         }
         _checkRegistry(registry, false);
 
-        bytes32 config = keccak256(abi.encode(_CONFIG_TAG, uint256(1), registry, registryRuntimeHash));
+        bytes32 config = keccak256(abi.encode(_CONFIG_TAG, uint256(2), registry, registryRuntimeHash));
         bytes32 manifest = keccak256(
             abi.encode(
                 _CONSTELLATION_TAG,
@@ -210,15 +214,16 @@ contract AcquisitionConstellationFactory {
             revert FactoryPhaseMismatch(uint8(Phase.READY_TO_FINALIZE), uint8(_phase));
         }
         if (_nextChildIndex != 5) revert FactoryChildIndex(_nextChildIndex);
-        for (uint8 i; i < 5; ++i) {
-            _checkDeployedChild(i, false);
-        }
         if (_registry.code.length == 0) revert FactoryRegistryCodeMissing(_registry);
         bytes32 actualRegistryHash = _registry.codehash;
         if (actualRegistryHash != _registryRuntimeHash) {
             revert FactoryRegistryRuntimeHashMismatch(_registryRuntimeHash, actualRegistryHash);
         }
         _checkRegistry(_registry, false);
+        for (uint8 i; i < 5; ++i) {
+            _checkDeployedChild(i, false);
+        }
+        _checkAuthoritySnapshot();
         _phase = Phase.FINALIZING;
         _finalize(2);
         _finalize(4);
@@ -230,6 +235,87 @@ contract AcquisitionConstellationFactory {
         }
         _phase = Phase.FINALIZED;
         emit ConstellationFinalized(_manifestHash, _deploymentCommitment);
+    }
+
+    function _checkAuthoritySnapshot() private view {
+        address authority = _children[0];
+        bytes4 selector = bytes4(keccak256("authoritySnapshot()"));
+        bool ok;
+        uint256 size;
+        uint256[27] memory words;
+        assembly ("memory-safe") {
+            let buffer := words
+            mstore(buffer, selector)
+            ok := staticcall(_AUTHORITY_SNAPSHOT_GAS, authority, buffer, 0x04, buffer, 0x360)
+            size := returndatasize()
+        }
+        if (!ok) revert FactoryAuthoritySnapshotCallFailed();
+        if (size != 864) revert FactoryAuthoritySnapshotReturnLength(size);
+
+        _snapshotEq(words[0], 2, 0);
+        _snapshotAddress(words[1], address(this), 1);
+        _snapshotEq(words[2], uint256(_manifestHash), 2);
+        _snapshotAddress(words[3], _registry, 3);
+        _snapshotAddress(words[4], _children[1], 4);
+        _snapshotAddress(words[5], _children[2], 5);
+        _snapshotAddress(words[6], _children[3], 6);
+        _snapshotAddress(words[7], _children[4], 7);
+        _snapshotBool(words[8], false, 8);
+        _snapshotAddress(words[9], _safe, 9);
+        _snapshotAddress(words[10], address(0), 10);
+        _snapshotBool(words[11], true, 11);
+        _snapshotAddress(words[12], address(0), 12);
+        _snapshotAddress(words[13], address(0), 13);
+        for (uint8 i = 14; i <= 19; ++i) {
+            _snapshotEq(words[i], 0, i);
+        }
+        _snapshotEq(words[20], 0, 20);
+        _snapshotAddress(words[21], address(0), 21);
+        _snapshotEq(words[22], 0, 22);
+        _snapshotEq(words[23], 0, 23);
+        _snapshotEq(words[24], uint256(_emptyOperatorStateHash()), 24);
+        _snapshotEq(words[25], 0, 25);
+        _snapshotEq(words[26], uint256(_emptyIngressStateHash()), 26);
+    }
+
+    function _snapshotEq(uint256 actual, uint256 expected, uint8 field) private pure {
+        if (actual != expected) revert FactoryAuthoritySnapshotSemanticMismatch(field);
+    }
+
+    function _snapshotAddress(uint256 word, address expected, uint8 field) private pure {
+        if (word >> 160 != 0 || address(uint160(word)) != expected) {
+            revert FactoryAuthoritySnapshotSemanticMismatch(field);
+        }
+    }
+
+    function _snapshotBool(uint256 word, bool expected, uint8 field) private pure {
+        if (word > 1 || (word == 1) != expected) revert FactoryAuthoritySnapshotSemanticMismatch(field);
+    }
+
+    function _emptyOperatorStateHash() private pure returns (bytes32) {
+        return keccak256(
+            abi.encode(bytes32(0), uint256(0), address(0), address(0), uint64(0), uint64(0), uint64(0), bytes32(0))
+        );
+    }
+
+    function _emptyIngressStateHash() private pure returns (bytes32) {
+        return keccak256(
+            abi.encode(
+                bytes32(0),
+                uint256(0),
+                address(0),
+                address(0),
+                bytes32(0),
+                uint256(0),
+                uint256(0),
+                uint256(0),
+                bytes32(0),
+                uint64(0),
+                uint64(0),
+                uint64(0),
+                bytes32(0)
+            )
+        );
     }
 
     function _checkDeployedChild(uint8 index, bool finalized) private view {

@@ -32,7 +32,6 @@ contract Task1Registry {
 
 contract Task1RuntimeProbe {
     function hashes(address factory, bytes32 manifest) external returns (bytes32[5] memory h) {
-        h[0] = address(new AcquisitionAuthority(factory, manifest)).codehash;
         h[1] = address(new AcquisitionVaultCore(factory, manifest)).codehash;
         h[2] = address(new PreVoteBudgetBook(factory, manifest)).codehash;
         h[3] = address(new AcquisitionIntentExecution(factory, manifest)).codehash;
@@ -248,7 +247,7 @@ contract MatrixChild {
 }
 
 contract AcquisitionConstellationTask1Test is Test {
-    bytes32 internal constant CONFIG_TAG = keccak256("OMERTA_ACQUISITION_TASK1_CONFIG_V1");
+    bytes32 internal constant CONFIG_TAG = keccak256("OMERTA_ACQUISITION_TASK2_CONFIG_V1");
     bytes32 internal constant CONSTELLATION_TAG = keccak256("OMERTA_ACQUISITION_CONSTELLATION_V1");
     bytes32 internal constant DEPLOYMENT_TAG = keccak256("OMERTA_ACQUISITION_DEPLOYMENT_V1");
 
@@ -303,7 +302,7 @@ contract AcquisitionConstellationTask1Test is Test {
         assertEq(next, 0);
         assertEq(actualSafe, address(safe));
         bytes32 expectedConfig =
-            keccak256(abi.encode(CONFIG_TAG, uint256(1), address(registry), address(registry).codehash));
+            keccak256(abi.encode(CONFIG_TAG, uint256(2), address(registry), address(registry).codehash));
         assertEq(config, expectedConfig);
         assertEq(manifest, _manifest(address(factory), expectedConfig, predicted));
     }
@@ -372,8 +371,9 @@ contract AcquisitionConstellationTask1Test is Test {
     }
 
     function test_finalizerPrecedenceUnauthorizedThenHashThenAlready() public {
-        bytes32 manifest = keccak256("manifest");
-        AcquisitionAuthority authority = new AcquisitionAuthority(address(this), manifest);
+        (AcquisitionConstellationFactory factory, bytes[5] memory initcodes,) = _configured();
+        AcquisitionAuthority authority = AcquisitionAuthority(factory.deployNext(initcodes[0]));
+        (bytes32 manifest,,,,,,,) = factory.factoryState();
         vm.prank(address(0xBAD));
         vm.expectRevert(
             abi.encodeWithSelector(AcquisitionAuthority.AuthorityFinalizerUnauthorized.selector, address(0xBAD))
@@ -382,18 +382,26 @@ contract AcquisitionConstellationTask1Test is Test {
         vm.expectRevert(
             abi.encodeWithSelector(AcquisitionAuthority.AuthorityManifestHashMismatch.selector, manifest, bytes32(0))
         );
+        vm.prank(address(factory));
         authority.finalizeAuthority(bytes32(0));
+        vm.prank(address(factory));
         authority.finalizeAuthority(manifest);
+        vm.prank(address(factory));
         vm.expectRevert(AcquisitionAuthority.AuthorityAlreadyFinalized.selector);
         authority.finalizeAuthority(manifest);
     }
 
     function test_childConstructorPrecedenceAndNoFallbackReceive() public {
         vm.expectRevert(AcquisitionAuthority.AuthorityFactoryZero.selector);
-        new AcquisitionAuthority(address(0), bytes32(0));
+        new AcquisitionAuthority(
+            address(0), bytes32(0), address(0), address(0), address(0), address(0), address(0), address(0)
+        );
         vm.expectRevert(AcquisitionAuthority.AuthorityManifestHashZero.selector);
-        new AcquisitionAuthority(address(this), bytes32(0));
-        AcquisitionAuthority authority = new AcquisitionAuthority(address(this), bytes32(uint256(1)));
+        new AcquisitionAuthority(
+            address(this), bytes32(0), address(0), address(0), address(0), address(0), address(0), address(0)
+        );
+        (AcquisitionConstellationFactory factory, bytes[5] memory initcodes,) = _configured();
+        AcquisitionAuthority authority = AcquisitionAuthority(factory.deployNext(initcodes[0]));
         (bool ok,) = address(authority).call(hex"deadbeef");
         assertFalse(ok);
         (ok,) = address(authority).call{value: 1}("");
@@ -757,6 +765,7 @@ contract AcquisitionConstellationTask1Test is Test {
                 for (uint8 i; i < 5; ++i) {
                     factory.deployNext(initcodes[i]);
                 }
+                _mockAuthoritySnapshot(factory, children);
                 bytes memory expected;
                 if (kind == 1) {
                     expected = abi.encodeWithSelector(
@@ -794,6 +803,7 @@ contract AcquisitionConstellationTask1Test is Test {
             for (uint8 i; i < 5; ++i) {
                 factory.deployNext(initcodes[i]);
             }
+            _mockAuthoritySnapshot(factory, children);
             uint256 length = mode == 5 ? 1 : 4096;
             vm.expectRevert(
                 abi.encodeWithSelector(
@@ -814,6 +824,7 @@ contract AcquisitionConstellationTask1Test is Test {
         for (uint8 i; i < 5; ++i) {
             factory.deployNext(initcodes[i]);
         }
+        _mockAuthoritySnapshot(factory, children);
         vm.expectRevert(
             abi.encodeWithSelector(AcquisitionConstellationFactory.FactoryFinalizerSemanticMismatch.selector, uint8(2))
         );
@@ -933,9 +944,21 @@ contract AcquisitionConstellationTask1Test is Test {
         for (uint8 i; i < 5; ++i) {
             predicted[i] = vm.computeCreateAddress(predictedFactory, uint256(i) + 1);
         }
-        bytes32 config = keccak256(abi.encode(CONFIG_TAG, uint256(1), address(registry), address(registry).codehash));
+        bytes32 config = keccak256(abi.encode(CONFIG_TAG, uint256(2), address(registry), address(registry).codehash));
         bytes32 manifest = _manifest(predictedFactory, config, predicted);
-        initcodes[0] = abi.encodePacked(type(AcquisitionAuthority).creationCode, abi.encode(predictedFactory, manifest));
+        initcodes[0] = abi.encodePacked(
+            type(AcquisitionAuthority).creationCode,
+            abi.encode(
+                predictedFactory,
+                manifest,
+                address(safe),
+                address(registry),
+                predicted[1],
+                predicted[2],
+                predicted[3],
+                predicted[4]
+            )
+        );
         initcodes[1] = abi.encodePacked(type(AcquisitionVaultCore).creationCode, abi.encode(predictedFactory, manifest));
         initcodes[2] = abi.encodePacked(type(PreVoteBudgetBook).creationCode, abi.encode(predictedFactory, manifest));
         initcodes[3] =
@@ -944,6 +967,7 @@ contract AcquisitionConstellationTask1Test is Test {
             abi.encodePacked(type(AcquisitionReconciliation).creationCode, abi.encode(predictedFactory, manifest));
         bytes32[5] memory ih;
         bytes32[5] memory rh = probe.hashes(predictedFactory, manifest);
+        rh[0] = _authorityRuntimeHash(predictedFactory, manifest, predicted);
         for (uint8 i; i < 5; ++i) {
             ih[i] = keccak256(initcodes[i]);
         }
@@ -962,7 +986,7 @@ contract AcquisitionConstellationTask1Test is Test {
         for (uint8 i; i < 5; ++i) {
             predicted[i] = vm.computeCreateAddress(predictedFactory, uint256(i) + 1);
         }
-        bytes32 config = keccak256(abi.encode(CONFIG_TAG, uint256(1), address(registry), address(registry).codehash));
+        bytes32 config = keccak256(abi.encode(CONFIG_TAG, uint256(2), address(registry), address(registry).codehash));
         bytes32 manifest = _manifest(predictedFactory, config, predicted);
         callbackInitcode = abi.encodePacked(
             type(ConstructorCallbackAuthority).creationCode, abi.encode(predictedFactory, manifest, caught)
@@ -985,7 +1009,7 @@ contract AcquisitionConstellationTask1Test is Test {
         for (uint8 i; i < 5; ++i) {
             predicted[i] = vm.computeCreateAddress(predictedFactory, uint256(i) + 1);
         }
-        bytes32 config = keccak256(abi.encode(CONFIG_TAG, uint256(1), address(registry), address(registry).codehash));
+        bytes32 config = keccak256(abi.encode(CONFIG_TAG, uint256(2), address(registry), address(registry).codehash));
         bytes32 manifest = _manifest(predictedFactory, config, predicted);
         if (poison) modes[4] = 4;
         for (uint8 i; i < 5; ++i) {
@@ -1008,6 +1032,111 @@ contract AcquisitionConstellationTask1Test is Test {
 
     function _nonzeroHashes() internal pure returns (bytes32[5] memory h) {
         h = [bytes32(uint256(1)), bytes32(uint256(2)), bytes32(uint256(3)), bytes32(uint256(4)), bytes32(uint256(5))];
+    }
+
+    function _authorityRuntimeHash(address predictedFactory, bytes32 manifest, address[5] memory predicted)
+        internal
+        returns (bytes32)
+    {
+        bytes memory runtime = vm.getDeployedCode("AcquisitionAuthority.sol:AcquisitionAuthority");
+        bytes32 nameHash = keccak256("OMERTA AcquisitionAuthority");
+        bytes32 versionHash = keccak256("2");
+        bytes32 domain = keccak256(
+            abi.encode(
+                keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
+                nameHash,
+                versionHash,
+                uint256(4663),
+                predicted[0]
+            )
+        );
+        _writeWord(runtime, 17_307, domain);
+        _writeWord(runtime, 17_265, bytes32(uint256(4663)));
+        _writeWord(runtime, 17_223, bytes32(uint256(uint160(predicted[0]))));
+        _writeWord(runtime, 17_388, nameHash);
+        _writeWord(runtime, 17_428, versionHash);
+        _writeWord(runtime, 15_559, bytes32("OMERTA AcquisitionAuthority") | bytes32(uint256(27)));
+        _writeWord(runtime, 15_608, bytes32("2") | bytes32(uint256(1)));
+        _writeWord(runtime, 953, bytes32(uint256(uint160(predictedFactory))));
+        _writeWord(runtime, 7_102, bytes32(uint256(uint160(predictedFactory))));
+        _writeWord(runtime, 10_165, bytes32(uint256(uint160(predictedFactory))));
+        _writeWord(runtime, 16_660, bytes32(uint256(uint160(predictedFactory))));
+        uint256[8] memory values = [
+            uint256(uint160(predictedFactory)),
+            uint256(manifest),
+            uint256(uint160(address(safe))),
+            uint256(uint160(address(registry))),
+            uint256(uint160(predicted[1])),
+            uint256(uint160(predicted[2])),
+            uint256(uint160(predicted[3])),
+            uint256(uint160(predicted[4]))
+        ];
+        uint256[8] memory firstOffsets = [uint256(953), 997, 7_319, 10_243, 2_480, 10_323, 10_363, 10_403];
+        for (uint256 i; i < 8; ++i) {
+            _writeWord(runtime, firstOffsets[i], bytes32(values[i]));
+        }
+        uint256[10] memory coreOffsets =
+            [uint256(5_660), 6_857, 9_187, 10_283, 11_868, 12_944, 13_948, 15_778, 15_950, 16_780];
+        for (uint256 i; i < coreOffsets.length; ++i) {
+            _writeWord(runtime, coreOffsets[i], bytes32(values[4]));
+        }
+        _writeWord(runtime, 7_168, bytes32(values[1]));
+        _writeWord(runtime, 7_220, bytes32(values[1]));
+        _writeWord(runtime, 8_742, bytes32(values[1]));
+        _writeWord(runtime, 10_205, bytes32(values[1]));
+        _writeWord(runtime, 16_720, bytes32(values[3]));
+        _writeWord(runtime, 16_840, bytes32(values[5]));
+        _writeWord(runtime, 16_900, bytes32(values[6]));
+        _writeWord(runtime, 16_960, bytes32(values[7]));
+        return keccak256(runtime);
+    }
+
+    function _writeWord(bytes memory data, uint256 offset, bytes32 value) internal pure {
+        assembly { mstore(add(add(data, 0x20), offset), value) }
+    }
+
+    function _mockAuthoritySnapshot(AcquisitionConstellationFactory factory, address[5] memory predicted) internal {
+        (bytes32 manifest,,,,,,,) = factory.factoryState();
+        uint256[27] memory words;
+        words[0] = 2;
+        words[1] = uint160(address(factory));
+        words[2] = uint256(manifest);
+        words[3] = uint160(address(registry));
+        words[4] = uint160(predicted[1]);
+        words[5] = uint160(predicted[2]);
+        words[6] = uint160(predicted[3]);
+        words[7] = uint160(predicted[4]);
+        words[9] = uint160(address(safe));
+        words[11] = 1;
+        words[24] = uint256(
+            keccak256(
+                abi.encode(bytes32(0), uint256(0), address(0), address(0), uint64(0), uint64(0), uint64(0), bytes32(0))
+            )
+        );
+        words[26] = uint256(
+            keccak256(
+                abi.encode(
+                    bytes32(0),
+                    uint256(0),
+                    address(0),
+                    address(0),
+                    bytes32(0),
+                    uint256(0),
+                    uint256(0),
+                    uint256(0),
+                    bytes32(0),
+                    uint64(0),
+                    uint64(0),
+                    uint64(0),
+                    bytes32(0)
+                )
+            )
+        );
+        vm.mockCall(
+            predicted[0],
+            abi.encodeWithSelector(AcquisitionAuthority.authoritySnapshot.selector),
+            abi.encodePacked(words)
+        );
     }
 
     function _gasHarness() internal returns (FactoryGasHarness harness) {
