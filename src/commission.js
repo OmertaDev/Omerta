@@ -441,7 +441,9 @@ export async function tickerBallotBoard(db) {
 const BALLOT_CHAIN_ID_V2 = '4663';
 const BALLOT_ZERO_HASH = `0x${'00'.repeat(32)}`;
 const BALLOT_ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
-const MAX_DAY_V2 = 2147483647n;
+// Day 99,999,999 closes exactly at JavaScript Date's positive limit
+// (+275760-09-13T00:00:00Z) and remains inside PostgreSQL's timestamp range.
+const MAX_DAY_V2 = 99999999n;
 const UINT256_LIMIT = 1n << 256n;
 const BALLOT_DECISION_V2 = Object.freeze({
   chamber: 1,
@@ -522,6 +524,23 @@ function exactStandingV2(value) {
   return { text: raw, bigint: BigInt(raw) };
 }
 
+function exactEpochSecondsV2(value, field = 'database epoch') {
+  const raw = typeof value === 'string' ? value : String(value ?? '');
+  if (!/^(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/.test(raw)) throw new Error(`invalid ${field}`);
+  return raw;
+}
+
+function compareEpochSecondsV2(leftValue, rightValue) {
+  const left = exactEpochSecondsV2(leftValue, 'left database epoch').split('.');
+  const right = exactEpochSecondsV2(rightValue, 'right database epoch').split('.');
+  const leftWhole = BigInt(left[0]), rightWhole = BigInt(right[0]);
+  if (leftWhole !== rightWhole) return leftWhole < rightWhole ? -1 : 1;
+  const places = Math.max(left[1]?.length ?? 0, right[1]?.length ?? 0);
+  const leftFraction = BigInt((left[1] ?? '').padEnd(places, '0') || '0');
+  const rightFraction = BigInt((right[1] ?? '').padEnd(places, '0') || '0');
+  return leftFraction < rightFraction ? -1 : leftFraction > rightFraction ? 1 : 0;
+}
+
 const familyBytesCompareV2 = (left, right) => Buffer.compare(
   Buffer.from(String(left)), Buffer.from(String(right)),
 );
@@ -597,24 +616,34 @@ async function ballotClockV2(client, day) {
   const epochMatch = epoch?.match(/^([0-9]+)(?:\.[0-9]+)?$/);
   const currentDay = suppliedDay ?? (epochMatch ? (BigInt(epochMatch[1]) / 86400n).toString() : '');
   if (!Number.isFinite(wall.getTime()) || !Number.isFinite(close.getTime())
-      || !/^(?:0|[1-9][0-9]*)$/.test(currentDay)) {
+      || !/^(?:0|[1-9][0-9]*)$/.test(currentDay) || !epochMatch) {
     throw new Error('database ballot clock returned invalid authority');
   }
-  return { wall, currentDay, close };
+  return {
+    wall,
+    currentDay,
+    close,
+    epochSeconds: exactEpochSecondsV2(epoch),
+    closeEpochSeconds: String(close.getTime() / 1000),
+  };
 }
 
 async function ballotTransactionV2(db, fn, { isolation } = {}) {
   if (typeof db?.connect !== 'function' || typeof db?.release === 'function') return fn(db);
-  const client = await db.connect();
-  try {
-    await client.query(isolation ? `BEGIN ISOLATION LEVEL ${isolation}` : 'BEGIN');
-    const result = await fn(client);
-    await client.query('COMMIT');
-    return result;
-  } catch (error) {
-    await client.query('ROLLBACK').catch(() => {});
-    throw error;
-  } finally { client.release(); }
+  const retriable = new Set(['40001', '40P01']);
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const client = await db.connect();
+    try {
+      await client.query(isolation ? `BEGIN ISOLATION LEVEL ${isolation}` : 'BEGIN');
+      const result = await fn(client);
+      await client.query('COMMIT');
+      return result;
+    } catch (error) {
+      await client.query('ROLLBACK').catch(() => {});
+      if (!retriable.has(error?.code) || attempt === 2) throw error;
+    } finally { client.release(); }
+  }
+  throw new Error('unreachable ballot transaction retry state');
 }
 
 function candidateViewV2(row, currentKeys) {
@@ -625,12 +654,27 @@ function candidateViewV2(row, currentKeys) {
     tokenAddress: getAddress(row.token_address),
     tokenDecimals: Number(row.token_decimals),
     registryIndex: String(row.registry_index),
+    activatedAt: isoBallotTimeV2(row.activated_at),
     ...(currentKeys ? { valid: currentKeys.has(key) } : {}),
+  };
+}
+
+function catalogViewV2(row) {
+  const available = row.state !== 'skipped_catalog_unavailable';
+  return {
+    available,
+    source: available ? 'robinhood_chain_registry_v2' : 'registry_unavailable',
+    finality: available ? 'finalized' : null,
+    chainId: String(row.chain_id),
+    registryAddress: available ? getAddress(row.registry_address) : null,
+    catalogVersion: available ? String(row.catalog_version) : null,
+    snapshotHash: available ? String(row.catalog_snapshot_hash).toLowerCase() : null,
   };
 }
 
 function resultViewV2(row) {
   if (!row) return null;
+  const catalogAvailable = row.status !== 'skipped_catalog_unavailable';
   return {
     day: String(row.day),
     status: row.status,
@@ -639,8 +683,9 @@ function resultViewV2(row) {
     tokenAddress: row.token_address ? getAddress(row.token_address) : null,
     tokenDecimals: row.token_decimals == null ? null : Number(row.token_decimals),
     registryIndex: row.registry_index == null ? null : String(row.registry_index),
-    catalogVersion: String(row.catalog_version),
-    catalogSnapshotHash: String(row.catalog_snapshot_hash).toLowerCase(),
+    catalogAvailable,
+    catalogVersion: catalogAvailable ? String(row.catalog_version) : null,
+    catalogSnapshotHash: catalogAvailable ? String(row.catalog_snapshot_hash).toLowerCase() : null,
     maxEthWei: String(row.max_eth_wei),
     votes: Number(row.votes),
     weighted: Number(row.weighted),
@@ -660,7 +705,8 @@ function resultViewV2(row) {
 
 async function ballotDayViewV2(client, row) {
   const candidates = (await client.query(
-    `SELECT day,asset_version_key,ticker,token_address,token_decimals,registry_index::text AS registry_index
+    `SELECT day,asset_version_key,ticker,token_address,token_decimals,
+            registry_index::text AS registry_index,activated_at
        FROM ticker_ballot_candidates_v2 WHERE day=$1
       ORDER BY registry_index ASC,asset_version_key ASC`,
     [row.day],
@@ -676,12 +722,7 @@ async function ballotDayViewV2(client, row) {
     openedBy: row.opened_by,
     openDetailsHash: String(row.open_details_hash).toLowerCase(),
     openedAt: isoBallotTimeV2(row.opened_at),
-    catalog: {
-      chainId: String(row.chain_id),
-      registryAddress: getAddress(row.registry_address),
-      catalogVersion: String(row.catalog_version),
-      snapshotHash: String(row.catalog_snapshot_hash).toLowerCase(),
-    },
+    catalog: catalogViewV2(row),
     candidates,
     result: resultViewV2(result),
   };
@@ -722,7 +763,6 @@ export async function openTickerBallotV2(db, input = {}) {
   const actorId = ballotActorV2(input.actorId);
   return ballotTransactionV2(db, async (client) => {
     const clock = await ballotClockV2(client, day);
-    if (BigInt(day) < BigInt(clock.currentDay)) ballotFail('past_day', 'A past ballot day cannot be opened.');
     let existing = (await client.query(
       'SELECT * FROM ticker_ballot_days_v2 WHERE day=$1 FOR UPDATE', [day],
     )).rows[0];
@@ -732,10 +772,11 @@ export async function openTickerBallotV2(db, input = {}) {
       }
       return ballotDayViewV2(client, existing);
     }
+    if (BigInt(day) < BigInt(clock.currentDay)) ballotFail('past_day', 'A past ballot day cannot be opened.');
 
     const catalog = await finalizedStockCatalogForBallotV2(client, {
       canonicalClose: clock.close,
-      observedAt: clock.wall,
+      observedEpochSeconds: clock.epochSeconds,
     });
     const state = !catalog.available
       ? 'skipped_catalog_unavailable'
@@ -763,10 +804,10 @@ export async function openTickerBallotV2(db, input = {}) {
       for (const asset of catalog.activeAssets) {
         await client.query(
           `INSERT INTO ticker_ballot_candidates_v2
-            (day,asset_version_key,ticker,token_address,token_decimals,registry_index)
-           VALUES ($1,$2,$3,$4,$5,$6)`,
+            (day,asset_version_key,ticker,token_address,token_decimals,registry_index,activated_at)
+           VALUES ($1,$2,$3,$4,$5,$6,$7)`,
           [day, asset.assetVersionKey, asset.ticker, asset.tokenAddress,
-            asset.tokenDecimals, asset.registryIndex],
+            asset.tokenDecimals, asset.registryIndex, asset.activatedAt],
         );
       }
     } else {
@@ -807,10 +848,12 @@ export async function castTickerVoteV2(ch, selection, client, h) {
   const clockProbe = await ballotClockV2(client, '0');
   const day = clockProbe.currentDay;
   const dayRow = (await client.query(
-    'SELECT * FROM ticker_ballot_days_v2 WHERE day=$1 FOR UPDATE', [day],
+    `SELECT *,EXTRACT(EPOCH FROM closes_at)::text AS closes_epoch_seconds
+       FROM ticker_ballot_days_v2 WHERE day=$1 FOR UPDATE`, [day],
   )).rows[0];
   if (!dayRow) ballotFail('ballot_unopened', 'No exact-version ballot is open for this UTC day.');
-  if (dayRow.state !== 'open' || clockProbe.wall.getTime() >= new Date(dayRow.closes_at).getTime()) {
+  if (dayRow.state !== 'open'
+      || compareEpochSecondsV2(clockProbe.epochSeconds, dayRow.closes_epoch_seconds) >= 0) {
     ballotFail('ballot_closed', 'The exact-version ballot is closed.');
   }
   const seats = await seatedGangs(client);
@@ -854,7 +897,7 @@ export async function castTickerVoteV2(ch, selection, client, h) {
 
   const current = await finalizedStockCatalogForBallotV2(client, {
     canonicalClose: dayRow.closes_at,
-    observedAt: clockProbe.wall,
+    observedEpochSeconds: clockProbe.epochSeconds,
   });
   if (!current.available) ballotFail('catalog_unavailable', 'The finalized catalog is unavailable.');
   const live = current.activeAssets.find((asset) => asset.assetVersionKey === candidate.asset_version_key);
@@ -898,15 +941,72 @@ export async function castTickerVoteV2(ch, selection, client, h) {
   };
 }
 
+const candidateOrderV2 = (left, right) => {
+  const li = BigInt(String(left.registry_index)), ri = BigInt(String(right.registry_index));
+  return li < ri ? -1 : li > ri ? 1
+    : Buffer.compare(Buffer.from(String(left.asset_version_key).slice(2), 'hex'),
+      Buffer.from(String(right.asset_version_key).slice(2), 'hex'));
+};
+
+function rankedVotesV2(votes, include) {
+  return votes.filter(include).sort((left, right) => (
+    left.standingBigInt > right.standingBigInt ? -1
+      : left.standingBigInt < right.standingBigInt ? 1
+        : familyBytesCompareV2(left.familyId, right.familyId)
+  )).slice(0, COMMISSION.SEATS).map((vote, index) => ({
+    ...vote,
+    weight: COMMISSION.SEATS - index,
+  }));
+}
+
+function resolvedBallotDecisionV2(candidates, counted, candidateByKey) {
+  if (!candidates.length) return {
+    selected: null, decidedBy: 'skipped',
+    decidedByCode: BALLOT_DECISION_V2.skipped_no_valid_candidate, votesCount: 0, weighted: 0,
+  };
+  if (!counted.length) return {
+    selected: candidates[0], decidedBy: 'default_silence',
+    decidedByCode: BALLOT_DECISION_V2.default_silence, votesCount: 0, weighted: 0,
+  };
+  const aggregates = new Map();
+  for (const vote of counted) {
+    const aggregate = aggregates.get(vote.assetVersionKey) ?? { weighted: 0, votes: 0 };
+    aggregate.weighted += vote.weight;
+    aggregate.votes += 1;
+    aggregates.set(vote.assetVersionKey, aggregate);
+  }
+  const rankedResults = [...aggregates].map(([key, aggregate]) => ({
+    key, candidate: candidateByKey.get(key), ...aggregate,
+  })).sort((left, right) => right.weighted - left.weighted || right.votes - left.votes
+    || candidateOrderV2(left.candidate, right.candidate));
+  const tied = rankedResults.length > 1
+    && rankedResults[0].weighted === rankedResults[1].weighted
+    && rankedResults[0].votes === rankedResults[1].votes;
+  if (tied) return {
+    selected: candidates[0], decidedBy: 'default_tie',
+    decidedByCode: BALLOT_DECISION_V2.default_tie, votesCount: 0, weighted: 0,
+  };
+  return {
+    selected: rankedResults[0].candidate, decidedBy: 'chamber',
+    decidedByCode: BALLOT_DECISION_V2.chamber,
+    votesCount: rankedResults[0].votes, weighted: rankedResults[0].weighted,
+  };
+}
+
 async function ballotTallyClientV2(client, day, suppliedClock) {
   const dayRow = (await client.query(
-    'SELECT * FROM ticker_ballot_days_v2 WHERE day=$1', [day],
+    `SELECT *,EXTRACT(EPOCH FROM closes_at)::text AS closes_epoch_seconds
+       FROM ticker_ballot_days_v2 WHERE day=$1`, [day],
   )).rows[0];
   if (!dayRow) ballotFail('ballot_unopened', 'No exact-version ballot exists for that UTC day.');
   const clock = suppliedClock ?? await ballotClockV2(client, day);
+  const atOrAfterCutoff = compareEpochSecondsV2(
+    clock.epochSeconds, dayRow.closes_epoch_seconds,
+  ) >= 0;
   const candidates = (await client.query(
     `SELECT day,asset_version_key,ticker,token_address,token_decimals,
-            registry_index::text AS registry_index
+            registry_index::text AS registry_index,activated_at,
+            EXTRACT(EPOCH FROM activated_at)::text AS activated_epoch_seconds
        FROM ticker_ballot_candidates_v2 WHERE day=$1
       ORDER BY registry_index ASC,asset_version_key ASC`,
     [day],
@@ -914,9 +1014,45 @@ async function ballotTallyClientV2(client, day, suppliedClock) {
   const candidateByKey = new Map(candidates.map((candidate) => [String(candidate.asset_version_key), candidate]));
   const current = await finalizedStockCatalogForBallotV2(client, {
     canonicalClose: dayRow.closes_at,
-    observedAt: clock.wall,
+    observedEpochSeconds: clock.epochSeconds,
   });
   const currentKeys = new Set(current.activeAssets.map((asset) => asset.assetVersionKey));
+  const eligibility = new Map();
+  if (current.available && atOrAfterCutoff) {
+    const lifecycleRows = (await client.query(
+      `SELECT c.asset_version_key,a.active,
+              EXTRACT(EPOCH FROM a.activated_at)::text AS activated_epoch_seconds,
+              EXTRACT(EPOCH FROM a.deactivated_at)::text AS deactivated_epoch_seconds
+         FROM ticker_ballot_candidates_v2 c
+         LEFT JOIN stock_asset_versions_v2 a ON a.asset_version_key=c.asset_version_key
+        WHERE c.day=$1 /* ticker_ballot_v2_cutoff_lifecycle */`,
+      [day],
+    )).rows;
+    const lifecycleByKey = new Map(lifecycleRows.map((row) => [String(row.asset_version_key), row]));
+    for (const candidate of candidates) {
+      const key = String(candidate.asset_version_key);
+      const lifecycle = lifecycleByKey.get(key);
+      let state = 'unprovable';
+      if (lifecycle?.activated_epoch_seconds != null
+          && compareEpochSecondsV2(
+            lifecycle.activated_epoch_seconds, candidate.activated_epoch_seconds,
+          ) === 0) {
+        if (lifecycle.active === true) state = currentKeys.has(key) ? 'eligible' : 'unprovable';
+        else if (lifecycle.deactivated_epoch_seconds != null) {
+          state = compareEpochSecondsV2(
+            lifecycle.deactivated_epoch_seconds, dayRow.closes_epoch_seconds,
+          ) >= 0 ? 'eligible' : 'inactive';
+        }
+      }
+      eligibility.set(key, state);
+    }
+  } else {
+    for (const candidate of candidates) {
+      const key = String(candidate.asset_version_key);
+      eligibility.set(key, current.available && currentKeys.has(key) ? 'eligible' : 'inactive');
+    }
+  }
+
   const rows = (await client.query(
     `SELECT v.day,v.family_id,v.asset_version_key,v.ticker,v.standing::text AS standing,
             v.created_at,v.updated_at,g.name,g.tag
@@ -925,20 +1061,26 @@ async function ballotTallyClientV2(client, day, suppliedClock) {
     [day],
   )).rows;
   const votes = rows.map((row) => {
+    const key = String(row.asset_version_key);
+    const candidateState = eligibility.get(key);
     let exclusionReason = null;
-    if (!row.name) exclusionReason = 'family_dissolved';
+    if (!atOrAfterCutoff && !row.name) exclusionReason = 'family_dissolved';
     else if (!current.available) exclusionReason = 'catalog_unavailable';
-    else if (!candidateByKey.has(String(row.asset_version_key))) exclusionReason = 'candidate_missing';
-    else if (!currentKeys.has(String(row.asset_version_key))) exclusionReason = 'candidate_inactive';
+    else if (!candidateByKey.has(key)) exclusionReason = 'candidate_missing';
+    else if (candidateState === 'unprovable') exclusionReason = 'candidate_history_unprovable';
+    else if (candidateState !== 'eligible') {
+      exclusionReason = atOrAfterCutoff ? 'candidate_inactive_at_cutoff' : 'candidate_inactive';
+    }
     const standing = exactStandingV2(row.standing);
     return {
       familyId: String(row.family_id),
       family: row.name || '(a family now dissolved)',
       tag: row.tag || null,
-      assetVersionKey: String(row.asset_version_key),
+      assetVersionKey: key,
       ticker: String(row.ticker),
       standing: standing.text,
       standingBigInt: standing.bigint,
+      candidateState,
       valid: exclusionReason === null,
       counted: false,
       weight: 0,
@@ -947,70 +1089,47 @@ async function ballotTallyClientV2(client, day, suppliedClock) {
       updatedAt: isoBallotTimeV2(row.updated_at),
     };
   });
-  const ranked = votes.filter((vote) => vote.valid)
-    .sort((left, right) => (left.standingBigInt > right.standingBigInt ? -1
-      : left.standingBigInt < right.standingBigInt ? 1
-        : familyBytesCompareV2(left.familyId, right.familyId)));
-  ranked.forEach((vote, index) => {
-    if (index < COMMISSION.SEATS) {
+  const counted = rankedVotesV2(votes, (vote) => vote.valid);
+  const countedByFamily = new Map(counted.map((vote) => [vote.familyId, vote]));
+  for (const vote of votes) {
+    const ranked = countedByFamily.get(vote.familyId);
+    if (ranked) {
       vote.counted = true;
-      vote.weight = COMMISSION.SEATS - index;
-    } else vote.exclusionReason = 'outside_top_five';
-  });
-  const counted = ranked.slice(0, COMMISSION.SEATS);
-  const currentCandidates = candidates.filter((candidate) => currentKeys.has(String(candidate.asset_version_key)))
-    .sort((left, right) => {
-      const li = BigInt(String(left.registry_index)), ri = BigInt(String(right.registry_index));
-      return li < ri ? -1 : li > ri ? 1 : String(left.asset_version_key).localeCompare(String(right.asset_version_key));
-    });
-
-  let decidedBy;
-  let decidedByCode;
-  let selected = null;
-  let votesCount = 0;
-  let weighted = 0;
-  if (!current.available) {
-    decidedBy = 'skipped';
-    decidedByCode = BALLOT_DECISION_V2.skipped_catalog_unavailable;
-  } else if (!currentCandidates.length) {
-    decidedBy = 'skipped';
-    decidedByCode = BALLOT_DECISION_V2.skipped_no_valid_candidate;
-  } else if (!counted.length) {
-    decidedBy = 'default_silence';
-    decidedByCode = BALLOT_DECISION_V2.default_silence;
-    [selected] = currentCandidates;
-  } else {
-    const aggregates = new Map();
-    for (const vote of counted) {
-      const currentAggregate = aggregates.get(vote.assetVersionKey) ?? { weighted: 0, votes: 0 };
-      currentAggregate.weighted += vote.weight;
-      currentAggregate.votes += 1;
-      aggregates.set(vote.assetVersionKey, currentAggregate);
-    }
-    const rankedResults = [...aggregates].map(([key, aggregate]) => ({
-      key,
-      candidate: candidateByKey.get(key),
-      ...aggregate,
-    })).sort((left, right) => right.weighted - left.weighted || right.votes - left.votes
-      || (BigInt(String(left.candidate.registry_index)) < BigInt(String(right.candidate.registry_index)) ? -1
-        : BigInt(String(left.candidate.registry_index)) > BigInt(String(right.candidate.registry_index)) ? 1
-          : left.key.localeCompare(right.key)));
-    const tied = rankedResults.length > 1
-      && rankedResults[0].weighted === rankedResults[1].weighted
-      && rankedResults[0].votes === rankedResults[1].votes;
-    if (tied) {
-      decidedBy = 'default_tie';
-      decidedByCode = BALLOT_DECISION_V2.default_tie;
-      [selected] = currentCandidates;
-    } else {
-      decidedBy = 'chamber';
-      decidedByCode = BALLOT_DECISION_V2.chamber;
-      selected = rankedResults[0].candidate;
-      votesCount = rankedResults[0].votes;
-      weighted = rankedResults[0].weighted;
+      vote.weight = ranked.weight;
+    } else if (vote.valid) vote.exclusionReason = 'outside_top_five';
+  }
+  const eligibleCandidates = candidates.filter(
+    (candidate) => eligibility.get(String(candidate.asset_version_key)) === 'eligible',
+  ).sort(candidateOrderV2);
+  let decision;
+  if (!current.available) decision = {
+    selected: null, decidedBy: 'skipped',
+    decidedByCode: BALLOT_DECISION_V2.skipped_catalog_unavailable, votesCount: 0, weighted: 0,
+  };
+  else {
+    decision = resolvedBallotDecisionV2(eligibleCandidates, counted, candidateByKey);
+    if (atOrAfterCutoff) {
+      const potentialCandidates = candidates.filter(
+        (candidate) => eligibility.get(String(candidate.asset_version_key)) !== 'inactive',
+      ).sort(candidateOrderV2);
+      const potentialCounted = rankedVotesV2(votes, (vote) => (
+        vote.candidateState === 'eligible' || vote.candidateState === 'unprovable'
+      ));
+      const potential = resolvedBallotDecisionV2(
+        potentialCandidates, potentialCounted, candidateByKey,
+      );
+      const ambiguousAuthority = potentialCounted.some(
+        (vote) => vote.candidateState === 'unprovable',
+      ) || (potential.selected
+        && eligibility.get(String(potential.selected.asset_version_key)) === 'unprovable');
+      if (ambiguousAuthority) decision = {
+        selected: null, decidedBy: 'skipped',
+        decidedByCode: BALLOT_DECISION_V2.skipped_no_valid_candidate,
+        votesCount: 0, weighted: 0,
+      };
     }
   }
-  const resultAssetVersionKey = selected ? String(selected.asset_version_key) : null;
+  const resultAssetVersionKey = decision.selected ? String(decision.selected.asset_version_key) : null;
   const tallyHash = canonicalTickerBallotTallyHashV2({
     chainId: BALLOT_CHAIN_ID_V2,
     day: String(dayRow.day),
@@ -1023,7 +1142,7 @@ async function ballotTallyClientV2(client, day, suppliedClock) {
       standing: vote.standing,
       weight: vote.weight,
     })),
-    decidedByCode,
+    decidedByCode: decision.decidedByCode,
     resultAssetVersionKey,
   });
   return {
@@ -1031,14 +1150,17 @@ async function ballotTallyClientV2(client, day, suppliedClock) {
     state: dayRow.state,
     catalogAvailable: current.available,
     catalogReason: current.reason,
-    candidates: candidates.map((candidate) => candidateViewV2(candidate, currentKeys)),
-    votes: votes.map(({ standingBigInt, ...vote }) => vote),
+    candidates: candidates.map((candidate) => ({
+      ...candidateViewV2(candidate),
+      valid: eligibility.get(String(candidate.asset_version_key)) === 'eligible',
+    })),
+    votes: votes.map(({ standingBigInt, candidateState, ...vote }) => vote),
     resultAssetVersionKey,
-    ticker: selected?.ticker ?? null,
-    decidedBy,
-    decidedByCode,
-    votesCount,
-    weighted,
+    ticker: decision.selected?.ticker ?? null,
+    decidedBy: decision.decidedBy,
+    decidedByCode: decision.decidedByCode,
+    votesCount: decision.votesCount,
+    weighted: decision.weighted,
     tallyHash,
   };
 }
@@ -1054,7 +1176,8 @@ export async function closeTickerBallotV2(db, dayValue) {
   const day = ballotDayV2(dayValue);
   return ballotTransactionV2(db, async (client) => {
     const dayRow = (await client.query(
-      'SELECT * FROM ticker_ballot_days_v2 WHERE day=$1 FOR UPDATE', [day],
+      `SELECT *,EXTRACT(EPOCH FROM closes_at)::text AS closes_epoch_seconds
+         FROM ticker_ballot_days_v2 WHERE day=$1 FOR UPDATE`, [day],
     )).rows[0];
     if (!dayRow) ballotFail('ballot_unopened', 'No exact-version ballot exists for that UTC day.');
     const existing = (await client.query(
@@ -1062,10 +1185,19 @@ export async function closeTickerBallotV2(db, dayValue) {
     )).rows[0];
     if (existing) return resultViewV2(existing);
     const clock = await ballotClockV2(client, day);
-    if (clock.wall.getTime() < new Date(dayRow.closes_at).getTime()) {
+    if (compareEpochSecondsV2(clock.epochSeconds, dayRow.closes_epoch_seconds) < 0) {
       ballotFail('ballot_open', 'The canonical UTC ballot cutoff has not arrived.');
     }
     const tally = await ballotTallyClientV2(client, day, clock);
+    for (const vote of tally.votes) {
+      await client.query(
+        `UPDATE commission_ticker_votes_v2
+            SET closed_valid=$3,closed_counted=$4,closed_weight=$5,closed_exclusion_reason=$6
+          WHERE day=$1 AND family_id=$2
+            AND closed_valid IS NULL AND closed_counted IS NULL AND closed_weight IS NULL`,
+        [day, vote.familyId, vote.valid, vote.counted, vote.weight, vote.exclusionReason],
+      );
+    }
     const ready = tally.resultAssetVersionKey !== null && tally.decidedByCode <= BALLOT_DECISION_V2.default_tie;
     const status = ready ? 'closed_ready'
       : tally.decidedByCode === BALLOT_DECISION_V2.skipped_catalog_unavailable
@@ -1108,6 +1240,30 @@ export async function closeTickerBallotV2(db, dayValue) {
   }, { isolation: 'REPEATABLE READ' });
 }
 
+async function closedVoteViewsV2(client, day) {
+  return (await client.query(
+    `SELECT v.family_id,v.asset_version_key,v.ticker,v.standing::text AS standing,
+            v.created_at,v.updated_at,v.closed_valid,v.closed_counted,v.closed_weight,
+            v.closed_exclusion_reason,g.name,g.tag
+       FROM commission_ticker_votes_v2 v LEFT JOIN gangs g ON g.id=v.family_id
+      WHERE v.day=$1 ORDER BY v.standing DESC,v.family_id ASC`,
+    [day],
+  )).rows.map((row) => ({
+    familyId: String(row.family_id),
+    family: row.name || '(a family now dissolved)',
+    tag: row.tag || null,
+    assetVersionKey: String(row.asset_version_key),
+    ticker: String(row.ticker),
+    standing: String(row.standing),
+    valid: row.closed_valid === true,
+    counted: row.closed_counted === true,
+    weight: Number(row.closed_weight ?? 0),
+    exclusionReason: row.closed_exclusion_reason ?? null,
+    createdAt: isoBallotTimeV2(row.created_at),
+    updatedAt: isoBallotTimeV2(row.updated_at),
+  }));
+}
+
 export async function tickerBallotBoardV2(db) {
   return ballotTransactionV2(db, async (client) => {
     const clock = await ballotClockV2(client, '0');
@@ -1118,6 +1274,8 @@ export async function tickerBallotBoardV2(db) {
     const lastRow = (await client.query(
       'SELECT * FROM ticker_ballot_results_v2 ORDER BY day DESC LIMIT 1',
     )).rows[0];
+    const lastResult = resultViewV2(lastRow);
+    if (lastResult) lastResult.voteEvidence = await closedVoteViewsV2(client, String(lastRow.day));
     if (!dayRow) {
       return {
         day,
@@ -1130,7 +1288,7 @@ export async function tickerBallotBoardV2(db) {
         closesAt: null,
         votes: [],
         leading: null,
-        lastResult: resultViewV2(lastRow),
+        lastResult,
         result: null,
         buying: false,
       };
@@ -1143,7 +1301,7 @@ export async function tickerBallotBoardV2(db) {
       : null;
     const candidates = tally?.candidates ?? (await client.query(
       `SELECT day,asset_version_key,ticker,token_address,token_decimals,
-              registry_index::text AS registry_index
+              registry_index::text AS registry_index,activated_at
          FROM ticker_ballot_candidates_v2 WHERE day=$1
         ORDER BY registry_index ASC,asset_version_key ASC`,
       [day],
@@ -1154,19 +1312,12 @@ export async function tickerBallotBoardV2(db) {
       tickers: candidates.map((candidate) => candidate.ticker),
       defaultTicker: tally?.candidates.find((candidate) => candidate.valid)?.ticker ?? null,
       candidates,
-      catalog: {
-        source: 'robinhood_chain_registry_v2',
-        finality: 'finalized',
-        chainId: String(dayRow.chain_id),
-        registryAddress: getAddress(dayRow.registry_address),
-        catalogVersion: String(dayRow.catalog_version),
-        snapshotHash: String(dayRow.catalog_snapshot_hash).toLowerCase(),
-      },
+      catalog: catalogViewV2(dayRow),
       maxEthWei: String(dayRow.max_eth_wei),
       closesAt: isoBallotTimeV2(dayRow.closes_at),
-      votes: tally?.votes ?? [],
+      votes: tally?.votes ?? await closedVoteViewsV2(client, day),
       leading: tally?.ticker ?? resultRow?.ticker ?? null,
-      lastResult: resultViewV2(lastRow),
+      lastResult,
       result: resultViewV2(resultRow),
       buying: false,
     };

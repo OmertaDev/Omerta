@@ -53,6 +53,7 @@ const candidate = (n, overrides = {}) => ({
   registryIndex: overrides.registryIndex ?? String(n - 1),
   active: overrides.active ?? true,
   activatedAt: overrides.activatedAt ?? '2026-09-03T23:59:59.999Z',
+  deactivatedAt: overrides.deactivatedAt ?? null,
 });
 
 async function seedCatalog(pool, {
@@ -82,7 +83,8 @@ async function seedCatalog(pool, {
          $11,$12,$13)`,
       [asset.assetVersionKey, asset.tickerHash, asset.ticker, asset.name, asset.tokenAddress,
         asset.tokenDecimals, asset.robinhoodAssetIdHash, asset.registryIndex, asset.active,
-        asset.activatedAt, asset.active ? null : asset.activatedAt, catalogVersion, syncedAt],
+        asset.activatedAt, asset.active ? null : (asset.deactivatedAt ?? asset.activatedAt),
+        catalogVersion, syncedAt],
     );
     if (asset.active) {
       for (const [dimension, value] of [
@@ -101,24 +103,36 @@ async function seedCatalog(pool, {
   return assets;
 }
 
-function clockedQuery(query, wall) {
+function epochSeconds(wall) {
+  const milliseconds = Date.parse(wall);
+  if (!Number.isFinite(milliseconds)) throw new Error(`invalid test wall ${wall}`);
+  return String(milliseconds / 1000);
+}
+
+function clockedQuery(query, wall, currentDay = DAY) {
   return async (sql, params = []) => {
     if (sql.includes('ticker_ballot_v2_clock')) {
       const closesAt = String(params[0]) === NEXT_DAY
         ? '2026-09-06T00:00:00.000Z'
         : CLOSE;
-      return { rows: [{ wall_now: new Date(wall), current_day: DAY, closes_at: new Date(closesAt) }] };
+      return { rows: [{
+        wall_now: new Date(wall), current_day: currentDay, closes_at: new Date(closesAt),
+        epoch_seconds: epochSeconds(wall),
+      }] };
+    }
+    if (sql.includes('ticker_ballot_v2_dissolution_clock')) {
+      return { rows: [{ epoch_seconds: epochSeconds(wall) }] };
     }
     return query(sql, params);
   };
 }
 
-function clockedPool(pool, wall, statements = null) {
+function clockedPool(pool, wall, statements = null, currentDay = DAY) {
   return {
-    query: clockedQuery(pool.query.bind(pool), wall),
+    query: clockedQuery(pool.query.bind(pool), wall, currentDay),
     async connect() {
       const client = await pool.connect();
-      const query = clockedQuery(client.query.bind(client), wall);
+      const query = clockedQuery(client.query.bind(client), wall, currentDay);
       return {
         query: async (sql, params) => {
           statements?.push(sql);
@@ -182,6 +196,49 @@ async function expectCode(promise, code) {
     `expected stable error code ${code}`);
 }
 
+function sqlStateError(code, message) {
+  const error = new Error(message);
+  error.code = code;
+  return error;
+}
+
+function commitFaultPool(pool, codes) {
+  const stats = { connects: 0, releases: 0, rollbacks: 0, commits: 0 };
+  return {
+    stats,
+    async connect() {
+      const attempt = stats.connects++;
+      const raw = await pool.connect();
+      return {
+        async query(sql, params) {
+          if (sql === 'ROLLBACK') stats.rollbacks++;
+          if (sql === 'COMMIT') {
+            stats.commits++;
+            const result = await raw.query(sql, params);
+            const code = codes[attempt];
+            if (code) throw sqlStateError(code, `injected ${code} on attempt ${attempt + 1}`);
+            return result;
+          }
+          return raw.query(sql, params);
+        },
+        release() {
+          stats.releases++;
+          raw.release();
+        },
+      };
+    },
+  };
+}
+
+const fixRegressionFailures = [];
+async function fixRegression(name, fn) {
+  try {
+    await fn();
+  } catch (error) {
+    fixRegressionFailures.push({ name, error });
+  }
+}
+
 // Independent literal Solidity ABI vector. The expected hash was produced once from the frozen
 // type list, then checked in; this expectation never calls the production helper or builder.
 const LITERAL_TALLY_HASH = '0x0884872988bf5b6da04a42955e08473a4664834e44ae18081ec3b33363f1ed23';
@@ -219,6 +276,405 @@ for (const mutation of tallyMutations) {
 assert.throws(() => canonicalTickerBallotTallyHashV2({ ...literalCommitment, chainId: '4664' }),
   /chain/i, 'the commitment cannot silently target another chain');
 
+// Review fix RED matrix. Each case exercises a consumer-visible failure independently so the
+// initial run reports every review finding instead of stopping at the first missing correction.
+await fixRegression('canonical cutoff keeps a winner deactivated only after close', async () => {
+  const pool = await makeDb();
+  try {
+    const assets = await seedCatalog(pool);
+    const families = await seedFamilies(pool, ['500', '400']);
+    await openTickerBallotV2(clockedPool(pool, WALL), {
+      day: DAY, maxEthWei: '11', detailsHash: DETAILS, actorId: 'mod',
+    });
+    await withClockedClient(pool, WALL, (client) => castTickerVoteV2(
+      families[0].ch, { assetVersionKey: assets[1].assetVersionKey }, client, families[0].h,
+    ));
+    await withClockedClient(pool, WALL, (client) => castTickerVoteV2(
+      families[1].ch, { assetVersionKey: assets[0].assetVersionKey }, client, families[1].h,
+    ));
+    await pool.query('DELETE FROM stock_asset_active_heads_v2 WHERE asset_version_key=$1',
+      [assets[1].assetVersionKey]);
+    await pool.query(
+      `UPDATE stock_asset_versions_v2
+          SET active=false,deactivated_at='2026-09-05T00:00:00.001Z'
+        WHERE asset_version_key=$1`,
+      [assets[1].assetVersionKey],
+    );
+    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-05T00:00:01Z' WHERE id=1");
+    const closed = await closeTickerBallotV2(clockedPool(pool, '2026-09-05T00:00:02.000Z'), DAY);
+    assert.equal(closed.assetVersionKey, assets[1].assetVersionKey,
+      'post-close deactivation cannot replace the canonical-cutoff winner');
+  } finally { await pool.end(); }
+});
+
+await fixRegression('pre-close deactivation is frozen as an excluded closed vote', async () => {
+  const pool = await makeDb();
+  try {
+    const assets = await seedCatalog(pool);
+    const families = await seedFamilies(pool, ['500', '400']);
+    await openTickerBallotV2(clockedPool(pool, WALL), {
+      day: DAY, maxEthWei: '12', detailsHash: DETAILS, actorId: 'mod',
+    });
+    await withClockedClient(pool, WALL, (client) => castTickerVoteV2(
+      families[0].ch, { assetVersionKey: assets[1].assetVersionKey }, client, families[0].h,
+    ));
+    await withClockedClient(pool, WALL, (client) => castTickerVoteV2(
+      families[1].ch, { assetVersionKey: assets[0].assetVersionKey }, client, families[1].h,
+    ));
+    await pool.query('DELETE FROM stock_asset_active_heads_v2 WHERE asset_version_key=$1',
+      [assets[1].assetVersionKey]);
+    await pool.query(
+      `UPDATE stock_asset_versions_v2
+          SET active=false,deactivated_at='2026-09-04T23:00:00Z'
+        WHERE asset_version_key=$1`,
+      [assets[1].assetVersionKey],
+    );
+    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z' WHERE id=1");
+    const closed = await closeTickerBallotV2(clockedPool(pool, CLOSE), DAY);
+    assert.equal(closed.assetVersionKey, assets[0].assetVersionKey);
+    const board = await tickerBallotBoardV2(clockedPool(pool, '2026-09-05T00:00:01Z'));
+    const excluded = board.votes.find((vote) => vote.assetVersionKey === assets[1].assetVersionKey);
+    assert.deepEqual({ valid: excluded?.valid, counted: excluded?.counted, weight: excluded?.weight,
+      exclusionReason: excluded?.exclusionReason }, {
+      valid: false, counted: false, weight: 0, exclusionReason: 'candidate_inactive_at_cutoff',
+    }, 'pre-close deactivation remains reconstructible on the closed board');
+  } finally { await pool.end(); }
+});
+
+await fixRegression('same-key churn fails closed without substituting the runner-up', async () => {
+  const pool = await makeDb();
+  try {
+    const assets = await seedCatalog(pool);
+    const families = await seedFamilies(pool, ['500', '400']);
+    await openTickerBallotV2(clockedPool(pool, WALL), {
+      day: DAY, maxEthWei: '13', detailsHash: DETAILS, actorId: 'mod',
+    });
+    await withClockedClient(pool, WALL, (client) => castTickerVoteV2(
+      families[0].ch, { assetVersionKey: assets[0].assetVersionKey }, client, families[0].h,
+    ));
+    await withClockedClient(pool, WALL, (client) => castTickerVoteV2(
+      families[1].ch, { assetVersionKey: assets[1].assetVersionKey }, client, families[1].h,
+    ));
+    await pool.query('DELETE FROM stock_asset_active_heads_v2 WHERE asset_version_key=$1',
+      [assets[0].assetVersionKey]);
+    await pool.query(
+      `UPDATE stock_asset_versions_v2
+          SET active=false,activated_at='2026-09-04T13:00:00Z',deactivated_at='2026-09-04T14:00:00Z'
+        WHERE asset_version_key=$1`,
+      [assets[0].assetVersionKey],
+    );
+    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z' WHERE id=1");
+    const closed = await closeTickerBallotV2(clockedPool(pool, CLOSE), DAY);
+    assert.deepEqual({ status: closed.status, assetVersionKey: closed.assetVersionKey,
+      skipReason: closed.skipReason }, {
+      status: 'skipped_no_valid_candidate', assetVersionKey: null, skipReason: 'no_valid_candidate',
+    }, 'unprovable winner history terminates the day instead of reranking to another asset');
+  } finally { await pool.end(); }
+});
+
+await fixRegression('owned transactions retry 40001 and 40P01 on fresh clients exactly', async () => {
+  for (const code of ['40001', '40P01']) {
+    const pool = await makeDb();
+    try {
+      await seedCatalog(pool);
+      const faulted = commitFaultPool(clockedPool(pool, WALL), [code]);
+      const opened = await openTickerBallotV2(faulted, {
+        day: DAY, maxEthWei: code === '40001' ? '21' : '22', detailsHash: DETAILS, actorId: 'mod',
+      });
+      assert.equal(opened.candidates.length, 2);
+      assert.deepEqual(faulted.stats, { connects: 2, releases: 2, rollbacks: 1, commits: 2 },
+        `${code} retries the whole owned transaction once on a fresh checked-out client`);
+      assert.equal((await pool.query(
+        'SELECT count(*)::int AS n FROM ticker_ballot_days_v2 WHERE day=$1', [DAY],
+      )).rows[0].n, 1, 'an uncertain exact retry returns one immutable day');
+      assert.equal((await pool.query(
+        'SELECT count(*)::int AS n FROM ticker_ballot_candidates_v2 WHERE day=$1', [DAY],
+      )).rows[0].n, 2, 'an uncertain exact retry never duplicates or truncates candidates');
+    } finally { await pool.end(); }
+  }
+});
+
+await fixRegression('owned transaction retry exhaustion preserves the third SQLSTATE failure', async () => {
+  const pool = await makeDb();
+  try {
+    await seedCatalog(pool);
+    const faulted = commitFaultPool(clockedPool(pool, WALL), ['40001', '40001', '40001']);
+    let failure;
+    try {
+      await openTickerBallotV2(faulted, {
+        day: DAY, maxEthWei: '23', detailsHash: DETAILS, actorId: 'mod',
+      });
+    } catch (error) { failure = error; }
+    assert.equal(failure?.code, '40001');
+    assert.equal(failure?.message, 'injected 40001 on attempt 3');
+    assert.deepEqual(faulted.stats, { connects: 3, releases: 3, rollbacks: 3, commits: 3 },
+      'maximum three owned attempts each rollback and release');
+  } finally { await pool.end(); }
+});
+
+await fixRegression('caller-owned checked clients are never transacted, retried, or released', async () => {
+  const failure = sqlStateError('40001', 'caller transaction serialization failure');
+  let queries = 0;
+  let releases = 0;
+  const checkedClient = {
+    async query(sql) {
+      queries++;
+      assert.equal(/^(?:BEGIN|COMMIT|ROLLBACK)/.test(sql), false);
+      throw failure;
+    },
+    release() { releases++; },
+  };
+  await assert.rejects(tallyTickerBallotV2(checkedClient, DAY), (error) => error === failure);
+  assert.equal(queries, 1);
+  assert.equal(releases, 0);
+});
+
+await fixRegression('exact open replay survives midnight', async () => {
+  const pool = await makeDb();
+  try {
+    await seedCatalog(pool);
+    const input = { day: DAY, maxEthWei: '31', detailsHash: DETAILS, actorId: 'mod' };
+    const opened = await openTickerBallotV2(clockedPool(pool, '2026-09-04T23:59:59.999Z'), input);
+    const replay = await openTickerBallotV2(
+      clockedPool(pool, '2026-09-05T00:00:00.001Z', null, NEXT_DAY), input,
+    );
+    assert.deepEqual(replay, opened, 'immutable exact retry is read before a new-day past check');
+  } finally { await pool.end(); }
+});
+
+await fixRegression('changed midnight replay remains an immutable conflict', async () => {
+  const pool = await makeDb();
+  try {
+    await seedCatalog(pool);
+    await openTickerBallotV2(clockedPool(pool, '2026-09-04T23:59:59.999Z'), {
+      day: DAY, maxEthWei: '32', detailsHash: DETAILS, actorId: 'mod',
+    });
+    await expectCode(openTickerBallotV2(
+      clockedPool(pool, '2026-09-05T00:00:00.001Z', null, NEXT_DAY), {
+        day: DAY, maxEthWei: '33', detailsHash: DETAILS, actorId: 'mod',
+      },
+    ), 'ballot_conflict');
+  } finally { await pool.end(); }
+});
+
+await fixRegression('unavailable catalog provenance is categorical and nullable', async () => {
+  const pool = await makeDb();
+  try {
+    const opened = await openTickerBallotV2(clockedPool(pool, WALL), {
+      day: DAY, maxEthWei: '41', detailsHash: DETAILS, actorId: 'mod',
+    });
+    assert.deepEqual(opened.catalog, {
+      available: false,
+      source: 'registry_unavailable',
+      finality: null,
+      chainId: '4663',
+      registryAddress: null,
+      catalogVersion: null,
+      snapshotHash: null,
+    }, 'zero storage sentinels are not emitted as finalized registry authority');
+    const board = await tickerBallotBoardV2(clockedPool(pool, WALL));
+    assert.deepEqual(board.catalog, opened.catalog,
+      'the public board preserves the same explicit unavailable provenance');
+  } finally { await pool.end(); }
+});
+
+await fixRegression('closed vote commitments survive dissolution and reconstruct the tally', async () => {
+  const pool = await makeDb();
+  try {
+    const [asset] = await seedCatalog(pool, { assets: [candidate(1)] });
+    const [family] = await seedFamilies(pool, ['500']);
+    await openTickerBallotV2(clockedPool(pool, WALL), {
+      day: DAY, maxEthWei: '51', detailsHash: DETAILS, actorId: 'mod',
+    });
+    await withClockedClient(pool, WALL, (client) => castTickerVoteV2(
+      family.ch, { assetVersionKey: asset.assetVersionKey }, client, family.h,
+    ));
+    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z' WHERE id=1");
+    const closed = await closeTickerBallotV2(clockedPool(pool, CLOSE), DAY);
+    await expectCode(withClockedClient(pool, '2026-09-05T00:00:00.001Z', (client) => castTickerVoteV2(
+      family.ch, { assetVersionKey: asset.assetVersionKey }, client, family.h,
+    )), 'ballot_closed');
+    await pool.query('UPDATE gangs SET season_tribute=999999 WHERE id=$1', [family.familyId]);
+    const raw = await pool.connect();
+    const client = { query: clockedQuery(raw.query.bind(raw), '2026-09-05T00:00:00.001Z') };
+    try {
+      await client.query('BEGIN');
+      await removeMember(client, family.familyId, family.ch.id);
+      await client.query('COMMIT');
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally { raw.release(); }
+    assert.equal((await pool.query(
+      'SELECT count(*)::int AS n FROM commission_ticker_votes_v2 WHERE day=$1 AND family_id=$2',
+      [DAY, family.familyId],
+    )).rows[0].n, 1, 'post-close dissolution cannot delete frozen vote evidence');
+    const board = await tickerBallotBoardV2(clockedPool(pool, '2026-09-05T00:00:01Z'));
+    assert.deepEqual(board.votes.map((vote) => ({
+      familyId: vote.familyId, assetVersionKey: vote.assetVersionKey, standing: vote.standing,
+      valid: vote.valid, counted: vote.counted, weight: vote.weight,
+      exclusionReason: vote.exclusionReason,
+    })), [{
+      familyId: family.familyId, assetVersionKey: asset.assetVersionKey, standing: '500',
+      valid: true, counted: true, weight: 5, exclusionReason: null,
+    }], 'closed board reads the frozen commitment rather than current family/standing state');
+    const reconstructed = canonicalTickerBallotTallyHashV2({
+      chainId: board.catalog.chainId,
+      day: board.day,
+      catalogVersion: board.catalog.catalogVersion,
+      catalogSnapshotHash: board.catalog.snapshotHash,
+      maxEthWei: board.maxEthWei,
+      votes: board.votes.filter((vote) => vote.valid && vote.counted).map((vote) => ({
+        familyId: vote.familyId,
+        assetVersionKey: vote.assetVersionKey,
+        standing: vote.standing,
+        weight: vote.weight,
+      })),
+      decidedByCode: closed.decidedByCode,
+      resultAssetVersionKey: closed.assetVersionKey,
+    });
+    assert.equal(reconstructed, closed.tallyHash,
+      'public frozen vote tuples reconstruct the stored exact ABI tally hash');
+    const rolled = await tickerBallotBoardV2(
+      clockedPool(pool, '2026-09-05T00:00:01Z', null, NEXT_DAY),
+    );
+    assert.deepEqual(rolled.lastResult.voteEvidence, board.votes,
+      'after UTC day rollover the last closed result still exposes its reconstructible tuples');
+  } finally { await pool.end(); }
+});
+
+await fixRegression('real open-cast-close tie defaults deterministically with literal ABI evidence', async () => {
+  const pool = await makeDb();
+  try {
+    const assets = await seedCatalog(pool);
+    const families = await seedFamilies(pool, [
+      '9007199254747136', '9007199254746112', '9007199254745088', '9007199254744064',
+    ]);
+    await openTickerBallotV2(clockedPool(pool, WALL), {
+      day: DAY, maxEthWei: MAX_ETH_WEI, detailsHash: DETAILS, actorId: 'mod',
+    });
+    for (const [index, assetIndex] of [[0, 0], [1, 1], [2, 1], [3, 0]]) {
+      await withClockedClient(pool, WALL, (client) => castTickerVoteV2(
+        families[index].ch, { assetVersionKey: assets[assetIndex].assetVersionKey },
+        client, families[index].h,
+      ));
+    }
+    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z' WHERE id=1");
+    const closed = await closeTickerBallotV2(clockedPool(pool, CLOSE), DAY);
+    assert.deepEqual({ assetVersionKey: closed.assetVersionKey, ticker: closed.ticker,
+      decidedBy: closed.decidedBy, decidedByCode: closed.decidedByCode,
+      votes: closed.votes, weighted: closed.weighted, tallyHash: closed.tallyHash }, {
+      assetVersionKey: assets[0].assetVersionKey,
+      ticker: assets[0].ticker,
+      decidedBy: 'default_tie',
+      decidedByCode: 3,
+      votes: 0,
+      weighted: 0,
+      tallyHash: '0x2c4e81048400f6696dca93c1ee3c48278811fb6ecc9812ddd80d380c84efd81b',
+    }, '5+2 versus 4+3 reaches the real equal-weight/equal-count default branch');
+    const board = await tickerBallotBoardV2(clockedPool(pool, '2026-09-05T00:00:01Z'));
+    assert.deepEqual(board.votes.map((vote) => vote.weight), [5, 4, 3, 2],
+      'the tie hash is backed by the production-path frozen vote tuples');
+  } finally { await pool.end(); }
+});
+
+await fixRegression('catalog freshness carries exact database numeric epoch precision', async () => {
+  const pool = await makeDb();
+  try {
+    await seedCatalog(pool, { assets: [candidate(1)], syncedAt: '2026-09-03T23:50:00.000Z' });
+    const exactEpoch = epochSeconds(WALL);
+    const firstStaleEpoch = `${exactEpoch}.000001`;
+    const exactParams = [];
+    const exactClient = {
+      query: async (sql, params = []) => {
+        const result = await pool.query(sql, params);
+        if (sql.includes('ticker_ballot_v2_catalog_state')
+            || sql.includes('ticker_ballot_v2_catalog_confirm')) {
+          exactParams.push(params[0]);
+          result.rows[0].mirror_stale = String(params[0]) !== exactEpoch;
+        }
+        return result;
+      },
+    };
+    const exactlyFresh = await finalizedStockCatalogForBallotV2(exactClient, {
+      canonicalClose: CLOSE,
+      observedEpochSeconds: exactEpoch,
+    });
+    assert.equal(exactlyFresh.available, true, 'exactly 600.000000 seconds remains fresh');
+    assert(exactParams.every((value) => value === exactEpoch),
+      'freshness SQL receives the exact database numeric epoch, never a Date');
+
+    const staleParams = [];
+    const staleClient = {
+      query: async (sql, params = []) => {
+        const result = await pool.query(sql, params);
+        if (sql.includes('ticker_ballot_v2_catalog_state')
+            || sql.includes('ticker_ballot_v2_catalog_confirm')) {
+          staleParams.push(params[0]);
+          result.rows[0].mirror_stale = String(params[0]) === firstStaleEpoch;
+        }
+        return result;
+      },
+    };
+    const firstStale = await finalizedStockCatalogForBallotV2(staleClient, {
+      canonicalClose: CLOSE,
+      observedEpochSeconds: firstStaleEpoch,
+    });
+    assert.equal(firstStale.available, false, 'the first database microsecond after 600 seconds is stale');
+    assert(staleParams.every((value) => value === firstStaleEpoch));
+  } finally { await pool.end(); }
+});
+
+await fixRegression('result DDL enforces status-decision-reason-analytics relationships', async () => {
+  const pool = await makeDb();
+  try {
+    const insert = (day, status, votes, weighted, decidedBy, code, reason, ready) => pool.query(
+      `INSERT INTO ticker_ballot_results_v2
+        (day,status,asset_version_key,ticker,token_address,token_decimals,registry_index,
+         catalog_version,catalog_snapshot_hash,max_eth_wei,votes,weighted,decided_by,
+         decided_by_code,skip_reason,tally_hash,closed_at,purchase_until)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,'1',$8,'1',$9,$10,$11,$12,$13,$14,$15,$16)`,
+      [day, status, ready ? hash('1') : null, ready ? 'T1' : null,
+        ready ? address('1') : null, ready ? 18 : null, ready ? '0' : null,
+        hash('c'), votes, weighted, decidedBy, code, reason, hash('f'), CLOSE,
+        ready ? PURCHASE_UNTIL : null],
+    );
+    await assert.rejects(insert(91001, 'closed_ready', 0, 0, 'skipped', 4, null, true));
+    await assert.rejects(insert(91002, 'closed_ready', 1, 5, 'default_tie', 3, null, true));
+    await assert.rejects(insert(
+      91003, 'skipped_no_valid_candidate', 0, 0, 'skipped', 5, 'catalog_empty', false,
+    ));
+    await assert.rejects(insert(
+      91004, 'skipped_no_valid_candidate', 1, 5, 'skipped', 6, 'no_valid_candidate', false,
+    ));
+  } finally { await pool.end(); }
+});
+
+await fixRegression('ballot day caps at the shared PostgreSQL-JavaScript timestamp boundary', async () => {
+  assert.doesNotThrow(() => canonicalTickerBallotTallyHashV2({
+    ...literalCommitment, day: '99999999',
+  }), 'day 99,999,999 closes at JavaScript Date maximum');
+  assert.throws(() => canonicalTickerBallotTallyHashV2({
+    ...literalCommitment, day: '100000000',
+  }), /day.*range/i, 'day 100,000,000 closes beyond JavaScript timestamp range');
+  const untouched = {
+    async query() { throw new Error('database must not be touched for an out-of-range day'); },
+  };
+  await expectCode(openTickerBallotV2(untouched, {
+    day: '100000000', maxEthWei: '1', detailsHash: DETAILS, actorId: 'mod',
+  }), 'bad_ballot_open');
+});
+
+if (fixRegressionFailures.length) {
+  for (const { name, error } of fixRegressionFailures) {
+    console.error(`RED ${name}: ${error?.message ?? error}`);
+  }
+  throw new AggregateError(
+    fixRegressionFailures.map(({ error }) => error),
+    `${fixRegressionFailures.length} Task 5 review regressions remain`,
+  );
+}
+
 // The new Task 2 seam must accept a checked-out query-only client, enforce exact active heads,
 // preserve huge catalog values as text, and use strict activated-before-close/freshness walls.
 {
@@ -229,7 +685,7 @@ assert.throws(() => canonicalTickerBallotTallyHashV2({ ...literalCommitment, cha
   const queryOnly = { query: pool.query.bind(pool) };
   const catalog = await finalizedStockCatalogForBallotV2(queryOnly, {
     canonicalClose: CLOSE,
-    observedAt: WALL,
+    observedEpochSeconds: epochSeconds(WALL),
   });
   assert.equal(catalog.available, true);
   assert.equal(catalog.catalogVersion, CATALOG_VERSION);
@@ -242,19 +698,19 @@ assert.throws(() => canonicalTickerBallotTallyHashV2({ ...literalCommitment, cha
   );
   const headMismatch = await finalizedStockCatalogForBallotV2(queryOnly, {
     canonicalClose: CLOSE,
-    observedAt: WALL,
+    observedEpochSeconds: epochSeconds(WALL),
   });
   assert.deepEqual(headMismatch.activeAssets, [], 'all three current reverse heads must identify the asset');
 
   await seedCatalog(pool, { assets: [before], syncedAt: '2026-09-03T23:50:00.000Z' });
   const exactlyFresh = await finalizedStockCatalogForBallotV2(queryOnly, {
     canonicalClose: CLOSE,
-    observedAt: '2026-09-04T00:00:00.000Z',
+    observedEpochSeconds: epochSeconds('2026-09-04T00:00:00.000Z'),
   });
   assert.equal(exactlyFresh.available, true, 'exactly 600 seconds is fresh');
   const firstStale = await finalizedStockCatalogForBallotV2(queryOnly, {
     canonicalClose: CLOSE,
-    observedAt: '2026-09-04T00:00:00.001Z',
+    observedEpochSeconds: epochSeconds('2026-09-04T00:00:00.001Z'),
   });
   assert.equal(firstStale.available, false, 'the first PostgreSQL instant after 600 seconds is stale');
 
@@ -275,7 +731,7 @@ assert.throws(() => canonicalTickerBallotTallyHashV2({ ...literalCommitment, cha
   };
   const incoherent = await finalizedStockCatalogForBallotV2(shiftingCatalog, {
     canonicalClose: CLOSE,
-    observedAt: WALL,
+    observedEpochSeconds: epochSeconds(WALL),
   });
   assert.equal(incoherent.available, false,
     'a catalog commit between evidence and active-head reads fails closed instead of mixing versions');
@@ -283,7 +739,7 @@ assert.throws(() => canonicalTickerBallotTallyHashV2({ ...literalCommitment, cha
   process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = OTHER_REGISTRY;
   const wrongRegistry = await finalizedStockCatalogForBallotV2(queryOnly, {
     canonicalClose: CLOSE,
-    observedAt: WALL,
+    observedEpochSeconds: epochSeconds(WALL),
   });
   assert.equal(wrongRegistry.available, false, 'configured and mirrored registry identity must agree');
   process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = REGISTRY;
@@ -438,9 +894,9 @@ let first;
   // fails closed while an exact key remains unambiguous.
   await mainPool.query(
     `INSERT INTO ticker_ballot_candidates_v2
-      (day,asset_version_key,ticker,token_address,token_decimals,registry_index)
-     VALUES ($1,$2,$3,$4,18,'99')`,
-    [DAY, hash('9'), firstCandidate.ticker, address('9')],
+      (day,asset_version_key,ticker,token_address,token_decimals,registry_index,activated_at)
+     VALUES ($1,$2,$3,$4,18,'99',$5)`,
+    [DAY, hash('9'), firstCandidate.ticker, address('9'), firstCandidate.activatedAt],
   );
   await expectCode(withClockedClient(mainPool, WALL, (client) => castTickerVoteV2(
     head.ch, { ticker: firstCandidate.ticker }, client, head.h,
@@ -604,6 +1060,7 @@ let first;
   assert.deepEqual({
     state: unavailable.state,
     status: unavailable.result.status,
+    catalogAvailable: unavailable.result.catalogAvailable,
     catalogVersion: unavailable.result.catalogVersion,
     catalogSnapshotHash: unavailable.result.catalogSnapshotHash,
     maxEthWei: unavailable.result.maxEthWei,
@@ -613,8 +1070,9 @@ let first;
   }, {
     state: 'skipped_catalog_unavailable',
     status: 'skipped_catalog_unavailable',
-    catalogVersion: '0',
-    catalogSnapshotHash: ZERO_HASH,
+    catalogAvailable: false,
+    catalogVersion: null,
+    catalogSnapshotHash: null,
     maxEthWei: MAX_ETH_WEI,
     assetVersionKey: null,
     purchaseUntil: null,

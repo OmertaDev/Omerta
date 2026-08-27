@@ -431,6 +431,14 @@ for (const id of ['smugglers_moon', 'open_roads', 'blood_oath'])
   // the zero-ledger window: dissolving a funded family legitimately ledgers the treasury burn.
   await pool.query(`INSERT INTO commission_ticker_votes (day, gang_id, ticker, standing) VALUES (${day}, '${bosses[1].gang}', 'MSFT', 500)`);
   await pool.query(
+    `INSERT INTO ticker_ballot_days_v2
+      (day,state,chain_id,registry_address,catalog_version,catalog_snapshot_hash,max_eth_wei,
+       opened_by,open_details_hash,opened_at,closes_at)
+     VALUES ($1,'open',4663,$2,'0',$3,'1','commission-test',$4,now(),
+       TIMESTAMPTZ '1970-01-01T00:00:00Z' + (($1::text || ' days')::interval) + interval '1 day')`,
+    [String(day), `0x${'a'.repeat(40)}`, `0x${'0'.repeat(64)}`, `0x${'d'.repeat(64)}`],
+  );
+  await pool.query(
     `INSERT INTO commission_ticker_votes_v2
       (day,family_id,asset_version_key,ticker,standing)
      VALUES ($1,$2,$3,'MSFT','900719925474099312345')`,

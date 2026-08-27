@@ -549,20 +549,23 @@ const unavailableBallotCatalog = (reason, config) => ({
 // Transaction-scoped Task 5 catalog seam. Unlike approvedStockTokenCatalogV2(), this helper never
 // connects, begins, commits, or releases: the caller supplies the checked-out query client so the
 // ballot day, immutable candidates, and catalog evidence share one transaction and one DB wall time.
-export async function finalizedStockCatalogForBallotV2(client, { canonicalClose, observedAt } = {}) {
+export async function finalizedStockCatalogForBallotV2(
+  client, { canonicalClose, observedEpochSeconds } = {},
+) {
   if (!client || typeof client.query !== 'function') throw new Error('a checked-out query client is required');
   const config = stockTokenRegistryV2ProductionConfig();
   if (!config) return unavailableBallotCatalog('configuration', null);
   const close = new Date(canonicalClose);
-  const at = new Date(observedAt);
-  if (!Number.isFinite(close.getTime()) || !Number.isFinite(at.getTime())) {
-    throw new Error('canonical ballot close and observed DB time are required');
+  const observedEpoch = typeof observedEpochSeconds === 'string' ? observedEpochSeconds : '';
+  if (!Number.isFinite(close.getTime()) || !/^(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/.test(observedEpoch)) {
+    throw new Error('canonical ballot close and exact observed DB epoch are required');
   }
   const state = (await client.query(
     `SELECT chain_id,registry_address,catalog_version::text AS catalog_version,
-            snapshot_hash,synced_at,$1::timestamptz > synced_at + interval '600 seconds' AS mirror_stale
+            snapshot_hash,synced_at,
+            $1::numeric > EXTRACT(EPOCH FROM synced_at) + 600 AS mirror_stale
        FROM stock_catalog_sync_state_v2 WHERE id=1 /* ticker_ballot_v2_catalog_state */`,
-    [at],
+    [observedEpoch],
   )).rows[0];
   if (!state) return unavailableBallotCatalog('unsynchronized', config);
   if (String(state.chain_id) !== ROBINHOOD_CHAIN_ID_V2
@@ -605,9 +608,10 @@ export async function finalizedStockCatalogForBallotV2(client, { canonicalClose,
   // equality on version + snapshot + identity brackets the middle statement into one coherent view.
   const confirmed = (await client.query(
     `SELECT chain_id,registry_address,catalog_version::text AS catalog_version,
-            snapshot_hash,$1::timestamptz > synced_at + interval '600 seconds' AS mirror_stale
+            snapshot_hash,
+            $1::numeric > EXTRACT(EPOCH FROM synced_at) + 600 AS mirror_stale
        FROM stock_catalog_sync_state_v2 WHERE id=1 /* ticker_ballot_v2_catalog_confirm */`,
-    [at],
+    [observedEpoch],
   )).rows[0];
   if (!confirmed
       || String(confirmed.chain_id) !== ROBINHOOD_CHAIN_ID_V2

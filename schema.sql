@@ -3599,7 +3599,7 @@ CREATE TABLE IF NOT EXISTS stock_catalog_evidence_v2 (
 -- ticker-keyed ballot and remain dormant until the later health/custody cutover. Task 5 writes
 -- database-authoritative preparation evidence only: no RPC, funds, publication, or finality.
 CREATE TABLE IF NOT EXISTS ticker_ballot_days_v2 (
-  day INT PRIMARY KEY CHECK (day >= 0),
+  day INT PRIMARY KEY CHECK (day >= 0 AND day <= 99999999),
   state TEXT NOT NULL CHECK (state IN
     ('open','closed_ready','skipped_catalog_unavailable','skipped_catalog_empty',
      'skipped_no_valid_candidate')),
@@ -3620,32 +3620,53 @@ CREATE TABLE IF NOT EXISTS ticker_ballot_days_v2 (
 );
 
 CREATE TABLE IF NOT EXISTS ticker_ballot_candidates_v2 (
-  day INT NOT NULL,
+  day INT NOT NULL CHECK (day >= 0 AND day <= 99999999),
   asset_version_key TEXT NOT NULL,
   ticker TEXT NOT NULL,
   token_address TEXT NOT NULL,
   token_decimals INT NOT NULL CHECK (token_decimals >= 0 AND token_decimals <= 255),
   registry_index NUMERIC(78,0) NOT NULL CHECK (registry_index >= 0),
+  activated_at TIMESTAMPTZ NOT NULL,
   PRIMARY KEY (day, asset_version_key)
 );
 CREATE INDEX IF NOT EXISTS ix_ticker_ballot_candidates_v2_ticker
   ON ticker_ballot_candidates_v2(day, ticker, registry_index, asset_version_key);
 
 CREATE TABLE IF NOT EXISTS commission_ticker_votes_v2 (
-  day INT NOT NULL,
+  day INT NOT NULL CHECK (day >= 0 AND day <= 99999999),
   family_id TEXT NOT NULL,
   asset_version_key TEXT NOT NULL,
   ticker TEXT NOT NULL,
   standing NUMERIC(78,0) NOT NULL CHECK (standing >= 0),
+  closed_valid BOOLEAN,
+  closed_counted BOOLEAN,
+  closed_weight INT CHECK (closed_weight >= 0 AND closed_weight <= 5),
+  closed_exclusion_reason TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  PRIMARY KEY (day, family_id)
+  PRIMARY KEY (day, family_id),
+  CHECK (
+    (closed_valid IS NULL AND closed_counted IS NULL AND closed_weight IS NULL
+      AND closed_exclusion_reason IS NULL)
+    OR
+    (closed_valid IS NOT NULL AND closed_counted IS NOT NULL AND closed_weight IS NOT NULL
+      AND (
+        (closed_valid AND closed_counted AND closed_weight BETWEEN 1 AND 5
+          AND closed_exclusion_reason IS NULL)
+        OR
+        (closed_valid AND NOT closed_counted AND closed_weight = 0
+          AND closed_exclusion_reason = 'outside_top_five')
+        OR
+        (NOT closed_valid AND NOT closed_counted AND closed_weight = 0
+          AND closed_exclusion_reason IS NOT NULL)
+      ))
+  )
 );
 CREATE INDEX IF NOT EXISTS ix_commission_ticker_votes_v2_candidate
   ON commission_ticker_votes_v2(day, asset_version_key, family_id);
 
 CREATE TABLE IF NOT EXISTS ticker_ballot_results_v2 (
-  day INT PRIMARY KEY CHECK (day >= 0),
+  day INT PRIMARY KEY CHECK (day >= 0 AND day <= 99999999),
   status TEXT NOT NULL CHECK (status IN
     ('closed_ready','skipped_catalog_unavailable','skipped_catalog_empty',
      'skipped_no_valid_candidate')),
@@ -3679,6 +3700,30 @@ CREATE TABLE IF NOT EXISTS ticker_ballot_results_v2 (
   CHECK ((status = 'closed_ready') = (registry_index IS NOT NULL)),
   CHECK ((status = 'closed_ready') = (purchase_until IS NOT NULL)),
   CHECK ((status = 'closed_ready') = (skip_reason IS NULL)),
+  CHECK (
+    (status = 'closed_ready' AND (
+      (decided_by = 'chamber' AND decided_by_code = 1
+        AND votes BETWEEN 1 AND 5 AND weighted BETWEEN 1 AND 15)
+      OR
+      (decided_by = 'default_silence' AND decided_by_code = 2
+        AND votes = 0 AND weighted = 0)
+      OR
+      (decided_by = 'default_tie' AND decided_by_code = 3
+        AND votes = 0 AND weighted = 0)
+    ))
+    OR
+    (status = 'skipped_catalog_unavailable' AND decided_by = 'skipped'
+      AND decided_by_code = 4 AND skip_reason = 'catalog_unavailable'
+      AND votes = 0 AND weighted = 0)
+    OR
+    (status = 'skipped_catalog_empty' AND decided_by = 'skipped'
+      AND decided_by_code = 5 AND skip_reason = 'catalog_empty'
+      AND votes = 0 AND weighted = 0)
+    OR
+    (status = 'skipped_no_valid_candidate' AND decided_by = 'skipped'
+      AND decided_by_code = 6 AND skip_reason = 'no_valid_candidate'
+      AND votes = 0 AND weighted = 0)
+  ),
   CHECK (publication_status = 'not_submitted' OR status = 'closed_ready')
 );
 CREATE INDEX IF NOT EXISTS ix_ticker_ballot_results_v2_publication
