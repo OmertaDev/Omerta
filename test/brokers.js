@@ -127,10 +127,9 @@ assert.match(workerSource, /import\s*\{[^}]*allocateEpoch[^}]*\}\s*from '\.\/bro
 assert.match(workerSource, /safe\('broker epoch',\s*\(\)\s*=>\s*allocateEpoch\(pool\)\)/,
   'the worker automatically publishes the completed activity epoch');
 
-// ── AGENTS AND RESIDENTS ARE EXCLUDED AT THE SOURCE ─────────────────────────────────────────────
-// ACTIVITY publishes both exclusions. The broker allocator is the point where a gameplay score
-// becomes an RWA allocation weight, so this is the last safe place to enforce them: excluded
-// accounts may play and may even activate, but they can never enter the frozen ownership snapshot.
+// ── AGENTS QUALIFY; NPC RESIDENTS ARE EXCLUDED AT THE SOURCE ────────────────────────────────────
+// The broker allocator is where a gameplay score becomes an RWA allocation weight. Agent accounts
+// are economic players here, on identical activation and activity terms; scenery receives nothing.
 {
   const human = await mk('Broker Human');
   const agent = await mk('Broker Agent');
@@ -151,16 +150,16 @@ assert.match(workerSource, /safe\('broker epoch',\s*\(\)\s*=>\s*allocateEpoch\(p
       [x.aid, exclusionDay]);
   }
 
-  const humanOnly = await allocateEpoch(pool, { endDay: exclusionDay, days: 1 });
-  assert.equal(humanOnly.holders, 1, 'only the qualified human enters the frozen RWA epoch');
+  const playersOnly = await allocateEpoch(pool, { endDay: exclusionDay, days: 1 });
+  assert.equal(playersOnly.holders, 2, 'the qualified human and agent enter the frozen RWA epoch');
   const eligible = (await pool.query(
-    'SELECT account_id FROM broker_weights WHERE epoch_id=$1', [humanOnly.epochId])).rows;
-  assert.deepEqual(eligible.map((x) => x.account_id), [human.aid],
-    'agent and resident accounts receive no RWA weight even when equally active and activated');
+    'SELECT account_id FROM broker_weights WHERE epoch_id=$1', [playersOnly.epochId])).rows;
+  assert.deepEqual(eligible.map((x) => x.account_id).sort(), [human.aid, agent.aid].sort(),
+    'agent wallets receive RWA weight on player terms while residents remain excluded');
   // Keep this historical fixture historical: the distribution tests below deliberately select the
   // latest epoch by computed_at and pin their own two candidates one and two hours in the past.
   await pool.query('UPDATE broker_epochs SET computed_at=$2 WHERE id=$1',
-    [humanOnly.epochId, new Date(Date.now() - 10 * 86400e3)]);
+    [playersOnly.epochId, new Date(Date.now() - 10 * 86400e3)]);
 }
 
 // ── THE RECORDER LOGS COUNTS, NEVER GRANTED XP ──────────────────────────────────────────────────

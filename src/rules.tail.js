@@ -5831,8 +5831,10 @@ export const ACTIVITY = {
   },
   // A floor purely to refuse dust rows (the ACTIVATION.MIN_OMR shape). NOT a cap and never a cap.
   MIN_SCORE: 25,
-  // Excluded from the distribution entirely — the standing exclusion on every legend surface.
-  EXCLUDE_AGENTS: true,
+  // NPC residents are scenery, not economic counterparties. Agent accounts are first-class
+  // players: the flag changes cadence and human-faucet eligibility, never access to skill-based
+  // $OMR or RWA distributions.
+  EXCLUDE_AGENTS: false,
   EXCLUDE_NPC: true,
 };
 // A player's epoch score: Σ over their throttled actions of that tag's XP. Linear by construction.

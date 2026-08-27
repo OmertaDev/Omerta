@@ -566,7 +566,9 @@ a broader player scoring 305 across four trades does. A gate charges a fixed cos
 Sybil-positive). `MIN_SCORE` (25) refuses dust and is likewise a floor, never a ceiling — the suite
 asserts no key in the block is even *named* like a cap.
 
-Agents and NPC residents are excluded, as on every other legend surface.
+Agent accounts qualify on the same measured-play terms as human accounts. The agent flag changes
+cadence and human-faucet eligibility, not access to this skill-based economic distribution. NPC
+residents remain excluded because scenery cannot receive a distribution.
 
 **Still owed before the leg goes live:** a sim probe (P9.35) measuring the realistic daily ceiling —
 the theoretical maximum is dominated by nerve regen (6/min → 8,640 nerve/day) and lands near
@@ -594,7 +596,7 @@ testable, and on mainnet the bot does the real DEX buy and reports what it got.
 - **`recordBankBuy`** — idempotent on `ref`; the per-asset root cap (`spend ≤ revenue`) read INSIDE
   the transaction so two concurrent buys cannot each see the whole budget.
 - **`runCityLeg`** — one epoch, idempotent on the window; pro-rata **linear, uncapped**; the breadth
-  gate and dust floor from `ACTIVITY`; agents and residents excluded at the source; the remainder
+  gate and dust floor from `ACTIVITY`; agent accounts qualify and NPC residents are excluded at the source; the remainder
   rule on the last payee; `prize:omr` + `fundReserve` post-commit.
 - **`runBankInvariants`** — RULE 1 (`distributed ≤ bought`) plus the books either side, wired into
   the worker's nightly `alertDrift` beside vig/bond/desk/treasury.

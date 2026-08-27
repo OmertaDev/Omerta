@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `e3ea30ce3b21`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `ec4a13c4df03`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 948 |
+| Commits in clone | 939 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-26 — docs: register settlement gas pool audit scope |
+| Latest commit | 2026-08-25 — docs: refresh branch-stable knowledge snapshot |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 147 |
+| OmertaDev | 138 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -33,7 +33,7 @@
 | [src/server.js](../../src/server.js) | 336 | yes |
 | [schema.sql](../../schema.sql) | 252 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
-| [SPEC.md](../../SPEC.md) | 232 | yes |
+| [SPEC.md](../../SPEC.md) | 231 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 169 | yes |
 | [package.json](../../package.json) | 127 | yes |
@@ -55,8 +55,8 @@
 | [src/preflight.js](../../src/preflight.js) | 47 | yes |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
 | [src/economy.js](../../src/economy.js) | 44 | yes |
-| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 43 | yes |
 | [src/casino.js](../../src/casino.js) | 43 | yes |
+| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 42 | yes |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
 | [src/business.js](../../src/business.js) | 39 | yes |
 | [src/chain.js](../../src/chain.js) | 36 | yes |

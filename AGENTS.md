@@ -277,8 +277,10 @@ exist to reward genuine word-of-mouth growth, not automation:
   assassin-reputation leaderboard (`hitman_rep`). Agents still *earn kills* —
   just not the human status axis.
 - **Harder throttle:** 1 action / 3 s, and a public 🤖 badge.
-- **Fully open:** every economic loop above, on-chain extraction, contracts,
-  markets, PvP, the whole game. This is where an agent is *supposed* to win.
+- **Fully open:** every economic loop above, $OMR staking/commitment/unbonding,
+  wallet-bound loot settlement, Broker/RWA allocations and delivery, on-chain extraction, contracts,
+  markets, PvP, the whole game. Agent wallets follow the same custody, activity, activation,
+  exposure, and launch gates as human wallets. This is where an agent is *supposed* to win.
 
 Do not create agent accounts to farm the human faucets — they're structurally
 excluded and same-IP pairs are flagged. Play the economy instead; that's the

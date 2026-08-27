@@ -11,14 +11,14 @@ Written 2026-07-25. Every number below was measured from the tree, not recalled.
 | | |
 |---|---|
 | Backend modules | **163** files, **56730** lines (`src/`, incl. `src/routes/` and `src/social/`) |
-| Test suites | **119** files, **48118** lines (`test/`) — ratio 0.85 test:src |
+| Test suites | **119** files, **50127** lines (`test/`) — ratio 0.88 test:src |
 | HTTP routes | **716** registrations |
 | Database tables | **245** (`schema.sql`, 3715 lines) |
 | Client | **11415** lines (`public/index.html`, single file, zero dependencies) |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **21** contracts, **5325** lines Solidity, **406** Foundry tests passing |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/bond-dials.js` (sizing the on-chain mint walls), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres) |
-| Design + audit docs | **415** markdown files, **88933** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
+| Design + audit docs | **415** markdown files, **93122** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
 | Ledger invariants | 18 named escrow/identity checks + per-currency conservation, **drift-0** |
 
 Roughly **55,000 lines** of code, tests, schema and contracts.
@@ -87,7 +87,8 @@ season rollover · the closed-alpha invite gate · mod tools (ban, mod-kill, con
 
 ### 3.6 Chain (M6, mainnet-gated)
 `OMR` ERC-20 with an owner-armed DEX sell tax · `VoucherClaim` (EIP-712, replay-proof, daily-capped) ·
-`GearVault` ERC-1155 with per-id supply caps · `OMRStaking` · `OmertaFees` (mint / respawn / reroll) ·
+`GearVault` ERC-1155 with per-id supply caps · legacy `OMRStaking` (not approved gameplay custody) ·
+approved-but-unimplemented upgradeable `OMRGameplayVault` replacement · `OmertaFees` (mint / respawn / reroll) ·
 `OmertaBond`. Backend: EIP-712 voucher signing in exact parity, the full-reserve withdrawal queue,
 SIWE wallet linking, a polled `getLogs` watcher over a persisted cursor, the exit toll, the early-exit
 surcharge.

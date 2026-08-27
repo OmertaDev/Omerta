@@ -12,7 +12,7 @@
 | [src/auction.js](../../src/auction.js) | 248 | platform-core | 4 / 5 | 5 | 6 | 3 |
 | [src/auth.js](../../src/auth.js) | 208 | platform-core | 1 / 2 | 4 | 4 | 1 |
 | [src/avatar.js](../../src/avatar.js) | 63 | platform-core | 1 / 2 | 0 | 0 | 1 |
-| [src/bank.js](../../src/bank.js) | 520 | platform-core | 3 / 5 | 4 | 14 | 1 |
+| [src/bank.js](../../src/bank.js) | 519 | platform-core | 3 / 5 | 4 | 14 | 1 |
 | [src/bloodline.js](../../src/bloodline.js) | 80 | platform-core | 1 / 3 | 2 | 4 | 0 |
 | [src/bonds.js](../../src/bonds.js) | 484 | platform-core | 3 / 10 | 9 | 15 | 2 |
 | [src/boxing.js](../../src/boxing.js) | 697 | vice-competition | 3 / 12 | 11 | 8 | 4 |
@@ -127,7 +127,7 @@
 | [src/routes/underworld.js](../../src/routes/underworld.js) | 27 | world-progression | 2 / 1 | 7 | 1 | 0 |
 | [src/rules.generated.js](../../src/rules.generated.js) | 480 | platform-core | 0 / 2 | 0 | 10 | 1 |
 | [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 196 | 0 | 0 | 109 |
-| [src/rules.tail.js](../../src/rules.tail.js) | 6045 | platform-core | 0 / 1 | 0 | 53 | 0 |
+| [src/rules.tail.js](../../src/rules.tail.js) | 6047 | platform-core | 0 / 1 | 0 | 53 | 0 |
 | [src/rwastockkeeper.js](../../src/rwastockkeeper.js) | 125 | platform-core | 0 / 1 | 0 | 5 | 0 |
 | [src/season.js](../../src/season.js) | 141 | world-progression | 1 / 2 | 2 | 8 | 0 |
 | [src/secrets.js](../../src/secrets.js) | 197 | law-intelligence | 3 / 5 | 5 | 6 | 2 |
