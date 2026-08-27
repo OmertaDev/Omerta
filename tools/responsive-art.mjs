@@ -9,6 +9,7 @@ import { basename, extname, join } from 'node:path';
 const ART_DIR = new URL('../public/art/', import.meta.url);
 const PHOTO_QUALITY = 0.82;
 const DIAGRAM_QUALITY = 0.9;
+const MARKETING_QUALITY = 0.92;
 const JOBS = [
   { source: 'hero-poster.jpg', widths: [640, 960, 1440, 1920], quality: PHOTO_QUALITY },
   { source: 'landing-break.jpg', widths: [640, 960, 1440], quality: PHOTO_QUALITY },
@@ -20,6 +21,10 @@ const JOBS = [
   { source: 'hype-money-poster.jpg', widths: [640, 960], quality: PHOTO_QUALITY },
   { source: 'gameplay-01-choose-your-path.png', widths: [640, 1080, 1600], quality: DIAGRAM_QUALITY },
   { source: 'omr-03-money-router.png', widths: [640, 1080, 1600], quality: DIAGRAM_QUALITY },
+  { source: '../../brand/agent-campaign/png/00-overview-16x9.png', output: 'agent-overview', widths: [640, 1080, 1600], quality: MARKETING_QUALITY },
+  { source: '../../brand/agent-campaign/png/01-cover.png', output: 'agent-cover', widths: [480, 720, 1080], quality: MARKETING_QUALITY },
+  { source: '../../brand/agent-campaign/png/02-turn.png', output: 'agent-turn', widths: [480, 720, 1080], quality: MARKETING_QUALITY },
+  { source: '../../brand/agent-campaign/png/03-economy.png', output: 'agent-economy', widths: [480, 720, 1080], quality: MARKETING_QUALITY },
 ];
 
 function resolveBrowser() {
@@ -40,12 +45,20 @@ if (!executablePath) {
 }
 
 const mimeOf = (file) => extname(file).toLowerCase() === '.png' ? 'image/png' : 'image/jpeg';
-const outputName = (source, width) => `${basename(source, extname(source))}-${width}.webp`;
+const jobName = (job) => job.output || basename(job.source, extname(job.source));
+const outputName = (job, width) => `${jobName(job)}-${width}.webp`;
+const requested = new Set(process.argv.slice(2));
+const jobs = requested.size ? JOBS.filter((job) => requested.has(jobName(job))) : JOBS;
+if (requested.size && jobs.length !== requested.size) {
+  const unknown = [...requested].filter((name) => !JOBS.some((job) => jobName(job) === name));
+  console.error(`Unknown responsive-art job: ${unknown.join(', ')}`);
+  process.exit(1);
+}
 const browser = await chromium.launch({ executablePath, headless: true });
 const page = await browser.newPage();
 
 try {
-  for (const job of JOBS) {
+  for (const job of jobs) {
     const sourceUrl = new URL(job.source, ART_DIR);
     const sourceBytes = await readFile(sourceUrl);
     const dataUrl = `data:${mimeOf(job.source)};base64,${sourceBytes.toString('base64')}`;
@@ -78,7 +91,7 @@ try {
         return { base64: btoa(binary), width, height, size: bytes.length };
       }, { dataUrl, width, quality: job.quality });
 
-      const name = outputName(job.source, width);
+      const name = outputName(job, width);
       await writeFile(new URL(name, ART_DIR), Buffer.from(encoded.base64, 'base64'));
       console.log(`${job.source} -> ${name} (${encoded.width}x${encoded.height}, ${Math.round(encoded.size / 1024)} KB)`);
     }
