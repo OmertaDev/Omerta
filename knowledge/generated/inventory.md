@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `36d5bb2f549a`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `d0d1fa3feaff`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,585 |
-| Text lines | 402,283 |
-| Repository bytes inventoried | 274,635,786 |
+| Text lines | 402,921 |
+| Repository bytes inventoried | 274,663,264 |
 | Backend/route modules | 167 |
 | HTTP route registrations / unique routes | 722 / 721 |
 | Database tables | 263 |
 | Solidity declarations | 33 |
-| Git commits | 1,012 |
+| Git commits | 1,014 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 4,613 / 21,634 |
+| Graph nodes / edges | 4,615 / 21,641 |
 
 ## Artifact kinds
 
@@ -72,10 +72,10 @@
 | [test/finalizedobservation.js](../../test/finalizedobservation.js) | 1,920 | test-suite | 2026-08-27 |
 | [test/gates.js](../../test/gates.js) | 1,747 | test-suite | 2026-08-24 |
 | [test/hardening.js](../../test/hardening.js) | 1,712 | test-suite | 2026-08-24 |
+| [docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md](../../docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md) | 1,710 | documentation | 2026-08-27 |
 | [src/chain.js](../../src/chain.js) | 1,703 | backend-module | 2026-08-22 |
 | [test/stockballotv2.js](../../test/stockballotv2.js) | 1,689 | test-suite | 2026-08-27 |
 | [tools/sim.js](../../tools/sim.js) | 1,681 | engineering-harness | 2026-08-16 |
-| [src/casino.js](../../src/casino.js) | 1,468 | backend-module | 2026-08-23 |
 
 ## Media estate
 
