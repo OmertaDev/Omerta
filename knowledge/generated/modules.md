@@ -33,14 +33,14 @@
 | [src/clues.js](../../src/clues.js) | 114 | platform-core | 4 / 3 | 3 | 5 | 0 |
 | [src/collection.js](../../src/collection.js) | 112 | law-intelligence | 2 / 13 | 2 | 7 | 1 |
 | [src/collision.js](../../src/collision.js) | 98 | engagement-growth | 1 / 3 | 1 | 7 | 1 |
-| [src/commission.js](../../src/commission.js) | 1326 | platform-core | 5 / 15 | 9 | 17 | 4 |
+| [src/commission.js](../../src/commission.js) | 1395 | platform-core | 5 / 15 | 9 | 17 | 4 |
 | [src/community.js](../../src/community.js) | 220 | engagement-growth | 3 / 7 | 2 | 8 | 1 |
 | [src/contacts.js](../../src/contacts.js) | 248 | engagement-growth | 2 / 8 | 3 | 10 | 2 |
 | [src/convoy.js](../../src/convoy.js) | 561 | enterprise-logistics | 4 / 9 | 10 | 14 | 2 |
 | [src/corner.js](../../src/corner.js) | 141 | platform-core | 2 / 3 | 3 | 4 | 0 |
 | [src/crew.js](../../src/crew.js) | 401 | social-combat | 2 / 6 | 15 | 18 | 1 |
 | [src/day.js](../../src/day.js) | 72 | world-progression | 6 / 2 | 1 | 0 | 0 |
-| [src/db.js](../../src/db.js) | 245 | platform-core | 0 / 23 | 0 | 1 | 11 |
+| [src/db.js](../../src/db.js) | 465 | platform-core | 0 / 23 | 0 | 5 | 12 |
 | [src/dbhealth.js](../../src/dbhealth.js) | 148 | platform-core | 0 / 5 | 0 | 0 | 2 |
 | [src/deeds.js](../../src/deeds.js) | 556 | enterprise-logistics | 2 / 5 | 11 | 8 | 0 |
 | [src/desk.js](../../src/desk.js) | 505 | platform-core | 3 / 7 | 6 | 13 | 3 |
@@ -142,7 +142,7 @@
 | [src/social/defense.js](../../src/social/defense.js) | 166 | platform-core | 7 / 3 | 0 | 2 | 0 |
 | [src/social/estate.js](../../src/social/estate.js) | 529 | enterprise-logistics | 18 / 4 | 0 | 80 | 0 |
 | [src/social/exchange.js](../../src/social/exchange.js) | 128 | economy-ledger | 3 / 1 | 0 | 2 | 0 |
-| [src/social/gangs.js](../../src/social/gangs.js) | 782 | platform-core | 12 / 8 | 0 | 15 | 3 |
+| [src/social/gangs.js](../../src/social/gangs.js) | 796 | platform-core | 12 / 8 | 0 | 15 | 3 |
 | [src/social/shared.js](../../src/social/shared.js) | 44 | platform-core | 2 / 9 | 0 | 2 | 0 |
 | [src/sol.js](../../src/sol.js) | 91 | platform-core | 0 / 4 | 0 | 0 | 1 |
 | [src/soldiers.js](../../src/soldiers.js) | 116 | social-combat | 2 / 3 | 6 | 3 | 0 |

@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `45a5bb46c890`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `2a8a2eeabb00`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,580 |
-| Text lines | 395,512 |
-| Repository bytes inventoried | 274,317,532 |
+| Text lines | 396,768 |
+| Repository bytes inventoried | 274,385,981 |
 | Backend/route modules | 166 |
 | HTTP route registrations / unique routes | 722 / 721 |
 | Database tables | 261 |
 | Solidity declarations | 33 |
-| Git commits | 976 |
+| Git commits | 978 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 4,564 / 21,379 |
+| Graph nodes / edges | 4,566 / 21,397 |
 
 ## Artifact kinds
 
@@ -57,8 +57,8 @@
 | [test/client.js](../../test/client.js) | 6,912 | test-suite | 2026-08-24 |
 | [BALANCE.md](../../BALANCE.md) | 6,472 | documentation | 2026-08-24 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6,045 | backend-module | 2026-08-24 |
+| [schema.sql](../../schema.sql) | 4,246 | data-schema | 2026-08-26 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
-| [schema.sql](../../schema.sql) | 4,058 | data-schema | 2026-08-26 |
 | [src/server.js](../../src/server.js) | 3,343 | backend-module | 2026-08-26 |
 | [omerta-contracts/fizz_data/contracts.json](../../omerta-contracts/fizz_data/contracts.json) | 2,739 | contract-project | 2026-08-25 |
 | [public/art/manifest.json](../../public/art/manifest.json) | 2,700 | media-asset | 2026-08-09 |
@@ -73,9 +73,9 @@
 | [test/hardening.js](../../test/hardening.js) | 1,712 | test-suite | 2026-08-24 |
 | [src/chain.js](../../src/chain.js) | 1,703 | backend-module | 2026-08-22 |
 | [tools/sim.js](../../tools/sim.js) | 1,681 | engineering-harness | 2026-08-16 |
+| [test/stockballotv2.js](../../test/stockballotv2.js) | 1,643 | test-suite | 2026-08-26 |
 | [src/casino.js](../../src/casino.js) | 1,468 | backend-module | 2026-08-23 |
 | [docs/WIKI.md](../../docs/WIKI.md) | 1,439 | documentation | 2026-08-25 |
-| [src/rwanominations.js](../../src/rwanominations.js) | 1,420 | backend-module | 2026-08-26 |
 
 ## Media estate
 

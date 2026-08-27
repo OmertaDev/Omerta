@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `45a5bb46c890`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `2a8a2eeabb00`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 976 |
+| Commits in clone | 978 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-26 — docs: refresh hardened ballot knowledge graph |
+| Latest commit | 2026-08-26 — fix: harden ballot authority migration and work bounds |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 175 |
+| OmertaDev | 177 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -31,7 +31,7 @@
 | [CLAUDE.md](../../CLAUDE.md) | 491 | yes |
 | [public/index.html](../../public/index.html) | 378 | yes |
 | [src/server.js](../../src/server.js) | 340 | yes |
-| [schema.sql](../../schema.sql) | 259 | yes |
+| [schema.sql](../../schema.sql) | 260 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
 | [SPEC.md](../../SPEC.md) | 240 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
@@ -62,9 +62,9 @@
 | [src/chain.js](../../src/chain.js) | 36 | yes |
 | [DEPLOY.md](../../DEPLOY.md) | 30 | yes |
 | [public/admin.html](../../public/admin.html) | 30 | yes |
+| [test/migrate.js](../../test/migrate.js) | 29 | yes |
 | [src/kitchen.js](../../src/kitchen.js) | 28 | yes |
 | [src/world.js](../../src/world.js) | 28 | yes |
-| [test/migrate.js](../../test/migrate.js) | 28 | yes |
 | [test/routes.js](../../test/routes.js) | 27 | yes |
 | [src/loans.js](../../src/loans.js) | 27 | yes |
 | [src/social/combat.js](../../src/social/combat.js) | 27 | yes |
