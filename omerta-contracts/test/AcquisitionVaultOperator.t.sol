@@ -286,12 +286,15 @@ contract O1ERC1271Mock {
     }
 }
 
-contract O1SignatureGasBoundaryHarness {
-    error InsufficientSignatureValidationGas();
+contract O1SignatureGasBoundaryHarness is AcquisitionVault {
+    constructor(address safeOwner, address registry) AcquisitionVault(safeOwner, registry) {}
 
-    function validateObservedGas(uint256 immediatePrecallGas, uint256 postcallGas) external pure {
-        if (immediatePrecallGas < 160_000) revert InsufficientSignatureValidationGas();
-        if (postcallGas < 50_000) revert InsufficientSignatureValidationGas();
+    function requireErc1271PrecallGas(uint256 observedGas) external pure {
+        _requireErc1271PrecallGas(observedGas);
+    }
+
+    function requireErc1271PostcallGas(uint256 observedGas) external pure {
+        _requireErc1271PostcallGas(observedGas);
     }
 }
 
@@ -783,7 +786,7 @@ contract AcquisitionVaultOperatorTest is Test {
 
     function _abiDescriptor(bytes memory entry) internal pure returns (string memory) {
         string memory kind = _jsonString(entry, "type");
-        string memory name = _jsonString(entry, "name");
+        string memory name = keccak256(bytes(kind)) == keccak256("constructor") ? "" : _jsonString(entry, "name");
         string memory mutability = _jsonString(entry, "stateMutability");
         string memory inputs = _parameterTypes(entry, "inputs");
         string memory outputs = _parameterTypes(entry, "outputs");
@@ -1182,6 +1185,17 @@ contract AcquisitionVaultOperatorTest is Test {
         }
     }
 
+    function test_literalConstructorAbiParserIgnoresNestedInputNames() public pure {
+        bytes memory constructorEntry = bytes(
+            '{"type":"constructor","inputs":[{"name":"safeOwner","type":"address","internalType":"address"},{"name":"registry","type":"address","internalType":"address"}],"stateMutability":"nonpayable"}'
+        );
+        assertEq(
+            _abiDescriptor(constructorEntry),
+            "constructor||(address,address)->()|nonpayable|",
+            "nested constructor input name leaked into top-level ABI name"
+        );
+    }
+
     function test_constructorPinsImmutableAuthorityAndStartsPausedAndEmpty() public view {
         assertEq(vault.owner(), address(safe));
         assertEq(vault.pendingOwner(), address(0));
@@ -1331,6 +1345,52 @@ contract AcquisitionVaultOperatorTest is Test {
         expected.owner = address(candidate);
         expected.pendingOwner = address(0);
         _assertStateEq(_state(), expected);
+
+        _assertCallFailureUnchanged(
+            address(safe),
+            abi.encodeCall(vault.nominateMainOperator, (operator, DETAILS)),
+            abi.encodeWithSelector(O1LiteralErrors.OwnableUnauthorizedAccount.selector, address(safe))
+        );
+
+        uint64 proposedAt = uint64(block.timestamp);
+        uint64 validAfter = proposedAt + NOMINATION_DELAY;
+        uint64 expiresAt = validAfter + ACCEPTANCE_WINDOW;
+        bytes32 expectedId =
+            _expectedNominationId(1, address(candidate), operator, proposedAt, validAfter, expiresAt, DETAILS);
+        vm.expectEmit(true, true, true, true, address(vault));
+        emit MainOperatorNominationCreated(
+            expectedId, operator, address(candidate), 1, proposedAt, validAfter, expiresAt, REASON_NOMINATED, DETAILS
+        );
+        bytes memory result =
+            candidate.execute(address(vault), abi.encodeCall(vault.nominateMainOperator, (operator, DETAILS)));
+        assertEq(abi.decode(result, (bytes32)), expectedId);
+        expected.nominationNonce = 1;
+        expected.proposalId = expectedId;
+        expected.proposalNumber = 1;
+        expected.nominee = operator;
+        expected.proposedBy = address(candidate);
+        expected.proposedAt = proposedAt;
+        expected.validAfter = validAfter;
+        expected.expiresAt = expiresAt;
+        expected.detailsHash = DETAILS;
+        _assertStateEq(_state(), expected);
+
+        vm.expectEmit(true, true, true, true, address(vault));
+        emit MainOperatorNominationCancelled(expectedId, operator, address(candidate), REASON_CANCELLED, SECOND_DETAILS);
+        candidate.execute(
+            address(vault), abi.encodeCall(vault.cancelMainOperatorNomination, (expectedId, SECOND_DETAILS))
+        );
+        expected.proposalId = bytes32(0);
+        expected.proposalNumber = 0;
+        expected.nominee = address(0);
+        expected.proposedBy = address(0);
+        expected.proposedAt = 0;
+        expected.validAfter = 0;
+        expected.expiresAt = 0;
+        expected.detailsHash = bytes32(0);
+        _assertStateEq(_state(), expected);
+        assertEq(vault.operatorGeneration(), 0);
+        assertEq(vault.outflowNonce(), 0);
     }
 
     function test_safeOnlyAuthorityRejectsActiveOperatorPendingNomineeAndStrangersAcrossSurface() public {
@@ -1444,6 +1504,7 @@ contract AcquisitionVaultOperatorTest is Test {
 
     function test_nomineeOnlyAcceptanceAndDisableCallerMatrixAreClosed() public {
         bytes32 proposalId = _nominate(operator, DETAILS);
+        vm.warp(_pending().validAfter);
         _assertCallFailureUnchanged(
             address(safe),
             abi.encodeCall(vault.acceptMainOperatorNomination, (proposalId)),
@@ -1460,7 +1521,6 @@ contract AcquisitionVaultOperatorTest is Test {
             abi.encodeWithSelector(O1LiteralErrors.OwnableUnauthorizedAccount.selector, stranger)
         );
 
-        vm.warp(_pending().validAfter);
         vm.prank(operator);
         vault.acceptMainOperatorNomination(proposalId);
         _assertCallFailureUnchanged(
@@ -1504,7 +1564,6 @@ contract AcquisitionVaultOperatorTest is Test {
     function test_runtimeDisassemblerSkipsPushDataAndBansValueAndDelegationOpcodes() public view {
         bytes memory runtime = address(vault).code;
         uint256 staticcallSites;
-        bytes4 registrySelector = bytes4(keccak256("supportedChainId()"));
         for (uint256 pc; pc < runtime.length;) {
             uint8 opcode = uint8(runtime[pc]);
             assertTrue(opcode != 0xf1, "runtime contains CALL");
@@ -1512,14 +1571,6 @@ contract AcquisitionVaultOperatorTest is Test {
             assertTrue(opcode != 0xf4, "runtime contains DELEGATECALL");
             assertTrue(opcode != 0xff, "runtime contains SELFDESTRUCT");
             if (opcode == 0xfa) ++staticcallSites;
-            if (opcode == 0x63 && pc + 4 < runtime.length) {
-                bytes4 pushed;
-                uint256 cursorPc = pc;
-                assembly ("memory-safe") {
-                    pushed := mload(add(add(runtime, 0x20), add(cursorPc, 1)))
-                }
-                assertTrue(pushed != registrySelector, "creation-only Registry selector survived runtime");
-            }
             if (opcode >= 0x60 && opcode <= 0x7f) {
                 pc += 1 + (opcode - 0x5f);
             } else {
@@ -1527,6 +1578,10 @@ contract AcquisitionVaultOperatorTest is Test {
             }
         }
         assertGt(staticcallSites, 0, "runtime omitted required signature STATICCALL families");
+        // The supportedChainId() public getter necessarily leaves its PUSH4
+        // dispatcher selector in runtime. Constructor-only evidence concerns
+        // the Registry external-call site, not the expected getter selector;
+        // source/build-info/IR review below owns that distinction.
     }
 
     function test_artifactMetadataBindsCompilerConfigSourceHashAndReviewedExternalCallVocabulary() public view {
@@ -1570,14 +1625,39 @@ contract AcquisitionVaultOperatorTest is Test {
         assertNotEq(_find(code, bytes("ERC1271_CALL_GAS"), 0), type(uint256).max);
         assertNotEq(_find(code, bytes("returndatasize"), 0), type(uint256).max);
         assertNotEq(_find(code, bytes("returndatacopy"), 0), type(uint256).max);
+        assertEq(
+            _count(code, bytes("_requireErc1271PrecallGas")),
+            2,
+            "pre-call gas seam must have one definition and one production use"
+        );
+        assertEq(
+            _count(code, bytes("_requireErc1271PostcallGas")),
+            2,
+            "post-call gas seam must have one definition and one production use"
+        );
+        assertNotEq(
+            _find(code, bytes("_requireErc1271PrecallGas(gasleft())"), 0),
+            type(uint256).max,
+            "validator does not feed gasleft() to production pre-call seam"
+        );
+        assertNotEq(
+            _find(code, bytes("_requireErc1271PostcallGas(gasleft())"), 0),
+            type(uint256).max,
+            "validator does not feed gasleft() to production post-call seam"
+        );
 
         // Pure Solidity tests cannot request ad-hoc compiler IR under this
         // repository's non-FFI profile. Task 2 therefore still MUST execute
         // `forge build --build-info`, `forge inspect AcquisitionVault ir`, and
         // `forge inspect AcquisitionVault irOptimized`, hash those outputs, and
-        // review their creation/runtime call sites. This executable gate binds
-        // that review to the exact compiler config and source hash; it does not
-        // misrepresent lexical or opcode evidence as full IR classification.
+        // review their creation/runtime call sites, including proof that the
+        // Registry selector's only external-call use is in creation code and
+        // both validator gasleft() observations invoke the same internal seams
+        // exposed by O1SignatureGasBoundaryHarness. The public
+        // supportedChainId() dispatcher selector is expected in runtime. This
+        // executable gate binds that review to the exact compiler config and
+        // source hash; it does not misrepresent lexical/opcode evidence as full
+        // IR classification.
     }
 
     // --- Delayed nomination lifecycle and checked generation transitions ---
@@ -2549,14 +2629,14 @@ contract AcquisitionVaultOperatorTest is Test {
     }
 
     function test_validatorSeamFreezesExactImmediatePrecallAndPostcallGasBoundaries() public {
-        O1SignatureGasBoundaryHarness harness = new O1SignatureGasBoundaryHarness();
-        vm.expectRevert(O1SignatureGasBoundaryHarness.InsufficientSignatureValidationGas.selector);
-        harness.validateObservedGas(159_999, type(uint256).max);
-        harness.validateObservedGas(160_000, 50_000);
+        O1SignatureGasBoundaryHarness harness = new O1SignatureGasBoundaryHarness(address(safe), address(registry));
+        vm.expectRevert(O1LiteralErrors.InsufficientSignatureValidationGas.selector);
+        harness.requireErc1271PrecallGas(159_999);
+        harness.requireErc1271PrecallGas(160_000);
 
-        vm.expectRevert(O1SignatureGasBoundaryHarness.InsufficientSignatureValidationGas.selector);
-        harness.validateObservedGas(type(uint256).max, 49_999);
-        harness.validateObservedGas(type(uint256).max, 50_000);
+        vm.expectRevert(O1LiteralErrors.InsufficientSignatureValidationGas.selector);
+        harness.requireErc1271PostcallGas(49_999);
+        harness.requireErc1271PostcallGas(50_000);
     }
 
     function test_erc1271PostcallReserveGuardHasExclusiveInsufficientGasError() public {
