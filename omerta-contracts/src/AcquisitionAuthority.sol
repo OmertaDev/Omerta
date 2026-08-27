@@ -790,7 +790,7 @@ contract AcquisitionAuthority is IAcquisitionAuthorityV2, EIP712, Ownable2Step, 
         if (!condition) {
             bytes4 selector = AuthorityInitialStateMismatch.selector;
             assembly ("memory-safe") {
-                mstore(0, shl(224, selector))
+                mstore(0, selector)
                 mstore(4, field)
                 revert(0, 0x24)
             }

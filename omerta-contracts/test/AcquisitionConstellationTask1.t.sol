@@ -1050,13 +1050,13 @@ contract AcquisitionConstellationTask1Test is Test {
                 predicted[0]
             )
         );
-        _writeWord(runtime, 15_622, domain);
-        _writeWord(runtime, 15_811, bytes32(uint256(4663)));
-        _writeWord(runtime, 15_575, bytes32(uint256(uint160(predicted[0]))));
-        _writeWord(runtime, 15_701, nameHash);
-        _writeWord(runtime, 15_739, versionHash);
-        _writeWord(runtime, 5_727, bytes32("OMERTA AcquisitionAuthority") | bytes32(uint256(27)));
-        _writeWord(runtime, 5_768, bytes32("2") | bytes32(uint256(1)));
+        _writeWord(runtime, 15_748, domain);
+        _writeWord(runtime, 15_937, bytes32(uint256(4663)));
+        _writeWord(runtime, 15_701, bytes32(uint256(uint160(predicted[0]))));
+        _writeWord(runtime, 15_827, nameHash);
+        _writeWord(runtime, 15_865, versionHash);
+        _writeWord(runtime, 5_853, bytes32("OMERTA AcquisitionAuthority") | bytes32(uint256(27)));
+        _writeWord(runtime, 5_894, bytes32("2") | bytes32(uint256(1)));
         uint256[8] memory values = [
             uint256(uint160(predictedFactory)),
             uint256(manifest),
@@ -1067,14 +1067,14 @@ contract AcquisitionConstellationTask1Test is Test {
             uint256(uint160(predicted[3])),
             uint256(uint160(predicted[4]))
         ];
-        uint256[5] memory factoryOffsets = [uint256(2_854), 4_501, 7_492, 11_830, 14_222];
-        uint256[3] memory manifestOffsets = [uint256(2_893), 4_541, 11_866];
-        uint256[3] memory registryOffsets = [uint256(2_932), 7_442, 14_171];
+        uint256[5] memory factoryOffsets = [uint256(2_854), 4_501, 7_618, 11_956, 14_348];
+        uint256[3] memory manifestOffsets = [uint256(2_893), 4_541, 11_992];
+        uint256[3] memory registryOffsets = [uint256(2_932), 7_568, 14_297];
         uint256[12] memory coreOffsets =
-            [uint256(1_940), 2_972, 3_729, 6_269, 7_392, 8_002, 10_905, 11_578, 13_038, 13_738, 14_120, 14_950];
-        uint256[3] memory budgetOffsets = [uint256(3_012), 7_342, 14_069];
-        uint256[3] memory intentOffsets = [uint256(3_052), 7_292, 14_018];
-        uint256[3] memory reconOffsets = [uint256(3_092), 7_242, 13_980];
+            [uint256(1_940), 2_972, 3_729, 6_395, 7_518, 8_128, 11_031, 11_704, 13_164, 13_864, 14_246, 15_076];
+        uint256[3] memory budgetOffsets = [uint256(3_012), 7_468, 14_195];
+        uint256[3] memory intentOffsets = [uint256(3_052), 7_418, 14_144];
+        uint256[3] memory reconOffsets = [uint256(3_092), 7_368, 14_106];
         for (uint256 i; i < factoryOffsets.length; ++i) {
             _writeWord(runtime, factoryOffsets[i], bytes32(values[0]));
         }
