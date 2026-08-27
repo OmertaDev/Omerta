@@ -1,15 +1,24 @@
 [CmdletBinding()]
 param(
   [switch]$ExpectTask0Red,
+  [ValidateSet('Task1','Task2')]
+  [string]$ValidatePhase = 'Task2',
+  [string]$ArtifactsRoot = '',
   [string]$ForgePath = 'forge',
   [string]$NodePath = 'node'
 )
 
 $ErrorActionPreference = 'Stop'
 $redExitCode = 42
-$repo = Split-Path -Parent $PSScriptRoot
-$config = Join-Path $repo 'foundry.toml'
-$legacyArtifact = Join-Path $repo 'out/AcquisitionVault.sol/AcquisitionVault.json'
+$verifierRepo = Split-Path -Parent $PSScriptRoot
+if ([string]::IsNullOrWhiteSpace($ArtifactsRoot)) {
+  $ArtifactsRoot = Join-Path $verifierRepo 'out'
+}
+$ArtifactsRoot = [IO.Path]::GetFullPath($ArtifactsRoot)
+$artifactProjectRoot = Split-Path -Parent $ArtifactsRoot
+$repo = $artifactProjectRoot
+$config = Join-Path $artifactProjectRoot 'foundry.toml'
+$legacyArtifact = Join-Path $ArtifactsRoot 'AcquisitionVault.sol/AcquisitionVault.json'
 $finalArtifacts = @(
   'AcquisitionConstellationFactory.sol/AcquisitionConstellationFactory.json',
   'AcquisitionAuthority.sol/AcquisitionAuthority.json',
@@ -17,7 +26,43 @@ $finalArtifacts = @(
   'PreVoteBudgetBook.sol/PreVoteBudgetBook.json',
   'AcquisitionIntentExecution.sol/AcquisitionIntentExecution.json',
   'AcquisitionReconciliation.sol/AcquisitionReconciliation.json'
-) | ForEach-Object { Join-Path (Join-Path $repo 'out') $_ }
+) | ForEach-Object { Join-Path $ArtifactsRoot $_ }
+
+$script:artifactTreeBaseline = $null
+$script:isolatedRoot = $null
+
+function Get-TextSha256([string]$Text) {
+  $sha = [Security.Cryptography.SHA256]::Create()
+  try { return '0x' + [Convert]::ToHexString($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($Text))).ToLowerInvariant() }
+  finally { $sha.Dispose() }
+}
+
+function Get-ArtifactTreeFingerprint([string]$Root) {
+  if (-not (Test-Path -LiteralPath $Root -PathType Container)) { return '<absent>' }
+  $rootPath = [IO.Path]::GetFullPath($Root).TrimEnd([IO.Path]::DirectorySeparatorChar,[IO.Path]::AltDirectorySeparatorChar)
+  $rows = @(
+    Get-ChildItem -LiteralPath $rootPath -Recurse -File | ForEach-Object {
+      $relative = $_.FullName.Substring($rootPath.Length).TrimStart('\','/').Replace('\','/')
+      $hash = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+      "$relative|$hash"
+    } | Sort-Object
+  )
+  return Get-TextSha256 ($rows -join "`n")
+}
+
+function Assert-ArtifactTreeUnchanged {
+  if ($null -eq $script:artifactTreeBaseline) { return }
+  $after = Get-ArtifactTreeFingerprint $ArtifactsRoot
+  if (-not [string]::Equals($after,$script:artifactTreeBaseline,[StringComparison]::Ordinal)) {
+    [Console]::Error.WriteLine("Canonical ArtifactsRoot changed during verification: before=$($script:artifactTreeBaseline) after=$after")
+    exit 1
+  }
+}
+
+function Exit-Verified([int]$Code) {
+  Assert-ArtifactTreeUnchanged
+  exit $Code
+}
 
 $stableRowsText = @'
 F|1|MOVE|1|owner()
@@ -172,7 +217,7 @@ $stableRows = @($stableRowsText -split "`r?`n" | Where-Object { $_ } | ForEach-O
 
 function Fail([string]$Message, [int]$Code = 1) {
   [Console]::Error.WriteLine($Message)
-  exit $Code
+  Exit-Verified $Code
 }
 
 function Canonical-Type($InputNode) {
@@ -202,7 +247,7 @@ for(const r of rows) h=keccak256(encodeAbiParameters(p,[h,r.Prefix,BigInt(r.Numb
 process.stdout.write(h.toLowerCase());
 '@
   $json = $Rows | ConvertTo-Json -Depth 8 -Compress
-  Push-Location -LiteralPath $repo
+  Push-Location -LiteralPath $verifierRepo
   try { $result = ($json | & $RequestedNode -e $nodeScript 2>&1) -join ''; $nodeExit = $LASTEXITCODE }
   finally { Pop-Location }
   if ($nodeExit -ne 0 -or $result -notmatch '^0x[0-9a-f]{64}$') { Fail "Node+viem census hash failed: $result" }
@@ -236,7 +281,7 @@ function Assert-StableRowTable($ActualRows, $ExpectedRows) {
 }
 
 function Byte-Length([string]$Hex) {
-  if ([string]::IsNullOrWhiteSpace($Hex) -or -not $Hex.StartsWith('0x')) { Fail 'Malformed artifact bytecode.' }
+  if ([string]::IsNullOrWhiteSpace($Hex) -or -not $Hex.StartsWith('0x')) { throw 'Malformed artifact bytecode.' }
   return [int](($Hex.Length - 2) / 2)
 }
 
@@ -257,10 +302,10 @@ function Scan-Opcodes([string]$Hex) {
 }
 
 function Strip-SolidityMetadata([string]$Hex) {
-  if ($Hex.Length -lt 6) { Fail 'Bytecode too short for Solidity CBOR trailer.' }
+  if ($Hex.Length -lt 6) { throw 'Bytecode too short for Solidity CBOR trailer.' }
   $metadataBytes = [Convert]::ToInt32($Hex.Substring($Hex.Length - 4), 16)
   $removeChars = ($metadataBytes + 2) * 2
-  if ($removeChars -ge ($Hex.Length - 2)) { Fail 'Invalid Solidity CBOR trailer length.' }
+  if ($removeChars -ge ($Hex.Length - 2)) { throw 'Invalid Solidity CBOR trailer length.' }
   return $Hex.Substring(0, $Hex.Length - $removeChars)
 }
 
@@ -268,6 +313,230 @@ function Has-Prohibited($Ops) {
   return @($Ops | Where-Object { $_ -in @('CREATE','CALL','CALLCODE','DELEGATECALL','CREATE2','SELFDESTRUCT') }).Count -ne 0
 }
 
+function Canonical-AbiComponent($Node) {
+  $children = ''
+  if ($null -ne $Node.components) {
+    $children = '(' + (@($Node.components | ForEach-Object { Canonical-AbiComponent $_ }) -join ',') + ')'
+  }
+  return ([string]$Node.name) + ':' + ([string]$Node.type) + ':' + ([string]$Node.internalType) + $children
+}
+
+function Canonical-AbiRow($Row) {
+  $inputs = @($Row.inputs | ForEach-Object { Canonical-AbiComponent $_ }) -join ','
+  $outputs = @($Row.outputs | ForEach-Object { Canonical-AbiComponent $_ }) -join ','
+  switch ([string]$Row.type) {
+    'function' { return "function|$($Row.name)|$($Row.stateMutability)|in=[$inputs]|out=[$outputs]" }
+    'error' { return "error|$($Row.name)|in=[$inputs]" }
+    'event' {
+      $indexed = @($Row.inputs | ForEach-Object { if ($_.indexed) { '1' } else { '0' } }) -join ','
+      return "event|$($Row.name)|anonymous=$([bool]$Row.anonymous)|in=[$inputs]|indexed=[$indexed]"
+    }
+    'constructor' { return "constructor|$($Row.stateMutability)|in=[$inputs]" }
+    default { return "$($Row.type)|$($Row.stateMutability)|in=[$inputs]|out=[$outputs]" }
+  }
+}
+
+function Get-AbiFingerprint($Artifact) {
+  $rows = @($Artifact.abi | ForEach-Object { Canonical-AbiRow $_ } | Sort-Object)
+  return Get-TextSha256 ($rows -join "`n")
+}
+
+function Assert-AbiFingerprint($Artifact, [string]$Expected, [string]$Name) {
+  $actual = Get-AbiFingerprint $Artifact
+  if (-not [string]::Equals($actual,$Expected,[StringComparison]::Ordinal)) {
+    throw "$Name exact ABI schema drift: $actual"
+  }
+}
+
+function Assert-IsolatedArtifactMatch($Canonical, $Isolated, [string]$ExpectedAbiHash, [string]$Name) {
+  if (-not [string]::Equals([string]$Canonical.bytecode.object,[string]$Isolated.bytecode.object,[StringComparison]::OrdinalIgnoreCase) -or
+      -not [string]::Equals([string]$Canonical.deployedBytecode.object,[string]$Isolated.deployedBytecode.object,[StringComparison]::OrdinalIgnoreCase) -or
+      -not [string]::Equals((Get-AbiFingerprint $Canonical),$ExpectedAbiHash,[StringComparison]::Ordinal) -or
+      -not [string]::Equals((Get-AbiFingerprint $Isolated),$ExpectedAbiHash,[StringComparison]::Ordinal)) {
+    throw "$Name canonical artifact does not match isolated compiler output."
+  }
+}
+
+function Get-SourceSetFingerprint($Metadata) {
+  $rows = @($Metadata.sources.psobject.Properties | ForEach-Object { "$($_.Name)=$($_.Value.keccak256)" } | Sort-Object)
+  return Get-TextSha256 ($rows -join "`n")
+}
+
+function Get-FileKeccak([string]$Path) {
+  $nodeScript = "const fs=require('fs');const{keccak256,toHex}=require('viem');process.stdout.write(keccak256(toHex(fs.readFileSync(process.argv[1]))));"
+  Push-Location -LiteralPath $verifierRepo
+  try { $result = (& $NodePath -e $nodeScript $Path 2>&1) -join ''; $nodeExit = $LASTEXITCODE }
+  finally { Pop-Location }
+  if ($nodeExit -ne 0 -or $result -notmatch '^0x[0-9a-fA-F]{64}$') { throw "Source hash failed for $Path`: $result" }
+  return $result.ToLowerInvariant()
+}
+
+function Assert-MetadataProvenance(
+  $Artifact,
+  [string]$Source,
+  [string]$Contract,
+  [string]$ExpectedSourceSetHash,
+  [bool]$ViaIr,
+  [bool]$RequireLocalSources
+) {
+  $metadata = $Artifact.metadata
+  if ($metadata -is [string]) { $metadata = $metadata | ConvertFrom-Json -Depth 100 }
+  if (-not [string]::Equals([string]$metadata.compiler.version,'0.8.26+commit.8a97fa7a',[StringComparison]::Ordinal)) {
+    throw "$Contract compiler identity drift."
+  }
+  if ($metadata.settings.optimizer.enabled -ne $true -or [int]$metadata.settings.optimizer.runs -ne 800 -or
+      -not [string]::Equals([string]$metadata.settings.evmVersion,'cancun',[StringComparison]::Ordinal)) {
+    throw "$Contract optimizer/EVM provenance drift."
+  }
+  $actualViaIr = $metadata.settings.viaIR -eq $true
+  if ($actualViaIr -ne $ViaIr) { throw "$Contract viaIR provenance drift." }
+  $targets = @($metadata.settings.compilationTarget.psobject.Properties)
+  if ($targets.Count -ne 1 -or
+      -not [string]::Equals([string]$targets[0].Name,$Source,[StringComparison]::Ordinal) -or
+      -not [string]::Equals([string]$targets[0].Value,$Contract,[StringComparison]::Ordinal)) {
+    throw "$Contract compilationTarget drift."
+  }
+  $sourceSetHash = Get-SourceSetFingerprint $metadata
+  if (-not [string]::Equals($sourceSetHash,$ExpectedSourceSetHash,[StringComparison]::Ordinal)) {
+    throw "$Contract source-set/hash provenance drift: $sourceSetHash"
+  }
+  if ($RequireLocalSources) {
+    foreach ($property in @($metadata.sources.psobject.Properties)) {
+      $local = Join-Path $artifactProjectRoot $property.Name
+      if (-not (Test-Path -LiteralPath $local -PathType Leaf)) { throw "$Contract local source missing: $($property.Name)" }
+      $localHash = Get-FileKeccak $local
+      if (-not [string]::Equals($localHash,[string]$property.Value.keccak256,[StringComparison]::OrdinalIgnoreCase)) {
+        throw "$Contract local source hash drift: $($property.Name)"
+      }
+    }
+  }
+}
+
+function Assert-Task2CompilerConfiguration([string]$Toml, $LegacyArtifact) {
+  if ($Toml -notmatch 'solc_version\s*=\s*"0\.8\.26"' -or $Toml -notmatch 'optimizer\s*=\s*true' -or
+      $Toml -notmatch 'optimizer_runs\s*=\s*800' -or $Toml -notmatch 'evm_version\s*=\s*"cancun"') {
+    throw 'Task2 default compiler profile drift.'
+  }
+  $expectedPaths = @(
+    'src/AcquisitionConstellationFactory.sol','src/AcquisitionAuthority.sol','src/AcquisitionVaultCore.sol',
+    'src/PreVoteBudgetBook.sol','src/AcquisitionIntentExecution.sol','src/AcquisitionReconciliation.sol',
+    'src/interfaces/IAcquisitionAuthorityV2.sol'
+  )
+  $restrictionMatches = [regex]::Matches($Toml,'\{\s*paths\s*=\s*"([^"]+)"[^\r\n]+\}')
+  if ($restrictionMatches.Count -ne 7) { throw 'Task2 compiler restriction count drift.' }
+  $actualPaths = @($restrictionMatches | ForEach-Object { $_.Groups[1].Value } | Sort-Object)
+  $expectedSorted = @($expectedPaths | Sort-Object)
+  for ($i=0;$i-lt$expectedSorted.Count;$i++) {
+    if (-not [string]::Equals($actualPaths[$i],$expectedSorted[$i],[StringComparison]::Ordinal)) {
+      throw 'Task2 compiler restriction path drift.'
+    }
+  }
+  foreach ($match in $restrictionMatches) {
+    $line = $match.Value
+    if ($line -notmatch 'version\s*=\s*"=0\.8\.26"' -or $line -notmatch 'via_ir\s*=\s*true' -or
+        $line -notmatch 'optimizer_runs\s*=\s*800' -or $line -notmatch 'evm_version\s*=\s*"cancun"') {
+      throw "Task2 compiler restriction settings drift: $line"
+    }
+  }
+  if ($Toml -notmatch 'name\s*=\s*"constellation-via-ir"[^\r\n]+via_ir\s*=\s*true[^\r\n]+optimizer\s*=\s*true[^\r\n]+optimizer_runs\s*=\s*800[^\r\n]+evm_version\s*=\s*"cancun"') {
+    throw 'Task2 named compiler profile drift.'
+  }
+  $legacyMetadata = $LegacyArtifact.metadata
+  if ($legacyMetadata -is [string]) { $legacyMetadata = $legacyMetadata | ConvertFrom-Json -Depth 100 }
+  if ($legacyMetadata.settings.viaIR -eq $true) { throw 'Historical AcquisitionVault must remain on the default non-viaIR profile.' }
+}
+
+function Assert-CanonicalArtifactLayout([string[]]$Paths) {
+  $expectedNames = @(
+    'AcquisitionConstellationFactory','AcquisitionAuthority','AcquisitionVaultCore','PreVoteBudgetBook',
+    'AcquisitionIntentExecution','AcquisitionReconciliation'
+  )
+  for ($i=0;$i-lt$Paths.Count;$i++) {
+    $expected = [IO.Path]::GetFullPath($Paths[$i])
+    $matches = @(Get-ChildItem -LiteralPath $ArtifactsRoot -Recurse -File -Filter ($expectedNames[$i] + '.json'))
+    if ($matches.Count -ne 1 -or -not [string]::Equals([IO.Path]::GetFullPath($matches[0].FullName),$expected,[StringComparison]::OrdinalIgnoreCase)) {
+      throw "$($expectedNames[$i]) canonical artifact missing, duplicated, profiled, or misplaced."
+    }
+  }
+}
+
+function Initialize-IsolatedCompiler {
+  if ($null -ne $script:isolatedRoot) { return }
+  $script:isolatedRoot = Join-Path ([IO.Path]::GetTempPath()) ('omerta-constellation-verifier-' + [Guid]::NewGuid().ToString('N'))
+  $null = New-Item -ItemType Directory -Path $script:isolatedRoot
+}
+
+function Invoke-IsolatedForgeInspect([string]$Contract, [string]$Field, [switch]$Json, [switch]$Ast) {
+  Initialize-IsolatedCompiler
+  $args = @('inspect',$Contract,$Field,'--root',$artifactProjectRoot,'--out',(Join-Path $script:isolatedRoot 'out'),'--cache-path',(Join-Path $script:isolatedRoot 'cache'))
+  if ($Json) { $args += '--json' }
+  if ($Ast) { $args += '--ast' }
+  $text = (& $ForgePath @args 2>&1) -join "`n"
+  if ($LASTEXITCODE -ne 0) { throw "forge inspect $Contract $Field failed closed: $text" }
+  return $text
+}
+
+function Get-ReferenceSignature($References) {
+  return @($References | Sort-Object start,length | ForEach-Object { "$($_.start):$($_.length)" }) -join ','
+}
+
+function Get-ImmutableReferenceSet($Artifact) {
+  return @($Artifact.deployedBytecode.immutableReferences.psobject.Properties | ForEach-Object { Get-ReferenceSignature $_.Value } | Sort-Object)
+}
+
+function Assert-ReferenceSet($Artifact, [string[]]$Expected, [string]$Name) {
+  $actual = @(Get-ImmutableReferenceSet $Artifact)
+  $expectedSorted = @($Expected | Sort-Object)
+  if ($actual.Count -ne $expectedSorted.Count) { throw "$Name immutable reference count drift." }
+  for ($i=0;$i-lt$expectedSorted.Count;$i++) {
+    if (-not [string]::Equals($actual[$i],$expectedSorted[$i],[StringComparison]::Ordinal)) {
+      throw "$Name immutable reference position/length drift."
+    }
+  }
+}
+
+function Assert-StorageRows($Layout, $ExpectedRows, [string]$Name) {
+  $rows = @($Layout.storage)
+  if ($rows.Count -ne $ExpectedRows.Count) { throw "$Name storage row count drift." }
+  for ($i=0;$i-lt$ExpectedRows.Count;$i++) {
+    $actual = $rows[$i]; $expected = $ExpectedRows[$i]
+    $typeProperty = $Layout.types.psobject.Properties[[string]$actual.type]
+    if ($null -eq $typeProperty) { throw "$Name storage type missing at row $i." }
+    $type = $typeProperty.Value
+    if (-not [string]::Equals([string]$actual.label,[string]$expected.Label,[StringComparison]::Ordinal) -or
+        -not [string]::Equals([string]$actual.slot,[string]$expected.Slot,[StringComparison]::Ordinal) -or
+        [int]$actual.offset -ne [int]$expected.Offset -or
+        -not [string]::Equals([string]$type.label,[string]$expected.Type,[StringComparison]::Ordinal) -or
+        -not [string]::Equals([string]$type.encoding,[string]$expected.Encoding,[StringComparison]::Ordinal) -or
+        -not [string]::Equals([string]$type.numberOfBytes,[string]$expected.Bytes,[StringComparison]::Ordinal)) {
+      throw "$Name storage schema drift at row $i."
+    }
+  }
+}
+
+function Assert-DescriptorUniverse([string[]]$Descriptors, [string]$Kind, [int]$ExpectedCount, [bool]$AllowGuardRepeat = $false) {
+  if ($Descriptors.Count -ne $ExpectedCount) { throw "$Kind collision-universe count drift: $($Descriptors.Count)." }
+  $seen = @{}
+  foreach ($descriptor in $Descriptors) {
+    if ($seen.ContainsKey($descriptor)) {
+      if (-not ($AllowGuardRepeat -and $descriptor -eq 'ReentrancyGuardReentrantCall()')) {
+        throw "$Kind duplicate descriptor: $descriptor"
+      }
+    } else { $seen[$descriptor] = $true }
+  }
+  $nodeScript = @'
+const fs=require('fs'); const {keccak256,toBytes}=require('viem');
+const x=JSON.parse(fs.readFileSync(0,'utf8')); const seen=new Map();
+for(const d of x.descriptors){ const full=keccak256(toBytes(d)); const key=x.kind==='event'?full:full.slice(0,10); const prior=seen.get(key); if(prior && prior!==d){process.stderr.write(`${key}:${prior}:${d}`);process.exit(9)} seen.set(key,d) }
+'@
+  $payload = @{kind=$Kind;descriptors=$Descriptors} | ConvertTo-Json -Depth 5 -Compress
+  Push-Location -LiteralPath $verifierRepo
+  try { $output = ($payload | & $NodePath -e $nodeScript 2>&1) -join ''; $nodeExit = $LASTEXITCODE }
+  finally { Pop-Location }
+  if ($nodeExit -ne 0) { throw "$Kind selector/topic collision: $output" }
+}
+
+$script:artifactTreeBaseline = Get-ArtifactTreeFingerprint $ArtifactsRoot
 if (-not (Test-Path -LiteralPath $config -PathType Leaf)) { Fail "Missing foundry config: $config" }
 try { $null = & $ForgePath --version } catch { Fail "Forge is unavailable at '$ForgePath'." }
 try { $null = & $NodePath --version } catch { Fail "Node is unavailable at '$NodePath'." }
@@ -362,11 +631,8 @@ foreach ($forbidden in @('CREATE','CALL','CALLCODE','DELEGATECALL','CREATE2','SE
 }
 if (@($runtimeOps | Where-Object { $_ -eq 'STATICCALL' }).Count -ne 2) { Fail 'Task5 runtime must contain exactly two executable STATICCALL opcodes.' }
 
-$oldLocation = Get-Location
 try {
-  Set-Location -LiteralPath $repo
-  $layoutText = (& $ForgePath inspect AcquisitionVault storageLayout --json 2>&1) -join "`n"
-  if ($LASTEXITCODE -ne 0) { Fail "forge inspect storageLayout failed closed: $layoutText" }
+  $layoutText = Invoke-IsolatedForgeInspect 'AcquisitionVault' 'storageLayout' -Json
   $layout = $layoutText | ConvertFrom-Json -Depth 100
   $expected = [ordered]@{
     '_nameFallback'='0'; '_versionFallback'='1'; '_owner'='2'; '_pendingOwner'='3'; '_paused'='3';
@@ -383,32 +649,353 @@ try {
     if ($entry.Count -ne 1 -or [string]$entry[0].slot -ne $expected[$name]) { Fail "Storage layout drift for $name." }
   }
   if ((@($layout.storage | ForEach-Object {[int]$_.slot}) | Measure-Object -Maximum).Maximum -ne 39) { Fail 'Task5 last semantic storage root is not 39.' }
-  $guardSource = Get-Content -LiteralPath (Join-Path $repo 'lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol') -Raw
+  $guardSource = Get-Content -LiteralPath (Join-Path $artifactProjectRoot 'lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol') -Raw
   if ($guardSource -notmatch '0x9b779b17422d0df92223018b32b4d1fa46e071723d6817e2486d003becc55f00') { Fail 'Namespaced ReentrancyGuard slot evidence drift.' }
-  $ir = (& $ForgePath inspect AcquisitionVault ir 2>&1) -join "`n"
-  if ($LASTEXITCODE -ne 0) { Fail 'forge inspect IR failed closed.' }
-  $iro = (& $ForgePath inspect AcquisitionVault irOptimized 2>&1) -join "`n"
-  if ($LASTEXITCODE -ne 0) { Fail 'forge inspect optimized IR failed closed.' }
+  $ir = Invoke-IsolatedForgeInspect 'AcquisitionVault' 'ir'
+  $iro = Invoke-IsolatedForgeInspect 'AcquisitionVault' 'irOptimized'
   if ($ir -notmatch 'staticcall\(gas\(\), var_registry_[0-9]+' -or $iro -notmatch 'staticcall\(gas\(\), var_registry,') { Fail 'Task5 constructor Registry STATICCALL posture missing.' }
   foreach ($word in @('delegatecall','callcode','create2','selfdestruct')) {
     if ($ir -match "(?im)\b$word\s*\(") { Fail "Forbidden Task5 IR operation: $word." }
   }
-  $assembly = (& $ForgePath inspect AcquisitionVault assembly 2>&1) -join "`n"
-  if ($LASTEXITCODE -ne 0) { Fail 'forge inspect assembly failed closed.' }
+  $assembly = Invoke-IsolatedForgeInspect 'AcquisitionVault' 'assembly'
   if ([regex]::Matches($assembly,'sub_0:\s+assembly\s*\{').Count -ne 1) { Fail 'Expected one top-level sub_0 assembly boundary.' }
-} finally { Set-Location -LiteralPath $oldLocation }
+} catch { Fail $_.Exception.Message }
 Write-Output "Task5 bytecode: initcode=$initcode constructorPrefix=$creationOffsetBytes runtime=$runtime"
 Write-Output "Constructor inventory: STATICCALL=1 prohibited=0; runtime inventory: STATICCALL=2 prohibited=0"
 
+function Get-ExecutableParts($Artifact,[string]$Name) {
+  $creation=$Artifact.bytecode.object.Substring(2); $runtime=$Artifact.deployedBytecode.object.Substring(2)
+  $offset=$creation.IndexOf($runtime,[StringComparison]::OrdinalIgnoreCase)
+  if($offset-lt0-or$offset-ne$creation.LastIndexOf($runtime,[StringComparison]::OrdinalIgnoreCase)){throw "$Name runtime suffix occurrence drift."}
+  if($creation.Substring($offset)-cne$runtime){throw "$Name runtime suffix mismatch."}
+  $prefix='0x'+$creation.Substring(0,$offset)
+  $stripped=Strip-SolidityMetadata ('0x'+$runtime)
+  return @{Creation=@(Scan-Opcodes $prefix);Runtime=@(Scan-Opcodes $stripped);Offset=[int]($offset/2)}
+}
+
+function Assert-CallInventory($Parts, $CreationExpected, $RuntimeExpected, [string]$Name) {
+  foreach ($opcode in @('CREATE','CALL','CALLCODE','DELEGATECALL','CREATE2','STATICCALL','SELFDESTRUCT')) {
+    $creationCount = @($Parts.Creation | Where-Object { $_ -eq $opcode }).Count
+    $runtimeCount = @($Parts.Runtime | Where-Object { $_ -eq $opcode }).Count
+    $expectedCreation = if ($CreationExpected.ContainsKey($opcode)) { [int]$CreationExpected[$opcode] } else { 0 }
+    $expectedRuntime = if ($RuntimeExpected.ContainsKey($opcode)) { [int]$RuntimeExpected[$opcode] } else { 0 }
+    if ($creationCount -ne $expectedCreation -or $runtimeCount -ne $expectedRuntime) {
+      throw "$Name $opcode inventory drift: creation=$creationCount runtime=$runtimeCount."
+    }
+  }
+}
+
+function Assert-Task2FactoryIr([string]$Ir) {
+  $clean=[regex]::Replace($Ir,'/\*\*.*?\*/','',[Text.RegularExpressions.RegexOptions]::Singleline)
+  $clean=[regex]::Replace($clean,'\s+',' ')
+  if(([regex]::Matches($clean,'(?<!static)call\(')).Count-ne5 -or
+     ([regex]::Matches($clean,'(?<!static)call\(\s*100000')).Count-ne5 -or
+     ([regex]::Matches($clean,'staticcall\(')).Count-ne5 -or
+     ([regex]::Matches($clean,'staticcall\(100000')).Count-ne2 -or
+     ([regex]::Matches($clean,'staticcall\(50000')).Count-ne2 -or
+     ([regex]::Matches($clean,'staticcall\(160000')).Count-ne1 -or
+     ([regex]::Matches($clean,'create\(')).Count-ne1 -or
+     ([regex]::Matches($clean,'returndatasize\(')).Count-ne10) {
+    throw 'Task2 Factory bounded compiler call/gas/returndata inventory drift.'
+  }
+  if($clean-notmatch'create\(\s*_[0-9]+,\s*add\('){throw 'Task2 Factory zero-value CREATE compiler posture drift.'}
+  if($clean-cmatch'(?m)returndatacopy\s*\(' -or $clean-cmatch'(?m)\b(delegatecall|callcode|create2|selfdestruct)\s*\('){
+    throw 'Task2 Factory dynamic returndata/prohibited compiler operation drift.'
+  }
+}
+
+function Assert-Task2AuthorityIr([string]$Ir) {
+  $clean=[regex]::Replace($Ir,'/\*\*.*?\*/','',[Text.RegularExpressions.RegexOptions]::Singleline)
+  $clean=[regex]::Replace($clean,'\s+',' ')
+  if(([regex]::Matches($clean,'staticcall\(')).Count-ne2 -or
+     ([regex]::Matches($clean,'staticcall\(100000')).Count-ne1 -or
+     ([regex]::Matches($clean,'returndatasize\(')).Count-ne1) {
+    throw 'Task2 Authority bounded signature-call compiler inventory drift.'
+  }
+  if($clean-cmatch'(?m)returndatacopy\s*\(' -or $clean-cmatch'(?m)(?<!static)call\s*\(' -or
+     $clean-cmatch'(?m)\b(delegatecall|callcode|create|create2|selfdestruct)\s*\('){
+    throw 'Task2 Authority dynamic returndata/prohibited compiler operation drift.'
+  }
+}
+
+function Assert-Rejected([string]$Label, [scriptblock]$Action) {
+  $rejected=$false
+  try { & $Action } catch { $rejected=$true }
+  if (-not $rejected) { throw "Verifier negative selftest failed: $Label" }
+}
+
+function Test-AuthoritySizePolicy([int]$RuntimeSize,[int]$InitcodeSize) {
+  return [pscustomobject]@{
+    RuntimeTarget = $RuntimeSize -le 18000
+    RuntimeHard = $RuntimeSize -le 20000
+    InitcodeTarget = $InitcodeSize -le 30000
+    InitcodeHard = $InitcodeSize -le 49152
+  }
+}
+
+function Invoke-Task2Validation {
+  $names=@('Factory','Authority','Core','BudgetBook','IntentExecution','Reconciliation')
+  $sources=@(
+    'src/AcquisitionConstellationFactory.sol','src/AcquisitionAuthority.sol','src/AcquisitionVaultCore.sol',
+    'src/PreVoteBudgetBook.sol','src/AcquisitionIntentExecution.sol','src/AcquisitionReconciliation.sol'
+  )
+  $contracts=@(
+    'AcquisitionConstellationFactory','AcquisitionAuthority','AcquisitionVaultCore','PreVoteBudgetBook',
+    'AcquisitionIntentExecution','AcquisitionReconciliation'
+  )
+  $abiHashes=@(
+    '0xf05e9741ee47a34bb470075bab9debca7cc63300eb4225ac796522eb07759acc',
+    '0xa0a12b00c6ce531d92676cb928870c7924fcf0169b0f06115b4a25a3a2ff4f0f',
+    '0xfc58342d536bace7c64f784a0bb1458f485a817ad9eea1b75a1266b797c29fe7',
+    '0x9e2f7a41d47b119e3b573d771462d93b4e631dc02af95201460e15157ac2577f',
+    '0x8d1832ae8d0d3b4641495ae33d844b4b6423727e81575eab829ba979bcc2c046',
+    '0x59fc50ed2e69f376aa218ce414edde3a4d354b33b5b814be944fcaeef514ae33'
+  )
+  $sourceHashes=@(
+    '0xcd60b29528c4be7e595c85679fd14930557a267334d7637da3a40daac3643614',
+    '0xf347cbc5003464be9fe40045de44b98b4e4f1e0c6b3c57652bbbec238ef200b8',
+    '0xd145a7b8ed304c2283d3d7a81850bfd855fb235525956c4ce51c992162c5f0ec',
+    '0x191c2867d26dc4b4d080a130bbc5f4de37f260c6951460f4eda63d5147d0d401',
+    '0xfa0ddd58a732c141958eb9c498e21b5127d1edb39492ff15ad80acfc718a5b04',
+    '0x5236dd84e460d48f015b6ccee4e92bb64a030687ce6838b97c7359cd84a60831'
+  )
+  $artifacts=@()
+  for($i=0;$i-lt6;$i++){
+    $artifact=Get-Content -LiteralPath $finalArtifacts[$i] -Raw|ConvertFrom-Json -Depth 100
+    Assert-AbiFingerprint $artifact $abiHashes[$i] $names[$i]
+    Assert-MetadataProvenance $artifact $sources[$i] $contracts[$i] $sourceHashes[$i] $true $true
+    $artifacts+=$artifact
+  }
+  Assert-Task2CompilerConfiguration (Get-Content -LiteralPath $config -Raw) $legacy
+
+  $allAbi=@($artifacts|ForEach-Object { $_.abi })
+  $functions=@($allAbi|Where-Object type -eq 'function')
+  $errors=@($allAbi|Where-Object type -eq 'error')
+  $events=@($allAbi|Where-Object type -eq 'event')
+  $constructors=@($allAbi|Where-Object type -eq 'constructor')
+  if($functions.Count-ne62-or$errors.Count-ne102-or$events.Count-ne24-or$constructors.Count-ne6-or$allAbi.Count-ne194){
+    throw "Task2 aggregate ABI census drift: $($functions.Count)/$($errors.Count)/$($events.Count)/$($constructors.Count)/$($allAbi.Count)."
+  }
+  if(@($allAbi|Where-Object { $_.type-eq'receive'-or$_.type-eq'fallback'-or$_.stateMutability-eq'payable' }).Count-ne0){
+    throw 'Task2 payable/receive/fallback surface drift.'
+  }
+
+  $snapshot=@($artifacts[1].abi|Where-Object { $_.type-eq'function'-and$_.name-eq'authoritySnapshot' })
+  if($snapshot.Count-ne1-or$snapshot[0].stateMutability-ne'view'-or$snapshot[0].inputs.Count-ne0-or$snapshot[0].outputs.Count-ne27){
+    throw 'Task2 Authority flat snapshot arity/mutability drift.'
+  }
+  $snapshotTypes=@('uint256','address','bytes32','address','address','address','address','address','bool','address','address','bool','address','address','uint256','uint256','uint256','uint256','uint256','address','bytes32','address','bytes32','uint256','bytes32','uint256','bytes32')
+  for($i=0;$i-lt27;$i++){
+    if($snapshot[0].outputs[$i].type-ne$snapshotTypes[$i]-or-not[string]::IsNullOrEmpty([string]$snapshot[0].outputs[$i].name)-or$null-ne$snapshot[0].outputs[$i].components){
+      throw "Task2 Authority flat snapshot schema drift at ordinal $i."
+    }
+  }
+
+  $futureFunctions=@('authorizePreVoteBudget((uint256,uint256,uint64),bytes32)','getPreVoteBudget(uint256)')
+  $futureErrors=@('BudgetDayClosed(uint256)','BudgetDeadlineOverflow()','InvalidPurchaseUntil(uint64,uint64)','BudgetAlreadyAuthorized(uint256)','InsufficientAvailable(uint256,uint256)','BudgetNotFound(uint256)')
+  $futureEvents=@('PreVoteBudgetAuthorized(bytes32,uint256,uint256,uint64,uint256,uint256,uint64,uint8,bytes32)')
+  $functionUniverse=@($functions|ForEach-Object{Canonical-Descriptor $_})+$futureFunctions
+  $errorUniverse=@($errors|ForEach-Object{Canonical-Descriptor $_})+$futureErrors
+  $eventUniverse=@($events|ForEach-Object{Canonical-Descriptor $_})+$futureEvents
+  Assert-DescriptorUniverse $functionUniverse 'function' 64
+  Assert-DescriptorUniverse $errorUniverse 'error' 108 $true
+  Assert-DescriptorUniverse $eventUniverse 'event' 25
+
+  $factoryLayout=(Invoke-IsolatedForgeInspect 'AcquisitionConstellationFactory' 'storageLayout' -Json -Ast)|ConvertFrom-Json -Depth 100
+  $authorityLayout=(Invoke-IsolatedForgeInspect 'AcquisitionAuthority' 'storageLayout' -Json -Ast)|ConvertFrom-Json -Depth 100
+  $factoryRows=@(
+    @{Label='_childInitcodeHashes';Slot='0';Offset=0;Type='bytes32[5]';Encoding='inplace';Bytes='160'},
+    @{Label='_childRuntimeHashes';Slot='5';Offset=0;Type='bytes32[5]';Encoding='inplace';Bytes='160'},
+    @{Label='_children';Slot='10';Offset=0;Type='address[5]';Encoding='inplace';Bytes='160'},
+    @{Label='_phase';Slot='15';Offset=0;Type='enum AcquisitionConstellationFactory.Phase';Encoding='inplace';Bytes='1'},
+    @{Label='_nextChildIndex';Slot='15';Offset=1;Type='uint8';Encoding='inplace';Bytes='1'}
+  )
+  $authorityRows=@(
+    @{Label='_nameFallback';Slot='0';Offset=0;Type='string';Encoding='bytes';Bytes='32'},
+    @{Label='_versionFallback';Slot='1';Offset=0;Type='string';Encoding='bytes';Bytes='32'},
+    @{Label='_owner';Slot='2';Offset=0;Type='address';Encoding='inplace';Bytes='20'},
+    @{Label='_pendingOwner';Slot='3';Offset=0;Type='address';Encoding='inplace';Bytes='20'},
+    @{Label='_paused';Slot='3';Offset=20;Type='bool';Encoding='inplace';Bytes='1'},
+    @{Label='mainOperator';Slot='4';Offset=0;Type='address';Encoding='inplace';Bytes='20'},
+    @{Label='_finalized';Slot='4';Offset=20;Type='bool';Encoding='inplace';Bytes='1'},
+    @{Label='operatorGeneration';Slot='5';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='_sharedO2Nonce';Slot='6';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='_cancelNonce';Slot='7';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='nominationNonce';Slot='8';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='_pendingMainOperatorNomination';Slot='9';Offset=0;Type='struct IAcquisitionAuthorityV2.PendingOperatorNomination';Encoding='inplace';Bytes='192'},
+    @{Label='ingressProposalNonce';Slot='15';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='ingressGeneration';Slot='16';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='activeIngressGeneration';Slot='17';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='_pendingIngressProposal';Slot='18';Offset=0;Type='struct IAcquisitionAuthorityV2.PendingIngressProposal';Encoding='inplace';Bytes='352'},
+    @{Label='_ingressRecords';Slot='29';Offset=0;Type='mapping(uint256 => struct IAcquisitionAuthorityV2.IngressRecord)';Encoding='mapping';Bytes='32'}
+  )
+  Assert-StorageRows $factoryLayout $factoryRows 'Factory'
+  Assert-StorageRows $authorityLayout $authorityRows 'Authority'
+
+  $isolatedOut=Join-Path $script:isolatedRoot 'out'
+  $isolatedFactory=Get-Content -LiteralPath (Join-Path $isolatedOut 'AcquisitionConstellationFactory.sol/AcquisitionConstellationFactory.json') -Raw|ConvertFrom-Json -Depth 100
+  $isolatedAuthority=Get-Content -LiteralPath (Join-Path $isolatedOut 'AcquisitionAuthority.sol/AcquisitionAuthority.json') -Raw|ConvertFrom-Json -Depth 100
+  for($i=2;$i-lt6;$i++){$null=Invoke-IsolatedForgeInspect $contracts[$i] 'abi'}
+  $isolatedArtifacts=@()
+  for($i=0;$i-lt6;$i++){
+    $isolatedArtifact=Get-Content -LiteralPath (Join-Path $isolatedOut ((Split-Path -Leaf $sources[$i])+'/'+$contracts[$i]+'.json')) -Raw|ConvertFrom-Json -Depth 100
+    Assert-IsolatedArtifactMatch $artifacts[$i] $isolatedArtifact $abiHashes[$i] $names[$i]
+    $isolatedArtifacts+=$isolatedArtifact
+  }
+  $factorySemantic=[ordered]@{
+    '_safe'='926:32,4037:32';'_registry'='1011:32,1301:32';'_registryRuntimeHash'='1050:32,1343:32';
+    '_configurationRoot'='965:32';'_manifestHash'='831:32,1756:32,4857:32,5138:32';'_deploymentCommitment'='866:32,3096:32'
+  }
+  $authoritySemantic=[ordered]@{
+    '_factory'='2854:32,4501:32,7618:32,11956:32,14348:32';'_manifestHash'='2893:32,4541:32,11992:32';
+    '_launchSafe'='4617:32';'_registry'='2932:32,7568:32,14297:32';
+    '_core'='1940:32,2972:32,3729:32,6395:32,7518:32,8128:32,11031:32,11704:32,13164:32,13864:32,14246:32,15083:32';
+    '_budgetBook'='3012:32,7468:32,14195:32';'_intentExecution'='3052:32,7418:32,14144:32';'_reconciliation'='3092:32,7368:32,14106:32'
+  }
+  foreach($pair in @(@{Artifact=$isolatedFactory;Name='AcquisitionConstellationFactory';Map=$factorySemantic},@{Artifact=$isolatedAuthority;Name='AcquisitionAuthority';Map=$authoritySemantic})){
+    $definition=@($pair.Artifact.ast.nodes|Where-Object { $_.nodeType-eq'ContractDefinition'-and$_.name-eq$pair.Name })
+    if($definition.Count-ne1){throw "$($pair.Name) AST contract identity drift."}
+    $variables=@($definition[0].nodes|Where-Object { $_.nodeType-eq'VariableDeclaration'-and$_.mutability-eq'immutable' })
+    if($variables.Count-ne$pair.Map.Count){throw "$($pair.Name) semantic immutable count drift."}
+    foreach($entry in $pair.Map.GetEnumerator()){
+      $variable=@($variables|Where-Object { $_.name -eq $entry.Key })
+      if($variable.Count-ne1){throw "$($pair.Name) semantic immutable label drift: $($entry.Key)"}
+      $expectedType=if($entry.Key-in@('_manifestHash','_registryRuntimeHash','_configurationRoot','_deploymentCommitment')){'bytes32'}else{'address'}
+      if($variable[0].typeDescriptions.typeString-ne$expectedType){throw "$($pair.Name) semantic immutable type drift: $($entry.Key)"}
+      $refProperty=$pair.Artifact.deployedBytecode.immutableReferences.psobject.Properties[[string]$variable[0].id]
+      if($null-eq$refProperty-or(Get-ReferenceSignature $refProperty.Value)-ne$entry.Value){throw "$($pair.Name) semantic immutable reference drift: $($entry.Key)"}
+    }
+  }
+  $factoryExpected=@($factorySemantic.Values)
+  $authorityExpected=@(
+    '15755:32','15944:32','15708:32','15834:32','15872:32','5853:32','5894:32'
+  )+@($authoritySemantic.Values)
+  Assert-ReferenceSet $artifacts[0] $factoryExpected 'Factory canonical artifact'
+  Assert-ReferenceSet $artifacts[1] $authorityExpected 'Authority canonical artifact'
+  $leafReferenceSets=@(
+    @('93:32,338:32','133:32,374:32'),@('97:32,225:32','133:32,265:32'),
+    @('93:32,338:32','133:32,374:32'),@('93:32,338:32','133:32,374:32')
+  )
+  for($i=0;$i-lt4;$i++){Assert-ReferenceSet $artifacts[$i+2] $leafReferenceSets[$i] $names[$i+2]}
+
+  $expectedSizes=@(@(7196,5484,1712),@(18629,16068,2561),@(676,473,203),@(675,473,202),@(676,473,203),@(676,473,203))
+  for($i=0;$i-lt6;$i++){
+    $init=Byte-Length $artifacts[$i].bytecode.object;$run=Byte-Length $artifacts[$i].deployedBytecode.object;$parts=Get-ExecutableParts $artifacts[$i] $names[$i]
+    if($init-ne$expectedSizes[$i][0]-or$run-ne$expectedSizes[$i][1]-or$parts.Offset-ne$expectedSizes[$i][2]){throw "$($names[$i]) bytecode size/suffix split drift."}
+    if($i-eq0){Assert-CallInventory $parts @{STATICCALL=1} @{CREATE=1;CALL=5;STATICCALL=4} $names[$i]}
+    elseif($i-eq1){Assert-CallInventory $parts @{} @{STATICCALL=2} $names[$i]}
+    else{Assert-CallInventory $parts @{} @{} $names[$i]}
+    if($i-ne1-and($run-gt24576-or$init-gt49152)){throw "$($names[$i]) EIP bytecode bound drift."}
+  }
+  $sizePolicy=Test-AuthoritySizePolicy 16068 18629
+  if(-not$sizePolicy.RuntimeTarget-or-not$sizePolicy.RuntimeHard-or-not$sizePolicy.InitcodeTarget-or-not$sizePolicy.InitcodeHard){throw 'Authority bytecode target/hard policy drift.'}
+  if(-not(Test-AuthoritySizePolicy 18000 30000).RuntimeTarget-or(Test-AuthoritySizePolicy 18001 30001).RuntimeTarget-or
+     -not(Test-AuthoritySizePolicy 20000 49152).RuntimeHard-or(Test-AuthoritySizePolicy 20001 49153).RuntimeHard-or
+     -not(Test-AuthoritySizePolicy 18000 30000).InitcodeTarget-or(Test-AuthoritySizePolicy 18001 30001).InitcodeTarget-or
+     -not(Test-AuthoritySizePolicy 20000 49152).InitcodeHard-or(Test-AuthoritySizePolicy 20001 49153).InitcodeHard){throw 'Authority size-boundary selftest failed.'}
+
+  $factoryIr=Invoke-IsolatedForgeInspect 'AcquisitionConstellationFactory' 'irOptimized'
+  $authorityIr=Invoke-IsolatedForgeInspect 'AcquisitionAuthority' 'irOptimized'
+  Assert-Task2FactoryIr $factoryIr
+  Assert-Task2AuthorityIr $authorityIr
+
+  # Negative verifier selftests exercise the same exact validators used above.
+  $mutated=$artifacts[0]|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100
+  (@($mutated.abi|Where-Object { $_.type-eq'function'-and$_.name-eq'deployNext' })[0]).stateMutability='view'
+  Assert-Rejected 'ABI mutability' { Assert-AbiFingerprint $mutated $abiHashes[0] 'mutated Factory' }
+  $mutated=$artifacts[0]|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100
+  (@($mutated.abi|Where-Object { $_.type-eq'event'-and$_.name-eq'ChildDeployed' })[0]).inputs[3].indexed=$true
+  Assert-Rejected 'event indexedness' { Assert-AbiFingerprint $mutated $abiHashes[0] 'mutated Factory' }
+  $mutated=$artifacts[1]|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100
+  (@($mutated.abi|Where-Object { $_.type-eq'function'-and$_.name-eq'authoritySnapshot' })[0]).outputs[26].type='uint128'
+  Assert-Rejected 'flat snapshot type/order' { Assert-AbiFingerprint $mutated $abiHashes[1] 'mutated Authority' }
+  $mutated=$artifacts[1]|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100
+  (@($mutated.abi|Where-Object { $_.type-eq'function'-and$_.name-eq'authorityTopology' })[0]).outputs[0].name='wrongFactory'
+  Assert-Rejected 'ABI output name' { Assert-AbiFingerprint $mutated $abiHashes[1] 'mutated Authority' }
+  $mutated=$artifacts[1]|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100
+  (@($mutated.abi|Where-Object { $_.type-eq'error'-and$_.name-eq'AuthorityPeerMismatch' })[0]).inputs[0].type='uint16'
+  Assert-Rejected 'error descriptor/type' { Assert-AbiFingerprint $mutated $abiHashes[1] 'mutated Authority' }
+  $mutated=$artifacts[1]|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100
+  (@($mutated.abi|Where-Object type -eq 'constructor')[0]).inputs[0].name='wrongFactory'
+  Assert-Rejected 'constructor input identity' { Assert-AbiFingerprint $mutated $abiHashes[1] 'mutated Authority' }
+  $mutatedLayout=$authorityLayout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutatedLayout.storage[0].slot='1'
+  Assert-Rejected 'storage slot' { Assert-StorageRows $mutatedLayout $authorityRows 'mutated Authority' }
+  $mutatedLayout=$authorityLayout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutatedLayout.storage[0].label='_wrong'
+  Assert-Rejected 'storage label' { Assert-StorageRows $mutatedLayout $authorityRows 'mutated Authority' }
+  $mutatedLayout=$authorityLayout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutatedLayout.storage[4].offset=19
+  Assert-Rejected 'storage packing offset' { Assert-StorageRows $mutatedLayout $authorityRows 'mutated Authority' }
+  $mutatedLayout=$authorityLayout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutatedLayout.types.psobject.Properties[$mutatedLayout.storage[0].type].Value.numberOfBytes='31'
+  Assert-Rejected 'storage byte width' { Assert-StorageRows $mutatedLayout $authorityRows 'mutated Authority' }
+  $mutatedLayout=$authorityLayout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutatedLayout.types.psobject.Properties[$mutatedLayout.storage[0].type].Value.encoding='inplace'
+  Assert-Rejected 'storage encoding' { Assert-StorageRows $mutatedLayout $authorityRows 'mutated Authority' }
+  $mutatedLayout=$authorityLayout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutatedLayout.storage=@($mutatedLayout.storage)+@($mutatedLayout.storage[0])
+  Assert-Rejected 'unexpected storage row' { Assert-StorageRows $mutatedLayout $authorityRows 'mutated Authority' }
+  $mutatedLayout=$authorityLayout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutatedLayout.storage=@($mutatedLayout.storage|Select-Object -Skip 1)
+  Assert-Rejected 'missing storage row' { Assert-StorageRows $mutatedLayout $authorityRows 'mutated Authority' }
+  Assert-Rejected 'function selector collision' { Assert-DescriptorUniverse @('burn(uint256)','collate_propagate_storage(bytes16)') 'function-selftest' 2 }
+  Assert-Rejected 'error selector collision' { Assert-DescriptorUniverse @('burn(uint256)','collate_propagate_storage(bytes16)') 'error-selftest' 2 }
+  Assert-Rejected 'event duplicate' { Assert-DescriptorUniverse @('X(uint256)','X(uint256)') 'event' 2 }
+  Assert-Rejected 'illegal error duplicate' { Assert-DescriptorUniverse @('X()','X()') 'error-selftest' 2 $true }
+  Assert-DescriptorUniverse @('ReentrancyGuardReentrantCall()','ReentrancyGuardReentrantCall()') 'error-selftest' 2 $true
+  $mutated=$artifacts[0]|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutated.metadata.compiler.version='0.8.27+commit.00000000'
+  Assert-Rejected 'compiler version' { Assert-MetadataProvenance $mutated $sources[0] $contracts[0] $sourceHashes[0] $true $false }
+  $mutated=$artifacts[0]|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutated.metadata.settings.viaIR=$false
+  Assert-Rejected 'viaIR profile' { Assert-MetadataProvenance $mutated $sources[0] $contracts[0] $sourceHashes[0] $true $false }
+  $mutated=$artifacts[0]|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutated.metadata.settings.optimizer.runs=801
+  Assert-Rejected 'optimizer runs' { Assert-MetadataProvenance $mutated $sources[0] $contracts[0] $sourceHashes[0] $true $false }
+  $mutated=$artifacts[0]|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$targetProperty=@($mutated.metadata.settings.compilationTarget.psobject.Properties)[0];$targetProperty.Value='WrongFactory'
+  Assert-Rejected 'compilationTarget' { Assert-MetadataProvenance $mutated $sources[0] $contracts[0] $sourceHashes[0] $true $false }
+  $mutated=$artifacts[0]|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$sourceProperty=@($mutated.metadata.sources.psobject.Properties)[0];$sourceProperty.Value.keccak256='0x'+('00'*32)
+  Assert-Rejected 'source hash/set' { Assert-MetadataProvenance $mutated $sources[0] $contracts[0] $sourceHashes[0] $true $false }
+  $toml=Get-Content -LiteralPath $config -Raw
+  Assert-Rejected 'compiler restriction setting' { Assert-Task2CompilerConfiguration ($toml -replace 'via_ir = true','via_ir = false') $legacy }
+  Assert-Rejected 'compiler restriction path' { Assert-Task2CompilerConfiguration ($toml -replace 'src/AcquisitionVaultCore.sol','src/WrongCore.sol') $legacy }
+  $legacyViaIr=$legacy|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100
+  $legacyViaIr.metadata.settings|Add-Member -NotePropertyName viaIR -NotePropertyValue $true -Force
+  Assert-Rejected 'legacy Vault viaIR' { Assert-Task2CompilerConfiguration $toml $legacyViaIr }
+  Assert-Rejected 'Factory snapshot gas mutation' { Assert-Task2FactoryIr ($factoryIr -replace 'staticcall\(160000','staticcall(160001') }
+  Assert-Rejected 'Factory returndata-copy mutation' { Assert-Task2FactoryIr ($factoryIr+' returndatacopy(0,0,returndatasize())') }
+  Assert-Rejected 'Authority CALL mutation' { Assert-Task2AuthorityIr ($authorityIr+' call(1,2,3,4,5,6,7)') }
+  Assert-Rejected 'immutable reference length' { Assert-ReferenceSet $artifacts[0] @($factoryExpected[0..4]+@('926:31,4037:32')) 'mutated Factory' }
+  $mutated=$artifacts[0]|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100
+  $firstImmutable=@($mutated.deployedBytecode.immutableReferences.psobject.Properties|Select-Object -First 1)[0];$firstImmutable.Value[0].start=[int]$firstImmutable.Value[0].start+1
+  Assert-Rejected 'immutable reference start' { Assert-ReferenceSet $mutated $factoryExpected 'mutated Factory' }
+  $mutated=$artifacts[0]|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100
+  $firstImmutable=@($mutated.deployedBytecode.immutableReferences.psobject.Properties|Select-Object -First 1)[0];$mutated.deployedBytecode.immutableReferences.psobject.Properties.Remove($firstImmutable.Name)
+  Assert-Rejected 'immutable reference missing' { Assert-ReferenceSet $mutated $factoryExpected 'mutated Factory' }
+  $mutated=$artifacts[0]|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutated.deployedBytecode.object='0x00'+$mutated.deployedBytecode.object.Substring(4)
+  Assert-Rejected 'creation/runtime split' { $null=Get-ExecutableParts $mutated 'mutated Factory' }
+  $mutated=$artifacts[0]|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutated.bytecode.object='0x00'+$mutated.bytecode.object.Substring(4)
+  Assert-Rejected 'isolated build identity mismatch' { Assert-IsolatedArtifactMatch $mutated $isolatedArtifacts[0] $abiHashes[0] 'mutated Factory' }
+  $scannerExecutableRejected=Has-Prohibited @(Scan-Opcodes '0xf4');$scannerPushDataPassed=-not(Has-Prohibited @(Scan-Opcodes '0x60f4'))
+  $scannerTruncatedRejected=$false;try{$null=Scan-Opcodes '0x62aabb'}catch{$scannerTruncatedRejected=$true}
+  $metadataRejected=$false;try{$null=Strip-SolidityMetadata '0x6000ffff'}catch{$metadataRejected=$true}
+  if(-not$scannerExecutableRejected-or-not$scannerPushDataPassed-or-not$scannerTruncatedRejected-or-not$metadataRejected){throw 'Task2 opcode/metadata negative selftest failed.'}
+
+  Write-Output 'Task2 ABI: aggregate=62/102/24/6/194 collisionUniverses=64/108/25 snapshot=27-static-words'
+  Write-Output 'Task2 storage: Factory=5 rows through slot15; Authority=17 rows with semantic roots through mapping slot29'
+  Write-Output 'Task2 bytecode: Factory=7196/5484 Authority=18629/16068 leaves<=676/473; isolated IR/opcode/source/profile checks passed'
+}
+
 $present = @($finalArtifacts | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf })
 if ($present.Count -eq 0) {
-  if ($ExpectTask0Red) { Write-Output 'Task 0 RED verified: exact six final artifacts absent; legacy/self checks passed.'; exit 0 }
+  if ($ExpectTask0Red) { Write-Output 'Task 0 RED verified: exact six final artifacts absent; legacy/self checks passed.'; Exit-Verified 0 }
   [Console]::Error.WriteLine('Task 0 RED: exact six final artifacts are absent. Re-run with -ExpectTask0Red only at the Task 0 boundary.')
-  exit $redExitCode
+  Exit-Verified $redExitCode
 }
 if ($present.Count -ne 6) {
   [Console]::Error.WriteLine("Partial constellation artifact set: $($present.Count) of 6.")
-  exit 43
+  Exit-Verified 43
+}
+try { Assert-CanonicalArtifactLayout $finalArtifacts } catch { Fail $_.Exception.Message 1 }
+if ($ValidatePhase -eq 'Task2') {
+  try { Invoke-Task2Validation } catch { Fail $_.Exception.Message 1 }
+  if ($ExpectTask0Red) {
+    [Console]::Error.WriteLine('-ExpectTask0Red rejects a complete conforming Task 2 artifact set.')
+    Exit-Verified 44
+  }
+  Write-Output 'Task 2 GREEN: exact phase, artifacts, ABI/collisions, storage/immutables, provenance, sizes, and compiler call policy passed.'
+  Exit-Verified 0
 }
 
 $factoryFunctions = @('factoryState()','childCommitment(uint8)','deployNext(bytes)','finalizeConstellation()')
@@ -495,15 +1082,20 @@ function Assert-SourceProvenance($Artifact,[string]$Source,[string]$Name,[string
   $sourceProperty=$metadata.sources.psobject.Properties[$Source]
   $sourceEntry=if($null-ne$sourceProperty){$sourceProperty.Value}else{$null}
   if($null-eq$sourceEntry-or [string]::IsNullOrWhiteSpace([string]$sourceEntry.keccak256)){throw "$Name source provenance missing: $Source"}
-  $nodeScript="const fs=require('fs');const{keccak256,toHex}=require('viem');process.stdout.write(keccak256(toHex(fs.readFileSync(process.argv[1]))));"
-  Push-Location -LiteralPath $repo
-  try{$localHash=(& $NodePath -e $nodeScript (Join-Path $repo $Source) 2>&1)-join'';$nodeExit=$LASTEXITCODE}finally{Pop-Location}
-  if($nodeExit-ne0-or-not [string]::Equals([string]$localHash,[string]$sourceEntry.keccak256,[StringComparison]::OrdinalIgnoreCase)){throw "$Name local source hash provenance drift."}
-  if(-not [string]::Equals([string]$localHash,$FrozenHash,[StringComparison]::OrdinalIgnoreCase)){throw "$Name reviewed source hash drift."}
+  if(-not [string]::Equals([string]$sourceEntry.keccak256,$FrozenHash,[StringComparison]::OrdinalIgnoreCase)){throw "$Name reviewed source hash drift."}
+  $localPath=Join-Path $artifactProjectRoot $Source
+  if(-not(Test-Path -LiteralPath $localPath -PathType Leaf)){throw "$Name local source missing."}
+  $nodeScript="const fs=require('fs');const{keccak256,toHex}=require('viem');const s=fs.readFileSync(process.argv[1],'utf8').replace(/\r\n/g,'\n');process.stdout.write(keccak256(toHex(Buffer.from(s))));"
+  Push-Location -LiteralPath $verifierRepo
+  try{$localHash=(& $NodePath -e $nodeScript $localPath 2>&1)-join'';$nodeExit=$LASTEXITCODE}finally{Pop-Location}
+  if($nodeExit-ne0-or-not[string]::Equals($localHash,$FrozenHash,[StringComparison]::OrdinalIgnoreCase)){throw "$Name local source hash provenance drift."}
   $sourceNames=@($metadata.sources.psobject.Properties.Name)
   if($sourceNames.Count-ne1-or-not [string]::Equals($sourceNames[0],$Source,[StringComparison]::Ordinal)){throw "$Name reviewed production source set drift."}
   if($metadata.compiler.version-notmatch'^0.8.26\+commit\.'){throw "$Name compiler provenance drift."}
-  if($metadata.settings.optimizer.enabled-ne$true-or$metadata.settings.optimizer.runs-ne800-or$metadata.settings.evmVersion-ne'cancun'){throw "$Name build settings provenance drift."}
+  if($metadata.settings.optimizer.enabled-ne$true-or$metadata.settings.optimizer.runs-ne800-or$metadata.settings.evmVersion-ne'cancun'-or$metadata.settings.viaIR-eq$true){throw "$Name build settings provenance drift."}
+  $targets=@($metadata.settings.compilationTarget.psobject.Properties)
+  $targetContract=[IO.Path]::GetFileNameWithoutExtension($Source)
+  if($targets.Count-ne1-or-not[string]::Equals($targets[0].Name,$Source,[StringComparison]::Ordinal)-or-not[string]::Equals($targets[0].Value,$targetContract,[StringComparison]::Ordinal)){throw "$Name compilationTarget provenance drift."}
 }
 
 function Assert-FactoryCompilerPolicy([string]$Ir) {
@@ -520,16 +1112,6 @@ function Assert-FactoryCompilerPolicy([string]$Ir) {
   if($Ir-match'(?im)\b(delegatecall|callcode|create2|selfdestruct)\s*\('){throw 'Factory prohibited compiler callsite.'}
 }
 
-function Get-ExecutableParts($Artifact,[string]$Name) {
-  $creation=$Artifact.bytecode.object.Substring(2); $runtime=$Artifact.deployedBytecode.object.Substring(2)
-  $offset=$creation.IndexOf($runtime,[StringComparison]::OrdinalIgnoreCase)
-  if($offset-lt0-or$offset-ne$creation.LastIndexOf($runtime,[StringComparison]::OrdinalIgnoreCase)){throw "$Name runtime suffix occurrence drift."}
-  if($creation.Substring($offset)-cne$runtime){throw "$Name runtime suffix mismatch."}
-  $prefix='0x'+$creation.Substring(0,$offset)
-  $stripped=Strip-SolidityMetadata ('0x'+$runtime)
-  return @{Creation=@(Scan-Opcodes $prefix);Runtime=@(Scan-Opcodes $stripped);Offset=[int]($offset/2)}
-}
-
 try {
   $factory=Get-Content -LiteralPath $finalArtifacts[0] -Raw|ConvertFrom-Json -Depth 100
   Assert-ArtifactSurface $factory $factoryFunctions $factoryErrors $factoryEvents 'constructor(address,address,bytes32,bytes32[5],bytes32[5]):nonpayable' 'Factory'
@@ -544,9 +1126,7 @@ try {
   Assert-AbiNames $factory 'childCommitment' @('index') @('child','initcodeHash','runtimeHash')
   Assert-AbiNames $factory 'deployNext' @('initcode') @('child')
   Assert-AbiNames $factory 'finalizeConstellation' @() @()
-  Push-Location -LiteralPath $repo
-  try{$factoryIr=(& $ForgePath inspect AcquisitionConstellationFactory irOptimized 2>&1)-join"`n";$factoryIrExit=$LASTEXITCODE}finally{Pop-Location}
-  if($factoryIrExit-ne0){throw 'Factory optimized-IR inspection failed closed.'}
+  $factoryIr=Invoke-IsolatedForgeInspect 'AcquisitionConstellationFactory' 'irOptimized'
   Assert-FactoryCompilerPolicy $factoryIr
   function Assert-RejectedIrMutation([string]$Label,[string]$MutatedIr){$rejected=$false;try{Assert-FactoryCompilerPolicy $MutatedIr}catch{$rejected=$true};if(-not$rejected){throw "Compiler-policy negative selftest failed: $Label"}}
   Assert-RejectedIrMutation 'phase-after-CREATE' ($factoryIr.Replace('0:7068:7074  "_phase"','0:99999:99999  "movedPhase"')+' 0:7068:7074  "_phase"')
@@ -556,8 +1136,7 @@ try {
   Assert-RejectedIrMutation 'dynamic-returndata-copy' ($factoryIr+' returndatacopy(0,0,returndatasize())')
   Assert-RejectedIrMutation 'prohibited-delegatecall' ($factoryIr+' delegatecall(1,2,3,4,5,6)')
   Assert-ImmutableReferences $factory '1262:32;470:32,540:32,595:32,738:32,1332:32;630:32,682:32,1367:32;1297:32;924:32,1143:32,2720:32,3158:32;890:32,1176:32' 'Factory'
-  $factoryLayoutText=& $ForgePath inspect AcquisitionConstellationFactory storageLayout --json 2>&1
-  if($LASTEXITCODE-ne0){throw "Factory storage inspect failed: $factoryLayoutText"}
+  $factoryLayoutText=Invoke-IsolatedForgeInspect 'AcquisitionConstellationFactory' 'storageLayout' -Json
   $factoryLayout=$factoryLayoutText|ConvertFrom-Json -Depth 100
   $factoryStorage=@($factoryLayout.storage)
   $expectedFactoryStorage=@('_childInitcodeHashes','_childRuntimeHashes','_children','_phase','_nextChildIndex')
@@ -588,8 +1167,7 @@ try {
     Assert-AbiNames $artifact ($spec.Finalizer.Substring(0,$spec.Finalizer.IndexOf('('))) @('manifestHash') @()
     $childImmutable=@('85:32,224:32;121:32,295:32,347:32,450:32','85:32,224:32;121:32,295:32,347:32,450:32','106:32,224:32;142:32,295:32,347:32,450:32','85:32,224:32;121:32,295:32,347:32,450:32','85:32,224:32;121:32,295:32,347:32,450:32')
     Assert-ImmutableReferences $artifact $childImmutable[$i] $spec.Name
-    $layoutText=& $ForgePath inspect $spec.Name storageLayout --json 2>&1
-    if($LASTEXITCODE-ne0){throw "$($spec.Name) storage inspect failed: $layoutText"}
+    $layoutText=Invoke-IsolatedForgeInspect $spec.Name 'storageLayout' -Json
     $layout=$layoutText|ConvertFrom-Json -Depth 100
     $childRows=@($layout.storage)
     if($childRows.Count-ne1){throw "$($spec.Name) storage count drift."}
@@ -613,7 +1191,7 @@ try {
 
 if ($ExpectTask0Red) {
   [Console]::Error.WriteLine('-ExpectTask0Red rejects a complete conforming Task 1 artifact set.')
-  exit 44
+  Exit-Verified 44
 }
 Write-Output 'Task 1 GREEN: exact six-artifact ABI, constructor, payable/fallback, size, suffix, and opcode conformance passed.'
-exit 0
+Exit-Verified 0
