@@ -288,7 +288,7 @@
 | [docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md](../../docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md) | documentation | 231 | 2026-08-27 |
 | [docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md](../../docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md) | documentation | 1230 | 2026-08-27 |
 | [docs/superpowers/plans/2026-08-26-settlement-gas-pool.md](../../docs/superpowers/plans/2026-08-26-settlement-gas-pool.md) | documentation | 600 | 2026-08-26 |
-| [docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md](../../docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md) | documentation | 1750 | 2026-08-27 |
+| [docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md](../../docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md) | documentation | 1970 | 2026-08-27 |
 | [docs/superpowers/plans/2026-08-27-finalized-event-time-handoff.md](../../docs/superpowers/plans/2026-08-27-finalized-event-time-handoff.md) | documentation | 221 | 2026-08-27 |
 | [docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md](../../docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md) | design | 124 | 2026-08-23 |
 | [docs/superpowers/specs/2026-08-26-grill-completion.md](../../docs/superpowers/specs/2026-08-26-grill-completion.md) | documentation | 824 | 2026-08-26 |
