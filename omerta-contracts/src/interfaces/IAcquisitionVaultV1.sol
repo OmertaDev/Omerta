@@ -74,6 +74,36 @@ interface IAcquisitionVaultV1 {
         bytes32 detailsHash;
     }
 
+    struct AccountingTotals {
+        uint256 availableWei;
+        uint256 unattributedWei;
+        uint256 ordinaryReservedWei;
+        uint256 reconciliationLiabilityWei;
+        uint256 reconciliationBackingWei;
+        uint256 reconciliationShortfallWei;
+        uint256 accountedBackingWei;
+        uint256 actualBalanceWei;
+        uint256 balanceDeficitWei;
+        uint256 forcedSurplusWei;
+        uint256 accountingSequence;
+    }
+
+    enum AccountingMutationKind {
+        NONE,
+        SYNC_BALANCE,
+        UNATTRIBUTED_RECLASSIFICATION,
+        CANONICAL_DEPOSIT
+    }
+
+    enum AccountingComponentKind {
+        NONE,
+        FORCED_SURPLUS_TO_UNATTRIBUTED,
+        BALANCE_DEFICIT_OBSERVATION_SET,
+        UNATTRIBUTED_TO_AVAILABLE,
+        CANONICAL_DEPOSIT_DEFICIT_REPAIR,
+        CANONICAL_DEPOSIT_AVAILABLE_CREDIT
+    }
+
     error WrongChain(uint256 actualChainId);
     error ZeroAddress();
     error ContractRequired(address target);
@@ -104,6 +134,12 @@ interface IAcquisitionVaultV1 {
     error InvalidSignature();
     error InsufficientSignatureValidationGas();
     error LocalReadinessFailed(uint8 condition);
+    error InvalidGlobalLifetimeCap();
+    error NoBalanceDelta();
+    error InvalidAmount();
+    error InsufficientUnattributed(uint256 availableWei, uint256 requestedWei);
+    error BalanceDeficitActive(uint256 deficitWei);
+    error ReconciliationShortfallActive(uint256 shortfallWei);
 
     event MainOperatorNominationCreated(
         bytes32 indexed proposalId,
@@ -148,6 +184,30 @@ interface IAcquisitionVaultV1 {
     );
     event RiskPaused(address indexed actor, uint8 reasonCode, bytes32 detailsHash);
     event RiskUnpaused(address indexed actor, uint8 reasonCode, bytes32 detailsHash);
+    event AccountingMutation(
+        uint256 indexed accountingSequence,
+        bytes32 indexed mutationId,
+        uint8 indexed mutationKind,
+        AccountingTotals preTotals,
+        AccountingTotals postTotals,
+        uint256 componentCount
+    );
+    event AccountingComponent(
+        uint256 indexed accountingSequence,
+        uint256 indexed componentIndex,
+        bytes32 indexed componentId,
+        uint8 componentKind,
+        bytes32 componentSubjectId,
+        uint256 amountWei
+    );
+    event UnattributedReclassified(
+        bytes32 indexed mutationId,
+        uint256 indexed accountingSequence,
+        address indexed actor,
+        uint256 amountWei,
+        uint8 reasonCode,
+        bytes32 detailsHash
+    );
 
     function supportedChainId() external view returns (uint256);
     function OPERATOR_NOMINATION_DELAY() external view returns (uint64);
@@ -183,4 +243,15 @@ interface IAcquisitionVaultV1 {
     function unpause(bytes32 detailsHash) external;
     function hashOutflowAuthorization(OutflowAuthorization calldata authorization) external view returns (bytes32);
     function hashSuccessorConsent(SuccessorConsent calldata consent) external view returns (bytes32);
+    function globalLifetimeCanonicalDepositCapWei() external view returns (uint256);
+    function availableWei() external view returns (uint256);
+    function unattributedWei() external view returns (uint256);
+    function ordinaryReservedWei() external view returns (uint256);
+    function reconciliationLiabilityWei() external view returns (uint256);
+    function reconciliationBackingWei() external view returns (uint256);
+    function accountingSequence() external view returns (uint256);
+    function lastObservedBalanceDeficitWei() external view returns (uint256);
+    function accountingTotals() external view returns (AccountingTotals memory);
+    function syncBalance() external returns (bytes32 mutationId);
+    function reclassifyUnattributed(uint256 amountWei, bytes32 detailsHash) external returns (bytes32 mutationId);
 }

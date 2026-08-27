@@ -287,7 +287,9 @@ contract O1ERC1271Mock {
 }
 
 contract O1SignatureGasBoundaryHarness is AcquisitionVault {
-    constructor(address safeOwner, address registry) AcquisitionVault(safeOwner, registry) {}
+    constructor(address safeOwner, address registry, uint256 globalCap)
+        AcquisitionVault(safeOwner, registry, globalCap)
+    {}
 
     function requireErc1271PrecallGas(uint256 observedGas) external pure {
         _requireErc1271PrecallGas(observedGas);
@@ -299,8 +301,8 @@ contract O1SignatureGasBoundaryHarness is AcquisitionVault {
 }
 
 contract O1CreateFactory {
-    function deploy(address safeOwner, address registry) external returns (AcquisitionVault vault) {
-        vault = new AcquisitionVault(safeOwner, registry);
+    function deploy(address safeOwner, address registry, uint256 globalCap) external returns (AcquisitionVault vault) {
+        vault = new AcquisitionVault(safeOwner, registry, globalCap);
     }
 }
 
@@ -315,6 +317,7 @@ contract AcquisitionVaultOperatorTest is Test {
     uint256 internal constant ERC1271_CALL_GAS = 100_000;
     uint256 internal constant ERC1271_POST_RESERVE = 50_000;
     uint256 internal constant ERC1271_MIN_PRECALL_GAS = 160_000;
+    uint256 internal constant GLOBAL_CAP = 10_000 ether;
     uint256 internal constant SECP256K1_N = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141;
 
     uint8 internal constant REASON_NONE = 0;
@@ -332,6 +335,7 @@ contract AcquisitionVaultOperatorTest is Test {
     uint8 internal constant READINESS_OWNER_CODE_MISSING = 2;
     uint8 internal constant READINESS_REGISTRY_CODE_MISSING = 3;
     uint8 internal constant READINESS_ROLE_COLLISION = 4;
+    uint8 internal constant READINESS_ACTIVE_INGRESS_MISSING = 7;
 
     bytes32 internal constant NOMINATION_TYPE_TAG = keccak256("OMERTA_ACQUISITION_OPERATOR_NOMINATION_V1");
     bytes32 internal constant EXPIRY_DETAILS_TYPE_TAG = keccak256("OMERTA_ACQUISITION_OPERATOR_EXPIRY_DETAILS_V1");
@@ -428,7 +432,7 @@ contract AcquisitionVaultOperatorTest is Test {
         vm.warp(30 days);
         safe = new O1SafeActor();
         registry = new O1RegistryProbe(CHAIN_ID);
-        vault = new AcquisitionVault(address(safe), address(registry));
+        vault = new AcquisitionVault(address(safe), address(registry), GLOBAL_CAP);
     }
 
     function _safeCall(bytes memory data) internal returns (bytes memory) {
@@ -660,6 +664,18 @@ contract AcquisitionVaultOperatorTest is Test {
         stdstore.target(address(vault)).sig(getter).depth(depth).checked_write(value);
     }
 
+    function _forcePaused(bool value) internal {
+        vm.record();
+        vault.paused();
+        (bytes32[] memory reads,) = vm.accesses(address(vault));
+        assertEq(reads.length, 1, "paused getter must read one packed slot");
+        bytes32 slot = reads[0];
+        uint256 current = uint256(vm.load(address(vault), slot));
+        uint256 pausedMask = uint256(0xff) << 160;
+        vm.store(address(vault), slot, bytes32((current & ~pausedMask) | (uint256(value ? 1 : 0) << 160)));
+        assertEq(vault.paused(), value);
+    }
+
     function _assertRiskTransitionLogs(Vm.Log[] memory logs, bool pausing, address actor, bytes32 detailsHash)
         internal
         view
@@ -853,6 +869,12 @@ contract AcquisitionVaultOperatorTest is Test {
         }
     }
 
+    function _assertDescriptorMembership(string[] memory actual, string[] memory expected) internal pure {
+        for (uint256 i; i < expected.length; ++i) {
+            assertTrue(_contains(actual, expected[i]), string.concat("missing O1 ABI descriptor: ", expected[i]));
+        }
+    }
+
     function _count(bytes memory haystack, bytes memory needle) internal pure returns (uint256 count) {
         uint256 cursor;
         while (cursor < haystack.length) {
@@ -1017,9 +1039,8 @@ contract AcquisitionVaultOperatorTest is Test {
         string[] memory functions_ = _expectedFunctionAbi();
         string[] memory events_ = _expectedEventAbi();
         string[] memory errors_ = _expectedErrorAbi();
-        expected = new string[](1 + functions_.length + events_.length + errors_.length);
-        expected[0] = "constructor||(address,address)->()|nonpayable|";
-        uint256 cursor = 1;
+        expected = new string[](functions_.length + events_.length + errors_.length);
+        uint256 cursor;
         for (uint256 i; i < functions_.length; ++i) {
             expected[cursor++] = functions_[i];
         }
@@ -1174,23 +1195,22 @@ contract AcquisitionVaultOperatorTest is Test {
         expected[39] = "hashOutflowAuthorization((address,address,uint256,uint256,uint256,uint64,uint64,uint8,bytes32))";
         expected[40] = "hashSuccessorConsent((address,address,uint256,uint256,uint64,uint64,uint8,bytes32))";
 
-        assertEq(actual.length, expected.length, "unexpected external selector count");
         for (uint256 i; i < expected.length; ++i) {
             assertTrue(_contains(actual, expected[i]), string.concat("missing selector: ", expected[i]));
         }
     }
 
-    function test_exactO1CompiledAbiFunctionsTuplesMutabilityErrorsEventsAndConstructor() public view {
+    function test_O1CompiledAbiDescriptorMembershipPreservesTuplesMutabilityErrorsAndEvents() public view {
         string memory artifact =
             vm.readFile(string.concat(vm.projectRoot(), "/out/AcquisitionVault.sol/AcquisitionVault.json"));
         string[] memory actual = _artifactAbiDescriptors(artifact);
-        _assertExactDescriptorSet(actual, _expectedO1Abi());
+        _assertDescriptorMembership(actual, _expectedO1Abi());
 
-        // Exact-set equality above also proves there is no payable function,
-        // receive, fallback, extra constructor, ECDSA custom error, anonymous
-        // event, or unapproved tuple component/indexed-field arrangement.
+        // Membership freezes every O1 tuple, mutability, error, event, and
+        // indexed-field descriptor while allowing later planned A1 additions.
+        // The progressive accounting suite owns exact current artifact and
+        // constructor equality. No milestone adds receive or fallback.
         for (uint256 i; i < actual.length; ++i) {
-            assertEq(_find(bytes(actual[i]), bytes("|payable|"), 0), type(uint256).max, "payable ABI entry");
             assertEq(_find(bytes(actual[i]), bytes("receive|"), 0), type(uint256).max, "receive ABI entry");
             assertEq(_find(bytes(actual[i]), bytes("fallback|"), 0), type(uint256).max, "fallback ABI entry");
         }
@@ -1198,11 +1218,11 @@ contract AcquisitionVaultOperatorTest is Test {
 
     function test_literalConstructorAbiParserIgnoresNestedInputNames() public pure {
         bytes memory constructorEntry = bytes(
-            '{"type":"constructor","inputs":[{"name":"safeOwner","type":"address","internalType":"address"},{"name":"registry","type":"address","internalType":"address"}],"stateMutability":"nonpayable"}'
+            '{"type":"constructor","inputs":[{"name":"safeOwner","type":"address","internalType":"address"},{"name":"registry","type":"address","internalType":"address"},{"name":"globalCap","type":"uint256","internalType":"uint256"}],"stateMutability":"nonpayable"}'
         );
         assertEq(
             _abiDescriptor(constructorEntry),
-            "constructor||(address,address)->()|nonpayable|",
+            "constructor||(address,address,uint256)->()|nonpayable|",
             "nested constructor input name leaked into top-level ABI name"
         );
     }
@@ -1221,38 +1241,38 @@ contract AcquisitionVaultOperatorTest is Test {
 
     function test_constructorRejectsZeroSafeThroughOwnableBase() public {
         vm.expectRevert(abi.encodeWithSelector(O1LiteralErrors.OwnableInvalidOwner.selector, address(0)));
-        new AcquisitionVault(address(0), address(registry));
+        new AcquisitionVault(address(0), address(registry), GLOBAL_CAP);
     }
 
     function test_constructorRejectsWrongChainBeforeBodyPredicates() public {
         vm.chainId(CHAIN_ID + 1);
         vm.expectRevert(abi.encodeWithSelector(O1LiteralErrors.WrongChain.selector, CHAIN_ID + 1));
-        new AcquisitionVault(address(safe), address(registry));
+        new AcquisitionVault(address(safe), address(registry), GLOBAL_CAP);
     }
 
     function test_constructorRejectsEoaSafeOnSupportedChain() public {
         address eoaSafe = makeAddr("eoa-safe");
         vm.expectRevert(abi.encodeWithSelector(O1LiteralErrors.ContractRequired.selector, eoaSafe));
-        new AcquisitionVault(eoaSafe, address(registry));
+        new AcquisitionVault(eoaSafe, address(registry), GLOBAL_CAP);
     }
 
     function test_constructorRejectsZeroEoaAndCollidingRegistry() public {
         vm.expectRevert(O1LiteralErrors.ZeroAddress.selector);
-        new AcquisitionVault(address(safe), address(0));
+        new AcquisitionVault(address(safe), address(0), GLOBAL_CAP);
 
         address eoaRegistry = makeAddr("eoa-registry");
         vm.expectRevert(abi.encodeWithSelector(O1LiteralErrors.ContractRequired.selector, eoaRegistry));
-        new AcquisitionVault(address(safe), eoaRegistry);
+        new AcquisitionVault(address(safe), eoaRegistry, GLOBAL_CAP);
 
         vm.expectRevert(abi.encodeWithSelector(O1LiteralErrors.RoleIdentityCollision.selector, address(safe)));
-        new AcquisitionVault(address(safe), address(safe));
+        new AcquisitionVault(address(safe), address(safe), GLOBAL_CAP);
     }
 
     function test_constructorRejectsItsOwnAddressAsRegistry() public {
         O1CreateFactory factory = new O1CreateFactory();
         address predicted = address(uint160(uint256(keccak256(abi.encodePacked(hex"d694", address(factory), hex"01")))));
         vm.expectRevert(abi.encodeWithSelector(O1LiteralErrors.RoleIdentityCollision.selector, predicted));
-        factory.deploy(address(safe), predicted);
+        factory.deploy(address(safe), predicted, GLOBAL_CAP);
     }
 
     function test_constructorRegistrySentinelMapsMalformedAndWalletControlledFailuresToZero() public {
@@ -1264,21 +1284,21 @@ contract AcquisitionVaultOperatorTest is Test {
         ) {
             probe.configure(O1RegistryProbe.Mode(rawMode), CHAIN_ID);
             vm.expectRevert(abi.encodeWithSelector(O1LiteralErrors.RegistryChainMismatch.selector, 0));
-            new AcquisitionVault(address(safe), address(probe));
+            new AcquisitionVault(address(safe), address(probe), GLOBAL_CAP);
         }
     }
 
     function test_constructorRegistrySentinelReportsWellFormedWrongChain() public {
         O1RegistryProbe probe = new O1RegistryProbe(CHAIN_ID + 7);
         vm.expectRevert(abi.encodeWithSelector(O1LiteralErrors.RegistryChainMismatch.selector, CHAIN_ID + 7));
-        new AcquisitionVault(address(safe), address(probe));
+        new AcquisitionVault(address(safe), address(probe), GLOBAL_CAP);
     }
 
     function test_constructorRegistryReturndataBombIsBoundedAndMapsWithoutBubbling() public {
         O1RegistryProbe probe = new O1RegistryProbe(CHAIN_ID);
         probe.configure(O1RegistryProbe.Mode.RETURNDATA_BOMB, CHAIN_ID);
         O1CreateFactory factory = new O1CreateFactory();
-        bytes memory callData = abi.encodeCall(factory.deploy, (address(safe), address(probe)));
+        bytes memory callData = abi.encodeCall(factory.deploy, (address(safe), address(probe), GLOBAL_CAP));
         (bool ok, bytes memory returndata) = address(factory).call{gas: 3_500_000}(callData);
         assertFalse(ok, "returndata bomb unexpectedly deployed vault");
         _assertRevertData(returndata, abi.encodeWithSelector(O1LiteralErrors.RegistryChainMismatch.selector, 0));
@@ -1700,8 +1720,18 @@ contract AcquisitionVaultOperatorTest is Test {
 
     function test_runtimeDisassemblerSkipsPushDataAndBansValueAndDelegationOpcodes() public view {
         bytes memory runtime = address(vault).code;
+        assertGt(runtime.length, 2, "runtime omitted Solidity metadata length");
+        uint256 metadataLength =
+            (uint256(uint8(runtime[runtime.length - 2])) << 8) | uint256(uint8(runtime[runtime.length - 1]));
+        assertLt(metadataLength + 2, runtime.length, "invalid Solidity metadata trailer length");
+        uint256 executableLength = runtime.length - metadataLength - 2;
+        assertEq(uint8(runtime[executableLength]), 0xa2, "unexpected Solidity CBOR metadata prefix");
+
         uint256 staticcallSites;
-        for (uint256 pc; pc < runtime.length;) {
+        // The CBOR payload is compiler metadata rather than executable code and
+        // may contain arbitrary bytes that resemble opcodes. Disassemble only
+        // the validated executable prefix so every opcode assertion is real.
+        for (uint256 pc; pc < executableLength;) {
             uint8 opcode = uint8(runtime[pc]);
             assertTrue(opcode != 0xf1, "runtime contains CALL");
             assertTrue(opcode != 0xf2, "runtime contains CALLCODE");
@@ -2766,7 +2796,8 @@ contract AcquisitionVaultOperatorTest is Test {
     }
 
     function test_validatorSeamFreezesExactImmediatePrecallAndPostcallGasBoundaries() public {
-        O1SignatureGasBoundaryHarness harness = new O1SignatureGasBoundaryHarness(address(safe), address(registry));
+        O1SignatureGasBoundaryHarness harness =
+            new O1SignatureGasBoundaryHarness(address(safe), address(registry), GLOBAL_CAP);
         vm.expectRevert(O1LiteralErrors.InsufficientSignatureValidationGas.selector);
         harness.requireErc1271PrecallGas(159_999);
         harness.requireErc1271PrecallGas(160_000);
@@ -2777,7 +2808,8 @@ contract AcquisitionVaultOperatorTest is Test {
     }
 
     function test_erc1271PostcallReserveGuardUsesTheSharedProductionSeam() public {
-        O1SignatureGasBoundaryHarness harness = new O1SignatureGasBoundaryHarness(address(safe), address(registry));
+        O1SignatureGasBoundaryHarness harness =
+            new O1SignatureGasBoundaryHarness(address(safe), address(registry), GLOBAL_CAP);
         vm.expectRevert(O1LiteralErrors.InsufficientSignatureValidationGas.selector);
         harness.requireErc1271PostcallGas(49_999);
         harness.requireErc1271PostcallGas(50_000);
@@ -2904,7 +2936,7 @@ contract AcquisitionVaultOperatorTest is Test {
         _safeCall(abi.encodeCall(vault.transferOwnership, (address(0))));
         assertEq(vault.outflowNonce(), 1);
 
-        _safeCall(abi.encodeCall(vault.unpause, (DETAILS)));
+        _forcePaused(false);
         vm.prank(operator);
         vault.pause(DETAILS);
         assertEq(vault.outflowNonce(), 1);
@@ -2958,10 +2990,11 @@ contract AcquisitionVaultOperatorTest is Test {
 
         _writeAddress(vault.pendingOwner.selector, address(0));
         registry.configure(O1RegistryProbe.Mode.REVERT_DATA, CHAIN_ID + 1);
+        vm.expectRevert(
+            abi.encodeWithSelector(O1LiteralErrors.LocalReadinessFailed.selector, READINESS_ACTIVE_INGRESS_MISSING)
+        );
         _safeCall(abi.encodeCall(vault.unpause, (DETAILS)));
-        assertFalse(vault.paused(), "constructor-only RegistryV2 identity was queried again");
-        vm.expectRevert(O1LiteralErrors.ExpectedPause.selector);
-        _safeCall(abi.encodeCall(vault.unpause, (DETAILS)));
+        assertTrue(vault.paused(), "Task-4 pre-ingress vault unexpectedly unpaused");
     }
 
     function test_unpauseRejectsEveryO1OwnerOperatorPendingAndImmutableRoleCollisionShape() public {
@@ -3021,16 +3054,13 @@ contract AcquisitionVaultOperatorTest is Test {
         _assertCallFailureUnchanged(address(safe), abi.encodeCall(vault.unpause, (DETAILS)), collisionError);
     }
 
-    function test_pauseUnpauseEmitExactInheritedThenRiskEvidenceForSafeAndOperatorActors() public {
-        vm.recordLogs();
-        _safeCall(abi.encodeCall(vault.unpause, (DETAILS)));
-        _assertRiskTransitionLogs(vm.getRecordedLogs(), false, address(safe), DETAILS);
-
+    function test_pauseEmitsExactInheritedThenRiskEvidenceForSafeAndOperatorActors() public {
+        _forcePaused(false);
         vm.recordLogs();
         _safeCall(abi.encodeCall(vault.pause, (SECOND_DETAILS)));
         _assertRiskTransitionLogs(vm.getRecordedLogs(), true, address(safe), SECOND_DETAILS);
 
-        _safeCall(abi.encodeCall(vault.unpause, (DETAILS)));
+        _forcePaused(false);
         _appoint(operator);
         vm.recordLogs();
         vm.prank(operator);
@@ -3039,7 +3069,7 @@ contract AcquisitionVaultOperatorTest is Test {
     }
 
     function test_safeAndActiveOperatorMayPauseButPendingNomineeAndStrangerMayNot() public {
-        _safeCall(abi.encodeCall(vault.unpause, (DETAILS)));
+        _forcePaused(false);
         vm.expectRevert(abi.encodeWithSelector(O1LiteralErrors.OwnableUnauthorizedAccount.selector, stranger));
         vm.prank(stranger);
         vault.pause(DETAILS);
@@ -3059,7 +3089,7 @@ contract AcquisitionVaultOperatorTest is Test {
         _safeCall(abi.encodeCall(vault.pause, (DETAILS)));
         assertTrue(vault.paused());
 
-        _safeCall(abi.encodeCall(vault.unpause, (DETAILS)));
+        _forcePaused(false);
         _appoint(operator);
         vm.prank(operator);
         vault.pause(SECOND_DETAILS);
@@ -3069,7 +3099,7 @@ contract AcquisitionVaultOperatorTest is Test {
     function test_pauseRejectsEmptyDetailsAndAlreadyPausedWithoutChangingAuthority() public {
         vm.expectRevert(O1LiteralErrors.ExpectedPause.selector);
         _safeCall(abi.encodeCall(vault.pause, (DETAILS)));
-        _safeCall(abi.encodeCall(vault.unpause, (DETAILS)));
+        _forcePaused(false);
         O1State memory beforeState = _state();
         vm.expectRevert(O1LiteralErrors.EmptyDetailsHash.selector);
         _safeCall(abi.encodeCall(vault.pause, (bytes32(0))));

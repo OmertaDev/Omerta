@@ -37,17 +37,32 @@ contract AcquisitionVault is IAcquisitionVaultV1, EIP712, Ownable2Step, Pausable
         keccak256("OMERTA_ACQUISITION_OPERATOR_OWNERSHIP_ACCEPTANCE_CANCEL_V1");
     bytes32 private constant _NOMINATION_COUNTER = keccak256("nominationNonce");
     bytes32 private constant _GENERATION_COUNTER = keccak256("operatorGeneration");
+    bytes32 private constant _ACCOUNTING_SEQUENCE_COUNTER = keccak256("accountingSequence");
+    bytes32 private constant _ACCOUNTING_MUTATION_KIND = keccak256("OMERTA_ACQUISITION_ACCOUNTING_MUTATION_V1");
+    bytes32 private constant _ACCOUNTING_COMPONENT_KIND = keccak256("OMERTA_ACQUISITION_ACCOUNTING_COMPONENT_V1");
+    bytes32 private constant _SYNC_BALANCE_KIND = keccak256("OMERTA_ACQUISITION_SYNC_BALANCE_V1");
     bytes4 private constant _ERC1271_MAGIC = 0x1626ba7e;
 
     address public immutable stockTokenRegistryV2;
+    uint256 public immutable globalLifetimeCanonicalDepositCapWei;
     string public constant version = "1";
     address public mainOperator;
     uint256 public operatorGeneration;
     uint256 public outflowNonce;
     uint256 public nominationNonce;
     PendingOperatorNomination private _pendingMainOperatorNomination;
+    uint256 public availableWei;
+    uint256 public unattributedWei;
+    uint256 public ordinaryReservedWei;
+    uint256 public reconciliationLiabilityWei;
+    uint256 public reconciliationBackingWei;
+    uint256 public accountingSequence;
+    uint256 public lastObservedBalanceDeficitWei;
 
-    constructor(address safeOwner, address registry) Ownable(safeOwner) EIP712("OMERTA AcquisitionVault", "1") {
+    constructor(address safeOwner, address registry, uint256 globalLifetimeCanonicalDepositCapWei_)
+        Ownable(safeOwner)
+        EIP712("OMERTA AcquisitionVault", "1")
+    {
         if (block.chainid != supportedChainId) revert WrongChain(block.chainid);
         if (safeOwner.code.length == 0) revert ContractRequired(safeOwner);
         if (registry == address(0)) revert ZeroAddress();
@@ -69,7 +84,9 @@ contract AcquisitionVault is IAcquisitionVaultV1, EIP712, Ownable2Step, Pausable
         }
         if (!ok || size != 32) revert RegistryChainMismatch(0);
         if (actual != supportedChainId) revert RegistryChainMismatch(actual);
+        if (globalLifetimeCanonicalDepositCapWei_ == 0) revert InvalidGlobalLifetimeCap();
         stockTokenRegistryV2 = registry;
+        globalLifetimeCanonicalDepositCapWei = globalLifetimeCanonicalDepositCapWei_;
         _pause();
     }
 
@@ -275,7 +292,9 @@ contract AcquisitionVault is IAcquisitionVaultV1, EIP712, Ownable2Step, Pausable
     function unpause(bytes32 detailsHash) external onlyOwner {
         if (!paused()) revert ExpectedPause();
         _requireDetails(detailsHash);
-        _requireLocalReadiness();
+        if (!_localReadinessSatisfied()) {
+            revert LocalReadinessFailed(uint8(LocalReadinessCondition.ACTIVE_INGRESS_MISSING));
+        }
         _unpause();
         emit RiskUnpaused(_msgSender(), uint8(ReasonCode.RISK_UNPAUSED), detailsHash);
     }
@@ -317,6 +336,112 @@ contract AcquisitionVault is IAcquisitionVaultV1, EIP712, Ownable2Step, Pausable
         );
     }
 
+    function accountingTotals() public view returns (AccountingTotals memory totals) {
+        uint256 shortfall = reconciliationLiabilityWei - reconciliationBackingWei;
+        uint256 accounted = availableWei + unattributedWei + ordinaryReservedWei + reconciliationBackingWei;
+        uint256 actual = address(this).balance;
+        uint256 deficit = accounted > actual ? accounted - actual : 0;
+        uint256 forced = actual > accounted ? actual - accounted : 0;
+        totals = AccountingTotals({
+            availableWei: availableWei,
+            unattributedWei: unattributedWei,
+            ordinaryReservedWei: ordinaryReservedWei,
+            reconciliationLiabilityWei: reconciliationLiabilityWei,
+            reconciliationBackingWei: reconciliationBackingWei,
+            reconciliationShortfallWei: shortfall,
+            accountedBackingWei: accounted,
+            actualBalanceWei: actual,
+            balanceDeficitWei: deficit,
+            forcedSurplusWei: forced,
+            accountingSequence: accountingSequence
+        });
+    }
+
+    function syncBalance() external returns (bytes32 mutationId) {
+        AccountingTotals memory preTotals = accountingTotals();
+        uint256 forcedSurplus = preTotals.forcedSurplusWei;
+        bool observationChanged = preTotals.balanceDeficitWei != lastObservedBalanceDeficitWei;
+        if (forcedSurplus == 0 && !observationChanged) revert NoBalanceDelta();
+
+        uint256 nextSequence = _nextAccountingSequence();
+        if (forcedSurplus != 0) unattributedWei = unattributedWei + forcedSurplus;
+        accountingSequence = nextSequence;
+        AccountingTotals memory postTotals = accountingTotals();
+        lastObservedBalanceDeficitWei = postTotals.balanceDeficitWei;
+
+        bytes32 subjectId = keccak256(abi.encode(_SYNC_BALANCE_KIND, preTotals, postTotals));
+        mutationId = _accountingMutationId(nextSequence, AccountingMutationKind.SYNC_BALANCE, subjectId);
+        uint256 componentCount = (forcedSurplus == 0 ? 0 : 1) + (observationChanged ? 1 : 0);
+        emit AccountingMutation(
+            nextSequence, mutationId, uint8(AccountingMutationKind.SYNC_BALANCE), preTotals, postTotals, componentCount
+        );
+        uint256 componentIndex;
+        if (forcedSurplus != 0) {
+            _emitAccountingComponent(
+                nextSequence,
+                mutationId,
+                componentIndex,
+                AccountingComponentKind.FORCED_SURPLUS_TO_UNATTRIBUTED,
+                subjectId,
+                forcedSurplus
+            );
+            ++componentIndex;
+        }
+        if (observationChanged) {
+            _emitAccountingComponent(
+                nextSequence,
+                mutationId,
+                componentIndex,
+                AccountingComponentKind.BALANCE_DEFICIT_OBSERVATION_SET,
+                subjectId,
+                postTotals.balanceDeficitWei
+            );
+        }
+    }
+
+    function reclassifyUnattributed(uint256 amountWei, bytes32 detailsHash)
+        external
+        onlyOwner
+        returns (bytes32 mutationId)
+    {
+        _requireDetails(detailsHash);
+        if (amountWei == 0) revert InvalidAmount();
+        AccountingTotals memory preTotals = accountingTotals();
+        if (preTotals.balanceDeficitWei != 0) revert BalanceDeficitActive(preTotals.balanceDeficitWei);
+        if (preTotals.reconciliationShortfallWei != 0) {
+            revert ReconciliationShortfallActive(preTotals.reconciliationShortfallWei);
+        }
+        if (amountWei > preTotals.unattributedWei) {
+            revert InsufficientUnattributed(preTotals.unattributedWei, amountWei);
+        }
+
+        uint256 nextSequence = _nextAccountingSequence();
+        uint256 newAvailable = availableWei + amountWei;
+        uint256 newUnattributed = unattributedWei - amountWei;
+        availableWei = newAvailable;
+        unattributedWei = newUnattributed;
+        accountingSequence = nextSequence;
+        AccountingTotals memory postTotals = accountingTotals();
+        lastObservedBalanceDeficitWei = postTotals.balanceDeficitWei;
+
+        mutationId =
+            _accountingMutationId(nextSequence, AccountingMutationKind.UNATTRIBUTED_RECLASSIFICATION, detailsHash);
+        emit AccountingMutation(
+            nextSequence,
+            mutationId,
+            uint8(AccountingMutationKind.UNATTRIBUTED_RECLASSIFICATION),
+            preTotals,
+            postTotals,
+            1
+        );
+        _emitAccountingComponent(
+            nextSequence, mutationId, 0, AccountingComponentKind.UNATTRIBUTED_TO_AVAILABLE, detailsHash, amountWei
+        );
+        emit UnattributedReclassified(
+            mutationId, nextSequence, _msgSender(), amountWei, uint8(ReasonCode.UNATTRIBUTED_RECLASSIFIED), detailsHash
+        );
+    }
+
     function _checkOwnerCandidate(address candidate) private view {
         if (
             candidate == owner() || candidate == address(this) || candidate == stockTokenRegistryV2
@@ -351,6 +476,44 @@ contract AcquisitionVault is IAcquisitionVaultV1, EIP712, Ownable2Step, Pausable
     function _nextGeneration() private view returns (uint256) {
         if (operatorGeneration == type(uint256).max) revert CounterExhausted(_GENERATION_COUNTER);
         return operatorGeneration + 1;
+    }
+
+    function _nextAccountingSequence() private view returns (uint256) {
+        if (accountingSequence == type(uint256).max) revert CounterExhausted(_ACCOUNTING_SEQUENCE_COUNTER);
+        return accountingSequence + 1;
+    }
+
+    function _accountingMutationId(uint256 sequence, AccountingMutationKind kind, bytes32 subjectId)
+        private
+        view
+        returns (bytes32)
+    {
+        return keccak256(
+            abi.encode(_ACCOUNTING_MUTATION_KIND, supportedChainId, address(this), sequence, uint8(kind), subjectId)
+        );
+    }
+
+    function _emitAccountingComponent(
+        uint256 sequence,
+        bytes32 mutationId,
+        uint256 componentIndex,
+        AccountingComponentKind kind,
+        bytes32 subjectId,
+        uint256 amountWei
+    ) private {
+        bytes32 componentId = keccak256(
+            abi.encode(
+                _ACCOUNTING_COMPONENT_KIND,
+                supportedChainId,
+                address(this),
+                mutationId,
+                componentIndex,
+                uint8(kind),
+                subjectId,
+                amountWei
+            )
+        );
+        emit AccountingComponent(sequence, componentIndex, componentId, uint8(kind), subjectId, amountWei);
     }
 
     function _requireDetails(bytes32 detailsHash) private pure {
@@ -398,7 +561,7 @@ contract AcquisitionVault is IAcquisitionVaultV1, EIP712, Ownable2Step, Pausable
         if (observedGas < ERC1271_POST_CALL_GAS_RESERVE) revert InsufficientSignatureValidationGas();
     }
 
-    function _requireLocalReadiness() private view {
+    function _localReadinessSatisfied() private view returns (bool) {
         if (block.chainid != supportedChainId) revert LocalReadinessFailed(uint8(LocalReadinessCondition.WRONG_CHAIN));
         if (owner().code.length == 0) revert LocalReadinessFailed(uint8(LocalReadinessCondition.OWNER_CODE_MISSING));
         if (stockTokenRegistryV2.code.length == 0) {
@@ -414,5 +577,13 @@ contract AcquisitionVault is IAcquisitionVaultV1, EIP712, Ownable2Step, Pausable
                 || (m != address(0) && (m == o || m == po || m == address(this) || m == stockTokenRegistryV2))
                 || (n != address(0) && (n == o || n == po || n == m || n == address(this) || n == stockTokenRegistryV2))
         ) revert LocalReadinessFailed(uint8(LocalReadinessCondition.ROLE_COLLISION));
+        AccountingTotals memory totals = accountingTotals();
+        if (totals.balanceDeficitWei != 0) {
+            revert LocalReadinessFailed(uint8(LocalReadinessCondition.BALANCE_DEFICIT));
+        }
+        if (totals.reconciliationShortfallWei != 0) {
+            revert LocalReadinessFailed(uint8(LocalReadinessCondition.RECONCILIATION_SHORTFALL));
+        }
+        return false;
     }
 }
