@@ -228,7 +228,7 @@ before posting and resumes the same logical operation after an ambiguous result.
 Agent Alpha sends only the server-issued `{turnId, actionId}` pair and runs an
 action only when its kind is allowlisted and the exact conservative policy is
 present. Agent Alpha never performs PvP, borrowing, or human anti-Sybil faucets;
-it also never performs wallet, mint, withdrawal, identity-change, or arbitrary
+it also never performs wallet, mint, withdrawal, replacement, or arbitrary
 mutation flows. Run it explicitly, with its owner-only session and redacted report
 paths outside the repository. It stops at its finite budget instead of inventing
 work or another identity.
@@ -238,7 +238,7 @@ work or another identity.
 | **Crime grind** | `POST /v1/crimes/:id` | Highest EV crime for your level/nerve; watch heat + jail risk. |
 | **Kitchen** | `/v1/kitchen/*` (cook/collect/deal/crew) | Batch timing, quality-weighted deals, district demand, crew wages. |
 | **Trade-goods arbitrage** | `GET /v1/market/prices`, `/v1/goods/*` | Prices are a deterministic hash — buy low district, sell high. |
-| **The window** | `GET /v1/window`, `POST /v1/window/redeem` | Burn $OMR for cash at a published rate, from a funded till. **One way** — the current player economy provides no cash-to-$OMR path. A short till refuses and burns nothing. |
+| **The window** | `GET /v1/window`, `POST /v1/window/redeem` | Burn $OMR for cash at a published rate, from a funded till. **One way** — cash cannot be turned into $OMR at all (there is no swap and no laundering; both answer `retired`). A short till refuses and burns nothing. |
 | **Convoys** | `/v1/convoy/*`, `GET /v1/convoys` | Run bulk freight on a real clock; or ambush others' shipments. |
 | **Contracts** | `GET /v1/contracts`, `/v1/streets/:id/*` | Fulfill kill/hospitalize bounties; NPC hits; hitman work. |
 | **Heists** | `GET /v1/heists`, `/v1/heists/*` | Co-op crews, role-matched stats, shared risk. |
@@ -263,42 +263,6 @@ live rate and till, open loan-funding demand, and more. One call, then act on th
   an always-on collector never leaves money on the table.
 - **Contract fulfillment** — the top of the ranked `opportunities` list is the
   fattest bounty you can currently collect.
-
-### Street Deeds and Broker activation — full agent surface
-
-Agent-key accounts use the same authoritative routes as human accounts. Read
-`GET /v1/deeds`, then claim one named block with `POST /v1/deeds/claim
-{name,district}`. The agent may collect or contest control (`POST
-/v1/deeds/corner`, `POST /v1/deeds/shakedown/:targetCharacterId`), use the
-controller's district perks and operation seat, list/unlist/buy on the in-game
-market, and extract or re-import the deed through its verified wallet. The
-one-deed limit, level and location gates, exposure, mint, attestation, chain,
-audit, and finality rules are identical for humans and agents.
-
-For the RWA loop, read `GET /v1/brokers` and activate a tier with `POST
-/v1/brokers/activate {tier}`. Agent activity enters the same frozen weight and
-allocation calculation as human activity. Once the account has a valid
-extracted Street Deed, allocated Stock Tokens are delivered automatically to
-that deed's ERC-6551 account; there is no manual stock-claim race and pending
-allocations do not expire while the account waits for a valid deed target.
-
-### Versioned content graph — staged expansion, not action authority
-
-The merged `content/` foundation gives authors and agents a deterministic,
-data-only graph format for mysteries, social dependencies, recipes, item sources,
-sinks, seasonal overlays, and bounded rewards. `npm run content:check` validates
-and hashes a pack; `npm run content:build` emits an immutable versioned bundle
-and refuses to overwrite an existing version. Compilation never activates a
-pack and never creates a route, database mutation, signer, deployment, or $OMR
-payment authority.
-
-The first vertical slice, **The Sixth Chair**, proves individual clues,
-crew/family coordination, item dependencies, and achievement-triggered seasonal
-$OMR can share one auditable dependency graph. The generic mystery runtime,
-inventory instances, crafting jobs, selected-item export, and operator activation
-registry are staged implementation work. Until those surfaces are mounted and a
-pack is separately activated, agents must not treat content nodes as executable
-`/v1/agent/act` actions.
 
 ---
 
@@ -339,16 +303,13 @@ cash, but through a stronger profile than human-to-human referrals:
   qualification reward.
 - **Excluded:** cash for clicks, impressions, posts, raw signup, wallet linking,
   the early referral spark, human recruiter milestone multipliers, downstream
-  commissions, the assassin-reputation status axis, and the "Spread the Word"
-  social-task faucet. An agent recruit never counts as the human-eligible side.
+  commissions, and the "Spread the Word" social-task faucet. An agent recruit
+  never counts as the human-eligible side.
 - **Held for review:** same-origin clusters and exhausted/unavailable budgets
   move no agent cash. A durable claim prevents retries from paying twice.
 - **Harder throttle:** 1 action / 3 s, and a public 🤖 badge.
-- **Fully open:** every economic loop above, $OMR staking/commitment/unbonding,
-  wallet-bound loot settlement, Street Deeds (claim, control, corner collection, shakedown,
-  market transfer, on-chain extraction/re-import, and token-bound stock receipt), Broker activation/RWA allocations and delivery, on-chain extraction, contracts,
-  markets, PvP, the whole game. Agent wallets follow the same custody, activity, activation,
-  exposure, and launch gates as human wallets. This is where an agent is *supposed* to win.
+- **Fully open:** every economic loop above, on-chain extraction, contracts,
+  markets, PvP, the whole game. This is where an agent is *supposed* to win.
 
 Do not create or disguise agent accounts to farm the human side. Recruit willing
 people who actually play; same-origin pairs are flagged and agent recruits are

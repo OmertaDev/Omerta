@@ -484,6 +484,60 @@ export async function territoryOf(pool, gangId) {
   });
 }
 
+// Explore needs the same operation facts as the Family screen, plus the one rival operation at the
+// actor's current district. Keep that slice here with the accrual clock that authorizes a raid; a
+// family badge alone cannot prove that collection, upkeep, construction, or muscle work will move.
+export async function territoryExploreBoard(pool, ch, gangId = null) {
+  const own = gangId ? await territoryOf(pool, gangId) : [];
+  let rival = null;
+  if (gangId) {
+    const row = (await pool.query(
+      'SELECT * FROM territory_rackets WHERE district_id=$1 AND owner_gang<>$2', [ch.loc, gangId])).rows[0];
+    if (row) rival = {
+      district: row.district_id,
+      pending: accrued(row),
+      raidCdSeconds: row.raid_cd_until
+        ? Math.max(0, Math.ceil((new Date(row.raid_cd_until).getTime() - Date.now()) / 1000)) : 0,
+    };
+  }
+  return { own, rival };
+}
+
+// One shared, mutation-shaped interpretation of territory state. The result is intentionally only
+// booleans + route witnesses: Explore never sends this internal family state to the client.
+export function territoryAvailability(ch, h = {}, board = {}) {
+  const owned = h.owned || {};
+  if (!owned.gangId) return { ready: false, blocker: 'social' };
+  const own = board.own || [];
+  const command = canCommand(h);
+  const treasury = Number(owned.gang?.treasury || 0);
+  const canCollect = !safeHoused(ch) && own.some((racket) => !racket.cold && Number(racket.pending || 0) > 0);
+  const canUpkeep = command && own.some((racket) => Number(racket.upkeepOwed || 0) > 0
+    && treasury >= Number(racket.upkeepOwed));
+  const occupied = new Set(own.map((racket) => racket.district));
+  const canEstablish = command && treasury >= Number(TERRITORY_RACKETS[0]?.cost || Infinity)
+    && (owned.held || []).some((district) => !occupied.has(district));
+  const canUpgrade = command && !jailed(ch) && !safeHoused(ch) && own.some((racket) => !racket.cold
+    && racket.nextTier && treasury >= Number(racket.nextTier.cost));
+  const canFortify = command && own.some((racket) => racket.fortCost != null
+    && treasury >= Number(racket.fortCost));
+  const canOperate = command && own.some((racket) => racket.opReady);
+  const canUnassign = command && own.some((racket) => !!racket.specialist);
+  const rival = board.rival;
+  const canRaid = !!rival && !jailed(ch) && !hospitalized(ch) && !safeHoused(ch)
+    && levelOf(Number(ch.respect)) >= CONSTANTS.TERRITORY_RIVAL_MIN_LVL
+    && Number(ch.energy || 0) >= CONSTANTS.TERRITORY_RIVAL_ENERGY
+    && Number(rival.pending || 0) > 0 && Number(rival.raidCdSeconds || 0) <= 0;
+  const ready = canCollect || canUpkeep || canEstablish || canUpgrade || canFortify
+    || canOperate || canUnassign || canRaid;
+  return {
+    ready,
+    blocker: ready ? null : (jailed(ch) || hospitalized(ch) || safeHoused(ch)) ? 'status' : 'resource',
+    canCollect, canUpkeep, canEstablish, canUpgrade, canFortify, canOperate, canUnassign, canRaid,
+    raidDistrict: canRaid ? rival.district : null,
+  };
+}
+
 // TIER-4 §D — THE SYNDICATE: the family's specialization meta (pure status, no §10.4). Reads the held
 // operations and returns the dominant same-type syndicate if it clears the floor. `syndicateMin` and
 // the TYPE catalog ride along for the console.

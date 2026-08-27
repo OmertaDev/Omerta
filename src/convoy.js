@@ -494,7 +494,7 @@ async function topWeek(pool, kind) {
   return { name: who.name, value: Math.floor(top[1]) };
 }
 
-export async function convoyBoard(pool, characterId) {
+export async function convoyBoard(pool, characterId, actor = null) {
   const rows = (await pool.query(
     `SELECT c.*, ch.name AS owner FROM convoys c JOIN characters ch ON ch.id = c.owner_character
       WHERE c.status='transit' AND NOT c.is_npc ORDER BY c.arrives_at ASC LIMIT 30`)).rows;
@@ -503,11 +503,28 @@ export async function convoyBoard(pool, characterId) {
     "SELECT * FROM convoys WHERE is_npc AND status='transit' ORDER BY arrives_at ASC LIMIT 30")).rows;
   const cargo = (await pool.query(
     'SELECT convoy_id, good_id, qty FROM convoy_cargo WHERE qty > 0')).rows;
+  // Personalized authority for the public road rows: the mutation refuses your own/family freight,
+  // an arrived/spent run, and a second play by the same character. Expose only the resulting boolean;
+  // owner ids, family ids, and prior-attempt rows remain private.
+  const actorState = actor || (characterId ? (await pool.query(
+    'SELECT jail_until, hosp_until, safe_until, energy, ammo FROM characters WHERE id=$1',
+    [characterId])).rows[0] : null);
+  const actorCanAmbush = !!actorState && !jailed(actorState) && !hospitalized(actorState)
+    && !safeHoused(actorState) && Number(actorState.energy || 0) >= CONVOY.AMBUSH_ENERGY
+    && Number(actorState.ammo || 0) >= CONVOY.AMBUSH_AMMO;
+  const myGang = characterId ? (await pool.query(
+    'SELECT gang_id FROM gang_members WHERE character_id=$1', [characterId])).rows[0]?.gang_id : null;
+  const tried = new Set(characterId ? (await pool.query(
+    `SELECT ca.convoy_id FROM convoy_ambushes ca
+       JOIN convoys c ON c.id=ca.convoy_id AND c.status='transit'
+      WHERE ca.character_id=$1`, [characterId])).rows.map((r) => r.convoy_id) : []);
   const byConvoy = {};
   for (const r of cargo) (byConvoy[r.convoy_id] = byConvoy[r.convoy_id] || []).push(r);
   const mapConvoy = (c, owner) => ({ id: c.id, owner, npc: !!c.is_npc, from: c.origin, to: c.destination,
     band: valueBand(manifestValue(byConvoy[c.id] || [], c.destination)),
     ambushed: c.ambushed, ambushes: Number(c.ambushes || 0), ambushesLeft: Math.max(0, CONVOY.MAX_AMBUSHES - Number(c.ambushes || 0)),
+    canAmbush: actorCanAmbush && c.owner_character !== characterId && (!c.owner_gang || c.owner_gang !== myGang)
+      && !arrived(c) && Number(c.ambushes || 0) < CONVOY.MAX_AMBUSHES && !tried.has(c.id),
     arrivesSeconds: Math.max(0, Math.ceil((new Date(c.arrives_at) - Date.now()) / 1000)) });
   const inTransit = [...rows.map((c) => mapConvoy(c, c.owner)),
     ...npc.map((c) => mapConvoy(c, 'an unmarked truck'))];
@@ -537,7 +554,10 @@ export async function convoyBoard(pool, characterId) {
       nextArmorCost: Number(rigRow.armor_lvl || 0) < CONVOY.RIG_UPGRADE_MAX ? rigUpgradeCost(cfg, Number(rigRow.armor_lvl || 0)) : null,
       nextEngineCost: Number(rigRow.engine_lvl || 0) < CONVOY.RIG_UPGRADE_MAX ? rigUpgradeCost(cfg, Number(rigRow.engine_lvl || 0)) : null };
   }
-  const [roadBoss, teamsterOfWeek] = await Promise.all([topWeek(pool, 'hijack'), topWeek(pool, 'deliver')]);
+  // convoyBoard is also called with Agent Turn's transaction client, despite this parameter's
+  // historical `pool` name. One physical connection cannot run both contest reads concurrently.
+  const roadBoss = await topWeek(pool, 'hijack');
+  const teamsterOfWeek = await topWeek(pool, 'deliver');
   const delivered = Number(acct.freight_delivered || 0), hijacked = Number(acct.freight_hijacked || 0);
   // TIER C — the hauler's reputation + this shipment's LANE heat (so the player can see a lane going hot
   // and rotate). The heat sheds guard def on THIS lane; reputation manages it (cools/quiets) + halves the toll.

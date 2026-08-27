@@ -201,9 +201,55 @@ console.log(`✓ retention: young accounts pending (not churned); an aged no-sho
 
 // ── (6) agents and NPC residents are excluded from "do humans come back" ────────────────────────
 await pool.query('UPDATE account_persistent SET agent_flag=true WHERE account_id=$1', [b.account]);
+await pool.query(`INSERT INTO telemetry (id,account_id,event,props) VALUES
+  ('agent-op-1',$1,'agent_turn_action',$2),
+  ('agent-op-2',$1,'agent_turn_action',$3),
+  ('agent-op-3',$1,'agent_turn_action',$4),
+  ('human-op-ignored',$5,'agent_turn_action',$6)`, [
+  b.account,
+  JSON.stringify({ actionKind: 'crime', recommended: true, explorationSystemId: 'business-empire',
+    visited: 1, remaining: 39, blockerCodes: ['cash', 'nerve'] }),
+  JSON.stringify({ actionKind: 'market_fill', recommended: false, explorationSystemId: 'business-empire',
+    visited: 2, remaining: 38, blockerCodes: ['nerve'] }),
+  JSON.stringify({ actionKind: 'loan_repay', recommended: true, explorationSystemId: 'kitchen',
+    visited: 3, remaining: 37, blockerCodes: ['cooking'] }),
+  a.account,
+  JSON.stringify({ actionKind: 'human-authored', recommended: true, explorationSystemId: 'streets-crime',
+    visited: 40, remaining: 0, blockerCodes: ['human'] }),
+]);
+await pool.query(
+  "INSERT INTO telemetry (id,account_id,event,props,at) VALUES ('agent-classified',$1,'crime_attempt','{}',now()+interval '1 minute')",
+  [b.account]);
 const withAgent = await opsEngagement(pool, 14);
 assert.equal(withAgent.players.agents, 1, 'the agent is counted separately');
 assert.equal(withAgent.players.humans, r.players.humans - 1, 'and removed from the human population');
+assert.deepEqual(withAgent.agentActions, [
+  { actionKind: 'crime', events: 1, recommended: 1 },
+  { actionKind: 'loan_repay', events: 1, recommended: 1 },
+  { actionKind: 'market_fill', events: 1, recommended: 0 },
+], 'operator evidence summarizes only agent action kinds and recommendation counts');
+assert.deepEqual(withAgent.agentBlockers, [
+  { code: 'nerve', events: 2 }, { code: 'cash', events: 1 }, { code: 'cooking', events: 1 },
+], 'operator evidence summarizes server-authored blocker codes without payloads or IDs');
+const agentEmpire = withAgent.systems.find((system) => system.system === 'business empire');
+const agentKitchen = withAgent.systems.find((system) => system.system === 'the kitchen');
+const agentStreets = withAgent.systems.find((system) => system.system === 'streets / crime');
+assert.deepEqual({ accounts: agentEmpire.agentAccounts, events: agentEmpire.agentEvents }, { accounts: 1, events: 2 },
+  'per-system evidence counts distinct acting agents and activation events');
+assert.deepEqual({ accounts: agentKitchen.agentAccounts, events: agentKitchen.agentEvents }, { accounts: 1, events: 1 },
+  'a second exploration system receives its own bounded aggregate');
+assert.equal(agentEmpire.systemId, 'business-empire',
+  'operator per-system evidence carries the shared canonical coverage system id');
+assert.deepEqual({ accounts: agentStreets.agentAccounts, events: agentStreets.agentEvents }, { accounts: 0, events: 0 },
+  'operational rows authored under a human account are excluded from agent evidence');
+assert.deepEqual({ accounts: agentStreets.accounts, events: agentStreets.events },
+  { accounts: streets.accounts, events: streets.events + 1 },
+  'legacy event volume still includes classified agent play while distinct adoption remains human-only');
+assert(new Date(agentStreets.last) > new Date(streets.last),
+  'legacy last-use time still advances for classified agent play');
+assert.equal(JSON.stringify({ actions: withAgent.agentActions, blockers: withAgent.agentBlockers,
+  systems: withAgent.systems }).includes(b.account), false,
+  'operator aggregates expose no account IDs or raw authored telemetry');
 console.log('✓ agents counted separately — an agent returning says nothing about whether the game is fun');
 
 // ── (7) the route is mod-gated ──────────────────────────────────────────────────────────────────

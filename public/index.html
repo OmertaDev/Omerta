@@ -1247,7 +1247,7 @@
       <a href="/art/omr-03-money-router.png?v=b2bde1b36f44" aria-label="Open the full-size OMR signed money-router diagram">
         <picture><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 48px), 920px" srcset="/art/omr-03-money-router-640.webp 640w, /art/omr-03-money-router-1080.webp 1080w, /art/omr-03-money-router-1600.webp 1600w"><img src="/art/omr-03-money-router.png?v=b2bde1b36f44" width="6480" height="4080" loading="lazy" decoding="async" alt="OMR money router showing the exact signed percentage split for gameplay fees, Store revenue, bonds, DEX sell tax, Desk auctions, POL fees, Bank harvest fees, and exit tolls."></picture>
       </a>
-      <figcaption>03 / 05 · FOLLOW EVERY DOLLAR · CODE-ANCHORED, STATE-LABELED · <a href="/wiki#economy">OPEN ALL FIVE RESEARCH SHEETS IN THE CODEX →</a></figcaption>
+      <figcaption>03 / 06 · FOLLOW EVERY DOLLAR · CODE-ANCHORED, STATE-LABELED · <a href="/wiki#economy">OPEN ALL SIX RESEARCH SHEETS IN THE CODEX →</a></figcaption>
     </figure>
   </div>
 
@@ -4952,16 +4952,16 @@
         ${favorBoard.open?.length ? favorBoard.open.map((x) => `<div class="fv-row">
             <span class="nm">${esc(x.from)} wants <b>${x.qty} ${esc(x.good)}</b> at ${esc(x.districtName || x.district)}${x.note ? ` — <i>${esc(x.note)}</i>` : ''}</span>
             <span class="lp">$${fmt(x.pay)} · ${mins(x.expiresSeconds)}
-              ${x.here ? `<button class="act" data-do="POST /v1/favors/${x.id}/run">run it</button>`
+              ${x.here ? `<button class="act" data-do="POST /v1/favors/${x.id}/run"${x.canRun !== false ? '' : ' disabled'}>run it</button>`
                 : `<button class="act" data-do="POST /v1/travel/${x.district}">travel there</button>`}</span>
           </div>`).join('') : '<div class="d">nothing on the wire. Favors only reach people whose number you hold.</div>'}
         <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center">
           <span class="d" style="font-size:11px">put work out:</span>
           <select id="fv-good">${(rules?.goods || []).map((g) => `<option value="${g.id}">${esc(g.name || g.id)}</option>`).join('')}</select>
-          <input id="fv-qty" type="number" min="1" max="${favorBoard.maxQty || 20}" value="3" style="width:64px" placeholder="qty">
-          <input id="fv-pay" type="number" min="${favorBoard.minPay || 500}" value="5000" style="width:88px" placeholder="pay">
+          <input id="fv-qty" type="number" min="1" max="${favorBoard.maxQty || 20}" value="1" style="width:64px" placeholder="qty">
+          <input id="fv-pay" type="number" min="${favorBoard.minPay || 500}" value="${favorBoard.minPay || 500}" style="width:88px" placeholder="pay">
           <select id="fv-dist">${(rules?.districts || []).map((d) => `<option value="${d.id}">${esc(d.name || d.id)}</option>`).join('')}</select>
-          <button class="act" id="fv-post">put the word out</button>
+          <button class="act" id="fv-post"${favorBoard.canPost !== false ? '' : ' disabled'}>put the word out</button>
         </div>
         ${favorBoard.mine?.length ? `<div style="margin-top:8px"><span class="d" style="font-size:11px">your open favors — the pay is held up front:</span>
           ${favorBoard.mine.map((y) => `<div class="fv-row"><span class="nm">${y.qty} ${esc(y.good)} at ${esc(y.districtName || y.district)}</span>
@@ -6974,6 +6974,33 @@
       act('POST', '/v1/market/order', { goodId: t.querySelector('#mk-ogood').value, qty: Number(t.querySelector('#mk-oqty').value), price: Number(t.querySelector('#mk-oprice').value) }).then(rerender);
   }
 
+  function deepCityMarkup(explore) {
+    if (!explore?.catalog || !explore?.progress) return '';
+    const progress = explore.progress;
+    const total = Math.max(0, Math.floor(Number(explore.catalog.count) || 0));
+    const visited = Math.max(0, Math.min(total, Math.floor(Number(progress.visited) || 0)));
+    const remaining = progress.remaining;
+    const progressLine = `<div class="d" style="color:var(--dim);font-size:12.5px">${visited} of ${total} systems worked</div>`;
+    if (explore.next) return `<section class="card" aria-labelledby="new-territory-title" style="margin-top:14px;border-color:var(--gold)">
+      <h2 id="new-territory-title" style="margin-top:0">New territory</h2>
+      ${progressLine}<span class="t" style="margin-top:8px">${esc(explore.next.name)}</span>
+      <div class="d">${esc(explore.next.hook)}</div>
+      <div class="row" style="margin-top:6px"><button type="button" class="act" data-explore-next>take a look →</button></div>
+    </section>`;
+    const message = typeof remaining === 'number' && Number.isFinite(remaining) && remaining === 0
+      ? `All ${total} systems are worked.`
+      : 'No new territory is actionable now. The city will surface one when your situation changes.';
+    return `<section class="card" aria-labelledby="new-territory-title" style="margin-top:14px">
+      <h2 id="new-territory-title" style="margin-top:0">New territory</h2>
+      ${progressLine}<div class="d" style="margin-top:8px">${message}</div>
+    </section>`;
+  }
+
+  function bindDeepCity(root, next) {
+    const button = root.querySelector('[data-explore-next]');
+    if (button && next) button.onclick = () => setTab(next.tab);
+  }
+
   // ── START HERE: the guided First-Week funnel — the new-player on-ramp over the /v1/onboard board ──
   async function renderStart() {
     const t = $('#tab-start');
@@ -7280,21 +7307,7 @@
                 : `<button class="act" data-crgo="${k.tab || 'streets'}">show me →</button>`}
             </div>`).join('')}</div>`;
         }).join('')}</div>`; })()}
-      ${(() => { // STILL ON THE TABLE — a featured systems catalog the coach's queue-of-5 can't carry.
-        // These level-unlocked entries have never been touched, most overdue first. This finite catalog
-        // is not a claim to enumerate the whole city. Hidden when there is nothing untapped. Pure read.
-        if (!ob.allDone) return '';
-        const untap = ex.untapped || [];
-        const pg = ex.progress || {};
-        if (ex.allTried) return `<h2 style="margin-top:14px">Still On The Table <span class="d" style="font-size:11px">— every currently open featured system is worked.</span></h2>
-          <div class="d" style="color:var(--gold);font-size:12.5px;margin-bottom:12px">🏆 You've had a hand in all ${pg.unlocked || 0} featured systems currently open to you. More open as your level rises.</div>`;
-        if (!untap.length) return '';
-        return `<h2 style="margin-top:14px">Still On The Table <span class="d" style="font-size:11px">— featured systems catalog: you've tried ${pg.tried || 0} of ${pg.unlocked || 0} open to you.</span></h2>
-          <div class="grid">${untap.map((s) => `
-            <div class="card"><span class="t">${esc(s.name)}</span>
-              <div class="d">${esc(s.hook)}</div>
-              <div class="row" style="margin-top:6px"><button class="act" data-go-tab="${s.tab}">take a look →</button></div></div>`).join('')}</div>`;
-      })()}
+      ${ob.allDone ? deepCityMarkup(ex) : ''}
       ${sect('howto', 'How the city works', 'the six things worth knowing — 60 seconds', `
         <div class="grid">
           <div class="card"><img class="ico wide" loading="lazy" alt="" src="/art/interior-streets.jpg"><span class="t">The Streets</span>
@@ -7419,6 +7432,7 @@
       act('POST', `/v1/social/${b.dataset.swclaim}/claim`, proof ? { proof } : {}).then(() => renderStart());
     });
     wireStory(t); // THE SITUATION's nemesis card
+    bindDeepCity(t, ex.next || null);
     t.querySelectorAll('[data-go-tab]').forEach((b) => b.onclick = () => setTab(b.dataset.goTab));
     const pf = t.querySelector('#paper-fold');
     if (pf) pf.onclick = () => act('POST', '/v1/paper/read', {}).then(() => renderStart());
@@ -7794,8 +7808,8 @@
           <div class="card"><span class="t">${tk.conflict ? '🗡 ' : ''}${esc(tk.how)}</span>
             ${tk.conflict ? '<span class="chip" style="border-color:var(--bad);color:var(--bad)">CONFLICT</span>' : ''}
             ${tk.claimed ? '<span class="chip good">PAID</span>'
-              : tk.accepted ? `<button class="act prime" data-corner-claim="${tk.slot}">collect the envelope</button>`
-              : `<button class="act" data-corner-take="${tk.slot}">take the job</button>`}
+              : tk.accepted ? `<button class="act prime" data-corner-claim="${tk.slot}"${tk.canClaim !== false ? '' : ' disabled'}>collect the envelope</button>`
+              : `<button class="act" data-corner-take="${tk.slot}"${tk.canAccept !== false ? '' : ' disabled'}>take the job</button>`}
           </div>`).join('')}</div>
         <div class="d" style="color:var(--dim);font-size:11.5px;margin-top:4px">only work done AFTER you take a job counts — travel to another district for a different board</div>
         <div class="d" style="margin-top:6px;border-top:1px solid var(--line2);padding-top:6px">
@@ -9818,8 +9832,10 @@
         // as a wall, not as trivia.
         return `<div class="card">${aart('heist', (hb.jobs || []).find((jj) => jj.name === o.name)?.id)}<span class="t">${o.name}</span>
           <div class="d">${o.leader}'s job · ${o.crew} in, ${o.crewNeeded} needed · lvl ${o.lvl}+</div>
-          ${!my && o.rolesOpen.length ? (lvlOk ? `<select data-joinrole="${o.id}">${o.rolesOpen.map((ro) => `<option>${ro}</option>`).join('')}</select>
-          <button class="act" data-joinheist="${o.id}">crew up</button>` : `<span class="chip">🔒 you need level ${o.lvl}</span>`) : ''}</div>`; }).join('')}</div>` : ''}
+          ${!my && o.rolesOpen.length ? (!lvlOk ? `<span class="chip">🔒 you need level ${o.lvl}</span>`
+            : o.canJoin === false ? '<span class="chip">not available to your street</span>'
+              : `<select data-joinrole="${o.id}">${o.rolesOpen.map((ro) => `<option>${ro}</option>`).join('')}</select>
+          <button class="act" data-joinheist="${o.id}">crew up</button>`) : ''}</div>`; }).join('')}</div>` : ''}
 
       <h2 style="margin-top:12px">Smuggling Convoys</h2>
       ${cb.legend ? `<div class="card" style="border-color:var(--gold,#c9a227)"><span class="t">🚚 ${cb.legend.hauler} · 🔫 ${cb.legend.bandit}</span>
@@ -9854,7 +9870,7 @@
       ${(cb.inTransit || []).length ? `<div class="grid" style="margin-top:6px">${cb.inTransit.map((c) => `
         <div class="card"><span class="t">${c.npc ? '🚚 An unmarked truck' : `${c.owner}'s convoy`}${c.npc ? ' <span class="chip">NPC</span>' : ''}</span>
           <div class="d">${c.from} → ${c.to} · value ${c.band} · arrives ${mins(c.arrivesSeconds)} · ${c.ambushesLeft} ambush${c.ambushesLeft === 1 ? '' : 'es'} left</div>
-          <button class="act" data-ambush="${c.id}">AMBUSH (energy + ammo + heat)</button></div>`).join('')}</div>`
+          <button class="act" data-ambush="${c.id}"${c.canAmbush !== false ? '' : ' disabled'}>AMBUSH (energy + ammo + heat)</button></div>`).join('')}</div>`
         : '<div class="d" style="color:var(--dim);font-size:12.5px;margin-top:4px">no freight on the roads</div>'}`;
     const jobSel = t.querySelector('#hj-job');
     if (jobSel) {

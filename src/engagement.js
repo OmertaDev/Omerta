@@ -104,6 +104,51 @@ export const SYSTEMS = {
     'referral_qualified', 'referral_spark', 'referral_same_ip_flag', 'referral_claim_late'],
 };
 
+// Stable machine IDs for the engagement vocabulary. Coverage and operator evidence both consume
+// this explicit map: a display-label edit must never silently rename a historical system identity.
+export const SYSTEM_IDS = Object.freeze({
+  'streets / crime': 'streets-crime',
+  'the kitchen': 'kitchen',
+  'wet work': 'wet-work',
+  contracts: 'contracts',
+  'the dueling ladder': 'dueling-ladder',
+  'crew heists': 'crew-heists',
+  'clue scrolls': 'clue-scrolls',
+  'the family': 'family',
+  'the commission': 'commission',
+  territory: 'territory',
+  'the world': 'world',
+  'the blood war': 'blood-war',
+  'business empire': 'business-empire',
+  convoys: 'convoys',
+  'the port': 'port',
+  'the black market': 'black-market',
+  'loan sharking': 'loan-sharking',
+  'the casino': 'casino',
+  'the speakeasy': 'speakeasy',
+  boxing: 'boxing',
+  'street races': 'street-races',
+  'the stable': 'stable',
+  'the law': 'law',
+  'the pen': 'pen',
+  'the wire': 'wire',
+  secrets: 'secrets',
+  skills: 'skills',
+  'the underworld': 'underworld',
+  'the estate': 'estate',
+  'the made man': 'made-man',
+  'the auction house': 'auction-house',
+  'the collection': 'collection',
+  'going legit': 'going-legit',
+  'the megaproject': 'megaproject',
+  'street life': 'street-life',
+  landmarks: 'landmarks',
+  'street deeds': 'street-deeds',
+  vanity: 'vanity',
+  'the store / pass': 'store-pass',
+  'growth / social': 'growth-social',
+});
+
 // Events that exist but are NOT player engagement — moderator actions and anti-abuse flags. Declared
 // so the catalog test can demand total coverage: every event is either a system's or explicitly not
 // one. Silence is never allowed to be the answer.
@@ -114,6 +159,7 @@ export const SYSTEMS = {
 export const NON_ENGAGEMENT = [
   'mod_kill_reason',
   'screen_open',
+  'agent_turn_action',
   // Anonymous acquisition-funnel instruments. They measure whether the Path explainer moves a
   // visitor from first decision to guest play; counting them as player-system use would inflate DAU
   // and make the gameplay adoption report lie.
@@ -148,10 +194,12 @@ export async function opsEngagement(pool, days = 14) {
        FROM accounts a LEFT JOIN account_persistent p ON p.account_id = a.id
       WHERE a.status <> 'banned' LIMIT $1`, [MAX_ROWS])).rows;
   const human = new Map();
+  const agentIds = new Set();
+  const npcIds = new Set();
   let agents = 0;
   for (const a of accounts) {
-    if (a.npc) continue;
-    if (a.agent) { agents++; continue; }
+    if (a.npc) { npcIds.add(a.id); continue; }
+    if (a.agent) { agents++; agentIds.add(a.id); continue; }
     human.set(a.id, { created: a.created_at, days: new Set() });
   }
 
@@ -160,6 +208,9 @@ export async function opsEngagement(pool, days = 14) {
     'SELECT account_id, event, props, at FROM telemetry WHERE at >= $1 LIMIT $2', [since, MAX_ROWS])).rows;
 
   const perSystem = new Map();          // system -> {accounts:Set, events:n, last:Date}
+  const agentActions = new Map();       // action kind -> {events, recommended}
+  const agentBlockers = new Map();      // blocker code -> events
+  const agentSystems = new Map();       // exploration systemId -> {accounts:Set, events}
   const uncatalogued = new Map();       // event -> count (never silently dropped)
   const nonEng = new Set(NON_ENGAGEMENT);
   const emptyPathCounts = () => Object.fromEntries(PATH_IDS.map((id) => [id, 0]));
@@ -172,7 +223,7 @@ export async function opsEngagement(pool, days = 14) {
 
   for (const r of rows) {
     let props = {};
-    if (r.event.startsWith('path_')) try {
+    if (r.event.startsWith('path_') || r.event === 'agent_turn_action') try {
       props = typeof r.props === 'string' ? JSON.parse(r.props) : (r.props || {});
     } catch { /* old malformed Path row */ }
     const session = typeof props.session === 'string' ? props.session : null;
@@ -193,20 +244,47 @@ export async function opsEngagement(pool, days = 14) {
 
     const h = human.get(r.account_id);
     if (h) h.days.add(dayKey(r.at));    // activity day, for DAU + retention
+    if (r.event === 'agent_turn_action' && agentIds.has(r.account_id)) {
+      const actionKind = typeof props.actionKind === 'string' ? props.actionKind : null;
+      if (actionKind) {
+        const action = agentActions.get(actionKind) || { events: 0, recommended: 0 };
+        action.events++;
+        if (props.recommended === true) action.recommended++;
+        agentActions.set(actionKind, action);
+      }
+      const blockerCodes = Array.isArray(props.blockerCodes) ? props.blockerCodes : [];
+      for (const code of new Set(blockerCodes.filter((value) => typeof value === 'string'))) {
+        agentBlockers.set(code, (agentBlockers.get(code) || 0) + 1);
+      }
+      const systemId = typeof props.explorationSystemId === 'string' ? props.explorationSystemId : null;
+      if (systemId) {
+        const system = agentSystems.get(systemId) || { accounts: new Set(), events: 0 };
+        system.accounts.add(r.account_id);
+        system.events++;
+        agentSystems.set(systemId, system);
+      }
+    }
     if (nonEng.has(r.event)) continue;
     const sys = EVENT_TO_SYSTEM.get(r.event);
     if (!sys) { uncatalogued.set(r.event, (uncatalogued.get(r.event) || 0) + 1); continue; }
     if (!perSystem.has(sys)) perSystem.set(sys, { accounts: new Set(), events: 0, last: null });
     const s = perSystem.get(sys);
-    s.events++;
-    if (h) s.accounts.add(r.account_id);   // DISTINCT HUMANS — one player hammering a system is not adoption
-    if (!s.last || new Date(r.at) > new Date(s.last)) s.last = r.at;
+    if (!npcIds.has(r.account_id)) {
+      s.events++;
+      if (!s.last || new Date(r.at) > new Date(s.last)) s.last = r.at;
+    }
+    if (h) {
+      s.accounts.add(r.account_id);   // DISTINCT HUMANS — one player hammering a system is not adoption
+    }
   }
 
   // ── systems, including the ones nobody has touched ─────────────────────────────────────────────
   const systems = Object.keys(SYSTEMS).map((sys) => {
     const s = perSystem.get(sys) || { accounts: new Set(), events: 0, last: null };
-    return { system: sys, accounts: s.accounts.size, events: s.events, last: s.last };
+    const systemId = SYSTEM_IDS[sys];
+    const agent = agentSystems.get(systemId) || { accounts: new Set(), events: 0 };
+    return { system: sys, systemId, accounts: s.accounts.size, events: s.events, last: s.last,
+      agentAccounts: agent.accounts.size, agentEvents: agent.events };
   }).sort((a, b) => b.accounts - a.accounts || b.events - a.events);
 
   // A system with no events AND no declared events is untracked, not dead — say which it is rather
@@ -280,6 +358,10 @@ export async function opsEngagement(pool, days = 14) {
       },
     },
     systems,
+    agentActions: [...agentActions.entries()].map(([actionKind, counts]) => ({ actionKind, ...counts }))
+      .sort((a, b) => b.events - a.events || a.actionKind.localeCompare(b.actionKind)),
+    agentBlockers: [...agentBlockers.entries()].map(([code, events]) => ({ code, events }))
+      .sort((a, b) => b.events - a.events || a.code.localeCompare(b.code)),
     dead,
     untracked,
     // Events in the table that no system claims. Counted and surfaced — an instrumentation drift

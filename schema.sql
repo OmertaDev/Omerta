@@ -14,6 +14,16 @@ CREATE TABLE IF NOT EXISTS accounts (
 -- CREATE TABLE IF NOT EXISTS is a no-op on a live DB, so an inline column would never land on the
 -- existing accounts table (the 2026-08-06 boot-crash lesson).
 ALTER TABLE accounts ADD COLUMN IF NOT EXISTS token_version INT NOT NULL DEFAULT 0;
+-- Agent Alpha's first request must be recoverable before any bearer exists. Only a domain-separated
+-- hash of its pre-written recovery credential is stored; the unique index is the database mutex that
+-- maps concurrent/replayed bootstrap requests to one account without using account-scoped idempotency.
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS guest_bootstrap_hash TEXT;
+-- Legacy additive compatibility only: elapsed wall time is not recovery authority because an
+-- untouched guest in bootstrap state has no other credential. Lifecycle events retire the mapping.
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS guest_bootstrap_expires_at TIMESTAMPTZ;
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS guest_bootstrap_token_version INT;
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS guest_bootstrap_retired_at TIMESTAMPTZ;
+CREATE UNIQUE INDEX IF NOT EXISTS ux_accounts_guest_bootstrap_hash ON accounts (guest_bootstrap_hash);
 CREATE TABLE IF NOT EXISTS account_persistent (
   account_id TEXT PRIMARY KEY,
   prestige INT NOT NULL DEFAULT 0,
@@ -606,6 +616,50 @@ CREATE TABLE IF NOT EXISTS referrals (
   recruiter_account TEXT NOT NULL,
   qualified_at TIMESTAMPTZ
 );
+-- Agent recruiters use a separate, explicitly reserved cash profile. No row means no recruiter
+-- cash authority. `reserved` is the authorized liability ceiling for this campaign/epoch, while
+-- `paid` and the per-milestone counters are transactionally advanced with each unique claim.
+CREATE TABLE IF NOT EXISTS agent_acquisition_budgets (
+  id TEXT PRIMARY KEY,
+  campaign_id TEXT NOT NULL,
+  epoch_key TEXT NOT NULL,
+  liability_cap NUMERIC NOT NULL,
+  reserved NUMERIC NOT NULL,
+  paid NUMERIC NOT NULL DEFAULT 0,
+  qualified_cash NUMERIC NOT NULL,
+  retained_cash NUMERIC NOT NULL DEFAULT 0,
+  max_recruits INT NOT NULL,
+  qualified_claims_paid INT NOT NULL DEFAULT 0,
+  retained_claims_paid INT NOT NULL DEFAULT 0,
+  active BOOLEAN NOT NULL DEFAULT false,
+  expires_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_agent_acquisition_budget_epoch
+  ON agent_acquisition_budgets (campaign_id, epoch_key);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_agent_acquisition_budget_one_active
+  ON agent_acquisition_budgets (campaign_id) WHERE active;
+CREATE INDEX IF NOT EXISTS ix_agent_acquisition_budget_active
+  ON agent_acquisition_budgets (campaign_id, active, expires_at);
+-- One causal row per directly attributed recruit/milestone. A held claim records a qualified
+-- outcome that paid no agent cash (for example budget exhaustion or a review hold) without allowing
+-- the action retry to manufacture a second claim.
+CREATE TABLE IF NOT EXISTS agent_referral_claims (
+  recruit_account TEXT NOT NULL,
+  milestone TEXT NOT NULL,
+  recruiter_account TEXT NOT NULL,
+  campaign_id TEXT NOT NULL,
+  budget_id TEXT,
+  qualifier_version TEXT NOT NULL,
+  amount NUMERIC NOT NULL DEFAULT 0,
+  state TEXT NOT NULL,
+  hold_reason TEXT,
+  earned_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  paid_at TIMESTAMPTZ,
+  PRIMARY KEY (recruit_account, milestone)
+);
+CREATE INDEX IF NOT EXISTS ix_agent_referral_claims_recruiter
+  ON agent_referral_claims (recruiter_account, state, earned_at);
 -- daily "Spread the Word" social tasks: one claim per (account, day, task). Day-partitioned +
 -- self-cleaning conceptually; petty cash faucet to grow organic word-of-mouth + referral volume.
 CREATE TABLE IF NOT EXISTS social_claims (
@@ -2009,6 +2063,7 @@ CREATE INDEX IF NOT EXISTS ix_rng_action ON rng_audit (action);
 -- (red-team R16) funnelStats filters telemetry by event ('broadcast_share'/'first_week_step'); without
 -- this the admin dashboard's 15s poll seq-scanned the whole (fastest-growing) telemetry table twice.
 CREATE INDEX IF NOT EXISTS ix_telemetry_event ON telemetry (event);
+CREATE INDEX IF NOT EXISTS ix_telemetry_account_event ON telemetry (account_id, event);
 CREATE INDEX IF NOT EXISTS ix_notif_char_undelivered ON notifications (character_id) WHERE NOT delivered;
 -- one wallet address binds to at most one account (§4)
 CREATE UNIQUE INDEX IF NOT EXISTS ux_wallet_address ON account_persistent (wallet_address) WHERE wallet_address IS NOT NULL;

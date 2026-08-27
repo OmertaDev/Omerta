@@ -413,17 +413,16 @@ export async function heistBoard(pool, characterId) {
   // two flat queries instead of a correlated subquery — pg-mem (the test db) can't parse the
   // latter (the GET /v1/gangs precedent), and the flat form is fine on real Postgres too
   const openRows = (await pool.query(
-    `SELECT ch.id, ch.job, ch.created_at, c.name AS leader
+    `SELECT ch.id, ch.job, ch.created_at, ch.target_business, c.name AS leader,
+            b.character_id AS target_character
        FROM crew_heists ch JOIN characters c ON c.id = ch.leader_character
+       LEFT JOIN businesses b ON b.id = ch.target_business
       WHERE ch.status='planning' ORDER BY ch.created_at DESC LIMIT 30`)).rows;
   const memberRows = (await pool.query(
     `SELECT m.heist_id, m.role FROM crew_heist_members m
        JOIN crew_heists ch2 ON ch2.id = m.heist_id AND ch2.status='planning'`)).rows;
   const rolesOf = {};
   for (const r of memberRows) (rolesOf[r.heist_id] = rolesOf[r.heist_id] || []).push(r.role);
-  const open = openRows.filter((r) => !stale(r))
-    .map((r) => { const j = heistJobOf(r.job); const taken = rolesOf[r.id] || []; return { id: r.id, job: r.job, name: j.name, leader: r.leader,
-      crew: taken.length, crewNeeded: j.crew - taken.length, rolesOpen: j.roles.filter((x) => !taken.includes(x)), lvl: j.lvl, stake: j.stake }; });
   const mine = (await pool.query(
     `SELECT ch.id, ch.job, ch.leader_character FROM crew_heists ch
        JOIN crew_heist_members m ON m.heist_id = ch.id
@@ -445,14 +444,87 @@ export async function heistBoard(pool, characterId) {
   }
   // Tier-4: the actor's hot loot + lifetime notoriety (account-level, survives death)
   const meRow = (await pool.query(
-    `SELECT c.heist_loot, ap.heists_pulled FROM characters c JOIN account_persistent ap ON ap.account_id=c.account_id WHERE c.id=$1`, [characterId])).rows[0] || {};
+    `SELECT c.heist_loot, c.respect, c.jail_until, c.hosp_until, c.safe_until, c.heist_at,
+            ap.heists_pulled
+       FROM characters c JOIN account_persistent ap ON ap.account_id=c.account_id WHERE c.id=$1`, [characterId])).rows[0] || {};
   const pulled = Number(meRow.heists_pulled || 0);
+  const actorOpen = !mine && !jailed(meRow) && !hospitalized(meRow) && !safeHoused(meRow) && !cooling(meRow);
+  const actorLevel = levelOf(Number(meRow.respect || 0));
+  const open = openRows.filter((r) => !stale(r))
+    .map((r) => {
+      const j = heistJobOf(r.job);
+      const taken = rolesOf[r.id] || [];
+      const rolesOpen = j.roles.filter((x) => !taken.includes(x));
+      return { id: r.id, job: r.job, name: j.name, leader: r.leader,
+        crew: taken.length, crewNeeded: j.crew - taken.length, rolesOpen, lvl: j.lvl, stake: j.stake,
+        // Personalized board authority without exposing the mark's owner: joinHeist applies the same
+        // actor, notoriety, seat, and own-front gates under lock. Explore consumes only this boolean.
+        canJoin: actorOpen && actorLevel >= j.lvl && (!j.minPulled || pulled >= j.minPulled)
+          && taken.length < j.crew && rolesOpen.length > 0
+          && (!r.target_business || r.target_character !== characterId) };
+    });
   return { jobs: HEIST_JOBS.map((j) => ({ id: j.id, name: j.name, crew: j.crew, lvl: j.lvl, stake: j.stake,
     base: j.base, takePerLvl: j.takePerLvl || null, rateBps: j.rateBps || null, roles: j.roles, jailS: j.jailS, minPulled: j.minPulled || 0,
     locked: !!(j.minPulled && pulled < j.minPulled) })),
     roleStats: HEIST_ROLES, open, mine: my,
     you: { hotLoot: Math.floor(Number(meRow.heist_loot || 0)), pulled, rank: heistRankOf(pulled).name },
     caseEnergy: HEIST_CASE_ENERGY, ranks: HEIST_RANKS };
+}
+
+// The public board shows only the newest 30 plans. Explore needs exact actor eligibility across the
+// authoritative planning set, but never needs to reveal which plan supplied the witness. This query
+// projects only job/gate aggregates, excludes stale/own/busy candidates in SQL, and returns booleans.
+export async function heistExactAvailability(pool, ch, { agent = false, pulled = 0 } = {}) {
+  const none = { canJoin: false, policyJoinOnly: false };
+  if (jailed(ch) || hospitalized(ch) || safeHoused(ch) || cooling(ch)) return none;
+  const rows = (await pool.query(
+    `SELECT ch.job, COUNT(m.character_id) AS crew
+       FROM crew_heists ch
+       LEFT JOIN crew_heist_members m ON m.heist_id=ch.id
+       LEFT JOIN businesses b ON b.id=ch.target_business
+      WHERE ch.status='planning' AND ch.created_at >= $2
+        AND ch.id NOT IN (SELECT mine.heist_id FROM crew_heist_members mine WHERE mine.character_id=$1)
+        AND (b.character_id IS NULL OR b.character_id <> $1)
+      GROUP BY ch.id, ch.job`,
+    [ch.id, new Date(Date.now() - HEIST_PLAN_TTL_MS)])).rows;
+  const level = levelOf(Number(ch.respect || 0));
+  const eligible = rows.filter((row) => {
+    const job = heistJobOf(row.job);
+    return job && level >= job.lvl && (!job.minPulled || Number(pulled) >= job.minPulled)
+      && Number(row.crew) < job.crew;
+  });
+  const canJoin = eligible.some((row) => !agent || !heistJobOf(row.job).rateBps);
+  const policyJoinOnly = agent && !canJoin && eligible.some((row) => heistJobOf(row.job).rateBps);
+  return { canJoin, policyJoinOnly };
+}
+
+// Discovery and the heist screen read the same board vocabulary. A social Crew membership is not a
+// heist prerequisite: a player can front an eligible ordinary job, join an open role, or leave their
+// current plan. Keeping this beside gateJoiner/heistBoard prevents Explore from inventing a second
+// organization gate for a system whose authority is the score board itself.
+export function heistAvailability(ch, board = {}, { agent = false, exact = null } = {}) {
+  if (board.mine) return { ready: true, blocker: null, canLeave: true, canPlan: false, canJoin: false };
+  if (jailed(ch) || hospitalized(ch) || safeHoused(ch) || cooling(ch))
+    return { ready: false, blocker: 'status', canLeave: false, canPlan: false, canJoin: false };
+  const lvl = levelOf(Number(ch.respect));
+  const jobs = board.jobs || [];
+  const eligible = (job) => job && lvl >= Number(job.lvl || 0)
+    && !(Number(job.minPulled || 0) > Number(board.you?.pulled || 0)) && !job.locked;
+  // Inside jobs additionally need a live business mark. An ordinary job is the representative plan
+  // operation because every other plan gate is already visible in this board/character snapshot.
+  const canPlan = jobs.some((job) => eligible(job) && !job.rateBps && Number(ch.cash || 0) >= Number(job.stake || 0));
+  const byId = new Map(jobs.map((job) => [job.id, job]));
+  const joinable = (board.open || []).filter((plan) => plan.canJoin !== false
+    && eligible(byId.get(plan.job) || plan)
+    && Number(plan.crewNeeded || 0) > 0 && (plan.rolesOpen || []).length > 0);
+  // The inside job redirects a real player's accrued front income. Agents may still plan/join the
+  // ordinary co-op catalog, but the conservative autonomous policy keeps that selective PvP leg human.
+  const canJoin = exact && Object.hasOwn(exact, 'canJoin') ? !!exact.canJoin
+    : joinable.some((plan) => !agent || !(byId.get(plan.job) || plan).rateBps);
+  const policyBlocked = agent && !canPlan && (exact && Object.hasOwn(exact, 'policyJoinOnly')
+    ? !!exact.policyJoinOnly : joinable.some((plan) => (byId.get(plan.job) || plan).rateBps));
+  const ready = canPlan || canJoin;
+  return { ready, blocker: ready ? null : policyBlocked ? 'policy' : 'resource', canLeave: false, canPlan, canJoin };
 }
 
 // THE CREW LEADERBOARD (Tier-4 §D) — the most notorious thieves by lifetime scores (agents excluded).
@@ -477,7 +549,9 @@ export async function sweepStaleHeists(pool) {
   let swept = 0;
   try {
     const staleRows = (await client.query(
-      `SELECT id, job, leader_character FROM crew_heists WHERE status='planning' AND created_at < now() - interval '${Math.floor(HEIST_PLAN_TTL_MS / 1000)} seconds'`)).rows;
+      `SELECT id, job, leader_character FROM crew_heists
+        WHERE status='planning' AND created_at < now() - $1::interval`,
+      [`${Math.floor(HEIST_PLAN_TTL_MS / 1000)} seconds`])).rows;
     for (const s of staleRows) {
       await client.query('BEGIN');
       try {
