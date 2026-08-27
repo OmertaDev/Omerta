@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "namespace": "test.minimal",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "Compiler smoke fixture."
+  },
+  "nodes": [
+    {
+      "id": "start",
+      "type": "mystery",
+      "payload": {
+        "title": "A Small Test"
+      }
+    },
+    {
+      "id": "end",
+      "type": "terminal",
+      "payload": {}
+    }
+  ],
+  "edges": [
+    {
+      "from": "start",
+      "type": "UNLOCKS",
+      "to": "end"
+    }
+  ]
+}

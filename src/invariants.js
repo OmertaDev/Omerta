@@ -652,6 +652,57 @@ async function collectLedgerChecks(pool) {
   const fuDeath = -(await sum(pool, "currency='cash' AND reason='casino:futurity:death'"));
   push('futurity escrow', fuEscrow, fuPosted - fuWins - fuRefunds - fuPurse - fuTake - fuDeath);
 
+  // (f10) AGENT ACQUISITION — cash is a bounded faucet, not an escrow. Its authorization therefore
+  // lives in explicit campaign/epoch budgets: every paid claim must match both the budget counters
+  // and one dedicated ledger credit, and the worst-case configured claims must fit the reserve/cap.
+  const acquisitionBudgets = (await pool.query('SELECT * FROM agent_acquisition_budgets')).rows;
+  const acquisitionClaims = (await pool.query(
+    `SELECT c.*, recruiter.agent_flag recruiter_agent, recruit.agent_flag recruit_agent
+       FROM agent_referral_claims c
+       LEFT JOIN account_persistent recruiter ON recruiter.account_id=c.recruiter_account
+       LEFT JOIN account_persistent recruit ON recruit.account_id=c.recruit_account`,
+  )).rows;
+  const acquisitionIssues = [];
+  for (const budget of acquisitionBudgets) {
+    const paidClaims = acquisitionClaims.filter((claim) => claim.budget_id === budget.id && claim.state === 'paid');
+    const claimAmount = paidClaims.reduce((total, claim) => total + Number(claim.amount), 0);
+    const liabilityCap = Number(budget.liability_cap);
+    const reserved = Number(budget.reserved);
+    const paid = Number(budget.paid);
+    const maxRecruits = Number(budget.max_recruits);
+    const qualifiedCount = paidClaims.filter((claim) => claim.milestone === 'qualified_activation').length;
+    const retainedCount = paidClaims.filter((claim) => claim.milestone === 'retained_collaborator').length;
+    const worstCase = (Number(budget.qualified_cash) + Number(budget.retained_cash)) * maxRecruits;
+    if (![liabilityCap, reserved, paid, maxRecruits, worstCase].every(Number.isSafeInteger)
+      || liabilityCap < 1 || reserved < 1 || reserved > liabilityCap
+      || paid < 0 || paid > reserved || claimAmount !== paid
+      || qualifiedCount !== Number(budget.qualified_claims_paid)
+      || retainedCount !== Number(budget.retained_claims_paid)
+      || qualifiedCount > maxRecruits || retainedCount > maxRecruits || worstCase > reserved) {
+      acquisitionIssues.push(`budget:${budget.id}`);
+    }
+  }
+  for (const claim of acquisitionClaims) {
+    const budgetExists = claim.budget_id == null
+      || acquisitionBudgets.some((budget) => budget.id === claim.budget_id);
+    if (!['held', 'paid'].includes(claim.state)
+      || !claim.recruiter_agent || claim.recruit_agent
+      || (claim.state === 'held' && Number(claim.amount) !== 0)
+      || (claim.state === 'paid' && (Number(claim.amount) < 1 || !claim.budget_id))
+      || !budgetExists) {
+      acquisitionIssues.push(`claim:${claim.recruit_account}:${claim.milestone}`);
+    }
+  }
+  push('agent acquisition budget accounting', acquisitionIssues.length, 0, 0, { issues: acquisitionIssues });
+  const paidAgentClaims = acquisitionClaims
+    .filter((claim) => claim.state === 'paid')
+    .reduce((total, claim) => total + Number(claim.amount), 0);
+  const agentReferralLedger = await sum(
+    pool,
+    "currency='cash' AND reason IN ('referral:agent_qualified','referral:agent_retained')",
+  );
+  push('agent referral claim ledger', paidAgentClaims, agentReferralLedger, 0);
+
   // (g) UNKNOWN REASONS — any row outside the vocabulary is an unenumerated faucet/sink
   const unknown = [];
   for (const [cur, prefixes] of Object.entries(KNOWN_REASONS)) {

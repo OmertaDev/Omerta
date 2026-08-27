@@ -1,6 +1,7 @@
 // M1 core + shared transaction machinery. Every formula cites spec §7 / prototype v24.
 import crypto from 'node:crypto';
 import { recordMeeting } from './contacts.js';
+import { claimQualifiedAgentReferral } from './agentreferrals.js';
 import { EventEmitter } from 'node:events';
 import { CRIMES, DISTRICTS, DRUGS, RECRUIT_MILESTONES, CONSTANTS, RANKS,
          levelOf, rankIdxOf, cityEventOf, dayOf, referralXpBonus,
@@ -2269,8 +2270,9 @@ export async function travel(ch, district, client, h) {
 // Runs in its own transaction after any action by a referred, unpaid account.
 // All four gates required (level 8, 40 jobs, 3 check-ins, $25k net worth), once
 // ever. Pays recruiter + recruit atomically, bumps milestones and the recruiter
-// gang's weekly `recruit` progress, notifies both. Agent-flagged accounts are
-// excluded on both sides; same-IP pairs are flagged for review (§10.3).
+// gang's weekly `recruit` progress, notifies both. Agent recruits remain excluded. Agent recruiters
+// use a stronger minted-human gate and a separate campaign/epoch budget; they never inherit human
+// milestone, drive-multiplier, spark, or downline cash. Same-IP agent claims are held before value moves.
 export async function maybeQualifyReferral(pool, recruitAccountId) {
   // cheap unlocked pre-check to avoid opening a transaction for the common no-op
   const pre = (await pool.query('SELECT referred_by, ref_paid, agent_flag FROM account_persistent WHERE account_id=$1', [recruitAccountId])).rows[0];
@@ -2303,7 +2305,8 @@ export async function maybeQualifyReferral(pool, recruitAccountId) {
     const acct = lockedA[recruitAccountId], recruiterAcct = lockedA[recruiterAccountId];
     // re-validate every gate under the locks (state may have changed since the pre-check)
     if (!recruit || !recruiter || !acct || !recruiterAcct) { await client.query('ROLLBACK'); return null; }
-    if (acct.referred_by !== recruiterAccountId || acct.ref_paid || acct.agent_flag || recruiterAcct.agent_flag) { await client.query('ROLLBACK'); return null; }
+    if (acct.referred_by !== recruiterAccountId || acct.ref_paid || acct.agent_flag) { await client.query('ROLLBACK'); return null; }
+    const agentRecruiter = !!recruiterAcct.agent_flag;
 
     // the four gates, all required
     const owned = await loadOwned(client, recruit);
@@ -2312,8 +2315,17 @@ export async function maybeQualifyReferral(pool, recruitAccountId) {
     const qualified = levelOf(Number(recruit.respect)) >= M4.REF_GATES.level
       && Number(recruit.lc_crime) >= M4.REF_GATES.jobs
       && Number(acct.checkins_lifetime) >= M4.REF_GATES.checkins
-      && netWorth >= M4.REF_GATES.netWorth;
+      && netWorth >= M4.REF_GATES.netWorth
+      // The agent profile adds the Capo identity-cost gate; a non-agent recruit is not enough by
+      // itself. Human recruiters keep the existing four-gate profile unchanged.
+      && (!agentRecruiter || !!acct.minted);
     if (!qualified) { await client.query('ROLLBACK'); return null; }
+
+    const ips = (await client.query(
+      'SELECT id, created_ip FROM accounts WHERE id IN ($1,$2)',
+      [recruitAccountId, recruiterAccountId],
+    )).rows;
+    const sameIp = ips.length === 2 && ips[0].created_ip && ips[0].created_ip === ips[1].created_ip;
 
     // THE $OMR IS RETIRED (founder-directed 2026-07-31: "no longer promise to give away $OMR").
     // What a referral pays now is cash + THE CREW BONUS — a respect multiplier that scales with how
@@ -2321,12 +2333,35 @@ export async function maybeQualifyReferral(pool, recruitAccountId) {
     // needs nothing here: it is derived live in loadOwned from `referrals.qualified_at`, which the
     // line below is what sets. So qualifying a recruit turns the bonus on and this function does not
     // have to hand anything over for it.
-    const mult = await referralPushMult(client); // recruitment-drive CASH multiplier (1 when no push)
-    const recruitCash = Math.round(M4.REF_RECRUIT_CASH * mult), recruiterCash = Math.round(M4.REF_RECRUITER_CASH * mult);
+    // Human recruiters keep the established payout profile. Agent recruiters use a separate budget
+    // claim and the base recruit-side reward: a general recruitment drive cannot multiply an agent's
+    // continuously automatable acquisition attempts without its own reserved budget.
+    const mult = agentRecruiter ? 1 : await referralPushMult(client);
+    const recruitCash = Math.round(M4.REF_RECRUIT_CASH * mult);
+    let recruiterCash = 0;
+    let agentClaim = null;
+    if (agentRecruiter) {
+      agentClaim = await claimQualifiedAgentReferral(client, {
+        recruiterAccountId,
+        recruitAccountId,
+        reviewHold: !!sameIp,
+      });
+      recruiterCash = Number(agentClaim.amount || 0);
+    } else {
+      recruiterCash = Math.round(M4.REF_RECRUITER_CASH * mult);
+    }
     recruit.cash = Number(recruit.cash) + recruitCash;
     recruiter.cash = Number(recruiter.cash) + recruiterCash;
     await ledger(client, { characterId: recruit.id, currency: 'cash', amount: recruitCash, reason: 'referral:recruit' });
-    await ledger(client, { characterId: recruiter.id, currency: 'cash', amount: recruiterCash, reason: 'referral:recruiter', counterparty: recruit.id });
+    if (recruiterCash > 0) {
+      await ledger(client, {
+        characterId: recruiter.id,
+        currency: 'cash',
+        amount: recruiterCash,
+        reason: agentRecruiter ? 'referral:agent_qualified' : 'referral:recruiter',
+        counterparty: recruit.id,
+      });
+    }
 
     // recruiter ladder: recruits++ and any milestones crossed (cash faucet).
     // `m.omr` is deliberately NOT read: RECRUIT_MILESTONES is MACHINE-OWNED (ground rule #2), so the
@@ -2334,9 +2369,11 @@ export async function maybeQualifyReferral(pool, recruitAccountId) {
     // editing the prototype and re-extracting for no behavioural gain.
     const before = Number(recruiterAcct.recruits), after = before + 1;
     let milestoneCash = 0, title = null;
-    for (const m of RECRUIT_MILESTONES.filter((m) => m.n > before && m.n <= after)) {
-      milestoneCash += Math.round((m.cash || 0) * mult); // the drive multiplies milestone cash too
-      if (m.title) title = m.title;
+    if (!agentRecruiter) {
+      for (const m of RECRUIT_MILESTONES.filter((m) => m.n > before && m.n <= after)) {
+        milestoneCash += Math.round((m.cash || 0) * mult); // the drive multiplies milestone cash too
+        if (m.title) title = m.title;
+      }
     }
     if (milestoneCash > 0) {
       recruiter.cash = Number(recruiter.cash) + milestoneCash;
@@ -2348,18 +2385,24 @@ export async function maybeQualifyReferral(pool, recruitAccountId) {
     // crew earns both a bonus (rewarding the recruiter who brought a friend AND ran with them).
     // crew_members is account-keyed; a plain read — no FOR UPDATE (a leaf in this transaction, so no
     // lock-order concern). Bounded: gated behind the entire qualification wall, so it inherits every
-    // anti-Sybil property (once ever, agent-excluded, L8/40 jobs/3 check-ins/$25k). IN($1,$2) not
+    // anti-Sybil property (once ever, L8/40 jobs/3 check-ins/$25k; agent recruiters additionally
+    // require a minted non-agent recruit). IN($1,$2) not
     // ANY(array) — pg-mem returns zero rows for ANY-of-array (the same-IP flag lesson below).
     let bringOne = false;
     const crews = (await client.query('SELECT account_id, crew_id FROM crew_members WHERE account_id IN ($1,$2)', [recruitAccountId, recruiterAccountId])).rows;
     const rcCrew = crews.find((r) => r.account_id === recruitAccountId)?.crew_id;
     const rrCrew = crews.find((r) => r.account_id === recruiterAccountId)?.crew_id;
     if (rcCrew && rrCrew && rcCrew === rrCrew) {
-      const bRecruit = Math.round(CREW.BRING_ONE.RECRUIT_CASH * mult), bRecruiter = Math.round(CREW.BRING_ONE.RECRUITER_CASH * mult);
+      const bRecruit = Math.round(CREW.BRING_ONE.RECRUIT_CASH * mult);
+      // The recruited human keeps the ordinary Crew-side reward. The agent recruiter gets no
+      // unbudgeted second payout: their authorized claim above is the only recruiter cash leg.
+      const bRecruiter = agentRecruiter ? 0 : Math.round(CREW.BRING_ONE.RECRUITER_CASH * mult);
       recruit.cash = Number(recruit.cash) + bRecruit;
       recruiter.cash = Number(recruiter.cash) + bRecruiter;
       await ledger(client, { characterId: recruit.id, currency: 'cash', amount: bRecruit, reason: 'crew:bringone' });
-      await ledger(client, { characterId: recruiter.id, currency: 'cash', amount: bRecruiter, reason: 'crew:bringone', counterparty: recruit.id });
+      if (bRecruiter > 0) {
+        await ledger(client, { characterId: recruiter.id, currency: 'cash', amount: bRecruiter, reason: 'crew:bringone', counterparty: recruit.id });
+      }
       bringOne = true;
     }
 
@@ -2375,18 +2418,31 @@ export async function maybeQualifyReferral(pool, recruitAccountId) {
     // IN ($1,$2) not ANY($1)-of-array: node-postgres serializes a JS array for ANY, but pg-mem returns
     // ZERO rows for it — so the ANY form made this flag silently untestable (and never exercised). IN is
     // identical in production and pg-mem-portable. The self-referral guard above ensures the two ids differ.
-    const ips = (await client.query('SELECT id, created_ip FROM accounts WHERE id IN ($1,$2)', [recruitAccountId, acct.referred_by])).rows;
-    if (ips.length === 2 && ips[0].created_ip && ips[0].created_ip === ips[1].created_ip)
+    if (sameIp)
       await track(client, recruitAccountId, 'referral_same_ip_flag', { recruiter: acct.referred_by });
 
     await client.query(
       `UPDATE characters SET cash=$2, title=COALESCE($3, title) WHERE id=$1`, [recruiter.id, recruiter.cash, title]);
     await client.query('UPDATE characters SET cash=$2 WHERE id=$1', [recruit.id, recruit.cash]);
-    await notify(client, recruiter.id, 'ref', { from: recruit.name, amt: recruiterCash + milestoneCash, recruits: after, bringOne });
+    await notify(client, recruiter.id, 'ref', {
+      from: recruit.name,
+      amt: recruiterCash + milestoneCash,
+      recruits: after,
+      bringOne,
+      ...(agentRecruiter ? { profile: 'agent', claimState: agentClaim.state } : {}),
+    });
     await notify(client, recruit.id, 'ref', { made: true, amt: recruitCash, bringOne });
-    await track(client, recruitAccountId, 'referral_qualified', { recruiter: acct.referred_by, mult, bringOne });
+    await track(client, recruitAccountId, 'referral_qualified', {
+      recruiter: acct.referred_by,
+      mult,
+      bringOne,
+      recruiterProfile: agentRecruiter ? 'agent' : 'human',
+      ...(agentRecruiter ? { agentClaimState: agentClaim.state, agentCash: recruiterCash } : {}),
+    });
     await client.query('COMMIT');
-    return { qualified: true, bringOne };
+    return agentRecruiter
+      ? { qualified: true, bringOne, recruiterProfile: 'agent', agentCash: recruiterCash }
+      : { qualified: true, bringOne };
   } catch (e) { await client.query('ROLLBACK'); throw e; }
   finally { client.release(); }
 }

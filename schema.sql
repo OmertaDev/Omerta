@@ -616,6 +616,50 @@ CREATE TABLE IF NOT EXISTS referrals (
   recruiter_account TEXT NOT NULL,
   qualified_at TIMESTAMPTZ
 );
+-- Agent recruiters use a separate, explicitly reserved cash profile. No row means no recruiter
+-- cash authority. `reserved` is the authorized liability ceiling for this campaign/epoch, while
+-- `paid` and the per-milestone counters are transactionally advanced with each unique claim.
+CREATE TABLE IF NOT EXISTS agent_acquisition_budgets (
+  id TEXT PRIMARY KEY,
+  campaign_id TEXT NOT NULL,
+  epoch_key TEXT NOT NULL,
+  liability_cap NUMERIC NOT NULL,
+  reserved NUMERIC NOT NULL,
+  paid NUMERIC NOT NULL DEFAULT 0,
+  qualified_cash NUMERIC NOT NULL,
+  retained_cash NUMERIC NOT NULL DEFAULT 0,
+  max_recruits INT NOT NULL,
+  qualified_claims_paid INT NOT NULL DEFAULT 0,
+  retained_claims_paid INT NOT NULL DEFAULT 0,
+  active BOOLEAN NOT NULL DEFAULT false,
+  expires_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_agent_acquisition_budget_epoch
+  ON agent_acquisition_budgets (campaign_id, epoch_key);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_agent_acquisition_budget_one_active
+  ON agent_acquisition_budgets (campaign_id) WHERE active;
+CREATE INDEX IF NOT EXISTS ix_agent_acquisition_budget_active
+  ON agent_acquisition_budgets (campaign_id, active, expires_at);
+-- One causal row per directly attributed recruit/milestone. A held claim records a qualified
+-- outcome that paid no agent cash (for example budget exhaustion or a review hold) without allowing
+-- the action retry to manufacture a second claim.
+CREATE TABLE IF NOT EXISTS agent_referral_claims (
+  recruit_account TEXT NOT NULL,
+  milestone TEXT NOT NULL,
+  recruiter_account TEXT NOT NULL,
+  campaign_id TEXT NOT NULL,
+  budget_id TEXT,
+  qualifier_version TEXT NOT NULL,
+  amount NUMERIC NOT NULL DEFAULT 0,
+  state TEXT NOT NULL,
+  hold_reason TEXT,
+  earned_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  paid_at TIMESTAMPTZ,
+  PRIMARY KEY (recruit_account, milestone)
+);
+CREATE INDEX IF NOT EXISTS ix_agent_referral_claims_recruiter
+  ON agent_referral_claims (recruiter_account, state, earned_at);
 -- daily "Spread the Word" social tasks: one claim per (account, day, task). Day-partitioned +
 -- self-cleaning conceptually; petty cash faucet to grow organic word-of-mouth + referral volume.
 CREATE TABLE IF NOT EXISTS social_claims (
