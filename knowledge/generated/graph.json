@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "997919a6812b96423ebaccfd7340f43e77bceea2",
+  "sourceRevision": "df62bbb2889469830584fa4d85e0a4adbde4e684",
   "worktreeDirty": true,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,44 +43,44 @@
     ]
   },
   "census": {
-    "nodes": 4982,
-    "edges": 22329,
+    "nodes": 4997,
+    "edges": 22372,
     "byNodeType": {
-      "Artifact": 1642,
-      "Command": 39,
-      "Commit": 1030,
+      "Artifact": 1648,
+      "Command": 42,
+      "Commit": 1032,
       "Contract": 32,
-      "Document": 452,
+      "Document": 453,
       "Domain": 12,
       "ExternalDependency": 24,
       "HistoricalArtifact": 306,
-      "Module": 169,
+      "Module": 171,
       "PullRequest": 126,
       "Repository": 1,
       "Route": 713,
       "Subsystem": 8,
       "Table": 248,
-      "TestSuite": 177,
+      "TestSuite": 178,
       "Workflow": 3
     },
     "byEdgeType": {
-      "BELONGS_TO": 1845,
-      "CHANGED": 8804,
-      "CONTAINS": 1662,
-      "DECLARES": 39,
+      "BELONGS_TO": 1851,
+      "CHANGED": 8808,
+      "CONTAINS": 1668,
+      "DECLARES": 42,
       "DEFINED_IN": 993,
       "DEPENDS_ON": 60,
-      "EXECUTES": 161,
+      "EXECUTES": 166,
       "HANDLED_BY": 678,
-      "HAS_COMMIT": 1030,
+      "HAS_COMMIT": 1032,
       "IMPLEMENTS": 124,
-      "IMPORTS": 1499,
+      "IMPORTS": 1509,
       "INHERITS": 8,
       "REFERENCES": 2604,
-      "REPRESENTS": 801,
-      "TESTS": 528,
+      "REPRESENTS": 805,
+      "TESTS": 530,
       "TRACKS": 126,
-      "USES_TABLE": 1367
+      "USES_TABLE": 1368
     }
   },
   "nodes": [
@@ -12420,20 +12420,40 @@
       "path": "omerta-contracts/GENESIS-LAUNCH.md",
       "kind": "contract-project",
       "extension": ".md",
-      "bytes": 22366,
-      "lines": 394,
-      "version": "59bb544ec8ae9bb6",
+      "bytes": 23749,
+      "lines": 420,
+      "version": "de4833d91898e797",
       "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/GENESIS-LAUNCH.md",
           "line": 1,
-          "version": "59bb544ec8ae9bb6"
+          "version": "de4833d91898e797"
         }
       ],
       "lastChangedAt": "2026-08-27T04:25:58-04:00",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "18738f0238abac2204c0d201ea4ce93acefcd781"
+    },
+    {
+      "key": "Artifact:omerta-contracts/GENESIS-RELEASE-MANIFEST.md",
+      "type": "Artifact",
+      "id": "omerta-contracts/GENESIS-RELEASE-MANIFEST.md",
+      "label": "GENESIS-RELEASE-MANIFEST.md",
+      "path": "omerta-contracts/GENESIS-RELEASE-MANIFEST.md",
+      "kind": "contract-project",
+      "extension": ".md",
+      "bytes": 9541,
+      "lines": 223,
+      "version": "e4c70a0a77194d75",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/GENESIS-RELEASE-MANIFEST.md",
+          "line": 1,
+          "version": "e4c70a0a77194d75"
+        }
+      ]
     },
     {
       "key": "Artifact:omerta-contracts/inheritance-graph.dot",
@@ -17198,15 +17218,15 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 5594,
-      "lines": 67,
-      "version": "4b338bf31ca42462",
+      "bytes": 5863,
+      "lines": 70,
+      "version": "a65dde483fe204d6",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "4b338bf31ca42462"
+          "version": "a65dde483fe204d6"
         }
       ],
       "lastChangedAt": "2026-08-27T04:25:58-04:00",
@@ -29735,13 +29755,13 @@
       "extension": ".md",
       "bytes": 47800,
       "lines": 664,
-      "version": "aeb1f21b9d69ba96",
+      "version": "28c8e743dda2eee9",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "aeb1f21b9d69ba96"
+          "version": "28c8e743dda2eee9"
         }
       ],
       "lastChangedAt": "2026-08-27T04:25:58-04:00",
@@ -31198,6 +31218,26 @@
       "lastChangedCommit": "0524f3ce06d49e9409c54a15f8dd8de30444aa01"
     },
     {
+      "key": "Artifact:src/genesiscadence.js",
+      "type": "Artifact",
+      "id": "src/genesiscadence.js",
+      "label": "genesiscadence.js",
+      "path": "src/genesiscadence.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 6221,
+      "lines": 152,
+      "version": "93982c9d893f12ce",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/genesiscadence.js",
+          "line": 1,
+          "version": "93982c9d893f12ce"
+        }
+      ]
+    },
+    {
       "key": "Artifact:src/genesiscca.js",
       "type": "Artifact",
       "id": "src/genesiscca.js",
@@ -31205,15 +31245,15 @@
       "path": "src/genesiscca.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 34708,
-      "lines": 807,
-      "version": "683a01f51e01173e",
+      "bytes": 34777,
+      "lines": 808,
+      "version": "72f88b479ab3f109",
       "text": true,
       "provenance": [
         {
           "file": "src/genesiscca.js",
           "line": 1,
-          "version": "683a01f51e01173e"
+          "version": "72f88b479ab3f109"
         }
       ],
       "lastChangedAt": "2026-08-27T04:25:58-04:00",
@@ -31242,6 +31282,26 @@
       "lastChangedAt": "2026-08-27T04:25:58-04:00",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "18738f0238abac2204c0d201ea4ce93acefcd781"
+    },
+    {
+      "key": "Artifact:src/genesisrelease.js",
+      "type": "Artifact",
+      "id": "src/genesisrelease.js",
+      "label": "genesisrelease.js",
+      "path": "src/genesisrelease.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 17908,
+      "lines": 389,
+      "version": "50038bf3fe3f5e76",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/genesisrelease.js",
+          "line": 1,
+          "version": "50038bf3fe3f5e76"
+        }
+      ]
     },
     {
       "key": "Artifact:src/growth.js",
@@ -34862,15 +34922,15 @@
       "path": "test/genesiscca.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 8876,
-      "lines": 179,
-      "version": "20f2ea6de69742e9",
+      "bytes": 8987,
+      "lines": 180,
+      "version": "5570775cb667a1c5",
       "text": true,
       "provenance": [
         {
           "file": "test/genesiscca.js",
           "line": 1,
-          "version": "20f2ea6de69742e9"
+          "version": "5570775cb667a1c5"
         }
       ],
       "lastChangedAt": "2026-08-27T04:25:58-04:00",
@@ -34899,6 +34959,26 @@
       "lastChangedAt": "2026-08-27T04:25:58-04:00",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "18738f0238abac2204c0d201ea4ce93acefcd781"
+    },
+    {
+      "key": "Artifact:test/genesisrelease.js",
+      "type": "Artifact",
+      "id": "test/genesisrelease.js",
+      "label": "genesisrelease.js",
+      "path": "test/genesisrelease.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 7777,
+      "lines": 188,
+      "version": "5507fd4da0bb911e",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/genesisrelease.js",
+          "line": 1,
+          "version": "5507fd4da0bb911e"
+        }
+      ]
     },
     {
       "key": "Artifact:test/graph.js",
@@ -37017,6 +37097,26 @@
       "lastChangedCommit": "3f434841a7138e84fd2041849e89ab54fdf5de8f"
     },
     {
+      "key": "Artifact:tools/genesis-cadence-sample.js",
+      "type": "Artifact",
+      "id": "tools/genesis-cadence-sample.js",
+      "label": "genesis-cadence-sample.js",
+      "path": "tools/genesis-cadence-sample.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 3776,
+      "lines": 84,
+      "version": "645597d64cf884c8",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/genesis-cadence-sample.js",
+          "line": 1,
+          "version": "645597d64cf884c8"
+        }
+      ]
+    },
+    {
       "key": "Artifact:tools/genesis-fork-rehearsal.js",
       "type": "Artifact",
       "id": "tools/genesis-fork-rehearsal.js",
@@ -37084,6 +37184,26 @@
       "lastChangedAt": "2026-08-27T04:25:58-04:00",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "18738f0238abac2204c0d201ea4ce93acefcd781"
+    },
+    {
+      "key": "Artifact:tools/genesis-release-manifest.js",
+      "type": "Artifact",
+      "id": "tools/genesis-release-manifest.js",
+      "label": "genesis-release-manifest.js",
+      "path": "tools/genesis-release-manifest.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 6190,
+      "lines": 130,
+      "version": "8fcbe87e91e3688a",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/genesis-release-manifest.js",
+          "line": 1,
+          "version": "8fcbe87e91e3688a"
+        }
+      ]
     },
     {
       "key": "Artifact:tools/graph.js",
@@ -37988,6 +38108,19 @@
       ]
     },
     {
+      "key": "Command:npm:genesis:cadence",
+      "type": "Command",
+      "id": "npm:genesis:cadence",
+      "label": "npm run genesis:cadence",
+      "command": "node tools/genesis-cadence-sample.js",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
       "key": "Command:npm:genesis:config",
       "type": "Command",
       "id": "npm:genesis:config",
@@ -38014,11 +38147,37 @@
       ]
     },
     {
+      "key": "Command:npm:genesis:inventory",
+      "type": "Command",
+      "id": "npm:genesis:inventory",
+      "label": "npm run genesis:inventory",
+      "command": "node tools/genesis-release-manifest.js --inventory",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
       "key": "Command:npm:genesis:preflight",
       "type": "Command",
       "id": "npm:genesis:preflight",
       "label": "npm run genesis:preflight",
       "command": "node tools/genesis-launch-preflight.js",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:genesis:release",
+      "type": "Command",
+      "id": "npm:genesis:release",
+      "label": "npm run genesis:release",
+      "command": "node tools/genesis-release-manifest.js",
       "provenance": [
         {
           "file": "package.json",
@@ -38200,7 +38359,7 @@
       "type": "Command",
       "id": "npm:pretest",
       "label": "npm run pretest",
-      "command": "node test/agent-referral-cash.js && node test/content-graph.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js",
+      "command": "node test/agent-referral-cash.js && node test/content-graph.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js",
       "provenance": [
         {
           "file": "package.json",
@@ -38291,7 +38450,7 @@
       "type": "Command",
       "id": "npm:test:genesis",
       "label": "npm run test:genesis",
-      "command": "node test/genesiscca.js && node test/genesislaunch.js",
+      "command": "node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js",
       "provenance": [
         {
           "file": "package.json",
@@ -45872,6 +46031,22 @@
       ]
     },
     {
+      "key": "Commit:7513034368a2281262dc56792b1fba9d09501059",
+      "type": "Commit",
+      "id": "7513034368a2281262dc56792b1fba9d09501059",
+      "label": "docs: refresh knowledge graph for PWA safe-area release",
+      "title": "docs: refresh knowledge graph for PWA safe-area release",
+      "date": "2026-08-27T04:35:52-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7513034368a2281262dc56792b1fba9d09501059",
+      "provenance": [
+        {
+          "commit": "7513034368a2281262dc56792b1fba9d09501059",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7513034368a2281262dc56792b1fba9d09501059"
+        }
+      ]
+    },
+    {
       "key": "Commit:75192dc763e1c78328c524f1422ab081dc1b0e50",
       "type": "Commit",
       "id": "75192dc763e1c78328c524f1422ab081dc1b0e50",
@@ -52956,6 +53131,22 @@
         {
           "commit": "df5da0f699531d76ac8c4458a920e51dccbc5824",
           "url": "https://github.com/OmertaDev/Omerta/commit/df5da0f699531d76ac8c4458a920e51dccbc5824"
+        }
+      ]
+    },
+    {
+      "key": "Commit:df62bbb2889469830584fa4d85e0a4adbde4e684",
+      "type": "Commit",
+      "id": "df62bbb2889469830584fa4d85e0a4adbde4e684",
+      "label": "Merge latest main knowledge refresh",
+      "title": "Merge latest main knowledge refresh",
+      "date": "2026-08-27T04:54:43-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/df62bbb2889469830584fa4d85e0a4adbde4e684",
+      "provenance": [
+        {
+          "commit": "df62bbb2889469830584fa4d85e0a4adbde4e684",
+          "url": "https://github.com/OmertaDev/Omerta/commit/df62bbb2889469830584fa4d85e0a4adbde4e684"
         }
       ]
     },
@@ -61201,13 +61392,29 @@
       "id": "omerta-contracts/GENESIS-LAUNCH.md",
       "label": "omerta-contracts/GENESIS-LAUNCH.md",
       "documentType": "contract-project",
-      "lines": 394,
-      "version": "59bb544ec8ae9bb6",
+      "lines": 420,
+      "version": "de4833d91898e797",
       "provenance": [
         {
           "file": "omerta-contracts/GENESIS-LAUNCH.md",
           "line": 1,
-          "version": "59bb544ec8ae9bb6"
+          "version": "de4833d91898e797"
+        }
+      ]
+    },
+    {
+      "key": "Document:omerta-contracts/GENESIS-RELEASE-MANIFEST.md",
+      "type": "Document",
+      "id": "omerta-contracts/GENESIS-RELEASE-MANIFEST.md",
+      "label": "omerta-contracts/GENESIS-RELEASE-MANIFEST.md",
+      "documentType": "contract-project",
+      "lines": 223,
+      "version": "e4c70a0a77194d75",
+      "provenance": [
+        {
+          "file": "omerta-contracts/GENESIS-RELEASE-MANIFEST.md",
+          "line": 1,
+          "version": "e4c70a0a77194d75"
         }
       ]
     },
@@ -62578,12 +62785,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 664,
-      "version": "aeb1f21b9d69ba96",
+      "version": "28c8e743dda2eee9",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "aeb1f21b9d69ba96"
+          "version": "28c8e743dda2eee9"
         }
       ]
     },
@@ -63242,6 +63449,10 @@
           "line": 16
         },
         {
+          "file": "src/genesisrelease.js",
+          "line": 1
+        },
+        {
           "file": "src/rwastockkeeper.js",
           "line": 7
         },
@@ -63318,6 +63529,10 @@
           "line": 2
         },
         {
+          "file": "test/genesisrelease.js",
+          "line": 2
+        },
+        {
           "file": "test/pass.js",
           "line": 10
         },
@@ -63346,8 +63561,16 @@
           "line": 107
         },
         {
+          "file": "tools/genesis-cadence-sample.js",
+          "line": 4
+        },
+        {
           "file": "tools/genesis-launch-preflight.js",
           "line": 7
+        },
+        {
+          "file": "tools/genesis-release-manifest.js",
+          "line": 8
         },
         {
           "file": "tools/snapshot.js",
@@ -67054,6 +67277,9 @@
           "commit": "6ae9b8e9eb158180f3c98cfc4e19a645c4cc9b87"
         },
         {
+          "commit": "7513034368a2281262dc56792b1fba9d09501059"
+        },
+        {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
@@ -67171,6 +67397,9 @@
           "commit": "6ae9b8e9eb158180f3c98cfc4e19a645c4cc9b87"
         },
         {
+          "commit": "7513034368a2281262dc56792b1fba9d09501059"
+        },
+        {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
@@ -67286,6 +67515,9 @@
         },
         {
           "commit": "6ae9b8e9eb158180f3c98cfc4e19a645c4cc9b87"
+        },
+        {
+          "commit": "7513034368a2281262dc56792b1fba9d09501059"
         },
         {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
@@ -67436,6 +67668,9 @@
         },
         {
           "commit": "6ae9b8e9eb158180f3c98cfc4e19a645c4cc9b87"
+        },
+        {
+          "commit": "7513034368a2281262dc56792b1fba9d09501059"
         },
         {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
@@ -68661,17 +68896,32 @@
       ]
     },
     {
+      "key": "Module:src/genesiscadence.js",
+      "type": "Module",
+      "id": "src/genesiscadence.js",
+      "label": "src/genesiscadence.js",
+      "lines": 152,
+      "version": "93982c9d893f12ce",
+      "provenance": [
+        {
+          "file": "src/genesiscadence.js",
+          "line": 1,
+          "version": "93982c9d893f12ce"
+        }
+      ]
+    },
+    {
       "key": "Module:src/genesiscca.js",
       "type": "Module",
       "id": "src/genesiscca.js",
       "label": "src/genesiscca.js",
-      "lines": 807,
-      "version": "683a01f51e01173e",
+      "lines": 808,
+      "version": "72f88b479ab3f109",
       "provenance": [
         {
           "file": "src/genesiscca.js",
           "line": 1,
-          "version": "683a01f51e01173e"
+          "version": "72f88b479ab3f109"
         }
       ]
     },
@@ -68687,6 +68937,21 @@
           "file": "src/genesislaunch.js",
           "line": 1,
           "version": "a758195a4d1e4e63"
+        }
+      ]
+    },
+    {
+      "key": "Module:src/genesisrelease.js",
+      "type": "Module",
+      "id": "src/genesisrelease.js",
+      "label": "src/genesisrelease.js",
+      "lines": 389,
+      "version": "50038bf3fe3f5e76",
+      "provenance": [
+        {
+          "file": "src/genesisrelease.js",
+          "line": 1,
+          "version": "50038bf3fe3f5e76"
         }
       ]
     },
@@ -73405,12 +73670,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "997919a6812b96423ebaccfd7340f43e77bceea2",
+      "revision": "df62bbb2889469830584fa4d85e0a4adbde4e684",
       "currentBranch": "codex/site-copy-ui-upgrade",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": true,
-      "currentArtifactCount": 1642,
+      "currentArtifactCount": 1648,
       "provenance": [
         {
           "file": "README.md",
@@ -95222,13 +95487,13 @@
       "type": "TestSuite",
       "id": "test/genesiscca.js",
       "label": "test/genesiscca.js",
-      "lines": 179,
-      "version": "20f2ea6de69742e9",
+      "lines": 180,
+      "version": "5570775cb667a1c5",
       "provenance": [
         {
           "file": "test/genesiscca.js",
           "line": 1,
-          "version": "20f2ea6de69742e9"
+          "version": "5570775cb667a1c5"
         }
       ]
     },
@@ -95244,6 +95509,21 @@
           "file": "test/genesislaunch.js",
           "line": 1,
           "version": "561b1cfd1c520f2a"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/genesisrelease.js",
+      "type": "TestSuite",
+      "id": "test/genesisrelease.js",
+      "label": "test/genesisrelease.js",
+      "lines": 188,
+      "version": "5507fd4da0bb911e",
+      "provenance": [
+        {
+          "file": "test/genesisrelease.js",
+          "line": 1,
+          "version": "5507fd4da0bb911e"
         }
       ]
     },
@@ -97388,6 +97668,15 @@
       "to": "Domain:chain-economy",
       "provenance": {
         "file": "omerta-contracts/GENESIS-LAUNCH.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/GENESIS-RELEASE-MANIFEST.md",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/GENESIS-RELEASE-MANIFEST.md",
         "line": 1
       }
     },
@@ -103972,6 +104261,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:src/genesiscadence.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/genesiscadence.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:src/genesiscca.js",
       "to": "Domain:platform-core",
       "provenance": {
@@ -103985,6 +104283,15 @@
       "to": "Domain:platform-core",
       "provenance": {
         "file": "src/genesislaunch.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:src/genesisrelease.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/genesisrelease.js",
         "line": 1
       }
     },
@@ -105421,6 +105728,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/genesisrelease.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/genesisrelease.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/graph.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -106249,6 +106565,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:tools/genesis-cadence-sample.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/genesis-cadence-sample.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:tools/genesis-fork-rehearsal.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -106271,6 +106596,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/genesis-launch-preflight.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/genesis-release-manifest.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/genesis-release-manifest.js",
         "line": 1
       }
     },
@@ -147413,6 +147747,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:7513034368a2281262dc56792b1fba9d09501059",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "7513034368a2281262dc56792b1fba9d09501059"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7513034368a2281262dc56792b1fba9d09501059",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "7513034368a2281262dc56792b1fba9d09501059"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7513034368a2281262dc56792b1fba9d09501059",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "7513034368a2281262dc56792b1fba9d09501059"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7513034368a2281262dc56792b1fba9d09501059",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "7513034368a2281262dc56792b1fba9d09501059"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:75192dc763e1c78328c524f1422ab081dc1b0e50",
       "to": "Artifact:package.json",
       "provenance": {
@@ -184062,6 +184428,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:backend",
+      "to": "Artifact:src/genesiscadence.js",
+      "provenance": {
+        "file": "src/genesiscadence.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
       "to": "Artifact:src/genesiscca.js",
       "provenance": {
         "file": "src/genesiscca.js",
@@ -184074,6 +184449,15 @@
       "to": "Artifact:src/genesislaunch.js",
       "provenance": {
         "file": "src/genesislaunch.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
+      "to": "Artifact:src/genesisrelease.js",
+      "provenance": {
+        "file": "src/genesisrelease.js",
         "line": 1
       }
     },
@@ -185158,6 +185542,15 @@
       "to": "Artifact:omerta-contracts/GENESIS-LAUNCH.md",
       "provenance": {
         "file": "omerta-contracts/GENESIS-LAUNCH.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/GENESIS-RELEASE-MANIFEST.md",
+      "provenance": {
+        "file": "omerta-contracts/GENESIS-RELEASE-MANIFEST.md",
         "line": 1
       }
     },
@@ -192252,6 +192645,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/genesisrelease.js",
+      "provenance": {
+        "file": "test/genesisrelease.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/graph.js",
       "provenance": {
         "file": "test/graph.js",
@@ -193080,6 +193482,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:tools/genesis-cadence-sample.js",
+      "provenance": {
+        "file": "tools/genesis-cadence-sample.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:tools/genesis-fork-rehearsal.js",
       "provenance": {
         "file": "tools/genesis-fork-rehearsal.js",
@@ -193101,6 +193512,15 @@
       "to": "Artifact:tools/genesis-launch-preflight.js",
       "provenance": {
         "file": "tools/genesis-launch-preflight.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/genesis-release-manifest.js",
+      "provenance": {
+        "file": "tools/genesis-release-manifest.js",
         "line": 1
       }
     },
@@ -198391,6 +198811,15 @@
     {
       "type": "DECLARES",
       "from": "Artifact:package.json",
+      "to": "Command:npm:genesis:cadence",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
       "to": "Command:npm:genesis:config",
       "provenance": {
         "file": "package.json",
@@ -198409,7 +198838,25 @@
     {
       "type": "DECLARES",
       "from": "Artifact:package.json",
+      "to": "Command:npm:genesis:inventory",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
       "to": "Command:npm:genesis:preflight",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:genesis:release",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -207641,7 +208088,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 351
+      "weight": 355
     },
     {
       "type": "DEPENDS_ON",
@@ -208038,6 +208485,15 @@
     },
     {
       "type": "EXECUTES",
+      "from": "Command:npm:genesis:cadence",
+      "to": "Artifact:tools/genesis-cadence-sample.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
       "from": "Command:npm:genesis:config",
       "to": "Artifact:tools/genesis-launch-config.js",
       "provenance": {
@@ -208056,8 +208512,26 @@
     },
     {
       "type": "EXECUTES",
+      "from": "Command:npm:genesis:inventory",
+      "to": "Artifact:tools/genesis-release-manifest.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
       "from": "Command:npm:genesis:preflight",
       "to": "Artifact:tools/genesis-launch-preflight.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:genesis:release",
+      "to": "Artifact:tools/genesis-release-manifest.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -208202,6 +208676,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:pretest",
       "to": "Artifact:test/genesislaunch.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/genesisrelease.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -209345,6 +209828,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:genesis",
       "to": "Artifact:test/genesislaunch.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:genesis",
+      "to": "Artifact:test/genesisrelease.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -219929,6 +220421,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:7513034368a2281262dc56792b1fba9d09501059",
+      "provenance": {
+        "commit": "7513034368a2281262dc56792b1fba9d09501059"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:75192dc763e1c78328c524f1422ab081dc1b0e50",
       "provenance": {
         "commit": "75192dc763e1c78328c524f1422ab081dc1b0e50"
@@ -223468,6 +223968,14 @@
       "to": "Commit:df5da0f699531d76ac8c4458a920e51dccbc5824",
       "provenance": {
         "commit": "df5da0f699531d76ac8c4458a920e51dccbc5824"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:df62bbb2889469830584fa4d85e0a4adbde4e684",
+      "provenance": {
+        "commit": "df62bbb2889469830584fa4d85e0a4adbde4e684"
       }
     },
     {
@@ -227510,6 +228018,33 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "src/genesislaunch.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/genesisrelease.js",
+      "to": "Artifact:src/genesiscadence.js",
+      "provenance": {
+        "file": "src/genesisrelease.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/genesisrelease.js",
+      "to": "Artifact:src/genesiscca.js",
+      "provenance": {
+        "file": "src/genesisrelease.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/genesisrelease.js",
+      "to": "ExternalDependency:viem",
+      "provenance": {
+        "file": "src/genesisrelease.js",
         "line": 1
       }
     },
@@ -234688,6 +235223,33 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/genesisrelease.js",
+      "to": "Artifact:src/genesiscadence.js",
+      "provenance": {
+        "file": "test/genesisrelease.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/genesisrelease.js",
+      "to": "Artifact:src/genesiscca.js",
+      "provenance": {
+        "file": "test/genesisrelease.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/genesisrelease.js",
+      "to": "ExternalDependency:viem",
+      "provenance": {
+        "file": "test/genesisrelease.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/graph.js",
       "to": "Artifact:tools/graph.js",
       "provenance": {
@@ -238000,6 +238562,24 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:tools/genesis-cadence-sample.js",
+      "to": "Artifact:src/genesiscadence.js",
+      "provenance": {
+        "file": "tools/genesis-cadence-sample.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/genesis-cadence-sample.js",
+      "to": "ExternalDependency:viem",
+      "provenance": {
+        "file": "tools/genesis-cadence-sample.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:tools/genesis-fork-rehearsal.js",
       "to": "ExternalDependency:pg-mem",
       "provenance": {
@@ -238032,6 +238612,24 @@
       "provenance": {
         "file": "tools/genesis-launch-preflight.js",
         "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/genesis-release-manifest.js",
+      "to": "Artifact:src/genesiscadence.js",
+      "provenance": {
+        "file": "tools/genesis-release-manifest.js",
+        "line": 14
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/genesis-release-manifest.js",
+      "to": "ExternalDependency:viem",
+      "provenance": {
+        "file": "tools/genesis-release-manifest.js",
+        "line": 8
       }
     },
     {
@@ -265675,6 +266273,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:omerta-contracts/GENESIS-RELEASE-MANIFEST.md",
+      "to": "Artifact:omerta-contracts/GENESIS-RELEASE-MANIFEST.md",
+      "provenance": {
+        "file": "omerta-contracts/GENESIS-RELEASE-MANIFEST.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:omerta-contracts/README.md",
       "to": "Artifact:omerta-contracts/README.md",
       "provenance": {
@@ -267034,6 +267641,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Module:src/genesiscadence.js",
+      "to": "Artifact:src/genesiscadence.js",
+      "provenance": {
+        "file": "src/genesiscadence.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Module:src/genesiscca.js",
       "to": "Artifact:src/genesiscca.js",
       "provenance": {
@@ -267047,6 +267663,15 @@
       "to": "Artifact:src/genesislaunch.js",
       "provenance": {
         "file": "src/genesislaunch.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Module:src/genesisrelease.js",
+      "to": "Artifact:src/genesisrelease.js",
+      "provenance": {
+        "file": "src/genesisrelease.js",
         "line": 1
       }
     },
@@ -268928,6 +269553,15 @@
       "to": "Artifact:test/genesislaunch.js",
       "provenance": {
         "file": "test/genesislaunch.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/genesisrelease.js",
+      "to": "Artifact:test/genesisrelease.js",
+      "provenance": {
+        "file": "test/genesisrelease.js",
         "line": 1
       }
     },
@@ -271485,6 +272119,24 @@
       "provenance": {
         "file": "test/genesislaunch.js",
         "line": 5
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/genesisrelease.js",
+      "to": "Artifact:src/genesiscadence.js",
+      "provenance": {
+        "file": "test/genesisrelease.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/genesisrelease.js",
+      "to": "Artifact:src/genesiscca.js",
+      "provenance": {
+        "file": "test/genesisrelease.js",
+        "line": 9
       }
     },
     {
@@ -280089,6 +280741,15 @@
       "provenance": {
         "file": "src/genesislaunch.js",
         "line": 56
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/genesisrelease.js",
+      "to": "Table:characters",
+      "provenance": {
+        "file": "src/genesisrelease.js",
+        "line": 41
       }
     },
     {

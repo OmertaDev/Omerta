@@ -67,8 +67,10 @@
 | [src/firstblood.js](../../src/firstblood.js) | 85 | social-combat | 1 / 2 | 0 | 3 | 0 |
 | [src/firsts.js](../../src/firsts.js) | 144 | world-progression | 1 / 6 | 1 | 7 | 1 |
 | [src/game.js](../../src/game.js) | 2596 | platform-core | 10 / 125 | 21 | 62 | 12 |
-| [src/genesiscca.js](../../src/genesiscca.js) | 807 | platform-core | 0 / 1 | 0 | 0 | 0 |
+| [src/genesiscadence.js](../../src/genesiscadence.js) | 152 | platform-core | 0 / 4 | 0 | 0 | 1 |
+| [src/genesiscca.js](../../src/genesiscca.js) | 808 | platform-core | 0 / 3 | 0 | 0 | 1 |
 | [src/genesislaunch.js](../../src/genesislaunch.js) | 72 | platform-core | 1 / 3 | 0 | 1 | 0 |
+| [src/genesisrelease.js](../../src/genesisrelease.js) | 389 | platform-core | 2 / 0 | 0 | 1 | 0 |
 | [src/growth.js](../../src/growth.js) | 1026 | engagement-growth | 4 / 15 | 16 | 17 | 6 |
 | [src/heists.js](../../src/heists.js) | 576 | social-combat | 3 / 9 | 10 | 10 | 3 |
 | [src/home.js](../../src/home.js) | 54 | engagement-growth | 13 / 3 | 1 | 0 | 1 |

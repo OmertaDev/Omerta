@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { decodeFunctionData } from 'viem';
+import { decodeFunctionData, keccak256 } from 'viem';
 import {
   GENESIS_DISTRIBUTION_OMR,
   GENESIS_LP_RESERVE_OMR,
@@ -78,6 +78,7 @@ assert.equal(built.invariants.floorAligned, true);
 assert.equal(built.safeTransactions.prepare.length, 3);
 assert.equal(built.safeTransactions.launch.from, input.treasury);
 assert.equal(built.participants.vigRecipient, input.vigRecipient);
+assert.equal(built.calldataDigests.launchKeccak256, keccak256(built.safeTransactions.launch.data));
 
 const outer = decodeFunctionData({
   abi: [{

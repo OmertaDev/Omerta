@@ -761,6 +761,7 @@ export function buildGenesisLaunchArtifacts(input = {}) {
     strategyConfigData,
     distribution,
     approvals: { permit2Expiration },
+    calldataDigests: { launchKeccak256: keccak256(launchCalldata) },
     safeTransactions: {
       prepare: [
         {
