@@ -223,8 +223,15 @@ advance/event.
 `finalizeConstellation` has one exact validation order. It checks phase equals
 `READY_TO_FINALIZE`; checks `nextChildIndex == 5`, with any count inconsistency
 reported as `FactoryChildIndex(nextChildIndex)`; then checks children 0..4 in
-index order for exact predicted address, nonzero code, runtime size, runtime
-hash, topology call success, exact 96-byte return, and exact tuple semantics.
+index order at the fixed predicted address returned by `childCommitment`.
+Factory first reads `actualExtcodehash = extcodehash(predictedChild)`. Before
+runtime size, the general runtime-hash comparison, or any topology call, an
+`actualExtcodehash` of `bytes32(0)` (nonexistent account) or
+`keccak256(bytes(""))` (existing account with empty code) reverts as
+`FactoryRuntimeHashMismatch(index, expectedRuntimeHash, actualExtcodehash)`.
+For nonempty code it then checks runtime size, checks actual versus expected
+runtime hash, and checks topology call success, exact 96-byte return, and exact
+tuple semantics, in that order.
 It next checks Registry code, runtime hash, STATICCALL success, exact 32-byte
 return, and chain result. Only then does it set `FINALIZING`. It invokes
 finalizers in indices `2,4,3,1,0` (BudgetBook, Reconciliation, Intent, Core,
@@ -237,9 +244,13 @@ it rechecks all five finalized flags, sets `FINALIZED`, and emits
 failure atomically rolls back phase and every child finalization.
 
 Failures are normalized to the distinct errors above and never bubble or copy
-dynamic peer revert data. `FactoryChildAddressMismatch` is a deterministic
-ordinary-CREATE-address invariant harness, `FactoryRuntimeTooLarge` is an
-EIP-170 invariant harness, and the READY/count use of `FactoryChildIndex` covers
+dynamic peer revert data. `FactoryChildAddressMismatch` applies only immediately
+after raw CREATE when its returned address differs from the deterministic
+predicted address; it is a deterministic ordinary-CREATE-address invariant
+harness and is not a finalization branch. Finalization has no redundant stored
+“actual child” address to compare: `childCommitment` fixes the predicted identity
+used for every recheck. `FactoryRuntimeTooLarge` is an EIP-170 invariant harness,
+and the READY/count use of `FactoryChildIndex` covers
 an otherwise unreachable phase/count-corruption fixture (the same error remains
 normally reachable from an out-of-range `childCommitment` query). Other declared
 errors have direct input, dependency, child-behavior, timing, or injected
@@ -265,8 +276,9 @@ after CALL returns—and before checking its success bit, returndata size, or an
 semantic result—Factory independently requires `gasleft() >= 100_000`.
 Both failures use `FactoryPostCallGasInsufficient(index, available, required)`,
 with `required=211_588` at the precheck and `required=100_000` at the postcheck.
-Boundary and mutation tests cover 211,587/211,588 at entry, 99,999/100,000 on
-return, maximum cold-access/intervening overhead, EIP-150 forwarding, child
+Boundary and mutation tests cover 211,587/211,588 as `gasleft()` observed
+immediately at the precheck, 99,999/100,000 on return, maximum
+cold-access/intervening overhead, EIP-150 forwarding, child
 consumption of its complete cap, and the precedence of postcheck over CALL
 failure/returndata interpretation.
 
