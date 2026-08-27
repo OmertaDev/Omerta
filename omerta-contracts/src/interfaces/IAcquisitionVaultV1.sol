@@ -104,6 +104,58 @@ interface IAcquisitionVaultV1 {
         CANONICAL_DEPOSIT_AVAILABLE_CREDIT
     }
 
+    struct IngressConfig {
+        address ingress;
+        bytes32 runtimeCodeHash;
+        uint256 perDepositCapWei;
+        uint256 epochDepositCapWei;
+        uint256 lifetimeDepositCapWei;
+    }
+
+    struct PendingIngressProposal {
+        bytes32 proposalId;
+        uint256 proposalNumber;
+        address proposedBy;
+        IngressConfig config;
+        bytes32 configHash;
+        uint64 proposedAt;
+        uint64 validAfter;
+        uint64 expiresAt;
+        bytes32 detailsHash;
+    }
+
+    struct IngressRecord {
+        uint256 generation;
+        address ingress;
+        bytes32 runtimeCodeHash;
+        uint256 perDepositCapWei;
+        uint256 epochDepositCapWei;
+        uint256 lifetimeDepositCapWei;
+        uint64 activatedAt;
+        uint64 disabledAt;
+    }
+
+    enum DepositCapKind {
+        NONE,
+        PER_DEPOSIT,
+        EPOCH,
+        GENERATION_LIFETIME,
+        GLOBAL_LIFETIME
+    }
+
+    struct DepositRecord {
+        bytes32 depositId;
+        uint256 ingressGeneration;
+        address ingress;
+        bytes32 sourceEventId;
+        uint256 amountWei;
+        uint256 balanceDeficitRepairWei;
+        uint256 availableCreditWei;
+        uint256 epochDay;
+        uint256 accountingSequence;
+        uint64 depositedAt;
+    }
+
     error WrongChain(uint256 actualChainId);
     error ZeroAddress();
     error ContractRequired(address target);
@@ -140,6 +192,18 @@ interface IAcquisitionVaultV1 {
     error InsufficientUnattributed(uint256 availableWei, uint256 requestedWei);
     error BalanceDeficitActive(uint256 deficitWei);
     error ReconciliationShortfallActive(uint256 shortfallWei);
+    error IngressProposalPending(bytes32 proposalId);
+    error IngressProposalMissing();
+    error InvalidIngressConfig();
+    error IngressCodeHashMismatch(address ingress, bytes32 expected, bytes32 actual);
+    error IngressActive(address ingress);
+    error NoActiveIngress();
+    error IngressNotFound(uint256 generation);
+    error NotActiveIngress(address caller);
+    error DepositSourceRequired();
+    error DepositReplay(bytes32 depositId);
+    error DepositCapExceeded(uint8 capKind, uint256 capWei, uint256 attemptedTotalWei);
+    error DepositNotFound(bytes32 depositId);
 
     event MainOperatorNominationCreated(
         bytes32 indexed proposalId,
@@ -208,6 +272,64 @@ interface IAcquisitionVaultV1 {
         uint8 reasonCode,
         bytes32 detailsHash
     );
+    event IngressProposalCreated(
+        bytes32 indexed proposalId,
+        address indexed ingress,
+        address indexed proposedBy,
+        uint256 proposalNumber,
+        bytes32 configHash,
+        uint64 proposedAt,
+        uint64 validAfter,
+        uint64 expiresAt,
+        uint8 reasonCode,
+        bytes32 detailsHash
+    );
+    event IngressProposalCancelled(
+        bytes32 indexed proposalId,
+        address indexed ingress,
+        address indexed actor,
+        uint8 reasonCode,
+        bytes32 detailsHash
+    );
+    event IngressProposalExpired(
+        bytes32 indexed proposalId,
+        address indexed ingress,
+        address indexed actor,
+        uint8 reasonCode,
+        bytes32 detailsHash
+    );
+    event IngressActivated(
+        uint256 indexed ingressGeneration,
+        address indexed ingress,
+        bytes32 indexed proposalId,
+        bytes32 runtimeCodeHash,
+        uint256 perDepositCapWei,
+        uint256 epochDepositCapWei,
+        uint256 lifetimeDepositCapWei,
+        uint64 activatedAt,
+        uint8 reasonCode,
+        bytes32 detailsHash
+    );
+    event IngressDisabled(
+        uint256 indexed ingressGeneration,
+        address indexed ingress,
+        address indexed actor,
+        uint64 disabledAt,
+        uint8 reasonCode,
+        bytes32 detailsHash
+    );
+    event CanonicalDeposit(
+        bytes32 indexed depositId,
+        uint256 indexed ingressGeneration,
+        bytes32 indexed sourceEventId,
+        address ingress,
+        uint256 amountWei,
+        uint256 balanceDeficitRepairWei,
+        uint256 availableCreditWei,
+        uint256 epochDay,
+        uint256 accountingSequence,
+        uint64 depositedAt
+    );
 
     function supportedChainId() external view returns (uint256);
     function OPERATOR_NOMINATION_DELAY() external view returns (uint64);
@@ -254,4 +376,19 @@ interface IAcquisitionVaultV1 {
     function accountingTotals() external view returns (AccountingTotals memory);
     function syncBalance() external returns (bytes32 mutationId);
     function reclassifyUnattributed(uint256 amountWei, bytes32 detailsHash) external returns (bytes32 mutationId);
+    function globalLifetimeCanonicalDepositedWei() external view returns (uint256);
+    function ingressProposalNonce() external view returns (uint256);
+    function ingressGeneration() external view returns (uint256);
+    function activeIngressGeneration() external view returns (uint256);
+    function pendingIngressProposal() external view returns (PendingIngressProposal memory);
+    function getIngress(uint256 generation) external view returns (IngressRecord memory);
+    function proposeIngress(IngressConfig calldata config, bytes32 detailsHash) external returns (bytes32 proposalId);
+    function cancelIngressProposal(bytes32 proposalId, bytes32 detailsHash) external;
+    function expireIngressProposal(bytes32 proposalId) external;
+    function activateIngress(bytes32 proposalId) external returns (uint256 generation);
+    function disableIngress(bytes32 detailsHash) external;
+    function ingressLifetimeDepositedWei(uint256 generation) external view returns (uint256);
+    function ingressEpochDepositedWei(uint256 generation, uint256 epochDay) external view returns (uint256);
+    function getDeposit(bytes32 depositId) external view returns (DepositRecord memory);
+    function depositCanonical(bytes32 sourceEventId) external payable returns (bytes32 depositId);
 }

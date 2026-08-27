@@ -21,6 +21,11 @@ interface A1Task4Errors {
     error LocalReadinessFailed(uint8 condition);
 }
 
+interface A1Task5Errors {
+    error InvalidIngressConfig();
+    error NoActiveIngress();
+}
+
 contract A1Task4Safe {
     function execute(address target, bytes calldata data) external returns (bytes memory result) {
         (bool ok, bytes memory returndata) = target.call(data);
@@ -36,6 +41,20 @@ contract A1Task4Safe {
 contract A1Task4Registry {
     function supportedChainId() external pure returns (uint256) {
         return 4663;
+    }
+}
+
+contract A1Task5Ingress {
+    function deposit(address target, bytes32 sourceEventId) external payable returns (bytes memory result) {
+        (bool ok, bytes memory returndata) = target.call{value: msg.value}(
+            abi.encodeWithSelector(bytes4(keccak256("depositCanonical(bytes32)")), sourceEventId)
+        );
+        if (!ok) {
+            assembly ("memory-safe") {
+                revert(add(returndata, 0x20), mload(returndata))
+            }
+        }
+        return returndata;
     }
 }
 
@@ -76,6 +95,14 @@ contract AcquisitionVaultAccountingTest is Test {
         uint256 accountingSequence;
     }
 
+    struct Task5IngressConfig {
+        address ingress;
+        bytes32 runtimeCodeHash;
+        uint256 perDepositCapWei;
+        uint256 epochDepositCapWei;
+        uint256 lifetimeDepositCapWei;
+    }
+
     uint256 internal constant CHAIN_ID = 4663;
     uint256 internal constant GLOBAL_CAP = 10_000 ether;
     uint8 internal constant MUTATION_SYNC = 1;
@@ -89,7 +116,11 @@ contract AcquisitionVaultAccountingTest is Test {
     bytes32 internal constant COMPONENT_TAG = keccak256("OMERTA_ACQUISITION_ACCOUNTING_COMPONENT_V1");
     bytes32 internal constant SYNC_SUBJECT_TAG = keccak256("OMERTA_ACQUISITION_SYNC_BALANCE_V1");
     bytes32 internal constant DETAILS = keccak256("a1-task4-reclassification");
+    bytes32 internal constant SECOND_DETAILS = keccak256("a1-task5-second-details");
     bytes32 internal constant SEQUENCE_LABEL = keccak256(bytes("accountingSequence"));
+    bytes32 internal constant DEPOSIT_TAG = keccak256("OMERTA_ACQUISITION_DEPOSIT_V1");
+    bytes32 internal constant CANONICAL_DEPOSIT_SIG =
+        keccak256("CanonicalDeposit(bytes32,uint256,bytes32,address,uint256,uint256,uint256,uint256,uint256,uint64)");
 
     bytes4 internal constant CAP_SELECTOR = bytes4(keccak256("globalLifetimeCanonicalDepositCapWei()"));
     bytes4 internal constant TOTALS_SELECTOR = bytes4(keccak256("accountingTotals()"));
@@ -102,6 +133,11 @@ contract AcquisitionVaultAccountingTest is Test {
     bytes4 internal constant BACKING_SELECTOR = bytes4(keccak256("reconciliationBackingWei()"));
     bytes4 internal constant SEQUENCE_SELECTOR = bytes4(keccak256("accountingSequence()"));
     bytes4 internal constant LAST_DEFICIT_SELECTOR = bytes4(keccak256("lastObservedBalanceDeficitWei()"));
+    bytes4 internal constant PROPOSE_INGRESS_SELECTOR =
+        bytes4(keccak256("proposeIngress((address,bytes32,uint256,uint256,uint256),bytes32)"));
+    bytes4 internal constant ACTIVATE_INGRESS_SELECTOR = bytes4(keccak256("activateIngress(bytes32)"));
+    bytes4 internal constant DISABLE_INGRESS_SELECTOR = bytes4(keccak256("disableIngress(bytes32)"));
+    bytes4 internal constant ACTIVE_INGRESS_GENERATION_SELECTOR = bytes4(keccak256("activeIngressGeneration()"));
 
     bytes32 internal constant ACCOUNTING_MUTATION_SIG = keccak256(
         "AccountingMutation(uint256,bytes32,uint8,(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),uint256)"
@@ -193,6 +229,39 @@ contract AcquisitionVaultAccountingTest is Test {
         uint256 next = (current & ~pausedMask) | (uint256(value ? 1 : 0) << 160);
         vm.store(address(vault), slot, bytes32(next));
         assertEq(vault.paused(), value);
+    }
+
+    function _proposeAndActivateIngress() internal returns (A1Task5Ingress ingress) {
+        ingress = new A1Task5Ingress();
+        Task5IngressConfig memory config = Task5IngressConfig({
+            ingress: address(ingress),
+            runtimeCodeHash: address(ingress).codehash,
+            perDepositCapWei: 10 ether,
+            epochDepositCapWei: 20 ether,
+            lifetimeDepositCapWei: 30 ether
+        });
+        bytes32 proposalId =
+            abi.decode(_safeExecute(abi.encodeWithSelector(PROPOSE_INGRESS_SELECTOR, config, DETAILS)), (bytes32));
+        vm.warp(block.timestamp + 48 hours);
+        _safeExecute(abi.encodeWithSelector(ACTIVATE_INGRESS_SELECTOR, proposalId));
+    }
+
+    function _ingressConfig(A1Task5Ingress ingress, uint256 perDeposit, uint256 epoch, uint256 lifetime)
+        internal
+        view
+        returns (IAcquisitionVaultV1.IngressConfig memory)
+    {
+        return IAcquisitionVaultV1.IngressConfig({
+            ingress: address(ingress),
+            runtimeCodeHash: address(ingress).codehash,
+            perDepositCapWei: perDeposit,
+            epochDepositCapWei: epoch,
+            lifetimeDepositCapWei: lifetime
+        });
+    }
+
+    function _propose(IAcquisitionVaultV1.IngressConfig memory config, bytes32 details) internal returns (bytes32) {
+        return abi.decode(_safeExecute(abi.encodeCall(vault.proposeIngress, (config, details))), (bytes32));
     }
 
     function _mutationId(uint256 sequence, uint8 kind, bytes32 subjectId) internal view returns (bytes32) {
@@ -316,23 +385,21 @@ contract AcquisitionVaultAccountingTest is Test {
         assertEq(reads[0], bytes32(expectedSlot), "scalar storage slot drift");
     }
 
-    function _assertTask4AbiCounts(bytes memory json, uint256 opening, uint256 closing) internal pure {
+    function _assertTask5AbiCounts(bytes memory json, uint256 opening, uint256 closing) internal pure {
         uint256 functionCount = _countBetween(json, bytes('"type":"function"'), opening, closing);
         uint256 errorCount = _countBetween(json, bytes('"type":"error"'), opening, closing);
         uint256 eventCount = _countBetween(json, bytes('"type":"event"'), opening, closing);
         uint256 constructorCount = _countBetween(json, bytes('"type":"constructor"'), opening, closing);
-        assertEq(functionCount, 52, "Task-4 function count drift");
-        assertEq(errorCount, 43, "Task-4 error count drift");
-        assertEq(eventCount, 15, "Task-4 event count drift");
-        assertEq(constructorCount, 1, "Task-4 constructor count drift");
+        assertEq(functionCount, 67, "Task-5 function count drift");
+        assertEq(errorCount, 55, "Task-5 error count drift");
+        assertEq(eventCount, 21, "Task-5 event count drift");
+        assertEq(constructorCount, 1, "Task-5 constructor count drift");
         assertEq(
-            _countBetween(json, bytes('"stateMutability":"payable"'), opening, closing),
-            0,
-            "Task-4 payable entry leaked"
+            _countBetween(json, bytes('"stateMutability":"payable"'), opening, closing), 1, "Task-5 payable entry drift"
         );
         assertEq(_countBetween(json, bytes('"type":"receive"'), opening, closing), 0, "Task-4 receive entry leaked");
         assertEq(_countBetween(json, bytes('"type":"fallback"'), opening, closing), 0, "Task-4 fallback entry leaked");
-        assertEq(functionCount + errorCount + eventCount + constructorCount, 111, "Task-4 ABI entry drift");
+        assertEq(functionCount + errorCount + eventCount + constructorCount, 144, "Task-5 ABI entry drift");
     }
 
     function _assertTask4MethodMembers(string memory artifact) internal pure {
@@ -352,6 +419,70 @@ contract AcquisitionVaultAccountingTest is Test {
         ];
         for (uint256 i; i < added.length; ++i) {
             assertTrue(_contains(methods, added[i]), string.concat("missing Task-4 method: ", added[i]));
+        }
+    }
+
+    function _assertTask5MethodMembers(string memory artifact) internal pure {
+        string[] memory methods = vm.parseJsonKeys(artifact, ".methodIdentifiers");
+        assertEq(methods.length, 67, "Task-5 method count drift");
+        string[15] memory added = [
+            "globalLifetimeCanonicalDepositedWei()",
+            "ingressProposalNonce()",
+            "ingressGeneration()",
+            "activeIngressGeneration()",
+            "pendingIngressProposal()",
+            "getIngress(uint256)",
+            "proposeIngress((address,bytes32,uint256,uint256,uint256),bytes32)",
+            "cancelIngressProposal(bytes32,bytes32)",
+            "expireIngressProposal(bytes32)",
+            "activateIngress(bytes32)",
+            "disableIngress(bytes32)",
+            "ingressLifetimeDepositedWei(uint256)",
+            "ingressEpochDepositedWei(uint256,uint256)",
+            "getDeposit(bytes32)",
+            "depositCanonical(bytes32)"
+        ];
+        for (uint256 i; i < added.length; ++i) {
+            assertTrue(_contains(methods, added[i]), string.concat("missing Task-5 method: ", added[i]));
+        }
+    }
+
+    function _assertTask5ErrorAndEventNames(bytes memory json, uint256 opening, uint256 closing) internal pure {
+        string[12] memory errors = [
+            "IngressProposalPending",
+            "IngressProposalMissing",
+            "InvalidIngressConfig",
+            "IngressCodeHashMismatch",
+            "IngressActive",
+            "NoActiveIngress",
+            "IngressNotFound",
+            "NotActiveIngress",
+            "DepositSourceRequired",
+            "DepositReplay",
+            "DepositCapExceeded",
+            "DepositNotFound"
+        ];
+        for (uint256 i; i < errors.length; ++i) {
+            assertNotEq(
+                _findBetween(json, bytes(string.concat('"type":"error","name":"', errors[i], '"')), opening, closing),
+                type(uint256).max,
+                string.concat("missing Task-5 error: ", errors[i])
+            );
+        }
+        string[6] memory events = [
+            "IngressProposalCreated",
+            "IngressProposalCancelled",
+            "IngressProposalExpired",
+            "IngressActivated",
+            "IngressDisabled",
+            "CanonicalDeposit"
+        ];
+        for (uint256 i; i < events.length; ++i) {
+            assertNotEq(
+                _findBetween(json, bytes(string.concat('"type":"event","name":"', events[i], '"')), opening, closing),
+                type(uint256).max,
+                string.concat("missing Task-5 event: ", events[i])
+            );
         }
     }
 
@@ -458,7 +589,195 @@ contract AcquisitionVaultAccountingTest is Test {
         assertEq(totals.accountingSequence, 0);
     }
 
-    function test_exactTask4EnumsAbiCountsMembersConstructorAndStorageAppend() public {
+    function test_task5IngressLifecycleSurfaceExists() public {
+        A1Task5Ingress ingress = new A1Task5Ingress();
+        Task5IngressConfig memory config = Task5IngressConfig({
+            ingress: address(ingress),
+            runtimeCodeHash: address(ingress).codehash,
+            perDepositCapWei: 1 ether,
+            epochDepositCapWei: 2 ether,
+            lifetimeDepositCapWei: 3 ether
+        });
+        (bool ok,) = address(safe)
+            .call(
+                abi.encodeCall(
+                    A1Task4Safe.execute,
+                    (address(vault), abi.encodeWithSelector(PROPOSE_INGRESS_SELECTOR, config, DETAILS))
+                )
+            );
+        assertTrue(ok, "Task-5 ingress proposal selector is missing");
+    }
+
+    function test_task5ZeroRuntimeHashUsesInvalidConfigPartition() public {
+        A1Task5Ingress ingress = new A1Task5Ingress();
+        Task5IngressConfig memory config = Task5IngressConfig({
+            ingress: address(ingress),
+            runtimeCodeHash: bytes32(0),
+            perDepositCapWei: 1 ether,
+            epochDepositCapWei: 2 ether,
+            lifetimeDepositCapWei: 3 ether
+        });
+        _assertSafeRevert(
+            abi.encodeWithSelector(PROPOSE_INGRESS_SELECTOR, config, DETAILS),
+            abi.encodeWithSelector(A1Task5Errors.InvalidIngressConfig.selector)
+        );
+    }
+
+    function test_task5NonzeroSourceWithZeroValueUsesInvalidAmount() public {
+        A1Task5Ingress ingress = _proposeAndActivateIngress();
+        vm.expectRevert(A1Task4Errors.InvalidAmount.selector);
+        ingress.deposit(address(vault), keccak256("nonzero-source"));
+    }
+
+    function test_task5DanglingActivePointerDisablesAsNoActiveIngress() public {
+        _write(ACTIVE_INGRESS_GENERATION_SELECTOR, 999);
+        vm.recordLogs();
+        _assertSafeRevert(
+            abi.encodeWithSelector(DISABLE_INGRESS_SELECTOR, DETAILS),
+            abi.encodeWithSelector(A1Task5Errors.NoActiveIngress.selector)
+        );
+        assertEq(vm.getRecordedLogs().length, 0);
+        assertEq(_word(ACTIVE_INGRESS_GENERATION_SELECTOR), 999);
+    }
+
+    function test_task5CanonicalDepositExactFinalLogAndGlobalOrder() public {
+        A1Task5Ingress ingress = _proposeAndActivateIngress();
+        bytes32 sourceEventId = keccak256("canonical-log-source");
+        bytes32 depositId =
+            keccak256(abi.encode(DEPOSIT_TAG, CHAIN_ID, address(vault), uint256(1), address(ingress), sourceEventId));
+        vm.recordLogs();
+        ingress.deposit{value: 1 ether}(address(vault), sourceEventId);
+        Vm.Log[] memory logs = vm.getRecordedLogs();
+        assertEq(logs.length, 3);
+        assertEq(logs[0].topics[0], ACCOUNTING_MUTATION_SIG);
+        assertEq(logs[1].topics[0], ACCOUNTING_COMPONENT_SIG);
+        assertEq(logs[2].emitter, address(vault));
+        assertEq(logs[2].topics.length, 4);
+        assertEq(logs[2].topics[0], CANONICAL_DEPOSIT_SIG);
+        assertEq(logs[2].topics[1], depositId);
+        assertEq(logs[2].topics[2], bytes32(uint256(1)));
+        assertEq(logs[2].topics[3], sourceEventId);
+        assertEq(
+            logs[2].data,
+            abi.encode(
+                address(ingress),
+                1 ether,
+                uint256(0),
+                1 ether,
+                block.timestamp / 1 days,
+                uint256(1),
+                uint64(block.timestamp)
+            )
+        );
+    }
+
+    function test_task5ReadinessRoleCollisionPrecedesSimultaneousBalanceDeficit() public {
+        A1Task5Ingress ingress = _proposeAndActivateIngress();
+        ingress.deposit{value: 1 ether}(address(vault), keccak256("readiness-precedence"));
+        vm.deal(address(vault), 0);
+        vm.store(address(vault), bytes32(uint256(2)), bytes32(uint256(uint160(address(ingress)))));
+        vm.expectRevert(abi.encodeWithSelector(A1Task4Errors.LocalReadinessFailed.selector, uint8(4)));
+        vm.prank(address(ingress));
+        vault.unpause(DETAILS);
+    }
+
+    function test_task5LifecycleDelayHalfOpenExpiryAndDriftLiveness() public {
+        A1Task5Ingress ingress = new A1Task5Ingress();
+        bytes32 proposalId = _propose(_ingressConfig(ingress, 1 ether, 2 ether, 3 ether), DETAILS);
+        IAcquisitionVaultV1.PendingIngressProposal memory pending = vault.pendingIngressProposal();
+        assertEq(pending.proposalId, proposalId);
+        assertEq(pending.proposedBy, address(safe));
+        vm.expectRevert(abi.encodeWithSelector(IAcquisitionVaultV1.ProposalNotReady.selector, pending.validAfter));
+        _safeExecute(abi.encodeCall(vault.activateIngress, (proposalId)));
+
+        vm.etch(address(ingress), hex"");
+        _safeExecute(abi.encodeCall(vault.cancelIngressProposal, (proposalId, SECOND_DETAILS)));
+        assertEq(vault.pendingIngressProposal().proposalId, bytes32(0));
+
+        A1Task5Ingress expiring = new A1Task5Ingress();
+        proposalId = _propose(_ingressConfig(expiring, 1 ether, 2 ether, 3 ether), DETAILS);
+        pending = vault.pendingIngressProposal();
+        vm.warp(pending.expiresAt - 1);
+        vm.expectRevert(abi.encodeWithSelector(IAcquisitionVaultV1.ProposalNotReady.selector, pending.expiresAt));
+        vault.expireIngressProposal(proposalId);
+        vm.warp(pending.expiresAt);
+        vm.expectRevert(abi.encodeWithSelector(IAcquisitionVaultV1.ProposalExpired.selector, pending.expiresAt));
+        _safeExecute(abi.encodeCall(vault.activateIngress, (proposalId)));
+        vault.expireIngressProposal(proposalId);
+        assertEq(vault.pendingIngressProposal().proposalId, bytes32(0));
+    }
+
+    function test_task5ActivePendingRotationDisablePreservesPending() public {
+        A1Task5Ingress first = _proposeAndActivateIngress();
+        A1Task5Ingress second = new A1Task5Ingress();
+        bytes32 secondId = _propose(_ingressConfig(second, 1 ether, 2 ether, 3 ether), SECOND_DETAILS);
+        assertEq(vault.activeIngressGeneration(), 1);
+        assertEq(vault.pendingIngressProposal().proposalId, secondId);
+        _safeExecute(abi.encodeCall(vault.disableIngress, (DETAILS)));
+        uint64 disabledAt = uint64(block.timestamp);
+        assertEq(vault.activeIngressGeneration(), 0);
+        assertEq(vault.pendingIngressProposal().proposalId, secondId);
+        vm.warp(vault.pendingIngressProposal().validAfter);
+        _safeExecute(abi.encodeCall(vault.activateIngress, (secondId)));
+        assertEq(vault.activeIngressGeneration(), 2);
+        assertEq(vault.getIngress(1).ingress, address(first));
+        assertEq(vault.getIngress(1).disabledAt, disabledAt);
+        assertEq(vault.getIngress(2).ingress, address(second));
+    }
+
+    function test_task5DepositReplayCapsGettersAndPayableRollback() public {
+        A1Task5Ingress ingress = new A1Task5Ingress();
+        bytes32 proposalId = _propose(_ingressConfig(ingress, 1 ether, 2 ether, 2 ether), DETAILS);
+        vm.warp(vault.pendingIngressProposal().validAfter);
+        _safeExecute(abi.encodeCall(vault.activateIngress, (proposalId)));
+        bytes32 source = keccak256("replay-source");
+        bytes32 depositId = abi.decode(ingress.deposit{value: 1 ether}(address(vault), source), (bytes32));
+        IAcquisitionVaultV1.DepositRecord memory record = vault.getDeposit(depositId);
+        assertEq(record.amountWei, 1 ether);
+        assertEq(record.availableCreditWei, 1 ether);
+        assertEq(vault.ingressEpochDepositedWei(1, block.timestamp / 1 days), 1 ether);
+        assertEq(vault.ingressLifetimeDepositedWei(1), 1 ether);
+        assertEq(vault.globalLifetimeCanonicalDepositedWei(), 1 ether);
+
+        uint256 senderPre = address(ingress).balance;
+        vm.expectRevert(abi.encodeWithSelector(IAcquisitionVaultV1.DepositReplay.selector, depositId));
+        ingress.deposit{value: 1 ether}(address(vault), source);
+        assertEq(address(ingress).balance, senderPre);
+        bytes32 other = keccak256("over-per-deposit");
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAcquisitionVaultV1.DepositCapExceeded.selector,
+                uint8(IAcquisitionVaultV1.DepositCapKind.PER_DEPOSIT),
+                1 ether,
+                1 ether + 1
+            )
+        );
+        ingress.deposit{value: 1 ether + 1}(address(vault), other);
+        assertEq(vault.globalLifetimeCanonicalDepositedWei(), 1 ether);
+    }
+
+    function test_task5CanonicalDepositRepairsLiveDeficitBeforeCrediting() public {
+        A1Task5Ingress ingress = _proposeAndActivateIngress();
+        ingress.deposit{value: 2 ether}(address(vault), keccak256("backing"));
+        vm.deal(address(vault), 1 ether);
+        bytes32 depositId = abi.decode(ingress.deposit{value: 2 ether}(address(vault), keccak256("repair")), (bytes32));
+        IAcquisitionVaultV1.DepositRecord memory record = vault.getDeposit(depositId);
+        assertEq(record.balanceDeficitRepairWei, 1 ether);
+        assertEq(record.availableCreditWei, 1 ether);
+        assertEq(vault.availableWei(), 3 ether);
+        assertEq(vault.lastObservedBalanceDeficitWei(), 0);
+        assertEq(vault.accountingSequence(), 2);
+    }
+
+    function test_task5IngressAndDepositMissingGettersAreExact() public {
+        vm.expectRevert(abi.encodeWithSelector(IAcquisitionVaultV1.IngressNotFound.selector, uint256(1)));
+        vault.getIngress(1);
+        bytes32 missing = keccak256("missing-deposit");
+        vm.expectRevert(abi.encodeWithSelector(IAcquisitionVaultV1.DepositNotFound.selector, missing));
+        vault.getDeposit(missing);
+    }
+
+    function test_exactTask5EnumsAbiCountsMembersConstructorAndStorageAppend() public {
         assertEq(uint8(IAcquisitionVaultV1.AccountingMutationKind.NONE), 0);
         assertEq(uint8(IAcquisitionVaultV1.AccountingMutationKind.SYNC_BALANCE), 1);
         assertEq(uint8(IAcquisitionVaultV1.AccountingMutationKind.UNATTRIBUTED_RECLASSIFICATION), 2);
@@ -469,6 +788,11 @@ contract AcquisitionVaultAccountingTest is Test {
         assertEq(uint8(IAcquisitionVaultV1.AccountingComponentKind.UNATTRIBUTED_TO_AVAILABLE), 3);
         assertEq(uint8(IAcquisitionVaultV1.AccountingComponentKind.CANONICAL_DEPOSIT_DEFICIT_REPAIR), 4);
         assertEq(uint8(IAcquisitionVaultV1.AccountingComponentKind.CANONICAL_DEPOSIT_AVAILABLE_CREDIT), 5);
+        assertEq(uint8(IAcquisitionVaultV1.DepositCapKind.NONE), 0);
+        assertEq(uint8(IAcquisitionVaultV1.DepositCapKind.PER_DEPOSIT), 1);
+        assertEq(uint8(IAcquisitionVaultV1.DepositCapKind.EPOCH), 2);
+        assertEq(uint8(IAcquisitionVaultV1.DepositCapKind.GENERATION_LIFETIME), 3);
+        assertEq(uint8(IAcquisitionVaultV1.DepositCapKind.GLOBAL_LIFETIME), 4);
 
         string memory artifact =
             vm.readFile(string.concat(vm.projectRoot(), "/out/AcquisitionVault.sol/AcquisitionVault.json"));
@@ -476,9 +800,11 @@ contract AcquisitionVaultAccountingTest is Test {
         bytes memory marker = bytes('"abi":[');
         uint256 opening = _find(json, marker, 0) + marker.length - 1;
         uint256 closing = _matchingDelimiter(json, opening, bytes1("["), bytes1("]"));
-        _assertTask4AbiCounts(json, opening, closing);
+        _assertTask5AbiCounts(json, opening, closing);
         _assertTask4MethodMembers(artifact);
+        _assertTask5MethodMembers(artifact);
         _assertTask4ErrorAndEventNames(json, opening, closing);
+        _assertTask5ErrorAndEventNames(json, opening, closing);
         _assertTask4ConstructorDescriptor(json, opening, closing);
 
         assertEq(A1Task4Errors.InvalidGlobalLifetimeCap.selector, bytes4(keccak256("InvalidGlobalLifetimeCap()")));
@@ -510,6 +836,10 @@ contract AcquisitionVaultAccountingTest is Test {
         _assertGetterSlot(BACKING_SELECTOR, 18);
         _assertGetterSlot(SEQUENCE_SELECTOR, 19);
         _assertGetterSlot(LAST_DEFICIT_SELECTOR, 20);
+        _assertGetterSlot(bytes4(keccak256("globalLifetimeCanonicalDepositedWei()")), 21);
+        _assertGetterSlot(bytes4(keccak256("ingressProposalNonce()")), 22);
+        _assertGetterSlot(bytes4(keccak256("ingressGeneration()")), 23);
+        _assertGetterSlot(ACTIVE_INGRESS_GENERATION_SELECTOR, 24);
     }
 
     function test_constructorInitializesExactTask4ScalarsAndRejectsOnlyZeroCap() public {
@@ -586,7 +916,7 @@ contract AcquisitionVaultAccountingTest is Test {
         );
     }
 
-    function test_sourceSequenceExhaustionChecksPrecedeWritesAndTask5CallSurfacesAreAbsent() public view {
+    function test_sourceSequenceExhaustionChecksPrecedeWritesAndFutureCallSurfacesAreAbsent() public view {
         bytes memory source = bytes(vm.readFile(string.concat(vm.projectRoot(), "/src/AcquisitionVault.sol")));
         uint256 syncStart = _find(source, bytes("function syncBalance()"), 0);
         uint256 syncEnd = _find(source, bytes("function reclassifyUnattributed"), syncStart);
@@ -601,7 +931,13 @@ contract AcquisitionVaultAccountingTest is Test {
         uint256 reclassifyFirstWrite = _find(source, bytes("availableWei = newAvailable;"), syncEnd);
         assertLt(syncEnd, reclassifySequenceCheck);
         assertLt(reclassifySequenceCheck, reclassifyFirstWrite);
-        assertEq(_find(source, bytes("function depositCanonical"), 0), type(uint256).max);
+        uint256 depositStart = _find(source, bytes("function depositCanonical"), 0);
+        uint256 depositSequenceCheck =
+            _find(source, bytes("work.nextSequence = _nextAccountingSequence();"), depositStart);
+        uint256 depositFirstWrite = _find(source, bytes("availableWei = newAvailable;"), depositStart);
+        assertLt(depositStart, depositSequenceCheck);
+        assertLt(depositSequenceCheck, depositFirstWrite);
+        assertEq(_find(source, bytes("function authorizePreVoteBudget"), 0), type(uint256).max);
         assertEq(_find(source, bytes("delegatecall"), 0), type(uint256).max);
         assertEq(_find(source, bytes("tx.origin"), 0), type(uint256).max);
         assertEq(_find(source, bytes("call{value:"), 0), type(uint256).max);
@@ -904,7 +1240,7 @@ contract AcquisitionVaultAccountingTest is Test {
         safe.execute(address(vault), abi.encodeCall(vault.unpause, (DETAILS)));
     }
 
-    function test_noReceiveFallbackPayableOrTask5SurfaceLeaksIntoTask4() public {
+    function test_noReceiveFallbackOrTask6SurfaceLeaksIntoTask5() public {
         (bool emptyOk,) = address(vault).staticcall("");
         assertFalse(emptyOk);
         (bool unknownOk,) = address(vault).staticcall(hex"deadbeef");
@@ -925,16 +1261,12 @@ contract AcquisitionVaultAccountingTest is Test {
         string memory artifact =
             vm.readFile(string.concat(vm.projectRoot(), "/out/AcquisitionVault.sol/AcquisitionVault.json"));
         string[] memory methods = vm.parseJsonKeys(artifact, ".methodIdentifiers");
-        assertEq(methods.length, 52, "Task-4 method count drift");
-        string[8] memory forbidden = [
-            "depositCanonical(bytes32)",
-            "proposeIngress((address,bytes32,uint256,uint256,uint256),bytes32)",
-            "activateIngress(bytes32)",
-            "disableIngress(bytes32)",
+        assertEq(methods.length, 67, "Task-5 method count drift");
+        string[4] memory forbidden = [
             "authorizePreVoteBudget((uint256,uint256,uint64),bytes32)",
-            "globalLifetimeCanonicalDepositedWei()",
-            "getDeposit(bytes32)",
-            "getPreVoteBudget(uint256)"
+            "getPreVoteBudget(uint256)",
+            "depositCausalRefund(bytes32)",
+            "execute(address,uint256,bytes)"
         ];
         for (uint256 i; i < forbidden.length; ++i) {
             for (uint256 j; j < methods.length; ++j) {

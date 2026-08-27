@@ -463,6 +463,23 @@ contract AcquisitionVaultOperatorTest is Test {
         return vault.pendingMainOperatorNomination();
     }
 
+    function _proposeIngress(address ingress) internal returns (bytes32 proposalId) {
+        IAcquisitionVaultV1.IngressConfig memory config = IAcquisitionVaultV1.IngressConfig({
+            ingress: ingress,
+            runtimeCodeHash: ingress.codehash,
+            perDepositCapWei: 1 ether,
+            epochDepositCapWei: 2 ether,
+            lifetimeDepositCapWei: 3 ether
+        });
+        proposalId = abi.decode(_safeCall(abi.encodeCall(vault.proposeIngress, (config, DETAILS))), (bytes32));
+    }
+
+    function _activateIngress(address ingress) internal returns (bytes32 proposalId) {
+        proposalId = _proposeIngress(ingress);
+        vm.warp(vault.pendingIngressProposal().validAfter);
+        _safeCall(abi.encodeCall(vault.activateIngress, (proposalId)));
+    }
+
     function _expectedNominationId(
         uint256 proposalNumber,
         address proposedBy,
@@ -3107,5 +3124,45 @@ contract AcquisitionVaultOperatorTest is Test {
         vm.expectRevert(O1LiteralErrors.EmptyDetailsHash.selector);
         _safeCall(abi.encodeCall(vault.pause, (bytes32(0))));
         _assertStateEq(_state(), beforeState);
+    }
+
+    function test_task5ActiveAndPendingIngressAreReciprocalOwnerOperatorCollisions() public {
+        O1SafeActor activeIngress = new O1SafeActor();
+        _activateIngress(address(activeIngress));
+        vm.expectRevert(abi.encodeWithSelector(O1LiteralErrors.RoleIdentityCollision.selector, address(activeIngress)));
+        _safeCall(abi.encodeCall(vault.transferOwnership, (address(activeIngress))));
+        vm.expectRevert(abi.encodeWithSelector(O1LiteralErrors.RoleIdentityCollision.selector, address(activeIngress)));
+        _safeCall(abi.encodeCall(vault.nominateMainOperator, (address(activeIngress), DETAILS)));
+
+        _safeCall(abi.encodeCall(vault.disableIngress, (DETAILS)));
+        O1SafeActor pendingIngress = new O1SafeActor();
+        _proposeIngress(address(pendingIngress));
+        vm.expectRevert(abi.encodeWithSelector(O1LiteralErrors.RoleIdentityCollision.selector, address(pendingIngress)));
+        _safeCall(abi.encodeCall(vault.transferOwnership, (address(pendingIngress))));
+        vm.expectRevert(abi.encodeWithSelector(O1LiteralErrors.RoleIdentityCollision.selector, address(pendingIngress)));
+        _safeCall(abi.encodeCall(vault.nominateMainOperator, (address(pendingIngress), DETAILS)));
+    }
+
+    function test_task5PendingIngressSurvivesOwnershipHandoffAndAuthorityMovesImmediately() public {
+        O1SafeActor ingress = new O1SafeActor();
+        bytes32 proposalId = _proposeIngress(address(ingress));
+        O1SafeActor newSafe = new O1SafeActor();
+        _safeCall(abi.encodeCall(vault.transferOwnership, (address(newSafe))));
+        newSafe.execute(address(vault), abi.encodeCall(vault.acceptOwnership, ()));
+        assertEq(vault.pendingIngressProposal().proposalId, proposalId);
+
+        vm.expectRevert(abi.encodeWithSelector(O1LiteralErrors.OwnableUnauthorizedAccount.selector, address(safe)));
+        safe.execute(address(vault), abi.encodeCall(vault.cancelIngressProposal, (proposalId, SECOND_DETAILS)));
+        newSafe.execute(address(vault), abi.encodeCall(vault.cancelIngressProposal, (proposalId, SECOND_DETAILS)));
+        assertEq(vault.pendingIngressProposal().proposalId, bytes32(0));
+    }
+
+    function test_task5ProductionActivationThenSafeUnpauseSucceedsWithActiveOperator() public {
+        O1SafeActor ingress = new O1SafeActor();
+        _activateIngress(address(ingress));
+        _appoint(operator);
+        _safeCall(abi.encodeCall(vault.unpause, (DETAILS)));
+        assertFalse(vault.paused());
+        assertEq(vault.activeIngressGeneration(), 1);
     }
 }
