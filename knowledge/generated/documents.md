@@ -271,7 +271,7 @@
 | [CLAUDE.md](../../CLAUDE.md) | documentation | 17225 | 2026-08-26 |
 | [DEPLOY-CHECKLIST.md](../../DEPLOY-CHECKLIST.md) | operations | 147 | 2026-08-13 |
 | [DEPLOY.md](../../DEPLOY.md) | operations | 543 | 2026-08-24 |
-| [DESIGN.md](../../DESIGN.md) | design | 74 | 2026-08-23 |
+| [DESIGN.md](../../DESIGN.md) | design | 88 | 2026-08-27 |
 | [docs/ART.md](../../docs/ART.md) | documentation | 238 | 2026-08-14 |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | audit | 120 | 2026-08-17 |
 | [docs/BULLETPROOF.md](../../docs/BULLETPROOF.md) | documentation | 272 | 2026-08-21 |

@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f323ff5af5dd`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `d892bd31323b`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1009 |
+| Commits in clone | 1012 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-26 — merge: synchronize latest knowledge refresh |
+| Latest commit | 2026-08-27 — feat(ui): upgrade site-wide experience |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 208 |
+| OmertaDev | 211 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -29,7 +29,7 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 492 | yes |
-| [public/index.html](../../public/index.html) | 382 | yes |
+| [public/index.html](../../public/index.html) | 383 | yes |
 | [src/server.js](../../src/server.js) | 343 | yes |
 | [schema.sql](../../schema.sql) | 256 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
@@ -45,7 +45,7 @@
 | [test/levers.js](../../test/levers.js) | 95 | yes |
 | [test/social.js](../../test/social.js) | 83 | yes |
 | [test/growth.js](../../test/growth.js) | 78 | yes |
-| [public/wiki.html](../../public/wiki.html) | 76 | yes |
+| [public/wiki.html](../../public/wiki.html) | 77 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 66 | yes |
 | [test/hardening.js](../../test/hardening.js) | 64 | yes |
 | [tools/sim.js](../../tools/sim.js) | 58 | yes |
@@ -61,13 +61,13 @@
 | [src/business.js](../../src/business.js) | 39 | yes |
 | [test/gates.js](../../test/gates.js) | 36 | yes |
 | [src/chain.js](../../src/chain.js) | 36 | yes |
+| [public/admin.html](../../public/admin.html) | 31 | yes |
 | [DEPLOY.md](../../DEPLOY.md) | 30 | yes |
-| [public/admin.html](../../public/admin.html) | 30 | yes |
 | [src/loans.js](../../src/loans.js) | 29 | yes |
 | [test/docs.js](../../test/docs.js) | 29 | yes |
-| [src/kitchen.js](../../src/kitchen.js) | 28 | yes |
-| [src/world.js](../../src/world.js) | 28 | yes |
-| [test/migrate.js](../../test/migrate.js) | 28 | yes |
+| knowledge/generated/github-history.md | 28 | historical |
+| knowledge/generated/graph-summary.md | 28 | historical |
+| knowledge/generated/graph.json | 28 | historical |
 
 ## Pull requests
 
