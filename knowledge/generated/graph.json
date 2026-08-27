@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "f28acbe2218222ccac1c17f58a44b07df482e269",
+  "sourceRevision": "cb59712a5e200eaef73841affc77cce3f84db3f9",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 4577,
-    "edges": 21459,
+    "nodes": 4579,
+    "edges": 21467,
     "byNodeType": {
       "Artifact": 1582,
       "Command": 34,
-      "Commit": 985,
+      "Commit": 987,
       "Contract": 33,
       "Document": 406,
       "Domain": 12,
@@ -65,18 +65,18 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1843,
-      "CHANGED": 8253,
+      "CHANGED": 8258,
       "CONTAINS": 1602,
       "DECLARES": 34,
       "DEFINED_IN": 1016,
       "DEPENDS_ON": 59,
       "EXECUTES": 155,
       "HANDLED_BY": 653,
-      "HAS_COMMIT": 985,
+      "HAS_COMMIT": 987,
       "IMPLEMENTS": 124,
       "IMPORTS": 1476,
       "INHERITS": 5,
-      "REFERENCES": 2489,
+      "REFERENCES": 2490,
       "REPRESENTS": 756,
       "TESTS": 521,
       "TRACKS": 126,
@@ -10235,20 +10235,20 @@
       "path": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 16092,
-      "lines": 390,
-      "version": "f77cedd3e2a00c0b",
+      "bytes": 19448,
+      "lines": 443,
+      "version": "ec4585ffa1d49ad5",
       "text": true,
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
           "line": 1,
-          "version": "f77cedd3e2a00c0b"
+          "version": "ec4585ffa1d49ad5"
         }
       ],
-      "lastChangedAt": "2026-08-26T20:01:38-04:00",
+      "lastChangedAt": "2026-08-26T23:59:56-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e1047306ab3a2439e928d10cd5b237af1694f996"
+      "lastChangedCommit": "cb59712a5e200eaef73841affc77cce3f84db3f9"
     },
     {
       "key": "Artifact:docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
@@ -46763,6 +46763,22 @@
       ]
     },
     {
+      "key": "Commit:97f69a599a1f36c52b83ef09393c7970f3738c87",
+      "type": "Commit",
+      "id": "97f69a599a1f36c52b83ef09393c7970f3738c87",
+      "label": "docs: finalize finalized observation fix provenance",
+      "title": "docs: finalize finalized observation fix provenance",
+      "date": "2026-08-26T23:56:06-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/97f69a599a1f36c52b83ef09393c7970f3738c87",
+      "provenance": [
+        {
+          "commit": "97f69a599a1f36c52b83ef09393c7970f3738c87",
+          "url": "https://github.com/OmertaDev/Omerta/commit/97f69a599a1f36c52b83ef09393c7970f3738c87"
+        }
+      ]
+    },
+    {
       "key": "Commit:987b6bfc853af86eb175e3eb43183004dbcf1f5e",
       "type": "Commit",
       "id": "987b6bfc853af86eb175e3eb43183004dbcf1f5e",
@@ -49863,6 +49879,22 @@
         {
           "commit": "cb4e6a35d7950366a984b9f812a9d6376c4f2675",
           "url": "https://github.com/OmertaDev/Omerta/commit/cb4e6a35d7950366a984b9f812a9d6376c4f2675"
+        }
+      ]
+    },
+    {
+      "key": "Commit:cb59712a5e200eaef73841affc77cce3f84db3f9",
+      "type": "Commit",
+      "id": "cb59712a5e200eaef73841affc77cce3f84db3f9",
+      "label": "docs: amend finalized registry consumer plan",
+      "title": "docs: amend finalized registry consumer plan",
+      "date": "2026-08-26T23:59:56-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/cb59712a5e200eaef73841affc77cce3f84db3f9",
+      "provenance": [
+        {
+          "commit": "cb59712a5e200eaef73841affc77cce3f84db3f9",
+          "url": "https://github.com/OmertaDev/Omerta/commit/cb59712a5e200eaef73841affc77cce3f84db3f9"
         }
       ]
     },
@@ -57737,13 +57769,13 @@
       "id": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
       "label": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
       "documentType": "documentation",
-      "lines": 390,
-      "version": "f77cedd3e2a00c0b",
+      "lines": 443,
+      "version": "ec4585ffa1d49ad5",
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
           "line": 1,
-          "version": "f77cedd3e2a00c0b"
+          "version": "ec4585ffa1d49ad5"
         }
       ]
     },
@@ -60906,6 +60938,9 @@
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
         },
         {
+          "commit": "97f69a599a1f36c52b83ef09393c7970f3738c87"
+        },
+        {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
         },
         {
@@ -60978,6 +61013,9 @@
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
         },
         {
+          "commit": "97f69a599a1f36c52b83ef09393c7970f3738c87"
+        },
+        {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
         },
         {
@@ -61048,6 +61086,9 @@
         },
         {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
+        },
+        {
+          "commit": "97f69a599a1f36c52b83ef09393c7970f3738c87"
         },
         {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
@@ -61144,6 +61185,9 @@
         },
         {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
+        },
+        {
+          "commit": "97f69a599a1f36c52b83ef09393c7970f3738c87"
         },
         {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
@@ -67005,7 +67049,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "f28acbe2218222ccac1c17f58a44b07df482e269",
+      "revision": "cb59712a5e200eaef73841affc77cce3f84db3f9",
       "currentBranch": "codex/grill-completion",
       "defaultBranch": "main",
       "visibility": "public",
@@ -147830,6 +147874,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:97f69a599a1f36c52b83ef09393c7970f3738c87",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "97f69a599a1f36c52b83ef09393c7970f3738c87"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:97f69a599a1f36c52b83ef09393c7970f3738c87",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "97f69a599a1f36c52b83ef09393c7970f3738c87"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:97f69a599a1f36c52b83ef09393c7970f3738c87",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "97f69a599a1f36c52b83ef09393c7970f3738c87"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:97f69a599a1f36c52b83ef09393c7970f3738c87",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "97f69a599a1f36c52b83ef09393c7970f3738c87"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:987b6bfc853af86eb175e3eb43183004dbcf1f5e",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -159834,6 +159910,14 @@
       "to": "Artifact:docs/superpowers/plans/2026-08-23-first-action-onboarding.md",
       "provenance": {
         "commit": "cb4e6a35d7950366a984b9f812a9d6376c4f2675"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cb59712a5e200eaef73841affc77cce3f84db3f9",
+      "to": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "provenance": {
+        "commit": "cb59712a5e200eaef73841affc77cce3f84db3f9"
       }
     },
     {
@@ -210042,6 +210126,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:97f69a599a1f36c52b83ef09393c7970f3738c87",
+      "provenance": {
+        "commit": "97f69a599a1f36c52b83ef09393c7970f3738c87"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:987b6bfc853af86eb175e3eb43183004dbcf1f5e",
       "provenance": {
         "commit": "987b6bfc853af86eb175e3eb43183004dbcf1f5e"
@@ -211589,6 +211681,14 @@
       "to": "Commit:cb4e6a35d7950366a984b9f812a9d6376c4f2675",
       "provenance": {
         "commit": "cb4e6a35d7950366a984b9f812a9d6376c4f2675"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:cb59712a5e200eaef73841affc77cce3f84db3f9",
+      "provenance": {
+        "commit": "cb59712a5e200eaef73841affc77cce3f84db3f9"
       }
     },
     {
@@ -244991,10 +245091,19 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+        "line": 301
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
       "to": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
-        "line": 344
+        "line": 397
       }
     },
     {
@@ -245111,7 +245220,7 @@
       "to": "Artifact:test/finalizedobservation.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
-        "line": 298
+        "line": 303
       }
     },
     {
@@ -245120,7 +245229,7 @@
       "to": "Artifact:test/stockcatalogv2.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
-        "line": 297
+        "line": 298
       }
     },
     {
