@@ -79,7 +79,8 @@ Role separation is bidirectional and revalidated whenever a role is proposed,
 accepted, activated, or used:
 
 - every nonzero owner candidate remains a contract Safe and cannot equal the
-  vault, RegistryV2, current/pending operator, or active/pending ingress;
+  current owner, vault, RegistryV2, current/pending operator, or active/pending
+  ingress;
   validate at both `transferOwnership` and `acceptOwnership` because code and
   other pending roles can change between those calls;
 - `transferOwnership(address(0))` is allowed only to cancel an existing pending
@@ -582,9 +583,31 @@ preTotals, postTotals))`; for reclassification it is the caller's `detailsHash`;
 for a canonical deposit it is `depositId`. Component indexes are contiguous from zero.
 Zero-value components are omitted except
 `BALANCE_DEFICIT_OBSERVATION_SET`, whose zero amount is permitted only to record
-an observed deficit clearing. Any financial mutation that changes
-`lastObservedBalanceDeficitWei` includes that component with the new observation,
-including zero, in addition to its economic components. `componentCount` is exact.
+an observed deficit clearing in a `SYNC_BALANCE` mutation. A deposit or
+reclassification that changes the live derived deficit records the exact change
+in its pre/post totals and own economic components; it never mislabels one as a
+sync component. `componentCount` is exact.
+
+`componentSubjectId` is not implementation-selected. It follows this exact table:
+
+| `AccountingComponentKind` | Exact `componentSubjectId` |
+|---|---|
+| `FORCED_SURPLUS_TO_UNATTRIBUTED` | parent `SYNC_BALANCE` mutation `subjectId` |
+| `BALANCE_DEFICIT_OBSERVATION_SET` | the same parent `SYNC_BALANCE` mutation `subjectId`, including when `amountWei == 0` |
+| `UNATTRIBUTED_TO_AVAILABLE` | parent reclassification mutation `subjectId`, exactly the caller's nonzero `detailsHash` |
+| `CANONICAL_DEPOSIT_DEFICIT_REPAIR` | parent canonical-deposit mutation `subjectId`, exactly `depositId` |
+| `CANONICAL_DEPOSIT_AVAILABLE_CREDIT` | the same parent canonical-deposit `depositId` |
+
+`AccountingComponentKind.NONE` is forbidden in every stored/emitted component.
+RED tests independently derive the literal parent mutation ID and every component
+ID from the preimages and table above; they never call a production mutation-ID,
+component-ID, subject-ID, or hashing helper to obtain an expected value.
+
+Readiness errors are equally closed: A1 `unpause` with no live active ingress
+reverts exactly
+`LocalReadinessFailed(uint8(LocalReadinessCondition.ACTIVE_INGRESS_MISSING))`.
+`NoActiveIngress` is used only by ingress lifecycle/deposit operations and never
+by `unpause` readiness evaluation.
 
 ```solidity
 event AccountingMutation(
@@ -822,8 +845,10 @@ escape the closed `InvalidSignature` boundary.
   collisions fail; a distinct contract Safe and exact RegistryV2 are immutable
   from construction; the contract starts paused with zero operator, generation,
   nonce, and nomination. Override both ownership steps. A nonzero owner candidate
-  must be a contract Safe distinct from vault, RegistryV2, main/pending operator,
-  and, once A1 exists, active/pending ingress. Check at proposal and acceptance.
+  must be a contract Safe distinct from the current owner, vault, RegistryV2,
+  main/pending operator, and, once A1 exists, active/pending ingress. Check at
+  proposal and acceptance; a current-owner self-proposal and its event noise are
+  rejected at both gates.
   Permit zero only to cancel an existing pending ownership proposal; reject a
   zero no-op cancellation and prove zero can never accept or become owner.
   `renounceOwnership` always reverts.
@@ -1203,6 +1228,13 @@ constructor(
   indexes. Role/pause/nonce/proposal/budget evidence is nonfinancial and does not
   increment `accountingSequence`.
 
+  Independently derive literal mutation and component IDs for every non-`NONE`
+  component kind from the appendix preimages/table. Cover both nonzero and zero
+  `BALANCE_DEFICIT_OBSERVATION_SET`, prove the sync kinds use the parent sync
+  subject, reclassification uses exact `detailsHash`, and both deposit kinds use
+  exact `depositId`. Never use production hash/ID helpers for expected values;
+  reject `AccountingComponentKind.NONE` without sequence or history.
+
   Freeze A1 `unpause` as Safe-only with the O1 local identity/chain predicates
   plus `D == 0`, `S == 0`, one live active ingress, unchanged nonzero ingress
   code, exact pinned runtime code hash, no pending ingress proposal, and complete
@@ -1212,8 +1244,11 @@ constructor(
   local unpause success is not launch readiness.
 
   Before Task 5 there is no active ingress, so the Task-4 scalar milestone must
-  prove `unpause` fails `NoActiveIngress`; the first possible A1 local-unpause
-  success is tested only after Task 5 activates a valid ingress.
+  prove `unpause` fails exactly
+  `LocalReadinessFailed(uint8(LocalReadinessCondition.ACTIVE_INGRESS_MISSING))`;
+  the first possible A1 local-unpause success is tested only after Task 5
+  activates a valid ingress. `NoActiveIngress` is reserved for ingress
+  lifecycle/deposit operations, never readiness evaluation.
 
 - [ ] **Step 3: Preserve RED evidence**
 
@@ -1476,7 +1511,8 @@ depositCanonical(bytes32 sourceEventId)
   Fuzz exact uint256-wei boundaries and caps; deposit/force/sync/reclassify
   sequences against a small independent Solidity model; day/deadline/uint64
   calculations; code-hash and ID field mutations; and repeated failing calls.
-  Avoid deriving expected values through contract helpers.
+  Independently derive mutation/component IDs from the exact per-kind subject
+  table and preimages; avoid every production hash/ID helper for expected values.
 
 - [ ] **Step 3: Add required stateful invariants**
 
@@ -1490,6 +1526,7 @@ depositCanonical(bytes32 sourceEventId)
   owner/pendingOwner/operator/pendingOperator/activeIngress/pendingIngress,
     vault, and RegistryV2 remain pairwise disjoint where nonzero
   every nonzero owner/pendingOwner remains a contract
+  transferOwnership(current owner) always fails without event/state change
   V + D == B + F
   V + D + S == A + U + R + L + F
   L == P + S and P <= L
@@ -1498,11 +1535,14 @@ depositCanonical(bytes32 sourceEventId)
   per-generation/day/lifetime totals never exceed immutable caps
   every successful deposit ID is unique and immutable
   accountingSequence increments exactly once per successful financial mutation
+  every component kind is non-NONE and its subject/id matches the exact table
   failed actions change no nonce/sequence/ID/cap/bucket/event state
   forced ETH never becomes A without Safe reclassification
   pre-vote budgets move no funds and contain no result authority
   no O1/A1 actor can move native ETH, ERC-20, OMR, or Stock Tokens
   successful unpause satisfies the exact milestone-local predicate
+  missing active ingress during unpause uses LocalReadinessFailed(ACTIVE_INGRESS_MISSING),
+    while lifecycle/deposit missing-ingress failures use NoActiveIngress
   ```
 
 - [ ] **Step 4: Preserve invariant RED, fix minimally, and run full A1 checks**
