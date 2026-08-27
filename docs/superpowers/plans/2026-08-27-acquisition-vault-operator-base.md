@@ -39,9 +39,11 @@ evidence:
   There is no proxy, initializer, upgrade hook, storage gap, wrapper fallback,
   delegate target, linked mutable library, or intermediate deployment.
 - O1 is implemented and independently approved at remediation head
-  `82001b6e8ac54c46dda6eb185cda550e8a73a3de`. A1 remains unimplemented until
-  Tasks 4–8 land. Both remain undeployed, unfunded, unsigned, unconfigured,
-  unactivated, and unreachable from production.
+  `82001b6e8ac54c46dda6eb185cda550e8a73a3de`. A1 Task 4 is implemented and
+  independently approved at remediation head
+  `48b4a78605c9f21abca27d702923a501200b83bb`; A1 as a whole remains incomplete
+  until Tasks 5–8 land. O1 and the partial A1 artifact remain undeployed,
+  unfunded, unsigned, unconfigured, unactivated, and unreachable from production.
 - This plan adds no deploy script, address manifest, Safe transaction, signature,
   funding operation, private key, provider credential, RPC worker, backend route,
   UI control, feature selector, publisher, or cutover. It does not change the
@@ -68,6 +70,26 @@ heads.
   surface. A1 and all later composition gates remain pending.
 - No task may deploy, push, fund, sign, send a Safe transaction, change a live
   role, move ETH/tokens, or claim external audit/finality/provider evidence.
+
+### Interim A1 Task-4 milestone truth
+
+This is another current task-status note, not the controller-owned Task-8 closure
+record. The closure record remains entirely `UNSET` until Tasks 5–8 have stable
+reviewed heads.
+
+- Initial Task-4 accounting implementation:
+  `d66166aac628973b84f4864ee6bd1a367adcbade`.
+- Test/artifact remediation and current independently approved Task-4 head:
+  `48b4a78605c9f21abca27d702923a501200b83bb`.
+- Fresh independent review: Critical 0, Important 0, Minor 0. The focused
+  accounting suite passed 18/18, the focused O1 suite passed 80/80, and the full
+  configured Forge run passed 549/549 across 28 suites.
+- Task 4 is dormant. It adds exact scalar accounting, forced-balance sync, Safe
+  reclassification, immutable RegistryV2/global-cap context, and local readiness
+  stubs, but no payable ingress, native-ETH outflow, purchase, reservation,
+  reconciliation disposition, deployment, backend, UI, or cutover surface.
+- Tasks 5–8 remain pending; this interim status does not populate or substitute
+  for the controller-owned Task-8 closure evidence.
 
 ## Frozen authority boundary
 
@@ -1633,7 +1655,7 @@ constructor(
 )
 ```
 
-- [ ] **Step 1: Write RED constructor and accounting-view tests**
+- [x] **Step 1: Write RED constructor and accounting-view tests**
 
   Preserve every O1 constructor predicate/error/precedence test, including the
   isolated `Ownable(safeOwner)` zero-owner result and the low-level exact-selector
@@ -1655,7 +1677,7 @@ constructor(
   `accountingSequence`, immutable registry, immutable global cap, and the public
   future constants `32/32/67`.
 
-- [ ] **Step 2: Write RED balance-operation tests**
+- [x] **Step 2: Write RED balance-operation tests**
 
   Add `syncBalance()` and
   `reclassifyUnattributed(uint256 amountWei, bytes32 detailsHash)` tests.
@@ -1707,7 +1729,7 @@ constructor(
   activates a valid ingress. `NoActiveIngress` is reserved for ingress
   lifecycle/deposit operations, never readiness evaluation.
 
-- [ ] **Step 3: Preserve RED evidence**
+- [x] **Step 3: Preserve RED evidence**
 
   ```powershell
   Set-Location omerta-contracts
@@ -1717,7 +1739,7 @@ constructor(
   Expected failures must point to missing A1 behavior, not fixture or import
   errors.
 
-- [ ] **Step 4: Implement the minimum scalar model**
+- [x] **Step 4: Implement the minimum scalar model**
 
   Add immutable RegistryV2/global-cap context; `available`, `unattributed`,
   `ordinaryReserved`, reconciliation liability/backing, sequence, and last
@@ -1726,7 +1748,7 @@ constructor(
   Checked arithmetic must fail closed; do not silently saturate an accounting
   bucket.
 
-- [ ] **Step 5: Implement and verify balance operations**
+- [x] **Step 5: Implement and verify balance operations**
 
   Make the focused suite GREEN, then add mutation tests for `F` going to A,
   deficit rewriting a bucket, duplicate sync history, missing sequence increment,
@@ -1739,7 +1761,7 @@ constructor(
   forge build --sizes
   ```
 
-- [ ] **Step 6: Commit the focused accounting base**
+- [x] **Step 6: Commit the focused accounting base**
 
   Commit only scalar accounting source/interface/tests. Do not add ingress,
   budget, reservation, reconciliation record, outflow, or deploy code yet.
@@ -1769,6 +1791,93 @@ struct IngressConfig {
 depositCanonical(bytes32 sourceEventId)
     external payable returns (bytes32 depositId);
 ```
+
+#### Task-5 implementation-readiness clarification
+
+The following clauses are normative for Task 5 and resolve the final
+pre-implementation review without expanding its scope:
+
+1. The progressive Task-5 artifact has exactly 67 functions, 55 errors, 21
+   events, one constructor, and 144 total ABI entries. `depositCanonical(bytes32)`
+   is the only payable function; there is no receive or fallback. Task 5 adds no
+   pre-vote budget struct, selector, error, event, or storage from Task 6.
+2. Preserve every existing slot through Task 4 and append Task-5 storage in this
+   exact declaration order: global deposited total at slot 21; proposal nonce at
+   22; last-activated generation at 23; active-generation pointer at 24; the
+   pending proposal across slots 25–35; then ingress records, generation-lifetime
+   totals, generation/UTC-day totals, and deposit records at mapping roots 36,
+   37, 38, and 39 respectively. Whole-artifact RED tests freeze that append and
+   every new tuple, enum ordinal, selector, mutability, error payload, event
+   field/index, and the absence of Task-6 surface.
+3. One shared internal checked-timestamp seam is used by activation, disable,
+   and deposit. Test that seam directly at `type(uint64).max` and the first value
+   beyond it. Because the acceptance window is half-open, the latest reachable
+   successful full-path activation is `type(uint64).max - 1`; activation at
+   `type(uint64).max` reverts `ProposalExpired(type(uint64).max)`. Full-path
+   disable and deposit can store `type(uint64).max` and reject the first value
+   beyond it with `TimestampOverflow`, atomically.
+4. A pending ingress proposal survives a successful Safe A-to-B ownership
+   handoff byte-for-byte: its ID, proposer, config, timestamps, details, nonce,
+   and every ingress/accounting total remain unchanged. The old Safe immediately
+   loses authority; only current Safe B may cancel or, while paused and inside
+   the original window, activate it. Active ingress and a distinct pending
+   ingress also survive the handoff. Task 3A still cancels only a pending operator
+   nomination in its frozen event order; ownership acceptance never automatically
+   cancels or emits an event for ingress state.
+5. Safe cancellation and permissionless expiry are pause-independent liveness
+   operations. After exact pending-ID validation, they never revalidate ingress
+   code, code hash, config, caps, or current role health; disappearance, drift,
+   or a later unhealthy identity cannot trap the one pending slot. Activation
+   continues to revalidate all of those applicable predicates.
+6. Compound-invalid ingress/deposit precedence is not API except for the express
+   rules already frozen here: missing proposal, then wrong ID, then time; the
+   half-open activation/expiry window; and the isolated active-A/pending-B
+   activation trace returning `IngressActive(A)`. Every other error mapping uses
+   one-invalid-predicate fixtures. Reciprocal-collision mutation tests use valid
+   contract role occupants so `ContractRequired` cannot mask a missing
+   `RoleIdentityCollision` check.
+7. `DepositCapKind` ordinals are exactly `NONE=0`, `PER_DEPOSIT=1`, `EPOCH=2`,
+   `GENERATION_LIFETIME=3`, and `GLOBAL_LIFETIME=4`. Every cap counts full
+   `msg.value`, including deficit repair. An isolated failure returns
+   `DepositCapExceeded(kind, capWei, attemptedTotalWei)`, where per-deposit uses
+   `msg.value` and every cumulative cap uses its prior total plus `msg.value`.
+   Checks prefer subtraction form, but attempted totals remain checked; a
+   genuinely unrepresentable injected total fails closed with panic `0x11`,
+   never wrap, saturation, or fabricated evidence. Every cap/panic failure
+   refunds the incoming ETH and changes no ID, record, total, sequence,
+   observation, bucket, event, or log.
+8. Deposit pre-state custody is always computed with
+   `preV = address(this).balance - msg.value`; repair is
+   `min(msg.value, max(B - preV, 0))`; and only the residual credits `A`.
+   Partial, exact, and over-deficit RED traces prove the full value enters all
+   caps, one sequence is used, the post-state deficit observation is stored, no
+   sync-observation component is emitted, and event order is
+   `AccountingMutation`, contiguous nonzero repair then credit components, then
+   `CanonicalDeposit`. Existing forced surplus remains forced surplus until
+   `syncBalance`.
+9. Task 5 closes the complete local-unpause matrix: missing active ingress,
+   missing active-ingress code, code-hash mismatch, pending ingress proposal,
+   reciprocal role collision, deficit, and reconciliation shortfall each use the
+   exact `LocalReadinessCondition`; a healthy active ingress with no pending
+   proposal supplies the sole production activation-to-unpause success trace.
+   Lifecycle/deposit failures continue to use their custom ingress errors, not
+   readiness errors.
+10. Runtime-code pinning makes no proxy-detection or implementation-pinning
+    claim. A pinned proxy remains mechanically acceptable, so the non-proxy,
+    nondelegating source reproduction and launch-rehearsal gate remains mandatory.
+    RED and mutation evidence must cover code disappearance/drift without
+    asserting that the vault can identify an unchanged proxy whose implementation
+    moved.
+
+Required named RED/mutation traces cover the ownership handoff, drift-independent
+cancel/expiry/disable, latest-reachable activation timestamp and the shared cast
+seam, isolated contract-role collisions at proposal/activation/deposit, exact cap
+kind/payload and checked-overflow rollback, global-total preservation across
+rotation, generation/day key separation, replay preservation on every failed
+call, `preV` subtraction and repair-first ordering, component order/subjects,
+sequence exhaustion before the first write, the full readiness matrix, exact
+progressive ABI/storage equality, and every prohibited future selector/call
+family. These are Task-5 closure tests, not new production capabilities.
 
 - [ ] **Step 1: Write RED ingress lifecycle tests**
 
@@ -1831,8 +1940,11 @@ depositCanonical(bytes32 sourceEventId)
 
   Check `depositedAt` at `type(uint64).max` and reject the first timestamp beyond
   it before consuming ID/cap/sequence. Test ingress proposal derivation at the
-  same last-valid/first-invalid boundaries as operator nomination, and activation
-  and disable record casts at `type(uint64).max`/first invalid.
+  same last-valid/first-invalid boundaries as operator nomination. Full-path
+  activation succeeds at the latest reachable `type(uint64).max - 1` and reverts
+  `ProposalExpired(type(uint64).max)` at the half-open endpoint; directly test the
+  shared checked-timestamp seam at `type(uint64).max`/first invalid. Full-path
+  disable and deposit store `type(uint64).max` and reject the first invalid value.
   Independently assert `CounterExhausted` carries
   `keccak256(bytes("ingressProposalNonce"))` or
   `keccak256(bytes("ingressGeneration"))` as applicable; production helpers may
