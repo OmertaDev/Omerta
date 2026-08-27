@@ -83,11 +83,16 @@ and tombstones. It is the eventual origin of every native transfer. It contains
 no owner/operator/pause/ingress role copies and accepts authority only through
 typed calls plus an exact fresh Authority snapshot.
 
-Core is also the only hold-only Stock Token custodian and aggregate writer. It
-stores per-version accounted stock, fills, `unattributedStock`, and negative-drift
-observations. It has no token transfer, approval, permit, sweep, sale, recovery,
-or generic call surface. Reconciliation may mirror evidence but never owns these
-totals or custody.
+Core is also the only eventual hold-only Stock Token custodian and aggregate
+writer. Constellation Task 3 binds Registry identity and permits passive physical
+custody only; it has no Stock Token mutable state or observation. Constellation
+Task 5 freezes immutable Intent/attempt identity but keeps stock mutation
+dormant. Constellation Task 6, completing master acceptance slice 5 (A3+R),
+introduces callable per-version accounted stock, fills, `unattributedStock`, and
+negative-drift observations together with the atomic Reconciliation path. Core
+has no token transfer, approval, permit, sweep, sale, recovery, or generic call
+surface. Reconciliation may mirror evidence but never owns these totals or
+custody.
 
 ### 2.3 PreVoteBudgetBook
 
@@ -516,7 +521,8 @@ The Intent ID remains exactly:
 keccak256(abi.encode(chainId, core, ballotId, assetVersionKey))
 ```
 
-Task 5 Deposit and accounting V1 IDs remain Core-scoped with `address(this)`.
+Historical Task 5 Deposit and accounting V1 IDs remain behavioral-oracle inputs
+only. Task 3 replaces them with the tracked Core-owned V2 catalog rows below.
 Except for a closed literal exception expressly listed in the catalog below,
 every new V2 ID is literally:
 
@@ -558,6 +564,9 @@ means `keccak256(abi.encode(x))`, never packed encoding:
 |---|---|
 | operator proposal | `AUTH_OPERATOR_PROPOSAL_V2, chainId, core, authority, operatorGeneration, proposalNonce, proposedBy, nominee, proposedAt, validAfter, expiresAt, detailsHash` |
 | ingress proposal | `AUTH_INGRESS_PROPOSAL_V2, chainId, core, authority, ingressGeneration, ingressProposalNonce, proposedBy, ingress, runtimeCodeHash, perDepositCapWei, epochCapWei, lifetimeCapWei, proposedAt, validAfter, expiresAt, detailsHash` |
+| accounting mutation | `ACCOUNTING_MUTATION_V2, chainId, core, core, evidenceGeneration, accountingSequence, mutationKind, subjectId` |
+| accounting component | `ACCOUNTING_COMPONENT_V2, chainId, core, core, evidenceGeneration, accountingSequence, mutationId, componentIndex, componentKind, componentSubjectId, amountWei` |
+| canonical deposit | `CANONICAL_DEPOSIT_V2, chainId, core, core, ingressGeneration, sourceEventId, authority, ingress, activeIngressConfigHash` |
 | budget authorization | `BUDGET_AUTHORIZATION_V2, chainId, core, budgetBook, RegistryV2, ballotDay, maxEthWei, purchaseUntil, accountingSequence` |
 | attempt | `INTENT_ATTEMPT_V2, chainId, core, intentModule, authorityGeneration, attemptIndex, intentId, adapter, runtimeCodeHash, routeHash` |
 | cancellation | `INTENT_CANCELLATION_V2, chainId, core, intentModule, authorityGeneration, cancelNonce, intentId, actor, reasonCode, detailsHash` |
@@ -571,6 +580,16 @@ means `keccak256(abi.encode(x))`, never packed encoding:
 No V2 family may be added implicitly. A later family requires a tracked amendment
 that adds its literal tag, owner/emitter, exact ordered fields, replay tests, and
 consumer binding before implementation.
+
+For the Task 3 accounting rows, `evidenceGeneration` is zero for balance sync and
+Safe reclassification and is the active ingress generation for a canonical
+deposit. Components copy their parent mutation's generation and accounting
+sequence. A canonical deposit uses `sourceEventId` as its external-event
+nonce/replay key so the ID remains stable across retries. Its Authority address,
+ingress, and active config hash are action-specific evidence after the generic
+owner/generation/replay fields. The sync action's
+`keccak256(abi.encode(preTotals,postTotals))` is a supporting subject hash, not
+an independent ID family or replay key.
 
 The budget authorization ID is deliberately result-independent. It contains no
 authority generation, budget nonce, ballot ID, asset version key, winner, token,
@@ -610,19 +629,25 @@ reverts every earlier event. Static Authority reads never emit events.
 2. **Authority extraction:** ownership/operator/ingress/pause snapshot and complete
    reciprocal collision/nonce/replay matrix.
 3. **Core extraction:** canonical ingress accounting, caps, deposits, sync, minimal
-   records/tombstones, ETH custody, and hold-only Stock Token custody/aggregates.
+   records/tombstones, ETH custody, Registry-bound passive Stock Token custody,
+   and no Stock Token mutable accounting.
 4. **BudgetBook:** exactly one immutable pre-vote authorization record per
    `ballotDay`, without funds, consumption, tombstones, cancellation, rewrite,
    replacement, or reservation state.
-5. **Intent:** IDs, oracle/adapter/route commitments, attempt consumption, outcome table.
-6. **Reconciliation:** phases, evidence, repair causes, dispositions, incidents, typed leaves.
+5. **Intent:** IDs, oracle/adapter/route commitments, and attempt consumption;
+   freeze Stock Token observation bindings but keep every stock mutation dormant.
+6. **Reconciliation:** phases, evidence, repair causes, dispositions, incidents,
+   typed leaves, and the first callable Core Stock Token observation/accounting
+   path with atomic outcome handling; this completes master slice 5 (A3+R).
 7. **O2 integration:** direct/relayed authority, cancellation nonce, 0/1/32/67 components,
    exact ordering and batch rejection.
 8. **Stateful integration:** conservation, nonce rollback, phase deadlock resistance,
    forced ETH, token drift, replay domains, artifact census, factory-and-every-child
    runtime/initcode measurements and bounds, gas/journal proofs, and 0/1/32/67 traces.
 9. **Independent closure:** Wildcat review, controller verification, deployment rehearsal,
-   and documentation truth. No approval or production claim is populated early.
+   and documentation truth. This is not master acceptance slice 9 (D), the
+   separate allocation/deed-delivery slice. No approval or production claim is
+   populated early.
 
 Minimum mutations include child-order/initcode/runtime/address mismatch, premature
 activation, partial finalization, factory post-finalization power, role-copy drift,

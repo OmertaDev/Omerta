@@ -107,16 +107,16 @@ Constructor precedence is exact:
 
 1. zero Factory: **CoreFactoryZero()**;
 2. zero manifest: **CoreManifestHashZero()**;
-3. zero Authority, Registry, BudgetBook, IntentExecution, then Reconciliation, in that order: Authority-owned **ZeroAddress()** wire error;
-4. missing Registry code: Authority-owned **ContractRequired(registry)** wire error;
+3. zero Authority, Registry, BudgetBook, IntentExecution, then Reconciliation, in that order: **CoreZeroAddress()**;
+4. missing Registry code: **CoreContractRequired(registry)**;
 5. executing address differs from Factory nonce-2 prediction: **CoreAddressMismatch(expected,actual)**;
 6. Authority differs from nonce-1 prediction: **CorePeerMismatch(0,expected,actual)**;
 7. BudgetBook differs from nonce-3 prediction: **CorePeerMismatch(2,expected,actual)**;
 8. IntentExecution differs from nonce-4 prediction: **CorePeerMismatch(3,expected,actual)**;
 9. Reconciliation differs from nonce-5 prediction: **CorePeerMismatch(4,expected,actual)**;
-10. the correctly predicted Authority has no code: Authority-owned **ContractRequired(authority)** wire error;
+10. the correctly predicted Authority has no code: **CoreContractRequired(authority)**;
 11. zero cap: **InvalidGlobalLifetimeCap()**;
-12. store immutables and leave all mutable state zero.
+12. store immutables and leave all Core business/linear state zero; inherited ReentrancyGuard initializes only its namespaced guard slot.
 
 Constructor code may use EXTCODESIZE observations but performs no CALL or STATICCALL. BudgetBook, IntentExecution, and Reconciliation are future CREATE peers and intentionally have no code when Core is deployed second.
 
@@ -350,7 +350,21 @@ error CoreIngressReturnLength(uint256 generation, uint256 actualLength);
 error CoreIngressSemanticMismatch(uint8 field);
 ~~~
 
-Together with the nine infrastructure errors and inherited **ReentrancyGuardReentrantCall()**, the compiled Core ABI has exactly 27 error entries.
+Core adds nine unique module-local semantic errors rather than locally originating an Authority- or OpenZeppelin-owned selector:
+
+~~~solidity
+error CoreZeroAddress();
+error CoreContractRequired(address target);
+error CoreRoleIdentityCollision(address candidate);
+error CoreEmptyDetailsHash();
+error CoreCounterExhausted(bytes32 counterName);
+error CoreTimestampOverflow();
+error CoreNoActiveIngress();
+error CoreIngressCodeHashMismatch(address ingress, bytes32 expected, bytes32 actual);
+error CoreUnauthorized(address caller);
+~~~
+
+Together with the nine infrastructure errors, six bounded-read errors, 11 assigned business errors, nine local semantic errors, and inherited **ReentrancyGuardReentrantCall()**, the compiled Core ABI has exactly 36 error entries.
 
 Core emits:
 
@@ -398,54 +412,18 @@ event CanonicalDeposit(
 
 The signatures, parameter order, types, and indexing are exact. Core also emits unique **CoreFinalized** and no Stock Token event.
 
-## 6. Shared wire-error ownership
+## 6. Semantic-error ownership
 
-The Task 0 crosswalk gives these descriptors one compiled owner in Authority or OpenZeppelin:
+Task 0 requires every locally detected cross-module-equivalent failure to use a unique module-specific error. Propagation may retain a callee-owned selector, but Task 3 normalizes every bounded peer-call failure and never bubbles peer revert data. Core therefore originates only the nine **Core...** errors frozen in section 5.
 
-- **ZeroAddress()**
-- **ContractRequired(address)**
-- **RoleIdentityCollision(address)**
-- **EmptyDetailsHash()**
-- **CounterExhausted(bytes32)**
-- **TimestampOverflow()**
-- **NoActiveIngress()**
-- **IngressCodeHashMismatch(address,bytes32,bytes32)**
-- **OwnableUnauthorizedAccount(address)**
+Core must not:
 
-Core must reproduce those wire selectors for locally detected equivalent failures without redeclaring duplicate Core ABI errors and without bubbling peer revert data. The exact implementation rule is:
+1. redeclare or manually originate an Authority- or OpenZeppelin-owned selector;
+2. inherit Authority, Ownable, or an error-only interface to obtain error declarations;
+3. forward or decode peer revert data;
+4. hide an unapproved selector behind assembly.
 
-1. obtain each compile-time selector through its type-qualified definition, such as **IAcquisitionAuthorityV2.ZeroAddress.selector** or **Ownable.OwnableUnauthorizedAccount.selector**;
-2. pass that **bytes4** selector and statically typed arguments to a private fixed-size memory-safe assembly revert helper;
-3. encode the canonical selector-plus-ABI-arguments payload and revert with its exact fixed length.
-
-Solc 0.8.26 compiler probing under the frozen via-IR/optimizer/Cancun profile proves that referencing only the type-qualified **.selector** adds no error entry to Core’s ABI, while a direct qualified **revert IAcquisitionAuthorityV2.Error(...)** or **revert Ownable.Error(...)** does add the descriptor to Core’s ABI. Direct qualified error reverts are therefore forbidden in Core. Dynamic revert-data forwarding is also forbidden.
-
-The exact selector and payload inventory is:
-
-| Error | Selector | Exact revert length |
-|---|---:|---:|
-| ZeroAddress() | 0xd92e233d | 4 |
-| ContractRequired(address) | 0x42614f19 | 36 |
-| RoleIdentityCollision(address) | 0x292dc0de | 36 |
-| EmptyDetailsHash() | 0x617ecc2f | 4 |
-| CounterExhausted(bytes32) | 0xc5b7f929 | 36 |
-| TimestampOverflow() | 0x549a0197 | 4 |
-| NoActiveIngress() | 0xe2bbb444 | 4 |
-| IngressCodeHashMismatch(address,bytes32,bytes32) | 0xb21aca47 | 100 |
-| OwnableUnauthorizedAccount(address) | 0x118cdaa7 | 36 |
-
-Core must not inherit an error-only interface, Authority, or Ownable to obtain the declarations. Address arguments are masked to 160 bits before assembly storage. Four- and 36-byte payloads may use only Solidity scratch memory. The 100-byte ingress-hash payload must start at the free-memory pointer; it must not overwrite the free-memory pointer or zero slot while claiming memory safety. Exact 4/36/100-byte lengths prevent adjacent-memory disclosure.
-
-The verifier must:
-
-1. prove the nine selectors and payload layouts exactly;
-2. prove each selector’s one compiled ABI owner;
-3. inventory Core runtime selectors, including selectors absent from Core ABI;
-4. reject any unapproved hidden selector;
-5. prove no peer revert data is copied or bubbled;
-6. prove **ReentrancyGuardReentrantCall()** is the sole allowed repeated compiled error descriptor.
-
-This rule preserves historical wire behavior without weakening the cross-artifact collision invariant.
+The verifier inventories both compiled ABI descriptors and runtime-reachable selectors, proves every locally originated selector has exactly one semantic owner, rejects the former nine hidden wire-selector repetitions, and preserves **ReentrancyGuardReentrantCall()** as the sole allowed repeated descriptor.
 
 ## 7. Authority live Core-cap protocol
 
@@ -562,13 +540,13 @@ Call failure, wrong length, or semantic drift reverts through the normalized Cor
 3. Authority snapshot call;
 4. exact return length;
 5. semantic fields in ordinal order;
-6. caller is current Safe, otherwise OpenZeppelin-owned **OwnableUnauthorizedAccount(caller)** wire error;
-7. nonzero details hash, otherwise Authority-owned **EmptyDetailsHash()** wire error;
+6. caller is current Safe, otherwise **CoreUnauthorized(caller)**;
+7. nonzero details hash, otherwise **CoreEmptyDetailsHash()**;
 8. nonzero amount;
 9. zero live balance deficit;
 10. zero reconciliation shortfall;
 11. amount no greater than U;
-12. accounting sequence not exhausted, otherwise Authority-owned **CounterExhausted(keccak256("accountingSequence"))** wire error;
+12. accounting sequence not exhausted, otherwise **CoreCounterExhausted(keccak256("accountingSequence"))**;
 13. effects;
 14. evidence.
 
@@ -612,15 +590,15 @@ Construction and finalization leave every bucket, sequence, observation, cap cou
 2. shared nonreentrant guard;
 3. exact Authority snapshot;
 4. snapshot semantic consistency;
-5. zero active generation: Authority-owned **NoActiveIngress()** wire error;
+5. zero active generation: **CoreNoActiveIngress()**;
 6. exact bounded **getIngress** call and record semantics;
 7. caller equals the record ingress, otherwise **NotActiveIngress(caller)**;
-8. ingress code exists, otherwise Authority-owned **ContractRequired(ingress)**;
-9. runtime code hash equals the record, otherwise Authority-owned **IngressCodeHashMismatch**;
-10. ingress does not collide with Authority, Factory, Core, Registry, BudgetBook, IntentExecution, Reconciliation, current Safe, pending Safe, current operator, pending operator, or pending ingress; otherwise Authority-owned **RoleIdentityCollision(ingress)**;
+8. ingress code exists, otherwise **CoreContractRequired(ingress)**;
+9. runtime code hash equals the record, otherwise **CoreIngressCodeHashMismatch**;
+10. ingress does not collide with Authority, Factory, Core, Registry, BudgetBook, IntentExecution, Reconciliation, current Safe, pending Safe, current operator, pending operator, or pending ingress; otherwise **CoreRoleIdentityCollision(ingress)**;
 11. nonzero source event ID;
 12. nonzero msg.value;
-13. block timestamp fits uint64, otherwise Authority-owned **TimestampOverflow()**;
+13. block timestamp fits uint64, otherwise **CoreTimestampOverflow()**;
 14. V2 deposit ID and replay check;
 15. per-deposit cap;
 16. current UTC-day cap;
@@ -630,7 +608,7 @@ Construction and finalization leave every bucket, sequence, observation, cap cou
 20. effects;
 21. evidence.
 
-Core stores no ingress value. Authority remains the single live source for rotations, disablement, runtime identity, and configuration.
+Core stores no live ingress authority, active-ingress pointer, ingress configuration, or ingress-generation mirror. It stores only immutable per-deposit ingress provenance in **DepositRecord**. Authority remains the single live source for rotations, disablement, runtime identity, and configuration.
 
 The deposit is derived against the pre-call balance:
 
@@ -650,9 +628,9 @@ The cap order and payload are exact:
 3. GENERATION_LIFETIME;
 4. GLOBAL_LIFETIME.
 
-Each failure is **DepositCapExceeded(uint8(kind),capWei,attemptedTotalWei)**. The check uses subtraction form **amountWei > capWei - priorWei**. If injected corruption makes prior greater than cap, checked subtraction intentionally panics 0x11; it must not wrap, saturate, or fabricate a custom payload.
+When both subtraction and the attempted total are representable, a cap failure is **DepositCapExceeded(uint8(kind),capWei,attemptedTotalWei)**. The check uses subtraction form **amountWei > capWei - priorWei**. Checked arithmetic intentionally panics 0x11 if injected corruption makes prior greater than cap or if **priorWei + amountWei** is itself unrepresentable while constructing the failure payload; neither case may wrap, saturate, or fabricate a custom payload.
 
-All validation, timestamp, ID, cap totals, sequence, and pre/post values are computed before writes. Successful write order is:
+All validation, timestamp, ID, cap totals, sequence, pre-state totals, and prospective scalar values are computed before writes. Successful write order is:
 
 1. available credit;
 2. accounting sequence;
@@ -660,7 +638,7 @@ All validation, timestamp, ID, cap totals, sequence, and pre/post values are com
 4. generation total;
 5. global total;
 6. DepositRecord;
-7. post totals;
+7. compute post totals from the written state;
 8. post-state deficit observation;
 9. evidence.
 
@@ -675,18 +653,24 @@ The exact literal tags are:
 ~~~text
 ACCOUNTING_MUTATION_TAG = keccak256("OMERTA_ACQUISITION_ACCOUNTING_MUTATION_V2")
 ACCOUNTING_COMPONENT_TAG = keccak256("OMERTA_ACQUISITION_ACCOUNTING_COMPONENT_V2")
-SYNC_BALANCE_TAG = keccak256("OMERTA_ACQUISITION_SYNC_BALANCE_V2")
 CANONICAL_DEPOSIT_TAG = keccak256("OMERTA_ACQUISITION_DEPOSIT_V2")
 ACCOUNTING_SEQUENCE_COUNTER = keccak256("accountingSequence")
 ~~~
 
-The preimages are:
+This tracked freeze adds three literal families to the closed V2 catalog. All three conform to **TAG, chain, Core vault, owning/emitting module, generation, nonce-or-sequence, action fields**. Core is both the vault and owner/emitter, so it intentionally appears twice. The family domains are:
+
+| Family | Owner/emitter | Generation | Nonce or sequence |
+|---|---|---|---|
+| accounting mutation | Core | zero for sync/reclassification; active ingress generation for canonical deposit | accountingSequence |
+| accounting component | Core | same generation as its parent mutation | accountingSequence |
+| canonical deposit | Core | active ingress generation | sourceEventId, the canonical external-event replay key |
+
+**syncSubjectHash** is a supporting action-field hash, not a record ID, replay key, or V2 family. It has no independent tag or consumer and is protected by the enclosing accounting-mutation/component domain.
+
+The exact preimages are:
 
 ~~~text
-syncSubjectId = keccak256(abi.encode(
-    SYNC_BALANCE_TAG,
-    uint256(4663),
-    address(core),
+syncSubjectHash = keccak256(abi.encode(
     preTotals,
     postTotals
 ))
@@ -695,6 +679,8 @@ mutationId = keccak256(abi.encode(
     ACCOUNTING_MUTATION_TAG,
     uint256(4663),
     address(core),
+    address(core),
+    evidenceGeneration,
     accountingSequence,
     uint8(mutationKind),
     subjectId
@@ -704,6 +690,9 @@ componentId = keccak256(abi.encode(
     ACCOUNTING_COMPONENT_TAG,
     uint256(4663),
     address(core),
+    address(core),
+    evidenceGeneration,
+    accountingSequence,
     mutationId,
     componentIndex,
     uint8(componentKind),
@@ -715,15 +704,16 @@ depositId = keccak256(abi.encode(
     CANONICAL_DEPOSIT_TAG,
     uint256(4663),
     address(core),
-    address(authority),
+    address(core),
     activeIngressGeneration,
+    sourceEventId,
+    address(authority),
     activeIngress,
-    activeIngressConfigHash,
-    sourceEventId
+    activeIngressConfigHash
 ))
 ~~~
 
-The sync subject is **syncSubjectId**; reclassification uses the caller-supplied details hash; deposit uses **depositId**. These are intentional V2 changes. The undeployed monolith creates no record-compatibility obligation.
+The sync subject is **syncSubjectHash**; reclassification uses the caller-supplied details hash; deposit uses **depositId**. The accounting evidence generation is zero for sync and reclassification and the exact active ingress generation for deposit. Components copy their parent generation and accounting sequence. These are intentional V2 changes and exact generic-template applications. The undeployed monolith creates no record-compatibility obligation.
 
 ## 13. Exact Factory/Authority/Core call allowlist
 
@@ -742,42 +732,44 @@ Core runtime has no CALL, value transfer, ERC-20 call, approval, permit, sweep, 
 
 ## 14. ABI census and collision universe
 
-With the section 6 selector-only rule, the exact final Task 3 compiled ABI census is:
+With the unique Core error rule in section 6, the exact final Task 3 compiled ABI census is:
 
 | Artifact | Functions | Errors | Events | Constructors | ABI entries |
 |---|---:|---:|---:|---:|---:|
 | Factory | 4 | 35 | 2 | 1 | 42 |
 | Authority | 50 | 54 | 18 | 1 | 123 |
-| Core | 23 | 27 | 5 | 1 | 56 |
+| Core | 23 | 36 | 5 | 1 | 65 |
 | BudgetBook shell | 2 | 5 | 1 | 1 | 9 |
 | IntentExecution shell | 2 | 5 | 1 | 1 | 9 |
 | Reconciliation shell | 2 | 5 | 1 | 1 | 9 |
-| **Compiled total** | **83** | **131** | **28** | **6** | **248** |
+| **Compiled total** | **83** | **140** | **28** | **6** | **257** |
 
-Because **ReentrancyGuardReentrantCall()** appears in both Authority and Core, the compiled surface contains 130 unique semantic error descriptors. The historical FUTURE_RESERVED set adds two callable selectors, six unique semantic-error selectors, and one event topic. The exact collision universes are therefore:
+Because **ReentrancyGuardReentrantCall()** appears in both Authority and Core, the compiled surface contains 139 unique semantic error descriptors. The historical FUTURE_RESERVED set adds two callable selectors, six unique semantic-error selectors, and one event topic. The exact collision universes are therefore:
 
 - 85 callable function selectors;
-- 136 unique semantic-error selectors;
+- 145 unique semantic-error selectors;
 - 29 full event signatures/topics;
 - six constructors verified separately.
 
-The qualified/manual shared wire selectors in section 6 do not enlarge the semantic universe because each is already owned by Authority or OpenZeppelin. The verifier must distinguish compiled ABI entries, unique semantic descriptors, and runtime-reachable wire selectors.
+The verifier must reject any Authority-owned selector originated by Core and distinguish the 140 compiled error entries from the 139 unique compiled descriptors and the 145-descriptor future-inclusive collision universe.
 
 All Task 3 deployables remain solc 0.8.26, optimizer enabled with 800 runs, Cancun, and the exact phase-selected constellation via-IR profile. Runtime and initcode limits remain 24,576 and 49,152 bytes. No size, hash, source-provenance, immutable-reference, storage, IR, opcode, or collision count is accepted from a default-profile or duplicate artifact.
 
 ## 15. Stock Token architecture amendment
 
-The earlier constellation summary assigned hold-only Stock Token aggregates to Core in Task 3, while the master acceptance graph assigns attempt-bound Stock Token observation and reconciliation to Task 5. Task 3 has no attempt ID, execution phase, immutable asset version/token pair, adapter result, or reconciliation case. It cannot truthfully classify a token balance change as a fill, unattributed stock, or negative drift.
+The earlier constellation summary assigned hold-only Stock Token aggregates to constellation Task 3, while master acceptance slice 5 (**A3+R**) assigns attempt-bound Stock Token observation and reconciliation across constellation Task 5 (**Intent**) and constellation Task 6 (**Reconciliation**). Constellation Task 3 has no attempt ID, execution phase, immutable asset-version/token pair, adapter result, or reconciliation case. It cannot truthfully classify a token balance change as a fill, unattributed stock, or negative drift.
 
 This freeze resolves the conflict as follows:
 
-> **Task 3 — Registry-bound passive Stock Token custody.** Task 3 binds Core immutably to the Factory-committed StockTokenRegistryV2 and preserves Core as the sole future Stock Token custody/accounting authority. Task 3 adds only the already-crosswalked stockTokenRegistryV2() getter. It adds no stock sequence, per-version aggregate, fill record, unattributed-stock record, negative-drift record, Stock Token mutation, Stock Token event, token balance proxy, or token movement surface. Any ERC-20 balance physically sent to Core before Task 5 is inert, unaccounted physical custody and cannot block deployment or finalization.
+> **Constellation Task 3 — Registry-bound passive Stock Token custody.** Task 3 binds Core immutably to the Factory-committed StockTokenRegistryV2 and preserves Core as the sole future Stock Token custody/accounting authority. Task 3 adds only the already-crosswalked stockTokenRegistryV2() getter. It adds no stock sequence, per-version aggregate, fill record, unattributed-stock record, negative-drift record, Stock Token mutation, Stock Token event, token balance proxy, or token movement surface. Any ERC-20 balance physically sent to Core before constellation Task 6 is inert, unaccounted physical custody and cannot block deployment or finalization.
 >
-> **Task 5 — Authoritative Stock Token observation and accounting.** Task 5 introduces Core-owned stockSequence, exact per-version current/cumulative aggregates, per-attempt fill records, unattributedStock, negative-drift observations, and the exact NativeAndStockObserved event. Those mutations occur only through the typed, phase-guarded Intent execution protocol using the immutable intent’s asset version, token, ingress generation, and attempt identity. Task 5 must first freeze the complete event signature/indexing, storage structs, error set, balance-call gas/returndata policy, token-runtime identity policy, generic unmatched-transfer sync policy if any, and collision changes. Reconciliation consumes typed evidence but never owns Core totals or custody.
+> **Constellation Task 5 — Intent/attempt identity, still dormant for stock mutation.** Task 5 freezes the immutable intent’s asset version, token, ingress generation, adapter, route, and attempt identity, but does not make Core Stock Token observation/accounting callable while Reconciliation remains a shell. Any Task 5 preparatory interface or storage design remains dormant and cannot classify or mutate physical token custody.
+>
+> **Constellation Task 6 — Authoritative Stock Token observation and accounting; completion of master slice 5 (A3+R).** Task 6 introduces the callable Core-owned stockSequence, exact per-version current/cumulative aggregates, per-attempt fill records, unattributedStock, negative-drift observations, and exact NativeAndStockObserved event together with the Reconciliation case path required by the atomic outcome table. Those mutations occur only through the typed, phase-guarded Intent execution protocol using the immutable intent’s asset version, token, ingress generation, and attempt identity. Before implementation, Task 6 must freeze the complete event signature/indexing, storage structs, error set, balance-call gas/returndata policy, token-runtime identity policy, generic unmatched-transfer sync policy if any, collision changes, and exact atomic ordering for every outcome. Reconciliation consumes typed evidence but never owns Core totals or custody.
 
 Task 3 performs no token transfer, transferFrom, approval, permit, sweep, recovery, sale, delivery, generic external call, or balance query. A token can transfer to a predictable address without recipient consent; such physical custody does not become protocol inventory.
 
-Task 9’s delivery requirement and the constellation’s categorical no-transfer Core boundary remain a separate explicit architecture decision. Task 3 must not silently create that delivery seam.
+Master acceptance slice 9 (**D**, atomic allocation and permanent deed delivery)—not constellation Task 9, which is independent closure—remains a separate explicit architecture decision against the constellation’s categorical no-transfer Core boundary. Constellation Task 3 must not silently create that delivery seam.
 
 ## 16. RED/GREEN and mutation matrix
 
@@ -853,13 +845,17 @@ Task 3 implementation cannot begin until this freeze is independently approved. 
 - Registry getter equals the Factory-committed Registry before and after finalization.
 - Wrong Core Registry identity fails Factory preflight atomically.
 - Active, inactive historical, and unknown tokens transferred before deployment/finalization remain physically held and never create Core state or logs.
-- Candidate selectors for sync, fill, transfer, approve, sweep, recover, and allocate are absent and revert.
+- The exact 23-function allowlist excludes **syncStockToken(address)**, **recordStockFill(bytes32,uint256)**, **transfer(address,uint256)**, **approve(address,uint256)**, **sweepToken(address,address,uint256)**, **recoverToken(address,uint256)**, and **allocateStock(bytes32,address,uint256)**; low-level probes of those nonprotocol descriptors revert. Native **syncBalance()** remains required.
 - No stock mappings, sequences, records, aggregates, events, errors, token calls, or balance assertions exist.
 
 ### Verifier and mutation requirements
 
-- Add phase **Task3** while preserving historical Task1 and Task2 behavior and exit matrix 0/1/42/43/44.
-- Exact 83/131/28/6/248 compiled census and 85/136/29 collision universes, or fail the freeze if compiler evidence disproves a count.
+- The verifier parameter is exactly **ValidateSet('Task1','Task2','Task3')** and its default advances to **ValidatePhase = 'Task3'**.
+- A conforming Task 3 graph under default or explicit Task3 validation exits 0. A complete Task 1 or Task 2 graph under Task3 exits 1.
+- Each conforming historical graph exits 0 only under its exact explicit Task1 or Task2 phase. A complete graph from any other phase under Task1, Task2, or Task3 exits 1.
+- All six artifacts absent exit 42, except **-ExpectTask0Red** exits 0. A partial six-artifact set exits 43. A malformed or nonconforming complete set exits 1.
+- A conforming complete set plus **-ExpectTask0Red** exits 44 only after full conformance has been evaluated. Artifact cardinality is classified before phase conformance, while complete-set conformance precedes the exit-44 rejection.
+- Exact 83/140/28/6/257 compiled census and 85/145/29 collision universes, or fail the freeze if compiler evidence disproves a count.
 - Exact storage slots, type graph, immutables, source hashes, compiler profile, bytecode, sizes, IR, and opcode/callsite bindings.
 - Kill mutations that count only deposit credit toward caps, introduce ingress/Safe/cap mirrors, catch or bubble peer failure, forward unbounded gas, accept wrong output size, reorder evidence, write records before validation, add hidden payable/token surfaces, reject physical token prefunding, or add unapproved error selectors.
 - Run the new Task 3 suites plus every established Task 2, Task 1, crosswalk, accounting, operator, Registry V2, and historical oracle suite in isolated output/cache directories.
