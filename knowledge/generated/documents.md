@@ -314,8 +314,8 @@
 | [BALANCE.md](../../BALANCE.md) | documentation | 6472 | 2026-08-24 |
 | [CHAIN-AUDIT-PACKET.md](../../CHAIN-AUDIT-PACKET.md) | documentation | 296 | 2026-08-27 |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 1981 | 2026-08-27 |
-| [CLAUDE.md](../../CLAUDE.md) | documentation | 17225 | 2026-08-23 |
-| [content/README.md](../../content/README.md) | documentation | 66 | uncommitted |
+| [CLAUDE.md](../../CLAUDE.md) | documentation | 17225 | 2026-08-26 |
+| [content/README.md](../../content/README.md) | documentation | 66 | 2026-08-27 |
 | [DEPLOY-CHECKLIST.md](../../DEPLOY-CHECKLIST.md) | operations | 147 | 2026-08-13 |
 | [DEPLOY.md](../../DEPLOY.md) | operations | 543 | 2026-08-24 |
 | [DESIGN.md](../../DESIGN.md) | design | 88 | 2026-08-27 |
@@ -324,7 +324,7 @@
 | [docs/BULLETPROOF.md](../../docs/BULLETPROOF.md) | documentation | 272 | 2026-08-21 |
 | [docs/GAMEPLAY-MARKETING-PACK.md](../../docs/GAMEPLAY-MARKETING-PACK.md) | documentation | 55 | 2026-08-24 |
 | [docs/LAUNCH-TWEETS.md](../../docs/LAUNCH-TWEETS.md) | documentation | 125 | 2026-08-14 |
-| [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 249 | uncommitted |
+| [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 249 | 2026-08-26 |
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 346 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-23-discovery-integrity.md](../../docs/superpowers/plans/2026-08-23-discovery-integrity.md) | documentation | 65 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-23-first-action-onboarding.md](../../docs/superpowers/plans/2026-08-23-first-action-onboarding.md) | documentation | 311 | 2026-08-23 |
@@ -332,9 +332,9 @@
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-core-deployment.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-core-deployment.md) | documentation | 151 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-hook-rehearsal.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-hook-rehearsal.md) | documentation | 146 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-twap-rehearsal.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-twap-rehearsal.md) | documentation | 156 | 2026-08-24 |
-| [docs/superpowers/plans/2026-08-25-agent-alpha-deep-city.md](../../docs/superpowers/plans/2026-08-25-agent-alpha-deep-city.md) | documentation | 274 | uncommitted |
+| [docs/superpowers/plans/2026-08-25-agent-alpha-deep-city.md](../../docs/superpowers/plans/2026-08-25-agent-alpha-deep-city.md) | documentation | 274 | 2026-08-25 |
 | [docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md](../../docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md) | design | 124 | 2026-08-23 |
-| [docs/superpowers/specs/2026-08-25-agent-alpha-deep-city-design.md](../../docs/superpowers/specs/2026-08-25-agent-alpha-deep-city-design.md) | design | 177 | uncommitted |
+| [docs/superpowers/specs/2026-08-25-agent-alpha-deep-city-design.md](../../docs/superpowers/specs/2026-08-25-agent-alpha-deep-city-design.md) | design | 177 | 2026-08-25 |
 | [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2593 | 2026-08-27 |
 | [GRAPH.md](../../GRAPH.md) | documentation | 259 | 2026-07-27 |
 | [GTM.md](../../GTM.md) | documentation | 295 | 2026-08-13 |
