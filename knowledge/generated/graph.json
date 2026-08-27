@@ -1,7 +1,7 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "16b671a45965157ce10124b2e7bfdd2796942cb7",
-  "worktreeDirty": false,
+  "sourceRevision": "2db3f77bcb4a75ece6d5edf26530ae3ba1de5a37",
+  "worktreeDirty": true,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
     "nodeTypes": [
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 4616,
-    "edges": 21648,
+    "nodes": 4618,
+    "edges": 21655,
     "byNodeType": {
       "Artifact": 1585,
       "Command": 35,
-      "Commit": 1015,
+      "Commit": 1017,
       "Contract": 33,
       "Document": 408,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1844,
-      "CHANGED": 8382,
+      "CHANGED": 8387,
       "CONTAINS": 1605,
       "DECLARES": 35,
       "DEFINED_IN": 1018,
       "DEPENDS_ON": 59,
       "EXECUTES": 156,
       "HANDLED_BY": 653,
-      "HAS_COMMIT": 1015,
+      "HAS_COMMIT": 1017,
       "IMPLEMENTS": 124,
       "IMPORTS": 1477,
       "INHERITS": 5,
@@ -10327,20 +10327,20 @@
       "path": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 72892,
-      "lines": 1710,
-      "version": "aa43b12961a816e7",
+      "bytes": 75399,
+      "lines": 1750,
+      "version": "e793b524cc0212ea",
       "text": true,
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
           "line": 1,
-          "version": "aa43b12961a816e7"
+          "version": "e793b524cc0212ea"
         }
       ],
-      "lastChangedAt": "2026-08-27T03:58:00-04:00",
+      "lastChangedAt": "2026-08-27T04:12:54-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d0d1fa3feaff5d549b281bf383bbb4ed89c5d79a"
+      "lastChangedCommit": "2db3f77bcb4a75ece6d5edf26530ae3ba1de5a37"
     },
     {
       "key": "Artifact:docs/superpowers/plans/2026-08-27-finalized-event-time-handoff.md",
@@ -28654,13 +28654,13 @@
       "extension": ".md",
       "bytes": 46570,
       "lines": 647,
-      "version": "895988f0f2eb5784",
+      "version": "d08d0a8422a919cb",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "895988f0f2eb5784"
+          "version": "d08d0a8422a919cb"
         }
       ],
       "lastChangedAt": "2026-08-27T03:59:35-04:00",
@@ -39677,6 +39677,22 @@
       ]
     },
     {
+      "key": "Commit:2db3f77bcb4a75ece6d5edf26530ae3ba1de5a37",
+      "type": "Commit",
+      "id": "2db3f77bcb4a75ece6d5edf26530ae3ba1de5a37",
+      "label": "docs: finalize acquisition evidence IDs",
+      "title": "docs: finalize acquisition evidence IDs",
+      "date": "2026-08-27T04:12:54-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2db3f77bcb4a75ece6d5edf26530ae3ba1de5a37",
+      "provenance": [
+        {
+          "commit": "2db3f77bcb4a75ece6d5edf26530ae3ba1de5a37",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2db3f77bcb4a75ece6d5edf26530ae3ba1de5a37"
+        }
+      ]
+    },
+    {
       "key": "Commit:2dddbdaab85f6f63385c00e21f15aed958cc5a51",
       "type": "Commit",
       "id": "2dddbdaab85f6f63385c00e21f15aed958cc5a51",
@@ -46265,6 +46281,22 @@
         {
           "commit": "8b2fe4b5d0bcd30804b64ff85e1328788c71ecd1",
           "url": "https://github.com/OmertaDev/Omerta/commit/8b2fe4b5d0bcd30804b64ff85e1328788c71ecd1"
+        }
+      ]
+    },
+    {
+      "key": "Commit:8be942ab5155510517c4664af4bb1229ece8ee4c",
+      "type": "Commit",
+      "id": "8be942ab5155510517c4664af4bb1229ece8ee4c",
+      "label": "docs: finalize hardened plan provenance",
+      "title": "docs: finalize hardened plan provenance",
+      "date": "2026-08-27T04:00:03-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8be942ab5155510517c4664af4bb1229ece8ee4c",
+      "provenance": [
+        {
+          "commit": "8be942ab5155510517c4664af4bb1229ece8ee4c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8be942ab5155510517c4664af4bb1229ece8ee4c"
         }
       ]
     },
@@ -58363,13 +58395,13 @@
       "id": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
       "label": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
       "documentType": "documentation",
-      "lines": 1710,
-      "version": "aa43b12961a816e7",
+      "lines": 1750,
+      "version": "e793b524cc0212ea",
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
           "line": 1,
-          "version": "aa43b12961a816e7"
+          "version": "e793b524cc0212ea"
         }
       ]
     },
@@ -60284,12 +60316,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 647,
-      "version": "895988f0f2eb5784",
+      "version": "d08d0a8422a919cb",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "895988f0f2eb5784"
+          "version": "d08d0a8422a919cb"
         }
       ]
     },
@@ -61564,6 +61596,9 @@
           "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
         },
         {
+          "commit": "8be942ab5155510517c4664af4bb1229ece8ee4c"
+        },
+        {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
         },
         {
@@ -61696,6 +61731,9 @@
           "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
         },
         {
+          "commit": "8be942ab5155510517c4664af4bb1229ece8ee4c"
+        },
+        {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
         },
         {
@@ -61826,6 +61864,9 @@
         },
         {
           "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
+        },
+        {
+          "commit": "8be942ab5155510517c4664af4bb1229ece8ee4c"
         },
         {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
@@ -61982,6 +62023,9 @@
         },
         {
           "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
+        },
+        {
+          "commit": "8be942ab5155510517c4664af4bb1229ece8ee4c"
         },
         {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
@@ -67882,11 +67926,11 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "16b671a45965157ce10124b2e7bfdd2796942cb7",
+      "revision": "2db3f77bcb4a75ece6d5edf26530ae3ba1de5a37",
       "currentBranch": "codex/grill-completion",
       "defaultBranch": "main",
       "visibility": "public",
-      "worktreeDirty": false,
+      "worktreeDirty": true,
       "currentArtifactCount": 1586,
       "provenance": [
         {
@@ -119775,6 +119819,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:2db3f77bcb4a75ece6d5edf26530ae3ba1de5a37",
+      "to": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "provenance": {
+        "commit": "2db3f77bcb4a75ece6d5edf26530ae3ba1de5a37"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:2dddbdaab85f6f63385c00e21f15aed958cc5a51",
       "to": "Artifact:omerta-contracts/test/SettlementGasPoolCore.t.sol",
       "provenance": {
@@ -146499,6 +146551,38 @@
       "to": "Artifact:SPEC.md",
       "provenance": {
         "commit": "8b2fe4b5d0bcd30804b64ff85e1328788c71ecd1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8be942ab5155510517c4664af4bb1229ece8ee4c",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "8be942ab5155510517c4664af4bb1229ece8ee4c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8be942ab5155510517c4664af4bb1229ece8ee4c",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "8be942ab5155510517c4664af4bb1229ece8ee4c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8be942ab5155510517c4664af4bb1229ece8ee4c",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "8be942ab5155510517c4664af4bb1229ece8ee4c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8be942ab5155510517c4664af4bb1229ece8ee4c",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "8be942ab5155510517c4664af4bb1229ece8ee4c"
       }
     },
     {
@@ -208490,6 +208574,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2db3f77bcb4a75ece6d5edf26530ae3ba1de5a37",
+      "provenance": {
+        "commit": "2db3f77bcb4a75ece6d5edf26530ae3ba1de5a37"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2dddbdaab85f6f63385c00e21f15aed958cc5a51",
       "provenance": {
         "commit": "2dddbdaab85f6f63385c00e21f15aed958cc5a51"
@@ -211781,6 +211873,14 @@
       "to": "Commit:8b2fe4b5d0bcd30804b64ff85e1328788c71ecd1",
       "provenance": {
         "commit": "8b2fe4b5d0bcd30804b64ff85e1328788c71ecd1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:8be942ab5155510517c4664af4bb1229ece8ee4c",
+      "provenance": {
+        "commit": "8be942ab5155510517c4664af4bb1229ece8ee4c"
       }
     },
     {

@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `16b671a45965`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `2db3f77bcb4a`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,585 |
-| Text lines | 402,921 |
-| Repository bytes inventoried | 274,663,264 |
+| Text lines | 402,961 |
+| Repository bytes inventoried | 274,665,771 |
 | Backend/route modules | 167 |
 | HTTP route registrations / unique routes | 722 / 721 |
 | Database tables | 263 |
 | Solidity declarations | 33 |
-| Git commits | 1,015 |
+| Git commits | 1,017 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 4,616 / 21,648 |
+| Graph nodes / edges | 4,618 / 21,655 |
 
 ## Artifact kinds
 
@@ -70,9 +70,9 @@
 | [package-lock.json](../../package-lock.json) | 2,152 | package-config | 2026-08-21 |
 | [knowledge/github-snapshot.json](../../knowledge/github-snapshot.json) | 2,048 | knowledge-base | 2026-08-24 |
 | [test/finalizedobservation.js](../../test/finalizedobservation.js) | 1,920 | test-suite | 2026-08-27 |
+| [docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md](../../docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md) | 1,750 | documentation | 2026-08-27 |
 | [test/gates.js](../../test/gates.js) | 1,747 | test-suite | 2026-08-24 |
 | [test/hardening.js](../../test/hardening.js) | 1,712 | test-suite | 2026-08-24 |
-| [docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md](../../docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md) | 1,710 | documentation | 2026-08-27 |
 | [src/chain.js](../../src/chain.js) | 1,703 | backend-module | 2026-08-22 |
 | [test/stockballotv2.js](../../test/stockballotv2.js) | 1,689 | test-suite | 2026-08-27 |
 | [tools/sim.js](../../tools/sim.js) | 1,681 | engineering-harness | 2026-08-16 |
