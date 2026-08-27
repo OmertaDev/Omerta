@@ -17,19 +17,29 @@ path off until the Safe completes a separate, reviewable ceremony.
 
 | Phase | Script | Contracts |
 |---|---|---|
-| 0 — governance prerequisite | `script/DeploySafe.s.sol` | Fresh Safe v1.4.1 proxy (external governance infrastructure; not part of the 17 OMERTA contracts) |
+| 0 — governance prerequisite | `script/DeploySafe.s.sol` | Fresh Safe v1.4.1 proxy (external governance infrastructure; not part of the OMERTA Solidity inventory) |
 | 1 — pre-pool core | `script/Deploy.s.sol` | OMR, GearVault, VoucherClaim, OMRStaking, OmertaFees, StreetDeed, DynastyNFT, StockVault, GenesisOracle, OmertaBond |
 | 2 — Bank | `script/DeployBank.s.sol` | Denari, Transmuter, Alchemist |
 | 3 — post-pool oracle | `script/DeployTwapOracle.s.sol` | OmrTwapOracle |
 | 4 — v4 hook | `script/DeployHook.s.sol` | OmertaHook at a mined CREATE2 address |
+| Additive legacy RWA machine | `script/DeployRwaStockMachine.s.sol` | StockTokenRegistry and RwaStockBuyer; both born with automation/venue authority off |
 
-The other three source-level contracts do not get top-level deployment transactions:
+Six other top-level source files do not get a deployment transaction from the current release scripts:
 
 - `CollateralEscrow` is created by `Alchemist` when each user first deposits.
 - `FlashGuard` is abstract and is inherited by the Bank contracts.
 - `IOmrOracle` is an interface.
+- `StockTokenRegistryV2` is implemented, independently approved and dormant; its production publisher
+  remains blocked on the finalized consumer, health overlay, and AcquisitionVault budget bridge.
+- `SettlementGasPool` is a reviewed standalone dependency, but no gameplay-vault integration or deploy
+  script is authorized by this runbook yet.
+- `AcquisitionVault` contains only the independently approved O1 authority base. A1 accounting and all
+  later custody/outflow integration remain pending, so it must not be deployed.
 
-That accounts for all 17 contracts plus the one interface in the audit scope.
+That accounts for all 23 top-level `src/*.sol` files: 22 contract-bearing files plus the top-level
+`IOmrOracle` interface. Three additional dedicated interface files live under `src/interfaces/` and
+also receive no deployment transaction. Freeze the exact release phase and refresh the third-party
+audit packet before any mainnet broadcast; source inventory alone is not release scope approval.
 
 ## 1. Freeze and prove the source
 

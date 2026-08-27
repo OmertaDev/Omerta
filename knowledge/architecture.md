@@ -30,7 +30,7 @@ flowchart LR
 | Worker | `src/worker.js`, `src/watcher.js` | Runs timed settlements, buybacks, season/world sweeps, monitoring and chain-event synchronization. Exactly one worker is intended. |
 | Browser client | `public/index.html`, other `public/*.html`, `public/omerta-ui.css` | Static, no-build console plus admin, wiki, arena, play and public identity/share pages. |
 | Agent interface | `AGENTS.md`, `omerta-mcp/`, `/openapi.json`, `/v1/rules`, `/v1/opportunities` | Gives agents stable machine-readable discovery, authentication and action surfaces. |
-| Contracts | `omerta-contracts/src/` | Token, vouchers, gear/deeds/NFTs, fees, bonds, oracle, hook, staking, stock vault and bank protocol. |
+| Contracts | `omerta-contracts/src/` | Token, vouchers, gear/deeds/NFTs, fees, bonds, oracle, hook, staking, stock machine, bank protocol, settlement-gas pool and the dormant AcquisitionVault authority base. |
 | Delivery plane | `.github/workflows/`, `render.yaml`, `tools/`, `test/` | CI, deployment declaration, performance/correctness harnesses, audits and release controls. |
 
 ## Request lifecycle
@@ -75,11 +75,17 @@ The database is the measured scaling dial in the current architecture. See `rend
 
 The backend and contracts communicate through explicit parity surfaces: SIWE wallet linking,
 on-chain fee events, persisted watcher cursors, EIP-712 withdrawal/gear vouchers and reserve
-accounting. The watcher stays behind the head by a confirmation depth and backfills after downtime.
+accounting. Shared finalized-observation code pins event consumers to an exact block/hash and
+backfills after downtime. `StockTokenRegistryV2` and the standalone `SettlementGasPool` are reviewed
+dormant foundations. `AcquisitionVault` currently contains only the independently approved O1
+Safe/operator authority kernel; A1 accounting/ingress/budget and all later purchase, reconciliation
+and outflow integration remain pending.
 
 Production chain activation is deliberately dormant until configuration and external gates are
-cleared. The game can operate off-chain without those variables. `CHAIN-DEPLOY.md` is the operational
-authority; `CHAIN-AUDIT-PACKET.md` defines the review scope and properties to attack.
+cleared. The game can operate off-chain without those variables. `CHAIN-DEPLOY.md` is the current
+operational inventory authority. `CHAIN-AUDIT-PACKET.md` is a superseded 2026-08-21 pre-O1 snapshot;
+it preserves historical attack-surface analysis but must be regenerated at the exact release head
+before an external engagement.
 
 ## Architectural invariants
 

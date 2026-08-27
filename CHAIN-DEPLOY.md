@@ -60,17 +60,23 @@ touches mainnet** until §0 is satisfied.
    different layer, and the ERC-20 path survives armed at zero as its backstop.
 
    ### THE BATCH — what goes out, and why it is drawn here
-   **The packet itself is `CHAIN-AUDIT-PACKET.md`** — the enumerated scope, what each wall CLAIMS,
-   what the four provers already prove against what stays config-only, and the properties an auditor
-   should attack. Send that; this section is the summary of it.
+   **`CHAIN-AUDIT-PACKET.md` is the frozen 2026-08-21 pre-O1 packet** — useful historical attack-
+   surface context, but superseded as a current engagement scope. Before sending anything externally,
+   refresh that packet against the exact release head and reconcile it with the current inventory below.
    *"Batch, not dribble" (`omerta-dynasty-machine-design.md`) means the scope must be KNOWN before it
-   is sent. Enumerated 2026-08-11; `forge test` **305/305** green on this exact set, measured 2026-08-21
+   is sent. The old packet was enumerated 2026-08-11; `forge test` **305/305** was green on that old
+   set when measured 2026-08-21
    (StreetDeed added 2026-08-14; `DynastyNFT` + `StockVault` + `OmertaFees.payForPackage` added
    2026-08-14; the count has since grown with the red-team regressions — RT#5's constructor daily
    caps, RT#8's two-step ownership, the four-way sell tax — so re-measure rather than quoting this
    figure, and if the two disagree the tree is right and this line is stale.)*
 
-   **In the batch — 21 contracts + 1 interface, every one carrying tests:**
+   **In the batch — 22 contracts + 1 interface, every one carrying tests:**
+
+   This count is the current top-level `src/*.sol` inventory used by the documentation guard. Three
+   additional dedicated interface files live under `src/interfaces/`. Inventory does not equal launch
+   authorization: the rows marked dormant remain outside deployment until their dependent plans and
+   external gates close.
 
    | subsystem | contracts | the thing to attack |
    |---|---|---|
@@ -82,6 +88,7 @@ touches mainnet** until §0 is satisfied.
    | the identity NFT | `DynastyNFT` | the EIP-712 self-mint (NO owner mint, nonce/deadline/daily-cap walls), that it gates **NOTHING on `balanceOf`** (the entitlement is account-bound off-chain — the token is a transferable trophy), and the uncapped sequential supply + EIP-2981 royalty |
    | the stock machine | `StockTokenRegistry`, `StockTokenRegistryV2`, `RwaStockBuyer`, `StockVault` | legacy compatibility plus additive immutable version identity; atomic ticker/token/provider conflict replacement; activation TTL; monotonic ballot eligibility that cannot revive after same-key reactivation; one immutable closed-day family result and frozen purchase budget/deadline; ballot-bound exact-token purchase through a Safe-approved adapter; daily ETH/slippage/one-shot walls; pre-held transfer only; EIP-712 allocation authorization; per-token delivery caps, pause, rotation, and sweep |
    | gameplay settlement gas | `SettlementGasPool` | immutable gameplay-vault credit authority; terminal replay keys; exact executor liabilities and self-only pull withdrawals; bounded gas/data-fee accounting; delayed configuration; and migration of unreserved ETH only to one exact successor while old credits stay backed |
+   | acquisition authority base | `AcquisitionVault` | O1 Safe/main-operator authority and EIP-712 replay controls only; independently approved and dormant, with no ETH outflow. A1 accounting/ingress/budget and later A3/R/O2 integration are pending, so it has no deployment or production authority |
 
    **V2 catalog mirror gate (built, not deployed/configured here):** configure a
    syntactically valid absolute HTTP(S) `CHAIN_RPC_URL` and the canonical nonzero
@@ -204,9 +211,10 @@ share a key with anything that spends — and it is now the Safe whose balance b
 makes co-mingling it with a spending key strictly worse than before.
 
 ## 1. Build + test the contracts
-- [ ] `cd omerta-contracts && ./run-forge-test.sh` → all `[PASS]` (Gate 0.1). Suite: OMR, VoucherClaim,
-      GearVault, OMRStaking, OmertaFees (incl. `payForPackage`), OmertaBond, OmrTwapOracle, GenesisOracle,
-      OmertaHook + THE BANK + StreetDeed + DynastyNFT + StockVault (288 tests, seven fuzzes).
+- [ ] `cd omerta-contracts && ./run-forge-test.sh` → all `[PASS]` (Gate 0.1). The latest complete
+      configured run passed 531/531 across 27 suites on 2026-08-27. Re-run at the exact release head
+      and reconcile the frozen deployment/audit phase with the current inventory above; a historical
+      count or a green subset is not this gate.
       The hook's tests deploy a REAL Uniswap v4 `PoolManager`, which the emscripten solc cannot compile —
       **use native solc** (`./run-forge-test.sh`, or the sandboxed runner, which now fetches the native
       binary and says so if it cannot).

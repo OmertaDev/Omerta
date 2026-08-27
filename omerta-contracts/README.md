@@ -38,6 +38,11 @@ complete dry-run, broadcast, Safe-wiring, backend activation, and rollback seque
 > of heap compiling v4's `PoolManager`, so on a shim-only box every suite runs EXCEPT
 > `OmertaHook.t.sol`. The third-party audit should still re-run `./run-forge-test.sh` on an
 > open-internet machine with NATIVE solc as part of its own verification.
+>
+> Those figures are runner history, not the current tree census. The latest complete native run on
+> 2026-08-27 passed **531/531 across 27 suites**. The tree now has 23 top-level Solidity files plus
+> three dedicated interface files; see `DEPLOYMENT.md` for which artifacts have scripts and which
+> reviewed slices remain deliberately dormant.
 
 ## Server-side signing parity (for M6-B, viem)
 The chain service must produce signatures `VoucherClaim.claim` accepts:
@@ -82,7 +87,7 @@ const signature = await account.signTypedData({
 ```
 
 ## Before mainnet (non-negotiable)
-Third-party audit of all eight contracts + the signing service; launch review of Robinhood Chain ToS re: wagering-adjacent dApps; Safe signer ceremony; VoucherClaim's daily cap + OMR tranche, OmertaBond's `dailyCapOMR` + `maxOmrPerEth`, and the **per-gearId supply caps** (gear is fail-closed — no class mints until the Safe caps it) all set deliberately small for launch.
+Third-party audit of the exact release-frozen contract phase plus the signing service; launch review of Robinhood Chain ToS re: wagering-adjacent dApps; Safe signer ceremony; VoucherClaim's daily cap + OMR tranche, OmertaBond's `dailyCapOMR` + `maxOmrPerEth`, and the **per-gearId supply caps** (gear is fail-closed — no class mints until the Safe caps it) all set deliberately small for launch. The 2026-08-21 audit packet predates RegistryV2, the settlement-gas pool, and the O1 AcquisitionVault base; refresh it before engagement and do not deploy incomplete/dormant slices.
 
 ⚠ **Point the auditor at tokenomics v2 step 4 explicitly.** Until 2026-07-29 this suite's headline
 property was "nothing mints", and every prior review leaned on it. OMR now has a mint path and bonds

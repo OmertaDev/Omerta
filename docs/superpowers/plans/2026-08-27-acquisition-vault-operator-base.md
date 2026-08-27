@@ -38,9 +38,10 @@ evidence:
 - The production artifact is one final, immutable-code `AcquisitionVault`.
   There is no proxy, initializer, upgrade hook, storage gap, wrapper fallback,
   delegate target, linked mutable library, or intermediate deployment.
-- O1 and A1 commits are source/test milestones only. They remain unimplemented
-  until their tasks land, and remain undeployed, unfunded, unsigned,
-  unconfigured, unactivated, and unreachable from production after they land.
+- O1 is implemented and independently approved at remediation head
+  `82001b6e8ac54c46dda6eb185cda550e8a73a3de`. A1 remains unimplemented until
+  Tasks 4–8 land. Both remain undeployed, unfunded, unsigned, unconfigured,
+  unactivated, and unreachable from production.
 - This plan adds no deploy script, address manifest, Safe transaction, signature,
   funding operation, private key, provider credential, RPC worker, backend route,
   UI control, feature selector, publisher, or cutover. It does not change the
@@ -48,6 +49,23 @@ evidence:
 - The exact supported chain is `4663`. This is a repository compatibility
   constraint and EIP-712/deployment wall, not a recovered interview fact about
   another canonical chain.
+
+### Interim O1 milestone truth
+
+This is a current task-status note, not the controller-owned Task-8 closure
+record below; that record stays `UNSET` until A1 Tasks 4–8 have stable reviewed
+heads.
+
+- Initial O1 GREEN: `44a8762438128b3eecad7f3657b3a1c5c83ba4fd`.
+- Ownership-epoch remediation and current approved O1 head:
+  `82001b6e8ac54c46dda6eb185cda550e8a73a3de`.
+- Fresh independent review: Critical 0, Important 0, Minor 0. Focused O1 tests
+  passed 80/80; the full configured Forge run passed 531/531 across 27 suites.
+- The twelve-lens Wildcat review found no confirmed O1 finding. Its repeated
+  ownership-handoff lead was closed by Task 3A and independently re-reviewed.
+- O1 remains dormant and contains no payable ingress, native-ETH outflow,
+  purchase, reservation, reconciliation, deployment, backend, UI, or cutover
+  surface. A1 and all later composition gates remain pending.
 - No task may deploy, push, fund, sign, send a Safe transaction, change a live
   role, move ETH/tokens, or claim external audit/finality/provider evidence.
 
@@ -911,6 +929,9 @@ proves the permitted targets, calldata, gas, and return handling.
 
 ### Task 1: Write the O1 operator-authority RED suite
 
+**Status:** Complete. Literal RED evidence was preserved before the O1 GREEN
+implementation; the focused suite and mutation matrix subsequently closed.
+
 **Files:**
 
 - Add: `omerta-contracts/test/AcquisitionVaultOperator.t.sol`
@@ -918,12 +939,12 @@ proves the permitted targets, calldata, gas, and return handling.
 
 **Interfaces under test:**
 
-- Future `omerta-contracts/src/AcquisitionVault.sol`
-- Future `omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol`
+- `omerta-contracts/src/AcquisitionVault.sol`
+- `omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol`
 - Test-local Safe, EOA signer, ERC-1271 response/gas/reentrancy mocks, and a
   test-only validator harness where an internal seam needs isolated proof.
 
-- [ ] **Step 1: Freeze the literal appendix ABI and typed payloads in tests**
+- [x] **Step 1: Freeze the literal appendix ABI and typed payloads in tests**
 
   Generate expected selectors, tuple return order, constants, errors, events,
   indexed fields, counter transitions, and ID preimages independently from the
@@ -968,7 +989,7 @@ proves the permitted targets, calldata, gas, and return handling.
   Independently calculate literal struct hashes and domain separator in tests;
   do not use a production hash helper to derive expected values.
 
-- [ ] **Step 2: Add constructor, ownership, and selector-negative tests**
+- [x] **Step 2: Add constructor, ownership, and selector-negative tests**
 
   Isolate one constructor-invalid predicate per test and prove the appendix's
   exact mapping: zero Safe reaches inherited `OwnableInvalidOwner(address(0))`;
@@ -1003,7 +1024,7 @@ proves the permitted targets, calldata, gas, and return handling.
   exact RegistryV2 read is the third creation-only family and must not survive
   runtime. Do not search raw bytes. The test is RED until the O1 runtime exists.
 
-- [ ] **Step 3: Add nomination lifecycle boundary tests**
+- [x] **Step 3: Add nomination lifecycle boundary tests**
 
   Cover nomination only by the Safe from zero with no pending proposal;
   a nonzero EOA/ERC-1271 nominee distinct from owner, pending owner, vault,
@@ -1022,7 +1043,7 @@ proves the permitted targets, calldata, gas, and return handling.
   second. The first produces exact derived timestamps; the second reverts
   `TimestampOverflow` without consuming the proposal counter or history.
 
-- [ ] **Step 4: Add generation and direct-transition tests**
+- [x] **Step 4: Add generation and direct-transition tests**
 
   Prove Safe disable of an active operator or pending nomination is immediate
   and increments generation exactly once while preserving the global next-
@@ -1054,7 +1075,7 @@ proves the permitted targets, calldata, gas, and return handling.
   wrong reason, zero details, invalid time, and invalid signature prove stages
   5 through 8 respectively. Each failure leaves all state and logs unchanged.
 
-- [ ] **Step 5: Add replay, time, and EOA signature tests**
+- [x] **Step 5: Add replay, time, and EOA signature tests**
 
   The domain is exactly name `OMERTA AcquisitionVault`, version `1`, chain
   `4663`, and the vault address. Both payloads require:
@@ -1074,7 +1095,7 @@ proves the permitted targets, calldata, gas, and return handling.
   Cover canonical 65-byte EOA success and bad length, high-s, invalid-v, zero
   recover, and wrong-key failures.
 
-- [ ] **Step 6: Add bounded ERC-1271 adversarial tests**
+- [x] **Step 6: Add bounded ERC-1271 adversarial tests**
 
   Freeze one fail-closed internal validator:
 
@@ -1110,7 +1131,7 @@ proves the permitted targets, calldata, gas, and return handling.
   Assert every failure leaves operator, generation, nonce, nomination, pause
   state, and event history unchanged.
 
-- [ ] **Step 7: Add nonce and pause tests**
+- [x] **Step 7: Add nonce and pause tests**
 
   Prove `outflowNonce` means the next usable future O2 nonce, is shared by future
   direct/relayed outflows, never resets, and is preserved by every role,
@@ -1134,7 +1155,7 @@ proves the permitted targets, calldata, gas, and return handling.
   another external call.
   O1 has no financial/ingress/H/FO readiness claim and is never deployed.
 
-- [ ] **Step 8: Run focused tests and preserve literal RED evidence**
+- [x] **Step 8: Run focused tests and preserve literal RED evidence**
 
   ```powershell
   Set-Location omerta-contracts
@@ -1145,7 +1166,7 @@ proves the permitted targets, calldata, gas, and return handling.
   the exact failing command and reason in the task report; do not weaken or
   comment out the tests.
 
-- [ ] **Step 9: Commit the RED suite**
+- [x] **Step 9: Commit the RED suite**
 
   Commit only the focused test/mocks. A failing RED commit is intentional and
   must be immediately followed by Task 2 on the same bounded implementation
@@ -1154,6 +1175,10 @@ proves the permitted targets, calldata, gas, and return handling.
 ---
 
 ### Task 2: Implement the O1 role and signature kernel
+
+**Status:** Complete at initial O1 GREEN head
+`44a8762438128b3eecad7f3657b3a1c5c83ba4fd`; Task 3A later superseded its
+review head without expanding the ABI or storage layout.
 
 **Files:**
 
@@ -1183,7 +1208,7 @@ contract Safe and exact RegistryV2 so operator/ownership collisions are testable
 from the first milestone; A1 adds only the global lifetime cap argument before
 any deployment.
 
-- [ ] **Step 1: Define the narrow interface first**
+- [x] **Step 1: Define the narrow interface first**
 
   Add the full frozen `ReasonCode` and `LocalReadinessCondition` enums, the exact
   O1 structs/errors/events/getters/mutators/EIP-712 hash views, and every public
@@ -1206,7 +1231,7 @@ any deployment.
   This enables only the RED suite's compiled-artifact and source provenance
   reads. FFI remains disabled and no test receives filesystem write authority.
 
-- [ ] **Step 2: Implement immutable ownership/domain construction**
+- [x] **Step 2: Implement immutable ownership/domain construction**
 
   Use final inheritance:
 
@@ -1232,7 +1257,7 @@ any deployment.
   `transferOwnership(0)` only as an explicit cancellation when a pending owner
   exists. Override `renounceOwnership` to always revert, including for owner.
 
-- [ ] **Step 3: Implement delayed Safe nomination and generation transitions**
+- [x] **Step 3: Implement delayed Safe nomination and generation transitions**
 
   Implement the exact transition table:
 
@@ -1251,7 +1276,7 @@ any deployment.
 
   Failed transitions must perform no partial write or event emission.
 
-- [ ] **Step 4: Implement exact typed hashes and bounded signature validation**
+- [x] **Step 4: Implement exact typed hashes and bounded signature validation**
 
   Encode fields in the literal Task-1 order. Public hash helpers return
   `_hashTypedDataV4(structHash)`. Replacement is direct-only and validates only
@@ -1284,7 +1309,7 @@ any deployment.
   defensive assertion even though the preceding 160,000/100,000/10,000 bounds
   make its failure arithmetically unreachable on the conforming full path.
 
-- [ ] **Step 5: Make the O1 RED suite GREEN**
+- [x] **Step 5: Make the O1 RED suite GREEN**
 
   ```powershell
   Set-Location omerta-contracts
@@ -1302,7 +1327,7 @@ any deployment.
   Every command exits `0`. Inspect method identifiers explicitly and record the
   absence of outflow/sweep/payable/token/upgrade/burn surfaces.
 
-- [ ] **Step 5a: Make the RED runtime opcode and call-site boundary GREEN**
+- [x] **Step 5a: Make the RED runtime opcode and call-site boundary GREEN**
 
   Use the executable RED helper that disassembles `address(vault).code`, advances
   over each `PUSH1..PUSH32` immediate payload, and fails on opcode `CALL (0xf1)`,
@@ -1320,7 +1345,7 @@ any deployment.
   exact-selector RegistryV2 `supportedChainId()` constructor check and it cannot survive in
   runtime. Record hashes of the inspected outputs in the task report.
 
-- [ ] **Step 6: Run deliberate mutation checks**
+- [x] **Step 6: Run deliberate mutation checks**
 
   Locally mutate one condition at a time, run the focused suite, and revert only
   the deliberate mutation: 48-hour delay, exclusive expiry, generation +1,
@@ -1337,7 +1362,7 @@ any deployment.
   opcode/call-site and behavioral gates must kill each mutation. Each mutation
   must be killed by a named test or executable static gate.
 
-- [ ] **Step 7: Run repository-coupled contract checks**
+- [x] **Step 7: Run repository-coupled contract checks**
 
   ```powershell
   Set-Location omerta-contracts
@@ -1351,7 +1376,7 @@ any deployment.
   If the repository's configured Foundry executable is unavailable, stop with
   an honest tooling blocker; never substitute a syntax check for Forge evidence.
 
-- [ ] **Step 8: Commit O1 GREEN and write the task report**
+- [x] **Step 8: Commit O1 GREEN and write the task report**
 
   Commit only the O1 contract/interface/focused test adjustments. The report
   must state RED, GREEN, mutations, exact commands, ABI-negative result,
@@ -1361,15 +1386,19 @@ any deployment.
 
 ### Task 3: Independent O1 authority and replay review gate
 
+**Status:** Complete for the initial O1 head. The later Wildcat ownership-epoch
+lead superseded this review and was closed by Task 3A plus a fresh independent
+approval at `82001b6e8ac54c46dda6eb185cda550e8a73a3de`.
+
 **Files:** read-only review of the Task 1-2 frozen diff/package. Any fix is a
 separate focused implementation commit followed by a fresh independent review.
 
-- [ ] **Step 1: Generate a frozen review package**
+- [x] **Step 1: Generate a frozen review package**
 
   Pin the plan path, base commit before Task 1, exact O1 head, diff, and task
   evidence. The reviewer must not review a moving worktree.
 
-- [ ] **Step 2: Review with independent lenses**
+- [x] **Step 2: Review with independent lenses**
 
   Use a different reviewer from the implementer. Inspect ownership separation,
   reciprocal proposal/acceptance role separation, nomination and checked uint64
@@ -1385,13 +1414,13 @@ separate focused implementation commit followed by a fresh independent review.
   source/AST/IR external-call inventory, mutation evidence, runtime size, and no
   production reachability.
 
-- [ ] **Step 3: Close findings before A1**
+- [x] **Step 3: Close findings before A1**
 
   Every Critical or Important finding blocks Task 4. Apply the smallest test-first
   fix, rerun focused/full O1 verification, regenerate the frozen package, and use
   another independent re-review. Record Minor findings explicitly for later work.
 
-- [ ] **Step 4: Controller verification**
+- [x] **Step 4: Controller verification**
 
   The controller reruns the O1 focused suite, format, build/size, ABI/method/
   storage inspection, coupled RegistryV2/SettlementGasPool tests, and
@@ -1401,6 +1430,9 @@ separate focused implementation commit followed by a fresh independent review.
 ---
 
 ### Task 3A: Close the post-O1 ownership-epoch audit lead
+
+**Status:** Complete and freshly independently approved at
+`82001b6e8ac54c46dda6eb185cda550e8a73a3de`; Critical 0, Important 0, Minor 0.
 
 The twelve-lens Wildcat review found no present O1 exploit, but seven lenses
 independently reproduced one composition hazard: a delayed operator nomination
@@ -1422,7 +1454,7 @@ block.
 - Modify: `omerta-contracts/src/AcquisitionVault.sol`
 - Modify: `omerta-contracts/test/AcquisitionVaultOperator.t.sol`
 
-- [ ] **Step 1: Write the ownership-epoch RED test**
+- [x] **Step 1: Write the ownership-epoch RED test**
 
   Prove Safe A can nominate N and start/cancel an ownership transfer without
   changing that nomination. Successful A-to-B ownership acceptance must emit the
@@ -1449,7 +1481,7 @@ block.
   `mainOperator`, and pause state remain unchanged; and only ownership/pending-
   owner plus pending-nomination state changes.
 
-- [ ] **Step 2: Implement the minimum atomic cancellation**
+- [x] **Step 2: Implement the minimum atomic cancellation**
 
   In `acceptOwnership`, snapshot `previousOwner`, `candidate`, and the pending
   nomination; run the existing caller/candidate checks; call
@@ -1459,7 +1491,7 @@ block.
   not add an ownership epoch counter, interface change, transfer block, or
   automatic generation advancement.
 
-- [ ] **Step 3: Regenerate exact O1 artifact evidence**
+- [x] **Step 3: Regenerate exact O1 artifact evidence**
 
   Prove no ABI function/event/error or storage-layout count changes. Rerun the
   focused O1 suite, full Forge suite, targeted format, runtime/storage/IR/call-
@@ -1468,13 +1500,13 @@ block.
   nonce preservation, and pause preservation; named tests or static gates must
   kill every mutation.
 
-- [ ] **Step 4: Commit the focused remediation**
+- [x] **Step 4: Commit the focused remediation**
 
   Commit only `AcquisitionVault.sol` and `AcquisitionVaultOperator.t.sol`, record
   the exact immutable head, and keep detailed working evidence ignored. Do not
   include interface, A1, deployment, backend, UI, or generated-knowledge changes.
 
-- [ ] **Step 5: Fresh independent review**
+- [x] **Step 5: Fresh independent review**
 
   The original O1 approval is superseded when this fix lands. Freeze the exact
   remediation head and obtain a fresh independent review of the two-file delta,

@@ -182,8 +182,8 @@ flowchart TD
 | FO | Shared exact-head finalized-observation kernel, getter consumer, committed event-block timestamps, and consumer checkpoint/inbox contract | CN-1..4 | Pinned getter/log/event-time completeness, hash-recheck, reorg/crash/gap/bound/replay tests | Tasks 1–5 plus event-time fix complete/independently approved/dormant |
 | H1 | Predicate taxonomy, watcher, snapshots, operational overlay domain/API | FO, CN-1..4 | 5-minute poll, 10-minute freshness, bounded work, spam/stale tests | Pending |
 | H2 | `RwaHealthOverlay`, seven-day Safe clearance package/finality | H1, FO, CN-1..4 | Contract tests, exact event/finality/reorg proof | Pending |
-| O1 | mainOperator role state machine and EIP-712 authority | F0 | Unit/fuzz/invariant/1271/generation/nonce tests | Pending |
-| A1 | AcquisitionVault buckets, ingress, deposits, caps, pause/deficit base | O1, CN | Conservation/receipt/cap/migration/size tests | Pending |
+| O1 | mainOperator role state machine and EIP-712 authority | F0 | Unit/fuzz/invariant/1271/generation/nonce tests | Complete/independently approved/dormant at remediation head `82001b6e8ac54c46dda6eb185cda550e8a73a3de`; no outflow or deployment |
+| A1 | AcquisitionVault buckets, ingress, deposits, caps, pause/deficit base | O1, CN | Conservation/receipt/cap/migration/size tests | Pending; unblocked by approved O1, implementation Tasks 4–8 remain |
 | CB-bridge | Vault budget provenance into ballot opener/cutover gate | CN-5, A1, H2 | No manual production budget, no fallback/double authority | Pending |
 | CN-6 | One-cursor RegistryV2 finalized lifecycle consumer plus dormant exact-byte publisher | FO, CN-5, H2, CB-bridge | Event-time/reorg/crash/exact-match/drift/exact-byte rebroadcast tests; no duplicate observation kernel | Pending; publisher unreachable until H2 and AcquisitionVault provenance are approved |
 | CN-7 / X-CN | Real-PG harness, machine surfaces, C/N runbook/deploy package/review | CN-6 | MVCC/deadlock evidence; honest dormant manifest; whole-slice review | Pending |

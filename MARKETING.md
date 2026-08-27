@@ -91,8 +91,9 @@ compound, the collection, who owed whom blood — and your heir walks out into a
 | **Vice** | A casino, a racetrack, a boxing stable, a poker room, street races. All cash. Never $OMR — that line is deliberate. |
 | **Going legit** | The Vault, the compound, the Dynasty, the estate. Where a made man puts money he intends to keep. |
 
-**Scale, checked:** 142 backend modules, 100 test suites, 222 database tables, 15 smart contracts, 213
-Foundry tests. This is not a prototype with a whitepaper attached.
+**Scale, rechecked 2026-08-27:** 167 backend source files, 125 test files, 263 database tables,
+23 top-level Solidity files, and a 531/531 full Foundry run across 27 suites. This is not a prototype
+with a whitepaper attached. Source presence is not a production-live claim; the chain remains audit-gated.
 
 ---
 
@@ -200,7 +201,7 @@ Each of these is one thread, and each is true.
 6. **"The Bureau is building a case."** Heat → RICO → indictment → the Pen → the wall → WANTED. A
    whole antagonist arc most games don't have.
 7. **"A self-repaying loan with no liquidations."** THE BANK, for the DeFi audience.
-8. **"We wrote down what we're not sure about."** BALANCE.md and 85 audit reports. Radical for the
+8. **"We wrote down what we're not sure about."** BALANCE.md and 96 indexed audit reports. Radical for the
    space, and it is the trust play.
 
 ---

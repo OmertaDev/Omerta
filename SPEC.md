@@ -16,7 +16,7 @@ Written 2026-07-25. Every number below was measured from the tree, not recalled.
 | Database tables | **263** (`schema.sql`, 4309 lines) |
 | Client | **11415** lines (`public/index.html`, single file, zero dependencies) |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
-| Smart contracts | **22** contracts, **5611** lines Solidity, **428** Foundry tests passing |
+| Smart contracts | **23** top-level Solidity files, **6029** lines, **508** declared Foundry tests; latest full run **531/531** across 27 suites |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/bond-dials.js` (sizing the on-chain mint walls), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres) |
 | Design + audit docs | **421** markdown files, **93775** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
 | Ledger invariants | 18 named escrow/identity checks + per-currency conservation, **drift-0** |
