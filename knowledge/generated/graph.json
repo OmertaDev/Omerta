@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "22019d33f56b0350fc27b3036a8badf9dd944331",
+  "sourceRevision": "46e7a645809ae80422cc3aa6859008d6c37fcc1b",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5057,
-    "edges": 22550,
+    "nodes": 5059,
+    "edges": 22556,
     "byNodeType": {
       "Artifact": 1694,
       "Command": 42,
-      "Commit": 1044,
+      "Commit": 1046,
       "Contract": 32,
       "Document": 455,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1863,
-      "CHANGED": 8905,
+      "CHANGED": 8909,
       "CONTAINS": 1714,
       "DECLARES": 42,
       "DEFINED_IN": 993,
       "DEPENDS_ON": 60,
       "EXECUTES": 166,
       "HANDLED_BY": 678,
-      "HAS_COMMIT": 1044,
+      "HAS_COMMIT": 1046,
       "IMPLEMENTS": 124,
       "IMPORTS": 1510,
       "INHERITS": 8,
@@ -44547,6 +44547,22 @@
       ]
     },
     {
+      "key": "Commit:46e7a645809ae80422cc3aa6859008d6c37fcc1b",
+      "type": "Commit",
+      "id": "46e7a645809ae80422cc3aa6859008d6c37fcc1b",
+      "label": "Merge pull request #142 from OmertaDev/codex/site-copy-ui-upgrade",
+      "title": "Merge pull request #142 from OmertaDev/codex/site-copy-ui-upgrade",
+      "date": "2026-08-27T12:41:53-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/46e7a645809ae80422cc3aa6859008d6c37fcc1b",
+      "provenance": [
+        {
+          "commit": "46e7a645809ae80422cc3aa6859008d6c37fcc1b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/46e7a645809ae80422cc3aa6859008d6c37fcc1b"
+        }
+      ]
+    },
+    {
       "key": "Commit:47008d39f6aa8a93dcbc4d2e58746e9334d38173",
       "type": "Commit",
       "id": "47008d39f6aa8a93dcbc4d2e58746e9334d38173",
@@ -49055,6 +49071,22 @@
         {
           "commit": "8d8701bb5987f9ff51636492e24f09938125e169",
           "url": "https://github.com/OmertaDev/Omerta/commit/8d8701bb5987f9ff51636492e24f09938125e169"
+        }
+      ]
+    },
+    {
+      "key": "Commit:8d93b82acbfad74fa10e3c6e9956957a82dda04e",
+      "type": "Commit",
+      "id": "8d93b82acbfad74fa10e3c6e9956957a82dda04e",
+      "label": "docs: refresh knowledge graph after production sync",
+      "title": "docs: refresh knowledge graph after production sync",
+      "date": "2026-08-27T12:40:51-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8d93b82acbfad74fa10e3c6e9956957a82dda04e",
+      "provenance": [
+        {
+          "commit": "8d93b82acbfad74fa10e3c6e9956957a82dda04e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8d93b82acbfad74fa10e3c6e9956957a82dda04e"
         }
       ]
     },
@@ -68608,6 +68640,9 @@
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
         },
         {
+          "commit": "8d93b82acbfad74fa10e3c6e9956957a82dda04e"
+        },
+        {
           "commit": "8da1ac08e7365552192613cd3d631d963b710e7b"
         },
         {
@@ -68749,6 +68784,9 @@
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
         },
         {
+          "commit": "8d93b82acbfad74fa10e3c6e9956957a82dda04e"
+        },
+        {
           "commit": "8da1ac08e7365552192613cd3d631d963b710e7b"
         },
         {
@@ -68888,6 +68926,9 @@
         },
         {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
+        },
+        {
+          "commit": "8d93b82acbfad74fa10e3c6e9956957a82dda04e"
         },
         {
           "commit": "8da1ac08e7365552192613cd3d631d963b710e7b"
@@ -69065,6 +69106,9 @@
         },
         {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
+        },
+        {
+          "commit": "8d93b82acbfad74fa10e3c6e9956957a82dda04e"
         },
         {
           "commit": "8da1ac08e7365552192613cd3d631d963b710e7b"
@@ -75067,8 +75111,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "22019d33f56b0350fc27b3036a8badf9dd944331",
-      "currentBranch": "codex/site-copy-ui-upgrade",
+      "revision": "46e7a645809ae80422cc3aa6859008d6c37fcc1b",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -157052,6 +157096,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:8d93b82acbfad74fa10e3c6e9956957a82dda04e",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "8d93b82acbfad74fa10e3c6e9956957a82dda04e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8d93b82acbfad74fa10e3c6e9956957a82dda04e",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "8d93b82acbfad74fa10e3c6e9956957a82dda04e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8d93b82acbfad74fa10e3c6e9956957a82dda04e",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "8d93b82acbfad74fa10e3c6e9956957a82dda04e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8d93b82acbfad74fa10e3c6e9956957a82dda04e",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "8d93b82acbfad74fa10e3c6e9956957a82dda04e"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:8da1ac08e7365552192613cd3d631d963b710e7b",
       "to": "Artifact:docs/OMERTA-Whitepaper.docx",
       "provenance": {
@@ -221836,6 +221912,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:46e7a645809ae80422cc3aa6859008d6c37fcc1b",
+      "provenance": {
+        "commit": "46e7a645809ae80422cc3aa6859008d6c37fcc1b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:47008d39f6aa8a93dcbc4d2e58746e9334d38173",
       "provenance": {
         "commit": "47008d39f6aa8a93dcbc4d2e58746e9334d38173"
@@ -224087,6 +224171,14 @@
       "to": "Commit:8d8701bb5987f9ff51636492e24f09938125e169",
       "provenance": {
         "commit": "8d8701bb5987f9ff51636492e24f09938125e169"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:8d93b82acbfad74fa10e3c6e9956957a82dda04e",
+      "provenance": {
+        "commit": "8d93b82acbfad74fa10e3c6e9956957a82dda04e"
       }
     },
     {

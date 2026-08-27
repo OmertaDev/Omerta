@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `22019d33f56b`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `46e7a645809a`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1044 |
+| Commits in clone | 1046 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-27 — Merge remote-tracking branch 'origin/main' into codex/site-copy-ui-upgrade |
+| Latest commit | 2026-08-27 — Merge pull request #142 from OmertaDev/codex/site-copy-ui-upgrade |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 243 |
+| OmertaDev | 245 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -54,10 +54,10 @@
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
 | [src/preflight.js](../../src/preflight.js) | 48 | yes |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
-| knowledge/generated/github-history.md | 44 | historical |
-| knowledge/generated/graph-summary.md | 44 | historical |
-| knowledge/generated/graph.json | 44 | historical |
-| knowledge/generated/inventory.md | 44 | historical |
+| knowledge/generated/github-history.md | 45 | historical |
+| knowledge/generated/graph-summary.md | 45 | historical |
+| knowledge/generated/graph.json | 45 | historical |
+| knowledge/generated/inventory.md | 45 | historical |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 44 | yes |
 | [src/economy.js](../../src/economy.js) | 44 | yes |
 | [src/casino.js](../../src/casino.js) | 43 | yes |
