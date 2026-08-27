@@ -181,8 +181,13 @@ contract Task3ACapMock {
     }
 
     fallback() external {
-        require(msg.sig == bytes4(keccak256("globalLifetimeCanonicalDepositCapWei()")));
         uint8 mode = _mode;
+        if (msg.sig != bytes4(keccak256("globalLifetimeCanonicalDepositCapWei()")) || msg.data.length != 4) {
+            assembly ("memory-safe") {
+                mstore(0, mode)
+                revert(0, 32)
+            }
+        }
         if (mode == 1) revert();
         if (mode == 2) assembly { for {} 1 {} {} }
         if (mode == 7) assembly { revert(0, 4096) }
@@ -406,7 +411,7 @@ contract Task3AMaliciousCoreSnapshot {
     }
 
     fallback() external {
-        require(msg.sig == bytes4(keccak256("coreSnapshot()")));
+        require(msg.sig == bytes4(keccak256("coreSnapshot()")) && msg.data.length == 4);
         uint8 mode = _mode;
         if (mode == 1) revert();
         if (mode == 2) assembly { for {} 1 {} {} }
@@ -430,6 +435,7 @@ contract AcquisitionConstellationTask3ATest is Test {
     bytes32 internal constant CONSTELLATION_TAG = keccak256("OMERTA_ACQUISITION_CONSTELLATION_V1");
     bytes32 internal constant DEPLOYMENT_TAG = keccak256("OMERTA_ACQUISITION_DEPLOYMENT_V1");
     bytes4 internal constant CORE_CAP_SELECTOR = bytes4(keccak256("globalLifetimeCanonicalDepositCapWei()"));
+    bytes4 internal constant CORE_SNAPSHOT_SELECTOR = bytes4(keccak256("coreSnapshot()"));
 
     struct ProductionBundle {
         address predictedFactory;
@@ -629,7 +635,7 @@ contract AcquisitionConstellationTask3ATest is Test {
                 missingAuthPeers[2],
                 missingAuthPeers[3],
                 missingAuthPeers[4],
-                GLOBAL_CAP
+                0
             )
         );
 
@@ -692,6 +698,10 @@ contract AcquisitionConstellationTask3ATest is Test {
         for (uint8 field = 10; field < 18; ++field) {
             assertEq(_word(snapshot, field), 0);
         }
+        (bool capOk, bytes memory capResult) = core.staticcall(abi.encodeWithSelector(CORE_CAP_SELECTOR));
+        assertTrue(capOk, "Task3A production Core cap getter is absent");
+        assertEq(capResult.length, 32, "Task3A production Core cap getter must return exactly one word");
+        assertEq(abi.decode(capResult, (uint256)), _word(snapshot, 9), "Core getter/snapshot cap mismatch");
         assertEq(core.balance, 1 ether);
     }
 
@@ -760,6 +770,7 @@ contract AcquisitionConstellationTask3ATest is Test {
         _assertSnapshotFixtureReady(f);
 
         f.core.setMode(0);
+        vm.expectCall(address(f.core), 0, uint64(100_000), abi.encodeWithSelector(CORE_SNAPSHOT_SELECTOR));
         f.factory.finalizeConstellation();
     }
 
@@ -867,14 +878,14 @@ contract AcquisitionConstellationTask3ATest is Test {
         bytes32 pendingHash = keccak256(abi.encode(pending));
         vm.warp(pending.validAfter);
 
-        uint8[6] memory modes = [uint8(1), 2, 7, 3, 4, 6];
-        uint256[6] memory lengths = [uint256(0), 0, 0, 31, 33, 0];
+        uint8[7] memory modes = [uint8(1), 2, 7, 3, 4, 5, 6];
+        uint256[7] memory lengths = [uint256(0), 0, 0, 31, 33, 4096, 0];
         for (uint8 i; i < modes.length; ++i) {
             f.core.setMode(modes[i]);
             vm.prank(address(safe));
             if (i < 3) {
                 vm.expectRevert(ITask3AAuthority.AuthorityCoreCapCallFailed.selector);
-            } else if (i < 5) {
+            } else if (i < 6) {
                 vm.expectRevert(
                     abi.encodeWithSelector(ITask3AAuthority.AuthorityCoreCapReturnLength.selector, lengths[i])
                 );
@@ -924,9 +935,11 @@ contract AcquisitionConstellationTask3ATest is Test {
     function test_task3A_14_activationEarlyPrecedenceDoesNotReachCore() public {
         AuthorityFixture memory empty = _authorityFixture(GLOBAL_CAP);
         empty.core.setMode(2);
+        vm.record();
         vm.prank(address(safe));
         vm.expectRevert(ITask3AAuthority.IngressProposalMissing.selector);
         empty.authority.activateIngress(keccak256("missing"));
+        _assertNoCoreStorageAccess(empty.coreAddress, "missing proposal");
 
         AuthorityFixture memory f = _authorityFixture(GLOBAL_CAP);
         Task3AIngress ingress = new Task3AIngress();
@@ -935,16 +948,22 @@ contract AcquisitionConstellationTask3ATest is Test {
         IAcquisitionAuthorityV2.PendingIngressProposal memory pending = f.authority.pendingIngressProposal();
         f.core.setMode(2);
         bytes32 wrong = keccak256("wrong");
+        vm.record();
         vm.prank(address(safe));
         vm.expectRevert(abi.encodeWithSelector(ITask3AAuthority.ProposalIdMismatch.selector, proposal, wrong));
         f.authority.activateIngress(wrong);
+        _assertNoCoreStorageAccess(f.coreAddress, "wrong proposal id");
+        vm.record();
         vm.prank(address(safe));
         vm.expectRevert(abi.encodeWithSelector(ITask3AAuthority.ProposalNotReady.selector, pending.validAfter));
         f.authority.activateIngress(proposal);
+        _assertNoCoreStorageAccess(f.coreAddress, "proposal not ready");
         vm.warp(pending.expiresAt);
+        vm.record();
         vm.prank(address(safe));
         vm.expectRevert(abi.encodeWithSelector(ITask3AAuthority.ProposalExpired.selector, pending.expiresAt));
         f.authority.activateIngress(proposal);
+        _assertNoCoreStorageAccess(f.coreAddress, "proposal expired");
 
         AuthorityFixture memory active = _authorityFixture(GLOBAL_CAP);
         Task3AIngress first = new Task3AIngress();
@@ -961,9 +980,11 @@ contract AcquisitionConstellationTask3ATest is Test {
         IAcquisitionAuthorityV2.PendingIngressProposal memory secondPending = active.authority.pendingIngressProposal();
         vm.warp(secondPending.validAfter);
         active.core.setMode(2);
+        vm.record();
         vm.prank(address(safe));
         vm.expectRevert(abi.encodeWithSelector(ITask3AAuthority.IngressActive.selector, address(first)));
         active.authority.activateIngress(secondProposal);
+        _assertNoCoreStorageAccess(active.coreAddress, "active ingress overlap");
     }
 
     function test_task3A_15_cancelExpireDisableLiveThroughCoreFailure() public {
@@ -972,8 +993,10 @@ contract AcquisitionConstellationTask3ATest is Test {
         vm.prank(address(safe));
         bytes32 cancelled = f.authority.proposeIngress(_config(address(first), GLOBAL_CAP), keccak256("cancelled"));
         f.core.setMode(2);
+        vm.record();
         vm.prank(address(safe));
         f.authority.cancelIngressProposal(cancelled, keccak256("cancel"));
+        _assertNoCoreStorageAccess(f.coreAddress, "cancel ingress proposal");
 
         f.core.setMode(0);
         Task3AIngress second = new Task3AIngress();
@@ -982,7 +1005,9 @@ contract AcquisitionConstellationTask3ATest is Test {
         IAcquisitionAuthorityV2.PendingIngressProposal memory expiring = f.authority.pendingIngressProposal();
         f.core.setMode(2);
         vm.warp(expiring.expiresAt);
+        vm.record();
         f.authority.expireIngressProposal(expired);
+        _assertNoCoreStorageAccess(f.coreAddress, "expire ingress proposal");
 
         f.core.setMode(0);
         Task3AIngress third = new Task3AIngress();
@@ -993,12 +1018,14 @@ contract AcquisitionConstellationTask3ATest is Test {
         vm.prank(address(safe));
         f.authority.activateIngress(activated);
         f.core.setMode(2);
+        vm.record();
         vm.prank(address(safe));
         f.authority.disableIngress(keccak256("disable"));
+        _assertNoCoreStorageAccess(f.coreAddress, "disable ingress");
         assertEq(f.authority.activeIngressGeneration(), 0);
     }
 
-    function test_task3A_16_authorityHasNoCapMirrorAndUnpauseOrdinal11() public {
+    function test_task3A_16_authorityHasNoCapGetterAndUnpauseOrdinal11() public {
         AuthorityFixture memory f = _authorityFixture(GLOBAL_CAP);
         (bool hasCapGetter, bytes memory data) =
             address(f.authority).staticcall(abi.encodeWithSelector(CORE_CAP_SELECTOR));
@@ -1006,9 +1033,11 @@ contract AcquisitionConstellationTask3ATest is Test {
         assertEq(data.length, 0);
 
         f.core.setMode(2);
+        vm.record();
         vm.prank(address(safe));
         vm.expectRevert(abi.encodeWithSelector(ITask3AAuthority.LocalReadinessFailed.selector, uint8(11)));
         f.authority.unpause(keccak256("still-dormant"));
+        _assertNoCoreStorageAccess(f.coreAddress, "unpause readiness");
     }
 
     function _productionBundle(address predictedFactory, uint256 cap) internal returns (ProductionBundle memory b) {
@@ -1210,6 +1239,12 @@ contract AcquisitionConstellationTask3ATest is Test {
             (,, bool finalized) = abi.decode(topology, (address, bytes32, bool));
             assertFalse(finalized);
         }
+    }
+
+    function _assertNoCoreStorageAccess(address core, string memory branch) internal {
+        (bytes32[] memory reads, bytes32[] memory writes) = vm.accesses(core);
+        assertEq(reads.length, 0, string.concat(branch, " unexpectedly read Core storage"));
+        assertEq(writes.length, 0, string.concat(branch, " unexpectedly wrote Core storage"));
     }
 
     function _config(address ingress, uint256 lifetime)
