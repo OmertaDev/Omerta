@@ -4,6 +4,7 @@
 
 | Declaration | Kind | Source | Inherits / implements |
 |---|---|---|---|
+| `AcquisitionVault` | contract | [omerta-contracts/src/AcquisitionVault.sol:12](../../omerta-contracts/src/AcquisitionVault.sol#L12) | `IAcquisitionVaultV1`, `EIP712`, `Ownable2Step`, `Pausable`, `ReentrancyGuard` |
 | `Alchemist` | contract | [omerta-contracts/src/Alchemist.sol:40](../../omerta-contracts/src/Alchemist.sol#L40) | `Ownable2Step`, `ReentrancyGuard`, `FlashGuard` |
 | `CollateralEscrow` | contract | [omerta-contracts/src/CollateralEscrow.sol:40](../../omerta-contracts/src/CollateralEscrow.sol#L40) | — |
 | `Denari` | contract | [omerta-contracts/src/Denari.sol:43](../../omerta-contracts/src/Denari.sol#L43) | `ERC20`, `ERC20Permit`, `Ownable2Step` |
@@ -11,6 +12,7 @@
 | `FlashGuard` | abstract contract | [omerta-contracts/src/FlashGuard.sol:52](../../omerta-contracts/src/FlashGuard.sol#L52) | — |
 | `GearVault` | contract | [omerta-contracts/src/GearVault.sol:24](../../omerta-contracts/src/GearVault.sol#L24) | `ERC1155`, `Ownable2Step` |
 | `GenesisOracle` | contract | [omerta-contracts/src/GenesisOracle.sol:49](../../omerta-contracts/src/GenesisOracle.sol#L49) | `IOmrOracle`, `Ownable2Step` |
+| `IAcquisitionVaultV1` | interface | [omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol:3](../../omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol#L3) | — |
 | `IGearVault` | interface | [omerta-contracts/src/VoucherClaim.sol:11](../../omerta-contracts/src/VoucherClaim.sol#L11) | — |
 | `IOmrHookObserver` | interface | [omerta-contracts/src/OmertaHook.sol:21](../../omerta-contracts/src/OmertaHook.sol#L21) | — |
 | `IOMRMintable` | interface | [omerta-contracts/src/OmertaBond.sol:15](../../omerta-contracts/src/OmertaBond.sol#L15) | — |

@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `0fe33ebb51f3`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `9ea7377b01e2`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 1,585 |
-| Text lines | 403,181 |
-| Repository bytes inventoried | 274,680,491 |
+| Current artifacts | 1,588 |
+| Text lines | 407,279 |
+| Repository bytes inventoried | 274,881,258 |
 | Backend/route modules | 167 |
 | HTTP route registrations / unique routes | 722 / 721 |
 | Database tables | 263 |
-| Solidity declarations | 33 |
-| Git commits | 1,022 |
+| Solidity declarations | 35 |
+| Git commits | 1,033 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 4,623 / 21,677 |
+| Graph nodes / edges | 4,640 / 21,749 |
 
 ## Artifact kinds
 
@@ -30,9 +30,9 @@
 | audit | 98 |
 | design | 75 |
 | contract-project | 61 |
-| contract-test | 56 |
+| contract-test | 57 |
 | engineering-harness | 49 |
-| contract-source | 24 |
+| contract-source | 26 |
 | route-module | 20 |
 | web-surface | 13 |
 | operations | 11 |
@@ -60,22 +60,22 @@
 | [schema.sql](../../schema.sql) | 4,310 | data-schema | 2026-08-27 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
 | [src/server.js](../../src/server.js) | 3,343 | backend-module | 2026-08-26 |
+| [omerta-contracts/test/AcquisitionVaultOperator.t.sol](../../omerta-contracts/test/AcquisitionVaultOperator.t.sol) | 3,079 | contract-test | 2026-08-27 |
 | [omerta-contracts/fizz_data/contracts.json](../../omerta-contracts/fizz_data/contracts.json) | 2,739 | contract-project | 2026-08-25 |
 | [public/art/manifest.json](../../public/art/manifest.json) | 2,700 | media-asset | 2026-08-09 |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 2,619 | audit | 2026-08-12 |
 | [src/game.js](../../src/game.js) | 2,540 | backend-module | 2026-08-24 |
 | [omerta-contracts/x-ray/slither-function-summary.json](../../omerta-contracts/x-ray/slither-function-summary.json) | 2,449 | contract-project | 2026-08-25 |
 | [test/social.js](../../test/social.js) | 2,431 | test-suite | 2026-08-24 |
+| [docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md](../../docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md) | 2,314 | documentation | 2026-08-27 |
 | [test/growth.js](../../test/growth.js) | 2,212 | test-suite | 2026-08-24 |
 | [package-lock.json](../../package-lock.json) | 2,152 | package-config | 2026-08-21 |
 | [knowledge/github-snapshot.json](../../knowledge/github-snapshot.json) | 2,048 | knowledge-base | 2026-08-24 |
-| [docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md](../../docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md) | 1,970 | documentation | 2026-08-27 |
 | [test/finalizedobservation.js](../../test/finalizedobservation.js) | 1,920 | test-suite | 2026-08-27 |
 | [test/gates.js](../../test/gates.js) | 1,747 | test-suite | 2026-08-24 |
 | [test/hardening.js](../../test/hardening.js) | 1,712 | test-suite | 2026-08-24 |
 | [src/chain.js](../../src/chain.js) | 1,703 | backend-module | 2026-08-22 |
 | [test/stockballotv2.js](../../test/stockballotv2.js) | 1,689 | test-suite | 2026-08-27 |
-| [tools/sim.js](../../tools/sim.js) | 1,681 | engineering-harness | 2026-08-16 |
 
 ## Media estate
 

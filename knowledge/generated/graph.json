@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "0fe33ebb51f387d386e03cb828026a59bbde13de",
+  "sourceRevision": "9ea7377b01e2ae29df861880728a76a14455117a",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,13 +43,13 @@
     ]
   },
   "census": {
-    "nodes": 4623,
-    "edges": 21677,
+    "nodes": 4640,
+    "edges": 21749,
     "byNodeType": {
-      "Artifact": 1585,
+      "Artifact": 1588,
       "Command": 35,
-      "Commit": 1022,
-      "Contract": 33,
+      "Commit": 1033,
+      "Contract": 35,
       "Document": 408,
       "Domain": 12,
       "ExternalDependency": 23,
@@ -60,24 +60,24 @@
       "Route": 721,
       "Subsystem": 8,
       "Table": 263,
-      "TestSuite": 181,
+      "TestSuite": 182,
       "Workflow": 3
     },
     "byEdgeType": {
-      "BELONGS_TO": 1844,
-      "CHANGED": 8404,
-      "CONTAINS": 1605,
+      "BELONGS_TO": 1847,
+      "CHANGED": 8437,
+      "CONTAINS": 1608,
       "DECLARES": 35,
-      "DEFINED_IN": 1018,
+      "DEFINED_IN": 1020,
       "DEPENDS_ON": 59,
       "EXECUTES": 156,
       "HANDLED_BY": 653,
-      "HAS_COMMIT": 1022,
+      "HAS_COMMIT": 1033,
       "IMPLEMENTS": 124,
       "IMPORTS": 1477,
-      "INHERITS": 5,
-      "REFERENCES": 2505,
-      "REPRESENTS": 759,
+      "INHERITS": 6,
+      "REFERENCES": 2523,
+      "REPRESENTS": 760,
       "TESTS": 521,
       "TRACKS": 126,
       "USES_TABLE": 1364
@@ -9039,20 +9039,20 @@
       "path": "CHAIN-AUDIT-PACKET.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 21292,
-      "lines": 273,
-      "version": "8a66f9c849f5b2f7",
+      "bytes": 21554,
+      "lines": 278,
+      "version": "053bc1448a5b3eae",
       "text": true,
       "provenance": [
         {
           "file": "CHAIN-AUDIT-PACKET.md",
           "line": 1,
-          "version": "8a66f9c849f5b2f7"
+          "version": "053bc1448a5b3eae"
         }
       ],
-      "lastChangedAt": "2026-08-21T21:50:19-04:00",
+      "lastChangedAt": "2026-08-27T09:58:07-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "630ba4c3ee9f85835989c56753b2fcedb263b787"
+      "lastChangedCommit": "9ea7377b01e2ae29df861880728a76a14455117a"
     },
     {
       "key": "Artifact:CHAIN-DEPLOY.md",
@@ -9062,20 +9062,20 @@
       "path": "CHAIN-DEPLOY.md",
       "kind": "operations",
       "extension": ".md",
-      "bytes": 77278,
-      "lines": 812,
-      "version": "a02e463a1c167a71",
+      "bytes": 78018,
+      "lines": 820,
+      "version": "f8530c6642e31cf3",
       "text": true,
       "provenance": [
         {
           "file": "CHAIN-DEPLOY.md",
           "line": 1,
-          "version": "a02e463a1c167a71"
+          "version": "f8530c6642e31cf3"
         }
       ],
-      "lastChangedAt": "2026-08-26T14:29:42-04:00",
+      "lastChangedAt": "2026-08-27T09:58:07-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7722e7001811ffc162ee3c3fdd51fd4a683a014a"
+      "lastChangedCommit": "9ea7377b01e2ae29df861880728a76a14455117a"
     },
     {
       "key": "Artifact:CLAUDE.md",
@@ -10258,20 +10258,20 @@
       "path": "docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 15452,
+      "bytes": 15634,
       "lines": 231,
-      "version": "b29bdbfd5b89ea48",
+      "version": "4f586d74bc8e9ccb",
       "text": true,
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
           "line": 1,
-          "version": "b29bdbfd5b89ea48"
+          "version": "4f586d74bc8e9ccb"
         }
       ],
-      "lastChangedAt": "2026-08-27T03:03:17-04:00",
+      "lastChangedAt": "2026-08-27T09:58:07-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "904422db2cce2dfdbaad3015b720019f82e3d71e"
+      "lastChangedCommit": "9ea7377b01e2ae29df861880728a76a14455117a"
     },
     {
       "key": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
@@ -10327,20 +10327,20 @@
       "path": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 90119,
-      "lines": 1970,
-      "version": "384f75c008155b0b",
+      "bytes": 110364,
+      "lines": 2314,
+      "version": "fd031d021d433ba1",
       "text": true,
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
           "line": 1,
-          "version": "384f75c008155b0b"
+          "version": "fd031d021d433ba1"
         }
       ],
-      "lastChangedAt": "2026-08-27T04:42:05-04:00",
+      "lastChangedAt": "2026-08-27T09:58:07-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "ee6d119f0c860554b9f6e5e81b418adc91fd9136"
+      "lastChangedCommit": "9ea7377b01e2ae29df861880728a76a14455117a"
     },
     {
       "key": "Artifact:docs/superpowers/plans/2026-08-27-finalized-event-time-handoff.md",
@@ -10511,20 +10511,20 @@
       "path": "knowledge/architecture.md",
       "kind": "knowledge-base",
       "extension": ".md",
-      "bytes": 5718,
-      "lines": 95,
-      "version": "58e2660bdd4fb1d1",
+      "bytes": 6255,
+      "lines": 101,
+      "version": "badd14bb6c3ab1b0",
       "text": true,
       "provenance": [
         {
           "file": "knowledge/architecture.md",
           "line": 1,
-          "version": "58e2660bdd4fb1d1"
+          "version": "badd14bb6c3ab1b0"
         }
       ],
-      "lastChangedAt": "2026-08-24T14:49:55-04:00",
+      "lastChangedAt": "2026-08-27T09:58:07-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dee7593a66b955d677656afab4516cb68edb918d"
+      "lastChangedCommit": "9ea7377b01e2ae29df861880728a76a14455117a"
     },
     {
       "key": "Artifact:knowledge/data-economy.md",
@@ -10557,20 +10557,20 @@
       "path": "knowledge/decisions-and-risks.md",
       "kind": "knowledge-base",
       "extension": ".md",
-      "bytes": 4089,
-      "lines": 62,
-      "version": "8583698a6d7e4bb2",
+      "bytes": 4990,
+      "lines": 66,
+      "version": "f0fa2446d6d1f4ed",
       "text": true,
       "provenance": [
         {
           "file": "knowledge/decisions-and-risks.md",
           "line": 1,
-          "version": "8583698a6d7e4bb2"
+          "version": "f0fa2446d6d1f4ed"
         }
       ],
-      "lastChangedAt": "2026-08-24T14:49:55-04:00",
+      "lastChangedAt": "2026-08-27T09:58:07-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dee7593a66b955d677656afab4516cb68edb918d"
+      "lastChangedCommit": "9ea7377b01e2ae29df861880728a76a14455117a"
     },
     {
       "key": "Artifact:knowledge/domains.md",
@@ -10580,20 +10580,20 @@
       "path": "knowledge/domains.md",
       "kind": "knowledge-base",
       "extension": ".md",
-      "bytes": 4288,
-      "lines": 47,
-      "version": "08e11b2efe16f3d9",
+      "bytes": 4567,
+      "lines": 49,
+      "version": "90d59fe84b484284",
       "text": true,
       "provenance": [
         {
           "file": "knowledge/domains.md",
           "line": 1,
-          "version": "08e11b2efe16f3d9"
+          "version": "90d59fe84b484284"
         }
       ],
-      "lastChangedAt": "2026-08-24T14:49:55-04:00",
+      "lastChangedAt": "2026-08-27T09:58:07-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dee7593a66b955d677656afab4516cb68edb918d"
+      "lastChangedCommit": "9ea7377b01e2ae29df861880728a76a14455117a"
     },
     {
       "key": "Artifact:knowledge/github-snapshot.json",
@@ -10787,20 +10787,20 @@
       "path": "LAUNCH-READINESS.md",
       "kind": "operations",
       "extension": ".md",
-      "bytes": 17997,
-      "lines": 281,
-      "version": "2e832f63e4d735c6",
+      "bytes": 18221,
+      "lines": 283,
+      "version": "2371a971860789bd",
       "text": true,
       "provenance": [
         {
           "file": "LAUNCH-READINESS.md",
           "line": 1,
-          "version": "2e832f63e4d735c6"
+          "version": "2371a971860789bd"
         }
       ],
-      "lastChangedAt": "2026-08-25T00:11:25-04:00",
+      "lastChangedAt": "2026-08-27T09:58:07-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "62b32308c476f7616b9e32d30104be07d46a36ca"
+      "lastChangedCommit": "9ea7377b01e2ae29df861880728a76a14455117a"
     },
     {
       "key": "Artifact:LAUNCH.md",
@@ -10810,20 +10810,20 @@
       "path": "LAUNCH.md",
       "kind": "operations",
       "extension": ".md",
-      "bytes": 15844,
-      "lines": 231,
-      "version": "63ad93c7576229fd",
+      "bytes": 15849,
+      "lines": 232,
+      "version": "b9e9e52d611b373e",
       "text": true,
       "provenance": [
         {
           "file": "LAUNCH.md",
           "line": 1,
-          "version": "63ad93c7576229fd"
+          "version": "b9e9e52d611b373e"
         }
       ],
-      "lastChangedAt": "2026-08-13T08:48:16-04:00",
+      "lastChangedAt": "2026-08-27T09:58:07-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fcb5f634bf658a1e28b3dcea993321dfaa9b62f6"
+      "lastChangedCommit": "9ea7377b01e2ae29df861880728a76a14455117a"
     },
     {
       "key": "Artifact:MARKETING-COPY.md",
@@ -10833,20 +10833,20 @@
       "path": "MARKETING-COPY.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 25695,
-      "lines": 430,
-      "version": "9a9f5c04d4b82b3c",
+      "bytes": 25900,
+      "lines": 432,
+      "version": "e63e658700803dd2",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING-COPY.md",
           "line": 1,
-          "version": "9a9f5c04d4b82b3c"
+          "version": "e63e658700803dd2"
         }
       ],
-      "lastChangedAt": "2026-08-14T13:17:29-04:00",
+      "lastChangedAt": "2026-08-27T09:58:07-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "110e1671ed4155e7fda2854ed5a4d9e19e20fe9c"
+      "lastChangedCommit": "9ea7377b01e2ae29df861880728a76a14455117a"
     },
     {
       "key": "Artifact:MARKETING-POSTS.md",
@@ -10879,20 +10879,20 @@
       "path": "MARKETING.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 20604,
-      "lines": 354,
-      "version": "4dff4286d121047c",
+      "bytes": 20747,
+      "lines": 355,
+      "version": "eff5c52d788a70c1",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING.md",
           "line": 1,
-          "version": "4dff4286d121047c"
+          "version": "eff5c52d788a70c1"
         }
       ],
-      "lastChangedAt": "2026-08-20T23:47:39-04:00",
+      "lastChangedAt": "2026-08-27T09:58:07-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "44fa73ca93acefe1f78a7b7702fb2d51ff103f7c"
+      "lastChangedCommit": "9ea7377b01e2ae29df861880728a76a14455117a"
     },
     {
       "key": "Artifact:NIGHT-SESSION-LOG.md",
@@ -11178,20 +11178,20 @@
       "path": "omerta-contracts/DEPLOYMENT.md",
       "kind": "contract-project",
       "extension": ".md",
-      "bytes": 25165,
-      "lines": 452,
-      "version": "e172ba444631fac3",
+      "bytes": 26192,
+      "lines": 462,
+      "version": "0dc6eba67c2f4a7a",
       "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/DEPLOYMENT.md",
           "line": 1,
-          "version": "e172ba444631fac3"
+          "version": "0dc6eba67c2f4a7a"
         }
       ],
-      "lastChangedAt": "2026-08-25T01:16:12-04:00",
+      "lastChangedAt": "2026-08-27T09:58:07-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
+      "lastChangedCommit": "9ea7377b01e2ae29df861880728a76a14455117a"
     },
     {
       "key": "Artifact:omerta-contracts/deployments/46630/manifest.json",
@@ -11316,20 +11316,20 @@
       "path": "omerta-contracts/foundry.toml",
       "kind": "contract-project",
       "extension": ".toml",
-      "bytes": 296,
-      "lines": 17,
-      "version": "7bca589ed2230ae2",
+      "bytes": 395,
+      "lines": 21,
+      "version": "24f661f092dcbd31",
       "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/foundry.toml",
           "line": 1,
-          "version": "7bca589ed2230ae2"
+          "version": "24f661f092dcbd31"
         }
       ],
-      "lastChangedAt": "2026-08-02T00:46:10Z",
-      "lastChangedBy": "crvydev",
-      "lastChangedCommit": "96ec2122d44a8ec2d7535d1c09d89506a31e08bf"
+      "lastChangedAt": "2026-08-27T06:04:22-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "44a8762438128b3eecad7f3657b3a1c5c83ba4fd"
     },
     {
       "key": "Artifact:omerta-contracts/inheritance-graph.dot",
@@ -11385,20 +11385,20 @@
       "path": "omerta-contracts/README.md",
       "kind": "contract-project",
       "extension": ".md",
-      "bytes": 11753,
-      "lines": 99,
-      "version": "9ec40cafe65c191d",
+      "bytes": 12304,
+      "lines": 104,
+      "version": "657e7411fb0f0e16",
       "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/README.md",
           "line": 1,
-          "version": "9ec40cafe65c191d"
+          "version": "657e7411fb0f0e16"
         }
       ],
-      "lastChangedAt": "2026-08-25T00:11:25-04:00",
+      "lastChangedAt": "2026-08-27T09:58:07-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "62b32308c476f7616b9e32d30104be07d46a36ca"
+      "lastChangedCommit": "9ea7377b01e2ae29df861880728a76a14455117a"
     },
     {
       "key": "Artifact:omerta-contracts/reference/OmertaTradeFeeHook.sol",
@@ -12137,6 +12137,29 @@
       "lastChangedCommit": "dee7593a66b955d677656afab4516cb68edb918d"
     },
     {
+      "key": "Artifact:omerta-contracts/src/AcquisitionVault.sol",
+      "type": "Artifact",
+      "id": "omerta-contracts/src/AcquisitionVault.sol",
+      "label": "AcquisitionVault.sol",
+      "path": "omerta-contracts/src/AcquisitionVault.sol",
+      "kind": "contract-source",
+      "extension": ".sol",
+      "bytes": 19387,
+      "lines": 419,
+      "version": "3d4514669f43a33c",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/src/AcquisitionVault.sol",
+          "line": 1,
+          "version": "3d4514669f43a33c"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T09:13:57-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "82001b6e8ac54c46dda6eb185cda550e8a73a3de"
+    },
+    {
       "key": "Artifact:omerta-contracts/src/Alchemist.sol",
       "type": "Artifact",
       "id": "omerta-contracts/src/Alchemist.sol",
@@ -12296,6 +12319,29 @@
       "lastChangedAt": "2026-08-17T11:47:28-04:00",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "500c8a095fef7af11a8c793cb5d658412ff6a286"
+    },
+    {
+      "key": "Artifact:omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol",
+      "type": "Artifact",
+      "id": "omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol",
+      "label": "IAcquisitionVaultV1.sol",
+      "path": "omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol",
+      "kind": "contract-source",
+      "extension": ".sol",
+      "bytes": 7172,
+      "lines": 187,
+      "version": "7e68803ffbe81691",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol",
+          "line": 1,
+          "version": "7e68803ffbe81691"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T06:04:22-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "44a8762438128b3eecad7f3657b3a1c5c83ba4fd"
     },
     {
       "key": "Artifact:omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol",
@@ -12687,6 +12733,29 @@
       "lastChangedAt": "2026-08-25T00:11:25-04:00",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "62b32308c476f7616b9e32d30104be07d46a36ca"
+    },
+    {
+      "key": "Artifact:omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "type": "Artifact",
+      "id": "omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "label": "AcquisitionVaultOperator.t.sol",
+      "path": "omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "kind": "contract-test",
+      "extension": ".sol",
+      "bytes": 147093,
+      "lines": 3079,
+      "version": "be4e9a39982386ae",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+          "line": 1,
+          "version": "be4e9a39982386ae"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T09:13:57-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "82001b6e8ac54c46dda6eb185cda550e8a73a3de"
     },
     {
       "key": "Artifact:omerta-contracts/test/audit/AlchemistRedTeam.t.sol",
@@ -14300,20 +14369,20 @@
       "path": "omerta-contracts/x-ray/x-ray.md",
       "kind": "contract-project",
       "extension": ".md",
-      "bytes": 23680,
-      "lines": 385,
-      "version": "7172a07cb7a89922",
+      "bytes": 25053,
+      "lines": 404,
+      "version": "05ae17b919fa3bd7",
       "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/x-ray/x-ray.md",
           "line": 1,
-          "version": "7172a07cb7a89922"
+          "version": "05ae17b919fa3bd7"
         }
       ],
-      "lastChangedAt": "2026-08-25T00:19:21-04:00",
+      "lastChangedAt": "2026-08-27T09:58:07-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bc03455c615ae3f5bab067543fb9c0a5a49f4ae4"
+      "lastChangedCommit": "9ea7377b01e2ae29df861880728a76a14455117a"
     },
     {
       "key": "Artifact:omerta-convoys-design.md",
@@ -28514,20 +28583,20 @@
       "path": "README.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 33664,
+      "bytes": 33953,
       "lines": 166,
-      "version": "68cdb0acf7cc4424",
+      "version": "2c5eae0d11ac5ef4",
       "text": true,
       "provenance": [
         {
           "file": "README.md",
           "line": 1,
-          "version": "68cdb0acf7cc4424"
+          "version": "2c5eae0d11ac5ef4"
         }
       ],
-      "lastChangedAt": "2026-08-25T00:11:25-04:00",
+      "lastChangedAt": "2026-08-27T09:58:07-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "62b32308c476f7616b9e32d30104be07d46a36ca"
+      "lastChangedCommit": "9ea7377b01e2ae29df861880728a76a14455117a"
     },
     {
       "key": "Artifact:reference-prototype-v24.jsx",
@@ -28652,20 +28721,20 @@
       "path": "SPEC.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 46570,
+      "bytes": 46623,
       "lines": 647,
-      "version": "d08d0a8422a919cb",
+      "version": "cd375a4ec8dd94a3",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "d08d0a8422a919cb"
+          "version": "cd375a4ec8dd94a3"
         }
       ],
-      "lastChangedAt": "2026-08-27T04:14:05-04:00",
+      "lastChangedAt": "2026-08-27T09:58:07-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1d333b79f43c427ebc9d6733df79a124fe82fe0d"
+      "lastChangedCommit": "9ea7377b01e2ae29df861880728a76a14455117a"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -40349,6 +40418,22 @@
       ]
     },
     {
+      "key": "Commit:369d06d53d73373e72f9acc4a0bc00d92fe48811",
+      "type": "Commit",
+      "id": "369d06d53d73373e72f9acc4a0bc00d92fe48811",
+      "label": "test: harden acquisition operator red suite",
+      "title": "test: harden acquisition operator red suite",
+      "date": "2026-08-27T05:29:53-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/369d06d53d73373e72f9acc4a0bc00d92fe48811",
+      "provenance": [
+        {
+          "commit": "369d06d53d73373e72f9acc4a0bc00d92fe48811",
+          "url": "https://github.com/OmertaDev/Omerta/commit/369d06d53d73373e72f9acc4a0bc00d92fe48811"
+        }
+      ]
+    },
+    {
       "key": "Commit:36ada575a83cd3c33d0ddf3ea71c37973b4aeeb5",
       "type": "Commit",
       "id": "36ada575a83cd3c33d0ddf3ea71c37973b4aeeb5",
@@ -41725,6 +41810,22 @@
       ]
     },
     {
+      "key": "Commit:44a8762438128b3eecad7f3657b3a1c5c83ba4fd",
+      "type": "Commit",
+      "id": "44a8762438128b3eecad7f3657b3a1c5c83ba4fd",
+      "label": "feat: add acquisition vault operator kernel",
+      "title": "feat: add acquisition vault operator kernel",
+      "date": "2026-08-27T06:04:22-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/44a8762438128b3eecad7f3657b3a1c5c83ba4fd",
+      "provenance": [
+        {
+          "commit": "44a8762438128b3eecad7f3657b3a1c5c83ba4fd",
+          "url": "https://github.com/OmertaDev/Omerta/commit/44a8762438128b3eecad7f3657b3a1c5c83ba4fd"
+        }
+      ]
+    },
+    {
       "key": "Commit:44b982dbdd2f3f2d96c419f9b615642bd314c697",
       "type": "Commit",
       "id": "44b982dbdd2f3f2d96c419f9b615642bd314c697",
@@ -42393,6 +42494,22 @@
         {
           "commit": "50fb7d19a44090ac440846b6d71e1e8863b50e8a",
           "url": "https://github.com/OmertaDev/Omerta/commit/50fb7d19a44090ac440846b6d71e1e8863b50e8a"
+        }
+      ]
+    },
+    {
+      "key": "Commit:5112b6323537fbcd1bd894e77b774f24b294e902",
+      "type": "Commit",
+      "id": "5112b6323537fbcd1bd894e77b774f24b294e902",
+      "label": "test: correct acquisition operator red evidence",
+      "title": "test: correct acquisition operator red evidence",
+      "date": "2026-08-27T05:38:45-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5112b6323537fbcd1bd894e77b774f24b294e902",
+      "provenance": [
+        {
+          "commit": "5112b6323537fbcd1bd894e77b774f24b294e902",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5112b6323537fbcd1bd894e77b774f24b294e902"
         }
       ]
     },
@@ -43661,6 +43778,22 @@
       ]
     },
     {
+      "key": "Commit:65ecbab584c4abf9c20538cf4faadb9db9309c1c",
+      "type": "Commit",
+      "id": "65ecbab584c4abf9c20538cf4faadb9db9309c1c",
+      "label": "docs: harden acquisition vault handoff plan",
+      "title": "docs: harden acquisition vault handoff plan",
+      "date": "2026-08-27T08:37:13-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/65ecbab584c4abf9c20538cf4faadb9db9309c1c",
+      "provenance": [
+        {
+          "commit": "65ecbab584c4abf9c20538cf4faadb9db9309c1c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/65ecbab584c4abf9c20538cf4faadb9db9309c1c"
+        }
+      ]
+    },
+    {
       "key": "Commit:65ff55846667710f748c6ab91403428ecd4cea03",
       "type": "Commit",
       "id": "65ff55846667710f748c6ab91403428ecd4cea03",
@@ -44537,6 +44670,22 @@
         {
           "commit": "7302ef23e92797fd50f39524e4f0f6c2b258fc17",
           "url": "https://github.com/OmertaDev/Omerta/commit/7302ef23e92797fd50f39524e4f0f6c2b258fc17"
+        }
+      ]
+    },
+    {
+      "key": "Commit:7393eee8f8e52c1598a7f60cad68defa299bd6cb",
+      "type": "Commit",
+      "id": "7393eee8f8e52c1598a7f60cad68defa299bd6cb",
+      "label": "docs: include inherited EIP712 errors",
+      "title": "docs: include inherited EIP712 errors",
+      "date": "2026-08-27T05:15:52-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7393eee8f8e52c1598a7f60cad68defa299bd6cb",
+      "provenance": [
+        {
+          "commit": "7393eee8f8e52c1598a7f60cad68defa299bd6cb",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7393eee8f8e52c1598a7f60cad68defa299bd6cb"
         }
       ]
     },
@@ -45485,6 +45634,22 @@
       ]
     },
     {
+      "key": "Commit:7f1d8044bef1fed8ecefdb9521d3ca9269019bac",
+      "type": "Commit",
+      "id": "7f1d8044bef1fed8ecefdb9521d3ca9269019bac",
+      "label": "docs: correct successor and gas evidence",
+      "title": "docs: correct successor and gas evidence",
+      "date": "2026-08-27T05:49:36-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7f1d8044bef1fed8ecefdb9521d3ca9269019bac",
+      "provenance": [
+        {
+          "commit": "7f1d8044bef1fed8ecefdb9521d3ca9269019bac",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7f1d8044bef1fed8ecefdb9521d3ca9269019bac"
+        }
+      ]
+    },
+    {
       "key": "Commit:7feb393915616ed8b9c1beae44107dc984026be9",
       "type": "Commit",
       "id": "7feb393915616ed8b9c1beae44107dc984026be9",
@@ -45673,6 +45838,22 @@
         {
           "commit": "81c29e64092d65d69063a2b57fb90acb0134fa1f",
           "url": "https://github.com/OmertaDev/Omerta/commit/81c29e64092d65d69063a2b57fb90acb0134fa1f"
+        }
+      ]
+    },
+    {
+      "key": "Commit:82001b6e8ac54c46dda6eb185cda550e8a73a3de",
+      "type": "Commit",
+      "id": "82001b6e8ac54c46dda6eb185cda550e8a73a3de",
+      "label": "fix(contracts): cancel stale operator nomination on owner handoff",
+      "title": "fix(contracts): cancel stale operator nomination on owner handoff",
+      "date": "2026-08-27T09:13:57-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/82001b6e8ac54c46dda6eb185cda550e8a73a3de",
+      "provenance": [
+        {
+          "commit": "82001b6e8ac54c46dda6eb185cda550e8a73a3de",
+          "url": "https://github.com/OmertaDev/Omerta/commit/82001b6e8ac54c46dda6eb185cda550e8a73a3de"
         }
       ]
     },
@@ -47613,6 +47794,22 @@
       ]
     },
     {
+      "key": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
+      "type": "Commit",
+      "id": "9ea7377b01e2ae29df861880728a76a14455117a",
+      "label": "docs: normalize approved acquisition authority state",
+      "title": "docs: normalize approved acquisition authority state",
+      "date": "2026-08-27T09:58:07-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9ea7377b01e2ae29df861880728a76a14455117a",
+      "provenance": [
+        {
+          "commit": "9ea7377b01e2ae29df861880728a76a14455117a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9ea7377b01e2ae29df861880728a76a14455117a"
+        }
+      ]
+    },
+    {
       "key": "Commit:9eb5dc28e1bb88bedf0982434d852ad0f5c75fd0",
       "type": "Commit",
       "id": "9eb5dc28e1bb88bedf0982434d852ad0f5c75fd0",
@@ -48745,6 +48942,22 @@
         {
           "commit": "b02050eea5b47805f0da5073877ece29bd6de32a",
           "url": "https://github.com/OmertaDev/Omerta/commit/b02050eea5b47805f0da5073877ece29bd6de32a"
+        }
+      ]
+    },
+    {
+      "key": "Commit:b0320b68baeac737a0269f0e318caefcf3d04b88",
+      "type": "Commit",
+      "id": "b0320b68baeac737a0269f0e318caefcf3d04b88",
+      "label": "test: freeze acquisition vault operator authority",
+      "title": "test: freeze acquisition vault operator authority",
+      "date": "2026-08-27T04:58:43-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b0320b68baeac737a0269f0e318caefcf3d04b88",
+      "provenance": [
+        {
+          "commit": "b0320b68baeac737a0269f0e318caefcf3d04b88",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b0320b68baeac737a0269f0e318caefcf3d04b88"
         }
       ]
     },
@@ -49945,6 +50158,22 @@
         {
           "commit": "c16b3d6506971f6a97d104aa0acac6b99e07cacf",
           "url": "https://github.com/OmertaDev/Omerta/commit/c16b3d6506971f6a97d104aa0acac6b99e07cacf"
+        }
+      ]
+    },
+    {
+      "key": "Commit:c175ce5dd8574f02c80ff6d3fd6372a95928a5cc",
+      "type": "Commit",
+      "id": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc",
+      "label": "docs: finalize acquisition authority provenance",
+      "title": "docs: finalize acquisition authority provenance",
+      "date": "2026-08-27T04:44:34-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c175ce5dd8574f02c80ff6d3fd6372a95928a5cc",
+      "provenance": [
+        {
+          "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
         }
       ]
     },
@@ -53021,6 +53250,22 @@
       ]
     },
     {
+      "key": "Commit:faf956cac7a9185f64cd2a7feff14376244ec96f",
+      "type": "Commit",
+      "id": "faf956cac7a9185f64cd2a7feff14376244ec96f",
+      "label": "docs: align gas invariant evidence",
+      "title": "docs: align gas invariant evidence",
+      "date": "2026-08-27T05:51:34-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/faf956cac7a9185f64cd2a7feff14376244ec96f",
+      "provenance": [
+        {
+          "commit": "faf956cac7a9185f64cd2a7feff14376244ec96f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/faf956cac7a9185f64cd2a7feff14376244ec96f"
+        }
+      ]
+    },
+    {
       "key": "Commit:fafa8beb1181945dcd9fa52f1beb9704c0bc094e",
       "type": "Commit",
       "id": "fafa8beb1181945dcd9fa52f1beb9704c0bc094e",
@@ -53341,6 +53586,27 @@
       ]
     },
     {
+      "key": "Contract:AcquisitionVault",
+      "type": "Contract",
+      "id": "AcquisitionVault",
+      "label": "AcquisitionVault",
+      "contractKind": "contract",
+      "file": "omerta-contracts/src/AcquisitionVault.sol",
+      "bases": [
+        "IAcquisitionVaultV1",
+        "EIP712",
+        "Ownable2Step",
+        "Pausable",
+        "ReentrancyGuard"
+      ],
+      "provenance": [
+        {
+          "file": "omerta-contracts/src/AcquisitionVault.sol",
+          "line": 12
+        }
+      ]
+    },
+    {
       "key": "Contract:Alchemist",
       "type": "Contract",
       "id": "Alchemist",
@@ -53463,6 +53729,21 @@
         {
           "file": "omerta-contracts/src/GenesisOracle.sol",
           "line": 49
+        }
+      ]
+    },
+    {
+      "key": "Contract:IAcquisitionVaultV1",
+      "type": "Contract",
+      "id": "IAcquisitionVaultV1",
+      "label": "IAcquisitionVaultV1",
+      "contractKind": "interface",
+      "file": "omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol",
+      "bases": [],
+      "provenance": [
+        {
+          "file": "omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol",
+          "line": 3
         }
       ]
     },
@@ -58123,13 +58404,13 @@
       "id": "CHAIN-AUDIT-PACKET.md",
       "label": "CHAIN-AUDIT-PACKET.md",
       "documentType": "documentation",
-      "lines": 273,
-      "version": "8a66f9c849f5b2f7",
+      "lines": 278,
+      "version": "053bc1448a5b3eae",
       "provenance": [
         {
           "file": "CHAIN-AUDIT-PACKET.md",
           "line": 1,
-          "version": "8a66f9c849f5b2f7"
+          "version": "053bc1448a5b3eae"
         }
       ]
     },
@@ -58139,13 +58420,13 @@
       "id": "CHAIN-DEPLOY.md",
       "label": "CHAIN-DEPLOY.md",
       "documentType": "operations",
-      "lines": 812,
-      "version": "a02e463a1c167a71",
+      "lines": 820,
+      "version": "f8530c6642e31cf3",
       "provenance": [
         {
           "file": "CHAIN-DEPLOY.md",
           "line": 1,
-          "version": "a02e463a1c167a71"
+          "version": "f8530c6642e31cf3"
         }
       ]
     },
@@ -58428,12 +58709,12 @@
       "label": "docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
       "documentType": "documentation",
       "lines": 231,
-      "version": "b29bdbfd5b89ea48",
+      "version": "4f586d74bc8e9ccb",
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
           "line": 1,
-          "version": "b29bdbfd5b89ea48"
+          "version": "4f586d74bc8e9ccb"
         }
       ]
     },
@@ -58475,13 +58756,13 @@
       "id": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
       "label": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
       "documentType": "documentation",
-      "lines": 1970,
-      "version": "384f75c008155b0b",
+      "lines": 2314,
+      "version": "fd031d021d433ba1",
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
           "line": 1,
-          "version": "384f75c008155b0b"
+          "version": "fd031d021d433ba1"
         }
       ]
     },
@@ -58603,13 +58884,13 @@
       "id": "knowledge/architecture.md",
       "label": "knowledge/architecture.md",
       "documentType": "knowledge-base",
-      "lines": 95,
-      "version": "58e2660bdd4fb1d1",
+      "lines": 101,
+      "version": "badd14bb6c3ab1b0",
       "provenance": [
         {
           "file": "knowledge/architecture.md",
           "line": 1,
-          "version": "58e2660bdd4fb1d1"
+          "version": "badd14bb6c3ab1b0"
         }
       ]
     },
@@ -58635,13 +58916,13 @@
       "id": "knowledge/decisions-and-risks.md",
       "label": "knowledge/decisions-and-risks.md",
       "documentType": "knowledge-base",
-      "lines": 62,
-      "version": "8583698a6d7e4bb2",
+      "lines": 66,
+      "version": "f0fa2446d6d1f4ed",
       "provenance": [
         {
           "file": "knowledge/decisions-and-risks.md",
           "line": 1,
-          "version": "8583698a6d7e4bb2"
+          "version": "f0fa2446d6d1f4ed"
         }
       ]
     },
@@ -58651,13 +58932,13 @@
       "id": "knowledge/domains.md",
       "label": "knowledge/domains.md",
       "documentType": "knowledge-base",
-      "lines": 47,
-      "version": "08e11b2efe16f3d9",
+      "lines": 49,
+      "version": "90d59fe84b484284",
       "provenance": [
         {
           "file": "knowledge/domains.md",
           "line": 1,
-          "version": "08e11b2efe16f3d9"
+          "version": "90d59fe84b484284"
         }
       ]
     },
@@ -58779,13 +59060,13 @@
       "id": "LAUNCH-READINESS.md",
       "label": "LAUNCH-READINESS.md",
       "documentType": "operations",
-      "lines": 281,
-      "version": "2e832f63e4d735c6",
+      "lines": 283,
+      "version": "2371a971860789bd",
       "provenance": [
         {
           "file": "LAUNCH-READINESS.md",
           "line": 1,
-          "version": "2e832f63e4d735c6"
+          "version": "2371a971860789bd"
         }
       ]
     },
@@ -58795,13 +59076,13 @@
       "id": "LAUNCH.md",
       "label": "LAUNCH.md",
       "documentType": "operations",
-      "lines": 231,
-      "version": "63ad93c7576229fd",
+      "lines": 232,
+      "version": "b9e9e52d611b373e",
       "provenance": [
         {
           "file": "LAUNCH.md",
           "line": 1,
-          "version": "63ad93c7576229fd"
+          "version": "b9e9e52d611b373e"
         }
       ]
     },
@@ -58811,13 +59092,13 @@
       "id": "MARKETING-COPY.md",
       "label": "MARKETING-COPY.md",
       "documentType": "documentation",
-      "lines": 430,
-      "version": "9a9f5c04d4b82b3c",
+      "lines": 432,
+      "version": "e63e658700803dd2",
       "provenance": [
         {
           "file": "MARKETING-COPY.md",
           "line": 1,
-          "version": "9a9f5c04d4b82b3c"
+          "version": "e63e658700803dd2"
         }
       ]
     },
@@ -58843,13 +59124,13 @@
       "id": "MARKETING.md",
       "label": "MARKETING.md",
       "documentType": "documentation",
-      "lines": 354,
-      "version": "4dff4286d121047c",
+      "lines": 355,
+      "version": "eff5c52d788a70c1",
       "provenance": [
         {
           "file": "MARKETING.md",
           "line": 1,
-          "version": "4dff4286d121047c"
+          "version": "eff5c52d788a70c1"
         }
       ]
     },
@@ -59003,13 +59284,13 @@
       "id": "omerta-contracts/DEPLOYMENT.md",
       "label": "omerta-contracts/DEPLOYMENT.md",
       "documentType": "contract-project",
-      "lines": 452,
-      "version": "e172ba444631fac3",
+      "lines": 462,
+      "version": "0dc6eba67c2f4a7a",
       "provenance": [
         {
           "file": "omerta-contracts/DEPLOYMENT.md",
           "line": 1,
-          "version": "e172ba444631fac3"
+          "version": "0dc6eba67c2f4a7a"
         }
       ]
     },
@@ -59035,13 +59316,13 @@
       "id": "omerta-contracts/README.md",
       "label": "omerta-contracts/README.md",
       "documentType": "contract-project",
-      "lines": 99,
-      "version": "9ec40cafe65c191d",
+      "lines": 104,
+      "version": "657e7411fb0f0e16",
       "provenance": [
         {
           "file": "omerta-contracts/README.md",
           "line": 1,
-          "version": "9ec40cafe65c191d"
+          "version": "657e7411fb0f0e16"
         }
       ]
     },
@@ -59115,13 +59396,13 @@
       "id": "omerta-contracts/x-ray/x-ray.md",
       "label": "omerta-contracts/x-ray/x-ray.md",
       "documentType": "contract-project",
-      "lines": 385,
-      "version": "7172a07cb7a89922",
+      "lines": 404,
+      "version": "05ae17b919fa3bd7",
       "provenance": [
         {
           "file": "omerta-contracts/x-ray/x-ray.md",
           "line": 1,
-          "version": "7172a07cb7a89922"
+          "version": "05ae17b919fa3bd7"
         }
       ]
     },
@@ -60364,12 +60645,12 @@
       "label": "README.md",
       "documentType": "documentation",
       "lines": 166,
-      "version": "68cdb0acf7cc4424",
+      "version": "2c5eae0d11ac5ef4",
       "provenance": [
         {
           "file": "README.md",
           "line": 1,
-          "version": "68cdb0acf7cc4424"
+          "version": "2c5eae0d11ac5ef4"
         }
       ]
     },
@@ -60396,12 +60677,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 647,
-      "version": "d08d0a8422a919cb",
+      "version": "cd375a4ec8dd94a3",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "d08d0a8422a919cb"
+          "version": "cd375a4ec8dd94a3"
         }
       ]
     },
@@ -61709,6 +61990,9 @@
           "commit": "bc03455c615ae3f5bab067543fb9c0a5a49f4ae4"
         },
         {
+          "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
+        },
+        {
           "commit": "c290b64f774d4c1ed57080a198f40ea7f23d9225"
         },
         {
@@ -61853,6 +62137,9 @@
           "commit": "bc03455c615ae3f5bab067543fb9c0a5a49f4ae4"
         },
         {
+          "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
+        },
+        {
           "commit": "c290b64f774d4c1ed57080a198f40ea7f23d9225"
         },
         {
@@ -61995,6 +62282,9 @@
         },
         {
           "commit": "bc03455c615ae3f5bab067543fb9c0a5a49f4ae4"
+        },
+        {
+          "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
         },
         {
           "commit": "c290b64f774d4c1ed57080a198f40ea7f23d9225"
@@ -62163,6 +62453,9 @@
         },
         {
           "commit": "bc03455c615ae3f5bab067543fb9c0a5a49f4ae4"
+        },
+        {
+          "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
         },
         {
           "commit": "c290b64f774d4c1ed57080a198f40ea7f23d9225"
@@ -68048,12 +68341,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "0fe33ebb51f387d386e03cb828026a59bbde13de",
+      "revision": "9ea7377b01e2ae29df861880728a76a14455117a",
       "currentBranch": "codex/grill-completion",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 1586,
+      "currentArtifactCount": 1589,
       "provenance": [
         {
           "file": "README.md",
@@ -88766,6 +89059,21 @@
       ]
     },
     {
+      "key": "TestSuite:omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "type": "TestSuite",
+      "id": "omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "label": "omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "lines": 3079,
+      "version": "be4e9a39982386ae",
+      "provenance": [
+        {
+          "file": "omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+          "line": 1,
+          "version": "be4e9a39982386ae"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:omerta-contracts/test/audit/AlchemistRedTeam.t.sol",
       "type": "TestSuite",
       "id": "omerta-contracts/test/audit/AlchemistRedTeam.t.sol",
@@ -92852,6 +93160,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/src/AcquisitionVault.sol",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/src/AcquisitionVault.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:omerta-contracts/src/Alchemist.sol",
       "to": "Domain:chain-economy",
       "provenance": {
@@ -92910,6 +93227,15 @@
       "to": "Domain:chain-economy",
       "provenance": {
         "file": "omerta-contracts/src/GenesisOracle.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol",
         "line": 1
       }
     },
@@ -93063,6 +93389,15 @@
       "to": "Domain:chain-economy",
       "provenance": {
         "file": "omerta-contracts/src/VoucherClaim.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/test/AcquisitionVaultOperator.t.sol",
         "line": 1
       }
     },
@@ -121837,6 +122172,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:369d06d53d73373e72f9acc4a0bc00d92fe48811",
+      "to": "Artifact:omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "provenance": {
+        "commit": "369d06d53d73373e72f9acc4a0bc00d92fe48811"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:36ada575a83cd3c33d0ddf3ea71c37973b4aeeb5",
       "to": "Artifact:src/agentgateway.js",
       "provenance": {
@@ -128405,6 +128748,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:44a8762438128b3eecad7f3657b3a1c5c83ba4fd",
+      "to": "Artifact:omerta-contracts/foundry.toml",
+      "provenance": {
+        "commit": "44a8762438128b3eecad7f3657b3a1c5c83ba4fd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:44a8762438128b3eecad7f3657b3a1c5c83ba4fd",
+      "to": "Artifact:omerta-contracts/src/AcquisitionVault.sol",
+      "provenance": {
+        "commit": "44a8762438128b3eecad7f3657b3a1c5c83ba4fd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:44a8762438128b3eecad7f3657b3a1c5c83ba4fd",
+      "to": "Artifact:omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol",
+      "provenance": {
+        "commit": "44a8762438128b3eecad7f3657b3a1c5c83ba4fd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:44a8762438128b3eecad7f3657b3a1c5c83ba4fd",
+      "to": "Artifact:omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "provenance": {
+        "commit": "44a8762438128b3eecad7f3657b3a1c5c83ba4fd"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:44b982dbdd2f3f2d96c419f9b615642bd314c697",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -130681,6 +131056,14 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "commit": "50fb7d19a44090ac440846b6d71e1e8863b50e8a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5112b6323537fbcd1bd894e77b774f24b294e902",
+      "to": "Artifact:omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "provenance": {
+        "commit": "5112b6323537fbcd1bd894e77b774f24b294e902"
       }
     },
     {
@@ -136125,6 +136508,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:65ecbab584c4abf9c20538cf4faadb9db9309c1c",
+      "to": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "provenance": {
+        "commit": "65ecbab584c4abf9c20538cf4faadb9db9309c1c"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:65ff55846667710f748c6ab91403428ecd4cea03",
       "to": "Artifact:docs/diagrams/path-gun-1080x1350.excalidraw",
       "provenance": {
@@ -139569,6 +139960,14 @@
       "to": "Artifact:test/routes.js",
       "provenance": {
         "commit": "7302ef23e92797fd50f39524e4f0f6c2b258fc17"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7393eee8f8e52c1598a7f60cad68defa299bd6cb",
+      "to": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "provenance": {
+        "commit": "7393eee8f8e52c1598a7f60cad68defa299bd6cb"
       }
     },
     {
@@ -143653,6 +144052,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:7f1d8044bef1fed8ecefdb9521d3ca9269019bac",
+      "to": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "provenance": {
+        "commit": "7f1d8044bef1fed8ecefdb9521d3ca9269019bac"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:7feb393915616ed8b9c1beae44107dc984026be9",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -144569,6 +144976,22 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "commit": "81c29e64092d65d69063a2b57fb90acb0134fa1f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:82001b6e8ac54c46dda6eb185cda550e8a73a3de",
+      "to": "Artifact:omerta-contracts/src/AcquisitionVault.sol",
+      "provenance": {
+        "commit": "82001b6e8ac54c46dda6eb185cda550e8a73a3de"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:82001b6e8ac54c46dda6eb185cda550e8a73a3de",
+      "to": "Artifact:omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "provenance": {
+        "commit": "82001b6e8ac54c46dda6eb185cda550e8a73a3de"
       }
     },
     {
@@ -151149,6 +151572,134 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
+      "to": "Artifact:CHAIN-AUDIT-PACKET.md",
+      "provenance": {
+        "commit": "9ea7377b01e2ae29df861880728a76a14455117a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
+      "to": "Artifact:CHAIN-DEPLOY.md",
+      "provenance": {
+        "commit": "9ea7377b01e2ae29df861880728a76a14455117a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
+      "to": "Artifact:docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
+      "provenance": {
+        "commit": "9ea7377b01e2ae29df861880728a76a14455117a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
+      "to": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "provenance": {
+        "commit": "9ea7377b01e2ae29df861880728a76a14455117a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
+      "to": "Artifact:knowledge/architecture.md",
+      "provenance": {
+        "commit": "9ea7377b01e2ae29df861880728a76a14455117a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
+      "to": "Artifact:knowledge/decisions-and-risks.md",
+      "provenance": {
+        "commit": "9ea7377b01e2ae29df861880728a76a14455117a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
+      "to": "Artifact:knowledge/domains.md",
+      "provenance": {
+        "commit": "9ea7377b01e2ae29df861880728a76a14455117a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
+      "to": "Artifact:LAUNCH-READINESS.md",
+      "provenance": {
+        "commit": "9ea7377b01e2ae29df861880728a76a14455117a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
+      "to": "Artifact:LAUNCH.md",
+      "provenance": {
+        "commit": "9ea7377b01e2ae29df861880728a76a14455117a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
+      "to": "Artifact:MARKETING-COPY.md",
+      "provenance": {
+        "commit": "9ea7377b01e2ae29df861880728a76a14455117a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
+      "to": "Artifact:MARKETING.md",
+      "provenance": {
+        "commit": "9ea7377b01e2ae29df861880728a76a14455117a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
+      "to": "Artifact:omerta-contracts/DEPLOYMENT.md",
+      "provenance": {
+        "commit": "9ea7377b01e2ae29df861880728a76a14455117a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
+      "to": "Artifact:omerta-contracts/README.md",
+      "provenance": {
+        "commit": "9ea7377b01e2ae29df861880728a76a14455117a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
+      "to": "Artifact:omerta-contracts/x-ray/x-ray.md",
+      "provenance": {
+        "commit": "9ea7377b01e2ae29df861880728a76a14455117a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
+      "to": "Artifact:README.md",
+      "provenance": {
+        "commit": "9ea7377b01e2ae29df861880728a76a14455117a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "9ea7377b01e2ae29df861880728a76a14455117a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:9eb5dc28e1bb88bedf0982434d852ad0f5c75fd0",
       "to": "Artifact:omerta-stakes-and-spine-review.md",
       "provenance": {
@@ -154809,6 +155360,14 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "commit": "b02050eea5b47805f0da5073877ece29bd6de32a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b0320b68baeac737a0269f0e318caefcf3d04b88",
+      "to": "Artifact:omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "provenance": {
+        "commit": "b0320b68baeac737a0269f0e318caefcf3d04b88"
       }
     },
     {
@@ -159881,6 +160440,38 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "commit": "c16b3d6506971f6a97d104aa0acac6b99e07cacf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c175ce5dd8574f02c80ff6d3fd6372a95928a5cc",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c175ce5dd8574f02c80ff6d3fd6372a95928a5cc",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c175ce5dd8574f02c80ff6d3fd6372a95928a5cc",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c175ce5dd8574f02c80ff6d3fd6372a95928a5cc",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
       }
     },
     {
@@ -173933,6 +174524,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:faf956cac7a9185f64cd2a7feff14376244ec96f",
+      "to": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "provenance": {
+        "commit": "faf956cac7a9185f64cd2a7feff14376244ec96f"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:fafa8beb1181945dcd9fa52f1beb9704c0bc094e",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -177396,6 +177995,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/src/AcquisitionVault.sol",
+      "provenance": {
+        "file": "omerta-contracts/src/AcquisitionVault.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
       "to": "Artifact:omerta-contracts/src/Alchemist.sol",
       "provenance": {
         "file": "omerta-contracts/src/Alchemist.sol",
@@ -177453,6 +178061,15 @@
       "to": "Artifact:omerta-contracts/src/GenesisOracle.sol",
       "provenance": {
         "file": "omerta-contracts/src/GenesisOracle.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol",
+      "provenance": {
+        "file": "omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol",
         "line": 1
       }
     },
@@ -177606,6 +178223,15 @@
       "to": "Artifact:omerta-contracts/src/VoucherClaim.sol",
       "provenance": {
         "file": "omerta-contracts/src/VoucherClaim.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "provenance": {
+        "file": "omerta-contracts/test/AcquisitionVaultOperator.t.sol",
         "line": 1
       }
     },
@@ -190037,6 +190663,15 @@
     },
     {
       "type": "DEFINED_IN",
+      "from": "Contract:AcquisitionVault",
+      "to": "Artifact:omerta-contracts/src/AcquisitionVault.sol",
+      "provenance": {
+        "file": "omerta-contracts/src/AcquisitionVault.sol",
+        "line": 12
+      }
+    },
+    {
+      "type": "DEFINED_IN",
       "from": "Contract:Alchemist",
       "to": "Artifact:omerta-contracts/src/Alchemist.sol",
       "provenance": {
@@ -190096,6 +190731,15 @@
       "provenance": {
         "file": "omerta-contracts/src/GenesisOracle.sol",
         "line": 49
+      }
+    },
+    {
+      "type": "DEFINED_IN",
+      "from": "Contract:IAcquisitionVaultV1",
+      "to": "Artifact:omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol",
+      "provenance": {
+        "file": "omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol",
+        "line": 3
       }
     },
     {
@@ -209168,6 +209812,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:369d06d53d73373e72f9acc4a0bc00d92fe48811",
+      "provenance": {
+        "commit": "369d06d53d73373e72f9acc4a0bc00d92fe48811"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:36ada575a83cd3c33d0ddf3ea71c37973b4aeeb5",
       "provenance": {
         "commit": "36ada575a83cd3c33d0ddf3ea71c37973b4aeeb5"
@@ -209856,6 +210508,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:44a8762438128b3eecad7f3657b3a1c5c83ba4fd",
+      "provenance": {
+        "commit": "44a8762438128b3eecad7f3657b3a1c5c83ba4fd"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:44b982dbdd2f3f2d96c419f9b615642bd314c697",
       "provenance": {
         "commit": "44b982dbdd2f3f2d96c419f9b615642bd314c697"
@@ -210187,6 +210847,14 @@
       "to": "Commit:50fb7d19a44090ac440846b6d71e1e8863b50e8a",
       "provenance": {
         "commit": "50fb7d19a44090ac440846b6d71e1e8863b50e8a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:5112b6323537fbcd1bd894e77b774f24b294e902",
+      "provenance": {
+        "commit": "5112b6323537fbcd1bd894e77b774f24b294e902"
       }
     },
     {
@@ -210824,6 +211492,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:65ecbab584c4abf9c20538cf4faadb9db9309c1c",
+      "provenance": {
+        "commit": "65ecbab584c4abf9c20538cf4faadb9db9309c1c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:65ff55846667710f748c6ab91403428ecd4cea03",
       "provenance": {
         "commit": "65ff55846667710f748c6ab91403428ecd4cea03"
@@ -211259,6 +211935,14 @@
       "to": "Commit:7302ef23e92797fd50f39524e4f0f6c2b258fc17",
       "provenance": {
         "commit": "7302ef23e92797fd50f39524e4f0f6c2b258fc17"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:7393eee8f8e52c1598a7f60cad68defa299bd6cb",
+      "provenance": {
+        "commit": "7393eee8f8e52c1598a7f60cad68defa299bd6cb"
       }
     },
     {
@@ -211736,6 +212420,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:7f1d8044bef1fed8ecefdb9521d3ca9269019bac",
+      "provenance": {
+        "commit": "7f1d8044bef1fed8ecefdb9521d3ca9269019bac"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:7feb393915616ed8b9c1beae44107dc984026be9",
       "provenance": {
         "commit": "7feb393915616ed8b9c1beae44107dc984026be9"
@@ -211827,6 +212519,14 @@
       "to": "Commit:81c29e64092d65d69063a2b57fb90acb0134fa1f",
       "provenance": {
         "commit": "81c29e64092d65d69063a2b57fb90acb0134fa1f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:82001b6e8ac54c46dda6eb185cda550e8a73a3de",
+      "provenance": {
+        "commit": "82001b6e8ac54c46dda6eb185cda550e8a73a3de"
       }
     },
     {
@@ -212800,6 +213500,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:9ea7377b01e2ae29df861880728a76a14455117a",
+      "provenance": {
+        "commit": "9ea7377b01e2ae29df861880728a76a14455117a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:9eb5dc28e1bb88bedf0982434d852ad0f5c75fd0",
       "provenance": {
         "commit": "9eb5dc28e1bb88bedf0982434d852ad0f5c75fd0"
@@ -213363,6 +214071,14 @@
       "to": "Commit:b02050eea5b47805f0da5073877ece29bd6de32a",
       "provenance": {
         "commit": "b02050eea5b47805f0da5073877ece29bd6de32a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:b0320b68baeac737a0269f0e318caefcf3d04b88",
+      "provenance": {
+        "commit": "b0320b68baeac737a0269f0e318caefcf3d04b88"
       }
     },
     {
@@ -213963,6 +214679,14 @@
       "to": "Commit:c16b3d6506971f6a97d104aa0acac6b99e07cacf",
       "provenance": {
         "commit": "c16b3d6506971f6a97d104aa0acac6b99e07cacf"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:c175ce5dd8574f02c80ff6d3fd6372a95928a5cc",
+      "provenance": {
+        "commit": "c175ce5dd8574f02c80ff6d3fd6372a95928a5cc"
       }
     },
     {
@@ -215499,6 +216223,14 @@
       "to": "Commit:fa8e1459463d73359b80f1ab969b53b07d94a101",
       "provenance": {
         "commit": "fa8e1459463d73359b80f1ab969b53b07d94a101"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:faf956cac7a9185f64cd2a7feff14376244ec96f",
+      "provenance": {
+        "commit": "faf956cac7a9185f64cd2a7feff14376244ec96f"
       }
     },
     {
@@ -229948,6 +230680,15 @@
     },
     {
       "type": "INHERITS",
+      "from": "Contract:AcquisitionVault",
+      "to": "Contract:IAcquisitionVaultV1",
+      "provenance": {
+        "file": "omerta-contracts/src/AcquisitionVault.sol",
+        "line": 12
+      }
+    },
+    {
+      "type": "INHERITS",
       "from": "Contract:Alchemist",
       "to": "Contract:FlashGuard",
       "provenance": {
@@ -235109,7 +235850,7 @@
       "to": "Artifact:src/dexbot.js",
       "provenance": {
         "file": "CHAIN-AUDIT-PACKET.md",
-        "line": 182
+        "line": 187
       }
     },
     {
@@ -235118,16 +235859,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CHAIN-AUDIT-PACKET.md",
-        "line": 13
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:CHAIN-AUDIT-PACKET.md",
-      "to": "Artifact:test/docs.js",
-      "provenance": {
-        "file": "CHAIN-AUDIT-PACKET.md",
-        "line": 161
+        "line": 166
       }
     },
     {
@@ -235136,7 +235868,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CHAIN-AUDIT-PACKET.md",
-        "line": 217
+        "line": 222
       }
     },
     {
@@ -235145,7 +235877,7 @@
       "to": "Artifact:tools/bond-dials.js",
       "provenance": {
         "file": "CHAIN-AUDIT-PACKET.md",
-        "line": 84
+        "line": 89
       }
     },
     {
@@ -235154,7 +235886,7 @@
       "to": "Artifact:omerta-contracts/DEPLOYMENT.md",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 219
+        "line": 227
       }
     },
     {
@@ -235172,7 +235904,7 @@
       "to": "Artifact:src/dexbot.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 682
+        "line": 690
       }
     },
     {
@@ -235181,7 +235913,7 @@
       "to": "Artifact:src/dexbot.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 707
+        "line": 715
       }
     },
     {
@@ -235190,7 +235922,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 258
+        "line": 266
       }
     },
     {
@@ -235199,7 +235931,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 233
+        "line": 241
       }
     },
     {
@@ -235208,7 +235940,7 @@
       "to": "Artifact:src/stockdeliver.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 429
+        "line": 437
       }
     },
     {
@@ -235217,7 +235949,7 @@
       "to": "Artifact:test/watcher.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 195
+        "line": 202
       }
     },
     {
@@ -235226,7 +235958,7 @@
       "to": "Artifact:tools/chain-e2e.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 214
+        "line": 222
       }
     },
     {
@@ -235235,7 +235967,7 @@
       "to": "Artifact:tools/chain-e2e.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 220
+        "line": 228
       }
     },
     {
@@ -248497,6 +249229,159 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "to": "Artifact:omerta-contracts/foundry.toml",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+        "line": 1187
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "to": "Artifact:omerta-contracts/src/AcquisitionVault.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+        "line": 1185
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "to": "Artifact:omerta-contracts/src/AcquisitionVault.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+        "line": 1454
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "to": "Artifact:omerta-contracts/src/AcquisitionVault.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+        "line": 1621
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "to": "Artifact:omerta-contracts/src/AcquisitionVault.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+        "line": 1753
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "to": "Artifact:omerta-contracts/src/AcquisitionVault.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+        "line": 1909
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "to": "Artifact:omerta-contracts/src/AcquisitionVault.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+        "line": 942
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "to": "Artifact:omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+        "line": 1186
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "to": "Artifact:omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+        "line": 1622
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "to": "Artifact:omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+        "line": 1754
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "to": "Artifact:omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+        "line": 1910
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "to": "Artifact:omerta-contracts/src/interfaces/IAcquisitionVaultV1.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+        "line": 943
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "to": "Artifact:omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+        "line": 1191
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "to": "Artifact:omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+        "line": 1455
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "to": "Artifact:omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+        "line": 1623
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "to": "Artifact:omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+        "line": 1755
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "to": "Artifact:omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+        "line": 937
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-08-27-finalized-event-time-handoff.md",
       "to": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
       "provenance": {
@@ -248861,7 +249746,16 @@
       "to": "Artifact:docs/AUDITS.md",
       "provenance": {
         "file": "knowledge/decisions-and-risks.md",
-        "line": 38
+        "line": 39
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:knowledge/decisions-and-risks.md",
+      "to": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "provenance": {
+        "file": "knowledge/decisions-and-risks.md",
+        "line": 19
       }
     },
     {
@@ -248870,7 +249764,7 @@
       "to": "Artifact:knowledge/github-snapshot.json",
       "provenance": {
         "file": "knowledge/decisions-and-risks.md",
-        "line": 42
+        "line": 43
       }
     },
     {
@@ -248942,7 +249836,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "knowledge/decisions-and-risks.md",
-        "line": 37
+        "line": 38
       }
     },
     {
@@ -249093,6 +249987,15 @@
       "type": "REFERENCES",
       "from": "Artifact:knowledge/domains.md",
       "to": "Artifact:src/fees.js",
+      "provenance": {
+        "file": "knowledge/domains.md",
+        "line": 16
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:knowledge/domains.md",
+      "to": "Artifact:src/finalizedobservation.js",
       "provenance": {
         "file": "knowledge/domains.md",
         "line": 16
@@ -249704,19 +250607,19 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:LAUNCH-READINESS.md",
-      "to": "Artifact:omerta-contracts/run-forge-test-sandboxed.sh",
-      "provenance": {
-        "file": "LAUNCH-READINESS.md",
-        "line": 46
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:LAUNCH-READINESS.md",
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "LAUNCH-READINESS.md",
         "line": 103
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:LAUNCH.md",
+      "to": "Artifact:omerta-contracts/DEPLOYMENT.md",
+      "provenance": {
+        "file": "LAUNCH.md",
+        "line": 155
       }
     },
     {
@@ -249743,7 +250646,7 @@
       "to": "Artifact:tools/chain-e2e.js",
       "provenance": {
         "file": "LAUNCH.md",
-        "line": 225
+        "line": 226
       }
     },
     {
@@ -249752,7 +250655,7 @@
       "to": "Artifact:public/art/omr-vs-ohm.png",
       "provenance": {
         "file": "MARKETING.md",
-        "line": 272
+        "line": 273
       }
     },
     {
@@ -249761,7 +250664,7 @@
       "to": "Artifact:public/art/omr-vs-ohm.png",
       "provenance": {
         "file": "MARKETING.md",
-        "line": 282
+        "line": 283
       }
     },
     {
@@ -250058,7 +250961,7 @@
       "to": "Artifact:src/bonds.js",
       "provenance": {
         "file": "omerta-contracts/README.md",
-        "line": 63
+        "line": 68
       }
     },
     {
@@ -250130,7 +251033,7 @@
       "to": "Artifact:omerta-contracts/x-ray/architecture.svg",
       "provenance": {
         "file": "omerta-contracts/x-ray/x-ray.md",
-        "line": 24
+        "line": 30
       }
     },
     {
@@ -250139,34 +251042,7 @@
       "to": "Artifact:omerta-contracts/x-ray/entry-points.md",
       "provenance": {
         "file": "omerta-contracts/x-ray/x-ray.md",
-        "line": 119
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:omerta-contracts/x-ray/x-ray.md",
-      "to": "Artifact:omerta-contracts/x-ray/invariants.md",
-      "provenance": {
-        "file": "omerta-contracts/x-ray/x-ray.md",
-        "line": 131
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:omerta-contracts/x-ray/x-ray.md",
-      "to": "Artifact:omerta-contracts/x-ray/invariants.md",
-      "provenance": {
-        "file": "omerta-contracts/x-ray/x-ray.md",
-        "line": 133
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:omerta-contracts/x-ray/x-ray.md",
-      "to": "Artifact:omerta-contracts/x-ray/invariants.md",
-      "provenance": {
-        "file": "omerta-contracts/x-ray/x-ray.md",
-        "line": 135
+        "line": 125
       }
     },
     {
@@ -250220,7 +251096,34 @@
       "to": "Artifact:omerta-contracts/x-ray/invariants.md",
       "provenance": {
         "file": "omerta-contracts/x-ray/x-ray.md",
-        "line": 234
+        "line": 147
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-contracts/x-ray/x-ray.md",
+      "to": "Artifact:omerta-contracts/x-ray/invariants.md",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/x-ray.md",
+        "line": 149
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-contracts/x-ray/x-ray.md",
+      "to": "Artifact:omerta-contracts/x-ray/invariants.md",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/x-ray.md",
+        "line": 151
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:omerta-contracts/x-ray/x-ray.md",
+      "to": "Artifact:omerta-contracts/x-ray/invariants.md",
+      "provenance": {
+        "file": "omerta-contracts/x-ray/x-ray.md",
+        "line": 240
       }
     },
     {
@@ -257708,6 +258611,15 @@
       "to": "Artifact:src/world.js",
       "provenance": {
         "file": "src/world.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "to": "Artifact:omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "provenance": {
+        "file": "omerta-contracts/test/AcquisitionVaultOperator.t.sol",
         "line": 1
       }
     },
