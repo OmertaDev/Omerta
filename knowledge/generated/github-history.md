@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `5d42fb3eddf7`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `24a015ace8f4`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1005 |
+| Commits in clone | 1006 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-27 — fix: harden finalized event commitments |
+| Latest commit | 2026-08-27 — docs: normalize event commitment knowledge |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 204 |
+| OmertaDev | 205 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -32,8 +32,8 @@
 | [public/index.html](../../public/index.html) | 378 | yes |
 | [src/server.js](../../src/server.js) | 340 | yes |
 | [schema.sql](../../schema.sql) | 261 | yes |
+| [SPEC.md](../../SPEC.md) | 249 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
-| [SPEC.md](../../SPEC.md) | 248 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 169 | yes |
 | [package.json](../../package.json) | 133 | yes |
@@ -60,10 +60,10 @@
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
 | [src/business.js](../../src/business.js) | 39 | yes |
 | [src/chain.js](../../src/chain.js) | 36 | yes |
-| knowledge/generated/github-history.md | 34 | historical |
-| knowledge/generated/graph-summary.md | 34 | historical |
-| knowledge/generated/graph.json | 34 | historical |
-| knowledge/generated/inventory.md | 34 | historical |
+| knowledge/generated/github-history.md | 35 | historical |
+| knowledge/generated/graph-summary.md | 35 | historical |
+| knowledge/generated/graph.json | 35 | historical |
+| knowledge/generated/inventory.md | 35 | historical |
 | [DEPLOY.md](../../DEPLOY.md) | 30 | yes |
 | [public/admin.html](../../public/admin.html) | 30 | yes |
 | [test/migrate.js](../../test/migrate.js) | 29 | yes |
