@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `1601cb2542ca`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `3c99e325d7e9`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 981 |
+| Commits in clone | 982 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-26 — feat: add finalized observation kernel |
+| Latest commit | 2026-08-26 — docs: refresh finalized observation knowledge graph |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 180 |
+| OmertaDev | 181 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -33,7 +33,7 @@
 | [src/server.js](../../src/server.js) | 340 | yes |
 | [schema.sql](../../schema.sql) | 260 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
-| [SPEC.md](../../SPEC.md) | 241 | yes |
+| [SPEC.md](../../SPEC.md) | 242 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 169 | yes |
 | [package.json](../../package.json) | 132 | yes |
