@@ -897,7 +897,9 @@ contract AcquisitionVaultAccountingTest is Test {
         _assertCapFailure(ingress, keccak256("epoch-cap-plus-one"), 1, 2, 5 ether, 5 ether + 1);
         uint256 priorDay = block.timestamp / 1 days;
         vm.warp((priorDay + 1) * 1 days);
-        _deposit(ingress, keccak256("utc-next-day"), 2 ether);
+        _deposit(ingress, keccak256("generation-cap-minus-one"), 2 ether - 1);
+        assertEq(vault.ingressLifetimeDepositedWei(1), 7 ether - 1);
+        _deposit(ingress, keccak256("generation-cap"), 1);
         assertEq(vault.ingressEpochDepositedWei(1, priorDay), 5 ether);
         assertEq(vault.ingressEpochDepositedWei(1, priorDay + 1), 2 ether);
         assertEq(vault.ingressLifetimeDepositedWei(1), 7 ether);
@@ -971,6 +973,24 @@ contract AcquisitionVaultAccountingTest is Test {
         assertEq(pending.proposedAt, uint64(lastProposalTime));
         assertEq(pending.expiresAt, type(uint64).max);
         uint256 pendingState = vm.snapshotState();
+
+        A1Task5TimestampHarness overflowHarness =
+            new A1Task5TimestampHarness(address(safe), address(registry), GLOBAL_CAP);
+        uint256 firstInvalidProposalTime = lastProposalTime + 1;
+        vm.warp(firstInvalidProposalTime);
+        bytes32 emptyPendingHash = keccak256(abi.encode(overflowHarness.pendingIngressProposal()));
+        bytes32 emptyTotalsHash = keccak256(abi.encode(overflowHarness.accountingTotals()));
+        uint256 overflowHarnessBalance = address(overflowHarness).balance;
+        vm.recordLogs();
+        vm.expectRevert(IAcquisitionVaultV1.TimestampOverflow.selector);
+        safe.execute(address(overflowHarness), abi.encodeCall(overflowHarness.proposeIngress, (config, DETAILS)));
+        assertEq(vm.getRecordedLogs().length, 0);
+        assertEq(overflowHarness.ingressProposalNonce(), 0);
+        assertEq(keccak256(abi.encode(overflowHarness.pendingIngressProposal())), emptyPendingHash);
+        assertEq(keccak256(abi.encode(overflowHarness.accountingTotals())), emptyTotalsHash);
+        assertEq(address(overflowHarness).balance, overflowHarnessBalance);
+        assertEq(overflowHarness.ingressGeneration(), 0);
+        assertEq(overflowHarness.activeIngressGeneration(), 0);
 
         vm.warp(uint256(type(uint64).max) - 1);
         _activate(proposalId);
