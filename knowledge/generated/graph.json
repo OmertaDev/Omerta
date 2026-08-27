@@ -1,7 +1,7 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "2da0027e0a6e970a7990cdc7e5076292bce31b79",
-  "worktreeDirty": false,
+  "sourceRevision": "7daff76f37455c83a940f4a7ab2309022a511f01",
+  "worktreeDirty": true,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
     "nodeTypes": [
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 4582,
-    "edges": 21483,
+    "nodes": 4589,
+    "edges": 21509,
     "byNodeType": {
-      "Artifact": 1582,
-      "Command": 34,
-      "Commit": 990,
+      "Artifact": 1583,
+      "Command": 35,
+      "Commit": 992,
       "Contract": 33,
       "Document": 406,
       "Domain": 12,
@@ -59,28 +59,28 @@
       "Repository": 1,
       "Route": 721,
       "Subsystem": 8,
-      "Table": 261,
-      "TestSuite": 180,
+      "Table": 263,
+      "TestSuite": 181,
       "Workflow": 3
     },
     "byEdgeType": {
-      "BELONGS_TO": 1843,
-      "CHANGED": 8271,
-      "CONTAINS": 1602,
-      "DECLARES": 34,
-      "DEFINED_IN": 1016,
+      "BELONGS_TO": 1844,
+      "CHANGED": 8284,
+      "CONTAINS": 1603,
+      "DECLARES": 35,
+      "DEFINED_IN": 1018,
       "DEPENDS_ON": 59,
-      "EXECUTES": 155,
+      "EXECUTES": 156,
       "HANDLED_BY": 653,
-      "HAS_COMMIT": 990,
+      "HAS_COMMIT": 992,
       "IMPLEMENTS": 124,
-      "IMPORTS": 1476,
+      "IMPORTS": 1477,
       "INHERITS": 5,
-      "REFERENCES": 2490,
-      "REPRESENTS": 756,
+      "REFERENCES": 2491,
+      "REPRESENTS": 757,
       "TESTS": 521,
       "TRACKS": 126,
-      "USES_TABLE": 1362
+      "USES_TABLE": 1364
     }
   },
   "nodes": [
@@ -6440,20 +6440,20 @@
       "path": ".github/workflows/ci.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 12588,
-      "lines": 238,
-      "version": "b504fe00e4cac0f4",
+      "bytes": 12844,
+      "lines": 244,
+      "version": "20730fae6c202db0",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "b504fe00e4cac0f4"
+          "version": "20730fae6c202db0"
         }
       ],
-      "lastChangedAt": "2026-08-25T01:09:03-04:00",
+      "lastChangedAt": "2026-08-27T01:05:24-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e5cbed87fbd00543f3e9d9b4a6703a5c7163f6bd"
+      "lastChangedCommit": "7daff76f37455c83a940f4a7ab2309022a511f01"
     },
     {
       "key": "Artifact:.github/workflows/forge.yml",
@@ -16094,20 +16094,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 5175,
-      "lines": 61,
-      "version": "fea8cc6780b72851",
+      "bytes": 5251,
+      "lines": 62,
+      "version": "2d109b12427f2396",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "fea8cc6780b72851"
+          "version": "2d109b12427f2396"
         }
       ],
-      "lastChangedAt": "2026-08-26T22:55:55-04:00",
+      "lastChangedAt": "2026-08-27T01:05:24-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1601cb2542ca6d8be1f075a8d2673f68414ca7af"
+      "lastChangedCommit": "7daff76f37455c83a940f4a7ab2309022a511f01"
     },
     {
       "key": "Artifact:Procfile",
@@ -28537,20 +28537,20 @@
       "path": "schema.sql",
       "kind": "data-schema",
       "extension": ".sql",
-      "bytes": 268451,
-      "lines": 4246,
-      "version": "43068781bb92f89a",
+      "bytes": 271931,
+      "lines": 4310,
+      "version": "762aab2e0a09839a",
       "text": true,
       "provenance": [
         {
           "file": "schema.sql",
           "line": 1,
-          "version": "43068781bb92f89a"
+          "version": "762aab2e0a09839a"
         }
       ],
-      "lastChangedAt": "2026-08-26T21:43:49-04:00",
+      "lastChangedAt": "2026-08-27T01:05:24-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "2a8a2eeabb00cdc2dc8011599a4817425cd2511e"
+      "lastChangedCommit": "7daff76f37455c83a940f4a7ab2309022a511f01"
     },
     {
       "key": "Artifact:SIGN-OFF.md",
@@ -28608,13 +28608,13 @@
       "extension": ".md",
       "bytes": 46570,
       "lines": 647,
-      "version": "eebda5df50e79e22",
+      "version": "c9f9b852180c06f5",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "eebda5df50e79e22"
+          "version": "c9f9b852180c06f5"
         }
       ],
       "lastChangedAt": "2026-08-27T00:26:38-04:00",
@@ -30768,20 +30768,20 @@
       "path": "src/preflight.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 31993,
-      "lines": 438,
-      "version": "6833f0cf77c6bc4c",
+      "bytes": 32034,
+      "lines": 439,
+      "version": "c4e057a386896ad1",
       "text": true,
       "provenance": [
         {
           "file": "src/preflight.js",
           "line": 1,
-          "version": "6833f0cf77c6bc4c"
+          "version": "c4e057a386896ad1"
         }
       ],
-      "lastChangedAt": "2026-08-26T17:50:42-04:00",
+      "lastChangedAt": "2026-08-27T01:05:24-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a16c2fe9da22d79fb85d12c7fd6ee01152dce1a8"
+      "lastChangedCommit": "7daff76f37455c83a940f4a7ab2309022a511f01"
     },
     {
       "key": "Artifact:src/primetime.js",
@@ -32033,20 +32033,20 @@
       "path": "src/stockcatalogv2.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 39447,
-      "lines": 753,
-      "version": "3d1714dc958db8e2",
+      "bytes": 51078,
+      "lines": 1044,
+      "version": "6e7be862a9c65a0f",
       "text": true,
       "provenance": [
         {
           "file": "src/stockcatalogv2.js",
           "line": 1,
-          "version": "3d1714dc958db8e2"
+          "version": "6e7be862a9c65a0f"
         }
       ],
-      "lastChangedAt": "2026-08-26T20:33:12-04:00",
+      "lastChangedAt": "2026-08-27T01:05:24-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c7a3643f6b5a6a675b46062930e07a53fd5b0be2"
+      "lastChangedCommit": "7daff76f37455c83a940f4a7ab2309022a511f01"
     },
     {
       "key": "Artifact:src/stockdeliver.js",
@@ -34885,20 +34885,20 @@
       "path": "test/stockballotv2.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 75211,
-      "lines": 1643,
-      "version": "a65d0ce4e01b53ec",
+      "bytes": 77928,
+      "lines": 1676,
+      "version": "326f0cd8ad841189",
       "text": true,
       "provenance": [
         {
           "file": "test/stockballotv2.js",
           "line": 1,
-          "version": "a65d0ce4e01b53ec"
+          "version": "326f0cd8ad841189"
         }
       ],
-      "lastChangedAt": "2026-08-26T21:43:49-04:00",
+      "lastChangedAt": "2026-08-27T01:05:24-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "2a8a2eeabb00cdc2dc8011599a4817425cd2511e"
+      "lastChangedCommit": "7daff76f37455c83a940f4a7ab2309022a511f01"
     },
     {
       "key": "Artifact:test/stockcatalog.js",
@@ -34931,20 +34931,43 @@
       "path": "test/stockcatalogv2.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 59965,
-      "lines": 1035,
-      "version": "2feba7dd738b3797",
+      "bytes": 68737,
+      "lines": 1204,
+      "version": "0281e643ac7e7832",
       "text": true,
       "provenance": [
         {
           "file": "test/stockcatalogv2.js",
           "line": 1,
-          "version": "2feba7dd738b3797"
+          "version": "0281e643ac7e7832"
         }
       ],
-      "lastChangedAt": "2026-08-26T14:18:39-04:00",
+      "lastChangedAt": "2026-08-27T01:05:24-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b88551ce61e18ed1f520a30ee0297ad6a9a05ded"
+      "lastChangedCommit": "7daff76f37455c83a940f4a7ab2309022a511f01"
+    },
+    {
+      "key": "Artifact:test/stockcatalogv2.postgres.js",
+      "type": "Artifact",
+      "id": "test/stockcatalogv2.postgres.js",
+      "label": "stockcatalogv2.postgres.js",
+      "path": "test/stockcatalogv2.postgres.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 15946,
+      "lines": 377,
+      "version": "bcecc54cfb5f1056",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/stockcatalogv2.postgres.js",
+          "line": 1,
+          "version": "bcecc54cfb5f1056"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T01:05:24-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "7daff76f37455c83a940f4a7ab2309022a511f01"
     },
     {
       "key": "Artifact:test/stockdeliver.js",
@@ -36847,6 +36870,19 @@
       "id": "npm:test",
       "label": "npm run test",
       "command": "node test/finalizedobservation.js && node test/smoke.js && node test/economy.js && node test/social.js && node test/growth.js && node test/hardening.js && node test/agentturn.js && node test/security.js && node test/chain.js && node test/watcher.js && node test/vig.js && node test/casino.js && node test/heists.js && node test/convoy.js && node test/commission.js && node test/stockcatalog.js && node test/stockcatalogv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/market.js && node test/skills.js && node test/underworld.js && node test/law.js && node test/world.js && node test/npcwar.js && node test/pen.js && node test/loans.js && node test/portfolio.js && node test/estate.js && node test/deeds.js && node test/auction.js && node test/wire.js && node test/store.js && node test/pass.js && node test/landmarks.js && node test/speakeasy.js && node test/boxing.js && node test/bonds.js && node test/races.js && node test/port.js && node test/stable.js && node test/migrate.js && node test/emission.js && node test/desk.js && node test/made.js && node test/nft.js && node test/reimport.js && node test/walletforge.js && node test/expansion.js && node test/dynasty.js && node test/intrigue.js && node test/megaproject.js && node test/duels.js && node test/clues.js && node test/seasons.js && node test/ring.js && node test/standing.js && node test/sacking.js && node test/shields.js && node test/population.js && node test/tokenomics.js && node test/treasury.js && node test/stockdeliver.js && node test/dexbot.js && node test/mastery.js && node test/activity.js && node test/brokers.js && node test/bank.js && node test/community.js && node test/tokenhealth.js && node test/regimen.js && node test/career.js && node test/favors.js && node test/crew.js && node test/firstblood.js && node test/discovery.js && node test/mentor.js && node test/events.js && node test/results.js && node test/vouch.js && node test/streak.js && node test/circle.js && node test/collision.js && node test/firsts.js && node test/runs.js && node test/shipment.js && node test/avatar.js && node test/portrait.js && node test/push.js && node test/dispatch.js && node test/pwa.js && node test/people.js && node test/citywire.js && node test/bulletin.js && node test/explore.js && node test/primetime.js && node test/citymap.js && node test/day.js && node test/payroll.js && node test/home.js && node test/streets.js && node test/citywide.js && node test/drop.js && node test/sweeps.js && node test/tax.js && node test/router.js && node test/auth.js && node test/rules.js && node test/path-funnel.js && node test/routes.js && node test/diagram-renderer.js && node test/coldstart.js && node test/preflight.js && node test/client.js && node test/engagement.js && node test/levers.js && node test/graph.js && node test/gates.js && node test/chainparams.js && node test/docs.js && node test/playthrough-truth.js && node tools/knowledge-test.js",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:stockcatalogv2:postgres",
+      "type": "Command",
+      "id": "npm:test:stockcatalogv2:postgres",
+      "label": "npm run test:stockcatalogv2:postgres",
+      "command": "node test/stockcatalogv2.postgres.js",
       "provenance": [
         {
           "file": "package.json",
@@ -45035,6 +45071,22 @@
       ]
     },
     {
+      "key": "Commit:7daff76f37455c83a940f4a7ab2309022a511f01",
+      "type": "Commit",
+      "id": "7daff76f37455c83a940f4a7ab2309022a511f01",
+      "label": "feat: integrate stock catalog finalized observation",
+      "title": "feat: integrate stock catalog finalized observation",
+      "date": "2026-08-27T01:05:24-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7daff76f37455c83a940f4a7ab2309022a511f01",
+      "provenance": [
+        {
+          "commit": "7daff76f37455c83a940f4a7ab2309022a511f01",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7daff76f37455c83a940f4a7ab2309022a511f01"
+        }
+      ]
+    },
+    {
       "key": "Commit:7deb463f3b05a9862f5a82cbecc0a0dcc45ec33d",
       "type": "Commit",
       "id": "7deb463f3b05a9862f5a82cbecc0a0dcc45ec33d",
@@ -50199,6 +50251,22 @@
         {
           "commit": "ce7b06156328e6085c73e19804011c3935997eef",
           "url": "https://github.com/OmertaDev/Omerta/commit/ce7b06156328e6085c73e19804011c3935997eef"
+        }
+      ]
+    },
+    {
+      "key": "Commit:cf59d38d89841f799f0185d8854932fdd71f7de6",
+      "type": "Commit",
+      "id": "cf59d38d89841f799f0185d8854932fdd71f7de6",
+      "label": "docs: finalize sealed observation provenance",
+      "title": "docs: finalize sealed observation provenance",
+      "date": "2026-08-27T00:27:32-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/cf59d38d89841f799f0185d8854932fdd71f7de6",
+      "provenance": [
+        {
+          "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/cf59d38d89841f799f0185d8854932fdd71f7de6"
         }
       ]
     },
@@ -59770,12 +59838,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 647,
-      "version": "eebda5df50e79e22",
+      "version": "c9f9b852180c06f5",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "eebda5df50e79e22"
+          "version": "c9f9b852180c06f5"
         }
       ]
     },
@@ -60246,6 +60314,10 @@
           "line": 339
         },
         {
+          "file": "test/stockcatalogv2.postgres.js",
+          "line": 4
+        },
+        {
           "file": "tools/pgcheck.js",
           "line": 503
         }
@@ -60539,7 +60611,7 @@
         },
         {
           "file": "test/stockcatalogv2.js",
-          "line": 1002
+          "line": 1175
         },
         {
           "file": "test/stockdeliver.js",
@@ -60932,6 +61004,9 @@
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
         },
         {
+          "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
+        },
+        {
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
         },
         {
@@ -61005,6 +61080,9 @@
         },
         {
           "commit": "c8d8fdb693bb62b559f1e40382b0d09ebceabad1"
+        },
+        {
+          "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
         },
         {
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
@@ -61088,6 +61166,9 @@
           "commit": "c8d8fdb693bb62b559f1e40382b0d09ebceabad1"
         },
         {
+          "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
+        },
+        {
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
         },
         {
@@ -61167,6 +61248,9 @@
         },
         {
           "commit": "c8d8fdb693bb62b559f1e40382b0d09ebceabad1"
+        },
+        {
+          "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
         },
         {
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
@@ -61272,6 +61356,9 @@
         },
         {
           "commit": "c8d8fdb693bb62b559f1e40382b0d09ebceabad1"
+        },
+        {
+          "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
         },
         {
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
@@ -62867,13 +62954,13 @@
       "type": "Module",
       "id": "src/preflight.js",
       "label": "src/preflight.js",
-      "lines": 438,
-      "version": "6833f0cf77c6bc4c",
+      "lines": 439,
+      "version": "c4e057a386896ad1",
       "provenance": [
         {
           "file": "src/preflight.js",
           "line": 1,
-          "version": "6833f0cf77c6bc4c"
+          "version": "c4e057a386896ad1"
         }
       ]
     },
@@ -63692,13 +63779,13 @@
       "type": "Module",
       "id": "src/stockcatalogv2.js",
       "label": "src/stockcatalogv2.js",
-      "lines": 753,
-      "version": "3d1714dc958db8e2",
+      "lines": 1044,
+      "version": "6e7be862a9c65a0f",
       "provenance": [
         {
           "file": "src/stockcatalogv2.js",
           "line": 1,
-          "version": "3d1714dc958db8e2"
+          "version": "6e7be862a9c65a0f"
         }
       ]
     },
@@ -67127,12 +67214,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "2da0027e0a6e970a7990cdc7e5076292bce31b79",
+      "revision": "7daff76f37455c83a940f4a7ab2309022a511f01",
       "currentBranch": "codex/grill-completion",
       "defaultBranch": "main",
       "visibility": "public",
-      "worktreeDirty": false,
-      "currentArtifactCount": 1583,
+      "worktreeDirty": true,
+      "currentArtifactCount": 1584,
       "provenance": [
         {
           "file": "README.md",
@@ -83172,13 +83259,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4069
+          "line": 4133
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4069
+          "line": 4133
         }
       ]
     },
@@ -83658,13 +83745,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4079
+          "line": 4143
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4079
+          "line": 4143
         }
       ]
     },
@@ -83676,13 +83763,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4089
+          "line": 4153
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4089
+          "line": 4153
         }
       ]
     },
@@ -83694,13 +83781,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4097
+          "line": 4161
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4097
+          "line": 4161
         }
       ]
     },
@@ -84126,13 +84213,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3641
+          "line": 3705
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3641
+          "line": 3705
         }
       ]
     },
@@ -84180,13 +84267,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4118
+          "line": 4182
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4118
+          "line": 4182
         }
       ]
     },
@@ -84792,13 +84879,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4156
+          "line": 4220
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4156
+          "line": 4220
         }
       ]
     },
@@ -84810,13 +84897,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4172
+          "line": 4236
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4172
+          "line": 4236
         }
       ]
     },
@@ -85008,13 +85095,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4229
+          "line": 4293
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4229
+          "line": 4293
         }
       ]
     },
@@ -85044,13 +85131,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4132
+          "line": 4196
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4132
+          "line": 4196
         }
       ]
     },
@@ -86538,13 +86625,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3981
+          "line": 4045
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3981
+          "line": 4045
         }
       ]
     },
@@ -86556,13 +86643,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3991
+          "line": 4055
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3991
+          "line": 4055
         }
       ]
     },
@@ -86574,13 +86661,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4009
+          "line": 4073
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4009
+          "line": 4073
         }
       ]
     },
@@ -86592,13 +86679,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4033
+          "line": 4097
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4033
+          "line": 4097
         }
       ]
     },
@@ -86610,13 +86697,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3924
+          "line": 3988
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3924
+          "line": 3988
         }
       ]
     },
@@ -86646,13 +86733,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4017
+          "line": 4081
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4017
+          "line": 4081
         }
       ]
     },
@@ -86664,13 +86751,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4240
+          "line": 4304
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4240
+          "line": 4304
         }
       ]
     },
@@ -87024,13 +87111,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3565
+          "line": 3621
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3565
+          "line": 3621
         }
       ]
     },
@@ -87042,13 +87129,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3547
+          "line": 3603
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3547
+          "line": 3603
         }
       ]
     },
@@ -87078,13 +87165,49 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3589
+          "line": 3653
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3589
+          "line": 3653
+        }
+      ]
+    },
+    {
+      "key": "Table:stock_catalog_getter_checkpoint_v2",
+      "type": "Table",
+      "id": "stock_catalog_getter_checkpoint_v2",
+      "label": "stock_catalog_getter_checkpoint_v2",
+      "definitions": [
+        {
+          "file": "schema.sql",
+          "line": 3563
+        }
+      ],
+      "provenance": [
+        {
+          "file": "schema.sql",
+          "line": 3563
+        }
+      ]
+    },
+    {
+      "key": "Table:stock_catalog_getter_inbox_v2",
+      "type": "Table",
+      "id": "stock_catalog_getter_inbox_v2",
+      "label": "stock_catalog_getter_inbox_v2",
+      "definitions": [
+        {
+          "file": "schema.sql",
+          "line": 3585
+        }
+      ],
+      "provenance": [
+        {
+          "file": "schema.sql",
+          "line": 3585
         }
       ]
     },
@@ -87114,13 +87237,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3573
+          "line": 3629
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3573
+          "line": 3629
         }
       ]
     },
@@ -87348,13 +87471,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3622
+          "line": 3686
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3622
+          "line": 3686
         }
       ]
     },
@@ -87366,13 +87489,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3601
+          "line": 3665
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3601
+          "line": 3665
         }
       ]
     },
@@ -87402,13 +87525,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 3677
+          "line": 3741
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 3677
+          "line": 3741
         }
       ]
     },
@@ -87618,13 +87741,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4196
+          "line": 4260
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4196
+          "line": 4260
         }
       ]
     },
@@ -90228,13 +90351,13 @@
       "type": "TestSuite",
       "id": "test/stockballotv2.js",
       "label": "test/stockballotv2.js",
-      "lines": 1643,
-      "version": "a65d0ce4e01b53ec",
+      "lines": 1676,
+      "version": "326f0cd8ad841189",
       "provenance": [
         {
           "file": "test/stockballotv2.js",
           "line": 1,
-          "version": "a65d0ce4e01b53ec"
+          "version": "326f0cd8ad841189"
         }
       ]
     },
@@ -90258,13 +90381,28 @@
       "type": "TestSuite",
       "id": "test/stockcatalogv2.js",
       "label": "test/stockcatalogv2.js",
-      "lines": 1035,
-      "version": "2feba7dd738b3797",
+      "lines": 1204,
+      "version": "0281e643ac7e7832",
       "provenance": [
         {
           "file": "test/stockcatalogv2.js",
           "line": 1,
-          "version": "2feba7dd738b3797"
+          "version": "0281e643ac7e7832"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/stockcatalogv2.postgres.js",
+      "type": "TestSuite",
+      "id": "test/stockcatalogv2.postgres.js",
+      "label": "test/stockcatalogv2.postgres.js",
+      "lines": 377,
+      "version": "bcecc54cfb5f1056",
+      "provenance": [
+        {
+          "file": "test/stockcatalogv2.postgres.js",
+          "line": 1,
+          "version": "bcecc54cfb5f1056"
         }
       ]
     },
@@ -90513,13 +90651,13 @@
       "type": "Workflow",
       "id": ".github/workflows/ci.yml",
       "label": ".github/workflows/ci.yml",
-      "lines": 238,
-      "version": "b504fe00e4cac0f4",
+      "lines": 244,
+      "version": "20730fae6c202db0",
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "b504fe00e4cac0f4"
+          "version": "20730fae6c202db0"
         }
       ]
     },
@@ -100056,6 +100194,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/stockcatalogv2.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/stockcatalogv2.postgres.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/stockcatalogv2.postgres.js",
         "line": 1
       }
     },
@@ -141864,6 +142011,70 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:7daff76f37455c83a940f4a7ab2309022a511f01",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "commit": "7daff76f37455c83a940f4a7ab2309022a511f01"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7daff76f37455c83a940f4a7ab2309022a511f01",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "7daff76f37455c83a940f4a7ab2309022a511f01"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7daff76f37455c83a940f4a7ab2309022a511f01",
+      "to": "Artifact:schema.sql",
+      "provenance": {
+        "commit": "7daff76f37455c83a940f4a7ab2309022a511f01"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7daff76f37455c83a940f4a7ab2309022a511f01",
+      "to": "Artifact:src/preflight.js",
+      "provenance": {
+        "commit": "7daff76f37455c83a940f4a7ab2309022a511f01"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7daff76f37455c83a940f4a7ab2309022a511f01",
+      "to": "Artifact:src/stockcatalogv2.js",
+      "provenance": {
+        "commit": "7daff76f37455c83a940f4a7ab2309022a511f01"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7daff76f37455c83a940f4a7ab2309022a511f01",
+      "to": "Artifact:test/stockballotv2.js",
+      "provenance": {
+        "commit": "7daff76f37455c83a940f4a7ab2309022a511f01"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7daff76f37455c83a940f4a7ab2309022a511f01",
+      "to": "Artifact:test/stockcatalogv2.js",
+      "provenance": {
+        "commit": "7daff76f37455c83a940f4a7ab2309022a511f01"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7daff76f37455c83a940f4a7ab2309022a511f01",
+      "to": "Artifact:test/stockcatalogv2.postgres.js",
+      "provenance": {
+        "commit": "7daff76f37455c83a940f4a7ab2309022a511f01"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:7deb463f3b05a9862f5a82cbecc0a0dcc45ec33d",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -160852,6 +161063,46 @@
       "to": "Artifact:test/dynasty.js",
       "provenance": {
         "commit": "ce7b06156328e6085c73e19804011c3935997eef"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cf59d38d89841f799f0185d8854932fdd71f7de6",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cf59d38d89841f799f0185d8854932fdd71f7de6",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cf59d38d89841f799f0185d8854932fdd71f7de6",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cf59d38d89841f799f0185d8854932fdd71f7de6",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cf59d38d89841f799f0185d8854932fdd71f7de6",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
       }
     },
     {
@@ -182178,6 +182429,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/stockcatalogv2.postgres.js",
+      "provenance": {
+        "file": "test/stockcatalogv2.postgres.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/stockdeliver.js",
       "provenance": {
         "file": "test/stockdeliver.js",
@@ -187913,6 +188173,15 @@
       "type": "DECLARES",
       "from": "Artifact:package.json",
       "to": "Command:npm:test",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:stockcatalogv2:postgres",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -194782,7 +195051,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4069
+        "line": 4133
       }
     },
     {
@@ -195025,7 +195294,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4079
+        "line": 4143
       }
     },
     {
@@ -195034,7 +195303,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4089
+        "line": 4153
       }
     },
     {
@@ -195043,7 +195312,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4097
+        "line": 4161
       }
     },
     {
@@ -195250,7 +195519,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3641
+        "line": 3705
       }
     },
     {
@@ -195286,7 +195555,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4118
+        "line": 4182
       }
     },
     {
@@ -195592,7 +195861,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4156
+        "line": 4220
       }
     },
     {
@@ -195601,7 +195870,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4172
+        "line": 4236
       }
     },
     {
@@ -195700,7 +195969,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4229
+        "line": 4293
       }
     },
     {
@@ -195718,7 +195987,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4132
+        "line": 4196
       }
     },
     {
@@ -196465,7 +196734,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3981
+        "line": 4045
       }
     },
     {
@@ -196474,7 +196743,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3991
+        "line": 4055
       }
     },
     {
@@ -196483,7 +196752,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4009
+        "line": 4073
       }
     },
     {
@@ -196492,7 +196761,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4033
+        "line": 4097
       }
     },
     {
@@ -196501,7 +196770,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3924
+        "line": 3988
       }
     },
     {
@@ -196519,7 +196788,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4017
+        "line": 4081
       }
     },
     {
@@ -196528,7 +196797,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4240
+        "line": 4304
       }
     },
     {
@@ -196708,7 +196977,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3565
+        "line": 3621
       }
     },
     {
@@ -196717,7 +196986,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3547
+        "line": 3603
       }
     },
     {
@@ -196735,7 +197004,25 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3589
+        "line": 3653
+      }
+    },
+    {
+      "type": "DEFINED_IN",
+      "from": "Table:stock_catalog_getter_checkpoint_v2",
+      "to": "Artifact:schema.sql",
+      "provenance": {
+        "file": "schema.sql",
+        "line": 3563
+      }
+    },
+    {
+      "type": "DEFINED_IN",
+      "from": "Table:stock_catalog_getter_inbox_v2",
+      "to": "Artifact:schema.sql",
+      "provenance": {
+        "file": "schema.sql",
+        "line": 3585
       }
     },
     {
@@ -196753,7 +197040,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3573
+        "line": 3629
       }
     },
     {
@@ -196870,7 +197157,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3622
+        "line": 3686
       }
     },
     {
@@ -196879,7 +197166,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3601
+        "line": 3665
       }
     },
     {
@@ -196888,7 +197175,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 3677
+        "line": 3741
       }
     },
     {
@@ -197005,7 +197292,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4196
+        "line": 4260
       }
     },
     {
@@ -198806,6 +199093,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test",
       "to": "Artifact:tools/knowledge-test.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:stockcatalogv2:postgres",
+      "to": "Artifact:test/stockcatalogv2.postgres.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -209444,6 +209740,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:7daff76f37455c83a940f4a7ab2309022a511f01",
+      "provenance": {
+        "commit": "7daff76f37455c83a940f4a7ab2309022a511f01"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:7deb463f3b05a9862f5a82cbecc0a0dcc45ec33d",
       "provenance": {
         "commit": "7deb463f3b05a9862f5a82cbecc0a0dcc45ec33d"
@@ -212023,6 +212327,14 @@
       "to": "Commit:ce7b06156328e6085c73e19804011c3935997eef",
       "provenance": {
         "commit": "ce7b06156328e6085c73e19804011c3935997eef"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:cf59d38d89841f799f0185d8854932fdd71f7de6",
+      "provenance": {
+        "commit": "cf59d38d89841f799f0185d8854932fdd71f7de6"
       }
     },
     {
@@ -225545,7 +225857,16 @@
       "to": "ExternalDependency:viem",
       "provenance": {
         "file": "test/stockcatalogv2.js",
-        "line": 1002
+        "line": 1175
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/stockcatalogv2.postgres.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "test/stockcatalogv2.postgres.js",
+        "line": 4
       }
     },
     {
@@ -245440,6 +245761,15 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "to": "Artifact:test/stockcatalogv2.postgres.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+        "line": 299
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
       "to": "Artifact:docs/superpowers/specs/2026-08-26-grill-completion.md",
       "provenance": {
@@ -256658,6 +256988,15 @@
       "to": "Artifact:test/stockcatalogv2.js",
       "provenance": {
         "file": "test/stockcatalogv2.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/stockcatalogv2.postgres.js",
+      "to": "Artifact:test/stockcatalogv2.postgres.js",
+      "provenance": {
+        "file": "test/stockcatalogv2.postgres.js",
         "line": 1
       }
     },
@@ -269465,7 +269804,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/preflight.js",
-        "line": 256
+        "line": 257
       }
     },
     {
@@ -269474,7 +269813,7 @@
       "to": "Table:bond_reserve",
       "provenance": {
         "file": "src/preflight.js",
-        "line": 129
+        "line": 130
       }
     },
     {
@@ -269483,7 +269822,7 @@
       "to": "Table:bonds",
       "provenance": {
         "file": "src/preflight.js",
-        "line": 413
+        "line": 414
       }
     },
     {
@@ -269492,7 +269831,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/preflight.js",
-        "line": 270
+        "line": 271
       }
     },
     {
@@ -269510,7 +269849,7 @@
       "to": "Table:secrets",
       "provenance": {
         "file": "src/preflight.js",
-        "line": 209
+        "line": 210
       }
     },
     {
@@ -273236,7 +273575,7 @@
       "to": "Table:stock_asset_active_heads_v2",
       "provenance": {
         "file": "src/stockcatalogv2.js",
-        "line": 405
+        "line": 418
       }
     },
     {
@@ -273245,7 +273584,25 @@
       "to": "Table:stock_asset_versions_v2",
       "provenance": {
         "file": "src/stockcatalogv2.js",
-        "line": 398
+        "line": 411
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/stockcatalogv2.js",
+      "to": "Table:stock_catalog_getter_checkpoint_v2",
+      "provenance": {
+        "file": "src/stockcatalogv2.js",
+        "line": 544
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/stockcatalogv2.js",
+      "to": "Table:stock_catalog_getter_inbox_v2",
+      "provenance": {
+        "file": "src/stockcatalogv2.js",
+        "line": 657
       }
     },
     {
@@ -273254,7 +273611,7 @@
       "to": "Table:stock_catalog_sync_lock_v2",
       "provenance": {
         "file": "src/stockcatalogv2.js",
-        "line": 367
+        "line": 603
       }
     },
     {
@@ -273263,7 +273620,7 @@
       "to": "Table:stock_catalog_sync_runs_v2",
       "provenance": {
         "file": "src/stockcatalogv2.js",
-        "line": 479
+        "line": 492
       }
     },
     {
@@ -273272,7 +273629,7 @@
       "to": "Table:stock_catalog_sync_state_v2",
       "provenance": {
         "file": "src/stockcatalogv2.js",
-        "line": 371
+        "line": 385
       }
     },
     {

@@ -97,7 +97,7 @@
 | [src/port.js](../../src/port.js) | 488 | enterprise-logistics | 5 / 3 | 12 | 9 | 0 |
 | [src/portfolio.js](../../src/portfolio.js) | 51 | economy-ledger | 1 / 3 | 9 | 4 | 1 |
 | [src/portrait.js](../../src/portrait.js) | 337 | engagement-growth | 3 / 4 | 0 | 6 | 2 |
-| [src/preflight.js](../../src/preflight.js) | 438 | platform-core | 0 / 6 | 0 | 7 | 3 |
+| [src/preflight.js](../../src/preflight.js) | 439 | platform-core | 0 / 6 | 0 | 7 | 3 |
 | [src/primetime.js](../../src/primetime.js) | 260 | engagement-growth | 2 / 6 | 4 | 5 | 1 |
 | [src/push.js](../../src/push.js) | 226 | engagement-growth | 2 / 4 | 2 | 6 | 1 |
 | [src/races.js](../../src/races.js) | 489 | vice-competition | 4 / 9 | 11 | 9 | 3 |
@@ -152,7 +152,7 @@
 | [src/stable.js](../../src/stable.js) | 434 | vice-competition | 3 / 9 | 9 | 8 | 3 |
 | [src/standing.js](../../src/standing.js) | 119 | world-progression | 2 / 6 | 1 | 4 | 2 |
 | [src/stockcatalog.js](../../src/stockcatalog.js) | 388 | platform-core | 1 / 4 | 0 | 2 | 0 |
-| [src/stockcatalogv2.js](../../src/stockcatalogv2.js) | 753 | platform-core | 0 / 5 | 0 | 5 | 4 |
+| [src/stockcatalogv2.js](../../src/stockcatalogv2.js) | 1044 | platform-core | 0 / 5 | 0 | 7 | 4 |
 | [src/stockdeliver.js](../../src/stockdeliver.js) | 579 | economy-ledger | 2 / 7 | 3 | 6 | 4 |
 | [src/store.js](../../src/store.js) | 435 | platform-core | 4 / 11 | 5 | 14 | 4 |
 | [src/streak.js](../../src/streak.js) | 108 | world-progression | 2 / 3 | 3 | 3 | 0 |

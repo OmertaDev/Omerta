@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `2da0027e0a6e`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `7daff76f3745`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 1,582 |
-| Text lines | 399,255 |
-| Repository bytes inventoried | 274,492,017 |
+| Current artifacts | 1,583 |
+| Text lines | 400,197 |
+| Repository bytes inventoried | 274,534,936 |
 | Backend/route modules | 167 |
 | HTTP route registrations / unique routes | 722 / 721 |
-| Database tables | 261 |
+| Database tables | 263 |
 | Solidity declarations | 33 |
-| Git commits | 990 |
+| Git commits | 992 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 4,582 / 21,483 |
+| Graph nodes / edges | 4,589 / 21,509 |
 
 ## Artifact kinds
 
@@ -26,7 +26,7 @@
 | documentation | 204 |
 | artifact | 149 |
 | backend-module | 147 |
-| test-suite | 124 |
+| test-suite | 125 |
 | audit | 98 |
 | design | 75 |
 | contract-project | 61 |
@@ -57,7 +57,7 @@
 | [test/client.js](../../test/client.js) | 6,912 | test-suite | 2026-08-24 |
 | [BALANCE.md](../../BALANCE.md) | 6,472 | documentation | 2026-08-24 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6,045 | backend-module | 2026-08-24 |
-| [schema.sql](../../schema.sql) | 4,246 | data-schema | 2026-08-26 |
+| [schema.sql](../../schema.sql) | 4,310 | data-schema | 2026-08-27 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
 | [src/server.js](../../src/server.js) | 3,343 | backend-module | 2026-08-26 |
 | [omerta-contracts/fizz_data/contracts.json](../../omerta-contracts/fizz_data/contracts.json) | 2,739 | contract-project | 2026-08-25 |
@@ -73,8 +73,8 @@
 | [test/hardening.js](../../test/hardening.js) | 1,712 | test-suite | 2026-08-24 |
 | [src/chain.js](../../src/chain.js) | 1,703 | backend-module | 2026-08-22 |
 | [tools/sim.js](../../tools/sim.js) | 1,681 | engineering-harness | 2026-08-16 |
+| [test/stockballotv2.js](../../test/stockballotv2.js) | 1,676 | test-suite | 2026-08-27 |
 | [test/finalizedobservation.js](../../test/finalizedobservation.js) | 1,670 | test-suite | 2026-08-27 |
-| [test/stockballotv2.js](../../test/stockballotv2.js) | 1,643 | test-suite | 2026-08-26 |
 | [src/casino.js](../../src/casino.js) | 1,468 | backend-module | 2026-08-23 |
 
 ## Media estate

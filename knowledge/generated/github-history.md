@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `2da0027e0a6e`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `7daff76f3745`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 990 |
+| Commits in clone | 992 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-27 — docs: refresh sealed observation knowledge graph |
+| Latest commit | 2026-08-27 — feat: integrate stock catalog finalized observation |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 189 |
+| OmertaDev | 191 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -31,12 +31,12 @@
 | [CLAUDE.md](../../CLAUDE.md) | 491 | yes |
 | [public/index.html](../../public/index.html) | 378 | yes |
 | [src/server.js](../../src/server.js) | 340 | yes |
-| [schema.sql](../../schema.sql) | 260 | yes |
+| [schema.sql](../../schema.sql) | 261 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
 | [SPEC.md](../../SPEC.md) | 244 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 169 | yes |
-| [package.json](../../package.json) | 132 | yes |
+| [package.json](../../package.json) | 133 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 118 | yes |
 | [src/invariants.js](../../src/invariants.js) | 113 | yes |
@@ -50,9 +50,9 @@
 | [test/hardening.js](../../test/hardening.js) | 63 | yes |
 | [tools/sim.js](../../tools/sim.js) | 58 | yes |
 | [README.md](../../README.md) | 54 | yes |
+| [src/preflight.js](../../src/preflight.js) | 51 | yes |
 | [src/growth.js](../../src/growth.js) | 51 | yes |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
-| [src/preflight.js](../../src/preflight.js) | 50 | yes |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 45 | yes |
 | [src/economy.js](../../src/economy.js) | 44 | yes |
