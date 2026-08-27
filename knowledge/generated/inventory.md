@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `f323ff5af5dd`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `db725ffb4fde`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,566 |
-| Text lines | 388,422 |
-| Repository bytes inventoried | 274,424,570 |
+| Text lines | 388,723 |
+| Repository bytes inventoried | 274,434,559 |
 | Backend/route modules | 164 |
 | HTTP route registrations / unique routes | 713 / 713 |
 | Database tables | 245 |
 | Solidity declarations | 28 |
-| Git commits | 1,009 |
+| Git commits | 1,014 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 4,539 / 21,412 |
+| Graph nodes / edges | 4,544 / 21,437 |
 
 ## Artifact kinds
 
@@ -48,7 +48,7 @@
 |---|---:|---|---|
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
 | [CLAUDE.md](../../CLAUDE.md) | 17,225 | documentation | 2026-08-26 |
-| [public/index.html](../../public/index.html) | 11,432 | web-surface | 2026-08-26 |
+| [public/index.html](../../public/index.html) | 11,440 | web-surface | 2026-08-27 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
@@ -67,7 +67,7 @@
 | [src/game.js](../../src/game.js) | 2,540 | backend-module | 2026-08-24 |
 | [omerta-contracts/x-ray/slither-function-summary.json](../../omerta-contracts/x-ray/slither-function-summary.json) | 2,449 | contract-project | 2026-08-25 |
 | [test/social.js](../../test/social.js) | 2,431 | test-suite | 2026-08-24 |
-| [test/agent-alpha.js](../../test/agent-alpha.js) | 2,396 | test-suite | 2026-08-26 |
+| [test/agent-alpha.js](../../test/agent-alpha.js) | 2,397 | test-suite | 2026-08-27 |
 | [test/growth.js](../../test/growth.js) | 2,212 | test-suite | 2026-08-24 |
 | [package-lock.json](../../package-lock.json) | 2,166 | package-config | 2026-08-26 |
 | [knowledge/github-snapshot.json](../../knowledge/github-snapshot.json) | 2,048 | knowledge-base | 2026-08-24 |

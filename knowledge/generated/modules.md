@@ -22,7 +22,7 @@
 | [src/business.js](../../src/business.js) | 661 | enterprise-logistics | 6 / 7 | 13 | 7 | 1 |
 | [src/campaigns.js](../../src/campaigns.js) | 107 | platform-core | 3 / 1 | 4 | 1 | 0 |
 | [src/cardpng.js](../../src/cardpng.js) | 57 | platform-core | 0 / 1 | 0 | 0 | 0 |
-| [src/cards.js](../../src/cards.js) | 306 | platform-core | 1 / 3 | 5 | 10 | 1 |
+| [src/cards.js](../../src/cards.js) | 283 | platform-core | 1 / 3 | 5 | 10 | 1 |
 | [src/career.js](../../src/career.js) | 133 | engagement-growth | 2 / 3 | 2 | 9 | 0 |
 | [src/casino.js](../../src/casino.js) | 1468 | vice-competition | 4 / 11 | 21 | 22 | 4 |
 | [src/chain.js](../../src/chain.js) | 1703 | chain-economy | 9 / 18 | 17 | 29 | 12 |

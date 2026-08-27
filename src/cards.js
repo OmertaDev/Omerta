@@ -194,6 +194,20 @@ export function beefCard(d, ref) {
 }
 
 // ── the public profile page — the "champion" destination; a shared link lands here ──
+function shareNav(enter) {
+  return `<a class="skip-link" href="#main">Skip to the dossier</a>
+<nav class="public-nav" aria-label="Primary">
+  <a class="public-nav__brand" href="/">OMERTÀ</a>
+  <details class="public-nav__menu"><summary>Explore</summary><div class="public-nav__menu-list">
+    <a href="/">The city</a><a href="/wiki">The Codex</a><a href="/arena">The Arena</a><a href="/play">Connect an AI</a>
+  </div></details>
+  <div class="public-nav__links">
+    <a href="/wiki">Codex</a><a href="/arena">Arena</a><a href="/play">Agent setup</a>
+    <a class="public-nav__cta" href="${esc(enter)}">Enter</a>
+  </div>
+</nav>`;
+}
+
 export function profilePage(d, baseUrl, ref) {
   // og:image points at the PNG variant — X/Twitter/most feeds won't unfurl an SVG (server rasterizes,
   // falling back to SVG bytes if no rasterizer is installed).
@@ -207,66 +221,34 @@ export function profilePage(d, baseUrl, ref) {
   return `<!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
+<meta name="description" content="${esc(desc)}"><meta name="theme-color" content="#0a0909">
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}">
 <meta property="og:image" content="${esc(cardUrl)}"><meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@${esc(SOCIAL_X_HANDLE)}"><meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(desc)}"><meta name="twitter:image" content="${esc(cardUrl)}">
-<style>:root{color-scheme:dark}body{margin:0;background:#0c0d11;
-  color:${INK};font-family:'Helvetica Neue',Arial,sans-serif;min-height:100vh;display:grid;place-items:center;padding:32px;position:relative}
-/* THE BACKDROP. This page is the referral LANDING — every share link points here — so it was the one
-   surface where a flat gradient cost real conversion.
-   ROOT-RELATIVE on purpose, unlike og:image above. og:image is fetched by a CRAWLER with no page
-   context, so it has to be absolute off baseUrl; this is fetched by the VISITOR'S browser from the
-   origin it is already on, so a relative path is strictly more robust — it works whether or not
-   PUBLIC_URL happens to be set, and cannot point at a different host than the one serving the page.
-   If the file is ever missing the scrim below still stands on its own and nothing breaks. */
-body::before{content:'';position:fixed;inset:0;z-index:-2;
-  background:url('/art/hero-poster.jpg') center 62%/cover no-repeat;opacity:.5}
-body::after{content:'';position:fixed;inset:0;z-index:-1;
-  background:radial-gradient(120% 90% at 50% 40%,rgba(12,13,17,.70),rgba(12,13,17,.93) 62%,#0c0d11 100%)}
-.wrap{max-width:780px;width:100%;text-align:center;position:relative}
-.what{color:${DIM};font-size:13.5px;line-height:1.65;max-width:56ch;margin:20px auto 0}
-.what b{color:${GOLD};font-weight:400}
-.card{width:100%;border:1px solid #2a2d37;border-radius:6px;overflow:hidden;box-shadow:0 20px 60px #0009;margin-bottom:26px}
-.card svg{display:block;width:100%;height:auto}
-h1{font-family:Georgia,serif;font-size:15px;letter-spacing:.3em;color:${GOLD};text-transform:uppercase;margin:0 0 18px}
-.enter{display:inline-block;font-family:Georgia,serif;font-size:20px;letter-spacing:.04em;color:${BG};
-  background:${GOLD};padding:15px 40px;border-radius:4px;text-decoration:none;font-weight:600}
-.enter:hover{background:#dab55e}
-.sub{color:${DIM};font-size:13px;margin-top:16px;max-width:52ch;margin-left:auto;margin-right:auto;line-height:1.5}
-/* THE DOSSIER STRIP — a visitor should see a SPECIFIC, impressive person, not a generic pitch. Banded
-   status only (rank/level/kills/family/crew/dynasty) — never a dollar figure (the anti-precise-kill-EV
-   rule holds on a public, marketplace-indexed page exactly as on the paid Wire dossier). */
-.dossier{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:0 0 22px}
-.dtile{border:1px solid #2a2d37;border-radius:5px;padding:9px 15px;min-width:78px;background:rgba(20,16,10,.45)}
-.dtile .v{font-family:Georgia,serif;font-size:21px;color:${GOLD};line-height:1.1}
-.dtile .l{font-size:10px;letter-spacing:.18em;color:${DIM};text-transform:uppercase;margin-top:3px}
-.dtile.warn .v{color:#d98a3a}
-/* THE FACE — a small circular mugshot identity mark above the fold. Deliberately SUBORDINATE (the
-   legend card below is the page's hero); it gives the profile a face without competing. The avatar
-   route is public + keyless + hash-only (no injection surface). */
-.pfp{width:96px;height:96px;border-radius:50%;border:2px solid ${GOLD};box-shadow:0 8px 28px #000a;
-  margin:0 auto 16px;display:block;background:#0c0d11}</style>
-</head><body><div class="wrap">
-${d.found && d.id ? `<img class="pfp" alt="" width="96" height="96" src="/v1/avatar/${encodeURIComponent(d.id)}">` : ''}
-<h1>Omertà · the wire</h1>
-<div class="card">${inline}</div>
+<link rel="stylesheet" href="/omerta-ui.css?v=20260826">
+</head><body class="public-page share-page share-page--profile">
+${shareNav(enter)}
+<main class="share-shell" id="main" tabindex="-1"><div class="share-wrap">
+${d.found && d.id ? `<img class="share-avatar" alt="" width="96" height="96" src="/v1/avatar/${encodeURIComponent(d.id)}">` : ''}
+<h1 class="share-heading">${d.found ? `<span class="visually-hidden">${esc(d.name)}: </span>` : ''}Omertà · the wire</h1>
+<div class="share-card" aria-hidden="true">${inline}</div>
 ${d.found ? `<div class="dossier">
-  <div class="dtile"><div class="v">${d.level}</div><div class="l">Level</div></div>
-  <div class="dtile"><div class="v">${d.kills}</div><div class="l">${d.kills === 1 ? 'Kill' : 'Kills'}</div></div>
-  <div class="dtile"><div class="v" style="font-size:15px">${esc(d.hitmanRank)}</div><div class="l">Reputation</div></div>
-  ${d.gang ? `<div class="dtile"><div class="v" style="font-size:15px">${esc(d.gang)}</div><div class="l">Family</div></div>` : ''}
-  ${d.crew ? `<div class="dtile"><div class="v" style="font-size:15px">${esc(d.crew)}</div><div class="l">Crew</div></div>` : ''}
-  ${d.dynasty ? `<div class="dtile"><div class="v" style="font-size:15px">${esc(d.dynasty)}</div><div class="l">Dynasty · Gen ${d.generation}</div></div>` : (d.generation > 1 ? `<div class="dtile"><div class="v">Gen ${d.generation}</div><div class="l">Bloodline</div></div>` : '')}
-  ${d.wanted ? '<div class="dtile warn"><div class="v" style="font-size:15px">WANTED</div><div class="l">Standing</div></div>' : (d.welsher ? '<div class="dtile warn"><div class="v" style="font-size:15px">WELSHER</div><div class="l">Standing</div></div>' : '')}
+  <div class="share-stat"><div class="share-stat__value">${d.level}</div><div class="share-stat__label">Level</div></div>
+  <div class="share-stat"><div class="share-stat__value">${d.kills}</div><div class="share-stat__label">${d.kills === 1 ? 'Kill' : 'Kills'}</div></div>
+  <div class="share-stat"><div class="share-stat__value share-stat__value--compact">${esc(d.hitmanRank)}</div><div class="share-stat__label">Reputation</div></div>
+  ${d.gang ? `<div class="share-stat"><div class="share-stat__value share-stat__value--compact">${esc(d.gang)}</div><div class="share-stat__label">Family</div></div>` : ''}
+  ${d.crew ? `<div class="share-stat"><div class="share-stat__value share-stat__value--compact">${esc(d.crew)}</div><div class="share-stat__label">Crew</div></div>` : ''}
+  ${d.dynasty ? `<div class="share-stat"><div class="share-stat__value share-stat__value--compact">${esc(d.dynasty)}</div><div class="share-stat__label">Dynasty · Gen ${d.generation}</div></div>` : (d.generation > 1 ? `<div class="share-stat"><div class="share-stat__value">Gen ${d.generation}</div><div class="share-stat__label">Bloodline</div></div>` : '')}
+  ${d.wanted ? '<div class="share-stat share-stat--warning"><div class="share-stat__value share-stat__value--compact">WANTED</div><div class="share-stat__label">Standing</div></div>' : (d.welsher ? '<div class="share-stat share-stat--warning"><div class="share-stat__value share-stat__value--compact">WELSHER</div><div class="share-stat__label">Standing</div></div>' : '')}
 </div>` : ''}
-${d.found && d.bio ? `<p class="what" style="font-style:italic">“${esc(d.bio)}”</p>` : ''}
-<a class="enter" href="${esc(enter)}">ENTER THE CITY →</a>
-<p class="sub">${d.found ? `You're looking at ${esc(d.name)}'s sheet. Start your own street — free, no wallet needed${ref || d.name ? `, and ${esc(ref || d.name)} gets credit for bringing you in.` : '.'}` : 'A noir mob RPG — build a family, run the rackets, survive the street.'}</p>
-${d.found ? `<p class="what">A noir mafia RPG. Pull jobs, run a kitchen, take turf, and put a rival in the river —
-or <b>go legit</b> and die in bed. <b>Death is real</b>: your street dies, but the bloodline carries on.
+${d.found && d.bio ? `<p class="share-copy share-copy--bio">“${esc(d.bio)}”</p>` : ''}
+<a class="share-cta" href="${esc(enter)}">ENTER THE CITY →</a>
+<p class="share-copy">${d.found ? `You're looking at ${esc(d.name)}'s sheet. Start your own street — free, no wallet needed${ref || d.name ? `, and ${esc(ref || d.name)} gets credit for bringing you in.` : '.'}` : 'A noir mob RPG — build a family, run the rackets, survive the street.'}</p>
+${d.found ? `<p class="share-copy share-copy--story">A noir mafia RPG. Pull jobs, run a kitchen, take turf, and put a rival in the river —
+  or <b>go legit</b> and die in bed. <b>Death is real</b>: your street dies, but the bloodline carries on.
 Everything runs on one honest ledger, and the city never stops moving.</p>` : ''}
-</div></body></html>`;
+</div></main></body></html>`;
 }
 
 // ── THE BEEF PAGE — the shareable rivalry destination. A link to /beef/A/B unfurls the beef card
@@ -283,23 +265,18 @@ export function beefPage(d, baseUrl, ref) {
   return `<!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
+<meta name="description" content="${esc(desc)}"><meta name="theme-color" content="#0a0909">
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}">
 <meta property="og:image" content="${esc(cardUrl)}"><meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@${esc(SOCIAL_X_HANDLE)}"><meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(desc)}"><meta name="twitter:image" content="${esc(cardUrl)}">
-<style>:root{color-scheme:dark}body{margin:0;background:#0c0d11;color:${INK};font-family:'Helvetica Neue',Arial,sans-serif;min-height:100vh;display:grid;place-items:center;padding:32px;position:relative}
-body::before{content:'';position:fixed;inset:0;z-index:-2;background:url('/art/hero-poster.jpg') center 62%/cover no-repeat;opacity:.5}
-body::after{content:'';position:fixed;inset:0;z-index:-1;background:radial-gradient(120% 90% at 50% 40%,rgba(12,13,17,.70),rgba(12,13,17,.93) 62%,#0c0d11 100%)}
-.wrap{max-width:780px;width:100%;text-align:center;position:relative}
-.card{width:100%;border:1px solid #2a2d37;border-radius:6px;overflow:hidden;box-shadow:0 20px 60px #0009;margin-bottom:26px}
-.card svg{display:block;width:100%;height:auto}
-h1{font-family:Georgia,serif;font-size:15px;letter-spacing:.3em;color:${BLOOD};text-transform:uppercase;margin:0 0 18px}
-.enter{display:inline-block;font-family:Georgia,serif;font-size:20px;letter-spacing:.04em;color:${BG};background:${GOLD};padding:15px 40px;border-radius:4px;text-decoration:none;font-weight:600}
-.sub{color:${DIM};font-size:13px;margin-top:16px;max-width:52ch;margin-left:auto;margin-right:auto;line-height:1.5}</style>
-</head><body><div class="wrap">
-<h1>Omertà · blood between them</h1>
-<div class="card">${inline}</div>
-<a class="enter" href="${esc(enter)}">ENTER THE CITY →</a>
-<p class="sub">${d.found ? `${esc(A)} and ${esc(B)} have a feud in OMERTÀ — ${d.total} ${d.total === 1 ? 'body' : 'bodies'} and counting. Start your own street — free, no wallet needed${ref ? `, and ${esc(ref)} gets credit for bringing you in.` : '.'}` : 'A noir mob RPG — build a family, run the rackets, survive the street.'}</p>
-</div></body></html>`;
+<link rel="stylesheet" href="/omerta-ui.css?v=20260826">
+</head><body class="public-page share-page share-page--beef">
+${shareNav(enter)}
+<main class="share-shell" id="main" tabindex="-1"><div class="share-wrap">
+<h1 class="share-heading share-heading--blood"><span class="visually-hidden">${esc(A)} versus ${esc(B)}: </span>Omertà · blood between them</h1>
+<div class="share-card" aria-hidden="true">${inline}</div>
+<a class="share-cta" href="${esc(enter)}">ENTER THE CITY →</a>
+<p class="share-copy">${d.found ? `${esc(A)} and ${esc(B)} have a feud in OMERTÀ — ${d.total} ${d.total === 1 ? 'body' : 'bodies'} and counting. Start your own street — free, no wallet needed${ref ? `, and ${esc(ref)} gets credit for bringing you in.` : '.'}` : 'A noir mob RPG — build a family, run the rackets, survive the street.'}</p>
+</div></main></body></html>`;
 }
