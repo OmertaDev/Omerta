@@ -1,7 +1,7 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "ca15703d25540fced13e894e6b2133902e52d8e5",
-  "worktreeDirty": false,
+  "sourceRevision": "02bdb7af262aaf07ccb8f6fba39e9f0539d44691",
+  "worktreeDirty": true,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
     "nodeTypes": [
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 4608,
-    "edges": 21616,
+    "nodes": 4612,
+    "edges": 21627,
     "byNodeType": {
-      "Artifact": 1584,
+      "Artifact": 1585,
       "Command": 35,
-      "Commit": 1009,
+      "Commit": 1011,
       "Contract": 33,
-      "Document": 407,
+      "Document": 408,
       "Domain": 12,
       "ExternalDependency": 23,
       "HistoricalArtifact": 35,
@@ -65,19 +65,19 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1844,
-      "CHANGED": 8360,
-      "CONTAINS": 1604,
+      "CHANGED": 8365,
+      "CONTAINS": 1605,
       "DECLARES": 35,
       "DEFINED_IN": 1018,
       "DEPENDS_ON": 59,
       "EXECUTES": 156,
       "HANDLED_BY": 653,
-      "HAS_COMMIT": 1009,
+      "HAS_COMMIT": 1011,
       "IMPLEMENTS": 124,
       "IMPORTS": 1477,
       "INHERITS": 5,
-      "REFERENCES": 2503,
-      "REPRESENTS": 758,
+      "REFERENCES": 2505,
+      "REPRESENTS": 759,
       "TESTS": 521,
       "TRACKS": 126,
       "USES_TABLE": 1364
@@ -10318,6 +10318,29 @@
       "lastChangedAt": "2026-08-26T06:19:01-04:00",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "268eeebcc46a27243a18532192db6f2576e026ed"
+    },
+    {
+      "key": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "type": "Artifact",
+      "id": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "label": "2026-08-27-acquisition-vault-operator-base.md",
+      "path": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 45414,
+      "lines": 1072,
+      "version": "80e195d4a78bcd8c",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+          "line": 1,
+          "version": "80e195d4a78bcd8c"
+        }
+      ],
+      "lastChangedAt": "2026-08-27T03:29:12-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "02bdb7af262aaf07ccb8f6fba39e9f0539d44691"
     },
     {
       "key": "Artifact:docs/superpowers/plans/2026-08-27-finalized-event-time-handoff.md",
@@ -28631,13 +28654,13 @@
       "extension": ".md",
       "bytes": 46570,
       "lines": 647,
-      "version": "64d5cabbb69a9bbf",
+      "version": "9a16150e2ef6de19",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "64d5cabbb69a9bbf"
+          "version": "9a16150e2ef6de19"
         }
       ],
       "lastChangedAt": "2026-08-27T03:07:27-04:00",
@@ -37078,6 +37101,22 @@
       ]
     },
     {
+      "key": "Commit:02bdb7af262aaf07ccb8f6fba39e9f0539d44691",
+      "type": "Commit",
+      "id": "02bdb7af262aaf07ccb8f6fba39e9f0539d44691",
+      "label": "docs: plan acquisition vault operator base",
+      "title": "docs: plan acquisition vault operator base",
+      "date": "2026-08-27T03:29:12-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/02bdb7af262aaf07ccb8f6fba39e9f0539d44691",
+      "provenance": [
+        {
+          "commit": "02bdb7af262aaf07ccb8f6fba39e9f0539d44691",
+          "url": "https://github.com/OmertaDev/Omerta/commit/02bdb7af262aaf07ccb8f6fba39e9f0539d44691"
+        }
+      ]
+    },
+    {
       "key": "Commit:03313cca1ec9001cbab41e040bef235592ed8259",
       "type": "Commit",
       "id": "03313cca1ec9001cbab41e040bef235592ed8259",
@@ -40978,6 +41017,22 @@
         {
           "commit": "3ebaa016353640bba4787f4fdf3f2fe9d183b42a",
           "url": "https://github.com/OmertaDev/Omerta/commit/3ebaa016353640bba4787f4fdf3f2fe9d183b42a"
+        }
+      ]
+    },
+    {
+      "key": "Commit:3ed630a46a39283b60bad0d2222a6cec2ac5c06b",
+      "type": "Commit",
+      "id": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b",
+      "label": "docs: finalize handoff knowledge provenance",
+      "title": "docs: finalize handoff knowledge provenance",
+      "date": "2026-08-27T03:07:53-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/3ed630a46a39283b60bad0d2222a6cec2ac5c06b",
+      "provenance": [
+        {
+          "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
         }
       ]
     },
@@ -58239,6 +58294,22 @@
       ]
     },
     {
+      "key": "Document:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "type": "Document",
+      "id": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "label": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "documentType": "documentation",
+      "lines": 1072,
+      "version": "80e195d4a78bcd8c",
+      "provenance": [
+        {
+          "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+          "line": 1,
+          "version": "80e195d4a78bcd8c"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/superpowers/plans/2026-08-27-finalized-event-time-handoff.md",
       "type": "Document",
       "id": "docs/superpowers/plans/2026-08-27-finalized-event-time-handoff.md",
@@ -60149,12 +60220,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 647,
-      "version": "64d5cabbb69a9bbf",
+      "version": "9a16150e2ef6de19",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "64d5cabbb69a9bbf"
+          "version": "9a16150e2ef6de19"
         }
       ]
     },
@@ -61378,6 +61449,9 @@
           "commit": "3eb4f4111453574634bcc57d1a8e9ef17904d10e"
         },
         {
+          "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
+        },
+        {
           "commit": "45a5bb46c8900a565e0d86419e4dc0672a063012"
         },
         {
@@ -61498,6 +61572,9 @@
           "commit": "3eb4f4111453574634bcc57d1a8e9ef17904d10e"
         },
         {
+          "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
+        },
+        {
           "commit": "45a5bb46c8900a565e0d86419e4dc0672a063012"
         },
         {
@@ -61616,6 +61693,9 @@
         },
         {
           "commit": "3eb4f4111453574634bcc57d1a8e9ef17904d10e"
+        },
+        {
+          "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
         },
         {
           "commit": "45a5bb46c8900a565e0d86419e4dc0672a063012"
@@ -61760,6 +61840,9 @@
         },
         {
           "commit": "3eb4f4111453574634bcc57d1a8e9ef17904d10e"
+        },
+        {
+          "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
         },
         {
           "commit": "45a5bb46c8900a565e0d86419e4dc0672a063012"
@@ -67693,12 +67776,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "ca15703d25540fced13e894e6b2133902e52d8e5",
+      "revision": "02bdb7af262aaf07ccb8f6fba39e9f0539d44691",
       "currentBranch": "codex/grill-completion",
       "defaultBranch": "main",
       "visibility": "public",
-      "worktreeDirty": false,
-      "currentArtifactCount": 1585,
+      "worktreeDirty": true,
+      "currentArtifactCount": 1586,
       "provenance": [
         {
           "file": "README.md",
@@ -108242,6 +108325,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:02bdb7af262aaf07ccb8f6fba39e9f0539d44691",
+      "to": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "provenance": {
+        "commit": "02bdb7af262aaf07ccb8f6fba39e9f0539d44691"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:03313cca1ec9001cbab41e040bef235592ed8259",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -125366,6 +125457,38 @@
       "to": "Artifact:tools/pgcheck.js",
       "provenance": {
         "commit": "3ebaa016353640bba4787f4fdf3f2fe9d183b42a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3ed630a46a39283b60bad0d2222a6cec2ac5c06b",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3ed630a46a39283b60bad0d2222a6cec2ac5c06b",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3ed630a46a39283b60bad0d2222a6cec2ac5c06b",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3ed630a46a39283b60bad0d2222a6cec2ac5c06b",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
       }
     },
     {
@@ -180537,6 +180660,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/superpowers/plans/2026-08-27-finalized-event-time-handoff.md",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-27-finalized-event-time-handoff.md",
@@ -206828,6 +206960,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:02bdb7af262aaf07ccb8f6fba39e9f0539d44691",
+      "provenance": {
+        "commit": "02bdb7af262aaf07ccb8f6fba39e9f0539d44691"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:03313cca1ec9001cbab41e040bef235592ed8259",
       "provenance": {
         "commit": "03313cca1ec9001cbab41e040bef235592ed8259"
@@ -208775,6 +208915,14 @@
       "to": "Commit:3ebaa016353640bba4787f4fdf3f2fe9d183b42a",
       "provenance": {
         "commit": "3ebaa016353640bba4787f4fdf3f2fe9d183b42a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:3ed630a46a39283b60bad0d2222a6cec2ac5c06b",
+      "provenance": {
+        "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
       }
     },
     {
@@ -247659,6 +247807,24 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "to": "Artifact:docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+        "line": 32
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "to": "Artifact:docs/superpowers/specs/2026-08-26-grill-completion.md",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+        "line": 31
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-08-27-finalized-event-time-handoff.md",
       "to": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
       "provenance": {
@@ -254260,6 +254426,15 @@
       "to": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "to": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
         "line": 1
       }
     },
