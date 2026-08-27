@@ -1,37 +1,37 @@
 # Generated repository inventory
 
-> Source: worktree at `01e4ab1547ce`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `0524f3ce06d4`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 1,566 |
-| Text lines | 388,723 |
-| Repository bytes inventoried | 274,434,559 |
-| Backend/route modules | 164 |
+| Current artifacts | 1,574 |
+| Text lines | 390,752 |
+| Repository bytes inventoried | 274,519,981 |
+| Backend/route modules | 166 |
 | HTTP route registrations / unique routes | 713 / 713 |
-| Database tables | 245 |
+| Database tables | 247 |
 | Solidity declarations | 28 |
-| Git commits | 1,016 |
+| Git commits | 1,018 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 4,546 / 21,443 |
+| Graph nodes / edges | 4,566 / 21,516 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
 | media-asset | 530 |
-| documentation | 201 |
-| artifact | 152 |
-| backend-module | 145 |
-| test-suite | 120 |
+| documentation | 202 |
+| artifact | 154 |
+| backend-module | 147 |
+| test-suite | 122 |
 | audit | 98 |
 | design | 76 |
 | contract-project | 61 |
+| engineering-harness | 50 |
 | contract-test | 49 |
-| engineering-harness | 49 |
 | contract-source | 20 |
 | route-module | 19 |
 | web-surface | 13 |
@@ -56,19 +56,19 @@
 | [.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [test/client.js](../../test/client.js) | 6,997 | test-suite | 2026-08-26 |
 | [BALANCE.md](../../BALANCE.md) | 6,472 | documentation | 2026-08-24 |
-| [src/rules.tail.js](../../src/rules.tail.js) | 6,045 | backend-module | 2026-08-24 |
+| [src/rules.tail.js](../../src/rules.tail.js) | 6,048 | backend-module | 2026-08-27 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
-| [schema.sql](../../schema.sql) | 3,727 | data-schema | 2026-08-26 |
+| [schema.sql](../../schema.sql) | 3,771 | data-schema | 2026-08-27 |
 | [src/server.js](../../src/server.js) | 3,382 | backend-module | 2026-08-26 |
 | [omerta-contracts/fizz_data/contracts.json](../../omerta-contracts/fizz_data/contracts.json) | 2,739 | contract-project | 2026-08-25 |
 | [public/art/manifest.json](../../public/art/manifest.json) | 2,700 | media-asset | 2026-08-09 |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 2,619 | audit | 2026-08-12 |
+| [src/game.js](../../src/game.js) | 2,596 | backend-module | 2026-08-27 |
 | [test/gates.js](../../test/gates.js) | 2,570 | test-suite | 2026-08-26 |
-| [src/game.js](../../src/game.js) | 2,540 | backend-module | 2026-08-24 |
 | [omerta-contracts/x-ray/slither-function-summary.json](../../omerta-contracts/x-ray/slither-function-summary.json) | 2,449 | contract-project | 2026-08-25 |
 | [test/social.js](../../test/social.js) | 2,431 | test-suite | 2026-08-24 |
 | [test/agent-alpha.js](../../test/agent-alpha.js) | 2,397 | test-suite | 2026-08-27 |
-| [test/growth.js](../../test/growth.js) | 2,212 | test-suite | 2026-08-24 |
+| [test/growth.js](../../test/growth.js) | 2,212 | test-suite | 2026-08-27 |
 | [package-lock.json](../../package-lock.json) | 2,166 | package-config | 2026-08-26 |
 | [knowledge/github-snapshot.json](../../knowledge/github-snapshot.json) | 2,048 | knowledge-base | 2026-08-24 |
 | [test/hardening.js](../../test/hardening.js) | 1,716 | test-suite | 2026-08-25 |

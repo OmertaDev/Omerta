@@ -6,6 +6,7 @@
 |---|---:|---|---:|---:|---:|---:|
 | [src/accrual.js](../../src/accrual.js) | 200 | platform-core | 0 / 3 | 0 | 3 | 4 |
 | [src/agentgateway.js](../../src/agentgateway.js) | 359 | platform-core | 0 / 2 | 0 | 15 | 1 |
+| [src/agentreferrals.js](../../src/agentreferrals.js) | 113 | platform-core | 0 / 1 | 0 | 2 | 0 |
 | [src/agentturn.js](../../src/agentturn.js) | 548 | platform-core | 12 / 1 | 0 | 2 | 0 |
 | [src/aggregate.js](../../src/aggregate.js) | 96 | platform-core | 0 / 4 | 0 | 1 | 1 |
 | [src/arena.js](../../src/arena.js) | 29 | engagement-growth | 1 / 1 | 1 | 0 | 0 |
@@ -37,6 +38,7 @@
 | [src/commission.js](../../src/commission.js) | 434 | platform-core | 3 / 14 | 8 | 11 | 4 |
 | [src/community.js](../../src/community.js) | 220 | engagement-growth | 3 / 7 | 2 | 8 | 1 |
 | [src/contacts.js](../../src/contacts.js) | 248 | engagement-growth | 2 / 9 | 3 | 10 | 2 |
+| [src/content/compiler.js](../../src/content/compiler.js) | 335 | platform-core | 0 / 2 | 0 | 0 | 1 |
 | [src/convoy.js](../../src/convoy.js) | 581 | enterprise-logistics | 4 / 11 | 10 | 15 | 3 |
 | [src/corner.js](../../src/corner.js) | 156 | platform-core | 2 / 5 | 3 | 4 | 1 |
 | [src/crew.js](../../src/crew.js) | 401 | social-combat | 2 / 6 | 15 | 18 | 1 |
@@ -64,13 +66,13 @@
 | [src/fees.js](../../src/fees.js) | 225 | economy-ledger | 4 / 9 | 4 | 10 | 3 |
 | [src/firstblood.js](../../src/firstblood.js) | 85 | social-combat | 1 / 2 | 0 | 3 | 0 |
 | [src/firsts.js](../../src/firsts.js) | 144 | world-progression | 1 / 6 | 1 | 7 | 1 |
-| [src/game.js](../../src/game.js) | 2540 | platform-core | 9 / 123 | 21 | 62 | 11 |
-| [src/growth.js](../../src/growth.js) | 980 | engagement-growth | 4 / 15 | 16 | 15 | 6 |
+| [src/game.js](../../src/game.js) | 2596 | platform-core | 10 / 124 | 21 | 62 | 12 |
+| [src/growth.js](../../src/growth.js) | 1026 | engagement-growth | 4 / 15 | 16 | 17 | 6 |
 | [src/heists.js](../../src/heists.js) | 576 | social-combat | 3 / 9 | 10 | 10 | 3 |
 | [src/home.js](../../src/home.js) | 54 | engagement-growth | 13 / 3 | 1 | 0 | 1 |
 | [src/honor.js](../../src/honor.js) | 74 | social-combat | 1 / 12 | 1 | 5 | 1 |
 | [src/hustle.js](../../src/hustle.js) | 104 | platform-core | 2 / 3 | 2 | 3 | 0 |
-| [src/invariants.js](../../src/invariants.js) | 736 | economy-ledger | 1 / 84 | 1 | 42 | 78 |
+| [src/invariants.js](../../src/invariants.js) | 787 | economy-ledger | 1 / 85 | 1 | 44 | 79 |
 | [src/kitchen.js](../../src/kitchen.js) | 371 | platform-core | 3 / 3 | 13 | 8 | 0 |
 | [src/landmarks.js](../../src/landmarks.js) | 46 | world-progression | 3 / 1 | 2 | 2 | 0 |
 | [src/law.js](../../src/law.js) | 287 | law-intelligence | 3 / 7 | 9 | 7 | 2 |
@@ -127,12 +129,12 @@
 | [src/routes/territory.js](../../src/routes/territory.js) | 38 | enterprise-logistics | 2 / 1 | 10 | 2 | 0 |
 | [src/routes/underworld.js](../../src/routes/underworld.js) | 27 | world-progression | 2 / 1 | 7 | 1 | 0 |
 | [src/rules.generated.js](../../src/rules.generated.js) | 480 | platform-core | 0 / 2 | 0 | 10 | 1 |
-| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 194 | 0 | 0 | 108 |
-| [src/rules.tail.js](../../src/rules.tail.js) | 6045 | platform-core | 0 / 1 | 0 | 53 | 0 |
+| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 195 | 0 | 0 | 109 |
+| [src/rules.tail.js](../../src/rules.tail.js) | 6048 | platform-core | 0 / 1 | 0 | 53 | 0 |
 | [src/rwastockkeeper.js](../../src/rwastockkeeper.js) | 125 | platform-core | 0 / 1 | 0 | 5 | 0 |
 | [src/season.js](../../src/season.js) | 141 | world-progression | 1 / 2 | 2 | 8 | 0 |
 | [src/secrets.js](../../src/secrets.js) | 200 | law-intelligence | 3 / 6 | 5 | 6 | 2 |
-| [src/server.js](../../src/server.js) | 3382 | platform-core | 131 / 116 | 418 | 43 | 103 |
+| [src/server.js](../../src/server.js) | 3382 | platform-core | 131 / 117 | 418 | 43 | 104 |
 | [src/shipment.js](../../src/shipment.js) | 176 | enterprise-logistics | 2 / 2 | 3 | 8 | 0 |
 | [src/skills.js](../../src/skills.js) | 164 | world-progression | 4 / 3 | 5 | 4 | 0 |
 | [src/social.js](../../src/social.js) | 27 | social-combat | 6 / 12 | 44 | 3 | 6 |
