@@ -34,11 +34,13 @@ const MAX_ETH_WEI = '9007199254742016';
 const originalEnv = {
   CHAIN_RPC_URL: process.env.CHAIN_RPC_URL,
   STOCK_TOKEN_REGISTRY_V2_ADDRESS: process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS,
+  STOCK_TOKEN_REGISTRY_V2_START_BLOCK: process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK,
   MOD_KEY: process.env.MOD_KEY,
   RATE_LIMIT: process.env.RATE_LIMIT,
 };
 process.env.CHAIN_RPC_URL = 'https://finalized-rpc.example/';
 process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = REGISTRY;
+process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK = '0';
 process.env.MOD_KEY = 'task-five-mod-key';
 process.env.RATE_LIMIT = 'off';
 
@@ -62,6 +64,7 @@ async function seedCatalog(pool, {
   snapshotHash = hash('c'),
   registryAddress = REGISTRY,
   syncedAt = WALL,
+  foReady = true,
 } = {}) {
   await pool.query('DELETE FROM stock_asset_active_heads_v2');
   await pool.query('DELETE FROM stock_asset_versions_v2');
@@ -69,9 +72,13 @@ async function seedCatalog(pool, {
   await pool.query(
     `INSERT INTO stock_catalog_sync_state_v2
       (id,chain_id,registry_address,catalog_version,finalized_block_number,
-       finalized_block_hash,snapshot_hash,synced_at)
-     VALUES (1,4663,$1,$2,$3,$4,$5,$6)`,
-    [registryAddress, catalogVersion, '9007199254743040', hash('f'), snapshotHash, syncedAt],
+       finalized_block_hash,snapshot_hash,observation_hash,finalized_horizon_number,
+       finalized_horizon_hash,caught_up,verified_at,ready_verified_at,synced_at)
+     VALUES (1,4663,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
+    [registryAddress, catalogVersion, '9007199254743040', hash('f'), snapshotHash,
+      foReady ? hash('e') : null, foReady ? '9007199254743040' : null,
+      foReady ? hash('f') : null, foReady, foReady ? syncedAt : null,
+      foReady ? syncedAt : null, syncedAt],
   );
   for (const asset of assets) {
     await pool.query(
@@ -254,6 +261,32 @@ async function fixRegression(name, fn) {
   }
 }
 
+await fixRegression('pre-FO catalog fixtures fail closed until explicitly caught up', async () => {
+  const pool = await makeDb();
+  try {
+    await seedCatalog(pool, { foReady: false });
+    const unavailable = await withClockedClient(pool, WALL, (client) =>
+      finalizedStockCatalogForBallotV2(client, {
+        canonicalClose: CLOSE,
+        observedEpochSeconds: epochSeconds(WALL),
+      }));
+    assert.equal(unavailable.available, false);
+    assert.equal(unavailable.reason, 'stale');
+
+    await seedCatalog(pool, { foReady: true });
+    const ready = await withClockedClient(pool, WALL, (client) =>
+      finalizedStockCatalogForBallotV2(client, {
+        canonicalClose: CLOSE,
+        observedEpochSeconds: epochSeconds(WALL),
+      }));
+    assert.equal(ready.available, true,
+      'only a coherent caught-up FO fixture enables the existing ballot catalog cases');
+    assert.equal(ready.activeAssets.length, 2);
+  } finally {
+    await pool.end();
+  }
+});
+
 // Independent literal Solidity ABI vector. The expected hash was produced once from the frozen
 // type list, then checked in; this expectation never calls the production helper or builder.
 const LITERAL_TALLY_HASH = '0x0884872988bf5b6da04a42955e08473a4664834e44ae18081ec3b33363f1ed23';
@@ -315,7 +348,7 @@ await fixRegression('canonical cutoff keeps a winner deactivated only after clos
         WHERE asset_version_key=$1`,
       [assets[1].assetVersionKey],
     );
-    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-05T00:00:01Z' WHERE id=1");
+    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-05T00:00:01Z',verified_at='2026-09-05T00:00:01Z',ready_verified_at='2026-09-05T00:00:01Z',caught_up=true WHERE id=1");
     const closed = await closeTickerBallotV2(clockedPool(pool, '2026-09-05T00:00:02.000Z'), DAY);
     assert.equal(closed.assetVersionKey, assets[1].assetVersionKey,
       'post-close deactivation cannot replace the canonical-cutoff winner');
@@ -344,7 +377,7 @@ await fixRegression('pre-close deactivation is frozen as an excluded closed vote
         WHERE asset_version_key=$1`,
       [assets[1].assetVersionKey],
     );
-    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z' WHERE id=1");
+    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z',verified_at='2026-09-04T23:59:59Z',ready_verified_at='2026-09-04T23:59:59Z',caught_up=true WHERE id=1");
     const closed = await closeTickerBallotV2(clockedPool(pool, CLOSE), DAY);
     assert.equal(closed.assetVersionKey, assets[0].assetVersionKey);
     const board = await tickerBallotBoardV2(clockedPool(pool, '2026-09-05T00:00:01Z'));
@@ -378,7 +411,7 @@ await fixRegression('same-key churn fails closed without substituting the runner
         WHERE asset_version_key=$1`,
       [assets[0].assetVersionKey],
     );
-    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z' WHERE id=1");
+    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z',verified_at='2026-09-04T23:59:59Z',ready_verified_at='2026-09-04T23:59:59Z',caught_up=true WHERE id=1");
     const closed = await closeTickerBallotV2(clockedPool(pool, CLOSE), DAY);
     assert.deepEqual({ status: closed.status, assetVersionKey: closed.assetVersionKey,
       skipReason: closed.skipReason }, {
@@ -504,7 +537,7 @@ await fixRegression('closed vote commitments survive dissolution and reconstruct
     await withClockedClient(pool, WALL, (client) => castTickerVoteV2(
       family.ch, { assetVersionKey: asset.assetVersionKey }, client, family.h,
     ));
-    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z' WHERE id=1");
+    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z',verified_at='2026-09-04T23:59:59Z',ready_verified_at='2026-09-04T23:59:59Z',caught_up=true WHERE id=1");
     const closed = await closeTickerBallotV2(clockedPool(pool, CLOSE), DAY);
     await expectCode(withClockedClient(pool, '2026-09-05T00:00:00.001Z', (client) => castTickerVoteV2(
       family.ch, { assetVersionKey: asset.assetVersionKey }, client, family.h,
@@ -574,7 +607,7 @@ await fixRegression('real open-cast-close tie defaults deterministically with li
         client, families[index].h,
       ));
     }
-    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z' WHERE id=1");
+    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z',verified_at='2026-09-04T23:59:59Z',ready_verified_at='2026-09-04T23:59:59Z',caught_up=true WHERE id=1");
     const closed = await closeTickerBallotV2(clockedPool(pool, CLOSE), DAY);
     assert.deepEqual({ assetVersionKey: closed.assetVersionKey, ticker: closed.ticker,
       decidedBy: closed.decidedBy, decidedByCode: closed.decidedByCode,
@@ -816,7 +849,7 @@ await fixRegression('tally reads at most limit plus one and fails closed on plan
 await fixRegression('close refuses planted row 101 before any tuple freeze or result', async () => {
   const { pool } = await overloadedBallotFixture();
   try {
-    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z' WHERE id=1");
+    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z',verified_at='2026-09-04T23:59:59Z',ready_verified_at='2026-09-04T23:59:59Z',caught_up=true WHERE id=1");
     await expectCode(closeTickerBallotV2(clockedPool(pool, CLOSE), DAY), 'ballot_overloaded');
     assert.equal((await pool.query(
       'SELECT count(*)::int AS n FROM commission_ticker_votes_v2 WHERE day=$1 AND closed_valid IS NOT NULL',
@@ -836,7 +869,7 @@ await fixRegression('close freezes exactly 100 tuples with a 100-statement ceili
       day: DAY, maxEthWei: '640', detailsHash: DETAILS, actorId: 'mod',
     });
     await plantBallotVotes(pool, DAY, asset.assetVersionKey, 100, { prefix: 'ceiling' });
-    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z' WHERE id=1");
+    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z',verified_at='2026-09-04T23:59:59Z',ready_verified_at='2026-09-04T23:59:59Z',caught_up=true WHERE id=1");
     const statements = [];
     const result = await closeTickerBallotV2(clockedPool(pool, CLOSE, statements), DAY);
     assert.equal(result.voteEvidenceVersion, 1);
@@ -867,7 +900,7 @@ await fixRegression('rolled last-result evidence keeps the same limit plus one f
     await openTickerBallotV2(clockedPool(pool, WALL), {
       day: DAY, maxEthWei: '641', detailsHash: DETAILS, actorId: 'mod',
     });
-    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z' WHERE id=1");
+    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:59Z',verified_at='2026-09-04T23:59:59Z',ready_verified_at='2026-09-04T23:59:59Z',caught_up=true WHERE id=1");
     await closeTickerBallotV2(clockedPool(pool, CLOSE), DAY);
     await plantBallotVotes(pool, DAY, hash('1'), 101, { prefix: 'rolled-overflow' });
     const statements = [];
@@ -1075,7 +1108,7 @@ await fixRegression('sole cutoff winner survives an empty current active project
           SET active=false,deactivated_at='2026-09-05T00:00:00.001Z'
         WHERE asset_version_key=$1`, [asset.assetVersionKey],
     );
-    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-05T00:00:01Z' WHERE id=1");
+    await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-05T00:00:01Z',verified_at='2026-09-05T00:00:01Z',ready_verified_at='2026-09-05T00:00:01Z',caught_up=true WHERE id=1");
     const closed = await closeTickerBallotV2(
       clockedPool(pool, '2026-09-05T00:00:02Z'), DAY,
     );
@@ -1383,7 +1416,7 @@ let first;
     'UPDATE stock_asset_versions_v2 SET active=false,deactivated_at=$2 WHERE asset_version_key=$1',
     [firstCandidate.assetVersionKey, '2026-09-04T12:00:00Z'],
   );
-  await mainPool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T11:59:00Z' WHERE id=1");
+  await mainPool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T11:59:00Z',verified_at='2026-09-04T11:59:00Z',ready_verified_at='2026-09-04T11:59:00Z',caught_up=true WHERE id=1");
   tally = await tallyTickerBallotV2(clockedPool(mainPool, '2026-09-04T12:00:01.000Z'), DAY);
   assert(tally.votes.every((vote) => vote.valid === false && vote.exclusionReason === 'candidate_inactive'));
   assert.equal(tally.resultAssetVersionKey, first.candidates[1].assetVersionKey,
@@ -1407,13 +1440,13 @@ let first;
       (dimension_type,dimension_value,asset_version_key) VALUES ($1,$2,$3)`,
     [dimension, value, firstCandidate.assetVersionKey],
   );
-  await mainPool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T12:59:00Z' WHERE id=1");
+  await mainPool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T12:59:00Z',verified_at='2026-09-04T12:59:00Z',ready_verified_at='2026-09-04T12:59:00Z',caught_up=true WHERE id=1");
   tally = await tallyTickerBallotV2(clockedPool(mainPool, '2026-09-04T13:00:01.000Z'), DAY);
   assert(tally.votes.some((vote) => vote.valid), 'same-key reactivation strictly before close may restore voteability');
 
   await mainPool.query('UPDATE stock_asset_versions_v2 SET activated_at=$2 WHERE asset_version_key=$1',
     [firstCandidate.assetVersionKey, CLOSE]);
-  await mainPool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:00Z' WHERE id=1");
+  await mainPool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:00Z',verified_at='2026-09-04T23:59:00Z',ready_verified_at='2026-09-04T23:59:00Z',caught_up=true WHERE id=1");
   tally = await tallyTickerBallotV2(clockedPool(mainPool, '2026-09-05T00:00:01.000Z'), DAY);
   assert(tally.votes.every((vote) => vote.valid === false), 'activation exactly at close is never eligible');
 }
@@ -1434,7 +1467,7 @@ let first;
     families[1].ch, { assetVersionKey: assets[0].assetVersionKey }, client, families[1].h,
   ));
   await expectCode(closeTickerBallotV2(clockedPool(pool, '2026-09-04T23:59:59.999Z'), DAY), 'ballot_open');
-  await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-05T09:16:00Z' WHERE id=1");
+  await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-05T09:16:00Z',verified_at='2026-09-05T09:16:00Z',ready_verified_at='2026-09-05T09:16:00Z',caught_up=true WHERE id=1");
   const closeStatements = [];
   const delayed = clockedPool(pool, '2026-09-05T09:17:00.000Z', closeStatements);
   const [closedA, closedB] = await Promise.all([
@@ -1532,7 +1565,7 @@ let first;
   await invalidPool.query('DELETE FROM stock_asset_active_heads_v2');
   await invalidPool.query('UPDATE stock_asset_versions_v2 SET active=false,deactivated_at=now() WHERE asset_version_key=$1',
     [asset.assetVersionKey]);
-  await invalidPool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:00Z' WHERE id=1");
+  await invalidPool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:00Z',verified_at='2026-09-04T23:59:00Z',ready_verified_at='2026-09-04T23:59:00Z',caught_up=true WHERE id=1");
   const skipped = await closeTickerBallotV2(clockedPool(invalidPool, '2026-09-05T00:00:00.000Z'), DAY);
   assert.equal(skipped.status, 'skipped_no_valid_candidate');
   assert.equal(skipped.assetVersionKey, null);

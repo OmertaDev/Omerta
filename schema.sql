@@ -3542,7 +3542,63 @@ CREATE TABLE IF NOT EXISTS stock_catalog_sync_state_v2 (
   finalized_block_number NUMERIC(78,0) NOT NULL,
   finalized_block_hash TEXT NOT NULL,
   snapshot_hash TEXT NOT NULL,
+  observation_hash TEXT,
+  finalized_horizon_number NUMERIC(78,0),
+  finalized_horizon_hash TEXT,
+  caught_up BOOLEAN NOT NULL DEFAULT false,
+  verified_at TIMESTAMPTZ,
+  ready_verified_at TIMESTAMPTZ,
   synced_at TIMESTAMPTZ NOT NULL
+);
+ALTER TABLE stock_catalog_sync_state_v2 ADD COLUMN IF NOT EXISTS observation_hash TEXT;
+ALTER TABLE stock_catalog_sync_state_v2 ADD COLUMN IF NOT EXISTS finalized_horizon_number NUMERIC(78,0);
+ALTER TABLE stock_catalog_sync_state_v2 ADD COLUMN IF NOT EXISTS finalized_horizon_hash TEXT;
+ALTER TABLE stock_catalog_sync_state_v2 ADD COLUMN IF NOT EXISTS caught_up BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE stock_catalog_sync_state_v2 ADD COLUMN IF NOT EXISTS verified_at TIMESTAMPTZ;
+ALTER TABLE stock_catalog_sync_state_v2 ADD COLUMN IF NOT EXISTS ready_verified_at TIMESTAMPTZ;
+
+-- The getter mirror owns this exact finalized-observation cursor. It is deliberately separate from
+-- the later registry lifecycle consumer: raw logs here prove bounded observation only and grant no
+-- activation, reviewer, publisher, Safe, or ballot authority.
+CREATE TABLE IF NOT EXISTS stock_catalog_getter_checkpoint_v2 (
+  consumer_key TEXT PRIMARY KEY CHECK (consumer_key = 'stock_catalog_getter_v2'),
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  contract_address TEXT NOT NULL,
+  start_block_number NUMERIC(78,0) NOT NULL CHECK (start_block_number >= 0),
+  last_applied_block_number NUMERIC(78,0),
+  last_applied_block_hash TEXT,
+  last_observation_hash TEXT,
+  finalized_horizon_number NUMERIC(78,0),
+  finalized_horizon_hash TEXT,
+  caught_up BOOLEAN NOT NULL DEFAULT false,
+  verified_at TIMESTAMPTZ,
+  ready_verified_at TIMESTAMPTZ,
+  CHECK ((last_applied_block_number IS NULL) = (last_applied_block_hash IS NULL)),
+  CHECK ((last_applied_block_number IS NULL) = (last_observation_hash IS NULL)),
+  CHECK ((finalized_horizon_number IS NULL) = (finalized_horizon_hash IS NULL)),
+  CHECK (last_applied_block_number IS NULL OR last_applied_block_number >= start_block_number),
+  CHECK (finalized_horizon_number IS NULL OR last_applied_block_number IS NULL
+    OR finalized_horizon_number >= last_applied_block_number),
+  CHECK (NOT caught_up OR (last_applied_block_number = finalized_horizon_number
+    AND ready_verified_at IS NOT NULL))
+);
+
+CREATE TABLE IF NOT EXISTS stock_catalog_getter_inbox_v2 (
+  inbox_id TEXT PRIMARY KEY,
+  consumer_key TEXT NOT NULL REFERENCES stock_catalog_getter_checkpoint_v2(consumer_key),
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  contract_address TEXT NOT NULL,
+  block_number NUMERIC(78,0) NOT NULL,
+  block_hash TEXT NOT NULL,
+  transaction_hash TEXT NOT NULL,
+  transaction_index NUMERIC(78,0) NOT NULL,
+  log_index NUMERIC(78,0) NOT NULL,
+  topic0 TEXT NOT NULL,
+  topics_json TEXT NOT NULL,
+  data_hex TEXT NOT NULL,
+  observation_hash TEXT NOT NULL,
+  inserted_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (chain_id, contract_address, block_hash, transaction_hash, log_index)
 );
 
 CREATE TABLE IF NOT EXISTS stock_asset_versions_v2 (
@@ -3579,10 +3635,18 @@ CREATE TABLE IF NOT EXISTS stock_catalog_sync_runs_v2 (
   finalized_block_number NUMERIC(78,0) NOT NULL,
   finalized_block_hash TEXT NOT NULL,
   snapshot_hash TEXT NOT NULL,
+  observation_hash TEXT,
+  finalized_horizon_number NUMERIC(78,0),
+  finalized_horizon_hash TEXT,
+  caught_up BOOLEAN NOT NULL DEFAULT false,
   asset_count INT NOT NULL,
   observed_at TIMESTAMPTZ NOT NULL,
   synced_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+ALTER TABLE stock_catalog_sync_runs_v2 ADD COLUMN IF NOT EXISTS observation_hash TEXT;
+ALTER TABLE stock_catalog_sync_runs_v2 ADD COLUMN IF NOT EXISTS finalized_horizon_number NUMERIC(78,0);
+ALTER TABLE stock_catalog_sync_runs_v2 ADD COLUMN IF NOT EXISTS finalized_horizon_hash TEXT;
+ALTER TABLE stock_catalog_sync_runs_v2 ADD COLUMN IF NOT EXISTS caught_up BOOLEAN NOT NULL DEFAULT false;
 
 -- DDL only in this slice. A finalized getter snapshot cannot prove activation-event evidence
 -- provenance; the authenticated proposal/finality lifecycle populates this table later.

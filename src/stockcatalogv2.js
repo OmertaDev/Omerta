@@ -4,8 +4,12 @@
 // finalized registry observation is validated and hashed before a transaction begins, then replaces
 // only the current observed state while retaining every immutable historical version.
 import {
-  createPublicClient, encodeAbiParameters, encodeFunctionData, getAddress, http, keccak256, toBytes,
+  createPublicClient, encodeAbiParameters, encodeFunctionData, getAddress, http, keccak256, numberToHex,
+  toBytes,
 } from 'viem';
+import {
+  commitFinalizedObservation, finalizedInboxIdentity, observeFinalized,
+} from './finalizedobservation.js';
 
 export const ROBINHOOD_CHAIN_ID_V2 = '4663';
 const FINALITY = 'finalized';
@@ -15,6 +19,19 @@ const MAX_TIMESTAMP_SECONDS = 253402300799n;
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 const ZERO_HASH = `0x${'00'.repeat(32)}`;
 const DIMENSIONS = ['tickerHash', 'tokenAddress', 'robinhoodAssetIdHash'];
+const REGISTRY_OBSERVATION_LIMITS = Object.freeze({
+  maxBlockSpan: 10_000n,
+  maxLogs: 2_000,
+  maxBytes: 2_000_000,
+});
+const REGISTRY_EVENT_TOPICS = Object.freeze([
+  'AssetVersionRegistered(bytes32,bytes32,address,bytes32,string,string,uint8,uint64)',
+  'AssetVersionActivated(bytes32,bytes32,bytes32,uint64,uint64,uint256)',
+  'AssetVersionDeactivated(bytes32,bytes32,uint64,uint256)',
+  'BallotPublished(uint256,bytes32,address,uint8,bytes32,uint256,uint256,uint64,uint64)',
+  'PublisherSet(address)',
+].map((signature) => keccak256(toBytes(signature))).sort());
+const GETTER_CONSUMER_KEY = 'stock_catalog_getter_v2';
 
 const REGISTRY_ABI = [{
   type: 'function', name: 'activateVersion', stateMutability: 'nonpayable', inputs: [{
@@ -117,15 +134,21 @@ function stockTokenRegistryV2ProductionConfig() {
   catch { return null; }
   if (!['http:', 'https:'].includes(parsedRpc.protocol) || !parsedRpc.hostname) return null;
   let registryAddress;
+  let startBlock;
   try {
     registryAddress = canonicalAddress(
       String(process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS ?? '').trim(),
       'configured registry address',
     );
+    startBlock = canonicalUint(
+      String(process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK ?? '').trim(),
+      256,
+      'configured registry start block',
+    );
   } catch {
     return null;
   }
-  return { rpc: parsedRpc.toString(), registryAddress };
+  return { rpc: parsedRpc.toString(), registryAddress, startBlock };
 }
 
 function normalizedTicker(value, { requireCanonical = false } = {}) {
@@ -355,23 +378,13 @@ function storedAssetMatches(row, asset) {
     && storedTimestamp(row.deactivated_at_seconds) === asset.deactivatedAt;
 }
 
-export async function syncFinalizedStockCatalogV2(pool) {
-  // RPC and complete structural validation happen before BEGIN. A malformed/partial observation can
-  // therefore neither wait on nor mutate the database's last-known-good snapshot.
-  const observed = validateObservation(await _registryReaderV2());
-  const client = await pool.connect();
-  try {
-    await client.query('BEGIN');
-    // A permanent seeded row serializes both bootstrap (when state does not exist yet) and every
-    // steady-state comparison. Lock correctness is database-protocol authority, never env-dependent.
-    await client.query('SELECT id FROM stock_catalog_sync_lock_v2 WHERE id=1 FOR UPDATE');
+async function applyStockCatalogDomainV2(client, observed, finalizedObservation = null) {
     const state = (await client.query(
       `SELECT chain_id, registry_address, catalog_version, finalized_block_number,
               finalized_block_hash, snapshot_hash, synced_at
          FROM stock_catalog_sync_state_v2 WHERE id=1 FOR UPDATE`)).rows[0];
     if (state) {
       if (String(state.snapshot_hash).toLowerCase() === observed.snapshotHash) {
-        await client.query('COMMIT');
         return {
           synced: false, replayed: true, entries: observed.assets.length,
           active: observed.assets.filter((asset) => asset.active).length,
@@ -478,10 +491,15 @@ export async function syncFinalizedStockCatalogV2(pool) {
     await client.query(
       `INSERT INTO stock_catalog_sync_runs_v2
          (sync_id, chain_id, registry_address, catalog_version, finalized_block_number,
-          finalized_block_hash, snapshot_hash, asset_count, observed_at, synced_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,${epochTimestampSql('$9')},now())`,
+          finalized_block_hash, snapshot_hash, observation_hash,finalized_horizon_number,
+          finalized_horizon_hash,caught_up,asset_count,observed_at,synced_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,${epochTimestampSql('$13')},now())`,
       [observed.snapshotHash, observed.chainId, observed.registryAddress, observed.catalogVersion,
         observed.finalizedBlockNumber, observed.finalizedBlockHash, observed.snapshotHash,
+        finalizedObservation?.observationHash ?? null,
+        finalizedObservation?.finalizedHorizonNumber ?? null,
+        finalizedObservation?.finalizedHorizonHash ?? null,
+        finalizedObservation?.caughtUp === true,
         observed.assets.length, observed.observedAt]);
     // The singleton is deliberately last: it is the commit marker for the complete history/head/run set.
     await client.query(
@@ -496,18 +514,244 @@ export async function syncFinalizedStockCatalogV2(pool) {
          synced_at=EXCLUDED.synced_at`,
       [observed.chainId, observed.registryAddress, observed.catalogVersion,
         observed.finalizedBlockNumber, observed.finalizedBlockHash, observed.snapshotHash]);
-    await client.query('COMMIT');
     return {
       synced: true, replayed: false, entries: observed.assets.length,
       active: observed.assets.filter((asset) => asset.active).length,
       snapshotHash: observed.snapshotHash,
     };
+}
+
+function getterCheckpointFromRow(row) {
+  if (!row) return null;
+  return {
+    chainId: String(row.chain_id),
+    contractAddress: canonicalAddress(row.contract_address, 'getter checkpoint registry address'),
+    startBlock: String(row.start_block_number),
+    lastAppliedBlockNumber: row.last_applied_block_number == null
+      ? null : String(row.last_applied_block_number),
+    lastAppliedBlockHash: row.last_applied_block_hash == null
+      ? null : String(row.last_applied_block_hash).toLowerCase(),
+    lastObservationHash: row.last_observation_hash == null
+      ? null : String(row.last_observation_hash).toLowerCase(),
+  };
+}
+
+async function readStockCatalogGetterCheckpoint(pool, config) {
+  if (!pool || typeof pool.query !== 'function') return null;
+  const row = (await pool.query(
+    `SELECT chain_id,contract_address,start_block_number,last_applied_block_number,
+            last_applied_block_hash,last_observation_hash
+       FROM stock_catalog_getter_checkpoint_v2 WHERE consumer_key=$1`,
+    [GETTER_CONSUMER_KEY],
+  )).rows[0];
+  if (!row) return null;
+  const checkpoint = getterCheckpointFromRow(row);
+  if (checkpoint.chainId !== ROBINHOOD_CHAIN_ID_V2
+      || checkpoint.contractAddress !== config.registryAddress
+      || checkpoint.startBlock !== config.startBlock) {
+    throw new Error('stock catalog getter checkpoint identity conflicts with production configuration');
+  }
+  if (checkpoint.lastAppliedBlockNumber == null) return null;
+  return checkpoint;
+}
+
+function task2ObservationFromFinalizedEvidence(evidence) {
+  return {
+    ...evidence.getters,
+    assets: evidence.getters.assets.map((asset) => ({
+      ...asset,
+      tokenDecimals: Number(asset.tokenDecimals),
+    })),
+  };
+}
+
+async function markStockCatalogObservationV2(client, observed, {
+  observationHash, finalizedHorizonNumber, finalizedHorizonHash, caughtUp,
+}) {
+  await client.query(
+    `UPDATE stock_catalog_sync_state_v2
+        SET observation_hash=$1,finalized_horizon_number=$2,finalized_horizon_hash=$3,
+            caught_up=$4,verified_at=now(),
+            ready_verified_at=CASE WHEN $4 THEN now() ELSE ready_verified_at END
+      WHERE id=1`,
+    [observationHash, finalizedHorizonNumber, finalizedHorizonHash, caughtUp],
+  );
+  return observed;
+}
+
+function sameInboxRow(row, expected) {
+  return row.consumer_key === expected.consumerKey
+    && String(row.chain_id) === expected.chainId
+    && sameAddress(row.contract_address, expected.contractAddress)
+    && String(row.block_number) === expected.blockNumber
+    && String(row.block_hash).toLowerCase() === expected.blockHash
+    && String(row.transaction_hash).toLowerCase() === expected.transactionHash
+    && String(row.transaction_index) === expected.transactionIndex
+    && String(row.log_index) === expected.logIndex
+    && String(row.topic0).toLowerCase() === expected.topic0
+    && row.topics_json === expected.topicsJson
+    && row.data_hex === expected.dataHex
+    && String(row.observation_hash).toLowerCase() === expected.observationHash;
+}
+
+function stockCatalogGetterAdapter(observed) {
+  let applied = false;
+  return Object.freeze({
+    async lockAndReadCheckpoint(client, evidence) {
+      // This permanent row is first in every mirror transaction, including bootstrap. It also makes
+      // whole-table reverse-head replacement a single deterministic critical section.
+      await client.query('SELECT id FROM stock_catalog_sync_lock_v2 WHERE id=1 FOR UPDATE');
+      let row = (await client.query(
+        `SELECT chain_id,contract_address,start_block_number,last_applied_block_number,
+                last_applied_block_hash,last_observation_hash
+           FROM stock_catalog_getter_checkpoint_v2
+          WHERE consumer_key=$1 FOR UPDATE`,
+        [GETTER_CONSUMER_KEY],
+      )).rows[0];
+      if (!row) {
+        await client.query(
+          `INSERT INTO stock_catalog_getter_checkpoint_v2
+             (consumer_key,chain_id,contract_address,start_block_number,caught_up)
+           VALUES ($1,$2,$3,$4,false)`,
+          [GETTER_CONSUMER_KEY, evidence.identity.chainId,
+            evidence.identity.contractAddress, evidence.identity.startBlock],
+        );
+        row = (await client.query(
+          `SELECT chain_id,contract_address,start_block_number,last_applied_block_number,
+                  last_applied_block_hash,last_observation_hash
+             FROM stock_catalog_getter_checkpoint_v2
+            WHERE consumer_key=$1 FOR UPDATE`,
+          [GETTER_CONSUMER_KEY],
+        )).rows[0];
+      }
+      return getterCheckpointFromRow(row);
+    },
+
+    async insertOrVerifyInbox(client, evidence) {
+      for (const log of evidence.logs) {
+        const expected = {
+          consumerKey: GETTER_CONSUMER_KEY,
+          chainId: evidence.identity.chainId,
+          contractAddress: evidence.identity.contractAddress,
+          blockNumber: log.blockNumber,
+          blockHash: log.blockHash,
+          transactionHash: log.transactionHash,
+          transactionIndex: log.transactionIndex,
+          logIndex: log.logIndex,
+          topic0: log.topics[0],
+          topicsJson: JSON.stringify(log.topics),
+          dataHex: log.data,
+          observationHash: evidence.evidenceHash,
+        };
+        const inboxId = finalizedInboxIdentity({
+          chainId: expected.chainId,
+          contractAddress: expected.contractAddress,
+          blockHash: expected.blockHash,
+          transactionHash: expected.transactionHash,
+          logIndex: expected.logIndex,
+        });
+        const existing = (await client.query(
+          `SELECT consumer_key,chain_id,contract_address,block_number,block_hash,
+                  transaction_hash,transaction_index,log_index,topic0,topics_json,data_hex,
+                  observation_hash
+             FROM stock_catalog_getter_inbox_v2 WHERE inbox_id=$1`,
+          [inboxId],
+        )).rows[0];
+        if (existing) {
+          if (!sameInboxRow(existing, expected)) {
+            throw new Error(`conflicting finalized registry inbox identity ${inboxId}`);
+          }
+          continue;
+        }
+        await client.query(
+          `INSERT INTO stock_catalog_getter_inbox_v2
+             (inbox_id,consumer_key,chain_id,contract_address,block_number,block_hash,
+              transaction_hash,transaction_index,log_index,topic0,topics_json,data_hex,
+              observation_hash)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
+          [inboxId, expected.consumerKey, expected.chainId, expected.contractAddress,
+            expected.blockNumber, expected.blockHash, expected.transactionHash,
+            expected.transactionIndex, expected.logIndex, expected.topic0, expected.topicsJson,
+            expected.dataHex, expected.observationHash],
+        );
+      }
+    },
+
+    async applyDomainState(client, evidence) {
+      await applyStockCatalogDomainV2(client, observed, {
+        observationHash: evidence.evidenceHash,
+        finalizedHorizonNumber: evidence.finalizedHorizon.blockNumber,
+        finalizedHorizonHash: evidence.finalizedHorizon.blockHash,
+        caughtUp: evidence.caughtUp,
+      });
+      await markStockCatalogObservationV2(client, observed, {
+        observationHash: evidence.evidenceHash,
+        finalizedHorizonNumber: evidence.finalizedHorizon.blockNumber,
+        finalizedHorizonHash: evidence.finalizedHorizon.blockHash,
+        caughtUp: evidence.caughtUp,
+      });
+      applied = true;
+    },
+
+    async advanceCheckpoint(client, evidence) {
+      await client.query(
+        `UPDATE stock_catalog_getter_checkpoint_v2
+            SET last_applied_block_number=$2,last_applied_block_hash=$3,last_observation_hash=$4,
+                finalized_horizon_number=$5,finalized_horizon_hash=$6,caught_up=$7,
+                verified_at=now(),
+                ready_verified_at=CASE WHEN $7 THEN now() ELSE ready_verified_at END
+          WHERE consumer_key=$1`,
+        [GETTER_CONSUMER_KEY, evidence.head.blockNumber, evidence.head.blockHash,
+          evidence.evidenceHash, evidence.finalizedHorizon.blockNumber,
+          evidence.finalizedHorizon.blockHash, evidence.caughtUp],
+      );
+    },
+
+    async readCommittedResult() {
+      return {
+        synced: applied,
+        replayed: !applied,
+        entries: observed.assets.length,
+        active: observed.assets.filter((asset) => asset.active).length,
+        snapshotHash: observed.snapshotHash,
+      };
+    },
+  });
+}
+
+async function syncInjectedStockCatalogV2(pool, observed) {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    await client.query('SELECT id FROM stock_catalog_sync_lock_v2 WHERE id=1 FOR UPDATE');
+    const result = await applyStockCatalogDomainV2(client, observed);
+    if (!result.replayed) {
+      await markStockCatalogObservationV2(client, observed, {
+        observationHash: observed.snapshotHash,
+        finalizedHorizonNumber: observed.finalizedBlockNumber,
+        finalizedHorizonHash: observed.finalizedBlockHash,
+        caughtUp: true,
+      });
+    }
+    await client.query('COMMIT');
+    return result;
   } catch (error) {
     await client.query('ROLLBACK').catch(() => {});
     throw error;
   } finally {
     client.release();
   }
+}
+
+export async function syncFinalizedStockCatalogV2(pool) {
+  // RPC and complete structural validation happen before commitFinalizedObservation checks out its
+  // transaction client. Injected readers retain the Task 2 observation seam and transaction behavior.
+  if (_registryReaderV2 !== readStockTokenRegistryV2Onchain) {
+    return syncInjectedStockCatalogV2(pool, validateObservation(await _registryReaderV2()));
+  }
+  const evidence = await readStockTokenRegistryV2Onchain(pool);
+  const observed = validateObservation(task2ObservationFromFinalizedEvidence(evidence));
+  return commitFinalizedObservation(pool, evidence, stockCatalogGetterAdapter(observed));
 }
 
 const isoTimestamp = (value) => value == null ? null
@@ -562,8 +806,9 @@ export async function finalizedStockCatalogForBallotV2(
   }
   const state = (await client.query(
     `SELECT chain_id,registry_address,catalog_version::text AS catalog_version,
-            snapshot_hash,synced_at,
-            $1::numeric > EXTRACT(EPOCH FROM synced_at) + 600 AS mirror_stale
+            snapshot_hash,synced_at,ready_verified_at,caught_up,
+            (NOT caught_up OR ready_verified_at IS NULL
+             OR $1::numeric > EXTRACT(EPOCH FROM ready_verified_at) + 600) AS mirror_stale
        FROM stock_catalog_sync_state_v2 WHERE id=1 /* ticker_ballot_v2_catalog_state */`,
     [observedEpoch],
   )).rows[0];
@@ -609,7 +854,8 @@ export async function finalizedStockCatalogForBallotV2(
   const confirmed = (await client.query(
     `SELECT chain_id,registry_address,catalog_version::text AS catalog_version,
             snapshot_hash,
-            $1::numeric > EXTRACT(EPOCH FROM synced_at) + 600 AS mirror_stale
+            (NOT caught_up OR ready_verified_at IS NULL
+             OR $1::numeric > EXTRACT(EPOCH FROM ready_verified_at) + 600) AS mirror_stale
        FROM stock_catalog_sync_state_v2 WHERE id=1 /* ticker_ballot_v2_catalog_confirm */`,
     [observedEpoch],
   )).rows[0];
@@ -649,8 +895,9 @@ export async function approvedStockTokenCatalogV2(db) {
     await client.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
     state = (await client.query(
       `SELECT chain_id, registry_address, catalog_version, finalized_block_number,
-              finalized_block_hash, snapshot_hash, synced_at,
-              now() > synced_at + interval '600 seconds' AS mirror_stale
+              finalized_block_hash, snapshot_hash, synced_at,ready_verified_at,caught_up,
+              (NOT caught_up OR ready_verified_at IS NULL
+               OR now() > ready_verified_at + interval '600 seconds') AS mirror_stale
          FROM stock_catalog_sync_state_v2 WHERE id=1`)).rows[0];
     if (state) rows = (await client.query(
       `SELECT asset_version_key, chain_id, ticker_hash, ticker, name, token_address,
@@ -693,20 +940,44 @@ export async function stockTokenCatalogV2Ready(db) {
   return catalog.voteable && sameAddress(catalog.registryAddress, config.registryAddress);
 }
 
-async function readStockTokenRegistryV2Onchain() {
-  const config = stockTokenRegistryV2ProductionConfig();
-  if (!config) throw new Error('stock token registry v2 unconfigured');
-  const { rpc, registryAddress } = config;
-  const client = _registryV2ClientFactory(rpc);
-  const liveChainId = String(await client.getChainId());
-  if (liveChainId !== ROBINHOOD_CHAIN_ID_V2) {
-    throw new Error(`stock token registry v2 requires Robinhood Chain ${ROBINHOOD_CHAIN_ID_V2}; RPC is ${liveChainId}`);
+function rawRpcQuantity(value, field) {
+  if (typeof value === 'bigint') return value;
+  if (typeof value !== 'string' || !/^0x(?:0|[1-9a-f][0-9a-f]*)$/.test(value)) {
+    throw new Error(`malformed ${field} RPC quantity`);
   }
-  const finalizedBlock = await client.getBlock({ blockTag: FINALITY });
-  if (finalizedBlock.number == null || !finalizedBlock.hash) throw new Error('finalized block identity unavailable');
-  const blockNumber = finalizedBlock.number;
-  const read = (functionName, args = []) => client.readContract({
-    address: registryAddress, abi: REGISTRY_ABI, functionName, args, blockNumber,
+  return BigInt(value);
+}
+
+function makeStockTokenRegistryV2ObservationClient(client) {
+  return Object.freeze({
+    finalizedObservationRawTopics: true,
+    getChainId: (request) => client.getChainId(request),
+    getBlock: (request) => client.getBlock(request),
+    readContract: (request) => client.readContract(request),
+    getLogs: async ({ address, fromBlock, toBlock, topics }) => {
+      const logs = await client.request({
+        method: 'eth_getLogs',
+        params: [{
+          address,
+          fromBlock: numberToHex(fromBlock),
+          toBlock: numberToHex(toBlock),
+          topics,
+        }],
+      });
+      if (!Array.isArray(logs)) return logs;
+      return logs.map((log) => ({
+        ...log,
+        blockNumber: rawRpcQuantity(log.blockNumber, 'log block number'),
+        transactionIndex: rawRpcQuantity(log.transactionIndex, 'log transaction index'),
+        logIndex: rawRpcQuantity(log.logIndex, 'log index'),
+      }));
+    },
+  });
+}
+
+async function readStockTokenRegistryV2AtBlock({ readContract }, head, { registryAddress }) {
+  const read = (functionName, args = []) => readContract({
+    abi: REGISTRY_ABI, functionName, args,
   });
   const catalogVersion = await read('catalogVersion');
   const count = await read('versionCount');
@@ -717,7 +988,7 @@ async function readStockTokenRegistryV2Onchain() {
     assets.push({
       assetVersionKey, chainId: version.chainId.toString(), tickerHash: version.tickerHash,
       ticker: version.ticker, name: version.name, tokenAddress: version.token,
-      tokenDecimals: version.tokenDecimals, robinhoodAssetIdHash: version.robinhoodAssetIdHash,
+      tokenDecimals: version.tokenDecimals.toString(), robinhoodAssetIdHash: version.robinhoodAssetIdHash,
       registryIndex: index.toString(), active: version.active,
       registeredAt: version.registeredAt.toString(), activatedAt: version.activatedAt.toString(),
       deactivatedAt: version.deactivatedAt.toString(),
@@ -732,21 +1003,41 @@ async function readStockTokenRegistryV2Onchain() {
     const uniqueValues = [...new Set(assets.map((asset) => asset[dimension].toLowerCase()))];
     for (const normalizedValue of uniqueValues) {
       const sourceValue = assets.find((asset) => asset[dimension].toLowerCase() === normalizedValue)[dimension];
-      const head = await read(getterFor[dimension], [sourceValue]);
-      if (String(head).toLowerCase() !== ZERO_HASH) {
-        activeHeads[dimension].push({ dimensionValue: sourceValue, assetVersionKey: head });
+      const activeHead = await read(getterFor[dimension], [sourceValue]);
+      if (String(activeHead).toLowerCase() !== ZERO_HASH) {
+        activeHeads[dimension].push({ dimensionValue: sourceValue, assetVersionKey: activeHead });
       }
     }
   }
-  const verifiedBlock = await client.getBlock({ blockNumber });
-  if (!verifiedBlock?.hash
-    || String(verifiedBlock.hash).toLowerCase() !== String(finalizedBlock.hash).toLowerCase()) {
-    throw new Error('finalized block hash changed during registry read');
-  }
   return {
-    source: SOURCE, finality: FINALITY, chainId: liveChainId, registryAddress,
-    catalogVersion: catalogVersion.toString(), finalizedBlockNumber: blockNumber.toString(),
-    finalizedBlockHash: finalizedBlock.hash, observedAt: finalizedBlock.timestamp.toString(),
-    activeHeads, assets,
+    source: SOURCE,
+    finality: FINALITY,
+    chainId: ROBINHOOD_CHAIN_ID_V2,
+    registryAddress,
+    catalogVersion: catalogVersion.toString(),
+    finalizedBlockNumber: head.blockNumber,
+    finalizedBlockHash: head.blockHash,
+    observedAt: head.timestamp,
+    activeHeads,
+    assets,
   };
+}
+
+async function readStockTokenRegistryV2Onchain(pool) {
+  const config = stockTokenRegistryV2ProductionConfig();
+  if (!config) throw new Error('stock token registry v2 unconfigured');
+  const checkpoint = await readStockCatalogGetterCheckpoint(pool, config);
+  const client = makeStockTokenRegistryV2ObservationClient(_registryV2ClientFactory(config.rpc));
+  return observeFinalized({
+    client,
+    identity: {
+      chainId: ROBINHOOD_CHAIN_ID_V2,
+      contractAddress: config.registryAddress,
+      startBlock: config.startBlock,
+    },
+    checkpoint,
+    topics: REGISTRY_EVENT_TOPICS,
+    limits: REGISTRY_OBSERVATION_LIMITS,
+    readGetters: (facade, head) => readStockTokenRegistryV2AtBlock(facade, head, config),
+  });
 }

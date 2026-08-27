@@ -122,6 +122,7 @@ export const OPERATIONAL_ENV = [
   // STOCK_TOKEN_ADDRESSES remains a read-only legacy display fallback for vault-balance views and is
   // never used by the purchase or delivery value-moving paths.
   'STOCK_TOKEN_REGISTRY_ADDRESS', 'STOCK_TOKEN_REGISTRY_V2_ADDRESS',
+  'STOCK_TOKEN_REGISTRY_V2_START_BLOCK',
   'RWA_REVIEWER_KEY', 'RWA_REVIEWER_ID', 'RWA_BALLOT_PUBLISHER_PK', 'STOCK_KEEPER_PK',
   'STOCK_ALLOCATION_SIGNER_PK', 'STOCK_AUTH_TTL_SEC', 'STOCK_TOKEN_ADDRESSES',
   // THE TWO DEX BOTS (src/dexbot.js) — the buyback bot (swaps unspent Vig revenue for hard OMR on

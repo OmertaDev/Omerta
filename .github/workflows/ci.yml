@@ -141,6 +141,12 @@ jobs:
           POPULATION_OFF: 'on'      # the resident worker would race the probe's own fixtures
         run: npm run pgcheck
 
+      - name: stock catalog v2 finalized-observation consumer (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+        run: npm run test:stockcatalogv2:postgres
+
       # The backup is the last line of defence and the only check nobody would notice failing — you
       # find out on the day you need a restore. Two of its verifications were written after real
       # defects (a missing `pg_restore -f -` that would have failed EVERY backup; a schema-only dump

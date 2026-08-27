@@ -39,7 +39,8 @@
     "dexbot-e2e": "node tools/dexbot-e2e.js",
     "stock-e2e": "node tools/stock-e2e.js",
     "stock-catalog": "node tools/robinhood-stock-catalog.js",
-    "stock-catalog-v2": "node tools/robinhood-stock-catalog-v2.js"
+    "stock-catalog-v2": "node tools/robinhood-stock-catalog-v2.js",
+    "test:stockcatalogv2:postgres": "node test/stockcatalogv2.postgres.js"
   },
   "dependencies": {
     "@fastify/jwt": "^10.2.0",

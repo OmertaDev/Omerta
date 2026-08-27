@@ -25,6 +25,13 @@ const REGISTRY = '0x9999999999999999999999999999999999999999';
 const CASED_REGISTRY = getAddress('0x1234567890abcdef1234567890abcdef12345678');
 const MAX_TIMESTAMP_SECONDS = '253402300799';
 const ZERO_HASH = `0x${'00'.repeat(32)}`;
+const LITERAL_REGISTRY_EVENT_TOPICS = [
+  '0x65658f8aa9175ffb1216ab53e854c0826a5301f4f8a5d1c131df7717e0007663',
+  '0x6dd523bcbe80f3e32c20199dd6c23c7c2a58d5a3579dc0fd17a2866e3d34cf18',
+  '0xc0166530abaec0a0e410fc382bffc2e81e6bfb689a714c74da47586f936d20fa',
+  '0xccfb4ca7b5401ca4c7ff75517f2ff942df43aef92705e4bce62490c204f115f2',
+  '0xed30fbe863157b7f08fffd55e4092e6c3447401256a61c6a882491dd7851d75d',
+];
 const hash = (byte) => `0x${byte.repeat(64)}`;
 const address = (byte) => getAddress(`0x${byte.repeat(40)}`);
 const tickerHash = (ticker) => keccak256(toBytes(ticker));
@@ -368,24 +375,28 @@ await equalFirstPool.end?.();
 await conflictingFirstPool.end?.();
 __setStockTokenRegistryV2Reader(async () => observation());
 
-function finalizedReaderClient({ postReadHash = hash('d') } = {}) {
+function finalizedReaderClient({ finalized = 99n, postReadHash = null, rawLogs = [] } = {}) {
   const one = makeAsset({ ticker: 'AAPL', tokenByte: '1', providerByte: '1', registryIndex: 0, active: true,
     registeredAt: '100', activatedAt: '200' });
   const blockCalls = [];
   const contractCalls = [];
+  const rawRequests = [];
   const callLog = [];
   return {
-    one, blockCalls, contractCalls, callLog,
+    one, blockCalls, contractCalls, rawRequests, callLog,
     async getChainId() { callLog.push('getChainId'); return 4663; },
     async getBlock(request) {
       blockCalls.push(request);
       if (request.blockTag === 'finalized') {
         callLog.push('getBlock:finalized');
-        return { number: 99n, hash: hash('d'), timestamp: 300n };
+        return { number: finalized, hash: hashForReaderBlock(finalized), timestamp: 300n };
       }
-      assert.deepEqual(request, { blockNumber: 99n });
-      callLog.push('getBlock:99');
-      return { number: 99n, hash: postReadHash, timestamp: 300n };
+      callLog.push(`getBlock:${String(request.blockNumber)}`);
+      return {
+        number: request.blockNumber,
+        hash: postReadHash || hashForReaderBlock(request.blockNumber),
+        timestamp: 300n,
+      };
     },
     async readContract(request) {
       contractCalls.push(request);
@@ -406,14 +417,25 @@ function finalizedReaderClient({ postReadHash = hash('d') } = {}) {
         default: throw new Error(`unexpected registry getter ${request.functionName}`);
       }
     },
+    async request(request) {
+      callLog.push(`request:${request.method}`);
+      rawRequests.push(request);
+      return rawLogs;
+    },
   };
+}
+
+function hashForReaderBlock(number) {
+  return `0x${BigInt(number).toString(16).padStart(64, '0')}`;
 }
 
 const readerEnvironment = {
   rpc: process.env.CHAIN_RPC_URL, registry: process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS,
+  startBlock: process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK,
 };
 process.env.CHAIN_RPC_URL = '  https://hostile-rpc.invalid/rpc  ';
 process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = CASED_REGISTRY.toLowerCase();
+process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK = '97';
 const stableReaderClient = finalizedReaderClient();
 let normalizedReaderRpc = null;
 stockCatalogV2.__setStockTokenRegistryV2ClientFactory((rpc) => {
@@ -423,39 +445,150 @@ stockCatalogV2.__setStockTokenRegistryV2ClientFactory((rpc) => {
 __setStockTokenRegistryV2Reader(null);
 const readerPool = await makeDb();
 await syncFinalizedStockCatalogV2(readerPool);
+assert.equal(stableReaderClient.rawRequests.length, 1,
+  'the default production registry boundary must fetch its bounded log range through FO');
+assert.deepEqual(stableReaderClient.rawRequests[0], {
+  method: 'eth_getLogs',
+  params: [{
+    address: CASED_REGISTRY,
+    fromBlock: '0x61',
+    toBlock: '0x63',
+    topics: [LITERAL_REGISTRY_EVENT_TOPICS],
+  }],
+}, 'the raw viem boundary forwards the exact inclusive FO range and literal topic-0 OR matrix');
 assert.equal(normalizedReaderRpc, 'https://hostile-rpc.invalid/rpc',
   'the real reader consumes the same trimmed absolute production RPC configuration');
-assert.deepEqual(stableReaderClient.blockCalls,
-  [{ blockTag: 'finalized' }, { blockNumber: 99n }],
-  'reader rechecks finalized block N after every registry getter');
+assert.equal(stableReaderClient.blockCalls.filter((call) => call.blockTag === 'finalized').length, 2,
+  'FO brackets the bounded observation with finalized-horizon reads');
+assert(stableReaderClient.blockCalls.filter((call) => call.blockNumber != null)
+  .every((call) => call.blockNumber === 99n),
+  'FO resolves and rechecks only its exact bounded target');
 assert.equal(stableReaderClient.contractCalls.length, 7);
 assert(stableReaderClient.contractCalls.every((call) => call.blockNumber === 99n),
   'every registry getter is pinned to the one finalized block number');
 assert(stableReaderClient.contractCalls.every((call) => call.address === CASED_REGISTRY),
   'the real reader consumes the canonicalized production V2 registry address');
-assert.deepEqual(stableReaderClient.callLog, [
-  'getChainId',
-  'getBlock:finalized',
-  'readContract:catalogVersion@99',
-  'readContract:versionCount@99',
-  'readContract:versionKeyAt@99',
-  'readContract:getVersion@99',
-  'readContract:activeVersionForTickerHash@99',
-  'readContract:activeVersionForToken@99',
-  'readContract:activeVersionForProviderIdHash@99',
-  'getBlock:99',
-], 'the exact numbered-block hash recheck occurs after every pinned registry getter');
+assert(stableReaderClient.callLog.indexOf('request:eth_getLogs')
+  < stableReaderClient.callLog.indexOf('readContract:catalogVersion@99'),
+'FO completes the bounded log read before exposing its pinned getter facade');
+assert.equal(stableReaderClient.callLog.at(-1), 'getBlock:99',
+  'the exact numbered-block hash recheck closes the complete pinned registry observation');
 process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = `  ${CASED_REGISTRY.toLowerCase()}  `;
 assert.equal(stockCatalogV2.stockTokenRegistryV2ReaderConfigured(), true,
   'a padded valid registry address configures the default production reader');
 assert.equal(await stockCatalogV2.stockTokenCatalogV2Ready(readerPool), true,
   'the canonical mirror is ready under the same padded production registry configuration');
+
+const partialReaderClient = finalizedReaderClient({ finalized: 20_000n });
+stockCatalogV2.__setStockTokenRegistryV2ClientFactory(() => partialReaderClient);
+const partialReaderPool = await makeDb();
+await syncFinalizedStockCatalogV2(partialReaderPool);
+const partialCatalog = await approvedStockTokenCatalogV2(partialReaderPool);
+assert.equal(partialCatalog.finalizedBlockNumber, '10096',
+  'the first FO run applies only startBlock + maxBlockSpan - 1');
+assert.equal(partialCatalog.stale, true,
+  'a bounded not-caught-up observation cannot refresh public mirror readiness');
+assert.equal(partialCatalog.voteable, false,
+  'a bounded not-caught-up observation exposes no voteable active catalog');
+const partialCheckpoint = (await partialReaderPool.query(
+  `SELECT last_applied_block_number,last_observation_hash,finalized_horizon_number,
+          caught_up,ready_verified_at
+     FROM stock_catalog_getter_checkpoint_v2 WHERE consumer_key='stock_catalog_getter_v2'`)).rows[0];
+assert.equal(String(partialCheckpoint.last_applied_block_number), '10096');
+assert.equal(String(partialCheckpoint.finalized_horizon_number), '20000');
+assert.match(partialCheckpoint.last_observation_hash, /^0x[0-9a-f]{64}$/);
+assert.equal(partialCheckpoint.caught_up, false);
+assert.equal(partialCheckpoint.ready_verified_at, null,
+  'partial progress records no ready verification timestamp');
+const caughtUpResult = await syncFinalizedStockCatalogV2(partialReaderPool);
+assert.equal(caughtUpResult.synced, true);
+assert.deepEqual(partialReaderClient.rawRequests[1].params[0], {
+  address: CASED_REGISTRY,
+  fromBlock: '0x2771',
+  toBlock: '0x4e20',
+  topics: [LITERAL_REGISTRY_EVENT_TOPICS],
+}, 'the next bounded observation resumes immediately after the exact applied checkpoint');
+const caughtUpCheckpoint = (await partialReaderPool.query(
+  `SELECT last_applied_block_number,finalized_horizon_number,caught_up,ready_verified_at
+     FROM stock_catalog_getter_checkpoint_v2 WHERE consumer_key='stock_catalog_getter_v2'`)).rows[0];
+assert.equal(String(caughtUpCheckpoint.last_applied_block_number), '20000');
+assert.equal(String(caughtUpCheckpoint.finalized_horizon_number), '20000');
+assert.equal(caughtUpCheckpoint.caught_up, true);
+assert(caughtUpCheckpoint.ready_verified_at instanceof Date);
+assert.equal((await approvedStockTokenCatalogV2(partialReaderPool)).stale, false,
+  'only the caught-up successor advances public ready freshness');
+await partialReaderPool.end?.();
+stockCatalogV2.__setStockTokenRegistryV2ClientFactory(() => stableReaderClient);
+
+const inboxLog = {
+  removed: false,
+  address: CASED_REGISTRY,
+  blockNumber: '0x63',
+  blockHash: hashForReaderBlock(99n),
+  transactionHash: hash('a'),
+  transactionIndex: '0x2',
+  logIndex: '0x3',
+  topics: [LITERAL_REGISTRY_EVENT_TOPICS[0], hash('b')],
+  data: '0x1234',
+};
+const inboxReaderClient = finalizedReaderClient({ rawLogs: [inboxLog] });
+stockCatalogV2.__setStockTokenRegistryV2ClientFactory(() => inboxReaderClient);
+const inboxPool = await makeDb();
+await syncFinalizedStockCatalogV2(inboxPool);
+const storedInbox = (await inboxPool.query(
+  `SELECT chain_id,contract_address,block_number,block_hash,transaction_hash,
+          transaction_index,log_index,topic0,topics_json,data_hex,observation_hash
+     FROM stock_catalog_getter_inbox_v2`)).rows[0];
+assert.deepEqual({
+  chainId: String(storedInbox.chain_id),
+  contractAddress: storedInbox.contract_address,
+  blockNumber: String(storedInbox.block_number),
+  blockHash: storedInbox.block_hash,
+  transactionHash: storedInbox.transaction_hash,
+  transactionIndex: String(storedInbox.transaction_index),
+  logIndex: String(storedInbox.log_index),
+  topic0: storedInbox.topic0,
+  topicsJson: storedInbox.topics_json,
+  dataHex: storedInbox.data_hex,
+}, {
+  chainId: CHAIN_ID,
+  contractAddress: CASED_REGISTRY,
+  blockNumber: '99',
+  blockHash: hashForReaderBlock(99n),
+  transactionHash: hash('a'),
+  transactionIndex: '2',
+  logIndex: '3',
+  topic0: LITERAL_REGISTRY_EVENT_TOPICS[0],
+  topicsJson: JSON.stringify(inboxLog.topics),
+  dataHex: '0x1234',
+}, 'the getter consumer stores every normalized raw inbox byte without decoding lifecycle authority');
+assert.match(storedInbox.observation_hash, /^0x[0-9a-f]{64}$/);
+const storedRun = (await inboxPool.query(
+  `SELECT observation_hash,finalized_horizon_number,finalized_horizon_hash,caught_up
+     FROM stock_catalog_sync_runs_v2`)).rows[0];
+assert.deepEqual({
+  observationHash: storedRun.observation_hash,
+  finalizedHorizonNumber: String(storedRun.finalized_horizon_number),
+  finalizedHorizonHash: storedRun.finalized_horizon_hash,
+  caughtUp: storedRun.caught_up,
+}, {
+  observationHash: storedInbox.observation_hash,
+  finalizedHorizonNumber: '99',
+  finalizedHorizonHash: hashForReaderBlock(99n),
+  caughtUp: true,
+}, 'the immutable sync run records the FO commitment and horizon that produced its getter snapshot');
+assert.equal((await inboxPool.query('SELECT COUNT(*)::INT AS count FROM stock_catalog_evidence_v2')).rows[0].count, 0,
+  'getter observation logs never populate activation/reviewer evidence authority');
+await inboxPool.end?.();
+stockCatalogV2.__setStockTokenRegistryV2ClientFactory(() => stableReaderClient);
 let paddedRegistryRetry;
 await assert.doesNotReject(async () => {
   paddedRegistryRetry = await syncFinalizedStockCatalogV2(readerPool);
 }, 'configured:true and ready:true cannot split from default-reader synchronization');
-assert.equal(paddedRegistryRetry.replayed, true,
-  'the padded registry observation completes as the same canonical finalized snapshot');
+assert.equal(paddedRegistryRetry.replayed, false,
+  'a no-range verification commits its new checkpoint-base evidence rather than claiming exact replay');
+assert.equal(paddedRegistryRetry.synced, true,
+  'a caught-up no-range verification refreshes the fully verified mirror state');
 assert.equal((await readerPool.query(
   'SELECT registry_address FROM stock_catalog_sync_state_v2 WHERE id=1')).rows[0].registry_address,
 CASED_REGISTRY, 'the mirrored registry identity remains canonical after padded-config sync');
@@ -468,7 +601,7 @@ __setStockTokenRegistryV2Reader(null);
 let driftConnects = 0;
 await assert.rejects(() => syncFinalizedStockCatalogV2({
   connect: async () => { driftConnects++; return readerPool.connect(); },
-}), /finalized block.*hash|changed during registry read|reorg/i);
+}), /finalized|head|hash|reorg/i);
 assert.equal(driftConnects, 0, 'same-height finalized hash drift rejects before database work');
 process.env.CHAIN_RPC_URL = '  ';
 let invalidConfigFactoryCalls = 0;
@@ -489,15 +622,19 @@ if (readerEnvironment.rpc === undefined) delete process.env.CHAIN_RPC_URL;
 else process.env.CHAIN_RPC_URL = readerEnvironment.rpc;
 if (readerEnvironment.registry === undefined) delete process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
 else process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = readerEnvironment.registry;
+if (readerEnvironment.startBlock === undefined) delete process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK;
+else process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK = readerEnvironment.startBlock;
 await readerPool.end?.();
 __setStockTokenRegistryV2Reader(async () => observation());
 
 const beforeFailure = JSON.stringify(await approvedStockTokenCatalogV2(pool));
 const mismatchEnvironment = {
   rpc: process.env.CHAIN_RPC_URL, registry: process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS,
+  startBlock: process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK,
 };
 process.env.CHAIN_RPC_URL = 'https://configured-rpc.invalid';
 process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = `  ${CASED_REGISTRY.toLowerCase()}  `;
+process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK = '97';
 __setStockTokenRegistryV2Reader(async () => observation());
 let mismatchConnects = 0;
 await assert.rejects(() => syncFinalizedStockCatalogV2({
@@ -511,6 +648,8 @@ if (mismatchEnvironment.rpc === undefined) delete process.env.CHAIN_RPC_URL;
 else process.env.CHAIN_RPC_URL = mismatchEnvironment.rpc;
 if (mismatchEnvironment.registry === undefined) delete process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
 else process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = mismatchEnvironment.registry;
+if (mismatchEnvironment.startBlock === undefined) delete process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK;
+else process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK = mismatchEnvironment.startBlock;
 for (const [label, mutate, message] of [
   ['wrong source', (o) => { o.source = 'legacy'; }, /source/],
   ['non-finalized observation', (o) => { o.finality = 'latest'; }, /finalized/],
@@ -704,7 +843,7 @@ assert.deepEqual(catalog.activeAssets.map((a) => a.assetVersionKey), [nextAssets
   'active heads are rebuilt exactly from the new finalized observation');
 assert.equal((await pool.query('SELECT COUNT(*)::INT AS count FROM stock_asset_active_heads_v2')).rows[0].count, 3);
 
-await pool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at=now() - interval '601 seconds' WHERE id=1");
+await pool.query("UPDATE stock_catalog_sync_state_v2 SET ready_verified_at=now() - interval '601 seconds' WHERE id=1");
 catalog = await approvedStockTokenCatalogV2(pool);
 assert.equal(catalog.assets.length, 5, 'staleness retains auditable history');
 assert.deepEqual(catalog.activeAssets, [], 'a critical mirror older than ten minutes exposes no voteable actives');
@@ -719,7 +858,8 @@ const readState = (catalogVersion, syncedAt, registryAddress = REGISTRY, mirrorS
   finalized_block_number: catalogVersion === '12' ? '123456' : '123457',
   finalized_block_hash: catalogVersion === '12' ? hash('f') : hash('e'),
   snapshot_hash: catalogVersion === '12' ? firstSync.snapshotHash : hash('d'),
-  synced_at: syncedAt, db_now: DB_NOW, mirror_stale: mirrorStale,
+  synced_at: syncedAt, ready_verified_at: syncedAt, caught_up: true,
+  db_now: DB_NOW, mirror_stale: mirrorStale,
 });
 const oldReadRows = storedRows.map((row) => ({ ...row }));
 const newReadRows = storedRows.map((row, index) => ({
@@ -743,7 +883,7 @@ function coherentReadDb({ ageSeconds = 0, rows = oldReadRows, stateRow = undefin
           }
           if (/FROM stock_catalog_sync_state_v2/i.test(sql)) {
             assert.match(sql,
-              /now\(\)\s*>\s*synced_at\s*\+\s*interval\s*'600 seconds'\s+AS\s+mirror_stale/i,
+              /now\(\)\s*>\s*ready_verified_at\s*\+\s*interval\s*'600 seconds'\)\s+AS\s+mirror_stale/i,
               'PostgreSQL computes the strict ten-minute boundary inside the coherent snapshot');
             const selected = snapshotGeneration === 'new' ? newState : oldState;
             if (interleave) liveGeneration = 'new';
@@ -785,6 +925,7 @@ assert.equal(stockCatalogV2.stockTokenRegistryV2ReaderConfigured(), true,
   'worker configuration is a separate explicit predicate');
 const readinessEnvironment = {
   rpc: process.env.CHAIN_RPC_URL, registry: process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS,
+  startBlock: process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK,
 };
 const injectedReadinessReader = async () => observation();
 for (const [label, rpc] of [
@@ -838,6 +979,32 @@ for (const [label, registry] of [
     `${label} production registry does not configure the default worker reader`);
   __setStockTokenRegistryV2Reader(injectedReadinessReader);
 }
+for (const [label, startBlock] of [
+  ['missing', undefined],
+  ['empty', ''],
+  ['whitespace', '   '],
+  ['leading-zero decimal', '097'],
+  ['negative decimal', '-1'],
+  ['hex quantity', '0x61'],
+  ['fractional decimal', '97.0'],
+]) {
+  process.env.CHAIN_RPC_URL = 'https://configured-rpc.invalid';
+  process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = REGISTRY;
+  if (startBlock === undefined) delete process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK;
+  else process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK = startBlock;
+  let dbConnects = 0;
+  const countedDb = {
+    async connect() { dbConnects++; return exactlyFreshDb.connect(); },
+  };
+  assert.equal(await stockCatalogV2.stockTokenCatalogV2Ready(countedDb), false,
+    `${label} registry start block fails readiness`);
+  assert.equal(dbConnects, 0, `${label} start block fails closed before a database read`);
+  __setStockTokenRegistryV2Reader(null);
+  assert.equal(stockCatalogV2.stockTokenRegistryV2ReaderConfigured(), false,
+    `${label} start block does not configure the default worker reader`);
+  __setStockTokenRegistryV2Reader(injectedReadinessReader);
+}
+process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK = '97';
 for (const [label, rpc, configuredRegistry, mirroredRegistry] of [
   ['lowercase address over HTTP', '  http://configured-rpc.invalid:8545/rpc  ',
     CASED_REGISTRY.toLowerCase(), CASED_REGISTRY],
@@ -888,18 +1055,24 @@ assert.equal(await stockCatalogV2.stockTokenCatalogV2Ready(coherentReadDb({ stat
 __setStockTokenRegistryV2Reader(null);
 const savedRpc = process.env.CHAIN_RPC_URL;
 const savedV2Registry = process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
+const savedV2StartBlock = process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK;
 delete process.env.CHAIN_RPC_URL;
 delete process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
+delete process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK;
 assert.equal(stockCatalogV2.stockTokenRegistryV2ReaderConfigured(), false);
 assert.equal(await stockCatalogV2.stockTokenCatalogV2Ready(exactlyFreshDb), false,
   'database freshness cannot claim readiness when the sync reader is unconfigured');
 if (savedRpc === undefined) delete process.env.CHAIN_RPC_URL; else process.env.CHAIN_RPC_URL = savedRpc;
 if (savedV2Registry === undefined) delete process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
 else process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = savedV2Registry;
+if (savedV2StartBlock === undefined) delete process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK;
+else process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK = savedV2StartBlock;
 if (readinessEnvironment.rpc === undefined) delete process.env.CHAIN_RPC_URL;
 else process.env.CHAIN_RPC_URL = readinessEnvironment.rpc;
 if (readinessEnvironment.registry === undefined) delete process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
 else process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = readinessEnvironment.registry;
+if (readinessEnvironment.startBlock === undefined) delete process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK;
+else process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK = readinessEnvironment.startBlock;
 
 const emptyPool = await makeDb();
 const previousAddress = process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
@@ -1006,15 +1179,11 @@ assert.match(cliSource, /buildStockTokenActivationV2, buildStockTokenDeactivatio
 const moduleSource = await readFile(new URL('../src/stockcatalogv2.js', import.meta.url), 'utf8');
 assert.match(moduleSource, /encodeAbiParameters/, 'canonical ABI encoding is explicit');
 assert.doesNotMatch(moduleSource, /encodePacked|encodePackedParameters/, 'packed encoding is forbidden');
-assert.match(moduleSource, /getBlock\(\{ blockTag: FINALITY \}\)/,
-  'the real reader obtains exactly one finalized block identity');
-assert.match(moduleSource, /readContract\(\{[\s\S]*?functionName, args, blockNumber,[\s\S]*?\}\)/,
-  'every registry getter is routed through the exact finalized block number');
 assert.doesNotMatch(moduleSource, /confirmation|blockTag:\s*['"]latest['"]/i,
   'there is no confirmation-count or latest-block fallback');
 assert.match(moduleSource, /SELECT id FROM stock_catalog_sync_lock_v2 WHERE id=1 FOR UPDATE[\s\S]*SELECT chain_id[\s\S]*FOR UPDATE/,
   'bootstrap and steady-state syncs serialize before comparing the singleton');
-assert.match(moduleSource, /epochTimestampSql\('\$11'\)/,
+assert.match(moduleSource, /epochTimestampSql\('\$13'\)/,
   'reader uint64 seconds cross into timestamps through parameterized SQL');
 const schema = await readFile(new URL('../schema.sql', import.meta.url), 'utf8');
 for (const table of ['stock_catalog_sync_lock_v2', 'stock_catalog_sync_state_v2', 'stock_asset_versions_v2',
