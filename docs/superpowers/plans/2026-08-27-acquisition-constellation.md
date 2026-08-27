@@ -210,11 +210,24 @@ event ConstellationFinalized(
 );
 ```
 
-Validation precedence is closed: constructor wrong-chain; explicit Safe/Registry
-zero, code, and collision checks; Registry runtime hash; ordered zero child
-initcode hashes; ordered zero child runtime hashes; Registry call/return checks;
-legacy `RegistryChainMismatch(uint256)` for the sole well-formed wrong-chain
-result; commitment construction.
+Constructor validation precedence is a literal closed ladder. Factory first
+checks wrong chain, Safe zero, Registry zero, Safe code, then Registry code. It
+then derives predicted children 0..4 from Factory CREATE nonces 1..5; this
+address derivation occurs before collision validation but does not construct any
+commitment. Collision checks use `FactoryRoleCollision(candidate)` in this exact
+order: `safe == registry` with `candidate=safe`; `safe == factory` with
+`candidate=safe`; `registry == factory` with `candidate=registry`; then for each
+child index 0..4 in order, `safe == predictedChild[index]` with `candidate=safe`
+followed by `registry == predictedChild[index]` with `candidate=registry`.
+Because the code checks precede collisions, a Safe equal to the constructing
+Factory is normally rejected first as `FactorySafeCodeMissing`; the later
+collision branch remains an explicit invariant-harness case rather than changing
+precedence. Factory next checks Registry runtime hash, child initcode hashes 0..4
+for zero in order, child runtime hashes 0..4 for zero in order, Registry call
+success, exact return length, and the legacy `RegistryChainMismatch(uint256)`
+for the sole well-formed wrong-chain result. Only after the full ladder succeeds
+does it construct `configurationRoot`, `manifestHash`, and
+`deploymentCommitment`.
 `deployNext` checks phase, index, nonempty initcode, size, hash, then enters
 `DEPLOYING_CHILD`, CREATEs, and checks create success, expected address, runtime
 size/hash, topology call, exact 96-byte return, and tuple semantics before phase
@@ -282,6 +295,18 @@ cold-access/intervening overhead, EIP-150 forwarding, child
 consumption of its complete cap, and the precedence of postcheck over CALL
 failure/returndata interpretation.
 
+Compiler-stable seam tests use internal pure predicates
+`_hasFinalizerPrecheckGas(uint256 available)` (`available >= 211_588`) and
+`_hasFinalizerPostcheckGas(uint256 available)` (`available >= 100_000`). A
+test-only derived harness may expose those predicates, but neither selector is
+present in production ABI. Production still snapshots `gasleft()` immediately
+at the pre-CALL assembly checkpoint and immediately after CALL at the post-CALL
+assembly checkpoint, then applies the corresponding predicate with no external
+operation between observation and decision. The post-call boundary additionally
+uses a bounded injected/capped-call harness that can leave exactly 99,999 or
+100,000 gas at that checkpoint. Tests assert the exact `available` and `required`
+payloads, not only the error selector; harness code is excluded from production.
+
 Task 1 children are topology shells. Every constructor is exactly
 `(address factory, bytes32 manifestHash)`, makes no peer call, and stores no peer,
 Safe, Registry, owner, pause, operator, ingress, accounting, or business state.
@@ -289,6 +314,12 @@ Each child has a unique zero-factory and zero-manifest constructor error, the
 already-frozen unique topology getter/finalizer/errors/event, and `finalized=false`.
 Reciprocal bindings are indirect through manifest/initcode/runtime commitments
 and reviewed build provenance. Later business tasks add exact peer immutables.
+Every child finalizer uses the same exact validation precedence: caller is the
+Factory, supplied manifest equals the immutable manifest, then the child is not
+already finalized. Thus a wrong caller wins over a wrong hash or repeat call; a
+wrong hash wins over `AlreadyFinalized`; only after all three checks does the
+child set its flag and emit its unique finalized event. Tests assert all
+overlapping-condition precedence cases.
 
 The ten constructor errors are exactly:
 
