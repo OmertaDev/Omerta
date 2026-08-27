@@ -23,15 +23,22 @@ contract AcquisitionConstellationCrosswalkTest is Test {
     }
     enum SemanticKind {
         None,
+        Eip712Fallback,
         OwnerRole,
+        PauseState,
         OperatorRole,
+        IngressAuthority,
         Accounting,
         Guard
     }
     enum TargetKind {
         None,
         EcrecoverPrecompile,
-        CodeCheckedERC1271
+        CodeCheckedERC1271,
+        Registry,
+        ChildTopology,
+        ChildFinalizer,
+        RawCreate
     }
 
     uint256 internal constant FUNCTION_COUNT = 67;
@@ -78,9 +85,12 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         string label;
         Owner owner;
         SemanticKind kind;
+        uint8 startRoot;
+        uint8 endRoot;
     }
 
     struct Callsite {
+        string context;
         TargetKind targetKind;
         bytes4 selector;
         bool arbitraryCalldata;
@@ -89,12 +99,24 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         uint16 returnBytes;
         bool copiesRevertData;
         bool bubblesFailure;
+        uint256 postCallReserve;
+        string failurePolicy;
     }
 
     struct Dependency {
         string name;
+        Owner owner;
+        string introductionNode;
+        string provenance;
         bool proxy;
         bool delegates;
+    }
+
+    struct DescriptorRow {
+        bytes32 id;
+        Category category;
+        Owner owner;
+        string descriptor;
     }
 
     struct Manifest {
@@ -110,13 +132,12 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         string[21] events;
         Owner[21] eventOwners;
         Category[21] eventCategories;
-        StorageRow[4] storageRows;
-        Callsite[2] calls;
+        StorageRow[] storageRows;
+        Callsite[14] calls;
         Dependency[6] dependencies;
         string constructorMutability;
         string immutableSource;
         bytes scannerCode;
-        uint8 expectedForbidden;
         uint32 runtimeSize;
         uint32 initcodeSize;
         uint96 createValue;
@@ -197,28 +218,70 @@ contract AcquisitionConstellationCrosswalkTest is Test {
 
     function test_combinedCategoryAwareCollisionUniverse() public pure {
         (string[] memory legacyFunctions,) = _functions();
-        (string[] memory legacyErrors,) = _errors();
         (string[] memory legacyEvents,) = _events();
-        (string[] memory topologyFunctions, string[] memory topologyErrors, string[] memory topologyEvents) =
-            _topologyDescriptors();
-        string[] memory future = _futureReserved();
+        (DescriptorRow[] memory tf, DescriptorRow[] memory te, DescriptorRow[] memory tv) = _topologyRows();
+        DescriptorRow[] memory fr = _futureRows();
+        string[] memory topologyFunctions = _rowDescriptors(tf);
+        string[] memory topologyEvents = _rowDescriptors(tv);
+        string[] memory future = _rowDescriptors(fr);
+        assertTrue(_validRows(tf, tf));
+        assertTrue(_validRows(te, te));
+        assertTrue(_validRows(tv, tv));
+        assertTrue(_validRows(fr, fr));
 
         string[] memory functions = _join(legacyFunctions, topologyFunctions, future, 0, 2);
-        string[] memory errors = _join(legacyErrors, topologyErrors, future, 2, 8);
         string[] memory events = _join(legacyEvents, topologyEvents, future, 8, 9);
         _assertUnique(functions, true);
-        _assertUnique(errors, true);
+        assertTrue(_combinedErrorUniverseIsValid(te, fr));
         _assertUnique(events, false);
-        assertEq(functions.length, 67 + 12 + 2);
-        assertEq(errors.length, 55 + 15 + 6);
-        assertEq(events.length, 21 + 5 + 1);
+        assertEq(functions.length, 67 + 14 + 2);
+        assertEq(55 + te.length + 6, 55 + 51 + 6);
+        assertEq(events.length, 21 + 7 + 1);
     }
 
-    function test_reentrancyGuard_isSolePermittedRepeatedInheritedError() public pure {
-        assertTrue(_repeatableInheritedError("ReentrancyGuardReentrantCall()", 5));
-        assertFalse(_repeatableInheritedError("OwnableUnauthorizedAccount(address)", 2));
-        assertFalse(_repeatableInheritedError("ReentrancyGuardReentrantCall()", 7));
-        assertFalse(_repeatableInheritedError("ReentrancyGuardReentrantCall()", 1));
+    function test_mutation35_sameOwnerTopologyRowSwap_rejected() public pure {
+        (DescriptorRow[] memory actual,,) = _topologyRows();
+        (DescriptorRow[] memory expected,,) = _topologyRows();
+        assertTrue(_validRows(actual, expected));
+        (actual[10], actual[11]) = (actual[11], actual[10]);
+        assertFalse(_validRows(actual, expected));
+    }
+
+    function test_mutation36_topologyOwner_rejected() public pure {
+        (DescriptorRow[] memory actual,,) = _topologyRows();
+        (DescriptorRow[] memory expected,,) = _topologyRows();
+        assertTrue(_validRows(actual, expected));
+        actual[0].owner = Owner.Core;
+        assertFalse(_validRows(actual, expected));
+    }
+
+    function test_mutation37_futureCategory_rejected() public pure {
+        DescriptorRow[] memory actual = _futureRows();
+        DescriptorRow[] memory expected = _futureRows();
+        actual[0].category = Category.Topology;
+        assertFalse(_validRows(actual, expected));
+    }
+
+    function test_mutation38_pauseSemanticKind_rejected() public pure {
+        Manifest memory m = _valid();
+        m.storageRows[4].kind = SemanticKind.OwnerRole;
+        _rejects(m, Reject.AccountingCopy);
+    }
+
+    function test_mutation39_ingressSemanticKind_rejected() public pure {
+        Manifest memory m = _valid();
+        m.storageRows[18].kind = SemanticKind.OperatorRole;
+        _rejects(m, Reject.AccountingCopy);
+    }
+
+    function test_mutation34_nonGuardRepeatedInheritedError_rejected() public pure {
+        string[] memory rows = new string[](2);
+        Owner[] memory owners = new Owner[](2);
+        rows[0] = "OwnableUnauthorizedAccount(address)";
+        rows[1] = "OwnableUnauthorizedAccount(address)";
+        owners[0] = Owner.Authority;
+        owners[1] = Owner.Core;
+        assertFalse(_validErrorUniverse(rows, owners));
     }
 
     function test_validManifest_isAccepted() public pure {
@@ -226,38 +289,28 @@ contract AcquisitionConstellationCrosswalkTest is Test {
     }
 
     function test_storageOwnershipManifest() public pure {
-        Owner[40] memory roots;
-        roots[0] = Owner.Authority;
-        roots[1] = Owner.Authority;
-        roots[2] = Owner.Authority;
-        roots[3] = Owner.Authority;
-        for (uint256 i = 4; i <= 13; ++i) {
-            roots[i] = Owner.Authority;
-        }
-        for (uint256 i = 14; i <= 21; ++i) {
-            roots[i] = Owner.Core;
-        }
-        for (uint256 i = 22; i <= 36; ++i) {
-            roots[i] = Owner.Authority;
-        }
-        roots[37] = Owner.Core;
-        roots[38] = Owner.Core;
-        roots[39] = Owner.Core;
-        for (uint256 i; i < roots.length; ++i) {
-            assertTrue(roots[i] == Owner.Authority || roots[i] == Owner.Core);
-        }
+        Manifest memory m = _valid();
+        assertEq(uint8(_validate(m)), uint8(Reject.None));
+        assertEq(m.storageRows.length, 27);
     }
 
     function test_pushAwareScanner_skipsOpcodeBytesInPushData() public pure {
         bytes memory code = hex"61f4fff100"; // PUSH2 [DELEGATECALL, SELFDESTRUCT], CALL, STOP
-        (uint256 calls, uint256 forbidden) = _scan(code);
+        (uint256 calls, uint256 forbidden, bool malformed) = _scan(code);
         assertEq(calls, 1);
         assertEq(forbidden, 0);
+        assertFalse(malformed);
     }
 
     function test_pushAwareScanner_detectsRealForbiddenOpcode() public pure {
-        (, uint256 forbidden) = _scan(hex"60f4f4");
+        (, uint256 forbidden, bool malformed) = _scan(hex"60f4f4");
         assertEq(forbidden, 1);
+        assertFalse(malformed);
+    }
+
+    function test_pushAwareScanner_truncatedPushFailsClosed() public pure {
+        (,, bool malformed) = _scan(hex"62aabb");
+        assertTrue(malformed);
     }
 
     function test_runtimeLimitBoundary() public pure {
@@ -334,19 +387,19 @@ contract AcquisitionConstellationCrosswalkTest is Test {
 
     function test_mutation11_operatorRoleCopy_rejected() public pure {
         Manifest memory m = _valid();
-        m.storageRows[1].owner = Owner.Core;
+        m.storageRows[5].owner = Owner.Core;
         _rejects(m, Reject.OperatorCopy);
     }
 
     function test_mutation12_ownerAliasCopy_rejected() public pure {
         Manifest memory m = _valid();
-        m.storageRows[0] = StorageRow("safeOwnerMirror", Owner.Intent, SemanticKind.OwnerRole);
+        m.storageRows[0] = StorageRow("safeOwnerMirror", Owner.Intent, SemanticKind.OwnerRole, 0, 0);
         _rejects(m, Reject.OwnerCopy);
     }
 
     function test_mutation13_accountingMirror_rejected() public pure {
         Manifest memory m = _valid();
-        m.storageRows[2].owner = Owner.Reconciliation;
+        m.storageRows[10].owner = Owner.Reconciliation;
         _rejects(m, Reject.AccountingCopy);
     }
 
@@ -362,18 +415,16 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         _rejects(m, Reject.DelegateCall);
     }
 
-    function test_mutation16_pushDataFalsePositive_rejected() public pure {
+    function test_mutation16_executableForbiddenOpcode_rejected() public pure {
         Manifest memory m = _valid();
-        m.scannerCode = hex"60f4";
-        m.expectedForbidden = 1;
-        _rejects(m, Reject.PushScanner);
+        m.scannerCode = hex"61f4fff100f4";
+        _rejects(m, Reject.OpcodeAfterPush);
     }
 
-    function test_mutation17_realOpcodeAfterPush_rejected() public pure {
+    function test_mutation17_truncatedPush_rejected() public pure {
         Manifest memory m = _valid();
-        m.scannerCode = hex"60f4f4";
-        m.expectedForbidden = 0;
-        _rejects(m, Reject.OpcodeAfterPush);
+        m.scannerCode = hex"62aabb";
+        _rejects(m, Reject.PushScanner);
     }
 
     function test_mutation18_arbitraryTargetCalldata_rejected() public pure {
@@ -424,6 +475,54 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         _rejects(m, Reject.Proxy);
     }
 
+    function test_mutation26_sameOwnerFunctionRowSwap_rejected() public pure {
+        Manifest memory m = _valid();
+        (m.functions[0], m.functions[1]) = (m.functions[1], m.functions[0]);
+        _rejects(m, Reject.UnknownSelector);
+    }
+
+    function test_mutation27_storageRangeBoundary_rejected() public pure {
+        Manifest memory m = _valid();
+        m.storageRows[9].endRoot = 12;
+        _rejects(m, Reject.AccountingCopy);
+    }
+
+    function test_mutation28_storageRowSwap_rejected() public pure {
+        Manifest memory m = _valid();
+        (m.storageRows[10], m.storageRows[11]) = (m.storageRows[11], m.storageRows[10]);
+        _rejects(m, Reject.AccountingCopy);
+    }
+
+    function test_mutation29_topologyGasCap_rejected() public pure {
+        Manifest memory m = _valid();
+        m.calls[3].gasCap = 50_001;
+        _rejects(m, Reject.UnapprovedCall);
+    }
+
+    function test_mutation30_finalizerReturnPolicy_rejected() public pure {
+        Manifest memory m = _valid();
+        m.calls[8].returnBytes = 32;
+        _rejects(m, Reject.UnapprovedCall);
+    }
+
+    function test_mutation31_finalizerPostReserve_rejected() public pure {
+        Manifest memory m = _valid();
+        m.calls[8].postCallReserve = 99_999;
+        _rejects(m, Reject.UnapprovedCall);
+    }
+
+    function test_mutation32_createValuePolicy_rejected() public pure {
+        Manifest memory m = _valid();
+        m.calls[13].value = 1;
+        _rejects(m, Reject.UnapprovedCall);
+    }
+
+    function test_mutation33_dependencyOrder_rejected() public pure {
+        Manifest memory m = _valid();
+        (m.dependencies[0], m.dependencies[1]) = (m.dependencies[1], m.dependencies[0]);
+        _rejects(m, Reject.Proxy);
+    }
+
     function _valid() internal pure returns (Manifest memory m) {
         (string[] memory f, Owner[] memory fo) = _functions();
         (string[] memory e, Owner[] memory eo) = _errors();
@@ -446,21 +545,12 @@ contract AcquisitionConstellationCrosswalkTest is Test {
             m.eventOwners[i] = vo[i];
             m.eventCategories[i] = i >= 16 ? Category.Inherited : Category.Move;
         }
-        m.storageRows[0] = StorageRow("owner", Owner.Authority, SemanticKind.OwnerRole);
-        m.storageRows[1] = StorageRow("mainOperator", Owner.Authority, SemanticKind.OperatorRole);
-        m.storageRows[2] = StorageRow("availableWei", Owner.Core, SemanticKind.Accounting);
-        m.storageRows[3] = StorageRow("reentrancyGuard", Owner.Core, SemanticKind.Guard);
-        m.calls[0] = Callsite(TargetKind.EcrecoverPrecompile, 0x00000000, false, 0, 0, 32, false, false);
-        m.calls[1] = Callsite(TargetKind.CodeCheckedERC1271, 0x1626ba7e, false, 0, 100_000, 32, false, false);
-        string[6] memory names =
-            ["Registry", "CircuitBreakerHealth", "CanonicalIngress", "Oracle", "Adapter", "StockToken"];
-        for (uint256 i; i < 6; ++i) {
-            m.dependencies[i] = Dependency(names[i], false, false);
-        }
+        m.storageRows = _storageManifest();
+        m.calls = _callsiteManifest();
+        m.dependencies = _dependencyManifest();
         m.constructorMutability = "nonpayable";
         m.immutableSource = "manifest";
-        m.scannerCode = hex"60f4";
-        m.expectedForbidden = 0;
+        m.scannerCode = hex"61f4fff100";
         m.runtimeSize = uint32(RUNTIME_LIMIT);
         m.initcodeSize = uint32(INITCODE_LIMIT);
     }
@@ -483,20 +573,13 @@ contract AcquisitionConstellationCrosswalkTest is Test {
                 if (_selector(m.functions[i]) == _selector(m.functions[j])) return Reject.SelectorCollision;
             }
             if (m.assignments[i] != 1) return Reject.DuplicateAssignment;
-            bool known;
-            for (uint256 j; j < 67; ++j) {
-                if (_eq(m.functions[i], allowed[j])) {
-                    known = true;
-                    if (m.functionOwners[i] != allowedOwners[j]) return Reject.FactoryBusiness;
-                    break;
-                }
-            }
-            if (!known) {
+            if (!_eq(m.functions[i], allowed[i])) {
                 if (_eq(m.functions[i], "authorizePreVoteBudget((uint256,uint256,uint64),bytes32)")) {
                     return Reject.FutureEarly;
                 }
                 return Reject.UnknownSelector;
             }
+            if (m.functionOwners[i] != allowedOwners[i]) return Reject.FactoryBusiness;
             if (m.payableFlags[i]) {
                 ++payableCount;
                 if (!_eq(m.functions[i], "depositCanonical(bytes32)")) return Reject.HiddenPayable;
@@ -524,7 +607,9 @@ contract AcquisitionConstellationCrosswalkTest is Test {
                 if (keccak256(bytes(m.events[i])) == keccak256(bytes(m.events[j]))) return Reject.DuplicateEvent;
             }
         }
-        for (uint256 i; i < 4; ++i) {
+        StorageRow[] memory expectedStorage = _storageManifest();
+        if (m.storageRows.length != expectedStorage.length) return Reject.AccountingCopy;
+        for (uint256 i; i < m.storageRows.length; ++i) {
             if (m.storageRows[i].kind == SemanticKind.OperatorRole && m.storageRows[i].owner != Owner.Authority) {
                 return Reject.OperatorCopy;
             }
@@ -534,30 +619,48 @@ contract AcquisitionConstellationCrosswalkTest is Test {
             if (m.storageRows[i].kind == SemanticKind.Accounting && m.storageRows[i].owner != Owner.Core) {
                 return Reject.AccountingCopy;
             }
+            if (
+                !_eq(m.storageRows[i].label, expectedStorage[i].label)
+                    || m.storageRows[i].kind != expectedStorage[i].kind
+                    || m.storageRows[i].owner != expectedStorage[i].owner
+                    || m.storageRows[i].startRoot != expectedStorage[i].startRoot
+                    || m.storageRows[i].endRoot != expectedStorage[i].endRoot
+            ) return Reject.AccountingCopy;
         }
-        Callsite memory ec = m.calls[0];
-        Callsite memory er = m.calls[1];
-        if (ec.targetKind != TargetKind.EcrecoverPrecompile) return Reject.DelegateCall;
-        if (
-            ec.selector != bytes4(0) || ec.value != 0 || ec.returnBytes != 32 || ec.copiesRevertData
-                || ec.bubblesFailure
-        ) {
-            return Reject.UnapprovedCall;
+        Callsite[14] memory expectedCalls = _callsiteManifest();
+        for (uint256 i; i < 14; ++i) {
+            if (m.calls[i].targetKind != expectedCalls[i].targetKind) {
+                if (i == 0) return Reject.DelegateCall;
+                return Reject.UnapprovedCall;
+            }
+            if (
+                m.calls[i].selector != expectedCalls[i].selector
+                    || m.calls[i].arbitraryCalldata != expectedCalls[i].arbitraryCalldata
+            ) return Reject.ArbitraryCall;
+            if (
+                !_eq(m.calls[i].context, expectedCalls[i].context) || m.calls[i].value != expectedCalls[i].value
+                    || m.calls[i].gasCap != expectedCalls[i].gasCap
+                    || m.calls[i].returnBytes != expectedCalls[i].returnBytes
+                    || m.calls[i].copiesRevertData != expectedCalls[i].copiesRevertData
+                    || m.calls[i].bubblesFailure != expectedCalls[i].bubblesFailure
+                    || m.calls[i].postCallReserve != expectedCalls[i].postCallReserve
+                    || !_eq(m.calls[i].failurePolicy, expectedCalls[i].failurePolicy)
+            ) return Reject.UnapprovedCall;
         }
-        if (er.targetKind != TargetKind.CodeCheckedERC1271) return Reject.UnapprovedCall;
-        if (
-            er.selector != 0x1626ba7e || er.value != 0 || er.gasCap != 100_000 || er.returnBytes != 32
-                || er.copiesRevertData || er.bubblesFailure || er.arbitraryCalldata
-        ) return Reject.ArbitraryCall;
-        (, uint256 forbidden) = _scan(m.scannerCode);
-        if (forbidden != m.expectedForbidden) {
-            return m.scannerCode.length == 2 ? Reject.PushScanner : Reject.OpcodeAfterPush;
-        }
+        (, uint256 forbidden, bool malformed) = _scan(m.scannerCode);
+        if (malformed) return Reject.PushScanner;
+        if (forbidden != 0) return Reject.OpcodeAfterPush;
         if (m.runtimeSize > RUNTIME_LIMIT) return Reject.RuntimeOversize;
         if (m.initcodeSize > INITCODE_LIMIT) return Reject.InitcodeOversize;
         if (m.createValue != 0) return Reject.CreateValue;
         if (!_eq(m.immutableSource, "manifest")) return Reject.BlockContext;
+        Dependency[6] memory expectedDeps = _dependencyManifest();
         for (uint256 i; i < 6; ++i) {
+            if (
+                !_eq(m.dependencies[i].name, expectedDeps[i].name) || m.dependencies[i].owner != expectedDeps[i].owner
+                    || !_eq(m.dependencies[i].introductionNode, expectedDeps[i].introductionNode)
+                    || !_eq(m.dependencies[i].provenance, expectedDeps[i].provenance)
+            ) return Reject.Proxy;
             if (m.dependencies[i].proxy || m.dependencies[i].delegates) return Reject.Proxy;
         }
         return Reject.None;
@@ -585,11 +688,13 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         );
     }
 
-    function _scan(bytes memory code) internal pure returns (uint256 calls, uint256 forbidden) {
+    function _scan(bytes memory code) internal pure returns (uint256 calls, uint256 forbidden, bool malformed) {
         for (uint256 i; i < code.length; ++i) {
             uint8 op = uint8(code[i]);
             if (op >= 0x60 && op <= 0x7f) {
-                i += op - 0x5f;
+                uint256 width = op - 0x5f;
+                if (i + width >= code.length) return (calls, forbidden, true);
+                i += width;
                 continue;
             }
             if (op == 0xf1 || op == 0xfa) ++calls;
@@ -604,6 +709,51 @@ contract AcquisitionConstellationCrosswalkTest is Test {
                 if (compareSelectors) assertTrue(_selector(rows[i]) != _selector(rows[j]), "selector collision");
             }
         }
+    }
+
+    function _validErrorUniverse(string[] memory rows, Owner[] memory owners) internal pure returns (bool) {
+        if (rows.length != owners.length) return false;
+        uint256 authorityGuard;
+        uint256 coreGuard;
+        for (uint256 i; i < rows.length; ++i) {
+            if (_eq(rows[i], "ReentrancyGuardReentrantCall()")) {
+                if (owners[i] == Owner.Authority) ++authorityGuard;
+                else if (owners[i] == Owner.Core) ++coreGuard;
+                else return false;
+            }
+            for (uint256 j = i + 1; j < rows.length; ++j) {
+                if (_selector(rows[i]) != _selector(rows[j])) continue;
+                if (!_eq(rows[i], "ReentrancyGuardReentrantCall()") || !_eq(rows[i], rows[j])) return false;
+            }
+        }
+        return authorityGuard == 1 && coreGuard == 1;
+    }
+
+    function _combinedErrorUniverseIsValid(DescriptorRow[] memory topology, DescriptorRow[] memory future)
+        internal
+        pure
+        returns (bool)
+    {
+        (string[] memory legacy, Owner[] memory legacyOwners) = _errors();
+        uint256 futureErrorCount = 6;
+        string[] memory rows = new string[](legacy.length + topology.length + futureErrorCount + 1);
+        Owner[] memory owners = new Owner[](rows.length);
+        uint256 n;
+        for (uint256 i; i < legacy.length; ++i) {
+            rows[n] = legacy[i];
+            owners[n++] = legacyOwners[i];
+        }
+        for (uint256 i; i < topology.length; ++i) {
+            rows[n] = topology[i].descriptor;
+            owners[n++] = topology[i].owner;
+        }
+        for (uint256 i = 2; i < 8; ++i) {
+            rows[n] = future[i].descriptor;
+            owners[n++] = future[i].owner;
+        }
+        rows[n] = "ReentrancyGuardReentrantCall()";
+        owners[n] = Owner.Core;
+        return n + 1 == rows.length && _validErrorUniverse(rows, owners);
     }
 
     function _selector(string memory descriptor) internal pure returns (bytes4) {
@@ -834,12 +984,67 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         r[8] = "PreVoteBudgetAuthorized(bytes32,uint256,uint256,uint64,uint256,uint256,uint64,uint8,bytes32)";
     }
 
+    function _futureRows() internal pure returns (DescriptorRow[] memory r) {
+        string[] memory descriptors = _futureReserved();
+        r = new DescriptorRow[](descriptors.length);
+        for (uint256 i; i < descriptors.length; ++i) {
+            r[i] = DescriptorRow(
+                keccak256(abi.encode("FR", i + 1)), Category.FutureReserved, Owner.BudgetBook, descriptors[i]
+            );
+        }
+    }
+
+    function _topologyRows()
+        internal
+        pure
+        returns (DescriptorRow[] memory functions, DescriptorRow[] memory errors, DescriptorRow[] memory events)
+    {
+        (string[] memory f, string[] memory e, string[] memory v) = _topologyDescriptors();
+        functions = new DescriptorRow[](f.length);
+        errors = new DescriptorRow[](e.length);
+        events = new DescriptorRow[](v.length);
+        Owner[5] memory modules = [Owner.Authority, Owner.Core, Owner.BudgetBook, Owner.Intent, Owner.Reconciliation];
+        for (uint256 i; i < f.length; ++i) {
+            Owner owner = i < 10 ? modules[i / 2] : Owner.Factory;
+            functions[i] = DescriptorRow(keccak256(abi.encode("TF", i + 1)), Category.Topology, owner, f[i]);
+        }
+        for (uint256 i; i < e.length; ++i) {
+            Owner owner;
+            if (i < 15) owner = modules[i / 3];
+            else if (i < 41) owner = Owner.Factory;
+            else owner = modules[(i - 41) / 2];
+            errors[i] = DescriptorRow(keccak256(abi.encode("TER", i + 1)), Category.Topology, owner, e[i]);
+        }
+        for (uint256 i; i < v.length; ++i) {
+            Owner owner = i < 5 ? modules[i] : Owner.Factory;
+            events[i] = DescriptorRow(keccak256(abi.encode("TEV", i + 1)), Category.Topology, owner, v[i]);
+        }
+    }
+
+    function _rowDescriptors(DescriptorRow[] memory rows) internal pure returns (string[] memory r) {
+        r = new string[](rows.length);
+        for (uint256 i; i < rows.length; ++i) {
+            r[i] = rows[i].descriptor;
+        }
+    }
+
+    function _validRows(DescriptorRow[] memory actual, DescriptorRow[] memory expected) internal pure returns (bool) {
+        if (actual.length != expected.length) return false;
+        for (uint256 i; i < actual.length; ++i) {
+            if (
+                actual[i].id != expected[i].id || actual[i].category != expected[i].category
+                    || actual[i].owner != expected[i].owner || !_eq(actual[i].descriptor, expected[i].descriptor)
+            ) return false;
+        }
+        return true;
+    }
+
     function _topologyDescriptors()
         internal
         pure
         returns (string[] memory functions, string[] memory errors, string[] memory events)
     {
-        functions = new string[](12);
+        functions = new string[](14);
         functions[0] = "authorityTopology()";
         functions[1] = "finalizeAuthority(bytes32)";
         functions[2] = "coreTopology()";
@@ -850,10 +1055,12 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         functions[7] = "finalizeIntentExecution(bytes32)";
         functions[8] = "reconciliationTopology()";
         functions[9] = "finalizeReconciliation(bytes32)";
-        functions[10] = "deployNext(bytes)";
-        functions[11] = "finalizeConstellation()";
-        errors = new string[](15);
-        events = new string[](5);
+        functions[10] = "factoryState()";
+        functions[11] = "childCommitment(uint8)";
+        functions[12] = "deployNext(bytes)";
+        functions[13] = "finalizeConstellation()";
+        errors = new string[](51);
+        events = new string[](7);
         string[5] memory p = ["Authority", "Core", "BudgetBook", "IntentExecution", "Reconciliation"];
         for (uint256 i; i < 5; ++i) {
             errors[i * 3] = string.concat(p[i], "FinalizerUnauthorized(address)");
@@ -861,6 +1068,198 @@ contract AcquisitionConstellationCrosswalkTest is Test {
             errors[i * 3 + 2] = string.concat(p[i], "AlreadyFinalized()");
             events[i] = string.concat(p[i], "Finalized(bytes32)");
         }
+        string[26] memory factoryErrors = [
+            "FactorySafeZero()",
+            "FactoryRegistryZero()",
+            "FactorySafeCodeMissing(address)",
+            "FactoryRegistryCodeMissing(address)",
+            "FactoryRoleCollision(address)",
+            "FactoryRegistryRuntimeHashMismatch(bytes32,bytes32)",
+            "FactoryRegistryCallFailed()",
+            "FactoryRegistryReturnLength(uint256)",
+            "FactoryPhaseMismatch(uint8,uint8)",
+            "FactoryChildIndex(uint8)",
+            "FactoryChildInitcodeHashZero(uint8)",
+            "FactoryChildRuntimeHashZero(uint8)",
+            "FactoryInitcodeEmpty(uint8)",
+            "FactoryInitcodeTooLarge(uint8,uint256)",
+            "FactoryInitcodeHashMismatch(uint8,bytes32,bytes32)",
+            "FactoryCreateFailed(uint8)",
+            "FactoryChildAddressMismatch(uint8,address,address)",
+            "FactoryRuntimeTooLarge(uint8,uint256)",
+            "FactoryRuntimeHashMismatch(uint8,bytes32,bytes32)",
+            "FactoryTopologyCallFailed(uint8)",
+            "FactoryTopologyReturnLength(uint8,uint256)",
+            "FactoryTopologySemanticMismatch(uint8)",
+            "FactoryPostCallGasInsufficient(uint8,uint256,uint256)",
+            "FactoryFinalizerCallFailed(uint8)",
+            "FactoryFinalizerReturnLength(uint8,uint256)",
+            "FactoryFinalizerSemanticMismatch(uint8)"
+        ];
+        for (uint256 i; i < factoryErrors.length; ++i) {
+            errors[15 + i] = factoryErrors[i];
+        }
+        string[10] memory constructorErrors = [
+            "AuthorityFactoryZero()",
+            "AuthorityManifestHashZero()",
+            "CoreFactoryZero()",
+            "CoreManifestHashZero()",
+            "BudgetBookFactoryZero()",
+            "BudgetBookManifestHashZero()",
+            "IntentExecutionFactoryZero()",
+            "IntentExecutionManifestHashZero()",
+            "ReconciliationFactoryZero()",
+            "ReconciliationManifestHashZero()"
+        ];
+        for (uint256 i; i < constructorErrors.length; ++i) {
+            errors[41 + i] = constructorErrors[i];
+        }
+        events[5] = "ChildDeployed(uint8,address,bytes32,bytes32)";
+        events[6] = "ConstellationFinalized(bytes32,bytes32)";
+    }
+
+    function _storageManifest() internal pure returns (StorageRow[] memory r) {
+        r = new StorageRow[](27);
+        r[0] = StorageRow("_nameFallback", Owner.Authority, SemanticKind.Eip712Fallback, 0, 0);
+        r[1] = StorageRow("_versionFallback", Owner.Authority, SemanticKind.Eip712Fallback, 1, 1);
+        r[2] = StorageRow("_owner", Owner.Authority, SemanticKind.OwnerRole, 2, 2);
+        r[3] = StorageRow("_pendingOwner", Owner.Authority, SemanticKind.OwnerRole, 3, 3);
+        r[4] = StorageRow("_paused", Owner.Authority, SemanticKind.PauseState, 3, 3);
+        r[5] = StorageRow("mainOperator", Owner.Authority, SemanticKind.OperatorRole, 4, 4);
+        r[6] = StorageRow("operatorGeneration", Owner.Authority, SemanticKind.OperatorRole, 5, 5);
+        r[7] = StorageRow("outflowNonce", Owner.Authority, SemanticKind.OperatorRole, 6, 6);
+        r[8] = StorageRow("nominationNonce", Owner.Authority, SemanticKind.OperatorRole, 7, 7);
+        r[9] = StorageRow("_pendingMainOperatorNomination", Owner.Authority, SemanticKind.OperatorRole, 8, 13);
+        r[10] = StorageRow("availableWei", Owner.Core, SemanticKind.Accounting, 14, 14);
+        r[11] = StorageRow("unattributedWei", Owner.Core, SemanticKind.Accounting, 15, 15);
+        r[12] = StorageRow("ordinaryReservedWei", Owner.Core, SemanticKind.Accounting, 16, 16);
+        r[13] = StorageRow("reconciliationLiabilityWei", Owner.Core, SemanticKind.Accounting, 17, 17);
+        r[14] = StorageRow("reconciliationBackingWei", Owner.Core, SemanticKind.Accounting, 18, 18);
+        r[15] = StorageRow("accountingSequence", Owner.Core, SemanticKind.Accounting, 19, 19);
+        r[16] = StorageRow("lastObservedBalanceDeficitWei", Owner.Core, SemanticKind.Accounting, 20, 20);
+        r[17] = StorageRow("globalLifetimeCanonicalDepositedWei", Owner.Core, SemanticKind.Accounting, 21, 21);
+        r[18] = StorageRow("ingressProposalNonce", Owner.Authority, SemanticKind.IngressAuthority, 22, 22);
+        r[19] = StorageRow("ingressGeneration", Owner.Authority, SemanticKind.IngressAuthority, 23, 23);
+        r[20] = StorageRow("activeIngressGeneration", Owner.Authority, SemanticKind.IngressAuthority, 24, 24);
+        r[21] = StorageRow("_pendingIngressProposal", Owner.Authority, SemanticKind.IngressAuthority, 25, 35);
+        r[22] = StorageRow("_ingressRecords", Owner.Authority, SemanticKind.IngressAuthority, 36, 36);
+        r[23] = StorageRow("ingressLifetimeDepositedWei", Owner.Core, SemanticKind.Accounting, 37, 37);
+        r[24] = StorageRow("ingressEpochDepositedWei", Owner.Core, SemanticKind.Accounting, 38, 38);
+        r[25] = StorageRow("_depositRecords", Owner.Core, SemanticKind.Accounting, 39, 39);
+        r[26] = StorageRow("REENTRANCY_GUARD_STORAGE", Owner.Inherited, SemanticKind.Guard, 255, 255);
+    }
+
+    function _callsiteManifest() internal pure returns (Callsite[14] memory r) {
+        r[0] = Callsite(
+            "constructor.registry",
+            TargetKind.Registry,
+            bytes4(keccak256("supportedChainId()")),
+            false,
+            0,
+            100_000,
+            32,
+            false,
+            false,
+            0,
+            "registry-call-return-semantic"
+        );
+        r[1] = Callsite(
+            "runtime.ecrecover",
+            TargetKind.EcrecoverPrecompile,
+            bytes4(0),
+            false,
+            0,
+            0,
+            32,
+            false,
+            false,
+            0,
+            "invalid-signature"
+        );
+        r[2] = Callsite(
+            "runtime.erc1271",
+            TargetKind.CodeCheckedERC1271,
+            0x1626ba7e,
+            false,
+            0,
+            100_000,
+            32,
+            false,
+            false,
+            100_000,
+            "invalid-signature"
+        );
+        string[5] memory topology = [
+            "authorityTopology()",
+            "coreTopology()",
+            "budgetBookTopology()",
+            "intentExecutionTopology()",
+            "reconciliationTopology()"
+        ];
+        for (uint256 i; i < 5; ++i) {
+            r[3 + i] = Callsite(
+                string.concat("finalize.topology.", topology[i]),
+                TargetKind.ChildTopology,
+                bytes4(keccak256(bytes(topology[i]))),
+                false,
+                0,
+                50_000,
+                96,
+                false,
+                false,
+                0,
+                "topology-call-return-semantic"
+            );
+        }
+        string[5] memory finalizers = [
+            "finalizeBudgetBook(bytes32)",
+            "finalizeReconciliation(bytes32)",
+            "finalizeIntentExecution(bytes32)",
+            "finalizeCore(bytes32)",
+            "finalizeAuthority(bytes32)"
+        ];
+        for (uint256 i; i < 5; ++i) {
+            r[8 + i] = Callsite(
+                string.concat("finalize.call.", finalizers[i]),
+                TargetKind.ChildFinalizer,
+                bytes4(keccak256(bytes(finalizers[i]))),
+                false,
+                0,
+                100_000,
+                0,
+                false,
+                false,
+                100_000,
+                "finalizer-gas-call-return-semantic"
+            );
+        }
+        r[13] = Callsite(
+            "deploy.raw-create",
+            TargetKind.RawCreate,
+            bytes4(0),
+            false,
+            0,
+            0,
+            32,
+            false,
+            false,
+            0,
+            "create-address-runtime"
+        );
+    }
+
+    function _dependencyManifest() internal pure returns (Dependency[6] memory r) {
+        r[0] = Dependency("Registry", Owner.Factory, "TASK1", "address+runtimeHash+chain+nondelegating", false, false);
+        r[1] = Dependency(
+            "CircuitBreakerHealth", Owner.Authority, "HEALTH_NODE", "deferred-versioned-config", false, false
+        );
+        r[2] =
+            Dependency("CanonicalIngress", Owner.Authority, "INGRESS_NODE", "deferred-codehash-nonproxy", false, false);
+        r[3] = Dependency("Oracle", Owner.Intent, "INTENT_NODE", "deferred-codehash-nonproxy", false, false);
+        r[4] = Dependency("Adapter", Owner.Intent, "EXECUTION_NODE", "deferred-codehash-selector-policy", false, false);
+        r[5] = Dependency(
+            "StockToken", Owner.Core, "EXECUTION_NODE", "deferred-registry-version-token-proof", false, false
+        );
     }
 
     function _join(string[] memory a, string[] memory b, string[] memory c, uint256 cStart, uint256 cEnd)
@@ -879,9 +1278,5 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         for (uint256 i = cStart; i < cEnd; ++i) {
             out[n++] = c[i];
         }
-    }
-
-    function _repeatableInheritedError(string memory descriptor, uint256 copies) internal pure returns (bool) {
-        return copies >= 2 && copies <= 6 && _eq(descriptor, "ReentrancyGuardReentrantCall()");
     }
 }

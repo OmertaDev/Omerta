@@ -90,6 +90,13 @@ Authority semantically owns `ReasonCode`, `LocalReadinessCondition`, `PendingOpe
 
 Factory and manifest immutables are private. Each module has a unique topology getter returning exactly `(factory, manifestHash, finalized)`, plus a unique one-shot finalizer, error, and event. Finalizers return zero bytes. Factory uses fixed typed calls, not a uniform selector loop or probing fallback.
 
+Task 1 supersedes any earlier aggregate/opaque topology assumption with the exact
+nonrecursive commitments, reproducible configuration root, five-phase machine,
+Factory ABI, validation precedence, gas/return policy, and topology-only child
+constructors frozen in section 3.0 of the architecture amendment. Task 1 shells
+prove no future Authority or Core business state. The combined collision universe
+must include every Factory descriptor and every unique child constructor error.
+
 ## Constructor, payable, and forced ETH
 
 The one legacy nonpayable constructor is `RETIRED` and split among Factory launch checks, Authority initialization, and Core registry/cap/accounting initialization. All successor constructors and `deployNext` are nonpayable; every CREATE uses value zero. `depositCanonical(bytes32)` on Core is the sole legacy payable function. No contract has receive or fallback. Forced ETH at Core is not credited by construction: initial stored buckets/sequence/records are zero while `V == F`; first sync maps `F -> U`. Forced balances at noncustodial children are inert and unrecoverable.

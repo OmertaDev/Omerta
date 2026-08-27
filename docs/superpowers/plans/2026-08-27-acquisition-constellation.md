@@ -106,6 +106,167 @@ evidence emitted by Core without becoming an accounting authority.
 
 ## 3. Deployment manifest and finalization
 
+### 3.0 Task 1 exact deployment freeze
+
+Task 1 uses two nonrecursive commitments. `manifestHash` is the sole child-bound
+constellation identity:
+
+```text
+TASK1_CONFIG_TAG = keccak256("OMERTA_ACQUISITION_TASK1_CONFIG_V1")
+configurationRoot = keccak256(abi.encode(
+  TASK1_CONFIG_TAG, uint256(1), registry, registryRuntimeHash
+))
+
+CONSTELLATION_TAG = keccak256("OMERTA_ACQUISITION_CONSTELLATION_V1")
+manifestHash = keccak256(abi.encode(
+  CONSTELLATION_TAG, uint256(4663), factory, safe, configurationRoot,
+  registry, registryRuntimeHash,
+  authority, core, budgetBook, intentExecution, reconciliation
+))
+
+DEPLOYMENT_TAG = keccak256("OMERTA_ACQUISITION_DEPLOYMENT_V1")
+deploymentCommitment = keccak256(abi.encode(
+  DEPLOYMENT_TAG, manifestHash, childInitcodeHashes, childRuntimeHashes
+))
+```
+
+`manifestHash` excludes every child/factory initcode, runtime, and deployment
+hash. Later tasks must version and amend the configuration schema; Task 1's root
+is reproducible rather than opaque.
+
+The Factory constructor is exactly:
+
+```solidity
+constructor(
+  address safe,
+  address registry,
+  bytes32 registryRuntimeHash,
+  bytes32[5] childInitcodeHashes,
+  bytes32[5] childRuntimeHashes
+)
+```
+
+It derives `configurationRoot`, predicted children, `manifestHash`, and
+`deploymentCommitment`. Child order and Factory CREATE nonces are Authority/1,
+Core/2, BudgetBook/3, Intent/4, Reconciliation/5. For each nonce 1..5 the exact
+address is the low 20 bytes of `keccak256(0xd6 || 0x94 || factory || uint8(nonce))`.
+
+The exact Factory phase ordinals are `DEPLOYING=0`, `DEPLOYING_CHILD=1`,
+`READY_TO_FINALIZE=2`, `FINALIZING=3`, and `FINALIZED=4`. `deployNext` sets
+`DEPLOYING_CHILD` before the sole raw zero-value CREATE and rolls back to the
+prior state on any failure. A successful nonfinal child returns to `DEPLOYING`;
+the fifth enters `READY_TO_FINALIZE`. Finalization order is fixed as
+BudgetBook -> Reconciliation -> Intent -> Core -> Authority.
+
+Factory views and mutators are exactly:
+
+```solidity
+function factoryState() external view returns (
+  bytes32 manifestHash, bytes32 deploymentCommitment, uint8 phase,
+  uint8 nextChildIndex, address safe, bytes32 configurationRoot,
+  address registry, bytes32 registryRuntimeHash
+);
+function childCommitment(uint8 index) external view returns (
+  address child, bytes32 initcodeHash, bytes32 runtimeHash
+);
+function deployNext(bytes calldata initcode) external returns (address child);
+function finalizeConstellation() external;
+```
+
+Factory errors are the closed set:
+
+```solidity
+error WrongChain(uint256 actualChainId);
+error RegistryChainMismatch(uint256 actualChainId);
+error FactorySafeZero(); error FactoryRegistryZero();
+error FactorySafeCodeMissing(address safe); error FactoryRegistryCodeMissing(address registry);
+error FactoryRoleCollision(address candidate);
+error FactoryRegistryRuntimeHashMismatch(bytes32 expected, bytes32 actual);
+error FactoryRegistryCallFailed(); error FactoryRegistryReturnLength(uint256 actual);
+error FactoryPhaseMismatch(uint8 expected, uint8 actual); error FactoryChildIndex(uint8 index);
+error FactoryChildInitcodeHashZero(uint8 index); error FactoryChildRuntimeHashZero(uint8 index);
+error FactoryInitcodeEmpty(uint8 index); error FactoryInitcodeTooLarge(uint8 index, uint256 actual);
+error FactoryInitcodeHashMismatch(uint8 index, bytes32 expected, bytes32 actual);
+error FactoryCreateFailed(uint8 index);
+error FactoryChildAddressMismatch(uint8 index, address expected, address actual);
+error FactoryRuntimeTooLarge(uint8 index, uint256 actual);
+error FactoryRuntimeHashMismatch(uint8 index, bytes32 expected, bytes32 actual);
+error FactoryTopologyCallFailed(uint8 index); error FactoryTopologyReturnLength(uint8 index, uint256 actual);
+error FactoryTopologySemanticMismatch(uint8 index);
+error FactoryPostCallGasInsufficient(uint8 index, uint256 available, uint256 required);
+error FactoryFinalizerCallFailed(uint8 index); error FactoryFinalizerReturnLength(uint8 index, uint256 actual);
+error FactoryFinalizerSemanticMismatch(uint8 index);
+```
+
+Factory events are exactly:
+
+```solidity
+event ChildDeployed(
+  uint8 indexed index, address indexed child,
+  bytes32 indexed initcodeHash, bytes32 runtimeHash
+);
+event ConstellationFinalized(
+  bytes32 indexed manifestHash, bytes32 indexed deploymentCommitment
+);
+```
+
+Validation precedence is closed: constructor wrong-chain; explicit Safe/Registry
+zero, code, and collision checks; Registry runtime hash; ordered zero child
+initcode hashes; ordered zero child runtime hashes; Registry call/return checks;
+legacy `RegistryChainMismatch(uint256)` for the sole well-formed wrong-chain
+result; commitment construction.
+`deployNext` checks phase, index, nonempty initcode, size, hash, then enters
+`DEPLOYING_CHILD`, CREATEs, and checks create success, expected address, runtime
+size/hash, topology call, exact 96-byte return, and tuple semantics before phase
+advance/event. `finalizeConstellation` checks READY and count, then every child
+address/runtime/topology plus Registry health before `FINALIZING`; each fixed
+finalizer call first requires available gas at least the 100,000 call cap plus
+the 100,000 post-call reserve, then checks call success, exact
+zero return, then the 50,000-gas topology call's exact 96-byte semantic result.
+Failures are normalized to the distinct errors above and never bubble or copy
+peer returndata. Every error has a reachable branch except runtime oversize,
+which is retained as an explicit injected-code EIP-170 invariant harness.
+
+Registry construction/finalization STATICCALL uses 100,000 gas and exact 32-byte
+return. Topology STATICCALL uses 50,000 gas and exact 96-byte return. Finalizer
+CALL uses 100,000 gas, value zero, zero output area, zero returndata copying,
+no bubbling, plus an explicit 100,000-gas post-call reserve. Insufficient gas
+uses `(index, available, required)`. Boundary tests must
+measure all four gas seams.
+
+Task 1 children are topology shells. Every constructor is exactly
+`(address factory, bytes32 manifestHash)`, makes no peer call, and stores no peer,
+Safe, Registry, owner, pause, operator, ingress, accounting, or business state.
+Each child has a unique zero-factory and zero-manifest constructor error, the
+already-frozen unique topology getter/finalizer/errors/event, and `finalized=false`.
+Reciprocal bindings are indirect through manifest/initcode/runtime commitments
+and reviewed build provenance. Later business tasks add exact peer immutables.
+
+The ten constructor errors are exactly:
+
+```solidity
+error AuthorityFactoryZero(); error AuthorityManifestHashZero();
+error CoreFactoryZero(); error CoreManifestHashZero();
+error BudgetBookFactoryZero(); error BudgetBookManifestHashZero();
+error IntentExecutionFactoryZero(); error IntentExecutionManifestHashZero();
+error ReconciliationFactoryZero(); error ReconciliationManifestHashZero();
+```
+
+Task 1 onchain proof is limited to Factory/manifest/finalized topology, exact
+addresses and runtime commitments, dormant ABI, Registry identity/runtime/chain,
+and balance-independent deployment/finalization. Constructor call absence,
+source provenance, storage layout, immutables, opcode posture, and nondelegating
+Registry code are build/review proofs. Safe is a code-present governance
+principal and may be a recognized proxy; it has no runtime pin or perpetual
+health gate. Registry is the sole Task 1 result dependency. CB/health, canonical
+ingress, oracle, adapter, and Stock Token are absent and deferred to versioned
+later nodes.
+
+Forced ETH at Factory and every predicted child is ignored. Non-Core balances
+are inert and unrecoverable. Core makes no Task 1 accounting claim; the later
+accounting node preserves the oracle that its initial stored buckets are zero
+while `V=F`, then first sync maps `F -> U`.
+
 The factory is small and is deployed with ordinary `CREATE` from an exact known
 deployer and nonce. Its constructor commits:
 
