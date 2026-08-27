@@ -292,11 +292,27 @@ cutover.
   wrong addresses/topics, a log outside the requested interval, an unavailable
   block hash, gaps, oversized work, or any before/after head mismatch reject the
   entire observation before derived state changes.
+- For bounded catch-up, the observation head is
+  `N = min(finalizedHorizon, checkpoint + reviewedMaxBlockSpan)`. Logs cover the
+  exact inclusive range after the checkpoint through `N`, and every getter is
+  pinned to `N`; the later finalized horizon is returned separately. A chunk is
+  `caughtUp` only when `N` equals that horizon. Pinning getters to a later horizon
+  than the consumed log range is forbidden because it would expose state whose
+  causal events have not been applied.
+- “Complete logs” means one successful, unpaginated response for that exact
+  reviewed bounded range from the configured trusted RPC, with no silent
+  truncation signal and with interval/address/topic/identity/order/size plus
+  per-event-block hash validation. It is operational fail-closed completeness,
+  not a cryptographic proof that a single provider omitted nothing. Provider
+  quorum or receipt reconstruction requires a separately approved dependency.
 - Contract-specific consumers maintain independent immutable inbox identities
   `(chainId, contractAddress, blockHash, transactionHash, logIndex)` and separate
   checkpoint rows that bind deployment/start block plus last applied finalized
-  block number/hash. Inbox insert and consumer checkpoint advance are atomic;
-  replay is exact-idempotent.
+  block number/hash. RPC completes before the database transaction; consumer
+  inbox insert, typed domain apply, and last-applied checkpoint advance are one
+  transaction. If a consumer deliberately separates observation from apply, it
+  must expose distinct observed and applied cursors and readiness follows the
+  applied one. Replay is exact-idempotent.
 - The registry consumer derives activation generation and review provenance from
   its own event inbox. The health consumer derives Safe clearance generations
   from the separate overlay inbox. Neither consumer can advance or clear the

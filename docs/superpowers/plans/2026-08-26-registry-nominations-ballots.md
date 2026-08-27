@@ -981,6 +981,7 @@ Commit Task 5 files.
 
 **Files:**
 
+- Modify: `schema.sql`
 - Modify: `src/rwastockkeeper.js`
 - Modify: `src/stockcatalogv2.js`
 - Modify: `src/rwanominations.js`
@@ -989,8 +990,10 @@ Commit Task 5 files.
 - Modify: `test/stockcatalogv2.js`
 - Modify: `test/rwanominations.js`
 
-**Consumes:** Task 1 `publishBallot`, Task 5 ready result, finalized registry
-reader from Task 2.
+**Consumes:** Task 1 `publishBallot`, Task 5 ready result, the independently
+approved shared finalized-observation kernel, and Task 2's pure registry getter/
+snapshot validation logic. It does not implement another finalized-head reader,
+log scanner, cursor, or reorg detector.
 
 **Produces:**
 
@@ -1006,8 +1009,11 @@ catalog/result, computes the on-chain call from stored key/tally/catalog version
 and writes submission state only after `writeContract` returns a tx hash.
 Skipped results are terminal and never submitted.
 
-The finalized reader must return activation and ballot events with chain ID,
-contract, tx hash, log index, block number/hash, and decoded exact values. Sync
+The registry-typed FO consumer must return activation and ballot events with
+chain ID, contract, tx hash, log index, block number/hash, and decoded exact
+values. It uses registry-specific lock/checkpoint/inbox tables and atomically
+inserts typed inbox evidence, applies domain state, and advances the last-applied
+checkpoint. The generic FO kernel has no registry/H schema and no domain policy. Sync
 marks `executed_pending_finality` only from an unfinalized watcher seam and
 `synced_active`/`finalized` only from the finalized complete observation. A
 reorged provisional receipt becomes `reorged`; it never stays voteable.
@@ -1018,8 +1024,9 @@ Cover exact publication payload, no caller-supplied substitution, lease/retry,
 tx-hash submission not finality, finalized exact event matching, wrong contract/
 chain/key/evidence/review rejection, reorg removal, activation TTL based on chain
 inclusion timestamp, finality after timely inclusion, proposal `approval_stale`
-without inclusion, and worker safe wrappers that do not overlap RPC with a DB
-transaction.
+without inclusion, registry consumer checkpoint/inbox bootstrap and exact replay,
+crash rollback at insert/apply/advance seams, competing-worker compare-and-swap,
+and worker safe wrappers that do not overlap RPC with a DB transaction.
 
 - [ ] **Step 2: Run RED**
 
@@ -1037,7 +1044,8 @@ ballot lifecycle sync. Each call is independently wrapped with the existing
 `safe(label, fn)` and bounded to one ready publication per tick.
 
 No worker path fabricates a finalized block, advances on an HTTP provider fact,
-or deletes last-known-good finalized state after an outage.
+duplicates FO transport logic, advances a last-applied checkpoint before typed
+domain apply, or deletes last-known-good finalized state after an outage.
 
 - [ ] **Step 4: Run GREEN, full Node suite, and knowledge checks**
 

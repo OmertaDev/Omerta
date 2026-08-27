@@ -76,6 +76,15 @@ partial legacy behavior and dirty documentation do not count.
   preventing a cycle where H waits for CN-6 while CN-6 waits for H. Registry and
   health consumers retain separate typed inboxes/checkpoints and cannot advance
   or clear one another.
+- **Bounded head coherence:** when catch-up is chunked, FO pins logs and getters
+  to the same bounded target `N`, reports the later finalized horizon separately,
+  and marks caught-up only when they meet. One exact trusted-RPC bounded-range
+  response is the operational completeness boundary; no cryptographic
+  non-omission/quorum claim is fabricated.
+- **Applied means applied:** a consumer's last-applied checkpoint advances only
+  in the same transaction that inserts immutable inbox evidence and applies its
+  typed domain transition. A split design must expose separate observed/applied
+  cursors and readiness follows applied state.
 - **Additive clearance authority:** the registry-v2 ABI stays frozen. A separate
   `RwaHealthOverlay` supplies exact seven-day Safe clearance and finalized event
   evidence; an off-chain flag alone never clears quarantine.
