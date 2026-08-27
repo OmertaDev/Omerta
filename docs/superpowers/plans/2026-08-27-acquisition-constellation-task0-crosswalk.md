@@ -152,3 +152,11 @@ no-bubble policy, and normalized error family.
 ## RED boundary
 
 Task 0 is green only when the literal census, collision universe, ownership manifest, mutation fixtures, and oracle artifact checks pass, while an explicit artifact-missing RED test proves the six final artifacts are absent. Verifier exit semantics are frozen: with all six artifacts absent, default exits `42` and `-ExpectTask0Red` exits `0`; with a partial set in either mode, exit `43`; with all six conforming, default exits `0` and `-ExpectTask0Red` exits `44`; with all six present but any conformance drift, either mode exits `1`. Artifact cardinality is classified before conformance, while complete-set conformance is evaluated before the `-ExpectTask0Red` complete-set rejection so drift never masquerades as exit `44`. Task 1 replaces absence with exact six-artifact conformance. Linux CI later invokes PowerShell 7 with the same script and arguments.
+
+Task 1 conformance binds the exact reviewed six-file production source set and
+Keccak hashes, ABI parameter/output names, storage layout, immutable reference
+identity and positions, executable opcode inventories, and optimized-IR call
+shapes. Raw source substring matches are not acceptance evidence. The focused
+Task 1 harness separately executes the pre/post gas thresholds and finalizer
+CALL precedence for insufficient reserve, failed calls, nonzero return data,
+and post-call topology.

@@ -139,6 +139,60 @@ contract FactoryGasHarness is AcquisitionConstellationFactory {
     }
 }
 
+contract FinalizerGasTarget {
+    enum Mode {
+        SuccessEmpty,
+        SuccessOne,
+        SuccessLarge,
+        RevertLarge,
+        ConsumeAllowance
+    }
+    Mode internal immutable _mode;
+
+    constructor(Mode mode) {
+        _mode = mode;
+    }
+
+    fallback() external {
+        Mode mode = _mode;
+        assembly {
+            switch mode
+            case 0 { return(0, 0) }
+            case 1 {
+                mstore(0, 1)
+                return(0, 1)
+            }
+            case 2 { return(0, 4096) }
+            case 3 { revert(0, 4096) }
+            default {
+                for {} gt(gas(), 100) {} {}
+                return(0, 0)
+            }
+        }
+    }
+}
+
+/// Test-only executable model of the production CALL checkpoint and precedence.
+contract FinalizerCallSeamHarness {
+    error Post(uint256 available);
+    error Failed();
+    error Length(uint256 actual);
+
+    function run(address target, uint256 injectedPost) external returns (uint256 observedPost) {
+        bool ok;
+        assembly ("memory-safe") {
+            ok := call(100000, target, 0, 0, 0, 0, 0)
+            observedPost := gas()
+        }
+        uint256 decisionGas = injectedPost == type(uint256).max ? observedPost : injectedPost;
+        if (decisionGas < 100_000) revert Post(decisionGas);
+        uint256 size;
+        assembly ("memory-safe") { size := returndatasize() }
+        if (!ok) revert Failed();
+        if (size != 0) revert Length(size);
+    }
+}
+
 contract AcquisitionConstellationTask1Test is Test {
     bytes32 internal constant CONFIG_TAG = keccak256("OMERTA_ACQUISITION_TASK1_CONFIG_V1");
     bytes32 internal constant CONSTELLATION_TAG = keccak256("OMERTA_ACQUISITION_CONSTELLATION_V1");
@@ -321,6 +375,42 @@ contract AcquisitionConstellationTask1Test is Test {
         harness.requirePost(4, 99_999);
         harness.requirePre(3, 211_588);
         harness.requirePost(4, 100_000);
+    }
+
+    function test_actualFinalizerCallCheckpointAndFailurePrecedence() public {
+        FinalizerCallSeamHarness seam = new FinalizerCallSeamHarness();
+        FinalizerGasTarget empty = new FinalizerGasTarget(FinalizerGasTarget.Mode.SuccessEmpty);
+        FinalizerGasTarget one = new FinalizerGasTarget(FinalizerGasTarget.Mode.SuccessOne);
+        FinalizerGasTarget large = new FinalizerGasTarget(FinalizerGasTarget.Mode.SuccessLarge);
+        FinalizerGasTarget reverting = new FinalizerGasTarget(FinalizerGasTarget.Mode.RevertLarge);
+        FinalizerGasTarget consuming = new FinalizerGasTarget(FinalizerGasTarget.Mode.ConsumeAllowance);
+
+        vm.expectRevert(abi.encodeWithSelector(FinalizerCallSeamHarness.Post.selector, uint256(99_999)));
+        seam.run(address(reverting), 99_999);
+        vm.expectRevert(FinalizerCallSeamHarness.Failed.selector);
+        seam.run(address(reverting), 100_000);
+        vm.expectRevert(abi.encodeWithSelector(FinalizerCallSeamHarness.Length.selector, uint256(1)));
+        seam.run(address(one), 100_000);
+        vm.expectRevert(abi.encodeWithSelector(FinalizerCallSeamHarness.Length.selector, uint256(4096)));
+        seam.run(address(large), 100_000);
+        assertGe(seam.run(address(empty), type(uint256).max), 100_000);
+        // A cold target that deliberately consumes essentially the complete CALL allowance
+        // cannot make the checkpoint silently bypass the reserve rule.
+        assertGe(seam.run{gas: 211_588}(address(consuming), type(uint256).max), 100_000);
+    }
+
+    function test_absentAndExistingEmptyCodeHashesAreDistinct() public {
+        address absent = address(0xA651);
+        address empty = address(new Task1Safe());
+        vm.etch(empty, bytes(""));
+        bytes32 absentHash;
+        bytes32 emptyHash;
+        assembly {
+            absentHash := extcodehash(absent)
+            emptyHash := extcodehash(empty)
+        }
+        assertEq(absentHash, bytes32(0));
+        assertEq(emptyHash, keccak256(bytes("")));
     }
 
     function test_constructorWrongChainWins() public {

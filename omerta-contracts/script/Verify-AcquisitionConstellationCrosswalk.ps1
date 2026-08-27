@@ -461,6 +461,15 @@ function Assert-FunctionSchema($Artifact,[string]$Name,[string]$Mutability,[stri
   for($i=0;$i-lt$Outputs.Count;$i++){if(-not [string]::Equals($actual[$i],$Outputs[$i],[StringComparison]::Ordinal)){throw "$Name output schema drift at $i."}}
 }
 
+function Assert-AbiNames($Artifact,[string]$Name,[string[]]$Inputs,[string[]]$Outputs) {
+  $row=@($Artifact.abi|Where-Object { $_.type-eq'function'-and [string]::Equals([string]$_.name,$Name,[StringComparison]::Ordinal) })
+  if($row.Count-ne1){throw "$Name ABI-name row drift."};$row=$row[0]
+  $actualIn=@($row.inputs|ForEach-Object {$_.name});$actualOut=@($row.outputs|ForEach-Object {$_.name})
+  if($actualIn.Count-ne$Inputs.Count-or$actualOut.Count-ne$Outputs.Count){throw "$Name ABI-name arity drift."}
+  for($i=0;$i-lt$Inputs.Count;$i++){if(-not[string]::Equals($actualIn[$i],$Inputs[$i],[StringComparison]::Ordinal)){throw "$Name input name drift at $i."}}
+  for($i=0;$i-lt$Outputs.Count;$i++){if(-not[string]::Equals($actualOut[$i],$Outputs[$i],[StringComparison]::Ordinal)){throw "$Name output name drift at $i."}}
+}
+
 function Assert-EventSchema($Artifact,[string]$Name,[bool[]]$Indexed) {
   $rows=@($Artifact.abi|Where-Object { $_.type -eq 'event' -and [string]::Equals([string]$_.name,$Name,[StringComparison]::Ordinal) })
   if($rows.Count-ne1){throw "Event schema missing/duplicate: $Name"}
@@ -470,7 +479,17 @@ function Assert-EventSchema($Artifact,[string]$Name,[bool[]]$Indexed) {
   for($i=0;$i-lt$Indexed.Count;$i++){if([bool]$row.inputs[$i].indexed-ne$Indexed[$i]){throw "$Name indexed schema drift at $i."}}
 }
 
-function Assert-SourceProvenance($Artifact,[string]$Source,[string]$Name) {
+function Assert-ImmutableReferences($Artifact,[string]$Expected,[string]$Name) {
+  $parts=@()
+  foreach($p in @($Artifact.deployedBytecode.immutableReferences.psobject.Properties|Sort-Object Name)){
+    $refs=@($p.Value|ForEach-Object{"$($_.start):$($_.length)"})
+    $parts+=($refs-join',')
+  }
+  $actual=$parts-join';'
+  if(-not[string]::Equals($actual,$Expected,[StringComparison]::Ordinal)){throw "$Name immutable identity/reference drift."}
+}
+
+function Assert-SourceProvenance($Artifact,[string]$Source,[string]$Name,[string]$FrozenHash) {
   $metadata=$Artifact.metadata
   if($metadata-is[string]){$metadata=$metadata|ConvertFrom-Json -Depth 100}
   $sourceProperty=$metadata.sources.psobject.Properties[$Source]
@@ -480,29 +499,25 @@ function Assert-SourceProvenance($Artifact,[string]$Source,[string]$Name) {
   Push-Location -LiteralPath $repo
   try{$localHash=(& $NodePath -e $nodeScript (Join-Path $repo $Source) 2>&1)-join'';$nodeExit=$LASTEXITCODE}finally{Pop-Location}
   if($nodeExit-ne0-or-not [string]::Equals([string]$localHash,[string]$sourceEntry.keccak256,[StringComparison]::OrdinalIgnoreCase)){throw "$Name local source hash provenance drift."}
+  if(-not [string]::Equals([string]$localHash,$FrozenHash,[StringComparison]::OrdinalIgnoreCase)){throw "$Name reviewed source hash drift."}
+  $sourceNames=@($metadata.sources.psobject.Properties.Name)
+  if($sourceNames.Count-ne1-or-not [string]::Equals($sourceNames[0],$Source,[StringComparison]::Ordinal)){throw "$Name reviewed production source set drift."}
   if($metadata.compiler.version-notmatch'^0.8.26\+commit\.'){throw "$Name compiler provenance drift."}
   if($metadata.settings.optimizer.enabled-ne$true-or$metadata.settings.optimizer.runs-ne800-or$metadata.settings.evmVersion-ne'cancun'){throw "$Name build settings provenance drift."}
 }
 
-function Assert-FactorySourcePolicy {
-  $source=Get-Content -LiteralPath (Join-Path $repo 'src/AcquisitionConstellationFactory.sol') -Raw
-  if(([regex]::Matches($source,'\bcreate\s*\(')).Count-ne1){throw 'Factory raw CREATE source count drift.'}
-  $phaseAt=$source.IndexOf('_phase = Phase.DEPLOYING_CHILD;',[StringComparison]::Ordinal)
-  $createAt=$source.IndexOf('child := create(0, add(creation, 0x20), mload(creation))',[StringComparison]::Ordinal)
-  if($phaseAt-lt0-or$createAt-lt0-or$phaseAt-ge$createAt){throw 'Factory phase-before-zero-value-CREATE source policy drift.'}
-  foreach($literal in @(
-    'staticcall(_REGISTRY_GAS, registry','staticcall(_TOPOLOGY_GAS, child',
-    'call(_FINALIZER_GAS, child, 0','afterGas := gas()',
-    '_requireFinalizerPostcheck(index, afterGas)','size := returndatasize()',
-    'supportedChainId()','authorityTopology()','coreTopology()','budgetBookTopology()',
-    'intentExecutionTopology()','reconciliationTopology()','finalizeAuthority(bytes32)',
-    'finalizeCore(bytes32)','finalizeBudgetBook(bytes32)','finalizeIntentExecution(bytes32)',
-    'finalizeReconciliation(bytes32)'
-  )){if($source.IndexOf($literal,[StringComparison]::Ordinal)-lt0){throw "Factory typed call policy drift: $literal"}}
-  $postAt=$source.IndexOf('_requireFinalizerPostcheck(index, afterGas)',[StringComparison]::Ordinal)
-  $returnSizeAt=$source.IndexOf('size := returndatasize()',$postAt,[StringComparison]::Ordinal)
-  if($postAt-lt0-or$returnSizeAt-lt0-or$postAt-ge$returnSizeAt){throw 'Factory post-gas-before-returndata source policy drift.'}
-  if($source-match'\b(delegatecall|callcode|create2|selfdestruct)\s*\('){throw 'Factory prohibited source callsite.'}
+function Assert-FactoryCompilerPolicy([string]$Ir) {
+  $clean=[regex]::Replace($Ir,'/\*\*.*?\*/','',[Text.RegularExpressions.RegexOptions]::Singleline)
+  $clean=[regex]::Replace($clean,'\s+',' ')
+  $phase=$Ir.IndexOf('0:7068:7074  "_phase"',[StringComparison]::Ordinal);$create=$Ir.IndexOf('let var_child := create(',[StringComparison]::Ordinal)
+  if($phase-lt0-or$phase-ge$create-or-not[regex]::IsMatch($clean,'let _1 := 0 .*create\( _1, add\(var_creation_mpos, 32\), mload\(var_creation_mpos\)\)')){throw 'Factory compiler phase-before-zero-value-CREATE drift.'}
+  if(([regex]::Matches($clean,'(?<!static)call\( 100000, [^,]+, 0, [^,]+, [^,]+, 0, 0\)')).Count-ne5){throw 'Factory compiler finalizer CALL schema/count drift.'}
+  if(([regex]::Matches($clean,'staticcall\(100000, [^,]+, 0, (0x04|4), 0, (0x20|32)\)')).Count-ne2){throw 'Factory compiler Registry STATICCALL schema/count drift.'}
+  if(([regex]::Matches($clean,'staticcall\(50000, [^,]+, usr\$buffer, 0x04, usr\$buffer, 0x60\)')).Count-ne2){throw 'Factory compiler topology STATICCALL schema/count drift.'}
+  if(([regex]::Matches($clean,'let _[0-9]+ := gas\(\)')).Count-lt10){throw 'Factory compiler immediate gas checkpoint drift.'}
+  if(([regex]::Matches($clean,'returndatasize\(\)')).Count-ne9){throw 'Factory compiler bounded returndata observation drift.'}
+  if($Ir-match'(?im)\breturndatacopy\s*\('){throw 'Factory dynamic returndata copying drift.'}
+  if($Ir-match'(?im)\b(delegatecall|callcode|create2|selfdestruct)\s*\('){throw 'Factory prohibited compiler callsite.'}
 }
 
 function Get-ExecutableParts($Artifact,[string]$Name) {
@@ -524,9 +539,23 @@ try {
   Assert-FunctionSchema $factory 'finalizeConstellation' 'nonpayable' @()
   Assert-EventSchema $factory 'ChildDeployed' @($true,$true,$true,$false)
   Assert-EventSchema $factory 'ConstellationFinalized' @($true,$true)
-  Assert-SourceProvenance $factory 'src/AcquisitionConstellationFactory.sol' 'Factory'
-  Assert-FactorySourcePolicy
-  if(@($factory.deployedBytecode.immutableReferences.psobject.Properties).Count-ne6){throw 'Factory immutable count drift.'}
+  Assert-SourceProvenance $factory 'src/AcquisitionConstellationFactory.sol' 'Factory' '0xb2d5787777243b4c1308877b186eb5c1c112accf628be9c7b85e4d709acf74c0'
+  Assert-AbiNames $factory 'factoryState' @() @('manifestHash','deploymentCommitment','phase','nextChildIndex','safe','configurationRoot','registry','registryRuntimeHash')
+  Assert-AbiNames $factory 'childCommitment' @('index') @('child','initcodeHash','runtimeHash')
+  Assert-AbiNames $factory 'deployNext' @('initcode') @('child')
+  Assert-AbiNames $factory 'finalizeConstellation' @() @()
+  Push-Location -LiteralPath $repo
+  try{$factoryIr=(& $ForgePath inspect AcquisitionConstellationFactory irOptimized 2>&1)-join"`n";$factoryIrExit=$LASTEXITCODE}finally{Pop-Location}
+  if($factoryIrExit-ne0){throw 'Factory optimized-IR inspection failed closed.'}
+  Assert-FactoryCompilerPolicy $factoryIr
+  function Assert-RejectedIrMutation([string]$Label,[string]$MutatedIr){$rejected=$false;try{Assert-FactoryCompilerPolicy $MutatedIr}catch{$rejected=$true};if(-not$rejected){throw "Compiler-policy negative selftest failed: $Label"}}
+  Assert-RejectedIrMutation 'phase-after-CREATE' ($factoryIr.Replace('0:7068:7074  "_phase"','0:99999:99999  "movedPhase"')+' 0:7068:7074  "_phase"')
+  Assert-RejectedIrMutation 'nonzero-CREATE-value' ($factoryIr.Replace('let var_child := create(','let var_child := create(1, pop('))
+  Assert-RejectedIrMutation 'wrong-finalizer-gas' ($factoryIr.Replace('call(/** @src 0:11084:11304  "assembly (\"memory-safe\") {..." */ 100000','call(/** @src 0:11084:11304  "assembly (\"memory-safe\") {..." */ 99999'))
+  Assert-RejectedIrMutation 'wrong-topology-gas' ($factoryIr.Replace('staticcall(50000','staticcall(49999'))
+  Assert-RejectedIrMutation 'dynamic-returndata-copy' ($factoryIr+' returndatacopy(0,0,returndatasize())')
+  Assert-RejectedIrMutation 'prohibited-delegatecall' ($factoryIr+' delegatecall(1,2,3,4,5,6)')
+  Assert-ImmutableReferences $factory '1262:32;470:32,540:32,595:32,738:32,1332:32;630:32,682:32,1367:32;1297:32;924:32,1143:32,2846:32,3404:32;890:32,1176:32' 'Factory'
   $factoryLayoutText=& $ForgePath inspect AcquisitionConstellationFactory storageLayout --json 2>&1
   if($LASTEXITCODE-ne0){throw "Factory storage inspect failed: $factoryLayoutText"}
   $factoryLayout=$factoryLayoutText|ConvertFrom-Json -Depth 100
@@ -553,8 +582,12 @@ try {
     Assert-FunctionSchema $artifact ($spec.Topology.Substring(0,$spec.Topology.IndexOf('('))) 'view' @('address','bytes32','bool')
     Assert-FunctionSchema $artifact ($spec.Finalizer.Substring(0,$spec.Finalizer.IndexOf('('))) 'nonpayable' @()
     Assert-EventSchema $artifact "${p}Finalized" @($true)
-    Assert-SourceProvenance $artifact "src/$($spec.Name).sol" $spec.Name
-    if(@($artifact.deployedBytecode.immutableReferences.psobject.Properties).Count-ne2){throw "$($spec.Name) immutable count drift."}
+    $frozenChildHashes=@('0x61e46be3d23d4b601c5038c6c771f7e303bee6fa6bdddb33ab791a00fb5a637c','0x68a0c4ac031162b4dc46eb5025a41900fce83680ded925582040c98f07573740','0x9659973e3b81051e8865c40b87a6a39dc18746860022865d90e1248820a47829','0xeb20c36b0082cd56488736934de9a83d134200428d561252753835432b568dcb','0x8881c7b26f1f063c90eb1c2660cbb7fd0b2b934f27aecc2248400a141b3840e0')
+    Assert-SourceProvenance $artifact "src/$($spec.Name).sol" $spec.Name $frozenChildHashes[$i]
+    Assert-AbiNames $artifact ($spec.Topology.Substring(0,$spec.Topology.IndexOf('('))) @() @('factory','manifestHash','finalized')
+    Assert-AbiNames $artifact ($spec.Finalizer.Substring(0,$spec.Finalizer.IndexOf('('))) @('manifestHash') @()
+    $childImmutable=@('85:32,224:32;121:32,295:32,347:32,450:32','85:32,224:32;121:32,295:32,347:32,450:32','106:32,224:32;142:32,295:32,347:32,450:32','85:32,224:32;121:32,295:32,347:32,450:32','85:32,224:32;121:32,295:32,347:32,450:32')
+    Assert-ImmutableReferences $artifact $childImmutable[$i] $spec.Name
     $layoutText=& $ForgePath inspect $spec.Name storageLayout --json 2>&1
     if($LASTEXITCODE-ne0){throw "$($spec.Name) storage inspect failed: $layoutText"}
     $layout=$layoutText|ConvertFrom-Json -Depth 100
