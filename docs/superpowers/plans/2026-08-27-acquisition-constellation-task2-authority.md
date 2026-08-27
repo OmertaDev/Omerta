@@ -1,6 +1,6 @@
 # Acquisition Constellation Task 2 — Authority Architecture Freeze
 
-**Status:** architecture freeze pending independent approval; no Task 2 implementation or production approval is claimed
+**Status:** architecture freeze independently approved at `85081946` (C0/I0/M0); Task 2 implementation and production approval are not claimed
 
 **Inputs:** the approved constellation architecture, the Task 0 ownership/collision crosswalk, historical O1 Tasks 1–3A, and the Task 1 deployment proof at `f6a21dcc` (independently approved C0/I0/M0 as a development proof only).
 
