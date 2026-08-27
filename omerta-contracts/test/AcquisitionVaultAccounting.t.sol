@@ -4,6 +4,7 @@ pragma solidity 0.8.26;
 import {Test} from "forge-std/Test.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {StdStorage, stdStorage} from "forge-std/StdStorage.sol";
+import {stdError} from "forge-std/StdError.sol";
 import {AcquisitionVault} from "../src/AcquisitionVault.sol";
 import {IAcquisitionVaultV1} from "../src/interfaces/IAcquisitionVaultV1.sol";
 
@@ -58,6 +59,14 @@ contract A1Task5Ingress {
     }
 }
 
+contract A1Task5TimestampHarness is AcquisitionVault {
+    constructor(address safeOwner, address registry, uint256 cap) AcquisitionVault(safeOwner, registry, cap) {}
+
+    function exposedCheckedTimestamp(uint256 timestamp) external pure returns (uint64) {
+        return _checkedTimestamp(timestamp);
+    }
+}
+
 contract A1Task4ForceSend {
     constructor() payable {}
 
@@ -103,6 +112,21 @@ contract AcquisitionVaultAccountingTest is Test {
         uint256 lifetimeDepositCapWei;
     }
 
+    struct HandoffSnapshot {
+        bytes32 pendingHash;
+        bytes32 activeHash;
+        bytes32 depositHash;
+        bytes32 totalsHash;
+        uint256 proposalNonce;
+        uint256 generation;
+        uint256 lifetime;
+        uint256 epoch;
+        uint256 globalTotal;
+        uint256 sequence;
+        uint256 observation;
+        bool paused;
+    }
+
     uint256 internal constant CHAIN_ID = 4663;
     uint256 internal constant GLOBAL_CAP = 10_000 ether;
     uint8 internal constant MUTATION_SYNC = 1;
@@ -118,6 +142,10 @@ contract AcquisitionVaultAccountingTest is Test {
     bytes32 internal constant DETAILS = keccak256("a1-task4-reclassification");
     bytes32 internal constant SECOND_DETAILS = keccak256("a1-task5-second-details");
     bytes32 internal constant SEQUENCE_LABEL = keccak256(bytes("accountingSequence"));
+    bytes32 internal constant INGRESS_PROPOSAL_LABEL = keccak256(bytes("ingressProposalNonce"));
+    bytes32 internal constant INGRESS_GENERATION_LABEL = keccak256(bytes("ingressGeneration"));
+    bytes32 internal constant INGRESS_CONFIG_TAG = keccak256("OMERTA_ACQUISITION_INGRESS_CONFIG_V1");
+    bytes32 internal constant INGRESS_PROPOSAL_TAG = keccak256("OMERTA_ACQUISITION_INGRESS_PROPOSAL_V1");
     bytes32 internal constant DEPOSIT_TAG = keccak256("OMERTA_ACQUISITION_DEPOSIT_V1");
     bytes32 internal constant CANONICAL_DEPOSIT_SIG =
         keccak256("CanonicalDeposit(bytes32,uint256,bytes32,address,uint256,uint256,uint256,uint256,uint256,uint64)");
@@ -231,6 +259,18 @@ contract AcquisitionVaultAccountingTest is Test {
         assertEq(vault.paused(), value);
     }
 
+    function _writePackedLowAddress(bytes4 getter, address value) internal {
+        vm.record();
+        (bool ok,) = address(vault).staticcall(abi.encodeWithSelector(getter));
+        assertTrue(ok);
+        (bytes32[] memory reads,) = vm.accesses(address(vault));
+        assertEq(reads.length, 1);
+        bytes32 slot = reads[0];
+        uint256 current = uint256(vm.load(address(vault), slot));
+        uint256 next = (current & ~uint256(type(uint160).max)) | uint160(value);
+        vm.store(address(vault), slot, bytes32(next));
+    }
+
     function _proposeAndActivateIngress() internal returns (A1Task5Ingress ingress) {
         ingress = new A1Task5Ingress();
         Task5IngressConfig memory config = Task5IngressConfig({
@@ -262,6 +302,66 @@ contract AcquisitionVaultAccountingTest is Test {
 
     function _propose(IAcquisitionVaultV1.IngressConfig memory config, bytes32 details) internal returns (bytes32) {
         return abi.decode(_safeExecute(abi.encodeCall(vault.proposeIngress, (config, details))), (bytes32));
+    }
+
+    function _activate(bytes32 proposalId) internal returns (uint256) {
+        return abi.decode(_safeExecute(abi.encodeCall(vault.activateIngress, (proposalId))), (uint256));
+    }
+
+    function _deposit(A1Task5Ingress ingress, bytes32 source, uint256 amount) internal returns (bytes32) {
+        return abi.decode(ingress.deposit{value: amount}(address(vault), source), (bytes32));
+    }
+
+    function _configHash(IAcquisitionVaultV1.IngressConfig memory config) internal pure returns (bytes32) {
+        return keccak256(
+            abi.encode(
+                INGRESS_CONFIG_TAG,
+                config.ingress,
+                config.runtimeCodeHash,
+                config.perDepositCapWei,
+                config.epochDepositCapWei,
+                config.lifetimeDepositCapWei
+            )
+        );
+    }
+
+    function _proposalId(
+        uint256 proposalNumber,
+        address proposedBy,
+        bytes32 configHash,
+        uint64 proposedAt,
+        uint64 validAfter,
+        uint64 expiresAt,
+        bytes32 details
+    ) internal view returns (bytes32) {
+        return keccak256(
+            abi.encode(
+                INGRESS_PROPOSAL_TAG,
+                CHAIN_ID,
+                address(vault),
+                proposalNumber,
+                proposedBy,
+                configHash,
+                proposedAt,
+                validAfter,
+                expiresAt,
+                details
+            )
+        );
+    }
+
+    function _stateDigest(bytes32 depositId, uint256 generation, uint256 epochDay) internal view returns (bytes32) {
+        return keccak256(
+            abi.encode(
+                address(vault).balance,
+                vault.accountingTotals(),
+                vault.lastObservedBalanceDeficitWei(),
+                vault.globalLifetimeCanonicalDepositedWei(),
+                vault.ingressLifetimeDepositedWei(generation),
+                vault.ingressEpochDepositedWei(generation, epochDay),
+                depositId == bytes32(0) ? bytes32(0) : keccak256(abi.encode(vault.getDeposit(depositId)))
+            )
+        );
     }
 
     function _mutationId(uint256 sequence, uint8 kind, bytes32 subjectId) internal view returns (bytes32) {
@@ -775,6 +875,396 @@ contract AcquisitionVaultAccountingTest is Test {
         bytes32 missing = keccak256("missing-deposit");
         vm.expectRevert(abi.encodeWithSelector(IAcquisitionVaultV1.DepositNotFound.selector, missing));
         vault.getDeposit(missing);
+    }
+
+    function test_task5EveryCapBoundaryUtcRolloverGenerationResetAndGlobalPersistence() public {
+        vm.deal(address(this), 100_000 ether);
+        A1Task5Ingress ingress = new A1Task5Ingress();
+        bytes32 proposalId = _propose(_ingressConfig(ingress, 3 ether, 5 ether, 7 ether), DETAILS);
+        vm.warp(vault.pendingIngressProposal().validAfter);
+        _activate(proposalId);
+        uint256 clean = vm.snapshotState();
+
+        _deposit(ingress, keccak256("per-cap-minus-one"), 3 ether - 1);
+        assertTrue(vm.revertToState(clean));
+        _deposit(ingress, keccak256("per-cap"), 3 ether);
+        assertTrue(vm.revertToState(clean));
+        _assertCapFailure(ingress, keccak256("per-cap-plus-one"), 3 ether + 1, 1, 3 ether, 3 ether + 1);
+
+        _deposit(ingress, keccak256("epoch-cap-minus-one"), 3 ether);
+        _deposit(ingress, keccak256("epoch-cap-minus-one-b"), 2 ether - 1);
+        _deposit(ingress, keccak256("epoch-cap"), 1);
+        _assertCapFailure(ingress, keccak256("epoch-cap-plus-one"), 1, 2, 5 ether, 5 ether + 1);
+        uint256 priorDay = block.timestamp / 1 days;
+        vm.warp((priorDay + 1) * 1 days);
+        _deposit(ingress, keccak256("utc-next-day"), 2 ether);
+        assertEq(vault.ingressEpochDepositedWei(1, priorDay), 5 ether);
+        assertEq(vault.ingressEpochDepositedWei(1, priorDay + 1), 2 ether);
+        assertEq(vault.ingressLifetimeDepositedWei(1), 7 ether);
+        _assertCapFailure(ingress, keccak256("generation-plus-one"), 1, 3, 7 ether, 7 ether + 1);
+
+        _safeExecute(abi.encodeCall(vault.disableIngress, (SECOND_DETAILS)));
+        A1Task5Ingress second = new A1Task5Ingress();
+        proposalId = _propose(_ingressConfig(second, 3 ether, 5 ether, 7 ether), DETAILS);
+        vm.warp(vault.pendingIngressProposal().validAfter);
+        _activate(proposalId);
+        assertEq(vault.ingressLifetimeDepositedWei(2), 0);
+        assertEq(vault.globalLifetimeCanonicalDepositedWei(), 7 ether);
+        _deposit(second, keccak256("new-generation"), 1 ether);
+        assertEq(vault.ingressLifetimeDepositedWei(2), 1 ether);
+        assertEq(vault.globalLifetimeCanonicalDepositedWei(), 8 ether);
+    }
+
+    function test_task5GlobalCapMinusOneExactAndPlusOneWithRollback() public {
+        vm.deal(address(this), GLOBAL_CAP * 3);
+        A1Task5Ingress ingress = new A1Task5Ingress();
+        bytes32 proposalId = _propose(_ingressConfig(ingress, GLOBAL_CAP, GLOBAL_CAP, GLOBAL_CAP), DETAILS);
+        vm.warp(vault.pendingIngressProposal().validAfter);
+        _activate(proposalId);
+        _deposit(ingress, keccak256("global-minus-one"), GLOBAL_CAP - 1);
+        _deposit(ingress, keccak256("global-exact"), 1);
+        _safeExecute(abi.encodeCall(vault.disableIngress, (SECOND_DETAILS)));
+        A1Task5Ingress second = new A1Task5Ingress();
+        proposalId = _propose(_ingressConfig(second, GLOBAL_CAP, GLOBAL_CAP, GLOBAL_CAP), DETAILS);
+        vm.warp(vault.pendingIngressProposal().validAfter);
+        _activate(proposalId);
+        _assertCapFailure(second, keccak256("global-plus-one"), 1, 4, GLOBAL_CAP, GLOBAL_CAP + 1);
+    }
+
+    function _assertCapFailure(
+        A1Task5Ingress ingress,
+        bytes32 source,
+        uint256 amount,
+        uint8 kind,
+        uint256 cap,
+        uint256 attempted
+    ) internal {
+        bytes32 predicted = keccak256(
+            abi.encode(DEPOSIT_TAG, CHAIN_ID, address(vault), vault.activeIngressGeneration(), address(ingress), source)
+        );
+        uint256 generation = vault.activeIngressGeneration();
+        uint256 epochDay = block.timestamp / 1 days;
+        bytes32 beforeDigest = _stateDigest(bytes32(0), generation, epochDay);
+        uint256 ingressBalance = address(ingress).balance;
+        vm.recordLogs();
+        vm.expectRevert(abi.encodeWithSelector(IAcquisitionVaultV1.DepositCapExceeded.selector, kind, cap, attempted));
+        ingress.deposit{value: amount}(address(vault), source);
+        assertEq(vm.getRecordedLogs().length, 0);
+        assertEq(address(ingress).balance, ingressBalance);
+        assertEq(_stateDigest(bytes32(0), generation, epochDay), beforeDigest);
+        vm.expectRevert(abi.encodeWithSelector(IAcquisitionVaultV1.DepositNotFound.selector, predicted));
+        vault.getDeposit(predicted);
+    }
+
+    function test_task5TimestampSeamProposalActivationDisableAndDepositBoundaries() public {
+        A1Task5TimestampHarness harness = new A1Task5TimestampHarness(address(safe), address(registry), GLOBAL_CAP);
+        assertEq(harness.exposedCheckedTimestamp(type(uint64).max), type(uint64).max);
+        vm.expectRevert(IAcquisitionVaultV1.TimestampOverflow.selector);
+        harness.exposedCheckedTimestamp(uint256(type(uint64).max) + 1);
+
+        A1Task5Ingress ingress = new A1Task5Ingress();
+        IAcquisitionVaultV1.IngressConfig memory config = _ingressConfig(ingress, 10 ether, 20 ether, 30 ether);
+        uint256 lastProposalTime = uint256(type(uint64).max) - 48 hours - 7 days;
+        vm.warp(lastProposalTime);
+        bytes32 proposalId = _propose(config, DETAILS);
+        IAcquisitionVaultV1.PendingIngressProposal memory pending = vault.pendingIngressProposal();
+        assertEq(pending.proposedAt, uint64(lastProposalTime));
+        assertEq(pending.expiresAt, type(uint64).max);
+        uint256 pendingState = vm.snapshotState();
+
+        vm.warp(uint256(type(uint64).max) - 1);
+        _activate(proposalId);
+        assertEq(vault.getIngress(1).activatedAt, type(uint64).max - 1);
+        assertTrue(vm.revertToState(pendingState));
+        vm.warp(type(uint64).max);
+        vm.expectRevert(abi.encodeWithSelector(IAcquisitionVaultV1.ProposalExpired.selector, type(uint64).max));
+        _safeExecute(abi.encodeCall(vault.activateIngress, (proposalId)));
+        assertTrue(vm.revertToState(pendingState));
+        vm.warp(uint256(type(uint64).max) + 1);
+        vm.expectRevert(IAcquisitionVaultV1.TimestampOverflow.selector);
+        _safeExecute(abi.encodeCall(vault.activateIngress, (proposalId)));
+        assertEq(vault.pendingIngressProposal().proposalId, proposalId);
+
+        assertTrue(vm.revertToState(pendingState));
+        vm.warp(uint256(type(uint64).max) - 1);
+        _activate(proposalId);
+        uint256 activeState = vm.snapshotState();
+        vm.warp(type(uint64).max);
+        bytes32 depositId = _deposit(ingress, keccak256("deposit-at-max"), 1 ether);
+        assertEq(vault.getDeposit(depositId).depositedAt, type(uint64).max);
+        assertTrue(vm.revertToState(activeState));
+        vm.warp(type(uint64).max);
+        _safeExecute(abi.encodeCall(vault.disableIngress, (SECOND_DETAILS)));
+        assertEq(vault.getIngress(1).disabledAt, type(uint64).max);
+
+        assertTrue(vm.revertToState(activeState));
+        vm.warp(uint256(type(uint64).max) + 1);
+        bytes32 beforeDeposit = _stateDigest(bytes32(0), 1, block.timestamp / 1 days);
+        vm.recordLogs();
+        vm.expectRevert(IAcquisitionVaultV1.TimestampOverflow.selector);
+        ingress.deposit{value: 1 ether}(address(vault), keccak256("deposit-after-max"));
+        assertEq(vm.getRecordedLogs().length, 0);
+        assertEq(_stateDigest(bytes32(0), 1, block.timestamp / 1 days), beforeDeposit);
+        vm.expectRevert(IAcquisitionVaultV1.TimestampOverflow.selector);
+        _safeExecute(abi.encodeCall(vault.disableIngress, (SECOND_DETAILS)));
+        assertEq(vault.activeIngressGeneration(), 1);
+    }
+
+    function test_task5ProposalGenerationAndDepositSequenceExhaustionAreAtomic() public {
+        A1Task5Ingress ingress = new A1Task5Ingress();
+        IAcquisitionVaultV1.IngressConfig memory config = _ingressConfig(ingress, 10 ether, 20 ether, 30 ether);
+        _write(vault.ingressProposalNonce.selector, type(uint256).max);
+        vm.recordLogs();
+        _assertSafeRevert(
+            abi.encodeCall(vault.proposeIngress, (config, DETAILS)),
+            abi.encodeWithSelector(A1Task4Errors.CounterExhausted.selector, INGRESS_PROPOSAL_LABEL)
+        );
+        assertEq(vm.getRecordedLogs().length, 0);
+        assertEq(vault.ingressProposalNonce(), type(uint256).max);
+
+        _write(vault.ingressProposalNonce.selector, 0);
+        bytes32 proposalId = _propose(config, DETAILS);
+        vm.warp(vault.pendingIngressProposal().validAfter);
+        _write(vault.ingressGeneration.selector, type(uint256).max);
+        vm.recordLogs();
+        _assertSafeRevert(
+            abi.encodeCall(vault.activateIngress, (proposalId)),
+            abi.encodeWithSelector(A1Task4Errors.CounterExhausted.selector, INGRESS_GENERATION_LABEL)
+        );
+        assertEq(vm.getRecordedLogs().length, 0);
+        assertEq(vault.pendingIngressProposal().proposalId, proposalId);
+        assertEq(vault.activeIngressGeneration(), 0);
+
+        _write(vault.ingressGeneration.selector, 0);
+        _activate(proposalId);
+        _write(vault.accountingSequence.selector, type(uint256).max);
+        bytes32 beforeDigest = _stateDigest(bytes32(0), 1, block.timestamp / 1 days);
+        vm.recordLogs();
+        vm.expectRevert(abi.encodeWithSelector(A1Task4Errors.CounterExhausted.selector, SEQUENCE_LABEL));
+        ingress.deposit{value: 1 ether}(address(vault), keccak256("sequence-exhausted"));
+        assertEq(vm.getRecordedLogs().length, 0);
+        assertEq(_stateDigest(bytes32(0), 1, block.timestamp / 1 days), beforeDigest);
+    }
+
+    function test_task5InjectedPriorAboveCapPanicsAndFullValueCapsEvenWhenRepairing() public {
+        A1Task5Ingress ingress = _proposeAndActivateIngress();
+        _deposit(ingress, keccak256("initial-backing"), 2 ether);
+        vm.deal(address(vault), 1 ether);
+        _deposit(ingress, keccak256("repair-counts-full-value"), 2 ether);
+        assertEq(vault.ingressLifetimeDepositedWei(1), 4 ether);
+        assertEq(vault.globalLifetimeCanonicalDepositedWei(), 4 ether);
+        assertEq(vault.availableWei(), 3 ether);
+
+        stdstore.target(address(vault)).sig(vault.ingressLifetimeDepositedWei.selector).with_key(1)
+            .checked_write(31 ether);
+        bytes32 beforeDigest = _stateDigest(bytes32(0), 1, block.timestamp / 1 days);
+        vm.recordLogs();
+        vm.expectRevert(stdError.arithmeticError);
+        ingress.deposit{value: 1 ether}(address(vault), keccak256("prior-over-cap"));
+        assertEq(vm.getRecordedLogs().length, 0);
+        assertEq(_stateDigest(bytes32(0), 1, block.timestamp / 1 days), beforeDigest);
+    }
+
+    function test_task5OwnershipHandoffPreservesCompleteIngressAccountingAndCancelsOnlyOperatorNomination() public {
+        A1Task5Ingress active = _proposeAndActivateIngress();
+        bytes32 depositId = _deposit(active, keccak256("handoff-deposit"), 2 ether);
+        A1Task5Ingress pendingIngress = new A1Task5Ingress();
+        bytes32 pendingId = _propose(_ingressConfig(pendingIngress, 3 ether, 4 ether, 5 ether), SECOND_DETAILS);
+        A1Task4Safe operatorNominee = new A1Task4Safe();
+        _safeExecute(abi.encodeCall(vault.nominateMainOperator, (address(operatorNominee), DETAILS)));
+        A1Task4Safe newSafe = new A1Task4Safe();
+        _safeExecute(abi.encodeCall(vault.transferOwnership, (address(newSafe))));
+
+        HandoffSnapshot memory beforeState = HandoffSnapshot({
+            pendingHash: keccak256(abi.encode(vault.pendingIngressProposal())),
+            activeHash: keccak256(abi.encode(vault.getIngress(1))),
+            depositHash: keccak256(abi.encode(vault.getDeposit(depositId))),
+            totalsHash: keccak256(abi.encode(vault.accountingTotals())),
+            proposalNonce: vault.ingressProposalNonce(),
+            generation: vault.ingressGeneration(),
+            lifetime: vault.ingressLifetimeDepositedWei(1),
+            epoch: vault.ingressEpochDepositedWei(1, block.timestamp / 1 days),
+            globalTotal: vault.globalLifetimeCanonicalDepositedWei(),
+            sequence: vault.accountingSequence(),
+            observation: vault.lastObservedBalanceDeficitWei(),
+            paused: vault.paused()
+        });
+
+        newSafe.execute(address(vault), abi.encodeCall(vault.acceptOwnership, ()));
+        assertEq(vault.owner(), address(newSafe));
+        assertEq(vault.pendingMainOperatorNomination().proposalId, bytes32(0));
+        assertEq(keccak256(abi.encode(vault.pendingIngressProposal())), beforeState.pendingHash);
+        assertEq(keccak256(abi.encode(vault.getIngress(1))), beforeState.activeHash);
+        assertEq(keccak256(abi.encode(vault.getDeposit(depositId))), beforeState.depositHash);
+        assertEq(keccak256(abi.encode(vault.accountingTotals())), beforeState.totalsHash);
+        assertEq(vault.ingressProposalNonce(), beforeState.proposalNonce);
+        assertEq(vault.ingressGeneration(), beforeState.generation);
+        assertEq(vault.ingressLifetimeDepositedWei(1), beforeState.lifetime);
+        assertEq(vault.ingressEpochDepositedWei(1, block.timestamp / 1 days), beforeState.epoch);
+        assertEq(vault.globalLifetimeCanonicalDepositedWei(), beforeState.globalTotal);
+        assertEq(vault.accountingSequence(), beforeState.sequence);
+        assertEq(vault.lastObservedBalanceDeficitWei(), beforeState.observation);
+        assertEq(vault.paused(), beforeState.paused);
+
+        vm.expectRevert(abi.encodeWithSelector(A1Task4Errors.OwnableUnauthorizedAccount.selector, address(safe)));
+        safe.execute(address(vault), abi.encodeCall(vault.cancelIngressProposal, (pendingId, DETAILS)));
+        uint256 handedOff = vm.snapshotState();
+        newSafe.execute(address(vault), abi.encodeCall(vault.cancelIngressProposal, (pendingId, DETAILS)));
+        assertEq(vault.pendingIngressProposal().proposalId, bytes32(0));
+        assertTrue(vm.revertToState(handedOff));
+        newSafe.execute(address(vault), abi.encodeCall(vault.disableIngress, (DETAILS)));
+        vm.warp(vault.pendingIngressProposal().validAfter);
+        newSafe.execute(address(vault), abi.encodeCall(vault.activateIngress, (pendingId)));
+        assertEq(vault.activeIngressGeneration(), 2);
+        assertEq(vault.getIngress(2).ingress, address(pendingIngress));
+    }
+
+    function test_task5ConfigProposalAndDepositIdsBindEveryFieldAndGeneration() public {
+        A1Task5Ingress ingress = new A1Task5Ingress();
+        IAcquisitionVaultV1.IngressConfig memory config = _ingressConfig(ingress, 3 ether, 4 ether, 5 ether);
+        bytes32 proposalId = _propose(config, DETAILS);
+        IAcquisitionVaultV1.PendingIngressProposal memory pending = vault.pendingIngressProposal();
+        bytes32 expectedConfigHash = _configHash(config);
+        assertEq(pending.configHash, expectedConfigHash);
+        assertEq(
+            proposalId,
+            _proposalId(
+                pending.proposalNumber,
+                pending.proposedBy,
+                expectedConfigHash,
+                pending.proposedAt,
+                pending.validAfter,
+                pending.expiresAt,
+                DETAILS
+            )
+        );
+        assertTrue(_configHash(_ingressConfig(ingress, 3 ether - 1, 4 ether, 5 ether)) != expectedConfigHash);
+        assertTrue(
+            _proposalId(
+                pending.proposalNumber + 1,
+                pending.proposedBy,
+                expectedConfigHash,
+                pending.proposedAt,
+                pending.validAfter,
+                pending.expiresAt,
+                DETAILS
+            ) != proposalId
+        );
+        assertTrue(
+            _proposalId(
+                pending.proposalNumber,
+                pending.proposedBy,
+                expectedConfigHash,
+                pending.proposedAt,
+                pending.validAfter,
+                pending.expiresAt,
+                SECOND_DETAILS
+            ) != proposalId
+        );
+
+        vm.warp(pending.validAfter);
+        _activate(proposalId);
+        bytes32 source = keccak256("same-source-new-generation");
+        bytes32 first = _deposit(ingress, source, 1 ether);
+        assertEq(first, keccak256(abi.encode(DEPOSIT_TAG, CHAIN_ID, address(vault), 1, address(ingress), source)));
+        _safeExecute(abi.encodeCall(vault.disableIngress, (DETAILS)));
+        proposalId = _propose(config, SECOND_DETAILS);
+        vm.warp(vault.pendingIngressProposal().validAfter);
+        _activate(proposalId);
+        bytes32 second = _deposit(ingress, source, 1 ether);
+        assertEq(second, keccak256(abi.encode(DEPOSIT_TAG, CHAIN_ID, address(vault), 2, address(ingress), source)));
+        assertTrue(first != second);
+    }
+
+    function test_task5CodeChecksAreLiveWhileCancelExpireAndDisableIgnoreDrift() public {
+        A1Task5Ingress ingress = new A1Task5Ingress();
+        IAcquisitionVaultV1.IngressConfig memory config = _ingressConfig(ingress, 3 ether, 4 ether, 5 ether);
+        bytes32 proposalId = _propose(config, DETAILS);
+        IAcquisitionVaultV1.PendingIngressProposal memory pending = vault.pendingIngressProposal();
+        vm.warp(pending.validAfter);
+        uint256 healthyPending = vm.snapshotState();
+
+        vm.etch(address(ingress), hex"");
+        vm.expectRevert(abi.encodeWithSelector(IAcquisitionVaultV1.ContractRequired.selector, address(ingress)));
+        _safeExecute(abi.encodeCall(vault.activateIngress, (proposalId)));
+        _safeExecute(abi.encodeCall(vault.cancelIngressProposal, (proposalId, SECOND_DETAILS)));
+        assertEq(vault.pendingIngressProposal().proposalId, bytes32(0));
+
+        assertTrue(vm.revertToState(healthyPending));
+        vm.etch(address(ingress), hex"60006000f3");
+        bytes32 actualHash = address(ingress).codehash;
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAcquisitionVaultV1.IngressCodeHashMismatch.selector,
+                address(ingress),
+                config.runtimeCodeHash,
+                actualHash
+            )
+        );
+        _safeExecute(abi.encodeCall(vault.activateIngress, (proposalId)));
+        vm.warp(pending.expiresAt);
+        vault.expireIngressProposal(proposalId);
+        assertEq(vault.pendingIngressProposal().proposalId, bytes32(0));
+
+        assertTrue(vm.revertToState(healthyPending));
+        _activate(proposalId);
+        uint256 healthyActive = vm.snapshotState();
+        vm.etch(address(ingress), hex"");
+        vm.deal(address(ingress), 2 ether);
+        vm.expectRevert(abi.encodeWithSelector(IAcquisitionVaultV1.ContractRequired.selector, address(ingress)));
+        vm.prank(address(ingress));
+        vault.depositCanonical{value: 1 ether}(keccak256("missing-code-deposit"));
+        _safeExecute(abi.encodeCall(vault.disableIngress, (SECOND_DETAILS)));
+        assertEq(vault.activeIngressGeneration(), 0);
+
+        assertTrue(vm.revertToState(healthyActive));
+        vm.etch(address(ingress), hex"60006000f3");
+        vm.deal(address(ingress), 2 ether);
+        actualHash = address(ingress).codehash;
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAcquisitionVaultV1.IngressCodeHashMismatch.selector,
+                address(ingress),
+                config.runtimeCodeHash,
+                actualHash
+            )
+        );
+        vm.prank(address(ingress));
+        vault.depositCanonical{value: 1 ether}(keccak256("drift-deposit"));
+        _safeExecute(abi.encodeCall(vault.disableIngress, (SECOND_DETAILS)));
+        assertEq(vault.activeIngressGeneration(), 0);
+    }
+
+    function test_task5ReciprocalRolesAreRecheckedAtProposeActivateAndDeposit() public {
+        IAcquisitionVaultV1.IngressConfig memory ownerConfig = IAcquisitionVaultV1.IngressConfig({
+            ingress: address(safe),
+            runtimeCodeHash: address(safe).codehash,
+            perDepositCapWei: 1 ether,
+            epochDepositCapWei: 2 ether,
+            lifetimeDepositCapWei: 3 ether
+        });
+        _assertSafeRevert(
+            abi.encodeCall(vault.proposeIngress, (ownerConfig, DETAILS)),
+            abi.encodeWithSelector(IAcquisitionVaultV1.RoleIdentityCollision.selector, address(safe))
+        );
+
+        A1Task5Ingress ingress = new A1Task5Ingress();
+        bytes32 proposalId = _propose(_ingressConfig(ingress, 1 ether, 2 ether, 3 ether), DETAILS);
+        vm.warp(vault.pendingIngressProposal().validAfter);
+        _writePackedLowAddress(vault.pendingOwner.selector, address(ingress));
+        vm.expectRevert(abi.encodeWithSelector(IAcquisitionVaultV1.RoleIdentityCollision.selector, address(ingress)));
+        _safeExecute(abi.encodeCall(vault.activateIngress, (proposalId)));
+        assertEq(vault.activeIngressGeneration(), 0);
+
+        _writePackedLowAddress(vault.pendingOwner.selector, address(0));
+        _activate(proposalId);
+        _writePackedLowAddress(vault.pendingOwner.selector, address(ingress));
+        bytes32 beforeDigest = _stateDigest(bytes32(0), 1, block.timestamp / 1 days);
+        vm.recordLogs();
+        vm.expectRevert(abi.encodeWithSelector(IAcquisitionVaultV1.RoleIdentityCollision.selector, address(ingress)));
+        ingress.deposit{value: 1 ether}(address(vault), keccak256("deposit-role-collision"));
+        assertEq(vm.getRecordedLogs().length, 0);
+        assertEq(_stateDigest(bytes32(0), 1, block.timestamp / 1 days), beforeDigest);
     }
 
     function test_exactTask5EnumsAbiCountsMembersConstructorAndStorageAppend() public {

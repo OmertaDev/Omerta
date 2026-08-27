@@ -3165,4 +3165,34 @@ contract AcquisitionVaultOperatorTest is Test {
         assertFalse(vault.paused());
         assertEq(vault.activeIngressGeneration(), 1);
     }
+
+    function test_task5ReciprocalIngressCollisionIsRecheckedAtOwnerOperatorAcceptanceAndReplacement() public {
+        O1SafeActor ownerCandidate = new O1SafeActor();
+        _safeCall(abi.encodeCall(vault.transferOwnership, (address(ownerCandidate))));
+        vm.store(address(vault), bytes32(uint256(28)), bytes32(uint256(uint160(address(ownerCandidate)))));
+        vm.expectRevert(abi.encodeWithSelector(O1LiteralErrors.RoleIdentityCollision.selector, address(ownerCandidate)));
+        ownerCandidate.execute(address(vault), abi.encodeCall(vault.acceptOwnership, ()));
+        assertEq(vault.owner(), address(safe));
+
+        vm.store(address(vault), bytes32(uint256(28)), bytes32(0));
+        bytes32 proposalId = _nominate(operator, DETAILS);
+        vm.store(address(vault), bytes32(uint256(28)), bytes32(uint256(uint160(operator))));
+        vm.warp(vault.pendingMainOperatorNomination().validAfter);
+        vm.expectRevert(abi.encodeWithSelector(O1LiteralErrors.RoleIdentityCollision.selector, operator));
+        vm.prank(operator);
+        vault.acceptMainOperatorNomination(proposalId);
+        assertEq(vault.mainOperator(), address(0));
+
+        vm.store(address(vault), bytes32(uint256(28)), bytes32(0));
+        vm.prank(operator);
+        vault.acceptMainOperatorNomination(proposalId);
+        address successor = vm.addr(successorKey);
+        IAcquisitionVaultV1.SuccessorConsent memory consent = _validConsent(successor);
+        bytes memory signature = _sign(successorKey, _successorDigest(consent));
+        vm.store(address(vault), bytes32(uint256(28)), bytes32(uint256(uint160(successor))));
+        vm.expectRevert(O1LiteralErrors.InvalidOperatorReplacement.selector);
+        vm.prank(operator);
+        vault.replaceMainOperator(consent, signature);
+        assertEq(vault.mainOperator(), operator);
+    }
 }
