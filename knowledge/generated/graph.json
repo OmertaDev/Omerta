@@ -1,7 +1,7 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "24a015ace8f4d8f1c1683b6fe8810f5ebd6a74fa",
-  "worktreeDirty": false,
+  "sourceRevision": "904422db2cce2dfdbaad3015b720019f82e3d71e",
+  "worktreeDirty": true,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
     "nodeTypes": [
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 4605,
-    "edges": 21596,
+    "nodes": 4607,
+    "edges": 21609,
     "byNodeType": {
       "Artifact": 1584,
       "Command": 35,
-      "Commit": 1006,
+      "Commit": 1008,
       "Contract": 33,
       "Document": 407,
       "Domain": 12,
@@ -65,18 +65,18 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1844,
-      "CHANGED": 8347,
+      "CHANGED": 8354,
       "CONTAINS": 1604,
       "DECLARES": 35,
       "DEFINED_IN": 1018,
       "DEPENDS_ON": 59,
       "EXECUTES": 156,
       "HANDLED_BY": 653,
-      "HAS_COMMIT": 1006,
+      "HAS_COMMIT": 1008,
       "IMPLEMENTS": 124,
       "IMPORTS": 1477,
       "INHERITS": 5,
-      "REFERENCES": 2499,
+      "REFERENCES": 2503,
       "REPRESENTS": 758,
       "TESTS": 521,
       "TRACKS": 126,
@@ -10235,20 +10235,20 @@
       "path": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 19833,
-      "lines": 448,
-      "version": "2835f2f72e06cc38",
+      "bytes": 24896,
+      "lines": 533,
+      "version": "3761a6ce2d133dbd",
       "text": true,
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
           "line": 1,
-          "version": "2835f2f72e06cc38"
+          "version": "3761a6ce2d133dbd"
         }
       ],
-      "lastChangedAt": "2026-08-27T01:33:02-04:00",
+      "lastChangedAt": "2026-08-27T03:03:17-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fb0c18d3af446d1fa00fa548c65e80f9b2746b2f"
+      "lastChangedCommit": "904422db2cce2dfdbaad3015b720019f82e3d71e"
     },
     {
       "key": "Artifact:docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
@@ -10258,20 +10258,20 @@
       "path": "docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 14151,
-      "lines": 218,
-      "version": "f6c9002f8f6df9fc",
+      "bytes": 15452,
+      "lines": 231,
+      "version": "b29bdbfd5b89ea48",
       "text": true,
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
           "line": 1,
-          "version": "f6c9002f8f6df9fc"
+          "version": "b29bdbfd5b89ea48"
         }
       ],
-      "lastChangedAt": "2026-08-26T20:01:38-04:00",
+      "lastChangedAt": "2026-08-27T03:03:17-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e1047306ab3a2439e928d10cd5b237af1694f996"
+      "lastChangedCommit": "904422db2cce2dfdbaad3015b720019f82e3d71e"
     },
     {
       "key": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
@@ -10281,20 +10281,20 @@
       "path": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 47521,
-      "lines": 1152,
-      "version": "ac77f038a246d02f",
+      "bytes": 52242,
+      "lines": 1230,
+      "version": "26790089da99b7c6",
       "text": true,
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
           "line": 1,
-          "version": "ac77f038a246d02f"
+          "version": "26790089da99b7c6"
         }
       ],
-      "lastChangedAt": "2026-08-26T20:01:38-04:00",
+      "lastChangedAt": "2026-08-27T03:03:17-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e1047306ab3a2439e928d10cd5b237af1694f996"
+      "lastChangedCommit": "904422db2cce2dfdbaad3015b720019f82e3d71e"
     },
     {
       "key": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
@@ -28631,13 +28631,13 @@
       "extension": ".md",
       "bytes": 46570,
       "lines": 647,
-      "version": "041e97f6ae448086",
+      "version": "64d5cabbb69a9bbf",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "041e97f6ae448086"
+          "version": "64d5cabbb69a9bbf"
         }
       ],
       "lastChangedAt": "2026-08-27T02:33:07-04:00",
@@ -38838,6 +38838,22 @@
       ]
     },
     {
+      "key": "Commit:248ca2bfc0c9d95f9b3e2cc397fd6a953dd53c2f",
+      "type": "Commit",
+      "id": "248ca2bfc0c9d95f9b3e2cc397fd6a953dd53c2f",
+      "label": "docs: finalize event commitment provenance",
+      "title": "docs: finalize event commitment provenance",
+      "date": "2026-08-27T02:33:55-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/248ca2bfc0c9d95f9b3e2cc397fd6a953dd53c2f",
+      "provenance": [
+        {
+          "commit": "248ca2bfc0c9d95f9b3e2cc397fd6a953dd53c2f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/248ca2bfc0c9d95f9b3e2cc397fd6a953dd53c2f"
+        }
+      ]
+    },
+    {
       "key": "Commit:24a015ace8f4d8f1c1683b6fe8810f5ebd6a74fa",
       "type": "Commit",
       "id": "24a015ace8f4d8f1c1683b6fe8810f5ebd6a74fa",
@@ -46418,6 +46434,22 @@
         {
           "commit": "8fac36bd4cd77372a77048e9a622879314206340",
           "url": "https://github.com/OmertaDev/Omerta/commit/8fac36bd4cd77372a77048e9a622879314206340"
+        }
+      ]
+    },
+    {
+      "key": "Commit:904422db2cce2dfdbaad3015b720019f82e3d71e",
+      "type": "Commit",
+      "id": "904422db2cce2dfdbaad3015b720019f82e3d71e",
+      "label": "docs: freeze finalized consumer handoff",
+      "title": "docs: freeze finalized consumer handoff",
+      "date": "2026-08-27T03:03:17-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/904422db2cce2dfdbaad3015b720019f82e3d71e",
+      "provenance": [
+        {
+          "commit": "904422db2cce2dfdbaad3015b720019f82e3d71e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/904422db2cce2dfdbaad3015b720019f82e3d71e"
         }
       ]
     },
@@ -58132,13 +58164,13 @@
       "id": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
       "label": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
       "documentType": "documentation",
-      "lines": 448,
-      "version": "2835f2f72e06cc38",
+      "lines": 533,
+      "version": "3761a6ce2d133dbd",
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
           "line": 1,
-          "version": "2835f2f72e06cc38"
+          "version": "3761a6ce2d133dbd"
         }
       ]
     },
@@ -58148,13 +58180,13 @@
       "id": "docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
       "label": "docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
       "documentType": "documentation",
-      "lines": 218,
-      "version": "f6c9002f8f6df9fc",
+      "lines": 231,
+      "version": "b29bdbfd5b89ea48",
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
           "line": 1,
-          "version": "f6c9002f8f6df9fc"
+          "version": "b29bdbfd5b89ea48"
         }
       ]
     },
@@ -58164,13 +58196,13 @@
       "id": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
       "label": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
       "documentType": "documentation",
-      "lines": 1152,
-      "version": "ac77f038a246d02f",
+      "lines": 1230,
+      "version": "26790089da99b7c6",
       "provenance": [
         {
           "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
           "line": 1,
-          "version": "ac77f038a246d02f"
+          "version": "26790089da99b7c6"
         }
       ]
     },
@@ -60101,12 +60133,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 647,
-      "version": "041e97f6ae448086",
+      "version": "64d5cabbb69a9bbf",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "041e97f6ae448086"
+          "version": "64d5cabbb69a9bbf"
         }
       ]
     },
@@ -61303,6 +61335,9 @@
           "commit": "1b33e8457e8398bea1b267574bd4bcc44d02debf"
         },
         {
+          "commit": "248ca2bfc0c9d95f9b3e2cc397fd6a953dd53c2f"
+        },
+        {
           "commit": "24a015ace8f4d8f1c1683b6fe8810f5ebd6a74fa"
         },
         {
@@ -61417,6 +61452,9 @@
           "commit": "1b33e8457e8398bea1b267574bd4bcc44d02debf"
         },
         {
+          "commit": "248ca2bfc0c9d95f9b3e2cc397fd6a953dd53c2f"
+        },
+        {
           "commit": "24a015ace8f4d8f1c1683b6fe8810f5ebd6a74fa"
         },
         {
@@ -61529,6 +61567,9 @@
         },
         {
           "commit": "1b33e8457e8398bea1b267574bd4bcc44d02debf"
+        },
+        {
+          "commit": "248ca2bfc0c9d95f9b3e2cc397fd6a953dd53c2f"
         },
         {
           "commit": "24a015ace8f4d8f1c1683b6fe8810f5ebd6a74fa"
@@ -61667,6 +61708,9 @@
         },
         {
           "commit": "1b33e8457e8398bea1b267574bd4bcc44d02debf"
+        },
+        {
+          "commit": "248ca2bfc0c9d95f9b3e2cc397fd6a953dd53c2f"
         },
         {
           "commit": "24a015ace8f4d8f1c1683b6fe8810f5ebd6a74fa"
@@ -67618,11 +67662,11 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "24a015ace8f4d8f1c1683b6fe8810f5ebd6a74fa",
+      "revision": "904422db2cce2dfdbaad3015b720019f82e3d71e",
       "currentBranch": "codex/grill-completion",
       "defaultBranch": "main",
       "visibility": "public",
-      "worktreeDirty": false,
+      "worktreeDirty": true,
       "currentArtifactCount": 1585,
       "provenance": [
         {
@@ -114391,6 +114435,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:248ca2bfc0c9d95f9b3e2cc397fd6a953dd53c2f",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "248ca2bfc0c9d95f9b3e2cc397fd6a953dd53c2f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:248ca2bfc0c9d95f9b3e2cc397fd6a953dd53c2f",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "248ca2bfc0c9d95f9b3e2cc397fd6a953dd53c2f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:248ca2bfc0c9d95f9b3e2cc397fd6a953dd53c2f",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "248ca2bfc0c9d95f9b3e2cc397fd6a953dd53c2f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:248ca2bfc0c9d95f9b3e2cc397fd6a953dd53c2f",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "248ca2bfc0c9d95f9b3e2cc397fd6a953dd53c2f"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:24a015ace8f4d8f1c1683b6fe8810f5ebd6a74fa",
       "to": "Artifact:SPEC.md",
       "provenance": {
@@ -146827,6 +146903,30 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "commit": "8fac36bd4cd77372a77048e9a622879314206340"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:904422db2cce2dfdbaad3015b720019f82e3d71e",
+      "to": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
+      "provenance": {
+        "commit": "904422db2cce2dfdbaad3015b720019f82e3d71e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:904422db2cce2dfdbaad3015b720019f82e3d71e",
+      "to": "Artifact:docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
+      "provenance": {
+        "commit": "904422db2cce2dfdbaad3015b720019f82e3d71e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:904422db2cce2dfdbaad3015b720019f82e3d71e",
+      "to": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "provenance": {
+        "commit": "904422db2cce2dfdbaad3015b720019f82e3d71e"
       }
     },
     {
@@ -207529,6 +207629,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:248ca2bfc0c9d95f9b3e2cc397fd6a953dd53c2f",
+      "provenance": {
+        "commit": "248ca2bfc0c9d95f9b3e2cc397fd6a953dd53c2f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:24a015ace8f4d8f1c1683b6fe8810f5ebd6a74fa",
       "provenance": {
         "commit": "24a015ace8f4d8f1c1683b6fe8810f5ebd6a74fa"
@@ -211316,6 +211424,14 @@
       "to": "Commit:8fac36bd4cd77372a77048e9a622879314206340",
       "provenance": {
         "commit": "8fac36bd4cd77372a77048e9a622879314206340"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:904422db2cce2dfdbaad3015b720019f82e3d71e",
+      "provenance": {
+        "commit": "904422db2cce2dfdbaad3015b720019f82e3d71e"
       }
     },
     {
@@ -246650,7 +246766,7 @@
       "to": "Artifact:.github/workflows/ci.yml",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
-        "line": 301
+        "line": 328
       }
     },
     {
@@ -246659,7 +246775,7 @@
       "to": "Artifact:docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
-        "line": 402
+        "line": 429
       }
     },
     {
@@ -246677,7 +246793,7 @@
       "to": "Artifact:src/finalizedobservation.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
-        "line": 165
+        "line": 192
       }
     },
     {
@@ -246686,7 +246802,7 @@
       "to": "Artifact:src/finalizedobservation.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
-        "line": 202
+        "line": 229
       }
     },
     {
@@ -246695,7 +246811,7 @@
       "to": "Artifact:src/finalizedobservation.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
-        "line": 247
+        "line": 274
       }
     },
     {
@@ -246704,7 +246820,7 @@
       "to": "Artifact:src/finalizedobservation.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
-        "line": 284
+        "line": 311
       }
     },
     {
@@ -246713,7 +246829,7 @@
       "to": "Artifact:src/stockcatalogv2.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
-        "line": 296
+        "line": 323
       }
     },
     {
@@ -246722,7 +246838,7 @@
       "to": "Artifact:src/watcher.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
-        "line": 55
+        "line": 79
       }
     },
     {
@@ -246731,7 +246847,7 @@
       "to": "Artifact:test/finalizedobservation.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
-        "line": 114
+        "line": 141
       }
     },
     {
@@ -246740,7 +246856,7 @@
       "to": "Artifact:test/finalizedobservation.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
-        "line": 166
+        "line": 193
       }
     },
     {
@@ -246749,7 +246865,7 @@
       "to": "Artifact:test/finalizedobservation.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
-        "line": 203
+        "line": 230
       }
     },
     {
@@ -246758,7 +246874,7 @@
       "to": "Artifact:test/finalizedobservation.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
-        "line": 248
+        "line": 275
       }
     },
     {
@@ -246767,7 +246883,7 @@
       "to": "Artifact:test/finalizedobservation.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
-        "line": 284
+        "line": 311
       }
     },
     {
@@ -246776,7 +246892,7 @@
       "to": "Artifact:test/finalizedobservation.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
-        "line": 303
+        "line": 330
       }
     },
     {
@@ -246785,7 +246901,7 @@
       "to": "Artifact:test/stockcatalogv2.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
-        "line": 298
+        "line": 325
       }
     },
     {
@@ -246794,7 +246910,7 @@
       "to": "Artifact:test/stockcatalogv2.postgres.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md",
-        "line": 299
+        "line": 326
       }
     },
     {
@@ -246804,6 +246920,15 @@
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
         "line": 4
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 1017
       }
     },
     {
@@ -246821,184 +246946,13 @@
       "to": "Artifact:docs/WIKI.md",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 1074
+        "line": 1152
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
       "to": "Artifact:omerta-contracts/src/interfaces/IStockTokenRegistryV2.sol",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 222
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:omerta-contracts/src/interfaces/IStockTokenRegistryV2.sol",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 248
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:omerta-contracts/src/StockTokenRegistryV2.sol",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 223
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:omerta-contracts/src/StockTokenRegistryV2.sol",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 249
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:omerta-contracts/test/StockTokenRegistryV2.t.sol",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 224
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:omerta-contracts/test/StockTokenRegistryV2.t.sol",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 250
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:omerta-contracts/test/StockTokenRegistryV2Invariant.t.sol",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 225
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:omerta-contracts/test/StockTokenRegistryV2Invariant.t.sol",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 251
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:src/commission.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 233
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:src/commission.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 568
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:src/commission.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 837
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:src/routes/rwa.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 231
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:src/routes/rwa.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 727
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:src/routes/rwa.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 838
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:src/rwanominations.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 229
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:src/rwanominations.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 562
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:src/rwanominations.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 987
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:src/rwastockkeeper.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 234
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:src/rwastockkeeper.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 985
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:src/server.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
         "line": 236
@@ -247007,79 +246961,34 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:src/server.js",
+      "to": "Artifact:omerta-contracts/src/interfaces/IStockTokenRegistryV2.sol",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 729
+        "line": 262
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:src/server.js",
+      "to": "Artifact:omerta-contracts/src/StockTokenRegistryV2.sol",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 839
+        "line": 237
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:src/stockcatalog.js",
+      "to": "Artifact:omerta-contracts/src/StockTokenRegistryV2.sol",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 353
+        "line": 263
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:src/stockcatalogv2.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 226
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:src/stockcatalogv2.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 346
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:src/stockcatalogv2.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 986
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:src/worker.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 235
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:src/worker.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 988
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:test/commission.js",
+      "to": "Artifact:omerta-contracts/test/StockTokenRegistryV2.t.sol",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
         "line": 238
@@ -247088,70 +246997,16 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:test/commission.js",
+      "to": "Artifact:omerta-contracts/test/StockTokenRegistryV2.t.sol",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 841
+        "line": 264
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:test/docs.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 1075
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:test/rwanominations.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 230
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:test/rwanominations.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 563
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:test/rwanominations.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 991
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:test/rwaroutes.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 232
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:test/rwaroutes.js",
-      "provenance": {
-        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 728
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:test/stockballotv2.js",
+      "to": "Artifact:omerta-contracts/test/StockTokenRegistryV2Invariant.t.sol",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
         "line": 239
@@ -247160,10 +247015,289 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-      "to": "Artifact:test/stockballotv2.js",
+      "to": "Artifact:omerta-contracts/test/StockTokenRegistryV2Invariant.t.sol",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 836
+        "line": 265
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/commission.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 1007
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/commission.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 247
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/commission.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 582
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/commission.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 851
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 1003
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/routes/rwa.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 245
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/routes/rwa.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 741
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/routes/rwa.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 852
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/rwanominations.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 1006
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/rwanominations.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 243
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/rwanominations.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 576
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/rwastockkeeper.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 1004
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/rwastockkeeper.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 248
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 250
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 743
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 853
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/stockcatalog.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 367
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/stockcatalogv2.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 1005
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/stockcatalogv2.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 240
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/stockcatalogv2.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 360
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/worker.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 1009
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:src/worker.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 249
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:test/commission.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 252
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:test/commission.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 855
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:test/docs.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 1153
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:test/migrate.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 1015
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:test/rwanominations.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 1012
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:test/rwanominations.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 244
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:test/rwanominations.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 577
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:test/rwaroutes.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 246
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:test/rwaroutes.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 742
       }
     },
     {
@@ -247172,7 +247306,25 @@
       "to": "Artifact:test/stockballotv2.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 989
+        "line": 1010
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:test/stockballotv2.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 253
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+      "to": "Artifact:test/stockballotv2.js",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
+        "line": 850
       }
     },
     {
@@ -247181,7 +247333,7 @@
       "to": "Artifact:test/stockcatalogv2.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 228
+        "line": 1011
       }
     },
     {
@@ -247190,7 +247342,7 @@
       "to": "Artifact:test/stockcatalogv2.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 348
+        "line": 242
       }
     },
     {
@@ -247199,7 +247351,7 @@
       "to": "Artifact:test/stockcatalogv2.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 990
+        "line": 362
       }
     },
     {
@@ -247208,7 +247360,7 @@
       "to": "Artifact:tools/robinhood-stock-catalog-v2.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 227
+        "line": 241
       }
     },
     {
@@ -247217,7 +247369,7 @@
       "to": "Artifact:tools/robinhood-stock-catalog-v2.js",
       "provenance": {
         "file": "docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md",
-        "line": 347
+        "line": 361
       }
     },
     {

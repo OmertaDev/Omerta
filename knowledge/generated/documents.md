@@ -284,9 +284,9 @@
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-core-deployment.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-core-deployment.md) | documentation | 151 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-hook-rehearsal.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-hook-rehearsal.md) | documentation | 146 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-twap-rehearsal.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-twap-rehearsal.md) | documentation | 156 | 2026-08-24 |
-| [docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md](../../docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md) | documentation | 448 | 2026-08-27 |
-| [docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md](../../docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md) | documentation | 218 | 2026-08-26 |
-| [docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md](../../docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md) | documentation | 1152 | 2026-08-26 |
+| [docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md](../../docs/superpowers/plans/2026-08-26-finalized-observation-kernel.md) | documentation | 533 | 2026-08-27 |
+| [docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md](../../docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md) | documentation | 231 | 2026-08-27 |
+| [docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md](../../docs/superpowers/plans/2026-08-26-registry-nominations-ballots.md) | documentation | 1230 | 2026-08-27 |
 | [docs/superpowers/plans/2026-08-26-settlement-gas-pool.md](../../docs/superpowers/plans/2026-08-26-settlement-gas-pool.md) | documentation | 600 | 2026-08-26 |
 | [docs/superpowers/plans/2026-08-27-finalized-event-time-handoff.md](../../docs/superpowers/plans/2026-08-27-finalized-event-time-handoff.md) | documentation | 221 | 2026-08-27 |
 | [docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md](../../docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md) | design | 124 | 2026-08-23 |
