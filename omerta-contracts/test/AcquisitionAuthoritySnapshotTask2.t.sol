@@ -4,6 +4,7 @@ pragma solidity 0.8.26;
 import {Test} from "forge-std/Test.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {AcquisitionConstellationFactory} from "../src/AcquisitionConstellationFactory.sol";
+import {AcquisitionAuthority} from "../src/AcquisitionAuthority.sol";
 import {AcquisitionVaultCore} from "../src/AcquisitionVaultCore.sol";
 import {PreVoteBudgetBook} from "../src/PreVoteBudgetBook.sol";
 import {AcquisitionIntentExecution} from "../src/AcquisitionIntentExecution.sol";
@@ -63,6 +64,20 @@ contract MaliciousSnapshotAuthority {
 contract SnapshotForceEther {
     constructor(address payable target) payable {
         selfdestruct(target);
+    }
+}
+
+contract SnapshotAuthorityDeployer {
+    function deploy(
+        bytes32 manifest,
+        address safe,
+        address registry,
+        address core,
+        address budget,
+        address intent,
+        address reconciliation
+    ) external returns (AcquisitionAuthority) {
+        return new AcquisitionAuthority(address(this), manifest, safe, registry, core, budget, intent, reconciliation);
     }
 }
 
@@ -153,6 +168,31 @@ contract AcquisitionAuthoritySnapshotTask2Test is Test {
         assertEq(phase, 4);
     }
 
+    function test_snapshotEveryAdjacentOrdinalPrecedenceEdgeIsExactAndAtomic() public {
+        (AcquisitionConstellationFactory factory, MaliciousSnapshotAuthority authority, address[5] memory children) =
+            _ready();
+        uint256[27] memory valid;
+        for (uint8 field; field < 27; ++field) {
+            valid[field] = authority.word(field);
+            authority.setWord(field, valid[field] ^ 1);
+        }
+        for (uint8 expected; expected < 27; ++expected) {
+            vm.recordLogs();
+            vm.expectRevert(
+                abi.encodeWithSelector(
+                    AcquisitionConstellationFactory.FactoryAuthoritySnapshotSemanticMismatch.selector, expected
+                )
+            );
+            factory.finalizeConstellation();
+            assertEq(vm.getRecordedLogs().length, 0);
+            _assertReadyAndUnfinalized(factory, children);
+            authority.setWord(expected, valid[expected]);
+        }
+        factory.finalizeConstellation();
+        (,, uint8 phase,,,,,) = factory.factoryState();
+        assertEq(phase, 4);
+    }
+
     function test_snapshotCanonicalAddressBoolAndTypedZeroValidation() public {
         (AcquisitionConstellationFactory factory, MaliciousSnapshotAuthority authority, address[5] memory children) =
             _ready();
@@ -237,8 +277,37 @@ contract AcquisitionAuthoritySnapshotTask2Test is Test {
         assertTrue(ok);
         assertEq(result.length, 864);
         assertLe(consumed, 160_000);
-        vm.expectCallMinGas(address(authority), 0, uint64(160_000), abi.encodeWithSignature("authoritySnapshot()"));
+        vm.expectCall(address(authority), 0, uint64(160_000), abi.encodeWithSignature("authoritySnapshot()"));
         factory.finalizeConstellation();
+    }
+
+    function test_compiledProductionSnapshotColdPathFitsCapAndFactoryCapIsBuildBound() public {
+        SnapshotAuthorityDeployer deployer = new SnapshotAuthorityDeployer();
+        address predictedAuthority = vm.computeCreateAddress(address(deployer), 1);
+        address predictedCore = vm.computeCreateAddress(address(deployer), 2);
+        address predictedBudget = vm.computeCreateAddress(address(deployer), 3);
+        address predictedIntent = vm.computeCreateAddress(address(deployer), 4);
+        address predictedReconciliation = vm.computeCreateAddress(address(deployer), 5);
+        AcquisitionAuthority authority = deployer.deploy(
+            keccak256("snapshot-cap-manifest"),
+            address(safe),
+            address(registry),
+            predictedCore,
+            predictedBudget,
+            predictedIntent,
+            predictedReconciliation
+        );
+        assertEq(address(authority), predictedAuthority);
+        _cool(address(authority));
+        (bool ok, bytes memory result) = address(authority).staticcall{gas: 160_000}(
+            abi.encodeWithSelector(AcquisitionAuthority.authoritySnapshot.selector)
+        );
+        assertTrue(ok);
+        assertEq(result.length, 864);
+
+        string memory source = vm.readFile("src/AcquisitionConstellationFactory.sol");
+        assertTrue(_contains(source, "uint256 private constant _AUTHORITY_SNAPSHOT_GAS = 160_000;"));
+        assertTrue(_contains(source, "staticcall(_AUTHORITY_SNAPSHOT_GAS, authority, buffer, 0x04, buffer, 0x360)"));
     }
 
     function test_snapshotRealPathForcedEtherIsInert() public {
@@ -388,5 +457,22 @@ contract AcquisitionAuthoritySnapshotTask2Test is Test {
     function _cool(address target) internal {
         (bool ok,) = address(vm).call(abi.encodeWithSignature("cool(address)", target));
         assertTrue(ok);
+    }
+
+    function _contains(string memory haystack, string memory needle) internal pure returns (bool) {
+        bytes memory h = bytes(haystack);
+        bytes memory n = bytes(needle);
+        if (n.length > h.length) return false;
+        for (uint256 i; i <= h.length - n.length; ++i) {
+            bool match_ = true;
+            for (uint256 j; j < n.length; ++j) {
+                if (h[i + j] != n[j]) {
+                    match_ = false;
+                    break;
+                }
+            }
+            if (match_) return true;
+        }
+        return false;
     }
 }
