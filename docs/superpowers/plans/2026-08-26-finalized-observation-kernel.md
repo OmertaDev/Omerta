@@ -294,8 +294,13 @@ Task 5; use at most five fix/re-review loops.
 **Files:**
 
 - Modify: `src/stockcatalogv2.js`
+- Modify: `schema.sql`
 - Modify: `test/stockcatalogv2.js`
-- Modify: `test/finalizedobservation.js`
+- Create: `test/stockcatalogv2.postgres.js`
+- Modify: `package.json`
+- Modify: `.github/workflows/ci.yml`
+- Modify only if a genuinely generic regression is exposed:
+  `test/finalizedobservation.js`
 
 **Consumes:** independently approved Tasks 1–4. This task begins only after the
 Task 5 ballot fix has committed, been independently approved, and the shared
@@ -307,15 +312,57 @@ Prove the default production registry observation uses FO's bounded/pinned
 facade, every Task 2 getter stays at the FO target, Task 2 validation/snapshot
 hash/readiness output is unchanged, a bounded not-caught-up observation cannot
 refresh ready freshness, and no second head/log/cursor implementation remains.
+The production consumer requires canonical-decimal
+`STOCK_TOKEN_REGISTRY_V2_START_BLOCK`, binds chain `4663`, exact configured
+registry address and start block, and uses reviewed code constants
+`maxBlockSpan=10000n`, `maxLogs=2000`, and `maxBytes=2000000`.
 
 **Step 2: Extract only pure at-block enumeration**
 
 Retain Task 2's normalized production config, complete registry history/head
 enumeration, immutable snapshot validator/hash, database synchronizer, and public
-read model. Route its on-chain transport through FO without changing injected
-reader test seams or weakening exact registry readiness.
+read model. Extract a pure enumeration callback that receives only FO's pinned
+`readContract` facade and exact head evidence. Route the default production
+transport through FO without changing injected-reader test seams or weakening
+exact registry readiness. The consumer-owned viem wrapper must make one raw
+`eth_getLogs` request for the exact address/range and a topic-0 OR matrix covering
+all five V2 registry event signatures; it normalizes JSON-RPC quantities to
+`BigInt`, exposes no raw request capability to the getter callback, never sorts
+provider output, and provides no retry/pagination/fallback authority.
 
-**Step 3: Run focused and coupled suites**
+**Step 3: Add the separate durable getter-mirror consumer**
+
+Add a getter-mirror-specific checkpoint and raw finalized-log inbox, permanently
+bound to the consumer key, chain, contract and start block. The checkpoint stores
+the exact applied block/hash, prior FO observation commitment, finalized horizon,
+`caught_up`, verification time, and a distinct `ready_verified_at`. Existing
+pre-FO rows are not backfilled as ready. Inbox identity is exactly FO's five-part
+identity and a duplicate must match every stored byte or fail atomically.
+
+Keep this consumer categorically separate from CN-6: raw logs are observation
+evidence only; Task 5 does not decode or claim activation, reviewer, publisher,
+Safe or ballot-lifecycle provenance. Its domain apply remains Task 2's complete
+getter snapshot and current-head replacement. Under a permanent mirror lock, one
+transaction orders checkpoint lock, inbox insert/verify, getter-domain apply,
+and checkpoint advance. A partial bounded observation may advance applied state
+but not `ready_verified_at`; caught-up success advances it once; exact replay
+advances neither. Public ten-minute readiness uses PostgreSQL time against
+`ready_verified_at`, with exactly 600 seconds fresh and the first microsecond
+after stale.
+
+**Step 4: Prove the concrete transaction on real PostgreSQL**
+
+Create a disposable unique-schema test lane, refusing any database not explicitly
+provided as `TEST_DATABASE_URL`. Use two independent connections and real
+`NUMERIC(78,0)`, `TIMESTAMPTZ`, row locks and transactions. Cover concurrent
+bootstrap and same-base alternatives, exact replay, inbox conflicts, failure
+after each atomic stage, values beyond `2^53`, deterministic lock order/deadlock
+bounds, partial-versus-caught-up readiness, the exact 600-second-plus-one-
+microsecond boundary, coherent repeatable-read public views, and proof that all
+RPC completed before checkout/`BEGIN`. Wire this lane into the real-PostgreSQL CI
+job; pg-mem remains fast shape coverage and is not concurrency evidence.
+
+**Step 5: Run focused and coupled suites**
 
 ```powershell
 node test/finalizedobservation.js
@@ -325,15 +372,21 @@ node test/rwanominations.js
 node test/preflight.js
 node --check src/finalizedobservation.js
 node --check src/stockcatalogv2.js
+# With an explicitly disposable database:
+$env:TEST_DATABASE_URL='<throwaway-postgres-url>'
+node test/stockcatalogv2.postgres.js
 ```
 
-**Step 4: Commit and independently review the integration**
+**Step 6: Commit and independently review the integration**
 
 Review specifically for Task 2 regression, current-address readiness, exact
 ten-minute PostgreSQL boundary, bounded target/horizon coherence, no readiness
-refresh while catching up, and no duplicate finality transport. No schema,
-worker, route, contract, H, activation lifecycle, publisher, or funds code is
-allowed in this commit.
+refresh while catching up, real transaction atomicity, separate getter/CN-6
+consumer authority, and no duplicate finality transport. No worker, route,
+contract, H, activation lifecycle, publisher, Safe, reviewer, or funds code is
+allowed in this commit. The schema and real-PostgreSQL additions are the narrow
+master-spec-required exception to the original Task 5 file boundary; legacy
+`chain_cursor` and confirmation-depth watcher state remain forbidden.
 
 ---
 
