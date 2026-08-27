@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c",
+  "sourceRevision": "5ef0aa68fad49aab2e06dc93432d625e1c050445",
   "worktreeDirty": true,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 4453,
-    "edges": 20949,
+    "nodes": 4486,
+    "edges": 21073,
     "byNodeType": {
-      "Artifact": 1557,
+      "Artifact": 1568,
       "Command": 32,
-      "Commit": 939,
-      "Contract": 28,
-      "Document": 401,
+      "Commit": 951,
+      "Contract": 31,
+      "Document": 402,
       "Domain": 12,
       "ExternalDependency": 23,
       "HistoricalArtifact": 35,
@@ -60,24 +60,24 @@
       "Route": 712,
       "Subsystem": 8,
       "Table": 245,
-      "TestSuite": 168,
+      "TestSuite": 174,
       "Workflow": 3
     },
     "byEdgeType": {
-      "BELONGS_TO": 1813,
-      "CHANGED": 8065,
-      "CONTAINS": 1577,
+      "BELONGS_TO": 1823,
+      "CHANGED": 8124,
+      "CONTAINS": 1588,
       "DECLARES": 32,
-      "DEFINED_IN": 986,
+      "DEFINED_IN": 989,
       "DEPENDS_ON": 59,
       "EXECUTES": 148,
       "HANDLED_BY": 653,
-      "HAS_COMMIT": 939,
+      "HAS_COMMIT": 951,
       "IMPLEMENTS": 124,
       "IMPORTS": 1440,
       "INHERITS": 4,
-      "REFERENCES": 2405,
-      "REPRESENTS": 735,
+      "REFERENCES": 2427,
+      "REPRESENTS": 742,
       "TESTS": 510,
       "TRACKS": 126,
       "USES_TABLE": 1333
@@ -6612,9 +6612,9 @@
           "version": "c264d8eb8ba76427"
         }
       ],
-      "lastChangedAt": "2026-08-25T01:30:47-04:00",
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0a5474da70ad486754331ba0eae211017662bde1"
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:art/art-prompts.json",
@@ -9062,20 +9062,20 @@
       "path": "CHAIN-DEPLOY.md",
       "kind": "operations",
       "extension": ".md",
-      "bytes": 202056,
-      "lines": 1962,
-      "version": "a532348cee2d694b",
+      "bytes": 202381,
+      "lines": 1963,
+      "version": "97c1c6132f78168e",
       "text": true,
       "provenance": [
         {
           "file": "CHAIN-DEPLOY.md",
           "line": 1,
-          "version": "a532348cee2d694b"
+          "version": "97c1c6132f78168e"
         }
       ],
-      "lastChangedAt": "2026-08-25T01:16:12-04:00",
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:CLAUDE.md",
@@ -10076,15 +10076,18 @@
       "extension": ".docx",
       "bytes": 107295,
       "lines": null,
-      "version": "3abe7d23d092add9",
+      "version": "9e478687cddb0b72",
       "text": false,
       "provenance": [
         {
           "file": "docs/OMERTA-Whitepaper.docx",
           "line": 1,
-          "version": "3abe7d23d092add9"
+          "version": "9e478687cddb0b72"
         }
-      ]
+      ],
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:docs/OMR-MARKETING-PACK.md",
@@ -10248,6 +10251,29 @@
       "lastChangedCommit": "dee7593a66b955d677656afab4516cb68edb918d"
     },
     {
+      "key": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "type": "Artifact",
+      "id": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "label": "2026-08-26-settlement-gas-pool.md",
+      "path": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 39263,
+      "lines": 600,
+      "version": "f990a45efa880b3f",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+          "line": 1,
+          "version": "f990a45efa880b3f"
+        }
+      ],
+      "lastChangedAt": "2026-08-26T06:19:01-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "268eeebcc46a27243a18532192db6f2576e026ed"
+    },
+    {
       "key": "Artifact:docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md",
       "type": "Artifact",
       "id": "docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md",
@@ -10289,9 +10315,9 @@
           "version": "e98e4edecbcecfa8"
         }
       ],
-      "lastChangedAt": "2026-08-25T01:16:12-04:00",
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:GRAPH.md",
@@ -10818,9 +10844,9 @@
           "version": "7b44f37a150b90b3"
         }
       ],
-      "lastChangedAt": "2026-08-13T08:48:16-04:00",
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fcb5f634bf658a1e28b3dcea993321dfaa9b62f6"
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:omerta-broadcast-design.md",
@@ -10864,9 +10890,9 @@
           "version": "29750df88cc4e2f5"
         }
       ],
-      "lastChangedAt": "2026-08-25T01:16:12-04:00",
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:omerta-business-empire-design.md",
@@ -12157,6 +12183,29 @@
       "lastChangedCommit": "500c8a095fef7af11a8c793cb5d658412ff6a286"
     },
     {
+      "key": "Artifact:omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol",
+      "type": "Artifact",
+      "id": "omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol",
+      "label": "ISettlementDataFeeSource.sol",
+      "path": "omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol",
+      "kind": "contract-source",
+      "extension": ".sol",
+      "bytes": 176,
+      "lines": 7,
+      "version": "78162a91debc5d58",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol",
+          "line": 1,
+          "version": "78162a91debc5d58"
+        }
+      ],
+      "lastChangedAt": "2026-08-26T04:41:34-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "b08914b46287fd0f434765ffc411d7ec843a0d5a"
+    },
+    {
       "key": "Artifact:omerta-contracts/src/IOmrOracle.sol",
       "type": "Artifact",
       "id": "omerta-contracts/src/IOmrOracle.sol",
@@ -12339,6 +12388,29 @@
       "lastChangedAt": "2026-08-25T01:16:12-04:00",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
+    },
+    {
+      "key": "Artifact:omerta-contracts/src/SettlementGasPool.sol",
+      "type": "Artifact",
+      "id": "omerta-contracts/src/SettlementGasPool.sol",
+      "label": "SettlementGasPool.sol",
+      "path": "omerta-contracts/src/SettlementGasPool.sol",
+      "kind": "contract-source",
+      "extension": ".sol",
+      "bytes": 30256,
+      "lines": 799,
+      "version": "8ec50b2c5975726a",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/src/SettlementGasPool.sol",
+          "line": 1,
+          "version": "8ec50b2c5975726a"
+        }
+      ],
+      "lastChangedAt": "2026-08-26T06:19:01-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "268eeebcc46a27243a18532192db6f2576e026ed"
     },
     {
       "key": "Artifact:omerta-contracts/src/StockTokenRegistry.sol",
@@ -13445,6 +13517,98 @@
       "lastChangedCommit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
     },
     {
+      "key": "Artifact:omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+      "type": "Artifact",
+      "id": "omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+      "label": "SettlementGasPoolConfig.t.sol",
+      "path": "omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+      "kind": "contract-test",
+      "extension": ".sol",
+      "bytes": 27435,
+      "lines": 587,
+      "version": "af55547678a13268",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+          "line": 1,
+          "version": "af55547678a13268"
+        }
+      ],
+      "lastChangedAt": "2026-08-26T06:19:01-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "268eeebcc46a27243a18532192db6f2576e026ed"
+    },
+    {
+      "key": "Artifact:omerta-contracts/test/SettlementGasPoolCore.t.sol",
+      "type": "Artifact",
+      "id": "omerta-contracts/test/SettlementGasPoolCore.t.sol",
+      "label": "SettlementGasPoolCore.t.sol",
+      "path": "omerta-contracts/test/SettlementGasPoolCore.t.sol",
+      "kind": "contract-test",
+      "extension": ".sol",
+      "bytes": 31771,
+      "lines": 753,
+      "version": "f116ebb92d41cdf3",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/test/SettlementGasPoolCore.t.sol",
+          "line": 1,
+          "version": "f116ebb92d41cdf3"
+        }
+      ],
+      "lastChangedAt": "2026-08-26T05:32:12-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "d71886f8352fcff3f5bbc2cb1f138957d0906dfa"
+    },
+    {
+      "key": "Artifact:omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
+      "type": "Artifact",
+      "id": "omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
+      "label": "SettlementGasPoolInvariant.t.sol",
+      "path": "omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
+      "kind": "contract-test",
+      "extension": ".sol",
+      "bytes": 6466,
+      "lines": 155,
+      "version": "13987cca9a5786e9",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
+          "line": 1,
+          "version": "13987cca9a5786e9"
+        }
+      ],
+      "lastChangedAt": "2026-08-26T05:45:37-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "e512592f37f15bbf2319213c3bd1fe3c18d0c75d"
+    },
+    {
+      "key": "Artifact:omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+      "type": "Artifact",
+      "id": "omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+      "label": "SettlementGasPoolMigration.t.sol",
+      "path": "omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+      "kind": "contract-test",
+      "extension": ".sol",
+      "bytes": 25468,
+      "lines": 544,
+      "version": "f99e78600d780afa",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+          "line": 1,
+          "version": "f99e78600d780afa"
+        }
+      ],
+      "lastChangedAt": "2026-08-26T05:32:12-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "d71886f8352fcff3f5bbc2cb1f138957d0906dfa"
+    },
+    {
       "key": "Artifact:omerta-contracts/test/StockVault.t.sol",
       "type": "Artifact",
       "id": "omerta-contracts/test/StockVault.t.sol",
@@ -13535,6 +13699,29 @@
       "lastChangedAt": "2026-08-25T01:16:12-04:00",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
+    },
+    {
+      "key": "Artifact:omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
+      "type": "Artifact",
+      "id": "omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
+      "label": "SettlementGasPoolTestBase.sol",
+      "path": "omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
+      "kind": "contract-test",
+      "extension": ".sol",
+      "bytes": 2884,
+      "lines": 84,
+      "version": "54228f42fc563f65",
+      "text": true,
+      "provenance": [
+        {
+          "file": "omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
+          "line": 1,
+          "version": "54228f42fc563f65"
+        }
+      ],
+      "lastChangedAt": "2026-08-26T05:01:05-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "ff987f9d9e0feca4a9125aca7c7bad5f43720a4b"
     },
     {
       "key": "Artifact:omerta-contracts/test/vendor/ERC6551Account.sol",
@@ -15113,9 +15300,9 @@
           "version": "61de81460cb2e0a8"
         }
       ],
-      "lastChangedAt": "2026-08-25T01:16:12-04:00",
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:omerta-scarcity-design.md",
@@ -15826,9 +16013,9 @@
           "version": "5e6b5b7bed9c9f25"
         }
       ],
-      "lastChangedAt": "2026-08-23T21:51:20-04:00",
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "db38f84bc4828901ac328aa313209be16636b604"
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:public/apple-touch-icon.png",
@@ -28108,9 +28295,9 @@
           "version": "f7e0eaa2b9a80abf"
         }
       ],
-      "lastChangedAt": "2026-08-25T01:16:12-04:00",
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:README.md",
@@ -28260,18 +28447,18 @@
       "extension": ".md",
       "bytes": 46682,
       "lines": 648,
-      "version": "89959b4bf8257d8a",
+      "version": "0e3407f705e9c4ac",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "89959b4bf8257d8a"
+          "version": "0e3407f705e9c4ac"
         }
       ],
-      "lastChangedAt": "2026-08-25T01:16:12-04:00",
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -28476,9 +28663,9 @@
           "version": "be159b75350911fe"
         }
       ],
-      "lastChangedAt": "2026-08-17T03:22:06-04:00",
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "71efc650480a96dbf268b575781cf66741d6ac4f"
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:src/bloodline.js",
@@ -28568,9 +28755,9 @@
           "version": "1568672318201ddc"
         }
       ],
-      "lastChangedAt": "2026-08-25T00:11:25-04:00",
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "62b32308c476f7616b9e32d30104be07d46a36ca"
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:src/bulletin.js",
@@ -31121,9 +31308,9 @@
           "version": "bdfffd5c649c3e33"
         }
       ],
-      "lastChangedAt": "2026-08-24T16:20:04-04:00",
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "887d75a7a67e661eaecb7089eeac172269073b4e"
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:src/rwastockkeeper.js",
@@ -32041,9 +32228,9 @@
           "version": "e0e46175d56c203a"
         }
       ],
-      "lastChangedAt": "2026-08-12T21:32:44-04:00",
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "29b6b4d3a662d91c824dc3f0dd69421124c4cd2c"
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:test/agentturn.js",
@@ -32156,9 +32343,9 @@
           "version": "e3a3bc0962dc259f"
         }
       ],
-      "lastChangedAt": "2026-08-17T03:22:06-04:00",
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "71efc650480a96dbf268b575781cf66741d6ac4f"
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:test/bonds.js",
@@ -32225,9 +32412,9 @@
           "version": "9810207310880d6e"
         }
       ],
-      "lastChangedAt": "2026-08-25T00:11:25-04:00",
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "62b32308c476f7616b9e32d30104be07d46a36ca"
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:test/bulletin.js",
@@ -32317,9 +32504,9 @@
           "version": "5153a920695ffdd9"
         }
       ],
-      "lastChangedAt": "2026-08-21T18:28:23-04:00",
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fa01f1c4e7da901fc2fb51080678fa743ec6ba3e"
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:test/chainparams.js",
@@ -32575,6 +32762,29 @@
       "lastChangedCommit": "28cf761ffad0cf5a9d814589d4aa1fd5a2b52491"
     },
     {
+      "key": "Artifact:test/contextplus.js",
+      "type": "Artifact",
+      "id": "test/contextplus.js",
+      "label": "contextplus.js",
+      "path": "test/contextplus.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 4940,
+      "lines": 132,
+      "version": "2b751afea198988d",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/contextplus.js",
+          "line": 1,
+          "version": "2b751afea198988d"
+        }
+      ],
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+    },
+    {
       "key": "Artifact:test/convoy.js",
       "type": "Artifact",
       "id": "test/convoy.js",
@@ -32800,9 +33010,9 @@
           "version": "635e85b82cb77222"
         }
       ],
-      "lastChangedAt": "2026-08-25T01:16:12-04:00",
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:test/drop.js",
@@ -33398,9 +33608,9 @@
           "version": "c41fbab8570101d2"
         }
       ],
-      "lastChangedAt": "2026-08-21T16:44:39-04:00",
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c04b380a663d103a21d23d9ee5073724b392c88f"
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:test/market.js",
@@ -34295,9 +34505,9 @@
           "version": "ea5e450ce7b8bd41"
         }
       ],
-      "lastChangedAt": "2026-08-24T14:49:55-04:00",
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dee7593a66b955d677656afab4516cb68edb918d"
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:test/speakeasy.js",
@@ -35059,6 +35269,29 @@
       "lastChangedCommit": "dd8e51401f4950ac05a6f8eb8d147a31c778f548"
     },
     {
+      "key": "Artifact:tools/contextplus-health.js",
+      "type": "Artifact",
+      "id": "tools/contextplus-health.js",
+      "label": "contextplus-health.js",
+      "path": "tools/contextplus-health.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 2320,
+      "lines": 64,
+      "version": "80d77ca35f209686",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/contextplus-health.js",
+          "line": 1,
+          "version": "80d77ca35f209686"
+        }
+      ],
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+    },
+    {
       "key": "Artifact:tools/dexbot-e2e.js",
       "type": "Artifact",
       "id": "tools/dexbot-e2e.js",
@@ -35701,6 +35934,29 @@
       "lastChangedAt": "2026-08-05T03:01:34Z",
       "lastChangedBy": "Claude",
       "lastChangedCommit": "7feb393915616ed8b9c1beae44107dc984026be9"
+    },
+    {
+      "key": "Artifact:tools/setup-contextplus.ps1",
+      "type": "Artifact",
+      "id": "tools/setup-contextplus.ps1",
+      "label": "setup-contextplus.ps1",
+      "path": "tools/setup-contextplus.ps1",
+      "kind": "engineering-harness",
+      "extension": ".ps1",
+      "bytes": 2476,
+      "lines": 62,
+      "version": "e5ee3889b2ceff79",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/setup-contextplus.ps1",
+          "line": 1,
+          "version": "e5ee3889b2ceff79"
+        }
+      ],
+      "lastChangedAt": "2026-08-26T18:53:14-04:00",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
     },
     {
       "key": "Artifact:tools/sim.js",
@@ -37423,6 +37679,22 @@
       ]
     },
     {
+      "key": "Commit:17c003c62cd931bc7ad9e65604887f7711bc2ccf",
+      "type": "Commit",
+      "id": "17c003c62cd931bc7ad9e65604887f7711bc2ccf",
+      "label": "feat: add settlement gas credit accounting",
+      "title": "feat: add settlement gas credit accounting",
+      "date": "2026-08-26T04:12:54-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/17c003c62cd931bc7ad9e65604887f7711bc2ccf",
+      "provenance": [
+        {
+          "commit": "17c003c62cd931bc7ad9e65604887f7711bc2ccf",
+          "url": "https://github.com/OmertaDev/Omerta/commit/17c003c62cd931bc7ad9e65604887f7711bc2ccf"
+        }
+      ]
+    },
+    {
       "key": "Commit:17fe45cf8e4e85d682dcac49d2bb12e8bfa116e2",
       "type": "Commit",
       "id": "17fe45cf8e4e85d682dcac49d2bb12e8bfa116e2",
@@ -38175,6 +38447,22 @@
       ]
     },
     {
+      "key": "Commit:268eeebcc46a27243a18532192db6f2576e026ed",
+      "type": "Commit",
+      "id": "268eeebcc46a27243a18532192db6f2576e026ed",
+      "label": "test: harden settlement gas pool review boundaries",
+      "title": "test: harden settlement gas pool review boundaries",
+      "date": "2026-08-26T06:19:01-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/268eeebcc46a27243a18532192db6f2576e026ed",
+      "provenance": [
+        {
+          "commit": "268eeebcc46a27243a18532192db6f2576e026ed",
+          "url": "https://github.com/OmertaDev/Omerta/commit/268eeebcc46a27243a18532192db6f2576e026ed"
+        }
+      ]
+    },
+    {
       "key": "Commit:26a30525c9dbab1cf187c4340ff0ae7b0fd2fe23",
       "type": "Commit",
       "id": "26a30525c9dbab1cf187c4340ff0ae7b0fd2fe23",
@@ -38187,6 +38475,22 @@
         {
           "commit": "26a30525c9dbab1cf187c4340ff0ae7b0fd2fe23",
           "url": "https://github.com/OmertaDev/Omerta/commit/26a30525c9dbab1cf187c4340ff0ae7b0fd2fe23"
+        }
+      ]
+    },
+    {
+      "key": "Commit:26c0fdf684e966daa7585ceb08a25161add95589",
+      "type": "Commit",
+      "id": "26c0fdf684e966daa7585ceb08a25161add95589",
+      "label": "docs: plan settlement gas pool",
+      "title": "docs: plan settlement gas pool",
+      "date": "2026-08-26T03:58:47-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/26c0fdf684e966daa7585ceb08a25161add95589",
+      "provenance": [
+        {
+          "commit": "26c0fdf684e966daa7585ceb08a25161add95589",
+          "url": "https://github.com/OmertaDev/Omerta/commit/26c0fdf684e966daa7585ceb08a25161add95589"
         }
       ]
     },
@@ -38731,6 +39035,22 @@
         {
           "commit": "2da0333fb0117ee7bf07a53156b550b1f307f63c",
           "url": "https://github.com/OmertaDev/Omerta/commit/2da0333fb0117ee7bf07a53156b550b1f307f63c"
+        }
+      ]
+    },
+    {
+      "key": "Commit:2dddbdaab85f6f63385c00e21f15aed958cc5a51",
+      "type": "Commit",
+      "id": "2dddbdaab85f6f63385c00e21f15aed958cc5a51",
+      "label": "test: harden settlement gas pool core coverage",
+      "title": "test: harden settlement gas pool core coverage",
+      "date": "2026-08-26T04:25:30-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2dddbdaab85f6f63385c00e21f15aed958cc5a51",
+      "provenance": [
+        {
+          "commit": "2dddbdaab85f6f63385c00e21f15aed958cc5a51",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2dddbdaab85f6f63385c00e21f15aed958cc5a51"
         }
       ]
     },
@@ -41979,6 +42299,22 @@
         {
           "commit": "5ee73d90a898beaa87dd7f78909b304021a3ee32",
           "url": "https://github.com/OmertaDev/Omerta/commit/5ee73d90a898beaa87dd7f78909b304021a3ee32"
+        }
+      ]
+    },
+    {
+      "key": "Commit:5ef0aa68fad49aab2e06dc93432d625e1c050445",
+      "type": "Commit",
+      "id": "5ef0aa68fad49aab2e06dc93432d625e1c050445",
+      "label": "Merge origin/codex/site-copy-ui-upgrade into codex/settlement-gas-pool",
+      "title": "Merge origin/codex/site-copy-ui-upgrade into codex/settlement-gas-pool",
+      "date": "2026-08-27T00:00:03-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5ef0aa68fad49aab2e06dc93432d625e1c050445",
+      "provenance": [
+        {
+          "commit": "5ef0aa68fad49aab2e06dc93432d625e1c050445",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5ef0aa68fad49aab2e06dc93432d625e1c050445"
         }
       ]
     },
@@ -47151,6 +47487,22 @@
       ]
     },
     {
+      "key": "Commit:b08914b46287fd0f434765ffc411d7ec843a0d5a",
+      "type": "Commit",
+      "id": "b08914b46287fd0f434765ffc411d7ec843a0d5a",
+      "label": "feat: govern settlement gas pool configuration",
+      "title": "feat: govern settlement gas pool configuration",
+      "date": "2026-08-26T04:41:34-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b08914b46287fd0f434765ffc411d7ec843a0d5a",
+      "provenance": [
+        {
+          "commit": "b08914b46287fd0f434765ffc411d7ec843a0d5a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b08914b46287fd0f434765ffc411d7ec843a0d5a"
+        }
+      ]
+    },
+    {
       "key": "Commit:b0aa9df018c47e8f248bc31b1672854337a39225",
       "type": "Commit",
       "id": "b0aa9df018c47e8f248bc31b1672854337a39225",
@@ -48431,6 +48783,22 @@
       ]
     },
     {
+      "key": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "type": "Commit",
+      "id": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "label": "Expand game systems and agent workflows",
+      "title": "Expand game systems and agent workflows",
+      "date": "2026-08-26T18:53:14-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "provenance": [
+        {
+          "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+        }
+      ]
+    },
+    {
       "key": "Commit:c6db5d1bdcef0cb6f2db706dbf833a4465e8083e",
       "type": "Commit",
       "id": "c6db5d1bdcef0cb6f2db706dbf833a4465e8083e",
@@ -49199,6 +49567,22 @@
       ]
     },
     {
+      "key": "Commit:d71886f8352fcff3f5bbc2cb1f138957d0906dfa",
+      "type": "Commit",
+      "id": "d71886f8352fcff3f5bbc2cb1f138957d0906dfa",
+      "label": "test: harden settlement gas pool invariants",
+      "title": "test: harden settlement gas pool invariants",
+      "date": "2026-08-26T05:32:12-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d71886f8352fcff3f5bbc2cb1f138957d0906dfa",
+      "provenance": [
+        {
+          "commit": "d71886f8352fcff3f5bbc2cb1f138957d0906dfa",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d71886f8352fcff3f5bbc2cb1f138957d0906dfa"
+        }
+      ]
+    },
+    {
       "key": "Commit:d75d335aa29204d337826cb85898af558ba10311",
       "type": "Commit",
       "id": "d75d335aa29204d337826cb85898af558ba10311",
@@ -49919,6 +50303,22 @@
       ]
     },
     {
+      "key": "Commit:e3ea30ce3b21fbaa253f668efeeed502dd784903",
+      "type": "Commit",
+      "id": "e3ea30ce3b21fbaa253f668efeeed502dd784903",
+      "label": "docs: register settlement gas pool audit scope",
+      "title": "docs: register settlement gas pool audit scope",
+      "date": "2026-08-26T10:45:58-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e3ea30ce3b21fbaa253f668efeeed502dd784903",
+      "provenance": [
+        {
+          "commit": "e3ea30ce3b21fbaa253f668efeeed502dd784903",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e3ea30ce3b21fbaa253f668efeeed502dd784903"
+        }
+      ]
+    },
+    {
       "key": "Commit:e45c539124aeb46d5c535b63bd8d729955d3ce72",
       "type": "Commit",
       "id": "e45c539124aeb46d5c535b63bd8d729955d3ce72",
@@ -49931,6 +50331,22 @@
         {
           "commit": "e45c539124aeb46d5c535b63bd8d729955d3ce72",
           "url": "https://github.com/OmertaDev/Omerta/commit/e45c539124aeb46d5c535b63bd8d729955d3ce72"
+        }
+      ]
+    },
+    {
+      "key": "Commit:e512592f37f15bbf2319213c3bd1fe3c18d0c75d",
+      "type": "Commit",
+      "id": "e512592f37f15bbf2319213c3bd1fe3c18d0c75d",
+      "label": "test: make settlement credit invariant independent",
+      "title": "test: make settlement credit invariant independent",
+      "date": "2026-08-26T05:45:37-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e512592f37f15bbf2319213c3bd1fe3c18d0c75d",
+      "provenance": [
+        {
+          "commit": "e512592f37f15bbf2319213c3bd1fe3c18d0c75d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e512592f37f15bbf2319213c3bd1fe3c18d0c75d"
         }
       ]
     },
@@ -50443,6 +50859,22 @@
         {
           "commit": "ef3b73a380e642938dfbbc1b3de9ad57379175da",
           "url": "https://github.com/OmertaDev/Omerta/commit/ef3b73a380e642938dfbbc1b3de9ad57379175da"
+        }
+      ]
+    },
+    {
+      "key": "Commit:ef481a4012569d47b259ac8c72a0b900a1cc90db",
+      "type": "Commit",
+      "id": "ef481a4012569d47b259ac8c72a0b900a1cc90db",
+      "label": "docs: refresh settlement gas pool knowledge graph",
+      "title": "docs: refresh settlement gas pool knowledge graph",
+      "date": "2026-08-26T10:47:32-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ef481a4012569d47b259ac8c72a0b900a1cc90db",
+      "provenance": [
+        {
+          "commit": "ef481a4012569d47b259ac8c72a0b900a1cc90db",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ef481a4012569d47b259ac8c72a0b900a1cc90db"
         }
       ]
     },
@@ -51311,6 +51743,22 @@
       ]
     },
     {
+      "key": "Commit:ff987f9d9e0feca4a9125aca7c7bad5f43720a4b",
+      "type": "Commit",
+      "id": "ff987f9d9e0feca4a9125aca7c7bad5f43720a4b",
+      "label": "feat: add delayed settlement pool migration",
+      "title": "feat: add delayed settlement pool migration",
+      "date": "2026-08-26T05:01:05-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ff987f9d9e0feca4a9125aca7c7bad5f43720a4b",
+      "provenance": [
+        {
+          "commit": "ff987f9d9e0feca4a9125aca7c7bad5f43720a4b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ff987f9d9e0feca4a9125aca7c7bad5f43720a4b"
+        }
+      ]
+    },
+    {
       "key": "Commit:ffea37a33f7cec9ed03674e3e7c5079554ee649b",
       "type": "Commit",
       "id": "ffea37a33f7cec9ed03674e3e7c5079554ee649b",
@@ -51509,6 +51957,36 @@
         {
           "file": "omerta-contracts/src/IOmrOracle.sol",
           "line": 18
+        }
+      ]
+    },
+    {
+      "key": "Contract:ISettlementDataFeeSource",
+      "type": "Contract",
+      "id": "ISettlementDataFeeSource",
+      "label": "ISettlementDataFeeSource",
+      "contractKind": "interface",
+      "file": "omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol",
+      "bases": [],
+      "provenance": [
+        {
+          "file": "omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "key": "Contract:ISettlementGasPoolMigrationCandidate",
+      "type": "Contract",
+      "id": "ISettlementGasPoolMigrationCandidate",
+      "label": "ISettlementGasPoolMigrationCandidate",
+      "contractKind": "interface",
+      "file": "omerta-contracts/src/SettlementGasPool.sol",
+      "bases": [],
+      "provenance": [
+        {
+          "file": "omerta-contracts/src/SettlementGasPool.sol",
+          "line": 9
         }
       ]
     },
@@ -51713,6 +52191,25 @@
         {
           "file": "omerta-contracts/src/RwaStockBuyer.sol",
           "line": 43
+        }
+      ]
+    },
+    {
+      "key": "Contract:SettlementGasPool",
+      "type": "Contract",
+      "id": "SettlementGasPool",
+      "label": "SettlementGasPool",
+      "contractKind": "contract",
+      "file": "omerta-contracts/src/SettlementGasPool.sol",
+      "bases": [
+        "Ownable2Step",
+        "Pausable",
+        "ReentrancyGuard"
+      ],
+      "provenance": [
+        {
+          "file": "omerta-contracts/src/SettlementGasPool.sol",
+          "line": 24
         }
       ]
     },
@@ -56043,13 +56540,13 @@
       "id": "CHAIN-DEPLOY.md",
       "label": "CHAIN-DEPLOY.md",
       "documentType": "operations",
-      "lines": 1962,
-      "version": "a532348cee2d694b",
+      "lines": 1963,
+      "version": "97c1c6132f78168e",
       "provenance": [
         {
           "file": "CHAIN-DEPLOY.md",
           "line": 1,
-          "version": "a532348cee2d694b"
+          "version": "97c1c6132f78168e"
         }
       ]
     },
@@ -56306,6 +56803,22 @@
           "file": "docs/superpowers/plans/2026-08-24-robinhood-testnet-twap-rehearsal.md",
           "line": 1,
           "version": "bcd4240e0c7b53aa"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "type": "Document",
+      "id": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "label": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "documentType": "documentation",
+      "lines": 600,
+      "version": "f990a45efa880b3f",
+      "provenance": [
+        {
+          "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+          "line": 1,
+          "version": "f990a45efa880b3f"
         }
       ]
     },
@@ -58188,12 +58701,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 648,
-      "version": "89959b4bf8257d8a",
+      "version": "0e3407f705e9c4ac",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "89959b4bf8257d8a"
+          "version": "0e3407f705e9c4ac"
         }
       ]
     },
@@ -59184,6 +59697,9 @@
       "path": ".codex/config.toml",
       "provenance": [
         {
+          "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+        },
+        {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
         }
       ]
@@ -59195,6 +59711,9 @@
       "label": ".codex/start-contextplus.ps1",
       "path": ".codex/start-contextplus.ps1",
       "provenance": [
+        {
+          "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+        },
         {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
         }
@@ -59263,6 +59782,9 @@
         },
         {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
+        },
+        {
+          "commit": "ef481a4012569d47b259ac8c72a0b900a1cc90db"
         }
       ]
     },
@@ -59280,6 +59802,9 @@
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
         },
         {
+          "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+        },
+        {
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
         },
         {
@@ -59287,6 +59812,9 @@
         },
         {
           "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
+        },
+        {
+          "commit": "ef481a4012569d47b259ac8c72a0b900a1cc90db"
         }
       ]
     },
@@ -59316,6 +59844,9 @@
           "commit": "bc03455c615ae3f5bab067543fb9c0a5a49f4ae4"
         },
         {
+          "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+        },
+        {
           "commit": "c8d8fdb693bb62b559f1e40382b0d09ebceabad1"
         },
         {
@@ -59329,6 +59860,9 @@
         },
         {
           "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
+        },
+        {
+          "commit": "ef481a4012569d47b259ac8c72a0b900a1cc90db"
         }
       ]
     },
@@ -59358,6 +59892,9 @@
           "commit": "bc03455c615ae3f5bab067543fb9c0a5a49f4ae4"
         },
         {
+          "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+        },
+        {
           "commit": "c8d8fdb693bb62b559f1e40382b0d09ebceabad1"
         },
         {
@@ -59371,6 +59908,9 @@
         },
         {
           "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
+        },
+        {
+          "commit": "ef481a4012569d47b259ac8c72a0b900a1cc90db"
         }
       ]
     },
@@ -59400,6 +59940,9 @@
           "commit": "bc03455c615ae3f5bab067543fb9c0a5a49f4ae4"
         },
         {
+          "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+        },
+        {
           "commit": "c8d8fdb693bb62b559f1e40382b0d09ebceabad1"
         },
         {
@@ -59413,6 +59956,9 @@
         },
         {
           "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
+        },
+        {
+          "commit": "ef481a4012569d47b259ac8c72a0b900a1cc90db"
         }
       ]
     },
@@ -59460,6 +60006,9 @@
           "commit": "bc03455c615ae3f5bab067543fb9c0a5a49f4ae4"
         },
         {
+          "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+        },
+        {
           "commit": "c8d8fdb693bb62b559f1e40382b0d09ebceabad1"
         },
         {
@@ -59473,6 +60022,9 @@
         },
         {
           "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
+        },
+        {
+          "commit": "ef481a4012569d47b259ac8c72a0b900a1cc90db"
         }
       ]
     },
@@ -59488,6 +60040,9 @@
         },
         {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
+        },
+        {
+          "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
         },
         {
           "commit": "dee7593a66b955d677656afab4516cb68edb918d"
@@ -65223,12 +65778,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c",
-      "currentBranch": "codex/site-copy-ui-upgrade",
+      "revision": "5ef0aa68fad49aab2e06dc93432d625e1c050445",
+      "currentBranch": "codex/settlement-gas-pool",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": true,
-      "currentArtifactCount": 1558,
+      "currentArtifactCount": 1569,
       "provenance": [
         {
           "file": "README.md",
@@ -86064,6 +86619,66 @@
       ]
     },
     {
+      "key": "TestSuite:omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+      "type": "TestSuite",
+      "id": "omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+      "label": "omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+      "lines": 587,
+      "version": "af55547678a13268",
+      "provenance": [
+        {
+          "file": "omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+          "line": 1,
+          "version": "af55547678a13268"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:omerta-contracts/test/SettlementGasPoolCore.t.sol",
+      "type": "TestSuite",
+      "id": "omerta-contracts/test/SettlementGasPoolCore.t.sol",
+      "label": "omerta-contracts/test/SettlementGasPoolCore.t.sol",
+      "lines": 753,
+      "version": "f116ebb92d41cdf3",
+      "provenance": [
+        {
+          "file": "omerta-contracts/test/SettlementGasPoolCore.t.sol",
+          "line": 1,
+          "version": "f116ebb92d41cdf3"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
+      "type": "TestSuite",
+      "id": "omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
+      "label": "omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
+      "lines": 155,
+      "version": "13987cca9a5786e9",
+      "provenance": [
+        {
+          "file": "omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
+          "line": 1,
+          "version": "13987cca9a5786e9"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+      "type": "TestSuite",
+      "id": "omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+      "label": "omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+      "lines": 544,
+      "version": "f99e78600d780afa",
+      "provenance": [
+        {
+          "file": "omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+          "line": 1,
+          "version": "f99e78600d780afa"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:omerta-contracts/test/StockVault.t.sol",
       "type": "TestSuite",
       "id": "omerta-contracts/test/StockVault.t.sol",
@@ -86120,6 +86735,21 @@
           "file": "omerta-contracts/test/TestnetTwapDependencies.t.sol",
           "line": 1,
           "version": "9f9ed86165dcc96e"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
+      "type": "TestSuite",
+      "id": "omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
+      "label": "omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
+      "lines": 84,
+      "version": "54228f42fc563f65",
+      "provenance": [
+        {
+          "file": "omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
+          "line": 1,
+          "version": "54228f42fc563f65"
         }
       ]
     },
@@ -86510,6 +87140,21 @@
           "file": "test/community.js",
           "line": 1,
           "version": "c7bdc31061b80118"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/contextplus.js",
+      "type": "TestSuite",
+      "id": "test/contextplus.js",
+      "label": "test/contextplus.js",
+      "lines": 132,
+      "version": "2b751afea198988d",
+      "provenance": [
+        {
+          "file": "test/contextplus.js",
+          "line": 1,
+          "version": "2b751afea198988d"
         }
       ]
     },
@@ -89373,6 +90018,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:omerta-contracts/src/IOmrOracle.sol",
       "to": "Domain:chain-economy",
       "provenance": {
@@ -89440,6 +90094,15 @@
       "to": "Domain:chain-economy",
       "provenance": {
         "file": "omerta-contracts/src/RwaStockBuyer.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/src/SettlementGasPool.sol",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/src/SettlementGasPool.sol",
         "line": 1
       }
     },
@@ -89877,6 +90540,42 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/test/SettlementGasPoolCore.t.sol",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/test/SettlementGasPoolCore.t.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:omerta-contracts/test/StockVault.t.sol",
       "to": "Domain:chain-economy",
       "provenance": {
@@ -89908,6 +90607,15 @@
       "to": "Domain:chain-economy",
       "provenance": {
         "file": "omerta-contracts/test/TestnetTwapDependencies.t.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
+      "to": "Domain:chain-economy",
+      "provenance": {
+        "file": "omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
         "line": 1
       }
     },
@@ -96600,6 +97308,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/contextplus.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/contextplus.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/convoy.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -97572,6 +98289,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:tools/contextplus-health.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/contextplus-health.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:tools/dexbot-e2e.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -97819,6 +98545,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/scale.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/setup-contextplus.ps1",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/setup-contextplus.ps1",
         "line": 1
       }
     },
@@ -108920,6 +109655,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:17c003c62cd931bc7ad9e65604887f7711bc2ccf",
+      "to": "Artifact:omerta-contracts/src/SettlementGasPool.sol",
+      "provenance": {
+        "commit": "17c003c62cd931bc7ad9e65604887f7711bc2ccf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:17c003c62cd931bc7ad9e65604887f7711bc2ccf",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolCore.t.sol",
+      "provenance": {
+        "commit": "17c003c62cd931bc7ad9e65604887f7711bc2ccf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:17c003c62cd931bc7ad9e65604887f7711bc2ccf",
+      "to": "Artifact:omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
+      "provenance": {
+        "commit": "17c003c62cd931bc7ad9e65604887f7711bc2ccf"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:17fe45cf8e4e85d682dcac49d2bb12e8bfa116e2",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -111080,6 +111839,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:268eeebcc46a27243a18532192db6f2576e026ed",
+      "to": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "provenance": {
+        "commit": "268eeebcc46a27243a18532192db6f2576e026ed"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:268eeebcc46a27243a18532192db6f2576e026ed",
+      "to": "Artifact:omerta-contracts/src/SettlementGasPool.sol",
+      "provenance": {
+        "commit": "268eeebcc46a27243a18532192db6f2576e026ed"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:268eeebcc46a27243a18532192db6f2576e026ed",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+      "provenance": {
+        "commit": "268eeebcc46a27243a18532192db6f2576e026ed"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:26a30525c9dbab1cf187c4340ff0ae7b0fd2fe23",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -111196,6 +111979,14 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "commit": "26a30525c9dbab1cf187c4340ff0ae7b0fd2fe23"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:26c0fdf684e966daa7585ceb08a25161add95589",
+      "to": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "provenance": {
+        "commit": "26c0fdf684e966daa7585ceb08a25161add95589"
       }
     },
     {
@@ -115620,6 +116411,14 @@
       "to": "Artifact:omerta-uniswap-hooks-design.md",
       "provenance": {
         "commit": "2da0333fb0117ee7bf07a53156b550b1f307f63c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2dddbdaab85f6f63385c00e21f15aed958cc5a51",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolCore.t.sol",
+      "provenance": {
+        "commit": "2dddbdaab85f6f63385c00e21f15aed958cc5a51"
       }
     },
     {
@@ -148984,6 +149783,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:b08914b46287fd0f434765ffc411d7ec843a0d5a",
+      "to": "Artifact:omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol",
+      "provenance": {
+        "commit": "b08914b46287fd0f434765ffc411d7ec843a0d5a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b08914b46287fd0f434765ffc411d7ec843a0d5a",
+      "to": "Artifact:omerta-contracts/src/SettlementGasPool.sol",
+      "provenance": {
+        "commit": "b08914b46287fd0f434765ffc411d7ec843a0d5a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b08914b46287fd0f434765ffc411d7ec843a0d5a",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+      "provenance": {
+        "commit": "b08914b46287fd0f434765ffc411d7ec843a0d5a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b08914b46287fd0f434765ffc411d7ec843a0d5a",
+      "to": "Artifact:omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
+      "provenance": {
+        "commit": "b08914b46287fd0f434765ffc411d7ec843a0d5a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:b0aa9df018c47e8f248bc31b1672854337a39225",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -154744,6 +155575,254 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:AGENTS.md",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:CHAIN-DEPLOY.md",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:docs/OMERTA-Whitepaper.docx",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:docs/WIKI.md",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:omerta-bank-protocol-design.md",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:omerta-brokers-design.md",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:omerta-rwa-stock-machine-design.md",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:public/admin.html",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:public/wiki.html",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:src/bank.js",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:src/brokers.js",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:src/rules.tail.js",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:test/activity.js",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:test/bank.js",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:test/brokers.js",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:test/chain.js",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:test/contextplus.js",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:test/docs.js",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:test/made.js",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:test/social.js",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:tools/contextplus-health.js",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "Artifact:tools/setup-contextplus.ps1",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "HistoricalArtifact:.codex/config.toml",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "HistoricalArtifact:.codex/start-contextplus.ps1",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:c6db5d1bdcef0cb6f2db706dbf833a4465e8083e",
       "to": "Artifact:.env.example",
       "provenance": {
@@ -157564,6 +158643,38 @@
       "to": "Artifact:tools/pgcheck.js",
       "provenance": {
         "commit": "d6fa36077d93b2f429cebd9cf149b8b0c1809661"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d71886f8352fcff3f5bbc2cb1f138957d0906dfa",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+      "provenance": {
+        "commit": "d71886f8352fcff3f5bbc2cb1f138957d0906dfa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d71886f8352fcff3f5bbc2cb1f138957d0906dfa",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolCore.t.sol",
+      "provenance": {
+        "commit": "d71886f8352fcff3f5bbc2cb1f138957d0906dfa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d71886f8352fcff3f5bbc2cb1f138957d0906dfa",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
+      "provenance": {
+        "commit": "d71886f8352fcff3f5bbc2cb1f138957d0906dfa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d71886f8352fcff3f5bbc2cb1f138957d0906dfa",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+      "provenance": {
+        "commit": "d71886f8352fcff3f5bbc2cb1f138957d0906dfa"
       }
     },
     {
@@ -163568,6 +164679,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:e3ea30ce3b21fbaa253f668efeeed502dd784903",
+      "to": "Artifact:CHAIN-DEPLOY.md",
+      "provenance": {
+        "commit": "e3ea30ce3b21fbaa253f668efeeed502dd784903"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e3ea30ce3b21fbaa253f668efeeed502dd784903",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "e3ea30ce3b21fbaa253f668efeeed502dd784903"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:e45c539124aeb46d5c535b63bd8d729955d3ce72",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -163652,6 +164779,14 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "commit": "e45c539124aeb46d5c535b63bd8d729955d3ce72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e512592f37f15bbf2319213c3bd1fe3c18d0c75d",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
+      "provenance": {
+        "commit": "e512592f37f15bbf2319213c3bd1fe3c18d0c75d"
       }
     },
     {
@@ -165052,6 +166187,54 @@
       "to": "Artifact:test/tokenomics.js",
       "provenance": {
         "commit": "ef3b73a380e642938dfbbc1b3de9ad57379175da"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ef481a4012569d47b259ac8c72a0b900a1cc90db",
+      "to": "HistoricalArtifact:knowledge/generated/contracts.md",
+      "provenance": {
+        "commit": "ef481a4012569d47b259ac8c72a0b900a1cc90db"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ef481a4012569d47b259ac8c72a0b900a1cc90db",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "ef481a4012569d47b259ac8c72a0b900a1cc90db"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ef481a4012569d47b259ac8c72a0b900a1cc90db",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "ef481a4012569d47b259ac8c72a0b900a1cc90db"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ef481a4012569d47b259ac8c72a0b900a1cc90db",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "ef481a4012569d47b259ac8c72a0b900a1cc90db"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ef481a4012569d47b259ac8c72a0b900a1cc90db",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "ef481a4012569d47b259ac8c72a0b900a1cc90db"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ef481a4012569d47b259ac8c72a0b900a1cc90db",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "ef481a4012569d47b259ac8c72a0b900a1cc90db"
       }
     },
     {
@@ -168800,6 +169983,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:ff987f9d9e0feca4a9125aca7c7bad5f43720a4b",
+      "to": "Artifact:omerta-contracts/src/SettlementGasPool.sol",
+      "provenance": {
+        "commit": "ff987f9d9e0feca4a9125aca7c7bad5f43720a4b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ff987f9d9e0feca4a9125aca7c7bad5f43720a4b",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+      "provenance": {
+        "commit": "ff987f9d9e0feca4a9125aca7c7bad5f43720a4b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ff987f9d9e0feca4a9125aca7c7bad5f43720a4b",
+      "to": "Artifact:omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
+      "provenance": {
+        "commit": "ff987f9d9e0feca4a9125aca7c7bad5f43720a4b"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:ffea37a33f7cec9ed03674e3e7c5079554ee649b",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -170890,6 +172097,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol",
+      "provenance": {
+        "file": "omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
       "to": "Artifact:omerta-contracts/src/IOmrOracle.sol",
       "provenance": {
         "file": "omerta-contracts/src/IOmrOracle.sol",
@@ -170956,6 +172172,15 @@
       "to": "Artifact:omerta-contracts/src/RwaStockBuyer.sol",
       "provenance": {
         "file": "omerta-contracts/src/RwaStockBuyer.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/src/SettlementGasPool.sol",
+      "provenance": {
+        "file": "omerta-contracts/src/SettlementGasPool.sol",
         "line": 1
       }
     },
@@ -171394,6 +172619,42 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+      "provenance": {
+        "file": "omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolCore.t.sol",
+      "provenance": {
+        "file": "omerta-contracts/test/SettlementGasPoolCore.t.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
+      "provenance": {
+        "file": "omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+      "provenance": {
+        "file": "omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
       "to": "Artifact:omerta-contracts/test/StockVault.t.sol",
       "provenance": {
         "file": "omerta-contracts/test/StockVault.t.sol",
@@ -171424,6 +172685,15 @@
       "to": "Artifact:omerta-contracts/test/TestnetTwapDependencies.t.sol",
       "provenance": {
         "file": "omerta-contracts/test/TestnetTwapDependencies.t.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:contracts",
+      "to": "Artifact:omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
+      "provenance": {
+        "file": "omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
         "line": 1
       }
     },
@@ -174549,6 +175819,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md",
       "provenance": {
         "file": "docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md",
@@ -176763,6 +178042,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/contextplus.js",
+      "provenance": {
+        "file": "test/contextplus.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/convoy.js",
       "provenance": {
         "file": "test/convoy.js",
@@ -177735,6 +179023,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:tools/contextplus-health.js",
+      "provenance": {
+        "file": "tools/contextplus-health.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:tools/dexbot-e2e.js",
       "provenance": {
         "file": "tools/dexbot-e2e.js",
@@ -177981,6 +179278,15 @@
       "to": "Artifact:tools/scale.js",
       "provenance": {
         "file": "tools/scale.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/setup-contextplus.ps1",
+      "provenance": {
+        "file": "tools/setup-contextplus.ps1",
         "line": 1
       }
     },
@@ -183324,6 +184630,24 @@
     },
     {
       "type": "DEFINED_IN",
+      "from": "Contract:ISettlementDataFeeSource",
+      "to": "Artifact:omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol",
+      "provenance": {
+        "file": "omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol",
+        "line": 3
+      }
+    },
+    {
+      "type": "DEFINED_IN",
+      "from": "Contract:ISettlementGasPoolMigrationCandidate",
+      "to": "Artifact:omerta-contracts/src/SettlementGasPool.sol",
+      "provenance": {
+        "file": "omerta-contracts/src/SettlementGasPool.sol",
+        "line": 9
+      }
+    },
+    {
+      "type": "DEFINED_IN",
       "from": "Contract:IStockQuoteOracle",
       "to": "Artifact:omerta-contracts/src/RwaStockBuyer.sol",
       "provenance": {
@@ -183428,6 +184752,15 @@
       "provenance": {
         "file": "omerta-contracts/src/RwaStockBuyer.sol",
         "line": 43
+      }
+    },
+    {
+      "type": "DEFINED_IN",
+      "from": "Contract:SettlementGasPool",
+      "to": "Artifact:omerta-contracts/src/SettlementGasPool.sol",
+      "provenance": {
+        "file": "omerta-contracts/src/SettlementGasPool.sol",
+        "line": 24
       }
     },
     {
@@ -200876,6 +202209,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:17c003c62cd931bc7ad9e65604887f7711bc2ccf",
+      "provenance": {
+        "commit": "17c003c62cd931bc7ad9e65604887f7711bc2ccf"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:17fe45cf8e4e85d682dcac49d2bb12e8bfa116e2",
       "provenance": {
         "commit": "17fe45cf8e4e85d682dcac49d2bb12e8bfa116e2"
@@ -201252,9 +202593,25 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:268eeebcc46a27243a18532192db6f2576e026ed",
+      "provenance": {
+        "commit": "268eeebcc46a27243a18532192db6f2576e026ed"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:26a30525c9dbab1cf187c4340ff0ae7b0fd2fe23",
       "provenance": {
         "commit": "26a30525c9dbab1cf187c4340ff0ae7b0fd2fe23"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:26c0fdf684e966daa7585ceb08a25161add95589",
+      "provenance": {
+        "commit": "26c0fdf684e966daa7585ceb08a25161add95589"
       }
     },
     {
@@ -201527,6 +202884,14 @@
       "to": "Commit:2da0333fb0117ee7bf07a53156b550b1f307f63c",
       "provenance": {
         "commit": "2da0333fb0117ee7bf07a53156b550b1f307f63c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:2dddbdaab85f6f63385c00e21f15aed958cc5a51",
+      "provenance": {
+        "commit": "2dddbdaab85f6f63385c00e21f15aed958cc5a51"
       }
     },
     {
@@ -203151,6 +204516,14 @@
       "to": "Commit:5ee73d90a898beaa87dd7f78909b304021a3ee32",
       "provenance": {
         "commit": "5ee73d90a898beaa87dd7f78909b304021a3ee32"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:5ef0aa68fad49aab2e06dc93432d625e1c050445",
+      "provenance": {
+        "commit": "5ef0aa68fad49aab2e06dc93432d625e1c050445"
       }
     },
     {
@@ -205740,6 +207113,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:b08914b46287fd0f434765ffc411d7ec843a0d5a",
+      "provenance": {
+        "commit": "b08914b46287fd0f434765ffc411d7ec843a0d5a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:b0aa9df018c47e8f248bc31b1672854337a39225",
       "provenance": {
         "commit": "b0aa9df018c47e8f248bc31b1672854337a39225"
@@ -206380,6 +207761,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:c6cfc106267c5d6f02ae7c114125bdc5c6f0e923",
+      "provenance": {
+        "commit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:c6db5d1bdcef0cb6f2db706dbf833a4465e8083e",
       "provenance": {
         "commit": "c6db5d1bdcef0cb6f2db706dbf833a4465e8083e"
@@ -206764,6 +208153,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:d71886f8352fcff3f5bbc2cb1f138957d0906dfa",
+      "provenance": {
+        "commit": "d71886f8352fcff3f5bbc2cb1f138957d0906dfa"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:d75d335aa29204d337826cb85898af558ba10311",
       "provenance": {
         "commit": "d75d335aa29204d337826cb85898af558ba10311"
@@ -207124,9 +208521,25 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:e3ea30ce3b21fbaa253f668efeeed502dd784903",
+      "provenance": {
+        "commit": "e3ea30ce3b21fbaa253f668efeeed502dd784903"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:e45c539124aeb46d5c535b63bd8d729955d3ce72",
       "provenance": {
         "commit": "e45c539124aeb46d5c535b63bd8d729955d3ce72"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:e512592f37f15bbf2319213c3bd1fe3c18d0c75d",
+      "provenance": {
+        "commit": "e512592f37f15bbf2319213c3bd1fe3c18d0c75d"
       }
     },
     {
@@ -207383,6 +208796,14 @@
       "to": "Commit:ef3b73a380e642938dfbbc1b3de9ad57379175da",
       "provenance": {
         "commit": "ef3b73a380e642938dfbbc1b3de9ad57379175da"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ef481a4012569d47b259ac8c72a0b900a1cc90db",
+      "provenance": {
+        "commit": "ef481a4012569d47b259ac8c72a0b900a1cc90db"
       }
     },
     {
@@ -207815,6 +209236,14 @@
       "to": "Commit:ff928a9e2f778579c1de69fa7e65e1460114b5a1",
       "provenance": {
         "commit": "ff928a9e2f778579c1de69fa7e65e1460114b5a1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ff987f9d9e0feca4a9125aca7c7bad5f43720a4b",
+      "provenance": {
+        "commit": "ff987f9d9e0feca4a9125aca7c7bad5f43720a4b"
       }
     },
     {
@@ -226976,7 +228405,7 @@
       "to": "Artifact:omerta-contracts/DEPLOYMENT.md",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 204
+        "line": 205
       }
     },
     {
@@ -226994,7 +228423,7 @@
       "to": "Artifact:src/dexbot.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 1832
+        "line": 1833
       }
     },
     {
@@ -227003,7 +228432,7 @@
       "to": "Artifact:src/dexbot.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 1857
+        "line": 1858
       }
     },
     {
@@ -227012,7 +228441,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 243
+        "line": 244
       }
     },
     {
@@ -227021,7 +228450,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 218
+        "line": 219
       }
     },
     {
@@ -227030,7 +228459,7 @@
       "to": "Artifact:src/stockdeliver.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 414
+        "line": 415
       }
     },
     {
@@ -227039,7 +228468,7 @@
       "to": "Artifact:test/watcher.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 180
+        "line": 181
       }
     },
     {
@@ -227048,7 +228477,7 @@
       "to": "Artifact:tools/chain-e2e.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 199
+        "line": 200
       }
     },
     {
@@ -227057,7 +228486,7 @@
       "to": "Artifact:tools/chain-e2e.js",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
-        "line": 205
+        "line": 206
       }
     },
     {
@@ -239491,6 +240920,204 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 270
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 57
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/src/SettlementGasPool.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 271
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/src/SettlementGasPool.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 393
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/src/SettlementGasPool.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 509
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/src/SettlementGasPool.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 56
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/src/SettlementGasPool.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 69
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 272
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 507
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 60
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolCore.t.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 506
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolCore.t.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 59
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolCore.t.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 71
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 505
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 62
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 394
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 508
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 61
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 273
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 395
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 58
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 70
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md",
       "to": "Artifact:public/index.html",
       "provenance": {
@@ -245989,6 +247616,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "to": "Artifact:docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+      "provenance": {
+        "file": "docs/superpowers/plans/2026-08-26-settlement-gas-pool.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md",
       "to": "Artifact:docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md",
       "provenance": {
@@ -248923,6 +250559,42 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+      "provenance": {
+        "file": "omerta-contracts/test/SettlementGasPoolConfig.t.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:omerta-contracts/test/SettlementGasPoolCore.t.sol",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolCore.t.sol",
+      "provenance": {
+        "file": "omerta-contracts/test/SettlementGasPoolCore.t.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
+      "provenance": {
+        "file": "omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+      "to": "Artifact:omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+      "provenance": {
+        "file": "omerta-contracts/test/SettlementGasPoolMigration.t.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:omerta-contracts/test/StockVault.t.sol",
       "to": "Artifact:omerta-contracts/test/StockVault.t.sol",
       "provenance": {
@@ -248954,6 +250626,15 @@
       "to": "Artifact:omerta-contracts/test/TestnetTwapDependencies.t.sol",
       "provenance": {
         "file": "omerta-contracts/test/TestnetTwapDependencies.t.sol",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
+      "to": "Artifact:omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
+      "provenance": {
+        "file": "omerta-contracts/test/utils/SettlementGasPoolTestBase.sol",
         "line": 1
       }
     },
@@ -249188,6 +250869,15 @@
       "to": "Artifact:test/community.js",
       "provenance": {
         "file": "test/community.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/contextplus.js",
+      "to": "Artifact:test/contextplus.js",
+      "provenance": {
+        "file": "test/contextplus.js",
         "line": 1
       }
     },

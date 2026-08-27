@@ -167,7 +167,7 @@
 | [.agents/skills/remotion-saas/SKILL.md](../../.agents/skills/remotion-saas/SKILL.md) | documentation | 34 | 2026-08-24 |
 | [.agents/skills/remotion-studio/SKILL.md](../../.agents/skills/remotion-studio/SKILL.md) | documentation | 25 | 2026-08-24 |
 | [.agents/skills/remotion-upgrade/SKILL.md](../../.agents/skills/remotion-upgrade/SKILL.md) | documentation | 32 | 2026-08-24 |
-| [AGENTS.md](../../AGENTS.md) | documentation | 449 | 2026-08-25 |
+| [AGENTS.md](../../AGENTS.md) | documentation | 449 | 2026-08-26 |
 | [AUDIT-bank-city-leg.md](../../AUDIT-bank-city-leg.md) | audit | 119 | 2026-08-12 |
 | [AUDIT-blood-war.md](../../AUDIT-blood-war.md) | audit | 95 | 2026-08-05 |
 | [AUDIT-blue-team.md](../../AUDIT-blue-team.md) | audit | 178 | 2026-08-12 |
@@ -267,7 +267,7 @@
 | [AUDIT.md](../../AUDIT.md) | audit | 52 | 2026-07-14 |
 | [BALANCE.md](../../BALANCE.md) | documentation | 6472 | 2026-08-24 |
 | [CHAIN-AUDIT-PACKET.md](../../CHAIN-AUDIT-PACKET.md) | documentation | 273 | 2026-08-21 |
-| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 1962 | 2026-08-25 |
+| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 1963 | 2026-08-26 |
 | [CLAUDE.md](../../CLAUDE.md) | documentation | 17225 | 2026-08-23 |
 | [DEPLOY-CHECKLIST.md](../../DEPLOY-CHECKLIST.md) | operations | 147 | 2026-08-13 |
 | [DEPLOY.md](../../DEPLOY.md) | operations | 543 | 2026-08-24 |
@@ -284,8 +284,9 @@
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-core-deployment.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-core-deployment.md) | documentation | 151 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-hook-rehearsal.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-hook-rehearsal.md) | documentation | 146 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-twap-rehearsal.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-twap-rehearsal.md) | documentation | 156 | 2026-08-24 |
+| [docs/superpowers/plans/2026-08-26-settlement-gas-pool.md](../../docs/superpowers/plans/2026-08-26-settlement-gas-pool.md) | documentation | 600 | 2026-08-26 |
 | [docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md](../../docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md) | design | 124 | 2026-08-23 |
-| [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2539 | 2026-08-25 |
+| [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2539 | 2026-08-26 |
 | [GRAPH.md](../../GRAPH.md) | documentation | 259 | 2026-07-27 |
 | [GTM.md](../../GTM.md) | documentation | 295 | 2026-08-13 |
 | [HYPE.md](../../HYPE.md) | documentation | 134 | 2026-08-20 |
@@ -307,9 +308,9 @@
 | [MARKETING.md](../../MARKETING.md) | documentation | 354 | 2026-08-20 |
 | [NIGHT-SESSION-LOG.md](../../NIGHT-SESSION-LOG.md) | documentation | 45 | 2026-08-12 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 373 | 2026-07-12 |
-| [omerta-bank-protocol-design.md](../../omerta-bank-protocol-design.md) | design | 694 | 2026-08-13 |
+| [omerta-bank-protocol-design.md](../../omerta-bank-protocol-design.md) | design | 694 | 2026-08-26 |
 | [omerta-broadcast-design.md](../../omerta-broadcast-design.md) | design | 126 | 2026-08-12 |
-| [omerta-brokers-design.md](../../omerta-brokers-design.md) | design | 2026 | 2026-08-25 |
+| [omerta-brokers-design.md](../../omerta-brokers-design.md) | design | 2026 | 2026-08-26 |
 | [omerta-business-empire-design.md](../../omerta-business-empire-design.md) | design | 106 | 2026-07-16 |
 | [omerta-chain-migration-evm.md](../../omerta-chain-migration-evm.md) | documentation | 101 | 2026-08-12 |
 | [omerta-commission-design.md](../../omerta-commission-design.md) | design | 51 | 2026-07-16 |
@@ -360,7 +361,7 @@
 | [omerta-risk-to-earn-design.md](../../omerta-risk-to-earn-design.md) | design | 199 | 2026-08-12 |
 | [omerta-rwa-float-design.md](../../omerta-rwa-float-design.md) | design | 128 | 2026-08-12 |
 | [omerta-rwa-portfolio-design.md](../../omerta-rwa-portfolio-design.md) | design | 166 | 2026-08-12 |
-| [omerta-rwa-stock-machine-design.md](../../omerta-rwa-stock-machine-design.md) | design | 682 | 2026-08-25 |
+| [omerta-rwa-stock-machine-design.md](../../omerta-rwa-stock-machine-design.md) | design | 682 | 2026-08-26 |
 | [omerta-scarcity-design.md](../../omerta-scarcity-design.md) | design | 232 | 2026-08-16 |
 | [omerta-secrets-collection-design.md](../../omerta-secrets-collection-design.md) | design | 89 | 2026-07-23 |
 | [omerta-severance-plan.md](../../omerta-severance-plan.md) | documentation | 168 | 2026-07-28 |
@@ -390,5 +391,5 @@
 | [PRODUCT.md](../../PRODUCT.md) | documentation | 50 | 2026-08-24 |
 | [README.md](../../README.md) | documentation | 166 | 2026-08-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 875 | 2026-08-21 |
-| [SPEC.md](../../SPEC.md) | documentation | 648 | 2026-08-25 |
+| [SPEC.md](../../SPEC.md) | documentation | 648 | 2026-08-26 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |

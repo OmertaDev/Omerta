@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `ec4a13c4df03`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `5ef0aa68fad4`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 939 |
+| Commits in clone | 951 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-25 — docs: refresh branch-stable knowledge snapshot |
+| Latest commit | 2026-08-27 — Merge origin/codex/site-copy-ui-upgrade into codex/settlement-gas-pool |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 138 |
+| OmertaDev | 150 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -33,20 +33,20 @@
 | [src/server.js](../../src/server.js) | 336 | yes |
 | [schema.sql](../../schema.sql) | 252 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
-| [SPEC.md](../../SPEC.md) | 231 | yes |
+| [SPEC.md](../../SPEC.md) | 233 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 169 | yes |
 | [package.json](../../package.json) | 127 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 118 | yes |
 | [src/invariants.js](../../src/invariants.js) | 113 | yes |
-| [src/rules.tail.js](../../src/rules.tail.js) | 111 | yes |
+| [src/rules.tail.js](../../src/rules.tail.js) | 112 | yes |
 | [test/client.js](../../test/client.js) | 98 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
-| [test/social.js](../../test/social.js) | 83 | yes |
+| [test/social.js](../../test/social.js) | 84 | yes |
 | [test/growth.js](../../test/growth.js) | 78 | yes |
-| [public/wiki.html](../../public/wiki.html) | 74 | yes |
-| [docs/WIKI.md](../../docs/WIKI.md) | 65 | yes |
+| [public/wiki.html](../../public/wiki.html) | 75 | yes |
+| [docs/WIKI.md](../../docs/WIKI.md) | 66 | yes |
 | [test/hardening.js](../../test/hardening.js) | 63 | yes |
 | [tools/sim.js](../../tools/sim.js) | 58 | yes |
 | [README.md](../../README.md) | 54 | yes |
@@ -54,20 +54,20 @@
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
 | [src/preflight.js](../../src/preflight.js) | 47 | yes |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
+| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 44 | yes |
 | [src/economy.js](../../src/economy.js) | 44 | yes |
 | [src/casino.js](../../src/casino.js) | 43 | yes |
-| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 42 | yes |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
 | [src/business.js](../../src/business.js) | 39 | yes |
 | [src/chain.js](../../src/chain.js) | 36 | yes |
+| [public/admin.html](../../public/admin.html) | 31 | yes |
 | [DEPLOY.md](../../DEPLOY.md) | 30 | yes |
-| [public/admin.html](../../public/admin.html) | 30 | yes |
 | [src/kitchen.js](../../src/kitchen.js) | 28 | yes |
 | [src/world.js](../../src/world.js) | 28 | yes |
 | [test/migrate.js](../../test/migrate.js) | 28 | yes |
+| [test/chain.js](../../test/chain.js) | 27 | yes |
 | [src/loans.js](../../src/loans.js) | 27 | yes |
 | [src/social/combat.js](../../src/social/combat.js) | 27 | yes |
-| [test/casino.js](../../test/casino.js) | 27 | yes |
 
 ## Pull requests
 
