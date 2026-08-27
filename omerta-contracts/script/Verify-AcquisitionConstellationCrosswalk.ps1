@@ -1,8 +1,8 @@
 [CmdletBinding()]
 param(
   [switch]$ExpectTask0Red,
-  [ValidateSet('Task1','Task2')]
-  [string]$ValidatePhase = 'Task2',
+  [ValidateSet('Task1','Task2','Task3')]
+  [string]$ValidatePhase = 'Task3',
   [string]$ArtifactsRoot = '',
   [string]$ForgePath = 'forge',
   [string]$NodePath = 'node'
@@ -812,6 +812,758 @@ function Assert-Rejected([string]$Label, [scriptblock]$Action) {
   if (-not $rejected) { throw "Verifier negative selftest failed: $Label" }
 }
 
+$task3FormulaText = @'
+TASK3_CONFIG_TAG=keccak256("OMERTA_ACQUISITION_TASK3_CONFIG_V1")
+configurationRoot=keccak256(abi.encode(TASK3_CONFIG_TAG,uint256(3),registry,registryRuntimeHash,globalLifetimeCanonicalDepositCapWei))
+CONSTELLATION_TAG=keccak256("OMERTA_ACQUISITION_CONSTELLATION_V1")
+manifestHash=keccak256(abi.encode(CONSTELLATION_TAG,uint256(4663),factory,safe,configurationRoot,registry,registryRuntimeHash,authority,core,budgetBook,intentExecution,reconciliation))
+DEPLOYMENT_TAG=keccak256("OMERTA_ACQUISITION_DEPLOYMENT_V1")
+deploymentCommitment=keccak256(abi.encode(DEPLOYMENT_TAG,manifestHash,childInitcodeHashes,childRuntimeHashes))
+INGRESS_CONFIG_TAG=keccak256("OMERTA_AUTH_INGRESS_CONFIG_V2")
+activeIngressConfigHash=keccak256(abi.encode(INGRESS_CONFIG_TAG,uint256(4663),address(core),address(authority),ingress,runtimeCodeHash,perDepositCapWei,epochDepositCapWei,lifetimeDepositCapWei))
+ACCOUNTING_MUTATION_TAG=keccak256("OMERTA_ACQUISITION_ACCOUNTING_MUTATION_V2")
+ACCOUNTING_COMPONENT_TAG=keccak256("OMERTA_ACQUISITION_ACCOUNTING_COMPONENT_V2")
+CANONICAL_DEPOSIT_TAG=keccak256("OMERTA_ACQUISITION_DEPOSIT_V2")
+ACCOUNTING_SEQUENCE_COUNTER=keccak256("accountingSequence")
+syncSubjectHash=keccak256(abi.encode(preTotals,postTotals))
+mutationId=keccak256(abi.encode(ACCOUNTING_MUTATION_TAG,uint256(4663),address(core),address(core),evidenceGeneration,accountingSequence,uint8(mutationKind),subjectId))
+componentId=keccak256(abi.encode(ACCOUNTING_COMPONENT_TAG,uint256(4663),address(core),address(core),evidenceGeneration,accountingSequence,mutationId,componentIndex,uint8(componentKind),componentSubjectId,amountWei))
+depositId=keccak256(abi.encode(CANONICAL_DEPOSIT_TAG,uint256(4663),address(core),address(core),activeIngressGeneration,sourceEventId,address(authority),activeIngress,activeIngressConfigHash))
+shortfallWei=reconciliationLiabilityWei-reconciliationBackingWei
+accountedBackingWei=availableWei+unattributedWei+ordinaryReservedWei+reconciliationBackingWei
+balanceDeficitWei=max(accountedBackingWei-actualBalanceWei,0)
+forcedSurplusWei=max(actualBalanceWei-accountedBackingWei,0)
+depositPreBalanceWei=address(core).balance-msg.value
+depositDeficitRepairWei=min(msg.value,preTotals.balanceDeficitWei)
+depositAvailableCreditWei=msg.value-depositDeficitRepairWei
+depositCapCheck=amountWei>capWei-priorWei
+'@
+
+$task3StoragePolicyText = @'
+Factory|0|0|_childInitcodeHashes|bytes32[5]|inplace|160
+Factory|5|0|_childRuntimeHashes|bytes32[5]|inplace|160
+Factory|10|0|_children|address[5]|inplace|160
+Factory|15|0|_phase|enum AcquisitionConstellationFactory.Phase|inplace|1
+Factory|15|1|_nextChildIndex|uint8|inplace|1
+Authority|FORBID|globalLifetimeCanonicalDepositCapWei mirror
+Core|0|0|_finalized|bool|inplace|1
+Core|1|0|availableWei|uint256|inplace|32
+Core|2|0|unattributedWei|uint256|inplace|32
+Core|3|0|ordinaryReservedWei|uint256|inplace|32
+Core|4|0|reconciliationLiabilityWei|uint256|inplace|32
+Core|5|0|reconciliationBackingWei|uint256|inplace|32
+Core|6|0|accountingSequence|uint256|inplace|32
+Core|7|0|lastObservedBalanceDeficitWei|uint256|inplace|32
+Core|8|0|globalLifetimeCanonicalDepositedWei|uint256|inplace|32
+Core|9|0|ingressLifetimeDepositedWei|mapping(uint256 => uint256)|mapping|32
+Core|10|0|ingressEpochDepositedWei|mapping(uint256 => mapping(uint256 => uint256))|mapping|32
+Core|11|0|_depositRecords|mapping(bytes32 => DepositRecord)|mapping|32
+CoreImmutableTypes|address,address,address,address,address,address,bytes32,uint256
+FactoryImmutableTypes|address,address,bytes32,bytes32,bytes32,bytes32,uint256
+AuthorityImmutableTypes|address,address,address,address,address,address,address,bytes32
+AccountingTotals|availableWei:uint256|unattributedWei:uint256|ordinaryReservedWei:uint256|reconciliationLiabilityWei:uint256|reconciliationBackingWei:uint256|reconciliationShortfallWei:uint256|accountedBackingWei:uint256|actualBalanceWei:uint256|balanceDeficitWei:uint256|forcedSurplusWei:uint256|accountingSequence:uint256
+DepositRecord|depositId:bytes32|ingressGeneration:uint256|ingress:address|sourceEventId:bytes32|amountWei:uint256|balanceDeficitRepairWei:uint256|availableCreditWei:uint256|epochDay:uint256|accountingSequence:uint256|depositedAt:uint64
+AccountingMutationKind|NONE|SYNC_BALANCE|UNATTRIBUTED_RECLASSIFICATION|CANONICAL_DEPOSIT
+AccountingComponentKind|NONE|FORCED_SURPLUS_TO_UNATTRIBUTED|BALANCE_DEFICIT_OBSERVATION_SET|UNATTRIBUTED_TO_AVAILABLE|CANONICAL_DEPOSIT_DEFICIT_REPAIR|CANONICAL_DEPOSIT_AVAILABLE_CREDIT
+DepositCapKind|NONE|PER_DEPOSIT|EPOCH|GENERATION_LIFETIME|GLOBAL_LIFETIME
+'@
+
+$task3CallPolicyText = @'
+Factory|Core|STATICCALL|coreSnapshot()|value=0|gas=100000|input=4|output=576|exact-returndatasize|normalized|no-returndatacopy
+Authority|Core|STATICCALL|globalLifetimeCanonicalDepositCapWei()|value=0|gas=50000|input=4|output=32|exact-returndatasize|normalized|no-returndatacopy
+Core|Authority|STATICCALL|authoritySnapshot()|value=0|gas=160000|input=4|output=864|exact-returndatasize|normalized|no-returndatacopy
+Core|Authority|STATICCALL|getIngress(uint256)|value=0|gas=100000|input=36|output=256|exact-returndatasize|normalized|no-returndatacopy
+'@
+
+$task3FormulaHash = '0x59c3fa656e3e922b05e79027534b5ad07f0a2e8e4832c5085545227a705b016a'
+$task3StoragePolicyHash = '0xe8f3cd2e62484ade56138d6da22d9b08dd0ae649fe072e15cbca07e9bc889c93'
+$task3CallPolicyHash = '0x906bdd00e802b769057b202b79cb381492e0be8131ccfef8d30b736de9f44fb2'
+$task3AuthorityStableSchemaHash = '0xcc25457284ea321b35fdbb3dfb17a70d27c7533f7e482e371a9e733a87ac8765'
+
+function Get-FrozenLines([string]$Text) {
+  return @($Text -split "`r?`n" | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+}
+
+function Assert-Task3FrozenText([string]$Text,[string]$ExpectedHash,[string]$Name) {
+  $normalized=$Text.Replace("`r`n","`n")
+  $actual=Get-TextSha256 $normalized
+  if(-not[string]::Equals($actual,$ExpectedHash,[StringComparison]::Ordinal)){throw "Task3 $Name freeze drift: $actual"}
+}
+
+function Assert-Task3OrderedRows($Actual,$Expected,[string]$Name) {
+  if($Actual.Count-ne$Expected.Count){throw "$Name row count mismatch."}
+  for($i=0;$i-lt$Expected.Count;$i++){
+    if(-not[string]::Equals([string]$Actual[$i],[string]$Expected[$i],[StringComparison]::Ordinal)){throw "$Name row mismatch at ordinal $i."}
+  }
+}
+
+function Get-AbiSubsetFingerprint($Artifact,[string[]]$Kinds) {
+  $rows=@($Artifact.abi|Where-Object { $_.type -in $Kinds }|ForEach-Object { Canonical-AbiRow $_ }|Sort-Object)
+  return Get-TextSha256 ($rows -join "`n")
+}
+
+function Get-Task3Spec {
+  $factoryFunctions=Get-FrozenLines @'
+factoryState()
+childCommitment(uint8)
+deployNext(bytes)
+finalizeConstellation()
+'@
+  $factoryErrors=Get-FrozenLines @'
+WrongChain(uint256)
+RegistryChainMismatch(uint256)
+FactorySafeZero()
+FactoryRegistryZero()
+FactorySafeCodeMissing(address)
+FactoryRegistryCodeMissing(address)
+FactoryRoleCollision(address)
+FactoryRegistryRuntimeHashMismatch(bytes32,bytes32)
+FactoryRegistryCallFailed()
+FactoryRegistryReturnLength(uint256)
+FactoryPhaseMismatch(uint8,uint8)
+FactoryChildIndex(uint8)
+FactoryChildInitcodeHashZero(uint8)
+FactoryChildRuntimeHashZero(uint8)
+FactoryInitcodeEmpty(uint8)
+FactoryInitcodeTooLarge(uint8,uint256)
+FactoryInitcodeHashMismatch(uint8,bytes32,bytes32)
+FactoryCreateFailed(uint8)
+FactoryChildAddressMismatch(uint8,address,address)
+FactoryRuntimeTooLarge(uint8,uint256)
+FactoryRuntimeHashMismatch(uint8,bytes32,bytes32)
+FactoryTopologyCallFailed(uint8)
+FactoryTopologyReturnLength(uint8,uint256)
+FactoryTopologySemanticMismatch(uint8)
+FactoryPostCallGasInsufficient(uint8,uint256,uint256)
+FactoryFinalizerCallFailed(uint8)
+FactoryFinalizerReturnLength(uint8,uint256)
+FactoryFinalizerSemanticMismatch(uint8)
+FactoryAuthoritySnapshotCallFailed()
+FactoryAuthoritySnapshotReturnLength(uint256)
+FactoryAuthoritySnapshotSemanticMismatch(uint8)
+FactoryInvalidGlobalLifetimeCap()
+FactoryCoreSnapshotCallFailed()
+FactoryCoreSnapshotReturnLength(uint256)
+FactoryCoreSnapshotSemanticMismatch(uint8)
+'@
+  $factoryEvents=@('ChildDeployed(uint8,address,bytes32,bytes32)','ConstellationFinalized(bytes32,bytes32)')
+  $authorityFunctions=Get-FrozenLines @'
+ERC1271_CALL_GAS()
+ERC1271_MIN_PRECALL_GAS()
+ERC1271_POST_CALL_GAS_RESERVE()
+INGRESS_ACCEPTANCE_WINDOW()
+INGRESS_PROPOSAL_DELAY()
+MAX_AUTHORIZATION_LIFETIME()
+MAX_SIGNATURE_BYTES()
+OPERATOR_ACCEPTANCE_WINDOW()
+OPERATOR_NOMINATION_DELAY()
+OUTFLOW_AUTHORIZATION_TYPEHASH()
+SUCCESSOR_CONSENT_TYPEHASH()
+acceptMainOperatorNomination(bytes32)
+acceptOwnership()
+activateIngress(bytes32)
+activeIngressGeneration()
+authoritySnapshot()
+authorityTopology()
+cancelIngressProposal(bytes32,bytes32)
+cancelMainOperatorNomination(bytes32,bytes32)
+disableIngress(bytes32)
+disableMainOperator(bytes32)
+eip712Domain()
+expireIngressProposal(bytes32)
+expireMainOperatorNomination(bytes32)
+finalizeAuthority(bytes32)
+getIngress(uint256)
+hashOutflowAuthorization((address,address,uint256,uint256,uint256,uint64,uint64,uint8,bytes32))
+hashSuccessorConsent((address,address,uint256,uint256,uint64,uint64,uint8,bytes32))
+ingressGeneration()
+ingressProposalNonce()
+invalidateOutflowNonce(uint256,bytes32)
+mainOperator()
+nominateMainOperator(address,bytes32)
+nominationNonce()
+operatorGeneration()
+outflowNonce()
+owner()
+pause(bytes32)
+paused()
+pendingIngressProposal()
+pendingMainOperatorNomination()
+pendingOwner()
+proposeIngress((address,bytes32,uint256,uint256,uint256),bytes32)
+renounceMainOperator(bytes32)
+renounceOwnership()
+replaceMainOperator((address,address,uint256,uint256,uint64,uint64,uint8,bytes32),bytes)
+supportedChainId()
+transferOwnership(address)
+unpause(bytes32)
+version()
+'@
+  $authorityErrors=Get-FrozenLines @'
+AuthorityAddressMismatch(address,address)
+AuthorityAlreadyFinalized()
+AuthorityCoreCapCallFailed()
+AuthorityCoreCapReturnLength(uint256)
+AuthorityCoreCapSemanticMismatch(uint256)
+AuthorityFactoryZero()
+AuthorityFinalizerUnauthorized(address)
+AuthorityInitialStateMismatch(uint8)
+AuthorityManifestHashMismatch(bytes32,bytes32)
+AuthorityManifestHashZero()
+AuthorityNotFinalized()
+AuthorityPeerMismatch(uint8,address,address)
+AuthorizationExpired()
+AuthorizationNotYetValid()
+ContractRequired(address)
+CounterExhausted(bytes32)
+EmptyDetailsHash()
+EnforcedPause()
+ExpectedPause()
+IngressActive(address)
+IngressCodeHashMismatch(address,bytes32,bytes32)
+IngressNotFound(uint256)
+IngressProposalMissing()
+IngressProposalPending(bytes32)
+InsufficientSignatureValidationGas()
+InvalidActionReason(uint8)
+InvalidAuthorizationFields()
+InvalidAuthorizationWindow()
+InvalidIngressConfig()
+InvalidOperatorReplacement()
+InvalidOutflowNonceStep(uint256,uint256)
+InvalidShortString()
+InvalidSignature()
+LocalReadinessFailed(uint8)
+MainOperatorActive(address)
+NoActiveIngress()
+NoMainOperator()
+NoOperatorStateChange()
+NoPendingOwnershipTransfer()
+NotNominee(address)
+OperatorNominationMissing()
+OperatorNominationPending(bytes32)
+OutflowNonceExhausted(uint256)
+OwnableInvalidOwner(address)
+OwnableUnauthorizedAccount(address)
+OwnershipRenunciationDisabled()
+ProposalExpired(uint64)
+ProposalIdMismatch(bytes32,bytes32)
+ProposalNotReady(uint64)
+ReentrancyGuardReentrantCall()
+RoleIdentityCollision(address)
+StringTooLong(string)
+TimestampOverflow()
+ZeroAddress()
+'@
+  $authorityEvents=Get-FrozenLines @'
+AuthorityFinalized(bytes32)
+EIP712DomainChanged()
+IngressActivated(uint256,address,bytes32,bytes32,uint256,uint256,uint256,uint64,uint8,bytes32)
+IngressDisabled(uint256,address,address,uint64,uint8,bytes32)
+IngressProposalCancelled(bytes32,address,address,uint8,bytes32)
+IngressProposalCreated(bytes32,address,address,uint256,bytes32,uint64,uint64,uint64,uint8,bytes32)
+IngressProposalExpired(bytes32,address,address,uint8,bytes32)
+MainOperatorChanged(address,address,uint256,uint256,uint8,bytes32)
+MainOperatorNominationCancelled(bytes32,address,address,uint8,bytes32)
+MainOperatorNominationCreated(bytes32,address,address,uint256,uint64,uint64,uint64,uint8,bytes32)
+MainOperatorNominationExpired(bytes32,address,address,uint8,bytes32)
+OutflowNonceInvalidated(address,uint256,uint256,uint256,uint8,bytes32)
+OwnershipTransferStarted(address,address)
+OwnershipTransferred(address,address)
+Paused(address)
+RiskPaused(address,uint8,bytes32)
+RiskUnpaused(address,uint8,bytes32)
+Unpaused(address)
+'@
+  $coreFunctions=Get-FrozenLines @'
+MAX_ACTIVE_ORDINARY_RESERVATIONS()
+MAX_ACTIVE_RECONCILIATIONS()
+MAX_OPERATOR_OUTFLOW_COMPONENTS()
+stockTokenRegistryV2()
+globalLifetimeCanonicalDepositCapWei()
+availableWei()
+unattributedWei()
+ordinaryReservedWei()
+reconciliationLiabilityWei()
+reconciliationBackingWei()
+accountingSequence()
+lastObservedBalanceDeficitWei()
+accountingTotals()
+syncBalance()
+reclassifyUnattributed(uint256,bytes32)
+globalLifetimeCanonicalDepositedWei()
+ingressLifetimeDepositedWei(uint256)
+ingressEpochDepositedWei(uint256,uint256)
+getDeposit(bytes32)
+depositCanonical(bytes32)
+coreTopology()
+coreSnapshot()
+finalizeCore(bytes32)
+'@
+  $coreErrors=Get-FrozenLines @'
+CoreFactoryZero()
+CoreManifestHashZero()
+CoreFinalizerUnauthorized(address)
+CoreManifestHashMismatch(bytes32,bytes32)
+CoreAlreadyFinalized()
+CoreNotFinalized()
+CoreInitialStateMismatch(uint8)
+CoreAddressMismatch(address,address)
+CorePeerMismatch(uint8,address,address)
+CoreAuthoritySnapshotCallFailed()
+CoreAuthoritySnapshotReturnLength(uint256)
+CoreAuthoritySnapshotSemanticMismatch(uint8)
+CoreIngressCallFailed(uint256)
+CoreIngressReturnLength(uint256,uint256)
+CoreIngressSemanticMismatch(uint8)
+InvalidGlobalLifetimeCap()
+NoBalanceDelta()
+InvalidAmount()
+InsufficientUnattributed(uint256,uint256)
+BalanceDeficitActive(uint256)
+ReconciliationShortfallActive(uint256)
+NotActiveIngress(address)
+DepositSourceRequired()
+DepositReplay(bytes32)
+DepositCapExceeded(uint8,uint256,uint256)
+DepositNotFound(bytes32)
+CoreZeroAddress()
+CoreContractRequired(address)
+CoreRoleIdentityCollision(address)
+CoreEmptyDetailsHash()
+CoreCounterExhausted(bytes32)
+CoreTimestampOverflow()
+CoreNoActiveIngress()
+CoreIngressCodeHashMismatch(address,bytes32,bytes32)
+CoreUnauthorized(address)
+ReentrancyGuardReentrantCall()
+'@
+  $totals='(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)'
+  $coreEvents=@(
+    'CoreFinalized(bytes32)',
+    "AccountingMutation(uint256,bytes32,uint8,$totals,$totals,uint256)",
+    'AccountingComponent(uint256,uint256,bytes32,uint8,bytes32,uint256)',
+    'UnattributedReclassified(bytes32,uint256,address,uint256,uint8,bytes32)',
+    'CanonicalDeposit(bytes32,uint256,bytes32,address,uint256,uint256,uint256,uint256,uint256,uint64)'
+  )
+  $shells=@(
+    [pscustomobject]@{Name='BudgetBook';Functions=@('budgetBookTopology()','finalizeBudgetBook(bytes32)');Errors=@('BudgetBookFactoryZero()','BudgetBookManifestHashZero()','BudgetBookFinalizerUnauthorized(address)','BudgetBookManifestHashMismatch(bytes32,bytes32)','BudgetBookAlreadyFinalized()');Events=@('BudgetBookFinalized(bytes32)');Constructor='constructor(address,bytes32):nonpayable';AbiHash='0x9e2f7a41d47b119e3b573d771462d93b4e631dc02af95201460e15157ac2577f'},
+    [pscustomobject]@{Name='IntentExecution';Functions=@('intentExecutionTopology()','finalizeIntentExecution(bytes32)');Errors=@('IntentExecutionFactoryZero()','IntentExecutionManifestHashZero()','IntentExecutionFinalizerUnauthorized(address)','IntentExecutionManifestHashMismatch(bytes32,bytes32)','IntentExecutionAlreadyFinalized()');Events=@('IntentExecutionFinalized(bytes32)');Constructor='constructor(address,bytes32):nonpayable';AbiHash='0x8d1832ae8d0d3b4641495ae33d844b4b6423727e81575eab829ba979bcc2c046'},
+    [pscustomobject]@{Name='Reconciliation';Functions=@('reconciliationTopology()','finalizeReconciliation(bytes32)');Errors=@('ReconciliationFactoryZero()','ReconciliationManifestHashZero()','ReconciliationFinalizerUnauthorized(address)','ReconciliationManifestHashMismatch(bytes32,bytes32)','ReconciliationAlreadyFinalized()');Events=@('ReconciliationFinalized(bytes32)');Constructor='constructor(address,bytes32):nonpayable';AbiHash='0x59fc50ed2e69f376aa218ce414edde3a4d354b33b5b814be944fcaeef514ae33'}
+  )
+  $artifacts=@(
+    [pscustomobject]@{Name='Factory';Functions=$factoryFunctions;Errors=$factoryErrors;Events=$factoryEvents;Constructor='constructor(address,address,bytes32,uint256,bytes32[5],bytes32[5]):nonpayable'},
+    [pscustomobject]@{Name='Authority';Functions=$authorityFunctions;Errors=$authorityErrors;Events=$authorityEvents;Constructor='constructor(address,bytes32,address,address,address,address,address,address):nonpayable'},
+    [pscustomobject]@{Name='Core';Functions=$coreFunctions;Errors=$coreErrors;Events=$coreEvents;Constructor='constructor(address,bytes32,address,address,address,address,address,uint256):nonpayable'}
+  )+$shells
+  return [pscustomobject]@{
+    Artifacts=$artifacts
+    FutureFunctions=@('authorizePreVoteBudget((uint256,uint256,uint64),bytes32)','getPreVoteBudget(uint256)')
+    FutureErrors=@('BudgetDayClosed(uint256)','BudgetDeadlineOverflow()','InvalidPurchaseUntil(uint64,uint64)','BudgetAlreadyAuthorized(uint256)','InsufficientAvailable(uint256,uint256)','BudgetNotFound(uint256)')
+    FutureEvents=@('PreVoteBudgetAuthorized(bytes32,uint256,uint256,uint64,uint256,uint256,uint64,uint8,bytes32)')
+    FactoryStateTypes=@('bytes32','bytes32','uint8','uint8','address','bytes32','address','bytes32','uint256')
+    FactoryStateNames=@('manifestHash','deploymentCommitment','phase','nextChildIndex','safe','configurationRoot','registry','registryRuntimeHash','globalLifetimeCanonicalDepositCapWei')
+    CoreSnapshotTypes=@('uint256','address','bytes32','address','address','address','address','address','bool','uint256','uint256','uint256','uint256','uint256','uint256','uint256','uint256','uint256')
+  }
+}
+
+function Get-Task3UniqueCompiledErrors([string[]]$Descriptors) {
+  $seen=[System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+  $duplicates=[System.Collections.Generic.List[string]]::new()
+  foreach($descriptor in $Descriptors){if(-not$seen.Add($descriptor)){$duplicates.Add($descriptor)}}
+  if($Descriptors.Count-ne140-or$seen.Count-ne139-or$duplicates.Count-ne1-or$duplicates[0]-ne'ReentrancyGuardReentrantCall()'){
+    throw 'Task3 compiled error repetition policy drift.'
+  }
+  return @($seen)
+}
+
+function Assert-Task3SpecSelftests($Spec) {
+  Assert-Task3FrozenText $task3FormulaText $task3FormulaHash 'formula'
+  Assert-Task3FrozenText $task3StoragePolicyText $task3StoragePolicyHash 'storage/type policy'
+  Assert-Task3FrozenText $task3CallPolicyText $task3CallPolicyHash 'call policy'
+  Assert-Rejected 'Task3 formula mutation' { Assert-Task3FrozenText ($task3FormulaText.Replace('uint256(3)','uint256(2)')) $task3FormulaHash 'mutated formula' }
+  Assert-Rejected 'Task3 storage mutation' { Assert-Task3FrozenText ($task3StoragePolicyText.Replace('Core|11|0','Core|12|0')) $task3StoragePolicyHash 'mutated storage' }
+  Assert-Rejected 'Task3 call gas mutation' { Assert-Task3FrozenText ($task3CallPolicyText.Replace('gas=160000','gas=160001')) $task3CallPolicyHash 'mutated call policy' }
+
+  $functions=@($Spec.Artifacts|ForEach-Object{$_.Functions})
+  $errors=@($Spec.Artifacts|ForEach-Object{$_.Errors})
+  $events=@($Spec.Artifacts|ForEach-Object{$_.Events})
+  $constructors=@($Spec.Artifacts|ForEach-Object{$_.Constructor})
+  if($functions.Count-ne83-or$errors.Count-ne140-or$events.Count-ne28-or$constructors.Count-ne6-or
+     ($functions.Count+$errors.Count+$events.Count+$constructors.Count)-ne257){throw 'Task3 frozen descriptor census is internally inconsistent.'}
+  $expectedPerArtifact=@(@(4,35,2,1,42),@(50,54,18,1,123),@(23,36,5,1,65),@(2,5,1,1,9),@(2,5,1,1,9),@(2,5,1,1,9))
+  for($i=0;$i-lt6;$i++){
+    $a=$Spec.Artifacts[$i];$expected=$expectedPerArtifact[$i]
+    if($a.Functions.Count-ne$expected[0]-or$a.Errors.Count-ne$expected[1]-or$a.Events.Count-ne$expected[2]-or
+       (1+$a.Functions.Count+$a.Errors.Count+$a.Events.Count)-ne$expected[4]){throw "Task3 frozen $($a.Name) census is internally inconsistent."}
+  }
+  Assert-DescriptorUniverse @($functions+$Spec.FutureFunctions) 'function' 85
+  $uniqueErrors=Get-Task3UniqueCompiledErrors $errors
+  Assert-DescriptorUniverse @($uniqueErrors+$Spec.FutureErrors) 'error' 145
+  Assert-DescriptorUniverse @($events+$Spec.FutureEvents) 'event' 29
+  $authorityOwned=@($Spec.Artifacts[1].Errors|Where-Object{$_-notin@('OwnableInvalidOwner(address)','OwnableUnauthorizedAccount(address)','EnforcedPause()','ExpectedPause()','InvalidShortString()','StringTooLong(string)','ReentrancyGuardReentrantCall()')})
+  $coreAuthorityOverlap=@($Spec.Artifacts[2].Errors|Where-Object{$_-in$authorityOwned})
+  if($coreAuthorityOverlap.Count-ne0){throw "Task3 Core originates Authority-owned error: $($coreAuthorityOverlap[0])"}
+  if($Spec.FactoryStateTypes.Count-ne9-or$Spec.CoreSnapshotTypes.Count-ne18){throw 'Task3 flat state/snapshot arity freeze drift.'}
+  $mutated=@($Spec.Artifacts[2].Functions);$mutated[0]='syncStockToken(address)'
+  Assert-Rejected 'Task3 same-count hidden Core function' { Assert-ExactRows $mutated $Spec.Artifacts[2].Functions 'mutated Task3 Core function' }
+  $mutated=@($Spec.CoreSnapshotTypes);$mutated[17]='uint128'
+  Assert-Rejected 'Task3 Core snapshot type/order' { Assert-Task3OrderedRows $mutated $Spec.CoreSnapshotTypes 'mutated Task3 Core snapshot' }
+  $mutated=@($Spec.FactoryStateTypes);$mutated[8]='bytes32'
+  Assert-Rejected 'Task3 Factory ninth state word' { Assert-Task3OrderedRows $mutated $Spec.FactoryStateTypes 'mutated Task3 Factory state' }
+}
+
+function Assert-Task3ArtifactSurface($Artifact,$Expected) {
+  $abi=@($Artifact.abi)
+  $functions=@($abi|Where-Object type -eq 'function'|ForEach-Object{Canonical-Descriptor $_})
+  $errors=@($abi|Where-Object type -eq 'error'|ForEach-Object{Canonical-Descriptor $_})
+  $events=@($abi|Where-Object type -eq 'event'|ForEach-Object{Canonical-Descriptor $_})
+  $constructors=@($abi|Where-Object type -eq 'constructor')
+  Assert-ExactRows $functions $Expected.Functions "Task3 $($Expected.Name) function"
+  Assert-ExactRows $errors $Expected.Errors "Task3 $($Expected.Name) error"
+  Assert-ExactRows $events $Expected.Events "Task3 $($Expected.Name) event"
+  if($constructors.Count-ne1){throw "Task3 $($Expected.Name) constructor count drift."}
+  $constructor='constructor('+(@($constructors[0].inputs|ForEach-Object{Canonical-Type $_})-join',')+'):'+$constructors[0].stateMutability
+  if(-not[string]::Equals($constructor,$Expected.Constructor,[StringComparison]::Ordinal)){throw "Task3 $($Expected.Name) constructor drift: $constructor"}
+  if(@($abi|Where-Object{$_.type-eq'receive'-or$_.type-eq'fallback'}).Count-ne0){throw "Task3 $($Expected.Name) receive/fallback drift."}
+}
+
+function Assert-Task3FunctionShape($Artifact,[string]$Descriptor,[string]$Mutability,[string[]]$Outputs) {
+  $rows=@($Artifact.abi|Where-Object{$_.type-eq'function'-and(Canonical-Descriptor $_)-eq$Descriptor})
+  if($rows.Count-ne1){throw "Task3 function schema missing/duplicate: $Descriptor"}
+  $row=$rows[0]
+  if(-not[string]::Equals([string]$row.stateMutability,$Mutability,[StringComparison]::Ordinal)){throw "Task3 $Descriptor mutability drift."}
+  $actual=@($row.outputs|ForEach-Object{Canonical-Type $_})
+  if($actual.Count-ne$Outputs.Count){throw "Task3 $Descriptor output arity drift."}
+  for($i=0;$i-lt$Outputs.Count;$i++){
+    if(-not[string]::Equals($actual[$i],$Outputs[$i],[StringComparison]::Ordinal)){throw "Task3 $Descriptor output type drift at $i."}
+  }
+}
+
+function Assert-Task3ParameterNames($Rows,[string[]]$Expected,[string]$Name) {
+  if($Rows.Count-ne$Expected.Count){throw "Task3 $Name parameter-name arity drift."}
+  for($i=0;$i-lt$Expected.Count;$i++){
+    if(-not[string]::Equals([string]$Rows[$i].name,$Expected[$i],[StringComparison]::Ordinal)){throw "Task3 $Name parameter-name drift at $i."}
+  }
+}
+
+function Assert-Task3EventIndexed($Artifact,[string]$Descriptor,[bool[]]$Expected) {
+  $rows=@($Artifact.abi|Where-Object{$_.type-eq'event'-and(Canonical-Descriptor $_)-eq$Descriptor})
+  if($rows.Count-ne1-or$rows[0].anonymous-or$rows[0].inputs.Count-ne$Expected.Count){throw "Task3 event schema drift: $Descriptor"}
+  for($i=0;$i-lt$Expected.Count;$i++){
+    if([bool]$rows[0].inputs[$i].indexed-ne$Expected[$i]){throw "Task3 event indexedness drift: $Descriptor[$i]"}
+  }
+}
+
+function Assert-Task3SemanticStorageRows($Layout,$ExpectedRows,[string]$Name) {
+  $actualRows=@($Layout.storage)
+  if($actualRows.Count-ne$ExpectedRows.Count){throw "Task3 $Name storage row count drift."}
+  for($i=0;$i-lt$ExpectedRows.Count;$i++){
+    $actual=$actualRows[$i];$expected=$ExpectedRows[$i]
+    $property=$Layout.types.psobject.Properties[[string]$actual.type]
+    if($null-eq$property){throw "Task3 $Name storage type missing at row $i."}
+    $type=$property.Value
+    $typeMatches=if($null-ne$expected.TypePattern){[regex]::IsMatch([string]$type.label,[string]$expected.TypePattern)}else{[string]::Equals([string]$type.label,[string]$expected.Type,[StringComparison]::Ordinal)}
+    if(-not[string]::Equals([string]$actual.label,[string]$expected.Label,[StringComparison]::Ordinal)-or
+       -not[string]::Equals([string]$actual.slot,[string]$expected.Slot,[StringComparison]::Ordinal)-or
+       [int]$actual.offset-ne[int]$expected.Offset-or
+       -not$typeMatches-or
+       -not[string]::Equals([string]$type.encoding,[string]$expected.Encoding,[StringComparison]::Ordinal)-or
+       -not[string]::Equals([string]$type.numberOfBytes,[string]$expected.Bytes,[StringComparison]::Ordinal)){
+      throw "Task3 $Name semantic storage drift at row $i."
+    }
+  }
+}
+
+function Assert-Task3TupleComponents($Artifact,[string]$Descriptor,[string[]]$Names,[string[]]$Types) {
+  $rows=@($Artifact.abi|Where-Object{$_.type-eq'function'-and(Canonical-Descriptor $_)-eq$Descriptor})
+  if($rows.Count-ne1-or$rows[0].outputs.Count-ne1-or$null-eq$rows[0].outputs[0].components){throw "Task3 $Descriptor tuple output drift."}
+  $components=@($rows[0].outputs[0].components)
+  if($components.Count-ne$Names.Count-or$Names.Count-ne$Types.Count){throw "Task3 $Descriptor tuple component arity drift."}
+  for($i=0;$i-lt$Names.Count;$i++){
+    if(-not[string]::Equals([string]$components[$i].name,$Names[$i],[StringComparison]::Ordinal)-or
+       -not[string]::Equals([string]$components[$i].type,$Types[$i],[StringComparison]::Ordinal)){
+      throw "Task3 $Descriptor tuple component drift at $i."
+    }
+  }
+}
+
+function Assert-Task3DepositRecordStorageType($Layout,[string]$MappingTypeId) {
+  $mappingProperty=$Layout.types.psobject.Properties[$MappingTypeId]
+  if($null-eq$mappingProperty){throw 'Task3 Core DepositRecord mapping type missing.'}
+  $structProperty=$Layout.types.psobject.Properties[[string]$mappingProperty.Value.value]
+  if($null-eq$structProperty-or-not([string]$structProperty.Value.label).EndsWith('.DepositRecord',[StringComparison]::Ordinal)-or
+     -not[string]::Equals([string]$structProperty.Value.encoding,'inplace',[StringComparison]::Ordinal)-or
+     -not[string]::Equals([string]$structProperty.Value.numberOfBytes,'320',[StringComparison]::Ordinal)){
+    throw 'Task3 Core DepositRecord storage type header drift.'
+  }
+  $names=@('depositId','ingressGeneration','ingress','sourceEventId','amountWei','balanceDeficitRepairWei','availableCreditWei','epochDay','accountingSequence','depositedAt')
+  $types=@('bytes32','uint256','address','bytes32','uint256','uint256','uint256','uint256','uint256','uint64')
+  $slots=@('0','1','2','3','4','5','6','7','8','9')
+  $members=@($structProperty.Value.members)
+  if($members.Count-ne10){throw 'Task3 Core DepositRecord storage member count drift.'}
+  for($i=0;$i-lt10;$i++){
+    $memberType=$Layout.types.psobject.Properties[[string]$members[$i].type]
+    if($null-eq$memberType-or-not[string]::Equals([string]$members[$i].label,$names[$i],[StringComparison]::Ordinal)-or
+       -not[string]::Equals([string]$members[$i].slot,$slots[$i],[StringComparison]::Ordinal)-or[int]$members[$i].offset-ne0-or
+       -not[string]::Equals([string]$memberType.Value.label,$types[$i],[StringComparison]::Ordinal)){
+      throw "Task3 Core DepositRecord storage member drift at $i."
+    }
+  }
+}
+
+function Get-Task3ContractAst($Artifact,[string]$Contract) {
+  $definitions=@($Artifact.ast.nodes|Where-Object{$_.nodeType-eq'ContractDefinition'-and$_.name-eq$Contract})
+  if($definitions.Count-ne1){throw "Task3 $Contract AST identity drift."}
+  return $definitions[0]
+}
+
+function Assert-Task3ImmutableTypes($Artifact,[string]$Contract,[string[]]$ExpectedTypes) {
+  $definition=Get-Task3ContractAst $Artifact $Contract
+  $actual=@($definition.nodes|Where-Object{$_.nodeType-eq'VariableDeclaration'-and$_.mutability-eq'immutable'}|ForEach-Object{$_.typeDescriptions.typeString}|Sort-Object)
+  $expected=@($ExpectedTypes|Sort-Object)
+  Assert-Task3OrderedRows $actual $expected "Task3 $Contract immutable type"
+}
+
+function Assert-Task3ArtifactCompilerProfile($Artifact,[string]$Source,[string]$Contract) {
+  $metadata=$Artifact.metadata
+  if($metadata-is[string]){$metadata=$metadata|ConvertFrom-Json -Depth 100}
+  if(-not[string]::Equals([string]$metadata.compiler.version,'0.8.26+commit.8a97fa7a',[StringComparison]::Ordinal)-or
+     $metadata.settings.optimizer.enabled-ne$true-or[int]$metadata.settings.optimizer.runs-ne800-or
+     -not[string]::Equals([string]$metadata.settings.evmVersion,'cancun',[StringComparison]::Ordinal)-or$metadata.settings.viaIR-ne$true){
+    throw "Task3 $Contract compiler profile drift."
+  }
+  $targets=@($metadata.settings.compilationTarget.psobject.Properties)
+  if($targets.Count-ne1-or-not[string]::Equals([string]$targets[0].Name,$Source,[StringComparison]::Ordinal)-or
+     -not[string]::Equals([string]$targets[0].Value,$Contract,[StringComparison]::Ordinal)){throw "Task3 $Contract compilation target drift."}
+  foreach($property in @($metadata.sources.psobject.Properties)){
+    $local=Join-Path $artifactProjectRoot $property.Name
+    if(-not(Test-Path -LiteralPath $local -PathType Leaf)){throw "Task3 $Contract local source missing: $($property.Name)"}
+    if(-not[string]::Equals((Get-FileKeccak $local),[string]$property.Value.keccak256,[StringComparison]::OrdinalIgnoreCase)){
+      throw "Task3 $Contract local source provenance drift: $($property.Name)"
+    }
+  }
+}
+
+function Assert-Task3FormulaLiterals([string[]]$Sources) {
+  $text=($Sources|ForEach-Object{Get-Content -LiteralPath (Join-Path $artifactProjectRoot $_) -Raw})-join"`n"
+  $expected=[ordered]@{
+    'OMERTA_ACQUISITION_TASK3_CONFIG_V1'=1
+    'OMERTA_ACQUISITION_CONSTELLATION_V1'=1
+    'OMERTA_ACQUISITION_DEPLOYMENT_V1'=1
+    'OMERTA_AUTH_INGRESS_CONFIG_V2'=2
+    'OMERTA_ACQUISITION_ACCOUNTING_MUTATION_V2'=1
+    'OMERTA_ACQUISITION_ACCOUNTING_COMPONENT_V2'=1
+    'OMERTA_ACQUISITION_DEPOSIT_V2'=1
+  }
+  foreach($entry in $expected.GetEnumerator()){
+    if(([regex]::Matches($text,[regex]::Escape('"'+$entry.Key+'"'))).Count-ne$entry.Value){throw "Task3 literal-family occurrence drift: $($entry.Key)"}
+  }
+}
+
+function Assert-Task3FactoryIr([string]$Ir) {
+  $clean=[regex]::Replace($Ir,'/\*\*.*?\*/','',[Text.RegularExpressions.RegexOptions]::Singleline)
+  $clean=[regex]::Replace($clean,'\s+',' ')
+  if(([regex]::Matches($clean,'(?<!static)call\(')).Count-ne5-or
+     ([regex]::Matches($clean,'(?<!static)call\(\s*100000')).Count-ne5-or
+     ([regex]::Matches($clean,'create\(')).Count-ne1-or
+     ([regex]::Matches($clean,'staticcall\(100000')).Count-lt3-or
+     ([regex]::Matches($clean,'staticcall\(50000')).Count-lt2-or
+     ([regex]::Matches($clean,'staticcall\(160000')).Count-lt1){throw 'Task3 Factory bounded call/gas inventory drift.'}
+  if($clean-cmatch'(?m)returndatacopy\s*\('-or$clean-cmatch'(?m)\b(delegatecall|callcode|create2|selfdestruct)\s*\('){throw 'Task3 Factory prohibited compiler operation drift.'}
+}
+
+function Assert-Task3AuthorityIr([string]$Ir) {
+  $clean=[regex]::Replace($Ir,'/\*\*.*?\*/','',[Text.RegularExpressions.RegexOptions]::Singleline)
+  $clean=[regex]::Replace($clean,'\s+',' ')
+  if(([regex]::Matches($clean,'staticcall\(50000')).Count-lt1-or([regex]::Matches($clean,'staticcall\(100000')).Count-lt1){throw 'Task3 Authority bounded Core-cap/signature call policy drift.'}
+  if($clean-cmatch'(?m)returndatacopy\s*\('-or$clean-cmatch'(?m)(?<!static)call\s*\('-or
+     $clean-cmatch'(?m)\b(delegatecall|callcode|create|create2|selfdestruct)\s*\('){throw 'Task3 Authority dynamic returndata/prohibited compiler operation drift.'}
+}
+
+function Assert-Task3CoreIr([string]$Ir) {
+  $clean=[regex]::Replace($Ir,'/\*\*.*?\*/','',[Text.RegularExpressions.RegexOptions]::Singleline)
+  $clean=[regex]::Replace($clean,'\s+',' ')
+  if(([regex]::Matches($clean,'staticcall\(160000')).Count-lt1-or([regex]::Matches($clean,'staticcall\(100000')).Count-lt1){throw 'Task3 Core bounded Authority call policy drift.'}
+  if($clean-cmatch'(?m)returndatacopy\s*\('-or$clean-cmatch'(?m)(?<!static)call\s*\('-or
+     $clean-cmatch'(?m)\b(delegatecall|callcode|create|create2|selfdestruct)\s*\('){throw 'Task3 Core dynamic returndata/prohibited compiler operation drift.'}
+}
+
+function Assert-Task3OnlyStaticCalls($Parts,[int]$MinimumRuntime,[string]$Name) {
+  if($Parts.Creation.Count-ne0){throw "Task3 $Name constructor call/create inventory drift."}
+  $staticCount=@($Parts.Runtime|Where-Object{$_-eq'STATICCALL'}).Count
+  if($staticCount-lt$MinimumRuntime-or@($Parts.Runtime|Where-Object{$_-ne'STATICCALL'}).Count-ne0){throw "Task3 $Name runtime call/create inventory drift."}
+}
+
+function Invoke-Task3Validation {
+  $spec=Get-Task3Spec
+  Assert-Task3SpecSelftests $spec
+  $sources=@(
+    'src/AcquisitionConstellationFactory.sol','src/AcquisitionAuthority.sol','src/AcquisitionVaultCore.sol',
+    'src/PreVoteBudgetBook.sol','src/AcquisitionIntentExecution.sol','src/AcquisitionReconciliation.sol'
+  )
+  $contracts=@(
+    'AcquisitionConstellationFactory','AcquisitionAuthority','AcquisitionVaultCore','PreVoteBudgetBook',
+    'AcquisitionIntentExecution','AcquisitionReconciliation'
+  )
+  $artifacts=@()
+  for($i=0;$i-lt6;$i++){
+    $artifact=Get-Content -LiteralPath $finalArtifacts[$i] -Raw|ConvertFrom-Json -Depth 100
+    Assert-Task3ArtifactSurface $artifact $spec.Artifacts[$i]
+    $artifacts+=$artifact
+  }
+
+  $allAbi=@($artifacts|ForEach-Object{$_.abi})
+  $functions=@($allAbi|Where-Object type -eq 'function')
+  $errors=@($allAbi|Where-Object type -eq 'error')
+  $events=@($allAbi|Where-Object type -eq 'event')
+  $constructors=@($allAbi|Where-Object type -eq 'constructor')
+  if($functions.Count-ne83-or$errors.Count-ne140-or$events.Count-ne28-or$constructors.Count-ne6-or$allAbi.Count-ne257){
+    throw "Task3 aggregate ABI census drift: $($functions.Count)/$($errors.Count)/$($events.Count)/$($constructors.Count)/$($allAbi.Count)."
+  }
+  $payable=@($allAbi|Where-Object stateMutability -eq 'payable')
+  if($payable.Count-ne1-or$payable[0].type-ne'function'-or$payable[0].name-ne'depositCanonical'){throw 'Task3 payable surface drift.'}
+  Assert-DescriptorUniverse @(@($functions|ForEach-Object{Canonical-Descriptor $_})+$spec.FutureFunctions) 'function' 85
+  $uniqueErrors=Get-Task3UniqueCompiledErrors @($errors|ForEach-Object{Canonical-Descriptor $_})
+  Assert-DescriptorUniverse @($uniqueErrors+$spec.FutureErrors) 'error' 145
+  Assert-DescriptorUniverse @(@($events|ForEach-Object{Canonical-Descriptor $_})+$spec.FutureEvents) 'event' 29
+
+  $factory=$artifacts[0];$authority=$artifacts[1];$core=$artifacts[2]
+  Assert-Task3FunctionShape $factory 'factoryState()' 'view' $spec.FactoryStateTypes
+  Assert-Task3FunctionShape $factory 'childCommitment(uint8)' 'view' @('address','bytes32','bytes32')
+  Assert-Task3FunctionShape $factory 'deployNext(bytes)' 'nonpayable' @('address')
+  Assert-Task3FunctionShape $factory 'finalizeConstellation()' 'nonpayable' @()
+  $factoryState=@($factory.abi|Where-Object{$_.type-eq'function'-and$_.name-eq'factoryState'})[0]
+  Assert-Task3ParameterNames @($factoryState.outputs) $spec.FactoryStateNames 'Factory factoryState outputs'
+  $factoryConstructor=@($factory.abi|Where-Object type -eq 'constructor')[0]
+  Assert-Task3ParameterNames @($factoryConstructor.inputs) @('safe','registry','registryRuntimeHash','globalLifetimeCanonicalDepositCapWei','childInitcodeHashes','childRuntimeHashes') 'Factory constructor inputs'
+  Assert-Task3EventIndexed $factory 'ChildDeployed(uint8,address,bytes32,bytes32)' @($true,$true,$true,$false)
+  Assert-Task3EventIndexed $factory 'ConstellationFinalized(bytes32,bytes32)' @($true,$true)
+
+  $authoritySchema=Get-AbiSubsetFingerprint $authority @('function','event','constructor')
+  if(-not[string]::Equals($authoritySchema,$task3AuthorityStableSchemaHash,[StringComparison]::Ordinal)){throw "Task3 Authority stable function/event/constructor schema drift: $authoritySchema"}
+
+  $uintGetters=@(
+    'MAX_ACTIVE_ORDINARY_RESERVATIONS()','MAX_ACTIVE_RECONCILIATIONS()','MAX_OPERATOR_OUTFLOW_COMPONENTS()',
+    'globalLifetimeCanonicalDepositCapWei()','availableWei()','unattributedWei()','ordinaryReservedWei()',
+    'reconciliationLiabilityWei()','reconciliationBackingWei()','accountingSequence()',
+    'lastObservedBalanceDeficitWei()','globalLifetimeCanonicalDepositedWei()',
+    'ingressLifetimeDepositedWei(uint256)','ingressEpochDepositedWei(uint256,uint256)'
+  )
+  foreach($descriptor in $uintGetters){Assert-Task3FunctionShape $core $descriptor 'view' @('uint256')}
+  Assert-Task3FunctionShape $core 'stockTokenRegistryV2()' 'view' @('address')
+  $totalsType='(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)'
+  $depositType='(bytes32,uint256,address,bytes32,uint256,uint256,uint256,uint256,uint256,uint64)'
+  Assert-Task3FunctionShape $core 'accountingTotals()' 'view' @($totalsType)
+  Assert-Task3FunctionShape $core 'syncBalance()' 'nonpayable' @('bytes32')
+  Assert-Task3FunctionShape $core 'reclassifyUnattributed(uint256,bytes32)' 'nonpayable' @('bytes32')
+  Assert-Task3FunctionShape $core 'getDeposit(bytes32)' 'view' @($depositType)
+  Assert-Task3FunctionShape $core 'depositCanonical(bytes32)' 'payable' @('bytes32')
+  Assert-Task3FunctionShape $core 'coreTopology()' 'view' @('address','bytes32','bool')
+  Assert-Task3FunctionShape $core 'coreSnapshot()' 'view' $spec.CoreSnapshotTypes
+  Assert-Task3FunctionShape $core 'finalizeCore(bytes32)' 'nonpayable' @()
+  Assert-Task3TupleComponents $core 'accountingTotals()' @('availableWei','unattributedWei','ordinaryReservedWei','reconciliationLiabilityWei','reconciliationBackingWei','reconciliationShortfallWei','accountedBackingWei','actualBalanceWei','balanceDeficitWei','forcedSurplusWei','accountingSequence') @('uint256','uint256','uint256','uint256','uint256','uint256','uint256','uint256','uint256','uint256','uint256')
+  Assert-Task3TupleComponents $core 'getDeposit(bytes32)' @('depositId','ingressGeneration','ingress','sourceEventId','amountWei','balanceDeficitRepairWei','availableCreditWei','epochDay','accountingSequence','depositedAt') @('bytes32','uint256','address','bytes32','uint256','uint256','uint256','uint256','uint256','uint64')
+  $coreConstructor=@($core.abi|Where-Object type -eq 'constructor')[0]
+  Assert-Task3ParameterNames @($coreConstructor.inputs) @('factory','manifestHash','authority','registry','budgetBook','intentExecution','reconciliation','globalLifetimeCanonicalDepositCapWei') 'Core constructor inputs'
+  Assert-Task3EventIndexed $core 'CoreFinalized(bytes32)' @($true)
+  Assert-Task3EventIndexed $core "AccountingMutation(uint256,bytes32,uint8,$totalsType,$totalsType,uint256)" @($true,$true,$true,$false,$false,$false)
+  Assert-Task3EventIndexed $core 'AccountingComponent(uint256,uint256,bytes32,uint8,bytes32,uint256)' @($true,$true,$true,$false,$false,$false)
+  Assert-Task3EventIndexed $core 'UnattributedReclassified(bytes32,uint256,address,uint256,uint8,bytes32)' @($true,$true,$true,$false,$false,$false)
+  Assert-Task3EventIndexed $core 'CanonicalDeposit(bytes32,uint256,bytes32,address,uint256,uint256,uint256,uint256,uint256,uint64)' @($true,$true,$true,$false,$false,$false,$false,$false,$false,$false)
+
+  for($i=3;$i-lt6;$i++){Assert-AbiFingerprint $artifacts[$i] $spec.Artifacts[$i].AbiHash "Task3 $($spec.Artifacts[$i].Name)"}
+  for($i=0;$i-lt6;$i++){Assert-Task3ArtifactCompilerProfile $artifacts[$i] $sources[$i] $contracts[$i]}
+  Assert-Task2CompilerConfiguration (Get-EffectiveForgeConfig) $legacy
+  Assert-Task3FormulaLiterals $sources[0..2]
+
+  $factoryLayout=(Invoke-IsolatedForgeInspect 'AcquisitionConstellationFactory' 'storageLayout' -Json -Ast)|ConvertFrom-Json -Depth 100
+  $authorityLayout=(Invoke-IsolatedForgeInspect 'AcquisitionAuthority' 'storageLayout' -Json -Ast)|ConvertFrom-Json -Depth 100
+  $coreLayout=(Invoke-IsolatedForgeInspect 'AcquisitionVaultCore' 'storageLayout' -Json -Ast)|ConvertFrom-Json -Depth 100
+  for($i=3;$i-lt6;$i++){$null=Invoke-IsolatedForgeInspect $contracts[$i] 'storageLayout' -Json -Ast}
+  $isolatedOut=Join-Path $script:isolatedRoot 'out'
+  $isolatedArtifacts=@()
+  for($i=0;$i-lt6;$i++){
+    $isolated=Get-Content -LiteralPath (Join-Path $isolatedOut ((Split-Path -Leaf $sources[$i])+'/'+$contracts[$i]+'.json')) -Raw|ConvertFrom-Json -Depth 100
+    Assert-PortableIsolatedArtifactMatch $artifacts[$i] $isolated "Task3 $($spec.Artifacts[$i].Name)"
+    $isolatedArtifacts+=$isolated
+  }
+
+  $factoryRows=@(
+    @{Label='_childInitcodeHashes';Slot='0';Offset=0;Type='bytes32[5]';Encoding='inplace';Bytes='160'},
+    @{Label='_childRuntimeHashes';Slot='5';Offset=0;Type='bytes32[5]';Encoding='inplace';Bytes='160'},
+    @{Label='_children';Slot='10';Offset=0;Type='address[5]';Encoding='inplace';Bytes='160'},
+    @{Label='_phase';Slot='15';Offset=0;Type='enum AcquisitionConstellationFactory.Phase';Encoding='inplace';Bytes='1'},
+    @{Label='_nextChildIndex';Slot='15';Offset=1;Type='uint8';Encoding='inplace';Bytes='1'}
+  )
+  $authorityRows=@(
+    @{Label='_nameFallback';Slot='0';Offset=0;Type='string';Encoding='bytes';Bytes='32'},
+    @{Label='_versionFallback';Slot='1';Offset=0;Type='string';Encoding='bytes';Bytes='32'},
+    @{Label='_owner';Slot='2';Offset=0;Type='address';Encoding='inplace';Bytes='20'},
+    @{Label='_pendingOwner';Slot='3';Offset=0;Type='address';Encoding='inplace';Bytes='20'},
+    @{Label='_paused';Slot='3';Offset=20;Type='bool';Encoding='inplace';Bytes='1'},
+    @{Label='mainOperator';Slot='4';Offset=0;Type='address';Encoding='inplace';Bytes='20'},
+    @{Label='_finalized';Slot='4';Offset=20;Type='bool';Encoding='inplace';Bytes='1'},
+    @{Label='operatorGeneration';Slot='5';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='_sharedO2Nonce';Slot='6';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='_cancelNonce';Slot='7';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='nominationNonce';Slot='8';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='_pendingMainOperatorNomination';Slot='9';Offset=0;Type='struct IAcquisitionAuthorityV2.PendingOperatorNomination';Encoding='inplace';Bytes='192'},
+    @{Label='ingressProposalNonce';Slot='15';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='ingressGeneration';Slot='16';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='activeIngressGeneration';Slot='17';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='_pendingIngressProposal';Slot='18';Offset=0;Type='struct IAcquisitionAuthorityV2.PendingIngressProposal';Encoding='inplace';Bytes='352'},
+    @{Label='_ingressRecords';Slot='29';Offset=0;Type='mapping(uint256 => struct IAcquisitionAuthorityV2.IngressRecord)';Encoding='mapping';Bytes='32'}
+  )
+  $coreRows=@(
+    @{Label='_finalized';Slot='0';Offset=0;Type='bool';Encoding='inplace';Bytes='1'},
+    @{Label='availableWei';Slot='1';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='unattributedWei';Slot='2';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='ordinaryReservedWei';Slot='3';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='reconciliationLiabilityWei';Slot='4';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='reconciliationBackingWei';Slot='5';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='accountingSequence';Slot='6';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='lastObservedBalanceDeficitWei';Slot='7';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='globalLifetimeCanonicalDepositedWei';Slot='8';Offset=0;Type='uint256';Encoding='inplace';Bytes='32'},
+    @{Label='ingressLifetimeDepositedWei';Slot='9';Offset=0;Type='mapping(uint256 => uint256)';Encoding='mapping';Bytes='32'},
+    @{Label='ingressEpochDepositedWei';Slot='10';Offset=0;Type='mapping(uint256 => mapping(uint256 => uint256))';Encoding='mapping';Bytes='32'},
+    @{Label='_depositRecords';Slot='11';Offset=0;TypePattern='^mapping\(bytes32 => struct [A-Za-z0-9_.]+\.DepositRecord\)$';Encoding='mapping';Bytes='32'}
+  )
+  Assert-Task3SemanticStorageRows $factoryLayout $factoryRows 'Factory'
+  Assert-Task3SemanticStorageRows $authorityLayout $authorityRows 'Authority'
+  Assert-Task3SemanticStorageRows $coreLayout $coreRows 'Core'
+  Assert-Task3DepositRecordStorageType $coreLayout ([string]$coreLayout.storage[11].type)
+  Assert-Task3ImmutableTypes $isolatedArtifacts[0] 'AcquisitionConstellationFactory' @('address','address','bytes32','bytes32','bytes32','bytes32','uint256')
+  Assert-Task3ImmutableTypes $isolatedArtifacts[1] 'AcquisitionAuthority' @('address','address','address','address','address','address','address','bytes32')
+  Assert-Task3ImmutableTypes $isolatedArtifacts[2] 'AcquisitionVaultCore' @('address','address','address','address','address','address','bytes32','uint256')
+  for($i=3;$i-lt6;$i++){Assert-Task3ImmutableTypes $isolatedArtifacts[$i] $contracts[$i] @('address','bytes32')}
+
+  $factoryParts=Get-ExecutableParts $factory 'Task3 Factory'
+  Assert-CallInventory $factoryParts @{STATICCALL=1} @{CREATE=1;CALL=5;STATICCALL=5} 'Task3 Factory'
+  Assert-Task3OnlyStaticCalls (Get-ExecutableParts $authority 'Task3 Authority') 3 'Authority'
+  Assert-Task3OnlyStaticCalls (Get-ExecutableParts $core 'Task3 Core') 2 'Core'
+  for($i=3;$i-lt6;$i++){Assert-CallInventory (Get-ExecutableParts $artifacts[$i] "Task3 $($spec.Artifacts[$i].Name)") @{} @{} "Task3 $($spec.Artifacts[$i].Name)"}
+  for($i=0;$i-lt6;$i++){
+    if((Byte-Length $artifacts[$i].deployedBytecode.object)-gt24576-or(Byte-Length $artifacts[$i].bytecode.object)-gt49152){throw "Task3 $($spec.Artifacts[$i].Name) bytecode bound drift."}
+  }
+
+  $factoryIr=Invoke-IsolatedForgeInspect 'AcquisitionConstellationFactory' 'irOptimized'
+  $authorityIr=Invoke-IsolatedForgeInspect 'AcquisitionAuthority' 'irOptimized'
+  $coreIr=Invoke-IsolatedForgeInspect 'AcquisitionVaultCore' 'irOptimized'
+  Assert-Task3FactoryIr $factoryIr
+  Assert-Task3AuthorityIr $authorityIr
+  Assert-Task3CoreIr $coreIr
+  Assert-Rejected 'Task3 Factory dynamic returndata copy' { Assert-Task3FactoryIr ($factoryIr+' returndatacopy(0,0,returndatasize())') }
+  Assert-Rejected 'Task3 Authority unbounded CALL' { Assert-Task3AuthorityIr ($authorityIr+' call(1,2,3,4,5,6,7)') }
+  Assert-Rejected 'Task3 Core value CALL' { Assert-Task3CoreIr ($coreIr+' call(1,2,3,4,5,6,7)') }
+  $mutatedLayout=$coreLayout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutatedLayout.storage[11].slot='12'
+  Assert-Rejected 'Task3 Core deposit root mutation' { Assert-Task3SemanticStorageRows $mutatedLayout $coreRows 'mutated Core' }
+  $mutated=$core|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutated.metadata.settings.viaIR=$false
+  Assert-Rejected 'Task3 Core compiler profile mutation' { Assert-Task3ArtifactCompilerProfile $mutated $sources[2] $contracts[2] }
+
+  throw 'Task3 GREEN identity freeze pending: exact ABI/source/source-set hashes, immutable reference offsets, bytecode sizes/splits, and final compiler callsite counts.'
+}
+
 function Test-AuthoritySizePolicy([int]$RuntimeSize,[int]$InitcodeSize) {
   return [pscustomobject]@{
     RuntimeTarget = $RuntimeSize -le 18000
@@ -1136,6 +1888,15 @@ if ($candidateKinds.Count -ne 6) {
   Exit-Verified 43
 }
 try { Assert-CanonicalArtifactLayout $finalArtifacts } catch { Fail $_.Exception.Message 1 }
+if ($ValidatePhase -eq 'Task3') {
+  try { Invoke-Task3Validation } catch { Fail $_.Exception.Message 1 }
+  if ($ExpectTask0Red) {
+    [Console]::Error.WriteLine('-ExpectTask0Red rejects a complete conforming Task 3 artifact set.')
+    Exit-Verified 44
+  }
+  Write-Output 'Task 3 GREEN: exact phase, artifacts, ABI/collisions, storage/immutables, provenance, sizes, formulas, and compiler call policy passed.'
+  Exit-Verified 0
+}
 if ($ValidatePhase -eq 'Task2') {
   try { Invoke-Task2Validation } catch { Fail $_.Exception.Message 1 }
   if ($ExpectTask0Red) {
