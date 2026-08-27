@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `65b283debfa4`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `043eb9a9d42e`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1002 |
+| Commits in clone | 1003 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-27 — docs: normalize event time knowledge |
+| Latest commit | 2026-08-27 — docs: record event time provenance |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 201 |
+| OmertaDev | 202 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -33,7 +33,7 @@
 | [src/server.js](../../src/server.js) | 340 | yes |
 | [schema.sql](../../schema.sql) | 261 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
-| [SPEC.md](../../SPEC.md) | 247 | yes |
+| [SPEC.md](../../SPEC.md) | 248 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 169 | yes |
 | [package.json](../../package.json) | 133 | yes |
@@ -60,10 +60,10 @@
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
 | [src/business.js](../../src/business.js) | 39 | yes |
 | [src/chain.js](../../src/chain.js) | 36 | yes |
-| knowledge/generated/github-history.md | 32 | historical |
-| knowledge/generated/graph-summary.md | 32 | historical |
-| knowledge/generated/graph.json | 32 | historical |
-| knowledge/generated/inventory.md | 32 | historical |
+| knowledge/generated/github-history.md | 33 | historical |
+| knowledge/generated/graph-summary.md | 33 | historical |
+| knowledge/generated/graph.json | 33 | historical |
+| knowledge/generated/inventory.md | 33 | historical |
 | [DEPLOY.md](../../DEPLOY.md) | 30 | yes |
 | [public/admin.html](../../public/admin.html) | 30 | yes |
 | [test/migrate.js](../../test/migrate.js) | 29 | yes |
