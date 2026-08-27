@@ -2,6 +2,12 @@
 
 **Status:** architecture freeze independently approved at `85081946` (C0/I0/M0); Task 2 implementation and production approval are not claimed
 
+### Compiler-feasibility amendment — independently approved
+
+Solc 0.8.26 legacy code generation cannot compile the frozen `authoritySnapshot()` surface with 27 top-level static outputs: the signature itself reaches the legacy stack limit even when the outputs are unnamed and the implementation terminates with a direct 864-byte assembly return. Task 2 therefore uses the named `constellation-via-ir` compiler profile for exactly the six canonical deployables plus the type-only `IAcquisitionAuthorityV2`. That profile is frozen to solc 0.8.26, optimizer enabled with 800 runs, Cancun, and `viaIR = true`. The default profile and historical `AcquisitionVault` oracle remain `viaIR = false` with otherwise identical solc/optimizer/EVM settings.
+
+Canonical Task 2 hashes, sizes, immutable references, source provenance, and verifier inputs must come only from the explicitly selected `constellation-via-ir` artifacts. A legacy/default artifact, a profile-suffixed duplicate, or values mixed across profiles are noncanonical and must fail closed. The feasibility probe measured Authority runtime/initcode at 15,935/18,496 bytes; those figures are pre-final evidence only, not a bytecode commitment. This amendment is independently approved; it does not claim Task 2 implementation or production approval.
+
 **Inputs:** the approved constellation architecture, the Task 0 ownership/collision crosswalk, historical O1 Tasks 1–3A, and the Task 1 deployment proof at `f6a21dcc` (independently approved C0/I0/M0 as a development proof only).
 
 ## 1. Replacement boundary and graph edge
