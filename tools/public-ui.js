@@ -87,6 +87,26 @@ try {
   check(landingLoad.heroFallbackBytes === 0,
     `the responsive landing still fetched the 630 KB hero fallback — ${JSON.stringify(landingLoad.resources)}`);
 
+  await desktop.locator('#agent-players').scrollIntoViewIfNeeded();
+  await desktop.waitForFunction(() => document.querySelector('[data-agent-graphic="overview"]')?.naturalWidth > 0);
+  const agentProof = await desktop.evaluate(() => ({
+    graphics: document.querySelectorAll('[data-agent-graphic]').length,
+    overview: new URL(document.querySelector('[data-agent-graphic="overview"]').currentSrc).pathname,
+    overviewWidth: document.querySelector('[data-agent-graphic="overview"]').naturalWidth,
+    facts: document.querySelectorAll('.agent-showcase__brief dl > div').length,
+    actions: [...document.querySelectorAll('.agent-showcase__actions a')].map((link) => link.getAttribute('href')),
+    live: document.querySelector('.agent-showcase__status .is-live')?.textContent.trim(),
+    gated: document.querySelector('.agent-showcase__status .is-gated')?.textContent.trim(),
+    over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  }));
+  check(agentProof.graphics === 3 && /agent-overview-(1080|1600)\.webp$/.test(agentProof.overview)
+    && agentProof.overviewWidth >= 1080 && agentProof.facts === 4,
+    `landing agent dossier is missing its responsive system proof — ${JSON.stringify(agentProof)}`);
+  check(JSON.stringify(agentProof.actions) === JSON.stringify(['/play', '/agents', '/arena'])
+    && agentProof.live === 'AGENT API LIVE' && /DORMANT IN PRODUCTION$/.test(agentProof.gated || ''),
+    `landing agent dossier loses its setup, guide, Arena, or production-state truth — ${JSON.stringify(agentProof)}`);
+  check(agentProof.over <= 1, `desktop agent dossier scrolls sideways by ${agentProof.over}px`);
+
   // THE PATH FINDER — one real seven-decision walk, not a DOM snapshot. This catches a quiz whose
   // progressive controls render but cannot complete, a result whose share image 404s, and dossiers
   // that push their exact modifier cards sideways at ordinary desktop widths.
@@ -167,6 +187,7 @@ try {
         bandCopy: px('.landing .band p'),
       },
       videoDeferred: !video.hasAttribute('poster') && [...video.querySelectorAll('source')].every((source) => !source.hasAttribute('src')),
+      agentDeferred: [...document.querySelectorAll('[data-agent-graphic]')].every((image) => !image.currentSrc),
       tourDeferred: !document.querySelector('#tour-art').style.backgroundImage,
     };
   });
@@ -180,8 +201,25 @@ try {
   check(landingMobile.type.ctaHint >= 14 && landingMobile.type.wireLine >= 14
     && landingMobile.type.receiptRow >= 14 && landingMobile.type.receiptNote >= 14,
   `dense support copy fell below 14px — ${JSON.stringify(landingMobile.type)}`);
-  check(landingMobile.videoDeferred && landingMobile.tourDeferred,
+  check(landingMobile.videoDeferred && landingMobile.agentDeferred && landingMobile.tourDeferred,
     `below-fold/hidden media was exposed on the cold visit — ${JSON.stringify(landingMobile)}`);
+  await mobile.locator('#agent-players').scrollIntoViewIfNeeded();
+  await mobile.waitForFunction(() => document.querySelector('[data-agent-graphic="overview"]')?.naturalWidth > 0);
+  const agentMobile = await mobile.evaluate(() => {
+    const overview = document.querySelector('[data-agent-graphic="overview"]');
+    const rail = document.querySelector('.agent-showcase__rail');
+    return {
+      overview: new URL(overview.currentSrc).pathname,
+      overviewWidth: overview.naturalWidth,
+      railScrolls: rail.scrollWidth > rail.clientWidth,
+      pageOver: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      links: document.querySelectorAll('.agent-showcase__plate').length,
+    };
+  });
+  check(/agent-cover-(480|720)\.webp$/.test(agentMobile.overview) && agentMobile.overviewWidth <= 720,
+    `phone did not select the portrait agent cover — ${JSON.stringify(agentMobile)}`);
+  check(agentMobile.railScrolls && agentMobile.links === 2 && agentMobile.pageOver <= 1,
+    `phone agent evidence rail is clipped or expands the page — ${JSON.stringify(agentMobile)}`);
   await mobile.goto(`${BASE}/path`, { waitUntil: 'networkidle' });
   pathShape = await mobile.evaluate(() => {
     const choices = [...document.querySelectorAll('.quiz-option')];

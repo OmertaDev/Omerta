@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `13ece0e06050`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `22019d33f56b`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1039 |
+| Commits in clone | 1044 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-27 — Merge pull request #141 from OmertaDev/codex/site-copy-ui-upgrade |
+| Latest commit | 2026-08-27 — Merge remote-tracking branch 'origin/main' into codex/site-copy-ui-upgrade |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 238 |
+| OmertaDev | 243 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -29,11 +29,11 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 492 | yes |
-| [public/index.html](../../public/index.html) | 388 | yes |
+| [public/index.html](../../public/index.html) | 389 | yes |
 | [src/server.js](../../src/server.js) | 343 | yes |
 | [schema.sql](../../schema.sql) | 258 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
-| [SPEC.md](../../SPEC.md) | 244 | yes |
+| [SPEC.md](../../SPEC.md) | 245 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 170 | yes |
 | [package.json](../../package.json) | 132 | yes |
@@ -54,13 +54,13 @@
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
 | [src/preflight.js](../../src/preflight.js) | 48 | yes |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
+| knowledge/generated/github-history.md | 44 | historical |
+| knowledge/generated/graph-summary.md | 44 | historical |
+| knowledge/generated/graph.json | 44 | historical |
+| knowledge/generated/inventory.md | 44 | historical |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 44 | yes |
 | [src/economy.js](../../src/economy.js) | 44 | yes |
 | [src/casino.js](../../src/casino.js) | 43 | yes |
-| knowledge/generated/github-history.md | 41 | historical |
-| knowledge/generated/graph-summary.md | 41 | historical |
-| knowledge/generated/graph.json | 41 | historical |
-| knowledge/generated/inventory.md | 41 | historical |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
 | [src/business.js](../../src/business.js) | 39 | yes |
 | [src/chain.js](../../src/chain.js) | 37 | yes |
