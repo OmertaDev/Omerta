@@ -2215,7 +2215,8 @@ async function nonRegularReportTargetTest() {
       }
       await assert.rejects(
         runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1 }),
-        /^Agent Alpha report target is unsafe:/,
+        (error) => error instanceof Error
+          && /^Agent Alpha report target is unsafe:/.test(error.message),
         `${kind} report targets fail closed instead of receiving an append`,
       );
       assert.equal(api.state.sessionCalls, 0,
