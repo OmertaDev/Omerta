@@ -1336,6 +1336,9 @@
   <div id="top">
     <h1>OMERTÀ</h1><span class="sub">the city breathes</span>
     <span id="whoami"></span>
+    <button class="act capital-trigger" id="btn-capital" type="button" aria-label="Open the $OMR finance dashboard" title="the capital desk — launch, staking, bonds, the Desk and the on-chain rail">
+      <span class="capital-trigger__mark">$OMR</span><span class="capital-trigger__label">finance</span><span class="capital-trigger__balance" id="capital-balance">—</span>
+    </button>
     <a href="/wiki" target="_blank" class="act" style="text-decoration:none" title="the codex — every system explained">CODEX</a>
     <button class="act" id="btn-jump" aria-label="Jump to a screen" title="jump to any screen (press /)"><svg class="ic" aria-hidden="true"><use href="#i-glass"/></svg></button>
     <button class="act" id="btn-phone" aria-label="Open phone and messages" title="the cell — your inbox + messages" style="position:relative"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg><span id="phone-badge" class="hidden"></span></button>
@@ -4803,6 +4806,19 @@
     list.querySelectorAll('[data-jump]').forEach((b) => b.onclick = () => { $('#jumpmodal').classList.add('hidden'); setTab(b.dataset.jump); });
   }
   { const jb = $('#btn-jump'); if (jb) jb.onclick = openJump; }
+  { const cb = $('#btn-capital'); if (cb) cb.onclick = () => {
+      setTab('portfolio');
+      let attempts = 0;
+      const landing = setInterval(() => {
+        const target = $('#capital-overview');
+        if (target) {
+          clearInterval(landing);
+          const offset = ($('#top')?.getBoundingClientRect().height || 58) + 8;
+          const top = target.getBoundingClientRect().top + window.scrollY - offset;
+          window.scrollTo({ top: Math.max(0, top), behavior: REDUCED ? 'auto' : 'smooth' });
+        } else if (++attempts >= 50) clearInterval(landing);
+      }, 100);
+    }; }
   $('#jumpmodal')?.addEventListener('click', (e) => { if (e.target.id === 'jumpmodal') $('#jumpmodal').classList.add('hidden'); });
   $('#jump-q')?.addEventListener('input', (e) => paintJump(e.target.value));
   $('#jump-q')?.addEventListener('keydown', (e) => {
@@ -5239,6 +5255,8 @@
     }
     $('#whoami').innerHTML = `<b>${me.name}</b> · gen ${me.generation} · lvl ${me.level} · <button id="go-travel" title="travel">${esc(me.loc)} ⇄</button>` +
       (me.gang ? ` · <span style="color:${me.gang.color || 'var(--dim)'}">${me.gang.tag}</span>` : '');
+    const capitalBalance = $('#capital-balance');
+    if (capitalBalance) capitalBalance.textContent = fmt(Math.floor(Number(me.omr) || 0));
     const gt = $('#go-travel'); if (gt) gt.onclick = openTravel;   // move from ANY screen
     const chips = [];
     // LIVE countdowns (mins() ticks in place) — a short jail reads "0:08" and drains, not a static, wrong "1m"
@@ -5572,7 +5590,7 @@
     deeds: ['property', 'street deed', 'auction deed'],
     crew: ['recruit crew', 'crew objective', 'crew room'],
     discover: ['find player', 'find people', 'recruit', 'who is online'],
-    portfolio: ['invest', 'stocks', 'bonds', 'legit assets'],
+    portfolio: ['finance', 'crypto', 'defi', 'omr', 'wallet', 'stake', 'bonds', 'the desk', 'genesis auction', 'withdraw', 'legit assets'],
     estate: ['safe assets', 'legacy', 'heir', 'country estate'],
     store: ['buy omr', 'shop', 'made man', 'subscription'],
     deck: ['raw json', 'api response', 'console', 'developer'],
@@ -9992,6 +10010,12 @@
   // ── GOING LEGIT: the Portfolio — earned $OMR into legit, death-proof RWA holdings ──
   async function renderPortfolio() {
     const t = $('#tab-portfolio');
+    t.setAttribute('aria-busy', 'true');
+    if (!t.querySelector('#capital-overview')) t.innerHTML = `
+      <section class="capital-desk" role="status" aria-live="polite">
+        <div class="capital-desk__head"><div><span class="capital-desk__eyebrow">$OMR / capital operations</span>
+          <h2 class="capital-desk__title">Reading the books…</h2><p class="capital-desk__lede">Checking launch, market, reserve and wallet state.</p></div></div>
+      </section>`;
     await refresh();
     // eight serial awaits before a single pixel painted. Issuing them together doesn't make the
     // AUTHED ones concurrent (api() queues those on purpose — same-account calls serialize on the
@@ -9999,22 +10023,169 @@
     // response and the next request, and the keyless boards genuinely do run in parallel.
     // (D11 2026-08-05: the stock book retired — /v1/portfolio and its boards are tombstones now;
     // this screen is the REAL money arc: made → ladder → wallet → extraction → window → vault → bonds)
-    const [vaultR, bdR, winR, yldR, wdR, bkR, bkrR, drR, pvR] = await Promise.all([
-      api('GET', '/v1/vault'), api('GET', '/v1/bonds'),
+    const [vaultR, deskR, bdR, winR, yldR, wdR, bkR, bkrR, drR, pvR] = await Promise.all([
+      api('GET', '/v1/vault'), api('GET', '/v1/desk'), api('GET', '/v1/bonds'),
       api('GET', '/v1/window'), api('GET', '/v1/yield'),
       api('GET', '/v1/withdraw/status'), api('GET', '/v1/bank'),
       api('GET', '/v1/brokers'), api('GET', '/v1/drop'),
       api('GET', '/v1/provenance'),
     ]);
     const fgR = await api('GET', '/v1/forge');
+    const readFailureCount = [vaultR, deskR, bdR, winR, yldR, wdR, bkR, bkrR, drR, pvR, fgR]
+      .filter((r) => Number(r?.code) >= 400).length;
     const fg = fgR.body || {};
-    const vault = vaultR.body || {}, bd = bdR.body || {};
+    const vault = vaultR.body || {}, desk = deskR.body || {}, bd = bdR.body || {};
     const win = winR.body || {}, yld = yldR.body || {};
     const wd = wdR.body || {}, bk = bkR.body || {};
     const bkr = bkrR.body || {};
     const dr = drR.body || {};
     const pv = pvR.body || {};
+    const genesis = desk.genesis || bd.genesis || {};
+    const launchSteps = [
+      ['prepare', 'Prepare'], ['auction', 'Auction'], ['migration', 'Migrate'],
+      ['oracle_warmup', 'Warm oracle'], ['live', 'Market live'],
+    ];
+    const phaseIndex = launchSteps.findIndex(([id]) => id === genesis.phase);
+    const launchProgress = ({ legacy: 0, prepare: 12, auction: 40, migration: 66, oracle_warmup: 84, live: 100, failed: 0 })[genesis.phase] ?? 0;
+    const phaseLabel = ({
+      legacy: 'not armed', prepare: 'preparing launch', auction: 'initial auction live', migration: 'seeding liquidity',
+      oracle_warmup: 'warming the oracle', live: 'canonical market live', failed: 'launch halted',
+    })[genesis.phase] || 'status unavailable';
+    const phaseCopy = ({
+      legacy: 'The lifecycle interlock is not armed yet. The progress bar begins when the launch operator enters prepare.',
+      prepare: 'Contracts, allocations and one-shot approvals are being verified before the first bid can land.',
+      auction: 'The initial on-chain auction is active. This bar tracks launch milestones, not money raised; live fill remains chain-authoritative.',
+      migration: 'The auction has closed and proceeds are moving into the canonical liquidity position.',
+      oracle_warmup: 'Liquidity is in place. Normal Desk and reserve-bond operations wait for the canonical oracle to become trustworthy.',
+      live: 'Canonical liquidity and its oracle are live. Normal Desk auctions and reserve bonds may operate again.',
+      failed: 'The launch is halted. The Desk and reserve-bond rails stay fail-closed until an operator resolves the incident.',
+    })[genesis.phase] || (genesis.note || 'No launch status is available.');
+    const launchStateClass = genesis.phase === 'live' ? 'capital-state--live'
+      : genesis.phase === 'failed' ? 'capital-state--failed' : 'capital-state--closed';
+    const launchStages = launchSteps.map(([id, label], i) => {
+      const cls = genesis.phase === 'live' || (phaseIndex >= 0 && i < phaseIndex) ? ' capital-stage--done'
+        : i === phaseIndex ? ' capital-stage--current' : '';
+      return `<span class="capital-stage${cls}">${label}</span>`;
+    }).join('');
+    const bondDaily = bd.daily || null;
+    const bondOffered = Number(bondDaily?.offeredOmr || 0);
+    const bondRemaining = Number(bondDaily?.remainingOmr || 0);
+    const bondTranche = Number(bd.reserve?.remainingOmr || 0);
+    const bondBuyable = Math.max(0, Math.min(bondRemaining, bondTranche));
+    const bondFilledPct = bondOffered > 0 ? Math.max(0, Math.min(100, ((bondOffered - bondRemaining) / bondOffered) * 100)) : 0;
+    const deskAuction = desk.auction || null;
+    const deskLot = Number(deskAuction?.lot || 0);
+    const deskSold = Number(deskAuction?.sold || 0);
+    const deskFilledPct = deskLot > 0 ? Math.max(0, Math.min(100, (deskSold / deskLot) * 100)) : 0;
+    const deskClosedCopy = desk.closed === 'genesis_launch' ? 'closed for genesis'
+      : desk.closed === 'between_auctions' ? 'between daily auctions'
+        : desk.closed ? String(desk.closed).replaceAll('_', ' ') : 'awaiting the next lot';
+    const reserve = wd.reserve || {};
+    const walletReady = !!me.wallet, identityReady = !!me.minted, marketReady = genesis.phase === 'live';
+    const brokerActive = !!bkr.activation?.active;
+    const deskPrice = deskAuction?.priceEthPerOmr == null ? null : Number(deskAuction.priceEthPerOmr);
+    const deskPriceText = deskPrice == null ? 'no live print' : `${deskPrice.toFixed(8)} ETH / $OMR`;
     t.innerHTML = `
+      ${readFailureCount ? `<div class="artifact-notice artifact-notice--warning" role="alert" style="margin-bottom:12px"><b>${readFailureCount} capital ${readFailureCount === 1 ? 'book' : 'books'} did not answer.</b> The figures below show what could be verified. <button class="act" id="capital-retry" type="button">retry the read</button></div>` : ''}
+      <section class="capital-desk" id="capital-overview" aria-labelledby="capital-title">
+        <header class="capital-desk__head">
+          <div>
+            <span class="capital-desk__eyebrow">$OMR / capital operations</span>
+            <h2 class="capital-desk__title" id="capital-title">The Capital Desk</h2>
+            <p class="capital-desk__lede">One ledger for launch, The Desk, staking, reserve bonds, treasury programs, wallet custody and the extraction rail.</p>
+          </div>
+          <span class="capital-state ${launchStateClass}">${esc(phaseLabel)}</span>
+        </header>
+        <nav class="capital-nav" aria-label="Capital Desk sections">
+          <a href="#capital-overview">Overview</a>
+          <a href="#capital-overview" data-capital-tab="store">Buy</a>
+          <a href="#capital-desk-market">The Desk</a>
+          <a href="#capital-stake">Stake</a>
+          <a href="#capital-bonds">Bonds</a>
+          <a href="#capital-chain">Chain</a>
+          <a href="#capital-bank">Treasury</a>
+        </nav>
+        <div class="capital-ledger">
+          <div class="capital-launch">
+            <div class="capital-block-label"><span>Initial liquidity launch</span><b>${esc(phaseLabel)}</b></div>
+            <div class="capital-progress capital-progress--gold" role="progressbar" aria-label="Initial liquidity launch milestones" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${launchProgress}" aria-valuetext="${esc(phaseLabel)}" style="--capital-progress:${launchProgress}%">
+              <span class="capital-progress__fill"></span>
+            </div>
+            <div class="capital-stages" aria-label="Launch stages">${launchStages}</div>
+            <p class="capital-launch__note">${esc(phaseCopy)}</p>
+          </div>
+          <div class="capital-readiness" aria-label="On-chain readiness">
+            <div class="capital-block-label"><span>Your chain readiness</span><b>${[walletReady, identityReady, marketReady].filter(Boolean).length}/3</b></div>
+            <div class="capital-readiness__row${walletReady ? '' : ' is-blocked'}"><span class="capital-readiness__mark">${walletReady ? '✓' : '○'}</span><span>Wallet proven</span><small>${walletReady ? `${me.wallet.slice(0, 6)}…${me.wallet.slice(-4)}` : 'link below'}</small></div>
+            <div class="capital-readiness__row${identityReady ? '' : ' is-blocked'}"><span class="capital-readiness__mark">${identityReady ? '✓' : '○'}</span><span>Identity minted</span><small>${identityReady ? 'ready' : me.mintCredits > 0 ? 'credit in hand' : 'required to extract'}</small></div>
+            <div class="capital-readiness__row${marketReady ? '' : ' is-blocked'}"><span class="capital-readiness__mark">${marketReady ? '✓' : '○'}</span><span>Launch rail</span><small>${marketReady ? 'market live' : esc(phaseLabel)}</small></div>
+          </div>
+        </div>
+        <div class="capital-metrics" aria-label="Your capital position">
+          <div class="capital-metric"><span class="capital-metric__label">Liquid</span><span class="capital-metric__value is-money">${fmt(Math.floor(Number(me.omr) || 0))} $OMR</span><span class="capital-metric__note">on hand; exposed to the game’s loot rules</span></div>
+          <div class="capital-metric"><span class="capital-metric__label">Committed</span><span class="capital-metric__value">${fmt(Math.floor(Number(me.staked) || 0))} $OMR</span><span class="capital-metric__note">staked on the ladder and in the Vault</span></div>
+          <div class="capital-metric"><span class="capital-metric__label">Desk shelf</span><span class="capital-metric__value">${fmt(Math.floor(Number(desk.inventory) || 0))} $OMR</span><span class="capital-metric__note">recycled sink inventory, never newly printed</span></div>
+          <div class="capital-metric"><span class="capital-metric__label">Exit reserve</span><span class="capital-metric__value">${fmt(Math.floor(Number(reserve.available) || 0))} $OMR</span><span class="capital-metric__note">available behind signed withdrawal vouchers</span></div>
+        </div>
+        <div class="capital-markets" aria-label="Live capital rails">
+          <div class="capital-market">
+            <span class="capital-market__name">Genesis auction</span>
+            <span class="capital-market__body">Milestone progress only. Bid fill and clearing remain authoritative on-chain.</span>
+            <span class="capital-market__value ${genesis.phase === 'auction' || genesis.phase === 'live' ? 'is-live' : 'is-closed'}">${esc(phaseLabel)}</span>
+          </div>
+          <div class="capital-market">
+            <span class="capital-market__name">The Desk</span>
+            <span class="capital-market__body">${deskAuction ? `${fmt(deskAuction.left)} $OMR left in today’s descending auction · closes ${mins(deskAuction.closesSeconds)}` : `${fmt(Math.floor(Number(desk.inventory) || 0))} $OMR waits on the recycled shelf`}</span>
+            <span class="capital-market__value ${deskAuction ? 'is-live' : 'is-closed'}">${deskAuction ? `${Math.round(deskFilledPct)}% sold` : esc(deskClosedCopy)}</span>
+          </div>
+          <div class="capital-market">
+            <span class="capital-market__name">Reserve bonds</span>
+            <span class="capital-market__body">${bondDaily ? `${fmt(bondBuyable)} $OMR is executable now, bounded by today’s post and the funded tranche` : 'No daily reserve-bond offering has been posted.'}</span>
+            <span class="capital-market__value ${bondBuyable > 0 ? 'is-live' : 'is-closed'}">${bondDaily ? `${Math.round(bondFilledPct)}% filled` : 'closed'}</span>
+          </div>
+          <div class="capital-market">
+            <span class="capital-market__name">Price oracle</span>
+            <span class="capital-market__body">Reserve-bond quotes and Desk bands fail closed until a trusted $OMR / ETH market price is available.</span>
+            <span class="capital-market__value ${bd.oracle ? 'is-live' : 'is-closed'}">${bd.oracle ? `${fmt(bd.oracle)} $OMR / ETH` : 'no trusted print'}</span>
+          </div>
+          <div class="capital-market">
+            <span class="capital-market__name">Protocol capital</span>
+            <span class="capital-market__body">Bond proceeds already booked across protocol-owned liquidity, the RWA treasury and the full-reserve withdrawal bucket.</span>
+            <span class="capital-market__value">POL ${fmt(bd.reserve?.polEth || 0)} ETH · RWA ${fmt(bd.reserve?.rwaEth || 0)} ETH</span>
+          </div>
+          <div class="capital-market">
+            <span class="capital-market__name">Cash window</span>
+            <span class="capital-market__body">One-way redemption. It burns $OMR for city cash and refuses without burning if the till is short.</span>
+            <span class="capital-market__value ${win.open ? 'is-live' : 'is-closed'}">${win.open ? `$${fmt(win.rate)} / $OMR` : 'closed'}</span>
+          </div>
+          <div class="capital-market">
+            <span class="capital-market__name">Bank split</span>
+            <span class="capital-market__body">Borrower fees buy $OMR for active players; today’s score decides who shares the next distribution.</span>
+            <span class="capital-market__value ${bk.you?.today?.qualifies ? 'is-live' : 'is-closed'}">${bk.you?.today?.qualifies ? 'qualified' : `${fmt(Math.floor(bk.pool?.balance || 0))} $OMR waiting`}</span>
+          </div>
+          <div class="capital-market">
+            <span class="capital-market__name">Brokers’ RWA</span>
+            <span class="capital-market__body">Your activation window and play-weight are tracked now; stock delivery waits for the launch rail and a valid Street Deed.</span>
+            <span class="capital-market__value ${brokerActive && !bkr.blocked ? 'is-live' : 'is-closed'}">${brokerActive ? (bkr.blocked ? 'activated, not qualified' : `weight ${fmt(Math.floor(bkr.weight || 0))}`) : 'not activated'}</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="capital-desk-board" id="capital-desk-market" aria-labelledby="capital-desk-market-title">
+        <h2 id="capital-desk-market-title">The Desk <span class="d" style="font-size:11px">(spent $OMR returns to a published shelf; a descending auction recirculates it without minting)</span></h2>
+        <div class="capital-desk-board__grid">
+          <div class="capital-desk-board__cell"><span>Inventory</span><b>${fmt(Number(desk.inventory) || 0)} $OMR</b></div>
+          <div class="capital-desk-board__cell"><span>Recycled, 24h</span><b>${fmt(Number(desk.recycledToday) || 0)} $OMR</b></div>
+          <div class="capital-desk-board__cell"><span>POL buyback budget</span><b>${fmt(Number(desk.buyback?.budgetEth) || 0)} ETH</b></div>
+        </div>
+        ${deskAuction ? `
+          <div class="capital-block-label" style="margin-top:10px"><span>Today’s recycled auction</span><b>${fmt(deskSold)} / ${fmt(deskLot)} $OMR sold</b></div>
+          <div class="capital-progress" role="progressbar" aria-label="Desk auction sold" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(deskFilledPct)}" style="--capital-progress:${deskFilledPct}%"><span class="capital-progress__fill"></span></div>
+          <p class="capital-desk-board__note">${deskPriceText} now · ${fmt(deskAuction.left)} $OMR left · closes ${mins(deskAuction.closesSeconds)}. The price descends only as far as the published band.</p>`
+          : `<p class="capital-desk-board__note"><b>${esc(deskClosedCopy)}.</b> ${desk.band?.anchorEthPerOmr == null ? 'The market anchor is not trustworthy enough to quote a band.' : `Anchor ${Number(desk.band.anchorEthPerOmr).toFixed(8)} ETH / $OMR · sell above ${Number(desk.band.sellAbove).toFixed(8)} · buy below ${Number(desk.band.buyBelow).toFixed(8)}.`}</p>`}
+        <p class="capital-desk-board__note">${esc(desk.note || 'Desk status is read-only until a live lot is available.')}${desk.surge?.x > 1 ? ` Strength multiplier ×${Number(desk.surge.x).toFixed(2)} is awake after ${desk.surge.prints} qualifying prints.` : ''}</p>
+      </section>
+
       <h2>Going Legit <span class="d" style="font-size:11px">(what your $OMR does: the ladder, the vault, the window — and the on-chain way out)</span></h2>
       <div class="card" style="border-color:var(--neon)"><span class="t" style="color:var(--neon)">Where $OMR Comes From</span>
         <div class="d">Almost nowhere in the game. There is no wage, no yield, no drip — the one trickle the street
@@ -10037,7 +10208,7 @@
           : `Pay the dues and you're <i>made</i>: the badge, the upper compound, a club of your own, a seat in the high-stakes room, and a rung up the ladder.`}</div>
         <div class="d" style="color:var(--dim);font-size:11.5px;margin-top:4px">It buys <b>real advantage</b> — but there is a <b>ceiling</b>, and holding ${rules?.made?.ceilingOmr ?? 900} $OMR reaches it without paying a subscription. Nothing dues buy helps you fight. A free man runs the whole city, and can still hunt you for your $OMR.</div>
         <div class="row" style="margin-top:6px"><button data-do="POST /v1/made">${me.made ? 'ANOTHER 30 DAYS' : 'PAY THE DUES'} — ${rules?.made?.omr ?? 120} $OMR</button></div></div>
-      <h2 style="margin-top:12px">The Bank <span class="d" style="font-size:11px">(borrowers pay to use it — that profit buys $OMR and goes to the people who play)</span></h2>
+      <h2 class="capital-anchor" id="capital-bank" style="margin-top:12px">The Bank <span class="d" style="font-size:11px">(borrowers pay to use it — that profit buys $OMR and goes to the people who play)</span></h2>
       <div class="card"${bk.you?.today?.qualifies ? ' style="border-color:var(--ok)"' : ''}>
         <div class="d">${esc(bk.what || '')}</div>
         <div class="d" style="margin-top:6px">bought so far <b>${fmt(Math.floor(bk.pool?.boughtTotal || 0))}</b> $OMR ·
@@ -10079,7 +10250,7 @@
             : `<span class="chip good">IN THE SPLIT</span> ${esc(act2.name || '')} (×${act2.mult}) with ${Math.max(1, Math.floor((act2.secondsLeft || 0) / 86400))}d on the window — your cut scales with your play, weight <b>${fmt(Math.floor(bkr.weight || 0))}</b>.`)
           : `<span class="chip cold">NOT ACTIVATED</span> your play this week already counts (score ${fmt(Math.floor(play.score || 0))} across ${play.tracks || 0} trades${play.qualifies ? ' — enough to qualify' : ''}) — activate below and you're in the next split.`;
         return `
-      <h2 style="margin-top:12px">The Brokers' Desk <span class="d" style="font-size:11px">(the treasury buys stock with the city's own revenue — activated brokers who PLAY split every buy)</span></h2>
+      <h2 class="capital-anchor" id="capital-brokers" style="margin-top:12px">The Brokers' Desk <span class="d" style="font-size:11px">(the treasury buys stock with the city's own revenue — activated brokers who PLAY split every buy)</span></h2>
       <div class="card"${act2.active && !bkr.blocked ? ' style="border-color:var(--ok)"' : ''}>
         <div class="d">The families vote a ticker each day, and the treasury buys it with its own revenue.
           Every buy is split among <b>activated brokers</b> — weighted by how much you actually <b>played</b>
@@ -10091,7 +10262,7 @@
         <div class="d" style="font-size:11px;color:var(--dim);margin-top:4px">Straight talk: <b>no stock moves yet</b> — the treasury's buying opens with the chain at launch. Your window and your play are real today; the splits start when the buys do, and land in your Street Deed's vault.</div>
       </div>`; })() : ''}
 
-      <div class="card"><span class="t">THE LADDER — ${me.ladder?.name || 'off the ladder'}${me.ladder?.rung ? ` (rung ${me.ladder.rung}/${me.ladder.of})` : ''}</span>
+      <div class="card capital-anchor" id="capital-stake"><span class="t">THE LADDER — ${me.ladder?.name || 'off the ladder'}${me.ladder?.rung ? ` (rung ${me.ladder.rung}/${me.ladder.of})` : ''}</span>
         <div class="d">Power runs on $OMR you <b>HOLD</b>, not what you spend — ${fmt(Math.floor(me.ladder?.staked || 0))} staked.
           ${me.ladder?.fx ? `Carrying <b>+${me.ladder.fx.trunk}</b>, energy cap <b>+${me.ladder.fx.energy}</b>, nerve <b>+${me.ladder.fx.nerve}</b>, garage <b>+${me.ladder.fx.garage}</b>${me.ladder.fx.fenceBps ? `, the fence pays <b>+${(me.ladder.fx.fenceBps / 100).toFixed(1)}%</b>` : ''}.` : 'Stake $OMR to climb it.'}</div>
         <div class="d" style="color:var(--dim);font-size:11.5px;margin-top:4px">${me.ladder?.next
@@ -10103,7 +10274,7 @@
           ${me.ladder?.lock ? `Your word is given: <b class="neon">×${me.ladder.lock.mult}</b> for another <b>${mins(me.ladder.lock.seconds)}</b> — ${fmt(me.ladder?.effective || 0)} effective on the rungs. It cannot come out until then, and a killer still loots it at the committed rate.` : `A locked stake cannot be unstaked until the window passes — and it is still looted at the committed rate when you die. Commitment buys rungs, not safety.`}</div>
         ${(me.ladder?.lockTiers || []).length && Number(me.ladder?.staked || 0) > 0 ? `<div class="row" style="margin-top:4px">
           ${(me.ladder.lockTiers).map((t) => `<button class="act" data-stakelock="${t.id}" title="lock for ${t.days} days — counts ×${t.mult} on the ladder">${t.name} — ${t.days}d ×${t.mult}</button>`).join(' ')}</div>` : ''}</div>
-      <h2 style="margin-top:12px">Your Wallet <span class="d" style="font-size:11px">(the proven 0x address gates every $OMR / gear extraction — and survives your death)</span></h2>
+      <h2 class="capital-anchor" id="capital-wallet" style="margin-top:12px">Your Wallet <span class="d" style="font-size:11px">(the proven 0x address gates every $OMR / gear extraction — and survives your death)</span></h2>
       <div class="card">${me.wallet
         ? `<span class="t">Linked <span class="chip good">${me.wallet.slice(0, 6)}…${me.wallet.slice(-4)}</span></span><div class="d">on-chain extraction is unlocked (mainnet rail is dormant until launch)</div>`
         : `<span class="t">No wallet linked</span><div class="d">sign a one-time challenge to link it — MetaMask, Coinbase, Trust, Rabby, Phantom, Crypto.com, Robinhood Wallet or any other browser wallet${rules?.walletConnect ? ', or scan the QR with a wallet on your phone (WalletConnect)' : ''}. Nothing leaves your wallet; it just proves the address.</div>
@@ -10159,7 +10330,7 @@
              <button class="act" id="colors-claim">claim your colors</button>`}
       </div>` : ''}
 
-      <h2 style="margin-top:12px">Extraction <span class="d" style="font-size:11px">(mint your identity, then withdraw your $OMR on-chain to your own wallet — a small exit toll applies, steeper on fresh tokens)</span></h2>
+      <h2 class="capital-anchor" id="capital-chain" style="margin-top:12px">Extraction <span class="d" style="font-size:11px">(mint your identity, then withdraw your $OMR on-chain to your own wallet — a small exit toll applies, steeper on fresh tokens)</span></h2>
       <div class="card">
         <div class="d">Minted identity: ${me.minted
           ? '<b style="color:var(--ok)">✓ minted</b> — extraction is unlocked'
@@ -10187,7 +10358,7 @@
         <div class="d" style="margin-top:4px;color:var(--dim)">Cash and $OMR do not trade in either direction, at any price. Cash is the city's own money and it stays here; $OMR comes in from the outside, and goes out through the window below.</div></div>
 
       ${win.rate ? `
-      <h2 style="margin-top:12px">The Window <span class="d" style="font-size:11px">(one way: burn $OMR, take cash — cash never runs back the other way)</span></h2>
+      <h2 class="capital-anchor" id="capital-window" style="margin-top:12px">The Window <span class="d" style="font-size:11px">(one way: burn $OMR, take cash — cash never runs back the other way)</span></h2>
       <div class="card"${win.open ? '' : ' style="opacity:.75"'}>
         <div class="d">${win.note}</div>
         ${win.open ? `<div class="d">rate $${fmt(win.rate)} cash per $OMR · the till holds $${fmt(win.pool)} (${fmt(win.poolOmr)} $OMR worth) · your allowance today ${fmt(win.yourHeadroomOmr)} of ${fmt(win.dailyCapOmr)} $OMR</div>
@@ -10203,13 +10374,13 @@
         ${yld.families.map((f) => `<tr><td>${f.rank}</td><td>${esc(f.name)} <span class="chip">${esc(f.tag)}</span></td><td>${(f.shareBps / 100).toFixed(0)}%</td><td>${fmt(f.nextPayout)}</td></tr>`).join('')}</table>
         <div class="d" style="font-size:11px;color:var(--dim)">${yld.note}</div></div>` : ''}
 
-      <h2 style="margin-top:12px">The Vault <span class="d" style="font-size:11px">(cheaper cover, not a safe harbour — a killer takes 20% of a staked balance against 50% of a loose or unbonding one, so committing drops the take from half to a fifth without ever making you safe. Your principal always returns whole; yield pays the FAMILIES, not the staker; unstaking pulls it ALL and unbonds 6h — at the higher loose rate — before it's liquid)</span></h2>
+      <h2 class="capital-anchor" id="capital-vault" style="margin-top:12px">The Vault <span class="d" style="font-size:11px">(cheaper cover, not a safe harbour — a killer takes 20% of a staked balance against 50% of a loose or unbonding one, so committing drops the take from half to a fifth without ever making you safe. Your principal always returns whole; yield pays the FAMILIES, not the staker; unstaking pulls it ALL and unbonds 6h — at the higher loose rate — before it's liquid)</span></h2>
       <div class="card"><div class="d">staked ${fmt(Math.floor(me.staked || 0))} $OMR${me.unbonding ? ` · unbonding ${fmt(Math.floor(me.unbonding))} (${mins(me.unbondSeconds || 0)})` : ''}</div>
         <input id="stake-amt" placeholder="$OMR" size="8">
         <button class="act" id="stake-in">stake</button>
         <button class="act" id="stake-out">unstake it all</button></div>
 
-      <h2 style="margin-top:12px">The Bond Desk <span class="d" style="font-size:11px">(the house sells $OMR below market for ETH — and only as much as it opened the window for that day)</span></h2>
+      <h2 class="capital-anchor" id="capital-bonds" style="margin-top:12px">The Bond Desk <span class="d" style="font-size:11px">(the house sells $OMR below market for ETH — and only as much as it opened the window for that day)</span></h2>
       ${(() => {
         const dl = bd.daily, off = bd.offering || {};
         // TWO things have to hold before a quote can be signed: the house posted a window TODAY, and
@@ -10288,6 +10459,16 @@
 `;
 
     wireSects(t);
+    t.setAttribute('aria-busy', 'false');
+    { const retry = $('#capital-retry'); if (retry) retry.onclick = async () => {
+        await renderPortfolio();
+        const target = $('#capital-overview'), offset = ($('#top')?.getBoundingClientRect().height || 58) + 8;
+        if (target) window.scrollTo({ top: Math.max(0, target.getBoundingClientRect().top + window.scrollY - offset), behavior: REDUCED ? 'auto' : 'smooth' });
+      }; }
+    t.querySelectorAll('[data-capital-tab]').forEach((b) => b.onclick = (e) => {
+      e.preventDefault();
+      setTab(b.dataset.capitalTab);
+    });
     { const vb = $('#vault-claim'); if (vb) vb.onclick = () =>
         act('POST', '/v1/vault/claim', { omr: Number($('#vault-amt').value) }).then(() => renderPortfolio()); }
     { const wl = $('#wallet-link'); if (wl) wl.onclick = () => linkWallet(); }
