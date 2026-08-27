@@ -35,15 +35,25 @@ constructor(
 )
 ```
 
-`factory`, `manifestHash`, `registry`, `core`, `budgetBook`, `intentExecution`, and `reconciliation` are private immutables. Safe is mutable `Ownable2Step` owner state rather than an immutable. Every address and the manifest hash is nonzero. Safe and Registry must contain code. Safe is the recognized governance-proxy exception and is not runtime pinned; Registry remains runtime pinned. Core, BudgetBook, IntentExecution, and Reconciliation are predicted, not-yet-deployed peers and are deliberately not code-checked in this constructor.
+`factory`, `manifestHash`, `_launchSafe`, `registry`, `core`, `budgetBook`, `intentExecution`, and `reconciliation` are private immutables. `_launchSafe` is used only for deployment/finalizer attestation and never for current-role authorization; all live authorization reads the mutable `Ownable2Step` owner. It is therefore launch evidence, not a mutable-role mirror. Every address and the manifest hash is nonzero. Safe and Registry must contain code. Safe is the recognized governance-proxy exception and is not runtime pinned. Registry's runtime hash remains solely Factory-pinned: Authority independently checks only its nonzero address, code presence, and snapshot identity. Core, BudgetBook, IntentExecution, and Reconciliation are predicted, not-yet-deployed peers and are deliberately not code-checked in this constructor.
 
-Factory, Safe, Registry, and the five predicted children must be pairwise distinct, and the executing Authority must equal the predicted Authority child at index 0. Thus “Authority” and “predicted child 0” are one identity, not two identities that could be required to differ. Collision validation uses the already-derived predicted children and checks candidates in the frozen constructor ladder. The constructor performs no `CALL` or `STATICCALL`, makes no peer call, and begins paused and unfinalized with zero operator, generations, nonces, nominations, ingress state, and ingress records.
+The constructor validation ladder and first-error precedence are exact:
+
+1. zero factory: `AuthorityFactoryZero()`;
+2. zero manifest: `AuthorityManifestHashZero()`;
+3. zero Safe, Registry, Core, BudgetBook, IntentExecution, then Reconciliation, in that order: `ZeroAddress()`;
+4. missing Safe code, then missing Registry code: `ContractRequired(candidate)`;
+5. derive `expectedAuthority = predict(factory, 1)`; if `address(this) != expectedAuthority`, `AuthorityAddressMismatch(expectedAuthority,address(this))`;
+6. compare supplied Core, BudgetBook, IntentExecution, and Reconciliation with `predict(factory, 2..5)` in child-index order 1–4; the first mismatch is `AuthorityPeerMismatch(index,expected,actual)`;
+7. role collisions in this order: Safe equals Registry; Safe equals Factory; Registry equals Factory; then, for predicted child indices 0–4, Safe collision followed by Registry collision at each index. The first failure is `RoleIdentityCollision(candidate)`.
+
+Factory, Safe, Registry, and the five predicted children are consequently pairwise distinct, and executing Authority equals predicted child index 0. Predicted children are mutually distinct by ordinary-CREATE address derivation, so there is no redundant peer-versus-peer branch. Tests must freeze every overlapping candidate's first failure. The constructor performs no `CALL` or `STATICCALL`, makes no peer call, and begins paused and unfinalized with zero operator, generations, nonces, nominations, ingress state, and ingress records.
 
 The EIP-712 domain name is `OMERTA AcquisitionAuthority`, domain version is `2`, `version()` returns `2`, and the supported chain is 4663.
 
 ## 3. Exact Authority snapshot and Factory preflight
 
-Authority adds exactly one fixed-output view with the canonical descriptor `authoritySnapshot() returns (uint256,address,bytes32,address,address,address,address,address,bool,address,address,bool,address,address,uint256,uint256,uint256,uint256,uint256,address,bytes32,address,bytes32)`. Its 23 words (736 bytes) are returned in this exact order:
+Authority adds exactly one fixed-output view with the canonical descriptor `authoritySnapshot() returns (uint256,address,bytes32,address,address,address,address,address,bool,address,address,bool,address,address,uint256,uint256,uint256,uint256,uint256,address,bytes32,address,bytes32,uint256,bytes32,uint256,bytes32)`. Its 27 words (864 bytes) are returned in this exact order:
 
 | Field | Type | Ordinal | Pre-final expected value |
 |---|---|---:|---|
@@ -70,8 +80,16 @@ Authority adds exactly one fixed-output view with the canonical descriptor `auth
 | `activeIngressConfigHash` | `bytes32` | 20 | zero |
 | `pendingIngress` | `address` | 21 | zero |
 | `pendingIngressConfigHash` | `bytes32` | 22 | zero |
+| `nominationNonce` | `uint256` | 23 | zero |
+| `pendingOperatorStateHash` | `bytes32` | 24 | canonical all-zero operator-state hash |
+| `ingressProposalNonce` | `uint256` | 25 | zero |
+| `pendingIngressStateHash` | `bytes32` | 26 | canonical all-zero ingress-state hash |
 
-The return is static: no dynamic tail. Factory calls it with zero value, a 120,000 gas cap, a fixed 736-byte output area, no dynamic returndata copy, no revert bubbling, and exact returndata length. Address words require zero high 96 bits and bool words must be exactly zero or one.
+The operator state hash is exactly `keccak256(abi.encode(proposalId,proposalNumber,nominee,proposedBy,proposedAt,validAfter,expiresAt,detailsHash))`. The ingress state hash is exactly `keccak256(abi.encode(proposalId,proposalNumber,proposedBy,config.ingress,config.runtimeCodeHash,config.perDepositCapWei,config.epochDepositCapWei,config.lifetimeDepositCapWei,configHash,proposedAt,validAfter,expiresAt,detailsHash))`.
+
+For pre-final Factory attestation, both counters are zero. The exact expected operator hash is `keccak256(abi.encode(bytes32(0),uint256(0),address(0),address(0),uint64(0),uint64(0),uint64(0),bytes32(0)))`. The exact expected ingress hash is `keccak256(abi.encode(bytes32(0),uint256(0),address(0),address(0),bytes32(0),uint256(0),uint256(0),uint256(0),bytes32(0),uint64(0),uint64(0),uint64(0),bytes32(0)))`. These hashes are deliberately not `bytes32(0)`. Existing convenience fields 13, 21, and 22 remain in the snapshot.
+
+The return is static: no dynamic tail. Factory calls it with zero value, a 160,000 gas cap, a fixed 864-byte output area, no dynamic returndata copy, no revert bubbling, and exact returndata length. Address words require zero high 96 bits and bool words must be exactly zero or one. The 160,000 cap is provisional only until GREEN measures the compiled cold worst case; measured worst-case use above the cap fails Task 2 rather than silently raising it.
 
 Factory adds these unique errors:
 
@@ -81,7 +99,9 @@ error FactoryAuthoritySnapshotReturnLength(uint256 actualLength);
 error FactoryAuthoritySnapshotSemanticMismatch(uint8 field);
 ```
 
-The semantic mismatch payload is the first failing tuple ordinal, 0–22. Finalization precedence is exact: phase; child-count invariant; Registry code, runtime hash, call, return length, and chain result; child runtime/topology preflight at indices 0–4; Authority snapshot call, return length, canonical ABI, and field comparisons in ordinal order; transition to `FINALIZING`; finalizers in order 2,4,3,1,0; final flag rechecks; `FINALIZED` and event.
+The semantic mismatch payload is the first failing tuple ordinal, 0–26. Finalization precedence is exact: phase; child-count invariant; Registry code, runtime hash, call, return length, and chain result; child runtime/topology preflight at indices 0–4; Authority snapshot call, return length, canonical ABI, and field comparisons in ordinal order; transition to `FINALIZING`; finalizers in order 2,4,3,1,0; final flag rechecks; `FINALIZED` and event.
+
+Arbitrary mapping emptiness is not enumerated onchain. It is grounded by fresh EVM-zero storage, exact creation-bytecode and source-hash provenance, a constructor proof that mapping root 29 is never written, and the rule that every pre-final state mutator reverts. Zero pending IDs are discriminators, while the complete pending-state hashes prove that no scalar residue is hidden behind a zero discriminator.
 
 ## 4. Storage and immutable layout
 
@@ -103,27 +123,45 @@ Task 2 is a fresh deployment, so the following declaration layout is normative r
 | 15 | `ingressProposalNonce` |
 | 16 | `ingressGeneration` |
 | 17 | `activeIngressGeneration` |
-| 18–28 | pending/active ingress fields |
+| 18–28 | pending-ingress proposal fields |
 | 29 | ingress-record mapping root |
 
-ReentrancyGuard uses only its namespaced slot. The verifier must bind actual compiler-0.8.26 labels, slots, offsets, type identifiers, encodings, and byte widths to this semantic table, and bind every private peer immutable’s identity, Solidity type, bytecode reference positions, and lengths. No Core/accounting/cap storage may appear.
+Active ingress data lives only through `activeIngressGeneration` and the record at mapping root 29; it is not duplicated in slots 18–28. ReentrancyGuard uses only its namespaced slot. The verifier must bind actual compiler-0.8.26 labels, slots, offsets, type identifiers, encodings, and byte widths to this semantic table, and bind `factory`, `manifestHash`, `_launchSafe`, `registry`, `core`, `budgetBook`, `intentExecution`, and `reconciliation` immutable identities, Solidity types, bytecode reference positions, and lengths. No Core/accounting/cap storage may appear.
 
 ## 5. Exact surface and staging rule
 
 Authority has exactly 50 functions: the 47 legacy `MOVE` functions, its unique topology getter, its unique finalizer, and `authoritySnapshot()`. `outflowNonce()` returns `_sharedO2Nonce`; there is no `sharedO2Nonce()` or `cancelNonce()` getter. `_cancelNonce` is initialized to zero and appears only in the snapshot during Task 2. Task 7 introduces and freezes cancellation consumption. Task 2 performs no O2 execution.
 
-The error surface is the 35 legacy Authority custom errors; the five exact unique topology/constructor/finalizer errors `AuthorityFactoryZero()`, `AuthorityManifestHashZero()`, `AuthorityFinalizerUnauthorized(address)`, `AuthorityManifestHashMismatch(bytes32,bytes32)`, and `AuthorityAlreadyFinalized()`; and:
+The error surface is the 35 legacy Authority custom errors; the five exact unique topology/constructor/finalizer errors `AuthorityFactoryZero()`, `AuthorityManifestHashZero()`, `AuthorityFinalizerUnauthorized(address)`, `AuthorityManifestHashMismatch(bytes32,bytes32)`, and `AuthorityAlreadyFinalized()`; and four Task 2 custom errors:
 
 ```solidity
 error AuthorityNotFinalized();
 error AuthorityInitialStateMismatch(uint8 field);
+error AuthorityAddressMismatch(address expected, address actual);
+error AuthorityPeerMismatch(uint8 index, address expected, address actual);
 ```
 
-The seven inherited errors remain unchanged. Events are the 12 legacy Authority events, five inherited events, and the unique `AuthorityFinalized` event: exactly 18 events and no new nonce event. Full function-selector, semantic-error-selector, and event-topic collision checks remain mandatory.
+The new semantic-error selectors are frozen as `AuthorityAddressMismatch(address,address) = 0x8eb62af4` and `AuthorityPeerMismatch(uint8,address,address) = 0x9943c275`; both are unique against the current compiled and historical reserved error universe.
+
+The seven inherited errors remain unchanged. Authority therefore has exactly 51 errors. Events are the 12 legacy Authority events, five inherited events, and the unique `AuthorityFinalized` event: exactly 18 events and no new nonce event. Full function-selector, semantic-error-selector, and event-topic collision checks remain mandatory.
+
+The aggregate compiled Task 2 ABI census is exact:
+
+| Artifact | Functions | Errors | Events | Constructors | ABI entries |
+|---|---:|---:|---:|---:|---:|
+| Factory | 4 | 31 | 2 | 1 | 38 |
+| Authority | 50 | 51 | 18 | 1 | 120 |
+| Core shell | 2 | 5 | 1 | 1 | 9 |
+| BudgetBook shell | 2 | 5 | 1 | 1 | 9 |
+| IntentExecution shell | 2 | 5 | 1 | 1 | 9 |
+| Reconciliation shell | 2 | 5 | 1 | 1 | 9 |
+| **Compiled total** | **62** | **102** | **24** | **6** | **194** |
+
+The historical `FUTURE_RESERVED` set adds two callable selectors, six semantic-error selectors, and one event topic. The exact collision universes are therefore 64 callable function selectors, 108 semantic-error selectors, and 25 full event signatures/topics; six constructors are verified separately. `ReentrancyGuardReentrantCall()` remains the sole permitted repeated error descriptor even if the Task 2 compiler surface happens to contain only one occurrence.
 
 Every state-changing function except the finalizer checks `AuthorityNotFinalized` first and then enters the same nonReentrant guard. This includes ownership, pause, permissionless expiries, operator, and ingress mutations, so ERC-1271 callbacks cannot interleave any Authority mutation. Read-only getters, hash helpers, topology, and snapshot remain callable before finalization.
 
-The finalizer precedence is caller authorization, manifest match, already-finalized error, then initial-state checks. It sets `_finalized` only after all checks and emits `AuthorityFinalized`. `AuthorityInitialStateMismatch(field)` uses the snapshot ordinals: owner 9; pending owner 10; paused 11; main operator 12; pending operator 13; operator generation 14; shared nonce 15; cancel nonce 16; ingress generation 17; active generation 18; active ingress 19; active config hash 20; pending ingress 21; pending config hash 22. `_finalized == true` is handled only by the earlier already-finalized error (snapshot ordinal 8 is therefore not reused). Immutable identity fields 0–7 are construction invariants and are not mutable finalizer branches.
+The finalizer precedence is caller authorization, manifest match, already-finalized error, then initial-state checks. It sets `_finalized` only after all checks and emits `AuthorityFinalized`. `AuthorityInitialStateMismatch(field)` uses the snapshot ordinals: owner 9 must equal immutable `_launchSafe`; pending owner 10; paused 11; main operator 12; pending operator 13; operator generation 14; shared nonce 15; cancel nonce 16; ingress generation 17; active generation 18; active ingress 19; active config hash 20; pending ingress 21; pending config hash 22; nomination nonce 23; canonical all-zero pending-operator state hash 24; ingress-proposal nonce 25; and canonical all-zero pending-ingress state hash 26. `_finalized == true` is handled only by the earlier already-finalized error (snapshot ordinal 8 is therefore not reused). Immutable identity fields 0–7 are construction invariants and are not mutable finalizer branches.
 
 ## 6. Ownership and operator state machine
 
@@ -143,7 +181,9 @@ Every nonzero mutable role must be pairwise disjoint from owner, pending owner, 
 
 Only Safe may propose, cancel, activate, or disable ingress; expiry is permissionless. Proposal, cancellation, expiry, and disable are pause-independent. Activation is Safe-only and paused-only, with the existing half-open window. Cancellation, expiry, and disable remain possible through code absence or runtime-hash drift. Active ingress A and pending ingress B may coexist, and disabling A preserves pending B.
 
-Task 2 validates nonzero ingress and runtime hash, nonzero caps, and `perDepositCapWei <= epochDepositCapWei <= lifetimeDepositCapWei`. Authority owns configuration and records but no consumed-cap totals. The Core-owned global lifetime cap is deliberately neither copied nor consulted until Task 3 deposit enforcement. This is a pre-production staging rule, not permission to accept deposits.
+Task 2 validates nonzero ingress and runtime hash, nonzero caps, and `perDepositCapWei <= epochDepositCapWei <= lifetimeDepositCapWei`. Authority owns configuration and records but no consumed-cap totals. The Core-owned global lifetime cap is deliberately neither copied nor consulted during this isolated pre-production node. Task 2 can never be attached to a later Core in place.
+
+Task 3 is another fresh Factory, configuration root, manifest, deployment commitment, and five-child address set. No Task 2 owner/operator/ingress role, active ingress, pending configuration, counter, nonce, or record migrates. Before Task 3 exposes any deposit surface, both ingress proposal and ingress activation must enforce `lifetimeDepositCapWei <= Core.globalLifetimeCanonicalDepositCapWei` through the exact bounded protocol frozen by Task 3. This is a graph transition requirement, not optional validation.
 
 ## 8. Pause and deliberately fail-closed unpause
 
@@ -207,19 +247,19 @@ Factory snapshot preflight and Authority’s independent finalizer checks are bo
 Task 2 implementation is incomplete until focused tests and the machine verifier cover at least:
 
 1. fresh Factory/configuration/manifest/deployment commitments and proof that Task 1 addresses cannot be reused, upgraded, migrated, or refinalized;
-2. every constructor zero/code/collision case in deterministic precedence, no peer calls, initial pause/zero state, and Safe proxy exception versus Registry runtime pinning;
-3. exact 23-word snapshot encoding, every field, dirty address padding, dirty bool, 735/737/large return lengths, call failure/OOG, field-ordinal precedence, and atomic Factory rollback;
+2. every constructor zero/code/address/peer/collision case in the literal ladder, all overlapping-first-failure mutations, no peer calls, initial pause/zero state, and Safe proxy exception versus Factory-only Registry runtime pinning;
+3. exact 27-word snapshot encoding, every field and both independently recomputed pending-state hashes, dirty address padding, dirty bool, 863/865/large return lengths, call failure/OOG, field-ordinal precedence, cold worst-case gas measurement at the 160,000 cap, and atomic Factory rollback;
 4. Authority initial-state mismatch ordinals and finalizer caller/manifest/already/state precedence;
 5. unchanged historical Task 3A ownership behavior and event order;
 6. full operator delay/window, counter/timestamp overflow, generation/shared-nonce rules, replay, replacement consent, EOA/1271 signature boundaries, gas boundaries, malformed return/revert bombs, and callback attempts against every mutator;
 7. full ingress proposal/cancel/expire/activate/disable lifecycle, half-open time boundaries, code absence/hash drift liveness, A-active/B-pending behavior, role/constellation collisions at proposal and activation, and local cap inequalities without a copied global cap;
 8. pause authorization/event order and the exact fail-closed unpause ladder ending in `LocalReadinessFailed(11)` with no peer call/state change;
-9. ABI census, names/types/mutability/outputs/indexedness, storage roots/packing/types, immutable identities/reference positions, source/build provenance, selector/error/topic collisions, and compiler/optimizer/Cancun settings;
+9. exact 62/102/24/6/194 compiled ABI census, exact 64/108/25 collision universes including future reservations, names/types/mutability/outputs/indexedness, storage roots/packing/types, `_launchSafe` and peer immutable identities/reference positions, source/build provenance, selector/error/topic collisions, and compiler/optimizer/Cancun settings;
 10. AST/optimized-IR/opcode mutations proving no hidden payable/receive/fallback, business state, unexpected external call, dynamic returndata copy/bubble, proxy/delegation/create/selfdestruct/token operation, or forbidden source-set drift;
 11. size mutations at 18,000 target, 20,000 hard runtime gate, 30,000 target initcode, and 49,152 absolute initcode gate;
 12. unchanged historical Accounting (38), Operator (84), and RegistryV2 (22) suites as behavioral oracles, without editing those suites.
 
-The collision verifier must include all 50 Authority functions, all frozen Authority/inherited/topology/snapshot/Factory errors, all 18 Authority events, Factory events, every other topology descriptor, and historical `FUTURE_RESERVED` descriptors. No descriptor is admitted until full signature collision checks pass.
+The collision verifier must include all 50 Authority functions, all 51 Authority errors, all 31 Factory errors, all 18 Authority events, both Factory events, every unchanged child topology descriptor, and historical `FUTURE_RESERVED` descriptors. No descriptor is admitted until the exact 64-function/108-error/25-event collision universes pass.
 
 ## 12. Verifier phase semantics and implementation edges
 
@@ -233,15 +273,15 @@ Task 2 adds a `-ValidatePhase Task1|Task2` mode. Before Task 2 lands, historical
 - partial artifact set: exit `43` in either phase;
 - malformed, provenance-drifted, or otherwise nonconforming complete set: exit `1`.
 
-Dependency order is: this independently approved freeze; Task 2 RED tests/verifier mutations; fresh Factory/Authority implementation; refreshed commitments and source hashes; Task 2 GREEN and unchanged oracle suites; independent security/spec rereview. Task 3 Core behavior is a separate node and must not enter this implementation.
+Dependency order is: this independently approved freeze; Task 2 RED tests/verifier mutations; fresh Factory/Authority implementation; refreshed commitments and source hashes; Task 2 GREEN and unchanged oracle suites; independent security/spec rereview. Task 3 Core behavior is a separate fresh-constellation node and must not enter this implementation.
 
 ## 13. Frozen ambiguity resolutions
 
 This freeze resolves the previously open choices as follows:
 
-- Initial-state mismatch payloads reuse snapshot ordinals rather than introducing a second ordinal language.
+- Initial-state mismatch uses the single snapshot ordinal namespace 0–26 rather than introducing a second ordinal language: immutable fields 0–7 are construction/manifest invariants, field 8 is consumed by the earlier already-finalized branch, and mutable initial-state failures use fields 9–26.
 - V2 detail IDs use stored proposal nonces and explicit Core/Authority binding.
-- The Core global cap is intentionally absent from Authority ingress validation until Task 3.
+- The Core global cap is intentionally absent from Task 2 Authority ingress validation; Task 3 must use a fresh constellation and enforce its cap at both proposal and activation before exposing deposits.
 - Task 2’s unpause selector is deliberately nonfunctional and fail-closed rather than performing an incomplete local readiness check.
 - Historical Task 1 verification remains available through an explicit verifier phase; it is not treated as Task 2 conformance.
 
