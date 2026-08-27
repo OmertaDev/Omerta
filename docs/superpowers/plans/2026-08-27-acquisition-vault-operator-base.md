@@ -267,6 +267,7 @@ shown Solidity return types:
 | `MAX_SIGNATURE_BYTES()` | `uint256`, exactly `4_096` |
 | `ERC1271_CALL_GAS()` | `uint256`, exactly `100_000` |
 | `ERC1271_POST_CALL_GAS_RESERVE()` | `uint256`, exactly `50_000` |
+| `ERC1271_MIN_PRECALL_GAS()` | `uint256`, exactly `160_000` |
 | `MAX_ACTIVE_ORDINARY_RESERVATIONS()` | `uint256`, exactly `32` |
 | `MAX_ACTIVE_RECONCILIATIONS()` | `uint256`, exactly `32` |
 | `MAX_OPERATOR_OUTFLOW_COMPONENTS()` | `uint256`, exactly `67` |
@@ -424,6 +425,21 @@ struct PreVoteBudgetAuthorization {
 }
 ```
 
+Milestone interface reconciliation is exact:
+
+- the O1 `IAcquisitionVaultV1` source declares the full frozen `ReasonCode` and
+  `LocalReadinessCondition` enums with the ordinals above, the three O1 structs
+  (`PendingOperatorNomination`, `OutflowAuthorization`, `SuccessorConsent`), and
+  every constant/getter assigned to O1 in the allowlist—including the future
+  ingress-delay and `32/32/67` bound constants;
+- O1 declares only O1 mutators/views/errors/events. It does **not** yet declare
+  `IngressConfig`, `PendingIngressProposal`, `IngressRecord`, accounting enums or
+  structs, `DepositRecord`, pre-vote structs, A1 mutators/views, or A1-only
+  errors/events; and
+- A1 adds those already-frozen appendix declarations when their implementation
+  lands. The combined appendix documents the final O1+A1 interface but does not
+  expand the earlier O1 source milestone.
+
 ### Complete O1/A1 public selector allowlist
 
 The ABI contains only the following custom and inherited/public selectors. The
@@ -501,6 +517,16 @@ unchanged by failed/cancelled/expired/accepted proposals. First proposal number 
 one. `ingressGeneration` starts at zero and advances by checked `+1` only on a
 successful activation. `operatorGeneration` starts at zero and advances exactly
 as the transition table specifies. Counter exhaustion reverts before any write.
+
+`CounterExhausted(bytes32)` arguments are literal `keccak256` hashes of these
+UTF-8 labels; no public label getter is added:
+
+| Counter | Exact error argument |
+|---|---|
+| `nominationNonce` | `keccak256(bytes("nominationNonce"))` |
+| `operatorGeneration` | `keccak256(bytes("operatorGeneration"))` |
+| `ingressProposalNonce` | `keccak256(bytes("ingressProposalNonce"))` |
+| `ingressGeneration` | `keccak256(bytes("ingressGeneration"))` |
 
 ```text
 nominationId = keccak256(abi.encode(
@@ -712,6 +738,15 @@ newOwner)`, `OwnershipTransferred(address indexed previousOwner,address indexed
 newOwner)`, `Paused(address account)`, `Unpaused(address account)`, and
 `EIP712DomainChanged()`.
 
+Safe disable has one exact evidence sequence. If a nomination is pending, emit
+`MainOperatorNominationCancelled(proposalId, nominee, msg.sender,
+uint8(ReasonCode.OPERATOR_DISABLED), detailsHash)` and clear it first. Then
+increment `operatorGeneration` exactly once and always emit
+`MainOperatorChanged(previousOperator, address(0), newGeneration,
+preservedOutflowNonce, uint8(ReasonCode.OPERATOR_DISABLED), detailsHash)`. The
+second event is mandatory even for the pending-only `address(0) -> address(0)`
+case. Active and pending operator state cannot coexist in valid state.
+
 ### Complete closed error set
 
 Custom errors are exactly:
@@ -734,7 +769,7 @@ error OperatorNominationPending(bytes32 proposalId);
 error OperatorNominationMissing();
 error ProposalIdMismatch(bytes32 expectedId, bytes32 actualId);
 error NotNominee(address caller);
-error ProposalNotReady(uint64 validAfter);
+error ProposalNotReady(uint64 eligibleAt);
 error ProposalExpired(uint64 expiresAt);
 error NoOperatorStateChange();
 error InvalidOperatorReplacement();
@@ -777,6 +812,73 @@ Inherited errors reachable through the allowlisted functions are exactly
 `EnforcedPause()`, `ExpectedPause()`, and
 `ReentrancyGuardReentrantCall()`. ECDSA and wallet-controlled errors never
 escape the closed `InvalidSignature` boundary.
+
+### Exact validation and error partition
+
+Constructor tests isolate one invalid predicate at a time. Compound-invalid
+precedence is not public API and must not be asserted. The isolated mappings are:
+
+1. `Ownable(safeOwner)` runs as a base constructor, so zero Safe reverts
+   `OwnableInvalidOwner(address(0))`.
+2. With a valid contract Safe, wrong `block.chainid` reverts
+   `WrongChain(actualChainId)` before body-level Safe/Registry checks.
+3. On chain 4663, an EOA Safe reverts `ContractRequired(safeOwner)`.
+4. Zero RegistryV2 reverts `ZeroAddress()`; an EOA RegistryV2 reverts
+   `ContractRequired(registry)`; Safe/Registry/vault identity collisions revert
+   `RoleIdentityCollision(candidate)`.
+5. Registry chain probing uses a low-level `STATICCALL` with exactly the
+   `IStockTokenRegistryV2.supportedChainId.selector`, copies at most 32 bytes,
+   requires call success and `returndatasize == 32`, and never bubbles Registry
+   returndata. Revert, malformed, short, or oversized return data maps to
+   `RegistryChainMismatch(0)`; a well-formed decoded value other than 4663 maps
+   to `RegistryChainMismatch(actualChainId)`.
+
+Owner-only calls use inherited `OwnableUnauthorizedAccount(caller)`. For
+`renounceOwnership`, a non-owner gets that inherited error and the current owner
+gets `OwnershipRenunciationDisabled()`. Direct-operator functions (`renounce`,
+`replace`, and nonce invalidation) first return `NoMainOperator()` when no active
+operator exists; when one exists but `msg.sender` is different they return
+`OwnableUnauthorizedAccount(msg.sender)`. `pause` accepts only owner or active
+operator and maps every other caller—including when no operator is active—to
+`OwnableUnauthorizedAccount(msg.sender)`.
+
+Proposal expiry checks missing proposal, then exact ID, then time. A permissionless
+operator or ingress expiry attempted before `expiresAt` reverts
+`ProposalNotReady(expiresAt)`. Nominee acceptance before `validAfter` separately
+uses `ProposalNotReady(validAfter)`; acceptance at/after `expiresAt` uses
+`ProposalExpired(expiresAt)`.
+
+Successor replacement validation is partitioned without overlap:
+
+- no active/wrong direct caller follows the direct-operator mapping above;
+- zero, same-as-current, or role-colliding successor is
+  `InvalidOperatorReplacement()`;
+- consent `currentOperator`, `successor`, `generation`, or `outflowNonce`
+  mismatch is `InvalidAuthorizationFields()`;
+- wrong reason is `InvalidActionReason(supplied)`;
+- zero details is `EmptyDetailsHash()`;
+- time failures retain the frozen authorization-time errors; and
+- EOA/ERC-1271 signature failures retain `InvalidSignature()` except for the
+  explicit gas-guard partition below.
+
+For an ERC-1271 candidate, calldata/memory construction happens first. Immediately
+before the wallet call require
+`gasleft() >= ERC1271_CALL_GAS + ERC1271_POST_CALL_GAS_RESERVE + 10_000`, exactly
+`160_000`. The additional 10,000 covers call/access/return bookkeeping and the
+EIP-150 forwarding constraint. Request exactly 100,000 gas for the `STATICCALL`;
+after validation require `gasleft() >= 50_000`. Either gas-guard failure reverts
+`InsufficientSignatureValidationGas()`. Wallet-controlled revert, wrong magic,
+or malformed return remains `InvalidSignature()`. Every failure restores the
+reentrancy guard and leaves all domain state, counters, and logs unchanged.
+
+Runtime `STATICCALL` evidence is target-family based, never an optimizer-dependent
+raw opcode count. Exactly two runtime families are allowed: compiler-emitted
+`ecrecover` precompile use at address `0x0000000000000000000000000000000000000001`
+for the EOA branch, and the bounded ERC-1271 wallet call above. The constructor's
+exact RegistryV2 selector read is a third creation-only family and must not survive
+in deployed runtime. PUSH-aware disassembly still bans runtime
+`CALL`/`CALLCODE`/`DELEGATECALL`/`SELFDESTRUCT`; source/build-info AST/IR review
+proves the permitted targets, calldata, gas, and return handling.
 
 ---
 
@@ -841,8 +943,16 @@ escape the closed `InvalidSignature` boundary.
 
 - [ ] **Step 2: Add constructor, ownership, and selector-negative tests**
 
-  Prove wrong chain, zero/EOA Safe, zero/EOA/wrong-chain RegistryV2, and identity
-  collisions fail; a distinct contract Safe and exact RegistryV2 are immutable
+  Isolate one constructor-invalid predicate per test and prove the appendix's
+  exact mapping: zero Safe reaches inherited `OwnableInvalidOwner(address(0))`;
+  a valid contract Safe on a non-4663 chain reaches `WrongChain(actual)`; an EOA
+  Safe reaches `ContractRequired(safe)`; zero RegistryV2 reaches
+  `ZeroAddress()`; and EOA/colliding RegistryV2 candidates reach their exact
+  appendix errors. Compound-invalid precedence is not an API and is not tested.
+  Exercise the low-level RegistryV2 read with revert, failure, empty/short, and
+  oversized return fixtures and expect `RegistryChainMismatch(0)`; a well-formed
+  non-4663 word reports `RegistryChainMismatch(actual)`. No returndata bubbles.
+  A distinct contract Safe and exact RegistryV2 are immutable
   from construction; the contract starts paused with zero operator, generation,
   nonce, and nomination. Override both ownership steps. A nonzero owner candidate
   must be a contract Safe distinct from the current owner, vault, RegistryV2,
@@ -859,8 +969,12 @@ escape the closed `InvalidSignature` boundary.
 
   Add the RED PUSH-aware runtime disassembler assertion here: walk deployed
   bytecode by opcode, skip every `PUSH1..PUSH32` payload, reject CALL/CALLCODE/
-  DELEGATECALL/SELFDESTRUCT, and separately inventory STATICCALL. Do not search
-  raw bytes. The test is RED until the O1 runtime exists.
+  DELEGATECALL/SELFDESTRUCT, and separately inventory STATICCALL by reviewed
+  target family rather than asserting an optimizer-dependent raw count. Runtime
+  permits exactly compiler-emitted `ecrecover` precompile calls to `address(1)`
+  for the EOA branch and bounded ERC-1271 wallet validation. The constructor's
+  exact RegistryV2 read is the third creation-only family and must not survive
+  runtime. Do not search raw bytes. The test is RED until the O1 runtime exists.
 
 - [ ] **Step 3: Add nomination lifecycle boundary tests**
 
@@ -872,7 +986,9 @@ escape the closed `InvalidSignature` boundary.
   `expiresAt - 1`, and `expiresAt` behavior where
   `expiresAt = validAfter + 7 days`; exact nominee and ID acceptance; Safe
   cancellation; permissionless expiry with contract-derived details; and no
-  appointment on cancel/expiry. Recheck every reciprocal role exclusion at
+  appointment on cancel/expiry. For expiry, missing/exact-ID validation runs
+  first and an early exact-ID call reverts `ProposalNotReady(expiresAt)`.
+  Recheck every reciprocal role exclusion at
   acceptance so a role change during the delay cannot collapse authority.
 
   Test `block.timestamp == type(uint64).max - 48 hours - 7 days` and the next
@@ -881,15 +997,25 @@ escape the closed `InvalidSignature` boundary.
 
 - [ ] **Step 4: Add generation and direct-transition tests**
 
-  Prove Safe disable of an active operator or pending nomination is immediate,
-  clears pending state, increments generation exactly once, preserves the
-  global next-outflow nonce, and rejects a no-state disable. Prove only the
-  direct active operator may renounce or replace; renounce reaches zero;
+  Prove Safe disable of an active operator or pending nomination is immediate
+  and increments generation exactly once while preserving the global next-
+  outflow nonce. If pending exists, it first emits
+  `MainOperatorNominationCancelled` with `OPERATOR_DISABLED` and caller details,
+  then clears it; it always emits `MainOperatorChanged(previousOperator,
+  address(0), newGeneration, preservedNonce, OPERATOR_DISABLED, details)`,
+  including pending-only `0 -> 0`. Reject a no-state disable. Prove only the
+  direct active operator may renounce or replace; no active operator maps to
+  `NoMainOperator()`, while a wrong direct caller and unauthorized pause map to
+  inherited `OwnableUnauthorizedAccount(caller)`. Renounce reaches zero;
   replacement rejects zero/same/wrong caller/relay plus owner, pending owner,
   vault, RegistryV2, and, after A1, active/pending ingress. It rechecks those
   identities immediately before consent validation and atomically installs one
-  successor with no overlap. Both increment generation exactly once and
-  preserve the next nonce.
+  successor with no overlap. Freeze replacement failures exactly: zero/same/
+  role-colliding successor is `InvalidOperatorReplacement`; mismatched consent
+  operator/successor/generation/outflow nonce is `InvalidAuthorizationFields`;
+  wrong reason is `InvalidActionReason`; zero details is `EmptyDetailsHash`;
+  time/signature failures retain their appendix errors. Both increment
+  generation exactly once and preserve the next nonce.
 
 - [ ] **Step 5: Add replay, time, and EOA signature tests**
 
@@ -918,14 +1044,17 @@ escape the closed `InvalidSignature` boundary.
   - reject empty or more than `4_096` signature bytes before external work;
   - for EOAs use `ECDSA.tryRecoverCalldata`, require exactly 65 bytes and exact
     signer;
-  - for contracts require gas for an exact `100_000`-gas `staticcall` plus a
-    `50_000` post-call reserve;
+  - for contracts, construct calldata first, then require immediate pre-call
+    `gasleft() >= 160_000`, request exactly `100_000` gas for `staticcall`, and
+    require post-validation `gasleft() >= 50_000`; the extra `10_000` covers
+    call/access/return bookkeeping and the EIP-150 forwarding constraint;
   - copy at most 32 return bytes, require call success and
     `returndatasize == 32`, and accept only the ABI-left-aligned first four bytes
     `0x1626ba7e`;
   - collapse wrong magic, 0/4/31/33/64-byte return, revert, deliberate >100k
-    consumption, insufficient outer gas, and malformed signature to one
-    `InvalidSignature` without bubbling wallet-controlled data;
+    consumption, and malformed signature to `InvalidSignature` without bubbling
+    wallet-controlled data, but map either outer-gas guard failure exclusively
+    to `InsufficientSignatureValidationGas`, never `InvalidSignature`;
   - signature-consuming mutators are `nonReentrant`, validate before their first
     **domain/application-state** write (the guard writes and reverts atomically),
     and call a private transition core afterward.
@@ -945,6 +1074,8 @@ escape the closed `InvalidSignature` boundary.
   preserves the result. In a bounded stateful trace, nonce growth is at most the
   count of successful one-step invalidations. Document/test checked failure at
   the theoretical uint256 exhaustion boundary; never wrap or reset.
+  Assert `CounterExhausted` carries the literal appendix label hash for each
+  reachable O1 counter; derive those hashes independently in the test.
 
   Invalidation moves no funds and writes no accounting sequence. Safe or active
   operator may pause; pending nominee has no authority. O1 `unpause` is Safe-only
@@ -1002,9 +1133,12 @@ any deployment.
 
 - [ ] **Step 1: Define the narrow interface first**
 
-  Add only the exact O1 structs, constants, errors, events, getters, mutators,
-  and EIP-712 hash views required by Task 1. Use explicit custom errors and
-  closed reason codes. Do not add convenience aliases, generic execution,
+  Add the full frozen `ReasonCode` and `LocalReadinessCondition` enums, the exact
+  O1 structs/errors/events/getters/mutators/EIP-712 hash views, and every public
+  constant already assigned to the O1 selector allowlist, including future
+  ingress-delay and 32/32/67 bounds. Do not yet declare future A1 structs,
+  mutators, views, errors, or events; Task 4/5/6 adds those declarations with
+  their implementations. Do not add convenience aliases, generic execution,
   payable functions, token interfaces, admin sweeps, recovery, or future A1/A3/
   R/O2 selectors.
 
@@ -1021,10 +1155,13 @@ any deployment.
       ReentrancyGuard
   ```
 
-  Require `block.chainid == 4663`, a nonzero contract Safe, a distinct nonzero
-  contract RegistryV2 whose `supportedChainId()` is 4663, initialize
-  `Ownable(safeOwner)`, `EIP712("OMERTA AcquisitionVault", "1")`, and start
-  paused. The RegistryV2 check is the only constructor external `STATICCALL`.
+  Initialize `Ownable(safeOwner)` and `EIP712("OMERTA AcquisitionVault", "1")`,
+  enforce the appendix's isolated constructor mappings, and start paused. Probe
+  RegistryV2 with a low-level exact-selector `STATICCALL`, copy at most 32 bytes,
+  and require success plus `returndatasize == 32`: failure/revert/malformed/
+  oversized maps to `RegistryChainMismatch(0)`, while a decoded non-4663 value
+  maps to `RegistryChainMismatch(actual)`, with no returndata bubbling. This is
+  the only constructor external read and it must not survive runtime.
 
   Override `transferOwnership` and `acceptOwnership` to apply the appendix's
   contract-Safe and reciprocal collision checks at both stages. Preserve
@@ -1039,9 +1176,9 @@ any deployment.
   |---|---|---:|---:|---|
   | nominate | Safe; operator zero; no pending; appendix role-disjoint nominee/details/timestamp | unchanged | unchanged | create `[+48h, +48h+7d)` |
   | cancel | Safe; exact live ID/details | unchanged | unchanged | clear |
-  | expire | anyone; exact ID; `now >= expiresAt` | unchanged | unchanged | clear |
+  | expire | anyone; proposal exists, exact ID, otherwise early call is `ProposalNotReady(expiresAt)`; `now >= expiresAt` | unchanged | unchanged | clear |
   | accept | exact nominee/ID; `validAfter <= now < expiresAt`; recheck role disjointness | +1 | preserve | clear |
-  | disable | Safe; active or pending real state | +1 once | preserve | clear |
+  | disable | Safe; active or pending real state; cancel-event first when pending, then changed-event even for `0 -> 0` | +1 once | preserve | clear |
   | renounce | direct active operator/details | +1 | preserve | defensive clear |
   | replace | direct active operator; appendix role-disjoint successor; valid consent | +1 | preserve | defensive clear |
   | invalidate | direct active operator; supplied nonce exactly current + 1/details | unchanged | +1 | absent |
@@ -1058,11 +1195,17 @@ any deployment.
   a successful role change invalidates through generation, while an intervening
   future outflow/invalidation changes the bound `outflowNonce`.
 
-  Implement the EOA/ERC-1271 validator exactly as tested, with `4_096` bytes,
-  `100_000` call gas, `50_000` reserve, exact 32-byte return, left-aligned magic,
-  one closed error, no returndata bubbling, and no domain/application-state write
-  before validation. The `nonReentrant` guard's own entry write is explicitly not
-  misclassified as domain state and reverts atomically on failure.
+  Implement the EOA/ERC-1271 validator exactly as tested. EOA recovery uses the
+  compiler-emitted `ecrecover` precompile family at `address(1)`. For ERC-1271,
+  after calldata construction require the exact `160_000` immediate pre-call
+  threshold, request exactly `100_000` staticcall gas, copy/accept only the exact
+  32-byte left-aligned magic response, and require at least `50_000` gas after
+  validation. The threshold's extra `10_000` covers access/call/return work and
+  EIP-150. Either guard failure is `InsufficientSignatureValidationGas`; wallet-
+  controlled failure is `InvalidSignature`. Bubble no returndata and perform no
+  domain/application-state write before validation. The `nonReentrant` guard's
+  own entry write is explicitly not misclassified as domain state and reverts
+  atomically on failure.
 
 - [ ] **Step 5: Make the O1 RED suite GREEN**
 
@@ -1089,12 +1232,15 @@ any deployment.
   `CALLCODE (0xf2)`, `DELEGATECALL (0xf4)`, or `SELFDESTRUCT (0xff)`. A raw byte
   substring search is invalid because PUSH data can contain opcode bytes.
 
-  `STATICCALL (0xfa)` is permitted only for the exact ERC-1271 validator in O1;
+  Runtime `STATICCALL (0xfa)` is permitted for exactly two reviewed target
+  families: compiler-emitted EOA `ecrecover` at `address(1)`, and the exact
+  bounded ERC-1271 validator. Raw opcode count is optimizer-dependent; do not
+  gate on it. Instead,
   inspect source plus `forge build --build-info`, the build-info AST, and
   `forge inspect AcquisitionVault ir` / `irOptimized` to enumerate every
   external-call site and prove its target/calldata/gas/returndata shape.
   Separately inspect creation AST/IR: its only external read is the frozen
-  RegistryV2 `supportedChainId()` constructor check and it cannot survive in
+  exact-selector RegistryV2 `supportedChainId()` constructor check and it cannot survive in
   runtime. Record hashes of the inspected outputs in the task report.
 
 - [ ] **Step 6: Run deliberate mutation checks**
@@ -1102,9 +1248,12 @@ any deployment.
   Locally mutate one condition at a time, run the focused suite, and revert only
   the deliberate mutation: 48-hour delay, exclusive expiry, generation +1,
   nonce preservation/one-step advancement/max-1 jump, reciprocal role collision,
-  owner proposal/acceptance check, uint64 derivation, direct caller, domain
-  chain/address, one struct-field
-  order, signature max, ERC-1271 gas, return length, magic alignment, and
+  owner proposal/acceptance check, constructor error mapping/Registry malformed
+  response, expiry error ordering, disable dual-event ordering, exact counter
+  label, direct caller error mapping, replacement error partition, uint64
+  derivation, domain chain/address, one struct-field order, signature max,
+  ERC-1271 `160_000` pre-call and `50_000` post-call gas guards, return length,
+  magic alignment, and
   pending-clear. Also inject one hidden value-bearing low-level call, one token
   transfer call, and one `delegatecall` inside an allowlisted mutator; the
   opcode/call-site and behavioral gates must kill each mutation. Each mutation
@@ -1149,7 +1298,11 @@ separate focused implementation commit followed by a fresh independent review.
   boundaries, generation invalidation, exact one-step global nonce semantics and
   the max-1 attack trace,
   direct-only replacement, typed field/domain exactness, EOA malleability,
-  ERC-1271 gas/return/reentrancy handling, reason/details evidence, failure
+  the two-family runtime STATICCALL/constructor-only Registry call boundary,
+  ERC-1271 exact pre/post gas errors and return/reentrancy handling, constructor
+  and direct-caller error mapping, early-expiry ordering, Safe-disable dual-event
+  evidence, literal counter labels, successor error partition, reason/details
+  evidence, failure
   atomicity, exact ABI allowlist, PUSH-aware runtime opcode disassembly,
   source/AST/IR external-call inventory, mutation evidence, runtime size, and no
   production reachability.
@@ -1189,11 +1342,16 @@ constructor(
 
 - [ ] **Step 1: Write RED constructor and accounting-view tests**
 
-  Require chain `4663`; distinct, nonzero contract Safe and RegistryV2;
-  `IStockTokenRegistryV2(registry).supportedChainId() == 4663`; nonzero global
-  lifetime cap; paused, zero-funded, zero operator/nomination/ingress/budget; and
-  all accounting scalars zero. Use test contract fixtures, not invented
-  production addresses.
+  Preserve every O1 constructor predicate/error/precedence test, including the
+  isolated `Ownable(safeOwner)` zero-owner result and the low-level exact-selector
+  RegistryV2 response-length/sentinel rules; add only a nonzero global lifetime
+  cap predicate. Compound-invalid precedence remains outside the API. Require
+  paused, zero-funded, zero operator/nomination/ingress/budget, and all accounting
+  scalars zero. Use test contract fixtures, not invented production addresses.
+
+  Extend `IAcquisitionVaultV1` only with the A1 structs/enums/mutators/views/
+  errors/events introduced by Tasks 4-6. Preserve O1's already-declared complete
+  reason/readiness enums and constants without duplicate or speculative ABI.
 
   Re-run the O1 ownership/operator collision suite after A1 adds active/pending
   ingress. Prove a pending ownership or operator proposal cannot be made
@@ -1319,6 +1477,8 @@ depositCanonical(bytes32 sourceEventId)
   window as operator nomination: no overwrite, exact ID, Safe cancel, public
   expiry, Safe activation while paused, immediate Safe disable, and no active
   overlap. Activated generation caps are immutable.
+  Missing proposal and wrong-ID checks precede time; early permissionless expiry
+  of an exact live proposal reverts `ProposalNotReady(expiresAt)`.
 
   At proposal, activation, and every deposit, require nonzero contract code and
   the exact pinned `address.codehash`. Reciprocally reject vault, RegistryV2,
@@ -1367,6 +1527,10 @@ depositCanonical(bytes32 sourceEventId)
   it before consuming ID/cap/sequence. Test ingress proposal derivation at the
   same last-valid/first-invalid boundaries as operator nomination, and activation
   and disable record casts at `type(uint64).max`/first invalid.
+  Independently assert `CounterExhausted` carries
+  `keccak256(bytes("ingressProposalNonce"))` or
+  `keccak256(bytes("ingressGeneration"))` as applicable; production helpers may
+  not derive expected arguments.
 
 - [ ] **Step 3: Write RED repair-first deposit tests**
 
@@ -1412,7 +1576,10 @@ depositCanonical(bytes32 sourceEventId)
   reconciliation, outflow, generic call, token, approval, migration/import, or
   sweep selector. Re-run the opcode-aware runtime disassembly and source/AST/IR
   call-site gates: O1/A1 runtime still contains no CALL/CALLCODE/DELEGATECALL/
-  SELFDESTRUCT, and the only reviewed runtime STATICCALL remains ERC-1271.
+  SELFDESTRUCT. Runtime STATICCALL remains limited to the two reviewed target
+  families: compiler-emitted EOA `ecrecover` at `address(1)` and bounded ERC-1271
+  validation. The exact RegistryV2 read remains constructor-only; prove through
+  creation/runtime AST/IR/source, not a raw optimizer-dependent opcode count.
 
 - [ ] **Step 6: Commit the ingress/deposit slice**
 
@@ -1505,6 +1672,10 @@ depositCanonical(bytes32 sourceEventId)
   ingress rotations so every invariant run terminates with useful coverage. Add
   adversarial attempts to jump the nonce directly to max-1/max and role changes
   between proposal and acceptance/activation.
+  Include insufficient-gas ERC-1271 traces at both exact guards, wrong-caller/no-
+  active direct actions, early exact-ID proposal expiry, pending-only Safe
+  disable, and counter-exhaustion fixtures with independently derived literal
+  label hashes.
 
 - [ ] **Step 2: Add reference-model fuzz tests**
 
@@ -1537,6 +1708,10 @@ depositCanonical(bytes32 sourceEventId)
   accountingSequence increments exactly once per successful financial mutation
   every component kind is non-NONE and its subject/id matches the exact table
   failed actions change no nonce/sequence/ID/cap/bucket/event state
+  signature gas-guard failures are InsufficientSignatureValidationGas and
+    wallet-controlled validation failures are InvalidSignature
+  pending-only operator disable emits cancellation then 0->0 change, increments
+    generation once, and preserves outflowNonce
   forced ETH never becomes A without Safe reclassification
   pre-vote budgets move no funds and contain no result authority
   no O1/A1 actor can move native ETH, ERC-20, OMR, or Stock Tokens
@@ -1580,7 +1755,10 @@ depositCanonical(bytes32 sourceEventId)
   compiler `0.8.26`, optimizer `800`, Cancun, fuzz runs `512`, runtime size,
   exact ABI/method/error/event surface, storage layout, PUSH-aware forbidden-
   opcode test, and reviewed source/build-info AST/IR/optimized-IR call-site
-  inventory. A clean static result supplements but never replaces behavioral
+  inventory. The runtime inventory permits only EOA `ecrecover` at `address(1)`
+  and bounded ERC-1271 target families; the RegistryV2 exact-selector read is
+  creation-only, and no assertion depends on raw STATICCALL count. A clean static
+  result supplements but never replaces behavioral
   tests.
 
 - [ ] **Step 6: Deliberately test the future 67-component architecture guard**
@@ -1629,6 +1807,11 @@ Fixes use separate focused commits and new independent re-reviews.
   - bounded storage/work, reentrancy, payable/forced-ETH behavior, exact ABI
     allowlist, PUSH-aware opcode scan, source/AST/IR call-site inventory,
     runtime size, and storage layout;
+  - exact two-family runtime STATICCALL boundary (EOA `ecrecover` at address 1
+    and bounded ERC-1271), constructor-only RegistryV2 read, and absence of any
+    optimizer-dependent raw STATICCALL-count claim;
+  - exact constructor, direct-caller, expiry, successor-consent, signature-gas,
+    Safe-disable event, and literal counter-label error partitions;
   - no legacy import/migration, purchase, reservation, attempt, reconciliation
     disposition, outflow, token, burn, upgrade, deploy, signing, or cutover code.
 
@@ -1739,6 +1922,20 @@ This plan is complete only when:
   jointly prove O1 has no ETH outflow and A1 has no reservation, attempt,
   reconciliation disposition, operator outflow, token, gas-pool, upgrade, burn,
   arbitrary-call, legacy import, deploy, or cutover authority;
+- the O1 interface exposes the complete frozen reason/readiness enums and O1-
+  assigned constants but no premature A1 declarations; A1 adds only its exact
+  appendix declarations, with no capability expansion;
+- constructor tests isolate predicates and prove inherited owner errors plus the
+  exact non-bubbling RegistryV2 sentinel/actual mapping; direct callers, early
+  expiry, successor consent, pending-only disable evidence, and literal counter
+  labels match the appendix exactly;
+- runtime STATICCALL evidence is target-family based: only compiler-emitted EOA
+  `ecrecover` at address 1 and bounded ERC-1271 survive; the exact RegistryV2
+  read is creation-only, and raw opcode count is never treated as stable;
+- ERC-1271 uses the exact post-calldata `160_000` pre-call threshold, exact
+  `100_000` requested gas, and `50_000` post-validation guard; gas-guard failures
+  are `InsufficientSignatureValidationGas`, wallet failures are
+  `InvalidSignature`, and every failure leaves state/logs unchanged;
 - conservation, unique capped repair-first deposits, sequence continuity,
   32/32 future bounds, and the future 67-component ceiling are proven exactly;
 - the pre-vote record is proven finalized-before-open only by the later dedicated
