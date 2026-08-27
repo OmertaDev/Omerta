@@ -363,7 +363,7 @@ function Get-SourceSetFingerprint($Metadata) {
 }
 
 function Get-FileKeccak([string]$Path) {
-  $nodeScript = "const fs=require('fs');const{keccak256,toHex}=require('viem');process.stdout.write(keccak256(toHex(fs.readFileSync(process.argv[1]))));"
+  $nodeScript = "const fs=require('fs');const{keccak256,toHex}=require('viem');const s=fs.readFileSync(process.argv[1],'utf8').replace(/\r\n/g,'\n');process.stdout.write(keccak256(toHex(Buffer.from(s))));"
   Push-Location -LiteralPath $verifierRepo
   try { $result = (& $NodePath -e $nodeScript $Path 2>&1) -join ''; $nodeExit = $LASTEXITCODE }
   finally { Pop-Location }
