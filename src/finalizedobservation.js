@@ -6,6 +6,8 @@ const ZERO_ADDRESS = `0x${'0'.repeat(40)}`;
 const MAX_BLOCK_SPAN = 1_000_000n;
 const MAX_LOGS = 10_000;
 const MAX_BYTES = 10_000_000;
+const PUBLISHED_FO_ERRORS = new WeakSet();
+const SAFE_DOMAIN_ERRORS = new WeakSet();
 
 export class FinalizedObservationError extends Error {
   static CODES = Object.freeze([
@@ -32,11 +34,36 @@ export class FinalizedObservationError extends Error {
   ]);
 
   constructor(code, message, cause) {
+    if (!FinalizedObservationError.CODES.includes(code)) {
+      throw new TypeError('unpublished finalized observation error code');
+    }
     super(message);
     this.name = 'FinalizedObservationError';
     this.code = code;
     if (cause !== undefined) Object.defineProperty(this, 'cause', { value: cause, enumerable: false });
+    PUBLISHED_FO_ERRORS.add(this);
   }
+
+  static safeDomain(code, cause) {
+    if (typeof code !== 'string' || !/^[a-z][a-z0-9_]{0,63}$/.test(code) || code.startsWith('fo_')) {
+      throw new TypeError('invalid finalized observation domain error code');
+    }
+    const error = new Error(`finalized observation consumer error: ${code}`);
+    error.name = 'FinalizedObservationDomainError';
+    Object.defineProperty(error, 'code', { value: code, enumerable: true });
+    if (cause !== undefined) Object.defineProperty(error, 'cause', { value: cause, enumerable: false });
+    SAFE_DOMAIN_ERRORS.add(error);
+    return Object.freeze(error);
+  }
+}
+
+function isPublishedFoError(error) {
+  return PUBLISHED_FO_ERRORS.has(error)
+    && FinalizedObservationError.CODES.includes(error.code);
+}
+
+function isSafeDomainError(error) {
+  return SAFE_DOMAIN_ERRORS.has(error);
 }
 
 function fail(code, message, cause) {
@@ -99,7 +126,8 @@ function canonicalJson(value, seen = new Set()) {
     seen.delete(value);
     return serialized;
   }
-  if (typeof value !== 'object' || Object.getPrototypeOf(value) !== Object.prototype) {
+  if (typeof value !== 'object'
+    || (Object.getPrototypeOf(value) !== Object.prototype && Object.getPrototypeOf(value) !== null)) {
     fail('fo_bad_config', 'evidence must be plain serializable data');
   }
   seen.add(value);
@@ -156,7 +184,7 @@ export function finalizedInboxIdentity(input) {
 async function rpc(call, message = 'finalized observation RPC unavailable') {
   try { return await call(); }
   catch (cause) {
-    if (cause instanceof FinalizedObservationError) throw cause;
+    if (isPublishedFoError(cause) || isSafeDomainError(cause)) throw cause;
     fail('fo_rpc_unavailable', message, cause);
   }
 }
@@ -214,12 +242,15 @@ function normalizedCheckpoint(input, identity) {
   let startBlock;
   let lastAppliedBlockNumber;
   let lastAppliedBlockHash;
+  let lastObservationHash;
   try {
     chainId = decimal(input.chainId, 'checkpoint chain id', { positive: true });
     contractAddress = canonicalAddress(input.contractAddress, 'checkpoint contract address');
     startBlock = decimal(input.startBlock, 'checkpoint start block');
     lastAppliedBlockNumber = decimal(input.lastAppliedBlockNumber, 'last applied block number');
     lastAppliedBlockHash = bytes32(input.lastAppliedBlockHash, 'last applied block hash');
+    lastObservationHash = input.lastObservationHash == null
+      ? null : bytes32(input.lastObservationHash, 'last observation hash');
   } catch (cause) {
     fail('fo_checkpoint_identity', 'checkpoint identity is malformed', cause);
   }
@@ -227,7 +258,7 @@ function normalizedCheckpoint(input, identity) {
     || startBlock !== identity.startBlock || BigInt(lastAppliedBlockNumber) < BigInt(startBlock)) {
     fail('fo_checkpoint_identity', 'checkpoint belongs to another finalized observation identity');
   }
-  return { lastAppliedBlockNumber, lastAppliedBlockHash };
+  return { lastAppliedBlockNumber, lastAppliedBlockHash, lastObservationHash };
 }
 
 function normalizeLog(raw, { identity, topics }, fromBlock, toBlock) {
@@ -315,8 +346,8 @@ async function normalizedLogs(client, rawLogs, config, fromBlock, toBlock) {
       let block;
       try { block = await exactBlock(client, BigInt(log.blockNumber), 'fo_log_block_hash'); }
       catch (cause) {
-        if (cause instanceof FinalizedObservationError && cause.code === 'fo_rpc_unavailable') throw cause;
-        if (cause instanceof FinalizedObservationError && cause.code === 'fo_head_mismatch') {
+        if (isPublishedFoError(cause) && cause.code === 'fo_rpc_unavailable') throw cause;
+        if (isPublishedFoError(cause) && cause.code === 'fo_head_mismatch') {
           fail('fo_log_block_hash', 'event block returned another height', cause);
         }
         throw cause;
@@ -333,6 +364,113 @@ async function normalizedLogs(client, rawLogs, config, fromBlock, toBlock) {
 async function recheckExact(client, number, expected) {
   const actual = await exactBlock(client, number, 'fo_head_mismatch');
   assertSameBlock(actual, expected);
+}
+
+function descriptorView(value, field) {
+  try {
+    return {
+      prototype: Object.getPrototypeOf(value),
+      descriptors: Object.getOwnPropertyDescriptors(value),
+    };
+  } catch (cause) {
+    fail('fo_bad_config', `${field} cannot be inspected safely`, cause);
+  }
+}
+
+function copyDataSnapshot(value, field, { allowBigInt = false, requireFrozen = false } = {},
+  active = new Set()) {
+  if (value === null || typeof value === 'string' || typeof value === 'boolean'
+    || (allowBigInt && typeof value === 'bigint')) return value;
+  if (typeof value !== 'object') fail('fo_bad_config', `${field} contains unsupported data`);
+  if (active.has(value)) fail('fo_bad_config', `${field} must not contain cycles`);
+  if (requireFrozen) {
+    let frozen;
+    try { frozen = Object.isFrozen(value); }
+    catch (cause) { fail('fo_bad_config', `${field} cannot be inspected safely`, cause); }
+    if (!frozen) fail('fo_bad_config', `${field} must be deeply immutable`);
+  }
+  active.add(value);
+  const { prototype, descriptors } = descriptorView(value, field);
+  const keys = Reflect.ownKeys(descriptors);
+  if (keys.some((key) => typeof key === 'symbol')) {
+    fail('fo_bad_config', `${field} must not contain symbol capabilities`);
+  }
+  let copy;
+  if (Array.isArray(value)) {
+    if (prototype !== Array.prototype) fail('fo_bad_config', `${field} must contain plain arrays`);
+    const lengthDescriptor = descriptors.length;
+    if (!lengthDescriptor || !Object.hasOwn(lengthDescriptor, 'value') || lengthDescriptor.enumerable
+      || !Number.isSafeInteger(lengthDescriptor.value) || lengthDescriptor.value < 0) {
+      fail('fo_bad_config', `${field} array length is malformed`);
+    }
+    const indexKeys = keys.filter((key) => key !== 'length');
+    if (indexKeys.length !== lengthDescriptor.value) {
+      fail('fo_bad_config', `${field} arrays must be dense and carry no extra properties`);
+    }
+    copy = [];
+    for (let index = 0; index < lengthDescriptor.value; index++) {
+      const descriptor = descriptors[String(index)];
+      if (!descriptor || !descriptor.enumerable || !Object.hasOwn(descriptor, 'value')) {
+        fail('fo_bad_config', `${field} arrays must contain enumerable data entries`);
+      }
+      copy.push(copyDataSnapshot(
+        descriptor.value, `${field}[${index}]`, { allowBigInt, requireFrozen }, active));
+    }
+  } else {
+    if (prototype !== Object.prototype && prototype !== null) {
+      fail('fo_bad_config', `${field} must contain only plain objects`);
+    }
+    copy = Object.create(prototype);
+    for (const key of keys) {
+      const descriptor = descriptors[key];
+      if (!descriptor.enumerable || !Object.hasOwn(descriptor, 'value')) {
+        fail('fo_bad_config', `${field} must contain only enumerable data properties`);
+      }
+      Object.defineProperty(copy, key, {
+        value: copyDataSnapshot(
+          descriptor.value, `${field}.${key}`, { allowBigInt, requireFrozen }, active),
+        enumerable: true,
+        writable: true,
+        configurable: true,
+      });
+    }
+  }
+  active.delete(value);
+  return copy;
+}
+
+function pinnedGetterRequest(request) {
+  if (!request || typeof request !== 'object') {
+    fail('fo_bad_config', 'pinned getter request must be a plain object');
+  }
+  const { prototype, descriptors } = descriptorView(request, 'pinned getter request');
+  if (prototype !== Object.prototype && prototype !== null) {
+    fail('fo_bad_config', 'pinned getter request must be a plain object');
+  }
+  const keys = Reflect.ownKeys(descriptors);
+  const allowed = new Set(['abi', 'functionName', 'args']);
+  if (keys.some((key) => typeof key !== 'string' || !allowed.has(key))) {
+    fail('fo_bad_config', 'pinned getter request contains an execution-context capability');
+  }
+  for (const key of keys) {
+    if (!descriptors[key].enumerable || !Object.hasOwn(descriptors[key], 'value')) {
+      fail('fo_bad_config', 'pinned getter request must contain only enumerable data properties');
+    }
+  }
+  if (!descriptors.abi || !descriptors.functionName
+    || typeof descriptors.functionName.value !== 'string' || descriptors.functionName.value === '') {
+    fail('fo_bad_config', 'pinned getter request requires ABI and function name data');
+  }
+  const abi = copyDataSnapshot(descriptors.abi.value, 'pinned getter ABI', { allowBigInt: true });
+  if (!Array.isArray(abi)) fail('fo_bad_config', 'pinned getter ABI must be a dense array');
+  const normalized = { abi, functionName: descriptors.functionName.value };
+  if (descriptors.args) {
+    const args = copyDataSnapshot(
+      descriptors.args.value, 'pinned getter arguments', { allowBigInt: true });
+    if (!Array.isArray(args)) fail('fo_bad_config', 'pinned getter arguments must be a dense array');
+    normalized.args = args;
+  }
+  return deepFreeze(normalized);
 }
 
 /**
@@ -397,14 +535,9 @@ export async function observeFinalized({ client, identity, checkpoint = null, to
   const publicHead = deepFreeze({ ...target });
   const facade = Object.freeze({
     readContract: async (request) => {
-      if (!request || typeof request !== 'object' || Object.getPrototypeOf(request) !== Object.prototype) {
-        fail('fo_bad_config', 'pinned getter request must be a plain object');
-      }
-      for (const key of ['address', 'blockNumber', 'blockTag']) {
-        if (Object.hasOwn(request, key)) fail('fo_bad_config', `pinned getter cannot override ${key}`);
-      }
+      const call = pinnedGetterRequest(request);
       const result = await rpc(() => client.readContract({
-        ...request,
+        ...call,
         address: config.identity.contractAddress,
         blockNumber: targetNumber,
       }));
@@ -412,17 +545,18 @@ export async function observeFinalized({ client, identity, checkpoint = null, to
       return result;
     },
   });
-  let getters;
-  try { getters = await readGetters(facade, publicHead); }
+  let getterSource;
+  try { getterSource = await readGetters(facade, publicHead); }
   catch (cause) {
-    if (cause instanceof FinalizedObservationError) throw cause;
+    if (isPublishedFoError(cause) || isSafeDomainError(cause)) throw cause;
     fail('fo_rpc_unavailable', 'pinned getter observation failed', cause);
   }
-  await recheckExact(client, targetNumber, target);
+  const getters = deepFreeze(copyDataSnapshot(getterSource, 'getter evidence'));
   const getterJson = canonicalJson(getters);
   if (Buffer.byteLength(getterJson) > config.limits.maxBytes) {
     fail('fo_work_oversized', 'getter evidence exceeds the configured byte bound');
   }
+  await recheckExact(client, targetNumber, target);
 
   const finalTag = normalizedBlock(
     await rpc(() => client.getBlock({ blockTag: 'finalized' })), 'fo_head_mismatch', 'final finalized head');
@@ -454,54 +588,48 @@ export async function observeFinalized({ client, identity, checkpoint = null, to
   return deepFreeze({ ...payload, evidenceHash });
 }
 
-function isDeepFrozen(value, seen = new Set()) {
-  if (value === null || typeof value !== 'object' || seen.has(value)) return true;
-  if (!Object.isFrozen(value)) return false;
-  seen.add(value);
-  return Object.values(value).every((nested) => isDeepFrozen(nested, seen));
-}
-
 function validateCommitObservation(observation) {
-  if (!observation || typeof observation !== 'object' || typeof observation.then === 'function'
-    || !isDeepFrozen(observation)) {
+  if (!observation || typeof observation !== 'object') {
     fail('fo_bad_config', 'commit requires completed immutable finalized evidence');
   }
+  const snapshot = deepFreeze(copyDataSnapshot(
+    observation, 'commit evidence', { requireFrozen: true }));
   let identity;
   let head;
   let horizon;
   try {
     identity = {
-      chainId: decimal(observation.identity?.chainId, 'observation chain id', { positive: true }),
-      contractAddress: canonicalAddress(observation.identity?.contractAddress),
-      startBlock: decimal(observation.identity?.startBlock, 'observation start block'),
+      chainId: decimal(snapshot.identity?.chainId, 'observation chain id', { positive: true }),
+      contractAddress: canonicalAddress(snapshot.identity?.contractAddress),
+      startBlock: decimal(snapshot.identity?.startBlock, 'observation start block'),
     };
     head = {
-      blockNumber: decimal(observation.head?.blockNumber, 'observation head number'),
-      blockHash: bytes32(observation.head?.blockHash, 'observation head hash'),
+      blockNumber: decimal(snapshot.head?.blockNumber, 'observation head number'),
+      blockHash: bytes32(snapshot.head?.blockHash, 'observation head hash'),
     };
     horizon = {
-      blockNumber: decimal(observation.finalizedHorizon?.blockNumber, 'observation horizon number'),
-      blockHash: bytes32(observation.finalizedHorizon?.blockHash, 'observation horizon hash'),
+      blockNumber: decimal(snapshot.finalizedHorizon?.blockNumber, 'observation horizon number'),
+      blockHash: bytes32(snapshot.finalizedHorizon?.blockHash, 'observation horizon hash'),
     };
-    bytes32(observation.evidenceHash, 'observation evidence hash');
+    bytes32(snapshot.evidenceHash, 'observation evidence hash');
   } catch (cause) {
-    if (cause instanceof FinalizedObservationError && cause.code === 'fo_bad_config') throw cause;
+    if (isPublishedFoError(cause) && cause.code === 'fo_bad_config') throw cause;
     fail('fo_bad_config', 'commit evidence identity is malformed', cause);
   }
-  if (identity.chainId !== observation.identity.chainId
-    || identity.contractAddress !== observation.identity.contractAddress
-    || identity.startBlock !== observation.identity.startBlock
-    || head.blockNumber !== observation.head.blockNumber || head.blockHash !== observation.head.blockHash
-    || horizon.blockNumber !== observation.finalizedHorizon.blockNumber
-    || horizon.blockHash !== observation.finalizedHorizon.blockHash
+  if (identity.chainId !== snapshot.identity.chainId
+    || identity.contractAddress !== snapshot.identity.contractAddress
+    || identity.startBlock !== snapshot.identity.startBlock
+    || head.blockNumber !== snapshot.head.blockNumber || head.blockHash !== snapshot.head.blockHash
+    || horizon.blockNumber !== snapshot.finalizedHorizon.blockNumber
+    || horizon.blockHash !== snapshot.finalizedHorizon.blockHash
     || BigInt(head.blockNumber) > BigInt(horizon.blockNumber)) {
     fail('fo_bad_config', 'commit evidence is not canonical');
   }
-  const { evidenceHash, ...payload } = observation;
+  const { evidenceHash, ...payload } = snapshot;
   if (keccak256(toBytes(canonicalJson(payload))) !== evidenceHash) {
     fail('fo_bad_config', 'commit evidence hash does not match its immutable payload');
   }
-  return { identity, head };
+  return { identity, head, observation: snapshot };
 }
 
 function validateAdapter(adapter) {
@@ -537,11 +665,18 @@ function normalizeLockedCheckpoint(input, observationIdentity) {
   const emptyNumber = input.lastAppliedBlockNumber == null;
   const emptyHash = input.lastAppliedBlockHash == null;
   if (emptyNumber !== emptyHash) fail('fo_checkpoint_identity', 'consumer checkpoint is only partially initialized');
-  if (emptyNumber) return { lastAppliedBlockNumber: null, lastAppliedBlockHash: null };
+  if (emptyNumber) {
+    if (input.lastObservationHash != null) {
+      fail('fo_checkpoint_identity', 'empty consumer checkpoint cannot carry an observation commitment');
+    }
+    return { lastAppliedBlockNumber: null, lastAppliedBlockHash: null, lastObservationHash: null };
+  }
   try {
     return {
       lastAppliedBlockNumber: decimal(input.lastAppliedBlockNumber, 'consumer last-applied number'),
       lastAppliedBlockHash: bytes32(input.lastAppliedBlockHash, 'consumer last-applied hash'),
+      lastObservationHash: input.lastObservationHash == null
+        ? null : bytes32(input.lastObservationHash, 'consumer last-observation hash'),
     };
   } catch (cause) {
     fail('fo_checkpoint_identity', 'consumer last-applied checkpoint is malformed', cause);
@@ -549,22 +684,28 @@ function normalizeLockedCheckpoint(input, observationIdentity) {
 }
 
 function matchesCheckpoint(current, expected) {
-  if (expected == null) return current.lastAppliedBlockNumber == null && current.lastAppliedBlockHash == null;
+  if (expected == null) {
+    return current.lastAppliedBlockNumber == null && current.lastAppliedBlockHash == null
+      && current.lastObservationHash == null;
+  }
   return current.lastAppliedBlockNumber === expected.lastAppliedBlockNumber
-    && current.lastAppliedBlockHash === expected.lastAppliedBlockHash;
+    && current.lastAppliedBlockHash === expected.lastAppliedBlockHash
+    && current.lastObservationHash === (expected.lastObservationHash ?? null);
 }
 
 function safeConsumerCause(cause) {
-  if (cause instanceof FinalizedObservationError) return cause;
-  if (cause && typeof cause.code === 'string' && /^[a-z][a-z0-9_]*$/.test(cause.code)) return cause;
-  const error = new Error('finalized observation consumer transaction failed');
-  error.name = 'FinalizedObservationConsumerError';
-  Object.defineProperty(error, 'cause', { value: cause, enumerable: false });
-  return error;
+  if (isPublishedFoError(cause) || isSafeDomainError(cause)) return cause;
+  return FinalizedObservationError.safeDomain('consumer_failed', cause);
 }
 
+/**
+ * Atomically consumes immutable evidence through a domain adapter. The locked checkpoint
+ * must return `lastObservationHash`; `advanceCheckpoint` must store the supplied evidence
+ * hash with its metadata in the same transaction. Only that exact commitment is a replay.
+ */
 export async function commitFinalizedObservation(pool, observation, adapter) {
   const canonical = validateCommitObservation(observation);
+  const committed = canonical.observation;
   validateAdapter(adapter);
   if (!pool || typeof pool.connect !== 'function') {
     fail('fo_bad_config', 'commit requires a pool, not a caller-owned transaction client');
@@ -579,20 +720,23 @@ export async function commitFinalizedObservation(pool, observation, adapter) {
     await client.query('BEGIN');
     began = true;
     const locked = normalizeLockedCheckpoint(
-      await adapter.lockAndReadCheckpoint(client, observation), canonical.identity);
-    const atHead = matchesCheckpoint(locked, {
+      await adapter.lockAndReadCheckpoint(client, committed), canonical.identity);
+    const exactReplay = matchesCheckpoint(locked, {
       lastAppliedBlockNumber: canonical.head.blockNumber,
       lastAppliedBlockHash: canonical.head.blockHash,
+      lastObservationHash: committed.evidenceHash,
     });
-    const atBase = matchesCheckpoint(locked, observation.checkpointBase);
-    if (!atHead && !atBase) fail('fo_checkpoint_advanced', 'consumer checkpoint advanced after observation');
-
-    await adapter.insertOrVerifyInbox(client, observation);
-    if (!atHead) {
-      await adapter.applyDomainState(client, observation);
-      await adapter.advanceCheckpoint(client, observation);
+    const atBase = matchesCheckpoint(locked, committed.checkpointBase);
+    if (!exactReplay && !atBase) {
+      fail('fo_checkpoint_advanced', 'consumer checkpoint advanced after observation');
     }
-    const result = await adapter.readCommittedResult(client, observation);
+
+    if (!exactReplay) {
+      await adapter.insertOrVerifyInbox(client, committed);
+      await adapter.applyDomainState(client, committed);
+      await adapter.advanceCheckpoint(client, committed);
+    }
+    const result = await adapter.readCommittedResult(client, committed);
     await client.query('COMMIT');
     began = false;
     return result;

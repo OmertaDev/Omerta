@@ -329,6 +329,7 @@ await test('subsequent range is exactly checkpoint plus one through bounded N', 
   const observed = await observe(client, { checkpoint: checkpointAt(base) });
   assert.deepEqual(observed.checkpointBase, {
     lastAppliedBlockNumber: base.toString(), lastAppliedBlockHash: blockHash(base),
+    lastObservationHash: null,
   });
   assert.deepEqual(observed.range, {
     fromBlock: (base + 1n).toString(), toBlock: (base + 3n).toString(),
@@ -579,7 +580,20 @@ for (const forbidden of [
   { address: CONTRACT },
   { address: OTHER_CONTRACT },
   { blockNumber: START + 2n },
+  { blockHash: hash('f') },
   { blockTag: 'latest' },
+  { stateOverride: [] },
+  { blockOverrides: { number: START + 2n } },
+  { account: CONTRACT },
+  { authorizationList: [] },
+  { factory: OTHER_CONTRACT },
+  { factoryData: '0x' },
+  { code: '0x00' },
+  { gas: 1n },
+  { value: 1n },
+  { nonce: 1n },
+  { chain: { id: '4663' } },
+  { futureExecutionContext: true },
 ]) {
   await test(`pinned getter refuses override ${Object.keys(forbidden)[0]}`, async () => {
     const client = new FakePublicClient({ logs: [] });
@@ -591,6 +605,57 @@ for (const forbidden of [
     assert.equal(client.readContractCalls.length, 0);
   });
 }
+
+await test('pinned getter rejects non-enumerable and symbol request capabilities', async () => {
+  for (const request of [
+    Object.defineProperty({ abi: [], functionName: 'value' }, 'gas', { value: 1n }),
+    Object.assign({ abi: [], functionName: 'value' }, { [Symbol('capability')]: () => true }),
+  ]) {
+    const client = new FakePublicClient({ logs: [] });
+    await rejectsCode(() => observe(client, {
+      readGetters: ({ readContract }) => readContract(request),
+    }), 'fo_bad_config');
+    assert.equal(client.readContractCalls.length, 0);
+  }
+});
+
+for (const [name, args] of [
+  ['Number argument', [1]],
+  ['function argument', [() => true]],
+  ['sparse arguments', Array(1)],
+]) {
+  await test(`pinned getter rejects capability-bearing ${name}`, async () => {
+    const client = new FakePublicClient({ logs: [] });
+    await rejectsCode(() => observe(client, {
+      readGetters: ({ readContract }) => readContract({ abi: [], functionName: 'value', args }),
+    }), 'fo_bad_config');
+    assert.equal(client.readContractCalls.length, 0);
+  });
+}
+
+await test('pinned getter forwards only fresh copied ABI, function name, and BigInt arguments', async () => {
+  const abi = [{
+    type: 'function', name: 'value', stateMutability: 'view',
+    inputs: [{ name: 'index', type: 'uint256' }], outputs: [{ name: '', type: 'uint256' }],
+  }];
+  const args = [1n];
+  const client = new FakePublicClient({
+    logs: [],
+    readResult: (request) => {
+      assert.notEqual(request.abi, abi);
+      assert.notEqual(request.abi[0], abi[0]);
+      assert.notEqual(request.args, args);
+      assert.deepEqual(Reflect.ownKeys(request).sort(),
+        ['abi', 'address', 'args', 'blockNumber', 'functionName'].sort());
+      return 7n;
+    },
+  });
+  await observe(client, {
+    readGetters: async ({ readContract }) => ({
+      value: String(await readContract({ abi, functionName: 'value', args })),
+    }),
+  });
+});
 
 await test('pinned getter facade rechecks the target after every read', async () => {
   const target = START + 2n;
@@ -632,6 +697,87 @@ await test('getter evidence rejects cycles', async () => {
   cycle.self = cycle;
   const client = new FakePublicClient({ logs: [] });
   await rejectsCode(() => observe(client, { readGetters: async () => cycle }), 'fo_bad_config');
+});
+
+await test('getter evidence rejects enumerable accessors without invoking them', async () => {
+  let reads = 0;
+  const evidence = Object.defineProperty({}, 'value', {
+    enumerable: true,
+    get() { reads++; return 'live'; },
+  });
+  const client = new FakePublicClient({ logs: [] });
+  await rejectsCode(() => observe(client, { readGetters: async () => evidence }), 'fo_bad_config');
+  assert.equal(reads, 0);
+});
+
+await test('getter evidence rejects symbol and non-enumerable properties', async () => {
+  for (const evidence of [
+    Object.assign({ value: 'visible' }, { [Symbol('capability')]: { live: true } }),
+    Object.defineProperty({ value: 'visible' }, 'hidden', { value: 'unhashed' }),
+  ]) {
+    const client = new FakePublicClient({ logs: [] });
+    await rejectsCode(() => observe(client, { readGetters: async () => evidence }), 'fo_bad_config');
+  }
+});
+
+await test('getter evidence rejects sparse arrays instead of hashing them like dense arrays', async () => {
+  const sparse = Array(1);
+  const dense = [];
+  const sparseClient = new FakePublicClient({ logs: [] });
+  await rejectsCode(() => observe(sparseClient, { readGetters: async () => sparse }), 'fo_bad_config');
+  const denseObservation = await observe(new FakePublicClient({ logs: [] }), {
+    readGetters: async () => dense,
+  });
+  assert.deepEqual(denseObservation.getters, []);
+});
+
+await test('getter evidence turns a benign Proxy descriptor view into inert copied data', async () => {
+  const target = { nested: { value: 'before' } };
+  const proxy = new Proxy(target, {});
+  const observed = await observe(new FakePublicClient({ logs: [] }), {
+    readGetters: async () => proxy,
+  });
+  assert.notEqual(observed.getters, proxy);
+  assert.notEqual(observed.getters.nested, target.nested);
+  target.nested.value = 'after';
+  assert.equal(observed.getters.nested.value, 'before');
+});
+
+await test('getter evidence accepts and freshly snapshots null-prototype data objects', async () => {
+  const source = Object.assign(Object.create(null), { value: 'fixed' });
+  const observed = await observe(new FakePublicClient({ logs: [] }), {
+    readGetters: async () => source,
+  });
+  assert.notEqual(observed.getters, source);
+  assert.equal(Object.getPrototypeOf(observed.getters), null);
+  assert.equal(observed.getters.value, 'fixed');
+});
+
+await test('getter evidence fails closed and safely when Proxy descriptor inspection throws', async () => {
+  const cause = new Error('proxy trap secret=private');
+  const proxy = new Proxy({}, { ownKeys() { throw cause; } });
+  const client = new FakePublicClient({ logs: [] });
+  const error = await rejectsCode(
+    () => observe(client, { readGetters: async () => proxy }), 'fo_bad_config');
+  assert.equal(error.cause, cause);
+  assert.doesNotMatch(error.message, /secret|private/i);
+});
+
+await test('retained callback data cannot mutate or grow after the snapshot byte check', async () => {
+  const source = { value: 'before' };
+  const client = new FakePublicClient({ logs: [] });
+  const getBlock = client.getBlock.bind(client);
+  client.getBlock = async (request) => {
+    if (request.blockTag === 'finalized' && client.tagIndex === 1) source.value = 'x'.repeat(1000);
+    return getBlock(request);
+  };
+  const observed = await observe(client, {
+    limits: { maxBytes: 64 },
+    readGetters: async () => source,
+  });
+  assert.notEqual(observed.getters, source);
+  assert.deepEqual(observed.getters, { value: 'before' });
+  assert(Buffer.byteLength(JSON.stringify(observed.getters)) <= 64);
 });
 
 await test('getter evidence is bounded by the configured byte cap', async () => {
@@ -706,6 +852,7 @@ const TEST_CONSUMER_SCHEMA = `
     start_block NUMERIC(78,0) NOT NULL,
     last_applied_block_number NUMERIC(78,0),
     last_applied_block_hash TEXT,
+    last_observation_hash TEXT,
     finalized_horizon_number NUMERIC(78,0),
     finalized_horizon_hash TEXT,
     caught_up BOOLEAN NOT NULL DEFAULT false,
@@ -748,6 +895,7 @@ class AtomicTestPool {
     this.connectCount = 0;
     this.releaseCount = 0;
     this.rollbackCount = 0;
+    this.verificationCount = 0;
     this.owner = null;
     this.waiters = [];
     this.state = {
@@ -758,6 +906,7 @@ class AtomicTestPool {
         start_block: START.toString(),
         last_applied_block_number: null,
         last_applied_block_hash: null,
+        last_observation_hash: null,
         finalized_horizon_number: null,
         finalized_horizon_hash: null,
         caught_up: false,
@@ -859,10 +1008,11 @@ class AtomicTestClient {
       Object.assign(this.tx.checkpoint, {
         last_applied_block_number: params[0],
         last_applied_block_hash: params[1],
-        finalized_horizon_number: params[2],
-        finalized_horizon_hash: params[3],
-        caught_up: params[4],
-        verified_at: 'test-db-time',
+        last_observation_hash: params[2],
+        finalized_horizon_number: params[3],
+        finalized_horizon_hash: params[4],
+        caught_up: params[5],
+        verified_at: `test-db-time-${++this.pool.verificationCount}`,
       });
       return { rows: [] };
     }
@@ -901,6 +1051,7 @@ function adapterFor({ trace = [], failAt = null, failure = null } = {}) {
         lastAppliedBlockNumber: row.last_applied_block_number == null
           ? null : String(row.last_applied_block_number),
         lastAppliedBlockHash: row.last_applied_block_hash,
+        lastObservationHash: row.last_observation_hash,
       };
     },
     async insertOrVerifyInbox(client, observation) {
@@ -938,6 +1089,7 @@ function adapterFor({ trace = [], failAt = null, failure = null } = {}) {
           [identity, JSON.stringify(log)]);
         maybeFail('duringApply');
       }
+      maybeFail('duringApply');
     },
     async advanceCheckpoint(client, observation) {
       trace.push('advance');
@@ -945,9 +1097,10 @@ function adapterFor({ trace = [], failAt = null, failure = null } = {}) {
       await client.query(
         `UPDATE fo_checkpoint_test
             SET last_applied_block_number=$1,last_applied_block_hash=$2,
-                finalized_horizon_number=$3,finalized_horizon_hash=$4,caught_up=$5,
+                last_observation_hash=$3,
+                finalized_horizon_number=$4,finalized_horizon_hash=$5,caught_up=$6,
                 verified_at=now() WHERE id=1`,
-        [observation.head.blockNumber, observation.head.blockHash,
+        [observation.head.blockNumber, observation.head.blockHash, observation.evidenceHash,
           observation.finalizedHorizon.blockNumber, observation.finalizedHorizon.blockHash,
           observation.caughtUp]);
     },
@@ -999,7 +1152,7 @@ await test('coordinator owns one transaction and invokes the adapter in fixed or
   assert.equal(pool.state.checkpoint.finalized_horizon_number,
     observation.finalizedHorizon.blockNumber);
   assert.equal(pool.state.checkpoint.caught_up, true);
-  assert.equal(pool.state.checkpoint.verified_at, 'test-db-time');
+  assert.equal(pool.state.checkpoint.verified_at, 'test-db-time-1');
 });
 
 for (const failAt of ['afterInbox', 'duringApply', 'beforeAdvance']) {
@@ -1021,13 +1174,166 @@ await test('same immutable observation replays exact inbox evidence without reap
   await commitFinalizedObservation(pool, observation, adapterFor());
   const replayTrace = [];
   const replayed = await commitFinalizedObservation(pool, observation, adapterFor({ trace: replayTrace }));
-  assert.deepEqual(replayTrace, ['lock', 'inbox', 'result']);
+  assert.deepEqual(replayTrace, ['lock', 'result']);
   assert.equal(replayed.inbox, 1);
   assert.equal(replayed.domain, 1);
   assert.equal(pool.state.domain.size, 1);
 });
 
-await test('same inbox identity with conflicting payload fails and preserves committed state', async () => {
+await test('same-head A then A+B fails before committing an inbox-only alternative', async () => {
+  const first = await observe(new FakePublicClient({
+    finalized: START + 1n,
+    logs: [eventLog(START)],
+  }), { readGetters: async () => ({ version: '1' }) });
+  const alternative = await observe(new FakePublicClient({
+    finalized: START + 1n,
+    logs: [eventLog(START), eventLog(START + 1n, { transactionHash: hash('c') })],
+  }), { readGetters: async () => ({ version: '1' }) });
+  const pool = new AtomicTestPool();
+  await commitFinalizedObservation(pool, first, adapterFor());
+  const before = pool.snapshot();
+  const trace = [];
+  await rejectsCode(
+    () => commitFinalizedObservation(pool, alternative, adapterFor({ trace })),
+    'fo_checkpoint_advanced');
+  assert.deepEqual(trace, ['lock']);
+  assert.deepEqual(pool.snapshot(), before);
+});
+
+await test('same-head A+B then subset A is not exact replay', async () => {
+  const first = await observe(new FakePublicClient({
+    finalized: START + 1n,
+    logs: [eventLog(START), eventLog(START + 1n, { transactionHash: hash('c') })],
+  }), { readGetters: async () => ({ version: '1' }) });
+  const subset = await observe(new FakePublicClient({
+    finalized: START + 1n,
+    logs: [eventLog(START)],
+  }), { readGetters: async () => ({ version: '1' }) });
+  const pool = new AtomicTestPool();
+  await commitFinalizedObservation(pool, first, adapterFor());
+  const before = pool.snapshot();
+  const trace = [];
+  await rejectsCode(() => commitFinalizedObservation(pool, subset, adapterFor({ trace })),
+    'fo_checkpoint_advanced');
+  assert.deepEqual(trace, ['lock']);
+  assert.deepEqual(pool.snapshot(), before);
+});
+
+for (const [name, alternative] of [
+  ['changed getters', () => observe(new FakePublicClient({
+    finalized: START + 1n, logs: [eventLog(START)],
+  }), { readGetters: async () => ({ version: '2' }) })],
+  ['changed finalized horizon', () => observe(new FakePublicClient({
+    finalized: START + 10n, logs: [eventLog(START)],
+  }), { limits: { maxBlockSpan: 2n }, readGetters: async () => ({ version: '1' }) })],
+]) {
+  await test(`same-head ${name} is not exact replay`, async () => {
+    const first = await transactionObservation();
+    const second = await alternative();
+    assert.equal(second.head.blockHash, first.head.blockHash);
+    assert.notEqual(second.evidenceHash, first.evidenceHash);
+    const pool = new AtomicTestPool();
+    await commitFinalizedObservation(pool, first, adapterFor());
+    const before = pool.snapshot();
+    const trace = [];
+    await rejectsCode(() => commitFinalizedObservation(pool, second, adapterFor({ trace })),
+      'fo_checkpoint_advanced');
+    assert.deepEqual(trace, ['lock']);
+    assert.deepEqual(pool.snapshot(), before);
+  });
+}
+
+await test('new no-work observation CASes prior commitment and refreshes metadata atomically', async () => {
+  const first = await observe(new FakePublicClient({
+    finalized: START, logs: [eventLog(START)],
+  }), { readGetters: async () => ({ version: '1' }) });
+  const pool = new AtomicTestPool();
+  await commitFinalizedObservation(pool, first, adapterFor());
+  const beforeVerified = pool.state.checkpoint.verified_at;
+  const noWork = await observe(new FakePublicClient({ finalized: START, logs: () => {
+    assert.fail('no-work observation must not read logs');
+  } }), {
+    checkpoint: checkpointAt(START, { lastObservationHash: first.evidenceHash }),
+    readGetters: async () => ({ version: '1' }),
+  });
+  assert.equal(noWork.range, null);
+  assert.equal(noWork.checkpointBase.lastObservationHash, first.evidenceHash);
+  assert.notEqual(noWork.evidenceHash, first.evidenceHash);
+  const trace = [];
+  await commitFinalizedObservation(pool, noWork, adapterFor({ trace }));
+  assert.deepEqual(trace, ['lock', 'inbox', 'apply', 'advance', 'result']);
+  assert.equal(pool.state.checkpoint.last_applied_block_number, first.head.blockNumber);
+  assert.equal(pool.state.checkpoint.last_observation_hash, noWork.evidenceHash);
+  assert.notEqual(pool.state.checkpoint.verified_at, beforeVerified);
+  assert.equal(pool.state.inbox.size, 1);
+  assert.equal(pool.state.domain.size, 1);
+});
+
+await test('stale same-head no-work base commitment fails before inbox mutation', async () => {
+  const first = await observe(new FakePublicClient({
+    finalized: START, logs: [eventLog(START)],
+  }), { readGetters: async () => ({ version: '1' }) });
+  const pool = new AtomicTestPool();
+  await commitFinalizedObservation(pool, first, adapterFor());
+  const stale = await observe(new FakePublicClient({ finalized: START, logs: [] }), {
+    checkpoint: checkpointAt(START, { lastObservationHash: hash('a') }),
+    readGetters: async () => ({ version: '1' }),
+  });
+  const before = pool.snapshot();
+  const trace = [];
+  await rejectsCode(() => commitFinalizedObservation(pool, stale, adapterFor({ trace })),
+    'fo_checkpoint_advanced');
+  assert.deepEqual(trace, ['lock']);
+  assert.deepEqual(pool.snapshot(), before);
+});
+
+await test('concurrent different same-head observations serialize and one fails before inbox', async () => {
+  const first = await observe(new FakePublicClient({
+    finalized: START, logs: [eventLog(START)],
+  }), { readGetters: async () => ({ version: '1' }) });
+  const pool = new AtomicTestPool();
+  await commitFinalizedObservation(pool, first, adapterFor());
+  const base = checkpointAt(START, { lastObservationHash: first.evidenceHash });
+  const left = await observe(new FakePublicClient({ finalized: START, logs: [] }), {
+    checkpoint: base, readGetters: async () => ({ version: '2' }),
+  });
+  const right = await observe(new FakePublicClient({ finalized: START, logs: [] }), {
+    checkpoint: base, readGetters: async () => ({ version: '3' }),
+  });
+  const leftTrace = [];
+  const rightTrace = [];
+  const results = await Promise.allSettled([
+    commitFinalizedObservation(pool, left, adapterFor({ trace: leftTrace })),
+    commitFinalizedObservation(pool, right, adapterFor({ trace: rightTrace })),
+  ]);
+  assert.equal(results.filter((result) => result.status === 'fulfilled').length, 1);
+  const rejected = results.find((result) => result.status === 'rejected');
+  assert.equal(rejected.reason.code, 'fo_checkpoint_advanced');
+  const rejectedTrace = results[0].status === 'rejected' ? leftTrace : rightTrace;
+  assert.deepEqual(rejectedTrace, ['lock']);
+  assert.equal(pool.state.inbox.size, 1);
+  assert.equal(pool.state.domain.size, 1);
+});
+
+for (const failAt of ['afterInbox', 'duringApply', 'beforeAdvance']) {
+  await test(`no-work crash ${failAt} rolls back commitment and refreshed metadata`, async () => {
+    const first = await observe(new FakePublicClient({
+      finalized: START, logs: [eventLog(START)],
+    }), { readGetters: async () => ({ version: '1' }) });
+    const pool = new AtomicTestPool();
+    await commitFinalizedObservation(pool, first, adapterFor());
+    const noWork = await observe(new FakePublicClient({ finalized: START, logs: [] }), {
+      checkpoint: checkpointAt(START, { lastObservationHash: first.evidenceHash }),
+      readGetters: async () => ({ version: '2' }),
+    });
+    const before = pool.snapshot();
+    await assert.rejects(
+      () => commitFinalizedObservation(pool, noWork, adapterFor({ failAt })), /consumer|failed/i);
+    assert.deepEqual(pool.snapshot(), before);
+  });
+}
+
+await test('same-head conflicting inbox payload fails commitment CAS before inbox mutation', async () => {
   const original = await transactionObservation();
   const conflicting = await observe(new FakePublicClient({
     finalized: START + 1n,
@@ -1036,7 +1342,11 @@ await test('same inbox identity with conflicting payload fails and preserves com
   const pool = new AtomicTestPool();
   await commitFinalizedObservation(pool, original, adapterFor());
   const before = pool.snapshot();
-  await rejectsCode(() => commitFinalizedObservation(pool, conflicting, adapterFor()), 'fo_log_duplicate');
+  const trace = [];
+  await rejectsCode(
+    () => commitFinalizedObservation(pool, conflicting, adapterFor({ trace })),
+    'fo_checkpoint_advanced');
+  assert.deepEqual(trace, ['lock']);
   assert.deepEqual(pool.snapshot(), before);
 });
 
@@ -1082,9 +1392,10 @@ await test('consumer checkpoint identity mismatch is distinct from advancement',
 
 await test('stable FO and domain errors retain object identity through rollback', async () => {
   const observation = await transactionObservation();
+  const domainCause = new Error('raw domain detail stays private');
   for (const failure of [
     new FinalizedObservationError('fo_log_duplicate', 'stable FO conflict'),
-    Object.assign(new Error('safe domain conflict'), { code: 'domain_conflict' }),
+    FinalizedObservationError.safeDomain('domain_conflict', domainCause),
   ]) {
     const pool = new AtomicTestPool();
     let caught;
@@ -1095,6 +1406,65 @@ await test('stable FO and domain errors retain object identity through rollback'
     assert.equal(caught, failure);
     assert.equal(pool.rollbackCount, 1);
   }
+  const domain = FinalizedObservationError.safeDomain('domain_conflict', domainCause);
+  assert.equal(domain.code, 'domain_conflict');
+  assert.equal(domain.cause, domainCause);
+  assert.equal(Object.prototype.propertyIsEnumerable.call(domain, 'cause'), false);
+  assert.doesNotMatch(domain.message, /raw|private|detail/i);
+});
+
+await test('FO constructor rejects every unpublished code', () => {
+  for (const code of ['domain_error', 'fo_not_published', '23505', '']) {
+    assert.throws(() => new FinalizedObservationError(code, 'secret must not escape'), TypeError);
+  }
+});
+
+await test('safe domain factory validates its code and cannot be forged by marker or shape', async () => {
+  assert.throws(() => FinalizedObservationError.safeDomain('Bad Code', new Error('private')), TypeError);
+  const observation = await transactionObservation();
+  const forged = Object.assign(new Error('postgres://user:password@host forged secret'), {
+    code: 'domain_conflict', safeDomain: true,
+  });
+  const pool = new AtomicTestPool();
+  let caught;
+  try {
+    await commitFinalizedObservation(pool, observation,
+      adapterFor({ failAt: 'afterInbox', failure: forged }));
+  } catch (error) { caught = error; }
+  assert.notEqual(caught, forged);
+  assert.equal(caught.cause, forged);
+  assert.doesNotMatch(caught.message, /password|private|postgres|forged/i);
+  assert.doesNotMatch(JSON.stringify(caught), /password|private|postgres|forged/i);
+});
+
+await test('arbitrary coded adapter errors are always wrapped without exposing their message', async () => {
+  const observation = await transactionObservation();
+  for (const code of ['domain_error', '23505', 'ECONNRESET']) {
+    const failure = Object.assign(new Error(`postgres://user:password@host secret ${code}`), { code });
+    const pool = new AtomicTestPool();
+    let caught;
+    try {
+      await commitFinalizedObservation(pool, observation,
+        adapterFor({ failAt: 'afterInbox', failure }));
+    } catch (error) { caught = error; }
+    assert.notEqual(caught, failure);
+    assert.equal(caught.cause, failure);
+    assert.doesNotMatch(caught.message, /password|private|postgres|secret/i);
+    assert.doesNotMatch(JSON.stringify(caught), /password|private|postgres|secret/i);
+  }
+});
+
+await test('forged FinalizedObservationError prototypes do not bypass provider wrapping', async () => {
+  const forged = Object.assign(Object.create(FinalizedObservationError.prototype), {
+    name: 'FinalizedObservationError',
+    message: 'provider secret=private',
+    code: 'fo_bad_config',
+  });
+  const client = new FakePublicClient({ chainError: forged });
+  const error = await rejectsCode(() => observe(client), 'fo_rpc_unavailable');
+  assert.notEqual(error, forged);
+  assert.equal(error.cause, forged);
+  assert.doesNotMatch(error.message, /secret|private/i);
 });
 
 await test('unknown adapter errors are safe wrappers with non-enumerable causes', async () => {
@@ -1111,6 +1481,26 @@ await test('unknown adapter errors are safe wrappers with non-enumerable causes'
   assert.equal(Object.prototype.propertyIsEnumerable.call(caught, 'cause'), false);
   assert.doesNotMatch(caught.message, /password|private|postgres/i);
   assert.doesNotMatch(JSON.stringify(caught), /password|private|postgres/i);
+});
+
+await test('commit rejects live accessor evidence before post-validation mutation or pool acquisition', async () => {
+  const observation = await transactionObservation();
+  let live = '1';
+  const getters = Object.freeze(Object.defineProperty({}, 'version', {
+    enumerable: true,
+    get() { return live; },
+  }));
+  const forged = Object.freeze({ ...observation, getters });
+  const pool = new AtomicTestPool();
+  const connect = pool.connect.bind(pool);
+  pool.connect = async () => {
+    live = 'changed-after-validation';
+    return connect();
+  };
+  await rejectsCode(
+    () => commitFinalizedObservation(pool, forged, adapterFor()), 'fo_bad_config');
+  assert.equal(pool.connectCount, 0);
+  assert.equal(live, '1');
 });
 
 await test('caller cannot pass a promise, mutable evidence, or a pre-opened client', async () => {
