@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `d0d1fa3feaff`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `16b671a45965`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1014 |
+| Commits in clone | 1015 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-27 — docs: harden acquisition vault plan |
+| Latest commit | 2026-08-27 — docs: normalize hardened acquisition plan |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 213 |
+| OmertaDev | 214 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -32,7 +32,7 @@
 | [public/index.html](../../public/index.html) | 378 | yes |
 | [src/server.js](../../src/server.js) | 340 | yes |
 | [schema.sql](../../schema.sql) | 261 | yes |
-| [SPEC.md](../../SPEC.md) | 251 | yes |
+| [SPEC.md](../../SPEC.md) | 252 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 169 | yes |
@@ -57,11 +57,11 @@
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 45 | yes |
 | [src/economy.js](../../src/economy.js) | 44 | yes |
 | [src/casino.js](../../src/casino.js) | 43 | yes |
+| knowledge/generated/github-history.md | 41 | historical |
+| knowledge/generated/graph-summary.md | 41 | historical |
+| knowledge/generated/graph.json | 41 | historical |
+| knowledge/generated/inventory.md | 41 | historical |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
-| knowledge/generated/github-history.md | 40 | historical |
-| knowledge/generated/graph-summary.md | 40 | historical |
-| knowledge/generated/graph.json | 40 | historical |
-| knowledge/generated/inventory.md | 40 | historical |
 | [src/business.js](../../src/business.js) | 39 | yes |
 | [src/chain.js](../../src/chain.js) | 36 | yes |
 | [DEPLOY.md](../../DEPLOY.md) | 30 | yes |
