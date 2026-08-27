@@ -1,6 +1,6 @@
 # Acquisition Constellation Task 0 Crosswalk
 
-**Status:** normative Task 0 crosswalk and RED-verification boundary; Task 1 implementation pending
+**Status:** normative Task 0 crosswalk; Task 1 topology/deployment node implemented and locally verified, later business nodes pending independent review
 
 **Architecture source:** `2026-08-27-acquisition-constellation.md`
 
@@ -139,6 +139,15 @@ Launch attestation categorically proves nonproxy/nondelegating behavior for Regi
 All six runtimes forbid proxy/fallback/receive/delegatecall/callcode/create2/selfdestruct, generic execution, upgrades, arbitrary target/calldata, hidden payable functions, role mirrors, and accounting mirrors. Runtime must be `<= 24,576`; initcode `<= 49,152`.
 
 Task 0/Task 1 admits no business calls. The only future CREATE exception is Factory `deployNext`; later typed Authority/Core/finalizer, adapter, reconciliation leaf, and O2 calls are introduced by their own nodes and exact allowlist amendments. Opcode presence is checked with a PUSH-aware scanner; target, selector, value, gas, returndata, and failure policy are checked through AST/IR.
+
+Task 1's callsite rows are phase-complete rather than single-use labels. The
+Registry helper policy covers both constructor validation and finalization
+revalidation. The unique topology helper policy covers deploy-time validation,
+finalization preflight, the check immediately after each finalizer, and the final
+all-flags recheck. The unique finalizer CALL policy covers the fixed five-call
+order only. Every phase use retains the same frozen target provenance, selector,
+value, gas, fixed output/return-length handling, canonical tuple validation,
+no-bubble policy, and normalized error family.
 
 ## RED boundary
 

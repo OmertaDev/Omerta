@@ -152,9 +152,9 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         "out/AcquisitionReconciliation.sol/AcquisitionReconciliation.json"
     ];
 
-    function test_task0Red_exactSixFinalArtifactsAreAbsent() public {
+    function test_task1Green_exactSixFinalArtifactsArePresent() public {
         for (uint256 i; i < finalArtifacts.length; ++i) {
-            assertFalse(vm.exists(finalArtifacts[i]), finalArtifacts[i]);
+            assertTrue(vm.exists(finalArtifacts[i]), finalArtifacts[i]);
         }
     }
 

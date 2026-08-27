@@ -406,18 +406,181 @@ if ($present.Count -eq 0) {
   [Console]::Error.WriteLine('Task 0 RED: exact six final artifacts are absent. Re-run with -ExpectTask0Red only at the Task 0 boundary.')
   exit $redExitCode
 }
-if ($present.Count -ne 6) { Fail "Partial constellation artifact set: $($present.Count) of 6." }
-if ($ExpectTask0Red) { Fail '-ExpectTask0Red requires all six final artifacts to be absent.' }
-
-# Task 1 hooks fail closed: exact ABI allowlists, storage-layout ownership, unique topology
-# descriptors, source/build-info AST and optimized-IR call inventories, creation/runtime
-# opcode separation, dependency attestation, runtime/initcode sizes, and hashes must be
-# populated by the Task 1 amendment before this branch may report GREEN.
-foreach ($path in $finalArtifacts) {
-  $artifact = Get-Content -LiteralPath $path -Raw | ConvertFrom-Json -Depth 100
-  if ((Byte-Length $artifact.deployedBytecode.object) -gt 24576) { Fail "Runtime too large: $path" }
-  if ((Byte-Length $artifact.bytecode.object) -gt 49152) { Fail "Initcode too large: $path" }
-  $bad = @(Scan-Opcodes $artifact.deployedBytecode.object | Where-Object { $_ -in @('CALLCODE','DELEGATECALL','CREATE2','SELFDESTRUCT') })
-  if ($bad.Count -ne 0) { Fail "Forbidden runtime opcodes in ${path}: $($bad -join ', ')." }
+if ($present.Count -ne 6) {
+  [Console]::Error.WriteLine("Partial constellation artifact set: $($present.Count) of 6.")
+  exit 43
 }
-Fail 'Task 1 artifact hooks are intentionally not approved/populated at Task 0.' 43
+
+$factoryFunctions = @('factoryState()','childCommitment(uint8)','deployNext(bytes)','finalizeConstellation()')
+$factoryErrors = @(
+  'WrongChain(uint256)','RegistryChainMismatch(uint256)','FactorySafeZero()','FactoryRegistryZero()',
+  'FactorySafeCodeMissing(address)','FactoryRegistryCodeMissing(address)','FactoryRoleCollision(address)',
+  'FactoryRegistryRuntimeHashMismatch(bytes32,bytes32)','FactoryRegistryCallFailed()',
+  'FactoryRegistryReturnLength(uint256)','FactoryPhaseMismatch(uint8,uint8)','FactoryChildIndex(uint8)',
+  'FactoryChildInitcodeHashZero(uint8)','FactoryChildRuntimeHashZero(uint8)','FactoryInitcodeEmpty(uint8)',
+  'FactoryInitcodeTooLarge(uint8,uint256)','FactoryInitcodeHashMismatch(uint8,bytes32,bytes32)',
+  'FactoryCreateFailed(uint8)','FactoryChildAddressMismatch(uint8,address,address)',
+  'FactoryRuntimeTooLarge(uint8,uint256)','FactoryRuntimeHashMismatch(uint8,bytes32,bytes32)',
+  'FactoryTopologyCallFailed(uint8)','FactoryTopologyReturnLength(uint8,uint256)',
+  'FactoryTopologySemanticMismatch(uint8)','FactoryPostCallGasInsufficient(uint8,uint256,uint256)',
+  'FactoryFinalizerCallFailed(uint8)','FactoryFinalizerReturnLength(uint8,uint256)',
+  'FactoryFinalizerSemanticMismatch(uint8)'
+)
+$factoryEvents = @('ChildDeployed(uint8,address,bytes32,bytes32)','ConstellationFinalized(bytes32,bytes32)')
+$childSpecs = @(
+  @{Name='AcquisitionAuthority'; Prefix='Authority'; Topology='authorityTopology()'; Finalizer='finalizeAuthority(bytes32)'},
+  @{Name='AcquisitionVaultCore'; Prefix='Core'; Topology='coreTopology()'; Finalizer='finalizeCore(bytes32)'},
+  @{Name='PreVoteBudgetBook'; Prefix='BudgetBook'; Topology='budgetBookTopology()'; Finalizer='finalizeBudgetBook(bytes32)'},
+  @{Name='AcquisitionIntentExecution'; Prefix='IntentExecution'; Topology='intentExecutionTopology()'; Finalizer='finalizeIntentExecution(bytes32)'},
+  @{Name='AcquisitionReconciliation'; Prefix='Reconciliation'; Topology='reconciliationTopology()'; Finalizer='finalizeReconciliation(bytes32)'}
+)
+
+function Assert-ArtifactSurface($Artifact, [string[]]$Functions, [string[]]$Errors, [string[]]$Events, [string]$Constructor, [string]$Name) {
+  $abi=@($Artifact.abi)
+  $af=@($abi|Where-Object type -eq 'function'|ForEach-Object { Canonical-Descriptor $_ })
+  $ae=@($abi|Where-Object type -eq 'error'|ForEach-Object { Canonical-Descriptor $_ })
+  $av=@($abi|Where-Object type -eq 'event'|ForEach-Object { Canonical-Descriptor $_ })
+  $ac=@($abi|Where-Object type -eq 'constructor')
+  Assert-ExactRows $af $Functions "$Name function"
+  Assert-ExactRows $ae $Errors "$Name error"
+  Assert-ExactRows $av $Events "$Name event"
+  if($ac.Count-ne1){throw "$Name constructor count drift."}
+  $actual='constructor('+(@($ac[0].inputs|ForEach-Object { Canonical-Type $_ })-join ',')+'):'+$ac[0].stateMutability
+  if(-not [string]::Equals($actual,$Constructor,[StringComparison]::Ordinal)){throw "$Name constructor drift: $actual"}
+  if(@($abi|Where-Object { $_.type -eq 'receive' -or $_.type -eq 'fallback' }).Count-ne0){throw "$Name receive/fallback drift."}
+  if(@($abi|Where-Object stateMutability -eq 'payable').Count-ne0){throw "$Name payable drift."}
+}
+
+function Assert-FunctionSchema($Artifact,[string]$Name,[string]$Mutability,[string[]]$Outputs) {
+  $rows=@($Artifact.abi|Where-Object { $_.type -eq 'function' -and [string]::Equals([string]$_.name,$Name,[StringComparison]::Ordinal) })
+  if($rows.Count-ne1){throw "Function schema missing/duplicate: $Name"}
+  $row=$rows[0]
+  if(-not [string]::Equals([string]$row.stateMutability,$Mutability,[StringComparison]::Ordinal)){throw "$Name mutability drift."}
+  $actual=@($row.outputs|ForEach-Object { Canonical-Type $_ })
+  if($actual.Count-ne$Outputs.Count){throw "$Name output count drift."}
+  for($i=0;$i-lt$Outputs.Count;$i++){if(-not [string]::Equals($actual[$i],$Outputs[$i],[StringComparison]::Ordinal)){throw "$Name output schema drift at $i."}}
+}
+
+function Assert-EventSchema($Artifact,[string]$Name,[bool[]]$Indexed) {
+  $rows=@($Artifact.abi|Where-Object { $_.type -eq 'event' -and [string]::Equals([string]$_.name,$Name,[StringComparison]::Ordinal) })
+  if($rows.Count-ne1){throw "Event schema missing/duplicate: $Name"}
+  $row=$rows[0]
+  if($row.anonymous){throw "$Name anonymous drift."}
+  if($row.inputs.Count-ne$Indexed.Count){throw "$Name indexed count drift."}
+  for($i=0;$i-lt$Indexed.Count;$i++){if([bool]$row.inputs[$i].indexed-ne$Indexed[$i]){throw "$Name indexed schema drift at $i."}}
+}
+
+function Assert-SourceProvenance($Artifact,[string]$Source,[string]$Name) {
+  $metadata=$Artifact.metadata
+  if($metadata-is[string]){$metadata=$metadata|ConvertFrom-Json -Depth 100}
+  $sourceProperty=$metadata.sources.psobject.Properties[$Source]
+  $sourceEntry=if($null-ne$sourceProperty){$sourceProperty.Value}else{$null}
+  if($null-eq$sourceEntry-or [string]::IsNullOrWhiteSpace([string]$sourceEntry.keccak256)){throw "$Name source provenance missing: $Source"}
+  $nodeScript="const fs=require('fs');const{keccak256,toHex}=require('viem');process.stdout.write(keccak256(toHex(fs.readFileSync(process.argv[1]))));"
+  Push-Location -LiteralPath $repo
+  try{$localHash=(& $NodePath -e $nodeScript (Join-Path $repo $Source) 2>&1)-join'';$nodeExit=$LASTEXITCODE}finally{Pop-Location}
+  if($nodeExit-ne0-or-not [string]::Equals([string]$localHash,[string]$sourceEntry.keccak256,[StringComparison]::OrdinalIgnoreCase)){throw "$Name local source hash provenance drift."}
+  if($metadata.compiler.version-notmatch'^0.8.26\+commit\.'){throw "$Name compiler provenance drift."}
+  if($metadata.settings.optimizer.enabled-ne$true-or$metadata.settings.optimizer.runs-ne800-or$metadata.settings.evmVersion-ne'cancun'){throw "$Name build settings provenance drift."}
+}
+
+function Assert-FactorySourcePolicy {
+  $source=Get-Content -LiteralPath (Join-Path $repo 'src/AcquisitionConstellationFactory.sol') -Raw
+  if(([regex]::Matches($source,'\bcreate\s*\(')).Count-ne1){throw 'Factory raw CREATE source count drift.'}
+  $phaseAt=$source.IndexOf('_phase = Phase.DEPLOYING_CHILD;',[StringComparison]::Ordinal)
+  $createAt=$source.IndexOf('child := create(0, add(creation, 0x20), mload(creation))',[StringComparison]::Ordinal)
+  if($phaseAt-lt0-or$createAt-lt0-or$phaseAt-ge$createAt){throw 'Factory phase-before-zero-value-CREATE source policy drift.'}
+  foreach($literal in @(
+    'staticcall(_REGISTRY_GAS, registry','staticcall(_TOPOLOGY_GAS, child',
+    'call(_FINALIZER_GAS, child, 0','afterGas := gas()',
+    '_requireFinalizerPostcheck(index, afterGas)','size := returndatasize()',
+    'supportedChainId()','authorityTopology()','coreTopology()','budgetBookTopology()',
+    'intentExecutionTopology()','reconciliationTopology()','finalizeAuthority(bytes32)',
+    'finalizeCore(bytes32)','finalizeBudgetBook(bytes32)','finalizeIntentExecution(bytes32)',
+    'finalizeReconciliation(bytes32)'
+  )){if($source.IndexOf($literal,[StringComparison]::Ordinal)-lt0){throw "Factory typed call policy drift: $literal"}}
+  $postAt=$source.IndexOf('_requireFinalizerPostcheck(index, afterGas)',[StringComparison]::Ordinal)
+  $returnSizeAt=$source.IndexOf('size := returndatasize()',$postAt,[StringComparison]::Ordinal)
+  if($postAt-lt0-or$returnSizeAt-lt0-or$postAt-ge$returnSizeAt){throw 'Factory post-gas-before-returndata source policy drift.'}
+  if($source-match'\b(delegatecall|callcode|create2|selfdestruct)\s*\('){throw 'Factory prohibited source callsite.'}
+}
+
+function Get-ExecutableParts($Artifact,[string]$Name) {
+  $creation=$Artifact.bytecode.object.Substring(2); $runtime=$Artifact.deployedBytecode.object.Substring(2)
+  $offset=$creation.IndexOf($runtime,[StringComparison]::OrdinalIgnoreCase)
+  if($offset-lt0-or$offset-ne$creation.LastIndexOf($runtime,[StringComparison]::OrdinalIgnoreCase)){throw "$Name runtime suffix occurrence drift."}
+  if($creation.Substring($offset)-cne$runtime){throw "$Name runtime suffix mismatch."}
+  $prefix='0x'+$creation.Substring(0,$offset)
+  $stripped=Strip-SolidityMetadata ('0x'+$runtime)
+  return @{Creation=@(Scan-Opcodes $prefix);Runtime=@(Scan-Opcodes $stripped);Offset=[int]($offset/2)}
+}
+
+try {
+  $factory=Get-Content -LiteralPath $finalArtifacts[0] -Raw|ConvertFrom-Json -Depth 100
+  Assert-ArtifactSurface $factory $factoryFunctions $factoryErrors $factoryEvents 'constructor(address,address,bytes32,bytes32[5],bytes32[5]):nonpayable' 'Factory'
+  Assert-FunctionSchema $factory 'factoryState' 'view' @('bytes32','bytes32','uint8','uint8','address','bytes32','address','bytes32')
+  Assert-FunctionSchema $factory 'childCommitment' 'view' @('address','bytes32','bytes32')
+  Assert-FunctionSchema $factory 'deployNext' 'nonpayable' @('address')
+  Assert-FunctionSchema $factory 'finalizeConstellation' 'nonpayable' @()
+  Assert-EventSchema $factory 'ChildDeployed' @($true,$true,$true,$false)
+  Assert-EventSchema $factory 'ConstellationFinalized' @($true,$true)
+  Assert-SourceProvenance $factory 'src/AcquisitionConstellationFactory.sol' 'Factory'
+  Assert-FactorySourcePolicy
+  if(@($factory.deployedBytecode.immutableReferences.psobject.Properties).Count-ne6){throw 'Factory immutable count drift.'}
+  $factoryLayoutText=& $ForgePath inspect AcquisitionConstellationFactory storageLayout --json 2>&1
+  if($LASTEXITCODE-ne0){throw "Factory storage inspect failed: $factoryLayoutText"}
+  $factoryLayout=$factoryLayoutText|ConvertFrom-Json -Depth 100
+  $factoryStorage=@($factoryLayout.storage)
+  $expectedFactoryStorage=@('_childInitcodeHashes','_childRuntimeHashes','_children','_phase','_nextChildIndex')
+  $expectedSlots=@('0','5','10','15','15');$expectedOffsets=@(0,0,0,0,1)
+  $expectedTypeLabels=@('bytes32[5]','bytes32[5]','address[5]','enum AcquisitionConstellationFactory.Phase','uint8')
+  $expectedTypeBytes=@('160','160','160','1','1')
+  if($factoryStorage.Count-ne5){throw 'Factory storage count drift.'}
+  for($i=0;$i-lt5;$i++){
+    $row=$factoryStorage[$i];$type=$factoryLayout.types.psobject.Properties[$row.type].Value
+    if(-not [string]::Equals($row.label,$expectedFactoryStorage[$i],[StringComparison]::Ordinal)-or$row.slot-ne$expectedSlots[$i]-or$row.offset-ne$expectedOffsets[$i]-or-not [string]::Equals($type.label,$expectedTypeLabels[$i],[StringComparison]::Ordinal)-or$type.encoding-ne'inplace'-or$type.numberOfBytes-ne$expectedTypeBytes[$i]){throw "Factory storage drift at $i."}
+  }
+  $parts=Get-ExecutableParts $factory 'Factory'
+  $fc=$parts.Creation; $fr=$parts.Runtime
+  if(@($fc|Where-Object {$_-eq'STATICCALL'}).Count-ne1-or @($fc|Where-Object {$_-ne'STATICCALL'}).Count-ne0){throw 'Factory constructor opcode inventory drift.'}
+  if(@($fr|Where-Object {$_-eq'CREATE'}).Count-ne1-or @($fr|Where-Object {$_-eq'CALL'}).Count-ne1-or @($fr|Where-Object {$_-eq'STATICCALL'}).Count-ne2-or @($fr|Where-Object {$_-notin@('CREATE','CALL','STATICCALL')}).Count-ne0){throw 'Factory runtime opcode inventory drift.'}
+  if((Byte-Length $factory.deployedBytecode.object)-gt24576-or(Byte-Length $factory.bytecode.object)-gt49152){throw 'Factory bytecode bound drift.'}
+  for($i=0;$i-lt5;$i++){
+    $spec=$childSpecs[$i];$artifact=Get-Content -LiteralPath $finalArtifacts[$i+1] -Raw|ConvertFrom-Json -Depth 100
+    $p=$spec.Prefix
+    $errs=@("${p}FactoryZero()","${p}ManifestHashZero()","${p}FinalizerUnauthorized(address)","${p}ManifestHashMismatch(bytes32,bytes32)","${p}AlreadyFinalized()")
+    Assert-ArtifactSurface $artifact @($spec.Topology,$spec.Finalizer) $errs @("${p}Finalized(bytes32)") 'constructor(address,bytes32):nonpayable' $spec.Name
+    Assert-FunctionSchema $artifact ($spec.Topology.Substring(0,$spec.Topology.IndexOf('('))) 'view' @('address','bytes32','bool')
+    Assert-FunctionSchema $artifact ($spec.Finalizer.Substring(0,$spec.Finalizer.IndexOf('('))) 'nonpayable' @()
+    Assert-EventSchema $artifact "${p}Finalized" @($true)
+    Assert-SourceProvenance $artifact "src/$($spec.Name).sol" $spec.Name
+    if(@($artifact.deployedBytecode.immutableReferences.psobject.Properties).Count-ne2){throw "$($spec.Name) immutable count drift."}
+    $layoutText=& $ForgePath inspect $spec.Name storageLayout --json 2>&1
+    if($LASTEXITCODE-ne0){throw "$($spec.Name) storage inspect failed: $layoutText"}
+    $layout=$layoutText|ConvertFrom-Json -Depth 100
+    $childRows=@($layout.storage)
+    if($childRows.Count-ne1){throw "$($spec.Name) storage count drift."}
+    $childRow=$childRows[0];$childType=$layout.types.psobject.Properties[$childRow.type].Value
+    if(-not [string]::Equals([string]$childRow.label,'_finalized',[StringComparison]::Ordinal)-or$childRow.slot-ne'0'-or$childRow.offset-ne0-or$childType.label-ne'bool'-or$childType.encoding-ne'inplace'-or$childType.numberOfBytes-ne'1'){throw "$($spec.Name) storage minimality drift."}
+    $cp=Get-ExecutableParts $artifact $spec.Name
+    if($cp.Creation.Count-ne0-or$cp.Runtime.Count-ne0){throw "$($spec.Name) call/create opcode inventory drift."}
+    if((Byte-Length $artifact.deployedBytecode.object)-gt24576-or(Byte-Length $artifact.bytecode.object)-gt49152){throw "$($spec.Name) bytecode bound drift."}
+  }
+  $mutated=$factory|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100
+  (@($mutated.abi|Where-Object { $_.type-eq'function'-and$_.name-eq'deployNext' })[0]).stateMutability='view'
+  $mutationRejected=$false
+  try{Assert-FunctionSchema $mutated 'deployNext' 'nonpayable' @('address')}catch{$mutationRejected=$true}
+  if(-not$mutationRejected){throw 'Function-schema negative selftest failed.'}
+  $mutated=$factory|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100
+  (@($mutated.abi|Where-Object { $_.type-eq'event'-and$_.name-eq'ChildDeployed' })[0]).inputs[3].indexed=$true
+  $mutationRejected=$false
+  try{Assert-EventSchema $mutated 'ChildDeployed' @($true,$true,$true,$false)}catch{$mutationRejected=$true}
+  if(-not$mutationRejected){throw 'Event-schema negative selftest failed.'}
+} catch { Fail $_.Exception.Message 1 }
+
+if ($ExpectTask0Red) {
+  [Console]::Error.WriteLine('-ExpectTask0Red rejects a complete conforming Task 1 artifact set.')
+  exit 44
+}
+Write-Output 'Task 1 GREEN: exact six-artifact ABI, constructor, payable/fallback, size, suffix, and opcode conformance passed.'
+exit 0

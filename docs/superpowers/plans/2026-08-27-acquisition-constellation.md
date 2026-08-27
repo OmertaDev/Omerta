@@ -1,6 +1,6 @@
 # Acquisition Constellation Architecture Amendment
 
-**Status:** normative architecture amendment, implementation pending
+**Status:** normative architecture amendment; Task 1 topology/deployment node implemented and locally verified, later business nodes and independent review pending
 
 **Supersedes:** the final-monolithic `AcquisitionVault`, inline Task 6, no-intermediate-deployment, aggregate-constructor, `deployAll`, proxy, and recursive runtime-hash assumptions in the O1/A1 plan
 **Historical reference:** Task 5 commit `6e066ffabab0b0f63ac06be141d501474588aace`, runtime 23,212 bytes, is a dormant and nondeployable behavioral oracle. Independent review remains pending. It is not final A1 approval.
