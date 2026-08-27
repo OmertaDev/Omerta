@@ -686,7 +686,7 @@ function build(options = {}) {
   const currentBranch = typeof options.currentBranch === 'string' ? options.currentBranch
     : currentBranchForSnapshot({
       currentBranch: branch,
-      storedBranch: !branch && (snapshot.generatedOnly || snapshot.syntheticPullRequestMerge)
+      storedBranch: snapshot.generatedOnly || snapshot.syntheticPullRequestMerge
         ? storedCurrentBranch()
         : '',
       snapshot,
