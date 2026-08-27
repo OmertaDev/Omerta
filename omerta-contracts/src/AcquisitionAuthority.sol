@@ -1092,9 +1092,10 @@ contract AcquisitionAuthority is IAcquisitionAuthorityV2, EIP712, Ownable2Step, 
         bool ok;
         uint256 size;
         bytes32 result;
+        bytes4 magic = _ERC1271_MAGIC;
         assembly ("memory-safe") {
             let input := mload(0x40)
-            mstore(input, shl(224, _ERC1271_MAGIC))
+            mstore(input, magic)
             mstore(add(input, 0x04), digest)
             mstore(add(input, 0x24), 0x40)
             let length := signature.length

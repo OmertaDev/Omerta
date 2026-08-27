@@ -1050,11 +1050,11 @@ contract AcquisitionConstellationTask1Test is Test {
                 predicted[0]
             )
         );
-        _writeWord(runtime, 15_748, domain);
-        _writeWord(runtime, 15_937, bytes32(uint256(4663)));
-        _writeWord(runtime, 15_701, bytes32(uint256(uint160(predicted[0]))));
-        _writeWord(runtime, 15_827, nameHash);
-        _writeWord(runtime, 15_865, versionHash);
+        _writeWord(runtime, 15_755, domain);
+        _writeWord(runtime, 15_944, bytes32(uint256(4663)));
+        _writeWord(runtime, 15_708, bytes32(uint256(uint160(predicted[0]))));
+        _writeWord(runtime, 15_834, nameHash);
+        _writeWord(runtime, 15_872, versionHash);
         _writeWord(runtime, 5_853, bytes32("OMERTA AcquisitionAuthority") | bytes32(uint256(27)));
         _writeWord(runtime, 5_894, bytes32("2") | bytes32(uint256(1)));
         uint256[8] memory values = [
@@ -1071,7 +1071,7 @@ contract AcquisitionConstellationTask1Test is Test {
         uint256[3] memory manifestOffsets = [uint256(2_893), 4_541, 11_992];
         uint256[3] memory registryOffsets = [uint256(2_932), 7_568, 14_297];
         uint256[12] memory coreOffsets =
-            [uint256(1_940), 2_972, 3_729, 6_395, 7_518, 8_128, 11_031, 11_704, 13_164, 13_864, 14_246, 15_076];
+            [uint256(1_940), 2_972, 3_729, 6_395, 7_518, 8_128, 11_031, 11_704, 13_164, 13_864, 14_246, 15_083];
         uint256[3] memory budgetOffsets = [uint256(3_012), 7_468, 14_195];
         uint256[3] memory intentOffsets = [uint256(3_052), 7_418, 14_144];
         uint256[3] memory reconOffsets = [uint256(3_092), 7_368, 14_106];
