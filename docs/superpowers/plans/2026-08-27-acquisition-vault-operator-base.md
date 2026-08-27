@@ -848,18 +848,25 @@ operator or ingress expiry attempted before `expiresAt` reverts
 uses `ProposalNotReady(validAfter)`; acceptance at/after `expiresAt` uses
 `ProposalExpired(expiresAt)`.
 
-Successor replacement validation is partitioned without overlap:
+Successor replacement validation uses this exact first-failure order; the first
+failing check determines the error and implementations may not reorder it:
 
-- no active/wrong direct caller follows the direct-operator mapping above;
-- zero, same-as-current, or role-colliding successor is
-  `InvalidOperatorReplacement()`;
-- consent `currentOperator`, `successor`, `generation`, or `outflowNonce`
-  mismatch is `InvalidAuthorizationFields()`;
-- wrong reason is `InvalidActionReason(supplied)`;
-- zero details is `EmptyDetailsHash()`;
-- time failures retain the frozen authorization-time errors; and
-- EOA/ERC-1271 signature failures retain `InvalidSignature()` except for the
-  explicit gas-guard partition below.
+1. Require an active operator or revert `NoMainOperator()`.
+2. Require the direct caller to equal that operator or revert inherited
+   `OwnableUnauthorizedAccount(msg.sender)`.
+3. Require successor nonzero, different from the current operator, and
+   role-disjoint or revert `InvalidOperatorReplacement()`.
+4. Require consent `currentOperator`, `successor`, `generation`, and
+   `outflowNonce` to match exactly or revert `InvalidAuthorizationFields()`.
+5. Require reason exactly `OPERATOR_REPLACED` or revert
+   `InvalidActionReason(supplied)`.
+6. Require nonzero `detailsHash` or revert `EmptyDetailsHash()`.
+7. Validate the authorization time window using the frozen time errors.
+8. Validate signature maximum length, EOA/ERC-1271 path, gas guards, and
+   cryptography. Signature length remains checked before any external work;
+   the preceding pure field/time checks do not perform external work. Signature
+   failures use `InvalidSignature()` except for the explicit gas-guard partition
+   below.
 
 For an ERC-1271 candidate, calldata/memory construction happens first. Immediately
 before the wallet call require
@@ -1016,6 +1023,13 @@ proves the permitted targets, calldata, gas, and return handling.
   wrong reason is `InvalidActionReason`; zero details is `EmptyDetailsHash`;
   time/signature failures retain their appendix errors. Both increment
   generation exactly once and preserve the next nonce.
+
+  Add compound-invalid RED cases that correct one stage at a time and assert the
+  first failure: all-invalid with no active operator proves stage 1; then active
+  operator/wrong caller proves stage 2; correct caller/invalid successor proves
+  stage 3; corrected successor/mismatched consent fields proves stage 4; then
+  wrong reason, zero details, invalid time, and invalid signature prove stages
+  5 through 8 respectively. Each failure leaves all state and logs unchanged.
 
 - [ ] **Step 5: Add replay, time, and EOA signature tests**
 
@@ -1194,6 +1208,11 @@ any deployment.
   the successor's same-transaction consent. There is no separate consent nonce:
   a successful role change invalidates through generation, while an intervening
   future outflow/invalidation changes the bound `outflowNonce`.
+  Execute the appendix's eight replacement checks in their exact stated order;
+  do not consolidate or reorder them even when several inputs are invalid. The
+  first failure is observable API behavior. The maximum signature length must
+  still be rejected before any external work; earlier caller, field, reason,
+  details, and time checks are pure/internal validation.
 
   Implement the EOA/ERC-1271 validator exactly as tested. EOA recovery uses the
   compiler-emitted `ecrecover` precompile family at `address(1)`. For ERC-1271,
@@ -1250,7 +1269,8 @@ any deployment.
   nonce preservation/one-step advancement/max-1 jump, reciprocal role collision,
   owner proposal/acceptance check, constructor error mapping/Registry malformed
   response, expiry error ordering, disable dual-event ordering, exact counter
-  label, direct caller error mapping, replacement error partition, uint64
+  label, direct caller error mapping, replacement first-failure ordering at each
+  of its eight stages, uint64
   derivation, domain chain/address, one struct-field order, signature max,
   ERC-1271 `160_000` pre-call and `50_000` post-call gas guards, return length,
   magic alignment, and
@@ -1715,6 +1735,8 @@ depositCanonical(bytes32 sourceEventId)
   forced ETH never becomes A without Safe reclassification
   pre-vote budgets move no funds and contain no result authority
   no O1/A1 actor can move native ETH, ERC-20, OMR, or Stock Tokens
+  every compound-invalid replacement returns the error from the earliest failing
+    stage in the frozen eight-step order and changes no state/logs
   successful unpause satisfies the exact milestone-local predicate
   missing active ingress during unpause uses LocalReadinessFailed(ACTIVE_INGRESS_MISSING),
     while lifecycle/deposit missing-ingress failures use NoActiveIngress
@@ -1927,8 +1949,9 @@ This plan is complete only when:
   appendix declarations, with no capability expansion;
 - constructor tests isolate predicates and prove inherited owner errors plus the
   exact non-bubbling RegistryV2 sentinel/actual mapping; direct callers, early
-  expiry, successor consent, pending-only disable evidence, and literal counter
-  labels match the appendix exactly;
+  expiry, pending-only disable evidence, and literal counter labels match the
+  appendix exactly; successor replacement obeys the frozen eight-stage first-
+  failure order under compound-invalid RED, mutation, and invariant coverage;
 - runtime STATICCALL evidence is target-family based: only compiler-emitted EOA
   `ecrecover` at address 1 and bounded ERC-1271 survive; the exact RegistryV2
   read is creation-only, and raw opcode count is never treated as stable;
