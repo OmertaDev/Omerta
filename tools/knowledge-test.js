@@ -125,6 +125,11 @@ assert.equal(currentBranchForSnapshot({
   currentBranch: '', storedBranch: 'codex/authored-branch', snapshot: syntheticPullRequestSnapshot,
 }), 'codex/authored-branch',
   'a synthetic PR checkout must retain the stored authored branch instead of reporting detached');
+assert.equal(currentBranchForSnapshot({
+  currentBranch: 'main', storedBranch: 'codex/authored-branch',
+  snapshot: { generatedOnly: true },
+}), 'codex/authored-branch',
+  'a generated-only snapshot must retain the authored branch when CI checks it out on main');
 
 const baseInducedMergeSnapshot = repositorySnapshotFromState({
   head: 'changed-synthetic-merge',

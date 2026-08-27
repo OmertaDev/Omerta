@@ -112,7 +112,7 @@ function repositorySnapshotFromState({
 
 function currentBranchForSnapshot({ currentBranch = '', storedBranch = '', snapshot = {} }) {
   const mayUseStoredBranch = snapshot.generatedOnly || snapshot.syntheticPullRequestMerge;
-  return currentBranch || (mayUseStoredBranch ? storedBranch : '') || '(detached)';
+  return (mayUseStoredBranch ? storedBranch : '') || currentBranch || '(detached)';
 }
 
 function repositorySnapshot() {
