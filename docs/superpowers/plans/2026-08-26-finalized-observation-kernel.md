@@ -15,11 +15,27 @@ getter reads, and target/horizon rechecks. It returns immutable evidence but
 publishes no domain state. A generic transaction coordinator then calls a typed
 consumer adapter to lock/compare its own checkpoint, insert its own inbox, apply
 its own transitions, and advance its own last-applied checkpoint atomically.
-Task 2's registry reader is integrated only after the kernel itself is approved;
-H2 and C/N Task 6 later create separate concrete schemas/adapters.
+Task 2's registry reader is integrated only after the kernel itself is approved.
+The approved event-time extension retains exact event-block timestamps from the
+same block responses already used for hash verification. H2 and C/N Task 6 later
+create separate concrete schemas/adapters and never reuse the getter consumer's
+authority.
 
 **Tech stack:** Node.js ESM, viem-compatible public client seams, PostgreSQL/pg-
 mem transaction adapters, native `node:assert`, repository knowledge checks.
+
+## Implementation and authority status — 2026-08-27
+
+- FO Tasks 1–4 are implemented and independently approved.
+- FO Task 5's complete getter mirror is implemented and independently approved,
+  including its disposable real-PostgreSQL evidence. It remains dormant and
+  unscheduled.
+- The scoped Task-1 `eventBlocks` extension from the follow-on finalized
+  event-time plan is implemented and independently approved, including the
+  reviewed type-disjoint BigInt commitment and strict pre-pool commit validator.
+- The H2 and CN-6 consumers defined below are acceptance contracts only: their
+  runtime/schema/workers do not yet exist. Nothing in this plan is production
+  configured, deployed, Safe-executed, chain-finalized, funded, or active.
 
 ## Binding boundaries
 
@@ -44,6 +60,14 @@ mem transaction adapters, native `node:assert`, repository knowledge checks.
   lie inside the requested interval, include canonical block/transaction hashes
   and transaction/log indices, be uniquely and stably ordered, stay within log/
   byte limits, and match an independently fetched exact block hash.
+- The immutable observation also commits `eventBlocks`, one deeply frozen exact
+  record per unique normalized-log block in first canonical log-occurrence order:
+  `{blockNumber: bigint, blockHash: bytes32, blockTimestamp: bigint}`. The record
+  reuses the exact numbered-block response already fetched for hash verification;
+  no caller, target-head inference, receipt, or later database lookup may supply
+  its nonnegative `blockTimestamp`. Multiple logs in one block share one record,
+  a log-free observation carries `eventBlocks: []`, and changing only a timestamp
+  changes the observation commitment.
 - The getter callback receives only a pinned facade. It cannot choose another
   address/block or access the raw client. FO rechecks target block/hash after
   every payload RPC and performs a final target/horizon bracket. Natural advance
@@ -79,8 +103,11 @@ export async function commitFinalizedObservation(pool, observation, adapter)
 
 The immutable observation contains canonical identity, checkpoint base,
 `finalizedHorizon`, bounded `head`, exact `range`, normalized ordered logs,
-getter evidence, evidence hash, and `caughtUp`. Consumer adapters implement a
-documented capability contract equivalent to:
+`eventBlocks`, getter evidence, evidence hash, and `caughtUp`. Before opening a
+database transaction, each typed consumer must map every decoded log to exactly
+one committed `(blockNumber, blockHash, blockTimestamp)` event-block record and
+reject a missing, extra, reordered, or mismatched association. Consumer adapters
+implement a documented capability contract equivalent to:
 
 ```js
 {
@@ -427,16 +454,67 @@ no funds/token, and maps no domain readiness state. Prove legacy `watcher.js` an
 
 **Step 3: Freeze consumer handoff contracts**
 
-Document the exact adapter contract and acceptance fixtures for:
+The accepted H2 entry point is:
 
-- H2's separate overlay clearance checkpoint/inbox;
-- CN-6's separate registry activation/ballot checkpoint/inbox;
-- later acquisition/gameplay consumers.
+```js
+syncFinalizedRwaHealthOverlay(pool)
+```
 
-The registry consumer must ingest all relevant V2 registry topics, derive
-activation generation from ordered events starting at the deployment block,
-compare pinned `activationGeneration`/ballot getters, and match exact review/
-approval/inclusion evidence. H cannot reuse or advance that cursor.
+H2 owns its exact chain `4663`, immutable overlay address, inclusive deployment
+start block, exact clearance topic set, and separately reviewed code-owned work
+limits. It owns `rwa_health_overlay_lock_v2`,
+`rwa_health_overlay_checkpoint_v2`, an immutable raw-plus-decoded
+`rwa_health_overlay_inbox_v2`, an ordered overlay-generation reducer, and one
+atomic clearance apply. It may not read or advance the Task 5 getter-mirror
+checkpoint/inbox or the CN-6 registry-lifecycle checkpoint/inbox, and neither of
+those consumers may clear an H episode. Exact finalized clearance removes only
+the sticky latch; a new successful health evaluation performed after finalized
+apply remains mandatory before the effective state can become green.
+
+The accepted CN-6 entry point and transaction helpers are:
+
+```js
+syncFinalizedRwaRegistryLifecycle(pool)
+applyFinalizedRwaActivationEvents(client, decodedBatch)
+applyFinalizedRwaBallotEvents(client, decodedBatch)
+```
+
+`syncFinalizedRwaRegistryLifecycle` owns one registry-wide cursor,
+`rwa_registry_lifecycle_lock_v2`, `rwa_registry_lifecycle_checkpoint_v2`, a
+raw-plus-decoded `rwa_registry_lifecycle_inbox_v2`, one reducer, and one atomic
+adapter for all five
+ordered RegistryV2 topics: `PublisherSet`, `AssetVersionRegistered`,
+`AssetVersionActivated`, `AssetVersionDeactivated`, and `BallotPublished`. Both
+helpers execute beneath that one adapter and transaction using only the supplied
+query client. They never connect, begin, commit, roll back, release, retry, or
+perform RPC. The fixed initial ceilings are 10,000 blocks, 2,000 logs, 2,000,000
+bytes, 256 unique asset-version keys, 64 ballot days, and 256 proposal/result
+matches; exceeding any ceiling fails closed without partial checkpoint advance.
+
+Before `BEGIN`, CN-6 maps each decoded event to its exact committed event-block
+record. Activation-instance identity is
+`(4663, registryAddress, assetVersionKey, activationGeneration)`, derived from
+the complete ordered stream starting at the exact deployment block. Inclusion
+is timely only when `approvedAt <= eventBlockTimestamp < validUntil`. A local
+`approval_stale` label yields when later finalized evidence proves timely
+canonical inclusion. Unmatched canonical events remain immutable chain facts,
+advance the cursor, and raise persistent public drift, but never authorize a
+proposal or result. Finalized checkpoint disagreement halts the consumer for a
+separately reviewed recovery; it never auto-rewinds or deletes history.
+
+The future publisher is a separate dormant component. Before any broadcast it
+must persist the exact signed transaction bytes and canonical hash; every retry
+may rebroadcast only those identical bytes. No signer or broadcaster exists in
+this slice. If the purchase window elapses before publication,
+`purchase_window_elapsed_before_publication` is terminal: no extension,
+reopening, runner-up, or replacement winner is permitted. H2 readiness and
+AcquisitionVault-backed pre-vote budget provenance are mandatory before any
+CN-6 publisher becomes reachable. `RWA_STOCK_PIPELINE` is only a future cutover
+selector name and is absent from current production code.
+
+Later acquisition/gameplay consumers follow the same separate-identity rule;
+they receive neither the getter, registry, nor health consumer's cursor as
+authority.
 
 **Step 4: Independent whole-slice review**
 
@@ -445,3 +523,10 @@ wording, replay/crash/reorg behavior, Task 2 compatibility, and DAG compliance.
 Report separately which facts are implemented/reviewed versus merely planned,
 configured, deployed, Safe-executed, finalized, or active. FO remains dormant
 library infrastructure until a separately approved concrete consumer is wired.
+
+**Accepted completion truth:** Tasks 1–5 and the event-time extension are
+implemented, independently reviewed, and dormant. This handoff documentation is
+not evidence that H2/CN-6 is implemented, that any address/RPC/signer is
+configured, that a contract is deployed, that a Safe package is signed or
+executed, that a chain event is finalized, that ETH is funded, or that a feature
+is active.

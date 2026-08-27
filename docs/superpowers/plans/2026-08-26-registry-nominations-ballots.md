@@ -26,6 +26,20 @@ Node.js ESM, Fastify, PostgreSQL/pg-mem, viem, native `node:assert` test suites.
 **Spec:** `docs/superpowers/specs/2026-08-26-grill-completion.md`, sections C,
 N, and the C/N portions of U and X.
 
+## Implementation and authority status — 2026-08-27
+
+- Tasks 1–5 are implemented, independently approved, and dormant. Task 5's
+  authenticated manual `maxEthWei` input remains preparation evidence only; it
+  is not AcquisitionVault-backed production budget provenance.
+- The shared FO Tasks 1–5 and the follow-on immutable `eventBlocks` timestamp
+  evidence/fix are implemented, independently approved, and dormant.
+- Task 6 below is a frozen future acceptance contract. Its registry lifecycle
+  consumer, publisher, production worker wiring, H2 dependency, and
+  AcquisitionVault budget bridge are not implemented by this plan state.
+- No V2 addition here is production configured, deployed, Safe-executed,
+  chain-finalized, funded, or active. `RWA_STOCK_PIPELINE` names a future explicit
+  selector; no such selector exists in current production code.
+
 ## Global constraints
 
 - Supported production chain ID is the repository-pinned `4663`.
@@ -923,11 +937,15 @@ Opening current/future day snapshots every currently finalized active v2 asset
 and exact catalog version/hash. Exact idempotent retry succeeds; changed retry
 fails. Once opened, budget/candidates never change.
 
-Existing `/v1/commission/ticker` switches to the v2 board/cast. For temporary
-client compatibility, cast accepts either exact `assetVersionKey` or a ticker
-that resolves to exactly one snapshotted candidate; storage is always the key.
+The V2 board/cast domain is implemented and tested but remains dormant. Current
+production `/v1/commission/ticker` still calls the legacy board/cast directly.
+A later explicit cutover node must introduce and test the future selector before
+switching that route; there is no `RWA_STOCK_PIPELINE` implementation today. At
+that future cutover, temporary client compatibility may accept either exact
+`assetVersionKey` or a ticker that resolves to exactly one snapshotted candidate;
+storage is always the key.
 
-- [ ] **Step 1: Write RED tests**
+- [x] **Step 1: Write RED tests**
 
 Cover positive canonical wei validation without `Number`, open-before-vote,
 exact retry, changed retry rejection, no candidate mutation after open, one
@@ -945,14 +963,14 @@ chain ID, day, catalog version, budget, sorted valid vote tuples
 `(familyIdHash,assetVersionKey,standing,weight)`, decided-by code, and result key
 or zero. Do not hash mutable display names.
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 ```powershell
 node test/stockballotv2.js
 node test/commission.js
 ```
 
-- [ ] **Step 3: Implement ballot v2**
+- [x] **Step 3: Implement ballot v2**
 
 Keep legacy exported functions for legacy tests/migration, but route new traffic
 through explicit v2 functions. Current voteability requires candidate snapshot
@@ -963,7 +981,7 @@ At close, if no valid vote winner exists, choose first still-valid candidate by
 frozen `registry_index`, then key. If none exists, write skipped result. Close
 uses one transaction and a primary-key race; it never extends/reopens.
 
-- [ ] **Step 4: Run GREEN and full Commission/catalog baseline**
+- [x] **Step 4: Run GREEN and full Commission/catalog baseline**
 
 ```powershell
 node test/stockballotv2.js
@@ -982,41 +1000,94 @@ Commit Task 5 files.
 **Files:**
 
 - Modify: `schema.sql`
+- Modify: `src/db.js`
 - Modify: `src/rwastockkeeper.js`
 - Modify: `src/stockcatalogv2.js`
 - Modify: `src/rwanominations.js`
+- Modify: `src/commission.js`
+- Create: `src/rwaregistrylifecycle.js`
 - Modify: `src/worker.js`
 - Modify: `test/stockballotv2.js`
 - Modify: `test/stockcatalogv2.js`
 - Modify: `test/rwanominations.js`
+- Create: `test/rwaregistrylifecycle.js`
+- Create: `test/rwaregistrylifecycle.postgres.js`
+- Modify: `test/migrate.js`
+- Modify: `package.json`
+- Modify: `.github/workflows/ci.yml`
 
 **Consumes:** Task 1 `publishBallot`, Task 5 ready result, the independently
 approved shared finalized-observation kernel, and Task 2's pure registry getter/
 snapshot validation logic. It does not implement another finalized-head reader,
-log scanner, cursor, or reorg detector.
+log scanner, cursor, or reorg detector. H2 readiness and AcquisitionVault-backed
+pre-vote budget provenance are mandatory gates before publisher reachability;
+Task 6 may be developed dormant before those dependencies but cannot activate or
+cut over without them.
 
 **Produces:**
 
 ```js
 publishResolvedStockBallotV2(pool)
-syncFinalizedRwaActivationLifecycle(pool, finalizedObservation)
-syncFinalizedRwaBallotLifecycle(pool, finalizedObservation)
+syncFinalizedRwaRegistryLifecycle(pool)
+applyFinalizedRwaActivationEvents(client, decodedBatch)
+applyFinalizedRwaBallotEvents(client, decodedBatch)
 ```
 
 The publisher accepts no ticker/token/budget from a caller. It reads the one
 closed-ready result, verifies current exact active version and unchanged frozen
 catalog/result, computes the on-chain call from stored key/tally/catalog version,
-and writes submission state only after `writeContract` returns a tx hash.
-Skipped results are terminal and never submitted.
+and is dormant until the required H2 and budget gates pass. Before the first
+broadcast, it must persist the exact signed transaction bytes and their canonical
+hash. Every retry may rebroadcast only those identical bytes; a lease must never
+re-sign or construct a replacement transaction. No production signer,
+broadcaster, address, or worker reachability is supplied by this plan state.
+Skipped results are terminal and never submitted. If the immutable purchase
+window elapses before publication,
+`purchase_window_elapsed_before_publication` is terminal with no extension,
+reopening, runner-up, or replacement winner.
 
-The registry-typed FO consumer must return activation and ballot events with
-chain ID, contract, tx hash, log index, block number/hash, and decoded exact
-values. It uses registry-specific lock/checkpoint/inbox tables and atomically
-inserts typed inbox evidence, applies domain state, and advances the last-applied
-checkpoint. The generic FO kernel has no registry/H schema and no domain policy. Sync
-marks `executed_pending_finality` only from an unfinalized watcher seam and
-`synced_active`/`finalized` only from the finalized complete observation. A
-reorged provisional receipt becomes `reorged`; it never stays voteable.
+`syncFinalizedRwaRegistryLifecycle(pool)` is the sole registry-lifecycle FO
+coordinator. It observes all five ordered RegistryV2 topics—`PublisherSet`,
+`AssetVersionRegistered`, `AssetVersionActivated`,
+`AssetVersionDeactivated`, and `BallotPublished`—under one registry identity,
+cursor, `rwa_registry_lifecycle_lock_v2`,
+`rwa_registry_lifecycle_checkpoint_v2`, raw-plus-decoded
+`rwa_registry_lifecycle_inbox_v2`, reducer, and atomic commit.
+`applyFinalizedRwaActivationEvents` and `applyFinalizedRwaBallotEvents` are
+transition helpers beneath that one adapter and transaction. They use only the
+supplied query client and never connect, begin, commit, roll back, release,
+retry, or perform RPC.
+
+The consumer maps every decoded log before `BEGIN` to the exact committed FO
+`eventBlocks` entry `(blockNumber, blockHash, blockTimestamp)`. Its fixed initial
+ceilings are 10,000 blocks, 2,000 logs, 2,000,000 bytes, 256 unique touched
+asset-version keys, 64 ballot days, and 256 proposal/result matches. A ceiling
+failure applies and advances nothing. The generic FO kernel owns no registry/H
+schema or domain policy, and Task 5's getter consumer retains a separate
+identity, lock, checkpoint, raw inbox, and readiness.
+
+Activation-instance authority is exactly
+`(chainId=4663, registryAddress, assetVersionKey, activationGeneration)`.
+Generation is derived from the complete ordered registry stream beginning at the
+exact deployment block and reconciled to pinned getters. Review inclusion is
+timely only when `approvedAt <= eventBlockTimestamp < validUntil`; finalization
+may occur later. A local `approval_stale` projection yields when a later
+finalized event proves timely canonical inclusion. Unmatched canonical events
+are retained as immutable chain facts, advance the cursor, raise persistent
+public drift, and never authorize a local proposal/result. A finalized checkpoint
+disagreement halts this consumer for separately reviewed recovery; it never
+auto-rewinds, deletes, or fabricates history.
+
+Only an exact finalized activation event can produce `synced_active`, and only
+an exact finalized ballot event can produce `finalized`. Provisional receipts
+and transaction hashes remain non-authorizing and may become `reorged`; they
+never stay voteable/finalized after disappearance. H2 owns the separate future
+`syncFinalizedRwaHealthOverlay(pool)` identity,
+`rwa_health_overlay_lock_v2`, `rwa_health_overlay_checkpoint_v2`, raw-plus-decoded
+`rwa_health_overlay_inbox_v2`, overlay-generation reducer, and atomic clearance
+apply. H2 cannot read or advance this registry cursor, and this consumer cannot
+clear health. Finalized clearance also requires a new post-finality health
+evaluation before green.
 
 - [ ] **Step 1: Add RED lifecycle tests**
 
@@ -1026,7 +1097,11 @@ chain/key/evidence/review rejection, reorg removal, activation TTL based on chai
 inclusion timestamp, finality after timely inclusion, proposal `approval_stale`
 without inclusion, registry consumer checkpoint/inbox bootstrap and exact replay,
 crash rollback at insert/apply/advance seams, competing-worker compare-and-swap,
-and worker safe wrappers that do not overlap RPC with a DB transaction.
+worker safe wrappers that do not overlap RPC with a DB transaction, unmatched
+canonical-event progress plus persistent non-authorizing drift, local-stale
+reconciliation to timely finalized proof, deep finalized reorg halt, exact
+signed-byte persistence/rebroadcast, and terminal elapsed purchase-window
+behavior.
 
 - [ ] **Step 2: Run RED**
 
@@ -1038,10 +1113,13 @@ node test/rwanominations.js
 
 - [ ] **Step 3: Implement lifecycle sync and worker calls**
 
-Worker ordering is: finalized registry/catalog sync, nomination seat/expiry/
-approval refresh, prior-day ballot close, ready ballot submission, finalized
-ballot lifecycle sync. Each call is independently wrapped with the existing
-`safe(label, fn)` and bounded to one ready publication per tick.
+Future worker ordering is: finalized getter-catalog sync, one finalized
+registry-lifecycle sync, nomination seat/expiry/approval refresh, prior-day
+ballot close, H2/budget-gated ready ballot submission, then the next lifecycle
+sync. Each call is independently wrapped with the existing `safe(label, fn)` and
+bounded to one ready publication per tick. This wiring remains dormant and must
+not be placed behind a pretend `RWA_STOCK_PIPELINE` branch: the selector does not
+exist until its later explicit cutover node implements and tests it.
 
 No worker path fabricates a finalized block, advances on an HTTP provider fact,
 duplicates FO transport logic, advances a last-applied checkpoint before typed
