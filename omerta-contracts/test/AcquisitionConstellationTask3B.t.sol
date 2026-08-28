@@ -2673,7 +2673,8 @@ contract AcquisitionConstellationTask3BTest is Test {
             abi.encode(predictedFactory, bundle.manifest, bundle.children[0], bundle.children[1], address(registry_))
         );
         bundle.initcodes[3] = abi.encodePacked(
-            type(AcquisitionIntentExecution).creationCode, abi.encode(predictedFactory, bundle.manifest)
+            type(AcquisitionIntentExecution).creationCode,
+            abi.encode(predictedFactory, bundle.manifest, bundle.children[1])
         );
         bundle.initcodes[4] = abi.encodePacked(
             type(AcquisitionReconciliation).creationCode, abi.encode(predictedFactory, bundle.manifest)

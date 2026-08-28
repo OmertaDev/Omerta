@@ -373,8 +373,9 @@ contract AcquisitionAuthoritySnapshotTask2Test is Test {
             type(PreVoteBudgetBook).creationCode,
             abi.encode(predictedFactory, manifest, predicted[0], predicted[1], address(registry))
         );
-        initcodes[3] =
-            abi.encodePacked(type(AcquisitionIntentExecution).creationCode, abi.encode(predictedFactory, manifest));
+        initcodes[3] = abi.encodePacked(
+            type(AcquisitionIntentExecution).creationCode, abi.encode(predictedFactory, manifest, predicted[1])
+        );
         initcodes[4] =
             abi.encodePacked(type(AcquisitionReconciliation).creationCode, abi.encode(predictedFactory, manifest));
         bytes32[5] memory initHashes;

@@ -1176,7 +1176,8 @@ contract AcquisitionConstellationTask3ATest is Test {
             type(PreVoteBudgetBook).creationCode,
             abi.encode(factory, manifest, children[0], children[1], address(registry))
         );
-        initcodes[3] = abi.encodePacked(type(AcquisitionIntentExecution).creationCode, abi.encode(factory, manifest));
+        initcodes[3] =
+            abi.encodePacked(type(AcquisitionIntentExecution).creationCode, abi.encode(factory, manifest, children[1]));
         initcodes[4] = abi.encodePacked(type(AcquisitionReconciliation).creationCode, abi.encode(factory, manifest));
     }
 

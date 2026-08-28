@@ -17,6 +17,7 @@ compilation_restrictions = [
   { paths = "src/AcquisitionIntentExecution.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
   { paths = "src/AcquisitionReconciliation.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
   { paths = "src/interfaces/IAcquisitionAuthorityV2.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/interfaces/IAcquisitionIntentExecutionV2.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
 ]
 fs_permissions = [
   { access = "read", path = "./out" },
