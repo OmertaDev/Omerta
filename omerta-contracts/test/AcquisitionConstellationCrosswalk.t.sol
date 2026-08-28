@@ -50,6 +50,14 @@ contract AcquisitionConstellationCrosswalkTest is Test {
     uint256 internal constant LAST_STORAGE_ROOT = 39;
     uint256 internal constant RUNTIME_LIMIT = 24_576;
     uint256 internal constant INITCODE_LIMIT = 49_152;
+    uint256 internal constant TASK4_FUNCTION_COUNT = 85;
+    uint256 internal constant TASK4_ERROR_COUNT = 164;
+    uint256 internal constant TASK4_EVENT_COUNT = 29;
+    uint256 internal constant TASK4_CONSTRUCTOR_COUNT = 6;
+    uint256 internal constant TASK4_ABI_COUNT = 284;
+    uint256 internal constant TASK4_UNIQUE_FUNCTION_COUNT = 85;
+    uint256 internal constant TASK4_UNIQUE_ERROR_COUNT = 163;
+    uint256 internal constant TASK4_UNIQUE_EVENT_COUNT = 29;
     bytes32 internal constant LEGACY_CENSUS_HASH = 0x900d8599031796556ccc5d83d3df8dcfe4725d4c34b9f0cf26ff269436a00aab;
 
     enum Reject {
@@ -119,6 +127,17 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         string descriptor;
     }
 
+    struct Task4ArtifactCensus {
+        uint256 functionCount;
+        uint256 errorCount;
+        uint256 eventCount;
+        uint256 constructorCount;
+        uint256 abiCount;
+        uint256 authorityGuardCount;
+        uint256 coreGuardCount;
+        uint256 otherGuardCount;
+    }
+
     struct Manifest {
         string[67] functions;
         bytes32[67] functionRowIds;
@@ -156,6 +175,106 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         for (uint256 i; i < finalArtifacts.length; ++i) {
             assertTrue(vm.exists(finalArtifacts[i]), finalArtifacts[i]);
         }
+    }
+
+    function test_task4_exactAggregateAndCollisionUniverse() public view {
+        string[] memory functions = new string[](TASK4_FUNCTION_COUNT);
+        string[] memory errors = new string[](TASK4_ERROR_COUNT);
+        string[] memory events = new string[](TASK4_EVENT_COUNT);
+        Task4ArtifactCensus memory census;
+
+        for (uint256 artifactIndex; artifactIndex < finalArtifacts.length; ++artifactIndex) {
+            string memory json = vm.readFile(finalArtifacts[artifactIndex]);
+            for (uint256 abiIndex; vm.keyExistsJson(json, _abiPath(abiIndex)); ++abiIndex) {
+                string memory path = _abiPath(abiIndex);
+                string memory kind = vm.parseJsonString(json, string.concat(path, ".type"));
+                uint8 classified = _classifyAbiKind(kind);
+                ++census.abiCount;
+                if (classified == 1) {
+                    ++census.constructorCount;
+                } else if (classified == 2) {
+                    functions[census.functionCount++] = _artifactDescriptor(json, path);
+                } else if (classified == 3) {
+                    string memory descriptor = _artifactDescriptor(json, path);
+                    errors[census.errorCount++] = descriptor;
+                    if (_sameBytes(descriptor, "ReentrancyGuardReentrantCall()")) {
+                        if (artifactIndex == 1) ++census.authorityGuardCount;
+                        else if (artifactIndex == 2) ++census.coreGuardCount;
+                        else ++census.otherGuardCount;
+                    }
+                } else if (classified == 4) {
+                    events[census.eventCount++] = _artifactDescriptor(json, path);
+                } else {
+                    assertTrue(false, "unexpected compiled ABI kind");
+                }
+            }
+        }
+
+        assertEq(census.abiCount, TASK4_ABI_COUNT);
+        assertEq(census.functionCount, TASK4_FUNCTION_COUNT);
+        assertEq(census.errorCount, TASK4_ERROR_COUNT);
+        assertEq(census.eventCount, TASK4_EVENT_COUNT);
+        assertEq(census.constructorCount, TASK4_CONSTRUCTOR_COUNT);
+        assertEq(
+            census.functionCount + census.errorCount + census.eventCount + census.constructorCount, TASK4_ABI_COUNT
+        );
+        assertEq(_uniqueDescriptorCount(functions, true, false), TASK4_UNIQUE_FUNCTION_COUNT);
+        assertEq(_uniqueDescriptorCount(errors, true, true), TASK4_UNIQUE_ERROR_COUNT);
+        assertEq(_uniqueDescriptorCount(events, false, false), TASK4_UNIQUE_EVENT_COUNT);
+        assertEq(_uniqueEventTopicCount(events), TASK4_UNIQUE_EVENT_COUNT);
+        assertTrue(_validGuardOwnership(census.authorityGuardCount, census.coreGuardCount, census.otherGuardCount));
+    }
+
+    function test_task4_abiKindClassificationFailsClosed() public pure {
+        assertEq(_classifyAbiKind("constructor"), 1);
+        assertEq(_classifyAbiKind("function"), 2);
+        assertEq(_classifyAbiKind("error"), 3);
+        assertEq(_classifyAbiKind("event"), 4);
+        assertEq(_classifyAbiKind("receive"), 0);
+        assertEq(_classifyAbiKind("fallback"), 0);
+        assertEq(_classifyAbiKind("Function"), 0);
+        assertEq(_classifyAbiKind(" function"), 0);
+    }
+
+    function test_task4_eventTopicCollisionMutationRejected() public pure {
+        bytes32[] memory topics = new bytes32[](2);
+        topics[0] = keccak256("EventOne(uint256)");
+        topics[1] = keccak256("EventTwo(uint256)");
+        assertTrue(_uniqueHashes(topics));
+        topics[1] = topics[0];
+        assertFalse(_uniqueHashes(topics));
+    }
+
+    function test_task4_guardOwnershipMutationRejected() public pure {
+        assertTrue(_validGuardOwnership(1, 1, 0));
+        assertFalse(_validGuardOwnership(0, 1, 1));
+        assertFalse(_validGuardOwnership(1, 0, 1));
+        assertFalse(_validGuardOwnership(2, 0, 0));
+        assertFalse(_validGuardOwnership(0, 2, 0));
+        assertFalse(_validGuardOwnership(1, 1, 1));
+    }
+
+    function test_task4_budgetRowsTransitionedFromHistoricalFutureToCompiledOwnership() public view {
+        string[] memory historical = _futureReserved();
+        string memory json = vm.readFile(finalArtifacts[3]);
+        uint256[3] memory matched;
+        for (uint256 abiIndex; vm.keyExistsJson(json, _abiPath(abiIndex)); ++abiIndex) {
+            string memory path = _abiPath(abiIndex);
+            string memory kind = vm.parseJsonString(json, string.concat(path, ".type"));
+            if (_eq(kind, "constructor")) continue;
+            string memory descriptor = _artifactDescriptor(json, path);
+            for (uint256 historicalIndex; historicalIndex < historical.length; ++historicalIndex) {
+                if (!_eq(descriptor, historical[historicalIndex])) continue;
+                if (_eq(kind, "function")) ++matched[0];
+                else if (_eq(kind, "error")) ++matched[1];
+                else if (_eq(kind, "event")) ++matched[2];
+                else assertTrue(false, "historical row compiled under wrong ABI kind");
+            }
+        }
+        assertEq(matched[0], 2, "Task4 BudgetBook function transition");
+        assertEq(matched[1], 6, "Task4 BudgetBook error transition");
+        assertEq(matched[2], 1, "Task4 BudgetBook event transition");
+        assertEq(_activeFutureReserved().length, 0, "Task4 historical rows still active future reservations");
     }
 
     function test_frozenCountsAndLimits() public pure {
@@ -969,6 +1088,116 @@ contract AcquisitionConstellationCrosswalkTest is Test {
             r[n] = h[i];
             o[n++] = Owner.Authority;
         }
+    }
+
+    function _abiPath(uint256 index) internal pure returns (string memory) {
+        return string.concat(".abi[", vm.toString(index), "]");
+    }
+
+    function _classifyAbiKind(string memory kind) internal pure returns (uint8) {
+        if (_sameBytes(kind, "constructor")) return 1;
+        if (_sameBytes(kind, "function")) return 2;
+        if (_sameBytes(kind, "error")) return 3;
+        if (_sameBytes(kind, "event")) return 4;
+        return 0;
+    }
+
+    function _artifactDescriptor(string memory json, string memory path) internal view returns (string memory) {
+        string memory name = vm.parseJsonString(json, string.concat(path, ".name"));
+        return string.concat(name, "(", _parameterTypes(json, string.concat(path, ".inputs")), ")");
+    }
+
+    function _parameterTypes(string memory json, string memory path) internal view returns (string memory types) {
+        for (uint256 i; vm.keyExistsJson(json, string.concat(path, "[", vm.toString(i), "]")); ++i) {
+            if (i != 0) types = string.concat(types, ",");
+            types = string.concat(types, _canonicalType(json, string.concat(path, "[", vm.toString(i), "]")));
+        }
+    }
+
+    function _canonicalType(string memory json, string memory path) internal view returns (string memory) {
+        string memory abiType = vm.parseJsonString(json, string.concat(path, ".type"));
+        bytes memory raw = bytes(abiType);
+        if (!_startsWithTuple(raw)) return abiType;
+        return string.concat("(", _parameterTypes(json, string.concat(path, ".components")), ")", _slice(raw, 5));
+    }
+
+    function _startsWithTuple(bytes memory value) internal pure returns (bool) {
+        return value.length >= 5 && value[0] == "t" && value[1] == "u" && value[2] == "p" && value[3] == "l"
+            && value[4] == "e";
+    }
+
+    function _slice(bytes memory value, uint256 start) internal pure returns (string memory result) {
+        bytes memory sliced = new bytes(value.length - start);
+        for (uint256 i; i < sliced.length; ++i) {
+            sliced[i] = value[start + i];
+        }
+        result = string(sliced);
+    }
+
+    function _uniqueDescriptorCount(string[] memory rows, bool compareSelectors, bool allowGuardDuplicate)
+        internal
+        pure
+        returns (uint256 unique)
+    {
+        uint256 guardCount;
+        for (uint256 i; i < rows.length; ++i) {
+            bool duplicate;
+            for (uint256 j; j < i; ++j) {
+                bool same = _sameBytes(rows[i], rows[j]);
+                if (same) {
+                    assertTrue(
+                        allowGuardDuplicate && _sameBytes(rows[i], "ReentrancyGuardReentrantCall()"),
+                        "unexpected compiled descriptor duplicate"
+                    );
+                    duplicate = true;
+                } else if (compareSelectors) {
+                    assertTrue(_selector(rows[i]) != _selector(rows[j]), "compiled selector collision");
+                }
+            }
+            if (_sameBytes(rows[i], "ReentrancyGuardReentrantCall()")) ++guardCount;
+            if (!duplicate) ++unique;
+        }
+        if (allowGuardDuplicate) assertEq(guardCount, 2, "sole guard duplicate cardinality");
+    }
+
+    function _uniqueEventTopicCount(string[] memory rows) internal pure returns (uint256) {
+        bytes32[] memory topics = new bytes32[](rows.length);
+        for (uint256 i; i < rows.length; ++i) {
+            topics[i] = keccak256(bytes(rows[i]));
+        }
+        assertTrue(_uniqueHashes(topics), "compiled event topic collision");
+        return topics.length;
+    }
+
+    function _uniqueHashes(bytes32[] memory hashes) internal pure returns (bool) {
+        for (uint256 i; i < hashes.length; ++i) {
+            for (uint256 j; j < i; ++j) {
+                if (hashes[i] == hashes[j]) return false;
+            }
+        }
+        return true;
+    }
+
+    function _validGuardOwnership(uint256 authorityCount, uint256 coreCount, uint256 otherCount)
+        internal
+        pure
+        returns (bool)
+    {
+        return authorityCount == 1 && coreCount == 1 && otherCount == 0;
+    }
+
+    function _sameBytes(string memory a, string memory b) internal pure returns (bool) {
+        bytes memory left = bytes(a);
+        bytes memory right = bytes(b);
+        if (left.length != right.length) return false;
+        for (uint256 i; i < left.length; ++i) {
+            if (left[i] != right[i]) return false;
+        }
+        return true;
+    }
+
+    function _activeFutureReserved() internal pure returns (string[] memory r) {
+        r = new string[](0);
     }
 
     function _futureReserved() internal pure returns (string[] memory r) {

@@ -1,8 +1,8 @@
 [CmdletBinding()]
 param(
   [switch]$ExpectTask0Red,
-  [ValidateSet('Task1','Task2','Task3')]
-  [string]$ValidatePhase = 'Task3',
+  [ValidateSet('Task1','Task2','Task3','Task4')]
+  [string]$ValidatePhase = 'Task4',
   [string]$ArtifactsRoot = '',
   [string]$ForgePath = 'forge',
   [string]$NodePath = 'node'
@@ -1558,6 +1558,7 @@ function Assert-Task3LowercaseCompilerOperations([string]$Ir,[string]$Name) {
 
 function Assert-Task3FactoryIr([string]$Ir) {
   $clean=[regex]::Replace($Ir,'/\*\*.*?\*/','',[Text.RegularExpressions.RegexOptions]::Singleline)
+  $clean=[regex]::Replace($clean,'(?m)///[^\r\n]*','')
   $clean=[regex]::Replace($clean,'\s+',' ')
   Assert-Task3LowercaseCompilerOperations $clean 'Factory'
   if(([regex]::Matches($clean,'(?<!static)\bcall\s*\(')).Count-ne5-or
@@ -1601,6 +1602,183 @@ function Assert-Task3ExecutableIdentity($Artifact,$Expected,$CreationCalls,$Runt
   Assert-Task3OrderedRows $actual @($Expected.Sizes) "Task3 $Name creation/runtime/suffix sizes"
   Assert-ReferenceSet $Artifact @($Expected.ImmutableReferences) "Task3 $Name"
   Assert-CallInventory $parts $CreationCalls $RuntimeCalls "Task3 $Name"
+}
+
+function Assert-Task4BudgetBookStorageGraph($Layout) {
+  $rows=@(
+    @{Label='_finalized';Slot='0';Offset=0;Type='bool';Encoding='inplace';Bytes='1'},
+    @{Label='_preVoteBudgets';Slot='1';Offset=0;Type='mapping(uint256 => struct PreVoteBudgetBook.PreVoteBudgetAuthorization)';Encoding='mapping';Bytes='32'}
+  )
+  Assert-Task3SemanticStorageRows $Layout $rows 'Task4 BudgetBook'
+  $mapping=Get-Task3StorageTypeById $Layout ([string]$Layout.storage[1].type) 'Task4 BudgetBook mapping'
+  if($mapping.Value.encoding-ne'mapping'-or$mapping.Value.numberOfBytes-ne'32'-or$mapping.Value.key-ne't_uint256'){throw 'Task4 BudgetBook mapping key graph drift.'}
+  $key=Get-Task3StorageTypeById $Layout ([string]$mapping.Value.key) 'Task4 BudgetBook mapping key metadata'
+  if($key.Value.label-ne'uint256'-or$key.Value.encoding-ne'inplace'-or$key.Value.numberOfBytes-ne'32'){throw 'Task4 BudgetBook mapping key metadata drift.'}
+  $record=Get-Task3StorageTypeById $Layout ([string]$mapping.Value.value) 'Task4 BudgetBook record'
+  $expected=@(
+    @('budgetId','0',0,'bytes32'),@('ballotDay','1',0,'uint256'),@('maxEthWei','2',0,'uint256'),
+    @('purchaseUntil','3',0,'uint64'),@('availableAtAuthorizationWei','4',0,'uint256'),
+    @('accountingSequence','5',0,'uint256'),@('authorizedAt','6',0,'uint64'),@('detailsHash','7',0,'bytes32')
+  )
+  if($record.Value.label-ne'struct PreVoteBudgetBook.PreVoteBudgetAuthorization'-or$record.Value.encoding-ne'inplace'-or$record.Value.numberOfBytes-ne'256'-or@($record.Value.members).Count-ne8){throw 'Task4 BudgetBook record cardinality/type metadata drift.'}
+  for($i=0;$i-lt8;$i++){
+    $m=$record.Value.members[$i];$t=Get-Task3StorageTypeById $Layout ([string]$m.type) "Task4 BudgetBook member $i"
+    $width=if($expected[$i][3]-eq'uint64'){'8'}else{'32'}
+    if($m.label-ne$expected[$i][0]-or$m.slot-ne$expected[$i][1]-or[int]$m.offset-ne$expected[$i][2]-or$t.Value.label-ne$expected[$i][3]-or$t.Value.encoding-ne'inplace'-or$t.Value.numberOfBytes-ne$width){throw "Task4 BudgetBook record member/type metadata drift at ordinal $i."}
+  }
+}
+
+function Assert-Task4BudgetBookIr([string]$Ir,[string]$AuthorityId,[string]$CoreId) {
+  if([string]::IsNullOrEmpty($AuthorityId)-or[string]::IsNullOrEmpty($CoreId)-or$AuthorityId-eq$CoreId){throw 'Task4 BudgetBook expected target AST identity missing.'}
+  $clean=[regex]::Replace($Ir,'/\*\*.*?\*/','',[Text.RegularExpressions.RegexOptions]::Singleline)
+  $clean=[regex]::Replace($clean,'(?m)///[^\r\n]*','')
+  $clean=[regex]::Replace($clean,'\s+',' ')
+  Assert-Task3LowercaseCompilerOperations $clean 'Task4 BudgetBook'
+  if(([regex]::Matches($clean,'\bstaticcall\s*\(')).Count-ne2-or
+     ([regex]::Matches($clean,'\bstaticcall\s*\(\s*160000')).Count-ne1-or
+     ([regex]::Matches($clean,'\bstaticcall\s*\(\s*100000')).Count-ne1-or
+     ([regex]::Matches($clean,'\bstaticcall\s*\(\s*50000')).Count-ne0){throw 'Task4 BudgetBook bounded call/gas inventory drift.'}
+  if($clean-cmatch'(?m)returndatacopy\s*\('-or$clean-cmatch'(?m)(?<!static)call\s*\('-or
+     $clean-cmatch'(?m)\b(delegatecall|callcode|create|create2|selfdestruct)\s*\('){throw 'Task4 BudgetBook prohibited compiler operation drift.'}
+  foreach($row in @(
+    @('160000','4','864',("loadimmutable(`"$AuthorityId`")"),'memPtr','mstore(0,shl(226,0x01e0e089))revert(0,4)'),
+    @('100000','4','352','_10','memPtr_2','mstore(0,shl(224,0x3f94725f))revert(0,4)')
+  )){
+    $calls=[regex]::Matches($clean,"(?<result>[A-Za-z_][A-Za-z0-9_]*)\s*:=\s*staticcall\s*\(\s*$($row[0])\s*,\s*(?<target>[^,]+),\s*0\s*,\s*$($row[1])\s*,\s*(?<pointer>[^,]+),\s*(?<out>[A-Za-z_][A-Za-z0-9_]*)\s*\)")
+    if($calls.Count-ne1){throw "Task4 BudgetBook fixed-buffer call drift: $($row[0])/$($row[1])/$($row[2])."}
+    if($calls[0].Groups['target'].Value.Trim()-ne$row[3]-or$calls[0].Groups['pointer'].Value.Trim()-ne$row[4]){throw "Task4 BudgetBook target/output-pointer drift: $($row[0])."}
+    $out=[regex]::Escape($calls[0].Groups['out'].Value);$result=[regex]::Escape($calls[0].Groups['result'].Value);$prefix=$clean.Substring(0,$calls[0].Index)
+    $assignments=[regex]::Matches($prefix,"(?<![A-Za-z0-9_])$out\s*:=\s*(?<rhs>[A-Za-z_][A-Za-z0-9_]*(?:\s*\([^()]*\))?|[0-9]+)")
+    if($assignments.Count-lt2){throw "Task4 BudgetBook output assignment cardinality drift: $($row[0])."}
+    $last=$assignments[$assignments.Count-1];$callDepth=([regex]::Matches($prefix,'\{')).Count-([regex]::Matches($prefix,'\}')).Count;$assignmentPrefix=$prefix.Substring(0,$last.Index);$assignmentDepth=([regex]::Matches($assignmentPrefix,'\{')).Count-([regex]::Matches($assignmentPrefix,'\}')).Count
+    if($last.Groups['rhs'].Value-ne$row[2]-or$assignmentDepth-ne$callDepth){throw "Task4 BudgetBook unconditional final output assignment drift: $($row[0])/$($row[2])."}
+    $tail=$clean.Substring($calls[0].Index+$calls[0].Length)
+    $failure=[regex]::Match($tail,('^\s*let\s+(?<size>[A-Za-z_][A-Za-z0-9_]*)\s*:=\s*returndatasize\s*\(\s*\)\s*if\s+iszero\s*\(\s*'+$result+'\s*\)\s*\{(?<body>[^{}]*)\}'))
+    if(-not$failure.Success){throw "Task4 BudgetBook result/failure-check binding drift: $($row[0])."}
+    if(([regex]::Replace($failure.Groups['body'].Value,'\s+',''))-cne$row[5]){throw "Task4 BudgetBook transport failure body drift: $($row[0])."}
+    $returnSize=[regex]::Escape($failure.Groups['size'].Value);if(-not[regex]::IsMatch($tail,("if\s+iszero\s*\(\s*eq\s*\(\s*{0}\s*,\s*{1}\s*\)\s*\)" -f $returnSize,$out))){throw "Task4 BudgetBook returndata-size binding drift: $($row[0])."}
+  }
+  if($clean-notmatch("let\s+_10\s*:=\s*loadimmutable\(`""+[regex]::Escape($CoreId)+"`"\)")){throw 'Task4 BudgetBook Core target binding drift.'}
+  $coreCall=[regex]::Match($clean,'[A-Za-z_][A-Za-z0-9_]*\s*:=\s*staticcall\s*\(\s*100000\s*,\s*_10\s*,');if(-not$coreCall.Success){throw 'Task4 BudgetBook Core call target drift.'}
+  $corePrefix=$clean.Substring(0,$coreCall.Index);$coreAssignments=[regex]::Matches($corePrefix,'(?<![A-Za-z0-9_])_10\s*:=\s*(?<rhs>loadimmutable\("[0-9]+"\)|[A-Za-z_][A-Za-z0-9_]*(?:\s*\([^()]*\))?)')
+  if($coreAssignments.Count-lt1){throw 'Task4 BudgetBook Core target binding cardinality drift.'};$lastCore=$coreAssignments[$coreAssignments.Count-1];$coreCallDepth=([regex]::Matches($corePrefix,'\{')).Count-([regex]::Matches($corePrefix,'\}')).Count;$coreAssignmentPrefix=$corePrefix.Substring(0,$lastCore.Index);$coreAssignmentDepth=([regex]::Matches($coreAssignmentPrefix,'\{')).Count-([regex]::Matches($coreAssignmentPrefix,'\}')).Count
+  if($lastCore.Groups['rhs'].Value-cne("loadimmutable(`"$CoreId`")")-or$coreAssignmentDepth-ne$coreCallDepth){throw 'Task4 BudgetBook final Core target binding drift.'}
+}
+
+function Assert-Task4NoRuntimeReturndataCopy($Artifact) {
+  $creation=[string]$Artifact.bytecode.object;$runtime=[string]$Artifact.deployedBytecode.object;$offset=$creation.Substring(2).IndexOf($runtime.Substring(2),[StringComparison]::OrdinalIgnoreCase)
+  if($offset-lt0){throw 'Task4 returndata-copy scan suffix drift.'};$prefix='0x'+$creation.Substring(2,$offset);$stripped=Strip-SolidityMetadata $runtime
+  foreach($hex in @($prefix,$stripped)){
+    $bytes=[Convert]::FromHexString($hex.Substring(2));for($i=0;$i-lt$bytes.Length;$i++){if($bytes[$i]-ge0x60-and$bytes[$i]-le0x7f){$i+=$bytes[$i]-0x5f;continue};if($bytes[$i]-eq0x3e){throw 'Task4 executable RETURNDATACOPY drift.'}}
+  }
+}
+
+function Assert-Task4CanonicalSemanticImmutables($Artifact,$DeclarationArtifact,$Expected) {
+  $definition=Get-Task3ContractAst $DeclarationArtifact 'PreVoteBudgetBook';$variables=@($definition.nodes|Where-Object{$_.nodeType-eq'VariableDeclaration'-and$_.mutability-eq'immutable'})
+  $properties=@($Artifact.deployedBytecode.immutableReferences.psobject.Properties)
+  if($Expected.Count-ne5-or$variables.Count-ne5-or$properties.Count-ne5){throw 'Task4 canonical semantic immutable cardinality drift.'}
+  foreach($entry in $Expected.GetEnumerator()){$variable=@($variables|Where-Object{$_.name-ceq$entry.Key});if($variable.Count-ne1){throw "Task4 canonical immutable AST identity drift: $($entry.Key)"};$property=$Artifact.deployedBytecode.immutableReferences.psobject.Properties[[string]$variable[0].id];if($null-eq$property-or(Get-ReferenceSignature $property.Value)-cne$entry.Value){throw "Task4 canonical semantic immutable drift: $($entry.Key)"}}
+}
+
+function Invoke-Task4Validation {
+  $task3=Get-Task3Spec
+  $sources=@('src/AcquisitionConstellationFactory.sol','src/AcquisitionAuthority.sol','src/AcquisitionVaultCore.sol','src/PreVoteBudgetBook.sol','src/AcquisitionIntentExecution.sol','src/AcquisitionReconciliation.sol')
+  $contracts=@('AcquisitionConstellationFactory','AcquisitionAuthority','AcquisitionVaultCore','PreVoteBudgetBook','AcquisitionIntentExecution','AcquisitionReconciliation')
+  $artifacts=@($finalArtifacts|ForEach-Object{Get-Content -LiteralPath $_ -Raw|ConvertFrom-Json -Depth 100})
+  foreach($i in @(0,1,2,4,5)){Assert-Task3ArtifactSurface $artifacts[$i] $task3.Artifacts[$i]}
+  $budget=$artifacts[3]
+  $allAbi=@($artifacts|ForEach-Object{$_.abi});$f=@($allAbi|Where-Object type -eq 'function');$e=@($allAbi|Where-Object type -eq 'error');$v=@($allAbi|Where-Object type -eq 'event');$c=@($allAbi|Where-Object type -eq 'constructor')
+  if($f.Count-ne85-or$e.Count-ne164-or$v.Count-ne29-or$c.Count-ne6-or$allAbi.Count-ne284){throw "Task4 aggregate ABI census drift: $($f.Count)/$($e.Count)/$($v.Count)/$($c.Count)/$($allAbi.Count)."}
+  $unique=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal);foreach($x in $e){$null=$unique.Add((Canonical-Descriptor $x))}
+  $dupes=@($e|ForEach-Object{Canonical-Descriptor $_}|Group-Object|Where-Object Count -gt 1)
+  if($unique.Count-ne163-or$dupes.Count-ne1-or$dupes[0].Name-ne'ReentrancyGuardReentrantCall()'-or$dupes[0].Count-ne2){throw 'Task4 exact error-collision universe drift.'}
+  foreach($kind in @(@($f,85,'function'),@($v,29,'event'))){$set=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal);foreach($x in $kind[0]){$null=$set.Add((Canonical-Descriptor $x))};if($set.Count-ne$kind[1]){throw "Task4 $($kind[2]) collision universe drift."}}
+  Assert-DescriptorUniverse @($f|ForEach-Object{Canonical-Descriptor $_}) 'Task4 function' 85
+  Assert-DescriptorUniverse @($e|ForEach-Object{Canonical-Descriptor $_}) 'Task4 error' 164 $true
+  Assert-DescriptorUniverse @($v|ForEach-Object{Canonical-Descriptor $_}) 'Task4 event' 29
+  $payable=@($allAbi|Where-Object stateMutability -eq 'payable');if($payable.Count-ne1-or$payable[0].name-ne'depositCanonical'){throw 'Task4 payable/receive/fallback surface drift.'}
+  Assert-AbiFingerprint $budget '0x528883ffe95637fa174685aca380b1bd00b03f5735328bc32cf065eb94159486' 'Task4 BudgetBook'
+  Assert-Task3FunctionShape $budget 'budgetBookTopology()' 'view' @('address','bytes32','bool')
+  Assert-Task3FunctionShape $budget 'finalizeBudgetBook(bytes32)' 'nonpayable' @()
+  Assert-Task3FunctionShape $budget 'authorizePreVoteBudget((uint256,uint256,uint64),bytes32)' 'nonpayable' @('bytes32')
+  Assert-Task3FunctionShape $budget 'getPreVoteBudget(uint256)' 'view' @('(bytes32,uint256,uint256,uint64,uint256,uint256,uint64,bytes32)')
+  $ctor=@($budget.abi|Where-Object type -eq 'constructor')[0];Assert-Task3ParameterNames @($ctor.inputs) @('factory','manifestHash','authority','core','registry') 'Task4 BudgetBook constructor inputs'
+  $auth=@($budget.abi|Where-Object{$_.type-eq'function'-and$_.name-eq'authorizePreVoteBudget'})[0]
+  Assert-Task3ParameterNames @($auth.inputs) @('input','detailsHash') 'Task4 authorize inputs'
+  $inputComponents=@($auth.inputs[0].components);$inputNames=@('ballotDay','maxEthWei','purchaseUntil');$inputTypes=@('uint256','uint256','uint64')
+  if($inputComponents.Count-ne3){throw 'Task4 authorize input tuple arity drift.'};for($i=0;$i-lt3;$i++){if($inputComponents[$i].name-ne$inputNames[$i]-or$inputComponents[$i].type-ne$inputTypes[$i]){throw "Task4 authorize input tuple drift at $i."}}
+  Assert-Task3TupleComponents $budget 'getPreVoteBudget(uint256)' @('budgetId','ballotDay','maxEthWei','purchaseUntil','availableAtAuthorizationWei','accountingSequence','authorizedAt','detailsHash') @('bytes32','uint256','uint256','uint64','uint256','uint256','uint64','bytes32')
+  Assert-Task3EventIndexed $budget 'BudgetBookFinalized(bytes32)' @($true)
+  Assert-Task3EventIndexed $budget 'PreVoteBudgetAuthorized(bytes32,uint256,uint256,uint64,uint256,uint256,uint64,uint8,bytes32)' @($true,$true,$false,$false,$false,$false,$false,$false,$false)
+  Assert-Task3ArtifactCompilerProfile $budget $sources[3] $contracts[3] '0x4cf119d131a1378bccff4872bdf159f4fe2a0b2d5f7aa9d06d98abee39b7d2df' '0xbc8eca410aeeb572004a1e9ea043fd32f1da5810beadd031f53ce2935aaf67e4'
+  foreach($i in @(0,1,2,4,5)){
+    Assert-AbiFingerprint $artifacts[$i] $task3.Artifacts[$i].AbiHash "Task4 inherited $($task3.Artifacts[$i].Name)"
+    Assert-Task3ArtifactCompilerProfile $artifacts[$i] $sources[$i] $contracts[$i] $task3.Artifacts[$i].SourceHash $task3.Artifacts[$i].SourceSetHash
+  }
+  Assert-Task2CompilerConfiguration (Get-EffectiveForgeConfig) $legacy
+  $layout=(Invoke-IsolatedForgeInspect 'PreVoteBudgetBook' 'storageLayout' -Json -Ast)|ConvertFrom-Json -Depth 100
+  $isolated=Get-Content -LiteralPath (Join-Path $script:isolatedRoot 'out/PreVoteBudgetBook.sol/PreVoteBudgetBook.json') -Raw|ConvertFrom-Json -Depth 100
+  $isolatedArtifacts=@();for($i=0;$i-lt6;$i++){if($i-ne3){$null=Invoke-IsolatedForgeInspect $contracts[$i] 'storageLayout' -Json -Ast};$ia=Get-Content -LiteralPath (Join-Path $script:isolatedRoot ("out/"+(Split-Path -Leaf $sources[$i])+"/"+$contracts[$i]+'.json')) -Raw|ConvertFrom-Json -Depth 100;Assert-PortableIsolatedArtifactMatch $artifacts[$i] $ia "Task4 $($contracts[$i])";$isolatedArtifacts+=$ia}
+  Assert-PortableIsolatedArtifactMatch $budget $isolated 'Task4 BudgetBook'
+  Assert-Task4BudgetBookStorageGraph $layout
+  Assert-Task3ImmutableTypes $isolated 'PreVoteBudgetBook' @('address','address','address','address','bytes32')
+  $sem=[ordered]@{'_factory'=@('address','106:32,221:32,890:32');'_manifestHash'=@('bytes32','142:32,261:32,944:32');'_authority'=@('address','822:32');'_core'=@('address','1043:32');'_registry'=@('address','996:32')}
+  Assert-Task3SemanticImmutables $isolated 'PreVoteBudgetBook' $sem
+  $canonicalSem=[ordered]@{'_factory'='106:32,221:32,890:32';'_manifestHash'='142:32,261:32,944:32';'_authority'='822:32';'_core'='1043:32';'_registry'='996:32'}
+  Assert-Task4CanonicalSemanticImmutables $budget $isolated $canonicalSem
+  foreach($i in @(0,1,2,4,5)){Assert-Task3SemanticImmutables $isolatedArtifacts[$i] $contracts[$i] $task3.ImmutableSemantics[$i]}
+  $storageHashes=@('0xe6589788c63cb49ef6c0069be4372759daa7b0490f4a769c18cc4969c5752912','0x19f94895e9af9d0d3adee7f72d055b6cddac9cff7c6ed3618c1b37a26801de9b','0xab7cc8617a849c5657963938a67ae177b3246dd5016021cc5e810d3d2e0bbd08')
+  for($i=0;$i-lt3;$i++){$sl=(Invoke-IsolatedForgeInspect $contracts[$i] 'storageLayout' -Json -Ast)|ConvertFrom-Json -Depth 100;$actual=Get-TextSha256 ($sl|ConvertTo-Json -Depth 100 -Compress);if($actual-ne$storageHashes[$i]){throw "Task4 inherited $($contracts[$i]) exact storage graph drift: $actual"}}
+  Assert-Task3ExecutableIdentity $budget ([pscustomobject]@{Sizes=@(4320,3582,738);ImmutableReferences=@('106:32,221:32,890:32','142:32,261:32,944:32','822:32','1043:32','996:32')}) @{} @{STATICCALL=2} 'Task4 BudgetBook'
+  $creationCallPolicies=@(@{STATICCALL=1},@{},@{},@{},@{},@{});$runtimeCallPolicies=@(@{CREATE=1;CALL=5;STATICCALL=5},@{STATICCALL=4},@{STATICCALL=2},@{STATICCALL=2},@{},@{})
+  foreach($i in @(0,1,2,4,5)){Assert-Task3ExecutableIdentity $artifacts[$i] $task3.Artifacts[$i] $creationCallPolicies[$i] $runtimeCallPolicies[$i] "Task4 inherited $($task3.Artifacts[$i].Name)";Assert-Task4NoRuntimeReturndataCopy $artifacts[$i]}
+  Assert-Task4NoRuntimeReturndataCopy $budget
+  $budgetDefinition=Get-Task3ContractAst $isolated 'PreVoteBudgetBook';$authorityAstId=[string](@($budgetDefinition.nodes|Where-Object{$_.name-ceq'_authority'})[0].id);$coreAstId=[string](@($budgetDefinition.nodes|Where-Object{$_.name-ceq'_core'})[0].id);$factoryAstId=[string](@($budgetDefinition.nodes|Where-Object{$_.name-ceq'_factory'})[0].id);$registryAstId=[string](@($budgetDefinition.nodes|Where-Object{$_.name-ceq'_registry'})[0].id)
+  $ir=(Invoke-IsolatedForgeInspect 'PreVoteBudgetBook' 'irOptimized') -join "`n";Assert-Task4BudgetBookIr $ir $authorityAstId $coreAstId
+  $task4IrForMutation=[regex]::Replace($ir,'/\*\*.*?\*/','',[Text.RegularExpressions.RegexOptions]::Singleline);$task4IrForMutation=[regex]::Replace($task4IrForMutation,'(?m)///[^\r\n]*','');$task4IrForMutation=[regex]::Replace($task4IrForMutation,'\s+',' ')
+  Assert-Task3FactoryIr (Invoke-IsolatedForgeInspect 'AcquisitionConstellationFactory' 'irOptimized');Assert-Task3AuthorityIr (Invoke-IsolatedForgeInspect 'AcquisitionAuthority' 'irOptimized');Assert-Task3CoreIr (Invoke-IsolatedForgeInspect 'AcquisitionVaultCore' 'irOptimized')
+  Assert-Rejected 'Task4 BudgetBook extra STATICCALL' {Assert-Task4BudgetBookIr ($task4IrForMutation+' staticcall(100000,0,0,4,0,352)') $authorityAstId $coreAstId}
+  Assert-Rejected 'Task4 BudgetBook mixed-case returndata copy' {Assert-Task4BudgetBookIr ($task4IrForMutation+' ReturnDataCopy (0,0,0)') $authorityAstId $coreAstId}
+  Assert-Rejected 'Task4 BudgetBook result-bypass' {Assert-Task4BudgetBookIr ($task4IrForMutation-replace'var_ok\s*:=\s*staticcall','var_bypass := staticcall') $authorityAstId $coreAstId}
+  Assert-Rejected 'Task4 BudgetBook empty transport failure body' {Assert-Task4BudgetBookIr ($task4IrForMutation-replace'if\s+iszero\s*\(\s*var_ok\s*\)\s*\{[^{}]*\}','if iszero(var_ok) { }') $authorityAstId $coreAstId}
+  Assert-Rejected 'Task4 BudgetBook changed transport selector' {Assert-Task4BudgetBookIr ($task4IrForMutation-replace'0x01e0e089','0x01e0e088') $authorityAstId $coreAstId}
+  Assert-Rejected 'Task4 BudgetBook removed transport revert' {Assert-Task4BudgetBookIr ($task4IrForMutation-replace'revert\(\s*0\s*,\s*4\s*\)','pop(0)') $authorityAstId $coreAstId}
+  Assert-Rejected 'Task4 BudgetBook conditional output-size' {Assert-Task4BudgetBookIr ($task4IrForMutation-replace'(?<![A-Za-z0-9_])size\s*:=\s*864','size := 1 if 0 { size := 864 }') $authorityAstId $coreAstId}
+  Assert-Rejected 'Task4 BudgetBook later dynamic output overwrite' {Assert-Task4BudgetBookIr ($task4IrForMutation-replace'(?<![A-Za-z0-9_])size\s*:=\s*864','size := 864 size := calldatasize()') $authorityAstId $coreAstId}
+  Assert-Rejected 'Task4 BudgetBook gas mutation' {Assert-Task4BudgetBookIr ($task4IrForMutation-replace'staticcall\s*\(\s*160000','staticcall(160001') $authorityAstId $coreAstId}
+  Assert-Rejected 'Task4 BudgetBook input-size mutation' {Assert-Task4BudgetBookIr ($task4IrForMutation-replace',\s*0\s*,\s*4\s*,\s*memPtr\s*,\s*size\s*\)',', 0, 5, memPtr, size)') $authorityAstId $coreAstId}
+  Assert-Rejected 'Task4 BudgetBook output-size mutation' {Assert-Task4BudgetBookIr ($task4IrForMutation-replace'(?<![A-Za-z0-9_])size_2\s*:=\s*352','size_2 := 353') $authorityAstId $coreAstId}
+  $authorityIrId=[regex]::Match($ir,'staticcall\s*\(\s*160000\s*,[\s\S]*?loadimmutable\("(?<id>[0-9]+)"\)').Groups['id'].Value;$coreIrId=[regex]::Match($ir,'let\s+_10\s*:=\s*loadimmutable\("(?<id>[0-9]+)"\)').Groups['id'].Value
+  Assert-Rejected 'Task4 BudgetBook target mutation' {Assert-Task4BudgetBookIr ($task4IrForMutation-replace("loadimmutable\(`""+[regex]::Escape($authorityIrId)+"`"\)"),("loadimmutable(`"$coreIrId`")")) $authorityAstId $coreAstId}
+  $coreToFactory=$task4IrForMutation-replace("loadimmutable\(`""+[regex]::Escape($coreAstId)+"`"\)"),("loadimmutable(`"$factoryAstId`")");if($coreToFactory-ceq$task4IrForMutation){throw 'Task4 Core-to-Factory hostile fixture did not alter normalized IR.'}
+  Assert-Rejected 'Task4 BudgetBook Core-to-Factory immutable mutation' {Assert-Task4BudgetBookIr $coreToFactory $authorityAstId $coreAstId}
+  $authorityToRegistry=$task4IrForMutation-replace("loadimmutable\(`""+[regex]::Escape($authorityAstId)+"`"\)"),("loadimmutable(`"$registryAstId`")");if($authorityToRegistry-ceq$task4IrForMutation){throw 'Task4 Authority-to-Registry hostile fixture did not alter normalized IR.'}
+  Assert-Rejected 'Task4 BudgetBook Authority-to-Registry immutable mutation' {Assert-Task4BudgetBookIr $authorityToRegistry $authorityAstId $coreAstId}
+  Assert-Rejected 'Task4 BudgetBook output-pointer mutation' {Assert-Task4BudgetBookIr ($task4IrForMutation-replace',\s*memPtr_2\s*,\s*size_2\s*\)',', 0, size_2)') $authorityAstId $coreAstId}
+  Assert-Rejected 'Task4 BudgetBook late Core target rebind' {Assert-Task4BudgetBookIr ($task4IrForMutation-replace'var_ok_1\s*:=\s*staticcall','_10 := caller() var_ok_1 := staticcall') $authorityAstId $coreAstId}
+  foreach($op in @('call(1,2,3,4,5,6,7)','delegatecall(1,2,3,4,5,6)','callcode(1,2,3,4,5,6,7)','create(0,0,0)','create2(0,0,0,0)','selfdestruct(0)','returndatacopy(0,0,0)')){Assert-Rejected "Task4 BudgetBook forbidden IR $op" {Assert-Task4BudgetBookIr ($task4IrForMutation+' '+$op) $authorityAstId $coreAstId}}
+  Assert-Rejected 'Task4 BudgetBook same-type immutable swap' { $m=$sem.Clone();$m['_authority']=$sem['_core'];$m['_core']=$sem['_authority'];Assert-Task3SemanticImmutables $isolated 'PreVoteBudgetBook' $m }
+  Assert-Rejected 'Task4 canonical BudgetBook same-type immutable swap' { $m=$canonicalSem.Clone();$m['_authority']=$canonicalSem['_core'];$m['_core']=$canonicalSem['_authority'];Assert-Task4CanonicalSemanticImmutables $budget $isolated $m }
+  $renamed=$budget|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$renamedRefs=[ordered]@{};foreach($property in @($renamed.deployedBytecode.immutableReferences.psobject.Properties)){$renamedRefs[[string]([int64]$property.Name+1000)]=$property.Value};$renamed.deployedBytecode.immutableReferences=[pscustomobject]$renamedRefs
+  Assert-Rejected 'Task4 canonical immutable property-ID rename' {Assert-Task4CanonicalSemanticImmutables $renamed $isolated $canonicalSem}
+  $mut=$layout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mut.storage[1].slot='2';Assert-Rejected 'Task4 BudgetBook mapping root mutation' {Assert-Task4BudgetBookStorageGraph $mut}
+  $mut=$layout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mt=Get-Task3StorageTypeById $mut ([string]$mut.storage[1].type) 'mutated Task4 mapping';$mt.Value.key='t_bytes32';Assert-Rejected 'Task4 BudgetBook mapping key mutation' {Assert-Task4BudgetBookStorageGraph $mut}
+  $mut=$layout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mt=Get-Task3StorageTypeById $mut ([string]$mut.storage[1].type) 'mutated Task4 mapping';$mt.Value.value='t_uint256';Assert-Rejected 'Task4 BudgetBook mapping value mutation' {Assert-Task4BudgetBookStorageGraph $mut}
+  $mut=$layout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mt=Get-Task3StorageTypeById $mut ([string]$mut.storage[1].type) 'mutated Task4 mapping';$rt=Get-Task3StorageTypeById $mut ([string]$mt.Value.value) 'mutated Task4 record';$rt.Value.members[7].type='t_uint256';Assert-Rejected 'Task4 BudgetBook record member mutation' {Assert-Task4BudgetBookStorageGraph $mut}
+  $mut=$layout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mt=Get-Task3StorageTypeById $mut ([string]$mut.storage[1].type) 'mutated Task4 mapping';$rt=Get-Task3StorageTypeById $mut ([string]$mt.Value.value) 'mutated Task4 record';$rt.Value.label='struct PreVoteBudgetBook.Other';Assert-Rejected 'Task4 BudgetBook record label mutation' {Assert-Task4BudgetBookStorageGraph $mut}
+  $mut=$layout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$kt=Get-Task3StorageTypeById $mut 't_uint256' 'mutated Task4 key metadata';$kt.Value.label='bytes32';Assert-Rejected 'Task4 BudgetBook key metadata mutation' {Assert-Task4BudgetBookStorageGraph $mut}
+  $mut=$layout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$u64=Get-Task3StorageTypeById $mut 't_uint64' 'mutated Task4 uint64 metadata';$u64.Value.encoding='bytes';Assert-Rejected 'Task4 BudgetBook uint64 encoding mutation' {Assert-Task4BudgetBookStorageGraph $mut}
+  $mut=$layout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$u64=Get-Task3StorageTypeById $mut 't_uint64' 'mutated Task4 uint64 metadata';$u64.Value.numberOfBytes='32';Assert-Rejected 'Task4 BudgetBook uint64 width mutation' {Assert-Task4BudgetBookStorageGraph $mut}
+  $mut=$budget|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;@($mut.abi|Where-Object{$_.type-eq'constructor'})[0].inputs[2].name='core';Assert-Rejected 'Task4 BudgetBook ABI parameter-name mutation' {Assert-AbiFingerprint $mut '0x528883ffe95637fa174685aca380b1bd00b03f5735328bc32cf065eb94159486' 'mutated Task4 BudgetBook'}
+  $mut=$budget|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mut.abi+=([pscustomobject]@{type='receive';stateMutability='payable'});Assert-Rejected 'Task4 BudgetBook hidden payable receive' {Assert-AbiFingerprint $mut '0x528883ffe95637fa174685aca380b1bd00b03f5735328bc32cf065eb94159486' 'mutated Task4 BudgetBook'}
+  $mut=$budget|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;@($mut.abi|Where-Object{$_.type-eq'event'-and$_.name-eq'PreVoteBudgetAuthorized'})[0].anonymous=$true;Assert-Rejected 'Task4 BudgetBook anonymous event mutation' {Assert-AbiFingerprint $mut '0x528883ffe95637fa174685aca380b1bd00b03f5735328bc32cf065eb94159486' 'mutated Task4 BudgetBook'}
+  $mut=$artifacts[0]|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;@($mut.abi|Where-Object{$_.type-eq'function'-and$_.name-eq'factoryState'})[0].stateMutability='pure';Assert-Rejected 'Task4 inherited Factory ABI mutation' {Assert-AbiFingerprint $mut $task3.Artifacts[0].AbiHash 'mutated Task4 Factory'}
+  $mut=$artifacts[0]|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mut.deployedBytecode.object=$mut.deployedBytecode.object.Substring(0,$mut.deployedBytecode.object.Length-2)+'00';Assert-Rejected 'Task4 inherited executable mutation' {Assert-PortableIsolatedArtifactMatch $mut $isolatedArtifacts[0] 'mutated Task4 Factory'}
+  $mut=$budget|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mut.deployedBytecode.object=$mut.deployedBytecode.object.Substring(0,$mut.deployedBytecode.object.Length-2);Assert-Rejected 'Task4 BudgetBook size/suffix mutation' {Assert-Task3ExecutableIdentity $mut ([pscustomobject]@{Sizes=@(4320,3582,738);ImmutableReferences=@('106:32,221:32,890:32','142:32,261:32,944:32','822:32','1043:32','996:32')}) @{} @{STATICCALL=2} 'mutated Task4 BudgetBook'}
+  Assert-Rejected 'Task4 BudgetBook compiler/source mutation' {Assert-Task3ArtifactCompilerProfile $budget $sources[3] $contracts[3] ('0x'+('00'*32)) '0xbc8eca410aeeb572004a1e9ea043fd32f1da5810beadd031f53ce2935aaf67e4'}
+  Assert-Rejected 'Task4 BudgetBook source-set mutation' {Assert-Task3ArtifactCompilerProfile $budget $sources[3] $contracts[3] '0x4cf119d131a1378bccff4872bdf159f4fe2a0b2d5f7aa9d06d98abee39b7d2df' ('0x'+('00'*32))}
+  Write-Output 'Task4 ABI: aggregate=85/164/29/6/284 unique-errors=163; BudgetBook=4/29/2/1'
+  Write-Output 'Task4 BudgetBook: storage=2 roots/8 record members; bytecode=4320/3582 suffix=738; calls=160000/4/864 + 100000/4/352'
 }
 
 function Invoke-Task3Validation {
@@ -2229,6 +2407,15 @@ if ($candidateKinds.Count -ne 6) {
   Exit-Verified 43
 }
 try { Assert-CanonicalArtifactLayout $finalArtifacts } catch { Fail $_.Exception.Message 1 }
+if ($ValidatePhase -eq 'Task4') {
+  try { Invoke-Task4Validation } catch { Fail ($_.Exception.Message + ' | ' + $_.ScriptStackTrace) 1 }
+  if ($ExpectTask0Red) {
+    [Console]::Error.WriteLine('-ExpectTask0Red rejects a complete conforming Task 4 artifact set.')
+    Exit-Verified 44
+  }
+  Write-Output 'Task 4 GREEN: exact phase, artifacts, ABI/collisions, BudgetBook storage/immutables, provenance, executable identity, and fixed-buffer compiler call policy passed.'
+  Exit-Verified 0
+}
 if ($ValidatePhase -eq 'Task3') {
   try { Invoke-Task3Validation } catch { Fail $_.Exception.Message 1 }
   if ($ExpectTask0Red) {
