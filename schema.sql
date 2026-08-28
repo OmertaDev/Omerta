@@ -4308,6 +4308,331 @@ CREATE TABLE IF NOT EXISTS schema_meta (
   applied_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- RWA REGISTRY LIFECYCLE CN-6A — one independently checkpointed, finalized, read-only
+-- consumer of the immutable StockTokenRegistryV2 event stream. These are all new tables:
+-- the Task-5 getter mirror remains the upstream Registry authority, while CN-6A owns only
+-- its raw inbox, ordered reduction, reconciliation results, and readiness lease.
+CREATE TABLE IF NOT EXISTS rwa_registry_lifecycle_lock_v2 (
+  id SMALLINT PRIMARY KEY CHECK (id = 1),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+INSERT INTO rwa_registry_lifecycle_lock_v2 (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS rwa_registry_lifecycle_checkpoint_v2 (
+  consumer_key TEXT PRIMARY KEY CHECK (consumer_key = 'rwa_registry_lifecycle_v2'),
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT CHECK (registry_address IS NULL OR char_length(registry_address) = 42),
+  start_block_number NUMERIC(78,0) CHECK (start_block_number IS NULL OR start_block_number >= 0),
+  last_applied_block_number NUMERIC(78,0) CHECK
+    (last_applied_block_number IS NULL OR last_applied_block_number >= 0),
+  last_applied_block_hash TEXT CHECK
+    (last_applied_block_hash IS NULL OR char_length(last_applied_block_hash) = 66),
+  last_observation_hash TEXT CHECK
+    (last_observation_hash IS NULL OR char_length(last_observation_hash) = 66),
+  finalized_horizon_block_number NUMERIC(78,0) CHECK
+    (finalized_horizon_block_number IS NULL OR finalized_horizon_block_number >= 0),
+  finalized_horizon_block_hash TEXT CHECK
+    (finalized_horizon_block_hash IS NULL OR char_length(finalized_horizon_block_hash) = 66),
+  caught_up BOOLEAN NOT NULL DEFAULT false,
+  halted BOOLEAN NOT NULL DEFAULT false,
+  verified_at TIMESTAMPTZ,
+  ready_verified_at TIMESTAMPTZ,
+  CHECK ((registry_address IS NULL) = (start_block_number IS NULL)),
+  CHECK ((last_applied_block_number IS NULL) = (last_applied_block_hash IS NULL)),
+  CHECK ((last_applied_block_number IS NULL) = (last_observation_hash IS NULL)),
+  CHECK ((finalized_horizon_block_number IS NULL) = (finalized_horizon_block_hash IS NULL)),
+  CHECK (last_applied_block_number IS NULL OR start_block_number IS NOT NULL),
+  CHECK (last_applied_block_number IS NULL OR last_applied_block_number >= start_block_number),
+  CHECK (finalized_horizon_block_number IS NULL OR last_applied_block_number IS NULL
+    OR finalized_horizon_block_number >= last_applied_block_number),
+  CHECK (NOT caught_up OR (last_applied_block_number = finalized_horizon_block_number
+    AND verified_at IS NOT NULL)),
+  CHECK (ready_verified_at IS NULL OR (caught_up AND NOT halted))
+);
+INSERT INTO rwa_registry_lifecycle_checkpoint_v2 (consumer_key,chain_id)
+  VALUES ('rwa_registry_lifecycle_v2',4663)
+  ON CONFLICT (consumer_key) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS rwa_registry_lifecycle_inbox_v2 (
+  inbox_id TEXT PRIMARY KEY,
+  consumer_key TEXT NOT NULL REFERENCES rwa_registry_lifecycle_checkpoint_v2(consumer_key)
+    ON DELETE RESTRICT,
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  contract_address TEXT NOT NULL CHECK (char_length(contract_address) = 42),
+  block_number NUMERIC(78,0) NOT NULL CHECK (block_number >= 0),
+  block_hash TEXT NOT NULL CHECK (char_length(block_hash) = 66),
+  block_timestamp NUMERIC(78,0) NOT NULL CHECK (block_timestamp >= 0),
+  transaction_hash TEXT NOT NULL CHECK (char_length(transaction_hash) = 66),
+  transaction_index NUMERIC(78,0) NOT NULL CHECK (transaction_index >= 0),
+  log_index NUMERIC(78,0) NOT NULL CHECK (log_index >= 0),
+  topic0 TEXT NOT NULL CHECK (char_length(topic0) = 66),
+  topics_json TEXT NOT NULL,
+  data_hex TEXT NOT NULL,
+  event_kind TEXT NOT NULL CHECK (event_kind IN
+    ('PublisherSet','AssetVersionRegistered','AssetVersionActivated',
+     'AssetVersionDeactivated','BallotPublished')),
+  decoded_hash TEXT NOT NULL CHECK (char_length(decoded_hash) = 66),
+  observation_hash TEXT NOT NULL CHECK (char_length(observation_hash) = 66),
+  publisher TEXT,
+  asset_version_key TEXT,
+  ticker_hash TEXT,
+  token_address TEXT,
+  robinhood_asset_id_hash TEXT,
+  ticker TEXT,
+  name TEXT,
+  token_decimals SMALLINT CHECK (token_decimals IS NULL OR token_decimals BETWEEN 0 AND 255),
+  registered_at NUMERIC(78,0) CHECK (registered_at IS NULL OR registered_at >= 0),
+  evidence_hash TEXT,
+  review_id TEXT,
+  approved_at NUMERIC(78,0) CHECK (approved_at IS NULL OR approved_at >= 0),
+  valid_until NUMERIC(78,0) CHECK (valid_until IS NULL OR valid_until >= 0),
+  catalog_version NUMERIC(78,0) CHECK (catalog_version IS NULL OR catalog_version >= 0),
+  reason_hash TEXT,
+  deactivated_at NUMERIC(78,0) CHECK (deactivated_at IS NULL OR deactivated_at >= 0),
+  ballot_day NUMERIC(78,0) CHECK (ballot_day IS NULL OR ballot_day >= 0),
+  tally_hash TEXT,
+  max_eth_wei NUMERIC(78,0) CHECK (max_eth_wei IS NULL OR max_eth_wei >= 0),
+  purchase_until NUMERIC(78,0) CHECK (purchase_until IS NULL OR purchase_until >= 0),
+  published_at NUMERIC(78,0) CHECK (published_at IS NULL OR published_at >= 0),
+  inserted_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (chain_id, contract_address, block_hash, transaction_hash, log_index)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_rwa_registry_lifecycle_inbox_identity_v2
+  ON rwa_registry_lifecycle_inbox_v2
+    (chain_id,contract_address,block_hash,transaction_hash,log_index);
+CREATE INDEX IF NOT EXISTS ix_rwa_registry_lifecycle_inbox_order_v2
+  ON rwa_registry_lifecycle_inbox_v2
+    (consumer_key,block_number,transaction_index,log_index);
+
+CREATE TABLE IF NOT EXISTS rwa_registry_activation_instances_v2 (
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  activation_generation NUMERIC(78,0) NOT NULL CHECK (activation_generation > 0),
+  activation_block_number NUMERIC(78,0) NOT NULL CHECK (activation_block_number >= 0),
+  activation_block_hash TEXT NOT NULL CHECK (char_length(activation_block_hash) = 66),
+  activation_transaction_hash TEXT NOT NULL CHECK (char_length(activation_transaction_hash) = 66),
+  activation_transaction_index NUMERIC(78,0) NOT NULL CHECK (activation_transaction_index >= 0),
+  activation_log_index NUMERIC(78,0) NOT NULL CHECK (activation_log_index >= 0),
+  catalog_version NUMERIC(78,0) NOT NULL CHECK (catalog_version > 0),
+  review_id TEXT NOT NULL CHECK (char_length(review_id) = 66),
+  evidence_hash TEXT NOT NULL CHECK (char_length(evidence_hash) = 66),
+  approved_at TIMESTAMPTZ NOT NULL,
+  valid_until TIMESTAMPTZ NOT NULL,
+  included_at TIMESTAMPTZ NOT NULL,
+  local_match BOOLEAN NOT NULL DEFAULT false,
+  local_match_record_id TEXT,
+  deactivation_block_number NUMERIC(78,0) CHECK
+    (deactivation_block_number IS NULL OR deactivation_block_number >= 0),
+  deactivation_block_hash TEXT CHECK
+    (deactivation_block_hash IS NULL OR char_length(deactivation_block_hash) = 66),
+  deactivation_transaction_hash TEXT CHECK
+    (deactivation_transaction_hash IS NULL OR char_length(deactivation_transaction_hash) = 66),
+  deactivation_log_index NUMERIC(78,0) CHECK
+    (deactivation_log_index IS NULL OR deactivation_log_index >= 0),
+  deactivation_reason_hash TEXT CHECK
+    (deactivation_reason_hash IS NULL OR char_length(deactivation_reason_hash) = 66),
+  deactivation_catalog_version NUMERIC(78,0) CHECK
+    (deactivation_catalog_version IS NULL OR deactivation_catalog_version > 0),
+  deactivated_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (chain_id, registry_address, asset_version_key, activation_generation),
+  CHECK (valid_until = approved_at + interval '604800 seconds'),
+  CHECK (approved_at <= included_at AND included_at < valid_until),
+  CHECK (local_match = (local_match_record_id IS NOT NULL)),
+  CHECK ((deactivation_block_number IS NULL) = (deactivation_block_hash IS NULL)),
+  CHECK ((deactivation_block_number IS NULL) = (deactivation_transaction_hash IS NULL)),
+  CHECK ((deactivation_block_number IS NULL) = (deactivation_log_index IS NULL)),
+  CHECK ((deactivation_block_number IS NULL) = (deactivation_reason_hash IS NULL)),
+  CHECK ((deactivation_block_number IS NULL) = (deactivation_catalog_version IS NULL)),
+  CHECK ((deactivation_block_number IS NULL) = (deactivated_at IS NULL))
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_registry_activation_instances_asset_generation_v2
+  ON rwa_registry_activation_instances_v2
+    (asset_version_key,activation_generation DESC,registry_address);
+
+CREATE TABLE IF NOT EXISTS rwa_registry_asset_lifecycle_current_v2 (
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  registered BOOLEAN NOT NULL DEFAULT true,
+  active BOOLEAN NOT NULL DEFAULT false,
+  activation_generation NUMERIC(78,0) NOT NULL DEFAULT 0 CHECK (activation_generation >= 0),
+  catalog_version NUMERIC(78,0) NOT NULL DEFAULT 0 CHECK (catalog_version >= 0),
+  ticker_hash TEXT NOT NULL CHECK (char_length(ticker_hash) = 66),
+  ticker TEXT NOT NULL,
+  name TEXT NOT NULL,
+  token_address TEXT NOT NULL CHECK (char_length(token_address) = 42),
+  token_decimals SMALLINT NOT NULL CHECK (token_decimals BETWEEN 0 AND 255),
+  robinhood_asset_id_hash TEXT NOT NULL CHECK (char_length(robinhood_asset_id_hash) = 66),
+  registry_index NUMERIC(78,0) NOT NULL CHECK (registry_index >= 0),
+  registration_block_number NUMERIC(78,0) NOT NULL CHECK (registration_block_number >= 0),
+  registration_block_hash TEXT NOT NULL CHECK (char_length(registration_block_hash) = 66),
+  registration_transaction_hash TEXT NOT NULL CHECK (char_length(registration_transaction_hash) = 66),
+  registration_log_index NUMERIC(78,0) NOT NULL CHECK (registration_log_index >= 0),
+  registered_at NUMERIC(78,0) NOT NULL CHECK (registered_at >= 0),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (chain_id,registry_address,asset_version_key),
+  UNIQUE (asset_version_key),
+  CHECK (NOT active OR (registered AND activation_generation > 0)),
+  CHECK (registered OR (NOT active AND activation_generation = 0))
+);
+
+CREATE TABLE IF NOT EXISTS rwa_registry_publisher_history_v2 (
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  publisher TEXT NOT NULL CHECK (char_length(publisher) = 42),
+  block_number NUMERIC(78,0) NOT NULL CHECK (block_number >= 0),
+  block_hash TEXT NOT NULL CHECK (char_length(block_hash) = 66),
+  block_timestamp NUMERIC(78,0) NOT NULL CHECK (block_timestamp >= 0),
+  transaction_hash TEXT NOT NULL CHECK (char_length(transaction_hash) = 66),
+  transaction_index NUMERIC(78,0) NOT NULL CHECK (transaction_index >= 0),
+  log_index NUMERIC(78,0) NOT NULL CHECK (log_index >= 0),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (chain_id,registry_address,block_hash,transaction_hash,log_index)
+);
+
+CREATE TABLE IF NOT EXISTS rwa_registry_publisher_current_v2 (
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  publisher TEXT NOT NULL CHECK (char_length(publisher) = 42),
+  block_number NUMERIC(78,0) NOT NULL CHECK (block_number >= 0),
+  block_hash TEXT NOT NULL CHECK (char_length(block_hash) = 66),
+  block_timestamp NUMERIC(78,0) NOT NULL CHECK (block_timestamp >= 0),
+  transaction_hash TEXT NOT NULL CHECK (char_length(transaction_hash) = 66),
+  transaction_index NUMERIC(78,0) NOT NULL CHECK (transaction_index >= 0),
+  log_index NUMERIC(78,0) NOT NULL CHECK (log_index >= 0),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (chain_id,registry_address)
+);
+
+CREATE TABLE IF NOT EXISTS rwa_registry_ballot_events_v2 (
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  ballot_day NUMERIC(78,0) NOT NULL CHECK (ballot_day >= 0),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  token_address TEXT NOT NULL CHECK (char_length(token_address) = 42),
+  token_decimals SMALLINT NOT NULL CHECK (token_decimals BETWEEN 0 AND 255),
+  tally_hash TEXT NOT NULL CHECK (char_length(tally_hash) = 66),
+  catalog_version NUMERIC(78,0) NOT NULL CHECK (catalog_version >= 0),
+  max_eth_wei NUMERIC(78,0) NOT NULL CHECK (max_eth_wei >= 0),
+  purchase_until NUMERIC(78,0) NOT NULL CHECK (purchase_until >= 0),
+  published_at NUMERIC(78,0) NOT NULL CHECK (published_at >= 0),
+  activation_generation NUMERIC(78,0) NOT NULL CHECK (activation_generation >= 0),
+  block_number NUMERIC(78,0) NOT NULL CHECK (block_number >= 0),
+  block_hash TEXT NOT NULL CHECK (char_length(block_hash) = 66),
+  block_timestamp NUMERIC(78,0) NOT NULL CHECK (block_timestamp >= 0),
+  transaction_hash TEXT NOT NULL CHECK (char_length(transaction_hash) = 66),
+  transaction_index NUMERIC(78,0) NOT NULL CHECK (transaction_index >= 0),
+  log_index NUMERIC(78,0) NOT NULL CHECK (log_index >= 0),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (chain_id,registry_address,ballot_day)
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_registry_ballot_events_day_v2
+  ON rwa_registry_ballot_events_v2(ballot_day,registry_address);
+
+CREATE TABLE IF NOT EXISTS rwa_registry_lifecycle_event_results_v2 (
+  inbox_id TEXT PRIMARY KEY REFERENCES rwa_registry_lifecycle_inbox_v2(inbox_id)
+    ON DELETE RESTRICT,
+  event_kind TEXT NOT NULL CHECK (event_kind IN
+    ('PublisherSet','AssetVersionRegistered','AssetVersionActivated',
+     'AssetVersionDeactivated','BallotPublished')),
+  disposition TEXT NOT NULL CHECK (disposition IN
+    ('drift','publisher_applied','registration_applied',
+     'activation_matched','activation_provenance_unmatched','deactivation_applied',
+     'ballot_matched','ballot_provenance_unmatched')),
+  local_record_id TEXT,
+  detail_code TEXT NOT NULL CHECK (detail_code IN
+    ('publisher_applied','registration_applied','deactivation_applied','matched','unmatched','drift')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CHECK (
+    (event_kind='PublisherSet' AND disposition='publisher_applied'
+      AND detail_code='publisher_applied' AND local_record_id IS NULL)
+    OR (event_kind='AssetVersionRegistered' AND disposition='registration_applied'
+      AND detail_code='registration_applied' AND local_record_id IS NULL)
+    OR (event_kind='AssetVersionDeactivated' AND disposition='deactivation_applied'
+      AND detail_code='deactivation_applied' AND local_record_id IS NULL)
+    OR (event_kind='AssetVersionActivated' AND disposition='activation_matched'
+      AND detail_code='matched' AND local_record_id IS NOT NULL)
+    OR (event_kind='AssetVersionActivated' AND disposition='activation_provenance_unmatched'
+      AND detail_code='unmatched' AND local_record_id IS NULL)
+    OR (event_kind='BallotPublished' AND disposition='ballot_matched'
+      AND detail_code='matched' AND local_record_id IS NOT NULL)
+    OR (event_kind='BallotPublished' AND disposition='ballot_provenance_unmatched'
+      AND detail_code='unmatched' AND local_record_id IS NULL)
+    OR (event_kind IN ('AssetVersionActivated','BallotPublished') AND disposition='drift'
+      AND detail_code='drift' AND local_record_id IS NOT NULL)
+  )
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_registry_lifecycle_event_results_disposition_v2
+  ON rwa_registry_lifecycle_event_results_v2(disposition,event_kind,created_at);
+
+CREATE TABLE IF NOT EXISTS rwa_registry_lifecycle_runtime_v2 (
+  id SMALLINT PRIMARY KEY CHECK (id = 1),
+  consumer_key TEXT NOT NULL CHECK (consumer_key = 'rwa_registry_lifecycle_v2'),
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT CHECK (registry_address IS NULL OR char_length(registry_address) = 42),
+  start_block_number NUMERIC(78,0) CHECK (start_block_number IS NULL OR start_block_number >= 0),
+  last_applied_block_number NUMERIC(78,0) CHECK
+    (last_applied_block_number IS NULL OR last_applied_block_number >= 0),
+  last_applied_block_hash TEXT CHECK
+    (last_applied_block_hash IS NULL OR char_length(last_applied_block_hash) = 66),
+  finalized_horizon_block_number NUMERIC(78,0) CHECK
+    (finalized_horizon_block_number IS NULL OR finalized_horizon_block_number >= 0),
+  finalized_horizon_block_hash TEXT CHECK
+    (finalized_horizon_block_hash IS NULL OR char_length(finalized_horizon_block_hash) = 66),
+  sync_in_progress BOOLEAN NOT NULL DEFAULT false,
+  attempt_id TEXT,
+  last_attempt_at TIMESTAMPTZ,
+  last_success_at TIMESTAMPTZ,
+  ready_verified_at TIMESTAMPTZ,
+  caught_up BOOLEAN NOT NULL DEFAULT false,
+  halted BOOLEAN NOT NULL DEFAULT false,
+  failure_code TEXT CHECK (failure_code IS NULL OR failure_code IN
+    ('rwa_lifecycle_unconfigured','rwa_lifecycle_config','rwa_lifecycle_input',
+     'rwa_lifecycle_rpc','rwa_lifecycle_decode','rwa_lifecycle_timestamp','rwa_lifecycle_structure',
+     'rwa_lifecycle_generation','rwa_lifecycle_catalog','rwa_lifecycle_getter_mismatch',
+     'rwa_lifecycle_task5_mismatch','rwa_lifecycle_inbox_conflict',
+     'rwa_lifecycle_provenance','rwa_lifecycle_capacity','rwa_lifecycle_reorg',
+     'rwa_lifecycle_observation','rwa_lifecycle_halted','rwa_lifecycle_internal')),
+  unresolved_incident_count INT NOT NULL DEFAULT 0 CHECK (unresolved_incident_count >= 0),
+  last_incident_id TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  FOREIGN KEY (consumer_key) REFERENCES rwa_registry_lifecycle_checkpoint_v2(consumer_key)
+    ON DELETE RESTRICT,
+  CHECK ((registry_address IS NULL) = (start_block_number IS NULL)),
+  CHECK ((last_applied_block_number IS NULL) = (last_applied_block_hash IS NULL)),
+  CHECK ((finalized_horizon_block_number IS NULL) = (finalized_horizon_block_hash IS NULL)),
+  CHECK (NOT sync_in_progress OR (attempt_id IS NOT NULL AND last_attempt_at IS NOT NULL)),
+  CHECK (ready_verified_at IS NULL OR (caught_up AND NOT halted AND NOT sync_in_progress))
+);
+INSERT INTO rwa_registry_lifecycle_runtime_v2 (id,consumer_key,chain_id)
+  VALUES (1,'rwa_registry_lifecycle_v2',4663)
+  ON CONFLICT (id) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS rwa_registry_lifecycle_attempts_v2 (
+  attempt_id TEXT PRIMARY KEY,
+  status TEXT NOT NULL CHECK (status IN ('started','succeeded','failed','superseded')),
+  started_at TIMESTAMPTZ NOT NULL,
+  ended_at TIMESTAMPTZ,
+  failure_code TEXT CHECK (failure_code IS NULL OR failure_code IN
+    ('rwa_lifecycle_unconfigured','rwa_lifecycle_config','rwa_lifecycle_input',
+     'rwa_lifecycle_rpc','rwa_lifecycle_decode','rwa_lifecycle_timestamp','rwa_lifecycle_structure',
+     'rwa_lifecycle_generation','rwa_lifecycle_catalog','rwa_lifecycle_getter_mismatch',
+     'rwa_lifecycle_task5_mismatch','rwa_lifecycle_inbox_conflict',
+     'rwa_lifecycle_provenance','rwa_lifecycle_capacity','rwa_lifecycle_reorg',
+     'rwa_lifecycle_observation','rwa_lifecycle_halted','rwa_lifecycle_internal')),
+  superseded_by_attempt_id TEXT,
+  CHECK ((status = 'started' AND ended_at IS NULL)
+    OR (status IN ('succeeded','failed','superseded') AND ended_at IS NOT NULL)),
+  CHECK (ended_at IS NULL OR ended_at >= started_at),
+  CHECK ((status = 'failed') = (failure_code IS NOT NULL)),
+  CHECK (status = 'superseded' OR superseded_by_attempt_id IS NULL)
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_registry_lifecycle_attempts_status_v2
+  ON rwa_registry_lifecycle_attempts_v2(status,started_at,attempt_id);
+
 -- RWA HEALTH H1 — server-authoritative operational observations and sticky blockers.
 CREATE TABLE IF NOT EXISTS rwa_health_apply_lock_v2 (
   id SMALLINT PRIMARY KEY CHECK (id = 1),

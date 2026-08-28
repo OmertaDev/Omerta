@@ -41,9 +41,10 @@ are `7781e0f2`, `af85eaed`, `db5555f4`, and `fb64148d`. Focused verification is
 18/18 passing, crosswalk verification is 63/63 passing, the exact five-by-five
 phase and cardinality matrices match their frozen exits, and independent final
 security and specification reviews are C0/I0/M0.
-Acquisition Constellation Tasks 6–9, CN-6A, H2, CN-6B, and the broader interview scope
+Acquisition Constellation Tasks 6–9, H2, CN-6B, and the broader interview scope
 remain planned acceptance/implementation nodes rather than active production
-consumers.
+consumers. CN-6A is development-closed, independently approved, dormant, and
+unconfigured.
 The Task 5 constellation is dormant, undeployed, unfunded, and unactivated;
 final A1/A3/R and production approval remain pending.
 
@@ -59,14 +60,14 @@ partial legacy behavior and dirty documentation do not count.
 | OV-1..OV-14 | Explicit override ledger | F0, O1/O2, R, G1/G2, B, P, X | Tracked; each consuming plan must restate applicable overrides |
 | GI-AUTH | Global invariants / Authority separation | O1/O2, H, A, G1/F/P, U, X | Pending outside approved C/N and standalone pool slices |
 | GI-CONS | Global invariants / Conservation and provenance | A1/A3/R/O2, D, G1/G2/B/P | Reserved-vs-reconciliation correction tracked; implementation pending |
-| GI-FINAL | Global invariants / Finality, replay, and audit | FO, CB, H, R, G2, F, P, U | Shared kernel, getter consumer, and committed event-time evidence implemented/approved/dormant; CN-6A Registry lifecycle and H2 health consumers pending |
+| GI-FINAL | Global invariants / Finality, replay, and audit | FO, CB, H, R, G2, F, P, U | Shared kernel, getter consumer, event-time evidence, and CN-6A Registry lifecycle implemented/approved/dormant; H2 health consumer pending |
 | GI-PROD | Global invariants / Product posture | A/CB/R/D/G/B/P/U/X | Pending; dormant/no-selling/no-APY posture tracked |
 | C1 | Immutable asset identity/history | C/N Tasks 1–2 | Implemented and independently approved; dormant/undeployed |
-| C2 | Activation approval and ballots | C/N Tasks 1, 4–7; H; A1 budget bridge | Registry/reviewer/database ballot implemented and independently approved/dormant; CN-6A lifecycle generation, H2, and CN-6B publisher/integration pending |
-| C3 | Finalized mirror authority | C/N Task 2, FO, CN-6A, CN-6B, Task 7 | Getter mirror, shared observation kernel, and event-time evidence implemented/approved/dormant; CN-6A Registry lifecycle consumer and H2 consumer pending |
+| C2 | Activation approval and ballots | C/N Tasks 1, 4–7; H; A1 budget bridge | Registry/reviewer/database ballot and CN-6A lifecycle generation implemented and independently approved/dormant; H2 and CN-6B publisher/integration pending |
+| C3 | Finalized mirror authority | C/N Task 2, FO, CN-6A, CN-6B, Task 7 | Getter mirror, shared observation kernel, event-time evidence, and CN-6A Registry lifecycle consumer implemented/approved/dormant; H2 consumer pending |
 | N1 | Nomination identity/cadence | C/N Tasks 3–4 | Implemented and independently approved; dormant |
 | N2 | Support and seat authority | C/N Task 3; Commission seat-generation integration | Domain approved; rapid loss/reseat generation hook pending |
-| N3 | Review and expiry | C/N Tasks 3–4, CN-6A/CN-6B, Task 7 | Domain/routes/package approved; finalized activation lifecycle and dormant publisher pending |
+| N3 | Review and expiry | C/N Tasks 3–4, CN-6A/CN-6B, Task 7 | Domain/routes/package and finalized activation lifecycle approved/dormant; publisher pending |
 | H | Health and operational quarantine | H1 watcher/domain; H2 additive overlay/finality; U | H1 implemented/independently approved/dormant at `74866a4d`; H2 pending and mandatory before non-dormant ballot/purchase/delivery; real-PG H1 execution remains an X-gate environment check |
 | A1 | Native-ETH buckets/deposits | O1, AC-0..9 | O1/Task4 approved; Task5 `ee857436` is the approved dormant/nondeployable 23,212B oracle; AC Tasks 2–4 retain their recorded approvals; AC Task 5 architecture `7781e0f2`, GREEN `db5555f4`, and verifier/crosswalk `fb64148d` development-closed with final reviews C0/I0/M0; Tasks 6–9 and final A1/A3/R/production approval pending |
 | A2 | mainOperator | O1 role/typed authority; O2 final debit integration | Pending; A2 cannot complete before A3/R |
@@ -213,9 +214,9 @@ flowchart TD
 | CN-1..4 | Registry, getter catalog, nominations, reviewer routes/packages | F0 | Focused tests + independent reviews | Complete/approved/dormant |
 | CN-5 | Immutable DB ballot/tally/budget evidence | CN-1..4 | BigInt/time/snapshot/concurrency/literal-ABI tests | Complete/independently approved/dormant; manual budget is not production provenance |
 | FO | Shared exact-head finalized-observation kernel, getter consumer, committed event-block timestamps, and consumer checkpoint/inbox contract | CN-1..4 | Pinned getter/log/event-time completeness, hash-recheck, reorg/crash/gap/bound/replay tests | Tasks 1–5 plus event-time fix complete/independently approved/dormant |
-| CN-6A | Read-only one-cursor Registry V2 finalized lifecycle/generation consumer | FO, CN-1..4 | Exact event-time/reorg/crash/generation/replay proof; separate identity/checkpoint/inbox; no publisher reachability | Architecture frozen and independently accepted P0=0/P1=0; RED/implementation pending; required before H2 implementation |
+| CN-6A | Read-only one-cursor Registry V2 finalized lifecycle/generation consumer | FO, CN-1..4 | Exact event-time/reorg/crash/generation/replay proof; separate identity/checkpoint/inbox; no publisher reachability | Development implemented and independently accepted P0=0/P1=0 on 2026-08-28; dormant/unconfigured; real-PG execution retained as an X-gate environment check |
 | H1 | Predicate taxonomy, watcher, snapshots, operational overlay domain/API | FO, CN-1..4 | 5-minute poll, 10-minute freshness, bounded work, spam/stale tests | Implementation complete/independently approved/dormant at `74866a4d`; focused tests green; real-PG harness unexecuted without configured test URL and retained for X-global evidence |
-| H2 | `RwaHealthOverlay`, seven-day Safe clearance package/finality, and H2 readiness wall | H1, FO, CN-6A | Contract tests, exact event/finality/reorg/readiness proof | Architecture frozen and independently accepted P0=0/P1=0; RED/implementation pending behind CN-6A |
+| H2 | `RwaHealthOverlay`, seven-day Safe clearance package/finality, and H2 readiness wall | H1, FO, CN-6A | Contract tests, exact event/finality/reorg/readiness proof | Architecture frozen and independently accepted P0=0/P1=0; CN-6A dependency closed; RED/implementation pending |
 | O1 | mainOperator role state machine and EIP-712 authority | F0 | Unit/fuzz/invariant/1271/generation/nonce tests | Complete/independently approved/dormant at remediation head `82001b6e8ac54c46dda6eb185cda550e8a73a3de`; no outflow or deployment |
 | A1-ref | Monolithic behavioral oracle for authority, buckets, ingress, deposits and caps | O1, CN | Preserve O1/Task4/Task5 evidence; never deploy | Task5 oracle `ee857436`, runtime 23,212B, independently approved and dormant/nondeployable; fresh BudgetBook and Intent-identity slices closed through Task 4 `0b455987` and Task 5 `fb64148d`; Tasks 6–9 pending; not final A1/A3/R approval |
 | AC-0..9 | Immutable acquisition constellation: manifest factory, Authority, Core, BudgetBook, Intent, Reconciliation, O2 integration and review | A1-ref, O1, CN | Exact crosswalk; phased CREATE/finalization; typed-call/stateful/size/replay/gas tests; independent Wildcat/controller approval | Tasks 0–5 development-closed through Task 5 verifier/crosswalk `fb64148d`; dormant, undeployed, unfunded, and unactivated; Tasks 6–9, broader interview scope, and final A1/A3/R/production approval pending |

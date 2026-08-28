@@ -1,9 +1,10 @@
 # RWA Registry Lifecycle CN-6A — Finalized Read-Only Consumer Freeze
 
 **Date:** 2026-08-28
-**Status:** architecture frozen after independent preflight accepted with P0=0/P1=0;
-RED, implementation, configuration, finality, deployment, publisher reachability, and
-cutover remain pending
+**Status:** development implemented, verified, and independently accepted with
+P0=0/P1=0; dormant and intentionally unconfigured. Production RPC/Registry
+configuration, scheduling, observed finality, deployment, publisher reachability,
+and cutover remain pending.
 **Parent authority:** master C/FO requirements, the umbrella CN-6A/H2/CN-6B split,
 the finalized-observation kernel, the finalized event-time handoff, and Registry/
 nomination/ballot Tasks 1–5
@@ -481,3 +482,25 @@ CN-6A development closure is code, migrations, focused/integrated tests, read-on
 machine facts, and independent review. It is not a configured RPC/Registry address,
 scheduled worker, observed production finality, deployed contract, Safe execution,
 signed/broadcast transaction, publisher, ballot cutover, funding, or activation.
+
+## 9. Development closure record
+
+Closed on 2026-08-28 as an implemented, reviewed, dormant dependency for H2:
+
+- production source SHA-256
+  `0FA1F23FADF8461877B6DD841D2DEB35300E8C66FDFD4DF1AB3AFA36C84AB11D`;
+- schema SHA-256
+  `3060A1E32CE3518636508B125DA6FAF41798D11011B9BC61E3671704D3D840D1`;
+- unit and production-style sync test SHA-256 values
+  `D39A1BFC8BC6BE123739699222D24E23C96D060913D90B618BBEFB0747D91A3F`
+  and `6DEFF917CA2A603D1BA7FF61B71F00E35A50AB514659C2A41CB98FCCE2E2C37A`;
+- lifecycle unit tests 28/28, production-style finalized RPC/sync, FO, Task-5,
+  nominations, ballot, migration, gate, security, chain, H1, and diff checks green;
+- independent final security and specification reviews both accepted the frozen
+  bytes with P0=0/P1=0;
+- the real-PostgreSQL lane truthfully skipped because
+  `RWA_REGISTRY_LIFECYCLE_TEST_DATABASE_URL` was not configured. That remains an
+  explicit X-gate environment evidence item, not claimed executed evidence.
+
+No production configuration, schedule, deployment, Safe execution, transaction,
+finality observation, publisher, funding, or cutover was performed.

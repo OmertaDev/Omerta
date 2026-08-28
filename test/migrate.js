@@ -648,7 +648,7 @@ for (const [t, kind] of Object.entries(DISPOSITION)) {
     ],
     rwa_registry_asset_lifecycle_current_v2: [
       'chain_id', 'registry_address', 'asset_version_key', 'registered', 'active',
-      'activation_generation', 'catalog_version', 'updated_at',
+      'registry_index', 'activation_generation', 'catalog_version', 'updated_at',
     ],
     rwa_registry_publisher_history_v2: [
       'chain_id', 'registry_address', 'publisher', 'block_number', 'block_hash',

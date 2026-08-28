@@ -14,6 +14,14 @@ if (!databaseUrl) {
   assert(['postgres:', 'postgresql:'].includes(parsed.protocol) && parsed.pathname.slice(1),
     'RWA_REGISTRY_LIFECYCLE_TEST_DATABASE_URL must name an explicit PostgreSQL database');
 
+  const originalLifecycleEnv = Object.freeze({
+    CHAIN_RPC_URL: process.env.CHAIN_RPC_URL,
+    STOCK_TOKEN_REGISTRY_V2_ADDRESS: process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS,
+    STOCK_TOKEN_REGISTRY_V2_START_BLOCK: process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK,
+  });
+  process.env.CHAIN_RPC_URL = 'http://127.0.0.1:1';
+  process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+  process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK = '0';
   const lifecycle = await import('../src/rwaregistrylifecycle.js');
   const expectedExports = Object.freeze([
     'applyFinalizedRwaActivationEvents',
@@ -352,7 +360,8 @@ if (!databaseUrl) {
         WHERE consumer_key=$1 FOR UPDATE`, [consumerKey]);
       await takeover.query('SELECT id FROM rwa_registry_lifecycle_runtime_v2 WHERE id=1 FOR UPDATE');
       await takeover.query(`UPDATE rwa_registry_lifecycle_attempts_v2
-        SET status='superseded' WHERE attempt_id='attempt-old' AND status='started'`);
+        SET status='superseded',ended_at=clock_timestamp()
+        WHERE attempt_id='attempt-old' AND status='started'`);
       await takeover.query(`INSERT INTO rwa_registry_lifecycle_attempts_v2
         (attempt_id,status,started_at) VALUES ('attempt-new','started',clock_timestamp())`);
       const takeoverResult = await takeover.query(`UPDATE rwa_registry_lifecycle_runtime_v2 SET
@@ -454,10 +463,14 @@ if (!databaseUrl) {
       sortedSecond.release();
     }
 
-    console.log('PASS RWA Registry lifecycle real PostgreSQL: lock order, readiness/takeover, CAS, constraints, rollback, sorted domain locks');
+    console.log('PASS RWA Registry lifecycle real PostgreSQL harness: schema constraints and explicit lock/CAS concurrency fixtures completed');
   } finally {
     if (pool) await pool.end().catch(() => {});
     await admin.query(`DROP SCHEMA IF EXISTS ${quotedSchema} CASCADE`).catch(() => {});
     await admin.end().catch(() => {});
+    for (const [key, value] of Object.entries(originalLifecycleEnv)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
   }
 }
