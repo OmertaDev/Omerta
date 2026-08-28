@@ -754,11 +754,8 @@ contract AcquisitionConstellationTask3BTest is Test {
         );
 
         vm.deal(address(_core), 7 ether);
-        ITask3BFinalCore.AccountingTotals memory deficitPre = post;
-        deficitPre.actualBalanceWei = 7 ether;
-        deficitPre.balanceDeficitWei = 3 ether;
-        ITask3BFinalCore.AccountingTotals memory deficitPost = deficitPre;
-        deficitPost.accountingSequence = 2;
+        ITask3BFinalCore.AccountingTotals memory deficitPre = _totals(0, 10 ether, 0, 0, 0, 7 ether, 1);
+        ITask3BFinalCore.AccountingTotals memory deficitPost = _totals(0, 10 ether, 0, 0, 0, 7 ether, 2);
         bytes32 deficitSubject = keccak256(abi.encode(deficitPre, deficitPost));
         bytes32 expectedDeficitMutation = _mutationId(0, 2, _SYNC_BALANCE, deficitSubject);
         bytes32 expectedDeficitComponent =
@@ -774,11 +771,8 @@ contract AcquisitionConstellationTask3BTest is Test {
         assertEq(_core.unattributedWei(), 10 ether, "deficit never rewrites bucket");
 
         vm.deal(address(_core), 10 ether);
-        ITask3BFinalCore.AccountingTotals memory clearPre = deficitPost;
-        clearPre.actualBalanceWei = 10 ether;
-        clearPre.balanceDeficitWei = 0;
-        ITask3BFinalCore.AccountingTotals memory clearPost = clearPre;
-        clearPost.accountingSequence = 3;
+        ITask3BFinalCore.AccountingTotals memory clearPre = _totals(0, 10 ether, 0, 0, 0, 10 ether, 2);
+        ITask3BFinalCore.AccountingTotals memory clearPost = _totals(0, 10 ether, 0, 0, 0, 10 ether, 3);
         bytes32 clearSubject = keccak256(abi.encode(clearPre, clearPost));
         bytes32 clearMutation = _mutationId(0, 3, _SYNC_BALANCE, clearSubject);
         bytes32 clearComponent = _componentId(0, 3, clearMutation, 0, _DEFICIT_OBSERVATION, clearSubject, 0);
@@ -800,15 +794,8 @@ contract AcquisitionConstellationTask3BTest is Test {
         bytes32 expectedMutation = _mutationId(0, 2, _UNATTRIBUTED_RECLASSIFICATION, details);
         bytes32 expectedComponent =
             _componentId(0, 2, expectedMutation, 0, _UNATTRIBUTED_TO_AVAILABLE, details, 4 ether);
-        ITask3BFinalCore.AccountingTotals memory reclassPre = _zeroTotals(10 ether);
-        reclassPre.unattributedWei = 10 ether;
-        reclassPre.accountedBackingWei = 10 ether;
-        reclassPre.forcedSurplusWei = 0;
-        reclassPre.accountingSequence = 1;
-        ITask3BFinalCore.AccountingTotals memory reclassPost = reclassPre;
-        reclassPost.availableWei = 4 ether;
-        reclassPost.unattributedWei = 6 ether;
-        reclassPost.accountingSequence = 2;
+        ITask3BFinalCore.AccountingTotals memory reclassPre = _totals(0, 10 ether, 0, 0, 0, 10 ether, 1);
+        ITask3BFinalCore.AccountingTotals memory reclassPost = _totals(4 ether, 6 ether, 0, 0, 0, 10 ether, 2);
         vm.recordLogs();
         assertEq(_core.reclassifyUnattributed(4 ether, details), expectedMutation, "reclassification ID");
         Vm.Log[] memory logs = vm.getRecordedLogs();
