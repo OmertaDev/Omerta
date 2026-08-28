@@ -10,6 +10,8 @@ additional_compiler_profiles = [
   { name = "constellation-via-ir", via_ir = true, optimizer = true, optimizer_runs = 800, evm_version = "cancun" },
 ]
 compilation_restrictions = [
+  { paths = "src/RwaHealthOverlay.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/interfaces/IRwaHealthOverlay.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
   { paths = "src/AcquisitionConstellationFactory.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
   { paths = "src/AcquisitionAuthority.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
   { paths = "src/AcquisitionVaultCore.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },

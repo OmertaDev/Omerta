@@ -4,6 +4,10 @@
 **Status:** architecture frozen after independent security and specification preflight
 accepted with P0=0/P1=0; RED, implementation, deployment, configuration, Safe
 execution, finality, and production cutover remain pending
+**Implementation clarifications:**
+`2026-08-28-rwa-health-h2-implementation-addendum.md` closes the post-CN-6A package/
+consumer handoff seams and must receive independent P0/P1=0 preflight before off-chain
+GREEN.
 **Parent authority:**
 `docs/superpowers/specs/2026-08-26-grill-completion.md` section H,
 `docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md`,
