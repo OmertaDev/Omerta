@@ -1744,3 +1744,23 @@ const SCENERY_WAIVED = {
 }
 
 }
+
+// H1 is observation and evidence only. This gate deliberately reads the dedicated source unit,
+// so the absent file is an honest RED and a later empty/no-op implementation cannot turn green.
+{
+  const healthPath = path.join(SRC, 'rwahealth.js');
+  const healthSource = fs.readFileSync(healthPath, 'utf8');
+  assert.match(healthSource, /finalizedStockCatalogForHealthV2/,
+    'H1 authority is the exact finalized Registry V2 health reader, never a legacy catalog read');
+  assert.doesNotMatch(healthSource,
+    /\b(?:privateKeyToAccount|walletClient|sendTransaction|writeContract|signMessage|signTypedData)\b/,
+    'H1 has no signing or transaction-broadcast capability');
+  assert.doesNotMatch(healthSource,
+    /\b(?:buildStockTokenActivationV2|buildStockTokenDeactivationV2|publishTickerBallot|executeSafe)\b/,
+    'H1 cannot mutate Registry state, publish ballots, or execute Safe packages');
+  assert.doesNotMatch(healthSource,
+    /\b(?:purchase|delivery|budget|withdraw|transferEth|burn|mint)\b/i,
+    'H1 has no purchase, delivery, budget, token, ETH, mint, burn, or withdrawal surface');
+  assert.doesNotMatch(healthSource, /process\.env|CHAIN_RPC_URL|fetch\s*\(/,
+    'H1 has no environment-selected provider URL, generic production fetch, or hidden config surface');
+}

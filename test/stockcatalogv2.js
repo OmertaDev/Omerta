@@ -1324,6 +1324,55 @@ const packageJson = JSON.parse(await readFile(new URL('../package.json', import.
 assert.match(packageJson.scripts.test, /node test\/stockcatalogv2\.js/);
 assert.equal(packageJson.scripts['stock-catalog-v2'], 'node tools/robinhood-stock-catalog-v2.js');
 
+// H1 RED: the health reader is a distinct, caller-transaction-owned Registry seam.
+assert.equal(typeof stockCatalogV2.finalizedStockCatalogForHealthV2, 'function',
+  'H1 exports the exact finalizedStockCatalogForHealthV2(client,{ observedEpochSeconds }) seam');
+let healthConnects = 0;
+const healthClient = {
+  query: (...args) => readerPool.query(...args),
+  connect: async () => { healthConnects++; throw new Error('health reader must not connect'); },
+};
+const healthObservedEpochSeconds = String(Math.floor(new Date((await readerPool.query(
+  'SELECT ready_verified_at FROM stock_catalog_sync_state_v2 WHERE id=1',
+)).rows[0].ready_verified_at).getTime() / 1000));
+const healthCatalog = await stockCatalogV2.finalizedStockCatalogForHealthV2(healthClient, {
+  observedEpochSeconds: healthObservedEpochSeconds,
+});
+assert.equal(healthConnects, 0, 'health reader uses only the caller-owned query client');
+assert.deepEqual(Object.keys(healthCatalog), [
+  'available', 'reason', 'source', 'finality', 'chainId', 'registryAddress', 'catalogVersion',
+  'catalogSnapshotHash', 'readyVerifiedAt', 'historicalVersions', 'activeVersions',
+], 'health catalog success has the exact closed top-level schema');
+assert.equal(healthCatalog.available, true);
+assert.equal(healthCatalog.reason, null);
+assert.equal(healthCatalog.source, 'robinhood_chain_registry_v2');
+assert.equal(healthCatalog.finality, 'finalized');
+assert(Object.isFrozen(healthCatalog) && Object.isFrozen(healthCatalog.activeVersions)
+  && healthCatalog.activeVersions.every((row) => Object.isFrozen(row)),
+'health catalog success is recursively frozen');
+assert.deepEqual([...healthCatalog.activeVersions, ...healthCatalog.historicalVersions]
+  .map((row) => row.assetVersionKey).sort(),
+[...healthCatalog.activeVersions, ...healthCatalog.historicalVersions]
+  .map((row) => row.assetVersionKey), 'active and historical health identities are stable-key ordered');
+assert.equal(new Set([...healthCatalog.activeVersions, ...healthCatalog.historicalVersions]
+  .map((row) => row.assetVersionKey)).size,
+healthCatalog.activeVersions.length + healthCatalog.historicalVersions.length,
+'active and historical health arrays are disjoint and exhaustive');
+
+const unavailableHealth = await stockCatalogV2.finalizedStockCatalogForHealthV2({
+  query: async () => ({ rows: [] }),
+}, { observedEpochSeconds: '20000' });
+assert.deepEqual(Object.keys(unavailableHealth), Object.keys(healthCatalog));
+assert.equal(unavailableHealth.available, false);
+assert(['configuration', 'unsynchronized', 'identity', 'stale', 'malformed', 'changed']
+  .includes(unavailableHealth.reason));
+assert.deepEqual(unavailableHealth.activeVersions, []);
+assert.deepEqual(unavailableHealth.historicalVersions, []);
+assert(Object.isFrozen(unavailableHealth) && Object.isFrozen(unavailableHealth.activeVersions),
+  'health catalog unavailable result is recursively frozen and exposes no partial mirror');
+assert.equal(JSON.stringify(unavailableHealth).includes('query'), false,
+  'health result exposes neither query capability nor transport internals');
+
 __setStockTokenRegistryV2Reader(null);
 await emptyPool.end?.();
 await sameVersionPool.end?.();

@@ -70,11 +70,22 @@ try {
     ['POST', '/v1/rwa/reviewer/nominations/:id/disposition'],
     ['POST', '/v1/rwa/reviewer/nominations/:id/submission'],
     ['GET', '/v1/rwa/reviewer/queue'],
+    ['GET', '/v1/rwa/health'],
+    ['GET', '/v1/rwa/health/:assetVersionKey'],
+    ['POST', '/v1/rwa/reviewer/health/:assetVersionKey/enter'],
   ];
   for (const [method, url] of expected) {
     assert(app.routes.some((route) => route.method === method && route.url === url),
       `${method} ${url} must be mounted`);
   }
+  const h1ReviewerRoute = app.routes.find((route) => route.method === 'POST'
+    && route.url === '/v1/rwa/reviewer/health/:assetVersionKey/enter');
+  assert.equal(h1ReviewerRoute.authKind, 'rwaReviewerAuth');
+  assert.equal(h1ReviewerRoute.isRwaReviewer, true);
+  assert.equal(h1ReviewerRoute.isMod, false,
+    'H1 entry reuses the unforgeable reviewer perimeter, never MOD_KEY or player authority');
+  const h1PublicRoutes = app.routes.filter((route) => route.url.startsWith('/v1/rwa/health'));
+  assert.equal(h1PublicRoutes.length, 2);
 
   const board = await app.inject({ method: 'GET', url: '/v1/rwa/nominations?limit=2' });
   assert.equal(board.statusCode, 200, board.body);
@@ -87,6 +98,34 @@ try {
   });
   assert.equal(reviewer.statusCode, 503, reviewer.body);
   assert.deepEqual(reviewer.json(), { error: 'rwa_reviewer_disabled' });
+
+  const publicHealth = await app.inject({ method: 'GET', url: '/v1/rwa/health' });
+  assert.notEqual(publicHealth.statusCode, 404, 'the public H1 health board is mounted without bearer auth');
+  assert.doesNotMatch(publicHealth.body,
+    /reviewer|transport|providerAssetId|raw|exception|internalUrl|idempotency/i,
+    'public H1 output never exposes reviewer identity or private provider/transport evidence');
+  const publicDetail = await app.inject({
+    method: 'GET', url: `/v1/rwa/health/0x${'1'.repeat(64)}`,
+  });
+  assert.notEqual(publicDetail.statusCode, 404, 'the public immutable-key H1 detail route is mounted');
+
+  const unauthenticatedHealthEntry = await app.inject({
+    method: 'POST', url: `/v1/rwa/reviewer/health/0x${'1'.repeat(64)}/enter`,
+    headers: { 'idempotency-key': 'h1-red-no-reviewer' }, payload: {},
+  });
+  assert.equal(unauthenticatedHealthEntry.statusCode, 401,
+    'H1 reviewer entry authenticates before input, catalog, idempotency, or domain work');
+  const disabledHealthEntry = await app.inject({
+    method: 'POST', url: `/v1/rwa/reviewer/health/0x${'1'.repeat(64)}/enter`,
+    headers: { 'x-rwa-reviewer-key': 'anything', 'idempotency-key': 'h1-red-disabled' },
+    payload: {
+      state: 'operational_quarantine', ruleCode: 'reviewer_material_drift',
+      reasonHash: `0x${'2'.repeat(64)}`, evidenceHash: `0x${'3'.repeat(64)}`,
+    },
+  });
+  assert.equal(disabledHealthEntry.statusCode, 503, disabledHealthEntry.body);
+  assert.deepEqual(disabledHealthEntry.json(), { error: 'rwa_reviewer_disabled' },
+    'H1 entry reuses the existing reviewer latch and does not fall into player auth/idempotency');
 } finally {
   await app.close();
   if (prior.key === undefined) delete process.env.RWA_REVIEWER_KEY;
