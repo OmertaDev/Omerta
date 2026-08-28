@@ -173,7 +173,7 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
         bytes memory initcode = vm.getCode("AcquisitionAuthority.sol:AcquisitionAuthority");
         assertLe(runtime.length, 20_000);
         assertLe(initcode.length, 49_152);
-        assertEq(runtime.length, 16_068);
+        assertEq(runtime.length, 16_300);
         string memory artifact = vm.readFile("out/AcquisitionAuthority.sol/AcquisitionAuthority.json");
         assertEq(vm.parseJsonString(artifact, ".abi[16].name"), "authoritySnapshot");
         for (uint256 i; i < 27; ++i) {
@@ -192,7 +192,7 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
         assertTrue(ok);
         assertEq(result.length, 864);
         assertLe(used, 160_000);
-        (bytes32 manifest,,,,,,,) = factory.factoryState();
+        (bytes32 manifest,,,,,,,,) = factory.factoryState();
         assertEq(_word(result, 0), 2);
         assertEq(address(uint160(_word(result, 1))), address(factory));
         assertEq(bytes32(_word(result, 2)), manifest);
@@ -565,16 +565,16 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
         assertEq(chainId, 4663);
         assertEq(verifyingContract, address(authority));
         string memory artifact = vm.readFile("out/AcquisitionAuthority.sol/AcquisitionAuthority.json");
-        assertEq((vm.parseJsonBytes(artifact, ".bytecode.object")).length, 18_629);
-        assertEq((vm.parseJsonBytes(artifact, ".deployedBytecode.object")).length, 16_068);
+        assertEq((vm.parseJsonBytes(artifact, ".bytecode.object")).length, 18_868);
+        assertEq((vm.parseJsonBytes(artifact, ".deployedBytecode.object")).length, 16_300);
     }
 
     function test_task2FreshFactoriesCannotReuseTask1AddressesOrCommitments() public {
         (AcquisitionConstellationFactory first,,) = _configured();
         (AcquisitionConstellationFactory second,,) = _configured();
         assertTrue(address(first) != address(second));
-        (bytes32 firstManifest, bytes32 firstDeployment,,,,,,) = first.factoryState();
-        (bytes32 secondManifest, bytes32 secondDeployment,,,,,,) = second.factoryState();
+        (bytes32 firstManifest, bytes32 firstDeployment,,,,,,,) = first.factoryState();
+        (bytes32 secondManifest, bytes32 secondDeployment,,,,,,,) = second.factoryState();
         assertTrue(firstManifest != secondManifest);
         assertTrue(firstDeployment != secondDeployment);
         for (uint8 i; i < 5; ++i) {
@@ -818,7 +818,7 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
     function test_task2FinalizerCallerManifestAlreadyPrecedenceAndRollback() public {
         (AcquisitionConstellationFactory factory, bytes[5] memory initcodes,) = _configured();
         AcquisitionAuthority authority = AcquisitionAuthority(factory.deployNext(initcodes[0]));
-        (bytes32 manifest,,,,,,,) = factory.factoryState();
+        (bytes32 manifest,,,,,,,,) = factory.factoryState();
         vm.expectRevert(
             abi.encodeWithSelector(AcquisitionAuthority.AuthorityFinalizerUnauthorized.selector, address(this))
         );
@@ -844,7 +844,7 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
             if (field == 20) continue;
             (AcquisitionConstellationFactory factory, bytes[5] memory initcodes,) = _configured();
             AcquisitionAuthority authority = AcquisitionAuthority(factory.deployNext(initcodes[0]));
-            (bytes32 manifest,,,,,,,) = factory.factoryState();
+            (bytes32 manifest,,,,,,,,) = factory.factoryState();
             _corruptInitialField(authority, field);
             vm.expectRevert(abi.encodeWithSelector(AcquisitionAuthority.AuthorityInitialStateMismatch.selector, field));
             vm.prank(address(factory));
@@ -857,7 +857,7 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
     function test_task2InitialStateOrdinalTwentyIsStrictlyShadowedByNineteen() public {
         (AcquisitionConstellationFactory factory, bytes[5] memory initcodes,) = _configured();
         AcquisitionAuthority authority = AcquisitionAuthority(factory.deployNext(initcodes[0]));
-        (bytes32 manifest,,,,,,,) = factory.factoryState();
+        (bytes32 manifest,,,,,,,,) = factory.factoryState();
         bytes32 base = _ingressBase(0);
         vm.store(address(authority), bytes32(uint256(base) + 2), bytes32(uint256(1)));
         vm.prank(address(factory));
@@ -865,7 +865,7 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
 
         (AcquisitionConstellationFactory secondFactory, bytes[5] memory secondInitcodes,) = _configured();
         AcquisitionAuthority second = AcquisitionAuthority(secondFactory.deployNext(secondInitcodes[0]));
-        (bytes32 secondManifest,,,,,,,) = secondFactory.factoryState();
+        (bytes32 secondManifest,,,,,,,,) = secondFactory.factoryState();
         bytes32 secondBase = _ingressBase(0);
         vm.store(address(second), bytes32(uint256(secondBase) + 1), bytes32(uint256(1)));
         vm.store(address(second), bytes32(uint256(secondBase) + 2), bytes32(uint256(1)));

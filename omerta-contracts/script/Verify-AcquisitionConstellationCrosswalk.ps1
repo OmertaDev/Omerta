@@ -1164,6 +1164,7 @@ ReentrancyGuardReentrantCall()
     FactoryStateTypes=@('bytes32','bytes32','uint8','uint8','address','bytes32','address','bytes32','uint256')
     FactoryStateNames=@('manifestHash','deploymentCommitment','phase','nextChildIndex','safe','configurationRoot','registry','registryRuntimeHash','globalLifetimeCanonicalDepositCapWei')
     CoreSnapshotTypes=@('uint256','address','bytes32','address','address','address','address','address','bool','uint256','uint256','uint256','uint256','uint256','uint256','uint256','uint256','uint256')
+    CoreSnapshotNames=@('schemaVersion','factory','manifestHash','authority','registry','budgetBook','intentExecution','reconciliation','finalized','globalLifetimeCanonicalDepositCapWei','availableWei','unattributedWei','ordinaryReservedWei','reconciliationLiabilityWei','reconciliationBackingWei','accountingSequence','lastObservedBalanceDeficitWei','globalLifetimeCanonicalDepositedWei')
   }
 }
 
@@ -1204,11 +1205,13 @@ function Assert-Task3SpecSelftests($Spec) {
   $authorityOwned=@($Spec.Artifacts[1].Errors|Where-Object{$_-notin@('OwnableInvalidOwner(address)','OwnableUnauthorizedAccount(address)','EnforcedPause()','ExpectedPause()','InvalidShortString()','StringTooLong(string)','ReentrancyGuardReentrantCall()')})
   $coreAuthorityOverlap=@($Spec.Artifacts[2].Errors|Where-Object{$_-in$authorityOwned})
   if($coreAuthorityOverlap.Count-ne0){throw "Task3 Core originates Authority-owned error: $($coreAuthorityOverlap[0])"}
-  if($Spec.FactoryStateTypes.Count-ne9-or$Spec.CoreSnapshotTypes.Count-ne18){throw 'Task3 flat state/snapshot arity freeze drift.'}
+  if($Spec.FactoryStateTypes.Count-ne9-or$Spec.CoreSnapshotTypes.Count-ne18-or$Spec.CoreSnapshotNames.Count-ne18){throw 'Task3 flat state/snapshot arity freeze drift.'}
   $mutated=@($Spec.Artifacts[2].Functions);$mutated[0]='syncStockToken(address)'
   Assert-Rejected 'Task3 same-count hidden Core function' { Assert-ExactRows $mutated $Spec.Artifacts[2].Functions 'mutated Task3 Core function' }
   $mutated=@($Spec.CoreSnapshotTypes);$mutated[17]='uint128'
   Assert-Rejected 'Task3 Core snapshot type/order' { Assert-Task3OrderedRows $mutated $Spec.CoreSnapshotTypes 'mutated Task3 Core snapshot' }
+  $mutated=@($Spec.CoreSnapshotNames);$mutated[17]='globalLifetimeCanonicalDepositedWei_'
+  Assert-Rejected 'Task3 Core snapshot output name/order' { Assert-Task3OrderedRows $mutated $Spec.CoreSnapshotNames 'mutated Task3 Core snapshot output name' }
   $mutated=@($Spec.FactoryStateTypes);$mutated[8]='bytes32'
   Assert-Rejected 'Task3 Factory ninth state word' { Assert-Task3OrderedRows $mutated $Spec.FactoryStateTypes 'mutated Task3 Factory state' }
 }
@@ -1461,6 +1464,8 @@ function Invoke-Task3Validation {
   Assert-Task3FunctionShape $core 'depositCanonical(bytes32)' 'payable' @('bytes32')
   Assert-Task3FunctionShape $core 'coreTopology()' 'view' @('address','bytes32','bool')
   Assert-Task3FunctionShape $core 'coreSnapshot()' 'view' $spec.CoreSnapshotTypes
+  $coreSnapshot=@($core.abi|Where-Object{$_.type-eq'function'-and$_.name-eq'coreSnapshot'})[0]
+  Assert-Task3ParameterNames @($coreSnapshot.outputs) $spec.CoreSnapshotNames 'Core snapshot outputs'
   Assert-Task3FunctionShape $core 'finalizeCore(bytes32)' 'nonpayable' @()
   Assert-Task3TupleComponents $core 'accountingTotals()' @('availableWei','unattributedWei','ordinaryReservedWei','reconciliationLiabilityWei','reconciliationBackingWei','reconciliationShortfallWei','accountedBackingWei','actualBalanceWei','balanceDeficitWei','forcedSurplusWei','accountingSequence') @('uint256','uint256','uint256','uint256','uint256','uint256','uint256','uint256','uint256','uint256','uint256')
   Assert-Task3TupleComponents $core 'getDeposit(bytes32)' @('depositId','ingressGeneration','ingress','sourceEventId','amountWei','balanceDeficitRepairWei','availableCreditWei','epochDay','accountingSequence','depositedAt') @('bytes32','uint256','address','bytes32','uint256','uint256','uint256','uint256','uint256','uint64')

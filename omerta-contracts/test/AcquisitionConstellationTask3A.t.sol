@@ -2,6 +2,7 @@
 pragma solidity 0.8.26;
 
 import {Test} from "forge-std/Test.sol";
+import {Vm} from "forge-std/Vm.sol";
 import {AcquisitionConstellationFactory} from "../src/AcquisitionConstellationFactory.sol";
 import {AcquisitionAuthority} from "../src/AcquisitionAuthority.sol";
 import {AcquisitionVaultCore} from "../src/AcquisitionVaultCore.sol";
@@ -117,6 +118,30 @@ contract Task3AIngress {}
 contract Task3AForceEther {
     constructor(address payable target) payable {
         selfdestruct(target);
+    }
+}
+
+contract Task3APrefundERC20 {
+    event Transfer(address indexed from, address indexed to, uint256 amount);
+
+    mapping(address account => uint256 balance) public balanceOf;
+    uint256 public totalSupply;
+
+    function mint(address to, uint256 amount) external {
+        totalSupply += amount;
+        balanceOf[to] += amount;
+        emit Transfer(address(0), to, amount);
+    }
+
+    function transfer(address to, uint256 amount) external returns (bool) {
+        uint256 balance = balanceOf[msg.sender];
+        require(balance >= amount);
+        unchecked {
+            balanceOf[msg.sender] = balance - amount;
+        }
+        balanceOf[to] += amount;
+        emit Transfer(msg.sender, to, amount);
+        return true;
     }
 }
 
@@ -679,30 +704,102 @@ contract AcquisitionConstellationTask3ATest is Test {
     }
 
     function test_task3A_04_coreSnapshotExact576AndIgnoresPhysicalBalance() public {
-        (Task3ARawCreateDispatcher deployer, address core, bytes32 manifest, address[5] memory peers) =
-            _productionCoreFixture(GLOBAL_CAP);
+        Task3APrefundERC20 knownStockToken = new Task3APrefundERC20();
+        Task3APrefundERC20 unknownStockToken = new Task3APrefundERC20();
+        address predictedFactory = vm.computeCreateAddress(address(this), vm.getNonce(address(this)));
+        ProductionBundle memory b = _productionBundle(predictedFactory, GLOBAL_CAP);
+        address core = b.children[1];
+        uint256 knownStockAmount = 19 ether;
+        uint256 unknownStockAmount = 37 ether;
+
+        knownStockToken.mint(address(this), knownStockAmount);
+        unknownStockToken.mint(address(this), unknownStockAmount);
+        assertTrue(knownStockToken.transfer(core, knownStockAmount));
+        assertTrue(unknownStockToken.transfer(core, unknownStockAmount));
+        assertEq(core.code.length, 0, "ERC-20 prefunding must work at the predicted Core address");
+
+        address deployed = _rawCreate(_futureFactoryInitcode(GLOBAL_CAP, b.initcodeHashes, b.runtimeHashes));
+        assertEq(deployed, predictedFactory);
+        ITask3AFactory factory = ITask3AFactory(deployed);
         new Task3AForceEther{value: 1 ether}(payable(core));
-        (bool ok, bytes memory snapshot) = core.staticcall(abi.encodeWithSignature("coreSnapshot()"));
+        assertEq(core.code.length, 0, "forced ETH must pre-fund the predicted Core address");
+        assertEq(core.balance, 1 ether, "cap-below-prefunding forced balance mismatch");
+        for (uint8 i; i < 5; ++i) {
+            assertEq(factory.deployNext(b.initcodes[i]), b.children[i]);
+        }
+        assertEq(core.balance, 1 ether, "Core CREATE changed cap-below-prefunding balance");
+
+        (bool ok, bytes memory snapshotBefore) = core.staticcall(abi.encodeWithSignature("coreSnapshot()"));
         assertTrue(ok, "Task3A coreSnapshot surface is absent");
-        assertEq(snapshot.length, 576);
-        assertEq(_word(snapshot, 0), 3);
-        assertEq(address(uint160(_word(snapshot, 1))), address(deployer));
-        assertEq(bytes32(_word(snapshot, 2)), manifest);
-        assertEq(address(uint160(_word(snapshot, 3))), peers[0]);
-        assertEq(address(uint160(_word(snapshot, 4))), address(registry));
-        assertEq(address(uint160(_word(snapshot, 5))), peers[2]);
-        assertEq(address(uint160(_word(snapshot, 6))), peers[3]);
-        assertEq(address(uint160(_word(snapshot, 7))), peers[4]);
-        assertEq(_word(snapshot, 8), 0);
-        assertEq(_word(snapshot, 9), GLOBAL_CAP);
+        assertEq(snapshotBefore.length, 576);
+        assertEq(_word(snapshotBefore, 0), 3);
+        assertEq(address(uint160(_word(snapshotBefore, 1))), address(factory));
+        assertEq(bytes32(_word(snapshotBefore, 2)), b.manifest);
+        assertEq(address(uint160(_word(snapshotBefore, 3))), b.children[0]);
+        assertEq(address(uint160(_word(snapshotBefore, 4))), address(registry));
+        assertEq(address(uint160(_word(snapshotBefore, 5))), b.children[2]);
+        assertEq(address(uint160(_word(snapshotBefore, 6))), b.children[3]);
+        assertEq(address(uint160(_word(snapshotBefore, 7))), b.children[4]);
+        assertEq(_word(snapshotBefore, 8), 0);
+        assertEq(_word(snapshotBefore, 9), GLOBAL_CAP);
         for (uint8 field = 10; field < 18; ++field) {
-            assertEq(_word(snapshot, field), 0);
+            assertEq(_word(snapshotBefore, field), 0);
         }
         (bool capOk, bytes memory capResult) = core.staticcall(abi.encodeWithSelector(CORE_CAP_SELECTOR));
         assertTrue(capOk, "Task3A production Core cap getter is absent");
         assertEq(capResult.length, 32, "Task3A production Core cap getter must return exactly one word");
-        assertEq(abi.decode(capResult, (uint256)), _word(snapshot, 9), "Core getter/snapshot cap mismatch");
+        assertEq(abi.decode(capResult, (uint256)), _word(snapshotBefore, 9), "Core getter/snapshot cap mismatch");
         assertEq(core.balance, 1 ether);
+        assertEq(knownStockToken.balanceOf(core), knownStockAmount);
+        assertEq(unknownStockToken.balanceOf(core), unknownStockAmount);
+
+        vm.record();
+        vm.recordLogs();
+        factory.finalizeConstellation();
+        (bytes32[] memory knownReads, bytes32[] memory knownWrites) = vm.accesses(address(knownStockToken));
+        (bytes32[] memory unknownReads, bytes32[] memory unknownWrites) = vm.accesses(address(unknownStockToken));
+        assertEq(knownReads.length, 0, "finalization read the known Stock Token");
+        assertEq(knownWrites.length, 0, "finalization wrote the known Stock Token");
+        assertEq(unknownReads.length, 0, "finalization read the unknown Stock Token");
+        assertEq(unknownWrites.length, 0, "finalization wrote the unknown Stock Token");
+
+        Vm.Log[] memory logs = vm.getRecordedLogs();
+        assertEq(logs.length, 6, "ERC-20 prefunding changed finalization log count");
+        address[6] memory expectedEmitters =
+            [b.children[2], b.children[4], b.children[3], b.children[1], b.children[0], address(factory)];
+        for (uint8 i; i < logs.length; ++i) {
+            assertEq(logs[i].emitter, expectedEmitters[i], "ERC-20 prefunding changed finalization log order");
+        }
+
+        (bool afterOk, bytes memory snapshotAfter) = core.staticcall(abi.encodeWithSignature("coreSnapshot()"));
+        assertTrue(afterOk);
+        assertEq(snapshotAfter.length, 576);
+        for (uint8 field; field < 18; ++field) {
+            uint256 expected = field == 8 ? 1 : _word(snapshotBefore, field);
+            assertEq(_word(snapshotAfter, field), expected, "ERC-20 prefunding changed Core accounting");
+        }
+        assertEq(core.balance, 1 ether);
+        assertEq(knownStockToken.balanceOf(core), knownStockAmount);
+        assertEq(unknownStockToken.balanceOf(core), unknownStockAmount);
+
+        uint256 equalityCap = 1 ether;
+        address equalityFactoryAddress = vm.computeCreateAddress(address(this), vm.getNonce(address(this)));
+        ProductionBundle memory equalityBundle = _productionBundle(equalityFactoryAddress, equalityCap);
+        address equalityDeployed = _rawCreate(
+            _futureFactoryInitcode(equalityCap, equalityBundle.initcodeHashes, equalityBundle.runtimeHashes)
+        );
+        assertEq(equalityDeployed, equalityFactoryAddress);
+        ITask3AFactory equalityFactory = ITask3AFactory(equalityDeployed);
+        address equalityCore = equalityBundle.children[1];
+        new Task3AForceEther{value: equalityCap}(payable(equalityCore));
+        assertEq(equalityCore.code.length, 0, "equal-cap ETH must pre-fund the predicted Core address");
+        assertEq(equalityCore.balance, equalityCap, "forced balance must equal the committed cap");
+        for (uint8 i; i < 5; ++i) {
+            assertEq(equalityFactory.deployNext(equalityBundle.initcodes[i]), equalityBundle.children[i]);
+        }
+        assertEq(equalityCore.balance, equalityCap, "Core CREATE changed the equal-cap prefunding");
+        equalityFactory.finalizeConstellation();
+        assertEq(equalityCore.balance, equalityCap, "equal-cap finalization changed the physical balance");
     }
 
     function test_task3A_05_factoryCoreSnapshotCallLengthOogBombAtomic() public {

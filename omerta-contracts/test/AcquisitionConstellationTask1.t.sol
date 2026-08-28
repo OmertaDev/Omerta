@@ -31,11 +31,14 @@ contract Task1Registry {
 }
 
 contract Task1RuntimeProbe {
-    function hashes(address factory, bytes32 manifest) external returns (bytes32[5] memory h) {
-        h[1] = address(new AcquisitionVaultCore(factory, manifest)).codehash;
-        h[2] = address(new PreVoteBudgetBook(factory, manifest)).codehash;
-        h[3] = address(new AcquisitionIntentExecution(factory, manifest)).codehash;
-        h[4] = address(new AcquisitionReconciliation(factory, manifest)).codehash;
+    function deploy(bytes memory creation) external returns (address child) {
+        assembly ("memory-safe") {
+            child := create(0, add(creation, 0x20), mload(creation))
+            if iszero(child) {
+                returndatacopy(0, 0, returndatasize())
+                revert(0, returndatasize())
+            }
+        }
     }
 }
 
@@ -117,9 +120,14 @@ contract ConstructorCallbackAuthority {
 }
 
 contract FactoryGasHarness is AcquisitionConstellationFactory {
-    constructor(address safe, address registry, bytes32 registryHash, bytes32[5] memory ih, bytes32[5] memory rh)
-        AcquisitionConstellationFactory(safe, registry, registryHash, ih, rh)
-    {}
+    constructor(
+        address safe,
+        address registry,
+        bytes32 registryHash,
+        uint256 globalCap,
+        bytes32[5] memory ih,
+        bytes32[5] memory rh
+    ) AcquisitionConstellationFactory(safe, registry, registryHash, globalCap, ih, rh) {}
 
     function pre(uint256 available) external pure returns (bool) {
         return _hasFinalizerPrecheckGas(available);
@@ -247,19 +255,18 @@ contract MatrixChild {
 }
 
 contract AcquisitionConstellationTask1Test is Test {
-    bytes32 internal constant CONFIG_TAG = keccak256("OMERTA_ACQUISITION_TASK2_CONFIG_V1");
+    uint256 internal constant GLOBAL_CAP = 3 ether;
+    bytes32 internal constant CONFIG_TAG = keccak256("OMERTA_ACQUISITION_TASK3_CONFIG_V1");
     bytes32 internal constant CONSTELLATION_TAG = keccak256("OMERTA_ACQUISITION_CONSTELLATION_V1");
     bytes32 internal constant DEPLOYMENT_TAG = keccak256("OMERTA_ACQUISITION_DEPLOYMENT_V1");
 
     Task1Safe internal safe;
     Task1Registry internal registry;
-    Task1RuntimeProbe internal probe;
 
     function setUp() public {
         vm.chainId(4663);
         safe = new Task1Safe();
         registry = new Task1Registry(4663);
-        probe = new Task1RuntimeProbe();
     }
 
     function test_exactLifecycleCommitmentsPredictionsAndFinalizerOrder() public {
@@ -270,7 +277,7 @@ contract AcquisitionConstellationTask1Test is Test {
             assertEq(factory.deployNext(initcodes[i]), predicted[i]);
         }
         _assertDeploymentCommitment(factory, initcodes, manifest, deployment);
-        (,, uint8 phase, uint8 next,,,,) = factory.factoryState();
+        (,, uint8 phase, uint8 next,,,,,) = factory.factoryState();
         assertEq(phase, 2);
         assertEq(next, 5);
         vm.recordLogs();
@@ -283,7 +290,7 @@ contract AcquisitionConstellationTask1Test is Test {
         assertEq(logs[3].emitter, predicted[1]);
         assertEq(logs[4].emitter, predicted[0]);
         assertEq(logs[5].emitter, address(factory));
-        (,, phase,,,,,) = factory.factoryState();
+        (,, phase,,,,,,) = factory.factoryState();
         assertEq(phase, 4);
         _assertTopology(predicted, address(factory), manifest, true);
     }
@@ -297,13 +304,15 @@ contract AcquisitionConstellationTask1Test is Test {
         uint8 next;
         address actualSafe;
         bytes32 config;
-        (manifest, deployment, phase, next, actualSafe, config,,) = factory.factoryState();
+        uint256 globalCap;
+        (manifest, deployment, phase, next, actualSafe, config,,, globalCap) = factory.factoryState();
         assertEq(phase, 0);
         assertEq(next, 0);
         assertEq(actualSafe, address(safe));
         bytes32 expectedConfig =
-            keccak256(abi.encode(CONFIG_TAG, uint256(2), address(registry), address(registry).codehash));
+            keccak256(abi.encode(CONFIG_TAG, uint256(3), address(registry), address(registry).codehash, GLOBAL_CAP));
         assertEq(config, expectedConfig);
+        assertEq(globalCap, GLOBAL_CAP);
         assertEq(manifest, _manifest(address(factory), expectedConfig, predicted));
     }
 
@@ -365,7 +374,7 @@ contract AcquisitionConstellationTask1Test is Test {
             )
         );
         factory.deployNext(wrong);
-        (,, uint8 phase, uint8 next,,,,) = factory.factoryState();
+        (,, uint8 phase, uint8 next,,,,,) = factory.factoryState();
         assertEq(phase, 0);
         assertEq(next, 0);
     }
@@ -373,7 +382,7 @@ contract AcquisitionConstellationTask1Test is Test {
     function test_finalizerPrecedenceUnauthorizedThenHashThenAlready() public {
         (AcquisitionConstellationFactory factory, bytes[5] memory initcodes,) = _configured();
         AcquisitionAuthority authority = AcquisitionAuthority(factory.deployNext(initcodes[0]));
-        (bytes32 manifest,,,,,,,) = factory.factoryState();
+        (bytes32 manifest,,,,,,,,) = factory.factoryState();
         vm.prank(address(0xBAD));
         vm.expectRevert(
             abi.encodeWithSelector(AcquisitionAuthority.AuthorityFinalizerUnauthorized.selector, address(0xBAD))
@@ -412,7 +421,7 @@ contract AcquisitionConstellationTask1Test is Test {
         bytes32[5] memory h =
             [bytes32(uint256(1)), bytes32(uint256(2)), bytes32(uint256(3)), bytes32(uint256(4)), bytes32(uint256(5))];
         FactoryGasHarness harness =
-            new FactoryGasHarness(address(safe), address(registry), address(registry).codehash, h, h);
+            new FactoryGasHarness(address(safe), address(registry), address(registry).codehash, GLOBAL_CAP, h, h);
         assertFalse(harness.pre(211_587));
         assertTrue(harness.pre(211_588));
         assertFalse(harness.post(99_999));
@@ -509,27 +518,31 @@ contract AcquisitionConstellationTask1Test is Test {
             [bytes32(uint256(1)), bytes32(uint256(2)), bytes32(uint256(3)), bytes32(uint256(4)), bytes32(uint256(5))];
         vm.chainId(1);
         vm.expectRevert(abi.encodeWithSelector(AcquisitionConstellationFactory.WrongChain.selector, uint256(1)));
-        new AcquisitionConstellationFactory(address(0), address(0), bytes32(0), h, h);
+        new AcquisitionConstellationFactory(address(0), address(0), bytes32(0), GLOBAL_CAP, h, h);
     }
 
     function test_constructorLiteralValidationLadder() public {
         bytes32[5] memory h = _nonzeroHashes();
         vm.expectRevert(AcquisitionConstellationFactory.FactorySafeZero.selector);
-        new AcquisitionConstellationFactory(address(0), address(registry), address(registry).codehash, h, h);
+        new AcquisitionConstellationFactory(address(0), address(registry), address(registry).codehash, GLOBAL_CAP, h, h);
         vm.expectRevert(AcquisitionConstellationFactory.FactoryRegistryZero.selector);
-        new AcquisitionConstellationFactory(address(safe), address(0), bytes32(0), h, h);
+        new AcquisitionConstellationFactory(address(safe), address(0), bytes32(0), GLOBAL_CAP, h, h);
         vm.expectRevert(
             abi.encodeWithSelector(AcquisitionConstellationFactory.FactorySafeCodeMissing.selector, address(0xA11CE))
         );
-        new AcquisitionConstellationFactory(address(0xA11CE), address(registry), address(registry).codehash, h, h);
+        new AcquisitionConstellationFactory(
+            address(0xA11CE), address(registry), address(registry).codehash, GLOBAL_CAP, h, h
+        );
         vm.expectRevert(
             abi.encodeWithSelector(AcquisitionConstellationFactory.FactoryRegistryCodeMissing.selector, address(0xB0B))
         );
-        new AcquisitionConstellationFactory(address(safe), address(0xB0B), bytes32(0), h, h);
+        new AcquisitionConstellationFactory(address(safe), address(0xB0B), bytes32(0), GLOBAL_CAP, h, h);
         vm.expectRevert(
             abi.encodeWithSelector(AcquisitionConstellationFactory.FactoryRoleCollision.selector, address(registry))
         );
-        new AcquisitionConstellationFactory(address(registry), address(registry), address(registry).codehash, h, h);
+        new AcquisitionConstellationFactory(
+            address(registry), address(registry), address(registry).codehash, GLOBAL_CAP, h, h
+        );
         vm.expectRevert(
             abi.encodeWithSelector(
                 AcquisitionConstellationFactory.FactoryRegistryRuntimeHashMismatch.selector,
@@ -537,13 +550,13 @@ contract AcquisitionConstellationTask1Test is Test {
                 address(registry).codehash
             )
         );
-        new AcquisitionConstellationFactory(address(safe), address(registry), bytes32(uint256(9)), h, h);
+        new AcquisitionConstellationFactory(address(safe), address(registry), bytes32(uint256(9)), GLOBAL_CAP, h, h);
         h[2] = bytes32(0);
         vm.expectRevert(
             abi.encodeWithSelector(AcquisitionConstellationFactory.FactoryChildInitcodeHashZero.selector, uint8(2))
         );
         new AcquisitionConstellationFactory(
-            address(safe), address(registry), address(registry).codehash, h, _nonzeroHashes()
+            address(safe), address(registry), address(registry).codehash, GLOBAL_CAP, h, _nonzeroHashes()
         );
         h = _nonzeroHashes();
         bytes32[5] memory runtimeHashes = _nonzeroHashes();
@@ -552,7 +565,7 @@ contract AcquisitionConstellationTask1Test is Test {
             abi.encodeWithSelector(AcquisitionConstellationFactory.FactoryChildRuntimeHashZero.selector, uint8(3))
         );
         new AcquisitionConstellationFactory(
-            address(safe), address(registry), address(registry).codehash, h, runtimeHashes
+            address(safe), address(registry), address(registry).codehash, GLOBAL_CAP, h, runtimeHashes
         );
     }
 
@@ -560,7 +573,9 @@ contract AcquisitionConstellationTask1Test is Test {
         bytes32[5] memory h = _nonzeroHashes();
         RegistryBehaviorMock reverting = new RegistryBehaviorMock(0);
         vm.expectRevert(AcquisitionConstellationFactory.FactoryRegistryCallFailed.selector);
-        new AcquisitionConstellationFactory(address(safe), address(reverting), address(reverting).codehash, h, h);
+        new AcquisitionConstellationFactory(
+            address(safe), address(reverting), address(reverting).codehash, GLOBAL_CAP, h, h
+        );
         uint256[4] memory modes = [uint256(1), uint256(2), uint256(3), uint256(4)];
         uint256[4] memory lengths = [uint256(0), uint256(31), uint256(33), uint256(4096)];
         for (uint256 i; i < 4; ++i) {
@@ -568,16 +583,22 @@ contract AcquisitionConstellationTask1Test is Test {
             vm.expectRevert(
                 abi.encodeWithSelector(AcquisitionConstellationFactory.FactoryRegistryReturnLength.selector, lengths[i])
             );
-            new AcquisitionConstellationFactory(address(safe), address(malformed), address(malformed).codehash, h, h);
+            new AcquisitionConstellationFactory(
+                address(safe), address(malformed), address(malformed).codehash, GLOBAL_CAP, h, h
+            );
         }
         RegistryBehaviorMock wrongChain = new RegistryBehaviorMock(5);
         vm.expectRevert(
             abi.encodeWithSelector(AcquisitionConstellationFactory.RegistryChainMismatch.selector, uint256(1))
         );
-        new AcquisitionConstellationFactory(address(safe), address(wrongChain), address(wrongChain).codehash, h, h);
+        new AcquisitionConstellationFactory(
+            address(safe), address(wrongChain), address(wrongChain).codehash, GLOBAL_CAP, h, h
+        );
         RegistryBehaviorMock exhausting = new RegistryBehaviorMock(6);
         vm.expectRevert(AcquisitionConstellationFactory.FactoryRegistryCallFailed.selector);
-        new AcquisitionConstellationFactory(address(safe), address(exhausting), address(exhausting).codehash, h, h);
+        new AcquisitionConstellationFactory(
+            address(safe), address(exhausting), address(exhausting).codehash, GLOBAL_CAP, h, h
+        );
     }
 
     function test_registryCallbackDuringFactoryConstructionCaughtAndUncaught() public {
@@ -585,15 +606,18 @@ contract AcquisitionConstellationTask1Test is Test {
         uint64 nonce = vm.getNonce(address(this));
         address predictedFactory = vm.computeCreateAddress(address(this), uint256(nonce) + 1);
         RegistryCallbackMock caught = new RegistryCallbackMock(predictedFactory, true);
-        AcquisitionConstellationFactory factory =
-            new AcquisitionConstellationFactory(address(safe), address(caught), address(caught).codehash, h, h);
+        AcquisitionConstellationFactory factory = new AcquisitionConstellationFactory(
+            address(safe), address(caught), address(caught).codehash, GLOBAL_CAP, h, h
+        );
         assertEq(address(factory), predictedFactory);
 
         nonce = vm.getNonce(address(this));
         predictedFactory = vm.computeCreateAddress(address(this), uint256(nonce) + 1);
         RegistryCallbackMock uncaught = new RegistryCallbackMock(predictedFactory, false);
         vm.expectRevert(AcquisitionConstellationFactory.FactoryRegistryCallFailed.selector);
-        new AcquisitionConstellationFactory(address(safe), address(uncaught), address(uncaught).codehash, h, h);
+        new AcquisitionConstellationFactory(
+            address(safe), address(uncaught), address(uncaught).codehash, GLOBAL_CAP, h, h
+        );
     }
 
     function test_childConstructorCallbacksCaughtHaveExactPhaseErrors() public {
@@ -608,7 +632,7 @@ contract AcquisitionConstellationTask1Test is Test {
             callbackChild.finalizeCallbackResult(),
             abi.encodeWithSelector(AcquisitionConstellationFactory.FactoryPhaseMismatch.selector, uint8(2), uint8(1))
         );
-        (,, uint8 phase, uint8 next,,,,) = factory.factoryState();
+        (,, uint8 phase, uint8 next,,,,,) = factory.factoryState();
         assertEq(phase, 0);
         assertEq(next, 1);
     }
@@ -617,7 +641,7 @@ contract AcquisitionConstellationTask1Test is Test {
         (AcquisitionConstellationFactory factory, bytes memory initcode,) = _callbackConfigured(false);
         vm.expectRevert(abi.encodeWithSelector(AcquisitionConstellationFactory.FactoryCreateFailed.selector, uint8(0)));
         factory.deployNext(initcode);
-        (,, uint8 phase, uint8 next,,,,) = factory.factoryState();
+        (,, uint8 phase, uint8 next,,,,,) = factory.factoryState();
         assertEq(phase, 0);
         assertEq(next, 0);
     }
@@ -639,7 +663,7 @@ contract AcquisitionConstellationTask1Test is Test {
             )
         );
         factory.finalizeConstellation();
-        (,, uint8 phase,,,,,) = factory.factoryState();
+        (,, uint8 phase,,,,,,) = factory.factoryState();
         assertEq(phase, 2);
     }
 
@@ -682,7 +706,7 @@ contract AcquisitionConstellationTask1Test is Test {
             for (uint8 i; i < 5; ++i) {
                 factory.deployNext(initcodes[i]);
             }
-            (bytes32 manifest,,,,,,,) = factory.factoryState();
+            (bytes32 manifest,,,,,,,,) = factory.factoryState();
             (, bytes32 expectedHash) = _runtimeCommitment(factory, failing);
             vm.etch(predicted[failing], bytes(""));
             vm.expectRevert(
@@ -694,7 +718,7 @@ contract AcquisitionConstellationTask1Test is Test {
                 )
             );
             factory.finalizeConstellation();
-            (,, uint8 phase,,,,,) = factory.factoryState();
+            (,, uint8 phase,,,,,,) = factory.factoryState();
             assertEq(phase, 2);
             for (uint8 i; i < failing; ++i) {
                 (address actualFactory, bytes32 actualManifest, bool finalized) = _topology(predicted[i], i);
@@ -728,7 +752,7 @@ contract AcquisitionConstellationTask1Test is Test {
         );
         factory.finalizeConstellation();
         vm.clearMockedCalls();
-        (bytes32 manifest,, uint8 phase,,,,,) = factory.factoryState();
+        (bytes32 manifest,, uint8 phase,,,,,,) = factory.factoryState();
         assertEq(phase, 2);
         _assertTopology(predicted, address(factory), manifest, false);
 
@@ -782,7 +806,7 @@ contract AcquisitionConstellationTask1Test is Test {
                 }
                 vm.expectRevert(expected);
                 factory.finalizeConstellation();
-                (bytes32 manifest,, uint8 phase,,,,,) = factory.factoryState();
+                (bytes32 manifest,, uint8 phase,,,,,,) = factory.factoryState();
                 assertEq(phase, 2);
                 for (uint8 i; i < 5; ++i) {
                     (address actualFactory, bytes32 actualManifest, bool finalized) = _topology(children[i], i);
@@ -811,7 +835,7 @@ contract AcquisitionConstellationTask1Test is Test {
                 )
             );
             factory.finalizeConstellation();
-            (bytes32 manifest,, uint8 phase,,,,,) = factory.factoryState();
+            (bytes32 manifest,, uint8 phase,,,,,,) = factory.factoryState();
             assertEq(phase, 2);
             _assertTopology(children, address(factory), manifest, false);
         }
@@ -829,7 +853,7 @@ contract AcquisitionConstellationTask1Test is Test {
             abi.encodeWithSelector(AcquisitionConstellationFactory.FactoryFinalizerSemanticMismatch.selector, uint8(2))
         );
         factory.finalizeConstellation();
-        (bytes32 manifest,, uint8 phase,,,,,) = factory.factoryState();
+        (bytes32 manifest,, uint8 phase,,,,,,) = factory.factoryState();
         assertEq(phase, 2);
         _assertTopology(children, address(factory), manifest, false);
     }
@@ -840,7 +864,7 @@ contract AcquisitionConstellationTask1Test is Test {
         for (uint8 i; i < 5; ++i) {
             factory.deployNext(initcodes[i]);
         }
-        (bytes32 manifest,,,,,,,) = factory.factoryState();
+        (bytes32 manifest,,,,,,,,) = factory.factoryState();
         bytes memory callData = abi.encodeWithSelector(PreVoteBudgetBook.finalizeBudgetBook.selector, manifest);
         vm.mockCallRevert(predicted[2], callData, hex"deadbeef");
         vm.expectRevert(
@@ -849,7 +873,7 @@ contract AcquisitionConstellationTask1Test is Test {
         factory.finalizeConstellation();
         vm.clearMockedCalls();
         _assertTopology(predicted, address(factory), manifest, false);
-        (,, uint8 phase,,,,,) = factory.factoryState();
+        (,, uint8 phase,,,,,,) = factory.factoryState();
         assertEq(phase, 2);
     }
 
@@ -861,7 +885,7 @@ contract AcquisitionConstellationTask1Test is Test {
             for (uint8 i; i < 5; ++i) {
                 factory.deployNext(initcodes[i]);
             }
-            (bytes32 manifest,,,,,,,) = factory.factoryState();
+            (bytes32 manifest,,,,,,,,) = factory.factoryState();
             uint8 failing = order[position];
             bytes memory callData = abi.encodeWithSelector(_finalizerSelector(failing), manifest);
             vm.mockCallRevert(predicted[failing], callData, hex"01");
@@ -874,7 +898,7 @@ contract AcquisitionConstellationTask1Test is Test {
             );
             vm.clearMockedCalls();
             _assertTopology(predicted, address(factory), manifest, false);
-            (,, uint8 phase,,,,,) = factory.factoryState();
+            (,, uint8 phase,,,,,,) = factory.factoryState();
             assertEq(phase, 2);
         }
     }
@@ -885,7 +909,7 @@ contract AcquisitionConstellationTask1Test is Test {
         for (uint8 i; i < 5; ++i) {
             factory.deployNext(initcodes[i]);
         }
-        (bytes32 manifest,,,,,,,) = factory.factoryState();
+        (bytes32 manifest,,,,,,,,) = factory.factoryState();
         bytes4 selector = AcquisitionAuthority.authorityTopology.selector;
         vm.mockCall(predicted[0], abi.encodeWithSelector(selector), abi.encode(address(factory), manifest, uint256(2)));
         vm.expectRevert(
@@ -944,7 +968,8 @@ contract AcquisitionConstellationTask1Test is Test {
         for (uint8 i; i < 5; ++i) {
             predicted[i] = vm.computeCreateAddress(predictedFactory, uint256(i) + 1);
         }
-        bytes32 config = keccak256(abi.encode(CONFIG_TAG, uint256(2), address(registry), address(registry).codehash));
+        bytes32 config =
+            keccak256(abi.encode(CONFIG_TAG, uint256(3), address(registry), address(registry).codehash, GLOBAL_CAP));
         bytes32 manifest = _manifest(predictedFactory, config, predicted);
         initcodes[0] = abi.encodePacked(
             type(AcquisitionAuthority).creationCode,
@@ -959,20 +984,32 @@ contract AcquisitionConstellationTask1Test is Test {
                 predicted[4]
             )
         );
-        initcodes[1] = abi.encodePacked(type(AcquisitionVaultCore).creationCode, abi.encode(predictedFactory, manifest));
+        initcodes[1] = abi.encodePacked(
+            type(AcquisitionVaultCore).creationCode,
+            abi.encode(
+                predictedFactory,
+                manifest,
+                predicted[0],
+                address(registry),
+                predicted[2],
+                predicted[3],
+                predicted[4],
+                GLOBAL_CAP
+            )
+        );
         initcodes[2] = abi.encodePacked(type(PreVoteBudgetBook).creationCode, abi.encode(predictedFactory, manifest));
         initcodes[3] =
             abi.encodePacked(type(AcquisitionIntentExecution).creationCode, abi.encode(predictedFactory, manifest));
         initcodes[4] =
             abi.encodePacked(type(AcquisitionReconciliation).creationCode, abi.encode(predictedFactory, manifest));
         bytes32[5] memory ih;
-        bytes32[5] memory rh = probe.hashes(predictedFactory, manifest);
-        rh[0] = _authorityRuntimeHash(predictedFactory, manifest, predicted);
+        bytes32[5] memory rh = _runtimeHashes(predictedFactory, initcodes);
         for (uint8 i; i < 5; ++i) {
             ih[i] = keccak256(initcodes[i]);
         }
-        factory =
-            new AcquisitionConstellationFactory(address(safe), address(registry), address(registry).codehash, ih, rh);
+        factory = new AcquisitionConstellationFactory(
+            address(safe), address(registry), address(registry).codehash, GLOBAL_CAP, ih, rh
+        );
         assertEq(address(factory), predictedFactory);
     }
 
@@ -986,7 +1023,8 @@ contract AcquisitionConstellationTask1Test is Test {
         for (uint8 i; i < 5; ++i) {
             predicted[i] = vm.computeCreateAddress(predictedFactory, uint256(i) + 1);
         }
-        bytes32 config = keccak256(abi.encode(CONFIG_TAG, uint256(2), address(registry), address(registry).codehash));
+        bytes32 config =
+            keccak256(abi.encode(CONFIG_TAG, uint256(3), address(registry), address(registry).codehash, GLOBAL_CAP));
         bytes32 manifest = _manifest(predictedFactory, config, predicted);
         callbackInitcode = abi.encodePacked(
             type(ConstructorCallbackAuthority).creationCode, abi.encode(predictedFactory, manifest, caught)
@@ -995,8 +1033,9 @@ contract AcquisitionConstellationTask1Test is Test {
         bytes32[5] memory rh = _nonzeroHashes();
         ih[0] = keccak256(callbackInitcode);
         rh[0] = keccak256(type(ConstructorCallbackAuthority).runtimeCode);
-        factory =
-            new AcquisitionConstellationFactory(address(safe), address(registry), address(registry).codehash, ih, rh);
+        factory = new AcquisitionConstellationFactory(
+            address(safe), address(registry), address(registry).codehash, GLOBAL_CAP, ih, rh
+        );
         callbackChild = predicted[0];
     }
 
@@ -1009,7 +1048,8 @@ contract AcquisitionConstellationTask1Test is Test {
         for (uint8 i; i < 5; ++i) {
             predicted[i] = vm.computeCreateAddress(predictedFactory, uint256(i) + 1);
         }
-        bytes32 config = keccak256(abi.encode(CONFIG_TAG, uint256(2), address(registry), address(registry).codehash));
+        bytes32 config =
+            keccak256(abi.encode(CONFIG_TAG, uint256(3), address(registry), address(registry).codehash, GLOBAL_CAP));
         bytes32 manifest = _manifest(predictedFactory, config, predicted);
         if (poison) modes[4] = 4;
         for (uint8 i; i < 5; ++i) {
@@ -1025,8 +1065,9 @@ contract AcquisitionConstellationTask1Test is Test {
             ih[i] = keccak256(initcodes[i]);
             rh[i] = runtimeHash;
         }
-        factory =
-            new AcquisitionConstellationFactory(address(safe), address(registry), address(registry).codehash, ih, rh);
+        factory = new AcquisitionConstellationFactory(
+            address(safe), address(registry), address(registry).codehash, GLOBAL_CAP, ih, rh
+        );
         assertEq(address(factory), predictedFactory);
     }
 
@@ -1034,78 +1075,25 @@ contract AcquisitionConstellationTask1Test is Test {
         h = [bytes32(uint256(1)), bytes32(uint256(2)), bytes32(uint256(3)), bytes32(uint256(4)), bytes32(uint256(5))];
     }
 
-    function _authorityRuntimeHash(address predictedFactory, bytes32 manifest, address[5] memory predicted)
+    function _runtimeHashes(address predictedFactory, bytes[5] memory initcodes)
         internal
-        returns (bytes32)
+        returns (bytes32[5] memory runtimeHashes)
     {
-        bytes memory runtime = vm.getDeployedCode("AcquisitionAuthority.sol:AcquisitionAuthority");
-        bytes32 nameHash = keccak256("OMERTA AcquisitionAuthority");
-        bytes32 versionHash = keccak256("2");
-        bytes32 domain = keccak256(
-            abi.encode(
-                keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
-                nameHash,
-                versionHash,
-                uint256(4663),
-                predicted[0]
-            )
-        );
-        _writeWord(runtime, 15_755, domain);
-        _writeWord(runtime, 15_944, bytes32(uint256(4663)));
-        _writeWord(runtime, 15_708, bytes32(uint256(uint160(predicted[0]))));
-        _writeWord(runtime, 15_834, nameHash);
-        _writeWord(runtime, 15_872, versionHash);
-        _writeWord(runtime, 5_853, bytes32("OMERTA AcquisitionAuthority") | bytes32(uint256(27)));
-        _writeWord(runtime, 5_894, bytes32("2") | bytes32(uint256(1)));
-        uint256[8] memory values = [
-            uint256(uint160(predictedFactory)),
-            uint256(manifest),
-            uint256(uint160(address(safe))),
-            uint256(uint160(address(registry))),
-            uint256(uint160(predicted[1])),
-            uint256(uint160(predicted[2])),
-            uint256(uint160(predicted[3])),
-            uint256(uint160(predicted[4]))
-        ];
-        uint256[5] memory factoryOffsets = [uint256(2_854), 4_501, 7_618, 11_956, 14_348];
-        uint256[3] memory manifestOffsets = [uint256(2_893), 4_541, 11_992];
-        uint256[3] memory registryOffsets = [uint256(2_932), 7_568, 14_297];
-        uint256[12] memory coreOffsets =
-            [uint256(1_940), 2_972, 3_729, 6_395, 7_518, 8_128, 11_031, 11_704, 13_164, 13_864, 14_246, 15_083];
-        uint256[3] memory budgetOffsets = [uint256(3_012), 7_468, 14_195];
-        uint256[3] memory intentOffsets = [uint256(3_052), 7_418, 14_144];
-        uint256[3] memory reconOffsets = [uint256(3_092), 7_368, 14_106];
-        for (uint256 i; i < factoryOffsets.length; ++i) {
-            _writeWord(runtime, factoryOffsets[i], bytes32(values[0]));
+        uint256 clean = vm.snapshotState();
+        vm.etch(predictedFactory, type(Task1RuntimeProbe).runtimeCode);
+        vm.setNonce(predictedFactory, 1);
+        for (uint8 i; i < 5; ++i) {
+            address child = Task1RuntimeProbe(predictedFactory).deploy(initcodes[i]);
+            assertEq(child, vm.computeCreateAddress(predictedFactory, uint256(i) + 1));
+            runtimeHashes[i] = child.codehash;
         }
-        for (uint256 i; i < manifestOffsets.length; ++i) {
-            _writeWord(runtime, manifestOffsets[i], bytes32(values[1]));
-        }
-        _writeWord(runtime, 4_617, bytes32(values[2]));
-        for (uint256 i; i < registryOffsets.length; ++i) {
-            _writeWord(runtime, registryOffsets[i], bytes32(values[3]));
-        }
-        for (uint256 i; i < coreOffsets.length; ++i) {
-            _writeWord(runtime, coreOffsets[i], bytes32(values[4]));
-        }
-        for (uint256 i; i < budgetOffsets.length; ++i) {
-            _writeWord(runtime, budgetOffsets[i], bytes32(values[5]));
-        }
-        for (uint256 i; i < intentOffsets.length; ++i) {
-            _writeWord(runtime, intentOffsets[i], bytes32(values[6]));
-        }
-        for (uint256 i; i < reconOffsets.length; ++i) {
-            _writeWord(runtime, reconOffsets[i], bytes32(values[7]));
-        }
-        return keccak256(runtime);
-    }
-
-    function _writeWord(bytes memory data, uint256 offset, bytes32 value) internal pure {
-        assembly { mstore(add(add(data, 0x20), offset), value) }
+        assertTrue(vm.revertToState(clean));
     }
 
     function _mockAuthoritySnapshot(AcquisitionConstellationFactory factory, address[5] memory predicted) internal {
-        (bytes32 manifest,,,,,,,) = factory.factoryState();
+        bytes32 manifest;
+        uint256 globalCap;
+        (manifest,,,,,,,, globalCap) = factory.factoryState();
         uint256[27] memory words;
         words[0] = 2;
         words[1] = uint160(address(factory));
@@ -1146,11 +1134,27 @@ contract AcquisitionConstellationTask1Test is Test {
             abi.encodeWithSelector(AcquisitionAuthority.authoritySnapshot.selector),
             abi.encodePacked(words)
         );
+
+        uint256[18] memory coreWords;
+        coreWords[0] = 3;
+        coreWords[1] = uint160(address(factory));
+        coreWords[2] = uint256(manifest);
+        coreWords[3] = uint160(predicted[0]);
+        coreWords[4] = uint160(address(registry));
+        coreWords[5] = uint160(predicted[2]);
+        coreWords[6] = uint160(predicted[3]);
+        coreWords[7] = uint160(predicted[4]);
+        coreWords[9] = globalCap;
+        vm.mockCall(
+            predicted[1],
+            abi.encodeWithSelector(AcquisitionVaultCore.coreSnapshot.selector),
+            abi.encodePacked(coreWords)
+        );
     }
 
     function _gasHarness() internal returns (FactoryGasHarness harness) {
         bytes32[5] memory h = _nonzeroHashes();
-        harness = new FactoryGasHarness(address(safe), address(registry), address(registry).codehash, h, h);
+        harness = new FactoryGasHarness(address(safe), address(registry), address(registry).codehash, GLOBAL_CAP, h, h);
     }
 
     function _topology(address child, uint8 index) internal view returns (address, bytes32, bool) {

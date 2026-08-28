@@ -19,6 +19,7 @@ contract AcquisitionAuthority is IAcquisitionAuthorityV2, EIP712, Ownable2Step, 
     uint256 public constant ERC1271_CALL_GAS = 100_000;
     uint256 public constant ERC1271_POST_CALL_GAS_RESERVE = 50_000;
     uint256 public constant ERC1271_MIN_PRECALL_GAS = 160_000;
+    uint256 private constant _CORE_CAP_GAS = 50_000;
     bytes32 public constant OUTFLOW_AUTHORIZATION_TYPEHASH = keccak256(
         "OutflowAuthorizationV2(address authority,address core,address targetModule,bytes32 action,address operator,address destination,uint256 amountWei,uint256 generation,uint256 nonce,uint64 issuedAt,uint64 deadline,uint8 reasonCode,bytes32 detailsHash)"
     );
@@ -93,6 +94,9 @@ contract AcquisitionAuthority is IAcquisitionAuthorityV2, EIP712, Ownable2Step, 
     error AuthorityInitialStateMismatch(uint8 field);
     error AuthorityAddressMismatch(address expected, address actual);
     error AuthorityPeerMismatch(uint8 index, address expected, address actual);
+    error AuthorityCoreCapCallFailed();
+    error AuthorityCoreCapReturnLength(uint256 actualLength);
+    error AuthorityCoreCapSemanticMismatch(uint256 actualCapWei);
     event AuthorityFinalized(bytes32 indexed manifestHash);
 
     address private immutable _factory;
@@ -869,12 +873,30 @@ contract AcquisitionAuthority is IAcquisitionAuthorityV2, EIP712, Ownable2Step, 
                 || config.perDepositCapWei > config.epochDepositCapWei
                 || config.epochDepositCapWei > config.lifetimeDepositCapWei
         ) revert InvalidIngressConfig();
+        if (config.lifetimeDepositCapWei > _readCoreGlobalLifetimeCap()) revert InvalidIngressConfig();
         if (config.ingress.code.length == 0) revert ContractRequired(config.ingress);
         bytes32 actual = config.ingress.codehash;
         if (actual != config.runtimeCodeHash) {
             revert IngressCodeHashMismatch(config.ingress, config.runtimeCodeHash, actual);
         }
         if (_roleCollision(config.ingress, ignorePendingIngress ? 4 : 0)) revert RoleIdentityCollision(config.ingress);
+    }
+
+    function _readCoreGlobalLifetimeCap() private view returns (uint256 cap) {
+        address core = _core;
+        bytes4 selector = bytes4(keccak256("globalLifetimeCanonicalDepositCapWei()"));
+        bool ok;
+        uint256 size;
+        assembly ("memory-safe") {
+            let buffer := mload(0x40)
+            mstore(buffer, selector)
+            ok := staticcall(_CORE_CAP_GAS, core, buffer, 0x04, buffer, 0x20)
+            size := returndatasize()
+            cap := mload(buffer)
+        }
+        if (!ok) revert AuthorityCoreCapCallFailed();
+        if (size != 32) revert AuthorityCoreCapReturnLength(size);
+        if (cap == 0) revert AuthorityCoreCapSemanticMismatch(cap);
     }
 
     function _ingressConfigHash(IngressConfig memory config) private view returns (bytes32) {
