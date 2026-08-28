@@ -1,10 +1,13 @@
 # RWA Health H1 — Operational Watcher and Sticky Domain Freeze
 
 **Date:** 2026-08-28  
-**Status:** architecture frozen for RED after independent C0/I0/M0 review of
-SHA-256 `54CA0F9F0D34C8EA1A33426C385E688B89F3B6694BD906AAC279468D90B690BF`;
-RED, implementation, deployment, configuration, Safe execution, finality, and
-production cutover remain pending  
+**Status:** architecture freeze and RED are closed; H1 implementation is committed
+at `74866a4d`, focused unit/pg-mem/integration checks are green, and independent
+security/specification review reports P0/P1=0. The real-PostgreSQL harness is
+implemented but was not executed in this environment because
+`RWA_HEALTH_TEST_DATABASE_URL` is not configured. H1 remains dormant, undeployed,
+unconfigured, and intentionally unable to clear sticky episodes; H2, Safe execution,
+finality, and production cutover remain pending.
 **Parent authority:**
 `docs/superpowers/specs/2026-08-26-grill-completion.md` section H and
 `docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md`  
@@ -1667,3 +1670,40 @@ H1 completion will not mean H2, CN-6, CB-bridge, A3, R, O2, delivery, deployment
 configuration, Safe execution, finality, or production cutover is complete. Until H2
 and its consumer are independently closed, every sticky H1 episode is intentionally
 unclearable and every dependent future pipeline remains dormant.
+
+## 12. H1 closure evidence
+
+The reviewed H1 implementation is commit `74866a4d`. It adds the closed provider
+taxonomy and bounded transport, durable frozen sweep batches/pages, selective private
+evidence retention, sticky episode reducer, clearance-aware read/action seams,
+reviewer adverse-transition perimeter, five-minute worker schedule, public/operator
+routes, migrations, and focused test surfaces.
+
+Observed focused evidence in this worktree:
+
+```text
+node test/finalizedobservation.js       pass
+node test/stockcatalogv2.js             pass
+node test/rwanominations.js             pass
+node test/rwaroutes.js                  pass
+npm run test:rwahealth                  pass (unit 12/12 plus integration scenarios)
+node test/watcher.js                    pass
+node test/migrate.js                    pass
+node test/gates.js                      pass
+node --check <changed JavaScript>       pass
+git diff --check                        pass
+```
+
+The real-PostgreSQL harness asserts production lock/clock SQL and fails closed when
+its CI lane is configured, but local execution truth is `skipped` because this
+environment has no `RWA_HEALTH_TEST_DATABASE_URL`. No PostgreSQL concurrency,
+performance, provider, chain, deployment, configuration, Safe, or production fact is
+inferred from that skip.
+
+Independent implementation reviews closed with P0=0 and P1=0. They specifically
+verified Registry-first lock ordering, per-transaction database epochs after lock
+acquisition, selective evidence integrity, exact source-failure taxonomy retention,
+SQL-ordered post-clearance behavior, reviewer composite-FK preservation, public read
+precedence, and the real-PostgreSQL harness's production-capability wiring. H1 is
+therefore development-closed and dormant; the unexecuted real-PostgreSQL lane remains
+an explicit X-global environment gate.
