@@ -2094,6 +2094,38 @@ contract AcquisitionConstellationTask3BTest is Test {
         assertEq(businessWrites[15], bytes32(uint256(7)), "last business write deficit observation");
     }
 
+    function test_task3B_30_sequenceExhaustionPrecedesInvalidPreTotalsAndFullyRollsBack() public {
+        vm.store(address(_core), bytes32(uint256(4)), bytes32(0));
+        vm.store(address(_core), bytes32(uint256(5)), bytes32(uint256(1)));
+        vm.store(address(_core), bytes32(uint256(6)), bytes32(type(uint256).max));
+
+        bytes32 source = keccak256("sequence-before-invalid-pre-totals");
+        bytes32 configHash = _configHash(_ingress, 10 ether, 20 ether, 40 ether);
+        bytes32 depositId = _depositId(1, source, _ingress, configHash);
+        uint256 epochDay = block.timestamp / _EPOCH_DAY;
+        bytes32 digest = _stateDigest(depositId);
+        uint256 callerBalance = address(this).balance;
+
+        vm.recordLogs();
+        vm.expectRevert(
+            abi.encodeWithSelector(ITask3BFinalCore.CoreCounterExhausted.selector, _ACCOUNTING_SEQUENCE_COUNTER)
+        );
+        _ingress.deposit{value: 1}(address(_core), source);
+
+        assertEq(_stateDigest(depositId), digest, "sequence precedence full raw rollback");
+        assertEq(address(this).balance, callerBalance, "sequence precedence incoming value refund");
+        assertEq(vm.getRecordedLogs().length, 0, "sequence precedence log rollback");
+        assertEq(_core.ingressEpochDepositedWei(1, epochDay), 0, "sequence precedence epoch untouched");
+        assertEq(_core.ingressLifetimeDepositedWei(1), 0, "sequence precedence lifetime untouched");
+        assertEq(_core.globalLifetimeCanonicalDepositedWei(), 0, "sequence precedence global untouched");
+        bytes32 recordBase = keccak256(abi.encode(depositId, uint256(11)));
+        for (uint256 i; i < 10; ++i) {
+            assertEq(
+                vm.load(address(_core), _offset(recordBase, i)), bytes32(0), "sequence precedence record untouched"
+            );
+        }
+    }
+
     function _configureIngress(
         uint256 generation,
         Task3BIngress ingress,
