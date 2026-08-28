@@ -33,14 +33,14 @@ mem transaction adapters, native `node:assert`, repository knowledge checks.
 - The scoped Task-1 `eventBlocks` extension from the follow-on finalized
   event-time plan is implemented and independently approved, including the
   reviewed type-disjoint BigInt commitment and strict pre-pool commit validator.
-- The H2 and CN-6 consumers defined below are acceptance contracts only: their
+- The H2 and CN-6A consumers defined below are acceptance contracts only: their
   runtime/schema/workers do not yet exist. Nothing in this plan is production
   configured, deployed, Safe-executed, chain-finalized, funded, or active.
 
 ## Binding boundaries
 
 - FO depends only on approved CN-1..4 infrastructure and general chain parameter
-  conventions. It does not depend on H, Task 5, CN-6, AcquisitionVault, gameplay,
+  conventions. It does not depend on H, Task 5, CN-6A/CN-6B, AcquisitionVault, gameplay,
   a deployed address, a reviewer secret, a signer, or a private key.
 - FO owns no database table, HTTP route, worker schedule, domain readiness label,
   ABI decoder, Safe package, policy decision, or contract deployment.
@@ -366,7 +366,7 @@ the exact applied block/hash, prior FO observation commitment, finalized horizon
 pre-FO rows are not backfilled as ready. Inbox identity is exactly FO's five-part
 identity and a duplicate must match every stored byte or fail atomically.
 
-Keep this consumer categorically separate from CN-6: raw logs are observation
+Keep this consumer categorically separate from CN-6A: raw logs are observation
 evidence only; Task 5 does not decode or claim activation, reviewer, publisher,
 Safe or ballot-lifecycle provenance. Its domain apply remains Task 2's complete
 getter snapshot and current-head replacement. Under a permanent mirror lock, one
@@ -413,7 +413,7 @@ node test/stockcatalogv2.postgres.js
 
 Review specifically for Task 2 regression, current-address readiness, exact
 ten-minute PostgreSQL boundary, bounded target/horizon coherence, no readiness
-refresh while catching up, real transaction atomicity, separate getter/CN-6
+refresh while catching up, real transaction atomicity, separate getter/CN-6A
 consumer authority, and no duplicate finality transport. No worker, route,
 contract, H, activation lifecycle, publisher, Safe, reviewer, or funds code is
 allowed in this commit. The schema and real-PostgreSQL additions are the narrow
@@ -422,7 +422,7 @@ master-spec-required exception to the original Task 5 file boundary; legacy
 
 ---
 
-### Task 6: Plan-level verification and handoff to H/CN-6
+### Task 6: Plan-level verification and handoff to CN-6A/H/CN-6B
 
 **Files:**
 
@@ -466,12 +466,12 @@ limits. It owns `rwa_health_overlay_lock_v2`,
 `rwa_health_overlay_checkpoint_v2`, an immutable raw-plus-decoded
 `rwa_health_overlay_inbox_v2`, an ordered overlay-generation reducer, and one
 atomic clearance apply. It may not read or advance the Task 5 getter-mirror
-checkpoint/inbox or the CN-6 registry-lifecycle checkpoint/inbox, and neither of
+checkpoint/inbox or the CN-6A registry-lifecycle checkpoint/inbox, and neither of
 those consumers may clear an H episode. Exact finalized clearance removes only
 the sticky latch; a new successful health evaluation performed after finalized
 apply remains mandatory before the effective state can become green.
 
-The accepted CN-6 entry point and transaction helpers are:
+The accepted CN-6A entry point and transaction helpers are:
 
 ```js
 syncFinalizedRwaRegistryLifecycle(pool)
@@ -491,7 +491,7 @@ perform RPC. The fixed initial ceilings are 10,000 blocks, 2,000 logs, 2,000,000
 bytes, 256 unique asset-version keys, 64 ballot days, and 256 proposal/result
 matches; exceeding any ceiling fails closed without partial checkpoint advance.
 
-Before `BEGIN`, CN-6 maps each decoded event to its exact committed event-block
+Before `BEGIN`, CN-6A maps each decoded event to its exact committed event-block
 record. Activation-instance identity is
 `(4663, registryAddress, assetVersionKey, activationGeneration)`, derived from
 the complete ordered stream starting at the exact deployment block. Inclusion
@@ -509,7 +509,7 @@ this slice. If the purchase window elapses before publication,
 `purchase_window_elapsed_before_publication` is terminal: no extension,
 reopening, runner-up, or replacement winner is permitted. H2 readiness and
 AcquisitionVault-backed pre-vote budget provenance are mandatory before any
-CN-6 publisher becomes reachable. `RWA_STOCK_PIPELINE` is only a future cutover
+CN-6B publisher becomes reachable. `RWA_STOCK_PIPELINE` is only a future cutover
 selector name and is absent from current production code.
 
 Later acquisition/gameplay consumers follow the same separate-identity rule;
@@ -526,7 +526,7 @@ library infrastructure until a separately approved concrete consumer is wired.
 
 **Accepted completion truth:** Tasks 1–5 and the event-time extension are
 implemented, independently reviewed, and dormant. This handoff documentation is
-not evidence that H2/CN-6 is implemented, that any address/RPC/signer is
+not evidence that CN-6A/H2/CN-6B is implemented, that any address/RPC/signer is
 configured, that a contract is deployed, that a Safe package is signed or
 executed, that a chain event is finalized, that ETH is funded, or that a feature
 is active.

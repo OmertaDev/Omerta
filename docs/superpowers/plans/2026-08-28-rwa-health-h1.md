@@ -1421,8 +1421,8 @@ same-key reactivation and still requires H2 clearance; a terminal old episode re
 terminal history and does not reopen automatically, but the reactivated snapshot has
 no green readiness until freshly evaluated. H1 neither fabricates nor infers the
 Registry activation generation because the current finalized getter mirror does not
-persist that mapping; CN-6 must add finalized lifecycle-event authority, and H2 must
-bind the exact activation generation supplied by CN-6. No successor
+persist that mapping; CN-6A must add read-only finalized lifecycle-event authority,
+and H2 must bind the exact activation generation supplied by CN-6A. No successor
 `assetVersionKey` is invented merely because the same key reactivated.
 
 The reviewer route first creates the existing durable HTTP idempotency reservation.
@@ -1644,29 +1644,43 @@ not an H1 clear and cannot mutate H1 state. Its immutable ID binds:
 
 ```text
 chainId + registryAddress + catalogSnapshotHash + assetVersionKey
-+ episodeId + generation + currentSeverity + stateSequence
++ activationGeneration + episodeId + generation + currentSeverity + stateSequence
 + latestEpisodeEventId + latestMaterialEvidenceHash
 + recoveryEvidenceHash + freshHealthyEvaluationId + freshHealthyEvidenceHash
-+ reviewerId + approvedAt + clearanceDeadline + exact Safe package hash
++ reviewerId + approvedAt + clearanceDeadline + expectedOverlayGeneration
++ exact non-self-referential Safe call-intent hash
 ```
 
 Exactly one configured reviewer must approve it, and
-`clearanceDeadline = approvedAt + interval '7 days'`. The Safe package and overlay
-event bind that attestation ID. H1 adverse entry/escalation actions cannot substitute
+`clearanceDeadline = approvedAt + interval '7 days'`. H2 defines the Safe call-intent
+hash over exact chain/Safe/to/value/operation/selector/calldata with no caller-supplied
+derived hash or attestation slot, then derives the clearance ID from that commitment;
+an optional expected Safe nonce is nonauthoritative package metadata and never an
+identity or finalized-authority field. This removes the prior recursive package-hash
+wording. The Safe calldata and overlay event bind that derived clearance ID. H1
+adverse entry/escalation actions cannot substitute
 for clearance approval. Package creation and broadcast call the H1 clearance seam
-with the entire bound head. Finalized H2 ingestion rechecks the entire tuple under
-the Registry share lock, H1 lock, and its independent finalized-consumer order before
-populating clearance fields. Any intervening episode event, new material evidence,
-severity/sequence change, replaced healthy evaluation, deadline expiry, cross-asset/
-Registry replay, or reviewer mismatch stales the package; mining or a transaction
-hash does not waive the recheck. H2 also adds the composite clearance-evidence FKs
+with the entire bound head. Finalized H2 ingestion rechecks the entire tuple,
+including CN-6A's exact finalized Registry activation generation, under the Registry
+share lock, H1 lock, and its independent finalized-consumer order before
+populating clearance fields. Routine later healthy-only evaluations are permitted only
+when they share the exact catalog snapshot, episode ID/generation/severity, latest
+episode-event head, and latest material-event/evidence head, every intervening applied
+evaluation is healthy, and `current.state_sequence` equals the attested sequence plus
+that exact evaluation count. Any intervening adverse/unknown evaluation, reviewer or
+material event, catalog/episode/head mutation, clearance event, unexplained sequence
+change, deadline expiry, cross-asset/Registry replay, or reviewer mismatch stales the
+package; mining or a transaction hash does not waive the recheck. Both event inclusion
+and not-yet-committed finalized database apply must occur before the exact deadline;
+exact replay of an already committed clearance remains idempotent after it. H2 also
+adds the composite clearance-evidence FKs
 for episode events/current rows that H1 intentionally cannot reference yet.
 
 H2 RED must reject absent/adverse-only/wrong-reviewer attestations, wrong Registry/
 asset/episode/generation, substituted recovery or healthy evidence, expiry, and
 mutations after review, signing, broadcast, mining, or immediately before finality.
 
-H1 completion will not mean H2, CN-6, CB-bridge, A3, R, O2, delivery, deployment,
+H1 completion will not mean CN-6A, H2, CN-6B, CB-bridge, A3, R, O2, delivery, deployment,
 configuration, Safe execution, finality, or production cutover is complete. Until H2
 and its consumer are independently closed, every sticky H1 episode is intentionally
 unclearable and every dependent future pipeline remains dormant.

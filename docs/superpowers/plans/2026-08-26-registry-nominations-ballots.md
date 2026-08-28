@@ -995,7 +995,29 @@ Commit Task 5 files.
 
 ---
 
-### Task 6: Exact V2 Ballot Publication, Finality Sync, and Worker Integration
+### Tasks 6A/6B: Registry Lifecycle Consumer and Dormant Publisher (split authority)
+
+The historical combined Task 6 below is superseded as an executable unit by the
+dependency-cycle split frozen on 2026-08-28:
+
+- **Task 6A / CN-6A** is normative in
+  `docs/superpowers/plans/2026-08-28-rwa-registry-lifecycle-cn6a.md`. It produces only
+  the read-only one-cursor finalized Registry lifecycle/generation consumer, its exact
+  H2 activation-authority seam, migrations, and tests. It consumes FO and Task 5; it
+  has no publisher, worker schedule, signer, sender, Safe package, funds, or cutover.
+- **Task 6B / CN-6B** runs later, only after H2 and the AcquisitionVault-backed budget
+  bridge. It owns `publishResolvedStockBallotV2`, the exact unsigned/signed-byte
+  persistence and dormant worker/cutover integration described below, and consumes
+  CN-6A's projection. It must reuse CN-6A's single scanner, checkpoint, inbox, reducer,
+  event-time evidence, and readiness; it may not add another Registry cursor.
+
+The remaining combined text is retained as a requirement ledger, not permission to
+implement both halves together. Every lifecycle/finality/reducer/helper clause maps to
+CN-6A; every publish, transaction-byte, worker, or cutover clause maps to CN-6B. Any
+conflict is resolved in favor of the dedicated CN-6A plan, H2 plan, umbrella DAG, and
+this split.
+
+#### Historical combined Task 6 requirement ledger
 
 **Files:**
 

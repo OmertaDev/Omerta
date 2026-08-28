@@ -41,7 +41,7 @@ are `7781e0f2`, `af85eaed`, `db5555f4`, and `fb64148d`. Focused verification is
 18/18 passing, crosswalk verification is 63/63 passing, the exact five-by-five
 phase and cardinality matrices match their frozen exits, and independent final
 security and specification reviews are C0/I0/M0.
-Acquisition Constellation Tasks 6–9, H2, CN-6, and the broader interview scope
+Acquisition Constellation Tasks 6–9, CN-6A, H2, CN-6B, and the broader interview scope
 remain planned acceptance/implementation nodes rather than active production
 consumers.
 The Task 5 constellation is dormant, undeployed, unfunded, and unactivated;
@@ -59,14 +59,14 @@ partial legacy behavior and dirty documentation do not count.
 | OV-1..OV-14 | Explicit override ledger | F0, O1/O2, R, G1/G2, B, P, X | Tracked; each consuming plan must restate applicable overrides |
 | GI-AUTH | Global invariants / Authority separation | O1/O2, H, A, G1/F/P, U, X | Pending outside approved C/N and standalone pool slices |
 | GI-CONS | Global invariants / Conservation and provenance | A1/A3/R/O2, D, G1/G2/B/P | Reserved-vs-reconciliation correction tracked; implementation pending |
-| GI-FINAL | Global invariants / Finality, replay, and audit | FO, CB, H, R, G2, F, P, U | Shared kernel, getter consumer, and committed event-time evidence implemented/approved/dormant; typed registry/health consumers pending |
+| GI-FINAL | Global invariants / Finality, replay, and audit | FO, CB, H, R, G2, F, P, U | Shared kernel, getter consumer, and committed event-time evidence implemented/approved/dormant; CN-6A Registry lifecycle and H2 health consumers pending |
 | GI-PROD | Global invariants / Product posture | A/CB/R/D/G/B/P/U/X | Pending; dormant/no-selling/no-APY posture tracked |
 | C1 | Immutable asset identity/history | C/N Tasks 1–2 | Implemented and independently approved; dormant/undeployed |
-| C2 | Activation approval and ballots | C/N Tasks 1, 4–7; H; A1 budget bridge | Registry/reviewer/database ballot implemented and independently approved/dormant; finalized lifecycle/integration pending |
-| C3 | Finalized mirror authority | C/N Task 2, FO, Tasks 6–7 | Getter mirror, shared observation kernel, and event-time evidence implemented/approved/dormant; typed registry/health consumers pending |
+| C2 | Activation approval and ballots | C/N Tasks 1, 4–7; H; A1 budget bridge | Registry/reviewer/database ballot implemented and independently approved/dormant; CN-6A lifecycle generation, H2, and CN-6B publisher/integration pending |
+| C3 | Finalized mirror authority | C/N Task 2, FO, CN-6A, CN-6B, Task 7 | Getter mirror, shared observation kernel, and event-time evidence implemented/approved/dormant; CN-6A Registry lifecycle consumer and H2 consumer pending |
 | N1 | Nomination identity/cadence | C/N Tasks 3–4 | Implemented and independently approved; dormant |
 | N2 | Support and seat authority | C/N Task 3; Commission seat-generation integration | Domain approved; rapid loss/reseat generation hook pending |
-| N3 | Review and expiry | C/N Tasks 3–4, 6–7 | Domain/routes/package approved; finalized activation lifecycle pending |
+| N3 | Review and expiry | C/N Tasks 3–4, CN-6A/CN-6B, Task 7 | Domain/routes/package approved; finalized activation lifecycle and dormant publisher pending |
 | H | Health and operational quarantine | H1 watcher/domain; H2 additive overlay/finality; U | H1 implemented/independently approved/dormant at `74866a4d`; H2 pending and mandatory before non-dormant ballot/purchase/delivery; real-PG H1 execution remains an X-gate environment check |
 | A1 | Native-ETH buckets/deposits | O1, AC-0..9 | O1/Task4 approved; Task5 `ee857436` is the approved dormant/nondeployable 23,212B oracle; AC Tasks 2–4 retain their recorded approvals; AC Task 5 architecture `7781e0f2`, GREEN `db5555f4`, and verifier/crosswalk `fb64148d` development-closed with final reviews C0/I0/M0; Tasks 6–9 and final A1/A3/R/production approval pending |
 | A2 | mainOperator | O1 role/typed authority; O2 final debit integration | Pending; A2 cannot complete before A3/R |
@@ -97,8 +97,10 @@ partial legacy behavior and dirty documentation do not count.
   the same-block canonical event timestamp committed as `eventBlocks`, and
   before/after finalized-head recheck. The kernel/getter/event-time slice is
   implemented, independently approved, and dormant. It lands after CN-1..4 and
-  before H, preventing a cycle where H waits for CN-6 while CN-6 waits for H.
-  Registry and health consumers retain separate identities, locks, typed
+  before the typed consumers. CN-6 is split to remove the discovered generation
+  cycle: CN-6A is the read-only finalized Registry lifecycle/activation-generation
+  consumer required by H2; CN-6B is the later dormant publisher/cutover node that
+  depends on H2 and budget provenance. Registry and health consumers retain separate identities, locks, typed
   inboxes/checkpoints, reducers, and readiness; they cannot advance or clear one
   another.
 - **Bounded head coherence:** when catch-up is chunked, FO pins logs and getters
@@ -110,14 +112,20 @@ partial legacy behavior and dirty documentation do not count.
   in the same transaction that inserts immutable inbox evidence and applies its
   typed domain transition. A split design must expose separate observed/applied
   cursors and readiness follows applied state.
+- **Global RWA lock prefix:** every future cross-node path preserves
+  `Task-5 Registry mirror -> H1 -> CN-6A -> H2 -> CN-6B`, taking only the prefix
+  it needs and then stable sorted domain rows. CN-6A never locks H1/H2 and H1 never
+  locks CN-6A/H2; callers that combine them own the one-way order.
 - **Additive clearance authority:** the registry-v2 ABI stays frozen. A separate
   `RwaHealthOverlay` supplies exact seven-day Safe clearance and finalized event
-  evidence; an off-chain flag alone never clears quarantine.
+  evidence; an off-chain flag alone never clears quarantine. H2 binds CN-6A's exact
+  finalized activation generation and exposes a caught-up/unhalted readiness wall
+  consumed by every H-gated action.
 - **Budget bridge:** Task 5's manual `maxEthWei` opener is temporary dormant
   preparation. Production opening must consume/verify AcquisitionVault budget
   provenance; the post-ballot intent consumes that immutable ceiling. Both H2
   readiness and AcquisitionVault-backed pre-vote budget provenance are mandatory
-  before the CN-6 publisher can become reachable.
+  before the CN-6B publisher can become reachable.
 - **Split operator delivery:** O1 owns appointment, zero-disable, renounce,
   replacement, generations, consent and nonces. O2 implements arbitrary ETH
   only after A3 reservations and R reconciliation liabilities exist.
@@ -154,13 +162,17 @@ behavioral oracle and is not a deploy node.
 flowchart TD
   F0 --> CN
   CN --> FO
-  FO --> H
+  CN --> CN6A
+  FO --> CN6A
+  CN6A --> H
   O1 --> AC
   CN --> AC
   CN --> CB
   FO --> CB
   H --> CB
   AC --> CB
+  H --> CN6B
+  CB --> CN6B
   CB --> A3
   H --> A3
   A3 --> R
@@ -201,15 +213,16 @@ flowchart TD
 | CN-1..4 | Registry, getter catalog, nominations, reviewer routes/packages | F0 | Focused tests + independent reviews | Complete/approved/dormant |
 | CN-5 | Immutable DB ballot/tally/budget evidence | CN-1..4 | BigInt/time/snapshot/concurrency/literal-ABI tests | Complete/independently approved/dormant; manual budget is not production provenance |
 | FO | Shared exact-head finalized-observation kernel, getter consumer, committed event-block timestamps, and consumer checkpoint/inbox contract | CN-1..4 | Pinned getter/log/event-time completeness, hash-recheck, reorg/crash/gap/bound/replay tests | Tasks 1–5 plus event-time fix complete/independently approved/dormant |
+| CN-6A | Read-only one-cursor Registry V2 finalized lifecycle/generation consumer | FO, CN-1..4 | Exact event-time/reorg/crash/generation/replay proof; separate identity/checkpoint/inbox; no publisher reachability | Architecture frozen and independently accepted P0=0/P1=0; RED/implementation pending; required before H2 implementation |
 | H1 | Predicate taxonomy, watcher, snapshots, operational overlay domain/API | FO, CN-1..4 | 5-minute poll, 10-minute freshness, bounded work, spam/stale tests | Implementation complete/independently approved/dormant at `74866a4d`; focused tests green; real-PG harness unexecuted without configured test URL and retained for X-global evidence |
-| H2 | `RwaHealthOverlay`, seven-day Safe clearance package/finality | H1, FO, CN-1..4 | Contract tests, exact event/finality/reorg proof | Pending |
+| H2 | `RwaHealthOverlay`, seven-day Safe clearance package/finality, and H2 readiness wall | H1, FO, CN-6A | Contract tests, exact event/finality/reorg/readiness proof | Architecture frozen and independently accepted P0=0/P1=0; RED/implementation pending behind CN-6A |
 | O1 | mainOperator role state machine and EIP-712 authority | F0 | Unit/fuzz/invariant/1271/generation/nonce tests | Complete/independently approved/dormant at remediation head `82001b6e8ac54c46dda6eb185cda550e8a73a3de`; no outflow or deployment |
 | A1-ref | Monolithic behavioral oracle for authority, buckets, ingress, deposits and caps | O1, CN | Preserve O1/Task4/Task5 evidence; never deploy | Task5 oracle `ee857436`, runtime 23,212B, independently approved and dormant/nondeployable; fresh BudgetBook and Intent-identity slices closed through Task 4 `0b455987` and Task 5 `fb64148d`; Tasks 6–9 pending; not final A1/A3/R approval |
 | AC-0..9 | Immutable acquisition constellation: manifest factory, Authority, Core, BudgetBook, Intent, Reconciliation, O2 integration and review | A1-ref, O1, CN | Exact crosswalk; phased CREATE/finalization; typed-call/stateful/size/replay/gas tests; independent Wildcat/controller approval | Tasks 0–5 development-closed through Task 5 verifier/crosswalk `fb64148d`; dormant, undeployed, unfunded, and unactivated; Tasks 6–9, broader interview scope, and final A1/A3/R/production approval pending |
 | CB-bridge | Core/BudgetBook provenance into ballot opener/cutover gate | CN-5, AC-0..4, H2 | No manual production budget, no fallback/double authority | Pending |
-| CN-6 | One-cursor RegistryV2 finalized lifecycle consumer plus dormant exact-byte publisher | FO, CN-5, H2, CB-bridge | Event-time/reorg/crash/exact-match/drift/exact-byte rebroadcast tests; no duplicate observation kernel | Pending; publisher unreachable until H2 and AcquisitionVault provenance are approved |
-| CN-7 / X-CN | Real-PG harness, machine surfaces, C/N runbook/deploy package/review | CN-6 | MVCC/deadlock evidence; honest dormant manifest; whole-slice review | Pending |
-| A3 | Purchase intent/reservation/oracle/adapter/expiry/cancel execution | AC-0..5, CN-6, H2 | Constellation typed-call/unit/fuzz/invariant/oracle/route/replay tests | Pending within Intent/Core extraction |
+| CN-6B | Dormant exact-byte Registry V2 activation/ballot publisher using CN-6A's existing lifecycle cursor | CN-5, CN-6A, H2, CB-bridge | Exact-match/drift/exact-byte rebroadcast tests; no duplicate observation kernel/cursor | Pending; publisher unreachable until H2 and AcquisitionVault provenance are approved |
+| CN-7 / X-CN | Real-PG harness, machine surfaces, C/N runbook/deploy package/review | CN-6A, CN-6B | MVCC/deadlock evidence; honest dormant manifest; whole-slice review | Pending |
+| A3 | Purchase intent/reservation/oracle/adapter/expiry/cancel execution | AC-0..5, CN-6B, H2 | Constellation typed-call/unit/fuzz/invariant/oracle/route/replay tests | Pending within Intent/Core extraction |
 | R | Attempt journal, reconciliation, incidents, hold-only unmatched Stock Token | AC-0..6, H2 | Phase-hook/finality/reorg/repair/shortfall/bounded-index tests | Pending within Recon/Core extraction |
 | O2 | Fully integrated arbitrary ETH debit | AC-0..7 | Shared-nonce, 0/1/32/67, whole-reservation cancellation and surviving reconciliation invariants | Pending within constellation integration |
 | P0 | Pool/vault interface and deterministic address/latch ceremony | approved SGP | ABI/circular-deployment and code-pin review | Pending |
@@ -218,7 +231,7 @@ flowchart TD
 | G2 | Finalized journal, crash/reorg recovery, controller recovery/migration/checkpoints | G1, F | Reorg/crash/migration/checkpoint continuity tests | Pending |
 | B | Seven-day finalized OMR principal TWA and 1.50x max ruleset | G2 | Epoch/ruleset/tie/collision/TWA tests | Pending |
 | P1 | Permissionless settlement and community gas hook integration | G1, F, P0 | Winner/replay/zero-loot/partial/empty/hook-isolation tests | Pending |
-| D | Atomic-unit allocation, deeds, holds, FIFO delivery, operations gas | CN-6, H2, R, B | Conservation/property-binding/finality/per-item isolation tests | Pending |
+| D | Atomic-unit allocation, deeds, holds, FIFO delivery, operations gas | CN-6B, H2, R, B | Conservation/property-binding/finality/per-item isolation tests | Pending |
 | U-domain | Complete public/operator APIs, workers, alerts, exports | Each domain | Auth/idempotency/bounds/stable-error/authority matrix tests | Pending |
 | U-console | Graphical operations console | U-domain | Browser/accessibility/preview/persistent-red/finality visual tests | Pending |
 | X-global | Manifests, deploy scripts, rehearsals, docs/knowledge, security reviews | All nodes | Full Node/Forge/real-PG/static/knowledge/audit review | Pending |

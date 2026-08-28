@@ -4,7 +4,7 @@
 
 **Goal:** Extend the approved Finalized Observation kernel with immutable canonical event-block timestamps, then freeze the separate H2 and RegistryV2 consumer contracts without adding domain authority, reachability, signing, deployment, or cutover.
 
-**Architecture:** `observeFinalized` already fetches every unique event block to verify its hash. It will retain the canonical timestamp from that same exact block response as a frozen `eventBlocks` evidence array and include the array in the observation commitment. Task 5 continues to own only the complete getter mirror; future H2 and CN-6 consumers receive separate identities, checkpoints, inboxes, reducers, and atomic adapters.
+**Architecture:** `observeFinalized` already fetches every unique event block to verify its hash. It will retain the canonical timestamp from that same exact block response as a frozen `eventBlocks` evidence array and include the array in the observation commitment. Task 5 continues to own only the complete getter mirror; future CN-6A and H2 consumers receive separate identities, checkpoints, inboxes, reducers, and atomic adapters. CN-6B later reuses CN-6A's Registry lifecycle projection rather than adding a cursor.
 
 **Tech Stack:** Node.js ESM, viem-compatible public-client seams, native `node:assert`, PostgreSQL/pg-mem consumer tests, repository knowledge generator.
 
@@ -18,7 +18,7 @@
 - A trusted-RPC response is operational completeness evidence, not cryptographic proof of provider non-omission.
 - Event-block timestamps come only from the exact `getBlock({blockNumber})` response already used to prove each log block hash. They are never caller-supplied, inferred from the target head, fetched inside a database transaction, or copied from a receipt.
 - The event-time extension must preserve exact address/topic/range/order/hash validation, work/byte ceilings, target/finalized brackets, pinned getter capabilities, secret-safe fixed public errors, and deep immutability.
-- Task 5 getter evidence, future CN-6 lifecycle evidence, and future H2 clearance evidence never share consumer keys, checkpoints, inboxes, locks, readiness, or domain transitions.
+- Task 5 getter evidence, future CN-6A lifecycle evidence, and future H2 clearance evidence never share consumer keys, checkpoints, inboxes, locks, readiness, or domain transitions.
 - Provisional receipts and local wall-clock labels never authorize. Only a finalized exact event plus the owning consumer's atomic apply may change finalized domain state.
 - Production remains dormant: no environment value, address, signer, Safe action, RPC worker, route, funds, deployment, or feature selector is activated by this plan.
 
@@ -39,7 +39,7 @@
 4. A log-free observation has `eventBlocks: []`. Multiple logs in one block cause one exact block fetch/evidence entry, not one per log. A log whose declared block hash differs from the fetched block still fails before evidence is published.
 5. This extension does not alter FO inbox identity. Consumer inbox identity remains `(chainId, contractAddress, blockHash, transactionHash, logIndex)`; a typed consumer separately persists the matching event-block timestamp as evidence.
 6. There is no production migration requirement for Task 5 checkpoint commitments because the getter consumer is dormant and unscheduled. Compatibility tests must still prove the existing Task 5 consumer accepts the extended observation and preserves its categorical getter-only authority.
-7. CN-6 will use one registry-wide lifecycle cursor/adapter over all five ordered RegistryV2 topics. Activation and ballot application are transition helpers under that adapter, not separate coordinators.
+7. CN-6A will use one registry-wide lifecycle cursor/adapter over all five ordered RegistryV2 topics. Activation and ballot application are transition helpers under that adapter, not separate coordinators. CN-6B is the later publisher and must not add another lifecycle cursor.
 8. Unmatched canonical RegistryV2 events are retained as exact chain facts, advance the cursor, raise persistent public drift, and remain non-authorizing until exact local provenance matches. They do not wedge the whole registry stream.
 9. A future RegistryV2 publisher must persist the exact signed transaction bytes and canonical hash before broadcast and may rebroadcast only identical bytes. This plan adds no signer or broadcaster.
 10. Deep finalized checkpoint disagreement halts the affected consumer with a persistent incident. No automatic rewind, deletion, or fabricated replay is allowed; a later reviewed recovery node owns rebuild.
@@ -154,8 +154,8 @@
 
 **Interfaces:**
 
-- Consumes: approved Task-1 `eventBlocks` evidence; approved Task-5 getter mirror; H1/H2 recon; CN-6 recon.
-- Produces: exact plan-level contracts for H2 and CN-6. This task produces no runtime function, schema, route, worker, signer, funds path, deployment, or cutover.
+- Consumes: approved Task-1 `eventBlocks` evidence; approved Task-5 getter mirror; H1/H2 recon; CN-6A/CN-6B recon.
+- Produces: exact plan-level contracts for CN-6A, H2, and CN-6B. This task produces no runtime function, schema, route, worker, signer, funds path, deployment, or cutover.
 
 - [ ] **Step 1: Amend the FO handoff surface**
 
@@ -165,7 +165,7 @@
 
   Document top-level future entry point `syncFinalizedRwaHealthOverlay(pool)`, its own chain/address/start/topics/limits, `rwa_health_overlay_lock_v2`, checkpoint, raw+decoded inbox, overlay-generation reducer, and atomic clearance apply. State explicitly that it cannot read/advance the getter or registry-lifecycle cursor and that finalized clearance still requires a new post-finality health evaluation before green.
 
-- [ ] **Step 3: Freeze CN-6's one-cursor registry contract**
+- [ ] **Step 3: Freeze CN-6A's one-cursor registry contract**
 
   Document top-level future entry point `syncFinalizedRwaRegistryLifecycle(pool)` and helper signatures:
 
@@ -190,7 +190,7 @@
 
 - [ ] **Step 5: Correct graph/status truth**
 
-  Mark CN-5 and FO Tasks 1-5 implemented/independently approved/dormant; mark event-time evidence according to its actual review status; state H2 and AcquisitionVault budget provenance remain mandatory before CN-6 publisher reachability; state `RWA_STOCK_PIPELINE` is a future selector not yet implemented in production code.
+  Mark CN-5 and FO Tasks 1-5 implemented/independently approved/dormant; mark event-time evidence according to its actual review status; state CN-6A supplies read-only finalized activation generations before H2, while H2 and AcquisitionVault budget provenance remain mandatory before CN-6B publisher reachability; state `RWA_STOCK_PIPELINE` is a future selector not yet implemented in production code.
 
 - [ ] **Step 6: Run plan and knowledge verification**
 
@@ -205,7 +205,7 @@
 
 - [ ] **Step 7: Commit and independently review Task 2**
 
-  Review for accurate implementation/review/configuration/deployment/finality/activation status, exact separate-consumer boundaries, no duplicate scanner/cursor, no fabricated external evidence, and DAG consistency. This task completes the FO plan and unblocks the separately planned H0/H1/H2 implementation; it does not itself start CN-6 or production cutover.
+  Review for accurate implementation/review/configuration/deployment/finality/activation status, exact separate-consumer boundaries, no duplicate scanner/cursor, no fabricated external evidence, and DAG consistency. This task completes the FO plan and unblocks the separately planned CN-6A/H0/H1/H2/CN-6B implementation; it does not itself start those consumers or production cutover.
 
 ---
 
@@ -217,4 +217,3 @@ This plan is complete only when:
 - Task 2 has a documentation-only commit, independent approval, full native/knowledge verification, and a clean worktree;
 - the final report states separately what is implemented, reviewed, configured, deployed, Safe-executed, finalized, funded, and active;
 - no production signer, key, address, RPC worker, route, funds/token mutation, deployment, or selector activation has been introduced.
-
