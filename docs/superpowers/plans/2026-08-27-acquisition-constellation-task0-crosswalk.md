@@ -1,6 +1,6 @@
 # Acquisition Constellation Task 0 Crosswalk
 
-**Status:** normative Task 0 crosswalk; Task 1 topology/deployment development proof independently approved at `f6a21dcc` (C0/I0/M0); Task 2 Authority implementation/evidence independently approved through `0a46d048`, `03efc11a`, and integrated verifier `77c7359c` (C0/I0/M0), dormant and undeployed; Task 3 fresh-Core constellation pending
+**Status:** normative Task 0 crosswalk; Task 1 topology/deployment development proof independently approved at `f6a21dcc` (C0/I0/M0); Task 2 Authority implementation/evidence independently approved through `0a46d048`, `03efc11a`, and integrated verifier `77c7359c` (C0/I0/M0); Task 3 architecture approved at `23b58923`, Task 3A/3B implementation lineage completed through Core `cafdd9f1`, and verifier closure completed at `818d295a` with independent final reviews C0/I0/M0. The constellation remains dormant, undeployed, unfunded, and unactivated; Tasks 4–9, broader interview scope, and final A1/production approval remain pending.
 
 **Architecture source:** `2026-08-27-acquisition-constellation.md`
 
@@ -9,6 +9,11 @@
 **Frozen oracle:** Task 5 `AcquisitionVault` at runtime 23,212 bytes. Its ABI census is exactly 67 functions, 55 errors, 21 events, one constructor, and 144 total entries. Its semantic storage ends at mapping root 39. It has one payable function, `depositCanonical(bytes32)`, and no receive or fallback.
 
 This document assigns each legacy descriptor and semantic state item once. It does not authorize production contracts, deployment, or any later-node surface.
+
+Task 3 closure is supported by the isolated acquisition and Registry result of
+359/359 passing, exact Task 3 phase exit `0`, and conforming-complete
+`-ExpectTask0Red` exit `44`. These are Task 3 development and verifier facts,
+not deployment, funding, activation, final A1, or production evidence.
 
 ## Categories and collision rules
 

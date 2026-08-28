@@ -1,6 +1,6 @@
 # Acquisition Constellation Task 3 — Core and Cap-Bridge Architecture Freeze
 
-**Status:** architecture freeze independently approved at 23b58923 (security C0/I0/M0; specification C0/I0/M0); implementation, production approval, deployment, funding, migration, and activation remain pending
+**Status:** architecture freeze independently approved at `23b58923`; Task 3A and Task 3B implementation lineage culminates in Core `cafdd9f1`, with verifier closure at `818d295a`; independent final security and specification reviews are C0/I0/M0. The constellation remains dormant, undeployed, unfunded, and unactivated. Tasks 4–9, broader interview scope, and final A1/production approval remain pending.
 
 **Inputs:** the independently approved Task 0 ownership/collision crosswalk, the approved constellation architecture, the independently approved Task 2 closure at e89370b2, the approved historical Task 5 behavioral oracle at ee857436, and the grill-completion acceptance graph.
 
@@ -16,6 +16,20 @@ This node closes two dependency-ordered stages:
 Task 3A is an internal RED/GREEN checkpoint, not Task 3 completion. Task 3 closes only after the full Task 3B surface and the combined Factory/Authority/Core graph pass the verification matrix in this document.
 
 Task 3 does not add reservations, intents, adapter execution, reconciliation disposition, O2/outflow, repair, Stock Token observation, Stock Token aggregate mutation, token movement, or token delivery. Authority unpause remains deliberately fail-closed at readiness ordinal 11. Those later graph nodes cannot be pulled forward merely to make Task 3 appear production-ready.
+
+### Verified Task 3 closure evidence
+
+- Architecture approval: `23b58923`.
+- Task 3A and Task 3B implementation lineage through the final Core at `cafdd9f1`.
+- Integrated Task 3 verifier: `818d295a`.
+- Isolated acquisition and Registry verification: 359/359 passing.
+- Exact Task 3 phase verification: exit `0`; conforming-complete `-ExpectTask0Red`: exit `44`.
+- Independent final security and specification reviews: C0/I0/M0.
+
+This is development closure for Task 3 only. It does not prove deployment,
+funding, activation, final A1 acceptance, or production approval. The graph is
+dormant, undeployed, unfunded, and unactivated; Tasks 4–9 and the broader Grill
+interview scope remain pending.
 
 The exact ownership boundary after Task 3 is:
 
