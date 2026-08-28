@@ -10,6 +10,7 @@ import {
 import {
   commitFinalizedObservation, finalizedInboxIdentity, observeFinalized,
 } from './finalizedobservation.js';
+import { dbCaps } from './db.js';
 
 export const ROBINHOOD_CHAIN_ID_V2 = '4663';
 const FINALITY = 'finalized';
@@ -789,6 +790,147 @@ const unavailableBallotCatalog = (reason, config) => ({
   syncedAt: null,
   activeAssets: [],
 });
+
+function deepFreeze(value) {
+  if (value && typeof value === 'object' && !Object.isFrozen(value)) {
+    for (const child of Object.values(value)) deepFreeze(child);
+    Object.freeze(value);
+  }
+  return value;
+}
+
+const unavailableHealthCatalog = (reason, config) => deepFreeze({
+  available: false,
+  reason,
+  source: 'registry_unavailable',
+  finality: null,
+  chainId: ROBINHOOD_CHAIN_ID_V2,
+  registryAddress: config?.registryAddress?.toLowerCase() ?? ZERO_ADDRESS,
+  catalogVersion: '0',
+  catalogSnapshotHash: ZERO_HASH,
+  readyVerifiedAt: null,
+  historicalVersions: [],
+  activeVersions: [],
+});
+
+function healthAsset(row) {
+  const assetVersionKey = canonicalHash(row.asset_version_key, 'asset version key', { nonzero: true });
+  const ticker = normalizedTicker(row.ticker, { requireCanonical: true });
+  const tokenAddress = getAddress(row.token_address).toLowerCase();
+  const tokenDecimals = Number(row.token_decimals);
+  if (!Number.isInteger(tokenDecimals) || tokenDecimals < 0 || tokenDecimals > 255) {
+    throw new Error('malformed token decimals');
+  }
+  const active = row.active === true;
+  const registeredAt = isoTimestamp(row.registered_at);
+  const activatedAt = isoTimestamp(row.activated_at);
+  const deactivatedAt = row.deactivated_at == null ? null : isoTimestamp(row.deactivated_at);
+  if (!registeredAt || !activatedAt || (active ? deactivatedAt !== null : deactivatedAt === null)) {
+    throw new Error('malformed lifecycle timestamps');
+  }
+  return {
+    assetVersionKey,
+    normalizedTicker: ticker,
+    tokenAddress,
+    tokenDecimals,
+    robinhoodAssetIdHash: canonicalHash(row.robinhood_asset_id_hash, 'Robinhood asset id hash', { nonzero: true }),
+    active,
+    registeredAt,
+    activatedAt,
+    deactivatedAt,
+  };
+}
+
+// Caller-transaction-owned H1 Registry seam. It intentionally owns no connection or transaction.
+export async function finalizedStockCatalogForHealthV2(client, { observedEpochSeconds } = {}) {
+  if (!client || typeof client.query !== 'function') throw new Error('a checked-out query client is required');
+  const observedEpoch = typeof observedEpochSeconds === 'string' ? observedEpochSeconds : '';
+  if (!/^(?:0|[1-9][0-9]*)$/.test(observedEpoch)) {
+    throw new Error('exact observed DB epoch seconds are required');
+  }
+  const config = stockTokenRegistryV2ProductionConfig();
+  if (!config) return unavailableHealthCatalog('configuration', null);
+
+  await client.query(`SELECT id FROM stock_catalog_sync_lock_v2 WHERE id=1${dbCaps.skipLocked ? ' FOR SHARE' : ''}`);
+  const readState = async (marker) => (await client.query(
+    `SELECT chain_id,registry_address,catalog_version::text AS catalog_version,
+            snapshot_hash,ready_verified_at,caught_up,
+            (NOT caught_up OR ready_verified_at IS NULL
+             OR $1::numeric > EXTRACT(EPOCH FROM ready_verified_at) + 600) AS mirror_stale,
+            EXISTS (
+              SELECT 1 FROM stock_catalog_getter_checkpoint_v2 c
+               WHERE c.consumer_key=$2 AND c.chain_id::text=$3
+                 AND lower(c.contract_address)=lower($4)
+                 AND c.start_block_number::text=$5
+            ) AS getter_identity_matches
+       FROM stock_catalog_sync_state_v2 WHERE id=1 /* ${marker} */`,
+    [observedEpoch, GETTER_CONSUMER_KEY, ROBINHOOD_CHAIN_ID_V2,
+      config.registryAddress, config.startBlock],
+  )).rows[0];
+  const state = await readState('rwa_health_v2_catalog_state');
+  if (!state) return unavailableHealthCatalog('unsynchronized', config);
+  if (String(state.chain_id) !== ROBINHOOD_CHAIN_ID_V2
+      || !sameAddress(state.registry_address, config.registryAddress)
+      || state.getter_identity_matches !== true) return unavailableHealthCatalog('identity', config);
+  if (state.mirror_stale !== false) return unavailableHealthCatalog('stale', config);
+
+  let catalogVersion;
+  let catalogSnapshotHash;
+  let readyVerifiedAt;
+  try {
+    catalogVersion = canonicalUint(String(state.catalog_version), 256, 'catalog version');
+    catalogSnapshotHash = canonicalHash(state.snapshot_hash, 'catalog snapshot hash', { nonzero: true });
+    readyVerifiedAt = isoTimestamp(state.ready_verified_at);
+    if (!readyVerifiedAt) throw new Error('missing ready time');
+  } catch {
+    return unavailableHealthCatalog('malformed', config);
+  }
+
+  const rows = (await client.query(
+    `SELECT asset_version_key,ticker,token_address,token_decimals,robinhood_asset_id_hash,
+            active,registered_at,activated_at,deactivated_at
+       FROM stock_asset_versions_v2
+      WHERE chain_id=4663
+      ORDER BY asset_version_key ASC /* rwa_health_v2_all_versions */`,
+  )).rows;
+  const confirmed = await readState('rwa_health_v2_catalog_confirm');
+  if (!confirmed
+      || String(confirmed.chain_id) !== ROBINHOOD_CHAIN_ID_V2
+      || !sameAddress(confirmed.registry_address, config.registryAddress)
+      || String(confirmed.catalog_version) !== catalogVersion
+      || String(confirmed.snapshot_hash).toLowerCase() !== catalogSnapshotHash
+      || confirmed.mirror_stale !== false
+      || confirmed.getter_identity_matches !== true) {
+    return unavailableHealthCatalog('changed', config);
+  }
+
+  const historicalVersions = [];
+  const activeVersions = [];
+  try {
+    let priorKey = null;
+    for (const row of rows) {
+      const asset = healthAsset(row);
+      if (priorKey !== null && asset.assetVersionKey <= priorKey) throw new Error('duplicate or unordered version');
+      priorKey = asset.assetVersionKey;
+      (asset.active ? activeVersions : historicalVersions).push(asset);
+    }
+  } catch {
+    return unavailableHealthCatalog('malformed', config);
+  }
+  return deepFreeze({
+    available: true,
+    reason: null,
+    source: SOURCE,
+    finality: FINALITY,
+    chainId: ROBINHOOD_CHAIN_ID_V2,
+    registryAddress: config.registryAddress.toLowerCase(),
+    catalogVersion,
+    catalogSnapshotHash,
+    readyVerifiedAt,
+    historicalVersions,
+    activeVersions,
+  });
+}
 
 // Transaction-scoped Task 5 catalog seam. Unlike approvedStockTokenCatalogV2(), this helper never
 // connects, begins, commits, or releases: the caller supplies the checked-out query client so the

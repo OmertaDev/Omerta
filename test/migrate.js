@@ -9,8 +9,8 @@ import assert from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { newDb } from 'pg-mem';
-import { columnMigrations, migrateColumns } from '../src/db.js';
+import { DataType, newDb } from 'pg-mem';
+import { columnMigrations, migrateColumns, registerPgMemCompatibility } from '../src/db.js';
 import * as dbModule from '../src/db.js';
 import { srcText } from './lib/srcfiles.js';
 
@@ -98,6 +98,7 @@ CREATE TABLE ticker_ballot_results_v2 (
 // It must not gain invented activation or closed-vote evidence merely because a new binary booted.
 {
   const legacy = newDb();
+  registerPgMemCompatibility(legacy, DataType);
   const { Pool: LegacyPool } = legacy.adapters.createPg();
   const legacyPool = new LegacyPool();
   await legacyPool.query(LEGACY_TASK5_SCHEMA);
@@ -245,6 +246,7 @@ CREATE TABLE ticker_ballot_results_v2 (
 // PostgreSQL additionally supplies transactional DDL rollback for any later constraint failure.
 {
   const invalid = newDb();
+  registerPgMemCompatibility(invalid, DataType);
   const { Pool: InvalidPool } = invalid.adapters.createPg();
   const invalidPool = new InvalidPool();
   await invalidPool.query(LEGACY_TASK5_SCHEMA);
@@ -292,6 +294,7 @@ CREATE TABLE ticker_ballot_results_v2 (
 
 {
   const broken = newDb();
+  registerPgMemCompatibility(broken, DataType);
   const { Pool: BrokenPool } = broken.adapters.createPg();
   const brokenPool = new BrokenPool();
   await brokenPool.query(LEGACY_TASK5_SCHEMA);
@@ -347,6 +350,7 @@ assert(idStmt && !/PRIMARY KEY/i.test(idStmt), 'column-level PRIMARY KEY is stri
 
 // ── 2. clean no-op on a FRESH DB (every column already exists) ──
 const mem = newDb();
+registerPgMemCompatibility(mem, DataType);
 const { Pool } = mem.adapters.createPg();
 const pool = new Pool();
 await pool.query(SCHEMA);
@@ -360,6 +364,7 @@ await dbModule.migrateTask5BallotV2(pool, { compatibility: 'pg-mem' });
 // schema -> generic safe columns -> targeted fail-closed authority -> schema stamp.
 {
   const bootMem = newDb();
+  registerPgMemCompatibility(bootMem, DataType);
   const { Pool: BootPool } = bootMem.adapters.createPg();
   const bootPool = new BootPool();
   const statements = [];

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { Pool } from 'pg';
-import { getAddress, keccak256, toBytes } from 'viem';
+import { getAddress, keccak256, stringToHex, toBytes } from 'viem';
 import {
   __setStockTokenRegistryV2Reader,
   computeStockAssetVersionKey,
@@ -11,6 +11,8 @@ import {
 
 const databaseUrl = process.env.RWA_HEALTH_TEST_DATABASE_URL;
 if (!databaseUrl) {
+  assert.notEqual(process.env.CI, 'true',
+    'RWA_HEALTH_TEST_DATABASE_URL is required when the real-PostgreSQL H1 lane runs in CI');
   console.log('SKIP rwa health real PostgreSQL: RWA_HEALTH_TEST_DATABASE_URL is not set');
   process.exitCode = 0;
 } else {
@@ -18,7 +20,10 @@ if (!databaseUrl) {
   assert(['postgres:', 'postgresql:'].includes(parsed.protocol) && parsed.pathname.slice(1),
     'RWA_HEALTH_TEST_DATABASE_URL must name an explicit PostgreSQL database');
 
-  const { sweepRwaHealth, requireFreshRwaHealth } = await import('../src/rwahealth.js');
+  const { dbCaps } = await import('../src/db.js');
+  dbCaps.skipLocked = true;
+  const { sweepRwaHealth } = await import('../src/rwahealthsweep.js');
+  const { requireFreshRwaHealth } = await import('../src/rwahealthread.js');
   assert.equal(typeof sweepRwaHealth, 'function', 'H1 RED: sweepRwaHealth export is absent');
   assert.equal(typeof requireFreshRwaHealth, 'function', 'H1 RED: requireFreshRwaHealth export is absent');
 
@@ -38,6 +43,20 @@ if (!databaseUrl) {
       new Promise((resolve) => setTimeout(() => resolve(marker), 150)),
     ]);
     assert.equal(result, marker, message);
+  }
+
+  function recordingPool(base, statements) {
+    const record = (sql) => statements.push(String(sql).replace(/\s+/g, ' ').trim());
+    return {
+      query(sql, params) { record(sql); return base.query(sql, params); },
+      async connect() {
+        const client = await base.connect();
+        return {
+          query(sql, params) { record(sql); return client.query(sql, params); },
+          release() { client.release(); },
+        };
+      },
+    };
   }
 
   try {
@@ -124,7 +143,7 @@ if (!databaseUrl) {
       const id = `0x${index.toString(16).padStart(64, '0')}`;
       const ticker = `T${index}`;
       const tokenAddress = getAddress(`0x${(index + 1).toString(16).padStart(40, '0')}`);
-      const robinhoodAssetIdHash = keccak256(toBytes(id));
+      const robinhoodAssetIdHash = keccak256(stringToHex(id));
       const catalogAsset = {
         chainId: '4663', ticker, tickerHash: keccak256(toBytes(ticker)), name: `${ticker} Token`,
         tokenAddress, tokenDecimals: 18, robinhoodAssetIdHash, registryIndex: String(index), active: true,
@@ -156,6 +175,12 @@ if (!databaseUrl) {
       },
     }));
     await syncFinalizedStockCatalogV2(pool);
+    await pool.query(`INSERT INTO stock_catalog_getter_checkpoint_v2
+      (consumer_key,chain_id,contract_address,start_block_number,last_applied_block_number,
+       last_applied_block_hash,last_observation_hash,finalized_horizon_number,
+       finalized_horizon_hash,caught_up,verified_at,ready_verified_at)
+      VALUES ('stock_catalog_getter_v2',4663,$1,1,100,$2,$3,100,$2,true,now(),now())`,
+    [registryAddress, h('f'), h('e')]);
 
     const body = Buffer.from(JSON.stringify({ assets: providerAssets }));
     const fetchFn = async () => new Response(body, {
@@ -163,12 +188,19 @@ if (!databaseUrl) {
       headers: { 'content-type': 'application/json', 'content-length': String(body.length) },
     });
     const started = process.hrtime.bigint();
-    const result = await sweepRwaHealth(pool, { fetchFn });
+    const productionSql = [];
+    const result = await sweepRwaHealth(recordingPool(pool, productionSql), { fetchFn });
     const elapsedMs = Number(process.hrtime.bigint() - started) / 1e6;
     assert(elapsedMs < 240_000, `2,048-version H1 sweep exceeded 240 seconds: ${elapsedMs}ms`);
     assert.equal(result?.status, 'complete', 'H1 RED: bounded sweep did not complete');
     assert.equal(Number(result?.activeVersionCount), 2048);
     assert.equal(Number(result?.pageCount), 8);
+    const issued = productionSql.join('\n');
+    assert.match(issued, /stock_catalog_sync_lock_v2 WHERE id=1 FOR SHARE/i);
+    assert.match(issued, /rwa_health_apply_lock_v2 WHERE id=1 FOR UPDATE/i);
+    assert.match(issued, /rwa_health_batches_v2[\s\S]*FOR UPDATE/i);
+    assert.match(issued, /rwa_health_current_v2[\s\S]*FOR UPDATE/i);
+    assert.match(issued, /date_trunc\('milliseconds',clock_timestamp\(\)\)/i);
 
     console.log('PASS rwa health real PostgreSQL: locks, constraints, input isolation, 2,048 budget');
   } finally {
@@ -176,6 +208,7 @@ if (!databaseUrl) {
     delete process.env.CHAIN_RPC_URL;
     delete process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
     delete process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK;
+    dbCaps.skipLocked = false;
     if (pool) await pool.end().catch(() => {});
     await admin.query(`DROP SCHEMA IF EXISTS ${quotedSchema} CASCADE`).catch(() => {});
     await admin.end().catch(() => {});

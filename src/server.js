@@ -6,6 +6,7 @@ import zlib from 'node:zlib';
 import { makeDb } from './db.js';
 import { isDbDown, pingDb } from './dbhealth.js';
 import { preflight } from './preflight.js';
+import { RwaHealthError } from './rwahealtherror.js';
 import * as G from './game.js';
 import * as E from './economy.js';
 import * as S from './social.js';
@@ -657,6 +658,7 @@ export async function buildServer() {
   });
 
   app.setErrorHandler((err, req, reply) => {
+    if (err instanceof RwaHealthError) return reply.code(400).send({ error: err.code });
     if (err instanceof G.GameError) return reply.code(400).send({ error: err.code, message: err.message, ...(err.data || {}) });
     // A bad token is a bad token — 401, never 500. Most fast-jwt errors already arrive carrying a 401,
     // but not all: FAST_JWT_INVALID_ALGORITHM (raised by the pinned `algorithms` above when a token is

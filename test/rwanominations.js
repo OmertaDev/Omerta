@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { newDb } from 'pg-mem';
+import { DataType, newDb } from 'pg-mem';
 import { getAddress, keccak256, toBytes } from 'viem';
-import { makeDb } from '../src/db.js';
+import { makeDb, registerPgMemCompatibility } from '../src/db.js';
 import { computeStockAssetVersionKey } from '../src/stockcatalogv2.js';
 import {
   claimRwaNominationReview,
@@ -152,6 +152,7 @@ async function rejectsCode(promise, code, label) {
 
 async function rollbackCapableFixture() {
   const mem = newDb();
+  registerPgMemCompatibility(mem, DataType);
   const { Pool } = mem.adapters.createPg();
   const pool = new Pool();
   await pool.query(SCHEMA);

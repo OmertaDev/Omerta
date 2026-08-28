@@ -752,7 +752,6 @@ if (readerEnvironment.registry === undefined) delete process.env.STOCK_TOKEN_REG
 else process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = readerEnvironment.registry;
 if (readerEnvironment.startBlock === undefined) delete process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK;
 else process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK = readerEnvironment.startBlock;
-await readerPool.end?.();
 __setStockTokenRegistryV2Reader(async () => observation());
 
 const beforeFailure = JSON.stringify(await approvedStockTokenCatalogV2(pool));
@@ -1327,6 +1326,14 @@ assert.equal(packageJson.scripts['stock-catalog-v2'], 'node tools/robinhood-stoc
 // H1 RED: the health reader is a distinct, caller-transaction-owned Registry seam.
 assert.equal(typeof stockCatalogV2.finalizedStockCatalogForHealthV2, 'function',
   'H1 exports the exact finalizedStockCatalogForHealthV2(client,{ observedEpochSeconds }) seam');
+const healthReaderEnvironment = {
+  rpc: process.env.CHAIN_RPC_URL,
+  registry: process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS,
+  startBlock: process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK,
+};
+process.env.CHAIN_RPC_URL = 'https://configured-rpc.invalid';
+process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = CASED_REGISTRY;
+process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK = '97';
 let healthConnects = 0;
 const healthClient = {
   query: (...args) => readerPool.query(...args),
@@ -1343,7 +1350,7 @@ assert.deepEqual(Object.keys(healthCatalog), [
   'available', 'reason', 'source', 'finality', 'chainId', 'registryAddress', 'catalogVersion',
   'catalogSnapshotHash', 'readyVerifiedAt', 'historicalVersions', 'activeVersions',
 ], 'health catalog success has the exact closed top-level schema');
-assert.equal(healthCatalog.available, true);
+assert.equal(healthCatalog.available, true, `health catalog unavailable: ${healthCatalog.reason}`);
 assert.equal(healthCatalog.reason, null);
 assert.equal(healthCatalog.source, 'robinhood_chain_registry_v2');
 assert.equal(healthCatalog.finality, 'finalized');
@@ -1372,9 +1379,16 @@ assert(Object.isFrozen(unavailableHealth) && Object.isFrozen(unavailableHealth.a
   'health catalog unavailable result is recursively frozen and exposes no partial mirror');
 assert.equal(JSON.stringify(unavailableHealth).includes('query'), false,
   'health result exposes neither query capability nor transport internals');
+if (healthReaderEnvironment.rpc === undefined) delete process.env.CHAIN_RPC_URL;
+else process.env.CHAIN_RPC_URL = healthReaderEnvironment.rpc;
+if (healthReaderEnvironment.registry === undefined) delete process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS;
+else process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = healthReaderEnvironment.registry;
+if (healthReaderEnvironment.startBlock === undefined) delete process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK;
+else process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK = healthReaderEnvironment.startBlock;
 
 __setStockTokenRegistryV2Reader(null);
 await emptyPool.end?.();
 await sameVersionPool.end?.();
+await readerPool.end?.();
 await pool.end?.();
 console.log('✅ stock catalog v2: canonical keys/calldata, finalized complete mirror, atomic LKG, stale fail-closed, unsigned CLI');

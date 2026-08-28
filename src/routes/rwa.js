@@ -14,6 +14,8 @@ import { GameError } from '../game.js';
 import { openTickerBallotV2 } from '../commission.js';
 import { checkAuthRateLimit, rateLimitsEnabled } from '../ratelimit.js';
 import { normalizeRwaReviewerConfig } from '../preflight.js';
+import { rwaHealthBoard, rwaHealthDetail } from '../rwahealthread.js';
+import { enterRwaHealthReview } from '../rwahealthreview.js';
 
 const ZERO_ADDRESS = /^0x0{40}$/i;
 const fail = (code, message) => { throw new GameError(code, message); };
@@ -136,6 +138,8 @@ function reviewerMutation(pool, handler) {
     }
     let handlerReturned = false;
     try {
+      req.rwaReviewerTransportKeyHash = crypto.createHash('sha256')
+        .update(reservation.key, 'utf8').digest('hex');
       const result = await handler(req, reply);
       // Once the domain handler returns, its owned transaction may already be committed. From this
       // point onward the reservation is an uncertainty latch: completion-storage failure must never
@@ -240,6 +244,24 @@ export function registerRwa(app, { pool, auth, modAuth, withCharacter, reviewerR
     preHandler: rwaReviewerAuth,
     handler: reviewerMutation(pool, handler),
   });
+  app.get('/v1/rwa/health', async (req) => {
+    const query = exactQuery(req.query, ['state', 'limit', 'cursor']);
+    return rwaHealthBoard(pool, {
+      state: query.state,
+      limit: query.limit == null ? undefined : Number(query.limit),
+      cursor: query.cursor,
+    });
+  });
+  app.get('/v1/rwa/health/:assetVersionKey', async (req) => (
+    rwaHealthDetail(pool, req.params.assetVersionKey)
+  ));
+  app.post('/v1/rwa/reviewer/health/:assetVersionKey/enter', reviewerPost(async (req) => {
+    const body = exactBody(req.body, ['state', 'ruleCode', 'reasonHash', 'evidenceHash']);
+    return enterRwaHealthReview(
+      pool, req.params.assetVersionKey, req.rwaReviewerId,
+      req.rwaReviewerTransportKeyHash, body,
+    );
+  }));
   app.post('/v1/rwa/reviewer/nominations/:id/claim', reviewerPost(async (req) => {
     if (req.body != null && (typeof req.body !== 'object' || Array.isArray(req.body) || Object.keys(req.body).length)) {
       fail('bad_body', 'Claim takes no body fields.');

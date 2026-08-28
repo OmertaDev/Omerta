@@ -4307,3 +4307,463 @@ CREATE TABLE IF NOT EXISTS schema_meta (
   schema_sha TEXT NOT NULL,
   applied_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- RWA HEALTH H1 — server-authoritative operational observations and sticky blockers.
+CREATE TABLE IF NOT EXISTS rwa_health_apply_lock_v2 (
+  id SMALLINT PRIMARY KEY CHECK (id = 1),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+INSERT INTO rwa_health_apply_lock_v2 (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS rwa_health_runtime_v2 (
+  chain_id INT NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT PRIMARY KEY CHECK (char_length(registry_address) = 42),
+  catalog_version NUMERIC(78,0) CHECK (catalog_version >= 0),
+  catalog_snapshot_hash TEXT CHECK (catalog_snapshot_hash IS NULL OR char_length(catalog_snapshot_hash) = 66),
+  active_version_count INT CHECK (active_version_count IS NULL OR active_version_count >= 0),
+  capacity_exceeded BOOLEAN NOT NULL DEFAULT false,
+  last_attempted_slot NUMERIC(78,0) CHECK (last_attempted_slot >= 0),
+  last_completed_slot NUMERIC(78,0) CHECK (last_completed_slot >= 0),
+  missed_slot_count BIGINT NOT NULL DEFAULT 0 CHECK (missed_slot_count >= 0),
+  last_error_code TEXT CHECK (last_error_code IS NULL OR last_error_code IN
+    ('health_registry_unavailable','health_registry_stale','health_capacity_exceeded',
+     'health_slot_conflict','health_snapshot_changed','health_provider_timeout',
+     'health_provider_http','health_provider_oversized','health_provider_malformed')),
+  updated_at TIMESTAMPTZ NOT NULL,
+  CHECK ((active_version_count IS NULL AND capacity_exceeded = false)
+      OR (active_version_count IS NOT NULL
+          AND capacity_exceeded = (active_version_count > 2048))),
+  CHECK (last_completed_slot IS NULL
+      OR (last_attempted_slot IS NOT NULL AND last_completed_slot <= last_attempted_slot))
+);
+
+CREATE TABLE IF NOT EXISTS rwa_health_batches_v2 (
+  batch_id TEXT PRIMARY KEY CHECK (char_length(batch_id) = 66),
+  chain_id INT NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  catalog_version NUMERIC(78,0) NOT NULL CHECK (catalog_version >= 0),
+  catalog_snapshot_hash TEXT NOT NULL CHECK (char_length(catalog_snapshot_hash) = 66),
+  active_set_hash TEXT NOT NULL CHECK (char_length(active_set_hash) = 66),
+  rule_set_hash TEXT NOT NULL CHECK (char_length(rule_set_hash) = 66),
+  provider_endpoint_hash TEXT NOT NULL CHECK (char_length(provider_endpoint_hash) = 66),
+  provider_commitment TEXT NOT NULL CHECK (char_length(provider_commitment) = 66),
+  cycle_slot NUMERIC(78,0) NOT NULL CHECK (cycle_slot >= 0),
+  source_state TEXT NOT NULL CHECK (source_state IN ('observed','unknown')),
+  failure_code TEXT CHECK (failure_code IS NULL OR failure_code IN
+    ('provider_timeout','provider_redirect','provider_http','provider_content_type',
+     'provider_content_encoding','provider_oversized','provider_utf8','provider_json',
+     'provider_shape','provider_identity_malformed','provider_identity_duplicate')),
+  observed_at TIMESTAMPTZ NOT NULL,
+  fetch_completed_at TIMESTAMPTZ NOT NULL,
+  active_version_count INT NOT NULL CHECK (active_version_count BETWEEN 0 AND 2048),
+  declared_page_count SMALLINT NOT NULL CHECK (declared_page_count BETWEEN 0 AND 8),
+  applied_page_count SMALLINT NOT NULL DEFAULT 0 CHECK (applied_page_count BETWEEN 0 AND 8),
+  applied_item_count INT NOT NULL DEFAULT 0 CHECK (applied_item_count BETWEEN 0 AND 2048),
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','complete','abandoned')),
+  completed_at TIMESTAMPTZ,
+  abandoned_at TIMESTAMPTZ,
+  abandoned_code TEXT,
+  CHECK (fetch_completed_at >= observed_at),
+  CHECK ((source_state = 'observed' AND failure_code IS NULL)
+      OR (source_state = 'unknown' AND failure_code IS NOT NULL)),
+  CHECK ((active_version_count = 0 AND declared_page_count = 0)
+      OR (active_version_count > 0 AND declared_page_count = ((active_version_count + 255) / 256))),
+  CHECK (applied_page_count <= declared_page_count),
+  CHECK (applied_item_count <= active_version_count),
+  CHECK ((status = 'complete' AND completed_at IS NOT NULL
+          AND abandoned_at IS NULL AND abandoned_code IS NULL
+          AND applied_page_count = declared_page_count
+          AND applied_item_count = active_version_count)
+      OR (status = 'pending' AND completed_at IS NULL
+          AND abandoned_at IS NULL AND abandoned_code IS NULL)
+      OR (status = 'abandoned' AND completed_at IS NULL
+          AND abandoned_at IS NOT NULL AND abandoned_code IN
+            ('health_snapshot_changed','health_registry_stale'))),
+  UNIQUE (batch_id,chain_id,registry_address,catalog_version,catalog_snapshot_hash),
+  UNIQUE (batch_id,provider_commitment,source_state)
+);
+CREATE UNIQUE INDEX ux_rwa_health_cycle_v2 ON rwa_health_batches_v2
+  (chain_id,registry_address,catalog_version,catalog_snapshot_hash,rule_set_hash,
+   provider_endpoint_hash,cycle_slot);
+CREATE UNIQUE INDEX ux_rwa_health_one_pending_batch_v2 ON rwa_health_batches_v2
+  (chain_id,registry_address) WHERE status = 'pending';
+
+CREATE TABLE IF NOT EXISTS rwa_health_private_provider_evidence_v2 (
+  batch_id TEXT PRIMARY KEY,
+  raw_body_hash TEXT NOT NULL CHECK (char_length(raw_body_hash) = 66),
+  source_state TEXT NOT NULL DEFAULT 'observed' CHECK (source_state = 'observed'),
+  byte_count INT NOT NULL CHECK (byte_count BETWEEN 0 AND 2000000),
+  body_bytes BYTEA NOT NULL,
+  captured_at TIMESTAMPTZ NOT NULL,
+  retain_until TIMESTAMPTZ NOT NULL,
+  FOREIGN KEY (batch_id,raw_body_hash,source_state)
+    REFERENCES rwa_health_batches_v2(batch_id,provider_commitment,source_state)
+    ON DELETE RESTRICT,
+  CHECK (byte_count = octet_length(body_bytes)),
+  CHECK (retain_until >= captured_at + interval '35 days')
+);
+
+CREATE TABLE IF NOT EXISTS rwa_health_pages_v2 (
+  page_id TEXT PRIMARY KEY CHECK (char_length(page_id) = 66),
+  batch_id TEXT NOT NULL REFERENCES rwa_health_batches_v2(batch_id) ON DELETE RESTRICT,
+  page_index SMALLINT NOT NULL CHECK (page_index BETWEEN 0 AND 7),
+  first_asset_version_key TEXT NOT NULL CHECK (char_length(first_asset_version_key) = 66),
+  last_asset_version_key TEXT NOT NULL CHECK (char_length(last_asset_version_key) = 66),
+  item_count SMALLINT NOT NULL CHECK (item_count BETWEEN 1 AND 256),
+  status TEXT NOT NULL DEFAULT 'planned' CHECK (status IN ('planned','applied')),
+  applied_at TIMESTAMPTZ,
+  UNIQUE (batch_id,page_index),
+  UNIQUE (batch_id,page_id),
+  CHECK (first_asset_version_key <= last_asset_version_key),
+  CHECK ((status = 'planned' AND applied_at IS NULL)
+      OR (status = 'applied' AND applied_at IS NOT NULL))
+);
+
+CREATE TABLE IF NOT EXISTS rwa_health_evaluations_v2 (
+  evaluation_id TEXT PRIMARY KEY CHECK (char_length(evaluation_id) = 66),
+  batch_id TEXT NOT NULL,
+  page_id TEXT NOT NULL,
+  chain_id INT NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  catalog_version NUMERIC(78,0) NOT NULL CHECK (catalog_version >= 0),
+  catalog_snapshot_hash TEXT NOT NULL CHECK (char_length(catalog_snapshot_hash) = 66),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  normalized_ticker TEXT NOT NULL,
+  token_address TEXT NOT NULL CHECK (char_length(token_address) = 42),
+  token_decimals SMALLINT NOT NULL CHECK (token_decimals BETWEEN 0 AND 255),
+  robinhood_asset_id_hash TEXT NOT NULL CHECK (char_length(robinhood_asset_id_hash) = 66),
+  expected_identity_hash TEXT NOT NULL CHECK (char_length(expected_identity_hash) = 66),
+  evaluation_kind TEXT NOT NULL CHECK (evaluation_kind IN
+    ('healthy','health_unknown','operational_quarantine')),
+  predicate_commitment TEXT NOT NULL CHECK (char_length(predicate_commitment) = 66),
+  provider_record SMALLINT NOT NULL CHECK (provider_record BETWEEN 0 AND 2),
+  supported_chain SMALLINT NOT NULL CHECK (supported_chain BETWEEN 0 AND 2),
+  ticker_identity SMALLINT NOT NULL CHECK (ticker_identity BETWEEN 0 AND 2),
+  token_identity SMALLINT NOT NULL CHECK (token_identity BETWEEN 0 AND 2),
+  token_decimals_result SMALLINT NOT NULL CHECK (token_decimals_result BETWEEN 0 AND 2),
+  provider_active SMALLINT NOT NULL CHECK (provider_active BETWEEN 0 AND 2),
+  fractional_tradable SMALLINT NOT NULL CHECK (fractional_tradable BETWEEN 0 AND 2),
+  evidence_hash TEXT NOT NULL CHECK
+    (char_length(evidence_hash) = 66 AND evidence_hash <> '0x0000000000000000000000000000000000000000000000000000000000000000'),
+  observed_at TIMESTAMPTZ NOT NULL,
+  status TEXT NOT NULL DEFAULT 'planned' CHECK (status IN ('planned','applied')),
+  applied_at TIMESTAMPTZ,
+  UNIQUE (batch_id,asset_version_key),
+  UNIQUE (page_id,asset_version_key),
+  UNIQUE (registry_address,asset_version_key,evaluation_id),
+  UNIQUE (registry_address,asset_version_key,catalog_version,catalog_snapshot_hash,evaluation_id),
+  UNIQUE (registry_address,asset_version_key,evaluation_id,evaluation_kind,evidence_hash),
+  UNIQUE (registry_address,asset_version_key,evaluation_id,status),
+  UNIQUE (registry_address,asset_version_key,evaluation_id,status,evaluation_kind,evidence_hash),
+  UNIQUE (registry_address,asset_version_key,catalog_version,catalog_snapshot_hash,evaluation_id,status),
+  UNIQUE (registry_address,asset_version_key,evaluation_id,status,
+          evaluation_kind,observed_at,applied_at,evidence_hash),
+  UNIQUE (registry_address,asset_version_key,catalog_version,catalog_snapshot_hash,
+          evaluation_id,status,evaluation_kind,observed_at,applied_at,evidence_hash),
+  FOREIGN KEY (batch_id,page_id)
+    REFERENCES rwa_health_pages_v2(batch_id,page_id) ON DELETE RESTRICT,
+  FOREIGN KEY (batch_id,chain_id,registry_address,catalog_version,catalog_snapshot_hash)
+    REFERENCES rwa_health_batches_v2
+      (batch_id,chain_id,registry_address,catalog_version,catalog_snapshot_hash)
+    ON DELETE RESTRICT,
+  CHECK ((status = 'planned' AND applied_at IS NULL)
+      OR (status = 'applied' AND applied_at >= observed_at))
+);
+CREATE INDEX ix_rwa_health_eval_asset_v2 ON rwa_health_evaluations_v2
+  (registry_address,asset_version_key,applied_at DESC NULLS LAST,evaluation_id DESC)
+  WHERE status = 'applied';
+
+CREATE TABLE IF NOT EXISTS rwa_health_reviewer_actions_v2 (
+  reviewer_action_id TEXT PRIMARY KEY CHECK (char_length(reviewer_action_id) = 66),
+  chain_id INT NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  target_episode_id TEXT NOT NULL CHECK (char_length(target_episode_id) = 66),
+  target_episode_generation NUMERIC(78,0) NOT NULL CHECK (target_episode_generation > 0),
+  requested_state TEXT NOT NULL CHECK (requested_state IN
+    ('health_unknown','operational_quarantine')),
+  rule_code TEXT NOT NULL CHECK (rule_code IN
+    ('reviewer_material_drift','reviewer_verification_unknown')),
+  reason_hash TEXT NOT NULL CHECK
+    (char_length(reason_hash) = 66 AND reason_hash <> '0x0000000000000000000000000000000000000000000000000000000000000000'),
+  evidence_hash TEXT NOT NULL CHECK
+    (char_length(evidence_hash) = 66 AND evidence_hash <> '0x0000000000000000000000000000000000000000000000000000000000000000'),
+  reviewer_id TEXT NOT NULL,
+  first_transport_key_hash TEXT NOT NULL CHECK (char_length(first_transport_key_hash) = 64),
+  requested_at TIMESTAMPTZ NOT NULL,
+  applied_at TIMESTAMPTZ NOT NULL,
+  outcome TEXT NOT NULL CHECK (outcome IN ('opened','escalated','evidence_only')),
+  CHECK (applied_at >= requested_at),
+  CHECK ((requested_state = 'operational_quarantine'
+          AND rule_code = 'reviewer_material_drift')
+      OR (requested_state = 'health_unknown'
+          AND rule_code = 'reviewer_verification_unknown')),
+  UNIQUE (target_episode_id,registry_address,asset_version_key,
+           target_episode_generation,reviewer_action_id),
+  UNIQUE (target_episode_id,registry_address,asset_version_key,
+          target_episode_generation,reviewer_action_id,requested_state,rule_code),
+  UNIQUE (target_episode_id,registry_address,asset_version_key,
+          target_episode_generation,reviewer_action_id,requested_state,evidence_hash),
+  UNIQUE (target_episode_id,registry_address,asset_version_key,
+          target_episode_generation,reviewer_action_id,requested_state,rule_code,evidence_hash),
+  UNIQUE (target_episode_id,registry_address,asset_version_key,
+          target_episode_generation,reviewer_action_id,requested_state,evidence_hash,outcome)
+);
+
+CREATE TABLE IF NOT EXISTS rwa_health_episodes_v2 (
+  episode_id TEXT PRIMARY KEY CHECK (char_length(episode_id) = 66),
+  chain_id INT NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  generation NUMERIC(78,0) NOT NULL CHECK (generation > 0),
+  initial_state TEXT NOT NULL CHECK (initial_state IN
+    ('health_unknown','operational_quarantine')),
+  opened_at TIMESTAMPTZ NOT NULL,
+  opening_evaluation_id TEXT,
+  opening_evaluation_status TEXT CHECK
+    (opening_evaluation_status IS NULL OR opening_evaluation_status = 'applied'),
+  opening_reviewer_action_id TEXT,
+  opening_rule_code TEXT NOT NULL CHECK (opening_rule_code IN
+    ('provider_record','supported_chain','ticker_identity','token_identity',
+     'token_decimals','provider_active','fractional_tradable',
+     'reviewer_material_drift','reviewer_verification_unknown')),
+  opening_reason_hash TEXT NOT NULL CHECK
+    (char_length(opening_reason_hash) = 66 AND opening_reason_hash <> '0x0000000000000000000000000000000000000000000000000000000000000000'),
+  opening_evidence_hash TEXT NOT NULL CHECK
+    (char_length(opening_evidence_hash) = 66 AND opening_evidence_hash <> '0x0000000000000000000000000000000000000000000000000000000000000000'),
+  clearance_id TEXT,
+  clearance_generation NUMERIC(78,0),
+  clearance_block_number NUMERIC(78,0),
+  clearance_block_hash TEXT,
+  clearance_applied_at TIMESTAMPTZ,
+  terminal_status TEXT CHECK (terminal_status IS NULL OR terminal_status IN
+    ('healthy_after_clearance','post_clearance_failure_superseded')),
+  terminal_evaluation_id TEXT,
+  terminal_evaluation_status TEXT CHECK
+    (terminal_evaluation_status IS NULL OR terminal_evaluation_status = 'applied'),
+  terminal_evaluation_kind TEXT CHECK (terminal_evaluation_kind IS NULL OR terminal_evaluation_kind IN
+    ('healthy','health_unknown','operational_quarantine')),
+  terminal_evaluation_evidence_hash TEXT,
+  closed_at TIMESTAMPTZ,
+  UNIQUE (registry_address,asset_version_key,generation),
+  UNIQUE (episode_id,registry_address,asset_version_key,generation),
+  UNIQUE (registry_address,asset_version_key,generation,episode_id),
+  UNIQUE (registry_address,asset_version_key,generation,episode_id,opened_at),
+  FOREIGN KEY (registry_address,asset_version_key,opening_evaluation_id,
+               initial_state,opening_evidence_hash)
+    REFERENCES rwa_health_evaluations_v2
+      (registry_address,asset_version_key,evaluation_id,evaluation_kind,evidence_hash)
+    ON DELETE RESTRICT,
+  FOREIGN KEY (registry_address,asset_version_key,opening_evaluation_id,
+               opening_evaluation_status)
+    REFERENCES rwa_health_evaluations_v2
+      (registry_address,asset_version_key,evaluation_id,status) ON DELETE RESTRICT,
+  FOREIGN KEY (episode_id,registry_address,asset_version_key,generation,
+               opening_reviewer_action_id,initial_state,opening_rule_code,opening_evidence_hash)
+    REFERENCES rwa_health_reviewer_actions_v2
+      (target_episode_id,registry_address,asset_version_key,target_episode_generation,
+       reviewer_action_id,requested_state,rule_code,evidence_hash)
+    ON DELETE RESTRICT,
+  FOREIGN KEY (registry_address,asset_version_key,terminal_evaluation_id,
+               terminal_evaluation_status,terminal_evaluation_kind,
+               terminal_evaluation_evidence_hash)
+    REFERENCES rwa_health_evaluations_v2
+      (registry_address,asset_version_key,evaluation_id,status,evaluation_kind,evidence_hash)
+    ON DELETE RESTRICT,
+  CHECK ((opening_evaluation_id IS NULL) <> (opening_reviewer_action_id IS NULL)),
+  CHECK ((opening_evaluation_id IS NULL) = (opening_evaluation_status IS NULL)),
+  CHECK ((terminal_evaluation_id IS NULL) = (terminal_evaluation_status IS NULL)),
+  CHECK ((terminal_evaluation_id IS NULL) = (terminal_evaluation_kind IS NULL)),
+  CHECK ((terminal_evaluation_id IS NULL) = (terminal_evaluation_evidence_hash IS NULL)),
+  CHECK (opening_evaluation_id IS NULL OR opening_reason_hash = opening_evidence_hash),
+  CHECK ((clearance_id IS NULL AND clearance_generation IS NULL
+          AND clearance_block_number IS NULL AND clearance_block_hash IS NULL
+          AND clearance_applied_at IS NULL)
+      OR (clearance_id IS NOT NULL AND char_length(clearance_id) = 66
+          AND clearance_generation = generation AND clearance_block_number >= 0
+          AND char_length(clearance_block_hash) = 66 AND clearance_applied_at IS NOT NULL)),
+  CHECK ((terminal_status IS NULL AND terminal_evaluation_id IS NULL AND closed_at IS NULL)
+      OR (terminal_status IS NOT NULL AND terminal_evaluation_id IS NOT NULL AND closed_at IS NOT NULL
+          AND clearance_applied_at IS NOT NULL AND closed_at >= clearance_applied_at)),
+  CHECK ((terminal_status IS NULL AND terminal_evaluation_kind IS NULL)
+      OR (terminal_status = 'healthy_after_clearance' AND terminal_evaluation_kind = 'healthy')
+      OR (terminal_status = 'post_clearance_failure_superseded'
+          AND terminal_evaluation_kind IN ('health_unknown','operational_quarantine')))
+);
+CREATE UNIQUE INDEX ux_rwa_health_one_open_episode_v2
+  ON rwa_health_episodes_v2(registry_address,asset_version_key)
+  WHERE closed_at IS NULL;
+
+CREATE TABLE IF NOT EXISTS rwa_health_episode_events_v2 (
+  event_id TEXT PRIMARY KEY CHECK (char_length(event_id) = 66),
+  episode_id TEXT NOT NULL,
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  episode_generation NUMERIC(78,0) NOT NULL CHECK (episode_generation > 0),
+  event_kind TEXT NOT NULL CHECK (event_kind IN
+    ('opened','escalated','evidence_only','clearance_applied','terminal')),
+  source_kind TEXT NOT NULL CHECK (source_kind IN ('evaluation','reviewer','h2_clearance')),
+  source_id TEXT NOT NULL CHECK (char_length(source_id) = 66),
+  source_evaluation_id TEXT,
+  source_evaluation_status TEXT CHECK
+    (source_evaluation_status IS NULL OR source_evaluation_status = 'applied'),
+  source_evaluation_kind TEXT CHECK (source_evaluation_kind IS NULL OR source_evaluation_kind IN
+    ('healthy','health_unknown','operational_quarantine')),
+  source_reviewer_action_id TEXT,
+  source_reviewer_state TEXT CHECK (source_reviewer_state IS NULL OR source_reviewer_state IN
+    ('health_unknown','operational_quarantine')),
+  source_reviewer_outcome TEXT CHECK (source_reviewer_outcome IS NULL OR source_reviewer_outcome IN
+    ('opened','escalated','evidence_only')),
+  source_clearance_id TEXT,
+  resulting_severity TEXT NOT NULL CHECK (resulting_severity IN
+    ('none','health_unknown','operational_quarantine')),
+  evidence_hash TEXT NOT NULL CHECK
+    (char_length(evidence_hash) = 66 AND evidence_hash <> '0x0000000000000000000000000000000000000000000000000000000000000000'),
+  created_at TIMESTAMPTZ NOT NULL,
+  UNIQUE (episode_id,source_kind,source_id),
+  UNIQUE (episode_id,registry_address,asset_version_key,episode_generation,event_id),
+  UNIQUE (episode_id,registry_address,asset_version_key,episode_generation,
+          event_id,resulting_severity),
+  UNIQUE (episode_id,registry_address,asset_version_key,episode_generation,
+          event_id,evidence_hash),
+  UNIQUE (episode_id,registry_address,asset_version_key,episode_generation,
+          event_id,resulting_severity,evidence_hash),
+  FOREIGN KEY (episode_id,registry_address,asset_version_key,episode_generation)
+    REFERENCES rwa_health_episodes_v2
+      (episode_id,registry_address,asset_version_key,generation) ON DELETE RESTRICT,
+  FOREIGN KEY (registry_address,asset_version_key,source_evaluation_id,
+               source_evaluation_status,source_evaluation_kind,evidence_hash)
+    REFERENCES rwa_health_evaluations_v2
+      (registry_address,asset_version_key,evaluation_id,status,evaluation_kind,evidence_hash)
+    ON DELETE RESTRICT,
+  FOREIGN KEY (episode_id,registry_address,asset_version_key,episode_generation,
+               source_reviewer_action_id,source_reviewer_state,evidence_hash,
+               source_reviewer_outcome)
+    REFERENCES rwa_health_reviewer_actions_v2
+      (target_episode_id,registry_address,asset_version_key,target_episode_generation,
+       reviewer_action_id,requested_state,evidence_hash,outcome) ON DELETE RESTRICT,
+  CHECK ((source_kind = 'evaluation' AND source_id = source_evaluation_id
+          AND source_evaluation_id IS NOT NULL
+          AND source_evaluation_status = 'applied'
+          AND source_evaluation_kind IS NOT NULL
+          AND source_reviewer_action_id IS NULL AND source_reviewer_state IS NULL
+          AND source_reviewer_outcome IS NULL
+          AND source_clearance_id IS NULL)
+      OR (source_kind = 'reviewer' AND source_id = source_reviewer_action_id
+          AND source_reviewer_action_id IS NOT NULL
+          AND source_reviewer_state IS NOT NULL AND source_reviewer_outcome IS NOT NULL
+          AND source_evaluation_id IS NULL AND source_evaluation_status IS NULL
+          AND source_evaluation_kind IS NULL
+          AND source_clearance_id IS NULL)
+      OR (source_kind = 'h2_clearance' AND source_id = source_clearance_id
+          AND source_clearance_id IS NOT NULL
+          AND source_evaluation_id IS NULL AND source_evaluation_status IS NULL
+          AND source_evaluation_kind IS NULL
+          AND source_reviewer_action_id IS NULL AND source_reviewer_state IS NULL
+          AND source_reviewer_outcome IS NULL)),
+  CHECK ((source_kind = 'evaluation' AND
+            ((event_kind = 'opened'
+                AND source_evaluation_kind IN ('health_unknown','operational_quarantine')
+                AND resulting_severity = source_evaluation_kind)
+             OR (event_kind = 'escalated'
+                AND source_evaluation_kind = 'operational_quarantine'
+                AND resulting_severity = 'operational_quarantine')
+             OR (event_kind = 'terminal' AND resulting_severity = 'none')))
+      OR (source_kind = 'reviewer' AND
+            event_kind = source_reviewer_outcome AND
+            ((source_reviewer_outcome = 'opened'
+                AND resulting_severity = source_reviewer_state)
+             OR (source_reviewer_outcome = 'escalated'
+                AND source_reviewer_state = 'operational_quarantine'
+                AND resulting_severity = 'operational_quarantine')
+             OR (source_reviewer_outcome = 'evidence_only'
+                AND ((source_reviewer_state = 'health_unknown'
+                        AND resulting_severity IN ('health_unknown','operational_quarantine'))
+                     OR (source_reviewer_state = 'operational_quarantine'
+                        AND resulting_severity = 'operational_quarantine')))))
+      OR (source_kind = 'h2_clearance' AND event_kind = 'clearance_applied'
+          AND resulting_severity IN ('health_unknown','operational_quarantine')))
+);
+CREATE INDEX ix_rwa_health_episode_events_v2 ON rwa_health_episode_events_v2
+  (episode_id,created_at,event_id);
+
+CREATE TABLE IF NOT EXISTS rwa_health_current_v2 (
+  chain_id INT NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  catalog_version NUMERIC(78,0) NOT NULL CHECK (catalog_version >= 0),
+  catalog_snapshot_hash TEXT NOT NULL CHECK (char_length(catalog_snapshot_hash) = 66),
+  last_evaluation_id TEXT,
+  last_evaluation_status TEXT CHECK
+    (last_evaluation_status IS NULL OR last_evaluation_status = 'applied'),
+  latest_evaluation_kind TEXT CHECK (latest_evaluation_kind IS NULL OR latest_evaluation_kind IN
+    ('healthy','health_unknown','operational_quarantine')),
+  last_evaluation_evidence_hash TEXT,
+  last_observed_at TIMESTAMPTZ,
+  last_applied_at TIMESTAMPTZ,
+  current_episode_id TEXT,
+  current_episode_generation NUMERIC(78,0),
+  current_severity TEXT CHECK (current_severity IS NULL OR current_severity IN
+    ('health_unknown','operational_quarantine')),
+  episode_opened_at TIMESTAMPTZ,
+  latest_episode_event_id TEXT,
+  latest_material_event_id TEXT,
+  latest_material_evidence_hash TEXT,
+  clearance_id TEXT,
+  clearance_generation NUMERIC(78,0),
+  clearance_applied_at TIMESTAMPTZ,
+  next_due_at TIMESTAMPTZ,
+  state_sequence BIGINT NOT NULL CHECK (state_sequence > 0),
+  PRIMARY KEY (registry_address,asset_version_key),
+  FOREIGN KEY (registry_address,asset_version_key,catalog_version,
+               catalog_snapshot_hash,last_evaluation_id,last_evaluation_status,
+               latest_evaluation_kind,last_observed_at,last_applied_at,
+               last_evaluation_evidence_hash)
+    REFERENCES rwa_health_evaluations_v2
+      (registry_address,asset_version_key,catalog_version,catalog_snapshot_hash,
+       evaluation_id,status,evaluation_kind,observed_at,applied_at,evidence_hash)
+    ON DELETE RESTRICT,
+  FOREIGN KEY (registry_address,asset_version_key,current_episode_generation,
+               current_episode_id,episode_opened_at)
+    REFERENCES rwa_health_episodes_v2
+      (registry_address,asset_version_key,generation,episode_id,opened_at)
+    ON DELETE RESTRICT,
+  FOREIGN KEY (current_episode_id,registry_address,asset_version_key,
+               current_episode_generation,latest_episode_event_id,current_severity)
+    REFERENCES rwa_health_episode_events_v2
+      (episode_id,registry_address,asset_version_key,episode_generation,event_id,resulting_severity)
+    ON DELETE RESTRICT,
+  FOREIGN KEY (current_episode_id,registry_address,asset_version_key,
+               current_episode_generation,latest_material_event_id,
+               latest_material_evidence_hash)
+    REFERENCES rwa_health_episode_events_v2
+      (episode_id,registry_address,asset_version_key,episode_generation,event_id,evidence_hash)
+    ON DELETE RESTRICT,
+  CHECK ((last_evaluation_id IS NULL AND last_evaluation_status IS NULL
+          AND latest_evaluation_kind IS NULL
+          AND last_evaluation_evidence_hash IS NULL
+          AND last_observed_at IS NULL AND last_applied_at IS NULL AND next_due_at IS NULL)
+      OR (last_evaluation_id IS NOT NULL AND last_evaluation_status = 'applied'
+          AND latest_evaluation_kind IS NOT NULL
+          AND last_evaluation_evidence_hash IS NOT NULL
+          AND last_observed_at IS NOT NULL AND last_applied_at IS NOT NULL
+          AND next_due_at IS NOT NULL)),
+  CHECK ((current_episode_id IS NULL AND current_episode_generation IS NULL
+          AND current_severity IS NULL AND episode_opened_at IS NULL
+          AND latest_episode_event_id IS NULL AND latest_material_event_id IS NULL
+          AND latest_material_evidence_hash IS NULL)
+      OR (current_episode_id IS NOT NULL AND current_episode_generation > 0
+          AND current_severity IS NOT NULL AND episode_opened_at IS NOT NULL
+          AND latest_episode_event_id IS NOT NULL
+          AND char_length(latest_episode_event_id) = 66
+          AND latest_material_event_id IS NOT NULL
+          AND char_length(latest_material_event_id) = 66
+          AND latest_material_evidence_hash IS NOT NULL
+          AND char_length(latest_material_evidence_hash) = 66)),
+  CHECK ((clearance_id IS NULL AND clearance_generation IS NULL AND clearance_applied_at IS NULL)
+      OR (clearance_id IS NOT NULL AND char_length(clearance_id) = 66
+          AND current_episode_id IS NOT NULL
+          AND clearance_generation = current_episode_generation
+          AND clearance_applied_at IS NOT NULL)),
+  CHECK (next_due_at IS NULL OR next_due_at = last_observed_at + interval '300 seconds')
+);

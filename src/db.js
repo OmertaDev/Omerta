@@ -12,6 +12,20 @@ import { fileURLToPath } from 'node:url';
 // terms (never a silently different outcome — only a different blocking posture).
 export const dbCaps = { skipLocked: false };
 
+// Register only the PostgreSQL built-ins that H1's literal schema needs and pg-mem omits. Callers
+// that create a raw pg-mem database for schema tests must opt in before applying schema.sql; the
+// real-Postgres branch never calls this compatibility registrar.
+export function registerPgMemCompatibility(mem, DataType) {
+  mem.public.registerFunction({
+    name: 'char_length', args: [DataType.text], returns: DataType.integer,
+    implementation: (value) => Array.from(value).length,
+  });
+  mem.public.registerFunction({
+    name: 'octet_length', args: [DataType.bytea], returns: DataType.integer,
+    implementation: (value) => Buffer.byteLength(value),
+  });
+}
+
 const here = path.dirname(fileURLToPath(import.meta.url));
 const SCHEMA = fs.readFileSync(path.join(here, '..', 'schema.sql'), 'utf8');
 // A fixed key for the boot-time schema advisory lock (any constant bigint — must match across processes).
@@ -90,6 +104,7 @@ export function columnMigrations(schemaText) {
         .replace(/\s+PRIMARY\s+KEY\b/i, '')
         .replace(/\s+UNIQUE\b/i, '')
         .replace(/\s+REFERENCES\s+[A-Za-z0-9_]+\s*(\([^)]*\))?/i, '')
+        .replace(/\s+ON\s+(?:DELETE|UPDATE)\s+(?:NO\s+ACTION|RESTRICT|CASCADE|SET\s+NULL|SET\s+DEFAULT)\b/gi, '')
         .trim();
       if (def) out.push(`ALTER TABLE ${table} ADD COLUMN IF NOT EXISTS ${col[1]} ${def}`);
     }
@@ -453,8 +468,9 @@ export async function makeDb() {
   if (process.env.NODE_ENV === 'production')
     throw new Error('DATABASE_URL must be set in production — refusing to boot on the in-memory pg-mem database (all state would be lost on restart).');
   dbCaps.skipLocked = false; // pg-mem parses neither SKIP LOCKED nor NOWAIT
-  const { newDb } = await import('pg-mem');
+  const { newDb, DataType } = await import('pg-mem');
   const mem = newDb();
+  registerPgMemCompatibility(mem, DataType);
   const { Pool } = mem.adapters.createPg();
   const pool = new Pool();
   await pool.query(SCHEMA);

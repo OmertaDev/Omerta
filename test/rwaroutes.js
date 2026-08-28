@@ -4,7 +4,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getAddress, keccak256 } from 'viem';
-import { newDb } from 'pg-mem';
+import { DataType, newDb } from 'pg-mem';
+import { registerPgMemCompatibility } from '../src/db.js';
 import { buildServer } from '../src/server.js';
 import { buildStockTokenActivationV2, computeStockAssetVersionKey } from '../src/stockcatalogv2.js';
 import {
@@ -109,12 +110,16 @@ try {
   });
   assert.notEqual(publicDetail.statusCode, 404, 'the public immutable-key H1 detail route is mounted');
 
+  process.env.RWA_REVIEWER_KEY = 'h1-route-reviewer-secret';
+  process.env.RWA_REVIEWER_ID = 'h1-route-reviewer';
   const unauthenticatedHealthEntry = await app.inject({
     method: 'POST', url: `/v1/rwa/reviewer/health/0x${'1'.repeat(64)}/enter`,
     headers: { 'idempotency-key': 'h1-red-no-reviewer' }, payload: {},
   });
   assert.equal(unauthenticatedHealthEntry.statusCode, 401,
     'H1 reviewer entry authenticates before input, catalog, idempotency, or domain work');
+  delete process.env.RWA_REVIEWER_KEY;
+  delete process.env.RWA_REVIEWER_ID;
   const disabledHealthEntry = await app.inject({
     method: 'POST', url: `/v1/rwa/reviewer/health/0x${'1'.repeat(64)}/enter`,
     headers: { 'x-rwa-reviewer-key': 'anything', 'idempotency-key': 'h1-red-disabled' },
@@ -167,6 +172,7 @@ console.log('✅ RWA reviewer classification requires an unforgeable server-crea
 
 {
   const mem = newDb();
+  registerPgMemCompatibility(mem, DataType);
   const { Pool } = mem.adapters.createPg();
   const pool = new Pool();
   await pool.query(SCHEMA);
@@ -230,6 +236,7 @@ console.log('✅ RWA Safe package validation rejects types, not valid BigInt tex
 
 {
   const mem = newDb();
+  registerPgMemCompatibility(mem, DataType);
   const { Pool } = mem.adapters.createPg();
   const pool = new Pool();
   await pool.query(SCHEMA);
@@ -272,6 +279,7 @@ console.log('✅ RWA disposition compares exact DB wall time before whole-second
 
 {
   const mem = newDb();
+  registerPgMemCompatibility(mem, DataType);
   const { Pool } = mem.adapters.createPg();
   const pool = new Pool();
   await pool.query(SCHEMA);
@@ -436,6 +444,7 @@ console.log('✅ RWA reviewer queue cleanup remains chunk-bounded at the 5,000-r
 
 {
   const mem = newDb();
+  registerPgMemCompatibility(mem, DataType);
   const { Pool } = mem.adapters.createPg();
   const pool = new Pool();
   await pool.query(SCHEMA);
@@ -532,6 +541,7 @@ console.log('✅ RWA reviewer queue batches every cleanup transition with exact 
 
 {
   const mem = newDb();
+  registerPgMemCompatibility(mem, DataType);
   const { Pool } = mem.adapters.createPg();
   const pool = new Pool();
   await pool.query(SCHEMA);
@@ -704,7 +714,7 @@ process.env.STOCK_TOKEN_REGISTRY_V2_ADDRESS = getAddress(`0x${'9'.repeat(40)}`);
 const live = await buildServer();
 try {
   const reviewerRoutes = live.routes.filter((route) => route.url.startsWith('/v1/rwa/reviewer/'));
-  assert.equal(reviewerRoutes.length, 4);
+  assert.equal(reviewerRoutes.length, 5);
   assert(reviewerRoutes.every((route) => route.authKind === 'rwaReviewerAuth'
     && route.isRwaReviewer && !route.isMod), 'reviewer routes have their own runtime perimeter');
   const openapi = (await live.inject({ method: 'GET', url: '/openapi.json' })).json();
@@ -1098,6 +1108,7 @@ console.log('✅ RWA reviewer auth, exact package, replay, and submission routes
 // transaction as the review update/event. The injected builder fails after the update point.
 {
   const mem = newDb();
+  registerPgMemCompatibility(mem, DataType);
   const { Pool } = mem.adapters.createPg();
   const pool = new Pool();
   await pool.query(SCHEMA);
