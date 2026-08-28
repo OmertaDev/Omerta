@@ -965,6 +965,26 @@ contract AcquisitionConstellationTask3BTest is Test {
         );
     }
 
+    function test_task3B_07a_activeIngressConsistencyPrecedesDirtyPendingIngress() public {
+        bytes memory callData =
+            abi.encodeCall(ITask3BFinalCore.reclassifyUnattributed, (1, keccak256("field-19-order")));
+        uint256 snapshot = vm.snapshotState();
+        _authority.setSnapshotWord(19, 0);
+        _authority.setSnapshotWord(21, uint256(1) << 200);
+        _assertSnapshotSemanticBoth(callData, 19);
+        assertTrue(vm.revertToState(snapshot), "active ingress before dirty pending ingress restore");
+    }
+
+    function test_task3B_07b_activeConfigConsistencyPrecedesDirtyPendingIngress() public {
+        bytes memory callData =
+            abi.encodeCall(ITask3BFinalCore.reclassifyUnattributed, (1, keccak256("field-20-order")));
+        uint256 snapshot = vm.snapshotState();
+        _authority.setSnapshotWord(20, 0);
+        _authority.setSnapshotWord(21, uint256(1) << 200);
+        _assertSnapshotSemanticBoth(callData, 20);
+        assertTrue(vm.revertToState(snapshot), "active config before dirty pending ingress restore");
+    }
+
     function test_task3B_08_ingressReadBoundedFailuresEverySemanticOrdinalAndAtomicity() public {
         bytes32 source = keccak256("ingress-read-source");
         uint8[5] memory modes = [uint8(1), 2, 3, 4, 5];
@@ -2030,6 +2050,48 @@ contract AcquisitionConstellationTask3BTest is Test {
         assertEq(address(this).balance, callerBalance, "overflow incoming value refund");
         assertEq(vm.getRecordedLogs().length, 0, "overflow log rollback");
         assertEq(core.ingressEpochDepositedWei(1, epochDay), type(uint256).max - 1, "overflow prior preserved");
+    }
+
+    function test_task3B_29_successfulDepositUsesFrozenBusinessStorageWriteOrder() public {
+        bytes32 source = keccak256("frozen-deposit-write-order");
+        bytes32 configHash = _configHash(_ingress, 10 ether, 20 ether, 40 ether);
+        bytes32 depositId = _depositId(1, source, _ingress, configHash);
+        uint256 epochDay = block.timestamp / _EPOCH_DAY;
+        bytes32 generationSlot = keccak256(abi.encode(uint256(1), uint256(9)));
+        bytes32 epochOuter = keccak256(abi.encode(uint256(1), uint256(10)));
+        bytes32 epochSlot = keccak256(abi.encode(epochDay, epochOuter));
+        bytes32 recordBase = keccak256(abi.encode(depositId, uint256(11)));
+
+        vm.record();
+        assertEq(_ingress.deposit{value: 2 ether}(address(_core), source), depositId, "ordered deposit ID");
+        (, bytes32[] memory writes) = vm.accesses(address(_core));
+
+        bytes32[] memory businessWrites = new bytes32[](writes.length);
+        uint256 businessWriteCount;
+        uint256 guardWriteCount;
+        for (uint256 i; i < writes.length; ++i) {
+            if (writes[i] == _REENTRANCY_GUARD_STORAGE) {
+                ++guardWriteCount;
+                continue;
+            }
+            businessWrites[businessWriteCount++] = writes[i];
+        }
+
+        assertEq(guardWriteCount, 2, "guard entry and exit writes");
+        assertEq(businessWriteCount, 16, "exact business write count");
+        assertEq(businessWrites[0], bytes32(uint256(1)), "first business write available");
+        assertEq(businessWrites[1], bytes32(uint256(6)), "second business write sequence");
+        assertEq(businessWrites[2], epochSlot, "third business write epoch total");
+        assertEq(businessWrites[3], generationSlot, "fourth business write generation total");
+        assertEq(businessWrites[4], bytes32(uint256(8)), "fifth business write global total");
+        for (uint256 i; i < 10; ++i) {
+            assertEq(
+                businessWrites[5 + i],
+                bytes32(uint256(recordBase) + i),
+                string.concat("DepositRecord write ", vm.toString(i))
+            );
+        }
+        assertEq(businessWrites[15], bytes32(uint256(7)), "last business write deficit observation");
     }
 
     function _configureIngress(
