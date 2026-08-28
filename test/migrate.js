@@ -599,5 +599,144 @@ for (const [t, kind] of Object.entries(DISPOSITION)) {
   assert.equal(offenders.length, 0, `districts→gangs lock-order inversion (AB-BA deadlock vs seizeDistrict/establishRacket): ${offenders.join('; ')}`);
 }
 
+// ── 6. CN-6A is a new-table migration with an independent, read-only authority cursor ──
+// These tables are deliberately not folded into the Task-5 getter cursor. A schema that creates only
+// some of them can appear to boot and then either lose replay evidence or make readiness a mutable flag.
+// Keep the corpus explicit: adding a second Registry lifecycle cursor is an architecture change, not a
+// harmless table addition.
+{
+  const expectedTables = [
+    'rwa_registry_lifecycle_lock_v2',
+    'rwa_registry_lifecycle_checkpoint_v2',
+    'rwa_registry_lifecycle_inbox_v2',
+    'rwa_registry_activation_instances_v2',
+    'rwa_registry_asset_lifecycle_current_v2',
+    'rwa_registry_publisher_history_v2',
+    'rwa_registry_publisher_current_v2',
+    'rwa_registry_ballot_events_v2',
+    'rwa_registry_lifecycle_event_results_v2',
+    'rwa_registry_lifecycle_runtime_v2',
+    'rwa_registry_lifecycle_attempts_v2',
+  ];
+  const tableBody = (table) => {
+    const match = SCHEMA.match(new RegExp(
+      `CREATE TABLE IF NOT EXISTS ${table}\\s*\\(([\\s\\S]*?)\\n\\);`, 'i',
+    ));
+    assert(match, `CN-6A schema must create ${table}`);
+    return match[1];
+  };
+  const requiredColumns = {
+    rwa_registry_lifecycle_lock_v2: ['id', 'created_at'],
+    rwa_registry_lifecycle_checkpoint_v2: [
+      'consumer_key', 'chain_id', 'registry_address', 'start_block_number',
+      'last_applied_block_number', 'last_applied_block_hash', 'last_observation_hash',
+      'finalized_horizon_block_number', 'finalized_horizon_block_hash', 'caught_up', 'halted',
+      'verified_at', 'ready_verified_at',
+    ],
+    rwa_registry_lifecycle_inbox_v2: [
+      'inbox_id', 'consumer_key', 'chain_id', 'contract_address', 'block_number',
+      'block_hash', 'block_timestamp', 'transaction_hash', 'transaction_index',
+      'log_index', 'topic0', 'topics_json', 'data_hex', 'event_kind', 'decoded_hash',
+      'observation_hash', 'inserted_at',
+    ],
+    rwa_registry_activation_instances_v2: [
+      'chain_id', 'registry_address', 'asset_version_key', 'activation_generation',
+      'activation_block_number', 'activation_block_hash', 'activation_transaction_hash',
+      'activation_log_index', 'catalog_version', 'review_id', 'evidence_hash',
+      'approved_at', 'valid_until', 'included_at', 'local_match',
+      'deactivation_block_number', 'deactivation_block_hash',
+    ],
+    rwa_registry_asset_lifecycle_current_v2: [
+      'chain_id', 'registry_address', 'asset_version_key', 'registered', 'active',
+      'activation_generation', 'catalog_version', 'updated_at',
+    ],
+    rwa_registry_publisher_history_v2: [
+      'chain_id', 'registry_address', 'publisher', 'block_number', 'block_hash',
+      'transaction_hash', 'log_index',
+    ],
+    rwa_registry_publisher_current_v2: [
+      'chain_id', 'registry_address', 'publisher', 'block_number', 'block_hash',
+      'transaction_hash', 'log_index',
+    ],
+    rwa_registry_ballot_events_v2: [
+      'chain_id', 'registry_address', 'ballot_day', 'asset_version_key', 'token_address',
+      'token_decimals', 'tally_hash', 'catalog_version', 'max_eth_wei',
+      'purchase_until', 'activation_generation', 'block_number', 'block_hash',
+      'transaction_hash', 'log_index',
+    ],
+    rwa_registry_lifecycle_event_results_v2: [
+      'inbox_id', 'event_kind', 'disposition', 'created_at',
+    ],
+    rwa_registry_lifecycle_runtime_v2: [
+      'id', 'consumer_key', 'chain_id', 'registry_address', 'start_block_number',
+      'last_applied_block_number', 'last_applied_block_hash',
+      'finalized_horizon_block_number', 'finalized_horizon_block_hash', 'sync_in_progress',
+      'attempt_id', 'last_attempt_at', 'last_success_at', 'ready_verified_at',
+      'caught_up', 'halted', 'failure_code', 'unresolved_incident_count',
+      'last_incident_id',
+    ],
+    rwa_registry_lifecycle_attempts_v2: [
+      'attempt_id', 'status', 'started_at', 'ended_at', 'failure_code',
+    ],
+  };
+  const bodies = Object.fromEntries(expectedTables.map((table) => [table, tableBody(table)]));
+  for (const [table, columns] of Object.entries(requiredColumns)) {
+    for (const column of columns) {
+      assert.match(bodies[table], new RegExp(`\\b${column}\\b`, 'i'),
+        `CN-6A ${table} must retain authority column ${column}`);
+    }
+  }
+
+  // The essential constraints are named by their semantic boundary rather than by line number so a
+  // harmless schema reflow cannot weaken the test. These are the constraints that prevent the new
+  // consumer from becoming a second mutable Registry authority.
+  assert.match(bodies.rwa_registry_lifecycle_checkpoint_v2,
+    /consumer_key\s+TEXT[\s\S]{0,100}?CHECK\s*\(consumer_key\s*=\s*'rwa_registry_lifecycle_v2'\)/i,
+    'CN-6A checkpoint permanently binds the literal consumer key');
+  assert.match(bodies.rwa_registry_lifecycle_checkpoint_v2,
+    /chain_id\s+NUMERIC\(78,0\)[\s\S]{0,100}?CHECK\s*\(chain_id\s*=\s*4663\)/i,
+    'CN-6A checkpoint permanently binds Robinhood Chain 4663');
+  assert.match(bodies.rwa_registry_lifecycle_inbox_v2,
+    /UNIQUE\s*\(\s*chain_id\s*,\s*contract_address\s*,\s*block_hash\s*,\s*transaction_hash\s*,\s*log_index\s*\)/i,
+    'CN-6A inbox binds the complete immutable finalized-log identity');
+  assert.match(bodies.rwa_registry_activation_instances_v2,
+    /PRIMARY KEY\s*\(\s*chain_id\s*,\s*registry_address\s*,\s*asset_version_key\s*,\s*activation_generation\s*\)/i,
+    'CN-6A activation instances never reuse a generation');
+  assert.match(bodies.rwa_registry_activation_instances_v2,
+    /valid_until\s*=\s*approved_at\s*\+\s*interval\s*'604800 seconds'/i,
+    'CN-6A activation instances enforce the exact seven-day package TTL');
+  assert.match(bodies.rwa_registry_activation_instances_v2,
+    /approved_at\s*<=\s*included_at[\s\S]*included_at\s*<\s*valid_until/i,
+    'CN-6A activation instances enforce half-open timely inclusion');
+  assert.match(bodies.rwa_registry_lifecycle_attempts_v2,
+    /status\s+TEXT[\s\S]{0,100}?CHECK\s*\(status\s+IN\s*\(\s*'started'\s*,\s*'succeeded'\s*,\s*'failed'\s*,\s*'superseded'\s*\)\)/i,
+    'CN-6A attempt history has a closed operational lifecycle');
+  assert.match(bodies.rwa_registry_lifecycle_attempts_v2,
+    /status\s*=\s*'started'[\s\S]*ended_at\s+IS NULL[\s\S]*status\s+IN\s*\(\s*'succeeded'\s*,\s*'failed'\s*,\s*'superseded'\s*\)[\s\S]*ended_at\s+IS NOT NULL/i,
+    'CN-6A attempt completion time is coherent with terminal status');
+
+  const requiredIndexes = [
+    'ux_rwa_registry_lifecycle_inbox_identity_v2',
+    'ix_rwa_registry_lifecycle_inbox_order_v2',
+    'ix_rwa_registry_activation_instances_asset_generation_v2',
+    'ix_rwa_registry_ballot_events_day_v2',
+    'ix_rwa_registry_lifecycle_event_results_disposition_v2',
+    'ix_rwa_registry_lifecycle_attempts_status_v2',
+  ];
+  for (const index of requiredIndexes) {
+    assert.match(SCHEMA, new RegExp(`CREATE (?:UNIQUE )?INDEX(?: IF NOT EXISTS)? ${index}\\b`, 'i'),
+      `CN-6A schema must create operational index ${index}`);
+  }
+
+  const rows = (await pool.query(
+    `SELECT table_name FROM information_schema.tables
+       WHERE table_schema = 'public' AND table_name LIKE 'rwa_registry_%_v2'
+       ORDER BY table_name`,
+  )).rows.map((row) => row.table_name);
+  for (const table of expectedTables) {
+    assert(rows.includes(table), `fresh schema migration must materialize ${table}`);
+  }
+}
+
 console.log(`✅ Schema-integrity test passed — MED-1: ${stmts.length} idempotent ADD COLUMN IF NOT EXISTS statements derived from schema.sql (no leakage, clean no-op on a fresh DB, a dropped later-added column is RE-ADDED). MED-2: all ${charTables.size} character-scoped tables (character_id OR a named %_character role) have a documented death disposition (${Object.values(DISPOSITION).filter((v) => v === 'wiped').length} wiped / ${Object.values(DISPOSITION).filter((v) => v === 'special').length} special / ${Object.values(DISPOSITION).filter((v) => v === 'escrow').length} escrow / ${Object.values(DISPOSITION).filter((v) => v === 'ledger' || v === 'log').length} ledger — a new unclassified table fails CI closed, and every wiped/special table has a DELETE or a resolving status UPDATE in src).`);
 process.exit(0);
