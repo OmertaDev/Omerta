@@ -409,7 +409,7 @@ contract Task3BAuthorityOracle {
         uint256 entryGas = gasleft();
         uint8 mode = _ingressMode;
         uint256[8] memory words = _ingress;
-        require(generation == words[0], "ingress generation");
+        require(generation == _snapshot[18], "ingress generation");
         assembly ("memory-safe") {
             switch mode
             case 1 {
@@ -562,16 +562,43 @@ contract AcquisitionConstellationTask3BTest is Test {
         _configureIngress(1, _ingress, 10 ether, 20 ether, 40 ether);
     }
 
-    function test_task3B_01_exactFinalAbiCensusConstantsRegistryAndForbiddenSurface() public {
-        string memory artifactPath = vm.getArtifactPathByCode(type(AcquisitionVaultCore).creationCode);
-        bytes memory json = bytes(vm.readFile(artifactPath));
-        uint256 abiLabel = _find(json, bytes('"abi":['), 0);
-        assertNotEq(abiLabel, type(uint256).max, "Core artifact ABI missing");
-        uint256 opening = _find(json, bytes("["), abiLabel);
-        uint256 closing = _matchingDelimiter(json, opening, bytes1("["), bytes1("]"));
+    function test_task3B_01a_optimizedIrHasNoDynamicReturndataCopy() public {
+        (bytes memory json,,) = _coreArtifactAbi();
         _assertOptimizedIrHasNoReturndataCopy(json);
-        _assertExactCoreAbi(json, opening, closing);
+    }
 
+    function test_task3B_01b_exactFunctionAbiAndTupleNames() public {
+        (bytes memory json, uint256 opening, uint256 closing) = _coreArtifactAbi();
+        _assertAbiKindRows(json, opening, closing, "function", _expectedFunctionRows());
+        _assertAbiNameKindRows(json, opening, closing, "function", _expectedFunctionNameRows());
+        _assertDeepFunctionAbiNames(json, opening, closing);
+    }
+
+    function test_task3B_01c_exactErrorAbiAndNames() public {
+        (bytes memory json, uint256 opening, uint256 closing) = _coreArtifactAbi();
+        _assertAbiKindRows(json, opening, closing, "error", _expectedErrorRows());
+        _assertAbiNameKindRows(json, opening, closing, "error", _expectedErrorNameRows());
+    }
+
+    function test_task3B_01d_exactEventAbiIndexingAndNames() public {
+        (bytes memory json, uint256 opening, uint256 closing) = _coreArtifactAbi();
+        _assertAbiKindRows(json, opening, closing, "event", _expectedEventRows());
+        _assertAbiNameKindRows(json, opening, closing, "event", _expectedEventNameRows());
+    }
+
+    function test_task3B_01e_exactConstructorAbiAndNames() public {
+        (bytes memory json, uint256 opening, uint256 closing) = _coreArtifactAbi();
+        string[] memory constructorRows = new string[](1);
+        constructorRows[0] = "constructor(address,bytes32,address,address,address,address,address,uint256)|nonpayable";
+        _assertAbiKindRows(json, opening, closing, "constructor", constructorRows);
+        string[] memory constructorNameRows = new string[](1);
+        constructorNameRows[0] =
+            "constructor(factory,manifestHash,authority,registry,budgetBook,intentExecution,reconciliation,globalLifetimeCanonicalDepositCapWei)|";
+        _assertAbiNameKindRows(json, opening, closing, "constructor", constructorNameRows);
+        _assertDeepConstructorAbiNames(json, opening, closing);
+    }
+
+    function test_task3B_01f_runtimeConstantsRegistryAndForbiddenSurface() public {
         assertEq(_core.MAX_ACTIVE_ORDINARY_RESERVATIONS(), 32, "ordinary reservation limit");
         assertEq(_core.MAX_ACTIVE_RECONCILIATIONS(), 32, "reconciliation limit");
         assertEq(_core.MAX_OPERATOR_OUTFLOW_COMPONENTS(), 67, "O2 component limit");
@@ -878,16 +905,6 @@ contract AcquisitionConstellationTask3BTest is Test {
         }
         _authority.setModes(0, 0);
 
-        _calibrateOracleGas();
-        _authority.setModes(6, 0);
-        vm.expectCall(
-            address(_authority), 0, uint64(160_000), abi.encodeWithSignature("authoritySnapshot()"), uint64(1)
-        );
-        _assertRawRevert(
-            callData,
-            abi.encodeWithSelector(ITask3BFinalCore.InsufficientUnattributed.selector, uint256(0), uint256(1)),
-            0
-        );
         _authority.setModes(7, 0);
         _assertRawRevert(callData, abi.encodeWithSelector(ITask3BFinalCore.CoreAuthoritySnapshotCallFailed.selector), 0);
         _authority.setModes(0, 0);
@@ -931,8 +948,10 @@ contract AcquisitionConstellationTask3BTest is Test {
         _authority.setSnapshotWord(19, 0);
         _assertSnapshotSemanticBoth(callData, 20);
         assertTrue(vm.revertToState(consistencySnapshot), "inactive nonzero config restore");
+        consistencySnapshot = vm.snapshotState();
         _authority.setSnapshotWord(20, 0);
         _assertSnapshotSemanticBoth(callData, 20);
+        assertTrue(vm.revertToState(consistencySnapshot), "active zero config restore");
 
         uint256 arbitrarySnapshot = vm.snapshotState();
         _authority.setSnapshotWord(11, 1);
@@ -946,6 +965,17 @@ contract AcquisitionConstellationTask3BTest is Test {
             0
         );
         assertTrue(vm.revertToState(arbitrarySnapshot), "arbitrary snapshot fields restore");
+
+        _calibrateOracleGas();
+        _authority.setModes(6, 0);
+        vm.expectCall(
+            address(_authority), 0, uint64(160_000), abi.encodeWithSignature("authoritySnapshot()"), uint64(1)
+        );
+        _assertRawRevert(
+            callData,
+            abi.encodeWithSelector(ITask3BFinalCore.InsufficientUnattributed.selector, uint256(0), uint256(1)),
+            0
+        );
     }
 
     function test_task3B_08_ingressReadBoundedFailuresEverySemanticOrdinalAndAtomicity() public {
@@ -968,26 +998,12 @@ contract AcquisitionConstellationTask3BTest is Test {
         }
         _authority.setModes(0, 0);
 
-        _calibrateOracleGas();
-        uint256 gasSnapshot = vm.snapshotState();
-        _authority.setModes(0, 6);
-        vm.expectCall(
-            address(_authority), 0, uint64(160_000), abi.encodeWithSignature("authoritySnapshot()"), uint64(1)
-        );
-        vm.expectCall(
-            address(_authority),
-            0,
-            uint64(100_000),
-            abi.encodeWithSignature("getIngress(uint256)", uint256(1)),
-            uint64(1)
-        );
-        _ingress.deposit{value: 1}(address(_core), keccak256("bounded-ingress-gas"));
-        assertTrue(vm.revertToState(gasSnapshot), "bounded ingress gas restore");
         _authority.setModes(0, 7);
         vm.expectRevert(abi.encodeWithSelector(ITask3BFinalCore.CoreIngressCallFailed.selector, uint256(1)));
         _ingress.deposit{value: 1}(address(_core), keccak256("static-ingress-read"));
         _authority.setModes(0, 0);
 
+        uint256 validConfig = uint256(_configHash(_ingress, 10 ether, 20 ether, 40 ether));
         uint256[9] memory badValues;
         badValues[0] = 2;
         badValues[1] = uint160(address(0x1234));
@@ -997,7 +1013,7 @@ contract AcquisitionConstellationTask3BTest is Test {
         badValues[5] = _GLOBAL_CAP + 1;
         badValues[6] = uint256(1) << 64;
         badValues[7] = 1;
-        badValues[8] = 0;
+        badValues[8] = validConfig == 1 ? 2 : 1;
         for (uint8 field; field < 9; ++field) {
             uint256 snapshot = vm.snapshotState();
             if (field < 8) {
@@ -1026,6 +1042,20 @@ contract AcquisitionConstellationTask3BTest is Test {
         vm.expectRevert(abi.encodeWithSelector(ITask3BFinalCore.CoreIngressSemanticMismatch.selector, uint8(7)));
         _ingress.deposit{value: 1}(address(_core), keccak256("dirty-disabled-at"));
         assertTrue(vm.revertToState(dirtyDisabledSnapshot), "dirty disabledAt restore");
+
+        _calibrateOracleGas();
+        _authority.setModes(0, 6);
+        vm.expectCall(
+            address(_authority), 0, uint64(160_000), abi.encodeWithSignature("authoritySnapshot()"), uint64(1)
+        );
+        vm.expectCall(
+            address(_authority),
+            0,
+            uint64(100_000),
+            abi.encodeWithSignature("getIngress(uint256)", uint256(1)),
+            uint64(1)
+        );
+        _ingress.deposit{value: 1}(address(_core), keccak256("bounded-ingress-gas"));
     }
 
     function test_task3B_09_depositAuthorizationConfigCodeAndLocalPrecedence() public {
@@ -1101,7 +1131,7 @@ contract AcquisitionConstellationTask3BTest is Test {
 
         _configureIngress(2, _ingress, 100 ether, 100 ether, 100 ether);
         _ingress.deposit{value: 87 ether}(address(_core), keccak256("global-minus"));
-        assertEq(_core.globalLifetimeCanonicalDepositedWei(), _GLOBAL_CAP - 1, "global minus one");
+        assertEq(_core.globalLifetimeCanonicalDepositedWei(), _GLOBAL_CAP - 1 ether, "global minus one ether");
         _ingress.deposit{value: 1 ether}(address(_core), keccak256("global-exact"));
         assertEq(_core.ingressLifetimeDepositedWei(2), 88 ether, "generation reset");
         assertEq(_core.globalLifetimeCanonicalDepositedWei(), _GLOBAL_CAP, "global exact");
@@ -1117,7 +1147,7 @@ contract AcquisitionConstellationTask3BTest is Test {
         vm.store(address(_core), bytes32(uint256(1)), bytes32(uint256(10 ether)));
         vm.deal(address(_core), 5 ether);
         uint256 fullValueCapSnapshot = vm.snapshotState();
-        _configureIngress(1, _ingress, 10 ether, 6 ether, 6 ether);
+        _configureIngress(1, _ingress, 6 ether, 6 ether, 6 ether);
         _ingress.deposit{value: 4 ether}(address(_core), keccak256("repair-cap-first"));
         vm.expectRevert(
             abi.encodeWithSelector(ITask3BFinalCore.DepositCapExceeded.selector, _EPOCH_CAP, 6 ether, 7 ether)
@@ -2738,6 +2768,119 @@ contract AcquisitionConstellationTask3BTest is Test {
         string memory typeId = _jsonString(json, memberOpening, memberClosing, "type");
         (uint256 typeOpening, uint256 typeClosing) = _jsonNamedObjectRange(json, typesOpening, typesClosing, typeId);
         assertEq(_jsonString(json, typeOpening, typeClosing, "label"), typeLabels[index], "DepositRecord member type");
+    }
+
+    function _coreArtifactAbi() private returns (bytes memory json, uint256 opening, uint256 closing) {
+        string memory artifactPath = vm.getArtifactPathByCode(type(AcquisitionVaultCore).creationCode);
+        json = bytes(vm.readFile(artifactPath));
+        uint256 abiLabel = _find(json, bytes('"abi":['), 0);
+        assertNotEq(abiLabel, type(uint256).max, "Core artifact ABI missing");
+        opening = _find(json, bytes("["), abiLabel);
+        closing = _matchingDelimiter(json, opening, bytes1("["), bytes1("]"));
+    }
+
+    function _assertDeepConstructorAbiNames(bytes memory json, uint256 opening, uint256 closing) private pure {
+        string[8] memory constructorNames = [
+            "factory",
+            "manifestHash",
+            "authority",
+            "registry",
+            "budgetBook",
+            "intentExecution",
+            "reconciliation",
+            "globalLifetimeCanonicalDepositCapWei"
+        ];
+        (uint256 objectOpening, uint256 objectClosing) = _findAbiObject(json, opening, closing, "constructor", "");
+        (uint256 arrayOpening, uint256 arrayClosing) = _jsonArrayRange(json, objectOpening, objectClosing, "inputs");
+        assertEq(_topLevelObjectCount(json, arrayOpening, arrayClosing), constructorNames.length, "constructor names");
+        for (uint256 i; i < constructorNames.length; ++i) {
+            (uint256 parameterOpening, uint256 parameterClosing) =
+                _topLevelObjectAt(json, arrayOpening, arrayClosing, i);
+            assertEq(
+                _jsonString(json, parameterOpening, parameterClosing, "name"),
+                constructorNames[i],
+                "constructor input name"
+            );
+        }
+    }
+
+    function _assertDeepFunctionAbiNames(bytes memory json, uint256 opening, uint256 closing) private pure {
+        string[18] memory snapshotNames = [
+            "schemaVersion",
+            "factory",
+            "manifestHash",
+            "authority",
+            "registry",
+            "budgetBook",
+            "intentExecution",
+            "reconciliation",
+            "finalized",
+            "globalLifetimeCanonicalDepositCapWei",
+            "availableWei",
+            "unattributedWei",
+            "ordinaryReservedWei",
+            "reconciliationLiabilityWei",
+            "reconciliationBackingWei",
+            "accountingSequence",
+            "lastObservedBalanceDeficitWei",
+            "globalLifetimeCanonicalDepositedWei"
+        ];
+        (uint256 objectOpening, uint256 objectClosing) =
+            _findAbiObject(json, opening, closing, "function", "coreSnapshot");
+        (uint256 arrayOpening, uint256 arrayClosing) = _jsonArrayRange(json, objectOpening, objectClosing, "outputs");
+        assertEq(_topLevelObjectCount(json, arrayOpening, arrayClosing), snapshotNames.length, "snapshot output names");
+        for (uint256 i; i < snapshotNames.length; ++i) {
+            (uint256 parameterOpening, uint256 parameterClosing) =
+                _topLevelObjectAt(json, arrayOpening, arrayClosing, i);
+            assertEq(
+                _jsonString(json, parameterOpening, parameterClosing, "name"), snapshotNames[i], "snapshot output name"
+            );
+        }
+
+        string[11] memory totalsNames = [
+            "availableWei",
+            "unattributedWei",
+            "ordinaryReservedWei",
+            "reconciliationLiabilityWei",
+            "reconciliationBackingWei",
+            "reconciliationShortfallWei",
+            "accountedBackingWei",
+            "actualBalanceWei",
+            "balanceDeficitWei",
+            "forcedSurplusWei",
+            "accountingSequence"
+        ];
+        string[11] memory totalsTypes = [
+            "uint256",
+            "uint256",
+            "uint256",
+            "uint256",
+            "uint256",
+            "uint256",
+            "uint256",
+            "uint256",
+            "uint256",
+            "uint256",
+            "uint256"
+        ];
+        _assertTupleAbiNames(json, opening, closing, "accountingTotals", totalsNames, totalsTypes);
+
+        string[10] memory depositNames = [
+            "depositId",
+            "ingressGeneration",
+            "ingress",
+            "sourceEventId",
+            "amountWei",
+            "balanceDeficitRepairWei",
+            "availableCreditWei",
+            "epochDay",
+            "accountingSequence",
+            "depositedAt"
+        ];
+        string[10] memory depositTypes = [
+            "bytes32", "uint256", "address", "bytes32", "uint256", "uint256", "uint256", "uint256", "uint256", "uint64"
+        ];
+        _assertTupleAbiNames(json, opening, closing, "getDeposit", depositNames, depositTypes);
     }
 
     function _assertExactCoreAbi(bytes memory json, uint256 opening, uint256 closing) private pure {
