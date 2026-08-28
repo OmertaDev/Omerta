@@ -19,7 +19,8 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         Inherited,
         Retired,
         FutureReserved,
-        Topology
+        Topology,
+        NewV2
     }
     enum SemanticKind {
         None,
@@ -58,6 +59,14 @@ contract AcquisitionConstellationCrosswalkTest is Test {
     uint256 internal constant TASK4_UNIQUE_FUNCTION_COUNT = 85;
     uint256 internal constant TASK4_UNIQUE_ERROR_COUNT = 163;
     uint256 internal constant TASK4_UNIQUE_EVENT_COUNT = 29;
+    uint256 internal constant TASK5_FUNCTION_COUNT = 87;
+    uint256 internal constant TASK5_ERROR_COUNT = 168;
+    uint256 internal constant TASK5_EVENT_COUNT = 29;
+    uint256 internal constant TASK5_CONSTRUCTOR_COUNT = 6;
+    uint256 internal constant TASK5_ABI_COUNT = 290;
+    uint256 internal constant TASK5_UNIQUE_FUNCTION_COUNT = 87;
+    uint256 internal constant TASK5_UNIQUE_ERROR_COUNT = 167;
+    uint256 internal constant TASK5_UNIQUE_EVENT_COUNT = 29;
     bytes32 internal constant LEGACY_CENSUS_HASH = 0x900d8599031796556ccc5d83d3df8dcfe4725d4c34b9f0cf26ff269436a00aab;
 
     enum Reject {
@@ -138,6 +147,15 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         uint256 otherGuardCount;
     }
 
+    struct ArtifactDescriptorPartition {
+        uint256 functionCount;
+        bytes32 functionHash;
+        uint256 errorCount;
+        bytes32 errorHash;
+        uint256 eventCount;
+        bytes32 eventHash;
+    }
+
     struct Manifest {
         string[67] functions;
         bytes32[67] functionRowIds;
@@ -177,10 +195,21 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         }
     }
 
-    function test_task4_exactAggregateAndCollisionUniverse() public view {
-        string[] memory functions = new string[](TASK4_FUNCTION_COUNT);
-        string[] memory errors = new string[](TASK4_ERROR_COUNT);
-        string[] memory events = new string[](TASK4_EVENT_COUNT);
+    function test_task4_frozenAggregateConstantsRemainHistorical() public pure {
+        assertEq(TASK4_FUNCTION_COUNT, 85);
+        assertEq(TASK4_ERROR_COUNT, 164);
+        assertEq(TASK4_EVENT_COUNT, 29);
+        assertEq(TASK4_CONSTRUCTOR_COUNT, 6);
+        assertEq(TASK4_ABI_COUNT, 284);
+        assertEq(TASK4_UNIQUE_FUNCTION_COUNT, 85);
+        assertEq(TASK4_UNIQUE_ERROR_COUNT, 163);
+        assertEq(TASK4_UNIQUE_EVENT_COUNT, 29);
+    }
+
+    function test_task5_exactAggregateAndCollisionUniverse() public view {
+        string[] memory functions = new string[](TASK5_FUNCTION_COUNT);
+        string[] memory errors = new string[](TASK5_ERROR_COUNT);
+        string[] memory events = new string[](TASK5_EVENT_COUNT);
         Task4ArtifactCensus memory census;
 
         for (uint256 artifactIndex; artifactIndex < finalArtifacts.length; ++artifactIndex) {
@@ -210,19 +239,62 @@ contract AcquisitionConstellationCrosswalkTest is Test {
             }
         }
 
-        assertEq(census.abiCount, TASK4_ABI_COUNT);
-        assertEq(census.functionCount, TASK4_FUNCTION_COUNT);
-        assertEq(census.errorCount, TASK4_ERROR_COUNT);
-        assertEq(census.eventCount, TASK4_EVENT_COUNT);
-        assertEq(census.constructorCount, TASK4_CONSTRUCTOR_COUNT);
+        assertEq(census.abiCount, TASK5_ABI_COUNT);
+        assertEq(census.functionCount, TASK5_FUNCTION_COUNT);
+        assertEq(census.errorCount, TASK5_ERROR_COUNT);
+        assertEq(census.eventCount, TASK5_EVENT_COUNT);
+        assertEq(census.constructorCount, TASK5_CONSTRUCTOR_COUNT);
         assertEq(
-            census.functionCount + census.errorCount + census.eventCount + census.constructorCount, TASK4_ABI_COUNT
+            census.functionCount + census.errorCount + census.eventCount + census.constructorCount, TASK5_ABI_COUNT
         );
-        assertEq(_uniqueDescriptorCount(functions, true, false), TASK4_UNIQUE_FUNCTION_COUNT);
-        assertEq(_uniqueDescriptorCount(errors, true, true), TASK4_UNIQUE_ERROR_COUNT);
-        assertEq(_uniqueDescriptorCount(events, false, false), TASK4_UNIQUE_EVENT_COUNT);
-        assertEq(_uniqueEventTopicCount(events), TASK4_UNIQUE_EVENT_COUNT);
+        assertEq(_uniqueDescriptorCount(functions, true, false), TASK5_UNIQUE_FUNCTION_COUNT);
+        assertEq(_uniqueDescriptorCount(errors, true, true), TASK5_UNIQUE_ERROR_COUNT);
+        assertEq(_uniqueDescriptorCount(events, false, false), TASK5_UNIQUE_EVENT_COUNT);
+        assertEq(_uniqueEventTopicCount(events), TASK5_UNIQUE_EVENT_COUNT);
         assertTrue(_validGuardOwnership(census.authorityGuardCount, census.coreGuardCount, census.otherGuardCount));
+    }
+
+    function test_task5_nonIntentArtifactsHaveExactFrozenDescriptorPartitions() public view {
+        uint256[5] memory artifactIndexes = [uint256(0), 1, 2, 3, 5];
+        ArtifactDescriptorPartition[5] memory expected = _nonIntentArtifactPartitions();
+
+        for (uint256 i; i < artifactIndexes.length; ++i) {
+            string memory json = vm.readFile(finalArtifacts[artifactIndexes[i]]);
+            _assertArtifactDescriptorPartition(json, expected[i]);
+        }
+    }
+
+    function test_task5_sameKindSameCountDescriptorSubstitutionRejectedByExactPartition() public view {
+        string[] memory functions = _artifactDescriptorsByKind(vm.readFile(finalArtifacts[0]), "function");
+        ArtifactDescriptorPartition[5] memory expected = _nonIntentArtifactPartitions();
+        assertTrue(_matchesDescriptorPartition(functions, expected[0].functionCount, expected[0].functionHash));
+
+        string memory original = functions[0];
+        functions[0] = "factoryStateMutated()";
+        assertFalse(_eq(original, functions[0]), "hostile fixture must replace a distinct descriptor");
+        assertEq(functions.length, expected[0].functionCount, "hostile fixture must preserve kind cardinality");
+        _assertUnique(functions, true);
+        assertEq(_uniqueDescriptorCount(functions, true, false), expected[0].functionCount);
+        assertFalse(
+            _matchesDescriptorPartition(functions, expected[0].functionCount, expected[0].functionHash),
+            "exact artifact ownership accepted same-kind same-count substitution"
+        );
+    }
+
+    function test_task5_exactDescriptorPartitionAcceptsSetReordering() public view {
+        string[] memory functions = _artifactDescriptorsByKind(vm.readFile(finalArtifacts[1]), "function");
+        ArtifactDescriptorPartition[5] memory expected = _nonIntentArtifactPartitions();
+        assertTrue(_matchesDescriptorPartition(functions, expected[1].functionCount, expected[1].functionHash));
+
+        string memory first = functions[0];
+        string memory second = functions[1];
+        assertFalse(_eq(first, second), "reorder fixture requires distinct descriptors");
+        (functions[0], functions[1]) = (functions[1], functions[0]);
+        assertTrue(_eq(functions[0], second) && _eq(functions[1], first), "reorder fixture must change ABI order");
+        assertTrue(
+            _matchesDescriptorPartition(functions, expected[1].functionCount, expected[1].functionHash),
+            "exact descriptor set rejected harmless ABI reorder"
+        );
     }
 
     function test_task4_abiKindClassificationFailsClosed() public pure {
@@ -340,6 +412,7 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         (string[] memory legacyEvents,) = _events();
         (DescriptorRow[] memory tf, DescriptorRow[] memory te, DescriptorRow[] memory tv) = _topologyRows();
         DescriptorRow[] memory fr = _futureRows();
+        (DescriptorRow[] memory nf, DescriptorRow[] memory ne, DescriptorRow[] memory nv) = _task5NewV2Rows();
         string[] memory topologyFunctions = _rowDescriptors(tf);
         string[] memory topologyEvents = _rowDescriptors(tv);
         string[] memory future = _rowDescriptors(fr);
@@ -347,15 +420,129 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         assertTrue(_validRows(te, te));
         assertTrue(_validRows(tv, tv));
         assertTrue(_validRows(fr, fr));
+        assertTrue(_validRows(nf, nf));
+        assertTrue(_validRows(ne, ne));
+        assertEq(nv.length, 0);
 
-        string[] memory functions = _join(legacyFunctions, topologyFunctions, future, 0, 2);
+        string[] memory task4Functions = _join(legacyFunctions, topologyFunctions, future, 0, 2);
+        string[] memory functions = _joinTwo(task4Functions, _rowDescriptors(nf));
         string[] memory events = _join(legacyEvents, topologyEvents, future, 8, 9);
         _assertUnique(functions, true);
-        assertTrue(_combinedErrorUniverseIsValid(te, fr));
+        assertTrue(_combinedErrorUniverseIsValid(te, fr, ne));
         _assertUnique(events, false);
-        assertEq(functions.length, 67 + 14 + 2);
-        assertEq(55 + te.length + 6, 55 + 51 + 6);
+        assertEq(functions.length, 67 + 14 + 2 + 2);
+        assertEq(55 + te.length + 6 + ne.length, 55 + 51 + 6 + 4);
         assertEq(events.length, 21 + 7 + 1);
+    }
+
+    function test_task5_newV2RowsExactTransitionOwnerCategoryAndCardinality() public view {
+        (DescriptorRow[] memory functions, DescriptorRow[] memory errors, DescriptorRow[] memory events) =
+            _task5NewV2Rows();
+        assertEq(functions.length, 2);
+        assertEq(errors.length, 4);
+        assertEq(events.length, 0);
+        assertEq(_activeFutureReserved().length, 0);
+        for (uint256 i; i < functions.length; ++i) {
+            assertEq(uint8(functions[i].category), uint8(Category.NewV2));
+            assertEq(uint8(functions[i].owner), uint8(Owner.Intent));
+            assertEq(functions[i].id, keccak256(abi.encode("T5NF", i + 1)));
+        }
+        for (uint256 i; i < errors.length; ++i) {
+            assertEq(uint8(errors[i].category), uint8(Category.NewV2));
+            assertEq(uint8(errors[i].owner), uint8(Owner.Intent));
+            assertEq(errors[i].id, keccak256(abi.encode("T5NE", i + 1)));
+        }
+
+        _assertTask5IntentArtifactRows(functions, errors);
+    }
+
+    function _assertTask5IntentArtifactRows(DescriptorRow[] memory functions, DescriptorRow[] memory errors)
+        internal
+        view
+    {
+        string memory json = vm.readFile(finalArtifacts[4]);
+        uint256[2] memory functionMatches;
+        uint256[4] memory errorMatches;
+        uint256 topologyFunctions;
+        uint256 topologyErrors;
+        uint256 topologyEvents;
+        uint256 constructors;
+        for (uint256 abiIndex; vm.keyExistsJson(json, _abiPath(abiIndex)); ++abiIndex) {
+            string memory path = _abiPath(abiIndex);
+            string memory kind = vm.parseJsonString(json, string.concat(path, ".type"));
+            if (_eq(kind, "constructor")) {
+                ++constructors;
+                continue;
+            }
+            string memory descriptor = _artifactDescriptor(json, path);
+            if (_eq(kind, "function")) {
+                uint256 matchIndex = _matchingRow(descriptor, functions);
+                if (matchIndex != 0) {
+                    ++functionMatches[matchIndex - 1];
+                } else {
+                    assertTrue(
+                        _eq(descriptor, "intentExecutionTopology()")
+                            || _eq(descriptor, "finalizeIntentExecution(bytes32)"),
+                        "extra Intent function outside Task4 topology and Task5 NewV2"
+                    );
+                    ++topologyFunctions;
+                }
+            } else if (_eq(kind, "error")) {
+                uint256 matchIndex = _matchingRow(descriptor, errors);
+                if (matchIndex != 0) {
+                    ++errorMatches[matchIndex - 1];
+                } else {
+                    assertTrue(_isTask4IntentError(descriptor), "extra Intent error outside Task4 and Task5 NewV2");
+                    ++topologyErrors;
+                }
+            } else if (_eq(kind, "event")) {
+                assertEq(descriptor, "IntentExecutionFinalized(bytes32)", "extra Intent event");
+                ++topologyEvents;
+            } else {
+                assertTrue(false, "unexpected Intent ABI kind");
+            }
+        }
+        assertEq(constructors, 1);
+        assertEq(topologyFunctions, 2);
+        assertEq(topologyErrors, 5);
+        assertEq(topologyEvents, 1);
+        for (uint256 i; i < functionMatches.length; ++i) {
+            assertEq(functionMatches[i], 1, "NewV2 function match");
+        }
+        for (uint256 i; i < errorMatches.length; ++i) {
+            assertEq(errorMatches[i], 1, "NewV2 error match");
+        }
+    }
+
+    function test_task5_newV2MutationProofsRejectIdCategoryOwnerDescriptorAndCardinality() public pure {
+        (DescriptorRow[] memory expectedFunctions, DescriptorRow[] memory expectedErrors,) = _task5NewV2Rows();
+        (DescriptorRow[] memory actualFunctions, DescriptorRow[] memory actualErrors,) = _task5NewV2Rows();
+        actualFunctions[0].id = bytes32(0);
+        assertFalse(_validRows(actualFunctions, expectedFunctions));
+        (actualFunctions,,) = _task5NewV2Rows();
+        actualFunctions[0].category = Category.Topology;
+        assertFalse(_validRows(actualFunctions, expectedFunctions));
+        (actualFunctions,,) = _task5NewV2Rows();
+        actualFunctions[0].owner = Owner.Core;
+        assertFalse(_validRows(actualFunctions, expectedFunctions));
+        (actualFunctions,,) = _task5NewV2Rows();
+        actualFunctions[0].descriptor = "deriveIntentId(bytes32,uint256)";
+        assertFalse(_validRows(actualFunctions, expectedFunctions));
+        DescriptorRow[] memory shortFunctions = new DescriptorRow[](1);
+        shortFunctions[0] = expectedFunctions[0];
+        assertFalse(_validRows(shortFunctions, expectedFunctions));
+        (actualFunctions,,) = _task5NewV2Rows();
+        assertTrue(actualFunctions[0].id != actualFunctions[1].id);
+        assertFalse(_eq(actualFunctions[0].descriptor, actualFunctions[1].descriptor));
+        actualFunctions[1] = actualFunctions[0];
+        assertFalse(_validRows(actualFunctions, expectedFunctions));
+        (actualFunctions,,) = _task5NewV2Rows();
+        assertEq(uint8(actualFunctions[0].owner), uint8(actualFunctions[1].owner));
+        assertTrue(actualFunctions[0].id != actualFunctions[1].id);
+        (actualFunctions[0], actualFunctions[1]) = (actualFunctions[1], actualFunctions[0]);
+        assertFalse(_validRows(actualFunctions, expectedFunctions));
+        actualErrors[0].category = Category.FutureReserved;
+        assertFalse(_validRows(actualErrors, expectedErrors));
     }
 
     function test_mutation35_sameOwnerTopologyRowSwap_rejected() public pure {
@@ -848,14 +1035,14 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         return authorityGuard == 1 && coreGuard == 1;
     }
 
-    function _combinedErrorUniverseIsValid(DescriptorRow[] memory topology, DescriptorRow[] memory future)
-        internal
-        pure
-        returns (bool)
-    {
+    function _combinedErrorUniverseIsValid(
+        DescriptorRow[] memory topology,
+        DescriptorRow[] memory future,
+        DescriptorRow[] memory newV2
+    ) internal pure returns (bool) {
         (string[] memory legacy, Owner[] memory legacyOwners) = _errors();
         uint256 futureErrorCount = 6;
-        string[] memory rows = new string[](legacy.length + topology.length + futureErrorCount + 1);
+        string[] memory rows = new string[](legacy.length + topology.length + futureErrorCount + newV2.length + 1);
         Owner[] memory owners = new Owner[](rows.length);
         uint256 n;
         for (uint256 i; i < legacy.length; ++i) {
@@ -869,6 +1056,10 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         for (uint256 i = 2; i < 8; ++i) {
             rows[n] = future[i].descriptor;
             owners[n++] = future[i].owner;
+        }
+        for (uint256 i; i < newV2.length; ++i) {
+            rows[n] = newV2[i].descriptor;
+            owners[n++] = newV2[i].owner;
         }
         rows[n] = "ReentrancyGuardReentrantCall()";
         owners[n] = Owner.Core;
@@ -1107,6 +1298,130 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         return string.concat(name, "(", _parameterTypes(json, string.concat(path, ".inputs")), ")");
     }
 
+    function _assertArtifactDescriptorPartition(string memory json, ArtifactDescriptorPartition memory expected)
+        internal
+        view
+    {
+        string[] memory functions = _artifactDescriptorsByKind(json, "function");
+        string[] memory errors = _artifactDescriptorsByKind(json, "error");
+        string[] memory events = _artifactDescriptorsByKind(json, "event");
+        assertTrue(
+            _matchesDescriptorPartition(functions, expected.functionCount, expected.functionHash),
+            "exact artifact function partition"
+        );
+        assertTrue(
+            _matchesDescriptorPartition(errors, expected.errorCount, expected.errorHash),
+            "exact artifact error partition"
+        );
+        assertTrue(
+            _matchesDescriptorPartition(events, expected.eventCount, expected.eventHash),
+            "exact artifact event partition"
+        );
+    }
+
+    function _artifactDescriptorsByKind(string memory json, string memory expectedKind)
+        internal
+        view
+        returns (string[] memory rows)
+    {
+        uint256 count;
+        for (uint256 abiIndex; vm.keyExistsJson(json, _abiPath(abiIndex)); ++abiIndex) {
+            if (_eq(vm.parseJsonString(json, string.concat(_abiPath(abiIndex), ".type")), expectedKind)) ++count;
+        }
+        rows = new string[](count);
+        uint256 rowIndex;
+        for (uint256 abiIndex; vm.keyExistsJson(json, _abiPath(abiIndex)); ++abiIndex) {
+            string memory path = _abiPath(abiIndex);
+            if (!_eq(vm.parseJsonString(json, string.concat(path, ".type")), expectedKind)) continue;
+            rows[rowIndex++] = _artifactDescriptor(json, path);
+        }
+        assertEq(rowIndex, count, "artifact descriptor collection cardinality");
+    }
+
+    function _matchesDescriptorPartition(string[] memory rows, uint256 expectedCount, bytes32 expectedHash)
+        internal
+        pure
+        returns (bool)
+    {
+        return rows.length == expectedCount && _descriptorPartitionHash(rows) == expectedHash;
+    }
+
+    function _descriptorPartitionHash(string[] memory rows) internal pure returns (bytes32) {
+        string[] memory sorted = new string[](rows.length);
+        for (uint256 i; i < rows.length; ++i) {
+            sorted[i] = rows[i];
+        }
+        for (uint256 i = 1; i < sorted.length; ++i) {
+            string memory candidate = sorted[i];
+            uint256 j = i;
+            while (j != 0 && _descriptorComesAfter(sorted[j - 1], candidate)) {
+                sorted[j] = sorted[j - 1];
+                --j;
+            }
+            sorted[j] = candidate;
+        }
+
+        bytes memory joined;
+        for (uint256 i; i < sorted.length; ++i) {
+            if (i != 0) joined = bytes.concat(joined, bytes("\n"));
+            joined = bytes.concat(joined, bytes(sorted[i]));
+        }
+        return keccak256(joined);
+    }
+
+    function _descriptorComesAfter(string memory left, string memory right) internal pure returns (bool) {
+        bytes memory a = bytes(left);
+        bytes memory b = bytes(right);
+        uint256 commonLength = a.length < b.length ? a.length : b.length;
+        for (uint256 i; i < commonLength; ++i) {
+            if (uint8(a[i]) != uint8(b[i])) return uint8(a[i]) > uint8(b[i]);
+        }
+        return a.length > b.length;
+    }
+
+    function _nonIntentArtifactPartitions() internal pure returns (ArtifactDescriptorPartition[5] memory expected) {
+        expected[0] = ArtifactDescriptorPartition({
+            functionCount: 4,
+            functionHash: 0x77e79aa303a945f069f154fa2b8393ec7bb12f010bcec339f3a3f247b49074be,
+            errorCount: 35,
+            errorHash: 0x10da2a62fcd635ac20f43a3604075c53aad7b9bdaa20da8632a1987ba186d260,
+            eventCount: 2,
+            eventHash: 0x08a4a2cb9281b3bd9f93345b502180d535b486331d9b9bea8b27f8ba2146a4cf
+        });
+        expected[1] = ArtifactDescriptorPartition({
+            functionCount: 50,
+            functionHash: 0xb439b62dccc4ec1c47ffb01800896dc15b55f9a1955a5d1ad3b798c4c0c594a0,
+            errorCount: 54,
+            errorHash: 0xca063e84d4789ea0db888a33220de6f5b50b1696b35d19654a65e20b79f4bd76,
+            eventCount: 18,
+            eventHash: 0x9409a20bda8f1776e4887cc8c628335eda460e0aae710b429aae73a454b9efee
+        });
+        expected[2] = ArtifactDescriptorPartition({
+            functionCount: 23,
+            functionHash: 0xbffe172907ef380212285fb526a86d7f271ed3d106bb8bcd8711c837626659a5,
+            errorCount: 36,
+            errorHash: 0xdcedc445532e355478ee2e1f13b8be05bb9c3d69c9b1d8d29472ebc4bdfe4776,
+            eventCount: 5,
+            eventHash: 0x32f4d40f4741e4810ee206ecf1062a90df09e6a8a9f05791934e88b8d3ccee82
+        });
+        expected[3] = ArtifactDescriptorPartition({
+            functionCount: 4,
+            functionHash: 0x4704b160754082c1683da0664f25c0582f6044477990765e42926d9fcab5a60d,
+            errorCount: 29,
+            errorHash: 0x1a39c111e4b2f9e6ab563129aad4439430b6e9213fbb26f9196793e99f2a3e71,
+            eventCount: 2,
+            eventHash: 0x220f493e421d15af04c8ec9fae273aec4105154235832c0725811069a97b5151
+        });
+        expected[4] = ArtifactDescriptorPartition({
+            functionCount: 2,
+            functionHash: 0xd16f274e0c956fd773d96d2a34039ac67d5715cb7ba435c238a76189c6f15ae6,
+            errorCount: 5,
+            errorHash: 0x1fd46988bb9beb67de977b59ea9db2098295b27ca7564ae082e718127640ec58,
+            eventCount: 1,
+            eventHash: 0xf367f39206358295ebaffc9ac4fbdf599fb888fbefb98ef5cefa788c672f0f71
+        });
+    }
+
     function _parameterTypes(string memory json, string memory path) internal view returns (string memory types) {
         for (uint256 i; vm.keyExistsJson(json, string.concat(path, "[", vm.toString(i), "]")); ++i) {
             if (i != 0) types = string.concat(types, ",");
@@ -1223,6 +1538,35 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         }
     }
 
+    function _task5NewV2Rows()
+        internal
+        pure
+        returns (DescriptorRow[] memory functions, DescriptorRow[] memory errors, DescriptorRow[] memory events)
+    {
+        functions = new DescriptorRow[](2);
+        functions[0] = DescriptorRow(
+            keccak256(abi.encode("T5NF", uint256(1))), Category.NewV2, Owner.Intent, "deriveIntentId(uint256,bytes32)"
+        );
+        functions[1] = DescriptorRow(
+            keccak256(abi.encode("T5NF", uint256(2))),
+            Category.NewV2,
+            Owner.Intent,
+            "deriveAttemptId(uint256,uint256,bytes32,address,bytes32,bytes32)"
+        );
+        errors = new DescriptorRow[](4);
+        string[4] memory descriptors = [
+            "IntentExecutionZeroAddress()",
+            "IntentExecutionContractRequired(address)",
+            "IntentExecutionAddressMismatch(address,address)",
+            "IntentExecutionPeerMismatch(uint8,address,address)"
+        ];
+        for (uint256 i; i < errors.length; ++i) {
+            errors[i] =
+                DescriptorRow(keccak256(abi.encode("T5NE", i + 1)), Category.NewV2, Owner.Intent, descriptors[i]);
+        }
+        events = new DescriptorRow[](0);
+    }
+
     function _topologyRows()
         internal
         pure
@@ -1255,6 +1599,20 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         for (uint256 i; i < rows.length; ++i) {
             r[i] = rows[i].descriptor;
         }
+    }
+
+    function _matchingRow(string memory descriptor, DescriptorRow[] memory rows) internal pure returns (uint256) {
+        for (uint256 i; i < rows.length; ++i) {
+            if (_eq(descriptor, rows[i].descriptor)) return i + 1;
+        }
+        return 0;
+    }
+
+    function _isTask4IntentError(string memory descriptor) internal pure returns (bool) {
+        return _eq(descriptor, "IntentExecutionFactoryZero()") || _eq(descriptor, "IntentExecutionManifestHashZero()")
+            || _eq(descriptor, "IntentExecutionFinalizerUnauthorized(address)")
+            || _eq(descriptor, "IntentExecutionManifestHashMismatch(bytes32,bytes32)")
+            || _eq(descriptor, "IntentExecutionAlreadyFinalized()");
     }
 
     function _validRows(DescriptorRow[] memory actual, DescriptorRow[] memory expected) internal pure returns (bool) {
@@ -1506,6 +1864,17 @@ contract AcquisitionConstellationCrosswalkTest is Test {
         }
         for (uint256 i = cStart; i < cEnd; ++i) {
             out[n++] = c[i];
+        }
+    }
+
+    function _joinTwo(string[] memory a, string[] memory b) internal pure returns (string[] memory out) {
+        out = new string[](a.length + b.length);
+        uint256 n;
+        for (uint256 i; i < a.length; ++i) {
+            out[n++] = a[i];
+        }
+        for (uint256 i; i < b.length; ++i) {
+            out[n++] = b[i];
         }
     }
 }

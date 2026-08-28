@@ -1,8 +1,8 @@
 [CmdletBinding()]
 param(
   [switch]$ExpectTask0Red,
-  [ValidateSet('Task1','Task2','Task3','Task4')]
-  [string]$ValidatePhase = 'Task4',
+  [ValidateSet('Task1','Task2','Task3','Task4','Task5')]
+  [string]$ValidatePhase = 'Task5',
   [string]$ArtifactsRoot = '',
   [string]$ForgePath = 'forge',
   [string]$NodePath = 'node'
@@ -27,6 +27,7 @@ $finalArtifacts = @(
   'AcquisitionIntentExecution.sol/AcquisitionIntentExecution.json',
   'AcquisitionReconciliation.sol/AcquisitionReconciliation.json'
 ) | ForEach-Object { Join-Path $ArtifactsRoot $_ }
+$task5InterfaceArtifact = Join-Path $ArtifactsRoot 'IAcquisitionIntentExecutionV2.sol/IAcquisitionIntentExecutionV2.json'
 
 $script:artifactTreeBaseline = $null
 $script:isolatedRoot = $null
@@ -302,10 +303,15 @@ function Scan-Opcodes([string]$Hex) {
 }
 
 function Strip-SolidityMetadata([string]$Hex) {
-  if ($Hex.Length -lt 6) { throw 'Bytecode too short for Solidity CBOR trailer.' }
+  if (-not $Hex.StartsWith('0x') -or $Hex.Length -lt 6 -or (($Hex.Length-2)%2)-ne0) { throw 'Bytecode too short or malformed for Solidity CBOR trailer.' }
   $metadataBytes = [Convert]::ToInt32($Hex.Substring($Hex.Length - 4), 16)
   $removeChars = ($metadataBytes + 2) * 2
   if ($removeChars -ge ($Hex.Length - 2)) { throw 'Invalid Solidity CBOR trailer length.' }
+  $metadataStart=$Hex.Length-$removeChars
+  $cbor=$Hex.Substring($metadataStart,$metadataBytes*2).ToLowerInvariant()
+  if($metadataBytes-ne51-or$cbor-notmatch'^a2646970667358221220[0-9a-f]{64}64736f6c634300081a$'){
+    throw 'Invalid or noncanonical Solidity ipfs/solc CBOR trailer.'
+  }
   return $Hex.Substring(0, $Hex.Length - $removeChars)
 }
 
@@ -1195,6 +1201,17 @@ ReentrancyGuardReentrantCall()
   }
 }
 
+function Assert-Task5InterfaceArtifactPaths([string[]]$Paths,[string]$Expected) {
+  if($Paths.Count-ne1-or-not[string]::Equals([IO.Path]::GetFullPath($Paths[0]),[IO.Path]::GetFullPath($Expected),[StringComparison]::OrdinalIgnoreCase)){
+    throw 'Task5 interface canonical artifact missing, duplicated, replaced, profiled, or misplaced.'
+  }
+}
+
+function Assert-Task5CanonicalInterfaceArtifactLayout {
+  $matches=@(Get-ChildItem -LiteralPath $ArtifactsRoot -Recurse -File -Filter 'IAcquisitionIntentExecutionV2.json'|ForEach-Object{$_.FullName})
+  Assert-Task5InterfaceArtifactPaths $matches $task5InterfaceArtifact
+}
+
 function Get-Task3UniqueCompiledErrors([string[]]$Descriptors) {
   $seen=[System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
   $duplicates=[System.Collections.Generic.List[string]]::new()
@@ -1678,6 +1695,285 @@ function Assert-Task4CanonicalSemanticImmutables($Artifact,$DeclarationArtifact,
   $properties=@($Artifact.deployedBytecode.immutableReferences.psobject.Properties)
   if($Expected.Count-ne5-or$variables.Count-ne5-or$properties.Count-ne5){throw 'Task4 canonical semantic immutable cardinality drift.'}
   foreach($entry in $Expected.GetEnumerator()){$variable=@($variables|Where-Object{$_.name-ceq$entry.Key});if($variable.Count-ne1){throw "Task4 canonical immutable AST identity drift: $($entry.Key)"};$property=$Artifact.deployedBytecode.immutableReferences.psobject.Properties[[string]$variable[0].id];if($null-eq$property-or(Get-ReferenceSignature $property.Value)-cne$entry.Value){throw "Task4 canonical semantic immutable drift: $($entry.Key)"}}
+}
+
+function Assert-Task5CompilerConfiguration($EffectiveConfig,$LegacyArtifact) {
+  if (-not [string]::Equals([string]$EffectiveConfig.solc,'0.8.26',[StringComparison]::Ordinal) -or
+      $EffectiveConfig.optimizer -ne $true -or [int]$EffectiveConfig.optimizer_runs -ne 800 -or
+      -not [string]::Equals([string]$EffectiveConfig.evm_version,'cancun',[StringComparison]::Ordinal) -or
+      $EffectiveConfig.via_ir -eq $true) { throw 'Task5 default compiler profile drift.' }
+  $profiles=@($EffectiveConfig.additional_compiler_profiles)
+  if($profiles.Count-ne1){throw 'Task5 additional compiler profile count drift.'}
+  $profile=$profiles[0]
+  if($profile.name-ne'constellation-via-ir'-or$profile.via_ir-ne$true-or$profile.optimizer-ne$true-or
+     [int]$profile.optimizer_runs-ne800-or$profile.evm_version-ne'cancun'-or$null-ne$profile.bytecode_hash){throw 'Task5 named compiler profile drift.'}
+  $expected=@(
+    'src/AcquisitionConstellationFactory.sol','src/AcquisitionAuthority.sol','src/AcquisitionVaultCore.sol',
+    'src/PreVoteBudgetBook.sol','src/AcquisitionIntentExecution.sol','src/AcquisitionReconciliation.sol',
+    'src/interfaces/IAcquisitionAuthorityV2.sol','src/interfaces/IAcquisitionIntentExecutionV2.sol'
+  )
+  $restrictions=@($EffectiveConfig.compilation_restrictions)
+  if($restrictions.Count-ne8){throw 'Task5 compiler restriction count drift.'}
+  foreach($path in $expected){
+    $matches=@($restrictions|Where-Object{[string]::Equals([string]$_.paths,$path,[StringComparison]::Ordinal)})
+    if($matches.Count-ne1){throw "Task5 compiler restriction path missing or duplicated: $path"}
+    $r=$matches[0]
+    if($r.version-ne'=0.8.26'-or$r.via_ir-ne$true-or[int]$r.optimizer_runs-ne800-or$r.evm_version-ne'cancun'-or
+       $null-ne$r.bytecode_hash-or$null-ne$r.min_optimizer_runs-or$null-ne$r.max_optimizer_runs-or
+       $null-ne$r.min_evm_version-or$null-ne$r.max_evm_version){throw "Task5 compiler restriction settings drift: $path"}
+  }
+  $legacyMetadata=$LegacyArtifact.metadata;if($legacyMetadata-is[string]){$legacyMetadata=$legacyMetadata|ConvertFrom-Json -Depth 100}
+  if($legacyMetadata.settings.viaIR-eq$true){throw 'Historical AcquisitionVault must remain on the default non-viaIR profile.'}
+}
+
+function Assert-Task5InterfaceSchema([string]$Path) {
+  $text=(Get-Content -LiteralPath $Path -Raw).Replace("`r`n","`n")
+  if((Get-FileKeccak $Path)-ne'0xbd126851fc77bb3ef5f17b71e2f65d01af179e965281619ee0dfcff17f48c947'){throw 'Task5 interface source identity drift.'}
+  $normalized=[regex]::Replace($text,'//[^\r\n]*|/\*.*?\*/','',[Text.RegularExpressions.RegexOptions]::Singleline)
+  $normalized=[regex]::Replace($normalized,'\s+',' ').Trim()
+  $expected='pragma solidity 0.8.26; interface IAcquisitionIntentExecutionV2 { struct IntentIdentityInput { uint256 ballotDay; bytes32 assetVersionKey; } struct AttemptIdentityInput { uint256 operatorGeneration; uint256 attemptIndex; bytes32 intentId; address adapter; bytes32 runtimeCodeHash; bytes32 routeHash; } struct ImmutableIntentCommitment { bytes32 intentId; bytes32 budgetId; uint256 ballotDay; bytes32 assetVersionKey; address token; uint8 tokenDecimals; uint256 maxEthWei; uint64 purchaseUntil; uint256 ingressGeneration; bytes32 oracleCommitment; uint256 minimumOutput; address adapter; bytes32 adapterRuntimeCodeHash; bytes32 routeHash; } }'
+  if($normalized-cne$expected){throw 'Task5 exact type-only interface/schema drift.'}
+}
+
+function Assert-Task5InterfaceArtifactSchema($Artifact) {
+  $definitions=@($Artifact.ast.nodes|Where-Object{$_.nodeType-eq'ContractDefinition'-and$_.name-eq'IAcquisitionIntentExecutionV2'})
+  if($definitions.Count-ne1-or$definitions[0].contractKind-ne'interface'){throw 'Task5 interface AST identity drift.'}
+  $nodes=@($definitions[0].nodes)
+  if(@($nodes|Where-Object{$_.nodeType-ne'StructDefinition'}).Count-ne0){throw 'Task5 type-only interface gained runtime declarations.'}
+  $expected=[ordered]@{
+    IntentIdentityInput=@('ballotDay:uint256','assetVersionKey:bytes32')
+    AttemptIdentityInput=@('operatorGeneration:uint256','attemptIndex:uint256','intentId:bytes32','adapter:address','runtimeCodeHash:bytes32','routeHash:bytes32')
+    ImmutableIntentCommitment=@('intentId:bytes32','budgetId:bytes32','ballotDay:uint256','assetVersionKey:bytes32','token:address','tokenDecimals:uint8','maxEthWei:uint256','purchaseUntil:uint64','ingressGeneration:uint256','oracleCommitment:bytes32','minimumOutput:uint256','adapter:address','adapterRuntimeCodeHash:bytes32','routeHash:bytes32')
+  }
+  if($nodes.Count-ne3){throw 'Task5 interface struct cardinality drift.'}
+  for($i=0;$i-lt3;$i++){
+    $entry=$expected.GetEnumerator()|Select-Object -Index $i;$node=$nodes[$i]
+    if($node.name-cne$entry.Key){throw "Task5 interface struct order/name drift at $i."}
+    $actual=@($node.members|ForEach-Object{"$($_.name):$($_.typeDescriptions.typeString)"})
+    Assert-Task3OrderedRows $actual @($entry.Value) "Task5 interface $($entry.Key) members"
+  }
+  if(@($Artifact.abi).Count-ne0-or(Byte-Length $Artifact.bytecode.object)-ne0-or(Byte-Length $Artifact.deployedBytecode.object)-ne0){throw 'Task5 type-only interface emitted an ABI or executable surface.'}
+  $metadata=$Artifact.metadata;if($metadata-is[string]){$metadata=$metadata|ConvertFrom-Json -Depth 100}
+  if((Get-SourceSetFingerprint $metadata)-ne'0x7b9aaed0ffb3578c86f896b6451cd9383cf16679a2878f5a374bd496087a300a'){throw 'Task5 interface source-set drift.'}
+}
+
+function Assert-Task5IntentIr([string]$Ir,[string]$CoreId) {
+  if([string]::IsNullOrWhiteSpace($CoreId)){throw 'Task5 Core immutable AST identity missing.'}
+  $clean=[regex]::Replace($Ir,'/\*\*.*?\*/','',[Text.RegularExpressions.RegexOptions]::Singleline)
+  $clean=[regex]::Replace($clean,'(?m)///[^\r\n]*','');$clean=[regex]::Replace($clean,'\s+',' ')
+  Assert-Task3LowercaseCompilerOperations $clean 'Task5 IntentExecution'
+  if($clean-cmatch'\b(staticcall|call|delegatecall|callcode|create|create2|selfdestruct|returndatacopy)\s*\('){throw 'Task5 Intent runtime call/prohibited compiler operation drift.'}
+  $attempt=[regex]::Match($clean,'case 0x14ddcae0 \{(?<body>.*?)\} case 0x2e256d9a',[Text.RegularExpressions.RegexOptions]::Singleline)
+  $intent=[regex]::Match($clean,'case 0x6fd37d8c \{(?<body>.*?)\} case 0xac59c1e5',[Text.RegularExpressions.RegexOptions]::Singleline)
+  if(-not$attempt.Success-or-not$intent.Success){throw 'Task5 selector/body binding drift.'}
+  Assert-Task5ExactSelectorStreams $intent.Groups['body'].Value 'intent' @(
+    'callvalue','revert','slt','add','calldatasize','not','revert','mload','add','mstore','mstore','add','and','loadimmutable',
+    'mstore','add','calldataload','mstore','add','calldataload','mstore','finalize_allocation','keccak256','mload','mload','mstore','return'
+  ) @('expr_mpos','_4','var_intentId','memPos_2')
+  Assert-Task5ExactSelectorStreams $attempt.Groups['body'].Value 'attempt' @(
+    'callvalue','revert','slt','add','calldatasize','not','revert','calldataload','and','iszero','eq','revert','add','mstore',
+    'mstore','add','mstore','add','and','loadimmutable','mstore','add','address','mstore','add','calldataload','mstore','add',
+    'calldataload','mstore','add','calldataload','mstore','add','mstore','add','calldataload','mstore','add','calldataload',
+    'mstore','finalize_allocation','keccak256','mload','mload','mstore','return'
+  ) @('value','_2','_3','var_attemptId','memPos')
+  $corePattern='and\(\s*loadimmutable\("'+[regex]::Escape($CoreId)+'"\)\s*,\s*0xffffffffffffffffffffffffffffffffffffffff\s*\)'
+  $intentBody=[regex]::Replace($intent.Groups['body'].Value,$corePattern,'CORE')
+  $attemptBody=[regex]::Replace($attempt.Groups['body'].Value,$corePattern,'CORE')
+  if($intentBody-ceq$intent.Groups['body'].Value-or$attemptBody-ceq$attempt.Groups['body'].Value){throw 'Task5 Core immutable body binding drift.'}
+  if(-not[string]::Equals((Get-TextSha256 $intentBody),'0x05de055fe1e68aaef61ceee88e3b10fb802b637dada440f850c30532608b3171',[StringComparison]::Ordinal)){throw 'Task5 intent complete normalized selector-body drift.'}
+  if(-not[string]::Equals((Get-TextSha256 $attemptBody),'0xe092d1bb2c2af13fa243ecff0ed6c810303ac1be68b293497e9ab87f0d733b50',[StringComparison]::Ordinal)){throw 'Task5 attempt complete normalized selector-body drift.'}
+  $intentTokens=@('let expr_mpos := mload(64)','let _4 := add(expr_mpos, 32)','mstore(_4, 0x1237)',
+    'mstore(add(expr_mpos, 64), CORE)','mstore(add(expr_mpos, 96), calldataload(4))','mstore(add(expr_mpos, 128), calldataload(36))',
+    'mstore(expr_mpos, 128)','finalize_allocation(expr_mpos, 160)','let var_intentId := keccak256(_4, mload(expr_mpos))',
+    'mstore(memPos_2, var_intentId)','return(memPos_2, 32)')
+  Assert-Task5OrderedTokens $intentBody $intentTokens 'intent'
+  if(([regex]::Matches($intentBody,'keccak256\(')).Count-ne1-or([regex]::Matches($intentBody,'mstore\(')).Count-ne6){throw 'Task5 intent selector exact four-word hash dataflow drift.'}
+  Assert-Task5SelectorWriterInventory $intentBody 'intent' 6
+  if(([regex]::Matches($intentBody,'\bexpr_mpos\s*:=' )).Count-ne1-or
+     ([regex]::Matches($intentBody,'\b_4\s*:=' )).Count-ne1){throw 'Task5 intent base/hash-pointer assignment cardinality drift.'}
+  $attemptTokens=@('let value := calldataload(100)','let _2 := and(value, 0xffffffffffffffffffffffffffffffffffffffff)',
+    'let _3 := add(_1, 32)','mstore(_3, 0x8aa693df3b136274e99739abc62a2c7aabc541180430aaba0fc4cb6267383c27)',
+    'mstore(add(_1, 64), 0x1237)','mstore(add(_1, 96), CORE)','mstore(add(_1, 128), address())',
+    'mstore(add(_1, 160), calldataload(4))','mstore(add(_1, 192), calldataload(36))','mstore(add(_1, 224), calldataload(68))',
+    'mstore(add(_1, 256), _2)','mstore(add(_1, 288), calldataload(132))','mstore(add(_1, 320), calldataload(164))',
+    'mstore(_1, 320)','finalize_allocation(_1, 352)','let var_attemptId := keccak256(_3, mload(_1))',
+    'mstore(memPos, var_attemptId)','return(memPos, 32)')
+  Assert-Task5OrderedTokens $attemptBody $attemptTokens 'attempt'
+  if(([regex]::Matches($attemptBody,'keccak256\(')).Count-ne1-or([regex]::Matches($attemptBody,'mstore\(')).Count-ne12){throw 'Task5 attempt selector exact ten-word hash dataflow drift.'}
+  Assert-Task5SelectorWriterInventory $attemptBody 'attempt' 12
+  if(([regex]::Matches($attemptBody,'\b_3\s*:=' )).Count-ne1-or
+     ([regex]::Matches($attemptBody,'\b_1\s*:=' )).Count-ne0-or
+     ([regex]::Matches($attemptBody,'\b_2\s*:=' )).Count-ne1){throw 'Task5 attempt base/hash-pointer/normalized-input assignment cardinality drift.'}
+}
+
+function Assert-Task5ExactSelectorStreams([string]$Body,[string]$Name,[string[]]$ExpectedOperations,[string[]]$ExpectedLhs) {
+  $operations=@([regex]::Matches($Body,'\b([A-Za-z_][A-Za-z0-9_]*)\s*\(')|ForEach-Object{$_.Groups[1].Value})
+  $lhs=@([regex]::Matches($Body,'(?:\blet\s+)?\b([A-Za-z_][A-Za-z0-9_]*)\s*:=' )|ForEach-Object{$_.Groups[1].Value})
+  Assert-Task3OrderedRows $operations $ExpectedOperations "Task5 $Name complete operation-name stream"
+  Assert-Task3OrderedRows $lhs $ExpectedLhs "Task5 $Name complete assignment-LHS stream"
+}
+
+function Assert-Task5SelectorWriterInventory([string]$Body,[string]$Name,[int]$ExpectedMstores) {
+  if(([regex]::Matches($Body,'\bmstore\s*\(')).Count-ne$ExpectedMstores){throw "Task5 $Name MSTORE inventory drift."}
+  foreach($writer in @('mstore8','mcopy','calldatacopy','codecopy','extcodecopy','returndatacopy')){
+    if([regex]::IsMatch($Body,('\b'+$writer+'\s*\('),[Text.RegularExpressions.RegexOptions]::IgnoreCase)){throw "Task5 $Name non-frozen memory writer/copy drift: $writer"}
+  }
+}
+
+function Assert-Task5OrderedTokens([string]$Body,[string[]]$Tokens,[string]$Name) {
+  $normalizedBody=[regex]::Replace($Body,'\s*([(),])\s*','$1');$offset=0
+  foreach($raw in $Tokens){$token=[regex]::Replace($raw,'\s*([(),])\s*','$1');$index=$normalizedBody.IndexOf($token,$offset,[StringComparison]::Ordinal);if($index-lt0){throw "Task5 $Name ordered dataflow token missing: $raw"};$offset=$index+$token.Length}
+}
+
+function Assert-Task5Changed([string]$Original,[string]$Mutated,[string]$Name) {
+  if($Original-ceq$Mutated){throw "Task5 hostile mutation did not alter input: $Name"}
+}
+
+function Assert-Task5IntentStorage($Layout) {
+  $rows=@($Layout.storage);if($rows.Count-ne1){throw 'Task5 Intent storage row count drift.'}
+  $row=$rows[0];$type=Get-Task3StorageTypeById $Layout ([string]$row.type) 'Task5 Intent bool'
+  if($row.label-ne'_finalized'-or$row.slot-ne'0'-or[int]$row.offset-ne0-or$type.Value.label-ne'bool'-or
+     $type.Value.encoding-ne'inplace'-or$type.Value.numberOfBytes-ne'1'){throw 'Task5 Intent exact bool storage drift.'}
+}
+
+function Get-Task5OpcodeCount([string]$Hex,[byte]$Needle) {
+  $bytes=[Convert]::FromHexString($Hex.Substring(2));$count=0
+  for($i=0;$i-lt$bytes.Length;$i++){
+    $op=$bytes[$i]
+    if($op-ge0x60-and$op-le0x7f){$width=$op-0x5f;if(($i+$width)-ge$bytes.Length){throw 'Task5 truncated PUSH immediate.'};$i+=$width;continue}
+    if($op-eq$Needle){$count++}
+  }
+  return $count
+}
+
+function Invoke-Task5Validation {
+  $task3=Get-Task3Spec
+  $sources=@('src/AcquisitionConstellationFactory.sol','src/AcquisitionAuthority.sol','src/AcquisitionVaultCore.sol','src/PreVoteBudgetBook.sol','src/AcquisitionIntentExecution.sol','src/AcquisitionReconciliation.sol')
+  $contracts=@('AcquisitionConstellationFactory','AcquisitionAuthority','AcquisitionVaultCore','PreVoteBudgetBook','AcquisitionIntentExecution','AcquisitionReconciliation')
+  $artifacts=@($finalArtifacts|ForEach-Object{Get-Content -LiteralPath $_ -Raw|ConvertFrom-Json -Depth 100})
+  foreach($i in @(0,1,2,5)){Assert-Task3ArtifactSurface $artifacts[$i] $task3.Artifacts[$i]}
+  $budget=$artifacts[3];$intent=$artifacts[4]
+  $allAbi=@($artifacts|ForEach-Object{$_.abi});$f=@($allAbi|Where-Object type -eq 'function');$e=@($allAbi|Where-Object type -eq 'error');$v=@($allAbi|Where-Object type -eq 'event');$c=@($allAbi|Where-Object type -eq 'constructor')
+  if($f.Count-ne87-or$e.Count-ne168-or$v.Count-ne29-or$c.Count-ne6-or$allAbi.Count-ne290){throw "Task5 aggregate ABI census drift: $($f.Count)/$($e.Count)/$($v.Count)/$($c.Count)/$($allAbi.Count)."}
+  $uniqueErrors=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal);foreach($x in $e){$null=$uniqueErrors.Add((Canonical-Descriptor $x))}
+  $dupes=@($e|ForEach-Object{Canonical-Descriptor $_}|Group-Object|Where-Object Count -gt 1)
+  if($uniqueErrors.Count-ne167-or$dupes.Count-ne1-or$dupes[0].Name-ne'ReentrancyGuardReentrantCall()'-or$dupes[0].Count-ne2){throw 'Task5 exact error collision universe drift.'}
+  foreach($kind in @(@($f,87,'function'),@($v,29,'event'))){$set=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal);foreach($x in $kind[0]){$null=$set.Add((Canonical-Descriptor $x))};if($set.Count-ne$kind[1]){throw "Task5 $($kind[2]) collision universe drift."}}
+  Assert-DescriptorUniverse @($f|ForEach-Object{Canonical-Descriptor $_}) 'Task5 function' 87
+  Assert-DescriptorUniverse @($e|ForEach-Object{Canonical-Descriptor $_}) 'Task5 error' 168 $true
+  Assert-DescriptorUniverse @($v|ForEach-Object{Canonical-Descriptor $_}) 'Task5 event' 29
+  $payable=@($allAbi|Where-Object stateMutability -eq 'payable');if($payable.Count-ne1-or$payable[0].name-ne'depositCanonical'){throw 'Task5 payable/receive/fallback surface drift.'}
+
+  foreach($i in @(0,1,2,5)){
+    Assert-AbiFingerprint $artifacts[$i] $task3.Artifacts[$i].AbiHash "Task5 inherited $($task3.Artifacts[$i].Name)"
+    Assert-Task3ArtifactCompilerProfile $artifacts[$i] $sources[$i] $contracts[$i] $task3.Artifacts[$i].SourceHash $task3.Artifacts[$i].SourceSetHash
+  }
+  Assert-AbiFingerprint $budget '0x528883ffe95637fa174685aca380b1bd00b03f5735328bc32cf065eb94159486' 'Task5 inherited BudgetBook'
+  Assert-Task3ArtifactCompilerProfile $budget $sources[3] $contracts[3] '0x4cf119d131a1378bccff4872bdf159f4fe2a0b2d5f7aa9d06d98abee39b7d2df' '0xbc8eca410aeeb572004a1e9ea043fd32f1da5810beadd031f53ce2935aaf67e4'
+  Assert-AbiFingerprint $intent '0x5b35e6a74c65cc0844e9a8ffcc4bc99a3faa7984c5a3efd7a9691092a5ca024e' 'Task5 IntentExecution'
+  Assert-Task3ArtifactCompilerProfile $intent $sources[4] $contracts[4] '0x28d228a17a23e9b55703ceca7c738d0c0430155f39c77fc7e4b6131e7a6d5053' '0x61a33ae8c5debf7f66ff40a33255d72d6c398cfedd02144882f9a6a8421b3e49'
+  Assert-Task5CompilerConfiguration (Get-EffectiveForgeConfig) $legacy
+  Assert-Task5InterfaceSchema (Join-Path $artifactProjectRoot 'src/interfaces/IAcquisitionIntentExecutionV2.sol')
+  $null=Invoke-IsolatedForgeInspect 'IAcquisitionIntentExecutionV2' 'storageLayout' -Json -Ast
+  $interfaceArtifact=Get-Content -LiteralPath (Join-Path $script:isolatedRoot 'out/IAcquisitionIntentExecutionV2.sol/IAcquisitionIntentExecutionV2.json') -Raw|ConvertFrom-Json -Depth 100
+  Assert-Task5InterfaceArtifactSchema $interfaceArtifact
+  $canonicalInterface=Get-Content -LiteralPath $task5InterfaceArtifact -Raw|ConvertFrom-Json -Depth 100
+  if(@($canonicalInterface.abi).Count-ne0-or(Byte-Length $canonicalInterface.bytecode.object)-ne0-or(Byte-Length $canonicalInterface.deployedBytecode.object)-ne0){throw 'Task5 canonical interface artifact gained ABI or executable surface.'}
+  $canonicalMetadata=$canonicalInterface.metadata;if($canonicalMetadata-is[string]){$canonicalMetadata=$canonicalMetadata|ConvertFrom-Json -Depth 100}
+  $isolatedMetadata=$interfaceArtifact.metadata;if($isolatedMetadata-is[string]){$isolatedMetadata=$isolatedMetadata|ConvertFrom-Json -Depth 100}
+  if((Get-SourceSetFingerprint $canonicalMetadata)-ne(Get-SourceSetFingerprint $isolatedMetadata)-or
+     (Get-AbiFingerprint $canonicalInterface)-ne(Get-AbiFingerprint $interfaceArtifact)-or
+     [string]$canonicalInterface.bytecode.object-cne[string]$interfaceArtifact.bytecode.object-or
+     [string]$canonicalInterface.deployedBytecode.object-cne[string]$interfaceArtifact.deployedBytecode.object){throw 'Task5 canonical interface artifact differs from isolated schema/executable/provenance output.'}
+
+  Assert-Task3FunctionShape $intent 'intentExecutionTopology()' 'view' @('address','bytes32','bool')
+  Assert-Task3FunctionShape $intent 'finalizeIntentExecution(bytes32)' 'nonpayable' @()
+  Assert-Task3FunctionShape $intent 'deriveIntentId(uint256,bytes32)' 'view' @('bytes32')
+  Assert-Task3FunctionShape $intent 'deriveAttemptId(uint256,uint256,bytes32,address,bytes32,bytes32)' 'view' @('bytes32')
+  $ctor=@($intent.abi|Where-Object type -eq 'constructor')[0];Assert-Task3ParameterNames @($ctor.inputs) @('factory','manifestHash','core') 'Task5 Intent constructor inputs'
+  $di=@($intent.abi|Where-Object{$_.type-eq'function'-and$_.name-eq'deriveIntentId'})[0];Assert-Task3ParameterNames @($di.inputs) @('ballotDay','assetVersionKey') 'Task5 intent inputs';Assert-Task3ParameterNames @($di.outputs) @('intentId') 'Task5 intent output'
+  $da=@($intent.abi|Where-Object{$_.type-eq'function'-and$_.name-eq'deriveAttemptId'})[0];Assert-Task3ParameterNames @($da.inputs) @('operatorGeneration','attemptIndex','intentId','adapter','runtimeCodeHash','routeHash') 'Task5 attempt inputs';Assert-Task3ParameterNames @($da.outputs) @('attemptId') 'Task5 attempt output'
+  Assert-Task3EventIndexed $intent 'IntentExecutionFinalized(bytes32)' @($true)
+
+  $layout=(Invoke-IsolatedForgeInspect 'AcquisitionIntentExecution' 'storageLayout' -Json -Ast)|ConvertFrom-Json -Depth 100
+  $isolated=Get-Content -LiteralPath (Join-Path $script:isolatedRoot 'out/AcquisitionIntentExecution.sol/AcquisitionIntentExecution.json') -Raw|ConvertFrom-Json -Depth 100
+  Assert-PortableIsolatedArtifactMatch $intent $isolated 'Task5 IntentExecution';Assert-Task5IntentStorage $layout
+  Assert-Task3ImmutableTypes $isolated 'AcquisitionIntentExecution' @('address','address','bytes32')
+  $sem=[ordered]@{'_factory'=@('address','102:32,457:32');'_manifestHash'=@('bytes32','142:32,493:32');'_core'=@('address','341:32,635:32')}
+  Assert-Task3SemanticImmutables $isolated 'AcquisitionIntentExecution' $sem
+  Assert-Task3ExecutableIdentity $intent ([pscustomobject]@{Sizes=@(1380,847,533);ImmutableReferences=@('102:32,457:32','142:32,493:32','341:32,635:32')}) @{} @{} 'Task5 IntentExecution'
+  Assert-Task4NoRuntimeReturndataCopy $intent
+  $parts=Get-ExecutableParts $intent 'Task5 IntentExecution'
+  $creationPrefix=(Get-PortableExecutableIdentity $intent 'Task5 IntentExecution').CreationPrefix
+  if((Get-Task5OpcodeCount ('0x'+$creationPrefix) 0x3b)-ne1){throw 'Task5 creation EXTCODESIZE inventory drift.'}
+  if((Get-Task5OpcodeCount ('0x'+$creationPrefix) 0x3e)-ne0){throw 'Task5 creation RETURNDATACOPY inventory drift.'}
+  foreach($op in @('CALL','STATICCALL','DELEGATECALL','CALLCODE','CREATE','CREATE2','SELFDESTRUCT','RETURNDATACOPY')){if(@($parts.Runtime|Where-Object{$_-eq$op}).Count-ne0){throw "Task5 runtime opcode inventory drift: $op"}}
+  $definition=Get-Task3ContractAst $isolated 'AcquisitionIntentExecution';$coreId=[string](@($definition.nodes|Where-Object{$_.name-ceq'_core'})[0].id)
+  $ir=(Invoke-IsolatedForgeInspect 'AcquisitionIntentExecution' 'irOptimized')-join"`n";Assert-Task5IntentIr $ir $coreId
+
+  $creationPolicies=@(@{STATICCALL=1},@{},@{},@{},@{},@{});$runtimePolicies=@(@{CREATE=1;CALL=5;STATICCALL=5},@{STATICCALL=4},@{STATICCALL=2},@{STATICCALL=2},@{},@{})
+  for($i=0;$i-lt6;$i++){if($i-ne4){$null=Invoke-IsolatedForgeInspect $contracts[$i] 'storageLayout' -Json -Ast;$ia=Get-Content -LiteralPath (Join-Path $script:isolatedRoot ("out/"+(Split-Path -Leaf $sources[$i])+"/"+$contracts[$i]+'.json')) -Raw|ConvertFrom-Json -Depth 100;Assert-PortableIsolatedArtifactMatch $artifacts[$i] $ia "Task5 inherited $($contracts[$i])";if($i-ne3){Assert-Task3ExecutableIdentity $artifacts[$i] $task3.Artifacts[$i] $creationPolicies[$i] $runtimePolicies[$i] "Task5 inherited $($contracts[$i])"}}}
+  Assert-Task3ExecutableIdentity $budget ([pscustomobject]@{Sizes=@(4320,3582,738);ImmutableReferences=@('106:32,221:32,890:32','142:32,261:32,944:32','822:32','1043:32','996:32')}) @{} @{STATICCALL=2} 'Task5 inherited BudgetBook'
+
+  $mut=$intent|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;@($mut.abi|Where-Object type -eq 'constructor')[0].inputs[2].name='authority';Assert-Rejected 'Task5 constructor parameter mutation' {Assert-AbiFingerprint $mut '0x5b35e6a74c65cc0844e9a8ffcc4bc99a3faa7984c5a3efd7a9691092a5ca024e' 'mutated Task5 Intent'}
+  $mut=$intent|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;@($mut.abi|Where-Object{$_.type-eq'function'-and$_.name-eq'deriveAttemptId'})[0].inputs[0].name='authorityGeneration';Assert-Rejected 'Task5 ABI name mutation' {Assert-AbiFingerprint $mut '0x5b35e6a74c65cc0844e9a8ffcc4bc99a3faa7984c5a3efd7a9691092a5ca024e' 'mutated Task5 Intent'}
+  $mut=$intent|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mut.abi+=([pscustomobject]@{type='receive';stateMutability='payable'});Assert-Rejected 'Task5 hidden payable surface' {Assert-AbiFingerprint $mut '0x5b35e6a74c65cc0844e9a8ffcc4bc99a3faa7984c5a3efd7a9691092a5ca024e' 'mutated Task5 Intent'}
+  $mut=$layout|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mut.storage[0].offset=1;Assert-Rejected 'Task5 storage offset mutation' {Assert-Task5IntentStorage $mut}
+  $mut=$isolated|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$d=Get-Task3ContractAst $mut 'AcquisitionIntentExecution';$a=@($d.nodes|Where-Object name -eq '_factory')[0];$b=@($d.nodes|Where-Object name -eq '_core')[0];$ar=$mut.deployedBytecode.immutableReferences.psobject.Properties[[string]$a.id];$br=$mut.deployedBytecode.immutableReferences.psobject.Properties[[string]$b.id];$swap=$ar.Value;$ar.Value=$br.Value;$br.Value=$swap;Assert-Rejected 'Task5 same-type immutable swap' {Assert-Task3SemanticImmutables $mut 'AcquisitionIntentExecution' $sem}
+  Assert-Rejected 'Task5 source hash mutation' {Assert-Task3ArtifactCompilerProfile $intent $sources[4] $contracts[4] ('0x'+('00'*32)) '0x61a33ae8c5debf7f66ff40a33255d72d6c398cfedd02144882f9a6a8421b3e49'}
+  Assert-Rejected 'Task5 source-set mutation' {Assert-Task3ArtifactCompilerProfile $intent $sources[4] $contracts[4] '0x28d228a17a23e9b55703ceca7c738d0c0430155f39c77fc7e4b6131e7a6d5053' ('0x'+('00'*32))}
+  $irBase=[regex]::Replace($ir,'/\*\*.*?\*/','',[Text.RegularExpressions.RegexOptions]::Singleline);$irBase=[regex]::Replace($irBase,'(?m)///[^\r\n]*','');$irBase=[regex]::Replace($irBase,'\s+',' ')
+  $swapped=$irBase.Replace('calldataload(4)','TASK5_SWAP').Replace('calldataload(36)','calldataload(4)').Replace('TASK5_SWAP','calldataload(36)')
+  $attemptHashNeedle='let var_attemptId := keccak256'
+  $irMutations=[ordered]@{
+    tag=($irBase-replace'8aa693df3b136274e99739abc62a2c7aabc541180430aaba0fc4cb6267383c27','8ba693df3b136274e99739abc62a2c7aabc541180430aaba0fc4cb6267383c27')
+    chain=($irBase-replace'0x1237','0x1238')
+    core=($irBase-replace('loadimmutable\("'+[regex]::Escape($coreId)+'"\)'),'caller()')
+    module=($irBase-replace'address\(\)','caller()')
+    adjacentSwap=$swapped
+    omitted=$irBase.Replace('calldataload(68)','0')
+    duplicated=$irBase.Replace('calldataload(68)','calldataload(36)')
+    calldataOffset=$irBase.Replace('calldataload(132)','calldataload(133)')
+    memoryOffset=($irBase-replace'\b288\b','289')
+    packedLength=($irBase-replace'\b320\b','319')
+    shiftedPointer=($irBase-replace'keccak256\s*\(\s*_3\s*,\s*mload\s*\(\s*_1\s*\)\s*\)','keccak256(add(_3, 1), mload(_1))')
+    wrongReturn=($irBase-replace'mstore\s*\(\s*memPos\s*,\s*var_attemptId\s*\)','mstore(memPos, calldataload(4))')
+    selectorSwap=($irBase-replace'case 0x14ddcae0','case 0x14ddcae1')
+    lateHashPointerRebind=$irBase.Replace($attemptHashNeedle,'_3 := add(_3, 1) '+$attemptHashNeedle)
+    lateBaseRebind=$irBase.Replace($attemptHashNeedle,'_1 := add(_1, 32) '+$attemptHashNeedle)
+    lateLengthRebind=$irBase.Replace($attemptHashNeedle,'mstore8(_1, 1) '+$attemptHashNeedle)
+    mstore8Overwrite=$irBase.Replace($attemptHashNeedle,'mstore8(add(_1, 64), 0) '+$attemptHashNeedle)
+    calldatacopyOverwrite=$irBase.Replace($attemptHashNeedle,'calldatacopy(add(_1, 64), 4, 32) '+$attemptHashNeedle)
+    mcopyOverwrite=$irBase.Replace($attemptHashNeedle,'mcopy(add(_1, 64), 0, 32) '+$attemptHashNeedle)
+    codecopyOverwrite=$irBase.Replace($attemptHashNeedle,'codecopy(add(_1, 64), 0, 32) '+$attemptHashNeedle)
+    extcodecopyOverwrite=$irBase.Replace($attemptHashNeedle,'extcodecopy(address(), add(_1, 64), 0, 32) '+$attemptHashNeedle)
+    datacopyOverwrite=$irBase.Replace($attemptHashNeedle,'datacopy(add(_1, 64), 0, 32) '+$attemptHashNeedle)
+    verbatimWriter=$irBase.Replace($attemptHashNeedle,'verbatim_0i_0o(hex"00") '+$attemptHashNeedle)
+    junkPop=$irBase.Replace($attemptHashNeedle,'pop(0) '+$attemptHashNeedle)
+    junkLetAssignment=$irBase.Replace($attemptHashNeedle,'let task5_junk := 0 '+$attemptHashNeedle)
+    conditionalLeave=$irBase.Replace($attemptHashNeedle,'if 1 { leave } '+$attemptHashNeedle)
+    bareLeave=$irBase.Replace($attemptHashNeedle,'leave '+$attemptHashNeedle)
+    emptyBlock=$irBase.Replace($attemptHashNeedle,'{ } '+$attemptHashNeedle)
+    infiniteFor=$irBase.Replace($attemptHashNeedle,'for { } 1 { } { } '+$attemptHashNeedle)
+  }
+  foreach($entry in $irMutations.GetEnumerator()){Assert-Task5Changed $irBase $entry.Value $entry.Key;Assert-Rejected "Task5 IR hostile $($entry.Key)" {Assert-Task5IntentIr $entry.Value $coreId}}
+  Assert-Rejected 'Task5 extra external call' {Assert-Task5IntentIr ($ir+' staticcall(1,2,3,4,5,6)') $coreId}
+  $mut=$intent|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mut.deployedBytecode.object=$mut.deployedBytecode.object.Substring(0,$mut.deployedBytecode.object.Length-2);Assert-Rejected 'Task5 runtime size/suffix mutation' {Assert-Task3ExecutableIdentity $mut ([pscustomobject]@{Sizes=@(1380,847,533);ImmutableReferences=@('102:32,457:32','142:32,493:32','341:32,635:32')}) @{} @{} 'mutated Task5 Intent'}
+  $cfg=Get-EffectiveForgeConfig;$cfg.compilation_restrictions=@($cfg.compilation_restrictions[0..6]);Assert-Rejected 'Task5 missing eighth restriction' {Assert-Task5CompilerConfiguration $cfg $legacy}
+  $cfg=Get-EffectiveForgeConfig;$cfg.compilation_restrictions[7].paths='src/Wrong.sol';Assert-Rejected 'Task5 wrong interface restriction' {Assert-Task5CompilerConfiguration $cfg $legacy}
+  $cfg=Get-EffectiveForgeConfig;$cfg.compilation_restrictions[7].paths=$cfg.compilation_restrictions[0].paths;Assert-Rejected 'Task5 duplicate restriction' {Assert-Task5CompilerConfiguration $cfg $legacy}
+  Assert-Rejected 'Task5 interface absent fixture' {Assert-Task5InterfaceArtifactPaths @() $task5InterfaceArtifact}
+  Assert-Rejected 'Task5 interface duplicate fixture' {Assert-Task5InterfaceArtifactPaths @($task5InterfaceArtifact,$task5InterfaceArtifact) $task5InterfaceArtifact}
+  Assert-Rejected 'Task5 interface wrong-directory fixture' {Assert-Task5InterfaceArtifactPaths @((Join-Path $ArtifactsRoot 'wrong/IAcquisitionIntentExecutionV2.json')) $task5InterfaceArtifact}
+  $mutInterface=$interfaceArtifact|ConvertTo-Json -Depth 100|ConvertFrom-Json -Depth 100;$mutInterface.ast.nodes=@();Assert-Rejected 'Task5 replaced empty-interface fixture' {Assert-Task5InterfaceArtifactSchema $mutInterface}
+  $validRuntime=[string]$intent.deployedBytecode.object
+  $plausible=$validRuntime.Substring(0,$validRuntime.Length-106)+'a1646970667358221220'+('00'*32)+'0033';Assert-Rejected 'Task5 plausible-length noncanonical CBOR' {$null=Strip-SolidityMetadata $plausible}
+  $malformed=$validRuntime.Substring(0,$validRuntime.Length-106)+'ff646970667358221220'+('00'*32)+'64736f6c634300081a0033';Assert-Rejected 'Task5 malformed CBOR' {$null=Strip-SolidityMetadata $malformed}
+  $validSuffix=$validRuntime.Substring($validRuntime.Length-106);$forged='0x3e'+$validSuffix;Assert-Rejected 'Task5 forbidden opcode before valid metadata suffix' {if((Get-Task5OpcodeCount (Strip-SolidityMetadata $forged) 0x3e)-ne0){throw 'forbidden executable opcode'}}
+  Assert-Rejected 'Task5 truncated PUSH scanner fixture' {$null=Get-Task5OpcodeCount '0x62aabb' 0x3e}
+  if((Get-Task5OpcodeCount '0x603e00' 0x3e)-ne0){throw 'Task5 PUSH-data scanner selftest drift.'}
+  Write-Output 'Task5 ABI: aggregate=87/168/29/6/290 unique=87/167/29; IntentExecution=4/9/1/1'
+  Write-Output 'Task5 IntentExecution: storage=1 bool; immutables=3; bytecode=1380/847 suffix=533; runtime external calls=0'
 }
 
 function Invoke-Task4Validation {
@@ -2407,6 +2703,16 @@ if ($candidateKinds.Count -ne 6) {
   Exit-Verified 43
 }
 try { Assert-CanonicalArtifactLayout $finalArtifacts } catch { Fail $_.Exception.Message 1 }
+if ($ValidatePhase -eq 'Task5') {
+  try { Assert-Task5CanonicalInterfaceArtifactLayout } catch { Fail $_.Exception.Message 1 }
+  try { Invoke-Task5Validation } catch { Fail ($_.Exception.Message + ' | ' + $_.ScriptStackTrace) 1 }
+  if ($ExpectTask0Red) {
+    [Console]::Error.WriteLine('-ExpectTask0Red rejects a complete conforming Task 5 artifact set.')
+    Exit-Verified 44
+  }
+  Write-Output 'Task 5 GREEN: exact phase, artifacts, ABI/collisions, Intent identity schema/storage/immutables, provenance, executable identity, and zero-call policy passed.'
+  Exit-Verified 0
+}
 if ($ValidatePhase -eq 'Task4') {
   try { Invoke-Task4Validation } catch { Fail ($_.Exception.Message + ' | ' + $_.ScriptStackTrace) 1 }
   if ($ExpectTask0Red) {
