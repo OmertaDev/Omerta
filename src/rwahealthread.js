@@ -1,6 +1,11 @@
 import { dbCaps } from './db.js';
+import {
+  deriveRwaBatchId, deriveRwaEvaluationIds, deriveRwaPageId,
+  RWA_HEALTH_PROVIDER_ENDPOINT_HASH, RWA_HEALTH_RULE_SET_HASH,
+} from './rwahealth.js';
 import { RwaHealthError } from './rwahealtherror.js';
 import { finalizedStockCatalogForHealthV2 } from './stockcatalogv2.js';
+import { keccak256 } from 'viem';
 
 const ZERO_HASH = `0x${'00'.repeat(32)}`;
 const MAX_I63 = 2n ** 63n - 1n;
@@ -14,6 +19,13 @@ const PREDICATES = [
   ['fractional_tradable', 'fractional_tradable'],
 ];
 const RESULTS = ['pass', 'unknown', 'verified_failure'];
+const FRESH_HEALTH_RECEIPTS = new WeakMap();
+const FRESH_HEALTH_RECEIPT_KEYS = Object.freeze([
+  'ok', 'purpose', 'chainId', 'registryAddress', 'catalogVersion', 'catalogSnapshotHash',
+  'assetVersionKey', 'evaluationId', 'evaluationKind', 'observedAt', 'appliedAt',
+  'freshThrough', 'stateSequence', 'episodeId', 'episodeGeneration',
+  'latestEpisodeEventId', 'latestMaterialEvidenceHash',
+]);
 
 const fail = (code) => { throw new RwaHealthError(code); };
 const bytes32 = (value) => typeof value === 'string' && /^0x[0-9a-f]{64}$/.test(value) && value !== ZERO_HASH;
@@ -41,6 +53,32 @@ const ownData = (value, names) => {
     const descriptor = Object.getOwnPropertyDescriptor(value, name);
     return descriptor && Object.hasOwn(descriptor, 'value');
   });
+};
+const exactFrozenData = (value, names) => {
+  if (!value || Object.getPrototypeOf(value) !== Object.prototype || !Object.isFrozen(value)
+      || !Object.isFrozen(names) || Reflect.ownKeys(value).length !== names.length
+      || !Reflect.ownKeys(value).every((name, index) => name === names[index])) return false;
+  return names.every((name) => {
+    const descriptor = Object.getOwnPropertyDescriptor(value, name);
+    return descriptor && Object.hasOwn(descriptor, 'value') && descriptor.enumerable === true
+      && descriptor.configurable === false && descriptor.writable === false;
+  });
+};
+const exactIso = (value) => {
+  if (typeof value !== 'string') return false;
+  const parsed = new Date(value);
+  return Number.isFinite(parsed.getTime()) && parsed.toISOString() === value;
+};
+const canonicalAddress = (value) => typeof value === 'string'
+  && /^0x[0-9a-f]{40}$/.test(value) && value !== `0x${'00'.repeat(20)}`;
+const rowIso = (value) => {
+  const parsed = value instanceof Date ? value : new Date(value);
+  return Number.isFinite(parsed.getTime()) ? parsed.toISOString() : null;
+};
+const nullReceipt = (entries) => {
+  const result = Object.create(null);
+  for (const [key, value] of entries) result[key] = value;
+  return deepFreeze(result);
 };
 const shareLockSql = () => `SELECT id FROM stock_catalog_sync_lock_v2 WHERE id=1${dbCaps.skipLocked ? ' FOR SHARE' : ''}`;
 const nowSql = () => dbCaps.skipLocked ? "date_trunc('milliseconds',clock_timestamp())" : 'now()';
@@ -133,7 +171,7 @@ export async function requireFreshRwaHealth(client, assetVersionKey, args) {
       || row.latest_material_evidence_hash !== args.expectedMaterialEvidenceHash)) {
     fail('health_snapshot_changed');
   }
-  return deepFreeze({
+  const receipt = deepFreeze({
     ok: true, purpose: args.purpose, chainId: '4663', registryAddress: catalog.registryAddress,
     catalogVersion: catalog.catalogVersion, catalogSnapshotHash: catalog.catalogSnapshotHash,
     assetVersionKey, evaluationId: row.last_evaluation_id, evaluationKind: 'healthy',
@@ -143,6 +181,176 @@ export async function requireFreshRwaHealth(client, assetVersionKey, args) {
     latestEpisodeEventId: clearance ? row.latest_episode_event_id : null,
     latestMaterialEvidenceHash: clearance ? row.latest_material_evidence_hash : null,
   });
+  FRESH_HEALTH_RECEIPTS.set(receipt, client);
+  return receipt;
+}
+
+function validateClearanceReceipt(client, receipt) {
+  if (FRESH_HEALTH_RECEIPTS.get(receipt) !== client
+      || !exactFrozenData(receipt, FRESH_HEALTH_RECEIPT_KEYS)
+      || receipt.ok !== true || receipt.purpose !== 'quarantine_clearance_broadcast'
+      || receipt.chainId !== '4663' || !canonicalAddress(receipt.registryAddress)
+      || decimal(receipt.catalogVersion, MAX_U256) === null
+      || !bytes32(receipt.catalogSnapshotHash) || !bytes32(receipt.assetVersionKey)
+      || !bytes32(receipt.evaluationId) || receipt.evaluationKind !== 'healthy'
+      || !exactIso(receipt.observedAt) || !exactIso(receipt.appliedAt)
+      || !exactIso(receipt.freshThrough)
+      || new Date(receipt.appliedAt).getTime() < new Date(receipt.observedAt).getTime()
+      || new Date(receipt.freshThrough).getTime() !== new Date(receipt.observedAt).getTime() + 600_000
+      || decimal(receipt.stateSequence, MAX_I63, true) === null
+      || !bytes32(receipt.episodeId)
+      || decimal(receipt.episodeGeneration, MAX_U256, true) === null
+      || !bytes32(receipt.latestEpisodeEventId)
+      || !bytes32(receipt.latestMaterialEvidenceHash)) fail('health_bad_input');
+}
+
+export async function readRwaHealthClearanceContext(client, h1Receipt) {
+  if (!client || typeof client.query !== 'function') fail('health_bad_input');
+  validateClearanceReceipt(client, h1Receipt);
+  const row = (await client.query(
+    `SELECT c.current_severity,
+            e.evaluation_id,e.evidence_hash,e.batch_id,e.page_id,e.chain_id,
+            e.registry_address,e.catalog_version,e.catalog_snapshot_hash,e.asset_version_key,
+            e.normalized_ticker,e.token_address,e.token_decimals,e.robinhood_asset_id_hash,
+            e.expected_identity_hash,e.predicate_commitment,e.provider_record,e.supported_chain,
+            e.ticker_identity,e.token_identity,e.token_decimals_result,e.provider_active,
+            e.fractional_tradable,e.evaluation_kind,e.status AS evaluation_status,
+            e.observed_at,e.applied_at,
+            b.active_set_hash,b.rule_set_hash,b.provider_endpoint_hash,b.provider_commitment,
+            b.cycle_slot,b.source_state AS batch_source_state,b.failure_code,
+            b.status AS batch_status,
+            p.page_index,p.first_asset_version_key,p.last_asset_version_key,p.item_count,
+            p.status AS page_status,p.applied_at AS page_applied_at,
+            v.raw_body_hash,v.source_state AS evidence_source_state,v.byte_count,v.body_bytes,
+            v.captured_at,v.retain_until
+       FROM rwa_health_evaluations_v2 e
+       JOIN rwa_health_current_v2 c
+         ON c.registry_address=e.registry_address
+        AND c.asset_version_key=e.asset_version_key
+        AND c.last_evaluation_id=e.evaluation_id
+       JOIN rwa_health_batches_v2 b
+         ON b.batch_id=e.batch_id AND b.chain_id=e.chain_id
+        AND b.registry_address=e.registry_address AND b.catalog_version=e.catalog_version
+        AND b.catalog_snapshot_hash=e.catalog_snapshot_hash
+       JOIN rwa_health_pages_v2 p ON p.batch_id=e.batch_id AND p.page_id=e.page_id
+       LEFT JOIN rwa_health_private_provider_evidence_v2 v ON v.batch_id=e.batch_id
+      WHERE e.evaluation_id=$1 AND e.registry_address=$2 AND e.asset_version_key=$3
+        AND e.catalog_version=$4::numeric AND e.catalog_snapshot_hash=$5
+        AND e.evidence_hash=c.last_evaluation_evidence_hash
+        AND e.observed_at=$6::timestamptz AND e.applied_at=$7::timestamptz
+        AND e.status='applied' AND e.evaluation_kind='healthy'
+        AND c.catalog_version=e.catalog_version
+        AND c.catalog_snapshot_hash=e.catalog_snapshot_hash
+        AND c.last_evaluation_status='applied' AND c.latest_evaluation_kind='healthy'
+        AND c.last_observed_at=e.observed_at AND c.last_applied_at=e.applied_at
+        AND c.state_sequence=$8::bigint AND c.current_episode_id=$9
+        AND c.current_episode_generation=$10::numeric
+        AND c.latest_episode_event_id=$11 AND c.latest_material_evidence_hash=$12
+        AND c.clearance_applied_at IS NULL`, [
+      h1Receipt.evaluationId, h1Receipt.registryAddress, h1Receipt.assetVersionKey,
+      h1Receipt.catalogVersion, h1Receipt.catalogSnapshotHash, h1Receipt.observedAt,
+      h1Receipt.appliedAt, h1Receipt.stateSequence, h1Receipt.episodeId,
+      h1Receipt.episodeGeneration, h1Receipt.latestEpisodeEventId,
+      h1Receipt.latestMaterialEvidenceHash,
+    ],
+  )).rows[0];
+  if (!row) fail('health_evidence_conflict');
+
+  const severity = row.current_severity === 'health_unknown' ? '1'
+    : row.current_severity === 'operational_quarantine' ? '2' : null;
+  const observedAt = rowIso(row.observed_at);
+  const appliedAt = rowIso(row.applied_at);
+  const capturedAt = rowIso(row.captured_at);
+  const retainUntil = rowIso(row.retain_until);
+  const pageAppliedAt = rowIso(row.page_applied_at);
+  const byteCount = decimal(String(row.byte_count), 2_000_000n);
+  if (severity === null || String(row.chain_id) !== '4663'
+      || row.registry_address !== h1Receipt.registryAddress
+      || String(row.catalog_version) !== h1Receipt.catalogVersion
+      || row.catalog_snapshot_hash !== h1Receipt.catalogSnapshotHash
+      || row.asset_version_key !== h1Receipt.assetVersionKey
+      || row.evaluation_id !== h1Receipt.evaluationId || !bytes32(row.evidence_hash)
+      || !bytes32(row.batch_id) || !bytes32(row.page_id)
+      || row.evaluation_kind !== 'healthy' || row.evaluation_status !== 'applied'
+      || observedAt !== h1Receipt.observedAt || appliedAt !== h1Receipt.appliedAt
+      || row.batch_source_state !== 'observed' || row.failure_code !== null
+      || !['pending', 'complete'].includes(row.batch_status)
+      || row.page_status !== 'applied' || pageAppliedAt !== appliedAt
+      || row.evidence_source_state !== 'observed' || byteCount === null
+      || row.rule_set_hash !== RWA_HEALTH_RULE_SET_HASH
+      || !bytes32(row.provider_endpoint_hash)
+      || row.provider_endpoint_hash !== RWA_HEALTH_PROVIDER_ENDPOINT_HASH
+      || !bytes32(row.provider_commitment) || row.raw_body_hash !== row.provider_commitment
+      || !capturedAt || !retainUntil
+      || new Date(retainUntil).getTime() < new Date(capturedAt).getTime() + 35 * 86_400_000
+      || !(row.body_bytes instanceof Uint8Array)) fail('health_evidence_conflict');
+
+  const body = Uint8Array.from(row.body_bytes);
+  if (BigInt(body.byteLength) !== byteCount || keccak256(body) !== row.provider_commitment) {
+    fail('health_evidence_conflict');
+  }
+
+  let batchId;
+  let pageId;
+  let recomputed;
+  try {
+    batchId = deriveRwaBatchId({
+      registryAddress: row.registry_address,
+      catalogVersion: String(row.catalog_version),
+      catalogSnapshotHash: row.catalog_snapshot_hash,
+      activeSetHash: row.active_set_hash,
+      cycleSlot: String(row.cycle_slot),
+      providerCommitment: row.provider_commitment,
+    });
+    pageId = deriveRwaPageId({
+      batchId: row.batch_id,
+      pageIndex: Number(row.page_index),
+      firstAssetVersionKey: row.first_asset_version_key,
+      lastAssetVersionKey: row.last_asset_version_key,
+      itemCount: Number(row.item_count),
+    });
+    recomputed = deriveRwaEvaluationIds({
+      batchId: row.batch_id,
+      pageId: row.page_id,
+      identity: {
+        chainId: '4663', registryAddress: row.registry_address,
+        catalogVersion: String(row.catalog_version),
+        catalogSnapshotHash: row.catalog_snapshot_hash,
+        assetVersionKey: row.asset_version_key, normalizedTicker: row.normalized_ticker,
+        tokenAddress: row.token_address, tokenDecimals: Number(row.token_decimals),
+        robinhoodAssetIdHash: row.robinhood_asset_id_hash,
+      },
+      predicateValues: [row.provider_record, row.supported_chain, row.ticker_identity,
+        row.token_identity, row.token_decimals_result, row.provider_active,
+        row.fractional_tradable].map(Number),
+      evaluationKind: 0,
+      providerCommitment: row.provider_commitment,
+    });
+  } catch {
+    fail('health_evidence_conflict');
+  }
+  if (batchId !== row.batch_id || pageId !== row.page_id
+      || recomputed.expectedIdentityHash !== row.expected_identity_hash
+      || recomputed.predicateCommitment !== row.predicate_commitment
+      || recomputed.evidenceHash !== row.evidence_hash
+      || recomputed.evaluationId !== row.evaluation_id) fail('health_evidence_conflict');
+
+  return nullReceipt([
+    ['currentSeverity', severity],
+    ['evaluationId', row.evaluation_id],
+    ['evaluationEvidenceHash', row.evidence_hash],
+    ['evaluationBatchId', row.batch_id],
+    ['evaluationPageId', row.page_id],
+    ['evaluationObservedAt', observedAt],
+    ['evaluationAppliedAt', appliedAt],
+    ['providerEndpointHash', row.provider_endpoint_hash],
+    ['providerCommitment', row.provider_commitment],
+    ['providerSourceState', 'observed'],
+    ['providerByteCount', byteCount.toString()],
+    ['providerCapturedAt', capturedAt],
+    ['providerRetainUntil', retainUntil],
+    ['providerBodyBase64url', Buffer.from(body).toString('base64url')],
+  ]);
 }
 
 function parseOptions(options) {

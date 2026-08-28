@@ -21,14 +21,14 @@ const KIND_NAMES = Object.freeze(['healthy', 'health_unknown', 'operational_quar
 const textEncoder = new TextEncoder();
 
 const tag = (value) => keccak256(toBytes(value));
-const RULE_SET_HASH = keccak256(encodeAbiParameters([
+export const RWA_HEALTH_RULE_SET_HASH = keccak256(encodeAbiParameters([
   { type: 'bytes32' }, { type: 'bytes32' }, { type: 'bytes32' }, { type: 'bytes32' },
   { type: 'bytes32' }, { type: 'bytes32' }, { type: 'bytes32' }, { type: 'bytes32' },
   { type: 'uint8' }, { type: 'uint8' }, { type: 'uint8' },
 ], [
   tag('RWA_HEALTH_RHJ_ASSET_IDENTITY_V2'), ...PREDICATE_CODES.map(tag), 0, 1, 2,
 ]));
-const PROVIDER_ENDPOINT_HASH = keccak256(toBytes(ENDPOINT));
+export const RWA_HEALTH_PROVIDER_ENDPOINT_HASH = keccak256(toBytes(ENDPOINT));
 
 function fail(code, message) { throw new RwaHealthError(code, message); }
 function withProviderFailure(error, providerFailureCode) {
@@ -352,8 +352,8 @@ export function deriveRwaBatchId({
   return abi(
     ['bytes32', 'uint256', 'address', 'uint256', 'bytes32', 'bytes32', 'uint256', 'bytes32', 'bytes32', 'bytes32'],
     [tag('OMERTA_RWA_HEALTH_BATCH_V2'), 4663n, registryAddress, BigInt(catalogVersion),
-      catalogSnapshotHash, activeSetHash, BigInt(cycleSlot), RULE_SET_HASH,
-      PROVIDER_ENDPOINT_HASH, providerCommitment],
+      catalogSnapshotHash, activeSetHash, BigInt(cycleSlot), RWA_HEALTH_RULE_SET_HASH,
+      RWA_HEALTH_PROVIDER_ENDPOINT_HASH, providerCommitment],
   );
 }
 
@@ -472,7 +472,8 @@ function deriveStrict(input) {
     ['bytes32', 'uint256', 'address', 'uint256', 'bytes32', 'bytes32', 'uint256', 'bytes32', 'bytes32', 'bytes32'],
     [tag('OMERTA_RWA_HEALTH_BATCH_V2'), 4663n, input.registryAddress,
       BigInt(input.catalogVersion), input.catalogSnapshotHash, activeSetHash,
-      BigInt(input.cycleSlot), RULE_SET_HASH, PROVIDER_ENDPOINT_HASH, providerBodyHash],
+      BigInt(input.cycleSlot), RWA_HEALTH_RULE_SET_HASH,
+      RWA_HEALTH_PROVIDER_ENDPOINT_HASH, providerBodyHash],
   );
   const pageId = abi(['bytes32', 'bytes32', 'uint8', 'bytes32', 'bytes32', 'uint16'], [
     tag('OMERTA_RWA_HEALTH_PAGE_V2'), batchId, input.pageIndex,
@@ -508,7 +509,8 @@ function deriveStrict(input) {
       input.sourceId, input.resultingSeverity, input.reviewerEvidenceHash],
   );
   return {
-    ruleSetHash: RULE_SET_HASH, providerEndpointHash: PROVIDER_ENDPOINT_HASH,
+    ruleSetHash: RWA_HEALTH_RULE_SET_HASH,
+    providerEndpointHash: RWA_HEALTH_PROVIDER_ENDPOINT_HASH,
     providerBodyHash, expectedIdentityHash, orderedIdentityListHash, activeSetHash,
     batchId, pageId, predicateCommitment, evidenceHash, evaluationId, episodeId,
     reviewerActionId, episodeEventId,
@@ -637,7 +639,11 @@ export async function fetchRwaHealthProvider(fetchFn = globalThis.fetch) {
     const body = new Uint8Array(total);
     let offset = 0;
     for (const chunk of chunks) { body.set(chunk, offset); offset += chunk.length; }
-    return deepFreeze({ body, providerBodyHash: keccak256(body), providerEndpointHash: PROVIDER_ENDPOINT_HASH });
+    return deepFreeze({
+      body,
+      providerBodyHash: keccak256(body),
+      providerEndpointHash: RWA_HEALTH_PROVIDER_ENDPOINT_HASH,
+    });
   } finally { clearTimeout(timer); }
 }
 
