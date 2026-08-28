@@ -655,15 +655,18 @@ reverts every earlier event. Static Authority reads never emit events.
 5. **Intent:** intent/attempt schemas and identities plus oracle/adapter/route
    commitments; freeze dormant interfaces only. Every execution or consumption
    entry point is absent or fails before state change and before any adapter call.
-6. **Reconciliation:** phases, evidence, repair causes, dispositions, incidents,
+6. **Intent and Reconciliation:** the complete stateful A3 lifecycle—atomic
+   creation/reservation/tombstone, direct and separately nonced relayed
+   cancellation, deterministic permissionless expiry, and permissionless
+   execution—plus phases, evidence, repair causes, dispositions, incidents,
    typed leaves, actual attempt consumption immediately before the adapter call,
    adapter invocation, authoritative post-call Core native/Stock Token
    observation, Core delta mutation/components, any required Reconciliation case,
    Intent outcome journal and `AttemptResultRecorded` receipt, then terminal
-   evidence in one atomic path; this first callable execution path completes
-   master slice 5 (A3+R).
-7. **O2 integration:** direct/relayed authority, cancellation nonce, 0/1/32/67 components,
-   exact ordering and batch rejection.
+   evidence in one atomic path. This node completes master slice 5 (A3+R).
+7. **O2 integration:** direct/relayed O2 authority, the shared O2 nonce,
+   0/1/32/67 components, exact ordering, and batch rejection. Intent cancellation
+   and its separate nonce are already owned and closed by Task 6.
 8. **Stateful integration:** conservation, nonce rollback, phase deadlock resistance,
    forced ETH, token drift, replay domains, artifact census, factory-and-every-child
    runtime/initcode measurements and bounds, gas/journal proofs, and 0/1/32/67 traces.
