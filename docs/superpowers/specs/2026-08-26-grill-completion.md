@@ -421,9 +421,11 @@ The normative implementation architecture is
 `docs/superpowers/plans/2026-08-27-acquisition-constellation.md`. It supersedes
 the one-final-monolith, inline Task-6, proxy, aggregate-constructor/`deployAll`,
 and no-intermediate-deployment assumptions without erasing the user requirements
-below. Task 5 commit `6e066ffa` is a dormant, undeployed, nondeployable
-behavioral reference with 23,212-byte runtime and independent review pending. It
-is not final A1 approval and is not part of the deploy graph.
+below. Historical oracle commit `ee857436` is a dormant, undeployed,
+nondeployable behavioral reference with 23,212-byte runtime and independent
+approval; it is not part of the deploy graph. Constellation Task 5 closes only
+the fresh Intent/attempt identity slice through `fb64148d`; it remains dormant,
+undeployed, unfunded, and unactivated and is not final A1/A3/R approval.
 
 The deploy graph is one immutable non-proxy manifest factory plus five children:
 Authority, Core, BudgetBook, Intent, and Reconciliation. Authority alone owns

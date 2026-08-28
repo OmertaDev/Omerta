@@ -2,11 +2,12 @@
 
 **Date:** 2026-08-28
 
-**Status:** normative pre-implementation architecture freeze; no Task 5 RED,
-GREEN, verifier closure, deployment, funding, Safe execution, finalization, or
-activation is claimed by this document. The Task 4 constellation remains the
-latest implemented development graph and is itself dormant, undeployed,
-unfunded, and unactivated.
+**Status:** architecture freeze approved at `7781e0f2`; RED gate frozen at
+`af85eaed`; GREEN implementation completed at `db5555f4`; exact
+verifier/crosswalk closure completed at `fb64148d`. Independent final security
+and specification reviews are C0/I0/M0. The fresh Task 5 constellation remains
+dormant, undeployed, unfunded, and unactivated; Tasks 6–9, final A1/A3/R
+acceptance, and production approval remain pending.
 
 **Inputs:** the binding grill-completion specification; the approved acquisition
 constellation architecture; the Task 0 ownership/collision crosswalk; the Task 3
@@ -14,6 +15,47 @@ Stock Token amendment; the implemented Task 4 BudgetBook freeze; the current
 Factory, Authority, Core, BudgetBook, IntentExecution shell, Reconciliation
 shell, and Registry V2 contracts; Registry V2 ballot tests; and the historical
 23,212-byte monolith as a behavioral absence oracle.
+
+### Verified Task 5 closure evidence
+
+- Architecture freeze: `7781e0f2`; RED gate: `af85eaed`; GREEN production
+  source: `db5555f4`; verifier/crosswalk closure: `fb64148d`.
+- `AcquisitionIntentExecution.sol` SHA-256:
+  `2B9547CAA35B20AD61D080E3E4BED4EC1051A58C0FD810805A3399111AA7FA98`;
+  type-only `IAcquisitionIntentExecutionV2.sol` SHA-256:
+  `16960C5452A6B15433E9C59272F504015E819CCC16CDFA913538A1ADB875AC0A`.
+- The Intent artifact is exactly `1380/847/533` bytes for
+  initcode/runtime/constructor prefix, has one `bool` storage row at slot zero,
+  three semantic immutables, and zero runtime external-call or
+  `RETURNDATACOPY` operations.
+- Focused Task 5 verification is 18/18 passing. The artifact-backed crosswalk is
+  63/63 passing. The compiled census is exactly `87/168/29/6/290`; the unique
+  descriptor census is `87/167/29`, with
+  `ReentrancyGuardReentrantCall()` as the sole intentional duplicate.
+- The exact five-by-five historical phase matrix has zero on every diagonal and
+  one on every off-diagonal. The conforming Task 5 RED invocation exits `44`;
+  the earlier same-phase RED exits remain their recorded Task 1–4 closure
+  evidence. Every historical and current artifact-tree fingerprint remained
+  byte-for-byte unchanged during verification.
+- Cardinality exits are exact: all six deployable artifacts absent `42`, absent
+  plus RED `0`, partial sets one through five `43` in either mode, malformed
+  complete `1` in either mode, and conforming complete Task 5 `0` or `44` under
+  the RED switch.
+- Verifier SHA-256:
+  `B432BD8A05CC441ECE16F0184811E6D3EF28138C7FB7453FA259E0A12C88350F`;
+  crosswalk SHA-256:
+  `509BDAEEBACC79C4912D6E038BD08434A08B3F88A7BDF31F4EA168044B3FC01A`;
+  frozen RED harness SHA-256:
+  `BAD8C29B393B258267B1C5D5A85B1002ADF07496CE67A9CFB5ED4E6A7D7F2A69`.
+- Independent final verifier security and specification reviews are C0/I0/M0
+  after hostile
+  interface, CBOR, PUSH/opcode, optimized-IR, memory-writer, assignment,
+  control-flow, descriptor-partition, and phase-isolation mutations.
+
+These are Task 5 development-closure facts only. They do not prove deployment,
+funding, activation, ballot finality, health clearance, purchase authorization,
+adapter or oracle approval, token accounting, final A1/A3/R acceptance,
+third-party audit, or production readiness.
 
 ## 0. Decision and dependency boundary
 
