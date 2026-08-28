@@ -1,10 +1,15 @@
 # Acquisition Constellation Task 0 Crosswalk
 
-**Status:** normative Task 0 crosswalk; Task 1 topology/deployment development proof independently approved at `f6a21dcc` (C0/I0/M0); Task 2 Authority implementation/evidence independently approved through `0a46d048`, `03efc11a`, and integrated verifier `77c7359c` (C0/I0/M0); Task 3 architecture approved at `23b58923`, Task 3A/3B implementation lineage completed through Core `cafdd9f1`, and verifier closure completed at `818d295a` with independent final reviews C0/I0/M0. The constellation remains dormant, undeployed, unfunded, and unactivated; Tasks 4–9, broader interview scope, and final A1/production approval remain pending.
+**Status:** normative Task 0 crosswalk; Tasks 1–3 retain their recorded independent approvals; Task 4 architecture, RED, GREEN, and verifier/crosswalk closure completed through `080330e2`, `255bb57d`, `14bda2f6`, and `0b455987`, with independent final security and specification reviews C0/I0/M0. The constellation remains dormant, undeployed, unfunded, and unactivated; Tasks 5–9, broader interview scope, final A1/A3/R acceptance, and production approval remain pending.
 
 **Architecture source:** `2026-08-27-acquisition-constellation.md`
 
 **Task 2 Authority source:** `2026-08-27-acquisition-constellation-task2-authority.md`. It preserves the 47 Authority `MOVE` rows, adds only the frozen topology/finalizer/snapshot surface, and requires fresh pre-production deployment rather than migration from a Task 1 shell.
+
+**Task 4 BudgetBook source:** `2026-08-27-acquisition-constellation-task4-budget-book.md`.
+It moves the two historical functions, six historical errors, and one historical
+event from future-reserved to compiled ownership exactly once, adds only its
+frozen module-local infrastructure, and preserves every other ownership row.
 
 **Frozen oracle:** Task 5 `AcquisitionVault` at runtime 23,212 bytes. Its ABI census is exactly 67 functions, 55 errors, 21 events, one constructor, and 144 total entries. Its semantic storage ends at mapping root 39. It has one payable function, `depositCanonical(bytes32)`, and no receive or fallback.
 
@@ -14,6 +19,13 @@ Task 3 closure is supported by the isolated acquisition and Registry result of
 359/359 passing, exact Task 3 phase exit `0`, and conforming-complete
 `-ExpectTask0Red` exit `44`. These are Task 3 development and verifier facts,
 not deployment, funding, activation, final A1, or production evidence.
+
+Task 4 closure is supported by focused verification at 27/27 passing, the
+artifact-backed crosswalk at 57/57 passing, exact compiled census
+`85/164/29/6/284`, exact unique census `85/163/29`, the serialized four-phase
+matrix, and exact absent/partial/malformed cardinality exits. These are Task 4
+development and verifier facts, not deployment, funding, activation, final
+A1/A3/R, or production evidence.
 
 ## Categories and collision rules
 

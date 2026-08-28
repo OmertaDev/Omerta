@@ -1,8 +1,43 @@
 # Acquisition Constellation Task 4 — Pre-Vote BudgetBook Architecture Freeze
 
-**Status:** exact architecture freeze independently approved after remediation (security C0/I0/M0; specification C0/I0/M0; artifact/crosswalk feasibility C0/I0/M0); no Task 4 production source, RED suite, verifier phase, deployment, funding, activation, or production approval exists yet
+**Status:** architecture freeze approved at `080330e2`; RED gate frozen at `255bb57d`; GREEN implementation completed at `14bda2f6`; exact verifier/crosswalk closure completed at `0b455987`. Independent final security and specification reviews are C0/I0/M0. The fresh Task 4 constellation is dormant, undeployed, unfunded, and unactivated; Tasks 5–9, final A1/A3/R acceptance, and production approval remain pending.
 
 **Inputs:** the approved constellation architecture, Task 0 ownership/collision crosswalk, independently approved Task 3 architecture at `23b58923`, Task 3 Core implementation at `cafdd9f1`, Task 3 exact verifier at `818d295a`, the corrected historical pre-vote budget provenance, and the grill-completion acceptance graph.
+
+### Verified Task 4 closure evidence
+
+- Architecture freeze: `080330e2`; RED gate: `255bb57d`; GREEN production
+  source: `14bda2f6`; verifier/crosswalk closure: `0b455987`.
+- `PreVoteBudgetBook.sol` SHA-256:
+  `6D09CD40C3D14B735F5C979D8C4E5943D428171E9340B4D3D2DF53F70A5C49F6`.
+  Its exact initcode/runtime/metadata-suffix sizes are `4320/3582/738` bytes.
+- Focused Task 4 verification is 27/27 passing, including 512 invariant runs,
+  256,000 calls, zero reverts, and zero discards. The artifact-backed
+  constellation crosswalk is 57/57 passing.
+- The compiled census is exactly `85/164/29/6/284`; the unique descriptor
+  census is `85/163/29`, with `ReentrancyGuardReentrantCall()` as the sole
+  intentional duplicate and one copy owned by Authority plus one by Core.
+- Verifier SHA-256:
+  `298B1332F650F3267FA456BE6B2CE00686D51C64F3CCB1600DCE4CD26C93D191`;
+  crosswalk SHA-256:
+  `AC271E37DA042CB781D11DE7DBB622A6AD0F88E2BF2D1632AED3FEA93BD0B94C`.
+- A forced build with `storageLayout` and `irOptimized` outputs passes. The
+  exact fixed calls are Authority `160000/4/864` and Core `100000/4/352`, with
+  no returndata-copy or prohibited call/create operations in constructor prefix
+  or metadata-stripped runtime.
+- The serialized four-by-four historical phase matrix matches the table in
+  Section 11, and each same-phase RED invocation exits `44`. Cardinality exits
+  are exact: all artifacts absent `42`, absent plus RED `0`, partial sets one
+  through five `43`, and malformed complete `1`; every artifact-tree
+  fingerprint remains unchanged.
+- Independent final verifier security and specification reviews are C0/I0/M0.
+  Static analysis produced no unresolved security finding; deliberate exact
+  equality, timestamp, fixed-buffer assembly, and complexity notices are
+  covered by focused and hostile-mutation evidence.
+
+These are Task 4 development-closure facts only. They do not prove deployment,
+funding, activation, ballot finality, purchase authorization, token approval,
+final A1/A3/R acceptance, third-party audit, or production readiness.
 
 ## 0. Decision and dependency boundary
 

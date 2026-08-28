@@ -28,19 +28,19 @@ No earlier state implies a later one. Current global deployment state is
 **undeployed/unfunded/unsigned/unconfigured** for every Grill-v2 addition.
 
 As of 2026-08-28, CN-5, FO Tasks 1–5, FO's follow-on `eventBlocks`
-evidence extension, and Acquisition Constellation Tasks 2–3 are
+evidence extension, and Acquisition Constellation Tasks 2–4 are
 implemented, independently approved, and dormant. That status proves no
 production configuration, deployment, Safe execution, chain finality, funding,
-or activation. Task 3 architecture approval is `23b58923`; its Task 3A/3B
-implementation lineage culminates in Core `cafdd9f1`, and verifier closure is
-`818d295a`. Isolated acquisition and Registry verification is 359/359 passing;
-exact Task 3 phase verification exits `0`; conforming-complete RED exits `44`;
-and independent final security and specification reviews are C0/I0/M0.
-Acquisition Constellation Tasks 4–9, H2, CN-6, and the broader interview scope
+or activation. Task 4 architecture, RED, GREEN, and verifier/crosswalk closure
+are `080330e2`, `255bb57d`, `14bda2f6`, and `0b455987`. Focused verification is
+27/27 passing, crosswalk verification is 57/57 passing, exact Task 4 phase
+verification exits `0`, conforming-complete RED exits `44`, and independent
+final security and specification reviews are C0/I0/M0.
+Acquisition Constellation Tasks 5–9, H2, CN-6, and the broader interview scope
 remain planned acceptance/implementation nodes rather than active production
 consumers.
-The Task 3 constellation is dormant, undeployed, unfunded, and unactivated;
-final A1 and production approval remain pending.
+The Task 4 constellation is dormant, undeployed, unfunded, and unactivated;
+final A1/A3/R and production approval remain pending.
 
 ## Requirement manifest
 
@@ -63,7 +63,7 @@ partial legacy behavior and dirty documentation do not count.
 | N2 | Support and seat authority | C/N Task 3; Commission seat-generation integration | Domain approved; rapid loss/reseat generation hook pending |
 | N3 | Review and expiry | C/N Tasks 3–4, 6–7 | Domain/routes/package approved; finalized activation lifecycle pending |
 | H | Health and operational quarantine | H1 watcher/domain; H2 additive overlay/finality; U | Pending; mandatory before non-dormant ballot/purchase/delivery |
-| A1 | Native-ETH buckets/deposits | O1, AC-0..9 | O1/Task4 approved; Task5 `ee857436` is the approved dormant/nondeployable 23,212B oracle; AC Task 2 Authority implemented/approved/dormant through `77c7359c`; AC Task 3 architecture `23b58923`, Core `cafdd9f1`, and verifier `818d295a` development-closed with final reviews C0/I0/M0; Tasks 4–9 and final A1/production approval pending |
+| A1 | Native-ETH buckets/deposits | O1, AC-0..9 | O1/Task4 approved; Task5 `ee857436` is the approved dormant/nondeployable 23,212B oracle; AC Tasks 2–3 retain their recorded approvals; AC Task 4 architecture `080330e2`, GREEN `14bda2f6`, and verifier/crosswalk `0b455987` development-closed with final reviews C0/I0/M0; Tasks 5–9 and final A1/A3/R/production approval pending |
 | A2 | mainOperator | O1 role/typed authority; O2 final debit integration | Pending; A2 cannot complete before A3/R |
 | A3 | Purchase intents | CB budget bridge, A3 | Pending |
 | A4 | Pause and deficit | AC, R, O2, U | Pending |
@@ -199,8 +199,8 @@ flowchart TD
 | H1 | Predicate taxonomy, watcher, snapshots, operational overlay domain/API | FO, CN-1..4 | 5-minute poll, 10-minute freshness, bounded work, spam/stale tests | Pending |
 | H2 | `RwaHealthOverlay`, seven-day Safe clearance package/finality | H1, FO, CN-1..4 | Contract tests, exact event/finality/reorg proof | Pending |
 | O1 | mainOperator role state machine and EIP-712 authority | F0 | Unit/fuzz/invariant/1271/generation/nonce tests | Complete/independently approved/dormant at remediation head `82001b6e8ac54c46dda6eb185cda550e8a73a3de`; no outflow or deployment |
-| A1-ref | Monolithic behavioral oracle for authority, buckets, ingress, deposits and caps | O1, CN | Preserve O1/Task4/Task5 evidence; never deploy | Task5 oracle `ee857436`, runtime 23,212B, independently approved and dormant/nondeployable; Task 3 fresh Core/cap-bridge development slice closed through `cafdd9f1` and verifier `818d295a`; Tasks 4–9 pending; not final A1 approval |
-| AC-0..9 | Immutable acquisition constellation: manifest factory, Authority, Core, BudgetBook, Intent, Reconciliation, O2 integration and review | A1-ref, O1, CN | Exact crosswalk; phased CREATE/finalization; typed-call/stateful/size/replay/gas tests; independent Wildcat/controller approval | Tasks 0–3 development-closed through Task 3 verifier `818d295a`; dormant, undeployed, unfunded, and unactivated; Tasks 4–9, broader interview scope, and final A1/production approval pending |
+| A1-ref | Monolithic behavioral oracle for authority, buckets, ingress, deposits and caps | O1, CN | Preserve O1/Task4/Task5 evidence; never deploy | Task5 oracle `ee857436`, runtime 23,212B, independently approved and dormant/nondeployable; Task 4 fresh BudgetBook evidence slice closed through GREEN `14bda2f6` and verifier/crosswalk `0b455987`; Tasks 5–9 pending; not final A1/A3/R approval |
+| AC-0..9 | Immutable acquisition constellation: manifest factory, Authority, Core, BudgetBook, Intent, Reconciliation, O2 integration and review | A1-ref, O1, CN | Exact crosswalk; phased CREATE/finalization; typed-call/stateful/size/replay/gas tests; independent Wildcat/controller approval | Tasks 0–4 development-closed through Task 4 verifier/crosswalk `0b455987`; dormant, undeployed, unfunded, and unactivated; Tasks 5–9, broader interview scope, and final A1/A3/R/production approval pending |
 | CB-bridge | Core/BudgetBook provenance into ballot opener/cutover gate | CN-5, AC-0..4, H2 | No manual production budget, no fallback/double authority | Pending |
 | CN-6 | One-cursor RegistryV2 finalized lifecycle consumer plus dormant exact-byte publisher | FO, CN-5, H2, CB-bridge | Event-time/reorg/crash/exact-match/drift/exact-byte rebroadcast tests; no duplicate observation kernel | Pending; publisher unreachable until H2 and AcquisitionVault provenance are approved |
 | CN-7 / X-CN | Real-PG harness, machine surfaces, C/N runbook/deploy package/review | CN-6 | MVCC/deadlock evidence; honest dormant manifest; whole-slice review | Pending |

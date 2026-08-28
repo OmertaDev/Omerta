@@ -1,9 +1,9 @@
 # Acquisition Constellation Architecture Amendment
 
-**Status:** normative architecture amendment; Task 1 topology/deployment development proof independently approved at `f6a21dcc` (C0/I0/M0); Task 2 Authority implementation/evidence independently approved through `0a46d048`, `03efc11a`, and integrated verifier `77c7359c` (C0/I0/M0); Task 3 architecture approved at `23b58923`, Task 3A/3B implementation lineage completed through Core `cafdd9f1`, and verifier closure completed at `818d295a` with independent final reviews C0/I0/M0. The constellation remains dormant, undeployed, unfunded, and unactivated; Tasks 4–9, broader interview scope, and final A1/production approval remain pending.
+**Status:** normative architecture amendment; Tasks 1–3 retain their recorded independent approvals; Task 4 architecture, RED, GREEN, and verifier/crosswalk closure completed through `080330e2`, `255bb57d`, `14bda2f6`, and `0b455987`, with independent final security and specification reviews C0/I0/M0. The constellation remains dormant, undeployed, unfunded, and unactivated; Tasks 5–9, broader interview scope, final A1/A3/R acceptance, and production approval remain pending.
 
 **Supersedes:** the final-monolithic `AcquisitionVault`, inline Task 6, no-intermediate-deployment, aggregate-constructor, `deployAll`, proxy, and recursive runtime-hash assumptions in the O1/A1 plan
-**Historical reference:** Task 5 oracle head `ee8574368bc8f9363a844b8783a85de542b19fc0`, runtime 23,212 bytes, is independently approved, dormant, and nondeployable. Task 3 closes the fresh Core/cap-bridge development slice; Tasks 4–9 still remain, so the oracle and Task 3 closure remain evidence rather than final A1 approval.
+**Historical reference:** Task 5 oracle head `ee8574368bc8f9363a844b8783a85de542b19fc0`, runtime 23,212 bytes, is independently approved, dormant, and nondeployable. Task 4 closes the fresh BudgetBook evidence slice; Tasks 5–9 still remain, so the oracle and Task 4 closure remain evidence rather than final A1/A3/R approval.
 
 **Task 2 closure:** `2026-08-27-acquisition-constellation-task2-authority.md` is the exact implemented Authority extraction boundary and records its independent implementation, adversarial-snapshot, and machine-verifier approvals. Task 1 remains a development proof only; Task 2 uses a fresh Factory and five fresh children and makes no upgrade, refinalization, migration, deployment, funding, or activation claim.
 
@@ -15,11 +15,21 @@ the conforming-complete RED invocation exits `44`. Independent final security
 and specification reviews are C0/I0/M0. This is a dormant, undeployed, unfunded,
 and unactivated development closure, not final A1 or production approval.
 
+**Task 4 closure:** `2026-08-27-acquisition-constellation-task4-budget-book.md`
+records architecture `080330e2`, RED `255bb57d`, GREEN `14bda2f6`, and exact
+verifier/crosswalk closure `0b455987`. Focused Task 4 verification is 27/27
+passing, the artifact-backed crosswalk is 57/57 passing, the serialized
+historical phase matrix and cardinality gates match their exact expected exits,
+and independent final reviews are C0/I0/M0. This is a dormant, undeployed,
+unfunded, and unactivated development closure, not final A1/A3/R or production
+approval.
+
 ## 1. Decision and invariants
 
 The approved target architecture implements A1/A3/R/O2 as an immutable,
-non-proxy constellation. The repository has closed only Tasks 0–2; Core and the
-business nodes remain Tasks 3–9. Under the target architecture, no child uses a
+non-proxy constellation. The repository has development-closed Tasks 0–4;
+Intent, Reconciliation, O2 integration, and final review remain Tasks 5–9.
+Under the target architecture, no child uses a
 proxy, fallback, receive, `delegatecall`, generic executor, upgrade hook, mutable
 library pointer, or role mirror. The deploy graph contains one manifest factory
 and exactly five children:
@@ -675,8 +685,8 @@ fallback, delegatecall, proxy, transfer, approval, sweep, and size-limit breach.
 
 O1, Task 4, and Task 5 tests and evidence remain historical behavioral oracles.
 Task 5 oracle `ee857436` proves an independently approved focused monolithic
-reference with 23,212-byte runtime, not a deployable architecture. Task 3 closes
-the fresh Core/cap-bridge development slice and its verifier; Tasks 4–9 must not
+reference with 23,212-byte runtime, not a deployable architecture. Task 4 closes
+the fresh BudgetBook evidence slice and its verifier; Tasks 5–9 must not
 modify the monolith and must each use their required fresh constellation. No
 final A1
 implemented/approved/deployed/funded/active closure field may be set until all
