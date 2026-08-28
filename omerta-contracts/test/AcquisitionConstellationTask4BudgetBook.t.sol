@@ -539,16 +539,15 @@ contract AcquisitionConstellationTask4BudgetBookTest is Test {
         dispatcher.deploy(creation);
 
         Task4FactoryHarness factory = new Task4FactoryHarness();
+        address authority = address(factory.authority());
         vm.expectRevert(ITask4BudgetBook.BudgetBookZeroAddress.selector);
-        factory.deployBudget(
-            _creation(address(factory), _MANIFEST, address(factory.authority()), address(0), address(_registry))
-        );
+        factory.deployBudget(_creation(address(factory), _MANIFEST, authority, address(0), address(_registry)));
 
         factory = new Task4FactoryHarness();
+        authority = address(factory.authority());
+        address core = address(factory.core());
         vm.expectRevert(ITask4BudgetBook.BudgetBookZeroAddress.selector);
-        factory.deployBudget(
-            _creation(address(factory), _MANIFEST, address(factory.authority()), address(factory.core()), address(0))
-        );
+        factory.deployBudget(_creation(address(factory), _MANIFEST, authority, core, address(0)));
 
         factory = new Task4FactoryHarness();
         vm.expectRevert(ITask4BudgetBook.BudgetBookZeroAddress.selector);
@@ -557,12 +556,10 @@ contract AcquisitionConstellationTask4BudgetBookTest is Test {
 
     function test_task4_02b_constructorCodeAddressAndPeerPrecedenceIsExact() public {
         Task4FactoryHarness factory = new Task4FactoryHarness();
+        address authority = address(factory.authority());
+        address core = address(factory.core());
         vm.expectRevert(abi.encodeWithSelector(ITask4BudgetBook.BudgetBookContractRequired.selector, address(0xBEEF)));
-        factory.deployBudget(
-            _creation(
-                address(factory), _MANIFEST, address(factory.authority()), address(factory.core()), address(0xBEEF)
-            )
-        );
+        factory.deployBudget(_creation(address(factory), _MANIFEST, authority, core, address(0xBEEF)));
 
         Task4RawCreateDispatcher dispatcher = new Task4RawCreateDispatcher();
         address expected = vm.computeCreateAddress(address(dispatcher), 3);
@@ -574,47 +571,37 @@ contract AcquisitionConstellationTask4BudgetBookTest is Test {
 
         factory = new Task4FactoryHarness();
         address expectedAuthority = address(factory.authority());
+        core = address(factory.core());
         vm.expectRevert(
             abi.encodeWithSelector(
                 ITask4BudgetBook.BudgetBookPeerMismatch.selector, uint8(0), expectedAuthority, address(0xCAFE)
             )
         );
-        factory.deployBudget(
-            _creation(address(factory), _MANIFEST, address(0xCAFE), address(factory.core()), address(_registry))
-        );
+        factory.deployBudget(_creation(address(factory), _MANIFEST, address(0xCAFE), core, address(_registry)));
 
         factory = new Task4FactoryHarness();
         address expectedCore = address(factory.core());
+        authority = address(factory.authority());
         vm.expectRevert(
             abi.encodeWithSelector(
                 ITask4BudgetBook.BudgetBookPeerMismatch.selector, uint8(1), expectedCore, address(0xCAFE)
             )
         );
-        factory.deployBudget(
-            _creation(address(factory), _MANIFEST, address(factory.authority()), address(0xCAFE), address(_registry))
-        );
+        factory.deployBudget(_creation(address(factory), _MANIFEST, authority, address(0xCAFE), address(_registry)));
 
         factory = new Task4FactoryHarness();
-        vm.etch(address(factory.authority()), "");
-        vm.expectRevert(
-            abi.encodeWithSelector(ITask4BudgetBook.BudgetBookContractRequired.selector, address(factory.authority()))
-        );
-        factory.deployBudget(
-            _creation(
-                address(factory), _MANIFEST, address(factory.authority()), address(factory.core()), address(_registry)
-            )
-        );
+        authority = address(factory.authority());
+        core = address(factory.core());
+        vm.etch(authority, "");
+        vm.expectRevert(abi.encodeWithSelector(ITask4BudgetBook.BudgetBookContractRequired.selector, authority));
+        factory.deployBudget(_creation(address(factory), _MANIFEST, authority, core, address(_registry)));
 
         factory = new Task4FactoryHarness();
-        vm.etch(address(factory.core()), "");
-        vm.expectRevert(
-            abi.encodeWithSelector(ITask4BudgetBook.BudgetBookContractRequired.selector, address(factory.core()))
-        );
-        factory.deployBudget(
-            _creation(
-                address(factory), _MANIFEST, address(factory.authority()), address(factory.core()), address(_registry)
-            )
-        );
+        authority = address(factory.authority());
+        core = address(factory.core());
+        vm.etch(core, "");
+        vm.expectRevert(abi.encodeWithSelector(ITask4BudgetBook.BudgetBookContractRequired.selector, core));
+        factory.deployBudget(_creation(address(factory), _MANIFEST, authority, core, address(_registry)));
     }
 
     function test_task4_03_constructorAcceptsForcedPrefundingAndNeverCallsPeers() public {
@@ -1459,10 +1446,9 @@ contract AcquisitionConstellationTask4BudgetBookTest is Test {
         uint256 coreBalance = address(_core).balance;
         uint256 budgetBalance = address(_book).balance;
         ITask4BudgetBook.PreVoteBudgetInput memory dayOne = _currentInput(2 ether);
-        ITask4BudgetBook.PreVoteBudgetInput memory dayTwo = dayOne;
-        dayTwo.ballotDay += 1;
-        dayTwo.maxEthWei = 3 ether;
-        dayTwo.purchaseUntil = _deadline(dayTwo.ballotDay);
+        ITask4BudgetBook.PreVoteBudgetInput memory dayTwo = ITask4BudgetBook.PreVoteBudgetInput({
+            ballotDay: dayOne.ballotDay + 1, maxEthWei: 3 ether, purchaseUntil: _deadline(dayOne.ballotDay + 1)
+        });
         bytes32 idOne = _authorize(dayOne, _DETAILS, address(_safe));
         bytes32 idTwo = _authorize(dayTwo, keccak256("day-two-details"), address(_safe));
         assertEq(idOne, _budgetId(address(_book), dayOne, _SEQUENCE), "day one exact ID");
@@ -2226,26 +2212,40 @@ contract AcquisitionConstellationTask4BudgetBookTest is Test {
         assertFalse(_hasStaticcallShape(suffixCollision, "100000", "352"), "identifier suffix collision rejected");
         bytes memory direct = _compactIr(bytes("let ok := staticcall(100000, target, 0, 4, out, 352)"));
         assertTrue(_hasStaticcallShape(direct, "100000", "352"), "direct output binding accepted");
+        bytes memory separatedAssignment =
+            _compactIr(bytes("let prior := 0\nlet size := 864\nlet ok := staticcall(160000, target, 0, 4, out, size)"));
+        assertTrue(_hasStaticcallShape(separatedAssignment, "160000", "864"), "separated output binding accepted");
     }
 
     function _compactIr(bytes memory value) private pure returns (bytes memory compacted) {
         compacted = new bytes(value.length);
         uint256 written;
+        bool separated;
         for (uint256 i; i < value.length;) {
             if (i + 1 < value.length && value[i] == 0x2f && value[i + 1] == 0x2f) {
                 i += 2;
                 while (i < value.length && value[i] != 0x0a && value[i] != 0x0d) ++i;
+                separated = true;
                 continue;
             }
             if (i + 1 < value.length && value[i] == 0x2f && value[i + 1] == 0x2a) {
                 i += 2;
                 while (i + 1 < value.length && !(value[i] == 0x2a && value[i + 1] == 0x2f)) ++i;
                 i = i + 1 < value.length ? i + 2 : value.length;
+                separated = true;
                 continue;
             }
             bytes1 character = value[i++];
-            if (character <= 0x20) continue;
+            if (character <= 0x20) {
+                separated = true;
+                continue;
+            }
+            if (separated && written != 0 && _isIdentifierByte(compacted[written - 1]) && _isIdentifierByte(character))
+            {
+                compacted[written++] = bytes1(";");
+            }
             compacted[written++] = character;
+            separated = false;
         }
         assembly ("memory-safe") {
             mstore(compacted, written)

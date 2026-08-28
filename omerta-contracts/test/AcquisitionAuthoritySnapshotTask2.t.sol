@@ -369,7 +369,10 @@ contract AcquisitionAuthoritySnapshotTask2Test is Test {
                 GLOBAL_CAP
             )
         );
-        initcodes[2] = abi.encodePacked(type(PreVoteBudgetBook).creationCode, abi.encode(predictedFactory, manifest));
+        initcodes[2] = abi.encodePacked(
+            type(PreVoteBudgetBook).creationCode,
+            abi.encode(predictedFactory, manifest, predicted[0], predicted[1], address(registry))
+        );
         initcodes[3] =
             abi.encodePacked(type(AcquisitionIntentExecution).creationCode, abi.encode(predictedFactory, manifest));
         initcodes[4] =

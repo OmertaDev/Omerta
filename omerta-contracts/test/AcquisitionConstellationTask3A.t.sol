@@ -1172,7 +1172,10 @@ contract AcquisitionConstellationTask3ATest is Test {
         initcodes[1] = _futureCoreInitcode(
             factory, manifest, children[0], address(registry), children[2], children[3], children[4], cap
         );
-        initcodes[2] = abi.encodePacked(type(PreVoteBudgetBook).creationCode, abi.encode(factory, manifest));
+        initcodes[2] = abi.encodePacked(
+            type(PreVoteBudgetBook).creationCode,
+            abi.encode(factory, manifest, children[0], children[1], address(registry))
+        );
         initcodes[3] = abi.encodePacked(type(AcquisitionIntentExecution).creationCode, abi.encode(factory, manifest));
         initcodes[4] = abi.encodePacked(type(AcquisitionReconciliation).creationCode, abi.encode(factory, manifest));
     }
