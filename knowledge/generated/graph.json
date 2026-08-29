@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "e919245b2d4e548f86471f2bd864b9724e33f512",
+  "sourceRevision": "787524c9947e02c4ed06c2f7507c97deaa86f148",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5598,
-    "edges": 24499,
+    "nodes": 5600,
+    "edges": 24508,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 53,
-      "Commit": 1243,
+      "Commit": 1245,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 9662,
+      "CHANGED": 9669,
       "CONTAINS": 1846,
       "DECLARES": 53,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 193,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1243,
+      "HAS_COMMIT": 1245,
       "IMPLEMENTS": 124,
       "IMPORTS": 1628,
       "INHERITS": 12,
@@ -33758,20 +33758,20 @@
       "path": "src/db.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 34951,
-      "lines": 651,
-      "version": "1940ab98870d0c22",
+      "bytes": 35718,
+      "lines": 659,
+      "version": "acaea6a29abfe98f",
       "text": true,
       "provenance": [
         {
           "file": "src/db.js",
           "line": 1,
-          "version": "1940ab98870d0c22"
+          "version": "acaea6a29abfe98f"
         }
       ],
-      "lastChangedAt": "2026-08-29T01:57:33.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c6bb58f62340596a93e38007d167e5deacca3855"
+      "lastChangedAt": "2026-08-29T11:14:40.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "787524c9947e02c4ed06c2f7507c97deaa86f148"
     },
     {
       "key": "Artifact:src/dbhealth.js",
@@ -39807,20 +39807,20 @@
       "path": "test/rwahealthoverlay.schema.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 20154,
-      "lines": 434,
-      "version": "bcf5b22cd2cb26b6",
+      "bytes": 21260,
+      "lines": 446,
+      "version": "2e81cbf93f79e8c8",
       "text": true,
       "provenance": [
         {
           "file": "test/rwahealthoverlay.schema.js",
           "line": 1,
-          "version": "bcf5b22cd2cb26b6"
+          "version": "2e81cbf93f79e8c8"
         }
       ],
-      "lastChangedAt": "2026-08-29T01:57:33.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c6bb58f62340596a93e38007d167e5deacca3855"
+      "lastChangedAt": "2026-08-29T11:14:40.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "787524c9947e02c4ed06c2f7507c97deaa86f148"
     },
     {
       "key": "Artifact:test/rwahealthoverlay.vector.js",
@@ -52286,6 +52286,22 @@
       ]
     },
     {
+      "key": "Commit:787524c9947e02c4ed06c2f7507c97deaa86f148",
+      "type": "Commit",
+      "id": "787524c9947e02c4ed06c2f7507c97deaa86f148",
+      "label": "fix(db): a valid constraint read as drifted, and the boot refused — name[] has no driver parser",
+      "title": "fix(db): a valid constraint read as drifted, and the boot refused — name[] has no driver parser",
+      "date": "2026-08-29T11:14:40.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/787524c9947e02c4ed06c2f7507c97deaa86f148",
+      "provenance": [
+        {
+          "commit": "787524c9947e02c4ed06c2f7507c97deaa86f148",
+          "url": "https://github.com/OmertaDev/Omerta/commit/787524c9947e02c4ed06c2f7507c97deaa86f148"
+        }
+      ]
+    },
+    {
       "key": "Commit:787f696a0921192f0130096d4cb70893ca853e82",
       "type": "Commit",
       "id": "787f696a0921192f0130096d4cb70893ca853e82",
@@ -56570,6 +56586,22 @@
         {
           "commit": "ac0350a6d4bb7453ed31df4d2c39468a80a6aff0",
           "url": "https://github.com/OmertaDev/Omerta/commit/ac0350a6d4bb7453ed31df4d2c39468a80a6aff0"
+        }
+      ]
+    },
+    {
+      "key": "Commit:ac0ca3c60f14cba4996855b20657454ca23f175a",
+      "type": "Commit",
+      "id": "ac0ca3c60f14cba4996855b20657454ca23f175a",
+      "label": "chore(knowledge): regenerate artifacts at e919245b so the graph carries canonical UTC",
+      "title": "chore(knowledge): regenerate artifacts at e919245b so the graph carries canonical UTC",
+      "date": "2026-08-29T10:49:18.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ac0ca3c60f14cba4996855b20657454ca23f175a",
+      "provenance": [
+        {
+          "commit": "ac0ca3c60f14cba4996855b20657454ca23f175a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ac0ca3c60f14cba4996855b20657454ca23f175a"
         }
       ]
     },
@@ -71527,7 +71559,7 @@
       "provenance": [
         {
           "file": "src/db.js",
-          "line": 522
+          "line": 530
         },
         {
           "file": "test/rwahealth.postgres.js",
@@ -71555,7 +71587,7 @@
       "provenance": [
         {
           "file": "src/db.js",
-          "line": 640
+          "line": 648
         },
         {
           "file": "test/finalizedobservation.js",
@@ -75605,6 +75637,9 @@
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
         },
         {
+          "commit": "ac0ca3c60f14cba4996855b20657454ca23f175a"
+        },
+        {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
         },
         {
@@ -75855,6 +75890,9 @@
         },
         {
           "commit": "a7e5fc0c072ea8ab8973c23d8ff7f11522b41776"
+        },
+        {
+          "commit": "ac0ca3c60f14cba4996855b20657454ca23f175a"
         },
         {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
@@ -76145,6 +76183,9 @@
           "commit": "a7e5fc0c072ea8ab8973c23d8ff7f11522b41776"
         },
         {
+          "commit": "ac0ca3c60f14cba4996855b20657454ca23f175a"
+        },
+        {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
         },
         {
@@ -76431,6 +76472,9 @@
         },
         {
           "commit": "a7e5fc0c072ea8ab8973c23d8ff7f11522b41776"
+        },
+        {
+          "commit": "ac0ca3c60f14cba4996855b20657454ca23f175a"
         },
         {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
@@ -76767,6 +76811,9 @@
         },
         {
           "commit": "a7e5fc0c072ea8ab8973c23d8ff7f11522b41776"
+        },
+        {
+          "commit": "ac0ca3c60f14cba4996855b20657454ca23f175a"
         },
         {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
@@ -77762,13 +77809,13 @@
       "type": "Module",
       "id": "src/db.js",
       "label": "src/db.js",
-      "lines": 651,
-      "version": "1940ab98870d0c22",
+      "lines": 659,
+      "version": "acaea6a29abfe98f",
       "provenance": [
         {
           "file": "src/db.js",
           "line": 1,
-          "version": "1940ab98870d0c22"
+          "version": "acaea6a29abfe98f"
         }
       ]
     },
@@ -83087,7 +83134,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "e919245b2d4e548f86471f2bd864b9724e33f512",
+      "revision": "787524c9947e02c4ed06c2f7507c97deaa86f148",
       "currentBranch": "claude/game-dev-roadmap-6jtsst",
       "defaultBranch": "main",
       "visibility": "public",
@@ -108044,13 +108091,13 @@
       "type": "TestSuite",
       "id": "test/rwahealthoverlay.schema.js",
       "label": "test/rwahealthoverlay.schema.js",
-      "lines": 434,
-      "version": "bcf5b22cd2cb26b6",
+      "lines": 446,
+      "version": "2e81cbf93f79e8c8",
       "provenance": [
         {
           "file": "test/rwahealthoverlay.schema.js",
           "line": 1,
-          "version": "bcf5b22cd2cb26b6"
+          "version": "2e81cbf93f79e8c8"
         }
       ]
     },
@@ -166483,6 +166530,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:787524c9947e02c4ed06c2f7507c97deaa86f148",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "commit": "787524c9947e02c4ed06c2f7507c97deaa86f148"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:787524c9947e02c4ed06c2f7507c97deaa86f148",
+      "to": "Artifact:test/rwahealthoverlay.schema.js",
+      "provenance": {
+        "commit": "787524c9947e02c4ed06c2f7507c97deaa86f148"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:787f696a0921192f0130096d4cb70893ca853e82",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -179959,6 +180022,46 @@
       "to": "Artifact:test/tokenomics.js",
       "provenance": {
         "commit": "ac0350a6d4bb7453ed31df4d2c39468a80a6aff0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ac0ca3c60f14cba4996855b20657454ca23f175a",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "ac0ca3c60f14cba4996855b20657454ca23f175a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ac0ca3c60f14cba4996855b20657454ca23f175a",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "ac0ca3c60f14cba4996855b20657454ca23f175a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ac0ca3c60f14cba4996855b20657454ca23f175a",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "ac0ca3c60f14cba4996855b20657454ca23f175a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ac0ca3c60f14cba4996855b20657454ca23f175a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "ac0ca3c60f14cba4996855b20657454ca23f175a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ac0ca3c60f14cba4996855b20657454ca23f175a",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "ac0ca3c60f14cba4996855b20657454ca23f175a"
       }
     },
     {
@@ -244656,6 +244759,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:787524c9947e02c4ed06c2f7507c97deaa86f148",
+      "provenance": {
+        "commit": "787524c9947e02c4ed06c2f7507c97deaa86f148"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:787f696a0921192f0130096d4cb70893ca853e82",
       "provenance": {
         "commit": "787f696a0921192f0130096d4cb70893ca853e82"
@@ -246795,6 +246906,14 @@
       "to": "Commit:ac0350a6d4bb7453ed31df4d2c39468a80a6aff0",
       "provenance": {
         "commit": "ac0350a6d4bb7453ed31df4d2c39468a80a6aff0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ac0ca3c60f14cba4996855b20657454ca23f175a",
+      "provenance": {
+        "commit": "ac0ca3c60f14cba4996855b20657454ca23f175a"
       }
     },
     {
@@ -252239,7 +252358,7 @@
       "to": "ExternalDependency:pg-mem",
       "provenance": {
         "file": "src/db.js",
-        "line": 640
+        "line": 648
       }
     },
     {
@@ -252248,7 +252367,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "src/db.js",
-        "line": 522
+        "line": 530
       }
     },
     {
