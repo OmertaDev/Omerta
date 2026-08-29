@@ -167,7 +167,7 @@ if (!databaseUrl) {
     process.env.STOCK_TOKEN_REGISTRY_V2_START_BLOCK = '1';
     __setStockTokenRegistryV2Reader(async () => ({
       source: 'robinhood_chain_registry_v2', finality: 'finalized', chainId: '4663',
-      registryAddress, catalogVersion: '1', finalizedBlockNumber: '100',
+      registryAddress, catalogVersion: String(catalogAssets.length), finalizedBlockNumber: '100',
       finalizedBlockHash: h('f'), observedAt: '1787700000', assets: catalogAssets,
       activeHeads: {
         tickerHash: heads('tickerHash'), tokenAddress: heads('tokenAddress'),

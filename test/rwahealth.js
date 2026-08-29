@@ -499,6 +499,47 @@ await test('evidence preimages reject corruption, cross-asset swaps, and same-ID
   }), /evidence|conflict/i);
 });
 
+await test('the per-identity evaluation is linear in the catalog, not quadratic', async () => {
+  // The sweep calls this once per identity with the SAME observation, and two of the values it needs
+  // depend on the observation alone: the id->asset index and the raw-body hash. Computing either per
+  // call is O(N^2) in the catalog — the real-PostgreSQL 2,048-version lane measured 306s against its
+  // own 240s budget before this was memoised, and that lane had never been run.
+  //
+  // Asserted as a SHAPE, never as elapsed time: a guard that passes because of how long something
+  // takes is measuring the wrong thing, and only a change to that duration ever tells you. Each
+  // asset counts reads of its own `id`, so the old filter (every id, every call) and the memo (every
+  // id, once) are told apart exactly, on a fixture small enough to be free.
+  const N = 8;
+  let idReads = 0;
+  const assets = Array.from({ length: N }, (_, index) => {
+    const id = `0x${index.toString(16).padStart(64, '0')}`;
+    return {
+      get id() { idReads += 1; return id; },
+      tokenSymbol: `T${index}`,
+      deployments: [{ chainId: 4663, contractAddress: getAddress(`0x${(index + 1).toString(16).padStart(40, '0')}`) }],
+      status: 'ASSET_STATUS_ACTIVE',
+      tradingCapabilities: { fractionalTradability: 'tradable' },
+      tokenDecimals: 18,
+    };
+  });
+  const observation = { assets, __rawBody: JSON.stringify({ assets: [] }) };
+
+  // one evaluation per identity, exactly as the sweep drives it
+  for (let index = 0; index < N; index += 1) {
+    evaluateRwaHealthAsset({ ...expected, robinhoodAssetIdHash: keccak256(toBytes(`0x${index.toString(16).padStart(64, '0')}`)) }, observation);
+  }
+  assert.equal(idReads, N,
+    `each provider id must be hashed ONCE per observation, not once per identity — got ${idReads} `
+    + `reads across ${N} evaluations of a ${N}-asset catalog (quadratic would be ${N * N})`);
+
+  // and a DIFFERENT observation must not read the first one's memo
+  const other = { assets, __rawBody: JSON.stringify({ assets: [1] }) };
+  const a = evaluateRwaHealthAsset(expected, observation);
+  const b = evaluateRwaHealthAsset(expected, other);
+  assert.notEqual(a.providerBodyHash, b.providerBodyHash,
+    'the memo is keyed on the observation, so a different body must hash differently');
+});
+
 if (failures.length) {
   console.error(`rwahealth: ${passes} passed, ${failures.length} failed`);
   for (const failure of failures) console.error(failure.stack || failure);

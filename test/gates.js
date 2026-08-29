@@ -32,6 +32,12 @@ import { parse } from 'acorn';
 
 const SRC = fileURLToPath(new URL('../src/', import.meta.url));
 const relPath = (from, to) => path.relative(from, to).replaceAll('\\', '/');
+
+// Comments OUT before any capability or wall scan. A capability NAMED IN PROSE is not a capability,
+// and a scanner that reads prose produces the mostly-wrong advisory people learn to route around —
+// this file's own recorded class. One implementation, because two copies of a rule is how the two
+// come to disagree. `//` is left alone after a colon so a URL in a string does not eat its own line.
+const decomment = (t) => t.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/[^\n]*/g, '$1');
 const GATES = ['jailed', 'hospitalized', 'safeHoused', 'penSafe', 'inHole', 'witproActive'];
 // The column each gate reads, so a hand-written inline check counts as enforcement. Matched as a
 // PROPERTY ACCESS (`ch.safe_until`) rather than the bare column, because the bare name also appears
@@ -419,11 +425,10 @@ console.log('✅ THE GATE MATRIX passed — every verb in a family enforces the 
   };
   const unwalled = [];
   let scanned = 0;
-  // Comments OUT first. A body slice runs to the next `export`, which swallows THAT function's
-  // leading doc comment — so prose about a price would put a neighbour in scope, and prose about a
-  // wall would credit one that isn't there. (Both directions observed on the first run.) `//` is
-  // left alone after a colon so a URL in an error string does not eat its own line.
-  const decomment = (t) => t.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/[^\n]*/g, '$1');
+  // Comments OUT first (the shared `decomment`). A body slice runs to the next `export`, which
+  // swallows THAT function's leading doc comment — so prose about a price would put a neighbour in
+  // scope, and prose about a wall would credit one that isn't there. Both directions observed on
+  // the first run, and the over-read is the dangerous one: it makes the check MORE permissive.
   for (const rel of MODULES) {
     const src = decomment(fs.readFileSync(new URL(`../src/${rel}`, import.meta.url), 'utf8'));
     // split on exported function boundaries so each body is read whole and no wall is credited to
@@ -2575,9 +2580,12 @@ scopedSocialContext = async function(db) {
 // H1 is observation and evidence only. Read every dedicated H1 source unit so splitting the
 // implementation cannot move a forbidden capability outside the gate's field of view.
 {
-  const healthSource = [
+  // Read the CODE, never the prose: a capability named in a comment is not a capability, and a
+  // guard that fires on an explanatory sentence is one commit away from being reworded around.
+  // (Observed: a comment about a test's own time budget tripped the budget/mint/burn assertion.)
+  const healthSource = decomment([
     'rwahealth.js', 'rwahealthread.js', 'rwahealthreview.js', 'rwahealthsweep.js',
-  ].map((name) => fs.readFileSync(path.join(SRC, name), 'utf8')).join('\n');
+  ].map((name) => fs.readFileSync(path.join(SRC, name), 'utf8')).join('\n'));
   assert.match(healthSource, /finalizedStockCatalogForHealthV2/,
     'H1 authority is the exact finalized Registry V2 health reader, never a legacy catalog read');
   assert.doesNotMatch(healthSource,
@@ -2642,15 +2650,34 @@ scopedSocialContext = async function(db) {
   assert.doesNotMatch(executable, /process\.env\[[^\]]+\]|process\.env\.[A-Z0-9_]*(?:CUTOVER|ACTIVATION)/,
     'CN-6A has no dynamic, cutover, or activation-authority environment selector');
 
+  // RUNNING ITS TESTS IS NOT SCHEDULING IT. The rule this enforces is the one stated above — no
+  // PRODUCTION entry point may schedule or cut over the dormant coordinator — and for package.json
+  // the pattern was broader than that intent: it also forbade a script that merely invokes
+  // `test/rwaregistrylifecycle*.js`, which is why those three suites were the only ones in the tree
+  // that nothing could run (THE SUITE LEDGER found ten more, and two of them were red). A test
+  // invocation is stripped BEFORE the check rather than the pattern being loosened, so every other
+  // mention — a coordinator import, a scheduled script, the exported symbol — still fails, and the
+  // dormancy property is unchanged.
+  const pkgText = fs.readFileSync(fileURLToPath(new URL('../package.json', import.meta.url)), 'utf8');
+  const pkgProduction = pkgText
+    // a whole script entry whose body is NOTHING BUT invocations of its test files — key included,
+    // since the key names the suite it runs
+    .replace(/^\s*"[^"]*":\s*"(?:node test\/rwaregistrylifecycle[A-Za-z0-9._-]*\.js(?: && )?)+",?$/gm, '')
+    // and the same invocations sitting inside a longer chain (`pretest`), fragment only
+    .replace(/node test\/rwaregistrylifecycle[A-Za-z0-9._-]*\.js/g, '');
   const unreachable = [
     ['worker.js', fs.readFileSync(path.join(SRC, 'worker.js'), 'utf8')],
-    ['package.json', fs.readFileSync(fileURLToPath(new URL('../package.json', import.meta.url)), 'utf8')],
+    ['package.json', pkgProduction],
   ];
   for (const [name, source] of unreachable) {
     assert.doesNotMatch(source,
       /\b(?:syncFinalizedRwaRegistryLifecycle|rwaregistrylifecycle)\b/,
       `CN-6A remains dormant: ${name} must not schedule or cut over its coordinator`);
   }
+  // and the narrowing must never become a hole: the coordinator's own SYMBOL is forbidden in
+  // package.json outright, test invocation or not.
+  assert.doesNotMatch(pkgText, /\bsyncFinalizedRwaRegistryLifecycle\b/,
+    'CN-6A remains dormant: package.json may run its tests but may never name its coordinator');
   const serverSource = fs.readFileSync(path.join(SRC, 'server.js'), 'utf8');
   assert.doesNotMatch(serverSource, /\bsyncFinalizedRwaRegistryLifecycle\b/,
     'CN-6A remains dormant: server.js may expose future read-only facts but cannot run its coordinator');
@@ -2843,4 +2870,94 @@ scopedSocialContext = async function(db) {
 
   console.log(`  ✓ all ${total} SQL interpolations are shape-safe (${shaped}) or declared `
     + `(${usedDecl.size}) — no user string can reach SQL text`);
+}
+
+// ═══ THE SUITE LEDGER — a test nobody runs is not a guard ═════════════════════════════════════════
+// `package.json`'s `test` is a single ~120-entry `&&` chain on ONE LINE. Any two branches that each
+// add a suite conflict on that line, git cannot merge it, and whoever resolves picks a side — which
+// silently drops the other side's suites. That is not hypothetical: merge 48238abe took one side and
+// dropped FIVE suites plus the `test:stockcatalogv2:postgres` script, and because CI still invoked
+// that script by name the real-Postgres job failed in ZERO SECONDS on every run afterwards ("Missing
+// script"). Sweeping the class then found TWELVE test/*.js that nothing ran at all — including
+// test/rwahealthoverlay.schema.js, where a guard had been added earlier in the same session as this
+// ledger. Ten of the twelve passed when finally run; a suite that does not execute reads on the
+// summary line exactly like one that does.
+//
+// TWO RULES, because the first is blind to the second:
+//   (a) every test/*.js is RUN — by `test`, by `pretest` (npm runs it automatically), by a script CI
+//       invokes with `npm run`, or named directly in the workflow — or is DECLARED below with the
+//       property that makes it unrunnable there.
+//   (b) every `npm run X` in the workflow names a script that EXISTS. This is the rule that would
+//       have caught the break at the merge: rule (a) sees a file with no runner, and says nothing at
+//       all about a runner with no script.
+//
+// Scope, honestly: this proves a suite is INVOKED, not that it is meaningful. A file wired into the
+// chain and asserting nothing still passes here.
+{
+  const ROOT = fileURLToPath(new URL('../', import.meta.url));
+  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+  const scripts = pkg.scripts || {};
+  const ci = fs.readFileSync(path.join(ROOT, '.github/workflows/ci.yml'), 'utf8');
+
+  // A suite is covered if it is named by `test`/`pretest` (npm runs pretest before test), by any
+  // script the workflow actually invokes, or directly by the workflow.
+  const invoked = new Set(['test', 'pretest']);
+  for (const m of ci.matchAll(/npm run ([a-zA-Z0-9:_-]+)/g)) invoked.add(m[1]);
+  const covered = new Set();
+  for (const name of invoked) {
+    const body = scripts[name];
+    if (!body) continue;
+    for (const f of body.matchAll(/test\/[A-Za-z0-9._-]+\.js/g)) covered.add(f[0]);
+  }
+  for (const f of ci.matchAll(/test\/[A-Za-z0-9._-]+\.js/g)) covered.add(f[0]);
+
+  // Declared: a suite the chain cannot run, each with the property that makes that true. A reason,
+  // not a category — "it fails in CI" is a description of the symptom and would waive a real break.
+  const DECLARED = {
+    'test/contextplus.js':
+      'Windows-only by construction: it spawns %SystemRoot%\\System32\\...\\powershell.exe to drive '
+      + 'the ContextPlus .ps1 launcher, so on Linux `join(process.env.SystemRoot, ...)` throws before '
+      + 'any assertion runs. Wiring it into the chain would make every Linux run red for a reason '
+      + 'that says nothing about the product.',
+    'test/mcp.js':
+      'Needs the SEPARATE omerta-mcp package\'s own dependencies (@modelcontextprotocol/sdk), which '
+      + 'the repo root does not install — `npm ci` here would have to carry a dep only that package '
+      + 'uses. It is the clean-machine check for the published MCP server and belongs to that '
+      + 'package\'s own verification, run from omerta-mcp/ after its install.',
+  };
+
+  const onDisk = fs.readdirSync(path.join(ROOT, 'test'))
+    .filter((f) => f.endsWith('.js')).map((f) => `test/${f}`).sort();
+  const orphans = onDisk.filter((f) => !covered.has(f) && !DECLARED[f]);
+
+  // anti-vacuity, TWO floors because they fail differently: the first catches a reader that has
+  // stopped seeing test files on disk, the second one that has stopped resolving the npm scripts —
+  // and with the second broken EVERY file reads as an orphan, which is the tempting-to-bulk-declare
+  // failure rather than a silent pass.
+  assert(onDisk.length > 100, `THE SUITE LEDGER saw only ${onDisk.length} test files on disk — the `
+    + 'directory read is broken, and a sweep that reaches nothing reads exactly like a clean tree');
+  assert(covered.size > 100, `THE SUITE LEDGER resolved only ${covered.size} suites out of the npm `
+    + 'scripts — the script reader is broken, not the tree');
+
+  // Rule (b): the workflow may not call a script that does not exist. This is the one that fires at
+  // the merge — a dropped script is invisible to rule (a), which only ever looks for files.
+  const missing = [...invoked].filter((n) => n !== 'test' && n !== 'pretest' && !scripts[n]).sort();
+  assert.deepEqual(missing, [], 'the workflow invokes npm script(s) that package.json does not '
+    + 'define — `npm run` exits non-zero immediately ("Missing script"), so the step fails in zero '
+    + 'seconds and everything reading the run assumes the check ran. This is how merge 48238abe left '
+    + `the real-Postgres job red:\n   - ${missing.join('\n   - ')}`);
+
+  assert.deepEqual(orphans, [], 'test suite(s) that NOTHING runs — not `npm test`, not `pretest`, not '
+    + 'any script the workflow invokes. A guard that never executes reads on the summary line exactly '
+    + 'like one that passes. Add it to `pretest` (or, if it needs a real database, give it a script '
+    + 'and a step in the pgcheck job), or declare it above with the property that makes it '
+    + `unrunnable here:\n   - ${orphans.join('\n   - ')}`);
+
+  const stale = Object.keys(DECLARED).filter((f) => covered.has(f) || !onDisk.includes(f)).sort();
+  assert.deepEqual(stale, [], 'declaration(s) for suites that are now run, or no longer exist — a '
+    + 'stale waiver silently re-covers whatever moves into its place, so remove them:'
+    + `\n   - ${stale.join('\n   - ')}`);
+
+  console.log(`  ✓ all ${onDisk.length} test suites are run (${covered.size}) or declared `
+    + `(${Object.keys(DECLARED).length}), and all ${invoked.size - 2} scripts the workflow calls exist`);
 }
