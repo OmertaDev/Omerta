@@ -8,7 +8,9 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { compileContentPack } from '../src/content/compiler.js';
+import * as ContentCompiler from '../src/content/compiler.js';
+
+const { compileContentPack, validateRuntimeContentPack } = ContentCompiler;
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const fixture = path.join(ROOT, 'test', 'fixtures', 'content', 'valid-minimal.json');
@@ -456,3 +458,567 @@ for (const type of [
   assert.ok(sixthChairTypes.has(type), `Sixth Chair exercises ${type}`);
 }
 console.log('✓ Sixth Chair vertical slice spans mysteries, social growth, items, export, and finite OMR');
+
+// Break caught: compile-only packs remain broad authoring artifacts, but a pack promoted for live
+// execution needs an explicit, closed, capability-checked runtime manifest.
+assert.equal(typeof validateRuntimeContentPack, 'function', 'the compiler exports the live-runtime validator');
+
+const runtimeFixturePath = path.join(ROOT, 'test', 'fixtures', 'content', 'runtime-minimal.json');
+const runtimePack = JSON.parse(fs.readFileSync(runtimeFixturePath, 'utf8'));
+
+const compiledRuntime = compileContentPack(runtimePack);
+assert.strictEqual(
+  validateRuntimeContentPack(compiledRuntime),
+  compiledRuntime,
+  'a supported runtime manifest validates without replacing the immutable bundle object',
+);
+assert.throws(
+  () => validateRuntimeContentPack(compileContentPack(ordered)),
+  /runtime manifest is required/,
+  'compile-only packs remain valid authoring artifacts but cannot be activated as live runtime content',
+);
+
+const invalidRuntime = (mutate) => {
+  const pack = structuredClone(runtimePack);
+  mutate(pack);
+  return () => validateRuntimeContentPack(compileContentPack(pack));
+};
+
+assert.throws(
+  invalidRuntime((pack) => { pack.runtime.entryNodeId = 'missing'; }),
+  /runtime entryNodeId missing references a missing node/,
+  'the live entry point must exist',
+);
+assert.throws(
+  invalidRuntime((pack) => { pack.runtime.partyPolicyId = 'quorum'; }),
+  /runtime partyPolicyId quorum must reference party_policy/,
+  'manifest references carry exact node types',
+);
+assert.throws(
+  invalidRuntime((pack) => { pack.runtime.nodeIds = pack.runtime.nodeIds.filter((id) => id !== 'closed'); }),
+  /runtime nodeIds must contain terminalNodeId closed/,
+  'the terminal cannot sit outside the executable closure',
+);
+assert.throws(
+  invalidRuntime((pack) => { pack.runtime.actionNodeIds.push('clue'); }),
+  /runtime action node clue must be puzzle or choice/,
+  'passive definitions cannot become client actions',
+);
+assert.throws(
+  invalidRuntime((pack) => { pack.runtime.actionNodeIds = ['puzzle']; }),
+  /runtime actionNodeIds must include action node choice/,
+  'an in-profile choice or puzzle cannot become unreachable by omission from the action manifest',
+);
+assert.throws(
+  invalidRuntime((pack) => { pack.runtime.nodeIds.push('case'); }),
+  /runtime nodeIds must be a non-empty unique string array/,
+  'the executable closure has one stable identity per node',
+);
+assert.throws(
+  invalidRuntime((pack) => {
+    pack.nodes.find((node) => node.id === 'witness').payload.participantKinds = ['human_eligible_non_agent', 'moderator'];
+  }),
+  /runtime role witness has unsupported participant kind moderator/,
+  'participant authority comes from the reviewed agent/human vocabulary',
+);
+assert.throws(
+  invalidRuntime((pack) => { pack.nodes.find((node) => node.id === 'puzzle').payload.answerSpecId = 'missing'; }),
+  /runtime puzzle puzzle answerSpecId missing references a missing node/,
+  'canonical puzzles require a server-side answer specification',
+);
+assert.throws(
+  invalidRuntime((pack) => { pack.nodes.find((node) => node.id === 'puzzle-answer').payload.verifier = 'javascript'; }),
+  /runtime answer spec puzzle-answer has unsupported verifier javascript/,
+  'answer verification is a finite server-owned vocabulary',
+);
+assert.throws(
+  invalidRuntime((pack) => { pack.nodes.find((node) => node.id === 'puzzle-answer').payload.acceptedValues = []; }),
+  /runtime answer spec puzzle-answer requires non-empty acceptedValues/,
+  'canonical answer sets cannot be vacuous',
+);
+assert.throws(
+  invalidRuntime((pack) => { pack.nodes.find((node) => node.id === 'choice').payload.options = [{ id: 'only', label: 'Only one road' }]; }),
+  /runtime choice choice requires at least two stable options/,
+  'choices expose real stable alternatives',
+);
+assert.throws(
+  invalidRuntime((pack) => { pack.nodes.find((node) => node.id === 'choice').payload.options[1].id = 'keep'; }),
+  /runtime choice choice has duplicate option id keep/,
+  'choice identity never depends on author array order',
+);
+assert.throws(
+  invalidRuntime((pack) => {
+    pack.nodes.push({ id: 'deferred-source', type: 'source', payload: { budgetId: 'deferred-budget' } });
+    pack.nodes.push({ id: 'deferred-budget', type: 'budget', payload: { kind: 'source', maxUnitsPerEpoch: 1, epoch: 'day' } });
+    pack.nodes.push({ id: 'deferred-item', type: 'item_def', payload: {} });
+    pack.edges.push({ from: 'deferred-source', type: 'REQUIRES', to: 'deferred-budget' });
+    pack.edges.push({ from: 'deferred-source', type: 'PRODUCES', to: 'deferred-item', quantity: 1 });
+    pack.runtime.nodeIds.push('deferred-source', 'deferred-budget', 'deferred-item');
+  }),
+  /runtime node deferred-source has unsupported type source/,
+  'deferred crafting/economy nodes fail closed when placed inside the executable profile',
+);
+assert.throws(
+  invalidRuntime((pack) => {
+    pack.nodes.find((node) => node.id === 'puzzle').payload.gates = [{ kind: 'stat_at_least', stat: 'muscle', value: 1 }];
+  }),
+  /runtime node puzzle has unsupported gate stat_at_least/,
+  'the runtime cannot accidentally execute an unimplemented gate adapter',
+);
+assert.throws(
+  invalidRuntime((pack) => {
+    pack.nodes.find((node) => node.id === 'closed').payload.effects[0].recipientPolicy = undefined;
+  }),
+  /runtime terminal closed effect 0 requires recipientPolicy all_participants and claimPolicy self/,
+  'terminal effects state exactly who earns and who may claim them',
+);
+assert.throws(
+  invalidRuntime((pack) => {
+    pack.nodes.find((node) => node.id === 'closed').payload.effects.push({
+      kind: 'enqueue_omr_allocation_transfer', allocationId: 'unfunded',
+      recipientPolicy: 'all_participants', claimPolicy: 'self',
+    });
+  }),
+  /runtime node closed has unsupported effect enqueue_omr_allocation_transfer/,
+  'live OMR settlement remains unavailable until its adapter and funding invariants exist',
+);
+assert.throws(
+  invalidRuntime((pack) => {
+    pack.edges.push({ from: 'reward', type: 'REWARDS', to: 'title' });
+  }),
+  /runtime reward title has duplicate authority from edge and terminal effect/,
+  'one terminal effect path, not an edge plus an effect, owns each award',
+);
+assert.throws(
+  invalidRuntime((pack) => {
+    pack.nodes.find((node) => node.id === 'clue').payload.shareScope = 'actor_private';
+  }),
+  /runtime evidence clue has unsupported shareScope actor_private/,
+  'the runtime rejects evidence visibility modes it cannot enforce',
+);
+console.log('✓ live runtime manifests are strict, capability-gated, private-answer-complete, and single-authority');
+
+// Break caught: the runtime contract must ship as reusable authored fixtures, not exist only in this
+// test's in-memory object, and the live Sixth Chair version must leave every deferred adapter inert.
+const compiledRuntimeFixture = compileContentPack(runtimePack);
+assert.strictEqual(validateRuntimeContentPack(compiledRuntimeFixture), compiledRuntimeFixture,
+  'the file-backed minimal runtime fixture compiles and runtime-validates');
+
+const sixthChairV2Path = path.join(ROOT, 'content', 'packs', 'sixth-chair-v2', 'pack.json');
+const sixthChairV2 = JSON.parse(fs.readFileSync(sixthChairV2Path, 'utf8'));
+const compiledSixthChairV2 = compileContentPack(sixthChairV2);
+assert.strictEqual(validateRuntimeContentPack(compiledSixthChairV2), compiledSixthChairV2,
+  'Sixth Chair v2 is activation-ready for the supported narrative runtime');
+assert.equal(sixthChairV2.namespace, 'omerta.sixth-chair');
+assert.equal(sixthChairV2.version, 2, 'the live contract is a new immutable version, never an edit to v1');
+
+const v2NodeById = new Map(sixthChairV2.nodes.map((node) => [node.id, node]));
+const v2RuntimeIds = new Set(sixthChairV2.runtime.nodeIds);
+const v2ProfileTypes = new Set(sixthChairV2.runtime.nodeIds.map((id) => v2NodeById.get(id).type));
+for (const deferredType of [
+  'public_hook', 'acquisition_campaign', 'referral_entry', 'newcomer_activation',
+  'source', 'budget', 'item_def', 'recipe', 'sink', 'tool', 'facility', 'skill_track',
+  'retention_checkpoint', 'agent_recruitment_reward', 'funded_omr_allocation', 'season_overlay',
+]) {
+  assert.equal(v2ProfileTypes.has(deferredType), false, `Sixth Chair v2 keeps ${deferredType} outside the executable profile`);
+}
+assert(sixthChairV2.nodes.some((node) => node.type === 'source' && !v2RuntimeIds.has(node.id)),
+  'the deferred salvage graph remains authored and explicitly inert');
+assert(sixthChairV2.nodes.some((node) => node.type === 'funded_omr_allocation' && !v2RuntimeIds.has(node.id)),
+  'the deferred OMR allocation remains authored and explicitly inert');
+
+const v2Puzzles = sixthChairV2.runtime.actionNodeIds.map((id) => v2NodeById.get(id)).filter((node) => node.type === 'puzzle');
+assert.equal(v2Puzzles.length, 3, 'Archivist, Driver, and Broker each get a canonical puzzle');
+for (const puzzle of v2Puzzles) {
+  const answerSpec = v2NodeById.get(puzzle.payload.answerSpecId);
+  assert(answerSpec && answerSpec.type === 'answer_spec' && v2RuntimeIds.has(answerSpec.id),
+    `${puzzle.id} has one private in-profile answer specification`);
+  assert.equal(JSON.stringify(puzzle.payload).includes(answerSpec.payload.acceptedValues[0]), false,
+    `${puzzle.id} does not inline its canonical answer in the public puzzle payload`);
+}
+const v2Choice = v2NodeById.get('witness-puzzle');
+assert(v2Choice.payload.options.length >= 2 && new Set(v2Choice.payload.options.map((option) => option.id)).size === v2Choice.payload.options.length,
+  'the Witness owns stable visible choices');
+const v2Terminal = v2NodeById.get(sixthChairV2.runtime.terminalNodeId);
+assert.deepEqual(v2Terminal.payload.effects.map((effect) => effect.kind).sort(), ['award_collectible', 'award_status'],
+  'the live terminal is value-neutral: status and collectible only');
+assert(v2Terminal.payload.effects.every((effect) => effect.recipientPolicy === 'all_participants' && effect.claimPolicy === 'self'),
+  'every participant earns and self-claims the live terminal awards');
+assert.equal(sixthChairV2.edges.some((edge) => edge.from === 'party-completion-reward'
+  && edge.type === 'REWARDS' && ['sixth-chair-title', 'sixth-chair-seal'].includes(edge.to)), false,
+  'terminal effects are the only title/seal award authority');
+console.log('✓ Sixth Chair v2 activates only its complete, private-answer-backed, value-neutral mystery spine');
+
+// The first district sampler is six independently promotable personal graphs. Each starts only in
+// its authored neighborhood, reveals two to four actions in a strict sequence, and ends in one
+// inert, exact-once memory rather than a new faucet or power reward.
+const districtStorylets = [
+  ['docks-missed-tide', 'docks', 'The Man Who Missed the Tide'],
+  ['canal-water-cellar', 'canal', 'Water in the Cellar'],
+  ['brick-last-kiln', 'brick', 'The Last Kiln'],
+  ['neon-house-lights', 'neon', 'House Lights'],
+  ['foundry-furnace-ledger', 'foundry', 'The Furnace Ledger'],
+  ['cathedral-saints-account', 'cathedral', "A Saint's Account"],
+];
+const storyletNamespaces = new Set();
+const storyletAwards = new Set();
+for (const [directory, districtId, title] of districtStorylets) {
+  const sourcePath = path.join(ROOT, 'content', 'packs', directory, 'pack.json');
+  const source = JSON.parse(fs.readFileSync(sourcePath, 'utf8'));
+  const compiled = compileContentPack(source);
+  assert.strictEqual(validateRuntimeContentPack(compiled), compiled,
+    `${title} compiles into the supported live runtime profile`);
+  const cli = spawnSync(process.execPath, ['tools/content.js', 'check', sourcePath], {
+    cwd: ROOT, encoding: 'utf8',
+  });
+  assert.equal(cli.status, 0, `${title} fails the public content promotion gate:\n${cli.stdout}\n${cli.stderr}`);
+  assert.equal(storyletNamespaces.has(source.namespace), false, `${title} has an independent namespace`);
+  storyletNamespaces.add(source.namespace);
+
+  const nodeById = new Map(source.nodes.map((node) => [node.id, node]));
+  const root = nodeById.get(source.runtime.entryNodeId);
+  assert.equal(root.payload.title, title, `${directory} carries its approved player-facing title`);
+  const rootLocationGate = root.payload.gates.find((gate) => gate.kind === 'at_location');
+  const location = nodeById.get(rootLocationGate?.locationId);
+  assert.equal(location?.type, 'location', `${title} has a typed runtime location`);
+  assert.equal(location?.payload?.districtId, districtId, `${title} is gated to ${districtId}`);
+  const policy = nodeById.get(source.runtime.partyPolicyId);
+  assert.deepEqual(policy.payload.organizationScopes, ['personal'], `${title} is a living-street storylet`);
+  const roles = source.edges.filter((edge) => edge.from === policy.id
+    && edge.type === 'PERFORMED_BY_ROLE').map((edge) => nodeById.get(edge.to));
+  assert.equal(roles.length, 1, `${title} requires one self-owned role`);
+  assert.deepEqual([...roles[0].payload.participantKinds].sort(), ['agent', 'human_eligible_non_agent'],
+    `${title} is equally playable by agents and humans`);
+
+  const actionIds = source.runtime.actionNodeIds;
+  assert(actionIds.length >= 2 && actionIds.length <= 4,
+    `${title} has the approved two-to-four-stage storylet length`);
+  for (const [index, actionId] of actionIds.entries()) {
+    const action = nodeById.get(actionId);
+    assert(action.payload.gates.some((gate) => gate.kind === 'at_location'
+      && gate.locationId === location.id), `${title}/${actionId} rechecks its district`);
+    assert(action.payload.gates.some((gate) => gate.kind === 'party_role'
+      && gate.role === roles[0].id), `${title}/${actionId} is performed by the self-owned role`);
+    if (index > 0) {
+      assert(source.edges.some((edge) => edge.from === actionIds[index - 1]
+        && edge.type === 'UNLOCKS' && edge.to === actionId),
+      `${title} reveals action ${index + 1} only after action ${index}`);
+    }
+    if (action.type === 'puzzle') {
+      const answer = nodeById.get(action.payload.answerSpecId);
+      assert.equal(answer?.type, 'answer_spec', `${title}/${actionId} has a private canonical answer`);
+      for (const accepted of answer.payload.acceptedValues) {
+        assert.equal(JSON.stringify(action.payload).toLowerCase().includes(accepted), false,
+          `${title}/${actionId} does not inline ${accepted} into its public prompt`);
+      }
+    }
+  }
+
+  const terminal = nodeById.get(source.runtime.terminalNodeId);
+  assert.deepEqual(terminal.payload.effects.map((effect) => effect.kind), ['award_collectible'],
+    `${title} has no status, cash, OMR, item, or power reward`);
+  const awardId = terminal.payload.effects[0].collectibleId;
+  assert.equal(storyletAwards.has(awardId), false, `${title} owns a globally unique memory identity`);
+  storyletAwards.add(awardId);
+  assert.equal(nodeById.get(awardId)?.payload?.gameplayPower, 'none', `${title}'s memory is inert`);
+}
+assert.equal(storyletNamespaces.size, 6, 'all six district storylets are independently activatable');
+assert.equal(storyletAwards.size, 6, 'all six district memories are exact logical entitlements');
+console.log('✓ six district storylets are personal, location-gated, sequential, private-answer-safe, and value-neutral');
+
+// The late-game spine needs declarative rank/build/social approaches and durable narrative memory,
+// without opening a generic predicate language or a new economy adapter. Choice-owned account facts
+// are definitions in the signed bundle; clients may select only options whose server-owned gates pass.
+const rankCaseSource = JSON.parse(fs.readFileSync(
+  path.join(ROOT, 'content', 'packs', 'docks-missed-tide', 'pack.json'), 'utf8'));
+rankCaseSource.namespace = 'omerta.case.iron-election.test';
+rankCaseSource.nodes.find((node) => node.id === 'missed-tide').payload.gates.push(
+  { kind: 'level_at_least', level: 35 },
+);
+const rankChoice = rankCaseSource.nodes.find((node) => node.id === 'tide-choice');
+rankChoice.payload.options = [
+  { id: 'patient', label: 'Work the ward honestly', storyFlagIds: ['iron-patient'] },
+  { id: 'expert', label: 'Read the ward like a thief',
+    gates: [{ kind: 'mastery_at_least', trackId: 'gambling', level: 10 }],
+    storyFlagIds: ['iron-expert'] },
+  { id: 'crew', label: 'Put your crew on every ballot box',
+    gates: [{ kind: 'crew_membership' }], storyFlagIds: ['iron-crew'] },
+];
+rankCaseSource.nodes.push(
+  { id: 'iron-patient', type: 'story_flag', payload: {
+    key: 'omerta.case.iron-election.test.outcome', kind: 'public_reputation',
+    value: 'patient', title: 'The Patient Ward', gameplayPower: 'none',
+  } },
+  { id: 'iron-expert', type: 'story_flag', payload: {
+    key: 'omerta.case.iron-election.test.outcome', kind: 'future_scene_variant',
+    value: 'expert', title: 'The Quiet Count', gameplayPower: 'none',
+  } },
+  { id: 'iron-crew', type: 'story_flag', payload: {
+    key: 'omerta.case.iron-election.test.outcome', kind: 'family_debt',
+    value: 'crew', title: 'The Ward Owes the Crew', gameplayPower: 'none',
+  } },
+);
+rankCaseSource.runtime.nodeIds.push('iron-patient', 'iron-expert', 'iron-crew');
+const compiledRankCase = compileContentPack(rankCaseSource);
+assert.strictEqual(validateRuntimeContentPack(compiledRankCase), compiledRankCase,
+  'rank, mastery, optional-crew, and account-story-fact declarations fit the bounded runtime');
+
+const invalidRankCase = (change) => {
+  const pack = structuredClone(rankCaseSource); change(pack);
+  return () => validateRuntimeContentPack(compileContentPack(pack));
+};
+assert.throws(invalidRankCase((pack) => {
+  pack.nodes.find((node) => node.id === 'missed-tide').payload.gates.at(-1).level = 34.5;
+}), /level_at_least.*positive integer/, 'rank gates cannot smuggle fractional or ambiguous levels');
+assert.throws(invalidRankCase((pack) => {
+  pack.nodes.find((node) => node.id === 'tide-choice').payload.options[1].gates[0].trackId = 'counterfeiting';
+}), /mastery_at_least.*unknown track counterfeiting/, 'build-sensitive routes use the canonical mastery catalog');
+const identityGateSource = structuredClone(rankCaseSource);
+identityGateSource.namespace = 'omerta.case.identity-gates.test';
+for (const node of identityGateSource.nodes.filter((node) => node.type === 'story_flag')) {
+  node.payload.key = `${identityGateSource.namespace}.outcome`;
+}
+identityGateSource.nodes.find((node) => node.id === 'missed-tide').payload.gates.push(
+  { kind: 'path_is', pathId: 'gun' },
+);
+identityGateSource.nodes.find((node) => node.id === 'tide-choice').payload.options[1].gates.push(
+  { kind: 'skill_owned', skillId: 'executioner' },
+  { kind: 'discipline_at_least', disciplineId: 'marksmanship', level: 8 },
+  { kind: 'honor_at_least', honor: 25 },
+  { kind: 'underworld_standing_at_least', npcId: 'fixer', standing: 25 },
+);
+identityGateSource.nodes.find((node) => node.id === 'tide-choice').payload.options[2].gates.push(
+  { kind: 'honor_at_most', honor: -25 },
+);
+assert.strictEqual(
+  validateRuntimeContentPack(compileContentPack(identityGateSource)).namespace,
+  identityGateSource.namespace,
+  'Path, skill, regimen, honor, and Underworld declarations fit the closed identity-gate DSL',
+);
+const invalidIdentityGate = (change) => {
+  const pack = structuredClone(identityGateSource); change(pack);
+  return () => validateRuntimeContentPack(compileContentPack(pack));
+};
+const identityRootGate = (pack) => pack.nodes.find((node) => node.id === 'missed-tide').payload.gates.at(-1);
+const identityChoiceGates = (pack) => pack.nodes.find((node) => node.id === 'tide-choice').payload.options[1].gates;
+assert.throws(invalidIdentityGate((pack) => { identityRootGate(pack).pathId = 'counterfeiter'; }),
+  /path_is.*unknown path counterfeiter/, 'Path gates use the canonical six-Path catalog');
+assert.throws(invalidIdentityGate((pack) => { identityChoiceGates(pack)[1].skillId = 'forger'; }),
+  /skill_owned.*unknown skill forger/, 'skill gates use the canonical skill tree');
+assert.throws(invalidIdentityGate((pack) => { identityChoiceGates(pack)[2].disciplineId = 'luck'; }),
+  /discipline_at_least.*unknown discipline luck/, 'regimen gates use the canonical discipline catalog');
+assert.throws(invalidIdentityGate((pack) => { identityChoiceGates(pack)[2].level = 26; }),
+  /discipline_at_least.*level 1-25/, 'regimen gates cannot exceed the signed discipline cap');
+assert.throws(invalidIdentityGate((pack) => { identityChoiceGates(pack)[3].honor = 25.5; }),
+  /honor_at_least.*integer honor -100-100/, 'honor gates reject fractional thresholds');
+assert.throws(invalidIdentityGate((pack) => { identityChoiceGates(pack)[4].npcId = 'capone'; }),
+  /underworld_standing_at_least.*unknown NPC capone/, 'Underworld gates use the canonical fixture catalog');
+assert.throws(invalidIdentityGate((pack) => { identityChoiceGates(pack)[4].standing = 101; }),
+  /underworld_standing_at_least.*standing 0-100/, 'Underworld gates stay within the published standing range');
+assert.throws(invalidRankCase((pack) => {
+  pack.nodes.find((node) => node.id === 'iron-expert').payload.kind = 'income_multiplier';
+}), /story flag iron-expert has unknown kind income_multiplier/,
+'persistent consequences stay inside the reviewed narrative vocabulary');
+assert.throws(invalidRankCase((pack) => {
+  pack.nodes.find((node) => node.id === 'iron-expert').payload.gameplayPower = 'cash_bonus';
+}), /story flag iron-expert must be gameplay-inert/,
+'account story facts cannot become hidden permanent power');
+assert.throws(invalidRankCase((pack) => {
+  pack.nodes.find((node) => node.id === 'tide-choice').payload.options[1].storyFlagIds = ['missing-fact'];
+}), /storyFlagIds missing-fact references a missing node/,
+'choice consequences are typed bundle references rather than caller-supplied keys');
+console.log('✓ late-game content declarations are rank-gated, build-reactive, optionally social, and narratively persistent');
+console.log('✓ identity content declarations are closed over canonical Path, skill, regimen, honor, and Underworld catalogs');
+
+const donCases = [
+  ['iron-election', 'omerta.don.iron-election', 'The Iron Election', 35, 'brick',
+    ['crimes', 'favors', 'deeds', 'law'], 'gambling', 10],
+  ['house-made-of-glass', 'omerta.don.house-made-of-glass', 'A House Made of Glass', 50, 'neon',
+    ['casino', 'wire', 'secrets', 'larceny'], 'larceny', 10],
+  ['port-no-return', 'omerta.don.port-no-return', 'Port of No Return', 65, 'docks',
+    ['port', 'convoys', 'contracts', 'seamanship'], 'seamanship', 10],
+  ['empty-seat', 'omerta.don.empty-seat', 'The Empty Seat', 80, 'cathedral',
+    ['family', 'commission', 'diplomacy', 'vouching'], 'scores', 25],
+  ['two-funerals', 'omerta.don.two-funerals', 'Two Funerals', 95, 'foundry',
+    ['bloodline', 'vendetta', 'marriage', 'honor'], 'wetwork', 25],
+  ['federal-ledger', 'omerta.don.federal-ledger', 'The Federal Ledger', 110, 'canal',
+    ['law', 'loans', 'black-market', 'informants'], 'commerce', 25],
+  ['don-of-the-city', 'omerta.don.don-of-the-city', 'Don of the City', 125, 'brick',
+    ['all-districts', 'family-politics', 'megaproject', 'legacy'], 'muscle', 40],
+];
+const donNamespaces = new Set();
+const donMementos = new Set();
+for (const [directory, namespace, title, level, districtId, systems, trackId, masteryLevel] of donCases) {
+  const source = JSON.parse(fs.readFileSync(
+    path.join(ROOT, 'content', 'packs', directory, 'pack.json'), 'utf8'));
+  const bundle = compileContentPack(source);
+  assert.strictEqual(validateRuntimeContentPack(bundle), bundle, `${title} passes the live capability profile`);
+  assert.equal(source.namespace, namespace, `${title} owns its expected stable namespace`);
+  assert.equal(donNamespaces.has(namespace), false, `${title} is independently activatable`);
+  donNamespaces.add(namespace);
+  const nodeById = new Map(source.nodes.map((node) => [node.id, node]));
+  const root = nodeById.get(source.runtime.entryNodeId);
+  assert.equal(root.payload.title, title, `${directory} publishes the approved title`);
+  assert.deepEqual(root.payload.systems, systems, `${title} reconnects the approved existing systems`);
+  assert.deepEqual(root.payload.gates.find((gate) => gate.kind === 'level_at_least'),
+    { kind: 'level_at_least', level }, `${title} opens at its approved Don-rank threshold`);
+  const locationGate = root.payload.gates.find((gate) => gate.kind === 'at_location');
+  assert.equal(nodeById.get(locationGate.locationId)?.payload?.districtId, districtId,
+    `${title} is rooted in its approved district`);
+  const policy = nodeById.get(source.runtime.partyPolicyId);
+  assert.deepEqual(policy.payload.organizationScopes, ['personal'], `${title} remains a personal case`);
+  assert(source.runtime.actionNodeIds.length >= 5 && source.runtime.actionNodeIds.length <= 8,
+    `${title} has five to eight authored action stages`);
+  for (const actionId of source.runtime.actionNodeIds) {
+    const action = nodeById.get(actionId);
+    assert(['puzzle', 'choice'].includes(action?.type), `${title} action ${actionId} is executable`);
+    const kinds = new Set((action.payload.gates || []).map((gate) => gate.kind));
+    assert(kinds.has('party_role') && kinds.has('at_location'),
+      `${title} action ${actionId} rechecks actor and district authority`);
+  }
+  const ending = source.nodes.find((node) => node.type === 'choice'
+    && node.payload?.options?.every((option) => option.storyFlagIds?.length));
+  assert(ending, `${title} ends in a persistent authored decision`);
+  assert.equal(ending.payload.options.length, 3, `${title} has baseline, build, and social resolutions`);
+  assert.equal(ending.payload.options.filter((option) => !(option.gates || []).length).length, 1,
+    `${title} always retains one ungated resolution`);
+  assert.deepEqual(ending.payload.options.find((option) => option.gates?.[0]?.kind === 'mastery_at_least')
+    ?.gates[0], { kind: 'mastery_at_least', trackId, level: masteryLevel },
+  `${title} uses the approved mastery-sensitive resolution`);
+  assert(ending.payload.options.some((option) => option.gates?.some((gate) => gate.kind === 'crew_membership')),
+    `${title} has an optional social resolution without requiring a crew`);
+  const outcomeFlags = ending.payload.options.flatMap((option) => option.storyFlagIds)
+    .map((id) => nodeById.get(id));
+  assert.equal(new Set(outcomeFlags.map((node) => node.payload.key)).size, 1,
+    `${title} writes exactly one stable decision key`);
+  assert.equal(new Set(outcomeFlags.map((node) => node.payload.value)).size, 3,
+    `${title} records three distinguishable outcomes`);
+  assert(outcomeFlags.every((node) => node.type === 'story_flag' && node.payload.gameplayPower === 'none'),
+    `${title} consequences are narrative facts, not permanent power`);
+  const reward = source.nodes.find((node) => node.type === 'reward_bundle');
+  assert.equal(Number(reward.payload.cash || 0), 0, `${title} cannot author cash`);
+  assert.equal(Number(reward.payload.omr || 0), 0, `${title} cannot author OMR`);
+  assert.equal(Number(reward.payload.tradeableItems || 0), 0, `${title} cannot author tradeable loot`);
+  const terminal = nodeById.get(source.runtime.terminalNodeId);
+  assert.equal(terminal.payload.effects.length, 1, `${title} has one terminal memento entitlement`);
+  assert.equal(terminal.payload.effects[0].kind, 'award_collectible', `${title}'s reward is collectible-only`);
+  const mementoId = terminal.payload.effects[0].collectibleId;
+  assert.equal(donMementos.has(mementoId), false, `${title}'s memento identity is globally unique`);
+  donMementos.add(mementoId);
+  assert.equal(nodeById.get(mementoId)?.payload?.gameplayPower, 'none', `${title}'s memento is inert`);
+}
+assert.equal(donNamespaces.size, 7, 'all seven Don Cases can be promoted independently');
+assert.equal(donMementos.size, 7, 'all seven Don Cases own distinct inert memories');
+console.log('✓ seven Don Cases form a rank-gated, build-reactive, persistent, value-neutral late-game spine');
+
+const identityCases = [
+  ['last-clean-contract', 'omerta.case.path.gun.last-clean-contract', 'The Last Clean Contract', 'gun',
+    ['contracts', 'streets-combat', 'skills', 'mastery', 'regimen', 'honor', 'underworld'],
+    [{ kind: 'skill_owned', skillId: 'executioner' },
+      { kind: 'mastery_at_least', trackId: 'wetwork', level: 10 },
+      { kind: 'discipline_at_least', disciplineId: 'marksmanship', level: 8 }],
+    [{ kind: 'honor_at_least', honor: 25 },
+      { kind: 'underworld_standing_at_least', npcId: 'fixer', standing: 25 }]],
+  ['hostile-books', 'omerta.case.path.ledger.hostile-books', 'Hostile Books', 'ledger',
+    ['business', 'black-market', 'loans', 'skills', 'mastery', 'regimen', 'honor', 'underworld'],
+    [{ kind: 'skill_owned', skillId: 'broker' },
+      { kind: 'mastery_at_least', trackId: 'commerce', level: 10 },
+      { kind: 'discipline_at_least', disciplineId: 'presence', level: 8 }],
+    [{ kind: 'honor_at_least', honor: 25 },
+      { kind: 'underworld_standing_at_least', npcId: 'madame', standing: 25 }]],
+  ['bad-batch', 'omerta.case.path.kitchen.bad-batch', 'The Bad Batch', 'kitchen',
+    ['kitchen', 'goods-market', 'skills', 'mastery', 'regimen', 'honor', 'underworld'],
+    [{ kind: 'mastery_at_least', trackId: 'chemistry', level: 10 },
+      { kind: 'discipline_at_least', disciplineId: 'composure', level: 8 }],
+    [{ kind: 'honor_at_least', honor: 25 },
+      { kind: 'underworld_standing_at_least', npcId: 'doc', standing: 25 }]],
+  ['black-ice', 'omerta.case.path.wheel.black-ice', 'Black Ice', 'wheel',
+    ['convoys', 'races', 'garage', 'skills', 'mastery', 'regimen', 'honor', 'underworld'],
+    [{ kind: 'skill_owned', skillId: 'road_captain' },
+      { kind: 'mastery_at_least', trackId: 'wheels', level: 10 },
+      { kind: 'discipline_at_least', disciplineId: 'handling', level: 8 }],
+    [{ kind: 'honor_at_least', honor: 25 },
+      { kind: 'underworld_standing_at_least', npcId: 'harbor', standing: 25 }]],
+  ['nobody-saw-him-leave', 'omerta.case.path.shadow.nobody-saw-him-leave', 'Nobody Saw Him Leave', 'shadow',
+    ['streets-crime', 'contracts', 'wire', 'skills', 'mastery', 'regimen', 'honor', 'underworld'],
+    [{ kind: 'mastery_at_least', trackId: 'larceny', level: 10 },
+      { kind: 'discipline_at_least', disciplineId: 'poise', level: 8 },
+      { kind: 'honor_at_most', honor: -25 }],
+    [{ kind: 'honor_at_least', honor: 25 },
+      { kind: 'underworld_standing_at_least', npcId: 'fixer', standing: 25 }]],
+  ['twelve-rounds', 'omerta.case.path.ring.twelve-rounds', 'Twelve Rounds', 'ring',
+    ['boxing', 'duels', 'skills', 'mastery', 'regimen', 'honor', 'underworld'],
+    [{ kind: 'skill_owned', skillId: 'bruiser' },
+      { kind: 'mastery_at_least', trackId: 'fists', level: 10 },
+      { kind: 'discipline_at_least', disciplineId: 'conditioning', level: 8 }],
+    [{ kind: 'honor_at_least', honor: 25 },
+      { kind: 'underworld_standing_at_least', npcId: 'cornerman', standing: 25 }]],
+];
+const identityNamespaces = new Set();
+const identityMementos = new Set();
+const identityGateCoverage = new Set();
+for (const [directory, namespace, title, pathId, systems, specialistGates, relationshipGates] of identityCases) {
+  const source = JSON.parse(fs.readFileSync(
+    path.join(ROOT, 'content', 'packs', directory, 'pack.json'), 'utf8'));
+  const bundle = compileContentPack(source);
+  assert.strictEqual(validateRuntimeContentPack(bundle), bundle, `${title} passes the live capability profile`);
+  assert.equal(source.namespace, namespace, `${title} owns its expected stable namespace`);
+  assert.equal(identityNamespaces.has(namespace), false, `${title} is independently activatable`);
+  identityNamespaces.add(namespace);
+  const nodeById = new Map(source.nodes.map((node) => [node.id, node]));
+  const root = nodeById.get(source.runtime.entryNodeId);
+  assert.equal(root.payload.title, title, `${directory} publishes the approved title`);
+  assert.deepEqual(root.payload.systems, systems, `${title} reconnects its approved existing systems`);
+  assert.deepEqual(root.payload.gates, [{ kind: 'path_is', pathId }],
+    `${title} belongs exclusively to the approved Path`);
+  const policy = nodeById.get(source.runtime.partyPolicyId);
+  assert.deepEqual(policy.payload.organizationScopes, ['personal'], `${title} remains a personal identity case`);
+  assert.equal(source.runtime.actionNodeIds.length, 5, `${title} has four investigations and one resolution`);
+  for (const actionId of source.runtime.actionNodeIds) {
+    const action = nodeById.get(actionId);
+    assert(['puzzle', 'choice'].includes(action?.type), `${title} action ${actionId} is executable`);
+    assert((action.payload.gates || []).some((gate) => gate.kind === 'party_role' && gate.role === 'investigator'),
+      `${title} action ${actionId} rechecks the personal role`);
+  }
+  const ending = source.nodes.find((node) => node.type === 'choice'
+    && node.payload?.options?.every((option) => option.storyFlagIds?.length));
+  assert(ending, `${title} ends in a persistent authored decision`);
+  assert.equal(ending.payload.options.length, 3, `${title} has baseline, specialist, and relationship outcomes`);
+  assert.equal(ending.payload.options.filter((option) => !(option.gates || []).length).length, 1,
+    `${title} always retains one ungated resolution`);
+  assert.deepEqual(ending.payload.options[1].gates, specialistGates,
+    `${title}'s specialist method reads the approved build identity`);
+  assert.deepEqual(ending.payload.options[2].gates, relationshipGates,
+    `${title}'s relationship method reads honor and canonical Underworld standing`);
+  for (const option of ending.payload.options) {
+    for (const gate of option.gates || []) identityGateCoverage.add(gate.kind);
+  }
+  const outcomeFlags = ending.payload.options.flatMap((option) => option.storyFlagIds).map((id) => nodeById.get(id));
+  assert.equal(new Set(outcomeFlags.map((node) => node.payload.key)).size, 1,
+    `${title} writes exactly one stable decision key`);
+  assert(outcomeFlags.every((node) => node.payload.key === `${namespace}.outcome`),
+    `${title}'s narrative fact is namespace-scoped`);
+  assert.equal(new Set(outcomeFlags.map((node) => node.payload.value)).size, 3,
+    `${title} records three distinguishable outcomes`);
+  assert(outcomeFlags.every((node) => node.type === 'story_flag' && node.payload.gameplayPower === 'none'),
+    `${title} consequences are narrative facts, not permanent power`);
+  const reward = source.nodes.find((node) => node.type === 'reward_bundle');
+  assert.equal(Number(reward.payload.cash || 0), 0, `${title} cannot author cash`);
+  assert.equal(Number(reward.payload.omr || 0), 0, `${title} cannot author OMR`);
+  assert.equal(Number(reward.payload.tradeableItems || 0), 0, `${title} cannot author tradeable loot`);
+  const terminal = nodeById.get(source.runtime.terminalNodeId);
+  assert.equal(terminal.payload.effects.length, 1, `${title} has one terminal memento entitlement`);
+  assert.equal(terminal.payload.effects[0].kind, 'award_collectible', `${title}'s reward is collectible-only`);
+  const mementoId = terminal.payload.effects[0].collectibleId;
+  assert.equal(identityMementos.has(mementoId) || donMementos.has(mementoId), false,
+    `${title}'s memento identity is globally unique across major cases`);
+  identityMementos.add(mementoId);
+  assert.equal(nodeById.get(mementoId)?.payload?.gameplayPower, 'none', `${title}'s memento is inert`);
+}
+assert.equal(identityNamespaces.size, 6, 'all six Path Cases can be promoted independently');
+assert.equal(identityMementos.size, 6, 'all six Path Cases own distinct inert memories');
+assert.deepEqual([...identityGateCoverage].sort(), [
+  'discipline_at_least', 'honor_at_least', 'honor_at_most', 'mastery_at_least',
+  'skill_owned', 'underworld_standing_at_least',
+], 'the identity drop exercises every reviewed build and relationship gate');
+console.log('✓ six Path Cases are identity-gated, build-reactive, persistent, and value-neutral');

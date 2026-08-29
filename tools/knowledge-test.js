@@ -182,6 +182,23 @@ assert(graph.census.byNodeType.Commit >= 800, 'the Git lineage unexpectedly coll
 assert(graph.census.byNodeType.PullRequest >= 120, 'the GitHub snapshot unexpectedly collapsed');
 
 const routeById = new Map(model.routes.map((route) => [`${route.method} ${route.url}`, route]));
+const contentRouteProvenance = [
+  ['GET /v1/content', 'authenticated', 'contentBoard'],
+  ['POST /v1/content/:namespace/instances', 'authenticated', 'createContentInstance'],
+  ['GET /v1/content/instances/:instanceId', 'authenticated', 'contentInstanceBoard'],
+  ['POST /v1/content/instances/:instanceId/join', 'authenticated', 'joinContentInstance'],
+  ['POST /v1/content/instances/:instanceId/consent', 'authenticated', 'setContentConsent'],
+  ['POST /v1/content/instances/:instanceId/act', 'authenticated', 'actOnContentInstance'],
+  ['POST /v1/content/instances/:instanceId/leave', 'authenticated', 'leaveContentInstance'],
+  ['POST /v1/content/instances/:instanceId/claim', 'authenticated', 'claimContentRewards'],
+  ['POST /v1/mod/content/activate', 'moderator', 'activateContentBundle'],
+];
+for (const [id, access, handler] of contentRouteProvenance) {
+  const route = routeById.get(id);
+  assert.deepEqual({ access: route?.access, handler: route?.handler, handlerFile: route?.handlerFile }, {
+    access, handler, handlerFile: 'src/content/runtime.js',
+  }, `${id} must preserve its real authority and authored-content handler through route wrappers`);
+}
 const namedImportProvenance = [
   {
     id: 'GET /v1/arena', handler: 'arenaBoard', handlerFile: 'src/arena.js',

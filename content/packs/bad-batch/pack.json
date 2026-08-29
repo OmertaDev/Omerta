@@ -1,0 +1,401 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.case.path.kitchen.bad-batch",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "in-game Path Case with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "bad-batch",
+    "entryNodeId": "bad-batch",
+    "partyPolicyId": "personal-policy",
+    "quorumId": "solo-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "bad-batch",
+      "personal-policy",
+      "solo-quorum",
+      "investigator",
+      "poison-in-the-steam",
+      "copper-assay",
+      "copper-assay-answer",
+      "split-manifest",
+      "split-manifest-answer",
+      "cooling-clock",
+      "cooling-clock-answer",
+      "blue-collar-seal",
+      "blue-collar-seal-answer",
+      "batch-verdict",
+      "quarantined-batch-flag",
+      "proofed-process-flag",
+      "source-traced-flag",
+      "bad-batch-memory",
+      "bad-batch-copper-spoon",
+      "case-closed"
+    ],
+    "actionNodeIds": [
+      "copper-assay",
+      "split-manifest",
+      "cooling-clock",
+      "blue-collar-seal",
+      "batch-verdict"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "bad-batch",
+      "type": "mystery",
+      "payload": {
+        "title": "The Bad Batch",
+        "summary": "A kitchen crew is collapsing around a batch that passed every ordinary test. The poison is hidden in the process, the supply book, or the people trusted to sign both.",
+        "systems": [
+          "kitchen",
+          "goods-market",
+          "skills",
+          "mastery",
+          "regimen",
+          "honor",
+          "underworld"
+        ],
+        "gates": [
+          {
+            "kind": "path_is",
+            "pathId": "kitchen"
+          }
+        ]
+      }
+    },
+    {
+      "id": "personal-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "solo-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "Investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "poison-in-the-steam",
+      "type": "chapter",
+      "payload": {
+        "title": "Poison in the Steam"
+      }
+    },
+    {
+      "id": "copper-assay",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Copper Assay",
+        "prompt": "What color ring forms around the poisoned sample when it touches the copper spoon?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "copper-assay-answer"
+      }
+    },
+    {
+      "id": "copper-assay-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "violet",
+          "violet ring"
+        ]
+      }
+    },
+    {
+      "id": "split-manifest",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Split Manifest",
+        "prompt": "Which supplier mark appears only on the drums routed through the false storeroom?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "split-manifest-answer"
+      }
+    },
+    {
+      "id": "split-manifest-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "blue heron",
+          "the blue heron"
+        ]
+      }
+    },
+    {
+      "id": "cooling-clock",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Cooling Clock",
+        "prompt": "At what minute does the bad batch first fall outside the safe cooling curve?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "cooling-clock-answer"
+      }
+    },
+    {
+      "id": "cooling-clock-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "minute seventeen",
+          "17",
+          "seventeen"
+        ]
+      }
+    },
+    {
+      "id": "blue-collar-seal",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Blue-Collar Seal",
+        "prompt": "Whose initials sit beneath the counterfeit inspection seal?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "blue-collar-seal-answer"
+      }
+    },
+    {
+      "id": "blue-collar-seal-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "em",
+          "e.m."
+        ]
+      }
+    },
+    {
+      "id": "batch-verdict",
+      "type": "choice",
+      "payload": {
+        "title": "What Leaves the Kitchen",
+        "prompt": "The contaminated drums are isolated and the chain of custody is in your hands. How do you close the kitchen?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "quarantine-and-burn",
+            "label": "Quarantine the lot and burn every suspect drum",
+            "storyFlagIds": [
+              "quarantined-batch-flag"
+            ]
+          },
+          {
+            "id": "prove-the-process",
+            "label": "Stabilize one sample and prove exactly where the process broke",
+            "gates": [
+              {
+                "kind": "mastery_at_least",
+                "trackId": "chemistry",
+                "level": 10
+              },
+              {
+                "kind": "discipline_at_least",
+                "disciplineId": "composure",
+                "level": 8
+              }
+            ],
+            "storyFlagIds": [
+              "proofed-process-flag"
+            ]
+          },
+          {
+            "id": "trace-the-source",
+            "label": "Trace the poison to its source and give the survivors the full record",
+            "gates": [
+              {
+                "kind": "honor_at_least",
+                "honor": 25
+              },
+              {
+                "kind": "underworld_standing_at_least",
+                "npcId": "doc",
+                "standing": 25
+              }
+            ],
+            "storyFlagIds": [
+              "source-traced-flag"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "quarantined-batch-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.case.path.kitchen.bad-batch.outcome",
+        "kind": "public_reputation",
+        "value": "batch-quarantined",
+        "title": "The Kitchen Went Cold",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "proofed-process-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.case.path.kitchen.bad-batch.outcome",
+        "kind": "case_evidence",
+        "value": "process-proved",
+        "title": "The Seventeenth Minute",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "source-traced-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.case.path.kitchen.bad-batch.outcome",
+        "kind": "district_contact",
+        "value": "source-traced-for-survivors",
+        "title": "The Poison Had an Address",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "bad-batch-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "bad-batch-copper-spoon",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Violet-Ringed Copper Spoon",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The Steam Clears",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "bad-batch-copper-spoon",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "bad-batch",
+      "type": "REQUIRES",
+      "to": "personal-policy"
+    },
+    {
+      "from": "personal-policy",
+      "type": "REQUIRES",
+      "to": "solo-quorum"
+    },
+    {
+      "from": "personal-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "bad-batch",
+      "type": "UNLOCKS",
+      "to": "poison-in-the-steam"
+    },
+    {
+      "from": "poison-in-the-steam",
+      "type": "UNLOCKS",
+      "to": "copper-assay"
+    },
+    {
+      "from": "copper-assay",
+      "type": "UNLOCKS",
+      "to": "split-manifest"
+    },
+    {
+      "from": "split-manifest",
+      "type": "UNLOCKS",
+      "to": "cooling-clock"
+    },
+    {
+      "from": "cooling-clock",
+      "type": "UNLOCKS",
+      "to": "blue-collar-seal"
+    },
+    {
+      "from": "blue-collar-seal",
+      "type": "UNLOCKS",
+      "to": "batch-verdict"
+    },
+    {
+      "from": "batch-verdict",
+      "type": "UNLOCKS",
+      "to": "bad-batch-memory"
+    },
+    {
+      "from": "bad-batch-memory",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    }
+  ]
+}

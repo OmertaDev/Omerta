@@ -1,0 +1,417 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.don.federal-ledger",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "late-game authored case with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "federal-ledger",
+    "entryNodeId": "federal-ledger",
+    "partyPolicyId": "personal-policy",
+    "quorumId": "solo-quorum",
+    "terminalNodeId": "ledger-closed",
+    "nodeIds": [
+      "federal-ledger",
+      "personal-policy",
+      "solo-quorum",
+      "investigator",
+      "canal-location",
+      "the-books-under-water",
+      "marshal-docket-puzzle",
+      "marshal-docket-answer",
+      "vig-column-puzzle",
+      "vig-column-answer",
+      "grey-heron-puzzle",
+      "grey-heron-answer",
+      "dead-drop-puzzle",
+      "dead-drop-answer",
+      "ledger-verdict",
+      "ledger-public-record",
+      "ledger-balanced-settlement",
+      "ledger-crew-custody",
+      "federal-ledger-memory",
+      "federal-ledger-carbon",
+      "ledger-closed"
+    ],
+    "actionNodeIds": [
+      "marshal-docket-puzzle",
+      "vig-column-puzzle",
+      "grey-heron-puzzle",
+      "dead-drop-puzzle",
+      "ledger-verdict"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "federal-ledger",
+      "type": "mystery",
+      "payload": {
+        "title": "The Federal Ledger",
+        "summary": "A federal examiner vanishes in Canal Ward, leaving one wet ledger that ties lawful warrants, predatory notes, midnight auctions, and paid informants to the same careful hand.",
+        "systems": [
+          "law",
+          "loans",
+          "black-market",
+          "informants"
+        ],
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "canal-location"
+          },
+          {
+            "kind": "level_at_least",
+            "level": 110
+          }
+        ]
+      }
+    },
+    {
+      "id": "personal-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "solo-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "Ledger Examiner",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "canal-location",
+      "type": "location",
+      "payload": {
+        "title": "Canal Ward",
+        "districtId": "canal"
+      }
+    },
+    {
+      "id": "the-books-under-water",
+      "type": "chapter",
+      "payload": {
+        "title": "The Books Under Water"
+      }
+    },
+    {
+      "id": "marshal-docket-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Marshal's Tab",
+        "prompt": "The examiner wrote: six lamps, one bridge, seven locks. Enter the three-digit docket number.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "canal-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "marshal-docket-answer"
+      }
+    },
+    {
+      "id": "marshal-docket-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "617"
+        ]
+      }
+    },
+    {
+      "id": "vig-column-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Vig Column",
+        "prompt": "A one-thousand-dollar note comes home owing twelve-fifty. What amount belongs in the ledger's vig column?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "canal-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "vig-column-answer"
+      }
+    },
+    {
+      "id": "vig-column-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "250",
+          "$250"
+        ]
+      }
+    },
+    {
+      "id": "grey-heron-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Auction Alias",
+        "prompt": "Every midnight invoice bears the initials G.H. The examiner's margin says: the color of rainwater, then the bird that waits beside it. Name the buyer.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "canal-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "grey-heron-answer"
+      }
+    },
+    {
+      "id": "grey-heron-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "grey heron",
+          "gray heron"
+        ]
+      }
+    },
+    {
+      "id": "dead-drop-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "Three Canal Bells",
+        "prompt": "The informant card reads short, short, long. Its key reads short equals low and long equals high. Enter the dead-drop signal.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "canal-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "dead-drop-answer"
+      }
+    },
+    {
+      "id": "dead-drop-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "low low high"
+        ]
+      }
+    },
+    {
+      "id": "ledger-verdict",
+      "type": "choice",
+      "payload": {
+        "title": "Who Owns the Original",
+        "prompt": "The names are legible now. Decide where the only original ledger will spend the night.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "canal-location"
+          }
+        ],
+        "options": [
+          {
+            "id": "public-indictment",
+            "label": "File a clean public indictment",
+            "storyFlagIds": [
+              "ledger-public-record"
+            ]
+          },
+          {
+            "id": "balanced-settlement",
+            "label": "Balance the syndicate's books without blood",
+            "gates": [
+              {
+                "kind": "mastery_at_least",
+                "trackId": "commerce",
+                "level": 25
+              }
+            ],
+            "storyFlagIds": [
+              "ledger-balanced-settlement"
+            ]
+          },
+          {
+            "id": "crew-custody",
+            "label": "Put the original ledger in crew custody",
+            "gates": [
+              {
+                "kind": "crew_membership"
+              }
+            ],
+            "storyFlagIds": [
+              "ledger-crew-custody"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "ledger-public-record",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.federal-ledger.outcome",
+        "kind": "public_reputation",
+        "value": "public_indictment",
+        "title": "The Ledger Went on the Record",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "ledger-balanced-settlement",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.federal-ledger.outcome",
+        "kind": "district_contact",
+        "value": "balanced_settlement",
+        "title": "The Books Were Balanced Quietly",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "ledger-crew-custody",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.federal-ledger.outcome",
+        "kind": "family_debt",
+        "value": "crew_custody",
+        "title": "The Crew Holds the Original",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "federal-ledger-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "federal-ledger-carbon",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Federal Ledger Carbon",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "ledger-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The Books Close Twice",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "federal-ledger-carbon",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "federal-ledger",
+      "type": "REQUIRES",
+      "to": "personal-policy"
+    },
+    {
+      "from": "personal-policy",
+      "type": "REQUIRES",
+      "to": "solo-quorum"
+    },
+    {
+      "from": "personal-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "federal-ledger",
+      "type": "UNLOCKS",
+      "to": "the-books-under-water"
+    },
+    {
+      "from": "the-books-under-water",
+      "type": "UNLOCKS",
+      "to": "marshal-docket-puzzle"
+    },
+    {
+      "from": "marshal-docket-puzzle",
+      "type": "UNLOCKS",
+      "to": "vig-column-puzzle"
+    },
+    {
+      "from": "vig-column-puzzle",
+      "type": "UNLOCKS",
+      "to": "grey-heron-puzzle"
+    },
+    {
+      "from": "grey-heron-puzzle",
+      "type": "UNLOCKS",
+      "to": "dead-drop-puzzle"
+    },
+    {
+      "from": "dead-drop-puzzle",
+      "type": "UNLOCKS",
+      "to": "ledger-verdict"
+    },
+    {
+      "from": "ledger-verdict",
+      "type": "UNLOCKS",
+      "to": "federal-ledger-memory"
+    },
+    {
+      "from": "federal-ledger-memory",
+      "type": "UNLOCKS",
+      "to": "ledger-closed"
+    }
+  ]
+}

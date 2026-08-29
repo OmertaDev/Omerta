@@ -10,18 +10,18 @@ Written 2026-07-25. Every number below was measured from the tree, not recalled.
 
 | | |
 |---|---|
-| Backend modules | **183** files, **71265** lines (`src/`, incl. `src/routes/` and `src/social/`) |
-| Test suites | **144** files, **70159** lines (`test/`) — ratio 0.98 test:src |
-| HTTP routes | **729** registrations (**729** unique) |
-| Database tables | **299** (`schema.sql`) |
+| Backend modules | **187** files, **75805** lines (`src/`, incl. `src/routes/` and `src/social/`) |
+| Test suites | **153** files, **74457** lines (`test/`) — ratio 0.98 test:src |
+| HTTP routes | **746** registrations (**746** unique) |
+| Database tables | **317** (`schema.sql`, 6008 lines) |
 | Client | **11752** lines (`public/index.html`, single file, zero dependencies) |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **32** top-level Solidity files, **9794** lines, **844** declared top-level Foundry test functions; the release gate re-measures the passing suite |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/bond-dials.js` (sizing the on-chain mint walls), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres) |
-| Design + audit docs | **485** markdown files, **126070** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
+| Design + audit docs | **487** markdown files, **127064** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
 | Ledger invariants | 18 named escrow/identity checks + per-currency conservation, **drift-0** |
 
-Roughly **150,000 lines** of backend code, tests, schema and top-level contracts.
+Roughly **166,000 lines** of backend code, tests, schema and top-level contracts.
 
 ---
 
@@ -31,7 +31,7 @@ Everything is built on five load-bearing decisions. None has needed revision in 
 
 **`rules.js` is the constants layer, in two files.** `rules.generated.js` holds the prototype's 22 data
 tables (479 lines) and is overwritten wholesale by the extractor; `rules.tail.js` holds every helper,
-catalog, ladder and founder-signed lever (6049 lines) and the extractor never opens it. `rules.js`
+catalog, ladder and founder-signed lever (6062 lines) and the extractor never opens it. `rules.js`
 re-exports both. Nothing in `src/` hardcodes a balance number.
 
 **`withCharacter` is the transaction spine.** Every player action opens `SELECT … FOR UPDATE` on the
@@ -133,7 +133,8 @@ THE LEVY, the override, THE STATESMAN.
 **Skills** — a 3×3 tree, tier-4 capstones, active abilities, per-skill respec, prestige carry,
 grandmastery.
 **The Underworld** — six named fixtures, standing with decay, gifts, the daily lead and streaks,
-rivalries, grudges and penance, weekly favors, errand chains.
+rivalries, grudges and penance, weekly favors, errand chains, and Mickey the Cornerman's sixth
+campaign, **The Long Count**.
 **THE WIRE** — wiretaps, sweeps, the tiered subscription, the bug trace, the dossier, disinformation,
 informants, the spymaster ladder, the watchdog, the standing watch.
 **Secrets & Blackmail** · **The Collection** · **THE MEGAPROJECT** · **The Estate** and **Auction
@@ -144,6 +145,57 @@ House** (with player consignment) · **The Portfolio / Dynasty Fund** (dividends
 **Underworld Campaigns** · **The Bloodline** · **Marriages & the Consigliere** · **Named Soldiers** with
 permadeath · **THE POPULATION** (NPC residents that behave and renew) · **City Standing** (the spine
 metric) · **THE CELLPHONE** (inbox, DMs, blocked lines).
+
+**Authored Content** — immutable operator-activated graph bundles, hash/version-pinned instances,
+revision-checked server-issued actions, the playable four-role **Sixth Chair v2**, and six short
+personal, district-gated storylets with exactly-once gameplay-inert mementos. Seven personal Don Cases
+then form the late-game spine from level 35 through 125: **The Iron Election**, **A House Made of Glass**,
+**Port of No Return**, **The Empty Seat**, **Two Funerals**, **The Federal Ledger**, and
+**Don of the City**. Their server-derived rank gates, optional mastery/Crew resolutions, write-once account story
+flags, and inert mementos add authored consequence without cash, $OMR, mastery, or permanent power.
+Six personal Path Cases form the identity drop: Gun — **The Last Clean Contract**;
+Ledger — **Hostile Books**; Kitchen — **The Bad Batch**; Wheel — **Black Ice**;
+Shadow — **Nobody Saw Him Leave**; and
+Ring — **Twelve Rounds**. The closed server-derived gates cover Path, skill, mastery, regimen, honor, and
+effective Underworld standing to change the available method and remembered outcome, never the
+value-neutral reward class.
+The social follow-up adds **The Two-Man Rule**, a two-seat Crew/Extended Family case whose parallel
+Watcher and Signatory branches converge on one value-neutral, all-participant memento. Forming
+content lobbies expire without erasing their audit row, abandoned slots can be re-formed, and active
+stories never expire. The runtime also supports root-only season-phase entry gates and immutable
+once-per-season run keys derived from the canonical 28-day clock; phase changes never strand a run
+that already started and never authorize a payout.
+The production seasonal case is **The Books Open at Midnight**, a personal Opening-phase,
+once-per-season case with two normalized-answer puzzles, a three-way resolution, and one recurring
+gameplay-inert seasonal page. It moves no cash, $OMR, power, or transaction-ledger value and requires
+operator activation of its exact compiled bundle hash. Seasonal collectible entitlements are scoped
+by namespace plus the server-derived season run key: the same logical inert memento may be
+self-claimed once each season, but additional scopes or content versions cannot mint it again during
+that season.
+The first production authored supply chain is **The Bellini Restoration** at the Old Foundry. Its two
+globally finite daily sources grant exact-hash, account-owned Ledger Plate and Charred Binding lots
+once per account per source/epoch. The v2 apprenticeship consumes fixed inputs when a server-timed
+work order starts, produces only stackable gameplay-inert workpieces when its `readyAt` clock clears,
+and trains one exact-hash Bellini Restoration skill through compiled XP thresholds. One active job is
+allowed per account and namespace. Skill level 2 unlocks the final FIFO recipe for one non-stackable,
+non-tradeable, gameplay-inert Restored Bellini Lockbox. The v3 Press Room adds a location-bound
+Restoration Bench and an account-owned Bellini Restoration Press. Its only gameplay power is satisfying
+declared authored-crafting requirements: exact-hash durability wears once when a requiring job or
+recipe starts, and a board-issued repair consumes compiled same-hash material to restore the compiled
+maximum. Acquisition, use, and repair are append-only audited. Immutable receipts and work-order snapshots
+preserve provenance; inventory and XP survive street death; old-version lots and XP remain visible but
+cannot enter or unlock a new version. An in-flight old-hash run remains collectible against its pinned
+immutable bundle and archives its output and XP under that hash. Non-stackable keepsake ownership caps
+span versions; tool ownership and durability stay exact-hash so an archived press cannot unlock or block
+its successor. The v4 Material Exchange adds a sealed barter manifest for Ledger Plates and Charred
+Bindings only: whole-lot offers stay inside one exact hash, use compiler-bounded TTL/listing caps, count
+escrow toward ownership limits, conserve both item totals, and append list/fill/cancel audit events.
+It cannot admit tools, workpieces, keepsakes, drugs, ordinary inventory, or exportable items. The adapter
+moves no cash, crates, ammo, $OMR, or transaction-ledger value. Only the exchange routes grant narrow
+authored-material barter authority; no route grants combat, cash-market, or export authority. This direct
+content API does not expand Agent Turn action authority. Power outside authored crafting, drug supply,
+rare-item export, and bounded seasonal $OMR
+settlement remain later adapters.
 
 ### 3.9 Surfaces
 The playable console (22 tabs, progressive disclosure, 15 language packs, live feed, atmosphere layer) ·

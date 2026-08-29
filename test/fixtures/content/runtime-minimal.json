@@ -1,0 +1,213 @@
+{
+  "schemaVersion": 1,
+  "namespace": "test.runtime-minimal-file",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "File-backed runtime validation fixture."
+  },
+  "runtime": {
+    "experienceId": "case",
+    "entryNodeId": "case",
+    "partyPolicyId": "policy",
+    "quorumId": "quorum",
+    "terminalNodeId": "closed",
+    "nodeIds": [
+      "case",
+      "policy",
+      "quorum",
+      "investigator",
+      "witness",
+      "chapter",
+      "puzzle",
+      "puzzle-answer",
+      "clue",
+      "choice",
+      "testimony",
+      "collaboration",
+      "fact",
+      "reward",
+      "title",
+      "seal",
+      "closed"
+    ],
+    "actionNodeIds": ["puzzle", "choice"]
+  },
+  "nodes": [
+    {
+      "id": "case",
+      "type": "mystery",
+      "payload": {
+        "title": "The Missing Matchbook"
+      }
+    },
+    {
+      "id": "policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": ["crew"],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 2,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "Investigator",
+        "participantKinds": ["agent"]
+      }
+    },
+    {
+      "id": "witness",
+      "type": "role",
+      "payload": {
+        "title": "Witness",
+        "participantKinds": ["human_eligible_non_agent"],
+        "consentRequired": true
+      }
+    },
+    {
+      "id": "chapter",
+      "type": "chapter",
+      "payload": {
+        "title": "The Back Booth"
+      }
+    },
+    {
+      "id": "puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "Name on the Matchbook",
+        "prompt": "Whose name survived the rain?",
+        "gates": [{"kind": "party_role", "role": "investigator"}],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "puzzle-answer"
+      }
+    },
+    {
+      "id": "puzzle-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": ["bellini"]
+      }
+    },
+    {
+      "id": "clue",
+      "type": "evidence",
+      "payload": {
+        "title": "Bellini Matchbook"
+      }
+    },
+    {
+      "id": "choice",
+      "type": "choice",
+      "payload": {
+        "title": "Who gets the photograph?",
+        "gates": [{"kind": "party_role", "role": "witness"}],
+        "options": [
+          {"id": "keep", "label": "Keep it in the Crew archive"},
+          {"id": "burn", "label": "Burn it after memorizing the face"}
+        ]
+      }
+    },
+    {
+      "id": "testimony",
+      "type": "evidence",
+      "payload": {
+        "title": "The Investigator Decides"
+      }
+    },
+    {
+      "id": "collaboration",
+      "type": "human_agent_collaboration",
+      "payload": {
+        "consentRequired": true,
+        "uniqueParticipants": true
+      }
+    },
+    {
+      "id": "fact",
+      "type": "world_fact",
+      "payload": {
+        "key": "history.matchbook.owner",
+        "scope": "party_instance"
+      }
+    },
+    {
+      "id": "reward",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "title",
+      "type": "status",
+      "payload": {
+        "title": "Keeper of the Matchbook",
+        "economicPower": "none"
+      }
+    },
+    {
+      "id": "seal",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Rain-Blackened Matchbook",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The Name Survived",
+        "effects": [
+          {
+            "kind": "award_status",
+            "statusId": "title",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          },
+          {
+            "kind": "award_collectible",
+            "collectibleId": "seal",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {"from": "case", "type": "REQUIRES", "to": "policy"},
+    {"from": "policy", "type": "REQUIRES", "to": "quorum"},
+    {"from": "policy", "type": "PERFORMED_BY_ROLE", "to": "investigator"},
+    {"from": "policy", "type": "PERFORMED_BY_ROLE", "to": "witness"},
+    {"from": "case", "type": "UNLOCKS", "to": "chapter"},
+    {"from": "chapter", "type": "UNLOCKS", "to": "puzzle"},
+    {"from": "chapter", "type": "UNLOCKS", "to": "choice"},
+    {"from": "puzzle", "type": "REVEALS", "to": "clue"},
+    {"from": "choice", "type": "REVEALS", "to": "testimony"},
+    {"from": "clue", "type": "CONTRIBUTES_TO", "to": "collaboration"},
+    {"from": "testimony", "type": "CONTRIBUTES_TO", "to": "collaboration"},
+    {"from": "collaboration", "type": "PERFORMED_BY_ROLE", "to": "investigator"},
+    {"from": "collaboration", "type": "PERFORMED_BY_ROLE", "to": "witness"},
+    {"from": "collaboration", "type": "REVEALS", "to": "fact"},
+    {"from": "collaboration", "type": "REWARDS", "to": "reward"},
+    {"from": "reward", "type": "UNLOCKS", "to": "closed"}
+  ]
+}

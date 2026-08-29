@@ -1,0 +1,460 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.don.two-funerals",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "in-game Don Case with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "two-funerals",
+    "entryNodeId": "two-funerals",
+    "partyPolicyId": "personal-policy",
+    "quorumId": "solo-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "two-funerals",
+      "personal-policy",
+      "solo-quorum",
+      "mourner",
+      "foundry-row",
+      "double-wake",
+      "mourning-order-puzzle",
+      "mourning-order-answer",
+      "wake-table-choice",
+      "marriage-ledger-puzzle",
+      "marriage-ledger-answer",
+      "vendetta-witness-choice",
+      "honor-balance-puzzle",
+      "honor-balance-answer",
+      "two-funerals-choice",
+      "two-funerals-baseline-flag",
+      "two-funerals-wetwork-flag",
+      "two-funerals-crew-flag",
+      "two-funerals-memory",
+      "two-funerals-black-ribbon",
+      "case-closed"
+    ],
+    "actionNodeIds": [
+      "mourning-order-puzzle",
+      "wake-table-choice",
+      "marriage-ledger-puzzle",
+      "vendetta-witness-choice",
+      "honor-balance-puzzle",
+      "two-funerals-choice"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "two-funerals",
+      "type": "mystery",
+      "payload": {
+        "title": "Two Funerals",
+        "summary": "Two coffins arrive on Foundry Row, one for each side of a marriage that was meant to end a vendetta. The bloodlines agree only that honor demands an answer before either grave is closed.",
+        "systems": [
+          "bloodline",
+          "vendetta",
+          "marriage",
+          "honor"
+        ],
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "foundry-row"
+          },
+          {
+            "kind": "level_at_least",
+            "level": 95
+          }
+        ]
+      }
+    },
+    {
+      "id": "personal-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "solo-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "mourner",
+      "type": "role",
+      "payload": {
+        "title": "Mourner",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "foundry-row",
+      "type": "location",
+      "payload": {
+        "title": "Foundry Row",
+        "districtId": "foundry"
+      }
+    },
+    {
+      "id": "double-wake",
+      "type": "chapter",
+      "payload": {
+        "title": "The Double Wake"
+      }
+    },
+    {
+      "id": "mourning-order-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Order of Mourning",
+        "prompt": "The old truce says the bereaved spouse walks before both bloodlines. Who must cross the foundry floor first?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "mourner"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "foundry-row"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "mourning-order-answer"
+      }
+    },
+    {
+      "id": "mourning-order-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "the bereaved spouse",
+          "bereaved spouse",
+          "the spouse",
+          "spouse"
+        ]
+      }
+    },
+    {
+      "id": "wake-table-choice",
+      "type": "choice",
+      "payload": {
+        "title": "One Table or Two",
+        "prompt": "The two families refuse to share a wake table. How do you seat them without breaking the marriage truce?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "mourner"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "foundry-row"
+          }
+        ],
+        "options": [
+          {
+            "id": "marriage-center",
+            "label": "Place the wedding portrait between the bloodlines"
+          },
+          {
+            "id": "honor-rotation",
+            "label": "Rotate the seats after every condolence"
+          },
+          {
+            "id": "empty-head",
+            "label": "Leave the head chair empty for the dead"
+          }
+        ]
+      }
+    },
+    {
+      "id": "marriage-ledger-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Marriage Ledger",
+        "prompt": "The marriage entry binds Riva to Orsini, but the witness line bears only an initial. The chapel register identifies the witness as Elena. What first name belongs in the ledger?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "mourner"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "foundry-row"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "marriage-ledger-answer"
+      }
+    },
+    {
+      "id": "marriage-ledger-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "elena"
+        ]
+      }
+    },
+    {
+      "id": "vendetta-witness-choice",
+      "type": "choice",
+      "payload": {
+        "title": "The Witness at the Furnace",
+        "prompt": "A furnace tender saw the first shot and fears that either family will turn testimony into a new vendetta. What protection do you put on the record?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "mourner"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "foundry-row"
+          }
+        ],
+        "options": [
+          {
+            "id": "sealed-testimony",
+            "label": "Seal the testimony until both burials are complete"
+          },
+          {
+            "id": "shared-guard",
+            "label": "Make each bloodline provide one guard"
+          },
+          {
+            "id": "chapel-sanctuary",
+            "label": "Move the witness into chapel sanctuary"
+          }
+        ]
+      }
+    },
+    {
+      "id": "honor-balance-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Weight of Honor",
+        "prompt": "Each bloodline claims one life and owes one grave. How many blood debts remain if both funerals close under the same truce?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "mourner"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "foundry-row"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "honor-balance-answer"
+      }
+    },
+    {
+      "id": "honor-balance-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "zero",
+          "0",
+          "none"
+        ]
+      }
+    },
+    {
+      "id": "two-funerals-choice",
+      "type": "choice",
+      "payload": {
+        "title": "What Goes Into the Ground",
+        "prompt": "The graves wait, the witness is hidden, and both families demand the last word. How do you close the two funerals?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "mourner"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "foundry-row"
+          }
+        ],
+        "options": [
+          {
+            "id": "bury-both",
+            "label": "Bury both dead under the truce and spare the witness",
+            "storyFlagIds": [
+              "two-funerals-baseline-flag"
+            ]
+          },
+          {
+            "id": "name-killer",
+            "label": "Read the shot pattern, name the killer, and mark the debt",
+            "gates": [
+              {
+                "kind": "mastery_at_least",
+                "trackId": "wetwork",
+                "level": 25
+              }
+            ],
+            "storyFlagIds": [
+              "two-funerals-wetwork-flag"
+            ]
+          },
+          {
+            "id": "carry-coffins",
+            "label": "Have your crew carry both coffins so neither family walks first",
+            "gates": [
+              {
+                "kind": "crew_membership"
+              }
+            ],
+            "storyFlagIds": [
+              "two-funerals-crew-flag"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "two-funerals-baseline-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.two-funerals.outcome",
+        "kind": "witness_spared",
+        "value": "quiet-graves",
+        "title": "The Quiet Graves",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "two-funerals-wetwork-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.two-funerals.outcome",
+        "kind": "case_evidence",
+        "value": "killer-marked",
+        "title": "The Killer Marked",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "two-funerals-crew-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.two-funerals.outcome",
+        "kind": "family_debt",
+        "value": "crew-bears-coffins",
+        "title": "Both Families Owe the Bearers",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "two-funerals-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "two-funerals-black-ribbon",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Black Ribbon from the Double Wake",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "Two Graves, One Truce",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "two-funerals-black-ribbon",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "two-funerals",
+      "type": "REQUIRES",
+      "to": "personal-policy"
+    },
+    {
+      "from": "personal-policy",
+      "type": "REQUIRES",
+      "to": "solo-quorum"
+    },
+    {
+      "from": "personal-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "mourner"
+    },
+    {
+      "from": "two-funerals",
+      "type": "UNLOCKS",
+      "to": "double-wake"
+    },
+    {
+      "from": "double-wake",
+      "type": "UNLOCKS",
+      "to": "mourning-order-puzzle"
+    },
+    {
+      "from": "mourning-order-puzzle",
+      "type": "UNLOCKS",
+      "to": "wake-table-choice"
+    },
+    {
+      "from": "wake-table-choice",
+      "type": "UNLOCKS",
+      "to": "marriage-ledger-puzzle"
+    },
+    {
+      "from": "marriage-ledger-puzzle",
+      "type": "UNLOCKS",
+      "to": "vendetta-witness-choice"
+    },
+    {
+      "from": "vendetta-witness-choice",
+      "type": "UNLOCKS",
+      "to": "honor-balance-puzzle"
+    },
+    {
+      "from": "honor-balance-puzzle",
+      "type": "UNLOCKS",
+      "to": "two-funerals-choice"
+    },
+    {
+      "from": "two-funerals-choice",
+      "type": "UNLOCKS",
+      "to": "two-funerals-memory"
+    },
+    {
+      "from": "two-funerals-memory",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    }
+  ]
+}

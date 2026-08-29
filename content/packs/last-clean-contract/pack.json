@@ -1,0 +1,403 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.case.path.gun.last-clean-contract",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "in-game Path Case with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "last-clean-contract",
+    "entryNodeId": "last-clean-contract",
+    "partyPolicyId": "personal-policy",
+    "quorumId": "solo-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "last-clean-contract",
+      "personal-policy",
+      "solo-quorum",
+      "investigator",
+      "a-name-in-clean-ink",
+      "unsigned-contract",
+      "unsigned-contract-answer",
+      "quiet-cartridge",
+      "quiet-cartridge-answer",
+      "alley-clock",
+      "alley-clock-answer",
+      "fixers-second-book",
+      "fixers-second-book-answer",
+      "contract-verdict",
+      "contract-fulfilled-flag",
+      "executioners-proof-flag",
+      "life-brokered-flag",
+      "last-clean-contract-memory",
+      "gun-clean-contract-seal",
+      "case-closed"
+    ],
+    "actionNodeIds": [
+      "unsigned-contract",
+      "quiet-cartridge",
+      "alley-clock",
+      "fixers-second-book",
+      "contract-verdict"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "last-clean-contract",
+      "type": "mystery",
+      "payload": {
+        "title": "The Last Clean Contract",
+        "summary": "A contract with no signature, no witness, and no promised payment puts a Gun between a perfect shot and the one life that can explain who ordered it.",
+        "systems": [
+          "contracts",
+          "streets-combat",
+          "skills",
+          "mastery",
+          "regimen",
+          "honor",
+          "underworld"
+        ],
+        "gates": [
+          {
+            "kind": "path_is",
+            "pathId": "gun"
+          }
+        ]
+      }
+    },
+    {
+      "id": "personal-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "solo-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "Investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "a-name-in-clean-ink",
+      "type": "chapter",
+      "payload": {
+        "title": "A Name in Clean Ink"
+      }
+    },
+    {
+      "id": "unsigned-contract",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Unsigned Contract",
+        "prompt": "What two-word phrase is pressed into the paper where the client's name should be?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "unsigned-contract-answer"
+      }
+    },
+    {
+      "id": "unsigned-contract-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "clean hands"
+        ]
+      }
+    },
+    {
+      "id": "quiet-cartridge",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Quiet Cartridge",
+        "prompt": "Which maker's mark appears beneath the filed rim of the cartridge left with the contract?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "quiet-cartridge-answer"
+      }
+    },
+    {
+      "id": "quiet-cartridge-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "vesper arms",
+          "vesper"
+        ]
+      }
+    },
+    {
+      "id": "alley-clock",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Alley Clock",
+        "prompt": "At what time did the target deliberately stop beneath the dead streetlamp?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "alley-clock-answer"
+      }
+    },
+    {
+      "id": "alley-clock-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "11:17",
+          "eleven seventeen"
+        ]
+      }
+    },
+    {
+      "id": "fixers-second-book",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Fixer's Second Book",
+        "prompt": "Which alias connects the target to the erased entry in the Fixer's private book?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "fixers-second-book-answer"
+      }
+    },
+    {
+      "id": "fixers-second-book-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "mr sunday",
+          "mister sunday"
+        ]
+      }
+    },
+    {
+      "id": "contract-verdict",
+      "type": "choice",
+      "payload": {
+        "title": "One Round, Three Truths",
+        "prompt": "The target waits in the open and the real client watches from cover. How does the last clean contract end?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "fulfill-the-paper",
+            "label": "Fulfill the contract exactly as written",
+            "storyFlagIds": [
+              "contract-fulfilled-flag"
+            ]
+          },
+          {
+            "id": "executioners-proof",
+            "label": "Take the impossible angle and expose the hidden client",
+            "gates": [
+              {
+                "kind": "skill_owned",
+                "skillId": "executioner"
+              },
+              {
+                "kind": "mastery_at_least",
+                "trackId": "wetwork",
+                "level": 10
+              },
+              {
+                "kind": "discipline_at_least",
+                "disciplineId": "marksmanship",
+                "level": 8
+              }
+            ],
+            "storyFlagIds": [
+              "executioners-proof-flag"
+            ]
+          },
+          {
+            "id": "broker-the-life",
+            "label": "Spare the target and make the Fixer own the truth",
+            "gates": [
+              {
+                "kind": "honor_at_least",
+                "honor": 25
+              },
+              {
+                "kind": "underworld_standing_at_least",
+                "npcId": "fixer",
+                "standing": 25
+              }
+            ],
+            "storyFlagIds": [
+              "life-brokered-flag"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "contract-fulfilled-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.case.path.gun.last-clean-contract.outcome",
+        "kind": "public_reputation",
+        "value": "contract-fulfilled",
+        "title": "The Paper Was Honored",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "executioners-proof-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.case.path.gun.last-clean-contract.outcome",
+        "kind": "case_evidence",
+        "value": "hidden-client-exposed",
+        "title": "The Impossible Angle",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "life-brokered-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.case.path.gun.last-clean-contract.outcome",
+        "kind": "witness_spared",
+        "value": "target-spared-by-fixer",
+        "title": "A Life Put on the Books",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "last-clean-contract-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "gun-clean-contract-seal",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Clean Contract Cartridge",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The Last Shot Belongs to You",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "gun-clean-contract-seal",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "last-clean-contract",
+      "type": "REQUIRES",
+      "to": "personal-policy"
+    },
+    {
+      "from": "personal-policy",
+      "type": "REQUIRES",
+      "to": "solo-quorum"
+    },
+    {
+      "from": "personal-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "last-clean-contract",
+      "type": "UNLOCKS",
+      "to": "a-name-in-clean-ink"
+    },
+    {
+      "from": "a-name-in-clean-ink",
+      "type": "UNLOCKS",
+      "to": "unsigned-contract"
+    },
+    {
+      "from": "unsigned-contract",
+      "type": "UNLOCKS",
+      "to": "quiet-cartridge"
+    },
+    {
+      "from": "quiet-cartridge",
+      "type": "UNLOCKS",
+      "to": "alley-clock"
+    },
+    {
+      "from": "alley-clock",
+      "type": "UNLOCKS",
+      "to": "fixers-second-book"
+    },
+    {
+      "from": "fixers-second-book",
+      "type": "UNLOCKS",
+      "to": "contract-verdict"
+    },
+    {
+      "from": "contract-verdict",
+      "type": "UNLOCKS",
+      "to": "last-clean-contract-memory"
+    },
+    {
+      "from": "last-clean-contract-memory",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    }
+  ]
+}

@@ -4284,6 +4284,369 @@ CREATE TABLE IF NOT EXISTS family_buybacks (
 -- lands (the 2026-08-06 boot-crash lesson).
 ALTER TABLE sell_tax_events ADD COLUMN IF NOT EXISTS community_eth NUMERIC NOT NULL DEFAULT 0;
 
+-- ── AUTHORED CONTENT RUNTIME — immutable bundles + account-level party instances ───────────────
+-- Bundles are compiler-verified before registration and immutable at (namespace, version). The
+-- activation pointer is only consulted for NEW instances: every run copies the exact hash/version so
+-- an operator promotion cannot rewrite a party's story underneath it. All party/reward ownership is
+-- account-keyed and survives death; character ids below are audit/display snapshots, not ownership.
+CREATE TABLE IF NOT EXISTS content_bundles (
+  namespace TEXT NOT NULL,
+  version INT NOT NULL,
+  schema_version INT NOT NULL,
+  content_hash TEXT NOT NULL UNIQUE,
+  bundle_json TEXT NOT NULL,
+  registered_by TEXT,
+  registered_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (namespace, version)
+);
+CREATE TABLE IF NOT EXISTS content_activations (
+  namespace TEXT PRIMARY KEY,
+  version INT NOT NULL,
+  content_hash TEXT NOT NULL,
+  activated_by TEXT,
+  activated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE TABLE IF NOT EXISTS content_instances (
+  id TEXT PRIMARY KEY,
+  namespace TEXT NOT NULL,
+  version INT NOT NULL,
+  content_hash TEXT NOT NULL,
+  experience_id TEXT NOT NULL,
+  root_node_id TEXT NOT NULL,
+  scope_kind TEXT NOT NULL,
+  scope_id TEXT NOT NULL,
+  run_key TEXT NOT NULL DEFAULT 'once',
+  created_by_account TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'forming',
+  revision INT NOT NULL DEFAULT 1,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  forming_expires_at TIMESTAMPTZ,
+  started_at TIMESTAMPTZ,
+  completed_at TIMESTAMPTZ,
+  CONSTRAINT content_instance_status CHECK (status IN ('forming','active','completed','abandoned'))
+);
+ALTER TABLE content_instances ADD COLUMN IF NOT EXISTS run_key TEXT NOT NULL DEFAULT 'once';
+ALTER TABLE content_instances ADD COLUMN IF NOT EXISTS forming_expires_at TIMESTAMPTZ;
+ALTER TABLE content_instances
+  DROP CONSTRAINT IF EXISTS content_instances_namespace_version_experience_id_scope_kind_scope_id_key;
+CREATE UNIQUE INDEX IF NOT EXISTS ux_content_instances_live_run
+  ON content_instances (namespace, version, experience_id, scope_kind, scope_id, run_key)
+  WHERE status <> 'abandoned';
+CREATE INDEX IF NOT EXISTS ix_content_instances_creator
+  ON content_instances (created_by_account, created_at);
+CREATE INDEX IF NOT EXISTS ix_content_instances_scope
+  ON content_instances (scope_kind, scope_id, status);
+CREATE TABLE IF NOT EXISTS content_instance_members (
+  instance_id TEXT NOT NULL,
+  account_id TEXT NOT NULL,
+  joined_character_id TEXT,
+  name_snapshot TEXT NOT NULL,
+  participant_kind TEXT NOT NULL,
+  role_id TEXT NOT NULL,
+  consent_at TIMESTAMPTZ,
+  consent_revoked_at TIMESTAMPTZ,
+  joined_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (instance_id, account_id),
+  UNIQUE (instance_id, role_id)
+);
+CREATE INDEX IF NOT EXISTS ix_content_members_account
+  ON content_instance_members (account_id, joined_at);
+CREATE TABLE IF NOT EXISTS content_instance_nodes (
+  instance_id TEXT NOT NULL,
+  node_id TEXT NOT NULL,
+  state TEXT NOT NULL,
+  actor_account TEXT,
+  actor_character_id TEXT,
+  result_json TEXT NOT NULL DEFAULT '{}',
+  revealed_at TIMESTAMPTZ,
+  completed_at TIMESTAMPTZ,
+  CONSTRAINT content_node_state CHECK (state IN ('revealed','available','completed','failed')),
+  PRIMARY KEY (instance_id, node_id)
+);
+CREATE TABLE IF NOT EXISTS content_instance_facts (
+  instance_id TEXT NOT NULL,
+  fact_key TEXT NOT NULL,
+  value_json TEXT NOT NULL,
+  set_by_node_id TEXT NOT NULL,
+  set_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (instance_id, fact_key)
+);
+-- Durable authored-memory decisions. These are account-scoped narrative facts, never currencies,
+-- stats, inventory, or economy modifiers. A key is write-once: retries of the same exact outcome
+-- are harmless, while a conflicting rewrite fails closed.
+CREATE TABLE IF NOT EXISTS content_story_flags (
+  account_id TEXT NOT NULL,
+  flag_key TEXT NOT NULL,
+  flag_kind TEXT NOT NULL,
+  flag_value TEXT NOT NULL,
+  title TEXT NOT NULL,
+  source_namespace TEXT NOT NULL,
+  source_version INT NOT NULL,
+  source_instance_id TEXT NOT NULL,
+  source_node_id TEXT NOT NULL,
+  source_choice_id TEXT NOT NULL,
+  recorded_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (account_id, flag_key),
+  CONSTRAINT content_story_flag_kind CHECK (flag_kind IN (
+    'npc_ally','npc_grudge','district_contact','witness_spared','family_debt',
+    'case_evidence','public_reputation','future_scene_variant'
+  )),
+  CONSTRAINT content_story_flag_source_version CHECK (source_version > 0)
+);
+CREATE INDEX IF NOT EXISTS ix_content_story_flags_source
+  ON content_story_flags (source_instance_id, source_node_id);
+CREATE TABLE IF NOT EXISTS content_instance_effects (
+  instance_id TEXT NOT NULL,
+  node_id TEXT NOT NULL,
+  effect_ordinal INT NOT NULL,
+  subject_account TEXT NOT NULL,
+  kind TEXT NOT NULL,
+  target_id TEXT NOT NULL,
+  state TEXT NOT NULL DEFAULT 'pending',
+  payload_json TEXT NOT NULL,
+  external_ref TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  applied_at TIMESTAMPTZ,
+  CONSTRAINT content_effect_state CHECK (state IN ('pending','applied','held','failed')),
+  PRIMARY KEY (instance_id, node_id, effect_ordinal, subject_account)
+);
+CREATE INDEX IF NOT EXISTS ix_content_effects_subject
+  ON content_instance_effects (subject_account, state, created_at);
+-- Existing deployments receive the typed entitlement target before the uniqueness index is built.
+-- Legacy rows may remain NULL; every runtime-created effect supplies the target explicitly.
+ALTER TABLE content_instance_effects ADD COLUMN IF NOT EXISTS target_id TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS ux_content_effects_entitlement
+  ON content_instance_effects (subject_account, kind, target_id);
+
+-- ── AUTHORED CONTENT SUPPLY — exact-hash lots + globally finite sources ───────────────────────
+-- Authored inventory is account-owned and therefore survives street death. Every lot is pinned to
+-- the exact activated bundle hash that defined it; a later version cannot reinterpret old inputs.
+-- Runtime authority remains gameplay-inert; only compiler-allowlisted exact-hash materials may move
+-- through the separate cashless authored exchange below. Supply mutations write no currency ledger.
+CREATE TABLE IF NOT EXISTS content_inventory_lots (
+  id TEXT PRIMARY KEY,
+  account_id TEXT NOT NULL,
+  namespace TEXT NOT NULL,
+  version INT NOT NULL,
+  content_hash TEXT NOT NULL,
+  item_id TEXT NOT NULL,
+  quantity_initial INT NOT NULL,
+  quantity_remaining INT NOT NULL,
+  acquired_via TEXT NOT NULL,
+  authority_id TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  exhausted_at TIMESTAMPTZ,
+  CONSTRAINT content_lot_version CHECK (version > 0),
+  CONSTRAINT content_lot_quantity CHECK (
+    quantity_initial > 0 AND quantity_remaining >= 0 AND quantity_remaining <= quantity_initial
+  ),
+  CONSTRAINT content_lot_acquisition CHECK (
+    acquired_via IN ('source','recipe','work_order','exchange_fill','exchange_return')
+  )
+);
+-- Existing authored-inventory deployments predate the exchange transfer provenance values.
+ALTER TABLE content_inventory_lots DROP CONSTRAINT IF EXISTS content_lot_acquisition;
+ALTER TABLE content_inventory_lots ADD CONSTRAINT content_lot_acquisition CHECK (
+  acquired_via IN ('source','recipe','work_order','exchange_fill','exchange_return')
+);
+CREATE INDEX IF NOT EXISTS ix_content_inventory_owner
+  ON content_inventory_lots (account_id, namespace, content_hash, item_id, created_at);
+CREATE INDEX IF NOT EXISTS ix_content_inventory_archive
+  ON content_inventory_lots (account_id, namespace, version, content_hash);
+
+-- One row is the citywide source reservoir for one exact bundle/source/epoch. The row is locked
+-- before a claim and never allowed above the compiler-pinned budget.
+CREATE TABLE IF NOT EXISTS content_source_epochs (
+  namespace TEXT NOT NULL,
+  version INT NOT NULL,
+  content_hash TEXT NOT NULL,
+  source_id TEXT NOT NULL,
+  epoch_key TEXT NOT NULL,
+  units_issued INT NOT NULL DEFAULT 0,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (namespace, content_hash, source_id, epoch_key),
+  CONSTRAINT content_source_epoch_units CHECK (units_issued >= 0)
+);
+
+-- Per-account source authority is exactly one claim in an authored epoch. The associated receipt
+-- proves what the finite global reservoir emitted; retries cannot mint another lot.
+CREATE TABLE IF NOT EXISTS content_source_claims (
+  account_id TEXT NOT NULL,
+  namespace TEXT NOT NULL,
+  version INT NOT NULL,
+  content_hash TEXT NOT NULL,
+  source_id TEXT NOT NULL,
+  epoch_key TEXT NOT NULL,
+  receipt_id TEXT NOT NULL UNIQUE,
+  claimed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (account_id, namespace, content_hash, source_id, epoch_key)
+);
+
+-- Immutable, account-scoped source/craft audit receipts. Input and output arrays use logical item
+-- ids and quantities only; private account ids and exact-hash lot provenance stay server-side.
+CREATE TABLE IF NOT EXISTS content_supply_receipts (
+  id TEXT PRIMARY KEY,
+  account_id TEXT NOT NULL,
+  namespace TEXT NOT NULL,
+  version INT NOT NULL,
+  content_hash TEXT NOT NULL,
+  action_kind TEXT NOT NULL,
+  action_id TEXT NOT NULL,
+  epoch_key TEXT,
+  inputs_json TEXT NOT NULL DEFAULT '[]',
+  outputs_json TEXT NOT NULL DEFAULT '[]',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT content_supply_action_kind CHECK (action_kind IN ('source','recipe'))
+);
+CREATE INDEX IF NOT EXISTS ix_content_supply_receipts_owner
+  ON content_supply_receipts (account_id, created_at);
+
+-- A work-order row is both the authoritative active clock and its immutable completion receipt.
+-- Inputs/outputs and XP are snapshotted from the exact compiled hash at start; an activation change
+-- therefore cannot rewrite or strand work already under way. Account ownership survives street death.
+CREATE TABLE IF NOT EXISTS content_work_order_runs (
+  id TEXT PRIMARY KEY,
+  account_id TEXT NOT NULL,
+  namespace TEXT NOT NULL,
+  version INT NOT NULL,
+  content_hash TEXT NOT NULL,
+  job_id TEXT NOT NULL,
+  skill_id TEXT NOT NULL,
+  skill_xp INT NOT NULL,
+  inputs_json TEXT NOT NULL,
+  outputs_json TEXT NOT NULL,
+  started_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  ready_at TIMESTAMPTZ NOT NULL,
+  status TEXT NOT NULL DEFAULT 'active',
+  collected_at TIMESTAMPTZ,
+  CONSTRAINT content_work_order_version CHECK (version > 0),
+  CONSTRAINT content_work_order_xp CHECK (skill_xp > 0),
+  CONSTRAINT content_work_order_status CHECK (status IN ('active','collected'))
+);
+CREATE INDEX IF NOT EXISTS ix_content_work_order_active
+  ON content_work_order_runs (account_id, namespace, status, started_at);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_content_work_order_one_active
+  ON content_work_order_runs (account_id, namespace) WHERE status = 'active';
+CREATE INDEX IF NOT EXISTS ix_content_work_order_history
+  ON content_work_order_runs (account_id, namespace, content_hash, collected_at);
+
+-- Durable authored tools are account-owned but remain pinned to the exact bundle hash that defined
+-- their workshop-only capability. Their inventory item has no market/export/combat authority; this
+-- row is the sole durability authority, and old-version rows cannot satisfy a new activation.
+CREATE TABLE IF NOT EXISTS content_tool_states (
+  account_id TEXT NOT NULL,
+  namespace TEXT NOT NULL,
+  version INT NOT NULL,
+  content_hash TEXT NOT NULL,
+  tool_id TEXT NOT NULL,
+  item_id TEXT NOT NULL,
+  max_durability INT NOT NULL,
+  durability_remaining INT NOT NULL,
+  acquired_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (account_id, namespace, content_hash, tool_id),
+  CONSTRAINT content_tool_version CHECK (version > 0),
+  CONSTRAINT content_tool_durability CHECK (
+    max_durability > 0
+    AND durability_remaining >= 0
+    AND durability_remaining <= max_durability
+  )
+);
+CREATE INDEX IF NOT EXISTS ix_content_tool_archive
+  ON content_tool_states (account_id, namespace, version, content_hash, tool_id);
+
+-- Acquisition, wear, and repair are append-only tool audit events. action_id binds wear to the job
+-- run or recipe receipt that authorized it; neither a retry nor job collection can spend wear again.
+CREATE TABLE IF NOT EXISTS content_tool_events (
+  id TEXT PRIMARY KEY,
+  account_id TEXT NOT NULL,
+  namespace TEXT NOT NULL,
+  version INT NOT NULL,
+  content_hash TEXT NOT NULL,
+  tool_id TEXT NOT NULL,
+  item_id TEXT NOT NULL,
+  event_kind TEXT NOT NULL,
+  action_id TEXT NOT NULL,
+  durability_before INT NOT NULL,
+  durability_after INT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT content_tool_event_version CHECK (version > 0),
+  CONSTRAINT content_tool_event_kind CHECK (event_kind IN ('acquire','use','repair')),
+  CONSTRAINT content_tool_event_durability CHECK (
+    durability_before >= 0 AND durability_after >= 0
+  )
+);
+CREATE INDEX IF NOT EXISTS ix_content_tool_events_owner
+  ON content_tool_events (account_id, namespace, content_hash, tool_id, created_at);
+
+-- Authored skill XP is exact-hash account state. A later bundle may display the old progress but
+-- cannot reinterpret its thresholds or use it to unlock the newly activated workshop version.
+CREATE TABLE IF NOT EXISTS content_skill_progress (
+  account_id TEXT NOT NULL,
+  namespace TEXT NOT NULL,
+  version INT NOT NULL,
+  content_hash TEXT NOT NULL,
+  skill_id TEXT NOT NULL,
+  xp INT NOT NULL DEFAULT 0,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (account_id, namespace, content_hash, skill_id),
+  CONSTRAINT content_skill_version CHECK (version > 0),
+  CONSTRAINT content_skill_xp CHECK (xp >= 0)
+);
+CREATE INDEX IF NOT EXISTS ix_content_skill_archive
+  ON content_skill_progress (account_id, namespace, version, content_hash);
+
+-- ── AUTHORED CONTENT EXCHANGE — exact-hash, cashless, account-owned barter ─────────────────────
+-- A live row is the escrow bucket for one whole-lot offer. Both legs stay inside one immutable
+-- content hash; listing, fill, and return never touch cash, $OMR, ordinary inventory, or the ledger.
+CREATE TABLE IF NOT EXISTS content_exchange_listings (
+  id TEXT PRIMARY KEY,
+  seller_account TEXT NOT NULL,
+  namespace TEXT NOT NULL,
+  version INT NOT NULL,
+  content_hash TEXT NOT NULL,
+  offered_item_id TEXT NOT NULL,
+  offered_quantity INT NOT NULL,
+  requested_item_id TEXT NOT NULL,
+  requested_quantity INT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'live',
+  buyer_account TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  expires_at TIMESTAMPTZ NOT NULL,
+  settled_at TIMESTAMPTZ,
+  CONSTRAINT content_exchange_version CHECK (version > 0),
+  CONSTRAINT content_exchange_quantities CHECK (offered_quantity > 0 AND requested_quantity > 0),
+  CONSTRAINT content_exchange_distinct_items CHECK (offered_item_id <> requested_item_id),
+  CONSTRAINT content_exchange_status CHECK (status IN ('live','filled','cancelled'))
+);
+CREATE INDEX IF NOT EXISTS ix_content_exchange_board
+  ON content_exchange_listings (namespace, status, expires_at, created_at);
+CREATE INDEX IF NOT EXISTS ix_content_exchange_seller
+  ON content_exchange_listings (seller_account, namespace, status, created_at);
+
+-- Append-only conservation evidence. The listing row is mutable state; these events retain who moved
+-- each exact-hash leg and why without exposing account identifiers through the player projection.
+CREATE TABLE IF NOT EXISTS content_exchange_events (
+  id TEXT PRIMARY KEY,
+  listing_id TEXT NOT NULL,
+  actor_account TEXT NOT NULL,
+  counterparty_account TEXT,
+  namespace TEXT NOT NULL,
+  version INT NOT NULL,
+  content_hash TEXT NOT NULL,
+  event_kind TEXT NOT NULL,
+  offered_item_id TEXT NOT NULL,
+  offered_quantity INT NOT NULL,
+  requested_item_id TEXT NOT NULL,
+  requested_quantity INT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (listing_id, event_kind),
+  CONSTRAINT content_exchange_event_kind CHECK (event_kind IN ('list','fill','cancel')),
+  CONSTRAINT content_exchange_event_quantities CHECK (offered_quantity > 0 AND requested_quantity > 0)
+);
+CREATE INDEX IF NOT EXISTS ix_content_exchange_events_actor
+  ON content_exchange_events (actor_account, namespace, created_at);
+
 -- ═══════════════ THE COMMUNITY DROP — G-3's claim rail (D1 variant b: in-game credit) ═══════════════
 -- The allocation dataset (built off-chain by tools/snapshot.js + tools/allocate-drop.js from
 -- snapshots taken at HISTORICAL blocks, loaded by a mod, published for reproducibility). One row per

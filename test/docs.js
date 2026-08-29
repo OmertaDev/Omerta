@@ -33,6 +33,213 @@ const lines = (p) => { const s = read(p); let n = 0; for (let i = 0; i < s.lengt
 const countLines = (files) => files.reduce((n, f) => n + lines(f), 0);
 const spec = read('SPEC.md');
 
+// Authored content is now a playable API surface, so every reader-facing guide must distinguish the
+// shipped runtime slice from the larger graph systems that are still staged. This guard exists because
+// the browser wiki continued to call the whole runtime inactive after the API and tests had gone live.
+{
+  const markdownWiki = read('docs/WIKI.md');
+  const browserWiki = read('public/wiki.html');
+  const authorGuide = read('content/README.md');
+  const agentGuide = read('AGENTS.md');
+  const storylets = [
+    'The Man Who Missed the Tide',
+    'Water in the Cellar',
+    'The Last Kiln',
+    'House Lights',
+    'The Furnace Ledger',
+    "A Saint's Account",
+  ];
+  const donCases = [
+    'The Iron Election', 'A House Made of Glass', 'Port of No Return', 'The Empty Seat',
+    'Two Funerals', 'The Federal Ledger', 'Don of the City',
+  ];
+  const pathCases = [
+    'The Last Clean Contract', 'Hostile Books', 'The Bad Batch', 'Black Ice',
+    'Nobody Saw Him Leave', 'Twelve Rounds',
+  ];
+  const socialCases = ['The Two-Man Rule'];
+  const seasonalCases = ['The Books Open at Midnight'];
+  const craftingPacks = ['The Bellini Restoration'];
+
+  for (const [name, guide] of [['markdown wiki', markdownWiki], ['browser wiki', browserWiki]]) {
+    const prose = (name === 'browser wiki' ? guide.replace(/<[^>]*>/g, ' ') : guide)
+      .replace(/\s+/g, ' ');
+    assert(guide.includes('The Sixth Chair') && /playable.{0,30}v2|v2.{0,30}playable/i.test(guide),
+      `${name} must identify The Sixth Chair v2 as playable`);
+    for (const storylet of storylets) {
+      assert(prose.includes(storylet), `${name} must list the district storylet ${storylet}`);
+    }
+    for (const donCase of donCases) {
+      assert(prose.includes(donCase), `${name} must list the Don Case ${donCase}`);
+    }
+    for (const pathCase of pathCases) {
+      assert(prose.includes(pathCase), `${name} must list the Path Case ${pathCase}`);
+    }
+    for (const socialCase of socialCases) {
+      assert(prose.includes(socialCase), `${name} must list the organization case ${socialCase}`);
+    }
+    for (const seasonalCase of seasonalCases) {
+      assert(prose.includes(seasonalCase), `${name} must list the seasonal case ${seasonalCase}`);
+    }
+    for (const craftingPack of craftingPacks) {
+      assert(prose.includes(craftingPack), `${name} must list the authored workshop ${craftingPack}`);
+    }
+    assert(/personal/i.test(guide) && /district-gated|location-gated/i.test(guide),
+      `${name} must explain personal, district-gated authored stories`);
+    assert(/value-neutral|gameplay-inert/i.test(guide),
+      `${name} must state that the authored rewards are gameplay-inert`);
+    assert(/story flag|storyFlag/i.test(guide) && /write-once/i.test(guide),
+      `${name} must explain durable, write-once authored memory`);
+    assert(/forming.{0,80}(?:expir|deadline)|(?:expir|deadline).{0,80}forming/i.test(prose)
+      && /active.{0,80}(?:never|non-expir)|(?:never|non-expir).{0,80}active/i.test(prose),
+    `${name} must explain finite forming lobbies and non-expiring active runs`);
+    assert(/once_per_season|once-per-season/i.test(guide)
+      && /root-only|entry gate/i.test(prose),
+    `${name} must explain the closed seasonal authored-content policy`);
+    assert(/The Books Open at Midnight.{0,300}personal.{0,80}Opening-phase/i.test(prose)
+      && /two normalized-answer puzzles.{0,100}three-way resolution/i.test(prose),
+    `${name} must describe the production seasonal case structure and opening-phase gate`);
+    assert(/namespace.{0,100}season run key/i.test(prose)
+      && /self-claimed once each season/i.test(prose)
+      && /additional scopes or content versions cannot mint it again/i.test(prose),
+    `${name} must explain seasonal entitlement identity and same-season anti-farming`);
+    assert(/The Books Open at Midnight.{0,500}no cash, \$OMR, power, or transaction-ledger value/i.test(prose)
+      && /exact compiled bundle hash/i.test(prose),
+    `${name} must preserve the seasonal case's inert economy and exact-hash activation boundary`);
+    assert(/The Bellini Restoration.{0,500}Old Foundry/i.test(prose)
+      && /globally finite daily/i.test(prose)
+      && /exact-hash/i.test(prose)
+      && /FIFO/i.test(prose),
+    `${name} must describe the production authored workshop and its supply authority`);
+    assert(/old-version lots.{0,180}(?:cannot|can't).{0,100}(?:new|recipe pool)/i.test(prose)
+      && /non-stackable.{0,100}(?:cap|ownership).{0,100}(?:version|versions)/i.test(prose),
+    `${name} must explain exact-hash version isolation and cross-version keepsake caps`);
+    assert(/server-timed work order/i.test(prose)
+      && /exact-hash Bellini Restoration skill/i.test(prose)
+      && /one active job/i.test(prose),
+    `${name} must explain the production work-order clock and exact-hash skill authority`);
+    assert(/inputs?.{0,80}(?:immediately|when.{0,30}start)/i.test(prose)
+      && /early collection is refused/i.test(prose)
+      && /(?:later activation|old-hash).{0,180}(?:does not strand|remains collectible|pinned immutable)/i.test(prose),
+    `${name} must explain work-order consumption, readiness, and pinned-version collection`);
+    assert(/v3.{0,120}Press Room/i.test(prose)
+      && /location-bound|location facility/i.test(prose)
+      && /Restoration Press/i.test(prose),
+    `${name} must describe the production authored tool and facility`);
+    assert(/exact-hash durability/i.test(prose)
+      && /wear.{0,100}(?:job|recipe).{0,100}(?:start|transaction)/i.test(prose)
+      && /repair.{0,160}(?:same-hash|compiled).{0,120}material/i.test(prose),
+    `${name} must explain exact-hash wear and compiler-owned material repair`);
+    assert(/(?:acquisition, use, and repair|acquisition, use, and repairs).{0,80}(?:append-only|audited)/i.test(prose)
+      && /(?:archived.{0,100}press|old-version press.{0,100}archived).{0,160}(?:cannot|can't).{0,100}(?:unlock|satisfy|affect)/i.test(prose),
+    `${name} must explain durable-tool auditing and version isolation`);
+    assert(/v4.{0,120}Material Exchange/i.test(prose)
+      && /Ledger Plates?.{0,120}Charred Bindings?/i.test(prose)
+      && /same-hash|exact-hash/i.test(prose)
+      && /whole-lot|complete (?:barter|offer)/i.test(prose),
+    `${name} must describe the production authored material exchange`);
+    assert(/escrow.{0,160}(?:ownership|owned|maxOwned|cap)/i.test(prose)
+      && /(?:conserve|conserves).{0,100}(?:item totals|both item totals)/i.test(prose)
+      && /list(?:ing)?\/fill\/cancel|list, fill, and cancel/i.test(prose),
+    `${name} must explain authored barter conservation, cap accounting, and auditing`);
+    assert(/no combat|grants no combat|combat.{0,60}(?:authority|cannot)/i.test(prose)
+      && /gameplay-power|gameplay power|power outside authored crafting/i.test(prose)
+      && /export authority/i.test(prose),
+    `${name} must preserve the work-order capability boundary`);
+    assert(/no cash, crates, ammo, \$OMR, or transaction-ledger value/i.test(prose),
+      `${name} must preserve the authored workshop's value-neutral economy boundary`);
+    assert(!/generic mystery runtime[^.]{0,180}(?:not an active game surface|remain(?:s)? staged)/i.test(guide),
+      `${name} still describes the shipped mystery runtime as inactive`);
+  }
+
+  assert(authorGuide.includes('content:build:storylets') && storylets.every((title) => authorGuide.includes(title)),
+    'the content author guide must document the district sampler and its build command');
+  assert(authorGuide.includes('content:build:don-cases') && donCases.every((title) => authorGuide.includes(title)),
+    'the content author guide must document all Don Cases and their build command');
+  assert(authorGuide.includes('content:build:path-cases') && pathCases.every((title) => authorGuide.includes(title)),
+    'the content author guide must document all Path Cases and their build command');
+  assert(authorGuide.includes('content:build:social-cases') && socialCases.every((title) => authorGuide.includes(title)),
+    'the content author guide must document the two-seat organization case and its build command');
+  assert(authorGuide.includes('content:build:seasonal-cases')
+    && seasonalCases.every((title) => authorGuide.includes(title)),
+  'the content author guide must document the production seasonal case and its build command');
+  assert(authorGuide.includes('content:build:crafting-packs')
+    && craftingPacks.every((title) => authorGuide.includes(title)),
+  'the content author guide must document the production authored workshop and its build command');
+  assert(authorGuide.includes('content:build:crafting-tools')
+    && authorGuide.includes('content/dist/bellini-lockbox-v3.json'),
+  'the content author guide must document the durable-tool production build command');
+  assert(authorGuide.includes('content:build:crafting-exchange')
+    && authorGuide.includes('content/dist/bellini-lockbox-v4.json'),
+  'the content author guide must document the material-exchange production build command');
+  assert(agentGuide.includes('GET /v1/content') && agentGuide.includes('POST /v1/content/instances/:instanceId/act'),
+    'the agent guide must expose content discovery and the direct authored-content action route');
+  assert(agentGuide.includes('POST /v1/agent/act') && /does not grant|never grants/i.test(agentGuide),
+    'the agent guide must preserve the authored-content /agent/act authority boundary');
+  assert(agentGuide.includes('POST /v1/content/:namespace/sources/:sourceId/collect')
+    && agentGuide.includes('POST /v1/content/:namespace/recipes/:recipeId/craft')
+    && agentGuide.includes('POST /v1/content/:namespace/jobs/:jobId/start')
+    && agentGuide.includes('POST /v1/content/:namespace/jobs/:jobId/collect')
+    && agentGuide.includes('POST /v1/content/:namespace/tools/:toolId/repair')
+    && agentGuide.includes('POST /v1/content/:namespace/exchange/list')
+    && agentGuide.includes('stale_content'),
+  'the agent guide must expose hash-checked direct supply, tool, and material-exchange routes');
+  assert(spec.includes('personal, district-gated storylets') && spec.includes('The Long Count'),
+    'SPEC must inventory the playable district sampler and sixth Underworld campaign');
+  assert(donCases.every((title) => spec.includes(title)) && /story\s+flags/i.test(spec),
+    'SPEC must inventory the late-game spine and its durable narrative memory');
+  assert(pathCases.every((title) => spec.includes(title)) && /Path, skill, mastery, regimen, honor/i.test(spec),
+    'SPEC must inventory the identity drop and its server-derived character-build gates');
+  assert(pathCases.every((title) => agentGuide.includes(title)),
+    'the agent guide must list all six directly playable Path Cases');
+  assert(socialCases.every((title) => agentGuide.includes(title))
+    && /once_per_season|once-per-season/i.test(agentGuide),
+  'the agent guide must list the organization case and seasonal runtime policy');
+  assert(seasonalCases.every((title) => agentGuide.includes(title) && spec.includes(title))
+    && /Opening-phase/i.test(agentGuide) && /Opening-phase/i.test(spec),
+  'the agent guide and SPEC must inventory the production seasonal case');
+  assert(craftingPacks.every((title) => agentGuide.includes(title) && spec.includes(title))
+    && /FIFO/i.test(agentGuide) && /FIFO/i.test(spec),
+  'the agent guide and SPEC must inventory the production authored workshop');
+
+  const packageJson = JSON.parse(read('package.json'));
+  assert(packageJson.scripts.pretest.includes('node test/content-seasonal-case.js'),
+    'pretest must run the production seasonal case test');
+  assert(packageJson.scripts['content:check'].includes('content/packs/books-open-at-midnight/pack.json'),
+    'content:check must validate the production seasonal source pack');
+  assert.equal(packageJson.scripts['content:build:seasonal-cases'],
+    'node tools/content.js build content/packs/books-open-at-midnight/pack.json content/dist/books-open-at-midnight-v1.json',
+  'the seasonal build command must emit the immutable production artifact');
+  assert(packageJson.scripts.pretest.includes('node test/content-crafting.js'),
+    'pretest must run the production authored crafting test');
+  assert(packageJson.scripts['content:check'].includes('content/packs/bellini-lockbox/pack.json'),
+    'content:check must validate the production authored workshop source pack');
+  assert.equal(packageJson.scripts['content:build:crafting-packs'],
+    'node tools/content.js build content/packs/bellini-lockbox/pack.json content/dist/bellini-lockbox-v1.json',
+  'the authored crafting build command must emit the immutable production artifact');
+  assert(packageJson.scripts.pretest.includes('node test/content-crafting-jobs.js'),
+    'pretest must run the production authored work-order and skill test');
+  assert(packageJson.scripts['content:check'].includes('content/packs/bellini-lockbox-v2/pack.json'),
+    'content:check must validate the production authored work-order source pack');
+  assert.equal(packageJson.scripts['content:build:crafting-jobs'],
+    'node tools/content.js build content/packs/bellini-lockbox-v2/pack.json content/dist/bellini-lockbox-v2.json',
+  'the authored work-order build command must emit the immutable v2 production artifact');
+  assert(packageJson.scripts.pretest.includes('node test/content-crafting-tools.js'),
+    'pretest must run the production authored durable-tool and facility test');
+  assert(packageJson.scripts['content:check'].includes('content/packs/bellini-lockbox-v3/pack.json'),
+    'content:check must validate the production authored durable-tool source pack');
+  assert.equal(packageJson.scripts['content:build:crafting-tools'],
+    'node tools/content.js build content/packs/bellini-lockbox-v3/pack.json content/dist/bellini-lockbox-v3.json',
+  'the authored durable-tool build command must emit the immutable v3 production artifact');
+  assert(packageJson.scripts.pretest.includes('node test/content-exchange.js'),
+    'pretest must run the production authored material-exchange test');
+  assert(packageJson.scripts['content:check'].includes('content/packs/bellini-lockbox-v4/pack.json'),
+    'content:check must validate the production authored material-exchange source pack');
+  assert.equal(packageJson.scripts['content:build:crafting-exchange'],
+    'node tools/content.js build content/packs/bellini-lockbox-v4/pack.json content/dist/bellini-lockbox-v4.json',
+  'the authored material-exchange build command must emit the immutable v4 production artifact');
+}
+
 // FILE COUNTS are asserted exactly; LINE TOTALS within 2%. That split is deliberate. A file count only
 // moves when a module is added or relocated, which is worth restating — and it is the figure that broke
 // (a flat listing of src/ under-reported by 27 files the moment code moved into subdirectories). A line

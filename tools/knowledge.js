@@ -832,8 +832,12 @@ function build(options = {}) {
       const url = m[3];
       const line = lineAt(text, m.index);
       const snippet = routeRegistrationSnippet(text, m.index);
-      const access = /preHandler:\s*modAuth/.test(snippet) ? 'moderator'
-        : /preHandler:\s*auth/.test(snippet) ? 'authenticated'
+      const registrationArguments = routeRegistrationArguments(snippet);
+      const routeOptions = registrationArguments[1] || '';
+      const access = /preHandler:\s*modAuth/.test(routeOptions)
+          || /^\s*guarded\(\s*modAuth\b/.test(routeOptions) ? 'moderator'
+        : /preHandler:\s*auth/.test(routeOptions)
+          || /^\s*guarded\(\s*auth\b/.test(routeOptions) ? 'authenticated'
         : /websocket:\s*true/.test(snippet) ? 'token-query'
         : 'public';
       const routeId = `${method} ${url}`;
@@ -841,7 +845,7 @@ function build(options = {}) {
       const lineStart = text.lastIndexOf('\n', m.index) + 1;
       const indent = text.slice(lineStart, m.index);
       const localFunctions = localFunctionsBefore(text, m.index, indent);
-      const directHandlerArgument = routeRegistrationArguments(snippet).at(-1) || '';
+      const directHandlerArgument = registrationArguments.at(-1) || '';
       const directFactoryMatch = /^([A-Za-z_$][\w$]*)\s*\(/.exec(directHandlerArgument);
       const directFactory = directFactoryMatch && localFunctions.has(directFactoryMatch[1])
         ? { name: directFactoryMatch[1], index: snippet.lastIndexOf(directHandlerArgument) }
@@ -854,16 +858,30 @@ function build(options = {}) {
       }).filter(Boolean).sort((a, b) => a.index - b.index)[0] || null;
       const localHandler = directFactory || returnedLocal;
       const returnedImport = namedImports.get(finalCallbackCall(directHandlerArgument)) || null;
+      // The authored-content registrar deliberately composes security/transaction wrappers around a
+      // named runtime operation. Preserve the innermost domain operation as graph provenance rather
+      // than attributing the route to G.withCharacter or the local instanceMutation response shim.
+      const delegatedContentImport = rel === 'src/routes/content.js'
+        ? [...snippet.matchAll(/\b([A-Za-z_$][\w$]*)\s*\(/g)]
+          .map((call) => namedImports.get(call[1]))
+          .filter((binding) => binding?.file === 'src/content/runtime.js')
+          .at(-1) || null
+        : null;
       const handlerMatch = handlerMatches.find((x) => aliases.has(x[1]) && !/\/(?:game|rules)\.js$/.test(aliases.get(x[1])))
         || handlerMatches.find((x) => aliases.has(x[1])) || null;
-      const handlerFile = localHandler ? rel : returnedImport?.file || (handlerMatch ? aliases.get(handlerMatch[1]) : null);
+      const resolvedLocalHandler = delegatedContentImport && localHandler?.name === 'instanceMutation'
+        ? null : localHandler;
+      const resolvedImport = returnedImport || delegatedContentImport;
+      const handlerFile = resolvedLocalHandler ? rel
+        : resolvedImport?.file || (handlerMatch ? aliases.get(handlerMatch[1]) : null);
       const domain = url.startsWith('/v1/auth') ? 'platform-core'
         : url.startsWith('/v1/wallet') || url.startsWith('/v1/withdraw') || url.startsWith('/v1/gear') ? 'chain-economy'
         : url.startsWith('/v1/casino') || url.startsWith('/v1/races') || url.startsWith('/v1/boxing') || url.startsWith('/v1/speakeasy') ? 'vice-competition'
         : url.startsWith('/v1/law') || url.startsWith('/v1/pen') || url.startsWith('/v1/wire') ? 'law-intelligence'
         : url.startsWith('/v1/opportunities') || url.startsWith('/v1/discovery') || url.startsWith('/v1/coach') ? 'engagement-growth'
         : url.startsWith('/v1') ? domainFor(handlerFile || rel) || 'platform-core' : 'client-experience';
-      const handler = localHandler?.name || returnedImport?.name || (handlerMatch ? `${handlerMatch[1]}.${handlerMatch[2]}` : null);
+      const handler = resolvedLocalHandler?.name || resolvedImport?.name
+        || (handlerMatch ? `${handlerMatch[1]}.${handlerMatch[2]}` : null);
       const n = node('Route', routeId, { label: routeId, method, url, access, domain, definitions: [] }, { file: rel, line });
       n.definitions.push({ file: rel, line });
       edge('DEFINED_IN', n.key, `Artifact:${rel}`, { file: rel, line });

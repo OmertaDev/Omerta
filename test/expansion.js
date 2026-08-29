@@ -10,7 +10,7 @@ process.env.SOV_WINDOW_OPEN = 'on'; // TEST-ONLY: the vulnerability window is al
 import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
 import { runLedgerInvariants } from '../src/invariants.js';
-import { HONOR } from '../src/rules.js';
+import { CAMPAIGNS, HONOR } from '../src/rules.js';
 
 const app = await buildServer();
 const pool = app.pool;
@@ -256,6 +256,25 @@ let gA, gB, bossA, bossB;
 
 // ═══ #4 CAMPAIGNS ═══
 {
+  assert.equal(CAMPAIGNS.length, 6, 'all six Underworld fixtures now offer an authored campaign');
+  const longCount = CAMPAIGNS.find((campaign) => campaign.id === 'long_count');
+  assert.equal(longCount?.npc, 'cornerman', 'The Long Count belongs to Mickey the Cornerman');
+  assert.deepEqual(longCount?.steps.filter((step) => step.action).map((step) => step.action),
+    ['train', 'fight'], 'Mickey reuses the live boxing action stream instead of inventing a campaign-only verb');
+  assert.deepEqual(longCount?.steps.find((step) => step.choice)?.choice.map((branch) => branch.id),
+    ['protect_boxer', 'protect_gym', 'expose_fix'],
+    'The Long Count offers the approved boxer, gym, and exposure resolutions');
+
+  const mickey = await mk('Mick');
+  let mickeyStart = await call('POST', '/v1/campaigns/long_count/start', { token: mickey.token });
+  assert.equal(mickeyStart.body?.error, 'standing', 'Mickey keeps the standard fixture-standing gate');
+  await pool.query(`INSERT INTO npc_standing (character_id, npc_id, standing) VALUES ('${mickey.id}','cornerman',30)`);
+  mickeyStart = await call('POST', '/v1/campaigns/long_count/start', { token: mickey.token });
+  assert.equal(mickeyStart.code, 200, `start The Long Count: ${JSON.stringify(mickeyStart.body)}`);
+  const mickeyBoard = (await call('GET', '/v1/campaigns', { token: mickey.token })).body;
+  assert.equal(mickeyBoard.campaigns.find((campaign) => campaign.id === 'long_count')?.action, 'train',
+    'the live board issues Mickey\'s first boxing task');
+
   const p = await mk('Cam');
   // gate: below standing the story is locked
   let r = await call('POST', '/v1/campaigns/doc_oath/start', { token: p.token });
@@ -296,7 +315,7 @@ let gA, gB, bossA, bossB;
   // a second claim is refused
   r = await call('POST', '/v1/campaigns/doc_oath/claim', { token: p.token });
   assert.equal(r.body?.error, 'claimed', 'the reward is once-per-street');
-  console.log('✓ campaigns: gate/advance/choose/claim-once');
+  console.log('✓ campaigns: six-fixer catalog + Mickey start + gate/advance/choose/claim-once');
 }
 
 // ═══ #5 BLOODLINE — a death writes the record; the heir reads the hall ═══

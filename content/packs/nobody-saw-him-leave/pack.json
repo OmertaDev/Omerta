@@ -1,0 +1,405 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.case.path.shadow.nobody-saw-him-leave",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "in-game Shadow Path case with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "nobody-saw-him-leave",
+    "entryNodeId": "nobody-saw-him-leave",
+    "partyPolicyId": "personal-policy",
+    "quorumId": "solo-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "nobody-saw-him-leave",
+      "personal-policy",
+      "solo-quorum",
+      "investigator",
+      "the-empty-stoop",
+      "vanishing-contract",
+      "vanishing-contract-answer",
+      "wire-that-kept-talking",
+      "wire-that-kept-talking-answer",
+      "borrowed-coat",
+      "borrowed-coat-answer",
+      "witness-in-the-wall",
+      "witness-in-the-wall-answer",
+      "choose-the-exit",
+      "quiet-exit-flag",
+      "perfect-disappearance-flag",
+      "witness-spared-flag",
+      "shadow-case-memory",
+      "shadow-empty-button",
+      "case-closed"
+    ],
+    "actionNodeIds": [
+      "vanishing-contract",
+      "wire-that-kept-talking",
+      "borrowed-coat",
+      "witness-in-the-wall",
+      "choose-the-exit"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "nobody-saw-him-leave",
+      "type": "mystery",
+      "payload": {
+        "title": "Nobody Saw Him Leave",
+        "summary": "A contract runner disappears from a watched street without breaking the wire. His last route crosses a dead drop, a borrowed coat, and one witness everyone has agreed not to see.",
+        "systems": [
+          "streets-crime",
+          "contracts",
+          "wire",
+          "skills",
+          "mastery",
+          "regimen",
+          "honor",
+          "underworld"
+        ],
+        "gates": [
+          {
+            "kind": "path_is",
+            "pathId": "shadow"
+          }
+        ]
+      }
+    },
+    {
+      "id": "personal-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "solo-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "Investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "the-empty-stoop",
+      "type": "chapter",
+      "payload": {
+        "title": "The Empty Stoop"
+      }
+    },
+    {
+      "id": "vanishing-contract",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Vanishing Contract",
+        "prompt": "What alias signed the runner's last street contract?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "vanishing-contract-answer"
+      }
+    },
+    {
+      "id": "vanishing-contract-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "mr sunday",
+          "mister sunday"
+        ]
+      }
+    },
+    {
+      "id": "wire-that-kept-talking",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Wire That Kept Talking",
+        "prompt": "Which phrase repeats after the runner should have gone silent?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "wire-that-kept-talking-answer"
+      }
+    },
+    {
+      "id": "wire-that-kept-talking-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "leave the lamp lit"
+        ]
+      }
+    },
+    {
+      "id": "borrowed-coat",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Borrowed Coat",
+        "prompt": "What is sewn into the coat left beneath the fire escape?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "borrowed-coat-answer"
+      }
+    },
+    {
+      "id": "borrowed-coat-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "a false hem",
+          "false hem"
+        ]
+      }
+    },
+    {
+      "id": "witness-in-the-wall",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Witness in the Wall",
+        "prompt": "Which room number belongs to the witness erased from the street sheet?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "witness-in-the-wall-answer"
+      }
+    },
+    {
+      "id": "witness-in-the-wall-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "room 6",
+          "six",
+          "6"
+        ]
+      }
+    },
+    {
+      "id": "choose-the-exit",
+      "type": "choice",
+      "payload": {
+        "title": "Choose the Exit",
+        "prompt": "The runner is alive, the contract is unfinished, and the witness knows the route. How does the street remember the disappearance?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "close-the-book",
+            "label": "Close the contract and let the empty stoop keep its secret",
+            "storyFlagIds": [
+              "quiet-exit-flag"
+            ]
+          },
+          {
+            "id": "erase-every-footstep",
+            "label": "Erase every footprint and finish the perfect disappearance",
+            "gates": [
+              {
+                "kind": "mastery_at_least",
+                "trackId": "larceny",
+                "level": 10
+              },
+              {
+                "kind": "discipline_at_least",
+                "disciplineId": "poise",
+                "level": 8
+              },
+              {
+                "kind": "honor_at_most",
+                "honor": -25
+              }
+            ],
+            "storyFlagIds": [
+              "perfect-disappearance-flag"
+            ]
+          },
+          {
+            "id": "spare-the-witness",
+            "label": "Spare the witness and have the Fixer build a safer name",
+            "gates": [
+              {
+                "kind": "honor_at_least",
+                "honor": 25
+              },
+              {
+                "kind": "underworld_standing_at_least",
+                "npcId": "fixer",
+                "standing": 25
+              }
+            ],
+            "storyFlagIds": [
+              "witness-spared-flag"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "quiet-exit-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.case.path.shadow.nobody-saw-him-leave.outcome",
+        "kind": "future_scene_variant",
+        "value": "quiet-exit",
+        "title": "The Stoop Kept Quiet",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "perfect-disappearance-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.case.path.shadow.nobody-saw-him-leave.outcome",
+        "kind": "case_evidence",
+        "value": "perfect-disappearance",
+        "title": "No Footprints Left",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "witness-spared-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.case.path.shadow.nobody-saw-him-leave.outcome",
+        "kind": "witness_spared",
+        "value": "witness-spared",
+        "title": "A Witness With Another Name",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "shadow-case-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "shadow-empty-button",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Button From an Empty Coat",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The Street Remembers Nobody",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "shadow-empty-button",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "nobody-saw-him-leave",
+      "type": "REQUIRES",
+      "to": "personal-policy"
+    },
+    {
+      "from": "personal-policy",
+      "type": "REQUIRES",
+      "to": "solo-quorum"
+    },
+    {
+      "from": "personal-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "nobody-saw-him-leave",
+      "type": "UNLOCKS",
+      "to": "the-empty-stoop"
+    },
+    {
+      "from": "the-empty-stoop",
+      "type": "UNLOCKS",
+      "to": "vanishing-contract"
+    },
+    {
+      "from": "vanishing-contract",
+      "type": "UNLOCKS",
+      "to": "wire-that-kept-talking"
+    },
+    {
+      "from": "wire-that-kept-talking",
+      "type": "UNLOCKS",
+      "to": "borrowed-coat"
+    },
+    {
+      "from": "borrowed-coat",
+      "type": "UNLOCKS",
+      "to": "witness-in-the-wall"
+    },
+    {
+      "from": "witness-in-the-wall",
+      "type": "UNLOCKS",
+      "to": "choose-the-exit"
+    },
+    {
+      "from": "choose-the-exit",
+      "type": "UNLOCKS",
+      "to": "shadow-case-memory"
+    },
+    {
+      "from": "shadow-case-memory",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    }
+  ]
+}

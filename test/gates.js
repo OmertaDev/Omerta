@@ -218,6 +218,9 @@ assert.equal(undeclared.length, 0,
 // Every collect* action must be classified. EXEMPT needs a reason, so "it was inconvenient" cannot
 // pass as one.
 const COLLECT_EXEMPT = {
+  collectContentSource: 'authored salvage emits only gameplay-inert exact-hash lots; the capability '
+    + 'validator admits trade only through the separate cashless, same-hash barter manifest, while the '
+    + 'source mutation itself enforces location, finite global budget, per-account epoch, and ownership caps',
   collectConvoy: 'gated at the route by district — the freight lands where it lands, and the '
     + 'safehouse block is enforced separately in the collect path',
   collectFrontierTribute: 'not an exported action',

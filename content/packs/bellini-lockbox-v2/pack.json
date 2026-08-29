@@ -1,0 +1,318 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.workshop.bellini-lockbox",
+  "version": 2,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "This authored apprenticeship is an in-city, value-neutral workshop loop with no acquisition or referral role."
+  },
+  "nodes": [
+    {
+      "id": "old-foundry-bench",
+      "type": "location",
+      "payload": {
+        "title": "The Old Foundry Bench",
+        "districtId": "foundry"
+      }
+    },
+    {
+      "id": "plate-cache-budget",
+      "type": "budget",
+      "payload": {
+        "kind": "source",
+        "epoch": "day",
+        "maxUnitsPerEpoch": 300
+      }
+    },
+    {
+      "id": "binding-cache-budget",
+      "type": "budget",
+      "payload": {
+        "kind": "source",
+        "epoch": "day",
+        "maxUnitsPerEpoch": 200
+      }
+    },
+    {
+      "id": "foundry-plate-salvage",
+      "type": "source",
+      "payload": {
+        "title": "Pull Ledger Plates from the Ash",
+        "sourceKind": "finite_salvage",
+        "budgetId": "plate-cache-budget",
+        "claimLimitPerEpoch": 1,
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "old-foundry-bench"
+          }
+        ]
+      }
+    },
+    {
+      "id": "archive-binding-salvage",
+      "type": "source",
+      "payload": {
+        "title": "Recover Charred Bindings",
+        "sourceKind": "finite_salvage",
+        "budgetId": "binding-cache-budget",
+        "claimLimitPerEpoch": 1,
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "old-foundry-bench"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ledger-plate",
+      "type": "item_def",
+      "payload": {
+        "title": "Ledger Plate",
+        "category": "authored_raw_material",
+        "tier": 1,
+        "stackable": true,
+        "maxOwned": 12,
+        "gameplayPower": "none",
+        "tradeable": false
+      }
+    },
+    {
+      "id": "charred-binding",
+      "type": "item_def",
+      "payload": {
+        "title": "Charred Binding",
+        "category": "authored_raw_material",
+        "tier": 1,
+        "stackable": true,
+        "maxOwned": 8,
+        "gameplayPower": "none",
+        "tradeable": false
+      }
+    },
+    {
+      "id": "trued-ledger-plate",
+      "type": "item_def",
+      "payload": {
+        "title": "Trued Ledger Plate",
+        "category": "authored_workpiece",
+        "tier": 1,
+        "stackable": true,
+        "maxOwned": 12,
+        "gameplayPower": "none",
+        "tradeable": false
+      }
+    },
+    {
+      "id": "reinforced-binding",
+      "type": "item_def",
+      "payload": {
+        "title": "Reinforced Binding",
+        "category": "authored_workpiece",
+        "tier": 1,
+        "stackable": true,
+        "maxOwned": 8,
+        "gameplayPower": "none",
+        "tradeable": false
+      }
+    },
+    {
+      "id": "bellini-restoration-skill",
+      "type": "skill_track",
+      "payload": {
+        "title": "Bellini Restoration",
+        "thresholds": [10, 30, 60]
+      }
+    },
+    {
+      "id": "true-ledger-plate",
+      "type": "work_order",
+      "payload": {
+        "title": "True a Ledger Plate",
+        "jobKind": "account_work_order",
+        "durationSeconds": 300,
+        "skillTrackId": "bellini-restoration-skill",
+        "minSkillLevel": 0,
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "old-foundry-bench"
+          }
+        ]
+      }
+    },
+    {
+      "id": "stitch-fireproof-binding",
+      "type": "work_order",
+      "payload": {
+        "title": "Stitch a Fireproof Binding",
+        "jobKind": "account_work_order",
+        "durationSeconds": 600,
+        "skillTrackId": "bellini-restoration-skill",
+        "minSkillLevel": 1,
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "old-foundry-bench"
+          }
+        ]
+      }
+    },
+    {
+      "id": "restore-bellini-lockbox",
+      "type": "recipe",
+      "payload": {
+        "title": "Restore the Bellini Lockbox",
+        "craftKind": "account_inventory",
+        "skillTrackId": "bellini-restoration-skill",
+        "minSkillLevel": 2,
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "old-foundry-bench"
+          }
+        ]
+      }
+    },
+    {
+      "id": "bellini-lockbox",
+      "type": "item_def",
+      "payload": {
+        "title": "Restored Bellini Lockbox",
+        "category": "authored_keepsake",
+        "tier": 2,
+        "stackable": false,
+        "maxOwned": 1,
+        "gameplayPower": "none",
+        "tradeable": false
+      }
+    },
+    {
+      "id": "private-display",
+      "type": "sink",
+      "payload": {
+        "title": "Private Display",
+        "kind": "display_only",
+        "gameplayPower": "none"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "foundry-plate-salvage",
+      "type": "REQUIRES",
+      "to": "plate-cache-budget"
+    },
+    {
+      "from": "archive-binding-salvage",
+      "type": "REQUIRES",
+      "to": "binding-cache-budget"
+    },
+    {
+      "from": "foundry-plate-salvage",
+      "type": "PRODUCES",
+      "to": "ledger-plate",
+      "quantity": 3
+    },
+    {
+      "from": "archive-binding-salvage",
+      "type": "PRODUCES",
+      "to": "charred-binding",
+      "quantity": 2
+    },
+    {
+      "from": "true-ledger-plate",
+      "type": "CONSUMES",
+      "to": "ledger-plate",
+      "quantity": 1
+    },
+    {
+      "from": "true-ledger-plate",
+      "type": "PRODUCES",
+      "to": "trued-ledger-plate",
+      "quantity": 1
+    },
+    {
+      "from": "true-ledger-plate",
+      "type": "TRAINS",
+      "to": "bellini-restoration-skill",
+      "quantity": 10
+    },
+    {
+      "from": "stitch-fireproof-binding",
+      "type": "CONSUMES",
+      "to": "charred-binding",
+      "quantity": 1
+    },
+    {
+      "from": "stitch-fireproof-binding",
+      "type": "PRODUCES",
+      "to": "reinforced-binding",
+      "quantity": 1
+    },
+    {
+      "from": "stitch-fireproof-binding",
+      "type": "TRAINS",
+      "to": "bellini-restoration-skill",
+      "quantity": 15
+    },
+    {
+      "from": "restore-bellini-lockbox",
+      "type": "CONSUMES",
+      "to": "trued-ledger-plate",
+      "quantity": 3
+    },
+    {
+      "from": "restore-bellini-lockbox",
+      "type": "CONSUMES",
+      "to": "reinforced-binding",
+      "quantity": 2
+    },
+    {
+      "from": "restore-bellini-lockbox",
+      "type": "PRODUCES",
+      "to": "bellini-lockbox",
+      "quantity": 1
+    },
+    {
+      "from": "bellini-lockbox",
+      "type": "SINKS_TO",
+      "to": "private-display"
+    }
+  ],
+  "crafting": {
+    "title": "The Bellini Restoration School",
+    "nodeIds": [
+      "old-foundry-bench",
+      "plate-cache-budget",
+      "binding-cache-budget",
+      "foundry-plate-salvage",
+      "archive-binding-salvage",
+      "ledger-plate",
+      "charred-binding",
+      "trued-ledger-plate",
+      "reinforced-binding",
+      "bellini-restoration-skill",
+      "true-ledger-plate",
+      "stitch-fireproof-binding",
+      "restore-bellini-lockbox",
+      "bellini-lockbox",
+      "private-display"
+    ],
+    "sourceIds": [
+      "foundry-plate-salvage",
+      "archive-binding-salvage"
+    ],
+    "recipeIds": [
+      "restore-bellini-lockbox"
+    ],
+    "jobIds": [
+      "true-ledger-plate",
+      "stitch-fireproof-binding"
+    ],
+    "skillTrackIds": [
+      "bellini-restoration-skill"
+    ]
+  }
+}

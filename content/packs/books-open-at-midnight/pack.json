@@ -1,0 +1,260 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.case.season.books-open-at-midnight",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "in-game seasonal case with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "books-open-at-midnight",
+    "entryNodeId": "books-open-at-midnight",
+    "partyPolicyId": "personal-policy",
+    "quorumId": "solo-quorum",
+    "terminalNodeId": "case-closed",
+    "runPolicy": "once_per_season",
+    "nodeIds": [
+      "books-open-at-midnight",
+      "personal-policy",
+      "solo-quorum",
+      "investigator",
+      "the-first-night",
+      "read-the-opening-column",
+      "read-the-opening-column-answer",
+      "find-the-dry-seal",
+      "find-the-dry-seal-answer",
+      "write-the-first-line",
+      "midnight-memory",
+      "midnight-ledger-page",
+      "case-closed"
+    ],
+    "actionNodeIds": [
+      "read-the-opening-column",
+      "find-the-dry-seal",
+      "write-the-first-line"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "books-open-at-midnight",
+      "type": "mystery",
+      "payload": {
+        "title": "The Books Open at Midnight",
+        "summary": "On the first night of the season, a municipal ledger appears beneath the contract desk. Its opening entries decide which promises will count toward city standing and which crews will wake to find their territory already spoken for.",
+        "systems": [
+          "seasons",
+          "city-standing",
+          "territory",
+          "contracts"
+        ],
+        "gates": [
+          {
+            "kind": "season_phase_is",
+            "phaseId": "opening"
+          }
+        ]
+      }
+    },
+    {
+      "id": "personal-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "solo-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "Investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "the-first-night",
+      "type": "chapter",
+      "payload": {
+        "title": "The First Night"
+      }
+    },
+    {
+      "id": "read-the-opening-column",
+      "type": "puzzle",
+      "payload": {
+        "title": "Read the Opening Column",
+        "prompt": "One ward is entered before every other territory claim, but its name survives only in the clerk's margin. Enter that ward name.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "read-the-opening-column-answer"
+      }
+    },
+    {
+      "id": "read-the-opening-column-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "north quay"
+        ]
+      }
+    },
+    {
+      "id": "find-the-dry-seal",
+      "type": "puzzle",
+      "payload": {
+        "title": "Find the Dry Seal",
+        "prompt": "Every contract is wet with fresh ink except one page stamped before the city clock turned. Enter the number on that contract.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "find-the-dry-seal-answer"
+      }
+    },
+    {
+      "id": "find-the-dry-seal-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "contract 28",
+          "twenty eight",
+          "28"
+        ]
+      }
+    },
+    {
+      "id": "write-the-first-line",
+      "type": "choice",
+      "payload": {
+        "title": "Write the First Line",
+        "prompt": "The opening column is exposed and the false contract is in your hand. What will the season's first page say?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "publish-the-order",
+            "label": "Publish the true order of claims before dawn"
+          },
+          {
+            "id": "hold-the-first-line",
+            "label": "Hold the first line blank until the contracts are called in"
+          },
+          {
+            "id": "close-the-book",
+            "label": "Close the ledger and let the city earn its opening position"
+          }
+        ]
+      }
+    },
+    {
+      "id": "midnight-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "midnight-ledger-page",
+      "type": "collectible_def",
+      "payload": {
+        "title": "A Page Dated Midnight",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The Season Has Its First Entry",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "midnight-ledger-page",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "books-open-at-midnight",
+      "type": "REQUIRES",
+      "to": "personal-policy"
+    },
+    {
+      "from": "personal-policy",
+      "type": "REQUIRES",
+      "to": "solo-quorum"
+    },
+    {
+      "from": "personal-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "books-open-at-midnight",
+      "type": "UNLOCKS",
+      "to": "the-first-night"
+    },
+    {
+      "from": "the-first-night",
+      "type": "UNLOCKS",
+      "to": "read-the-opening-column"
+    },
+    {
+      "from": "read-the-opening-column",
+      "type": "UNLOCKS",
+      "to": "find-the-dry-seal"
+    },
+    {
+      "from": "find-the-dry-seal",
+      "type": "UNLOCKS",
+      "to": "write-the-first-line"
+    },
+    {
+      "from": "write-the-first-line",
+      "type": "UNLOCKS",
+      "to": "midnight-memory"
+    },
+    {
+      "from": "midnight-memory",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    }
+  ]
+}

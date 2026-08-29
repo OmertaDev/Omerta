@@ -108,6 +108,7 @@ import { register as registerSov } from './routes/sov.js';
 import { register as registerLeaderboards } from './routes/leaderboards.js';
 import { register as registerModTools } from './routes/modtools.js';
 import { registerRwa } from './routes/rwa.js';
+import { register as registerContent } from './routes/content.js';
 import * as Phone from './phone.js';
 import * as Mega from './megaproject.js';
 import * as Duels from './duels.js';
@@ -1961,6 +1962,7 @@ export async function buildServer() {
   app.post('/v1/loans/house/repay', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Loans.repayHouseLoan(ch, client, h)));
   registerModTools(app, { pool, auth, modAuth, closeAccountSockets });
+  registerContent(app, { pool, auth, modAuth });
   app.post('/v1/loans/square', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Loans.squareWanted(ch, client, h)));
   // buy is two-party (buyer pays the current lender, becomes the new lender): look up the seller, lock both.

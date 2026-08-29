@@ -1,0 +1,416 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.don.house-made-of-glass",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "in-game Don Case with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "house-made-of-glass",
+    "entryNodeId": "house-made-of-glass",
+    "partyPolicyId": "personal-policy",
+    "quorumId": "solo-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "house-made-of-glass",
+      "personal-policy",
+      "solo-quorum",
+      "investigator",
+      "neon-location",
+      "mirrors-after-midnight",
+      "mirror-index",
+      "mirror-index-answer",
+      "wire-phrase",
+      "wire-phrase-answer",
+      "marker-sequence",
+      "marker-sequence-answer",
+      "service-route",
+      "service-route-answer",
+      "glass-verdict",
+      "witness-warned-flag",
+      "black-book-flag",
+      "crew-secret-flag",
+      "glass-house-memory",
+      "don-house-made-of-glass-smoked-chip",
+      "case-closed"
+    ],
+    "actionNodeIds": [
+      "mirror-index",
+      "wire-phrase",
+      "marker-sequence",
+      "service-route",
+      "glass-verdict"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "house-made-of-glass",
+      "type": "mystery",
+      "payload": {
+        "title": "A House Made of Glass",
+        "summary": "A Neon Mile casino launders secrets through mirrored rooms, dead wires, borrowed markers, and a thief's invisible service route.",
+        "systems": [
+          "casino",
+          "wire",
+          "secrets",
+          "larceny"
+        ],
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "neon-location"
+          },
+          {
+            "kind": "level_at_least",
+            "level": 50
+          }
+        ]
+      }
+    },
+    {
+      "id": "personal-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "solo-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "Investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "neon-location",
+      "type": "location",
+      "payload": {
+        "title": "Neon Mile",
+        "districtId": "neon"
+      }
+    },
+    {
+      "id": "mirrors-after-midnight",
+      "type": "chapter",
+      "payload": {
+        "title": "Mirrors After Midnight"
+      }
+    },
+    {
+      "id": "mirror-index",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Mirror Index",
+        "prompt": "Which suite is reflected twice in the casino's false directory?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "neon-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "mirror-index-answer"
+      }
+    },
+    {
+      "id": "mirror-index-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "suite seven",
+          "7"
+        ]
+      }
+    },
+    {
+      "id": "wire-phrase",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Silent Wire",
+        "prompt": "What two-word phrase opens the recording hidden beneath the table noise?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "neon-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "wire-phrase-answer"
+      }
+    },
+    {
+      "id": "wire-phrase-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "dead air"
+        ]
+      }
+    },
+    {
+      "id": "marker-sequence",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Borrowed Marker",
+        "prompt": "Which color and face card complete the cashier's coded debt sequence?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "neon-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "marker-sequence-answer"
+      }
+    },
+    {
+      "id": "marker-sequence-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "blue queen"
+        ]
+      }
+    },
+    {
+      "id": "service-route",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Unseen Entrance",
+        "prompt": "What route does the floor plan omit from every public copy?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "neon-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "service-route-answer"
+      }
+    },
+    {
+      "id": "service-route-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "service mirror"
+        ]
+      }
+    },
+    {
+      "id": "glass-verdict",
+      "type": "choice",
+      "payload": {
+        "title": "What the Glass Keeps",
+        "prompt": "The hidden room is open and the house witness is listening. Which truth leaves with you?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "neon-location"
+          }
+        ],
+        "options": [
+          {
+            "id": "warn-the-witness",
+            "label": "Warn the witness and let the house empty quietly",
+            "storyFlagIds": [
+              "witness-warned-flag"
+            ]
+          },
+          {
+            "id": "take-the-black-book",
+            "label": "Slip through the service mirrors and take the black book",
+            "gates": [
+              {
+                "kind": "mastery_at_least",
+                "trackId": "larceny",
+                "level": 10
+              }
+            ],
+            "storyFlagIds": [
+              "black-book-flag"
+            ]
+          },
+          {
+            "id": "crew-controls-secret",
+            "label": "Surround the house and make the secret answer to your crew",
+            "gates": [
+              {
+                "kind": "crew_membership"
+              }
+            ],
+            "storyFlagIds": [
+              "crew-secret-flag"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "witness-warned-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.house-made-of-glass.outcome",
+        "kind": "witness_spared",
+        "value": "witness-warned",
+        "title": "The Witness Walked Free",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "black-book-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.house-made-of-glass.outcome",
+        "kind": "case_evidence",
+        "value": "black-book-taken",
+        "title": "The Black Book in Hand",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "crew-secret-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.house-made-of-glass.outcome",
+        "kind": "family_debt",
+        "value": "crew-controls-secret",
+        "title": "The House Owes the Crew",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "glass-house-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "don-house-made-of-glass-smoked-chip",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Smoked Glass House Chip",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "Every Mirror Keeps a Version",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "don-house-made-of-glass-smoked-chip",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "house-made-of-glass",
+      "type": "REQUIRES",
+      "to": "personal-policy"
+    },
+    {
+      "from": "personal-policy",
+      "type": "REQUIRES",
+      "to": "solo-quorum"
+    },
+    {
+      "from": "personal-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "house-made-of-glass",
+      "type": "UNLOCKS",
+      "to": "mirrors-after-midnight"
+    },
+    {
+      "from": "mirrors-after-midnight",
+      "type": "UNLOCKS",
+      "to": "mirror-index"
+    },
+    {
+      "from": "mirror-index",
+      "type": "UNLOCKS",
+      "to": "wire-phrase"
+    },
+    {
+      "from": "wire-phrase",
+      "type": "UNLOCKS",
+      "to": "marker-sequence"
+    },
+    {
+      "from": "marker-sequence",
+      "type": "UNLOCKS",
+      "to": "service-route"
+    },
+    {
+      "from": "service-route",
+      "type": "UNLOCKS",
+      "to": "glass-verdict"
+    },
+    {
+      "from": "glass-verdict",
+      "type": "UNLOCKS",
+      "to": "glass-house-memory"
+    },
+    {
+      "from": "glass-house-memory",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    }
+  ]
+}

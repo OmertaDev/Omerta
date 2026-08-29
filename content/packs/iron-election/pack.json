@@ -1,0 +1,417 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.don.iron-election",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "in-game Don Case with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "iron-election",
+    "entryNodeId": "iron-election",
+    "partyPolicyId": "personal-policy",
+    "quorumId": "solo-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "iron-election",
+      "personal-policy",
+      "solo-quorum",
+      "investigator",
+      "brick-location",
+      "ward-in-shadow",
+      "soot-ballots",
+      "soot-ballots-answer",
+      "favor-ledger",
+      "favor-ledger-answer",
+      "deed-seal",
+      "deed-seal-answer",
+      "buried-docket",
+      "buried-docket-answer",
+      "ward-verdict",
+      "neutral-ward-flag",
+      "odds-exposed-flag",
+      "crew-compact-flag",
+      "iron-election-memory",
+      "don-iron-election-ballot-seal",
+      "case-closed"
+    ],
+    "actionNodeIds": [
+      "soot-ballots",
+      "favor-ledger",
+      "deed-seal",
+      "buried-docket",
+      "ward-verdict"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "iron-election",
+      "type": "mystery",
+      "payload": {
+        "title": "The Iron Election",
+        "summary": "Brick Yards chooses a ward boss while forged ballots, called-in favors, altered deeds, and a buried law docket point to the same unseen hand.",
+        "systems": [
+          "crimes",
+          "favors",
+          "deeds",
+          "law"
+        ],
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "brick-location"
+          },
+          {
+            "kind": "level_at_least",
+            "level": 35
+          }
+        ]
+      }
+    },
+    {
+      "id": "personal-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "solo-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "Investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "brick-location",
+      "type": "location",
+      "payload": {
+        "title": "Brick Yards",
+        "districtId": "brick"
+      }
+    },
+    {
+      "id": "ward-in-shadow",
+      "type": "chapter",
+      "payload": {
+        "title": "A Ward Cast in Soot"
+      }
+    },
+    {
+      "id": "soot-ballots",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Soot Ballots",
+        "prompt": "Which kiln designation repeats in the corner of every altered ballot?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "brick-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "soot-ballots-answer"
+      }
+    },
+    {
+      "id": "soot-ballots-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "kiln nine",
+          "9"
+        ]
+      }
+    },
+    {
+      "id": "favor-ledger",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Called-In Book",
+        "prompt": "Whose surname is written beside every favor forgiven during election week?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "brick-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "favor-ledger-answer"
+      }
+    },
+    {
+      "id": "favor-ledger-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "valenti"
+        ]
+      }
+    },
+    {
+      "id": "deed-seal",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Foundry Deeds",
+        "prompt": "What figure faces left on the authentic ward deeds?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "brick-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "deed-seal-answer"
+      }
+    },
+    {
+      "id": "deed-seal-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "crowned lion"
+        ]
+      }
+    },
+    {
+      "id": "buried-docket",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Buried Docket",
+        "prompt": "Which case number was cut from the municipal law ledger?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "brick-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "buried-docket-answer"
+      }
+    },
+    {
+      "id": "buried-docket-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "case 35-b",
+          "35-b"
+        ]
+      }
+    },
+    {
+      "id": "ward-verdict",
+      "type": "choice",
+      "payload": {
+        "title": "Who Carries the Yard",
+        "prompt": "The count is yours to settle. What future do you write for the ward?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "brick-location"
+          }
+        ],
+        "options": [
+          {
+            "id": "neutral-foreman",
+            "label": "Publish the count and seat a neutral foreman",
+            "storyFlagIds": [
+              "neutral-ward-flag"
+            ]
+          },
+          {
+            "id": "read-the-odds",
+            "label": "Read the rigged odds and expose the ballot switch",
+            "gates": [
+              {
+                "kind": "mastery_at_least",
+                "trackId": "gambling",
+                "level": 10
+              }
+            ],
+            "storyFlagIds": [
+              "odds-exposed-flag"
+            ]
+          },
+          {
+            "id": "crew-compact",
+            "label": "Put your crew behind a ward compact",
+            "gates": [
+              {
+                "kind": "crew_membership"
+              }
+            ],
+            "storyFlagIds": [
+              "crew-compact-flag"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "neutral-ward-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.iron-election.outcome",
+        "kind": "public_reputation",
+        "value": "neutral-foreman",
+        "title": "The Published Count",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "odds-exposed-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.iron-election.outcome",
+        "kind": "case_evidence",
+        "value": "rigged-odds-exposed",
+        "title": "The Odds Laid Bare",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "crew-compact-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.iron-election.outcome",
+        "kind": "family_debt",
+        "value": "crew-ward-compact",
+        "title": "The Ward Owes the Crew",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "iron-election-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "don-iron-election-ballot-seal",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Iron Ballot Seal",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The Yard Remembers Its Vote",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "don-iron-election-ballot-seal",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "iron-election",
+      "type": "REQUIRES",
+      "to": "personal-policy"
+    },
+    {
+      "from": "personal-policy",
+      "type": "REQUIRES",
+      "to": "solo-quorum"
+    },
+    {
+      "from": "personal-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "iron-election",
+      "type": "UNLOCKS",
+      "to": "ward-in-shadow"
+    },
+    {
+      "from": "ward-in-shadow",
+      "type": "UNLOCKS",
+      "to": "soot-ballots"
+    },
+    {
+      "from": "soot-ballots",
+      "type": "UNLOCKS",
+      "to": "favor-ledger"
+    },
+    {
+      "from": "favor-ledger",
+      "type": "UNLOCKS",
+      "to": "deed-seal"
+    },
+    {
+      "from": "deed-seal",
+      "type": "UNLOCKS",
+      "to": "buried-docket"
+    },
+    {
+      "from": "buried-docket",
+      "type": "UNLOCKS",
+      "to": "ward-verdict"
+    },
+    {
+      "from": "ward-verdict",
+      "type": "UNLOCKS",
+      "to": "iron-election-memory"
+    },
+    {
+      "from": "iron-election-memory",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    }
+  ]
+}

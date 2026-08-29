@@ -1,0 +1,272 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.storylet.neon.house-lights",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "in-game district storylet with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "house-lights",
+    "entryNodeId": "house-lights",
+    "partyPolicyId": "personal-policy",
+    "quorumId": "solo-quorum",
+    "terminalNodeId": "story-closed",
+    "nodeIds": [
+      "house-lights",
+      "personal-policy",
+      "solo-quorum",
+      "investigator",
+      "neon-location",
+      "after-last-show",
+      "dealer-puzzle",
+      "dealer-answer",
+      "booth-choice",
+      "blackout-puzzle",
+      "blackout-answer",
+      "neon-memory",
+      "house-ticket",
+      "story-closed"
+    ],
+    "actionNodeIds": [
+      "dealer-puzzle",
+      "booth-choice",
+      "blackout-puzzle"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "house-lights",
+      "type": "mystery",
+      "payload": {
+        "title": "House Lights",
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "neon-location"
+          }
+        ]
+      }
+    },
+    {
+      "id": "personal-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "solo-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "Investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "neon-location",
+      "type": "location",
+      "payload": {
+        "title": "The Neon Mile",
+        "districtId": "neon"
+      }
+    },
+    {
+      "id": "after-last-show",
+      "type": "chapter",
+      "payload": {
+        "title": "After the Last Show"
+      }
+    },
+    {
+      "id": "dealer-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Dealer's Tell",
+        "prompt": "Which cuff does the dealer touch before every fixed hand?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "neon-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "dealer-answer"
+      }
+    },
+    {
+      "id": "dealer-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "left cuff",
+          "left"
+        ]
+      }
+    },
+    {
+      "id": "booth-choice",
+      "type": "choice",
+      "payload": {
+        "title": "The Listening Booth",
+        "prompt": "The wire caught a threat against the headliner. Who hears it first?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "neon-location"
+          }
+        ],
+        "options": [
+          {
+            "id": "singer",
+            "label": "Warn the singer before the encore"
+          },
+          {
+            "id": "madame",
+            "label": "Give the recording to the Madame"
+          },
+          {
+            "id": "house",
+            "label": "Let the house use it to flush out the buyer"
+          }
+        ]
+      }
+    },
+    {
+      "id": "blackout-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Blackout Cue",
+        "prompt": "What two words bring the whole room bright?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "neon-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "blackout-answer"
+      }
+    },
+    {
+      "id": "blackout-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "house lights"
+        ]
+      }
+    },
+    {
+      "id": "neon-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "house-ticket",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Unpunched House Ticket",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "story-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The Room Comes Bright",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "house-ticket",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "house-lights",
+      "type": "REQUIRES",
+      "to": "personal-policy"
+    },
+    {
+      "from": "personal-policy",
+      "type": "REQUIRES",
+      "to": "solo-quorum"
+    },
+    {
+      "from": "personal-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "house-lights",
+      "type": "UNLOCKS",
+      "to": "after-last-show"
+    },
+    {
+      "from": "after-last-show",
+      "type": "UNLOCKS",
+      "to": "dealer-puzzle"
+    },
+    {
+      "from": "dealer-puzzle",
+      "type": "UNLOCKS",
+      "to": "booth-choice"
+    },
+    {
+      "from": "booth-choice",
+      "type": "UNLOCKS",
+      "to": "blackout-puzzle"
+    },
+    {
+      "from": "blackout-puzzle",
+      "type": "UNLOCKS",
+      "to": "neon-memory"
+    },
+    {
+      "from": "neon-memory",
+      "type": "UNLOCKS",
+      "to": "story-closed"
+    }
+  ]
+}
