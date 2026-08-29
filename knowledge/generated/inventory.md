@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `487872a2591d`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `e919245b2d4e`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,826 |
-| Text lines | 516,069 |
-| Repository bytes inventoried | 313,588,652 |
+| Text lines | 516,117 |
+| Repository bytes inventoried | 313,592,148 |
 | Backend/route modules | 187 |
 | HTTP route registrations / unique routes | 742 / 742 |
 | Database tables | 317 |
 | Solidity declarations | 49 |
-| Git commits | 1,241 |
+| Git commits | 1,243 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 5,596 / 24,490 |
+| Graph nodes / edges | 5,598 / 24,499 |
 
 ## Artifact kinds
 
@@ -56,19 +56,19 @@
 | [.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [test/client.js](../../test/client.js) | 6,997 | test-suite | 2026-08-26 |
 | [BALANCE.md](../../BALANCE.md) | 6,472 | documentation | 2026-08-24 |
-| [src/rules.tail.js](../../src/rules.tail.js) | 6,063 | backend-module | 2026-08-28 |
+| [src/rules.tail.js](../../src/rules.tail.js) | 6,063 | backend-module | 2026-08-29 |
 | [schema.sql](../../schema.sql) | 6,009 | data-schema | 2026-08-29 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
 | [omerta-contracts/test/AcquisitionConstellationTask3B.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask3B.t.sol) | 3,743 | contract-test | 2026-08-28 |
 | [test/docs.js](../../test/docs.js) | 3,674 | test-suite | 2026-08-29 |
-| [src/server.js](../../src/server.js) | 3,404 | backend-module | 2026-08-28 |
+| [src/server.js](../../src/server.js) | 3,404 | backend-module | 2026-08-29 |
 | [omerta-contracts/test/AcquisitionVaultOperator.t.sol](../../omerta-contracts/test/AcquisitionVaultOperator.t.sol) | 3,199 | contract-test | 2026-08-27 |
 | [omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1](../../omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1) | 2,947 | contract-project | 2026-08-28 |
 | [test/gates.js](../../test/gates.js) | 2,847 | test-suite | 2026-08-29 |
 | [omerta-contracts/fizz_data/contracts.json](../../omerta-contracts/fizz_data/contracts.json) | 2,739 | contract-project | 2026-08-25 |
-| [docs/WIKI.md](../../docs/WIKI.md) | 2,717 | documentation | 2026-08-28 |
+| [docs/WIKI.md](../../docs/WIKI.md) | 2,717 | documentation | 2026-08-29 |
 | [public/art/manifest.json](../../public/art/manifest.json) | 2,700 | media-asset | 2026-08-09 |
-| [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 2,619 | audit | 2026-08-12 |
+| [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 2,619 | audit | 2026-08-13 |
 | [src/game.js](../../src/game.js) | 2,596 | backend-module | 2026-08-27 |
 | [docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md](../../docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md) | 2,453 | documentation | 2026-08-27 |
 | [omerta-contracts/x-ray/slither-function-summary.json](../../omerta-contracts/x-ray/slither-function-summary.json) | 2,449 | contract-project | 2026-08-25 |
