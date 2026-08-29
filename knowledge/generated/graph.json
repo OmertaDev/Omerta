@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "1115e806ba8f47bce3b50131308687f94a8aab95",
+  "sourceRevision": "ee8ea7328ee85e62e461debe6b25a29fa0a3bb1b",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5648,
-    "edges": 24758,
+    "nodes": 5651,
+    "edges": 24771,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 56,
-      "Commit": 1290,
+      "Commit": 1293,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,18 +65,18 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 9833,
+      "CHANGED": 9842,
       "CONTAINS": 1846,
       "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1290,
+      "HAS_COMMIT": 1293,
       "IMPLEMENTS": 124,
       "IMPORTS": 1633,
       "INHERITS": 12,
-      "REFERENCES": 2822,
+      "REFERENCES": 2823,
       "REPRESENTS": 891,
       "TESTS": 583,
       "TRACKS": 126,
@@ -7544,20 +7544,20 @@
       "path": ".github/workflows/forge.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 6647,
-      "lines": 116,
-      "version": "134cf7aba90af0cf",
+      "bytes": 7508,
+      "lines": 129,
+      "version": "14016a53c1cff8fb",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/forge.yml",
           "line": 1,
-          "version": "134cf7aba90af0cf"
+          "version": "14016a53c1cff8fb"
         }
       ],
-      "lastChangedAt": "2026-08-29T20:42:54.000Z",
+      "lastChangedAt": "2026-08-29T22:19:11.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "2766eb3f06ff246aaf67c0bffbd359a57ceb55d6"
+      "lastChangedCommit": "966bd7c5d6d803a31907846f8ee55c745488005c"
     },
     {
       "key": "Artifact:.github/workflows/knowledge-refresh.yml",
@@ -7613,20 +7613,20 @@
       "path": ".gitignore",
       "kind": "artifact",
       "extension": "(none)",
-      "bytes": 907,
-      "lines": 28,
-      "version": "f684ac6ea9b90657",
+      "bytes": 1266,
+      "lines": 33,
+      "version": "f18f72b7fefbf165",
       "text": true,
       "provenance": [
         {
           "file": ".gitignore",
           "line": 1,
-          "version": "f684ac6ea9b90657"
+          "version": "f18f72b7fefbf165"
         }
       ],
-      "lastChangedAt": "2026-08-27T08:25:58.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "18738f0238abac2204c0d201ea4ce93acefcd781"
+      "lastChangedAt": "2026-08-29T22:54:58.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "ee8ea7328ee85e62e461debe6b25a29fa0a3bb1b"
     },
     {
       "key": "Artifact:.nvmrc",
@@ -10971,20 +10971,20 @@
       "path": "CLAUDE.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 1684977,
-      "lines": 17432,
-      "version": "b9dec5deeae4bca0",
+      "bytes": 1689477,
+      "lines": 17480,
+      "version": "43c268f8e96f7722",
       "text": true,
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "b9dec5deeae4bca0"
+          "version": "43c268f8e96f7722"
         }
       ],
-      "lastChangedAt": "2026-08-29T21:41:25.000Z",
+      "lastChangedAt": "2026-08-29T22:54:58.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "8317d343b0752aaf5428d05ccf46650ad65d18cd"
+      "lastChangedCommit": "ee8ea7328ee85e62e461debe6b25a29fa0a3bb1b"
     },
     {
       "key": "Artifact:content/packs/bad-batch/pack.json",
@@ -38151,20 +38151,20 @@
       "path": "test/docs.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 296782,
-      "lines": 3986,
-      "version": "778fbac8ff1b2109",
+      "bytes": 299278,
+      "lines": 4017,
+      "version": "8ee2e1a5b0be7755",
       "text": true,
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "778fbac8ff1b2109"
+          "version": "8ee2e1a5b0be7755"
         }
       ],
-      "lastChangedAt": "2026-08-29T20:42:54.000Z",
+      "lastChangedAt": "2026-08-29T22:19:11.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "2766eb3f06ff246aaf67c0bffbd359a57ceb55d6"
+      "lastChangedCommit": "966bd7c5d6d803a31907846f8ee55c745488005c"
     },
     {
       "key": "Artifact:test/drop.js",
@@ -53029,6 +53029,22 @@
       ]
     },
     {
+      "key": "Commit:7c2756ffe78b52b2a4863b4a7e6879df9dd870f5",
+      "type": "Commit",
+      "id": "7c2756ffe78b52b2a4863b4a7e6879df9dd870f5",
+      "label": "knowledge: regenerate at 1115e806 (generated-only)",
+      "title": "knowledge: regenerate at 1115e806 (generated-only)",
+      "date": "2026-08-29T22:11:27.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7c2756ffe78b52b2a4863b4a7e6879df9dd870f5",
+      "provenance": [
+        {
+          "commit": "7c2756ffe78b52b2a4863b4a7e6879df9dd870f5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7c2756ffe78b52b2a4863b4a7e6879df9dd870f5"
+        }
+      ]
+    },
+    {
       "key": "Commit:7c369eab07ba53807a8e64bd612f7c8a9430d4b9",
       "type": "Commit",
       "id": "7c369eab07ba53807a8e64bd612f7c8a9430d4b9",
@@ -55409,6 +55425,22 @@
         {
           "commit": "96520062c2ea862e25475d56fd173679400b421c",
           "url": "https://github.com/OmertaDev/Omerta/commit/96520062c2ea862e25475d56fd173679400b421c"
+        }
+      ]
+    },
+    {
+      "key": "Commit:966bd7c5d6d803a31907846f8ee55c745488005c",
+      "type": "Commit",
+      "id": "966bd7c5d6d803a31907846f8ee55c745488005c",
+      "label": "forge CI: the compiler was the one dependency not pinned",
+      "title": "forge CI: the compiler was the one dependency not pinned",
+      "date": "2026-08-29T22:19:11.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/966bd7c5d6d803a31907846f8ee55c745488005c",
+      "provenance": [
+        {
+          "commit": "966bd7c5d6d803a31907846f8ee55c745488005c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/966bd7c5d6d803a31907846f8ee55c745488005c"
         }
       ]
     },
@@ -62113,6 +62145,22 @@
         {
           "commit": "ee8574368bc8f9363a844b8783a85de542b19fc0",
           "url": "https://github.com/OmertaDev/Omerta/commit/ee8574368bc8f9363a844b8783a85de542b19fc0"
+        }
+      ]
+    },
+    {
+      "key": "Commit:ee8ea7328ee85e62e461debe6b25a29fa0a3bb1b",
+      "type": "Commit",
+      "id": "ee8ea7328ee85e62e461debe6b25a29fa0a3bb1b",
+      "label": "forge CI: the count in both logs was the answer",
+      "title": "forge CI: the count in both logs was the answer",
+      "date": "2026-08-29T22:54:58.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ee8ea7328ee85e62e461debe6b25a29fa0a3bb1b",
+      "provenance": [
+        {
+          "commit": "ee8ea7328ee85e62e461debe6b25a29fa0a3bb1b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ee8ea7328ee85e62e461debe6b25a29fa0a3bb1b"
         }
       ]
     },
@@ -69292,13 +69340,13 @@
       "id": "CLAUDE.md",
       "label": "CLAUDE.md",
       "documentType": "documentation",
-      "lines": 17432,
-      "version": "b9dec5deeae4bca0",
+      "lines": 17480,
+      "version": "43c268f8e96f7722",
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "b9dec5deeae4bca0"
+          "version": "43c268f8e96f7722"
         }
       ]
     },
@@ -76636,6 +76684,9 @@
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
+          "commit": "7c2756ffe78b52b2a4863b4a7e6879df9dd870f5"
+        },
+        {
           "commit": "7d03ee5748c2bee319ddefba4034300a5d71c817"
         },
         {
@@ -76981,6 +77032,9 @@
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
+          "commit": "7c2756ffe78b52b2a4863b4a7e6879df9dd870f5"
+        },
+        {
           "commit": "7d03ee5748c2bee319ddefba4034300a5d71c817"
         },
         {
@@ -77324,6 +77378,9 @@
         },
         {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
+        },
+        {
+          "commit": "7c2756ffe78b52b2a4863b4a7e6879df9dd870f5"
         },
         {
           "commit": "7d03ee5748c2bee319ddefba4034300a5d71c817"
@@ -77728,6 +77785,9 @@
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
+          "commit": "7c2756ffe78b52b2a4863b4a7e6879df9dd870f5"
+        },
+        {
           "commit": "7d03ee5748c2bee319ddefba4034300a5d71c817"
         },
         {
@@ -77960,6 +78020,9 @@
         },
         {
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
+        },
+        {
+          "commit": "7c2756ffe78b52b2a4863b4a7e6879df9dd870f5"
         },
         {
           "commit": "83d19c0f0a798b0b59bed8d79b856659f08bba83"
@@ -84178,7 +84241,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "1115e806ba8f47bce3b50131308687f94a8aab95",
+      "revision": "ee8ea7328ee85e62e461debe6b25a29fa0a3bb1b",
       "currentBranch": "claude/game-dev-roadmap-6jtsst",
       "defaultBranch": "main",
       "visibility": "public",
@@ -108115,13 +108178,13 @@
       "type": "TestSuite",
       "id": "test/docs.js",
       "label": "test/docs.js",
-      "lines": 3986,
-      "version": "778fbac8ff1b2109",
+      "lines": 4017,
+      "version": "8ee2e1a5b0be7755",
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "778fbac8ff1b2109"
+          "version": "8ee2e1a5b0be7755"
         }
       ]
     },
@@ -109735,13 +109798,13 @@
       "type": "Workflow",
       "id": ".github/workflows/forge.yml",
       "label": ".github/workflows/forge.yml",
-      "lines": 116,
-      "version": "134cf7aba90af0cf",
+      "lines": 129,
+      "version": "14016a53c1cff8fb",
       "provenance": [
         {
           "file": ".github/workflows/forge.yml",
           "line": 1,
-          "version": "134cf7aba90af0cf"
+          "version": "14016a53c1cff8fb"
         }
       ]
     },
@@ -169270,6 +169333,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:7c2756ffe78b52b2a4863b4a7e6879df9dd870f5",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "7c2756ffe78b52b2a4863b4a7e6879df9dd870f5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7c2756ffe78b52b2a4863b4a7e6879df9dd870f5",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "7c2756ffe78b52b2a4863b4a7e6879df9dd870f5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7c2756ffe78b52b2a4863b4a7e6879df9dd870f5",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "7c2756ffe78b52b2a4863b4a7e6879df9dd870f5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7c2756ffe78b52b2a4863b4a7e6879df9dd870f5",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "7c2756ffe78b52b2a4863b4a7e6879df9dd870f5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7c2756ffe78b52b2a4863b4a7e6879df9dd870f5",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "7c2756ffe78b52b2a4863b4a7e6879df9dd870f5"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:7c369eab07ba53807a8e64bd612f7c8a9430d4b9",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -176554,6 +176657,22 @@
       "to": "Artifact:tools/pgquery.js",
       "provenance": {
         "commit": "96520062c2ea862e25475d56fd173679400b421c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:966bd7c5d6d803a31907846f8ee55c745488005c",
+      "to": "Artifact:.github/workflows/forge.yml",
+      "provenance": {
+        "commit": "966bd7c5d6d803a31907846f8ee55c745488005c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:966bd7c5d6d803a31907846f8ee55c745488005c",
+      "to": "Artifact:test/docs.js",
+      "provenance": {
+        "commit": "966bd7c5d6d803a31907846f8ee55c745488005c"
       }
     },
     {
@@ -201658,6 +201777,22 @@
       "to": "Artifact:omerta-contracts/test/AcquisitionVaultAccounting.t.sol",
       "provenance": {
         "commit": "ee8574368bc8f9363a844b8783a85de542b19fc0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ee8ea7328ee85e62e461debe6b25a29fa0a3bb1b",
+      "to": "Artifact:.gitignore",
+      "provenance": {
+        "commit": "ee8ea7328ee85e62e461debe6b25a29fa0a3bb1b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ee8ea7328ee85e62e461debe6b25a29fa0a3bb1b",
+      "to": "Artifact:CLAUDE.md",
+      "provenance": {
+        "commit": "ee8ea7328ee85e62e461debe6b25a29fa0a3bb1b"
       }
     },
     {
@@ -247584,6 +247719,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:7c2756ffe78b52b2a4863b4a7e6879df9dd870f5",
+      "provenance": {
+        "commit": "7c2756ffe78b52b2a4863b4a7e6879df9dd870f5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:7c369eab07ba53807a8e64bd612f7c8a9430d4b9",
       "provenance": {
         "commit": "7c369eab07ba53807a8e64bd612f7c8a9430d4b9"
@@ -248771,6 +248914,14 @@
       "to": "Commit:96520062c2ea862e25475d56fd173679400b421c",
       "provenance": {
         "commit": "96520062c2ea862e25475d56fd173679400b421c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:966bd7c5d6d803a31907846f8ee55c745488005c",
+      "provenance": {
+        "commit": "966bd7c5d6d803a31907846f8ee55c745488005c"
       }
     },
     {
@@ -252123,6 +252274,14 @@
       "to": "Commit:ee8574368bc8f9363a844b8783a85de542b19fc0",
       "provenance": {
         "commit": "ee8574368bc8f9363a844b8783a85de542b19fc0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ee8ea7328ee85e62e461debe6b25a29fa0a3bb1b",
+      "provenance": {
+        "commit": "ee8ea7328ee85e62e461debe6b25a29fa0a3bb1b"
       }
     },
     {
@@ -263120,7 +263279,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3926
+        "line": 3957
       }
     },
     {
@@ -263129,7 +263288,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3927
+        "line": 3958
       }
     },
     {
@@ -263138,7 +263297,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 1099
+        "line": 1130
       }
     },
     {
@@ -263147,7 +263306,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3790
+        "line": 3821
       }
     },
     {
@@ -282354,6 +282513,15 @@
       "provenance": {
         "file": "CLAUDE.md",
         "line": 16413
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:test/docs.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 17464
       }
     },
     {
@@ -303512,7 +303680,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3926
+        "line": 3957
       }
     },
     {
@@ -303521,7 +303689,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3927
+        "line": 3958
       }
     },
     {
@@ -303530,7 +303698,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 1099
+        "line": 1130
       }
     },
     {
@@ -303539,7 +303707,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3790
+        "line": 3821
       }
     },
     {

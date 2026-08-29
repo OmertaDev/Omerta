@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `1115e806ba8f`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `ee8ea7328ee8`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,826 |
-| Text lines | 518,069 |
-| Repository bytes inventoried | 313,739,798 |
+| Text lines | 518,166 |
+| Repository bytes inventoried | 313,748,014 |
 | Backend/route modules | 187 |
 | HTTP route registrations / unique routes | 742 / 742 |
 | Database tables | 317 |
 | Solidity declarations | 49 |
-| Git commits | 1,290 |
+| Git commits | 1,293 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 5,648 / 24,758 |
+| Graph nodes / edges | 5,651 / 24,771 |
 
 ## Artifact kinds
 
@@ -47,7 +47,7 @@
 | File | Lines | Kind | Last change |
 |---|---:|---|---|
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
-| [CLAUDE.md](../../CLAUDE.md) | 17,432 | documentation | 2026-08-29 |
+| [CLAUDE.md](../../CLAUDE.md) | 17,480 | documentation | 2026-08-29 |
 | [public/index.html](../../public/index.html) | 11,792 | web-surface | 2026-08-29 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
@@ -59,7 +59,7 @@
 | [src/rules.tail.js](../../src/rules.tail.js) | 6,063 | backend-module | 2026-08-29 |
 | [schema.sql](../../schema.sql) | 6,009 | data-schema | 2026-08-29 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
-| [test/docs.js](../../test/docs.js) | 3,986 | test-suite | 2026-08-29 |
+| [test/docs.js](../../test/docs.js) | 4,017 | test-suite | 2026-08-29 |
 | [omerta-contracts/test/AcquisitionConstellationTask3B.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask3B.t.sol) | 3,743 | contract-test | 2026-08-28 |
 | [test/gates.js](../../test/gates.js) | 3,569 | test-suite | 2026-08-29 |
 | [src/server.js](../../src/server.js) | 3,472 | backend-module | 2026-08-29 |
