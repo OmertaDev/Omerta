@@ -115,16 +115,21 @@ collapses a pacing timer server-wide; `TRAIN_CD_MS`/`MISSION_CD_MS` in particula
       at ~30 concurrent players the 20-pool COLLAPSES (queueing on `connectionTimeout` → 503s read as an
       outage — measured 2026-08-11: 30 vs 284 req/s). Keep it declared; scale the DATABASE plan first.
 - [ ] `INVARIANT_WEBHOOK_URL=<url>` — §10.4 drift, Vig/Bond, and backup-watchdog alerts (recommended).
-      **Must be set on the WORKER process** — every automatic alarm lives there (`src/worker.js`); the api
-      only alerts on a manual `GET /v1/mod/invariants` or an `/admin` load. On Render, put it on the shared
-      env group so both get it. A Slack or Discord webhook URL works as-is: the payload carries `text` and
+      **Set it on BOTH processes** — on Render the shared env group does that, which is where
+      `render.yaml` puts it. Most automatic alarms live in the worker (`src/worker.js`), and this line
+      used to say "worker only". That stopped being true when the worker-dark watchdog shipped: the
+      **API** now alarms on its own timer as well, and it is the ONLY thing that can page when the
+      WORKER is gone — a process cannot alarm on being dead. Set the key on the worker alone and every
+      alarm works except that one, which is precisely the shape that hid a 17h outage. A Slack or Discord webhook URL works as-is: the payload carries `text` and
       `content` alongside the structured fields, because those services 400 a body with neither and
       `alertDrift` swallows the error — a webhook that looked configured would have delivered nothing.
       **Getting one (Discord, 60 seconds):** Server Settings → Integrations → Webhooks → New Webhook →
       pick a channel → *Copy Webhook URL*. It looks like `https://discord.com/api/webhooks/<id>/<token>`.
       **Slack:** api.slack.com/apps → your app → Incoming Webhooks → *Add New Webhook to Workspace*.
-      **Then PROVE it:** open `/admin` → Mod Tools → **send test alert**. A message must land in the
-      channel within seconds. `/admin`'s Backups panel also carries an *alerts reach you* line, so an
+      **Then PROVE it:** open `/admin` → Mod Tools → **send test alert**, and require
+      `configured: true`. A message must land in the channel within seconds. The drill answers for
+      ONE service — `/admin` is served by the API, so it proves the API can page (the worker-dark
+      alarm); the worker's own key is proven by its next §10.4 sweep, or by watching for the boot log. `/admin`'s Backups panel also carries an *alerts reach you* line, so an
       unset webhook is visible rather than discovered the night the ledger drifts. Treat the URL as a
       password — anyone who has it can post into that channel.
 - [ ] `CITY_WIRE_WEBHOOK_URL=<url>` — **THE CITY WIRE** (optional, organic marketing): a SEPARATE Discord
@@ -453,6 +458,11 @@ step 3 returned the true counts, step 4 came back `"ok": true` with every §10.4
       `total` goes UP by one. Ban does not touch these counts either; they read `characters`, not
       `accounts`. Subtracting by name is the remedy, not a workaround.
 - [ ] `GET /admin` (with the `x-mod-key`) → the ops dashboard; the §10.4 banner reads **OK** (drift-0).
+- [ ] **Press `send test alert` on /admin and require `configured: true`** (§5 explains why it is per
+      SERVICE — this proves the API's key, i.e. the alarm that pages when the worker is gone). A green
+      §10.4 banner proves the API is up, never that an alarm can leave the building. A 200 means "we
+      tried": `alertDrift` swallows a failed POST on purpose, so watch the channel, and check the
+      logs for `invariant webhook failed` if nothing lands.
 - [ ] `npm run invariants` (or `GET /v1/mod/invariants`) → every check `ok:true`.
 - [ ] Confirm the worker logged a tick (and, after 12h, a buyback).
 

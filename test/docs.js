@@ -3734,6 +3734,40 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
   console.log('✓ DEPLOY.md §8 states the smoke-debris window the code enforces, the asymmetry it warns about, and that no sweep exists');
 }
 
+// ─── INVARIANT_WEBHOOK_URL is not worker-only any more, and the runbook said it was ──────────────
+// §5 told the operator "**Must be set on the WORKER process** — every automatic alarm lives there".
+// That was true until `startWorkerWatch` shipped, and then it was false in the direction that leaves
+// an outage undetected: the API now alarms on its own timer and is the ONLY process that can page
+// when the worker is GONE, because a process cannot alarm on being dead. An operator following the
+// old sentence literally sets the key on the worker, every other alarm works, and exactly the one
+// covering a dark worker is mute — the shape that hid a 17h outage.
+//
+// The same false claim lived in render.yaml's comment and was corrected there; this is the sweep of
+// that class to its second instance. Guarded two-sided: the doc must say BOTH services, and must not
+// go back to saying worker-only. If the watchdog ever moves OFF the API the right response is to
+// rewrite this note, not to widen the check — and that move is separately caught by test/gates.js,
+// which fails if `startWorkerWatch` is defined in src/server.js and never called.
+{
+  const deploy = read('DEPLOY.md');
+  assert(!/Must be set on the WORKER process/.test(deploy),
+    'DEPLOY.md §5 says INVARIANT_WEBHOOK_URL must be set on the worker — since startWorkerWatch shipped '
+    + 'the API alarms too, and it is the only process that can page when the worker is dead. Setting it '
+    + 'worker-only leaves that alarm mute while every other alarm works.');
+  assert(/Set it on BOTH processes/.test(deploy),
+    'DEPLOY.md §5 must tell the operator to set INVARIANT_WEBHOOK_URL on BOTH processes');
+
+  // …and the drill the note sends them to must exist, on the service it names.
+  assert(/send test alert/.test(deploy) && /configured: true/.test(deploy),
+    'DEPLOY.md must tell the operator to run the /admin alarm drill and require `configured: true` — '
+    + 'a dashboard that renders proves the API is up, never that the alarm can leave the building');
+  assert(/\/v1\/mod\/alert\/test/.test(read('src/routes/modtools.js')),
+    'DEPLOY.md sends the operator to the alarm drill; POST /v1/mod/alert/test must exist');
+  assert(/alert\/test/.test(read('public/admin.html')),
+    'DEPLOY.md says the drill is a button on /admin — public/admin.html must call it');
+
+  console.log('✓ DEPLOY.md states the webhook belongs on BOTH services, and the drill it names exists');
+}
+
 // ═══ THE POSTED-CLAIM LEDGER — the figures that leave the building ════════════════════════════════
 // `MARKETING-POSTS.md` holds the drafts for Hacker News and the MCP registries. Its own header says
 // these are the surfaces where "a wrong sentence travels furthest", and HN in particular punishes an
