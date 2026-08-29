@@ -355,7 +355,7 @@
 | [docs/superpowers/specs/2026-08-26-grill-completion.md](../../docs/superpowers/specs/2026-08-26-grill-completion.md) | documentation | 861 | 2026-08-28 |
 | [docs/superpowers/specs/2026-08-27-authored-content-runtime-design.md](../../docs/superpowers/specs/2026-08-27-authored-content-runtime-design.md) | design | 281 | 2026-08-27 |
 | [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2717 | 2026-08-28 |
-| [GRAPH.md](../../GRAPH.md) | documentation | 273 | 2026-08-29 |
+| [GRAPH.md](../../GRAPH.md) | documentation | 295 | 2026-08-29 |
 | [GTM.md](../../GTM.md) | documentation | 295 | 2026-08-13 |
 | [HYPE.md](../../HYPE.md) | documentation | 134 | 2026-08-20 |
 | [knowledge/architecture.md](../../knowledge/architecture.md) | knowledge-base | 101 | 2026-08-27 |
@@ -458,6 +458,6 @@
 | [omerta-wallet-forged-stats-design.md](../../omerta-wallet-forged-stats-design.md) | design | 140 | 2026-08-21 |
 | [PRODUCT.md](../../PRODUCT.md) | documentation | 50 | 2026-08-24 |
 | [README.md](../../README.md) | documentation | 166 | 2026-08-27 |
-| [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 875 | 2026-08-21 |
+| [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 882 | 2026-08-29 |
 | [SPEC.md](../../SPEC.md) | documentation | 716 | 2026-08-28 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |

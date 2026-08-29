@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "9ced165206edcaf0e93ae46016bc9d121b68270d",
+  "sourceRevision": "487872a2591dd4605c7686bb722f696e256e5aed",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5595,
-    "edges": 24479,
+    "nodes": 5596,
+    "edges": 24490,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 53,
-      "Commit": 1240,
+      "Commit": 1241,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,18 +65,18 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 9646,
+      "CHANGED": 9655,
       "CONTAINS": 1846,
       "DECLARES": 53,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 193,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1240,
+      "HAS_COMMIT": 1241,
       "IMPLEMENTS": 124,
       "IMPORTS": 1628,
       "INHERITS": 12,
-      "REFERENCES": 2804,
+      "REFERENCES": 2805,
       "REPRESENTS": 891,
       "TESTS": 578,
       "TRACKS": 126,
@@ -13363,20 +13363,20 @@
       "path": "GRAPH.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 16136,
-      "lines": 273,
-      "version": "67cebbaf4a4e8788",
+      "bytes": 18075,
+      "lines": 295,
+      "version": "a74e273cb8e30c40",
       "text": true,
       "provenance": [
         {
           "file": "GRAPH.md",
           "line": 1,
-          "version": "67cebbaf4a4e8788"
+          "version": "a74e273cb8e30c40"
         }
       ],
-      "lastChangedAt": "2026-08-29T10:01:11+00:00",
+      "lastChangedAt": "2026-08-29T10:28:08+00:00",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "a6d0cc888ce0bd317f7061515a086db9a782c9c9"
+      "lastChangedCommit": "487872a2591dd4605c7686bb722f696e256e5aed"
     },
     {
       "key": "Artifact:GTM.md",
@@ -32723,20 +32723,20 @@
       "path": "SIGN-OFF.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 72143,
-      "lines": 875,
-      "version": "4730ab41f2655315",
+      "bytes": 72654,
+      "lines": 882,
+      "version": "d35f19b686387e3f",
       "text": true,
       "provenance": [
         {
           "file": "SIGN-OFF.md",
           "line": 1,
-          "version": "4730ab41f2655315"
+          "version": "d35f19b686387e3f"
         }
       ],
-      "lastChangedAt": "2026-08-21T18:28:23-04:00",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fa01f1c4e7da901fc2fb51080678fa743ec6ba3e"
+      "lastChangedAt": "2026-08-29T10:28:08+00:00",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "487872a2591dd4605c7686bb722f696e256e5aed"
     },
     {
       "key": "Artifact:skills-lock.json",
@@ -38680,20 +38680,20 @@
       "path": "test/graph.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 8696,
-      "lines": 113,
-      "version": "977e0376104a0411",
+      "bytes": 11823,
+      "lines": 156,
+      "version": "e827a2eef65b6c09",
       "text": true,
       "provenance": [
         {
           "file": "test/graph.js",
           "line": 1,
-          "version": "977e0376104a0411"
+          "version": "e827a2eef65b6c09"
         }
       ],
-      "lastChangedAt": "2026-08-27T01:22:04-04:00",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0524f3ce06d49e9409c54a15f8dd8de30444aa01"
+      "lastChangedAt": "2026-08-29T10:28:08+00:00",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "487872a2591dd4605c7686bb722f696e256e5aed"
     },
     {
       "key": "Artifact:test/growth.js",
@@ -41279,20 +41279,20 @@
       "path": "tools/graph.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 27996,
-      "lines": 466,
-      "version": "d0af85935f20a9b8",
+      "bytes": 39430,
+      "lines": 663,
+      "version": "8088b69f348d6f74",
       "text": true,
       "provenance": [
         {
           "file": "tools/graph.js",
           "line": 1,
-          "version": "d0af85935f20a9b8"
+          "version": "8088b69f348d6f74"
         }
       ],
-      "lastChangedAt": "2026-08-24T14:49:55-04:00",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dee7593a66b955d677656afab4516cb68edb918d"
+      "lastChangedAt": "2026-08-29T10:28:08+00:00",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "487872a2591dd4605c7686bb722f696e256e5aed"
     },
     {
       "key": "Artifact:tools/hype.js",
@@ -48762,6 +48762,22 @@
         {
           "commit": "48238abed0b399c329097e4d20c516c660a77ba1",
           "url": "https://github.com/OmertaDev/Omerta/commit/48238abed0b399c329097e4d20c516c660a77ba1"
+        }
+      ]
+    },
+    {
+      "key": "Commit:487872a2591dd4605c7686bb722f696e256e5aed",
+      "type": "Commit",
+      "id": "487872a2591dd4605c7686bb722f696e256e5aed",
+      "label": "feat(graph): increment 2 — open-findings, and the query's first run found the sheet contradicting itself",
+      "title": "feat(graph): increment 2 — open-findings, and the query's first run found the sheet contradicting itself",
+      "date": "2026-08-29T10:28:08+00:00",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/487872a2591dd4605c7686bb722f696e256e5aed",
+      "provenance": [
+        {
+          "commit": "487872a2591dd4605c7686bb722f696e256e5aed",
+          "url": "https://github.com/OmertaDev/Omerta/commit/487872a2591dd4605c7686bb722f696e256e5aed"
         }
       ]
     },
@@ -69109,13 +69125,13 @@
       "id": "GRAPH.md",
       "label": "GRAPH.md",
       "documentType": "documentation",
-      "lines": 273,
-      "version": "67cebbaf4a4e8788",
+      "lines": 295,
+      "version": "a74e273cb8e30c40",
       "provenance": [
         {
           "file": "GRAPH.md",
           "line": 1,
-          "version": "67cebbaf4a4e8788"
+          "version": "a74e273cb8e30c40"
         }
       ]
     },
@@ -70965,13 +70981,13 @@
       "id": "SIGN-OFF.md",
       "label": "SIGN-OFF.md",
       "documentType": "documentation",
-      "lines": 875,
-      "version": "4730ab41f2655315",
+      "lines": 882,
+      "version": "d35f19b686387e3f",
       "provenance": [
         {
           "file": "SIGN-OFF.md",
           "line": 1,
-          "version": "4730ab41f2655315"
+          "version": "d35f19b686387e3f"
         }
       ]
     },
@@ -75539,6 +75555,9 @@
           "commit": "45a5bb46c8900a565e0d86419e4dc0672a063012"
         },
         {
+          "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
+        },
+        {
           "commit": "5ee68c063ea851c97d273aaa2e426e017c88e677"
         },
         {
@@ -75699,6 +75718,9 @@
         },
         {
           "commit": "45a5bb46c8900a565e0d86419e4dc0672a063012"
+        },
+        {
+          "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
         },
         {
           "commit": "4a6682dcd42077048bc93ee02136352c854bf1fc"
@@ -75983,6 +76005,9 @@
           "commit": "45a5bb46c8900a565e0d86419e4dc0672a063012"
         },
         {
+          "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
+        },
+        {
           "commit": "4a6682dcd42077048bc93ee02136352c854bf1fc"
         },
         {
@@ -76263,6 +76288,9 @@
         },
         {
           "commit": "45a5bb46c8900a565e0d86419e4dc0672a063012"
+        },
+        {
+          "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
         },
         {
           "commit": "4a6682dcd42077048bc93ee02136352c854bf1fc"
@@ -76593,6 +76621,9 @@
         },
         {
           "commit": "45a5bb46c8900a565e0d86419e4dc0672a063012"
+        },
+        {
+          "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
         },
         {
           "commit": "4a6682dcd42077048bc93ee02136352c854bf1fc"
@@ -83009,7 +83040,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "9ced165206edcaf0e93ae46016bc9d121b68270d",
+      "revision": "487872a2591dd4605c7686bb722f696e256e5aed",
       "currentBranch": "claude/game-dev-roadmap-6jtsst",
       "defaultBranch": "main",
       "visibility": "public",
@@ -107231,13 +107262,13 @@
       "type": "TestSuite",
       "id": "test/graph.js",
       "label": "test/graph.js",
-      "lines": 113,
-      "version": "977e0376104a0411",
+      "lines": 156,
+      "version": "e827a2eef65b6c09",
       "provenance": [
         {
           "file": "test/graph.js",
           "line": 1,
-          "version": "977e0376104a0411"
+          "version": "e827a2eef65b6c09"
         }
       ]
     },
@@ -152729,6 +152760,78 @@
       "to": "Artifact:test/streak.js",
       "provenance": {
         "commit": "478faff2d00ff11bbabade265ed041337f570315"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:487872a2591dd4605c7686bb722f696e256e5aed",
+      "to": "Artifact:GRAPH.md",
+      "provenance": {
+        "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:487872a2591dd4605c7686bb722f696e256e5aed",
+      "to": "Artifact:SIGN-OFF.md",
+      "provenance": {
+        "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:487872a2591dd4605c7686bb722f696e256e5aed",
+      "to": "Artifact:test/graph.js",
+      "provenance": {
+        "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:487872a2591dd4605c7686bb722f696e256e5aed",
+      "to": "Artifact:tools/graph.js",
+      "provenance": {
+        "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:487872a2591dd4605c7686bb722f696e256e5aed",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:487872a2591dd4605c7686bb722f696e256e5aed",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:487872a2591dd4605c7686bb722f696e256e5aed",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:487872a2591dd4605c7686bb722f696e256e5aed",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:487872a2591dd4605c7686bb722f696e256e5aed",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
       }
     },
     {
@@ -242690,6 +242793,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:487872a2591dd4605c7686bb722f696e256e5aed",
+      "provenance": {
+        "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:48979b216972dbe5afa825d41caef32bb26a2439",
       "provenance": {
         "commit": "48979b216972dbe5afa825d41caef32bb26a2439"
@@ -286578,7 +286689,16 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "GRAPH.md",
-        "line": 270
+        "line": 292
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:GRAPH.md",
+      "to": "Artifact:test/graph.js",
+      "provenance": {
+        "file": "GRAPH.md",
+        "line": 265
       }
     },
     {
@@ -286623,7 +286743,7 @@
       "to": "Artifact:tools/knowledge.js",
       "provenance": {
         "file": "GRAPH.md",
-        "line": 263
+        "line": 285
       }
     },
     {
@@ -290043,7 +290163,7 @@
       "to": "Artifact:omerta-contracts/run-forge-test.sh",
       "provenance": {
         "file": "SIGN-OFF.md",
-        "line": 664
+        "line": 671
       }
     },
     {
@@ -290052,7 +290172,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "SIGN-OFF.md",
-        "line": 666
+        "line": 673
       }
     },
     {
@@ -290061,7 +290181,7 @@
       "to": "Artifact:src/walletforge.js",
       "provenance": {
         "file": "SIGN-OFF.md",
-        "line": 849
+        "line": 856
       }
     },
     {
@@ -290088,7 +290208,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "SIGN-OFF.md",
-        "line": 542
+        "line": 549
       }
     },
     {
@@ -290106,7 +290226,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "SIGN-OFF.md",
-        "line": 852
+        "line": 859
       }
     },
     {
@@ -290115,7 +290235,7 @@
       "to": "Artifact:test/made.js",
       "provenance": {
         "file": "SIGN-OFF.md",
-        "line": 337
+        "line": 344
       }
     },
     {
@@ -290133,7 +290253,7 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "file": "SIGN-OFF.md",
-        "line": 542
+        "line": 549
       }
     },
     {
@@ -290142,7 +290262,7 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "file": "SIGN-OFF.md",
-        "line": 543
+        "line": 550
       }
     },
     {
@@ -290151,7 +290271,7 @@
       "to": "Artifact:test/walletforge.js",
       "provenance": {
         "file": "SIGN-OFF.md",
-        "line": 853
+        "line": 860
       }
     },
     {

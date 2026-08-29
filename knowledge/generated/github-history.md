@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `9ced165206ed`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `487872a2591d`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1240 |
+| Commits in clone | 1241 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-29 — docs: the audit packet was a partial refresh disagreeing with itself in four places |
+| Latest commit | 2026-08-29 — feat(graph): increment 2 — open-findings, and the query's first run found the sheet contradicting itself |
 
 ## Commit authors
 
@@ -21,7 +21,7 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 431 |
-| Claude | 121 |
+| Claude | 122 |
 | CRVYDEV | 41 |
 
 ## Historical hotspots
@@ -43,10 +43,10 @@
 | [src/invariants.js](../../src/invariants.js) | 114 | yes |
 | [test/client.js](../../test/client.js) | 101 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
-| knowledge/generated/github-history.md | 91 | historical |
-| knowledge/generated/graph-summary.md | 91 | historical |
-| knowledge/generated/graph.json | 91 | historical |
-| knowledge/generated/inventory.md | 91 | historical |
+| knowledge/generated/github-history.md | 92 | historical |
+| knowledge/generated/graph-summary.md | 92 | historical |
+| knowledge/generated/graph.json | 92 | historical |
+| knowledge/generated/inventory.md | 92 | historical |
 | [test/social.js](../../test/social.js) | 84 | yes |
 | [public/wiki.html](../../public/wiki.html) | 80 | yes |
 | [test/growth.js](../../test/growth.js) | 79 | yes |
