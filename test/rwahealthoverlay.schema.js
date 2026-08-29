@@ -374,6 +374,18 @@ function productionClient(initial = new Map(), { failValidationFor = null } = {}
     'PostgreSQL internal char constraint types are cast to stable text before driver decoding');
   assert.match(catalogRead, /c\.confdeltype::text\s+AS\s+confdeltype/i,
     'PostgreSQL internal char delete actions are cast to stable text before driver decoding');
+  // The same rule one type over, and it was the forgotten sibling: `pg_attribute.attname` is type
+  // `name`, so ARRAY() over it is `name[]` (OID 1003) — a type node-pg ships no array parser for, so
+  // the column list arrives as the raw literal string "{a,b}" and the exact ordered comparison below
+  // sees `Array.isArray` false. The verifier then calls a correct constraint DRIFTED, and being
+  // fail-closed it takes the whole boot down with it. Asserted as ABSENCE of a bare projection rather
+  // than as two more instances, so a third column added here has to make the same decision.
+  assert.equal(/(?<!::text)\bSELECT\s+a\.attname\b(?!::text)/i.test(catalogRead), false,
+    'every pg_attribute.attname projection must be cast ::text — an uncast one decodes as an opaque '
+    + 'string, and a fail-closed verifier reads that as a drifted constraint and refuses to boot');
+  assert.equal((catalogRead.match(/a\.attname::text/gi) || []).length, 2,
+    'both ordered column-list projections must still be in view, or this check has stopped covering '
+    + 'the thing it was written for');
   assert.equal(client.statements.at(-1), 'COMMIT');
   const before = client.statements.length;
   const rerun = await migrateRwaHealthOverlayV2(client);

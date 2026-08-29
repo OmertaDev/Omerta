@@ -405,6 +405,14 @@ function h2MigrationError(detail) {
   return error;
 }
 
+// `pg_attribute.attname` is Postgres type `name`, so an ARRAY() over it comes back as `name[]`
+// (OID 1003) — and node-pg ships an array parser for `text[]` (1009) and not for that one, so a
+// perfectly valid column list arrives as the raw literal string "{a,b}" and `Array.isArray` is
+// false. The verifier then reports a DRIFTED constraint on a constraint that is exactly right, and
+// because it is fail-closed that takes the whole boot down: every real-Postgres harness opens a
+// database, so one unparsed array reads as five separate harness failures. The `::text` cast is the
+// same one its five sibling projections above already carry (`contype`, `confdeltype`,
+// `confrelid::regclass`) — this was the forgotten sibling, not a new rule.
 async function readH2ForeignKey(q, spec) {
   const rows = (await q.query(
     `SELECT c.conname,c.contype::text AS contype,c.convalidated,
@@ -412,14 +420,14 @@ async function readH2ForeignKey(q, spec) {
             pg_get_constraintdef(c.oid,true) AS definition,
             c.confrelid::regclass::text AS referenced_table,
             ARRAY(
-              SELECT a.attname
+              SELECT a.attname::text
                 FROM unnest(c.conkey) WITH ORDINALITY AS key_column(attnum,ordinality)
                 JOIN pg_attribute a
                   ON a.attrelid=c.conrelid AND a.attnum=key_column.attnum
                ORDER BY key_column.ordinality
             ) AS source_columns,
             ARRAY(
-              SELECT a.attname
+              SELECT a.attname::text
                 FROM unnest(c.confkey) WITH ORDINALITY AS key_column(attnum,ordinality)
                 JOIN pg_attribute a
                   ON a.attrelid=c.confrelid AND a.attnum=key_column.attnum
