@@ -3672,6 +3672,50 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
   console.log('✓ GRAPH.md argues from measured figures, not remembered ones');
 }
 
+// ═══ THE SMOKE-DEBRIS NOTE — a runbook line that makes two claims about code ══════════════════════
+// DEPLOY.md §8's smoke check creates a real player on the live box, once per deploy, forever. The
+// launch rehearsal found 10 of 12 entries on `/v1/live` were dead level-1 accounts from old smoke
+// runs, and the fix at the time was a recency gate on the player-facing boards. That closed the
+// board half and left the OTHER half unstated: the ops overview's headline counts have no recency
+// gate, so smoke debris inflates the founder's own player figure permanently.
+//
+// The note now says both halves — and a note is prose, which rots. Two claims in it are checkable
+// against code, so they are checked, and the guard is deliberately two-sided: it fails when the
+// cited window drifts, AND it fails if somebody gates the overview, because then the warning is
+// telling a reader a number is inflated when it no longer is. The correct response to that failure
+// is to DELETE the warning, not to widen the check.
+{
+  const R = await import('../src/rules.js');
+  const deploy = read('DEPLOY.md');
+
+  const cited = deploy.match(/ages off the player-facing boards after `DISCOVERY\.SEEN_DAYS` \((\d+)\)/);
+  assert(cited, 'DEPLOY.md §8 must state the window smoke debris ages off the boards after, citing DISCOVERY.SEEN_DAYS');
+  assert.equal(Number(cited[1]), R.DISCOVERY.SEEN_DAYS,
+    `DEPLOY.md §8 quotes DISCOVERY.SEEN_DAYS as ${cited[1]}; the live lever is ${R.DISCOVERY.SEEN_DAYS}`);
+
+  // Half one: the boards really are gated, so "debris self-clears there and needs no sweep" is true.
+  // Asserted at the CALL SITE, not at the lever — a helper that exists and is never called gates
+  // nothing, which is exactly the shape the rehearsal found.
+  for (const f of ['src/collision.js', 'src/discovery.js'])
+    assert(/seenSince\(\)/.test(read(f)),
+      `${f} must apply seenSince() — DEPLOY.md §8 tells the operator smoke debris ages off these boards`);
+
+  // Half two: the overview's headline counts really are UNGATED, so "counts permanently" is true.
+  const ops = read('src/ops.js');
+  // BOTH quote styles, and that is load-bearing rather than tidy: a gated count MUST be
+  // double-quoted, because the SQL then carries an interval literal with a quote inside it. A
+  // single-quote-only reader loses the gated row from the corpus entirely, so the mutation that
+  // matters fails at the COUNT assertion instead of at the one that names what changed — measured.
+  const totals = [...ops.matchAll(/\b(total|alive|dead):\s*await one\((['"])((?:(?!\2).)+)\2/g)].map((m) => [m[1], m[3]]);
+  assert.equal(totals.length, 3, `expected the three headline character counts in src/ops.js, saw ${totals.length}`);
+  const gated = totals.filter(([, q]) => /last_accrued_at/.test(q)).map(([k]) => k);
+  assert.equal(gated.length, 0,
+    `src/ops.js now gates ${gated.join('/')} on recency — DEPLOY.md §8's warning that smoke characters `
+    + 'count in the headline figure permanently is no longer true. Delete the warning rather than this check.');
+
+  console.log('✓ DEPLOY.md §8 states the smoke-debris window the code enforces, and the asymmetry it warns about');
+}
+
 // ═══ THE POSTED-CLAIM LEDGER — the figures that leave the building ════════════════════════════════
 // `MARKETING-POSTS.md` holds the drafts for Hacker News and the MCP registries. Its own header says
 // these are the surfaces where "a wrong sentence travels furthest", and HN in particular punishes an

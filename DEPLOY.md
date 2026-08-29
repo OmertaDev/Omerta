@@ -437,6 +437,16 @@ step 3 returned the true counts, step 4 came back `"ok": true` with every §10.4
 - [ ] `GET /v1/session` → 200 (server up).
 - [ ] Boot log shows `[db] Postgres ready` (NOT `[db] pg-mem …` — that means `DATABASE_URL` was missing).
 - [ ] `POST /v1/auth/guest` → token; `POST /v1/character {name}` → 200; `POST /v1/crimes/pick` → a result.
+      **Name it `smoke <date>` and know that it PERSISTS** — this line creates a real player on the
+      live box, once per deploy, forever. Measured 2026-08-29, the two consequences:
+      it ages off the player-facing boards after `DISCOVERY.SEEN_DAYS` (30) — `/v1/live` and the
+      ROLODEX gate on `last_accrued_at`, so debris self-clears there and needs no sweep — but
+      `/v1/mod/overview`'s `total`/`alive`/`dead` carry **no recency gate**, so every smoke character
+      counts in YOUR OWN headline player figure permanently. `active24h` is gated and is the honest
+      one to read. The launch rehearsal found 10 of 12 entries on `/v1/live` were dead level-1
+      accounts from old smoke runs; the recency gate closed the board half, and this note closes the
+      other. If a clean count matters (a launch report, a funnel figure), subtract the smoke
+      characters by name — they are the only ones this checklist creates.
 - [ ] `GET /admin` (with the `x-mod-key`) → the ops dashboard; the §10.4 banner reads **OK** (drift-0).
 - [ ] `npm run invariants` (or `GET /v1/mod/invariants`) → every check `ok:true`.
 - [ ] Confirm the worker logged a tick (and, after 12h, a buyback).
