@@ -374,6 +374,8 @@ function productionClient(initial = new Map(), { failValidationFor = null } = {}
     'PostgreSQL internal char constraint types are cast to stable text before driver decoding');
   assert.match(catalogRead, /c\.confdeltype::text\s+AS\s+confdeltype/i,
     'PostgreSQL internal char delete actions are cast to stable text before driver decoding');
+  assert.equal((catalogRead.match(/a\.attname::text/gi) ?? []).length, 2,
+    'PostgreSQL name[] constraint columns are cast to stable text[] before driver decoding');
   assert.equal(client.statements.at(-1), 'COMMIT');
   const before = client.statements.length;
   const rerun = await migrateRwaHealthOverlayV2(client);

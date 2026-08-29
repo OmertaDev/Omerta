@@ -412,14 +412,14 @@ async function readH2ForeignKey(q, spec) {
             pg_get_constraintdef(c.oid,true) AS definition,
             c.confrelid::regclass::text AS referenced_table,
             ARRAY(
-              SELECT a.attname
+              SELECT a.attname::text
                 FROM unnest(c.conkey) WITH ORDINALITY AS key_column(attnum,ordinality)
                 JOIN pg_attribute a
                   ON a.attrelid=c.conrelid AND a.attnum=key_column.attnum
                ORDER BY key_column.ordinality
             ) AS source_columns,
             ARRAY(
-              SELECT a.attname
+              SELECT a.attname::text
                 FROM unnest(c.confkey) WITH ORDINALITY AS key_column(attnum,ordinality)
                 JOIN pg_attribute a
                   ON a.attrelid=c.confrelid AND a.attnum=key_column.attnum
