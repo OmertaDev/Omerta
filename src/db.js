@@ -439,14 +439,22 @@ function exactStringArray(value, expected) {
 }
 
 function verifyH2ForeignKey(row, spec, { requireValidated }) {
-  if (!row || row.contype !== 'f'
-      || String(row.referenced_table).replace(/^public\./, '') !== H2_FINALIZED_TABLE
-      || row.confdeltype !== 'r'
-      || !exactStringArray(row.source_columns, spec.source)
-      || !exactStringArray(row.referenced_columns, spec.referenced)
-      || canonicalConstraintDefinition(row.definition)
-        !== canonicalConstraintDefinition(h2ForeignKeyDefinition(spec))) {
-    throw h2MigrationError(`drifted constraint ${spec.name}`);
+  const drift = [];
+  if (!row) {
+    drift.push('missing');
+  } else {
+    if (row.contype !== 'f') drift.push('type');
+    if (String(row.referenced_table).replace(/^public\./, '') !== H2_FINALIZED_TABLE) {
+      drift.push('referenced_table');
+    }
+    if (row.confdeltype !== 'r') drift.push('delete_action');
+    if (!exactStringArray(row.source_columns, spec.source)) drift.push('source_columns');
+    if (!exactStringArray(row.referenced_columns, spec.referenced)) drift.push('referenced_columns');
+    if (canonicalConstraintDefinition(row.definition)
+        !== canonicalConstraintDefinition(h2ForeignKeyDefinition(spec))) drift.push('definition');
+  }
+  if (drift.length > 0) {
+    throw h2MigrationError(`drifted constraint ${spec.name} fields=${drift.join(',')}`);
   }
   if (requireValidated && row.convalidated !== true) {
     throw h2MigrationError(`unvalidated constraint ${spec.name}`);

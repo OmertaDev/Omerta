@@ -404,6 +404,18 @@ for (const [label, override] of [
 
 {
   const client = productionClient(new Map([
+    [FOREIGN_KEYS[0].name, metadata(FOREIGN_KEYS[0], {
+      source_columns: [...FOREIGN_KEYS[0].source].reverse(),
+      referenced_columns: [...FOREIGN_KEYS[0].referenced].reverse(),
+    })],
+  ]));
+  await assert.rejects(migrateRwaHealthOverlayV2(client), (error) => (
+    error.message.includes('fields=source_columns,referenced_columns')
+  ), 'production failures name only the mismatched metadata fields without leaking tuple values');
+}
+
+{
+  const client = productionClient(new Map([
     [FOREIGN_KEYS[0].name, metadata(FOREIGN_KEYS[0], { convalidated: false })],
   ]));
   await assert.rejects(migrateRwaHealthOverlayV2(client), (error) => (
