@@ -666,6 +666,48 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
     + 'configured in production), so stating it in the present tense is a promise the product cannot '
     + `keep:\n  ${unqualified.join('\n  ')}`);
 
+  // ── THE SAME RULE, ON THE DOCS THAT BECOME THE COPY ────────────────────────────────────────────
+  // The list above is the LIVE pages. But launch-day copy is drafted in the marketing docs and then
+  // pasted verbatim into a post, so those reach further than any page and were covered by nothing —
+  // the recorded shape of a class applied where it was discovered and never swept to its edge.
+  // Found 2026-08-29 by running the guard's own predicate over them: docs/LAUNCH-TWEETS.md, the
+  // launch-day thread, said "Play well enough, cash out on-chain. For real." with no caveat anywhere
+  // in the file, while every sibling doc states the rule it was breaking (MARKETING-COPY.md §0:
+  // never "cash out today"; HYPE.md: the closer states plainly that extraction opens at launch).
+  //
+  // NOTE the scope split, deliberately: only the extraction TENSE is checked here. The earnings
+  // framing in these files is founder-directed (2026-08-14, recorded in HYPE.md § Copy and
+  // tools/hype.js) and is NOT this guard's business — what is checkable is whether a doc describing
+  // the rail also says the rail is shut.
+  //
+  // The predicates are the marketing corpus's OWN, not the live pages' above, and that is the whole
+  // reason this check works: copy says "cash out" and "the on-chain exit" where a technical page says
+  // "extraction" or names the route, so the page vocabulary run over these files matches almost
+  // nothing and the check reads clean over a file carrying the defect. Measured: with the page
+  // predicates the reverted LAUNCH-TWEETS line scores DESCRIBES=false, i.e. it would have been waved
+  // through by the very guard written for it. Widening the PAGE predicates instead was rejected —
+  // that loosens a passing check on seven live surfaces to fix a different corpus.
+  const SAYS_EXTRACTION = /cash(ing)? out|cash-out|on-chain (exit|withdrawal|extraction)|extract\w* (real |your |earned )?\$?OMR|withdraw\w* \$?OMR|POST \/v1\/withdraw/i;
+  const SAYS_SHUT = new RegExp(`${OPENS_THE_RAIL.source}|not open|opens at launch|audit-gated`, 'i');
+  const MARKETING_DOCS = ['MARKETING.md', 'MARKETING-COPY.md', 'MARKETING-POSTS.md', 'HYPE.md',
+    'LAUNCH.md', 'LAUNCH-NIGHT.md', 'LAUNCH-READINESS.md', 'docs/LAUNCH-TWEETS.md',
+    'docs/OMR-MARKETING-PACK.md', 'docs/OMR-MACHINE-CAMPAIGN.md', 'docs/GAMEPLAY-MARKETING-PACK.md'];
+  // catalogue-or-declare: a marketing doc that exists and is not listed is one nobody is checking.
+  const onDisk = [...fs.readdirSync('.').filter((f) => /^(MARKETING|HYPE|LAUNCH)[A-Z-]*\.md$/.test(f)),
+    ...fs.readdirSync('docs').filter((f) => /MARKETING|CAMPAIGN|TWEETS/.test(f)).map((f) => `docs/${f}`)];
+  const unlisted = onDisk.filter((f) => !MARKETING_DOCS.includes(f));
+  assert.deepEqual(unlisted, [], 'a marketing doc is not in MARKETING_DOCS, so the extraction-tense '
+    + `rule is not being applied to copy that ships publicly:\n  ${unlisted.join('\n  ')}`);
+  // …and the floor, because a corpus that has stopped matching reads exactly like a clean sweep.
+  const describing = MARKETING_DOCS.filter((f) => SAYS_EXTRACTION.test(read(f)));
+  assert(describing.length >= 4, 'the extraction-tense rule now governs only '
+    + `${describing.length} marketing doc(s) — the predicate or the corpus has stopped matching, so `
+    + 'this is vacuous rather than clean');
+  const loose = describing.filter((f) => !SAYS_SHUT.test(read(f)));
+  assert.deepEqual(loose, [], 'a marketing doc describes on-chain extraction without saying anywhere '
+    + 'that the rail is not open yet. This copy gets pasted into public posts verbatim, so it travels '
+    + `further than any page:\n  ${loose.join('\n  ')}`);
+
   // The caveat must also live next to the decision, not only somewhere at the bottom of a long page.
   // These were the three conversion-copy regressions found in the 2026-08-23 public-surface pass:
   // a live API pitch promising "real value", a gameplay intro saying $OMR "becomes real", and an
@@ -831,6 +873,31 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
       `omerta-contracts/test/vendor/${f} is gone — stock-e2e proves the backend's token-bound-account `
       + 'address against the REAL registry; without it the prover would be checking our arithmetic '
       + 'against our own arithmetic.');
+}
+
+// ── THE WORKFLOW SCRIPT LEDGER ──────────────────────────────────────────────────
+// The block above asserts CI still INVOKES each harness. It cannot see the other half: an invocation
+// naming a script package.json does not define. `npm run <missing>` exits non-zero with
+// "Missing script", so the step fails for a reason that has nothing to do with the code under test —
+// which is exactly how ci.yml came to run `npm run test:stockcatalogv2:postgres` against a
+// package.json that had no such key, turning a real-PostgreSQL job red on every branch at once.
+// Catalogue rather than spot-check: every `npm run` any workflow issues must resolve.
+{
+  const scripts = JSON.parse(read('package.json')).scripts ?? {};
+  const invocations = [];
+  for (const file of fs.readdirSync('.github/workflows').filter((f) => /\.ya?ml$/.test(f))) {
+    for (const m of read(`.github/workflows/${file}`).matchAll(/npm run ([a-z0-9:_-]+)/gi))
+      invocations.push({ file, script: m[1] });
+  }
+  // anti-vacuity: an extractor that has stopped reading the workflows passes clean over a tree where
+  // every one of these is broken.
+  assert(invocations.length >= 10, 'THE WORKFLOW SCRIPT LEDGER read only '
+    + `${invocations.length} \`npm run\` invocation(s) across .github/workflows — the workflows or the `
+    + 'pattern have moved, so this check is measuring nothing.');
+  const missing = invocations.filter((i) => !(i.script in scripts))
+    .map((i) => `.github/workflows/${i.file} runs \`npm run ${i.script}\`, which package.json does not define`);
+  assert.deepEqual(missing, [], 'a workflow invokes a script that does not exist, so that step fails '
+    + `with "Missing script" whatever the code does:\n  ${missing.join('\n  ')}`);
 }
 
 // ── and neither does a gate that fails on its own dependency list ────────────────────────────────

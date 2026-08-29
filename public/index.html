@@ -827,6 +827,17 @@
      autoplay). Poster and sources attach only near the viewport; phones receive the 720p encode. */
   .landing .band video { display: block; width: 100%; max-width: 820px; aspect-ratio: 16/9; margin: 14px auto 2px;
     border: 1px solid var(--line); border-radius: var(--r-lg); background: #000; box-shadow: var(--shadow); }
+  /* THE FILMS DECK. Same click-to-play contract as the money map — preload="none", with the poster
+     and the source attached only near the viewport — so a visitor who never presses play pays for a
+     poster and nothing else (tools/pageweight.js measures the cold load, and it must not move). The
+     posters deliberately REUSE plates this page already serves rather than adding new assets. */
+  .landing .films { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    max-width: 980px; margin: 16px auto 2px; text-align: left; }
+  .landing .films figure { margin: 0; }
+  .landing .band .films video { max-width: 100%; margin: 0 0 8px; }
+  .landing .films figcaption { color: var(--dim); font-family: var(--mono);
+    font-size: var(--om-type-body); line-height: 1.55; }
+  .landing .films figcaption b { color: var(--fg); }
   .landing .omr-preview { max-width: 920px; margin: 22px auto 2px; text-align: left; }
   .landing .omr-preview a { display: block; background: var(--panel2); border: 1px solid color-mix(in srgb, var(--neon) 45%, var(--line));
     border-radius: var(--r-md); overflow: hidden; box-shadow: var(--shadow); }
@@ -1261,6 +1272,27 @@
     </aside>
   </section>
 
+  <section class="band band--films" id="films" aria-labelledby="films-title">
+    <div class="artifact-kicker">Watch the city</div>
+    <h2 id="films-title">THREE CUTS. NOTHING PLAYS UNTIL YOU PRESS IT.</h2>
+    <p>Short films made from the game's own art library. The narrated money map sits further down, next
+      to the routing it explains, and the $OMR flywheel cut sits with it.</p>
+    <div class="films">
+      <figure>
+        <video controls playsinline preload="none" data-video-poster="/art/hero-poster-960.webp" data-video-poster-mobile="/art/hero-poster-640.webp" aria-label="Play the OMERTA trailer"><source data-src="/art/hype.mp4" type="video/mp4">Your browser cannot play this film. <a href="/art/hype.mp4">Download the trailer.</a></video>
+        <figcaption><b>THE TRAILER</b> · 13 seconds · the city, the stakes, and what one street is worth.</figcaption>
+      </figure>
+      <figure>
+        <video controls playsinline preload="none" data-video-poster="/art/landing-break-960.webp" data-video-poster-mobile="/art/landing-break-640.webp" aria-label="Play the jobs film"><source data-src="/art/hype-streets.mp4" type="video/mp4">Your browser cannot play this film. <a href="/art/hype-streets.mp4">Download the jobs film.</a></video>
+        <figcaption><b>THE JOBS</b> · 12 seconds · hits, heists, arson, and stolen cars.</figcaption>
+      </figure>
+      <figure>
+        <video controls playsinline preload="none" data-video-poster="/art/interior-scores-1024.webp" data-video-poster-mobile="/art/interior-scores-640.webp" aria-label="Play the risk-to-earn film"><source data-src="/art/hype-earn.mp4" type="video/mp4">Your browser cannot play this film. <a href="/art/hype-earn.mp4">Download the risk film.</a></video>
+        <figcaption><b>RISK TO EARN</b> · 13 seconds · what you can build, and what it costs to lose it. The on-chain exit is built and not open yet.</figcaption>
+      </figure>
+    </div>
+  </section>
+
   <h2 class="visually-hidden">The city at a glance</h2>
   <div class="pill-grid">
     <div class="pill"><picture class="landing-art" aria-hidden="true"><source type="image/webp" sizes="(max-width: 760px) calc(100vw - 56px), 480px" data-srcset="/art/district-cathedral-480.webp 480w, /art/district-cathedral-960.webp 960w"><img data-lazy-src="/art/district-cathedral.jpg" width="1024" height="576" loading="lazy" decoding="async" alt=""></picture><h3>The city moves without you</h3><p>Daily events, economic weather, day and night, RICO cases, and rival cartels keep changing the odds.</p></div>
@@ -1365,6 +1397,13 @@
       </a>
       <figcaption>VALUE FLOW / 03 OF 06 · FOUNDER-SIGNED GO-LIVE ROUTING · CODE-ANCHORED, STATE-LABELED · <a href="/wiki#economy">OPEN ALL SIX RESEARCH SHEETS IN THE CODEX →</a></figcaption>
     </figure>
+    <div class="films" aria-label="The $OMR flywheel film">
+      <figure>
+        <video controls playsinline preload="none" data-video-poster="/art/omr-03-money-router-640.webp" data-video-poster-mobile="/art/omr-03-money-router-640.webp" aria-label="Play the fifteen-second OMR flywheel film"><source data-src="/art/hype-flywheel.mp4" type="video/mp4">Your browser cannot play this film. <a href="/art/hype-flywheel.mp4">Download the flywheel film.</a></video>
+        <figcaption><b>THE FLYWHEEL</b> · 15 seconds · the same routing above, in fifteen seconds. Mechanism only — no price, yield, or return is stated or implied.</figcaption>
+      </figure>
+    </div>
+
     <div class="omr-sheet-links" aria-label="Related OMR research sheets">
       <a href="/art/omr-05-ohm-contrast.png?v=c7d637922bd1">MODIFIED OHM MODEL: compare the legacy reflexive loop with OMR's separated rails →</a>
       <a href="/art/omr-04-reserve-rwa.png?v=0b64dcd1f9f3">RESERVE + RWA: trace backing, allocation, and delivery conservation walls →</a>
