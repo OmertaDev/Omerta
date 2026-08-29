@@ -6064,6 +6064,8 @@ const ACTFNS = new Map();   // route path → the handler names its registration
     assert.equal(r.code, 200, `WAVE 65 could not drive ${url} (${JSON.stringify(r.body)})`);
     described++; const line = String(describeFn(r.body, 200)); said.set(url, line); return { r, line };
   };
+  // the same drive without the 200 assertion, for a precondition an earlier row may already have met
+  const drive65Raw = async (url, payload) => inject('POST', url, t65, payload || null);
   const gymDriven = await drive65('/v1/train/muscle');
   assert(gymDriven.r.body.nextTrainSeconds > 0, 'the gym must SEND its cooldown, or the line has nothing to read');
   assert(/covers the disciplines/.test(gymDriven.line),
@@ -6242,6 +6244,56 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   if (dice70.r.body.point) assert(new RegExp(`point ${dice70.r.body.point}`).test(dice70.line),
     `craps must name the point it was chasing: ${dice70.line}`);
 
+  // ── WAVE 71: THE COMPOUND'S NAME, AND THE MAN WHO TAKES THE POST ─────────────────────────────
+  // Two more of wave 69's class, each with a SIBLING one function away that got it right. NAMING
+  // the compound burns 18 $OMR and read "the place has a name now — X": the purchase named and the
+  // figure left off, while unlockFeature and upgradeEstate both state theirs. The line was also
+  // held together by a KEY COUNT — a guard that breaks the moment a reply grows a field, which is
+  // exactly what a price fix does — so the reply now names its SYSTEM (`compound`) and the branch
+  // keys on that. ASSIGNING a specialist read "done." while its own stand-down read a full
+  // sentence, with the fortitude bonus riding the reply the whole time.
+  await app.pool.query("UPDATE account_persistent SET omr=5000 WHERE account_id=(SELECT account_id FROM characters WHERE id=$1)", [id65]);
+  const up71 = await drive65('/v1/estate/upgrade');
+  assert(up71.r.code === 200, `wave 71 fixture: no compound to name (${JSON.stringify(up71.r.body).slice(0, 90)})`);
+  const nm71 = await drive65('/v1/estate/name', { name: 'The Wave House' });
+  assert(nm71.r.code === 200, `wave 71: naming refused (${JSON.stringify(nm71.r.body).slice(0, 90)})`);
+  assert(nm71.r.body.compound === 'named', 'the reply must NAME ITS SYSTEM — a bare {ok,name} is the shape half the game returns');
+  assert(nm71.r.body.omr > 0, 'the reply must SEND the burn it took — the client has no estate catalog to price it from');
+  assert(new RegExp(`${nm71.r.body.omr.toLocaleString('en-US')} \\$OMR`).test(nm71.line),
+    `naming the place must name the $OMR it burned: ${nm71.line}`);
+  assert(/The Wave House/.test(nm71.line), `naming the place must still name it: ${nm71.line}`);
+
+  // the specialist: the shared fixture is already in a family by this point (an earlier row founds
+  // one), so it is READ rather than founded — founding again refuses `in_gang` and the whole block
+  // would be skipped, which reads on the summary line exactly like a covered action.
+  const gid71 = (await app.pool.query('SELECT gang_id FROM gang_members WHERE character_id=$1', [id65])).rows[0]?.gang_id;
+  assert(gid71, 'wave 71 fixture: the driver must be in a family to post a specialist');
+  // a district NO earlier row has already put an operation on — an `exists` refusal there would skip
+  // the whole block, which reads on the summary line exactly like a covered action.
+  const d71 = (await app.pool.query(
+    "SELECT id FROM districts WHERE id NOT IN (SELECT district_id FROM territory_rackets) LIMIT 1")).rows[0]?.id;
+  assert(d71, 'wave 71 fixture: no free district to run an operation on');
+  await app.pool.query('UPDATE districts SET holder_gang=$1, npc_holder=NULL, garrison=1000 WHERE id=$2', [gid71, d71]);
+  await app.pool.query('UPDATE gangs SET treasury=50000000 WHERE id=$1', [gid71]);
+  await app.pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [id65, d71]);
+  const est71 = await drive65Raw(`/v1/territory/${d71}/establish`, { kind: 'numbers' });
+  assert(est71.code === 200, `wave 71 fixture: no operation (${JSON.stringify(est71.body).slice(0, 120)})`);
+  const sp71 = await drive65(`/v1/territory/${d71}/specialist`, { memberId: id65 });
+  assert(sp71.r.code === 200, `wave 71: assign refused (${JSON.stringify(sp71.r.body).slice(0, 90)})`);
+  assert(sp71.r.body.fortBonus !== undefined && sp71.r.body.specialist,
+    'the assign must SEND the man and the bonus it just bought');
+  assert(new RegExp(`\\+${sp71.r.body.fortBonus} fortitude`).test(sp71.line),
+    `posting a specialist must name what the post buys: ${sp71.line}`);
+  assert(sp71.line.includes(sp71.r.body.specialist), `it must name the man who took the post: ${sp71.line}`);
+  // the article, SYNTHETIC on purpose — the driven half takes whichever district still has no
+  // operation on it, and only `docks` and `neon` carry an article at all, so on `Old Foundry` a
+  // doubling produces "the Old Foundry" and this assertion CANNOT FIRE. A check that cannot fail
+  // reads exactly like a clean bill of health (a mutation restoring the doubling survived it), so
+  // it is pinned on the one shape where the class is visible — the wave-64 stand-down's own idiom.
+  const spDock = describeFn({ ok: true, specialist: 'Sal Vitto', district: 'docks', fortBonus: 4 }, 200);
+  assert(/The Docks/.test(spDock), `the fixture must resolve the district to its NAME: ${spDock}`);
+  assert(!/the The /i.test(spDock), `a district name already carries its article: ${spDock}`);
+
 
 }
 
@@ -6350,6 +6402,7 @@ await app.close();
   console.log('  ✓ wave 68: the hired gun — a fee that burned whether or not anybody died, and never said so');
   console.log('  ✓ wave 69: six purchases that named what they bought and left the price off — four of the five $OMR burns in one file, plus founding a family and the envelope');
   console.log('  ✓ wave 70: the den — a stake taken at the deal and never named, and a whole pass line reported as one net figure');
+  console.log('  ✓ wave 71: the compound\'s name and the man who takes the post — an $OMR burn with no price, and a post its own stand-down could describe');
 }
 
 console.log(`✅ client wiring test passed — across the console AND /admin: of ${refs.size} routes they can ` +

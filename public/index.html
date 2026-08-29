@@ -2784,8 +2784,12 @@
     if (body && body.minted && !body.alreadyMinted) return '\u{1F396} you\'re MADE. The extraction rail is open to you now.';
     if (body && body.ok && body.listed === false && body.street)
       return `\u{1F3F7} ${txt(body.street)} is off the market — the deed stays yours`;
-    if (body && body.ok && body.name && body.estate === undefined && body.district === undefined && body.price === undefined && body.tier === undefined && Object.keys(body).filter((k) => k !== 'events' && k !== 'ok' && k !== 'character' && k !== 'owned').length === 1)
-      return `the place has a name now — ${txt(body.name)}`;
+    // keyed on the server's own system marker rather than on a key COUNT: the count guard broke the
+    // moment the reply grew its price, and an 18 $OMR burn that named no figure was the bare-price
+    // class inverted — the purchase named and the money left off, on the premium currency.
+    if (body && body.ok && body.compound === 'named')
+      return `the place has a name now — ${txt(body.name)}`
+        + (body.omr ? ` — ${fmt(body.omr)} $OMR, ${fmt(body.spent)} sunk into it all told` : '');
     if (!body || typeof body !== 'object') return code < 400 ? 'done.' : 'no dice.';
     if (code >= 400) { const e = body.error; return body.message || (e && ERRMAP[e]) || (e ? e.replace(/_/g, ' ') : `the city said no (${code})`); }
     const bits = [];
@@ -3612,6 +3616,11 @@
       bits.push(body.full
         ? `\u{1FA7A} the Doc signs you out whole — $${fmt(body.cost)}, and you walk out at full strength`
         : `\u{1FA7A} discharged early — $${fmt(body.cost)}${body.hospSeconds > 0 ? `, ${minsTxt(body.hospSeconds)} still on the chart` : ', and the bed is behind you'}`);
+    // ASSIGNING one read "done." while the stand-down three lines down read a full sentence — the
+    // forgotten-sibling shape, and the reply carried the fortitude bonus the whole time.
+    if (body.specialist && body.district && body.fortBonus !== undefined)
+      bits.push(`\u{1F454} ${txt(body.specialist)} takes over at ${$dist(body.district)}`
+        + ` — +${body.fortBonus} fortitude against a rival raid, and the Bureau's heat grows slower there`);
     if (body.specialist !== undefined && body.district && body.fortBonus === undefined)
       bits.push(`\u{1F454} ${txt(body.specialist || 'your specialist')} stands down at ${$dist(body.district)} — free for another post, and that one runs unwatched`);
     // the peek pierces anonymity on every pot on your own head, and said nothing about what it found.
