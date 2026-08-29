@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "4f42a7d8b4ca1f690f89e5d657196c0e377dcf72",
+  "sourceRevision": "d29dee6744f22dd650505bd243d9607cdf7fa534",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5622,
-    "edges": 24647,
+    "nodes": 5627,
+    "edges": 24666,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 56,
-      "Commit": 1264,
+      "Commit": 1269,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,18 +65,18 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 9752,
+      "CHANGED": 9765,
       "CONTAINS": 1846,
       "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1264,
+      "HAS_COMMIT": 1269,
       "IMPLEMENTS": 124,
       "IMPORTS": 1633,
       "INHERITS": 12,
-      "REFERENCES": 2818,
+      "REFERENCES": 2819,
       "REPRESENTS": 891,
       "TESTS": 583,
       "TRACKS": 126,
@@ -11661,20 +11661,20 @@
       "path": "DEPLOY.md",
       "kind": "operations",
       "extension": ".md",
-      "bytes": 42049,
-      "lines": 553,
-      "version": "a703331cd7541c62",
+      "bytes": 43617,
+      "lines": 568,
+      "version": "adf5346460f96645",
       "text": true,
       "provenance": [
         {
           "file": "DEPLOY.md",
           "line": 1,
-          "version": "a703331cd7541c62"
+          "version": "adf5346460f96645"
         }
       ],
-      "lastChangedAt": "2026-08-29T14:18:11.000Z",
+      "lastChangedAt": "2026-08-29T19:44:28.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "909c119e03b9a3b091d2988bf48085ea44c48b68"
+      "lastChangedCommit": "fa4f8e2b006c5b3ac216297396fb125e5f1bae49"
     },
     {
       "key": "Artifact:deploy/fee-splits.env",
@@ -20027,20 +20027,20 @@
       "path": "public/admin.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 99153,
+      "bytes": 99212,
       "lines": 1150,
-      "version": "030f69b633cbdfb9",
+      "version": "878ff3e6301c2b1e",
       "text": true,
       "provenance": [
         {
           "file": "public/admin.html",
           "line": 1,
-          "version": "030f69b633cbdfb9"
+          "version": "878ff3e6301c2b1e"
         }
       ],
-      "lastChangedAt": "2026-08-27T08:25:58.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "18738f0238abac2204c0d201ea4ce93acefcd781"
+      "lastChangedAt": "2026-08-29T19:44:28.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "fa4f8e2b006c5b3ac216297396fb125e5f1bae49"
     },
     {
       "key": "Artifact:public/apple-touch-icon.png",
@@ -32771,18 +32771,18 @@
       "extension": ".md",
       "bytes": 52606,
       "lines": 716,
-      "version": "f6ad984320943eb4",
+      "version": "c91def7ac8d37e56",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "f6ad984320943eb4"
+          "version": "c91def7ac8d37e56"
         }
       ],
-      "lastChangedAt": "2026-08-29T14:06:14.000Z",
+      "lastChangedAt": "2026-08-29T19:44:28.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "e70f3b09617414aadc2764ca6ce2e27d93dd1450"
+      "lastChangedCommit": "fa4f8e2b006c5b3ac216297396fb125e5f1bae49"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -35161,20 +35161,20 @@
       "path": "src/preflight.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 34107,
-      "lines": 468,
-      "version": "aff0789afc49e16f",
+      "bytes": 34720,
+      "lines": 476,
+      "version": "6830d0a72acbd2f5",
       "text": true,
       "provenance": [
         {
           "file": "src/preflight.js",
           "line": 1,
-          "version": "aff0789afc49e16f"
+          "version": "6830d0a72acbd2f5"
         }
       ],
-      "lastChangedAt": "2026-08-29T16:52:36.000Z",
+      "lastChangedAt": "2026-08-29T19:50:53.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "3dd27e1e77928f91e3209103370c847c9c4aca23"
+      "lastChangedCommit": "69e14b09468d8239c8b20bd7bb374cdb10208f3a"
     },
     {
       "key": "Artifact:src/primetime.js",
@@ -38151,20 +38151,20 @@
       "path": "test/docs.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 284520,
-      "lines": 3832,
-      "version": "e3ed821cd28b15f8",
+      "bytes": 288579,
+      "lines": 3884,
+      "version": "0881986e94866fc7",
       "text": true,
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "e3ed821cd28b15f8"
+          "version": "0881986e94866fc7"
         }
       ],
-      "lastChangedAt": "2026-08-29T14:18:11.000Z",
+      "lastChangedAt": "2026-08-29T19:44:28.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "909c119e03b9a3b091d2988bf48085ea44c48b68"
+      "lastChangedCommit": "fa4f8e2b006c5b3ac216297396fb125e5f1bae49"
     },
     {
       "key": "Artifact:test/drop.js",
@@ -39370,20 +39370,20 @@
       "path": "test/preflight.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 22898,
-      "lines": 326,
-      "version": "4f95345bbe353b63",
+      "bytes": 24430,
+      "lines": 346,
+      "version": "94a923156030d9a5",
       "text": true,
       "provenance": [
         {
           "file": "test/preflight.js",
           "line": 1,
-          "version": "4f95345bbe353b63"
+          "version": "94a923156030d9a5"
         }
       ],
-      "lastChangedAt": "2026-08-27T08:25:58.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "18738f0238abac2204c0d201ea4ce93acefcd781"
+      "lastChangedAt": "2026-08-29T19:50:53.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "69e14b09468d8239c8b20bd7bb374cdb10208f3a"
     },
     {
       "key": "Artifact:test/primetime.js",
@@ -41371,20 +41371,20 @@
       "path": "tools/knowledge-test.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 20266,
-      "lines": 365,
-      "version": "d437d808f46f11a8",
+      "bytes": 21980,
+      "lines": 385,
+      "version": "e57d9d05841fcfcf",
       "text": true,
       "provenance": [
         {
           "file": "tools/knowledge-test.js",
           "line": 1,
-          "version": "d437d808f46f11a8"
+          "version": "e57d9d05841fcfcf"
         }
       ],
-      "lastChangedAt": "2026-08-29T15:30:48.000Z",
+      "lastChangedAt": "2026-08-29T20:01:22.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "f73eb82968af5b18002c2889cdcd481e4b97231b"
+      "lastChangedCommit": "d29dee6744f22dd650505bd243d9607cdf7fa534"
     },
     {
       "key": "Artifact:tools/knowledge.js",
@@ -45749,6 +45749,22 @@
       ]
     },
     {
+      "key": "Commit:28e56135435df2e8fbe1a5605c97e02d560551cf",
+      "type": "Commit",
+      "id": "28e56135435df2e8fbe1a5605c97e02d560551cf",
+      "label": "chore(knowledge): refresh generated artifacts for 4f42a7d",
+      "title": "chore(knowledge): refresh generated artifacts for 4f42a7d",
+      "date": "2026-08-29T18:46:26.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/28e56135435df2e8fbe1a5605c97e02d560551cf",
+      "provenance": [
+        {
+          "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf",
+          "url": "https://github.com/OmertaDev/Omerta/commit/28e56135435df2e8fbe1a5605c97e02d560551cf"
+        }
+      ]
+    },
+    {
       "key": "Commit:2923ea5387f5ac231cb13f41b5593366cc61e143",
       "type": "Commit",
       "id": "2923ea5387f5ac231cb13f41b5593366cc61e143",
@@ -49845,6 +49861,22 @@
       ]
     },
     {
+      "key": "Commit:56bedb8799696d940fdd15d49cb3bc6c87bd21ac",
+      "type": "Commit",
+      "id": "56bedb8799696d940fdd15d49cb3bc6c87bd21ac",
+      "label": "DEPLOY.md §8: there is no smoke-debris sweep, and mod-kill makes it worse",
+      "title": "DEPLOY.md §8: there is no smoke-debris sweep, and mod-kill makes it worse",
+      "date": "2026-08-29T19:39:37.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/56bedb8799696d940fdd15d49cb3bc6c87bd21ac",
+      "provenance": [
+        {
+          "commit": "56bedb8799696d940fdd15d49cb3bc6c87bd21ac",
+          "url": "https://github.com/OmertaDev/Omerta/commit/56bedb8799696d940fdd15d49cb3bc6c87bd21ac"
+        }
+      ]
+    },
+    {
       "key": "Commit:56cb14c28f47202b33e814815b6aee67e321e749",
       "type": "Commit",
       "id": "56cb14c28f47202b33e814815b6aee67e321e749",
@@ -51201,6 +51233,22 @@
         {
           "commit": "69d232bdc9c026f8ad334f0caa76ebaa0d993d52",
           "url": "https://github.com/OmertaDev/Omerta/commit/69d232bdc9c026f8ad334f0caa76ebaa0d993d52"
+        }
+      ]
+    },
+    {
+      "key": "Commit:69e14b09468d8239c8b20bd7bb374cdb10208f3a",
+      "type": "Commit",
+      "id": "69e14b09468d8239c8b20bd7bb374cdb10208f3a",
+      "label": "preflight said the alarm webhook is worker-only — the third instance, and the worst",
+      "title": "preflight said the alarm webhook is worker-only — the third instance, and the worst",
+      "date": "2026-08-29T19:50:53.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/69e14b09468d8239c8b20bd7bb374cdb10208f3a",
+      "provenance": [
+        {
+          "commit": "69e14b09468d8239c8b20bd7bb374cdb10208f3a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/69e14b09468d8239c8b20bd7bb374cdb10208f3a"
         }
       ]
     },
@@ -59765,6 +59813,22 @@
       ]
     },
     {
+      "key": "Commit:d29dee6744f22dd650505bd243d9607cdf7fa534",
+      "type": "Commit",
+      "id": "d29dee6744f22dd650505bd243d9607cdf7fa534",
+      "label": "knowledge-test asserted a property that is false by design on every branch but main",
+      "title": "knowledge-test asserted a property that is false by design on every branch but main",
+      "date": "2026-08-29T20:01:22.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d29dee6744f22dd650505bd243d9607cdf7fa534",
+      "provenance": [
+        {
+          "commit": "d29dee6744f22dd650505bd243d9607cdf7fa534",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d29dee6744f22dd650505bd243d9607cdf7fa534"
+        }
+      ]
+    },
+    {
       "key": "Commit:d3bffd900a7c7f492394782820df258a89270a01",
       "type": "Commit",
       "id": "d3bffd900a7c7f492394782820df258a89270a01",
@@ -62577,6 +62641,22 @@
         {
           "commit": "fa01f1c4e7da901fc2fb51080678fa743ec6ba3e",
           "url": "https://github.com/OmertaDev/Omerta/commit/fa01f1c4e7da901fc2fb51080678fa743ec6ba3e"
+        }
+      ]
+    },
+    {
+      "key": "Commit:fa4f8e2b006c5b3ac216297396fb125e5f1bae49",
+      "type": "Commit",
+      "id": "fa4f8e2b006c5b3ac216297396fb125e5f1bae49",
+      "label": "DEPLOY.md §5 told the operator to set the alarm webhook on the worker only",
+      "title": "DEPLOY.md §5 told the operator to set the alarm webhook on the worker only",
+      "date": "2026-08-29T19:44:28.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/fa4f8e2b006c5b3ac216297396fb125e5f1bae49",
+      "provenance": [
+        {
+          "commit": "fa4f8e2b006c5b3ac216297396fb125e5f1bae49",
+          "url": "https://github.com/OmertaDev/Omerta/commit/fa4f8e2b006c5b3ac216297396fb125e5f1bae49"
         }
       ]
     },
@@ -68924,13 +69004,13 @@
       "id": "DEPLOY.md",
       "label": "DEPLOY.md",
       "documentType": "operations",
-      "lines": 553,
-      "version": "a703331cd7541c62",
+      "lines": 568,
+      "version": "adf5346460f96645",
       "provenance": [
         {
           "file": "DEPLOY.md",
           "line": 1,
-          "version": "a703331cd7541c62"
+          "version": "adf5346460f96645"
         }
       ]
     },
@@ -71405,12 +71485,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 716,
-      "version": "f6ad984320943eb4",
+      "version": "c91def7ac8d37e56",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "f6ad984320943eb4"
+          "version": "c91def7ac8d37e56"
         }
       ]
     },
@@ -76103,6 +76183,9 @@
           "commit": "27f81c38122be5c0bf9dc9a153e233379ed61ff8"
         },
         {
+          "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
+        },
+        {
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
         },
         {
@@ -76421,6 +76504,9 @@
           "commit": "27f81c38122be5c0bf9dc9a153e233379ed61ff8"
         },
         {
+          "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
+        },
+        {
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
         },
         {
@@ -76737,6 +76823,9 @@
         },
         {
           "commit": "27f81c38122be5c0bf9dc9a153e233379ed61ff8"
+        },
+        {
+          "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
         },
         {
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
@@ -77112,6 +77201,9 @@
         },
         {
           "commit": "27f81c38122be5c0bf9dc9a153e233379ed61ff8"
+        },
+        {
+          "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
         },
         {
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
@@ -79220,13 +79312,13 @@
       "type": "Module",
       "id": "src/preflight.js",
       "label": "src/preflight.js",
-      "lines": 468,
-      "version": "aff0789afc49e16f",
+      "lines": 476,
+      "version": "6830d0a72acbd2f5",
       "provenance": [
         {
           "file": "src/preflight.js",
           "line": 1,
-          "version": "aff0789afc49e16f"
+          "version": "6830d0a72acbd2f5"
         }
       ]
     },
@@ -83630,8 +83722,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "4f42a7d8b4ca1f690f89e5d657196c0e377dcf72",
-      "currentBranch": "main",
+      "revision": "d29dee6744f22dd650505bd243d9607cdf7fa534",
+      "currentBranch": "claude/game-dev-roadmap-6jtsst",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -107567,13 +107659,13 @@
       "type": "TestSuite",
       "id": "test/docs.js",
       "label": "test/docs.js",
-      "lines": 3832,
-      "version": "e3ed821cd28b15f8",
+      "lines": 3884,
+      "version": "0881986e94866fc7",
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "e3ed821cd28b15f8"
+          "version": "0881986e94866fc7"
         }
       ]
     },
@@ -108302,13 +108394,13 @@
       "type": "TestSuite",
       "id": "test/preflight.js",
       "label": "test/preflight.js",
-      "lines": 326,
-      "version": "4f95345bbe353b63",
+      "lines": 346,
+      "version": "94a923156030d9a5",
       "provenance": [
         {
           "file": "test/preflight.js",
           "line": 1,
-          "version": "4f95345bbe353b63"
+          "version": "94a923156030d9a5"
         }
       ]
     },
@@ -141354,6 +141446,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:28e56135435df2e8fbe1a5605c97e02d560551cf",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:28e56135435df2e8fbe1a5605c97e02d560551cf",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:28e56135435df2e8fbe1a5605c97e02d560551cf",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:28e56135435df2e8fbe1a5605c97e02d560551cf",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:2923ea5387f5ac231cb13f41b5593366cc61e143",
       "to": "Artifact:src/explore.js",
       "provenance": {
@@ -156250,6 +156374,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:56bedb8799696d940fdd15d49cb3bc6c87bd21ac",
+      "to": "Artifact:DEPLOY.md",
+      "provenance": {
+        "commit": "56bedb8799696d940fdd15d49cb3bc6c87bd21ac"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:56bedb8799696d940fdd15d49cb3bc6c87bd21ac",
+      "to": "Artifact:test/docs.js",
+      "provenance": {
+        "commit": "56bedb8799696d940fdd15d49cb3bc6c87bd21ac"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:56cb14c28f47202b33e814815b6aee67e321e749",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -161782,6 +161922,22 @@
       "to": "Artifact:SPEC.md",
       "provenance": {
         "commit": "69d232bdc9c026f8ad334f0caa76ebaa0d993d52"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:69e14b09468d8239c8b20bd7bb374cdb10208f3a",
+      "to": "Artifact:src/preflight.js",
+      "provenance": {
+        "commit": "69e14b09468d8239c8b20bd7bb374cdb10208f3a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:69e14b09468d8239c8b20bd7bb374cdb10208f3a",
+      "to": "Artifact:test/preflight.js",
+      "provenance": {
+        "commit": "69e14b09468d8239c8b20bd7bb374cdb10208f3a"
       }
     },
     {
@@ -191642,6 +191798,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:d29dee6744f22dd650505bd243d9607cdf7fa534",
+      "to": "Artifact:tools/knowledge-test.js",
+      "provenance": {
+        "commit": "d29dee6744f22dd650505bd243d9607cdf7fa534"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:d3bffd900a7c7f492394782820df258a89270a01",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -203422,6 +203586,38 @@
       "to": "Artifact:test/walletforge.js",
       "provenance": {
         "commit": "fa01f1c4e7da901fc2fb51080678fa743ec6ba3e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fa4f8e2b006c5b3ac216297396fb125e5f1bae49",
+      "to": "Artifact:DEPLOY.md",
+      "provenance": {
+        "commit": "fa4f8e2b006c5b3ac216297396fb125e5f1bae49"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fa4f8e2b006c5b3ac216297396fb125e5f1bae49",
+      "to": "Artifact:public/admin.html",
+      "provenance": {
+        "commit": "fa4f8e2b006c5b3ac216297396fb125e5f1bae49"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fa4f8e2b006c5b3ac216297396fb125e5f1bae49",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "fa4f8e2b006c5b3ac216297396fb125e5f1bae49"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fa4f8e2b006c5b3ac216297396fb125e5f1bae49",
+      "to": "Artifact:test/docs.js",
+      "provenance": {
+        "commit": "fa4f8e2b006c5b3ac216297396fb125e5f1bae49"
       }
     },
     {
@@ -242748,6 +242944,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:28e56135435df2e8fbe1a5605c97e02d560551cf",
+      "provenance": {
+        "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2923ea5387f5ac231cb13f41b5593366cc61e143",
       "provenance": {
         "commit": "2923ea5387f5ac231cb13f41b5593366cc61e143"
@@ -244796,6 +245000,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:56bedb8799696d940fdd15d49cb3bc6c87bd21ac",
+      "provenance": {
+        "commit": "56bedb8799696d940fdd15d49cb3bc6c87bd21ac"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:56cb14c28f47202b33e814815b6aee67e321e749",
       "provenance": {
         "commit": "56cb14c28f47202b33e814815b6aee67e321e749"
@@ -245471,6 +245683,14 @@
       "to": "Commit:69d232bdc9c026f8ad334f0caa76ebaa0d993d52",
       "provenance": {
         "commit": "69d232bdc9c026f8ad334f0caa76ebaa0d993d52"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:69e14b09468d8239c8b20bd7bb374cdb10208f3a",
+      "provenance": {
+        "commit": "69e14b09468d8239c8b20bd7bb374cdb10208f3a"
       }
     },
     {
@@ -249756,6 +249976,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:d29dee6744f22dd650505bd243d9607cdf7fa534",
+      "provenance": {
+        "commit": "d29dee6744f22dd650505bd243d9607cdf7fa534"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:d3bffd900a7c7f492394782820df258a89270a01",
       "provenance": {
         "commit": "d3bffd900a7c7f492394782820df258a89270a01"
@@ -251159,6 +251387,14 @@
       "to": "Commit:fa01f1c4e7da901fc2fb51080678fa743ec6ba3e",
       "provenance": {
         "commit": "fa01f1c4e7da901fc2fb51080678fa743ec6ba3e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:fa4f8e2b006c5b3ac216297396fb125e5f1bae49",
+      "provenance": {
+        "commit": "fa4f8e2b006c5b3ac216297396fb125e5f1bae49"
       }
     },
     {
@@ -261716,7 +261952,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3772
+        "line": 3824
       }
     },
     {
@@ -261725,7 +261961,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3773
+        "line": 3825
       }
     },
     {
@@ -263768,7 +264004,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/preflight.js",
-        "line": 233
+        "line": 253
       }
     },
     {
@@ -263777,7 +264013,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/preflight.js",
-        "line": 257
+        "line": 277
       }
     },
     {
@@ -263786,7 +264022,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/preflight.js",
-        "line": 320
+        "line": 340
       }
     },
     {
@@ -263795,7 +264031,7 @@
       "to": "Artifact:src/vig.js",
       "provenance": {
         "file": "test/preflight.js",
-        "line": 199
+        "line": 219
       }
     },
     {
@@ -263804,7 +264040,7 @@
       "to": "Artifact:src/vig.js",
       "provenance": {
         "file": "test/preflight.js",
-        "line": 258
+        "line": 278
       }
     },
     {
@@ -285617,10 +285853,19 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:DEPLOY.md",
+      "to": "Artifact:src/social/estate.js",
+      "provenance": {
+        "file": "DEPLOY.md",
+        "line": 457
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:DEPLOY.md",
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "DEPLOY.md",
-        "line": 118
+        "line": 119
       }
     },
     {
@@ -302072,7 +302317,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3772
+        "line": 3824
       }
     },
     {
@@ -302081,7 +302326,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3773
+        "line": 3825
       }
     },
     {
@@ -303962,7 +304207,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/preflight.js",
-        "line": 233
+        "line": 253
       }
     },
     {
@@ -303971,7 +304216,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/preflight.js",
-        "line": 257
+        "line": 277
       }
     },
     {
@@ -303980,7 +304225,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/preflight.js",
-        "line": 320
+        "line": 340
       }
     },
     {
@@ -303989,7 +304234,7 @@
       "to": "Artifact:src/vig.js",
       "provenance": {
         "file": "test/preflight.js",
-        "line": 199
+        "line": 219
       }
     },
     {
@@ -303998,7 +304243,7 @@
       "to": "Artifact:src/vig.js",
       "provenance": {
         "file": "test/preflight.js",
-        "line": 258
+        "line": 278
       }
     },
     {
