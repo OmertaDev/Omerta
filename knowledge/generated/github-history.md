@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `ee8ea7328ee8`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `4d78d9cad8ad`.
 
 ## Repository
 
@@ -9,19 +9,19 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1293 |
+| Commits in clone | 1280 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-29 — forge CI: the count in both logs was the answer |
+| Latest commit | 2026-08-29 — Get main green: the forge gate's unpinned compiler, and four guards for prose that had rotted (#150) |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 433 |
-| Claude | 170 |
+| OmertaDev | 434 |
+| Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 2 |
 
@@ -29,7 +29,7 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| [CLAUDE.md](../../CLAUDE.md) | 497 | yes |
+| [CLAUDE.md](../../CLAUDE.md) | 496 | yes |
 | [public/index.html](../../public/index.html) | 390 | yes |
 | [src/server.js](../../src/server.js) | 350 | yes |
 | [SPEC.md](../../SPEC.md) | 273 | yes |
@@ -42,10 +42,10 @@
 | [src/worker.js](../../src/worker.js) | 122 | yes |
 | [src/invariants.js](../../src/invariants.js) | 115 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 114 | yes |
-| knowledge/generated/github-history.md | 113 | historical |
-| knowledge/generated/graph-summary.md | 113 | historical |
-| knowledge/generated/graph.json | 113 | historical |
-| knowledge/generated/inventory.md | 113 | historical |
+| knowledge/generated/github-history.md | 110 | historical |
+| knowledge/generated/graph-summary.md | 110 | historical |
+| knowledge/generated/graph.json | 110 | historical |
+| knowledge/generated/inventory.md | 110 | historical |
 | [test/client.js](../../test/client.js) | 101 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
 | [test/social.js](../../test/social.js) | 84 | yes |
@@ -62,12 +62,12 @@
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 49 | yes |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
 | [src/economy.js](../../src/economy.js) | 44 | yes |
-| knowledge/generated/documents.md | 43 | historical |
 | [src/casino.js](../../src/casino.js) | 43 | yes |
-| [test/docs.js](../../test/docs.js) | 41 | yes |
+| knowledge/generated/documents.md | 41 | historical |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
 | [src/business.js](../../src/business.js) | 39 | yes |
-| knowledge/generated/modules.md | 38 | historical |
+| [test/docs.js](../../test/docs.js) | 38 | yes |
+| knowledge/generated/modules.md | 37 | historical |
 | [src/chain.js](../../src/chain.js) | 37 | yes |
 
 ## Pull requests
