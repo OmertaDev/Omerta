@@ -664,6 +664,16 @@ function finalCallbackCall(argument) {
   return name;
 }
 
+// git renders a ZERO UTC offset differently across versions: 2.43 emits `+00:00`
+// where 2.55 emits `Z`. Both mean the same instant, and non-UTC offsets (`-04:00`)
+// are identical in both — but graph.json is asserted BYTE-stable, so whoever
+// regenerates last wins and the other environment fails a drift check on
+// formatting alone. Canonicalise the zero offset to `Z` (RFC 3339's own form, and
+// what the newer git already emits) so the bytes do not depend on the toolchain.
+function canonicalGitDate(date) {
+  return typeof date === 'string' ? date.replace(/\+00:00$/, 'Z') : date;
+}
+
 function parseCommits(revision = 'HEAD') {
   const raw = git(['log', '--date=iso-strict', '--pretty=format:%x1e%H%x1f%ad%x1f%an%x1f%s', '--name-only', revision]);
   const commits = [];
@@ -671,7 +681,7 @@ function parseCommits(revision = 'HEAD') {
     const lines = chunk.replace(/^\r?\n/, '').split(/\r?\n/);
     const [hash, date, author, ...subjectParts] = (lines.shift() || '').split('\x1f');
     if (!hash) continue;
-    commits.push({ hash, date, author, subject: subjectParts.join('\x1f'), files: lines.map(posix).filter(Boolean) });
+    commits.push({ hash, date: canonicalGitDate(date), author, subject: subjectParts.join('\x1f'), files: lines.map(posix).filter(Boolean) });
   }
   return commits;
 }

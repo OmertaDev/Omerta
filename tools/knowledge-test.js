@@ -181,6 +181,28 @@ assert(graph.census.byNodeType.Contract >= 18, 'the contract inventory unexpecte
 assert(graph.census.byNodeType.Commit >= 800, 'the Git lineage unexpectedly collapsed');
 assert(graph.census.byNodeType.PullRequest >= 120, 'the GitHub snapshot unexpectedly collapsed');
 
+// THE TOOLCHAIN-INDEPENDENT TIMESTAMP. graph.json is asserted byte-stable, and git
+// renders a ZERO UTC offset differently by version: 2.43 emits `+00:00` where 2.55
+// emits `Z`. Non-UTC offsets (`-04:00`) are identical in both, so the divergence is
+// specifically the zero offset — which means whoever regenerates last wins and the
+// other environment fails a drift check on formatting alone, with nothing wrong.
+// Assert the canonical form on every date the generator lifts out of git.
+const commitDates = graph.nodes.filter((n) => n.type === 'Commit' && n.date)
+  .map((n) => [`Commit ${n.key}`, n.date]);
+const artifactDates = model.artifacts.filter((a) => a.lastChangedAt).map((a) => [a.path, a.lastChangedAt]);
+assert(commitDates.length >= 800, 'THE TOOLCHAIN-INDEPENDENT TIMESTAMP read only '
+  + `${commitDates.length} commit date(s) — the commit half of this check is measuring nothing.`);
+assert(artifactDates.length >= 1000, 'THE TOOLCHAIN-INDEPENDENT TIMESTAMP read only '
+  + `${artifactDates.length} artifact date(s) — the artifact half of this check is measuring nothing.`);
+const gitDates = [...commitDates, ...artifactDates];
+const offsetDates = gitDates.filter(([, date]) => /\+00:00$/.test(date));
+assert.deepEqual(offsetDates.slice(0, 5), [], 'a git-sourced date carries `+00:00` rather than `Z`. '
+  + 'That is git 2.43 rendering a zero UTC offset; git 2.55 renders the same instant as `Z`, so these '
+  + 'bytes make graph.json drift by toolchain rather than by content:\n  '
+  + offsetDates.slice(0, 5).map(([where, date]) => `${where}: ${date}`).join('\n  '));
+assert(gitDates.some(([, date]) => date.endsWith('Z')), 'THE TOOLCHAIN-INDEPENDENT TIMESTAMP '
+  + 'found no UTC date at all, so it governs nothing on this clone.');
+
 const routeById = new Map(model.routes.map((route) => [`${route.method} ${route.url}`, route]));
 const contentRouteProvenance = [
   ['GET /v1/content', 'authenticated', 'contentBoard'],
