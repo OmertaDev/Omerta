@@ -17300,3 +17300,33 @@ suites parse `TEST_DATABASE_URL` with `new URL()`, which **refuses the socket-st
 `postgres://postgres@/db?host=/tmp` form** the other gates take — CI passes a TCP url, so drive them
 the way CI does (`postgres://postgres@127.0.0.1:5433/db`) or the run fails on the harness rather than
 on the code, which reads exactly like a defect and is not one.
+**AND THE SMOKE CHECK CREATES A PERMANENT PLAYER, WHICH THE RUNBOOK NEVER SAID (2026-08-29).**
+`DEPLOY.md` §8's post-deploy smoke check tells the operator to create a character on the live box —
+once per deploy, forever — and said nothing about what becomes of it. The launch rehearsal had
+already found the consequence once (10 of 12 entries on `/v1/live` were dead level-1 accounts from
+old smoke runs) and the fix at the time was a **recency gate on the player-facing boards**. That
+closed the board half and left the other half unstated, which is the RT#7 shape: a class fixed where
+it was discovered and never taken to its edge. **Measured rather than assumed**: `src/ops.js`'s three
+headline counts (`total`/`alive`/`dead`) carry **no recency gate**, while `active24h` — one line
+below them — does. So every smoke character counts in the founder's own headline player figure
+permanently, and the honest number to read is the one that is gated. Both halves are on the line now,
+with the consequence a reader can act on (subtract them by name — they are the only characters the
+checklist creates). **The note makes two claims about code and prose rots, so both are guarded, and
+the guard is deliberately TWO-SIDED**: it fails if the cited `DISCOVERY.SEEN_DAYS` drifts from the
+lever, it fails if `collision.js`/`discovery.js` stop calling `seenSince()` (asserted at the CALL
+SITE, never at the lever — *a helper that exists and is never called gates nothing*, which is exactly
+the shape the rehearsal found), and it fails if somebody **GATES the overview** — because then the
+warning is telling a reader a number is inflated when it no longer is, and the right response is to
+DELETE the warning rather than widen the check. The assertion says so in its own message.
+**Its first cut read only single-quoted SQL**, and a gated count *must* be double-quoted, because the
+SQL then carries an interval literal with a quote inside it — so the mutation that matters made the
+gated row **vanish from the corpus** and fired at the count assertion instead of at the one that
+names what changed (the recorded *"a failure that names the wrong thing is barely better than no
+failure"* class, and the reason the fix is the extractor rather than the assertion). Three mutations,
+three distinct named failures. **One process note re-paid twice in one sitting**: a background
+notification reported *"exit code 0"* for a full-suite run that had produced 23 lines and no `EXIT=`
+— the wrapper's code, not the suite's, because the command carried `&` INSIDE a backgrounded call and
+the shell returned instantly. Read the log's own `EXIT=` line, never the notification; and the same
+sitting had already reported `KN_EXIT=1` for a knowledge test that passes three-for-three, which was
+the piped `tail`'s code. **The pipe-masking trap has two more costumes than the one ground rule #8
+names.**
