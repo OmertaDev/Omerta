@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `c6bb58f62340`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `6715d574e6f3`.
 
 ## Repository
 
@@ -9,19 +9,19 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1230 |
+| Commits in clone | 1235 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-28 — fix: normalize postgres constraint metadata |
+| Latest commit | 2026-08-29 — ci: stop main going red at every merge for a condition that cannot hold there |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 429 |
-| Claude | 113 |
+| OmertaDev | 431 |
+| Claude | 116 |
 | CRVYDEV | 41 |
 
 ## Historical hotspots
@@ -31,7 +31,7 @@
 | [CLAUDE.md](../../CLAUDE.md) | 492 | yes |
 | [public/index.html](../../public/index.html) | 389 | yes |
 | [src/server.js](../../src/server.js) | 349 | yes |
-| [schema.sql](../../schema.sql) | 271 | yes |
+| [schema.sql](../../schema.sql) | 272 | yes |
 | [SPEC.md](../../SPEC.md) | 270 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
@@ -43,10 +43,10 @@
 | [src/invariants.js](../../src/invariants.js) | 114 | yes |
 | [test/client.js](../../test/client.js) | 101 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
-| knowledge/generated/github-history.md | 88 | historical |
-| knowledge/generated/graph-summary.md | 88 | historical |
-| knowledge/generated/graph.json | 88 | historical |
-| knowledge/generated/inventory.md | 88 | historical |
+| knowledge/generated/github-history.md | 89 | historical |
+| knowledge/generated/graph-summary.md | 89 | historical |
+| knowledge/generated/graph.json | 89 | historical |
+| knowledge/generated/inventory.md | 89 | historical |
 | [test/social.js](../../test/social.js) | 84 | yes |
 | [public/wiki.html](../../public/wiki.html) | 80 | yes |
 | [test/growth.js](../../test/growth.js) | 79 | yes |
@@ -61,11 +61,11 @@
 | [test/economy.js](../../test/economy.js) | 46 | yes |
 | [src/economy.js](../../src/economy.js) | 44 | yes |
 | [src/casino.js](../../src/casino.js) | 43 | yes |
-| [test/gates.js](../../test/gates.js) | 41 | yes |
+| [test/gates.js](../../test/gates.js) | 42 | yes |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
 | [src/business.js](../../src/business.js) | 39 | yes |
 | [src/chain.js](../../src/chain.js) | 37 | yes |
-| [test/migrate.js](../../test/migrate.js) | 33 | yes |
+| [test/migrate.js](../../test/migrate.js) | 34 | yes |
 | [public/admin.html](../../public/admin.html) | 33 | yes |
 | knowledge/generated/documents.md | 31 | historical |
 
