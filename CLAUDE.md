@@ -17429,3 +17429,51 @@ lesson that lives only in history is one the next reader answers with `--skip`.
 ("Nothing to compile"), so a green-looking local run can mean the gate never ran. The ground truth is
 the artifacts — `deployedBytecode.object` length in `out/**/*.json` — which is what `--sizes` reports
 anyway.
+
+**AND THE GATE WAS RED FOR A SECOND, INDEPENDENT REASON: THE COMPILER WAS THE ONE DEPENDENCY THE
+WORKFLOW DID NOT PIN (2026-08-29).** With the EIP-170 fix in, `forge build` went green and the gate
+moved down a step: **three tests failing on the runner that PASS locally at the same SHA.** Two
+hypotheses, and the discipline was to kill one by measurement rather than argue both. **(b) artifact
+population — DEAD**: the exact CI invocation, no `--match-path`, run locally end to end — **43 suites,
+896 passed, 0 failed, 1171.98s.** Dependencies ruled out the same way rather than assumed:
+`lib/forge-std` v1.9.6, `lib/openzeppelin-contracts` v5.6.1, `lib/v4-core` npm 1.0.2 — byte-identical
+to the pins in the workflow's own fetch step.
+**THE DECISIVE MEASUREMENT IS A COUNT, AND IT WAS SITTING IN BOTH LOGS ALL ALONG.** CI's summary line
+said **891** total tests where local said **896**, at a SHA with no `.sol` diff between them. Pulling
+the full **6.3 MB** CI log (`get_job_logs` without `return_content` returns a signed blob URL `curl`
+can download whole, which sidesteps the token cap) and diffing per-suite counts against a local
+`forge test --list --json` isolated the entire difference to ONE file:
+`SettlementGasPoolInvariant.t.sol` — **local 6, CI 1**. That file holds six `invariant_*` functions and
+no `test_*`, and CI printed all six nested under a single `SettlementGasPoolInvariantTest invariants:`
+heading with one shared `(runs: 512, calls: 256000, reverts: 0)` line: the older aggregated
+invariant-reporting model. **A test COUNT is a version fingerprint** — and it beat every theory about
+runner CPU, memory and gas, because it is a fact about test DISCOVERY rather than about execution.
+**THE CAUSE:** `foundry-rs/foundry-toolchain@v1` with no `version` resolves **`stable` AT RUN TIME**,
+so the one thing compiling and running the suite was the only thing in that workflow not held still —
+while forge-std, OpenZeppelin, v4-core and solc (0.8.26, `foundry.toml`) are all pinned by hand a few
+lines below. **The forgotten sibling**, on the dependency that decides what every other pin means. The
+regression had a clean boundary that made "the environment moved" the right frame from the start: forge
+runs 110–112 (2026-08-27) **green**, 113–116 (2026-08-29) **red**, on the same unpinned toolchain.
+**FIXED AND PROVEN BY A BEFORE/AFTER ON ONE SHA:** `version: v1.7.1` plus a `forge --version (what
+actually ran)` banner step. Run 117 — banner reads **1.7.1**, the invariant suite reports **6**, the
+summary reads **896 passed, 0 failed**, and all four gate steps (test, dexbot-e2e, stock-e2e, the
+EIP-170 sizes row) are green. The banner is the instrument rather than decoration: the next time local
+and CI disagree, the log ANSWERS "which forge ran this" instead of leaving it to be inferred from a
+count. **The guard is deliberately TWO-SIDED**, because a `version:` key alone is not a pin —
+`stable`/`nightly`/`latest` are CHANNELS that satisfy "a version is declared" and still resolve at run
+time — so `test/docs.js` fails on a missing pin, on a channel masquerading as one, and on the banner
+step going away.
+**A NEGATIVE RESULT WORTH KEEPING, because it nearly became a wrong conclusion.** The three tests run
+in ISOLATION under forge 1.5.1 all **PASS** — so "any older forge fails them" is not the shape, and an
+isolated repro is not a refutation of a full-suite failure. Two of the three are CREATE-address
+predictions (`vm.computeCreateAddress(address(this), vm.getNonce(address(this)))`), which depend on
+nothing but sender and nonce, so what moved between versions is nonce accounting across
+`vm.snapshotState`/`revertToState`, never initcode.
+**AND A REASONING ERROR CORRECTED MID-DIAGNOSIS:** I had been reading the CI-vs-local **gas** figures
+as an independent signal. **A failing test stops early**, so its lower gas is a CONSEQUENCE of the
+failure rather than a cause — which killed an entire line of reasoning that had looked like evidence.
+**Deliberately NOT changed:** `O1ERC1271Mock`'s absolute gas window (`entryGas < 98_000 || > 100_000`
+against a 100,000 stipend) is a genuinely version-fragile assertion — its own preamble SLOADs `mode`,
+cold **2,100** against a **2,000** allowance, so it passes only while that slot is warm. Widening it
+before a measurement supports a specific fix is the loosen-until-green antipattern, and the LOWER bound
+is already asserted version-independently one call away by `vm.expectCallMinGas`.
