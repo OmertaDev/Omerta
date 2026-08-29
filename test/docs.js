@@ -3538,3 +3538,80 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
   'the operator UI must show gameplay-vault controller recovery, pull withdrawals, tranche state, exact receipt, and solvency');
   console.log('✓ RWA budget is pre-vote fixed, MVP holdings are spot/units-first, and the OMR-staking rule is complete with implementation pending');
 }
+
+// ── GRAPH.md's own evidence, against the tree ───────────────────────────────────────────────────
+//
+// GRAPH.md exists to argue two things: that the engineering memory should be a graph, and that the
+// largest fixed token cost is CLAUDE.md. Both arguments are carried entirely by measured figures —
+// and every one of them had rotted in the same direction, understating the case:
+//
+//     CLAUDE.md      5,630 → 17,224 lines   (206% out; the log tripled underneath the sentence)
+//     audit reports     57 → 96
+//     levers           769 → 727 pinned     (a different metric, restated to the mechanical one)
+//
+// So the document written to argue for the lever was making the case at a third of its true size.
+// That is the class this file exists for, and it is why the figures are now measured rather than
+// remembered.
+//
+// THE BAND IS WIDER THAN SPEC'S 2%, DELIBERATELY. CLAUDE.md is append-only by design and grows by
+// hundreds of lines in a working session, so a 2% band (344 lines) would fire on unrelated work —
+// and a guard that nags on unrelated work gets deleted, which catches nothing. 10% still catches the
+// drift that actually happened by a factor of twenty.
+{
+  const graphDoc = read('GRAPH.md');
+  const figure = (label, re) => {
+    const m = graphDoc.match(re);
+    assert(m, `GRAPH.md no longer states ${label} in the expected form — the guard below has stopped `
+      + 'checking anything. Update this test with the new wording.');
+    return Number(m[1].replace(/,/g, ''));
+  };
+  const band = (claimed, real, what, tol) => assert(Math.abs(claimed - real) / Math.max(real, 1) < tol,
+    `GRAPH.md says ${claimed} ${what}; it is ${real} — more than ${tol * 100}% out, so restate it. `
+    + 'Its whole argument is carried by these numbers.');
+
+  // Stated three times in the document; all three must move together, or §6's lever argument is
+  // made against a size §2 has already contradicted.
+  const claimedLog = [...graphDoc.matchAll(/\*\*?([\d,]{5,})\*?\*? ?lines?\b|\b([\d,]{5,})-line\b/g)]
+    .map((m) => Number((m[1] || m[2]).replace(/,/g, '')));
+  assert(claimedLog.length >= 3, 'GRAPH.md must state the CLAUDE.md line count where it argues from '
+    + `it (§2 evidence, §4 aside, §6 token cost); found ${claimedLog.length} such figures`);
+  const realLog = lines('CLAUDE.md');
+  for (const c of claimedLog) band(c, realLog, 'lines in CLAUDE.md', 0.10);
+  assert(new Set(claimedLog).size === 1,
+    `GRAPH.md states the CLAUDE.md size as ${[...new Set(claimedLog)].join(' and ')} in different `
+    + 'sections; one of them is stale and the two arguments disagree');
+
+  // Audit reports move only when an audit is written — worth restating, so this one is exact.
+  const audits = fs.readdirSync('.').filter((f) => /^AUDIT-.*\.md$/.test(f)).length;
+  assert.equal(figure('the audit-report count', /\*\*(\d+) audit reports\*\*/), audits,
+    `GRAPH.md's audit-report count is stale; the tree holds ${audits}`);
+
+  // Levers move with ordinary balance work, so band rather than nag.
+  //
+  // Counted INSIDE the SIGNED array, not across the file. A whole-file count reads 735, because
+  // test/levers.js also lists 8 levers that are inert with a stated reason — they are deliberately
+  // not pinned, so folding them in would make GRAPH.md cite a register that is 8 larger than the one
+  // the suite actually enforces. The bracket walk is what makes the two numbers the same number.
+  const lev = read('test/levers.js');
+  const open = lev.indexOf('const SIGNED = [');
+  assert(open >= 0, 'test/levers.js no longer declares `const SIGNED = [` — the lever count below is '
+    + 'measuring nothing. Update this test with the new register.');
+  let depth = 0, close = -1;
+  for (let i = open + 'const SIGNED = '.length; i < lev.length; i += 1) {
+    if (lev[i] === '[') depth += 1;
+    else if (lev[i] === ']' && (depth -= 1) === 0) { close = i; break; }
+  }
+  assert(close > open, 'the SIGNED register in test/levers.js never closes');
+  const pinned = (lev.slice(open, close).match(/^\s*\['[A-Z][A-Za-z0-9_.]*',/gm) || []).length;
+  assert(pinned > 500, `only ${pinned} pins found inside SIGNED — the extractor has stopped reading `
+    + 'the register, and a count of nothing reads exactly like a count that agrees');
+  band(figure('the signed-lever count', /\*\*([\d,]+) signed levers\*\*/), pinned, 'signed levers', 0.10);
+
+  // §6 says the precondition for trimming the log has been met because the knowledge plane shipped.
+  // If that plane is ever removed, the section is claiming a thing that no longer exists.
+  assert(fs.existsSync('tools/knowledge.js') && fs.existsSync('knowledge/generated/graph.json'),
+    "GRAPH.md §6 says the knowledge plane shipped and so the stated reason to defer trimming CLAUDE.md "
+    + 'is spent; that claim requires tools/knowledge.js and knowledge/generated/graph.json to exist');
+
+  console.log('✓ GRAPH.md argues from measured figures, not remembered ones');
+}

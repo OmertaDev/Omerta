@@ -54,15 +54,20 @@ loop, the tools, the planning and the roles are already in place, and it is wher
 Memory here is transcript-shaped, which is precisely the abstraction AgentHub identifies as the
 first to fail once work becomes numerous. The evidence is in the artifacts:
 
-- `CLAUDE.md` is **5,630 lines**, loaded into every session, and states its own job outright:
+- `CLAUDE.md` is **17,224 lines**, loaded into every session, and states its own job outright:
   *"precedent lookup: ~414 comments in `src/` cite a pattern by name, and this log is where those
   names are defined. Read it that way — search it for the precedent you need, don't read it front to
   back."* That is a graph query, performed by hand, against prose.
-- **57 audit reports**, each explicitly point-in-time, holding **81 severity-tagged findings** as
-  prose. "Which findings are still open?" cannot be answered without reading all of them.
-- **769 lever-shaped tokens** across `BALANCE.md` and `SIGN-OFF.md`. A lever has a value, a
-  rationale, a sim measurement, a sign-off status, a flagging audit and a pinning test — six
-  relations, stored as sentences in three files.
+- **96 audit reports**, each explicitly point-in-time, holding their findings as prose. "Which
+  findings are still open?" cannot be answered without reading all of them — and it cannot be
+  answered mechanically either: the reports do not share a finding-header format, so counting them
+  gives 44, 156 or 1,126 depending on the pattern you pick. *That* is the argument for increment 2,
+  more sharply than a headline number would make it. A corpus that cannot count its own findings
+  cannot be asked which are open.
+- **727 signed levers**, pinned by `test/levers.js` against `BALANCE.md` and `SIGN-OFF.md`. A lever
+  has a value, a rationale, a sim measurement, a sign-off status, a flagging audit and a pinning
+  test — six relations, stored as sentences in three files. Only the last of the six is mechanical
+  today, and only because a bespoke register was built for it.
 - Drift has already bitten: the design doc diverging from the code on vendetta rep, the two codices
   falling out of sync (fixed with a bespoke drift-detector), stale `SPEC` §6, a `STAFF_CAP_MS` that
   said one thing and did another. Each is a missing `SUPERSEDES` or `CONTRADICTS` edge.
@@ -185,7 +190,7 @@ tokens, retries, and the **minimum evidence required to finalise**. And the rule
 Control (objectives, plans, budgets) · Execution (tools, tests, sub-agents) · Artifact (immutable
 versioned outputs) · Graph (entities, claims, provenance, lineage) · Evaluation (deterministic
 checks, evaluators, human review). *"The separation prevents one chat transcript from becoming the
-database, workflow engine, and audit log."* — which is exactly what a 5,630-line log is on its way
+database, workflow engine, and audit log."* — which is exactly what a 17,224-line log is on its way
 to becoming.
 
 ### Standing rules
@@ -248,11 +253,20 @@ paper's own advice is to earn each stage before taking the next.
 should not become a new form of context dumping. Each worker needs a task-specific subgraph…
 serialize within a token budget."*
 
-The largest fixed token cost in this project is `CLAUDE.md` — 5,630 lines, every session, mostly to
-serve lookups the graph now answers directly. That is the lever, and it is the paper's point exactly:
-place memory outside the context window and retrieve the connected state the current decision needs,
-rather than replaying the whole history.
+The largest fixed token cost in this project is `CLAUDE.md` — **17,224 lines**, every session, mostly
+to serve lookups the graph now answers directly. That is the lever, and it is the paper's point
+exactly: place memory outside the context window and retrieve the connected state the current
+decision needs, rather than replaying the whole history.
 
-**Not acted on yet.** Trimming the log is a real change to the project's memory and it should follow
-the graph proving itself, not precede it — and there is a second source on token usage still to read
-(see the session note). Recorded here as the identified lever, not as a completed change.
+**Still not acted on — but the precondition it set has been met.** This section said trimming should
+follow the graph proving itself rather than precede it. Since then the knowledge plane shipped
+(`tools/knowledge.js`, ~5,590 nodes and ~24,460 edges over the engineering corpus), it is gated in
+CI, and its artifacts are regenerated on every merge. The stated reason to wait is therefore spent,
+and what remains is the change itself.
+
+**The figure above is the third thing this section has understated.** It read 5,630 for long enough
+that the log tripled underneath it, so the case for the lever was being made at a third of its true
+size in the one document written to argue for it. Every figure in §2 was stale in the same
+direction. They are measured from the tree now and pinned by `test/docs.js`, because a document
+whose only value is being accurate is exactly the kind that goes quietly wrong — the same argument
+that put a guard on the launch checklist's ETH prices and on SPEC §1's file counts.
