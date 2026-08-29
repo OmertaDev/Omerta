@@ -2968,11 +2968,12 @@ scopedSocialContext = async function(db) {
 // the sixteenth Map, or declares numInstances, and the failure mode is the worst kind — a player on
 // box A never hears an event emitted on box B, silently, with nothing red anywhere.
 //
-// TWO RULES, because each covers what the other cannot:
+// THREE RULES, because each covers what the others cannot:
 //   (a) the deployment does not declare numInstances, and the warning still NAMES each documented
 //       piece of per-process state — so deleting the reasoning fails, not just the number.
 //   (b) every module-scope mutable collection in src/ is CLASSIFIED, and anything classified SHARED
 //       is named in that warning.
+//   (c) the WORKER carries its own warning, and it names every module that takes an advisory lock.
 //
 // SCOPE, stated because it is not obvious and a reader would otherwise over-trust this: rule (b)
 // sees MODULE-scope collections only. Two of the four things render.yaml names are invisible to it —
@@ -3063,6 +3064,47 @@ scopedSocialContext = async function(db) {
   assert.deepEqual(stalePosture, [],
     'posture(s) declared for module-scope state that no longer exists — drop them so the ledger keeps '
     + 'describing the tree:\n  ' + stalePosture.join('\n  '));
+
+  // (c) the WORKER's own posture, which is a DIFFERENT property and had one line of prose. Rules
+  // (a) and (b) are about state that does not exist across boxes — the API's failure. A second
+  // WORKER loses no state; it DOUBLE-RUNS work, and the defence is per-job rather than global: a
+  // handful of modules take a session advisory lock and every other job rests on its own
+  // claim-then-act latch. Until this rule the worker's whole comment was "Run exactly ONE. The game
+  // works without it" — which explains running ZERO and never says a word about running TWO, the
+  // case that sends a push twice and moves money twice with nothing red anywhere.
+  //
+  // The crossing is TWO-DIRECTIONAL and DERIVED, never a list restated here (a list in a test is a
+  // second copy of the thing it checks, which is how the two come to disagree): add a lock without
+  // documenting it and this fails; delete a lock and the comment stops being allowed to claim it.
+  // `pg_try_advisory_lock` only, which is the SESSION lock the sentence is about. db.js takes a
+  // plain `pg_advisory_lock` for the schema boot (it QUEUES rather than skipping, and is not a
+  // worker job), and treasury.js also takes `pg_advisory_xact_lock` inside two claim paths — a
+  // transaction-scoped lock over one row's arithmetic, not a single-writer posture for a sweep.
+  {
+    const from = render.indexOf('# 2) the background worker');
+    assert(from > 0, "render.yaml no longer carries the worker's warning block");
+    const cut = render.indexOf('\n  - type:', from);
+    const warning = cut > 0 ? render.slice(from, cut) : render.slice(from);
+    for (const phrase of ['RUN EXACTLY ONE INSTANCE', 'TWICE']) {
+      assert(warning.includes(phrase),
+        `render.yaml's worker warning must still say ${phrase} — one instance is the DEFAULT and the `
+        + 'reasoning is the only thing standing between an operator and a second replica that '
+        + 'double-sends and double-spends');
+    }
+    const locked = fs.readdirSync(path.join(ROOT, 'src')).filter((f) => f.endsWith('.js'))
+      .filter((f) => fs.readFileSync(path.join(ROOT, 'src', f), 'utf8').includes('pg_try_advisory_lock'))
+      .sort();
+    assert(locked.length >= 3,
+      `only ${locked.length} module(s) in src/ take a pg_try_advisory_lock — the extractor has stopped `
+      + 'reading them, so this crossing is vacuous rather than clean');
+    const named = [...new Set([...warning.matchAll(/`([a-z]+\.js)`/g)].map((m) => m[1]))].sort();
+    assert.deepEqual(named, locked,
+      "render.yaml's worker warning and src/ disagree about which jobs are guarded against a second\n"
+      + '      replica. Every module taking an advisory lock must be named there (an undocumented one\n'
+      + '      reads as unguarded) and no module may be named that has stopped taking one (a comment\n'
+      + `      claiming a defence that is gone is worse than none).\n   named: ${named.join(', ')}\n`
+      + `   locked: ${locked.join(', ')}`);
+  }
 
   const shared = found.filter((k) => POSTURE[k].startsWith('shared:')).length;
   console.log(`  ✓ all ${found.length} module-scope collections carry a single-instance posture `
@@ -3162,4 +3204,108 @@ scopedSocialContext = async function(db) {
     + `   - ${late.join('\n   - ')}`);
   console.log(`✓ all ${captures} awaited child exits are captured at spawn `
     + `(${WAIVED.size} declared: reads exitCode first, with a timeout)`);
+}
+
+// ═══ THE PACKAGE MANIFEST LEDGER — the gate drives the source, the registry gets the artifact ═════
+//
+// `omerta-mcp` is the only thing this project publishes, and the command it publishes is the one
+// `/play`, `AGENTS.md`, the README and the public posts all hand a non-technical reader verbatim:
+// `npx -y omerta-mcp`. Its publish gate is the package's own `npm test`, which is `node
+// ../test/mcp.js` — and that spawns `index.js` from the WORKING TREE, where every file exists. So
+// the gate proves the SOURCE works and says nothing about what the tarball carries.
+//
+// `files` is what makes the two disagree. Reproduced 2026-08-29 rather than argued: plant a sibling
+// `_probe_helper.js`, import it from `index.js`, leave `files` alone —
+//   • `npm pack --dry-run`  →  3 files, the sibling absent
+//   • `npm test`            →  green
+// The published package then ERR_MODULE_NOT_FOUNDs for EVERY user, on the one command the docs
+// promise, while every gate in the repo is green and nothing anywhere says so until somebody
+// reports it. Latent today — `index.js` genuinely imports nothing but the SDK and node builtins —
+// and reachable on the next revision that splits a helper out of a 700-line file. The package is at
+// 1.3.0, so it has been revised three times already.
+//
+// NPM IS THE ORACLE, deliberately. `files` supports globs and directories, and npm always includes
+// package.json/README/LICENSE and always excludes others; a check that reimplemented those rules
+// would be a second implementation of npm's semantics, which is exactly how the two come to
+// disagree — the class this file exists for. `npm pack --dry-run --json` lists what the registry
+// receives, costs ~0.5s, needs no network, and runs no lifecycle script here (the package declares
+// none). If it cannot run, this FAILS rather than skips: a guard that quietly does nothing reads on
+// the summary line exactly like a clean one.
+//
+// Only RELATIVE specifiers are the tarball's business — a bare specifier is a dependency npm
+// installs for the user and `node:` is builtin — and the closure is walked transitively from the
+// declared entry points, so a file two hops deep is covered rather than only the first.
+//
+// TWO HONEST SCOPE NOTES, both measured while mutating this. The ENTRY-POINT half is UNREACHABLE:
+// npm always ships the file named by `main`/`bin` whatever `files` says (removing `index.js` from
+// the list still packs it), so that assertion is defence in depth over a guarantee npm already
+// makes — kept, because an unreachable guard costs nothing and an untested one that READS as tested
+// costs everything, but nobody should think it is load-bearing. And the closure walk has nothing to
+// walk today: `index.js` is the whole package, so the transitive step is exercised by the mutation
+// that plants a sibling, not by the tree in its current shape.
+{
+  const ROOT = fileURLToPath(new URL('../', import.meta.url));
+  const { execFileSync } = await import('node:child_process');
+
+  // The governed set is derived, never a hardcoded name: a package can only ship SHORT if it
+  // declares `files`, so that declaration is the membership test. A private package is nobody's
+  // registry problem, and one without `files` ships everything and cannot be short.
+  const pkgs = execFileSync('git', ['ls-files', '*package.json'], { cwd: ROOT, encoding: 'utf8' })
+    .split('\n').filter((p) => p && !p.includes('node_modules'))
+    .map((rel) => ({ rel, dir: path.dirname(path.join(ROOT, rel)),
+      json: JSON.parse(fs.readFileSync(path.join(ROOT, rel), 'utf8')) }))
+    .filter(({ json }) => !json.private && Array.isArray(json.files));
+  assert(pkgs.length >= 1,
+    'THE PACKAGE MANIFEST LEDGER found no publishable package declaring `files` — the extractor has '
+    + 'stopped reading them, so this check is vacuous rather than clean');
+
+  const missing = [];
+  let walked = 0;
+  for (const { rel, dir, json } of pkgs) {
+    let shipped;
+    try {
+      const out = execFileSync('npm', ['pack', '--dry-run', '--json'], { cwd: dir, encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'] });
+      shipped = new Set(JSON.parse(out)[0].files.map((f) => f.path));
+    } catch (e) {
+      assert.fail(`THE PACKAGE MANIFEST LEDGER could not ask npm what ${rel} ships (${e.message}). `
+        + 'It fails rather than skipping: a guard that quietly does nothing looks exactly like one '
+        + 'that passed, and this is the only check standing between a short `files` list and a '
+        + 'published package that cannot start.');
+    }
+    assert(shipped.size >= 2, `npm reports ${rel} shipping ${shipped.size} file(s) — too few to be real`);
+
+    // Entry points first, because that is the sharpest possible break: a `bin` aimed at a file the
+    // manifest excludes is a package that cannot start at all.
+    const entries = [json.main, ...Object.values(json.bin ?? {})].filter(Boolean)
+      .map((p) => p.replace(/^\.\//, ''));
+    const seen = new Set();
+    const queue = [...new Set(entries)];
+    while (queue.length) {
+      const f = queue.shift();
+      if (seen.has(f)) continue;
+      seen.add(f);
+      if (!shipped.has(f)) { missing.push(`${rel}: \`${f}\` is imported (or is an entry point) but is not in the tarball`); continue; }
+      const abs = path.join(dir, f);
+      if (!fs.existsSync(abs)) continue;
+      walked++;
+      for (const m of fs.readFileSync(abs, 'utf8')
+        .matchAll(/(?:^|[^\w$.])(?:import|export)\s+(?:[^'"]*?\sfrom\s+)?['"](\.[^'"]+)['"]|import\s*\(\s*['"](\.[^'"]+)['"]/g)) {
+        const spec = m[1] ?? m[2];
+        queue.push(path.posix.normalize(path.posix.join(path.posix.dirname(f), spec)));
+      }
+    }
+  }
+
+  assert(walked >= 1,
+    `THE PACKAGE MANIFEST LEDGER walked only ${walked} source file(s) — the entry points did not `
+    + 'resolve, so nothing was actually checked');
+  assert.equal(missing.length, 0,
+    'a published package imports a file its `files` manifest does not ship. The publish gate spawns\n'
+    + '      the entry point from the WORKING TREE, so it stays green while the tarball the registry\n'
+    + '      serves cannot start — every `npx -y <pkg>` user gets ERR_MODULE_NOT_FOUND and no check\n'
+    + '      anywhere says so. Add the file to `files`:\n'
+    + `   - ${missing.join('\n   - ')}`);
+  console.log(`✓ every relative import reachable from ${pkgs.length} publishable package `
+    + `(${walked} source file${walked === 1 ? '' : 's'}) is in the tarball npm would publish`);
 }

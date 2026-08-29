@@ -205,7 +205,23 @@ services:
           property: connectionString
 
   # 2) the background worker — the 12h buyback, the nightly §10.4 economy monitor, and every timed settlement.
-  #    Run exactly ONE. The game works without it, but income/settlements/alerts stall — keep it running.
+  # ⚠ RUN EXACTLY ONE INSTANCE OF THIS SERVICE (numInstances is deliberately not declared — it
+  # defaults to 1). Running ZERO is loud and recoverable: income, settlements and alerts stall, and
+  # /health reports the worker heartbeat stale. Running TWO is SILENT, and is the one to be careful
+  # of — both replicas run the same tick, so every job that is not individually guarded happens
+  # TWICE:
+  #   · outbound sends double — a push buzzed twice, a digest emailed twice, a city-wire line
+  #     posted twice. There is no undo, and the recipient is the one who notices.
+  #   · money moves double. This project has found and fixed that class one job at a time, and each
+  #     lock's own comment records its case: the DEX bots each SENDING real ETH, the city leg on a
+  #     MINT path, the population's metered daily faucet spending its whole allowance twice.
+  #   · the defence is PER JOB, never global. These modules take a session advisory lock —
+  #     `bank.js`, `dexbot.js`, `treasury.js`, `npcwar.js`, `population.js`, `diplomacy.js` — and
+  #     every other job rests on its own claim-then-act latch. A NEW job inherits nothing: it
+  #     carries that discipline itself, or it double-runs the day a second replica exists.
+  # That second replica is not hypothetical — it is the threat model each of those locks names in
+  # its own comment ("two worker replicas could each read it as untouched"), which is a deploy
+  # overlap, and it lasts long enough to send.
   - type: worker
     name: omerta-worker
     runtime: node
