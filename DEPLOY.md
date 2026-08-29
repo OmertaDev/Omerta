@@ -446,7 +446,12 @@ step 3 returned the true counts, step 4 came back `"ok": true` with every §10.4
       one to read. The launch rehearsal found 10 of 12 entries on `/v1/live` were dead level-1
       accounts from old smoke runs; the recency gate closed the board half, and this note closes the
       other. If a clean count matters (a launch report, a funnel figure), subtract the smoke
-      characters by name — they are the only ones this checklist creates.
+      characters by name — they are the only ones this checklist creates. **There is no sweep, and the
+      obvious lever makes it worse**: nothing in `src/` deletes a character row (a bloodline's dead
+      streets are its record), so a smoke character is permanent, and `POST /v1/mod/kill` runs the
+      estate — which INSERTs an heir (`src/social/estate.js`, carrying the victim's own `is_npc`), so
+      `total` goes UP by one. Ban does not touch these counts either; they read `characters`, not
+      `accounts`. Subtracting by name is the remedy, not a workaround.
 - [ ] `GET /admin` (with the `x-mod-key`) → the ops dashboard; the §10.4 banner reads **OK** (drift-0).
 - [ ] `npm run invariants` (or `GET /v1/mod/invariants`) → every check `ok:true`.
 - [ ] Confirm the worker logged a tick (and, after 12h, a buyback).
