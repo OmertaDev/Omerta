@@ -289,6 +289,15 @@ was checked against the tree on 2026-08-21; it respects the five never-claims (n
 yield promise, no "floor", stock delivery stated as gated, extraction stated as opening at launch).
 **Founder signs the final wording before posting**, like everything else here.
 
+**Where it lives, since it is not on a page and that is deliberate.** The graphic is a
+**distribution** asset — it ships with the thread above, the way `hype-short.mp4` ships with the
+posts rather than being embedded (`HYPE.md`). The landing page answers the same comparison in its
+own idiom: `/art/omr-05-ohm-contrast.png`, one of the numbered research sheets linked from the
+`#omr-economy` band. Two assets, two audiences, and neither supersedes the other — a seven-row
+social card cropped into a research-sheet slot would read as a duplicate of the sheet beside it.
+Both are served from `public/art/` by the boot-time allowlist, so the thread's graphic is a live
+URL (`/art/omr-vs-ohm.png`) without being embedded anywhere.
+
 > People keep comparing every treasury-adjacent token to what $OHM did in 2021. Fair — that's the
 > ghost in the room. So here is exactly where $OMR (OMERTÀ, on Robinhood Chain) is built
 > differently — mechanism by mechanism, all of it checkable on a public ledger.

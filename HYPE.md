@@ -42,6 +42,10 @@ Lengths below were **measured from each file's own `mvhd` box** on 2026-08-29, n
 | `hype-short.mp4` | 1080×1920 | ~10s | social | vertical, fastest cut for X/TikTok/Reels | **distribution only** — see below |
 | `hype-money.mp4` | 1920×1080 | ~87s | explainer | the FULL money map — every fee, every flow, the RWA arc | landing `#omr-economy` |
 
+`hype-money.mp4` also ships a **mobile encode** — `hype-money-720.mp4` (1280×720, H.264 CRF 29, 9.5 MB
+against 53.9 MB), attached to the same `<video>` under `media="(max-width: 760px)"`, so a phone fetches
+the small one and nothing else. It is a variant of the same cut, not a seventh film.
+
 `hype-short.mp4` is deliberately **not embedded on the site**: it is a 9:16 cut whose whole job is to
 be posted to X / TikTok / Reels, and a vertical film letterboxed into a 16:9 slot on a desktop landing
 page is worse than a link. It ships in the media index and in `docs/LAUNCH-TWEETS.md`, which is where
