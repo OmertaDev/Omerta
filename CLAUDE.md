@@ -17477,3 +17477,43 @@ against a 100,000 stipend) is a genuinely version-fragile assertion — its own 
 cold **2,100** against a **2,000** allowance, so it passes only while that slot is warm. Widening it
 before a measurement supports a specific fix is the loosen-until-green antipattern, and the LOWER bound
 is already asserted version-independently one call away by `vm.expectCallMinGas`.
+
+**THE FROZEN COUNT THAT NAMED NO COMPILER, AND THE TRAP THAT MADE ONE VERSION EXPERIMENT WORTHLESS
+(2026-08-29).** Two small findings out of the same pin, and the first one's PREMISE was wrong until the
+document was actually read. `CHAIN-AUDIT-PACKET.md` quotes **387 Foundry tests across 22 suites,
+measured 2026-08-27** against a tree that now measures **896/43**, which looks like the stale-figure
+class this project keeps fixing. **It is not.** The packet's own banner declares it a **SUPERSEDED
+SNAPSHOT ... retained as historical audit evidence** and tells the reader to *rebuild and freeze a new
+packet at the release head*, and `test/docs.js`'s existing guard says in its own comment that the packet
+is deliberately **not** held to the tree. Refreshing those figures would have destroyed a record kept on
+purpose. **And they were never wrong**: measured at `18738f023` — the commit that WROTE the line — the
+tree held 21 `.t.sol` files, 21 test contracts, 384 test/invariant functions and exactly **12**
+parameterised fuzz functions, so *387 / 22 / "twelve 512-run fuzz"* was accurate the day it was written.
+It is stale, not false, and the difference decides the fix.
+**THE REAL FINDING IS NARROW AND TOUCHES NO FIGURE: the measurement names no compiler, and could not
+have.** At that commit the workflow used `foundry-rs/foundry-toolchain@v1` with **no `version:` key**,
+so `stable` resolved at run time and the compiler behind those figures **is not recoverable from the
+record**. That matters because **the count is version-DEPENDENT** — a suite holding only `invariant_*`
+functions counts as ONE test under the older aggregated model and as N under 1.7.1 — so a reader who
+checks out the 2026-08-27 tree and re-runs `forge test` today may get a different number and **cannot
+tell whether the tree changed or the counter did**, which is exactly the ambiguity that left the forge
+gate red and unreproducible for 19 hours. The packet now states that provenance beside the frozen
+figures, and the guard **crosses the version the packet names against the version the workflow actually
+pins** — two sources, one truth, so the note cannot go stale the first time somebody bumps the pin.
+**The split was MEASURED rather than guessed**, because the task said not to guess it: of the +509, **at
+most +6** is the counting change (9 invariant functions across 3 invariant-only suites), and the rest is
+real growth — 21 suites to 43, the Acquisition constellation.
+**AND A VACUOUS LOOP IN MY OWN MEASUREMENT, caught by a precondition rather than by luck.** The first
+fuzz count returned **0**, which read as a real answer. `git ls-tree -r --name-only <ref>
+omerta-contracts/test` run from *inside* `omerta-contracts/` matches nothing — git pathspecs are
+relative to CWD — so the loop iterated over an empty list and reported a confident zero. It only
+surfaced because the re-run printed `files found:` first. *A loop over an empty list reads exactly like
+a measurement of zero.*
+**THE `--out` TRAP, recorded at the site where it bites (`omerta-contracts/foundry.toml`).** The
+obvious way to run a second toolchain version without clobbering `out/` is `forge test --out out-151`.
+`fs_permissions` allows exactly `./out` and `./src`, so every artifact-reading test then fails with
+`vm.readFile: the path out-151/... is not allowed to be accessed` — a **HARNESS** failure wearing a
+compiler failure's clothes. It made one whole version experiment worthless: the run reported three red
+tests and measured nothing about the compiler at all. It was caught by reading the failure TEXT rather
+than the exit code — **it names a PERMISSION, never an assertion**. To compare toolchains, use separate
+checkouts, never `--out`.
