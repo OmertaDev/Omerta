@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "contextplus": {
+      "command": "npx",
+      "args": ["-y", "contextplus"],
+      "env": {
+        "CONTEXTPLUS_EMBED_BATCH_SIZE": "8",
+        "CONTEXTPLUS_EMBED_TRACKER": "lazy",
+        "OLLAMA_EMBED_MODEL": "nomic-embed-text",
+        "OLLAMA_CHAT_MODEL": "llama3.2"
+      }
+    }
+  }
+}
