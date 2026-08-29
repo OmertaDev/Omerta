@@ -95,7 +95,7 @@
 | [src/notoriety.js](../../src/notoriety.js) | 31 | world-progression | 1 / 2 | 0 | 2 | 0 |
 | [src/npcwar.js](../../src/npcwar.js) | 575 | world-progression | 2 / 8 | 7 | 8 | 1 |
 | [src/opportunities.js](../../src/opportunities.js) | 156 | engagement-growth | 6 / 2 | 1 | 6 | 0 |
-| [src/ops.js](../../src/ops.js) | 219 | platform-core | 6 / 4 | 4 | 11 | 2 |
+| [src/ops.js](../../src/ops.js) | 225 | platform-core | 6 / 4 | 4 | 11 | 2 |
 | [src/pass.js](../../src/pass.js) | 118 | platform-core | 3 / 5 | 2 | 3 | 2 |
 | [src/path-funnel.js](../../src/path-funnel.js) | 379 | platform-core | 0 / 4 | 0 | 7 | 2 |
 | [src/path-pages.js](../../src/path-pages.js) | 326 | platform-core | 0 / 2 | 0 | 1 | 1 |

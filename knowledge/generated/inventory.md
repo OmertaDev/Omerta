@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `8317d343b075`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `1115e806ba8f`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,826 |
-| Text lines | 517,996 |
-| Repository bytes inventoried | 313,733,572 |
+| Text lines | 518,069 |
+| Repository bytes inventoried | 313,739,798 |
 | Backend/route modules | 187 |
 | HTTP route registrations / unique routes | 742 / 742 |
 | Database tables | 317 |
 | Solidity declarations | 49 |
-| Git commits | 1,288 |
+| Git commits | 1,290 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 5,646 / 24,747 |
+| Graph nodes / edges | 5,648 / 24,758 |
 
 ## Artifact kinds
 
@@ -61,7 +61,7 @@
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
 | [test/docs.js](../../test/docs.js) | 3,986 | test-suite | 2026-08-29 |
 | [omerta-contracts/test/AcquisitionConstellationTask3B.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask3B.t.sol) | 3,743 | contract-test | 2026-08-28 |
-| [test/gates.js](../../test/gates.js) | 3,523 | test-suite | 2026-08-29 |
+| [test/gates.js](../../test/gates.js) | 3,569 | test-suite | 2026-08-29 |
 | [src/server.js](../../src/server.js) | 3,472 | backend-module | 2026-08-29 |
 | [omerta-contracts/test/AcquisitionVaultOperator.t.sol](../../omerta-contracts/test/AcquisitionVaultOperator.t.sol) | 3,222 | contract-test | 2026-08-29 |
 | [omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1](../../omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1) | 2,947 | contract-project | 2026-08-28 |
