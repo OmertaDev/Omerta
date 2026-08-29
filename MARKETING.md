@@ -91,9 +91,12 @@ compound, the collection, who owed whom blood — and your heir walks out into a
 | **Vice** | A casino, a racetrack, a boxing stable, a poker room, street races. All cash. Never $OMR — that line is deliberate. |
 | **Going legit** | The Vault, the compound, the Dynasty, the estate. Where a made man puts money he intends to keep. |
 
-**Scale, rechecked 2026-08-27:** 167 backend source files, 125 test files, 263 database tables,
-23 top-level Solidity files, and a 531/531 full Foundry run across 27 suites. This is not a prototype
-with a whitepaper attached. Source presence is not a production-live claim; the chain remains audit-gated.
+**Scale, re-measured 2026-08-29 (the figures `SPEC.md`'s size table carries, which `test/docs.js`
+holds to the tree):** 187 backend source files, 153 test files, 317 database tables, 32 top-level
+Solidity files, and 844 declared Foundry test functions across 37 suites. This is not a prototype
+with a whitepaper attached. Source presence is not a production-live claim; the chain remains
+audit-gated — and quote the *declared* test count, not a passing one, unless you have just run the
+suite yourself (the release gate re-measures what passes).
 
 ---
 
@@ -106,7 +109,7 @@ Four things, in the order they are hardest to copy.
 Most games check their economy when something looks wrong. This one checks it every night, against
 30 invariants, and treats a drift of one cent as an alarm. There is a **money router** that
 *declares* every real-value inflow and where each slice lands, derived from the live constants so the
-declaration cannot drift from the code. There are 85 red-team reports in the repo, each
+declaration cannot drift from the code. There are 96 red-team reports in the repo, each
 point-in-time, each with the findings it fixed and the things it attacked and found sound.
 
 That is not a feature players ask for. It is the thing that lets everything else be true.
