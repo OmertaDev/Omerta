@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "c6bb58f62340596a93e38007d167e5deacca3855",
+  "sourceRevision": "503a7a3cd32f7c081e20afa98e1e34e4094b6cb1",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5582,
-    "edges": 24432,
+    "nodes": 5586,
+    "edges": 24446,
     "byNodeType": {
       "Artifact": 1824,
-      "Command": 53,
-      "Commit": 1230,
+      "Command": 54,
+      "Commit": 1233,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1977,
-      "CHANGED": 9620,
+      "CHANGED": 9629,
       "CONTAINS": 1844,
-      "DECLARES": 53,
+      "DECLARES": 54,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
-      "EXECUTES": 193,
+      "EXECUTES": 194,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1230,
+      "HAS_COMMIT": 1233,
       "IMPLEMENTS": 124,
       "IMPORTS": 1626,
       "INHERITS": 12,
@@ -19935,20 +19935,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 11491,
-      "lines": 81,
-      "version": "e28ff0b5826faafb",
+      "bytes": 11567,
+      "lines": 82,
+      "version": "29cd2825a0ab9b86",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "e28ff0b5826faafb"
+          "version": "29cd2825a0ab9b86"
         }
       ],
-      "lastChangedAt": "2026-08-28T20:22:12-04:00",
+      "lastChangedAt": "2026-08-28T22:06:24-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
+      "lastChangedCommit": "503a7a3cd32f7c081e20afa98e1e34e4094b6cb1"
     },
     {
       "key": "Artifact:Procfile",
@@ -33735,20 +33735,20 @@
       "path": "src/db.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 34951,
+      "bytes": 34963,
       "lines": 651,
-      "version": "1940ab98870d0c22",
+      "version": "e3910f53fbf0eef5",
       "text": true,
       "provenance": [
         {
           "file": "src/db.js",
           "line": 1,
-          "version": "1940ab98870d0c22"
+          "version": "e3910f53fbf0eef5"
         }
       ],
-      "lastChangedAt": "2026-08-28T21:57:33-04:00",
+      "lastChangedAt": "2026-08-28T22:06:24-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c6bb58f62340596a93e38007d167e5deacca3855"
+      "lastChangedCommit": "503a7a3cd32f7c081e20afa98e1e34e4094b6cb1"
     },
     {
       "key": "Artifact:src/dbhealth.js",
@@ -39784,20 +39784,20 @@
       "path": "test/rwahealthoverlay.schema.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 20154,
-      "lines": 434,
-      "version": "bcf5b22cd2cb26b6",
+      "bytes": 20322,
+      "lines": 436,
+      "version": "c1488ccb4c0ee749",
       "text": true,
       "provenance": [
         {
           "file": "test/rwahealthoverlay.schema.js",
           "line": 1,
-          "version": "bcf5b22cd2cb26b6"
+          "version": "c1488ccb4c0ee749"
         }
       ],
-      "lastChangedAt": "2026-08-28T21:57:33-04:00",
+      "lastChangedAt": "2026-08-28T22:06:24-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c6bb58f62340596a93e38007d167e5deacca3855"
+      "lastChangedCommit": "503a7a3cd32f7c081e20afa98e1e34e4094b6cb1"
     },
     {
       "key": "Artifact:test/rwahealthoverlay.vector.js",
@@ -40244,20 +40244,20 @@
       "path": "test/stockcatalogv2.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 78795,
-      "lines": 1395,
-      "version": "093775ffac92379d",
+      "bytes": 78984,
+      "lines": 1397,
+      "version": "b201d5aa59908c4e",
       "text": true,
       "provenance": [
         {
           "file": "test/stockcatalogv2.js",
           "line": 1,
-          "version": "093775ffac92379d"
+          "version": "b201d5aa59908c4e"
         }
       ],
-      "lastChangedAt": "2026-08-28T06:32:41-04:00",
+      "lastChangedAt": "2026-08-28T22:06:24-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "74866a4d20590be6c8b6f04bddf3f57d2ce5124e"
+      "lastChangedCommit": "503a7a3cd32f7c081e20afa98e1e34e4094b6cb1"
     },
     {
       "key": "Artifact:test/stockcatalogv2.postgres.js",
@@ -42660,6 +42660,19 @@
       "id": "npm:test:genesis",
       "label": "npm run test:genesis",
       "command": "node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:stockcatalogv2:postgres",
+      "type": "Command",
+      "id": "npm:test:stockcatalogv2:postgres",
+      "label": "npm run test:stockcatalogv2:postgres",
+      "command": "node test/stockcatalogv2.postgres.js",
       "provenance": [
         {
           "file": "package.json",
@@ -48672,6 +48685,22 @@
       ]
     },
     {
+      "key": "Commit:47a02f551f675bcc6ee197f38922b8d38cad344c",
+      "type": "Commit",
+      "id": "47a02f551f675bcc6ee197f38922b8d38cad344c",
+      "label": "Merge pull request #146 from OmertaDev/codex/grill-production-migration-fix",
+      "title": "Merge pull request #146 from OmertaDev/codex/grill-production-migration-fix",
+      "date": "2026-08-28T22:01:14-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/47a02f551f675bcc6ee197f38922b8d38cad344c",
+      "provenance": [
+        {
+          "commit": "47a02f551f675bcc6ee197f38922b8d38cad344c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/47a02f551f675bcc6ee197f38922b8d38cad344c"
+        }
+      ]
+    },
+    {
       "key": "Commit:48238abed0b399c329097e4d20c516c660a77ba1",
       "type": "Commit",
       "id": "48238abed0b399c329097e4d20c516c660a77ba1",
@@ -49148,6 +49177,22 @@
         {
           "commit": "500c8a095fef7af11a8c793cb5d658412ff6a286",
           "url": "https://github.com/OmertaDev/Omerta/commit/500c8a095fef7af11a8c793cb5d658412ff6a286"
+        }
+      ]
+    },
+    {
+      "key": "Commit:503a7a3cd32f7c081e20afa98e1e34e4094b6cb1",
+      "type": "Commit",
+      "id": "503a7a3cd32f7c081e20afa98e1e34e4094b6cb1",
+      "label": "fix: stabilize Postgres H2 catalog decoding",
+      "title": "fix: stabilize Postgres H2 catalog decoding",
+      "date": "2026-08-28T22:06:24-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/503a7a3cd32f7c081e20afa98e1e34e4094b6cb1",
+      "provenance": [
+        {
+          "commit": "503a7a3cd32f7c081e20afa98e1e34e4094b6cb1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/503a7a3cd32f7c081e20afa98e1e34e4094b6cb1"
         }
       ]
     },
@@ -54924,6 +54969,22 @@
         {
           "commit": "987b6bfc853af86eb175e3eb43183004dbcf1f5e",
           "url": "https://github.com/OmertaDev/Omerta/commit/987b6bfc853af86eb175e3eb43183004dbcf1f5e"
+        }
+      ]
+    },
+    {
+      "key": "Commit:99439d4c633a14dcdf11854903d92ea79abbb12a",
+      "type": "Commit",
+      "id": "99439d4c633a14dcdf11854903d92ea79abbb12a",
+      "label": "docs: refresh migration hotfix knowledge graph",
+      "title": "docs: refresh migration hotfix knowledge graph",
+      "date": "2026-08-28T22:00:07-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/99439d4c633a14dcdf11854903d92ea79abbb12a",
+      "provenance": [
+        {
+          "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/99439d4c633a14dcdf11854903d92ea79abbb12a"
         }
       ]
     },
@@ -75570,6 +75631,9 @@
           "commit": "982ba81b2db3f68ec4d02f1c3b6e07eceae45456"
         },
         {
+          "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
+        },
+        {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
         },
         {
@@ -75843,6 +75907,9 @@
           "commit": "982ba81b2db3f68ec4d02f1c3b6e07eceae45456"
         },
         {
+          "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
+        },
+        {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
         },
         {
@@ -76114,6 +76181,9 @@
         },
         {
           "commit": "982ba81b2db3f68ec4d02f1c3b6e07eceae45456"
+        },
+        {
+          "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
         },
         {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
@@ -76437,6 +76507,9 @@
           "commit": "982ba81b2db3f68ec4d02f1c3b6e07eceae45456"
         },
         {
+          "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
+        },
+        {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
         },
         {
@@ -76585,6 +76658,9 @@
         },
         {
           "commit": "982ba81b2db3f68ec4d02f1c3b6e07eceae45456"
+        },
+        {
+          "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
         },
         {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
@@ -77440,12 +77516,12 @@
       "id": "src/db.js",
       "label": "src/db.js",
       "lines": 651,
-      "version": "1940ab98870d0c22",
+      "version": "e3910f53fbf0eef5",
       "provenance": [
         {
           "file": "src/db.js",
           "line": 1,
-          "version": "1940ab98870d0c22"
+          "version": "e3910f53fbf0eef5"
         }
       ]
     },
@@ -82764,8 +82840,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "c6bb58f62340596a93e38007d167e5deacca3855",
-      "currentBranch": "codex/grill-production-migration-fix",
+      "revision": "503a7a3cd32f7c081e20afa98e1e34e4094b6cb1",
+      "currentBranch": "codex/grill-production-release-fix-v2",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -107721,13 +107797,13 @@
       "type": "TestSuite",
       "id": "test/rwahealthoverlay.schema.js",
       "label": "test/rwahealthoverlay.schema.js",
-      "lines": 434,
-      "version": "bcf5b22cd2cb26b6",
+      "lines": 436,
+      "version": "c1488ccb4c0ee749",
       "provenance": [
         {
           "file": "test/rwahealthoverlay.schema.js",
           "line": 1,
-          "version": "bcf5b22cd2cb26b6"
+          "version": "c1488ccb4c0ee749"
         }
       ]
     },
@@ -108021,13 +108097,13 @@
       "type": "TestSuite",
       "id": "test/stockcatalogv2.js",
       "label": "test/stockcatalogv2.js",
-      "lines": 1395,
-      "version": "093775ffac92379d",
+      "lines": 1397,
+      "version": "b201d5aa59908c4e",
       "provenance": [
         {
           "file": "test/stockcatalogv2.js",
           "line": 1,
-          "version": "093775ffac92379d"
+          "version": "b201d5aa59908c4e"
         }
       ]
     },
@@ -153759,6 +153835,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:503a7a3cd32f7c081e20afa98e1e34e4094b6cb1",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "503a7a3cd32f7c081e20afa98e1e34e4094b6cb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:503a7a3cd32f7c081e20afa98e1e34e4094b6cb1",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "commit": "503a7a3cd32f7c081e20afa98e1e34e4094b6cb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:503a7a3cd32f7c081e20afa98e1e34e4094b6cb1",
+      "to": "Artifact:test/rwahealthoverlay.schema.js",
+      "provenance": {
+        "commit": "503a7a3cd32f7c081e20afa98e1e34e4094b6cb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:503a7a3cd32f7c081e20afa98e1e34e4094b6cb1",
+      "to": "Artifact:test/stockcatalogv2.js",
+      "provenance": {
+        "commit": "503a7a3cd32f7c081e20afa98e1e34e4094b6cb1"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:505531dcbade92e5bb207d52753954c2082ec0bf",
       "to": "Artifact:AUDIT-full-product.md",
       "provenance": {
@@ -174603,6 +174711,46 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "commit": "987b6bfc853af86eb175e3eb43183004dbcf1f5e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:99439d4c633a14dcdf11854903d92ea79abbb12a",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:99439d4c633a14dcdf11854903d92ea79abbb12a",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:99439d4c633a14dcdf11854903d92ea79abbb12a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:99439d4c633a14dcdf11854903d92ea79abbb12a",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:99439d4c633a14dcdf11854903d92ea79abbb12a",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
       }
     },
     {
@@ -220061,6 +220209,15 @@
     {
       "type": "DECLARES",
       "from": "Artifact:package.json",
+      "to": "Command:npm:test:stockcatalogv2:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
       "to": "Command:npm:ui:quality",
       "provenance": {
         "file": "package.json",
@@ -232129,6 +232286,15 @@
     },
     {
       "type": "EXECUTES",
+      "from": "Command:npm:test:stockcatalogv2:postgres",
+      "to": "Artifact:test/stockcatalogv2.postgres.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
       "from": "Command:npm:ui:quality",
       "to": "Artifact:tools/public-ui.js",
       "provenance": {
@@ -242162,6 +242328,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:47a02f551f675bcc6ee197f38922b8d38cad344c",
+      "provenance": {
+        "commit": "47a02f551f675bcc6ee197f38922b8d38cad344c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:48238abed0b399c329097e4d20c516c660a77ba1",
       "provenance": {
         "commit": "48238abed0b399c329097e4d20c516c660a77ba1"
@@ -242397,6 +242571,14 @@
       "to": "Commit:500c8a095fef7af11a8c793cb5d658412ff6a286",
       "provenance": {
         "commit": "500c8a095fef7af11a8c793cb5d658412ff6a286"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:503a7a3cd32f7c081e20afa98e1e34e4094b6cb1",
+      "provenance": {
+        "commit": "503a7a3cd32f7c081e20afa98e1e34e4094b6cb1"
       }
     },
     {
@@ -245285,6 +245467,14 @@
       "to": "Commit:987b6bfc853af86eb175e3eb43183004dbcf1f5e",
       "provenance": {
         "commit": "987b6bfc853af86eb175e3eb43183004dbcf1f5e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:99439d4c633a14dcdf11854903d92ea79abbb12a",
+      "provenance": {
+        "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
       }
     },
     {
