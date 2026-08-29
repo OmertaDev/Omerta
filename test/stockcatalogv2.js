@@ -1322,6 +1322,11 @@ assert.match(schema, /finalized_block_number NUMERIC\(78,0\)/);
 const packageJson = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
 assert.match(packageJson.scripts.test, /node test\/stockcatalogv2\.js/);
 assert.equal(packageJson.scripts['stock-catalog-v2'], 'node tools/robinhood-stock-catalog-v2.js');
+// ci.yml runs the real-PostgreSQL consumer BY THIS NAME. It shipped once with the workflow step
+// written and the script never defined, so the job died on "Missing script" — green suites, red CI,
+// and nothing in the code at fault. (test/docs.js catalogues the class across every workflow.)
+assert.equal(packageJson.scripts['test:stockcatalogv2:postgres'], 'node test/stockcatalogv2.postgres.js',
+  'the real-PostgreSQL CI consumer stays callable by the exact name the workflow invokes');
 
 // H1 RED: the health reader is a distinct, caller-transaction-owned Registry seam.
 assert.equal(typeof stockCatalogV2.finalizedStockCatalogForHealthV2, 'function',

@@ -91,9 +91,12 @@ compound, the collection, who owed whom blood — and your heir walks out into a
 | **Vice** | A casino, a racetrack, a boxing stable, a poker room, street races. All cash. Never $OMR — that line is deliberate. |
 | **Going legit** | The Vault, the compound, the Dynasty, the estate. Where a made man puts money he intends to keep. |
 
-**Scale, rechecked 2026-08-27:** 167 backend source files, 125 test files, 263 database tables,
-23 top-level Solidity files, and a 531/531 full Foundry run across 27 suites. This is not a prototype
-with a whitepaper attached. Source presence is not a production-live claim; the chain remains audit-gated.
+**Scale, re-measured 2026-08-29 (the figures `SPEC.md`'s size table carries, which `test/docs.js`
+holds to the tree):** 187 backend source files, 153 test files, 317 database tables, 32 top-level
+Solidity files, and 844 declared Foundry test functions across 37 suites. This is not a prototype
+with a whitepaper attached. Source presence is not a production-live claim; the chain remains
+audit-gated — and quote the *declared* test count, not a passing one, unless you have just run the
+suite yourself (the release gate re-measures what passes).
 
 ---
 
@@ -104,10 +107,11 @@ Four things, in the order they are hardest to copy.
 ### 3.1 The accounting is adversarial, and it is the product
 
 Most games check their economy when something looks wrong. This one checks it every night, against
-30 invariants, and treats a drift of one cent as an alarm. There is a **money router** that
-*declares* every real-value inflow and where each slice lands, derived from the live constants so the
-declaration cannot drift from the code. There are 85 red-team reports in the repo, each
-point-in-time, each with the findings it fixed and the things it attacked and found sound.
+more than thirty conservation invariants (32 today, and the count only ever grows), and treats a drift
+of one cent as an alarm. There is a **money router** that *declares* every real-value inflow and
+where each slice lands, derived from the live constants so the declaration cannot drift from the
+code. There are 96 red-team reports in the repo, each point-in-time, each with the findings it fixed
+and the things it attacked and found sound.
 
 That is not a feature players ask for. It is the thing that lets everything else be true.
 
@@ -284,6 +288,15 @@ $OMR structurally lacks the three things that killed $OHM. The graphic
 was checked against the tree on 2026-08-21; it respects the five never-claims (no price talk, no
 yield promise, no "floor", stock delivery stated as gated, extraction stated as opening at launch).
 **Founder signs the final wording before posting**, like everything else here.
+
+**Where it lives, since it is not on a page and that is deliberate.** The graphic is a
+**distribution** asset — it ships with the thread above, the way `hype-short.mp4` ships with the
+posts rather than being embedded (`HYPE.md`). The landing page answers the same comparison in its
+own idiom: `/art/omr-05-ohm-contrast.png`, one of the numbered research sheets linked from the
+`#omr-economy` band. Two assets, two audiences, and neither supersedes the other — a seven-row
+social card cropped into a research-sheet slot would read as a duplicate of the sheet beside it.
+Both are served from `public/art/` by the boot-time allowlist, so the thread's graphic is a live
+URL (`/art/omr-vs-ohm.png`) without being embedded anywhere.
 
 > People keep comparing every treasury-adjacent token to what $OHM did in 2021. Fair — that's the
 > ghost in the room. So here is exactly where $OMR (OMERTÀ, on Robinhood Chain) is built

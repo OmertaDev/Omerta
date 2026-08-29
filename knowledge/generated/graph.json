@@ -1,7 +1,7 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "d29dee6744f22dd650505bd243d9607cdf7fa534",
-  "worktreeDirty": false,
+  "sourceRevision": "2766eb3f06ff246aaf67c0bffbd359a57ceb55d6",
+  "worktreeDirty": true,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
     "nodeTypes": [
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5627,
-    "edges": 24666,
+    "nodes": 5629,
+    "edges": 24680,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 56,
-      "Commit": 1269,
+      "Commit": 1271,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,18 +65,18 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 9765,
+      "CHANGED": 9774,
       "CONTAINS": 1846,
       "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1269,
+      "HAS_COMMIT": 1271,
       "IMPLEMENTS": 124,
       "IMPORTS": 1633,
       "INHERITS": 12,
-      "REFERENCES": 2819,
+      "REFERENCES": 2822,
       "REPRESENTS": 891,
       "TESTS": 583,
       "TRACKS": 126,
@@ -7544,20 +7544,20 @@
       "path": ".github/workflows/forge.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 5272,
-      "lines": 98,
-      "version": "400c07bc5d707cc8",
+      "bytes": 6647,
+      "lines": 116,
+      "version": "134cf7aba90af0cf",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/forge.yml",
           "line": 1,
-          "version": "400c07bc5d707cc8"
+          "version": "134cf7aba90af0cf"
         }
       ],
-      "lastChangedAt": "2026-08-25T04:12:37.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
+      "lastChangedAt": "2026-08-29T20:42:54.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "2766eb3f06ff246aaf67c0bffbd359a57ceb55d6"
     },
     {
       "key": "Artifact:.github/workflows/knowledge-refresh.yml",
@@ -12604,15 +12604,15 @@
       "path": "docs/LAUNCH-TWEETS.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 5588,
-      "lines": 125,
-      "version": "cd6f1a1476895883",
+      "bytes": 6160,
+      "lines": 131,
+      "version": "53d11189dfe787a2",
       "text": true,
       "provenance": [
         {
           "file": "docs/LAUNCH-TWEETS.md",
           "line": 1,
-          "version": "cd6f1a1476895883"
+          "version": "53d11189dfe787a2"
         }
       ],
       "lastChangedAt": "2026-08-14T17:17:29.000Z",
@@ -13409,15 +13409,15 @@
       "path": "HYPE.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 9385,
-      "lines": 134,
-      "version": "88e91f604dd91fde",
+      "bytes": 10912,
+      "lines": 151,
+      "version": "5c34d8aa96f6ecbf",
       "text": true,
       "provenance": [
         {
           "file": "HYPE.md",
           "line": 1,
-          "version": "88e91f604dd91fde"
+          "version": "5c34d8aa96f6ecbf"
         }
       ],
       "lastChangedAt": "2026-08-21T03:47:39.000Z",
@@ -13800,15 +13800,15 @@
       "path": "MARKETING.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 20747,
-      "lines": 355,
-      "version": "eff5c52d788a70c1",
+      "bytes": 21791,
+      "lines": 368,
+      "version": "f2263aaa8abf4be8",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING.md",
           "line": 1,
-          "version": "eff5c52d788a70c1"
+          "version": "f2263aaa8abf4be8"
         }
       ],
       "lastChangedAt": "2026-08-27T13:58:07.000Z",
@@ -16330,20 +16330,20 @@
       "path": "omerta-contracts/test/AcquisitionVaultOperator.t.sol",
       "kind": "contract-test",
       "extension": ".sol",
-      "bytes": 154083,
-      "lines": 3199,
-      "version": "e4c95ccf30d1d92f",
+      "bytes": 155319,
+      "lines": 3222,
+      "version": "f38e7b44064fe2c6",
       "text": true,
       "provenance": [
         {
           "file": "omerta-contracts/test/AcquisitionVaultOperator.t.sol",
           "line": 1,
-          "version": "e4c95ccf30d1d92f"
+          "version": "f38e7b44064fe2c6"
         }
       ],
-      "lastChangedAt": "2026-08-27T16:18:29.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f609a1a1d18b98a3cd4118c045f7f2a05e8e1db3"
+      "lastChangedAt": "2026-08-29T20:42:54.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "2766eb3f06ff246aaf67c0bffbd359a57ceb55d6"
     },
     {
       "key": "Artifact:omerta-contracts/test/audit/AlchemistRedTeam.t.sol",
@@ -32493,15 +32493,15 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1141529,
-      "lines": 11753,
-      "version": "de0fc5432ad4da82",
+      "bytes": 1145029,
+      "lines": 11792,
+      "version": "6208962e0fc97bb7",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "de0fc5432ad4da82"
+          "version": "6208962e0fc97bb7"
         }
       ],
       "lastChangedAt": "2026-08-27T16:35:08.000Z",
@@ -32771,13 +32771,13 @@
       "extension": ".md",
       "bytes": 52606,
       "lines": 716,
-      "version": "c91def7ac8d37e56",
+      "version": "6806cba658b52fd2",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "c91def7ac8d37e56"
+          "version": "6806cba658b52fd2"
         }
       ],
       "lastChangedAt": "2026-08-29T19:44:28.000Z",
@@ -33758,15 +33758,15 @@
       "path": "src/db.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 35718,
-      "lines": 659,
-      "version": "acaea6a29abfe98f",
+      "bytes": 36960,
+      "lines": 679,
+      "version": "6239c48b89f278a9",
       "text": true,
       "provenance": [
         {
           "file": "src/db.js",
           "line": 1,
-          "version": "acaea6a29abfe98f"
+          "version": "6239c48b89f278a9"
         }
       ],
       "lastChangedAt": "2026-08-29T11:14:40.000Z",
@@ -38151,20 +38151,20 @@
       "path": "test/docs.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 288579,
-      "lines": 3884,
-      "version": "0881986e94866fc7",
+      "bytes": 296782,
+      "lines": 3986,
+      "version": "778fbac8ff1b2109",
       "text": true,
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "0881986e94866fc7"
+          "version": "778fbac8ff1b2109"
         }
       ],
-      "lastChangedAt": "2026-08-29T19:44:28.000Z",
+      "lastChangedAt": "2026-08-29T20:42:54.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "fa4f8e2b006c5b3ac216297396fb125e5f1bae49"
+      "lastChangedCommit": "2766eb3f06ff246aaf67c0bffbd359a57ceb55d6"
     },
     {
       "key": "Artifact:test/drop.js",
@@ -40267,15 +40267,15 @@
       "path": "test/stockcatalogv2.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 78795,
-      "lines": 1395,
-      "version": "093775ffac92379d",
+      "bytes": 79289,
+      "lines": 1400,
+      "version": "65fa7846338db58d",
       "text": true,
       "provenance": [
         {
           "file": "test/stockcatalogv2.js",
           "line": 1,
-          "version": "093775ffac92379d"
+          "version": "65fa7846338db58d"
         }
       ],
       "lastChangedAt": "2026-08-28T10:32:41.000Z",
@@ -41371,15 +41371,15 @@
       "path": "tools/knowledge-test.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 21980,
-      "lines": 385,
-      "version": "e57d9d05841fcfcf",
+      "bytes": 23744,
+      "lines": 407,
+      "version": "d11ade05e26030fc",
       "text": true,
       "provenance": [
         {
           "file": "tools/knowledge-test.js",
           "line": 1,
-          "version": "e57d9d05841fcfcf"
+          "version": "d11ade05e26030fc"
         }
       ],
       "lastChangedAt": "2026-08-29T20:01:22.000Z",
@@ -43685,6 +43685,22 @@
       ]
     },
     {
+      "key": "Commit:0eb995dd6969e2d162b4ea8618d23e63c616e976",
+      "type": "Commit",
+      "id": "0eb995dd6969e2d162b4ea8618d23e63c616e976",
+      "label": "knowledge: regenerate at d29dee67",
+      "title": "knowledge: regenerate at d29dee67",
+      "date": "2026-08-29T20:03:18.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0eb995dd6969e2d162b4ea8618d23e63c616e976",
+      "provenance": [
+        {
+          "commit": "0eb995dd6969e2d162b4ea8618d23e63c616e976",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0eb995dd6969e2d162b4ea8618d23e63c616e976"
+        }
+      ]
+    },
+    {
       "key": "Commit:0ed5758f09a9528bfecbf9b58c1d10de1c67fd9a",
       "type": "Commit",
       "id": "0ed5758f09a9528bfecbf9b58c1d10de1c67fd9a",
@@ -45569,6 +45585,22 @@
         {
           "commit": "270e080030e7aa076a5d5473c780cfb2d50d2655",
           "url": "https://github.com/OmertaDev/Omerta/commit/270e080030e7aa076a5d5473c780cfb2d50d2655"
+        }
+      ]
+    },
+    {
+      "key": "Commit:2766eb3f06ff246aaf67c0bffbd359a57ceb55d6",
+      "type": "Commit",
+      "id": "2766eb3f06ff246aaf67c0bffbd359a57ceb55d6",
+      "label": "The pre-mainnet gate was red for 19 hours because a TEST HARNESS was 906 bytes over EIP-170",
+      "title": "The pre-mainnet gate was red for 19 hours because a TEST HARNESS was 906 bytes over EIP-170",
+      "date": "2026-08-29T20:42:54.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2766eb3f06ff246aaf67c0bffbd359a57ceb55d6",
+      "provenance": [
+        {
+          "commit": "2766eb3f06ff246aaf67c0bffbd359a57ceb55d6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2766eb3f06ff246aaf67c0bffbd359a57ceb55d6"
         }
       ]
     },
@@ -69100,13 +69132,13 @@
       "id": "docs/LAUNCH-TWEETS.md",
       "label": "docs/LAUNCH-TWEETS.md",
       "documentType": "documentation",
-      "lines": 125,
-      "version": "cd6f1a1476895883",
+      "lines": 131,
+      "version": "53d11189dfe787a2",
       "provenance": [
         {
           "file": "docs/LAUNCH-TWEETS.md",
           "line": 1,
-          "version": "cd6f1a1476895883"
+          "version": "53d11189dfe787a2"
         }
       ]
     },
@@ -69644,13 +69676,13 @@
       "id": "HYPE.md",
       "label": "HYPE.md",
       "documentType": "documentation",
-      "lines": 134,
-      "version": "88e91f604dd91fde",
+      "lines": 151,
+      "version": "5c34d8aa96f6ecbf",
       "provenance": [
         {
           "file": "HYPE.md",
           "line": 1,
-          "version": "88e91f604dd91fde"
+          "version": "5c34d8aa96f6ecbf"
         }
       ]
     },
@@ -69900,13 +69932,13 @@
       "id": "MARKETING.md",
       "label": "MARKETING.md",
       "documentType": "documentation",
-      "lines": 355,
-      "version": "eff5c52d788a70c1",
+      "lines": 368,
+      "version": "f2263aaa8abf4be8",
       "provenance": [
         {
           "file": "MARKETING.md",
           "line": 1,
-          "version": "eff5c52d788a70c1"
+          "version": "f2263aaa8abf4be8"
         }
       ]
     },
@@ -71485,12 +71517,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 716,
-      "version": "c91def7ac8d37e56",
+      "version": "6806cba658b52fd2",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "c91def7ac8d37e56"
+          "version": "6806cba658b52fd2"
         }
       ]
     },
@@ -71982,7 +72014,7 @@
       "provenance": [
         {
           "file": "src/db.js",
-          "line": 530
+          "line": 550
         },
         {
           "file": "test/rwahealth.postgres.js",
@@ -72010,7 +72042,7 @@
       "provenance": [
         {
           "file": "src/db.js",
-          "line": 648
+          "line": 668
         },
         {
           "file": "test/finalizedobservation.js",
@@ -76003,6 +76035,9 @@
           "commit": "0a59554664bbf60a2f5d754c5718ea532208ba5f"
         },
         {
+          "commit": "0eb995dd6969e2d162b4ea8618d23e63c616e976"
+        },
+        {
           "commit": "0fe33ebb51f387d386e03cb828026a59bbde13de"
         },
         {
@@ -76136,6 +76171,9 @@
         },
         {
           "commit": "0a59554664bbf60a2f5d754c5718ea532208ba5f"
+        },
+        {
+          "commit": "0eb995dd6969e2d162b4ea8618d23e63c616e976"
         },
         {
           "commit": "0f643f3fdccffbdacdd31dc603e2093bf618b25e"
@@ -76459,6 +76497,9 @@
           "commit": "0a59554664bbf60a2f5d754c5718ea532208ba5f"
         },
         {
+          "commit": "0eb995dd6969e2d162b4ea8618d23e63c616e976"
+        },
+        {
           "commit": "0f643f3fdccffbdacdd31dc603e2093bf618b25e"
         },
         {
@@ -76778,6 +76819,9 @@
         },
         {
           "commit": "0a59554664bbf60a2f5d754c5718ea532208ba5f"
+        },
+        {
+          "commit": "0eb995dd6969e2d162b4ea8618d23e63c616e976"
         },
         {
           "commit": "0f643f3fdccffbdacdd31dc603e2093bf618b25e"
@@ -77158,6 +77202,9 @@
           "commit": "0a59554664bbf60a2f5d754c5718ea532208ba5f"
         },
         {
+          "commit": "0eb995dd6969e2d162b4ea8618d23e63c616e976"
+        },
+        {
           "commit": "0f643f3fdccffbdacdd31dc603e2093bf618b25e"
         },
         {
@@ -77465,6 +77512,9 @@
       "provenance": [
         {
           "commit": "0a59554664bbf60a2f5d754c5718ea532208ba5f"
+        },
+        {
+          "commit": "0eb995dd6969e2d162b4ea8618d23e63c616e976"
         },
         {
           "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
@@ -78397,13 +78447,13 @@
       "type": "Module",
       "id": "src/db.js",
       "label": "src/db.js",
-      "lines": 659,
-      "version": "acaea6a29abfe98f",
+      "lines": 679,
+      "version": "6239c48b89f278a9",
       "provenance": [
         {
           "file": "src/db.js",
           "line": 1,
-          "version": "acaea6a29abfe98f"
+          "version": "6239c48b89f278a9"
         }
       ]
     },
@@ -83722,11 +83772,11 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "d29dee6744f22dd650505bd243d9607cdf7fa534",
+      "revision": "2766eb3f06ff246aaf67c0bffbd359a57ceb55d6",
       "currentBranch": "claude/game-dev-roadmap-6jtsst",
       "defaultBranch": "main",
       "visibility": "public",
-      "worktreeDirty": false,
+      "worktreeDirty": true,
       "currentArtifactCount": 1826,
       "provenance": [
         {
@@ -106009,13 +106059,13 @@
       "type": "TestSuite",
       "id": "omerta-contracts/test/AcquisitionVaultOperator.t.sol",
       "label": "omerta-contracts/test/AcquisitionVaultOperator.t.sol",
-      "lines": 3199,
-      "version": "e4c95ccf30d1d92f",
+      "lines": 3222,
+      "version": "f38e7b44064fe2c6",
       "provenance": [
         {
           "file": "omerta-contracts/test/AcquisitionVaultOperator.t.sol",
           "line": 1,
-          "version": "e4c95ccf30d1d92f"
+          "version": "f38e7b44064fe2c6"
         }
       ]
     },
@@ -107659,13 +107709,13 @@
       "type": "TestSuite",
       "id": "test/docs.js",
       "label": "test/docs.js",
-      "lines": 3884,
-      "version": "0881986e94866fc7",
+      "lines": 3986,
+      "version": "778fbac8ff1b2109",
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "0881986e94866fc7"
+          "version": "778fbac8ff1b2109"
         }
       ]
     },
@@ -108979,13 +109029,13 @@
       "type": "TestSuite",
       "id": "test/stockcatalogv2.js",
       "label": "test/stockcatalogv2.js",
-      "lines": 1395,
-      "version": "093775ffac92379d",
+      "lines": 1400,
+      "version": "65fa7846338db58d",
       "provenance": [
         {
           "file": "test/stockcatalogv2.js",
           "line": 1,
-          "version": "093775ffac92379d"
+          "version": "65fa7846338db58d"
         }
       ]
     },
@@ -109279,13 +109329,13 @@
       "type": "Workflow",
       "id": ".github/workflows/forge.yml",
       "label": ".github/workflows/forge.yml",
-      "lines": 98,
-      "version": "400c07bc5d707cc8",
+      "lines": 116,
+      "version": "134cf7aba90af0cf",
       "provenance": [
         {
           "file": ".github/workflows/forge.yml",
           "line": 1,
-          "version": "400c07bc5d707cc8"
+          "version": "134cf7aba90af0cf"
         }
       ]
     },
@@ -130126,6 +130176,54 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:0eb995dd6969e2d162b4ea8618d23e63c616e976",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "0eb995dd6969e2d162b4ea8618d23e63c616e976"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0eb995dd6969e2d162b4ea8618d23e63c616e976",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "0eb995dd6969e2d162b4ea8618d23e63c616e976"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0eb995dd6969e2d162b4ea8618d23e63c616e976",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "0eb995dd6969e2d162b4ea8618d23e63c616e976"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0eb995dd6969e2d162b4ea8618d23e63c616e976",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "0eb995dd6969e2d162b4ea8618d23e63c616e976"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0eb995dd6969e2d162b4ea8618d23e63c616e976",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "0eb995dd6969e2d162b4ea8618d23e63c616e976"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0eb995dd6969e2d162b4ea8618d23e63c616e976",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "0eb995dd6969e2d162b4ea8618d23e63c616e976"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:0ed5758f09a9528bfecbf9b58c1d10de1c67fd9a",
       "to": "Artifact:SPEC.md",
       "provenance": {
@@ -139178,6 +139276,30 @@
       "to": "Artifact:test/boxing.js",
       "provenance": {
         "commit": "270e080030e7aa076a5d5473c780cfb2d50d2655"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2766eb3f06ff246aaf67c0bffbd359a57ceb55d6",
+      "to": "Artifact:.github/workflows/forge.yml",
+      "provenance": {
+        "commit": "2766eb3f06ff246aaf67c0bffbd359a57ceb55d6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2766eb3f06ff246aaf67c0bffbd359a57ceb55d6",
+      "to": "Artifact:omerta-contracts/test/AcquisitionVaultOperator.t.sol",
+      "provenance": {
+        "commit": "2766eb3f06ff246aaf67c0bffbd359a57ceb55d6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2766eb3f06ff246aaf67c0bffbd359a57ceb55d6",
+      "to": "Artifact:test/docs.js",
+      "provenance": {
+        "commit": "2766eb3f06ff246aaf67c0bffbd359a57ceb55d6"
       }
     },
     {
@@ -241912,6 +242034,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:0eb995dd6969e2d162b4ea8618d23e63c616e976",
+      "provenance": {
+        "commit": "0eb995dd6969e2d162b4ea8618d23e63c616e976"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0ed5758f09a9528bfecbf9b58c1d10de1c67fd9a",
       "provenance": {
         "commit": "0ed5758f09a9528bfecbf9b58c1d10de1c67fd9a"
@@ -242851,6 +242981,14 @@
       "to": "Commit:270e080030e7aa076a5d5473c780cfb2d50d2655",
       "provenance": {
         "commit": "270e080030e7aa076a5d5473c780cfb2d50d2655"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:2766eb3f06ff246aaf67c0bffbd359a57ceb55d6",
+      "provenance": {
+        "commit": "2766eb3f06ff246aaf67c0bffbd359a57ceb55d6"
       }
     },
     {
@@ -254023,7 +254161,7 @@
       "to": "ExternalDependency:pg-mem",
       "provenance": {
         "file": "src/db.js",
-        "line": 648
+        "line": 668
       }
     },
     {
@@ -254032,7 +254170,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "src/db.js",
-        "line": 530
+        "line": 550
       }
     },
     {
@@ -261952,7 +262090,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3824
+        "line": 3926
       }
     },
     {
@@ -261961,7 +262099,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3825
+        "line": 3927
       }
     },
     {
@@ -261970,7 +262108,16 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3688
+        "line": 1099
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/docs.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/docs.js",
+        "line": 3790
       }
     },
     {
@@ -261988,7 +262135,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 688
+        "line": 730
       }
     },
     {
@@ -261997,16 +262144,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 746
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:test/docs.js",
-      "to": "Artifact:src/rules.js",
-      "provenance": {
-        "file": "test/docs.js",
-        "line": 997
+        "line": 788
       }
     },
     {
@@ -286194,6 +286332,15 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/LAUNCH-TWEETS.md",
+      "to": "Artifact:test/docs.js",
+      "provenance": {
+        "file": "docs/LAUNCH-TWEETS.md",
+        "line": 19
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/OMR-MACHINE-CAMPAIGN.md",
       "to": "Artifact:docs/diagrams/omr-06-the-omr-machine-1080x1350.excalidraw",
       "provenance": {
@@ -288823,10 +288970,19 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:HYPE.md",
+      "to": "Artifact:docs/LAUNCH-TWEETS.md",
+      "provenance": {
+        "file": "HYPE.md",
+        "line": 51
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:HYPE.md",
       "to": "Artifact:src/router.js",
       "provenance": {
         "file": "HYPE.md",
-        "line": 66
+        "line": 83
       }
     },
     {
@@ -288835,7 +288991,7 @@
       "to": "Artifact:tools/hype.js",
       "provenance": {
         "file": "HYPE.md",
-        "line": 104
+        "line": 121
       }
     },
     {
@@ -289978,7 +290134,7 @@
       "to": "Artifact:public/art/omr-vs-ohm.png",
       "provenance": {
         "file": "MARKETING.md",
-        "line": 273
+        "line": 277
       }
     },
     {
@@ -289987,7 +290143,16 @@
       "to": "Artifact:public/art/omr-vs-ohm.png",
       "provenance": {
         "file": "MARKETING.md",
-        "line": 283
+        "line": 287
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:MARKETING.md",
+      "to": "Artifact:test/docs.js",
+      "provenance": {
+        "file": "MARKETING.md",
+        "line": 94
       }
     },
     {
@@ -302317,7 +302482,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3824
+        "line": 3926
       }
     },
     {
@@ -302326,7 +302491,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3825
+        "line": 3927
       }
     },
     {
@@ -302335,7 +302500,16 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3688
+        "line": 1099
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/docs.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/docs.js",
+        "line": 3790
       }
     },
     {
@@ -302353,7 +302527,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 688
+        "line": 730
       }
     },
     {
@@ -302362,16 +302536,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 746
-      }
-    },
-    {
-      "type": "TESTS",
-      "from": "Artifact:test/docs.js",
-      "to": "Artifact:src/rules.js",
-      "provenance": {
-        "file": "test/docs.js",
-        "line": 997
+        "line": 788
       }
     },
     {

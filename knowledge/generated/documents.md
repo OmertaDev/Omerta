@@ -323,7 +323,7 @@
 | [docs/AUDITS.md](../../docs/AUDITS.md) | audit | 120 | 2026-08-17 |
 | [docs/BULLETPROOF.md](../../docs/BULLETPROOF.md) | documentation | 272 | 2026-08-21 |
 | [docs/GAMEPLAY-MARKETING-PACK.md](../../docs/GAMEPLAY-MARKETING-PACK.md) | documentation | 55 | 2026-08-24 |
-| [docs/LAUNCH-TWEETS.md](../../docs/LAUNCH-TWEETS.md) | documentation | 125 | 2026-08-14 |
+| [docs/LAUNCH-TWEETS.md](../../docs/LAUNCH-TWEETS.md) | documentation | 131 | 2026-08-14 |
 | [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 249 | 2026-08-26 |
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 346 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-23-discovery-integrity.md](../../docs/superpowers/plans/2026-08-23-discovery-integrity.md) | documentation | 65 | 2026-08-24 |
@@ -357,7 +357,7 @@
 | [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2717 | 2026-08-29 |
 | [GRAPH.md](../../GRAPH.md) | documentation | 295 | 2026-08-29 |
 | [GTM.md](../../GTM.md) | documentation | 295 | 2026-08-13 |
-| [HYPE.md](../../HYPE.md) | documentation | 134 | 2026-08-21 |
+| [HYPE.md](../../HYPE.md) | documentation | 151 | 2026-08-21 |
 | [knowledge/architecture.md](../../knowledge/architecture.md) | knowledge-base | 101 | 2026-08-27 |
 | [knowledge/data-economy.md](../../knowledge/data-economy.md) | knowledge-base | 100 | 2026-08-24 |
 | [knowledge/decisions-and-risks.md](../../knowledge/decisions-and-risks.md) | knowledge-base | 66 | 2026-08-27 |
@@ -373,7 +373,7 @@
 | [LAUNCH.md](../../LAUNCH.md) | operations | 232 | 2026-08-27 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 432 | 2026-08-27 |
 | [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-08-29 |
-| [MARKETING.md](../../MARKETING.md) | documentation | 355 | 2026-08-27 |
+| [MARKETING.md](../../MARKETING.md) | documentation | 368 | 2026-08-27 |
 | [NIGHT-SESSION-LOG.md](../../NIGHT-SESSION-LOG.md) | documentation | 45 | 2026-08-13 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 373 | 2026-07-12 |
 | [omerta-bank-protocol-design.md](../../omerta-bank-protocol-design.md) | design | 694 | 2026-08-26 |
