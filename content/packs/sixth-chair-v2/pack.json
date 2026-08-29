@@ -1,0 +1,910 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.sixth-chair",
+  "version": 2,
+  "growth": {
+    "role": "human_collaboration",
+    "audienceHypothesis": "puzzle_communities",
+    "publicHook": "public-cipher",
+    "attributionPolicy": "direct_once_with_consent",
+    "qualificationPolicy": "agent_human_v1",
+    "rewardProfile": "agent_cash_capability_status",
+    "externalActionPolicy": "approved_asset_only",
+    "retentionCheckpoint": "retained-collaborator"
+  },
+  "nodes": [
+    {
+      "id": "public-cipher",
+      "type": "public_hook",
+      "payload": {
+        "title": "The Empty Place Setting",
+        "disclosure": "ai_agent_promoting_omerta",
+        "approvedAssetOnly": true,
+        "publishesExternally": false,
+        "optOutSupported": true,
+        "teaser": "Five names are printed beneath a photograph of six chairs. Who was erased?"
+      }
+    },
+    {
+      "id": "sixth-chair-campaign",
+      "type": "acquisition_campaign",
+      "payload": {
+        "externalActionPolicy": "approved_asset_only",
+        "attribution": "direct_once_with_consent",
+        "rewardsRawReach": false,
+        "moderationRequired": true
+      }
+    },
+    {
+      "id": "referral-door",
+      "type": "referral_entry",
+      "payload": {
+        "attributionPolicy": "direct_once_with_consent",
+        "lateClaimSupported": true,
+        "privacyNoticeRequired": true
+      }
+    },
+    {
+      "id": "qualified-newcomer",
+      "type": "newcomer_activation",
+      "payload": {
+        "qualificationPolicy": "agent_human_v1",
+        "recruitKinds": [
+          "human_eligible_non_agent"
+        ],
+        "passiveTimeQualifies": false,
+        "walletLinkAloneQualifies": false
+      }
+    },
+    {
+      "id": "the-sixth-chair",
+      "type": "mystery",
+      "payload": {
+        "title": "The Sixth Chair",
+        "summary": "Reconstruct a forbidden Family supper through asymmetric evidence, salvage, and a willing Witness.",
+        "difficulty": "hard",
+        "scope": "crew_or_extended_family"
+      }
+    },
+    {
+      "id": "crew-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "crew",
+          "extended_family"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "four-seat-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 4,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "archivist",
+      "type": "role",
+      "payload": {
+        "title": "Archivist",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ],
+        "requiredCapability": "evidence_analysis"
+      }
+    },
+    {
+      "id": "driver",
+      "type": "role",
+      "payload": {
+        "title": "Driver",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ],
+        "requiredCapability": "vehicle_salvage"
+      }
+    },
+    {
+      "id": "broker",
+      "type": "role",
+      "payload": {
+        "title": "Broker",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ],
+        "requiredCapability": "market_history"
+      }
+    },
+    {
+      "id": "witness",
+      "type": "role",
+      "payload": {
+        "title": "Witness",
+        "participantKinds": [
+          "human_eligible_non_agent"
+        ],
+        "consentRequired": true,
+        "requiredCapability": "independent_interpretation"
+      }
+    },
+    {
+      "id": "four-way-testimony",
+      "type": "human_agent_collaboration",
+      "payload": {
+        "consentRequired": true,
+        "uniqueParticipants": true,
+        "recruiterCannotFillHumanSeat": true,
+        "humanChoiceRemainsIndependent": true
+      }
+    },
+    {
+      "id": "ledger-chapter",
+      "type": "chapter",
+      "payload": {
+        "title": "The Ledger With Six Columns"
+      }
+    },
+    {
+      "id": "archive-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Burned Margin",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "archivist"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "prompt": "Seven scorched margin marks survive only as the initials B, E, L, L, I, N, I. Enter the erased family name.",
+        "answerSpecId": "archive-answer"
+      }
+    },
+    {
+      "id": "supper-photo",
+      "type": "evidence",
+      "payload": {
+        "title": "Photograph of Six Place Settings",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "route-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Route That Never Closed",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "driver"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "prompt": "The sedan left Bricktown, followed the freight rails east, and died beneath the river cranes. Enter the district name.",
+        "answerSpecId": "route-answer"
+      }
+    },
+    {
+      "id": "vehicle-plate",
+      "type": "evidence",
+      "payload": {
+        "title": "A Plate Number in the Rain"
+      }
+    },
+    {
+      "id": "market-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Sixth Glass",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "broker"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "prompt": "Five glasses carried 11, 13, 17, 19, and 23 cents. The sixth carried the only composite number between the last two. Enter that number.",
+        "answerSpecId": "market-answer"
+      }
+    },
+    {
+      "id": "property-deed",
+      "type": "evidence",
+      "payload": {
+        "title": "A Deed Signed by Nobody"
+      }
+    },
+    {
+      "id": "witness-puzzle",
+      "type": "choice",
+      "payload": {
+        "title": "Which Memory Is Borrowed?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "witness"
+          }
+        ],
+        "choiceOwnership": "witness_only",
+        "recruiterCanOverride": false,
+        "prompt": "The Witness decides what survives the supper.",
+        "options": [
+          {
+            "id": "name-the-sixth-family",
+            "label": "Name the erased family and preserve the record"
+          },
+          {
+            "id": "protect-the-living",
+            "label": "Seal the name and protect the living witness"
+          }
+        ]
+      }
+    },
+    {
+      "id": "witness-testimony",
+      "type": "evidence",
+      "payload": {
+        "title": "The Witness Changes One Name"
+      }
+    },
+    {
+      "id": "sixth-family-fact",
+      "type": "world_fact",
+      "payload": {
+        "key": "history.sixth_family.existed",
+        "scope": "party_instance"
+      }
+    },
+    {
+      "id": "salvage-source-budget",
+      "type": "budget",
+      "payload": {
+        "kind": "source",
+        "maxUnitsPerEpoch": 6000,
+        "epoch": "season"
+      }
+    },
+    {
+      "id": "wrecked-sedan-salvage",
+      "type": "source",
+      "payload": {
+        "sourceKind": "car_salvage",
+        "budgetId": "salvage-source-budget",
+        "requiresOwnedWreck": true
+      }
+    },
+    {
+      "id": "spent-ammo-salvage",
+      "type": "source",
+      "payload": {
+        "sourceKind": "spent_ammunition_salvage",
+        "budgetId": "salvage-source-budget",
+        "destroysInput": true
+      }
+    },
+    {
+      "id": "abstract-contraband-cache",
+      "type": "source",
+      "payload": {
+        "sourceKind": "fictional_contraband_supply",
+        "budgetId": "salvage-source-budget",
+        "fictionalGameplayOnly": true
+      }
+    },
+    {
+      "id": "steel-scrap",
+      "type": "item_def",
+      "payload": {
+        "title": "Steel Scrap",
+        "category": "raw_material",
+        "tier": 1,
+        "stackable": true
+      }
+    },
+    {
+      "id": "cartridge-brass",
+      "type": "item_def",
+      "payload": {
+        "title": "Cartridge Brass",
+        "category": "raw_material",
+        "tier": 1,
+        "stackable": true
+      }
+    },
+    {
+      "id": "ledger-fiber",
+      "type": "item_def",
+      "payload": {
+        "title": "Ledger Fiber",
+        "category": "abstract_contraband_material",
+        "tier": 2,
+        "stackable": true,
+        "fictionalGameplayOnly": true
+      }
+    },
+    {
+      "id": "sealed-precursor",
+      "type": "item_def",
+      "payload": {
+        "title": "Sealed Precursor",
+        "category": "abstract_drug_supply",
+        "tier": 2,
+        "stackable": true,
+        "fictionalGameplayOnly": true
+      }
+    },
+    {
+      "id": "bench-press",
+      "type": "tool",
+      "payload": {
+        "title": "Restoration Press",
+        "durabilityCost": 3
+      }
+    },
+    {
+      "id": "crew-workshop",
+      "type": "facility",
+      "payload": {
+        "title": "Crew Workshop",
+        "organizationScopes": [
+          "crew",
+          "extended_family"
+        ]
+      }
+    },
+    {
+      "id": "salvage-mastery",
+      "type": "skill_track",
+      "payload": {
+        "title": "Salvage",
+        "maxMastery": 99
+      }
+    },
+    {
+      "id": "metalwork-mastery",
+      "type": "skill_track",
+      "payload": {
+        "title": "Metalwork",
+        "maxMastery": 99
+      }
+    },
+    {
+      "id": "restore-lockbox",
+      "type": "recipe",
+      "payload": {
+        "title": "Restore the Bellini Lockbox",
+        "skill": "metalwork-mastery",
+        "minMastery": 12,
+        "facility": "crew-workshop",
+        "fictionalGameplayOnly": true
+      }
+    },
+    {
+      "id": "bellini-lockbox",
+      "type": "item_def",
+      "payload": {
+        "title": "Restored Bellini Lockbox",
+        "category": "rare_crafted_key_item",
+        "tier": 4,
+        "stackable": false,
+        "maxDurability": 100,
+        "exportPolicy": {
+          "mode": "owner_initiated_optional",
+          "gameplayEffect": "none",
+          "identityPolicy": "escrow_single_identity",
+          "metadataPolicy": "hash_pinned",
+          "chainProfile": "allowlisted_profile"
+        }
+      }
+    },
+    {
+      "id": "restoration-wear",
+      "type": "sink",
+      "payload": {
+        "kind": "durability",
+        "repairLossBps": 500,
+        "terminalAtZero": true
+      }
+    },
+    {
+      "id": "sixth-chair-seal",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Seal of the Sixth Chair",
+        "rarity": "seasonal_unique",
+        "gameplayPower": "none",
+        "exportPolicy": {
+          "mode": "owner_initiated_optional",
+          "gameplayEffect": "none",
+          "identityPolicy": "escrow_single_identity",
+          "metadataPolicy": "hash_pinned",
+          "chainProfile": "allowlisted_profile"
+        }
+      }
+    },
+    {
+      "id": "sixth-chair-title",
+      "type": "status",
+      "payload": {
+        "title": "Witness to the Sixth Chair",
+        "economicPower": "none"
+      }
+    },
+    {
+      "id": "party-completion-reward",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "retained-collaborator",
+      "type": "retention_checkpoint",
+      "payload": {
+        "minimumAccountAgeDays": 14,
+        "distinctActiveDays": 3,
+        "meaningfulOutcomeRequired": true,
+        "idleSessionsQualify": false,
+        "circularTransfersQualify": false
+      }
+    },
+    {
+      "id": "agent-acquisition-cash-budget",
+      "type": "budget",
+      "payload": {
+        "currency": "cash",
+        "liabilityCap": 20000,
+        "reserved": 20000,
+        "maxRecruits": 20,
+        "expiresWith": "season-overlay"
+      }
+    },
+    {
+      "id": "agent-qualified-cash",
+      "type": "agent_recruitment_reward",
+      "payload": {
+        "milestone": "qualified_activation",
+        "currency": "cash",
+        "amount": 250,
+        "budgetId": "agent-acquisition-cash-budget",
+        "ledgerReason": "referral:agent_qualified",
+        "claimKey": "direct_recruiter_recruit_campaign_milestone",
+        "directOnly": true,
+        "eligibleRecruiterKinds": [
+          "agent"
+        ],
+        "eligibleRecruitKinds": [
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "agent-retained-cash",
+      "type": "agent_recruitment_reward",
+      "payload": {
+        "milestone": "retained_collaborator",
+        "currency": "cash",
+        "amount": 750,
+        "budgetId": "agent-acquisition-cash-budget",
+        "ledgerReason": "referral:agent_retained",
+        "claimKey": "direct_recruiter_recruit_campaign_milestone",
+        "directOnly": true,
+        "eligibleRecruiterKinds": [
+          "agent"
+        ],
+        "eligibleRecruitKinds": [
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "season-omr-reserve",
+      "type": "funded_omr_allocation",
+      "payload": {
+        "currency": "OMR",
+        "amountAtomic": "1000000000000000000",
+        "funding": "season_precommitted",
+        "trigger": "achievement",
+        "timeEmission": false,
+        "claimLimit": 1,
+        "allocationId": "season.sixth-chair.v1"
+      }
+    },
+    {
+      "id": "season-overlay",
+      "type": "season_overlay",
+      "payload": {
+        "activation": "operator_promoted_bundle_only",
+        "changesBaseHash": false
+      }
+    },
+    {
+      "id": "archive-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "bellini"
+        ]
+      }
+    },
+    {
+      "id": "route-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "docks",
+          "the docks"
+        ]
+      }
+    },
+    {
+      "id": "market-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "21"
+        ]
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "There Were Six",
+        "effects": [
+          {
+            "kind": "award_status",
+            "statusId": "sixth-chair-title",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          },
+          {
+            "kind": "award_collectible",
+            "collectibleId": "sixth-chair-seal",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "public-cipher",
+      "type": "ATTRACTS_TO",
+      "to": "sixth-chair-campaign"
+    },
+    {
+      "from": "sixth-chair-campaign",
+      "type": "ATTRACTS_TO",
+      "to": "referral-door"
+    },
+    {
+      "from": "referral-door",
+      "type": "ACTIVATES",
+      "to": "qualified-newcomer"
+    },
+    {
+      "from": "qualified-newcomer",
+      "type": "UNLOCKS",
+      "to": "the-sixth-chair"
+    },
+    {
+      "from": "the-sixth-chair",
+      "type": "REQUIRES",
+      "to": "crew-policy"
+    },
+    {
+      "from": "crew-policy",
+      "type": "REQUIRES",
+      "to": "four-seat-quorum"
+    },
+    {
+      "from": "crew-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "archivist"
+    },
+    {
+      "from": "crew-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "driver"
+    },
+    {
+      "from": "crew-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "broker"
+    },
+    {
+      "from": "crew-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "witness"
+    },
+    {
+      "from": "the-sixth-chair",
+      "type": "UNLOCKS",
+      "to": "ledger-chapter"
+    },
+    {
+      "from": "ledger-chapter",
+      "type": "UNLOCKS",
+      "to": "archive-puzzle"
+    },
+    {
+      "from": "ledger-chapter",
+      "type": "UNLOCKS",
+      "to": "route-puzzle"
+    },
+    {
+      "from": "ledger-chapter",
+      "type": "UNLOCKS",
+      "to": "market-puzzle"
+    },
+    {
+      "from": "ledger-chapter",
+      "type": "UNLOCKS",
+      "to": "witness-puzzle"
+    },
+    {
+      "from": "archive-puzzle",
+      "type": "REVEALS",
+      "to": "supper-photo"
+    },
+    {
+      "from": "route-puzzle",
+      "type": "REVEALS",
+      "to": "vehicle-plate"
+    },
+    {
+      "from": "market-puzzle",
+      "type": "REVEALS",
+      "to": "property-deed"
+    },
+    {
+      "from": "witness-puzzle",
+      "type": "REVEALS",
+      "to": "witness-testimony"
+    },
+    {
+      "from": "supper-photo",
+      "type": "CONTRIBUTES_TO",
+      "to": "four-way-testimony"
+    },
+    {
+      "from": "vehicle-plate",
+      "type": "CONTRIBUTES_TO",
+      "to": "four-way-testimony"
+    },
+    {
+      "from": "property-deed",
+      "type": "CONTRIBUTES_TO",
+      "to": "four-way-testimony"
+    },
+    {
+      "from": "witness-testimony",
+      "type": "CONTRIBUTES_TO",
+      "to": "four-way-testimony"
+    },
+    {
+      "from": "qualified-newcomer",
+      "type": "COLLABORATES_WITH",
+      "to": "four-way-testimony"
+    },
+    {
+      "from": "four-way-testimony",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "archivist"
+    },
+    {
+      "from": "four-way-testimony",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "driver"
+    },
+    {
+      "from": "four-way-testimony",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "broker"
+    },
+    {
+      "from": "four-way-testimony",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "witness"
+    },
+    {
+      "from": "four-way-testimony",
+      "type": "RETURNS_FOR",
+      "to": "retained-collaborator"
+    },
+    {
+      "from": "four-way-testimony",
+      "type": "REVEALS",
+      "to": "sixth-family-fact"
+    },
+    {
+      "from": "sixth-family-fact",
+      "type": "UNLOCKS",
+      "to": "restore-lockbox"
+    },
+    {
+      "from": "wrecked-sedan-salvage",
+      "type": "REQUIRES",
+      "to": "salvage-source-budget"
+    },
+    {
+      "from": "spent-ammo-salvage",
+      "type": "REQUIRES",
+      "to": "salvage-source-budget"
+    },
+    {
+      "from": "abstract-contraband-cache",
+      "type": "REQUIRES",
+      "to": "salvage-source-budget"
+    },
+    {
+      "from": "wrecked-sedan-salvage",
+      "type": "PRODUCES",
+      "to": "steel-scrap",
+      "quantity": 12
+    },
+    {
+      "from": "spent-ammo-salvage",
+      "type": "PRODUCES",
+      "to": "cartridge-brass",
+      "quantity": 8
+    },
+    {
+      "from": "abstract-contraband-cache",
+      "type": "PRODUCES",
+      "to": "ledger-fiber",
+      "quantity": 4
+    },
+    {
+      "from": "abstract-contraband-cache",
+      "type": "PRODUCES",
+      "to": "sealed-precursor",
+      "quantity": 2
+    },
+    {
+      "from": "restore-lockbox",
+      "type": "CONSUMES",
+      "to": "steel-scrap",
+      "quantity": 6
+    },
+    {
+      "from": "restore-lockbox",
+      "type": "CONSUMES",
+      "to": "cartridge-brass",
+      "quantity": 4
+    },
+    {
+      "from": "restore-lockbox",
+      "type": "CONSUMES",
+      "to": "ledger-fiber",
+      "quantity": 2
+    },
+    {
+      "from": "restore-lockbox",
+      "type": "USES_TOOL",
+      "to": "bench-press"
+    },
+    {
+      "from": "restore-lockbox",
+      "type": "REQUIRES",
+      "to": "crew-workshop"
+    },
+    {
+      "from": "restore-lockbox",
+      "type": "REQUIRES",
+      "to": "metalwork-mastery"
+    },
+    {
+      "from": "restore-lockbox",
+      "type": "PRODUCES",
+      "to": "bellini-lockbox",
+      "quantity": 1
+    },
+    {
+      "from": "bellini-lockbox",
+      "type": "SINKS_TO",
+      "to": "restoration-wear"
+    },
+    {
+      "from": "bellini-lockbox",
+      "type": "EXPORTS_AS",
+      "to": "sixth-chair-seal"
+    },
+    {
+      "from": "four-way-testimony",
+      "type": "REWARDS",
+      "to": "party-completion-reward"
+    },
+    {
+      "from": "party-completion-reward",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    },
+    {
+      "from": "case-closed",
+      "type": "REWARDS",
+      "to": "season-omr-reserve"
+    },
+    {
+      "from": "season-omr-reserve",
+      "type": "OVERLAID_BY_SEASON",
+      "to": "season-overlay"
+    },
+    {
+      "from": "qualified-newcomer",
+      "type": "REWARDS_RECRUITER",
+      "to": "agent-qualified-cash"
+    },
+    {
+      "from": "agent-qualified-cash",
+      "type": "REQUIRES",
+      "to": "agent-acquisition-cash-budget"
+    },
+    {
+      "from": "retained-collaborator",
+      "type": "REWARDS_RECRUITER",
+      "to": "agent-retained-cash"
+    },
+    {
+      "from": "agent-retained-cash",
+      "type": "REQUIRES",
+      "to": "agent-acquisition-cash-budget"
+    }
+  ],
+  "runtime": {
+    "experienceId": "the-sixth-chair",
+    "entryNodeId": "the-sixth-chair",
+    "partyPolicyId": "crew-policy",
+    "quorumId": "four-seat-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "the-sixth-chair",
+      "crew-policy",
+      "four-seat-quorum",
+      "archivist",
+      "driver",
+      "broker",
+      "witness",
+      "four-way-testimony",
+      "ledger-chapter",
+      "archive-puzzle",
+      "archive-answer",
+      "supper-photo",
+      "route-puzzle",
+      "route-answer",
+      "vehicle-plate",
+      "market-puzzle",
+      "market-answer",
+      "property-deed",
+      "witness-puzzle",
+      "witness-testimony",
+      "sixth-family-fact",
+      "party-completion-reward",
+      "sixth-chair-seal",
+      "sixth-chair-title",
+      "case-closed"
+    ],
+    "actionNodeIds": [
+      "archive-puzzle",
+      "route-puzzle",
+      "market-puzzle",
+      "witness-puzzle"
+    ]
+  }
+}

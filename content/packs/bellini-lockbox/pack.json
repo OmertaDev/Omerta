@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.workshop.bellini-lockbox",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "This first authored supply chain is an in-city, value-neutral workshop proof with no acquisition or referral role."
+  },
+  "nodes": [
+    {
+      "id": "old-foundry-bench",
+      "type": "location",
+      "payload": {
+        "title": "The Old Foundry Bench",
+        "districtId": "foundry"
+      }
+    },
+    {
+      "id": "plate-cache-budget",
+      "type": "budget",
+      "payload": {
+        "kind": "source",
+        "epoch": "day",
+        "maxUnitsPerEpoch": 300
+      }
+    },
+    {
+      "id": "binding-cache-budget",
+      "type": "budget",
+      "payload": {
+        "kind": "source",
+        "epoch": "day",
+        "maxUnitsPerEpoch": 200
+      }
+    },
+    {
+      "id": "foundry-plate-salvage",
+      "type": "source",
+      "payload": {
+        "title": "Pull Ledger Plates from the Ash",
+        "sourceKind": "finite_salvage",
+        "budgetId": "plate-cache-budget",
+        "claimLimitPerEpoch": 1,
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "old-foundry-bench"
+          }
+        ]
+      }
+    },
+    {
+      "id": "archive-binding-salvage",
+      "type": "source",
+      "payload": {
+        "title": "Recover Charred Bindings",
+        "sourceKind": "finite_salvage",
+        "budgetId": "binding-cache-budget",
+        "claimLimitPerEpoch": 1,
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "old-foundry-bench"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ledger-plate",
+      "type": "item_def",
+      "payload": {
+        "title": "Ledger Plate",
+        "category": "authored_raw_material",
+        "tier": 1,
+        "stackable": true,
+        "maxOwned": 12,
+        "gameplayPower": "none",
+        "tradeable": false
+      }
+    },
+    {
+      "id": "charred-binding",
+      "type": "item_def",
+      "payload": {
+        "title": "Charred Binding",
+        "category": "authored_raw_material",
+        "tier": 1,
+        "stackable": true,
+        "maxOwned": 8,
+        "gameplayPower": "none",
+        "tradeable": false
+      }
+    },
+    {
+      "id": "restore-bellini-lockbox",
+      "type": "recipe",
+      "payload": {
+        "title": "Restore the Bellini Lockbox",
+        "craftKind": "account_inventory",
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "old-foundry-bench"
+          }
+        ]
+      }
+    },
+    {
+      "id": "bellini-lockbox",
+      "type": "item_def",
+      "payload": {
+        "title": "Restored Bellini Lockbox",
+        "category": "authored_keepsake",
+        "tier": 2,
+        "stackable": false,
+        "maxOwned": 1,
+        "gameplayPower": "none",
+        "tradeable": false
+      }
+    },
+    {
+      "id": "private-display",
+      "type": "sink",
+      "payload": {
+        "title": "Private Display",
+        "kind": "display_only",
+        "gameplayPower": "none"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "foundry-plate-salvage",
+      "type": "REQUIRES",
+      "to": "plate-cache-budget"
+    },
+    {
+      "from": "archive-binding-salvage",
+      "type": "REQUIRES",
+      "to": "binding-cache-budget"
+    },
+    {
+      "from": "foundry-plate-salvage",
+      "type": "PRODUCES",
+      "to": "ledger-plate",
+      "quantity": 3
+    },
+    {
+      "from": "archive-binding-salvage",
+      "type": "PRODUCES",
+      "to": "charred-binding",
+      "quantity": 2
+    },
+    {
+      "from": "restore-bellini-lockbox",
+      "type": "CONSUMES",
+      "to": "ledger-plate",
+      "quantity": 3
+    },
+    {
+      "from": "restore-bellini-lockbox",
+      "type": "CONSUMES",
+      "to": "charred-binding",
+      "quantity": 2
+    },
+    {
+      "from": "restore-bellini-lockbox",
+      "type": "PRODUCES",
+      "to": "bellini-lockbox",
+      "quantity": 1
+    },
+    {
+      "from": "bellini-lockbox",
+      "type": "SINKS_TO",
+      "to": "private-display"
+    }
+  ],
+  "crafting": {
+    "title": "The Bellini Restoration",
+    "nodeIds": [
+      "old-foundry-bench",
+      "plate-cache-budget",
+      "binding-cache-budget",
+      "foundry-plate-salvage",
+      "archive-binding-salvage",
+      "ledger-plate",
+      "charred-binding",
+      "restore-bellini-lockbox",
+      "bellini-lockbox",
+      "private-display"
+    ],
+    "sourceIds": [
+      "foundry-plate-salvage",
+      "archive-binding-salvage"
+    ],
+    "recipeIds": [
+      "restore-bellini-lockbox"
+    ]
+  }
+}

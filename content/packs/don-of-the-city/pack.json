@@ -1,0 +1,416 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.don.don-of-the-city",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "late-game authored case with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "don-of-the-city",
+    "entryNodeId": "don-of-the-city",
+    "partyPolicyId": "personal-policy",
+    "quorumId": "solo-quorum",
+    "terminalNodeId": "city-settled",
+    "nodeIds": [
+      "don-of-the-city",
+      "personal-policy",
+      "solo-quorum",
+      "claimant",
+      "brick-location",
+      "the-last-table",
+      "district-seals-puzzle",
+      "district-seals-answer",
+      "commission-count-puzzle",
+      "commission-count-answer",
+      "keystone-puzzle",
+      "keystone-answer",
+      "legacy-line-puzzle",
+      "legacy-line-answer",
+      "city-verdict",
+      "city-unbound-don",
+      "city-iron-peace",
+      "city-crew-compact",
+      "city-legacy-memory",
+      "brick-civic-keystone",
+      "city-settled"
+    ],
+    "actionNodeIds": [
+      "district-seals-puzzle",
+      "commission-count-puzzle",
+      "keystone-puzzle",
+      "legacy-line-puzzle",
+      "city-verdict"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "don-of-the-city",
+      "type": "mystery",
+      "payload": {
+        "title": "Don of the City",
+        "summary": "A half-built civic hall in the Brick Yards hides the last compact among the districts. Finish its proof, survive the families' final veto, and decide what kind of legacy will sit above the city.",
+        "systems": [
+          "all-districts",
+          "family-politics",
+          "megaproject",
+          "legacy"
+        ],
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "brick-location"
+          },
+          {
+            "kind": "level_at_least",
+            "level": 125
+          }
+        ]
+      }
+    },
+    {
+      "id": "personal-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "solo-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "claimant",
+      "type": "role",
+      "payload": {
+        "title": "City Claimant",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "brick-location",
+      "type": "location",
+      "payload": {
+        "title": "Brick Yards",
+        "districtId": "brick"
+      }
+    },
+    {
+      "id": "the-last-table",
+      "type": "chapter",
+      "payload": {
+        "title": "The Last Table"
+      }
+    },
+    {
+      "id": "district-seals-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "Six Seals in Mortar",
+        "prompt": "The charter wall gives six initials in order: D, C, B, N, F, C. Enter the full district sequence.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "claimant"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "brick-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "district-seals-answer"
+      }
+    },
+    {
+      "id": "district-seals-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "docks canal brick neon foundry cathedral"
+        ]
+      }
+    },
+    {
+      "id": "commission-count-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Empty Commission Seat",
+        "prompt": "Four family seals are fixed to the compact and the empty chair carries one more. How many signatures can the completed table hold?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "claimant"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "brick-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "commission-count-answer"
+      }
+    },
+    {
+      "id": "commission-count-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "five",
+          "5"
+        ]
+      }
+    },
+    {
+      "id": "keystone-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Stone That Takes the Weight",
+        "prompt": "The civic arch holds only when its pressure meets the central wedge-shaped stone. Name that stone.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "claimant"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "brick-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "keystone-answer"
+      }
+    },
+    {
+      "id": "keystone-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "keystone"
+        ]
+      }
+    },
+    {
+      "id": "legacy-line-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "What the City Remembers",
+        "prompt": "The dedication is missing one word: A city forgets its bosses but remembers its ____.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "claimant"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "brick-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "legacy-line-answer"
+      }
+    },
+    {
+      "id": "legacy-line-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "debts"
+        ]
+      }
+    },
+    {
+      "id": "city-verdict",
+      "type": "choice",
+      "payload": {
+        "title": "The Last Signature",
+        "prompt": "The compact is ready and every family is watching. Decide how your name enters the city's memory.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "claimant"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "brick-location"
+          }
+        ],
+        "options": [
+          {
+            "id": "unbound-don",
+            "label": "Accept the seal with no private promise",
+            "storyFlagIds": [
+              "city-unbound-don"
+            ]
+          },
+          {
+            "id": "iron-peace",
+            "label": "Break the last veto and impose a hard peace",
+            "gates": [
+              {
+                "kind": "mastery_at_least",
+                "trackId": "muscle",
+                "level": 40
+              }
+            ],
+            "storyFlagIds": [
+              "city-iron-peace"
+            ]
+          },
+          {
+            "id": "crew-compact",
+            "label": "Seat your crew beside the city charter",
+            "gates": [
+              {
+                "kind": "crew_membership"
+              }
+            ],
+            "storyFlagIds": [
+              "city-crew-compact"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "city-unbound-don",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.don-of-the-city.outcome",
+        "kind": "public_reputation",
+        "value": "unbound_don",
+        "title": "The Don Owes No Private Promise",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "city-iron-peace",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.don-of-the-city.outcome",
+        "kind": "npc_grudge",
+        "value": "iron_peace",
+        "title": "The Last Veto Was Broken",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "city-crew-compact",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.don-of-the-city.outcome",
+        "kind": "family_debt",
+        "value": "crew_compact",
+        "title": "The Crew Has a Seat at the Table",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "city-legacy-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "brick-civic-keystone",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Brick Civic Keystone",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "city-settled",
+      "type": "terminal",
+      "payload": {
+        "title": "The City Keeps the Name",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "brick-civic-keystone",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "don-of-the-city",
+      "type": "REQUIRES",
+      "to": "personal-policy"
+    },
+    {
+      "from": "personal-policy",
+      "type": "REQUIRES",
+      "to": "solo-quorum"
+    },
+    {
+      "from": "personal-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "claimant"
+    },
+    {
+      "from": "don-of-the-city",
+      "type": "UNLOCKS",
+      "to": "the-last-table"
+    },
+    {
+      "from": "the-last-table",
+      "type": "UNLOCKS",
+      "to": "district-seals-puzzle"
+    },
+    {
+      "from": "district-seals-puzzle",
+      "type": "UNLOCKS",
+      "to": "commission-count-puzzle"
+    },
+    {
+      "from": "commission-count-puzzle",
+      "type": "UNLOCKS",
+      "to": "keystone-puzzle"
+    },
+    {
+      "from": "keystone-puzzle",
+      "type": "UNLOCKS",
+      "to": "legacy-line-puzzle"
+    },
+    {
+      "from": "legacy-line-puzzle",
+      "type": "UNLOCKS",
+      "to": "city-verdict"
+    },
+    {
+      "from": "city-verdict",
+      "type": "UNLOCKS",
+      "to": "city-legacy-memory"
+    },
+    {
+      "from": "city-legacy-memory",
+      "type": "UNLOCKS",
+      "to": "city-settled"
+    }
+  ]
+}

@@ -1,0 +1,406 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.case.path.ledger.hostile-books",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "in-game Path Case with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "hostile-books",
+    "entryNodeId": "hostile-books",
+    "partyPolicyId": "personal-policy",
+    "quorumId": "solo-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "hostile-books",
+      "personal-policy",
+      "solo-quorum",
+      "investigator",
+      "numbers-at-war",
+      "orphaned-invoice",
+      "orphaned-invoice-answer",
+      "split-loan",
+      "split-loan-answer",
+      "black-market-column",
+      "black-market-column-answer",
+      "madames-red-page",
+      "madames-red-page-answer",
+      "ledger-verdict",
+      "books-absorbed-flag",
+      "hostile-books-exposed-flag",
+      "madames-accord-flag",
+      "hostile-books-memory",
+      "ledger-hostile-books-seal",
+      "case-closed"
+    ],
+    "actionNodeIds": [
+      "orphaned-invoice",
+      "split-loan",
+      "black-market-column",
+      "madames-red-page",
+      "ledger-verdict"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "hostile-books",
+      "type": "mystery",
+      "payload": {
+        "title": "Hostile Books",
+        "summary": "A rival's accounts are buying the city one debt at a time, but the arithmetic points past the businesses on the page to a hostile takeover nobody has named aloud.",
+        "systems": [
+          "business",
+          "black-market",
+          "loans",
+          "skills",
+          "mastery",
+          "regimen",
+          "honor",
+          "underworld"
+        ],
+        "gates": [
+          {
+            "kind": "path_is",
+            "pathId": "ledger"
+          }
+        ]
+      }
+    },
+    {
+      "id": "personal-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "solo-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "Investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "numbers-at-war",
+      "type": "chapter",
+      "payload": {
+        "title": "Numbers at War"
+      }
+    },
+    {
+      "id": "orphaned-invoice",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Orphaned Invoice",
+        "prompt": "Which shell company is billed for stock that never entered any warehouse?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "orphaned-invoice-answer"
+      }
+    },
+    {
+      "id": "orphaned-invoice-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "north crown imports",
+          "north crown"
+        ]
+      }
+    },
+    {
+      "id": "split-loan",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Split Loan",
+        "prompt": "What fraction of each defaulted loan is quietly transferred into the acquisition column?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "split-loan-answer"
+      }
+    },
+    {
+      "id": "split-loan-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "three eighths",
+          "3/8"
+        ]
+      }
+    },
+    {
+      "id": "black-market-column",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Black-Market Column",
+        "prompt": "Which commodity code disguises the payments used to corner the private market?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "black-market-column-answer"
+      }
+    },
+    {
+      "id": "black-market-column-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "blue carbon",
+          "b-c 12",
+          "bc12"
+        ]
+      }
+    },
+    {
+      "id": "madames-red-page",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Madame's Red Page",
+        "prompt": "Whose initials authorize every debt purchase on the Madame's hidden red page?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "madames-red-page-answer"
+      }
+    },
+    {
+      "id": "madames-red-page-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "e v",
+          "ev"
+        ]
+      }
+    },
+    {
+      "id": "ledger-verdict",
+      "type": "choice",
+      "payload": {
+        "title": "Balance of Power",
+        "prompt": "The hostile ledger is complete and the rival's acquisition clock has one hour left. How do you close the books?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "absorb-the-books",
+            "label": "Buy the exposed debt and absorb the hostile books",
+            "storyFlagIds": [
+              "books-absorbed-flag"
+            ]
+          },
+          {
+            "id": "broker-the-collapse",
+            "label": "Reverse the paper and make the takeover consume itself",
+            "gates": [
+              {
+                "kind": "skill_owned",
+                "skillId": "broker"
+              },
+              {
+                "kind": "mastery_at_least",
+                "trackId": "commerce",
+                "level": 10
+              },
+              {
+                "kind": "discipline_at_least",
+                "disciplineId": "presence",
+                "level": 8
+              }
+            ],
+            "storyFlagIds": [
+              "hostile-books-exposed-flag"
+            ]
+          },
+          {
+            "id": "madames-accord",
+            "label": "Return the stolen accounts and bind the Madame to an honest settlement",
+            "gates": [
+              {
+                "kind": "honor_at_least",
+                "honor": 25
+              },
+              {
+                "kind": "underworld_standing_at_least",
+                "npcId": "madame",
+                "standing": 25
+              }
+            ],
+            "storyFlagIds": [
+              "madames-accord-flag"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "books-absorbed-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.case.path.ledger.hostile-books.outcome",
+        "kind": "family_debt",
+        "value": "hostile-books-absorbed",
+        "title": "The Debt Changed Hands",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "hostile-books-exposed-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.case.path.ledger.hostile-books.outcome",
+        "kind": "case_evidence",
+        "value": "takeover-reversed",
+        "title": "The Hostile Sum Exposed",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "madames-accord-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.case.path.ledger.hostile-books.outcome",
+        "kind": "npc_ally",
+        "value": "madame-settlement-brokered",
+        "title": "The Madame's Accord",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "hostile-books-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "ledger-hostile-books-seal",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Hostile Ledger Leaf",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The City Balances on Your Line",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "ledger-hostile-books-seal",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "hostile-books",
+      "type": "REQUIRES",
+      "to": "personal-policy"
+    },
+    {
+      "from": "personal-policy",
+      "type": "REQUIRES",
+      "to": "solo-quorum"
+    },
+    {
+      "from": "personal-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "hostile-books",
+      "type": "UNLOCKS",
+      "to": "numbers-at-war"
+    },
+    {
+      "from": "numbers-at-war",
+      "type": "UNLOCKS",
+      "to": "orphaned-invoice"
+    },
+    {
+      "from": "orphaned-invoice",
+      "type": "UNLOCKS",
+      "to": "split-loan"
+    },
+    {
+      "from": "split-loan",
+      "type": "UNLOCKS",
+      "to": "black-market-column"
+    },
+    {
+      "from": "black-market-column",
+      "type": "UNLOCKS",
+      "to": "madames-red-page"
+    },
+    {
+      "from": "madames-red-page",
+      "type": "UNLOCKS",
+      "to": "ledger-verdict"
+    },
+    {
+      "from": "ledger-verdict",
+      "type": "UNLOCKS",
+      "to": "hostile-books-memory"
+    },
+    {
+      "from": "hostile-books-memory",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    }
+  ]
+}

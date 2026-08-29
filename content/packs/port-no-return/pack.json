@@ -1,0 +1,417 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.don.port-no-return",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "in-game Don Case with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "port-no-return",
+    "entryNodeId": "port-no-return",
+    "partyPolicyId": "personal-policy",
+    "quorumId": "solo-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "port-no-return",
+      "personal-policy",
+      "solo-quorum",
+      "investigator",
+      "docks-location",
+      "the-vanished-convoy",
+      "erased-berth",
+      "erased-berth-answer",
+      "convoy-pennant",
+      "convoy-pennant-answer",
+      "ash-contract",
+      "ash-contract-answer",
+      "tide-bell",
+      "tide-bell-answer",
+      "harbor-verdict",
+      "captain-released-flag",
+      "dead-channel-flag",
+      "harbor-compact-flag",
+      "port-memory",
+      "don-port-no-return-brass-tide-key",
+      "case-closed"
+    ],
+    "actionNodeIds": [
+      "erased-berth",
+      "convoy-pennant",
+      "ash-contract",
+      "tide-bell",
+      "harbor-verdict"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "port-no-return",
+      "type": "mystery",
+      "payload": {
+        "title": "Port of No Return",
+        "summary": "A convoy vanished inside the Docks, leaving an erased berth, a false pennant, an ash-marked contract, and a tide signal no landsman can read.",
+        "systems": [
+          "port",
+          "convoys",
+          "contracts",
+          "seamanship"
+        ],
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "docks-location"
+          },
+          {
+            "kind": "level_at_least",
+            "level": 65
+          }
+        ]
+      }
+    },
+    {
+      "id": "personal-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "solo-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "Investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "docks-location",
+      "type": "location",
+      "payload": {
+        "title": "The Docks",
+        "districtId": "docks"
+      }
+    },
+    {
+      "id": "the-vanished-convoy",
+      "type": "chapter",
+      "payload": {
+        "title": "The Convoy That Never Sailed"
+      }
+    },
+    {
+      "id": "erased-berth",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Erased Berth",
+        "prompt": "Which berth was cut from both the harbor map and the port ledger?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "docks-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "erased-berth-answer"
+      }
+    },
+    {
+      "id": "erased-berth-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "berth thirteen",
+          "13"
+        ]
+      }
+    },
+    {
+      "id": "convoy-pennant",
+      "type": "puzzle",
+      "payload": {
+        "title": "The False Pennant",
+        "prompt": "What color and bird identify the convoy that entered under borrowed registry?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "docks-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "convoy-pennant-answer"
+      }
+    },
+    {
+      "id": "convoy-pennant-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "red heron"
+        ]
+      }
+    },
+    {
+      "id": "ash-contract",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Burned Contract",
+        "prompt": "Which two words survive beside the consignee line on the scorched contract?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "docks-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "ash-contract-answer"
+      }
+    },
+    {
+      "id": "ash-contract-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "contract ash"
+        ]
+      }
+    },
+    {
+      "id": "tide-bell",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Dead Channel Signal",
+        "prompt": "At which bell does the hidden channel clear beneath the breakwater?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "docks-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "tide-bell-answer"
+      }
+    },
+    {
+      "id": "tide-bell-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "third bell",
+          "3"
+        ]
+      }
+    },
+    {
+      "id": "harbor-verdict",
+      "type": "choice",
+      "payload": {
+        "title": "Who Owns the Missing Tide",
+        "prompt": "The stranded captain, the dead channel, and the harbor unions all wait on your word. What do you bind to the port?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "docks-location"
+          }
+        ],
+        "options": [
+          {
+            "id": "release-the-captain",
+            "label": "Release the stranded captain and close the contract",
+            "storyFlagIds": [
+              "captain-released-flag"
+            ]
+          },
+          {
+            "id": "chart-the-channel",
+            "label": "Pilot the manifest through the dead channel and map it",
+            "gates": [
+              {
+                "kind": "mastery_at_least",
+                "trackId": "seamanship",
+                "level": 10
+              }
+            ],
+            "storyFlagIds": [
+              "dead-channel-flag"
+            ]
+          },
+          {
+            "id": "crew-harbor-compact",
+            "label": "Bind the dock unions to a convoy compact with your crew",
+            "gates": [
+              {
+                "kind": "crew_membership"
+              }
+            ],
+            "storyFlagIds": [
+              "harbor-compact-flag"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "captain-released-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.port-no-return.outcome",
+        "kind": "witness_spared",
+        "value": "captain-released",
+        "title": "The Captain Sent Home",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "dead-channel-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.port-no-return.outcome",
+        "kind": "district_contact",
+        "value": "dead-channel-charted",
+        "title": "The Dead Channel Charted",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "harbor-compact-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.port-no-return.outcome",
+        "kind": "family_debt",
+        "value": "crew-harbor-compact",
+        "title": "The Harbor Owes the Crew",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "port-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "don-port-no-return-brass-tide-key",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Brass Dead-Tide Key",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The Port Keeps One Way Home",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "don-port-no-return-brass-tide-key",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "port-no-return",
+      "type": "REQUIRES",
+      "to": "personal-policy"
+    },
+    {
+      "from": "personal-policy",
+      "type": "REQUIRES",
+      "to": "solo-quorum"
+    },
+    {
+      "from": "personal-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "port-no-return",
+      "type": "UNLOCKS",
+      "to": "the-vanished-convoy"
+    },
+    {
+      "from": "the-vanished-convoy",
+      "type": "UNLOCKS",
+      "to": "erased-berth"
+    },
+    {
+      "from": "erased-berth",
+      "type": "UNLOCKS",
+      "to": "convoy-pennant"
+    },
+    {
+      "from": "convoy-pennant",
+      "type": "UNLOCKS",
+      "to": "ash-contract"
+    },
+    {
+      "from": "ash-contract",
+      "type": "UNLOCKS",
+      "to": "tide-bell"
+    },
+    {
+      "from": "tide-bell",
+      "type": "UNLOCKS",
+      "to": "harbor-verdict"
+    },
+    {
+      "from": "harbor-verdict",
+      "type": "UNLOCKS",
+      "to": "port-memory"
+    },
+    {
+      "from": "port-memory",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    }
+  ]
+}

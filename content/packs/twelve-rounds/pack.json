@@ -1,0 +1,404 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.case.path.ring.twelve-rounds",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "in-game Ring Path case with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "twelve-rounds",
+    "entryNodeId": "twelve-rounds",
+    "partyPolicyId": "personal-policy",
+    "quorumId": "solo-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "twelve-rounds",
+      "personal-policy",
+      "solo-quorum",
+      "investigator",
+      "the-fixed-card",
+      "missing-round",
+      "missing-round-answer",
+      "resin-wraps",
+      "resin-wraps-answer",
+      "silent-bell",
+      "silent-bell-answer",
+      "locker-ledger",
+      "locker-ledger-answer",
+      "answer-the-bell",
+      "card-settled-flag",
+      "clean-twelve-flag",
+      "fix-refused-flag",
+      "ring-case-memory",
+      "ring-cracked-bell-clapper",
+      "case-closed"
+    ],
+    "actionNodeIds": [
+      "missing-round",
+      "resin-wraps",
+      "silent-bell",
+      "locker-ledger",
+      "answer-the-bell"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "twelve-rounds",
+      "type": "mystery",
+      "payload": {
+        "title": "Twelve Rounds",
+        "summary": "A championship card ends on the wrong bell. The wraps are doctored, the judges are bought, and a Cornerman swears the fix can still be refused before the city names its champion.",
+        "systems": [
+          "boxing",
+          "duels",
+          "skills",
+          "mastery",
+          "regimen",
+          "honor",
+          "underworld"
+        ],
+        "gates": [
+          {
+            "kind": "path_is",
+            "pathId": "ring"
+          }
+        ]
+      }
+    },
+    {
+      "id": "personal-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "solo-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "Investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "the-fixed-card",
+      "type": "chapter",
+      "payload": {
+        "title": "The Fixed Card"
+      }
+    },
+    {
+      "id": "missing-round",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Missing Round",
+        "prompt": "Which round was cut from the official judge's card?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "missing-round-answer"
+      }
+    },
+    {
+      "id": "missing-round-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "round seven",
+          "seven",
+          "7"
+        ]
+      }
+    },
+    {
+      "id": "resin-wraps",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Resin Wraps",
+        "prompt": "What substance was brushed beneath the champion's hand wraps?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "resin-wraps-answer"
+      }
+    },
+    {
+      "id": "resin-wraps-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "pine resin",
+          "resin"
+        ]
+      }
+    },
+    {
+      "id": "silent-bell",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Silent Bell",
+        "prompt": "What word is scratched inside the bell that ended the fight early?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "silent-bell-answer"
+      }
+    },
+    {
+      "id": "silent-bell-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "settled"
+        ]
+      }
+    },
+    {
+      "id": "locker-ledger",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Locker Ledger",
+        "prompt": "Whose mark sits beside all three paid judges?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "locker-ledger-answer"
+      }
+    },
+    {
+      "id": "locker-ledger-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "the red glove",
+          "red glove"
+        ]
+      }
+    },
+    {
+      "id": "answer-the-bell",
+      "type": "choice",
+      "payload": {
+        "title": "Answer the Bell",
+        "prompt": "The judges are waiting, the crowd wants blood, and the twelfth round is still yours to define. What belongs in the record?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "settle-the-card",
+            "label": "Settle the card, name the official winner, and end the night",
+            "storyFlagIds": [
+              "card-settled-flag"
+            ]
+          },
+          {
+            "id": "fight-a-clean-twelve",
+            "label": "Break the scheme with twelve clean rounds no fixer can dispute",
+            "gates": [
+              {
+                "kind": "skill_owned",
+                "skillId": "bruiser"
+              },
+              {
+                "kind": "mastery_at_least",
+                "trackId": "fists",
+                "level": 10
+              },
+              {
+                "kind": "discipline_at_least",
+                "disciplineId": "conditioning",
+                "level": 8
+              }
+            ],
+            "storyFlagIds": [
+              "clean-twelve-flag"
+            ]
+          },
+          {
+            "id": "refuse-the-fix",
+            "label": "Refuse the fix and ask the Cornerman to make the truth stand",
+            "gates": [
+              {
+                "kind": "honor_at_least",
+                "honor": 25
+              },
+              {
+                "kind": "underworld_standing_at_least",
+                "npcId": "cornerman",
+                "standing": 25
+              }
+            ],
+            "storyFlagIds": [
+              "fix-refused-flag"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "card-settled-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.case.path.ring.twelve-rounds.outcome",
+        "kind": "future_scene_variant",
+        "value": "card-settled",
+        "title": "The Official Card Stood",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "clean-twelve-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.case.path.ring.twelve-rounds.outcome",
+        "kind": "public_reputation",
+        "value": "clean-twelve",
+        "title": "Twelve Clean Rounds",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "fix-refused-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.case.path.ring.twelve-rounds.outcome",
+        "kind": "npc_ally",
+        "value": "fix-refused",
+        "title": "The Cornerman Stood With You",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "ring-case-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "ring-cracked-bell-clapper",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Clapper From the Twelfth Bell",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The Bell Tells the Truth",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "ring-cracked-bell-clapper",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "twelve-rounds",
+      "type": "REQUIRES",
+      "to": "personal-policy"
+    },
+    {
+      "from": "personal-policy",
+      "type": "REQUIRES",
+      "to": "solo-quorum"
+    },
+    {
+      "from": "personal-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "twelve-rounds",
+      "type": "UNLOCKS",
+      "to": "the-fixed-card"
+    },
+    {
+      "from": "the-fixed-card",
+      "type": "UNLOCKS",
+      "to": "missing-round"
+    },
+    {
+      "from": "missing-round",
+      "type": "UNLOCKS",
+      "to": "resin-wraps"
+    },
+    {
+      "from": "resin-wraps",
+      "type": "UNLOCKS",
+      "to": "silent-bell"
+    },
+    {
+      "from": "silent-bell",
+      "type": "UNLOCKS",
+      "to": "locker-ledger"
+    },
+    {
+      "from": "locker-ledger",
+      "type": "UNLOCKS",
+      "to": "answer-the-bell"
+    },
+    {
+      "from": "answer-the-bell",
+      "type": "UNLOCKS",
+      "to": "ring-case-memory"
+    },
+    {
+      "from": "ring-case-memory",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    }
+  ]
+}

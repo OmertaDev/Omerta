@@ -1,0 +1,272 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.storylet.canal.water-in-cellar",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "in-game district storylet with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "water-in-cellar",
+    "entryNodeId": "water-in-cellar",
+    "partyPolicyId": "personal-policy",
+    "quorumId": "solo-quorum",
+    "terminalNodeId": "story-closed",
+    "nodeIds": [
+      "water-in-cellar",
+      "personal-policy",
+      "solo-quorum",
+      "investigator",
+      "canal-location",
+      "rising-line",
+      "dry-valve-puzzle",
+      "dry-valve-answer",
+      "cellar-choice",
+      "knock-puzzle",
+      "knock-answer",
+      "canal-memory",
+      "canal-watermark",
+      "story-closed"
+    ],
+    "actionNodeIds": [
+      "dry-valve-puzzle",
+      "cellar-choice",
+      "knock-puzzle"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "water-in-cellar",
+      "type": "mystery",
+      "payload": {
+        "title": "Water in the Cellar",
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "canal-location"
+          }
+        ]
+      }
+    },
+    {
+      "id": "personal-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "solo-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "Investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "canal-location",
+      "type": "location",
+      "payload": {
+        "title": "Canal Row",
+        "districtId": "canal"
+      }
+    },
+    {
+      "id": "rising-line",
+      "type": "chapter",
+      "payload": {
+        "title": "The Rising Line"
+      }
+    },
+    {
+      "id": "dry-valve-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Dry Valve",
+        "prompt": "What symbol is chalked above the only dry valve?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "canal-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "dry-valve-answer"
+      }
+    },
+    {
+      "id": "dry-valve-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "white heron"
+        ]
+      }
+    },
+    {
+      "id": "cellar-choice",
+      "type": "choice",
+      "payload": {
+        "title": "What the Water Takes",
+        "prompt": "The water is rising. What do you carry upstairs first?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "canal-location"
+          }
+        ],
+        "options": [
+          {
+            "id": "medicine",
+            "label": "The Doc's medicine crates"
+          },
+          {
+            "id": "ledger",
+            "label": "The landlord's deed ledger"
+          },
+          {
+            "id": "neighbor",
+            "label": "The old tenant who refuses to leave"
+          }
+        ]
+      }
+    },
+    {
+      "id": "knock-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The House Call",
+        "prompt": "How many knocks mean the Doc sent help?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "canal-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "knock-answer"
+      }
+    },
+    {
+      "id": "knock-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "three",
+          "3"
+        ]
+      }
+    },
+    {
+      "id": "canal-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "canal-watermark",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Canal Cellar Watermark",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "story-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "What the Water Left",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "canal-watermark",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "water-in-cellar",
+      "type": "REQUIRES",
+      "to": "personal-policy"
+    },
+    {
+      "from": "personal-policy",
+      "type": "REQUIRES",
+      "to": "solo-quorum"
+    },
+    {
+      "from": "personal-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "water-in-cellar",
+      "type": "UNLOCKS",
+      "to": "rising-line"
+    },
+    {
+      "from": "rising-line",
+      "type": "UNLOCKS",
+      "to": "dry-valve-puzzle"
+    },
+    {
+      "from": "dry-valve-puzzle",
+      "type": "UNLOCKS",
+      "to": "cellar-choice"
+    },
+    {
+      "from": "cellar-choice",
+      "type": "UNLOCKS",
+      "to": "knock-puzzle"
+    },
+    {
+      "from": "knock-puzzle",
+      "type": "UNLOCKS",
+      "to": "canal-memory"
+    },
+    {
+      "from": "canal-memory",
+      "type": "UNLOCKS",
+      "to": "story-closed"
+    }
+  ]
+}
