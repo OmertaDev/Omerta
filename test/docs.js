@@ -3713,7 +3713,25 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     `src/ops.js now gates ${gated.join('/')} on recency — DEPLOY.md §8's warning that smoke characters `
     + 'count in the headline figure permanently is no longer true. Delete the warning rather than this check.');
 
-  console.log('✓ DEPLOY.md §8 states the smoke-debris window the code enforces, and the asymmetry it warns about');
+  // Half three: "there is no sweep, and the obvious lever makes it worse". Both halves are
+  // decidable. If a route ever CAN remove a character, the note is stale in the worst direction —
+  // it would be telling an operator to live with debris a real remedy now clears. Comments are
+  // stripped first: the rule is cited in prose in this very file, and a scanner that reads its own
+  // explanation as a violation is the mostly-wrong advisory people route around.
+  // walkSrc, never a flat readdir — its own header records the bug a flat listing reintroduces:
+  // the guard goes QUIET when code moves into a subdirectory instead of failing.
+  const stripComments = (t) => t.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  const removers = walkSrc('src').filter((f) => /DELETE\s+FROM\s+characters\b/i.test(stripComments(read(f))));
+  assert.equal(removers.length, 0,
+    `${removers.join(', ')} now deletes character rows — DEPLOY.md §8 tells the operator there is no `
+    + 'sweep and to subtract smoke debris by name. Rewrite the note around the new remedy.');
+  // …and the lever an operator would reach for really does add a row rather than remove one.
+  assert(/INSERT INTO characters/.test(read('src/social/estate.js')),
+    'src/social/estate.js must INSERT the heir — DEPLOY.md §8 warns that mod-kill raises `total` by one');
+  assert(/runEstate\(/.test(read('src/routes/modtools.js')),
+    'POST /v1/mod/kill must run the estate — DEPLOY.md §8 warns it creates an heir');
+
+  console.log('✓ DEPLOY.md §8 states the smoke-debris window the code enforces, the asymmetry it warns about, and that no sweep exists');
 }
 
 // ═══ THE POSTED-CLAIM LEDGER — the figures that leave the building ════════════════════════════════
