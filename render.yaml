@@ -83,7 +83,12 @@ envVarGroups:
                                  # backup watchdog post to it. Leave it blank and those alarms have nowhere
                                  # to shout; you would only find out by reading logs. Discord: Server
                                  # Settings → Integrations → Webhooks → New Webhook → Copy URL.
-                                 # It is in the SHARED group on purpose: the alarms run in the worker.
+                                 # It is in the SHARED group and MUST STAY THERE: the economy and backup
+                                 # alarms run in the WORKER, and since 2026-08-29 the API runs one of its
+                                 # own — the watchdog that shouts when the WORKER goes dark (measured: 15
+                                 # hours silent, `/health` saying `stale: true` to nobody). A process
+                                 # cannot alarm on being dead, so moving this key to the worker alone
+                                 # disables the one alarm that covers the worker being gone.
       - key: CITY_WIRE_WEBHOOK_URL
         sync: false              # OPTIONAL, marketing: a PUBLIC Discord channel webhook. THE CITY WIRE
                                  # posts the city's drama (kills, wars, monuments, prison breaks) there so

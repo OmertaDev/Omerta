@@ -17330,3 +17330,63 @@ the shell returned instantly. Read the log's own `EXIT=` line, never the notific
 sitting had already reported `KN_EXIT=1` for a knowledge test that passes three-for-three, which was
 the piped `tail`'s code. **The pipe-masking trap has two more costumes than the one ground rule #8
 names.**
+
+**THE WORKER WENT DARK FOR FIFTEEN HOURS AND THE ALARM WAS A FIELD ON AN ENDPOINT (2026-08-29).**
+Measured on production, not inferred: `/health` reported `worker.stale: true` continuously —
+`beatAgoSeconds: 54719` against an API `uptimeSeconds` of 54727, i.e. **one beat, eight seconds after
+boot, then nothing for 15h 12m**. `/v1/fairness` showed today's commitment `recorded: true`, and that
+row is written by job 2 of the tick, so the boot tick got through the heartbeat and the fair-draw
+stamp and stopped at or after job 3 — a narrowing, not a diagnosis. Every timed settlement and every
+proactive alarm in the game lives on that tick: **121 jobs**, including the nightly §10.4 drift
+monitor, the WAL-archiver watchdog, the oracle-keeper watchdog and eight other invariant runners with
+their alert legs. So the whole detection layer was off, and **the only thing that would have said so
+was the layer that had stopped.** The founder has been receiving §10.4 pages on Discord since
+2026-08-07, which is what makes this evidence rather than theory: the channel works, and it was
+silent because the process that posts to it was the one that was gone.
+**THE BRANCH THAT SETS `stale` SAYS A MONITOR "POINTED HERE CAN ALARM ON IT". NOTHING WAS POINTED
+THERE.** That is this codebase's own alarm-into-nothing shape, now paid for a **fourth** time (the
+§10.4 webhook that 400'd on both Slack and Discord, the WAL archiver, the oracle keeper). *A field on
+an endpoint is not an alarm; something has to POST.*
+**TWO HALVES, because either alone leaves the outage standing.** **(1) THE API WATCHES THE WORKER**
+(`startWorkerWatch`, `src/server.js`) — the API is the right watcher for exactly one reason: **a
+process cannot alarm on being dead**, and the API is the one that stays up when the worker does not.
+It shouts on the SAME channel every other alarm uses, so nothing new is configured, and costs one
+indexed primary-key read every 15 minutes. Latched per EPISODE **and it announces RECOVERY**, because
+without the recovery line an operator who restarts the worker cannot tell whether it worked — and a
+latch that never unlatches makes the SECOND episode silent, which is the half a static check
+structurally cannot see. `WORKER_STALE_SEC` is read by **both** `/health`'s `worker.stale` and the
+alarm: two copies of that number is how a dashboard and an alarm come to disagree about whether the
+worker is alive. Deliberately **not** a 503 on `/health` — the API is genuinely healthy, and failing
+its own health check would take the GAME down to report that a sweep is late. **(2) A HUNG TICK NOW
+ENDS** (`guardedTick`, `src/worker.js`) — the startup-order fix that preceded this keeps the
+*schedule* alive through a hang and that is **all** it does: the hourly interval fires, the in-flight
+guard skips it, and the worker does nothing forever, louder. Three warnings **naming the stuck job**,
+then `process.exit(1)`. Exiting is the already-TESTED posture rather than a new bet — every job is
+its own transaction, every sweep idempotent, and `tools/chaos.js` SIGKILLs this process mid-sweep
+precisely to prove the resumed run pays exactly once. **The 30-minute bound is sized so NOTHING
+BOUNDED CAN REACH IT**: `statement_timeout` 15s, `lock_timeout` 8s, `idle_in_transaction` 30s, and
+every worker-reachable `fetch` carries `AbortSignal.timeout(10s)`, while the largest tick ever
+MEASURED is the season rollover at ~2 minutes for 50,000 players (`tools/workercost.js`). A
+30-minute tick is therefore not a slow tick; it is an await that will never settle. Arithmetic over
+the shipped constants: this outage would have paged within **105 minutes** and, if it was a hang,
+self-healed at **30**.
+**THE FIX HAD TO BE MADE DRIVABLE BEFORE IT COULD BE TRUSTED.** The watchdog first sat inside the
+main-module block, so `buildServer()` never started it and the claim could only ever have been
+static — the probe that proved it returned `paged when dark: FAIL (0)`. Lifted into an exported
+function returning **the same `check` predicate the interval runs**, so `test/hardening.js` drives
+the real code (quiet while fresh → pages once on the dark edge → latches → announces recovery →
+**pages again on the next episode**), with `everyMs: 3_600_000` so no wall clock decides whether it
+passes. `test/gates.js` keeps the static half and asserts the hang bound as a **RELATION** (15–60
+minutes) rather than a literal, because both ends are real — too short kills a legitimately long
+tick, too long and the remedy never arrives — plus that `startWorkerWatch` is actually **CALLED**: a
+watchdog nobody starts is prose.
+**AND THE COMMENT THAT WOULD HAVE UNDONE IT.** `render.yaml` explains `INVARIANT_WEBHOOK_URL`'s place
+in the SHARED env group with *"the alarms run in the worker"* — a reason that stopped being complete
+the moment the API started alarming, and one a later tidy-up could follow onto the worker alone,
+**silently muting the single alarm that covers the worker being gone**. Corrected, and guarded on both
+decidable halves (the key is in the group; the web service pulls the group), because prose rots by
+hand. **TWO GUARD BUGS, both the over-read class, both found by mutation**: a region sliced to
+end-of-file was satisfied by an unrelated `process.exit(1)` five hundred lines away, and
+`/workerDarkAlerted\s*=\s*false/` matched the `let` **DECLARATION** rather than the recovery edge —
+*a declaration is not an edge*. Both regions bounded; **ten mutations kill by name**. §10.4 untouched
+(a heartbeat read and a webhook move no value).

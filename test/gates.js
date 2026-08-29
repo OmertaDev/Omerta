@@ -858,6 +858,126 @@ const SCENERY_WAIVED = {
     + '      registration (and un-awaited, so nothing after it is starved either):\n'
     + `   - ${inverted.join('\n   - ')}`);
   console.log(`✓ all ${scheduled.size} guarded worker schedulers are registered before they are first run`);
+
+  // AND THE WATCHDOG MUST NAME WHERE IT IS STUCK. Ordering keeps the schedule alive; this is the other
+  // half — what the operator reads at 3am. Measured in production 2026-08-29: the heartbeat (job 1) and
+  // the fair-draw stamp (job 2) both landed and nothing among the other 119 ever did, so "a tick has
+  // been running 14 hours" left the reader to guess which. Three claims, because the first two are each
+  // blind to the third: safe() must RECORD the label, the watchdog must PRINT it, and no safe() may nest
+  // inside another — a nested call's finally would clear the label while its parent is still running,
+  // so the watchdog would name nothing at exactly the moment it is needed.
+  {
+    // Comments are stripped here too, and for the reason this file has been bitten by twice: the
+    // paragraph in worker.js explaining the watchdog NAMES `currentJob`, so a scan of raw source
+    // would match its own documentation and pass over a watchdog that had stopped printing it.
+    const code = decomment(src);
+    const w = code.slice(code.search(/const guardedTick = async/));
+    assert(/currentJob\s*=\s*label/.test(body),
+      'safe() no longer records the job it is running (`currentJob = label`), so the watchdog below it '
+      + 'can only report a duration — which is the state production was in on 2026-08-29');
+    assert(/currentJob\s*\?/.test(w) || /\$\{currentJob/.test(w),
+      'the worker watchdog no longer prints the job it is stuck in; a duration alone leaves the reader '
+      + `to guess which of ${(code.match(/safe\('/g) || []).length} jobs, which is the whole defect`);
+
+    let nested = 0, seen = 0;
+    for (const m of code.matchAll(/\bsafe\(/g)) {
+      // balanced-paren slice of the call's own arguments, so a multi-line query stays one call
+      let i = m.index + m[0].length, d = 1;
+      for (; i < code.length && d > 0; i++) { if (code[i] === '(') d++; else if (code[i] === ')') d--; }
+      const args = code.slice(m.index + m[0].length, i - 1);
+      if (!args.startsWith("'")) continue;           // the definition itself, not a call
+      seen++;
+      if (/\bsafe\(/.test(args)) nested++;
+    }
+    assert(seen >= 100,
+      `the nesting scan found only ${seen} safe() call(s) — the worker tick runs over a hundred, so the `
+      + 'extractor has stopped reading it; this check is vacuous rather than clean');
+    assert.equal(nested, 0,
+      'a safe() job is nested inside another. The inner call\'s finally clears currentJob while the '
+      + 'outer job is still running, so the watchdog reports no job for the one still in flight. Give '
+      + 'the inner work its own name at the top level, or drop the label clear.');
+    // AND A HANG MUST END. Ordering keeps the schedule alive and the label says where it stopped —
+    // neither RECOVERS. The hourly interval fires, the in-flight guard skips it, and the worker does
+    // nothing forever. Production supplied the missing half: `/health` said `stale: true` for 14.6
+    // hours and nobody was polling it, so the remedy cannot be a log line. Bounded, the same hang
+    // costs one restart. The window is asserted as a RELATION rather than a literal, because both
+    // ends are real: too short and a legitimately long tick (the season rollover measures ~2 min at
+    // 50,000 players) is killed on a capacity problem; too long and the remedy never arrives.
+    // BOUNDED to the watchdog's own callback, deliberately. A slice to end-of-file reads any later
+    // `process.exit(1)` in worker.js (there is one at the boot-failure branch) and the claim below
+    // passes with the watchdog's own exit deleted — measured: mutation M1 SURVIVED exactly that way.
+    const wdStart = w.search(/const watchdog = setInterval/);
+    const wdEnd = w.indexOf('}, HANG_WARN_MS)', wdStart);
+    assert(wdStart >= 0 && wdEnd > wdStart,
+      'the hung-tick watchdog is gone from src/worker.js, so a tick that never returns leaves the '
+      + 'worker dark forever — which is the state production was in for 14.6 hours on 2026-08-29');
+    const wd = w.slice(wdStart, wdEnd);
+    // `wdEnd` was found by matching the interval's own `}, HANG_WARN_MS)` terminator, so the period is
+    // already proven to be HANG_WARN_MS; all that is left is to read what that constant is worth.
+    const period = w.match(/HANG_WARN_MS\s*=\s*(\d+)\s*\*\s*60\s*\*\s*1000/);
+    const warns = w.match(/HANG_EXIT_WARNINGS\s*=\s*(\d+)/);
+    assert(/process\.exit\(1\)/.test(wd),
+      'the worker watchdog no longer exits on a hung tick, so a hang is announced forever and never '
+      + 'remedied — which is the state production was in for 14.6 hours on 2026-08-29');
+    assert(period && warns, 'the hang bound is no longer two readable constants (HANG_WARN_MS x '
+      + 'HANG_EXIT_WARNINGS), so this check cannot size it');
+    const boundMin = Number(period[1]) * Number(warns[1]);
+    assert(boundMin >= 15 && boundMin <= 60,
+      `the hung-tick restart fires after ${boundMin}m. Under 15m it can kill a legitimately long tick `
+      + '(the season rollover measures ~2m at 50,000 players — tools/workercost.js); over 60m the '
+      + 'remedy arrives too late to be one. Re-measure the longest job before moving this.');
+    console.log(`✓ the worker watchdog names the job it is stuck in, across ${seen} un-nested safe() `
+      + `jobs, and restarts the process after ${boundMin}m`);
+  }
+
+  // ── AND SOMEBODY WATCHES THE WATCHER ────────────────────────────────────────────────────────────
+  // A process cannot alarm on being dead, so every claim above is worth exactly nothing on the night
+  // the worker does not come back — and that night has already happened: 14.8 hours dark on
+  // 2026-08-29, with `/health` reporting `worker.stale: true` the whole time and nobody looking. A
+  // field on an endpoint is not an alarm. The API is the only process that stays up when the worker
+  // does not, so it is the one that has to shout, on the channel every other alarm already uses.
+  {
+    const api = decomment(fs.readFileSync(new URL('../src/server.js', import.meta.url), 'utf8'));
+    assert(/import\s*\{[^}]*\balertDrift\b[^}]*\}\s*from\s*'\.\/invariants\.js'/.test(api),
+      "src/server.js calls alertDrift but does not import it — the watchdog would throw the first time "
+      + 'the worker went dark, i.e. exactly when it is the only thing running');
+    assert(/worker_heartbeat/.test(api),
+      'the API no longer reads worker_heartbeat; nothing outside the worker can tell whether it is alive');
+    // BOTH EDGES. The latch is what stops a dark worker paging every 15 minutes; the recovery line is
+    // what tells an operator their restart worked. A latch without a recovery is a watchdog that cries
+    // once and then goes as quiet as the thing it was watching — and worse, one that latches and never
+    // unlatches goes PERMANENTLY quiet: the second dark episode never pages at all.
+    //
+    // Bounded to the callback BODY, deliberately. `let workerDarkAlerted = false;` is the declaration
+    // and sits above it, so a tree-wide search for `= false` matches that and passes with the unlatch
+    // deleted — measured: mutation M4 SURVIVED exactly that way. The declaration is not an edge.
+    const wStart = api.search(/export function startWorkerWatch/);
+    const wEnd = api.indexOf('\n}\n', wStart);
+    assert(wStart >= 0 && wEnd > wStart,
+      'the API no longer runs a worker watchdog, so nothing outside the worker can notice it stop — '
+      + 'the state production was in for 14.8 hours on 2026-08-29');
+    const watch = api.slice(wStart, wEnd);
+    assert(/workerDarkAlerted\s*=\s*true/.test(watch),
+      'the worker watchdog no longer latches, so a dark worker pages on every sweep of the interval '
+      + 'until somebody mutes the channel — which is how a real alarm gets ignored');
+    assert(/workerDarkAlerted\s*=\s*false/.test(watch),
+      'the worker watchdog never unlatches, so it announces recovery to nobody AND never fires again: '
+      + 'the second dark episode is silent. (test/hardening.js DRIVES both edges; this catches the '
+      + 'shape regressing in a way that fixture happens not to reach.)');
+    assert(/startWorkerWatch\(/.test(api.slice(wEnd)),
+      'startWorkerWatch is defined and never CALLED — a watchdog nobody starts is prose. It must run '
+      + 'in the main-module block beside the drain handler.');
+
+    // ONE THRESHOLD, not two. `/health`'s `worker.stale` and the alarm answer the same question, and a
+    // second copy of the number is how a dashboard and an alarm come to disagree about whether the
+    // worker is alive — the restatement class this project keeps paying for.
+    const uses = (api.match(/WORKER_STALE_SEC/g) || []).length;
+    assert(uses >= 3, `WORKER_STALE_SEC is referenced ${uses} time(s): it must be declared and read by `
+      + "BOTH /health and the alarm, or the two disagree about what 'stale' means");
+    assert(!/ageSec\s*>\s*\d/.test(api),
+      'a bare numeric staleness threshold is back in src/server.js — both readers must share the constant');
+    console.log('✓ the API watches the worker heartbeat and shouts on the founder channel, one shared threshold');
+  }
 }
 
 // ═══ THE CATALOG LEDGER — an object index is not an allowlist ════════════════════════════════════
@@ -3177,9 +3297,29 @@ scopedSocialContext = async function(db) {
       + `   locked: ${locked.join(', ')}`);
   }
 
+  // AND THE ALARM CHANNEL MUST REACH THE API. INVARIANT_WEBHOOK_URL sits in the SHARED env group,
+  // and until 2026-08-29 render.yaml explained that with "the alarms run in the worker" — a reason
+  // that is no longer complete, because the API now runs the one alarm the worker cannot: the
+  // watchdog that shouts when the WORKER is dark. A process cannot alarm on being dead. So a later
+  // tidy-up that followed that stated reason and moved the key onto the worker alone would silently
+  // mute exactly the alarm that covers the worker being gone, and nothing would fail. Two decidable
+  // halves: the key is in the group, and the web service pulls that group.
+  {
+    const group = render.match(/envVarGroups:[\s\S]*?(?=\nservices:)/);
+    assert(group && /INVARIANT_WEBHOOK_URL/.test(group[0]),
+      'INVARIANT_WEBHOOK_URL has left render.yaml\'s shared env group. The API reads it to page when '
+      + 'the WORKER goes dark (src/server.js startWorkerWatch) — a process cannot alarm on being dead, '
+      + 'so on the worker alone that alarm is mute and the outage is silent again.');
+    const web = render.slice(render.indexOf('- type: web'), render.indexOf('- type: worker'));
+    assert(/fromGroup: omerta-secrets/.test(web),
+      'the web service no longer pulls the shared env group, so the API cannot reach '
+      + 'INVARIANT_WEBHOOK_URL and its worker watchdog can write telemetry but never page a human.');
+  }
+
   const shared = found.filter((k) => POSTURE[k].startsWith('shared:')).length;
   console.log(`  ✓ all ${found.length} module-scope collections carry a single-instance posture `
     + `(${shared} shared, each named in render.yaml); numInstances stays undeclared`);
+  console.log('  ✓ the alarm channel reaches the API, so the watchdog that covers a dark worker can page');
 }
 
 // ═══ THE CHILD-EXIT LEDGER — a listener attached after the work never fires ═══════════════════════
