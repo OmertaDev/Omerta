@@ -77,6 +77,26 @@ envVarGroups:
       # Project ID. It is PUBLIC by design (it ships in the page) — it is not a secret.
       - key: WALLETCONNECT_PROJECT_ID
         sync: false
+      # ── WEB PUSH (optional; the whole path is DORMANT until the pair is set) ──
+      # The highest-ROI retention switch in a lazy-accrual game: things happen TO an absent player, and
+      # without this the only way to learn is to open the tab. Generate the pair ONCE with
+      # `npm run vapid`, paste both here, redeploy. The client then stops hiding the 🔔 and asks for
+      # permission the first time the city moves on them.
+      #
+      # IT LIVES IN THE SHARED GROUP ON PURPOSE, AND THAT IS THE WHOLE POINT. This is a KEY PAIR that
+      # must MATCH across two processes — the API serves the public key on /v1/rules and stores the
+      # subscriptions; the WORKER signs and sends. Set on one service only, or generated twice, and the
+      # failure is SILENT: /admin → Integrations reads env presence on the API, so push reads LIVE while
+      # every send is rejected or never attempted, with nothing red anywhere. The group is what makes
+      # "both services, same pair" structural instead of a thing an operator has to remember.
+      - key: VAPID_PUBLIC_KEY
+        sync: false              # from `npm run vapid`. PUBLIC by design — it ships to the browser.
+      - key: VAPID_PRIVATE_KEY
+        sync: false              # the other half of the SAME pair. Keep it secret; never regenerate one
+                                 # side alone (every existing subscription is bound to the public key).
+      - key: VAPID_SUBJECT
+        sync: false              # optional contact URI the push services want; defaults to
+                                 # mailto:ops@omerta.fun. A mailto: or https: URI, nothing else.
       - key: INVARIANT_WEBHOOK_URL
         sync: false              # YOU paste this one: a Slack or Discord webhook URL. It is how the game
                                  # TELLS you something is wrong — the nightly §10.4 economy check and the

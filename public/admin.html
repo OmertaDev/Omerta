@@ -390,8 +390,9 @@
           <div class="note" style="margin-top:4px">${x.why}</div>
           ${x.live ? '' : `<div class="note" style="margin-top:4px"><b>Needs:</b> <code>${(x.needs || []).join('</code> <code>')}</code></div>
             <div class="note" style="margin-top:3px"><b>To switch on:</b> ${x.steps}</div>`}
+          ${x.caveat ? `<div class="note" style="margin-top:3px;color:var(--bad)"><b>⚠</b> ${x.caveat}</div>` : ''}
         </div>`).join('')
-      + '<div class="note" style="margin-top:6px">These are env-config switches (no code deploy). Set the vars on the API and redeploy. Secrets never leave the server — this panel reads presence only.</div>'
+      + '<div class="note" style="margin-top:6px">These are env-config switches (no code deploy). Set them in the SHARED env group and redeploy BOTH services — several are read by the worker (web push signs and sends there; the email digest runs there entirely), so setting them on the API alone can read LIVE here and still do nothing. Secrets never leave the server — this panel reads presence only.</div>'
       + capacityLine(ig && ig.capacity);
   }
 

@@ -3316,6 +3316,52 @@ scopedSocialContext = async function(db) {
       + 'INVARIANT_WEBHOOK_URL and its worker watchdog can write telemetry but never page a human.');
   }
 
+  // AND THE PUSH KEY PAIR MUST SPAN BOTH PROCESSES. Web push is the only activation switch in the
+  // game that is a KEY PAIR read by two different services — the API serves the public half on
+  // /v1/rules and stores the subscriptions, the WORKER signs and sends — so it is the one switch
+  // where "set it on the service that needs it" is the wrong instruction. Set on the API alone, or
+  // generated twice, and the failure is SILENT in the worst way: /admin → Integrations reads env
+  // presence on the API, so the panel says LIVE while every push is never attempted or is rejected,
+  // with nothing red anywhere. Declaring all three keys in the SHARED group is what makes "both
+  // services, same pair" structural rather than a thing an operator has to remember, and a
+  // per-service declaration is exactly the shape that lets the two halves diverge.
+  {
+    const group = render.match(/envVarGroups:[\s\S]*?(?=\nservices:)/);
+    const KEYS = ['VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY', 'VAPID_SUBJECT'];
+    for (const k of KEYS) {
+      assert(group && new RegExp(`key: ${k}\\b`).test(group[0]),
+        `${k} is not declared in render.yaml's SHARED env group. Web push is a key pair spanning the `
+        + 'API (serves the public key, stores subscriptions) and the WORKER (signs and sends): declared '
+        + 'per-service, or not at all, the two halves can differ and /admin reads LIVE while nothing sends.');
+    }
+    const web = render.slice(render.indexOf('- type: web'), render.indexOf('- type: worker'));
+    const worker = render.slice(render.indexOf('- type: worker'));
+    for (const [name, body] of [['web', web], ['worker', worker]]) {
+      assert(/fromGroup: omerta-secrets/.test(body),
+        `the ${name} service no longer pulls the shared env group, so it cannot see the VAPID pair — `
+        + 'push then reads LIVE on the panel while one half of the rail is unconfigured.');
+      for (const k of KEYS) {
+        assert(!new RegExp(`key: ${k}\\b`).test(body),
+          `${name} declares ${k} in its OWN envVars. That is the divergence vector this guard exists `
+          + 'for: two services holding two different pairs is a rail that reads LIVE and sends nothing. '
+          + 'Keep the pair in the shared group.');
+      }
+    }
+    // ...and the panel must SAY so where it matters, which is the LIVE branch. `live` is computed from
+    // the API's own env, so the one reading a founder most needs to distrust is the reassuring one.
+    const ops = fs.readFileSync(path.join(ROOT, 'src', 'ops.js'), 'utf8');
+    const push = ops.slice(ops.indexOf("{ id: 'push'"), ops.indexOf("{ id: 'x_oauth'"));
+    assert(push && /caveat:/.test(push),
+      "src/ops.js's push integration has lost its `caveat`. `live` reads env presence on the API alone, "
+      + 'so without it the panel makes a confident claim about a rail whose sending half it cannot see.');
+    const admin = fs.readFileSync(path.join(ROOT, 'public', 'admin.html'), 'utf8');
+    assert(/x\.caveat/.test(admin),
+      'public/admin.html no longer renders `caveat`, so the warning is a field on an endpoint that '
+      + 'nobody reads — the same shape as an alarm posting nowhere.');
+    console.log('  ✓ the web-push key pair is declared once, in the shared group both services pull, '
+      + 'and the panel says its LIVE reading only covers this process');
+  }
+
   const shared = found.filter((k) => POSTURE[k].startsWith('shared:')).length;
   console.log(`  ✓ all ${found.length} module-scope collections carry a single-instance posture `
     + `(${shared} shared, each named in render.yaml); numInstances stays undeclared`);
