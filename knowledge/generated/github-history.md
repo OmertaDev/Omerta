@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `c6bb58f62340`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `a556316130d0`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1230 |
+| Commits in clone | 1233 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-28 — fix: normalize postgres constraint metadata |
+| Latest commit | 2026-08-28 — fix: stabilize Postgres H2 catalog decoding |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 429 |
+| OmertaDev | 432 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -36,17 +36,17 @@
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 170 | yes |
-| [package.json](../../package.json) | 140 | yes |
+| [package.json](../../package.json) | 141 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 120 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 114 | yes |
 | [src/invariants.js](../../src/invariants.js) | 114 | yes |
 | [test/client.js](../../test/client.js) | 101 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
-| knowledge/generated/github-history.md | 88 | historical |
-| knowledge/generated/graph-summary.md | 88 | historical |
-| knowledge/generated/graph.json | 88 | historical |
-| knowledge/generated/inventory.md | 88 | historical |
+| knowledge/generated/github-history.md | 89 | historical |
+| knowledge/generated/graph-summary.md | 89 | historical |
+| knowledge/generated/graph.json | 89 | historical |
+| knowledge/generated/inventory.md | 89 | historical |
 | [test/social.js](../../test/social.js) | 84 | yes |
 | [public/wiki.html](../../public/wiki.html) | 80 | yes |
 | [test/growth.js](../../test/growth.js) | 79 | yes |
