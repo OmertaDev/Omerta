@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "f2774d844fbec576d63a1e05a04b96199bea79af",
+  "sourceRevision": "a19dcc7f8b0b4d0e2147a47fc1e42fe2b1415661",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5634,
-    "edges": 24702,
+    "nodes": 5636,
+    "edges": 24708,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 56,
-      "Commit": 1276,
+      "Commit": 1278,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 9792,
+      "CHANGED": 9796,
       "CONTAINS": 1846,
       "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1276,
+      "HAS_COMMIT": 1278,
       "IMPLEMENTS": 124,
       "IMPORTS": 1633,
       "INHERITS": 12,
@@ -43013,6 +43013,22 @@
       ]
     },
     {
+      "key": "Commit:034088998533e03011506f653c3e0b3cc2d3477f",
+      "type": "Commit",
+      "id": "034088998533e03011506f653c3e0b3cc2d3477f",
+      "label": "chore(knowledge): regenerate at f2774d8",
+      "title": "chore(knowledge): regenerate at f2774d8",
+      "date": "2026-08-29T19:17:39.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/034088998533e03011506f653c3e0b3cc2d3477f",
+      "provenance": [
+        {
+          "commit": "034088998533e03011506f653c3e0b3cc2d3477f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/034088998533e03011506f653c3e0b3cc2d3477f"
+        }
+      ]
+    },
+    {
       "key": "Commit:03ca104bc507e1ea373b61e35a5330ad09e20029",
       "type": "Commit",
       "id": "03ca104bc507e1ea373b61e35a5330ad09e20029",
@@ -56145,6 +56161,22 @@
         {
           "commit": "a16c2fe9da22d79fb85d12c7fd6ee01152dce1a8",
           "url": "https://github.com/OmertaDev/Omerta/commit/a16c2fe9da22d79fb85d12c7fd6ee01152dce1a8"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a19dcc7f8b0b4d0e2147a47fc1e42fe2b1415661",
+      "type": "Commit",
+      "id": "a19dcc7f8b0b4d0e2147a47fc1e42fe2b1415661",
+      "label": "Merge pull request #148 from OmertaDev/claude/marketing-materials-audit-56gsby",
+      "title": "Merge pull request #148 from OmertaDev/claude/marketing-materials-audit-56gsby",
+      "date": "2026-08-29T19:36:13.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a19dcc7f8b0b4d0e2147a47fc1e42fe2b1415661",
+      "provenance": [
+        {
+          "commit": "a19dcc7f8b0b4d0e2147a47fc1e42fe2b1415661",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a19dcc7f8b0b4d0e2147a47fc1e42fe2b1415661"
         }
       ]
     },
@@ -76241,6 +76273,9 @@
       "path": "knowledge/generated/github-history.md",
       "provenance": [
         {
+          "commit": "034088998533e03011506f653c3e0b3cc2d3477f"
+        },
+        {
           "commit": "043eb9a9d42ec4bedd9de853cb408ebf9e3a6c9c"
         },
         {
@@ -76571,6 +76606,9 @@
       "path": "knowledge/generated/graph-summary.md",
       "provenance": [
         {
+          "commit": "034088998533e03011506f653c3e0b3cc2d3477f"
+        },
+        {
           "commit": "043eb9a9d42ec4bedd9de853cb408ebf9e3a6c9c"
         },
         {
@@ -76900,6 +76938,9 @@
       "label": "knowledge/generated/graph.json",
       "path": "knowledge/generated/graph.json",
       "provenance": [
+        {
+          "commit": "034088998533e03011506f653c3e0b3cc2d3477f"
+        },
         {
           "commit": "043eb9a9d42ec4bedd9de853cb408ebf9e3a6c9c"
         },
@@ -77287,6 +77328,9 @@
       "label": "knowledge/generated/inventory.md",
       "path": "knowledge/generated/inventory.md",
       "provenance": [
+        {
+          "commit": "034088998533e03011506f653c3e0b3cc2d3477f"
+        },
         {
           "commit": "043eb9a9d42ec4bedd9de853cb408ebf9e3a6c9c"
         },
@@ -83882,8 +83926,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "f2774d844fbec576d63a1e05a04b96199bea79af",
-      "currentBranch": "claude/marketing-materials-audit-56gsby",
+      "revision": "a19dcc7f8b0b4d0e2147a47fc1e42fe2b1415661",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -127970,6 +128014,38 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "commit": "03313cca1ec9001cbab41e040bef235592ed8259"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:034088998533e03011506f653c3e0b3cc2d3477f",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "034088998533e03011506f653c3e0b3cc2d3477f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:034088998533e03011506f653c3e0b3cc2d3477f",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "034088998533e03011506f653c3e0b3cc2d3477f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:034088998533e03011506f653c3e0b3cc2d3477f",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "034088998533e03011506f653c3e0b3cc2d3477f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:034088998533e03011506f653c3e0b3cc2d3477f",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "034088998533e03011506f653c3e0b3cc2d3477f"
       }
     },
     {
@@ -241952,6 +242028,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:034088998533e03011506f653c3e0b3cc2d3477f",
+      "provenance": {
+        "commit": "034088998533e03011506f653c3e0b3cc2d3477f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:03ca104bc507e1ea373b61e35a5330ad09e20029",
       "provenance": {
         "commit": "03ca104bc507e1ea373b61e35a5330ad09e20029"
@@ -248515,6 +248599,14 @@
       "to": "Commit:a16c2fe9da22d79fb85d12c7fd6ee01152dce1a8",
       "provenance": {
         "commit": "a16c2fe9da22d79fb85d12c7fd6ee01152dce1a8"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a19dcc7f8b0b4d0e2147a47fc1e42fe2b1415661",
+      "provenance": {
+        "commit": "a19dcc7f8b0b4d0e2147a47fc1e42fe2b1415661"
       }
     },
     {

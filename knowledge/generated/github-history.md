@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f2774d844fbe`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `a19dcc7f8b0b`.
 
 ## Repository
 
@@ -9,19 +9,19 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1276 |
+| Commits in clone | 1278 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-29 — Restate SPEC's test line total after the merge |
+| Latest commit | 2026-08-29 — Merge pull request #148 from OmertaDev/claude/marketing-materials-audit-56gsby |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 432 |
-| Claude | 155 |
+| OmertaDev | 433 |
+| Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 1 |
 
@@ -42,10 +42,10 @@
 | [src/worker.js](../../src/worker.js) | 122 | yes |
 | [src/invariants.js](../../src/invariants.js) | 115 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 114 | yes |
-| knowledge/generated/github-history.md | 107 | historical |
-| knowledge/generated/graph-summary.md | 107 | historical |
-| knowledge/generated/graph.json | 107 | historical |
-| knowledge/generated/inventory.md | 107 | historical |
+| knowledge/generated/github-history.md | 108 | historical |
+| knowledge/generated/graph-summary.md | 108 | historical |
+| knowledge/generated/graph.json | 108 | historical |
+| knowledge/generated/inventory.md | 108 | historical |
 | [test/client.js](../../test/client.js) | 101 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
 | [test/social.js](../../test/social.js) | 84 | yes |
