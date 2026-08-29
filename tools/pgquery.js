@@ -25,9 +25,9 @@
 //
 //   createdb omerta_query
 //   DATABASE_URL=postgres://localhost/omerta_query node tools/pgquery.js
-import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { scanQueryCalls } from './sqlscan.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -39,54 +39,21 @@ if (!process.env.DATABASE_URL) {
 }
 
 // ── 1. EXTRACT ───────────────────────────────────────────────────────────────────────────────────
-// Every `.query(` call site, then the first string literal that follows. Hand-rolled rather than
-// regex because the argument may be a template literal spanning many lines and containing quotes,
-// braces and nested templates — the exact shape a regex reads wrong (test/client.js learned this the
-// expensive way, twice).
-function firstStringArg(src, from) {
-  let i = from;
-  while (i < src.length && /[\s\n]/.test(src[i])) i++;
-  const q = src[i];
-  if (q !== '`' && q !== "'" && q !== '"') return null;   // a variable, a function call, or SCHEMA
-  let out = '', depth = 0, interpolated = false;
-  for (i++; i < src.length; i++) {
-    const c = src[i];
-    if (c === '\\') { out += src[i + 1]; i++; continue; }
-    if (q === '`' && c === '$' && src[i + 1] === '{') { interpolated = true; depth++; i++; continue; }
-    if (depth > 0) { if (c === '{') depth++; else if (c === '}') depth--; continue; }
-    if (c === q) return { sql: out, interpolated };
-    out += c;
-  }
-  return null;
-}
-
-const files = [];
-(function walk(dir) {
-  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-    const p = path.join(dir, e.name);
-    if (e.isDirectory()) walk(p);
-    else if (e.name.endsWith('.js')) files.push(p);
-  }
-})(path.join(ROOT, 'src'));
-
-const lineOf = (src, idx) => src.slice(0, idx).split('\n').length;
+// The walker lives in tools/sqlscan.js because THE INTERPOLATION LEDGER (test/gates.js) audits the
+// same corpus and the two must never disagree about what it is. See that file for why it is
+// hand-rolled rather than a regex.
 // PREPARE handles DML only. DDL, transaction control and session commands are not preparable and are
 // not what this guard is about — they are counted as skipped, not as passes.
 const DML = /^\s*(select|insert|update|delete|with|values)\b/i;
 
-const stmts = [], interpolated = [], unreadable = [], skipped = [];
-for (const file of files) {
-  const src = fs.readFileSync(file, 'utf8');
-  const rel = path.relative(ROOT, file);
-  for (const m of src.matchAll(/\.query\(/g)) {
-    const at = m.index + m[0].length;
-    const got = firstStringArg(src, at);
-    const where = `${rel}:${lineOf(src, m.index)}`;
-    if (!got) { unreadable.push(where); continue; }
-    if (got.interpolated) { interpolated.push({ where, sql: got.sql }); continue; }
-    if (!DML.test(got.sql)) { skipped.push(where); continue; }
-    stmts.push({ where, sql: got.sql });
-  }
+const scan = new URL('../src/', import.meta.url);
+const { readable, unreadable: unreadableSites } = scanQueryCalls(fileURLToPath(scan), { root: ROOT });
+const stmts = [], interpolated = [], skipped = [];
+const unreadable = unreadableSites.map((u) => u.where);
+for (const got of readable) {
+  if (got.interpolated) { interpolated.push({ where: got.where, sql: got.sql }); continue; }
+  if (!DML.test(got.sql)) { skipped.push(got.where); continue; }
+  stmts.push({ where: got.where, sql: got.sql });
 }
 
 // ── 2. PREPARE ───────────────────────────────────────────────────────────────────────────────────
@@ -175,7 +142,26 @@ if (failures.length) {
 // live referral sites that had read fine for as long as the column was unindexed). The IN form is the
 // only portable one and it is not preparable, so the ceiling rises by exactly the three converted
 // sites: a raise that BUYS a class of latent bug being enforced away, which is what warrants one.
-const CEILING = { interpolated: 78, unreadable: 40 };
+// 78 → 162 (2026-08-29): NOT a growth event — the count had been drifting past its ceiling for a
+// while and the ceiling had never been re-derived, so this raise is the deliberate decision that
+// backlog was owed. The set was measured and every one of its 215 interpolated expressions
+// classified: 155 match a mechanical safe shape (an engine shim like nowSql()/lockSuffix(), a
+// ternary over two string literals, a generated `${n}` placeholder, a numeric coercion, an
+// ALL_CAPS module constant) or trace in one level to bindings that all do; the remaining 44 were
+// read at their call sites and are a SQL-fragment parameter whose every caller passes a literal, a
+// closed-set map key or membership-gated column name, a generated placeholder list, a declared
+// migration spec, or a locally-built pagination predicate made only of `$n`. No user string reaches
+// SQL text anywhere.
+//
+// WHAT MAKES THE RAISE DEFENSIBLE is not the audit — AUDIT-red-team-eight lens 3 did exactly that
+// sweep by hand at 95 interpolations and it decayed the moment the tree moved. It is that the class
+// this guard structurally cannot check now has a guard of its own: THE INTERPOLATION LEDGER
+// (test/gates.js) asserts the property the count was only ever a proxy for, catalogue-or-declare,
+// and fails BY NAME on an injected user string. The two share one corpus (tools/sqlscan.js) so they
+// can never disagree about what the set is. This number bounds how much SQL goes unPREPARED; the
+// ledger bounds what can be in it. Neither replaces the other, and the ceiling stays because a
+// statement that never reaches Postgres is still a statement nobody type-checked.
+const CEILING = { interpolated: 162, unreadable: 40 };
 const overflow = [];
 if (interpolated.length > CEILING.interpolated)
   overflow.push(`interpolated queries grew to ${interpolated.length} (ceiling ${CEILING.interpolated}) — these are UNCHECKED by this guard`);

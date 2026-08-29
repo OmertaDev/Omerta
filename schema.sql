@@ -5146,10 +5146,10 @@ CREATE TABLE IF NOT EXISTS rwa_health_batches_v2 (
   UNIQUE (batch_id,chain_id,registry_address,catalog_version,catalog_snapshot_hash),
   UNIQUE (batch_id,provider_commitment,source_state)
 );
-CREATE UNIQUE INDEX ux_rwa_health_cycle_v2 ON rwa_health_batches_v2
+CREATE UNIQUE INDEX IF NOT EXISTS ux_rwa_health_cycle_v2 ON rwa_health_batches_v2
   (chain_id,registry_address,catalog_version,catalog_snapshot_hash,rule_set_hash,
    provider_endpoint_hash,cycle_slot);
-CREATE UNIQUE INDEX ux_rwa_health_one_pending_batch_v2 ON rwa_health_batches_v2
+CREATE UNIQUE INDEX IF NOT EXISTS ux_rwa_health_one_pending_batch_v2 ON rwa_health_batches_v2
   (chain_id,registry_address) WHERE status = 'pending';
 
 CREATE TABLE IF NOT EXISTS rwa_health_private_provider_evidence_v2 (
@@ -5233,7 +5233,7 @@ CREATE TABLE IF NOT EXISTS rwa_health_evaluations_v2 (
   CHECK ((status = 'planned' AND applied_at IS NULL)
       OR (status = 'applied' AND applied_at >= observed_at))
 );
-CREATE INDEX ix_rwa_health_eval_asset_v2 ON rwa_health_evaluations_v2
+CREATE INDEX IF NOT EXISTS ix_rwa_health_eval_asset_v2 ON rwa_health_evaluations_v2
   (registry_address,asset_version_key,applied_at DESC NULLS LAST,evaluation_id DESC)
   WHERE status = 'applied';
 
@@ -5813,7 +5813,7 @@ CREATE TABLE IF NOT EXISTS rwa_health_episodes_v2 (
       OR (terminal_status = 'post_clearance_failure_superseded'
           AND terminal_evaluation_kind IN ('health_unknown','operational_quarantine')))
 );
-CREATE UNIQUE INDEX ux_rwa_health_one_open_episode_v2
+CREATE UNIQUE INDEX IF NOT EXISTS ux_rwa_health_one_open_episode_v2
   ON rwa_health_episodes_v2(registry_address,asset_version_key)
   WHERE closed_at IS NULL;
 
@@ -5914,7 +5914,7 @@ CREATE TABLE IF NOT EXISTS rwa_health_episode_events_v2 (
       OR (source_kind = 'h2_clearance' AND event_kind = 'clearance_applied'
           AND resulting_severity IN ('health_unknown','operational_quarantine')))
 );
-CREATE INDEX ix_rwa_health_episode_events_v2 ON rwa_health_episode_events_v2
+CREATE INDEX IF NOT EXISTS ix_rwa_health_episode_events_v2 ON rwa_health_episode_events_v2
   (episode_id,created_at,event_id);
 
 CREATE TABLE IF NOT EXISTS rwa_health_current_v2 (

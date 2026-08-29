@@ -2655,3 +2655,192 @@ scopedSocialContext = async function(db) {
   assert.doesNotMatch(serverSource, /\bsyncFinalizedRwaRegistryLifecycle\b/,
     'CN-6A remains dormant: server.js may expose future read-only facts but cannot run its coordinator');
 }
+
+// ═══ THE INTERPOLATION LEDGER — every `${...}` reaching SQL text is classified or declared ════════
+//
+// `tools/pgquery.js` PREPAREs every static SQL string in src/ against real Postgres. It structurally
+// CANNOT read a query built with `${...}`, so it counts those against a ceiling and says so — the
+// honesty rule. But a count is a PROXY. What actually matters about an interpolated query is whether
+// a USER STRING can reach the SQL text, and a ceiling cannot tell a new IN-list fan-out (harmless,
+// and the only portable form — `= ANY($1)` returns zero rows on pg-mem the moment the column is
+// indexed, THE ANY-OF-ARRAY BAN below) from a new `WHERE name = '${req.body.name}'`. Both move the
+// number by one.
+//
+// AUDIT-red-team-eight lens 3 proved the real property BY HAND: all 95 interpolations of the day
+// traced to a placeholder list, a ternary over two literals, a module constant or an allowlisted
+// column name, so no user string reached SQL text. It was never made into a test. The corpus is 215
+// interpolations across 162 statements now, and without this every one of those hand-sweeps has to
+// be redone from scratch by the next person who wonders.
+//
+// THE RULE. Every interpolated expression must EITHER match a declared safe SHAPE, or trace in one
+// level to bindings that ALL do, or be DECLARED here with the property that makes it safe. Waivers
+// are keyed on (file, expression text) and NEVER on a line — a line-keyed waiver rots on the next
+// edit above it, which the connection ledger's viem waivers cost once already.
+//
+// THE CORPUS IS SHARED WITH pgquery, via tools/sqlscan.js. Two guards over the same set that
+// disagree about what the set IS are worse than one of them: pgquery's ceiling would then bound a
+// corpus this never sees, and this would clear expressions pgquery never counted.
+//
+// Scope, stated rather than implied: this proves an expression cannot CARRY a user string into SQL
+// text. It does not prove the resulting SQL is correct — that is pgquery's job for the static half,
+// and precisely why the interpolated half stays counted rather than waved through.
+{
+  const LIT = "(?:'[^']*'|\"[^\"]*\")";
+  // Each shape is safe for a reason that survives a reader who has never seen this file:
+  const SHAPES = [
+    // The engine shims. `dbCaps` is set at boot from the real engine, never from a request, and each
+    // of these returns one of a fixed set of SQL fragments (they are NOT uniform across modules —
+    // `nowSql()` has three different expansions — which is exactly why a substitution table would be
+    // a new restatement surface that rots, and a named-helper allowlist is not).
+    [/^(nowSql|lockSuffix|lock|epochTimestampSql|healthDbNowSql|sqlHonorDelta|inList|filt)\s*\(/,
+      'declared SQL-fragment helper (engine shim / bound-placeholder builder)'],
+    [new RegExp(`\\?\\s*${LIT}\\s*:\\s*${LIT}\\s*$`), 'ternary over two string literals'],
+    // `$${...}` builds a PLACEHOLDER number. The value it stands for is bound, by construction.
+    [/\$\$\{/, 'generated $n placeholder fan-out (every value bound)'],
+    [/^\s*Number\(|^\s*Math\.(floor|round|min|max|abs)\(/, 'numeric coercion — cannot carry text'],
+    [/^\s*[A-Z][A-Z0-9_]*(\.[A-Z][A-Z0-9_]*)*\s*$/, 'ALL_CAPS module constant'],
+    [/^\s*\d+(\s*[-+*/]\s*\d+)*\s*$/, 'numeric literal'],
+    [/^\s*params\.length(\s*[-+]\s*\d+)?\s*$/, 'parameter-count index (a $n number)'],
+    [/^\s*(''|"")\s*$/, 'empty string'],
+  ];
+  const shapeOf = (e) => { for (const [re, why] of SHAPES) if (re.test(e)) return why; return null; };
+
+  // ONE-LEVEL TRACING, and ALL bindings must be safe — not "any". A weaker rule would clear an array
+  // initialised safely and then pushed to unsafely, which is the only interesting way this fails.
+  // Matching is file-wide rather than function-scoped, which is the conservative direction: a
+  // same-named binding in another function makes the requirement STRICTER, never looser.
+  const bindings = (src, id) => {
+    const esc = id.replace(/\$/g, '\\$');
+    const out = [];
+    const grab = (re) => { for (const m of src.matchAll(re)) out.push(m[1].replace(/\s+/g, ' ').trim()); };
+    grab(new RegExp(`(?:const|let|var)\\s+${esc}\\s*=\\s*([\\s\\S]{0,220}?)(?:;|\\n)`, 'g'));
+    grab(new RegExp(`\\b${esc}\\.push\\(([\\s\\S]{0,220}?)\\)\\s*[;\\n]`, 'g'));
+    grab(new RegExp(`(?<![\\w$.])${esc}\\s*=\\s*([^=][\\s\\S]{0,220}?)(?:;|\\n)`, 'g'));
+    return out;
+  };
+  const classify = (src, expr) => {
+    const direct = shapeOf(expr);
+    if (direct) return direct;
+    const base = expr.match(/^([A-Za-z_$][\w$]*)(?:\.join\([^)]*\))?$/);
+    if (!base) return null;
+    const b = bindings(src, base[1]);
+    if (!b.length || !b.every((r) => shapeOf(r))) return null;
+    return `traced: ${shapeOf(b[0])}`;
+  };
+
+  // SELF-TEST, and it runs FIRST on purpose. The floors below catch a matcher that matches too
+  // LITTLE; this catches one that matches too MUCH, which is the direction that lets an injection
+  // site through quietly — and if it ran last, a permissive matcher would fail at the stale-waiver
+  // assert instead (every declaration goes unused when everything is "safe"), sending the reader to
+  // delete waivers over a matcher that had stopped checking anything.
+  const synth = "const sort = req.query.sort;\nconst safe = dbCaps.skipLocked ? 'a' : 'b';\n"
+    + 'const mixed = nowSql();\nmixed = req.body.dir;\n';
+  assert.equal(classify(synth, 'req.body.name'), null, 'a raw request field must never classify safe');
+  assert.equal(classify(synth, 'sort'), null, 'a binding that traces to a request field must never classify safe');
+  assert.equal(classify(synth, 'mixed'), null, 'a binding assigned safely ONCE and unsafely once must '
+    + 'never classify safe — the rule is ALL bindings, not any, because the only interesting way this '
+    + 'fails is an array built safely and then pushed to unsafely');
+  assert(classify(synth, 'safe'), 'a binding that traces to a two-literal ternary must classify safe');
+
+  // ── DECLARED. Each of these was read at its call sites; the reason is the PROPERTY that makes a
+  // user string unreachable, never "it looked fine". Keyed on file + expression text.
+  const DECLARED = {
+    // A SQL-fragment PARAMETER of a module-local helper whose every call site passes a literal.
+    'src/honor.js|col': 'board(col,dir,cond) — both call sites pass literal column/direction/predicate',
+    'src/honor.js|dir': 'board(col,dir,cond) — both call sites pass literals',
+    'src/honor.js|cond': 'board(col,dir,cond) — both call sites pass literals',
+    'src/vig.js|table': 'sumEth(pool,table,col,where) — every call site passes a literal table name',
+    'src/vig.js|col': 'sumEth(...) — literal column at every call site',
+    'src/vig.js|where': 'sumEth(...) — literal predicate at every call site (default empty)',
+    'src/invariants.js|where': 'sum(pool,where) — literal predicates at every call site',
+    'src/heists.js|cols': 'setMember(id,cols,params) — every call site passes a literal SET clause; values bound',
+    'src/heists.js|extra': 'local candidate-scan helper — literal predicate at every call site',
+    'src/world.js|cols': 'raid setMember(id,cols,params) — literal SET clause at every call site; values bound',
+    'src/world.js|extra': 'freeQ(extra,params) — literal predicate at both call sites; values bound',
+    'src/pen.js|cols': 'break setMember/setMemberRat — literal SET clause at every call site; values bound',
+    'src/wire.js|col': "claim(w,col) — three literal column names ('alerted_hunt'/'_wanted'/'_indicted')",
+    'src/rwanominations.js|setClause': 'updateQueueNominationIds(...,setClause,marker) — literal at every call site',
+    'src/rwanominations.js|marker': 'a literal SQL-comment tag at every call site (query attribution only)',
+    'src/stockcatalogv2.js|marker': 'readState(marker) — two literal tags, inside a /* */ SQL comment',
+
+    // A CLOSED SET: the value indexes a module-private map, or is membership-gated before it is used.
+    'src/chain.js|k.table': 'k is a value of the module-private KINDS map; nftKind() null-guards a bad key',
+    'src/chain.js|k.clear': 'same KINDS map — the column name is declared in the map, not supplied',
+    'src/nft.js|k.table': 'same module-private KINDS map, reached only through nftKind() (throws bad_kind)',
+    'src/kitchen.js|col': "Object.hasOwn(KITCHEN.MODULES, modId) gates it, so `lab_${modId}` is a catalog key",
+    'src/boxing.js|s': "String(stat||'') then a .includes(s) membership check against the fixed stat list",
+    'src/stable.js|s': 'same membership gate against the fixed racer stat list',
+    'src/standing.js|sel': 'ALL_COLS.map(...) — column list derived from the STANDING_PILLARS constant',
+    'src/social/estate.js|t': "for (const t of ['cars','boats']) — literal array",
+    'src/social/estate.js|table': 'for (const table of [...47 literal table names]) — literal array',
+    'src/rwaregistrylifecycle.js|runtimeMode': "lockHeadRows(client, runtimeMode='SHARE') — lock mode, literal at both call sites",
+
+    // A DECLARED MIGRATION SPEC — the strings come from a hardcoded const array in the same file.
+    'src/db.js|table': 'migration spec table name from a module const array',
+    'src/db.js|name': 'migration spec constraint name from the same const array',
+    'src/db.js|expression': 'migration spec CHECK expression from the same const array',
+    'src/db.js|spec.table': 'the same const array, read through the spec object',
+    'src/db.js|spec.name': 'the same const array, read through the spec object',
+
+    // GENERATED PLACEHOLDERS — the fragment is `$n,$n,...`; every value is bound.
+    'src/game.js|vals.join(\',\')': 'multi-row INSERT VALUES tuples built from $n placeholders; values bound',
+    'src/rwanominations.js|values.join(\',\')': 'same batched-INSERT placeholder fan-out; values bound',
+    'src/rwanominations.js|placeholders': 'same — a generated $n list; values bound',
+    'src/rwanominations.js|conditions.join(\' OR \')': 'OR of generated $n comparisons; values bound',
+
+    // LOCALLY-BUILT PAGINATION FRAGMENTS. Each is a template containing only $n placeholders; the
+    // cursor VALUES are validated in pageOptions and pushed as bound parameters, never spliced.
+    'src/rwanominations.js|after': 'keyset predicate of $n placeholders; cursor values bound',
+    'src/rwanominations.js|cursor': 'keyset predicate of $n placeholders; cursor values bound',
+    'src/rwanominations.js|cursorClause': 'keyset predicate of $n placeholders; cursor values bound',
+    'src/rwanominations.js|activeWhere': 'built from literal fragments + $n placeholders',
+    'src/rwanominations.js|finalizedJoin': 'literal JOIN fragment chosen in-file, no request value',
+    'src/rwanominations.js|staleEndorsement': 'staleness predicate of $n placeholders; values bound',
+    'src/rwanominations.js|staleSponsor': 'staleness predicate of $n placeholders; values bound',
+
+    // MULTI-LINE ternaries over literals — safe for the same reason as the one-line shape, but the
+    // normalised text is too long for the pattern to be worth widening (a wider one would start
+    // matching ternaries whose arms are not literals at all).
+    'src/rwahealthreview.js|clockExpression': "dbCaps ternary over two literal clock expressions",
+    'src/rwahealthclearance.js|select': "wholeSecond ? date_trunc('second',expr) : expr — both literal",
+  };
+
+  const { scanQueryCalls } = await import('../tools/sqlscan.js');
+  const { readable } = scanQueryCalls(SRC, { root: fileURLToPath(new URL('../', import.meta.url)) });
+  let total = 0, shaped = 0;
+  const undeclared = [], usedDecl = new Set();
+  for (const g of readable) {
+    if (!g.interpolated) continue;
+    for (const part of g.parts) {
+      const expr = part.replace(/\s+/g, ' ').trim();
+      total++;
+      const why = classify(g.src, expr);
+      if (why) { shaped++; continue; }
+      const key = `${g.rel}|${expr}`;
+      if (DECLARED[key]) { usedDecl.add(key); continue; }
+      undeclared.push(`${g.where}  \${${expr}}`);
+    }
+  }
+
+  // Two floors, because they fail differently: one catches an extractor that has stopped reading
+  // src/ (a sweep that reaches nothing reads exactly like a clean tree), the other a shape matcher
+  // that has stopped MATCHING — which would push everything into `undeclared` and, in the tempting
+  // fix, into blanket waivers.
+  assert(total > 150, `THE INTERPOLATION LEDGER read only ${total} interpolated expressions — the `
+    + 'shared scanner has stopped reading src/, and a sweep that reaches nothing reads exactly like a clean tree');
+  assert(shaped > 100, `only ${shaped} of ${total} interpolations matched a safe shape — the shape `
+    + 'matcher is broken, and the next reader will be tempted to bulk-declare what it stopped seeing');
+
+  assert.deepEqual(undeclared, [], 'interpolated expression(s) reaching SQL text that match no safe '
+    + 'shape and carry no declaration. If the value cannot be a user string, declare it in THE '
+    + 'INTERPOLATION LEDGER with the property that makes that true; if it can, it is an injection '
+    + `site and must be bound as a parameter instead:\n   - ${undeclared.join('\n   - ')}`);
+
+  const stale = Object.keys(DECLARED).filter((k) => !usedDecl.has(k)).sort();
+  assert.deepEqual(stale, [], 'declaration(s) for interpolations that no longer exist — a stale '
+    + 'waiver silently re-covers whatever moves into its place, so remove them:'
+    + `\n   - ${stale.join('\n   - ')}`);
+
+  console.log(`  ✓ all ${total} SQL interpolations are shape-safe (${shaped}) or declared `
+    + `(${usedDecl.size}) — no user string can reach SQL text`);
+}
