@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "909c119e03b9a3b091d2988bf48085ea44c48b68",
+  "sourceRevision": "b1226efd603402870b47483593109e91f1b1743a",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5610,
-    "edges": 24575,
+    "nodes": 5612,
+    "edges": 24586,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 56,
-      "Commit": 1252,
+      "Commit": 1254,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,18 +65,18 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 9704,
+      "CHANGED": 9712,
       "CONTAINS": 1846,
       "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1252,
+      "HAS_COMMIT": 1254,
       "IMPLEMENTS": 124,
       "IMPORTS": 1631,
       "INHERITS": 12,
-      "REFERENCES": 2811,
+      "REFERENCES": 2812,
       "REPRESENTS": 891,
       "TESTS": 581,
       "TRACKS": 126,
@@ -10971,20 +10971,20 @@
       "path": "CLAUDE.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 1672689,
-      "lines": 17303,
-      "version": "cc88a0b0f9b8b648",
+      "bytes": 1675583,
+      "lines": 17333,
+      "version": "9bcd546bc7dbb91d",
       "text": true,
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "cc88a0b0f9b8b648"
+          "version": "9bcd546bc7dbb91d"
         }
       ],
-      "lastChangedAt": "2026-08-29T14:06:14.000Z",
+      "lastChangedAt": "2026-08-29T14:26:04.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "e70f3b09617414aadc2764ca6ce2e27d93dd1450"
+      "lastChangedCommit": "b1226efd603402870b47483593109e91f1b1743a"
     },
     {
       "key": "Artifact:content/packs/bad-batch/pack.json",
@@ -54565,6 +54565,22 @@
       ]
     },
     {
+      "key": "Commit:9179a0a4bee230a26f332fefff28ad181a8562f5",
+      "type": "Commit",
+      "id": "9179a0a4bee230a26f332fefff28ad181a8562f5",
+      "label": "knowledge: regenerate at 909c119e",
+      "title": "knowledge: regenerate at 909c119e",
+      "date": "2026-08-29T14:19:37.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9179a0a4bee230a26f332fefff28ad181a8562f5",
+      "provenance": [
+        {
+          "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9179a0a4bee230a26f332fefff28ad181a8562f5"
+        }
+      ]
+    },
+    {
       "key": "Commit:9179e6d9d379f7b816a4ffd04fa52c9ac902dd8c",
       "type": "Commit",
       "id": "9179e6d9d379f7b816a4ffd04fa52c9ac902dd8c",
@@ -57089,6 +57105,22 @@
         {
           "commit": "b0f885a6fc2759b253b6d7cfdcc591dd8d28f387",
           "url": "https://github.com/OmertaDev/Omerta/commit/b0f885a6fc2759b253b6d7cfdcc591dd8d28f387"
+        }
+      ]
+    },
+    {
+      "key": "Commit:b1226efd603402870b47483593109e91f1b1743a",
+      "type": "Commit",
+      "id": "b1226efd603402870b47483593109e91f1b1743a",
+      "label": "docs: record the smoke-debris finding and the two pipe-masking costumes",
+      "title": "docs: record the smoke-debris finding and the two pipe-masking costumes",
+      "date": "2026-08-29T14:26:04.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b1226efd603402870b47483593109e91f1b1743a",
+      "provenance": [
+        {
+          "commit": "b1226efd603402870b47483593109e91f1b1743a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b1226efd603402870b47483593109e91f1b1743a"
         }
       ]
     },
@@ -68684,13 +68716,13 @@
       "id": "CLAUDE.md",
       "label": "CLAUDE.md",
       "documentType": "documentation",
-      "lines": 17303,
-      "version": "cc88a0b0f9b8b648",
+      "lines": 17333,
+      "version": "9bcd546bc7dbb91d",
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "cc88a0b0f9b8b648"
+          "version": "9bcd546bc7dbb91d"
         }
       ]
     },
@@ -75791,6 +75823,9 @@
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
         },
         {
+          "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
+        },
+        {
           "commit": "ac0ca3c60f14cba4996855b20657454ca23f175a"
         },
         {
@@ -76020,6 +76055,9 @@
         },
         {
           "commit": "8da1ac08e7365552192613cd3d631d963b710e7b"
+        },
+        {
+          "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
         },
         {
           "commit": "92b05e973d1a6b3571e2adf04d9c9ba1c8fde266"
@@ -76322,6 +76360,9 @@
           "commit": "8da1ac08e7365552192613cd3d631d963b710e7b"
         },
         {
+          "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
+        },
+        {
           "commit": "92b05e973d1a6b3571e2adf04d9c9ba1c8fde266"
         },
         {
@@ -76622,6 +76663,9 @@
           "commit": "8da1ac08e7365552192613cd3d631d963b710e7b"
         },
         {
+          "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
+        },
+        {
           "commit": "92b05e973d1a6b3571e2adf04d9c9ba1c8fde266"
         },
         {
@@ -76764,6 +76808,9 @@
         },
         {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
+        },
+        {
+          "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
         },
         {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
@@ -76973,6 +77020,9 @@
           "commit": "8da1ac08e7365552192613cd3d631d963b710e7b"
         },
         {
+          "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
+        },
+        {
           "commit": "92b05e973d1a6b3571e2adf04d9c9ba1c8fde266"
         },
         {
@@ -77145,6 +77195,9 @@
         },
         {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
+        },
+        {
+          "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
         },
         {
           "commit": "982ba81b2db3f68ec4d02f1c3b6e07eceae45456"
@@ -83336,7 +83389,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "909c119e03b9a3b091d2988bf48085ea44c48b68",
+      "revision": "b1226efd603402870b47483593109e91f1b1743a",
       "currentBranch": "claude/game-dev-roadmap-6jtsst",
       "defaultBranch": "main",
       "visibility": "public",
@@ -173676,6 +173729,62 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:9179a0a4bee230a26f332fefff28ad181a8562f5",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9179a0a4bee230a26f332fefff28ad181a8562f5",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9179a0a4bee230a26f332fefff28ad181a8562f5",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9179a0a4bee230a26f332fefff28ad181a8562f5",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9179a0a4bee230a26f332fefff28ad181a8562f5",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9179a0a4bee230a26f332fefff28ad181a8562f5",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9179a0a4bee230a26f332fefff28ad181a8562f5",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:919a25e698cff07134b9a994b0ed96487a6329af",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -181392,6 +181501,14 @@
       "to": "Artifact:test/crew.js",
       "provenance": {
         "commit": "b0f885a6fc2759b253b6d7cfdcc591dd8d28f387"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b1226efd603402870b47483593109e91f1b1743a",
+      "to": "Artifact:CLAUDE.md",
+      "provenance": {
+        "commit": "b1226efd603402870b47483593109e91f1b1743a"
       }
     },
     {
@@ -246478,6 +246595,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:9179a0a4bee230a26f332fefff28ad181a8562f5",
+      "provenance": {
+        "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:9179e6d9d379f7b816a4ffd04fa52c9ac902dd8c",
       "provenance": {
         "commit": "9179e6d9d379f7b816a4ffd04fa52c9ac902dd8c"
@@ -247737,6 +247862,14 @@
       "to": "Commit:b0f885a6fc2759b253b6d7cfdcc591dd8d28f387",
       "provenance": {
         "commit": "b0f885a6fc2759b253b6d7cfdcc591dd8d28f387"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:b1226efd603402870b47483593109e91f1b1743a",
+      "provenance": {
+        "commit": "b1226efd603402870b47483593109e91f1b1743a"
       }
     },
     {
@@ -276279,6 +276412,15 @@
       "provenance": {
         "file": "CLAUDE.md",
         "line": 11688
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:src/ops.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 17309
       }
     },
     {

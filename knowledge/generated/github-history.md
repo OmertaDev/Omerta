@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `909c119e03b9`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `b1226efd6034`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1252 |
+| Commits in clone | 1254 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-29 — The smoke check creates a permanent player, and the runbook never said so |
+| Latest commit | 2026-08-29 — docs: record the smoke-debris finding and the two pipe-masking costumes |
 
 ## Commit authors
 
@@ -21,14 +21,14 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 431 |
-| Claude | 133 |
+| Claude | 135 |
 | CRVYDEV | 41 |
 
 ## Historical hotspots
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| [CLAUDE.md](../../CLAUDE.md) | 493 | yes |
+| [CLAUDE.md](../../CLAUDE.md) | 494 | yes |
 | [public/index.html](../../public/index.html) | 389 | yes |
 | [src/server.js](../../src/server.js) | 349 | yes |
 | [schema.sql](../../schema.sql) | 272 | yes |
@@ -42,10 +42,10 @@
 | [src/rules.tail.js](../../src/rules.tail.js) | 114 | yes |
 | [src/invariants.js](../../src/invariants.js) | 114 | yes |
 | [test/client.js](../../test/client.js) | 101 | yes |
-| knowledge/generated/github-history.md | 97 | historical |
-| knowledge/generated/graph-summary.md | 97 | historical |
-| knowledge/generated/graph.json | 97 | historical |
-| knowledge/generated/inventory.md | 97 | historical |
+| knowledge/generated/github-history.md | 98 | historical |
+| knowledge/generated/graph-summary.md | 98 | historical |
+| knowledge/generated/graph.json | 98 | historical |
+| knowledge/generated/inventory.md | 98 | historical |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
 | [test/social.js](../../test/social.js) | 84 | yes |
 | [public/wiki.html](../../public/wiki.html) | 80 | yes |
@@ -65,8 +65,8 @@
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
 | [src/business.js](../../src/business.js) | 39 | yes |
 | [src/chain.js](../../src/chain.js) | 37 | yes |
+| knowledge/generated/documents.md | 36 | historical |
 | [test/docs.js](../../test/docs.js) | 35 | yes |
-| knowledge/generated/documents.md | 35 | historical |
 | [test/migrate.js](../../test/migrate.js) | 34 | yes |
 
 ## Pull requests
