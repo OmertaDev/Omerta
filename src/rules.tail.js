@@ -3858,6 +3858,19 @@ export const CAMPAIGNS = [
                   { id: 'name', label: 'Give him up. The house is the house.', honor: -8, cash: 7500 } ] },
     ],
     reward: { cash: 11000, standing: 15, honor: 0, title: 'FRIEND OF THE HOUSE' } },
+  { id: 'long_count', npc: 'cornerman', name: 'The Long Count',
+    blurb: 'Mickey the Corner has a young contender, a dying gym, and a promoter who bought the eighth round before the bell ever rang.',
+    steps: [
+      { say: '"The kid listens to you," Mickey says. "Put two honest sessions into him. Let me see what he does when the room starts hurting."', action: 'train', n: 2 },
+      { say: 'The promoter leaves an envelope on the ring apron. The dive keeps Mickey\'s gym open. Refusing it keeps the kid clean. The betting slips could burn the whole fix.',
+        choice: [
+          { id: 'protect_boxer', label: 'Protect the boxer. Tear up the deal and let him fight clean.', honor: 10 },
+          { id: 'protect_gym', label: 'Protect the gym. Take the controlled loss and keep the doors open.', honor: -4, cash: 6000 },
+          { id: 'expose_fix', label: 'Expose the fix. Put the betting slips in front of the Commission.', honor: 6 },
+        ] },
+      { say: 'Mickey tapes the kid\'s hands without looking up. "However you called it, now you stand in his corner. See the count through."', action: 'fight', n: 1 },
+    ],
+    reward: { cash: 10000, standing: 15, honor: 0, title: 'CORNERSIDE' } },
 ]
 export const campaignOf = (id) => CAMPAIGNS.find((c) => c.id === id)
 

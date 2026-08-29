@@ -1,0 +1,406 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.case.path.wheel.black-ice",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "in-game Path Case with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "black-ice",
+    "entryNodeId": "black-ice",
+    "partyPolicyId": "personal-policy",
+    "quorumId": "solo-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "black-ice",
+      "personal-policy",
+      "solo-quorum",
+      "investigator",
+      "road-without-weather",
+      "glass-in-the-tread",
+      "glass-in-the-tread-answer",
+      "vanished-milepost",
+      "vanished-milepost-answer",
+      "garage-torque",
+      "garage-torque-answer",
+      "dead-channel",
+      "dead-channel-answer",
+      "road-verdict",
+      "wreck-cleared-flag",
+      "sabotage-proved-flag",
+      "drivers-rescued-flag",
+      "black-ice-memory",
+      "black-ice-chain-link",
+      "case-closed"
+    ],
+    "actionNodeIds": [
+      "glass-in-the-tread",
+      "vanished-milepost",
+      "garage-torque",
+      "dead-channel",
+      "road-verdict"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "black-ice",
+      "type": "mystery",
+      "payload": {
+        "title": "Black Ice",
+        "summary": "Convoys are leaving dry roads and arriving upside down. Race telemetry, garage work orders, and a silent harbor channel say the weather has an accomplice.",
+        "systems": [
+          "convoys",
+          "races",
+          "garage",
+          "skills",
+          "mastery",
+          "regimen",
+          "honor",
+          "underworld"
+        ],
+        "gates": [
+          {
+            "kind": "path_is",
+            "pathId": "wheel"
+          }
+        ]
+      }
+    },
+    {
+      "id": "personal-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "solo-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "Investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "road-without-weather",
+      "type": "chapter",
+      "payload": {
+        "title": "A Road Without Weather"
+      }
+    },
+    {
+      "id": "glass-in-the-tread",
+      "type": "puzzle",
+      "payload": {
+        "title": "Glass in the Tread",
+        "prompt": "What color fleck appears in every tire cut from the wrecked convoy rigs?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "glass-in-the-tread-answer"
+      }
+    },
+    {
+      "id": "glass-in-the-tread-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "black",
+          "black glass"
+        ]
+      }
+    },
+    {
+      "id": "vanished-milepost",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Vanished Milepost",
+        "prompt": "Which mile marker was removed from every printed convoy route before departure?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "vanished-milepost-answer"
+      }
+    },
+    {
+      "id": "vanished-milepost-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "mile forty-two",
+          "42",
+          "forty-two"
+        ]
+      }
+    },
+    {
+      "id": "garage-torque",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Garage Torque",
+        "prompt": "Which wheel position carries the same false torque mark on all three rigs?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "garage-torque-answer"
+      }
+    },
+    {
+      "id": "garage-torque-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "left rear",
+          "rear left"
+        ]
+      }
+    },
+    {
+      "id": "dead-channel",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Dead Channel",
+        "prompt": "What call sign breaks the harbor radio silence eleven seconds before each crash?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "dead-channel-answer"
+      }
+    },
+    {
+      "id": "dead-channel-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "winter crow",
+          "the winter crow"
+        ]
+      }
+    },
+    {
+      "id": "road-verdict",
+      "type": "choice",
+      "payload": {
+        "title": "Who Owns the Next Mile",
+        "prompt": "The sabotage route is mapped and another convoy is already rolling toward it. How do you finish the run?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "clear-the-road",
+            "label": "Clear the wreck, close the route, and end the run",
+            "storyFlagIds": [
+              "wreck-cleared-flag"
+            ]
+          },
+          {
+            "id": "drive-the-proof",
+            "label": "Drive the trap at speed and prove the sabotage in motion",
+            "gates": [
+              {
+                "kind": "skill_owned",
+                "skillId": "road_captain"
+              },
+              {
+                "kind": "mastery_at_least",
+                "trackId": "wheels",
+                "level": 10
+              },
+              {
+                "kind": "discipline_at_least",
+                "disciplineId": "handling",
+                "level": 8
+              }
+            ],
+            "storyFlagIds": [
+              "sabotage-proved-flag"
+            ]
+          },
+          {
+            "id": "bring-them-home",
+            "label": "Break the trap early and bring every driver home",
+            "gates": [
+              {
+                "kind": "honor_at_least",
+                "honor": 25
+              },
+              {
+                "kind": "underworld_standing_at_least",
+                "npcId": "harbor",
+                "standing": 25
+              }
+            ],
+            "storyFlagIds": [
+              "drivers-rescued-flag"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "wreck-cleared-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.case.path.wheel.black-ice.outcome",
+        "kind": "public_reputation",
+        "value": "wreck-cleared",
+        "title": "The Road Was Closed",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "sabotage-proved-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.case.path.wheel.black-ice.outcome",
+        "kind": "case_evidence",
+        "value": "sabotage-proved-at-speed",
+        "title": "Eleven Seconds of Proof",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "drivers-rescued-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.case.path.wheel.black-ice.outcome",
+        "kind": "npc_ally",
+        "value": "drivers-brought-home",
+        "title": "Nobody Left in the Snow",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "black-ice-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "black-ice-chain-link",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Black-Ice Chain Link",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The Road Thaws",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "black-ice-chain-link",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "black-ice",
+      "type": "REQUIRES",
+      "to": "personal-policy"
+    },
+    {
+      "from": "personal-policy",
+      "type": "REQUIRES",
+      "to": "solo-quorum"
+    },
+    {
+      "from": "personal-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "black-ice",
+      "type": "UNLOCKS",
+      "to": "road-without-weather"
+    },
+    {
+      "from": "road-without-weather",
+      "type": "UNLOCKS",
+      "to": "glass-in-the-tread"
+    },
+    {
+      "from": "glass-in-the-tread",
+      "type": "UNLOCKS",
+      "to": "vanished-milepost"
+    },
+    {
+      "from": "vanished-milepost",
+      "type": "UNLOCKS",
+      "to": "garage-torque"
+    },
+    {
+      "from": "garage-torque",
+      "type": "UNLOCKS",
+      "to": "dead-channel"
+    },
+    {
+      "from": "dead-channel",
+      "type": "UNLOCKS",
+      "to": "road-verdict"
+    },
+    {
+      "from": "road-verdict",
+      "type": "UNLOCKS",
+      "to": "black-ice-memory"
+    },
+    {
+      "from": "black-ice-memory",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    }
+  ]
+}

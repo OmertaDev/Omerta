@@ -213,7 +213,7 @@
 | [.agents/skills/viem-integration/references/wagmi-react.md](../../.agents/skills/viem-integration/references/wagmi-react.md) | documentation | 624 | 2026-08-27 |
 | [.agents/skills/viem-integration/references/writing-transactions.md](../../.agents/skills/viem-integration/references/writing-transactions.md) | documentation | 467 | 2026-08-27 |
 | [.agents/skills/viem-integration/SKILL.md](../../.agents/skills/viem-integration/SKILL.md) | documentation | 271 | 2026-08-27 |
-| [AGENTS.md](../../AGENTS.md) | documentation | 479 | 2026-08-27 |
+| [AGENTS.md](../../AGENTS.md) | documentation | 583 | 2026-08-28 |
 | [AUDIT-bank-city-leg.md](../../AUDIT-bank-city-leg.md) | audit | 119 | 2026-08-12 |
 | [AUDIT-blood-war.md](../../AUDIT-blood-war.md) | audit | 95 | 2026-08-05 |
 | [AUDIT-blue-team.md](../../AUDIT-blue-team.md) | audit | 178 | 2026-08-12 |
@@ -315,7 +315,7 @@
 | [CHAIN-AUDIT-PACKET.md](../../CHAIN-AUDIT-PACKET.md) | documentation | 296 | 2026-08-27 |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 1981 | 2026-08-27 |
 | [CLAUDE.md](../../CLAUDE.md) | documentation | 17225 | 2026-08-26 |
-| [content/README.md](../../content/README.md) | documentation | 66 | 2026-08-27 |
+| [content/README.md](../../content/README.md) | documentation | 281 | 2026-08-28 |
 | [DEPLOY-CHECKLIST.md](../../DEPLOY-CHECKLIST.md) | operations | 147 | 2026-08-13 |
 | [DEPLOY.md](../../DEPLOY.md) | operations | 543 | 2026-08-24 |
 | [DESIGN.md](../../DESIGN.md) | design | 88 | 2026-08-27 |
@@ -333,9 +333,11 @@
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-hook-rehearsal.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-hook-rehearsal.md) | documentation | 146 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-twap-rehearsal.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-twap-rehearsal.md) | documentation | 156 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-25-agent-alpha-deep-city.md](../../docs/superpowers/plans/2026-08-25-agent-alpha-deep-city.md) | documentation | 274 | 2026-08-25 |
+| [docs/superpowers/plans/2026-08-27-authored-content-runtime.md](../../docs/superpowers/plans/2026-08-27-authored-content-runtime.md) | documentation | 278 | 2026-08-28 |
 | [docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md](../../docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md) | design | 124 | 2026-08-23 |
 | [docs/superpowers/specs/2026-08-25-agent-alpha-deep-city-design.md](../../docs/superpowers/specs/2026-08-25-agent-alpha-deep-city-design.md) | design | 177 | 2026-08-25 |
-| [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2593 | 2026-08-27 |
+| [docs/superpowers/specs/2026-08-27-authored-content-runtime-design.md](../../docs/superpowers/specs/2026-08-27-authored-content-runtime-design.md) | design | 281 | 2026-08-27 |
+| [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2717 | 2026-08-28 |
 | [GRAPH.md](../../GRAPH.md) | documentation | 259 | 2026-07-27 |
 | [GTM.md](../../GTM.md) | documentation | 295 | 2026-08-13 |
 | [HYPE.md](../../HYPE.md) | documentation | 134 | 2026-08-20 |
@@ -440,5 +442,5 @@
 | [PRODUCT.md](../../PRODUCT.md) | documentation | 50 | 2026-08-24 |
 | [README.md](../../README.md) | documentation | 166 | 2026-08-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 875 | 2026-08-21 |
-| [SPEC.md](../../SPEC.md) | documentation | 664 | 2026-08-27 |
+| [SPEC.md](../../SPEC.md) | documentation | 716 | 2026-08-28 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |

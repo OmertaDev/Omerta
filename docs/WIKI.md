@@ -2380,16 +2380,140 @@ policies, growth journeys, and achievement-triggered seasonal rewards as data ra
 Packs cannot contain JavaScript, SQL, shell commands, credentials, or publishing authority.
 
 `npm run content:check` validates the schemas, dependency rules, source/sink conservation, social satisfiability,
-finite reward budgets, and deterministic hashes. `npm run content:build` emits an immutable versioned bundle and
-refuses to overwrite it; compilation never activates a pack. The first vertical slice, **The Sixth Chair**,
-contains 47 nodes and 57 edges spanning clues, Crew/Family coordination, item acquisition, and a bounded seasonal
-$OMR hunt. It proves the compiler and authoring workflow, but it is not an active game surface.
+finite reward budgets, runtime capability profile, and deterministic hashes. `npm run content:build` emits the
+immutable runtime-ready v2 bundle and refuses to overwrite it; compilation never activates a pack. The original
+**The Sixth Chair** v1 graph remains an unchanged 47-node, 57-edge compiler specimen spanning clues,
+Crew/Family coordination, item acquisition, and a bounded seasonal $OMR hunt.
 
-The generic mystery runtime, durable inventory instances, crafting jobs and skills, salvage/drug-supply chains,
-selected rare-item NFT export, seasonal activation registry, and operator controls remain staged implementation.
-Export is always owner-initiated, hash-pinned, and gameplay-inert while the item is away; seasonal $OMR is finite
-and achievement-triggered, never a time-based faucet. Agent exploration may later surface these systems, but
-content compilation itself can never grant `POST /v1/agent/act` authority.
+**The Sixth Chair v2 is playable** through a deliberately smaller runtime profile: an operator activates its exact bundle hash,
+a Crew or Extended Family opens a four-seat lobby, and organization members discover and join the open run as
+Archivist, Driver, Broker, or consent-required human Witness. Each role receives only its server-issued puzzle or
+choice. All four contributions reveal shared evidence, close the case, record the Sixth Family world fact, and
+let each participant claim a value-neutral title and collectible exactly once. Every instance stays pinned to
+the version and hash it started on; a later activation affects only new runs. The server revalidates the entire
+party's current organization, participant-kind, and consent authority throughout active play, and a logical title
+or collectible entitlement cannot be duplicated by joining another organization run or later content version.
+
+The first district sampler adds six independently versioned, personal, district-gated stories: Docks — **The Man
+Who Missed the Tide**; Canal — **Water in the Cellar**; Brick — **The Last Kiln**; Neon — **House Lights**;
+Foundry — **The Furnace Ledger**; and Cathedral — **A Saint's Account**. Each short run exposes only its next
+server-issued puzzle or choice, disappears from the executable board when the player leaves its district, and
+revalidates location before every mutation. Completion records the selected choice and grants one exactly-once,
+gameplay-inert memento—never cash, $OMR, status, or combat power. Their separate namespaces and activation hashes
+let operators promote each district independently without rewriting another story or an in-progress instance.
+
+The late-game spine adds seven independently promotable personal **Don Cases**: level 35 — **The Iron
+Election**; 50 — **A House Made of Glass**; 65 — **Port of No Return**; 80 — **The Empty Seat**; 95 —
+**Two Funerals**; 110 — **The Federal Ledger**; and 125 — **Don of the City**. Each case runs through
+five to eight sequential actions and reconnects at least three existing systems. Its ending always has
+an ungated route, a mastery-sensitive route, and an optional Crew route. Those methods change the
+remembered authored outcome, not the reward: every case converges on one distinct gameplay-inert
+memento and writes no cash, $OMR, mastery, combat power, or transaction-ledger entry.
+
+The identity drop adds six independently promotable personal **Path Cases**: Gun — **The Last Clean
+Contract**; Ledger — **Hostile Books**; Kitchen — **The Bad Batch**; Wheel — **Black Ice**; Shadow —
+**Nobody Saw Him Leave**; and Ring — **Twelve Rounds**. Every case runs four investigations and a
+three-way resolution: one ungated baseline, one specialist method gated by its canonical skill,
+mastery, or regimen, and one relationship method gated by Honor or Infamy plus effective standing
+with a named Underworld fixture. The gate changes the authored method and durable story-flag outcome,
+not the reward; each case grants one distinct gameplay-inert memento and no economic power.
+
+The first two-seat organization case is **The Two-Man Rule**. A Crew or Extended Family opens the
+lobby, one member takes Watcher, and another takes Signatory; both roles admit human or agent-controlled
+players. Their role-locked investigations run in parallel, and the shared three-way resolution remains
+unavailable until both branches are complete. Completion creates one self-claim entitlement for each
+participant to the same gameplay-inert memento. It moves no cash, $OMR, or transaction-ledger value.
+
+The first production seasonal case is **The Books Open at Midnight**
+(`omerta.case.season.books-open-at-midnight`), a personal Opening-phase story that may run once per
+season. Two normalized-answer puzzles lead to a three-way resolution and one recurring,
+gameplay-inert seasonal page. It moves no cash, $OMR, power, or transaction-ledger value, and it does
+not appear until an operator activates its exact compiled bundle hash.
+
+The first production authored workshop is **The Bellini Restoration**
+(`omerta.workshop.bellini-lockbox`) at the Old Foundry. Two globally finite daily sources issue
+Ledger Plate and Charred Binding lots once per account per source and epoch. Those lots are durable,
+account-owned, and pinned to the exact bundle hash that defined them. The v2 apprenticeship consumes
+fixed inputs when a server-timed work order starts and produces only stackable, gameplay-inert
+workpieces when the server-issued `readyAt` clears. Collection grants a compiled XP award to one
+exact-hash Bellini Restoration skill track; one active job is allowed per account and namespace, and
+skill level 2 unlocks the final FIFO recipe for one non-stackable, non-tradeable, gameplay-inert
+Restored Bellini Lockbox. Clients submit only the board's active hash and source, job, or recipe
+identity; they cannot nominate items, quantities, budgets, clocks, XP, caps, or outputs.
+
+The v3 Press Room adds the location-bound Old Foundry Restoration Bench and an account-owned Bellini
+Restoration Press. The press is non-tradeable and its only gameplay power is satisfying explicitly
+declared authored-crafting requirements. It has exact-hash durability: a requiring work order spends
+wear once when the job starts, an instant recipe spends wear inside its craft transaction, and job
+collection never spends wear again. The board-issued repair route consumes compiler-declared,
+same-hash material (Ledger Plate) and restores the compiler-declared maximum at the required facility. Every
+acquisition, use, and repair is append-only audited. An old-version press remains visible under
+archived tools but cannot satisfy, block acquisition in, or otherwise affect the active version.
+
+The v4 **Material Exchange** admits only Ledger Plates and Charred Bindings to an authored-only barter
+board. A seller chooses two different allowlisted material IDs and whole quantities, escrows the offered
+leg, and requests the other material under the same exact content hash. Offers are whole-lot and
+full-fill only; the
+compiled bundle fixes a 24-hour lifetime and a five-open-offer account cap. An owner can cancel even
+after expiry, and an activation change does not reinterpret or strand an old-hash offer. Live escrow
+still counts toward `maxOwned`, fills conserve both item totals, and list/fill/cancel append audit
+events. The board cannot trade the Press, workpieces, Lockbox, drugs, ordinary inventory, or anything
+exportable, and it moves no cash, $OMR, or transaction-ledger value.
+
+The server derives level, Path, owned skills, mastery, regimen, honor, effective Underworld standing,
+district, and Crew membership from the current locked street.
+Discovery leaves a locked case visible with `eligible: false` and safe `blockedBy` details; final options
+likewise publish `available` and `blockedBy`, then recheck the selected route during the mutation. The
+ending records one account-scoped, write-once story flag from a closed narrative vocabulary. The caller
+can read the safe key, kind, value, and title through `GET /v1/content`; internal source provenance is
+not public. These flags are durable narrative memory for later scenes, not a generic effect or economy
+adapter.
+
+Mickey the Cornerman's **The Long Count** is the sixth Underworld campaign: two training sessions open a three-way
+decision about the boxer, the gym, or exposing the fix, followed by one sanctioned fight. It uses the existing
+campaign engine, standing gate, persisted branch choice, and campaign reward ledger rather than a parallel quest
+system.
+
+`GET /v1/content` returns active experiences, eligible open lobbies, and the caller's instances. Creation, join,
+consent, action, leave, and claim mutations are revision-checked; stale requests return a safe replacement
+projection. A personal story attempted outside its required district returns `wrong_location` with the safe
+destination. Actor, organization, participant kind, effects, and rewards are server-derived. Private answer
+specifications, account IDs, raw organization IDs, and effect payloads never enter the public contract.
+Forming organization lobbies expire after a finite 24-hour deadline; expiry abandons only that forming
+lobby, so its organization can recreate it. Starting a run clears the forming deadline, and active runs
+never expire. Ordinary content uses run key `once`. Content declared `once_per_season` receives the
+server-derived `season:<number>` run key and may run once for the same organization scope in each season;
+clients cannot nominate either the scope identity or run key. A `season_phase_is` gate is a root-only
+season phase entry gate, rechecked at creation and start but not after activation, so a later phase change
+cannot make an in-progress story impossible to finish. Seasonal collectible entitlements are scoped by
+namespace plus the server-derived season run key. The same logical inert memento may be self-claimed
+once each season, but additional scopes or content versions cannot mint it again during that season.
+
+The `crafting` section of `GET /v1/content` returns active authored workshops, current exact-hash
+inventory and escrow quantities, skill progress, facilities, tools and durability, archived lots/XP/tools,
+source epoch/cap state, current work order, job and recipe requirements, blockers, the optional barter
+board, and direct action descriptors.
+Source, job-start, recipe, and tool-repair mutations require the active `expectedContentHash`; an activation change returns
+`409 stale_content` with a replacement workshop. A source locks its citywide finite epoch reservoir
+and per-account claim before creating provenance lots and an immutable receipt. Work-order start
+consumes same-hash inputs immediately and snapshots its inputs, outputs, duration, skill, and XP under
+the immutable bundle hash. Early collection is refused. A later activation does not strand an active
+run: collection resolves the pinned bundle and keeps its output and XP archived under the old hash,
+while the current version starts at its own exact-hash progression. Old-version lots remain visible
+but cannot enter the new recipe pool. A recipe consumes only same-hash lots in FIFO order and records
+its own receipt. Non-stackable keepsake caps span versions, so a version
+bump cannot duplicate a keepsake; authored-tool caps are exact-hash so the newly promoted version may
+assemble its own isolated press. `POST /v1/content/:namespace/exchange/list` creates an allowlisted,
+same-hash barter; board-issued `exchange/:listingId/fill` and `cancel` routes settle or return the whole
+escrow lot. The adapter moves no cash, crates, ammo, $OMR, or transaction-ledger value. Only these
+exchange routes grant narrow authored-material barter authority; they grant no combat, cash-market, or
+export authority, and no authored route receives `POST /v1/agent/act` authority.
+
+Power outside authored crafting, drug-supply chains, selected rare-item NFT export,
+retention/referral adapters, and bounded seasonal $OMR settlement remain staged implementation.
+Export is always owner-initiated, hash-pinned, and gameplay-inert while the item is away; seasonal
+$OMR is finite and achievement-triggered, never a time-based faucet. Content compilation and
+exploration never grant `POST /v1/agent/act` authority.
 
 ---
 

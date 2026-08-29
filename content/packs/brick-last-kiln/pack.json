@@ -1,0 +1,234 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.storylet.brick.last-kiln",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "in-game district storylet with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "last-kiln",
+    "entryNodeId": "last-kiln",
+    "partyPolicyId": "personal-policy",
+    "quorumId": "solo-quorum",
+    "terminalNodeId": "story-closed",
+    "nodeIds": [
+      "last-kiln",
+      "personal-policy",
+      "solo-quorum",
+      "investigator",
+      "brick-location",
+      "kiln-vigil",
+      "kiln-puzzle",
+      "kiln-answer",
+      "kiln-choice",
+      "brick-memory",
+      "last-kiln-brick",
+      "story-closed"
+    ],
+    "actionNodeIds": [
+      "kiln-puzzle",
+      "kiln-choice"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "last-kiln",
+      "type": "mystery",
+      "payload": {
+        "title": "The Last Kiln",
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "brick-location"
+          }
+        ]
+      }
+    },
+    {
+      "id": "personal-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "solo-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "Investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "brick-location",
+      "type": "location",
+      "payload": {
+        "title": "Brick Yards",
+        "districtId": "brick"
+      }
+    },
+    {
+      "id": "kiln-vigil",
+      "type": "chapter",
+      "payload": {
+        "title": "The Night Shift"
+      }
+    },
+    {
+      "id": "kiln-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "Heat Behind the Wall",
+        "prompt": "Which kiln number still carries heat after the foreman cuts the gas?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "brick-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "kiln-answer"
+      }
+    },
+    {
+      "id": "kiln-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "nine",
+          "9"
+        ]
+      }
+    },
+    {
+      "id": "kiln-choice",
+      "type": "choice",
+      "payload": {
+        "title": "The Foreman's Terms",
+        "prompt": "The old kiln can save one thing before dawn. Which is it?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "brick-location"
+          }
+        ],
+        "options": [
+          {
+            "id": "workers",
+            "label": "Give the workers the yard and stand protection"
+          },
+          {
+            "id": "mold",
+            "label": "Smash the family mold before it can be copied"
+          },
+          {
+            "id": "lease",
+            "label": "Lease the fire to the family holding the block"
+          }
+        ]
+      }
+    },
+    {
+      "id": "brick-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "last-kiln-brick",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Brick from the Last Kiln",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "story-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "One Fire Stays Lit",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "last-kiln-brick",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "last-kiln",
+      "type": "REQUIRES",
+      "to": "personal-policy"
+    },
+    {
+      "from": "personal-policy",
+      "type": "REQUIRES",
+      "to": "solo-quorum"
+    },
+    {
+      "from": "personal-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "last-kiln",
+      "type": "UNLOCKS",
+      "to": "kiln-vigil"
+    },
+    {
+      "from": "kiln-vigil",
+      "type": "UNLOCKS",
+      "to": "kiln-puzzle"
+    },
+    {
+      "from": "kiln-puzzle",
+      "type": "UNLOCKS",
+      "to": "kiln-choice"
+    },
+    {
+      "from": "kiln-choice",
+      "type": "UNLOCKS",
+      "to": "brick-memory"
+    },
+    {
+      "from": "brick-memory",
+      "type": "UNLOCKS",
+      "to": "story-closed"
+    }
+  ]
+}

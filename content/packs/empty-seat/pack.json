@@ -1,0 +1,458 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.don.empty-seat",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "in-game Don Case with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "empty-seat",
+    "entryNodeId": "empty-seat",
+    "partyPolicyId": "personal-policy",
+    "quorumId": "solo-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "empty-seat",
+      "personal-policy",
+      "solo-quorum",
+      "petitioner",
+      "cathedral-steps",
+      "vacant-chair",
+      "sealed-ballot-puzzle",
+      "sealed-ballot-answer",
+      "family-petition-choice",
+      "vouch-chain-puzzle",
+      "vouch-chain-answer",
+      "diplomatic-price-choice",
+      "commission-tally-puzzle",
+      "commission-tally-answer",
+      "empty-seat-choice",
+      "empty-seat-baseline-flag",
+      "empty-seat-scores-flag",
+      "empty-seat-crew-flag",
+      "empty-seat-memory",
+      "empty-seat-commission-place-card",
+      "case-closed"
+    ],
+    "actionNodeIds": [
+      "sealed-ballot-puzzle",
+      "family-petition-choice",
+      "vouch-chain-puzzle",
+      "diplomatic-price-choice",
+      "commission-tally-puzzle",
+      "empty-seat-choice"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "empty-seat",
+      "type": "mystery",
+      "payload": {
+        "title": "The Empty Seat",
+        "summary": "A Commission chair stands vacant, and every family arrives at Cathedral Steps with a vouch, a grievance, and a different count of the votes.",
+        "systems": [
+          "family",
+          "commission",
+          "diplomacy",
+          "vouching"
+        ],
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "cathedral-steps"
+          },
+          {
+            "kind": "level_at_least",
+            "level": 80
+          }
+        ]
+      }
+    },
+    {
+      "id": "personal-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "solo-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "petitioner",
+      "type": "role",
+      "payload": {
+        "title": "Petitioner",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "cathedral-steps",
+      "type": "location",
+      "payload": {
+        "title": "Cathedral Steps",
+        "districtId": "cathedral"
+      }
+    },
+    {
+      "id": "vacant-chair",
+      "type": "chapter",
+      "payload": {
+        "title": "A Chair Without a Name"
+      }
+    },
+    {
+      "id": "sealed-ballot-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Sealed Ballot",
+        "prompt": "Five Commission ballots are marked first, second, fourth, fifth, and sixth. Which chair's ballot was removed before the families arrived?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "petitioner"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "cathedral-steps"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "sealed-ballot-answer"
+      }
+    },
+    {
+      "id": "sealed-ballot-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "third chair",
+          "third",
+          "3"
+        ]
+      }
+    },
+    {
+      "id": "family-petition-choice",
+      "type": "choice",
+      "payload": {
+        "title": "The Family Petition",
+        "prompt": "Three petitions claim the vacant chair. Which argument do you permit into the Commission record?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "petitioner"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "cathedral-steps"
+          }
+        ],
+        "options": [
+          {
+            "id": "blood",
+            "label": "Let the oldest bloodline make its claim"
+          },
+          {
+            "id": "service",
+            "label": "Hear the family that kept the peace"
+          },
+          {
+            "id": "silence",
+            "label": "Enter the name backed by the quietest room"
+          }
+        ]
+      }
+    },
+    {
+      "id": "vouch-chain-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "Names Behind Names",
+        "prompt": "Bellini vouched for Russo, Russo vouched for Vale, and Vale withdrew before dawn. Whose word began the surviving chain?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "petitioner"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "cathedral-steps"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "vouch-chain-answer"
+      }
+    },
+    {
+      "id": "vouch-chain-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "bellini"
+        ]
+      }
+    },
+    {
+      "id": "diplomatic-price-choice",
+      "type": "choice",
+      "payload": {
+        "title": "The Price of Agreement",
+        "prompt": "A rival delegation will release its delegates, but only if the new chair honors one term. Which term reaches the table?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "petitioner"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "cathedral-steps"
+          }
+        ],
+        "options": [
+          {
+            "id": "neutral-ward",
+            "label": "Keep one ward neutral for a season"
+          },
+          {
+            "id": "shared-vote",
+            "label": "Give the rival family one public vote"
+          },
+          {
+            "id": "private-guarantee",
+            "label": "Offer a private guarantee and no public concession"
+          }
+        ]
+      }
+    },
+    {
+      "id": "commission-tally-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Working Majority",
+        "prompt": "Nine chairs exist, two must recuse, and the vote cannot tie. What is the smallest number that can carry the motion?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "petitioner"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "cathedral-steps"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "commission-tally-answer"
+      }
+    },
+    {
+      "id": "commission-tally-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "four",
+          "4"
+        ]
+      }
+    },
+    {
+      "id": "empty-seat-choice",
+      "type": "choice",
+      "payload": {
+        "title": "Who Fills the Silence",
+        "prompt": "The doors open and the Commission waits. How do you make the final majority?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "petitioner"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "cathedral-steps"
+          }
+        ],
+        "options": [
+          {
+            "id": "stand-alone",
+            "label": "Stand alone and ask every chair to answer in public",
+            "storyFlagIds": [
+              "empty-seat-baseline-flag"
+            ]
+          },
+          {
+            "id": "count-proxies",
+            "label": "Read the proxy books and expose the majority already hiding there",
+            "gates": [
+              {
+                "kind": "mastery_at_least",
+                "trackId": "scores",
+                "level": 25
+              }
+            ],
+            "storyFlagIds": [
+              "empty-seat-scores-flag"
+            ]
+          },
+          {
+            "id": "fill-gallery",
+            "label": "Bring your crew to the gallery and make every quiet vouch visible",
+            "gates": [
+              {
+                "kind": "crew_membership"
+              }
+            ],
+            "storyFlagIds": [
+              "empty-seat-crew-flag"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "empty-seat-baseline-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.empty-seat.outcome",
+        "kind": "public_reputation",
+        "value": "open-vote",
+        "title": "The Open Vote",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "empty-seat-scores-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.empty-seat.outcome",
+        "kind": "future_scene_variant",
+        "value": "proxy-majority",
+        "title": "The Counted Majority",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "empty-seat-crew-flag",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.don.empty-seat.outcome",
+        "kind": "family_debt",
+        "value": "gallery-vouches",
+        "title": "The Gallery Remembers",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "empty-seat-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "empty-seat-commission-place-card",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Commission Place Card from the Empty Seat",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The Chair Is Counted",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "empty-seat-commission-place-card",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "empty-seat",
+      "type": "REQUIRES",
+      "to": "personal-policy"
+    },
+    {
+      "from": "personal-policy",
+      "type": "REQUIRES",
+      "to": "solo-quorum"
+    },
+    {
+      "from": "personal-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "petitioner"
+    },
+    {
+      "from": "empty-seat",
+      "type": "UNLOCKS",
+      "to": "vacant-chair"
+    },
+    {
+      "from": "vacant-chair",
+      "type": "UNLOCKS",
+      "to": "sealed-ballot-puzzle"
+    },
+    {
+      "from": "sealed-ballot-puzzle",
+      "type": "UNLOCKS",
+      "to": "family-petition-choice"
+    },
+    {
+      "from": "family-petition-choice",
+      "type": "UNLOCKS",
+      "to": "vouch-chain-puzzle"
+    },
+    {
+      "from": "vouch-chain-puzzle",
+      "type": "UNLOCKS",
+      "to": "diplomatic-price-choice"
+    },
+    {
+      "from": "diplomatic-price-choice",
+      "type": "UNLOCKS",
+      "to": "commission-tally-puzzle"
+    },
+    {
+      "from": "commission-tally-puzzle",
+      "type": "UNLOCKS",
+      "to": "empty-seat-choice"
+    },
+    {
+      "from": "empty-seat-choice",
+      "type": "UNLOCKS",
+      "to": "empty-seat-memory"
+    },
+    {
+      "from": "empty-seat-memory",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    }
+  ]
+}

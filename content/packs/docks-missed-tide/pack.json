@@ -1,0 +1,229 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.storylet.docks.missed-tide",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "in-game district storylet with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "missed-tide",
+    "entryNodeId": "missed-tide",
+    "partyPolicyId": "personal-policy",
+    "quorumId": "solo-quorum",
+    "terminalNodeId": "story-closed",
+    "nodeIds": [
+      "missed-tide",
+      "personal-policy",
+      "solo-quorum",
+      "investigator",
+      "docks-location",
+      "missing-man",
+      "manifest-puzzle",
+      "manifest-answer",
+      "tide-choice",
+      "docks-memory",
+      "tide-token",
+      "story-closed"
+    ],
+    "actionNodeIds": [
+      "manifest-puzzle",
+      "tide-choice"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "missed-tide",
+      "type": "mystery",
+      "payload": {
+        "title": "The Man Who Missed the Tide",
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "docks-location"
+          }
+        ]
+      }
+    },
+    {
+      "id": "personal-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "solo-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "Investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "docks-location",
+      "type": "location",
+      "payload": {
+        "title": "The Docks",
+        "districtId": "docks"
+      }
+    },
+    {
+      "id": "missing-man",
+      "type": "chapter",
+      "payload": {
+        "title": "An Empty Berth"
+      }
+    },
+    {
+      "id": "manifest-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Salt-Stained Manifest",
+        "prompt": "Which berth was scrubbed from the manifest?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "docks-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "manifest-answer"
+      }
+    },
+    {
+      "id": "manifest-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "berth six"
+        ]
+      }
+    },
+    {
+      "id": "tide-choice",
+      "type": "choice",
+      "payload": {
+        "title": "The Last Launch",
+        "prompt": "Who gets the last place on the launch?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "docks-location"
+          }
+        ],
+        "options": [
+          {
+            "id": "sailor",
+            "label": "The sailor who missed his tide"
+          },
+          {
+            "id": "family",
+            "label": "The family hiding below the pier"
+          }
+        ]
+      }
+    },
+    {
+      "id": "docks-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "tide-token",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Tide-Worn Token",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "story-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The Tide Keeps Its Own Time",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "tide-token",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "missed-tide",
+      "type": "REQUIRES",
+      "to": "personal-policy"
+    },
+    {
+      "from": "personal-policy",
+      "type": "REQUIRES",
+      "to": "solo-quorum"
+    },
+    {
+      "from": "personal-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "missed-tide",
+      "type": "UNLOCKS",
+      "to": "missing-man"
+    },
+    {
+      "from": "missing-man",
+      "type": "UNLOCKS",
+      "to": "manifest-puzzle"
+    },
+    {
+      "from": "manifest-puzzle",
+      "type": "UNLOCKS",
+      "to": "tide-choice"
+    },
+    {
+      "from": "tide-choice",
+      "type": "UNLOCKS",
+      "to": "docks-memory"
+    },
+    {
+      "from": "docks-memory",
+      "type": "UNLOCKS",
+      "to": "story-closed"
+    }
+  ]
+}

@@ -1,0 +1,272 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.storylet.foundry.furnace-ledger",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "in-game district storylet with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "furnace-ledger",
+    "entryNodeId": "furnace-ledger",
+    "partyPolicyId": "personal-policy",
+    "quorumId": "solo-quorum",
+    "terminalNodeId": "story-closed",
+    "nodeIds": [
+      "furnace-ledger",
+      "personal-policy",
+      "solo-quorum",
+      "investigator",
+      "foundry-location",
+      "cold-furnace",
+      "initials-puzzle",
+      "initials-answer",
+      "ledger-choice",
+      "temperature-puzzle",
+      "temperature-answer",
+      "foundry-memory",
+      "ledger-rubbing",
+      "story-closed"
+    ],
+    "actionNodeIds": [
+      "initials-puzzle",
+      "ledger-choice",
+      "temperature-puzzle"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "furnace-ledger",
+      "type": "mystery",
+      "payload": {
+        "title": "The Furnace Ledger",
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "foundry-location"
+          }
+        ]
+      }
+    },
+    {
+      "id": "personal-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "solo-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "Investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "foundry-location",
+      "type": "location",
+      "payload": {
+        "title": "Old Foundry",
+        "districtId": "foundry"
+      }
+    },
+    {
+      "id": "cold-furnace",
+      "type": "chapter",
+      "payload": {
+        "title": "The Cold Furnace"
+      }
+    },
+    {
+      "id": "initials-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "Initials in the Margin",
+        "prompt": "Which initials recur beside every load of seized steel?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "foundry-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "initials-answer"
+      }
+    },
+    {
+      "id": "initials-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "m b",
+          "m.b."
+        ]
+      }
+    },
+    {
+      "id": "ledger-choice",
+      "type": "choice",
+      "payload": {
+        "title": "Books That Burn",
+        "prompt": "The furnace is hot enough for one clean ending. What goes in?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "foundry-location"
+          }
+        ],
+        "options": [
+          {
+            "id": "ledger",
+            "label": "Burn the debt ledger and free the shop"
+          },
+          {
+            "id": "notes",
+            "label": "Keep the notes as leverage over the lender"
+          },
+          {
+            "id": "deed",
+            "label": "Give the deed to the workers who kept the fire"
+          }
+        ]
+      }
+    },
+    {
+      "id": "temperature-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Final Heat",
+        "prompt": "What number is circled beside the last unpaid account?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "foundry-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "temperature-answer"
+      }
+    },
+    {
+      "id": "temperature-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "1919"
+        ]
+      }
+    },
+    {
+      "id": "foundry-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "ledger-rubbing",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Furnace Ledger Rubbing",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "story-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The Books Turn to Ash",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "ledger-rubbing",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "furnace-ledger",
+      "type": "REQUIRES",
+      "to": "personal-policy"
+    },
+    {
+      "from": "personal-policy",
+      "type": "REQUIRES",
+      "to": "solo-quorum"
+    },
+    {
+      "from": "personal-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "furnace-ledger",
+      "type": "UNLOCKS",
+      "to": "cold-furnace"
+    },
+    {
+      "from": "cold-furnace",
+      "type": "UNLOCKS",
+      "to": "initials-puzzle"
+    },
+    {
+      "from": "initials-puzzle",
+      "type": "UNLOCKS",
+      "to": "ledger-choice"
+    },
+    {
+      "from": "ledger-choice",
+      "type": "UNLOCKS",
+      "to": "temperature-puzzle"
+    },
+    {
+      "from": "temperature-puzzle",
+      "type": "UNLOCKS",
+      "to": "foundry-memory"
+    },
+    {
+      "from": "foundry-memory",
+      "type": "UNLOCKS",
+      "to": "story-closed"
+    }
+  ]
+}

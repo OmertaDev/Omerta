@@ -1,0 +1,273 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.storylet.cathedral.saints-account",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "in-game district storylet with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "saints-account",
+    "entryNodeId": "saints-account",
+    "partyPolicyId": "personal-policy",
+    "quorumId": "solo-quorum",
+    "terminalNodeId": "story-closed",
+    "nodeIds": [
+      "saints-account",
+      "personal-policy",
+      "solo-quorum",
+      "investigator",
+      "cathedral-location",
+      "quiet-books",
+      "window-puzzle",
+      "window-answer",
+      "account-choice",
+      "closing-puzzle",
+      "closing-answer",
+      "cathedral-memory",
+      "saints-account-pressing",
+      "story-closed"
+    ],
+    "actionNodeIds": [
+      "window-puzzle",
+      "account-choice",
+      "closing-puzzle"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "saints-account",
+      "type": "mystery",
+      "payload": {
+        "title": "A Saint's Account",
+        "gates": [
+          {
+            "kind": "at_location",
+            "locationId": "cathedral-location"
+          }
+        ]
+      }
+    },
+    {
+      "id": "personal-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "solo-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "Investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "cathedral-location",
+      "type": "location",
+      "payload": {
+        "title": "Cathedral Hill",
+        "districtId": "cathedral"
+      }
+    },
+    {
+      "id": "quiet-books",
+      "type": "chapter",
+      "payload": {
+        "title": "The Quiet Books"
+      }
+    },
+    {
+      "id": "window-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Window in Every Entry",
+        "prompt": "Which saint's window appears beside every hidden deposit?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "cathedral-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "window-answer"
+      }
+    },
+    {
+      "id": "window-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "saint jude",
+          "st jude",
+          "st. jude"
+        ]
+      }
+    },
+    {
+      "id": "account-choice",
+      "type": "choice",
+      "payload": {
+        "title": "A Tithe With No Name",
+        "prompt": "The hidden account can settle one debt before the bank opens. Which one?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "cathedral-location"
+          }
+        ],
+        "options": [
+          {
+            "id": "parish",
+            "label": "Return the money to the parish families"
+          },
+          {
+            "id": "clinic",
+            "label": "Send it to the Canal Row clinic"
+          },
+          {
+            "id": "secret",
+            "label": "Keep the account alive and own the secret"
+          }
+        ]
+      }
+    },
+    {
+      "id": "closing-puzzle",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Reconciled Page",
+        "prompt": "What word closes the final balanced account?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "at_location",
+            "locationId": "cathedral-location"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "closing-answer"
+      }
+    },
+    {
+      "id": "closing-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "amen"
+        ]
+      }
+    },
+    {
+      "id": "cathedral-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "saints-account-pressing",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Pressed Saint's Account",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "story-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "Every Debt Has a Witness",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "saints-account-pressing",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "saints-account",
+      "type": "REQUIRES",
+      "to": "personal-policy"
+    },
+    {
+      "from": "personal-policy",
+      "type": "REQUIRES",
+      "to": "solo-quorum"
+    },
+    {
+      "from": "personal-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "saints-account",
+      "type": "UNLOCKS",
+      "to": "quiet-books"
+    },
+    {
+      "from": "quiet-books",
+      "type": "UNLOCKS",
+      "to": "window-puzzle"
+    },
+    {
+      "from": "window-puzzle",
+      "type": "UNLOCKS",
+      "to": "account-choice"
+    },
+    {
+      "from": "account-choice",
+      "type": "UNLOCKS",
+      "to": "closing-puzzle"
+    },
+    {
+      "from": "closing-puzzle",
+      "type": "UNLOCKS",
+      "to": "cathedral-memory"
+    },
+    {
+      "from": "cathedral-memory",
+      "type": "UNLOCKS",
+      "to": "story-closed"
+    }
+  ]
+}

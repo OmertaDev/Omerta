@@ -1,0 +1,277 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.case.organization.two-man-rule",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "in-game organization case with no external acquisition action"
+  },
+  "runtime": {
+    "experienceId": "two-man-rule",
+    "entryNodeId": "two-man-rule",
+    "partyPolicyId": "organization-policy",
+    "quorumId": "two-seat-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "two-man-rule",
+      "organization-policy",
+      "two-seat-quorum",
+      "watcher",
+      "signatory",
+      "the-double-lock",
+      "watch-the-corridor",
+      "watch-the-corridor-answer",
+      "read-the-counterseal",
+      "read-the-counterseal-answer",
+      "turn-the-keys",
+      "two-man-memory",
+      "two-man-counterseal",
+      "case-closed"
+    ],
+    "actionNodeIds": [
+      "watch-the-corridor",
+      "read-the-counterseal",
+      "turn-the-keys"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "two-man-rule",
+      "type": "mystery",
+      "payload": {
+        "title": "The Two-Man Rule",
+        "summary": "A dead accountant left one box that cannot be opened by a single hand. One partner must read the corridor while the other verifies the counterseal, and both must decide what the city is allowed to remember.",
+        "systems": [
+          "crew",
+          "extended-family",
+          "evidence",
+          "contracts"
+        ]
+      }
+    },
+    {
+      "id": "organization-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "crew",
+          "extended_family"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true
+      }
+    },
+    {
+      "id": "two-seat-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 2,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "watcher",
+      "type": "role",
+      "payload": {
+        "title": "Watcher",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "signatory",
+      "type": "role",
+      "payload": {
+        "title": "Signatory",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "the-double-lock",
+      "type": "chapter",
+      "payload": {
+        "title": "The Double Lock"
+      }
+    },
+    {
+      "id": "watch-the-corridor",
+      "type": "puzzle",
+      "payload": {
+        "title": "Watch the Corridor",
+        "prompt": "The night guard's route skips one door on every pass. Enter the brass number on that door.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "watcher"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "watch-the-corridor-answer"
+      }
+    },
+    {
+      "id": "watch-the-corridor-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "door 14",
+          "fourteen",
+          "14"
+        ]
+      }
+    },
+    {
+      "id": "read-the-counterseal",
+      "type": "puzzle",
+      "payload": {
+        "title": "Read the Counterseal",
+        "prompt": "Two seals look identical until the paper is held to the lamp. Enter the animal hidden in the authentic watermark.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "signatory"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "read-the-counterseal-answer"
+      }
+    },
+    {
+      "id": "read-the-counterseal-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "normalized_exact",
+        "acceptedValues": [
+          "black heron",
+          "heron"
+        ]
+      }
+    },
+    {
+      "id": "turn-the-keys",
+      "type": "choice",
+      "payload": {
+        "title": "Turn the Keys",
+        "prompt": "The corridor is clear and the counterseal is true. What do you enter in the organization's book before both keys turn?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "signatory"
+          }
+        ],
+        "options": [
+          {
+            "id": "open-in-silence",
+            "label": "Open the box in silence and close the dead man's account"
+          },
+          {
+            "id": "copy-the-ledger",
+            "label": "Copy the ledger before the original disappears"
+          },
+          {
+            "id": "seal-it-again",
+            "label": "Seal the box again and leave both keys with the organization"
+          }
+        ]
+      }
+    },
+    {
+      "id": "two-man-memory",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "two-man-counterseal",
+      "type": "collectible_def",
+      "payload": {
+        "title": "The Split Counterseal",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "Neither Hand Turned Alone",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "two-man-counterseal",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "two-man-rule",
+      "type": "REQUIRES",
+      "to": "organization-policy"
+    },
+    {
+      "from": "organization-policy",
+      "type": "REQUIRES",
+      "to": "two-seat-quorum"
+    },
+    {
+      "from": "organization-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "watcher"
+    },
+    {
+      "from": "organization-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "signatory"
+    },
+    {
+      "from": "two-man-rule",
+      "type": "UNLOCKS",
+      "to": "the-double-lock"
+    },
+    {
+      "from": "the-double-lock",
+      "type": "UNLOCKS",
+      "to": "watch-the-corridor"
+    },
+    {
+      "from": "the-double-lock",
+      "type": "UNLOCKS",
+      "to": "read-the-counterseal"
+    },
+    {
+      "from": "watch-the-corridor",
+      "type": "UNLOCKS",
+      "to": "turn-the-keys"
+    },
+    {
+      "from": "read-the-counterseal",
+      "type": "UNLOCKS",
+      "to": "turn-the-keys"
+    },
+    {
+      "from": "turn-the-keys",
+      "type": "UNLOCKS",
+      "to": "two-man-memory"
+    },
+    {
+      "from": "two-man-memory",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    }
+  ]
+}
