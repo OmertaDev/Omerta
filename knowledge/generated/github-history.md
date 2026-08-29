@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `b2ad561759f8`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `8317d343b075`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1286 |
+| Commits in clone | 1288 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-29 — Merge remote-tracking branch 'origin/main' into claude/game-dev-roadmap-6jtsst |
+| Latest commit | 2026-08-29 — The pre-mainnet gate was red for 19 hours: log the finding and the sweep |
 
 ## Commit authors
 
@@ -21,7 +21,7 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 433 |
-| Claude | 163 |
+| Claude | 165 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 2 |
 
@@ -29,7 +29,7 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| [CLAUDE.md](../../CLAUDE.md) | 495 | yes |
+| [CLAUDE.md](../../CLAUDE.md) | 496 | yes |
 | [public/index.html](../../public/index.html) | 390 | yes |
 | [src/server.js](../../src/server.js) | 350 | yes |
 | [SPEC.md](../../SPEC.md) | 273 | yes |
@@ -42,10 +42,10 @@
 | [src/worker.js](../../src/worker.js) | 122 | yes |
 | [src/invariants.js](../../src/invariants.js) | 115 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 114 | yes |
-| knowledge/generated/github-history.md | 110 | historical |
-| knowledge/generated/graph-summary.md | 110 | historical |
-| knowledge/generated/graph.json | 110 | historical |
-| knowledge/generated/inventory.md | 110 | historical |
+| knowledge/generated/github-history.md | 111 | historical |
+| knowledge/generated/graph-summary.md | 111 | historical |
+| knowledge/generated/graph.json | 111 | historical |
+| knowledge/generated/inventory.md | 111 | historical |
 | [test/client.js](../../test/client.js) | 101 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
 | [test/social.js](../../test/social.js) | 84 | yes |
@@ -63,7 +63,7 @@
 | [test/economy.js](../../test/economy.js) | 46 | yes |
 | [src/economy.js](../../src/economy.js) | 44 | yes |
 | [src/casino.js](../../src/casino.js) | 43 | yes |
-| knowledge/generated/documents.md | 41 | historical |
+| knowledge/generated/documents.md | 42 | historical |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
 | [test/docs.js](../../test/docs.js) | 40 | yes |
 | [src/business.js](../../src/business.js) | 39 | yes |
