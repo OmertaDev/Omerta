@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `48238abed0b3`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `c6bb58f62340`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1227 |
+| Commits in clone | 1230 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-28 — Merge origin/main into codex/grill-completion |
+| Latest commit | 2026-08-28 — fix: normalize postgres constraint metadata |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 426 |
+| OmertaDev | 429 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -43,10 +43,10 @@
 | [src/invariants.js](../../src/invariants.js) | 114 | yes |
 | [test/client.js](../../test/client.js) | 101 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
-| knowledge/generated/github-history.md | 87 | historical |
-| knowledge/generated/graph-summary.md | 87 | historical |
-| knowledge/generated/graph.json | 87 | historical |
-| knowledge/generated/inventory.md | 87 | historical |
+| knowledge/generated/github-history.md | 88 | historical |
+| knowledge/generated/graph-summary.md | 88 | historical |
+| knowledge/generated/graph.json | 88 | historical |
+| knowledge/generated/inventory.md | 88 | historical |
 | [test/social.js](../../test/social.js) | 84 | yes |
 | [public/wiki.html](../../public/wiki.html) | 80 | yes |
 | [test/growth.js](../../test/growth.js) | 79 | yes |
@@ -67,7 +67,7 @@
 | [src/chain.js](../../src/chain.js) | 37 | yes |
 | [test/migrate.js](../../test/migrate.js) | 33 | yes |
 | [public/admin.html](../../public/admin.html) | 33 | yes |
-| [test/docs.js](../../test/docs.js) | 31 | yes |
+| knowledge/generated/documents.md | 31 | historical |
 
 ## Pull requests
 

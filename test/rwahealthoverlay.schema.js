@@ -369,6 +369,11 @@ function productionClient(initial = new Map(), { failValidationFor = null } = {}
     /LOCK TABLE rwa_health_finalized_clearances_v2,rwa_health_episodes_v2,[\s\S]*ACCESS EXCLUSIVE MODE/i);
   assert.equal(client.statements.filter((sql) => /ADD CONSTRAINT .* NOT VALID/i.test(sql)).length, 3);
   assert.equal(client.statements.filter((sql) => /VALIDATE CONSTRAINT/i.test(sql)).length, 3);
+  const catalogRead = client.statements.find((sql) => /FROM pg_constraint c/i.test(sql));
+  assert.match(catalogRead, /c\.contype::text\s+AS\s+contype/i,
+    'PostgreSQL internal char constraint types are cast to stable text before driver decoding');
+  assert.match(catalogRead, /c\.confdeltype::text\s+AS\s+confdeltype/i,
+    'PostgreSQL internal char delete actions are cast to stable text before driver decoding');
   assert.equal(client.statements.at(-1), 'COMMIT');
   const before = client.statements.length;
   const rerun = await migrateRwaHealthOverlayV2(client);
