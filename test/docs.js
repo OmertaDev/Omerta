@@ -933,6 +933,37 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
   }
 }
 
+// ── and the COMPILER that consumes all of them was the one thing not held still ──────────────────
+// Same class as the fetch list above, one layer down and easier to miss because it reads as
+// configured rather than as absent: `foundry-rs/foundry-toolchain@v1` with no `version` resolves
+// `stable` AT RUN TIME. So this workflow pinned forge-std (v1.9.6), OpenZeppelin (v5.6.1), v4-core
+// (1.0.2) and solc (0.8.26, foundry.toml) by hand — and left the compiler and test runner floating.
+// The forgotten sibling. It matters most exactly when the gate is red: a moving compiler means a
+// CI failure cannot be reproduced locally, and this gate spent a session in that position with
+// three tests passing on the developer's machine and failing on the runner.
+//
+// The rule is deliberately two-sided, because half of it is not obvious: a `version` key alone is
+// not a pin. `stable` and `nightly` are CHANNELS — they satisfy "a version is declared" and still
+// resolve at run time, which is the state this guard exists to forbid wearing a version key.
+{
+  const wf = read('.github/workflows/forge.yml');
+  const step = wf.match(/uses:\s*foundry-rs\/foundry-toolchain@[^\n]*\n([\s\S]*?)(?=\n\s*-\s|$)/);
+  assert(step, ".github/workflows/forge.yml no longer installs foundry-rs/foundry-toolchain — the "
+    + 'extractor found no step to check, which reads exactly like a clean sweep. If the gate now '
+    + 'gets its compiler some other way, pin THAT and re-point this guard at it.');
+  const version = step[1].match(/^\s*version:\s*(\S+)/m);
+  assert(version, '.github/workflows/forge.yml installs foundry-toolchain with NO `version:`, so it '
+    + 'resolves `stable` at run time. Every other dependency in this workflow is pinned by hand; the '
+    + 'compiler and test runner must be too, or a red gate cannot be reproduced locally.');
+  assert(!/^(stable|nightly|latest)$/i.test(version[1]),
+    `.github/workflows/forge.yml pins the toolchain to "${version[1]}", which is a CHANNEL rather `
+    + 'than a version — it still resolves at run time. Pin the release tag (e.g. v1.7.1), which is '
+    + 'the whole point: the log and the local run must be able to name the same binary.');
+  assert(/run:\s*forge --version/.test(wf),
+    '.github/workflows/forge.yml no longer prints `forge --version`. The pin says which binary SHOULD '
+    + 'run; the banner is how the log says which one DID, without anybody having to guess at it.');
+}
+
 // ── nor one whose SIZE check can skip the suite ──────────────────────────────────────────────────
 // The same class as the dependency gap above, from a different cause. `forge build --sizes` is
 // all-or-nothing, so on 2026-08-27 a single test harness 906 bytes over EIP-170 (a typed factory,

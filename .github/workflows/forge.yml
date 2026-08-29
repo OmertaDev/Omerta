@@ -34,8 +34,21 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # PINNED, like every other dependency this workflow fetches. `foundry-toolchain@v1` with no
+      # `version` resolves `stable` AT RUN TIME, so the one thing compiling and running the suite was
+      # the only thing here not held still — while forge-std (v1.9.6), OpenZeppelin (v5.6.1), v4-core
+      # (1.0.2) and solc (0.8.26, foundry.toml) are all pinned by hand a few lines below. The forgotten
+      # sibling. A moving compiler means a red gate cannot be reproduced locally, which is exactly the
+      # position this gate was in. The banner is the instrument: when local and CI disagree again, the
+      # log answers "which forge ran this" instead of leaving it to be guessed at.
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: v1.7.1
+
+      - name: forge --version (what actually ran)
+        working-directory: omerta-contracts
+        run: forge --version
 
       # Deps aren't committed as submodules — fetch them into lib/ at the pinned versions the
       # contracts target (deterministic, avoids forge-install/submodule friction inside the parent
