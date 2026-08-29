@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "48238abed0b399c329097e4d20c516c660a77ba1",
+  "sourceRevision": "c6bb58f62340596a93e38007d167e5deacca3855",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5579,
-    "edges": 24418,
+    "nodes": 5582,
+    "edges": 24432,
     "byNodeType": {
       "Artifact": 1824,
       "Command": 53,
-      "Commit": 1227,
+      "Commit": 1230,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1977,
-      "CHANGED": 9609,
+      "CHANGED": 9620,
       "CONTAINS": 1844,
       "DECLARES": 53,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 193,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1227,
+      "HAS_COMMIT": 1230,
       "IMPLEMENTS": 124,
       "IMPORTS": 1626,
       "INHERITS": 12,
@@ -33735,20 +33735,20 @@
       "path": "src/db.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 34900,
-      "lines": 650,
-      "version": "059269a913acddb6",
+      "bytes": 34951,
+      "lines": 651,
+      "version": "1940ab98870d0c22",
       "text": true,
       "provenance": [
         {
           "file": "src/db.js",
           "line": 1,
-          "version": "059269a913acddb6"
+          "version": "1940ab98870d0c22"
         }
       ],
-      "lastChangedAt": "2026-08-28T20:24:40-04:00",
+      "lastChangedAt": "2026-08-28T21:57:33-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8b1ab95834441198d0fabeabc8b647c96f4ab4c6"
+      "lastChangedCommit": "c6bb58f62340596a93e38007d167e5deacca3855"
     },
     {
       "key": "Artifact:src/dbhealth.js",
@@ -39784,20 +39784,20 @@
       "path": "test/rwahealthoverlay.schema.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 19736,
-      "lines": 429,
-      "version": "ca4019f40f5135de",
+      "bytes": 20154,
+      "lines": 434,
+      "version": "bcf5b22cd2cb26b6",
       "text": true,
       "provenance": [
         {
           "file": "test/rwahealthoverlay.schema.js",
           "line": 1,
-          "version": "ca4019f40f5135de"
+          "version": "bcf5b22cd2cb26b6"
         }
       ],
-      "lastChangedAt": "2026-08-28T20:24:40-04:00",
+      "lastChangedAt": "2026-08-28T21:57:33-04:00",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8b1ab95834441198d0fabeabc8b647c96f4ab4c6"
+      "lastChangedCommit": "c6bb58f62340596a93e38007d167e5deacca3855"
     },
     {
       "key": "Artifact:test/rwahealthoverlay.vector.js",
@@ -46012,6 +46012,22 @@
         {
           "commit": "2ca4444f5f02d660f4e477a38d598088447b4cce",
           "url": "https://github.com/OmertaDev/Omerta/commit/2ca4444f5f02d660f4e477a38d598088447b4cce"
+        }
+      ]
+    },
+    {
+      "key": "Commit:2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c",
+      "type": "Commit",
+      "id": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c",
+      "label": "docs: refresh integrated knowledge graph",
+      "title": "docs: refresh integrated knowledge graph",
+      "date": "2026-08-28T21:36:58-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c",
+      "provenance": [
+        {
+          "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
         }
       ]
     },
@@ -56992,6 +57008,22 @@
       ]
     },
     {
+      "key": "Commit:b4e6b02ed8198d69e24f519354078a8fbcd04eec",
+      "type": "Commit",
+      "id": "b4e6b02ed8198d69e24f519354078a8fbcd04eec",
+      "label": "Merge pull request #145 from OmertaDev/codex/grill-completion",
+      "title": "Merge pull request #145 from OmertaDev/codex/grill-completion",
+      "date": "2026-08-28T21:37:50-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b4e6b02ed8198d69e24f519354078a8fbcd04eec",
+      "provenance": [
+        {
+          "commit": "b4e6b02ed8198d69e24f519354078a8fbcd04eec",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b4e6b02ed8198d69e24f519354078a8fbcd04eec"
+        }
+      ]
+    },
+    {
       "key": "Commit:b4f4ea7f4cceab1b3542236a0f7368191199af42",
       "type": "Commit",
       "id": "b4f4ea7f4cceab1b3542236a0f7368191199af42",
@@ -58364,6 +58396,22 @@
         {
           "commit": "c6a33f2902794b3f473ace4b556d9dc4c1c01359",
           "url": "https://github.com/OmertaDev/Omerta/commit/c6a33f2902794b3f473ace4b556d9dc4c1c01359"
+        }
+      ]
+    },
+    {
+      "key": "Commit:c6bb58f62340596a93e38007d167e5deacca3855",
+      "type": "Commit",
+      "id": "c6bb58f62340596a93e38007d167e5deacca3855",
+      "label": "fix: normalize postgres constraint metadata",
+      "title": "fix: normalize postgres constraint metadata",
+      "date": "2026-08-28T21:57:33-04:00",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c6bb58f62340596a93e38007d167e5deacca3855",
+      "provenance": [
+        {
+          "commit": "c6bb58f62340596a93e38007d167e5deacca3855",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c6bb58f62340596a93e38007d167e5deacca3855"
         }
       ]
     },
@@ -71225,7 +71273,7 @@
       "provenance": [
         {
           "file": "src/db.js",
-          "line": 521
+          "line": 522
         },
         {
           "file": "test/rwahealth.postgres.js",
@@ -71253,7 +71301,7 @@
       "provenance": [
         {
           "file": "src/db.js",
-          "line": 639
+          "line": 640
         },
         {
           "file": "test/finalizedobservation.js",
@@ -75270,6 +75318,9 @@
           "commit": "1d333b79f43c427ebc9d6733df79a124fe82fe0d"
         },
         {
+          "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
+        },
+        {
           "commit": "30514acce0345f7ed2d7ebde333e5de343c699e5"
         },
         {
@@ -75397,6 +75448,9 @@
         },
         {
           "commit": "27f81c38122be5c0bf9dc9a153e233379ed61ff8"
+        },
+        {
+          "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
         },
         {
           "commit": "2da0027e0a6e970a7990cdc7e5076292bce31b79"
@@ -75669,6 +75723,9 @@
           "commit": "27f81c38122be5c0bf9dc9a153e233379ed61ff8"
         },
         {
+          "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
+        },
+        {
           "commit": "2da0027e0a6e970a7990cdc7e5076292bce31b79"
         },
         {
@@ -75939,6 +75996,9 @@
           "commit": "27f81c38122be5c0bf9dc9a153e233379ed61ff8"
         },
         {
+          "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
+        },
+        {
           "commit": "2da0027e0a6e970a7990cdc7e5076292bce31b79"
         },
         {
@@ -76158,6 +76218,9 @@
           "commit": "18738f0238abac2204c0d201ea4ce93acefcd781"
         },
         {
+          "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
+        },
+        {
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
         },
         {
@@ -76252,6 +76315,9 @@
         },
         {
           "commit": "27f81c38122be5c0bf9dc9a153e233379ed61ff8"
+        },
+        {
+          "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
         },
         {
           "commit": "2da0027e0a6e970a7990cdc7e5076292bce31b79"
@@ -76482,6 +76548,9 @@
           "commit": "27f81c38122be5c0bf9dc9a153e233379ed61ff8"
         },
         {
+          "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
+        },
+        {
           "commit": "2da0027e0a6e970a7990cdc7e5076292bce31b79"
         },
         {
@@ -76563,6 +76632,9 @@
           "commit": "27f81c38122be5c0bf9dc9a153e233379ed61ff8"
         },
         {
+          "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
+        },
+        {
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
         },
         {
@@ -76597,6 +76669,9 @@
         },
         {
           "commit": "18738f0238abac2204c0d201ea4ce93acefcd781"
+        },
+        {
+          "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
         },
         {
           "commit": "36b737e4e28237323cf2a95680ef0a4125a7dcc6"
@@ -77364,13 +77439,13 @@
       "type": "Module",
       "id": "src/db.js",
       "label": "src/db.js",
-      "lines": 650,
-      "version": "059269a913acddb6",
+      "lines": 651,
+      "version": "1940ab98870d0c22",
       "provenance": [
         {
           "file": "src/db.js",
           "line": 1,
-          "version": "059269a913acddb6"
+          "version": "1940ab98870d0c22"
         }
       ]
     },
@@ -82689,8 +82764,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "48238abed0b399c329097e4d20c516c660a77ba1",
-      "currentBranch": "codex/grill-completion",
+      "revision": "c6bb58f62340596a93e38007d167e5deacca3855",
+      "currentBranch": "codex/grill-production-migration-fix",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -107646,13 +107721,13 @@
       "type": "TestSuite",
       "id": "test/rwahealthoverlay.schema.js",
       "label": "test/rwahealthoverlay.schema.js",
-      "lines": 429,
-      "version": "ca4019f40f5135de",
+      "lines": 434,
+      "version": "bcf5b22cd2cb26b6",
       "provenance": [
         {
           "file": "test/rwahealthoverlay.schema.js",
           "line": 1,
-          "version": "ca4019f40f5135de"
+          "version": "bcf5b22cd2cb26b6"
         }
       ]
     },
@@ -142416,6 +142491,78 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "commit": "2ca4444f5f02d660f4e477a38d598088447b4cce"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
       }
     },
     {
@@ -186896,6 +187043,22 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "commit": "c6a33f2902794b3f473ace4b556d9dc4c1c01359"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6bb58f62340596a93e38007d167e5deacca3855",
+      "to": "Artifact:src/db.js",
+      "provenance": {
+        "commit": "c6bb58f62340596a93e38007d167e5deacca3855"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6bb58f62340596a93e38007d167e5deacca3855",
+      "to": "Artifact:test/rwahealthoverlay.schema.js",
+      "provenance": {
+        "commit": "c6bb58f62340596a93e38007d167e5deacca3855"
       }
     },
     {
@@ -240671,6 +240834,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c",
+      "provenance": {
+        "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2ced14c11913bb82a4753fd5004979293bfd5eb2",
       "provenance": {
         "commit": "2ced14c11913bb82a4753fd5004979293bfd5eb2"
@@ -246159,6 +246330,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:b4e6b02ed8198d69e24f519354078a8fbcd04eec",
+      "provenance": {
+        "commit": "b4e6b02ed8198d69e24f519354078a8fbcd04eec"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:b4f4ea7f4cceab1b3542236a0f7368191199af42",
       "provenance": {
         "commit": "b4f4ea7f4cceab1b3542236a0f7368191199af42"
@@ -246842,6 +247021,14 @@
       "to": "Commit:c6a33f2902794b3f473ace4b556d9dc4c1c01359",
       "provenance": {
         "commit": "c6a33f2902794b3f473ace4b556d9dc4c1c01359"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:c6bb58f62340596a93e38007d167e5deacca3855",
+      "provenance": {
+        "commit": "c6bb58f62340596a93e38007d167e5deacca3855"
       }
     },
     {
@@ -251238,7 +251425,7 @@
       "to": "ExternalDependency:pg-mem",
       "provenance": {
         "file": "src/db.js",
-        "line": 639
+        "line": 640
       }
     },
     {
@@ -251247,7 +251434,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "src/db.js",
-        "line": 521
+        "line": 522
       }
     },
     {
