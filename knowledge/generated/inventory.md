@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `008dd2a93e14`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `3dd27e1e7792`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,826 |
-| Text lines | 517,155 |
-| Repository bytes inventoried | 313,667,668 |
+| Text lines | 517,577 |
+| Repository bytes inventoried | 313,699,258 |
 | Backend/route modules | 187 |
 | HTTP route registrations / unique routes | 742 / 742 |
 | Database tables | 317 |
 | Solidity declarations | 49 |
-| Git commits | 1,260 |
+| Git commits | 1,262 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 5,618 / 24,610 |
+| Graph nodes / edges | 5,620 / 24,636 |
 
 ## Artifact kinds
 
@@ -47,7 +47,7 @@
 | File | Lines | Kind | Last change |
 |---|---:|---|---|
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
-| [CLAUDE.md](../../CLAUDE.md) | 17,333 | documentation | 2026-08-29 |
+| [CLAUDE.md](../../CLAUDE.md) | 17,393 | documentation | 2026-08-29 |
 | [public/index.html](../../public/index.html) | 11,753 | web-surface | 2026-08-27 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
@@ -61,8 +61,8 @@
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
 | [test/docs.js](../../test/docs.js) | 3,832 | test-suite | 2026-08-29 |
 | [omerta-contracts/test/AcquisitionConstellationTask3B.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask3B.t.sol) | 3,743 | contract-test | 2026-08-28 |
-| [src/server.js](../../src/server.js) | 3,404 | backend-module | 2026-08-29 |
-| [test/gates.js](../../test/gates.js) | 3,383 | test-suite | 2026-08-29 |
+| [test/gates.js](../../test/gates.js) | 3,523 | test-suite | 2026-08-29 |
+| [src/server.js](../../src/server.js) | 3,472 | backend-module | 2026-08-29 |
 | [omerta-contracts/test/AcquisitionVaultOperator.t.sol](../../omerta-contracts/test/AcquisitionVaultOperator.t.sol) | 3,199 | contract-test | 2026-08-27 |
 | [omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1](../../omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1) | 2,947 | contract-project | 2026-08-28 |
 | [omerta-contracts/fizz_data/contracts.json](../../omerta-contracts/fizz_data/contracts.json) | 2,739 | contract-project | 2026-08-25 |
