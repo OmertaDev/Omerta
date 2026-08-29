@@ -25,3 +25,9 @@ baselines/
 probe-tmp.mjs
 .worktrees/
 .release-worktrees/
+
+# /handoff:create writes this at the repo root. test/docs.js counts every markdown file
+# git would report (`git ls-files --cached --others --exclude-standard`), and SPEC states that
+# count exactly — so an untracked HANDOFF.md fails the docs guard the moment it is written,
+# before it is ever committed. A handoff is session scratch, not project documentation.
+HANDOFF.md
