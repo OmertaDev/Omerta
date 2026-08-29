@@ -44,6 +44,21 @@ jobs:
           cache: npm
       - run: npm ci
 
+      # The knowledge artifacts are REVISION-STAMPED (graph.json records its own sourceRevision and
+      # carries the git lineage as ~1,200 Commit nodes), so on `push: main` they are necessarily
+      # stamped from whichever branch generated them and the byte-comparison in `npm test` cannot be
+      # green. That red says nothing about anyone's code: the PR run tests the exact tree about to
+      # land via the synthetic-merge hatch, so genuine staleness is already gated there. What was
+      # left on main was a red that always fires and never means anything — the kind that teaches
+      # people to scroll past red on main, which is how the 2026-07-30 outage survived seven commits.
+      #
+      # So on main, and only on main, the artifacts are brought to this revision before the suites
+      # run. `knowledge-refresh.yml` commits the same regeneration back, so the checked-in files stop
+      # claiming a branch they no longer belong to.
+      - name: knowledge artifacts carry the merge's own revision (main only)
+        if: github.event_name == 'push' && github.ref_name == 'main'
+        run: npm run knowledge
+
       - name: npm test (the full suite, on pg-mem)
         run: npm test
 
