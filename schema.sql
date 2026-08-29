@@ -4798,6 +4798,458 @@ CREATE INDEX ix_rwa_health_eval_asset_v2 ON rwa_health_evaluations_v2
   (registry_address,asset_version_key,applied_at DESC NULLS LAST,evaluation_id DESC)
   WHERE status = 'applied';
 
+-- RWA HEALTH H2 — an independently checkpointed finalized consumer plus immutable
+-- reviewer packages. The control rows are intentionally unconfigured at rest: only the
+-- finalized consumer may bind the configured overlay identity and populate readiness.
+CREATE TABLE IF NOT EXISTS rwa_health_overlay_lock_v2 (
+  id SMALLINT PRIMARY KEY CHECK (id = 1),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+INSERT INTO rwa_health_overlay_lock_v2 (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS rwa_health_overlay_checkpoint_v2 (
+  consumer_key TEXT PRIMARY KEY CHECK (consumer_key = 'rwa_health_overlay_v2'),
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT CHECK (registry_address IS NULL OR char_length(registry_address) = 42),
+  overlay_address TEXT CHECK (overlay_address IS NULL OR char_length(overlay_address) = 42),
+  safe_address TEXT CHECK (safe_address IS NULL OR char_length(safe_address) = 42),
+  start_block_number NUMERIC(78,0) CHECK (start_block_number IS NULL OR
+    start_block_number BETWEEN 0 AND 115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  last_applied_block_number NUMERIC(78,0) CHECK
+    (last_applied_block_number IS NULL OR last_applied_block_number BETWEEN 0 AND
+      115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  last_applied_block_hash TEXT CHECK
+    (last_applied_block_hash IS NULL OR char_length(last_applied_block_hash) = 66),
+  last_observation_hash TEXT CHECK
+    (last_observation_hash IS NULL OR char_length(last_observation_hash) = 66),
+  finalized_horizon_block_number NUMERIC(78,0) CHECK
+    (finalized_horizon_block_number IS NULL OR finalized_horizon_block_number BETWEEN 0 AND
+      115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  finalized_horizon_block_hash TEXT CHECK
+    (finalized_horizon_block_hash IS NULL OR char_length(finalized_horizon_block_hash) = 66),
+  caught_up BOOLEAN NOT NULL DEFAULT false,
+  halted BOOLEAN NOT NULL DEFAULT false,
+  verified_at TIMESTAMPTZ,
+  ready_verified_at TIMESTAMPTZ,
+  CHECK ((registry_address IS NULL) = (overlay_address IS NULL)),
+  CHECK ((registry_address IS NULL) = (safe_address IS NULL)),
+  CHECK ((registry_address IS NULL) = (start_block_number IS NULL)),
+  CHECK ((last_applied_block_number IS NULL) = (last_applied_block_hash IS NULL)),
+  CHECK ((last_applied_block_number IS NULL) = (last_observation_hash IS NULL)),
+  CHECK ((finalized_horizon_block_number IS NULL) = (finalized_horizon_block_hash IS NULL)),
+  CHECK (last_applied_block_number IS NULL OR start_block_number IS NOT NULL),
+  CHECK (last_applied_block_number IS NULL OR
+    (last_applied_block_number >= start_block_number
+      OR (start_block_number > 0 AND last_applied_block_number = start_block_number - 1))),
+  CHECK (finalized_horizon_block_number IS NULL OR last_applied_block_number IS NULL
+    OR finalized_horizon_block_number >= last_applied_block_number),
+  CHECK (NOT caught_up OR (last_applied_block_number = finalized_horizon_block_number
+    AND last_applied_block_hash = finalized_horizon_block_hash AND verified_at IS NOT NULL)),
+  CHECK (ready_verified_at IS NULL OR (caught_up AND NOT halted))
+);
+INSERT INTO rwa_health_overlay_checkpoint_v2 (consumer_key,chain_id)
+  VALUES ('rwa_health_overlay_v2',4663)
+  ON CONFLICT (consumer_key) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS rwa_health_overlay_runtime_v2 (
+  id SMALLINT PRIMARY KEY CHECK (id = 1),
+  consumer_key TEXT NOT NULL CHECK (consumer_key = 'rwa_health_overlay_v2'),
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT CHECK (registry_address IS NULL OR char_length(registry_address) = 42),
+  overlay_address TEXT CHECK (overlay_address IS NULL OR char_length(overlay_address) = 42),
+  safe_address TEXT CHECK (safe_address IS NULL OR char_length(safe_address) = 42),
+  start_block_number NUMERIC(78,0) CHECK (start_block_number IS NULL OR
+    start_block_number BETWEEN 0 AND 115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  last_applied_block_number NUMERIC(78,0) CHECK
+    (last_applied_block_number IS NULL OR last_applied_block_number BETWEEN 0 AND
+      115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  last_applied_block_hash TEXT CHECK
+    (last_applied_block_hash IS NULL OR char_length(last_applied_block_hash) = 66),
+  finalized_horizon_block_number NUMERIC(78,0) CHECK
+    (finalized_horizon_block_number IS NULL OR finalized_horizon_block_number BETWEEN 0 AND
+      115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  finalized_horizon_block_hash TEXT CHECK
+    (finalized_horizon_block_hash IS NULL OR char_length(finalized_horizon_block_hash) = 66),
+  sync_in_progress BOOLEAN NOT NULL DEFAULT false,
+  attempt_id TEXT,
+  last_attempt_at TIMESTAMPTZ,
+  last_success_at TIMESTAMPTZ,
+  ready_verified_at TIMESTAMPTZ,
+  caught_up BOOLEAN NOT NULL DEFAULT false,
+  halted BOOLEAN NOT NULL DEFAULT false,
+  failure_code TEXT CHECK (failure_code IS NULL OR failure_code IN
+    ('h2_rpc_failed','h2_decode_failed','h2_fo_failed','h2_dependency_lag',
+     'h2_reorg_halt','h2_dependency_mismatch','h2_checkpoint_halt',
+     'h2_generation_halt','h2_inbox_halt','h2_structure_halt','h2_attempt_superseded')),
+  unresolved_authority_incident_count NUMERIC(78,0) NOT NULL DEFAULT 0
+    CHECK (unresolved_authority_incident_count BETWEEN 0 AND
+      115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  last_incident_id TEXT CHECK (last_incident_id IS NULL OR char_length(last_incident_id) = 66),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  FOREIGN KEY (consumer_key) REFERENCES rwa_health_overlay_checkpoint_v2(consumer_key)
+    ON DELETE RESTRICT,
+  CHECK ((registry_address IS NULL) = (overlay_address IS NULL)),
+  CHECK ((registry_address IS NULL) = (safe_address IS NULL)),
+  CHECK ((registry_address IS NULL) = (start_block_number IS NULL)),
+  CHECK ((last_applied_block_number IS NULL) = (last_applied_block_hash IS NULL)),
+  CHECK ((finalized_horizon_block_number IS NULL) = (finalized_horizon_block_hash IS NULL)),
+  CHECK (NOT sync_in_progress OR (attempt_id IS NOT NULL AND last_attempt_at IS NOT NULL)),
+  CHECK (ready_verified_at IS NULL OR
+    (caught_up AND NOT halted AND NOT sync_in_progress
+      AND unresolved_authority_incident_count = 0))
+);
+INSERT INTO rwa_health_overlay_runtime_v2 (id,consumer_key,chain_id)
+  VALUES (1,'rwa_health_overlay_v2',4663)
+  ON CONFLICT (id) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS rwa_health_overlay_attempts_v2 (
+  attempt_id TEXT PRIMARY KEY CHECK (char_length(attempt_id) = 66),
+  status TEXT NOT NULL CHECK (status IN ('started','succeeded','failed','superseded')),
+  started_at TIMESTAMPTZ NOT NULL,
+  ended_at TIMESTAMPTZ,
+  failure_code TEXT CHECK (failure_code IS NULL OR failure_code IN
+    ('h2_rpc_failed','h2_decode_failed','h2_fo_failed','h2_dependency_lag',
+     'h2_reorg_halt','h2_dependency_mismatch','h2_checkpoint_halt',
+     'h2_generation_halt','h2_inbox_halt','h2_structure_halt','h2_attempt_superseded')),
+  superseded_by_attempt_id TEXT CHECK
+    (superseded_by_attempt_id IS NULL OR char_length(superseded_by_attempt_id) = 66),
+  CHECK ((status = 'started' AND ended_at IS NULL AND failure_code IS NULL
+          AND superseded_by_attempt_id IS NULL)
+      OR (status = 'succeeded' AND ended_at IS NOT NULL AND failure_code IS NULL
+          AND superseded_by_attempt_id IS NULL)
+      OR (status = 'failed' AND ended_at IS NOT NULL AND failure_code IS NOT NULL
+          AND failure_code <> 'h2_attempt_superseded' AND superseded_by_attempt_id IS NULL)
+      OR (status = 'superseded' AND ended_at IS NOT NULL
+          AND failure_code = 'h2_attempt_superseded'
+          AND superseded_by_attempt_id IS NOT NULL)),
+  CHECK (ended_at IS NULL OR ended_at >= started_at)
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_health_overlay_attempts_status_v2
+  ON rwa_health_overlay_attempts_v2(status,started_at,attempt_id);
+
+CREATE TABLE IF NOT EXISTS rwa_health_overlay_asset_state_v2 (
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  overlay_address TEXT NOT NULL CHECK (char_length(overlay_address) = 42),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  overlay_generation NUMERIC(78,0) NOT NULL CHECK (overlay_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  latest_clearance_id TEXT NOT NULL CHECK (char_length(latest_clearance_id) = 66),
+  last_block_number NUMERIC(78,0) NOT NULL CHECK (last_block_number BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  last_block_hash TEXT NOT NULL CHECK (char_length(last_block_hash) = 66),
+  last_transaction_hash TEXT NOT NULL CHECK (char_length(last_transaction_hash) = 66),
+  last_log_index NUMERIC(78,0) NOT NULL CHECK (last_log_index BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (registry_address,overlay_address,asset_version_key),
+  UNIQUE (overlay_address,asset_version_key,overlay_generation),
+  UNIQUE (latest_clearance_id)
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_health_overlay_asset_generation_v2
+  ON rwa_health_overlay_asset_state_v2(asset_version_key,overlay_generation DESC,overlay_address);
+
+CREATE TABLE IF NOT EXISTS rwa_health_overlay_inbox_v2 (
+  inbox_id TEXT PRIMARY KEY CHECK (char_length(inbox_id) = 66),
+  consumer_key TEXT NOT NULL REFERENCES rwa_health_overlay_checkpoint_v2(consumer_key)
+    ON DELETE RESTRICT,
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  contract_address TEXT NOT NULL CHECK (char_length(contract_address) = 42),
+  block_number NUMERIC(78,0) NOT NULL CHECK (block_number BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  block_hash TEXT NOT NULL CHECK (char_length(block_hash) = 66),
+  block_timestamp NUMERIC(78,0) NOT NULL CHECK (block_timestamp BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  transaction_hash TEXT NOT NULL CHECK (char_length(transaction_hash) = 66),
+  transaction_index NUMERIC(78,0) NOT NULL CHECK (transaction_index BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  log_index NUMERIC(78,0) NOT NULL CHECK (log_index BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  topic0 TEXT NOT NULL CHECK (char_length(topic0) = 66),
+  topics_json TEXT NOT NULL,
+  data_hex TEXT NOT NULL,
+  decoded_hash TEXT NOT NULL CHECK (char_length(decoded_hash) = 66),
+  observation_hash TEXT NOT NULL CHECK (char_length(observation_hash) = 66),
+  clearance_id TEXT NOT NULL CHECK (char_length(clearance_id) = 66),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  overlay_generation NUMERIC(78,0) NOT NULL CHECK (overlay_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  activation_generation NUMERIC(78,0) NOT NULL CHECK (activation_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  catalog_snapshot_hash TEXT NOT NULL CHECK (char_length(catalog_snapshot_hash) = 66),
+  episode_id TEXT NOT NULL CHECK (char_length(episode_id) = 66),
+  episode_generation NUMERIC(78,0) NOT NULL CHECK (episode_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  current_severity SMALLINT NOT NULL CHECK (current_severity IN (1,2)),
+  state_sequence BIGINT NOT NULL CHECK (state_sequence BETWEEN 1 AND 9223372036854775807),
+  latest_episode_event_id TEXT NOT NULL CHECK (char_length(latest_episode_event_id) = 66),
+  latest_material_evidence_hash TEXT NOT NULL CHECK (char_length(latest_material_evidence_hash) = 66),
+  recovery_evidence_hash TEXT NOT NULL CHECK (char_length(recovery_evidence_hash) = 66),
+  fresh_healthy_evaluation_id TEXT NOT NULL CHECK (char_length(fresh_healthy_evaluation_id) = 66),
+  fresh_healthy_evidence_hash TEXT NOT NULL CHECK (char_length(fresh_healthy_evidence_hash) = 66),
+  reviewer_id_hash TEXT NOT NULL CHECK (char_length(reviewer_id_hash) = 66),
+  clearance_payload_hash TEXT NOT NULL CHECK (char_length(clearance_payload_hash) = 66),
+  safe_call_intent_hash TEXT NOT NULL CHECK (char_length(safe_call_intent_hash) = 66),
+  approved_at NUMERIC(20,0) NOT NULL CHECK
+    (approved_at BETWEEN 0 AND 18446744073709551615),
+  clearance_deadline NUMERIC(20,0) NOT NULL CHECK
+    (clearance_deadline BETWEEN 0 AND 18446744073709551615),
+  inserted_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (chain_id,contract_address,block_hash,transaction_hash,log_index),
+  UNIQUE (inbox_id,clearance_id),
+  CHECK (clearance_deadline = approved_at + 604800),
+  CHECK (approved_at <= block_timestamp AND block_timestamp < clearance_deadline)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_rwa_health_overlay_inbox_identity_v2
+  ON rwa_health_overlay_inbox_v2
+    (chain_id,contract_address,block_hash,transaction_hash,log_index);
+CREATE INDEX IF NOT EXISTS ix_rwa_health_overlay_inbox_order_v2
+  ON rwa_health_overlay_inbox_v2
+    (consumer_key,block_number,transaction_index,log_index);
+CREATE INDEX IF NOT EXISTS ix_rwa_health_overlay_inbox_asset_generation_v2
+  ON rwa_health_overlay_inbox_v2(asset_version_key,overlay_generation,block_number);
+
+CREATE TABLE IF NOT EXISTS rwa_health_clearance_attestations_v2 (
+  clearance_id TEXT PRIMARY KEY CHECK (char_length(clearance_id) = 66),
+  semantic_request_hash TEXT NOT NULL CHECK (char_length(semantic_request_hash) = 66),
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  overlay_address TEXT NOT NULL CHECK (char_length(overlay_address) = 42),
+  safe_address TEXT NOT NULL CHECK (char_length(safe_address) = 42),
+  catalog_version NUMERIC(78,0) NOT NULL CHECK (catalog_version BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  catalog_snapshot_hash TEXT NOT NULL CHECK (char_length(catalog_snapshot_hash) = 66),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  activation_generation NUMERIC(78,0) NOT NULL CHECK (activation_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  activation_block_number NUMERIC(78,0) NOT NULL CHECK (activation_block_number BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  activation_block_hash TEXT NOT NULL CHECK (char_length(activation_block_hash) = 66),
+  activation_transaction_hash TEXT NOT NULL CHECK (char_length(activation_transaction_hash) = 66),
+  activation_log_index NUMERIC(78,0) NOT NULL CHECK (activation_log_index BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  activation_evidence_hash TEXT NOT NULL CHECK (char_length(activation_evidence_hash) = 66),
+  activation_review_id TEXT NOT NULL CHECK (char_length(activation_review_id) = 66),
+  activation_approved_at TIMESTAMPTZ NOT NULL,
+  activation_valid_until TIMESTAMPTZ NOT NULL,
+  activation_included_at TIMESTAMPTZ NOT NULL,
+  episode_id TEXT NOT NULL CHECK (char_length(episode_id) = 66),
+  episode_generation NUMERIC(78,0) NOT NULL CHECK (episode_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  current_severity SMALLINT NOT NULL CHECK (current_severity IN (1,2)),
+  state_sequence BIGINT NOT NULL CHECK (state_sequence BETWEEN 1 AND 9223372036854775807),
+  latest_episode_event_id TEXT NOT NULL CHECK (char_length(latest_episode_event_id) = 66),
+  latest_material_event_id TEXT NOT NULL CHECK (char_length(latest_material_event_id) = 66),
+  latest_material_evidence_hash TEXT NOT NULL CHECK (char_length(latest_material_evidence_hash) = 66),
+  fresh_healthy_evaluation_id TEXT NOT NULL CHECK (char_length(fresh_healthy_evaluation_id) = 66),
+  fresh_healthy_evaluation_status TEXT NOT NULL DEFAULT 'applied'
+    CHECK (fresh_healthy_evaluation_status = 'applied'),
+  fresh_healthy_evaluation_kind TEXT NOT NULL DEFAULT 'healthy'
+    CHECK (fresh_healthy_evaluation_kind = 'healthy'),
+  fresh_healthy_evidence_hash TEXT NOT NULL CHECK (char_length(fresh_healthy_evidence_hash) = 66),
+  fresh_healthy_evaluation_applied_at TIMESTAMPTZ NOT NULL,
+  reviewer_id TEXT NOT NULL,
+  reviewer_id_hash TEXT NOT NULL CHECK (char_length(reviewer_id_hash) = 66),
+  recovery_evidence_hash TEXT NOT NULL CHECK (char_length(recovery_evidence_hash) = 66),
+  approved_at NUMERIC(20,0) NOT NULL CHECK
+    (approved_at BETWEEN 0 AND 18446744073709551615),
+  clearance_deadline NUMERIC(20,0) NOT NULL CHECK
+    (clearance_deadline BETWEEN 0 AND 18446744073709551615),
+  expected_overlay_generation NUMERIC(78,0) NOT NULL CHECK
+    (expected_overlay_generation BETWEEN 1 AND
+      115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  expected_safe_nonce NUMERIC(78,0) CHECK (expected_safe_nonce IS NULL OR
+    expected_safe_nonce BETWEEN 0 AND
+      115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  clearance_payload_hash TEXT NOT NULL CHECK (char_length(clearance_payload_hash) = 66),
+  safe_call_intent_hash TEXT NOT NULL CHECK (char_length(safe_call_intent_hash) = 66),
+  calldata_hash TEXT NOT NULL CHECK (char_length(calldata_hash) = 66),
+  first_transport_key_hash TEXT NOT NULL CHECK (char_length(first_transport_key_hash) = 64),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (clearance_id,registry_address,asset_version_key,expected_overlay_generation),
+  UNIQUE (clearance_id,recovery_evidence_hash),
+  UNIQUE (clearance_id,semantic_request_hash),
+  FOREIGN KEY (chain_id,registry_address,asset_version_key,activation_generation)
+    REFERENCES rwa_registry_activation_instances_v2
+      (chain_id,registry_address,asset_version_key,activation_generation) ON DELETE RESTRICT,
+  FOREIGN KEY (registry_address,asset_version_key,fresh_healthy_evaluation_id,
+               fresh_healthy_evaluation_status,fresh_healthy_evaluation_kind,
+               fresh_healthy_evidence_hash)
+    REFERENCES rwa_health_evaluations_v2
+      (registry_address,asset_version_key,evaluation_id,status,evaluation_kind,evidence_hash)
+    ON DELETE RESTRICT,
+  CHECK (clearance_deadline = approved_at + 604800),
+  CHECK (activation_valid_until = activation_approved_at + interval '604800 seconds'),
+  CHECK (activation_approved_at <= activation_included_at
+    AND activation_included_at < activation_valid_until)
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_health_clearance_attestations_asset_v2
+  ON rwa_health_clearance_attestations_v2
+    (registry_address,asset_version_key,expected_overlay_generation,created_at DESC);
+
+CREATE TABLE IF NOT EXISTS rwa_health_clearance_recovery_evidence_v2 (
+  clearance_id TEXT PRIMARY KEY,
+  recovery_evidence_hash TEXT NOT NULL CHECK (char_length(recovery_evidence_hash) = 66),
+  byte_count INT NOT NULL CHECK (byte_count BETWEEN 1 AND 65536),
+  evidence_bytes BYTEA NOT NULL,
+  captured_at TIMESTAMPTZ NOT NULL,
+  retain_until TIMESTAMPTZ NOT NULL,
+  FOREIGN KEY (clearance_id,recovery_evidence_hash)
+    REFERENCES rwa_health_clearance_attestations_v2(clearance_id,recovery_evidence_hash)
+    ON DELETE RESTRICT,
+  CHECK (byte_count = octet_length(evidence_bytes)),
+  CHECK (retain_until >= captured_at + interval '35 days')
+);
+
+CREATE TABLE IF NOT EXISTS rwa_health_clearance_safe_proposals_v2 (
+  clearance_id TEXT PRIMARY KEY,
+  semantic_request_hash TEXT NOT NULL CHECK (char_length(semantic_request_hash) = 66),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  expected_overlay_generation NUMERIC(78,0) NOT NULL CHECK
+    (expected_overlay_generation BETWEEN 1 AND
+      115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  safe_address TEXT NOT NULL CHECK (char_length(safe_address) = 42),
+  to_address TEXT NOT NULL CHECK (char_length(to_address) = 42),
+  value_wei NUMERIC(78,0) NOT NULL DEFAULT 0 CHECK (value_wei = 0),
+  operation SMALLINT NOT NULL DEFAULT 0 CHECK (operation = 0),
+  calldata_hex TEXT NOT NULL,
+  calldata_hash TEXT NOT NULL CHECK (char_length(calldata_hash) = 66),
+  expected_safe_nonce NUMERIC(78,0) CHECK (expected_safe_nonce IS NULL OR
+    expected_safe_nonce BETWEEN 0 AND
+      115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  safe_service_transaction_hash TEXT CHECK
+    (safe_service_transaction_hash IS NULL OR char_length(safe_service_transaction_hash) = 66),
+  execution_transaction_hash TEXT CHECK
+    (execution_transaction_hash IS NULL OR char_length(execution_transaction_hash) = 66),
+  status TEXT NOT NULL CHECK (status IN
+    ('safe_package_ready','safe_submitted','approval_stale',
+     'finalized_applied','finalized_rejected')),
+  approved_at NUMERIC(20,0) NOT NULL CHECK
+    (approved_at BETWEEN 0 AND 18446744073709551615),
+  clearance_deadline NUMERIC(20,0) NOT NULL CHECK
+    (clearance_deadline BETWEEN 0 AND 18446744073709551615),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  submitted_at TIMESTAMPTZ,
+  finalized_at TIMESTAMPTZ,
+  FOREIGN KEY (clearance_id,registry_address,asset_version_key,expected_overlay_generation)
+    REFERENCES rwa_health_clearance_attestations_v2
+      (clearance_id,registry_address,asset_version_key,expected_overlay_generation)
+    ON DELETE RESTRICT,
+  FOREIGN KEY (clearance_id,semantic_request_hash)
+    REFERENCES rwa_health_clearance_attestations_v2(clearance_id,semantic_request_hash)
+    ON DELETE RESTRICT,
+  CHECK (clearance_deadline = approved_at + 604800),
+  CHECK ((status = 'safe_package_ready' AND safe_service_transaction_hash IS NULL
+          AND execution_transaction_hash IS NULL AND submitted_at IS NULL AND finalized_at IS NULL)
+      OR (status = 'safe_submitted' AND safe_service_transaction_hash IS NOT NULL
+          AND execution_transaction_hash IS NULL AND submitted_at IS NOT NULL AND finalized_at IS NULL)
+      OR (status = 'approval_stale' AND execution_transaction_hash IS NULL
+          AND finalized_at IS NULL)
+      OR (status IN ('finalized_applied','finalized_rejected')
+          AND execution_transaction_hash IS NOT NULL AND finalized_at IS NOT NULL))
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_rwa_health_clearance_open_generation_v2
+  ON rwa_health_clearance_safe_proposals_v2
+    (registry_address,asset_version_key,expected_overlay_generation)
+  WHERE status IN ('safe_package_ready','safe_submitted');
+CREATE UNIQUE INDEX IF NOT EXISTS ux_rwa_health_clearance_open_semantic_v2
+  ON rwa_health_clearance_safe_proposals_v2(semantic_request_hash)
+  WHERE status IN ('safe_package_ready','safe_submitted');
+CREATE INDEX IF NOT EXISTS ix_rwa_health_clearance_expiry_v2
+  ON rwa_health_clearance_safe_proposals_v2(clearance_deadline,clearance_id)
+  WHERE status IN ('safe_package_ready','safe_submitted');
+
+CREATE TABLE IF NOT EXISTS rwa_health_overlay_event_results_v2 (
+  inbox_id TEXT PRIMARY KEY REFERENCES rwa_health_overlay_inbox_v2(inbox_id)
+    ON DELETE RESTRICT,
+  clearance_id TEXT NOT NULL CHECK (char_length(clearance_id) = 66),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  overlay_generation NUMERIC(78,0) NOT NULL CHECK (overlay_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  disposition TEXT NOT NULL CHECK (disposition IN
+    ('attestation_missing','package_mismatch','reviewer_mismatch',
+     'activation_instance_missing','activation_provenance_unmatched',
+     'stale_registry_generation','expired','stale_h1_head','applied')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (inbox_id,clearance_id),
+  UNIQUE (inbox_id,clearance_id,disposition),
+  FOREIGN KEY (inbox_id,clearance_id)
+    REFERENCES rwa_health_overlay_inbox_v2(inbox_id,clearance_id) ON DELETE RESTRICT
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_health_overlay_event_results_disposition_v2
+  ON rwa_health_overlay_event_results_v2(disposition,created_at,inbox_id);
+
+CREATE TABLE IF NOT EXISTS rwa_health_overlay_incidents_v2 (
+  inbox_id TEXT PRIMARY KEY,
+  incident_id TEXT NOT NULL UNIQUE CHECK (char_length(incident_id) = 66),
+  clearance_id TEXT NOT NULL CHECK (char_length(clearance_id) = 66),
+  disposition TEXT NOT NULL CHECK (disposition IN
+    ('attestation_missing','package_mismatch','reviewer_mismatch',
+     'activation_instance_missing','activation_provenance_unmatched',
+     'stale_registry_generation','expired','stale_h1_head')),
+  authority_incident BOOLEAN NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  FOREIGN KEY (inbox_id,clearance_id,disposition)
+    REFERENCES rwa_health_overlay_event_results_v2(inbox_id,clearance_id,disposition)
+    ON DELETE RESTRICT,
+  CHECK (authority_incident = (disposition IN
+    ('attestation_missing','package_mismatch','reviewer_mismatch',
+     'activation_instance_missing','activation_provenance_unmatched')))
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_health_overlay_incidents_authority_v2
+  ON rwa_health_overlay_incidents_v2(authority_incident,created_at,inbox_id);
+
+CREATE TABLE IF NOT EXISTS rwa_health_finalized_clearances_v2 (
+  clearance_id TEXT PRIMARY KEY CHECK (char_length(clearance_id) = 66),
+  disposition TEXT NOT NULL DEFAULT 'applied' CHECK (disposition = 'applied'),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  overlay_address TEXT NOT NULL CHECK (char_length(overlay_address) = 42),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  activation_generation NUMERIC(78,0) NOT NULL CHECK (activation_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  overlay_generation NUMERIC(78,0) NOT NULL CHECK (overlay_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  episode_id TEXT NOT NULL CHECK (char_length(episode_id) = 66),
+  episode_generation NUMERIC(78,0) NOT NULL CHECK (episode_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  h1_clearance_generation NUMERIC(78,0) NOT NULL CHECK (h1_clearance_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  execution_block_number NUMERIC(78,0) NOT NULL CHECK (execution_block_number BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  execution_block_hash TEXT NOT NULL CHECK (char_length(execution_block_hash) = 66),
+  execution_transaction_hash TEXT NOT NULL CHECK (char_length(execution_transaction_hash) = 66),
+  execution_log_index NUMERIC(78,0) NOT NULL CHECK (execution_log_index BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  event_inbox_id TEXT NOT NULL,
+  h1_clearance_event_id TEXT NOT NULL CHECK (char_length(h1_clearance_event_id) = 66),
+  recovery_evidence_hash TEXT NOT NULL CHECK (char_length(recovery_evidence_hash) = 66),
+  finalized_applied_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT uq_rwa_health_finalized_episode_v2 UNIQUE
+    (clearance_id,registry_address,asset_version_key,episode_id,episode_generation,
+     h1_clearance_generation,execution_block_number,execution_block_hash,finalized_applied_at),
+  CONSTRAINT uq_rwa_health_finalized_event_v2 UNIQUE
+    (clearance_id,registry_address,asset_version_key,episode_id,episode_generation,
+     h1_clearance_event_id,recovery_evidence_hash),
+  CONSTRAINT uq_rwa_health_finalized_current_v2 UNIQUE
+    (clearance_id,registry_address,asset_version_key,episode_id,episode_generation,
+     h1_clearance_generation,finalized_applied_at,h1_clearance_event_id),
+  FOREIGN KEY (clearance_id) REFERENCES rwa_health_clearance_attestations_v2(clearance_id)
+    ON DELETE RESTRICT,
+  FOREIGN KEY (event_inbox_id,clearance_id,disposition)
+    REFERENCES rwa_health_overlay_event_results_v2(inbox_id,clearance_id,disposition)
+    ON DELETE RESTRICT,
+  UNIQUE (event_inbox_id),
+  UNIQUE (overlay_address,asset_version_key,overlay_generation)
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_health_finalized_clearances_asset_v2
+  ON rwa_health_finalized_clearances_v2
+    (registry_address,asset_version_key,episode_generation,finalized_applied_at DESC);
+
 CREATE TABLE IF NOT EXISTS rwa_health_reviewer_actions_v2 (
   reviewer_action_id TEXT PRIMARY KEY CHECK (char_length(reviewer_action_id) = 66),
   chain_id INT NOT NULL CHECK (chain_id = 4663),
@@ -4895,6 +5347,13 @@ CREATE TABLE IF NOT EXISTS rwa_health_episodes_v2 (
     REFERENCES rwa_health_evaluations_v2
       (registry_address,asset_version_key,evaluation_id,status,evaluation_kind,evidence_hash)
     ON DELETE RESTRICT,
+  CONSTRAINT fk_rwa_health_episode_h2_clearance_v2 FOREIGN KEY
+    (clearance_id,registry_address,asset_version_key,episode_id,generation,
+     clearance_generation,clearance_block_number,clearance_block_hash,clearance_applied_at)
+    REFERENCES rwa_health_finalized_clearances_v2
+      (clearance_id,registry_address,asset_version_key,episode_id,episode_generation,
+       h1_clearance_generation,execution_block_number,execution_block_hash,finalized_applied_at)
+    ON DELETE RESTRICT,
   CHECK ((opening_evaluation_id IS NULL) <> (opening_reviewer_action_id IS NULL)),
   CHECK ((opening_evaluation_id IS NULL) = (opening_evaluation_status IS NULL)),
   CHECK ((terminal_evaluation_id IS NULL) = (terminal_evaluation_status IS NULL)),
@@ -4967,6 +5426,13 @@ CREATE TABLE IF NOT EXISTS rwa_health_episode_events_v2 (
     REFERENCES rwa_health_reviewer_actions_v2
       (target_episode_id,registry_address,asset_version_key,target_episode_generation,
        reviewer_action_id,requested_state,evidence_hash,outcome) ON DELETE RESTRICT,
+  CONSTRAINT fk_rwa_health_event_h2_clearance_v2 FOREIGN KEY
+    (source_clearance_id,registry_address,asset_version_key,episode_id,
+     episode_generation,event_id,evidence_hash)
+    REFERENCES rwa_health_finalized_clearances_v2
+      (clearance_id,registry_address,asset_version_key,episode_id,
+       episode_generation,h1_clearance_event_id,recovery_evidence_hash)
+    ON DELETE RESTRICT,
   CHECK ((source_kind = 'evaluation' AND source_id = source_evaluation_id
           AND source_evaluation_id IS NOT NULL
           AND source_evaluation_status = 'applied'
@@ -5063,6 +5529,15 @@ CREATE TABLE IF NOT EXISTS rwa_health_current_v2 (
                latest_material_evidence_hash)
     REFERENCES rwa_health_episode_events_v2
       (episode_id,registry_address,asset_version_key,episode_generation,event_id,evidence_hash)
+    ON DELETE RESTRICT,
+  CONSTRAINT fk_rwa_health_current_h2_clearance_v2 FOREIGN KEY
+    (clearance_id,registry_address,asset_version_key,current_episode_id,
+     current_episode_generation,clearance_generation,clearance_applied_at,
+     latest_episode_event_id)
+    REFERENCES rwa_health_finalized_clearances_v2
+      (clearance_id,registry_address,asset_version_key,episode_id,
+       episode_generation,h1_clearance_generation,finalized_applied_at,
+       h1_clearance_event_id)
     ON DELETE RESTRICT,
   CHECK ((last_evaluation_id IS NULL AND last_evaluation_status IS NULL
           AND latest_evaluation_kind IS NULL

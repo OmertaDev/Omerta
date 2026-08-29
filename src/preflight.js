@@ -123,6 +123,12 @@ export const OPERATIONAL_ENV = [
   // never used by the purchase or delivery value-moving paths.
   'STOCK_TOKEN_REGISTRY_ADDRESS', 'STOCK_TOKEN_REGISTRY_V2_ADDRESS',
   'STOCK_TOKEN_REGISTRY_V2_START_BLOCK',
+  // H2 quarantine-clearance overlay. All three are an all-or-nothing, dormant-until-configured
+  // authority tuple: deployed overlay, controlling Safe, and the first block the finalized reader
+  // may scan. Classification permits an operator to configure the feature; the H2 reader still
+  // fails closed unless the complete tuple and its on-chain identity checks agree.
+  'RWA_HEALTH_OVERLAY_V2_ADDRESS', 'RWA_HEALTH_OVERLAY_V2_SAFE_ADDRESS',
+  'RWA_HEALTH_OVERLAY_V2_START_BLOCK',
   'RWA_REVIEWER_KEY', 'RWA_REVIEWER_ID', 'RWA_BALLOT_PUBLISHER_PK', 'STOCK_KEEPER_PK',
   'STOCK_ALLOCATION_SIGNER_PK', 'STOCK_AUTH_TTL_SEC', 'STOCK_TOKEN_ADDRESSES',
   // THE TWO DEX BOTS (src/dexbot.js) — the buyback bot (swaps unspent Vig revenue for hard OMR on

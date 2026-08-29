@@ -336,6 +336,169 @@ export async function migrateTask5BallotV2(q, { compatibility = 'postgres' } = {
   }
 }
 
+const RWA_HEALTH_H2_FOREIGN_KEYS = Object.freeze([
+  Object.freeze({
+    table: 'rwa_health_episodes_v2',
+    name: 'fk_rwa_health_episode_h2_clearance_v2',
+    source: Object.freeze([
+      'clearance_id', 'registry_address', 'asset_version_key', 'episode_id', 'generation',
+      'clearance_generation', 'clearance_block_number', 'clearance_block_hash',
+      'clearance_applied_at',
+    ]),
+    referenced: Object.freeze([
+      'clearance_id', 'registry_address', 'asset_version_key', 'episode_id',
+      'episode_generation', 'h1_clearance_generation', 'execution_block_number',
+      'execution_block_hash', 'finalized_applied_at',
+    ]),
+  }),
+  Object.freeze({
+    table: 'rwa_health_episode_events_v2',
+    name: 'fk_rwa_health_event_h2_clearance_v2',
+    source: Object.freeze([
+      'source_clearance_id', 'registry_address', 'asset_version_key', 'episode_id',
+      'episode_generation', 'event_id', 'evidence_hash',
+    ]),
+    referenced: Object.freeze([
+      'clearance_id', 'registry_address', 'asset_version_key', 'episode_id',
+      'episode_generation', 'h1_clearance_event_id', 'recovery_evidence_hash',
+    ]),
+  }),
+  Object.freeze({
+    table: 'rwa_health_current_v2',
+    name: 'fk_rwa_health_current_h2_clearance_v2',
+    source: Object.freeze([
+      'clearance_id', 'registry_address', 'asset_version_key', 'current_episode_id',
+      'current_episode_generation', 'clearance_generation', 'clearance_applied_at',
+      'latest_episode_event_id',
+    ]),
+    referenced: Object.freeze([
+      'clearance_id', 'registry_address', 'asset_version_key', 'episode_id',
+      'episode_generation', 'h1_clearance_generation', 'finalized_applied_at',
+      'h1_clearance_event_id',
+    ]),
+  }),
+]);
+
+const H2_FINALIZED_TABLE = 'rwa_health_finalized_clearances_v2';
+
+function h2ForeignKeyDefinition(spec) {
+  return `FOREIGN KEY (${spec.source.join(',')}) REFERENCES ${H2_FINALIZED_TABLE} `
+    + `(${spec.referenced.join(',')}) ON DELETE RESTRICT`;
+}
+
+function canonicalConstraintDefinition(value) {
+  return String(value ?? '')
+    .toLowerCase()
+    .replaceAll('"', '')
+    .replace(/\bpublic\./g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/\s*([(),])\s*/g, '$1')
+    .trim();
+}
+
+function h2MigrationError(detail) {
+  const error = new Error(`RWA health H2 authority migration rejected ${detail}`);
+  error.code = 'rwa_health_overlay_migration_invalid';
+  return error;
+}
+
+async function readH2ForeignKey(q, spec) {
+  const rows = (await q.query(
+    `SELECT c.conname,c.contype,c.convalidated,c.confdeltype,
+            pg_get_constraintdef(c.oid,true) AS definition,
+            c.confrelid::regclass::text AS referenced_table,
+            ARRAY(
+              SELECT a.attname
+                FROM unnest(c.conkey) WITH ORDINALITY AS key_column(attnum,ordinality)
+                JOIN pg_attribute a
+                  ON a.attrelid=c.conrelid AND a.attnum=key_column.attnum
+               ORDER BY key_column.ordinality
+            ) AS source_columns,
+            ARRAY(
+              SELECT a.attname
+                FROM unnest(c.confkey) WITH ORDINALITY AS key_column(attnum,ordinality)
+                JOIN pg_attribute a
+                  ON a.attrelid=c.confrelid AND a.attnum=key_column.attnum
+               ORDER BY key_column.ordinality
+            ) AS referenced_columns
+       FROM pg_constraint c
+      WHERE c.conname=$1 AND c.conrelid=$2::regclass`,
+    [spec.name, spec.table],
+  )).rows;
+  if (rows.length > 1) throw h2MigrationError(`duplicate constraint ${spec.name}`);
+  return rows[0] ?? null;
+}
+
+function exactStringArray(value, expected) {
+  return Array.isArray(value) && value.length === expected.length
+    && value.every((entry, index) => String(entry) === expected[index]);
+}
+
+function verifyH2ForeignKey(row, spec, { requireValidated }) {
+  if (!row || row.contype !== 'f'
+      || String(row.referenced_table).replace(/^public\./, '') !== H2_FINALIZED_TABLE
+      || row.confdeltype !== 'r'
+      || !exactStringArray(row.source_columns, spec.source)
+      || !exactStringArray(row.referenced_columns, spec.referenced)
+      || canonicalConstraintDefinition(row.definition)
+        !== canonicalConstraintDefinition(h2ForeignKeyDefinition(spec))) {
+    throw h2MigrationError(`drifted constraint ${spec.name}`);
+  }
+  if (requireValidated && row.convalidated !== true) {
+    throw h2MigrationError(`unvalidated constraint ${spec.name}`);
+  }
+  if (!requireValidated && row.convalidated !== false) {
+    throw h2MigrationError(`new constraint ${spec.name} had unexpected validation state`);
+  }
+}
+
+// Existing H1 tables predate H2. CREATE TABLE IF NOT EXISTS cannot retrofit their three
+// authority FKs, and the generic ADD-COLUMN lane deliberately cannot add table constraints.
+// Production therefore freezes all four participating tables and installs each missing FK as
+// NOT VALID, verifies its literal definition/column order, validates all legacy rows, then
+// verifies convalidated=true before the outer boot path may stamp the schema. A pre-existing
+// name-only, drifted, or unvalidated constraint is not repaired in place: it is evidence of an
+// unknown migration and startup fails closed. pg-mem cannot expose pg_constraint faithfully or
+// parse NOT VALID/VALIDATE; its explicit compatibility result is test scaffolding, never claimed
+// as PostgreSQL migration evidence.
+export async function migrateRwaHealthOverlayV2(q, { compatibility = 'postgres' } = {}) {
+  await q.query('BEGIN');
+  try {
+    await q.query('SELECT 1 AS ok /* rwa_health_overlay_v2_targeted_migration */');
+    if (compatibility === 'pg-mem') {
+      await q.query('COMMIT');
+      return Object.freeze({ compatibility: 'pg-mem', verified: false, installed: 0 });
+    }
+    if (compatibility !== 'postgres') throw h2MigrationError('unknown compatibility mode');
+    await q.query(
+      `LOCK TABLE rwa_health_finalized_clearances_v2,rwa_health_episodes_v2,
+                  rwa_health_episode_events_v2,rwa_health_current_v2
+         IN ACCESS EXCLUSIVE MODE`,
+    );
+    let installed = 0;
+    for (const spec of RWA_HEALTH_H2_FOREIGN_KEYS) {
+      const existing = await readH2ForeignKey(q, spec);
+      if (existing) {
+        verifyH2ForeignKey(existing, spec, { requireValidated: true });
+        continue;
+      }
+      await q.query(
+        `ALTER TABLE ${spec.table} ADD CONSTRAINT ${spec.name} `
+          + `${h2ForeignKeyDefinition(spec)} NOT VALID`,
+      );
+      verifyH2ForeignKey(await readH2ForeignKey(q, spec), spec, { requireValidated: false });
+      await q.query(`ALTER TABLE ${spec.table} VALIDATE CONSTRAINT ${spec.name}`);
+      verifyH2ForeignKey(await readH2ForeignKey(q, spec), spec, { requireValidated: true });
+      installed++;
+    }
+    await q.query('COMMIT');
+    return Object.freeze({ compatibility: 'postgres', verified: true, installed });
+  } catch (error) {
+    await q.query('ROLLBACK').catch(() => {});
+    throw error;
+  }
+}
+
 // Called only while makeDb holds the existing session advisory lock. Keeping the sequence in one
 // tested seam prevents a future boot edit from stamping a build before its fail-closed authority
 // migration completed.
@@ -345,6 +508,7 @@ export async function migrateSchemaUnderLock(
   await boot.query(schemaText);
   const migration = await migrateColumns(boot, schemaText);
   await migrateTask5BallotV2(boot, { compatibility });
+  await migrateRwaHealthOverlayV2(boot, { compatibility });
   const stamp = await stampSchema(boot);
   return { migration, stamp };
 }

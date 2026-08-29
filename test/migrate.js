@@ -381,12 +381,15 @@ await dbModule.migrateTask5BallotV2(pool, { compatibility: 'pg-mem' });
     schemaText: SCHEMA, compatibility: 'pg-mem',
   });
   const targeted = statements.findIndex((sql) => sql.includes('task5_ballot_v2_targeted_migration'));
+  const h2Targeted = statements.findIndex((sql) => (
+    sql.includes('rwa_health_overlay_v2_targeted_migration')
+  ));
   const lastGeneric = statements
     .slice(0, targeted)
     .findLastIndex((sql) => /^ALTER TABLE .* ADD COLUMN IF NOT EXISTS /i.test(sql));
   const stamp = statements.findIndex((sql) => sql.includes('SELECT app_version FROM schema_meta'));
-  assert(lastGeneric >= 0 && targeted > lastGeneric && stamp > targeted,
-    'generic safe columns run before targeted authority and the stamp records only the completed migration');
+  assert(lastGeneric >= 0 && targeted > lastGeneric && h2Targeted > targeted && stamp > h2Targeted,
+    'generic columns, Task 5 authority, and H2 authority run before the schema stamp');
   await bootPool.end();
 }
 
