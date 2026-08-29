@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `9a81c9494cb4`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `847991f714ef`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1107 |
+| Commits in clone | 1219 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-28 — feat: add rwa health h2 clearance packages |
+| Latest commit | 2026-08-28 — fix: close merged release gates |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 306 |
+| OmertaDev | 418 |
 | Claude | 113 |
 | CRVYDEV | 41 |
 
@@ -28,46 +28,46 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| [CLAUDE.md](../../CLAUDE.md) | 491 | yes |
-| [public/index.html](../../public/index.html) | 378 | yes |
-| [src/server.js](../../src/server.js) | 341 | yes |
-| [schema.sql](../../schema.sql) | 264 | yes |
-| [SPEC.md](../../SPEC.md) | 254 | yes |
+| [CLAUDE.md](../../CLAUDE.md) | 492 | yes |
+| [public/index.html](../../public/index.html) | 389 | yes |
+| [src/server.js](../../src/server.js) | 348 | yes |
+| [schema.sql](../../schema.sql) | 270 | yes |
+| [SPEC.md](../../SPEC.md) | 269 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
-| [src/game.js](../../src/game.js) | 169 | yes |
-| [package.json](../../package.json) | 134 | yes |
+| [src/game.js](../../src/game.js) | 170 | yes |
+| [package.json](../../package.json) | 139 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
-| [src/worker.js](../../src/worker.js) | 119 | yes |
-| [src/invariants.js](../../src/invariants.js) | 113 | yes |
-| [src/rules.tail.js](../../src/rules.tail.js) | 111 | yes |
-| [test/client.js](../../test/client.js) | 98 | yes |
+| [src/worker.js](../../src/worker.js) | 120 | yes |
+| [src/invariants.js](../../src/invariants.js) | 114 | yes |
+| [src/rules.tail.js](../../src/rules.tail.js) | 113 | yes |
+| [test/client.js](../../test/client.js) | 101 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
-| [test/social.js](../../test/social.js) | 83 | yes |
-| [test/growth.js](../../test/growth.js) | 78 | yes |
-| [public/wiki.html](../../public/wiki.html) | 74 | yes |
-| [docs/WIKI.md](../../docs/WIKI.md) | 65 | yes |
-| [test/hardening.js](../../test/hardening.js) | 63 | yes |
+| [test/social.js](../../test/social.js) | 84 | yes |
+| knowledge/generated/github-history.md | 83 | historical |
+| knowledge/generated/graph-summary.md | 83 | historical |
+| knowledge/generated/graph.json | 83 | historical |
+| knowledge/generated/inventory.md | 83 | historical |
+| [public/wiki.html](../../public/wiki.html) | 79 | yes |
+| [test/growth.js](../../test/growth.js) | 79 | yes |
+| [docs/WIKI.md](../../docs/WIKI.md) | 68 | yes |
+| [test/hardening.js](../../test/hardening.js) | 64 | yes |
 | [tools/sim.js](../../tools/sim.js) | 58 | yes |
 | [README.md](../../README.md) | 55 | yes |
-| [src/preflight.js](../../src/preflight.js) | 52 | yes |
-| [src/growth.js](../../src/growth.js) | 51 | yes |
+| [src/preflight.js](../../src/preflight.js) | 53 | yes |
+| [src/growth.js](../../src/growth.js) | 52 | yes |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
-| knowledge/generated/github-history.md | 47 | historical |
-| knowledge/generated/graph-summary.md | 47 | historical |
-| knowledge/generated/graph.json | 47 | historical |
-| knowledge/generated/inventory.md | 47 | historical |
-| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 46 | yes |
+| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 49 | yes |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
 | [src/economy.js](../../src/economy.js) | 44 | yes |
 | [src/casino.js](../../src/casino.js) | 43 | yes |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
+| [test/gates.js](../../test/gates.js) | 40 | yes |
 | [src/business.js](../../src/business.js) | 39 | yes |
-| [src/chain.js](../../src/chain.js) | 36 | yes |
+| [src/chain.js](../../src/chain.js) | 37 | yes |
 | [test/migrate.js](../../test/migrate.js) | 33 | yes |
-| [DEPLOY.md](../../DEPLOY.md) | 30 | yes |
-| [public/admin.html](../../public/admin.html) | 30 | yes |
-| [test/gates.js](../../test/gates.js) | 28 | yes |
+| [public/admin.html](../../public/admin.html) | 33 | yes |
+| [test/routes.js](../../test/routes.js) | 30 | yes |
 
 ## Pull requests
 
