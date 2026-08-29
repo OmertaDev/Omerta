@@ -189,5 +189,5 @@
 | [src/walletforge.js](../../src/walletforge.js) | 206 | chain-economy | 3 / 2 | 2 | 6 | 1 |
 | [src/watcher.js](../../src/watcher.js) | 486 | chain-economy | 6 / 4 | 0 | 5 | 6 |
 | [src/wire.js](../../src/wire.js) | 463 | law-intelligence | 4 / 7 | 11 | 18 | 2 |
-| [src/worker.js](../../src/worker.js) | 878 | platform-core | 56 / 9 | 0 | 30 | 9 |
+| [src/worker.js](../../src/worker.js) | 908 | platform-core | 56 / 9 | 0 | 30 | 9 |
 | [src/world.js](../../src/world.js) | 800 | world-progression | 3 / 11 | 14 | 10 | 2 |

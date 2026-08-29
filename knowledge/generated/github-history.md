@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f73eb82968af`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `008dd2a93e14`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1258 |
+| Commits in clone | 1260 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-29 — knowledge: the drift failure names the whole recipe, because the obvious half does not work |
+| Latest commit | 2026-08-29 — worker: register the schedules before the first tick, because a hang below them leaves none at all |
 
 ## Commit authors
 
@@ -21,7 +21,7 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 431 |
-| Claude | 139 |
+| Claude | 141 |
 | CRVYDEV | 41 |
 
 ## Historical hotspots
@@ -38,14 +38,14 @@
 | [src/game.js](../../src/game.js) | 170 | yes |
 | [package.json](../../package.json) | 141 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
-| [src/worker.js](../../src/worker.js) | 120 | yes |
+| [src/worker.js](../../src/worker.js) | 121 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 114 | yes |
 | [src/invariants.js](../../src/invariants.js) | 114 | yes |
+| knowledge/generated/github-history.md | 101 | historical |
+| knowledge/generated/graph-summary.md | 101 | historical |
+| knowledge/generated/graph.json | 101 | historical |
+| knowledge/generated/inventory.md | 101 | historical |
 | [test/client.js](../../test/client.js) | 101 | yes |
-| knowledge/generated/github-history.md | 100 | historical |
-| knowledge/generated/graph-summary.md | 100 | historical |
-| knowledge/generated/graph.json | 100 | historical |
-| knowledge/generated/inventory.md | 100 | historical |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
 | [test/social.js](../../test/social.js) | 84 | yes |
 | [public/wiki.html](../../public/wiki.html) | 80 | yes |
@@ -58,7 +58,7 @@
 | [src/growth.js](../../src/growth.js) | 52 | yes |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 49 | yes |
-| [test/gates.js](../../test/gates.js) | 46 | yes |
+| [test/gates.js](../../test/gates.js) | 47 | yes |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
 | [src/economy.js](../../src/economy.js) | 44 | yes |
 | [src/casino.js](../../src/casino.js) | 43 | yes |
