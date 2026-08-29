@@ -1,6 +1,6 @@
 # Generated repository inventory
 
-> Source: worktree at `2766eb3f06ff`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `b2ad561759f8`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
@@ -13,10 +13,10 @@
 | HTTP route registrations / unique routes | 742 / 742 |
 | Database tables | 317 |
 | Solidity declarations | 49 |
-| Git commits | 1,271 |
+| Git commits | 1,286 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 5,629 / 24,680 |
+| Graph nodes / edges | 5,644 / 24,739 |
 
 ## Artifact kinds
 
@@ -48,7 +48,7 @@
 |---|---:|---|---|
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
 | [CLAUDE.md](../../CLAUDE.md) | 17,393 | documentation | 2026-08-29 |
-| [public/index.html](../../public/index.html) | 11,792 | web-surface | 2026-08-27 |
+| [public/index.html](../../public/index.html) | 11,792 | web-surface | 2026-08-29 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
