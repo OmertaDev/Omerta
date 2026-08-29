@@ -249,8 +249,28 @@ for (const route of ['POST /v1/auth/x', 'POST /v1/auth/privy']) {
 }
 assert.equal(model.routes.filter((route) => route.method === 'GET' && route.url === '/').length, 1,
   'dynamic route concatenations must not be coerced into an additional literal GET / registration');
-assert.equal(repository.currentBranch, storedRepository.currentBranch,
-  'knowledge checks must not drift when the same revision is checked from a named or detached branch');
+// This used to byte-compare the LIVE build's currentBranch against the committed artifact's, with the
+// message "must not drift when the same revision is checked from a named or detached branch". That
+// property is real, but it is a property of `currentBranchForSnapshot` and it holds only where that
+// function says it holds: a generated-only or synthetic-PR head reads the STORED branch (asserted
+// above, from both a named and a detached checkout), while an ordinary authored commit deliberately
+// FOLLOWS the checkout, so a branch describes itself. Comparing the live build against the artifact
+// therefore demanded the checkout be standing on `main` — false by design for every authored commit on
+// every branch, which is why each real-source head on a PR reddened while each regeneration head
+// passed. The git-date block below is the same lesson one field over: currentBranch is a function of
+// the CHECKOUT rather than of the REVISION, so assert the PROPERTY rather than byte-comparing it.
+assert(repository.currentBranch, 'the artifact must never carry an empty currentBranch — a bare "" '
+  + 'reads as "no branch" where the resolver promises "(detached)"');
+assert.equal(currentBranchForSnapshot({
+  currentBranch: 'a-named-branch', storedBranch: 'main', snapshot: { generatedOnly: false, syntheticPullRequestMerge: false },
+}), 'a-named-branch',
+  'an ordinary authored commit must describe the branch it is checked out on, not the branch the '
+  + 'committed artifact was generated on — the stored branch is a substitute for a checkout that has '
+  + 'no name, never an assertion that every checkout is the artifact\'s own');
+assert.equal(currentBranchForSnapshot({
+  currentBranch: '', storedBranch: '', snapshot: { generatedOnly: true },
+}), '(detached)',
+  'a detached checkout with nothing stored to fall back on must say so rather than reporting empty');
 
 // The same rule one field over, and it is the reason CI could not agree with a developer's machine:
 // git renders an ISO-strict UTC date as `+00:00` up to 2.43 and as `Z` from 2.55, so every commit
