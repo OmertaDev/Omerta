@@ -213,7 +213,13 @@ export async function nameEstate(ch, name, client, h) {
   await spendOmr(client, h, ESTATE.NAME_OMR, 'estate:name');
   await bumpPrestige(client, ch.account_id, ESTATE.NAME_OMR);
   await upsertEstate(client, ch.account_id, { name: n, spent_omr: Number(cur.spent_omr || 0) + ESTATE.NAME_OMR });
-  return { ok: true, name: n };
+  // `omr`/`spent` mirror unlockFeature and upgradeEstate: naming the place is an $OMR burn like both
+  // of them, and it named no price at all — the bare-price class inverted (the purchase named, the
+  // figure left off). `compound` NAMES THE SYSTEM so the client can key on it: this reply used to be
+  // a bare {ok, name}, which is the shape half the game returns, and the line was held together by a
+  // key COUNT — a guard that breaks the moment a reply grows a field, which is exactly what a price
+  // fix does. A marker that names the system cannot collide; absence is not a discriminator.
+  return { ok: true, compound: 'named', name: n, omr: ESTATE.NAME_OMR, spent: Number(cur.spent_omr || 0) + ESTATE.NAME_OMR };
 }
 
 // ── STEP TWO: THE STAFF (the recurring $OMR payroll) + THE GALA (design §A) ──
