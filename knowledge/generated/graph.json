@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "e70f3b09617414aadc2764ca6ce2e27d93dd1450",
+  "sourceRevision": "909c119e03b9a3b091d2988bf48085ea44c48b68",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5608,
-    "edges": 24562,
+    "nodes": 5610,
+    "edges": 24575,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 56,
-      "Commit": 1250,
+      "Commit": 1252,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,20 +65,20 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 9695,
+      "CHANGED": 9704,
       "CONTAINS": 1846,
       "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1250,
+      "HAS_COMMIT": 1252,
       "IMPLEMENTS": 124,
-      "IMPORTS": 1630,
+      "IMPORTS": 1631,
       "INHERITS": 12,
       "REFERENCES": 2811,
       "REPRESENTS": 891,
-      "TESTS": 580,
+      "TESTS": 581,
       "TRACKS": 126,
       "USES_TABLE": 1489
     }
@@ -11661,20 +11661,20 @@
       "path": "DEPLOY.md",
       "kind": "operations",
       "extension": ".md",
-      "bytes": 41100,
-      "lines": 543,
-      "version": "148d88ecb5e6a730",
+      "bytes": 42049,
+      "lines": 553,
+      "version": "a703331cd7541c62",
       "text": true,
       "provenance": [
         {
           "file": "DEPLOY.md",
           "line": 1,
-          "version": "148d88ecb5e6a730"
+          "version": "a703331cd7541c62"
         }
       ],
-      "lastChangedAt": "2026-08-24T19:44:53.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b1a180875960a09974d306bf774ea2949d071ff8"
+      "lastChangedAt": "2026-08-29T14:18:11.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "909c119e03b9a3b091d2988bf48085ea44c48b68"
     },
     {
       "key": "Artifact:deploy/fee-splits.env",
@@ -38151,20 +38151,20 @@
       "path": "test/docs.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 281268,
-      "lines": 3788,
-      "version": "2a4dd9b5daa323d2",
+      "bytes": 284520,
+      "lines": 3832,
+      "version": "e3ed821cd28b15f8",
       "text": true,
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "2a4dd9b5daa323d2"
+          "version": "e3ed821cd28b15f8"
         }
       ],
-      "lastChangedAt": "2026-08-29T14:06:14.000Z",
+      "lastChangedAt": "2026-08-29T14:18:11.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "e70f3b09617414aadc2764ca6ce2e27d93dd1450"
+      "lastChangedCommit": "909c119e03b9a3b091d2988bf48085ea44c48b68"
     },
     {
       "key": "Artifact:test/drop.js",
@@ -50229,6 +50229,22 @@
       ]
     },
     {
+      "key": "Commit:5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93",
+      "type": "Commit",
+      "id": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93",
+      "label": "Regenerate the knowledge graph",
+      "title": "Regenerate the knowledge graph",
+      "date": "2026-08-29T14:07:01.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93",
+      "provenance": [
+        {
+          "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
+        }
+      ]
+    },
+    {
       "key": "Commit:5ea313a1003718c22ca6632f1f5a34086c81a3e7",
       "type": "Commit",
       "id": "5ea313a1003718c22ca6632f1f5a34086c81a3e7",
@@ -54417,6 +54433,22 @@
         {
           "commit": "9077034198955fb52504257eb36d068ab98c07ae",
           "url": "https://github.com/OmertaDev/Omerta/commit/9077034198955fb52504257eb36d068ab98c07ae"
+        }
+      ]
+    },
+    {
+      "key": "Commit:909c119e03b9a3b091d2988bf48085ea44c48b68",
+      "type": "Commit",
+      "id": "909c119e03b9a3b091d2988bf48085ea44c48b68",
+      "label": "The smoke check creates a permanent player, and the runbook never said so",
+      "title": "The smoke check creates a permanent player, and the runbook never said so",
+      "date": "2026-08-29T14:18:11.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/909c119e03b9a3b091d2988bf48085ea44c48b68",
+      "provenance": [
+        {
+          "commit": "909c119e03b9a3b091d2988bf48085ea44c48b68",
+          "url": "https://github.com/OmertaDev/Omerta/commit/909c119e03b9a3b091d2988bf48085ea44c48b68"
         }
       ]
     },
@@ -68700,13 +68732,13 @@
       "id": "DEPLOY.md",
       "label": "DEPLOY.md",
       "documentType": "operations",
-      "lines": 543,
-      "version": "148d88ecb5e6a730",
+      "lines": 553,
+      "version": "a703331cd7541c62",
       "provenance": [
         {
           "file": "DEPLOY.md",
           "line": 1,
-          "version": "148d88ecb5e6a730"
+          "version": "a703331cd7541c62"
         }
       ]
     },
@@ -75741,6 +75773,9 @@
           "commit": "487872a2591dd4605c7686bb722f696e256e5aed"
         },
         {
+          "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
+        },
+        {
           "commit": "5ee68c063ea851c97d273aaa2e426e017c88e677"
         },
         {
@@ -75916,6 +75951,9 @@
         },
         {
           "commit": "5342b0b5e230b68eda89ff7f78178b88b189f602"
+        },
+        {
+          "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
         },
         {
           "commit": "5ee68c063ea851c97d273aaa2e426e017c88e677"
@@ -76215,6 +76253,9 @@
           "commit": "5342b0b5e230b68eda89ff7f78178b88b189f602"
         },
         {
+          "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
+        },
+        {
           "commit": "5ee68c063ea851c97d273aaa2e426e017c88e677"
         },
         {
@@ -76512,6 +76553,9 @@
           "commit": "5342b0b5e230b68eda89ff7f78178b88b189f602"
         },
         {
+          "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
+        },
+        {
           "commit": "5ee68c063ea851c97d273aaa2e426e017c88e677"
         },
         {
@@ -76707,6 +76751,9 @@
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
         },
         {
+          "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
+        },
+        {
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
         },
         {
@@ -76855,6 +76902,9 @@
         },
         {
           "commit": "5342b0b5e230b68eda89ff7f78178b88b189f602"
+        },
+        {
+          "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
         },
         {
           "commit": "5ee68c063ea851c97d273aaa2e426e017c88e677"
@@ -77074,6 +77124,9 @@
         },
         {
           "commit": "45a5bb46c8900a565e0d86419e4dc0672a063012"
+        },
+        {
+          "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
         },
         {
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
@@ -83283,7 +83336,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "e70f3b09617414aadc2764ca6ce2e27d93dd1450",
+      "revision": "909c119e03b9a3b091d2988bf48085ea44c48b68",
       "currentBranch": "claude/game-dev-roadmap-6jtsst",
       "defaultBranch": "main",
       "visibility": "public",
@@ -107220,13 +107273,13 @@
       "type": "TestSuite",
       "id": "test/docs.js",
       "label": "test/docs.js",
-      "lines": 3788,
-      "version": "2a4dd9b5daa323d2",
+      "lines": 3832,
+      "version": "e3ed821cd28b15f8",
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "2a4dd9b5daa323d2"
+          "version": "e3ed821cd28b15f8"
         }
       ]
     },
@@ -157327,6 +157380,62 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:5ea313a1003718c22ca6632f1f5a34086c81a3e7",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -172963,6 +173072,22 @@
       "to": "Artifact:test/world.js",
       "provenance": {
         "commit": "9077034198955fb52504257eb36d068ab98c07ae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:909c119e03b9a3b091d2988bf48085ea44c48b68",
+      "to": "Artifact:DEPLOY.md",
+      "provenance": {
+        "commit": "909c119e03b9a3b091d2988bf48085ea44c48b68"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:909c119e03b9a3b091d2988bf48085ea44c48b68",
+      "to": "Artifact:test/docs.js",
+      "provenance": {
+        "commit": "909c119e03b9a3b091d2988bf48085ea44c48b68"
       }
     },
     {
@@ -231327,7 +231452,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 404
+      "weight": 405
     },
     {
       "type": "DEPENDS_ON",
@@ -244185,6 +244310,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93",
+      "provenance": {
+        "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:5ea313a1003718c22ca6632f1f5a34086c81a3e7",
       "provenance": {
         "commit": "5ea313a1003718c22ca6632f1f5a34086c81a3e7"
@@ -246276,6 +246409,14 @@
       "to": "Commit:9077034198955fb52504257eb36d068ab98c07ae",
       "provenance": {
         "commit": "9077034198955fb52504257eb36d068ab98c07ae"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:909c119e03b9a3b091d2988bf48085ea44c48b68",
+      "provenance": {
+        "commit": "909c119e03b9a3b091d2988bf48085ea44c48b68"
       }
     },
     {
@@ -260801,7 +260942,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3728
+        "line": 3772
       }
     },
     {
@@ -260810,7 +260951,16 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3729
+        "line": 3773
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/docs.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/docs.js",
+        "line": 3688
       }
     },
     {
@@ -301067,7 +301217,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3728
+        "line": 3772
       }
     },
     {
@@ -301076,7 +301226,16 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 3729
+        "line": 3773
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/docs.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/docs.js",
+        "line": 3688
       }
     },
     {
