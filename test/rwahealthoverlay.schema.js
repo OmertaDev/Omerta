@@ -374,6 +374,14 @@ function productionClient(initial = new Map(), { failValidationFor = null } = {}
     'PostgreSQL internal char constraint types are cast to stable text before driver decoding');
   assert.match(catalogRead, /c\.confdeltype::text\s+AS\s+confdeltype/i,
     'PostgreSQL internal char delete actions are cast to stable text before driver decoding');
+  // The same class, one column over, and the one that actually shipped red: pg_attribute.attname is
+  // type `name`, so ARRAY(SELECT a.attname) is name[] (OID 1003) and node-postgres registers no array
+  // parser for it — the driver returns the raw literal as a STRING, Array.isArray fails, and every
+  // real-PostgreSQL boot dies claiming a constraint drifted that is byte-perfect. text[] (1009) parses.
+  // pg-mem cannot reproduce the decode, so this asserts the CAST rather than the decoded value.
+  assert.equal((catalogRead.match(/a\.attname::text/gi) ?? []).length, 2,
+    'both constraint-column ARRAY subqueries cast attname to text — name[] is a driver decode gap, '
+    + 'and without the cast the migration fails closed on every correct database');
   assert.equal(client.statements.at(-1), 'COMMIT');
   const before = client.statements.length;
   const rerun = await migrateRwaHealthOverlayV2(client);
@@ -382,13 +390,14 @@ function productionClient(initial = new Map(), { failValidationFor = null } = {}
     'an exact validated rerun performs no authority DDL');
 }
 
-for (const [label, override] of [
-  ['definition', { definition: `${definition(FOREIGN_KEYS[0])} MATCH FULL` }],
-  ['source order', { source_columns: [...FOREIGN_KEYS[0].source].reverse() }],
-  ['reference order', { referenced_columns: [...FOREIGN_KEYS[0].referenced].reverse() }],
-  ['delete action', { confdeltype: 'c' }],
-  ['referenced table', { referenced_table: 'wrong_clearances_v2' }],
-  ['type', { contype: 'c' }],
+for (const [label, field, override] of [
+  ['definition', 'definition', { definition: `${definition(FOREIGN_KEYS[0])} MATCH FULL` }],
+  ['source order', 'source_columns', { source_columns: [...FOREIGN_KEYS[0].source].reverse() }],
+  ['reference order', 'referenced_columns',
+    { referenced_columns: [...FOREIGN_KEYS[0].referenced].reverse() }],
+  ['delete action', 'delete_action', { confdeltype: 'c' }],
+  ['referenced table', 'referenced_table', { referenced_table: 'wrong_clearances_v2' }],
+  ['type', 'type', { contype: 'c' }],
 ]) {
   const client = productionClient(new Map([
     [FOREIGN_KEYS[0].name, metadata(FOREIGN_KEYS[0], override)],
@@ -396,7 +405,10 @@ for (const [label, override] of [
   await assert.rejects(migrateRwaHealthOverlayV2(client), (error) => (
     error.code === 'rwa_health_overlay_migration_invalid'
       && error.message.includes(`drifted constraint ${FOREIGN_KEYS[0].name}`)
-  ), `${label} drift must fail closed`);
+      // and it NAMES what drifted. Six conditions share one refusal; an operator staring at a
+      // database that will not boot should not have to read pg_constraint to learn which.
+      && error.message.includes(`fields=${field}`)
+  ), `${label} drift must fail closed, naming ${field}`);
   assert.equal(client.statements.at(-1), 'ROLLBACK');
 }
 

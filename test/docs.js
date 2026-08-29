@@ -875,6 +875,31 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
       + 'against our own arithmetic.');
 }
 
+// ── THE WORKFLOW SCRIPT LEDGER ──────────────────────────────────────────────────
+// The block above asserts CI still INVOKES each harness. It cannot see the other half: an invocation
+// naming a script package.json does not define. `npm run <missing>` exits non-zero with
+// "Missing script", so the step fails for a reason that has nothing to do with the code under test —
+// which is exactly how ci.yml came to run `npm run test:stockcatalogv2:postgres` against a
+// package.json that had no such key, turning a real-PostgreSQL job red on every branch at once.
+// Catalogue rather than spot-check: every `npm run` any workflow issues must resolve.
+{
+  const scripts = JSON.parse(read('package.json')).scripts ?? {};
+  const invocations = [];
+  for (const file of fs.readdirSync('.github/workflows').filter((f) => /\.ya?ml$/.test(f))) {
+    for (const m of read(`.github/workflows/${file}`).matchAll(/npm run ([a-z0-9:_-]+)/gi))
+      invocations.push({ file, script: m[1] });
+  }
+  // anti-vacuity: an extractor that has stopped reading the workflows passes clean over a tree where
+  // every one of these is broken.
+  assert(invocations.length >= 10, 'THE WORKFLOW SCRIPT LEDGER read only '
+    + `${invocations.length} \`npm run\` invocation(s) across .github/workflows — the workflows or the `
+    + 'pattern have moved, so this check is measuring nothing.');
+  const missing = invocations.filter((i) => !(i.script in scripts))
+    .map((i) => `.github/workflows/${i.file} runs \`npm run ${i.script}\`, which package.json does not define`);
+  assert.deepEqual(missing, [], 'a workflow invokes a script that does not exist, so that step fails '
+    + `with "Missing script" whatever the code does:\n  ${missing.join('\n  ')}`);
+}
+
 // ── and neither does a gate that fails on its own dependency list ────────────────────────────────
 // `forge test` is the pre-mainnet gate. Economy v3 step 6 added the v4 hook, added v4-core to
 // `run-forge-test.sh`, and did NOT add it to the workflow — so on GitHub `forge build` failed to

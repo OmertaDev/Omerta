@@ -411,15 +411,22 @@ async function readH2ForeignKey(q, spec) {
             c.confdeltype::text AS confdeltype,
             pg_get_constraintdef(c.oid,true) AS definition,
             c.confrelid::regclass::text AS referenced_table,
+            -- ::text is load-bearing, not decoration. pg_attribute.attname has SQL type name,
+            -- so a bare ARRAY(...) of it is name[] (OID 1003) and node-postgres registers no
+            -- array parser for that OID: the driver hands back the raw literal {a,b,c} as a
+            -- STRING, exactStringArray's Array.isArray fails, and every boot against real
+            -- PostgreSQL dies on a drifted-constraint refusal that never drifted. text[]
+            -- (OID 1009) the driver does parse. No backticks in this comment: it sits inside a
+            -- JS template literal.
             ARRAY(
-              SELECT a.attname
+              SELECT a.attname::text
                 FROM unnest(c.conkey) WITH ORDINALITY AS key_column(attnum,ordinality)
                 JOIN pg_attribute a
                   ON a.attrelid=c.conrelid AND a.attnum=key_column.attnum
                ORDER BY key_column.ordinality
             ) AS source_columns,
             ARRAY(
-              SELECT a.attname
+              SELECT a.attname::text
                 FROM unnest(c.confkey) WITH ORDINALITY AS key_column(attnum,ordinality)
                 JOIN pg_attribute a
                   ON a.attrelid=c.confrelid AND a.attnum=key_column.attnum
@@ -439,14 +446,27 @@ function exactStringArray(value, expected) {
 }
 
 function verifyH2ForeignKey(row, spec, { requireValidated }) {
-  if (!row || row.contype !== 'f'
-      || String(row.referenced_table).replace(/^public\./, '') !== H2_FINALIZED_TABLE
-      || row.confdeltype !== 'r'
-      || !exactStringArray(row.source_columns, spec.source)
-      || !exactStringArray(row.referenced_columns, spec.referenced)
-      || canonicalConstraintDefinition(row.definition)
+  // Name every field that drifted rather than only the constraint. A bare `drifted constraint X`
+  // is a fail-closed refusal with nothing in it for the operator: the six conditions below fail
+  // for entirely different reasons, and telling them apart is otherwise a manual pg_constraint
+  // read against a database that will not boot.
+  const drift = [];
+  if (!row) drift.push('missing');
+  else {
+    if (row.contype !== 'f') drift.push('type');
+    if (String(row.referenced_table).replace(/^public\./, '') !== H2_FINALIZED_TABLE) {
+      drift.push('referenced_table');
+    }
+    if (row.confdeltype !== 'r') drift.push('delete_action');
+    if (!exactStringArray(row.source_columns, spec.source)) drift.push('source_columns');
+    if (!exactStringArray(row.referenced_columns, spec.referenced)) drift.push('referenced_columns');
+    if (canonicalConstraintDefinition(row.definition)
         !== canonicalConstraintDefinition(h2ForeignKeyDefinition(spec))) {
-    throw h2MigrationError(`drifted constraint ${spec.name}`);
+      drift.push('definition');
+    }
+  }
+  if (drift.length) {
+    throw h2MigrationError(`drifted constraint ${spec.name} fields=${drift.join(',')}`);
   }
   if (requireValidated && row.convalidated !== true) {
     throw h2MigrationError(`unvalidated constraint ${spec.name}`);
