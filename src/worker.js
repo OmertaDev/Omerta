@@ -276,7 +276,17 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
   // Each job is individually transactional, so a failure in one must NOT starve the others —
   // above all the nightly §10.4 drift monitor (a non-technical founder relies on that alarm).
   // Isolate every job in its own try/catch so a poison row can't take the whole tick down.
-  const safe = async (label, fn) => { try { return await fn(); } catch (e) { console.error(`worker: ${label} failed`, e); return null; } };
+  // WHICH job the tick is inside, for the watchdog below. A hung tick is the failure this ordering
+  // exists to survive (see the startup block), and "a tick has been running 14 minutes" leaves the
+  // reader to guess which of 121 jobs — measured in production on 2026-08-29, where the heartbeat
+  // (job 1) and the fair-draw stamp (job 2) both landed and nothing after them ever did. The label is
+  // what turns that into a module to open. Cleared on return so a finished tick names nothing.
+  let currentJob = null;
+  const safe = async (label, fn) => {
+    currentJob = label;
+    try { return await fn(); } catch (e) { console.error(`worker: ${label} failed`, e); return null; }
+    finally { currentJob = null; }
+  };
   // How many consecutive ticks have found the database unreachable — used only to keep the log honest
   // (say it once, then say how long it has been going on) rather than to change what we do about it.
   let dbDownTicks = 0;
@@ -703,9 +713,57 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
   const guardedTick = async () => {
     if (ticking) { console.warn('worker: previous tick still running — skipping this interval'); return; }
     ticking = true;
-    try { await tick(); } finally { ticking = false; }
+    // A HUNG tick is the one failure this process cannot report on its own: safe() catches throws,
+    // never hangs, and every alarm in the game lives on this tick — so when it stops, the thing that
+    // would tell you has stopped too. The watchdog is the only voice left. It is unref'd so it can
+    // never itself be what keeps a dead worker alive.
+    const started = Date.now();
+    // THREE WARNINGS, THEN WE RESTART OURSELVES. The ordering below keeps the SCHEDULE alive through a
+    // hang, and that is ALL it does: the hourly interval fires, the in-flight guard skips it, and the
+    // worker does nothing forever — louder, but still dark. Production supplied the other half on
+    // 2026-08-29: `/health` reported `stale: true` for 14.6 hours with nobody polling it, which is this
+    // codebase's own alarm-into-nothing shape. A log line is not a remedy when the only reader is asleep.
+    //
+    // Exiting is safe because it is already the TESTED posture, not a new bet: every job is its own
+    // transaction, every sweep is idempotent, and tools/chaos.js SIGKILLs this process mid-sweep
+    // precisely to prove the resumed run pays exactly once. A dying connection rolls its transaction
+    // back. So the cost of a wrong restart is repeated idempotent work; the cost of not restarting is
+    // every timed settlement and every alarm in the game, indefinitely.
+    //
+    // The bound is three warning periods (30 min), and the sizing is not a guess: NOTHING BOUNDED CAN
+    // REACH IT. The pool sets statement_timeout 15s, lock_timeout 8s and idle_in_transaction 30s
+    // (src/db.js), and every outbound fetch on this tick carries AbortSignal.timeout(10s) — so no
+    // query, no lock wait and no HTTP call can hang half an hour. The largest tick ever MEASURED is
+    // the season rollover at ~2 minutes for 50,000 players (tools/workercost.js), and it is many small
+    // bounded transactions rather than one long one. A 30-minute tick is therefore not a slow tick; it
+    // is an await that will never settle, which is the one shape with no other remedy. Three periods
+    // rather than one so an operator reading logs sees the stuck job NAMED three times first.
+    const HANG_WARN_MS = 10 * 60 * 1000;
+    const HANG_EXIT_WARNINGS = 3;
+    let hangWarnings = 0;
+    const watchdog = setInterval(() => {
+      hangWarnings++;
+      console.error(`🚨 worker: this tick has been running ${Math.round((Date.now() - started) / 60000)}m`
+        + (currentJob ? `, stuck in '${currentJob}'` : '')
+        + ' — every timed settlement and every alarm is blocked behind it, and /health reports the '
+        + 'heartbeat stale. Restart the worker service.');
+      if (hangWarnings >= HANG_EXIT_WARNINGS) {
+        console.error('🚨 worker: the tick has not returned in '
+          + `${Math.round(HANG_WARN_MS * HANG_EXIT_WARNINGS / 60000)}m — exiting so the platform `
+          + 'restarts us. Every sweep is idempotent and each job is its own transaction (tools/chaos.js '
+          + 'proves a mid-sweep kill resumes exactly once), so this costs repeated work, never money.');
+        process.exit(1);
+      }
+    }, HANG_WARN_MS);
+    watchdog.unref?.();
+    try { await tick(); } finally { clearInterval(watchdog); ticking = false; }
   };
-  await guardedTick();
+  // ORDER IS LOAD-BEARING (measured in production 2026-08-29, 14h dark): registering the hourly
+  // schedule AFTER `await guardedTick()` means a first tick that never returns leaves NO SCHEDULE AT
+  // ALL — not a skipped tick, no interval object, ever — and the process stays alive on the pending
+  // await, so the platform sees a healthy process and never restarts it. The only outward sign is a
+  // heartbeat frozen at boot+8s. Registered FIRST, the same hang instead announces itself hourly
+  // through the in-flight guard's own warning above. The health clock hoists for the same reason.
   setInterval(guardedTick, 3600 * 1000);
 
   // H1 operational health is its own fixed five-minute clock. JavaScript time chooses only when to
@@ -728,6 +786,17 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
     }, delay);
   };
   scheduleHealthBoundary();
+
+  // THE FIRST TICK IS FIRED HERE, NOT AWAITED, and both halves of that are deliberate. HERE, because
+  // both schedules it could starve (the hourly interval, the health clock) are already registered and
+  // nothing that can hang sits above it — makeViemSource() below awaits an RPC. NOT AWAITED, because
+  // awaiting it is what let a hung tick swallow every registration after it. The in-flight guard makes
+  // it safe against the hourly fire. The explicit catch keeps the old crash-and-restart semantics: a
+  // first tick that THROWS ends the process, so the platform brings it back.
+  void guardedTick().catch((e) => {
+    console.error('🚨 worker: the first tick threw — exiting so the platform restarts us', e);
+    process.exit(1);
+  });
 
   // §11 chain-event sync (audit F2/F3): POLL getLogs over a persisted block cursor, staying
   // CHAIN_CONFIRMATIONS behind head — so worker downtime backfills (no lost fee credits) and a
@@ -869,9 +938,12 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
         syncing = true;
         try { await syncTick(); } finally { syncing = false; }
       };
-      await guardedSync();
+      // same ordering rule as the hourly tick above: register the poll FIRST, so a first sweep that
+      // hangs (a big backfill against a slow RPC) costs one sweep rather than the whole schedule.
       setInterval(guardedSync, Number(process.env.CHAIN_POLL_MS || 30000));
       console.log(`⛓  chain sync polling every ${Number(process.env.CHAIN_POLL_MS || 30000) / 1000}s, ${DEFAULT_CONFIRMATIONS} confirmations behind head`);
+      await guardedSync();
     }
   }
+
 }

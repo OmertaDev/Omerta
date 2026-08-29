@@ -83,7 +83,12 @@ envVarGroups:
                                  # backup watchdog post to it. Leave it blank and those alarms have nowhere
                                  # to shout; you would only find out by reading logs. Discord: Server
                                  # Settings → Integrations → Webhooks → New Webhook → Copy URL.
-                                 # It is in the SHARED group on purpose: the alarms run in the worker.
+                                 # It is in the SHARED group and MUST STAY THERE: the economy and backup
+                                 # alarms run in the WORKER, and since 2026-08-29 the API runs one of its
+                                 # own — the watchdog that shouts when the WORKER goes dark (measured: 15
+                                 # hours silent, `/health` saying `stale: true` to nobody). A process
+                                 # cannot alarm on being dead, so moving this key to the worker alone
+                                 # disables the one alarm that covers the worker being gone.
       - key: CITY_WIRE_WEBHOOK_URL
         sync: false              # OPTIONAL, marketing: a PUBLIC Discord channel webhook. THE CITY WIRE
                                  # posts the city's drama (kills, wars, monuments, prison breaks) there so
@@ -106,6 +111,8 @@ services:
     #   · the `wsClients` presence registry — /v1/online, discovery/circle "online" chips, the
     #     push-skip signal all read it
     #   · the in-memory rate-limit buckets (unless REDIS_URL is set) — N instances = N× every limit
+    #   · the per-account flood brakes (phone.js `lastDmAt`, server.js `lastChatAt`) — the same
+    #     class as the buckets above and NOT covered by REDIS_URL: N instances = N× the allowed rate
     #   · the /health request-metrics ring — per-instance numbers, harmless but misleading
     # Scaling OUT (vs upgrading the database, which is the measured dial below) needs REDIS_URL for
     # the rate limiter + a cross-process fanout for the bus. Until that exists, more instances make
@@ -203,7 +210,23 @@ services:
           property: connectionString
 
   # 2) the background worker — the 12h buyback, the nightly §10.4 economy monitor, and every timed settlement.
-  #    Run exactly ONE. The game works without it, but income/settlements/alerts stall — keep it running.
+  # ⚠ RUN EXACTLY ONE INSTANCE OF THIS SERVICE (numInstances is deliberately not declared — it
+  # defaults to 1). Running ZERO is loud and recoverable: income, settlements and alerts stall, and
+  # /health reports the worker heartbeat stale. Running TWO is SILENT, and is the one to be careful
+  # of — both replicas run the same tick, so every job that is not individually guarded happens
+  # TWICE:
+  #   · outbound sends double — a push buzzed twice, a digest emailed twice, a city-wire line
+  #     posted twice. There is no undo, and the recipient is the one who notices.
+  #   · money moves double. This project has found and fixed that class one job at a time, and each
+  #     lock's own comment records its case: the DEX bots each SENDING real ETH, the city leg on a
+  #     MINT path, the population's metered daily faucet spending its whole allowance twice.
+  #   · the defence is PER JOB, never global. These modules take a session advisory lock —
+  #     `bank.js`, `dexbot.js`, `treasury.js`, `npcwar.js`, `population.js`, `diplomacy.js` — and
+  #     every other job rests on its own claim-then-act latch. A NEW job inherits nothing: it
+  #     carries that discipline itself, or it double-runs the day a second replica exists.
+  # That second replica is not hypothetical — it is the threat model each of those locks names in
+  # its own comment ("two worker replicas could each read it as untouched"), which is a deploy
+  # overlap, and it lasts long enough to send.
   - type: worker
     name: omerta-worker
     runtime: node

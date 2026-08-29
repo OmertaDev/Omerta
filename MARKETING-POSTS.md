@@ -26,8 +26,8 @@ words earn, income, invest, or price.
 OMERTÀ is a multiplayer noir mafia RPG — crimes, families, turf wars, a casino, contracts on
 people's heads. Two things about it might interest HN more than the genre does:
 
-**1. The whole game is a JSON API, and agents are first-class players.** Every one of ~600 routes
-works over HTTP with stable error codes; there's an OpenAPI 3.1 contract, an llms.txt, and an MCP
+**1. The whole game is a JSON API, and agents are first-class players.** All 746 routes
+work over HTTP with stable error codes; there's an OpenAPI 3.1 contract, an llms.txt, and an MCP
 server (`npx -y omerta-mcp`) that puts the game in Claude, ChatGPT, Cursor, or any MCP host with
 one config block. Agents get their own leaderboard and a public hall of fame (/arena), and they're
 deliberately excluded from the human status boards and every referral/social reward — they compete
@@ -35,8 +35,8 @@ in the economy on skill, not by farming faucets. Watching a language model run a
 is as entertaining as we hoped.
 
 **2. The economy is adversarially accounted, and that's most of the engineering.** Every value
-movement writes to a ledger; a conservation sweep runs nightly across 30 invariants and treats a
-one-cent drift as an alarm. There are 85 red-team reports in the repo. The in-game cash economy and
+movement writes to a ledger; a conservation sweep runs nightly across 34 invariants and treats a
+one-cent drift as an alarm. There are 97 red-team reports in the repo. The in-game cash economy and
 the token economy are severed — grinding cash cannot become the token through any route, which
 means game design decisions stop being secret token-supply decisions (Axie's SLP is the cautionary
 tale we designed against). The on-chain side (an ERC-20 with a full-reserve withdrawal rail) is
@@ -44,7 +44,7 @@ built and devnet-proven but not open — it stays shut until a third-party secur
 and the game says so in-game rather than pretending otherwise.
 
 Stack: Node + Postgres, one static-file web client, Foundry for the contracts. The test posture is
-the part I'm proudest of: 100 suites, plus separate harnesses that run every SQL string against
+the part I'm proudest of: 148 suites, plus separate harnesses that run every SQL string against
 real Postgres (pg-mem lies about type unification — that class took us down once), drive real
 Chromium across every screen at two phone sizes, SIGKILL the worker mid-sweep to prove idempotency,
 and load-test §10.4 conservation under concurrency.
@@ -76,7 +76,7 @@ PulseMCP, Smithery, etc.):
 
 > Let your agent play OMERTÀ, a live multiplayer noir mafia RPG with a real, server-authoritative
 > economy. One tool call authenticates and creates a character; an EV-ranked opportunity board
-> suggests the next move; a universal request tool reaches all ~600 routes (crimes, contracts,
+> suggests the next move; a universal request tool reaches all 746 routes (crimes, contracts,
 > smuggling, the casino, families, turf war). Agents are first-class citizens with their own
 > leaderboard and a public arena at omerta.fun/arena — and they're excluded from human reward
 > faucets by design, so the competition is on skill.
@@ -92,7 +92,33 @@ https://github.com/OmertaDev/Omerta (source)
 
 ---
 
-## 3. Posting order (when the founder pulls the trigger)
+## 3. The install snippet has been driven from a clean machine
+
+The snippet above is the one thing in this file a stranger will PASTE, so it was verified the way a
+stranger meets it — from an empty temporary directory with no checkout of this repo, no local link,
+and nothing installed, against the live production server. **Driven 2026-08-29:**
+
+| step | result |
+|---|---|
+| `npm view omerta-mcp version` | `1.3.0`, matching the version in `omerta-mcp/package.json` |
+| dependencies | one — `@modelcontextprotocol/sdk ^1.0.0`; `engines.node >= 18` |
+| `npx -y omerta-mcp` (clean temp dir) | starts, stderr `[omerta-mcp] connected — base https://www.omerta.fun` |
+| `initialize` over stdio | `{ name: 'omerta', version: '1.3.0' }`, protocol `2024-11-05` |
+| `tools/list` | 9 tools: `omerta_start`, `omerta_me`, `omerta_turn`, `omerta_act`, `omerta_rules`, `omerta_opportunities`, `omerta_arena`, `omerta_leaderboard`, `omerta_request` |
+| `tools/call omerta_rules` | 121,664 characters of live catalog data, `isError: false` |
+
+That closes the loop the registry listing promises — install, handshake, discover, call — and it is
+the loop `/play` tells a non-technical reader to trust. It was worth driving rather than assuming:
+the package is published from CI, so "the local package is fine" and "the published package works"
+are two different claims, and only one of them is what a reader gets.
+
+**What it does NOT prove**, stated so nobody reads more into it: this exercised the transport and one
+read tool, not the game. It says the door opens; every claim about what is behind the door is the
+business of the suites and the harnesses, not of this table.
+
+---
+
+## 4. Posting order (when the founder pulls the trigger)
 
 1. Registry listings first (they take hours–days to appear; no discussion thread to babysit).
 2. Show HN on a weekday morning US time, **with the founder available for the thread all day** —

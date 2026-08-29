@@ -17222,3 +17222,171 @@ the refund; the server dropping `minEntrants` on the stakes; the card entry drop
 on; the futurity reverting to its original sentence), each restored by `cp` from a scratchpad copy,
 never `git checkout`. Driven actions 265 → 270. Suite green; **no SQL moved in `src/`** (checked with a
 diff filter, not assumed), so the real-Postgres gates do not apply.
+
+**THE BOOTSTRAP CHILD WAS KILLING A CORPSE — a race `test/agent-alpha.js` had been winning on luck
+(2026-08-29).** The full suite came back red at
+`Timed out waiting for bootstrap child hard exit`, and the run that produced it reported **exit code
+0** to its wrapper — the pipe-masking trap in its newest costume, since the task's last command was a
+`tail`. Only `EXIT=1` inside the log was the truth. **The suite passed standalone**, which is the
+shape that makes a red like this easy to wave off as a flake and re-run; it is not one.
+**ROOT CAUSE, reproduced before it was called anything.** The block stages a client that dies
+mid-request: a child holds `/v1/auth/guest` open, signals the parent over IPC, and blocks on
+`await new Promise(() => {})`. **That is not a hang.** The moment the child's event loop drains, Node
+detects the unsettled top-level await and **exits 13 of its own accord** — its own stderr said so
+(*"Warning: Detected unsettled top-level await"*) and nobody had read it. The parent meanwhile does
+real work between the held response and the kill (a file read and two DB queries), and attached its
+`exit` listener **at kill time** — so on an exit that had already fired the listener never ran, the
+8-second `waitFor` expired, and the failure named the wait rather than the cause. Instrumented, the
+happy path shows `exitCode=null` and an exit observed in **2ms**; a deliberate **50ms** delay in that
+window is enough to flip it to `exitCode=13` and reproduce the CI error verbatim. So the window is not
+a margin — it is however long somebody else's latency happens to be, and this test has been winning a
+coin toss, not passing.
+**THE FIX HAS TWO HALVES AND ONLY ONE OF THEM IS TESTABLE, which is worth stating rather than
+glossing.** (1) **Hold the child HONESTLY** — a keepalive timer, so the only thing that ends that
+process is the parent's kill, which is what the block's own assertions claim; the assertion is now
+`death.signal === 'SIGTERM'`, which is the *cause* of death rather than the weak `exitCode !== 0` that
+`null` and `13` both satisfy. (2) **Capture the exit promise at SPAWN**, so an exit at any later moment
+is observed. Half (2) **survives its own mutation with half (1) in place, correctly**: with the child
+genuinely held there is no early exit to miss, so it is defence in depth against the child dying for
+some *other* reason — a crash, an OOM, a future edit. Reverting BOTH reproduces the original error by
+name.
+**THE CLASS, SWEPT** (the RT#7 shape — a defect fixed where it was found and never taken to its
+edge). Two more sites attach an `exit` listener after doing work: agent-alpha's second child (held by
+the *server*, so it cannot self-exit — latent, not live) and **`test/mcp.js`, where the same await
+carries NO TIMEOUT AT ALL** and would hang the job outright with no message. **And the first sweep
+did not reach its own edge** — a re-check of every `spawn` site in `test/` and `tools/` found **two
+more in `tools/chaos.js`**, which runs in CI: a worker spawned, worked against, killed, and only THEN
+listened to — the second with a **60-second** poll loop in the gap, and the worker is a process that
+genuinely can die inside it (a boot failure, a crash, an OOM). Neither await carries a timeout, so the
+failure is not a wrong answer but an **infinite hang**, reported to CI as a 20-minute job timeout with
+no message. Reproduced with the probe rather than argued (attach-after-work: `HUNG — exit never
+observed`; capture-at-spawn: `OBSERVED`). A third site in the same file was already correct and is
+left alone — it checks `exitCode`/`signalCode` first and carries a 12s fallback, and its own comment
+records the related lesson that reading `exitCode` alone misreports a signalled death. All now capture
+at spawn — and **five instances across three files is a class, so it earned a guard rather than a third
+hand-fix**: **THE CHILD-EXIT LEDGER** (`test/gates.js`, catalogue-or-declare like its siblings) fails if a
+spawned child whose exit is EVER awaited has that listener attached with an `await` in between, with the
+one defensible site DECLARED rather than fixed and **two anti-vacuity floors** — one for an extractor that
+has stopped seeing spawns, one for a waiver list drifted off the tree, since a stale waiver silently
+re-covers a real site. A child nobody waits on (an anvil the parent simply kills at teardown) is
+deliberately out of scope. **Its own first run produced two false positives and both were mine**: the
+scanner read COMMENTS, and the only `await` at those two sites was in the sentence explaining why they
+capture at spawn — the recorded lesson (the ARTICLE LEDGER and the ANY-OF-ARRAY BAN both strip comments
+first, because *a mostly-wrong advisory is the kind people route around*); comments are stripped now, with
+line positions preserved so a failure still names the real line. Three mutations, three distinct named
+kills (a reverted fix names its file and line; a bogus waiver trips the stale check — a RENAMED live one
+would trip the main assert first and prove something else; a blinded extractor reports `found only 0`
+rather than a clean sweep). The mechanism is proven directly by a probe rather than argued: against a child that has
+already exited, the old shape reports `HUNG — exit never observed` and the new one observes it.
+**`test/mcp.js` is not in the `npm test` chain** — it is `omerta-mcp`'s own `npm test`, run by the
+publish workflow after `npm install` — so it was verified the way CI runs it, with the SDK installed,
+green before and after (its local `ERR_MODULE_NOT_FOUND` was a missing `node_modules`, checked against
+the original before being blamed on the change).
+**AND THE RED CI ON THE OPEN PR WAS ALREADY FIXED IN AN UNPUSHED COMMIT — the sub-second step
+(2026-08-29).** Ground rule #8 sends you to CI after every push, and the PR's `real Postgres` job was
+red while `suites + sim (pg-mem)` was green. **The diagnosis was one call, and the shape of the call
+is the lesson**: `get_job_logs` tailing that job returns the postgres service container's teardown —
+not the failure — and cost two wasted reads at 80 and 175 lines; `list_workflow_jobs` gives
+**step-level conclusions**, which named a single failing step out of nine. That step ran
+**11:37:00 → 11:37:00 — under one second**, and a sub-second failure is not a logic failure: it is the
+`npm run <missing-script>` signature, which exits non-zero instantly and **reads on a summary line
+exactly like a check that ran**. Decisively, the two RWA steps in my local `ci.yml` were **absent from
+that run's step list**, which proves the workflow at origin's tip predates them — i.e. the red head is
+`a0320ce0` and the fix is the already-committed, **unpushed** `ffe20171`, whose own message names this
+exact class. **Verified rather than argued** before pushing: all three real-PG steps driven locally at
+HEAD on fresh throwaway databases — stock catalog v2, RWA health, RWA registry lifecycle — **green,
+green, green**, plus `pgquery` and `pgcheck`. One local-invocation note worth keeping: those three
+suites parse `TEST_DATABASE_URL` with `new URL()`, which **refuses the socket-style
+`postgres://postgres@/db?host=/tmp` form** the other gates take — CI passes a TCP url, so drive them
+the way CI does (`postgres://postgres@127.0.0.1:5433/db`) or the run fails on the harness rather than
+on the code, which reads exactly like a defect and is not one.
+**AND THE SMOKE CHECK CREATES A PERMANENT PLAYER, WHICH THE RUNBOOK NEVER SAID (2026-08-29).**
+`DEPLOY.md` §8's post-deploy smoke check tells the operator to create a character on the live box —
+once per deploy, forever — and said nothing about what becomes of it. The launch rehearsal had
+already found the consequence once (10 of 12 entries on `/v1/live` were dead level-1 accounts from
+old smoke runs) and the fix at the time was a **recency gate on the player-facing boards**. That
+closed the board half and left the other half unstated, which is the RT#7 shape: a class fixed where
+it was discovered and never taken to its edge. **Measured rather than assumed**: `src/ops.js`'s three
+headline counts (`total`/`alive`/`dead`) carry **no recency gate**, while `active24h` — one line
+below them — does. So every smoke character counts in the founder's own headline player figure
+permanently, and the honest number to read is the one that is gated. Both halves are on the line now,
+with the consequence a reader can act on (subtract them by name — they are the only characters the
+checklist creates). **The note makes two claims about code and prose rots, so both are guarded, and
+the guard is deliberately TWO-SIDED**: it fails if the cited `DISCOVERY.SEEN_DAYS` drifts from the
+lever, it fails if `collision.js`/`discovery.js` stop calling `seenSince()` (asserted at the CALL
+SITE, never at the lever — *a helper that exists and is never called gates nothing*, which is exactly
+the shape the rehearsal found), and it fails if somebody **GATES the overview** — because then the
+warning is telling a reader a number is inflated when it no longer is, and the right response is to
+DELETE the warning rather than widen the check. The assertion says so in its own message.
+**Its first cut read only single-quoted SQL**, and a gated count *must* be double-quoted, because the
+SQL then carries an interval literal with a quote inside it — so the mutation that matters made the
+gated row **vanish from the corpus** and fired at the count assertion instead of at the one that
+names what changed (the recorded *"a failure that names the wrong thing is barely better than no
+failure"* class, and the reason the fix is the extractor rather than the assertion). Three mutations,
+three distinct named failures. **One process note re-paid twice in one sitting**: a background
+notification reported *"exit code 0"* for a full-suite run that had produced 23 lines and no `EXIT=`
+— the wrapper's code, not the suite's, because the command carried `&` INSIDE a backgrounded call and
+the shell returned instantly. Read the log's own `EXIT=` line, never the notification; and the same
+sitting had already reported `KN_EXIT=1` for a knowledge test that passes three-for-three, which was
+the piped `tail`'s code. **The pipe-masking trap has two more costumes than the one ground rule #8
+names.**
+
+**THE WORKER WENT DARK FOR FIFTEEN HOURS AND THE ALARM WAS A FIELD ON AN ENDPOINT (2026-08-29).**
+Measured on production, not inferred: `/health` reported `worker.stale: true` continuously —
+`beatAgoSeconds: 54719` against an API `uptimeSeconds` of 54727, i.e. **one beat, eight seconds after
+boot, then nothing for 15h 12m**. `/v1/fairness` showed today's commitment `recorded: true`, and that
+row is written by job 2 of the tick, so the boot tick got through the heartbeat and the fair-draw
+stamp and stopped at or after job 3 — a narrowing, not a diagnosis. Every timed settlement and every
+proactive alarm in the game lives on that tick: **121 jobs**, including the nightly §10.4 drift
+monitor, the WAL-archiver watchdog, the oracle-keeper watchdog and eight other invariant runners with
+their alert legs. So the whole detection layer was off, and **the only thing that would have said so
+was the layer that had stopped.** The founder has been receiving §10.4 pages on Discord since
+2026-08-07, which is what makes this evidence rather than theory: the channel works, and it was
+silent because the process that posts to it was the one that was gone.
+**THE BRANCH THAT SETS `stale` SAYS A MONITOR "POINTED HERE CAN ALARM ON IT". NOTHING WAS POINTED
+THERE.** That is this codebase's own alarm-into-nothing shape, now paid for a **fourth** time (the
+§10.4 webhook that 400'd on both Slack and Discord, the WAL archiver, the oracle keeper). *A field on
+an endpoint is not an alarm; something has to POST.*
+**TWO HALVES, because either alone leaves the outage standing.** **(1) THE API WATCHES THE WORKER**
+(`startWorkerWatch`, `src/server.js`) — the API is the right watcher for exactly one reason: **a
+process cannot alarm on being dead**, and the API is the one that stays up when the worker does not.
+It shouts on the SAME channel every other alarm uses, so nothing new is configured, and costs one
+indexed primary-key read every 15 minutes. Latched per EPISODE **and it announces RECOVERY**, because
+without the recovery line an operator who restarts the worker cannot tell whether it worked — and a
+latch that never unlatches makes the SECOND episode silent, which is the half a static check
+structurally cannot see. `WORKER_STALE_SEC` is read by **both** `/health`'s `worker.stale` and the
+alarm: two copies of that number is how a dashboard and an alarm come to disagree about whether the
+worker is alive. Deliberately **not** a 503 on `/health` — the API is genuinely healthy, and failing
+its own health check would take the GAME down to report that a sweep is late. **(2) A HUNG TICK NOW
+ENDS** (`guardedTick`, `src/worker.js`) — the startup-order fix that preceded this keeps the
+*schedule* alive through a hang and that is **all** it does: the hourly interval fires, the in-flight
+guard skips it, and the worker does nothing forever, louder. Three warnings **naming the stuck job**,
+then `process.exit(1)`. Exiting is the already-TESTED posture rather than a new bet — every job is
+its own transaction, every sweep idempotent, and `tools/chaos.js` SIGKILLs this process mid-sweep
+precisely to prove the resumed run pays exactly once. **The 30-minute bound is sized so NOTHING
+BOUNDED CAN REACH IT**: `statement_timeout` 15s, `lock_timeout` 8s, `idle_in_transaction` 30s, and
+every worker-reachable `fetch` carries `AbortSignal.timeout(10s)`, while the largest tick ever
+MEASURED is the season rollover at ~2 minutes for 50,000 players (`tools/workercost.js`). A
+30-minute tick is therefore not a slow tick; it is an await that will never settle. Arithmetic over
+the shipped constants: this outage would have paged within **105 minutes** and, if it was a hang,
+self-healed at **30**.
+**THE FIX HAD TO BE MADE DRIVABLE BEFORE IT COULD BE TRUSTED.** The watchdog first sat inside the
+main-module block, so `buildServer()` never started it and the claim could only ever have been
+static — the probe that proved it returned `paged when dark: FAIL (0)`. Lifted into an exported
+function returning **the same `check` predicate the interval runs**, so `test/hardening.js` drives
+the real code (quiet while fresh → pages once on the dark edge → latches → announces recovery →
+**pages again on the next episode**), with `everyMs: 3_600_000` so no wall clock decides whether it
+passes. `test/gates.js` keeps the static half and asserts the hang bound as a **RELATION** (15–60
+minutes) rather than a literal, because both ends are real — too short kills a legitimately long
+tick, too long and the remedy never arrives — plus that `startWorkerWatch` is actually **CALLED**: a
+watchdog nobody starts is prose.
+**AND THE COMMENT THAT WOULD HAVE UNDONE IT.** `render.yaml` explains `INVARIANT_WEBHOOK_URL`'s place
+in the SHARED env group with *"the alarms run in the worker"* — a reason that stopped being complete
+the moment the API started alarming, and one a later tidy-up could follow onto the worker alone,
+**silently muting the single alarm that covers the worker being gone**. Corrected, and guarded on both
+decidable halves (the key is in the group; the web service pulls the group), because prose rots by
+hand. **TWO GUARD BUGS, both the over-read class, both found by mutation**: a region sliced to
+end-of-file was satisfied by an unrelated `process.exit(1)` five hundred lines away, and
+`/workerDarkAlerted\s*=\s*false/` matched the `let` **DECLARATION** rather than the recovery edge —
+*a declaration is not an edge*. Both regions bounded; **ten mutations kill by name**. §10.4 untouched
+(a heartbeat read and a webhook move no value).

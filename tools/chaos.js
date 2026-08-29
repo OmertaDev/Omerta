@@ -160,9 +160,14 @@ console.log('1. THE WORKER IS KILLED MID-SWEEP, THEN RUNS AGAIN');
   const killAt = [120, 400, 900];
   for (const ms of killAt) {
     const w = spawn('node', ['src/worker.js'], { env: process.env, stdio: 'ignore' });
+    // Capture the death at SPAWN. An `exit` listener attached after the work window never fires for
+    // a process that already died inside it — and the worker CAN die on its own (a boot failure, a
+    // crash, an OOM), so this await would hang with no timeout and no message rather than reporting
+    // the real error. Reproduced: attach-after-work reports HUNG, capture-at-spawn observes the exit.
+    const wExited = new Promise((r) => w.once('exit', r));
     await sleep(ms);
     w.kill('SIGKILL');
-    await new Promise((r) => w.on('exit', r));
+    await wExited;
   }
   console.log(`  … worker SIGKILLed mid-tick at ${killAt.join('ms, ')}ms`);
 
@@ -173,11 +178,14 @@ console.log('1. THE WORKER IS KILLED MID-SWEEP, THEN RUNS AGAIN');
   // alone can outlast a naive 6s window on a shared runner. So: wait for the WORK to be done, with a
   // generous ceiling for the case where it genuinely never completes.
   const done = spawn('node', ['src/worker.js'], { env: process.env, stdio: 'ignore' });
+  // Same reason as above, and the window here is far wider: the poll loop below runs up to 60s, so a
+  // worker that crashes inside it leaves an exit nobody is listening for and this harness never ends.
+  const doneExited = new Promise((r) => done.once('exit', r));
   const settledCount = async () => Number((await pool.query(
     `SELECT count(*) n FROM auctions WHERE status='settled' AND lot_id = ANY($1::text[])`, [bidLots])).rows[0].n);
   for (let waited = 0; waited < 60000 && await settledCount() < bidLots.length; waited += 500) await sleep(500);
   done.kill('SIGKILL');
-  await new Promise((r) => done.on('exit', r));
+  await doneExited;
 
   const after = await drift();
   const ledgerAfter = await ledgerCounts();

@@ -136,7 +136,7 @@ import { agentTurn } from './agentturn.js';
 import { postCityWire } from './citywire.js';
 import { bulletinPublic, bulletinBoard, claimBulletin } from './bulletin.js';
 import { rateLimitsEnabled, initRateLimiter, checkRateLimit, checkAuthRateLimit, checkReadLimit, checkPublicRateLimit } from './ratelimit.js';
-import { runLedgerInvariants } from './invariants.js';
+import { runLedgerInvariants, alertDrift } from './invariants.js';
 import { dayOf, cityEventOf, priceBlock, goodPriceOf, demandOf, makingsPriceOf,
          levelOf, GOODS, DRUGS, DISTRICTS, CONSTANTS, sealOf, CRIMES, GUNS, VESTS, CARS, KITCHENS, CONSUMABLES, TRADE_RANKS, M3, M4, M8, PATHS,
          RANKS,
@@ -172,6 +172,70 @@ class AgentTurnConflict extends Error {}
 // on a loopback socket in-suite); the wiring itself is pinned by a labelled source check.
 export const WS_MAX_BUFFER = Number(process.env.WS_MAX_BUFFER || 256 * 1024);
 export const wsSendable = (socket) => !!socket && (socket.bufferedAmount || 0) < WS_MAX_BUFFER;
+
+// HOW LONG A SILENT WORKER IS STILL NORMAL. The tick is hourly, so 90 minutes means it missed one.
+// Exported and shared by BOTH readers below — `/health`'s `worker.stale` and the alarm that fires
+// without being asked — because two copies of this number is how the dashboard and the alarm come to
+// disagree about whether the worker is alive.
+export const WORKER_STALE_SEC = Number(process.env.WORKER_STALE_SEC || 5400);
+
+// THE API WATCHES THE WORKER, because every alarm in the game lives on the process that can die.
+// MEASURED IN PRODUCTION, 2026-08-29: the worker went dark for 14.8 hours. `/health` reported
+// `worker.stale: true` the entire time and nobody saw it — the branch that sets it says a monitor
+// "pointed here can alarm on it", which is exactly the alarm-into-nothing shape this codebase has now
+// paid for three times (the §10.4 webhook that 400'd, the WAL archiver, the oracle keeper). A field on
+// an endpoint is not an alarm; something has to POST.
+//
+// The API is the right watcher for one reason: it is the only process that stays up when the worker
+// does not. It shouts on the SAME channel every other alarm uses (INVARIANT_WEBHOOK_URL), so the
+// founder configures nothing new, and it costs one primary-key read every 15 minutes. Latched per
+// EPISODE and it announces RECOVERY too (the archiver watchdog's discipline) — without the recovery
+// line an operator who restarts the worker cannot tell whether it worked, and a latch that never
+// unlatches is worse than none: the SECOND dark episode would be silent.
+//
+// Deliberately NOT on the worker: a process cannot alarm on being dead. And deliberately not a 503 on
+// /health either — the API is genuinely healthy, and failing its own health check would take the GAME
+// down to report that a sweep is late.
+//
+// A FUNCTION rather than a block inside the main-module guard, so the behaviour can be DRIVEN: the
+// returned `check` is the same predicate the interval runs, so a test exercises the real edges instead
+// of a copy, and without waiting on a wall clock (a sleeping test is the recorded flake shape).
+export function startWorkerWatch(pool, {
+  staleSec = WORKER_STALE_SEC,
+  everyMs = Number(process.env.WORKER_WATCH_MS || 15 * 60 * 1000),
+  alert = alertDrift,
+} = {}) {
+  let workerDarkAlerted = false;
+  const check = async () => {
+    try {
+      const hb = await pool.query('SELECT beat_at FROM worker_heartbeat WHERE id = 1');
+      if (!hb.rows[0]) return null;                  // no row yet: a fresh database, not a dead worker
+      const ageSec = Math.round((Date.now() - new Date(hb.rows[0].beat_at).getTime()) / 1000);
+      const dark = ageSec > staleSec;
+      if (dark && !workerDarkAlerted) {
+        workerDarkAlerted = true;
+        await alert(pool, [{ name: 'worker heartbeat', ok: false,
+          detail: `the worker has not beaten in ${Math.round(ageSec / 60)} minutes (hourly tick). Every `
+            + 'timed settlement and every proactive alarm — the nightly §10.4 drift monitor included — '
+            + 'is stopped. Check the worker service logs for a tick that never returned, and restart it.' }],
+        'worker');
+        return 'dark';
+      }
+      if (!dark && workerDarkAlerted) {
+        workerDarkAlerted = false;
+        await alert(pool, [{ name: 'worker heartbeat', ok: true,
+          detail: `recovered — the worker beat ${ageSec}s ago.` }], 'worker');
+        return 'recovered';
+      }
+      return null;
+    } catch {
+      return null;   // a DB blip is its own alarm (and /health's db half); never throw into the loop
+    }
+  };
+  const timer = setInterval(check, everyMs);
+  timer.unref?.();
+  return { timer, check };
+}
 
 export async function buildServer() {
   // ── PREFLIGHT (src/preflight.js) ────────────────────────────────────────────────────────────
@@ -795,7 +859,7 @@ export async function buildServer() {
       const hb = await pool.query('SELECT beat_at FROM worker_heartbeat WHERE id = 1');
       if (hb.rows[0]) {
         const ageSec = Math.round((Date.now() - new Date(hb.rows[0].beat_at).getTime()) / 1000);
-        body.worker = { beatAgoSeconds: ageSec, stale: ageSec > 5400 };
+        body.worker = { beatAgoSeconds: ageSec, stale: ageSec > WORKER_STALE_SEC };
       }
     } catch { /* the worker_heartbeat read failing is itself a DB issue, already covered by body.db */ }
     return { body, code };
@@ -3381,6 +3445,10 @@ if (process.argv[1] && process.argv[1].endsWith('server.js')) {
   // never the thing that ends us). Proven in tools/chaos.js scenario 6: a request BLOCKED on a held
   // row lock when SIGTERM lands still gets its answer, and a connection attempted after it is
   // refused — measured, not assumed.
+  // THE API WATCHES THE WORKER (see startWorkerWatch above for why the API is the one that shouts).
+  startWorkerWatch(app.pool);
+
+
   let draining = false;
   const drain = (sig) => {
     if (draining) return;
