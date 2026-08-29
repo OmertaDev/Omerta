@@ -866,6 +866,41 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
   }
 }
 
+// ── nor one whose SIZE check can skip the suite ──────────────────────────────────────────────────
+// The same class as the dependency gap above, from a different cause. `forge build --sizes` is
+// all-or-nothing, so on 2026-08-27 a single test harness 906 bytes over EIP-170 (a typed factory,
+// whose RUNTIME code embeds its target's INITCODE) failed the build step and SKIPPED `forge test`
+// and both e2e provers with it — 19 hours of a red pre-mainnet gate in which the suite never ran,
+// on a path-filtered workflow nobody was watching. The remedy is ordering, not a bigger exception:
+// the parse gate builds, the suite and the provers run, and only THEN is the size table checked, so
+// a size regression fails on its own step with everything below it already proven.
+{
+  // COMMENTS STRIPPED FIRST, line positions preserved: the notes on these steps NAME the commands
+  // they are about (`forge build --sizes` appears in the parse gate's own comment explaining why it
+  // is not there), so a scanner reading prose finds the size gate above the suite and reports the
+  // correct ordering as a violation — a mostly-wrong advisory is the kind people route around.
+  const wf = read('.github/workflows/forge.yml')
+    .split('\n').map((line) => (/^\s*#/.test(line) ? '' : line)).join('\n');
+  const at = (needle) => {
+    const i = wf.indexOf(needle);
+    assert(i > 0, `.github/workflows/forge.yml no longer contains \`${needle}\` — the forge job's `
+      + 'step order can no longer be checked, which is the state that let a size regression skip the '
+      + 'entire contract suite for 19 hours.');
+    return i;
+  };
+  const sizes = at('forge build --sizes');
+  for (const after of ['forge test -vvv', 'npm run dexbot-e2e', 'npm run stock-e2e'])
+    assert(at(after) < sizes,
+      `.github/workflows/forge.yml runs \`forge build --sizes\` BEFORE \`${after}\`. --sizes is `
+      + 'all-or-nothing, so one over-limit contract fails that step and skips every step below it — '
+      + 'which is exactly how the pre-mainnet gate went red for 19 hours with the suite not running '
+      + 'at all. Keep the size table LAST.');
+  // and the parse gate itself must stay free of it, or the split above buys nothing
+  assert(/run:\s*forge build\s*$/m.test(wf),
+    ".github/workflows/forge.yml has no bare `forge build` step — the parse gate and the size gate "
+    + 'must be separate steps, or a size regression skips the suite again.');
+}
+
 // ── EVERY SIGNER-BEARING CONTRACT IS IN THE ROTATION RUNBOOK (red-team C1) ──────────────────────
 // One backend key (`VOUCHER_SIGNER_PK`) signs for several contracts, and each stores its own
 // `signer` that must be rotated separately. There is deliberately no shared registry on-chain, so

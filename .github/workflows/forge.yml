@@ -57,11 +57,15 @@ jobs:
           tar xzf uniswap-v4-core-1.0.2.tgz -C lib/v4-core --strip-components=1
           rm -f uniswap-v4-core-1.0.2.tgz
 
+      # PARSE gate only — the SIZE gate is its own step at the END of this job, and the split is
+      # load-bearing rather than tidy. `forge build --sizes` is all-or-nothing: on 2026-08-27 a test
+      # harness went 906 bytes over EIP-170 and that one row failed this step, which SKIPPED
+      # `forge test` and both e2e provers with it — 19 hours of a red pre-mainnet gate in which the
+      # suite did not run at all, on a path-filtered workflow nobody was watching. Same shape as the
+      # v4-core dependency gap recorded above, different cause. A size regression must fail on its
+      # own step, after the suite has already proven the contracts work.
       - name: forge build
-        # FuzzTester deliberately composes every stateful handler into one Medusa/Echidna target and
-        # disables their code-size check; it is never deployed. Keep EIP-170 as a hard gate for every
-        # production/test contract while excluding only that synthetic 27KB harness from the table.
-        run: forge build --sizes --skip FuzzTester
+        run: forge build
 
       - name: forge test (unit + fuzz)
         run: forge test -vvv
@@ -95,3 +99,17 @@ jobs:
       - name: the stock rail on a real chain (stock-e2e)
         working-directory: .
         run: npm run stock-e2e
+
+      # THE SIZE GATE, LAST ON PURPOSE. Runs after the suite and both provers so an over-limit
+      # contract fails on its own step and can never skip them (see the note on `forge build`).
+      #
+      # FuzzTester deliberately composes every stateful handler into one Medusa/Echidna target and
+      # disables their code-size check; it is never deployed. Keep EIP-170 as a hard gate for every
+      # production/test contract while excluding only that synthetic 27KB harness from the table —
+      # never a second `--skip` for a harness that got too big. A typed factory embeds its target's
+      # INITCODE in its own RUNTIME code, so a `new Vault(...)` helper is over the limit whenever the
+      # vault's initcode is; deploy from calldata with raw `create` instead (O1CreateFactory /
+      # A1Task4RawCreateFactory), which costs a few hundred bytes and keeps this gate's claim true.
+      - name: forge build --sizes (EIP-170)
+        working-directory: omerta-contracts
+        run: forge build --sizes --skip FuzzTester
