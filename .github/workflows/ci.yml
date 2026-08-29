@@ -57,7 +57,21 @@ jobs:
       # claiming a branch they no longer belong to.
       - name: knowledge artifacts carry the merge's own revision (main only)
         if: github.event_name == 'push' && github.ref_name == 'main'
-        run: npm run knowledge
+        run: |
+          set -euo pipefail
+          npm run knowledge
+          # The commit is not optional and not about persistence: graph.json records
+          # `worktreeDirty`, so a regenerated-but-uncommitted tree drifts from its own render at
+          # line 4. Committing locally (never pushed from here — knowledge-refresh.yml owns that)
+          # is what makes the snapshot clean, and a generated-only commit reports its PARENT as the
+          # source revision, so the artifacts still describe the merge that triggered this run.
+          if git diff --quiet -- knowledge/generated; then
+            echo "already current for $(git rev-parse --short HEAD)"
+          else
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -q -m "chore(knowledge): refresh for $(git rev-parse --short HEAD)" -- knowledge/generated
+          fi
 
       - name: npm test (the full suite, on pg-mem)
         run: npm test

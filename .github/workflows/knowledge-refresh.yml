@@ -23,6 +23,12 @@ name: knowledge refresh
 # commit. The next render therefore produces identical bytes and commits nothing. A GITHUB_TOKEN
 # push also does not trigger workflows, so the loop cannot start in the first place.
 #
+# WHAT LANDS ON MAIN IS WHAT CI TESTED. ci.yml performs the identical regeneration on `push: main`
+# and commits it LOCALLY (it never pushes), so the bytes this job pushes are the bytes the suites
+# ran against — the render is deterministic at a given revision. A GITHUB_TOKEN push does not
+# trigger workflows, so the resulting commit gets no ci run of its own; it does not need one, since
+# its tree is the tested one.
+#
 # NO paths-ignore, deliberately: a merge that touches only markdown still adds commits, and
 # commits are nodes in this graph.
 
