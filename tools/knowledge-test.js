@@ -324,9 +324,20 @@ for (const [name, expected] of Object.entries(outputs)) {
     const expectedLines = expected.split('\n');
     let line = 0;
     while (actualLines[line] === expectedLines[line] && line < Math.max(actualLines.length, expectedLines.length)) line += 1;
-    assert.fail(`${name} drifted; run npm run knowledge; first difference at line ${line + 1}\n`
+    // MEASURED, because the obvious recipe is half of one: the artifacts pin sourceRevision AND
+    // worktreeDirty, so they describe the tree EXACTLY as it stood when they were built. `npm run
+    // knowledge` alone does clear this locally — and it bakes worktreeDirty:true, which must never
+    // be committed. For a commit the order is forced: land the source change first (clean tree),
+    // then regenerate, then commit the artifacts ALONE. A commit whose changed paths are entirely
+    // under knowledge/generated/ is read as the snapshot of its PARENT (sourceRevisionForSnapshot),
+    // which is the only way an artifact can describe a commit it is contained in. Push the pair
+    // together or CI is red on the authored commit, which cannot carry its own hash.
+    assert.fail(`${name} drifted; first difference at line ${line + 1}\n`
       + `committed: ${JSON.stringify(actualLines[line] ?? '<EOF>')}\n`
-      + `generated: ${JSON.stringify(expectedLines[line] ?? '<EOF>')}`);
+      + `generated: ${JSON.stringify(expectedLines[line] ?? '<EOF>')}\n`
+      + 'fix: `npm run knowledge` clears this locally but stamps worktreeDirty:true — do not commit '
+      + 'that. To commit: land the source change first, regenerate on the clean tree, then commit the '
+      + 'artifacts ALONE (a generated-only commit describes its PARENT) and push both together.');
   }
 }
 
