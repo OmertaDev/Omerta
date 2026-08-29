@@ -34,8 +34,21 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # PINNED, like every other dependency this workflow fetches. `foundry-toolchain@v1` with no
+      # `version` resolves `stable` AT RUN TIME, so the one thing compiling and running the suite was
+      # the only thing here not held still — while forge-std (v1.9.6), OpenZeppelin (v5.6.1), v4-core
+      # (1.0.2) and solc (0.8.26, foundry.toml) are all pinned by hand a few lines below. The forgotten
+      # sibling. A moving compiler means a red gate cannot be reproduced locally, which is exactly the
+      # position this gate was in. The banner is the instrument: when local and CI disagree again, the
+      # log answers "which forge ran this" instead of leaving it to be guessed at.
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: v1.7.1
+
+      - name: forge --version (what actually ran)
+        working-directory: omerta-contracts
+        run: forge --version
 
       # Deps aren't committed as submodules — fetch them into lib/ at the pinned versions the
       # contracts target (deterministic, avoids forge-install/submodule friction inside the parent
@@ -57,11 +70,15 @@ jobs:
           tar xzf uniswap-v4-core-1.0.2.tgz -C lib/v4-core --strip-components=1
           rm -f uniswap-v4-core-1.0.2.tgz
 
+      # PARSE gate only — the SIZE gate is its own step at the END of this job, and the split is
+      # load-bearing rather than tidy. `forge build --sizes` is all-or-nothing: on 2026-08-27 a test
+      # harness went 906 bytes over EIP-170 and that one row failed this step, which SKIPPED
+      # `forge test` and both e2e provers with it — 19 hours of a red pre-mainnet gate in which the
+      # suite did not run at all, on a path-filtered workflow nobody was watching. Same shape as the
+      # v4-core dependency gap recorded above, different cause. A size regression must fail on its
+      # own step, after the suite has already proven the contracts work.
       - name: forge build
-        # FuzzTester deliberately composes every stateful handler into one Medusa/Echidna target and
-        # disables their code-size check; it is never deployed. Keep EIP-170 as a hard gate for every
-        # production/test contract while excluding only that synthetic 27KB harness from the table.
-        run: forge build --sizes --skip FuzzTester
+        run: forge build
 
       - name: forge test (unit + fuzz)
         run: forge test -vvv
@@ -95,3 +112,17 @@ jobs:
       - name: the stock rail on a real chain (stock-e2e)
         working-directory: .
         run: npm run stock-e2e
+
+      # THE SIZE GATE, LAST ON PURPOSE. Runs after the suite and both provers so an over-limit
+      # contract fails on its own step and can never skip them (see the note on `forge build`).
+      #
+      # FuzzTester deliberately composes every stateful handler into one Medusa/Echidna target and
+      # disables their code-size check; it is never deployed. Keep EIP-170 as a hard gate for every
+      # production/test contract while excluding only that synthetic 27KB harness from the table —
+      # never a second `--skip` for a harness that got too big. A typed factory embeds its target's
+      # INITCODE in its own RUNTIME code, so a `new Vault(...)` helper is over the limit whenever the
+      # vault's initcode is; deploy from calldata with raw `create` instead (O1CreateFactory /
+      # A1Task4RawCreateFactory), which costs a few hundred bytes and keeps this gate's claim true.
+      - name: forge build --sizes (EIP-170)
+        working-directory: omerta-contracts
+        run: forge build --sizes --skip FuzzTester

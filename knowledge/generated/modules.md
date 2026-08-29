@@ -95,7 +95,7 @@
 | [src/notoriety.js](../../src/notoriety.js) | 31 | world-progression | 1 / 2 | 0 | 2 | 0 |
 | [src/npcwar.js](../../src/npcwar.js) | 575 | world-progression | 2 / 8 | 7 | 8 | 1 |
 | [src/opportunities.js](../../src/opportunities.js) | 156 | engagement-growth | 6 / 2 | 1 | 6 | 0 |
-| [src/ops.js](../../src/ops.js) | 219 | platform-core | 6 / 4 | 4 | 11 | 2 |
+| [src/ops.js](../../src/ops.js) | 225 | platform-core | 6 / 4 | 4 | 11 | 2 |
 | [src/pass.js](../../src/pass.js) | 118 | platform-core | 3 / 5 | 2 | 3 | 2 |
 | [src/path-funnel.js](../../src/path-funnel.js) | 379 | platform-core | 0 / 4 | 0 | 7 | 2 |
 | [src/path-pages.js](../../src/path-pages.js) | 326 | platform-core | 0 / 2 | 0 | 1 | 1 |
@@ -107,7 +107,7 @@
 | [src/port.js](../../src/port.js) | 488 | enterprise-logistics | 5 / 4 | 12 | 9 | 0 |
 | [src/portfolio.js](../../src/portfolio.js) | 51 | economy-ledger | 1 / 3 | 9 | 4 | 1 |
 | [src/portrait.js](../../src/portrait.js) | 337 | engagement-growth | 3 / 4 | 0 | 6 | 2 |
-| [src/preflight.js](../../src/preflight.js) | 468 | platform-core | 0 / 7 | 0 | 7 | 3 |
+| [src/preflight.js](../../src/preflight.js) | 476 | platform-core | 0 / 7 | 0 | 7 | 3 |
 | [src/primetime.js](../../src/primetime.js) | 260 | engagement-growth | 2 / 6 | 4 | 5 | 1 |
 | [src/push.js](../../src/push.js) | 226 | engagement-growth | 2 / 4 | 3 | 6 | 1 |
 | [src/races.js](../../src/races.js) | 489 | vice-competition | 4 / 9 | 11 | 9 | 3 |

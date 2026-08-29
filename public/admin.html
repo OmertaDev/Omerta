@@ -390,8 +390,9 @@
           <div class="note" style="margin-top:4px">${x.why}</div>
           ${x.live ? '' : `<div class="note" style="margin-top:4px"><b>Needs:</b> <code>${(x.needs || []).join('</code> <code>')}</code></div>
             <div class="note" style="margin-top:3px"><b>To switch on:</b> ${x.steps}</div>`}
+          ${x.caveat ? `<div class="note" style="margin-top:3px;color:var(--bad)"><b>⚠</b> ${x.caveat}</div>` : ''}
         </div>`).join('')
-      + '<div class="note" style="margin-top:6px">These are env-config switches (no code deploy). Set the vars on the API and redeploy. Secrets never leave the server — this panel reads presence only.</div>'
+      + '<div class="note" style="margin-top:6px">These are env-config switches (no code deploy). Set them in the SHARED env group and redeploy BOTH services — several are read by the worker (web push signs and sends there; the email digest runs there entirely), so setting them on the API alone can read LIVE here and still do nothing. Secrets never leave the server — this panel reads presence only.</div>'
       + capacityLine(ig && ig.capacity);
   }
 
@@ -1085,7 +1086,7 @@
       <div class="mod-row"><div class="mod-field"><label for="m-fund">$OMR to reserve</label><input id="m-fund" inputmode="decimal" size="10"></div><button id="m-fund-go">fund reserve</button></div>
       <div class="mod-row"><div class="mod-field"><label for="m-push-h">Hours</label><input id="m-push-h" inputmode="numeric" size="5" value="48"></div><div class="mod-field"><label for="m-push-m">Cash multiplier</label><input id="m-push-m" inputmode="decimal" size="5" value="2"></div><button id="m-push-go">start recruit drive</button></div>
       <div class="mod-row"><button id="m-alert-go">send test alert</button>
-        <span class="note">proves INVARIANT_WEBHOOK_URL works — before you need it</span></div>
+        <span class="note">proves INVARIANT_WEBHOOK_URL works on THIS service (the API) — which is the one that pages when the worker is gone</span></div>
       <div id="m-out" class="note" role="status" aria-live="polite"></div>`;
     const out = (m, bad) => { const el = $('#m-out'); el.textContent = m; el.style.color = bad ? 'var(--bad)' : 'var(--dim)'; };
     $('#m-invite').onclick = async () => {

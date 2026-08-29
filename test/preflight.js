@@ -145,6 +145,26 @@ assert.deepEqual(
   preflight({ ...GOOD, INVARIANT_WEBHOOK_URL: 'https://hook' }).warnings.filter((w) => /INVARIANT_WEBHOOK_URL is not set/.test(w)),
   [], '…and once set, the webhook warning is silent (H5)');
 
+// …and the warning must send them to the RIGHT service. It used to end "it must be on the WORKER
+// process, which is where the alarms fire" — true until `startWorkerWatch` shipped, and then false in
+// the direction that leaves an outage undetected: preflight runs on BOTH processes, so on the API it
+// pointed the operator at the OTHER service while THIS one's alarm was the missing one. The API is
+// the only process that can page when the worker is GONE (a process cannot alarm on being dead), so
+// worker-only leaves exactly that alarm mute while every other alarm works — the shape that hid a 17h
+// outage. Two-sided, like DEPLOY.md's own guard in test/docs.js: it must say BOTH, and must not go
+// back to saying worker-only. If the watchdog ever moves OFF the API, rewrite this note rather than
+// widening the check — that move is separately caught by test/gates.js, which fails if
+// `startWorkerWatch` is defined in src/server.js and never called.
+{
+  const w = preflight(GOOD).warnings.find((x) => /INVARIANT_WEBHOOK_URL is not set/.test(x));
+  assert(/BOTH processes/.test(w),
+    'the unset-webhook warning must tell the operator to set it on BOTH processes — the worker fires '
+    + `most alarms, the API is the only one that can page when the worker is dead. Got: ${w}`);
+  assert(!/must be on the WORKER process/.test(w),
+    'the unset-webhook warning must not send the operator to the worker alone — that leaves the '
+    + `worker-dark alarm mute while every other alarm works. Got: ${w}`);
+}
+
 // BLUE-TEAM M8: the private ops alarm and the public city-wire must be DISTINCT channels, or drama
 // buries a drift line. Fatal only on the exact misconfiguration (both set AND equal).
 assert(preflight({ ...GOOD, INVARIANT_WEBHOOK_URL: 'https://h', CITY_WIRE_WEBHOOK_URL: 'https://h' }).errors.some((e) => /same channel/i.test(e)),

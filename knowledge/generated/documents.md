@@ -314,10 +314,10 @@
 | [BALANCE.md](../../BALANCE.md) | documentation | 6472 | 2026-08-24 |
 | [CHAIN-AUDIT-PACKET.md](../../CHAIN-AUDIT-PACKET.md) | documentation | 305 | 2026-08-29 |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 2001 | 2026-08-29 |
-| [CLAUDE.md](../../CLAUDE.md) | documentation | 17393 | 2026-08-29 |
+| [CLAUDE.md](../../CLAUDE.md) | documentation | 17480 | 2026-08-29 |
 | [content/README.md](../../content/README.md) | documentation | 281 | 2026-08-29 |
 | [DEPLOY-CHECKLIST.md](../../DEPLOY-CHECKLIST.md) | operations | 147 | 2026-08-13 |
-| [DEPLOY.md](../../DEPLOY.md) | operations | 553 | 2026-08-29 |
+| [DEPLOY.md](../../DEPLOY.md) | operations | 568 | 2026-08-29 |
 | [DESIGN.md](../../DESIGN.md) | design | 88 | 2026-08-27 |
 | [docs/ART.md](../../docs/ART.md) | documentation | 238 | 2026-08-14 |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | audit | 120 | 2026-08-17 |

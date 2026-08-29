@@ -933,6 +933,72 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
   }
 }
 
+// ── and the COMPILER that consumes all of them was the one thing not held still ──────────────────
+// Same class as the fetch list above, one layer down and easier to miss because it reads as
+// configured rather than as absent: `foundry-rs/foundry-toolchain@v1` with no `version` resolves
+// `stable` AT RUN TIME. So this workflow pinned forge-std (v1.9.6), OpenZeppelin (v5.6.1), v4-core
+// (1.0.2) and solc (0.8.26, foundry.toml) by hand — and left the compiler and test runner floating.
+// The forgotten sibling. It matters most exactly when the gate is red: a moving compiler means a
+// CI failure cannot be reproduced locally, and this gate spent a session in that position with
+// three tests passing on the developer's machine and failing on the runner.
+//
+// The rule is deliberately two-sided, because half of it is not obvious: a `version` key alone is
+// not a pin. `stable` and `nightly` are CHANNELS — they satisfy "a version is declared" and still
+// resolve at run time, which is the state this guard exists to forbid wearing a version key.
+{
+  const wf = read('.github/workflows/forge.yml');
+  const step = wf.match(/uses:\s*foundry-rs\/foundry-toolchain@[^\n]*\n([\s\S]*?)(?=\n\s*-\s|$)/);
+  assert(step, ".github/workflows/forge.yml no longer installs foundry-rs/foundry-toolchain — the "
+    + 'extractor found no step to check, which reads exactly like a clean sweep. If the gate now '
+    + 'gets its compiler some other way, pin THAT and re-point this guard at it.');
+  const version = step[1].match(/^\s*version:\s*(\S+)/m);
+  assert(version, '.github/workflows/forge.yml installs foundry-toolchain with NO `version:`, so it '
+    + 'resolves `stable` at run time. Every other dependency in this workflow is pinned by hand; the '
+    + 'compiler and test runner must be too, or a red gate cannot be reproduced locally.');
+  assert(!/^(stable|nightly|latest)$/i.test(version[1]),
+    `.github/workflows/forge.yml pins the toolchain to "${version[1]}", which is a CHANNEL rather `
+    + 'than a version — it still resolves at run time. Pin the release tag (e.g. v1.7.1), which is '
+    + 'the whole point: the log and the local run must be able to name the same binary.');
+  assert(/run:\s*forge --version/.test(wf),
+    '.github/workflows/forge.yml no longer prints `forge --version`. The pin says which binary SHOULD '
+    + 'run; the banner is how the log says which one DID, without anybody having to guess at it.');
+}
+
+// ── nor one whose SIZE check can skip the suite ──────────────────────────────────────────────────
+// The same class as the dependency gap above, from a different cause. `forge build --sizes` is
+// all-or-nothing, so on 2026-08-27 a single test harness 906 bytes over EIP-170 (a typed factory,
+// whose RUNTIME code embeds its target's INITCODE) failed the build step and SKIPPED `forge test`
+// and both e2e provers with it — 19 hours of a red pre-mainnet gate in which the suite never ran,
+// on a path-filtered workflow nobody was watching. The remedy is ordering, not a bigger exception:
+// the parse gate builds, the suite and the provers run, and only THEN is the size table checked, so
+// a size regression fails on its own step with everything below it already proven.
+{
+  // COMMENTS STRIPPED FIRST, line positions preserved: the notes on these steps NAME the commands
+  // they are about (`forge build --sizes` appears in the parse gate's own comment explaining why it
+  // is not there), so a scanner reading prose finds the size gate above the suite and reports the
+  // correct ordering as a violation — a mostly-wrong advisory is the kind people route around.
+  const wf = read('.github/workflows/forge.yml')
+    .split('\n').map((line) => (/^\s*#/.test(line) ? '' : line)).join('\n');
+  const at = (needle) => {
+    const i = wf.indexOf(needle);
+    assert(i > 0, `.github/workflows/forge.yml no longer contains \`${needle}\` — the forge job's `
+      + 'step order can no longer be checked, which is the state that let a size regression skip the '
+      + 'entire contract suite for 19 hours.');
+    return i;
+  };
+  const sizes = at('forge build --sizes');
+  for (const after of ['forge test -vvv', 'npm run dexbot-e2e', 'npm run stock-e2e'])
+    assert(at(after) < sizes,
+      `.github/workflows/forge.yml runs \`forge build --sizes\` BEFORE \`${after}\`. --sizes is `
+      + 'all-or-nothing, so one over-limit contract fails that step and skips every step below it — '
+      + 'which is exactly how the pre-mainnet gate went red for 19 hours with the suite not running '
+      + 'at all. Keep the size table LAST.');
+  // and the parse gate itself must stay free of it, or the split above buys nothing
+  assert(/run:\s*forge build\s*$/m.test(wf),
+    ".github/workflows/forge.yml has no bare `forge build` step — the parse gate and the size gate "
+    + 'must be separate steps, or a size regression skips the suite again.');
+}
+
 // ── EVERY SIGNER-BEARING CONTRACT IS IN THE ROTATION RUNBOOK (red-team C1) ──────────────────────
 // One backend key (`VOUCHER_SIGNER_PK`) signs for several contracts, and each stores its own
 // `signer` that must be rotated separately. There is deliberately no shared registry on-chain, so
@@ -3780,7 +3846,59 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     `src/ops.js now gates ${gated.join('/')} on recency — DEPLOY.md §8's warning that smoke characters `
     + 'count in the headline figure permanently is no longer true. Delete the warning rather than this check.');
 
-  console.log('✓ DEPLOY.md §8 states the smoke-debris window the code enforces, and the asymmetry it warns about');
+  // Half three: "there is no sweep, and the obvious lever makes it worse". Both halves are
+  // decidable. If a route ever CAN remove a character, the note is stale in the worst direction —
+  // it would be telling an operator to live with debris a real remedy now clears. Comments are
+  // stripped first: the rule is cited in prose in this very file, and a scanner that reads its own
+  // explanation as a violation is the mostly-wrong advisory people route around.
+  // walkSrc, never a flat readdir — its own header records the bug a flat listing reintroduces:
+  // the guard goes QUIET when code moves into a subdirectory instead of failing.
+  const stripComments = (t) => t.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  const removers = walkSrc('src').filter((f) => /DELETE\s+FROM\s+characters\b/i.test(stripComments(read(f))));
+  assert.equal(removers.length, 0,
+    `${removers.join(', ')} now deletes character rows — DEPLOY.md §8 tells the operator there is no `
+    + 'sweep and to subtract smoke debris by name. Rewrite the note around the new remedy.');
+  // …and the lever an operator would reach for really does add a row rather than remove one.
+  assert(/INSERT INTO characters/.test(read('src/social/estate.js')),
+    'src/social/estate.js must INSERT the heir — DEPLOY.md §8 warns that mod-kill raises `total` by one');
+  assert(/runEstate\(/.test(read('src/routes/modtools.js')),
+    'POST /v1/mod/kill must run the estate — DEPLOY.md §8 warns it creates an heir');
+
+  console.log('✓ DEPLOY.md §8 states the smoke-debris window the code enforces, the asymmetry it warns about, and that no sweep exists');
+}
+
+// ─── INVARIANT_WEBHOOK_URL is not worker-only any more, and the runbook said it was ──────────────
+// §5 told the operator "**Must be set on the WORKER process** — every automatic alarm lives there".
+// That was true until `startWorkerWatch` shipped, and then it was false in the direction that leaves
+// an outage undetected: the API now alarms on its own timer and is the ONLY process that can page
+// when the worker is GONE, because a process cannot alarm on being dead. An operator following the
+// old sentence literally sets the key on the worker, every other alarm works, and exactly the one
+// covering a dark worker is mute — the shape that hid a 17h outage.
+//
+// The same false claim lived in render.yaml's comment and was corrected there; this is the sweep of
+// that class to its second instance. Guarded two-sided: the doc must say BOTH services, and must not
+// go back to saying worker-only. If the watchdog ever moves OFF the API the right response is to
+// rewrite this note, not to widen the check — and that move is separately caught by test/gates.js,
+// which fails if `startWorkerWatch` is defined in src/server.js and never called.
+{
+  const deploy = read('DEPLOY.md');
+  assert(!/Must be set on the WORKER process/.test(deploy),
+    'DEPLOY.md §5 says INVARIANT_WEBHOOK_URL must be set on the worker — since startWorkerWatch shipped '
+    + 'the API alarms too, and it is the only process that can page when the worker is dead. Setting it '
+    + 'worker-only leaves that alarm mute while every other alarm works.');
+  assert(/Set it on BOTH processes/.test(deploy),
+    'DEPLOY.md §5 must tell the operator to set INVARIANT_WEBHOOK_URL on BOTH processes');
+
+  // …and the drill the note sends them to must exist, on the service it names.
+  assert(/send test alert/.test(deploy) && /configured: true/.test(deploy),
+    'DEPLOY.md must tell the operator to run the /admin alarm drill and require `configured: true` — '
+    + 'a dashboard that renders proves the API is up, never that the alarm can leave the building');
+  assert(/\/v1\/mod\/alert\/test/.test(read('src/routes/modtools.js')),
+    'DEPLOY.md sends the operator to the alarm drill; POST /v1/mod/alert/test must exist');
+  assert(/alert\/test/.test(read('public/admin.html')),
+    'DEPLOY.md says the drill is a button on /admin — public/admin.html must call it');
+
+  console.log('✓ DEPLOY.md states the webhook belongs on BOTH services, and the drill it names exists');
 }
 
 // ═══ THE POSTED-CLAIM LEDGER — the figures that leave the building ════════════════════════════════

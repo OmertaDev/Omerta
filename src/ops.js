@@ -133,11 +133,17 @@ export function integrationsStatus() {
   const has = (k) => !!(process.env[k] && String(process.env[k]).trim());
   const baseUrl = process.env.PUBLIC_URL || process.env.SOCIAL_GAME_URL;
   return { integrations: [
+    // ⚠ `live` HERE READS THIS PROCESS'S OWN ENV (the API). Web push is a KEY PAIR spanning two
+    // processes — the API serves the public key and stores subscriptions, the WORKER signs and sends —
+    // so a pair set on the API alone, or generated twice, reads LIVE on this panel while every push is
+    // never attempted or is rejected, with nothing red anywhere. render.yaml declares all three keys in
+    // the SHARED env group for exactly that reason; `caveat` says so on the panel itself.
     { id: 'push', name: 'Web Push', kind: 'retention',
       live: has('VAPID_PUBLIC_KEY') && has('VAPID_PRIVATE_KEY'),
       why: 'Wakes returning players — for a lazy-accrual game where things happen to you while you\'re gone, this is the single highest-ROI retention primitive.',
       needs: ['VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY', 'VAPID_SUBJECT (optional, mailto:)'],
-      steps: 'Run `node tools/vapid.js` once, set VAPID_PUBLIC_KEY + VAPID_PRIVATE_KEY (keep the private one secret), redeploy. The 🔔 button then appears in-client.' },
+      steps: 'Run `npm run vapid` ONCE, then set the SAME VAPID_PUBLIC_KEY + VAPID_PRIVATE_KEY on BOTH the API (serves the public key, stores subscriptions) and the WORKER (signs and sends) — render.yaml keeps them in the shared env group for exactly that reason. Keep the private one secret; redeploy. The 🔔 then appears in-client.',
+      caveat: 'Reads env presence on THIS process (the API). A worker missing the pair, or holding a different one, still reads LIVE — set it in the shared env group, never per-service.' },
     { id: 'x_oauth', name: 'X one-click sign-in', kind: 'funnel',
       live: has('X_CLIENT_ID') && !!baseUrl,
       why: 'One-tap signup removes the friction at the top of the funnel — without it, X users must paste a token (developers only), which nobody does.',

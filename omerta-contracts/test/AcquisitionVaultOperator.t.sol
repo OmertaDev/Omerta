@@ -300,9 +300,23 @@ contract O1SignatureGasBoundaryHarness is AcquisitionVault {
     }
 }
 
+// Deploys from CALLDATA rather than from `new AcquisitionVault(...)`, and the difference is a size
+// gate rather than a style preference: a typed factory embeds its target's INITCODE in its own
+// RUNTIME code, so `new AcquisitionVault(...)` here made this 25,482-byte harness the only contract
+// in the tree over EIP-170 — and because `forge build --sizes` is all-or-nothing, that failed the
+// build step and SKIPPED `forge test` and both e2e provers with it. AcquisitionVault's own runtime
+// is legal (23,212); nothing about the production contract needed to change. Raw `create` bubbles
+// the constructor's revert data verbatim, which the returndata-bomb test reads.
+// Mirrors A1Task4RawCreateFactory in test/AcquisitionVaultAccounting.t.sol (386 bytes runtime).
 contract O1CreateFactory {
-    function deploy(address safeOwner, address registry, uint256 globalCap) external returns (AcquisitionVault vault) {
-        vault = new AcquisitionVault(safeOwner, registry, globalCap);
+    function deploy(bytes memory initCode) external returns (address deployed) {
+        assembly ("memory-safe") {
+            deployed := create(0, add(initCode, 0x20), mload(initCode))
+            if iszero(deployed) {
+                returndatacopy(0, 0, returndatasize())
+                revert(0, returndatasize())
+            }
+        }
     }
 }
 
@@ -1285,11 +1299,19 @@ contract AcquisitionVaultOperatorTest is Test {
         new AcquisitionVault(address(safe), address(safe), GLOBAL_CAP);
     }
 
+    function _vaultInitCode(address safeOwner, address registry_, uint256 cap)
+        internal
+        pure
+        returns (bytes memory)
+    {
+        return abi.encodePacked(type(AcquisitionVault).creationCode, abi.encode(safeOwner, registry_, cap));
+    }
+
     function test_constructorRejectsItsOwnAddressAsRegistry() public {
         O1CreateFactory factory = new O1CreateFactory();
         address predicted = address(uint160(uint256(keccak256(abi.encodePacked(hex"d694", address(factory), hex"01")))));
         vm.expectRevert(abi.encodeWithSelector(O1LiteralErrors.RoleIdentityCollision.selector, predicted));
-        factory.deploy(address(safe), predicted, GLOBAL_CAP);
+        factory.deploy(_vaultInitCode(address(safe), predicted, GLOBAL_CAP));
     }
 
     function test_constructorRegistrySentinelMapsMalformedAndWalletControlledFailuresToZero() public {
@@ -1315,7 +1337,8 @@ contract AcquisitionVaultOperatorTest is Test {
         O1RegistryProbe probe = new O1RegistryProbe(CHAIN_ID);
         probe.configure(O1RegistryProbe.Mode.RETURNDATA_BOMB, CHAIN_ID);
         O1CreateFactory factory = new O1CreateFactory();
-        bytes memory callData = abi.encodeCall(factory.deploy, (address(safe), address(probe), GLOBAL_CAP));
+        bytes memory callData =
+            abi.encodeCall(factory.deploy, (_vaultInitCode(address(safe), address(probe), GLOBAL_CAP)));
         (bool ok, bytes memory returndata) = address(factory).call{gas: 3_500_000}(callData);
         assertFalse(ok, "returndata bomb unexpectedly deployed vault");
         _assertRevertData(returndata, abi.encodeWithSelector(O1LiteralErrors.RegistryChainMismatch.selector, 0));
