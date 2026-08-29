@@ -29,17 +29,30 @@ the phone frame edge-to-edge — cleaner than a blur-fill of near-black footage)
 
 ## The cuts
 
-| file | size | ~len | job | angle |
-|---|---|---|---|---|
-| `hype.mp4` | 1920×1080 | ~13s | the trailer | the city / world, earnings closer |
-| `hype-streets.mp4` | 1920×1080 | ~12s | crime/action | the jobs — hitman, heist, arson, cars |
-| `hype-flywheel.mp4` | 1920×1080 | ~15s | tokenomics | the $OMR value flywheel, mechanism-true |
-| `hype-earn.mp4` | 1920×1080 | ~13s | acquisition | risk-to-earn: play, take it, cash out |
-| `hype-short.mp4` | 1080×1920 | ~10s | social | vertical, fastest cut for X/TikTok/Reels |
-| `hype-money.mp4` | 1920×1080 | ~77s | explainer | the FULL money map — every fee, every flow, the RWA arc |
+Lengths below were **measured from each file's own `mvhd` box** on 2026-08-29, not estimated —
+`hype-money.mp4` had been recorded as ~77s and is 86.7s. Every one of them is served in production at
+`https://www.omerta.fun/art/<file>` (range-served by `sendVideo()` off a boot-time allowlist).
+
+| file | size | ~len | job | angle | featured |
+|---|---|---|---|---|---|
+| `hype.mp4` | 1920×1080 | ~13s | the trailer | the city / world, earnings closer | landing `#films` |
+| `hype-streets.mp4` | 1920×1080 | ~12s | crime/action | the jobs — hitman, heist, arson, cars | landing `#films` |
+| `hype-flywheel.mp4` | 1920×1080 | ~15s | tokenomics | the $OMR value flywheel, mechanism-true | landing `#omr-economy`, beside the routing it explains |
+| `hype-earn.mp4` | 1920×1080 | ~13s | acquisition | risk-to-earn: play, take it, cash out | landing `#films` |
+| `hype-short.mp4` | 1080×1920 | ~10s | social | vertical, fastest cut for X/TikTok/Reels | **distribution only** — see below |
+| `hype-money.mp4` | 1920×1080 | ~87s | explainer | the FULL money map — every fee, every flow, the RWA arc | landing `#omr-economy` |
+
+`hype-short.mp4` is deliberately **not embedded on the site**: it is a 9:16 cut whose whole job is to
+be posted to X / TikTok / Reels, and a vertical film letterboxed into a 16:9 slot on a desktop landing
+page is worse than a link. It ships in the media index and in `docs/LAUNCH-TWEETS.md`, which is where
+it gets used. Every embed is `preload="none"` with the poster and source attached only near the
+viewport, and every poster REUSES a plate the page already serves. Measured both ways with
+`npm run pageweight`: the landing cold load is **414 KB without the deck and 415 KB with it**, still
+6 responses — the whole cost is the extra kilobyte of (gzipped) markup, and not one video or poster
+byte is fetched until a viewer scrolls to it.
 
 The five hype cuts have **distinct footage** (no reused shots between cuts except the shared OMERTÀ
-end-plate) so they don't feel repetitive when posted together; the explainer, being ~5× longer, draws
+end-plate) so they don't feel repetitive when posted together; the explainer, being ~7× longer, draws
 freely on the whole library.
 
 ## Music

@@ -107,10 +107,11 @@ Four things, in the order they are hardest to copy.
 ### 3.1 The accounting is adversarial, and it is the product
 
 Most games check their economy when something looks wrong. This one checks it every night, against
-30 invariants, and treats a drift of one cent as an alarm. There is a **money router** that
-*declares* every real-value inflow and where each slice lands, derived from the live constants so the
-declaration cannot drift from the code. There are 96 red-team reports in the repo, each
-point-in-time, each with the findings it fixed and the things it attacked and found sound.
+more than thirty conservation invariants (32 today, and the count only ever grows), and treats a drift
+of one cent as an alarm. There is a **money router** that *declares* every real-value inflow and
+where each slice lands, derived from the live constants so the declaration cannot drift from the
+code. There are 96 red-team reports in the repo, each point-in-time, each with the findings it fixed
+and the things it attacked and found sound.
 
 That is not a feature players ask for. It is the thing that lets everything else be true.
 
