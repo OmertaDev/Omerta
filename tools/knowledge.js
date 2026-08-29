@@ -664,14 +664,19 @@ function finalCallbackCall(argument) {
   return name;
 }
 
-// git renders a ZERO UTC offset differently across versions: 2.43 emits `+00:00`
-// where 2.55 emits `Z`. Both mean the same instant, and non-UTC offsets (`-04:00`)
-// are identical in both — but graph.json is asserted BYTE-stable, so whoever
-// regenerates last wins and the other environment fails a drift check on
-// formatting alone. Canonicalise the zero offset to `Z` (RFC 3339's own form, and
-// what the newer git already emits) so the bytes do not depend on the toolchain.
-function canonicalGitDate(date) {
-  return typeof date === 'string' ? date.replace(/\+00:00$/, 'Z') : date;
+// Git renders `--date=iso-strict` for UTC as `+00:00` up to git 2.43 and as `Z` from 2.55 — the
+// same instant, two spellings. The generated artifacts are byte-compared by knowledge-test, so an
+// un-normalized commit date makes the graph a function of the CHECKOUT'S GIT BINARY rather than of
+// the revision: regenerate on one machine, verify on another, and 3,065 timestamps "drift" with
+// nothing having changed. That is the third instance of one class here (after worktreeDirty and the
+// branch name), so it is normalized at the single seam that reads git rather than tolerated
+// downstream. `Date` parsing of an ISO-8601 offset is spec-defined and version-stable, and it keeps
+// the INSTANT exactly; what it drops is the author's local wall-clock, which git itself remains the
+// authority on. An unparseable date is passed through untouched rather than written as the string
+// "Invalid Date" — a value nobody can act on is worse than a value that looks foreign.
+function canonicalCommitDate(raw) {
+  const parsed = new Date(raw);
+  return Number.isNaN(parsed.getTime()) ? raw : parsed.toISOString();
 }
 
 function parseCommits(revision = 'HEAD') {
@@ -681,7 +686,7 @@ function parseCommits(revision = 'HEAD') {
     const lines = chunk.replace(/^\r?\n/, '').split(/\r?\n/);
     const [hash, date, author, ...subjectParts] = (lines.shift() || '').split('\x1f');
     if (!hash) continue;
-    commits.push({ hash, date: canonicalGitDate(date), author, subject: subjectParts.join('\x1f'), files: lines.map(posix).filter(Boolean) });
+    commits.push({ hash, date: canonicalCommitDate(date), author, subject: subjectParts.join('\x1f'), files: lines.map(posix).filter(Boolean) });
   }
   return commits;
 }

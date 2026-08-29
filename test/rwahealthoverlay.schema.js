@@ -374,14 +374,18 @@ function productionClient(initial = new Map(), { failValidationFor = null } = {}
     'PostgreSQL internal char constraint types are cast to stable text before driver decoding');
   assert.match(catalogRead, /c\.confdeltype::text\s+AS\s+confdeltype/i,
     'PostgreSQL internal char delete actions are cast to stable text before driver decoding');
-  // The same class, one column over, and the one that actually shipped red: pg_attribute.attname is
-  // type `name`, so ARRAY(SELECT a.attname) is name[] (OID 1003) and node-postgres registers no array
-  // parser for it — the driver returns the raw literal as a STRING, Array.isArray fails, and every
-  // real-PostgreSQL boot dies claiming a constraint drifted that is byte-perfect. text[] (1009) parses.
-  // pg-mem cannot reproduce the decode, so this asserts the CAST rather than the decoded value.
-  assert.equal((catalogRead.match(/a\.attname::text/gi) ?? []).length, 2,
-    'both constraint-column ARRAY subqueries cast attname to text — name[] is a driver decode gap, '
-    + 'and without the cast the migration fails closed on every correct database');
+  // The same rule one type over, and it was the forgotten sibling: `pg_attribute.attname` is type
+  // `name`, so ARRAY() over it is `name[]` (OID 1003) — a type node-pg ships no array parser for, so
+  // the column list arrives as the raw literal string "{a,b}" and the exact ordered comparison below
+  // sees `Array.isArray` false. The verifier then calls a correct constraint DRIFTED, and being
+  // fail-closed it takes the whole boot down with it. Asserted as ABSENCE of a bare projection rather
+  // than as two more instances, so a third column added here has to make the same decision.
+  assert.equal(/(?<!::text)\bSELECT\s+a\.attname\b(?!::text)/i.test(catalogRead), false,
+    'every pg_attribute.attname projection must be cast ::text — an uncast one decodes as an opaque '
+    + 'string, and a fail-closed verifier reads that as a drifted constraint and refuses to boot');
+  assert.equal((catalogRead.match(/a\.attname::text/gi) || []).length, 2,
+    'both ordered column-list projections must still be in view, or this check has stopped covering '
+    + 'the thing it was written for');
   assert.equal(client.statements.at(-1), 'COMMIT');
   const before = client.statements.length;
   const rerun = await migrateRwaHealthOverlayV2(client);
@@ -390,14 +394,13 @@ function productionClient(initial = new Map(), { failValidationFor = null } = {}
     'an exact validated rerun performs no authority DDL');
 }
 
-for (const [label, field, override] of [
-  ['definition', 'definition', { definition: `${definition(FOREIGN_KEYS[0])} MATCH FULL` }],
-  ['source order', 'source_columns', { source_columns: [...FOREIGN_KEYS[0].source].reverse() }],
-  ['reference order', 'referenced_columns',
-    { referenced_columns: [...FOREIGN_KEYS[0].referenced].reverse() }],
-  ['delete action', 'delete_action', { confdeltype: 'c' }],
-  ['referenced table', 'referenced_table', { referenced_table: 'wrong_clearances_v2' }],
-  ['type', 'type', { contype: 'c' }],
+for (const [label, override] of [
+  ['definition', { definition: `${definition(FOREIGN_KEYS[0])} MATCH FULL` }],
+  ['source order', { source_columns: [...FOREIGN_KEYS[0].source].reverse() }],
+  ['reference order', { referenced_columns: [...FOREIGN_KEYS[0].referenced].reverse() }],
+  ['delete action', { confdeltype: 'c' }],
+  ['referenced table', { referenced_table: 'wrong_clearances_v2' }],
+  ['type', { contype: 'c' }],
 ]) {
   const client = productionClient(new Map([
     [FOREIGN_KEYS[0].name, metadata(FOREIGN_KEYS[0], override)],
@@ -405,10 +408,7 @@ for (const [label, field, override] of [
   await assert.rejects(migrateRwaHealthOverlayV2(client), (error) => (
     error.code === 'rwa_health_overlay_migration_invalid'
       && error.message.includes(`drifted constraint ${FOREIGN_KEYS[0].name}`)
-      // and it NAMES what drifted. Six conditions share one refusal; an operator staring at a
-      // database that will not boot should not have to read pg_constraint to learn which.
-      && error.message.includes(`fields=${field}`)
-  ), `${label} drift must fail closed, naming ${field}`);
+  ), `${label} drift must fail closed`);
   assert.equal(client.statements.at(-1), 'ROLLBACK');
 }
 

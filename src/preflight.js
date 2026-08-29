@@ -88,6 +88,12 @@ export const OPERATIONAL_ENV = [
   // graceful shutdown: how long in-flight requests get to finish after SIGTERM before the hard exit
   // (server.js drain). Operational — Render SIGKILLs ~30s after SIGTERM, so keep it well under that.
   'DRAIN_MS',
+  // THE API'S WORKER WATCHDOG. WORKER_STALE_SEC is how long a silent worker is still normal (the tick
+  // is hourly, so the 90m default means it missed one) and is read by BOTH `/health`'s `worker.stale`
+  // and the alarm — one number, because two copies is how a dashboard and an alarm come to disagree
+  // about whether the worker is alive. WORKER_WATCH_MS is how often the API looks. Neither disables
+  // anything: a longer window is a later page, never a silent one.
+  'WORKER_STALE_SEC', 'WORKER_WATCH_MS',
   // access posture
   'INVITE_MODE', 'RATE_LIMIT', 'RATE_AUTH_BURST', 'RATE_AUTH_PER_SEC', 'RATE_HUMAN_BURST',
   'RATE_HUMAN_PER_SEC', 'RATE_PUBLIC_BURST', 'RATE_PUBLIC_PER_SEC', 'RATE_READ_BURST',

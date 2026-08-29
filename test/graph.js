@@ -104,6 +104,49 @@ assert(trace.some((l) => l.startsWith('read by') && l.includes('src/')), 'and wh
 assert(trace.some((l) => l.startsWith('decided in') && l.includes('.md')), 'and which documents decided it');
 console.log('✓ lever trace: declaration, readers, pins and deciding documents resolve for a real lever');
 
+// ── open-findings: it reports, and it must never quietly stop reporting ──────────────────────────
+// GRAPH.md §5 increment 2. Three registers — SIGN-OFF.md (founder decisions), BALANCE.md (economy
+// sign-off) and SPEC.md (technical debt) — share the D1–D15 id namespace, so `D1` names three
+// unrelated things and a bare mention cannot be attributed. The query therefore REPORTS: it prints
+// each row's own state with outside evidence beside it, and flags the collision. These assertions
+// pin the parts that would make it useless if they broke silently.
+{
+  const claims = [...g.nodes.values()].filter((n) => n.type === 'Claim');
+  const rows = claims.filter((n) => n.register !== 'AUDIT');
+  // per-register FIRST, so a broken parser names the register it lost rather than only the total
+  for (const reg of ['SIGN-OFF', 'BALANCE', 'SPEC']) {
+    assert(rows.some((n) => n.register === reg), `no rows extracted from ${reg} — a register that `
+      + 'stops parsing silently drops every decision it holds');
+  }
+  assert(rows.length >= 30, `only ${rows.length} register rows extracted — with a broken register `
+    + 'parser this query reports an empty sheet, which reads exactly like a clean one');
+
+  // The collision is the whole reason this reports rather than concludes. If it stopped being
+  // detected the query would start attributing one register's evidence to another's decision.
+  assert(rows.some((n) => n.ambiguous), 'the shared D1–D15 namespace is no longer detected as '
+    + 'ambiguous — evidence would now be attributed to whichever register parsed first');
+
+  const out = QUERIES['open-findings'](g);
+  const text = out.join('\n');
+  assert(/AMBIGUOUS/.test(text), 'the query must SAY when an id is carried by more than one register');
+  assert(/COVERAGE, not a census/.test(text), 'the audit-corpus figure must be stated as coverage — '
+    + 'read as a census it is a count of findings nobody can check');
+  assert(g.auditCoverage.reports > g.auditCoverage.withMarker,
+    `coverage claims ${g.auditCoverage.withMarker} of ${g.auditCoverage.reports} reports carry a `
+    + 'marker; if every report matched, the scan would be a census and the caveat would be false');
+
+  // The sheet's own answer table is the authority on whether a decision is closed. A word scan over
+  // row bodies read 12 of 15 as resolved — "it is already built that way" inside an argument FOR an
+  // option is not a closure — so the answer must come from the table or not at all.
+  const sheet = rows.filter((n) => n.register === 'SIGN-OFF');
+  assert(sheet.length >= 10 && sheet.every((n) => n.answer),
+    'every sheet row must resolve to an answer in SIGN-OFF.md\'s own answer table; a row with no '
+    + 'entry is genuinely unanswered and the query says so');
+  console.log(`✓ open-findings: ${rows.length} register rows across three D-namespace registers, `
+    + `${rows.filter((n) => n.ambiguous).length} flagged ambiguous, audit coverage stated as `
+    + `${g.auditCoverage.withMarker} of ${g.auditCoverage.reports} reports`);
+}
+
 console.log('✅ THE GRAPH PLANE test passed — the work-and-knowledge graph builds from the tree with '
   + `${c.nodes} nodes and ${c.edges} edges, every node carries provenance + an authoring run + a content hash, `
   + 'every invariant check names what it reconciles, precedent lookup resolves a named pattern to its call sites, '

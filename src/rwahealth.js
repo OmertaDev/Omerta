@@ -526,10 +526,38 @@ export function deriveRwaHealthIds(input) {
   return deepFreeze(deriveStrict(input));
 }
 
+// Two values here are functions of the OBSERVATION alone, and the sweep calls this once per
+// identity with the same one — so computing them per call is quadratic in the catalog. Measured on
+// the 2,048-version fixture: 4.19M keccaks re-hashing every provider id for every identity, plus
+// 2,048 re-hashes of the whole ~1MB raw body, for 306s against the suite's own 240s budget (that
+// suite had never been run — see THE SUITE LEDGER). Memoised per observation object, both collapse
+// to one pass and the sweep lands at 7.8s (both figures measured on real Postgres). A WeakMap
+// rather than a field because the observation is deep-frozen, and because a different body is a
+// different object, so nothing can be stale.
+const observationMemo = new WeakMap();
+function memoFor(observation) {
+  let memo = observationMemo.get(observation);
+  if (!memo) {
+    // the same predicate the per-identity filter used, so a non-string id is still no match and
+    // duplicates still land in the same bucket — `matching.length === 1` keeps its exact meaning
+    const byIdHash = new Map();
+    for (const item of observation.assets) {
+      const { id } = item;
+      if (typeof id !== 'string') continue;
+      const hash = hashUtf8(id);
+      const bucket = byIdHash.get(hash);
+      if (bucket) bucket.push(item); else byIdHash.set(hash, [item]);
+    }
+    memo = { byIdHash, providerBodyHash: keccak256(toBytes(observation.__rawBody)) };
+    observationMemo.set(observation, memo);
+  }
+  return memo;
+}
+
 export function evaluateRwaHealthAsset(identity, observation) {
   if (!identity || !observation || !Array.isArray(observation.assets)) throw new TypeError('invalid health evaluation');
-  const matching = observation.assets.filter((item) => typeof item.id === 'string'
-    && hashUtf8(item.id) === identity.robinhoodAssetIdHash);
+  const memo = memoFor(observation);
+  const matching = memo.byIdHash.get(identity.robinhoodAssetIdHash) || [];
   const values = Array(7).fill(1);
   if (matching.length === 1) {
     values[0] = 0;
@@ -548,7 +576,7 @@ export function evaluateRwaHealthAsset(identity, observation) {
   const predicates = values.map((result, index) => ({ code: PREDICATE_CODES[index], result: RESULT_NAMES[result] }));
   const ruleIndex = values.findIndex((value) => value === winning && winning !== 0);
   return deepFreeze({
-    providerBodyHash: keccak256(toBytes(observation.__rawBody)),
+    providerBodyHash: memo.providerBodyHash,
     expectedIdentityHash: fixedIdentity(identity),
     predicateCommitment: abi(
       ['bytes32', ...Array(7).fill('uint8')],

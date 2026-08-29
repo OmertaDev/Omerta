@@ -274,6 +274,39 @@ assert.equal(model.routes.filter((route) => route.method === 'GET' && route.url 
 assert.equal(repository.currentBranch, storedRepository.currentBranch,
   'knowledge checks must not drift when the same revision is checked from a named or detached branch');
 
+// The same rule one field over, and it is the reason CI could not agree with a developer's machine:
+// git renders an ISO-strict UTC date as `+00:00` up to 2.43 and as `Z` from 2.55, so every commit
+// date in the graph used to be a function of the checkout's git binary. Byte-compared artifacts make
+// that a drift failure with nothing changed. Assert the PROPERTY rather than the normalizer: every
+// timestamp the graph carries is canonical UTC. Both floors matter and fail differently — the first
+// catches a scan that has stopped finding timestamps at all (a clean bill of health over nothing),
+// the second that the git-derived fields specifically are still present and still covered.
+{
+  const timestamps = [];
+  const walk = (value, path) => {
+    if (Array.isArray(value)) { value.forEach((entry, i) => walk(entry, `${path}[${i}]`)); return; }
+    if (value && typeof value === 'object') {
+      for (const [key, entry] of Object.entries(value)) walk(entry, path ? `${path}.${key}` : key);
+      return;
+    }
+    if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value)) {
+      timestamps.push({ path, value });
+    }
+  };
+  walk(JSON.parse(fs.readFileSync(path.join(root, 'knowledge', 'generated', 'graph.json'), 'utf8')), '');
+  assert(timestamps.length >= 500, `only ${timestamps.length} timestamps scanned in graph.json — a scan `
+    + 'that finds nothing reads exactly like a graph with no environment-dependent dates in it');
+  const gitDerived = timestamps.filter((t) => /(?:\.date|lastChangedAt)$/.test(t.path));
+  assert(gitDerived.length >= 500, `only ${gitDerived.length} git-derived commit dates found — this `
+    + 'check exists for those fields specifically, so losing sight of them is losing the check');
+  const offset = timestamps.filter((t) => !t.value.endsWith('Z'));
+  assert.equal(offset.length, 0, `${offset.length} timestamp(s) in graph.json carry a local UTC offset `
+    + 'rather than canonical Z, so the artifact is a function of the checkout\'s git version rather '
+    + `than of the revision — first at ${offset[0]?.path} = ${offset[0]?.value}`);
+  console.log(`\u2713 checkout stability: all ${timestamps.length} graph timestamps are canonical UTC `
+    + `(${gitDerived.length} read from git), so regenerating under a different git version cannot drift them`);
+}
+
 for (const artifact of graph.nodes.filter((n) => n.type === 'Artifact')) {
   assert(artifact.version, `${artifact.key} has no version`);
   assert(graph.edges.some((e) => e.type === 'CONTAINS' && e.to === artifact.key), `${artifact.key} has no subsystem`);
@@ -313,9 +346,20 @@ for (const [name, expected] of Object.entries(outputs)) {
     const expectedLines = expected.split('\n');
     let line = 0;
     while (actualLines[line] === expectedLines[line] && line < Math.max(actualLines.length, expectedLines.length)) line += 1;
-    assert.fail(`${name} drifted; run npm run knowledge; first difference at line ${line + 1}\n`
+    // MEASURED, because the obvious recipe is half of one: the artifacts pin sourceRevision AND
+    // worktreeDirty, so they describe the tree EXACTLY as it stood when they were built. `npm run
+    // knowledge` alone does clear this locally — and it bakes worktreeDirty:true, which must never
+    // be committed. For a commit the order is forced: land the source change first (clean tree),
+    // then regenerate, then commit the artifacts ALONE. A commit whose changed paths are entirely
+    // under knowledge/generated/ is read as the snapshot of its PARENT (sourceRevisionForSnapshot),
+    // which is the only way an artifact can describe a commit it is contained in. Push the pair
+    // together or CI is red on the authored commit, which cannot carry its own hash.
+    assert.fail(`${name} drifted; first difference at line ${line + 1}\n`
       + `committed: ${JSON.stringify(actualLines[line] ?? '<EOF>')}\n`
-      + `generated: ${JSON.stringify(expectedLines[line] ?? '<EOF>')}`);
+      + `generated: ${JSON.stringify(expectedLines[line] ?? '<EOF>')}\n`
+      + 'fix: `npm run knowledge` clears this locally but stamps worktreeDirty:true — do not commit '
+      + 'that. To commit: land the source change first, regenerate on the clean tree, then commit the '
+      + 'artifacts ALONE (a generated-only commit describes its PARENT) and push both together.');
   }
 }
 

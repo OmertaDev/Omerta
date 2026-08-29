@@ -348,6 +348,111 @@ for (const need of [
 const idStmt = stmts.find((s) => s.startsWith('ALTER TABLE characters ADD COLUMN IF NOT EXISTS id '));
 assert(idStmt && !/PRIMARY KEY/i.test(idStmt), 'column-level PRIMARY KEY is stripped from the ADD COLUMN def');
 
+// ── 1b. THE RE-APPLY LEDGER — every statement in schema.sql survives being run twice ──
+// schema.sql is applied at EVERY boot (`makeDb` → `boot.query(SCHEMA)`), and node-pg sends the whole
+// file as ONE simple query, which Postgres runs as an IMPLICIT TRANSACTION: one error aborts the
+// entire batch and `makeDb` throws, so the process refuses to boot. On a fresh database that never
+// happens; on an EXISTING one — i.e. every deploy after the first — any non-idempotent statement is a
+// crash loop. That is the 2026-08-06 outage (`gang_members.post`) and it recurred on 2026-08-28, when
+// five `CREATE INDEX` statements shipped without `IF NOT EXISTS` while the other 155 in the file had
+// it. pgcheck §7 catches this behaviourally and did, but it needs a real database and runs in its own
+// CI job; this is the same property asserted from the text alone, in `npm test`, on every PR.
+//
+// THE RULE IS PER-SHAPE, because "idempotent" means something different for each kind of DDL — an
+// index and a table say IF NOT EXISTS, a constraint has no such clause and must be DROPped first, a
+// seed row needs ON CONFLICT or a WHERE NOT EXISTS guard. Anything the classifier does not recognise
+// is a FAILURE, not a pass: a new shape has to be added deliberately with its idempotent form stated,
+// which is the whole point of catalogue-or-declare.
+{
+  // Split on top-level `;`, tracking parens, quotes, dollar-quoting and `--` comments. Hand-rolled
+  // rather than a regex for the reason the SQL scanner is: statements here span many lines and carry
+  // both quote characters, and a regex reads them wrong in a way that silently drops statements.
+  const statements = [];
+  {
+    let depth = 0, quote = null, dollar = false, cur = '';
+    for (let i = 0; i < SCHEMA.length; i++) {
+      const c = SCHEMA[i];
+      if (dollar) { if (c === '$' && SCHEMA[i + 1] === '$') { dollar = false; cur += '$$'; i++; continue; } cur += c; continue; }
+      if (quote) { cur += c; if (c === quote && SCHEMA[i - 1] !== '\\') quote = null; continue; }
+      if (c === '$' && SCHEMA[i + 1] === '$') { dollar = true; cur += '$$'; i++; continue; }
+      if (c === "'" || c === '"') { quote = c; cur += c; continue; }
+      if (c === '-' && SCHEMA[i + 1] === '-') { while (i < SCHEMA.length && SCHEMA[i] !== '\n') i++; cur += '\n'; continue; }
+      if (c === '(') depth++; else if (c === ')') depth--;
+      if (c === ';' && depth === 0) { statements.push(cur.trim()); cur = ''; continue; }
+      cur += c;
+    }
+    if (cur.trim()) statements.push(cur.trim());
+  }
+
+  // Each entry: the shape, and the form that makes THAT shape safe to run a second time.
+  const SAFE = [
+    [/^CREATE TABLE IF NOT EXISTS\b/i, 'CREATE TABLE … IF NOT EXISTS'],
+    [/^CREATE (?:UNIQUE )?INDEX IF NOT EXISTS\b/i, 'CREATE INDEX … IF NOT EXISTS'],
+    [/^ALTER TABLE [\s\S]*\bADD COLUMN IF NOT EXISTS\b/i, 'ALTER TABLE … ADD COLUMN IF NOT EXISTS'],
+    [/^ALTER TABLE [\s\S]*\bDROP CONSTRAINT IF EXISTS\b/i, 'ALTER TABLE … DROP CONSTRAINT IF EXISTS'],
+    // A seed row is idempotent either by ON CONFLICT or by the WHERE NOT EXISTS form this file uses.
+    [/^INSERT INTO [\s\S]*\bON CONFLICT\b/i, 'INSERT … ON CONFLICT'],
+    [/^INSERT INTO [\s\S]*\bWHERE NOT EXISTS\b/i, 'INSERT … WHERE NOT EXISTS'],
+    // An UPDATE is idempotent when it sets constants under a predicate that stops matching (or keeps
+    // producing the same result). The occupation seeds are the recorded case — see the E1 note in
+    // CLAUDE.md about a re-boot re-occupying a district players had liberated.
+    [/^UPDATE [\s\S]*\bSET\b[\s\S]*\bWHERE\b/i, 'UPDATE … WHERE (converges)'],
+  ];
+  // Postgres has NO `ADD CONSTRAINT IF NOT EXISTS`, so the only idempotent way to add one is to DROP
+  // it first — which is what this file does. So an ADD CONSTRAINT is safe exactly when a matching
+  // `DROP CONSTRAINT IF EXISTS` for the SAME table and name appears EARLIER in the file. Matching on
+  // the pair rather than on proximity is what makes it decidable: a drop for a different constraint
+  // sitting next to it would look identical to the eye and would not make it safe.
+  const dropped = new Set();
+  const constraintAdd = /^ALTER TABLE\s+(\w+)[\s\S]*?\bADD CONSTRAINT\s+(\w+)/i;
+  const constraintDrop = /^ALTER TABLE\s+(\w+)[\s\S]*?\bDROP CONSTRAINT IF EXISTS\s+(\w+)/i;
+  const shapeOf = (statement) => {
+    const direct = SAFE.find(([re]) => re.test(statement))?.[1];
+    if (direct) return direct;
+    const add = statement.match(constraintAdd);
+    if (add && dropped.has(`${add[1]}.${add[2]}`)) return 'ALTER TABLE … DROP CONSTRAINT IF EXISTS + ADD CONSTRAINT';
+    return null;
+  };
+
+  // SELF-TEST FIRST, before the scan, so a matcher that has stopped discriminating fails HERE rather
+  // than somewhere downstream that names the wrong thing.
+  assert.equal(shapeOf('CREATE UNIQUE INDEX ux_x ON t (a)'), null,
+    'a bare CREATE INDEX must never classify safe — it is the exact statement that crashed the boot');
+  assert.equal(shapeOf('ALTER TABLE t ADD CONSTRAINT ck_x CHECK (a > 0)'), null,
+    'a bare ADD CONSTRAINT must never classify safe — Postgres has no IF NOT EXISTS for it');
+  assert.equal(shapeOf('CREATE TABLE t (a INT)'), null, 'a bare CREATE TABLE must never classify safe');
+  assert(shapeOf('CREATE UNIQUE INDEX IF NOT EXISTS ux_x ON t (a)'), 'the guarded index form must classify safe');
+  dropped.add('t.ck_x');
+  assert(shapeOf('ALTER TABLE t ADD CONSTRAINT ck_x CHECK (a > 0)'),
+    'an ADD CONSTRAINT paired with an earlier DROP … IF EXISTS for the SAME name must classify safe');
+  assert.equal(shapeOf('ALTER TABLE t ADD CONSTRAINT ck_other CHECK (a > 0)'), null,
+    'the pair must match on NAME — a drop of a different constraint does not make this one safe');
+  assert.equal(shapeOf('ALTER TABLE other ADD CONSTRAINT ck_x CHECK (a > 0)'), null,
+    'the pair must match on TABLE — the same constraint name on another table is another constraint');
+  dropped.clear();
+
+  const unsafe = [];
+  let checked = 0;
+  for (const statement of statements) {
+    if (!statement) continue;
+    checked++;
+    const drop = statement.match(constraintDrop);
+    if (drop) dropped.add(`${drop[1]}.${drop[2]}`);
+    if (!shapeOf(statement)) unsafe.push(statement.replace(/\s+/g, ' ').slice(0, 110));
+  }
+  // Anti-vacuity, two floors because they fail differently: the first catches a splitter that has
+  // stopped finding statements, the second a matcher that has stopped recognising the file's own
+  // dominant shape (either would report a clean sweep over a schema full of hazards).
+  assert(checked > 500, `the splitter found only ${checked} statements — it has stopped reading schema.sql`);
+  assert(statements.filter((s) => /^CREATE TABLE IF NOT EXISTS\b/i.test(s)).length > 200,
+    'the classifier no longer recognises the file\'s dominant shape');
+  assert.equal(unsafe.length, 0,
+    `${unsafe.length} statement(s) in schema.sql are not safe to run a second time — the whole file is `
+    + 'applied at every boot inside one implicit transaction, so each of these is a crash loop on any '
+    + `existing database:\n  ${unsafe.join('\n  ')}`);
+  console.log(`  ✓ all ${checked} statements in schema.sql are re-apply safe (the file is applied at every boot)`);
+}
+
 // ── 2. clean no-op on a FRESH DB (every column already exists) ──
 const mem = newDb();
 registerPgMemCompatibility(mem, DataType);

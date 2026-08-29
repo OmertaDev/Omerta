@@ -1154,6 +1154,62 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     + `batch matches the tree (${scope[1]} contracts + ${scope[2]} interface)`);
 }
 
+// CHAIN-AUDIT-PACKET.md is a FROZEN snapshot and says so in its own banner, so it is deliberately NOT
+// held to the tree — `CHAIN-DEPLOY.md` is the live inventory authority and is checked against the tree
+// above. But a snapshot that disagrees with ITSELF is not a record: a reader cannot tell which half is
+// the evidence. It got there the ordinary way — 18738f02 refreshed the §1 table and its test count and
+// left the heading, the framing date and the §3 prover row on the pre-refresh figures, so the document
+// simultaneously claimed 17 contracts (heading) and enumerated 24 (its own table), and claimed both 387
+// tests / 22 suites and 305 / 12, ninety lines apart. Hold every figure to the ones beside it.
+{
+  const pkt = read('CHAIN-AUDIT-PACKET.md');
+
+  // the §1 table is the ground truth INSIDE this document: it enumerates the batch, one row per file
+  const rows = [...pkt.matchAll(/^\| \d+ \| `([A-Za-z0-9]+)` \|(.*)$/gm)];
+  assert(rows.length > 10, `the §1 batch table has stopped being readable (${rows.length} rows found) — `
+    + 'this check would be vacuous rather than clean');
+  const tableIfaces = rows.filter((r) => /interface, not a contract|interface only/.test(r[2])).length;
+  const tableContracts = rows.length - tableIfaces;
+
+  const head = /## 1\. HISTORICAL SCOPE — (\d+) contracts \+ (\d+) interfaces?/.exec(pkt);
+  assert(head, 'CHAIN-AUDIT-PACKET.md §1 has lost its scope heading');
+  assert.equal(`${head[1]}+${head[2]}`, `${tableContracts}+${tableIfaces}`,
+    `the packet's §1 heading sends ${head[1]} contracts + ${head[2]} interface(s) to audit while the table `
+    + `directly beneath it enumerates ${tableContracts} + ${tableIfaces}. An auditor scopes from the `
+    + 'heading and discovers the rest mid-engagement, which is what "batch, not dribble" exists to prevent');
+
+  const body = /(\d+)\s+Solidity files,\s+(\d+)\s+contracts and\s+(\d+)\s+interfaces/.exec(pkt);
+  assert(body, 'CHAIN-AUDIT-PACKET.md §1 has lost its file-count sentence');
+  assert.equal([body[1], body[2], body[3]].join('/'), [rows.length, tableContracts, tableIfaces].join('/'),
+    `the packet says ${body[1]} files / ${body[2]} contracts / ${body[3]} interfaces; its own table `
+    + `enumerates ${rows.length} / ${tableContracts} / ${tableIfaces}`);
+
+  // and every restatement of the measurement must agree with the others — a partial refresh is the
+  // failure mode, so what matters is not any single figure but that they cannot drift apart
+  const pairs = [...pkt.matchAll(/(\d+)\s+(?:Foundry\s+)?tests?\s+(?:across|\/)\s+(\d+)\s+suites/g)]
+    .map((m) => `${m[1]}/${m[2]}`);
+  assert(pairs.length >= 2, `the packet states its Foundry count in ${pairs.length} place(s); with fewer `
+    + 'than two there is nothing to hold it to and this assertion proves nothing');
+  assert.equal(new Set(pairs).size, 1,
+    `the packet gives its Foundry suite two different answers: ${[...new Set(pairs)].join(' and ')}`);
+
+  // \s+, not a space: the §1 sentence wraps between the count and "512-run", so a literal space here
+  // matched ONE site of two and the agreement below was trivially true — vacuous, not clean
+  const fuzz = [...pkt.matchAll(/(\w+)\s+512-run fuzz/g)].map((m) => m[1]);
+  assert(fuzz.length >= 2, `the packet counts its 512-run fuzz properties in ${fuzz.length} place(s); `
+    + 'with fewer than two this agreement check proves nothing');
+  assert.equal(new Set(fuzz).size, 1, `the packet counts its 512-run fuzz properties two ways: ${
+    [...new Set(fuzz)].join(' and ')}`);
+
+  const dates = [...pkt.matchAll(/measured (?:on )?\*{0,2}(\d{4}-\d\d-\d\d)/g)].map((m) => m[1]);
+  assert(dates.length >= 2, `the packet states its measurement date in ${dates.length} place(s)`);
+  assert.equal(new Set(dates).size, 1,
+    `the packet was measured on two different days at once: ${[...new Set(dates)].join(' and ')}`);
+
+  console.log(`✓ the audit packet agrees with itself (${tableContracts} contracts + ${tableIfaces} `
+    + `interfaces, ${pairs[0]} tests/suites, measured ${dates[0]})`);
+}
+
 // The issuer-retirement answer is a value-conservation rule, not optional prose. Keep the player Codex,
 // the design authority, and the launch runbook aligned: ordinary multiplier actions preserve raw units;
 // terminal actions stop and reconcile actual receipt back to the same pending cohort, never treasury.
@@ -3604,4 +3660,239 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     && admin.includes('frozen inputs · pause or cancel · never rewrite'),
   'the operator UI must show gameplay-vault controller recovery, pull withdrawals, tranche state, exact receipt, and solvency');
   console.log('✓ RWA budget is pre-vote fixed, MVP holdings are spot/units-first, and the OMR-staking rule is complete with implementation pending');
+}
+
+// ── GRAPH.md's own evidence, against the tree ───────────────────────────────────────────────────
+//
+// GRAPH.md exists to argue two things: that the engineering memory should be a graph, and that the
+// largest fixed token cost is CLAUDE.md. Both arguments are carried entirely by measured figures —
+// and every one of them had rotted in the same direction, understating the case:
+//
+//     CLAUDE.md      5,630 → 17,224 lines   (206% out; the log tripled underneath the sentence)
+//     audit reports     57 → 96
+//     levers           769 → 727 pinned     (a different metric, restated to the mechanical one)
+//
+// So the document written to argue for the lever was making the case at a third of its true size.
+// That is the class this file exists for, and it is why the figures are now measured rather than
+// remembered.
+//
+// THE BAND IS WIDER THAN SPEC'S 2%, DELIBERATELY. CLAUDE.md is append-only by design and grows by
+// hundreds of lines in a working session, so a 2% band (344 lines) would fire on unrelated work —
+// and a guard that nags on unrelated work gets deleted, which catches nothing. 10% still catches the
+// drift that actually happened by a factor of twenty.
+{
+  const graphDoc = read('GRAPH.md');
+  const figure = (label, re) => {
+    const m = graphDoc.match(re);
+    assert(m, `GRAPH.md no longer states ${label} in the expected form — the guard below has stopped `
+      + 'checking anything. Update this test with the new wording.');
+    return Number(m[1].replace(/,/g, ''));
+  };
+  const band = (claimed, real, what, tol) => assert(Math.abs(claimed - real) / Math.max(real, 1) < tol,
+    `GRAPH.md says ${claimed} ${what}; it is ${real} — more than ${tol * 100}% out, so restate it. `
+    + 'Its whole argument is carried by these numbers.');
+
+  // Stated three times in the document; all three must move together, or §6's lever argument is
+  // made against a size §2 has already contradicted.
+  const claimedLog = [...graphDoc.matchAll(/\*\*?([\d,]{5,})\*?\*? ?lines?\b|\b([\d,]{5,})-line\b/g)]
+    .map((m) => Number((m[1] || m[2]).replace(/,/g, '')));
+  assert(claimedLog.length >= 3, 'GRAPH.md must state the CLAUDE.md line count where it argues from '
+    + `it (§2 evidence, §4 aside, §6 token cost); found ${claimedLog.length} such figures`);
+  const realLog = lines('CLAUDE.md');
+  for (const c of claimedLog) band(c, realLog, 'lines in CLAUDE.md', 0.10);
+  assert(new Set(claimedLog).size === 1,
+    `GRAPH.md states the CLAUDE.md size as ${[...new Set(claimedLog)].join(' and ')} in different `
+    + 'sections; one of them is stale and the two arguments disagree');
+
+  // Audit reports move only when an audit is written — worth restating, so this one is exact.
+  const audits = fs.readdirSync('.').filter((f) => /^AUDIT-.*\.md$/.test(f)).length;
+  assert.equal(figure('the audit-report count', /\*\*(\d+) audit reports\*\*/), audits,
+    `GRAPH.md's audit-report count is stale; the tree holds ${audits}`);
+
+  // Levers move with ordinary balance work, so band rather than nag.
+  //
+  // Counted INSIDE the SIGNED array, not across the file. A whole-file count reads 735, because
+  // test/levers.js also lists 8 levers that are inert with a stated reason — they are deliberately
+  // not pinned, so folding them in would make GRAPH.md cite a register that is 8 larger than the one
+  // the suite actually enforces. The bracket walk is what makes the two numbers the same number.
+  const lev = read('test/levers.js');
+  const open = lev.indexOf('const SIGNED = [');
+  assert(open >= 0, 'test/levers.js no longer declares `const SIGNED = [` — the lever count below is '
+    + 'measuring nothing. Update this test with the new register.');
+  let depth = 0, close = -1;
+  for (let i = open + 'const SIGNED = '.length; i < lev.length; i += 1) {
+    if (lev[i] === '[') depth += 1;
+    else if (lev[i] === ']' && (depth -= 1) === 0) { close = i; break; }
+  }
+  assert(close > open, 'the SIGNED register in test/levers.js never closes');
+  const pinned = (lev.slice(open, close).match(/^\s*\['[A-Z][A-Za-z0-9_.]*',/gm) || []).length;
+  assert(pinned > 500, `only ${pinned} pins found inside SIGNED — the extractor has stopped reading `
+    + 'the register, and a count of nothing reads exactly like a count that agrees');
+  band(figure('the signed-lever count', /\*\*([\d,]+) signed levers\*\*/), pinned, 'signed levers', 0.10);
+
+  // §6 says the precondition for trimming the log has been met because the knowledge plane shipped.
+  // If that plane is ever removed, the section is claiming a thing that no longer exists.
+  assert(fs.existsSync('tools/knowledge.js') && fs.existsSync('knowledge/generated/graph.json'),
+    "GRAPH.md §6 says the knowledge plane shipped and so the stated reason to defer trimming CLAUDE.md "
+    + 'is spent; that claim requires tools/knowledge.js and knowledge/generated/graph.json to exist');
+
+  console.log('✓ GRAPH.md argues from measured figures, not remembered ones');
+}
+
+// ═══ THE SMOKE-DEBRIS NOTE — a runbook line that makes two claims about code ══════════════════════
+// DEPLOY.md §8's smoke check creates a real player on the live box, once per deploy, forever. The
+// launch rehearsal found 10 of 12 entries on `/v1/live` were dead level-1 accounts from old smoke
+// runs, and the fix at the time was a recency gate on the player-facing boards. That closed the
+// board half and left the OTHER half unstated: the ops overview's headline counts have no recency
+// gate, so smoke debris inflates the founder's own player figure permanently.
+//
+// The note now says both halves — and a note is prose, which rots. Two claims in it are checkable
+// against code, so they are checked, and the guard is deliberately two-sided: it fails when the
+// cited window drifts, AND it fails if somebody gates the overview, because then the warning is
+// telling a reader a number is inflated when it no longer is. The correct response to that failure
+// is to DELETE the warning, not to widen the check.
+{
+  const R = await import('../src/rules.js');
+  const deploy = read('DEPLOY.md');
+
+  const cited = deploy.match(/ages off the player-facing boards after `DISCOVERY\.SEEN_DAYS` \((\d+)\)/);
+  assert(cited, 'DEPLOY.md §8 must state the window smoke debris ages off the boards after, citing DISCOVERY.SEEN_DAYS');
+  assert.equal(Number(cited[1]), R.DISCOVERY.SEEN_DAYS,
+    `DEPLOY.md §8 quotes DISCOVERY.SEEN_DAYS as ${cited[1]}; the live lever is ${R.DISCOVERY.SEEN_DAYS}`);
+
+  // Half one: the boards really are gated, so "debris self-clears there and needs no sweep" is true.
+  // Asserted at the CALL SITE, not at the lever — a helper that exists and is never called gates
+  // nothing, which is exactly the shape the rehearsal found.
+  for (const f of ['src/collision.js', 'src/discovery.js'])
+    assert(/seenSince\(\)/.test(read(f)),
+      `${f} must apply seenSince() — DEPLOY.md §8 tells the operator smoke debris ages off these boards`);
+
+  // Half two: the overview's headline counts really are UNGATED, so "counts permanently" is true.
+  const ops = read('src/ops.js');
+  // BOTH quote styles, and that is load-bearing rather than tidy: a gated count MUST be
+  // double-quoted, because the SQL then carries an interval literal with a quote inside it. A
+  // single-quote-only reader loses the gated row from the corpus entirely, so the mutation that
+  // matters fails at the COUNT assertion instead of at the one that names what changed — measured.
+  const totals = [...ops.matchAll(/\b(total|alive|dead):\s*await one\((['"])((?:(?!\2).)+)\2/g)].map((m) => [m[1], m[3]]);
+  assert.equal(totals.length, 3, `expected the three headline character counts in src/ops.js, saw ${totals.length}`);
+  const gated = totals.filter(([, q]) => /last_accrued_at/.test(q)).map(([k]) => k);
+  assert.equal(gated.length, 0,
+    `src/ops.js now gates ${gated.join('/')} on recency — DEPLOY.md §8's warning that smoke characters `
+    + 'count in the headline figure permanently is no longer true. Delete the warning rather than this check.');
+
+  console.log('✓ DEPLOY.md §8 states the smoke-debris window the code enforces, and the asymmetry it warns about');
+}
+
+// ═══ THE POSTED-CLAIM LEDGER — the figures that leave the building ════════════════════════════════
+// `MARKETING-POSTS.md` holds the drafts for Hacker News and the MCP registries. Its own header says
+// these are the surfaces where "a wrong sentence travels furthest", and HN in particular punishes an
+// inaccurate technical claim harder than it punishes an unfinished product — so of every document in
+// this repository it is the one where a stale number costs the most, and it was the one with no
+// guard at all. Four of its checkable claims had rotted, all understating the tree (~600 routes
+// against 746, 100 suites against 148, 85 red-team reports against 97, 30 invariants against 34);
+// understating is the safe direction to be wrong in and it is still wrong.
+//
+// TWO RULES, because each covers what the other cannot:
+//   (a) every claim's PATTERN must still match the file — a reworded sentence must fail loudly here
+//       rather than silently stop being covered, which is how prose guards quietly die;
+//   (b) the number it captures must equal the tree, MEASURED. Routes come from SPEC's own row, which
+//       test/routes.js already holds to the live app registry, so the two ends of the chain cannot
+//       disagree without something failing.
+//
+// SPEC's Ledger-invariants row is checked here for the same reason it was found wrong: it sits one
+// line under a size table every other row of which is machine-checked, and it said 18 named checks
+// against a live 30. An unchecked row in a checked table is the easiest kind of figure to trust.
+{
+  const posts = read('MARKETING-POSTS.md');
+
+  // Measured, never restated. `npm test` is the chain a reader means by "suites".
+  //
+  // Three counts of "suites" coexist in this repo and all three are correct about different sets, so
+  // do NOT reconcile them by editing one to match another (measured 2026-08-29):
+  //   148  the npm test CHAIN — 147 files in test/ plus tools/knowledge-test.js. This is the one a
+  //        reader of the post means, because it is what running `npm test` executes.
+  //   152  test/*.js at top level — THE SUITE LEDGER in test/gates.js (150 run + 2 declared). The
+  //        five outside the chain run elsewhere: three *.postgres.js in CI's real-Postgres job,
+  //        test/mcp.js under omerta-mcp's own npm test, and test/contextplus.js.
+  //   153  test/**/*.js recursive — SPEC's size table. The extra is test/lib/srcfiles.js, a shared
+  //        helper rather than a suite; the row is a file count, not a claim about how many run.
+  const pkg = JSON.parse(read('package.json'));
+  const suites = new Set(`${pkg.scripts.pretest || ''} ${pkg.scripts.test}`
+    .match(/(?:test|tools)\/[\w.-]+\.js/g) || []).size;
+  assert(suites > 100, `read only ${suites} suites out of the npm test chain — the extractor stopped `
+    + 'seeing the script, and a count of nothing reads exactly like a count that agrees');
+
+  // The red-team reports are AUDIT.md plus AUDIT-*.md at the root. `docs/AUDITS.md` is the INDEX and
+  // `CHAIN-AUDIT-PACKET.md` is a packet for an auditor, so neither is a report. Same git-not-the-disk
+  // discipline as the markdown count above, and for the same three reasons recorded there.
+  let reports;
+  try {
+    reports = [...new Set(execFileSync('git', ['ls-files', '-z', '--cached', '--others',
+      '--exclude-standard', 'AUDIT*.md'], { encoding: 'utf8' }).split('\0').filter(Boolean))].length;
+  } catch {
+    reports = fs.readdirSync('.').filter((f) => /^AUDIT.*\.md$/.test(f)).length;
+  }
+  assert(reports > 50, `found only ${reports} red-team reports — the extractor is not reading the root`);
+
+  // The §10.4 sweep is counted by RUNNING it: `invariants.js` pushes one check per currency inside a
+  // loop, so a static count of `push(` sites is a restatement of the implementation and is wrong.
+  const { makeDb } = await import('../src/db.js');
+  const { runLedgerInvariants } = await import('../src/invariants.js');
+  const db = await makeDb();
+  const { checks } = await runLedgerInvariants(db.pool || db, { alert: false });
+  const named = checks.filter((c) => !/ conservation$/.test(c.name)).length;
+  const conservation = checks.length - named;
+  assert(checks.length > 20, `the §10.4 sweep emitted only ${checks.length} checks on an empty server`);
+
+  // SPEC's own row, in the table whose every other row is already machine-checked.
+  const specInv = spec.match(/^\| Ledger invariants \| \*\*(\d+)\*\* checks — \*\*(\d+)\*\* named[^|]*?\*\*(\d+)\*\* per-currency/m);
+  assert(specInv, "SPEC.md's size table must state the ledger-invariant count in the checked form "
+    + '"**N** checks — **N** named escrow/identity checks + **N** per-currency conservation"');
+  assert.deepEqual([+specInv[1], +specInv[2], +specInv[3]], [checks.length, named, conservation],
+    `SPEC says ${specInv[1]}/${specInv[2]}/${specInv[3]} ledger invariants (total/named/per-currency); `
+    + `the sweep emits ${checks.length}/${named}/${conservation} — restate it`);
+
+  // Routes ride SPEC's row rather than booting the app a second time: test/routes.js already holds
+  // that row to `app.routes.length`, so crossing the post against SPEC crosses it against the app.
+  const specRoutes = spec.match(/^\| HTTP routes \| \*\*([\d,]+)\*\*/m);
+  assert(specRoutes, 'SPEC.md must state the route count in its size table (row "HTTP routes")');
+  const routes = Number(specRoutes[1].replace(/,/g, ''));
+
+  const CLAIMS = [
+    ['routes (Show HN)', /All ([\d,]+) routes\nwork over HTTP/, routes],
+    ['routes (registry listing)', /reaches all ([\d,]+) routes/, routes],
+    ['the §10.4 sweep', /sweep runs nightly across ([\d,]+) invariants/, checks.length],
+    ['red-team reports', /There are ([\d,]+) red-team reports/, reports],
+    ['test suites', /proudest of: ([\d,]+) suites/, suites],
+  ];
+  const wrong = [];
+  for (const [what, re, real] of CLAIMS) {
+    const m = posts.match(re);
+    // (a) the pattern must MATCH: a claim reworded out from under its check is the failure mode this
+    // whole file exists for, so it fails here rather than passing over a sentence nothing reads.
+    assert(m, `MARKETING-POSTS.md no longer states ${what} in the form this guard checks — either `
+      + 'restore the wording or update the pattern, but do not leave a public claim unchecked');
+    const claimed = Number(m[1].replace(/,/g, ''));
+    if (claimed !== real) wrong.push(`${what}: the draft says ${claimed}, the tree has ${real}`);
+  }
+  assert.deepEqual(wrong, [], 'a draft meant for Hacker News and the MCP registries states a figure '
+    + `the tree does not support:\n  ${wrong.join('\n  ')}`);
+
+  // The install snippet is the one line a stranger PASTES, so the receipt beside it is held to the
+  // package it names — a version or a tool list that has drifted would be a verification of software
+  // nobody can install.
+  const mcpPkg = JSON.parse(read('omerta-mcp/package.json'));
+  assert(posts.includes(`\`${mcpPkg.version}\`, matching the version in`),
+    `the clean-machine receipt must name omerta-mcp's current version (${mcpPkg.version})`);
+  const tools = [...read('omerta-mcp/index.js').matchAll(/name: '(omerta_\w+)'/g)].map((m) => m[1]);
+  assert(tools.length >= 5, `read only ${tools.length} tool declarations out of omerta-mcp/index.js`);
+  const missing = tools.filter((t) => !posts.includes(`\`${t}\``));
+  assert.deepEqual(missing, [], 'the clean-machine receipt lists the tools an MCP host will see, so '
+    + `every tool the package declares must be in it:\n  ${missing.join(', ')}`);
+  assert(posts.includes(`| \`tools/list\` | ${tools.length} tools:`),
+    `the receipt must state the tool COUNT the package declares (${tools.length})`);
+
+  console.log(`  ✓ the public drafts' ${CLAIMS.length} tree-claims are measured (${routes} routes, `
+    + `${checks.length} invariants, ${reports} reports, ${suites} suites) and the MCP receipt matches `
+    + `omerta-mcp@${mcpPkg.version}'s ${tools.length} tools`);
 }

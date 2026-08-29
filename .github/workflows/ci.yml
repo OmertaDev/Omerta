@@ -44,6 +44,35 @@ jobs:
           cache: npm
       - run: npm ci
 
+      # The knowledge artifacts are REVISION-STAMPED (graph.json records its own sourceRevision and
+      # carries the git lineage as ~1,200 Commit nodes), so on `push: main` they are necessarily
+      # stamped from whichever branch generated them and the byte-comparison in `npm test` cannot be
+      # green. That red says nothing about anyone's code: the PR run tests the exact tree about to
+      # land via the synthetic-merge hatch, so genuine staleness is already gated there. What was
+      # left on main was a red that always fires and never means anything — the kind that teaches
+      # people to scroll past red on main, which is how the 2026-07-30 outage survived seven commits.
+      #
+      # So on main, and only on main, the artifacts are brought to this revision before the suites
+      # run. `knowledge-refresh.yml` commits the same regeneration back, so the checked-in files stop
+      # claiming a branch they no longer belong to.
+      - name: knowledge artifacts carry the merge's own revision (main only)
+        if: github.event_name == 'push' && github.ref_name == 'main'
+        run: |
+          set -euo pipefail
+          npm run knowledge
+          # The commit is not optional and not about persistence: graph.json records
+          # `worktreeDirty`, so a regenerated-but-uncommitted tree drifts from its own render at
+          # line 4. Committing locally (never pushed from here — knowledge-refresh.yml owns that)
+          # is what makes the snapshot clean, and a generated-only commit reports its PARENT as the
+          # source revision, so the artifacts still describe the merge that triggered this run.
+          if git diff --quiet -- knowledge/generated; then
+            echo "already current for $(git rev-parse --short HEAD)"
+          else
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -q -m "chore(knowledge): refresh for $(git rev-parse --short HEAD)" -- knowledge/generated
+          fi
+
       - name: npm test (the full suite, on pg-mem)
         run: npm test
 
@@ -146,6 +175,25 @@ jobs:
         env:
           TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
         run: npm run test:stockcatalogv2:postgres
+
+      # Its two siblings, which were written against a real database for the same reason and which
+      # nothing had ever run — a suite that does not execute is not a guard, and it reads on the
+      # summary line exactly like one that passes.
+      # Each names its OWN env var, and neither reads TEST_DATABASE_URL — they SKIP without it, and
+      # under CI=true they assert rather than skip, so a step handed the wrong variable name goes red
+      # rather than passing having run nothing. Both namespace themselves into a private schema, so
+      # sharing omerta_check with pgcheck is safe.
+      - name: RWA health H1 sweep, 2,048 versions (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          RWA_HEALTH_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+        run: npm run test:rwahealth:postgres
+
+      - name: RWA registry lifecycle persistence (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          RWA_REGISTRY_LIFECYCLE_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+        run: npm run test:rwaregistrylifecycle:postgres
 
       # The backup is the last line of defence and the only check nobody would notice failing — you
       # find out on the day you need a restore. Two of its verifications were written after real

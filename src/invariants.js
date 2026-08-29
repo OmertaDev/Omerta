@@ -772,10 +772,24 @@ export function webhookText(kind, failed = []) {
   // A drill must not read like an emergency. Without this the test alert arrives as "🚨 OMERTÀ — test
   // invariant drift", which is exactly the message someone would panic at — and the point of the drill
   // is to learn what a REAL one looks like, so it has to be unmistakably distinguishable from one.
-  const head = kind === 'test' ? '✅ OMERTÀ — alert test. This is a DRILL: alerting works, nothing is wrong.'
-    : kind === 'backup' ? '🚨 OMERTÀ — BACKUPS ARE NOT RUNNING'
-      : `🚨 OMERTÀ — ${kind === 'ledger' ? '§10.4 ledger' : kind} invariant drift`;
-  const lines = (Array.isArray(failed) ? failed : [failed]).map((f) => {
+  // AND A RECOVERY MUST NOT READ LIKE AN EMERGENCY, which is the same argument one line up — and the
+  // reason it is needed at all: every watchdog here latches per EPISODE, so an operator who restarts
+  // a dark worker cannot tell whether it worked unless the all-clear reaches the channel the alarm
+  // came from. Announcing recovery to the console alone (which is what the archiver and oracle
+  // watchdogs do today) is the alarm-into-nothing shape one level down.
+  //
+  // Decided by the PAYLOAD rather than by a new `kind`, so the telemetry event stays one name per
+  // subsystem and a dashboard keyed on it still sees both edges of an episode. That is safe because
+  // every caller reporting a FAILURE either filters `!c.ok` or ships objects carrying no `ok` at all,
+  // so an all-ok list is only ever something deliberately constructed as an all-clear. An EMPTY list
+  // is not a recovery: `[].every()` is true, and an alert with nothing in it is a bug, not good news.
+  const arr = Array.isArray(failed) ? failed : [failed];
+  const recovered = arr.length > 0 && arr.every((f) => f && typeof f === 'object' && f.ok === true);
+  const head = recovered ? `✅ OMERTÀ — ${kind === 'ledger' ? '§10.4 ledger' : kind} RECOVERED`
+    : kind === 'test' ? '✅ OMERTÀ — alert test. This is a DRILL: alerting works, nothing is wrong.'
+      : kind === 'backup' ? '🚨 OMERTÀ — BACKUPS ARE NOT RUNNING'
+        : `🚨 OMERTÀ — ${kind === 'ledger' ? '§10.4 ledger' : kind} invariant drift`;
+  const lines = arr.map((f) => {
     if (!f || typeof f !== 'object') return `• ${String(f)}`;
     if (f.drift !== undefined) return `• ${f.name}: drift ${f.drift} (balances ${f.lhs} vs ledger ${f.rhs})`;
     const rest = Object.entries(f).filter(([k]) => k !== 'name').map(([k, v]) => `${k}=${v}`).join(', ');
