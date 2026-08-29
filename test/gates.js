@@ -789,6 +789,77 @@ const SCENERY_WAIVED = {
   console.log(`✓ all ${jobs} worker jobs are isolated and every wrapped result is read null-safely`);
 }
 
+// ═══ THE STARTUP-ORDER LEDGER — a schedule you never reached is not a schedule ═══════════════════
+//
+// MEASURED IN PRODUCTION, 2026-08-29: the live worker went dark for 14 hours and `/health` reported
+// `uptimeSeconds 50788, worker.beatAgoSeconds 50780` — a gap pinned at exactly 8 seconds across
+// three readings hours apart. The beat happened ONCE, 8s after boot, and never again. That is not a
+// crash and not a slow job; it is the signature of a first tick that never returned.
+//
+// The mechanism is an ordering, and it is worth stating because it reads as harmless:
+//
+//     await guardedTick();                 // ← hangs
+//     setInterval(guardedTick, 3600_000);  // ← never reached, so NO INTERVAL OBJECT EVER EXISTS
+//
+// Not a skipped tick — no schedule at all, forever. And the process does not die: it stays alive on
+// the pending top-level await, so the platform sees a healthy process and never restarts it. Worse,
+// the in-flight guard's own `previous tick still running` warning can never fire either, because the
+// interval that would have fired it was the statement below the hang. So the failure is SILENT from
+// inside and from outside alike, on the one process that owns every alarm in the game — when the
+// worker stops, the thing that would tell you has stopped too.
+//
+// Registered FIRST, the identical hang costs one tick instead of the whole schedule, and announces
+// itself hourly. So the rule is exactly the defect and nothing wider: a guarded scheduler must not
+// be INVOKED above its own `setInterval` registration. It says nothing about awaiting one below the
+// registration — `await guardedSync()` is the last statement in the block and starves nothing.
+//
+// This is a SOURCE-level check, honestly labelled: the startup sequence lives inside
+// `if (process.argv[1].endsWith('worker.js'))` with top-level await, so it is not importable and
+// there is nothing to drive. The `pool.on('error')` tripwire in test/hardening.js is the precedent.
+{
+  const src = fs.readFileSync(path.join(SRC, 'worker.js'), 'utf8');
+  const at = src.search(/if \(process\.argv\[1\] && process\.argv\[1\]\.endsWith\('worker\.js'\)\)/);
+  assert(at >= 0, 'the worker main-module block could not be located — the extractor is broken, not the code');
+  // COMMENTS ARE STRIPPED FIRST, and this check caught itself on the recorded lesson: the very
+  // paragraph in worker.js explaining this ordering contains the string `await guardedTick()`, so
+  // the first cut flagged its own documentation as the defect. `decomment` keeps the newline, so
+  // reported line numbers still name the real line (there are no block comments in this block).
+  const body = decomment(bodyOf(src, at));
+
+  const inverted = [];
+  const scheduled = new Set();
+  for (const m of body.matchAll(/setInterval\(\s*(guarded\w+)\s*,/g)) {
+    const fn = m[1];
+    if (scheduled.has(fn)) continue;
+    scheduled.add(fn);
+    // its own invocation: `await guardedX(`, `void guardedX(`, or a bare statement call — but never
+    // the declaration itself (`const guardedX = `) and never the registration we just matched.
+    const call = new RegExp(`(?:await|void)\\s+${fn}\\s*\\(|^\\s*${fn}\\s*\\(`, 'm');
+    const before = body.slice(0, m.index);
+    const hit = call.exec(before);
+    if (hit) {
+      const line = before.slice(0, hit.index).split('\n').length;
+      inverted.push(`${fn}() is called at line ${line} of the worker main block, `
+        + `${before.slice(hit.index).split('\n').length - 1} line(s) ABOVE its own setInterval`);
+    }
+  }
+
+  // Two-sided, because the two halves fail differently. Without the floor, DELETING a registration
+  // silently shrinks the governed set to nothing and this reads exactly like a clean sweep.
+  assert(scheduled.size >= 2,
+    `the startup-order scan found only ${scheduled.size} guarded scheduler(s) — the worker registers `
+    + 'the hourly tick and the chain poll, so either a schedule has been deleted or the extractor has '
+    + 'stopped seeing them; this check is vacuous rather than clean');
+  assert.equal(inverted.length, 0,
+    'a guarded scheduler is INVOKED above its own setInterval. If that call hangs, the registration\n'
+    + '      below it is never reached — no interval object is ever created, the process stays alive on\n'
+    + '      the pending await, the platform sees a healthy process, and the in-flight guard that would\n'
+    + '      have warned hourly was itself the statement that was skipped. Fire the first run BELOW the\n'
+    + '      registration (and un-awaited, so nothing after it is starved either):\n'
+    + `   - ${inverted.join('\n   - ')}`);
+  console.log(`✓ all ${scheduled.size} guarded worker schedulers are registered before they are first run`);
+}
+
 // ═══ THE CATALOG LEDGER — an object index is not an allowlist ════════════════════════════════════
 //
 // `if (!CATALOG[userInput]) throw` reads like a membership test and is not one: every JavaScript
