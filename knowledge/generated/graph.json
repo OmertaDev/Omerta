@@ -1,7 +1,7 @@
 {
   "schema": "omerta.knowledge-graph.v1",
   "sourceRevision": "a556316130d0885875d66cccb021f6401aabb97b",
-  "worktreeDirty": true,
+  "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
     "nodeTypes": [
@@ -82844,7 +82844,7 @@
       "currentBranch": "codex/grill-production-release-fix",
       "defaultBranch": "main",
       "visibility": "public",
-      "worktreeDirty": true,
+      "worktreeDirty": false,
       "currentArtifactCount": 1824,
       "provenance": [
         {
