@@ -1,15 +1,17 @@
 #!/usr/bin/env node
 // THE GRAPH PLANE — the project's work-and-knowledge graph, built from the repo itself.
 //
-// Why this exists (Graph Engineering, §V and §VI-E): this project's memory is a 5,600-line
-// chronological log plus 57 point-in-time audit reports plus two balance registers. CLAUDE.md states
+// Why this exists (Graph Engineering, §V and §VI-E): this project's memory is a 17,000-line
+// chronological log plus ~96 point-in-time audit reports plus three decision registers that share one
+// id namespace (see the `open-findings` query for what that costs). CLAUDE.md states
 // its own job outright — "precedent lookup: ~414 comments in src/ cite a pattern by name, and this
 // log is where those names are defined. Read it that way — search it for the precedent you need,
 // don't read it front to back." That is a graph query being performed by hand against prose.
 //
 // The paper's diagnosis is that the bottleneck is not the next model call, it is the PLACEMENT of
-// memory and evaluation. Evaluation here is already strong: 53 suites, 6 harnesses, 21 conservation
-// checks. Memory is the weak plane — it is transcript-shaped, which is the abstraction AgentHub
+// memory and evaluation. Evaluation here is already strong: a suite per system, a dozen measurement
+// harnesses, and the §10.4 conservation sweep. Memory is the weak plane — it is transcript-shaped,
+// which is the abstraction AgentHub
 // identifies as the first to fail once work becomes numerous. This file moves the structural half of
 // that memory out of prose and into something you can ask questions of.
 //
@@ -84,7 +86,7 @@ function walk(dir, pred, out = []) {
 //   COVERS      Suite   → Module    the suite imports the module
 //   CITES       Module  → Pattern   a comment invokes the precedent by name
 //   MENTIONS    Source  → any       a document names it
-const NODE_TYPES = ['Source', 'Module', 'Suite', 'Harness', 'Lever', 'Reason', 'Check', 'Pattern'];
+const NODE_TYPES = ['Source', 'Module', 'Suite', 'Harness', 'Lever', 'Reason', 'Check', 'Pattern', 'Claim'];
 const EDGE_TYPES = ['DEFINES', 'READS', 'PINS', 'EMITS', 'RECONCILES', 'COVERS', 'CITES', 'MENTIONS'];
 
 // ── build ───────────────────────────────────────────────────────────────────────────────────────
@@ -293,7 +295,139 @@ export function build() {
     }
   }
 
-  return { runId, nodes, edges, unparsed, builtAt: null };
+
+  // ── Claims: the decision registers, and the audit corpus's flagged items ───────────────────────
+  // GRAPH.md §5 increment 2. Its exit criterion is `query open-findings` answering without anyone
+  // reading a report, and DISAGREEING with SIGN-OFF.md where the two actually disagree.
+  //
+  // What is deterministic here is narrower than it looks, and pretending otherwise is the failure
+  // mode. §2 measured it: the audit corpus has no shared finding header — counting gives 44, 156 or
+  // 1,126 depending on the pattern — so a "count of findings" would be a number nobody could check.
+  // What IS reliably structured is the DECISION REGISTERS: SIGN-OFF.md's `### D<n> — ` rows and
+  // BALANCE.md's `**D<n> — SIGNED/BUILT**` rows. Those are extracted exactly.
+  //
+  // THE TRAP, and the reason this query reports rather than concludes: those two registers SHARE the
+  // D1–D8 namespace. BALANCE's D3 is the public-wash cap (BUILT 2026-07-16); the sheet's D3 is
+  // whether the early-exit toll follows the token on-chain (open — its own body still lists options
+  // A/B/C and a recommendation). A naive extractor sees `D3 — BUILT**` in CLAUDE.md and closes the
+  // wrong one. So an id carried by more than one register is marked AMBIGUOUS and its evidence is
+  // shown, never applied. A confidently wrong verdict is worse here than an honest "go and look".
+  const DECIDED = /\b(?:SIGNED|BUILT|SHIPPED|CLOSED|DECIDED|RESOLVED|APPLIED|ANSWERED)\b/i;
+  const registers = [];
+  let sheetClaim = null;   // the sheet's OWN headline count, so the query can disagree with it
+
+  {
+    const f = path.join(ROOT, 'SIGN-OFF.md');
+    if (fs.existsSync(f)) {
+      // The sheet's OWN resolution is its answer table (`| D1 | **A** | ... |`), not a word in a row's
+      // body — "it is already built that way" inside an argument FOR an option is not a closure, and
+      // a word scan read 12 of 15 as resolved when reading them showed otherwise. So the table is the
+      // authority and a row with no table entry is genuinely unanswered.
+      const r = rel(f), text = read(f), lines = text.split('\n'), h = sha(text);
+      const answers = new Map();
+      lines.forEach((line, i) => {
+        const a = /^\|\s*([A-Z]{1,3}-?\d{1,2})\s*\|\s*\*\*(.+?)\*\*\s*\|/.exec(line);
+        if (a) answers.set(a[1], { letter: a[2], line: i + 1 });
+      });
+      lines.forEach((line, i) => {
+        const m = /^### ([A-Z]{1,3}-?\d{1,2}) — (.+)$/.exec(line);
+        if (!m) return;
+        const ans = answers.get(m[1]);
+        registers.push({ register: 'SIGN-OFF', num: m[1], title: m[2], file: r, line: i + 1, hash: h,
+          answer: ans ? ans.letter : null, resolvedHere: Boolean(ans) });
+      });
+      sheetClaim = { file: r, answered: answers.size, rows: registers.filter((c) => c.register === 'SIGN-OFF').length };
+    }
+  }
+  {
+    const f = path.join(ROOT, 'BALANCE.md');
+    if (fs.existsSync(f)) {
+      // BALANCE's register is a LIST — `- **D3 — BUILT**: ...` — and the file carries the whole
+      // set TWICE: the signed rows under §11, and a verbatim copy under `## Appendix — the original
+      // DECIDE list (for the record)`. Taking both would double-report every id and make half the
+      // rows read OPEN because the appendix preserves the pre-signing question wording. So the
+      // enclosing heading is tracked and an explicitly-historical section is skipped.
+      const r = rel(f), text = read(f), h = sha(text);
+      let heading = '';
+      text.split('\n').forEach((line, i) => {
+        if (/^#+ /.test(line)) { heading = line; return; }
+        if (/Appendix|for the record|superseded/i.test(heading)) return;
+        const m = /^[-*] \*\*(D\d{1,2}) — (.+?)\*\*/.exec(line);
+        if (!m) return;
+        registers.push({ register: 'BALANCE', num: m[1], title: m[2], file: r, line: i + 1, hash: h,
+          resolvedHere: DECIDED.test(m[2]) });
+      });
+    }
+  }
+
+  {
+    // A THIRD register in the same namespace, and the reason the query reports rather than concludes:
+    // `D1` alone means the Uniswap-hook decision (SIGN-OFF), kill-EV economics (BALANCE) and reads
+    // taking the write lock (SPEC's technical-debt list). Extracted so the collision is VISIBLE
+    // rather than silently mis-attributing SPEC's evidence to a balance call.
+    const f = path.join(ROOT, 'SPEC.md');
+    if (fs.existsSync(f)) {
+      const r = rel(f), text = read(f), h = sha(text);
+      text.split('\n').forEach((line, i) => {
+        const m = /^#{2,4} (D\d{1,2}) — (.+)$/.exec(line);
+        if (!m) return;
+        registers.push({ register: 'SPEC', num: m[1], title: m[2], file: r, line: i + 1, hash: h,
+          resolvedHere: /\b(?:RESOLVED|ADDRESSED)\b/.test(m[2]) && !/PARTLY|MOSTLY/.test(m[2]) });
+      });
+    }
+  }
+
+  // an id carried by two registers cannot be attributed from a bare mention
+  const byNum = {};
+  for (const c of registers) (byNum[c.num] ||= new Set()).add(c.register);
+  for (const c of registers) {
+    c.ambiguous = byNum[c.num].size > 1;
+    node('Claim', `${c.register}:${c.num}`, {
+      register: c.register, num: c.num, title: c.title, answer: c.answer || null,
+      resolvedHere: c.resolvedHere, ambiguous: c.ambiguous, evidence: [],
+    }, { file: c.file, line: c.line, hash: c.hash });
+  }
+
+  // Evidence: a line elsewhere in the corpus that names the id AND a decision word. This is the
+  // second, independent source the exit criterion needs — the sheet's own state is one opinion.
+  for (const f of docFiles) {
+    const r = rel(f);
+    if (/^(SIGN-OFF|BALANCE)\.md$/.test(r)) continue;          // a register is not evidence about itself
+    const text = read(f);
+    text.split('\n').forEach((line, i) => {
+      for (const num of Object.keys(byNum)) {
+        if (!new RegExp(`(?<![\\w-])${num}(?![\\w\\d])`).test(line)) continue;
+        if (!DECIDED.test(line)) continue;
+        for (const reg of byNum[num]) {
+          const n = nodes.get(`Claim:${reg}:${num}`);
+          if (n && n.evidence.length < 4) n.evidence.push(`${r}:${i + 1}  ${line.trim().slice(0, 90)}`);
+          edge('MENTIONS', `Source:${r}`, `Claim:${reg}:${num}`, { file: r, line: i + 1 });
+        }
+      }
+    });
+  }
+
+  // The audit corpus's flagged-but-not-patched paragraphs. COVERAGE IS STATED, never implied: the
+  // reports do not share a marker, so this reaches a minority of them and the query says which.
+  const auditFiles = docFiles.filter((f) => /^AUDIT-.*\.md$/.test(rel(f)));
+  let flaggedReports = 0;
+  for (const f of auditFiles) {
+    const r = rel(f), text = read(f), h = sha(text);
+    let hit = false;
+    text.split('\n').forEach((line, i) => {
+      if (!/flagged(?![\w])|not patched|NOT changed|accepted-as-designed|accepted, not/i.test(line)) return;
+      if (!/flagged|not patched|NOT changed|accepted/i.test(line)) return;
+      hit = true;
+      node('Claim', `AUDIT:${r}#${i + 1}`, {
+        register: 'AUDIT', num: `${r}#${i + 1}`, title: line.trim().slice(0, 140),
+        resolvedHere: false, ambiguous: false, evidence: [],
+      }, { file: r, line: i + 1, hash: h });
+    });
+    if (hit) flaggedReports++;
+  }
+  const auditCoverage = { reports: auditFiles.length, withMarker: flaggedReports };
+
+  return { runId, nodes, edges, unparsed, builtAt: null, auditCoverage, sheetClaim };
 }
 
 // ── the graph's own invariants (§Appendix: "every graph write satisfies four invariants") ────────
@@ -424,6 +558,69 @@ const QUERIES = {
     return [...g.nodes.values()]
       .filter((n) => n.type === 'Module' && !covered.has(n.key))
       .map((n) => `${n.id}  (${n.lines} lines)`).sort();
+  },
+
+  // GRAPH.md §5 increment 2. What is open, without reading a report end to end.
+  //
+  // It REPORTS; it does not adjudicate, and that is a decision rather than an omission. Two things
+  // make a verdict unjustifiable here. (1) SIGN-OFF.md and BALANCE.md share the D1–D8 id namespace —
+  // BALANCE's D3 is the public-wash cap (BUILT), the sheet's D3 is whether the early-exit toll
+  // follows the token on-chain (its body still lists options A/B/C), so `D3 — BUILT` in CLAUDE.md
+  // closes one and says nothing about the other. Any id both registers carry is marked AMBIGUOUS and
+  // its evidence is shown, never applied. (2) A resolution word in a row's own body is weak: "it is
+  // already built that way" inside an argument for option A is not a closure. So a row's status is
+  // stated as what its OWN TEXT says, with the outside evidence beside it as a lead.
+  //
+  // Coverage is printed rather than implied. The audit corpus shares no finding header (§2: counting
+  // gives 44, 156 or 1,126 depending on the pattern), so the flagged-paragraph scan reaches a
+  // minority of reports and the output says which — a number read as a census would be worse than none.
+  'open-findings': (g) => {
+    const claims = [...g.nodes.values()].filter((n) => n.type === 'Claim');
+    const rows = claims.filter((n) => n.register !== 'AUDIT');
+    const out = [];
+    const sheet = rows.filter((n) => n.register === 'SIGN-OFF');
+    const bal = rows.filter((n) => n.register === 'BALANCE');
+    const spec = rows.filter((n) => n.register === 'SPEC');
+
+    if (g.sheetClaim) {
+      out.push(`sheet          ${g.sheetClaim.file} — ${g.sheetClaim.rows} decision rows, `
+        + `${g.sheetClaim.answered} carrying an answer in its own answer table`);
+      const un = sheet.filter((n) => !n.answer);
+      out.push(un.length
+        ? `               ⚠ ${un.length} row(s) with NO answer recorded: ${un.map((n) => n.num).join(', ')}`
+        : '               every row the sheet states has an answer recorded against it');
+    } else {
+      out.push('sheet          (SIGN-OFF.md parsed no rows — the register may have been restructured)');
+    }
+    out.push(`rows parsed    ${sheet.length} in SIGN-OFF, ${bal.length} in BALANCE, ${spec.length} in SPEC`);
+    out.push(`               ${rows.filter((n) => n.ambiguous).length} of ${rows.length} carry an id more than one register uses`);
+    out.push('');
+
+    for (const [label, set] of [['SIGN-OFF.md — the founder decision sheet', sheet],
+      ['BALANCE.md — the economy register', bal], ['SPEC.md — the technical-debt register', spec]]) {
+      if (!set.length) continue;
+      out.push(`── ${label} ──`);
+      for (const n of set) {
+        // Only the sheet has an answer table, so only the sheet can be missing an answer. A BALANCE
+        // or SPEC row states its own status in its title and is reported as exactly that.
+        const state = n.answer ? `answered ${String(n.answer).slice(0, 12).padEnd(12)}`
+          : n.resolvedHere ? 'closed by its own text  '
+          : n.register === 'SIGN-OFF' ? '⚠ NO ANSWER RECORDED    ' : 'open on its own text    ';
+        out.push(`  ${n.num.padEnd(5)}${state} ${n.title.slice(0, 66)}`);
+        if (n.ambiguous) {
+          out.push('        ⚠ AMBIGUOUS — both registers carry this id; the evidence below cannot be attributed');
+        }
+        for (const e of n.evidence) out.push(`        lead  ${e}`);
+      }
+      out.push('');
+    }
+
+    const flagged = claims.filter((n) => n.register === 'AUDIT');
+    const c = g.auditCoverage || { reports: 0, withMarker: 0 };
+    out.push(`audit corpus   ${c.withMarker} of ${c.reports} reports carry a detectable flagged/not-patched marker`);
+    out.push(`               ${flagged.length} flagged paragraphs extracted — COVERAGE, not a census: the reports`);
+    out.push('               share no finding header, so a report absent here may still hold open items.');
+    return out;
   },
 
   // Everything the extractor could not read. Printed so a growing blind spot is visible.

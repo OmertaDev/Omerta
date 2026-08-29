@@ -146,11 +146,18 @@ the number is wrong.
 
 ---
 
-# 🔴 LIVE SHEET — the 15 decisions currently open (2026-08-02)
+# 📄 THE QUESTIONS AS THEY WERE PUT — D1–D15, all answered above (2026-08-02)
 
-Everything below is a real fork with no default. Each one is written the same way: **the situation**,
-**why it is yours and not mine**, three options **A / B / C**, and my recommendation. Answer with the
-letter — *"D1: A. D2: C."* is a complete reply. Where a letter needs a number I say so.
+> **NOT OPEN.** Every one of these fifteen was answered on 2026-08-02 — the answers are the table
+> directly above, and the build state of each is tracked in `CLAUDE.md` and `BALANCE.md`. This block
+> is kept because the reasoning behind an answer is worth more than the letter: it records the
+> situation, why the call was the founder's, and what the alternatives cost. **Read it as the
+> record, never as a to-do list.** It carried the heading *"🔴 LIVE SHEET — the 15 decisions
+> currently open"* until 2026-08-29, two lines under its own answer table — found by
+> `node tools/graph.js query open-findings`, which is what that query is for.
+
+Each is written the same way: **the situation**, **why it is yours and not mine**, three options
+**A / B / C**, and my recommendation.
 
 Ordered by **deadline, not importance**: D1–D5 block a mainnet deploy and some of them become
 expensive or impossible to change afterwards. D6–D10 are live in the game today. D11–D15 can wait.

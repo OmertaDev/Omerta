@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `e309a4c915a6`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `9ced165206ed`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1237 |
+| Commits in clone | 1240 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-29 — ci: regenerating is not enough — graph.json records worktreeDirty |
+| Latest commit | 2026-08-29 — docs: the audit packet was a partial refresh disagreeing with itself in four places |
 
 ## Commit authors
 
@@ -21,7 +21,7 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 431 |
-| Claude | 118 |
+| Claude | 121 |
 | CRVYDEV | 41 |
 
 ## Historical hotspots
@@ -43,10 +43,10 @@
 | [src/invariants.js](../../src/invariants.js) | 114 | yes |
 | [test/client.js](../../test/client.js) | 101 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
-| knowledge/generated/github-history.md | 90 | historical |
-| knowledge/generated/graph-summary.md | 90 | historical |
-| knowledge/generated/graph.json | 90 | historical |
-| knowledge/generated/inventory.md | 90 | historical |
+| knowledge/generated/github-history.md | 91 | historical |
+| knowledge/generated/graph-summary.md | 91 | historical |
+| knowledge/generated/graph.json | 91 | historical |
+| knowledge/generated/inventory.md | 91 | historical |
 | [test/social.js](../../test/social.js) | 84 | yes |
 | [public/wiki.html](../../public/wiki.html) | 80 | yes |
 | [test/growth.js](../../test/growth.js) | 79 | yes |
@@ -66,8 +66,8 @@
 | [src/business.js](../../src/business.js) | 39 | yes |
 | [src/chain.js](../../src/chain.js) | 37 | yes |
 | [test/migrate.js](../../test/migrate.js) | 34 | yes |
+| [test/docs.js](../../test/docs.js) | 33 | yes |
 | [public/admin.html](../../public/admin.html) | 33 | yes |
-| knowledge/generated/documents.md | 31 | historical |
 
 ## Pull requests
 

@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `e309a4c915a6`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `9ced165206ed`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,826 |
-| Text lines | 515,649 |
-| Repository bytes inventoried | 313,560,890 |
+| Text lines | 515,800 |
+| Repository bytes inventoried | 313,571,641 |
 | Backend/route modules | 187 |
 | HTTP route registrations / unique routes | 742 / 742 |
 | Database tables | 317 |
 | Solidity declarations | 49 |
-| Git commits | 1,237 |
+| Git commits | 1,240 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 5,592 / 24,464 |
+| Graph nodes / edges | 5,595 / 24,479 |
 
 ## Artifact kinds
 
@@ -60,7 +60,7 @@
 | [schema.sql](../../schema.sql) | 6,009 | data-schema | 2026-08-29 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
 | [omerta-contracts/test/AcquisitionConstellationTask3B.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask3B.t.sol) | 3,743 | contract-test | 2026-08-28 |
-| [test/docs.js](../../test/docs.js) | 3,541 | test-suite | 2026-08-28 |
+| [test/docs.js](../../test/docs.js) | 3,674 | test-suite | 2026-08-29 |
 | [src/server.js](../../src/server.js) | 3,404 | backend-module | 2026-08-28 |
 | [omerta-contracts/test/AcquisitionVaultOperator.t.sol](../../omerta-contracts/test/AcquisitionVaultOperator.t.sol) | 3,199 | contract-test | 2026-08-27 |
 | [omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1](../../omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1) | 2,947 | contract-project | 2026-08-28 |

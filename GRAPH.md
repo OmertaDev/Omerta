@@ -230,20 +230,42 @@ the reviewers have a different prompt, evidence set or role.
 
 **The fourth write invariant is not claimed.** Stated in §3 rather than faked.
 
-### Increment 2, with its exit criterion
+### Increment 2 — SHIPPED 2026-08-29, and it shipped narrower than it was planned
 
-**Model-assisted extraction of the 81 audit findings into typed `Claim` nodes** — status (open /
-fixed / accepted / superseded), severity, the fix commit, the regression that pins it. This is the
-genuinely unstructured layer, it is embarrassingly parallel with a defined reducer, and it is exactly
-the paper's Haiku-extraction case. It also lets a machine check a claim `SIGN-OFF.md` currently makes
-in prose: that every open item has been resolved.
+**Planned:** model-assisted extraction of the audit corpus's findings into typed `Claim` nodes —
+status, severity, fix commit, pinning regression. **Exit criterion (the paper's, for this stage): a
+cross-session query works** — `graph query open-findings` answers without anyone reading a report,
+and disagrees with `SIGN-OFF.md` where the two actually disagree.
 
-**Exit criterion (the paper's, for this stage): a cross-session query works** — specifically,
-`graph query open-findings` answers correctly without anyone reading a report, and disagrees with
-`SIGN-OFF.md` where the two actually disagree.
+**What shipped:** `Claim` nodes and the query, built deterministically, over the *decision registers*
+rather than over findings. The plan quoted a findings count; §2 above measures why no such number
+exists — the corpus shares no finding header, so counting gives 44, 156 or 1,126 depending on the
+pattern you pick. A `Claim` node per "finding" would have been a number nobody could check, which is
+the failure this whole document is against. What *is* reliably structured is the registers:
+`SIGN-OFF.md`'s `### D<n>` rows and its answer table, `BALANCE.md`'s signed `- **D<n> — …**` list,
+and `SPEC.md`'s technical-debt headings. Those extract exactly, and the audit corpus is reduced to
+what can be stated honestly: a flagged-paragraph scan whose **coverage is printed** (81 of 96 reports
+carry a detectable marker), never a census.
 
-Not started. It needs a persistent store (which is also what unlocks write invariant 4), and the
-paper's own advice is to earn each stage before taking the next.
+**It reports; it does not adjudicate**, and that is the finding rather than a shortfall. The three
+registers **share the `D1`–`D15` id namespace**: `D1` is the Uniswap-hook decision in one, kill-EV
+economics in another, and "reads take the write lock" in the third. So a line reading `D3 — BUILT`
+closes exactly one of three things and a naive extractor closes the wrong one. Every id more than one
+register carries is marked **AMBIGUOUS** and its evidence is shown beside it, never applied. A
+confidently wrong verdict is worse here than an honest *go and look*.
+
+**The exit criterion was met on its first run, by disagreeing.** `SIGN-OFF.md` answered all fifteen
+decisions on 2026-08-02 and recorded the answers in a table — and two lines under that table it still
+headed the block *"🔴 LIVE SHEET — the 15 decisions currently open"*. The query read the answer table
+as the authority (a word scan over row bodies reads 12 of 15 as resolved, because "it is already
+built that way" inside an argument *for* an option is not a closure) and the heading was corrected.
+The same partial-refresh class as the audit packet, on the one document whose job is telling the
+founder what still needs their call.
+
+Guarded by `test/graph.js`: a floor on rows extracted, one assertion per register so a parser that
+stops seeing one names it, and — the load-bearing one — that the namespace collision is still
+*detected*, since the day it stops being detected the query silently starts attributing one
+register's evidence to another's decision.
 
 ---
 
