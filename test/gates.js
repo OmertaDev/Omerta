@@ -2961,3 +2961,110 @@ scopedSocialContext = async function(db) {
   console.log(`  ✓ all ${onDisk.length} test suites are run (${covered.size}) or declared `
     + `(${Object.keys(DECLARED).length}), and all ${invoked.size - 2} scripts the workflow calls exist`);
 }
+
+// ═══ THE SINGLE-INSTANCE LEDGER — state that does not exist across boxes ══════════════════════════
+// render.yaml documents, at length, that this service runs exactly ONE instance because the process
+// holds state a second box would not share. That warning is prose: nothing fails when somebody adds
+// the sixteenth Map, or declares numInstances, and the failure mode is the worst kind — a player on
+// box A never hears an event emitted on box B, silently, with nothing red anywhere.
+//
+// TWO RULES, because each covers what the other cannot:
+//   (a) the deployment does not declare numInstances, and the warning still NAMES each documented
+//       piece of per-process state — so deleting the reasoning fails, not just the number.
+//   (b) every module-scope mutable collection in src/ is CLASSIFIED, and anything classified SHARED
+//       is named in that warning.
+//
+// SCOPE, stated because it is not obvious and a reader would otherwise over-trust this: rule (b)
+// sees MODULE-scope collections only. Two of the four things render.yaml names are invisible to it —
+// `wsClients` is function-scope inside server.js and `bus` is an EventEmitter, not a Map — so they
+// are covered by rule (a) instead. A syntactic sweep alone would report all-clear while blind to the
+// two biggest, which reads exactly like a clean bill of health.
+{
+  const ROOT = fileURLToPath(new URL('../', import.meta.url));
+  const render = fs.readFileSync(path.join(ROOT, 'render.yaml'), 'utf8');
+
+  // (a) the constraint itself. numInstances is deliberately ABSENT (it defaults to 1); declaring it
+  // at all — even as 1 — is the edit that makes raising it a one-character change.
+  assert.doesNotMatch(render, /^\s*numInstances:/m,
+    'render.yaml must not declare numInstances — the single-instance constraint is the DEFAULT, and '
+    + 'declaring it makes scaling out a one-character edit past every reason in the comment above it');
+  for (const named of ['game.js `bus`', '`wsClients` presence registry', 'rate-limit buckets', 'flood brakes']) {
+    assert(render.includes(named),
+      `render.yaml's single-instance warning must still name ${named} — the warning IS the guard for `
+      + 'state this ledger cannot see, so deleting a bullet silently removes the only thing standing '
+      + 'between an operator and a scale-out that breaks it');
+  }
+
+  // (b) classify every module-scope mutable collection. Three postures, and the distinction is
+  // correctness rather than taste: a deterministic cache costs CPU on a second box and nothing else;
+  // a same-process fast path whose real guard is a DB constraint is correct anywhere; genuine
+  // cross-request state is not.
+  const POSTURE = {
+    'aggregate.js:validated': 'cache: a WeakSet of board maps already validated — a second box re-validates, same answer',
+    'stockdeliver.js:decCache': 'cache: ERC-20 decimals are immutable on-chain, so every box reads the same value',
+    'cardpng.js:CACHE': 'cache: content-hash-keyed PNG renders of a deterministic SVG; a second box re-renders',
+    'rwahealth.js:observationMemo': 'cache: per-observation-object memo of two pure hashes; a different body is a different object',
+    'rwahealthread.js:FRESH_HEALTH_RECEIPTS': 'cache: per-receipt-object freshness memo, keyed on the object itself',
+    'rwaregistrylifecycle.js:HEAD_RECEIPT_CLIENTS': 'cache: per-client head-receipt memo, keyed on the client object',
+    'finalizedobservation.js:PUBLISHED_FO_ERRORS': 'cache: per-error-object marker; a second box marks its own errors',
+    'finalizedobservation.js:SAFE_DOMAIN_ERRORS': 'cache: per-error-object marker; a second box marks its own errors',
+    'rwahealthclearance.js:CREATE_REQUESTS': 'cache: per-request-object marker, scoped to the request being served',
+    'rwahealthclearance.js:SUBMISSION_REQUESTS': 'cache: per-request-object marker, scoped to the request being served',
+    'rwahealthclearance.js:READ_REQUESTS': 'cache: per-request-object marker, scoped to the request being served',
+    'v4oraclekeeper.js:IN_FLIGHT_WINDOWS': 'db-backstopped: same-process guard; the DB primary key is the cross-process guard (said at the site)',
+    'auth.js:guestBootstrapLocks': 'db-backstopped: a process-local queue for same-process retries; the unique index is the cross-process backstop (said at the site)',
+    'ratelimit.js:buckets': 'shared: N instances = N× every limit, unless REDIS_URL is set',
+    'phone.js:lastDmAt': 'shared: the DM flood brake — N instances = N× the allowed rate, and REDIS_URL does NOT cover it',
+  };
+  const found = [];
+  const walk = (dir) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) { walk(full); continue; }
+      if (!entry.name.endsWith('.js')) continue;
+      const rel = relPath(SRC, full);
+      const text = fs.readFileSync(full, 'utf8');
+      // module scope is column 0 — an indented declaration is inside a function and out of scope.
+      // Then keep only the ones WRITTEN after construction: a Map/Set built once from a literal and
+      // never touched is a lookup table, not state, and 27 of the 42 declarations are exactly that.
+      // Classifying constants would be the mostly-wrong advisory people learn to route around.
+      for (const m of text.matchAll(/^(?:const|let|var) ([A-Za-z_$][\w$]*) = new (?:Map|Set|WeakMap|WeakSet)\(/gm)) {
+        const name = m[1];
+        if (!new RegExp(`\\b${name}\\.(?:set|add|delete|clear)\\s*\\(`).test(text)) continue;
+        found.push(`${rel}:${name}`);
+      }
+    }
+  };
+  walk(SRC);
+  found.sort();
+
+  assert(found.length > 10,
+    `read only ${found.length} module-scope collections — the scan stopped seeing src/, and a sweep `
+    + 'that reaches nothing reads exactly like a sweep that passes');
+
+  const unclassified = found.filter((k) => !POSTURE[k]);
+  assert.deepEqual(unclassified, [],
+    'module-scope mutable collection(s) with no single-instance posture — classify each as a '
+    + 'deterministic cache (a second box computes the same answer), db-backstopped (the real guard '
+    + 'is a DB constraint), or shared (single-instance only, and named in render.yaml):\n  '
+    + unclassified.join('\n  '));
+
+  // anything SHARED must be in the warning an operator actually reads
+  // decidable: the warning must name the IDENTIFIER, so an operator reading it before scaling out
+  // can find the code rather than being told a category
+  const undocumented = found.filter((k) => POSTURE[k].startsWith('shared:'))
+    .filter((k) => !render.includes(k.slice(k.indexOf(':') + 1)));
+  assert.deepEqual(undocumented, [],
+    'state classified SHARED but not named in render.yaml\'s single-instance warning — the warning is '
+    + 'what an operator reads before scaling out, so an unnamed one is invisible exactly then:\n  '
+    + undocumented.join('\n  '));
+
+  const stalePosture = Object.keys(POSTURE).filter((k) => !found.includes(k)).sort();
+  assert.deepEqual(stalePosture, [],
+    'posture(s) declared for module-scope state that no longer exists — drop them so the ledger keeps '
+    + 'describing the tree:\n  ' + stalePosture.join('\n  '));
+
+  const shared = found.filter((k) => POSTURE[k].startsWith('shared:')).length;
+  console.log(`  ✓ all ${found.length} module-scope collections carry a single-instance posture `
+    + `(${shared} shared, each named in render.yaml); numInstances stays undeclared`);
+}

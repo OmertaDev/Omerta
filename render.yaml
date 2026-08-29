@@ -106,6 +106,8 @@ services:
     #   · the `wsClients` presence registry — /v1/online, discovery/circle "online" chips, the
     #     push-skip signal all read it
     #   · the in-memory rate-limit buckets (unless REDIS_URL is set) — N instances = N× every limit
+    #   · the per-account flood brakes (phone.js `lastDmAt`, server.js `lastChatAt`) — the same
+    #     class as the buckets above and NOT covered by REDIS_URL: N instances = N× the allowed rate
     #   · the /health request-metrics ring — per-instance numbers, harmless but misleading
     # Scaling OUT (vs upgrading the database, which is the measured dial below) needs REDIS_URL for
     # the rate limiter + a cross-process fanout for the bus. Until that exists, more instances make
