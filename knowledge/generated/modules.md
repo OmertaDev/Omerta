@@ -141,7 +141,7 @@
 | [src/rules.generated.js](../../src/rules.generated.js) | 480 | platform-core | 0 / 2 | 0 | 10 | 1 |
 | [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 200 | 0 | 0 | 112 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6063 | platform-core | 0 / 1 | 0 | 53 | 0 |
-| [src/rwahealth.js](../../src/rwahealth.js) | 656 | platform-core | 1 / 1 | 0 | 0 | 1 |
+| [src/rwahealth.js](../../src/rwahealth.js) | 684 | platform-core | 1 / 1 | 0 | 0 | 1 |
 | [src/rwahealthclearance.js](../../src/rwahealthclearance.js) | 1092 | platform-core | 4 / 0 | 0 | 6 | 0 |
 | [src/rwahealtherror.js](../../src/rwahealtherror.js) | 20 | platform-core | 0 / 6 | 0 | 0 | 1 |
 | [src/rwahealthoverlay.js](../../src/rwahealthoverlay.js) | 304 | platform-core | 1 / 0 | 0 | 4 | 0 |

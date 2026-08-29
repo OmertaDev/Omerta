@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `787524c9947e`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `65eb90f0b4c2`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1245 |
+| Commits in clone | 1248 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-29 — fix(db): a valid constraint read as drifted, and the boot refused — name[] has no driver parser |
+| Latest commit | 2026-08-29 — test: the single-instance constraint was prose, and its own list was short by two |
 
 ## Commit authors
 
@@ -21,7 +21,7 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 431 |
-| Claude | 126 |
+| Claude | 129 |
 | CRVYDEV | 41 |
 
 ## Historical hotspots
@@ -36,17 +36,17 @@
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 170 | yes |
-| [package.json](../../package.json) | 140 | yes |
+| [package.json](../../package.json) | 141 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 120 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 114 | yes |
 | [src/invariants.js](../../src/invariants.js) | 114 | yes |
 | [test/client.js](../../test/client.js) | 101 | yes |
+| knowledge/generated/github-history.md | 95 | historical |
+| knowledge/generated/graph-summary.md | 95 | historical |
+| knowledge/generated/graph.json | 95 | historical |
+| knowledge/generated/inventory.md | 95 | historical |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
-| knowledge/generated/github-history.md | 94 | historical |
-| knowledge/generated/graph-summary.md | 94 | historical |
-| knowledge/generated/graph.json | 94 | historical |
-| knowledge/generated/inventory.md | 94 | historical |
 | [test/social.js](../../test/social.js) | 84 | yes |
 | [public/wiki.html](../../public/wiki.html) | 80 | yes |
 | [test/growth.js](../../test/growth.js) | 79 | yes |
@@ -59,9 +59,9 @@
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 49 | yes |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
+| [test/gates.js](../../test/gates.js) | 44 | yes |
 | [src/economy.js](../../src/economy.js) | 44 | yes |
 | [src/casino.js](../../src/casino.js) | 43 | yes |
-| [test/gates.js](../../test/gates.js) | 42 | yes |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
 | [src/business.js](../../src/business.js) | 39 | yes |
 | [src/chain.js](../../src/chain.js) | 37 | yes |

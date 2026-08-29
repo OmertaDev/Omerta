@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "787524c9947e02c4ed06c2f7507c97deaa86f148",
+  "sourceRevision": "65eb90f0b4c27d84c086b1bacaefab6cbb4ace3a",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5600,
-    "edges": 24508,
+    "nodes": 5606,
+    "edges": 24537,
     "byNodeType": {
       "Artifact": 1826,
-      "Command": 53,
-      "Commit": 1245,
+      "Command": 56,
+      "Commit": 1248,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 9669,
+      "CHANGED": 9682,
       "CONTAINS": 1846,
-      "DECLARES": 53,
+      "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
-      "EXECUTES": 193,
+      "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1245,
+      "HAS_COMMIT": 1248,
       "IMPLEMENTS": 124,
       "IMPORTS": 1628,
       "INHERITS": 12,
@@ -7521,20 +7521,20 @@
       "path": ".github/workflows/ci.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 14914,
-      "lines": 273,
-      "version": "4ff6e553958404d8",
+      "bytes": 16040,
+      "lines": 292,
+      "version": "8a9fea81b21881cb",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "4ff6e553958404d8"
+          "version": "8a9fea81b21881cb"
         }
       ],
-      "lastChangedAt": "2026-08-29T09:53:39.000Z",
+      "lastChangedAt": "2026-08-29T13:12:18.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "e309a4c915a6e5e373507a5226252aa4e4174f42"
+      "lastChangedCommit": "ffe20171a9ae64a13067a8aa15f2f15bad80c250"
     },
     {
       "key": "Artifact:.github/workflows/forge.yml",
@@ -19958,20 +19958,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 11491,
-      "lines": 81,
-      "version": "e28ff0b5826faafb",
+      "bytes": 12000,
+      "lines": 84,
+      "version": "b6ff464e9eff62fe",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "e28ff0b5826faafb"
+          "version": "b6ff464e9eff62fe"
         }
       ],
-      "lastChangedAt": "2026-08-29T00:22:12.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
+      "lastChangedAt": "2026-08-29T13:12:18.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "ffe20171a9ae64a13067a8aa15f2f15bad80c250"
     },
     {
       "key": "Artifact:Procfile",
@@ -32677,20 +32677,20 @@
       "path": "render.yaml",
       "kind": "operations",
       "extension": ".yaml",
-      "bytes": 16405,
-      "lines": 222,
-      "version": "f874977916c0dc72",
+      "bytes": 16606,
+      "lines": 224,
+      "version": "6610da2180314445",
       "text": true,
       "provenance": [
         {
           "file": "render.yaml",
           "line": 1,
-          "version": "f874977916c0dc72"
+          "version": "6610da2180314445"
         }
       ],
-      "lastChangedAt": "2026-08-21T15:48:06.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "46c289cb24bf10cb88695073407eb9c35fc85441"
+      "lastChangedAt": "2026-08-29T13:12:40.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "65eb90f0b4c27d84c086b1bacaefab6cbb4ace3a"
     },
     {
       "key": "Artifact:schema.sql",
@@ -35943,20 +35943,20 @@
       "path": "src/rwahealth.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 29829,
-      "lines": 656,
-      "version": "d2b6731e6292eb01",
+      "bytes": 31288,
+      "lines": 684,
+      "version": "4d66ab1b39da28ba",
       "text": true,
       "provenance": [
         {
           "file": "src/rwahealth.js",
           "line": 1,
-          "version": "d2b6731e6292eb01"
+          "version": "4d66ab1b39da28ba"
         }
       ],
-      "lastChangedAt": "2026-08-28T12:59:28.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "317e438591b34c6c3c493409125162c6bfce2228"
+      "lastChangedAt": "2026-08-29T13:12:18.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "ffe20171a9ae64a13067a8aa15f2f15bad80c250"
     },
     {
       "key": "Artifact:src/rwahealthclearance.js",
@@ -38588,20 +38588,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 179431,
-      "lines": 2847,
-      "version": "276b352b1697d1d3",
+      "bytes": 195425,
+      "lines": 3071,
+      "version": "e3488bbc836aa6bc",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "276b352b1697d1d3"
+          "version": "e3488bbc836aa6bc"
         }
       ],
-      "lastChangedAt": "2026-08-29T09:43:09.000Z",
+      "lastChangedAt": "2026-08-29T13:12:40.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "62a7d1685075098cf5924993997dc4d98e096844"
+      "lastChangedCommit": "65eb90f0b4c27d84c086b1bacaefab6cbb4ace3a"
     },
     {
       "key": "Artifact:test/genesiscca.js",
@@ -39692,20 +39692,20 @@
       "path": "test/rwahealth.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 23736,
-      "lines": 509,
-      "version": "ad4cff2ab681f5cd",
+      "bytes": 26071,
+      "lines": 550,
+      "version": "238c71b3a048a59e",
       "text": true,
       "provenance": [
         {
           "file": "test/rwahealth.js",
           "line": 1,
-          "version": "ad4cff2ab681f5cd"
+          "version": "238c71b3a048a59e"
         }
       ],
-      "lastChangedAt": "2026-08-28T10:32:41.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "74866a4d20590be6c8b6f04bddf3f57d2ce5124e"
+      "lastChangedAt": "2026-08-29T13:12:18.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "ffe20171a9ae64a13067a8aa15f2f15bad80c250"
     },
     {
       "key": "Artifact:test/rwahealth.postgres.js",
@@ -39715,20 +39715,20 @@
       "path": "test/rwahealth.postgres.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 10847,
+      "bytes": 10872,
       "lines": 217,
-      "version": "910202468846f67e",
+      "version": "3a5646e3ffb628be",
       "text": true,
       "provenance": [
         {
           "file": "test/rwahealth.postgres.js",
           "line": 1,
-          "version": "910202468846f67e"
+          "version": "3a5646e3ffb628be"
         }
       ],
-      "lastChangedAt": "2026-08-28T10:32:41.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "74866a4d20590be6c8b6f04bddf3f57d2ce5124e"
+      "lastChangedAt": "2026-08-29T13:12:18.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "ffe20171a9ae64a13067a8aa15f2f15bad80c250"
     },
     {
       "key": "Artifact:test/rwahealthclearance.js",
@@ -42601,7 +42601,7 @@
       "type": "Command",
       "id": "npm:pretest",
       "label": "npm run pretest",
-      "command": "node test/finalizedobservation.js && node test/stockballotv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/rwahealth.js && node test/rwahealth.integration.js && node test/agent-referral-cash.js && node test/content-graph.js && node test/content-runtime.js && node test/content-social.js && node test/content-seasonal.js && node test/content-seasonal-case.js && node test/content-crafting.js && node test/content-crafting-jobs.js && node test/content-crafting-tools.js && node test/content-exchange.js && node test/content-api.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js",
+      "command": "node test/finalizedobservation.js && node test/stockballotv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/rwahealth.js && node test/rwahealth.integration.js && node test/rwahealthclearance.js && node test/rwahealthclearancecontext.js && node test/rwahealthoverlay.readiness.js && node test/rwahealthoverlay.schema.js && node test/rwahealthoverlay.vector.js && node test/rwaregistrylifecycle.js && node test/rwaregistrylifecycle.sync.js && node test/agent-referral-cash.js && node test/content-graph.js && node test/content-runtime.js && node test/content-social.js && node test/content-seasonal.js && node test/content-seasonal-case.js && node test/content-crafting.js && node test/content-crafting-jobs.js && node test/content-crafting-tools.js && node test/content-exchange.js && node test/content-api.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js",
       "provenance": [
         {
           "file": "package.json",
@@ -42706,6 +42706,45 @@
       "id": "npm:test:genesis",
       "label": "npm run test:genesis",
       "command": "node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:rwahealth:postgres",
+      "type": "Command",
+      "id": "npm:test:rwahealth:postgres",
+      "label": "npm run test:rwahealth:postgres",
+      "command": "node test/rwahealth.postgres.js",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:rwaregistrylifecycle:postgres",
+      "type": "Command",
+      "id": "npm:test:rwaregistrylifecycle:postgres",
+      "label": "npm run test:rwaregistrylifecycle:postgres",
+      "command": "node test/rwaregistrylifecycle.postgres.js",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:stockcatalogv2:postgres",
+      "type": "Command",
+      "id": "npm:test:stockcatalogv2:postgres",
+      "label": "npm run test:stockcatalogv2:postgres",
+      "command": "node test/stockcatalogv2.postgres.js",
       "provenance": [
         {
           "file": "package.json",
@@ -50766,6 +50805,22 @@
       ]
     },
     {
+      "key": "Commit:65eb90f0b4c27d84c086b1bacaefab6cbb4ace3a",
+      "type": "Commit",
+      "id": "65eb90f0b4c27d84c086b1bacaefab6cbb4ace3a",
+      "label": "test: the single-instance constraint was prose, and its own list was short by two",
+      "title": "test: the single-instance constraint was prose, and its own list was short by two",
+      "date": "2026-08-29T13:12:40.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/65eb90f0b4c27d84c086b1bacaefab6cbb4ace3a",
+      "provenance": [
+        {
+          "commit": "65eb90f0b4c27d84c086b1bacaefab6cbb4ace3a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/65eb90f0b4c27d84c086b1bacaefab6cbb4ace3a"
+        }
+      ]
+    },
+    {
       "key": "Commit:65ecbab584c4abf9c20538cf4faadb9db9309c1c",
       "type": "Commit",
       "id": "65ecbab584c4abf9c20538cf4faadb9db9309c1c",
@@ -55642,6 +55697,22 @@
         {
           "commit": "a01fa098d16c334c6a86b8ee3ef6b1ca7585aea4",
           "url": "https://github.com/OmertaDev/Omerta/commit/a01fa098d16c334c6a86b8ee3ef6b1ca7585aea4"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a0320ce02b4c58b73576476ccea9fb66be65745c",
+      "type": "Commit",
+      "id": "a0320ce02b4c58b73576476ccea9fb66be65745c",
+      "label": "chore(knowledge): regenerate artifacts for 787524c9",
+      "title": "chore(knowledge): regenerate artifacts for 787524c9",
+      "date": "2026-08-29T11:15:21.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a0320ce02b4c58b73576476ccea9fb66be65745c",
+      "provenance": [
+        {
+          "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a0320ce02b4c58b73576476ccea9fb66be65745c"
         }
       ]
     },
@@ -62666,6 +62737,22 @@
         {
           "commit": "ff987f9d9e0feca4a9125aca7c7bad5f43720a4b",
           "url": "https://github.com/OmertaDev/Omerta/commit/ff987f9d9e0feca4a9125aca7c7bad5f43720a4b"
+        }
+      ]
+    },
+    {
+      "key": "Commit:ffe20171a9ae64a13067a8aa15f2f15bad80c250",
+      "type": "Commit",
+      "id": "ffe20171a9ae64a13067a8aa15f2f15bad80c250",
+      "label": "test: twelve suites nothing ran, and the orphan sweep found a quadratic hot path",
+      "title": "test: twelve suites nothing ran, and the orphan sweep found a quadratic hot path",
+      "date": "2026-08-29T13:12:18.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ffe20171a9ae64a13067a8aa15f2f15bad80c250",
+      "provenance": [
+        {
+          "commit": "ffe20171a9ae64a13067a8aa15f2f15bad80c250",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ffe20171a9ae64a13067a8aa15f2f15bad80c250"
         }
       ]
     },
@@ -75883,6 +75970,9 @@
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
         },
         {
+          "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
+        },
+        {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
         },
         {
@@ -76174,6 +76264,9 @@
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
         },
         {
+          "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
+        },
+        {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
         },
         {
@@ -76463,6 +76556,9 @@
         },
         {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
+        },
+        {
+          "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
         },
         {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
@@ -76804,6 +76900,9 @@
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
         },
         {
+          "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
+        },
+        {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
         },
         {
@@ -76958,6 +77057,9 @@
         },
         {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
+        },
+        {
+          "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
         },
         {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
@@ -79234,13 +79336,13 @@
       "type": "Module",
       "id": "src/rwahealth.js",
       "label": "src/rwahealth.js",
-      "lines": 656,
-      "version": "d2b6731e6292eb01",
+      "lines": 684,
+      "version": "4d66ab1b39da28ba",
       "provenance": [
         {
           "file": "src/rwahealth.js",
           "line": 1,
-          "version": "d2b6731e6292eb01"
+          "version": "4d66ab1b39da28ba"
         }
       ]
     },
@@ -83134,7 +83236,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "787524c9947e02c4ed06c2f7507c97deaa86f148",
+      "revision": "65eb90f0b4c27d84c086b1bacaefab6cbb4ace3a",
       "currentBranch": "claude/game-dev-roadmap-6jtsst",
       "defaultBranch": "main",
       "visibility": "public",
@@ -107296,13 +107398,13 @@
       "type": "TestSuite",
       "id": "test/gates.js",
       "label": "test/gates.js",
-      "lines": 2847,
-      "version": "276b352b1697d1d3",
+      "lines": 3071,
+      "version": "e3488bbc836aa6bc",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "276b352b1697d1d3"
+          "version": "e3488bbc836aa6bc"
         }
       ]
     },
@@ -108016,13 +108118,13 @@
       "type": "TestSuite",
       "id": "test/rwahealth.js",
       "label": "test/rwahealth.js",
-      "lines": 509,
-      "version": "ad4cff2ab681f5cd",
+      "lines": 550,
+      "version": "238c71b3a048a59e",
       "provenance": [
         {
           "file": "test/rwahealth.js",
           "line": 1,
-          "version": "ad4cff2ab681f5cd"
+          "version": "238c71b3a048a59e"
         }
       ]
     },
@@ -108032,12 +108134,12 @@
       "id": "test/rwahealth.postgres.js",
       "label": "test/rwahealth.postgres.js",
       "lines": 217,
-      "version": "910202468846f67e",
+      "version": "3a5646e3ffb628be",
       "provenance": [
         {
           "file": "test/rwahealth.postgres.js",
           "line": 1,
-          "version": "910202468846f67e"
+          "version": "3a5646e3ffb628be"
         }
       ]
     },
@@ -108676,13 +108778,13 @@
       "type": "Workflow",
       "id": ".github/workflows/ci.yml",
       "label": ".github/workflows/ci.yml",
-      "lines": 273,
-      "version": "4ff6e553958404d8",
+      "lines": 292,
+      "version": "8a9fea81b21881cb",
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "4ff6e553958404d8"
+          "version": "8a9fea81b21881cb"
         }
       ]
     },
@@ -160194,6 +160296,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:65eb90f0b4c27d84c086b1bacaefab6cbb4ace3a",
+      "to": "Artifact:render.yaml",
+      "provenance": {
+        "commit": "65eb90f0b4c27d84c086b1bacaefab6cbb4ace3a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:65eb90f0b4c27d84c086b1bacaefab6cbb4ace3a",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "65eb90f0b4c27d84c086b1bacaefab6cbb4ace3a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:65ecbab584c4abf9c20538cf4faadb9db9309c1c",
       "to": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
       "provenance": {
@@ -177086,6 +177204,46 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "commit": "a01fa098d16c334c6a86b8ee3ef6b1ca7585aea4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a0320ce02b4c58b73576476ccea9fb66be65745c",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a0320ce02b4c58b73576476ccea9fb66be65745c",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a0320ce02b4c58b73576476ccea9fb66be65745c",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a0320ce02b4c58b73576476ccea9fb66be65745c",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a0320ce02b4c58b73576476ccea9fb66be65745c",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
       }
     },
     {
@@ -203874,6 +204032,54 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:ffe20171a9ae64a13067a8aa15f2f15bad80c250",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "commit": "ffe20171a9ae64a13067a8aa15f2f15bad80c250"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ffe20171a9ae64a13067a8aa15f2f15bad80c250",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "ffe20171a9ae64a13067a8aa15f2f15bad80c250"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ffe20171a9ae64a13067a8aa15f2f15bad80c250",
+      "to": "Artifact:src/rwahealth.js",
+      "provenance": {
+        "commit": "ffe20171a9ae64a13067a8aa15f2f15bad80c250"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ffe20171a9ae64a13067a8aa15f2f15bad80c250",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "ffe20171a9ae64a13067a8aa15f2f15bad80c250"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ffe20171a9ae64a13067a8aa15f2f15bad80c250",
+      "to": "Artifact:test/rwahealth.js",
+      "provenance": {
+        "commit": "ffe20171a9ae64a13067a8aa15f2f15bad80c250"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ffe20171a9ae64a13067a8aa15f2f15bad80c250",
+      "to": "Artifact:test/rwahealth.postgres.js",
+      "provenance": {
+        "commit": "ffe20171a9ae64a13067a8aa15f2f15bad80c250"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:ffea37a33f7cec9ed03674e3e7c5079554ee649b",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -220874,6 +221080,33 @@
     {
       "type": "DECLARES",
       "from": "Artifact:package.json",
+      "to": "Command:npm:test:rwahealth:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:rwaregistrylifecycle:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:stockcatalogv2:postgres",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
       "to": "Command:npm:ui:quality",
       "provenance": {
         "file": "package.json",
@@ -231746,7 +231979,70 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:pretest",
+      "to": "Artifact:test/rwahealthclearance.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/rwahealthclearancecontext.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/rwahealthoverlay.readiness.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/rwahealthoverlay.schema.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/rwahealthoverlay.vector.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
       "to": "Artifact:test/rwanominations.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/rwaregistrylifecycle.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/rwaregistrylifecycle.sync.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -232935,6 +233231,33 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:genesis",
       "to": "Artifact:test/genesisrelease.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rwahealth:postgres",
+      "to": "Artifact:test/rwahealth.postgres.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:rwaregistrylifecycle:postgres",
+      "to": "Artifact:test/rwaregistrylifecycle.postgres.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:stockcatalogv2:postgres",
+      "to": "Artifact:test/stockcatalogv2.postgres.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -243999,6 +244322,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:65eb90f0b4c27d84c086b1bacaefab6cbb4ace3a",
+      "provenance": {
+        "commit": "65eb90f0b4c27d84c086b1bacaefab6cbb4ace3a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:65ecbab584c4abf9c20538cf4faadb9db9309c1c",
       "provenance": {
         "commit": "65ecbab584c4abf9c20538cf4faadb9db9309c1c"
@@ -246434,6 +246765,14 @@
       "to": "Commit:a01fa098d16c334c6a86b8ee3ef6b1ca7585aea4",
       "provenance": {
         "commit": "a01fa098d16c334c6a86b8ee3ef6b1ca7585aea4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a0320ce02b4c58b73576476ccea9fb66be65745c",
+      "provenance": {
+        "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
       }
     },
     {
@@ -249946,6 +250285,14 @@
       "to": "Commit:ff987f9d9e0feca4a9125aca7c7bad5f43720a4b",
       "provenance": {
         "commit": "ff987f9d9e0feca4a9125aca7c7bad5f43720a4b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ffe20171a9ae64a13067a8aa15f2f15bad80c250",
+      "provenance": {
+        "commit": "ffe20171a9ae64a13067a8aa15f2f15bad80c250"
       }
     },
     {
@@ -260890,7 +261237,7 @@
       "to": "Artifact:tools/sqlscan.js",
       "provenance": {
         "file": "test/gates.js",
-        "line": 2808
+        "line": 2835
       }
     },
     {
