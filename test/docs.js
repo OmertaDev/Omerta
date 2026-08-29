@@ -315,6 +315,102 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
   const { llmsTxt } = await import('../src/agentgateway.js');
   const surfaceText = (f) => (f === '<llms.txt>' ? llmsTxt() : read(f));
   const ALL_SURFACES = [...SURFACES, '<llms.txt>'];
+  const llms = llmsTxt();
+  assert(llms.includes('[Arena snapshot (JSON)](https://www.omerta.fun/v1/arena): the public banded board behind this page.'),
+    'llms.txt identifies the public Arena JSON snapshot as the public banded board behind this page');
+  assert(!llms.includes('/v1/leaderboard/agents'),
+    'llms.txt does not direct unauthenticated discovery to the authenticated agent leaderboard');
+
+  // Agent Turn v3 deliberately has two lanes: existing EV-ranked action authority and one
+  // read-only Deep City recommendation. These discovery surfaces are the boundary most likely to
+  // collapse the two into an unsafe promise ("the agent can execute exploration"), so require each
+  // machine-facing guide to state the separation and the exact 40-system scope. The bounded runner
+  // is a different boundary again: one owner-operated identity, finite cadence, and no fleet/reset
+  // or policy expansion.
+  const agentGuide = read('AGENTS.md');
+  const mcpGuide = read('omerta-mcp/README.md');
+  const publicDiscoverySurfaces = [
+    ['GET /agents', agentGuide],
+    ['GET /wiki', read('public/wiki.html')],
+    ['docs/WIKI.md (Wiki source)', read('docs/WIKI.md')],
+    ['GET /arena', read('public/arena.html')],
+    ['GET /llms.txt', llms],
+  ];
+  const discoveryBoundaryFailures = [];
+  for (const [name, text] of publicDiscoverySurfaces) {
+    const arenaIndex = text.indexOf('/v1/arena');
+    const detailedIndex = text.indexOf('/v1/leaderboard/agents');
+    if (arenaIndex < 0 || !/\/v1\/arena[\s\S]{0,180}\bpublic\b/i.test(text.slice(arenaIndex))) {
+      discoveryBoundaryFailures.push(`${name}: must identify /v1/arena as the public Arena snapshot`);
+    }
+    if (detailedIndex >= 0) {
+      if (arenaIndex < 0 || arenaIndex > detailedIndex) {
+        discoveryBoundaryFailures.push(`${name}: must lead discovery with /v1/arena before the detailed leaderboard`);
+      }
+      const boundary = text.slice(Math.max(0, detailedIndex - 80), detailedIndex + 220);
+      if (!/authenticated/i.test(boundary)) {
+        discoveryBoundaryFailures.push(`${name}: must label /v1/leaderboard/agents authenticated`);
+      }
+    }
+  }
+  assert.deepEqual(discoveryBoundaryFailures, [],
+    `every public agent-discovery surface must preserve the public Arena/authenticated leaderboard boundary:\n  ${discoveryBoundaryFailures.join('\n  ')}`);
+  const requiredV3Surfaces = [
+    ['AGENTS.md', agentGuide],
+    ['omerta-mcp/README.md', mcpGuide],
+    ['<llms.txt>', llms],
+  ];
+  for (const [name, text] of requiredV3Surfaces) {
+    assert(/Agent Turn v3/i.test(text), `${name} must name the shipped Agent Turn v3 contract`);
+    assert(/`exploration`[\s\S]{0,300}(?:coverage object|coverage payload)[\s\S]{0,300}`catalog`[\s\S]{0,100}`progress`[\s\S]{0,100}`next`[\s\S]{0,100}`blocked`/i.test(text),
+      `${name} must describe required exploration as the catalog/progress/next/blocked coverage object`);
+    assert(/`exploration\.next`[\s\S]{0,400}(?:one|exactly one)[\s\S]{0,120}(?:unvisited|new)[\s\S]{0,120}(?:eligible|actionable)[\s\S]{0,120}(?:40-system|40 system)[\s\S]{0,120}(?:null|none)/i.test(text),
+      `${name} must locate the one-of-40-or-null recommendation at literal exploration.next`);
+    assert(/exploration[\s\S]{0,500}read-only/i.test(text),
+      `${name} must describe exploration as read-only`);
+    assert(/exploration[\s\S]{0,500}(?:non-EV|no EV|without EV)/i.test(text),
+      `${name} must say exploration is outside EV scoring/ranking`);
+    assert(/exploration[\s\S]{0,500}(?:non-executable|not executable|cannot be executed)/i.test(text),
+      `${name} must say exploration cannot be executed`);
+    assert(/exploration[\s\S]{0,700}(?:outside|separate from)[\s\S]{0,120}(?:authority|actions)/i.test(text),
+      `${name} must keep exploration outside Agent Turn action authority`);
+    assert(/(?:one|exactly one)[\s\S]{0,120}(?:unvisited|new)[\s\S]{0,120}(?:eligible|actionable)[\s\S]{0,120}(?:40-system|40 system)/i.test(text),
+      `${name} must describe one relevant unvisited eligible system from the canonical 40`);
+  }
+
+  for (const [name, text] of [['AGENTS.md', agentGuide], ['omerta-mcp/README.md', mcpGuide]]) {
+    assert(/Agent Alpha[\s\S]{0,1800}owner-operated/i.test(text),
+      `${name} must identify Agent Alpha as owner-operated`);
+    assert(/Agent Alpha[\s\S]{0,1800}one durable\s+(?:origin-bound\s+)?identity/i.test(text),
+      `${name} must bind Agent Alpha to one durable identity`);
+    assert(/Agent Alpha[\s\S]{0,1800}no reset/i.test(text),
+      `${name} must say Agent Alpha has no reset path`);
+    assert(/Agent Alpha[\s\S]{0,1800}(?:not a fleet|no fleet)/i.test(text),
+      `${name} must not present Agent Alpha as a fleet runner`);
+    assert(/Agent Alpha[\s\S]{0,1800}(?:1–50|1-50)[\s\S]{0,300}3100 ms/i.test(text),
+      `${name} must publish Agent Alpha's finite action and cadence bounds`);
+    assert(/Agent Alpha[\s\S]{0,1800}(?:never|no autonomous)[\s\S]{0,100}PvP[\s\S]{0,160}borrowing[\s\S]{0,180}human\s+(?:anti-Sybil\s+)?faucets/i.test(text),
+      `${name} must preserve the runner's no-PvP, no-borrowing, no-human-faucet policy`);
+  }
+
+  assert(/GET `?\/v1\/arena`?[\s\S]{0,160}public/i.test(agentGuide)
+    && /GET `?\/v1\/leaderboard\/agents`?[\s\S]{0,160}authenticated/i.test(agentGuide),
+  'AGENTS.md must distinguish the public Arena snapshot from the authenticated detailed leaderboard');
+  const oldArenaModule = ['opportunities', '\\.js'].join('');
+  const staleArenaOwnershipPattern = `(${oldArenaModule}.{0,120}arenaBoard|arenaBoard.{0,120}${oldArenaModule})`;
+  let staleArenaOwnership = '';
+  try {
+    staleArenaOwnership = execFileSync('git', ['grep', '-n', '-I', '-E', staleArenaOwnershipPattern, '--', '.'], {
+      encoding: 'utf8',
+    });
+  } catch (error) {
+    if (error.status !== 1) throw error;
+  }
+  assert.equal(staleArenaOwnership.trim(), '',
+    `Arena ownership references must point to src/arena.js:\n${staleArenaOwnership}`);
+  const dormantProduction = /(?:production[\s\S]{0,120}(?:dormant|no chain configured)|dormant[\s\S]{0,40}production)/i;
+  assert(dormantProduction.test(agentGuide) && dormantProduction.test(mcpGuide),
+  'both agent guides must keep production extraction explicitly dormant');
   const bad = [];
   for (const f of ALL_SURFACES) {
     let text;
@@ -827,4 +923,2411 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
   assert(deploy.includes('POST-CLOSE INELIGIBILITY') && deploy.includes('public skipped-purchase status'),
     'the launch runbook must require skip-and-carry disclosure and rehearsal before arming');
   console.log('✓ post-close Stock Token ineligibility skips without substitution, preserves bounded ETH, and stays public');
+}
+
+// A registry removal during an OPEN ballot invalidates only the removed candidate's votes. Families
+// retain the ordinary recast path until the unchanged cutoff; active votes still decide the day.
+{
+  const md = read('docs/WIKI.md');
+  const web = read('public/wiki.html');
+  const design = read('omerta-brokers-design.md');
+  const historical = read('omerta-rwa-stock-machine-design.md');
+  const deploy = read('CHAIN-DEPLOY.md');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    assert(src.includes('recast') && /does\s+not\s+restart\s+or\s+extend/.test(src),
+      `${name} must preserve recasting without restarting or extending the open ballot`);
+  }
+  assert(design.includes('Founder open-ballot removal posture') && design.includes('do not contribute'),
+    'the RWA design must exclude removed-candidate votes from the live lead and closing tally');
+  assert(historical.includes('invalidates only that candidate\'s votes'),
+    'the historical Stock Machine amendment must carry the current pre-close removal rule');
+  assert(deploy.includes('PRE-CLOSE DEACTIVATION') && deploy.includes('active-only counting'),
+    'the launch runbook must gate arming on active-only ballot counting and deterministic tests');
+  console.log('✓ pre-close Stock Token removal invalidates only affected votes without restarting or extending the ballot');
+}
+
+// Skipped-day ETH defaults to one non-expiring acquisition pool. It may serve later exact winners only
+// through fresh daily caps and never becomes a ticker entitlement, stacked cap, or catch-up batch. The
+// founder-approved mainOperator is the explicit public unilateral ETH-transfer exception.
+{
+  const md = read('docs/WIKI.md');
+  const web = read('public/wiki.html');
+  const design = read('omerta-brokers-design.md');
+  const historical = read('omerta-rwa-stock-machine-design.md');
+  const deploy = read('CHAIN-DEPLOY.md');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/`/g, '').replace(/\s+/g, ' ');
+    assert(plain.includes('general Stock Token acquisition budget') && plain.includes('catch-up batch')
+      && plain.includes('mainOperator') && plain.includes('any address') && plain.includes('any purpose'),
+      `${name} must disclose pooled, non-stacking acquisition-budget carry-forward`);
+  }
+  assert(design.includes('Founder carried-budget posture') && design.includes('not earmarked'),
+    'the RWA design must keep skipped ETH pooled rather than owed to the unavailable token');
+  assert(historical.includes('non-expiring, general Stock Token acquisition backlog')
+    && historical.includes('unilateral authority to move any/all pool ETH'),
+    'the historical Stock Machine amendment must carry the pooled backlog rule');
+  assert(deploy.includes('CARRIED ACQUISITION BUDGET') && deploy.includes('RwaStockBuyer.sweepEth')
+    && deploy.includes('main-operator-only') && deploy.includes('operator_outflow'),
+    'the launch runbook must replace the Safe sweep with the explicit main-operator authority');
+  console.log('✓ skipped-day ETH remains pooled acquisition capital under fresh daily caps, never catch-up authority');
+}
+
+// Catalog recovery is Safe-reviewed and forward-only. Identity versions are immutable and permanent;
+// reactivation toggles the same version, while any address/provider change creates a new key and leaves
+// the old version enumerable. Only one version per ticker may be active, and ballots/allocations do not move.
+{
+  const md = read('docs/WIKI.md');
+  const web = read('public/wiki.html');
+  const design = read('omerta-brokers-design.md');
+  const historical = read('omerta-rwa-stock-machine-design.md');
+  const deploy = read('CHAIN-DEPLOY.md');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<[^>]+>/g, '').replace(/\*\*/g, '');
+    assert(plain.includes('Catalog changes are forward-only')
+      && plain.includes('only future open ballots')
+      && plain.includes('only one version of a ticker may be active')
+      && plain.includes('cannot redirect an existing pending allocation'),
+    `${name} must disclose immutable catalog versions, active-ticker uniqueness, and allocation separation`);
+  }
+  assert(design.includes('Founder forward-only catalog lifecycle')
+    && design.includes('StockTokenRegistry.upsertAsset')
+    && design.includes('prior version stays')
+    && design.includes('ticker-derived key')
+    && design.includes('Postgres declares `ticker` unique'),
+  'the RWA design must require immutable version keys and record the ticker-key overwrite gap');
+  assert(historical.includes('Catalog lifecycle is forward-only')
+    && historical.includes('active-ticker uniqueness remains a launch gate'),
+  'the historical Stock Machine amendment must carry the current forward-only lifecycle');
+  assert(deploy.includes('FORWARD-ONLY CATALOG LIFECYCLE')
+    && deploy.includes('old version remains inactive/enumerable')
+    && deploy.includes('active-ticker uniqueness')
+    && deploy.includes('allocation non-redirection'),
+  'the launch runbook must gate activation on immutable versions and rehearse non-redirection');
+  console.log('✓ Stock Token identities are immutable/versioned, forward-only, singly active per ticker, and allocation-neutral');
+}
+
+// Version keys are content-addressed identities, not opaque Safe aliases. Chain, normalized ticker,
+// canonical token, and RHJ provider id determine the key; metadata/status changes do not fork it.
+{
+  const md = read('docs/WIKI.md');
+  const web = read('public/wiki.html');
+  const design = read('omerta-brokers-design.md');
+  const historical = read('omerta-rwa-stock-machine-design.md');
+  const deploy = read('CHAIN-DEPLOY.md');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<[^>]+>/g, '').replace(/\*\*/g, '');
+    assert(/version(?:'s asset)? key is deterministic/.test(plain)
+      && plain.includes('Robinhood Chain ID')
+      && plain.includes('opaque'),
+    `${name} must disclose independently recomputable catalog identities and forbid opaque aliases`);
+  }
+  for (const [name, src] of [['omerta-brokers-design.md', design],
+    ['omerta-rwa-stock-machine-design.md', historical], ['CHAIN-DEPLOY.md', deploy]]) {
+    assert(src.includes('keccak256(abi.encode(chainId, keccak256(bytes(normalizedTicker)), token,')
+      && src.includes('robinhoodAssetIdHash'),
+    `${name} must retain the founder-approved deterministic Stock Token version-key formula`);
+  }
+  assert(design.includes('Ticker, token, provider-id hash, and chain ID are identity fields')
+    && design.includes('Human-readable name and active status are not identity fields'),
+  'the RWA design must distinguish version-forming identity from mutable metadata/status');
+  assert(deploy.includes('DETERMINISTIC VERSION KEY')
+    && deploy.includes('wrong-key rejection')
+    && deploy.includes('ticker-rename versioning'),
+  'the launch runbook must test deterministic keys, mismatch rejection, and rename versioning');
+  console.log('✓ Stock Token version keys deterministically bind chain/ticker/token/provider identity, never metadata or status');
+}
+
+// Permanent history may repeat individual identity fields, but the active set is one-to-one across
+// ticker, token, and provider id. Conflict retirement and activation are one registry-enforced mutation.
+{
+  const md = read('docs/WIKI.md');
+  const web = read('public/wiki.html');
+  const design = read('omerta-brokers-design.md');
+  const historical = read('omerta-rwa-stock-machine-design.md');
+  const deploy = read('CHAIN-DEPLOY.md');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/\s+/g, ' ');
+    assert(plain.includes('Inactive historical versions may repeat')
+      || plain.includes('Inactive history may repeat'),
+    `${name} must retain reusable identity fields in inactive audit history`);
+    assert(plain.includes('Activating a version atomically deactivates every active conflict')
+      && (plain.includes('exact same version') || plain.includes('reactivating that exact version')),
+    `${name} must disclose atomic conflict retirement and exact-version reactivation`);
+  }
+  assert(design.includes('Founder active-set uniqueness posture')
+    && design.includes('single active owner for each')
+    && design.includes('cannot depend on an eventual worker sync'),
+  'the RWA design must make three-field active uniqueness an immediate registry invariant');
+  assert(historical.includes('the active set may not')
+    && historical.includes('registry invariant'),
+  'the historical Stock Machine amendment must carry active-set uniqueness');
+  assert(deploy.includes('ACTIVE-SET UNIQUENESS')
+    && deploy.includes('three separate collision cases')
+    && deploy.includes('one successor colliding on multiple fields'),
+  'the launch runbook must rehearse every active-index collision shape');
+  console.log('✓ Stock Token history may reuse identity fields while the registry atomically preserves active-set uniqueness');
+}
+
+// A production registry with zero active versions is a visible hard stop, never authority to restore a
+// static/default token. The skipped day is durable, the buyer is silent, and recovery is forward-only.
+{
+  const md = read('docs/WIKI.md');
+  const web = read('public/wiki.html');
+  const design = read('omerta-brokers-design.md');
+  const historical = read('omerta-rwa-stock-machine-design.md');
+  const deploy = read('CHAIN-DEPLOY.md');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/\s+/g, ' ');
+    assert((plain.includes('no candidates') || plain.includes('zero candidates'))
+      && (plain.includes('no default') || plain.includes('no active default'))
+      && plain.includes('catalog_empty')
+      && (plain.includes('not replayed') || plain.includes('never replayed')),
+    `${name} must disclose the visible hard-empty catalog and permanent skipped-day history`);
+  }
+  assert(design.includes('Founder empty-catalog posture')
+    && design.includes("{resolved:false, reason:'no_tickers'}")
+    && design.includes('durable public skip record/status'),
+  'the RWA design must record the current transient empty-catalog implementation gap');
+  assert(historical.includes('production catalog has no candidates and no default')
+    && historical.includes('SPY/static fallback never returns'),
+  'the historical Stock Machine amendment must carry hard-empty production behavior');
+  assert(deploy.includes('EMPTY ACTIVE CATALOG')
+    && deploy.includes('publisher/buyer silence')
+    && deploy.includes('CURRENT SUBMISSION TOOL IS LEGACY-SHAPED'),
+  'the launch runbook must rehearse hard-empty behavior and block legacy catalog calldata');
+  console.log('✓ an empty production Stock Token catalog stops visibly, preserves pooled ETH, and never replays');
+}
+
+// Family nominations create a public review queue, never catalog authority. Only Safe execution and
+// registry sync may promote a nomination into the active candidate set.
+{
+  const md = read('docs/WIKI.md');
+  const web = read('public/wiki.html');
+  const design = read('omerta-brokers-design.md');
+  const historical = read('omerta-rwa-stock-machine-design.md');
+  const deploy = read('CHAIN-DEPLOY.md');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/\s+/g, ' ');
+    assert(plain.includes('Seated families may') && plain.includes('nominate')
+      && plain.includes('boss or underboss') && /evidence(?:,\s+|—\s*)not approval/.test(plain),
+    `${name} must disclose who can nominate and the discovery-evidence boundary`);
+    assert((plain.includes('Safe approval') || plain.includes('on-chain approval'))
+      && (plain.includes('registry sync') || plain.includes('worker synchronization'))
+      && plain.includes('cannot alter closed/skipped ballots or pending allocations'),
+    `${name} must keep nominations non-binding and isolated from ballots/allocations`);
+  }
+  assert(design.includes('Founder family nomination posture')
+    && design.includes('No nomination') && design.includes('table, route, or board exists today')
+    && design.includes('rate-limited under the cadence below'),
+  'the RWA design must record the approved queue and its remaining implementation/policy gaps');
+  assert(historical.includes('public, non-binding family nomination queue')
+    && historical.includes('Safe execution plus sync remains the sole promotion path'),
+  'the historical Stock Machine amendment must carry the nomination authority boundary');
+  assert(deploy.includes('PUBLIC FAMILY NOMINATIONS')
+    && deploy.includes('No nomination schema')
+    && deploy.includes('full non-authoritative boundary'),
+  'the launch runbook must gate launch on a durable, non-authoritative nomination queue');
+  console.log('✓ seated families may publicly nominate and endorse RWA candidates without bypassing Safe approval');
+}
+
+// Nomination throttling is family-keyed and terminal history is append-only. Approval is still only a
+// review disposition until the corresponding Safe execution is observed in the active registry mirror.
+{
+  const md = read('docs/WIKI.md');
+  const web = read('public/wiki.html');
+  const design = read('omerta-brokers-design.md');
+  const historical = read('omerta-rwa-stock-machine-design.md');
+  const deploy = read('CHAIN-DEPLOY.md');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/\s+/g, ' ');
+    assert(plain.includes('one nomination per rolling seven days')
+      || plain.includes('one new nomination per rolling seven days'),
+    `${name} must disclose the family-keyed seven-day nomination cadence`);
+    assert(plain.includes('30 days') && plain.includes('one endorsement')
+      && plain.includes('change') && plain.includes('withdraw'),
+    `${name} must disclose nomination lifetime and reversible single-family endorsements`);
+    assert(plain.includes('not_eligible') && plain.includes('Expiry only archives')
+      && plain.includes('fresh') && plain.includes('never') && plain.includes('rewrite'),
+    `${name} must keep terminal disposition and renomination history append-only`);
+  }
+  assert(design.includes('Founder nomination cadence')
+    && design.includes('rolling 168-hour window')
+    && design.includes('pending_until = created_at + 30 days')
+    && design.includes('Safe transaction is matched'),
+  'the RWA design must pin exact clocks and separate review approval from registry authority');
+  assert(historical.includes('Cadence is now fixed')
+    && historical.includes('Renomination after cooldown creates a fresh linked record'),
+  'the historical Stock Machine amendment must carry cadence and append-only renomination');
+  assert(deploy.includes('NOMINATION CLOCKS')
+    && deploy.includes('exact deadline races')
+    && deploy.includes('delayed Safe execution'),
+  'the launch runbook must rehearse clocks, terminal races, and non-authoritative approval');
+  console.log('✓ family RWA nominations are weekly, endorsements reversible, and 30-day history append-only');
+}
+
+// Nomination review survives political turnover, but live endorsement counts follow the currently seated
+// Commission. Historical events are never deleted or silently reactivated after a family regains a seat.
+{
+  const md = read('docs/WIKI.md');
+  const web = read('public/wiki.html');
+  const design = read('omerta-brokers-design.md');
+  const historical = read('omerta-rwa-stock-machine-design.md');
+  const deploy = read('CHAIN-DEPLOY.md');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/\s+/g, ' ');
+    assert(plain.includes('nomination') && plain.includes('loses its Commission seat or dissolves')
+      && plain.includes('loses') && plain.includes('write authority'),
+    `${name} must preserve valid nominations while revoking departed-family writes`);
+    assert(plain.includes('stops counting as current')
+      && plain.includes('must endorse again')
+      && (plain.includes('current support') || plain.includes('current seated support'))
+      && plain.includes('historical'),
+    `${name} must separate current seated support from immutable historical endorsements`);
+  }
+  assert(design.includes('Founder nomination seat-turnover posture')
+    && design.includes('current_endorsements')
+    && design.includes('seated at read/decision time'),
+  'the RWA design must derive live support from current seats without deleting events');
+  assert(historical.includes('valid nomination survives seat loss or family dissolution')
+    && historical.includes('neither Safe-binding'),
+  'the historical Stock Machine amendment must carry the seat-turnover boundary');
+  assert(deploy.includes('SEAT TURNOVER DURING REVIEW')
+    && deploy.includes('between authorization and commit')
+    && deploy.includes('current-count recomputation from immutable history'),
+  'the launch runbook must rehearse seat/rank races and history-derived live support');
+  console.log('✓ RWA nomination history survives seat turnover while current support follows the live Commission');
+}
+
+// Pending nominations deduplicate by exact immutable identity, not ticker. Duplicate attempts preserve
+// cooldown and require an explicit endorsement; same-ticker/different-version conflicts remain visible.
+{
+  const md = read('docs/WIKI.md');
+  const web = read('public/wiki.html');
+  const design = read('omerta-brokers-design.md');
+  const historical = read('omerta-rwa-stock-machine-design.md');
+  const deploy = read('CHAIN-DEPLOY.md');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/\s+/g, ' ');
+    assert(plain.includes('one pending nomination') && plain.includes('deterministic version key')
+      && plain.includes('existing item'),
+    `${name} must deduplicate pending nominations by exact version identity`);
+    assert(plain.includes('seven-day nomination allowance') && plain.includes('explicit')
+      && plain.includes('endorse') && plain.includes('Different identities')
+      && plain.includes('conflict'),
+    `${name} must preserve cooldown, require endorsement confirmation, and expose identity conflicts`);
+  }
+  assert(design.includes('Founder nomination deduplication posture')
+    && design.includes('conditional unique constraint')
+    && design.includes("does not silently endorse on redirect")
+    && design.includes("last_nomination_at"),
+  'the RWA design must make duplicate redirect and cooldown preservation transaction-safe');
+  assert(historical.includes('one pending item per deterministic version key citywide')
+    && historical.includes('survive concurrent submissions'),
+  'the historical Stock Machine amendment must carry exact-key deduplication and concurrency');
+  assert(deploy.includes('EXACT-IDENTITY DEDUPLICATION')
+    && deploy.includes('database constraint')
+    && deploy.includes('duplicate redirect without endorsement'),
+  'the launch runbook must rehearse exact-key races without implicit endorsement or cooldown loss');
+  console.log('✓ pending RWA nominations deduplicate by exact version key without spending cooldown or hiding conflicts');
+}
+
+// The submitting family is a single sponsor, never also an endorser. Live support is derived from the
+// currently seated five-family chamber, and a reseated sponsor must explicitly renew rather than revive.
+{
+  const md = read('docs/WIKI.md');
+  const web = read('public/wiki.html');
+  const design = read('omerta-brokers-design.md');
+  const historical = read('omerta-rwa-stock-machine-design.md');
+  const deploy = read('CHAIN-DEPLOY.md');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/\s+/g, ' ');
+    assert(plain.includes('submitting family') && plain.includes('sponsor')
+      && plain.includes('cannot endorse its own'),
+    `${name} must identify one sponsor and prohibit sponsor self-endorsement`);
+    assert(plain.includes('at most five') || plain.includes('maximum is five'),
+    `${name} must bound current nomination support by the five-seat Commission`);
+    assert(plain.includes('Reseating') && plain.includes('explicit')
+      && plain.includes('current boss or underboss') && plain.includes('histor'),
+    `${name} must require explicit sponsor renewal while preserving history`);
+  }
+  assert(design.includes('Founder nomination sponsor posture')
+    && design.includes('sponsor_family_id')
+    && design.includes('sponsor_support_renewed')
+    && design.includes('bounded `0..5`'),
+  'the RWA design must pin immutable sponsor identity and the no-double-count support formula');
+  assert(historical.includes('immutable sole sponsor')
+    && historical.includes('live support `0..5`'),
+  'the historical Stock Machine amendment must carry sponsor counting');
+  assert(deploy.includes('SPONSOR COUNTING')
+    && deploy.includes('forbid that family from endorsing its own item')
+    && deploy.includes('self-endorsement refusal'),
+  'the launch runbook must rehearse sponsor uniqueness and five-seat bounds');
+  console.log('✓ each RWA nomination has one sponsor and at most five current supporting families with no double count');
+}
+
+// A three-family majority requests review but never exercises Safe authority. Before operator claim the
+// signal follows live support; after claim, political churn is disclosure rather than auto-cancellation.
+{
+  const md = read('docs/WIKI.md');
+  const web = read('public/wiki.html');
+  const design = read('omerta-brokers-design.md');
+  const historical = read('omerta-rwa-stock-machine-design.md');
+  const deploy = read('CHAIN-DEPLOY.md');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/\s+/g, ' ');
+    assert((plain.includes('Three current supporting families')
+      || plain.includes('three current seated families'))
+      && plain.includes('review_requested') && plain.includes('RHJ') && plain.includes('alert'),
+    `${name} must disclose the majority review signal and evidence refresh`);
+    assert(plain.includes('never creates Safe calldata')
+      && plain.includes('below three') && plain.includes('under_review')
+      && (plain.includes('below threshold') || plain.includes('lower-support')),
+    `${name} must keep review requests non-authoritative and define pre/post-claim support churn`);
+    assert(plain.includes('current support') && plain.includes('oldest first'),
+    `${name} must disclose support-first, age-second queue ordering`);
+  }
+  assert(design.includes('Founder nomination review-threshold posture')
+    && design.includes('current_support >= 3')
+    && design.includes('failed-refresh status visible')
+    && design.includes('current_support DESC, created_at ASC, id ASC'),
+  'the RWA design must pin threshold state transitions, refresh failure, and deterministic order');
+  assert(historical.includes('Three current supporting families mark `review_requested`')
+    && historical.includes('support churn stays visible but cannot cancel it'),
+  'the historical Stock Machine amendment must carry the review-request boundary');
+  assert(deploy.includes('REVIEW-REQUESTED THRESHOLD')
+    && deploy.includes('failed/slow evidence refresh')
+    && deploy.includes('manual below-threshold claim'),
+  'the launch runbook must rehearse review threshold, evidence, and operator-claim races');
+  console.log('✓ three current family supporters request RWA review without binding the Safe or cancelling claimed work');
+}
+
+// The procedural signal always means three independent seated organizations. Sparse chambers do not
+// scale the threshold down; they use the explicit manual-review escape hatch instead.
+{
+  const md = read('docs/WIKI.md');
+  const web = read('public/wiki.html');
+  const design = read('omerta-brokers-design.md');
+  const historical = read('omerta-rwa-stock-machine-design.md');
+  const deploy = read('CHAIN-DEPLOY.md');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/\s+/g, ' ');
+    assert(plain.includes('always three distinct currently seated families')
+      || plain.includes('stays fixed at three distinct currently seated families'),
+    `${name} must disclose the constant three-family automatic review quorum`);
+    assert(plain.includes('majority of') && plain.includes('occupied seats')
+      && plain.includes('fewer than three')
+      && (plain.includes('manual operator') || plain.includes('authorized operator')),
+    `${name} must forbid sparse-chamber scaling while retaining manual review`);
+    assert(plain.includes('recompute') && plain.includes('without changing the threshold')
+      && plain.includes('under_review'),
+    `${name} must preserve the constant through seat churn and claimed review`);
+  }
+  assert(design.includes('Founder fixed review quorum')
+    && design.includes('independent of `occupied_seat_count`')
+    && design.includes('rank/seat weight does not') && design.includes('alter the count'),
+  'the RWA design must pin an unweighted constant quorum independent of occupancy');
+  assert(historical.includes('automatic quorum is a constant three distinct')
+    && historical.includes('never rank-weighted'),
+  'the historical Stock Machine amendment must carry fixed review quorum');
+  assert(deploy.includes('FIXED REVIEW QUORUM')
+    && deploy.includes('Rehearse chambers') && deploy.includes('with 0–5 occupied seats')
+    && deploy.includes('weighted-rank irrelevance'),
+  'the launch runbook must rehearse every occupancy and reject rank weighting');
+  console.log('✓ automatic RWA review always requires three distinct seated families, regardless of occupied seats');
+}
+
+// The 30-day deadline is immutable across every unresolved state. Operator activity cannot keep a stale
+// review alive; terminal disposition and later Safe execution remain distinct public state machines.
+{
+  const md = read('docs/WIKI.md');
+  const web = read('public/wiki.html');
+  const design = read('omerta-brokers-design.md');
+  const historical = read('omerta-rwa-stock-machine-design.md');
+  const deploy = read('CHAIN-DEPLOY.md');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/\s+/g, ' ');
+    assert(plain.includes('original 30-day deadline') && plain.includes('under_review')
+      && plain.includes('cannot') && plain.includes('extend'),
+    `${name} must disclose the immutable deadline through active review`);
+    assert(plain.includes('reviewer') && plain.includes('latest public')
+      && plain.includes('fresh linked nomination') && plain.includes('new evidence'),
+    `${name} must preserve expiry history and require fresh evidence to continue`);
+    assert(plain.includes('Terminal') && plain.includes('do not expire')
+      && plain.includes('awaiting Safe execution') && plain.includes('non-voteable'),
+    `${name} must separate terminal review disposition from Safe execution state`);
+  }
+  assert(design.includes('Founder hard nomination deadline')
+    && design.includes("now() < pending_until")
+    && design.includes('No operator extension field or reopen path exists'),
+  'the RWA design must pin database-time boundary semantics and forbid extensions/reopen');
+  assert(historical.includes('30-day `pending_until` is immutable')
+    && historical.includes('Approved-but-unexecuted work remains separately visible'),
+  'the historical Stock Machine amendment must carry hard review expiry');
+  assert(deploy.includes('HARD 30-DAY NOMINATION DEADLINE')
+    && deploy.includes('exact-boundary races against')
+    && deploy.includes('approved-but-delayed execution'),
+  'the launch runbook must rehearse hard deadline and terminal/execution separation');
+  console.log('✓ unresolved RWA nominations expire at a hard 30-day deadline, including under review');
+}
+
+// Review approval is not indefinitely reusable Safe authority. Exact identity/evidence and a seven-day
+// deadline are committed in calldata and checked by the registry; stale execution requires fresh review.
+{
+  const md = read('docs/WIKI.md');
+  const web = read('public/wiki.html');
+  const design = read('omerta-brokers-design.md');
+  const historical = read('omerta-rwa-stock-machine-design.md');
+  const deploy = read('CHAIN-DEPLOY.md');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/\s+/g, ' ');
+    assert(plain.includes('seven-day') && plain.includes('version key')
+      && plain.includes('evidence hash') && plain.includes('rejects'),
+    `${name} must disclose identity/evidence-bound, contract-enforced Safe execution TTL`);
+    assert((plain.includes('mined before') || plain.includes('mining before')) && plain.includes('sync')
+      && plain.includes('approval_stale') && plain.includes('non-voteable'),
+    `${name} must separate on-time execution, delayed sync, and stale approval`);
+    assert(plain.includes('fresh linked nomination') && plain.includes('Safe review')
+      && (plain.includes('cannot') || plain.includes('unable')),
+    `${name} must forbid replacement authority from an expired review`);
+  }
+  assert(design.includes('Founder Safe execution TTL')
+    && design.includes('block.timestamp <= validUntil')
+    && design.includes('cannot be requeued, regenerated, or assigned a new deadline'),
+  'the RWA design must pin registry time semantics and prohibit TTL renewal');
+  assert(historical.includes('expires exactly seven days after `approved_at`')
+    && historical.includes('Current registry/tooling lacks this binding'),
+  'the historical Stock Machine amendment must carry Safe TTL and implementation gap');
+  assert(deploy.includes('SEVEN-DAY SAFE EXECUTION TTL')
+    && deploy.includes('old-calldata rejection')
+    && deploy.includes('fresh-review recovery'),
+  'the launch runbook must rehearse Safe TTL boundaries and stale-calldata rejection');
+  console.log('✓ approved RWA Safe calldata binds identity/evidence and expires after seven days without renewal');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/\s+/g, ' ');
+    assert(plain.includes('evidence_drift') && plain.includes('residual executability')
+      && plain.includes('no on-chain catalog authority') && plain.includes('Safe-governance failure'),
+    `${name} must disclose evidence drift controls and their on-chain authority boundary`);
+    assert(plain.includes('atomic Safe-authorized registry transition')
+      && plain.includes('deactivate') && plain.includes('All parts revert together')
+      && plain.includes('duplicate-active'),
+    `${name} must require one reverting-together conflict-resolution and activation transition`);
+    assert(plain.includes('executed_pending_finality') && plain.includes('synced_active')
+      && plain.includes('Only finalized canonical chain state is voteable')
+      && plain.includes('pre-finality reorg'),
+    `${name} must gate voteability on canonical finalized and synchronized registry state`);
+  }
+  assert(design.includes('Founder pre-execution evidence drift rule')
+    && design.includes('Founder atomic activation rule')
+    && design.includes('Founder finalized-chain voteability rule'),
+  'the RWA design must pin all three approved Safe activation-integrity rules');
+  assert(historical.includes('residual') && historical.includes('executability stays visible')
+    && historical.includes('one reverting-together registry transaction')
+    && historical.includes('finalized, canonical, synchronized activation state `synced_active`'),
+  'the historical Stock Machine amendment must carry activation-integrity requirements');
+  assert(deploy.includes('PRE-EXECUTION EVIDENCE DRIFT')
+    && deploy.includes('ATOMIC REGISTRY ACTIVATION')
+    && deploy.includes('FINALIZED-CHAIN VOTEABILITY')
+    && deploy.includes('ballot creation racing the finality transition'),
+  'the launch runbook must rehearse evidence drift, atomic activation, and finality races');
+  console.log('✓ RWA activation handles evidence drift, atomic uniqueness, and canonical-chain finality');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/\s+/g, ' ');
+    assert(plain.includes('One authenticated authorized RWA reviewer')
+      && (plain.includes('no second reviewer or reviewer co-signature is required')
+        || (plain.includes('a second reviewer or reviewer co-signature is not required')))
+      && plain.includes('Safe') && plain.includes('separate') && plain.includes('voteability'),
+    `${name} must preserve one-person review disposition without collapsing the Safe activation gate`);
+    assert(plain.includes('operational_quarantine') && plain.includes('health_unknown')
+      && plain.includes('new or changed votes') && plain.includes('automatic delivery')
+      && plain.includes('permanent allocation') && plain.includes('remain intact'),
+    `${name} must fail closed after activation without confiscating permanent allocations`);
+    assert(plain.includes('new family nomination')
+      && (plain.includes('needs no new family nomination') || plain.includes('does not need a new family nomination'))
+      && plain.includes('one authorized reviewer approval')
+      && plain.includes('Safe') && plain.includes('deactivated')
+      && (plain.includes('no carried endorsements') || plain.includes('do not carry over'))
+      && (plain.includes('reactivated in place') || plain.includes('reactivates the existing version')),
+    `${name} must distinguish operational clearance from full deactivated-version reactivation`);
+  }
+  assert(design.includes('Founder single-reviewer disposition rule')
+    && design.includes('Founder post-activation quarantine rule')
+    && design.includes('Founder quarantine recovery and reactivation rule'),
+  'the RWA design must pin the approved reviewer, quarantine, and recovery authority model');
+  assert(historical.includes('reviewer alone may terminally set')
+    && historical.includes('unverifiable critical')
+    && historical.includes('no support carries over'),
+  'the historical Stock Machine amendment must carry reviewer and quarantine recovery rules');
+  assert(deploy.includes('SINGLE-REVIEWER TERMINAL DISPOSITION')
+    && deploy.includes('POST-ACTIVATION OPERATIONAL QUARANTINE')
+    && deploy.includes('QUARANTINE CLEARANCE VERSUS REACTIVATION')
+    && deploy.includes('reactivation conflicts'),
+  'the launch runbook must rehearse one-person review, quarantine, and both recovery paths');
+  console.log('✓ one reviewer disposes nominations; quarantine fails closed and recovers under Safe control');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/\s+/g, ' ');
+    assert((plain.includes('Quarantine may begin automatically or manually')
+        || plain.includes('Quarantine can begin automatically or manually'))
+      && plain.includes('One authenticated authorized RWA reviewer may also impose either')
+      && plain.includes('have no quarantine authority')
+      && plain.includes('original quarantine timestamp'),
+    `${name} must bind automatic/manual quarantine entry and deny player authority`);
+    assert(plain.includes('at least every five minutes') && plain.includes('older than ten minutes')
+      && plain.includes('synchronous fresh check') && plain.includes('founder/Safe policy change')
+      && plain.includes('last_checked_at') && plain.includes('last_healthy_at'),
+    `${name} must disclose quarantine cadence, freshness, action preflight, and public health fields`);
+    assert(plain.includes('purchase_at_risk') && plain.includes('best-effort same-nonce')
+      && plain.includes('not guaranteed') && plain.includes('no substitute ticker')
+      && plain.includes('ordering_uncertain') && plain.includes('canonical assets')
+      && (plain.includes('pause delivery') || plain.includes('delivery pauses')),
+    `${name} must preserve the canonical result across quarantine/purchase transaction races`);
+  }
+  assert(design.includes('Founder quarantine-entry authority rule')
+    && design.includes('Founder monitoring cadence and freshness rule')
+    && design.includes('Founder in-flight purchase race rule'),
+  'the RWA design must pin entry authority, health timing, and purchase-race behavior');
+  assert(historical.includes('at least every five minutes')
+    && historical.includes('best-effort safe same-nonce cancellation')
+    && historical.includes('Unprovable chronology is `ordering_uncertain`'),
+  'the historical Stock Machine amendment must carry quarantine timing and race semantics');
+  assert(deploy.includes('QUARANTINE-ENTRY AUTHORITY')
+    && deploy.includes('FIVE-MINUTE MONITOR / TEN-MINUTE FRESHNESS')
+    && deploy.includes('IN-FLIGHT PURCHASE/QUARANTINE RACE')
+    && deploy.includes('mempool replacement loss/win'),
+  'the launch runbook must rehearse quarantine authority, freshness boundaries, and purchase races');
+  console.log('✓ quarantine entry, health freshness, and in-flight purchase ordering are deterministic');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/`/g, '').replace(/\s+/g, ' ');
+    assert(plain.includes('delivery resumes only') && plain.includes('synchronous health check')
+      && plain.includes('FIFO by creation time') && plain.includes('stable allocation ID')
+      && plain.includes('unbroadcast stage') && plain.includes('without changing delivered')
+      && plain.includes('no substitute') && plain.includes('priority bonus'),
+    `${name} must resume quarantined delivery deterministically without delay windfalls`);
+    assert(plain.includes('delivery_impossible_pending_resolution')
+      && plain.includes('never expire') && plain.includes('unrelated')
+      && plain.includes('general treasury ETH') && plain.includes('actual')
+      && plain.includes('original cohort weights') && plain.includes('public conservation calculation'),
+    `${name} must leave undeliverable allocations conserved and resolve only from actual asset recovery`);
+    assert(plain.includes('delivery_hold') && plain.includes('exact immutable asset version')
+      && plain.includes('original FIFO position') && plain.includes('before staging')
+      && (plain.includes('post-broadcast') || plain.includes('once a transfer is broadcast'))
+      && plain.includes('cannot reserve batches or starve')
+      && (plain.includes('never forfeit') || plain.includes('never causes forfeiture')),
+    `${name} must make user delivery holds reversible, non-economic, and race-safe`);
+  }
+  assert(design.includes('Founder delivery-backlog resumption rule')
+    && design.includes('Founder permanently undeliverable resolution rule')
+    && design.includes('Founder user delivery-hold rule'),
+  'the RWA design must pin backlog, undeliverable-asset, and user-hold policy');
+  assert(historical.includes('paused delivery resumes FIFO')
+    && historical.includes('delivery_impossible_pending_resolution')
+    && historical.includes('global/per-version `delivery_hold`'),
+  'the historical Stock Machine amendment must carry delivery resumption and hold rules');
+  assert(deploy.includes('QUARANTINE DELIVERY-BACKLOG RESUMPTION')
+    && deploy.includes('PERMANENTLY UNDELIVERABLE STOCK TOKEN')
+    && deploy.includes('USER DELIVERY HOLD')
+    && deploy.includes('zero/partial/multiple recoveries')
+    && deploy.includes('global/version') && deploy.includes('precedence, rapid toggles'),
+  'the launch runbook must rehearse backlog delivery, asset recovery, and delivery holds');
+  console.log('✓ paused deliveries resume FIFO; undeliverable assets conserve value; users may hold delivery');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/`/g, '').replace(/\s+/g, ' ');
+    assert(plain.includes('awaiting_deed')
+      && (plain.includes('exactly one eligible') || plain.includes('Exactly one eligible'))
+      && plain.includes('rwa_delivery_deed') && plain.includes('multiple') && plain.includes('deed')
+      && plain.includes('all unbound') && plain.includes('whole')
+      && plain.includes('bound destination') && plain.includes('immutable'),
+    `${name} must define explicit multi-deed selection and immutable whole-allocation binding`);
+    assert(plain.includes('pending allocation travels with') && plain.includes('Finalized deed transfer')
+      && plain.includes('delivery holds')
+      && (plain.includes('not re-scored') || plain.includes('without re-scoring'))
+      && plain.includes('former owner') && plain.includes('public deed view')
+      && (plain.includes('does not price, guarantee, or intermediate')
+        || plain.includes('neither prices, guarantees, nor intermediates')),
+    `${name} must make bound rights follow the deed with transfer-time disclosure`);
+    assert(plain.includes('redirect a bound allocation') && plain.includes('ordinary Safe action')
+      && plain.includes('protocol-wide Street Deed/TBA migration')
+      && plain.includes('deterministic') && plain.includes('one-to-') && plain.includes('conservation proof')
+      && (plain.includes('individual rescue') || plain.includes('rescue one individual'))
+      && (plain.includes('Delivery pauses') || plain.includes('delivery pauses')),
+    `${name} must prohibit individual beneficiary rewrites while allowing deterministic protocol migration`);
+  }
+  assert(design.includes('Founder Street Deed destination-binding rule')
+    && design.includes('Founder deed-transfer attached-rights rule')
+    && design.includes('Founder bound-beneficiary immutability and migration rule'),
+  'the RWA design must pin deed binding, attached transfer rights, and migration-only remapping');
+  assert(historical.includes('account-beneficial `awaiting_deed`')
+    && historical.includes('Bound pending rights and holds follow finalized deed transfer')
+    && historical.includes('individual rescue is forbidden'),
+  'the historical Stock Machine amendment must carry deed-bound ownership semantics');
+  assert(deploy.includes('STREET DEED DELIVERY-DESTINATION BINDING')
+    && deploy.includes('BOUND RIGHTS FOLLOW DEED TRANSFER')
+    && deploy.includes('BOUND BENEFICIARY IMMUTABILITY / PROTOCOL MIGRATION ONLY')
+    && deploy.includes('mapping collision/omission'),
+  'the launch runbook must rehearse deed selection, transfers, and deterministic migration');
+  console.log('✓ Stock Token allocations bind whole to a deed, follow its transfer, and resist redirection');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<[^>]+>/g, '').replace(/\*\*/g, '').replace(/`/g, '').replace(/\s+/g, ' ');
+    assert(plain.includes('dedicated, separately accounted RWA delivery-')
+      && plain.includes('operations ETH budget')
+      && plain.includes('no extra')
+      && (plain.includes('deed extraction requirement') || plain.includes('Deed extraction requirement'))
+      && plain.includes('pooled') && plain.includes('delivery_gas_unfunded')
+      && plain.includes('delivery_gas_above_ceiling')
+      && (plain.includes('cannot sell or skim Stock Tokens') || plain.includes('may not sell or skim Stock Tokens'))
+      && plain.includes('funding-source category') && plain.includes('mainOperator')
+      && plain.includes('operator_outflow'),
+    `${name} must fund delivery gas separately without allocation dilution or keeper reimbursement`);
+    assert(plain.includes('integer atomic units') && plain.includes('largest fractional remainder')
+      && plain.includes('stable immutable account ID ascending')
+      && plain.includes('qualified_rounded_zero') && plain.includes('no phantom')
+      && (plain.includes('no dollar-value threshold') || plain.includes('without a dollar-value threshold'))
+      && plain.includes('row')
+      && plain.includes('audit history'),
+    `${name} must conserve cohort atomic units by deterministic largest-remainder rounding`);
+    assert(plain.includes('Delivery batches isolate items') && plain.includes('full staged amount')
+      && plain.includes('recipient-specific') && plain.includes('unrelated successes')
+      && plain.includes('only after finality')
+      && (plain.includes('token-wide') || plain.includes('Token-wide'))
+      && plain.includes('staged plus delivered') && plain.includes('cannot double-') && plain.includes('confirm')
+      && plain.includes('cannot alter FIFO'),
+    `${name} must isolate recipient delivery failures while halting systemic conservation failures`);
+  }
+  assert(design.includes('Founder delivery-gas funding rule')
+    && design.includes('Founder atomic-unit largest-remainder rule')
+    && design.includes('Founder isolated delivery-item batch rule'),
+  'the RWA design must pin gas separation, integer rounding, and isolated batch semantics');
+  assert(historical.includes('separately accounted RWA operations ETH')
+    && historical.includes('public `qualified_rounded_zero`')
+    && historical.includes('recipient failure cannot undo unrelated success'),
+  'the historical Stock Machine amendment must carry delivery economics and isolation rules');
+  assert(deploy.includes('DEDICATED RWA DELIVERY-GAS BUDGET')
+    && deploy.includes('INTEGER ATOMIC UNITS / LARGEST REMAINDER')
+    && deploy.includes('PER-ITEM ISOLATED DELIVERY BATCHES')
+    && deploy.includes('bounded-batch fairness'),
+  'the launch runbook must rehearse gas funding, rounding edges, and mixed delivery results');
+  console.log('✓ delivery gas is non-dilutive; atomic-unit rounding conserves; recipient failures isolate');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<\/?[A-Za-z][^>]*>/g, '').replace(/&lt;/g, '<').replace(/\*\*/g, '')
+      .replace(/`/g, '').replace(/\s+/g, ' ');
+    assert(plain.includes('actual custody') && plain.includes('receivedUnits = postPurchaseBalance - prePurchaseBalance')
+      && plain.includes('verified positive delta') && plain.includes('acquisition_amount_mismatch')
+      && plain.includes('fee-on-transfer') && plain.includes('new immutable version')
+      && plain.includes('Safe-approved') && plain.includes('conservation test'),
+    `${name} must derive allocatable units from serialized canonical custody balance delta`);
+    assert(plain.includes('total') && plain.includes('trade') && plain.includes('input')
+      && (plain.includes('network gas is separate') || plain.includes('Network gas is separate'))
+      && plain.includes('no protocol skim')
+      && plain.includes('unconsumed') && plain.includes('refunded ETH')
+      && plain.includes('second ticker') && plain.includes('captures favorable execution')
+      && plain.includes('effective') && plain.includes('oracle') && plain.includes('deviation'),
+    `${name} must separate trade economics from gas and publish actual execution reconciliation`);
+    assert(plain.includes('purchaseUntil = closed_at + 2 hours')
+      && plain.includes('block.timestamp <= purchaseUntil') && plain.includes('one logical')
+      && plain.includes('only one') && plain.includes('partial fill') && plain.includes('no top-up')
+      && plain.includes('purchase_window_missed') && plain.includes('late')
+      && plain.includes('revert') && plain.includes('Public history'),
+    `${name} must enforce a two-hour one-success purchase window and terminal missed day`);
+  }
+  assert(design.includes('Founder custody-balance acquisition truth rule')
+    && design.includes('Founder acquisition spend/refund/slippage rule')
+    && design.includes('Founder hard two-hour purchase window rule'),
+  'the RWA design must pin custody truth, spend accounting, and hard execution window');
+  assert(historical.includes('exact-token-serialized custody delta')
+    && historical.includes('input/consumption/refund/units/prices/deviation/venue/gas')
+    && historical.includes('`purchase_window_missed` skips forever'),
+  'the historical Stock Machine amendment must carry purchase truth and deadline semantics');
+  assert(deploy.includes('ACTUAL CUSTODY BALANCE-DELTA ACQUISITION TRUTH')
+    && deploy.includes('ACQUISITION SPEND / REFUND / SLIPPAGE ACCOUNTING')
+    && deploy.includes('HARD TWO-HOUR PURCHASE WINDOW / ONE SUCCESS')
+    && deploy.includes('Current buyer lacks this deadline binding'),
+  'the launch runbook must rehearse acquisition reconciliation, slippage, and deadline races');
+  console.log('✓ custody delta controls units; spend/refunds reconcile; each ballot gets one on-time fill');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<\/?[A-Za-z][^>]*>/g, '').replace(/\*\*/g, '').replace(/`/g, '').replace(/\s+/g, ' ');
+    assert(plain.includes('cannot') && plain.includes('own independent reference')
+      && plain.includes('at least one independently governed valid price')
+      && plain.includes('median') && plain.includes('at most five minutes')
+      && plain.includes('500 basis points (5%)') && plain.includes('minOut')
+      && plain.includes('wrong-asset') && plain.includes('unverified') && plain.includes('fallback'),
+    `${name} must require a fresh independent oracle under the hard five-percent ceiling`);
+    assert(plain.includes('ballots continue') && plain.includes('calendar')
+      && plain.includes('market_unavailable') && plain.includes('buys')
+      && plain.includes('pooled') && plain.includes('stale prior close')
+      && plain.includes('Monday catch-up') && plain.includes('off-hours')
+      && plain.includes('underlying_market_closed') && plain.includes('asset_halted'),
+    `${name} must preserve daily votes while evidence—not the clock—controls tradability`);
+    assert(plain.includes('exact Safe-approved adapter address and deployed code hash')
+      && plain.includes('arbitrary') && plain.includes('delegatecall')
+      && (plain.includes('per-attempt deadline') || plain.includes('attempt deadline'))
+      && plain.includes('five minutes')
+      && plain.includes('cannot redirect') && plain.includes('Private submission')
+      && plain.includes('public') && plain.includes('lower input')
+      && plain.includes('widen') && plain.includes('fresh Safe approval'),
+    `${name} must confine adapter targets, calldata, funds, retries, and upgrade authority`);
+  }
+  assert(design.includes('Founder independent price-oracle rule')
+    && design.includes('Founder calendar-neutral market-availability rule')
+    && design.includes('Founder adapter and attempt-confinement rule'),
+  'the RWA design must pin independent pricing, evidence-based availability, and adapter confinement');
+  assert(historical.includes('Venue/router/pool cannot self-reference price')
+    && historical.includes('`market_unavailable` pools ETH')
+    && historical.includes('Safe-approved adapter address+code hash'),
+  'the historical Stock Machine amendment must carry oracle, market, and adapter walls');
+  assert(deploy.includes('INDEPENDENT FIVE-MINUTE PRICE ORACLE / 500-BPS HARD CEILING')
+    && deploy.includes('CALENDAR-NEUTRAL MARKET AVAILABILITY')
+    && deploy.includes('ADAPTER / ATTEMPT CONFINEMENT')
+    && deploy.includes('arbitrary-call/delegatecall attempts'),
+  'the launch runbook must rehearse oracle, off-hours, and adapter attack boundaries');
+  console.log('✓ independent fresh pricing, evidence-based availability, and exact adapters gate purchases');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = src.replace(/<\/?[A-Za-z][^>]*>/g, '').replace(/\*\*/g, '').replace(/`/g, '').replace(/\s+/g, ' ');
+    assert(plain.includes('RwaAcquisitionVault') && plain.includes('mainOperator')
+      && plain.includes('any amount') && plain.includes('any address') && plain.includes('any purpose')
+      && plain.includes('without Safe approval') && plain.includes('without')
+      && plain.includes('timelock') && plain.includes('operator_outflow')
+      && plain.includes('cannot move Stock Tokens') && plain.includes('explicit'),
+    `${name} must disclose unilateral main-operator ETH custody power without overstating vault restriction`);
+    assert(plain.includes('per-purchase') && plain.includes('citywide daily')
+      && plain.includes('rolling-30-day') && plain.includes('actual')
+      && plain.includes('exposure_cap_reached') && plain.includes('no substitute')
+      && plain.includes('Main-operator ETH outflows bypass') && plain.includes('withdrawal'),
+    `${name} must enforce normal-buy concentration caps while classifying operator outflow separately`);
+    assert(plain.includes('state-preserving vault migration') && plain.includes('at least 48 hours')
+      && plain.includes('code hash') && plain.includes('full') && plain.includes('reconciliation')
+      && plain.includes('mainOperator') && plain.includes('bypass')
+      && plain.includes('permanent') && plain.includes('dispose')
+      && plain.includes('never') && plain.includes('mislabel'),
+    `${name} must separate canonical migration from immediate arbitrary main-operator outflow`);
+    assert(plain.includes('exactly one current') && plain.includes('pendingMainOperator')
+      && plain.includes('zero address disables') && plain.includes('immediately')
+      && plain.includes('at least 48 hours') && plain.includes('nominated address')
+      && plain.includes('Safe-driven appointment') && plain.includes('restoration from a zero operator')
+      && plain.includes('instant-replacement path'),
+    `${name} must expose a single operator with immediate Safe disable, delayed Safe restoration, and instant self-handoff`);
+    assert(plain.includes('replaceMainOperator') && plain.includes('nonzero')
+      && plain.includes('different successor immediately')
+      && plain.includes('without Safe approval') && plain.includes('acceptance delay')
+      && plain.includes('timelock') && plain.includes('cannot be relayed')
+      && plain.includes('msg.sender == mainOperator') && plain.includes('consents in the same transaction')
+      && plain.includes('EIP-712') && plain.includes('current operator')
+      && plain.includes('proposed operator') && plain.includes('acceptance deadline')
+      && plain.includes('EOA') && plain.includes('ERC-1271 magic value')
+      && plain.includes('cancels') && plain.includes('pending Safe nomination')
+      && plain.includes('preserves nextOutflowNonce')
+      && plain.includes('immediately in canonical ordering')
+      && plain.includes('Safe retains immediate zero-disable'),
+    `${name} must let the active operator install a consenting successor instantly with atomic authority rotation`);
+    assert(plain.includes('acceptance deadline') && plain.includes('issuedAt')
+      && plain.includes('block.timestamp') && plain.includes('no longer than one hour')
+      && plain.includes('Future-issued') && plain.includes('expired')
+      && plain.includes('zero/reversed') && plain.includes('over-hour')
+      && plain.includes('consent fails before mutation'),
+    `${name} must reject same-address handoffs and bound successor consent to a non-future one-hour window`);
+    assert(plain.includes('Zeroing atomically cancels') && plain.includes('increments')
+      && plain.includes('invalidates every outstanding signed')
+      && plain.includes('Re-enabling even the same address')
+      && plain.includes('expires seven days after') && plain.includes('late acceptance')
+      && plain.includes('fresh nomination'),
+    `${name} must make emergency disable a full generation reset and bound nomination acceptance`);
+    assert(plain.includes('direct on-chain call') && plain.includes('EIP-712')
+      && plain.includes('chain ID') && plain.includes('verifying vault')
+      && plain.includes('operator generation') && plain.includes('reason code')
+      && plain.includes('nonzero details hash') && plain.includes('exact current global nonce')
+      && plain.includes('issuedAt') && plain.includes('deadline')
+      && plain.includes('backend') && plain.includes('never') && plain.includes('authority'),
+    `${name} must authorize operator outflow only by the current operator with replay-safe typed data`);
+    assert(plain.includes('operations') && plain.includes('security')
+      && plain.includes('purchase_recovery') && plain.includes('migration_bypass')
+      && plain.includes('retirement') && plain.includes('other') && plain.includes('reconciliation_outflow')
+      && plain.includes('detailsHash') && plain.includes('immutable')
+      && plain.includes('off-chain') && plain.includes('availability')
+      && plain.includes('never gates execution'),
+    `${name} must give every operator outflow a durable public reason category and content commitment`);
+    assert(plain.includes('nextOutflowNonce') && plain.includes('invalidateOutflowNonces')
+      && plain.includes('without moving ETH') && plain.includes('strict increase')
+      && plain.includes('old/new nonce') && plain.includes('changes no bucket')
+      && plain.includes('Direct and relayed') && plain.includes('global counter'),
+    `${name} must serialize direct and relayed outflows and permit public nonce invalidation without value movement`);
+    assert(plain.includes('relayed authorization is valid only when')
+      && plain.includes('issuedAt') && plain.includes('block.timestamp')
+      && plain.includes('Future-issued') && plain.includes('expired')
+      && plain.includes('zero/reversed') && plain.includes('signatures fail before')
+      && plain.includes('Direct') && plain.includes('signature-lifetime window')
+      && plain.includes('same nonce'),
+    `${name} must limit every relayed operator authorization to a non-future one-hour validity interval`);
+    assert(plain.includes('Every operator outflow requires a nonzero recipient')
+      && plain.includes('no operator_burn') && plain.includes('zero-address transfer')
+      && plain.includes('intentional ETH-burning action') && plain.includes('product scenario')
+      && plain.includes('cannot prove') && plain.includes('recoverable')
+      && plain.includes('operator trust'),
+    `${name} must reject the zero address and expose no protocol ETH-burning path`);
+    assert(plain.includes('mainOperator may directly renounce')
+      && plain.includes('cannot be relayed') && plain.includes('msg.sender == mainOperator')
+      && plain.includes('sets the role to zero') && plain.includes('pending nomination')
+      && plain.includes('increments') && plain.includes('invalidates every')
+      && plain.includes('moves no ETH') && plain.includes('changes no nonce')
+      && plain.includes('names no successor') && plain.includes('orderly handoff')
+      && plain.includes('replaceMainOperator'),
+    `${name} must distinguish direct zeroing renunciation from instant successor handoff`);
+    assert(plain.includes('EOA') && plain.includes('ERC-1271')
+      && plain.includes('msg.sender == mainOperator') && plain.includes('ECDSA recovery')
+      && plain.includes('isValidSignature') && plain.includes('magic value')
+      && plain.includes('Revert') && plain.includes('out-of-gas')
+      && plain.includes('malformed') && plain.includes('fails closed')
+      && plain.includes('never falls back'),
+    `${name} must support EOA and ERC-1271 operators with strict fail-closed signer-type validation`);
+    assert(plain.includes('smart-wallet operator identity follows the mainOperator address')
+      && plain.includes('pinned runtime code hash') && plain.includes('proxy implementation')
+      && plain.includes('owner set') && plain.includes('module set')
+      && plain.includes('signature policy') && plain.includes('do not automatically')
+      && plain.includes('rotate') && plain.includes('disable') && plain.includes('increment')
+      && plain.includes('Every action still validates') && plain.includes('Public monitoring')
+      && plain.includes('owner/module/configuration changes')
+      && plain.includes('code appearance') && plain.includes('disappearance')
+      && plain.includes('last-check time') && plain.includes('warnings without changing authority')
+      && plain.includes('zero-disable immediately') && plain.includes('fails closed')
+      && plain.includes('Safe restoration'),
+    `${name} must attach smart-wallet authority to its address while monitoring mutable wallet behavior`);
+    assert(plain.includes('operator_wallet_changed') && plain.includes('operator_wallet_health_unknown')
+      && plain.includes('without changing authority or pausing action')
+      && plain.includes('relay proceeds when current EOA/ERC-1271 validation succeeds on-chain')
+      && plain.includes('zero-disable immediately'),
+    `${name} must keep wallet-change and health-unknown states informational while enforcing current on-chain authority`);
+    assert(plain.includes('at least every five minutes') && plain.includes('older than ten minutes')
+      && plain.includes('Before the server constructs or relays')
+      && plain.includes('synchronously attempts a fresh check')
+      && plain.includes('last_checked_at') && plain.includes('last_changed_at')
+      && plain.includes('last_healthy_at') && plain.includes('failure reason')
+      && plain.includes('does not veto') && plain.includes('authoritative')
+      && plain.includes('Direct') && plain.includes('never depend on watcher')
+      && plain.includes('server') && plain.includes('API availability'),
+    `${name} must monitor operator wallets on a five-minute/ten-minute cadence without turning watcher failure into authority`);
+    assert(plain.includes('Every operator-role transition carries a public reason code')
+      && plain.includes('nonzero detailsHash') && plain.includes('instant replacement')
+      && plain.includes('direct renunciation') && plain.includes('Safe zero-disable')
+      && plain.includes('Safe nomination') && plain.includes('nomination cancellation')
+      && plain.includes('nominee acceptance') && plain.includes('same closed')
+      && plain.includes('EIP-712/ERC-1271') && plain.includes('direct/Safe calldata')
+      && plain.includes('immutable event') && plain.includes('actor')
+      && plain.includes('old/new/pending operator') && plain.includes('generation')
+      && plain.includes('transition type') && plain.includes('Missing off-chain explanation text')
+      && plain.includes('never blocks') && plain.includes('cannot rewrite'),
+    `${name} must bind and disclose a durable reason commitment for every operator-role transition`);
+    assert(plain.includes('approved, identified acquisition inflow')
+      && plain.includes('forced ETH') && plain.includes('mistaken transfers')
+      && plain.includes('unexplained positive balance surplus') && plain.includes('unattributed')
+      && plain.includes('syncUnattributed()') && plain.includes('vault.balance - accountedBuckets')
+      && plain.includes('may publicly reclassify a specified')
+      && plain.includes('reason code') && plain.includes('details hash')
+      && plain.includes('reclassification never revives')
+      && plain.includes('mainOperator') && plain.includes('operator_outflow')
+      && plain.includes('Negative accounting drift') && plain.includes('invariant failure'),
+    `${name} must quarantine unexplained ETH from automated buying while preserving Safe reclassification and operator exit`);
+    assert(plain.includes('Every purchase reservation has one immutable attempt deadline')
+      && plain.includes('two-hour purchase window') && plain.includes('block.timestamp')
+      && plain.includes('transaction mined at or after the deadline fails')
+      && plain.includes('anyone may permissionlessly and idempotently call')
+      && plain.includes('expireIntent(intentId)') && plain.includes('terminal intent_expired')
+      && plain.includes('entire remaining reservation')
+      && plain.includes('cannot be extended, revived, re-reserved, or executed')
+      && plain.includes('no substitute or catch-up') && plain.includes('later purchases')
+      && plain.includes('fresh caps and authority'),
+    `${name} must expire reservations permissionlessly at immutable deadlines without revival or catch-up`);
+    assert(plain.includes('Each closed ballot and exact Stock Token version may create at most one logical purchase intent')
+      && plain.includes('intentId = keccak256(abi.encode(chainId, vault, ballotId, assetVersionKey))')
+      && plain.includes('permanent lifecycle record') && plain.includes('terminal state')
+      && plain.includes('monotonic attemptNonce') && plain.includes('serialized')
+      && plain.includes('at most one registered attempt may be live')
+      && plain.includes('replacements or retries') && plain.includes('settle canonically')
+      && plain.includes('second or parallel intent') && plain.includes('split a ballot')
+      && plain.includes('change its asset version') && plain.includes('more than one success')
+      && plain.includes('partial-fill finality') && plain.includes('operator cancellation')
+      && plain.includes('permanently prevent recreation or further execution')
+      && plain.includes('second creation attempt fails') && plain.includes('reservation')
+      && plain.includes('bucket') && plain.includes('clock') && plain.includes('history'),
+    `${name} must bind each ballot/version to one permanent deterministic intent with serialized attempts`);
+    assert(plain.includes('Only the currently Safe-approved RwaStockBuyer may create the intent and reservation')
+      && plain.includes('one atomic transaction') && plain.includes('finalized closed ballot')
+      && plain.includes('deterministic intent ID') && plain.includes('exact active and healthy Stock Token version')
+      && plain.includes('zero accounting deficit') && plain.includes('sufficient unreserved available ETH')
+      && plain.includes('per-buy/daily/rolling/concentration caps')
+      && plain.includes('approved adapter and current code identity')
+      && plain.includes('fresh independent oracle and deviation wall')
+      && plain.includes('still-future immutable deadline')
+      && plain.includes('after every check succeeds') && plain.includes('persist the intent')
+      && plain.includes('reserve ETH') && plain.includes('initialize attempts')
+      && plain.includes('consume the next accountingSequence')
+      && plain.includes('failed check or competing creation reverts completely')
+      && plain.includes('no intent or tombstone') && plain.includes('reservation')
+      && plain.includes('bucket change') && plain.includes('attempt nonce')
+      && plain.includes('sequence consumption') && plain.includes('tried again')
+      && plain.includes('same unchanged deadline') && plain.includes('buyer approval bypasses none'),
+    `${name} must create and consume an intent only after every authority and value wall succeeds atomically`);
+    assert(plain.includes('After creation, any address may call executeIntent(intentId) before the deadline')
+      && plain.includes('no caller-chosen asset') && plain.includes('recipient')
+      && plain.includes('input ceiling') && plain.includes('adapter')
+      && plain.includes('oracle/deviation limit') && plain.includes('output destination')
+      && plain.includes('stored intent') && plain.includes('current approved registry state')
+      && plain.includes('revalidates activity') && plain.includes('health')
+      && plain.includes('deficit') && plain.includes('reservation') && plain.includes('caps')
+      && plain.includes('adapter/code identity') && plain.includes('fresh oracle/deviation')
+      && plain.includes('time at inclusion') && plain.includes('execution timing only inside')
+      && plain.includes('pays its own network gas') && plain.includes('receives no fee')
+      && plain.includes('rebate') && plain.includes('refund') && plain.includes('Stock Token')
+      && plain.includes('approval') && plain.includes('economic benefit')
+      && plain.includes('All output goes to StockVault')
+      && plain.includes('unused or returned ETH goes to RwaAcquisitionVault')
+      && plain.includes('cannot create, edit, cancel, reserve for, or redirect')
+      && plain.includes('atomic and reentrancy-protected')
+      && plain.includes('first valid canonical execution wins')
+      && plain.includes('revert without accounting mutation or sequence consumption'),
+    `${name} must make fully bound intent execution permissionless without caller compensation or redirect authority`);
+    assert(plain.includes('The Safe or current mainOperator may immediately call')
+      && plain.includes('cancelIntent(intentId, reasonCode, detailsHash)')
+      && plain.includes('active intent without transferring ETH')
+      && plain.includes('existing closed reason taxonomy') && plain.includes('nonzero details hash')
+      && plain.includes('terminal intent_cancelled')
+      && plain.includes('complete remaining reservation') && plain.includes('available acquisition ETH')
+      && plain.includes('consumes the next accountingSequence')
+      && plain.includes('immutable record') && plain.includes('actor and authority')
+      && plain.includes('reason/details') && plain.includes('released amount')
+      && plain.includes('intent/attempt state') && plain.includes('complete pre/post accounting')
+      && plain.includes('cannot revive') && plain.includes('substitute') && plain.includes('extend')
+      && plain.includes('replay') && plain.includes('split') && plain.includes('re-reserve')
+      && plain.includes('allocate') && plain.includes('catch-up')
+      && plain.includes('does not rewrite the ballot') && plain.includes('prior attempts')
+      && plain.includes('deposit history') && plain.includes('Canonical inclusion order decides')
+      && plain.includes('cancellation versus execution') && plain.includes('expiry')
+      && plain.includes('refund') && plain.includes('operator outflow')
+      && plain.includes('first valid transition wins') && plain.includes('later incompatible calls fail')
+      && plain.includes('abort a planned RWA purchase') && plain.includes('no ETH leaves the vault'),
+    `${name} must let Safe or current main operator cancel a specific intent publicly without moving ETH`);
+    assert(plain.includes('Pre-adapter validation failures revert without consuming attemptNonce')
+      && plain.includes('Once execution actually invokes the approved adapter')
+      && plain.includes('consumes the next nonce') && plain.includes('immutable public result')
+      && plain.includes('revert, false return, or zero Stock Token output')
+      && plain.includes('retryable attempt_failed') && plain.includes('canonical pre/post vault and custody balances')
+      && plain.includes('zero ETH debit') && plain.includes('zero Stock Token output')
+      && plain.includes('intent and reservation') && plain.includes('sequential retry before the same deadline')
+      && plain.includes('nonzero or unexplained ETH debit') && plain.includes('refund')
+      && plain.includes('token receipt') && plain.includes('custody delta')
+      && plain.includes('attempt_reconciliation') && plain.includes('blocks another execution or final settlement')
+      && plain.includes('explicit public reconciliation') && plain.includes('consumed nonce and result')
+      && plain.includes('never be erased or overwritten'),
+    `${name} must permanently record adapter-level outcomes and quarantine unexplained value deltas`);
+    assert(plain.includes('Only the Safe may finalize an attempt_reconciliation')
+      && plain.includes('classify its value effects') && plain.includes('release quarantined ETH')
+      && plain.includes('declare the attempt reconciled') && plain.includes('current mainOperator may append evidence')
+      && plain.includes('proposed disposition') && plain.includes('submission is informational')
+      && plain.includes('cannot alter buckets') && plain.includes('custody facts')
+      && plain.includes('terminal state') && plain.includes('accountingSequence')
+      && plain.includes('cannot authorize') && plain.includes('relayer to finalize')
+      && plain.includes('exact intent') && plain.includes('consumed attempt nonce')
+      && plain.includes('public reason code') && plain.includes('nonzero details-hash commitment'),
+    `${name} must reserve attempt-reconciliation finality and value release exclusively to Safe`);
+    assert(plain.includes('Safe reconciliation publishes') && plain.includes('actual ETH debit')
+      && plain.includes('cumulative verified refund') && plain.includes('Stock Token custody delta')
+      && plain.includes('canonical transaction provenance') && plain.includes('resulting disposition')
+      && plain.includes('complete pre/post balance') && plain.includes('buckets')
+      && plain.includes('deficit') && plain.includes('intent state')
+      && plain.includes('consumes the next accountingSequence')
+      && plain.includes('positive valid Stock Token custody delta')
+      && plain.includes('final fill at the actual received amount')
+      && plain.includes('Only those units may be allocated') && plain.includes('no top-up')
+      && plain.includes('second fill') && plain.includes('substitute purchase') && plain.includes('catch-up')
+      && plain.includes('Zero or invalid custody output cannot be represented as acquired stock')
+      && plain.includes('unexplained residual value remains quarantined'),
+    `${name} must reconcile exact canonical value facts and treat any valid positive custody delta as final`);
+    assert(plain.includes('cancellation or the immutable deadline arrives during reconciliation')
+      && plain.includes('intent becomes terminal for execution immediately')
+      && plain.includes('Proven unaffected value releases normally')
+      && plain.includes('unresolved portion moves from the reservation')
+      && plain.includes('nonspendable reconciliation_pending bucket')
+      && plain.includes('cannot fund another reservation')
+      && plain.includes('Only later Safe reconciliation may release the amount proven unspent')
+      && plain.includes('actual debit') && plain.includes('refund') && plain.includes('output')
+      && plain.includes('canonical evidence') && plain.includes('may revive the intent')
+      && plain.includes('retry it') && plain.includes('replace its purchase')
+      && plain.includes('provide a substitute') && plain.includes('catch-up authority'),
+    `${name} must terminate execution while quarantining unresolved value until Safe reconciliation`);
+    assert(plain.includes('derives or strictly caps every reconcilable ETH debit')
+      && plain.includes('verified refund') && plain.includes('Stock Token output')
+      && plain.includes('immutable pre-adapter balance snapshots')
+      && plain.includes('current canonical RwaAcquisitionVault and StockVault balances')
+      && plain.includes('already-recorded canonical refund and provenance records')
+      && plain.includes('Safe chooses the disposition') && plain.includes('commits reason, details, and evidence')
+      && plain.includes('cannot override those observations') && plain.includes('over-credit output or refund')
+      && plain.includes('hide debit') && plain.includes('enter unsupported value')
+      && plain.includes('inconsistent reconciliation reverts before')
+      && plain.includes('bucket') && plain.includes('intent') && plain.includes('allocation')
+      && plain.includes('accountingSequence') && plain.includes('custody-state mutation'),
+    `${name} must contract-bound reconciliation values rather than grant Safe arbitrary accounting writes`);
+    assert(plain.includes('reconciliation_pending has no timeout') && plain.includes('abandonment path')
+      && plain.includes('presumed outcome') && plain.includes('automatic release')
+      && plain.includes('Passage of time') && plain.includes('deadline age')
+      && plain.includes('Safe inactivity') && plain.includes('unavailable signers')
+      && plain.includes('missing off-chain evidence') && plain.includes('never turns uncertainty into available ETH')
+      && plain.includes('amount and') && plain.includes('age remain public indefinitely')
+      && plain.includes('valid contract-bounded reconciliation')
+      && plain.includes('Safe signer recovery and incident escalation provide liveness')
+      && plain.includes('accounting never guesses'),
+    `${name} must preserve uncertain value indefinitely rather than convert time or signer loss into spend authority`);
+    assert(plain.includes('current mainOperator nevertheless retains raw operator_outflow authority')
+      && plain.includes('actual ETH accounted in reconciliation_pending')
+      && plain.includes('unilateral sweep power') && plain.includes('cannot finalize or classify reconciliation')
+      && plain.includes('release value into available ETH') && plain.includes('erase or reduce the unresolved liability')
+      && plain.includes('represent missing ETH as reconciled')
+      && plain.includes('normal outflow nonce') && plain.includes('accountingSequence')
+      && plain.includes('publicly debits backed quarantine') && plain.includes('affected reconciliation records')
+      && plain.includes('complete pre/post balance') && plain.includes('quarantine')
+      && plain.includes('liability') && plain.includes('deficit')
+      && plain.includes('resulting unbacked liability remains an explicit accounting deficit')
+      && plain.includes('automation pause and repair rules')
+      && plain.includes('canonical evidence and actual funding resolve it'),
+    `${name} must preserve operator sweep authority without letting custody movement erase reconciliation liability`);
+    assert(plain.includes('Each reconciliation attempt and the vault-wide aggregate separately expose')
+      && plain.includes('reconciliationLiability') && plain.includes('backedQuarantineEth')
+      && plain.includes('reconciliationShortfall')
+      && plain.includes('reconciliationLiability = backedQuarantineEth + reconciliationShortfall')
+      && plain.includes('Any positive shortfall joins vault-wide accountingDeficit')
+      && plain.includes('globally pauses new intent creation and execution')
+      && plain.includes('authorized outflow remain live')
+      && plain.includes('hide under-collateralization'),
+    `${name} must expose exact reconciliation solvency and join every shortfall to the global deficit pause`);
+    assert(plain.includes('greatest backedQuarantineEth first')
+      && plain.includes('oldest reconciliationStartedAt') && plain.includes('lowest intent ID')
+      && plain.includes('fully debiting records before at most one partial debit')
+      && plain.includes('Generic canonical repair funding uses one unified deficit-component queue')
+      && plain.includes('firstObservedAt') && plain.includes('shortfallCreatedAt')
+      && plain.includes('numeric componentTypeCode') && plain.includes('record ID')
+      && plain.includes('fully repairing components before at most one partial repair')
+      && plain.includes('exact canonical late refund overrides the generic queue')
+      && plain.includes('repairs its own attempt first')
+      && plain.includes('Contract-controlled bounded priority indexes')
+      && plain.includes('caller-supplied sort proofs') && plain.includes('unbounded historical scans')
+      && plain.includes('cannot choose a bucket or record')
+      && plain.includes('pre/post liability') && plain.includes('backing')
+      && plain.includes('shortfall') && plain.includes('deficit') && plain.includes('sequence'),
+    `${name} must deterministically index quarantine debits and one unified generic deficit-repair queue`);
+    assert(plain.includes('Safe may finalize') && plain.includes('factual')
+      && plain.includes('contract-bounded reconciliation') && plain.includes('ETH proven unspent is absent')
+      && plain.includes('durable terminal reconciled_shortfall')
+      && plain.includes('no available ETH is fabricated') && plain.includes('no liability is erased')
+      && plain.includes('intent closes permanently') && plain.includes('without revival')
+      && plain.includes('retry') && plain.includes('replacement') && plain.includes('substitute')
+      && plain.includes('catch-up') && plain.includes('append-only')
+      && plain.includes('actual funding repairs'),
+    `${name} must close factual underfunded reconciliation without fabricating spendable value`);
+    assert(plain.includes('real repair ETH reaches a Safe-finalized reconciled_shortfall')
+      && plain.includes('immutable disposition proves the ETH was unspent')
+      && plain.includes('same atomic entry reduces that record')
+      && plain.includes('shortfall and liability')
+      && plain.includes('credits exactly the repaired amount to available acquisition ETH')
+      && plain.includes('no second Safe action') && plain.includes('never reopens or edits the intent')
+      && plain.includes('capped at the exact missing principal')
+      && plain.includes('no interest') && plain.includes('penalty')
+      && plain.includes('opportunity-cost compensation') && plain.includes('damages')
+      && plain.includes('yield') && plain.includes('extra credit')
+      && plain.includes('still-unresolved reconciliation restores backing without creating available ETH'),
+    `${name} must release only real repaired principal under an already-finalized proven-unspent disposition`);
+    assert(plain.includes('canonical refund received after terminal or final reconciliation')
+      && plain.includes('first repairs the exact attempt') && plain.includes('reconciliationShortfall')
+      && plain.includes('remainder not required for') && plain.includes('terminal-refund classification')
+      && plain.includes('value above proven debit is unattributed')
+      && plain.includes('never reopens') && plain.includes('edits') && plain.includes('catch-up')
+      && plain.includes('Stock Tokens received after terminal or final reconciliation')
+      && plain.includes('unattributed_stock quarantine') && plain.includes('exact token address')
+      && plain.includes('immutable asset version') && plain.includes('canonical transaction provenance')
+      && plain.includes('Safe may only continue holding the exact stock')
+      && plain.includes('fixed Safe-approved recovery vault')
+      && plain.includes('Safe-approved recovery adapter')
+      && plain.includes('cannot choose an arbitrary recipient') && plain.includes('retroactively allocate')
+      && plain.includes('substitute an asset') && plain.includes('old intent or allocation')
+      && plain.includes('excluded from distributable inventory') && plain.includes('player allocations')
+      && plain.includes('fulfilled-acquisition totals') && plain.includes('included in gross custody')
+      && plain.includes('concentration-risk reporting') && plain.includes('exact-version exposure cap'),
+    `${name} must repair exact late refunds first and confine late stock while counting its custody risk`);
+    assert(plain.includes('outflow that debits reconciliation backing must use reconciliation_outflow')
+      && plain.includes('generic reason is rejected')
+      && plain.includes('dedicated code is rejected when no reconciliation backing is touched')
+      && plain.includes('cannot choose the accounting bucket or reconciliation record'),
+    `${name} must reserve a dedicated reason for quarantine-touching operator outflow`);
+    assert(plain.includes('positive reconciliation shortfall or operator debit of reconciliation backing')
+      && plain.includes('immediate critical alert') && plain.includes('persistent red incident state')
+      && plain.includes('aggregate and per-record liabilities') && plain.includes('backing')
+      && plain.includes('shortfall') && plain.includes('age')
+      && plain.includes('affected intent and attempt IDs') && plain.includes('last quarantine outflow')
+      && plain.includes('vault deficit') && plain.includes('purchase-pause state')
+      && plain.includes('Every zero-to-positive transition creates a new immutable incidentId')
+      && plain.includes('alerts, acknowledgments, outflows, repairs, and reconciliation actions append')
+      && plain.includes('closes only after finalized canonical zero is synchronized into the mirror')
+      && plain.includes('later recurrence creates a new ID')
+      && plain.includes('Safe or current mainOperator may submit a signed public acknowledgment')
+      && plain.includes('exact incidentId') && plain.includes('current operator generation')
+      && plain.includes('Acknowledgment may silence duplicate notifications only')
+      && plain.includes('cannot clear') && plain.includes('downgrade') && plain.includes('conceal')
+      && plain.includes('resolve') && plain.includes('unpause') && plain.includes('financial state'),
+    `${name} must give each reconciliation incident an immutable generation and notification-only acknowledgment`);
+    assert(plain.includes('reconciliation shortfall or acquisition accounting deficit pauses new purchase-intent')
+      && plain.includes('does not pause delivery of Stock Tokens already acquired and allocated')
+      && plain.includes('exact StockVault custody') && plain.includes('every delivery invariant remain healthy')
+      && plain.includes('Asset quarantine') && plain.includes('custody mismatch')
+      && plain.includes('delivery hold') && plain.includes('insufficient delivery gas')
+      && plain.includes('fee ceiling') && plain.includes('stale token health')
+      && plain.includes('independent delivery wall')
+      && plain.includes('creates no new allocation or purchase'),
+    `${name} must isolate the acquisition deficit pause from healthy delivery of already-owed stock`);
+    assert(plain.includes('canonical RWA accounting mirror is more than ten minutes stale')
+      && plain.includes('cannot prove finalized accountingSequence continuity')
+      && plain.includes('operator UI remains red') && plain.includes('incident_state_unknown_stale')
+      && plain.includes('never renders green') && plain.includes('disables new risk-creating purchase controls')
+      && plain.includes('recovery funding') && plain.includes('reconciliation')
+      && plain.includes('cancellation') && plain.includes('expiry')
+      && plain.includes('otherwise-authorized operator outflow controls available')
+      && plain.includes('neither invents an on-chain incident nor resolves a real one'),
+    `${name} must fail the incident UI red when its finalized accounting mirror is stale or discontinuous`);
+    assert(plain.includes('Canonical ETH recovered by redeeming or liquidating unattributed_stock')
+      && plain.includes('first repairs the exact originating attempt')
+      && plain.includes('Any remaining ETH enters the unattributed bucket')
+      && plain.includes('does not automatically become available')
+      && plain.includes('allocate to the historical cohort') && plain.includes('reopen the old intent')
+      && plain.includes('substitute or catch-up') && plain.includes('immutable recovery record')
+      && plain.includes('late-stock provenance') && plain.includes('input units')
+      && plain.includes('actual ETH output') && plain.includes('exact shortfall repair')
+      && plain.includes('remainder classification') && plain.includes('pre/post stock and ETH accounting'),
+    `${name} must causally repair the originating shortfall and quarantine excess late-stock recovery proceeds`);
+    assert(plain.includes('exactly one active Stock Token recovery-vault version')
+      && plain.includes('bound to chain, address, runtime code hash')
+      && plain.includes('proxy') && plain.includes('implementation address and code hash')
+      && plain.includes('Safe rotation is publicly proposed at least 48 hours before execution')
+      && plain.includes('atomically replaces the old version with the new one')
+      && plain.includes('Continued quarantine is the emergency fallback')
+      && plain.includes('no immediate redirection bypass'),
+    `${name} must code-pin one delayed recovery vault without an emergency redirect bypass`);
+    assert(plain.includes('Each recovery adapter is Safe-approved by exact address and runtime code hash')
+      && plain.includes('one exact input token/version') && plain.includes('canonical ETH output path')
+      && plain.includes('fresh independent price') && plain.includes('minEthOut')
+      && plain.includes('maximum slippage') && plain.includes('immutable deadline')
+      && plain.includes('fixed route') && plain.includes('no arbitrary calldata')
+      && plain.includes('caller-selected path') && plain.includes('delegatecall')
+      && plain.includes('persistent approval') && plain.includes('residual token authority')
+      && plain.includes('Recovery succeeds only when canonical ETH is atomically received by the acquisition vault')
+      && plain.includes('intermediate assets remain inside the adapter')
+      && plain.includes('Unexpected ERC-20 output receives no recovery credit')
+      && plain.includes('exact-token/provenance unattributed_stock quarantine'),
+    `${name} must confine exact-stock recovery to fresh-price-bound atomic canonical ETH output`);
+    assert(plain.includes('For custody risk, concentration reporting')
+      && plain.includes('every applicable exact-version exposure wall')
+      && plain.includes('greater of its latest fresh independent-oracle market value')
+      && plain.includes('last valid acquisition price')
+      && plain.includes('If neither value exists or is usable')
+      && plain.includes('new purchases of that exact version remain blocked')
+      && plain.includes('valuation becomes available'),
+    `${name} must conservatively value quarantined stock and block unpriceable exact-version purchases`);
+    assert(plain.includes('unique, immutable, domain-separated recoveryId')
+      && plain.includes('active recovery-vault address/version/runtime code hash')
+      && plain.includes('proxy implementation') && plain.includes('exact quarantine record and provenance')
+      && plain.includes('Stock Token version') && plain.includes('exact input units')
+      && plain.includes('adapter/code identity') && plain.includes('canonical acquisition-vault destination')
+      && plain.includes('independent-oracle observation') && plain.includes('minEthOut')
+      && plain.includes('Safe authorization generation/nonce') && plain.includes('issue time')
+      && plain.includes('earlier of one hour after Safe approval and the oracle-validity deadline')
+      && plain.includes('new one-use ID') && plain.includes('rechecks every pinned identity')
+      && plain.includes('fresh independent price') && plain.includes('stricter')
+      && plain.includes('execution-time oracle floor'),
+    `${name} must make each recovery authorization fully bound, one-use, code-pinned, and price-fresh for at most one hour`);
+    assert(plain.includes('multiple monotonic partial tranches') && plain.includes('separate authorized recoveryId')
+      && plain.includes('exact units') && plain.includes('remainingUnits') && plain.includes('resolves only at zero')
+      && plain.includes('arbitrary Stock Token sweep') && plain.includes('Direct transfer is preferred')
+      && plain.includes('approval') && plain.includes('exact units immediately before use')
+      && plain.includes('reset to zero atomically') && plain.includes('executeRecovery(recoveryId)')
+      && plain.includes('no payload or discretion') && plain.includes('no reward or refund')
+      && plain.includes('separately accounted operations wallet')
+      && plain.includes('recovery gas never reduces recovery credit')
+      && plain.includes('acquisition backing') && plain.includes('allocations') && plain.includes('player value'),
+    `${name} must permit exact partial recovery without a sweep, standing allowance, executor discretion, or value-funded gas`);
+    assert(plain.includes('Permissionless execution does not permit permissionless creation or enqueueing')
+      && plain.includes('constant-time exact-ID lookup') && plain.includes('positive units')
+      && plain.includes('active, unexpired, uncancelled, unconsumed authorization')
+      && plain.includes('rechecks vault, token, adapter, oracle') && plain.includes('proxy code identity')
+      && plain.includes('exact pre/post Stock Token') && plain.includes('canonical-ETH balance deltas')
+      && plain.includes('checked arithmetic') && plain.includes('nonReentrant')
+      && plain.includes('checks-effects-interactions') && plain.includes('atomic rollback')
+      && plain.includes('no attacker-sized loop or scan') && plain.includes('dynamic route')
+      && plain.includes('caller callback') && plain.includes('caller-selected external call')
+      && plain.includes('duplicate') && plain.includes('losing-race calls create no canonical event')
+      && plain.includes('incident entry') && plain.includes('alert') && plain.includes('storage growth')
+      && plain.includes('caller alone pays') && plain.includes('same-ID front-run')
+      && plain.includes('identical approved action') && plain.includes('MEV-protected submission is preferred')
+      && plain.includes('not a trusted control') && plain.includes('separately code-pinned adapter')
+      && plain.includes('adversarial balance-delta tests') && plain.includes('unrelated versions')
+      && plain.includes('Safe or current mainOperator may pause recovery immediately')
+      && plain.includes('only the Safe may resume') && plain.includes('cannot redirect stock')
+      && plain.includes('consume authorization') && plain.includes('credit recovery'),
+    `${name} must make blackhat recovery spam self-funded, constant-time, non-reentrant, non-amplifying, and non-discretionary`);
+    assert(plain.includes('Successful recovery transitions publish structured canonical IDs')
+      && plain.includes('transaction hashes') && plain.includes('blocker changes')
+      && plain.includes('code identities') && plain.includes('finality')
+      && plain.includes('restricted evidence remains off-chain under an immutable content hash')
+      && plain.includes('Provisional and finalized streams are separate')
+      && plain.includes('finalized is the default accounting, UI, and export authority')
+      && plain.includes('Canonical history is retained permanently')
+      && plain.includes('complete cursor-based exports') && plain.includes('checksum-addressed')
+      && plain.includes('Anonymous incident and recovery APIs are read-only')
+      && plain.includes('strict cursor validation') && plain.includes('fixed maximum page and body size')
+      && plain.includes('cheap indexed lookup') && plain.includes('quotas') && plain.includes('caching')
+      && plain.includes('content-addressed precomputed exports') && plain.includes('Invalid cursors')
+      && plain.includes('rejected executions') && plain.includes('cannot cause unbounded scans')
+      && plain.includes('canonical writes') && plain.includes('export regeneration')
+      && plain.includes('incident amplification') && plain.includes('retention-bounded separately'),
+    `${name} must expose permanent finalized recovery evidence through bounded read-only anti-amplification APIs`);
+    assert(plain.includes('Quarantine and indefinite hold are the complete launch behavior')
+      && plain.includes('Recovery is optional') && plain.includes('real material quarantined balance')
+      && plain.includes('not an ordinary RWA-launch blocker')
+      && plain.includes('recovery remains unavailable and every recovery mutation control remains disabled')
+      && plain.includes('exact production vault/adapter/oracle/API implementation and deployment manifest')
+      && plain.includes('contract unit tests') && plain.includes('stateful fuzz/invariant tests')
+      && plain.includes('malicious-token/adapter/oracle/receiver and reentrancy tests')
+      && plain.includes('forked-route slippage/MEV/reorg tests')
+      && plain.includes('API authorization/idempotency/concurrency/body-limit/cursor/export/load/denial-of-service tests')
+      && plain.includes('independent third-party review of the exact source and bytecode')
+      && plain.includes('critical or high finding must be fixed')
+      && plain.includes('remaining finding publicly dispositioned')
+      && plain.includes('chain, addresses, compiler settings, source commit')
+      && plain.includes('runtime and implementation code hashes')
+      && plain.includes('adapter') && plain.includes('oracle identities')
+      && plain.includes('test reports') && plain.includes('audit artifact hashes')
+      && plain.includes('material contract, proxy, adapter, oracle, authorization, accounting, or write-route change')
+      && plain.includes('resets the applicable gate')
+      && plain.includes('No placeholder generic executor or recovery write endpoint may ship'),
+    `${name} must default to hold-only quarantine and conditionally gate any later recovery implementation`);
+    assert(plain.includes('If recovery is built, the Safe records every authorization on-chain')
+      && plain.includes('Proxy vaults and adapters remain permitted')
+      && plain.includes('no non-upgradeable requirement')
+      && plain.includes('exact proxy and implementation identities stay pinned and rechecked')
+      && plain.includes('Safe-set hard caps limit each tranche')
+      && plain.includes('each Stock Token version over rolling 24 hours')
+      && plain.includes('all recovery over rolling 24 hours')
+      && plain.includes('no operator bypass over Stock Token recovery')
+      && plain.includes('main operator') && plain.includes('ETH after canonical receipt is unchanged')
+      && plain.includes('Two fresh independent price sources')
+      && plain.includes('more conservative output floor') && plain.includes('500 basis points fails closed')
+      && plain.includes('V1 accepts only conventional balance-delta ERC-20 behavior')
+      && plain.includes('zero attributable token or ETH residue and zero allowance')
+      && plain.includes('forced unsolicited dust receives no recovery credit')
+      && plain.includes('Public APIs return unsigned calldata')
+      && plain.includes('never sponsor or relay anonymous gas')
+      && plain.includes('Canonical history derives only from finalized events emitted by pinned contracts')
+      && plain.includes('Failed, duplicate, or malformed spam')
+      && plain.includes('cannot automatically pause recovery')
+      && plain.includes('open a financial incident') && plain.includes('write canonical history')
+      && plain.includes('vulnerability-disclosure or bounty channel')
+      && plain.includes('independently monitors code identity')
+      && plain.includes('balances') && plain.includes('allowances') && plain.includes('oracle divergence')
+      && plain.includes('recovery rate') && plain.includes('sequence gaps')
+      && plain.includes('rehearses pause, cancellation, and rotation')
+      && plain.includes('conditional safety constraints')
+      && plain.includes('not a reason to build a recovery subsystem before it is needed'),
+    `${name} must keep the optional recovery edge path minimal while preserving the final approved security walls`);
+    assert(plain.includes('reconciliation incident closes only when finalized canonical state simultaneously proves')
+      && plain.includes('reconciliationShortfall == 0') && plain.includes('accountingDeficit == 0')
+      && plain.includes('every affected record') && plain.includes('liability/backing invariant')
+      && plain.includes('continuous accountingSequence') && plain.includes('synchronized public-mirror state')
+      && plain.includes('Acknowledgments do not affect closure'),
+    `${name} must close incidents only on finalized record-level, aggregate, sequence, and mirror proof`);
+    assert(plain.includes('Purchase blocking uses independent composable reasons')
+      && plain.includes('manual Safe/operator pause') && plain.includes('reconciliation deficit')
+      && plain.includes('stale accounting mirror') && plain.includes('token quarantine')
+      && plain.includes('oracle failure') && plain.includes('exposure cap')
+      && plain.includes('Clearing one reason removes only that blocker')
+      && plain.includes('Purchases resume only when no applicable blocker remains')
+      && plain.includes('automatic deficit clearance never clears a manual or unrelated pause'),
+    `${name} must compose purchase blockers without letting one clearance overwrite another`);
+    assert(plain.includes('contract-maintained debit or repair priority index disagrees with immutable records')
+      && plain.includes('new purchases pause')
+      && plain.includes('anyone may rebuild the index deterministically in bounded chunks')
+      && plain.includes('completed root must equal the root derived from immutable records')
+      && plain.includes('Safe and operator cannot choose order')
+      && plain.includes('dependent mutations remain unavailable until the rebuild proves complete'),
+    `${name} must provide permissionless deterministic index recovery without privileged reordering`);
+    assert(plain.includes('Every operator outflow or generic repair supplies a public positive maxComponents')
+      && plain.includes('complete requested transfer or repair')
+      && plain.includes('processable within that bound')
+      && plain.includes('transaction reverts before any mutation or ETH transfer')
+      && plain.includes('split across sequential transactions')
+      && plain.includes('preserving the same deterministic order'),
+    `${name} must bound multi-record financial mutations without allowing partially accounted transfers`);
+    assert(plain.includes('Public incident history uses an immutable cursor ordered by accountingSequence')
+      && plain.includes('componentIndex') && plain.includes('stable event ID')
+      && plain.includes('Offset pagination') && plain.includes('mutable latest-first authority are forbidden')
+      && plain.includes('UI defaults to the active or most recent incident')
+      && plain.includes('complete export of every generation')
+      && plain.includes('cursor continuity') && plain.includes('canonical reorg/finality status'),
+    `${name} must expose stable canonical incident pagination and complete generation export`);
+    assert(plain.includes('mainOperator may cancel directly or authorize a relayer through EIP-712/ERC-1271')
+      && plain.includes('binds action, chain, vault, operator generation, exact intent ID')
+      && plain.includes('reason code') && plain.includes('nonzero details hash')
+      && plain.includes('exact nextIntentCancelNonce') && plain.includes('issuedAt') && plain.includes('deadline')
+      && plain.includes('lifetime is at most one hour') && plain.includes('future issue time is invalid')
+      && plain.includes('direct and relayed operator cancellations consume the same monotonic cancellation nonce')
+      && plain.includes('independently of nextOutflowNonce')
+      && plain.includes('Safe cancellation consumes neither operator nonce')
+      && plain.includes('older-generation cancellation signature'),
+    `${name} must isolate direct and relayed intent cancellation behind its own one-hour nonce lane`);
+    assert(plain.includes('Safe or current mainOperator may immediately pause new intent creation and execution')
+      && plain.includes('closed public reason code') && plain.includes('nonzero details hash')
+      && plain.includes('only the Safe may unpause') && plain.includes('Canonical deposits')
+      && plain.includes('deficit repair') && plain.includes('matched refunds') && plain.includes('reconciliation')
+      && plain.includes('permissionless expiry') && plain.includes('explicit cancellation')
+      && plain.includes('otherwise-authorized operator outflows remain available')
+      && plain.includes('deadlines continue') && plain.includes('without extension')
+      && plain.includes('tolling') && plain.includes('revival') && plain.includes('substitute')
+      && plain.includes('catch-up') && plain.includes('normal expiry and cancellation rules')
+      && plain.includes('actor, authority, operator generation, reason/details, and inclusion time'),
+    `${name} must let Safe/operator stop new purchase risk while reserving resume to Safe and preserving recovery`);
+    assert(plain.includes('exact intent') && plain.includes('approved attempt')
+      && plain.includes('adapter or sender') && plain.includes('canonical transaction provenance')
+      && plain.includes('Cumulative matched refund cannot exceed')
+      && plain.includes('actual debited ETH') && plain.includes('intent is active')
+      && plain.includes('remaining reserved capacity') && plain.includes('original bound')
+      && plain.includes('retry before the unchanged deadline')
+      && plain.includes('After cancellation') && plain.includes('intent_expired')
+      && plain.includes('successful finalization') && plain.includes('terminal state')
+      && plain.includes('available acquisition ETH') && plain.includes('never reopens')
+      && plain.includes('Unknown-intent') && plain.includes('unprovable-sender/provenance')
+      && plain.includes('above-debit excess refunds') && plain.includes('unattributed')
+      && plain.includes('Every receipt publishes') && plain.includes('cumulative debit/refund')
+      && plain.includes('pre/post buckets'),
+    `${name} must classify active, late-terminal, unmatched, and excess refunds by exact provenance`);
+    assert(plain.includes('Only a currently Safe-approved acquisition ingress contract')
+      && plain.includes('canonical acquisition ETH') && plain.includes('positive deposit')
+      && plain.includes('depositId = keccak256(abi.encode(chainId, sourceContract, externalPaymentReferenceHash))')
+      && plain.includes('nonzero external reference') && plain.includes('msg.value')
+      && plain.includes('duplicate ID') && plain.includes('reverts') && plain.includes('double-crediting')
+      && plain.includes('Success credits available ETH') && plain.includes('approval version')
+      && plain.includes('pre/post buckets') && plain.includes('public and forward-only')
+      && plain.includes('Direct receipt') && plain.includes('unapproved source')
+      && plain.includes('forced ETH') && plain.includes('unattributed')
+      && plain.includes('canonical identity') && plain.includes('later sync'),
+    `${name} must admit canonical acquisition ETH only through unique Safe-approved source references`);
+    assert(plain.includes('Each Safe ingress approval binds')
+      && plain.includes('exact chain') && plain.includes('source address')
+      && plain.includes('source runtime code hash') && plain.includes('approval version')
+      && plain.includes('proxy') && plain.includes('resolved implementation address')
+      && plain.includes('implementation runtime code hash')
+      && plain.includes('revalidates every') && plain.includes('before consuming a deposit ID')
+      && plain.includes('fresh public Safe approval version') && plain.includes('mismatch reverts')
+      && plain.includes('Plain or forced ETH') && plain.includes('unattributed')
+      && plain.includes('forward-only') && plain.includes('canonical history')
+      && plain.includes('deposit IDs') && plain.includes('consumed forever'),
+    `${name} must bind canonical ingress approval to exact address and code identity without rewriting history`);
+    assert(plain.includes('Each acquisition vault has at most one active canonical ingress approval version')
+      && plain.includes('exact version or the disabled/zero state')
+      && plain.includes('Safe rotation atomically deactivates the old version and activates the new one')
+      && plain.includes('no overlap') && plain.includes('grace period')
+      && plain.includes('dual-source window') && plain.includes('active when its transaction is included')
+      && plain.includes('Broadcast or mempool time grants no grandfathering')
+      && plain.includes('old-version call included after rotation reverts')
+      && plain.includes('before accepting ETH') && plain.includes('consuming its deposit ID')
+      && plain.includes('changing accounting') && plain.includes('Plain or forced ETH')
+      && plain.includes('unattributed') && plain.includes('Canonical chain order')
+      && plain.includes('same-block rotation/deposit races') && plain.includes('prior accepted deposits')
+      && plain.includes('consumed IDs') && plain.includes('approval history remain unchanged'),
+    `${name} must maintain one inclusion-time canonical ingress version without overlap or historical rewrite`);
+    assert(plain.includes('During a positive accounting deficit')
+      && plain.includes('canonical deposit consumes its deposit ID once')
+      && plain.includes('deficitRepairAmount = min(msg.value, deficitBefore)')
+      && plain.includes('availableCreditAmount = msg.value - deficitRepairAmount')
+      && plain.includes('without crediting a bucket')
+      && plain.includes('only the available-credit remainder')
+      && plain.includes('immutable deposit record') && plain.includes('total')
+      && plain.includes('both portions') && plain.includes('deficit before/after')
+      && plain.includes('approval version') && plain.includes('pre/post buckets')
+      && plain.includes('repair-only deposit') && plain.includes('canonical provenance')
+      && plain.includes('zero spendable ETH') && plain.includes('full msg.value')
+      && plain.includes('available'),
+    `${name} must consume each canonical deposit once and expose the exact deficit-repair/available split`);
+    assert(plain.includes('Safe may immediately call reclassifyUnattributed')
+      && plain.includes('positive amount no greater than')
+      && plain.includes('only move is unattributed -> available')
+      && plain.includes('transfers no ETH') && plain.includes('creates no reservation')
+      && plain.includes('targets no ballot') && plain.includes('revives nothing')
+      && plain.includes('bypasses no cap') && plain.includes('oracle')
+      && plain.includes('adapter') && plain.includes('deadline')
+      && plain.includes('never books a purchase') && plain.includes('immutable')
+      && plain.includes('non-deletable') && plain.includes('non-reversible')
+      && plain.includes('valid purchase') && plain.includes('operator_outflow'),
+    `${name} must limit immediate Safe reclassification to an immutable accounting-only unattributed-to-available move`);
+    assert(plain.includes('If accounted buckets exceed actual vault balance')
+      && plain.includes('accounting_deficit = accountedBuckets - vault.balance')
+      && plain.includes('first-observed block/time') && plain.includes('cause')
+      && plain.includes('last reconciliation') && plain.includes('pre/post figures')
+      && plain.includes('blocks automated buying') && plain.includes('new reservations')
+      && plain.includes('Safe reclassification') && plain.includes('canonical migration')
+      && plain.includes('expiry') && plain.includes('cancellation')
+      && plain.includes('refund reconciliation') && plain.includes('Every incoming wei first repairs')
+      && plain.includes('actual balance') && plain.includes('without') && plain.includes('bucket')
+      && plain.includes('mainOperator may still withdraw') && plain.includes('actual remaining ETH')
+      && plain.includes('available') && plain.includes('unattributed') && plain.includes('reserved')
+      && plain.includes('deficit before/after') && plain.includes('balance and')
+      && plain.includes('buckets fall together')
+      && (plain.includes('zero-deficit reconciliation')
+        || (plain.includes('public reconciliation') && plain.includes('proves zero')))
+      && plain.includes('No role') && plain.includes('silently haircut or erase')
+      && plain.includes('bucket or deficit'),
+    `${name} must halt automation on accounting deficit without hiding it or removing operator access to actual ETH`);
+    assert(plain.includes('Deficit mode clears only after')
+      && plain.includes('canonical-chain reconciliation computes accounting_deficit == 0')
+      && plain.includes('configured finality') && plain.includes('finalized result')
+      && plain.includes('public mirror') && plain.includes('resume immediately')
+      && plain.includes('normal cap') && plain.includes('oracle') && plain.includes('adapter')
+      && plain.includes('health') && plain.includes('deadline') && plain.includes('authority wall')
+      && plain.includes('no Safe') && plain.includes('operator acknowledgment')
+      && plain.includes('additional cooldown')
+      && plain.includes('does not revive') && plain.includes('expired or cancelled intent')
+      && plain.includes('extend a purchase window') && plain.includes('replay a missed ballot')
+      && plain.includes('catch-up authority') && plain.includes('block')
+      && plain.includes('transaction') && plain.includes('synchronization time')
+      && plain.includes('pre/post deficit') && plain.includes('later deficit')
+      && plain.includes('manually declare zero') && plain.includes('bypass finality'),
+    `${name} must resume automatically only after finalized synchronized zero-deficit proof without reviving missed work`);
+    assert(plain.includes('Every successful atomic vault-accounting entrypoint receives exactly the next monotonic')
+      && plain.includes('accountingSequence') && plain.includes('canonical deposits and deficit repair')
+      && plain.includes('unattributed synchronization') && plain.includes('Safe reclassification')
+      && plain.includes('reservation or intent creation') && plain.includes('purchase debit/finalization')
+      && plain.includes('refunds') && plain.includes('expiry/cancellation')
+      && plain.includes('operator outflow') && plain.includes('deficit reconciliation')
+      && plain.includes('canonical migration') && plain.includes('Component effects')
+      && plain.includes('share the sequence') && plain.includes('deterministic componentIndex order')
+      && plain.includes('action') && plain.includes('actor') && plain.includes('transaction/block position')
+      && plain.includes('complete pre/post vault balance') && plain.includes('available')
+      && plain.includes('unattributed') && plain.includes('reserved')
+      && plain.includes('accounted-bucket total') && plain.includes('deficit')
+      && plain.includes('affected intent/bucket deltas')
+      && plain.includes('Reverts and true no-ops consume no sequence')
+      && plain.includes('Canonical on-chain inclusion order is authoritative')
+      && plain.includes('worker timestamps') && plain.includes('API arrival')
+      && plain.includes('database time') && plain.includes('roll back reorged entries')
+      && plain.includes('finalized canonical order') && plain.includes('duplicate sequence')
+      && plain.includes('unexplained gap') && plain.includes('pre/post discontinuity')
+      && plain.includes('public synchronization failure') && plain.includes('never silently healed'),
+    `${name} must publish one canonical total order for every successful vault-accounting mutation`);
+    assert(plain.includes('empty calldata only') && plain.includes('arbitrary-call')
+      && plain.includes('delegatecall') && plain.includes('token approval')
+      && plain.includes('token transfer') && plain.includes('payable')
+      && plain.includes('reentrancy guard') && plain.includes('Transfer failure')
+      && plain.includes('richer interaction') && plain.includes('without')
+      && plain.includes('vault authority'),
+    `${name} must keep arbitrary ETH destination power while denying generic vault execution authority`);
+    assert(plain.includes('available ETH first') && plain.includes('unattributed ETH second')
+      && plain.includes('ordinary reserved ETH third') && plain.includes('reconciliation_pending ETH last')
+      && plain.includes('caller cannot select a bucket') && plain.includes('minimum number')
+      && plain.includes('amount descending') && plain.includes('later execution deadline first')
+      && plain.includes('intent ID ascending') && plain.includes('partially funded')
+      && plain.includes('greatest backed amount first') && plain.includes('oldest reconciliationStartedAt')
+      && plain.includes('fully exhausting records before at most one partial debit')
+      && plain.includes('immediately publishes') && plain.includes('pre/post')
+      && plain.includes('rolls back'),
+    `${name} must debit and cancel deterministically while disclosing every operator outflow atomically`);
+  }
+  assert(design.includes('Founder acquisition-vault/operator-override rule')
+    && design.includes('Founder main-operator appointment/authentication rule')
+    && design.includes('Founder outflow reason/nonce rule')
+    && design.includes('Founder relayed-authorization time rule')
+    && design.includes('Founder zero-recipient/no-burn rule')
+    && design.includes('Founder operator self-renunciation rule')
+    && design.includes('Founder instant main-operator self-replacement rule')
+    && design.includes('Founder address-based smart-wallet operator rule')
+    && design.includes('Founder operator-wallet monitoring cadence rule')
+    && design.includes('Founder operator-role reason/disclosure rule')
+    && design.includes('Founder unattributed-ETH quarantine/reclassification rule')
+    && design.includes('Founder immutable reservation-expiry rule')
+    && design.includes('Founder deterministic singleton purchase-intent rule')
+    && design.includes('Founder atomic post-wall intent-creation rule')
+    && design.includes('Founder permissionless bound-intent execution rule')
+    && design.includes('Founder Safe/main-operator explicit intent-cancellation rule')
+    && design.includes('Founder immutable adapter-attempt result/reconciliation rule')
+    && design.includes('Founder Safe-only attempt-reconciliation finality rule')
+    && design.includes('Founder exact reconciliation evidence/final-fill rule')
+    && design.includes('Founder terminal reconciliation-quarantine rule')
+    && design.includes('Founder contract-derived reconciliation-bound rule')
+    && design.includes('Founder indefinite reconciliation-quarantine rule')
+    && design.includes('Founder quarantine/operator-outflow deficit-preservation rule')
+    && design.includes('Founder reconciliation-liability solvency rule')
+    && design.includes('Founder deterministic reconciliation debit/repair rule')
+    && design.includes('Founder factual underfunded-reconciliation closure rule')
+    && design.includes('Founder repaired terminal-shortfall principal-release rule')
+    && design.includes('Founder exact late-arrival reconciliation rule')
+    && design.includes('Founder late-stock recovery-proceeds rule')
+    && design.includes('Founder recovery-vault and adapter confinement rule')
+    && design.includes('Founder canonical recovery-output and conservative valuation rule')
+    && design.includes('Founder immutable recovery-authorization and expiry rule')
+    && design.includes('Founder partial recovery, no-sweep, and permissionless-execution rule')
+    && design.includes('Founder blackhat/grief-resistant recovery-execution rule')
+    && design.includes('Founder public recovery-evidence, finality, retention, and API-abuse rule')
+    && design.includes('Founder recovery implementation/audit activation gate')
+    && design.includes('Founder quarantine proportionality and conditional-v1 security rule')
+    && design.includes('Founder reconciliation-incident alert/UI rule')
+    && design.includes('Founder acquisition-deficit delivery-continuity rule')
+    && design.includes('Founder stale reconciliation-mirror fail-closed rule')
+    && design.includes('Founder exact incident-closure and composable-blocker rule')
+    && design.includes('Founder priority-index rebuild and bounded-mutation rule')
+    && design.includes('Founder canonical incident-history cursor rule')
+    && design.includes('Founder relayed intent-cancellation authorization rule')
+    && design.includes('Founder asymmetric emergency purchase-pause rule')
+    && design.includes('Founder matched/late/unmatched refund rule')
+    && design.includes('Founder canonical acquisition-deposit identity rule')
+    && design.includes('Founder exact ingress-code identity rule')
+    && design.includes('Founder single-active-ingress-version rule')
+    && design.includes('Founder immutable deficit-repair deposit-split rule')
+    && design.includes('Founder immediate accounting-only Safe reclassification rule')
+    && design.includes('Founder accounting-deficit/operator-survival rule')
+    && design.includes('Founder finalized zero-deficit automatic-resumption rule')
+    && design.includes('Founder vault-wide accounting-sequence rule')
+    && design.includes('Founder EOA/ERC-1271 operator rule')
+    && design.includes('Founder ETH-only operator-call rule')
+    && design.includes('Founder operator-outflow debit/disclosure rule')
+    && design.includes('Founder spend-based concentration-cap rule')
+    && design.includes('Founder vault migration/retirement with operator bypass'),
+  'the RWA design must pin the main-operator override, normal caps, and two vault-exit paths');
+  assert(historical.includes('explicit sweep trust assumption')
+    && historical.includes('pending nominee/48-hour acceptance clock')
+    && historical.includes('Nomination expires seven days')
+    && historical.includes('relayed EIP-712')
+    && historical.includes('closed public reason code')
+    && historical.includes('current operator may advance it without moving ETH')
+    && historical.includes('with a one-hour') && historical.includes('maximum and no future issue time')
+    && historical.includes('recipient must be nonzero and there is no ETH-burn path')
+    && historical.includes('directly self-renounce')
+    && historical.includes('active operator may directly replace itself immediately')
+    && historical.includes('same-transaction EIP-712')
+    && historical.includes('maximum one-hour deadline')
+    && historical.includes('global outflow nonce persists')
+    && historical.includes('Safe may still zero')
+    && historical.includes('Smart-wallet authority follows its address')
+    && historical.includes('changes/unknown health are public informational warnings only')
+    && historical.includes('Watch at least every five minutes, stale after ten')
+    && historical.includes('never make watcher failure a veto')
+    && historical.includes('Every replacement/')
+    && historical.includes('closed public reason code plus')
+    && historical.includes('Forced/mistaken/unexplained ETH is')
+    && historical.includes('permissionless sync only books surplus')
+    && historical.includes('Each reservation has one immutable deadline')
+    && historical.includes('permissionless idempotent expiry releases all')
+    && historical.includes('Each ballot/exact asset version has one permanent deterministic')
+    && historical.includes('attempts are monotonic and')
+    && historical.includes('no parallel/split/second-success/terminal recreation exists')
+    && historical.includes('Safe-approved `RwaStockBuyer` creates atomically after every')
+    && historical.includes('failure consumes no intent/tombstone/reservation/bucket/attempt/sequence')
+    && historical.includes('`executeIntent(intentId)` is permissionless but fully bound')
+    && historical.includes('routes Stock Tokens/ETH only to their vaults')
+    && historical.includes('pays caller nothing')
+    && historical.includes('Safe or current main operator may explicitly `cancelIntent`')
+    && historical.includes('terminal full reservation release')
+    && historical.includes('canonical inclusion order resolves every execution/expiry/refund/outflow race')
+    && historical.includes('Pre-adapter validation failures')
+    && historical.includes('retryable `attempt_failed` only')
+    && historical.includes('`attempt_reconciliation`')
+    && historical.includes('Only Safe finalizes reconciliation')
+    && historical.includes('cannot mutate buckets/state/sequence')
+    && historical.includes('actual ETH debit, cumulative verified refund')
+    && historical.includes('positive valid custody delta is the final fill')
+    && historical.includes('nonspendable `reconciliation_pending`')
+    && historical.includes('later proven-unspent value becomes available without revival/replacement')
+    && historical.includes('Contract-derived bounds from immutable')
+    && historical.includes('Safe chooses disposition/evidence but cannot override observed value')
+    && historical.includes('has no timeout, abandonment, presumed outcome, or')
+    && historical.includes('accounting never guesses')
+    && historical.includes('raw outflow authority over actual quarantine ETH')
+    && historical.includes('but the transfer cannot')
+    && historical.includes('finalize/classify/release/erase the unresolved liability')
+    && historical.includes('resulting shortfall as explicit accounting deficit')
+    && historical.includes('contract-fixed available → unattributed → ordinary')
+    && historical.includes('reconciliationLiability = backedQuarantineEth + reconciliationShortfall')
+    && historical.includes('greatest backing first, then oldest `reconciliationStartedAt`')
+    && historical.includes('Generic canonical repair uses one unified oldest-created deficit queue')
+    && historical.includes('Contract-owned') && historical.includes('bounded priority indexes')
+    && historical.includes('durable terminal `reconciled_shortfall`')
+    && historical.includes('same entry retires') && historical.includes('no second Safe action')
+    && historical.includes('interest') && historical.includes('opportunity-cost')
+    && historical.includes('A late exact canonical') && historical.includes('refund repairs its own attempt shortfall')
+    && historical.includes('`unattributed_stock` quarantine')
+    && historical.includes('fixed Safe-approved recovery vault')
+    && historical.includes('excluded from') && historical.includes('included in gross custody')
+    && historical.includes('Recovery ETH repairs the exact originating attempt shortfall first')
+    && historical.includes('remainder to `unattributed`')
+    && historical.includes('public 48-hour delayed and atomic')
+    && historical.includes('canonical ETH using fresh independent price')
+    && historical.includes('unexpected ERC-20 output receives no recovery credit')
+    && historical.includes('greater of fresh independent market value')
+    && historical.includes('blocks new exact-version purchases')
+    && historical.includes('unique domain-separated immutable `recoveryId`')
+    && historical.includes('earlier of one hour after approval and oracle validity')
+    && historical.includes('Partial recovery is monotonic through separately authorized exact tranches')
+    && historical.includes('Neither Safe nor operator has an arbitrary Stock Token')
+    && historical.includes('Anyone may execute an authorized ID with no payload')
+    && historical.includes('Permissionless execution cannot create/enqueue records')
+    && historical.includes('constant-time') && historical.includes('`nonReentrant`')
+    && historical.includes('Invalid, duplicate, expired, cancelled, losing-race, or reverted calls')
+    && historical.includes('cost only the caller') && historical.includes('identical-ID front-run')
+    && historical.includes('Safe/current main operator may pause recovery immediately')
+    && historical.includes('Public recovery/incident data exposes structured canonical facts')
+    && historical.includes('finalized is default') && historical.includes('History is')
+    && historical.includes('permanent with checksum-addressed cursor exports')
+    && historical.includes('invalid/replayed/transport spam cannot scan, write, alert, regenerate exports')
+    && historical.includes('Quarantine-and-hold is the')
+    && historical.includes('complete default')
+    && historical.includes('recovery is optional')
+    && historical.includes('not an ordinary') && historical.includes('RWA-launch blocker')
+    && historical.includes('stateful fuzz/invariant')
+    && historical.includes('independent third-party source/bytecode review')
+    && historical.includes('No placeholder generic')
+    && historical.includes('Safe authorization then records on-chain')
+    && historical.includes('no non-upgradeable mandate')
+    && historical.includes('per-version rolling-24-hour')
+    && historical.includes('500-bps divergence')
+    && historical.includes('conventional balance-delta ERC-20s only')
+    && historical.includes('unsigned calldata without gas sponsorship')
+    && historical.includes('never auto-pauses, opens an incident, or writes canonical history')
+    && historical.includes('bounty/disclosure channel')
+    && historical.includes('rehearsed pause/cancel/rotation runbook')
+    && historical.includes('dedicated `reconciliation_outflow`')
+    && historical.includes('persistent red RWA UI')
+    && historical.includes('immutable `incidentId`')
+    && historical.includes('incident_state_unknown_stale')
+    && historical.includes('Acquisition deficit pauses buying')
+    && historical.includes('Incident closure') && historical.includes('every record invariant')
+    && historical.includes('blockers') && historical.includes('compose independently')
+    && historical.includes('permissionless bounded deterministic rebuild')
+    && historical.includes('positive `maxComponents`')
+    && historical.includes('Incident API cursors order immutable history')
+    && historical.includes('no offset/mutable ordering')
+    && historical.includes('exact `nextIntentCancelNonce`')
+    && historical.includes('independently of `nextOutflowNonce`')
+    && historical.includes('only the Safe may unpause')
+    && historical.includes('Existing deadlines continue to run without extension')
+    && historical.includes('Exact-provenance refunds up to actual debit')
+    && historical.includes('terminal refunds first repair their exact attempt shortfall')
+    && historical.includes('remainder becomes available without reopening')
+    && historical.includes('Canonical acquisition credit')
+    && historical.includes('unique chain/source/external-reference deposit ID')
+    && historical.includes('Each ingress approval binds exact address/runtime code hash')
+    && historical.includes('prior canonical deposits and consumed IDs remain historical truth')
+    && historical.includes('Each vault has one active exact ingress version')
+    && historical.includes('Safe rotation is atomic with no overlap/grace')
+    && historical.includes('only inclusion-time active version is canonical')
+    && historical.includes('deficitRepairAmount = min(msg.value, deficitBefore)')
+    && historical.includes('availableCreditAmount')
+    && historical.includes('Safe reclassification is immediate but only')
+    && historical.includes('unattributed-to-available accounting')
+    && historical.includes('public positive accounting')
+    && historical.includes('main operator may still withdraw actual remaining balance')
+    && historical.includes('no silent haircut is permitted')
+    && historical.includes('zero reconciliation reaches configured finality')
+    && historical.includes('without acknowledgment/cooldown')
+    && historical.includes('no role may manually declare zero')
+    && historical.includes('vault-wide `accountingSequence`')
+    && historical.includes('compound effects share deterministic component order')
+    && historical.includes('finalized canonical inclusion')
+    && historical.includes('EOA or ERC-1271 wallet')
+    && historical.includes('Vault outflow is ETH-only')
+    && historical.includes('cancel the fewest whole reservations')
+    && historical.includes('`exposure_cap_reached` skips without substitute')
+    && historical.includes('main operator may bypass it for raw ETH outflow'),
+  'the historical Stock Machine amendment must carry the unilateral operator trust boundary');
+  assert(deploy.includes('DEDICATED ACQUISITION VAULT + MAIN-OPERATOR ARBITRARY ETH EXIT')
+    && deploy.includes('ONE PUBLIC OPERATOR / TWO-STEP ROTATION')
+    && deploy.includes('DIRECT OR FULLY BOUND EIP-712 OUTFLOW AUTHORIZATION')
+    && deploy.includes('CLOSED REASON TAXONOMY + ONE GLOBAL NONCE')
+    && deploy.includes('RECONCILIATION LIABILITY / BACKING / SHORTFALL INVARIANT')
+    && deploy.includes('DETERMINISTIC QUARANTINE DEBIT + SHORTFALL REPAIR')
+    && deploy.includes('UNDERFUNDED FACTUAL RECONCILIATION CLOSURE')
+    && deploy.includes('AUTOMATIC EXACT-PRINCIPAL RELEASE AFTER TERMINAL REPAIR')
+    && deploy.includes('EXACT LATE REFUND + LATE STOCK QUARANTINE')
+    && deploy.includes('EXACT-PROVENANCE LATE-STOCK RECOVERY PROCEEDS')
+    && deploy.includes('ONE CODE-PINNED 48-HOUR RECOVERY VAULT')
+    && deploy.includes('CONFINED EXACT-STOCK TO CANONICAL-ETH RECOVERY ADAPTER')
+    && deploy.includes('CONSERVATIVE QUARANTINED-STOCK EXPOSURE VALUE')
+    && deploy.includes('IMMUTABLE ONE-HOUR RECOVERY AUTHORIZATION')
+    && deploy.includes('MONOTONIC PARTIAL RECOVERY / NO STOCK SWEEP / SEPARATE GAS')
+    && deploy.includes('BLACKHAT- AND GRIEF-RESISTANT RECOVERY EXECUTION')
+    && deploy.includes('PUBLIC FINALIZED RECOVERY HISTORY / API SPAM WALL')
+    && deploy.includes('RECOVERY IMPLEMENTATION / INDEPENDENT AUDIT ACTIVATION GATE')
+    && deploy.includes('CONDITIONAL MINIMAL RECOVERY SECURITY')
+    && deploy.includes('CRITICAL RECONCILIATION INCIDENT UI')
+    && deploy.includes('TEN-MINUTE STALE INCIDENT MIRROR FAILS RED')
+    && deploy.includes('ACQUISITION DEFICIT DOES NOT BLOCK HEALTHY DELIVERY')
+    && deploy.includes('EXACT INCIDENT CLOSURE + COMPOSABLE PURCHASE BLOCKERS')
+    && deploy.includes('PERMISSIONLESS INDEX REBUILD + MAX-COMPONENT ATOMICITY')
+    && deploy.includes('CANONICAL INCIDENT CURSOR + FULL HISTORY EXPORT')
+    && deploy.includes('ONE-HOUR RELAYED AUTHORIZATION WINDOW')
+    && deploy.includes('NONZERO RECIPIENT / NO ETH BURN PATH')
+    && deploy.includes('DIRECT OPERATOR SELF-RENUNCIATION')
+    && deploy.includes('INSTANT CURRENT-OPERATOR SELF-REPLACEMENT')
+    && deploy.includes('ADDRESS-BASED SMART-WALLET OPERATOR IDENTITY')
+    && deploy.includes('FIVE-MINUTE OPERATOR-WALLET WATCH / TEN-MINUTE FRESHNESS')
+    && deploy.includes('PUBLIC REASON + DETAILS COMMITMENT FOR EVERY OPERATOR-ROLE CHANGE')
+    && deploy.includes('UNATTRIBUTED ETH QUARANTINE + SAFE RECLASSIFICATION')
+    && deploy.includes('IMMUTABLE PERMISSIONLESS RESERVATION EXPIRY')
+    && deploy.includes('DETERMINISTIC SINGLETON PURCHASE INTENT')
+    && deploy.includes('ATOMIC POST-WALL INTENT CREATION')
+    && deploy.includes('PERMISSIONLESS EXECUTION OF FULLY BOUND INTENTS')
+    && deploy.includes('IMMUTABLE ADAPTER-ATTEMPT RESULTS + RECONCILIATION GATE')
+    && deploy.includes('SAFE-ONLY ATTEMPT-RECONCILIATION FINALITY')
+    && deploy.includes('EXACT RECONCILIATION EVIDENCE + FINAL-FILL ACCOUNTING')
+    && deploy.includes('TERMINAL RECONCILIATION-PENDING QUARANTINE')
+    && deploy.includes('CONTRACT-DERIVED RECONCILIATION VALUE BOUNDS')
+    && deploy.includes('NO-TIMEOUT RECONCILIATION QUARANTINE')
+    && deploy.includes('OPERATOR QUARANTINE OUTFLOW / LIABILITY SURVIVES')
+    && deploy.includes('SAFE + MAIN-OPERATOR EXPLICIT INTENT CANCELLATION')
+    && deploy.includes('SEPARATE EIP-712 INTENT-CANCEL NONCE')
+    && deploy.includes('SAFE/OPERATOR PAUSE + SAFE-ONLY RESUME')
+    && deploy.includes('MATCHED ACTIVE / LATE TERMINAL / UNMATCHED REFUNDS')
+    && deploy.includes('UNIQUE SAFE-APPROVED CANONICAL ACQUISITION DEPOSITS')
+    && deploy.includes('EXACT INGRESS ADDRESS/CODE/IMPLEMENTATION IDENTITY')
+    && deploy.includes('ONE ACTIVE CANONICAL INGRESS VERSION')
+    && deploy.includes('IMMUTABLE DEFICIT-REPAIR DEPOSIT SPLIT')
+    && deploy.includes('IMMEDIATE ACCOUNTING-ONLY SAFE RECLASSIFICATION')
+    && deploy.includes('PUBLIC ACCOUNTING DEFICIT / OPERATOR SURVIVAL')
+    && deploy.includes('FINALIZED ZERO-DEFICIT AUTOMATIC RESUMPTION')
+    && deploy.includes('ONE VAULT-WIDE ACCOUNTING SEQUENCE')
+    && deploy.includes('EOA + ERC-1271 MAIN OPERATOR')
+    && deploy.includes('ETH-ONLY EMPTY-CALLDATA OUTFLOW')
+    && deploy.includes('DETERMINISTIC OUTFLOW DEBIT + IMMEDIATE DISCLOSURE')
+    && deploy.includes('SPEND-BASED CONCENTRATION CAPS')
+    && deploy.includes('STATE-PRESERVING VAULT MIGRATION / OPERATOR BYPASS')
+    && deploy.includes('operator partial/full bypass'),
+  'the launch runbook must rehearse both normal vault protections and arbitrary operator exits');
+  assert(!design.includes('operator cannot appoint its own successor')
+    && !historical.includes('outflow authority cannot self-appoint')
+    && !deploy.includes('Do not let outflow authority appoint its own successor'),
+  'the superseded Safe-only successor restriction must not survive the instant self-replacement override');
+  const admin = read('public/admin.html');
+  assert(admin.includes('Quarantined Stock Tokens')
+    && admin.includes('hold-only default · conditional future recovery')
+    && admin.includes('optional future edge feature')
+    && admin.includes('not an RWA launch dependency')
+    && admin.includes('no recovery capability is deployed')
+    && admin.includes('finalized default · checksummed cursor pages')
+    && !admin.includes('Authorize Stock recovery')
+    && !admin.includes('Execute Stock recovery')
+    && !admin.includes('Recovery abuse guard'),
+  'the disabled operator UI must collapse the undeployed recovery edge case into one hold-only quarantine control');
+  console.log('✓ pooled ETH is capped/accounted by default but main operator retains arbitrary transfer power');
+}
+
+// Founder batch: freeze an exact pre-vote budget, keep the MVP spot-only and units-first, and record
+// OMR staking as an allocation direction rather than silently changing the shipped broker formula.
+{
+  const design = read('omerta-brokers-design.md');
+  const historical = read('omerta-rwa-stock-machine-design.md');
+  const deploy = read('CHAIN-DEPLOY.md');
+  const admin = read('public/admin.html');
+  const md = read('docs/WIKI.md');
+  const web = read('public/wiki.html');
+
+  for (const [name, src] of [['docs/WIKI.md', md], ['public/wiki.html', web]]) {
+    const plain = (name.endsWith('.html') ? src.replace(/<[^>]+>/g, ' ') : src).replace(/\s+/g, ' ');
+    assert(plain.includes('does not use an automatic percentage of prior-day protocol revenue')
+      && plain.includes('no mandatory minimum acquisition-vault ETH reserve')
+      && plain.includes('published and atomically frozen before the ballot opens')
+      && plain.includes('There is no policy minimum economic purchase size')
+      && plain.includes('ordinary execution walls still fail normally'),
+    `${name} must disclose the immutable pre-vote budget with no revenue formula, reserve floor, or policy dust floor`);
+    assert(plain.includes('provider-native spot Stock Token')
+      && plain.includes('LP tokens') && plain.includes('yield wrappers')
+      && plain.includes('may not sell, rebalance, rotate, or market-time')
+      && plain.includes('not permanently prohibited')
+      && plain.includes('authorizes none of them for the MVP'),
+    `${name} must keep the MVP spot-only while preserving unauthorised future-product optionality`);
+    assert(plain.includes('Verified OMR staking may multiply active-play allocation')
+      && plain.includes('boost is not live')
+      && plain.includes('same unified actual on-chain OMR gameplay position')
+      && plain.includes('Made Ladder, commitment locks, gameplay loss, unbonding, and inheritance')
+      && plain.includes('not a separate') && plain.includes('account_persistent.staked')
+      && plain.includes('Active-play qualification for human and agent accounts')
+      && plain.includes('NPC/resident exclusion')
+      && plain.includes('recurring 30-day Broker activation remain mandatory')
+      && plain.includes('activationMult × activityScore × stakeMult')
+      && plain.includes('failed activity still produces zero')
+      && plain.includes('fixed public tiers')
+      && plain.includes('finalized time-weighted-average eligible principal')
+      && plain.includes('complete seven-day epoch')
+      && plain.includes('no separate 72-hour maturity delay')
+      && plain.includes('one verified allocation wallet') && plain.includes('wallet change begins next epoch')
+      && plain.includes('Liquid OMR') && plain.includes('claimed rewards not restaked')
+      && plain.includes('Broker-activation spend do not count')
+      && plain.includes('approved cap is 1.50×')
+      && plain.includes('below 300 OMR receives 1.00×')
+      && plain.includes('300–999.999… receives 1.10×')
+      && plain.includes('1,000–4,999.999… receives 1.20×')
+      && plain.includes('5,000–19,999.999… receives 1.35×')
+      && plain.includes('20,000 OMR or more receives 1.50×')
+      && plain.includes('Only finalized active and committed principal qualifies')
+      && plain.includes('Pending deposits, idle loot, unbonding, withdrawable, withdrawn')
+      && plain.includes('One verified wallet may qualify one permanent account per epoch')
+      && plain.includes('conflicting claim receives zero stake multiplier until resolved')
+      && plain.includes('changes the TWA prospectively from canonical time')
+      && plain.includes('Only the Safe may change tiers or thresholds')
+      && plain.includes('at least seven public days') && plain.includes('first full epoch beginning after notice')
+      && plain.includes('Every epoch freezes the schedule')
+      && plain.includes('critical defect pauses or cancels that epoch rather than rewriting weights')
+      && plain.includes('replacement custody and settlement baseline is approved but not live')
+      && plain.includes('OMRGameplayVault') && plain.includes('no personal APY')
+      && plain.includes('actual reserve-backed on-chain OMR')
+      && plain.includes('one-use typed and rate-bounded chain-first gameplay outcomes')
+      && plain.includes('imports legacy stake only against deposited OMR')
+      && plain.includes('shipped formula remains') && plain.includes('activationMult × activityScore')
+      && plain.includes('no current stake balance counts silently or retroactively')
+      && plain.includes('Agent accounts have full economic parity')
+      && plain.includes('verified EOA or ERC-1271 controller wallets')
+      && plain.includes('receive idle loot') && plain.includes('lose eligible principal')
+      && plain.includes('build finalized Broker stake TWA')
+      && plain.includes('receive Stock Token allocations and delivery')
+      && plain.includes('never denies vault authorization, settlement, checkpoints, Broker weight, RWA allocation, or delivery'),
+    `${name} must pin the capped tier schedule, agent-wallet parity, eligible buckets, wallet uniqueness, prospective TWA, Safe governance, and frozen epoch rules`);
+    assert(plain.includes('founder-directed replacement makes that stake actual on-chain OMR')
+      && plain.includes('rather than a separate database balance')
+      && plain.includes('same canonical position must drive the Made Ladder')
+      && plain.includes('Broker staking multiplier, gameplay loss, unbonding, inheritance, and public accounting')
+      && plain.includes('database may mirror finalized chain state and journal pending settlement')
+      && plain.includes('cannot independently create or move stake')
+      && plain.includes('approved design uses a new') && plain.includes('OMRGameplayVault')
+      && plain.includes('Principal pays no personal APY')
+      && plain.includes('Game-earned OMR must first become real')
+      && plain.includes('reserve-backed on-chain OMR before staking')
+      && plain.includes('Safe-rotatable gameplay signer') && plain.includes('may not sweep funds')
+      && plain.includes('Chain settlement finalizes before the game consumes one-use resources')
+      && plain.includes('migration mint covers a shortage')
+      && plain.includes('approved, not live'),
+    `${name} must disclose the approved actual-OMR gameplay-vault custody, settlement, outage, and migration baseline`);
+    assert(plain.includes("Only the account's verified controller wallet")
+      && plain.includes('claim-and-stake rail may fund its position')
+      && plain.includes('bypass transfer cannot stake for somebody else or qualify them')
+      && plain.includes('permanent game account') && plain.includes('death or respawn')
+      && plain.includes('published on-chain risk-ruleset version')
+      && plain.includes('maximum losses of 20%') && plain.includes('50% for idle/unbonding OMR')
+      && plain.includes('higher rate or new loss type requires a new public version and fresh consent')
+      && plain.includes('prepared, submitted, finalized, and game-committed states')
+      && plain.includes('final vault event is the one source for crash recovery')
+      && plain.includes('balance actually available') && plain.includes('cannot overdraw')
+      && plain.includes('on-chain history for the Made Ladder') && plain.includes('Broker time-weighted average')
+      && plain.includes('does not automatically trap withdrawals') && plain.includes('custody-integrity incident')
+      && plain.includes('founder selected an upgradeable gameplay vault')
+      && plain.includes('non-upgradeable migration-only contract')
+      && plain.includes('proxy implementation') && plain.includes('real trust assumptions')
+      && plain.includes('upgrade can technically change')
+      && plain.includes('approved structure uses an OpenZeppelin Transparent Proxy')
+      && plain.includes('dedicated') && plain.includes('ProxyAdmin') && plain.includes('non-upgradeable upgrade governor')
+      && plain.includes('Only the Safe may propose, cancel, or execute')
+      && plain.includes('main operator, gameplay signer, relayer, servers, and individual wallets have no upgrade power')
+      && plain.includes('upgrade or upgrade-control change is published for at least 48 hours')
+      && plain.includes('exact old/new code hashes') && plain.includes('storage-layout commitment')
+      && plain.includes('cannot bypass that delay')
+      && plain.includes('Implementations cannot initialize themselves')
+      && plain.includes('versioned setup step runs once inside the exact upgrade transaction')
+      && plain.includes('validates OMR identity') && plain.includes('balance and liabilities')
+      && plain.includes('failed continuity check reverts the upgrade')
+      && plain.includes('Independent review and rehearsal remain necessary')
+      && plain.includes('rollback follows the same proposal and delay')
+      && plain.includes('increases economic risk requires a new ruleset and fresh consent')
+      && plain.includes('does not consent keeps an exit under the previously accepted terms')
+      && plain.includes('implementation and code hash') && plain.includes('validation result')
+      && plain.includes('authority mismatch stays red')
+      && plain.includes('stops new deposits and commitments')
+      && plain.includes('without silently stopping exits'),
+    `${name} must disclose controller binding, versioned consent, hard rates, exactly-once settlement, checkpointing, scoped pauses, and upgrade trust`);
+    assert(plain.includes('Changing a healthy controller normally requires signatures from both the current and proposed wallets')
+      && plain.includes('authenticated control of the permanent game account')
+      && plain.includes('public seven-day request') && plain.includes('notifies every available account channel')
+      && plain.includes('current controller may contest')
+      && plain.includes('only the Safe may resolve a contested request against public evidence')
+      && plain.includes('nobody may shorten the seven-day minimum')
+      && plain.includes('withdrawals, deposits, new commitments, and more controller changes stop')
+      && plain.includes('existing commitments, unbonding clocks, gameplay exposure, and valid losses continue')
+      && plain.includes('recovery is not a temporary shield')
+      && plain.includes('advances the public controller generation')
+      && plain.includes('invalidates unfinished old-wallet authorizations')
+      && plain.includes('never rewrites finalized history')
+      && plain.includes('EOA and ERC-1271 smart-contract wallets are supported')
+      && plain.includes('invalid contract-wallet responses fail closed')
+      && plain.includes('Unlocked principal is withdrawn directly by the current controller to that same wallet')
+      && plain.includes('no arbitrary recipient') && plain.includes('server signature')
+      && plain.includes('Stake, unbond, and withdrawal accept partial amounts')
+      && plain.includes('Every partial unstake has its own amount')
+      && plain.includes('six-hour unlock') && plain.includes('ruleset version') && plain.includes('exposure history')
+      && plain.includes('later request cannot restart or rewrite an earlier clock')
+      && plain.includes('earliest unlock time') && plain.includes('lowest immutable tranche ID')
+      && plain.includes('at most 16 live unbonding tranches per account')
+      && plain.includes('matured tranches do not count') && plain.includes('over-cap unstake fails before changing state')
+      && plain.includes('partial unstake must be at least 0.01 OMR')
+      && plain.includes('exact full remaining eligible stake can always exit')
+      && plain.includes('aggregate into one withdrawable balance')
+      && plain.includes("preserve each tranche's complete history")
+      && plain.includes('accepts only the pinned OMR contract')
+      && plain.includes('balance actually received') && plain.includes('caller claimed to send')
+      && plain.includes('Transfer fees, rebases, hooks, malformed results, and amount mismatches cannot fabricate a position')
+      && plain.includes('sent around the deposit route is unattributed and qualifies nobody')
+      && plain.includes('actual OMR balance to cover every accounted liability')
+      && plain.includes('red custody-integrity incident that stops new risk')
+      && plain.includes('no database or operator entry may conceal it')
+      && plain.includes('withdrawal response remains separately visible'),
+    `${name} must disclose dual-controller rotation, delayed recovery without sheltering, controller-only partial exits, tranche clocks, and exact OMR solvency`);
+    assert(plain.includes('Unattributed OMR remains nonqualifying and nonspendable while the vault is solvent')
+      && plain.includes('public 48-hour proposal') && plain.includes('single fixed OMR recovery-treasury address')
+      && plain.includes('cannot credit a player, settle gameplay, choose an arbitrary recipient')
+      && plain.includes('Anyone may fund a deficit with exact OMR')
+      && plain.includes('Actual OMR received repairs the deficit first')
+      && plain.includes('creates no qualification, yield, repayment claim, or gameplay credit')
+      && plain.includes('excess becomes unattributed')
+      && plain.includes('automatically pauses withdrawals as well as deposits, new commitments, and gameplay debits')
+      && plain.includes("Every player's liability remains recorded in full")
+      && plain.includes('no haircut, pro-rata conversion, first-come payout, operator write-off, or database adjustment')
+      && plain.includes('canonical zero deficit reaches configured finality')
+      && plain.includes('deficit-specific pauses clear automatically without acknowledgment or cooldown')
+      && plain.includes('unrelated pauses remain')
+      && plain.includes('checks solvency before and after every value-changing operation')
+      && plain.includes('Permissionless solvency and unattributed-balance synchronization')
+      && plain.includes('zero-to-positive recurrence receives a new immutable incident ID')
+      && plain.includes('actual balance, full liabilities, incident generation, finality, mirror freshness, and sequence continuity')
+      && plain.includes('acknowledgment cannot close or conceal an incident'),
+    `${name} must disclose fixed-destination delayed surplus recovery, permissionless no-credit deficit funding, full liabilities, automatic deficit pauses, and finalized recovery`);
+    assert(plain.includes("each eligible bucket's balance immediately before settlement")
+      && plain.includes('signer can supply ceilings but cannot choose or inflate that balance')
+      && plain.includes('round down to OMR atomic units') && plain.includes('legitimate zero-loot result still finalizes')
+      && plain.includes('settles them atomically in one transaction')
+      && plain.includes('approved unbonding-tranche order')
+      && plain.includes('credits the killer once with the combined actual loot')
+      && plain.includes('reverts everything if any invariant fails')
+      && plain.includes("killer's idle on-chain gameplay balance") && plain.includes('exposed at the idle rate')
+      && plain.includes('not automatically committed or staked')
+      && plain.includes('does not enter the Broker stake time-weighted average')
+      && plain.includes('cannot have a future issue time') && plain.includes('canonically included within five minutes')
+      && plain.includes('may reach finality after that deadline')
+      && plain.includes('prepared state is only an expiring off-chain journal entry')
+      && plain.includes('cannot reserve OMR, consume a nonce, pause withdrawals, or lock the victim')
+      && plain.includes('globally unique immutable gameplay event ID')
+      && plain.includes("victim's exact next monotonic settlement nonce")
+      && plain.includes('consumes the nonce even when actual loot is zero')
+      && plain.includes('preparation, rejection, expiry, and revert do not')
+      && plain.includes('MVP settles exactly one outcome') && plain.includes('batching is not authorized')
+      && plain.includes('ordinary signer rotation') && plain.includes('maximum five-minute overlap')
+      && plain.includes('emergency Safe revocation has no overlap')
+      && plain.includes('Settlement submission is permissionless')
+      && plain.includes('gains no authority over the victim, killer, amount, rate, buckets, recipient')
+      && plain.includes('no approved-relayer registry, relayer-count cap, or operator-managed relayer set')
+      && plain.includes('callers pay their own gas') && plain.includes('spam alone cannot pause settlement')
+      && plain.includes('voluntarily fund settlement gas shared by the whole community')
+      && plain.includes('dedicated, non-upgradeable') && plain.includes('SettlementGasPool')
+      && plain.includes("accepts only the chain's native gas asset")
+      && plain.includes('no sponsor balance, refund, yield, priority, allocation weight, governance power')
+      && plain.includes('Safe cannot sweep') && plain.includes('move only unreserved ETH')
+      && plain.includes('canonical settlement for an event ID and victim nonce')
+      && plain.includes('legitimate zero-loot') && plain.includes('calls receive zero')
+      && plain.includes('never pushes ETH') && plain.includes('pull accumulated credit')
+      && plain.includes('Credits are exact liabilities') && plain.includes('cannot submit a gas bill')
+      && plain.includes('public per-settlement wei cap') && plain.includes('unreserved pool ETH')
+      && plain.includes('partial or zero credit') && plain.includes('settlement remains permissionless')
+      && plain.includes('existing credits remain withdrawable')
+      && plain.includes('Increases, a new native-fee source')
+      && plain.includes('direct on-chain submission')
+      && plain.includes('invalid spam caller-funded and unreimbursed')
+      && plain.includes('one exact settlement-finality block count')
+      && plain.includes('no action receives a server-, signer-, submitter-, or operator-selected lower threshold')
+      && plain.includes('Every increase and decrease follows the same Safe-only 48-hour public')
+      && plain.includes('applies only to transactions first included after')
+      && plain.includes('never hot-edits finality')
+      && plain.includes('pre-finality reorg retries the same event ID and victim nonce')
+      && plain.includes('only after canonical absence is proven')
+      && plain.includes('post-settlement solvency totals'),
+    `${name} must disclose signer rotation, permissionless anti-spam submission, bounded community gas reimbursement, symmetric finality governance, reorg retry, and complete evidence`);
+    assert(plain.includes('actual Stock Token units')
+      && plain.includes('acquisition reference and cost') && plain.includes('allocation epoch')
+      && plain.includes('Estimated market value is secondary')
+      && plain.includes('timestamped, source-labeled, and stale-aware')
+      && plain.includes('demonstrated recurring material value')
+      && plain.includes('measured user demand') && plain.includes('actual failure mode')
+      && plain.includes('written Safe scope, authority, invariants, tests, and operating owner'),
+    `${name} must lead with units/provenance and admit new RWA complexity only with evidence and ownership`);
+  }
+
+  assert(design.includes('Founder fixed pre-vote budget with no reserve/dust policy floor')
+    && design.includes('Founder spot-only acquisition and no discretionary trading rule')
+    && design.includes('Founder future-product optionality and OMR-stake allocation direction')
+    && design.includes('Founder staking-weight composition, qualification, and snapshot rule')
+    && design.includes('Founder agent-wallet parity rule')
+    && design.includes('Founder unified on-chain OMR gameplay-stake directive')
+    && design.includes('Founder purpose-built OMRGameplayVault custody and settlement baseline')
+    && design.includes('Founder gameplay-vault identity, consent, settlement-finality, and upgradeability rule')
+    && design.includes('Founder gameplay-vault transparent-proxy upgrade-governance rule')
+    && design.includes('Founder gameplay-vault controller recovery, partial exit, and exact-OMR accounting rule')
+    && design.includes('Founder gameplay-vault tranche bounds, surplus recovery, and deficit-finality rule')
+    && design.includes('Founder gameplay-loss calculation and settlement-sequencing rule')
+    && design.includes('Founder signer rotation, permissionless settlement, community gas, finality, and Broker stake-weight rule')
+    && design.includes('Founder units-first portfolio and evidence-based complexity rule'),
+  'the canonical Broker design must pin all four founder decisions');
+  assert(historical.includes('no automatic prior-day-revenue percentage')
+    && historical.includes('exact backed maximum ETH budget')
+    && historical.includes('provider-native spot Stock Token')
+    && historical.includes('Verified OMR') && historical.includes('staking may later multiply active-play allocation')
+    && historical.includes('activationMult × activityScore × stakeMult')
+    && historical.includes('finalized time-weighted-average eligible principal')
+    && historical.includes('no separate 72-hour')
+    && historical.includes('2× ceiling was') && historical.includes('rejected')
+    && historical.includes('Database-only game stake will not remain an alternative')
+    && historical.includes('must all use one actual on-chain OMR gameplay position')
+    && historical.includes('Agent accounts and their verified EOA or ERC-1271 controller wallets have full economic parity')
+    && historical.includes('Broker weight, RWA allocation, or delivery')
+    && historical.includes('finalized mirror/pending-settlement')
+    && historical.includes('no constrained gameplay loss')
+    && historical.includes('No arbitrary') && historical.includes('owner sweep may substitute')
+    && historical.includes('new `OMRGameplayVault`, not a retrofit')
+    && historical.includes('no personal APY')
+    && historical.includes('One-use EIP-712') && historical.includes('outcomes bind chain')
+    && historical.includes('Loot reassigns actual victim principal')
+    && historical.includes('Settlement finalizes on-chain before irreversible game resource/result commitment')
+    && historical.includes('no migration mint is allowed')
+    && historical.includes('Only the verified controller wallet or exact claim-and-stake rail')
+    && historical.includes('20% active/committed and 50% idle/unbonding')
+    && historical.includes('prepared -> submitted -> finalized -> game_committed')
+    && historical.includes('lesser of calculated loss and execution-time eligible balance')
+    && historical.includes('exactly-once crash-recovery authority')
+    && historical.includes('checkpoints on-chain')
+    && historical.includes('separately declared custody-integrity')
+    && historical.includes('rejected non-upgradeable/migration-only custody')
+    && historical.includes('proxy implementation/admin an explicit trust boundary')
+    && historical.includes('OpenZeppelin Transparent Proxy')
+    && historical.includes('`GameplayVaultUpgradeGovernor`')
+    && historical.includes('only the Safe may propose, cancel')
+    && historical.includes('wait at least 48 hours')
+    && historical.includes('Emergency response is pause-only')
+    && historical.includes('reinitializer is only the committed one-use')
+    && historical.includes('Atomic validation covers pinned OMR')
+    && historical.includes('Rollback') && historical.includes('normal delayed upgrade')
+    && historical.includes('Material risk changes require a new ruleset/fresh consent')
+    && historical.includes('code/admin/governor/timelock drift stays red')
+    && historical.includes('current-wallet release plus new-wallet acceptance')
+    && historical.includes('public seven-day clock')
+    && historical.includes('Safe-only evidence resolution')
+    && historical.includes('recovery freezes withdrawal/deposit/commitment')
+    && historical.includes('not existing locks, unbond clocks, gameplay exposure')
+    && historical.includes('invalidates unfinalized old-generation authorizations without nonce reset')
+    && historical.includes('EOA and ERC-1271 controllers are supported fail-closed')
+    && historical.includes('server-independent controller pulls')
+    && historical.includes('separate amount/start/six-hour-unlock/ruleset/exposure tranche')
+    && historical.includes('earliest unlock time') && historical.includes('lowest immutable tranche ID')
+    && historical.includes('at most 16 live unbonding tranches')
+    && historical.includes('Partial unstake is at least `0.01 OMR`')
+    && historical.includes('aggregate into one withdrawable balance')
+    && historical.includes('pins exact OMR') && historical.includes('credits only verified balance delta')
+    && historical.includes('Bypass transfers') && historical.includes('unattributed and qualify nobody')
+    && historical.includes('actual OMR balance >= total accounted liabilities')
+    && historical.includes('public 48-hour proposal to one fixed OMR recovery-treasury address')
+    && historical.includes('Permissionless exact-receipt `fundDeficit`')
+    && historical.includes('automatically pauses withdrawals plus deposits/commitments/gameplay debits')
+    && historical.includes('preserves every liability in full')
+    && historical.includes('automatically clears only deficit-specific pauses')
+    && historical.includes('permissionless solvency/unattributed sync')
+    && historical.includes("execution-time pre-settlement balance")
+    && historical.includes('rounds down to OMR atomic units')
+    && historical.includes('Multi-bucket loss is one atomic transaction')
+    && historical.includes("killer's idle on-chain gameplay balance")
+    && historical.includes('expires if not included within five minutes')
+    && historical.includes('`prepared` remains an expiring') && historical.includes('off-chain nonlocking journal entry')
+    && historical.includes("victim's exact next nonce")
+    && historical.includes('successful zero-loot settlement consumes it')
+    && historical.includes('MVP settlement is one') && historical.includes('outcome/event per transaction')
+    && historical.includes('five-minute overlap') && historical.includes('emergency Safe revocation has no overlap')
+    && historical.includes('Settlement submission is permissionless')
+    && historical.includes('no approved-relayer registry')
+    && historical.includes('callers bear their gas')
+    && historical.includes('dedicated non-upgradeable native-asset `SettlementGasPool`')
+    && historical.includes('Contributions are final') && historical.includes('Safe has no treasury sweep')
+    && historical.includes('moves only unreserved ETH') && historical.includes('outstanding executor-credit backing')
+    && historical.includes('winning canonical event/nonce settlement') && historical.includes('zero loot')
+    && historical.includes('pull-to-self credit') && historical.includes('Credits are exact liabilities')
+    && historical.includes('minimum of contract-measured audited gas')
+    && historical.includes('per-settlement wei cap') && historical.includes('unreserved pool ETH')
+    && historical.includes('Empty/paused/insufficient sponsorship yields partial or zero credit')
+    && historical.includes('Safe may pause credits/reduce caps immediately')
+    && historical.includes('Direct chain submission stays open')
+    && historical.includes('one public finality') && historical.includes('per-action discretion')
+    && historical.includes('every increase or decrease uses the same Safe-only 48-hour exact public proposal')
+    && historical.includes('Emergencies pause new value-taking settlements')
+    && historical.includes('Pre-finality reorg retry reuses the same event/nonce')
+    && historical.includes('complete identities, timings, bucket math, tranche consumption')
+    && historical.includes('Broker stake weight is capped at 1.50×')
+    && historical.includes('`<300=1.00×`') && historical.includes('`20,000+=1.50×`')
+    && historical.includes('Only finalized active/committed principal counts')
+    && historical.includes('One wallet qualifies one account per epoch')
+    && historical.includes('Canonical transitions affect seven-day TWA prospectively')
+    && historical.includes('Safe-only tier changes get seven')
+    && historical.includes('each epoch freezes all weighting inputs')
+    && historical.includes('shipped formula remains')
+    && historical.includes('`activationMult × activityScore`; current balances do not count retroactively')
+    && historical.includes('recurring material value, measured user demand, or an actual failure mode'),
+  'the historical Stock Machine handoff must preserve the budget, asset, staking, portfolio, and complexity decisions');
+  assert(deploy.includes('FIXED PRE-VOTE BUDGET / NO REVENUE FORMULA OR RESERVE FLOOR')
+    && deploy.includes('SPOT-ONLY MVP / NO DISCRETIONARY SELLING')
+    && deploy.includes('OMR-STAKING MULTIPLICATIVE WEIGHT / FULL-EPOCH TWA — COMPLETE RULE, IMPLEMENTATION PENDING')
+    && deploy.includes('UNITS-FIRST PORTFOLIO / EVIDENCE-BASED COMPLEXITY')
+    && deploy.includes('finalWeight = activationMult × activityScore × stakeMult')
+    && deploy.includes('one verified allocation wallet per account/epoch')
+    && deploy.includes('defer wallet changes to the next epoch')
+    && deploy.includes('account_persistent.staked')
+    && deploy.includes('rejected a 2× maximum')
+    && deploy.includes('UNIFIED ON-CHAIN OMR GAMEPLAY STAKE')
+    && deploy.includes('replace every independent database-only')
+    && deploy.includes('actual OMR custody and canonical on-chain transitions')
+    && deploy.includes('finalized database mirror plus explicit pending-chain-settlement journal')
+    && deploy.includes('database write never fabricates or') && deploy.includes('settles stake')
+    && deploy.includes('guarantees immediately withdrawable principal')
+    && deploy.includes('Do not add a generic owner/operator sweep')
+    && deploy.includes('AGENT-WALLET PARITY')
+    && deploy.includes('verified agent-controlled EOA or ERC-1271 wallet')
+    && deploy.includes('receive idle loot') && deploy.includes('lose eligible')
+    && deploy.includes('build finalized Broker stake TWA')
+    && deploy.includes('receive Stock Token')
+    && deploy.includes('never vault authorization, settlement, checkpoints, Broker weights')
+    && deploy.includes('PURPOSE-BUILT OMRGAMEPLAYVAULT BASELINE')
+    && deploy.includes('Retire vault-level personal APY')
+    && deploy.includes('one-use EIP-712 outcome')
+    && deploy.includes('Settle chain-first')
+    && deploy.includes('before resource consumption')
+    && deploy.includes('never mint merely to honor rows')
+    && deploy.includes('explicit unfunded liability')
+    && deploy.includes('GAMEPLAY-VAULT IDENTITY / CONSENT / EXACTLY-ONCE SETTLEMENT')
+    && deploy.includes("account's current verified controller wallet")
+    && deploy.includes('20% active/committed and 50% idle/unbonding')
+    && deploy.includes('prepared -> submitted -> finalized -> game_committed')
+    && deploy.includes('min(calculatedLoss, eligibleBalance)')
+    && deploy.includes('sole recovery authority')
+    && deploy.includes('Checkpoint every deposit')
+    && deploy.includes('withdrawal pause requires a separately declared custody-')
+    && deploy.includes('UPGRADEABLE GAMEPLAY VAULT')
+    && deploy.includes('rejected a non-upgradeable, migration-')
+    && deploy.includes('disclose proxy implementation plus upgrade authority')
+    && deploy.includes('TRANSPARENT PROXY + DELAYED UPGRADE GOVERNOR')
+    && deploy.includes('not UUPS/Beacon/Diamond/custom proxy')
+    && deploy.includes('`GameplayVaultUpgradeGovernor` owns the admin')
+    && deploy.includes('only the Safe proposes, cancels, and executes')
+    && deploy.includes('upgrade_proposed -> waiting_48h -> executable -> executed_validated | cancelled | expired')
+    && deploy.includes('no hot-upgrade or delay bypass')
+    && deploy.includes('initialization-calldata hash') && deploy.includes('storage-layout commitment')
+    && deploy.includes('allow a versioned reinitializer only once')
+    && deploy.includes('Atomically validate pinned OMR token')
+    && deploy.includes('malicious implementation can lie')
+    && deploy.includes('Treat rollback as another complete delayed proposal')
+    && deploy.includes('requires fresh') && deploy.includes('consent, and preserves a prior-terms exit')
+    && deploy.includes('mismatch stays red and disables first-party deposits/commitments')
+    && deploy.includes('CONTROLLER ROTATION + LOST-WALLET RECOVERY')
+    && deploy.includes('paired') && deploy.includes('current-controller release')
+    && deploy.includes('public seven-day request')
+    && deploy.includes('only Safe resolves a contested request')
+    && deploy.includes('Recovery is no shield')
+    && deploy.includes('never resets a nonce')
+    && deploy.includes('EOA and ERC-1271 across verify/rotate/recover/deposit/withdraw')
+    && deploy.includes('CONTROLLER-ONLY PULL WITHDRAWALS + PARTIAL TRANCHES')
+    && deploy.includes('expose no arbitrary recipient')
+    && deploy.includes('checks-effects-interactions') && deploy.includes('ReentrancyGuard')
+    && deploy.includes('independent amount') && deploy.includes('six-hour unlock')
+    && deploy.includes('16-live-tranche bound')
+    && deploy.includes('EXACT OMR RECEIPT + VAULT SOLVENCY')
+    && deploy.includes('balance-after minus balance-before')
+    && deploy.includes('Direct bypass transfer is') && deploy.includes('unattributed OMR')
+    && deploy.includes('actual OMR balance >= total accounted liabilities')
+    && deploy.includes('persistent red custody-')
+    && deploy.includes('TRANCHE BOUNDS + SURPLUS RECOVERY + DEFICIT FINALITY')
+    && deploy.includes('MAX_LIVE_UNBONDING_TRANCHES = 16')
+    && deploy.includes('MIN_PARTIAL_UNBOND = 0.01 OMR')
+    && deploy.includes('surplus_recovery_proposed -> waiting_48h -> executable -> executed | cancelled | expired')
+    && deploy.includes('Add permissionless `fundDeficit(amount)` using actual balance delta')
+    && deploy.includes('deficit-specific withdrawal pause')
+    && deploy.includes('Preserve every liability at full face amount')
+    && deploy.includes('Clear only deficit-specific pauses automatically')
+    && deploy.includes('Check solvency pre/post every value-changing entrypoint')
+    && deploy.includes('`syncSolvency()` and `syncUnattributed()`')
+    && deploy.includes('EXECUTION-TIME LOSS + SINGLE-OUTCOME SETTLEMENT')
+    && deploy.includes("execution-time pre-settlement balance")
+    && deploy.includes('Round down to OMR atomic units')
+    && deploy.includes('legitimate zero-loot') && deploy.includes('outcome still finalizes')
+    && deploy.includes('calculate them independently and atomically in one') && deploy.includes('transaction, apply the approved unbonding-tranche order')
+    && deploy.includes("killer's idle on-chain gameplay balance")
+    && deploy.includes('cap authorization lifetime at five minutes')
+    && deploy.includes('`prepared` as an') && deploy.includes('expiring off-chain journal entry')
+    && deploy.includes("victim's exact next monotonic settlement nonce")
+    && deploy.includes('MVP accepts one outcome')
+    && deploy.includes('SIGNER OVERLAP + PERMISSIONLESS SUBMISSION')
+    && deploy.includes('rotation plus five minutes')
+    && deploy.includes('Emergency Safe') && deploy.includes('revocation has zero overlap')
+    && deploy.includes('Let any address submit an exact valid authorization')
+    && deploy.includes('Do not build an approved-relayer')
+    && deploy.includes('caller pays that gas')
+    && deploy.includes('NON-UPGRADEABLE COMMUNITY SETTLEMENTGASPOOL')
+    && deploy.includes("supported chain's native gas asset")
+    && deploy.includes('no sponsor balance, refund, yield, priority, allocation')
+    && deploy.includes('Safe no treasury sweep')
+    && deploy.includes('only unreserved ETH') && deploy.includes('outstanding executor credits')
+    && deploy.includes('CANONICAL-SUCCESS GAS CREDIT / PULL WITHDRAWAL')
+    && deploy.includes('canonical event-ID/victim-nonce settlement')
+    && deploy.includes('wrong-chain/vault') && deploy.includes('losing-race calls zero')
+    && deploy.includes('never push ETH during settlement')
+    && deploy.includes('checks-effects-interactions') && deploy.includes('`ReentrancyGuard`')
+    && deploy.includes('`totalOutstandingCredits` as an exact liability')
+    && deploy.includes('cannot revert or invalidate an otherwise canonical gameplay settlement')
+    && deploy.includes('CAPPED CONTRACT-DERIVED REIMBURSEMENT')
+    && deploy.includes('accept no caller-supplied gas cost')
+    && deploy.includes('PER_SETTLEMENT_WEI_CAP')
+    && deploy.includes('actualBalance - totalOutstandingCredits')
+    && deploy.includes('partial or zero credit') && deploy.includes('never closes permissionless settlement')
+    && deploy.includes('GAS-POOL GOVERNANCE + PERMISSIONLESS ABUSE BOUNDARY')
+    && deploy.includes('existing credits remain withdrawable')
+    && deploy.includes('exact 48-hour public proposal')
+    && deploy.includes('never restrict direct on-chain submission')
+    && deploy.includes('Invalid spam remains caller-funded and unreimbursed')
+    && deploy.includes('FINALITY + REORG + EVENT EVIDENCE')
+    && deploy.includes('`SETTLEMENT_FINALITY_BLOCKS` per supported chain')
+    && deploy.includes('finality_change_proposed -> waiting_48h -> executable -> executed | cancelled | expired')
+    && deploy.includes('every increase and decrease')
+    && deploy.includes('transactions first included after the boundary')
+    && deploy.includes('never hot-edits finality')
+    && deploy.includes('same immutable event ID/victim nonce')
+    && deploy.includes('post-settlement solvency totals')
+    && deploy.includes('BROKER STAKE MULTIPLIER COMPLETE RULE')
+    && deploy.includes('cap `stakeMult` at 1.50×')
+    && deploy.includes('`20,000+ = 1.50×`')
+    && deploy.includes('Count only finalized active and committed principal')
+    && deploy.includes('One verified wallet qualifies one permanent account per epoch')
+    && deploy.includes('seven public days') && deploy.includes('first later full')
+    && deploy.includes('Freeze per epoch the schedule')
+    && deploy.includes('Never read only the current balance at allocation time')
+    && deploy.includes('immediate stake/unstake around the snapshot')
+    && deploy.includes('flash-weightable'),
+  'the launch runbook must keep staking unimplemented until the unified vault and finalized anti-flash history exist');
+  assert(admin.includes('OMRGameplayVault control room')
+    && admin.includes('design approved · implementation, audit, and funded migration pending')
+    && admin.includes('Gameplay settlement health')
+    && admin.includes('signer generation · mirror freshness · canonical submission · pending outcomes')
+    && admin.includes('Legacy stake backing report')
+    && admin.includes('claims · deposited OMR · imports · unfunded liability')
+    && admin.includes('Gameplay-vault controller binding')
+    && admin.includes('account ID · verified wallet · recovery state · unattributed OMR')
+    && admin.includes('Gameplay risk ruleset')
+    && admin.includes('consent version · 20%/50% ceilings · Safe reductions')
+    && admin.includes('Settlement recovery queue')
+    && admin.includes('prepared · submitted · finalized · game committed')
+    && admin.includes('Gameplay-vault checkpoints')
+    && admin.includes('Made Ladder latest · Broker seven-day TWA')
+    && admin.includes('Gameplay-vault upgrade control')
+    && admin.includes('Transparent Proxy · non-upgradeable governor · Safe only')
+    && admin.includes('Gameplay-vault upgrade queue')
+    && admin.includes('exact package · 48-hour delay · cancel / execute / expire')
+    && admin.includes('Gameplay-vault implementation monitor')
+    && admin.includes('address · code hash · version · admin/governor drift')
+    && admin.includes('Gameplay-vault upgrade validation')
+    && admin.includes('OMR · liabilities · ruleset · nonces · pauses · bindings')
+    && admin.includes('Gameplay-vault rollback proposal')
+    && admin.includes('same evidence, delay, validation, and history')
+    && admin.includes('Gameplay-vault controller rotation')
+    && admin.includes('current release · new acceptance · controller generation')
+    && admin.includes('Lost-wallet recovery board')
+    && admin.includes('seven days · notifications · contest · Safe evidence review')
+    && admin.includes('Gameplay-vault withdrawal state')
+    && admin.includes('controller-only pull · server-independent · scoped pause')
+    && admin.includes('Gameplay-vault unbonding tranches')
+    && admin.includes('partial amounts · independent six-hour clocks · exposure')
+    && admin.includes('Gameplay-vault OMR solvency')
+    && admin.includes('actual receipt · liabilities · unattributed surplus · deficit incident')
+    && admin.includes('Unbonding tranche policy')
+    && admin.includes('earliest unlock first · max 16 · 0.01 OMR')
+    && admin.includes('Withdrawable aggregation')
+    && admin.includes('matured tranches · one balance · history preserved')
+    && admin.includes('Unattributed OMR recovery')
+    && admin.includes('Safe · fixed treasury · 48-hour proposal')
+    && admin.includes('Fund gameplay-vault deficit')
+    && admin.includes('permissionless · no player credit · excess unattributed')
+    && admin.includes('Gameplay-vault deficit incident')
+    && admin.includes('full liabilities · withdrawals paused · no haircut')
+    && admin.includes('Gameplay-vault solvency sync')
+    && admin.includes('pre/post checks · permissionless sync · incident generations')
+    && admin.includes('Gameplay loss calculator')
+    && admin.includes('execution-time buckets · floor rounding · signer ceilings')
+    && admin.includes('Atomic gameplay settlement')
+    && admin.includes('all buckets · one killer credit · full rollback')
+    && admin.includes('Gameplay loot state')
+    && admin.includes('idle balance · idle exposure · no automatic Broker weight')
+    && admin.includes('Settlement authorization clock')
+    && admin.includes('five-minute inclusion · future time rejected · finality may follow')
+    && admin.includes('Prepared settlement journal')
+    && admin.includes('off-chain · expiring · no victim or custody lock')
+    && admin.includes('Gameplay settlement sequence')
+    && admin.includes('unique event · exact victim nonce · zero loot consumes')
+    && admin.includes('Settlement batching policy')
+    && admin.includes('MVP one outcome · one transaction · one record')
+    && admin.includes('Signer rotation policy')
+    && admin.includes('routine five-minute overlap · emergency zero-grace revocation')
+    && admin.includes('Permissionless settlement submission')
+    && admin.includes('typed authorization · no submitter authority · no relayer registry')
+    && admin.includes('Settlement spam defense')
+    && admin.includes('caller-funded invalid calls · no mutation · no incident')
+    && admin.includes('Community gas pool')
+    && admin.includes('native-only non-upgradeable contract · separate from OMR/RWA custody')
+    && admin.includes('Sponsor contribution terms')
+    && admin.includes('final contribution · no refund, yield, priority, allocation, or governance')
+    && admin.includes('Executor gas eligibility')
+    && admin.includes('canonical event/nonce winner only · failed and losing calls zero')
+    && admin.includes('Executor credit withdrawal')
+    && admin.includes('pull-to-self · CEI/reentrancy guard · exact reserved liability')
+    && admin.includes('Gas reimbursement formula')
+    && admin.includes('measured audited cost · gas/data/wei caps · unreserved ETH')
+    && admin.includes('Gas-pool depletion')
+    && admin.includes('partial or zero credit · permissionless settlement remains open')
+    && admin.includes('Gas-pool governance')
+    && admin.includes('risk reductions immediate · increases, fee source, migration wait 48h')
+    && admin.includes('Settlement finality threshold')
+    && admin.includes('one public block count per chain · no per-action discretion')
+    && admin.includes('Finality change policy')
+    && admin.includes('every increase/decrease · Safe-only 48h · prospective effective block')
+    && admin.includes('Settlement reorg recovery')
+    && admin.includes('same event and nonce · canonical-absence proof')
+    && admin.includes('Settlement evidence record')
+    && admin.includes('bucket math · tranche use · killer credit · solvency')
+    && admin.includes('Broker stake multiplier')
+    && admin.includes('1.50× cap · 300 / 1k / 5k / 20k tiers')
+    && admin.includes('Broker eligible stake')
+    && admin.includes('active + committed only · finalized seven-day TWA')
+    && admin.includes('Broker wallet uniqueness')
+    && admin.includes('one wallet · one account · collisions score zero')
+    && admin.includes('Broker stake checkpoints')
+    && admin.includes('canonical prospective changes · no backfill')
+    && admin.includes('Broker tier governance')
+    && admin.includes('Safe only · seven-day notice · later full epoch')
+    && admin.includes('Broker epoch ruleset')
+    && admin.includes('frozen inputs · pause or cancel · never rewrite'),
+  'the operator UI must show gameplay-vault controller recovery, pull withdrawals, tranche state, exact receipt, and solvency');
+  console.log('✓ RWA budget is pre-vote fixed, MVP holdings are spot/units-first, and the OMR-staking rule is complete with implementation pending');
 }

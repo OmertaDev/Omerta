@@ -24,3 +24,4 @@ baselines/
 # 2026-08-14 is the reason this is stated rather than assumed)
 probe-tmp.mjs
 .worktrees/
+.release-worktrees/

@@ -32,9 +32,12 @@
   .body p { margin: 6px 0; color: var(--ink); font-size: 15.5px; }
   .path { display: inline-block; background: #0f0f13; border: 1px solid var(--line); border-radius: 4px; padding: 3px 8px; font-family: 'Courier New', monospace; font-size: 12.5px; color: var(--mach); }
   .arrow { color: var(--dim); }
-  pre { position: relative; background: #0f0f13; border: 1px solid var(--line); border-radius: 5px; padding: 12px 14px; overflow-x: auto; font-size: 12.5px; color: var(--ok); margin: 10px 0; }
-  .copy { position: absolute; top: 8px; right: 8px; background: var(--panel2); border: 1px solid var(--line); color: var(--neon); font-family: Georgia, serif; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; cursor: pointer; }
-  .copy:hover { background: #1e1e26; }
+  pre { position: relative; background: #0f0f13; border: 1px solid var(--line); border-radius: 5px; padding: 48px 14px 12px; overflow-x: auto; font-size: 12.5px; color: var(--ok); margin: 10px 0; }
+  .copy { position: absolute; top: 8px; right: 8px; min-height:34px; background: var(--panel2); border: 1px solid var(--line); color: var(--neon); font-family: Georgia, serif; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; cursor: pointer; transition:color var(--duration-quick) var(--ease-out),border-color var(--duration-quick) var(--ease-out),background-color var(--duration-quick) var(--ease-out),transform var(--duration-micro) var(--ease-out); }
+  .copy:hover { background: #1e1e26; border-color:var(--line2); }
+  .copy:active { transform:translateY(1px); }
+  .copy.is-copied { color:var(--ok); border-color:var(--ok); background:color-mix(in srgb,var(--ok) 9%,var(--panel2)); }
+  .copy.is-failed { color:var(--bad); border-color:var(--bad); background:color-mix(in srgb,var(--bad) 8%,var(--panel2)); }
   .say { background: #14120c; border: 1px solid color-mix(in srgb,var(--neon) 42%,var(--line)); border-radius: 4px; padding: 12px 14px; margin: 8px 0; color: var(--ink); font-style: italic; }
   table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 8px 0; }
   th { text-align: left; color: var(--dim); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; padding: 8px 10px; border-bottom: 1px solid var(--line); }
@@ -50,10 +53,11 @@
   .route-card:hover { border-color:var(--neon); text-decoration:none; }
   .route-card[aria-current="page"] { border-color:var(--mach); background:color-mix(in srgb,var(--mach) 5%,var(--panel)); }
   .copy-status { min-height:20px; color:var(--ok); font:12px/1.4 var(--mono); }
+  .copy-status.is-error { color:var(--bad); }
   footer { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line); text-align: center; color: var(--dim); font-size: 12px; }
-  @media (max-width: 560px) { .step { gap: 10px; padding: 16px 0; } header h1 { font-size: 29px; letter-spacing: .05em; } .num{width:30px;height:30px;font-size:15px} }
+  @media (max-width: 560px) { .step { gap: 10px; padding: 16px 0; } header h1 { font-size: 29px; letter-spacing: .05em; } .num{width:30px;height:30px;font-size:15px} .copy{min-height:44px;padding-inline:13px} pre{padding-top:58px} }
 </style>
-<link rel="stylesheet" href="/omerta-ui.css?v=20260824">
+<link rel="stylesheet" href="/omerta-ui.css?v=20260826">
 </head>
 <body class="public-page">
 <a class="skip-link" href="#wrap">Skip to setup</a>
@@ -169,17 +173,53 @@
 
 <script>
   document.querySelectorAll('.copy').forEach(function (b) {
+    var originalLabel = b.textContent;
     b.addEventListener('click', function () {
       var el = document.getElementById(b.getAttribute('data-t'));
       var txt = el ? el.textContent : '';
-      var done = function () {
-        var o = b.textContent;
-        b.textContent = 'Copied';
-        document.getElementById('copy-status').textContent = 'Configuration copied to the clipboard.';
-        setTimeout(function () { b.textContent = o; document.getElementById('copy-status').textContent = ''; }, 1400);
+      var status = document.getElementById('copy-status');
+      var selectText = function () {
+        if (!el) return;
+        var range = document.createRange();
+        range.selectNodeContents(el);
+        var selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
       };
-      if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(txt).then(done).catch(function () {}); }
-      else { try { var r = document.createRange(); r.selectNode(el); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); s.removeAllRanges(); done(); } catch (e) {} }
+      var reset = function () {
+        b.textContent = originalLabel;
+        b.classList.remove('is-copied', 'is-failed');
+        status.classList.remove('is-error');
+        status.textContent = '';
+      };
+      var done = function () {
+        b.textContent = 'Copied';
+        b.classList.remove('is-failed');
+        b.classList.add('is-copied');
+        status.classList.remove('is-error');
+        status.textContent = 'Configuration copied to the clipboard.';
+        window.clearTimeout(b._copyReset);
+        b._copyReset = window.setTimeout(reset, 1800);
+      };
+      var failed = function () {
+        selectText();
+        b.textContent = 'Select';
+        b.classList.remove('is-copied');
+        b.classList.add('is-failed');
+        status.classList.add('is-error');
+        status.textContent = 'Clipboard access was blocked. The configuration is selected so you can copy it manually.';
+        window.clearTimeout(b._copyReset);
+        b._copyReset = window.setTimeout(reset, 4200);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(done).catch(failed);
+      } else {
+        try {
+          selectText();
+          if (document.execCommand('copy')) { window.getSelection().removeAllRanges(); done(); }
+          else failed();
+        } catch (e) { failed(); }
+      }
     });
   });
 </script>

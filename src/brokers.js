@@ -141,9 +141,9 @@ export async function allocateEpoch(pool, { endDay = dayOf() - 1, days = BROKERS
       'SELECT id FROM broker_epochs WHERE start_day=$1 AND end_day=$2', [startDay, endDay])).rows[0];
     if (existing) { await client.query('COMMIT'); return { epochId: existing.id, already: true }; }
 
-    // Every eligible account with a LIVE activation. Flags are snapshotted here, where gameplay
-    // becomes an ownership weight: excluded accounts may still play and activate, but can never
-    // enter the frozen RWA epoch. Keep the queries flat/static — pg-mem parses neither a correlated
+    // Every eligible account with a LIVE activation. Agent accounts participate on the same
+    // activity/activation terms as humans; only NPC residents are excluded when gameplay becomes
+    // an ownership weight. Keep the queries flat/static — pg-mem parses neither a correlated
     // subquery nor `= ANY($1::text[])` (the /v1/gangs and MY PROFILE lessons), and pgquery can prepare
     // these exact statements against production Postgres.
     const eligible = new Set((await client.query(

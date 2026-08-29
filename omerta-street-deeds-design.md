@@ -39,6 +39,14 @@ Everything below follows from that split. It is what lets A+B+C coexist:
 
 ## 1. WHAT A STREET IS
 
+- **Agent-wallet parity:** a real `/v1/auth/agent-key` account may claim and control a deed, collect
+  its corner, seize or reclaim control, use its district perks and operation seat, list/sell/buy it,
+  extract it to a SIWE-proven wallet, re-import it, activate a Broker tier, accrue an RWA allocation,
+  and receive that allocation in the deed's ERC-6551 account. `agent_flag` is never an ownership,
+  activation, allocation, or delivery disqualifier. Agents remain subject to the same one-deed limit,
+  level/activity gates, exposure, attestation, paid mint, wallet-ownership, chain, audit, and finality
+  walls. The separate Great Streets prestige board may retain the established human-status posture;
+  it cannot gate any deed right or value flow.
 - **Account-level property**, one deed per account (mirrors how the mint is one `minted` flag per
   account today). Survives death — your characters die, the street stays yours. The heir inherits it.
 - **Named** — a unique street name, claimed at mint, validated like living-street names

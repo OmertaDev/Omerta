@@ -10,7 +10,10 @@ import { fileURLToPath } from 'node:url';
 // the recordRival/recordContact SAVEPOINT lessons cover. `skipLocked` is false under pg-mem, which
 // parses neither SKIP LOCKED nor NOWAIT; callers must keep a fallback that is CORRECT on its own
 // terms (never a silently different outcome — only a different blocking posture).
-export const dbCaps = { skipLocked: false };
+// Defaults are correctness-first fallbacks. Real Postgres capabilities turn on only after its schema
+// boot succeeds; an unknown/custom query adapter therefore gets portable SQL rather than a fast shape
+// whose semantics pg-mem is known to mis-execute.
+export const dbCaps = { skipLocked: false, indexedTextArrayAny: false };
 
 // Register only the PostgreSQL built-ins that H1's literal schema needs and pg-mem omits. Callers
 // that create a raw pg-mem database for schema tests must opt in before applying schema.sql; the
@@ -624,6 +627,7 @@ export async function makeDb() {
       boot.release();
     }
     dbCaps.skipLocked = true; // real Postgres — see dbCaps
+    dbCaps.indexedTextArrayAny = true; // pg-mem returns zero for indexed TEXT = ANY(array), even with scalar literals
     return pool;
   }
   // (red-team R9 config F2) A production deploy that forgot DATABASE_URL would SILENTLY boot the whole
@@ -633,6 +637,7 @@ export async function makeDb() {
     throw new Error('DATABASE_URL must be set in production — refusing to boot on the in-memory pg-mem database (all state would be lost on restart).');
   dbCaps.skipLocked = false; // pg-mem parses neither SKIP LOCKED nor NOWAIT
   const { newDb, DataType } = await import('pg-mem');
+  dbCaps.indexedTextArrayAny = false;
   const mem = newDb();
   registerPgMemCompatibility(mem, DataType);
   const { Pool } = mem.adapters.createPg();

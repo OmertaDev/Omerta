@@ -27,6 +27,9 @@ const allocDelivered = async (epoch, acct, ticker) => (await q(
 const checkOf = async (name) => (await runTreasuryInvariants(pool)).checks.find((c) => c.name === name);
 
 // ── seed: held stock, an extracted deed for A (no deed for B), and allocations to both ──
+// A is deliberately agent-flagged: agent ownership must never disqualify the deed target that
+// receives a frozen Broker/RWA allocation.
+await q("INSERT INTO account_persistent (account_id, agent_flag) VALUES ('accA', true)");
 await q("INSERT INTO stock_buys (ref, ticker, units, eth_spent, price_eth_per_unit, tx_hash, real) VALUES ('buy1','AAPL',100,1,0.01,'0xhash',true)");
 await q("INSERT INTO stock_buys (ref, ticker, units, eth_spent, price_eth_per_unit, tx_hash, real) VALUES ('buy2','TSLA',100,1,0.01,'0xhash2',true)");
 // A extracted a Street Deed — account_id re-keyed to onchain:<tokenId>, extracted_by_account = A.
@@ -44,7 +47,7 @@ const tx0 = await txCount();
 {
   const plan = await planStockDeliveries(pool);
   const accts = plan.map((p) => p.accountId);
-  assert(accts.includes('accA'), 'A (extracted deed) is a delivery target');
+  assert(accts.includes('accA'), 'agent A (extracted deed) is a delivery target');
   assert(!accts.includes('accB'), 'B (no extracted deed) is NOT a target — its allocation waits');
   const aAapl = plan.find((p) => p.accountId === 'accA' && p.ticker === 'AAPL');
   assert(aAapl && aAapl.deedTokenId === '777' && aAapl.units === 10, 'A/AAPL resolves to the extracted deed + owed units');
@@ -188,7 +191,7 @@ assert.equal(await txCount(), tx0, 'the stock delivery rail writes ZERO transact
   // A's SIWE-linked wallet (the exclusion compares against THIS)
   // the fixture never made an account_persistent row for accA (the rail itself doesn't need one) —
   // the exclusion compares against the SIWE-linked wallet stored there, so seed it
-  await q("INSERT INTO account_persistent (account_id, wallet_address) VALUES ('accA','0xAAAA00000000000000000000000000000000aaaa')");
+  await q("UPDATE account_persistent SET wallet_address='0xAAAA00000000000000000000000000000000aaaa' WHERE account_id='accA'");
   // the MINT transfer records the FIRST owner = A's wallet (mixed case on purpose — logs arrive
   // checksummed, SIWE stores lowercase; the comparison must not care)
   const mint = await recordDeedTransfer(pool, { tokenId: '777', from: '0x0000000000000000000000000000000000000000', to: '0xAAAA00000000000000000000000000000000AAAA' });

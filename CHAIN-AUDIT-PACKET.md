@@ -26,7 +26,7 @@ snapshot when later contracts land.
 
 *"Batch, not dribble"* (`omerta-dynasty-machine-design.md`): the scope must be KNOWN before it is
 sent, because a contract added afterwards means paying to re-audit. The set below is complete —
-`omerta-contracts/src` holds exactly these 18 files and nothing else.
+`omerta-contracts/src` holds exactly these 24 Solidity files and nothing else.
 
 | # | contract | what it is | its tests |
 |---|---|---|---|
@@ -36,21 +36,27 @@ sent, because a contract added afterwards means paying to re-audit. The set belo
 | 4 | `OMRStaking` | pre-funded reward pool, APY ceiling, principal always withdrawable | `Omerta.t.sol` |
 | 5 | `OmertaFees` | the inbound ETH tollbooth. Exact-fee, forwards in-tx, custodies nothing, monotonic nonce; carries `payForPackage` (the on-chain Store leg) | `Omerta.t.sol` |
 | 6 | `OmertaBond` | **the only mint.** Server-signed `BondQuote`, four walls (below), four-way ETH split forwarded in-tx, linear vesting | `OmertaBond.t.sol` |
-| 7 | `OmrTwapOracle` | the accretion oracle the bond's wall 4 reads. Permissionless `update()`, bounded window, fail-closed | `OmrTwapOracle.t.sol` |
-| 8 | `GenesisOracle` | a fixed-price `IOmrOracle` for the launch window, swapped out for the TWAP at pool init | `GenesisOracle.t.sol` |
-| 9 | `IOmrOracle` | the interface both oracles implement — **the interface, not a contract** | (implementations' tests) |
-| 10 | `OmertaHook` | the Uniswap v4 hook. Sell tax taken in the quote currency inside the swap, anti-snipe window, impact surge, permissionless sweep | `OmertaHook.t.sol` |
-| 11 | `StreetDeed` | ERC-721 street deeds. Self-verifying EIP-712 mint, `tokenId = keccak(name)`, never-pausable `redeem`, default-ON transfer lock | `StreetDeed.t.sol` |
-| 12 | `DynastyNFT` | ERC-721 identity. Self-verifying EIP-712 mint, no owner mint, EIP-2981 royalty — **and gates NOTHING on `balanceOf`** | `DynastyNFT.t.sol` |
-| 13 | `StockVault` | the stock distributor. **Never mints** — every `deliver` is a pre-held `SafeERC20.transfer`; keeper-only, idempotent, per-token daily cap | `StockVault.t.sol` |
-| 14 | `Alchemist` | THE BANK — the nUSD/DNR collateral market | `Bank.t.sol` |
-| 15 | `Transmuter` | THE BANK — the redemption side | `Bank.t.sol` |
-| 16 | `Denari` | THE BANK — the DNR debt token | `Bank.t.sol` |
-| 17 | `CollateralEscrow` | THE BANK — collateral custody | `Bank.t.sol` |
-| 18 | `FlashGuard` | THE BANK — the flash-loan guard | `FlashGuard.t.sol` |
+| 7 | `OmrTwapOracle` | legacy V2 arithmetic-price TWAP. Permissionless `update()`, bounded window, fail-closed | `OmrTwapOracle.t.sol` |
+| 8 | `OmrV4TwapOracle` | ownerless canonical v4 geometric-tick TWAP. Samples the hook cumulative, bounded on both sides, preserves `IOmrOracle` | `OmrV4TwapOracle.t.sol`, `OmertaHook.t.sol` |
+| 9 | `GenesisOracle` | a fixed-price `IOmrOracle` for a deliberately bounded pre-market window; not a perpetual live feed | `GenesisOracle.t.sol` |
+| 10 | `IOmrOracle` | the interface all bond-price feeds implement — **the interface, not a contract** | (implementations' tests) |
+| 11 | `OmertaHook` | the Uniswap v4 hook. LBP-only initialization, sell tax, anti-snipe window, impact surge, permissionless sweep, exact tick-time cumulative | `OmertaHook.t.sol`, `audit/OmertaHookObserverDoS.t.sol` |
+| 12 | `IInitializerHook` | the exact ERC-165 surface Liquidity Launcher's LBP strategy requires — **interface only** | `OmertaHook.t.sol`, genesis preflight tests |
+| 13 | `IOmrV4ObservationSource` | the exact ERC-165 cumulative source surface pinned by `OmrV4TwapOracle` — **interface only** | `OmrV4TwapOracle.t.sol`, `OmertaHook.t.sol` |
+| 14 | `GenesisProceedsSplitter` | ownerless CCA/LBP proceeds branch: revenue only after canonical pool initialization; failed-launch recovery only before it | `GenesisProceedsSplitter.t.sol` |
+| 15 | `StreetDeed` | ERC-721 street deeds. Self-verifying EIP-712 mint, `tokenId = keccak(name)`, never-pausable `redeem`, default-ON transfer lock | `StreetDeed.t.sol` |
+| 16 | `DynastyNFT` | ERC-721 identity. Self-verifying EIP-712 mint, no owner mint, EIP-2981 royalty — **and gates NOTHING on `balanceOf`** | `DynastyNFT.t.sol` |
+| 17 | `StockTokenRegistry` | Safe-curated tokenized-stock identity catalog and immutable closed-day family ballot | `RwaStockMachine.t.sol` |
+| 18 | `RwaStockBuyer` | paused-by-default, daily-capped adapter purchase bound to registry ballot, independent quote floor, and StockVault delivery | `RwaStockMachine.t.sol`, `audit/RwaStockMachineRedTeam.t.sol` |
+| 19 | `StockVault` | the stock distributor. **Never mints** — every delivery is a pre-held `SafeERC20.transfer`; authorization-bound, idempotent, per-token daily cap | `StockVault.t.sol`, `RwaStockMachine.t.sol` |
+| 20 | `Alchemist` | THE BANK — the DNR collateral market | `Bank.t.sol`, `audit/AlchemistRedTeam.t.sol` |
+| 21 | `Transmuter` | THE BANK — the redemption side | `Bank.t.sol`, `audit/TransmuterFundingRedTeam.t.sol` |
+| 22 | `Denari` | THE BANK — the DNR debt token | `Bank.t.sol` |
+| 23 | `CollateralEscrow` | THE BANK — collateral custody | `Bank.t.sol` |
+| 24 | `FlashGuard` | THE BANK — the flash-loan guard | `FlashGuard.t.sol` |
 
-**305 Foundry tests across 12 suites, green** (measured 2026-08-21, `forge test`), including two
-512-run fuzzes: OMR sell-tax conservation and the bond's anti-Ponzi tranche invariant.
+**387 Foundry tests across 22 suites, green** (measured 2026-08-27, `forge test`), including twelve
+512-run fuzz properties across token, bond, oracle, Bank, stock-delivery, hook, and guard surfaces.
 
 **Deliberately NOT in the batch, and each for a reason:**
 - **ERC-6551** (`test/vendor/ERC6551Registry.sol`, `ERC6551Account.sol`) — the reference
@@ -96,7 +102,12 @@ anyone short elsewhere profits from the crash. **Size on damage, never on attack
 never a window in which the Safe can intervene, only one in which an attacker waits. Vesting here is a
 product feature, not a security control, and the point of writing that down is that nobody counts it as one.
 
-### 2.2 The oracle: fail-closed on four failure modes, and bounded on BOTH sides
+### 2.2 The oracles: fail-closed on four failure modes, and bounded on BOTH sides
+Both normal-operation implementations preserve the same `IOmrOracle.consult()` consumer surface.
+`OmrTwapOracle` integrates a V2 pair's arithmetic price cumulative. `OmrV4TwapOracle` integrates the
+canonical v4 hook's tick cumulative and therefore publishes a geometric time-weighted price. The
+orientation and mean type differ deliberately; the bond's units remain 18-decimal OMR per native ETH.
+
 `update()` is permissionless on purpose (a keeper-gated poke means a lost key freezes the product) —
 which means **whoever pokes chooses when the window closes**. An interval longer than
 `PERIOD × MAX_WINDOW_MULT` is therefore **DISCARDED, not averaged**: it re-baselines, `consult()`
@@ -104,6 +115,13 @@ reports no usable reading, the bond reverts, and `Rebaselined` is emitted so an 
 Without that bound a nine-day keeper outage spanning a spike-and-crash reported **19,998.84 against a
 5,000 spot, stamped fresh**, invisible to a staleness check that measures when the average was COMPUTED
 rather than what period it COVERS.
+
+The v4-specific property to attack is path completeness: PoolManager exposes current slot0 but no
+historical series for this consumer. `OmertaHook` must accrue the pre-existing tick through elapsed
+time before adopting each successful swap's post-swap tick; same-timestamp swaps must count zero
+elapsed time; idle time must accrue counterfactually. The oracle seeds a fresh baseline at deployment,
+rounds negative fractional mean ticks toward negative infinity, invalidates a sub-wei result, and
+must remain correct if keepers skip any number of intermediate `ObservationRequested` events.
 
 ### 2.3 The v4 hook: three claims worth attacking directly
 `OmertaHook` is a different mechanism at a different layer from the ERC-20 tax — **do not treat it as a
@@ -121,6 +139,11 @@ variant** (the ERC-20 path survives armed at zero as its backstop). Its claims:
   irrecoverable, from a hook armed in the ordinary order with nobody doing anything wrong).
 - **(c) There is deliberately NO pause.** A hook that can revert `beforeSwap` can halt a public market.
   The only lever is the rate, and zero stops the fee rather than the pool.
+- **(d) Oracle bookkeeping is internal and asset-free.** `afterSwap` performs one PoolManager slot0
+  read and writes one packed tick accumulator; it does not call the observer. External observer code
+  runs only through permissionless `pokeObserver` after settlement, under a gas stipend with all
+  failures swallowed. A broken observer must not halt or poison a swap, while the cumulative path must
+  remain complete even if nobody pokes it.
 
 Also stated rather than hidden: **exact-OUTPUT sells are taxed in OMR, not the quote** — `afterSwap` can
 only take a delta on the *unspecified* currency, which is the output for exact-input (all router volume)

@@ -47,6 +47,12 @@ assert.ok(html.includes('<link rel="manifest" href="/manifest.json">'), 'the cli
 assert.ok(html.includes('rel="apple-touch-icon"'), 'an apple-touch-icon (iOS home screen)');
 assert.ok(html.includes('name="apple-mobile-web-app-capable"'), 'iOS standalone meta');
 assert.ok(html.includes('name="theme-color"'), 'a theme-color');
+assert.ok(html.includes('viewport-fit=cover'), 'the iOS viewport exposes its safe-area insets');
+const ui = (await get('/omerta-ui.css')).body;
+assert.ok(ui.includes('--om-safe-area-top: env(safe-area-inset-top, 0px)'),
+  'the shared public shell exposes the iPhone status-bar inset');
+assert.ok(/\.public-nav\s*\{[^}]*padding:\s*calc\(8px \+ var\(--om-safe-area-top\)\)/s.test(ui),
+  'the public header keeps its controls below the iPhone PWA status bar');
 
 // ── THE MOTION LIBRARY route — the generated ambient clips behind the cinematics + the landing hero.
 // The boot ALLOWLIST discipline (a request is a Map lookup — no traversal by construction), streamed

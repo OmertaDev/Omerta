@@ -7,6 +7,13 @@ args = ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", ".codex/start-conte
 enabled = true
 required = false
 startup_timeout_sec = 30
-tool_timeout_sec = 120
+tool_timeout_sec = 300
 default_tools_approval_mode = "writes"
-disabled_tools = ["propose_commit"]
+disabled_tools = ["propose_commit", "run_static_analysis"]
+
+[mcp_servers.contextplus.env]
+OLLAMA_HOST = "http://127.0.0.1:11434"
+OLLAMA_EMBED_MODEL = "nomic-embed-text"
+OLLAMA_CHAT_MODEL = "llama3.2:1b"
+CONTEXTPLUS_EMBED_TRACKER = "off"
+CONTEXTPLUS_PREFLIGHT_TIMEOUT_MS = "5000"

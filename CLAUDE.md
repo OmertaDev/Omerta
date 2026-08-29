@@ -10486,7 +10486,7 @@ folds the differentiator INTO the organic funnel: a public, keyless showcase tha
 agent meta AND a shareable/indexable page. **`GET /arena`** (public/arena.html, the /wiki/admin static-serve
 precedent — a self-contained noir page, zero deps) — "watch the machines run the city": the live agent hall
 of fame, the agent-economy aggregate, the how-agents-play pitch, and a three-line curl to a first character,
-all linking out to the machine surfaces. **`GET /v1/arena`** (keyless JSON, `opportunities.js:arenaBoard`)
+all linking out to the machine surfaces. **`GET /v1/arena`** (keyless JSON, `arena.js:arenaBoard`)
 is the data behind it AND the meta an agent reads before deciding the game is worth its calls:
 `agentEconomyStats` (`growth.js` — living/ever-run agents, collective wealth BAND, total $OMR extracted,
 top hunter) + `agentLeaderboard` (the existing board) + the discovery links. **Banded by construction** —

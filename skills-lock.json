@@ -1,6 +1,30 @@
 {
   "version": 1,
   "skills": {
+    "configurator": {
+      "source": "Uniswap/uniswap-ai",
+      "sourceType": "github",
+      "skillPath": "packages/plugins/uniswap-cca/skills/configurator/SKILL.md",
+      "computedHash": "39b55e67879e60c1c8f58f8870fc62012b61f0b1f5a6408b5e219c528113a59d"
+    },
+    "copy-trade": {
+      "source": "Uniswap/uniswap-ai",
+      "sourceType": "github",
+      "skillPath": "packages/plugins/uniswap-trading-tools/skills/copy-trade/SKILL.md",
+      "computedHash": "28ff31e49da9375b06e4e1ac6709b9024f8109d3dbb19d2f886213dc8f6adedb"
+    },
+    "dca-bot": {
+      "source": "Uniswap/uniswap-ai",
+      "sourceType": "github",
+      "skillPath": "packages/plugins/uniswap-trading-tools/skills/dca-bot/SKILL.md",
+      "computedHash": "cf827c7ff483939a969c5091e47e4834db9694ac7c0365a1af2f14ddff066f74"
+    },
+    "deployer": {
+      "source": "Uniswap/uniswap-ai",
+      "sourceType": "github",
+      "skillPath": "packages/plugins/uniswap-cca/skills/deployer/SKILL.md",
+      "computedHash": "60b717b1769b25c826179c40e822f0a7e1799f50b9f9dd45802c5e7d8ee43bee"
+    },
     "grill-me": {
       "source": "mattpocock/skills",
       "sourceType": "github",
@@ -12,6 +36,54 @@
       "sourceType": "github",
       "skillPath": "skills/productivity/handoff/SKILL.md",
       "computedHash": "9ea2a5de5ca2d717f913356de982fdc4fe27d28a300c16598cd43a4865491008"
+    },
+    "index-bot": {
+      "source": "Uniswap/uniswap-ai",
+      "sourceType": "github",
+      "skillPath": "packages/plugins/uniswap-trading-tools/skills/index-bot/SKILL.md",
+      "computedHash": "011a91de255fe0ec5e0367789895fbf19edeffb331ecfce0a2a21959c93411a4"
+    },
+    "liquidity-planner": {
+      "source": "Uniswap/uniswap-ai",
+      "sourceType": "github",
+      "skillPath": "packages/plugins/uniswap-driver/skills/liquidity-planner/SKILL.md",
+      "computedHash": "d2869c2a464c24309f2744b5c9ad096d80d27230380cae5f8e17a81fa0a0a286"
+    },
+    "lp-integration": {
+      "source": "Uniswap/uniswap-ai",
+      "sourceType": "github",
+      "skillPath": "packages/plugins/uniswap-trading/skills/lp-integration/SKILL.md",
+      "computedHash": "2ca1f92ca66bd3a34a32c0e634fcc2cfa46be581073cf4be5b1506436f40b4e7"
+    },
+    "pay-with-any-token": {
+      "source": "Uniswap/uniswap-ai",
+      "sourceType": "github",
+      "skillPath": "packages/plugins/uniswap-trading/skills/pay-with-any-token/SKILL.md",
+      "computedHash": "47a3460370eadbeb9f54f95a663c62df9f4848a9b86dc59144a54d9924af6142"
+    },
+    "pay-with-app": {
+      "source": "Uniswap/uniswap-ai",
+      "sourceType": "github",
+      "skillPath": "packages/plugins/uniswap-trading/skills/pay-with-app/SKILL.md",
+      "computedHash": "3116f83eb470ea18ea0c77222e406646ca28bba21dcfba3fc212a0bfec1401b0"
+    },
+    "permissioned-pools-configurator": {
+      "source": "Uniswap/uniswap-ai",
+      "sourceType": "github",
+      "skillPath": "packages/plugins/uniswap-permissioned-pools/skills/permissioned-pools-configurator/SKILL.md",
+      "computedHash": "45070fe7b8bbf0cded6a660996a66ea33173cd074c6a65b55669128a53430f28"
+    },
+    "permissioned-pools-deployer": {
+      "source": "Uniswap/uniswap-ai",
+      "sourceType": "github",
+      "skillPath": "packages/plugins/uniswap-permissioned-pools/skills/permissioned-pools-deployer/SKILL.md",
+      "computedHash": "e16708701a513672765544ec49b3873fb880f1ab67cd7aaf107ee738dd976e45"
+    },
+    "permissioned-pools-issuer": {
+      "source": "Uniswap/uniswap-ai",
+      "sourceType": "github",
+      "skillPath": "packages/plugins/uniswap-permissioned-pools/skills/permissioned-pools-issuer/SKILL.md",
+      "computedHash": "b2d75ddc7316a5e27afeb230fca8a11e8bd741323819c8cf477d9f5c5f6a883f"
     },
     "remotion-best-practices": {
       "source": "remotion-dev/skills",
@@ -84,6 +156,42 @@
       "sourceType": "github",
       "skillPath": "skills/remotion-upgrade/SKILL.md",
       "computedHash": "4ae459409a92018bd4e182ee6e696ab2d1e5c7a7cb6d87d7bad0cf2d5eeee2e4"
+    },
+    "swap-integration": {
+      "source": "Uniswap/uniswap-ai",
+      "sourceType": "github",
+      "skillPath": "packages/plugins/uniswap-trading/skills/swap-integration/SKILL.md",
+      "computedHash": "0c42278050b2e2ec907e11c3a7f8af70f67e57e5444d0ab1ff2af3d1d0f6f5ed"
+    },
+    "swap-planner": {
+      "source": "Uniswap/uniswap-ai",
+      "sourceType": "github",
+      "skillPath": "packages/plugins/uniswap-driver/skills/swap-planner/SKILL.md",
+      "computedHash": "c93d4361b7ba2e3549afe05a6c0095162050801876d285f61b50c2fec0e7c762"
+    },
+    "v4-hook-generator": {
+      "source": "Uniswap/uniswap-ai",
+      "sourceType": "github",
+      "skillPath": "packages/plugins/uniswap-hooks/skills/v4-hook-generator/SKILL.md",
+      "computedHash": "5cf9923b8b2ba874ba83b08dd160f1065378a5077548d8c5d1b9d3a44d781fe6"
+    },
+    "v4-sdk-integration": {
+      "source": "Uniswap/uniswap-ai",
+      "sourceType": "github",
+      "skillPath": "packages/plugins/uniswap-trading/skills/v4-sdk-integration/SKILL.md",
+      "computedHash": "d33a0e23a44c1cacde38210a08ce6f67c394fb32ae6d8e2bd0227f9a0b449271"
+    },
+    "v4-security-foundations": {
+      "source": "Uniswap/uniswap-ai",
+      "sourceType": "github",
+      "skillPath": "packages/plugins/uniswap-hooks/skills/v4-security-foundations/SKILL.md",
+      "computedHash": "d8f2966c62325b7606285614050c8424354b5da1af6250df31cdd67cbb4ffde9"
+    },
+    "viem-integration": {
+      "source": "Uniswap/uniswap-ai",
+      "sourceType": "github",
+      "skillPath": "packages/plugins/uniswap-viem/skills/viem-integration/SKILL.md",
+      "computedHash": "e4ea9d2a01f56ef0e61381dcdd2cf756d9eeb7f9502f18a09be401012b5ad7cc"
     }
   }
 }

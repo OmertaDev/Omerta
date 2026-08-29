@@ -1,6 +1,6 @@
 // M4 test: the Kitchen (makings → cook → collect → deal, crew sales + raids in
 // accrual, laylow/cleanpapers), paths, trade ranks, heist, missions, daily
-// contracts, First Week (+capstone), referrals (§7.13 incl. agent exclusion),
+// contracts, First Week (+capstone), referrals (§7.13 incl. agent-recruit exclusion),
 // telemetry, and mod tools. Runs on pg-mem — zero infra.
 process.env.SOCIAL_VERIFY_MODE = 'trust';   // alpha honor system; production runs 'live'
 process.env.MOD_KEY = 'test-mod-key';
@@ -1168,7 +1168,7 @@ const bot = await mk('Bot Barlow', 'Mentor Max');
 await pool.query(`UPDATE account_persistent SET agent_flag=true, checkins_lifetime=3 WHERE account_id = (SELECT account_id FROM characters WHERE id='${bot.id}')`);
 await seedCh(bot.id, 'respect=1000, lc_crime=40, cash=30000, nerve=50, energy=200');
 await call('POST', '/v1/crimes/pick', { token: bot.token });
-assert.equal((await meOf(mentor.token)).recruits, 1, 'agent accounts excluded from referral payouts');
+assert.equal((await meOf(mentor.token)).recruits, 1, 'agent recruits are excluded from referral payouts');
 
 // ── THE RECRUITERS boards (§7.13 status): individual hall of fame + family recruitment ──
 const lb = (await call('GET', '/v1/leaderboard/recruiters', { token: mentor.token })).body;
@@ -2207,5 +2207,5 @@ assert.equal((await call('POST', '/v1/respec', { token: chef.token, body: { musc
   assert.equal(capoRows, 0, "the license is capability, never cash — zero ledger rows for the whole flow");
 }
 
-console.log('✅ M4 growth test passed — paths, kitchen (makings/cook/collect/deal/crew/raid/laylow/cleanpapers), heist, missions (+$OMR faucet), dailies (+all-three bonus), First Week (+capstone), referrals (+milestones, agent exclusion), telemetry, mod tools, M8 stat respec (sum-conserving, floor-gated, ledgered burn), THE HUSTLE (the three-stop chain: location gates, legwork delta, ledgered once-a-day payoff), WORD ON THE STREET (per-district seed boards, conflict guaranteed, accept/delta/claim, ledgered corner:job, the MAX_DAY cap) + THE MARK (every job names a victim; residents in your district get named) + THE CAPO\'S LICENSE (agent recruiting perks: minted+retained+levelled gates, the tier board, the wire-slot perk, zero ledger rows)');
+console.log('✅ M4 growth test passed — paths, kitchen (makings/cook/collect/deal/crew/raid/laylow/cleanpapers), heist, missions (+$OMR faucet), dailies (+all-three bonus), First Week (+capstone), referrals (+milestones, agent-recruit exclusion), telemetry, mod tools, M8 stat respec (sum-conserving, floor-gated, ledgered burn), THE HUSTLE (the three-stop chain: location gates, legwork delta, ledgered once-a-day payoff), WORD ON THE STREET (per-district seed boards, conflict guaranteed, accept/delta/claim, ledgered corner:job, the MAX_DAY cap) + THE MARK (every job names a victim; residents in your district get named) + THE CAPO\'S LICENSE (agent recruiting perks: minted+retained+levelled gates, the tier board, the wire-slot perk, zero ledger rows)');
 await app.close();

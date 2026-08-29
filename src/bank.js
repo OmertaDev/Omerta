@@ -257,13 +257,12 @@ async function runCityLegInner(pool, { endDay = dayOf() - 1, days = CITY_EPOCH_D
       return { startDay, endDay, paid: 0, skipped: 'empty' };
     }
 
-    // Who qualifies. Agents and residents are excluded at the SOURCE, matching the standing posture
-    // on every legend and faucet surface — an agent that plays is playing, but the participation
-    // pools are for humans, and scenery cannot receive a distribution at all.
+    // Who qualifies. Agents are first-class economic players and qualify on the exact same measured
+    // activity as humans. NPC residents are scenery and cannot receive a distribution at all.
     // The two flags are read in JS rather than interpolated into the WHERE, so the SQL is STATIC and
     // `tools/pgquery.js` can prepare it against real Postgres — an interpolated string is unchecked
     // by that guard, and this query runs on the one path that mints.
-    const humans = new Set((await client.query(
+    const eligibleAccounts = new Set((await client.query(
       'SELECT account_id, agent_flag, npc_flag FROM account_persistent')).rows
       .filter((r) => !(ACTIVITY.EXCLUDE_AGENTS && r.agent_flag) && !(ACTIVITY.EXCLUDE_NPC && r.npc_flag))
       .map((r) => r.account_id));
@@ -272,7 +271,7 @@ async function runCityLegInner(pool, { endDay = dayOf() - 1, days = CITY_EPOCH_D
     const runners = [];
     let totalScore = 0;
     for (const [accountId, gains] of by) {
-      if (!humans.has(accountId)) continue;
+      if (!eligibleAccounts.has(accountId)) continue;
       // The breadth gate AND the dust floor. Neither is a cap: MIN_TRACKS is a fixed per-account
       // cost (Sybil-negative) and MIN_SCORE only refuses dust rows.
       if (!activityQualifies(gains)) continue;

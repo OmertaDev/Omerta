@@ -52,7 +52,11 @@ export function register(app, { pool, auth, modAuth, closeAccountSockets }) {
     app.post('/v1/mod/revoke', { preHandler: modAuth }, async (req) => {
       const { accountId } = req.body || {};
       if (!accountId) throw new G.GameError('args', 'accountId required.');
-      await pool.query('UPDATE accounts SET token_version = token_version + 1 WHERE id=$1', [accountId]);
+      await pool.query(
+        `UPDATE accounts SET token_version=token_version+1,
+           guest_bootstrap_retired_at=COALESCE(guest_bootstrap_retired_at, now()) WHERE id=$1`,
+        [accountId],
+      );
       closeAccountSockets(accountId, 4008, 'token_revoked'); // cut any live socket too
       return { ok: true };
     });
@@ -167,7 +171,7 @@ export function register(app, { pool, auth, modAuth, closeAccountSockets }) {
     // the ops/invariant view + the oracle keeper watchdog's live verdict (the /admin surface —
     // a silent keeper halt must read as a state on the founder's screen, not just a webhook)
     app.get('/v1/mod/bonds', { preHandler: modAuth }, async () =>
-      ({ ...(await Bonds.bondStatus(pool)), oracle: await Chain.bondOracleHealth() }));
+      ({ ...(await Bonds.bondStatus(pool)), oracle: await Chain.bondOracleHealth(pool) }));
     // THE TREASURY. The ETH inflow ledger and the sell-tax ingest that feeds it — plus, since the
     // founder reopened stock acquisition on 2026-08-10 (omerta-brokers-design.md), the STOCK reserve
     // and the per-ticker `allocated <= held` wall. That wall had been deleted along with the buy bot

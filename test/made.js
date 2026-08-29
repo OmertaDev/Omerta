@@ -329,6 +329,9 @@ assert.notEqual((await call('POST', '/v1/garage/boost', { token: holder.token })
 // holder is really killed and the committed rate still lands.
 const { STAKE_LOCKS, effectiveStake, stakeLockActive } = await import('../src/rules.js');
 const vera = await mk('Vera Vow');
+const veraAgentKey = await call('POST', '/v1/auth/agent-key', { token: vera.token });
+assert.equal(veraAgentKey.code, 200, 'an agent key does not narrow the gameplay staking surface');
+vera.token = veraAgentKey.body.token;
 // the gates: no stake → none; an unknown window → bad_tier (naming the real ones)
 assert.equal((await call('POST', '/v1/stake/lock', { token: vera.token, body: { tier: 'month' } })).body.error, 'none',
   'nothing staked → nothing to give your word on');

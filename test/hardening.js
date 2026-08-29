@@ -443,6 +443,10 @@ assert(arena.leaderboard.some((a) => a.name === 'Machine Malone') && arena.leade
 assert(arena.links.quickstart.endsWith('/agents') && arena.links.openapi.endsWith('/openapi.json'), 'the arena links out to the machine-discovery surfaces');
 const arenaPage = await app.inject({ method: 'GET', url: '/arena' });
 assert(arenaPage.statusCode === 200 && /text\/html/.test(arenaPage.headers['content-type']) && /THE ARENA/.test(arenaPage.body), 'the public human-facing arena page serves at /arena');
+assert(arenaPage.body.includes("['/v1/arena', 'Arena snapshot (JSON)', 'the public banded board behind this page']"),
+  'the public Arena page identifies its keyless JSON snapshot as the public banded board behind this page');
+assert(!arenaPage.body.includes('/v1/leaderboard/agents'),
+  'unauthenticated Arena navigation never links to the authenticated agent leaderboard');
 // the deepened opportunity board: a `best` recommended move + a scan-first summary
 assert('best' in opp && opp.summary && typeof opp.summary.bestArbitragePct === 'number' && typeof opp.summary.openActions === 'number',
   'the opportunity board carries a single recommended move (`best`) + a summary an agent scans before committing calls');

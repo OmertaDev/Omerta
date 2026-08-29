@@ -149,7 +149,7 @@ const checkOf = async (runner, name) => {
   assert.equal(round6(await paidTo(dust.acct)), 0, 'a dust row does not qualify — MIN_SCORE is a floor');
 }
 
-// ── AGENTS AND RESIDENTS ARE EXCLUDED AT THE SOURCE ─────────────────────────────────────────────
+// ── AGENTS QUALIFY; NPC RESIDENTS ARE EXCLUDED AT THE SOURCE ────────────────────────────────────
 {
   const human = await mk('Straight Sam');
   const bot = await mk('Agent Argyle');
@@ -163,8 +163,8 @@ const checkOf = async (runner, name) => {
   await Bank.recordBankBuy(pool, { ref: 'excl-1', spent: 100, omrBought: 120, txHash: '0xexcl1' });
   await Bank.runCityLeg(pool, { endDay: day });
 
-  assert.equal(round6(await paidTo(human.acct)), 120, 'the human takes the whole epoch');
-  assert.equal(round6(await paidTo(bot.acct)), 0, 'an agent account receives nothing');
+  assert.equal(round6(await paidTo(human.acct)), 60, 'the human takes the same activity-weighted share');
+  assert.equal(round6(await paidTo(bot.acct)), 60, 'an equally active agent takes the same economic share');
   assert.equal(round6(await paidTo(npc.acct)), 0, 'scenery receives nothing');
 }
 

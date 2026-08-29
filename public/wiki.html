@@ -119,6 +119,7 @@
   #doc .diagram-sheet{margin:0;background:var(--panel2);border:1px solid var(--line2);border-radius:2px;overflow:hidden}
   #doc .diagram-sheet:first-child{grid-column:1/-1}
   #doc .diagram-sheet--wide{grid-column:1/-1}
+  #doc .diagram-sheet--portrait{grid-column:1/-1;width:min(100%,560px);justify-self:center}
   #doc .diagram-sheet a{display:block;background:var(--panel2)}
   #doc .diagram-sheet img{display:block;width:100%;height:auto}
   #doc .diagram-sheet figcaption{padding:8px 10px;background:var(--panel2);color:var(--dim);font:11px/1.45 var(--mono)}
@@ -150,7 +151,7 @@
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
-<link rel="stylesheet" href="/omerta-ui.css?v=20260824">
+<link rel="stylesheet" href="/omerta-ui.css?v=20260826">
 </head>
 <body class="public-page">
 <a class="skip-link" href="#doc">Skip to the Codex</a>
@@ -295,9 +296,8 @@ const SECTIONS = [
       bounded utility: Rare / Legendary / Epic add <b>3% / 6% / 10%</b> to a car's chassis race power, or to a
       boat's base hold and speed. Driver stats, tuning, naval upgrades, resale value and melt yield are unchanged.
       You can buy your way up the ladder with $OMR, and
-      the price buys <b>exactly the next tier</b> — a known item for a known price, never a roll. That is how the
-      upgrade is built today; the old game-wide "nothing sells a random outcome for money" rule was retired
-      2026-08-21, and any future product that does sell one will carry its own published odds.</p>
+      the price buys <b>exactly the next tier</b> — a known item for a known price, never a roll. Any paid product
+      that introduces a chance-based outcome must publish its own odds before purchase.</p>
       <p>Once the production rail opens, you can also take one <b>on-chain</b> through the same route gear uses. The tradeoff is:
       <b>in-game items are lootable; extracted NFTs are safe, and inert</b>. An extracted car is an ERC-1155 in your own
       wallet — nobody can steal it, win it in a pink-slip race, chop it off your corpse or take it in a war, and it
@@ -334,13 +334,14 @@ const SECTIONS = [
 
   { id: 'economy', group: 'Money', title: 'The Economy — $OMR, the Window & the Vault', tag: 'the money cycle',
     html: `<p><b>Currencies:</b> cash (pocket and bank), <b>$OMR</b> (premium, account-level, earned through enumerated rules, and eligible for on-chain extraction by minted accounts once the production rail opens), crates, and ammo. <b>Cash can never buy $OMR.</b> The one live conversion runs the other way at the Window: spend $OMR for cash from a funded till. The game records every movement of value on a ledger.</p>
-      <p><b>Read the books:</b> gold marks token or ETH movement, blue marks code-controlled supply or allocation, green marks arrived backing, and red marks blocked or dormant paths. Sheet 03 uses the founder-signed go-live configuration; it is published but not armed while production chain rails are dormant. Open any sheet for the 6480 × 4080 source export.</p>
-      <div class="diagram-series" aria-label="Five-sheet code-anchored OMR system explainer">
-        <figure class="diagram-sheet"><a href="/art/omr-01-severance.png?v=7b50aea177a2"><img src="/art/omr-01-severance.png?v=7b50aea177a2" width="6480" height="4080" loading="lazy" alt="Two-ledger OMR map showing street cash, the one-way Window, the 100 million OMR founding supply, bounded bond mint, and dormant full-reserve exit."></a><figcaption>01 / 05 · TWO LEDGERS. ONE CONTROLLED BRIDGE.</figcaption></figure>
-        <figure class="diagram-sheet"><a href="/art/omr-02-return-velocity.png?v=cc8badf4b704"><img src="/art/omr-02-return-velocity.png?v=cc8badf4b704" width="6480" height="4080" loading="lazy" alt="OMR return-velocity loop from game utility to Desk inventory, a one-to-three-percent daily auction cap, and below-band buyback."></a><figcaption>02 / 05 · THE DESK: INVENTORY, NOT INFLATION.</figcaption></figure>
-        <figure class="diagram-sheet"><a href="/art/omr-03-money-router.png?v=b2bde1b36f44"><img src="/art/omr-03-money-router.png?v=b2bde1b36f44" width="6480" height="4080" loading="lazy" alt="OMR money router with exact signed splits for gameplay fees, Store receipts, reserve bonds, DEX sell tax, Desk proceeds, POL fees, Bank harvest fees, and exit tolls."></a><figcaption>03 / 05 · FOLLOW EVERY DOLLAR.</figcaption></figure>
-        <figure class="diagram-sheet"><a href="/art/omr-04-reserve-rwa.png?v=0b64dcd1f9f3"><img src="/art/omr-04-reserve-rwa.png?v=0b64dcd1f9f3" width="6480" height="4080" loading="lazy" alt="Parallel OMR extraction and tokenized-stock rails showing source percentages, the fifty-fifty Vig split, eligibility weights, and conservation invariants."></a><figcaption>04 / 05 · BACKING ARRIVES BEFORE THE PROMISE.</figcaption></figure>
-        <figure class="diagram-sheet"><a href="/art/omr-05-ohm-contrast.png?v=c7d637922bd1"><img src="/art/omr-05-ohm-contrast.png?v=c7d637922bd1" width="6480" height="4080" loading="lazy" alt="Causal comparison of the legacy 2021 Olympus premium and issuance loop with OMR's separated issuance, game-demand, revenue, and backed-exit rails."></a><figcaption>05 / 05 · SAME CATEGORY. DIFFERENT FAILURE SURFACE.</figcaption></figure>
+      <p><b>Read the books:</b> gold marks token or ETH movement, blue marks code-controlled supply or allocation, green marks arrived backing, and red marks blocked or dormant paths. Sheets 03 and 06 use the founder-signed go-live configuration; it is published but not armed while production chain rails are dormant. Sheets 01–05 open at 6480 × 4080; sheet 06 is the 1080 × 1350 portrait campaign map.</p>
+      <div class="diagram-series" aria-label="Six-sheet code-anchored OMR system explainer">
+        <figure class="diagram-sheet"><a href="/art/omr-01-severance.png?v=7b50aea177a2"><img src="/art/omr-01-severance.png?v=7b50aea177a2" width="6480" height="4080" loading="lazy" alt="Two-ledger OMR map showing street cash, the one-way Window, the 100 million OMR founding supply, bounded bond mint, and dormant full-reserve exit."></a><figcaption>01 / 06 · TWO LEDGERS. ONE CONTROLLED BRIDGE.</figcaption></figure>
+        <figure class="diagram-sheet"><a href="/art/omr-02-return-velocity.png?v=cc8badf4b704"><img src="/art/omr-02-return-velocity.png?v=cc8badf4b704" width="6480" height="4080" loading="lazy" alt="OMR return-velocity loop from game utility to Desk inventory, a one-to-three-percent daily auction cap, and below-band buyback."></a><figcaption>02 / 06 · THE DESK: INVENTORY, NOT INFLATION.</figcaption></figure>
+        <figure class="diagram-sheet"><a href="/art/omr-03-money-router.png?v=b2bde1b36f44"><img src="/art/omr-03-money-router.png?v=b2bde1b36f44" width="6480" height="4080" loading="lazy" alt="OMR money router with exact signed splits for gameplay fees, Store receipts, reserve bonds, DEX sell tax, Desk proceeds, POL fees, Bank harvest fees, and exit tolls."></a><figcaption>03 / 06 · FOLLOW EVERY DOLLAR.</figcaption></figure>
+        <figure class="diagram-sheet"><a href="/art/omr-04-reserve-rwa.png?v=0b64dcd1f9f3"><img src="/art/omr-04-reserve-rwa.png?v=0b64dcd1f9f3" width="6480" height="4080" loading="lazy" alt="Parallel OMR extraction and tokenized-stock rails showing source percentages, the fifty-fifty Vig split, eligibility weights, and conservation invariants."></a><figcaption>04 / 06 · BACKING ARRIVES BEFORE THE PROMISE.</figcaption></figure>
+        <figure class="diagram-sheet"><a href="/art/omr-05-ohm-contrast.png?v=c7d637922bd1"><img src="/art/omr-05-ohm-contrast.png?v=c7d637922bd1" width="6480" height="4080" loading="lazy" alt="Causal comparison of the legacy 2021 Olympus premium and issuance loop with OMR's separated issuance, game-demand, revenue, and backed-exit rails."></a><figcaption>05 / 06 · SAME CATEGORY. DIFFERENT FAILURE SURFACE.</figcaption></figure>
+        <figure class="diagram-sheet diagram-sheet--portrait"><a href="/art/omr-06-the-omr-machine-1080x1350.png?v=f8d21f2a315f" aria-label="Open the full-size OMR machine portrait explainer"><img src="/art/omr-06-the-omr-machine-1080x1350.png?v=f8d21f2a315f" width="1080" height="1350" loading="lazy" alt="Portrait OMR machine explainer showing the signed fee, Store, bond, sell-tax, POL-fee and Desk splits; the fifty-fifty Vig reserve and prize allocation; the recycling Desk; the activity-weighted Stock Machine; commitment staking; and dormant production rails."></a><figcaption>06 / 06 · THE $OMR MACHINE · DEMAND IS THE GAME. DEFENSE IS CODE-BOUNDED RECYCLING.</figcaption></figure>
       </div>
       <p><b>The game has no time-based $OMR faucet.</b> No wage, inflationary yield, or drip. One-time mission awards and daily prize credits are enumerated and funded on the game ledger; they do not call the ERC-20 mint. The contract has one additional mint path — <b>OmertaBond</b> — behind a daily cap, a 20% discount ceiling, a fail-closed TWAP and an absolute rate wall. Contract staking, if funded, redistributes a pre-loaded reward pool rather than minting rewards.</p>
       <p>Five ways to get some: <b>take it</b>
@@ -392,6 +393,148 @@ const SECTIONS = [
       staked one — committing halves what a bad night costs you without ever making you safe. Your full principal
       always returns, but it <b>unbonds for 6 hours</b> (at the higher idle rate) on the way out. Staking pays the
       staker no yield — $OMR yield goes to THE FAMILIES, through the family yield.`)}
+      <p>The founder-directed replacement makes that stake actual on-chain OMR rather than a separate database balance.
+      The same canonical position must drive the Made Ladder, commitment multiplier, Den access, Broker staking
+      multiplier, gameplay loss, unbonding, inheritance, and public accounting. The database may mirror finalized chain
+      state and journal pending settlement, but cannot independently create or move stake. The approved design uses a
+      new <code>OMRGameplayVault</code>, not the current yield-oriented <code>OMRStaking</code> contract. Principal pays no
+      personal APY; family yield and separately backed utility rewards remain. Game-earned OMR must first become real,
+      reserve-backed on-chain OMR before staking, with no double credit even when claim-and-stake is atomic.</p>
+      <p>The vault enforces pending deposit, active/committed stake, six-hour unbonding, withdrawable, and withdrawn
+      states. A narrowly authorized, Safe-rotatable gameplay signer may apply one-use, rate-bounded game outcomes but may
+      not sweep funds. Loot moves actual OMR inside the vault from the victim's exposed position to the killer's on-chain
+      gameplay balance. Chain settlement finalizes before the game consumes one-use resources or publishes an
+      irreversible result, and value-taking actions stop safely during chain or settlement outages. Legacy database
+      stake imports only against actual deposited OMR; no migration mint covers a shortage, which remains a published
+      liability. This design is approved, not live, pending implementation, audit, funded migration, and launch checks.</p>
+      <p>Only the account's verified controller wallet or the reserve-backed claim-and-stake rail may fund its position;
+      a bypass transfer cannot stake for somebody else or qualify them. The position follows the permanent game account,
+      not a character name, so death or respawn preserves principal and history. Depositing or committing accepts a
+      published on-chain risk-ruleset version. The vault—not the gameplay signer—enforces maximum losses of 20% for
+      active/committed stake and 50% for idle/unbonding OMR. The Safe may reduce or pause exposure, but a higher rate or
+      new loss type requires a new public version and fresh consent.</p>
+      <p>Value-taking actions move through prepared, submitted, finalized, and game-committed states. The final vault
+      event is the one source for crash recovery; concurrent settlements use only the balance actually available and
+      cannot overdraw. Every position change creates on-chain history for the Made Ladder and Broker time-weighted
+      average. Emergency controls are separate, so a gameplay or signer incident does not automatically trap withdrawals;
+      stopping exits requires a specifically declared custody-integrity incident.</p>
+      <p>The founder selected an upgradeable gameplay vault rather than a non-upgradeable migration-only contract. The
+      proxy implementation and upgrade controller are therefore real trust assumptions: an upgrade can technically change
+      rules, rates, settlement, pauses, or withdrawal behavior. The approved structure uses an OpenZeppelin Transparent
+      Proxy and dedicated <code>ProxyAdmin</code>, owned by a small non-upgradeable upgrade governor. Only the Safe may
+      propose, cancel, or execute; the main operator, gameplay signer, relayer, servers, and individual wallets have no
+      upgrade power.</p>
+      <p>An upgrade or upgrade-control change is published for at least 48 hours with its exact old/new code hashes,
+      version, initialization call, storage-layout commitment, reason, review evidence, and execution window. Emergencies
+      may pause affected functions immediately but cannot bypass that delay. Implementations cannot initialize themselves,
+      and a versioned setup step runs once inside the exact upgrade transaction. That transaction validates OMR identity,
+      balance and liabilities, ruleset, settlement nonces, pauses, controller bindings, and version; a failed continuity
+      check reverts the upgrade. Independent review and rehearsal remain necessary because upgradeable code can be
+      malicious.</p>
+      <p>A rollback follows the same proposal and delay. An upgrade that increases economic risk requires a new ruleset
+      and fresh consent, while a player who does not consent keeps an exit under the previously accepted terms. Public
+      surfaces show the proxy, implementation and code hash, governor, Safe, delay, pending proposal, evidence, validation
+      result, and full history. Any unexplained code or authority mismatch stays red and stops new deposits and
+      commitments without silently stopping exits.</p>
+      <p>Changing a healthy controller normally requires signatures from both the current and proposed wallets.
+      Lost-wallet recovery is slower: authenticated control of the permanent game account plus proof of the new wallet
+      opens a public seven-day request and notifies every available account channel. The current controller may contest
+      it; only the Safe may resolve a contested request against public evidence, and nobody may shorten the seven-day
+      minimum. While recovery is open, withdrawals, deposits, new commitments, and more controller changes stop, but
+      existing commitments, unbonding clocks, gameplay exposure, and valid losses continue—recovery is not a temporary
+      shield. A completed change advances the public controller generation, invalidates unfinished old-wallet
+      authorizations, and never rewrites finalized history. EOA and ERC-1271 smart-contract wallets are supported and
+      invalid contract-wallet responses fail closed.</p>
+      <p>Unlocked principal is withdrawn directly by the current controller to that same wallet. There is no arbitrary
+      recipient, server signature, support override, or required relayer. Stake, unbond, and withdrawal accept partial
+      amounts. Every partial unstake has its own amount, start, six-hour unlock, ruleset version, and exposure history; a
+      later request cannot restart or rewrite an earlier clock. Gameplay loss consumes eligible unbonding tranches by
+      earliest unlock time, ties by lowest immutable tranche ID, and exhausts one before the next. There may be at most
+      16 live unbonding tranches per account; matured tranches do not count, and an over-cap unstake fails before changing
+      state. A partial unstake must be at least 0.01 OMR, except the exact full remaining eligible stake can always exit.
+      Matured tranches aggregate into one withdrawable balance, while immutable events and checkpoints preserve each
+      tranche's complete history.</p>
+      <p>The vault accepts only the pinned OMR contract and records what its balance actually received, not what a caller
+      claimed to send. Transfer fees, rebases, hooks, malformed results, and amount mismatches cannot fabricate a position.
+      OMR sent around the deposit route is unattributed and qualifies nobody. The vault continuously requires its actual
+      OMR balance to cover every accounted liability. A shortfall is a red custody-integrity incident that stops new risk;
+      no database or operator entry may conceal it, and the withdrawal response remains separately visible.</p>
+      <p>Unattributed OMR remains nonqualifying and nonspendable while the vault is solvent. Only the Safe may recover
+      exact, verified surplus after a public 48-hour proposal, and only to the single fixed OMR recovery-treasury address.
+      The proposal publishes the amount, destination, evidence/reason, earliest execution, and expiry; a changed proposal
+      restarts the delay. It cannot credit a player, settle gameplay, choose an arbitrary recipient, or be executed by the
+      main operator, gameplay signer, relayer, or server. Anyone may fund a deficit with exact OMR. Actual OMR received
+      repairs the deficit first, credits no player and creates no qualification, yield, repayment claim, or gameplay
+      credit; excess becomes unattributed.</p>
+      <p>Any positive custody deficit automatically pauses withdrawals as well as deposits, new commitments, and gameplay
+      debits. Every player's liability remains recorded in full—there is no haircut, pro-rata conversion, first-come
+      payout, operator write-off, or database adjustment. When canonical zero deficit reaches configured finality and
+      the continuous public mirror synchronizes, the deficit-specific pauses clear automatically without acknowledgment
+      or cooldown; unrelated pauses remain. The vault checks solvency before and after every value-changing operation.
+      Permissionless solvency and unattributed-balance synchronization are available, every zero-to-positive recurrence
+      receives a new immutable incident ID, and public monitoring proves actual balance, full liabilities, incident
+      generation, finality, mirror freshness, and sequence continuity. An acknowledgment cannot close or conceal an
+      incident.</p>
+      <p>Gameplay loss is calculated by the vault from each eligible bucket's balance immediately before settlement. The
+      signer can supply ceilings but cannot choose or inflate that balance. Calculations round down to OMR atomic units,
+      never up to one; a legitimate zero-loot result still finalizes. If one outcome touches several buckets, the vault
+      calculates them independently and settles them atomically in one transaction, follows the approved
+      unbonding-tranche order, credits the killer once with the combined actual loot, and reverts everything if any
+      invariant fails.</p>
+      <p>Finalized loot enters the killer's idle on-chain gameplay balance and remains exposed at the idle rate. It is not
+      automatically committed or staked and does not enter the Broker stake time-weighted average until the killer takes
+      the separately authorized eligible action. A settlement authorization cannot have a future issue time and must be
+      canonically included within five minutes; once timely included, it may reach finality after that deadline. The
+      prepared state is only an expiring off-chain journal entry. It cannot reserve OMR, consume a nonce, pause
+      withdrawals, or lock the victim.</p>
+      <p>Every outcome binds a globally unique immutable gameplay event ID and the victim's exact next monotonic settlement
+      nonce. A successful settlement consumes the nonce even when actual loot is zero; preparation, rejection, expiry,
+      and revert do not. The MVP settles exactly one outcome and emits one complete record per transaction; batching is
+      not authorized.</p>
+      <p>During an ordinary signer rotation, the new generation activates immediately while an old authorization remains
+      usable only if issued before canonical rotation and still within both its original deadline and a maximum five-minute
+      overlap. An emergency Safe revocation has no overlap and invalidates every old-generation authorization not already
+      included; finalized settlement remains immutable.</p>
+      <p>Settlement submission is permissionless. Any address may present the exact signed authorization, but gains no
+      authority over the victim, killer, amount, rate, buckets, recipient, controller, ruleset, pauses, custody, or
+      upgrades. There is no approved-relayer registry, relayer-count cap, or operator-managed relayer set. Invalid, stale,
+      expired, replayed, malformed, and losing-race submissions change no canonical state; those callers pay their own gas,
+      and spam alone cannot pause settlement or create a financial incident.</p>
+      <p>Protocol users may voluntarily fund settlement gas shared by the whole community through a dedicated,
+      non-upgradeable <code>SettlementGasPool</code> that accepts only the chain's native gas asset. It has no custody of
+      or access to OMR principal, player liabilities, RWA acquisition ETH, Stock Tokens, or unrelated treasury funds. A
+      contribution is final and creates no sponsor balance, refund, yield, priority, allocation weight, governance power,
+      repayment claim, or other economic credit. The Safe cannot sweep it to treasury. After 48 public hours, an exact
+      code-hash-bound migration may move only unreserved ETH to one successor; the old pool retains outstanding-credit
+      backing and keeps withdrawals live.</p>
+      <p>Only the submitter winning canonical settlement for an event ID and victim nonce receives a gas credit, including
+      a legitimate zero-loot result. Invalid, expired, malformed, wrong-chain/vault, reverted, replayed, stale, and
+      losing-race calls receive zero. Vault economic effects complete before the fixed pool credits <code>msg.sender</code>;
+      settlement never pushes ETH or names an arbitrary reimbursement recipient. Executors later pull accumulated credit
+      only to themselves under checks-effects-interactions and reentrancy protection. Credits are exact liabilities and
+      cannot fund later reimbursement. Pool failure, pause, or depletion cannot revert canonical gameplay settlement.</p>
+      <p>The caller cannot submit a gas bill. Reimbursement is the minimum of contract-measured audited settlement gas at
+      <code>min(transaction gas price, base fee + public priority-fee cap)</code> plus any canonical reviewed chain-data
+      fee, the public per-settlement wei cap, and unreserved pool ETH. Arbitrary caller work, excess calldata, unrelated
+      external calls, deliberate gas burning, failed work, and fees above caps do not qualify. Empty or insufficient
+      sponsorship produces partial or zero credit while settlement remains permissionless; without a willing self-funder,
+      the game stays uncommitted and consumes no irreversible resource.</p>
+      <p>The Safe may immediately pause new credits or reduce caps while existing credits remain withdrawable. Increases,
+      a new native-fee source, and exact pool migration wait 48 public hours. The Safe cannot select submitters, manually
+      reward a chosen call, redirect credits, or refill the pool from OMR/RWA custody. Hosted HTTP surfaces may enforce
+      authentication, idempotency, rate limits, and abuse controls, but direct on-chain submission stays open. Exact typed
+      authorization, five-minute expiry, signer generation, event/nonce uniqueness, vault-derived loss, cheap early
+      rejection, bounded tranches, and no submitter-selected external calls leave invalid spam caller-funded and
+      unreimbursed; spam cannot lock a victim, consume resources, auto-pause, or create a canonical incident.</p>
+      <p>Each supported chain publishes one exact settlement-finality block count; no action receives a server-, signer-,
+      submitter-, or operator-selected lower threshold. Every increase and decrease follows the same Safe-only 48-hour
+      public proposal binding chain, current and proposed counts, reason/evidence, timing, expiry, and effective block. It
+      applies only to transactions first included after that boundary; pending and finalized transactions retain their
+      inclusion-time rule. Emergency response pauses new value-taking settlement and never hot-edits finality. A pre-finality reorg retries the same event ID and victim
+      nonce: the original authorization may be resubmitted while valid, or the same event/nonce may be freshly authorized
+      only after canonical absence is proven. Final events expose the ruleset, generations, nonce, submitter, times,
+      per-bucket balances and ceilings, rounded debits, tranche consumption, killer credit, and post-settlement solvency
+      totals.</p>
       <p><b>The cycle:</b> cash costs go to the street-tax pool, and every 12 hours the whole take funds the
       Exchange window's till — the cash players spend backs the cash $OMR redeems for. <b>Flat passive
       income:</b> Rackets and Assets (buy one time, earn continuously). <b>Trade goods</b> — buy at a low
@@ -465,10 +608,27 @@ const SECTIONS = [
       (convoys ×0.8 time), Blood Oath (kill loot ×1.25).</p>
       ${R(`GET /v1/commission [public] · POST /v1/commission/vote · /veto`)}` },
 
+  { id: 'contentgraph', group: 'The City & the World', title: 'The Content Graph — Mysteries, Crafting & Seasonal Hunts', tag: 'graph-authored expansion · staged',
+    html: `<p><b>The merged <code>content/</code> foundation is an authoring and verification plane, not a hidden
+      faucet or execution backdoor.</b> It models individual mysteries, Crew and Extended Family dependencies,
+      asymmetric social roles, world-state gates, raw-material sources, recipes, crafting requirements, item
+      sinks and durability, selected-item export policy, growth journeys, and achievement-triggered seasonal
+      rewards as data. Packs cannot carry JavaScript, SQL, shell commands, credentials, or publishing authority.</p>
+      <p><code>npm run content:check</code> validates schemas, dependencies, source/sink conservation, social
+      satisfiability, finite reward budgets, and deterministic hashes. <code>npm run content:build</code> emits an
+      immutable versioned bundle and refuses to overwrite it. Compilation never activates a pack.</p>
+      <p>The first vertical slice, <b>The Sixth Chair</b>, contains <b>47 nodes and 57 edges</b> across clues,
+      Crew/Family coordination, item acquisition, and a bounded seasonal $OMR hunt. It proves the compiler and
+      authoring workflow, but it is not an active game surface. The generic mystery runtime, durable inventory,
+      crafting jobs and skills, salvage and drug-supply chains, selected rare-item NFT export, activation registry,
+      and operator controls remain staged implementation. Export is owner-initiated, hash-pinned, and gameplay-inert
+      while the item is away; seasonal $OMR is finite and achievement-triggered, never time-based.</p>
+      ${R(`content/README.md · npm run content:check · npm run content:build`)}` },
+
   { id: 'den', group: 'Money', title: 'The Den (Casino)', tag: 'gambling at the Neon Mile',
-    html: `<p>Every game at the den today is <b>cash-denominated</b> — no den game touches $OMR. (The old blanket
-      "cash only, never $OMR" rule was retired 2026-08-21; if a $OMR-denominated game ever ships it will be documented
-      here with its own terms.) The server calculates and records every result. The house adds 1% to the
+    html: `<p>Every game at the den today is <b>cash-denominated</b> — no current den game touches $OMR. Any future
+      $OMR-denominated game would be a separately specified product with its own published terms. The server
+      calculates and records every result. The house adds 1% to the
       street-tax pool from real profit only.</p>
       <ul><li><b>Craps</b> — the pass line in one action, 1:1, edge about 1.41%, 1 nerve, up to $250k ($2M in the high-stakes room —
       L30 or the Madame's rope, plus the 300 $OMR access stake).</li>
@@ -685,11 +845,31 @@ const SECTIONS = [
     html: `<p><b>The game does not sell Stock Tokens for cash or $OMR.</b> The Brokers are a separate,
       treasury-funded active-play distribution, described next. Going legit means what your
       <b>earned $OMR</b> actually does directly:</p>
-      <p><b>Stake it</b> — a held balance climbs the ladder (trunk, energy, nerve, garage, the fence at the top),
-      and a committed balance is looted lighter than an idle one when you die. <b>Redeem it</b> at the Window for
+      <p><b>Stake it</b> — the approved custody architecture requires actual on-chain OMR. The same canonical position
+      climbs the ladder (trunk, energy, nerve, garage, the fence at the top), supports commitment locks and the Broker
+      multiplier, and remains exposed to gameplay loss and unbonding. This custody path is designed, not live.
+      <b>Redeem it</b> at the Window for
       cash. <b>Claim backed ETH</b> at the Vault — real ETH the treasury holds, never more than it holds.
       <b>Get Made</b> and take your $OMR out on-chain. <b>Landmarks</b> — a district plaque still bears your name.</p>
       ${R(`POST /v1/stake · /v1/made · GET /v1/vault · /v1/window · POST /v1/landmarks/:id`)}` },
+
+  { id: 'grillv2', group: 'Endgame & Going Legit', title: 'Grill v2 — RWA & OMR Architecture Status', tag: 'implemented foundation · staged completion',
+    html: `<p><b>Grill v2 is a dependency-ordered implementation program; code completion does not grant deployment
+      authority.</b> The active branch has production-shaped implementations and tests for the native-only
+      <code>SettlementGasPool</code>, immutable <code>StockTokenRegistryV2</code>, the finalized Stock Token catalog
+      mirror, public nomination and reviewer state machines, a dormant version-snapshot family ballot, and the
+      shared finalized-observation kernel that pins canonical block, hash, time, logs, and same-head getter evidence.
+      These components are not production deployment claims.</p>
+      <p>Remaining graph nodes include finalized health and acquisition controllers, the audited
+      <code>OMRGameplayVault</code> with delayed upgrade governor, game-settlement integration, complete delivery and
+      operations UI, deployment packages, and the launch gates. The approved model keeps actual OMR principal fully
+      backed; separates idle, active, committed, and unbonding balances; gives prepared outcomes no lock authority;
+      settles one short-lived EIP-712 outcome only after canonical finality; and never funds gas from player principal,
+      RWA inventory, or withdrawal reserves.</p>
+      <p>The Safe controls registry curation, delayed governance, reconciliation, and upgrades. The broad acquisition
+      operator cannot move OMR, Stock Tokens, the gameplay vault, the settlement gas pool, or upgrade authority.
+      Permissionless settlement can earn a bounded pull-based native-gas credit only for the executor whose valid
+      transaction wins canonical settlement; an empty pool cannot freeze gameplay.</p>` },
 
   { id: 'brokers', group: 'Endgame & Going Legit', title: 'The Brokers — Active Play & Stock Tokens', tag: 'RWA rewards, family ballot, permanent allocation',
     html: `<p><b>The Commission chooses the asset; verified play chooses the recipients.</b> Each seated family
@@ -697,15 +877,824 @@ const SECTIONS = [
       snapshot of the 15 highest-underlier-volume eligible tokens, not an automatically rotating list.
       After the closed UTC-day result, a bounded buyer may buy only the exact token address committed for
       that ballot.</p>
+      <p>If a candidate is removed <b>before</b> the normal cutoff, votes for it stop counting immediately
+      and affected families may recast for an active candidate. The ballot does not restart or extend;
+      an invalid vote left unrecast is ignored, then the normal active-default rule handles a tie or
+      silence.</p>
       <p>If that exact token becomes inactive, halted, or otherwise ineligible before the purchase, the
       day is <b>skipped</b>. The machine never substitutes the default or another token the families did
       not choose. The bounded, unspent ETH carries forward under the existing purchase caps;
       it does not enlarge a later daily cap. The public history keeps the closed ballot, skipped-purchase status, and
       reason.</p>
-      <p>For each seven-day activity epoch, a human account must record successful server-authoritative work
+      <p>The unspent ETH remains permanently in one general <b>Stock Token acquisition budget</b>. It is
+      not reserved for the skipped token and never expires through ordinary operation. The designated
+      <code>mainOperator</code> is the explicit exception and may move any or all pooled ETH to any address for
+      any purpose. Future valid winners may use the remaining backlog gradually, but every day remains one exact-token
+      purchase under the unchanged cap—never a stacked cap or catch-up batch. The skipped token receives
+      nothing unless it becomes eligible and wins a later ballot.</p>
+      <p>Catalog changes are <b>forward-only</b>. Robinhood's API never reactivates or replaces an entry.
+      The Safe must explicitly re-review a restored token; a changed address or provider identity requires
+      a reviewed, immutable version with a new asset key. The old version remains inactive and inspectable
+      forever, and only one version of a ticker may be active. Either affects only future open ballots—never
+      a closed or skipped result—and cannot redirect an existing pending allocation. Corporate-action
+      reconciliation remains separate, while inactive identities and ballot outcomes stay in the public
+      audit history.</p>
+      <p>Each version key is deterministic and publicly recomputable from the Robinhood Chain ID,
+      validated uppercase ticker, exact token address, and RHJ provider-asset-ID hash. Changing the ticker,
+      address, provider identity, or chain creates a new version; correcting a display name or toggling the
+      same version inactive and active does not. The Safe cannot substitute an opaque alias.</p>
+      <p>Inactive history may repeat a ticker, token address, or RHJ provider ID, but the active catalog
+      permits only one version for each. Activating a version atomically deactivates every active conflict;
+      reactivating that exact version updates its permanent record instead of creating a duplicate. The
+      on-chain registry enforces the rule even if Safe sequencing or the database mirror is stale.</p>
+      <p>If every version is inactive, the catalog is visibly empty: no candidates, no default, and no
+      valid cast. Rollover records a public <code>catalog_empty</code> skipped day, publishes no purchasable
+      winner, and leaves all ETH in the permanent acquisition budget. Production never revives SPY or an
+      old/static fallback. Explicit Safe approval resumes future ballots only; empty days are not replayed.</p>
+      <p>Seated families may publicly <b>nominate</b> a potential RHJ Stock Token. A boss or underboss submits
+      the ticker and a short reason; other seated families may endorse it. Robinhood identity, address,
+      status, capabilities, and observation time appear as evidence, not approval. A nomination never enters
+      the ballot by itself: only Safe approval on-chain followed by registry sync makes it voteable. The
+      rate-limited queue cannot alter closed/skipped ballots or pending allocations.</p>
+      <p>Each seated family may create one nomination per rolling seven days. It remains pending for at
+      most 30 days; each seated family gets one endorsement that its boss or underboss may change or
+      withdraw while pending. Safe approval, rejection, or <code>not_eligible</code> closes it early, but
+      approval becomes voteable only after Safe execution and registry sync. Expiry only archives it. A
+      later renomination is a new record with fresh evidence, never a rewrite of the old one.</p>
+      <p>A valid nomination survives if its family loses its Commission seat or dissolves, but that family
+      immediately loses write authority. Its endorsement remains in history and stops counting as current
+      seated support. Reseating does not revive it; the current boss or underboss must endorse again. Newly
+      seated families may endorse pending items. The board separates current support from historical events,
+      and neither binds the Safe.</p>
+      <p>Only one pending nomination may exist for an exact deterministic version key. A duplicate submitter
+      is sent to the existing item and may explicitly endorse it with its own reason; no duplicate row is
+      created and its seven-day nomination allowance is untouched. Different identities sharing a ticker
+      may coexist but are marked as conflicts because only one can be active. After closure or expiry, a
+      fresh linked nomination may capture new evidence without rewriting the old record.</p>
+      <p>The submitting family is the sole sponsor and cannot endorse its own nomination again. A currently
+      seated sponsor counts once; every other seated family may endorse once, for at most five current
+      supporting families with no double count. Seat loss leaves sponsor history but removes current
+      support. Reseating requires an explicit renewal by the current boss or underboss. The board separates
+      sponsor identity, current supporting families, and historical support.</p>
+      <p>Three current supporting families—including a current sponsor—mark a nomination
+      <code>review_requested</code>, refresh its RHJ evidence, and alert operators. This never creates Safe
+      calldata or guarantees approval. Falling below three before claim returns it to pending; after an
+      operator marks it <code>under_review</code>, support changes stay visible without cancelling review.
+      Operators may review below threshold. Pending items sort by current support, then oldest first.</p>
+      <p>The automatic threshold is always three distinct currently seated families, even with vacant
+      Commission seats. It never scales down to a majority of occupied seats and seat rank adds no weight.
+      With fewer than three seated families, only a manual operator claim can begin review. Seat changes
+      recompute support without changing the threshold or cancelling <code>under_review</code>.</p>
+      <p>The original 30-day deadline stays fixed through pending, <code>review_requested</code>, and
+      <code>under_review</code>. Claims, reassignment, refreshes, and progress updates cannot extend it.
+      Unresolved review expires at the deadline while preserving reviewer and latest public note; further
+      work needs a fresh linked nomination and evidence. Terminal Safe dispositions do not expire. An
+      approved item awaiting Safe execution stays public and non-voteable under separate execution status.</p>
+      <p>Approval creates a seven-day Safe execution window binding the exact version key and final evidence
+      hash. The registry rejects execution after the immutable deadline; mining before it remains valid if
+      sync arrives later. An unexecuted approval becomes <code>approval_stale</code>: still historically
+      approved, but non-voteable and unable to regenerate calldata. Continuing requires a fresh linked
+      nomination, evidence, and Safe review. Approval, deadline, Safe tx, execution, and sync stay separate.</p>
+      <p>Until execution, an off-chain watcher rechecks the bound RHJ identity/status and approved venue,
+      oracle, and exposure prerequisites. Material change becomes public <code>evidence_drift</code>, names
+      the changed fact, alerts Safe owners, and blocks OMERTÀ's own proposal and broadcast tooling. The
+      watcher and external feeds receive no on-chain catalog authority and cannot revoke signed calldata,
+      so residual executability remains public until Safe cancellation or TTL expiry. If the Safe executes
+      the warned transaction on time anyway, the registry accepts it and records a Safe-governance failure.</p>
+      <p>Catalog activation is one atomic Safe-authorized registry transition: deactivate every active
+      ticker/token/provider-ID conflict, create or select the exact immutable version, recheck uniqueness,
+      and activate it. All parts revert together. Events and mirror synchronization treat the transaction
+      as one unit, preventing both duplicate-active and half-installed replacement states.</p>
+      <p>Only finalized canonical chain state is voteable. <code>approved</code>,
+      <code>safe_submitted</code>, and <code>executed_pending_finality</code> remain non-voteable;
+      <code>synced_active</code> begins only after configured chain finality and mirror synchronization.
+      On-time inclusion remains valid if finality or sync arrives after the seven-day deadline. A
+      pre-finality reorg returns the version to non-voteable state and alerts operators; an open ballot then
+      applies the normal pre-close deactivation and recast rule. Submission, a receipt, or optimistic
+      indexing is never catalog truth.</p>
+      <p>One authenticated authorized RWA reviewer may set a terminal nomination status of
+      <code>approved</code>, <code>rejected</code>, or <code>not_eligible</code>; no second reviewer or reviewer
+      co-signature is required. The immutable disposition binds reviewer identity, status, public rationale,
+      evidence references, and final evidence hash. Approval sets <code>approved_at</code> and starts the
+      seven-day Safe window. That one-person review still cannot activate the catalog: Safe execution,
+      finality, and synchronization remain separate voteability gates.</p>
+      <p>Monitoring continues after <code>synced_active</code>. Verified material drift sets public
+      <code>operational_quarantine</code>; inability to verify a critical prerequisite is separately
+      <code>health_unknown</code>. Both block new ballot inclusion, new or changed votes, purchases, and
+      automatic delivery. Open-ballot votes are invalidated and may be recast by the unchanged cutoff; an
+      unpurchased closed winner skips without substitution and leaves ETH in the pooled Stock Token budget.
+      Ownership and permanent allocations remain intact and cannot be confiscated, substituted, redirected,
+      or expired. The board shows registry-active and operationally-blocked states together. The watcher may
+      halt OMERTÀ's use but cannot activate, permanently deactivate, transfer, or reassign anything.</p>
+      <p>If the exact version remains active on-chain, quarantine clearance needs no new family nomination,
+      but requires fresh evidence resolving every reason, one authorized reviewer approval, a new
+      evidence-bound seven-day Safe clearance action, canonical finality, and mirror synchronization. It
+      remains blocked until all complete. A Safe-deactivated version instead needs a fresh linked public
+      nomination with no carried endorsements or support, fresh RHJ evidence/review, new TTL-bound Safe
+      approval, atomic execution, finality, and sync. An unchanged immutable identity is reactivated in place,
+      not duplicated, while the complete prior nomination, quarantine, deactivation, and recovery history
+      remains linked and public.</p>
+      <p>Quarantine may begin automatically or manually. Deterministic watcher rules set
+      <code>operational_quarantine</code> for verified drift and <code>health_unknown</code> when critical
+      health cannot be verified. One authenticated authorized RWA reviewer may also impose either
+      immediately. Each entry records a stable reason code, public explanation, exact asset key,
+      evidence/source observations, actor, and timestamp. Families, nominees, endorsers, ordinary operators,
+      agents, and clients have no quarantine authority. Entry needs no Safe action because it only removes
+      permission; Safe-controlled recovery remains mandatory. Repeats are idempotent and cannot reset or
+      hide the original quarantine timestamp.</p>
+      <p>Every <code>synced_active</code> version is checked at least every five minutes, with a synchronous
+      fresh check immediately before candidate-snapshot publication, purchase broadcast, delivery-batch
+      start, and quarantine-clearance broadcast. Critical health older than ten minutes is unusable and
+      becomes <code>health_unknown</code>; an earlier successful check cannot authorize a later sensitive
+      action. Timeouts, malformed responses, signature failures, identity mismatches, and an unverifiable
+      chain/token/provider tuple fail closed without being mislabeled as drift. Production may check more
+      often, but loosening either ceiling requires a documented founder/Safe policy change. The board shows
+      <code>last_checked_at</code>, <code>last_healthy_at</code>, status, and a safe failure reason.</p>
+      <p>If quarantine is known before purchase broadcast, no transaction is sent: the day skips without
+      substitution and ETH stays pooled. The worker first atomically records exact health, catalog, ballot,
+      quote/oracle, spend, and transaction-intent snapshots. Quarantine after broadcast but before mining
+      sets <code>purchase_at_risk</code> and prompts a best-effort same-nonce cancellation/replacement only
+      where safe; it is not guaranteed, and no substitute ticker may be sent. Cancellation success or a
+      reverted purchase leaves the day skipped and ETH unspent. A canonically finalized purchase wins the
+      race: the real trade stands, units allocate to that day's eligible cohort, and delivery pauses without
+      unwind, substitution, or reassignment. The board publishes the full chronology, and later quarantine
+      grants no rebuy or catch-up authority. Unprovable ordering becomes <code>ordering_uncertain</code>:
+      preserve canonical assets and ledger, pause delivery, and require operator review.</p>
+      <p>After quarantine, delivery resumes only after the Safe clearance is canonically finalized and
+      synchronized and another synchronous health check succeeds. Paused allocations keep their exact asset
+      key, cohort, amount, creation time, and original priority. Eligible backlogs run FIFO by creation time
+      then stable allocation ID; newer rows cannot jump older eligible rows, but held/ineligible rows do not
+      block later work. Batches remain idempotent stage-then-confirm. Returning quarantine blocks new stages,
+      releases an unbroadcast stage without changing <code>delivered</code>, and lets a broadcast transfer
+      follow canonical chain outcome before pausing the rest. Delay creates no substitute, cash, yield,
+      priority bonus, or enlarged allocation. The board shows backlog size, oldest pause, latest completed
+      batch, and blocker. An acquisition-vault reconciliation shortfall or deficit is not itself a delivery blocker
+      for already-acquired, already-allocated units when exact StockVault custody and every independent delivery wall
+      are healthy.</p>
+      <p>A permanently frozen, non-transferable, irrecoverable, or unsupported exact Stock Token places its
+      allocations in <code>delivery_impossible_pending_resolution</code>; they never expire or change cohorts.
+      OMERTÀ cannot use an unrelated token, general treasury ETH, $OMR, game cash, or synthetic credit. The
+      Safe may resolve only from value actually recovered from that exact holding—verified RHJ redemption or
+      liquidation, successor corporate-action consideration, or recovered original units. Distribution is
+      pro rata by original cohort weights and cannot exceed actual recovery. Deterministic rounding residue
+      stays with that cohort, never general treasury. With no recovery, the obligation remains visibly
+      unresolved. Resolution requires fresh evidence, one authorized RWA reviewer, exact Safe calldata,
+      finality, sync, and a public conservation calculation.</p>
+      <p>Automatic delivery to the extracted Street Deed TBA remains default, but a user may set reversible
+      <code>delivery_hold</code> globally or for one exact immutable asset version. It preserves the allocation
+      and grants no forfeiture, expiry, redirection, sale, redemption, substitution, conversion, cash,
+      interest, yield, priority, compensation, or vote. Clearing restores original FIFO position. The keeper
+      checks before staging and before broadcast; a newly held unbroadcast stage releases without changing
+      <code>delivered</code>, while a post-broadcast hold cannot cancel or reverse canonical execution. Toggles
+      are idempotent and cannot reserve batches or starve others; held rows do not block later eligible rows.
+      The board may show <code>user_held</code>, but controls stay authenticated. Death, inactivity, logout,
+      and indefinite hold never forfeit the allocation tied to the designated deed TBA.</p>
+      <p>Before deed binding, an allocation is beneficially the qualifying account's and remains
+      <code>awaiting_deed</code>. A deed is eligible only after canonical extraction finality, deterministic
+      ERC-6551 TBA derivation, and current account ownership. Exactly one eligible deed automatically becomes
+      <code>rwa_delivery_deed</code>; with multiple deeds the server chooses neither oldest, newest, nor most
+      valuable, and the authenticated user must designate one. Establishing it binds all unbound and future
+      allocations to exact chain ID, deed contract, token ID, and TBA, whole and unsplit. Changing primary
+      affects only unbound and future allocations; bound destinations are immutable. Selection itself creates
+      no transfer, delivery, fee, tax, allocation, or ownership event.</p>
+      <p>A bound pending allocation travels with its exact Street Deed/TBA. Finalized deed transfer gives the
+      recipient control of TBA-held Stock Tokens, bound pending allocations, and their delivery holds, while original
+      activity/cohort history remains attributed to the qualifier without re-scoring. Holds persist; after
+      finality only the new owner may change them and the former owner immediately loses authority. Delivery
+      still targets the unchanged TBA during staging.
+      Before sale, the public deed view discloses aggregate pending allocations, exact versions,
+      delivered/undelivered amounts, quarantine/health/delivery-impossible status, and holds. OMERTÀ neither
+      prices, guarantees, nor intermediates the sale. Transfer causes no reallocation, duplicate allocation,
+      substitution, re-scoring, or cohort entry.</p>
+      <p>No user, reviewer, support operator, database administrator, keeper, or ordinary Safe action may
+      redirect a bound allocation to another deed, EOA, TBA, character, or account. Lost wallet, recovery
+      request, inactivity, death, sanctions, or sale dispute creates no discretion; recovery follows deed
+      control/transfer and owner wallet recovery. Only a verified protocol-wide Street Deed/TBA migration for
+      a contract defect or chain migration may remap it, using deterministic one-to-one mapping, preserved
+      current deed owner and every allocation field/history, exact Safe calldata, public old-to-new mapping
+      and conservation proof, canonical finality, and sync. It cannot rescue one individual; delivery pauses
+      until the valid migration completes.</p>
+      <p>Automatic Stock Token delivery gas comes by default from a dedicated, separately accounted RWA delivery-
+      operations ETH budget funded by the operator/Safe or an explicitly designated protocol-operations
+      source. Users pay no extra charge after the existing deed extraction requirement. Gas cannot reduce
+      allocations, cohort holdings, pooled acquisition ETH, withdrawal reserves, $OMR, game cash, or user
+      balances, and funding grants no allocation, priority, claim, repayment, or yield. A Safe-set fee ceiling
+      applies. Empty budget or excessive fees pause as <code>delivery_gas_unfunded</code> or
+      <code>delivery_gas_above_ceiling</code>, preserving allocation/FIFO and showing reason, balance, ceiling,
+      and oldest delay. The keeper cannot sell or skim Stock Tokens. Accounting publishes transaction hash,
+      gas used, effective price, ETH spent, funding-source category, and remaining balance. This does not
+      restrict the designated <code>mainOperator</code> from moving pooled ETH into gas or anywhere else; that
+      is a public pool-reducing <code>operator_outflow</code>, not an automatic fee.</p>
+      <p>Stock Token quantities use integer atomic units. The real token <code>decimals()</code> is read,
+      bounded, and cached by exact immutable version; no floating-point balance is ledgered. Each daily cohort
+      floors exact activity-weighted pro-rata entitlements, then distributes every remaining atomic unit by
+      largest fractional remainder. Equal remainders use stable immutable account ID ascending, never name,
+      family rank, arrival time, or operator choice. Allocations sum exactly to purchased cohort units. When
+      units are fewer than eligible accounts, a zero award is public <code>qualified_rounded_zero</code> with
+      weight/result but no phantom liability. Fractions never cross day, version, or cohort. Every positive
+      unit remains permanent with no dollar-value threshold. Same-deed/version rows may aggregate for delivery
+      while row audit history remains enumerable.</p>
+      <p>Delivery batches isolate items. All currently deliverable positive undelivered rows for one exact
+      deed TBA/version aggregate into one immutable-ID item for its full staged amount. A bounded transaction
+      may contain several items, but recipient-specific restriction, revert, or false return does not undo
+      unrelated successes. Canonical per-item results name asset key, deed/TBA, atomic units, item ID, and
+      transaction. Success increments <code>delivered</code> only after finality. Failure increments nothing,
+      exposes a stable reason, safely releases or retains its stage, and links retry attempts to the same
+      logical item ID. Token-wide or inventory/conservation failure halts the entire version. Delivered cannot
+      exceed allocated; staged plus delivered cannot exceed held. Retry, duplicate logs, reorg, or restart
+      cannot double-confirm. Batch caps cannot alter FIFO, permanently skip a recipient, or favor size.</p>
+      <p>Allocatable purchase units come from actual custody, not a quote or receipt. Router success, nominal
+      output, venue reporting, and events remain evidence, but after canonical finality the server serializes
+      against every exact-token movement and records pre/post custody balances. It computes
+      <code>receivedUnits = postPurchaseBalance - prePurchaseBalance</code> with transaction, asset key, vault,
+      and blocks. Allocation freezes only after a verified positive delta. Claimed-output mismatch becomes
+      public <code>acquisition_amount_mismatch</code> and blocks allocation pending reconciliation. Rebasing,
+      fee-on-transfer, reflection, elastic-supply, and other non-standard balance tokens are default-ineligible;
+      support needs a new immutable version, purpose-built Safe-approved adapter, fresh nomination/review,
+      and explicit conservation tests.</p>
+      <p>The daily cap applies to total ballot trade-input ETH, including venue/router/liquidity fees taken
+      from input; network gas is separate operations expense. Every net atomic unit actually received is
+      allocated with no protocol skim. Canonically unconsumed/refunded ETH returns to the pooled acquisition
+      budget without enlarging the day's allocation or allowing a second ticker. In-bound slippage lowers
+      actual cohort units; out-of-bound execution reverts. No treasury, operator, Safe owner, family, broker,
+      or keeper compensates ordinary slippage or captures favorable execution. Public accounting shows
+      intended, consumed, and refunded ETH; received units; effective and oracle prices; deviation;
+      venue/adapter; and separate gas.</p>
+      <p>Each closed ballot freezes <code>purchaseUntil = closed_at + 2 hours</code>, with no extension for
+      worker/provider outage, gas, quarantine, failed or replaced transactions, operator delay, stale quotes,
+      contention, or retries. Inclusion must satisfy <code>block.timestamp &lt;= purchaseUntil</code>; later
+      finality/sync remains valid. Before the boundary, one logical intent may retry reverted, dropped,
+      cancelled, or safely replaced attempts, but only one canonical success is allowed. Any positive output
+      meeting <code>minOut</code> and price bounds—including a partial fill—is final with no top-up, and unused
+      or refunded ETH stays pooled. No on-time success becomes <code>purchase_window_missed</code>, with no buy,
+      substitute, or replay; late transactions revert on-chain. Public history links every attempt status to
+      the ballot intent.</p>
+      <p>The venue, router, or pool cannot be its own independent reference oracle. Each exact asset version
+      has Safe-approved sources and requires at least one independently governed valid price; multiple valid
+      sources are decimal/direction-normalized and use their median. A snapshot lasts at most five minutes and
+      binds asset key, source, price, decimals, quote currency, observed time, round/sequence ID, and evidence
+      hash. Per-version Safe deviation may be tighter, but the contract hard ceiling is 500 basis points (5%)
+      and only reviewed upgrade may raise it. The buyer enforces <code>minOut</code> and effective price with
+      direction/decimal guards. Missing, stale, malformed, zero, negative, inconsistent, or wrong-asset data
+      fails closed, without venue-quote, prior-close/day, operator-value, or unverified-cache fallback. Public
+      history names used and rejected sources.</p>
+      <p>Family ballots continue every calendar day and preserve their vote, but the clock alone never proves
+      tradability. During the two-hour window, purchase needs a healthy transferable exact token, executable
+      approved venue, independent price no older than five minutes, and passing price, exposure, liquidity,
+      and inventory checks. If not, <code>market_unavailable</code> buys/substitutes nothing and leaves ETH
+      pooled. No stale prior close, weekend/holiday/halt extension, or Monday catch-up is allowed. A genuinely
+      live off-hours venue may execute with a fresh independent oracle. Public reasons distinguish
+      <code>underlying_market_closed</code>, <code>venue_unavailable</code>,
+      <code>oracle_unavailable</code>, <code>oracle_stale</code>, <code>asset_halted</code>, and combinations.</p>
+      <p>The buyer calls only an exact Safe-approved adapter address and deployed code hash on its chain; no
+      arbitrary target/calldata or <code>delegatecall</code> is allowed. Each attempt binds chain, ballot/intent
+      IDs, asset key/output token, custody vault, maximum input, <code>minOut</code>, oracle snapshot/evidence,
+      deviation, <code>purchaseUntil</code>, and an attempt deadline at most five minutes out and no later than
+      purchase expiry. The adapter cannot redirect/retain output, approve unrelated or unbounded spend, or
+      send residual ETH outside approved paths. Private submission is preferred but not trusted; public
+      mempool is allowed because all walls are on-chain. Retry may refresh quote/oracle and lower input within
+      remaining authority, never exceed it or auto-widen slippage/deviation. Revocation is forward-only.
+      Adapter/proxy code or code-hash change needs fresh Safe approval/security verification, but no new asset
+      version unless immutable identity changes. Targets, hashes, parameters, route, replacements, and results
+      remain public.</p>
+      <p>Acquisition ETH defaults to a separate <code>RwaAcquisitionVault</code> with ledger buckets for inflow,
+      reservations, purchases, refunds, available capital, and unattributed surplus. Normal release is buyer-
+      only for an exact ballot, asset, input, deadline, adapter, and intent; refunds return to the vault. Safe
+      may pause/tighten/revoke but cannot arbitrary-sweep. The publicly designated <code>mainOperator</code> may,
+      however, transfer any amount of available, unattributed, or reserved ETH to any address for any purpose
+      without Safe approval, destination allowlist, purchase/exposure caps, or timelock. Reserved transfers
+      first cancel affected intents. Each <code>operator_outflow</code> publishes operator, recipient, amount,
+      reason code, nonzero details hash, pre/post balances, buckets, and impacted intents. It cannot move Stock Tokens or rewrite
+      allocations. Buckets reconcile to the remaining balance. This unilateral power is explicit: the vault
+      is neither unsweepable nor strictly acquisition-only.</p>
+      <p>The vault exposes exactly one current <code>mainOperator</code>; the zero address disables outflows. It
+      also exposes any <code>pendingMainOperator</code>, proposal/acceptance times, and role generation. Deployment
+      declares the initial operator publicly. Safe may immediately set the operator to zero. Zeroing atomically
+      cancels any pending nomination, increments role generation, and invalidates every outstanding signed
+      outflow. Re-enabling even the same address needs a fresh public Safe nomination, at least 48 hours, and
+      acceptance by the nominated address itself. The nomination expires seven days after that acceptance time;
+      late acceptance fails and needs a fresh nomination. Safe may cancel sooner. The old operator remains current
+      until acceptance unless disabled first. Acceptance atomically installs and publishes the replacement;
+      this delayed path governs Safe-driven appointment and restoration from a zero operator. An active operator
+      has a separate instant-replacement path.</p>
+      <p>The active <code>mainOperator</code> may directly call <code>replaceMainOperator</code> to install any
+      nonzero, different successor immediately, without Safe approval, nomination, acceptance delay, or timelock. It cannot
+      be relayed and requires <code>msg.sender == mainOperator</code>. The successor consents in the same transaction
+      through EIP-712 binding action, chain ID, verifying vault, current operator, proposed operator, current role
+      generation, <code>issuedAt</code>, and acceptance deadline. Consent requires
+      <code>issuedAt &lt;= block.timestamp &lt;= deadline</code>, a later deadline, and a window no longer than one
+      hour. Future-issued, expired, zero/reversed, or over-hour consent fails before mutation. An EOA must recover exactly; a smart wallet must return the exact
+      ERC-1271 magic value, failing closed before mutation. Success cancels pending Safe nomination, installs the
+      successor, increments generation, invalidates old-operator authorizations, preserves
+      <code>nextOutflowNonce</code>, and publishes old/new/generation. Old authority ends immediately in canonical
+      ordering; Safe retains immediate zero-disable. No ETH, bucket, reservation, allocation, or cap changes.</p>
+      <p>Once installed, smart-wallet operator identity follows the <code>mainOperator</code> address, not a pinned
+      runtime code hash, proxy implementation, owner set, module set, or signature policy. Later wallet owner,
+      module, implementation, or code changes do not automatically rotate, disable, or increment generation.
+      Every action still validates current direct execution or ERC-1271 behavior. Public monitoring surfaces code
+      hash, detectable implementation, owner/module/configuration changes, validation failure, code appearance or
+      disappearance, and last-check time as <code>operator_wallet_changed</code> or
+      <code>operator_wallet_health_unknown</code> warnings without changing authority or pausing action. A direct
+      call proceeds for the current operator; relay proceeds when current EOA/ERC-1271 validation succeeds
+      on-chain. Safe may zero-disable immediately. Relay fails closed if validation becomes impossible; Safe restoration recovers an address that
+      can no longer originate a direct call.</p>
+      <p>The operator-wallet watcher checks code, detectable implementation, owners, modules, configuration, and
+      validation behavior at least every five minutes. Information older than ten minutes becomes
+      <code>operator_wallet_health_unknown</code>. Before the server constructs or relays an operator transaction,
+      it synchronously attempts a fresh check and publishes <code>last_checked_at</code>,
+      <code>last_changed_at</code>, <code>last_healthy_at</code>, observed identity/configuration, warning, and
+      failure reason. Watcher or refresh failure warns but does not veto; current on-chain caller/signature
+      validation is authoritative. Direct chain calls never depend on watcher, server, or API availability.</p>
+      <p>Every operator-role transition carries a public reason code and nonzero <code>detailsHash</code>: instant
+      replacement, direct renunciation, Safe zero-disable, Safe nomination, nomination cancellation, and nominee
+      acceptance. The code uses the same closed <code>operations</code>, <code>security</code>,
+      <code>purchase_recovery</code>, <code>migration_bypass</code>, <code>retirement</code>, or <code>other</code>
+      taxonomy. Relevant EIP-712/ERC-1271 authorization and direct/Safe calldata bind both fields. The immutable
+      event carries actor, old/new/pending operator, generation, transition type, reason, and details hash.
+      Missing off-chain explanation text never blocks a valid role change, and public surfaces cannot rewrite the
+      commitment.</p>
+      <p>ETH that cannot be matched to an approved, identified acquisition inflow—including forced ETH,
+      mistaken transfers, and unexplained positive balance surplus—is <code>unattributed</code>. It cannot fund
+      the automated buyer or a purchase reservation. Plain receipts book unattributed immediately; anyone may
+      call <code>syncUnattributed()</code> to book a positive <code>vault.balance - accountedBuckets</code> delta
+      without making it spendable. Only Safe may publicly reclassify a specified amount into available
+      acquisition ETH, publishing reason code, details hash, and old/new buckets. Every normal ballot, oracle,
+      adapter, purchase, daily, and rolling cap remains, and reclassification never revives or retro-funds an
+      intent. <code>mainOperator</code> may still withdraw unattributed ETH through
+      <code>operator_outflow</code>. Negative accounting drift pauses as an invariant failure, never a silent
+      bucket reduction.</p>
+      <p>Every purchase reservation has one immutable attempt deadline inside its approved two-hour purchase
+      window. Execution requires <code>block.timestamp &lt; deadline</code>; a transaction mined at or after the
+      deadline fails even if broadcast earlier. At or after the deadline, anyone may permissionlessly and
+      idempotently call <code>expireIntent(intentId)</code>, mark terminal <code>intent_expired</code>, and release
+      its entire remaining reservation to available ETH except any uncertain portion held in
+      <code>reconciliation_pending</code>. Proven unaffected value releases immediately; uncertain value stays
+      quarantined until Safe reconciliation. It cannot be extended, revived, re-reserved, or executed, and gets no
+      substitute or catch-up. Released ETH is usable only by later purchases with fresh
+      caps and authority.</p>
+      <p>Each closed ballot and exact Stock Token version may create at most one logical purchase intent:
+      <code>intentId = keccak256(abi.encode(chainId, vault, ballotId, assetVersionKey))</code>. The ID remains a
+      permanent lifecycle record from creation through terminal state. Transaction attempts use monotonic
+      <code>attemptNonce</code> and are serialized under the same intent; at most one registered attempt may be live,
+      and replacements or retries stay linked so only one transaction can settle canonically. No path may create a
+      second or parallel intent, split a ballot across intents, change its asset version, or produce more than one
+      success. Success, partial-fill finality, expiry, operator cancellation, and every other terminal disposition
+      permanently prevent recreation or further execution. A second creation attempt fails without changing any
+      reservation, bucket, clock, or history.</p>
+      <p>Only the currently Safe-approved <code>RwaStockBuyer</code> may create the intent and reservation. In one
+      atomic transaction it revalidates the finalized closed ballot, deterministic intent ID, exact active and healthy
+      Stock Token version, zero accounting deficit, sufficient unreserved available ETH,
+      per-buy/daily/rolling/concentration caps, approved adapter and current code identity, fresh independent oracle and deviation wall,
+      and a still-future immutable deadline. Only after every check succeeds does it persist the intent, reserve ETH,
+      initialize attempts, and consume the next <code>accountingSequence</code>. Any failed check or competing creation
+      reverts completely: no intent or tombstone, reservation, bucket change, attempt nonce, or sequence consumption.
+      Creation may be tried again before the same unchanged deadline, and buyer approval bypasses none of the walls.</p>
+      <p>After creation, any address may call <code>executeIntent(intentId)</code> before the deadline. The call accepts
+      no caller-chosen asset, recipient, input ceiling, adapter, oracle/deviation limit, output destination, or
+      deadline. It uses the stored intent and current approved registry state and revalidates activity, health,
+      deficit, reservation, caps, adapter/code identity, fresh oracle/deviation, and time at inclusion. A caller may
+      choose execution timing only inside that bounded envelope, pays its own network gas, and receives no fee, rebate, refund,
+      Stock Token, approval, or other economic benefit. All output goes to <code>StockVault</code>; unused or returned
+      ETH goes to <code>RwaAcquisitionVault</code>. Permissionless callers cannot create, edit, cancel, reserve for, or
+      redirect an intent. Calls are atomic and reentrancy-protected: the first valid canonical execution wins, while
+      competing, stale, failing, or terminal calls revert without accounting mutation or sequence consumption.</p>
+      <p>Pre-adapter validation failures revert without consuming <code>attemptNonce</code>, changing accounting, or
+      creating an attempt record. Once execution actually invokes the approved adapter, the attempt consumes the next
+      nonce and receives one immutable public result. A revert, false return, or zero Stock Token output is retryable
+      <code>attempt_failed</code> only when canonical pre/post vault and custody balances prove zero ETH debit and zero
+      Stock Token output. The intent and reservation remain active for a sequential retry before the same deadline.
+      Any nonzero or unexplained ETH debit, refund, token receipt, or custody delta instead marks
+      <code>attempt_reconciliation</code> and blocks another execution or final settlement until an explicit public
+      reconciliation accounts for it. A consumed nonce and result can never be erased or overwritten.</p>
+      <p>Only the Safe may finalize an <code>attempt_reconciliation</code>, classify its value effects, release
+      quarantined ETH, or declare the attempt reconciled. The current <code>mainOperator</code> may append evidence
+      and a proposed disposition, but that submission is informational: it cannot alter buckets, custody facts,
+      terminal state, or <code>accountingSequence</code>, and cannot authorize the operator or a relayer to finalize.
+      Safe finality binds the exact intent and consumed attempt nonce and includes the ordinary public reason code
+      and nonzero details-hash commitment.</p>
+      <p>Safe reconciliation publishes actual ETH debit, cumulative verified refund, Stock Token custody delta,
+      canonical transaction provenance, resulting disposition, and complete pre/post balance, buckets, deficit, and
+      intent state, and consumes the next <code>accountingSequence</code>. A positive valid Stock Token custody delta
+      is the intent's final fill at the actual received amount. Only those units may be allocated, and there is no
+      top-up, second fill, substitute purchase, or catch-up. Zero or invalid custody output cannot be represented as
+      acquired stock; unexplained residual value remains quarantined.</p>
+      <p>If cancellation or the immutable deadline arrives during reconciliation, the intent becomes terminal for
+      execution immediately. Proven unaffected value releases normally, but the unresolved portion moves from the
+      reservation into the nonspendable <code>reconciliation_pending</code> bucket and cannot fund another
+      reservation. Only later Safe reconciliation may release the amount proven unspent while booking actual debit,
+      refund, and output from canonical evidence. Neither transition may revive the intent, retry it, replace its
+      purchase, provide a substitute, or create catch-up authority.</p>
+      <p>The contract—not figures supplied by the Safe—derives or strictly caps every reconcilable ETH debit,
+      verified refund, and Stock Token output from immutable pre-adapter balance snapshots, current canonical
+      <code>RwaAcquisitionVault</code> and <code>StockVault</code> balances, and already-recorded canonical refund and
+      provenance records. The Safe chooses the disposition and commits reason, details, and evidence, but cannot
+      override those observations, over-credit output or refund, hide debit, or enter unsupported value. An
+      inconsistent reconciliation reverts before bucket, intent, allocation, <code>accountingSequence</code>, or
+      custody-state mutation.</p>
+      <p><code>reconciliation_pending</code> has no timeout, abandonment path, presumed outcome, or automatic release.
+      Passage of time, deadline age, Safe inactivity, unavailable signers, or missing off-chain evidence never turns
+      uncertainty into available ETH. The amount and age remain public indefinitely until the Safe completes a valid
+      contract-bounded reconciliation. Safe signer recovery and incident escalation provide liveness; accounting
+      never guesses.</p>
+      <p>The current <code>mainOperator</code> nevertheless retains raw <code>operator_outflow</code> authority over
+      actual ETH accounted in <code>reconciliation_pending</code>, consistent with its disclosed unilateral sweep
+      power. The transfer cannot finalize or classify reconciliation, release value into available ETH, erase or
+      reduce the unresolved liability, or represent missing ETH as reconciled. It consumes the normal outflow nonce
+      and <code>accountingSequence</code>, publicly debits backed quarantine, identifies affected reconciliation
+      records, and publishes complete pre/post balance, quarantine, liability, and deficit. Any resulting unbacked
+      liability remains an explicit accounting deficit under the existing automation pause and repair rules until
+      canonical evidence and actual funding resolve it.</p>
+      <p>Each reconciliation attempt and the vault-wide aggregate separately expose
+      <code>reconciliationLiability</code>, <code>backedQuarantineEth</code>, and
+      <code>reconciliationShortfall</code>, enforcing
+      <code>reconciliationLiability = backedQuarantineEth + reconciliationShortfall</code> after every mutation. Any
+      positive shortfall joins vault-wide <code>accountingDeficit</code> and globally pauses new intent creation and
+      execution while canonical deposits, deficit repair, matched or late refunds, reconciliation, expiry,
+      cancellation, and authorized outflow remain live. No caller, mirror, or authority may hide
+      under-collateralization by collapsing these figures.</p>
+      <p>If an operator outflow reaches reconciliation backing, record attribution is automatic: greatest
+      <code>backedQuarantineEth</code> first, then oldest <code>reconciliationStartedAt</code>, then lowest intent ID,
+      fully debiting records before at most one partial debit. Generic canonical repair funding uses one unified
+      deficit-component queue ordered by <code>firstObservedAt</code> or <code>shortfallCreatedAt</code>, then numeric
+      <code>componentTypeCode</code>, then record ID, fully repairing components before at most one partial repair. An
+      exact canonical late refund overrides the generic queue and repairs its own attempt first. Contract-controlled
+      bounded priority indexes, or an audited equivalent, maintain both orders; caller-supplied ordering,
+      caller-supplied sort proofs, and unbounded historical scans are not authoritative. The operator or depositor
+      cannot choose a bucket or record; events expose every affected record and aggregate pre/post liability, backing,
+      shortfall, deficit, and sequence.</p>
+      <p>The Safe may finalize factual, contract-bounded reconciliation even when the ETH proven unspent is absent.
+      That amount becomes durable terminal <code>reconciled_shortfall</code>: no available ETH is fabricated, no
+      liability is erased, and the intent closes permanently without revival, retry, replacement, substitute, or
+      catch-up. The shortfall and original evidence remain append-only until actual funding repairs them.</p>
+      <p>When real repair ETH reaches a Safe-finalized <code>reconciled_shortfall</code> whose immutable disposition
+      proves the ETH was unspent, the same atomic entry reduces that record's shortfall and liability and credits
+      exactly the repaired amount to available acquisition ETH. It needs no second Safe action and never reopens or
+      edits the intent. Repair is capped at the exact missing principal: the protocol creates no interest, penalty,
+      opportunity-cost compensation, damages, yield, or other extra credit. Repair of a still-unresolved
+      reconciliation restores backing without creating available ETH.</p>
+      <p>A canonical refund received after terminal or final reconciliation first repairs the exact attempt's
+      <code>reconciliationShortfall</code>. Only the remainder not required for repair follows normal terminal-refund
+      classification; value above proven debit is <code>unattributed</code>. This appends a receipt and never reopens,
+      edits, replaces, or grants catch-up to the old intent. Stock Tokens received after terminal or final
+      reconciliation enter <code>unattributed_stock</code> quarantine keyed by exact token address, immutable asset
+      version, amount, sender, and canonical transaction provenance. The Safe may only continue holding the exact
+      stock, transfer it to the fixed Safe-approved recovery vault, or redeem or liquidate that exact token through a
+      Safe-approved recovery adapter. It cannot choose an arbitrary recipient, retroactively allocate the stock,
+      substitute an asset, or reopen or change the old intent or allocation. Quarantined units are excluded from
+      distributable inventory, player allocations, and fulfilled-acquisition totals but included in gross custody,
+      concentration-risk reporting, and every applicable exact-version exposure cap.</p>
+      <p>Canonical ETH recovered by redeeming or liquidating <code>unattributed_stock</code> first repairs the exact
+      originating attempt's reconciliation shortfall. Any remaining ETH enters the <code>unattributed</code> bucket; it
+      does not automatically become available, allocate to the historical cohort, reopen the old intent, or create a
+      substitute or catch-up. The immutable recovery record binds late-stock provenance, input units, actual ETH
+      output, exact shortfall repair, remainder classification, and complete pre/post stock and ETH accounting.</p>
+      <p>There is exactly one active Stock Token recovery-vault version, bound to chain, address, runtime code hash,
+      and, for a proxy, implementation address and code hash. Safe rotation is publicly proposed at least 48 hours
+      before execution and atomically replaces the old version with the new one. Continued quarantine is the emergency
+      fallback; there is no immediate redirection bypass.</p>
+      <p>Each recovery adapter is Safe-approved by exact address and runtime code hash and binds one exact input
+      token/version to a canonical ETH output path, fresh independent price, <code>minEthOut</code>, maximum slippage,
+      immutable deadline, and fixed route. It exposes no arbitrary calldata, caller-selected path,
+      <code>delegatecall</code>, persistent approval, or residual token authority. Recovery succeeds only when canonical
+      ETH is atomically received by the acquisition vault; intermediate assets remain inside the adapter. Unexpected
+      ERC-20 output receives no recovery credit and, if it nevertheless arrives, enters exact-token/provenance
+      <code>unattributed_stock</code> quarantine.</p>
+      <p>For custody risk, concentration reporting, and every applicable exact-version exposure wall, quarantined
+      stock is valued at the greater of its latest fresh independent-oracle market value and last valid acquisition
+      price. If neither value exists or is usable, new purchases of that exact version remain blocked until valuation
+      becomes available.</p>
+      <p>Every recovery tranche receives a unique, immutable, domain-separated <code>recoveryId</code> binding the
+      action, chain, active recovery-vault address/version/runtime code hash and proxy implementation when applicable,
+      incident, exact quarantine record and provenance, Stock Token version, exact input units, adapter/code identity,
+      canonical acquisition-vault destination, independent-oracle observation, <code>minEthOut</code>, slippage ceiling,
+      fixed route, Safe authorization generation/nonce, issue time, and deadline. Only the Safe may create, activate,
+      cancel, or replace it. It expires at the earlier of one hour after Safe approval and the oracle-validity deadline;
+      expiry, cancellation, any field change, or price refresh requires a new one-use ID. Execution rechecks every
+      pinned identity and a fresh independent price and applies the stricter authorized/execution-time oracle floor.</p>
+      <p>A quarantined balance may be recovered through multiple monotonic partial tranches, each with a separate
+      authorized <code>recoveryId</code> and exact units. A tranche can only reduce <code>remainingUnits</code>, never
+      exceed it, and the quarantine record resolves only at zero. Neither Safe nor operator has an arbitrary Stock
+      Token sweep. Direct transfer is preferred; any technically required approval is for exact units immediately
+      before use and is consumed or reset to zero atomically. After Safe authorization anyone may call
+      <code>executeRecovery(recoveryId)</code>, but supplies no payload or discretion, chooses no amount, route,
+      recipient, or output, and receives no reward or refund. The caller or a separately accounted operations wallet
+      pays gas; recovery gas never reduces recovery credit, acquisition backing, allocations, or player value.</p>
+      <p>Permissionless execution does not permit permissionless creation or enqueueing. Execution is a constant-time
+      exact-ID lookup for positive units under an active, unexpired, uncancelled, unconsumed authorization. The same
+      call rechecks vault, token, adapter, oracle, and proxy code identity; measures exact pre/post Stock Token and
+      canonical-ETH balance deltas; uses checked arithmetic, <code>nonReentrant</code>, and
+      checks-effects-interactions; and consumes/decrements before calls with atomic rollback. It has no attacker-sized
+      loop or scan, dynamic route, caller callback/payment, or caller-selected external call. Malformed, reverted,
+      duplicate, expired, cancelled, or losing-race calls create no canonical event, incident entry, alert, storage
+      growth, or protocol gas cost; the caller alone pays. A same-ID front-run performs only the identical approved
+      action. Fresh-oracle <code>minEthOut</code>, maximum slippage, short expiry, and a fixed route bound sandwich loss;
+      MEV-protected submission is preferred but is not a trusted control. Nonstandard tokens require a separately code-pinned adapter
+      and adversarial balance-delta tests or remain quarantined without blocking unrelated versions. Safe or current
+      <code>mainOperator</code> may pause recovery immediately; only the Safe may resume, and pausing cannot redirect stock,
+      consume authorization, alter deadlines, or credit recovery.</p>
+      <p>Successful recovery transitions publish structured canonical IDs, versions, sequences/components, actor and
+      authority, transaction hashes, units, ETH, blocker changes, code identities, and finality. Sensitive, bulky, or
+      restricted evidence remains off-chain under an immutable content hash. Provisional and finalized streams are
+      separate; finalized is the default accounting, UI, and export authority, and reorgs replace only provisional
+      data. Canonical history is retained permanently. The recent UI may be bounded, but complete cursor-based exports
+      cover every generation in checksum-addressed pages/files. Anonymous incident and recovery APIs are read-only with
+      strict cursor validation, fixed maximum page and body size, cheap indexed lookup, per-origin/token quotas, caching,
+      and content-addressed precomputed exports. Invalid cursors, duplicates, rejected executions, and transport abuse cannot cause
+      unbounded scans, canonical writes, alerts, export regeneration, storage growth, or incident amplification;
+      infrastructure metrics are sampled and retention-bounded separately.</p>
+      <p>Quarantine and indefinite hold are the complete launch behavior for late or unexplained Stock Tokens. Recovery
+      is optional, deferred until a real material quarantined balance makes it worth building, and is not an ordinary
+      RWA-launch blocker. If later activated, recovery remains unavailable and every recovery mutation control remains
+      disabled until the exact production vault/adapter/oracle/API implementation and deployment manifest exist. Activation requires contract unit tests,
+      stateful fuzz/invariant tests, malicious-token/adapter/oracle/receiver and reentrancy tests, forked-route
+      slippage/MEV/reorg tests, API authorization/idempotency/concurrency/body-limit/cursor/export/load/denial-of-service
+      tests, and independent third-party review of the exact source and bytecode. Every critical or high finding must
+      be fixed and every remaining finding publicly dispositioned. The manifest binds chain, addresses, compiler
+      settings, source commit, runtime and implementation code hashes, adapter/oracle identities, test reports, and
+      audit artifact hashes. Any material contract, proxy, adapter, oracle, authorization, accounting, or write-route
+      change resets the applicable gate. No placeholder generic executor or recovery write endpoint may ship merely
+      because the design is documented.</p>
+      <p>If recovery is built, the Safe records every authorization on-chain. Proxy vaults and adapters remain
+      permitted—there is no non-upgradeable requirement—but exact proxy and implementation identities stay pinned and
+      rechecked. Safe-set hard caps limit each tranche, each Stock Token version over rolling 24 hours, and all recovery
+      over rolling 24 hours, with no operator bypass over Stock Token recovery; the main operator's separate authority
+      over ETH after canonical receipt is unchanged. Two fresh independent price sources set the more conservative
+      output floor and divergence above 500 basis points fails closed. V1 accepts only conventional balance-delta
+      ERC-20 behavior. A successful adapter ends with zero attributable token or ETH residue and zero allowance; forced
+      unsolicited dust receives no recovery credit and is quarantined. Public APIs return unsigned calldata and never
+      sponsor or relay anonymous gas. Canonical history derives only from finalized events emitted by pinned contracts.
+      Failed, duplicate, or malformed spam may be rate-limited and alerted on operationally but cannot automatically
+      pause recovery, open a financial incident, or write canonical history. Before activation, OMERTÀ publishes a
+      vulnerability-disclosure or bounty channel, independently monitors code identity, balances, allowances, oracle
+      divergence, recovery rate, and sequence gaps, and rehearses pause, cancellation, and rotation. These are
+      conditional safety constraints, not a reason to build a recovery subsystem before it is needed.</p>
+      <p>Ordinary RWA funding does not use an automatic percentage of prior-day protocol revenue and keeps no mandatory
+      minimum acquisition-vault ETH reserve. The exact maximum ETH budget comes only from backed available acquisition
+      ETH and is published and atomically frozen before the ballot opens; voting, a winner, later deposits, operator
+      edits, or price movement cannot resize it. There is no policy minimum economic purchase size, although actual
+      balance, venue minimums, caps, quotes, slippage, health, and other ordinary execution walls still fail normally.</p>
+      <p>The MVP may acquire only the Safe-approved provider-native spot Stock Token for the voted underlying. It does
+      not buy LP tokens, lending receipts, yield wrappers, synthetic equities, derivatives, or bridged wrappers. After
+      allocation, OMERTÀ may not sell, rebalance, rotate, or market-time the holding. Delivery and the existing mandatory
+      corporate-action, provider-retirement, legal, or worthless-removal processes are the only disposition paths.
+      Leverage, borrowing, shorting, options, perpetuals, leveraged tokens, lending, rehypothecation, and collateral use
+      are not permanently prohibited, but that future optionality authorizes none of them for the MVP.</p>
+      <p>Verified OMR staking may multiply active-play allocation, but the boost is not live. It will read the same unified
+      actual on-chain OMR gameplay position used by the Made Ladder, commitment locks, gameplay loss, unbonding, and
+      inheritance—not a separate <code>account_persistent.staked</code> balance. Active-play qualification for human and agent accounts,
+      NPC/resident exclusion, and recurring 30-day Broker activation remain mandatory. The selected future
+      formula is <code>activationMult × activityScore × stakeMult</code>, so failed activity still produces zero.
+      <code>stakeMult</code> uses fixed public tiers from finalized time-weighted-average eligible principal over the
+      complete seven-day epoch. There is no separate 72-hour maturity delay: accepted principal contributes pro rata
+      while staked. Each account binds one verified allocation wallet for an epoch and a wallet change begins next epoch.
+      Liquid OMR, unclaimed rewards, claimed rewards not restaked, and Broker-activation spend do not count. The approved
+      cap is 1.50×: below 300 OMR receives 1.00×; 300–999.999… receives 1.10×; 1,000–4,999.999… receives 1.20×;
+      5,000–19,999.999… receives 1.35×; and 20,000 OMR or more receives 1.50×. Only finalized active and committed
+      principal qualifies. Pending deposits, idle loot, unbonding, withdrawable, withdrawn, unattributed, quarantined,
+      and unfunded legacy value do not. One verified wallet may qualify one permanent account per epoch; every conflicting
+      claim receives zero stake multiplier until resolved. Each finalized transition changes the TWA prospectively from
+      canonical time with no shortcut, backfill, or retroactive restoration.</p>
+      <p>Only the Safe may change tiers or thresholds, after at least seven public days, effective no earlier than the first
+      full epoch beginning after notice. Every epoch freezes the schedule, wallet/account bindings, eligible buckets,
+      activity formula, activation requirement, and ruleset. A critical defect pauses or cancels that epoch rather than
+      rewriting weights after participation is known. The replacement custody and settlement baseline is approved but not
+      live: a new <code>OMRGameplayVault</code> has no
+      personal APY, accepts only actual reserve-backed on-chain OMR, enforces commitment/unbonding, uses one-use typed and
+      rate-bounded chain-first gameplay outcomes, and imports legacy stake only against deposited OMR. Until that vault,
+      the tier schedule, and anti-flash historical snapshots are implemented and tested, the shipped formula remains
+      <code>activationMult × activityScore</code>; no current stake balance counts silently or retroactively.</p>
+      <p>Agent accounts have full economic parity in this design. Their verified EOA or ERC-1271 controller wallets may
+      deposit, stake, commit, partially unbond, withdraw, survive inheritance, receive idle loot, lose eligible principal
+      through canonical gameplay settlement, build finalized Broker stake TWA, and receive Stock Token allocations and
+      delivery under the same activity, activation, wallet-uniqueness, consent, exposure, finality, solvency, and launch
+      gates as human wallets. The agent flag still excludes human-only faucets and status rewards; it never denies vault
+      authorization, settlement, checkpoints, Broker weight, RWA allocation, or delivery.</p>
+      <p>Portfolio views lead with actual Stock Token units, acquisition reference and cost, allocation epoch, delivery
+      state, and custody destination. Estimated market value is secondary, timestamped, source-labeled, and stale-aware,
+      never presented as guaranteed cash, yield, or redeemability. New RWA complexity requires demonstrated recurring
+      material value, measured user demand, or an actual failure mode plus written Safe scope, authority, invariants,
+      tests, and operating owner.</p>
+      <p>Any positive reconciliation shortfall or operator debit of reconciliation backing emits an immediate
+      critical alert and keeps the RWA operator UI in a persistent red incident state. It shows aggregate and
+      per-record liabilities, backing, shortfall, age, affected intent and attempt IDs, last quarantine outflow, vault
+      deficit, and purchase-pause state. Every zero-to-positive transition creates a new immutable
+      <code>incidentId</code>; alerts, acknowledgments, outflows, repairs, and reconciliation actions append to that
+      generation. It closes only after finalized canonical zero is synchronized into the mirror, and a later
+      recurrence creates a new ID. The Safe or current <code>mainOperator</code> may submit a signed public
+      acknowledgment bound to the exact <code>incidentId</code> and, for operator authority, current operator
+      generation. Acknowledgment may silence duplicate notifications only; it cannot clear, downgrade, conceal,
+      resolve, unpause, or mutate the incident's financial state.</p>
+      <p>A reconciliation shortfall or acquisition accounting deficit pauses new purchase-intent creation and
+      execution but does not pause delivery of Stock Tokens already acquired and allocated when exact
+      <code>StockVault</code> custody and every delivery invariant remain healthy. Asset quarantine, custody mismatch,
+      delivery hold, insufficient delivery gas, fee ceiling, stale token health, and every other independent delivery
+      wall still apply. Continuing delivery creates no new allocation or purchase.</p>
+      <p>If the canonical RWA accounting mirror is more than ten minutes stale or cannot prove finalized
+      <code>accountingSequence</code> continuity, the operator UI remains red and shows
+      <code>incident_state_unknown_stale</code>; it never renders green. It disables new risk-creating purchase controls
+      while keeping recovery funding, reconciliation, cancellation, expiry, and otherwise-authorized operator outflow
+      controls available. Stale display state neither invents an on-chain incident nor resolves a real one.</p>
+      <p>A reconciliation incident closes only when finalized canonical state simultaneously proves aggregate
+      <code>reconciliationShortfall == 0</code>, vault-wide <code>accountingDeficit == 0</code>, every affected record's
+      liability/backing invariant, continuous <code>accountingSequence</code>, and synchronized public-mirror state.
+      Acknowledgments do not affect closure.</p>
+      <p>Purchase blocking uses independent composable reasons, including manual Safe/operator pause, reconciliation
+      deficit, stale accounting mirror, token quarantine, oracle failure, and exposure cap. Clearing one reason removes
+      only that blocker. Purchases resume only when no applicable blocker remains, so automatic deficit clearance never
+      clears a manual or unrelated pause.</p>
+      <p>If a contract-maintained debit or repair priority index disagrees with immutable records, new purchases pause
+      and anyone may rebuild the index deterministically in bounded chunks. The completed root must equal the root
+      derived from immutable records; the Safe and operator cannot choose order, and dependent mutations remain
+      unavailable until the rebuild proves complete.</p>
+      <p>Every operator outflow or generic repair supplies a public positive <code>maxComponents</code>. The complete
+      requested transfer or repair must be accountably processable within that bound or the transaction reverts before
+      any mutation or ETH transfer. A large action may be split across sequential transactions, each preserving the
+      same deterministic order.</p>
+      <p>Public incident history uses an immutable cursor ordered by <code>accountingSequence</code>,
+      <code>componentIndex</code>, and stable event ID. Offset pagination and mutable latest-first authority are
+      forbidden. The UI defaults to the active or most recent incident while allowing complete export of every
+      generation, including cursor continuity and canonical reorg/finality status.</p>
+      <p>The Safe or current <code>mainOperator</code> may immediately call
+      <code>cancelIntent(intentId, reasonCode, detailsHash)</code> for an active intent without transferring ETH.
+      Cancellation uses the existing closed reason taxonomy and a nonzero details hash, marks terminal
+      <code>intent_cancelled</code>, releases the complete remaining reservation to available acquisition ETH except
+      any unresolved <code>reconciliation_pending</code> portion, and consumes the next
+      <code>accountingSequence</code>. Its immutable record publishes actor and authority,
+      reason/details, released amount, intent/attempt state, and complete pre/post accounting. It cannot revive,
+      substitute, extend, replay, split, re-reserve, allocate, or create catch-up, and does not rewrite the ballot,
+      asset, prior attempts, or deposit history. Canonical inclusion order decides cancellation versus execution,
+      expiry, refund, or operator outflow; the first valid transition wins and later incompatible calls fail without
+      mutation. Either authority can abort a planned RWA purchase even when no ETH leaves the vault.</p>
+      <p>The current <code>mainOperator</code> may cancel directly or authorize a relayer through EIP-712/ERC-1271.
+      The typed authorization binds action, chain, vault, operator generation, exact intent ID, reason code, nonzero
+      details hash, exact <code>nextIntentCancelNonce</code>, <code>issuedAt</code>, and deadline. Its lifetime is at most
+      one hour, future issue time is invalid, and direct and relayed operator cancellations consume the same monotonic
+      cancellation nonce independently of <code>nextOutflowNonce</code>. Safe cancellation consumes neither operator
+      nonce. Replacement, renunciation, or zero-disable invalidates every older-generation cancellation signature.</p>
+      <p>The Safe or current <code>mainOperator</code> may immediately pause new intent creation and execution with a
+      closed public reason code and nonzero details hash; only the Safe may unpause. Canonical deposits, deficit repair,
+      matched refunds, reconciliation, permissionless expiry, explicit cancellation, and otherwise-authorized operator
+      outflows remain available. Existing deadlines continue without extension, tolling, revival, substitute, or
+      catch-up, and reservations stay governed by normal expiry and cancellation rules. Every pause or unpause publicly records
+      actor, authority, operator generation, reason/details, and inclusion time.</p>
+      <p>A refund matches only through exact intent, approved attempt, adapter or sender, and canonical transaction
+      provenance. Cumulative matched refund cannot exceed actual debited ETH. While an intent is active, verified
+      refund restores its remaining reserved capacity only up to the original bound, allowing an otherwise-valid
+      retry before the unchanged deadline. After cancellation, <code>intent_expired</code>, successful finalization,
+      or any other terminal state, verified refund first repairs the exact attempt's reconciliation shortfall, if any;
+      only the remainder becomes available acquisition ETH. It never reopens the intent, ballot, allocation, purchase
+      window, substitute, or catch-up. Unknown-intent, unprovable-sender/provenance,
+      and above-debit excess refunds are <code>unattributed</code>, not available. Every receipt publishes sender,
+      amount, known intent/attempt, provenance, cumulative debit/refund, classification, and pre/post buckets.
+      Safe reclassification and main-operator withdrawal follow the unattributed rules.</p>
+      <p>Only a currently Safe-approved acquisition ingress contract may credit canonical acquisition ETH. Each
+      positive deposit has
+      <code>depositId = keccak256(abi.encode(chainId, sourceContract, externalPaymentReferenceHash))</code>;
+      caller/source, nonzero external reference, and <code>msg.value</code> must match. A duplicate ID reverts rather
+      than replaying or double-crediting. Success credits available ETH and publishes ID, chain, source, reference,
+      amount, approval version, and pre/post buckets. Safe ingress approval/revocation is public and forward-only.
+      Direct receipt, unapproved source, malformed/missing reference, source mismatch, and forced ETH stay
+      <code>unattributed</code> and cannot gain canonical identity through later synchronization.</p>
+      <p>Each Safe ingress approval binds exact chain, source address, source runtime code hash, and approval version.
+      For a proxy it also binds the resolved implementation address and implementation runtime code hash. The canonical
+      deposit path revalidates every field before consuming a deposit ID or crediting a bucket. Any source-code, proxy,
+      or implementation change requires a fresh public Safe approval version; mismatch reverts the canonical call.
+      Plain or forced ETH that still reaches the vault remains <code>unattributed</code>. Approval and revocation are
+      forward-only: earlier accepted deposits remain canonical history and their deposit IDs stay consumed forever.</p>
+      <p>Each acquisition vault has at most one active canonical ingress approval version: one exact version or the
+      disabled/zero state. Safe rotation atomically deactivates the old version and activates the new one; there is no
+      overlap, grace period, or dual-source window. A canonical deposit must name and match the version active when its
+      transaction is included. Broadcast or mempool time grants no grandfathering: an old-version call included after
+      rotation reverts before accepting ETH, consuming its deposit ID, or changing accounting. Plain or forced ETH
+      that still arrives is <code>unattributed</code>. Canonical chain order resolves same-block rotation/deposit races,
+      while prior accepted deposits, consumed IDs, and approval history remain unchanged.</p>
+      <p>During a positive accounting deficit, a canonical deposit consumes its deposit ID once and records
+      <code>deficitRepairAmount = min(msg.value, deficitBefore)</code> and
+      <code>availableCreditAmount = msg.value - deficitRepairAmount</code>. Repair raises actual balance and reduces
+      deficit without crediting a bucket; only the available-credit remainder increases available acquisition ETH. The
+      repair portion uses the unified queue ordered by <code>firstObservedAt</code> or
+      <code>shortfallCreatedAt</code>, numeric component type, then record ID, fully repairing components before at most
+      one partial repair; the sender cannot choose a record or bucket. An exact late refund stays bound to its own
+      attempt. If the assigned component is a finalized proven-unspent shortfall, the same entry retires the repaired
+      principal and credits exactly that amount to available under its immutable disposition. The
+      immutable deposit record publishes total, both portions, deficit before/after, approval version, and pre/post
+      buckets. A repair-only deposit remains canonical provenance but creates zero spendable ETH, and no retry or
+      display may treat its full <code>msg.value</code> as available.</p>
+      <p>Safe may immediately call <code>reclassifyUnattributed(amount, reasonCode, detailsHash)</code> for a
+      positive amount no greater than unattributed. The only move is <code>unattributed -> available</code>. It
+      transfers no ETH, creates no reservation, targets no ballot/asset/intent, revives nothing, bypasses no cap,
+      oracle, adapter, or deadline, and never books a purchase. The classification entry is immutable,
+      non-deletable, and non-reversible; ETH later leaves only through a valid purchase or
+      <code>operator_outflow</code>.</p>
+      <p>If accounted buckets exceed actual vault balance, public state reports
+      <code>accounting_deficit = accountedBuckets - vault.balance</code> with first-observed block/time, cause,
+      last reconciliation, and pre/post figures. While positive it blocks automated buying, new reservations,
+      Safe reclassification, and canonical migration. Existing expiry/cancellation/refund reconciliation and
+      inflows remain. Every incoming wei first repairs deficit by raising actual balance without bucket credit;
+      only post-repair canonical value becomes available and other remainder unattributed. The
+      <code>mainOperator</code> may still withdraw up to actual remaining ETH through the fixed available,
+      unattributed, ordinary reserved, then reconciliation-pending debit/cancellation order. Outflow publishes deficit before/after; balance and
+      buckets fall together, leaving deficit explicit. Automation/migration resumes only after public zero-deficit
+      reconciliation. No role may silently haircut or erase a bucket or deficit.</p>
+      <p>Deficit mode clears only after canonical-chain reconciliation computes
+      <code>accounting_deficit == 0</code>, its block reaches configured finality, and the finalized result synchronizes
+      into the public mirror. Automation and canonical migration then resume immediately under every normal cap,
+      oracle, adapter, health, deadline, and authority wall, with no Safe acknowledgment, operator acknowledgment, or
+      additional cooldown. Clearance does not revive an expired or cancelled intent, extend a purchase window, replay
+      a missed ballot, or create catch-up authority. Public reconciliation names block, transaction, finality,
+      synchronization time, and pre/post
+      deficit/buckets/balance. A later deficit immediately pauses again; no role may manually declare zero or bypass
+      finality.</p>
+      <p>Every successful atomic vault-accounting entrypoint receives exactly the next monotonic
+      <code>accountingSequence</code>. This includes canonical deposits and deficit repair, unattributed synchronization,
+      Safe reclassification, reservation or intent creation, purchase debit/finalization, refunds,
+      expiry/cancellation, operator outflow, deficit reconciliation, and canonical migration. Component effects in
+      one transaction share the sequence and use deterministic <code>componentIndex</code> order. Each record publishes
+      action, actor, transaction/block position, complete pre/post vault balance, available, unattributed, reserved,
+      accounted-bucket total, and deficit, plus affected intent/bucket deltas. Reverts and true no-ops consume no
+      sequence. Canonical on-chain inclusion order is authoritative; worker timestamps, API arrival, and database time
+      cannot reorder or invent mutations. Public mirrors roll back reorged entries and expose finalized canonical
+      order. A duplicate sequence, unexplained gap, or pre/post discontinuity is a public synchronization failure,
+      never silently healed.</p>
+      <p>Each outflow requires a direct on-chain call from the current operator or a relayed EIP-712 signature
+      from that same current address. The authorization binds action, chain ID, verifying vault, operator
+      generation, recipient, amount, reason code, nonzero details hash, exact current global nonce,
+      <code>issuedAt</code>, and deadline. Nonces are one-use and never reset
+      on rotation. Expired, replayed, wrong-chain, wrong-vault, and former-operator signatures fail before any
+      mutation. A backend API key, bearer token, server session, or relayer identity is never authority alone.</p>
+      <p>Every outflow carries exactly one public reason code from <code>operations</code>, <code>security</code>,
+      <code>purchase_recovery</code>, <code>migration_bypass</code>, <code>retirement</code>, <code>other</code>, or
+      <code>reconciliation_outflow</code>, plus a nonzero <code>detailsHash</code> of the canonical explanation bytes.
+      Any outflow that debits reconciliation backing must use <code>reconciliation_outflow</code>; a generic reason is
+      rejected, and the dedicated code is rejected when no reconciliation backing is touched. The caller cannot
+      choose the accounting bucket or reconciliation record. Code and hash remain immutable
+      if off-chain text disappears; availability never gates execution. Direct and relayed outflows both require
+      the exact <code>nextOutflowNonce</code> and increment that one global counter on success. The current operator
+      may call <code>invalidateOutflowNonces(newNextNonce)</code> to advance past signed authorizations without
+      moving ETH; it requires a strict increase, emits old/new nonce, and changes no bucket, reservation,
+      allocation, or purchase cap.</p>
+      <p>A relayed authorization is valid only when <code>issuedAt &lt;= block.timestamp &lt;= deadline</code>, the
+      deadline is later than issue time, and the whole interval is at most one hour. Future-issued, expired,
+      zero/reversed, or longer-lived signatures fail before signer, nonce, bucket, or reservation mutation.
+      Direct calls are live authorization without a signature-lifetime window, but consume the same nonce and
+      reason fields.</p>
+      <p>Every operator outflow requires a nonzero recipient. OMERTÀ exposes no <code>operator_burn</code>,
+      zero-address transfer, or other intentional ETH-burning action because no product scenario justifies ETH
+      destruction. The vault cannot prove an arbitrary nonzero destination is recoverable; that remains part of
+      the disclosed operator trust.</p>
+      <p>The current <code>mainOperator</code> may directly renounce. Renunciation cannot be relayed and requires
+      <code>msg.sender == mainOperator</code>. It sets the role to zero, cancels pending nomination, increments
+      generation, and invalidates every signed authorization like Safe zero-disable. It moves no ETH and changes
+      no nonce, bucket, reservation, allocation, or cap. The event publishes former operator/new generation;
+      renunciation itself names no successor, so orderly handoff uses instant <code>replaceMainOperator</code>.</p>
+      <p><code>mainOperator</code> may be an EOA or ERC-1271 smart-contract wallet. Direct execution always requires
+      <code>msg.sender == mainOperator</code>. Relay uses exact ECDSA recovery for an operator without code and the
+      exact ERC-1271 <code>isValidSignature</code> magic value for the same EIP-712 digest for one with code. Revert,
+      out-of-gas, malformed data, non-magic response, or signer-type mismatch fails closed before nonce or
+      accounting mutation. Failed ERC-1271 never falls back to ECDSA, nor failed ECDSA to arbitrary validation.</p>
+      <p><code>operator_outflow</code> sends ETH to the arbitrary recipient with empty calldata only. The vault
+      exposes no arbitrary-call payload, <code>delegatecall</code>, token approval, token transfer, or Stock
+      Token/NFT movement. A contract recipient's payable <code>receive</code> or fallback may execute, protected
+      by checks-effects-interactions and a reentrancy guard. Transfer failure rolls the whole outflow back. Any
+      richer interaction happens after ETH leaves, from the operator or recipient without vault authority.</p>
+      <p>Operator outflow consumes available ETH first, unattributed ETH second, ordinary reserved ETH third, and
+      <code>reconciliation_pending</code> ETH last; the caller cannot select a bucket. If ordinary reservations are
+      necessary, it cancels the minimum number of whole reservations, ordered by amount
+      descending, then later execution deadline first, then intent ID ascending. No intent remains partially funded;
+      excess released from cancelled reservations becomes available. If reconciliation backing is still required, it
+      debits greatest backed amount first, then oldest <code>reconciliationStartedAt</code>, then lowest intent ID, fully
+      exhausting records before at most one partial debit. The transaction immediately publishes each
+      cancellation and an <code>operator_outflow</code> with operator, authorization path, recipient, amount,
+      reason code, details hash, nonce, affected intents, and pre/post balances and buckets. A failed ETH transfer rolls back
+      every accounting and cancellation change. Public boards show operator rotation, outflows, and cancellations.</p>
+      <p>Normal buys obey ballot input, per-purchase cap, citywide daily cap, exact-version rolling-30-day cap,
+      and available unreserved balance. Actual input plus input fees consumes capacity; gas and failed attempts
+      do not. Success atomically consumes capacity. Safe may lower immediately without selling or rewriting;
+      increases need public finalized/synchronized Safe execution. <code>exposure_cap_reached</code> buys no
+      substitute and leaves remaining ETH pooled. Splitting cannot evade one-success. Public state shows caps,
+      use, capacity, window, and wall. Main-operator ETH outflows bypass purchase caps as withdrawals and can
+      never be reported as buys.</p>
+      <p>Canonical state-preserving vault migration remains a public Safe proposal delayed at least 48 hours,
+      binding old/successor vault, chain, successor code hash, full amount, old/new state hashes, evidence,
+      earliest execution, and expiry. It requires no pending intent or deterministic recreation, identical
+      buyer walls, full reconciliation, atomic state/balance movement, preserved surplus class, closed predecessor
+      reservations, finality, sync, and public proof. Emergency response is immediate pause. Separately,
+      <code>mainOperator</code> may bypass the process and move any/all ETH immediately and arbitrarily; that is
+      only <code>operator_outflow</code>, moves no state/certification, and cancels impacted intents. On permanent
+      retirement the operator may dispose of pool ETH arbitrarily. Public history never mislabels outflow as
+      locked capital, purchase, refund, or canonical migration.</p>
+      <p>For each seven-day activity epoch, a human or agent account must record successful server-authoritative work
       in at least <b>3 distinct tracks</b> and reach score <b>25</b>. Failed attempts, page views, time online,
-      client telemetry, agent accounts, and NPC residents do not count. Above the gate, the full uncapped
+      client telemetry, and NPC residents do not count. Above the gate, the full uncapped
       score is multiplied by the activated Broker tier, and the purchased units are allocated pro rata.
+      Agent accounts use the same authenticated Broker-activation and Street-Deed claim routes and may
+      control, collect, trade, extract, re-import, and receive Stock Tokens through the deed's ERC-6551 account;
+      <code>agent_flag</code> never blocks those ownership or value-delivery steps.
+      A future verified OMR-staking multiplier will read the same actual on-chain gameplay stake as the Made Ladder and
+      preserve that activity gate and the recurring activation requirement.
+      Its chosen composition is <code>activation multiplier × activity score × stake multiplier</code>, with fixed public
+      stake tiers based on the finalized full-epoch time-weighted average. It is not live until the eligible source and
+      tier ceiling/thresholds are resolved and anti-flash snapshot history is implemented.
       Delivery waits for an extracted Street Deed and then goes automatically to that deed's ERC-6551
       account. <b>A pending allocation never expires</b> and is never reclaimed for inactivity or moved to a
       later epoch.</p>
@@ -949,11 +1938,14 @@ const SECTIONS = [
       casino/nightclub (an upgradeable front); NOT The Speakeasy (the deep club system); NOT The Den (the games).</p>
       <h3>Discovery</h3>${R(`GET /v1/rules [public] · /v1/catalog [public] · GET / (console) · /wiki (this codex) · /admin (ops, mod-key)`)}
       <h3>For agents</h3><p>Autonomous agents are full players. Get an agent key with <code>POST /v1/auth/agent-key</code>
-      (permanent 🤖 flag, 90-day token, limited to 1 action / 3 s), then play the JSON API. Agents compete on SKILL —
-      the anti-abuse sources (referrals, social tasks, assassin reputation) are for humans only; every economic loop is
-      open.</p>
+      (permanent 🤖 flag, 90-day token, limited to 1 action / 3 s), then play the JSON API. Agent Turn v3 keeps its
+      EV-ranked executable queue separate from read-only Deep City coverage across 40 systems; Agent Alpha is the
+      bounded owner-operated reference runner for one durable identity. Every economic loop, Street Deed control,
+      Broker weighting, Stock Token allocation, and token-bound delivery is open on the same gates as human play.
+      One direct minted, qualified, human-eligible non-agent recruit may produce a finite budgeted agent cash claim;
+      raw reach, early spark, downstream and agent recruits, social-task cash, and assassin-reputation status do not.</p>
       ${R(`GET /agents (agent quickstart) · /openapi.json (OpenAPI 3.1) · /llms.txt (discovery index)`)}
-      ${R(`GET /v1/opportunities (the Opportunity Board — open actions and skill loops, ranked by estimated value) · /v1/leaderboard/agents (the agent leaderboard)`)}` },
+      ${R(`GET /v1/agent/turn · POST /v1/agent/act · GET /v1/opportunities (the Opportunity Board — open actions and skill loops, ranked by estimated value) · /v1/arena (the public, banded Arena snapshot) · /v1/leaderboard/agents (the authenticated detailed agent leaderboard)`)}` },
 ];
 
 const GROUP_ORDER = ['Start','The Basics','Money','Money & Legit','Crews & Family','The City & the World',

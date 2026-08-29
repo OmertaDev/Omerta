@@ -698,7 +698,8 @@ export const M4 = {
   // STEPPED PAYOUT — "the spark": a small, EARLY cash payout the moment a recruit shows real early
   // engagement (level 3 + 10 jobs), so the referrer gets fast feedback long before the full
   // qualification (L8/40 jobs/3 check-ins/$25k). Cash only (never $OMR — that stays on the full
-  // gate), agent-excluded, ONCE ever. Still requires real playtime, not raw signup → Sybil-bounded.
+  // gate), excluded from the AGENT recruiter profile, ONCE ever. Agents start at the separately
+  // budgeted full qualification milestone; weak early feedback is deliberately human-profile only.
   REF_SPARK: { level: 3, jobs: 10, recruiterCash: 2500, recruitCash: 1500 },
   // THE LATE CLAIM (§7.13 funnel fix): a recruit who missed the referral field at creation (or
   // arrived without a ?ref link) can still name who sent them, within this window of ACCOUNT
@@ -712,7 +713,8 @@ export const M4 = {
   // excluded at every level. Sensitive design: recorded as gated; founder green-lit.
   REF_TIER2_CASH: 5000,
   // Time-boxed RECRUITMENT DRIVE ("the push"): a mod starts a window during which every referral
-  // CASH payout (spark + full + milestone + tier-2) is multiplied. $OMR is untouched (fund-bounded).
+  // HUMAN-profile cash payout (spark + full + milestone + tier-2) is multiplied. Agent claims never
+  // inherit this lever; a campaign must expand its own reserved acquisition budget. $OMR is untouched.
   // Bounded by real qualified recruits (each needs real playtime) → Sybil-bounded like the base loop.
   REF_PUSH_MAX_MULT: 5, REF_PUSH_MAX_HOURS: 336,
 };
@@ -5359,8 +5361,9 @@ export const CREW = {
   // The friction the ROLODEX/discovery layer can't fix alone: founding a crew and getting a REAL
   // friend to actually PLAY has no concrete payoff — the crew is all status/coordination. So a
   // referral who QUALIFIES (the audited §7.13 anti-Sybil wall — L8/40 jobs/3 check-ins/$25k, once
-  // ever, agent-excluded) AND runs in their recruiter's crew earns BOTH a bonus, paid inside the
-  // same qualify transaction. It is a bounded cash FAUCET that inherits every anti-Sybil property of
+  // ever) AND runs in their recruiter's crew earns the recruit-side bonus. A human recruiter also
+  // earns the recruiter-side bonus; an agent recruiter does not, because the explicit acquisition
+  // budget is their only cash leg. It is a bounded cash FAUCET that inherits every anti-Sybil property of
   // the qualification wall (an alt farm can't earn it any faster than a real recruit who levelled to
   // 8, pulled 40 jobs and banked $25k), on top of the crew co-membership check — so it rewards the
   // recruiter who both brought a friend AND ran with them. v24: social rewards are cash, never $OMR.
@@ -5652,9 +5655,9 @@ export const nftDecode = (tokenId) => {
   return { kind: isBoat ? 'boat' : 'car', catalogId: cat.id, rarity: tier.id };
 };
 
-// ── THE CAPO'S LICENSE — agent recruiting perks (capability, never cash) ──────────────────────────
-// Agents are excluded from every referral CASH faucet by design (the anti-Sybil wall — an agent can
-// manufacture accounts, so cash rewards would be farmed). The License rewards recruiting through the
+// ── THE CAPO'S LICENSE — retained-agent recruiting capability ladder ─────────────────────────────
+// The License remains capability-only and is separate from the budgeted, once-per-direct-recruit
+// qualified cash claim. The License rewards retained recruiting through the
 // three signals a Sybil ring CANNOT fake cheaply: the recruit is MINTED (paid the 0.01-ETH identity
 // fee — real money per head), RETAINED (telemetry inside RETAIN_DAYS — still actually playing), and
 // LEVELLED (≥ MIN_LVL — genuinely played, not a parked signup). What it grants is worth something
@@ -5831,8 +5834,10 @@ export const ACTIVITY = {
   },
   // A floor purely to refuse dust rows (the ACTIVATION.MIN_OMR shape). NOT a cap and never a cap.
   MIN_SCORE: 25,
-  // Excluded from the distribution entirely — the standing exclusion on every legend surface.
-  EXCLUDE_AGENTS: true,
+  // NPC residents are scenery, not economic counterparties. Agent accounts are first-class
+  // players: the flag changes cadence and human-faucet eligibility, never access to skill-based
+  // $OMR or RWA distributions.
+  EXCLUDE_AGENTS: false,
   EXCLUDE_NPC: true,
 };
 // A player's epoch score: Σ over their throttled actions of that tag's XP. Linear by construction.

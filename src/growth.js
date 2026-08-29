@@ -914,10 +914,9 @@ export async function sweepSocialClaims(pool) {
 // 0x SIWE link sets. Nothing exported here — POST /v1/wallet returns a redirect to SIWE.
 
 // ── THE CAPO'S LICENSE — the worker computes each agent's qualifying-recruit count ────────────────
-// An agent-recruited human NEVER gets `ref_paid` (maybeQualifyReferral rolls back when the recruiter
-// is an agent — the cash wall), so the License computes its OWN signal, and deliberately a HARDER
-// one than the cash referral's: the recruit must be MINTED (0.01 ETH — real money per identity, the
-// Sybil bound), RETAINED (telemetry inside CAPO.RETAIN_DAYS — still playing), and LEVELLED (a living
+// The License computes its OWN retained signal rather than treating a once-paid cash claim as
+// permanent retention: the recruit must be MINTED (0.01 ETH — real money per identity, the Sybil
+// bound), RETAINED (telemetry inside CAPO.RETAIN_DAYS — still playing), and LEVELLED (a living
 // street ≥ CAPO.MIN_LVL — genuinely played). The count lands on account_persistent.capo_recruits
 // (direct SQL, off persistAccount's positional list — clobber-safe) and is read per-request by the
 // throttle + the wire board. Flat queries + JS joins throughout (pg-mem: no correlated subqueries,
@@ -968,6 +967,23 @@ export async function capoBoard(pool, accountId) {
   const n = Number(ap.capo_recruits || 0);
   const perks = capoPerksOf(n);
   const next = CAPO.TIERS.find((t) => t.n > n) || null;
+  const budget = (await pool.query(
+    `SELECT * FROM agent_acquisition_budgets
+      WHERE campaign_id='organic' AND active=true
+      ORDER BY created_at, id LIMIT 1`,
+  )).rows[0] || null;
+  const claims = (await pool.query(
+    'SELECT state, amount FROM agent_referral_claims WHERE recruiter_account=$1',
+    [accountId],
+  )).rows;
+  const remainingClaims = budget
+    ? Math.max(0, Number(budget.max_recruits) - Number(budget.qualified_claims_paid))
+    : 0;
+  const remainingLiability = budget
+    ? Math.max(0, Math.min(Number(budget.reserved), Number(budget.liability_cap)) - Number(budget.paid))
+    : 0;
+  const qualifiedCash = budget ? Number(budget.qualified_cash) : 0;
+  const budgetUnexpired = !!budget && (!budget.expires_at || new Date(budget.expires_at) > new Date());
   return {
     agent: !!ap.agent_flag, recruits: n,
     tier: perks.tier, actionsPerSec: perks.rate, tapBonus: perks.tapBonus,
@@ -975,5 +991,35 @@ export async function capoBoard(pool, accountId) {
     tiers: CAPO.TIERS.map((t) => ({ n: t.n, name: t.name, actionsPerSec: t.rate, tapBonus: t.tapBonus })),
     counts: { minted: true, retainDays: CAPO.RETAIN_DAYS, minLevel: CAPO.MIN_LVL,
       how: 'a recruit counts while they are minted, have played inside the window, and hold a living street at the level floor' },
+    cash: {
+      eligible: !!ap.agent_flag,
+      profile: 'agent_human_v1',
+      directOnly: true,
+      qualifiedCash,
+      claims: {
+        paid: claims.filter((claim) => claim.state === 'paid').length,
+        held: claims.filter((claim) => claim.state === 'held').length,
+        earnedCash: claims.filter((claim) => claim.state === 'paid')
+          .reduce((total, claim) => total + Number(claim.amount), 0),
+      },
+      budget: {
+        configured: !!budget,
+        available: !!ap.agent_flag && budgetUnexpired && remainingClaims > 0
+          && remainingLiability >= qualifiedCash,
+        remainingClaims,
+        remainingLiability,
+        expiresAt: budget?.expires_at || null,
+      },
+      qualifies: {
+        recruitKind: 'human_eligible_non_agent',
+        minted: true,
+        level: M4.REF_GATES.level,
+        jobs: M4.REF_GATES.jobs,
+        checkins: M4.REF_GATES.checkins,
+        netWorth: M4.REF_GATES.netWorth,
+      },
+      excluded: ['clicks', 'impressions', 'posts', 'raw_signup', 'wallet_link',
+        'elapsed_time', 'agent_recruits', 'downline'],
+    },
   };
 }

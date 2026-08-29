@@ -133,7 +133,9 @@ export async function exposeSecret(ch, mark, secretId, client, h) {
 // the board — dirt you hold + demands hanging over YOUR head
 export async function secretsBoard(ch, client) {
   const held = (await client.query(
-    'SELECT * FROM secrets WHERE holder_character=$1 AND expires_at > now() ORDER BY created_at', [ch.id])).rows;
+    `SELECT s.* FROM secrets s
+       JOIN characters mark ON mark.account_id=s.target_account AND mark.alive
+      WHERE s.holder_character=$1 AND s.expires_at > now() ORDER BY s.created_at`, [ch.id])).rows;
   const onMe = (await client.query(
     `SELECT s.*, c.name AS holder_name FROM secrets s
        JOIN characters c ON c.id = s.holder_character AND c.alive
@@ -147,6 +149,7 @@ export async function secretsBoard(ch, client) {
     kinds: Object.fromEntries(Object.entries(SECRETS.KINDS).map(([id, k]) => [id, { name: k.name, hushCap: k.hushCap, exposeHeat: k.exposeHeat }])),
     held: held.map((s) => ({
       id: s.id, on: s.target_name, kind: s.kind, kindName: secretKindOf(s.kind)?.name || s.kind,
+      exposable: true,
       hushCap: secretKindOf(s.kind)?.hushCap || 0,
       demand: s.demand != null ? Number(s.demand) : null,
       deadlineSeconds: s.extort_deadline ? secondsTo(s.extort_deadline) : null,

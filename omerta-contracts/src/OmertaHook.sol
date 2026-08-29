@@ -3,6 +3,7 @@ pragma solidity 0.8.26;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Ownable2Step} from "@openzeppelin/contracts/access/Ownable2Step.sol";
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {IHooks} from "v4-core/interfaces/IHooks.sol";
 import {IPoolManager} from "v4-core/interfaces/IPoolManager.sol";
 import {Hooks} from "v4-core/libraries/Hooks.sol";
@@ -13,16 +14,17 @@ import {BalanceDelta} from "v4-core/types/BalanceDelta.sol";
 import {BeforeSwapDelta, BeforeSwapDeltaLibrary} from "v4-core/types/BeforeSwapDelta.sol";
 import {ModifyLiquidityParams, SwapParams} from "v4-core/types/PoolOperation.sol";
 import {StateLibrary} from "v4-core/libraries/StateLibrary.sol";
+import {IInitializerHook} from "./interfaces/IInitializerHook.sol";
+import {IOmrV4ObservationSource} from "./interfaces/IOmrV4ObservationSource.sol";
 
 /// @notice The seam the hook-native oracle (omerta-v4-hook-design.md §5, sequencing step 3) plugs
 ///         into. It exists NOW, event-driven, because THIS HOOK'S PERMISSION SET AND LOGIC ARE BOTH
 ///         IMMUTABLE: an observation seam the roadmap needs later cannot be added later. See the header note
 ///         "what an immutable hook must ship on day one".
 interface IOmrHookObserver {
-    /// @param key the pool the observation belongs to. The observer reads price state off the
-    ///        PoolManager itself, so the hook stays thin and every line of oracle logic — including
-    ///        the both-sided window bound and the fail-closed rule the oracle audit established —
-    ///        lives in the contract that gets audited as an oracle.
+    /// @param key the pool the observation belongs to. The observer samples the hook's cumulative
+    ///        tick source, so missed keeper calls cannot erase intervening price changes. Windowing,
+    ///        conversion and fail-closed policy remain isolated in the oracle contract.
     function observe(PoolKey calldata key) external;
 }
 
@@ -113,7 +115,7 @@ interface IOmrHookObserver {
 ///         Pool-local enforcement is the accepted cost (design §4): anyone may open an unhooked OMR
 ///         pool and trade untaxed. The defence is depth (protocol-owned liquidity), backed by
 ///         `OMR.sol`'s transfer tax retained ARMED AT ZERO as a universal backstop.
-contract OmertaHook is IHooks, Ownable2Step {
+contract OmertaHook is IHooks, IInitializerHook, IOmrV4ObservationSource, Ownable2Step {
     // ── permissions (immutable, encoded in this contract's address) ──────────────────────────────
     /// @notice The exact flag set this hook implements. The constructor refuses to deploy anywhere
     ///         that does not carry it, which is what makes the CREATE2 salt search part of the
@@ -148,6 +150,10 @@ contract OmertaHook is IHooks, Ownable2Step {
     IPoolManager public immutable poolManager;
     /// @notice The taxed token. A pool is only allowed on this hook if one of its currencies is OMR.
     address public immutable omr;
+    /// @inheritdoc IInitializerHook
+    /// @dev This must be the exact singleton LBPStrategy configured in Liquidity Launcher. The
+    ///      strategy verifies it through ERC-165 before it accepts the launch configuration.
+    address public immutable authorized;
 
     // ── configuration (Safe) ─────────────────────────────────────────────────────────────────────
     uint256 public sellTaxBps; // 0 = off (the deploy default). The TOTAL rate.
@@ -210,6 +216,20 @@ contract OmertaHook is IHooks, Ownable2Step {
 
     mapping(Currency => Owed) public owed;
 
+    /// @dev One packed slot per pool. `tickCumulative` is the integral of the active tick over chain
+    ///      seconds, matching the v3 oracle convention. It is updated before replacing `tick` with
+    ///      each swap's post-swap tick, so every interval is charged to the price that actually
+    ///      prevailed during it. The uint32 timestamp and int56 cumulative deliberately use v3's
+    ///      wrapping arithmetic; differences remain correct across the uint32 timestamp rollover.
+    struct TickAccumulator {
+        int56 tickCumulative;
+        int24 tick;
+        uint32 blockTimestamp;
+        bool initialized;
+    }
+
+    mapping(PoolId => TickAccumulator) private _tickAccumulators;
+
     // ── events ───────────────────────────────────────────────────────────────────────────────────
     /// @notice One per taxed swap. `sender` is the PoolManager's caller — for an ordinary trade that
     ///         is the ROUTER, not the person (see "what this does not do"). It is emitted as
@@ -244,6 +264,7 @@ contract OmertaHook is IHooks, Ownable2Step {
     error BadBps();
     error ZeroAddress();
     error PoolNotAllowed();
+    error InvalidInitializer(address caller, address expected);
     error NothingToSweep();
     /// @dev The opening window's two refusals. Named separately from `PoolNotAllowed` so a swapper
     ///      who hits one can tell "this pool is not for me" from "you are early and too big".
@@ -255,13 +276,24 @@ contract OmertaHook is IHooks, Ownable2Step {
         _;
     }
 
-    constructor(IPoolManager poolManager_, address omr_, address safe) Ownable(safe) {
-        if (address(poolManager_) == address(0) || omr_ == address(0) || safe == address(0)) revert ZeroAddress();
+    constructor(IPoolManager poolManager_, address omr_, address safe, address authorizedInitializer) Ownable(safe) {
+        if (
+            address(poolManager_) == address(0) || omr_ == address(0) || safe == address(0)
+                || authorizedInitializer == address(0)
+        ) revert ZeroAddress();
         // The permission bits ARE the address. Deploying to an address that does not carry exactly
         // this flag set would silently give the pool a different hook contract than the one audited.
         if (uint160(address(this)) & Hooks.ALL_HOOK_MASK != HOOK_FLAGS) revert HookAddressMismatch();
         poolManager = poolManager_;
         omr = omr_;
+        authorized = authorizedInitializer;
+    }
+
+    /// @inheritdoc IERC165
+    /// @dev This is the same interface signal checked by Liquidity Launcher's MigratorParams.validateHook.
+    function supportsInterface(bytes4 interfaceId) external pure returns (bool) {
+        return interfaceId == type(IInitializerHook).interfaceId
+            || interfaceId == type(IOmrV4ObservationSource).interfaceId || interfaceId == type(IERC165).interfaceId;
     }
 
     // ── admin (the Safe) ─────────────────────────────────────────────────────────────────────────
@@ -398,7 +430,13 @@ contract OmertaHook is IHooks, Ownable2Step {
 
     /// @notice THE POOL GATE. One side must be OMR; the other must be an allowed quote currency.
     ///         Without this, anyone could mint this contract's events out of a worthless pool.
-    function beforeInitialize(address, PoolKey calldata key, uint160) external view onlyPoolManager returns (bytes4) {
+    function beforeInitialize(address sender, PoolKey calldata key, uint160)
+        external
+        view
+        onlyPoolManager
+        returns (bytes4)
+    {
+        if (sender != authorized) revert InvalidInitializer(sender, authorized);
         bool zeroIsOmr = Currency.unwrap(key.currency0) == omr;
         bool oneIsOmr = Currency.unwrap(key.currency1) == omr;
         if (zeroIsOmr == oneIsOmr) revert PoolNotAllowed(); // neither side is OMR (both is impossible)
@@ -407,12 +445,19 @@ contract OmertaHook is IHooks, Ownable2Step {
         return IHooks.beforeInitialize.selector;
     }
 
-    function afterInitialize(address, PoolKey calldata key, uint160, int24) external onlyPoolManager returns (bytes4) {
+    function afterInitialize(address, PoolKey calldata key, uint160, int24 tick)
+        external
+        onlyPoolManager
+        returns (bytes4)
+    {
         // Stamp the birth block. Written ONCE, here, and never updated anywhere — that is what makes
         // the opening window non-renewable, and it is why this is recorded rather than configured.
         PoolId id = key.toId();
         openedAt[id] = block.number;
         openingEndsAt[id] = block.number + antiSnipeBlocks;
+        _tickAccumulators[id] = TickAccumulator({
+            tickCumulative: 0, tick: tick, blockTimestamp: uint32(block.timestamp), initialized: true
+        });
         emit PoolOpened(id, block.number);
         emit ObservationRequested(id);
         return IHooks.afterInitialize.selector;
@@ -485,9 +530,11 @@ contract OmertaHook is IHooks, Ownable2Step {
         BalanceDelta delta,
         bytes calldata
     ) external onlyPoolManager returns (bytes4, int128) {
-        emit ObservationRequested(key.toId());
+        PoolId id = key.toId();
+        uint160 postSqrtPriceX96 = _writeTickAccumulator(id);
+        emit ObservationRequested(id);
 
-        (Currency feeCurrency, uint256 total) = _fee(key, params, delta);
+        (Currency feeCurrency, uint256 total) = _fee(key, params, delta, postSqrtPriceX96);
         if (total == 0) return (IHooks.afterSwap.selector, 0);
 
         _accrue(sender, key, feeCurrency, total); // effects
@@ -495,10 +542,50 @@ contract OmertaHook is IHooks, Ownable2Step {
         return (IHooks.afterSwap.selector, int128(uint128(total)));
     }
 
+    /// @inheritdoc IOmrV4ObservationSource
+    /// @dev Counterfactually brings the accumulator forward through an idle interval. No keeper is
+    ///      needed to make quiet-pool time count, and no external contract is entered from a hook
+    ///      callback. An unknown pool reports `initialized = false` instead of fabricating tick 0.
+    function currentTickCumulative(PoolId id)
+        external
+        view
+        returns (int56 tickCumulative, uint32 blockTimestamp, bool initialized)
+    {
+        TickAccumulator memory accumulator = _tickAccumulators[id];
+        if (!accumulator.initialized) return (0, 0, false);
+
+        blockTimestamp = uint32(block.timestamp);
+        uint32 elapsed;
+        unchecked {
+            elapsed = blockTimestamp - accumulator.blockTimestamp;
+            tickCumulative = accumulator.tickCumulative + int56(accumulator.tick) * int56(uint56(elapsed));
+        }
+        initialized = true;
+    }
+
+    /// @dev Accrue the tick that prevailed since the prior write, then adopt the post-swap tick.
+    ///      This is deliberately internal bookkeeping only: the oracle's window policy and price
+    ///      conversion remain outside the PoolManager callback path.
+    function _writeTickAccumulator(PoolId id) private returns (uint160 sqrtPriceX96) {
+        TickAccumulator storage accumulator = _tickAccumulators[id];
+        if (!accumulator.initialized) return 0;
+
+        uint32 blockTimestamp = uint32(block.timestamp);
+        uint32 elapsed;
+        unchecked {
+            elapsed = blockTimestamp - accumulator.blockTimestamp;
+            accumulator.tickCumulative += int56(accumulator.tick) * int56(uint56(elapsed));
+        }
+        accumulator.blockTimestamp = blockTimestamp;
+        int24 tick;
+        (sqrtPriceX96, tick,,) = StateLibrary.getSlot0(poolManager, id);
+        accumulator.tick = tick;
+    }
+
     /// @dev Which currency the fee lands in and how much of it. Returns `total == 0` — the "charge
     ///      nothing" answer — for a buy, for an unrecognised pool, and whenever the rate is off.
     ///      Split out from `afterSwap` because the two together do not fit the EVM's stack.
-    function _fee(PoolKey calldata key, SwapParams calldata params, BalanceDelta delta)
+    function _fee(PoolKey calldata key, SwapParams calldata params, BalanceDelta delta, uint160 postSqrtPriceX96)
         private
         view
         returns (Currency feeCurrency, uint256 total)
@@ -515,7 +602,7 @@ contract OmertaHook is IHooks, Ownable2Step {
         // rather than permanent. The permanent buy-side rate the four-slice resolution calls for is
         // deliberately NOT this (design §3): it is an economic surface with a fourth recipient, and it
         // should not arrive smuggled in behind a launch guard.
-        uint256 rate = isSell ? _sellRate(key) : _openingBuyRate(key);
+        uint256 rate = isSell ? _sellRate(postSqrtPriceX96) : _openingBuyRate(key);
         if (rate == 0) return (feeCurrency, 0);
 
         // The unspecified currency is the OUTPUT for an exact-input swap and the INPUT for an
@@ -539,7 +626,7 @@ contract OmertaHook is IHooks, Ownable2Step {
     ///      there is no oracle, no liquidity math, and nothing for a manipulated feed to loosen.
     ///      The result can only ever sit BETWEEN `sellTaxBps` and `surgeMaxBps`, both of which the
     ///      Safe set under `MAX_SELL_TAX_BPS` — the anti-rug wall binds the surge by construction.
-    function _sellRate(PoolKey calldata key) private view returns (uint256) {
+    function _sellRate(uint160 postSqrtPriceX96) private view returns (uint256) {
         uint256 base = sellTaxBps;
         uint256 ceil = surgeMaxBps;
         if (ceil <= base) return base; // surge off, or configured at/below base: flat
@@ -551,8 +638,7 @@ contract OmertaHook is IHooks, Ownable2Step {
         }
         if (pre == 0) return base; // no snapshot (surge armed mid-tx?) — charge the base, never guess
 
-        (uint160 postX96,,,) = StateLibrary.getSlot0(poolManager, key.toId());
-        uint256 post = uint256(postX96);
+        uint256 post = uint256(postSqrtPriceX96);
         if (post == 0) return base;
 
         // |Δ sqrtPrice| / sqrtPrice, in bps. sqrtPrice moves ~half as much as price for small moves,

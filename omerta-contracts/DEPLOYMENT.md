@@ -1,5 +1,11 @@
 # OMERTA smart-contract deployment plan
 
+The Uniswap CCA/LBP genesis launch has its own fail-closed ceremony and replaces the original
+concurrent bootstrap-bond concept. Read and sign off [GENESIS-LAUNCH.md](./GENESIS-LAUNCH.md) before
+deploying the launch hook, proceeds splitter, or launcher calldata. The older sections below still
+describe the core suite and post-launch bond/oracle rail; where they conflict on genesis sale order,
+`GENESIS-LAUNCH.md` controls.
+
 This runbook deploys every contract that should have a top-level address while keeping every privileged
 path off until the Safe completes a separate, reviewable ceremony.
 
@@ -23,6 +29,7 @@ path off until the Safe completes a separate, reviewable ceremony.
 | 3 — post-pool oracle | `script/DeployTwapOracle.s.sol` | OmrTwapOracle |
 | 4 — v4 hook | `script/DeployHook.s.sol` | OmertaHook at a mined CREATE2 address |
 | Additive legacy RWA machine | `script/DeployRwaStockMachine.s.sol` | StockTokenRegistry and RwaStockBuyer; both born with automation/venue authority off |
+| 5 — post-genesis v4 oracle | `script/DeployV4TwapOracle.s.sol` | ownerless OmrV4TwapOracle |
 
 Six other top-level source files do not get a deployment transaction from the current release scripts:
 
@@ -386,39 +393,44 @@ Set `V4_POOL_MANAGER` to the official PoolManager for the target chain and verif
 uses the canonical Foundry CREATE2 proxy at `0x4e59…956C`, mines the exact low-14-bit permission pattern,
 and checks both the predicted and deployed addresses.
 
-For the Robinhood Chain Testnet rehearsal, use the guarded helper. It derives the deployed OMR, Safe,
-owners, and broadcaster from `deployments/46630/manifest.json`; pins the configured PoolManager runtime
-code hash; requires broadcaster nonce 16; reconciles the CREATE2 salt, address, and permission bits; and
-leaves the hook completely unarmed:
+The hook constructor now binds an exact authorized LBP strategy. The historical Robinhood testnet
+helper is deliberately retired: it pins the obsolete three-argument constructor, salt, and hook
+address, and chain 46630 has no reviewed official LBP strategy matching the pinned mainnet stack.
+Invoking it fails before simulation and sends nothing:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\script\Deploy-TestnetHook.ps1 -PreflightOnly
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\script\Deploy-TestnetHook.ps1
 ```
 
-The broadcast path requires the case-sensitive confirmation `DEPLOY HOOK` and the encrypted testnet
-keystore password. If Foundry sends the CREATE2 transaction and then stops, do not rerun the helper until
-the broadcast record, predicted hook bytecode, and broadcaster nonce have been inspected.
+Use a chain-4663 fork for an exact-stack rehearsal. A new testnet release requires deploying and
+reviewing the complete LiquidityLauncher/CCA/LBP stack first, setting `LBP_STRATEGY` to the resulting
+testnet contract, mining a new hook salt/address, and freezing a replacement manifest-aware helper.
+Never put the mainnet strategy address into a testnet configuration when it has no code on that chain.
 
 ```powershell
 cast code 0x4e59b44847b379578588920cA78FbF26c0B4956C --rpc-url $env:CHAIN_RPC_URL
-forge script script/DeployHook.s.sol:DeployHook --rpc-url $env:CHAIN_RPC_URL --sender $deployer --account omerta-deployer --always-use-create-2-factory -vvvv
-forge script script/DeployHook.s.sol:DeployHook --rpc-url $env:CHAIN_RPC_URL --sender $deployer --account omerta-deployer --always-use-create-2-factory --broadcast -vvvv
+forge script script/DeployHook.s.sol:DeployHook --rpc-url $env:CHAIN_RPC_URL --sender $deployer --always-use-create-2-factory -vvvv
 ```
 
-After deployment, verify `(uint160(hook) & 0x3fff) == 0x30cc` and `HOOK_FLAGS() == 0x30cc`. Leave the hook
-unarmed until a separate Safe batch sets recipients, approved quote currencies, anti-snipe/surge policy,
-and finally the sell tax.
+After deployment, verify `(uint160(hook) & 0x3fff) == 0x30cc`, `HOOK_FLAGS() == 0x30cc`, and
+`authorized() == LBP_STRATEGY`. Follow `GENESIS-LAUNCH.md`: native ETH is allowed only in the reviewed
+preparation batch, while recipients, observer, anti-snipe/surge policy, and sell tax remain dormant
+unless their separate ceremonies explicitly arm them.
 
 If anti-snipe is required, call `setAntiSnipe` before PoolManager initializes the pool: the duration is
 snapshotted into that pool's immutable `openingEndsAt` deadline, and later global changes cannot extend it.
-When an oracle observer is eventually armed, a keeper must consume `ObservationRequested` events and call
-`pokeObserver(poolKey)` after settlement; the hook never enters observer code from inside `afterSwap`.
+The hook now exposes `IOmrV4ObservationSource`: it integrates tick on every successful swap and brings
+quiet time forward counterfactually, so keeper timing cannot erase the price path. `OmrV4TwapOracle`
+samples that cumulative outside settlement. The backend keeper intentionally schedules `update()`
+from the oracle's own baseline rather than depending on `ObservationRequested` delivery; that event is
+an optional liveness hint, while a quiet pool still needs its completed window closed. The hook never
+enters observer code from inside `afterSwap`.
 
-Important: the current audited suite has no hook-native oracle. Deploying `OmertaHook` is complete; migrating
-the canonical market to v4 is not. Do not move canonical liquidity until a separately audited hook-native
-oracle has accumulated a full window and `OmertaBond` has been cut over. Until then, keep the V2-compatible
-pool/TWAP as the bond price source.
+After the CCA/LBP migration initializes the canonical pool, follow `GENESIS-LAUNCH.md`: deploy
+`DeployV4TwapOracle.s.sol` in simulation first, verify the exact pool/source/period, set it as the hook
+observer, accumulate a full bounded window, and cut `OmertaBond` over only after fork and audit sign-off.
+The older `OmrTwapOracle` remains the V2-compatible path for deployments that intentionally retain a
+separately reviewed V2 market; it is not the source for the native ETH/OMR genesis pool.
 
 ## 9. Activate backend addresses last
 
@@ -443,9 +455,15 @@ relevant variables on both processes and redeploy them together:
 | OmertaHook | `OMERTA_HOOK_ADDRESS` only when the v4 market is activated |
 
 Also set `CHAIN_RPC_URL`, the RPC-reported `CHAIN_ID`, and `VOUCHER_SIGNER_PK` only on the process that
-signs. Apply `deploy/fee-splits.env` in lockstep to API and worker. Run `npm --prefix .. run preflight`, confirm chain
-parity/oracle health in the admin panel, and test one low-value transaction on each live rail before raising
-caps.
+signs. During the v4 warmup set `OMR_V4_ORACLE_ADDRESS` plus a dedicated low-balance
+`V4_ORACLE_KEEPER_PK` on the worker; the key has no privileged role because `update()` is
+permissionless. Optional `V4_ORACLE_CONFIRMATIONS`, `V4_ORACLE_TX_TIMEOUT_MS`, and
+`V4_ORACLE_LEASE_MS` tune receipt depth/wait and failed-attempt cooldown. The worker simulates before
+signing, stores the raw signed transaction before sending it, and records submitted/confirmed/reverted
+state in `v4_oracle_keeper_attempts`; never share this key with another transaction workload. Apply
+`deploy/fee-splits.env` in lockstep to API and worker. Run `npm --prefix .. run preflight`, confirm
+chain parity/oracle health in the admin panel, and test one low-value transaction on each live rail
+before raising caps.
 
 ## 10. Emergency posture
 

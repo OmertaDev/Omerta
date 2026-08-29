@@ -1,0 +1,75 @@
+{
+  "ok": false,
+  "failedAt": "2026-08-27T07:50:33.093Z",
+  "error": "InvalidAddressError: Address \"0x70997970C51812dC3a010c7d01B50e0D17dc79c8\" is invalid.\n\n- Address must be a hex value of 20 bytes (40 hex characters).\n- Address must match its checksum counterpart.\n\nVersion: viem@2.55.19\n    at encodeAddress (file:///C:/Users/Jorge/Documents/Omerta/node_modules/.pnpm/viem@2.55.19/node_modules/viem/_esm/utils/abi/encodeAbiParameters.js:133:15)\n    at prepareParam (file:///C:/Users/Jorge/Documents/Omerta/node_modules/.pnpm/viem@2.55.19/node_modules/viem/_esm/utils/abi/encodeAbiParameters.js:79:16)\n    at prepareParams (file:///C:/Users/Jorge/Documents/Omerta/node_modules/.pnpm/viem@2.55.19/node_modules/viem/_esm/utils/abi/encodeAbiParameters.js:63:29)\n    at encodeAbiParameters (file:///C:/Users/Jorge/Documents/Omerta/node_modules/.pnpm/viem@2.55.19/node_modules/viem/_esm/utils/abi/encodeAbiParameters.js:54:28)\n    at encodeDeployData (file:///C:/Users/Jorge/Documents/Omerta/node_modules/.pnpm/viem@2.55.19/node_modules/viem/_esm/utils/abi/encodeDeployData.js:16:18)\n    at deployContract (file:///C:/Users/Jorge/Documents/Omerta/node_modules/.pnpm/viem@2.55.19/node_modules/viem/_esm/actions/wallet/deployContract.js:32:22)\n    at Object.deployContract (file:///C:/Users/Jorge/Documents/Omerta/node_modules/.pnpm/viem@2.55.19/node_modules/viem/_esm/clients/decorators/wallet.js:34:35)\n    at deploy (file:///C:/Users/Jorge/Documents/Omerta/tools/genesis-fork-rehearsal.js:300:33)\n    at run (file:///C:/Users/Jorge/Documents/Omerta/tools/genesis-fork-rehearsal.js:383:28)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)",
+  "forkBlock": "47277446",
+  "receipts": [
+    {
+      "label": "deploy:OMR",
+      "transactionHash": "0x7a0ff73022783761fd1ae098439e5d7ac347907ead24e7e562914fef217efa84",
+      "blockHash": "0x9df55ac0a7ffe1454317f87e1851c20fcc789b02a1a2fdaf3a1f54e23f18b093",
+      "blockNumber": "47277447",
+      "status": "success",
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": null,
+      "contractAddress": "0x79e8ab29ff79805025c9462a2f2f12e9a496f81d",
+      "cumulativeGasUsed": "1685507",
+      "gasUsed": "1685507",
+      "effectiveGasPrice": "1031258231",
+      "logs": [
+        {
+          "address": "0x79e8ab29ff79805025c9462a2f2f12e9a496f81d",
+          "logIndex": 0,
+          "topics": [
+            "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266"
+          ],
+          "data": "0x"
+        },
+        {
+          "address": "0x79e8ab29ff79805025c9462a2f2f12e9a496f81d",
+          "logIndex": 1,
+          "topics": [
+            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266"
+          ],
+          "data": "0x00000000000000000000000000000000000000000052b7d2dcc80cd2e4000000"
+        }
+      ]
+    },
+    {
+      "label": "deploy:OmertaHook:create2",
+      "transactionHash": "0xa00401a91fd07cad2288ba75226aaaf80b9d68ac14b017e8a72329d8bad662bc",
+      "blockHash": "0x41fd577e56d34ae4b381e0328dcc74791d27cae5e3687c51865ca56f2507df39",
+      "blockNumber": "47277448",
+      "status": "success",
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": "0x4e59b44847b379578588920ca78fbf26c0b4956c",
+      "contractAddress": null,
+      "cumulativeGasUsed": "2459043",
+      "gasUsed": "2459043",
+      "effectiveGasPrice": "1027614382",
+      "logs": [
+        {
+          "address": "0x15c98bff8d92cf3818ce29ca0e659ac3827a70cc",
+          "logIndex": 0,
+          "topics": [
+            "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266"
+          ],
+          "data": "0x"
+        }
+      ]
+    }
+  ],
+  "healthSnapshots": [],
+  "faultEvidence": {},
+  "deployments": {
+    "OMR": "0x79E8AB29Ff79805025c9462a2f2F12e9A496f81d",
+    "OmertaHook": "0x15C98bFF8D92cf3818ce29ca0E659Ac3827a70cC"
+  },
+  "anvilDiagnostics": ""
+}

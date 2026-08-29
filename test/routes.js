@@ -310,6 +310,7 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
     'omr-03-money-router.png',
     'omr-04-reserve-rwa.png',
     'omr-05-ohm-contrast.png',
+    'omr-06-the-omr-machine-1080x1350.png',
   ];
   const gameplayDiagrams = [
     'gameplay-01-choose-your-path.png',
@@ -326,7 +327,10 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
   const versionOf = new Map(diagrams.map((name) => [name, createHash('sha256')
     .update(readFileSync(new URL(`../public/art/${name}`, import.meta.url))).digest('hex').slice(0, 12)]));
   const surfaces = [
-    ['/', new Set(['omr-03-money-router.png', 'gameplay-01-choose-your-path.png'])],
+    ['/', new Set([
+      'omr-03-money-router.png', 'omr-04-reserve-rwa.png', 'omr-05-ohm-contrast.png',
+      'gameplay-01-choose-your-path.png',
+    ])],
     ['/wiki', new Set(diagrams)],
   ];
 
@@ -348,6 +352,12 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
 // does not reveal either its poster or source until the observer brings it near the viewport.
 {
   const landing = (await app.inject({ method: 'GET', url: '/' })).body;
+  for (const claim of [
+    'A MODIFIED OHM-STYLE MODEL', 'Protocol-owned liquidity', 'Agentic finance',
+    'Real-world assets', 'Tokenomics', 'Value flow chart', 'THE CRYPTO STACK BEHIND THE CITY',
+  ]) assert(landing.includes(claim), `the landing must explain ${claim}`);
+  assert(landing.includes('CHAIN RAIL DORMANT') && landing.includes('production EVM chain is not configured'),
+    'the landing must place the production-chain caveat beside the OMR model');
   assert(landing.includes('<picture class="hero-art" aria-hidden="true">'),
     'the LCP hero must be a real responsive picture, not a fixed desktop CSS background');
   assert(landing.includes('fetchpriority="high"'), 'the responsive LCP hero must remain high priority');

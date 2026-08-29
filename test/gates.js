@@ -24,9 +24,11 @@
 // Scope, honestly: this checks that a gate is REACHED, not that it is correct. `fire` calling
 // `safeHoused(ch)` proves the shield is consulted, not that the comparison is the right way round.
 import assert from 'node:assert';
+import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parse } from 'acorn';
 
 const SRC = fileURLToPath(new URL('../src/', import.meta.url));
 const relPath = (from, to) => path.relative(from, to).replaceAll('\\', '/');
@@ -49,7 +51,8 @@ const files = [];
 (function walk(d) {
   for (const e of fs.readdirSync(d, { withFileTypes: true })) {
     const p = path.join(d, e.name);
-    if (e.isDirectory()) walk(p); else if (e.name.endsWith('.js')) files.push(p);
+    if (e.isDirectory()) walk(p);
+    else if (e.name.endsWith('.js') || e.name.endsWith('.mjs')) files.push(p);
   }
 }(SRC));
 
@@ -1153,74 +1156,253 @@ const SCENERY_WAIVED = {
 // pool-exhaustion shape this project has already been bitten by twice (`bankPosition`, `/v1/bank`).
 // Sequential is correct AND identical in speed.
 //
-// Scope, stated honestly: this matches a `Promise.all` whose ELEMENTS mention an identifier the
-// enclosing function takes as a pg client. A viem client (`watcher.js`'s `getLogs` batch) is
-// genuinely concurrent and is not matched — it is not a pg connection. A `pool` is not matched
-// either: `pool.query()` acquires its own connection per call, so that form is safe by design.
+// Scope, stated honestly: every executable `Promise.all` in src/ is unsafe BY DEFAULT. JavaScript's
+// callable/alias forms make regex proof speculative: an async arrow, an object/class method, or a
+// helper-built task bag can close over the same checked-out client without naming it in the call.
+// The only passes are exact FILE + CONTENT site classifications below: a genuine pool fan-out or a
+// non-PG (viem RPC) batch. New concurrency therefore fails until somebody classifies that exact
+// call, and a moved/deleted/over-broad classification fails through the hit-count checks.
 {
-  // catalogue-or-declare: a `client` that is NOT a pg connection. viem batches real network reads
-  // concurrently and is the whole point of a Promise.all there, so each is waived BY SITE with the
-  // reason — a new one has to be classified rather than silently inheriting the exemption.
+  // catalogue-or-declare: safe concurrency earns a waiver BY SITE with a reason — a new one has to
+  // be classified rather than silently inheriting an exemption.
   // Keyed on FILE + a CONTENT mark inside the call's own argument, never a line number: the first
   // cut waived `src/chain.js:1533`, and a two-line COMMENT added 1,200 lines above it shifted the
   // site to :1535 and failed the build on an edit that changed nothing — a line-keyed waiver rots
   // on any edit above it (the preflight-restatement class, in a guard). Every waiver must MATCH
   // (the stale-waiver assert below), so a mark that stops matching fails loudly instead of leaving
   // a real pg site quietly waived.
-  const VIEM_CLIENTS = [
-    { file: 'src/bank.js', mark: 'readContract', why: 'viem, reading the Alchemist market' },
-    { file: 'src/watcher.js', mark: 'getLogs', why: 'viem, three fee-event streams over one range' },
-    { file: 'src/chain.js', mark: "functionName: 'PERIOD'", why: "viem, the oracle's PERIOD + lastUpdate" },
+  const SAFE_CONCURRENT_SITES = [
+    { file: 'src/bank.js', mark: "'collateralOf', 'debtOf', 'maxDebtOf'",
+      why: 'viem, five independent Alchemist market RPC reads' },
+    { file: 'src/watcher.js', mark: 'event: mintEv, ...range(from, to)',
+      why: 'viem, three independent fee-event RPC streams over one range' },
+    { file: 'src/chain.js', mark: "opt(fees, 'mintFee'), opt(fees, 'respawnFee')",
+      why: 'viem, two independent fee-contract RPC reads through the local opt helper' },
+    { file: 'src/chain.js', mark: "opt(addr, 'sellTaxBps'), opt(addr, 'taxDevBps')",
+      why: 'viem, four independent sell-tax RPC reads through the local opt helper' },
     { file: 'src/chain.js', mark: "functionName: 'polBps'", why: "viem, OmertaBond's three immutable bps" },
-    { file: 'src/chainparams.js', mark: 'readContract', why: 'viem, the control-room live-value sweep' },
+    { file: 'src/chainparams.js', mark: 'abi: abiFor(p), functionName: p.read',
+      why: 'viem, independent control-room live-value RPC reads' },
+    { file: 'src/v4oraclekeeper.js', mark: "functionName: 'MAX_WINDOW_MULT'",
+      why: 'viem, one read-only oracle snapshot assembled from independent contract and block RPC reads' },
+    { file: 'src/arena.js', mark: 'agentLeaderboard(pool, 25), agentEconomyStats(pool)',
+      why: 'a genuine app pool; each reader acquires its own connection and no request snapshot is shared' },
   ];
-  const waiverHits = new Map(VIEM_CLIENTS.map((w) => [`${w.file}#${w.mark}`, 0]));
+  const waiverHits = new Map(SAFE_CONCURRENT_SITES.map((w) => [`${w.file}#${w.mark}`, 0]));
   const offenders = [];
+  const ambiguous = [];
   let scanned = 0;
-  // balanced-paren extraction, not a fixed window: a `.slice(+N)` runs past the call into the next
-  // statement and reads as a finding, and a short one truncates the argument and reads as a pass.
-  const argOf = (src, i) => {
-    let d = 0;
-    for (let j = i; j < src.length; j++) {
-      if (src[j] === '(') d++;
-      else if (src[j] === ')') { d--; if (!d) return src.slice(i + 1, j); }
+  // Acorn owns JavaScript grammar. Its tokens recover the exact argument span for content-bound
+  // waivers; the AST decides whether a syntactic call is the static built-in member we audit.
+  const unwrapExpression = (node) => {
+    while (node && (node.type === 'ChainExpression' || node.type === 'ParenthesizedExpression')) {
+      node = node.expression;
     }
-    return '';
+    return node;
   };
+  const staticPromiseAllMember = (callee) => {
+    const member = unwrapExpression(callee);
+    if (member?.type !== 'MemberExpression') return null;
+    const object = unwrapExpression(member.object);
+    if (object?.type !== 'Identifier' || object.name !== 'Promise') return null;
+    if (!member.computed) {
+      return member.property?.type === 'Identifier' && member.property.name === 'all' ? object : null;
+    }
+    const property = unwrapExpression(member.property);
+    if (property?.type === 'Literal' && property.value === 'all') return object;
+    if (property?.type === 'TemplateLiteral' && property.expressions.length === 0 &&
+        property.quasis.length === 1 && property.quasis[0].value.cooked === 'all') return object;
+    return null;
+  };
+  const argumentTokens = (call, tokens, sourceName) => {
+    let q = tokens.findLastIndex((token) => token.type.label === ')' && token.end === call.end);
+    if (q < 0) throw new Error(`${sourceName}: Acorn omitted the closing token for a CallExpression`);
+    const close = tokens[q];
+    let depth = 0;
+    for (; q >= 0; q--) {
+      const label = tokens[q].type.label;
+      if (label === ')') depth++;
+      else if (label === '(' && --depth === 0) return { open: tokens[q], close };
+    }
+    throw new Error(`${sourceName}: Acorn tokens did not balance a CallExpression`);
+  };
+  const promiseAllCalls = (src, sourceName = '<fixture>') => {
+    const tokens = [];
+    let ast;
+    try {
+      ast = parse(src, { ecmaVersion: 'latest', sourceType: 'module', onToken: tokens });
+    } catch (error) {
+      error.message = `${sourceName}: ${error.message}`;
+      throw error;
+    }
+    const calls = [];
+    const visit = (node) => {
+      if (!node || typeof node !== 'object') return;
+      if (node.type === 'CallExpression') {
+        const promise = staticPromiseAllMember(node.callee);
+        if (promise) {
+          const { open, close } = argumentTokens(node, tokens, sourceName);
+          calls.push({ at: promise.start, arg: src.slice(open.end, close.start) });
+        }
+      }
+      for (const value of Object.values(node)) {
+        if (Array.isArray(value)) {
+          for (const child of value) if (child?.type) visit(child);
+        } else if (value?.type) visit(value);
+      }
+    };
+    visit(ast);
+    return calls.sort((a, b) => a.at - b.at);
+  };
+
+  const arenaPoolWaiver = SAFE_CONCURRENT_SITES.find((waiver) =>
+    waiver.mark === 'agentLeaderboard(pool, 25), agentEconomyStats(pool)');
+  assert(arenaPoolWaiver, 'the arena genuine-pool Promise.all retains its exact reviewed waiver');
+  const exactWaiverHits = (waiver) => promiseAllCalls(
+    fs.readFileSync(path.resolve(waiver.file), 'utf8'), waiver.file)
+    .filter(({ arg }) => arg.includes(waiver.mark)).length;
+  assert.equal(exactWaiverHits({ ...arenaPoolWaiver, file: 'src/opportunities.js' }), 0,
+    'the stale opportunities.js provenance cannot consume the moved arena pool waiver');
+  assert.equal(exactWaiverHits(arenaPoolWaiver), 1,
+    'the live arena.js provenance consumes the exact genuine-pool waiver once');
+
+  const balancedSource = "const x = Promise.all([')', /\\)/, `raw ) ${inside(')')}`]);";
+  assert.equal(promiseAllCalls(balancedSource)[0]?.arg,
+    "[')', /\\)/, `raw ) ${inside(')')}`]",
+    'Promise.all argument extraction must ignore parentheses in lexical literals');
+
+  // AST discovery contract. Positive fixtures are executable direct member calls regardless of
+  // trivia, chaining, parentheses, or static computed access. Negative fixtures are inert source
+  // text or a member VALUE, not a call.
+  const discoveryCases = [
+    { name: 'whitespace around dot', src: 'const x = Promise . all([one(), two()]);', want: 1 },
+    { name: 'block comments between member segments and call',
+      src: 'const x = Promise /* p */ . /* dot */ all /* call */ ([one(), two()]);', want: 1 },
+    { name: 'line comments between member segments and call',
+      src: `const x = Promise // p
+        . // dot
+        all // call
+        ([one(), two()]);`, want: 1 },
+    { name: 'computed single-quote access', src: "const x = Promise['all']([one(), two()]);", want: 1 },
+    { name: 'computed double-quote access', src: 'const x = Promise["all"]([one(), two()]);', want: 1 },
+    { name: 'optional dot member', src: 'const x = Promise?.all([one(), two()]);', want: 1 },
+    { name: 'optional call', src: 'const x = Promise.all?.([one(), two()]);', want: 1 },
+    { name: 'optional computed member', src: "const x = Promise?.['all']([one(), two()]);", want: 1 },
+    { name: 'parenthesized member call', src: 'const x = (Promise.all)([one(), two()]);', want: 1 },
+    { name: 'template-computed member', src: 'const x = Promise[`all`]([one(), two()]);', want: 1 },
+    { name: 'executable template expression', src: 'const x = `raw ${Promise . all([one(), two()])}`;', want: 1 },
+    { name: 'single-quoted appearance', src: "const x = 'Promise.all([one(), two()])';", want: 0 },
+    { name: 'double-quoted appearance', src: 'const x = "Promise.all([one(), two()])";', want: 0 },
+    { name: 'line-comment appearance', src: '// Promise.all([one(), two()])\nconst x = 1;', want: 0 },
+    { name: 'block-comment appearance', src: '/* Promise.all([one(), two()]) */ const x = 1;', want: 0 },
+    { name: 'regex appearance', src: 'const x = /Promise\\.all\\s*\\(/;', want: 0 },
+    { name: 'regex statement after if block',
+      src: 'if (ready) {} /Promise.all()/.test(text);', want: 0 },
+    { name: 'regex statement after function declaration',
+      src: 'function ready() {} /Promise.all()/.test(text);', want: 0 },
+    { name: 'raw template appearance', src: 'const x = `Promise.all([one(), two()])`;', want: 0 },
+    { name: 'dot member reference not called', src: 'const x = Promise.all;', want: 0 },
+    { name: 'computed member reference not called', src: "const x = Promise['all'];", want: 0 },
+  ];
+  for (const fixture of discoveryCases) assert.equal(promiseAllCalls(fixture.src).length, fixture.want,
+    `Promise.all AST discovery failed: ${fixture.name}`);
+  assert.throws(() => promiseAllCalls('export const = broken;'), SyntaxError,
+    'a parse failure must abort Promise.all auditing rather than silently returning no calls');
+
+  // Function-form and indirection pressure tests. Safe concurrency is not inferred from a name: it
+  // earns one exact content-bound waiver, which the fixture must consume. This is the contract the
+  // live source scan below needs to enforce, rather than merely recognizing named declarations.
+  const auditFixture = (src, waiver = null) => {
+    const [{ arg } = { arg: '' }] = promiseAllCalls(src);
+    const waived = waiver && waiver.file === 'fixture.js' && arg.includes(waiver.mark);
+    return { offenders: waived ? 0 : 1, waiverHits: waived ? 1 : 0 };
+  };
+  const fixtureCases = [
+    {
+      name: 'async arrow db task bag',
+      src: `const load = async (db) => {
+        const tasks = { one: db.query('SELECT 1'), two: db.query('SELECT 2') };
+        return Promise.all(Object.values(tasks));
+      };`,
+      want: { offenders: 1, waiverHits: 0 },
+    },
+    {
+      name: 'object async method db task bag',
+      src: `const loader = { async load(db) {
+        const tasks = { one: db.query('SELECT 1'), two: db.query('SELECT 2') };
+        return Promise.all(Object.values(tasks));
+      } };`,
+      want: { offenders: 1, waiverHits: 0 },
+    },
+    {
+      name: 'class async method db task bag',
+      src: `class Loader { async load(db) {
+        const tasks = { one: db.query('SELECT 1'), two: db.query('SELECT 2') };
+        return Promise.all(Object.values(tasks));
+      } }`,
+      want: { offenders: 1, waiverHits: 0 },
+    },
+    {
+      name: 'renamed handle delegated to helper task builder',
+      src: `const buildTasks = (store) => ({ one: readOne(store), two: readTwo(store) });
+      async function loadCoverage(store) {
+        const tasks = buildTasks(store);
+        return Promise.all(Object.values(tasks));
+      }`,
+      want: { offenders: 1, waiverHits: 0 },
+    },
+    {
+      name: 'genuine pool batch with exact waiver',
+      src: `const loadArena = async (pool) => Promise.all([
+        agentLeaderboard(pool, 25), agentEconomyStats(pool)
+      ]);`,
+      waiver: { file: 'fixture.js', mark: 'agentLeaderboard(pool, 25), agentEconomyStats(pool)' },
+      want: { offenders: 0, waiverHits: 1 },
+    },
+    {
+      name: 'non-PG viem batch with exact waiver',
+      src: `const loadChain = async (rpc) => Promise.all([
+        rpc.readContract({ functionName: 'one' }), rpc.readContract({ functionName: 'two' })
+      ]);`,
+      waiver: { file: 'fixture.js', mark: "rpc.readContract({ functionName: 'one' })" },
+      want: { offenders: 0, waiverHits: 1 },
+    },
+  ];
+  for (const fixture of fixtureCases) assert.deepEqual(auditFixture(fixture.src, fixture.waiver), fixture.want,
+    `shared-client fixture failed: ${fixture.name}`);
   for (const f of files) {
-    // deliberately NOT comment-stripped: a string-aware stripper is its own trap here (backticks in
-    // SQL comments, `https://` inside a literal — both have bitten this repo), and the pattern being
-    // matched is a call, which prose does not contain.
+    // Acorn parses every JS/MJS module, including files with no calls: a syntax failure aborts the
+    // gate. Token offsets keep exact waivers and line reports tied to the original source.
     const src = fs.readFileSync(f, 'utf8');
-    const re = /Promise\.all\s*\(/g;
-    let m;
-    while ((m = re.exec(src))) {
+    const shortFile = relPath(process.cwd(), f);
+    for (const call of promiseAllCalls(src, shortFile)) {
       scanned++;
-      const arg = argOf(src, m.index + m[0].length - 1);
-      const site = `${relPath(process.cwd(), f)}:${src.slice(0, m.index).split('\n').length}`;
-      // ANY mention of the identifier, not just `client.query(` or a literal `f(client, …)` argument.
-      // The narrow forms were the first cut and they had THREE false negatives — `roster.js` hands
-      // the client to a reader inside a `.map`, and `dynasty.js` calls a closure that captures it —
-      // and a guard that misses the sites it exists for is worse than no guard.
-      if (!/\bclient\b/.test(arg)) continue;
-      const shortFile = relPath(process.cwd(), f);
-      const waiver = VIEM_CLIENTS.find((w) => w.file === shortFile && arg.includes(w.mark));
-      if (waiver) { waiverHits.set(`${waiver.file}#${waiver.mark}`, waiverHits.get(`${waiver.file}#${waiver.mark}`) + 1); continue; }
+      const { at, arg } = call;
+      const site = `${relPath(process.cwd(), f)}:${src.slice(0, at).split('\n').length}`;
+      const waivers = SAFE_CONCURRENT_SITES.filter((w) => w.file === shortFile && arg.includes(w.mark));
+      if (waivers.length > 1) { ambiguous.push(`${site} (${waivers.map((w) => w.mark).join(' | ')})`); continue; }
+      if (waivers.length === 1) {
+        const waiver = waivers[0];
+        waiverHits.set(`${waiver.file}#${waiver.mark}`, waiverHits.get(`${waiver.file}#${waiver.mark}`) + 1);
+        continue;
+      }
       offenders.push(site);
     }
   }
   assert(scanned >= 8, `the Promise.all scan found only ${scanned} sites — the extractor has stopped `
     + 'reading src/, so a green run here would mean nothing');
-  // a waiver that matches NOTHING is stale — either the site changed shape (re-classify it) or it
-  // is gone (delete the waiver); leaving it standing is how a future pg site inherits the exemption
-  for (const [key, hits] of waiverHits) assert(hits >= 1,
-    `the viem waiver "${key}" matched no Promise.all site — stale: the site moved or changed shape; re-classify or delete it`);
-  assert.deepEqual(offenders, [], 'a Promise.all issues CONCURRENT queries on a SHARED pg client. One '
+  assert.deepEqual(ambiguous, [], 'one Promise.all matched multiple safe-concurrency waivers; the content marks are too broad:\n   '
+    + ambiguous.join('\n   '));
+  // A waiver must match EXACTLY one call: zero is stale; two means its content mark is broad enough
+  // to let a future unrelated batch inherit the exemption.
+  for (const [key, hits] of waiverHits) assert.equal(hits, 1,
+    `the safe-concurrency waiver "${key}" matched ${hits} Promise.all sites — it must identify exactly one; re-classify, tighten, or delete it`);
+  assert.deepEqual(offenders, [], 'an UNCLASSIFIED Promise.all may issue concurrent queries on a SHARED pg client. One '
     + 'connection cannot do that: node-pg queues them behind a deprecation warning today and THROWS '
     + 'from pg@9, and the parallel form buys no speed because the connection serializes them either '
     + 'way. Await them in sequence — do NOT hand each one its own connection (it would read outside '
     + `the request's transaction, and N connections per request is the pool-exhaustion shape):\n   - ${offenders.join('\n   - ')}`);
-  console.log(`✓ no Promise.all shares one pg client across concurrent queries (${scanned} sites scanned)`);
+  console.log(`✓ all ${scanned} Promise.all sites are exact-classified as genuine-pool/non-PG concurrency; no shared pg client is waived by syntax inference`);
 }
 
 // ═══ THE WIRE LEDGER — a notification a player cannot read is a notification they never got ═══════
@@ -1701,7 +1883,7 @@ const SCENERY_WAIVED = {
   }
 
 
-// ═══ THE ANY-OF-ARRAY BAN — a query shape that arms itself when somebody adds an index ═══════════
+// ═══ THE JS-ARRAY ANY BAN — a query shape that arms itself when somebody adds an index ═══════════
 // `WHERE col = ANY($1)` with a JS array bound to $1 is CORRECT SQL and correct on production
 // Postgres. pg-mem returns ZERO ROWS for it — silently, no error — so the suites go green over a
 // query that found nothing. src/game.js states the rule in its own comments twice and src/growth.js
@@ -1717,30 +1899,672 @@ const SCENERY_WAIVED = {
 // THE CORPUS IS THE `IN (…)` SITES, not the violations — a rule counted by its own violations floors
 // at zero the moment the tree is clean and then measures nothing forever (the ARTICLE LEDGER lesson).
 {
-  const bad = [], inForms = [];
+  const inForms = [];
+  // Each reviewed expression is identified independently by source, SQL statement, indexed column,
+  // and placeholder. The binding is checked from the query CallExpression's params ArrayExpression;
+  // approving one expression can never approve a neighbour that happens to share its source line.
+  const reviewedAny = [
+    { column: 'c.id', param: 1, sql: /FROM characters c JOIN account_persistent ap/i },
+    { column: 'c.account_id', param: 2, sql: /FROM characters c JOIN account_persistent ap/i },
+    { column: 'character_id', param: 1, sql: /SELECT character_id, gang_id FROM gang_members/i },
+    { column: 'account_id', param: 1, sql: /SELECT account_id, crew_id FROM crew_members/i },
+    { column: 'target_account', param: 2, sql: /FROM digs WHERE character_id=\$1/i },
+    { column: 'gang_id', param: 1, sql: /SELECT gang_id, COUNT\(\*\) n FROM gang_members/i },
+  ];
+  const unwrap = (node) => {
+    while (node && (node.type === 'ChainExpression' || node.type === 'ParenthesizedExpression'))
+      node = node.expression;
+    return node;
+  };
+  const isQueryCall = (node) => {
+    const callee = unwrap(node?.callee);
+    if (callee?.type !== 'MemberExpression') return false;
+    if (!callee.computed) return callee.property?.type === 'Identifier' && callee.property.name === 'query';
+    const property = unwrap(callee.property);
+    return property?.type === 'Literal' && property.value === 'query';
+  };
+  const staticText = (node) => {
+    if (node?.type === 'Literal' && typeof node.value === 'string') return node.value;
+    if (node?.type === 'TemplateLiteral' && node.expressions.length === 0)
+      return node.quasis.map((part) => part.value.cooked ?? part.value.raw).join('');
+    return null;
+  };
+  const makeScope = (parent, type) => ({ parent, type, bindings: new Map() });
+  const bindingScope = (scope, kind) => {
+    if (kind !== 'var') return scope;
+    while (scope.parent && scope.type !== 'function' && scope.type !== 'program') scope = scope.parent;
+    return scope;
+  };
+  const bindPattern = (pattern, scope, declaration, kind) => {
+    pattern = unwrap(pattern);
+    if (!pattern) return;
+    if (pattern.type === 'Identifier') {
+      bindingScope(scope, kind).bindings.set(pattern.name, { declaration, kind });
+      return;
+    }
+    if (pattern.type === 'RestElement') return bindPattern(pattern.argument, scope, declaration, kind);
+    if (pattern.type === 'AssignmentPattern') return bindPattern(pattern.left, scope, declaration, kind);
+    if (pattern.type === 'ArrayPattern') {
+      for (const element of pattern.elements) bindPattern(element, scope, declaration, kind);
+      return;
+    }
+    if (pattern.type === 'ObjectPattern') for (const property of pattern.properties)
+      bindPattern(property.type === 'RestElement' ? property.argument : property.value, scope, declaration, kind);
+  };
+  const lexicalBindings = (ast) => {
+    const scopeAt = new WeakMap();
+    const program = makeScope(null, 'program');
+    const visit = (node, scope) => {
+      if (!node || typeof node !== 'object') return;
+      if (node.type === 'Program') {
+        scopeAt.set(node, program);
+        for (const child of node.body) visit(child, program);
+        return;
+      }
+      if (node.type === 'BlockStatement') {
+        const block = makeScope(scope, 'block');
+        scopeAt.set(node, block);
+        for (const child of node.body) visit(child, block);
+        return;
+      }
+      if (node.type === 'FunctionDeclaration' || node.type === 'FunctionExpression'
+        || node.type === 'ArrowFunctionExpression') {
+        if (node.type === 'FunctionDeclaration' && node.id)
+          bindPattern(node.id, scope, node, 'function');
+        const fn = makeScope(scope, 'function');
+        scopeAt.set(node, fn);
+        if (node.type === 'FunctionExpression' && node.id) bindPattern(node.id, fn, node, 'function');
+        for (const parameter of node.params) bindPattern(parameter, fn, parameter, 'parameter');
+        for (const parameter of node.params) visit(parameter, fn);
+        visit(node.body, fn);
+        return;
+      }
+      if (node.type === 'CatchClause') {
+        const caught = makeScope(scope, 'block');
+        scopeAt.set(node, caught);
+        bindPattern(node.param, caught, node.param, 'catch');
+        visit(node.param, caught);
+        visit(node.body, caught);
+        return;
+      }
+      scopeAt.set(node, scope);
+      if (node.type === 'VariableDeclaration') {
+        for (const declaration of node.declarations)
+          bindPattern(declaration.id, scope, declaration, node.kind);
+      } else if (node.type === 'ImportDeclaration') {
+        for (const specifier of node.specifiers)
+          bindPattern(specifier.local, scope, specifier, 'import');
+      } else if ((node.type === 'ClassDeclaration' || node.type === 'ClassExpression') && node.id) {
+        bindPattern(node.id, scope, node, 'class');
+      }
+      for (const value of Object.values(node)) {
+        if (Array.isArray(value)) {
+          for (const child of value) if (child?.type) visit(child, scope);
+        } else if (value?.type) visit(value, scope);
+      }
+    };
+    visit(ast, program);
+    return { program, scopeAt };
+  };
+  const resolveBinding = (name, scope) => {
+    while (scope) {
+      if (scope.bindings.has(name)) return scope.bindings.get(name);
+      scope = scope.parent;
+    }
+    return null;
+  };
+  const boundBySqlTextArray = (params, param, lexical, canonicalBinding) => {
+    const binding = unwrap(params?.type === 'ArrayExpression' ? params.elements[param - 1] : null);
+    const callee = unwrap(binding?.type === 'CallExpression' ? binding.callee : null);
+    return !!canonicalBinding && callee?.type === 'Identifier' && callee.name === 'sqlTextArray'
+      && resolveBinding(callee.name, lexical.scopeAt.get(callee)) === canonicalBinding;
+  };
+  // This is deliberately a small SQL lexer rather than a regex. PostgreSQL permits comments between
+  // a keyword and `(`, treats SOME as an ANY synonym, and permits both words inside comments/quoted
+  // values where they are not executable. Trivia is discarded before the membership shape is read.
+  const sqlTokens = (sql) => {
+    const tokens = [];
+    let index = 0;
+    while (index < sql.length) {
+      if (/\s/.test(sql[index])) { index += 1; continue; }
+      if (sql.startsWith('--', index)) {
+        const end = sql.indexOf('\n', index + 2);
+        index = end < 0 ? sql.length : end + 1;
+        continue;
+      }
+      if (sql.startsWith('/*', index)) {
+        let depth = 1;
+        index += 2;
+        while (index < sql.length && depth) {
+          if (sql.startsWith('/*', index)) { depth += 1; index += 2; }
+          else if (sql.startsWith('*/', index)) { depth -= 1; index += 2; }
+          else index += 1;
+        }
+        continue;
+      }
+      if (sql[index] === "'") {
+        index += 1;
+        while (index < sql.length) {
+          if (sql[index] !== "'") { index += 1; continue; }
+          if (sql[index + 1] === "'") { index += 2; continue; }
+          index += 1;
+          break;
+        }
+        continue;
+      }
+      if (sql[index] === '"') {
+        const start = index;
+        index += 1;
+        while (index < sql.length) {
+          if (sql[index] !== '"') { index += 1; continue; }
+          if (sql[index + 1] === '"') { index += 2; continue; }
+          index += 1;
+          break;
+        }
+        tokens.push({ type: 'quoted', value: sql.slice(start, index), start });
+        continue;
+      }
+      if (sql[index] === '$') {
+        const dollarQuote = sql.slice(index).match(/^\$(?:[A-Za-z_][A-Za-z0-9_]*)?\$/)?.[0];
+        if (dollarQuote) {
+          const end = sql.indexOf(dollarQuote, index + dollarQuote.length);
+          index = end < 0 ? sql.length : end + dollarQuote.length;
+          continue;
+        }
+        const parameter = sql.slice(index).match(/^\$(\d+)/);
+        if (parameter) {
+          tokens.push({ type: 'parameter', value: parameter[0], param: Number(parameter[1]), start: index });
+          index += parameter[0].length;
+          continue;
+        }
+      }
+      const word = sql.slice(index).match(/^[A-Za-z_][A-Za-z0-9_$]*/)?.[0];
+      if (word) {
+        tokens.push({ type: 'word', value: word, upper: word.toUpperCase(), start: index });
+        index += word.length;
+        continue;
+      }
+      const symbol = sql.startsWith('::', index) ? '::' : sql[index];
+      tokens.push({ type: 'symbol', value: symbol, start: index });
+      index += symbol.length;
+    }
+    return tokens;
+  };
+  const membershipExpressions = (sql) => {
+    const tokens = sqlTokens(sql), expressions = [];
+    for (let index = 0; index + 1 < tokens.length; index += 1) {
+      const operator = tokens[index];
+      if (operator.type !== 'word' || !['ANY', 'SOME'].includes(operator.upper)
+        || tokens[index + 1].value !== '(') continue;
+      let depth = 1, end = index + 2;
+      for (; end < tokens.length && depth; end += 1) {
+        if (tokens[end].value === '(') depth += 1;
+        else if (tokens[end].value === ')') depth -= 1;
+      }
+      const args = tokens.slice(index + 2, depth ? tokens.length : end - 1);
+      const scalarParameter = args.length === 5 && args[0]?.type === 'parameter'
+        && args[1].value === '::' && args[2].type === 'word' && args[2].upper === 'TEXT'
+        && args[3].value === '[' && args[4].value === ']';
+      const canonicalOperator = tokens[index - 1]?.value === '=';
+      const prior = tokens[index - 2];
+      const qualified = tokens[index - 3]?.value === '.' && tokens[index - 4]?.type === 'word';
+      const column = canonicalOperator && prior?.type === 'word'
+        ? `${qualified ? `${tokens[index - 4].value}.` : ''}${prior.value}` : '<expression>';
+      expressions.push({ column, param: scalarParameter ? args[0].param : null,
+        operator: operator.upper, canonicalOperator, start: operator.start });
+    }
+    return expressions;
+  };
+  const collectAny = (source, sourceName = '<fixture>') => {
+    const ast = parse(source, { ecmaVersion: 'latest', sourceType: 'module', locations: true });
+    const lexical = lexicalBindings(ast);
+    const moduleSerializer = lexical.program.bindings.get('sqlTextArray');
+    const canonicalBinding = moduleSerializer?.kind === 'const'
+      && moduleSerializer.declaration?.type === 'VariableDeclarator' ? moduleSerializer : null;
+    const usages = [];
+    const reviewedQueryFunctions = new Set(['scopedSocialContext']);
+    const functionName = (node, parent) => node.id?.type === 'Identifier' ? node.id.name
+      : parent?.type === 'VariableDeclarator' && parent.id?.type === 'Identifier' ? parent.id.name : null;
+    const visit = (node, parent = null, insideReviewedQueryFunction = false) => {
+      if (!node || typeof node !== 'object') return;
+      const isFunction = node.type === 'FunctionDeclaration' || node.type === 'FunctionExpression'
+        || node.type === 'ArrowFunctionExpression';
+      const insideReviewed = insideReviewedQueryFunction || (sourceName === 'explore.js' && isFunction
+        && reviewedQueryFunctions.has(functionName(node, parent)));
+      if (insideReviewed && node.type === 'CallExpression' && isQueryCall(node)
+        && staticText(node.arguments[0]) === null) {
+        usages.push({ source: sourceName, line: node.loc?.start.line || 0, sql: '<non-literal>',
+          column: '<query>', param: null, operator: 'ANY/SOME', unsafeReviewedQuery: true,
+          dynamic: false, scalarLiteral: false });
+      }
+      if (node.type === 'Literal' || node.type === 'TemplateLiteral') {
+        const dynamic = node.type === 'TemplateLiteral' && node.expressions.length > 0;
+        const text = staticText(node) ?? (dynamic
+          ? node.quasis.map((part) => part.value.cooked ?? part.value.raw).join(' ') : null);
+        if (text) {
+          const call = parent?.type === 'CallExpression' && parent.arguments[0] === node && isQueryCall(parent)
+            ? parent : null;
+          const dynamicReviewedQuery = dynamic && !!call && sourceName === 'explore.js'
+            && reviewedAny.some((site) => site.sql.test(text));
+          if (dynamicReviewedQuery) {
+            usages.push({ source: sourceName, line: node.loc?.start.line || 0, sql: text,
+              column: '<dynamic>', param: null, operator: 'ANY/SOME', dynamic: true, scalarLiteral: false });
+          } else {
+            for (const expression of membershipExpressions(text)) usages.push({ source: sourceName,
+              line: (node.loc?.start.line || 1) + text.slice(0, expression.start).split('\n').length - 1,
+              sql: text, ...expression, dynamic,
+              scalarLiteral: !dynamic && !!call && !!expression.param
+                && boundBySqlTextArray(call.arguments[1], expression.param, lexical, canonicalBinding) });
+          }
+        }
+      }
+      for (const value of Object.values(node)) {
+        if (Array.isArray(value)) {
+          for (const child of value) if (child?.type) visit(child, node, insideReviewed);
+        } else if (value?.type) visit(value, node, insideReviewed);
+      }
+    };
+    visit(ast);
+    return usages;
+  };
+  const classifyAny = (usages, { complete = false } = {}) => {
+    const seen = new Set(), bad = [], approved = [];
+    for (const usage of usages) {
+      if (usage.unsafeReviewedQuery) {
+        bad.push(`${usage.source}:${usage.line} scopedSocialContext passes non-literal SQL to query(...)`);
+        continue;
+      }
+      if (usage.dynamic) {
+        bad.push(`${usage.source}:${usage.line} interpolates a reviewed ANY/SOME SQL statement`);
+        continue;
+      }
+      if (!usage.canonicalOperator) {
+        bad.push(`${usage.source}:${usage.line} uses ${usage.operator} with an unreviewed surrounding operator`);
+        continue;
+      }
+      const matches = reviewedAny.map((site, index) => ({ site, index })).filter(({ site }) =>
+        usage.source === 'explore.js' && usage.column === site.column && usage.param === site.param
+          && site.sql.test(usage.sql));
+      if (matches.length !== 1) {
+        bad.push(`${usage.source}:${usage.line} unreviewed ${usage.column}=${usage.operator}($${usage.param || '?'})`);
+        continue;
+      }
+      const [{ index }] = matches;
+      if (!usage.scalarLiteral) {
+        bad.push(`${usage.source}:${usage.line} ${usage.column}=${usage.operator}($${usage.param}) is not bound by the module sqlTextArray(...)`);
+        continue;
+      }
+      if (seen.has(index)) {
+        bad.push(`${usage.source}:${usage.line} duplicates reviewed occurrence ${usage.column}=${usage.operator}($${usage.param})`);
+        continue;
+      }
+      seen.add(index);
+      approved.push(usage);
+    }
+    if (complete) for (const [index, site] of reviewedAny.entries()) if (!seen.has(index))
+      bad.push(`explore.js missing reviewed occurrence ${site.column}=ANY/SOME($${site.param})`);
+    return { accepted: bad.length === 0, approved, bad };
+  };
+  const anyGuardAccepts = (source) => classifyAny(collectAny(source, 'explore.js')).accepted;
+  const canonicalSerializer = 'const sqlTextArray = (values) => String(values); ';
+  const exploreBytesForSeal = fs.readFileSync(path.join(SRC, 'explore.js'));
+  const exploreSourceForSeal = exploreBytesForSeal.toString('utf8');
+  const scopedDeclarationIn = (source) => {
+    const ast = parse(source, { ecmaVersion: 'latest', sourceType: 'module' });
+    const declarations = ast.body.filter((node) => node.type === 'FunctionDeclaration'
+      && node.id?.name === 'scopedSocialContext');
+    assert.equal(declarations.length, 1, 'seal mutation fixture starts from one top-level scopedSocialContext declaration');
+    return declarations[0];
+  };
+  const mutateScopedDeclaration = (mutate) => {
+    const declaration = scopedDeclarationIn(exploreSourceForSeal);
+    const original = exploreSourceForSeal.slice(declaration.start, declaration.end);
+    const changed = mutate(original);
+    assert.notEqual(changed, original, 'seal mutation fixture must actually change scopedSocialContext');
+    return exploreSourceForSeal.slice(0, declaration.start) + changed + exploreSourceForSeal.slice(declaration.end);
+  };
+  const replaceScopedOnce = (before, after) => mutateScopedDeclaration((source) => {
+    assert(source.includes(before), `seal mutation fixture cannot find ${before}`);
+    return source.replace(before, after);
+  });
+  // This is a review seal, not a generated snapshot. Updating the digest requires reviewing the whole
+  // function and deliberately replacing this literal. Canonical AST ignores comments, whitespace,
+  // quote style and source locations, while every syntactic callee/query/SQL/parameter/body change is
+  // semantic and therefore changes the digest. See the independently pinned canonicalizer fixture.
+  const REVIEWED_SCOPED_SOCIAL_CONTEXT_SHA256 = '54497b859d3ff1be3ddb06cb4b8d33b36b6a9e72290a84ed8205b0d912bb3c54';
+  const AST_SEAL_METADATA = new Set(['start', 'end', 'loc', 'raw']);
+  const canonicalAst = (value) => {
+    if (value === null || typeof value !== 'object') return value;
+    if (Array.isArray(value)) return value.map(canonicalAst);
+    const canonical = {};
+    for (const key of Object.keys(value).sort()) if (!AST_SEAL_METADATA.has(key)) {
+      const child = canonicalAst(value[key]);
+      if (child !== undefined) canonical[key] = child;
+    }
+    return canonical;
+  };
+  const scopedSocialContextDigest = (source) => {
+    let ast;
+    try { ast = parse(source, { ecmaVersion: 'latest', sourceType: 'module' }); }
+    catch { return null; }
+    const declarations = ast.body.filter((node) => node.type === 'FunctionDeclaration'
+      && node.id?.name === 'scopedSocialContext');
+    if (declarations.length !== 1) return null;
+    return createHash('sha256').update(JSON.stringify(canonicalAst(declarations[0]))).digest('hex');
+  };
+  assert.equal(scopedSocialContextDigest(
+    "function scopedSocialContext(db) { return db.query('SELECT 1', []); }"),
+  'b6239d1ec76f2cd76b1a3ce97b5f4599b60ba9d2a121ebdc917d46cd2446e00b',
+  'the canonical-AST helper retains its independently recomputed fixture digest');
+  const scopedSocialContextSealAccepts = (source) =>
+    scopedSocialContextDigest(source) === REVIEWED_SCOPED_SOCIAL_CONTEXT_SHA256;
+  // Authoritative boundary: exact tracked bytes, with CRLF normalized to LF solely so Git's Windows
+  // checkout policy cannot false-fail the review. Comments, whitespace and every other byte remain
+  // sealed. This literal was independently recomputed with PowerShell SHA256.HashData over the same
+  // byte-level CRLF normalization; it is never derived from the checked-out source at assertion time.
+  const REVIEWED_EXPLORE_FILE_SHA256 = 'd56b18801cd3109f84bae8caaa3ba7478c773eda4b223f4504e6f5ad8e871ffd';
+  const normalizeCrlfBytes = (value) => {
+    const bytes = Buffer.isBuffer(value) ? value : Buffer.from(value);
+    const normalized = Buffer.allocUnsafe(bytes.length);
+    let written = 0;
+    for (let index = 0; index < bytes.length; index += 1) {
+      if (bytes[index] === 13 && bytes[index + 1] === 10) index += 1;
+      normalized[written] = bytes[index];
+      written += 1;
+    }
+    return normalized.subarray(0, written);
+  };
+  const wholeExploreFileDigest = (bytes) =>
+    createHash('sha256').update(normalizeCrlfBytes(bytes)).digest('hex');
+  assert.equal(wholeExploreFileDigest(Buffer.from('seal\nfixture\n')),
+    'ab40ee53bd51c029356ee1b88f352c14760961e5c81db10cc550902f6aeab4ef',
+    'the whole-file hash helper retains its independently recomputed fixture digest');
+  assert.equal(wholeExploreFileDigest(Buffer.from('seal\r\nfixture\r\n')),
+    'ab40ee53bd51c029356ee1b88f352c14760961e5c81db10cc550902f6aeab4ef',
+    'CRLF and LF checkouts normalize to the same reviewed bytes');
+  const wholeExploreFileSealAccepts = (bytes) =>
+    wholeExploreFileDigest(bytes) === REVIEWED_EXPLORE_FILE_SHA256;
+  const normalizedExploreSource = exploreSourceForSeal.replace(/\r\n/g, '\n');
+  const reassignment = `
+scopedSocialContext = async function(db) {
+  const ids = [];
+  return db['que' + 'ry']('SELECT character_id FROM gang_' + 'members WHERE character_id = A' + 'NY($1::text[])', [ids]);
+};
+`;
+  const wholeFileSealCases = [
+    { name: 'reviewed tracked bytes', bytes: exploreBytesForSeal, accepted: true },
+    { name: 'LF checkout', bytes: Buffer.from(normalizedExploreSource), accepted: true },
+    { name: 'CRLF checkout', bytes: Buffer.from(normalizedExploreSource.replace(/\n/g, '\r\n')), accepted: true },
+    { name: 'appended computed double-obscured reassignment',
+      bytes: Buffer.from(exploreSourceForSeal + reassignment), accepted: false },
+    { name: 'prepended computed double-obscured reassignment',
+      bytes: Buffer.from(reassignment + exploreSourceForSeal), accepted: false },
+    { name: 'export alias and rebinding', bytes: Buffer.from(exploreSourceForSeal
+      + `\nexport { scopedSocialContext as reviewedSocialContext };${reassignment}`), accepted: false },
+    { name: 'indirect eval statement', bytes: Buffer.from(exploreSourceForSeal
+      + "\n(0, eval)('scopedSocialContext = async function () { return null; }');\n"), accepted: false },
+    { name: 'new Function rebinding', bytes: Buffer.from(exploreSourceForSeal
+      + "\nscopedSocialContext = new Function('return async function scopedSocialContext() { return null; }')();\n"),
+    accepted: false },
+    { name: 'added executable statement', bytes: Buffer.from(exploreSourceForSeal
+      + '\nvoid scopedSocialContext;\n'), accepted: false },
+    { name: 'added comment byte', bytes: Buffer.from(exploreSourceForSeal
+      + '\n// review seal bypass\n'), accepted: false },
+    { name: 'added whitespace byte', bytes: Buffer.from(exploreSourceForSeal + ' '), accepted: false },
+  ];
+  const currentScopedDeclaration = scopedDeclarationIn(exploreSourceForSeal);
+  const currentScopedSource = exploreSourceForSeal.slice(currentScopedDeclaration.start, currentScopedDeclaration.end);
+  const sealCases = [
+    { name: 'reviewed declaration', source: exploreSourceForSeal, accepted: true },
+    { name: 'whitespace is not semantic', source: replaceScopedOnce('async function scopedSocialContext',
+      'async   function   scopedSocialContext'), accepted: true },
+    { name: 'comments are not semantic', source: mutateScopedDeclaration((source) =>
+      source.replace('{', '{\n  /* review-seal ignores comments */')), accepted: true },
+    { name: 'computed template query member', source: replaceScopedOnce('db.query(', 'db[`query`]('), accepted: false },
+    { name: 'concatenated query member', source: replaceScopedOnce('db.query(', "db['que' + 'ry']("), accepted: false },
+    { name: 'destructured query alias', source: mutateScopedDeclaration((source) => source.replace('{',
+      '{\n  const { query } = db;').replace('db.query(', 'query.call(db,')), accepted: false },
+    { name: 'bound query alias', source: mutateScopedDeclaration((source) => source.replace('{',
+      '{\n  const query = db.query.bind(db);').replace('db.query(', 'query(')), accepted: false },
+    { name: 'Function.call query invocation', source: replaceScopedOnce('db.query(', 'db.query.call(db,'), accepted: false },
+    { name: 'sequence query invocation', source: replaceScopedOnce('db.query(', '(0, db.query).call(db,'), accepted: false },
+    { name: 'composite literal LHS', source: replaceScopedOnce('character_id = ANY($1::text[])',
+      "'' || character_id = ANY($1::text[])"), accepted: false },
+    { name: 'composite identifier LHS', source: replaceScopedOnce('character_id = ANY($1::text[])',
+      'role || character_id = ANY($1::text[])'), accepted: false },
+    { name: 'raw JavaScript array parameter', source: replaceScopedOnce('[sqlTextArray(ids)]', '[ids]'), accepted: false },
+    { name: 'alternate variable function form', source: mutateScopedDeclaration((source) =>
+      source.replace('async function scopedSocialContext', 'const scopedSocialContext = async function') + ';'),
+    accepted: false },
+    { name: 'alternate object method form', source: mutateScopedDeclaration(() =>
+      'const scopedHolder = { async scopedSocialContext(db, ch, onlineAccounts) { return null; } };'), accepted: false },
+    { name: 'alternate assignment function form', source: mutateScopedDeclaration(() =>
+      'let scopedSocialContext; scopedSocialContext = async function(db, ch, onlineAccounts) { return null; };'),
+    accepted: false },
+    { name: 'missing declaration', source: exploreSourceForSeal.slice(0, currentScopedDeclaration.start)
+      + exploreSourceForSeal.slice(currentScopedDeclaration.end), accepted: false },
+    { name: 'duplicate declaration', source: `${exploreSourceForSeal}\n${currentScopedSource}`, accepted: false },
+  ];
+  const anyGuardCases = [
+    {
+      name: 'reviewed scalar literal',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [sqlTextArray(ids)])",
+      accepted: true,
+    },
+    {
+      name: 'unshadowed module serializer through a function scope',
+      source: canonicalSerializer
+        + "function run() { return db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [sqlTextArray(ids)]); }",
+      accepted: true,
+    },
+    {
+      name: 'reviewed SOME synonym with module serializer',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = SOME /* trivia */ ($1::text[])', [sqlTextArray(ids)])",
+      accepted: true,
+    },
+    {
+      name: 'same-line extra ANY',
+      source: "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[]) OR role = ANY($2::text[])', [sqlTextArray(ids), ids])",
+      accepted: false,
+    },
+    {
+      name: 'block-comment-hidden extra ANY',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[]) OR role = ANY /* hidden */ ($2::text[])', [sqlTextArray(ids), ids])",
+      accepted: false,
+    },
+    {
+      name: 'line-comment-hidden extra ANY',
+      source: canonicalSerializer
+        + "db.query(`SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[]) OR role = ANY -- hidden\n ($2::text[])`, [sqlTextArray(ids), ids])",
+      accepted: false,
+    },
+    {
+      name: 'membership text inside a SQL comment is not executable',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[]) /* role = ANY($2::text[]) */', [sqlTextArray(ids)])",
+      accepted: true,
+    },
+    {
+      name: 'PostgreSQL SOME synonym with unsafe binding',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[]) OR role = SOME($2::text[])', [sqlTextArray(ids), ids])",
+      accepted: false,
+    },
+    {
+      name: 'multiline extra ANY',
+      source: `db.query(\`SELECT character_id, gang_id FROM gang_members
+        WHERE character_id = ANY($1::text[])
+           OR role = ANY($2::text[])\`, [sqlTextArray(ids), ids])`,
+      accepted: false,
+    },
+    {
+      name: 'duplicate reviewed occurrence',
+      source: "db.query('SELECT character_id FROM gang_members WHERE character_id = ANY($1::text[]) OR character_id = ANY($1::text[])', [sqlTextArray(ids)])",
+      accepted: false,
+    },
+    {
+      name: 'duplicate reviewed SOME synonym occurrence',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[]) OR character_id = SOME($1::text[])', [sqlTextArray(ids)])",
+      accepted: false,
+    },
+    {
+      name: 'dynamic reviewed template suffix',
+      source: canonicalSerializer
+        + 'db.query(`SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[]) ${extra}`, [sqlTextArray(ids)])',
+      accepted: false,
+    },
+    {
+      name: 'dynamic reviewed template splitting the membership keyword',
+      source: canonicalSerializer
+        + 'db.query(`SELECT character_id, gang_id FROM gang_members WHERE character_id = A${middle}NY($1::text[])`, [sqlTextArray(ids)])',
+      accepted: false,
+    },
+    {
+      name: 'reviewed function rejects a dynamic table and split ANY keyword',
+      source: canonicalSerializer
+        + 'async function scopedSocialContext(db, table, middle, ids) { return db.query(`SELECT character_id, gang_id FROM gang_${table} WHERE character_id = A${middle}NY($1::text[])`, [ids]); }',
+      accepted: false,
+    },
+    {
+      name: 'reviewed function rejects a dynamic table and split SOME keyword',
+      source: canonicalSerializer
+        + 'async function scopedSocialContext(db, table, middle, ids) { return db.query(`SELECT character_id, gang_id FROM gang_${table} WHERE character_id = S${middle}OME($1::text[])`, [ids]); }',
+      accepted: false,
+    },
+    {
+      name: 'reviewed function rejects a non-literal query argument',
+      source: canonicalSerializer
+        + 'async function scopedSocialContext(db, sql, ids) { return db.query(sql, [ids]); }',
+      accepted: false,
+    },
+    {
+      name: 'reviewed function permits a fully static query without membership',
+      source: canonicalSerializer
+        + "async function scopedSocialContext(db) { return db.query('SELECT target_account FROM secrets'); }",
+      accepted: true,
+    },
+    {
+      name: 'qualified OPERATOR form cannot hide ANY with a JavaScript array',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id OPERATOR(pg_catalog.=) ANY($1::text[])', [ids])",
+      accepted: false,
+    },
+    {
+      name: 'unqualified OPERATOR form cannot hide SOME with a JavaScript array',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id OPERATOR(=) SOME($1::text[])', [ids])",
+      accepted: false,
+    },
+    {
+      name: 'reviewed membership requires the explicit text-array cast',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1)', [sqlTextArray(ids)])",
+      accepted: false,
+    },
+    {
+      name: 'reviewed membership rejects a different array cast',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::varchar[])', [sqlTextArray(ids)])",
+      accepted: false,
+    },
+    {
+      name: 'membership text inside strings comments and dollar bodies is ignored',
+      source: canonicalSerializer
+        + "db.query(`SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[]) AND 'role = ANY($2::text[])' <> '' AND $$role = SOME($3::text[])$$ <> '' /* role = ANY($4::text[]) */`, [sqlTextArray(ids)])",
+      accepted: true,
+    },
+    {
+      name: 'JavaScript array at a reviewed placeholder',
+      source: "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [ids])",
+      accepted: false,
+    },
+    {
+      name: 'function parameter shadows the module serializer',
+      source: canonicalSerializer
+        + "function run(sqlTextArray) { return db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [sqlTextArray(ids)]); }",
+      accepted: false,
+    },
+    {
+      name: 'block-local declaration shadows the module serializer',
+      source: canonicalSerializer
+        + "{ const sqlTextArray = (values) => values; db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [sqlTextArray(ids)]); }",
+      accepted: false,
+    },
+    {
+      name: 'serializer alias is not the reviewed binding',
+      source: canonicalSerializer
+        + "const serializer = sqlTextArray; db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [serializer(ids)])",
+      accepted: false,
+    },
+    {
+      name: 'import alias is not the reviewed binding',
+      source: canonicalSerializer
+        + "import { sqlTextArray as serializer } from './serializer.js'; db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [serializer(ids)])",
+      accepted: false,
+    },
+    {
+      name: 'serializer wrapper is not the reviewed binding',
+      source: canonicalSerializer
+        + "const wrapper = (values) => sqlTextArray(values); db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [wrapper(ids)])",
+      accepted: false,
+    },
+    {
+      name: 'computed serializer callee is not the reviewed binding',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [(0, sqlTextArray)(ids)])",
+      accepted: false,
+    },
+    {
+      name: 'computed-property serializer callee is not the reviewed binding',
+      source: canonicalSerializer
+        + "db.query('SELECT character_id, gang_id FROM gang_members WHERE character_id = ANY($1::text[])', [globalThis['sqlTextArray'](ids)])",
+      accepted: false,
+    },
+  ];
+  const misclassifiedAnyFixtures = anyGuardCases.map((fixture) => ({
+    name: fixture.name, expected: fixture.accepted, actual: anyGuardAccepts(fixture.source),
+  })).filter((fixture) => fixture.actual !== fixture.expected);
+  assert.deepEqual(misclassifiedAnyFixtures, [],
+    'every adversarial SQL occurrence and serializer-binding mutation is classified independently');
+  const misclassifiedSealFixtures = sealCases.map((fixture) => ({ name: fixture.name,
+    expected: fixture.accepted, actual: scopedSocialContextSealAccepts(fixture.source) }))
+    .filter((fixture) => fixture.actual !== fixture.expected);
+  assert.deepEqual(misclassifiedSealFixtures, [],
+    'the scopedSocialContext review seal changes or fails for every syntactic mutation');
+  const misclassifiedWholeFileSealFixtures = wholeFileSealCases.map((fixture) => ({ name: fixture.name,
+    expected: fixture.accepted, actual: wholeExploreFileSealAccepts(fixture.bytes) }))
+    .filter((fixture) => fixture.actual !== fixture.expected);
+  assert.deepEqual(misclassifiedWholeFileSealFixtures, [],
+    'the authoritative explore.js byte seal rejects every change outside or inside the function');
   const files = [];
   const walk = (d) => { for (const e of fs.readdirSync(d)) {
     const q = path.join(d, e);
     if (fs.statSync(q).isDirectory()) walk(q); else if (q.endsWith('.js')) files.push(q);
   } };
   walk(SRC);
+  const usages = [];
   for (const f of files) {
-    // comments are STRIPPED first: the rule is cited by name in fifteen comments across src/ (that is
-    // how well known it is and how unenforced it was), and a scanner that reads prose reports every one
-    // of them as a violation — a mostly-wrong advisory is one people route around.
-    const txt = fs.readFileSync(f, 'utf8').split(/\r?\n/).map((l) => l.replace(/\/\/.*$/, '')).join('\n');
-    txt.split('\n').forEach((line, i) => {
-      if (/=\s*ANY\(\$\d/.test(line)) bad.push(`${f}:${i + 1}  ${line.trim().slice(0, 90)}`);
+    const source = fs.readFileSync(f, 'utf8');
+    usages.push(...collectAny(source, path.relative(SRC, f).replace(/\\/g, '/')));
+    const txt = source.split(/\r?\n/).map((line) => line.replace(/\/\/.*$/, '')).join('\n');
+    txt.split('\n').forEach((line) => {
       if (/IN \(\$\d|IN \(\$\{/.test(line)) inForms.push(f);
     });
   }
-  assert(inForms.length >= 20, `THE ANY-OF-ARRAY BAN sees only ${inForms.length} IN(…) sites — the `
+  const classified = classifyAny(usages, { complete: true });
+  assert(inForms.length >= 20, `THE JS-ARRAY ANY/SOME BAN sees only ${inForms.length} IN(…) sites — the `
     + 'extractor has stopped reading src/, and a sweep that reaches nothing reads exactly like a clean tree');
-  assert.deepEqual(bad, [], 'a query binds a JS array to ANY($n). pg-mem returns ZERO rows for that '
-    + 'shape, silently, so the suites pass over a query that found nothing — and it only shows up once '
-    + 'the filtered column gets an index. Use IN ($1,$2) (fixed arity) or a generated placeholder list:\n   - '
-    + bad.join('\n   - '));
-  console.log(`  ✓ no query binds an array to ANY($n) (${inForms.length} IN(…) sites govern the rule)`);
+  assert.deepEqual(classified.bad, [], 'each ANY/SOME expression must be an exact reviewed Explore occurrence '
+    + 'whose own placeholder is bound by sqlTextArray(...); same-line neighbours receive no waiver:\n   - '
+    + classified.bad.join('\n   - '));
+  assert.equal(classified.approved.length, reviewedAny.length,
+    'Explore must retain exactly six reviewed scalar-literal ANY/SOME expressions across five statements');
+  console.log(`  ✓ no query binds a JS array to ANY/SOME($n); ${classified.approved.length} exact scalar-literal `
+    + `expressions and ${inForms.length} IN(…) sites govern the rule`);
 }
 
 }

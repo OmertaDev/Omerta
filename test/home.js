@@ -54,6 +54,22 @@ const me = (await call('GET', '/v1/me', { token })).body.character;
   }
 }
 
+// ── DEEP CITY: HOME AND STANDALONE EXPLORE ARE ONE CANONICAL READ ───────────────────────────────
+// This is deliberately value-for-value, not a shape assertion. A private Home ranker, a stale
+// synchronous call signature, or different live-context wiring can all return a plausible-looking
+// card while disagreeing with the canonical /v1/explore board.
+{
+  const home = (await call('GET', '/v1/home', { token })).body;
+  const standalone = await call('GET', '/v1/explore', { token });
+  assert.equal(standalone.code, 200, 'the canonical standalone Explore board answers');
+  assert.deepEqual(home.explore, bare(standalone.body, '/v1/explore'),
+    'Home.explore is exactly the canonical async Explore payload, never a second query or ranker');
+  assert.equal(home.explore.catalog.count, 40, 'Home carries the canonical 40-system catalog');
+  assert.equal(home.explore.progress.visited + home.explore.progress.remaining, 40,
+    'Home progress is the canonical account-level visited/remaining partition');
+  assert.equal(Array.isArray(home.explore.next), false, 'Home exposes one recommendation or null, never a choice list');
+}
+
 // ── THE CONTRACT: every key IS its own route's answer ───────────────────────────────────────────
 // Not "has the same fields" — the same VALUES, everywhere except the clocks. The client mirror
 // checks the screen's reads against the aggregate; the agent manual points at the solo routes.

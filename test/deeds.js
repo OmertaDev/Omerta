@@ -39,6 +39,11 @@ const notesFor = async (id, type) => (await pool.query(
   .rows.map((r) => (typeof r.payload === 'string' ? JSON.parse(r.payload) : r.payload));
 
 const a = await mk('Vito'), b = await mk('Sonny');
+const bAgentKey = await call('POST', '/v1/auth/agent-key', { token: b.token });
+assert.equal(bAgentKey.code, 200, 'the deed holder uses a real agent token, not a test-only database flag');
+b.token = bAgentKey.body.token;
+assert.equal((await pool.query('SELECT agent_flag FROM account_persistent WHERE account_id=$1', [b.acct])).rows[0].agent_flag,
+  true, 'the real agent-key route permanently marks the deed account as an agent');
 
 // ════════════ THE HELPERS ════════════
 assert.equal(deedRankOf(0).name, 'A Nameless Block', 'a deed with no legend is a nameless block');
@@ -109,14 +114,12 @@ assert.equal(await txCount(), txBefore, 'STREET DEEDS writes ZERO ledger rows �
 // give A's deed more legend so it tops the board
 await pool.query("INSERT INTO street_deed_history (account_id, kind, detail) VALUES ($1,'war','a war was won here'),($1,'blood','blood spilled')", [a.acct]);
 const lb = (await call('GET', '/v1/leaderboard/streets', { token: a.token })).body;
-assert(lb.streets.length >= 2, 'both claimed streets are on the board');
+assert(lb.streets.length >= 1, 'the human-held claimed street is on the human status board');
 assert.equal(lb.streets[0].name, 'Corvino Way', 'the most storied street tops the board');
 assert.equal(lb.streets[0].renown, deedRenown([{ kind: 'claim' }, { kind: 'war' }, { kind: 'blood' }]), 'ranked by its true renown');
-// an agent is excluded from the status board
-await pool.query('UPDATE account_persistent SET agent_flag=true WHERE account_id=$1', [b.acct]);
-const lb2 = (await call('GET', '/v1/leaderboard/streets', { token: a.token })).body;
-assert(!lb2.streets.find((s) => s.name === 'Nine Fingers Row'), "an agent's street is off the status board");
-await pool.query('UPDATE account_persistent SET agent_flag=false WHERE account_id=$1', [b.acct]);
+// The human status board remains separate from gameplay parity: this real agent claimed and controls
+// the street above, but does not enter the Great Streets prestige ranking.
+assert(!lb.streets.find((s) => s.name === cx.body.name), "the real agent's street is off the human status board");
 
 // ════════════ PHASE 2 — CONTROL + THE CORNER TAKE ════════════
 // The deed is property; CONTROL (the corner take) is contestable. `a` owns "Corvino Way" in neon,
@@ -418,8 +421,11 @@ const linkWallet = (acct, w) => pool.query('UPDATE account_persistent SET wallet
 
 const chainTx0 = await txCount();
 const e = await mk('Enzo');
+const eAgentKey = await call('POST', '/v1/auth/agent-key', { token: e.token });
+assert.equal(eAgentKey.code, 200, 'the on-chain deed lifecycle starts from a real agent token');
+e.token = eAgentKey.body.token;
 assert.equal((await call('POST', '/v1/deeds/claim', { token: e.token, body: { name: 'Enzo Alley', district: 'docks' } })).code, 200,
-  'the extractor claims a street');
+  'an agent claims a street through the ordinary authenticated route');
 
 // GATE: not minted → can't extract (the Sybil bound — `minted` never travels with the token)
 assert.equal((await call('POST', '/v1/deeds/extract', { token: e.token })).body.error, 'not_minted',
@@ -504,6 +510,9 @@ await markDeedExtracted(pool, { nonce: ext.body.nonce, tokenId: ext.body.tokenId
 
 // RE-IMPORT (the Redeemed watcher): a DEEDLESS burner with a linked wallet takes the on-chain deed back
 const burner = await mk('Bruno');
+const burnerAgentKey = await call('POST', '/v1/auth/agent-key', { token: burner.token });
+assert.equal(burnerAgentKey.code, 200, 'the importing wallet is also controlled by a real agent account');
+burner.token = burnerAgentKey.body.token;
 await linkWallet(burner.acct, burnerWallet);
 const ri = await reimportDeed(pool, { ref: 'tx1:0', from: burnerWallet, tokenId: ext.body.tokenId });
 assert.equal(ri.applied, true, 'the re-import applies to the linked burner');

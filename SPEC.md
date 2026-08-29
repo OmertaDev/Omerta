@@ -10,18 +10,18 @@ Written 2026-07-25. Every number below was measured from the tree, not recalled.
 
 | | |
 |---|---|
-| Backend modules | **167** files, **61718** lines (`src/`, incl. `src/routes/` and `src/social/`) |
-| Test suites | **125** files, **56501** lines (`test/`) — ratio 0.92 test:src |
-| HTTP routes | **725** registrations |
-| Database tables | **263** (`schema.sql`, 4309 lines) |
-| Client | **11415** lines (`public/index.html`, single file, zero dependencies) |
+| Backend modules | **183** files, **68334** lines (`src/`, incl. `src/routes/` and `src/social/`) |
+| Test suites | **144** files, **66338** lines (`test/`) — ratio 0.97 test:src |
+| HTTP routes | **725** registrations (**725** unique) |
+| Database tables | **299** (`schema.sql`) |
+| Client | **11499** lines (`public/index.html`, single file, zero dependencies) |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
-| Smart contracts | **23** top-level Solidity files, **6029** lines, **508** declared Foundry tests; latest full run **531/531** across 27 suites |
+| Smart contracts | **32** top-level Solidity files, **8926** lines, **860** declared Foundry test functions; the release gate re-measures the passing suite |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/bond-dials.js` (sizing the on-chain mint walls), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres) |
-| Design + audit docs | **421** markdown files, **93775** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
+| Design + audit docs | **271** markdown files, **77384** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
 | Ledger invariants | 18 named escrow/identity checks + per-currency conservation, **drift-0** |
 
-Roughly **55,000 lines** of code, tests, schema and contracts.
+Roughly **150,000 lines** of backend code, tests, schema and top-level contracts.
 
 ---
 
@@ -31,7 +31,7 @@ Everything is built on five load-bearing decisions. None has needed revision in 
 
 **`rules.js` is the constants layer, in two files.** `rules.generated.js` holds the prototype's 22 data
 tables (479 lines) and is overwritten wholesale by the extractor; `rules.tail.js` holds every helper,
-catalog, ladder and founder-signed lever (6031 lines) and the extractor never opens it. `rules.js`
+catalog, ladder and founder-signed lever (6049 lines) and the extractor never opens it. `rules.js`
 re-exports both. Nothing in `src/` hardcodes a balance number.
 
 **`withCharacter` is the transaction spine.** Every player action opens `SELECT … FOR UPDATE` on the
@@ -87,7 +87,8 @@ season rollover · the closed-alpha invite gate · mod tools (ban, mod-kill, con
 
 ### 3.6 Chain (M6, mainnet-gated)
 `OMR` ERC-20 with an owner-armed DEX sell tax · `VoucherClaim` (EIP-712, replay-proof, daily-capped) ·
-`GearVault` ERC-1155 with per-id supply caps · `OMRStaking` · `OmertaFees` (mint / respawn / reroll) ·
+`GearVault` ERC-1155 with per-id supply caps · legacy `OMRStaking` (not approved gameplay custody) ·
+approved-but-unimplemented upgradeable `OMRGameplayVault` replacement · `OmertaFees` (mint / respawn / reroll) ·
 `OmertaBond`. Backend: EIP-712 voucher signing in exact parity, the full-reserve withdrawal queue,
 SIWE wallet linking, a polled `getLogs` watcher over a persisted cursor, the exit toll, the early-exit
 surcharge.
@@ -147,8 +148,24 @@ metric) · **THE CELLPHONE** (inbox, DMs, blocked lines).
 ### 3.9 Surfaces
 The playable console (22 tabs, progressive disclosure, 15 language packs, live feed, atmosphere layer) ·
 `/admin` live-ops dashboard · `/wiki` codex · the Agent Gateway (`AGENTS.md`, OpenAPI, `llms.txt`, the
-Opportunity Board, the agent leaderboard, `omerta-mcp`) · THE BROADCAST cards and profiles ·
+Opportunity Board, public banded `/v1/arena`, authenticated detailed agent leaderboard, `omerta-mcp`) ·
+THE BROADCAST cards and profiles ·
 `/health` and the backup watchdog.
+
+### 3.10 Agent Turn v3 and Deep City
+
+Agent Turn v3 preserves the server-authoritative EV lane: `recommendedActionId` and `actions` are the
+only turn-issued execution authority, and `/v1/agent/act` accepts only the latest server-issued
+`{turnId, actionId}`. Its `exploration` sibling is read-only, non-EV, non-executable, and outside the
+authority fingerprint. It recommends exactly one relevant unvisited eligible system from the exact
+40-key engagement catalog, or `null`; Home and `GET /v1/explore` consume the same resolver.
+
+`tools/agent-alpha.js` is an owner-operated bounded canary runner for one durable origin-bound identity,
+not a fleet service. It has no reset, defaults to one action, permits 1–50 mutation attempts, and
+enforces at least 3100 ms between them. It accepts only the shipped allowlist under the exact
+conservative policy and never autonomously performs PvP, borrowing, human faucets, wallet/mint/
+withdrawal, replacement-character, or arbitrary mutation flows. Production extraction remains dormant
+with no chain configured.
 
 ---
 

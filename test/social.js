@@ -697,13 +697,19 @@ assert.equal(Number((await pool.query(`SELECT COUNT(*) n FROM bounties WHERE tar
 
 // audit L1 / anti-abuse: an AGENT tallies kills but earns NO feared-rep and is off BOTH boards
 const agent = await mk('Agent Smith');
-await pool.query(`UPDATE account_persistent SET agent_flag=true WHERE account_id=(SELECT account_id FROM characters WHERE id='${agent.id}')`);
+const combatAgentKey = await call('POST', '/v1/auth/agent-key', { token: agent.token });
+assert.equal(combatAgentKey.code, 200, 'the looter uses a real agent token');
+agent.token = combatAgentKey.body.token;
 const donGun = (await pool.query(`SELECT gun FROM characters WHERE id='${don.id}'`)).rows[0].gun;
 await seedCh(agent.id, `gun='${donGun}', muscle=500, speed=500, energy=200, ammo=8000, respect=1000, loc='docks'`);
 const aMark = await mk('Agent Mark'); await seedCh(aMark.id, "respect=1000, muscle=1, hosp_until=NULL, loc='docks'"); // level 11
+await pool.query(`UPDATE account_persistent SET omr=50 WHERE account_id=(SELECT account_id FROM characters WHERE id='${aMark.id}')`);
+const agentOmrPre = (await meOf(agent.token)).omr;
 await call('POST', `/v1/streets/${aMark.id}/search`, { token: agent.token });
 k = (await call('POST', `/v1/streets/${aMark.id}/fire`, { token: agent.token, body: { rounds: 6000 } })).body;
 assert(k.kill, 'agent whacks a qualifying mark'); assert.equal(k.hitman.repGain, 0, 'an agent earns NO feared-rep');
+assert.equal(k.omrLoot, Math.floor(50 * 0.50), 'the agent takes the same liquid $OMR loot as any other killer');
+assert.equal((await meOf(agent.token)).omr, agentOmrPre + 25, 'looted $OMR lands liquid in the agent account');
 const aAcct = (await pool.query(`SELECT hitman_rep, kills FROM account_persistent WHERE account_id=(SELECT account_id FROM characters WHERE id='${agent.id}')`)).rows[0];
 assert.equal(Number(aAcct.kills), 1, 'but the agent tallies the kill for its own stats');
 assert.equal(Number(aAcct.hitman_rep), 0, 'zero rep on the account');
@@ -1629,6 +1635,9 @@ assert.equal(Math.floor(sm.staked), 80, 'the heir inherits the remaining stake â
 // exempts a locked stake from the loot, the retired "staked is safe" harbour is back through the
 // side door, and this assertion is what fails.
 const oath = await mk('Otto Oathbound');
+const oathAgentKey = await call('POST', '/v1/auth/agent-key', { token: oath.token });
+assert.equal(oathAgentKey.code, 200, 'agent accounts can hold the same loot-exposed stake');
+oath.token = oathAgentKey.body.token;
 await seedCh(oath.id, 'respect=1000, cash=0, bank=0'); // clears LOOT_MIN_LVL
 await pool.query(`UPDATE account_persistent SET omr = 100 WHERE account_id=(SELECT account_id FROM characters WHERE id='${oath.id}')`);
 assert.equal((await call('POST', '/v1/stake', { token: oath.token, body: { amount: 100 } })).code, 200, 'staked');

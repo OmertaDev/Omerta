@@ -1,0 +1,17 @@
+{
+  "token": "0x79E8AB29Ff79805025c9462a2f2F12e9A496f81d",
+  "launchOwner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "treasury": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+  "vigRecipient": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+  "founderRecipient": "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
+  "proceedsSplitter": "0xeAd789bd8Ce8b9E94F5D0FCa99F8787c7e758817",
+  "positionRecipient": "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
+  "hook": "0x15C98bFF8D92cf3818ce29ca0E659Ac3827a70cC",
+  "salt": "0x34440346d3cd058fa2aef1e5cc4acf996895f35b6a3136f462c2d4de8703a32e",
+  "startBlock": "47283829",
+  "auctionBlocks": "24",
+  "prebidBlocks": "0",
+  "claimDelayBlocks": "12",
+  "permit2Expiration": "1787904078",
+  "requiredCurrencyRaised": "10000000000000000000"
+}
