@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `6715d574e6f3`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `e309a4c915a6`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1235 |
+| Commits in clone | 1237 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-29 — ci: stop main going red at every merge for a condition that cannot hold there |
+| Latest commit | 2026-08-29 — ci: regenerating is not enough — graph.json records worktreeDirty |
 
 ## Commit authors
 
@@ -21,7 +21,7 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 431 |
-| Claude | 116 |
+| Claude | 118 |
 | CRVYDEV | 41 |
 
 ## Historical hotspots
@@ -43,10 +43,10 @@
 | [src/invariants.js](../../src/invariants.js) | 114 | yes |
 | [test/client.js](../../test/client.js) | 101 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
-| knowledge/generated/github-history.md | 89 | historical |
-| knowledge/generated/graph-summary.md | 89 | historical |
-| knowledge/generated/graph.json | 89 | historical |
-| knowledge/generated/inventory.md | 89 | historical |
+| knowledge/generated/github-history.md | 90 | historical |
+| knowledge/generated/graph-summary.md | 90 | historical |
+| knowledge/generated/graph.json | 90 | historical |
+| knowledge/generated/inventory.md | 90 | historical |
 | [test/social.js](../../test/social.js) | 84 | yes |
 | [public/wiki.html](../../public/wiki.html) | 80 | yes |
 | [test/growth.js](../../test/growth.js) | 79 | yes |

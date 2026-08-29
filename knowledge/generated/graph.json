@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "6715d574e6f30b1506d2c6d85842317499106622",
+  "sourceRevision": "e309a4c915a6e5e373507a5226252aa4e4174f42",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5590,
-    "edges": 24456,
+    "nodes": 5592,
+    "edges": 24464,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 53,
-      "Commit": 1235,
+      "Commit": 1237,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 9632,
+      "CHANGED": 9638,
       "CONTAINS": 1846,
       "DECLARES": 53,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 193,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1235,
+      "HAS_COMMIT": 1237,
       "IMPLEMENTS": 124,
       "IMPORTS": 1628,
       "INHERITS": 12,
@@ -7521,20 +7521,20 @@
       "path": ".github/workflows/ci.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 13980,
-      "lines": 259,
-      "version": "0e06c18e20167598",
+      "bytes": 14914,
+      "lines": 273,
+      "version": "4ff6e553958404d8",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "0e06c18e20167598"
+          "version": "4ff6e553958404d8"
         }
       ],
-      "lastChangedAt": "2026-08-29T09:48:34+00:00",
+      "lastChangedAt": "2026-08-29T09:53:39+00:00",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "6715d574e6f30b1506d2c6d85842317499106622"
+      "lastChangedCommit": "e309a4c915a6e5e373507a5226252aa4e4174f42"
     },
     {
       "key": "Artifact:.github/workflows/forge.yml",
@@ -7567,20 +7567,20 @@
       "path": ".github/workflows/knowledge-refresh.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 2971,
-      "lines": 74,
-      "version": "637ddd2de673da89",
+      "bytes": 3396,
+      "lines": 80,
+      "version": "9f69a2bdcc367e79",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/knowledge-refresh.yml",
           "line": 1,
-          "version": "637ddd2de673da89"
+          "version": "9f69a2bdcc367e79"
         }
       ],
-      "lastChangedAt": "2026-08-29T09:48:34+00:00",
+      "lastChangedAt": "2026-08-29T09:53:39+00:00",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "6715d574e6f30b1506d2c6d85842317499106622"
+      "lastChangedCommit": "e309a4c915a6e5e373507a5226252aa4e4174f42"
     },
     {
       "key": "Artifact:.github/workflows/publish-mcp.yml",
@@ -53070,6 +53070,22 @@
       ]
     },
     {
+      "key": "Commit:8185471eb5aa6dbff71435b99a11f741b38b7263",
+      "type": "Commit",
+      "id": "8185471eb5aa6dbff71435b99a11f741b38b7263",
+      "label": "chore(knowledge): refresh generated artifacts for 6715d574",
+      "title": "chore(knowledge): refresh generated artifacts for 6715d574",
+      "date": "2026-08-29T09:51:44+00:00",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8185471eb5aa6dbff71435b99a11f741b38b7263",
+      "provenance": [
+        {
+          "commit": "8185471eb5aa6dbff71435b99a11f741b38b7263",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8185471eb5aa6dbff71435b99a11f741b38b7263"
+        }
+      ]
+    },
+    {
       "key": "Commit:818d295a672c6c001926212ac337de8fb9ac8af2",
       "type": "Commit",
       "id": "818d295a672c6c001926212ac337de8fb9ac8af2",
@@ -60538,6 +60554,22 @@
         {
           "commit": "e2c5f5174409cdb810883e443e92b9985c7e5ffa",
           "url": "https://github.com/OmertaDev/Omerta/commit/e2c5f5174409cdb810883e443e92b9985c7e5ffa"
+        }
+      ]
+    },
+    {
+      "key": "Commit:e309a4c915a6e5e373507a5226252aa4e4174f42",
+      "type": "Commit",
+      "id": "e309a4c915a6e5e373507a5226252aa4e4174f42",
+      "label": "ci: regenerating is not enough — graph.json records worktreeDirty",
+      "title": "ci: regenerating is not enough — graph.json records worktreeDirty",
+      "date": "2026-08-29T09:53:39+00:00",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e309a4c915a6e5e373507a5226252aa4e4174f42",
+      "provenance": [
+        {
+          "commit": "e309a4c915a6e5e373507a5226252aa4e4174f42",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e309a4c915a6e5e373507a5226252aa4e4174f42"
         }
       ]
     },
@@ -75660,6 +75692,9 @@
           "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
         },
         {
+          "commit": "8185471eb5aa6dbff71435b99a11f741b38b7263"
+        },
+        {
           "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
         },
         {
@@ -75936,6 +75971,9 @@
           "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
         },
         {
+          "commit": "8185471eb5aa6dbff71435b99a11f741b38b7263"
+        },
+        {
           "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
         },
         {
@@ -76210,6 +76248,9 @@
         },
         {
           "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
+        },
+        {
+          "commit": "8185471eb5aa6dbff71435b99a11f741b38b7263"
         },
         {
           "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
@@ -76534,6 +76575,9 @@
         },
         {
           "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
+        },
+        {
+          "commit": "8185471eb5aa6dbff71435b99a11f741b38b7263"
         },
         {
           "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
@@ -82905,7 +82949,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "6715d574e6f30b1506d2c6d85842317499106622",
+      "revision": "e309a4c915a6e5e373507a5226252aa4e4174f42",
       "currentBranch": "claude/game-dev-roadmap-6jtsst",
       "defaultBranch": "main",
       "visibility": "public",
@@ -108447,13 +108491,13 @@
       "type": "Workflow",
       "id": ".github/workflows/ci.yml",
       "label": ".github/workflows/ci.yml",
-      "lines": 259,
-      "version": "0e06c18e20167598",
+      "lines": 273,
+      "version": "4ff6e553958404d8",
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "0e06c18e20167598"
+          "version": "4ff6e553958404d8"
         }
       ]
     },
@@ -108477,13 +108521,13 @@
       "type": "Workflow",
       "id": ".github/workflows/knowledge-refresh.yml",
       "label": ".github/workflows/knowledge-refresh.yml",
-      "lines": 74,
-      "version": "637ddd2de673da89",
+      "lines": 80,
+      "version": "9f69a2bdcc367e79",
       "provenance": [
         {
           "file": ".github/workflows/knowledge-refresh.yml",
           "line": 1,
-          "version": "637ddd2de673da89"
+          "version": "9f69a2bdcc367e79"
         }
       ]
     },
@@ -168757,6 +168801,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:8185471eb5aa6dbff71435b99a11f741b38b7263",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "8185471eb5aa6dbff71435b99a11f741b38b7263"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8185471eb5aa6dbff71435b99a11f741b38b7263",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "8185471eb5aa6dbff71435b99a11f741b38b7263"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8185471eb5aa6dbff71435b99a11f741b38b7263",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "8185471eb5aa6dbff71435b99a11f741b38b7263"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8185471eb5aa6dbff71435b99a11f741b38b7263",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "8185471eb5aa6dbff71435b99a11f741b38b7263"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:818d295a672c6c001926212ac337de8fb9ac8af2",
       "to": "Artifact:omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1",
       "provenance": {
@@ -197257,6 +197333,22 @@
       "to": "Artifact:docs/superpowers/plans/2026-08-28-rwa-registry-lifecycle-cn6a.md",
       "provenance": {
         "commit": "e2c5f5174409cdb810883e443e92b9985c7e5ffa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e309a4c915a6e5e373507a5226252aa4e4174f42",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "commit": "e309a4c915a6e5e373507a5226252aa4e4174f42"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e309a4c915a6e5e373507a5226252aa4e4174f42",
+      "to": "Artifact:.github/workflows/knowledge-refresh.yml",
+      "provenance": {
+        "commit": "e309a4c915a6e5e373507a5226252aa4e4174f42"
       }
     },
     {
@@ -244626,6 +244718,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:8185471eb5aa6dbff71435b99a11f741b38b7263",
+      "provenance": {
+        "commit": "8185471eb5aa6dbff71435b99a11f741b38b7263"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:818d295a672c6c001926212ac337de8fb9ac8af2",
       "provenance": {
         "commit": "818d295a672c6c001926212ac337de8fb9ac8af2"
@@ -248357,6 +248457,14 @@
       "to": "Commit:e2c5f5174409cdb810883e443e92b9985c7e5ffa",
       "provenance": {
         "commit": "e2c5f5174409cdb810883e443e92b9985c7e5ffa"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:e309a4c915a6e5e373507a5226252aa4e4174f42",
+      "provenance": {
+        "commit": "e309a4c915a6e5e373507a5226252aa4e4174f42"
       }
     },
     {
