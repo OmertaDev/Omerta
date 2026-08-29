@@ -407,7 +407,8 @@ function h2MigrationError(detail) {
 
 async function readH2ForeignKey(q, spec) {
   const rows = (await q.query(
-    `SELECT c.conname,c.contype,c.convalidated,c.confdeltype,
+    `SELECT c.conname,c.contype::text AS contype,c.convalidated,
+            c.confdeltype::text AS confdeltype,
             pg_get_constraintdef(c.oid,true) AS definition,
             c.confrelid::regclass::text AS referenced_table,
             ARRAY(
