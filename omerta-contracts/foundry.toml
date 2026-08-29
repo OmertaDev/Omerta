@@ -6,6 +6,30 @@ solc_version = "0.8.26"
 optimizer = true
 optimizer_runs = 800
 evm_version = "cancun"
+# The constellation conformance suites inspect compiler-emitted storage and optimized IR from the
+# canonical artifacts. Keep these outputs in the default profile so the documented `forge test`
+# release command and GitHub's `forge test -vvv` exercise those checks instead of failing because
+# the metadata was omitted from otherwise-valid artifacts.
+extra_output = ["storageLayout", "irOptimized"]
+additional_compiler_profiles = [
+  { name = "constellation-via-ir", via_ir = true, optimizer = true, optimizer_runs = 800, evm_version = "cancun" },
+]
+compilation_restrictions = [
+  { paths = "src/RwaHealthOverlay.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/interfaces/IRwaHealthOverlay.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/AcquisitionConstellationFactory.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/AcquisitionAuthority.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/AcquisitionVaultCore.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/PreVoteBudgetBook.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/AcquisitionIntentExecution.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/AcquisitionReconciliation.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/interfaces/IAcquisitionAuthorityV2.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/interfaces/IAcquisitionIntentExecutionV2.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+]
+fs_permissions = [
+  { access = "read", path = "./out" },
+  { access = "read", path = "./src" },
+]
 remappings = [
   "@openzeppelin/=lib/openzeppelin-contracts/",
   "v4-core/=lib/v4-core/src/",

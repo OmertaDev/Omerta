@@ -1,6 +1,6 @@
 # OMERTÀ Backend
 
-Server-authoritative backend for OMERTÀ, built to `omerta-backend-spec.md` (in this repo). What began as the M1 solo loop is now the full city: 142 backend modules, 100 test suites, 222 database tables, and a playable web console covering every system — with the transaction ledger and RNG audit live from day one.
+Server-authoritative backend for OMERTÀ, built to `omerta-backend-spec.md` (in this repo). What began as the M1 solo loop is now the full city: 167 backend source files, 125 test files, 263 database tables, and a playable web console covering every system — with the transaction ledger and RNG audit live from day one.
 
 ## Run it (zero setup)
 ```
@@ -38,7 +38,7 @@ fee reverts) → the getLogs cursor watcher credits it → character MINTED → 
 ERC-20 in the player's wallet; replay + tampering revert) → the `Claimed` watcher closes the
 reserve accounting → gear voucher mints the ERC-1155 (uncapped ids fail closed; only VoucherClaim
 mints) → §10.4 $OMR conservation holds with the chain live. The Foundry unit+fuzz suite
-(`omerta-contracts/test`) now **passes 319/319 (incl. 512-run fuzzes) in CI** — `.github/workflows/forge.yml`
+(`omerta-contracts/test`) now **passes 531/531 across 27 suites** — `.github/workflows/forge.yml`
 runs `forge test` on GitHub's runners on every contracts push; run it locally with `omerta-contracts/run-forge-test.sh`.
 
 ## Try it
@@ -74,7 +74,7 @@ curl -s localhost:8787/v1/me -H "Authorization: Bearer $TOKEN"
 - `src/watcher.js` — §11 chain-event sync (audit F2/F3): polls `getLogs` over a persisted block cursor (`chain_cursor`), staying `CHAIN_CONFIRMATIONS` behind head — downtime backfills (no lost fee credits), shallow reorgs are never acted on. Idempotent; dormant without `CHAIN_RPC_URL`
 - `src/server.js` — Fastify routes, JWT auth (+ban check), rate-limit + idempotency-key hooks, mod endpoints (MOD_KEY), `/v1/ws` websocket gateway
 - `tools/backup.sh` — nightly pg_dump rotation (cron it with DATABASE_URL set)
-- `omerta-contracts/` — M6-A on-chain suite (Foundry/Solidity) for Robinhood Chain; has its own README/CLAUDE.md. OMR, VoucherClaim, GearVault, OMRStaking + `OmertaFees` (the §11 entry/revive fee tollbooth — exact fees, ETH straight to the dev wallet, events the backend watches). `omerta-chain-migration-evm.md` documents the Solana→EVM switch.
+- `omerta-contracts/` — M6-A on-chain suite (Foundry/Solidity) for Robinhood Chain; has its own README/CLAUDE.md. It includes the OMR rail, staking/fees, bonds/oracles, NFTs/deeds, THE BANK, the stock-machine contracts, the standalone settlement-gas pool, and the dormant O1 AcquisitionVault authority base. `omerta-chain-migration-evm.md` documents the Solana→EVM switch. Presence in `src/` does not mean deployed or armed; follow the contract deployment runbook.
 - `schema.sql` — M1–M4 tables (spec §3 subset)
 - `test/smoke.js` — M1 end-to-end journey + the §10.4 ledger invariant
 - `test/economy.js` — M2 economy journey + §10.4 cash-ledger and car-conservation invariants
@@ -160,6 +160,6 @@ Loot on a player fire-kill (killer takes 25% of victim pocket cash + 50% of loos
 - [x] **M3** — social: gangs, wars, turf, jumps, bounties, hits + death (the Estate), busting, exchange, notifications, websocket
 - [x] **M4** — Kitchen (§7.10 + crew/raids in accrual), paths, trade ranks, heist/missions/dailies, First Week, referrals (§7.13), telemetry, mod tools
 - [x] **M5** — alpha hardening: §10.2 rate limits + agent keys, §10.4 invariant job with alerting, idempotency keys, invite codes, season rollover (§8), X/Privy OAuth + guest upgrade, backups → invite-code alpha
-- [~] **M6-A** — on-chain contracts for **Robinhood Chain** (EVM, migrated from Solana): `omerta-contracts/` (OMR, VoucherClaim, GearVault, OMRStaking) — Foundry suite, 15 tests. See `omerta-chain-migration-evm.md`.
+- [~] **M6-A** — on-chain contracts for **Robinhood Chain** (EVM, migrated from Solana): `omerta-contracts/` — 23 top-level Solidity files and a Foundry suite whose latest full run passed 531/531 across 27 suites. O1 AcquisitionVault authority is implemented, independently approved and dormant; A1 accounting and the remaining launch integration are pending. See `omerta-chain-migration-evm.md`.
 - [~] **M6-B** — backend chain service (`src/chain.js`): viem EIP-712 signer in `VOUCHER_TYPEHASH` parity, `vouchers`/`chain_reserve`/`wallet_challenges` tables, full-reserve withdrawal queue, `Claimed` watcher, SIWE wallet verify. Deferred: buyback bot, devnet deploy → audit → mainnet
 - [~] **M6-C** — §11 real-ETH fees (`src/fees.js` + `OmertaFees.sol`): 0.01 ETH two-tier mint (free trial → withdrawal-eligible), 0.10 ETH pre-paid revive insurance (absorbs a killing blow), both forwarded straight to the dev wallet. `POST /character/mint`, `GET /fees/status`, fee-event watcher. Deferred: devnet deploy + `forge test` run

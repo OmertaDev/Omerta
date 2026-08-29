@@ -11,8 +11,38 @@
 // This is the test/migrate.js DISPOSITION guard applied to config instead of tables.
 import assert from 'node:assert';
 import fs from 'node:fs';
-import { preflight, isHardened, CLASSIFIED, TEST_ONLY_ENV, REQUIRED_ENV, EXPLICIT_ENV } from '../src/preflight.js';
+import * as Preflight from '../src/preflight.js';
 import { walkSrc } from './lib/srcfiles.js';
+
+const { preflight, isHardened, CLASSIFIED, TEST_ONLY_ENV, REQUIRED_ENV, EXPLICIT_ENV } = Preflight;
+assert.equal(typeof Preflight.normalizeRwaReviewerConfig, 'function',
+  'runtime and preflight share one exported pure reviewer-config normalizer');
+for (const [label, env] of [
+  ['whitespace key', { RWA_REVIEWER_KEY: '   ', RWA_REVIEWER_ID: 'public-reviewer' }],
+  ['padded secret core', { RWA_REVIEWER_KEY: '  shared-core  ', RWA_REVIEWER_ID: 'shared-core' }],
+  ['padded public collision', { RWA_REVIEWER_KEY: 'shared-core', RWA_REVIEWER_ID: '  shared-core  ' }],
+  ['control ID', { RWA_REVIEWER_KEY: 'distinct-secret', RWA_REVIEWER_ID: 'bad\u0007id' }],
+  ['format ID', { RWA_REVIEWER_KEY: 'distinct-secret', RWA_REVIEWER_ID: 'bad\u200did' }],
+  ['line separator ID', { RWA_REVIEWER_KEY: 'distinct-secret', RWA_REVIEWER_ID: 'bad\u2028id' }],
+  ['canonical moderator ID', {
+    RWA_REVIEWER_KEY: 'distinct-secret', RWA_REVIEWER_ID: '  moderator-core  ', MOD_KEY: ' moderator-core ',
+  }],
+  ['canonical secret collision', {
+    RWA_REVIEWER_KEY: ' reviewer-secret ', RWA_REVIEWER_ID: 'public-reviewer', MOD_KEY: 'reviewer-secret',
+  }],
+]) {
+  const snapshot = { ...env };
+  const normalized = Preflight.normalizeRwaReviewerConfig(env);
+  assert.equal(normalized.enabled, false, `${label} fails closed`);
+  assert.equal(normalized.key, null, `${label} never returns a rejected secret`);
+  assert.deepEqual(env, snapshot, `${label} normalization is pure`);
+}
+assert.deepEqual(Preflight.normalizeRwaReviewerConfig({
+  RWA_REVIEWER_KEY: 'valid-reviewer-secret', RWA_REVIEWER_ID: '  valid-public-reviewer  ',
+  MOD_KEY: 'distinct-moderator-secret',
+}), {
+  enabled: true, key: 'valid-reviewer-secret', id: 'valid-public-reviewer', errors: [],
+}, 'valid configuration returns one canonical public identity without mutating the secret');
 
 // ════════════ THE DRIFT DETECTOR ════════════
 const used = new Set();
@@ -73,6 +103,32 @@ assert(preflight({ ...GOOD, MARKET_SEED: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaa' }).error
   'a long but low-entropy seed is refused — it is offline-recoverable from the public prices board');
 assert(preflight({ ...GOOD, MARKET_SEED: 'short' }).errors.some((e) => /too weak/.test(e)),
   'a short seed is refused');
+
+assert(preflight({ ...GOOD, RWA_REVIEWER_KEY: 'reviewer-secret' }).errors.some((e) => /configured together/.test(e)),
+  'a reviewer key without its public reviewer identity fails closed in production');
+assert(preflight({ ...GOOD, RWA_REVIEWER_ID: 'reviewer-public-id' }).errors.some((e) => /configured together/.test(e)),
+  'a reviewer identity without its key fails closed in production');
+assert(preflight({
+  ...GOOD, RWA_REVIEWER_KEY: GOOD.MOD_KEY, RWA_REVIEWER_ID: 'reviewer-public-id',
+}).errors.some((e) => /distinct from MOD_KEY/.test(e)),
+  'reviewer and moderator authority cannot share one production secret');
+assert(preflight({
+  ...GOOD, RWA_REVIEWER_KEY: 'same-reviewer-secret', RWA_REVIEWER_ID: 'same-reviewer-secret',
+}).errors.some((e) => /public reviewer identity.*distinct from.*secret/i.test(e)),
+  'the public reviewer identity cannot publish the reviewer credential');
+assert(preflight({
+  ...GOOD, RWA_REVIEWER_KEY: 'distinct-reviewer-secret', RWA_REVIEWER_ID: `  ${GOOD.MOD_KEY}  `,
+}).errors.some((e) => /public reviewer identity.*distinct from MOD_KEY/i.test(e)),
+  'the canonical public reviewer identity cannot publish the moderator credential');
+for (const badId of ['   ', 'x'.repeat(201)]) {
+  assert(preflight({
+    ...GOOD, RWA_REVIEWER_KEY: 'distinct-reviewer-secret', RWA_REVIEWER_ID: badId,
+  }).errors.some((e) => /RWA_REVIEWER_ID.*1 through 200/i.test(e)),
+  'the canonical public reviewer identity is bounded to 1 through 200 characters');
+}
+assert.equal(preflight({
+  ...GOOD, RWA_REVIEWER_KEY: 'distinct-reviewer-secret', RWA_REVIEWER_ID: '  reviewer-public-id  ',
+}).errors.length, 0, 'a complete reviewer pair with a distinct secret is accepted');
 
 // BLUE-TEAM H1: the same floor on JWT_SECRET — the ONE secret that authenticates every session and
 // had no entropy check. HS256 over a weak-but-non-default secret is offline-forgeable → any account.

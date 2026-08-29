@@ -3603,6 +3603,600 @@ CREATE TABLE IF NOT EXISTS stock_token_catalog (
 );
 ALTER TABLE stock_token_catalog ADD COLUMN IF NOT EXISTS registry_index INT NOT NULL DEFAULT 0;
 
+-- Immutable StockTokenRegistryV2 history and its finalized, complete reverse-head mirror. This is
+-- additive: the legacy ticker-key catalog remains untouched as an explicit migration input.
+CREATE TABLE IF NOT EXISTS stock_catalog_sync_lock_v2 (
+  id INT PRIMARY KEY
+);
+INSERT INTO stock_catalog_sync_lock_v2 (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS stock_catalog_sync_state_v2 (
+  id INT PRIMARY KEY,
+  chain_id INT NOT NULL,
+  registry_address TEXT NOT NULL,
+  catalog_version NUMERIC(78,0) NOT NULL,
+  finalized_block_number NUMERIC(78,0) NOT NULL,
+  finalized_block_hash TEXT NOT NULL,
+  snapshot_hash TEXT NOT NULL,
+  observation_hash TEXT,
+  finalized_horizon_number NUMERIC(78,0),
+  finalized_horizon_hash TEXT,
+  caught_up BOOLEAN NOT NULL DEFAULT false,
+  verified_at TIMESTAMPTZ,
+  ready_verified_at TIMESTAMPTZ,
+  synced_at TIMESTAMPTZ NOT NULL
+);
+ALTER TABLE stock_catalog_sync_state_v2 ADD COLUMN IF NOT EXISTS observation_hash TEXT;
+ALTER TABLE stock_catalog_sync_state_v2 ADD COLUMN IF NOT EXISTS finalized_horizon_number NUMERIC(78,0);
+ALTER TABLE stock_catalog_sync_state_v2 ADD COLUMN IF NOT EXISTS finalized_horizon_hash TEXT;
+ALTER TABLE stock_catalog_sync_state_v2 ADD COLUMN IF NOT EXISTS caught_up BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE stock_catalog_sync_state_v2 ADD COLUMN IF NOT EXISTS verified_at TIMESTAMPTZ;
+ALTER TABLE stock_catalog_sync_state_v2 ADD COLUMN IF NOT EXISTS ready_verified_at TIMESTAMPTZ;
+
+-- The getter mirror owns this exact finalized-observation cursor. It is deliberately separate from
+-- the later registry lifecycle consumer: raw logs here prove bounded observation only and grant no
+-- activation, reviewer, publisher, Safe, or ballot authority.
+CREATE TABLE IF NOT EXISTS stock_catalog_getter_checkpoint_v2 (
+  consumer_key TEXT PRIMARY KEY CHECK (consumer_key = 'stock_catalog_getter_v2'),
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  contract_address TEXT NOT NULL,
+  start_block_number NUMERIC(78,0) NOT NULL CHECK (start_block_number >= 0),
+  last_applied_block_number NUMERIC(78,0),
+  last_applied_block_hash TEXT,
+  last_observation_hash TEXT,
+  finalized_horizon_number NUMERIC(78,0),
+  finalized_horizon_hash TEXT,
+  caught_up BOOLEAN NOT NULL DEFAULT false,
+  verified_at TIMESTAMPTZ,
+  ready_verified_at TIMESTAMPTZ,
+  CHECK ((last_applied_block_number IS NULL) = (last_applied_block_hash IS NULL)),
+  CHECK ((last_applied_block_number IS NULL) = (last_observation_hash IS NULL)),
+  CHECK ((finalized_horizon_number IS NULL) = (finalized_horizon_hash IS NULL)),
+  CHECK (last_applied_block_number IS NULL OR last_applied_block_number >= start_block_number),
+  CHECK (finalized_horizon_number IS NULL OR last_applied_block_number IS NULL
+    OR finalized_horizon_number >= last_applied_block_number),
+  CHECK (NOT caught_up OR (last_applied_block_number = finalized_horizon_number
+    AND ready_verified_at IS NOT NULL))
+);
+
+CREATE TABLE IF NOT EXISTS stock_catalog_getter_inbox_v2 (
+  inbox_id TEXT PRIMARY KEY,
+  consumer_key TEXT NOT NULL REFERENCES stock_catalog_getter_checkpoint_v2(consumer_key),
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  contract_address TEXT NOT NULL,
+  block_number NUMERIC(78,0) NOT NULL,
+  block_hash TEXT NOT NULL,
+  transaction_hash TEXT NOT NULL,
+  transaction_index NUMERIC(78,0) NOT NULL,
+  log_index NUMERIC(78,0) NOT NULL,
+  topic0 TEXT NOT NULL,
+  topics_json TEXT NOT NULL,
+  data_hex TEXT NOT NULL,
+  observation_hash TEXT NOT NULL,
+  inserted_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (chain_id, contract_address, block_hash, transaction_hash, log_index)
+);
+
+CREATE TABLE IF NOT EXISTS stock_asset_versions_v2 (
+  asset_version_key TEXT PRIMARY KEY,
+  chain_id INT NOT NULL,
+  ticker_hash TEXT NOT NULL,
+  ticker TEXT NOT NULL,
+  name TEXT NOT NULL,
+  token_address TEXT NOT NULL,
+  token_decimals INT NOT NULL,
+  robinhood_asset_id_hash TEXT NOT NULL,
+  registry_index NUMERIC(78,0) NOT NULL,
+  active BOOLEAN NOT NULL,
+  registered_at TIMESTAMPTZ,
+  activated_at TIMESTAMPTZ,
+  deactivated_at TIMESTAMPTZ,
+  last_catalog_version NUMERIC(78,0) NOT NULL,
+  synced_at TIMESTAMPTZ NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS stock_asset_active_heads_v2 (
+  dimension_type TEXT NOT NULL,
+  dimension_value TEXT NOT NULL,
+  asset_version_key TEXT NOT NULL,
+  PRIMARY KEY (dimension_type, dimension_value),
+  UNIQUE (dimension_type, asset_version_key)
+);
+
+CREATE TABLE IF NOT EXISTS stock_catalog_sync_runs_v2 (
+  sync_id TEXT PRIMARY KEY,
+  chain_id INT NOT NULL,
+  registry_address TEXT NOT NULL,
+  catalog_version NUMERIC(78,0) NOT NULL,
+  finalized_block_number NUMERIC(78,0) NOT NULL,
+  finalized_block_hash TEXT NOT NULL,
+  snapshot_hash TEXT NOT NULL,
+  observation_hash TEXT,
+  finalized_horizon_number NUMERIC(78,0),
+  finalized_horizon_hash TEXT,
+  caught_up BOOLEAN NOT NULL DEFAULT false,
+  asset_count INT NOT NULL,
+  observed_at TIMESTAMPTZ NOT NULL,
+  synced_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+ALTER TABLE stock_catalog_sync_runs_v2 ADD COLUMN IF NOT EXISTS observation_hash TEXT;
+ALTER TABLE stock_catalog_sync_runs_v2 ADD COLUMN IF NOT EXISTS finalized_horizon_number NUMERIC(78,0);
+ALTER TABLE stock_catalog_sync_runs_v2 ADD COLUMN IF NOT EXISTS finalized_horizon_hash TEXT;
+ALTER TABLE stock_catalog_sync_runs_v2 ADD COLUMN IF NOT EXISTS caught_up BOOLEAN NOT NULL DEFAULT false;
+
+-- DDL only in this slice. A finalized getter snapshot cannot prove activation-event evidence
+-- provenance; the authenticated proposal/finality lifecycle populates this table later.
+CREATE TABLE IF NOT EXISTS stock_catalog_evidence_v2 (
+  evidence_hash TEXT PRIMARY KEY,
+  asset_version_key TEXT NOT NULL,
+  evidence_uri TEXT,
+  observed_at TIMESTAMPTZ NOT NULL,
+  payload_hash TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Version-snapshot Commission ballot preparation. These tables are additive to the legacy
+-- ticker-keyed ballot and remain dormant until the later health/custody cutover. Task 5 writes
+-- database-authoritative preparation evidence only: no RPC, funds, publication, or finality.
+CREATE TABLE IF NOT EXISTS ticker_ballot_days_v2 (
+  day INT PRIMARY KEY CONSTRAINT ck_ticker_ballot_days_v2_day_range
+    CHECK (day >= 0 AND day <= 99999999),
+  state TEXT NOT NULL CHECK (state IN
+    ('open','closed_ready','skipped_catalog_unavailable','skipped_catalog_empty',
+     'skipped_no_valid_candidate')),
+  chain_id INT NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL,
+  catalog_version NUMERIC(78,0) NOT NULL CHECK (catalog_version >= 0),
+  catalog_snapshot_hash TEXT NOT NULL,
+  max_eth_wei NUMERIC(78,0) NOT NULL CHECK (max_eth_wei > 0),
+  opened_by TEXT NOT NULL,
+  open_details_hash TEXT NOT NULL,
+  opened_at TIMESTAMPTZ NOT NULL,
+  closes_at TIMESTAMPTZ NOT NULL,
+  closed_at TIMESTAMPTZ,
+  purchase_until TIMESTAMPTZ,
+  CHECK (closes_at > opened_at),
+  CHECK ((state = 'closed_ready') = (purchase_until IS NOT NULL)),
+  CHECK (purchase_until IS NULL OR purchase_until = closes_at + interval '7200 seconds')
+);
+
+CREATE TABLE IF NOT EXISTS ticker_ballot_candidates_v2 (
+  day INT NOT NULL CONSTRAINT ck_ticker_ballot_candidates_v2_day_range
+    CHECK (day >= 0 AND day <= 99999999),
+  asset_version_key TEXT NOT NULL,
+  ticker TEXT NOT NULL,
+  token_address TEXT NOT NULL,
+  token_decimals INT NOT NULL CHECK (token_decimals >= 0 AND token_decimals <= 255),
+  registry_index NUMERIC(78,0) NOT NULL CHECK (registry_index >= 0),
+  activation_evidence_version SMALLINT NOT NULL DEFAULT 0,
+  activated_at TIMESTAMPTZ,
+  PRIMARY KEY (day, asset_version_key),
+  CONSTRAINT ck_ticker_ballot_candidates_v2_activation_evidence CHECK (
+    activation_evidence_version = 0
+    OR (activation_evidence_version = 1 AND activated_at IS NOT NULL)
+  )
+);
+CREATE INDEX IF NOT EXISTS ix_ticker_ballot_candidates_v2_ticker
+  ON ticker_ballot_candidates_v2(day, ticker, registry_index, asset_version_key);
+
+CREATE TABLE IF NOT EXISTS commission_ticker_votes_v2 (
+  day INT NOT NULL CONSTRAINT ck_commission_ticker_votes_v2_day_range
+    CHECK (day >= 0 AND day <= 99999999),
+  family_id TEXT NOT NULL,
+  asset_version_key TEXT NOT NULL,
+  ticker TEXT NOT NULL,
+  standing NUMERIC(78,0) NOT NULL CHECK (standing >= 0),
+  closed_valid BOOLEAN,
+  closed_counted BOOLEAN,
+  closed_weight INT CHECK (closed_weight >= 0 AND closed_weight <= 5),
+  closed_exclusion_reason TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (day, family_id),
+  CONSTRAINT ck_commission_ticker_votes_v2_closed_tuple CHECK (
+    (closed_valid IS NULL AND closed_counted IS NULL AND closed_weight IS NULL
+      AND closed_exclusion_reason IS NULL)
+    OR
+    (closed_valid IS NOT NULL AND closed_counted IS NOT NULL AND closed_weight IS NOT NULL
+      AND (
+        (closed_valid AND closed_counted AND closed_weight BETWEEN 1 AND 5
+          AND closed_exclusion_reason IS NULL)
+        OR
+        (closed_valid AND NOT closed_counted AND closed_weight = 0
+          AND closed_exclusion_reason = 'outside_top_five')
+        OR
+        (NOT closed_valid AND NOT closed_counted AND closed_weight = 0
+          AND closed_exclusion_reason IS NOT NULL)
+      ))
+  )
+);
+CREATE INDEX IF NOT EXISTS ix_commission_ticker_votes_v2_candidate
+  ON commission_ticker_votes_v2(day, asset_version_key, family_id);
+CREATE INDEX IF NOT EXISTS ix_commission_ticker_votes_v2_family_day
+  ON commission_ticker_votes_v2(family_id, day);
+
+CREATE TABLE IF NOT EXISTS ticker_ballot_results_v2 (
+  day INT PRIMARY KEY CONSTRAINT ck_ticker_ballot_results_v2_day_range
+    CHECK (day >= 0 AND day <= 99999999),
+  status TEXT NOT NULL CHECK (status IN
+    ('closed_ready','skipped_catalog_unavailable','skipped_catalog_empty',
+     'skipped_no_valid_candidate')),
+  asset_version_key TEXT,
+  ticker TEXT,
+  token_address TEXT,
+  token_decimals INT CHECK (token_decimals >= 0 AND token_decimals <= 255),
+  registry_index NUMERIC(78,0),
+  catalog_version NUMERIC(78,0) NOT NULL CHECK (catalog_version >= 0),
+  catalog_snapshot_hash TEXT NOT NULL,
+  max_eth_wei NUMERIC(78,0) NOT NULL CHECK (max_eth_wei > 0),
+  votes INT NOT NULL DEFAULT 0 CHECK (votes >= 0 AND votes <= 5),
+  weighted INT NOT NULL DEFAULT 0 CHECK (weighted >= 0 AND weighted <= 15),
+  decided_by TEXT NOT NULL CHECK (decided_by IN
+    ('chamber','default_silence','default_tie','skipped')),
+  decided_by_code INT NOT NULL CHECK (decided_by_code >= 1 AND decided_by_code <= 6),
+  skip_reason TEXT,
+  tally_hash TEXT NOT NULL,
+  closed_at TIMESTAMPTZ NOT NULL,
+  purchase_until TIMESTAMPTZ,
+  publication_status TEXT NOT NULL DEFAULT 'not_submitted' CHECK (publication_status IN
+    ('not_submitted','publisher_submitted','published_pending_finality','finalized','reorged','failed')),
+  registry_tx_hash TEXT,
+  finalized_block_number NUMERIC(78,0),
+  finalized_block_hash TEXT,
+  finalized_at TIMESTAMPTZ,
+  vote_evidence_version SMALLINT NOT NULL DEFAULT 0
+    CONSTRAINT ck_ticker_ballot_results_v2_vote_evidence_version
+    CHECK (vote_evidence_version IN (0,1)),
+  CHECK ((status = 'closed_ready') = (asset_version_key IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (ticker IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (token_address IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (token_decimals IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (registry_index IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (purchase_until IS NOT NULL)),
+  CHECK ((status = 'closed_ready') = (skip_reason IS NULL)),
+  CONSTRAINT ck_ticker_ballot_results_v2_decision_tuple CHECK (
+    (status = 'closed_ready' AND (
+      (decided_by = 'chamber' AND decided_by_code = 1
+        AND votes BETWEEN 1 AND 5 AND weighted BETWEEN 1 AND 15)
+      OR
+      (decided_by = 'default_silence' AND decided_by_code = 2
+        AND votes = 0 AND weighted = 0)
+      OR
+      (decided_by = 'default_tie' AND decided_by_code = 3
+        AND votes = 0 AND weighted = 0)
+    ))
+    OR
+    (status = 'skipped_catalog_unavailable' AND decided_by = 'skipped'
+      AND decided_by_code = 4 AND skip_reason = 'catalog_unavailable'
+      AND votes = 0 AND weighted = 0)
+    OR
+    (status = 'skipped_catalog_empty' AND decided_by = 'skipped'
+      AND decided_by_code = 5 AND skip_reason = 'catalog_empty'
+      AND votes = 0 AND weighted = 0)
+    OR
+    (status = 'skipped_no_valid_candidate' AND decided_by = 'skipped'
+      AND decided_by_code = 6 AND skip_reason = 'no_valid_candidate'
+      AND votes = 0 AND weighted = 0)
+  ),
+  CONSTRAINT ck_ticker_ballot_results_v2_publication_tuple CHECK (
+    (registry_tx_hash IS NULL OR (registry_tx_hash LIKE '0x________________________________________________________________'
+      AND substring(registry_tx_hash,3,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,4,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,5,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,6,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,7,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,8,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,9,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,10,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,11,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,12,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,13,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,14,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,15,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,16,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,17,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,18,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,19,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,20,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,21,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,22,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,23,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,24,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,25,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,26,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,27,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,28,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,29,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,30,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,31,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,32,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,33,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,34,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,35,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,36,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,37,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,38,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,39,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,40,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,41,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,42,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,43,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,44,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,45,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,46,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,47,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,48,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,49,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,50,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,51,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,52,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,53,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,54,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,55,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,56,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,57,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,58,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,59,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,60,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,61,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,62,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,63,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,64,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,65,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(registry_tx_hash,66,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+    ))
+    AND (finalized_block_number IS NULL OR finalized_block_number >= 0)
+    AND
+    (finalized_block_hash IS NULL OR (finalized_block_hash LIKE '0x________________________________________________________________'
+      AND substring(finalized_block_hash,3,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,4,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,5,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,6,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,7,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,8,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,9,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,10,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,11,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,12,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,13,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,14,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,15,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,16,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,17,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,18,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,19,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,20,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,21,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,22,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,23,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,24,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,25,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,26,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,27,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,28,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,29,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,30,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,31,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,32,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,33,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,34,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,35,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,36,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,37,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,38,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,39,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,40,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,41,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,42,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,43,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,44,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,45,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,46,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,47,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,48,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,49,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,50,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,51,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,52,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,53,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,54,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,55,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,56,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,57,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,58,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,59,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,60,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,61,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,62,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,63,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,64,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,65,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+      AND substring(finalized_block_hash,66,1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+    ))
+    AND (
+      (status <> 'closed_ready'
+        AND publication_status = 'not_submitted'
+        AND registry_tx_hash IS NULL
+        AND finalized_block_number IS NULL
+        AND finalized_block_hash IS NULL
+        AND finalized_at IS NULL)
+      OR
+      (status = 'closed_ready' AND (
+        (publication_status = 'not_submitted'
+          AND registry_tx_hash IS NULL
+          AND finalized_block_number IS NULL
+          AND finalized_block_hash IS NULL
+          AND finalized_at IS NULL)
+        OR
+        (publication_status IN ('publisher_submitted','published_pending_finality')
+          AND registry_tx_hash IS NOT NULL
+          AND finalized_block_number IS NULL
+          AND finalized_block_hash IS NULL
+          AND finalized_at IS NULL)
+        OR
+        (publication_status = 'finalized'
+          AND registry_tx_hash IS NOT NULL
+          AND finalized_block_number IS NOT NULL
+          AND finalized_block_hash IS NOT NULL
+          AND finalized_at IS NOT NULL)
+        OR
+        (publication_status = 'reorged'
+          AND registry_tx_hash IS NOT NULL
+          AND finalized_block_number IS NULL
+          AND finalized_block_hash IS NULL
+          AND finalized_at IS NULL)
+        OR
+        (publication_status = 'failed'
+          AND finalized_block_number IS NULL
+          AND finalized_block_hash IS NULL
+          AND finalized_at IS NULL)
+      ))
+    )
+  )
+);
+CREATE INDEX IF NOT EXISTS ix_ticker_ballot_results_v2_publication
+  ON ticker_ballot_results_v2(publication_status, closed_at, day);
+
+-- Public family nomination/review state for immutable StockTokenRegistryV2 candidates. Candidate,
+-- sponsor, evidence, and deadline fields are written once by the domain layer; the current support
+-- slots live separately from the append-only event record. The partial unique index is the real
+-- PostgreSQL same-key race authority (pg-mem cannot demonstrate row-wait behavior).
+CREATE TABLE IF NOT EXISTS rwa_nominations_v2 (
+  id TEXT PRIMARY KEY,
+  asset_version_key TEXT NOT NULL,
+  chain_id INT NOT NULL CHECK (chain_id = 4663),
+  ticker TEXT NOT NULL,
+  ticker_hash TEXT NOT NULL,
+  token_address TEXT NOT NULL,
+  token_decimals INT NOT NULL CHECK (token_decimals >= 0 AND token_decimals <= 255),
+  robinhood_asset_id_hash TEXT NOT NULL,
+  name TEXT NOT NULL,
+  sponsor_family_id TEXT NOT NULL,
+  sponsor_account_id TEXT NOT NULL,
+  sponsor_support_active BOOLEAN NOT NULL DEFAULT true,
+  rationale TEXT NOT NULL,
+  evidence_hash TEXT NOT NULL,
+  evidence_uri TEXT,
+  prior_nomination_id TEXT,
+  status TEXT NOT NULL CHECK (status IN
+    ('pending','review_requested','under_review','approved','rejected','not_eligible','expired')),
+  execution_status TEXT NOT NULL DEFAULT 'not_applicable' CHECK (execution_status IN
+    ('not_applicable','safe_package_ready','safe_submitted','executed_pending_finality','synced_active',
+     'approval_stale','evidence_drift','safe_cancelled','execution_failed','reorged')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  pending_until TIMESTAMPTZ NOT NULL,
+  claimed_by TEXT,
+  claimed_at TIMESTAMPTZ,
+  disposition_by TEXT,
+  disposition_at TIMESTAMPTZ,
+  disposition_reason TEXT,
+  approved_at TIMESTAMPTZ,
+  valid_until TIMESTAMPTZ,
+  CHECK (pending_until > created_at),
+  CHECK ((claimed_by IS NULL) = (claimed_at IS NULL)),
+  CHECK ((disposition_by IS NULL) = (disposition_at IS NULL))
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_rwa_nominations_open_key_v2
+  ON rwa_nominations_v2(asset_version_key)
+  WHERE status IN ('pending','review_requested','under_review');
+CREATE INDEX IF NOT EXISTS ix_rwa_nominations_sponsor_cadence_v2
+  ON rwa_nominations_v2(sponsor_family_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS ix_rwa_nominations_version_history_v2
+  ON rwa_nominations_v2(asset_version_key, created_at DESC, id DESC);
+CREATE INDEX IF NOT EXISTS ix_rwa_nominations_identity_history_v2
+  ON rwa_nominations_v2(chain_id, ticker, token_address, robinhood_asset_id_hash, created_at DESC, id DESC);
+CREATE INDEX IF NOT EXISTS ix_rwa_nominations_expiry_v2
+  ON rwa_nominations_v2(pending_until, id);
+CREATE INDEX IF NOT EXISTS ix_rwa_nominations_queue_v2
+  ON rwa_nominations_v2(created_at, id);
+CREATE INDEX IF NOT EXISTS ix_rwa_nominations_live_queue_v2
+  ON rwa_nominations_v2(created_at, id)
+  WHERE status IN ('pending','review_requested','under_review');
+CREATE INDEX IF NOT EXISTS ix_rwa_nominations_live_ticker_version_v2
+  ON rwa_nominations_v2(ticker, asset_version_key, created_at, id)
+  WHERE status IN ('pending','review_requested','under_review');
+CREATE INDEX IF NOT EXISTS ix_rwa_nominations_live_ticker_order_v2
+  ON rwa_nominations_v2(ticker, created_at, id, asset_version_key)
+  WHERE status IN ('pending','review_requested','under_review');
+
+CREATE TABLE IF NOT EXISTS rwa_nomination_endorsements_v2 (
+  nomination_id TEXT NOT NULL,
+  family_id TEXT NOT NULL,
+  account_id TEXT NOT NULL,
+  active BOOLEAN NOT NULL,
+  rationale TEXT,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (nomination_id, family_id)
+);
+
+CREATE TABLE IF NOT EXISTS rwa_nomination_events_v2 (
+  event_id TEXT PRIMARY KEY,
+  nomination_id TEXT NOT NULL,
+  event_type TEXT NOT NULL,
+  family_id TEXT,
+  account_id TEXT,
+  actor_type TEXT NOT NULL,
+  actor_id TEXT NOT NULL,
+  details_hash TEXT NOT NULL,
+  details JSONB NOT NULL DEFAULT '{}'::jsonb,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_nomination_events_record_v2
+  ON rwa_nomination_events_v2(nomination_id, created_at, event_id);
+
+-- Task 3 creates this singleton shape for forward compatibility only. Authentication and the
+-- configured-reviewer latch belong to Task 4; nomination code in this slice never reads it.
+CREATE TABLE IF NOT EXISTS rwa_nomination_reviewer_state_v2 (
+  id INT PRIMARY KEY CHECK (id = 1),
+  reviewer_id TEXT NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Reviewer mutations never borrow a player account identity. Their replay ledger is deliberately
+-- separate from the account-keyed `idempotency` table and binds a key to the whole request surface.
+CREATE TABLE IF NOT EXISTS rwa_reviewer_idempotency_v2 (
+  reviewer_id TEXT NOT NULL,
+  key TEXT NOT NULL,
+  method TEXT NOT NULL,
+  path TEXT NOT NULL,
+  body_hash TEXT NOT NULL,
+  status INT NOT NULL,
+  response TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (reviewer_id, key)
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_reviewer_idempotency_created_v2
+  ON rwa_reviewer_idempotency_v2(created_at);
+
+-- Exact unsigned Safe packages created by an approved review. Task 4 may only prepare, submit, or
+-- stale an unsigned package; execution and finalized catalog evidence belong to the finality worker.
+CREATE TABLE IF NOT EXISTS rwa_nomination_safe_proposals_v2 (
+  nomination_id TEXT PRIMARY KEY,
+  asset_version_key TEXT NOT NULL,
+  registry_address TEXT NOT NULL,
+  safe_transaction JSONB NOT NULL,
+  calldata_hash TEXT NOT NULL,
+  evidence_hash TEXT NOT NULL,
+  review_id TEXT NOT NULL UNIQUE,
+  approved_at TIMESTAMPTZ NOT NULL,
+  valid_until TIMESTAMPTZ NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('safe_package_ready','safe_submitted','approval_stale')),
+  safe_tx_hash TEXT,
+  execution_tx_hash TEXT,
+  execution_block_number NUMERIC(78,0),
+  execution_block_hash TEXT,
+  finalized_at TIMESTAMPTZ,
+  synced_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CHECK ((status = 'safe_submitted') = (safe_tx_hash IS NOT NULL)),
+  CHECK (execution_tx_hash IS NULL AND execution_block_number IS NULL
+    AND execution_block_hash IS NULL AND finalized_at IS NULL AND synced_at IS NULL)
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_safe_proposals_expiry_v2
+  ON rwa_nomination_safe_proposals_v2(valid_until, nomination_id)
+  WHERE status = 'safe_package_ready';
+
 -- ── THE BROKERS (omerta-brokers-design.md) ───────────────────────────────────────────────────────
 -- All ACCOUNT-keyed and all NEW tables, so `CREATE TABLE IF NOT EXISTS` is live-DB-safe (a new
 -- COLUMN on an existing table would need an ALTER — the 2026-08-06 boot-crash lesson).
@@ -4151,4 +4745,1264 @@ CREATE TABLE IF NOT EXISTS schema_meta (
   app_version TEXT NOT NULL,
   schema_sha TEXT NOT NULL,
   applied_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- RWA REGISTRY LIFECYCLE CN-6A — one independently checkpointed, finalized, read-only
+-- consumer of the immutable StockTokenRegistryV2 event stream. These are all new tables:
+-- the Task-5 getter mirror remains the upstream Registry authority, while CN-6A owns only
+-- its raw inbox, ordered reduction, reconciliation results, and readiness lease.
+CREATE TABLE IF NOT EXISTS rwa_registry_lifecycle_lock_v2 (
+  id SMALLINT PRIMARY KEY CHECK (id = 1),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+INSERT INTO rwa_registry_lifecycle_lock_v2 (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS rwa_registry_lifecycle_checkpoint_v2 (
+  consumer_key TEXT PRIMARY KEY CHECK (consumer_key = 'rwa_registry_lifecycle_v2'),
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT CHECK (registry_address IS NULL OR char_length(registry_address) = 42),
+  start_block_number NUMERIC(78,0) CHECK (start_block_number IS NULL OR start_block_number >= 0),
+  last_applied_block_number NUMERIC(78,0) CHECK
+    (last_applied_block_number IS NULL OR last_applied_block_number >= 0),
+  last_applied_block_hash TEXT CHECK
+    (last_applied_block_hash IS NULL OR char_length(last_applied_block_hash) = 66),
+  last_observation_hash TEXT CHECK
+    (last_observation_hash IS NULL OR char_length(last_observation_hash) = 66),
+  finalized_horizon_block_number NUMERIC(78,0) CHECK
+    (finalized_horizon_block_number IS NULL OR finalized_horizon_block_number >= 0),
+  finalized_horizon_block_hash TEXT CHECK
+    (finalized_horizon_block_hash IS NULL OR char_length(finalized_horizon_block_hash) = 66),
+  caught_up BOOLEAN NOT NULL DEFAULT false,
+  halted BOOLEAN NOT NULL DEFAULT false,
+  verified_at TIMESTAMPTZ,
+  ready_verified_at TIMESTAMPTZ,
+  CHECK ((registry_address IS NULL) = (start_block_number IS NULL)),
+  CHECK ((last_applied_block_number IS NULL) = (last_applied_block_hash IS NULL)),
+  CHECK ((last_applied_block_number IS NULL) = (last_observation_hash IS NULL)),
+  CHECK ((finalized_horizon_block_number IS NULL) = (finalized_horizon_block_hash IS NULL)),
+  CHECK (last_applied_block_number IS NULL OR start_block_number IS NOT NULL),
+  CHECK (last_applied_block_number IS NULL OR last_applied_block_number >= start_block_number),
+  CHECK (finalized_horizon_block_number IS NULL OR last_applied_block_number IS NULL
+    OR finalized_horizon_block_number >= last_applied_block_number),
+  CHECK (NOT caught_up OR (last_applied_block_number = finalized_horizon_block_number
+    AND verified_at IS NOT NULL)),
+  CHECK (ready_verified_at IS NULL OR (caught_up AND NOT halted))
+);
+INSERT INTO rwa_registry_lifecycle_checkpoint_v2 (consumer_key,chain_id)
+  VALUES ('rwa_registry_lifecycle_v2',4663)
+  ON CONFLICT (consumer_key) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS rwa_registry_lifecycle_inbox_v2 (
+  inbox_id TEXT PRIMARY KEY,
+  consumer_key TEXT NOT NULL REFERENCES rwa_registry_lifecycle_checkpoint_v2(consumer_key)
+    ON DELETE RESTRICT,
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  contract_address TEXT NOT NULL CHECK (char_length(contract_address) = 42),
+  block_number NUMERIC(78,0) NOT NULL CHECK (block_number >= 0),
+  block_hash TEXT NOT NULL CHECK (char_length(block_hash) = 66),
+  block_timestamp NUMERIC(78,0) NOT NULL CHECK (block_timestamp >= 0),
+  transaction_hash TEXT NOT NULL CHECK (char_length(transaction_hash) = 66),
+  transaction_index NUMERIC(78,0) NOT NULL CHECK (transaction_index >= 0),
+  log_index NUMERIC(78,0) NOT NULL CHECK (log_index >= 0),
+  topic0 TEXT NOT NULL CHECK (char_length(topic0) = 66),
+  topics_json TEXT NOT NULL,
+  data_hex TEXT NOT NULL,
+  event_kind TEXT NOT NULL CHECK (event_kind IN
+    ('PublisherSet','AssetVersionRegistered','AssetVersionActivated',
+     'AssetVersionDeactivated','BallotPublished')),
+  decoded_hash TEXT NOT NULL CHECK (char_length(decoded_hash) = 66),
+  observation_hash TEXT NOT NULL CHECK (char_length(observation_hash) = 66),
+  publisher TEXT,
+  asset_version_key TEXT,
+  ticker_hash TEXT,
+  token_address TEXT,
+  robinhood_asset_id_hash TEXT,
+  ticker TEXT,
+  name TEXT,
+  token_decimals SMALLINT CHECK (token_decimals IS NULL OR token_decimals BETWEEN 0 AND 255),
+  registered_at NUMERIC(78,0) CHECK (registered_at IS NULL OR registered_at >= 0),
+  evidence_hash TEXT,
+  review_id TEXT,
+  approved_at NUMERIC(78,0) CHECK (approved_at IS NULL OR approved_at >= 0),
+  valid_until NUMERIC(78,0) CHECK (valid_until IS NULL OR valid_until >= 0),
+  catalog_version NUMERIC(78,0) CHECK (catalog_version IS NULL OR catalog_version >= 0),
+  reason_hash TEXT,
+  deactivated_at NUMERIC(78,0) CHECK (deactivated_at IS NULL OR deactivated_at >= 0),
+  ballot_day NUMERIC(78,0) CHECK (ballot_day IS NULL OR ballot_day >= 0),
+  tally_hash TEXT,
+  max_eth_wei NUMERIC(78,0) CHECK (max_eth_wei IS NULL OR max_eth_wei >= 0),
+  purchase_until NUMERIC(78,0) CHECK (purchase_until IS NULL OR purchase_until >= 0),
+  published_at NUMERIC(78,0) CHECK (published_at IS NULL OR published_at >= 0),
+  inserted_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (chain_id, contract_address, block_hash, transaction_hash, log_index)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_rwa_registry_lifecycle_inbox_identity_v2
+  ON rwa_registry_lifecycle_inbox_v2
+    (chain_id,contract_address,block_hash,transaction_hash,log_index);
+CREATE INDEX IF NOT EXISTS ix_rwa_registry_lifecycle_inbox_order_v2
+  ON rwa_registry_lifecycle_inbox_v2
+    (consumer_key,block_number,transaction_index,log_index);
+
+CREATE TABLE IF NOT EXISTS rwa_registry_activation_instances_v2 (
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  activation_generation NUMERIC(78,0) NOT NULL CHECK (activation_generation > 0),
+  activation_block_number NUMERIC(78,0) NOT NULL CHECK (activation_block_number >= 0),
+  activation_block_hash TEXT NOT NULL CHECK (char_length(activation_block_hash) = 66),
+  activation_transaction_hash TEXT NOT NULL CHECK (char_length(activation_transaction_hash) = 66),
+  activation_transaction_index NUMERIC(78,0) NOT NULL CHECK (activation_transaction_index >= 0),
+  activation_log_index NUMERIC(78,0) NOT NULL CHECK (activation_log_index >= 0),
+  catalog_version NUMERIC(78,0) NOT NULL CHECK (catalog_version > 0),
+  review_id TEXT NOT NULL CHECK (char_length(review_id) = 66),
+  evidence_hash TEXT NOT NULL CHECK (char_length(evidence_hash) = 66),
+  approved_at TIMESTAMPTZ NOT NULL,
+  valid_until TIMESTAMPTZ NOT NULL,
+  included_at TIMESTAMPTZ NOT NULL,
+  local_match BOOLEAN NOT NULL DEFAULT false,
+  local_match_record_id TEXT,
+  deactivation_block_number NUMERIC(78,0) CHECK
+    (deactivation_block_number IS NULL OR deactivation_block_number >= 0),
+  deactivation_block_hash TEXT CHECK
+    (deactivation_block_hash IS NULL OR char_length(deactivation_block_hash) = 66),
+  deactivation_transaction_hash TEXT CHECK
+    (deactivation_transaction_hash IS NULL OR char_length(deactivation_transaction_hash) = 66),
+  deactivation_log_index NUMERIC(78,0) CHECK
+    (deactivation_log_index IS NULL OR deactivation_log_index >= 0),
+  deactivation_reason_hash TEXT CHECK
+    (deactivation_reason_hash IS NULL OR char_length(deactivation_reason_hash) = 66),
+  deactivation_catalog_version NUMERIC(78,0) CHECK
+    (deactivation_catalog_version IS NULL OR deactivation_catalog_version > 0),
+  deactivated_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (chain_id, registry_address, asset_version_key, activation_generation),
+  CHECK (valid_until = approved_at + interval '604800 seconds'),
+  CHECK (approved_at <= included_at AND included_at < valid_until),
+  CHECK (local_match = (local_match_record_id IS NOT NULL)),
+  CHECK ((deactivation_block_number IS NULL) = (deactivation_block_hash IS NULL)),
+  CHECK ((deactivation_block_number IS NULL) = (deactivation_transaction_hash IS NULL)),
+  CHECK ((deactivation_block_number IS NULL) = (deactivation_log_index IS NULL)),
+  CHECK ((deactivation_block_number IS NULL) = (deactivation_reason_hash IS NULL)),
+  CHECK ((deactivation_block_number IS NULL) = (deactivation_catalog_version IS NULL)),
+  CHECK ((deactivation_block_number IS NULL) = (deactivated_at IS NULL))
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_registry_activation_instances_asset_generation_v2
+  ON rwa_registry_activation_instances_v2
+    (asset_version_key,activation_generation DESC,registry_address);
+
+CREATE TABLE IF NOT EXISTS rwa_registry_asset_lifecycle_current_v2 (
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  registered BOOLEAN NOT NULL DEFAULT true,
+  active BOOLEAN NOT NULL DEFAULT false,
+  activation_generation NUMERIC(78,0) NOT NULL DEFAULT 0 CHECK (activation_generation >= 0),
+  catalog_version NUMERIC(78,0) NOT NULL DEFAULT 0 CHECK (catalog_version >= 0),
+  ticker_hash TEXT NOT NULL CHECK (char_length(ticker_hash) = 66),
+  ticker TEXT NOT NULL,
+  name TEXT NOT NULL,
+  token_address TEXT NOT NULL CHECK (char_length(token_address) = 42),
+  token_decimals SMALLINT NOT NULL CHECK (token_decimals BETWEEN 0 AND 255),
+  robinhood_asset_id_hash TEXT NOT NULL CHECK (char_length(robinhood_asset_id_hash) = 66),
+  registry_index NUMERIC(78,0) NOT NULL CHECK (registry_index >= 0),
+  registration_block_number NUMERIC(78,0) NOT NULL CHECK (registration_block_number >= 0),
+  registration_block_hash TEXT NOT NULL CHECK (char_length(registration_block_hash) = 66),
+  registration_transaction_hash TEXT NOT NULL CHECK (char_length(registration_transaction_hash) = 66),
+  registration_log_index NUMERIC(78,0) NOT NULL CHECK (registration_log_index >= 0),
+  registered_at NUMERIC(78,0) NOT NULL CHECK (registered_at >= 0),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (chain_id,registry_address,asset_version_key),
+  UNIQUE (asset_version_key),
+  CHECK (NOT active OR (registered AND activation_generation > 0)),
+  CHECK (registered OR (NOT active AND activation_generation = 0))
+);
+
+CREATE TABLE IF NOT EXISTS rwa_registry_publisher_history_v2 (
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  publisher TEXT NOT NULL CHECK (char_length(publisher) = 42),
+  block_number NUMERIC(78,0) NOT NULL CHECK (block_number >= 0),
+  block_hash TEXT NOT NULL CHECK (char_length(block_hash) = 66),
+  block_timestamp NUMERIC(78,0) NOT NULL CHECK (block_timestamp >= 0),
+  transaction_hash TEXT NOT NULL CHECK (char_length(transaction_hash) = 66),
+  transaction_index NUMERIC(78,0) NOT NULL CHECK (transaction_index >= 0),
+  log_index NUMERIC(78,0) NOT NULL CHECK (log_index >= 0),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (chain_id,registry_address,block_hash,transaction_hash,log_index)
+);
+
+CREATE TABLE IF NOT EXISTS rwa_registry_publisher_current_v2 (
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  publisher TEXT NOT NULL CHECK (char_length(publisher) = 42),
+  block_number NUMERIC(78,0) NOT NULL CHECK (block_number >= 0),
+  block_hash TEXT NOT NULL CHECK (char_length(block_hash) = 66),
+  block_timestamp NUMERIC(78,0) NOT NULL CHECK (block_timestamp >= 0),
+  transaction_hash TEXT NOT NULL CHECK (char_length(transaction_hash) = 66),
+  transaction_index NUMERIC(78,0) NOT NULL CHECK (transaction_index >= 0),
+  log_index NUMERIC(78,0) NOT NULL CHECK (log_index >= 0),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (chain_id,registry_address)
+);
+
+CREATE TABLE IF NOT EXISTS rwa_registry_ballot_events_v2 (
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  ballot_day NUMERIC(78,0) NOT NULL CHECK (ballot_day >= 0),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  token_address TEXT NOT NULL CHECK (char_length(token_address) = 42),
+  token_decimals SMALLINT NOT NULL CHECK (token_decimals BETWEEN 0 AND 255),
+  tally_hash TEXT NOT NULL CHECK (char_length(tally_hash) = 66),
+  catalog_version NUMERIC(78,0) NOT NULL CHECK (catalog_version >= 0),
+  max_eth_wei NUMERIC(78,0) NOT NULL CHECK (max_eth_wei >= 0),
+  purchase_until NUMERIC(78,0) NOT NULL CHECK (purchase_until >= 0),
+  published_at NUMERIC(78,0) NOT NULL CHECK (published_at >= 0),
+  activation_generation NUMERIC(78,0) NOT NULL CHECK (activation_generation >= 0),
+  block_number NUMERIC(78,0) NOT NULL CHECK (block_number >= 0),
+  block_hash TEXT NOT NULL CHECK (char_length(block_hash) = 66),
+  block_timestamp NUMERIC(78,0) NOT NULL CHECK (block_timestamp >= 0),
+  transaction_hash TEXT NOT NULL CHECK (char_length(transaction_hash) = 66),
+  transaction_index NUMERIC(78,0) NOT NULL CHECK (transaction_index >= 0),
+  log_index NUMERIC(78,0) NOT NULL CHECK (log_index >= 0),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (chain_id,registry_address,ballot_day)
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_registry_ballot_events_day_v2
+  ON rwa_registry_ballot_events_v2(ballot_day,registry_address);
+
+CREATE TABLE IF NOT EXISTS rwa_registry_lifecycle_event_results_v2 (
+  inbox_id TEXT PRIMARY KEY REFERENCES rwa_registry_lifecycle_inbox_v2(inbox_id)
+    ON DELETE RESTRICT,
+  event_kind TEXT NOT NULL CHECK (event_kind IN
+    ('PublisherSet','AssetVersionRegistered','AssetVersionActivated',
+     'AssetVersionDeactivated','BallotPublished')),
+  disposition TEXT NOT NULL CHECK (disposition IN
+    ('drift','publisher_applied','registration_applied',
+     'activation_matched','activation_provenance_unmatched','deactivation_applied',
+     'ballot_matched','ballot_provenance_unmatched')),
+  local_record_id TEXT,
+  detail_code TEXT NOT NULL CHECK (detail_code IN
+    ('publisher_applied','registration_applied','deactivation_applied','matched','unmatched','drift')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CHECK (
+    (event_kind='PublisherSet' AND disposition='publisher_applied'
+      AND detail_code='publisher_applied' AND local_record_id IS NULL)
+    OR (event_kind='AssetVersionRegistered' AND disposition='registration_applied'
+      AND detail_code='registration_applied' AND local_record_id IS NULL)
+    OR (event_kind='AssetVersionDeactivated' AND disposition='deactivation_applied'
+      AND detail_code='deactivation_applied' AND local_record_id IS NULL)
+    OR (event_kind='AssetVersionActivated' AND disposition='activation_matched'
+      AND detail_code='matched' AND local_record_id IS NOT NULL)
+    OR (event_kind='AssetVersionActivated' AND disposition='activation_provenance_unmatched'
+      AND detail_code='unmatched' AND local_record_id IS NULL)
+    OR (event_kind='BallotPublished' AND disposition='ballot_matched'
+      AND detail_code='matched' AND local_record_id IS NOT NULL)
+    OR (event_kind='BallotPublished' AND disposition='ballot_provenance_unmatched'
+      AND detail_code='unmatched' AND local_record_id IS NULL)
+    OR (event_kind IN ('AssetVersionActivated','BallotPublished') AND disposition='drift'
+      AND detail_code='drift' AND local_record_id IS NOT NULL)
+  )
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_registry_lifecycle_event_results_disposition_v2
+  ON rwa_registry_lifecycle_event_results_v2(disposition,event_kind,created_at);
+
+CREATE TABLE IF NOT EXISTS rwa_registry_lifecycle_runtime_v2 (
+  id SMALLINT PRIMARY KEY CHECK (id = 1),
+  consumer_key TEXT NOT NULL CHECK (consumer_key = 'rwa_registry_lifecycle_v2'),
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT CHECK (registry_address IS NULL OR char_length(registry_address) = 42),
+  start_block_number NUMERIC(78,0) CHECK (start_block_number IS NULL OR start_block_number >= 0),
+  last_applied_block_number NUMERIC(78,0) CHECK
+    (last_applied_block_number IS NULL OR last_applied_block_number >= 0),
+  last_applied_block_hash TEXT CHECK
+    (last_applied_block_hash IS NULL OR char_length(last_applied_block_hash) = 66),
+  finalized_horizon_block_number NUMERIC(78,0) CHECK
+    (finalized_horizon_block_number IS NULL OR finalized_horizon_block_number >= 0),
+  finalized_horizon_block_hash TEXT CHECK
+    (finalized_horizon_block_hash IS NULL OR char_length(finalized_horizon_block_hash) = 66),
+  sync_in_progress BOOLEAN NOT NULL DEFAULT false,
+  attempt_id TEXT,
+  last_attempt_at TIMESTAMPTZ,
+  last_success_at TIMESTAMPTZ,
+  ready_verified_at TIMESTAMPTZ,
+  caught_up BOOLEAN NOT NULL DEFAULT false,
+  halted BOOLEAN NOT NULL DEFAULT false,
+  failure_code TEXT CHECK (failure_code IS NULL OR failure_code IN
+    ('rwa_lifecycle_unconfigured','rwa_lifecycle_config','rwa_lifecycle_input',
+     'rwa_lifecycle_rpc','rwa_lifecycle_decode','rwa_lifecycle_timestamp','rwa_lifecycle_structure',
+     'rwa_lifecycle_generation','rwa_lifecycle_catalog','rwa_lifecycle_getter_mismatch',
+     'rwa_lifecycle_task5_mismatch','rwa_lifecycle_inbox_conflict',
+     'rwa_lifecycle_provenance','rwa_lifecycle_capacity','rwa_lifecycle_reorg',
+     'rwa_lifecycle_observation','rwa_lifecycle_halted','rwa_lifecycle_internal')),
+  unresolved_incident_count INT NOT NULL DEFAULT 0 CHECK (unresolved_incident_count >= 0),
+  last_incident_id TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  FOREIGN KEY (consumer_key) REFERENCES rwa_registry_lifecycle_checkpoint_v2(consumer_key)
+    ON DELETE RESTRICT,
+  CHECK ((registry_address IS NULL) = (start_block_number IS NULL)),
+  CHECK ((last_applied_block_number IS NULL) = (last_applied_block_hash IS NULL)),
+  CHECK ((finalized_horizon_block_number IS NULL) = (finalized_horizon_block_hash IS NULL)),
+  CHECK (NOT sync_in_progress OR (attempt_id IS NOT NULL AND last_attempt_at IS NOT NULL)),
+  CHECK (ready_verified_at IS NULL OR (caught_up AND NOT halted AND NOT sync_in_progress))
+);
+INSERT INTO rwa_registry_lifecycle_runtime_v2 (id,consumer_key,chain_id)
+  VALUES (1,'rwa_registry_lifecycle_v2',4663)
+  ON CONFLICT (id) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS rwa_registry_lifecycle_attempts_v2 (
+  attempt_id TEXT PRIMARY KEY,
+  status TEXT NOT NULL CHECK (status IN ('started','succeeded','failed','superseded')),
+  started_at TIMESTAMPTZ NOT NULL,
+  ended_at TIMESTAMPTZ,
+  failure_code TEXT CHECK (failure_code IS NULL OR failure_code IN
+    ('rwa_lifecycle_unconfigured','rwa_lifecycle_config','rwa_lifecycle_input',
+     'rwa_lifecycle_rpc','rwa_lifecycle_decode','rwa_lifecycle_timestamp','rwa_lifecycle_structure',
+     'rwa_lifecycle_generation','rwa_lifecycle_catalog','rwa_lifecycle_getter_mismatch',
+     'rwa_lifecycle_task5_mismatch','rwa_lifecycle_inbox_conflict',
+     'rwa_lifecycle_provenance','rwa_lifecycle_capacity','rwa_lifecycle_reorg',
+     'rwa_lifecycle_observation','rwa_lifecycle_halted','rwa_lifecycle_internal')),
+  superseded_by_attempt_id TEXT,
+  CHECK ((status = 'started' AND ended_at IS NULL)
+    OR (status IN ('succeeded','failed','superseded') AND ended_at IS NOT NULL)),
+  CHECK (ended_at IS NULL OR ended_at >= started_at),
+  CHECK ((status = 'failed') = (failure_code IS NOT NULL)),
+  CHECK (status = 'superseded' OR superseded_by_attempt_id IS NULL)
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_registry_lifecycle_attempts_status_v2
+  ON rwa_registry_lifecycle_attempts_v2(status,started_at,attempt_id);
+
+-- RWA HEALTH H1 — server-authoritative operational observations and sticky blockers.
+CREATE TABLE IF NOT EXISTS rwa_health_apply_lock_v2 (
+  id SMALLINT PRIMARY KEY CHECK (id = 1),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+INSERT INTO rwa_health_apply_lock_v2 (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS rwa_health_runtime_v2 (
+  chain_id INT NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT PRIMARY KEY CHECK (char_length(registry_address) = 42),
+  catalog_version NUMERIC(78,0) CHECK (catalog_version >= 0),
+  catalog_snapshot_hash TEXT CHECK (catalog_snapshot_hash IS NULL OR char_length(catalog_snapshot_hash) = 66),
+  active_version_count INT CHECK (active_version_count IS NULL OR active_version_count >= 0),
+  capacity_exceeded BOOLEAN NOT NULL DEFAULT false,
+  last_attempted_slot NUMERIC(78,0) CHECK (last_attempted_slot >= 0),
+  last_completed_slot NUMERIC(78,0) CHECK (last_completed_slot >= 0),
+  missed_slot_count BIGINT NOT NULL DEFAULT 0 CHECK (missed_slot_count >= 0),
+  last_error_code TEXT CHECK (last_error_code IS NULL OR last_error_code IN
+    ('health_registry_unavailable','health_registry_stale','health_capacity_exceeded',
+     'health_slot_conflict','health_snapshot_changed','health_provider_timeout',
+     'health_provider_http','health_provider_oversized','health_provider_malformed')),
+  updated_at TIMESTAMPTZ NOT NULL,
+  CHECK ((active_version_count IS NULL AND capacity_exceeded = false)
+      OR (active_version_count IS NOT NULL
+          AND capacity_exceeded = (active_version_count > 2048))),
+  CHECK (last_completed_slot IS NULL
+      OR (last_attempted_slot IS NOT NULL AND last_completed_slot <= last_attempted_slot))
+);
+
+CREATE TABLE IF NOT EXISTS rwa_health_batches_v2 (
+  batch_id TEXT PRIMARY KEY CHECK (char_length(batch_id) = 66),
+  chain_id INT NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  catalog_version NUMERIC(78,0) NOT NULL CHECK (catalog_version >= 0),
+  catalog_snapshot_hash TEXT NOT NULL CHECK (char_length(catalog_snapshot_hash) = 66),
+  active_set_hash TEXT NOT NULL CHECK (char_length(active_set_hash) = 66),
+  rule_set_hash TEXT NOT NULL CHECK (char_length(rule_set_hash) = 66),
+  provider_endpoint_hash TEXT NOT NULL CHECK (char_length(provider_endpoint_hash) = 66),
+  provider_commitment TEXT NOT NULL CHECK (char_length(provider_commitment) = 66),
+  cycle_slot NUMERIC(78,0) NOT NULL CHECK (cycle_slot >= 0),
+  source_state TEXT NOT NULL CHECK (source_state IN ('observed','unknown')),
+  failure_code TEXT CHECK (failure_code IS NULL OR failure_code IN
+    ('provider_timeout','provider_redirect','provider_http','provider_content_type',
+     'provider_content_encoding','provider_oversized','provider_utf8','provider_json',
+     'provider_shape','provider_identity_malformed','provider_identity_duplicate')),
+  observed_at TIMESTAMPTZ NOT NULL,
+  fetch_completed_at TIMESTAMPTZ NOT NULL,
+  active_version_count INT NOT NULL CHECK (active_version_count BETWEEN 0 AND 2048),
+  declared_page_count SMALLINT NOT NULL CHECK (declared_page_count BETWEEN 0 AND 8),
+  applied_page_count SMALLINT NOT NULL DEFAULT 0 CHECK (applied_page_count BETWEEN 0 AND 8),
+  applied_item_count INT NOT NULL DEFAULT 0 CHECK (applied_item_count BETWEEN 0 AND 2048),
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','complete','abandoned')),
+  completed_at TIMESTAMPTZ,
+  abandoned_at TIMESTAMPTZ,
+  abandoned_code TEXT,
+  CHECK (fetch_completed_at >= observed_at),
+  CHECK ((source_state = 'observed' AND failure_code IS NULL)
+      OR (source_state = 'unknown' AND failure_code IS NOT NULL)),
+  CHECK ((active_version_count = 0 AND declared_page_count = 0)
+      OR (active_version_count > 0 AND declared_page_count = ((active_version_count + 255) / 256))),
+  CHECK (applied_page_count <= declared_page_count),
+  CHECK (applied_item_count <= active_version_count),
+  CHECK ((status = 'complete' AND completed_at IS NOT NULL
+          AND abandoned_at IS NULL AND abandoned_code IS NULL
+          AND applied_page_count = declared_page_count
+          AND applied_item_count = active_version_count)
+      OR (status = 'pending' AND completed_at IS NULL
+          AND abandoned_at IS NULL AND abandoned_code IS NULL)
+      OR (status = 'abandoned' AND completed_at IS NULL
+          AND abandoned_at IS NOT NULL AND abandoned_code IN
+            ('health_snapshot_changed','health_registry_stale'))),
+  UNIQUE (batch_id,chain_id,registry_address,catalog_version,catalog_snapshot_hash),
+  UNIQUE (batch_id,provider_commitment,source_state)
+);
+CREATE UNIQUE INDEX ux_rwa_health_cycle_v2 ON rwa_health_batches_v2
+  (chain_id,registry_address,catalog_version,catalog_snapshot_hash,rule_set_hash,
+   provider_endpoint_hash,cycle_slot);
+CREATE UNIQUE INDEX ux_rwa_health_one_pending_batch_v2 ON rwa_health_batches_v2
+  (chain_id,registry_address) WHERE status = 'pending';
+
+CREATE TABLE IF NOT EXISTS rwa_health_private_provider_evidence_v2 (
+  batch_id TEXT PRIMARY KEY,
+  raw_body_hash TEXT NOT NULL CHECK (char_length(raw_body_hash) = 66),
+  source_state TEXT NOT NULL DEFAULT 'observed' CHECK (source_state = 'observed'),
+  byte_count INT NOT NULL CHECK (byte_count BETWEEN 0 AND 2000000),
+  body_bytes BYTEA NOT NULL,
+  captured_at TIMESTAMPTZ NOT NULL,
+  retain_until TIMESTAMPTZ NOT NULL,
+  FOREIGN KEY (batch_id,raw_body_hash,source_state)
+    REFERENCES rwa_health_batches_v2(batch_id,provider_commitment,source_state)
+    ON DELETE RESTRICT,
+  CHECK (byte_count = octet_length(body_bytes)),
+  CHECK (retain_until >= captured_at + interval '35 days')
+);
+
+CREATE TABLE IF NOT EXISTS rwa_health_pages_v2 (
+  page_id TEXT PRIMARY KEY CHECK (char_length(page_id) = 66),
+  batch_id TEXT NOT NULL REFERENCES rwa_health_batches_v2(batch_id) ON DELETE RESTRICT,
+  page_index SMALLINT NOT NULL CHECK (page_index BETWEEN 0 AND 7),
+  first_asset_version_key TEXT NOT NULL CHECK (char_length(first_asset_version_key) = 66),
+  last_asset_version_key TEXT NOT NULL CHECK (char_length(last_asset_version_key) = 66),
+  item_count SMALLINT NOT NULL CHECK (item_count BETWEEN 1 AND 256),
+  status TEXT NOT NULL DEFAULT 'planned' CHECK (status IN ('planned','applied')),
+  applied_at TIMESTAMPTZ,
+  UNIQUE (batch_id,page_index),
+  UNIQUE (batch_id,page_id),
+  CHECK (first_asset_version_key <= last_asset_version_key),
+  CHECK ((status = 'planned' AND applied_at IS NULL)
+      OR (status = 'applied' AND applied_at IS NOT NULL))
+);
+
+CREATE TABLE IF NOT EXISTS rwa_health_evaluations_v2 (
+  evaluation_id TEXT PRIMARY KEY CHECK (char_length(evaluation_id) = 66),
+  batch_id TEXT NOT NULL,
+  page_id TEXT NOT NULL,
+  chain_id INT NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  catalog_version NUMERIC(78,0) NOT NULL CHECK (catalog_version >= 0),
+  catalog_snapshot_hash TEXT NOT NULL CHECK (char_length(catalog_snapshot_hash) = 66),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  normalized_ticker TEXT NOT NULL,
+  token_address TEXT NOT NULL CHECK (char_length(token_address) = 42),
+  token_decimals SMALLINT NOT NULL CHECK (token_decimals BETWEEN 0 AND 255),
+  robinhood_asset_id_hash TEXT NOT NULL CHECK (char_length(robinhood_asset_id_hash) = 66),
+  expected_identity_hash TEXT NOT NULL CHECK (char_length(expected_identity_hash) = 66),
+  evaluation_kind TEXT NOT NULL CHECK (evaluation_kind IN
+    ('healthy','health_unknown','operational_quarantine')),
+  predicate_commitment TEXT NOT NULL CHECK (char_length(predicate_commitment) = 66),
+  provider_record SMALLINT NOT NULL CHECK (provider_record BETWEEN 0 AND 2),
+  supported_chain SMALLINT NOT NULL CHECK (supported_chain BETWEEN 0 AND 2),
+  ticker_identity SMALLINT NOT NULL CHECK (ticker_identity BETWEEN 0 AND 2),
+  token_identity SMALLINT NOT NULL CHECK (token_identity BETWEEN 0 AND 2),
+  token_decimals_result SMALLINT NOT NULL CHECK (token_decimals_result BETWEEN 0 AND 2),
+  provider_active SMALLINT NOT NULL CHECK (provider_active BETWEEN 0 AND 2),
+  fractional_tradable SMALLINT NOT NULL CHECK (fractional_tradable BETWEEN 0 AND 2),
+  evidence_hash TEXT NOT NULL CHECK
+    (char_length(evidence_hash) = 66 AND evidence_hash <> '0x0000000000000000000000000000000000000000000000000000000000000000'),
+  observed_at TIMESTAMPTZ NOT NULL,
+  status TEXT NOT NULL DEFAULT 'planned' CHECK (status IN ('planned','applied')),
+  applied_at TIMESTAMPTZ,
+  UNIQUE (batch_id,asset_version_key),
+  UNIQUE (page_id,asset_version_key),
+  UNIQUE (registry_address,asset_version_key,evaluation_id),
+  UNIQUE (registry_address,asset_version_key,catalog_version,catalog_snapshot_hash,evaluation_id),
+  UNIQUE (registry_address,asset_version_key,evaluation_id,evaluation_kind,evidence_hash),
+  UNIQUE (registry_address,asset_version_key,evaluation_id,status),
+  UNIQUE (registry_address,asset_version_key,evaluation_id,status,evaluation_kind,evidence_hash),
+  UNIQUE (registry_address,asset_version_key,catalog_version,catalog_snapshot_hash,evaluation_id,status),
+  UNIQUE (registry_address,asset_version_key,evaluation_id,status,
+          evaluation_kind,observed_at,applied_at,evidence_hash),
+  UNIQUE (registry_address,asset_version_key,catalog_version,catalog_snapshot_hash,
+          evaluation_id,status,evaluation_kind,observed_at,applied_at,evidence_hash),
+  FOREIGN KEY (batch_id,page_id)
+    REFERENCES rwa_health_pages_v2(batch_id,page_id) ON DELETE RESTRICT,
+  FOREIGN KEY (batch_id,chain_id,registry_address,catalog_version,catalog_snapshot_hash)
+    REFERENCES rwa_health_batches_v2
+      (batch_id,chain_id,registry_address,catalog_version,catalog_snapshot_hash)
+    ON DELETE RESTRICT,
+  CHECK ((status = 'planned' AND applied_at IS NULL)
+      OR (status = 'applied' AND applied_at >= observed_at))
+);
+CREATE INDEX ix_rwa_health_eval_asset_v2 ON rwa_health_evaluations_v2
+  (registry_address,asset_version_key,applied_at DESC NULLS LAST,evaluation_id DESC)
+  WHERE status = 'applied';
+
+-- RWA HEALTH H2 — an independently checkpointed finalized consumer plus immutable
+-- reviewer packages. The control rows are intentionally unconfigured at rest: only the
+-- finalized consumer may bind the configured overlay identity and populate readiness.
+CREATE TABLE IF NOT EXISTS rwa_health_overlay_lock_v2 (
+  id SMALLINT PRIMARY KEY CHECK (id = 1),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+INSERT INTO rwa_health_overlay_lock_v2 (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS rwa_health_overlay_checkpoint_v2 (
+  consumer_key TEXT PRIMARY KEY CHECK (consumer_key = 'rwa_health_overlay_v2'),
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT CHECK (registry_address IS NULL OR char_length(registry_address) = 42),
+  overlay_address TEXT CHECK (overlay_address IS NULL OR char_length(overlay_address) = 42),
+  safe_address TEXT CHECK (safe_address IS NULL OR char_length(safe_address) = 42),
+  start_block_number NUMERIC(78,0) CHECK (start_block_number IS NULL OR
+    start_block_number BETWEEN 0 AND 115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  last_applied_block_number NUMERIC(78,0) CHECK
+    (last_applied_block_number IS NULL OR last_applied_block_number BETWEEN 0 AND
+      115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  last_applied_block_hash TEXT CHECK
+    (last_applied_block_hash IS NULL OR char_length(last_applied_block_hash) = 66),
+  last_observation_hash TEXT CHECK
+    (last_observation_hash IS NULL OR char_length(last_observation_hash) = 66),
+  finalized_horizon_block_number NUMERIC(78,0) CHECK
+    (finalized_horizon_block_number IS NULL OR finalized_horizon_block_number BETWEEN 0 AND
+      115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  finalized_horizon_block_hash TEXT CHECK
+    (finalized_horizon_block_hash IS NULL OR char_length(finalized_horizon_block_hash) = 66),
+  caught_up BOOLEAN NOT NULL DEFAULT false,
+  halted BOOLEAN NOT NULL DEFAULT false,
+  verified_at TIMESTAMPTZ,
+  ready_verified_at TIMESTAMPTZ,
+  CHECK ((registry_address IS NULL) = (overlay_address IS NULL)),
+  CHECK ((registry_address IS NULL) = (safe_address IS NULL)),
+  CHECK ((registry_address IS NULL) = (start_block_number IS NULL)),
+  CHECK ((last_applied_block_number IS NULL) = (last_applied_block_hash IS NULL)),
+  CHECK ((last_applied_block_number IS NULL) = (last_observation_hash IS NULL)),
+  CHECK ((finalized_horizon_block_number IS NULL) = (finalized_horizon_block_hash IS NULL)),
+  CHECK (last_applied_block_number IS NULL OR start_block_number IS NOT NULL),
+  CHECK (last_applied_block_number IS NULL OR
+    (last_applied_block_number >= start_block_number
+      OR (start_block_number > 0 AND last_applied_block_number = start_block_number - 1))),
+  CHECK (finalized_horizon_block_number IS NULL OR last_applied_block_number IS NULL
+    OR finalized_horizon_block_number >= last_applied_block_number),
+  CHECK (NOT caught_up OR (last_applied_block_number = finalized_horizon_block_number
+    AND last_applied_block_hash = finalized_horizon_block_hash AND verified_at IS NOT NULL)),
+  CHECK (ready_verified_at IS NULL OR (caught_up AND NOT halted))
+);
+INSERT INTO rwa_health_overlay_checkpoint_v2 (consumer_key,chain_id)
+  VALUES ('rwa_health_overlay_v2',4663)
+  ON CONFLICT (consumer_key) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS rwa_health_overlay_runtime_v2 (
+  id SMALLINT PRIMARY KEY CHECK (id = 1),
+  consumer_key TEXT NOT NULL CHECK (consumer_key = 'rwa_health_overlay_v2'),
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT CHECK (registry_address IS NULL OR char_length(registry_address) = 42),
+  overlay_address TEXT CHECK (overlay_address IS NULL OR char_length(overlay_address) = 42),
+  safe_address TEXT CHECK (safe_address IS NULL OR char_length(safe_address) = 42),
+  start_block_number NUMERIC(78,0) CHECK (start_block_number IS NULL OR
+    start_block_number BETWEEN 0 AND 115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  last_applied_block_number NUMERIC(78,0) CHECK
+    (last_applied_block_number IS NULL OR last_applied_block_number BETWEEN 0 AND
+      115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  last_applied_block_hash TEXT CHECK
+    (last_applied_block_hash IS NULL OR char_length(last_applied_block_hash) = 66),
+  finalized_horizon_block_number NUMERIC(78,0) CHECK
+    (finalized_horizon_block_number IS NULL OR finalized_horizon_block_number BETWEEN 0 AND
+      115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  finalized_horizon_block_hash TEXT CHECK
+    (finalized_horizon_block_hash IS NULL OR char_length(finalized_horizon_block_hash) = 66),
+  sync_in_progress BOOLEAN NOT NULL DEFAULT false,
+  attempt_id TEXT,
+  last_attempt_at TIMESTAMPTZ,
+  last_success_at TIMESTAMPTZ,
+  ready_verified_at TIMESTAMPTZ,
+  caught_up BOOLEAN NOT NULL DEFAULT false,
+  halted BOOLEAN NOT NULL DEFAULT false,
+  failure_code TEXT CHECK (failure_code IS NULL OR failure_code IN
+    ('h2_rpc_failed','h2_decode_failed','h2_fo_failed','h2_dependency_lag',
+     'h2_reorg_halt','h2_dependency_mismatch','h2_checkpoint_halt',
+     'h2_generation_halt','h2_inbox_halt','h2_structure_halt','h2_attempt_superseded')),
+  unresolved_authority_incident_count NUMERIC(78,0) NOT NULL DEFAULT 0
+    CHECK (unresolved_authority_incident_count BETWEEN 0 AND
+      115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  last_incident_id TEXT CHECK (last_incident_id IS NULL OR char_length(last_incident_id) = 66),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  FOREIGN KEY (consumer_key) REFERENCES rwa_health_overlay_checkpoint_v2(consumer_key)
+    ON DELETE RESTRICT,
+  CHECK ((registry_address IS NULL) = (overlay_address IS NULL)),
+  CHECK ((registry_address IS NULL) = (safe_address IS NULL)),
+  CHECK ((registry_address IS NULL) = (start_block_number IS NULL)),
+  CHECK ((last_applied_block_number IS NULL) = (last_applied_block_hash IS NULL)),
+  CHECK ((finalized_horizon_block_number IS NULL) = (finalized_horizon_block_hash IS NULL)),
+  CHECK (NOT sync_in_progress OR (attempt_id IS NOT NULL AND last_attempt_at IS NOT NULL)),
+  CHECK (ready_verified_at IS NULL OR
+    (caught_up AND NOT halted AND NOT sync_in_progress
+      AND unresolved_authority_incident_count = 0))
+);
+INSERT INTO rwa_health_overlay_runtime_v2 (id,consumer_key,chain_id)
+  VALUES (1,'rwa_health_overlay_v2',4663)
+  ON CONFLICT (id) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS rwa_health_overlay_attempts_v2 (
+  attempt_id TEXT PRIMARY KEY CHECK (char_length(attempt_id) = 66),
+  status TEXT NOT NULL CHECK (status IN ('started','succeeded','failed','superseded')),
+  started_at TIMESTAMPTZ NOT NULL,
+  ended_at TIMESTAMPTZ,
+  failure_code TEXT CHECK (failure_code IS NULL OR failure_code IN
+    ('h2_rpc_failed','h2_decode_failed','h2_fo_failed','h2_dependency_lag',
+     'h2_reorg_halt','h2_dependency_mismatch','h2_checkpoint_halt',
+     'h2_generation_halt','h2_inbox_halt','h2_structure_halt','h2_attempt_superseded')),
+  superseded_by_attempt_id TEXT CHECK
+    (superseded_by_attempt_id IS NULL OR char_length(superseded_by_attempt_id) = 66),
+  CHECK ((status = 'started' AND ended_at IS NULL AND failure_code IS NULL
+          AND superseded_by_attempt_id IS NULL)
+      OR (status = 'succeeded' AND ended_at IS NOT NULL AND failure_code IS NULL
+          AND superseded_by_attempt_id IS NULL)
+      OR (status = 'failed' AND ended_at IS NOT NULL AND failure_code IS NOT NULL
+          AND failure_code <> 'h2_attempt_superseded' AND superseded_by_attempt_id IS NULL)
+      OR (status = 'superseded' AND ended_at IS NOT NULL
+          AND failure_code = 'h2_attempt_superseded'
+          AND superseded_by_attempt_id IS NOT NULL)),
+  CHECK (ended_at IS NULL OR ended_at >= started_at)
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_health_overlay_attempts_status_v2
+  ON rwa_health_overlay_attempts_v2(status,started_at,attempt_id);
+
+CREATE TABLE IF NOT EXISTS rwa_health_overlay_asset_state_v2 (
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  overlay_address TEXT NOT NULL CHECK (char_length(overlay_address) = 42),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  overlay_generation NUMERIC(78,0) NOT NULL CHECK (overlay_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  latest_clearance_id TEXT NOT NULL CHECK (char_length(latest_clearance_id) = 66),
+  last_block_number NUMERIC(78,0) NOT NULL CHECK (last_block_number BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  last_block_hash TEXT NOT NULL CHECK (char_length(last_block_hash) = 66),
+  last_transaction_hash TEXT NOT NULL CHECK (char_length(last_transaction_hash) = 66),
+  last_log_index NUMERIC(78,0) NOT NULL CHECK (last_log_index BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (registry_address,overlay_address,asset_version_key),
+  UNIQUE (overlay_address,asset_version_key,overlay_generation),
+  UNIQUE (latest_clearance_id)
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_health_overlay_asset_generation_v2
+  ON rwa_health_overlay_asset_state_v2(asset_version_key,overlay_generation DESC,overlay_address);
+
+CREATE TABLE IF NOT EXISTS rwa_health_overlay_inbox_v2 (
+  inbox_id TEXT PRIMARY KEY CHECK (char_length(inbox_id) = 66),
+  consumer_key TEXT NOT NULL REFERENCES rwa_health_overlay_checkpoint_v2(consumer_key)
+    ON DELETE RESTRICT,
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  contract_address TEXT NOT NULL CHECK (char_length(contract_address) = 42),
+  block_number NUMERIC(78,0) NOT NULL CHECK (block_number BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  block_hash TEXT NOT NULL CHECK (char_length(block_hash) = 66),
+  block_timestamp NUMERIC(78,0) NOT NULL CHECK (block_timestamp BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  transaction_hash TEXT NOT NULL CHECK (char_length(transaction_hash) = 66),
+  transaction_index NUMERIC(78,0) NOT NULL CHECK (transaction_index BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  log_index NUMERIC(78,0) NOT NULL CHECK (log_index BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  topic0 TEXT NOT NULL CHECK (char_length(topic0) = 66),
+  topics_json TEXT NOT NULL,
+  data_hex TEXT NOT NULL,
+  decoded_hash TEXT NOT NULL CHECK (char_length(decoded_hash) = 66),
+  observation_hash TEXT NOT NULL CHECK (char_length(observation_hash) = 66),
+  clearance_id TEXT NOT NULL CHECK (char_length(clearance_id) = 66),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  overlay_generation NUMERIC(78,0) NOT NULL CHECK (overlay_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  activation_generation NUMERIC(78,0) NOT NULL CHECK (activation_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  catalog_snapshot_hash TEXT NOT NULL CHECK (char_length(catalog_snapshot_hash) = 66),
+  episode_id TEXT NOT NULL CHECK (char_length(episode_id) = 66),
+  episode_generation NUMERIC(78,0) NOT NULL CHECK (episode_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  current_severity SMALLINT NOT NULL CHECK (current_severity IN (1,2)),
+  state_sequence BIGINT NOT NULL CHECK (state_sequence BETWEEN 1 AND 9223372036854775807),
+  latest_episode_event_id TEXT NOT NULL CHECK (char_length(latest_episode_event_id) = 66),
+  latest_material_evidence_hash TEXT NOT NULL CHECK (char_length(latest_material_evidence_hash) = 66),
+  recovery_evidence_hash TEXT NOT NULL CHECK (char_length(recovery_evidence_hash) = 66),
+  fresh_healthy_evaluation_id TEXT NOT NULL CHECK (char_length(fresh_healthy_evaluation_id) = 66),
+  fresh_healthy_evidence_hash TEXT NOT NULL CHECK (char_length(fresh_healthy_evidence_hash) = 66),
+  reviewer_id_hash TEXT NOT NULL CHECK (char_length(reviewer_id_hash) = 66),
+  clearance_payload_hash TEXT NOT NULL CHECK (char_length(clearance_payload_hash) = 66),
+  safe_call_intent_hash TEXT NOT NULL CHECK (char_length(safe_call_intent_hash) = 66),
+  approved_at NUMERIC(20,0) NOT NULL CHECK
+    (approved_at BETWEEN 0 AND 18446744073709551615),
+  clearance_deadline NUMERIC(20,0) NOT NULL CHECK
+    (clearance_deadline BETWEEN 0 AND 18446744073709551615),
+  inserted_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (chain_id,contract_address,block_hash,transaction_hash,log_index),
+  UNIQUE (inbox_id,clearance_id),
+  CHECK (clearance_deadline = approved_at + 604800),
+  CHECK (approved_at <= block_timestamp AND block_timestamp < clearance_deadline)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_rwa_health_overlay_inbox_identity_v2
+  ON rwa_health_overlay_inbox_v2
+    (chain_id,contract_address,block_hash,transaction_hash,log_index);
+CREATE INDEX IF NOT EXISTS ix_rwa_health_overlay_inbox_order_v2
+  ON rwa_health_overlay_inbox_v2
+    (consumer_key,block_number,transaction_index,log_index);
+CREATE INDEX IF NOT EXISTS ix_rwa_health_overlay_inbox_asset_generation_v2
+  ON rwa_health_overlay_inbox_v2(asset_version_key,overlay_generation,block_number);
+
+CREATE TABLE IF NOT EXISTS rwa_health_clearance_attestations_v2 (
+  clearance_id TEXT PRIMARY KEY CHECK (char_length(clearance_id) = 66),
+  semantic_request_hash TEXT NOT NULL CHECK (char_length(semantic_request_hash) = 66),
+  chain_id NUMERIC(78,0) NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  overlay_address TEXT NOT NULL CHECK (char_length(overlay_address) = 42),
+  safe_address TEXT NOT NULL CHECK (char_length(safe_address) = 42),
+  catalog_version NUMERIC(78,0) NOT NULL CHECK (catalog_version BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  catalog_snapshot_hash TEXT NOT NULL CHECK (char_length(catalog_snapshot_hash) = 66),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  activation_generation NUMERIC(78,0) NOT NULL CHECK (activation_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  activation_block_number NUMERIC(78,0) NOT NULL CHECK (activation_block_number BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  activation_block_hash TEXT NOT NULL CHECK (char_length(activation_block_hash) = 66),
+  activation_transaction_hash TEXT NOT NULL CHECK (char_length(activation_transaction_hash) = 66),
+  activation_log_index NUMERIC(78,0) NOT NULL CHECK (activation_log_index BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  activation_evidence_hash TEXT NOT NULL CHECK (char_length(activation_evidence_hash) = 66),
+  activation_review_id TEXT NOT NULL CHECK (char_length(activation_review_id) = 66),
+  activation_approved_at TIMESTAMPTZ NOT NULL,
+  activation_valid_until TIMESTAMPTZ NOT NULL,
+  activation_included_at TIMESTAMPTZ NOT NULL,
+  episode_id TEXT NOT NULL CHECK (char_length(episode_id) = 66),
+  episode_generation NUMERIC(78,0) NOT NULL CHECK (episode_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  current_severity SMALLINT NOT NULL CHECK (current_severity IN (1,2)),
+  state_sequence BIGINT NOT NULL CHECK (state_sequence BETWEEN 1 AND 9223372036854775807),
+  latest_episode_event_id TEXT NOT NULL CHECK (char_length(latest_episode_event_id) = 66),
+  latest_material_event_id TEXT NOT NULL CHECK (char_length(latest_material_event_id) = 66),
+  latest_material_evidence_hash TEXT NOT NULL CHECK (char_length(latest_material_evidence_hash) = 66),
+  fresh_healthy_evaluation_id TEXT NOT NULL CHECK (char_length(fresh_healthy_evaluation_id) = 66),
+  fresh_healthy_evaluation_status TEXT NOT NULL DEFAULT 'applied'
+    CHECK (fresh_healthy_evaluation_status = 'applied'),
+  fresh_healthy_evaluation_kind TEXT NOT NULL DEFAULT 'healthy'
+    CHECK (fresh_healthy_evaluation_kind = 'healthy'),
+  fresh_healthy_evidence_hash TEXT NOT NULL CHECK (char_length(fresh_healthy_evidence_hash) = 66),
+  fresh_healthy_evaluation_applied_at TIMESTAMPTZ NOT NULL,
+  reviewer_id TEXT NOT NULL,
+  reviewer_id_hash TEXT NOT NULL CHECK (char_length(reviewer_id_hash) = 66),
+  recovery_evidence_hash TEXT NOT NULL CHECK (char_length(recovery_evidence_hash) = 66),
+  approved_at NUMERIC(20,0) NOT NULL CHECK
+    (approved_at BETWEEN 0 AND 18446744073709551615),
+  clearance_deadline NUMERIC(20,0) NOT NULL CHECK
+    (clearance_deadline BETWEEN 0 AND 18446744073709551615),
+  expected_overlay_generation NUMERIC(78,0) NOT NULL CHECK
+    (expected_overlay_generation BETWEEN 1 AND
+      115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  expected_safe_nonce NUMERIC(78,0) CHECK (expected_safe_nonce IS NULL OR
+    expected_safe_nonce BETWEEN 0 AND
+      115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  clearance_payload_hash TEXT NOT NULL CHECK (char_length(clearance_payload_hash) = 66),
+  safe_call_intent_hash TEXT NOT NULL CHECK (char_length(safe_call_intent_hash) = 66),
+  calldata_hash TEXT NOT NULL CHECK (char_length(calldata_hash) = 66),
+  first_transport_key_hash TEXT NOT NULL CHECK (char_length(first_transport_key_hash) = 64),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (clearance_id,registry_address,asset_version_key,expected_overlay_generation),
+  UNIQUE (clearance_id,recovery_evidence_hash),
+  UNIQUE (clearance_id,semantic_request_hash),
+  FOREIGN KEY (chain_id,registry_address,asset_version_key,activation_generation)
+    REFERENCES rwa_registry_activation_instances_v2
+      (chain_id,registry_address,asset_version_key,activation_generation) ON DELETE RESTRICT,
+  FOREIGN KEY (registry_address,asset_version_key,fresh_healthy_evaluation_id,
+               fresh_healthy_evaluation_status,fresh_healthy_evaluation_kind,
+               fresh_healthy_evidence_hash)
+    REFERENCES rwa_health_evaluations_v2
+      (registry_address,asset_version_key,evaluation_id,status,evaluation_kind,evidence_hash)
+    ON DELETE RESTRICT,
+  CHECK (clearance_deadline = approved_at + 604800),
+  CHECK (activation_valid_until = activation_approved_at + interval '604800 seconds'),
+  CHECK (activation_approved_at <= activation_included_at
+    AND activation_included_at < activation_valid_until)
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_health_clearance_attestations_asset_v2
+  ON rwa_health_clearance_attestations_v2
+    (registry_address,asset_version_key,expected_overlay_generation,created_at DESC);
+
+CREATE TABLE IF NOT EXISTS rwa_health_clearance_recovery_evidence_v2 (
+  clearance_id TEXT PRIMARY KEY,
+  recovery_evidence_hash TEXT NOT NULL CHECK (char_length(recovery_evidence_hash) = 66),
+  byte_count INT NOT NULL CHECK (byte_count BETWEEN 1 AND 65536),
+  evidence_bytes BYTEA NOT NULL,
+  captured_at TIMESTAMPTZ NOT NULL,
+  retain_until TIMESTAMPTZ NOT NULL,
+  FOREIGN KEY (clearance_id,recovery_evidence_hash)
+    REFERENCES rwa_health_clearance_attestations_v2(clearance_id,recovery_evidence_hash)
+    ON DELETE RESTRICT,
+  CHECK (byte_count = octet_length(evidence_bytes)),
+  CHECK (retain_until >= captured_at + interval '35 days')
+);
+
+CREATE TABLE IF NOT EXISTS rwa_health_clearance_safe_proposals_v2 (
+  clearance_id TEXT PRIMARY KEY,
+  semantic_request_hash TEXT NOT NULL CHECK (char_length(semantic_request_hash) = 66),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  expected_overlay_generation NUMERIC(78,0) NOT NULL CHECK
+    (expected_overlay_generation BETWEEN 1 AND
+      115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  safe_address TEXT NOT NULL CHECK (char_length(safe_address) = 42),
+  to_address TEXT NOT NULL CHECK (char_length(to_address) = 42),
+  value_wei NUMERIC(78,0) NOT NULL DEFAULT 0 CHECK (value_wei = 0),
+  operation SMALLINT NOT NULL DEFAULT 0 CHECK (operation = 0),
+  calldata_hex TEXT NOT NULL,
+  calldata_hash TEXT NOT NULL CHECK (char_length(calldata_hash) = 66),
+  expected_safe_nonce NUMERIC(78,0) CHECK (expected_safe_nonce IS NULL OR
+    expected_safe_nonce BETWEEN 0 AND
+      115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  safe_service_transaction_hash TEXT CHECK
+    (safe_service_transaction_hash IS NULL OR char_length(safe_service_transaction_hash) = 66),
+  execution_transaction_hash TEXT CHECK
+    (execution_transaction_hash IS NULL OR char_length(execution_transaction_hash) = 66),
+  status TEXT NOT NULL CHECK (status IN
+    ('safe_package_ready','safe_submitted','approval_stale',
+     'finalized_applied','finalized_rejected')),
+  approved_at NUMERIC(20,0) NOT NULL CHECK
+    (approved_at BETWEEN 0 AND 18446744073709551615),
+  clearance_deadline NUMERIC(20,0) NOT NULL CHECK
+    (clearance_deadline BETWEEN 0 AND 18446744073709551615),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  submitted_at TIMESTAMPTZ,
+  finalized_at TIMESTAMPTZ,
+  FOREIGN KEY (clearance_id,registry_address,asset_version_key,expected_overlay_generation)
+    REFERENCES rwa_health_clearance_attestations_v2
+      (clearance_id,registry_address,asset_version_key,expected_overlay_generation)
+    ON DELETE RESTRICT,
+  FOREIGN KEY (clearance_id,semantic_request_hash)
+    REFERENCES rwa_health_clearance_attestations_v2(clearance_id,semantic_request_hash)
+    ON DELETE RESTRICT,
+  CHECK (clearance_deadline = approved_at + 604800),
+  CHECK ((status = 'safe_package_ready' AND safe_service_transaction_hash IS NULL
+          AND execution_transaction_hash IS NULL AND submitted_at IS NULL AND finalized_at IS NULL)
+      OR (status = 'safe_submitted' AND safe_service_transaction_hash IS NOT NULL
+          AND execution_transaction_hash IS NULL AND submitted_at IS NOT NULL AND finalized_at IS NULL)
+      OR (status = 'approval_stale' AND execution_transaction_hash IS NULL
+          AND finalized_at IS NULL)
+      OR (status IN ('finalized_applied','finalized_rejected')
+          AND execution_transaction_hash IS NOT NULL AND finalized_at IS NOT NULL))
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_rwa_health_clearance_open_generation_v2
+  ON rwa_health_clearance_safe_proposals_v2
+    (registry_address,asset_version_key,expected_overlay_generation)
+  WHERE status IN ('safe_package_ready','safe_submitted');
+CREATE UNIQUE INDEX IF NOT EXISTS ux_rwa_health_clearance_open_semantic_v2
+  ON rwa_health_clearance_safe_proposals_v2(semantic_request_hash)
+  WHERE status IN ('safe_package_ready','safe_submitted');
+CREATE INDEX IF NOT EXISTS ix_rwa_health_clearance_expiry_v2
+  ON rwa_health_clearance_safe_proposals_v2(clearance_deadline,clearance_id)
+  WHERE status IN ('safe_package_ready','safe_submitted');
+
+CREATE TABLE IF NOT EXISTS rwa_health_overlay_event_results_v2 (
+  inbox_id TEXT PRIMARY KEY REFERENCES rwa_health_overlay_inbox_v2(inbox_id)
+    ON DELETE RESTRICT,
+  clearance_id TEXT NOT NULL CHECK (char_length(clearance_id) = 66),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  overlay_generation NUMERIC(78,0) NOT NULL CHECK (overlay_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  disposition TEXT NOT NULL CHECK (disposition IN
+    ('attestation_missing','package_mismatch','reviewer_mismatch',
+     'activation_instance_missing','activation_provenance_unmatched',
+     'stale_registry_generation','expired','stale_h1_head','applied')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (inbox_id,clearance_id),
+  UNIQUE (inbox_id,clearance_id,disposition),
+  FOREIGN KEY (inbox_id,clearance_id)
+    REFERENCES rwa_health_overlay_inbox_v2(inbox_id,clearance_id) ON DELETE RESTRICT
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_health_overlay_event_results_disposition_v2
+  ON rwa_health_overlay_event_results_v2(disposition,created_at,inbox_id);
+
+CREATE TABLE IF NOT EXISTS rwa_health_overlay_incidents_v2 (
+  inbox_id TEXT PRIMARY KEY,
+  incident_id TEXT NOT NULL UNIQUE CHECK (char_length(incident_id) = 66),
+  clearance_id TEXT NOT NULL CHECK (char_length(clearance_id) = 66),
+  disposition TEXT NOT NULL CHECK (disposition IN
+    ('attestation_missing','package_mismatch','reviewer_mismatch',
+     'activation_instance_missing','activation_provenance_unmatched',
+     'stale_registry_generation','expired','stale_h1_head')),
+  authority_incident BOOLEAN NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  FOREIGN KEY (inbox_id,clearance_id,disposition)
+    REFERENCES rwa_health_overlay_event_results_v2(inbox_id,clearance_id,disposition)
+    ON DELETE RESTRICT,
+  CHECK (authority_incident = (disposition IN
+    ('attestation_missing','package_mismatch','reviewer_mismatch',
+     'activation_instance_missing','activation_provenance_unmatched')))
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_health_overlay_incidents_authority_v2
+  ON rwa_health_overlay_incidents_v2(authority_incident,created_at,inbox_id);
+
+CREATE TABLE IF NOT EXISTS rwa_health_finalized_clearances_v2 (
+  clearance_id TEXT PRIMARY KEY CHECK (char_length(clearance_id) = 66),
+  disposition TEXT NOT NULL DEFAULT 'applied' CHECK (disposition = 'applied'),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  overlay_address TEXT NOT NULL CHECK (char_length(overlay_address) = 42),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  activation_generation NUMERIC(78,0) NOT NULL CHECK (activation_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  overlay_generation NUMERIC(78,0) NOT NULL CHECK (overlay_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  episode_id TEXT NOT NULL CHECK (char_length(episode_id) = 66),
+  episode_generation NUMERIC(78,0) NOT NULL CHECK (episode_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  h1_clearance_generation NUMERIC(78,0) NOT NULL CHECK (h1_clearance_generation BETWEEN 1 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  execution_block_number NUMERIC(78,0) NOT NULL CHECK (execution_block_number BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  execution_block_hash TEXT NOT NULL CHECK (char_length(execution_block_hash) = 66),
+  execution_transaction_hash TEXT NOT NULL CHECK (char_length(execution_transaction_hash) = 66),
+  execution_log_index NUMERIC(78,0) NOT NULL CHECK (execution_log_index BETWEEN 0 AND
+    115792089237316195423570985008687907853269984665640564039457584007913129639935),
+  event_inbox_id TEXT NOT NULL,
+  h1_clearance_event_id TEXT NOT NULL CHECK (char_length(h1_clearance_event_id) = 66),
+  recovery_evidence_hash TEXT NOT NULL CHECK (char_length(recovery_evidence_hash) = 66),
+  finalized_applied_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT uq_rwa_health_finalized_episode_v2 UNIQUE
+    (clearance_id,registry_address,asset_version_key,episode_id,episode_generation,
+     h1_clearance_generation,execution_block_number,execution_block_hash,finalized_applied_at),
+  CONSTRAINT uq_rwa_health_finalized_event_v2 UNIQUE
+    (clearance_id,registry_address,asset_version_key,episode_id,episode_generation,
+     h1_clearance_event_id,recovery_evidence_hash),
+  CONSTRAINT uq_rwa_health_finalized_current_v2 UNIQUE
+    (clearance_id,registry_address,asset_version_key,episode_id,episode_generation,
+     h1_clearance_generation,finalized_applied_at,h1_clearance_event_id),
+  FOREIGN KEY (clearance_id) REFERENCES rwa_health_clearance_attestations_v2(clearance_id)
+    ON DELETE RESTRICT,
+  FOREIGN KEY (event_inbox_id,clearance_id,disposition)
+    REFERENCES rwa_health_overlay_event_results_v2(inbox_id,clearance_id,disposition)
+    ON DELETE RESTRICT,
+  UNIQUE (event_inbox_id),
+  UNIQUE (overlay_address,asset_version_key,overlay_generation)
+);
+CREATE INDEX IF NOT EXISTS ix_rwa_health_finalized_clearances_asset_v2
+  ON rwa_health_finalized_clearances_v2
+    (registry_address,asset_version_key,episode_generation,finalized_applied_at DESC);
+
+CREATE TABLE IF NOT EXISTS rwa_health_reviewer_actions_v2 (
+  reviewer_action_id TEXT PRIMARY KEY CHECK (char_length(reviewer_action_id) = 66),
+  chain_id INT NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  target_episode_id TEXT NOT NULL CHECK (char_length(target_episode_id) = 66),
+  target_episode_generation NUMERIC(78,0) NOT NULL CHECK (target_episode_generation > 0),
+  requested_state TEXT NOT NULL CHECK (requested_state IN
+    ('health_unknown','operational_quarantine')),
+  rule_code TEXT NOT NULL CHECK (rule_code IN
+    ('reviewer_material_drift','reviewer_verification_unknown')),
+  reason_hash TEXT NOT NULL CHECK
+    (char_length(reason_hash) = 66 AND reason_hash <> '0x0000000000000000000000000000000000000000000000000000000000000000'),
+  evidence_hash TEXT NOT NULL CHECK
+    (char_length(evidence_hash) = 66 AND evidence_hash <> '0x0000000000000000000000000000000000000000000000000000000000000000'),
+  reviewer_id TEXT NOT NULL,
+  first_transport_key_hash TEXT NOT NULL CHECK (char_length(first_transport_key_hash) = 64),
+  requested_at TIMESTAMPTZ NOT NULL,
+  applied_at TIMESTAMPTZ NOT NULL,
+  outcome TEXT NOT NULL CHECK (outcome IN ('opened','escalated','evidence_only')),
+  CHECK (applied_at >= requested_at),
+  CHECK ((requested_state = 'operational_quarantine'
+          AND rule_code = 'reviewer_material_drift')
+      OR (requested_state = 'health_unknown'
+          AND rule_code = 'reviewer_verification_unknown')),
+  UNIQUE (target_episode_id,registry_address,asset_version_key,
+           target_episode_generation,reviewer_action_id),
+  UNIQUE (target_episode_id,registry_address,asset_version_key,
+          target_episode_generation,reviewer_action_id,requested_state,rule_code),
+  UNIQUE (target_episode_id,registry_address,asset_version_key,
+          target_episode_generation,reviewer_action_id,requested_state,evidence_hash),
+  UNIQUE (target_episode_id,registry_address,asset_version_key,
+          target_episode_generation,reviewer_action_id,requested_state,rule_code,evidence_hash),
+  UNIQUE (target_episode_id,registry_address,asset_version_key,
+          target_episode_generation,reviewer_action_id,requested_state,evidence_hash,outcome)
+);
+
+CREATE TABLE IF NOT EXISTS rwa_health_episodes_v2 (
+  episode_id TEXT PRIMARY KEY CHECK (char_length(episode_id) = 66),
+  chain_id INT NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  generation NUMERIC(78,0) NOT NULL CHECK (generation > 0),
+  initial_state TEXT NOT NULL CHECK (initial_state IN
+    ('health_unknown','operational_quarantine')),
+  opened_at TIMESTAMPTZ NOT NULL,
+  opening_evaluation_id TEXT,
+  opening_evaluation_status TEXT CHECK
+    (opening_evaluation_status IS NULL OR opening_evaluation_status = 'applied'),
+  opening_reviewer_action_id TEXT,
+  opening_rule_code TEXT NOT NULL CHECK (opening_rule_code IN
+    ('provider_record','supported_chain','ticker_identity','token_identity',
+     'token_decimals','provider_active','fractional_tradable',
+     'reviewer_material_drift','reviewer_verification_unknown')),
+  opening_reason_hash TEXT NOT NULL CHECK
+    (char_length(opening_reason_hash) = 66 AND opening_reason_hash <> '0x0000000000000000000000000000000000000000000000000000000000000000'),
+  opening_evidence_hash TEXT NOT NULL CHECK
+    (char_length(opening_evidence_hash) = 66 AND opening_evidence_hash <> '0x0000000000000000000000000000000000000000000000000000000000000000'),
+  clearance_id TEXT,
+  clearance_generation NUMERIC(78,0),
+  clearance_block_number NUMERIC(78,0),
+  clearance_block_hash TEXT,
+  clearance_applied_at TIMESTAMPTZ,
+  terminal_status TEXT CHECK (terminal_status IS NULL OR terminal_status IN
+    ('healthy_after_clearance','post_clearance_failure_superseded')),
+  terminal_evaluation_id TEXT,
+  terminal_evaluation_status TEXT CHECK
+    (terminal_evaluation_status IS NULL OR terminal_evaluation_status = 'applied'),
+  terminal_evaluation_kind TEXT CHECK (terminal_evaluation_kind IS NULL OR terminal_evaluation_kind IN
+    ('healthy','health_unknown','operational_quarantine')),
+  terminal_evaluation_evidence_hash TEXT,
+  closed_at TIMESTAMPTZ,
+  UNIQUE (registry_address,asset_version_key,generation),
+  UNIQUE (episode_id,registry_address,asset_version_key,generation),
+  UNIQUE (registry_address,asset_version_key,generation,episode_id),
+  UNIQUE (registry_address,asset_version_key,generation,episode_id,opened_at),
+  FOREIGN KEY (registry_address,asset_version_key,opening_evaluation_id,
+               initial_state,opening_evidence_hash)
+    REFERENCES rwa_health_evaluations_v2
+      (registry_address,asset_version_key,evaluation_id,evaluation_kind,evidence_hash)
+    ON DELETE RESTRICT,
+  FOREIGN KEY (registry_address,asset_version_key,opening_evaluation_id,
+               opening_evaluation_status)
+    REFERENCES rwa_health_evaluations_v2
+      (registry_address,asset_version_key,evaluation_id,status) ON DELETE RESTRICT,
+  FOREIGN KEY (episode_id,registry_address,asset_version_key,generation,
+               opening_reviewer_action_id,initial_state,opening_rule_code,opening_evidence_hash)
+    REFERENCES rwa_health_reviewer_actions_v2
+      (target_episode_id,registry_address,asset_version_key,target_episode_generation,
+       reviewer_action_id,requested_state,rule_code,evidence_hash)
+    ON DELETE RESTRICT,
+  FOREIGN KEY (registry_address,asset_version_key,terminal_evaluation_id,
+               terminal_evaluation_status,terminal_evaluation_kind,
+               terminal_evaluation_evidence_hash)
+    REFERENCES rwa_health_evaluations_v2
+      (registry_address,asset_version_key,evaluation_id,status,evaluation_kind,evidence_hash)
+    ON DELETE RESTRICT,
+  CONSTRAINT fk_rwa_health_episode_h2_clearance_v2 FOREIGN KEY
+    (clearance_id,registry_address,asset_version_key,episode_id,generation,
+     clearance_generation,clearance_block_number,clearance_block_hash,clearance_applied_at)
+    REFERENCES rwa_health_finalized_clearances_v2
+      (clearance_id,registry_address,asset_version_key,episode_id,episode_generation,
+       h1_clearance_generation,execution_block_number,execution_block_hash,finalized_applied_at)
+    ON DELETE RESTRICT,
+  CHECK ((opening_evaluation_id IS NULL) <> (opening_reviewer_action_id IS NULL)),
+  CHECK ((opening_evaluation_id IS NULL) = (opening_evaluation_status IS NULL)),
+  CHECK ((terminal_evaluation_id IS NULL) = (terminal_evaluation_status IS NULL)),
+  CHECK ((terminal_evaluation_id IS NULL) = (terminal_evaluation_kind IS NULL)),
+  CHECK ((terminal_evaluation_id IS NULL) = (terminal_evaluation_evidence_hash IS NULL)),
+  CHECK (opening_evaluation_id IS NULL OR opening_reason_hash = opening_evidence_hash),
+  CHECK ((clearance_id IS NULL AND clearance_generation IS NULL
+          AND clearance_block_number IS NULL AND clearance_block_hash IS NULL
+          AND clearance_applied_at IS NULL)
+      OR (clearance_id IS NOT NULL AND char_length(clearance_id) = 66
+          AND clearance_generation = generation AND clearance_block_number >= 0
+          AND char_length(clearance_block_hash) = 66 AND clearance_applied_at IS NOT NULL)),
+  CHECK ((terminal_status IS NULL AND terminal_evaluation_id IS NULL AND closed_at IS NULL)
+      OR (terminal_status IS NOT NULL AND terminal_evaluation_id IS NOT NULL AND closed_at IS NOT NULL
+          AND clearance_applied_at IS NOT NULL AND closed_at >= clearance_applied_at)),
+  CHECK ((terminal_status IS NULL AND terminal_evaluation_kind IS NULL)
+      OR (terminal_status = 'healthy_after_clearance' AND terminal_evaluation_kind = 'healthy')
+      OR (terminal_status = 'post_clearance_failure_superseded'
+          AND terminal_evaluation_kind IN ('health_unknown','operational_quarantine')))
+);
+CREATE UNIQUE INDEX ux_rwa_health_one_open_episode_v2
+  ON rwa_health_episodes_v2(registry_address,asset_version_key)
+  WHERE closed_at IS NULL;
+
+CREATE TABLE IF NOT EXISTS rwa_health_episode_events_v2 (
+  event_id TEXT PRIMARY KEY CHECK (char_length(event_id) = 66),
+  episode_id TEXT NOT NULL,
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  episode_generation NUMERIC(78,0) NOT NULL CHECK (episode_generation > 0),
+  event_kind TEXT NOT NULL CHECK (event_kind IN
+    ('opened','escalated','evidence_only','clearance_applied','terminal')),
+  source_kind TEXT NOT NULL CHECK (source_kind IN ('evaluation','reviewer','h2_clearance')),
+  source_id TEXT NOT NULL CHECK (char_length(source_id) = 66),
+  source_evaluation_id TEXT,
+  source_evaluation_status TEXT CHECK
+    (source_evaluation_status IS NULL OR source_evaluation_status = 'applied'),
+  source_evaluation_kind TEXT CHECK (source_evaluation_kind IS NULL OR source_evaluation_kind IN
+    ('healthy','health_unknown','operational_quarantine')),
+  source_reviewer_action_id TEXT,
+  source_reviewer_state TEXT CHECK (source_reviewer_state IS NULL OR source_reviewer_state IN
+    ('health_unknown','operational_quarantine')),
+  source_reviewer_outcome TEXT CHECK (source_reviewer_outcome IS NULL OR source_reviewer_outcome IN
+    ('opened','escalated','evidence_only')),
+  source_clearance_id TEXT,
+  resulting_severity TEXT NOT NULL CHECK (resulting_severity IN
+    ('none','health_unknown','operational_quarantine')),
+  evidence_hash TEXT NOT NULL CHECK
+    (char_length(evidence_hash) = 66 AND evidence_hash <> '0x0000000000000000000000000000000000000000000000000000000000000000'),
+  created_at TIMESTAMPTZ NOT NULL,
+  UNIQUE (episode_id,source_kind,source_id),
+  UNIQUE (episode_id,registry_address,asset_version_key,episode_generation,event_id),
+  UNIQUE (episode_id,registry_address,asset_version_key,episode_generation,
+          event_id,resulting_severity),
+  UNIQUE (episode_id,registry_address,asset_version_key,episode_generation,
+          event_id,evidence_hash),
+  UNIQUE (episode_id,registry_address,asset_version_key,episode_generation,
+          event_id,resulting_severity,evidence_hash),
+  FOREIGN KEY (episode_id,registry_address,asset_version_key,episode_generation)
+    REFERENCES rwa_health_episodes_v2
+      (episode_id,registry_address,asset_version_key,generation) ON DELETE RESTRICT,
+  FOREIGN KEY (registry_address,asset_version_key,source_evaluation_id,
+               source_evaluation_status,source_evaluation_kind,evidence_hash)
+    REFERENCES rwa_health_evaluations_v2
+      (registry_address,asset_version_key,evaluation_id,status,evaluation_kind,evidence_hash)
+    ON DELETE RESTRICT,
+  FOREIGN KEY (episode_id,registry_address,asset_version_key,episode_generation,
+               source_reviewer_action_id,source_reviewer_state,evidence_hash,
+               source_reviewer_outcome)
+    REFERENCES rwa_health_reviewer_actions_v2
+      (target_episode_id,registry_address,asset_version_key,target_episode_generation,
+       reviewer_action_id,requested_state,evidence_hash,outcome) ON DELETE RESTRICT,
+  CONSTRAINT fk_rwa_health_event_h2_clearance_v2 FOREIGN KEY
+    (source_clearance_id,registry_address,asset_version_key,episode_id,
+     episode_generation,event_id,evidence_hash)
+    REFERENCES rwa_health_finalized_clearances_v2
+      (clearance_id,registry_address,asset_version_key,episode_id,
+       episode_generation,h1_clearance_event_id,recovery_evidence_hash)
+    ON DELETE RESTRICT,
+  CHECK ((source_kind = 'evaluation' AND source_id = source_evaluation_id
+          AND source_evaluation_id IS NOT NULL
+          AND source_evaluation_status = 'applied'
+          AND source_evaluation_kind IS NOT NULL
+          AND source_reviewer_action_id IS NULL AND source_reviewer_state IS NULL
+          AND source_reviewer_outcome IS NULL
+          AND source_clearance_id IS NULL)
+      OR (source_kind = 'reviewer' AND source_id = source_reviewer_action_id
+          AND source_reviewer_action_id IS NOT NULL
+          AND source_reviewer_state IS NOT NULL AND source_reviewer_outcome IS NOT NULL
+          AND source_evaluation_id IS NULL AND source_evaluation_status IS NULL
+          AND source_evaluation_kind IS NULL
+          AND source_clearance_id IS NULL)
+      OR (source_kind = 'h2_clearance' AND source_id = source_clearance_id
+          AND source_clearance_id IS NOT NULL
+          AND source_evaluation_id IS NULL AND source_evaluation_status IS NULL
+          AND source_evaluation_kind IS NULL
+          AND source_reviewer_action_id IS NULL AND source_reviewer_state IS NULL
+          AND source_reviewer_outcome IS NULL)),
+  CHECK ((source_kind = 'evaluation' AND
+            ((event_kind = 'opened'
+                AND source_evaluation_kind IN ('health_unknown','operational_quarantine')
+                AND resulting_severity = source_evaluation_kind)
+             OR (event_kind = 'escalated'
+                AND source_evaluation_kind = 'operational_quarantine'
+                AND resulting_severity = 'operational_quarantine')
+             OR (event_kind = 'terminal' AND resulting_severity = 'none')))
+      OR (source_kind = 'reviewer' AND
+            event_kind = source_reviewer_outcome AND
+            ((source_reviewer_outcome = 'opened'
+                AND resulting_severity = source_reviewer_state)
+             OR (source_reviewer_outcome = 'escalated'
+                AND source_reviewer_state = 'operational_quarantine'
+                AND resulting_severity = 'operational_quarantine')
+             OR (source_reviewer_outcome = 'evidence_only'
+                AND ((source_reviewer_state = 'health_unknown'
+                        AND resulting_severity IN ('health_unknown','operational_quarantine'))
+                     OR (source_reviewer_state = 'operational_quarantine'
+                        AND resulting_severity = 'operational_quarantine')))))
+      OR (source_kind = 'h2_clearance' AND event_kind = 'clearance_applied'
+          AND resulting_severity IN ('health_unknown','operational_quarantine')))
+);
+CREATE INDEX ix_rwa_health_episode_events_v2 ON rwa_health_episode_events_v2
+  (episode_id,created_at,event_id);
+
+CREATE TABLE IF NOT EXISTS rwa_health_current_v2 (
+  chain_id INT NOT NULL CHECK (chain_id = 4663),
+  registry_address TEXT NOT NULL CHECK (char_length(registry_address) = 42),
+  asset_version_key TEXT NOT NULL CHECK (char_length(asset_version_key) = 66),
+  catalog_version NUMERIC(78,0) NOT NULL CHECK (catalog_version >= 0),
+  catalog_snapshot_hash TEXT NOT NULL CHECK (char_length(catalog_snapshot_hash) = 66),
+  last_evaluation_id TEXT,
+  last_evaluation_status TEXT CHECK
+    (last_evaluation_status IS NULL OR last_evaluation_status = 'applied'),
+  latest_evaluation_kind TEXT CHECK (latest_evaluation_kind IS NULL OR latest_evaluation_kind IN
+    ('healthy','health_unknown','operational_quarantine')),
+  last_evaluation_evidence_hash TEXT,
+  last_observed_at TIMESTAMPTZ,
+  last_applied_at TIMESTAMPTZ,
+  current_episode_id TEXT,
+  current_episode_generation NUMERIC(78,0),
+  current_severity TEXT CHECK (current_severity IS NULL OR current_severity IN
+    ('health_unknown','operational_quarantine')),
+  episode_opened_at TIMESTAMPTZ,
+  latest_episode_event_id TEXT,
+  latest_material_event_id TEXT,
+  latest_material_evidence_hash TEXT,
+  clearance_id TEXT,
+  clearance_generation NUMERIC(78,0),
+  clearance_applied_at TIMESTAMPTZ,
+  next_due_at TIMESTAMPTZ,
+  state_sequence BIGINT NOT NULL CHECK (state_sequence > 0),
+  PRIMARY KEY (registry_address,asset_version_key),
+  FOREIGN KEY (registry_address,asset_version_key,catalog_version,
+               catalog_snapshot_hash,last_evaluation_id,last_evaluation_status,
+               latest_evaluation_kind,last_observed_at,last_applied_at,
+               last_evaluation_evidence_hash)
+    REFERENCES rwa_health_evaluations_v2
+      (registry_address,asset_version_key,catalog_version,catalog_snapshot_hash,
+       evaluation_id,status,evaluation_kind,observed_at,applied_at,evidence_hash)
+    ON DELETE RESTRICT,
+  FOREIGN KEY (registry_address,asset_version_key,current_episode_generation,
+               current_episode_id,episode_opened_at)
+    REFERENCES rwa_health_episodes_v2
+      (registry_address,asset_version_key,generation,episode_id,opened_at)
+    ON DELETE RESTRICT,
+  FOREIGN KEY (current_episode_id,registry_address,asset_version_key,
+               current_episode_generation,latest_episode_event_id,current_severity)
+    REFERENCES rwa_health_episode_events_v2
+      (episode_id,registry_address,asset_version_key,episode_generation,event_id,resulting_severity)
+    ON DELETE RESTRICT,
+  FOREIGN KEY (current_episode_id,registry_address,asset_version_key,
+               current_episode_generation,latest_material_event_id,
+               latest_material_evidence_hash)
+    REFERENCES rwa_health_episode_events_v2
+      (episode_id,registry_address,asset_version_key,episode_generation,event_id,evidence_hash)
+    ON DELETE RESTRICT,
+  CONSTRAINT fk_rwa_health_current_h2_clearance_v2 FOREIGN KEY
+    (clearance_id,registry_address,asset_version_key,current_episode_id,
+     current_episode_generation,clearance_generation,clearance_applied_at,
+     latest_episode_event_id)
+    REFERENCES rwa_health_finalized_clearances_v2
+      (clearance_id,registry_address,asset_version_key,episode_id,
+       episode_generation,h1_clearance_generation,finalized_applied_at,
+       h1_clearance_event_id)
+    ON DELETE RESTRICT,
+  CHECK ((last_evaluation_id IS NULL AND last_evaluation_status IS NULL
+          AND latest_evaluation_kind IS NULL
+          AND last_evaluation_evidence_hash IS NULL
+          AND last_observed_at IS NULL AND last_applied_at IS NULL AND next_due_at IS NULL)
+      OR (last_evaluation_id IS NOT NULL AND last_evaluation_status = 'applied'
+          AND latest_evaluation_kind IS NOT NULL
+          AND last_evaluation_evidence_hash IS NOT NULL
+          AND last_observed_at IS NOT NULL AND last_applied_at IS NOT NULL
+          AND next_due_at IS NOT NULL)),
+  CHECK ((current_episode_id IS NULL AND current_episode_generation IS NULL
+          AND current_severity IS NULL AND episode_opened_at IS NULL
+          AND latest_episode_event_id IS NULL AND latest_material_event_id IS NULL
+          AND latest_material_evidence_hash IS NULL)
+      OR (current_episode_id IS NOT NULL AND current_episode_generation > 0
+          AND current_severity IS NOT NULL AND episode_opened_at IS NOT NULL
+          AND latest_episode_event_id IS NOT NULL
+          AND char_length(latest_episode_event_id) = 66
+          AND latest_material_event_id IS NOT NULL
+          AND char_length(latest_material_event_id) = 66
+          AND latest_material_evidence_hash IS NOT NULL
+          AND char_length(latest_material_evidence_hash) = 66)),
+  CHECK ((clearance_id IS NULL AND clearance_generation IS NULL AND clearance_applied_at IS NULL)
+      OR (clearance_id IS NOT NULL AND char_length(clearance_id) = 66
+          AND current_episode_id IS NOT NULL
+          AND clearance_generation = current_episode_generation
+          AND clearance_applied_at IS NOT NULL)),
+  CHECK (next_due_at IS NULL OR next_due_at = last_observed_at + interval '300 seconds')
 );

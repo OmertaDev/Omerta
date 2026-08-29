@@ -60,22 +60,25 @@ touches mainnet** until §0 is satisfied.
    different layer, and the ERC-20 path survives armed at zero as its backstop.
 
    ### THE BATCH — what goes out, and why it is drawn here
-   **The packet itself is `CHAIN-AUDIT-PACKET.md`** — the enumerated scope, what each wall CLAIMS,
-   what the four provers already prove against what stays config-only, and the properties an auditor
-   should attack. Send that; this section is the summary of it.
+   **`CHAIN-AUDIT-PACKET.md` is the frozen 2026-08-21 pre-O1 packet** — useful historical attack-
+   surface context, but superseded as a current engagement scope. Before sending anything externally,
+   refresh that packet against the exact release head and reconcile it with the current inventory below.
    *"Batch, not dribble" (`omerta-dynasty-machine-design.md`) means the scope must be KNOWN before it
-   is sent. Enumerated 2026-08-11; `forge test` **305/305** green on this exact set, measured 2026-08-21
+   is sent. The old packet was enumerated 2026-08-11; `forge test` **305/305** was green on that old
+   set when measured 2026-08-21
    (StreetDeed added 2026-08-14; `DynastyNFT` + `StockVault` + `OmertaFees.payForPackage` added
    2026-08-14; the count has since grown with the red-team regressions — RT#5's constructor daily
    caps, RT#8's two-step ownership, the four-way sell tax — so re-measure rather than quoting this
    figure, and if the two disagree the tree is right and this line is stale.)*
 
-   **In the batch — 21 contracts + 1 interface, every contract carrying tests:**
+   **In the batch — 31 contracts + 1 interface, every contract carrying tests:**
 
-   The count follows the audit packet's runtime/consumer convention: `IOmrOracle` is the standalone
-   consumer interface. The two exact compatibility-only surfaces under `src/interfaces/`
-   (`IInitializerHook`, `IOmrV4ObservationSource`) are included with `OmertaHook` rather than counted
-   as independently deployable audit subjects; their source files and ERC-165 IDs remain in scope.
+   This is the current 32-file top-level Solidity inventory. `IOmrOracle` is the standalone
+   top-level consumer interface; the remaining top-level files are
+   contract-bearing or abstract contract sources. Compatibility and module interfaces under
+   `src/interfaces/` remain in source/audit scope even though they are not independently deployable.
+   Inventory does not equal launch authorization: the rows marked dormant remain outside deployment
+   until their dependent plans and external gates close.
 
    | subsystem | contracts | the thing to attack |
    |---|---|---|
@@ -85,7 +88,23 @@ touches mainnet** until §0 is satisfied.
    | THE BANK | `Denari` (the DNR debt token, né `nUSD`), `CollateralEscrow`, `Alchemist`, `Transmuter`, `FlashGuard` | that no oracle sits on the borrow path and no `liquidate()` exists anywhere — the design's central claim, and the class that cost Inverse ~$21M twice |
    | Street Deeds | `StreetDeed` | the EIP-712 self-mint (name↔tokenId bijection, the daily cap, replay/deadline; NO owner mint), that `redeem` (the burn-to-re-import) is never pausable so a paused contract can never trap a holder's asset, and the **default-ON per-token transfer lock** (added 2026-08-14, the drain-before-sale mitigation): mint locks, every transfer arrival RE-LOCKS, only the OWNER may unlock (an approved operator deliberately cannot — operator-unlock IS the drain vector), `redeem` is never blocked by it, and the unlock emits `TransferLockSet` — the public "listing" act a buyer anchors TBA-content checks on |
    | the identity NFT | `DynastyNFT` | the EIP-712 self-mint (NO owner mint, nonce/deadline/daily-cap walls), that it gates **NOTHING on `balanceOf`** (the entitlement is account-bound off-chain — the token is a transferable trophy), and the uncapped sequential supply + EIP-2981 royalty |
-   | the stock machine | `StockTokenRegistry`, `RwaStockBuyer`, `StockVault` | Safe-curated provider identity/address; one immutable closed-day family result; ballot-bound exact-token purchase through a Safe-approved adapter; daily ETH/slippage/one-shot walls; pre-held transfer only; EIP-712 allocation authorization; per-token delivery caps, pause, rotation, and sweep |
+   | the stock machine | `StockTokenRegistry`, `StockTokenRegistryV2`, `RwaStockBuyer`, `StockVault` | legacy compatibility plus additive immutable version identity; atomic ticker/token/provider conflict replacement; activation TTL; monotonic ballot eligibility that cannot revive after same-key reactivation; one immutable closed-day family result and frozen purchase budget/deadline; ballot-bound exact-token purchase through a Safe-approved adapter; daily ETH/slippage/one-shot walls; pre-held transfer only; EIP-712 allocation authorization; per-token delivery caps, pause, rotation, and sweep |
+   | gameplay settlement gas | `SettlementGasPool` | immutable gameplay-vault credit authority; terminal replay keys; exact executor liabilities and self-only pull withdrawals; bounded gas/data-fee accounting; delayed configuration; and migration of unreserved ETH only to one exact successor while old credits stay backed |
+   | acquisition authority base | `AcquisitionVault` | O1 Safe/main-operator authority and EIP-712 replay controls only; independently approved and dormant, with no ETH outflow. A1 accounting/ingress/budget and later A3/R/O2 integration are pending, so it has no deployment or production authority |
+
+   **V2 catalog mirror gate (built, not deployed/configured here):** configure a
+   syntactically valid absolute HTTP(S) `CHAIN_RPC_URL` and the canonical nonzero
+   `STOCK_TOKEN_REGISTRY_V2_ADDRESS` together. The worker must complete one full
+   finalized snapshot—every getter pinned to one block, the numbered block hash
+   rechecked after enumeration, all three reverse heads proven, and the seeded
+   sync lock held—before any downstream surface treats the catalog as ready.
+   Public readiness additionally requires a nonempty matching registry snapshot
+   no more than ten minutes old; exactly ten minutes remains fresh, the first
+   database instant after it fails closed. A registry-address cutover makes the
+   old mirror unready immediately. Test-reader injection, a receipt, or a
+   provider/indexer claim is never production authorization. Do not seed the V2
+   evidence table from getter state: exact activation review/evidence finality is
+   proven only by the later finalized event-aware lifecycle sync.
 
    **NOW IN THE BATCH (added 2026-08-14, founder-directed).** `DynastyNFT`, `StockVault` and
    `OmertaFees.payForPackage` were previously held out; the founder cleared every design choice and lifted
@@ -194,9 +213,10 @@ share a key with anything that spends — and it is now the Safe whose balance b
 makes co-mingling it with a spending key strictly worse than before.
 
 ## 1. Build + test the contracts
-- [ ] `cd omerta-contracts && ./run-forge-test.sh` → all `[PASS]` (Gate 0.1). Suite: OMR, VoucherClaim,
-      GearVault, OMRStaking, OmertaFees (incl. `payForPackage`), OmertaBond, OmrTwapOracle, GenesisOracle,
-      OmertaHook + THE BANK + StreetDeed + DynastyNFT + StockVault (288 tests, seven fuzzes).
+- [ ] `cd omerta-contracts && ./run-forge-test.sh` → all `[PASS]` (Gate 0.1). The latest complete
+      configured run passed 531/531 across 27 suites on 2026-08-27. Re-run at the exact release head
+      and reconcile the frozen deployment/audit phase with the current inventory above; a historical
+      count or a green subset is not this gate.
       The hook's tests deploy a REAL Uniswap v4 `PoolManager`, which the emscripten solc cannot compile —
       **use native solc** (`./run-forge-test.sh`, or the sandboxed runner, which now fetches the native
       binary and says so if it cannot).

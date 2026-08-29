@@ -130,7 +130,15 @@ export const OPERATIONAL_ENV = [
   // keeper (pre-held-only); the allocation signer independently attests frozen active-play eligibility.
   // STOCK_TOKEN_ADDRESSES remains a read-only legacy display fallback for vault-balance views and is
   // never used by the purchase or delivery value-moving paths.
-  'STOCK_TOKEN_REGISTRY_ADDRESS', 'RWA_BALLOT_PUBLISHER_PK', 'STOCK_KEEPER_PK',
+  'STOCK_TOKEN_REGISTRY_ADDRESS', 'STOCK_TOKEN_REGISTRY_V2_ADDRESS',
+  'STOCK_TOKEN_REGISTRY_V2_START_BLOCK',
+  // H2 quarantine-clearance overlay. All three are an all-or-nothing, dormant-until-configured
+  // authority tuple: deployed overlay, controlling Safe, and the first block the finalized reader
+  // may scan. Classification permits an operator to configure the feature; the H2 reader still
+  // fails closed unless the complete tuple and its on-chain identity checks agree.
+  'RWA_HEALTH_OVERLAY_V2_ADDRESS', 'RWA_HEALTH_OVERLAY_V2_SAFE_ADDRESS',
+  'RWA_HEALTH_OVERLAY_V2_START_BLOCK',
+  'RWA_REVIEWER_KEY', 'RWA_REVIEWER_ID', 'RWA_BALLOT_PUBLISHER_PK', 'STOCK_KEEPER_PK',
   'STOCK_ALLOCATION_SIGNER_PK', 'STOCK_AUTH_TTL_SEC', 'STOCK_TOKEN_ADDRESSES',
   // THE TWO DEX BOTS (src/dexbot.js) — the buyback bot (swaps unspent Vig revenue for hard OMR on
   // the canonical v4 pool, books the ACHIEVED price through the audited runVigBuyback) + the
@@ -212,6 +220,37 @@ export const CLASSIFIED = new Set([
 export const isHardened = (env = process.env) =>
   env.NODE_ENV === 'production' || !!env.DATABASE_URL;
 
+const RWA_REVIEWER_ID_UNSAFE = /[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/u;
+
+// Shared by deploy preflight and the live reviewer perimeter. Rejected secrets are deliberately
+// not returned, so no caller can accidentally authenticate, latch, log, or publish invalid config.
+export function normalizeRwaReviewerConfig(env = process.env) {
+  const rawKey = env?.RWA_REVIEWER_KEY;
+  const rawId = env?.RWA_REVIEWER_ID;
+  const keySupplied = rawKey !== undefined && rawKey !== null;
+  const idSupplied = rawId !== undefined && rawId !== null;
+  const errors = [];
+  if (!keySupplied && !idSupplied) return { enabled: false, key: null, id: null, errors };
+  if (keySupplied !== idSupplied) errors.push('pair');
+
+  const keyText = typeof rawKey === 'string' ? rawKey : '';
+  const canonicalKey = keyText.trim();
+  if (typeof rawKey !== 'string' || !canonicalKey || keyText !== canonicalKey) errors.push('key');
+
+  const id = typeof rawId === 'string' ? rawId.trim() : '';
+  if (typeof rawId !== 'string' || id.length < 1 || id.length > 200) errors.push('id_bounds');
+  if (id && RWA_REVIEWER_ID_UNSAFE.test(id)) errors.push('id_unsafe');
+
+  const modKey = typeof env?.MOD_KEY === 'string' ? env.MOD_KEY.trim() : '';
+  if (canonicalKey && modKey && canonicalKey === modKey) errors.push('key_mod_collision');
+  if (id && canonicalKey && id === canonicalKey) errors.push('id_key_collision');
+  if (id && modKey && id === modKey) errors.push('id_mod_collision');
+
+  const uniqueErrors = [...new Set(errors)];
+  const enabled = keySupplied && idSupplied && uniqueErrors.length === 0;
+  return { enabled, key: enabled ? keyText : null, id: enabled ? id : null, errors: uniqueErrors };
+}
+
 /**
  * Run the deploy checks. Returns `{ errors, warnings }` — the caller decides what to do with them
  * (buildServer throws on errors). Pure over `env`, so the test can drive it without touching the
@@ -238,6 +277,21 @@ export function preflight(env = process.env) {
     if (s.length < 24 || new Set(s).size < 8)
       errors.push('JWT_SECRET is too weak — HS256 over a low-entropy secret is offline-brute-forceable, after which anyone can forge a token for any account. Use a long, high-entropy random secret (≥24 chars, ≥8 distinct).');
   }
+  const reviewer = normalizeRwaReviewerConfig(env);
+  if (reviewer.errors.includes('pair'))
+    errors.push('RWA_REVIEWER_KEY and RWA_REVIEWER_ID must be configured together; a partial reviewer perimeter is disabled.');
+  if (reviewer.errors.includes('key'))
+    errors.push('RWA_REVIEWER_KEY must be nonempty and have no surrounding HTTP-header whitespace.');
+  if (reviewer.errors.includes('id_bounds'))
+    errors.push('RWA_REVIEWER_ID must contain 1 through 200 characters after trimming.');
+  if (reviewer.errors.includes('id_unsafe'))
+    errors.push('RWA_REVIEWER_ID must not contain control, format, or line-separator characters.');
+  if (reviewer.errors.includes('key_mod_collision'))
+    errors.push('RWA_REVIEWER_KEY must be distinct from MOD_KEY; reviewer and moderator authority cannot share a secret.');
+  if (reviewer.errors.includes('id_key_collision'))
+    errors.push('The public reviewer identity must be distinct from the reviewer secret.');
+  if (reviewer.errors.includes('id_mod_collision'))
+    errors.push('The public reviewer identity must be distinct from MOD_KEY.');
   if (env.MARKET_SEED === 'omerta-server-seed')
     errors.push('MARKET_SEED is the public default, which makes every seeded draw (Numbers/Track/Fight/goods) predictable.');
   if (env.MARKET_SEED) {

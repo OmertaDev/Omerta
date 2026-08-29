@@ -10,18 +10,18 @@ Written 2026-07-25. Every number below was measured from the tree, not recalled.
 
 | | |
 |---|---|
-| Backend modules | **175** files, **65293** lines (`src/`, incl. `src/routes/` and `src/social/`) |
-| Test suites | **136** files, **61686** lines (`test/`) — ratio 0.94 test:src |
-| HTTP routes | **734** registrations |
-| Database tables | **266** (`schema.sql`, 4154 lines) |
-| Client | **11620** lines (`public/index.html`, single file, zero dependencies) |
+| Backend modules | **187** files, **75805** lines (`src/`, incl. `src/routes/` and `src/social/`) |
+| Test suites | **153** files, **74457** lines (`test/`) — ratio 0.98 test:src |
+| HTTP routes | **746** registrations (**746** unique) |
+| Database tables | **317** (`schema.sql`, 6008 lines) |
+| Client | **11752** lines (`public/index.html`, single file, zero dependencies) |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
-| Smart contracts | **22** top-level Solidity files, **4934** lines, **371** top-level Foundry tests passing |
+| Smart contracts | **32** top-level Solidity files, **9794** lines, **844** declared top-level Foundry test functions; the release gate re-measures the passing suite |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/bond-dials.js` (sizing the on-chain mint walls), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres) |
-| Design + audit docs | **470** markdown files, **113626** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
+| Design + audit docs | **487** markdown files, **127064** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
 | Ledger invariants | 18 named escrow/identity checks + per-currency conservation, **drift-0** |
 
-Roughly **133,000 lines** of code, tests, schema and contracts.
+Roughly **166,000 lines** of backend code, tests, schema and top-level contracts.
 
 ---
 
@@ -31,7 +31,7 @@ Everything is built on five load-bearing decisions. None has needed revision in 
 
 **`rules.js` is the constants layer, in two files.** `rules.generated.js` holds the prototype's 22 data
 tables (479 lines) and is overwritten wholesale by the extractor; `rules.tail.js` holds every helper,
-catalog, ladder and founder-signed lever (6049 lines) and the extractor never opens it. `rules.js`
+catalog, ladder and founder-signed lever (6062 lines) and the extractor never opens it. `rules.js`
 re-exports both. Nothing in `src/` hardcodes a balance number.
 
 **`withCharacter` is the transaction spine.** Every player action opens `SELECT … FOR UPDATE` on the

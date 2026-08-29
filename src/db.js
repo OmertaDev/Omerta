@@ -15,6 +15,20 @@ import { fileURLToPath } from 'node:url';
 // whose semantics pg-mem is known to mis-execute.
 export const dbCaps = { skipLocked: false, indexedTextArrayAny: false };
 
+// Register only the PostgreSQL built-ins that H1's literal schema needs and pg-mem omits. Callers
+// that create a raw pg-mem database for schema tests must opt in before applying schema.sql; the
+// real-Postgres branch never calls this compatibility registrar.
+export function registerPgMemCompatibility(mem, DataType) {
+  mem.public.registerFunction({
+    name: 'char_length', args: [DataType.text], returns: DataType.integer,
+    implementation: (value) => Array.from(value).length,
+  });
+  mem.public.registerFunction({
+    name: 'octet_length', args: [DataType.bytea], returns: DataType.integer,
+    implementation: (value) => Buffer.byteLength(value),
+  });
+}
+
 const here = path.dirname(fileURLToPath(import.meta.url));
 const SCHEMA = fs.readFileSync(path.join(here, '..', 'schema.sql'), 'utf8');
 // A fixed key for the boot-time schema advisory lock (any constant bigint — must match across processes).
@@ -93,6 +107,7 @@ export function columnMigrations(schemaText) {
         .replace(/\s+PRIMARY\s+KEY\b/i, '')
         .replace(/\s+UNIQUE\b/i, '')
         .replace(/\s+REFERENCES\s+[A-Za-z0-9_]+\s*(\([^)]*\))?/i, '')
+        .replace(/\s+ON\s+(?:DELETE|UPDATE)\s+(?:NO\s+ACTION|RESTRICT|CASCADE|SET\s+NULL|SET\s+DEFAULT)\b/gi, '')
         .trim();
       if (def) out.push(`ALTER TABLE ${table} ADD COLUMN IF NOT EXISTS ${col[1]} ${def}`);
     }
@@ -112,6 +127,393 @@ export async function migrateColumns(pool, schemaText = SCHEMA) {
     catch (e) { failed++; console.error('[migrate] skipped:', s, '—', e?.message?.slice(0, 140)); }
   }
   return { total: stmts.length, failed };
+}
+
+const TASK5_DECISION_TUPLE_SQL = `(
+  (status = 'closed_ready' AND (
+    (decided_by = 'chamber' AND decided_by_code = 1
+      AND votes BETWEEN 1 AND 5 AND weighted BETWEEN 1 AND 15)
+    OR (decided_by = 'default_silence' AND decided_by_code = 2
+      AND votes = 0 AND weighted = 0)
+    OR (decided_by = 'default_tie' AND decided_by_code = 3
+      AND votes = 0 AND weighted = 0)
+  ))
+  OR (status = 'skipped_catalog_unavailable' AND decided_by = 'skipped'
+    AND decided_by_code = 4 AND skip_reason = 'catalog_unavailable'
+    AND votes = 0 AND weighted = 0)
+  OR (status = 'skipped_catalog_empty' AND decided_by = 'skipped'
+    AND decided_by_code = 5 AND skip_reason = 'catalog_empty'
+    AND votes = 0 AND weighted = 0)
+  OR (status = 'skipped_no_valid_candidate' AND decided_by = 'skipped'
+    AND decided_by_code = 6 AND skip_reason = 'no_valid_candidate'
+    AND votes = 0 AND weighted = 0)
+)`;
+
+const TASK5_CLOSED_TUPLE_SQL = `(
+  (closed_valid IS NULL AND closed_counted IS NULL AND closed_weight IS NULL
+    AND closed_exclusion_reason IS NULL)
+  OR
+  (closed_valid IS NOT NULL AND closed_counted IS NOT NULL AND closed_weight IS NOT NULL
+    AND (
+      (closed_valid AND closed_counted AND closed_weight BETWEEN 1 AND 5
+        AND closed_exclusion_reason IS NULL)
+      OR (closed_valid AND NOT closed_counted AND closed_weight = 0
+        AND closed_exclusion_reason = 'outside_top_five')
+      OR (NOT closed_valid AND NOT closed_counted AND closed_weight = 0
+        AND closed_exclusion_reason IS NOT NULL)
+    ))
+)`;
+
+const canonicalBytes32Sql = (column) => `(${column} LIKE '0x${'_'.repeat(64)}'
+  AND ${Array.from({ length: 64 }, (_, index) => (
+    `substring(${column},${index + 3},1) IN ('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')`
+  )).join('\n  AND ')})`;
+
+const TASK5_PUBLICATION_TUPLE_SQL = `(
+  (registry_tx_hash IS NULL OR ${canonicalBytes32Sql('registry_tx_hash')})
+  AND (finalized_block_number IS NULL OR finalized_block_number >= 0)
+  AND (finalized_block_hash IS NULL OR ${canonicalBytes32Sql('finalized_block_hash')})
+  AND (
+    (status <> 'closed_ready'
+      AND publication_status = 'not_submitted'
+      AND registry_tx_hash IS NULL
+      AND finalized_block_number IS NULL
+      AND finalized_block_hash IS NULL
+      AND finalized_at IS NULL)
+    OR
+    (status = 'closed_ready' AND (
+      (publication_status = 'not_submitted'
+        AND registry_tx_hash IS NULL
+        AND finalized_block_number IS NULL
+        AND finalized_block_hash IS NULL
+        AND finalized_at IS NULL)
+      OR (publication_status IN ('publisher_submitted','published_pending_finality')
+        AND registry_tx_hash IS NOT NULL
+        AND finalized_block_number IS NULL
+        AND finalized_block_hash IS NULL
+        AND finalized_at IS NULL)
+      OR (publication_status = 'finalized'
+        AND registry_tx_hash IS NOT NULL
+        AND finalized_block_number IS NOT NULL
+        AND finalized_block_hash IS NOT NULL
+        AND finalized_at IS NOT NULL)
+      OR (publication_status = 'reorged'
+        AND registry_tx_hash IS NOT NULL
+        AND finalized_block_number IS NULL
+        AND finalized_block_hash IS NULL
+        AND finalized_at IS NULL)
+      OR (publication_status = 'failed'
+        AND finalized_block_number IS NULL
+        AND finalized_block_hash IS NULL
+        AND finalized_at IS NULL)
+    ))
+  )
+)`;
+
+const TASK5_BALLOT_CONSTRAINTS = [
+  ['ticker_ballot_days_v2', 'ck_ticker_ballot_days_v2_day_range',
+    'day >= 0 AND day <= 99999999'],
+  ['ticker_ballot_candidates_v2', 'ck_ticker_ballot_candidates_v2_day_range',
+    'day >= 0 AND day <= 99999999'],
+  ['commission_ticker_votes_v2', 'ck_commission_ticker_votes_v2_day_range',
+    'day >= 0 AND day <= 99999999'],
+  ['ticker_ballot_results_v2', 'ck_ticker_ballot_results_v2_day_range',
+    'day >= 0 AND day <= 99999999'],
+  ['ticker_ballot_candidates_v2', 'ck_ticker_ballot_candidates_v2_activation_evidence',
+    "activation_evidence_version = 0 OR (activation_evidence_version = 1 AND activated_at IS NOT NULL)"],
+  ['commission_ticker_votes_v2', 'ck_commission_ticker_votes_v2_closed_tuple',
+    TASK5_CLOSED_TUPLE_SQL],
+  ['ticker_ballot_results_v2', 'ck_ticker_ballot_results_v2_vote_evidence_version',
+    'vote_evidence_version IN (0,1)'],
+  ['ticker_ballot_results_v2', 'ck_ticker_ballot_results_v2_decision_tuple',
+    TASK5_DECISION_TUPLE_SQL],
+  ['ticker_ballot_results_v2', 'ck_ticker_ballot_results_v2_publication_tuple',
+    TASK5_PUBLICATION_TUPLE_SQL],
+];
+
+async function task5BallotColumns(q) {
+  const rows = (await q.query(
+    `SELECT table_name,column_name FROM information_schema.columns
+      WHERE table_name IN ('ticker_ballot_candidates_v2','commission_ticker_votes_v2',
+                           'ticker_ballot_results_v2')`,
+  )).rows;
+  return new Set(rows.map((row) => `${row.table_name}.${row.column_name}`));
+}
+
+async function rejectInvalidTask5BallotAuthority(q, columns) {
+  const checks = [
+    ...['ticker_ballot_days_v2', 'ticker_ballot_candidates_v2',
+      'commission_ticker_votes_v2', 'ticker_ballot_results_v2'].map((table) => ({
+      label: `${table} day range`,
+      sql: `SELECT 1 FROM ${table} WHERE day < 0 OR day > 99999999 LIMIT 1`,
+    })),
+    {
+      label: 'result decision tuple',
+      sql: `SELECT 1 FROM ticker_ballot_results_v2 WHERE NOT ${TASK5_DECISION_TUPLE_SQL} LIMIT 1`,
+    },
+    {
+      label: 'result publication tuple',
+      sql: `SELECT 1 FROM ticker_ballot_results_v2 WHERE NOT ${TASK5_PUBLICATION_TUPLE_SQL} LIMIT 1`,
+    },
+  ];
+  if (columns.has('ticker_ballot_candidates_v2.activation_evidence_version')
+      && columns.has('ticker_ballot_candidates_v2.activated_at')) checks.push({
+    label: 'candidate activation evidence tuple',
+    sql: `SELECT 1 FROM ticker_ballot_candidates_v2
+           WHERE NOT (activation_evidence_version = 0
+             OR (activation_evidence_version = 1 AND activated_at IS NOT NULL)) LIMIT 1`,
+  });
+  if (['closed_valid', 'closed_counted', 'closed_weight', 'closed_exclusion_reason'].every(
+    (column) => columns.has(`commission_ticker_votes_v2.${column}`),
+  )) checks.push({
+    label: 'closed vote tuple',
+    sql: `SELECT 1 FROM commission_ticker_votes_v2 WHERE NOT ${TASK5_CLOSED_TUPLE_SQL} LIMIT 1`,
+  });
+  if (columns.has('ticker_ballot_results_v2.vote_evidence_version')) checks.push({
+    label: 'result vote evidence version',
+    sql: `SELECT 1 FROM ticker_ballot_results_v2
+           WHERE vote_evidence_version NOT IN (0,1) LIMIT 1`,
+  });
+  for (const check of checks) {
+    if ((await q.query(check.sql)).rows.length) {
+      const error = new Error(`Task 5 authority migration rejected invalid legacy ${check.label}`);
+      error.code = 'task5_migration_invalid';
+      throw error;
+    }
+  }
+}
+
+async function addTask5BallotConstraint(q, table, name, expression, compatibility) {
+  if (compatibility === 'pg-mem') {
+    try {
+      await q.query(`ALTER TABLE ${table} ADD CONSTRAINT ${name} CHECK (${expression})`);
+    }
+    catch (error) {
+      if (error?.code !== '42P07') throw error;
+    }
+    return;
+  }
+  const exists = (await q.query(
+    'SELECT 1 FROM pg_constraint WHERE conname=$1 AND conrelid=$2::regclass', [name, table],
+  )).rows.length > 0;
+  if (!exists) await q.query(
+    `ALTER TABLE ${table} ADD CONSTRAINT ${name} CHECK (${expression}) NOT VALID`,
+  );
+  await q.query(`ALTER TABLE ${table} VALIDATE CONSTRAINT ${name}`);
+}
+
+// Targeted authority migration for the four already-shipped Task 5 tables. Unlike the generic
+// log-and-skip column pass, this transaction is deliberately fail-closed: version-zero is the only
+// truthful interpretation of legacy candidate/result evidence, and every authority constraint must
+// validate before startup may stamp the schema. `pg-mem` lacks NOT VALID/VALIDATE and transactional
+// DDL; its narrow adapter uses the same CHECK expressions while production retains PostgreSQL DDL.
+export async function migrateTask5BallotV2(q, { compatibility = 'postgres' } = {}) {
+  await q.query('BEGIN');
+  try {
+    await q.query('SELECT 1 AS ok /* task5_ballot_v2_targeted_migration */');
+    if (compatibility === 'postgres') await q.query(
+      `LOCK TABLE ticker_ballot_days_v2,ticker_ballot_candidates_v2,
+                  commission_ticker_votes_v2,ticker_ballot_results_v2
+         IN ACCESS EXCLUSIVE MODE`,
+    );
+    const before = await task5BallotColumns(q);
+    await rejectInvalidTask5BallotAuthority(q, before);
+    for (const statement of [
+      'ALTER TABLE ticker_ballot_candidates_v2 ADD COLUMN IF NOT EXISTS activation_evidence_version SMALLINT NOT NULL DEFAULT 0',
+      'ALTER TABLE ticker_ballot_candidates_v2 ADD COLUMN IF NOT EXISTS activated_at TIMESTAMPTZ',
+      'ALTER TABLE commission_ticker_votes_v2 ADD COLUMN IF NOT EXISTS closed_valid BOOLEAN',
+      'ALTER TABLE commission_ticker_votes_v2 ADD COLUMN IF NOT EXISTS closed_counted BOOLEAN',
+      'ALTER TABLE commission_ticker_votes_v2 ADD COLUMN IF NOT EXISTS closed_weight INT',
+      'ALTER TABLE commission_ticker_votes_v2 ADD COLUMN IF NOT EXISTS closed_exclusion_reason TEXT',
+      'ALTER TABLE ticker_ballot_results_v2 ADD COLUMN IF NOT EXISTS vote_evidence_version SMALLINT NOT NULL DEFAULT 0',
+    ]) await q.query(statement);
+    const after = await task5BallotColumns(q);
+    await rejectInvalidTask5BallotAuthority(q, after);
+    for (const constraint of TASK5_BALLOT_CONSTRAINTS) {
+      await addTask5BallotConstraint(q, ...constraint, compatibility);
+    }
+    await q.query('COMMIT');
+  } catch (error) {
+    await q.query('ROLLBACK').catch(() => {});
+    throw error;
+  }
+}
+
+const RWA_HEALTH_H2_FOREIGN_KEYS = Object.freeze([
+  Object.freeze({
+    table: 'rwa_health_episodes_v2',
+    name: 'fk_rwa_health_episode_h2_clearance_v2',
+    source: Object.freeze([
+      'clearance_id', 'registry_address', 'asset_version_key', 'episode_id', 'generation',
+      'clearance_generation', 'clearance_block_number', 'clearance_block_hash',
+      'clearance_applied_at',
+    ]),
+    referenced: Object.freeze([
+      'clearance_id', 'registry_address', 'asset_version_key', 'episode_id',
+      'episode_generation', 'h1_clearance_generation', 'execution_block_number',
+      'execution_block_hash', 'finalized_applied_at',
+    ]),
+  }),
+  Object.freeze({
+    table: 'rwa_health_episode_events_v2',
+    name: 'fk_rwa_health_event_h2_clearance_v2',
+    source: Object.freeze([
+      'source_clearance_id', 'registry_address', 'asset_version_key', 'episode_id',
+      'episode_generation', 'event_id', 'evidence_hash',
+    ]),
+    referenced: Object.freeze([
+      'clearance_id', 'registry_address', 'asset_version_key', 'episode_id',
+      'episode_generation', 'h1_clearance_event_id', 'recovery_evidence_hash',
+    ]),
+  }),
+  Object.freeze({
+    table: 'rwa_health_current_v2',
+    name: 'fk_rwa_health_current_h2_clearance_v2',
+    source: Object.freeze([
+      'clearance_id', 'registry_address', 'asset_version_key', 'current_episode_id',
+      'current_episode_generation', 'clearance_generation', 'clearance_applied_at',
+      'latest_episode_event_id',
+    ]),
+    referenced: Object.freeze([
+      'clearance_id', 'registry_address', 'asset_version_key', 'episode_id',
+      'episode_generation', 'h1_clearance_generation', 'finalized_applied_at',
+      'h1_clearance_event_id',
+    ]),
+  }),
+]);
+
+const H2_FINALIZED_TABLE = 'rwa_health_finalized_clearances_v2';
+
+function h2ForeignKeyDefinition(spec) {
+  return `FOREIGN KEY (${spec.source.join(',')}) REFERENCES ${H2_FINALIZED_TABLE} `
+    + `(${spec.referenced.join(',')}) ON DELETE RESTRICT`;
+}
+
+function canonicalConstraintDefinition(value) {
+  return String(value ?? '')
+    .toLowerCase()
+    .replaceAll('"', '')
+    .replace(/\bpublic\./g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/\s*([(),])\s*/g, '$1')
+    .trim();
+}
+
+function h2MigrationError(detail) {
+  const error = new Error(`RWA health H2 authority migration rejected ${detail}`);
+  error.code = 'rwa_health_overlay_migration_invalid';
+  return error;
+}
+
+async function readH2ForeignKey(q, spec) {
+  const rows = (await q.query(
+    `SELECT c.conname,c.contype,c.convalidated,c.confdeltype,
+            pg_get_constraintdef(c.oid,true) AS definition,
+            c.confrelid::regclass::text AS referenced_table,
+            ARRAY(
+              SELECT a.attname
+                FROM unnest(c.conkey) WITH ORDINALITY AS key_column(attnum,ordinality)
+                JOIN pg_attribute a
+                  ON a.attrelid=c.conrelid AND a.attnum=key_column.attnum
+               ORDER BY key_column.ordinality
+            ) AS source_columns,
+            ARRAY(
+              SELECT a.attname
+                FROM unnest(c.confkey) WITH ORDINALITY AS key_column(attnum,ordinality)
+                JOIN pg_attribute a
+                  ON a.attrelid=c.confrelid AND a.attnum=key_column.attnum
+               ORDER BY key_column.ordinality
+            ) AS referenced_columns
+       FROM pg_constraint c
+      WHERE c.conname=$1 AND c.conrelid=$2::regclass`,
+    [spec.name, spec.table],
+  )).rows;
+  if (rows.length > 1) throw h2MigrationError(`duplicate constraint ${spec.name}`);
+  return rows[0] ?? null;
+}
+
+function exactStringArray(value, expected) {
+  return Array.isArray(value) && value.length === expected.length
+    && value.every((entry, index) => String(entry) === expected[index]);
+}
+
+function verifyH2ForeignKey(row, spec, { requireValidated }) {
+  if (!row || row.contype !== 'f'
+      || String(row.referenced_table).replace(/^public\./, '') !== H2_FINALIZED_TABLE
+      || row.confdeltype !== 'r'
+      || !exactStringArray(row.source_columns, spec.source)
+      || !exactStringArray(row.referenced_columns, spec.referenced)
+      || canonicalConstraintDefinition(row.definition)
+        !== canonicalConstraintDefinition(h2ForeignKeyDefinition(spec))) {
+    throw h2MigrationError(`drifted constraint ${spec.name}`);
+  }
+  if (requireValidated && row.convalidated !== true) {
+    throw h2MigrationError(`unvalidated constraint ${spec.name}`);
+  }
+  if (!requireValidated && row.convalidated !== false) {
+    throw h2MigrationError(`new constraint ${spec.name} had unexpected validation state`);
+  }
+}
+
+// Existing H1 tables predate H2. CREATE TABLE IF NOT EXISTS cannot retrofit their three
+// authority FKs, and the generic ADD-COLUMN lane deliberately cannot add table constraints.
+// Production therefore freezes all four participating tables and installs each missing FK as
+// NOT VALID, verifies its literal definition/column order, validates all legacy rows, then
+// verifies convalidated=true before the outer boot path may stamp the schema. A pre-existing
+// name-only, drifted, or unvalidated constraint is not repaired in place: it is evidence of an
+// unknown migration and startup fails closed. pg-mem cannot expose pg_constraint faithfully or
+// parse NOT VALID/VALIDATE; its explicit compatibility result is test scaffolding, never claimed
+// as PostgreSQL migration evidence.
+export async function migrateRwaHealthOverlayV2(q, { compatibility = 'postgres' } = {}) {
+  await q.query('BEGIN');
+  try {
+    await q.query('SELECT 1 AS ok /* rwa_health_overlay_v2_targeted_migration */');
+    if (compatibility === 'pg-mem') {
+      await q.query('COMMIT');
+      return Object.freeze({ compatibility: 'pg-mem', verified: false, installed: 0 });
+    }
+    if (compatibility !== 'postgres') throw h2MigrationError('unknown compatibility mode');
+    await q.query(
+      `LOCK TABLE rwa_health_finalized_clearances_v2,rwa_health_episodes_v2,
+                  rwa_health_episode_events_v2,rwa_health_current_v2
+         IN ACCESS EXCLUSIVE MODE`,
+    );
+    let installed = 0;
+    for (const spec of RWA_HEALTH_H2_FOREIGN_KEYS) {
+      const existing = await readH2ForeignKey(q, spec);
+      if (existing) {
+        verifyH2ForeignKey(existing, spec, { requireValidated: true });
+        continue;
+      }
+      await q.query(
+        `ALTER TABLE ${spec.table} ADD CONSTRAINT ${spec.name} `
+          + `${h2ForeignKeyDefinition(spec)} NOT VALID`,
+      );
+      verifyH2ForeignKey(await readH2ForeignKey(q, spec), spec, { requireValidated: false });
+      await q.query(`ALTER TABLE ${spec.table} VALIDATE CONSTRAINT ${spec.name}`);
+      verifyH2ForeignKey(await readH2ForeignKey(q, spec), spec, { requireValidated: true });
+      installed++;
+    }
+    await q.query('COMMIT');
+    return Object.freeze({ compatibility: 'postgres', verified: true, installed });
+  } catch (error) {
+    await q.query('ROLLBACK').catch(() => {});
+    throw error;
+  }
+}
+
+// Called only while makeDb holds the existing session advisory lock. Keeping the sequence in one
+// tested seam prevents a future boot edit from stamping a build before its fail-closed authority
+// migration completed.
+export async function migrateSchemaUnderLock(
+  boot, { schemaText = SCHEMA, compatibility = 'postgres' } = {},
+) {
+  await boot.query(schemaText);
+  const migration = await migrateColumns(boot, schemaText);
+  await migrateTask5BallotV2(boot, { compatibility });
+  await migrateRwaHealthOverlayV2(boot, { compatibility });
+  const stamp = await stampSchema(boot);
+  return { migration, stamp };
 }
 
 export async function makeDb() {
@@ -218,10 +620,7 @@ export async function makeDb() {
     const boot = await pool.connect();
     try {
       await boot.query('SELECT pg_advisory_lock($1)', [SCHEMA_LOCK_KEY]);
-      await boot.query(SCHEMA);
-      // in-place upgrade: add any columns that a pre-existing table is missing (a fresh DB → all no-ops).
-      const mig = await migrateColumns(boot, SCHEMA);
-      await stampSchema(boot); // which build applied this schema — see stampSchema above
+      const { migration: mig } = await migrateSchemaUnderLock(boot);
       console.log(`[db] Postgres ready — column migration ran ${mig.total} ADD COLUMN IF NOT EXISTS statements${mig.failed ? ` (${mig.failed} skipped — see above)` : ''}.`);
     } finally {
       await boot.query('SELECT pg_advisory_unlock($1)', [SCHEMA_LOCK_KEY]).catch(() => {});
@@ -237,9 +636,10 @@ export async function makeDb() {
   if (process.env.NODE_ENV === 'production')
     throw new Error('DATABASE_URL must be set in production — refusing to boot on the in-memory pg-mem database (all state would be lost on restart).');
   dbCaps.skipLocked = false; // pg-mem parses neither SKIP LOCKED nor NOWAIT
+  const { newDb, DataType } = await import('pg-mem');
   dbCaps.indexedTextArrayAny = false;
-  const { newDb } = await import('pg-mem');
   const mem = newDb();
+  registerPgMemCompatibility(mem, DataType);
   const { Pool } = mem.adapters.createPg();
   const pool = new Pool();
   await pool.query(SCHEMA);

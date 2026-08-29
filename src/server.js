@@ -6,6 +6,7 @@ import zlib from 'node:zlib';
 import { makeDb } from './db.js';
 import { isDbDown, pingDb } from './dbhealth.js';
 import { preflight } from './preflight.js';
+import { RwaHealthError } from './rwahealtherror.js';
 import * as G from './game.js';
 import * as E from './economy.js';
 import * as S from './social.js';
@@ -106,6 +107,7 @@ import { register as registerDiplomacy } from './routes/diplomacy.js';
 import { register as registerSov } from './routes/sov.js';
 import { register as registerLeaderboards } from './routes/leaderboards.js';
 import { register as registerModTools } from './routes/modtools.js';
+import { registerRwa } from './routes/rwa.js';
 import { register as registerContent } from './routes/content.js';
 import * as Phone from './phone.js';
 import * as Mega from './megaproject.js';
@@ -252,6 +254,9 @@ export async function buildServer() {
 
   // THE AGENT GATEWAY — collect every mounted route (this hook fires per registration) so the
   // OpenAPI 3.1 contract at /openapi.json is auto-derived and never drifts from what's live.
+  const rwaReviewerRouteTrust = Symbol('rwa-reviewer-route-trust');
+  const isTrustedReviewerConfig = (config) => config?.authKind === 'rwaReviewerAuth'
+    && config?.rwaReviewerTrust === rwaReviewerRouteTrust;
   const routeRegistry = [];
   app.addHook('onRoute', (r) => {
     // Capture the REAL enforcement from the route's preHandler (by function name) so the OpenAPI
@@ -260,9 +265,18 @@ export async function buildServer() {
     const pre = [].concat(r.preHandler || []);
     const names = pre.map((f) => (f && f.name) || '');
     const isMod = names.includes('modAuth');
-    const hasAuth = names.includes('auth') || isMod;
+    const declaredReviewer = r.config?.authKind === 'rwaReviewerAuth';
+    const isRwaReviewer = isTrustedReviewerConfig(r.config);
+    if (declaredReviewer && !isRwaReviewer) {
+      throw new Error(`Untrusted reviewer route trust metadata: ${r.method} ${r.url}`);
+    }
+    const playerAuth = names.includes('auth');
+    const hasAuth = playerAuth || isMod || isRwaReviewer;
+    const authKind = isRwaReviewer ? 'rwaReviewerAuth' : isMod ? 'modAuth' : playerAuth ? 'auth' : null;
     const methods = Array.isArray(r.method) ? r.method : [r.method];
-    for (const m of methods) if (m !== 'HEAD' && m !== 'OPTIONS') routeRegistry.push({ method: m, url: r.url, hasAuth, isMod });
+    for (const m of methods) if (m !== 'HEAD' && m !== 'OPTIONS') routeRegistry.push({
+      method: m, url: r.url, hasAuth, isMod, isRwaReviewer, authKind,
+    });
   });
   // Exposed so tests can assert the mounted surface directly. /openapi.json is derived from the same
   // registry but deliberately omits /v1/mod, so it cannot stand in for the whole table — and the one
@@ -646,6 +660,7 @@ export async function buildServer() {
   });
 
   app.setErrorHandler((err, req, reply) => {
+    if (err instanceof RwaHealthError) return reply.code(400).send({ error: err.code });
     if (err instanceof G.GameError) return reply.code(400).send({ error: err.code, message: err.message, ...(err.data || {}) });
     // A bad token is a bad token — 401, never 500. Most fast-jwt errors already arrive carrying a 401,
     // but not all: FAST_JWT_INVALID_ALGORITHM (raised by the pinned `algorithms` above when a token is
@@ -853,6 +868,9 @@ export async function buildServer() {
         [uid(), req.ip, req.method, req.routeOptions?.url || req.url])
         .catch((e) => console.error('mod_actions audit write failed (non-fatal)', e?.message));
   };
+  registerRwa(app, {
+    pool, auth, modAuth, withCharacter: G.withCharacter, reviewerRouteTrust: rwaReviewerRouteTrust,
+  });
   // BLUE-TEAM M2: the audit log is readable back through the mod perimeter it records (the last N actions),
   // so the /admin dashboard can show who did what. A GET, so it doesn't log itself.
   app.get('/v1/mod/actions', { preHandler: modAuth }, async (req) => {
@@ -899,7 +917,8 @@ export async function buildServer() {
   await initRateLimiter();
   const guarded = (req) => (req.method === 'POST' || req.method === 'DELETE')
     && req.url.startsWith('/v1') && req.url !== '/v1/path-quiz'
-    && !req.url.startsWith('/v1/auth') && !req.url.startsWith('/v1/mod');
+    && !req.url.startsWith('/v1/auth') && !req.url.startsWith('/v1/mod')
+    && !isTrustedReviewerConfig(req.routeOptions?.config);
   app.addHook('preHandler', async (req, reply) => {
     // E-M1: auth endpoints are excluded from the account-keyed limiter above (they're unauthenticated),
     // so throttle them per-IP — bounds guest-mint Sybil floods + X/Privy auth-fetch amplification.
@@ -930,7 +949,8 @@ export async function buildServer() {
     // exhaustion. Route every keyless /v1 GET to the per-IP public limiter, so a new keyless route can
     // never ship unthrottled by omission (a denylist-by-default, not an allowlist).
     if (rateLimitsEnabled() && (req.method === 'GET' || req.method === 'HEAD')
-      && req.url.startsWith('/v1') && !req.url.startsWith('/v1/mod')) {
+      && req.url.startsWith('/v1') && !req.url.startsWith('/v1/mod')
+      && !isTrustedReviewerConfig(req.routeOptions?.config)) {
       let authed = true;
       try { await req.jwtVerify(); } catch { authed = false; }
       const limited = authed

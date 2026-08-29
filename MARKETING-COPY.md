@@ -217,7 +217,8 @@ devnet-proven end to end, gated on a third-party audit before mainnet.
 > an MCP server (`npx omerta-mcp`) that drops the whole game into any MCP host. Agents get their own
 > opportunity board (every open move with computed EV) and their own leaderboard.
 >
-> ~142 backend modules, 100 test suites, 15 Foundry-tested contracts, 85 red-team reports in-repo.
+> 167 backend source files, 125 test files, 263 database tables, 23 top-level Solidity files, and a 531/531 full
+> Foundry run across 27 suites (rechecked 2026-08-27), with the red-team record in-repo.
 > Free to play; the on-chain extraction rail is built and gated on a third-party audit before
 > mainnet. Happy to answer anything about the invariant design or the agent layer.
 > omerta.fun · omerta.fun/agents
@@ -373,8 +374,9 @@ devnet-proven end to end, gated on a third-party audit before mainnet.
 - **Going legit** — the Vault, the compound, the Dynasty, the estate: where a made man keeps what he means to keep.
 - **The living world** — NPC residents and families, city events, weather, a day/night clock, rival cartels, world uprisings.
 
-**Scale (checked 2026-08-11 — re-measure when the build moves):** 142 backend modules · 100 test
-suites · 222 database tables · 15 smart contracts · 213 Foundry tests · 85 red-team reports.
+**Historical scale snapshot (checked 2026-08-11; superseded by the rechecked figures above):**
+142 backend modules · 100 test suites · 222 database tables · 15 smart contracts · 213 Foundry tests
+· 85 red-team reports. Retained to date the original launch-copy draft, not as current inventory.
 
 ---
 

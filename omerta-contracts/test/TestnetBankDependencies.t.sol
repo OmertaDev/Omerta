@@ -5,6 +5,10 @@ import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@openzeppelin/contracts/interfaces/IERC20Metadata.sol";
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
+import {
+    TestBankAsset,
+    TestBankVault
+} from "../script/testnet/TestBankDependencies.sol";
 
 contract CreationHarness {
     function deploy(bytes memory creationCode) external returns (address deployed) {
@@ -16,8 +20,6 @@ contract CreationHarness {
 }
 
 contract TestnetBankDependenciesTest is Test {
-    string private constant ASSET_ARTIFACT = "TestBankDependencies.sol:TestBankAsset";
-    string private constant VAULT_ARTIFACT = "TestBankDependencies.sol:TestBankVault";
     uint256 private constant INITIAL_SUPPLY = 1_000_000e6;
 
     address private safe = address(0x5AFE);
@@ -67,25 +69,25 @@ contract TestnetBankDependenciesTest is Test {
 
     function test_dependencies_refuse_non_robinhood_testnet_chains() public {
         vm.chainId(1);
-        bytes memory assetCreation = abi.encodePacked(vm.getCode(ASSET_ARTIFACT), abi.encode(safe, INITIAL_SUPPLY));
+        bytes memory assetCreation = abi.encodePacked(type(TestBankAsset).creationCode, abi.encode(safe, INITIAL_SUPPLY));
         vm.expectRevert("CreationHarness: create failed");
         harness.deploy(assetCreation);
 
         vm.chainId(46630);
         IERC20 asset = IERC20(_deployAsset());
         vm.chainId(1);
-        bytes memory vaultCreation = abi.encodePacked(vm.getCode(VAULT_ARTIFACT), abi.encode(asset));
+        bytes memory vaultCreation = abi.encodePacked(type(TestBankVault).creationCode, abi.encode(asset));
         vm.expectRevert("CreationHarness: create failed");
         harness.deploy(vaultCreation);
     }
 
     function _deployAsset() private returns (address) {
-        bytes memory creation = abi.encodePacked(vm.getCode(ASSET_ARTIFACT), abi.encode(safe, INITIAL_SUPPLY));
+        bytes memory creation = abi.encodePacked(type(TestBankAsset).creationCode, abi.encode(safe, INITIAL_SUPPLY));
         return harness.deploy(creation);
     }
 
     function _deployVault(IERC20 asset) private returns (address) {
-        bytes memory creation = abi.encodePacked(vm.getCode(VAULT_ARTIFACT), abi.encode(asset));
+        bytes memory creation = abi.encodePacked(type(TestBankVault).creationCode, abi.encode(asset));
         return harness.deploy(creation);
     }
 }

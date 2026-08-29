@@ -2571,3 +2571,87 @@ scopedSocialContext = async function(db) {
 }
 
 }
+
+// H1 is observation and evidence only. Read every dedicated H1 source unit so splitting the
+// implementation cannot move a forbidden capability outside the gate's field of view.
+{
+  const healthSource = [
+    'rwahealth.js', 'rwahealthread.js', 'rwahealthreview.js', 'rwahealthsweep.js',
+  ].map((name) => fs.readFileSync(path.join(SRC, name), 'utf8')).join('\n');
+  assert.match(healthSource, /finalizedStockCatalogForHealthV2/,
+    'H1 authority is the exact finalized Registry V2 health reader, never a legacy catalog read');
+  assert.doesNotMatch(healthSource,
+    /\b(?:privateKeyToAccount|walletClient|sendTransaction|writeContract|signMessage|signTypedData)\b/,
+    'H1 has no signing or transaction-broadcast capability');
+  assert.doesNotMatch(healthSource,
+    /\b(?:buildStockTokenActivationV2|buildStockTokenDeactivationV2|publishTickerBallot|executeSafe)\b/,
+    'H1 cannot mutate Registry state, publish ballots, or execute Safe packages');
+  assert.doesNotMatch(healthSource, /\b(?:budget|withdraw|transferEth|burn|mint)\b/i,
+    'H1 has no budget, token, ETH, mint, burn, or withdrawal surface');
+  assert.doesNotMatch(healthSource, /process\.env|CHAIN_RPC_URL|fetch\s*\(/,
+    'H1 has no environment-selected provider URL, generic production fetch, or hidden config surface');
+}
+
+// CN-6A is a read-only finalized Registry lifecycle consumer, not the later CN-6B publisher. Keep
+// the capability boundary executable: the module has exactly the frozen coordinator/read helpers,
+// and no production entry point may schedule or cut over its dormant coordinator in this slice.
+{
+  const lifecyclePath = path.join(SRC, 'rwaregistrylifecycle.js');
+  assert(fs.existsSync(lifecyclePath),
+    'CN-6A RED: src/rwaregistrylifecycle.js is missing; implement only the frozen read-only consumer');
+  const lifecycleSource = fs.readFileSync(lifecyclePath, 'utf8');
+  const executable = lifecycleSource
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\/\/.*$/gm, '');
+  const actualExports = [...executable.matchAll(
+    /^export\s+(?:async\s+)?function\s+(\w+)\s*\(/gm,
+  )].map((match) => match[1]).sort();
+  const expectedExports = [
+    'syncFinalizedRwaRegistryLifecycle',
+    'applyFinalizedRwaActivationEvents',
+    'applyFinalizedRwaBallotEvents',
+    'readFinalizedRwaLifecycleHeadV2',
+    'compareFinalizedRwaActivationV2',
+    'requireFinalizedRwaActivationV2',
+  ].sort();
+  assert.deepEqual(actualExports, expectedExports,
+    'CN-6A exposes exactly its one coordinator and five transaction-local read/apply helpers');
+  assert.match(executable, /\bobserveFinalized\b/,
+    'CN-6A must delegate finalized-head observation to the shared FO kernel');
+  assert.match(executable, /\bcommitFinalizedObservation\b/,
+    'CN-6A must delegate checkpoint/inbox/domain atomicity to the shared FO kernel');
+  assert.doesNotMatch(executable,
+    /\b(?:privateKeyToAccount|createWalletClient|walletClient|signMessage|signTypedData|serializeTransaction|prepareTransactionRequest|sendTransaction|sendRawTransaction|writeContract|executeSafe)\b/,
+    'CN-6A has no private key, signer, Safe execution, transaction construction, or send capability');
+  assert.doesNotMatch(executable,
+    /\b(?:setPublisher|activateVersion|deactivateVersion|publishBallot|publishTickerBallot|buildStockTokenActivationV2|buildStockTokenDeactivationV2)\b/,
+    'CN-6A cannot mutate Registry publisher, activation, deactivation, or ballot state');
+  assert.doesNotMatch(executable,
+    /\b(?:eth_sendRawTransaction|eth_sendTransaction|broadcastTransaction)\b|\b(?:withdraw|transferEth|mint|burn)\s*\(/i,
+    'CN-6A has no broadcast, funds, token, mint, burn, or withdrawal surface');
+  assert.doesNotMatch(executable,
+    /\b(?:INSERT\s+INTO|UPDATE|DELETE\s+FROM)\s+rwa_health_/i,
+    'CN-6A cannot mutate H1 or H2 health/clearance state');
+  const configuredEnvironmentKeys = [...executable.matchAll(/process\.env\.([A-Z0-9_]+)/g)]
+    .map((match) => match[1]);
+  assert(configuredEnvironmentKeys.every((key) => [
+    'CHAIN_RPC_URL',
+    'STOCK_TOKEN_REGISTRY_V2_ADDRESS',
+    'STOCK_TOKEN_REGISTRY_V2_START_BLOCK',
+  ].includes(key)), 'CN-6A may read only the frozen Task-5 chain, Registry, and start-block config');
+  assert.doesNotMatch(executable, /process\.env\[[^\]]+\]|process\.env\.[A-Z0-9_]*(?:CUTOVER|ACTIVATION)/,
+    'CN-6A has no dynamic, cutover, or activation-authority environment selector');
+
+  const unreachable = [
+    ['worker.js', fs.readFileSync(path.join(SRC, 'worker.js'), 'utf8')],
+    ['package.json', fs.readFileSync(fileURLToPath(new URL('../package.json', import.meta.url)), 'utf8')],
+  ];
+  for (const [name, source] of unreachable) {
+    assert.doesNotMatch(source,
+      /\b(?:syncFinalizedRwaRegistryLifecycle|rwaregistrylifecycle)\b/,
+      `CN-6A remains dormant: ${name} must not schedule or cut over its coordinator`);
+  }
+  const serverSource = fs.readFileSync(path.join(SRC, 'server.js'), 'utf8');
+  assert.doesNotMatch(serverSource, /\bsyncFinalizedRwaRegistryLifecycle\b/,
+    'CN-6A remains dormant: server.js may expose future read-only facts but cannot run its coordinator');
+}

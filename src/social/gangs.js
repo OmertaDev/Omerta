@@ -17,6 +17,7 @@ import { sovGarrisonBonus, razeSov, dissolveSov } from '../sov.js';
 import { runEstate } from './estate.js';
 import { canCommand, now, uid, warActive } from './shared.js';
 import { postPower, rosterBoard, rosterEffects } from '../roster.js';
+import { dbCaps } from '../db.js';
 
 // ═══════════════════ GANGS (§5.5) ═══════════════════
 export async function createGang(ch, name, tag, client, h) {
@@ -103,6 +104,34 @@ export async function removeMember(client, gangId, characterId) {
     // board's join). Its VETO record stays — the decree it killed was killed while it lived.
     await client.query('DELETE FROM commission_votes WHERE gang_id=$1', [gangId]);
     await client.query('DELETE FROM commission_ticker_votes WHERE gang_id=$1', [gangId]); // the ticker ballot follows the same rule: no ghost governance
+    // Global V2 order: dissolution alone holds family first, then every ballot day containing one
+    // of its vote slots in ascending order, then the vote rows. Cast and close start at one day and
+    // never acquire a family row. The post-lock clock means a wait crossing exact cutoff preserves
+    // the now-frozen vote instead of deleting it with stale time.
+    const ballotDayLock = dbCaps.skipLocked ? 'FOR UPDATE OF d' : 'FOR UPDATE';
+    await client.query(
+      `SELECT d.day
+         FROM ticker_ballot_days_v2 d
+         JOIN commission_ticker_votes_v2 v ON v.day=d.day
+        WHERE v.family_id=$1
+        ORDER BY d.day ASC ${ballotDayLock}
+        /* ticker_ballot_v2_dissolution_days */`,
+      [gangId],
+    );
+    const ballotClockFn = dbCaps.skipLocked ? 'clock_timestamp()' : 'now()';
+    const ballotEpoch = (await client.query(
+      `SELECT EXTRACT(EPOCH FROM ${ballotClockFn})::text AS epoch_seconds
+       /* ticker_ballot_v2_dissolution_clock */`,
+    )).rows[0]?.epoch_seconds;
+    await client.query(
+      `DELETE FROM commission_ticker_votes_v2
+        WHERE family_id=$1
+          AND day IN (
+            SELECT day FROM ticker_ballot_days_v2
+             WHERE state='open' AND EXTRACT(EPOCH FROM closes_at) > $2::numeric
+          )`,
+      [gangId, String(ballotEpoch)],
+    );
     // Tier-4 — its OVERRIDE ballots die with it too (a dead family can't muster against the head veto).
     // overrideWeightOf already filters by live seats so a stale row scores 0, but keep the table honest.
     await client.query('DELETE FROM commission_overrides WHERE gang_id=$1', [gangId]);

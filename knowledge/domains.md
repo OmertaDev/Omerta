@@ -13,7 +13,7 @@ controlled domains. This is a navigation taxonomy, not a claim that domains are 
 | `enterprise-logistics` | Fronts, rackets, territory, convoys, port, shipping, loans, estates and productive assets | `src/business.js`, `src/territory.js`, `src/convoy.js`, `src/port.js`, `src/shipment.js`, `src/loans.js`, `src/estate.js` |
 | `vice-competition` | Casino tables, poker, races, stable, boxing, speakeasy and competitive ladders | `src/casino.js`, `src/ring.js`, `src/races.js`, `src/stable.js`, `src/boxing.js`, `src/speakeasy.js` |
 | `law-intelligence` | RICO/law, prison, wiretaps, secrets, dossiers and counter-intelligence | `src/law.js`, `src/pen.js`, `src/wire.js`, `src/secrets.js`, `src/collection.js` |
-| `chain-economy` | Wallets, fees, vouchers, watcher, NFTs/deeds, staking, bonds, DEX automation and bank protocol | `src/chain.js`, `src/watcher.js`, `src/fees.js`, `src/nft.js`, `src/dexbot.js`, `omerta-contracts/src/` |
+| `chain-economy` | Wallets, fees, vouchers, finalized event observation, NFTs/deeds, staking, bonds, DEX automation, stock acquisition/allocation, settlement gas and bank protocol | `src/chain.js`, `src/watcher.js`, `src/finalizedobservation.js`, `src/fees.js`, `src/nft.js`, `src/dexbot.js`, `omerta-contracts/src/` |
 | `engagement-growth` | Onboarding, coach, opportunities, retention, push, community, referral and public discovery loops | `src/growth.js`, `src/engagement.js`, `src/opportunities.js`, `src/community.js`, `src/push.js`, `src/home.js` |
 | `client-experience` | Main console, admin/wiki/arena/play, PWA behavior, art and accessible interaction copy | `public/` |
 | `agent-experience` | Machine onboarding, MCP, OpenAPI and ranked opportunity discovery | `AGENTS.md`, `omerta-mcp/`, `/openapi.json`, `/v1/opportunities` |
@@ -38,7 +38,9 @@ The complete product list is too deep to repeat in every navigation page. Use th
 - `client-experience` is intentionally thin in authority but very broad in reach: it exposes most of
   the route surface and has historically been a high-change hotspot.
 - `chain-economy` spans both backend and Solidity. Tests must prove encoding/parity on both sides,
-  not merely unit-test each side in isolation.
+  not merely unit-test each side in isolation. Implemented dormant foundations are not production
+  reachability: RegistryV2/finality, SettlementGasPool and AcquisitionVault O1 each retain explicit
+  dependency and launch gates.
 - `delivery-assurance` is a first-class domain because real PostgreSQL, browser, concurrency and
   chain behavior cannot be reduced to the in-memory unit suite.
 

@@ -41,6 +41,7 @@ const DECLARED = {
   '/v1/portfolio': 'retired — D11 removed the stock layer; the tombstone tells a stale client why',
   '/v1/leaderboard/portfolio': 'retired with the portfolio (D11)',
   '/v1/leaderboard/family-portfolio': 'retired with the portfolio (D11)',
+  '/v1/rwa/health': 'dormant until the finalized StockTokenRegistryV2 authority is configured; failing closed with health_registry_unavailable is safer than publishing fabricated health for an unknown registry',
   // Not an endpoint: the websocket upgrade path. A plain GET is correctly not a thing it serves.
   '/v1/ws': 'the websocket upgrade path, not a GET endpoint',
 };
@@ -56,12 +57,17 @@ assert(made.code < 400, `the first character can be created (got ${made.code} ${
 
 // Every mounted authed GET, minus the mod perimeter (its own credential) and param routes (they need
 // an id, which by definition means data exists — that is what the client guard's fixtures cover).
-const paths = [...new Set((app.routes || [])
+const parameterlessGets = (app.routes || [])
   .filter((r) => r.method === 'GET')
-  .map((r) => r.url)
-  .filter((u) => u.startsWith('/v1/'))
-  .filter((u) => !u.includes('/mod/'))
-  .filter((u) => !u.includes(':')))].sort();
+  .filter((r) => r.url.startsWith('/v1/'))
+  .filter((r) => !r.url.includes('/mod/'))
+  .filter((r) => !r.url.includes(':'));
+const reviewerGets = parameterlessGets.filter((r) => r.authKind === 'rwaReviewerAuth');
+assert.deepEqual(reviewerGets.map((r) => r.url), ['/v1/rwa/reviewer/queue'],
+  'the one trusted reviewer GET is classified and excluded from the player cold-start probe');
+const paths = [...new Set(parameterlessGets
+  .filter((r) => r.authKind !== 'rwaReviewerAuth')
+  .map((r) => r.url))].sort();
 
 // Anti-vacuity: an empty list is what a broken route registry looks like, and it would pass silently.
 assert(paths.length >= 120,

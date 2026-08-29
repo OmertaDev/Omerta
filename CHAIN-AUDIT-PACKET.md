@@ -1,8 +1,14 @@
 # CHAIN-AUDIT-PACKET — what goes to the third-party reviewer, and what to attack
 
-**This is gate 2 of the three in `CHAIN-DEPLOY.md` §0.** Gate 1 (`forge test`) is green and gate 3
-(the launch review) is signed; this is the one that is outstanding, and it is the one that cannot be
-patched after the fact, because a contract is immutable the moment it is deployed.
+> **SUPERSEDED SNAPSHOT — 2026-08-21, PRE-O1.** This packet is retained as historical audit evidence.
+> It predates `StockTokenRegistryV2`, `SettlementGasPool`, `AcquisitionVault`, and their dedicated
+> interfaces/tests, so it is not the current tree inventory and must not be sent as a complete current
+> engagement scope. Rebuild and freeze a new packet at the exact release head; `CHAIN-DEPLOY.md` is the
+> current operational inventory authority.
+
+**At the 2026-08-21 snapshot, this was gate 2 of the three in `CHAIN-DEPLOY.md` §0.** Gate 1
+(`forge test`) was green and gate 3 (the launch review) was signed; the external audit remained
+outstanding.
 
 **Read this beside `CHAIN-DEPLOY.md`, never instead of it.** That document is the operational
 runbook — the deploy order, the arm order, the env, the kill switches. This one is the SCOPE and the
@@ -10,14 +16,13 @@ ATTACK SURFACE: what is in the batch, what each contract's walls actually claim,
 been proven and by what, and — the part worth an auditor's time — the properties that are load-bearing
 and are NOT proven by anything we can run ourselves.
 
-Every figure below was measured on **2026-08-21** against the tree. `test/docs.js` fails the build if
-the batch enumeration drifts from the `.sol` files, or if any launch-gating doc calls an existing
-contract unwritten — that guard exists because this document's predecessor did exactly that, and an
-auditor told a contract does not exist does not attack it.
+Every figure below was measured on **2026-08-21** against that then-current tree. The live documentation
+guard now checks the current enumeration in `CHAIN-DEPLOY.md`; it intentionally does not rewrite this
+snapshot when later contracts land.
 
 ---
 
-## 1. THE SCOPE — 21 contracts + 3 top-level interfaces, one engagement
+## 1. HISTORICAL SCOPE — 17 contracts + 1 interface, one engagement
 
 *"Batch, not dribble"* (`omerta-dynasty-machine-design.md`): the scope must be KNOWN before it is
 sent, because a contract added afterwards means paying to re-audit. The set below is complete —

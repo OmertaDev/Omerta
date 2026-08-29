@@ -61,6 +61,7 @@ import { runStockDeliveryKeeper, deliveryKeeperReady } from './stockdeliver.js';
 import { allocateEpoch } from './brokers.js';
 import { syncApprovedStockTokenCatalog, stockTokenCatalogReady } from './stockcatalog.js';
 import { publishResolvedStockBallot, resolvedBallotPublisherReady } from './rwastockkeeper.js';
+import { sweepRwaHealth } from './rwahealthsweep.js';
 import { runDexBuyback, runPolPairing, runDexBotInvariants, dexBuybackReady, polPairingReady,
   readLpPositions, lpReaderReady } from './dexbot.js';
 import { runV4OracleKeeper, v4OracleKeeperReady } from './v4oraclekeeper.js';
@@ -706,6 +707,27 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
   };
   await guardedTick();
   setInterval(guardedTick, 3600 * 1000);
+
+  // H1 operational health is its own fixed five-minute clock. JavaScript time chooses only when to
+  // wake; sweepRwaHealth derives every authoritative slot/timestamp from PostgreSQL. Recomputing the
+  // next wall boundary after each run avoids completion-relative drift, and the local guard prevents
+  // one slow fetch/apply from overlapping itself. The database locks remain the cross-replica guard.
+  const healthPeriodMs = 5 * 60 * 1000;
+  let healthTicking = false;
+  const guardedHealthTick = async () => {
+    if (healthTicking) return;
+    healthTicking = true;
+    try { await safe('RWA health', () => sweepRwaHealth(pool)); }
+    finally { healthTicking = false; }
+  };
+  const scheduleHealthBoundary = () => {
+    const delay = healthPeriodMs - (Date.now() % healthPeriodMs);
+    setTimeout(async () => {
+      await guardedHealthTick();
+      scheduleHealthBoundary();
+    }, delay);
+  };
+  scheduleHealthBoundary();
 
   // §11 chain-event sync (audit F2/F3): POLL getLogs over a persisted block cursor, staying
   // CHAIN_CONFIRMATIONS behind head — so worker downtime backfills (no lost fee credits) and a
