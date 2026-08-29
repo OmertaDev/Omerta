@@ -17390,3 +17390,42 @@ end-of-file was satisfied by an unrelated `process.exit(1)` five hundred lines a
 `/workerDarkAlerted\s*=\s*false/` matched the `let` **DECLARATION** rather than the recovery edge —
 *a declaration is not an edge*. Both regions bounded; **ten mutations kill by name**. §10.4 untouched
 (a heartbeat read and a webhook move no value).
+
+**THE PRE-MAINNET GATE WAS RED FOR 19 HOURS BECAUSE A TEST HARNESS WAS 906 BYTES OVER EIP-170
+(2026-08-29).** `forge test (contracts)` is the gate the sandboxed environment cannot run, and its last
+run on `main` (`b4e6b02e`, 01:37:56Z) had FAILED — with nothing re-running since, because the workflow
+is path-filtered and no later merge touched a contract path. **A path-filtered gate does not go quiet
+when it breaks; it goes quiet and STAYS broken**, which is the same alarm-into-nothing shape as the
+§10.4 webhook that 400'd and the WAL archiver, in a workflow's clothes.
+**THE CAUSE IS A PROPERTY OF SOLIDITY, NOT A BIG CONTRACT: a factory's RUNTIME size is its target's
+INITCODE size.** A typed `new AcquisitionVault(...)` embeds the vault's whole initcode in the calling
+contract's runtime code — and `AcquisitionVault`'s initcode is **25,120 bytes, already over EIP-170 by
+itself** (its own *runtime* clears the limit with 1,364 to spare). So `O1CreateFactory` was over the
+limit **by construction** at 25,482 runtime, margin **−906**, and no amount of trimming the factory
+would have fixed it. The remedy is to stop embedding it: deploy from CALLDATA with raw `create`
+(`bytes memory initCode` + assembly `create` + `returndatacopy` to bubble the constructor's revert),
+which costs a few hundred bytes and keeps the gate's claim true.
+**THE STRUCTURAL HALF IS WORSE THAN THE INSTANCE, AND IS WHAT MADE IT 19 HOURS.** `forge build --sizes`
+is **all-or-nothing**: one over-limit row failed that step, which **SKIPPED `forge test` and both e2e
+provers** — so for 19 hours the pre-mainnet gate was red *and the Solidity suite did not run at all*.
+Identical to the v4-core dependency gap recorded above (a parse failure skipping every suite below it),
+different cause. Split: `forge build` is the PARSE gate and **`forge build --sizes` is its own step,
+LAST**, so a size regression fails on its own row after the contracts have already been proven to work.
+**THE CLASS WAS SWEPT TO ITS EDGE (the RT#7 discipline), and the sweep needed the right population.**
+A first measurement reported **42 contracts over the limit** — every one a `*Test`/`Deploy` artifact
+that `--sizes` never counts, i.e. a mostly-wrong advisory. The precise filter is the presence of
+`IS_TEST`/`IS_SCRIPT` in the artifact **ABI**, not a name pattern. Filtered: **258 contracts counted,
+exactly ONE over — `FuzzTester`**, which is explicitly `--skip`ped (it composes every stateful handler
+into one Medusa/Echidna target, disables their code-size check, and is never deployed). Tightest legal
+margins: `O1SignatureGasBoundaryHarness` **1,232**, `A1Task5TimestampHarness` **1,297**, `AcquisitionVault`
+**1,364**. Every `new AcquisitionVault(` site was then grepped — and **the raw grep says 11 while the truth is 9**,
+because two of the hits are the fix's own COMMENT explaining the rule (the recorded strip-comments-first
+lesson, arriving inside the sweep that cites it). All 9 sit inside a `Test` contract, which `--sizes`
+excludes by design; factory-shaped helpers (`function … returns (AcquisitionVault`): **zero**. So the instance is fixed, the structural cause is fixed, and no remaining site can reopen it.
+**The policy is written AT THE SITE rather than only in a commit message** (a comment on the size step
+naming the factory/initcode rule and forbidding a second `--skip` for a harness that grew), because a
+lesson that lives only in history is one the next reader answers with `--skip`.
+**One measurement note worth keeping:** `forge build --sizes` prints **no table at all** on a warm cache
+("Nothing to compile"), so a green-looking local run can mean the gate never ran. The ground truth is
+the artifacts — `deployedBytecode.object` length in `out/**/*.json` — which is what `--sizes` reports
+anyway.
