@@ -41,6 +41,7 @@ const DECLARED = {
   '/v1/portfolio': 'retired — D11 removed the stock layer; the tombstone tells a stale client why',
   '/v1/leaderboard/portfolio': 'retired with the portfolio (D11)',
   '/v1/leaderboard/family-portfolio': 'retired with the portfolio (D11)',
+  '/v1/rwa/health': 'dormant until the finalized StockTokenRegistryV2 authority is configured; failing closed with health_registry_unavailable is safer than publishing fabricated health for an unknown registry',
   // Not an endpoint: the websocket upgrade path. A plain GET is correctly not a thing it serves.
   '/v1/ws': 'the websocket upgrade path, not a GET endpoint',
 };

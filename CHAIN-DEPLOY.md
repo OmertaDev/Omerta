@@ -71,9 +71,10 @@ touches mainnet** until §0 is satisfied.
    caps, RT#8's two-step ownership, the four-way sell tax — so re-measure rather than quoting this
    figure, and if the two disagree the tree is right and this line is stale.)*
 
-   **Current source inventory — 32 top-level Solidity files plus 8 dedicated interfaces:**
+   **In the batch — 31 contracts + 1 interface, every contract carrying tests:**
 
-   `IOmrOracle` is the standalone top-level consumer interface; the remaining top-level files are
+   This is the current 32-file top-level Solidity inventory. `IOmrOracle` is the standalone
+   top-level consumer interface; the remaining top-level files are
    contract-bearing or abstract contract sources. Compatibility and module interfaces under
    `src/interfaces/` remain in source/audit scope even though they are not independently deployable.
    Inventory does not equal launch authorization: the rows marked dormant remain outside deployment
