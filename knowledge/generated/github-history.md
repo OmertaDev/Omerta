@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `1f884b3cdf6f`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f73eb82968af`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1256 |
+| Commits in clone | 1258 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-29 — guards: the worker's warning explains ZERO replicas and never TWO; the MCP gate drives the source, not the tarball |
+| Latest commit | 2026-08-29 — knowledge: the drift failure names the whole recipe, because the obvious half does not work |
 
 ## Commit authors
 
@@ -21,7 +21,7 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 431 |
-| Claude | 137 |
+| Claude | 139 |
 | CRVYDEV | 41 |
 
 ## Historical hotspots
@@ -42,10 +42,10 @@
 | [src/rules.tail.js](../../src/rules.tail.js) | 114 | yes |
 | [src/invariants.js](../../src/invariants.js) | 114 | yes |
 | [test/client.js](../../test/client.js) | 101 | yes |
-| knowledge/generated/github-history.md | 99 | historical |
-| knowledge/generated/graph-summary.md | 99 | historical |
-| knowledge/generated/graph.json | 99 | historical |
-| knowledge/generated/inventory.md | 99 | historical |
+| knowledge/generated/github-history.md | 100 | historical |
+| knowledge/generated/graph-summary.md | 100 | historical |
+| knowledge/generated/graph.json | 100 | historical |
+| knowledge/generated/inventory.md | 100 | historical |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
 | [test/social.js](../../test/social.js) | 84 | yes |
 | [public/wiki.html](../../public/wiki.html) | 80 | yes |
