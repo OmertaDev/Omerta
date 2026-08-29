@@ -17222,3 +17222,81 @@ the refund; the server dropping `minEntrants` on the stakes; the card entry drop
 on; the futurity reverting to its original sentence), each restored by `cp` from a scratchpad copy,
 never `git checkout`. Driven actions 265 → 270. Suite green; **no SQL moved in `src/`** (checked with a
 diff filter, not assumed), so the real-Postgres gates do not apply.
+
+**THE BOOTSTRAP CHILD WAS KILLING A CORPSE — a race `test/agent-alpha.js` had been winning on luck
+(2026-08-29).** The full suite came back red at
+`Timed out waiting for bootstrap child hard exit`, and the run that produced it reported **exit code
+0** to its wrapper — the pipe-masking trap in its newest costume, since the task's last command was a
+`tail`. Only `EXIT=1` inside the log was the truth. **The suite passed standalone**, which is the
+shape that makes a red like this easy to wave off as a flake and re-run; it is not one.
+**ROOT CAUSE, reproduced before it was called anything.** The block stages a client that dies
+mid-request: a child holds `/v1/auth/guest` open, signals the parent over IPC, and blocks on
+`await new Promise(() => {})`. **That is not a hang.** The moment the child's event loop drains, Node
+detects the unsettled top-level await and **exits 13 of its own accord** — its own stderr said so
+(*"Warning: Detected unsettled top-level await"*) and nobody had read it. The parent meanwhile does
+real work between the held response and the kill (a file read and two DB queries), and attached its
+`exit` listener **at kill time** — so on an exit that had already fired the listener never ran, the
+8-second `waitFor` expired, and the failure named the wait rather than the cause. Instrumented, the
+happy path shows `exitCode=null` and an exit observed in **2ms**; a deliberate **50ms** delay in that
+window is enough to flip it to `exitCode=13` and reproduce the CI error verbatim. So the window is not
+a margin — it is however long somebody else's latency happens to be, and this test has been winning a
+coin toss, not passing.
+**THE FIX HAS TWO HALVES AND ONLY ONE OF THEM IS TESTABLE, which is worth stating rather than
+glossing.** (1) **Hold the child HONESTLY** — a keepalive timer, so the only thing that ends that
+process is the parent's kill, which is what the block's own assertions claim; the assertion is now
+`death.signal === 'SIGTERM'`, which is the *cause* of death rather than the weak `exitCode !== 0` that
+`null` and `13` both satisfy. (2) **Capture the exit promise at SPAWN**, so an exit at any later moment
+is observed. Half (2) **survives its own mutation with half (1) in place, correctly**: with the child
+genuinely held there is no early exit to miss, so it is defence in depth against the child dying for
+some *other* reason — a crash, an OOM, a future edit. Reverting BOTH reproduces the original error by
+name.
+**THE CLASS, SWEPT** (the RT#7 shape — a defect fixed where it was found and never taken to its
+edge). Two more sites attach an `exit` listener after doing work: agent-alpha's second child (held by
+the *server*, so it cannot self-exit — latent, not live) and **`test/mcp.js`, where the same await
+carries NO TIMEOUT AT ALL** and would hang the job outright with no message. **And the first sweep
+did not reach its own edge** — a re-check of every `spawn` site in `test/` and `tools/` found **two
+more in `tools/chaos.js`**, which runs in CI: a worker spawned, worked against, killed, and only THEN
+listened to — the second with a **60-second** poll loop in the gap, and the worker is a process that
+genuinely can die inside it (a boot failure, a crash, an OOM). Neither await carries a timeout, so the
+failure is not a wrong answer but an **infinite hang**, reported to CI as a 20-minute job timeout with
+no message. Reproduced with the probe rather than argued (attach-after-work: `HUNG — exit never
+observed`; capture-at-spawn: `OBSERVED`). A third site in the same file was already correct and is
+left alone — it checks `exitCode`/`signalCode` first and carries a 12s fallback, and its own comment
+records the related lesson that reading `exitCode` alone misreports a signalled death. All now capture
+at spawn — and **five instances across three files is a class, so it earned a guard rather than a third
+hand-fix**: **THE CHILD-EXIT LEDGER** (`test/gates.js`, catalogue-or-declare like its siblings) fails if a
+spawned child whose exit is EVER awaited has that listener attached with an `await` in between, with the
+one defensible site DECLARED rather than fixed and **two anti-vacuity floors** — one for an extractor that
+has stopped seeing spawns, one for a waiver list drifted off the tree, since a stale waiver silently
+re-covers a real site. A child nobody waits on (an anvil the parent simply kills at teardown) is
+deliberately out of scope. **Its own first run produced two false positives and both were mine**: the
+scanner read COMMENTS, and the only `await` at those two sites was in the sentence explaining why they
+capture at spawn — the recorded lesson (the ARTICLE LEDGER and the ANY-OF-ARRAY BAN both strip comments
+first, because *a mostly-wrong advisory is the kind people route around*); comments are stripped now, with
+line positions preserved so a failure still names the real line. Three mutations, three distinct named
+kills (a reverted fix names its file and line; a bogus waiver trips the stale check — a RENAMED live one
+would trip the main assert first and prove something else; a blinded extractor reports `found only 0`
+rather than a clean sweep). The mechanism is proven directly by a probe rather than argued: against a child that has
+already exited, the old shape reports `HUNG — exit never observed` and the new one observes it.
+**`test/mcp.js` is not in the `npm test` chain** — it is `omerta-mcp`'s own `npm test`, run by the
+publish workflow after `npm install` — so it was verified the way CI runs it, with the SDK installed,
+green before and after (its local `ERR_MODULE_NOT_FOUND` was a missing `node_modules`, checked against
+the original before being blamed on the change).
+**AND THE RED CI ON THE OPEN PR WAS ALREADY FIXED IN AN UNPUSHED COMMIT — the sub-second step
+(2026-08-29).** Ground rule #8 sends you to CI after every push, and the PR's `real Postgres` job was
+red while `suites + sim (pg-mem)` was green. **The diagnosis was one call, and the shape of the call
+is the lesson**: `get_job_logs` tailing that job returns the postgres service container's teardown —
+not the failure — and cost two wasted reads at 80 and 175 lines; `list_workflow_jobs` gives
+**step-level conclusions**, which named a single failing step out of nine. That step ran
+**11:37:00 → 11:37:00 — under one second**, and a sub-second failure is not a logic failure: it is the
+`npm run <missing-script>` signature, which exits non-zero instantly and **reads on a summary line
+exactly like a check that ran**. Decisively, the two RWA steps in my local `ci.yml` were **absent from
+that run's step list**, which proves the workflow at origin's tip predates them — i.e. the red head is
+`a0320ce0` and the fix is the already-committed, **unpushed** `ffe20171`, whose own message names this
+exact class. **Verified rather than argued** before pushing: all three real-PG steps driven locally at
+HEAD on fresh throwaway databases — stock catalog v2, RWA health, RWA registry lifecycle — **green,
+green, green**, plus `pgquery` and `pgcheck`. One local-invocation note worth keeping: those three
+suites parse `TEST_DATABASE_URL` with `new URL()`, which **refuses the socket-style
+`postgres://postgres@/db?host=/tmp` form** the other gates take — CI passes a TCP url, so drive them
+the way CI does (`postgres://postgres@127.0.0.1:5433/db`) or the run fails on the harness rather than
+on the code, which reads exactly like a defect and is not one.

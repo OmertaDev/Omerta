@@ -3068,3 +3068,98 @@ scopedSocialContext = async function(db) {
   console.log(`  ✓ all ${found.length} module-scope collections carry a single-instance posture `
     + `(${shared} shared, each named in render.yaml); numInstances stays undeclared`);
 }
+
+// ═══ THE CHILD-EXIT LEDGER — a listener attached after the work never fires ═══════════════════════
+//
+// Found five times across three files before it was worth a check, which is this file's own class.
+// A child process that is spawned, worked against, and only THEN listened to is a coin toss: if it
+// died inside the work window — and a held child CAN, since Node exits 13 of its own accord on an
+// unsettled top-level await, and a real worker can crash, fail to boot, or be OOM-killed — the
+// `exit` event fired before anybody was listening and the await never settles.
+//
+// The failure is not a wrong answer. `test/agent-alpha.js` had an 8s `waitFor`, so it surfaced as
+// `Timed out waiting for bootstrap child hard exit` in a full-suite run while passing standalone —
+// a red that reads like a flake and gets re-run. `test/mcp.js` and both `tools/chaos.js` sites carry
+// NO timeout at all, so there it is an infinite hang, reported to CI as a job timeout with no
+// message. chaos.js's second site holds the gap open for a 60-second poll loop.
+//
+// Reproduced rather than argued, with the exact shape: spawn a process that exits immediately, wait
+// 300ms, kill (a no-op on a corpse), then attach — `HUNG — exit never observed`. Capture at spawn
+// instead — `OBSERVED`.
+//
+// The rule is narrow so it stays true: if a spawned child's exit is EVER awaited, the listener that
+// observes it must be attached with no `await` between it and the spawn. A child nobody waits on
+// (an anvil the parent simply kills at teardown) is not this check's business. And one site is
+// DECLARED rather than fixed, because it already solves the problem a different and equally sound
+// way — it reads exitCode/signalCode first and falls back to a listener with a timeout, so a death
+// inside the gap is seen rather than waited on forever.
+{
+  const ROOT = fileURLToPath(new URL('../', import.meta.url));
+  const dirs = ['test', 'tools'].map((d) => path.join(ROOT, d));
+  const files = [];
+  for (const d of dirs) {
+    for (const e of fs.readdirSync(d)) if (e.endsWith('.js')) files.push(path.join(d, e));
+  }
+
+  // catalogue-or-declare: a site that solves it another way is named WITH the property that makes
+  // it sound, so the next reader sees a decision rather than an oversight.
+  const WAIVED = new Map([
+    ['tools/chaos.js:child', 'reads exitCode/signalCode FIRST and only falls back to a listener, '
+      + 'with a 12s timeout — a death inside the gap is observed, not waited on; its own comment '
+      + 'records the related lesson that reading exitCode alone misreports a signalled death'],
+  ]);
+
+  const late = [];
+  const usedWaivers = new Set();
+  let captures = 0;
+  for (const f of files) {
+    const rel = relPath(ROOT, f);
+    // Strip line comments first. A scanner that reads prose reports the very comments a fix leaves
+    // behind — my own first run flagged two sites whose only `await` was in the sentence explaining
+    // why they capture at spawn, and a mostly-wrong advisory is the kind people route around. Line
+    // positions are preserved so the failure still names the real line.
+    const lines = fs.readFileSync(f, 'utf8').split('\n').map((l) => l.replace(/\/\/.*$/, ''));
+    for (let i = 0; i < lines.length; i++) {
+      const m = /(?:const|let|var)?\s*\b(\w+)\s*=\s*spawn\(/.exec(lines[i]);
+      if (!m) continue;
+      const v = m[1];
+      // Where is this child's exit observed? `process.on('exit')` is the PARENT's and must not match,
+      // so the variable name is required. 'close' carries the identical hazard and counts too.
+      const listener = new RegExp(`\\b${v}\\.(?:once|on)\\(\\s*['"](?:exit|close)['"]`);
+      let at = -1;
+      for (let j = i + 1; j < lines.length && j < i + 400; j++) {
+        if (listener.test(lines[j])) { at = j; break; }
+      }
+      if (at === -1) continue;   // nobody ever waits on this child — not this check's business
+      captures++;
+      // Anything that yields between the spawn and the capture is a window the child can die in.
+      let yields = false;
+      for (let j = i + 1; j < at; j++) if (/\bawait\b/.test(lines[j])) { yields = true; break; }
+      if (!yields) continue;
+      const key = `${rel}:${v}`;
+      if (WAIVED.has(key)) { usedWaivers.add(key); continue; }
+      late.push(`${rel}:${i + 1} — \`${v}\` spawned here, its exit first observed at line ${at + 1}, `
+        + 'with an await in between');
+    }
+  }
+
+  // Two anti-vacuity floors, because they fail differently. The first catches an extractor that has
+  // stopped seeing spawns at all; the second a WAIVER list that has drifted off the tree, which
+  // would silently re-cover a real site.
+  assert(captures >= 6,
+    `THE CHILD-EXIT LEDGER found only ${captures} awaited child exit(s) — the extractor has stopped `
+    + 'reading them, so this check is vacuous rather than clean');
+  for (const key of WAIVED.keys()) {
+    assert(usedWaivers.has(key),
+      `THE CHILD-EXIT LEDGER carries a stale waiver for ${key} — that site no longer attaches its `
+      + 'listener late, so the declaration is covering nothing and would quietly re-cover a real one');
+  }
+  assert.equal(late.length, 0,
+    'a child process\'s exit listener is attached AFTER work that can outlive the child. If it dies\n'
+    + '      in that window the event fires before anybody is listening and the await never settles —\n'
+    + '      a job timeout with no message, or an 8s "flake" that only reddens under load.\n'
+    + '      Capture it at SPAWN (`const gone = new Promise((r) => child.once(\'exit\', r));`):\n'
+    + `   - ${late.join('\n   - ')}`);
+  console.log(`✓ all ${captures} awaited child exits are captured at spawn `
+    + `(${WAIVED.size} declared: reads exitCode first, with a timeout)`);
+}

@@ -3671,3 +3671,117 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
 
   console.log('✓ GRAPH.md argues from measured figures, not remembered ones');
 }
+
+// ═══ THE POSTED-CLAIM LEDGER — the figures that leave the building ════════════════════════════════
+// `MARKETING-POSTS.md` holds the drafts for Hacker News and the MCP registries. Its own header says
+// these are the surfaces where "a wrong sentence travels furthest", and HN in particular punishes an
+// inaccurate technical claim harder than it punishes an unfinished product — so of every document in
+// this repository it is the one where a stale number costs the most, and it was the one with no
+// guard at all. Four of its checkable claims had rotted, all understating the tree (~600 routes
+// against 746, 100 suites against 148, 85 red-team reports against 97, 30 invariants against 34);
+// understating is the safe direction to be wrong in and it is still wrong.
+//
+// TWO RULES, because each covers what the other cannot:
+//   (a) every claim's PATTERN must still match the file — a reworded sentence must fail loudly here
+//       rather than silently stop being covered, which is how prose guards quietly die;
+//   (b) the number it captures must equal the tree, MEASURED. Routes come from SPEC's own row, which
+//       test/routes.js already holds to the live app registry, so the two ends of the chain cannot
+//       disagree without something failing.
+//
+// SPEC's Ledger-invariants row is checked here for the same reason it was found wrong: it sits one
+// line under a size table every other row of which is machine-checked, and it said 18 named checks
+// against a live 30. An unchecked row in a checked table is the easiest kind of figure to trust.
+{
+  const posts = read('MARKETING-POSTS.md');
+
+  // Measured, never restated. `npm test` is the chain a reader means by "suites".
+  //
+  // Three counts of "suites" coexist in this repo and all three are correct about different sets, so
+  // do NOT reconcile them by editing one to match another (measured 2026-08-29):
+  //   148  the npm test CHAIN — 147 files in test/ plus tools/knowledge-test.js. This is the one a
+  //        reader of the post means, because it is what running `npm test` executes.
+  //   152  test/*.js at top level — THE SUITE LEDGER in test/gates.js (150 run + 2 declared). The
+  //        five outside the chain run elsewhere: three *.postgres.js in CI's real-Postgres job,
+  //        test/mcp.js under omerta-mcp's own npm test, and test/contextplus.js.
+  //   153  test/**/*.js recursive — SPEC's size table. The extra is test/lib/srcfiles.js, a shared
+  //        helper rather than a suite; the row is a file count, not a claim about how many run.
+  const pkg = JSON.parse(read('package.json'));
+  const suites = new Set(`${pkg.scripts.pretest || ''} ${pkg.scripts.test}`
+    .match(/(?:test|tools)\/[\w.-]+\.js/g) || []).size;
+  assert(suites > 100, `read only ${suites} suites out of the npm test chain — the extractor stopped `
+    + 'seeing the script, and a count of nothing reads exactly like a count that agrees');
+
+  // The red-team reports are AUDIT.md plus AUDIT-*.md at the root. `docs/AUDITS.md` is the INDEX and
+  // `CHAIN-AUDIT-PACKET.md` is a packet for an auditor, so neither is a report. Same git-not-the-disk
+  // discipline as the markdown count above, and for the same three reasons recorded there.
+  let reports;
+  try {
+    reports = [...new Set(execFileSync('git', ['ls-files', '-z', '--cached', '--others',
+      '--exclude-standard', 'AUDIT*.md'], { encoding: 'utf8' }).split('\0').filter(Boolean))].length;
+  } catch {
+    reports = fs.readdirSync('.').filter((f) => /^AUDIT.*\.md$/.test(f)).length;
+  }
+  assert(reports > 50, `found only ${reports} red-team reports — the extractor is not reading the root`);
+
+  // The §10.4 sweep is counted by RUNNING it: `invariants.js` pushes one check per currency inside a
+  // loop, so a static count of `push(` sites is a restatement of the implementation and is wrong.
+  const { makeDb } = await import('../src/db.js');
+  const { runLedgerInvariants } = await import('../src/invariants.js');
+  const db = await makeDb();
+  const { checks } = await runLedgerInvariants(db.pool || db, { alert: false });
+  const named = checks.filter((c) => !/ conservation$/.test(c.name)).length;
+  const conservation = checks.length - named;
+  assert(checks.length > 20, `the §10.4 sweep emitted only ${checks.length} checks on an empty server`);
+
+  // SPEC's own row, in the table whose every other row is already machine-checked.
+  const specInv = spec.match(/^\| Ledger invariants \| \*\*(\d+)\*\* checks — \*\*(\d+)\*\* named[^|]*?\*\*(\d+)\*\* per-currency/m);
+  assert(specInv, "SPEC.md's size table must state the ledger-invariant count in the checked form "
+    + '"**N** checks — **N** named escrow/identity checks + **N** per-currency conservation"');
+  assert.deepEqual([+specInv[1], +specInv[2], +specInv[3]], [checks.length, named, conservation],
+    `SPEC says ${specInv[1]}/${specInv[2]}/${specInv[3]} ledger invariants (total/named/per-currency); `
+    + `the sweep emits ${checks.length}/${named}/${conservation} — restate it`);
+
+  // Routes ride SPEC's row rather than booting the app a second time: test/routes.js already holds
+  // that row to `app.routes.length`, so crossing the post against SPEC crosses it against the app.
+  const specRoutes = spec.match(/^\| HTTP routes \| \*\*([\d,]+)\*\*/m);
+  assert(specRoutes, 'SPEC.md must state the route count in its size table (row "HTTP routes")');
+  const routes = Number(specRoutes[1].replace(/,/g, ''));
+
+  const CLAIMS = [
+    ['routes (Show HN)', /All ([\d,]+) routes\nwork over HTTP/, routes],
+    ['routes (registry listing)', /reaches all ([\d,]+) routes/, routes],
+    ['the §10.4 sweep', /sweep runs nightly across ([\d,]+) invariants/, checks.length],
+    ['red-team reports', /There are ([\d,]+) red-team reports/, reports],
+    ['test suites', /proudest of: ([\d,]+) suites/, suites],
+  ];
+  const wrong = [];
+  for (const [what, re, real] of CLAIMS) {
+    const m = posts.match(re);
+    // (a) the pattern must MATCH: a claim reworded out from under its check is the failure mode this
+    // whole file exists for, so it fails here rather than passing over a sentence nothing reads.
+    assert(m, `MARKETING-POSTS.md no longer states ${what} in the form this guard checks — either `
+      + 'restore the wording or update the pattern, but do not leave a public claim unchecked');
+    const claimed = Number(m[1].replace(/,/g, ''));
+    if (claimed !== real) wrong.push(`${what}: the draft says ${claimed}, the tree has ${real}`);
+  }
+  assert.deepEqual(wrong, [], 'a draft meant for Hacker News and the MCP registries states a figure '
+    + `the tree does not support:\n  ${wrong.join('\n  ')}`);
+
+  // The install snippet is the one line a stranger PASTES, so the receipt beside it is held to the
+  // package it names — a version or a tool list that has drifted would be a verification of software
+  // nobody can install.
+  const mcpPkg = JSON.parse(read('omerta-mcp/package.json'));
+  assert(posts.includes(`\`${mcpPkg.version}\`, matching the version in`),
+    `the clean-machine receipt must name omerta-mcp's current version (${mcpPkg.version})`);
+  const tools = [...read('omerta-mcp/index.js').matchAll(/name: '(omerta_\w+)'/g)].map((m) => m[1]);
+  assert(tools.length >= 5, `read only ${tools.length} tool declarations out of omerta-mcp/index.js`);
+  const missing = tools.filter((t) => !posts.includes(`\`${t}\``));
+  assert.deepEqual(missing, [], 'the clean-machine receipt lists the tools an MCP host will see, so '
+    + `every tool the package declares must be in it:\n  ${missing.join(', ')}`);
+  assert(posts.includes(`| \`tools/list\` | ${tools.length} tools:`),
+    `the receipt must state the tool COUNT the package declares (${tools.length})`);
+
+  console.log(`  ✓ the public drafts' ${CLAIMS.length} tree-claims are measured (${routes} routes, `
+    + `${checks.length} invariants, ${reports} reports, ${suites} suites) and the MCP receipt matches `
+    + `omerta-mcp@${mcpPkg.version}'s ${tools.length} tools`);
+}

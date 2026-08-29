@@ -248,6 +248,7 @@ async function initialGuestCrashRecoveryTest() {
   const reportFile = join(dir, 'report.jsonl');
   const inviteCode = `bootstrap-crash-${crypto.randomUUID()}`;
   let child;
+  let childExited;
   try {
     await app.pool.query(
       'INSERT INTO invite_codes (code, uses_left) VALUES ($1, 1)',
@@ -270,6 +271,13 @@ async function initialGuestCrashRecoveryTest() {
         const response = await fetch(...args);
         if (new URL(args[0]).pathname === '/v1/auth/guest') {
           process.send?.({ type: 'guest_committed' });
+          // Hold forever, and hold it HONESTLY. A bare never-settling promise is not a hang: the
+          // moment this child's event loop drains, Node detects the unsettled top-level await and
+          // exits 13 of its OWN accord — so the parent's kill below would be killing a corpse, and
+          // the story this block tells (a client that dies mid-request) would be a coincidence
+          // rather than a fact. The timer keeps the loop alive so the only thing that ends this
+          // process is the parent's hard kill, which is what the assertions below claim.
+          setInterval(() => {}, 1 << 30);
           await new Promise(() => {});
         }
         return response;
@@ -298,6 +306,12 @@ async function initialGuestCrashRecoveryTest() {
       },
       stdio: ['ignore', 'ignore', 'pipe', 'ipc'],
     });
+    // Capture the death at SPAWN. An `exit` listener attached at kill time never fires if the
+    // process has already gone, and the parent does real work (a file read and two DB queries)
+    // between the held response and the kill — a window whose width is somebody else's latency.
+    childExited = new Promise((resolveExit) => {
+      child.once('exit', (code, signal) => resolveExit({ code, signal }));
+    });
     let childError = '';
     child.stderr.setEncoding('utf8');
     child.stderr.on('data', (chunk) => { childError += chunk; });
@@ -323,8 +337,11 @@ async function initialGuestCrashRecoveryTest() {
     )).rows[0].uses_left), 0, 'the guest commit consumed the closed-alpha invite once');
 
     child.kill();
-    await waitFor(new Promise((resolveExit) => child.once('exit', resolveExit)),
-      'bootstrap child hard exit');
+    const death = await waitFor(childExited, 'bootstrap child hard exit');
+    assert.equal(death.signal, 'SIGTERM',
+      'the runner dies from the parent\'s hard kill, not from Node tidying up its own unsettled '
+      + 'await — a self-exit would mean this process was already gone before the parent reached '
+      + 'the kill, and the crash this block claims to stage never happened');
     assert.notEqual(child.exitCode, 0,
       'the first runner dies before its normal response/session persistence path');
 
@@ -374,10 +391,8 @@ async function initialGuestCrashRecoveryTest() {
     assert.equal(childError.includes(bootstrapState.bootstrapSecret), false,
       'the crashed child never prints the bootstrap recovery secret');
   } finally {
-    if (child && child.exitCode == null && child.signalCode == null) {
-      child.kill();
-      await new Promise((resolveExit) => child.once('exit', resolveExit));
-    }
+    if (child && child.exitCode == null && child.signalCode == null) child.kill();
+    if (childExited) await childExited;
     if (priorInviteMode === undefined) delete process.env.INVITE_MODE;
     else process.env.INVITE_MODE = priorInviteMode;
     await app.close();
@@ -1842,6 +1857,12 @@ async function hardCrashReplayTest() {
     },
     stdio: ['ignore', 'ignore', 'pipe'],
   });
+  // Capture the death at SPAWN, for the reason given at the bootstrap child above: the parent runs
+  // a whole second runner between this child being held and the kill below, and an `exit` listener
+  // attached at kill time never fires for a process that has already gone.
+  const childExited = new Promise((resolveExit) => {
+    child.once('exit', (code, signal) => resolveExit({ code, signal }));
+  });
   let childError = '';
   child.stderr.setEncoding('utf8');
   child.stderr.on('data', (chunk) => { childError += chunk; });
@@ -1864,7 +1885,7 @@ async function hardCrashReplayTest() {
       'the refused concurrent process performs no remote action');
 
     child.kill();
-    await waitFor(new Promise((resolveExit) => child.once('exit', resolveExit)), 'child hard exit');
+    await waitFor(childExited, 'child hard exit');
     releaseFirst();
     assert.notEqual(child.exitCode, 0, 'the first runner terminates without its normal finally path');
     const crashed = JSON.parse(await readFile(sessionFile, 'utf8'));
@@ -1893,10 +1914,8 @@ async function hardCrashReplayTest() {
       'the replay journal clears only after authoritative confirmation');
   } finally {
     releaseFirst();
-    if (child.exitCode == null && child.signalCode == null) {
-      child.kill();
-      await new Promise((resolveExit) => child.once('exit', resolveExit));
-    }
+    if (child.exitCode == null && child.signalCode == null) child.kill();
+    await childExited;
     for (const socket of sockets) socket.destroy();
     await app.close();
     await rm(dir, { recursive: true, force: true });
