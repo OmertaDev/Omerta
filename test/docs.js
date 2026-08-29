@@ -1087,6 +1087,62 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     + `batch matches the tree (${scope[1]} contracts + ${scope[2]} interface)`);
 }
 
+// CHAIN-AUDIT-PACKET.md is a FROZEN snapshot and says so in its own banner, so it is deliberately NOT
+// held to the tree — `CHAIN-DEPLOY.md` is the live inventory authority and is checked against the tree
+// above. But a snapshot that disagrees with ITSELF is not a record: a reader cannot tell which half is
+// the evidence. It got there the ordinary way — 18738f02 refreshed the §1 table and its test count and
+// left the heading, the framing date and the §3 prover row on the pre-refresh figures, so the document
+// simultaneously claimed 17 contracts (heading) and enumerated 24 (its own table), and claimed both 387
+// tests / 22 suites and 305 / 12, ninety lines apart. Hold every figure to the ones beside it.
+{
+  const pkt = read('CHAIN-AUDIT-PACKET.md');
+
+  // the §1 table is the ground truth INSIDE this document: it enumerates the batch, one row per file
+  const rows = [...pkt.matchAll(/^\| \d+ \| `([A-Za-z0-9]+)` \|(.*)$/gm)];
+  assert(rows.length > 10, `the §1 batch table has stopped being readable (${rows.length} rows found) — `
+    + 'this check would be vacuous rather than clean');
+  const tableIfaces = rows.filter((r) => /interface, not a contract|interface only/.test(r[2])).length;
+  const tableContracts = rows.length - tableIfaces;
+
+  const head = /## 1\. HISTORICAL SCOPE — (\d+) contracts \+ (\d+) interfaces?/.exec(pkt);
+  assert(head, 'CHAIN-AUDIT-PACKET.md §1 has lost its scope heading');
+  assert.equal(`${head[1]}+${head[2]}`, `${tableContracts}+${tableIfaces}`,
+    `the packet's §1 heading sends ${head[1]} contracts + ${head[2]} interface(s) to audit while the table `
+    + `directly beneath it enumerates ${tableContracts} + ${tableIfaces}. An auditor scopes from the `
+    + 'heading and discovers the rest mid-engagement, which is what "batch, not dribble" exists to prevent');
+
+  const body = /(\d+)\s+Solidity files,\s+(\d+)\s+contracts and\s+(\d+)\s+interfaces/.exec(pkt);
+  assert(body, 'CHAIN-AUDIT-PACKET.md §1 has lost its file-count sentence');
+  assert.equal([body[1], body[2], body[3]].join('/'), [rows.length, tableContracts, tableIfaces].join('/'),
+    `the packet says ${body[1]} files / ${body[2]} contracts / ${body[3]} interfaces; its own table `
+    + `enumerates ${rows.length} / ${tableContracts} / ${tableIfaces}`);
+
+  // and every restatement of the measurement must agree with the others — a partial refresh is the
+  // failure mode, so what matters is not any single figure but that they cannot drift apart
+  const pairs = [...pkt.matchAll(/(\d+)\s+(?:Foundry\s+)?tests?\s+(?:across|\/)\s+(\d+)\s+suites/g)]
+    .map((m) => `${m[1]}/${m[2]}`);
+  assert(pairs.length >= 2, `the packet states its Foundry count in ${pairs.length} place(s); with fewer `
+    + 'than two there is nothing to hold it to and this assertion proves nothing');
+  assert.equal(new Set(pairs).size, 1,
+    `the packet gives its Foundry suite two different answers: ${[...new Set(pairs)].join(' and ')}`);
+
+  // \s+, not a space: the §1 sentence wraps between the count and "512-run", so a literal space here
+  // matched ONE site of two and the agreement below was trivially true — vacuous, not clean
+  const fuzz = [...pkt.matchAll(/(\w+)\s+512-run fuzz/g)].map((m) => m[1]);
+  assert(fuzz.length >= 2, `the packet counts its 512-run fuzz properties in ${fuzz.length} place(s); `
+    + 'with fewer than two this agreement check proves nothing');
+  assert.equal(new Set(fuzz).size, 1, `the packet counts its 512-run fuzz properties two ways: ${
+    [...new Set(fuzz)].join(' and ')}`);
+
+  const dates = [...pkt.matchAll(/measured (?:on )?\*{0,2}(\d{4}-\d\d-\d\d)/g)].map((m) => m[1]);
+  assert(dates.length >= 2, `the packet states its measurement date in ${dates.length} place(s)`);
+  assert.equal(new Set(dates).size, 1,
+    `the packet was measured on two different days at once: ${[...new Set(dates)].join(' and ')}`);
+
+  console.log(`✓ the audit packet agrees with itself (${tableContracts} contracts + ${tableIfaces} `
+    + `interfaces, ${pairs[0]} tests/suites, measured ${dates[0]})`);
+}
+
 // The issuer-retirement answer is a value-conservation rule, not optional prose. Keep the player Codex,
 // the design authority, and the launch runbook aligned: ordinary multiplier actions preserve raw units;
 // terminal actions stop and reconcile actual receipt back to the same pending cohort, never treasury.
