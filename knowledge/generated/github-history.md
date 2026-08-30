@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `e7b0cd2df5f0`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `2d2731014f37`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1305 |
+| Commits in clone | 1307 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-30 — THE RAW-KEY LEDGER learns the shorthand spelling — both halves, plus one stale waiver deleted |
+| Latest commit | 2026-08-30 — SPEC restates the client line count — the sweep's waves grew public/index.html past the 2% band |
 
 ## Commit authors
 
@@ -21,7 +21,7 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 434 |
-| Claude | 180 |
+| Claude | 182 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 3 |
 
@@ -32,18 +32,18 @@
 | [CLAUDE.md](../../CLAUDE.md) | 497 | yes |
 | [public/index.html](../../public/index.html) | 402 | yes |
 | [src/server.js](../../src/server.js) | 350 | yes |
-| [SPEC.md](../../SPEC.md) | 273 | yes |
+| [SPEC.md](../../SPEC.md) | 274 | yes |
 | [schema.sql](../../schema.sql) | 273 | yes |
 | [BALANCE.md](../../BALANCE.md) | 249 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 170 | yes |
 | [package.json](../../package.json) | 142 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
+| knowledge/generated/github-history.md | 122 | historical |
+| knowledge/generated/graph-summary.md | 122 | historical |
+| knowledge/generated/graph.json | 122 | historical |
+| knowledge/generated/inventory.md | 122 | historical |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
-| knowledge/generated/github-history.md | 121 | historical |
-| knowledge/generated/graph-summary.md | 121 | historical |
-| knowledge/generated/graph.json | 121 | historical |
-| knowledge/generated/inventory.md | 121 | historical |
 | [src/rules.tail.js](../../src/rules.tail.js) | 115 | yes |
 | [src/invariants.js](../../src/invariants.js) | 115 | yes |
 | [test/client.js](../../test/client.js) | 113 | yes |

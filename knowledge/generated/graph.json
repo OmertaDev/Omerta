@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "e7b0cd2df5f00d051fb7f6db21745b7648d6ff85",
+  "sourceRevision": "2d2731014f37086451b9680083246c93325e0df3",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5663,
-    "edges": 24879,
+    "nodes": 5665,
+    "edges": 24886,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 56,
-      "Commit": 1305,
+      "Commit": 1307,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 9937,
+      "CHANGED": 9942,
       "CONTAINS": 1846,
       "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1305,
+      "HAS_COMMIT": 1307,
       "IMPLEMENTS": 124,
       "IMPORTS": 1633,
       "INHERITS": 12,
@@ -32771,18 +32771,18 @@
       "extension": ".md",
       "bytes": 52606,
       "lines": 716,
-      "version": "6806cba658b52fd2",
+      "version": "c00ac563f73e5382",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "6806cba658b52fd2"
+          "version": "c00ac563f73e5382"
         }
       ],
-      "lastChangedAt": "2026-08-29T23:26:33.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4d78d9cad8adb025ca232f4015c2c3ae1d21fc73"
+      "lastChangedAt": "2026-08-30T11:47:03.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "2d2731014f37086451b9680083246c93325e0df3"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -44405,6 +44405,22 @@
       ]
     },
     {
+      "key": "Commit:17596032fb245849d5bf9207d2b2cb5bcb8b0e25",
+      "type": "Commit",
+      "id": "17596032fb245849d5bf9207d2b2cb5bcb8b0e25",
+      "label": "Knowledge graph regenerated for the raw-key ledger widening",
+      "title": "Knowledge graph regenerated for the raw-key ledger widening",
+      "date": "2026-08-30T11:35:09.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/17596032fb245849d5bf9207d2b2cb5bcb8b0e25",
+      "provenance": [
+        {
+          "commit": "17596032fb245849d5bf9207d2b2cb5bcb8b0e25",
+          "url": "https://github.com/OmertaDev/Omerta/commit/17596032fb245849d5bf9207d2b2cb5bcb8b0e25"
+        }
+      ]
+    },
+    {
       "key": "Commit:17983afd36dcaf3d96068d62a9e4096f571b7c69",
       "type": "Commit",
       "id": "17983afd36dcaf3d96068d62a9e4096f571b7c69",
@@ -46273,6 +46289,22 @@
         {
           "commit": "2ced14c11913bb82a4753fd5004979293bfd5eb2",
           "url": "https://github.com/OmertaDev/Omerta/commit/2ced14c11913bb82a4753fd5004979293bfd5eb2"
+        }
+      ]
+    },
+    {
+      "key": "Commit:2d2731014f37086451b9680083246c93325e0df3",
+      "type": "Commit",
+      "id": "2d2731014f37086451b9680083246c93325e0df3",
+      "label": "SPEC restates the client line count — the sweep's waves grew public/index.html past the 2% band",
+      "title": "SPEC restates the client line count — the sweep's waves grew public/index.html past the 2% band",
+      "date": "2026-08-30T11:47:03.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2d2731014f37086451b9680083246c93325e0df3",
+      "provenance": [
+        {
+          "commit": "2d2731014f37086451b9680083246c93325e0df3",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2d2731014f37086451b9680083246c93325e0df3"
         }
       ]
     },
@@ -72061,12 +72093,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 716,
-      "version": "6806cba658b52fd2",
+      "version": "c00ac563f73e5382",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "6806cba658b52fd2"
+          "version": "c00ac563f73e5382"
         }
       ]
     },
@@ -76747,6 +76779,9 @@
           "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
         },
         {
+          "commit": "17596032fb245849d5bf9207d2b2cb5bcb8b0e25"
+        },
+        {
           "commit": "18738f0238abac2204c0d201ea4ce93acefcd781"
         },
         {
@@ -77119,6 +77154,9 @@
           "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
         },
         {
+          "commit": "17596032fb245849d5bf9207d2b2cb5bcb8b0e25"
+        },
+        {
           "commit": "18738f0238abac2204c0d201ea4ce93acefcd781"
         },
         {
@@ -77489,6 +77527,9 @@
         },
         {
           "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
+        },
+        {
+          "commit": "17596032fb245849d5bf9207d2b2cb5bcb8b0e25"
         },
         {
           "commit": "18738f0238abac2204c0d201ea4ce93acefcd781"
@@ -77918,6 +77959,9 @@
         },
         {
           "commit": "16e24ac09a4dc7d2baeb5f75af3839844dca1876"
+        },
+        {
+          "commit": "17596032fb245849d5bf9207d2b2cb5bcb8b0e25"
         },
         {
           "commit": "18738f0238abac2204c0d201ea4ce93acefcd781"
@@ -84550,7 +84594,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "e7b0cd2df5f00d051fb7f6db21745b7648d6ff85",
+      "revision": "2d2731014f37086451b9680083246c93325e0df3",
       "currentBranch": "(detached)",
       "defaultBranch": "main",
       "visibility": "public",
@@ -133986,6 +134030,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:17596032fb245849d5bf9207d2b2cb5bcb8b0e25",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "17596032fb245849d5bf9207d2b2cb5bcb8b0e25"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:17596032fb245849d5bf9207d2b2cb5bcb8b0e25",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "17596032fb245849d5bf9207d2b2cb5bcb8b0e25"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:17596032fb245849d5bf9207d2b2cb5bcb8b0e25",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "17596032fb245849d5bf9207d2b2cb5bcb8b0e25"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:17596032fb245849d5bf9207d2b2cb5bcb8b0e25",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "17596032fb245849d5bf9207d2b2cb5bcb8b0e25"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:17983afd36dcaf3d96068d62a9e4096f571b7c69",
       "to": "Artifact:omerta-broadcast-design.md",
       "provenance": {
@@ -144734,6 +144810,14 @@
       "to": "Artifact:test/watcher.js",
       "provenance": {
         "commit": "2ced14c11913bb82a4753fd5004979293bfd5eb2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2d2731014f37086451b9680083246c93325e0df3",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "2d2731014f37086451b9680083246c93325e0df3"
       }
     },
     {
@@ -244476,6 +244560,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:17596032fb245849d5bf9207d2b2cb5bcb8b0e25",
+      "provenance": {
+        "commit": "17596032fb245849d5bf9207d2b2cb5bcb8b0e25"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:17983afd36dcaf3d96068d62a9e4096f571b7c69",
       "provenance": {
         "commit": "17983afd36dcaf3d96068d62a9e4096f571b7c69"
@@ -245407,6 +245499,14 @@
       "to": "Commit:2ced14c11913bb82a4753fd5004979293bfd5eb2",
       "provenance": {
         "commit": "2ced14c11913bb82a4753fd5004979293bfd5eb2"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:2d2731014f37086451b9680083246c93325e0df3",
+      "provenance": {
+        "commit": "2d2731014f37086451b9680083246c93325e0df3"
       }
     },
     {
