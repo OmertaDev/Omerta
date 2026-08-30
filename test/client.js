@@ -6821,7 +6821,51 @@ const ACTFNS = new Map();   // route path → the handler names its registration
     && new RegExp(`\\$${made71.r.body.spent.toLocaleString('en-US')}`).test(made71.line),
   `the DRIVEN commission receipt must name BOTH consumed inputs: ${made71.line}`);
 
+  // ── WAVE 72: THE SEALED BID'S TERMS + THE TRAIT ───────────────────────────────────────────────
+  // Two findings from the wave-72 sweep of the undriven surface (165 pressed routes the ledger had
+  // never driven). THE SEALED BID was fluent and left the load-bearing terms off: the stake is the
+  // family's TREASURY (the wave-55 pocket-vs-treasury class), a LOSING stake forfeits `lossBps` —
+  // the one number that makes it a sealed bid rather than "always commit everything" — and a RAISE
+  // read byte-identical to a fresh stake though the reply carried `added` all along. THE TRAIT —
+  // the once-ever level-50 capstone of a whole trade — read "done.": the reply carried a raw track
+  // id and describe() has no track catalog, so the server now sends `trackName` + the trait's own
+  // `desc` (the raw-key rule). DRIVEN throughout: every claim is about a field the SERVER sends,
+  // and a synthetic passes straight through the mutation that stops it being sent.
+  await inject('POST', '/v1/gangs', t65, { name: 'W72 Aces', tag: 'WSA' });
+  const t72 = (await inject('POST', '/v1/auth/guest')).body.token;
+  await inject('POST', '/v1/character', t72, { name: 'Holder ' + Math.random().toString(36).slice(2, 7) });
+  const id72 = (await inject('GET', '/v1/me', t72)).body.character.id;
+  await app.pool.query('UPDATE characters SET cash=2000000, respect=500000 WHERE id=$1', [id72]);
+  await inject('POST', '/v1/gangs', t72, { name: 'W72 Kings', tag: 'WSK' });
+  const g65 = (await app.pool.query('SELECT gang_id FROM gang_members WHERE character_id=$1', [id65])).rows[0].gang_id;
+  const g72 = (await app.pool.query('SELECT gang_id FROM gang_members WHERE character_id=$1', [id72])).rows[0].gang_id;
+  await app.pool.query('UPDATE gangs SET treasury=5000000 WHERE id IN ($1,$2)', [g65, g72]);
+  // a PLAYER-held district is the sealed contest's precondition (unheld ground falls to an outright
+  // claim and would never reach this line)
+  await app.pool.query(
+    "UPDATE districts SET holder_gang=$1, garrison=100000, seized_at=now(), npc_holder=NULL, contest_until=NULL WHERE id='docks'", [g72]);
+  const bid72 = await drive65('/v1/districts/docks/claim', { amount: 1000000 });
+  assert(bid72.r.body.lossBps > 0, 'the sealed bid must SEND the forfeiture share — the client cannot restate a signed lever');
+  assert(/of the treasury/.test(bid72.line), `the stake is the FAMILY'S money and the line must say so: ${bid72.line}`);
+  assert(new RegExp(`${Math.round(bid72.r.body.lossBps / 100)}% of it is forfeit`).test(bid72.line),
+    `the line must state what a LOSING stake costs — the term that makes it a sealed bid: ${bid72.line}`);
+  const raise72 = await drive65('/v1/districts/docks/claim', { amount: 1200000 });
+  assert(raise72.r.body.added > 0 && raise72.r.body.added < raise72.r.body.staked,
+    'a second stake is a RAISE and the server must send the delta');
+  assert(/raised to/.test(raise72.line) && new RegExp(fmtLike(raise72.r.body.added)).test(raise72.line),
+    `a raise must not read byte-identical to a fresh stake: ${raise72.line}`);
 
+  // THE TRAIT — driven at a real level-50 trade: the xp seed is the DATABASE, the reply is the claim.
+  await app.pool.query(
+    "INSERT INTO masteries (character_id, track_id, xp) VALUES ($1,'larceny',40000)", [id65]);
+  const trait72 = await drive65('/v1/mastery/trait/larceny', { trait: 'virtuoso' });
+  assert.equal(trait72.r.body.trackName, 'Larceny', 'the trait must SEND the trade DISPLAY name — the raw-key rule');
+  assert(trait72.r.body.desc && trait72.r.body.name, 'the trait must send what the once-ever choice bought');
+  assert(trait72.line !== 'done.' && /once and for good/.test(trait72.line) && /dies with the street/.test(trait72.line),
+    `the once-ever choice must state its permanence terms: ${trait72.line}`);
+  assert(trait72.line.includes(trait72.r.body.name) && trait72.line.includes(trait72.r.body.trackName)
+    && trait72.line.includes(trait72.r.body.desc),
+    `the trait line must name the trait, the trade and what it bought: ${trait72.line}`);
 }
 
 await app.close();

@@ -5724,6 +5724,48 @@ disabling the rolls branch outright fails at the SILENCE LEDGER (the static half
 driven claim, so it was re-cut to keep the branch and change only its WORDING, which fails at
 *"craps must name the come-out it threw"* with the line printed back. Driven actions 244 → 246.
 
+**PLAY WAVE 72 — THE SEALED BID'S MISSING HALF, AND A PERMANENT CHOICE THAT SAID "done."
+(2026-08-30; numbered 72 because the scarcity drop's commission receipt already claimed WAVE 71 in
+the ledger).** The sweep's surface measured honestly first — INSTRUMENTED, never regexed: the ledger's
+own run dumps 272 driven keys where a static regex reports 49, and against the 368 routes the console
+presses that leaves **165 never driven**. The first gap extractor produced FALSE gaps (it normalized
+only hex-ish segments to `:p`, so driven URLs carrying ids like `docks` never matched their pressed
+pattern — 217 "undriven" against a real 165); *a finding produced by a tool you wrote and did not
+check is not a finding*, for the eleventh session running. Four clusters driven through the REAL
+`describe()`; two findings, several clean lenses.
+**THE HEADLINE IS THE TRAIT — the once-ever level-50 capstone of a whole trade read `"done."`.**
+`chooseTrait` is the Fable moment: master a trade to level 50, choose VIRTUOSO or DYNAST, once,
+permanently, no respec — and the reply carried a raw `track` id with no display name, so no branch
+could claim it and the biggest single decision in the mastery system toasted nothing. The client
+could not have fixed it alone (describe() has no track catalog — the raw-key rule), so the server now
+sends `trackName` + the trait's own `desc`, and the line states the TERMS: *"🎖 Virtuoso — the
+Larceny die is cast, once and for good (it dies with the street). The trade's perk deepens to its
+mastered strength."* The branch keys on `trait` + `trackName` — checked against both near-collisions
+BEFORE shipping rather than after (pen.js sends `trackName` with no `trait`; the soldier hire sends
+`trait` with no `trackName` — absence is not a discriminator, so the PAIR is the key).
+**THE SEALED BID WAS FLUENT AND LEFT THE LOAD-BEARING TERMS OFF.** *"🕶 $1,000,000 on The Docks —
+1 in, 30m to go"* named neither that the stake is the family's TREASURY (the wave-55
+pocket-vs-treasury class — a boss reads a seven-figure spend with nothing saying whose pocket), nor
+`CONTEST_LOSS_BPS` — and per this file's own record that forfeiture **is what makes it a sealed bid
+rather than "always commit everything"**, i.e. the one term a player must weigh before committing.
+A RAISE also read byte-identical to a fresh stake though the reply carried `added` all along. Every
+figure was already in the reply; only the line was short — it now reads *"$1,000,000 of the treasury
+on The Docks … — lose and 50% of it is forfeit"*, and a raise leads with *"raised to $1,200,000
+(+$200,000)"*.
+**Clean lenses, recorded because a sweep that publishes only its hits cannot be audited:** blackmail
+end to end (dig / extort / pay-hush / expose all read with their terms), the feud sit-down (propose +
+accept), diplomacy pacts including the oathbreak, the Commission's weekly vote AND the daily ticker
+pick, the Law's jury buy (*"once per case"* named) and a demanded-trial acquittal, and the skills
+learn line.
+**Guarded by a WAVE 72 driven block** in `test/client.js` — its own holder character and two real
+gang foundings, a genuinely player-held district (the sealed contest's precondition — unheld ground
+falls to an outright claim and would never reach this line), and a real level-50 masteries seed, so
+every claim is asserted server-half first, line second. **Five mutations, five distinct named
+kills** — the server's `trackName` dropped; the client trait branch deleted (reproducing `"done."`
+verbatim); the forfeit term dropped from the line; the raise collapsed to a fresh stake; `lossBps`
+dropped from the server reply. No SQL moved in `src/` (checked with a diff filter, not assumed), so
+the real-Postgres gates do not apply. Driven actions → 285.
+
 ## Sensitive design notes
 *These are standing PRODUCT rules. They bind whatever else is true, and several of them exist
 because breaking one is very hard to walk back.*

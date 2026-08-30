@@ -2588,8 +2588,21 @@
     // silently is not available to it.
     const $dist = (id) => ((typeof rules !== 'undefined' && rules && rules.districts) || []).find((x) => x.id === id)?.name || String(id);
     // THE SEALED BID — a stake is secret, so the toast reports YOUR number and nobody else's.
-    if (body && body.staked !== undefined && body.families !== undefined)
-      return `\u{1F576} $${fmt(body.staked)} on ${txt($dist(body.district))}${body.defending ? ' \u2014 defending' : ''} \u2014 ${body.families} in, ${minsTxt(body.resolvesSeconds)} to go`;
+    // WAVE 72 — the line was fluent and left the load-bearing terms off: the money is the family's
+    // TREASURY (the wave-55 pocket-vs-treasury class), a LOSING stake forfeits `lossBps` — the one
+    // number that makes it a sealed bid rather than "always commit everything" — and a RAISE
+    // (`added` < `staked`) read byte-identical to a fresh stake.
+    if (body && body.staked !== undefined && body.families !== undefined) {
+      const raise71 = body.added !== undefined && Number(body.added) < Number(body.staked);
+      const forfeit71 = body.lossBps ? ` \u2014 lose and ${Math.round(body.lossBps / 100)}% of it is forfeit` : '';
+      return `\u{1F576} ${raise71 ? `raised to $${fmt(body.staked)} (+$${fmt(body.added)})` : `$${fmt(body.staked)}`} of the treasury on ${txt($dist(body.district))}${body.defending ? ' \u2014 defending' : ''} \u2014 ${body.families} in, ${minsTxt(body.resolvesSeconds)} to go${forfeit71}`;
+    }
+    // WAVE 72 — THE TRAIT: the once-ever level-50 capstone of a whole trade read "done.". Keyed on
+    // trait + trackName (only mastery sends the pair — pen.js sends trackName with no trait, the
+    // soldier hire sends trait with no trackName), and the line states the terms: permanent, once
+    // ever, dies with the street like the schooling it crowns.
+    if (body && body.trait && body.trackName)
+      return `\u{1F396} ${txt(body.name)} \u2014 the ${txt(body.trackName)} die is cast, once and for good (it dies with the street). ${txt(body.desc)}`;
     // THE OPERATION SLOTS — retiring a racket. Leads with the freed seat, which is the whole point.
     if (body && body.slotsUsed !== undefined && body.slots !== undefined && body.racket)
       return `\u{1F91D} you're out of ${art(body.name || body.racket)}${body.back ? ` — $${fmt(body.back)} back` : ''} — ${body.slotsUsed} of ${body.slots} seats running`;
