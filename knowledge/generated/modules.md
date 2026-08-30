@@ -87,7 +87,7 @@
 | [src/loans.js](../../src/loans.js) | 810 | enterprise-logistics | 4 / 10 | 13 | 10 | 2 |
 | [src/made.js](../../src/made.js) | 97 | social-combat | 3 / 1 | 2 | 1 | 0 |
 | [src/market.js](../../src/market.js) | 626 | economy-ledger | 3 / 8 | 8 | 8 | 2 |
-| [src/mastery.js](../../src/mastery.js) | 112 | world-progression | 2 / 2 | 3 | 9 | 0 |
+| [src/mastery.js](../../src/mastery.js) | 117 | world-progression | 2 / 2 | 3 | 9 | 0 |
 | [src/megaproject.js](../../src/megaproject.js) | 296 | enterprise-logistics | 4 / 4 | 6 | 7 | 0 |
 | [src/memo.js](../../src/memo.js) | 39 | economy-ledger | 0 / 3 | 0 | 0 | 1 |
 | [src/mentor.js](../../src/mentor.js) | 232 | social-combat | 2 / 5 | 7 | 7 | 1 |
