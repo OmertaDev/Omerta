@@ -17517,3 +17517,34 @@ compiler failure's clothes. It made one whole version experiment worthless: the 
 tests and measured nothing about the compiler at all. It was caught by reading the failure TEXT rather
 than the exit code — **it names a PERMISSION, never an assertion**. To compare toolchains, use separate
 checkouts, never `--out`.
+
+**A SILENTLY UNTESTED PR, AND THE ARTIFACT REFRESH THAT MAKES EVERY BRANCH CONFLICT BY CONSTRUCTION
+(2026-08-30).** Ground rule #8 sends you to CI after every push. **The failure mode here is that there
+was no CI to check, and nothing said so.** PR #151 sat open reporting `mergeable_state: "dirty"` with
+**zero check runs** — and a PR with no checks reads on its own page exactly like one whose checks
+passed: no red X, no failing job, nothing to click. GitHub runs **no workflows at all** on a dirty PR,
+so the whole gate was absent rather than failing. Same alarm-into-nothing shape as the §10.4 webhook
+that 400'd, the WAL archiver and the oracle keeper, in a PR page's clothes.
+**THE CAUSE IS STRUCTURAL, NOT A BAD MERGE: `main` takes an automated
+`chore(knowledge): refresh generated artifacts for <sha>` commit minutes after every merge**, so ANY
+branch carrying its own regenerated pair — which the provenance protocol REQUIRES — collides on
+`knowledge/generated/*` the moment it lands. Measured rather than assumed: all four conflicting paths
+were generated files and **not one was hand-written**, so the conflict says nothing about the branch's
+source changes.
+**AND NEITHER SIDE OF SUCH A CONFLICT IS CORRECT**, which is the part that makes "just take theirs" the
+wrong instinct: the artifacts are a function of the MERGED history, so ours describes a tree that no
+longer exists and theirs describes one that never had this branch in it. The resolution is the commit
+protocol one step on — resolve with a placeholder (either side), commit the MERGE, then regenerate on
+the clean merged tree and commit the artifacts **ALONE**, which keeps the rule that a commit whose
+changed paths are entirely under `knowledge/generated/` is read as the snapshot of its parent.
+Recorded at the site (`tools/knowledge-test.js`, beside the commit protocol it extends) rather than only
+in history, because a lesson that lives in a commit message is one the next reader answers with a
+`--strategy=theirs`.
+**TWO MEASUREMENT TRAPS PAID FOR ON THE WAY IN, both the vacuous-answer class.** A background poll had
+been looping over `gh api` for ten minutes — **`gh` is not installed here (exit 127)** — producing
+silence indistinguishable from "still running"; the API reads are `curl` with `$GITHUB_TOKEN` now, and
+the token's presence was verified before the result was believed. And a check-runs query with a
+**hand-typed SHA** returned `total_count: 0`, which reads exactly like "no CI fired" — the sha comes
+from `git rev-parse HEAD` now, and the real answer was still 0, which is what made the dirty-PR
+diagnosis trustworthy rather than an artifact of a bad query. *A confident zero is not a measurement
+until you have proven the query could ever have returned anything else.*
