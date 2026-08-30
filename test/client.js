@@ -7496,6 +7496,85 @@ await app.close();
   console.log('  ✓ wave 73: the world — a raid that put a strike on your own head read as a clean score, a war burned the treasury in silence, a plaque hid its burn and its displacement, and a dismissed gun hid the forfeit');
 }
 
+// ── WAVE 73 (politics): the rival raid put the block on alert win OR lose and only the WIN said so ──
+// Its OWN tokens, after the main loop: the raid needs a FAMILY on each side, a rival operation with
+// something in the till, and the raider standing on their block — none of which the shared fixture
+// has, and a refused drive is skipped in SILENCE and reads on the summary line exactly like a
+// covered one. BOTH outcomes are driven with the module's TEST-ONLY knob pinned (never one lucky
+// roll — a deterministic claim resting on a probabilistic precondition is the recorded flake shape),
+// and the window is asserted from the reply's OWN figure: a literal passes straight through the
+// mutation that stops the field being sent.
+{
+  const app5 = await buildServer();
+  const inj5 = async (method, url, token, payload) => {
+    const res = await app5.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
+  };
+  const mk73p = async (nm) => {
+    const t = (await inj5('POST', '/v1/auth/guest')).body.token;
+    await inj5('POST', '/v1/character', t, { name: nm + Math.random().toString(36).slice(2, 7) });
+    const id = (await inj5('GET', '/v1/me', t)).body.character.id;
+    await app5.pool.query('UPDATE characters SET cash=50000000, respect=5000000, energy=100, health=100, loc=$2 WHERE id=$1', [id, 'canal']);
+    return { t, id };
+  };
+  const raider73 = await mk73p('Muscle ');
+  await inj5('POST', '/v1/gangs', raider73.t, { name: 'Wave73 Crew ' + Math.random().toString(36).slice(2, 5), tag: 'P7' + Math.random().toString(36).slice(2, 4) });
+  const rival73 = await mk73p('Holder ');
+  await inj5('POST', '/v1/gangs', rival73.t, { name: 'Wave73 Rivals ' + Math.random().toString(36).slice(2, 5), tag: 'P8' + Math.random().toString(36).slice(2, 4) });
+  const rivalGang73 = (await app5.pool.query('SELECT id FROM gangs ORDER BY created_at DESC LIMIT 1')).rows[0].id;
+  // the rival's operation is SEEDED: establishing it the honest way needs the family to hold canal
+  // as turf, which is a whole war away and not what this block is about. What must be real is the
+  // raid itself — the reply, the cooldown row, and the refusal that follows.
+  await app5.pool.query(
+    `INSERT INTO territory_rackets (district_id, owner_gang, tier, kind, last_income_at)
+     VALUES ('canal', $1, 3, 'numbers', now() - interval '10 hours')`, [rivalGang73]);
+  const raid73p = async (what) => {
+    const r = await inj5('POST', '/v1/territory/canal/raid', raider73.t);
+    assert.equal(r.code, 200, `WAVE 73 (politics) could not drive ${what} (${JSON.stringify(r.body)})`);
+    return { r, line: String(describeFn(r.body, 200)) };
+  };
+
+  // ── THE LOSS: the branch that carried no cooldown field at all ──────────────────────────────────
+  process.env.TERRITORY_RIVAL_RAID_P = '0';
+  const lost73 = await raid73p('the repelled raid');
+  delete process.env.TERRITORY_RIVAL_RAID_P;
+  assert.equal(lost73.r.body.win, false, 'this block is vacuous unless the raid was genuinely REPELLED (the knob is pinned)');
+  // GROUND TRUTH is the database: the alert really is stamped on the rival's operation by the LOSING
+  // branch too, or the sentence below would be stating a term the game does not impose.
+  const cdRow = (await app5.pool.query('SELECT raid_cd_until FROM territory_rackets WHERE district_id=$1', ['canal'])).rows[0];
+  const cdLeft = (new Date(cdRow.raid_cd_until).getTime() - Date.now()) / 1000;
+  assert(cdLeft > 60, 'a LOSS must still put the operation on alert — that is the term the loser could not read');
+  assert(lost73.r.body.cooldownSeconds > 0,
+    "the window is TERRITORY_RIVAL_CD_MS and must ship from the server: the raider cannot read a rival family's raidCdSeconds");
+  assert(Math.abs(lost73.r.body.cooldownSeconds - cdLeft) < 120,
+    `the reply's window must be the one actually stamped on the row (said ${lost73.r.body.cooldownSeconds}s, row has ${Math.round(cdLeft)}s)`);
+  const cdTxt = Math.round(lost73.r.body.cooldownSeconds / 3600) + 'h';
+  assert(new RegExp(`\\b${cdTxt}\\b`).test(lost73.line) && /alert/i.test(lost73.line),
+    `the loser is precisely the man who wants to go again, and the line named neither the alert nor its length: ${lost73.line}`);
+  assert(/ran you off/.test(lost73.line) && /15 damage/.test(lost73.line),
+    `the beating must survive the addition: ${lost73.line}`);
+  // the very next press is REFUSED — which is what makes the omitted term a defect rather than trivia
+  await app5.pool.query('UPDATE characters SET energy=100, health=100 WHERE id=$1', [raider73.id]);
+  const again73 = await inj5('POST', '/v1/territory/canal/raid', raider73.t);
+  assert.equal(again73.body.error, 'cooldown', 'the retry must be refused — the line has to warn him before he spends the energy');
+
+  // ── THE WIN: the same window, and the same sentence for it ─────────────────────────────────────
+  await app5.pool.query(`UPDATE territory_rackets SET raid_cd_until=NULL, last_income_at=now() - interval '10 hours' WHERE district_id='canal'`);
+  process.env.TERRITORY_RIVAL_RAID_P = '1';
+  const won73 = await raid73p('the landed raid');
+  delete process.env.TERRITORY_RIVAL_RAID_P;
+  assert.equal(won73.r.body.win, true, 'this block is vacuous unless the raid genuinely LANDED (the knob is pinned)');
+  assert.equal(won73.r.body.cooldownSeconds, lost73.r.body.cooldownSeconds,
+    'win and lose share one window — sending it on one branch only is how the two came to drift');
+  assert(new RegExp(`\\b${cdTxt}\\b`).test(won73.line) && /alert/i.test(won73.line),
+    `the WIN said "they're on alert now" and never how long: ${won73.line}`);
+  assert(won73.r.body.cut > 0 && new RegExp(fmtLike(won73.r.body.cut)).test(won73.line),
+    `the cut must survive the addition: ${won73.line}`);
+  assert.notEqual(won73.line, lost73.line, 'the two outcomes must still read differently');
+  await app5.close();
+  console.log('  ✓ wave 73: politics — a repelled raid put the block on alert for eight hours and told the loser nothing, and the win never named how long');
+}
+
 // ── WAVE 64 — the lines THE SILENCE LEDGER's first crop now produces. The ledger above proves each
 // reply is no longer mute; these pin what it SAYS, because a branch that fires and says the wrong
 // thing is the same defect one step later. Synthetic on the exact shapes the servers return (the

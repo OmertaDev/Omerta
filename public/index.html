@@ -2802,10 +2802,16 @@
       return `\u{1F6E1} the walls on ${$dist(body.district)} held — $${fmt(body.cost)} out of the war chest and you took ${body.dmg} damage. `
         + `Your family can't move on them again today.`;
     // THE RIVAL RAID — muscle in on another family's operation. Its own line, or it reads as a siege.
-    if (body && body.ok && body.op === 'racket' && body.district)
+    // WAVE 73 — the ALERT window is set win OR lose, and only the WIN sentence mentioned it ("they're
+    // on alert now") without ever naming how long. The loser had spent 20 energy, 15 health and taken
+    // the heat for it, and the next press answers `cooldown` from a surface he cannot read. Both
+    // sentences state the same DURATION now, off the server's own figure — never a restated lever.
+    if (body && body.ok && body.op === 'racket' && body.district) {
+      const alert73 = body.cooldownSeconds ? ` The operation is on alert for ${minsTxt(body.cooldownSeconds)} — nobody can muscle it again until then.` : '';
       return body.win
-        ? `\u{1F4B0} muscled in on ${$dist(body.district)} — $${fmt(body.cut)} of their take into your family's treasury. They're on alert now.`
-        : `their crew ran you off ${$dist(body.district)} — you took ${body.dmg} damage and nothing came out of the till.`;
+        ? `\u{1F4B0} muscled in on ${$dist(body.district)} — $${fmt(body.cut)} of their take into your family's treasury.${alert73}`
+        : `their crew ran you off ${$dist(body.district)} — you took ${body.dmg} damage and nothing came out of the till.${alert73}`;
+    }
     if (body && body.ok && body.against && body.needed !== undefined)
       return `\u{2694} the coalition against ${txt(body.against)} is open — ${body.needed} families in and it arms: half the war chest and a cheaper price on their ground.`;
     if (body && body.ok && body.members !== undefined && body.armed !== undefined)

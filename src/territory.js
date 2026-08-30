@@ -328,7 +328,14 @@ export async function raidRivalRacket(ch, districtId, client, h) {
     await h.track(client, ch.account_id, 'territory_raid', { district: districtId, win: false });
     // `op` names the system: without it this read as a SOV SIEGE loss — "$undefined out of the war chest",
     // a bill this raid never charges.
-    return { ok: true, op: 'racket', district: districtId, win: false, dmg: CONSTANTS.TERRITORY_RIVAL_FAIL_DMG };
+    // the ALERT window ships on BOTH branches (it is set above, win or lose, by the design's own
+    // "the owner isn't ground down" note) — the WIN line named it and the LOSS reply carried no
+    // cooldown field at all, so the loser, who is precisely the man who wants to go again, had no
+    // surface telling him he cannot: /v1/territory returns only YOUR family's operations, and the
+    // rival's raidCdSeconds is internal by territoryExploreBoard's own comment. Two returns apart
+    // in one function — the forgotten sibling. It is a LEVER, so it ships from the server.
+    return { ok: true, op: 'racket', district: districtId, win: false, dmg: CONSTANTS.TERRITORY_RIVAL_FAIL_DMG,
+      cooldownSeconds: Math.round(CONSTANTS.TERRITORY_RIVAL_CD_MS / 1000) };
   }
   const cut = Math.floor(pending * CONSTANTS.TERRITORY_RIVAL_CUT_BPS / 10000);
   // advance the owner's clock so their remaining pending = pending − cut (the shakedown/convoy pattern)
@@ -340,7 +347,8 @@ export async function raidRivalRacket(ch, districtId, client, h) {
   if (h.owned.gang) h.owned.gang.treasury = Number(g.treasury) + cut;
   bus.emit(`gang:${r.owner_gang}`, { type: 'racket_raided', district: districtId, lost: cut });
   await h.track(client, ch.account_id, 'territory_raid', { district: districtId, win: true, cut });
-  return { ok: true, op: 'racket', district: districtId, win: true, cut };
+  return { ok: true, op: 'racket', district: districtId, win: true, cut,
+    cooldownSeconds: Math.round(CONSTANTS.TERRITORY_RIVAL_CD_MS / 1000) };
 }
 
 // ── STEP FIVE — RACKET SPECIALISTS + SPECIAL OPERATIONS ──
