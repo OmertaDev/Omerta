@@ -110,7 +110,9 @@ export async function tuneCar(ch, carId, client, h) {
   await client.query('UPDATE cars SET tune=$2 WHERE id=$1', [car.id, nt]);
   car.tune = nt;
   await h.track(client, ch.account_id, 'race', { mode: 'tune', tune: nt });
-  return { ok: true, tune: nt, spent: tuneCost, power: carPower(car.model_id, car.trim_id, nt, ch.speed, car.dmg, car.rarity) };
+  // The NAME rides too (wave 75) — the buyNos sibling has shipped it all along, and a garage holds
+  // several: "tuned up" with no iron in it left the owner checking the fleet to learn which one.
+  return { ok: true, tune: nt, spent: tuneCost, car: car.model_id, name: carOf(car.model_id)?.name || car.model_id, power: carPower(car.model_id, car.trim_id, nt, ch.speed, car.dmg, car.rarity) };
 }
 
 // POST /v1/races/list/:carId {limit} — put a car on the strip to race for a wager up to `limit`

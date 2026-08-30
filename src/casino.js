@@ -88,12 +88,15 @@ async function bumpVolume(client, amt) {
   await client.query('UPDATE den_volume SET total = total + $1 WHERE id=1', [amt]);
 }
 
-function gateBet(ch, amount, min, max) {
+function gateBet(ch, amount, min, max, roomTerms) {
   if (jailed(ch)) throw new GameError('jailed', 'No dice in lockup — yet.');
   if (ch.loc !== CASINO.DISTRICT) throw new GameError('district', `The den runs on ${districtName(CASINO.DISTRICT)} — the games are where the lights are.`, { district: CASINO.DISTRICT });
   const amt = Math.floor(Number(amount));
   if (!(amt >= min)) throw new GameError('min', `Table minimum is ${usd(min)}.`);
-  if (amt > max) throw new GameError('max', `Table maximum is ${usd(max)} — the house knows variance.`);
+  // The high-stakes terms ride with the refusal (wave 75): "Table maximum is $250,000" told a
+  // player nothing about WHY the big table refused them — the seat and the access stake are the
+  // published gates, and the one refusal that enforces the ceiling named neither.
+  if (amt > max) throw new GameError('max', `Table maximum is ${usd(max)} — the house knows variance.${roomTerms?.text || ''}`, roomTerms?.data);
   if (Number(ch.cash) < amt) throw new GameError('cash', 'Not that much in pocket.');
   return amt;
 }
@@ -125,10 +128,25 @@ function tableMax(ch, h) {
   const staked = Number(h?.acct?.staked || 0) >= ACCESS_STAKE.HIGH_OMR;
   return Math.floor((seat && staked ? CASINO.HIGH_MAX : CASINO.MAX_BET) * masteryFx(h, 'gambling'));
 }
+// The way UP from the small table, stated where the ceiling refuses (wave 75). Computed beside
+// tableMax — the SAME seat/stake reads — so the refusal and the gate structurally cannot disagree
+// about what the big table wants. Null once you're at the big table (the max is then just the max).
+function highRoomTerms(ch, h) {
+  const seat = levelOf(Number(ch.respect)) >= CASINO.HIGH_LVL || npcTier(h, 'madame') >= 2;
+  const have = Math.floor(Number(h?.acct?.staked || 0));
+  const staked = have >= ACCESS_STAKE.HIGH_OMR;
+  if (seat && staked) return null;
+  return {
+    text: seat
+      ? ` The high-stakes room takes ${ACCESS_STAKE.HIGH_OMR} $OMR STAKED — you hold ${have}.`
+      : ` The high-stakes room seats level ${CASINO.HIGH_LVL}+ (or the Madame's velvet rope)${staked ? '' : `, holding ${ACCESS_STAKE.HIGH_OMR} $OMR staked`}.`,
+    data: { needStaked: ACCESS_STAKE.HIGH_OMR, haveStaked: have, seat, staked },
+  };
+}
 
 export async function playDice(ch, amount, client, h) {
   const max = tableMax(ch, h);
-  const amt = gateBet(ch, amount, CASINO.MIN_BET, max);
+  const amt = gateBet(ch, amount, CASINO.MIN_BET, max, highRoomTerms(ch, h));
   // MADAME T1: the house comps your seat — dice cost no nerve (pacing QoL, the edge still pays)
   if (npcTier(h, 'madame') < 1) {
     if (Number(ch.nerve) < CASINO.DICE_NERVE) throw new GameError('nerve', 'Even dice take nerve.');
@@ -897,7 +915,7 @@ async function resolveDealer(ch, client, h, hand, player, dealer, dbl) {
 
 export async function blackjackDeal(ch, amount, client, h) {
   const max = tableMax(ch, h);
-  const amt = gateBet(ch, amount, CASINO.MIN_BET, max);
+  const amt = gateBet(ch, amount, CASINO.MIN_BET, max, highRoomTerms(ch, h));
   if ((await client.query('SELECT 1 FROM blackjack_hands WHERE character_id=$1', [ch.id])).rows[0])
     throw new GameError('hand', "Finish the hand you're in first.");
   // MADAME T1 comps the seat — a hand costs no nerve (the dice pacing perk)

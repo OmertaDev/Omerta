@@ -8477,6 +8477,225 @@ await app.close();
   console.log('  ✓ wave 73: chain — a voucher signed (or not signed at all) for "done.", a one-per-bloodline portrait mint that said nothing, a vested release with no word on what stayed locked, a paid credit spent in silence, and a signing payload rendered as a toast');
 }
 
+// ── WAVE 75: THE SWEEP RUN TO COMPLETION, DRIVEN — the 15 findings the parallel finders surfaced,
+// each proven at the REAL describe() off a REAL server reply. The clusters: the personal-empire buy
+// verbs (assets/rackets — an income line and the house's cut, sell-vs-buy discrimination on
+// `earned`), the retire's honest "nothing back", the kitchen lab's per-batch capacity, the FAMILY
+// crackdown line (a Bureau raid that seized the pending and fined the treasury used to fall into the
+// empty-till fallback — "nothing banked yet" over a five-figure loss), the boxing/stable LOSS lines
+// (a laid-up clock the manager plans the next card off), the port cast-off (cargo cost + the escort's
+// own price), the tune-up naming its iron, the estate hire's $OMR terms, the high-stakes dice refusal
+// carrying its OWN terms both with and without a seat, and the two-token kryl co-op ROUT (plan/join
+// lines + routUnits round-robin with the DATABASE as ground truth on both crew members' shipment).
+// Every claim is asserted in TWO halves — the SERVER sent the field, then the driven line reads it —
+// and every precondition is SEEDED (a refused drive reads on the summary line exactly like a covered
+// one): cash/respect/energy/nerve/ammo, the district hold (npc_holder cleared — the occupation seeds
+// dockrats on the docks), a hot smuggling racket, 1/1/1 fighters and racers so the loss is forced
+// (form ≤ 25 < gatekeeper 62 / graded 40), and kryl pinned to 31,000 strength so the grab routs it.
+{
+  const oldEnv = {};
+  const arm = { TERRITORY_RAID_P: '1', WORLD_RAID_P: '1' };
+  for (const [k, v] of Object.entries(arm)) { oldEnv[k] = process.env[k]; process.env[k] = v; }
+
+  const app9 = await buildServer();
+  const inj9 = async (method, url, token, payload) => {
+    const res = await app9.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
+  };
+  const fmtC = (n) => { const v = Number(n);
+    if (v !== 0 && Math.abs(v) < 0.01) return Number(v.toPrecision(2)).toString();
+    return v.toLocaleString('en-US', { maximumFractionDigits: 2 }); };
+  const driveW = async (url, tok, payload, what, method = 'POST') => {
+    const r = await inj9(method, url, tok, payload);
+    assert.equal(r.code, 200, `WAVE 75 could not drive ${what} (${JSON.stringify(r.body)})`);
+    described++;
+    return { r, line: String(describeFn(r.body, 200)) };
+  };
+  const seed9 = async (id) => app9.pool.query(
+    'UPDATE characters SET cash=90000000, respect=500000, energy=500, nerve=100, ammo=200 WHERE id=$1', [id]);
+
+  const tA = (await inj9('POST', '/v1/auth/guest')).body.token;
+  await inj9('POST', '/v1/character', tA, { name: 'WvA ' + Math.random().toString(36).slice(2, 7) });
+  const idA = (await inj9('GET', '/v1/me', tA)).body.character.id;
+  const acctA = (await app9.pool.query('SELECT account_id FROM characters WHERE id=$1', [idA])).rows[0].account_id;
+  await seed9(idA);
+  await app9.pool.query('UPDATE account_persistent SET omr = omr + 5000 WHERE account_id=$1', [acctA]);
+
+  // ── F-E1: an income ASSET names what it earns AND what it cost with the house's cut folded in;
+  // a Wheels buy (no income) must NOT invent an hourly figure. Sell-vs-buy discriminates on
+  // `earned` — absence is not a discriminator until a sibling grows the field, so both are driven.
+  const ab = await driveW('/v1/assets/grocery/buy', tA, null, 'the grocery buy');
+  assert.ok(ab.r.body.income !== undefined && ab.r.body.spent > 60000,
+    `WAVE 75: the asset buy must SEND income + spent (price + fee + tax) — got ${JSON.stringify(ab.r.body)}`);
+  assert.ok(ab.line.includes(fmtC(Math.round(ab.r.body.income * 60))) && /an hour while you're not looking/.test(ab.line),
+    `WAVE 75: the income asset's line must state the hourly take — got ${ab.line}`);
+  assert.ok(ab.line.includes(fmtC(ab.r.body.spent)) && /house's cut/.test(ab.line),
+    `WAVE 75: the buy must state the all-in price incl. the house's cut — got ${ab.line}`);
+  const wb = await driveW('/v1/assets/beater/buy', tA, null, 'the beater buy');
+  assert.equal(wb.r.body.income, undefined, 'WAVE 75 fixture: the beater must be a no-income Wheels asset');
+  assert.ok(!/an hour/.test(wb.line) && !/undefined/.test(wb.line),
+    `WAVE 75: a Wheels buy earns nothing and must not invent an hourly figure — got ${wb.line}`);
+
+  // ── F-E3: a RACKET buy states the hourly take; retiring it at RACKET_RETIRE_BPS 0 says plainly
+  // that NOTHING comes back and reports the freed seat count off the reply's own figures.
+  const rb = await driveW('/v1/rackets/laundro/buy', tA, null, 'the laundro buy');
+  assert.ok(rb.r.body.income !== undefined && /an hour while you're not looking/.test(rb.line),
+    `WAVE 75: the racket buy must state the hourly take — got ${rb.line}`);
+  const rr = await driveW('/v1/rackets/laundro', tA, null, 'the laundro retire', 'DELETE');
+  assert.ok(rr.r.body.back === 0 && rr.r.body.slotsUsed !== undefined && rr.r.body.slots !== undefined,
+    `WAVE 75: the retire must SEND back + the seat count — got ${JSON.stringify(rr.r.body)}`);
+  assert.ok(/nothing back/.test(rr.line) && rr.line.includes(`${rr.r.body.slotsUsed} of ${rr.r.body.slots}`),
+    `WAVE 75: retiring at 0 bps must say "nothing back" and name the freed seats — got ${rr.line}`);
+
+  // ── F-V1: the LAB upgrade names its per-batch capacity + the cash it cost (the bathtub's $OMR
+  // half is 0, so the $OMR clause correctly stays off this line).
+  const lb = await driveW('/v1/kitchen/lab/upgrade', tA, null, 'the lab upgrade');
+  assert.ok(lb.r.body.cap !== undefined && lb.r.body.cost > 0,
+    `WAVE 75: the lab upgrade must SEND cap + cost — got ${JSON.stringify(lb.r.body)}`);
+  assert.ok(lb.line.includes(`${lb.r.body.cap} units a batch`) && lb.line.includes(fmtC(lb.r.body.cost)) && !/undefined/.test(lb.line),
+    `WAVE 75: the lab line must state the capacity bought and the bill — got ${lb.line}`);
+
+  // ── F-W1: the FAMILY crackdown. A raided operation's collect reply carries `raided` rows and a
+  // zero take — the line must report the seizure + the treasury fine, NEVER the empty-till fallback
+  // ("nothing banked yet" over a five-figure loss was the finding).
+  const gname = 'W75 Family ' + Math.random().toString(36).slice(2, 6);
+  const gc = await inj9('POST', '/v1/gangs', tA, { name: gname, tag: 'W' + Math.random().toString(36).slice(2, 4).toUpperCase() });
+  assert.equal(gc.code, 200, `WAVE 75 could not found the family (${JSON.stringify(gc.body)})`);
+  const gid = (await app9.pool.query('SELECT id FROM gangs WHERE name=$1', [gname])).rows[0].id;
+  await app9.pool.query('UPDATE gangs SET treasury=50000000 WHERE id=$1', [gid]);
+  await app9.pool.query("UPDATE districts SET holder_gang=$1, npc_holder=NULL WHERE id='docks'", [gid]);
+  const est = await inj9('POST', '/v1/territory/docks/establish', tA, { kind: 'smuggling' });
+  assert.equal(est.code, 200, `WAVE 75 could not establish the smuggling ring (${JSON.stringify(est.body)})`);
+  await app9.pool.query(
+    "UPDATE territory_rackets SET scrutiny=100, scrutiny_at=now() - interval '3 hours', last_income_at=now() - interval '6 hours' WHERE district_id='docks'");
+  const cr = await driveW('/v1/territory/collect', tA, null, 'the raided territory collect');
+  assert.equal(cr.r.body.collect, 'territory', 'WAVE 75: the family collect must NAME its system');
+  assert.ok(Array.isArray(cr.r.body.raided) && cr.r.body.raided[0].seized > 0 && cr.r.body.raided[0].fine > 0 && !cr.r.body.collected,
+    `WAVE 75 fixture: the crackdown must have fired (seized + fined, nothing banked) — got ${JSON.stringify(cr.r.body)}`);
+  assert.ok(/CRACKED DOWN/.test(cr.line) && cr.line.includes(fmtC(cr.r.body.raided[0].seized)) && cr.line.includes(fmtC(cr.r.body.raided[0].fine)),
+    `WAVE 75: a raided collect must report the seizure and the fine — got ${cr.line}`);
+  assert.ok(!/nothing banked yet/.test(cr.line),
+    `WAVE 75: the crackdown must NOT fall into the empty-till fallback — got ${cr.line}`);
+
+  // ── F-V4 / F-R1: the LOSS lines. A 1/1/1 fighter's form is 3 + rand(0..22) ≤ 25 — guaranteed
+  // under the gatekeeper's 62 and the graded meet's 40 — so both losses are forced, not lucky.
+  await inj9('POST', '/v1/boxing/recruit', tA, { name: 'W75 Kid' });
+  const fid = (await app9.pool.query('SELECT id FROM fighters WHERE character_id=$1', [idA])).rows[0].id;
+  await app9.pool.query('UPDATE fighters SET power=1, chin=1, speed=1 WHERE id=$1', [fid]);
+  const bx = await driveW('/v1/boxing/exhibition', tA, { fighter: fid, tier: 'gatekeeper' }, 'the boxing loss');
+  assert.ok(bx.r.body.win === false && bx.r.body.injuredSeconds > 0,
+    `WAVE 75 fixture: the exhibition must be a LOSS with an injury clock — got ${JSON.stringify(bx.r.body)}`);
+  assert.ok(/dropped it/.test(bx.line) && /laid up/.test(bx.line),
+    `WAVE 75: a boxing loss must state the lay-up the manager plans around — got ${bx.line}`);
+  await inj9('POST', '/v1/stable/buy', tA, { kind: 'dog', name: 'W75 Dog' });
+  const rid = (await app9.pool.query('SELECT id FROM racers WHERE character_id=$1', [idA])).rows[0].id;
+  await app9.pool.query('UPDATE racers SET speed=1, stamina=1, heart=1 WHERE id=$1', [rid]);
+  const st = await driveW(`/v1/stable/circuit/${rid}`, tA, { meet: 'graded' }, 'the circuit loss');
+  assert.ok(st.r.body.win === false && st.r.body.injuredSeconds > 0,
+    `WAVE 75 fixture: the circuit must be a LOSS with an injury clock — got ${JSON.stringify(st.r.body)}`);
+  assert.ok(/got beat/.test(st.line) && /laid up/.test(st.line),
+    `WAVE 75: a circuit loss must state the lay-up — got ${st.line}`);
+
+  // ── F-R2: the port CAST-OFF names the lane, the cargo cost aboard and the escort's own price.
+  await app9.pool.query("UPDATE characters SET loc='docks' WHERE id=$1", [idA]);
+  await inj9('POST', '/v1/port/boat/dinghy', tA, null);
+  const bid = (await app9.pool.query('SELECT id FROM boats WHERE character_id=$1', [idA])).rows[0].id;
+  const pr = await driveW(`/v1/port/run/${bid}`, tA, { route: 'coastal', escort: true }, 'the cast-off');
+  assert.ok(pr.r.body.routeName && pr.r.body.cost > 0 && pr.r.body.escortCost > 0,
+    `WAVE 75: the cast-off must SEND routeName + cost + escortCost — got ${JSON.stringify(pr.r.body)}`);
+  assert.ok(pr.line.includes(pr.r.body.routeName) && pr.line.includes(fmtC(pr.r.body.cost)),
+    `WAVE 75: the cast-off must name the lane and the cargo aboard — got ${pr.line}`);
+  assert.ok(pr.line.includes(fmtC(pr.r.body.escortCost)) && /escort/.test(pr.line),
+    `WAVE 75: the escort's own price must ride the line — got ${pr.line}`);
+
+  // ── F-R5: the tune-up names its IRON (a garage holds several) and its bill.
+  await app9.pool.query(
+    "INSERT INTO cars (id, character_id, model_id, trim_id, dmg) VALUES ('w75-car', $1, 'errand', 'stock', 0)", [idA]);
+  const tn = await driveW('/v1/races/tune/w75-car', tA, null, 'the tune-up');
+  assert.ok(tn.r.body.name && tn.r.body.spent > 0,
+    `WAVE 75: the tune must SEND the car's name + the discounted bill — got ${JSON.stringify(tn.r.body)}`);
+  assert.ok(tn.line.includes(tn.r.body.name) && tn.line.includes(fmtC(tn.r.body.spent)),
+    `WAVE 75: the tune line must name the iron and the bill — got ${tn.line}`);
+
+  // ── F-E2: the estate HIRE states the $OMR terms — the hire fee (DATABASE ground truth: exactly
+  // what left the account) and the standing daily wage with the down-tools consequence.
+  await app9.pool.query('INSERT INTO estates (account_id, tier) VALUES ($1, 1)', [acctA]);
+  const omrPre = Number((await app9.pool.query('SELECT omr FROM account_persistent WHERE account_id=$1', [acctA])).rows[0].omr);
+  const eh = await driveW('/v1/estate/staff/groundskeeper', tA, null, 'the staff hire');
+  const omrPost = Number((await app9.pool.query('SELECT omr FROM account_persistent WHERE account_id=$1', [acctA])).rows[0].omr);
+  assert.equal(omrPre - omrPost, eh.r.body.hireOmr,
+    'WAVE 75: the DATABASE is ground truth — the reply\'s hireOmr must be what actually left the account');
+  assert.ok(eh.r.body.hireOmr > 0 && eh.line.includes(fmtC(eh.r.body.hireOmr)) && /\$OMR to bring them on/.test(eh.line),
+    `WAVE 75: the hire must state its fee — got ${eh.line}`);
+  assert.ok(/down tools/.test(eh.line),
+    `WAVE 75: the hire must state the unpaid-wages consequence — got ${eh.line}`);
+
+  // ── F-C1: the high-stakes dice refusal carries its OWN terms, both without a seat (what level
+  // buys one) and with one (the 300 $OMR STAKED the seat still wants — including what you hold).
+  const tD = (await inj9('POST', '/v1/auth/guest')).body.token;
+  await inj9('POST', '/v1/character', tD, { name: 'WvD ' + Math.random().toString(36).slice(2, 7) });
+  const idD = (await inj9('GET', '/v1/me', tD)).body.character.id;
+  await app9.pool.query("UPDATE characters SET loc='neon', cash=5000000 WHERE id=$1", [idD]);
+  const d1 = await inj9('POST', '/v1/casino/dice', tD, { amount: 300000 });
+  assert.equal(d1.code, 400, `WAVE 75 fixture: a level-1 300k bet must refuse at the table max (${JSON.stringify(d1.body)})`);
+  assert.ok(d1.body.needStaked === 300 && d1.body.seat === false,
+    `WAVE 75: the refusal must carry the machine-readable stake terms — got ${JSON.stringify(d1.body)}`);
+  assert.match(String(describeFn(d1.body, d1.code)), /seats level 30/,
+    'WAVE 75: without a seat the refusal must say what level buys one');
+  await app9.pool.query("UPDATE characters SET loc='neon' WHERE id=$1", [idA]);
+  const d2 = await inj9('POST', '/v1/casino/dice', tA, { amount: 300000 });
+  assert.equal(d2.code, 400, `WAVE 75 fixture: a seated but unstaked 300k bet must still refuse (${JSON.stringify(d2.body)})`);
+  assert.ok(d2.body.seat === true && d2.body.staked === false,
+    `WAVE 75: the seated refusal must say the seat is held and the stake is not — got ${JSON.stringify(d2.body)}`);
+  const d2line = String(describeFn(d2.body, d2.code));
+  assert.ok(/takes 300 \$OMR STAKED/.test(d2line) && /you hold 0/.test(d2line) && d2line.includes('$250,000'),
+    `WAVE 75: the seated refusal must state the stake wanted, what you hold, and the table max — got ${d2line}`);
+
+  // ── F-W2: the kryl CO-OP ROUT, two-handed. The plan line states the crew band, the join names
+  // the outfit and the count, and the go reports the rout + the material split — with the DATABASE
+  // as ground truth on BOTH crew members' shipment (ROUT_UNITS 6 round-robin over 2 = 3 each; the
+  // leader's rides the in-memory persist, the member's an absolute UPDATE — both halves must land).
+  const tB = (await inj9('POST', '/v1/auth/guest')).body.token;
+  await inj9('POST', '/v1/character', tB, { name: 'WvB ' + Math.random().toString(36).slice(2, 7) });
+  const idB = (await inj9('GET', '/v1/me', tB)).body.character.id;
+  await seed9(idB);
+  const pl = await driveW('/v1/world/kryl/plan', tA, null, 'the raid plan');
+  assert.ok(pl.r.body.op === 'raid' && pl.r.body.crewMin !== undefined,
+    `WAVE 75: the plan must NAME its system + the crew floor — got ${JSON.stringify(pl.r.body)}`);
+  assert.ok(/guns minimum/.test(pl.line), `WAVE 75: the plan line must state the crew band — got ${pl.line}`);
+  const raidId = pl.r.body.id;
+  const jn = await driveW(`/v1/world/raids/${raidId}/join`, tB, null, 'the raid join');
+  assert.ok(jn.r.body.op === 'raid' && jn.r.body.crew === 2 && jn.r.body.outfit,
+    `WAVE 75: the join must carry the outfit's NAME + the crew count — got ${JSON.stringify(jn.r.body)}`);
+  assert.ok(/you're in on the hit on The Kryl Syndicate — 2 of/.test(jn.line),
+    `WAVE 75: the join line must name the outfit (never the key) and the count — got ${jn.line}`);
+  // pin kryl to a routable strength: grab 1,550 drops 31,000 to 29,450 ≤ the 30,000 rout floor,
+  // and 31,000 > 30,000 so the fixture is above it going in. UPDATE-then-INSERT (first-touch table).
+  const up9 = await app9.pool.query(
+    "UPDATE world_npcs SET strength=31000, strength_at=now(), enraged_until=NULL WHERE npc_id='kryl'");
+  if (!up9.rowCount) await app9.pool.query(
+    "INSERT INTO world_npcs (npc_id, strength, strength_at) VALUES ('kryl', 31000, now())");
+  await seed9(idA); await seed9(idB);
+  const go = await driveW(`/v1/world/raids/${raidId}/go`, tA, null, 'the co-op rout');
+  assert.ok(go.r.body.routed === true && go.r.body.crew === 2 && go.r.body.share > 0,
+    `WAVE 75 fixture: the pinned raid must ROUT two-handed with a paid share — got ${JSON.stringify(go.r.body)}`);
+  assert.ok(go.r.body.routUnits === 3 && go.r.body.material === 'Cut Swiss steel' && go.r.body.frontier === true,
+    `WAVE 75: the rout must SEND the leader's material cut + the frontier flag — got ${JSON.stringify(go.r.body)}`);
+  for (const cid of [idA, idB]) {
+    const held = Number((await app9.pool.query('SELECT shipment FROM characters WHERE id=$1', [cid])).rows[0].shipment);
+    assert.equal(held, 3,
+      `WAVE 75: the DATABASE is ground truth — ROUT_UNITS 6 round-robins 3 to EACH of the two crew (char ${cid} holds ${held})`);
+  }
+  assert.ok(/cracked The Kryl Syndicate 2-handed/.test(go.line) && /ROUTED — the outfit is broken/.test(go.line),
+    `WAVE 75: the go line must name the outfit and the rout — got ${go.line}`);
+  assert.ok(/3 units of Cut Swiss steel/.test(go.line) && /plants its flag/.test(go.line),
+    `WAVE 75: the material cut and the frontier flag must ride the line — got ${go.line}`);
+
+  await app9.close();
+  for (const k of Object.keys(arm)) { if (oldEnv[k] === undefined) delete process.env[k]; else process.env[k] = oldEnv[k]; }
+  console.log('  ✓ wave 75: the parallel sweep\'s 15 findings driven — the buy verbs price themselves, the crackdown stopped reading as an empty till, the loss lines state the lay-up, the cast-off and the hire carry their terms, the high-stakes refusal explains itself both ways, and the co-op rout splits its material with the database agreeing');
+}
+
 console.log(`✅ client wiring test passed — across the console AND /admin: of ${refs.size} routes they can ` +
   `call, ${refs.size - dynamic.length} resolve to a really-mounted route (segment-wise, so ` +
   `/v1/streets/:id/jump cannot match /v1/streets/roster) and the ${dynamic.length} that build their ` +
