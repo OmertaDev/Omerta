@@ -2602,7 +2602,7 @@
     // soldier hire sends trait with no trackName), and the line states the terms: permanent, once
     // ever, dies with the street like the schooling it crowns.
     if (body && body.trait && body.trackName)
-      return `\u{1F396} ${txt(body.name)} \u2014 the ${txt(body.trackName)} die is cast, once and for good (it dies with the street). ${txt(body.desc)}`;
+      return `\u{1F396} ${txt(body.name)} \u2014 ${art(txt(body.trackName))} die is cast, once and for good (it dies with the street). ${txt(body.desc)}`;
     // THE OPERATION SLOTS — retiring a racket. Leads with the freed seat, which is the whole point.
     if (body && body.slotsUsed !== undefined && body.slots !== undefined && body.racket)
       return `\u{1F91D} you're out of ${art(body.name || body.racket)}${body.back ? ` — $${fmt(body.back)} back` : ''} — ${body.slotsUsed} of ${body.slots} seats running`;
