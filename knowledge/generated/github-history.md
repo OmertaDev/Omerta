@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `ee1a5894ca3b`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `50f09692b462`.
 
 ## Repository
 
@@ -9,7 +9,7 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1316 |
+| Commits in clone | 1319 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
@@ -21,9 +21,9 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 435 |
-| Claude | 190 |
+| Claude | 192 |
 | CRVYDEV | 41 |
-| github-actions[bot] | 3 |
+| github-actions[bot] | 4 |
 
 ## Historical hotspots
 
@@ -38,10 +38,10 @@
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 170 | yes |
 | [package.json](../../package.json) | 142 | yes |
-| knowledge/generated/github-history.md | 127 | historical |
-| knowledge/generated/graph-summary.md | 127 | historical |
-| knowledge/generated/graph.json | 127 | historical |
-| knowledge/generated/inventory.md | 127 | historical |
+| knowledge/generated/github-history.md | 129 | historical |
+| knowledge/generated/graph-summary.md | 129 | historical |
+| knowledge/generated/graph.json | 129 | historical |
+| knowledge/generated/inventory.md | 129 | historical |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
 | [test/client.js](../../test/client.js) | 115 | yes |
@@ -61,8 +61,8 @@
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 49 | yes |
 | knowledge/generated/modules.md | 48 | historical |
+| knowledge/generated/documents.md | 47 | historical |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
-| knowledge/generated/documents.md | 45 | historical |
 | [src/economy.js](../../src/economy.js) | 45 | yes |
 | [src/casino.js](../../src/casino.js) | 45 | yes |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
