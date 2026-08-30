@@ -374,6 +374,15 @@ for (const [name, expected] of Object.entries(outputs)) {
     // under knowledge/generated/ is read as the snapshot of its PARENT (sourceRevisionForSnapshot),
     // which is the only way an artifact can describe a commit it is contained in. Push the pair
     // together or CI is red on the authored commit, which cannot carry its own hash.
+    //
+    // AND THE MERGE CASE, which is the same rule one step on and cost a silently untested PR
+    // (2026-08-30). main takes an automated artifact-refresh commit after every merge, so ANY branch
+    // carrying its own regenerated pair conflicts here by construction — every conflict a generated
+    // file, none of them hand-written. The trap is not the conflict: GitHub runs NO workflows on a
+    // dirty PR, and a PR with no checks reads on its own page exactly like one whose checks passed.
+    // Neither side of such a conflict is correct, because the artifacts are a function of the MERGED
+    // history: resolve with a placeholder (either side), commit the merge, then regenerate on the
+    // clean merged tree and commit the artifacts ALONE, so the protocol above still holds.
     assert.fail(`${name} drifted; first difference at line ${line + 1}\n`
       + `committed: ${JSON.stringify(actualLines[line] ?? '<EOF>')}\n`
       + `generated: ${JSON.stringify(expectedLines[line] ?? '<EOF>')}\n`
