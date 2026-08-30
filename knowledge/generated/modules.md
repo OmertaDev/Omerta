@@ -16,7 +16,7 @@
 | [src/avatar.js](../../src/avatar.js) | 63 | platform-core | 1 / 2 | 0 | 0 | 1 |
 | [src/bank.js](../../src/bank.js) | 519 | platform-core | 3 / 5 | 4 | 14 | 1 |
 | [src/bloodline.js](../../src/bloodline.js) | 80 | platform-core | 1 / 3 | 2 | 4 | 0 |
-| [src/bonds.js](../../src/bonds.js) | 496 | platform-core | 4 / 11 | 9 | 15 | 3 |
+| [src/bonds.js](../../src/bonds.js) | 506 | platform-core | 4 / 11 | 9 | 15 | 3 |
 | [src/boxing.js](../../src/boxing.js) | 697 | vice-competition | 3 / 12 | 11 | 8 | 4 |
 | [src/brokers.js](../../src/brokers.js) | 298 | platform-core | 4 / 4 | 5 | 10 | 1 |
 | [src/bulletin.js](../../src/bulletin.js) | 89 | engagement-growth | 2 / 1 | 1 | 2 | 0 |

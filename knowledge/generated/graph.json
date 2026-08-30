@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "76f6f9599767890ae2f7ca96273c33040fa68b7a",
+  "sourceRevision": "854efe56c4518150dbb81c00dc358d10a61c30c9",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5687,
-    "edges": 25013,
+    "nodes": 5689,
+    "edges": 25023,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 56,
-      "Commit": 1329,
+      "Commit": 1331,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 10043,
+      "CHANGED": 10051,
       "CONTAINS": 1846,
       "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1329,
+      "HAS_COMMIT": 1331,
       "IMPLEMENTS": 124,
       "IMPORTS": 1634,
       "INHERITS": 12,
@@ -32493,20 +32493,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1178595,
-      "lines": 12116,
-      "version": "a5b9ae8ed36e5575",
+      "bytes": 1179661,
+      "lines": 12127,
+      "version": "a1ae8fa3b9085be7",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "a5b9ae8ed36e5575"
+          "version": "a1ae8fa3b9085be7"
         }
       ],
-      "lastChangedAt": "2026-08-30T16:58:59.000Z",
+      "lastChangedAt": "2026-08-30T17:16:56.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "76f6f9599767890ae2f7ca96273c33040fa68b7a"
+      "lastChangedCommit": "854efe56c4518150dbb81c00dc358d10a61c30c9"
     },
     {
       "key": "Artifact:public/manifest.json",
@@ -33068,20 +33068,20 @@
       "path": "src/bonds.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 37069,
-      "lines": 496,
-      "version": "4537628af4254fe8",
+      "bytes": 37913,
+      "lines": 506,
+      "version": "d949c19ca1ec7649",
       "text": true,
       "provenance": [
         {
           "file": "src/bonds.js",
           "line": 1,
-          "version": "4537628af4254fe8"
+          "version": "d949c19ca1ec7649"
         }
       ],
-      "lastChangedAt": "2026-08-30T11:48:05.000Z",
+      "lastChangedAt": "2026-08-30T17:16:56.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "14ca7023b93b64e9499636ec8f5b79ea1ea2a98e"
+      "lastChangedCommit": "854efe56c4518150dbb81c00dc358d10a61c30c9"
     },
     {
       "key": "Artifact:src/boxing.js",
@@ -37553,20 +37553,20 @@
       "path": "test/client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 661089,
-      "lines": 8528,
-      "version": "db883448c8771544",
+      "bytes": 662631,
+      "lines": 8543,
+      "version": "37cd4d2b69da3391",
       "text": true,
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "db883448c8771544"
+          "version": "37cd4d2b69da3391"
         }
       ],
-      "lastChangedAt": "2026-08-30T16:45:05.000Z",
+      "lastChangedAt": "2026-08-30T17:16:56.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "1c45b5855bfe3679d44dd5950219d205794b5d4a"
+      "lastChangedCommit": "854efe56c4518150dbb81c00dc358d10a61c30c9"
     },
     {
       "key": "Artifact:test/clues.js",
@@ -54181,6 +54181,22 @@
       ]
     },
     {
+      "key": "Commit:854efe56c4518150dbb81c00dc358d10a61c30c9",
+      "type": "Commit",
+      "id": "854efe56c4518150dbb81c00dc358d10a61c30c9",
+      "label": "fix: the bond claim receipt directs the on-chain claim still owed (Codex R5)",
+      "title": "fix: the bond claim receipt directs the on-chain claim still owed (Codex R5)",
+      "date": "2026-08-30T17:16:56.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/854efe56c4518150dbb81c00dc358d10a61c30c9",
+      "provenance": [
+        {
+          "commit": "854efe56c4518150dbb81c00dc358d10a61c30c9",
+          "url": "https://github.com/OmertaDev/Omerta/commit/854efe56c4518150dbb81c00dc358d10a61c30c9"
+        }
+      ]
+    },
+    {
       "key": "Commit:856133a46b4adc7b6b0958b4e4eb6302c1b80c16",
       "type": "Commit",
       "id": "856133a46b4adc7b6b0958b4e4eb6302c1b80c16",
@@ -56449,6 +56465,22 @@
         {
           "commit": "9f32c178651d5f851e02d93001b9b88f21b42c93",
           "url": "https://github.com/OmertaDev/Omerta/commit/9f32c178651d5f851e02d93001b9b88f21b42c93"
+        }
+      ]
+    },
+    {
+      "key": "Commit:9f623fa2eab8b55349b521bf11f5923b62ba332d",
+      "type": "Commit",
+      "id": "9f623fa2eab8b55349b521bf11f5923b62ba332d",
+      "label": "chore(knowledge): refresh generated artifacts for 76f6f959",
+      "title": "chore(knowledge): refresh generated artifacts for 76f6f959",
+      "date": "2026-08-30T16:59:46.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9f623fa2eab8b55349b521bf11f5923b62ba332d",
+      "provenance": [
+        {
+          "commit": "9f623fa2eab8b55349b521bf11f5923b62ba332d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9f623fa2eab8b55349b521bf11f5923b62ba332d"
         }
       ]
     },
@@ -77378,6 +77410,9 @@
           "commit": "9b99f50a11642c2206dfe0a0319f0351eca2f1e3"
         },
         {
+          "commit": "9f623fa2eab8b55349b521bf11f5923b62ba332d"
+        },
+        {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
         },
         {
@@ -77789,6 +77824,9 @@
           "commit": "9b99f50a11642c2206dfe0a0319f0351eca2f1e3"
         },
         {
+          "commit": "9f623fa2eab8b55349b521bf11f5923b62ba332d"
+        },
+        {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
         },
         {
@@ -78198,6 +78236,9 @@
         },
         {
           "commit": "9b99f50a11642c2206dfe0a0319f0351eca2f1e3"
+        },
+        {
+          "commit": "9f623fa2eab8b55349b521bf11f5923b62ba332d"
         },
         {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
@@ -78668,6 +78709,9 @@
           "commit": "9b99f50a11642c2206dfe0a0319f0351eca2f1e3"
         },
         {
+          "commit": "9f623fa2eab8b55349b521bf11f5923b62ba332d"
+        },
+        {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
         },
         {
@@ -78912,6 +78956,9 @@
         },
         {
           "commit": "9b99f50a11642c2206dfe0a0319f0351eca2f1e3"
+        },
+        {
+          "commit": "9f623fa2eab8b55349b521bf11f5923b62ba332d"
         },
         {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
@@ -79349,13 +79396,13 @@
       "type": "Module",
       "id": "src/bonds.js",
       "label": "src/bonds.js",
-      "lines": 496,
-      "version": "4537628af4254fe8",
+      "lines": 506,
+      "version": "d949c19ca1ec7649",
       "provenance": [
         {
           "file": "src/bonds.js",
           "line": 1,
-          "version": "4537628af4254fe8"
+          "version": "d949c19ca1ec7649"
         }
       ]
     },
@@ -85124,7 +85171,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "76f6f9599767890ae2f7ca96273c33040fa68b7a",
+      "revision": "854efe56c4518150dbb81c00dc358d10a61c30c9",
       "currentBranch": "claude/next-work-recommendations-x5f2fp",
       "defaultBranch": "main",
       "visibility": "public",
@@ -108671,13 +108718,13 @@
       "type": "TestSuite",
       "id": "test/client.js",
       "label": "test/client.js",
-      "lines": 8528,
-      "version": "db883448c8771544",
+      "lines": 8543,
+      "version": "37cd4d2b69da3391",
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "db883448c8771544"
+          "version": "37cd4d2b69da3391"
         }
       ]
     },
@@ -173544,6 +173591,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:854efe56c4518150dbb81c00dc358d10a61c30c9",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "854efe56c4518150dbb81c00dc358d10a61c30c9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:854efe56c4518150dbb81c00dc358d10a61c30c9",
+      "to": "Artifact:src/bonds.js",
+      "provenance": {
+        "commit": "854efe56c4518150dbb81c00dc358d10a61c30c9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:854efe56c4518150dbb81c00dc358d10a61c30c9",
+      "to": "Artifact:test/client.js",
+      "provenance": {
+        "commit": "854efe56c4518150dbb81c00dc358d10a61c30c9"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:856133a46b4adc7b6b0958b4e4eb6302c1b80c16",
       "to": "Artifact:omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1",
       "provenance": {
@@ -180668,6 +180739,46 @@
       "to": "Artifact:tools/compile-contracts.js",
       "provenance": {
         "commit": "9f32c178651d5f851e02d93001b9b88f21b42c93"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9f623fa2eab8b55349b521bf11f5923b62ba332d",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "9f623fa2eab8b55349b521bf11f5923b62ba332d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9f623fa2eab8b55349b521bf11f5923b62ba332d",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "9f623fa2eab8b55349b521bf11f5923b62ba332d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9f623fa2eab8b55349b521bf11f5923b62ba332d",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "9f623fa2eab8b55349b521bf11f5923b62ba332d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9f623fa2eab8b55349b521bf11f5923b62ba332d",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "9f623fa2eab8b55349b521bf11f5923b62ba332d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9f623fa2eab8b55349b521bf11f5923b62ba332d",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "9f623fa2eab8b55349b521bf11f5923b62ba332d"
       }
     },
     {
@@ -250786,6 +250897,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:854efe56c4518150dbb81c00dc358d10a61c30c9",
+      "provenance": {
+        "commit": "854efe56c4518150dbb81c00dc358d10a61c30c9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:856133a46b4adc7b6b0958b4e4eb6302c1b80c16",
       "provenance": {
         "commit": "856133a46b4adc7b6b0958b4e4eb6302c1b80c16"
@@ -251917,6 +252036,14 @@
       "to": "Commit:9f32c178651d5f851e02d93001b9b88f21b42c93",
       "provenance": {
         "commit": "9f32c178651d5f851e02d93001b9b88f21b42c93"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:9f623fa2eab8b55349b521bf11f5923b62ba332d",
+      "provenance": {
+        "commit": "9f623fa2eab8b55349b521bf11f5923b62ba332d"
       }
     },
     {
@@ -311769,7 +311896,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/bonds.js",
-        "line": 306
+        "line": 312
       }
     },
     {
@@ -311778,7 +311905,7 @@
       "to": "Table:bond_offerings",
       "provenance": {
         "file": "src/bonds.js",
-        "line": 362
+        "line": 368
       }
     },
     {
@@ -311814,7 +311941,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/bonds.js",
-        "line": 312
+        "line": 318
       }
     },
     {
@@ -311823,7 +311950,7 @@
       "to": "Table:gang_members",
       "provenance": {
         "file": "src/bonds.js",
-        "line": 313
+        "line": 319
       }
     },
     {
@@ -311832,7 +311959,7 @@
       "to": "Table:gangs",
       "provenance": {
         "file": "src/bonds.js",
-        "line": 306
+        "line": 312
       }
     },
     {
@@ -311850,7 +311977,7 @@
       "to": "Table:lp_depth",
       "provenance": {
         "file": "src/bonds.js",
-        "line": 222
+        "line": 228
       }
     },
     {
