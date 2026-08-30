@@ -3462,7 +3462,10 @@
     if (body.win === false && !spec) bits.push(`the house keeps it (−$${fmt(Math.abs(body.net ?? 0))})`);
     // street jump / extortion / convoy hijack — carry a `win` but no cash `net`, so each gets its own line
     if (body.win === true && body.stolen !== undefined) bits.push(`${body.intent === 'message' ? '📢 THE STREET SAW IT' : body.intent === 'rob' ? 'rolled them' : 'they went down'} — lifted $${fmt(body.stolen)}${body.crates ? `, ${body.crates} crate${body.crates > 1 ? 's' : ''}` : ''}${body.rep ? `, +${body.rep} respect` : ''}${body.war ? ' (war point)' : ''}${body.bounty ? ` · contract paid $${fmt(body.bounty)}` : ''}`);
-    if (body.win === false && body.dmg !== undefined && body.field === undefined && body.wager === undefined && body.district === undefined) bits.push(`the jump went bad — you took ${body.dmg} damage`);
+    // `cut`/`kind` ride every front shakedown/rob reply (cut:0 on a loss), and those render their own
+    // flop line below — without this exclusion a flopped shakedown ALSO read "the jump went bad", two
+    // lines with one claiming the wrong system (the WAVE 55/61 collision class, Codex round 3).
+    if (body.win === false && body.dmg !== undefined && body.field === undefined && body.wager === undefined && body.district === undefined && body.cut === undefined && body.kind === undefined) bits.push(`the jump went bad — you took ${body.dmg} damage`);
     if (body.robbed) bits.push(body.win ? `hit the register — skimmed $${fmt(body.cut)} off their ${txt(body.kindName || body.kind)}` : `pinched at the register — ${body.jailedS ? Math.round(body.jailedS / 60) + 'm in' : ''} lockup`);
     else if (body.theft) bits.push(body.win ? `🚗 GONE IN SIXTY — took their ${txt(body.car.name || body.car.model)}${body.revenge ? ' · 🗡 payback' : ''}` : `caught mid-hotwire — ${body.jailedS ? Math.round(body.jailedS / 60) + 'm in' : ''} lockup`);
     else if (body.trunk) bits.push(body.win ? `mugged the freight — ${fmt(body.qty)} × ${txt(goodName(body.good))} off their back${body.revenge ? ' · 🗡 payback' : ''}` : `pinched mid-mugging — ${body.jailedS ? Math.round(body.jailedS / 60) + 'm in' : ''} lockup`);

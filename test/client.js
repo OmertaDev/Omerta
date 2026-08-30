@@ -8171,6 +8171,11 @@ await app.close();
     "WAVE 73 (empire): the flop must SEND the beating it took — 'nothing to show for it' is false about an action that costs health, and the client cannot compute a roll");
   assert.ok(flop.line.includes(frontName), `WAVE 73 (empire): a repelled shakedown must name the front too — got ${flop.line}`);
   assert.ok(flop.line.includes(String(flop.r.body.dmg)), `WAVE 73 (empire): the flop must state the beating — got ${flop.line}`);
+  // Codex round 3: a flopped shakedown carries win:false + dmg and no field/wager/district, so the
+  // GENERIC jump-fail line also fired — two sentences, one claiming a system the player was nowhere
+  // near (the WAVE 55/61 collision class). The jump branch now excludes `cut`/`kind` carriers.
+  assert.ok(!/jump went bad/.test(flop.line),
+    `Codex R3: a flopped SHAKEDOWN must not ALSO read as a failed JUMP — got ${flop.line}`);
 
   // ── THE SPEC REFUSAL named ONE of three live specs. The Accountant and the Fixer were retired
   // when laundering was severed and UN-retired when scrutiny became income-sourced; the refusal

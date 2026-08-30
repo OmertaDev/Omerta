@@ -186,12 +186,14 @@ export async function joinSiege(ch, client, h) {
   if (s.pt.mechanic !== 'siege') throw new GameError('not_siege', 'Tonight is not a siege — check the board for what\'s on.');
   if (!s.live) throw new GameError('closed', 'The siege isn\'t on right now. The board shows when tonight\'s window opens.');
   if (levelOf(Number(ch.respect)) < PRIME_TIME.RALLY_MIN_LVL) throw new GameError('rookie', `Join the siege at level ${PRIME_TIME.RALLY_MIN_LVL}.`);
-  // agents are refused the siege OUTRIGHT (both modes): the settle skips agent_flag rows before
-  // BOTH reward branches — the cash AND the badge — so an agent's strike was a once-a-night spent
-  // on a reply advertising a reward it could never collect. Refusing at the door is the honest
-  // half of the same posture; it also makes the crack a purely human count.
-  if (h?.acct?.agent_flag)
-    throw new GameError('agent', 'The siege pays its fighters, and the house does not pay machines.');
+  // agents are refused a VALUE siege only — the answerCall/buyRound mirror (Codex round 3). The
+  // recorded posture (SIGN-OFF 2026-08-16) keeps the CASH faucets agent-excluded, and on a value
+  // night an agent's strike would also pad the crack of a faucet it cannot draw — a fleet joining
+  // every value siege makes SIEGE_CASH a guaranteed payout for any human who shows. An HONOR siege
+  // has no faucet: the strike counts and the settle grants the badge to machines too (status is
+  // Sybil-inflatable by recorded posture — the hitman-rep/fight-fix line).
+  if (h?.acct?.agent_flag && s.pt.mode === 'value')
+    throw new GameError('agent', 'The siege\'s purse is for people. Machines storm the gates on honor nights.');
   const day = s.pt.day;
   // once per night — SELECT-then-INSERT under the character lock (the answerCall latch discipline)
   const seen = await client.query('SELECT 1 FROM primetime_rally WHERE day=$1 AND character_id=$2', [day, ch.id]);
@@ -248,9 +250,13 @@ export async function settlePrimeTime(pool) {
           [d, r.character_id]);
         if (!claim.rows.length) continue;               // another worker took this row
         // A siege night marks EVERY fighter settled (win or lose) but pays only on a crack; a value rally
-        // always pays. Either way the dead / agents are marked-but-unpaid (the faucet posture).
+        // always pays. The dead are marked-but-unpaid; agents are skipped from the CASH faucets (the
+        // recorded faucet posture) but an HONOR siege's badge is status — Sybil-inflatable by the
+        // hitman-rep/fight-fix posture — so a machine that stormed the gates wears it too (Codex round 3:
+        // the join now admits agents on honor nights, and a door that admits must not settle to nothing).
         if (isSiege && !cracked) continue;              // the gates held — this fighter's row is closed, nothing owed
-        if (!r.alive || r.agent_flag) continue;
+        if (!r.alive) continue;
+        if (r.agent_flag && !(isSiege && pt.mode === 'honor')) continue;
         if (isSiege && pt.mode === 'honor') {           // a cracked HONOR siege grants the badge — status, no §10.4
           await client.query('UPDATE characters SET title=$2 WHERE id=$1', [r.character_id, PRIME_TIME.SIEGE_TITLE]);
           await notify(client, r.character_id, 'primetime_siege_won', { mode: 'honor', title: PRIME_TIME.SIEGE_TITLE, fighters: turnout });
