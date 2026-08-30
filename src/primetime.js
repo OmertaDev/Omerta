@@ -188,7 +188,11 @@ export async function joinSiege(ch, client, h) {
   const fighters = await turnoutOf(client, day);
   const dmg = siegeDamage(fighters), target = siegeTarget();
   await notify(client, ch.id, 'primetime_siege', { fighters, damage: dmg, target }).catch(() => {});
-  return { joined: true, fighters, damage: dmg, target, cracked: dmg >= target, pending: true };
+  // the MODE and what a crack pays ride with the reply (the answerCall shape): the once-a-night
+  // participation is spent here, and neither the reward nor the all-or-nothing settle is anywhere
+  // the client can compute — value pays cash, honor pays a badge, and an uncracked siege pays neither.
+  return { joined: true, fighters, damage: dmg, target, cracked: dmg >= target, pending: true,
+    mode: s.pt.mode, reward: s.pt.mode === 'value' ? PRIME_TIME.SIEGE_CASH : PRIME_TIME.SIEGE_TITLE };
 }
 
 // THE WORKER SETTLE — after a value-rally window has fully closed, pay every answerer the turnout-scaled

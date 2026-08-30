@@ -639,7 +639,10 @@ export async function betFuturity(ch, racerId, amount, client, h) {
   await client.query('UPDATE futurities SET pool = pool + $2 WHERE id=$1', [g.id, amt]);
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -amt, reason: 'casino:futurity:bet', counterparty: g.id });
   await h.track(client, ch.account_id, 'casino', { game: 'futurity_bet', amt });
-  return { ok: true, futurity: g.id, on: runner.racer_name, amount: amt };
+  // the card row is already locked and holds both terms a bettor must be told: when the book closes
+  // and how big the pool their stake now sits in is (the enterGrandPrix idiom).
+  return { ok: true, futurity: g.id, on: runner.racer_name, amount: amt, pool: Number(g.pool) + amt,
+    closesSeconds: Math.max(0, Math.ceil((new Date(g.resolves_at) - Date.now()) / 1000)) };
 }
 
 // ── worker resolution — race the field at window close, pay the parimutuel pool (the boxing main-event

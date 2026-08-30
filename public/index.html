@@ -2519,10 +2519,16 @@
         ? `\u{1F303} on the house — +$${fmt(body.cash)} (round ${body.round}/${body.of})`
         : `\u{1F303} a round with the crew — round ${body.round}/${body.of}`;
     // PRIME TIME THE SIEGE — landed your strike on the shared target
-    if (body && body.joined === true && body.target != null && body.damage != null)
+    // the once-a-night run is spent here, and it is ALL-OR-NOTHING: only a crack pays, and what it
+    // pays depends on the night's mode (value → cash, honor → a badge). Both ride the reply.
+    if (body && body.joined === true && body.target != null && body.damage != null) {
+      const pays = body.reward === undefined ? ''
+        : body.mode === 'value' ? ` A crack pays $${fmt(body.reward)} a head; an uncracked siege pays nothing.`
+          : ` A crack pays the "${txt(body.reward)}" badge; an uncracked siege pays nothing.`;
       return body.cracked
-        ? `\u{1F303} you stormed the gates — CRACKED! ${body.damage}/${body.target} (${body.fighters} in). Settled at close.`
-        : `\u{1F303} you stormed the gates — ${body.damage}/${body.target}, ${body.target - body.damage} to go (${body.fighters} in). Crack it before close.`;
+        ? `\u{1F303} you stormed the gates — CRACKED! ${body.damage}/${body.target} (${body.fighters} in). Settled at close.${pays}`
+        : `\u{1F303} you stormed the gates — ${body.damage}/${body.target}, ${body.target - body.damage} to go (${body.fighters} in). Crack it before close.${pays}`;
+    }
     // THE VOUCH — you staked your name (or pulled it back)
     if (body && body.vouched) return body.mutual ? `\u{1F91D} you vouched ${txt(body.vouched)} back — a mutual bond` : `you vouched for ${txt(body.vouched)} — your name's on them now`;
     if (body && body.pulled) return `pulled your name back from ${txt(body.pulled)}`;
@@ -3184,6 +3190,19 @@
         d.flags && d.flags.rat && 'RAT', d.flags && d.flags.indicted && 'INDICTED'].filter(Boolean);
       return `\u{1F5C2} the file on ${txt(d.name)} — ${txt(d.law && d.law.stage)} with the law, ${txt(d.wealth)}, ${d.record ? d.record.kills : 0} on the record${marks.length ? ` · ${marks.join(' · ')}` : ''}${body.spent !== undefined ? ` · ${fmt(body.spent)} $OMR` : ''}`;
     }
+    // THE TRACK settles its own way and MUST be read before the shared ticket line below, which
+    // fires first and renders every track claim as "$N collected" — including a SCRATCH, where the
+    // stake was merely REFUNDED and nothing was won (a refund reported as a win). Keyed on
+    // results[0].race, which is track-unique: the fight carries week/side, the numbers carry pick.
+    if (body && body.ok && body.settled !== undefined && Array.isArray(body.results) && body.results[0] && body.results[0].race) {
+      const raceName = (r) => r === 'dogs' ? 'the dogs' : r === 'horses' ? 'the ponies' : txt(r);
+      const lines = body.results.map((r) => r.scratched
+        ? `your runner in ${raceName(r.race)} was SCRATCHED — the stake came back, nothing won (${txt(r.winnerName)} took it)`
+        : r.hit ? `${txt(r.winnerName)} came in at ${raceName(r.race)} — your ticket HIT`
+          : `${txt(r.winnerName)} took ${raceName(r.race)} — your ticket tore up`);
+      const anyHit = body.results.some((r) => r.hit);
+      return `\u{1F3C7} ${lines.join(' · ')}${body.won ? ` — $${fmt(body.won)} ${anyHit ? 'at the window' : 'refunded'}` : ''}`;
+    }
     if (body && body.ok && body.settled !== undefined && body.won !== undefined)
       return body.settled ? (body.won ? `\u{1F4B0} ${body.settled} ticket${body.settled === 1 ? '' : 's'} settled — $${fmt(body.won)} collected${body.nearWins ? ` (${body.nearWins} a near miss — the runner pays a consolation)` : ''}${body.jackpot ? ` — AND THE VIG POT CRACKED: $${fmt(body.jackpot)} on top` : ''}` : `${body.settled} ticket${body.settled === 1 ? '' : 's'} settled — nothing came in`)
         : 'nothing to collect — no tickets have come up yet';
@@ -3688,8 +3707,15 @@
                           : `\u{1F3C1} ate the loss${margin}${said ? '' : ` — $${fmt(Math.abs(body.net))}`}${body.dmg ? ` (car ${body.dmg}% dmg)` : ''}`)
         + (body.nos ? ' · NOS burned' : ''));
     }
-    if (body.forPinks) bits.push(body.win ? `🎀 PINKS — you won their ${body.wonCar?.model || 'car'}` : `🎀 PINKS — you lost your ${body.lostCar?.model || 'car'}`);
-    if (body.grandPrix && body.buyin !== undefined && body.pool !== undefined) bits.push(`🏁 on the grid — $${fmt(body.buyin)} in · pool $${fmt(body.pool)}, ${body.entrants} runner${body.entrants > 1 ? 's' : ''}`);
+    // the iron is named by its DISPLAY name (the server sends it — a catalog key is not a car), and
+    // through art(), since model names carry their own article ("The Tsarina's Ghost").
+    if (body.forPinks) {
+      const slip = body.win ? body.wonCar : body.lostCar;
+      const iron = art(txt(slip?.name || slip?.model || 'car'));
+      const margin = (body.you !== undefined && body.them !== undefined) ? ` — ${body.you} to ${body.them}` : '';
+      bits.push(body.win ? `🎀 PINKS — you took ${iron} off them${margin}` : `🎀 PINKS — ${iron} is theirs now${margin}`);
+    }
+    if (body.grandPrix && body.buyin !== undefined && body.pool !== undefined) bits.push(`🏁 on the grid — $${fmt(body.buyin)} in · pool $${fmt(body.pool)}, ${body.entrants} runner${body.entrants > 1 ? 's' : ''}${body.closesSeconds ? `. The grid closes in ${minsTxt(body.closesSeconds)}` : ''}${body.minEntrants ? `; under ${body.minEntrants} on it and the buy-in comes back` : ''}.`);
     // The tune is a repeatable cash sink and was the one buy in the whole racing system that never
     // named its price — the nitrous line two screens up states `spent`, and so does the boat refit,
     // which is the same shape. It also MOVES: the Wheelman mastery discounts it, so the figure the
@@ -3851,7 +3877,9 @@
       bits.push(`$${fmt(body.stake)} on ${txt(fav ? body.a : body.b)}${fav ? '' : ' (the dog)'} in this week's fight at ${fav ? body.favPays : body.dogPays}× — pays $${fmt(Math.round(body.stake * (fav ? body.favPays : body.dogPays)))} if they win`); }
     if (body.racer && body.post !== undefined && body.fee !== undefined && body.race) bits.push(`${body.racer} is in today's ${body.race} — post ${body.post} at ${body.odds}:1. The nomination cost $${fmt(body.fee)} and it does not come back; the town's betting on your animal now.`);
     if (body.futurity && body.racer && body.fee !== undefined && body.form !== undefined) bits.push(`${body.racer} (form ${body.form}) is nominated to the futurity — $${fmt(body.fee)} to nominate, and that one does NOT come back${body.closesSeconds ? `. The card closes in ${minsTxt(body.closesSeconds)}` : ''} and the whole town bets on the field.`);
-    if (body.futurity && body.on && body.amount !== undefined) bits.push(`$${fmt(body.amount)} on ${body.on} in the futurity`);
+    // the stake is ESCROWED into a parimutuel pool that settles at a deadline — so the close clock,
+    // the pool it now sits in, and the scrapped-card refund all ride the line (the nominate sibling's shape).
+    if (body.futurity && body.on && body.amount !== undefined) bits.push(`$${fmt(body.amount)} on ${txt(body.on)} in the futurity${body.pool !== undefined ? ` — $${fmt(body.pool)} on the field` : ''}${body.closesSeconds ? `, and the book closes in ${minsTxt(body.closesSeconds)}` : ''}. It pays parimutuel: your stake back plus a cut of the LOSING pool, net of the vig — and if the card is scrapped the whole bet comes back.`);
     // THE FIGHT CIRCUIT main events (announce + a callout) and the back-room POKER ring both read
     // "done." — the mute class, a whole screen at a time. Each keys on its own shape so none crosses.
     if (body.champion && body.challenger && body.acceptWithinSeconds !== undefined)
@@ -3874,8 +3902,8 @@
     // rival-held one. Gate each on the field it uniquely sends.
     if (body.spent !== undefined && body.garrison !== undefined && body.name && body.npc) bits.push(`reinforced ${body.name}'s garrison to $${fmt(body.garrison)} (−$${fmt(body.spent)} from the treasury)`);
     if (body.cost !== undefined && body.garrison !== undefined && body.name && body.npc && body.district === undefined && body.premium === undefined) bits.push(`\u{1F6A9} took ${txt(body.name)}'s outpost — $${fmt(body.cost)} out of the treasury, now behind a $${fmt(body.garrison)} garrison a rival has to outbid to take it back`);
-    if (body.settled !== undefined && Array.isArray(body.results) && body.results[0]?.winner !== undefined && body.results[0]?.race) bits.push(
-      body.won > 0 ? `it came in — +$${fmt(body.won)} at the window` : `the tickets tore up — better luck at the next post`);
+    // (the track claim is rendered by its own early return above — it must beat the shared
+    // ticket line, which fires long before this accumulator ever runs.)
     if (body.game === 'tourney') bits.push(`seated at the big table — $${fmt(body.buyin)} in, pool $${fmt(body.pool)} (${body.entrants} runner${body.entrants === 1 ? '' : 's'})${body.closesSeconds ? `. It deals in ${minsTxt(body.closesSeconds)}` : ''}${body.minEntrants ? `; under ${body.minEntrants} seated and the buy-in comes back` : ''}.`);
     if (body.game === 'poker' && body.result) bits.push(
       body.result === 'push' ? `split pot — ${body.yourHand} both ways` :

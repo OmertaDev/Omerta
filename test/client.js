@@ -7063,6 +7063,130 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   assert(/respect/.test(killLine) && /feared/.test(killLine),
     `the kill must name BOTH legends it banked — ordinary respect and the assassin's: ${killLine}`);
 }
+// ── WAVE 73 (vice): the Track claim, the pinks, the grid, the futurity book, the siege ──────────
+// Five entries, all DRIVEN (never synthetic — a literal passes straight through the mutation that
+// stops a field being sent). The headline is the track claim: three settle systems share the
+// {ok, settled, won, results} byte-shape, and the shared ticket line fires FIRST, so a SCRATCH —
+// where the stake was merely refunded — rendered byte-identically to a genuine win.
+{
+  const mkV = async (n) => {
+    const t = (await inject('POST', '/v1/auth/guest')).body.token;
+    await inject('POST', '/v1/character', t, { name: n + Math.random().toString(36).slice(2, 7) });
+    return { t, id: (await inject('GET', '/v1/me', t)).body.character.id };
+  };
+  const sayV = (r) => { described++; return String(describeFn(r.body, r.code)); };
+  const driveV = async (url, tok, payload, what) => {
+    const r = await inject('POST', url, tok, payload);
+    assert.equal(r.code, 200, `WAVE 73 could not drive ${what} (${JSON.stringify(r.body)})`);
+    return { r, line: sayV(r) };
+  };
+  const A = await mkV('Vice ');
+  await app.pool.query("UPDATE characters SET cash=90000000, respect=900000, energy=500, health=100, loc='neon' WHERE id=$1", [A.id]);
+
+  // the shared fixture seeds a track_entries row for one race — a PLAYER entry puts a racerId at a
+  // post, so a backdated bet on that race SCRATCHES by design. Pick the race with no player entry,
+  // or the "genuine hit" leg would be measuring a scratch.
+  const taken = new Set((await app.pool.query('SELECT DISTINCT race FROM track_entries')).rows.map((r) => r.race));
+  const RACE = taken.has('dogs') ? 'horses' : 'dogs';
+  const backdate = () => app.pool.query('UPDATE track_bets SET day = day - 1 WHERE character_id=$1', [A.id]);
+
+  // trackWinnerOf is not exported, so the winning post is DISCOVERED from a probe claim rather than
+  // precomputed — the reply is the ground truth for who came in.
+  await driveV('/v1/casino/track', A.t, { race: RACE, runner: 0, amount: 500 }, 'a probe bet');
+  await backdate();
+  const c0 = await driveV('/v1/casino/track/claim', A.t, {}, 'the probe claim');
+  const W = c0.r.body.results[0].winner;
+  assert.equal(typeof W, 'number', 'WAVE 73: the probe claim must name the winning post');
+
+  // (a) A GENUINE HIT names who came in and the race, and the money is what the DATABASE moved.
+  const cashBefore = Number((await app.pool.query('SELECT cash FROM characters WHERE id=$1', [A.id])).rows[0].cash);
+  await driveV('/v1/casino/track', A.t, { race: RACE, runner: W, amount: 500 }, 'the winning bet');
+  await backdate();
+  const cHit = await driveV('/v1/casino/track/claim', A.t, {}, 'the winning claim');
+  const hitRow = cHit.r.body.results[0];
+  assert.equal(hitRow.hit, true, 'WAVE 73 precondition: the discovered post must genuinely HIT');
+  assert.ok(hitRow.winnerName, 'WAVE 73: the claim must SEND the winner\'s name');
+  const cashAfter = Number((await app.pool.query('SELECT cash FROM characters WHERE id=$1', [A.id])).rows[0].cash);
+  assert.equal(cashAfter - cashBefore, cHit.r.body.won - 500, 'WAVE 73: the claim\'s won must be what the DATABASE paid');
+  assert.ok(cHit.line.includes(hitRow.winnerName), `WAVE 73: a track HIT must name who came in — got ${cHit.line}`);
+  assert.match(cHit.line, RACE === 'dogs' ? /the dogs/ : /the ponies/, `WAVE 73: a track claim must name the race — got ${cHit.line}`);
+  assert.ok(cHit.line.includes(fmtLike(cHit.r.body.won)), `WAVE 73: a track HIT must state what came back — got ${cHit.line}`);
+
+  // (b) A LOSS names who took it and never claims money.
+  await driveV('/v1/casino/track', A.t, { race: RACE, runner: (W + 1) % 6, amount: 500 }, 'the losing bet');
+  await backdate();
+  const cLose = await driveV('/v1/casino/track/claim', A.t, {}, 'the losing claim');
+  assert.equal(cLose.r.body.results[0].hit, false, 'WAVE 73 precondition: the off post must lose');
+  assert.match(cLose.line, /tore up/, `WAVE 73: a torn-up ticket must say so — got ${cLose.line}`);
+
+  // (c) THE SCRATCH — the defect. The stake was REFUNDED and nothing was won, and the old shared
+  // line read "$500 collected", byte-identical to a win.
+  await driveV('/v1/casino/track', A.t, { race: RACE, runner: 0, amount: 500 }, 'the scratch bet');
+  await backdate();
+  await app.pool.query('UPDATE track_bets SET bet_racer_id=$2 WHERE character_id=$1', [A.id, crypto.randomUUID()]);
+  const cScr = await driveV('/v1/casino/track/claim', A.t, {}, 'the scratched claim');
+  assert.equal(cScr.r.body.results[0].scratched, true, 'WAVE 73 precondition: the swapped runner must SCRATCH');
+  assert.equal(cScr.r.body.won, 500, 'WAVE 73 precondition: a scratch refunds the stake');
+  assert.match(cScr.line, /SCRATCHED/, `WAVE 73: a scratched runner must say so — got ${cScr.line}`);
+  assert.match(cScr.line, /came back|refunded/, `WAVE 73: a scratch REFUNDS the stake — got ${cScr.line}`);
+  assert.ok(!/collected/.test(cScr.line), `WAVE 73: a refund must never read as collected winnings — got ${cScr.line}`);
+  assert.notEqual(cScr.line, cHit.line, 'WAVE 73: a scratch and a genuine win must not read the same');
+
+  // ── THE GRID: a $25,000 escrow into a scheduled race that refunds on a short field ─────────────
+  const carA = (await app.pool.query(
+    "INSERT INTO cars (id, character_id, model_id, trim_id, dmg) VALUES ($1,$2,'meridian','base',0) RETURNING id",
+    [crypto.randomUUID(), A.id])).rows[0].id;
+  const gp = await driveV('/v1/races/gp', A.t, { car: carA }, 'the grand prix entry');
+  assert.ok(gp.r.body.closesSeconds > 0, 'WAVE 73: the grid must SEND its close clock');
+  assert.ok(gp.r.body.minEntrants > 0, 'WAVE 73: the grid must SEND the short-field threshold (a lever — never restated client-side)');
+  assert.match(gp.line, /closes in/, `WAVE 73: the grid entry must say when it closes — got ${gp.line}`);
+  assert.ok(gp.line.includes(String(gp.r.body.minEntrants)) && /comes back/.test(gp.line),
+    `WAVE 73: the grid entry must state the short-field refund — got ${gp.line}`);
+
+  // ── PINKS: the loudest ownership transfer in the game named the iron by its raw catalog key ────
+  const B = await mkV('Rival ');
+  await app.pool.query("UPDATE characters SET cash=9000000, respect=900000, energy=500, health=100, loc='neon' WHERE id=$1", [B.id]);
+  const carB = (await app.pool.query(
+    "INSERT INTO cars (id, character_id, model_id, trim_id, dmg, pink_slip) VALUES ($1,$2,'tsarina','base',0,true) RETURNING id",
+    [crypto.randomUUID(), B.id])).rows[0].id;
+  const pk = await driveV(`/v1/races/pinks/${B.id}`, A.t, { myCar: carA, theirCar: carB }, 'the pinks race');
+  const slip = pk.r.body.win ? pk.r.body.wonCar : pk.r.body.lostCar;
+  assert.ok(slip && slip.name, 'WAVE 73: the pinks reply must SEND the car\'s display name');
+  assert.notEqual(slip.name, slip.model, 'WAVE 73 precondition: this car\'s name must genuinely differ from its catalog key');
+  assert.ok(pk.line.includes(slip.name), `WAVE 73: the pinks line must name the iron, never its catalog key — got ${pk.line}`);
+  assert.ok(!new RegExp(`\\b${slip.model}\\b`).test(pk.line), `WAVE 73: the pinks line must not print the raw key — got ${pk.line}`);
+  assert.ok(pk.line.includes(`${pk.r.body.you} to ${pk.r.body.them}`), `WAVE 73: the pinks line must state the margin — got ${pk.line}`);
+
+  // ── THE FUTURITY BOOK: cash escrowed into a parimutuel pool settling at a deadline ─────────────
+  const buy = await driveV('/v1/stable/buy', B.t, { kind: 'dog', name: 'Flash' }, 'a greyhound');
+  const racerId = buy.r.body.racer?.id || (await app.pool.query('SELECT id FROM racers WHERE character_id=$1', [B.id])).rows[0].id;
+  await driveV(`/v1/casino/futurity/nominate/${racerId}`, B.t, {}, 'the nomination');
+  const fb = await driveV('/v1/casino/futurity/bet', A.t, { racerId, amount: 2000 }, 'the futurity bet');
+  assert.ok(fb.r.body.closesSeconds > 0, 'WAVE 73: the futurity bet must SEND its close clock');
+  assert.ok(fb.r.body.pool >= 2000, 'WAVE 73: the futurity bet must SEND the pool its stake joined');
+  assert.match(fb.line, /closes in/, `WAVE 73: the futurity bet must say when the book closes — got ${fb.line}`);
+  assert.match(fb.line, /parimutuel/i, `WAVE 73: the futurity bet must say how it pays — got ${fb.line}`);
+  assert.match(fb.line, /scrapped|comes back/, `WAVE 73: the futurity bet must state the scrapped-card refund — got ${fb.line}`);
+
+  // ── THE SIEGE: the once-a-night run is all-or-nothing, and the two modes read identically ──────
+  process.env.PRIME_TIME_LIVE = 'on'; process.env.PRIME_TIME_MECH = 'siege';
+  const siegeLines = {};
+  for (const mode of ['value', 'honor']) {
+    process.env.PRIME_TIME_MODE = mode;
+    const S = await mkV('Siege ');
+    await app.pool.query('UPDATE characters SET respect=900000, energy=500, health=100 WHERE id=$1', [S.id]);
+    const sg = await driveV('/v1/primetime/siege', S.t, {}, `the ${mode} siege`);
+    assert.equal(sg.r.body.mode, mode, `WAVE 73: the siege must SEND the night's mode (${mode})`);
+    assert.ok(sg.r.body.reward !== undefined, `WAVE 73: the siege must SEND what a crack pays (${mode})`);
+    assert.match(sg.line, /uncracked siege pays nothing/, `WAVE 73: the siege must say it is all-or-nothing — got ${sg.line}`);
+    siegeLines[mode] = sg.line;
+  }
+  assert.ok(siegeLines.value.includes(fmtLike(3000)) || /\$/.test(siegeLines.value),
+    `WAVE 73: a value siege must name the cash a crack pays — got ${siegeLines.value}`);
+  assert.notEqual(siegeLines.value, siegeLines.honor, 'WAVE 73: the two siege modes must not read identically — they pay different things');
+  delete process.env.PRIME_TIME_LIVE; delete process.env.PRIME_TIME_MECH; delete process.env.PRIME_TIME_MODE;
+}
+
 // ── WAVE 73 (the Pen): a break BLOWN by a rat read as bad luck at the fence ──────────────────────
 // The Pen cannot sit in ACTIONS at all — jail refuses nearly everything, so a jailed row would
 // silence every row after it and those rows would then read on the summary line as covered (the
