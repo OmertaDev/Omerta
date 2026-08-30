@@ -51,7 +51,7 @@ import { buildServer } from '../src/server.js';
 import { M3, M4, PATHS, NPC_HITMEN, HEIST_ROLES, HEIST_JOBS, DRUGS, GOODS, DISTRICTS,
   COMMISSION, CONVOY, DUELS, TERRITORY_TYPES, CARS, TRIMS, ASSETS, RACKETS, BUSINESSES, ESTATE, WIRE, SECRETS, STABLE, WORLD, WORLD_NPCS,
   PEN, HONOR, MARRIAGE, CAMPAIGNS, LIMITED_RUNS, SHIPMENT, VANITY,
-  BUSINESS_EMPIRE, CORNER, cornerTasksOf } from '../src/rules.js';
+  BUSINESS_EMPIRE, CORNER, cornerTasksOf, charterFx } from '../src/rules.js';
 import { bumpHonor } from '../src/honor.js';
 import { mintLimitedRun } from '../src/economy.js';
 
@@ -6847,8 +6847,17 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   // claim and would never reach this line)
   await app.pool.query(
     "UPDATE districts SET holder_gang=$1, garrison=100000, seized_at=now(), npc_holder=NULL, contest_until=NULL WHERE id='docks'", [g72]);
+  // the STAKER runs a Fixers charter, whose hedge prices a losing stake 25% dearer — so the reply's
+  // lossBps must be the CHARTER-EFFECTIVE figure settleContest will actually charge, never the base
+  // lever (Codex A, the nominal-vs-actual class). Restated from the LIVE levers, not from the shared
+  // contestLossBpsFor — helper-vs-helper would pass a helper that returned the base.
+  await app.pool.query("UPDATE gangs SET charter='fixers' WHERE id=$1", [g65]);
   const bid72 = await drive65('/v1/districts/docks/claim', { amount: 1000000 });
   assert(bid72.r.body.lossBps > 0, 'the sealed bid must SEND the forfeiture share — the client cannot restate a signed lever');
+  const effLoss72 = Math.min(9999, Math.round(M3.CONTEST_LOSS_BPS * charterFx('fixers', 'contestLossMult')));
+  assert.notEqual(effLoss72, M3.CONTEST_LOSS_BPS, 'WAVE 72 precondition: the Fixers hedge must genuinely move the rate, or this pin is vacuous');
+  assert.equal(bid72.r.body.lossBps, effLoss72,
+    'the receipt must quote the CHARTER-EFFECTIVE forfeiture the settle will charge — the base lever understates a Fixers stake');
   assert(/of the treasury/.test(bid72.line), `the stake is the FAMILY'S money and the line must say so: ${bid72.line}`);
   assert(new RegExp(`${Math.round(bid72.r.body.lossBps / 100)}% of it is forfeit`).test(bid72.line),
     `the line must state what a LOSING stake costs — the term that makes it a sealed bid: ${bid72.line}`);
@@ -6857,6 +6866,7 @@ const ACTFNS = new Map();   // route path → the handler names its registration
     'a second stake is a RAISE and the server must send the delta');
   assert(/raised to/.test(raise72.line) && new RegExp(fmtLike(raise72.r.body.added)).test(raise72.line),
     `a raise must not read byte-identical to a fresh stake: ${raise72.line}`);
+  await app.pool.query('UPDATE gangs SET charter=NULL WHERE id=$1', [g65]); // the charter was this pin's fixture — later blocks run unchartered
 
   // THE TRAIT — driven at a real level-50 trade: the xp seed is the DATABASE, the reply is the claim.
   await app.pool.query(
@@ -7124,11 +7134,32 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   await app.pool.query('UPDATE track_bets SET bet_racer_id=$2 WHERE character_id=$1', [A.id, crypto.randomUUID()]);
   const cScr = await driveV('/v1/casino/track/claim', A.t, {}, 'the scratched claim');
   assert.equal(cScr.r.body.results[0].scratched, true, 'WAVE 73 precondition: the swapped runner must SCRATCH');
-  assert.equal(cScr.r.body.won, 500, 'WAVE 73 precondition: a scratch refunds the stake');
+  // `refunded`, never `won`: a scratch's stake coming back is not winnings, and folding them into
+  // one figure let a MIXED claim label the refund "at the window" (Codex C — the split is the fix)
+  assert.equal(cScr.r.body.refunded, 500, 'WAVE 73 precondition: a scratch refunds the stake — under refunded');
+  assert.equal(cScr.r.body.won, 0, 'a scratch must contribute NOTHING to won — a refund is not a win');
   assert.match(cScr.line, /SCRATCHED/, `WAVE 73: a scratched runner must say so — got ${cScr.line}`);
   assert.match(cScr.line, /came back|refunded/, `WAVE 73: a scratch REFUNDS the stake — got ${cScr.line}`);
   assert.ok(!/collected/.test(cScr.line), `WAVE 73: a refund must never read as collected winnings — got ${cScr.line}`);
   assert.notEqual(cScr.line, cHit.line, 'WAVE 73: a scratch and a genuine win must not read the same');
+
+  // (d) THE MIXED CLAIM — Codex C's actual scenario: one ticket HITS, the other SCRATCHES, settled
+  // in ONE claim. The old server folded payout+refund into one `won` and the client's anyHit label
+  // called the whole total winnings — so the refund read as money won. Both figures must now arrive
+  // split and BOTH must be on the line, each under its own word.
+  const OTHER = RACE === 'dogs' ? 'horses' : 'dogs';
+  await driveV('/v1/casino/track', A.t, { race: RACE, runner: W, amount: 500 }, 'the mixed hit bet');
+  await driveV('/v1/casino/track', A.t, { race: OTHER, runner: 0, amount: 500 }, 'the mixed scratch bet');
+  await backdate();
+  await app.pool.query('UPDATE track_bets SET bet_racer_id=$2 WHERE character_id=$1 AND race=$3', [A.id, crypto.randomUUID(), OTHER]);
+  const cMix = await driveV('/v1/casino/track/claim', A.t, {}, 'the mixed claim');
+  assert.equal(cMix.r.body.settled, 2, 'WAVE 73 precondition: the mixed claim settles BOTH tickets at once');
+  assert.ok(cMix.r.body.won > 0 && cMix.r.body.refunded === 500,
+    `WAVE 73: a mixed claim must split winnings from the refund — got won ${cMix.r.body.won}, refunded ${cMix.r.body.refunded}`);
+  assert.ok(cMix.line.includes(`$${fmtLike(cMix.r.body.won)} at the window`),
+    `WAVE 73: the mixed line must state the real winnings as winnings — got ${cMix.line}`);
+  assert.ok(cMix.line.includes(`$${fmtLike(cMix.r.body.refunded)} refunded`),
+    `WAVE 73: the mixed line must state the refund AS a refund, never fold it into the window figure — got ${cMix.line}`);
 
   // ── THE GRID: a $25,000 escrow into a scheduled race that refunds on a short field ─────────────
   const carA = (await app.pool.query(

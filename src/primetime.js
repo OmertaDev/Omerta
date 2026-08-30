@@ -115,6 +115,12 @@ export async function answerCall(ch, client, h) {
   if (s.pt.mechanic !== 'rally') throw new GameError('not_rally', 'Tonight is not a rally — check the board for what\'s on.');
   if (!s.live) throw new GameError('closed', 'Prime Time isn\'t live right now. The board shows when tonight\'s window opens.');
   if (levelOf(Number(ch.respect)) < PRIME_TIME.RALLY_MIN_LVL) throw new GameError('rookie', `Answer the call at level ${PRIME_TIME.RALLY_MIN_LVL}.`);
+  // agents are refused a VALUE night at the door (the buyRound F3 posture) rather than at the settle:
+  // the settle already skips agent_flag rows, so an agent's answer bought a reply promising cash
+  // that could never arrive — a once-a-night spent on a false receipt. Honor nights stay open (the
+  // title lands at join, and status is not the faucet posture's business).
+  if (s.pt.mode === 'value' && h?.acct?.agent_flag)
+    throw new GameError('agent', 'The purse is for people. Machines rally for the love of it — come back on an honor night.');
   const day = s.pt.day;
   // once per night. NOT `ON CONFLICT DO NOTHING RETURNING` — pg-mem LIES about it (returns a row even on
   // a conflict, so the latch never fires; the recordReckoning lesson). answerCall runs under the
@@ -180,6 +186,12 @@ export async function joinSiege(ch, client, h) {
   if (s.pt.mechanic !== 'siege') throw new GameError('not_siege', 'Tonight is not a siege — check the board for what\'s on.');
   if (!s.live) throw new GameError('closed', 'The siege isn\'t on right now. The board shows when tonight\'s window opens.');
   if (levelOf(Number(ch.respect)) < PRIME_TIME.RALLY_MIN_LVL) throw new GameError('rookie', `Join the siege at level ${PRIME_TIME.RALLY_MIN_LVL}.`);
+  // agents are refused the siege OUTRIGHT (both modes): the settle skips agent_flag rows before
+  // BOTH reward branches — the cash AND the badge — so an agent's strike was a once-a-night spent
+  // on a reply advertising a reward it could never collect. Refusing at the door is the honest
+  // half of the same posture; it also makes the crack a purely human count.
+  if (h?.acct?.agent_flag)
+    throw new GameError('agent', 'The siege pays its fighters, and the house does not pay machines.');
   const day = s.pt.day;
   // once per night — SELECT-then-INSERT under the character lock (the answerCall latch discipline)
   const seen = await client.query('SELECT 1 FROM primetime_rally WHERE day=$1 AND character_id=$2', [day, ch.id]);

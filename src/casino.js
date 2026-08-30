@@ -429,8 +429,11 @@ export async function betTrack(ch, race, runner, amount, client, h) {
 export async function claimTrack(ch, client, h) {
   const today = dayOf();
   const bets = (await client.query('SELECT * FROM track_bets WHERE character_id=$1 AND day < $2 FOR UPDATE', [ch.id, today])).rows;
-  if (!bets.length) return { ok: true, settled: 0, won: 0 };
-  let won = 0;
+  if (!bets.length) return { ok: true, settled: 0, won: 0, refunded: 0 };
+  // `won` is REAL winnings only; a scratch's stake comes back under `refunded`. One merged figure
+  // let a mixed claim (one hit, one scratch) label the refund as winnings at the window — the
+  // client's anyHit branch had no way to split a total the server had already folded.
+  let won = 0, refunded = 0;
   const results = [];
   for (const b of bets) {
     const d = Number(b.day);
@@ -446,7 +449,7 @@ export async function claimTrack(ch, client, h) {
     const nowAt = cur ? (cur.racerId || null) : null;
     if (backed !== nowAt) {
       const refund = Number(b.stake);
-      won += refund; ch.cash = Number(ch.cash) + refund;
+      refunded += refund; ch.cash = Number(ch.cash) + refund;
       await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: refund, reason: 'casino:win:track' });
       await bumpProfit(client, -refund); // the bet's profit bump is reversed → the den book nets 0 on a scratch
       results.push({ day: d, race: b.race, runner: Number(b.runner), winner, winnerName: field[winner].name, hit: false, scratched: true });
@@ -465,8 +468,8 @@ export async function claimTrack(ch, client, h) {
     results.push({ day: d, race: b.race, runner: Number(b.runner), winner, winnerName: field[winner].name, hit });
     await client.query('DELETE FROM track_bets WHERE character_id=$1 AND day=$2 AND race=$3', [ch.id, d, b.race]);
   }
-  await h.track(client, ch.account_id, 'casino', { game: 'track_claim', settled: bets.length, won });
-  return { ok: true, settled: bets.length, won, results };
+  await h.track(client, ch.account_id, 'casino', { game: 'track_claim', settled: bets.length, won, refunded });
+  return { ok: true, settled: bets.length, won, refunded, results };
 }
 
 // ── RUN IN THE CARD (step three): enter a fit racer into today's card of its kind. A cash ENTRY_FEE

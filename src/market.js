@@ -163,7 +163,13 @@ export async function bidListing(ch, listingId, amount, client, h) {
   // `carName`, never a bare `name`: a bare one is the shape the auction bids already use. The
   // `market` marker is what the line keys on — absence is not a discriminator.
   const cm = (await client.query('SELECT model_id FROM cars WHERE id=$1', [l.car_id])).rows[0];
-  return { ok: true, market: 'bid', id: listingId, carName: cm ? (carOf(cm.model_id)?.name || cm.model_id) : null, bid: amt, extended };
+  // `reserveMet` rides so the receipt can state the THIRD way the money comes back: a bid under an
+  // unmet hidden reserve can never take the lot, and cancelListing lets the seller pull it out from
+  // under exactly that bid (audit #5) — a receipt saying "held until outbid or the hammer" was
+  // withholding a supported refund path. The board already publishes reserveMet (never the amount),
+  // so this leaks nothing new; null = no reserve on the lot.
+  return { ok: true, market: 'bid', id: listingId, carName: cm ? (carOf(cm.model_id)?.name || cm.model_id) : null, bid: amt, extended,
+    reserveMet: l.reserve != null ? amt >= Number(l.reserve) : null };
 }
 
 // ── STEP TWO: standing BUY ORDERS (WTB) — the inverted listing ──

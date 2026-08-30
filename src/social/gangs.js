@@ -659,7 +659,10 @@ export async function stakeClaim(ch, districtId, amount, client, h) {
   return { ok: true, district: districtId, staked: total, added: delta, floor: q.cost,
     defending: q.defending, families,
     resolvesSeconds: Math.max(0, Math.round((until.getTime() - nowMs) / 1000)),
-    lossBps: M3.CONTEST_LOSS_BPS };
+    // the STAKER's charter-effective forfeiture, never the base lever — settleContest charges
+    // CONTEST_LOSS_BPS × the charter multiplier, so a Fixers boss reading the base 50% here was
+    // being understated by exactly the hedge their charter prices (the nominal-vs-actual class)
+    lossBps: contestLossBpsFor(g.charter) };
 }
 
 // The settlement itself, inside whatever transaction the caller is already running. TWO callers
@@ -669,6 +672,15 @@ export async function stakeClaim(ch, districtId, amount, client, h) {
 // claim path, which already holds it, and is the mutex for the sweep. Then every bidding gang in id
 // order — the districts → gangs order seizeDistrict already establishes, so no new cycle.
 //
+// What a losing stake forfeits, for a family under this charter — ONE implementation, read by the
+// settle (which CHARGES it) and the stake receipt (which QUOTES it), so the receipt can never
+// understate a Fixers family's forfeiture (base 50% vs their charter-effective 62.5% — the
+// nominal-vs-actual class: the reply must carry the EFFECTIVE figure, never the base lever).
+// Clamped under 10000 so a stake can never forfeit more than itself.
+export function contestLossBpsFor(charter) {
+  return Math.min(9999, Math.round(M3.CONTEST_LOSS_BPS * charterFx(charter, 'contestLossMult')));
+}
+
 // Returns null if there is nothing to settle (no district, or its window is still open).
 export async function settleContest(client, districtId) {
   const d = (await client.query('SELECT * FROM districts WHERE id=$1 FOR UPDATE', [districtId])).rows[0];
@@ -709,9 +721,10 @@ export async function settleContest(client, districtId) {
       continue;
     }
     // THE CHARTER: what a losing stake forfeits is the loser's OWN business — the Fixers hedge in
-    // ways that cost them more when the hedge fails. Clamped under 10000 so a stake can never
-    // forfeit more than itself, and the escrow identity holds either way (refund + burn == stake).
-    const lossBps = Math.min(9999, Math.round(M3.CONTEST_LOSS_BPS * charterFx(alive.charter, 'contestLossMult')));
+    // ways that cost them more when the hedge fails. The escrow identity holds either way
+    // (refund + burn == stake); the rate is the shared contestLossBpsFor, so the stake receipt
+    // quotes the same figure this line charges.
+    const lossBps = contestLossBpsFor(alive.charter);
     const back = Math.floor(amt * (10000 - lossBps) / 10000);
     const burn = amt - back;
     if (back > 0) {

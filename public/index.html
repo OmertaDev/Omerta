@@ -3236,8 +3236,10 @@
         ? `your runner in ${raceName(r.race)} was SCRATCHED — the stake came back, nothing won (${txt(r.winnerName)} took it)`
         : r.hit ? `${txt(r.winnerName)} came in at ${raceName(r.race)} — your ticket HIT`
           : `${txt(r.winnerName)} took ${raceName(r.race)} — your ticket tore up`);
-      const anyHit = body.results.some((r) => r.hit);
-      return `\u{1F3C7} ${lines.join(' · ')}${body.won ? ` — $${fmt(body.won)} ${anyHit ? 'at the window' : 'refunded'}` : ''}`;
+      // `won` and `refunded` are SEPARATE server figures now — a mixed claim (one hit, one scratch)
+      // used to fold both into one total and the anyHit label called the refund winnings.
+      const money = [body.won ? `$${fmt(body.won)} at the window` : '', body.refunded ? `$${fmt(body.refunded)} refunded` : ''].filter(Boolean).join(', ');
+      return `\u{1F3C7} ${lines.join(' · ')}${money ? ` — ${money}` : ''}`;
     }
     if (body && body.ok && body.settled !== undefined && body.won !== undefined)
       return body.settled ? (body.won ? `\u{1F4B0} ${body.settled} ticket${body.settled === 1 ? '' : 's'} settled — $${fmt(body.won)} collected${body.nearWins ? ` (${body.nearWins} a near miss — the runner pays a consolation)` : ''}${body.jackpot ? ` — AND THE VIG POT CRACKED: $${fmt(body.jackpot)} on top` : ''}` : `${body.settled} ticket${body.settled === 1 ? '' : 's'} settled — nothing came in`)
@@ -4184,7 +4186,10 @@
     // an unmet reserve. Keyed on the `market` marker, never on `name === undefined`: absence is not
     // a discriminator, and it held exactly until the reply grew the name it was missing.
     if (body.market === 'bid') bits.push(`bid $${fmt(body.bid)}${body.carName ? ` on ${art(txt(body.carName))}` : ''}`
-      + `${body.extended ? ' (clock reset)' : ''} — the money is HELD until you're outbid or the hammer falls.`);
+      + `${body.extended ? ' (clock reset)' : ''} — the money is HELD until you're outbid or the hammer falls.`
+      // reserveMet === false is the third refund path the old line withheld: under an unmet hidden
+      // reserve the seller may pull the lot (cancelListing audit #5), and your escrow comes back
+      + (body.reserveMet === false ? ' The hidden reserve is NOT met — the seller can still pull the lot, and your money comes straight back if they do.' : ''));
     // THE BLACK MARKET — five of its six verbs said nothing, and the sixth said something else.
     // Every one of these carries TERMS: a listing fee, an expiry after which it lapses, and — the
     // biggest — a WTB order ESCROWS the whole ask out of your pocket the moment you post it. Driven:

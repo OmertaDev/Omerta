@@ -259,6 +259,26 @@ assert.equal(wornSiege, PRIME_TIME.SIEGE_TITLE, 'a cracked honor siege writes th
 assert.equal(await cashOf(sgh.id), sghCash, 'an honor siege pays no cash');
 assert.equal(await txnCount(), sghTx, 'and the honor siege settle wrote no ledger row');
 
+// ════════════ AGENTS — the join-time gates mirror the settle's skip (never a false receipt) ════════════
+// the settle skips agent_flag rows before BOTH reward branches, so a machine's join used to buy a reply
+// promising cash (rally value / siege value) or the badge (siege honor) that could never arrive. The
+// gates now sit at the DOOR: value rally refuses; the siege refuses in both modes (its settle grants an
+// agent neither reward); the honor RALLY stays open, because its title lands at join, not at settle.
+const bot = await mk('Tin Man');
+await levelUp(bot.id);
+await pool.query('UPDATE account_persistent SET agent_flag=true WHERE account_id=(SELECT account_id FROM characters WHERE id=$1)', [bot.id]);
+setMode('value');
+assert.equal((await call('POST', '/v1/primetime/siege', { token: bot.token })).body.error, 'agent', 'a value siege turns a machine away at the gates');
+setMode('honor');
+assert.equal((await call('POST', '/v1/primetime/siege', { token: bot.token })).body.error, 'agent', 'the honor siege too — the settle would grant an agent neither reward');
+process.env.PRIME_TIME_MECH = 'rally';
+setMode('value');
+assert.equal((await call('POST', '/v1/primetime/answer', { token: bot.token })).body.error, 'agent', 'a value rally refuses an agent at answer time — never a pending that cannot pay');
+setMode('honor');
+const botHonor = await call('POST', '/v1/primetime/answer', { token: bot.token });
+assert.equal(botHonor.body.answered, true, 'an honor rally stays open to agents — the title lands at join, not at settle');
+assert.ok(typeof botHonor.body.title === 'string' && botHonor.body.title.length, 'the honor reply carries the title it granted');
+
 console.log('primetime: PRIME TIME step one (THE RALLY) + step two (HAPPY HOUR) + step three (THE SIEGE) ok');
 await app.close();
 process.exit(0);
