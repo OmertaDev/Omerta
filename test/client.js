@@ -7230,6 +7230,95 @@ const ACTFNS = new Map();   // route path → the handler names its registration
 }
 
 await app.close();
+
+// ── WAVE 73 (market): four verbs on the two boards, and none named what a player needed ─────────
+// Its OWN tokens, after the main loop: a bid needs a SECOND party (bidding your own iron is refused
+// `own`), a consignment needs a won trophy, and a cancel needs a listing that this fixture posted —
+// each a precondition the shared fixture would refuse in silence, which reads on the summary line
+// exactly like a covered action. DRIVEN throughout: every claim below is about a field the SERVER
+// sends, and a synthetic passes straight through the mutation that stops it being sent.
+//
+// Why THE SILENCE LEDGER never caught the mute one: ACTPATHS collects act() presses from SINGLE-
+// QUOTED literals, data-do attributes and the raw deck's tuples. All three /v1/auction press paths
+// are TEMPLATE literals and none of them is in the deck, so the path never enters ACTPATHS and
+// `reclaimConsignment` never enters pressedFns — the ledger is structurally blind to that shape.
+{
+  const app2 = await buildServer();
+  const inj2 = async (method, url, token, payload) => {
+    const res = await app2.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
+  };
+  const mk73 = async (nm) => {
+    const t = (await inj2('POST', '/v1/auth/guest')).body.token;
+    await inj2('POST', '/v1/character', t, { name: nm + Math.random().toString(36).slice(2, 7) });
+    const id = (await inj2('GET', '/v1/me', t)).body.character.id;
+    await app2.pool.query('UPDATE characters SET cash=50000000, respect=500000, loc=$2 WHERE id=$1', [id, 'docks']);
+    const account = (await app2.pool.query('SELECT account_id FROM characters WHERE id=$1', [id])).rows[0].account_id;
+    await app2.pool.query('UPDATE account_persistent SET omr=100000 WHERE account_id=$1', [account]);
+    return { t, id, account };
+  };
+  const S = await mk73('Consignor '), B = await mk73('Bidder ');
+  const drive73 = async (url, tok, payload, what) => {
+    const r = await inj2('POST', url, tok, payload || null);
+    assert.equal(r.code, 200, `WAVE 73 (market) could not drive ${what} (${JSON.stringify(r.body)})`);
+    return { r, line: String(describeFn(r.body, 200)) };
+  };
+
+  // ── THE BLOCK (RESALE): the window the listing never stated, and the pull that said nothing ───
+  await app2.pool.query(
+    "INSERT INTO auction_wins (account_id, lot_id, archetype, name, serial, price) VALUES ($1,'0:0','ring',$2,'W0-R',300)",
+    [S.account, "A Bishop's Ring"]);
+  const cons73 = await drive73('/v1/auction/consign', S.t, { lotId: '0:0', reserve: 200 }, 'the consignment');
+  assert.equal(cons73.r.body.consign, 'listed', 'the consignment must name its SYSTEM — a marker, never a bare {ok,id,name}');
+  assert(cons73.r.body.closesHours > 0, 'the consignment must SEND its window — the client has no consignment catalog');
+  assert(cons73.line.includes(String(cons73.r.body.closesHours) + 'h') && /before a bid lands/.test(cons73.line),
+    `the lot's WINDOW is the term — it is how long you can still change your mind: ${cons73.line}`);
+  const pull73 = await drive73(`/v1/auction/consign/${cons73.r.body.id}/cancel`, S.t, {}, 'pulling the lot');
+  assert.equal(pull73.r.body.consign, 'pulled', 'pulling must name its system');
+  assert.equal(pull73.r.body.name, "A Bishop's Ring", 'pulling must SEND the trophy it handed back');
+  assert(pull73.line !== 'done.' && pull73.line.includes("A Bishop's Ring") && /off the block/.test(pull73.line)
+    && /once a bid lands/.test(pull73.line),
+  `pulling a lot must name the trophy AND why it is only legal now: ${pull73.line}`);
+
+  // ── THE MARKET BID: the iron, and that the money LEFT the pocket ──────────────────────────────
+  // A REAL catalog model, so the display name genuinely differs from the id it replaced — against a
+  // made-up model_id the name assertion would pass while resolving nothing.
+  const model73 = 'junker', modelName73 = 'County Auction Junker';
+  await app2.pool.query(
+    "INSERT INTO cars (id, character_id, model_id, trim_id, dmg) VALUES ('w73m1',$1,$2,'rusted',0),('w73m2',$1,$2,'rusted',0)",
+    [S.id, model73]);
+  const lst73 = await drive73('/v1/market', S.t, { kind: 'car', carId: 'w73m1', minBid: 5000 }, 'the car listing');
+  const bid73 = await drive73(`/v1/market/${lst73.r.body.id}/bid`, B.t, { amount: 5000 }, 'the bid');
+  assert.equal(bid73.r.body.market, 'bid', 'the bid must name its SYSTEM — the branch keyed on `name === undefined` held only until the reply grew a name');
+  assert.equal(bid73.r.body.carName, modelName73, 'the bid must SEND the iron’s display name — the client has no listing catalog');
+  assert(bid73.line.includes(modelName73), `a bid must name WHAT was bid on, or three lots read three identical lines: ${bid73.line}`);
+  assert(/HELD until/.test(bid73.line),
+    `the cash left the pocket into escrow — the line must say so: ${bid73.line}`);
+  // the anti-snipe half still reads (it was the one term this line already had)
+  assert(/clock reset/.test(String(describeFn({ ...bid73.r.body, extended: true }, 200))),
+    'the snipe extension must survive the rekey');
+
+  // ── THE CANCEL: the quantity the route itself gates on, and the iron by name ──────────────────
+  await app2.pool.query(
+    "INSERT INTO character_cargo (character_id, good_id, qty) VALUES ($1,'gin',10) ON CONFLICT (character_id, good_id) DO UPDATE SET qty=10", [S.id]);
+  const gl73 = await drive73('/v1/market', S.t, { kind: 'good', goodId: 'gin', qty: 4, price: 100 }, 'the goods listing');
+  const gc73 = await drive73(`/v1/market/${gl73.r.body.id}/cancel`, S.t, {}, 'pulling the goods lot');
+  assert.equal(gc73.r.body.qty, 4, 'the goods cancel must SEND the quantity — the same call THROWS `cargo` on exactly that number');
+  // ground truth for what came back is the DATABASE, not the reply that claims it
+  const backQty = Number((await app2.pool.query(
+    'SELECT qty FROM character_cargo WHERE character_id=$1 AND good_id=$2', [S.id, 'gin'])).rows[0].qty);
+  assert.equal(backQty, 10, 'the freight must really be back in the trunk before the line is asserted');
+  assert(new RegExp(`${gc73.r.body.qty} \\u00D7`).test(gc73.line) && /Bathtub Gin/.test(gc73.line),
+    `a capacity-limited trunk needs the QUANTITY that just landed in it, not only the good: ${gc73.line}`);
+  const cl73 = await drive73('/v1/market', S.t, { kind: 'car', carId: 'w73m2', minBid: 9000 }, 'the second car listing');
+  const cc73 = await drive73(`/v1/market/${cl73.r.body.id}/cancel`, S.t, {}, 'pulling the car lot');
+  assert.equal(cc73.r.body.carName, modelName73, 'the car cancel must SEND the iron it handed back');
+  assert(cc73.line.includes(modelName73) && !/what was on it/.test(cc73.line),
+    `"what was on it" is vague where the iron's name is in hand: ${cc73.line}`);
+  await app2.close();
+  console.log('  ✓ wave 73: the market — a pulled lot said nothing, a bid named neither the iron nor the escrow, and a cancel dropped the quantity it gates on');
+}
+
 // ── WAVE 64 — the lines THE SILENCE LEDGER's first crop now produces. The ledger above proves each
 // reply is no longer mute; these pin what it SAYS, because a branch that fires and says the wrong
 // thing is the same defect one step later. Synthetic on the exact shapes the servers return (the

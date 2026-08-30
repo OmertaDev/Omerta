@@ -17,7 +17,7 @@
 // races fall back to the 40P01→contention mapping.
 import crypto from 'node:crypto';
 import { GameError, bus, ledger, notify, skillMult, trunkCap, npcTier, bumpStanding, bumpMastery, masteryFx } from './game.js';
-import { BLACK_MARKET as MARKET, GOODS, SKILLS, UNDERWORLD , jailed, safeHoused, usd } from './rules.js';
+import { BLACK_MARKET as MARKET, GOODS, SKILLS, UNDERWORLD , jailed, safeHoused, usd, carOf } from './rules.js';
 import { logCarCollect } from './collection.js';
 
 const uid = () => crypto.randomUUID();
@@ -157,7 +157,13 @@ export async function bidListing(ch, listingId, amount, client, h) {
       [listingId, new Date(Date.now() + MARKET.SNIPE_WINDOW_MS)]);
     extended = true;
   }
-  return { ok: true, id: listingId, bid: amt, extended };
+  // The bid named neither WHAT was bid on nor that the money had LEFT the pocket. The iron is the
+  // server's to name — the client has no listing catalog and the reply carried only an opaque
+  // listing UUID, so three car lots read three identical lines (both auction siblings send a name).
+  // `carName`, never a bare `name`: a bare one is the shape the auction bids already use. The
+  // `market` marker is what the line keys on — absence is not a discriminator.
+  const cm = (await client.query('SELECT model_id FROM cars WHERE id=$1', [l.car_id])).rows[0];
+  return { ok: true, market: 'bid', id: listingId, carName: cm ? (carOf(cm.model_id)?.name || cm.model_id) : null, bid: amt, extended };
 }
 
 // ── STEP TWO: standing BUY ORDERS (WTB) — the inverted listing ──
@@ -361,7 +367,10 @@ export async function cancelListing(ch, listingId, client, h) {
   await client.query("UPDATE market_listings SET status='cancelled', bid=NULL, bidder=NULL WHERE id=$1", [listingId]);
   // name what came back: a car listing is the iron, a goods lot is the freight. 'what was on it'
   // is the line a player got either way, and the row has known which all along.
-  return { ok: true, cancelled: l.id, ...(l.kind === 'good' ? { good: l.good_id, qty: Number(l.qty) } : { car: l.car_id }) };
+  const cn = l.kind === 'car' ? (await client.query('SELECT model_id FROM cars WHERE id=$1', [l.car_id])).rows[0] : null;
+  return { ok: true, cancelled: l.id,
+    ...(l.kind === 'good' ? { good: l.good_id, qty: Number(l.qty) }
+      : { car: l.car_id, carName: cn ? (carOf(cn.model_id)?.name || cn.model_id) : null }) };
 }
 
 // ── The board — public; car listings show the iron, goods show the dock ──

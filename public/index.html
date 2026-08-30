@@ -3523,7 +3523,15 @@
     // search is gone with it (the server clears it for real — it used to say so and not do it).
     if (body.calledOff) bits.push(body.calledOff === 'you' ? 'called your people off — the mark is yours to pick again'
       : `the hit is OFF — ${body.name || 'they'} ${body.calledOff === 'family' ? 'is family now' : 'runs with your crew now'}. Your search is cleared.`);
-    if (body.reserve !== undefined && body.fee !== undefined && body.serial) bits.push(`🔨 ${body.name} #${body.serial} on the block — reserve ${fmt(body.reserve)} $OMR (−${body.fee} fee)`);
+    // THE BLOCK (RESALE). Consigning burns a $OMR fee and ESCROWS the trophy out of the collection
+    // (auction_wins.listed flips), and reclaimConsignment refuses the moment anything is bid — so the
+    // window is not trivia, it is exactly how long you can still change your mind. The server has
+    // sent `closesHours` all along and the line dropped it, while the market's own listing sibling
+    // two screens down renders its window in full. PULLING it back read "done." over the trophy's
+    // name in hand; both key on the `consign` marker rather than on a bare {ok,id,name} shape.
+    if (body.consign === 'listed') bits.push(`\u{1F528} ${txt(body.name)} #${body.serial} on the block — reserve ${fmt(body.reserve)} $OMR (\u2212${fmt(body.fee)} fee)`
+      + `${body.closesHours ? `. It runs ${body.closesHours}h; pull it back any time before a bid lands, not after.` : ''}`);
+    if (body.consign === 'pulled') bits.push(`\u{1F528} ${txt(body.name)} is off the block — back in your collection, unsold. The listing fee doesn't come back, and once a bid lands you can't pull it at all.`);
     // THE GYM'S TERMS. `+2 muscle` named the gain and nothing it cost: not the energy, not the
     // cooldown the server has been sending all along in `nextTrainSeconds`, and — the term a player
     // cannot infer from anywhere — that the clock is SHARED with the eight regimen disciplines, so a
@@ -3999,7 +4007,14 @@
       else bits.push(`${body.family} repelled the raid — their guns put you in the hospital${body.hospSeconds ? ` for ${minsTxt(body.hospSeconds)}` : ''}.`);
     }
     if (body.winScore !== undefined && body.endsSeconds !== undefined) bits.push(`\u{2694}\u{FE0F} war declared on ${body.family} — land ${body.winScore} raids inside ${minsTxt(body.endsSeconds)} to win the campaign`);
-    if (body.bid !== undefined && body.id !== undefined && body.name === undefined && !body.youLead) bits.push(`bid $${fmt(body.bid)} placed${body.extended ? ' (clock reset)' : ''}`);
+    // A MARKET BID named neither the iron nor the money. Two terms, both the server's to send: the
+    // reply carried only an opaque listing UUID, so a player watching three car lots read three
+    // identical lines (both auction siblings send a name and render it), and the cash LEFT the
+    // pocket into escrow the instant the bid landed — returned only on an outbid or a cancel under
+    // an unmet reserve. Keyed on the `market` marker, never on `name === undefined`: absence is not
+    // a discriminator, and it held exactly until the reply grew the name it was missing.
+    if (body.market === 'bid') bits.push(`bid $${fmt(body.bid)}${body.carName ? ` on ${art(txt(body.carName))}` : ''}`
+      + `${body.extended ? ' (clock reset)' : ''} — the money is HELD until you're outbid or the hammer falls.`);
     // THE BLACK MARKET — five of its six verbs said nothing, and the sixth said something else.
     // Every one of these carries TERMS: a listing fee, an expiry after which it lapses, and — the
     // biggest — a WTB order ESCROWS the whole ask out of your pocket the moment you post it. Driven:
@@ -4027,9 +4042,14 @@
     // listing ID there and the chain sends a boolean, so the two shapes were never ambiguous.
     if (body.cancelled === true && body.refunded !== undefined)
       bits.push(`\u{1F517} the withdrawal is off the queue — ${fmt(body.refunded)} $OMR back in your balance. Nothing was signed, so nothing was ever claimable on-chain.`);
+    // …and the GOODS half dropped the one number the route itself gates on: cancelling THROWS
+    // `cargo` when the trunk can't take it all back, so quantity is the term, not decoration. The
+    // ORDER branch below it renders both of its numbers, which is what makes the asymmetry a slip
+    // rather than a style. The CAR half was vague where the iron's name is now in hand.
     else if (body.cancelled !== undefined) bits.push(body.refunded !== undefined
       ? `pulled it off the board — $${fmt(body.refunded)} escrow back${body.awaiting > 0 ? `, and ${body.awaiting} delivered units still wait for you at the dock` : ''}`
-      : `pulled it off the board${body.good ? ` — ${art(txt(goodName(body.good)))} comes back to you` : ' — what was on it comes back to you'}`);
+      : `pulled it off the board — ${body.good ? `${fmt(body.qty)} \u00D7 ${txt(goodName(body.good))} back in the trunk`
+        : `${body.carName ? art(txt(body.carName)) : 'the iron'} is back in the garage`}`);
     // The shark's own offer and a hit contract's stake, both of which read "done." while real money
     // moved back. Each is scoped by a field only its own reply carries: the contract names what is
     // LEFT on the mark's head (a pot several funders share, so pulling your share does not
