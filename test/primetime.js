@@ -270,8 +270,14 @@ const bot = await mk('Tin Man');
 await levelUp(bot.id);
 await pool.query('UPDATE account_persistent SET agent_flag=true WHERE account_id=(SELECT account_id FROM characters WHERE id=$1)', [bot.id]);
 setMode('value');
+// THE BOARD DISCLOSES THE BAR (Codex round 4): the actions refuse an agent on a value night, and a
+// board that still advertised the cash rendered an enabled button that could only fail (the check-5
+// class — the Port lane picker). One field covers all three mechanics; a human never carries it.
+assert.equal((await call('GET', '/v1/primetime', { token: bot.token })).body.agentBarred, true, 'a machine\'s board on a VALUE night says the door is shut — the card must not advertise a payout it will refuse');
+assert.equal((await call('GET', '/v1/primetime', { token: sg.token })).body.agentBarred, false, 'a human\'s board never carries the bar');
 assert.equal((await call('POST', '/v1/primetime/siege', { token: bot.token })).body.error, 'agent', 'a value siege turns a machine away at the gates');
 setMode('honor');
+assert.equal((await call('GET', '/v1/primetime', { token: bot.token })).body.agentBarred, false, 'an HONOR night opens the door — the bar lifts off the machine\'s board');
 const botToday = dayOf();
 await padSiege(botToday, PRIME_TIME.SIEGE_NEED - 1, 200);   // ghosts so the machine's night cracks
 sr = await call('POST', '/v1/primetime/siege', { token: bot.token });

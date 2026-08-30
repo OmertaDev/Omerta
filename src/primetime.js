@@ -76,7 +76,7 @@ async function roundsOf(client, day, cid) {
 
 // The board: tonight's window (mechanic/mode/hour/live/countdown), your participation, and the forecast.
 // Branches on the mechanic — RALLY carries turnout+reward+answered; HAPPY HOUR carries rounds. Pure read.
-export async function primeTimeBoard(client, ch) {
+export async function primeTimeBoard(client, ch, h) {
   const s = statusNow();
   const day = s.pt.day;
   const forecast = Array.from({ length: PRIME_TIME.FORECAST_DAYS }, (_, i) => {
@@ -95,6 +95,11 @@ export async function primeTimeBoard(client, ch) {
     mechanic: s.pt.mechanic, mode: s.pt.mode, hour: s.pt.hour,
     live: s.live, opensSeconds: s.secondsToStart, closesSeconds: s.secondsToEnd,
     minLevel: PRIME_TIME.RALLY_MIN_LVL, windowH: PRIME_TIME.WINDOW_H, forecast,
+    // ELIGIBILITY (Codex round 4): all three value-night actions refuse an agent at the door, and a
+    // board that still advertised the cash rendered an enabled button that could only fail — the
+    // check-5 class (the Port lane picker). ONE field covers every mechanic; always present (the
+    // ONE-shape rule), false for humans and on honor nights.
+    agentBarred: !!(h?.acct?.agent_flag && s.pt.mode === 'value'),
     // RALLY fields
     answered: siege ? false : partic, turnout: siege ? 0 : fighters, title: siege ? PRIME_TIME.SIEGE_TITLE : s.pt.title,
     reward: (!happy && !siege && s.pt.mode === 'value') ? rallyReward(fighters) : 0,  // an ESTIMATE — grows as more show; settled at final turnout

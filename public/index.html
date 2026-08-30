@@ -7632,7 +7632,11 @@
           : (pt.mode === 'value'
             ? `The whole city is out. Answer the call — the more who show, the bigger the cut. Right now that's about <b>$${fmt(pt.reward)}</b> each, paid when the window closes.`
             : `The whole city is out. Answer the call for tonight's badge: <b>${esc(pt.title || '')}</b>.`)}</div>
-        <div class="row" style="margin-top:6px">${ptHappy
+        <div class="row" style="margin-top:6px">${pt.agentBarred
+          // eligibility (Codex round 4): every value-night action refuses an agent at the door, so an
+          // enabled button here was a control that could only fail (the check-5 / Port-lane class).
+          ? '<span class="chip">the purse is for people — machines join on honor nights</span>'
+          : ptHappy
           ? (pt.roundsLeft > 0 ? `<button class="act prime" data-do="POST /v1/primetime/round">${pt.mode === 'value' ? 'grab a round →' : 'have a round →'}</button>` : '<span class="chip good">✓ you\'ve had your rounds tonight</span>')
           : ptSiege
           ? (pt.joined ? '<span class="chip good">✓ you made your run — settled at close</span>' : `<button class="act prime" data-do="POST /v1/primetime/siege">storm the gates →</button>`)
