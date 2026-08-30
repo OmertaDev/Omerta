@@ -6448,9 +6448,6 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   // branch that cannot be reached with a real body.
   const MUTE_OK = new Map([
     ['withCharacter', 'the request wrapper itself — every route unwraps it; a player never reads this shape'],
-    ['requestWithdraw', 'the chain rail renders its own voucher card; the console never toasts it'],
-    ['requestDynastyMint', 'same rail, same card'],
-    ['quoteBond', 'the same chain rail — the bond card renders the quote it signs, never a toast'],
     ['repairCar', 'its branches key on body.fixed === true|false; the sentinel walk cannot supply a literal'],
     ['burnerHit', 'it spreads ...await npcHit(...) — a call the static walk cannot follow; the npchit '
       + 'branch renders it live, and the WAVE 68 block below drives the burner line for real'],
@@ -8113,6 +8110,180 @@ await app.close();
 
   await app7.close();
   console.log('  ✓ wave 73: empire — a front named by its storage key, a beating nobody was told about, a refusal that named one of three live specs, and the biggest purchase on the screen quoting only what the seller walked away with');
+}
+
+// ── WAVE 73 (chain): the extraction rail issued a receipt for everything and read "done." ────────
+// Its OWN app and its own token, after the main loop, for two reasons. The chain is DORMANT in every
+// other suite and every other block here — chain.js reads its env at CALL time, so arming it is the
+// only way to drive a signature at all — and it must be disarmed again afterwards or the rest of the
+// run stops being chain-dormant. And a refused drive is SKIPPED in silence, which reads on the
+// summary line exactly like a covered one, so every precondition below is seeded: a minted account,
+// a SIWE-proven wallet, a funded reserve for the signed half and a DELIBERATELY unfunded one for the
+// queued half, a price print, the tranche, today's offering, a part-vested bond and a car.
+// Every claim is asserted in TWO halves — the SERVER sent the field, then the driven line reads it —
+// because a synthetic literal passes straight through the mutation that stops the field being sent;
+// and where a quantity is claimed the ground truth is the DATABASE, never the reply under test.
+{
+  const oldEnv = {};
+  const arm = { CHAIN_ID: '46630',
+    VOUCHER_SIGNER_PK: '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
+    VOUCHER_CLAIM_ADDRESS: '0x1111111111111111111111111111111111111111',
+    OMERTA_BOND_ADDRESS: '0x2222222222222222222222222222222222222222',
+    DYNASTY_NFT_ADDRESS: '0x3333333333333333333333333333333333333333' };
+  for (const [k, v] of Object.entries(arm)) { oldEnv[k] = process.env[k]; process.env[k] = v; }
+  const { privateKeyToAccount } = await import('viem/accounts');
+
+  const app8 = await buildServer();
+  const inj8 = async (method, url, token, payload) => {
+    const res = await app8.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
+  };
+  // the client's own fmt, mirrored: these figures carry decimals (a 2% toll on 12 $OMR is 0.24), so
+  // fmtLike's integer rounding cannot express them. The NUMBERS are still the server's own.
+  const fmtC = (n) => { const v = Number(n);
+    if (v !== 0 && Math.abs(v) < 0.01) return Number(v.toPrecision(2)).toString();
+    return v.toLocaleString('en-US', { maximumFractionDigits: 2 }); };
+  const driveC = async (url, tok, payload, what) => {
+    const r = await inj8('POST', url, tok, payload);
+    assert.equal(r.code, 200, `WAVE 73 (chain) could not drive ${what} (${JSON.stringify(r.body)})`);
+    described++;
+    return { r, line: String(describeFn(r.body, 200)) };
+  };
+
+  const tC = (await inj8('POST', '/v1/auth/guest')).body.token;
+  await inj8('POST', '/v1/character', tC, { name: 'Chain ' + Math.random().toString(36).slice(2, 7) });
+  const idC = (await inj8('GET', '/v1/me', tC)).body.character.id;
+  const acctC = (await app8.pool.query('SELECT account_id FROM characters WHERE id=$1', [idC])).rows[0].account_id;
+  await app8.pool.query('UPDATE characters SET cash=9000000, respect=500000 WHERE id=$1', [idC]);
+  // minted, or the extraction gate refuses; the credits are what the re-roll spends.
+  await app8.pool.query('UPDATE account_persistent SET omr = omr + 5000, minted=true, reroll_credits=3 WHERE account_id=$1', [acctC]);
+  const omrOf = async () => Number((await app8.pool.query(
+    'SELECT omr FROM account_persistent WHERE account_id=$1', [acctC])).rows[0].omr);
+
+  // ── THE WALLET CHALLENGE: not a receipt at all. Without a branch describe() falls through to
+  // `body.message`, and this one IS the signing payload — the account UUID and the nonce rendered as
+  // the player's toast (the curated flow hands it straight to personal_sign, which is what it is for).
+  const player = privateKeyToAccount('0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d');
+  const chg = await driveC('/v1/wallet/challenge', tC, null, 'the wallet challenge');
+  assert.equal(chg.r.body.walletLink, 'challenge', 'WAVE 73 (chain): the challenge must NAME its system — the payload alone matched no branch');
+  assert.ok(!chg.line.includes(acctC), `WAVE 73 (chain): the toast must never render the signing payload's account id — got ${chg.line}`);
+  assert.match(chg.line, /sign the challenge/i, `WAVE 73 (chain): the challenge must say what to do with it — got ${chg.line}`);
+  const ver = await inj8('POST', '/v1/wallet/verify', tC, {
+    address: player.address, signature: await player.signMessage({ message: chg.r.body.message }) });
+  assert.equal(ver.code, 200, `WAVE 73 (chain) could not link the wallet (${JSON.stringify(ver.body)})`);
+
+  // ── THE WITHDRAWAL, QUEUED. The reserve is deliberately left unfunded here, because this is the
+  // half that most needed saying: the debit and the 2% toll are REAL and NOTHING was signed, so the
+  // player holds no claim at all until the reserve funds.
+  const omrPre = await omrOf();
+  const wq = await driveC('/v1/withdraw', tC, { amount: 12 }, 'the queued withdrawal');
+  assert.equal(wq.r.body.withdraw, 'queued',
+    'WAVE 73 (chain): the withdrawal must NAME its system and which half it took — `status:\'signed\'` alone is the dynasty voucher and the gear withdrawal too');
+  assert.equal(omrPre - await omrOf(), wq.r.body.gross,
+    'WAVE 73 (chain): the DATABASE is ground truth — the reply\'s gross must be what actually left the balance');
+  assert.ok(wq.r.body.tax > 0 && wq.r.body.net === wq.r.body.gross - wq.r.body.tax,
+    'WAVE 73 (chain): the withdrawal must SEND the toll and the net it leaves');
+  assert.match(wq.line, /QUEUED/, `WAVE 73 (chain): a queued withdrawal must say so — got ${wq.line}`);
+  assert.match(wq.line, /NOTHING was signed/i, `WAVE 73 (chain): a queued withdrawal must state that no claim exists yet — got ${wq.line}`);
+  assert.ok(wq.line.includes(fmtC(wq.r.body.gross)) && wq.line.includes(fmtC(wq.r.body.tax)),
+    `WAVE 73 (chain): a queued withdrawal must name what left and what the toll took — got ${wq.line}`);
+
+  // ── THE WITHDRAWAL, SIGNED. Same route, the other half, once the reserve can cover it.
+  await app8.pool.query('UPDATE chain_reserve SET funded_omr = funded_omr + 100000 WHERE id=1');
+  const omrPre2 = await omrOf();
+  const ws = await driveC('/v1/withdraw', tC, { amount: 12 }, 'the signed withdrawal');
+  assert.equal(ws.r.body.withdraw, 'signed', 'WAVE 73 (chain): a funded reserve must report the SIGNED half');
+  assert.equal(omrPre2 - await omrOf(), ws.r.body.gross,
+    'WAVE 73 (chain): the DATABASE is ground truth on the signed half too');
+  assert.ok(ws.r.body.nonce > 0, 'WAVE 73 (chain): a signed withdrawal must SEND the voucher nonce — it is what the player claims with');
+  assert.match(ws.line, /SIGNED/, `WAVE 73 (chain): a signed withdrawal must say the voucher exists — got ${ws.line}`);
+  assert.ok(ws.line.includes(String(ws.r.body.nonce)) && /claimable on-chain/.test(ws.line),
+    `WAVE 73 (chain): a signed withdrawal must name the voucher and that it is claimable — got ${ws.line}`);
+  assert.ok(ws.line.includes(fmtC(ws.r.body.net)) && ws.line.includes(fmtC(ws.r.body.tax)),
+    `WAVE 73 (chain): a signed withdrawal must state what rides the voucher after the toll — got ${ws.line}`);
+  assert.notEqual(ws.line, wq.line, 'WAVE 73 (chain): the signed and queued halves must not read the same — one holds a claim and one holds nothing');
+
+  // ── THE DYNASTY VOUCHER: one portrait per bloodline, ever, and it read "done."
+  const dm = await driveC('/v1/identity/mint', tC, {}, 'the dynasty mint voucher');
+  assert.equal(dm.r.body.dynasty, 'voucher',
+    'WAVE 73 (chain): the mint voucher must NAME its system — a nonce plus status:\'signed\' is the withdrawal shape too');
+  assert.ok(dm.r.body.voucher && dm.r.body.voucher.deadline, 'WAVE 73 (chain): the voucher must SEND its deadline — only the server knows when it lapses');
+  assert.match(dm.line, /signed/i, `WAVE 73 (chain): the mint voucher must say it is signed — got ${dm.line}`);
+  assert.match(dm.line, /claim it on-chain/, `WAVE 73 (chain): the mint voucher must say it must be claimed — got ${dm.line}`);
+  assert.match(dm.line, /lapses/, `WAVE 73 (chain): the mint voucher must say it expires — got ${dm.line}`);
+
+  // ── THE RE-ROLL spends a PAID credit (the 0.01 ETH on-chain fee its own refusal names one call
+  // earlier), and neither the reply nor the line mentioned it. The DATABASE is ground truth.
+  const credPre = Number((await app8.pool.query('SELECT reroll_credits FROM account_persistent WHERE account_id=$1', [acctC])).rows[0].reroll_credits);
+  const rr = await driveC('/v1/character/reroll', tC, {}, 'the paid re-roll');
+  const credPost = Number((await app8.pool.query('SELECT reroll_credits FROM account_persistent WHERE account_id=$1', [acctC])).rows[0].reroll_credits);
+  assert.equal(credPre - credPost, 1, 'WAVE 73 (chain) precondition: the re-roll must genuinely consume a credit, or the claim is vacuous');
+  assert.equal(rr.r.body.spentCredit, true, 'WAVE 73 (chain): the re-roll must SEND that it spent a paid credit — its sibling on the same credit has said so since it shipped');
+  assert.equal(rr.r.body.creditsLeft, credPost, 'WAVE 73 (chain): the re-roll\'s creditsLeft must be what the DATABASE holds');
+  assert.match(rr.line, /credit spent/, `WAVE 73 (chain): the re-roll must say what it cost — got ${rr.line}`);
+  assert.ok(rr.line.includes(String(credPost)), `WAVE 73 (chain): the re-roll must say how many are left — got ${rr.line}`);
+
+  // ── THE BOND QUOTE. The curated card renders its own panel through the silent api() and is NOT
+  // defective; the raw deck presses this same route through act() and read "done." over a signed
+  // quote carrying a payout, a discount, a vest window and a deadline.
+  await app8.pool.query(
+    `INSERT INTO vig_buyback (id, eth_spent, omr_bought, price_omr_per_eth, to_reserve, to_prize, real, created_at)
+       VALUES ('w73-vb', 1, 3000, 3000, 0, 0, true, now())`);
+  await app8.pool.query('UPDATE bond_reserve SET capacity_omr = 1000000 WHERE id=1');
+  await app8.pool.query('INSERT INTO bond_offerings (day, offered_omr, quoted_omr) VALUES ($1, 500000, 0)',
+    [Math.floor(Date.now() / 86400000)]);
+  const bq = await driveC('/v1/bond/quote', tC, { principalEth: 1 }, 'the bond quote');
+  assert.equal(bq.r.body.bond, 'quote', 'WAVE 73 (chain): the quote must NAME its system');
+  assert.ok(bq.r.body.payoutOmr > 0 && bq.r.body.discountBps > 0 && bq.r.body.vestSeconds > 0 && bq.r.body.deadline > 0,
+    'WAVE 73 (chain): the quote must SEND the payout, the discount, the vest window and the deadline — none is derivable client-side');
+  assert.ok(bq.line.includes(fmtC(bq.r.body.payoutOmr)), `WAVE 73 (chain): the quote must name what it pays — got ${bq.line}`);
+  assert.ok(bq.line.includes(String(bq.r.body.discountBps / 100)), `WAVE 73 (chain): the quote must name the discount it was signed at — got ${bq.line}`);
+  assert.match(bq.line, /vesting over/, `WAVE 73 (chain): the quote must state that the payout vests — got ${bq.line}`);
+
+  // ── THE BOND CLAIM: a five-figure vested release read "done.", with nothing saying how much of
+  // the bond is still vesting behind it. Seeded part-vested so BOTH halves of the line are exercised.
+  await app8.pool.query(
+    `INSERT INTO bonds (id, nonce, account_id, payer_address, principal_eth, payout_omr, oracle_price, discount_bps, claimed_omr, vest_ms, tx_hash, opened_at)
+       VALUES ('w73-bond', 424242, $1, $2, 1, 3300, 3000, 800, 0, 3600000, '0xw73', now() - interval '30 minutes')`,
+    [acctC, player.address]);
+  const omrPre3 = await omrOf();
+  const bc = await driveC('/v1/bonds/w73-bond/claim', tC, {}, 'the bond claim');
+  assert.equal(bc.r.body.bond, 'claimed', 'WAVE 73 (chain): the claim must NAME its system — {ok, claimed} matched no branch at all');
+  // the claim is OFF-CHAIN ACCOUNTING (the real release is the OmertaBond contract), so the ground
+  // truth is the bond row's own ledger — never the in-game balance, which correctly does not move.
+  // The preconditions read the DATABASE and not the reply, or the mutation that stops a field being
+  // sent trips the precondition and the failure names the FIXTURE instead of the defect.
+  const bondRow = (await app8.pool.query('SELECT payout_omr, claimed_omr FROM bonds WHERE id=$1', ['w73-bond'])).rows[0];
+  const claimedRow = Number(bondRow.claimed_omr);
+  const lockedRow = Number(bondRow.payout_omr) - claimedRow;
+  assert.ok(claimedRow > 0, 'WAVE 73 (chain) precondition: the seeded bond must be part-vested, or the claim proves nothing');
+  assert.ok(lockedRow > 0, 'WAVE 73 (chain) precondition: the seeded bond must still have OMR locked, or the unvested half of the line is never read');
+  assert.ok(Math.abs(Number(bc.r.body.unvested) - lockedRow) < 1e-6,
+    'WAVE 73 (chain): the claim must SEND what is still locked — the DATABASE says how much');
+  assert.ok(Math.abs(claimedRow - bc.r.body.claimed) < 1e-6,
+    'WAVE 73 (chain): the DATABASE is ground truth — the reply\'s claimed must be what the bond row actually released');
+  assert.equal(await omrOf(), omrPre3, 'WAVE 73 (chain) precondition: a bond claim moves no in-game balance — the line must not imply it did');
+  assert.match(bc.line, /on-chain/, `WAVE 73 (chain): the claim must say where the real release happens — got ${bc.line}`);
+  assert.ok(bc.line.includes(fmtC(bc.r.body.claimed)), `WAVE 73 (chain): the claim must name what it released — got ${bc.line}`);
+  assert.ok(bc.line.includes(fmtC(bc.r.body.unvested)) && /still vesting/.test(bc.line),
+    `WAVE 73 (chain): the claim must name what is STILL LOCKED behind it — got ${bc.line}`);
+
+  // ── THE RARITY UPGRADE named the price and the TIER and never what the tier DOES. `utility.pct`
+  // is exactly what the $OMR bought and is not derivable from the tier's NAME.
+  await app8.pool.query(
+    `INSERT INTO cars (id, character_id, model_id, trim_id, dmg) VALUES ('w73-car', $1, 'errand', 'stock', 0)`, [idC]);
+  const up = await driveC('/v1/nft/car/w73-car/upgrade', tC, {}, 'the rarity upgrade');
+  assert.ok(up.r.body.utility && up.r.body.utility.pct > 0,
+    'WAVE 73 (chain) precondition: this tier must carry real utility, or there is nothing for the line to name');
+  assert.equal(up.r.body.utility.active, true, 'WAVE 73 (chain): the upgrade must SEND whether the utility is live — it goes false the moment the item is extracted');
+  assert.ok(up.line.includes(`+${up.r.body.utility.pct}%`),
+    `WAVE 73 (chain): the upgrade must name what the tier DOES, not only what it cost — got ${up.line}`);
+  assert.match(up.line, /while it stays in play/,
+    `WAVE 73 (chain): the upgrade must state that the utility is in-play only — got ${up.line}`);
+
+  await app8.close();
+  for (const k of Object.keys(arm)) { if (oldEnv[k] === undefined) delete process.env[k]; else process.env[k] = oldEnv[k]; }
+  console.log('  ✓ wave 73: chain — a voucher signed (or not signed at all) for "done.", a one-per-bloodline portrait mint that said nothing, a vested release with no word on what stayed locked, a paid credit spent in silence, and a signing payload rendered as a toast');
 }
 
 console.log(`✅ client wiring test passed — across the console AND /admin: of ${refs.size} routes they can ` +

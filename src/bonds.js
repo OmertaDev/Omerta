@@ -142,7 +142,12 @@ export async function claimBond(pool, accountId, bondId) {
     if (!(claimable > 0)) { await client.query('ROLLBACK'); throw new GameError('nothing', 'Nothing vested to claim yet.'); }
     await client.query('UPDATE bonds SET claimed_omr = claimed_omr + $2 WHERE id=$1', [bondId, claimable]);
     await client.query('COMMIT');
-    return { ok: true, claimed: claimable, note: 'Off-chain accounting — the on-chain OmertaBond contract releases the real OMR (mainnet, dormant).' };
+    // the SYSTEM marker + what is STILL LOCKED. A bare {ok, claimed} is a shape several systems can
+    // satisfy, and it matched no branch at all — so a five-figure vested release read "done.", with
+    // nothing saying how much of the bond is still vesting behind it.
+    const unvested = round6(Number(b.payout_omr) - Number(b.claimed_omr) - claimable);
+    return { bond: 'claimed', ok: true, claimed: claimable, unvested: unvested > 0 ? unvested : 0,
+      note: 'Off-chain accounting — the on-chain OmertaBond contract releases the real OMR (mainnet, dormant).' };
   } catch (e) { await client.query('ROLLBACK'); throw e; } finally { client.release(); }
 }
 

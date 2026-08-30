@@ -2450,7 +2450,13 @@
     const txt = (s) => String(s == null ? '' : s);
     // v3 step 7 — the rarity NFTs. The extraction line says the tradeoff out loud, because it is the
     // one action in the game with no way back.
-    if (body && body.rarityName && body.was) return `\u2728 ${body.name} is ${body.rarityName} now — ${body.spent} $OMR`;
+    // …and it named the price and the TIER and never what the tier DOES. `utility.pct` is exactly
+    // what the $OMR bought (rare +3%, legendary +6% on race chassis) and is not derivable from the
+    // tier's NAME; `active` is the term that matters later — it goes FALSE the moment the item is
+    // extracted on-chain, which is the whole substance of the extract tradeoff.
+    if (body && body.rarityName && body.was) return `\u2728 ${body.name} is ${body.rarityName} now — ${body.spent} $OMR${
+      body.utility && body.utility.pct ? ` · +${body.utility.pct}% ${(body.utility.appliesTo || []).join(', ').replace(/_/g, ' ')}${
+        body.utility.active ? ' while it stays in play' : ' (dormant — it is on-chain)'}` : ''}`;
     // LIMITED RUNS — the two moments worth stopping for: one found, one destroyed forever.
     if (body && body.car && body.car.run) return `\uD83D\uDE97 ${body.car.run.name} — NUMBER ${body.car.run.serial} OF ${body.car.run.cap}. Only ${body.car.run.cap} will ever exist.`;
     // MELTING A CAR is irreversible and pays real rounds, and this branch only ever spoke for the
@@ -3311,7 +3317,11 @@
       body.theft !== undefined || body.trunk !== undefined || body.boatTheft !== undefined || body.sabotage !== undefined ||
       body.op === 'piracy' ||
       (body.win === false && body.dmg !== undefined);
-    if (body.rerolled && body.stats) bits.push(`new build rolled — muscle ${body.stats.muscle} / cunning ${body.stats.cunning} / speed ${body.stats.speed}`);
+    // A RE-ROLL SPENDS A PAID CREDIT (the 0.01 ETH on-chain fee — the refusal one call earlier says
+    // so), and neither the reply nor this line mentioned it. Its own sibling on the SAME credit, one
+    // line down, has said `one re-roll credit spent` since it shipped.
+    if (body.rerolled && body.stats) bits.push(`new build rolled — muscle ${body.stats.muscle} / cunning ${body.stats.cunning} / speed ${body.stats.speed}${
+      body.spentCredit ? ` · one re-roll credit spent${body.creditsLeft !== undefined ? ` (${body.creditsLeft} left)` : ''}` : ''}`);
     // THE WALLET FORGE — `forged` + `stats` is this reply's own shape (nothing else sends `forged` on an action)
     if (body.forged && body.stats) bits.push(`🔥 ${body.name ? `the ledger names you ${txt(body.name)}` : 'the ledger is silent — an ordinary hand rolled'} — muscle ${body.stats.muscle} / cunning ${body.stats.cunning} / speed ${body.stats.speed}${body.bonus ? ` (+${body.bonus} forged into the strong suit)` : ''}${body.budgetExtra ? ` (+${body.budgetExtra} onto the whole budget)` : ''}${body.affinity ? ` · schooled in ${txt(body.affinity.name || body.affinity.discipline)} (level ${body.affinity.level})` : ''}${body.spentCredit ? ' · one re-roll credit spent' : ''}`);
     if (body.proposedTo) bits.push(`🕊 you offered a sit-down to the ${body.proposedTo} bloodline`);
@@ -4174,6 +4184,33 @@
       bits.push(`pulled your stake off the contract — $${fmt(body.refunded)} back${body.potRemaining > 0 ? `. There's still $${fmt(body.potRemaining)} on their head from other funders.` : `, and there's nothing left on their head.`}`);
     else if (body.refunded !== undefined && body.ok)
       bits.push(`\u{1F91D} took the offer off the street — $${fmt(body.refunded)} out of escrow and back in your pocket`);
+    // ── THE CHAIN RAIL, which said "done." over every receipt it issues ──────────────────────────
+    // Each branch keys on a SYSTEM MARKER the server now sends, never on a field-set: `status:
+    // 'signed'` and a `nonce` are shared by the withdrawal, the dynasty voucher and a gear
+    // withdrawal, so a shape test here would claim a sibling the day one of them grew a field.
+    // The deadline arrives as UNIX seconds (the on-chain tuple's unit), so it is converted here.
+    const untilTxt = (unixSec) => minsTxt(Math.max(0, Math.round(Number(unixSec) - Date.now() / 1000)));
+    if (body.withdraw === 'signed')
+      bits.push(`\u{1F517} the voucher is SIGNED — ${fmt(body.gross)} $OMR left your balance, ${fmt(body.net)} rides the voucher after a ${fmt(body.tax)} $OMR exit toll${
+        body.earlyTax > 0 ? ` (${fmt(body.earlyTax)} of that the fresh-token surcharge)` : ''} · voucher #${body.nonce}, claimable on-chain${
+        body.voucher?.deadline ? ` for the next ${untilTxt(body.voucher.deadline)}` : ''}`);
+    // the QUEUED half is the one that most needed saying: the debit and the toll are REAL and
+    // nothing was signed, so the player holds no claim at all until the reserve funds.
+    else if (body.withdraw === 'queued')
+      bits.push(`\u{1F517} QUEUED — ${fmt(body.gross)} $OMR is debited and the ${fmt(body.tax)} $OMR toll is paid, but NOTHING was signed: the exit reserve is short, so voucher #${body.nonce} waits its turn and signs the moment it funds. Pull it any time for the ${fmt(body.net)} $OMR back — the toll stays paid.`);
+    if (body.dynasty === 'voucher')
+      bits.push(`\u{1F5BC} the mint voucher is signed and bound to ${body.voucher?.to ? `${body.voucher.to.slice(0, 6)}…${body.voucher.to.slice(-4)}` : 'your linked wallet'} — claim it on-chain${
+        body.voucher?.deadline ? ` within ${untilTxt(body.voucher.deadline)}` : ''} or it lapses. One portrait per bloodline, ever.`);
+    if (body.bond === 'claimed')
+      bits.push(`\u{1F4B0} claimed ${fmt(body.claimed)} $OMR off the bond${body.unvested > 0
+        ? ` — ${fmt(body.unvested)} $OMR is still vesting behind it` : ' — that bond is fully claimed'}`
+        + ' · the release itself is on-chain, from the OmertaBond contract');
+    if (body.bond === 'quote')
+      bits.push(`\u{1F4DD} quote signed — ${fmt(body.payoutOmr)} $OMR at ${body.discountBps / 100}% off the market price, vesting over ${
+        minsTxt(body.vestSeconds)} · submit bond(quote, signature) with your wallet within ${untilTxt(body.deadline)} or it lapses`);
+    // the SIGNING PAYLOAD is not a receipt: without a branch the `body.message` fallback rendered
+    // the whole blob — account UUID and nonce — as the player's toast.
+    if (body.walletLink === 'challenge') bits.push('sign the challenge in your wallet to finish linking it');
     if (body.bought !== undefined && body.paid !== undefined) bits.push(body.bought === 'car'
       ? `🚗 bought outright — $${fmt(body.paid)}. It's in your garage.`
       : `bought ${body.qty} × ${txt(goodName(body.bought) || body.bought)} — $${fmt(body.paid)} out of pocket${body.remaining > 0 ? ` (${body.remaining} left on the lot)` : ''}`);
