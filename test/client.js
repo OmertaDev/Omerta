@@ -7319,6 +7319,81 @@ await app.close();
   console.log('  ✓ wave 73: the market — a pulled lot said nothing, a bid named neither the iron nor the escrow, and a cancel dropped the quantity it gates on');
 }
 
+// ── WAVE 73 (shylock): the collect paid the wrong man's number, and the deadline hung off the pledge
+// Its OWN tokens, after the main loop: a loan needs TWO parties (taking your own offer is refused
+// `own`), and the collect needs an OVERDUE active loan, which means backdating a row the shared
+// fixture never creates. DRIVEN throughout, and the money claim is measured from the DATABASE rather
+// than from the reply under test — the defect was precisely that the reply's own figure and the
+// actor's banked delta are two different numbers.
+{
+  const app3 = await buildServer();
+  const inj3 = async (method, url, token, payload) => {
+    const res = await app3.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
+  };
+  const mk73s = async (nm) => {
+    const t = (await inj3('POST', '/v1/auth/guest')).body.token;
+    await inj3('POST', '/v1/character', t, { name: nm + Math.random().toString(36).slice(2, 7) });
+    const id = (await inj3('GET', '/v1/me', t)).body.character.id;
+    await app3.pool.query('UPDATE characters SET cash=50000000, respect=500000 WHERE id=$1', [id]);
+    const account = (await app3.pool.query('SELECT account_id FROM characters WHERE id=$1', [id])).rows[0].account_id;
+    await app3.pool.query('UPDATE account_persistent SET omr=100000 WHERE account_id=$1', [account]);
+    return { t, id, account };
+  };
+  const cash73 = async (id) => Number((await app3.pool.query('SELECT cash FROM characters WHERE id=$1', [id])).rows[0].cash);
+  const drive73s = async (url, tok, payload, what) => {
+    const r = await inj3('POST', url, tok, payload || null);
+    assert.equal(r.code, 200, `WAVE 73 (shylock) could not drive ${what} (${JSON.stringify(r.body)})`);
+    return { r, line: String(describeFn(r.body, 200)) };
+  };
+  const Lk = await mk73s('Shark '), Mk = await mk73s('Mark ');
+
+  // ── THE TAKE: the deadline is the DEBT'S, so it must attach to the debt ────────────────────────
+  // Both shapes, because the plain one read correctly all along and the bug is in the ORDER: with the
+  // deadline trailing the pledge clause, only the pledged shape shows it. A one-shape drive here is
+  // exactly how this hid.
+  const off73 = await drive73s('/v1/loans', Lk.t, { amount: 100000, rate: 0.2, hours: 24 }, 'the plain offer');
+  const takeP = await drive73s(`/v1/loans/${off73.r.body.id}/take`, Mk.t, {}, 'taking the plain loan');
+  assert(takeP.r.body.dueSeconds > 0, 'the take must SEND its term — the client has no loan catalog');
+  assert(/owe \$120,000 inside 24h/.test(takeP.line),
+    `the deadline belongs to the DEBT: ${takeP.line}`);
+  const Mk2 = await mk73s('Mark2 ');
+  const offO = await drive73s('/v1/loans', Lk.t, { amount: 50000, rate: 0.25, hours: 24, collateralOmr: 200 }, 'the pledged offer');
+  const takeO = await drive73s(`/v1/loans/${offO.r.body.id}/take`, Mk2.t, {}, 'taking the pledged loan');
+  assert.equal(takeO.r.body.pledgedOmr, 200, 'the pledged take must send the escrowed pledge');
+  assert(/owe \$62,500 inside 24h/.test(takeO.line),
+    `with a pledge in the sentence the deadline still belongs to the debt: ${takeO.line}`);
+  assert(!/don't inside/.test(takeO.line) && !/keeps it if you don't 24h/.test(takeO.line),
+    `the deadline must not staple itself to the pledge sentence ("the shark keeps it if you don't inside 24h"): ${takeO.line}`);
+  assert(/escrowed against it/.test(takeO.line), `the pledge clause must survive the reorder: ${takeO.line}`);
+
+  // ── THE COLLECT: the shark's own take, and the three things it does to the mark ────────────────
+  await app3.pool.query("UPDATE loans SET due_at = now() - interval '1 hour' WHERE id=$1", [off73.r.body.id]);
+  const lenderBefore = await cash73(Lk.id);
+  const coll = await drive73s(`/v1/loans/${off73.r.body.id}/collect`, Lk.t, {}, 'the collect');
+  const banked = (await cash73(Lk.id)) - lenderBefore;
+  // GROUND TRUTH is the database: the reply's `seized` is what left the BORROWER, and the line had
+  // been rendering it as the actor's take. They differ by the house vig on every collect.
+  assert.equal(banked, coll.r.body.toLender, 'the reply’s toLender must be what the shark actually banked');
+  assert(coll.r.body.seized > banked, 'this block is vacuous unless the seized figure and the banked one genuinely differ (the vig)');
+  assert(new RegExp(fmtLike(banked)).test(coll.line),
+    `the line must name what the SHARK banked (${fmtLike(banked)}), not only what left the mark: ${coll.line}`);
+  assert(new RegExp(fmtLike(coll.r.body.vig)).test(coll.line) && /vig/.test(coll.line),
+    `the vig is the difference between the two figures — name it: ${coll.line}`);
+  // the withheld half: pressing collect hospitalizes the mark, brands them a welsher for good and
+  // marks them WANTED. Measured from the DATABASE, then required on the line.
+  const markRow = (await app3.pool.query('SELECT welsher, wanted_until, hosp_until FROM characters WHERE id=$1', [Mk.id])).rows[0];
+  assert.equal(markRow.welsher, true, 'the collect must genuinely brand the mark (or the line below asserts nothing)');
+  assert(new Date(markRow.wanted_until) > new Date(), 'the collect must genuinely mark them WANTED');
+  assert(new Date(markRow.hosp_until) > new Date(), 'the collect must genuinely break their legs');
+  assert(coll.r.body.wantedSeconds > 0 && coll.r.body.hospSeconds > 0,
+    'the two CLOCKS are levers — they must ship from the server, never be restated client-side');
+  assert(/welsher/.test(coll.line) && /WANTED/.test(coll.line) && /legs/.test(coll.line),
+    `pressing collect does three things to the mark and the line named none of them: ${coll.line}`);
+  await app3.close();
+  console.log('  ✓ wave 73: the shylock — a collect paid the wrong man’s number and hid what it did to the mark; a pledged take stapled the deadline to the wrong sentence');
+}
+
 // ── WAVE 64 — the lines THE SILENCE LEDGER's first crop now produces. The ledger above proves each
 // reply is no longer mute; these pin what it SAYS, because a branch that fires and says the wrong
 // thing is the same defect one step later. Synthetic on the exact shapes the servers return (the

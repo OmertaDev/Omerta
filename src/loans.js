@@ -448,7 +448,12 @@ export async function collectLoan(ch, borrower, loanId, client, h) {
   await h.notify(client, borrower.id, 'loan_collected', { by: ch.name, seized: collected, car: !!carSeized, omr: omrSeized, wanted: true });
   bus.emit('streets', { type: 'welsher', who: borrower.name, by: ch.name });
   await track(client, ch.account_id, 'loan_collect', { seized: collected, shortfall: owed - collected, car: !!carSeized });
-  return { ok: true, seized: collected, toLender, vig, shortfall: owed - collected, carSeized, omrSeized, wanted: true };
+  // the three consequences a presser is never told about ride with the receipt: the beating, the
+  // permanent welsher brand and the WANTED window. The two CLOCKS are founder levers, so they ship
+  // from here rather than being restated client-side (the crewNextCost/hunterSearchMs discipline —
+  // a restated lever is wrong for everybody the day it moves).
+  return { ok: true, seized: collected, toLender, vig, shortfall: owed - collected, carSeized, omrSeized,
+    wanted: true, wantedSeconds: Math.round(LOAN.WANTED_MS / 1000), hospSeconds: Math.round(LOAN.COLLECT_HOSP_MS / 1000) };
 }
 
 // POST /v1/loans/:id/sell — step 3 (the paper market): the current lender puts this ACTIVE loan's

@@ -3688,7 +3688,11 @@
     // this line — written for the lender, in DOLLARS — fired for the interdiction too, where the field
     // counts UNITS: 20 units of contraband and a $1,200 fine read "collected $20" ahead of the real
     // line. `toLender` is on the collect and nothing else. Driven.
-    if (body.seized && body.toLender !== undefined) bits.push(`collected $${fmt(body.seized)}${body.carSeized ? ' + their car' : ''}${body.omrSeized > 0 ? ` + their ${fmt(body.omrSeized)} $OMR pledge` : ''}${body.shortfall > 0 ? ` — still $${fmt(body.shortfall)} short, and they're marked` : ''}`);
+    // It rendered `seized` — what left the BORROWER — as the shark's own take, and the two differ by
+    // the house vig on every collect ($120,000 seized banked $114,000). It also said nothing about
+    // what pressing it DOES to the mark: a beating, a permanent welsher brand, and a WANTED window
+    // (omertà stripped, NPC hunters rolling). All five figures were already in the reply.
+    if (body.seized && body.toLender !== undefined) bits.push(`collected $${fmt(body.seized)}${body.carSeized ? ' + their car' : ''}${body.omrSeized > 0 ? ` + their ${fmt(body.omrSeized)} $OMR pledge` : ''} — $${fmt(body.toLender)} to you after the $${fmt(body.vig)} vig${body.shortfall > 0 ? ` — still $${fmt(body.shortfall)} short` : ''}${body.wanted ? `. Their legs are broken${body.hospSeconds ? ` (${minsTxt(body.hospSeconds)} in a bed)` : ''}, they're branded a welsher for good, and they're WANTED${body.wantedSeconds ? ` for ${minsTxt(body.wantedSeconds)}` : ''} — omertà stripped, hunters rolling` : ''}`);
     // `pay` is the generic "what it paid" field, but a FAVOR's pay is the poster's gross — the
     // runner nets it minus the house cut, and the favor branch above already says so. Appending the
     // gross here would report a bigger number than the pocket actually moved.
@@ -3987,7 +3991,10 @@
       bits.push(`\u{1F3E6} the house lent you $${fmt(body.principal)} — $${fmt(body.owed)} owed back inside ${body.dueHours}h`);
     else if (body.principal !== undefined && body.owed !== undefined && body.dueSeconds === undefined)
       bits.push(`\uD83E\uDD1D money's on the street — $${fmt(body.principal)} out of your pocket and into escrow, $${fmt(body.owed)} owed back inside ${body.hours}h${body.directed ? ' (spoken for)' : ''}${body.collateralMin > 0 ? `, secured against a car worth $${fmt(body.collateralMin)}+` : ''}${body.collateralOmr > 0 ? `, plus a ${fmt(body.collateralOmr)} $OMR pledge` : ''}. Nobody's on the hook until somebody takes it.`);
-    else if (body.principal !== undefined && body.owed !== undefined) bits.push(`took the loan — $${fmt(body.principal)} now, owe $${fmt(body.owed)}${body.collateral ? ' (car pledged)' : ''}${body.pledgedOmr > 0 ? ` — ${fmt(body.pledgedOmr)} $OMR escrowed against it: it comes home when you square up, the shark keeps it if you don't` : ''}${body.dueSeconds ? ` inside ${minsTxt(body.dueSeconds)}` : ''}`);
+    // the deadline is the DEBT'S, so it has to attach to the debt. Trailing it after the pledge
+    // clause read "the shark keeps it if you don't inside 24h" — a deadline stapled to the wrong
+    // sentence, on a term the borrower is being asked to accept.
+    else if (body.principal !== undefined && body.owed !== undefined) bits.push(`took the loan — $${fmt(body.principal)} now, owe $${fmt(body.owed)}${body.dueSeconds ? ` inside ${minsTxt(body.dueSeconds)}` : ''}${body.collateral ? ' (car pledged)' : ''}${body.pledgedOmr > 0 ? ` — ${fmt(body.pledgedOmr)} $OMR escrowed against it: it comes home when you square up, the shark keeps it if you don't` : ''}`);
     // THE BODYGUARD, which named the price and neither TERM — the pad/nut/Port-lane class on the
     // one purchase whose whole value is a pair of conditions. The cover runs a WINDOW (the reply
     // sent it only as an ISO `until` the client has no parser for; the server ships guardSeconds
