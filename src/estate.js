@@ -213,7 +213,13 @@ export async function nameEstate(ch, name, client, h) {
   await spendOmr(client, h, ESTATE.NAME_OMR, 'estate:name');
   await bumpPrestige(client, ch.account_id, ESTATE.NAME_OMR);
   await upsertEstate(client, ch.account_id, { name: n, spent_omr: Number(cur.spent_omr || 0) + ESTATE.NAME_OMR });
-  return { ok: true, name: n };
+  // `estate` NAMES THE SYSTEM, and it is what makes the price sayable at all: the client's branch
+  // for this line was keyed on the reply having exactly ONE key besides ok/events/character — a
+  // collision guard against the soldier-assign and deed-rename replies, which are byte-identical
+  // {ok, name} — so adding a figure would have silently handed this line to one of them. `omr` and
+  // `spent` mirror upgradeEstate/unlockFeature: both of THIS file's other $OMR burns name their
+  // price, and the naming, which burns the same currency against the same compound, named none.
+  return { ok: true, estate: 'named', name: n, omr: ESTATE.NAME_OMR, spent: Number(cur.spent_omr || 0) + ESTATE.NAME_OMR };
 }
 
 // ── STEP TWO: THE STAFF (the recurring $OMR payroll) + THE GALA (design §A) ──

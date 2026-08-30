@@ -3273,8 +3273,13 @@
     // ASSIGNING a soldier as your second answers {ok, name} — byte-identical to a deed RENAME, so it
     // read "the place has a name now — Paulie from Canal". The `soldier` marker names the system.
     if (body && body.ok && body.soldier && body.name) return `\u{1F396} ${txt(body.name)} is your second now — riding shotgun on the next job`;
-    if (body && body.ok && body.name && body.estate === undefined && body.district === undefined && body.price === undefined && body.tier === undefined && Object.keys(body).filter((k) => k !== 'events' && k !== 'ok' && k !== 'character' && k !== 'owned').length === 1)
-      return `the place has a name now — ${txt(body.name)}`;
+    // NAMING THE COMPOUND burns $OMR and said no price, while both its siblings in the same file
+    // name theirs. It could not be fixed here alone: the branch was keyed on the reply having
+    // exactly ONE key besides ok/events/character — a collision guard against the soldier-assign
+    // and deed-rename replies — so a figure would have handed this line to one of them. Re-keyed on
+    // the server's own `estate` marker, which is a decidable property rather than a key count.
+    if (body && body.ok && body.estate === 'named')
+      return `the place has a name now — ${txt(body.name)}${body.omr ? ` · ${fmt(body.omr)} $OMR${body.spent ? `, ${fmt(body.spent)} sunk into it all told` : ''}` : ''}`;
     if (!body || typeof body !== 'object') return code < 400 ? 'done.' : 'no dice.';
     if (code >= 400) { const e = body.error; return body.message || (e && ERRMAP[e]) || (e ? e.replace(/_/g, ' ') : `the city said no (${code})`); }
     const bits = [];
@@ -3379,7 +3384,14 @@
       bits.push(body.pay ? `🤝 THE PAYOFF — $${fmt(body.pay)}. That's a day's hustle done.` : `🤝 checked in (${body.step}/3) — next: ${body.what || 'keep moving'}`);
     // WORD ON THE STREET — took a corner job / collected the envelope
     if (body.corner === 'accepted') bits.push(`📋 took the job — ${body.how || body.kind}. Do the work, then collect here.`);
-    if (body.corner === 'claimed') bits.push(`📋 THE ENVELOPE — $${fmt(body.cash)} + ${body.respect} respect (${body.claimedToday}/${body.maxDay} today)`);
+    // the CHAIN half: the envelope reports a TOTAL, so a player paid $1,900 and 55 respect was
+    // never told that $1,500 and 40 of it were the block's standing job finishing — nor, on the way
+    // there, that it moved at all. Both figures are levers the client cannot derive, so both ride
+    // the reply.
+    if (body.corner === 'claimed') bits.push(`📋 THE ENVELOPE — $${fmt(body.cash)} + ${body.respect} respect (${body.claimedToday}/${body.maxDay} today)`
+      + (body.chain ? (body.chain.done
+        ? ` · the block's standing job is DONE — $${fmt(body.chain.bonus)} + ${body.chain.respectBonus} respect of that was the bonus for showing up`
+        : ` · the block's standing job moved to ${body.chain.step}/${body.chain.of} — come back tomorrow`) : ''));
     // THE CALL — settled a contact's request (paid from THEIR pocket). A voided call is a 200
     // (the delete must COMMIT — a thrown error would roll it back and jam the slot), so it
     // renders here, not through ERRMAP.
@@ -3405,7 +3417,14 @@
     else if (body.trunk) bits.push(body.win ? `mugged the freight — ${fmt(body.qty)} × ${txt(goodName(body.good))} off their back${body.revenge ? ' · 🗡 payback' : ''}` : `pinched mid-mugging — ${body.jailedS ? Math.round(body.jailedS / 60) + 'm in' : ''} lockup`);
     else if (body.boatTheft) bits.push(body.win ? `⚓ SLIPPED HER MOORINGS — took their ${body.boat.name}${body.revenge ? ' · 🗡 payback' : ''}` : `caught on the gangway — ${body.jailedS ? Math.round(body.jailedS / 60) + 'm in' : ''} lockup`);
     else if (body.sabotage) bits.push(body.win ? `🔧 wrecked their ${body.what} — ${body.name} is laid up${body.revenge ? ' · 🗡 payback' : ''}` : `caught in the stable — ${body.jailedS ? Math.round(body.jailedS / 60) + 'm in' : ''} lockup`);
-    else if (body.cut !== undefined && body.kind) bits.push(body.win ? `shook 'em down — took $${fmt(body.cut)}` : 'the shakedown flopped — nothing to show for it');
+    // THE SHAKEDOWN, whose identical sibling one line up names the front (`off their laundromat`)
+    // and which named it on NEITHER branch, though the reply carried it both times: the
+    // forgotten-sibling shape one branch apart, on the same core function. And the flop is the
+    // withheld-term half — 'nothing to show for it' is false about an action whose security puts
+    // ten to twenty-five points on you, and the roll only the server can state.
+    else if (body.cut !== undefined && body.kind) bits.push(body.win
+      ? `shook 'em down — took $${fmt(body.cut)} out of their ${txt(body.kindName || body.name || body.kind)}`
+      : `the shakedown at their ${txt(body.kindName || body.name || body.kind)} flopped${body.dmg ? ` — their security put ${body.dmg} damage on you` : ' — nothing to show for it'}`);
     if (body.district && body.win === true && body.cut !== undefined && !body.kind) bits.push(`muscled the block — grabbed $${fmt(body.cut)} from their operation`);
     if (body.district && body.win === false && body.dmg !== undefined && body.field === undefined) bits.push(`they held the block — you took ${body.dmg} damage`);
     if (body.fortitude !== undefined && body.cost !== undefined) bits.push(`\u{1F6E1} ${body.name || 'the operation'} in ${$dist(body.district)} is dug in to level ${body.fortitude}${body.max ? `/${body.max}` : ''} — $${fmt(body.cost)} out of the treasury. A rival raid has less chance of taking the till.`);
@@ -3467,7 +3486,11 @@
         + (body.belt ? ' — AND THE BELT' : body.defended ? ' — title DEFENDED' : ''));
     }
     if (body.spec !== undefined && body.name && body.spent !== undefined) bits.push(`✦ your ${txt(body.kindName || body.kind)} is now ${txt(body.name)} (−${body.spent} $OMR)`);
-    if (body.won !== undefined && body.feeBurned !== undefined) bits.push(body.won ? `TOOK IT OVER — ${art(txt(body.kindName || body.kind))} is yours (they got $${fmt(body.net)})` : `the takeover of ${art(txt(body.kindName || body.kind))} was fought off — the $${fmt(body.feeBurned)} fee is gone`);
+    // THE TAKEOVER quoted only the SELLER's proceeds, so the only figure a player read on the
+    // largest purchase on that screen was not what it cost them: `price` left their pocket and the
+    // `feeBurned` went with it, non-refundable. The LOSS line named that very fee, so the two halves
+    // of one action disagreed about whether the fee was worth mentioning.
+    if (body.won !== undefined && body.feeBurned !== undefined) bits.push(body.won ? `TOOK IT OVER — ${art(txt(body.kindName || body.kind))} is yours for $${fmt(body.price)}, and the $${fmt(body.feeBurned)} fee burned on top (they walked with $${fmt(body.net)})` : `the takeover of ${art(txt(body.kindName || body.kind))} was fought off — the $${fmt(body.feeBurned)} fee is gone`);
     if (body.pledged !== undefined && body.standing) bits.push(`pledged ${fmt(body.pledged)} $OMR to the treasury — ${body.standing.tier} (score ${fmt(body.standing.score)}). It is BURNED, not deposited: the score is what you get, and it does not come back`);
     if (body.charter !== undefined && body.name && body.spent !== undefined) bits.push(`✦ commissioned ${art(body.name)} (−${body.spent} $OMR)`);
     if (body.restored !== undefined && body.need !== undefined) bits.push(body.restored ? `the floor OVERRODE the head veto — the decree is RESTORED (${body.weight}/${body.need})` : `moved to override — the floor musters ${body.weight}/${body.need}`);
@@ -3925,7 +3948,13 @@
     if (body.paper === 'pulled') bits.push("pulled the paper off the market — the claim's yours again, and nobody can buy it out from under you.");
     if (body.paper === 'bought') bits.push(`bought the paper — $${fmt(body.price)} down ($${fmt(body.toSeller)} to the old lender, $${fmt(body.take)} house take). The debt owes YOU $${fmt(body.owed)} now.`);
     else if (body.toSeller !== undefined) bits.push(`took over ${art(body.name || 'club')} — $${fmt(body.paid)} paid ($${fmt(body.toSeller)} to the old owner)`);
-    if (body.won !== undefined && body.feePaid !== undefined) bits.push(body.won ? `STOOD OVER ${art(body.name || 'club')} — forced the sale, it's yours ($${fmt(body.paid)})` : `the standover was repelled — the $${fmt(body.feePaid)} fee's gone`);
+    // THE STANDOVER, the same two withheld terms one system over. `feePaid` burns win OR LOSE and
+    // only the loss line named it, so a raider read the sale price where the outlay was price PLUS
+    // fee. And an unnamed house sends `name: null`, which left the line saying "the club" with
+    // nothing to place it by — the district is what identifies it, and the server sends it now.
+    if (body.won !== undefined && body.feePaid !== undefined) bits.push(body.won
+      ? `STOOD OVER ${body.name ? art(txt(body.name)) : `the club in ${$dist(body.district)}`} — forced the sale, it's yours: $${fmt(body.paid)} to buy it out and the $${fmt(body.feePaid)} fee gone on top`
+      : `the standover${body.district ? ` in ${$dist(body.district)}` : ''} was repelled — the $${fmt(body.feePaid)} fee's gone`);
     // A bout and a race BOTH land the shared score line above, which already states the money — so
     // the result read "+$6,000 · … took $6,000", the same figure twice in one toast. Written as a
     // SCAN of what has already been said rather than a shape test (the heat-echo precedent), so a

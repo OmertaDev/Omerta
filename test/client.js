@@ -50,7 +50,8 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { buildServer } from '../src/server.js';
 import { M3, M4, PATHS, NPC_HITMEN, HEIST_ROLES, HEIST_JOBS, DRUGS, GOODS, DISTRICTS,
   COMMISSION, CONVOY, DUELS, TERRITORY_TYPES, CARS, TRIMS, ASSETS, RACKETS, BUSINESSES, ESTATE, WIRE, SECRETS, STABLE, WORLD, WORLD_NPCS,
-  PEN, HONOR, MARRIAGE, CAMPAIGNS, LIMITED_RUNS, SHIPMENT, VANITY } from '../src/rules.js';
+  PEN, HONOR, MARRIAGE, CAMPAIGNS, LIMITED_RUNS, SHIPMENT, VANITY,
+  BUSINESS_EMPIRE, CORNER, cornerTasksOf } from '../src/rules.js';
 import { bumpHonor } from '../src/honor.js';
 import { mintLimitedRun } from '../src/economy.js';
 
@@ -7923,6 +7924,195 @@ await app.close();
 
   await app6.close();
   console.log('  ✓ wave 73: freight — an offshore handoff and a tip-off that said "done.", a refund with no currency on it, a hull that said less than its own tune-up, and a refusal that named the district by its storage key');
+}
+
+// ── WAVE 73 (empire): the front that was named by its storage key, the beating nobody was told
+// about, a refusal that named one of three live specs, and the largest purchase on the screen
+// quoting only what the SELLER walked away with ─────────────────────────────────────────────────
+// Its OWN tokens after the main loop, for the same reason the freight block has them: every one of
+// these needs a second party who OWNS something (a front, a club) and a shared fixture has neither
+// — and a refused drive is skipped in SILENCE, which reads on the summary line exactly like a
+// covered one. Every claim is asserted in two halves — the SERVER sent the field, then the driven
+// line reads it — because a synthetic literal passes straight through the mutation that stops the
+// field being sent.
+{
+  const app7 = await buildServer();
+  const inj7 = async (method, url, token, payload) => {
+    const res = await app7.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
+  };
+  const mkE = async (nm, loc, stats) => {
+    const t = (await inj7('POST', '/v1/auth/guest')).body.token;
+    await inj7('POST', '/v1/character', t, { name: nm + Math.random().toString(36).slice(2, 7) });
+    const id = (await inj7('GET', '/v1/me', t)).body.character.id;
+    await app7.pool.query(
+      'UPDATE characters SET cash=90000000, respect=5000000, energy=500, health=100, loc=$2, muscle=$3, cunning=$4, speed=$5 WHERE id=$1',
+      [id, loc, stats.muscle, stats.cunning, stats.speed]);
+    return { t, id };
+  };
+  const driveE = async (url, tok, payload, what) => {
+    const r = await inj7('POST', url, tok, payload);
+    assert.equal(r.code, 200, `WAVE 73 (empire) could not drive ${what} (${JSON.stringify(r.body)})`);
+    described++;
+    return { r, line: String(describeFn(r.body, 200)) };
+  };
+
+  // ── THE FRONT, EXTORTED. rob and shakedown are the SAME core (extortFront) and disagreed about
+  // which key carries the display name: the win/loss ROB branches returned `name`, the SHAKEDOWN
+  // loss `kindName`, and the client read only `kindName` — so both rob branches rendered the raw
+  // catalog KEY. It is bounded to capitalisation today only because every BUSINESSES id happens to
+  // be its own lowercased name, and it breaks the day a front is added whose id is not.
+  // The rolls are STAT contests with no test knob, so each outcome is forced by the build: a rob
+  // is cunning+speed/2 both sides, a shakedown muscle+cunning/2, and rand(25) cannot cross the gap.
+  const mark = await mkE('Mark ', 'docks', { muscle: 3, cunning: 3, speed: 3 });
+  const thief = await mkE('Thief ', 'docks', { muscle: 3, cunning: 200, speed: 200 });
+  const front = await driveE('/v1/business/laundromat/buy', mark.t, {}, "the mark's front");
+  const frontId = front.r.body.id;
+  const backdate = () => app7.pool.query(
+    "UPDATE businesses SET last_collect_at = now() - interval '20 hours', shakedown_at = NULL WHERE id=$1", [frontId]);
+  const frontName = BUSINESSES.find((b) => b.kind === 'laundromat').name;
+  assert.notEqual(frontName, 'laundromat', 'WAVE 73 (empire) precondition: this front must be named something other than its id');
+
+  await backdate();
+  const rob = await driveE(`/v1/business/${frontId}/rob`, thief.t, {}, 'the register');
+  assert.equal(rob.r.body.win, true, 'WAVE 73 (empire): the rob must LAND, or the win branch is never read');
+  assert.ok(rob.r.body.kindName === frontName, "WAVE 73 (empire): the rob must SEND the front's display name — the client has no business catalog, so a reply carrying only the catalog key can render nothing but the key");
+  assert.ok(rob.line.includes(frontName) && !/\blaundromat\b/.test(rob.line),
+    `WAVE 73 (empire): the rob must name the front, never its storage key — got ${rob.line}`);
+
+  // the SHAKEDOWN, both branches: its identical sibling names the front and it named neither — and
+  // the loss COSTS HEALTH, which is not in the reply at all, so the client could not have said it.
+  await backdate();
+  await app7.pool.query('UPDATE characters SET muscle=200 WHERE id=$1', [thief.id]);
+  const shake = await driveE(`/v1/business/${frontId}/shakedown`, thief.t, {}, 'the shakedown');
+  assert.equal(shake.r.body.win, true, 'WAVE 73 (empire): the shakedown must LAND, or its win branch is never read');
+  assert.ok(shake.line.includes(frontName) && !/\blaundromat\b/.test(shake.line),
+    `WAVE 73 (empire): a landed shakedown must name the front its rob sibling names — got ${shake.line}`);
+  assert.ok(shake.line.includes(fmtLike(shake.r.body.cut)), `WAVE 73 (empire): the shakedown must still name the cut — got ${shake.line}`);
+
+  await backdate();
+  await app7.pool.query('UPDATE characters SET muscle=3, health=100 WHERE id=$1', [thief.id]);
+  await app7.pool.query('UPDATE characters SET muscle=200 WHERE id=$1', [mark.id]);
+  const hpPre = Number((await app7.pool.query('SELECT health FROM characters WHERE id=$1', [thief.id])).rows[0].health);
+  const flop = await driveE(`/v1/business/${frontId}/shakedown`, thief.t, {}, 'the shakedown that flops');
+  assert.equal(flop.r.body.win, false, 'WAVE 73 (empire): this shakedown must FAIL, or the loss branch is never read');
+  const hpPost = Number((await app7.pool.query('SELECT health FROM characters WHERE id=$1', [thief.id])).rows[0].health);
+  // GROUND TRUTH is the DATABASE: the beating the reply claims is the health the security actually took.
+  assert.ok(hpPre - hpPost > 0, 'WAVE 73 (empire) precondition: a repelled shakedown must genuinely cost health, or the claim below is vacuous');
+  assert.equal(flop.r.body.dmg, hpPre - hpPost,
+    "WAVE 73 (empire): the flop must SEND the beating it took — 'nothing to show for it' is false about an action that costs health, and the client cannot compute a roll");
+  assert.ok(flop.line.includes(frontName), `WAVE 73 (empire): a repelled shakedown must name the front too — got ${flop.line}`);
+  assert.ok(flop.line.includes(String(flop.r.body.dmg)), `WAVE 73 (empire): the flop must state the beating — got ${flop.line}`);
+
+  // ── THE SPEC REFUSAL named ONE of three live specs. The Accountant and the Fixer were retired
+  // when laundering was severed and UN-retired when scrutiny became income-sourced; the refusal
+  // never moved with them (the copy-lags-the-lever class), so it is factually false about the
+  // game's own catalog. describe() shows body.message FIRST, so the server's sentence IS the line.
+  const specs = Object.values(BUSINESS_EMPIRE.SPECS).map((s) => s.name);
+  assert.ok(specs.length > 1, 'WAVE 73 (empire) precondition: more than one spec must be live, or this assertion is vacuous');
+  const badSpec = await inj7('POST', `/v1/business/${frontId}/specialize`, mark.t, { spec: 'nonesuch' });
+  assert.equal(badSpec.body.error, 'bad_spec', 'WAVE 73 (empire): a bogus spec must refuse, or this block is vacuous');
+  const specLine = String(describeFn(badSpec.body, badSpec.code)); described++;
+  for (const s of specs) assert.ok(specLine.includes(s),
+    `WAVE 73 (empire): the refusal must name every live spec — ${s} is on the shelf and the message left it off: ${specLine}`);
+
+  // ── THE TAKEOVER quoted only the SELLER's proceeds. The buyer's own outlay — the assessed price
+  // plus a fee that burns win or lose — is in the reply and was unrendered, so the win line
+  // understated the cost of the largest purchase on the screen while the LOSS line named that very
+  // fee: the two halves of one action disagreeing about whether the fee is worth mentioning.
+  process.env.BUSINESS_TAKEOVER_P = '1';
+  const raider = await mkE('Raider ', 'docks', { muscle: 50, cunning: 50, speed: 50 });
+  const take = await driveE(`/v1/business/${frontId}/takeover`, raider.t, {}, 'the takeover');
+  assert.equal(take.r.body.won, true, 'WAVE 73 (empire): the takeover must LAND, or its win branch is never read');
+  assert.ok(take.r.body.price > 0 && take.r.body.feeBurned > 0, 'WAVE 73 (empire): the win must SEND both halves of the outlay');
+  assert.ok(take.line.includes(fmtLike(take.r.body.price)), `WAVE 73 (empire): the win must name the price the BUYER paid — got ${take.line}`);
+  assert.ok(take.line.includes(fmtLike(take.r.body.feeBurned)), `WAVE 73 (empire): the win must name the fee that burned on top — the loss line names it — got ${take.line}`);
+  assert.ok(take.line.includes(fmtLike(take.r.body.net)), `WAVE 73 (empire): the win must keep what the seller walked away with — got ${take.line}`);
+  delete process.env.BUSINESS_TAKEOVER_P;
+
+  // ── THE STANDOVER: the same shape one system over. `feePaid` burns win OR lose and only the LOSS
+  // line named it, so a raider read $750,000 where the outlay was $1,000,000 — and an unnamed house
+  // sends `name: null`, so the line said only 'the club' with no district to place it.
+  process.env.SPEAKEASY_STANDOVER_P = '1';
+  const host = await mkE('Host ', 'neon', { muscle: 3, cunning: 3, speed: 3 });
+  const heavy = await mkE('Heavy ', 'neon', { muscle: 200, cunning: 200, speed: 200 });
+  for (const c of [host, heavy]) await app7.pool.query(
+    "UPDATE account_persistent SET made_until = now() + interval '30 days' WHERE account_id=(SELECT account_id FROM characters WHERE id=$1)", [c.id]);
+  await driveE('/v1/speakeasy/neon/open', host.t, {}, 'the club');
+  const stand = await driveE('/v1/speakeasy/neon/standover', heavy.t, {}, 'the standover');
+  assert.equal(stand.r.body.won, true, 'WAVE 73 (empire): the standover must LAND, or its win branch is never read');
+  assert.equal(stand.r.body.name, null, 'WAVE 73 (empire) precondition: this house must be UNNAMED, or the district fallback is never exercised');
+  assert.equal(stand.r.body.district, 'neon', "WAVE 73 (empire): the standover must SEND the district — an unnamed club has nothing else to place it by");
+  const clubDist = DISTRICTS.find((d) => d.id === 'neon').name;
+  assert.ok(stand.line.includes(clubDist) && !/\bneon\b/.test(stand.line),
+    `WAVE 73 (empire): an unnamed club must be placed by its district, never by its storage key — got ${stand.line}`);
+  assert.ok(stand.line.includes(fmtLike(stand.r.body.feePaid)),
+    `WAVE 73 (empire): the win must name the fee that burned — the loss line does, and the raider's outlay is price PLUS fee — got ${stand.line}`);
+  assert.ok(stand.line.includes(fmtLike(stand.r.body.paid)), `WAVE 73 (empire): the win must still name the forced sale price — got ${stand.line}`);
+  delete process.env.SPEAKEASY_STANDOVER_P;
+
+  // ── THE COMPOUND'S NAME is a $OMR burn and the line named no price, while both its siblings in
+  // the same file name theirs. The old branch was keyed on the reply having exactly ONE key besides
+  // ok/events/character (a collision guard against the soldier-assign and deed-rename replies), so
+  // sending the price BREAKS that guard: the fix has to be paired — a system marker at the source.
+  const heir = await mkE('Heir ', 'docks', { muscle: 5, cunning: 5, speed: 5 });
+  await app7.pool.query(
+    'UPDATE account_persistent SET omr=100000 WHERE account_id=(SELECT account_id FROM characters WHERE id=$1)', [heir.id]);
+  await driveE('/v1/estate/upgrade', heir.t, {}, 'the compound');
+  const named = await driveE('/v1/estate/name', heir.t, { name: 'The Quiet Room' }, 'the naming');
+  assert.equal(named.r.body.estate, 'named', 'WAVE 73 (empire): the naming must NAME ITS SYSTEM — the one-key count it was keyed on cannot survive a price being added');
+  assert.equal(named.r.body.omr, ESTATE.NAME_OMR, 'WAVE 73 (empire): the naming must SEND the burn — a $OMR spend whose two siblings both name theirs');
+  assert.ok(named.line.includes('The Quiet Room'), `WAVE 73 (empire): the naming must still name the place — got ${named.line}`);
+  assert.ok(named.line.includes(fmtLike(named.r.body.omr)), `WAVE 73 (empire): the naming must state the $OMR it burned — got ${named.line}`);
+
+  // ── THE CORNER'S STANDING JOB — three separate days of showing up on the same block — advanced,
+  // completed and folded a bonus into the envelope, and the line read neither shape: a player was
+  // never told the chain moved, never told it finished, and never told that most of a completing
+  // envelope was the bonus. The counter is bumped in the DATABASE rather than by doing the work,
+  // so the drive is deterministic whichever kind the day's seed drew for a slot.
+  const grafter = await mkE('Grafter ', 'docks', { muscle: 5, cunning: 5, speed: 5 });
+  const day = Math.floor(Date.now() / 86400000);
+  const cornerAt = async (district, slot) => {
+    await app7.pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [grafter.id, district]);
+    const acc = await driveE(`/v1/corner/${slot}/accept`, grafter.t, {}, `the corner job in ${district}`);
+    const counters = JSON.stringify({ [acc.r.body.kind]: 99 });
+    await app7.pool.query(
+      `INSERT INTO daily_progress (character_id, day, counters) VALUES ($1,$2,$3)
+       ON CONFLICT (character_id, day) DO UPDATE SET counters=$3`, [grafter.id, day, counters]);
+    return { kind: acc.r.body.kind, claim: await driveE(`/v1/corner/${slot}/claim`, grafter.t, {}, `the envelope in ${district}`) };
+  };
+  // the two claims must be different KINDS of work — the corner pays one envelope per kind a day.
+  const pair = [];
+  for (const d of ['docks', 'canal', 'brick', 'neon', 'foundry', 'cathedral']) {
+    for (const s of [0, 1, 2]) {
+      const k = cornerTasksOf(d, day).find((x) => x.slot === s)?.kind;
+      if (k && !pair.some((p) => p.kind === k)) { pair.push({ district: d, slot: s, kind: k }); break; }
+    }
+    if (pair.length >= 2) break;
+  }
+  assert.ok(pair.length >= 2, 'WAVE 73 (empire) precondition: two corner jobs of different kinds must be reachable today');
+  const running = await cornerAt(pair[0].district, pair[0].slot);
+  assert.ok(running.claim.r.body.chain && running.claim.r.body.chain.of > 0,
+    'WAVE 73 (empire): a claim must SEND where the block\'s standing job now stands, or it is invisible');
+  assert.ok(running.claim.line.includes(`${running.claim.r.body.chain.step}`) && /standing job|the block/i.test(running.claim.line),
+    `WAVE 73 (empire): the envelope must say the standing job moved and how far — got ${running.claim.line}`);
+  // seed the SECOND block one step from done, so the next claim there completes and pays the bonus
+  await app7.pool.query(
+    `INSERT INTO corner_chains (character_id, district, step, last_day, started_day) VALUES ($1,$2,$3,$4,$4)`,
+    [grafter.id, pair[1].district, CORNER.CHAIN_STEPS - 1, day - 1]);
+  const done = await cornerAt(pair[1].district, pair[1].slot);
+  const ch2 = done.claim.r.body.chain;
+  assert.equal(ch2.done, true, 'WAVE 73 (empire): the seeded block must COMPLETE, or the completion line is never read');
+  assert.equal(ch2.bonus, CORNER.CHAIN_BONUS, 'WAVE 73 (empire): the completing claim must SEND the cash bonus folded into the envelope');
+  assert.equal(ch2.respectBonus, CORNER.CHAIN_RESPECT,
+    'WAVE 73 (empire): the completing claim must SEND the respect bonus too — the envelope reports a TOTAL, and a player told $1,900 has no way to know $1,500 of it was the standing job');
+  assert.ok(done.claim.line.includes(fmtLike(ch2.bonus)),
+    `WAVE 73 (empire): a completing envelope must split the bonus out of the total — got ${done.claim.line}`);
+  assert.ok(/standing job|three days|the block/i.test(done.claim.line),
+    `WAVE 73 (empire): a completing envelope must say the block's standing job is DONE — got ${done.claim.line}`);
+
+  await app7.close();
+  console.log('  ✓ wave 73: empire — a front named by its storage key, a beating nobody was told about, a refusal that named one of three live specs, and the biggest purchase on the screen quoting only what the seller walked away with');
 }
 
 console.log(`✅ client wiring test passed — across the console AND /admin: of ${refs.size} routes they can ` +
