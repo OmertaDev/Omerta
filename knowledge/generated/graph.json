@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "309beb2f37c5b16870278fcec5d39371e37ce519",
+  "sourceRevision": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5657,
-    "edges": 24833,
+    "nodes": 5659,
+    "edges": 24858,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 56,
-      "Commit": 1299,
+      "Commit": 1301,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 9897,
+      "CHANGED": 9920,
       "CONTAINS": 1846,
       "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1299,
+      "HAS_COMMIT": 1301,
       "IMPLEMENTS": 124,
       "IMPORTS": 1633,
       "INHERITS": 12,
@@ -32493,20 +32493,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1162722,
-      "lines": 11959,
-      "version": "49f9aaca5945132c",
+      "bytes": 1165195,
+      "lines": 11984,
+      "version": "44df0cf44426d9e9",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "49f9aaca5945132c"
+          "version": "44df0cf44426d9e9"
         }
       ],
-      "lastChangedAt": "2026-08-30T10:09:55.000Z",
+      "lastChangedAt": "2026-08-30T10:40:34.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "68dea84c55ec19d02a76f5f2a1f50775f8392e8f"
+      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
     },
     {
       "key": "Artifact:public/manifest.json",
@@ -33275,20 +33275,20 @@
       "path": "src/casino.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 110805,
+      "bytes": 110880,
       "lines": 1471,
-      "version": "e7a638f202b8298d",
+      "version": "5dbe3848533199e3",
       "text": true,
       "provenance": [
         {
           "file": "src/casino.js",
           "line": 1,
-          "version": "e7a638f202b8298d"
+          "version": "5dbe3848533199e3"
         }
       ],
-      "lastChangedAt": "2026-08-30T10:09:55.000Z",
+      "lastChangedAt": "2026-08-30T10:40:34.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "68dea84c55ec19d02a76f5f2a1f50775f8392e8f"
+      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
     },
     {
       "key": "Artifact:src/chain.js",
@@ -33482,20 +33482,20 @@
       "path": "src/collision.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 6789,
-      "lines": 98,
-      "version": "31679925ae2f74d0",
+      "bytes": 6719,
+      "lines": 97,
+      "version": "d4e71f4309182e2d",
       "text": true,
       "provenance": [
         {
           "file": "src/collision.js",
           "line": 1,
-          "version": "31679925ae2f74d0"
+          "version": "d4e71f4309182e2d"
         }
       ],
-      "lastChangedAt": "2026-08-20T20:35:54.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0e02724224334c3bc0e8ad778340741d3cfe63fa"
+      "lastChangedAt": "2026-08-30T10:40:34.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
     },
     {
       "key": "Artifact:src/commission.js",
@@ -33551,20 +33551,20 @@
       "path": "src/contacts.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 15834,
-      "lines": 248,
-      "version": "dbb1bb452cba1f96",
+      "bytes": 15764,
+      "lines": 247,
+      "version": "ea88ff08c644905c",
       "text": true,
       "provenance": [
         {
           "file": "src/contacts.js",
           "line": 1,
-          "version": "dbb1bb452cba1f96"
+          "version": "ea88ff08c644905c"
         }
       ],
-      "lastChangedAt": "2026-08-11T15:47:18.000Z",
-      "lastChangedBy": "CRVYDEV",
-      "lastChangedCommit": "75bab0b18ca25130e86a9706726ca801a4fc8dbf"
+      "lastChangedAt": "2026-08-30T10:40:34.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
     },
     {
       "key": "Artifact:src/content/compiler.js",
@@ -33666,20 +33666,20 @@
       "path": "src/convoy.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 43038,
+      "bytes": 43067,
       "lines": 581,
-      "version": "1012670652eb1aed",
+      "version": "86cc654e3e01a7ef",
       "text": true,
       "provenance": [
         {
           "file": "src/convoy.js",
           "line": 1,
-          "version": "1012670652eb1aed"
+          "version": "86cc654e3e01a7ef"
         }
       ],
-      "lastChangedAt": "2026-08-26T07:41:43.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "42693599f790a6ecd99a7aafb46a50159f23966f"
+      "lastChangedAt": "2026-08-30T10:40:34.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
     },
     {
       "key": "Artifact:src/corner.js",
@@ -33689,20 +33689,20 @@
       "path": "src/corner.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 9699,
-      "lines": 156,
-      "version": "203d453e84ed477d",
+      "bytes": 9629,
+      "lines": 155,
+      "version": "c84dae98f63a977b",
       "text": true,
       "provenance": [
         {
           "file": "src/corner.js",
           "line": 1,
-          "version": "203d453e84ed477d"
+          "version": "c84dae98f63a977b"
         }
       ],
-      "lastChangedAt": "2026-08-26T05:34:11.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "138b54f595f89b7bf85eb939dc354e22799e5f9b"
+      "lastChangedAt": "2026-08-30T10:40:34.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
     },
     {
       "key": "Artifact:src/crew.js",
@@ -33712,20 +33712,20 @@
       "path": "src/crew.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 29008,
-      "lines": 401,
-      "version": "99379fa1ed138f76",
+      "bytes": 28938,
+      "lines": 400,
+      "version": "ac4302dbc27177ad",
       "text": true,
       "provenance": [
         {
           "file": "src/crew.js",
           "line": 1,
-          "version": "99379fa1ed138f76"
+          "version": "ac4302dbc27177ad"
         }
       ],
-      "lastChangedAt": "2026-08-11T15:47:18.000Z",
-      "lastChangedBy": "CRVYDEV",
-      "lastChangedCommit": "75bab0b18ca25130e86a9706726ca801a4fc8dbf"
+      "lastChangedAt": "2026-08-30T10:40:34.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
     },
     {
       "key": "Artifact:src/day.js",
@@ -33804,20 +33804,20 @@
       "path": "src/deeds.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 42509,
-      "lines": 556,
-      "version": "01fde6d3ed39fb74",
+      "bytes": 42439,
+      "lines": 555,
+      "version": "0ca74e24c610b05c",
       "text": true,
       "provenance": [
         {
           "file": "src/deeds.js",
           "line": 1,
-          "version": "01fde6d3ed39fb74"
+          "version": "0ca74e24c610b05c"
         }
       ],
-      "lastChangedAt": "2026-08-20T02:50:07.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "2063c8b41954dbd61c7888ac9824572dc5840f9a"
+      "lastChangedAt": "2026-08-30T10:40:34.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
     },
     {
       "key": "Artifact:src/desk.js",
@@ -33896,20 +33896,20 @@
       "path": "src/discovery.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 10333,
-      "lines": 149,
-      "version": "be0893dc165dd903",
+      "bytes": 10263,
+      "lines": 148,
+      "version": "d3638083f37825da",
       "text": true,
       "provenance": [
         {
           "file": "src/discovery.js",
           "line": 1,
-          "version": "be0893dc165dd903"
+          "version": "d3638083f37825da"
         }
       ],
-      "lastChangedAt": "2026-08-20T20:35:54.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0e02724224334c3bc0e8ad778340741d3cfe63fa"
+      "lastChangedAt": "2026-08-30T10:40:34.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
     },
     {
       "key": "Artifact:src/dispatch.js",
@@ -34195,20 +34195,20 @@
       "path": "src/favors.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 22799,
-      "lines": 332,
-      "version": "3a7bb193ec847193",
+      "bytes": 22729,
+      "lines": 331,
+      "version": "9026bd6a0e76da70",
       "text": true,
       "provenance": [
         {
           "file": "src/favors.js",
           "line": 1,
-          "version": "3a7bb193ec847193"
+          "version": "9026bd6a0e76da70"
         }
       ],
-      "lastChangedAt": "2026-08-26T09:15:32.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d8bff472a99bede6e1deb41f3a51d051eba39ff8"
+      "lastChangedAt": "2026-08-30T10:40:34.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
     },
     {
       "key": "Artifact:src/fees.js",
@@ -34448,20 +34448,20 @@
       "path": "src/heists.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 42217,
-      "lines": 576,
-      "version": "ae433044ce28ac78",
+      "bytes": 42761,
+      "lines": 581,
+      "version": "6fe6c56bc1f92e9c",
       "text": true,
       "provenance": [
         {
           "file": "src/heists.js",
           "line": 1,
-          "version": "ae433044ce28ac78"
+          "version": "6fe6c56bc1f92e9c"
         }
       ],
-      "lastChangedAt": "2026-08-26T09:15:32.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d8bff472a99bede6e1deb41f3a51d051eba39ff8"
+      "lastChangedAt": "2026-08-30T10:40:34.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
     },
     {
       "key": "Artifact:src/home.js",
@@ -34517,20 +34517,20 @@
       "path": "src/hustle.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 5846,
-      "lines": 104,
-      "version": "35097be2391761eb",
+      "bytes": 5776,
+      "lines": 103,
+      "version": "5f0e4b20031c0b40",
       "text": true,
       "provenance": [
         {
           "file": "src/hustle.js",
           "line": 1,
-          "version": "35097be2391761eb"
+          "version": "5f0e4b20031c0b40"
         }
       ],
-      "lastChangedAt": "2026-08-19T18:43:35.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3b22558bfa5533bea6129b1a773cfd2abe279af0"
+      "lastChangedAt": "2026-08-30T10:40:34.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
     },
     {
       "key": "Artifact:src/invariants.js",
@@ -34678,20 +34678,20 @@
       "path": "src/market.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 46483,
+      "bytes": 46540,
       "lines": 635,
-      "version": "b68ab90e6fee24ef",
+      "version": "7ca0e0564ba42868",
       "text": true,
       "provenance": [
         {
           "file": "src/market.js",
           "line": 1,
-          "version": "b68ab90e6fee24ef"
+          "version": "7ca0e0564ba42868"
         }
       ],
-      "lastChangedAt": "2026-08-30T08:54:23.000Z",
+      "lastChangedAt": "2026-08-30T10:40:34.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "f3eec32d68469474737838b771bce614fe406bf8"
+      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
     },
     {
       "key": "Artifact:src/mastery.js",
@@ -35092,20 +35092,20 @@
       "path": "src/port.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 39979,
-      "lines": 488,
-      "version": "10ffd50b5003793e",
+      "bytes": 40581,
+      "lines": 493,
+      "version": "d9284b61feae0669",
       "text": true,
       "provenance": [
         {
           "file": "src/port.js",
           "line": 1,
-          "version": "10ffd50b5003793e"
+          "version": "d9284b61feae0669"
         }
       ],
-      "lastChangedAt": "2026-08-24T18:49:55.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dee7593a66b955d677656afab4516cb68edb918d"
+      "lastChangedAt": "2026-08-30T10:40:34.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
     },
     {
       "key": "Artifact:src/portfolio.js",
@@ -35299,20 +35299,20 @@
       "path": "src/ring.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 26587,
+      "bytes": 26612,
       "lines": 444,
-      "version": "3fe526ca191a505e",
+      "version": "542fcf34d1233972",
       "text": true,
       "provenance": [
         {
           "file": "src/ring.js",
           "line": 1,
-          "version": "3fe526ca191a505e"
+          "version": "542fcf34d1233972"
         }
       ],
-      "lastChangedAt": "2026-08-20T00:38:39.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3bbc776387d45bb0daa76d3db9db43788fdceb8a"
+      "lastChangedAt": "2026-08-30T10:40:34.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
     },
     {
       "key": "Artifact:src/rivals.js",
@@ -35920,20 +35920,20 @@
       "path": "src/rules.tail.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 489149,
-      "lines": 6063,
-      "version": "268e9ba8f41804ee",
+      "bytes": 489846,
+      "lines": 6071,
+      "version": "65d7b15f135237cc",
       "text": true,
       "provenance": [
         {
           "file": "src/rules.tail.js",
           "line": 1,
-          "version": "268e9ba8f41804ee"
+          "version": "65d7b15f135237cc"
         }
       ],
-      "lastChangedAt": "2026-08-29T00:22:12.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
+      "lastChangedAt": "2026-08-30T10:40:34.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
     },
     {
       "key": "Artifact:src/rwahealth.js",
@@ -36242,20 +36242,20 @@
       "path": "src/shipment.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 10984,
-      "lines": 176,
-      "version": "7e48c1f291722ddb",
+      "bytes": 10921,
+      "lines": 175,
+      "version": "9a82cc90d88e1046",
       "text": true,
       "provenance": [
         {
           "file": "src/shipment.js",
           "line": 1,
-          "version": "7e48c1f291722ddb"
+          "version": "9a82cc90d88e1046"
         }
       ],
-      "lastChangedAt": "2026-08-24T19:44:53.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b1a180875960a09974d306bf774ea2949d071ff8"
+      "lastChangedAt": "2026-08-30T10:40:34.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
     },
     {
       "key": "Artifact:src/skills.js",
@@ -36311,20 +36311,20 @@
       "path": "src/social/combat.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 84124,
+      "bytes": 84177,
       "lines": 1048,
-      "version": "efddfff85efcc12d",
+      "version": "005fd8c0dfbb50bb",
       "text": true,
       "provenance": [
         {
           "file": "src/social/combat.js",
           "line": 1,
-          "version": "efddfff85efcc12d"
+          "version": "005fd8c0dfbb50bb"
         }
       ],
-      "lastChangedAt": "2026-08-30T08:05:04.000Z",
+      "lastChangedAt": "2026-08-30T10:40:34.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "8cb5147bd0852a9f8b9959d2de7753a23e4b378a"
+      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
     },
     {
       "key": "Artifact:src/social/contracts.js",
@@ -37553,20 +37553,20 @@
       "path": "test/client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 605224,
-      "lines": 7875,
-      "version": "a7427924c039ed0b",
+      "bytes": 615459,
+      "lines": 7991,
+      "version": "84f746afc7857ded",
       "text": true,
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "a7427924c039ed0b"
+          "version": "84f746afc7857ded"
         }
       ],
-      "lastChangedAt": "2026-08-30T10:30:48.000Z",
+      "lastChangedAt": "2026-08-30T10:40:34.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "309beb2f37c5b16870278fcec5d39371e37ce519"
+      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
     },
     {
       "key": "Artifact:test/clues.js",
@@ -54437,6 +54437,22 @@
       ]
     },
     {
+      "key": "Commit:8b295044829a5866b59dae005b3ee80262953333",
+      "type": "Commit",
+      "id": "8b295044829a5866b59dae005b3ee80262953333",
+      "label": "Knowledge graph regenerated for the pen flake fix",
+      "title": "Knowledge graph regenerated for the pen flake fix",
+      "date": "2026-08-30T10:31:27.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8b295044829a5866b59dae005b3ee80262953333",
+      "provenance": [
+        {
+          "commit": "8b295044829a5866b59dae005b3ee80262953333",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8b295044829a5866b59dae005b3ee80262953333"
+        }
+      ]
+    },
+    {
       "key": "Commit:8b2fe4b5d0bcd30804b64ff85e1328788c71ecd1",
       "type": "Commit",
       "id": "8b2fe4b5d0bcd30804b64ff85e1328788c71ecd1",
@@ -62833,6 +62849,22 @@
         {
           "commit": "f65c40d342e551f52ed4a287e472629a05b35810",
           "url": "https://github.com/OmertaDev/Omerta/commit/f65c40d342e551f52ed4a287e472629a05b35810"
+        }
+      ]
+    },
+    {
+      "key": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "type": "Commit",
+      "id": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "label": "Play wave 73 (freight): the offshore handoff and the tip-off that said \"done.\", and eighteen refusals that named a district by its storage key",
+      "title": "Play wave 73 (freight): the offshore handoff and the tip-off that said \"done.\", and eighteen refusals that named a district by its storage key",
+      "date": "2026-08-30T10:40:34.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "provenance": [
+        {
+          "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
         }
       ]
     },
@@ -76816,6 +76848,9 @@
           "commit": "8958d9951447d065d94daf37cdd5e820c644e64c"
         },
         {
+          "commit": "8b295044829a5866b59dae005b3ee80262953333"
+        },
+        {
           "commit": "8be942ab5155510517c4664af4bb1229ece8ee4c"
         },
         {
@@ -77179,6 +77214,9 @@
           "commit": "8958d9951447d065d94daf37cdd5e820c644e64c"
         },
         {
+          "commit": "8b295044829a5866b59dae005b3ee80262953333"
+        },
+        {
           "commit": "8be942ab5155510517c4664af4bb1229ece8ee4c"
         },
         {
@@ -77540,6 +77578,9 @@
         },
         {
           "commit": "8958d9951447d065d94daf37cdd5e820c644e64c"
+        },
+        {
+          "commit": "8b295044829a5866b59dae005b3ee80262953333"
         },
         {
           "commit": "8be942ab5155510517c4664af4bb1229ece8ee4c"
@@ -77960,6 +78001,9 @@
         },
         {
           "commit": "8958d9951447d065d94daf37cdd5e820c644e64c"
+        },
+        {
+          "commit": "8b295044829a5866b59dae005b3ee80262953333"
         },
         {
           "commit": "8be942ab5155510517c4664af4bb1229ece8ee4c"
@@ -78773,12 +78817,12 @@
       "id": "src/casino.js",
       "label": "src/casino.js",
       "lines": 1471,
-      "version": "e7a638f202b8298d",
+      "version": "5dbe3848533199e3",
       "provenance": [
         {
           "file": "src/casino.js",
           "line": 1,
-          "version": "e7a638f202b8298d"
+          "version": "5dbe3848533199e3"
         }
       ]
     },
@@ -78907,13 +78951,13 @@
       "type": "Module",
       "id": "src/collision.js",
       "label": "src/collision.js",
-      "lines": 98,
-      "version": "31679925ae2f74d0",
+      "lines": 97,
+      "version": "d4e71f4309182e2d",
       "provenance": [
         {
           "file": "src/collision.js",
           "line": 1,
-          "version": "31679925ae2f74d0"
+          "version": "d4e71f4309182e2d"
         }
       ]
     },
@@ -78952,13 +78996,13 @@
       "type": "Module",
       "id": "src/contacts.js",
       "label": "src/contacts.js",
-      "lines": 248,
-      "version": "dbb1bb452cba1f96",
+      "lines": 247,
+      "version": "ea88ff08c644905c",
       "provenance": [
         {
           "file": "src/contacts.js",
           "line": 1,
-          "version": "dbb1bb452cba1f96"
+          "version": "ea88ff08c644905c"
         }
       ]
     },
@@ -79028,12 +79072,12 @@
       "id": "src/convoy.js",
       "label": "src/convoy.js",
       "lines": 581,
-      "version": "1012670652eb1aed",
+      "version": "86cc654e3e01a7ef",
       "provenance": [
         {
           "file": "src/convoy.js",
           "line": 1,
-          "version": "1012670652eb1aed"
+          "version": "86cc654e3e01a7ef"
         }
       ]
     },
@@ -79042,13 +79086,13 @@
       "type": "Module",
       "id": "src/corner.js",
       "label": "src/corner.js",
-      "lines": 156,
-      "version": "203d453e84ed477d",
+      "lines": 155,
+      "version": "c84dae98f63a977b",
       "provenance": [
         {
           "file": "src/corner.js",
           "line": 1,
-          "version": "203d453e84ed477d"
+          "version": "c84dae98f63a977b"
         }
       ]
     },
@@ -79057,13 +79101,13 @@
       "type": "Module",
       "id": "src/crew.js",
       "label": "src/crew.js",
-      "lines": 401,
-      "version": "99379fa1ed138f76",
+      "lines": 400,
+      "version": "ac4302dbc27177ad",
       "provenance": [
         {
           "file": "src/crew.js",
           "line": 1,
-          "version": "99379fa1ed138f76"
+          "version": "ac4302dbc27177ad"
         }
       ]
     },
@@ -79117,13 +79161,13 @@
       "type": "Module",
       "id": "src/deeds.js",
       "label": "src/deeds.js",
-      "lines": 556,
-      "version": "01fde6d3ed39fb74",
+      "lines": 555,
+      "version": "0ca74e24c610b05c",
       "provenance": [
         {
           "file": "src/deeds.js",
           "line": 1,
-          "version": "01fde6d3ed39fb74"
+          "version": "0ca74e24c610b05c"
         }
       ]
     },
@@ -79177,13 +79221,13 @@
       "type": "Module",
       "id": "src/discovery.js",
       "label": "src/discovery.js",
-      "lines": 149,
-      "version": "be0893dc165dd903",
+      "lines": 148,
+      "version": "d3638083f37825da",
       "provenance": [
         {
           "file": "src/discovery.js",
           "line": 1,
-          "version": "be0893dc165dd903"
+          "version": "d3638083f37825da"
         }
       ]
     },
@@ -79372,13 +79416,13 @@
       "type": "Module",
       "id": "src/favors.js",
       "label": "src/favors.js",
-      "lines": 332,
-      "version": "3a7bb193ec847193",
+      "lines": 331,
+      "version": "9026bd6a0e76da70",
       "provenance": [
         {
           "file": "src/favors.js",
           "line": 1,
-          "version": "3a7bb193ec847193"
+          "version": "9026bd6a0e76da70"
         }
       ]
     },
@@ -79537,13 +79581,13 @@
       "type": "Module",
       "id": "src/heists.js",
       "label": "src/heists.js",
-      "lines": 576,
-      "version": "ae433044ce28ac78",
+      "lines": 581,
+      "version": "6fe6c56bc1f92e9c",
       "provenance": [
         {
           "file": "src/heists.js",
           "line": 1,
-          "version": "ae433044ce28ac78"
+          "version": "6fe6c56bc1f92e9c"
         }
       ]
     },
@@ -79582,13 +79626,13 @@
       "type": "Module",
       "id": "src/hustle.js",
       "label": "src/hustle.js",
-      "lines": 104,
-      "version": "35097be2391761eb",
+      "lines": 103,
+      "version": "5f0e4b20031c0b40",
       "provenance": [
         {
           "file": "src/hustle.js",
           "line": 1,
-          "version": "35097be2391761eb"
+          "version": "5f0e4b20031c0b40"
         }
       ]
     },
@@ -79688,12 +79732,12 @@
       "id": "src/market.js",
       "label": "src/market.js",
       "lines": 635,
-      "version": "b68ab90e6fee24ef",
+      "version": "7ca0e0564ba42868",
       "provenance": [
         {
           "file": "src/market.js",
           "line": 1,
-          "version": "b68ab90e6fee24ef"
+          "version": "7ca0e0564ba42868"
         }
       ]
     },
@@ -79957,13 +80001,13 @@
       "type": "Module",
       "id": "src/port.js",
       "label": "src/port.js",
-      "lines": 488,
-      "version": "10ffd50b5003793e",
+      "lines": 493,
+      "version": "d9284b61feae0669",
       "provenance": [
         {
           "file": "src/port.js",
           "line": 1,
-          "version": "10ffd50b5003793e"
+          "version": "d9284b61feae0669"
         }
       ]
     },
@@ -80093,12 +80137,12 @@
       "id": "src/ring.js",
       "label": "src/ring.js",
       "lines": 444,
-      "version": "3fe526ca191a505e",
+      "version": "542fcf34d1233972",
       "provenance": [
         {
           "file": "src/ring.js",
           "line": 1,
-          "version": "3fe526ca191a505e"
+          "version": "542fcf34d1233972"
         }
       ]
     },
@@ -80497,13 +80541,13 @@
       "type": "Module",
       "id": "src/rules.tail.js",
       "label": "src/rules.tail.js",
-      "lines": 6063,
-      "version": "268e9ba8f41804ee",
+      "lines": 6071,
+      "version": "65d7b15f135237cc",
       "provenance": [
         {
           "file": "src/rules.tail.js",
           "line": 1,
-          "version": "268e9ba8f41804ee"
+          "version": "65d7b15f135237cc"
         }
       ]
     },
@@ -80707,13 +80751,13 @@
       "type": "Module",
       "id": "src/shipment.js",
       "label": "src/shipment.js",
-      "lines": 176,
-      "version": "7e48c1f291722ddb",
+      "lines": 175,
+      "version": "9a82cc90d88e1046",
       "provenance": [
         {
           "file": "src/shipment.js",
           "line": 1,
-          "version": "7e48c1f291722ddb"
+          "version": "9a82cc90d88e1046"
         }
       ]
     },
@@ -80753,12 +80797,12 @@
       "id": "src/social/combat.js",
       "label": "src/social/combat.js",
       "lines": 1048,
-      "version": "efddfff85efcc12d",
+      "version": "005fd8c0dfbb50bb",
       "provenance": [
         {
           "file": "src/social/combat.js",
           "line": 1,
-          "version": "efddfff85efcc12d"
+          "version": "005fd8c0dfbb50bb"
         }
       ]
     },
@@ -84412,7 +84456,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "309beb2f37c5b16870278fcec5d39371e37ce519",
+      "revision": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
       "currentBranch": "(detached)",
       "defaultBranch": "main",
       "visibility": "public",
@@ -107959,13 +108003,13 @@
       "type": "TestSuite",
       "id": "test/client.js",
       "label": "test/client.js",
-      "lines": 7875,
-      "version": "a7427924c039ed0b",
+      "lines": 7991,
+      "version": "84f746afc7857ded",
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "a7427924c039ed0b"
+          "version": "84f746afc7857ded"
         }
       ]
     },
@@ -173976,6 +174020,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:8b295044829a5866b59dae005b3ee80262953333",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "8b295044829a5866b59dae005b3ee80262953333"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8b295044829a5866b59dae005b3ee80262953333",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "8b295044829a5866b59dae005b3ee80262953333"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8b295044829a5866b59dae005b3ee80262953333",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "8b295044829a5866b59dae005b3ee80262953333"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8b295044829a5866b59dae005b3ee80262953333",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "8b295044829a5866b59dae005b3ee80262953333"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:8b2fe4b5d0bcd30804b64ff85e1328788c71ecd1",
       "to": "Artifact:docs/ART.md",
       "provenance": {
@@ -204356,6 +204432,158 @@
       "to": "Artifact:test/speakeasy.js",
       "provenance": {
         "commit": "f65c40d342e551f52ed4a287e472629a05b35810"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "to": "Artifact:src/casino.js",
+      "provenance": {
+        "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "to": "Artifact:src/collision.js",
+      "provenance": {
+        "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "to": "Artifact:src/contacts.js",
+      "provenance": {
+        "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "to": "Artifact:src/convoy.js",
+      "provenance": {
+        "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "to": "Artifact:src/corner.js",
+      "provenance": {
+        "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "to": "Artifact:src/crew.js",
+      "provenance": {
+        "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "to": "Artifact:src/deeds.js",
+      "provenance": {
+        "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "to": "Artifact:src/discovery.js",
+      "provenance": {
+        "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "to": "Artifact:src/favors.js",
+      "provenance": {
+        "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "to": "Artifact:src/heists.js",
+      "provenance": {
+        "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "to": "Artifact:src/hustle.js",
+      "provenance": {
+        "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "to": "Artifact:src/market.js",
+      "provenance": {
+        "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "to": "Artifact:src/port.js",
+      "provenance": {
+        "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "to": "Artifact:src/ring.js",
+      "provenance": {
+        "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "to": "Artifact:src/rules.tail.js",
+      "provenance": {
+        "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "to": "Artifact:src/shipment.js",
+      "provenance": {
+        "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "to": "Artifact:src/social/combat.js",
+      "provenance": {
+        "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "to": "Artifact:test/client.js",
+      "provenance": {
+        "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
       }
     },
     {
@@ -249034,6 +249262,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:8b295044829a5866b59dae005b3ee80262953333",
+      "provenance": {
+        "commit": "8b295044829a5866b59dae005b3ee80262953333"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:8b2fe4b5d0bcd30804b64ff85e1328788c71ecd1",
       "provenance": {
         "commit": "8b2fe4b5d0bcd30804b64ff85e1328788c71ecd1"
@@ -253229,6 +253465,14 @@
       "to": "Commit:f65c40d342e551f52ed4a287e472629a05b35810",
       "provenance": {
         "commit": "f65c40d342e551f52ed4a287e472629a05b35810"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f677e6b30a62523c7b1d1d5fed69fa7d75a45e48",
+      "provenance": {
+        "commit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
       }
     },
     {
@@ -310855,7 +311099,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/collision.js",
-        "line": 42
+        "line": 41
       }
     },
     {
@@ -310864,7 +311108,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/collision.js",
-        "line": 47
+        "line": 46
       }
     },
     {
@@ -310873,7 +311117,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/collision.js",
-        "line": 42
+        "line": 41
       }
     },
     {
@@ -310882,7 +311126,7 @@
       "to": "Table:crew_members",
       "provenance": {
         "file": "src/collision.js",
-        "line": 44
+        "line": 43
       }
     },
     {
@@ -310900,7 +311144,7 @@
       "to": "Table:gang_members",
       "provenance": {
         "file": "src/collision.js",
-        "line": 43
+        "line": 42
       }
     },
     {
@@ -310909,7 +311153,7 @@
       "to": "Table:gangs",
       "provenance": {
         "file": "src/collision.js",
-        "line": 43
+        "line": 42
       }
     },
     {
@@ -311143,7 +311387,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/contacts.js",
-        "line": 97
+        "line": 96
       }
     },
     {
@@ -311161,7 +311405,7 @@
       "to": "Table:character_cargo",
       "provenance": {
         "file": "src/contacts.js",
-        "line": 214
+        "line": 213
       }
     },
     {
@@ -311170,7 +311414,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/contacts.js",
-        "line": 64
+        "line": 63
       }
     },
     {
@@ -311179,7 +311423,7 @@
       "to": "Table:contact_calls",
       "provenance": {
         "file": "src/contacts.js",
-        "line": 70
+        "line": 69
       }
     },
     {
@@ -311215,7 +311459,7 @@
       "to": "Table:gangs",
       "provenance": {
         "file": "src/contacts.js",
-        "line": 93
+        "line": 92
       }
     },
     {
@@ -311224,7 +311468,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/contacts.js",
-        "line": 28
+        "line": 27
       }
     },
     {
@@ -311629,7 +311873,7 @@
       "to": "Table:corner_chains",
       "provenance": {
         "file": "src/corner.js",
-        "line": 34
+        "line": 33
       }
     },
     {
@@ -311638,7 +311882,7 @@
       "to": "Table:corner_jobs",
       "provenance": {
         "file": "src/corner.js",
-        "line": 27
+        "line": 26
       }
     },
     {
@@ -311647,7 +311891,7 @@
       "to": "Table:daily_progress",
       "provenance": {
         "file": "src/corner.js",
-        "line": 18
+        "line": 17
       }
     },
     {
@@ -311665,7 +311909,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/crew.js",
-        "line": 320
+        "line": 319
       }
     },
     {
@@ -311674,7 +311918,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/crew.js",
-        "line": 372
+        "line": 371
       }
     },
     {
@@ -311683,7 +311927,7 @@
       "to": "Table:bounties",
       "provenance": {
         "file": "src/crew.js",
-        "line": 306
+        "line": 305
       }
     },
     {
@@ -311692,7 +311936,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/crew.js",
-        "line": 41
+        "line": 40
       }
     },
     {
@@ -311728,7 +311972,7 @@
       "to": "Table:crew_objective_progress",
       "provenance": {
         "file": "src/crew.js",
-        "line": 200
+        "line": 199
       }
     },
     {
@@ -311737,7 +311981,7 @@
       "to": "Table:crew_objectives",
       "provenance": {
         "file": "src/crew.js",
-        "line": 199
+        "line": 198
       }
     },
     {
@@ -311746,7 +311990,7 @@
       "to": "Table:crew_requests",
       "provenance": {
         "file": "src/crew.js",
-        "line": 129
+        "line": 128
       }
     },
     {
@@ -311755,7 +311999,7 @@
       "to": "Table:crew_targets",
       "provenance": {
         "file": "src/crew.js",
-        "line": 201
+        "line": 200
       }
     },
     {
@@ -311800,7 +312044,7 @@
       "to": "Table:gang_members",
       "provenance": {
         "file": "src/crew.js",
-        "line": 232
+        "line": 231
       }
     },
     {
@@ -311809,7 +312053,7 @@
       "to": "Table:gangs",
       "provenance": {
         "file": "src/crew.js",
-        "line": 213
+        "line": 212
       }
     },
     {
@@ -311908,7 +312152,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/deeds.js",
-        "line": 102
+        "line": 101
       }
     },
     {
@@ -311935,7 +312179,7 @@
       "to": "Table:gangs",
       "provenance": {
         "file": "src/deeds.js",
-        "line": 175
+        "line": 174
       }
     },
     {
@@ -311944,7 +312188,7 @@
       "to": "Table:street_deed_history",
       "provenance": {
         "file": "src/deeds.js",
-        "line": 34
+        "line": 33
       }
     },
     {
@@ -311953,7 +312197,7 @@
       "to": "Table:street_deeds",
       "provenance": {
         "file": "src/deeds.js",
-        "line": 29
+        "line": 28
       }
     },
     {
@@ -311962,7 +312206,7 @@
       "to": "Table:street_tax",
       "provenance": {
         "file": "src/deeds.js",
-        "line": 427
+        "line": 426
       }
     },
     {
@@ -312259,7 +312503,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/discovery.js",
-        "line": 27
+        "line": 26
       }
     },
     {
@@ -312268,7 +312512,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/discovery.js",
-        "line": 45
+        "line": 44
       }
     },
     {
@@ -312277,7 +312521,7 @@
       "to": "Table:bloodline",
       "provenance": {
         "file": "src/discovery.js",
-        "line": 128
+        "line": 127
       }
     },
     {
@@ -312286,7 +312530,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/discovery.js",
-        "line": 27
+        "line": 26
       }
     },
     {
@@ -312304,7 +312548,7 @@
       "to": "Table:crew_members",
       "provenance": {
         "file": "src/discovery.js",
-        "line": 27
+        "line": 26
       }
     },
     {
@@ -312313,7 +312557,7 @@
       "to": "Table:crews",
       "provenance": {
         "file": "src/discovery.js",
-        "line": 43
+        "line": 42
       }
     },
     {
@@ -312331,7 +312575,7 @@
       "to": "Table:gang_members",
       "provenance": {
         "file": "src/discovery.js",
-        "line": 40
+        "line": 39
       }
     },
     {
@@ -312340,7 +312584,7 @@
       "to": "Table:gangs",
       "provenance": {
         "file": "src/discovery.js",
-        "line": 40
+        "line": 39
       }
     },
     {
@@ -312358,7 +312602,7 @@
       "to": "Table:vouches",
       "provenance": {
         "file": "src/discovery.js",
-        "line": 132
+        "line": 131
       }
     },
     {
@@ -313393,7 +313637,7 @@
       "to": "Table:character_assets",
       "provenance": {
         "file": "src/favors.js",
-        "line": 46
+        "line": 45
       }
     },
     {
@@ -313402,7 +313646,7 @@
       "to": "Table:character_cargo",
       "provenance": {
         "file": "src/favors.js",
-        "line": 62
+        "line": 61
       }
     },
     {
@@ -313411,7 +313655,7 @@
       "to": "Table:character_skills",
       "provenance": {
         "file": "src/favors.js",
-        "line": 47
+        "line": 46
       }
     },
     {
@@ -313420,7 +313664,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/favors.js",
-        "line": 145
+        "line": 144
       }
     },
     {
@@ -313447,7 +313691,7 @@
       "to": "Table:favors",
       "provenance": {
         "file": "src/favors.js",
-        "line": 124
+        "line": 123
       }
     },
     {
@@ -313456,7 +313700,7 @@
       "to": "Table:street_tax",
       "provenance": {
         "file": "src/favors.js",
-        "line": 98
+        "line": 97
       }
     },
     {
@@ -313465,7 +313709,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/favors.js",
-        "line": 295
+        "line": 294
       }
     },
     {
@@ -314437,7 +314681,7 @@
       "to": "Table:gang_members",
       "provenance": {
         "file": "src/heists.js",
-        "line": 277
+        "line": 282
       }
     },
     {
@@ -314455,7 +314699,7 @@
       "to": "Table:stash",
       "provenance": {
         "file": "src/heists.js",
-        "line": 207
+        "line": 212
       }
     },
     {
@@ -314464,7 +314708,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/heists.js",
-        "line": 564
+        "line": 569
       }
     },
     {
@@ -314518,7 +314762,7 @@
       "to": "Table:daily_progress",
       "provenance": {
         "file": "src/hustle.js",
-        "line": 17
+        "line": 16
       }
     },
     {
@@ -314536,7 +314780,7 @@
       "to": "Table:hustles",
       "provenance": {
         "file": "src/hustle.js",
-        "line": 22
+        "line": 21
       }
     },
     {
@@ -316543,7 +316787,7 @@
       "to": "Table:route_notoriety",
       "provenance": {
         "file": "src/port.js",
-        "line": 415
+        "line": 420
       }
     },
     {
@@ -317713,7 +317957,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 3624
+        "line": 3632
       }
     },
     {
@@ -317722,7 +317966,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 3357
+        "line": 3365
       }
     },
     {
@@ -317731,7 +317975,7 @@
       "to": "Table:auctions",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 3275
+        "line": 3283
       }
     },
     {
@@ -317740,7 +317984,7 @@
       "to": "Table:bank_revenue",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 5920
+        "line": 5928
       }
     },
     {
@@ -317749,7 +317993,7 @@
       "to": "Table:batches",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 742
+        "line": 750
       }
     },
     {
@@ -317758,7 +318002,7 @@
       "to": "Table:bloodline",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 1021
+        "line": 1029
       }
     },
     {
@@ -317767,7 +318011,7 @@
       "to": "Table:boats",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 1929
+        "line": 1937
       }
     },
     {
@@ -317776,7 +318020,7 @@
       "to": "Table:bonds",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 2426
+        "line": 2434
       }
     },
     {
@@ -317794,7 +318038,7 @@
       "to": "Table:career_claims",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 5120
+        "line": 5128
       }
     },
     {
@@ -317812,7 +318056,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 1426
+        "line": 1434
       }
     },
     {
@@ -317821,7 +318065,7 @@
       "to": "Table:contacts",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 5248
+        "line": 5256
       }
     },
     {
@@ -317830,7 +318074,7 @@
       "to": "Table:convoys",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 1899
+        "line": 1907
       }
     },
     {
@@ -317839,7 +318083,7 @@
       "to": "Table:crews",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 662
+        "line": 670
       }
     },
     {
@@ -317857,7 +318101,7 @@
       "to": "Table:duels",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 4177
+        "line": 4185
       }
     },
     {
@@ -317866,7 +318110,7 @@
       "to": "Table:family_aggro",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 1471
+        "line": 1479
       }
     },
     {
@@ -317875,7 +318119,7 @@
       "to": "Table:favors",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 2150
+        "line": 2158
       }
     },
     {
@@ -317884,7 +318128,7 @@
       "to": "Table:fighters",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 2125
+        "line": 2133
       }
     },
     {
@@ -317893,7 +318137,7 @@
       "to": "Table:firsts",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 3991
+        "line": 3999
       }
     },
     {
@@ -317902,7 +318146,7 @@
       "to": "Table:gangs",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 1327
+        "line": 1335
       }
     },
     {
@@ -317911,7 +318155,7 @@
       "to": "Table:informants",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 1268
+        "line": 1276
       }
     },
     {
@@ -317920,7 +318164,7 @@
       "to": "Table:landmarks",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 2771
+        "line": 2779
       }
     },
     {
@@ -317929,7 +318173,7 @@
       "to": "Table:limited_runs",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 3987
+        "line": 3995
       }
     },
     {
@@ -317938,7 +318182,7 @@
       "to": "Table:listings",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 2119
+        "line": 2127
       }
     },
     {
@@ -317947,7 +318191,7 @@
       "to": "Table:loans",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 1774
+        "line": 1782
       }
     },
     {
@@ -317956,7 +318200,7 @@
       "to": "Table:makings",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 1065
+        "line": 1073
       }
     },
     {
@@ -317965,7 +318209,7 @@
       "to": "Table:masteries",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 4838
+        "line": 4846
       }
     },
     {
@@ -317974,7 +318218,7 @@
       "to": "Table:population_state",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 4732
+        "line": 4740
       }
     },
     {
@@ -317983,7 +318227,7 @@
       "to": "Table:primetime_rally",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 4406
+        "line": 4414
       }
     },
     {
@@ -318001,7 +318245,7 @@
       "to": "Table:referrals",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 3360
+        "line": 3368
       }
     },
     {
@@ -318010,7 +318254,7 @@
       "to": "Table:rigs",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 1931
+        "line": 1939
       }
     },
     {
@@ -318028,7 +318272,7 @@
       "to": "Table:searches",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 1256
+        "line": 1264
       }
     },
     {
@@ -318037,7 +318281,7 @@
       "to": "Table:season_recaps",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 5407
+        "line": 5415
       }
     },
     {
@@ -318046,7 +318290,7 @@
       "to": "Table:secrets",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 3953
+        "line": 3961
       }
     },
     {
@@ -318055,7 +318299,7 @@
       "to": "Table:soldiers",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 3892
+        "line": 3900
       }
     },
     {
@@ -318064,7 +318308,7 @@
       "to": "Table:stash",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 646
+        "line": 654
       }
     },
     {
@@ -318073,7 +318317,7 @@
       "to": "Table:store_cosmetics",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 2863
+        "line": 2871
       }
     },
     {
@@ -318082,7 +318326,7 @@
       "to": "Table:street_tax",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 1273
+        "line": 1281
       }
     },
     {
@@ -318091,7 +318335,7 @@
       "to": "Table:telemetry",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 5675
+        "line": 5683
       }
     },
     {
@@ -318100,7 +318344,7 @@
       "to": "Table:territory_rackets",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 2207
+        "line": 2215
       }
     },
     {
@@ -318109,7 +318353,7 @@
       "to": "Table:ticker_ballot_results",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 5704
+        "line": 5712
       }
     },
     {
@@ -318127,7 +318371,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 4840
+        "line": 4848
       }
     },
     {
@@ -318136,7 +318380,7 @@
       "to": "Table:vendettas",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 1252
+        "line": 1260
       }
     },
     {
@@ -318145,7 +318389,7 @@
       "to": "Table:vig_revenue",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 2610
+        "line": 2618
       }
     },
     {
@@ -318154,7 +318398,7 @@
       "to": "Table:vouches",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 5515
+        "line": 5523
       }
     },
     {
@@ -318163,7 +318407,7 @@
       "to": "Table:wallet_rolls",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 455
+        "line": 463
       }
     },
     {
@@ -318172,7 +318416,7 @@
       "to": "Table:wiretaps",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 2437
+        "line": 2445
       }
     },
     {
@@ -318181,7 +318425,7 @@
       "to": "Table:world_npcs",
       "provenance": {
         "file": "src/rules.tail.js",
-        "line": 1403
+        "line": 1411
       }
     },
     {
@@ -319297,7 +319541,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/shipment.js",
-        "line": 147
+        "line": 146
       }
     },
     {
@@ -319306,7 +319550,7 @@
       "to": "Table:bespoke_pieces",
       "provenance": {
         "file": "src/shipment.js",
-        "line": 154
+        "line": 153
       }
     },
     {
@@ -319315,7 +319559,7 @@
       "to": "Table:bespoke_serials",
       "provenance": {
         "file": "src/shipment.js",
-        "line": 153
+        "line": 152
       }
     },
     {
@@ -319324,7 +319568,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/shipment.js",
-        "line": 22
+        "line": 21
       }
     },
     {
@@ -319342,7 +319586,7 @@
       "to": "Table:shipment_days",
       "provenance": {
         "file": "src/shipment.js",
-        "line": 37
+        "line": 36
       }
     },
     {
@@ -319351,7 +319595,7 @@
       "to": "Table:shipment_takes",
       "provenance": {
         "file": "src/shipment.js",
-        "line": 60
+        "line": 59
       }
     },
     {
@@ -319360,7 +319604,7 @@
       "to": "Table:world_npcs",
       "provenance": {
         "file": "src/shipment.js",
-        "line": 45
+        "line": 44
       }
     },
     {

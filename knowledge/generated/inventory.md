@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `309beb2f37c5`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `f677e6b30a62`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,826 |
-| Text lines | 519,349 |
-| Repository bytes inventoried | 313,851,607 |
+| Text lines | 519,499 |
+| Repository bytes inventoried | 313,865,774 |
 | Backend/route modules | 187 |
 | HTTP route registrations / unique routes | 742 / 742 |
 | Database tables | 317 |
 | Solidity declarations | 49 |
-| Git commits | 1,299 |
+| Git commits | 1,301 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 5,657 / 24,833 |
+| Graph nodes / edges | 5,659 / 24,858 |
 
 ## Artifact kinds
 
@@ -48,15 +48,15 @@
 |---|---:|---|---|
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
 | [CLAUDE.md](../../CLAUDE.md) | 17,522 | documentation | 2026-08-30 |
-| [public/index.html](../../public/index.html) | 11,959 | web-surface | 2026-08-30 |
+| [public/index.html](../../public/index.html) | 11,984 | web-surface | 2026-08-30 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
-| [test/client.js](../../test/client.js) | 7,875 | test-suite | 2026-08-30 |
+| [test/client.js](../../test/client.js) | 7,991 | test-suite | 2026-08-30 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [BALANCE.md](../../BALANCE.md) | 6,472 | documentation | 2026-08-24 |
-| [src/rules.tail.js](../../src/rules.tail.js) | 6,063 | backend-module | 2026-08-29 |
+| [src/rules.tail.js](../../src/rules.tail.js) | 6,071 | backend-module | 2026-08-30 |
 | [schema.sql](../../schema.sql) | 6,009 | data-schema | 2026-08-29 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
 | [test/docs.js](../../test/docs.js) | 4,017 | test-suite | 2026-08-29 |
