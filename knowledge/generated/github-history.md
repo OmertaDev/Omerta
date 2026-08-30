@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `93f09197cc41`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `ee1a5894ca3b`.
 
 ## Repository
 
@@ -9,19 +9,19 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1313 |
+| Commits in clone | 1316 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-30 — The sweep run to completion — the consolidated waves 73–74 record, and SPEC's test-line figure restated |
+| Latest commit | 2026-08-30 — Merge remote-tracking branch 'origin/main' into claude/next-work-recommendations-x5f2fp |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 434 |
-| Claude | 188 |
+| OmertaDev | 435 |
+| Claude | 190 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 3 |
 
@@ -29,7 +29,7 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| [CLAUDE.md](../../CLAUDE.md) | 498 | yes |
+| [CLAUDE.md](../../CLAUDE.md) | 499 | yes |
 | [public/index.html](../../public/index.html) | 404 | yes |
 | [src/server.js](../../src/server.js) | 350 | yes |
 | [SPEC.md](../../SPEC.md) | 275 | yes |
@@ -38,10 +38,10 @@
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 170 | yes |
 | [package.json](../../package.json) | 142 | yes |
-| knowledge/generated/github-history.md | 125 | historical |
-| knowledge/generated/graph-summary.md | 125 | historical |
-| knowledge/generated/graph.json | 125 | historical |
-| knowledge/generated/inventory.md | 125 | historical |
+| knowledge/generated/github-history.md | 127 | historical |
+| knowledge/generated/graph-summary.md | 127 | historical |
+| knowledge/generated/graph.json | 127 | historical |
+| knowledge/generated/inventory.md | 127 | historical |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
 | [test/client.js](../../test/client.js) | 115 | yes |
@@ -62,13 +62,13 @@
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 49 | yes |
 | knowledge/generated/modules.md | 48 | historical |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
+| knowledge/generated/documents.md | 45 | historical |
 | [src/economy.js](../../src/economy.js) | 45 | yes |
 | [src/casino.js](../../src/casino.js) | 45 | yes |
-| knowledge/generated/documents.md | 43 | historical |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
 | [src/business.js](../../src/business.js) | 40 | yes |
+| [test/docs.js](../../test/docs.js) | 39 | yes |
 | [src/chain.js](../../src/chain.js) | 38 | yes |
-| [test/docs.js](../../test/docs.js) | 38 | yes |
 
 ## Pull requests
 
