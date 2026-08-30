@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "01bef7c6dad7f2b11283700e5e638be5195a4485",
+  "sourceRevision": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5679,
-    "edges": 24965,
+    "nodes": 5681,
+    "edges": 24980,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 56,
-      "Commit": 1321,
+      "Commit": 1323,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 10003,
+      "CHANGED": 10016,
       "CONTAINS": 1846,
       "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1321,
+      "HAS_COMMIT": 1323,
       "IMPLEMENTS": 124,
       "IMPORTS": 1634,
       "INHERITS": 12,
@@ -32493,20 +32493,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1176930,
-      "lines": 12100,
-      "version": "f4d341e1ca5d695d",
+      "bytes": 1177533,
+      "lines": 12105,
+      "version": "8f876d3d12fb1fb6",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "f4d341e1ca5d695d"
+          "version": "8f876d3d12fb1fb6"
         }
       ],
-      "lastChangedAt": "2026-08-30T15:24:26.000Z",
+      "lastChangedAt": "2026-08-30T15:45:37.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "01bef7c6dad7f2b11283700e5e638be5195a4485"
+      "lastChangedCommit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
     },
     {
       "key": "Artifact:public/manifest.json",
@@ -33275,20 +33275,20 @@
       "path": "src/casino.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 110880,
-      "lines": 1471,
-      "version": "5dbe3848533199e3",
+      "bytes": 111215,
+      "lines": 1474,
+      "version": "ba4d78a66e1d6a98",
       "text": true,
       "provenance": [
         {
           "file": "src/casino.js",
           "line": 1,
-          "version": "5dbe3848533199e3"
+          "version": "ba4d78a66e1d6a98"
         }
       ],
-      "lastChangedAt": "2026-08-30T10:40:34.000Z",
+      "lastChangedAt": "2026-08-30T15:45:37.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      "lastChangedCommit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
     },
     {
       "key": "Artifact:src/chain.js",
@@ -34678,20 +34678,20 @@
       "path": "src/market.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 46540,
-      "lines": 635,
-      "version": "7ca0e0564ba42868",
+      "bytes": 47071,
+      "lines": 641,
+      "version": "abc138ebe789a959",
       "text": true,
       "provenance": [
         {
           "file": "src/market.js",
           "line": 1,
-          "version": "7ca0e0564ba42868"
+          "version": "abc138ebe789a959"
         }
       ],
-      "lastChangedAt": "2026-08-30T10:40:34.000Z",
+      "lastChangedAt": "2026-08-30T15:45:37.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      "lastChangedCommit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
     },
     {
       "key": "Artifact:src/mastery.js",
@@ -35184,20 +35184,20 @@
       "path": "src/primetime.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 18599,
-      "lines": 264,
-      "version": "67eb03903013c73c",
+      "bytes": 19662,
+      "lines": 276,
+      "version": "619d17df9db0ef5c",
       "text": true,
       "provenance": [
         {
           "file": "src/primetime.js",
           "line": 1,
-          "version": "67eb03903013c73c"
+          "version": "619d17df9db0ef5c"
         }
       ],
-      "lastChangedAt": "2026-08-30T10:09:55.000Z",
+      "lastChangedAt": "2026-08-30T15:45:37.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "68dea84c55ec19d02a76f5f2a1f50775f8392e8f"
+      "lastChangedCommit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
     },
     {
       "key": "Artifact:src/push.js",
@@ -36426,20 +36426,20 @@
       "path": "src/social/gangs.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 59620,
-      "lines": 796,
-      "version": "0d38929a149e8a41",
+      "bytes": 60501,
+      "lines": 809,
+      "version": "e24c4b238e654618",
       "text": true,
       "provenance": [
         {
           "file": "src/social/gangs.js",
           "line": 1,
-          "version": "0d38929a149e8a41"
+          "version": "e24c4b238e654618"
         }
       ],
-      "lastChangedAt": "2026-08-27T01:43:49.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "2a8a2eeabb00cdc2dc8011599a4817425cd2511e"
+      "lastChangedAt": "2026-08-30T15:45:37.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
     },
     {
       "key": "Artifact:src/social/shared.js",
@@ -37392,20 +37392,20 @@
       "path": "test/casino.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 81097,
-      "lines": 921,
-      "version": "eebb6f6f9fbb1e6a",
+      "bytes": 81213,
+      "lines": 922,
+      "version": "11f3d2d67c98bf3d",
       "text": true,
       "provenance": [
         {
           "file": "test/casino.js",
           "line": 1,
-          "version": "eebb6f6f9fbb1e6a"
+          "version": "11f3d2d67c98bf3d"
         }
       ],
-      "lastChangedAt": "2026-08-21T20:44:39.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c04b380a663d103a21d23d9ee5073724b392c88f"
+      "lastChangedAt": "2026-08-30T15:45:37.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
     },
     {
       "key": "Artifact:test/chain.js",
@@ -37553,20 +37553,20 @@
       "path": "test/client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 657695,
-      "lines": 8492,
-      "version": "4092118a7d26672d",
+      "bytes": 660649,
+      "lines": 8523,
+      "version": "40eb7873a6fe2836",
       "text": true,
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "4092118a7d26672d"
+          "version": "40eb7873a6fe2836"
         }
       ],
-      "lastChangedAt": "2026-08-30T15:24:26.000Z",
+      "lastChangedAt": "2026-08-30T15:45:37.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "01bef7c6dad7f2b11283700e5e638be5195a4485"
+      "lastChangedCommit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
     },
     {
       "key": "Artifact:test/clues.js",
@@ -39393,20 +39393,20 @@
       "path": "test/primetime.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 17765,
-      "lines": 265,
-      "version": "e4cd168e08c0ba6d",
+      "bytes": 19499,
+      "lines": 285,
+      "version": "4524ffa7ceb0af93",
       "text": true,
       "provenance": [
         {
           "file": "test/primetime.js",
           "line": 1,
-          "version": "e4cd168e08c0ba6d"
+          "version": "4524ffa7ceb0af93"
         }
       ],
-      "lastChangedAt": "2026-08-24T19:44:53.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b1a180875960a09974d306bf774ea2949d071ff8"
+      "lastChangedAt": "2026-08-30T15:45:37.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
     },
     {
       "key": "Artifact:test/push.js",
@@ -54453,6 +54453,22 @@
       ]
     },
     {
+      "key": "Commit:887e4db5ad5ad1246413c12f1a764ce2bf14fd58",
+      "type": "Commit",
+      "id": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58",
+      "label": "fix: second-round Codex P2 findings A-D — effective forfeiture on the stake receipt, agent gates at the door, won/refunded split, the reserve caveat on a bid",
+      "title": "fix: second-round Codex P2 findings A-D — effective forfeiture on the stake receipt, agent gates at the door, won/refunded split, the reserve caveat on a bid",
+      "date": "2026-08-30T15:45:37.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/887e4db5ad5ad1246413c12f1a764ce2bf14fd58",
+      "provenance": [
+        {
+          "commit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58",
+          "url": "https://github.com/OmertaDev/Omerta/commit/887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
+        }
+      ]
+    },
+    {
       "key": "Commit:88af49eae675a4dc965505eeee264a15bb8ed41f",
       "type": "Commit",
       "id": "88af49eae675a4dc965505eeee264a15bb8ed41f",
@@ -56177,6 +56193,22 @@
         {
           "commit": "9b700c23a563ab3253e36bfd0b11e5e7188e31ce",
           "url": "https://github.com/OmertaDev/Omerta/commit/9b700c23a563ab3253e36bfd0b11e5e7188e31ce"
+        }
+      ]
+    },
+    {
+      "key": "Commit:9b99f50a11642c2206dfe0a0319f0351eca2f1e3",
+      "type": "Commit",
+      "id": "9b99f50a11642c2206dfe0a0319f0351eca2f1e3",
+      "label": "Knowledge graph regenerated for the Codex-fix commit",
+      "title": "Knowledge graph regenerated for the Codex-fix commit",
+      "date": "2026-08-30T15:25:00.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9b99f50a11642c2206dfe0a0319f0351eca2f1e3",
+      "provenance": [
+        {
+          "commit": "9b99f50a11642c2206dfe0a0319f0351eca2f1e3",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9b99f50a11642c2206dfe0a0319f0351eca2f1e3"
         }
       ]
     },
@@ -73250,7 +73282,7 @@
         },
         {
           "file": "test/client.js",
-          "line": 8274
+          "line": 8305
         },
         {
           "file": "test/deeds.js",
@@ -77247,6 +77279,9 @@
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
         },
         {
+          "commit": "9b99f50a11642c2206dfe0a0319f0351eca2f1e3"
+        },
+        {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
         },
         {
@@ -77646,6 +77681,9 @@
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
         },
         {
+          "commit": "9b99f50a11642c2206dfe0a0319f0351eca2f1e3"
+        },
+        {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
         },
         {
@@ -78043,6 +78081,9 @@
         },
         {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
+        },
+        {
+          "commit": "9b99f50a11642c2206dfe0a0319f0351eca2f1e3"
         },
         {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
@@ -78501,6 +78542,9 @@
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
         },
         {
+          "commit": "9b99f50a11642c2206dfe0a0319f0351eca2f1e3"
+        },
+        {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
         },
         {
@@ -78733,6 +78777,9 @@
         },
         {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
+        },
+        {
+          "commit": "9b99f50a11642c2206dfe0a0319f0351eca2f1e3"
         },
         {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
@@ -79299,13 +79346,13 @@
       "type": "Module",
       "id": "src/casino.js",
       "label": "src/casino.js",
-      "lines": 1471,
-      "version": "5dbe3848533199e3",
+      "lines": 1474,
+      "version": "ba4d78a66e1d6a98",
       "provenance": [
         {
           "file": "src/casino.js",
           "line": 1,
-          "version": "5dbe3848533199e3"
+          "version": "ba4d78a66e1d6a98"
         }
       ]
     },
@@ -80214,13 +80261,13 @@
       "type": "Module",
       "id": "src/market.js",
       "label": "src/market.js",
-      "lines": 635,
-      "version": "7ca0e0564ba42868",
+      "lines": 641,
+      "version": "abc138ebe789a959",
       "provenance": [
         {
           "file": "src/market.js",
           "line": 1,
-          "version": "7ca0e0564ba42868"
+          "version": "abc138ebe789a959"
         }
       ]
     },
@@ -80544,13 +80591,13 @@
       "type": "Module",
       "id": "src/primetime.js",
       "label": "src/primetime.js",
-      "lines": 264,
-      "version": "67eb03903013c73c",
+      "lines": 276,
+      "version": "619d17df9db0ef5c",
       "provenance": [
         {
           "file": "src/primetime.js",
           "line": 1,
-          "version": "67eb03903013c73c"
+          "version": "619d17df9db0ef5c"
         }
       ]
     },
@@ -81354,13 +81401,13 @@
       "type": "Module",
       "id": "src/social/gangs.js",
       "label": "src/social/gangs.js",
-      "lines": 796,
-      "version": "0d38929a149e8a41",
+      "lines": 809,
+      "version": "e24c4b238e654618",
       "provenance": [
         {
           "file": "src/social/gangs.js",
           "line": 1,
-          "version": "0d38929a149e8a41"
+          "version": "e24c4b238e654618"
         }
       ]
     },
@@ -84939,7 +84986,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "01bef7c6dad7f2b11283700e5e638be5195a4485",
+      "revision": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58",
       "currentBranch": "claude/next-work-recommendations-x5f2fp",
       "defaultBranch": "main",
       "visibility": "public",
@@ -108381,13 +108428,13 @@
       "type": "TestSuite",
       "id": "test/casino.js",
       "label": "test/casino.js",
-      "lines": 921,
-      "version": "eebb6f6f9fbb1e6a",
+      "lines": 922,
+      "version": "11f3d2d67c98bf3d",
       "provenance": [
         {
           "file": "test/casino.js",
           "line": 1,
-          "version": "eebb6f6f9fbb1e6a"
+          "version": "11f3d2d67c98bf3d"
         }
       ]
     },
@@ -108486,13 +108533,13 @@
       "type": "TestSuite",
       "id": "test/client.js",
       "label": "test/client.js",
-      "lines": 8492,
-      "version": "4092118a7d26672d",
+      "lines": 8523,
+      "version": "40eb7873a6fe2836",
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "4092118a7d26672d"
+          "version": "40eb7873a6fe2836"
         }
       ]
     },
@@ -109626,13 +109673,13 @@
       "type": "TestSuite",
       "id": "test/primetime.js",
       "label": "test/primetime.js",
-      "lines": 265,
-      "version": "e4cd168e08c0ba6d",
+      "lines": 285,
+      "version": "4524ffa7ceb0af93",
       "provenance": [
         {
           "file": "test/primetime.js",
           "line": 1,
-          "version": "e4cd168e08c0ba6d"
+          "version": "4524ffa7ceb0af93"
         }
       ]
     },
@@ -174447,6 +174494,70 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:887e4db5ad5ad1246413c12f1a764ce2bf14fd58",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:887e4db5ad5ad1246413c12f1a764ce2bf14fd58",
+      "to": "Artifact:src/casino.js",
+      "provenance": {
+        "commit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:887e4db5ad5ad1246413c12f1a764ce2bf14fd58",
+      "to": "Artifact:src/market.js",
+      "provenance": {
+        "commit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:887e4db5ad5ad1246413c12f1a764ce2bf14fd58",
+      "to": "Artifact:src/primetime.js",
+      "provenance": {
+        "commit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:887e4db5ad5ad1246413c12f1a764ce2bf14fd58",
+      "to": "Artifact:src/social/gangs.js",
+      "provenance": {
+        "commit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:887e4db5ad5ad1246413c12f1a764ce2bf14fd58",
+      "to": "Artifact:test/casino.js",
+      "provenance": {
+        "commit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:887e4db5ad5ad1246413c12f1a764ce2bf14fd58",
+      "to": "Artifact:test/client.js",
+      "provenance": {
+        "commit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:887e4db5ad5ad1246413c12f1a764ce2bf14fd58",
+      "to": "Artifact:test/primetime.js",
+      "provenance": {
+        "commit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:88af49eae675a4dc965505eeee264a15bb8ed41f",
       "to": "Artifact:.github/workflows/forge.yml",
       "provenance": {
@@ -179627,6 +179738,46 @@
       "to": "HistoricalArtifact:omerta-yieldbank-design.md",
       "provenance": {
         "commit": "9b700c23a563ab3253e36bfd0b11e5e7188e31ce"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9b99f50a11642c2206dfe0a0319f0351eca2f1e3",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "9b99f50a11642c2206dfe0a0319f0351eca2f1e3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9b99f50a11642c2206dfe0a0319f0351eca2f1e3",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "9b99f50a11642c2206dfe0a0319f0351eca2f1e3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9b99f50a11642c2206dfe0a0319f0351eca2f1e3",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "9b99f50a11642c2206dfe0a0319f0351eca2f1e3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9b99f50a11642c2206dfe0a0319f0351eca2f1e3",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "9b99f50a11642c2206dfe0a0319f0351eca2f1e3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9b99f50a11642c2206dfe0a0319f0351eca2f1e3",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "9b99f50a11642c2206dfe0a0319f0351eca2f1e3"
       }
     },
     {
@@ -250417,6 +250568,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:887e4db5ad5ad1246413c12f1a764ce2bf14fd58",
+      "provenance": {
+        "commit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:88af49eae675a4dc965505eeee264a15bb8ed41f",
       "provenance": {
         "commit": "88af49eae675a4dc965505eeee264a15bb8ed41f"
@@ -251276,6 +251435,14 @@
       "to": "Commit:9b700c23a563ab3253e36bfd0b11e5e7188e31ce",
       "provenance": {
         "commit": "9b700c23a563ab3253e36bfd0b11e5e7188e31ce"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:9b99f50a11642c2206dfe0a0319f0351eca2f1e3",
+      "provenance": {
+        "commit": "9b99f50a11642c2206dfe0a0319f0351eca2f1e3"
       }
     },
     {
@@ -264706,7 +264873,7 @@
       "to": "ExternalDependency:viem/accounts",
       "provenance": {
         "file": "test/client.js",
-        "line": 8274
+        "line": 8305
       }
     },
     {
@@ -311749,7 +311916,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/casino.js",
-        "line": 523
+        "line": 526
       }
     },
     {
@@ -311767,7 +311934,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/casino.js",
-        "line": 525
+        "line": 528
       }
     },
     {
@@ -311821,7 +311988,7 @@
       "to": "Table:futurities",
       "provenance": {
         "file": "src/casino.js",
-        "line": 556
+        "line": 559
       }
     },
     {
@@ -311830,7 +311997,7 @@
       "to": "Table:futurity_bets",
       "provenance": {
         "file": "src/casino.js",
-        "line": 635
+        "line": 638
       }
     },
     {
@@ -311839,7 +312006,7 @@
       "to": "Table:futurity_runners",
       "provenance": {
         "file": "src/casino.js",
-        "line": 569
+        "line": 572
       }
     },
     {
@@ -311848,7 +312015,7 @@
       "to": "Table:futurity_state",
       "provenance": {
         "file": "src/casino.js",
-        "line": 545
+        "line": 548
       }
     },
     {
@@ -311875,7 +312042,7 @@
       "to": "Table:poker_entries",
       "provenance": {
         "file": "src/casino.js",
-        "line": 1123
+        "line": 1126
       }
     },
     {
@@ -311884,7 +312051,7 @@
       "to": "Table:poker_state",
       "provenance": {
         "file": "src/casino.js",
-        "line": 1093
+        "line": 1096
       }
     },
     {
@@ -311893,7 +312060,7 @@
       "to": "Table:poker_tournaments",
       "provenance": {
         "file": "src/casino.js",
-        "line": 1110
+        "line": 1113
       }
     },
     {
@@ -311902,7 +312069,7 @@
       "to": "Table:racers",
       "provenance": {
         "file": "src/casino.js",
-        "line": 478
+        "line": 481
       }
     },
     {
@@ -316780,7 +316947,7 @@
       "to": "Table:auctions",
       "provenance": {
         "file": "src/market.js",
-        "line": 506
+        "line": 512
       }
     },
     {
@@ -316816,7 +316983,7 @@
       "to": "Table:gangs",
       "provenance": {
         "file": "src/market.js",
-        "line": 377
+        "line": 383
       }
     },
     {
@@ -318292,7 +318459,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/primetime.js",
-        "line": 225
+        "line": 237
       }
     },
     {
@@ -318301,7 +318468,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/primetime.js",
-        "line": 224
+        "line": 236
       }
     },
     {
