@@ -786,7 +786,14 @@ export async function claimOnboard(ch, taskId, client, h) {
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: cash, reason: `onboard:${taskId}` });
   if (cb > 0) await h.ledger(client, { characterId: ch.id, currency: 'cb', amount: cb, reason: `onboard:${taskId}` });
   await h.track(client, h.accountId, 'first_week_step', { task: taskId, capstone: allDone });
-  return { ok: true, task: taskId, cash, cb, en, capstone: allDone };
+  // WHAT was finished and HOW FAR through the checklist — the two things the claim said nothing
+  // about, so all nine of the First Week's rewards read identically but for the figures. `task` is
+  // a raw id ('ob_crime') the client has no catalog for; the progress is the server's own offered
+  // list (an unofferable social task is not held against the player — see offeredTasks), so only
+  // the server can state it. Mirrors the LITERALLY ADJACENT career line, which names both.
+  const offered = offeredTasks(onboard, ident);
+  return { ok: true, task: taskId, taskName: t.name, cash, cb, en, capstone: allDone,
+    weekDone: offered.filter((x) => onboard[x.id]).length, weekOf: offered.length };
 }
 
 // ── DAILY SOCIAL TASKS ("Spread the Word") — the organic-growth petty-cash faucet ──────────────

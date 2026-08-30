@@ -7355,6 +7355,140 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   console.log('  ✓ wave 73: the pen — a break BLOWN by a rat read as bad luck at the fence, a tipper told nothing, and a hired gun that stated its price twice');
 }
 
+// ── WAVE 74 (daily): the everyday buttons — a burst, a wipe, a rung, a vest and a drill ─────────
+// Its OWN token, deliberately after the main loop: the wipe unlearns EVERY skill and burns the one
+// respec a day, and a shared fixture poisoned that way skips rows that then read on the summary
+// line exactly like covered ones (the Pen/club precedent).
+{
+  const t74 = (await inject('POST', '/v1/auth/guest')).body.token;
+  await inject('POST', '/v1/character', t74, { name: 'Daily ' + Math.random().toString(36).slice(2, 7) });
+  const id74 = (await inject('GET', '/v1/me', t74)).body.character.id;
+  const acc74 = (await app.pool.query('SELECT account_id FROM characters WHERE id=$1', [id74])).rows[0].account_id;
+  // every precondition SEEDED: a refused action is skipped in silence and reads as covered.
+  // level 40 buys the ten points a full branch costs, and the $OMR covers the wipe AND the vest.
+  await app.pool.query("UPDATE characters SET cash=50000000, respect=5000000, energy=500, health=100, loc='neon' WHERE id=$1", [id74]);
+  await app.pool.query('UPDATE account_persistent SET omr=100000 WHERE account_id=$1', [acc74]);
+  const omrNow = async () => Number((await app.pool.query('SELECT omr FROM account_persistent WHERE account_id=$1', [acc74])).rows[0].omr);
+  const drive74 = async (url, payload) => {
+    const r = await inject('POST', url, t74, payload || null);
+    assert.equal(r.code, 200, `WAVE 74 could not drive ${url} (${JSON.stringify(r.body)})`);
+    described++;
+    return { r, line: String(describeFn(r.body, 200)) };
+  };
+
+  // ── THE BURST: a mute line over a cooldown that shuts EVERY other active ──────────────────────
+  for (const s of ['bruiser', 'doctors_friend', 'executioner', 'made_man']) await drive74(`/v1/skills/${s}`);
+  const act74 = await drive74('/v1/skills/active/adrenaline');
+  assert.equal(act74.r.body.ability, 'adrenaline', 'the burst must name its ability');
+  assert(typeof act74.r.body.name === 'string' && act74.r.body.name.length,
+    'the burst must SEND the display name — describe() has no catalog of the actives');
+  assert(act74.r.body.cooldownSeconds > 0,
+    'the burst must SEND the shared cooldown: it is the TERM, and only the server knows it (a grandmastery halves it)');
+  // ground truth for the energy is the DATABASE, not the reply that claims it
+  const en74 = Number((await app.pool.query('SELECT energy FROM characters WHERE id=$1', [id74])).rows[0].energy);
+  assert.equal(Number(act74.r.body.energy), en74, 'the burst must report the tank the row actually holds');
+  assert(act74.line !== 'done.' && act74.line.includes(act74.r.body.name)
+    && act74.line.includes(fmtLike(en74)) && /shares the one clock/.test(act74.line),
+  `the burst must name itself, the tank AND the shared clock it shuts: ${act74.line}`);
+
+  // ── THE WIPE: the BURN reported as the balance, and the skills named by their storage keys ────
+  const omrBefore = await omrNow();
+  const wipe74 = await drive74('/v1/skills/respec');
+  const omrAfter = await omrNow();
+  assert(Array.isArray(wipe74.r.body.names) && wipe74.r.body.names.length === wipe74.r.body.unlearned.length,
+    'the wipe must SEND display names beside the ids — the client has no skill catalog (its per-skill sibling has sent one since it shipped)');
+  assert(wipe74.r.body.names.some((n) => /\s/.test(n)),
+    'the names must be the names, not the keys re-sent');
+  // the FIGURE is the burn, and the database is what proves which it is
+  assert.equal(omrBefore - omrAfter, Number(wipe74.r.body.omr),
+    `the wipe's omr field is what LEFT: ${omrBefore} → ${omrAfter} against ${wipe74.r.body.omr}`);
+  assert(/burned/.test(wipe74.line) && !/left/.test(wipe74.line),
+    `the wipe must say the $OMR was BURNED, never what is left: ${wipe74.line}`);
+  assert(wipe74.line.includes(wipe74.r.body.names[0]) && !wipe74.line.includes(wipe74.r.body.unlearned[0]),
+    `the wipe must name the skills, not their keys: ${wipe74.line}`);
+  assert(/respec a day/.test(wipe74.line),
+    `the wipe must state the shared clock its per-skill sibling already states: ${wipe74.line}`);
+
+  // ── THE FIRST WEEK: nine claims that read identically but for the figures ─────────────────────
+  // GUARANTEE the precondition: `ob_crime` reads lc_crime, which a BUSTED job does not bump — a
+  // deterministic assertion resting on the crime roll is the recorded flake class, and a refused
+  // claim is skipped in silence and reads on the summary line as covered.
+  for (let i = 0; i < 12; i++) {
+    await app.pool.query('UPDATE characters SET jail_until=NULL, nerve=100, energy=500 WHERE id=$1', [id74]);
+    await inject('POST', '/v1/crimes/pick', t74, { approach: 'standard' });
+    if (Number((await app.pool.query('SELECT lc_crime FROM characters WHERE id=$1', [id74])).rows[0].lc_crime) >= 1) break;
+  }
+  await app.pool.query('UPDATE characters SET jail_until=NULL, energy=500 WHERE id=$1', [id74]);
+  assert(Number((await app.pool.query('SELECT lc_crime FROM characters WHERE id=$1', [id74])).rows[0].lc_crime) >= 1,
+    'WAVE 74 could not land a clean job — the First Week claim would be refused and skip in silence');
+  const ob74 = await drive74('/v1/onboard/ob_crime/claim');
+  assert(typeof ob74.r.body.taskName === 'string' && ob74.r.body.taskName !== ob74.r.body.task,
+    'the claim must SEND the task NAME — `task` is a storage id the client has no catalog for');
+  assert(ob74.r.body.weekOf > 0 && ob74.r.body.weekDone >= 1,
+    'the claim must SEND the progress: the OFFERED list is the server\'s own (an unverifiable social task is not held against the player)');
+  assert(ob74.line.includes(ob74.r.body.taskName)
+    && ob74.line.includes(`${ob74.r.body.weekDone}/${ob74.r.body.weekOf}`),
+  `the claim must name WHAT was finished and HOW FAR through: ${ob74.line}`);
+
+  // ── THE VEST: a $OMR burn with no price on the line ───────────────────────────────────────────
+  const vBefore = await omrNow();
+  const vest74 = await drive74('/v1/armory/vest/lightv');
+  const vAfter = await omrNow();
+  assert(Number(vest74.r.body.omr) > 0, 'the vest must SEND its price — the client has no armory catalog');
+  assert.equal(vBefore - vAfter, Number(vest74.r.body.omr),
+    `the vest's price must be what left the account: ${vBefore} → ${vAfter} against ${vest74.r.body.omr}`);
+  assert(vest74.line.includes(`${fmtLike(vest74.r.body.omr)} $OMR`),
+    `the vest must name the bill it just charged: ${vest74.line}`);
+
+  // ── THE DRILL: the trainer named by their storage key, on the wire and on the toast ───────────
+  // TWO gym sessions with the shared clock cleared between them — a regimen session is also the
+  // career's own `ca_regimen` proof, which is the rung driven directly below.
+  for (let i = 0; i < 2; i++) {
+    await app.pool.query('UPDATE characters SET train_at=NULL, energy=500 WHERE id=$1', [id74]);
+    await drive74('/v1/regimen/stamina');
+  }
+  // WHICH job the armorer sets is a per-day seed draw with no override, so the counter it wants is
+  // seeded from the SERVER's own board — a deterministic assertion resting on today's draw is the
+  // recorded flake class, and an unmet drill is refused and would skip in silence.
+  const rb74 = (await inject('GET', '/v1/regimen', t74)).body;
+  const d74 = rb74.drills.find((d) => d.npc === 'armorer');
+  assert(d74, 'WAVE 74 found no armorer drill on the board');
+  await app.pool.query(
+    'INSERT INTO daily_progress (character_id, day, counters) VALUES ($1,$2,$3) '
+    + 'ON CONFLICT (character_id, day) DO UPDATE SET counters=$3',
+    [id74, Math.floor(Date.now() / 86400000), JSON.stringify({ [d74.kind]: d74.n })]);
+  const drill74 = await drive74('/v1/regimen/drill/armorer');
+  assert(typeof drill74.r.body.npcName === 'string' && drill74.r.body.npcName !== drill74.r.body.npc,
+    'the drill must SEND the trainer\'s NAME — the id is a storage key and the client has no catalog of the cast');
+  assert(drill74.line.includes(drill74.r.body.npcName),
+    `the drill's toast must name the trainer who ran it: ${drill74.line}`);
+  // the WIRE half's server side, read from the DATABASE rather than from the reply that claims it:
+  // the notification is the surface that rendered "armorer's drill is done", and gates.js's wire
+  // ledger holds the template to the name once the payload carries one.
+  const note74 = (await app.pool.query(
+    "SELECT payload FROM notifications WHERE character_id=$1 AND type='drill_done' ORDER BY created_at DESC LIMIT 1", [id74])).rows[0];
+  assert(note74, 'the drill must ring the wire');
+  assert.equal(JSON.parse(note74.payload).npcName, drill74.r.body.npcName,
+    'the drill\'s NOTIFY must carry the trainer\'s name too — the wire is where the raw key was read');
+
+  // ── THE RUNG: the SAME pay stated twice in one sentence ───────────────────────────────────────
+  const board74 = (await inject('GET', '/v1/career', t74)).body;
+  let ready74 = null;
+  for (const tier of board74.tiers) for (const k of tier.tasks) if (k.ready && !k.claimed && !ready74) ready74 = k.id;
+  assert(ready74, 'WAVE 74 found no claimable career rung — the precondition would skip in silence');
+  const car74 = await drive74(`/v1/career/${ready74}`);
+  assert(Number(car74.r.body.pay) > 0, 'the rung must SEND its pay');
+  const money74 = `$${fmtLike(car74.r.body.pay)}`;
+  const echo74 = (s, n) => s.split(n).length - 1;
+  assert.equal(echo74(car74.line, money74), 1,
+    `the rung printed its own pay ${echo74(car74.line, money74)} times — a figure stated twice reads as two figures: ${car74.line}`);
+  // …and the generic push must still SPEAK for a reply whose own branch says nothing about pay,
+  // or the scan has been traded for a silence (the check-in is the branch that owns that line).
+  const bare74 = String(describeFn({ ok: true, pay: 4321, streak: 3, energyGained: 0 }, 200));
+  assert(bare74.includes('$4,321'), `a reply whose branch states no pay must still have it stated: ${bare74}`);
+
+  console.log('  ✓ wave 74: the daily buttons — a burst that named no clock, a burn reported as a balance, a rung that paid twice and a drill run by a storage key');
+}
 await app.close();
 
 // ── WAVE 73 (market): four verbs on the two boards, and none named what a player needed ─────────

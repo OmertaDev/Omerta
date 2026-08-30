@@ -10,7 +10,7 @@
 // §10.4: ZERO surface. Training costs energy + the shared clock, never cash; XP and levels are not
 // currencies; nothing here writes a transactions row (the regimen test proves it). Discipline state
 // DIES WITH THE STREET (runEstate wipes character_disciplines + npc_drills).
-import { REGIMEN, UNDERWORLD, PACING, disciplineLvlOf, drillOf, dayOf, jailed } from './rules.js';
+import { REGIMEN, UNDERWORLD, PACING, disciplineLvlOf, drillOf, dayOf, jailed, npcOf } from './rules.js';
 import { GameError } from './game.js';
 
 const DISC_IDS = REGIMEN.DISCIPLINES.map((d) => d.id);
@@ -83,8 +83,13 @@ export async function claimDrill(ch, npc, client, h) {
   const disc = h.owned.disciplines || {};
   const target = trainerDiscipline(npc, disc);
   const total = await addXp(client, ch.id, target, REGIMEN.DRILL_XP);
-  await h.notify(client, ch.id, 'drill_done', { npc, discipline: target, xp: REGIMEN.DRILL_XP });
-  return { ok: true, npc, discipline: target, xp: REGIMEN.DRILL_XP, total, level: disciplineLvlOf(total) };
+  // npcName rides BOTH the notify and the reply — the id ('armorer') is a storage key and the name
+  // ('Bella Bang-Bang') is what a player knows the cast by; the client has no catalog of the cast,
+  // so the wire template rendered "armorer's drill is done". The board one screen up (regimenBoard)
+  // has sent `trainer` all along, which is what makes this the forgotten-sibling shape.
+  const nm = npcOf(npc)?.name || npc;
+  await h.notify(client, ch.id, 'drill_done', { npc, npcName: nm, discipline: target, xp: REGIMEN.DRILL_XP });
+  return { ok: true, npc, npcName: nm, discipline: target, xp: REGIMEN.DRILL_XP, total, level: disciplineLvlOf(total) };
 }
 
 // ── the board: your disciplines + today's six drills with live progress ──

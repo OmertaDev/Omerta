@@ -2677,7 +2677,12 @@
         : `paid $${fmt(body.cost)} toward ${txt(body.npcName)} — ${body.remaining} more to square`;
     if (body && body.ok && body.npcName && body.standing !== undefined)
       return `the envelope lands${body.cost ? ` ($${fmt(body.cost)})` : ''} — ${txt(body.npcName)} is at ${body.standing}${body.tier ? ` (tier ${body.tier})` : ''}`;
-    if (body && body.ok && body.npcName)
+    // SCOPED on the server's own `op` marker. This was the LAST of the four npcName branches and
+    // keyed on npcName ALONE, i.e. a catch-all for any reply carrying a fixture's name — so the
+    // moment the trainer drill started sending one (it had been rendering the raw key 'armorer' at
+    // the player), the drill's line was claimed by this one and read "Bella Bang-Bang does you a
+    // favor". A marker naming the SYSTEM holds; the absence of a sibling's field does not.
+    if (body && body.ok && body.npcName && body.op === 'favor')
       return `${txt(body.npcName)} does you a favor — ${body.health !== undefined ? 'patched up, back to full'
         : body.energy !== undefined ? `you're rested (${body.energy} energy)`
         : body.nerve !== undefined ? `nerve back up (${body.nerve})`
@@ -3060,7 +3065,10 @@
       return body.spent !== undefined
         ? `bought ${body.qty} × ${txt(goodName(body.good))} at $${fmt(body.unit)} a unit — $${fmt(body.spent)} out of pocket`
         : `sold ${body.qty} × ${txt(goodName(body.good))} at $${fmt(body.unit)} a unit — $${fmt(body.earned)} in`;
-    if (body && body.ok && body.vest && body.mult !== undefined) return `strapped into ${art(body.name || body.vest)} — it soaks ${Math.round((body.mult - 1) * 100)}% more punishment`;
+    // …and the PRICE, which a vest is the only armory buy that never named: a $OMR burn on the
+    // premium currency (driven, the account fell 99,940 → 99,880) with the bill left off entirely.
+    // The reply carries it now — the client has no vest catalog to price it from.
+    if (body && body.ok && body.vest && body.mult !== undefined) return `strapped into ${art(body.name || body.vest)} — it soaks ${Math.round((body.mult - 1) * 100)}% more punishment${body.omr !== undefined ? ` · ${fmt(body.omr)} $OMR` : ''}`;
     if (body && body.ok && body.racket && body.income !== undefined)
       return `${art(body.name || body.racket)} is yours — about $${fmt(Math.round(body.income * 60))} an hour while you're not looking`;
     // …and the UPGRADE beside it, which read the bare catch-all `paid $6,250` — the forgotten
@@ -3186,8 +3194,26 @@
       return `\u{1F3B4} you're made in ${txt(body.name)}. Omertà holds now — you can't move on your own people, and they can't move on you. Tribute goes to the treasury; what you earn counts to the family's standing.`;
     if (body && body.ok && body.dissolved !== undefined)
       return body.dissolved ? 'you walked, and the family went with you — nobody left to hold it' : 'you\'re out of the family';
+    // AN ACTIVE ABILITY — the capstone burst — said "done." over a reply that already carried both
+    // halves: what it landed (energy and/or nerve to the level-scaled cap, or the op cooldowns
+    // cleared) and the TERM, which is the one that decides whether to cast at all — every active
+    // shares ONE cooldown, so burning it here locks the other two until it cycles. Keyed on the
+    // ability/name conjunction, which nothing else in src/ sends.
+    if (body && body.ok && body.ability && body.name) {
+      const got = [];
+      if (body.energy !== undefined) got.push(`energy to the cap (${fmt(body.energy)})`);
+      if (body.nerve !== undefined) got.push(`nerve to the cap (${fmt(body.nerve)})`);
+      if (body.cooldownsCleared) got.push('the Score and the world-raid clocks wiped');
+      return `\u{26A1} ${txt(body.name)} — ${got.length ? got.join(' and ') : 'it lands'}`
+        + `${body.cooldownSeconds ? `. Every active shares the one clock, so the rest are shut for ${minsTxt(body.cooldownSeconds)}.` : '.'}`;
+    }
+    // THE FULL RESPEC said "60 $OMR left" and 60 was what it BURNED — `body.omr` is SKILLS.RESPEC_OMR,
+    // the charge, and the line reported it as the balance remaining. Driven, the account went
+    // 99,940 → 99,880: the player was told sixty tokens were left while ~99,880 were. It also joined
+    // the raw skill IDS verbatim ('doctors_friend') where the per-skill sibling below names the skill
+    // and states the once-a-day clock the two share — the forgotten-sibling shape, one file apart.
     if (body && body.ok && Array.isArray(body.unlearned) && body.points)
-      return `unlearned ${body.unlearned.join(', ')} — ${body.points.available} point${body.points.available === 1 ? '' : 's'} back to spend${body.omr !== undefined ? ` · ${fmt(body.omr)} $OMR left` : ''}`;
+      return `\u{1F393} unlearned ${(body.names || body.unlearned).map((n) => txt(n)).join(', ')} — ${body.points.available} point${body.points.available === 1 ? '' : 's'} back to spend${body.omr !== undefined ? `, and ${fmt(body.omr)} $OMR burned for it` : ''}. One respec a day, so the clock is spent too.`;
     if (body && body.ok && body.disinfoSeconds !== undefined)
       return `\u{1F5DE} the books are cooked for ${minsTxt(body.disinfoSeconds)} — anyone tapping your line reads lies${body.spent !== undefined ? ` · ${fmt(body.spent)} $OMR` : ''}`;
     // THE DOSSIER. The Wire's own card renders this as a case file and never calls describe() on the
@@ -3293,6 +3319,15 @@
     // it sat in the TDZ and could not ask whether the money had already been said (the $dist class).
     // A street race lands the shared score line AND its own checkered line, and both state the net.
     const saidNet = () => body.net !== undefined && bits.some((b) => b.includes(`$${fmt(Math.abs(body.net))}`));
+    // …and the same scan for `pay`, which had no equivalent and needed one: the generic pay push
+    // fired for the CAREER claim and the career branch then stated the figure again, so a claimed
+    // rung read "+$1,000 · 📜 Train a discipline — +$1,000 · Associate 1/6" — the same number twice
+    // in one sentence. A scan is the durable half over an exclusion list: it holds for the next
+    // branch somebody writes that states its own pay, which is why the push moved to the tail.
+    // NO Math.abs, unlike saidNet: pay is never negative, and every branch that states it renders
+    // `${fmt(body.pay)}` — so the scan must match exactly how they render it or it silently never
+    // fires (Math.abs of a non-number is NaN, which no branch ever prints).
+    const saidPay = () => body.pay !== undefined && bits.some((b) => b.includes(`$${fmt(body.pay)}`));
     // a win/loss response is "specialized" when it carries a game-specific marker — casino (game),
     // races (field/wager), or boxing (opponent/yourFighter/record). The generic WIN line below only
     // fires when NONE of those are present, so casino/race/boxing get exactly their own one-liner
@@ -3466,7 +3501,7 @@
     // gets its own flavored branch below, so the drill branch skips it.
     {
       if (body.discipline && body.levelUp !== undefined) bits.push(`🏋 ${body.yard ? 'the iron pile — ' : ''}${discName(body.discipline)} — +${body.xp} xp${body.levelUp ? ` · LEVEL ${body.level}` : ''}${body.nextTrainSeconds ? ` · the gym is shut for ${minsTxt(body.nextTrainSeconds)}, stats included` : ''}`);
-      if (body.discipline && body.npc && !body.line) bits.push(`📋 schooled — +${body.xp} xp ${discName(body.discipline)} (now lvl ${body.level})`);
+      if (body.discipline && body.npc && !body.line) bits.push(`📋 ${body.npcName ? `${txt(body.npcName)} ran you through it` : 'schooled'} — +${body.xp} xp ${discName(body.discipline)} (now lvl ${body.level})`);
       // PEN step six — cards with the crew + the yard character
       if (body.cards) bits.push(`🂠 cards with the crew — +${body.xp} xp at ${art(txt(body.trackName || body.track))} table`);
       if (body.line && body.npc && body.effect) {
@@ -3801,7 +3836,9 @@
         + `${body.energyGained ? `, +${body.energyGained} energy` : ''}`
         + `${body.wasStreak ? `. The gap cost you: day ${body.wasStreak} down to ${body.streak}` : ''}`
         + `${body.next ? `. Back tomorrow and it's $${fmt(body.next)}` : `. That's the top of the ladder`}`);
-    else if (body.pay && !body.favor && !body.call && !body.contact) bits.push(`+$${fmt(body.pay)}${body.streak ? ` (day ${body.streak})` : ''}`);
+    // (the generic `pay` push used to be chained here as the check-in's `else`; it moved to the tail
+    //  of this function, guarded by saidPay(), because an `else if` binds to its own chain and
+    //  nothing else — so it kept firing alongside branches fourteen blocks below it.)
     if (body.won !== undefined && body.settled) bits.push(body.won > 0 ? `settled — +$${fmt(body.won)}` : 'settled — nothing hit');
     // CUTTING the stash and COLLECTING a batch both answer with a qty and a quality, so the cut has
     // to be claimed FIRST and by its own `op` — and it says what it ADDED and what the quality fell
@@ -3850,7 +3887,11 @@
     // THE CAREER — a claimed rung on the ladder (tierOf marks the shape; capstone rides the sixth)
     if (body.tier && body.tierOf !== undefined && body.pay !== undefined)
       bits.push(`📜 ${body.task} — +$${fmt(body.pay)}${body.capstone ? ` (incl. the ${body.tier} capstone $${fmt(body.capstone)})` : ''} · ${body.tier} ${body.tierDone}/${body.tierOf}`);
-    if (body.task && body.cash !== undefined && body.kind !== 'social') bits.push(`reward: +$${fmt(body.cash)}${body.cb ? ` +${body.cb} crates` : ''}${body.en ? ` +${body.en} energy` : ''}${body.capstone ? ' — THE FIRST WEEK IS DONE!' : ''}`);
+    // THE FIRST WEEK read the figures and nothing else — all nine claims came back identical but for
+    // the money, naming neither what was finished nor how far through the checklist it left you,
+    // while the career line ONE LINE ABOVE names both. `task` is a raw id ('ob_crime') and the
+    // progress is the server's own offered list, so both had to ride the reply.
+    if (body.task && body.cash !== undefined && body.kind !== 'social') bits.push(`\u{1F4CB} ${txt(body.taskName || body.task)} — +$${fmt(body.cash)}${body.cb ? ` +${body.cb} crates` : ''}${body.en ? ` +${body.en} energy` : ''}${body.weekOf ? ` · First Week ${body.weekDone}/${body.weekOf}` : ''}${body.capstone ? ' — THE FIRST WEEK IS DONE!' : ''}`);
     // THE COMPOUND, which said only "moved up to the Safe House" over a $OMR burn and named no
     // figure at all — while the reply carried three. The trap is that its `spent` is the LIFETIME
     // total sunk into the place, where every other `spent` in the game is what the action just
@@ -4349,6 +4390,12 @@
       bits.push(`\u{1F441} ${body.contracts.length} contract${body.contracts.length === 1 ? '' : 's'} on your head`
         + `${pot ? ` — $${fmt(pot)} of paper, funders and all` : ''}. The board on Wet Work names them now.`);
     }
+    // THE GENERIC PAY, moved down from the check-in chain for the same reason the bare figure below
+    // was: chained up there it fired for every reply carrying `pay` whatever the branches beneath it
+    // had already said. Guarded by the scan rather than by `!bits.length`, because a reply may
+    // legitimately have other bits and still not have named its pay.
+    if (body.pay && !body.favor && !body.call && !body.contact && !saidPay())
+      bits.push(`+$${fmt(body.pay)}${body.streak ? ` (day ${body.streak})` : ''}`);
     if (body.cost && body.fixed === undefined && !bits.length) bits.push(`paid $${fmt(body.cost)}`);
     // THE BARE FIGURE, and it belongs HERE rather than in the obligation chain it used to end: it is
     // a last resort, so its guard is that no other branch spoke. `bought` stays in the condition —
@@ -11766,7 +11813,7 @@
       // ── the underworld & the regimen
       lead_done: () => `you're their lead today — +${d.bonus} standing${d.streak > 1 ? ` (${d.streak} days running)` : ''}`,
       errand_step: () => `${d.step} of ${d.of} done for ${d.npc}`,
-      drill_done: () => `${d.npc}'s drill is done — +${d.xp} ${discName(d.discipline)}`,
+      drill_done: () => `${d.npcName || d.npc}'s drill is done — +${d.xp} ${discName(d.discipline)}`,
       discipline_up: () => `your ${discName(d.discipline)} is level ${d.level} now`,
       soldier_down: () => `${d.name} is gone — ${d.cause}`,
       // ── the chain & the store

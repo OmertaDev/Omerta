@@ -600,7 +600,10 @@ export async function buyVest(ch, vestId, client, h) {
   h.acct.omr = Number(h.acct.omr) - v.omr;
   ch.vest = vestId;
   await h.ledger(client, { accountId: h.accountId, currency: 'omr', amount: -v.omr, reason: `vest:${vestId}` });
-  return { ok: true, vest: vestId, name: v.name, mult: v.mult };
+  // the PRICE rides back. A vest is a $OMR burn on the premium currency and the reply carried no
+  // cost field at all, so the line named the purchase and left the bill off — and the client cannot
+  // state it unaided (describe() has no armory catalog, and the vest ladder is not on the reply).
+  return { ok: true, vest: vestId, name: v.name, mult: v.mult, omr: v.omr };
 }
 
 export async function buyAmmo(ch, client, h) {
