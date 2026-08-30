@@ -16,7 +16,7 @@
 | [src/avatar.js](../../src/avatar.js) | 63 | platform-core | 1 / 2 | 0 | 0 | 1 |
 | [src/bank.js](../../src/bank.js) | 519 | platform-core | 3 / 5 | 4 | 14 | 1 |
 | [src/bloodline.js](../../src/bloodline.js) | 80 | platform-core | 1 / 3 | 2 | 4 | 0 |
-| [src/bonds.js](../../src/bonds.js) | 491 | platform-core | 4 / 11 | 9 | 15 | 3 |
+| [src/bonds.js](../../src/bonds.js) | 496 | platform-core | 4 / 11 | 9 | 15 | 3 |
 | [src/boxing.js](../../src/boxing.js) | 697 | vice-competition | 3 / 12 | 11 | 8 | 4 |
 | [src/brokers.js](../../src/brokers.js) | 298 | platform-core | 4 / 4 | 5 | 10 | 1 |
 | [src/bulletin.js](../../src/bulletin.js) | 89 | engagement-growth | 2 / 1 | 1 | 2 | 0 |
@@ -26,7 +26,7 @@
 | [src/cards.js](../../src/cards.js) | 283 | platform-core | 1 / 3 | 5 | 10 | 1 |
 | [src/career.js](../../src/career.js) | 133 | engagement-growth | 2 / 3 | 2 | 9 | 0 |
 | [src/casino.js](../../src/casino.js) | 1471 | vice-competition | 4 / 11 | 21 | 22 | 4 |
-| [src/chain.js](../../src/chain.js) | 1658 | chain-economy | 10 / 19 | 17 | 29 | 13 |
+| [src/chain.js](../../src/chain.js) | 1673 | chain-economy | 10 / 19 | 17 | 29 | 13 |
 | [src/chainparams.js](../../src/chainparams.js) | 354 | platform-core | 1 / 2 | 2 | 1 | 1 |
 | [src/circle.js](../../src/circle.js) | 91 | engagement-growth | 1 / 2 | 1 | 5 | 1 |
 | [src/citymap.js](../../src/citymap.js) | 123 | world-progression | 2 / 1 | 1 | 7 | 0 |
@@ -66,7 +66,7 @@
 | [src/explore.js](../../src/explore.js) | 830 | world-progression | 24 / 4 | 1 | 27 | 1 |
 | [src/fairness.js](../../src/fairness.js) | 92 | economy-ledger | 1 / 5 | 1 | 1 | 1 |
 | [src/favors.js](../../src/favors.js) | 331 | engagement-growth | 2 / 8 | 4 | 9 | 3 |
-| [src/fees.js](../../src/fees.js) | 225 | economy-ledger | 4 / 9 | 4 | 10 | 3 |
+| [src/fees.js](../../src/fees.js) | 228 | economy-ledger | 4 / 9 | 4 | 10 | 3 |
 | [src/finalizedobservation.js](../../src/finalizedobservation.js) | 874 | platform-core | 0 / 0 | 0 | 0 | 0 |
 | [src/firstblood.js](../../src/firstblood.js) | 85 | social-combat | 1 / 2 | 0 | 3 | 0 |
 | [src/firsts.js](../../src/firsts.js) | 144 | world-progression | 1 / 6 | 1 | 7 | 1 |
