@@ -312,7 +312,7 @@
 | [AUDIT-world-uprising.md](../../AUDIT-world-uprising.md) | audit | 80 | 2026-07-22 |
 | [AUDIT.md](../../AUDIT.md) | audit | 52 | 2026-07-14 |
 | [BALANCE.md](../../BALANCE.md) | documentation | 6472 | 2026-08-24 |
-| [CHAIN-AUDIT-PACKET.md](../../CHAIN-AUDIT-PACKET.md) | documentation | 317 | 2026-08-29 |
+| [CHAIN-AUDIT-PACKET.md](../../CHAIN-AUDIT-PACKET.md) | documentation | 317 | 2026-08-30 |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 2001 | 2026-08-29 |
 | [CLAUDE.md](../../CLAUDE.md) | documentation | 17551 | 2026-08-30 |
 | [content/README.md](../../content/README.md) | documentation | 281 | 2026-08-29 |
