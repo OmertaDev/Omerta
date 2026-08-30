@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "4e6ed925e75e7712118df55876d1a11cc3c52cfb",
+  "sourceRevision": "68dea84c55ec19d02a76f5f2a1f50775f8392e8f",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5653,
-    "edges": 24813,
+    "nodes": 5655,
+    "edges": 24825,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 56,
-      "Commit": 1295,
+      "Commit": 1297,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 9881,
+      "CHANGED": 9891,
       "CONTAINS": 1846,
       "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1295,
+      "HAS_COMMIT": 1297,
       "IMPLEMENTS": 124,
       "IMPORTS": 1633,
       "INHERITS": 12,
@@ -32493,20 +32493,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1160068,
-      "lines": 11931,
-      "version": "d557f5c5177228eb",
+      "bytes": 1162722,
+      "lines": 11959,
+      "version": "49f9aaca5945132c",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "d557f5c5177228eb"
+          "version": "49f9aaca5945132c"
         }
       ],
-      "lastChangedAt": "2026-08-30T09:33:37.000Z",
+      "lastChangedAt": "2026-08-30T10:09:55.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "4e6ed925e75e7712118df55876d1a11cc3c52cfb"
+      "lastChangedCommit": "68dea84c55ec19d02a76f5f2a1f50775f8392e8f"
     },
     {
       "key": "Artifact:public/manifest.json",
@@ -33275,20 +33275,20 @@
       "path": "src/casino.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 110505,
-      "lines": 1468,
-      "version": "8219d3d6d44793f5",
+      "bytes": 110805,
+      "lines": 1471,
+      "version": "e7a638f202b8298d",
       "text": true,
       "provenance": [
         {
           "file": "src/casino.js",
           "line": 1,
-          "version": "8219d3d6d44793f5"
+          "version": "e7a638f202b8298d"
         }
       ],
-      "lastChangedAt": "2026-08-23T12:52:46.000Z",
+      "lastChangedAt": "2026-08-30T10:09:55.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "c4db3449c3d01808ae7ea5c8f60a92424d81e60d"
+      "lastChangedCommit": "68dea84c55ec19d02a76f5f2a1f50775f8392e8f"
     },
     {
       "key": "Artifact:src/chain.js",
@@ -35184,20 +35184,20 @@
       "path": "src/primetime.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 18196,
-      "lines": 260,
-      "version": "caf0a91412ae9266",
+      "bytes": 18599,
+      "lines": 264,
+      "version": "67eb03903013c73c",
       "text": true,
       "provenance": [
         {
           "file": "src/primetime.js",
           "line": 1,
-          "version": "caf0a91412ae9266"
+          "version": "67eb03903013c73c"
         }
       ],
-      "lastChangedAt": "2026-08-24T19:44:53.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b1a180875960a09974d306bf774ea2949d071ff8"
+      "lastChangedAt": "2026-08-30T10:09:55.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "68dea84c55ec19d02a76f5f2a1f50775f8392e8f"
     },
     {
       "key": "Artifact:src/push.js",
@@ -35230,20 +35230,20 @@
       "path": "src/races.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 39090,
-      "lines": 489,
-      "version": "b8fd7255753c55b8",
+      "bytes": 39498,
+      "lines": 495,
+      "version": "b87c565062e28bc4",
       "text": true,
       "provenance": [
         {
           "file": "src/races.js",
           "line": 1,
-          "version": "b8fd7255753c55b8"
+          "version": "b87c565062e28bc4"
         }
       ],
-      "lastChangedAt": "2026-08-24T18:49:55.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dee7593a66b955d677656afab4516cb68edb918d"
+      "lastChangedAt": "2026-08-30T10:09:55.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "68dea84c55ec19d02a76f5f2a1f50775f8392e8f"
     },
     {
       "key": "Artifact:src/ratelimit.js",
@@ -37553,20 +37553,20 @@
       "path": "test/client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 594988,
-      "lines": 7747,
-      "version": "9b1022bd5b83e1a9",
+      "bytes": 604850,
+      "lines": 7871,
+      "version": "864478b8e4afba33",
       "text": true,
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "9b1022bd5b83e1a9"
+          "version": "864478b8e4afba33"
         }
       ],
-      "lastChangedAt": "2026-08-30T09:33:37.000Z",
+      "lastChangedAt": "2026-08-30T10:09:55.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "4e6ed925e75e7712118df55876d1a11cc3c52cfb"
+      "lastChangedCommit": "68dea84c55ec19d02a76f5f2a1f50775f8392e8f"
     },
     {
       "key": "Artifact:test/clues.js",
@@ -50277,6 +50277,22 @@
       ]
     },
     {
+      "key": "Commit:5b8dd8565c42c34934c1e382d468e6bbed6f6d5f",
+      "type": "Commit",
+      "id": "5b8dd8565c42c34934c1e382d468e6bbed6f6d5f",
+      "label": "Knowledge graph regenerated for wave 73 (world + politics)",
+      "title": "Knowledge graph regenerated for wave 73 (world + politics)",
+      "date": "2026-08-30T09:45:16.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5b8dd8565c42c34934c1e382d468e6bbed6f6d5f",
+      "provenance": [
+        {
+          "commit": "5b8dd8565c42c34934c1e382d468e6bbed6f6d5f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5b8dd8565c42c34934c1e382d468e6bbed6f6d5f"
+        }
+      ]
+    },
+    {
       "key": "Commit:5be5da68b9e8ac6328070cff43b8f06f04396a87",
       "type": "Commit",
       "id": "5be5da68b9e8ac6328070cff43b8f06f04396a87",
@@ -51393,6 +51409,22 @@
         {
           "commit": "68a13cef81b6daf08f51ee588e5fcf071a403030",
           "url": "https://github.com/OmertaDev/Omerta/commit/68a13cef81b6daf08f51ee588e5fcf071a403030"
+        }
+      ]
+    },
+    {
+      "key": "Commit:68dea84c55ec19d02a76f5f2a1f50775f8392e8f",
+      "type": "Commit",
+      "id": "68dea84c55ec19d02a76f5f2a1f50775f8392e8f",
+      "label": "Play wave 73 (vice): a refunded stake reported as a win, and four entries that took the money without naming the terms",
+      "title": "Play wave 73 (vice): a refunded stake reported as a win, and four entries that took the money without naming the terms",
+      "date": "2026-08-30T10:09:55.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/68dea84c55ec19d02a76f5f2a1f50775f8392e8f",
+      "provenance": [
+        {
+          "commit": "68dea84c55ec19d02a76f5f2a1f50775f8392e8f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/68dea84c55ec19d02a76f5f2a1f50775f8392e8f"
         }
       ]
     },
@@ -76680,6 +76712,9 @@
           "commit": "57815f7b7830d17990d099d4e894fa7d67d7b1b5"
         },
         {
+          "commit": "5b8dd8565c42c34934c1e382d468e6bbed6f6d5f"
+        },
+        {
           "commit": "5e63a28e1b8459d33b7bbebf3ca93a9a6b0cc29f"
         },
         {
@@ -77037,6 +77072,9 @@
           "commit": "57815f7b7830d17990d099d4e894fa7d67d7b1b5"
         },
         {
+          "commit": "5b8dd8565c42c34934c1e382d468e6bbed6f6d5f"
+        },
+        {
           "commit": "5e63a28e1b8459d33b7bbebf3ca93a9a6b0cc29f"
         },
         {
@@ -77392,6 +77430,9 @@
         },
         {
           "commit": "57815f7b7830d17990d099d4e894fa7d67d7b1b5"
+        },
+        {
+          "commit": "5b8dd8565c42c34934c1e382d468e6bbed6f6d5f"
         },
         {
           "commit": "5e63a28e1b8459d33b7bbebf3ca93a9a6b0cc29f"
@@ -77808,6 +77849,9 @@
           "commit": "57815f7b7830d17990d099d4e894fa7d67d7b1b5"
         },
         {
+          "commit": "5b8dd8565c42c34934c1e382d468e6bbed6f6d5f"
+        },
+        {
           "commit": "5e63a28e1b8459d33b7bbebf3ca93a9a6b0cc29f"
         },
         {
@@ -78073,6 +78117,9 @@
         },
         {
           "commit": "4d78d9cad8adb025ca232f4015c2c3ae1d21fc73"
+        },
+        {
+          "commit": "5b8dd8565c42c34934c1e382d468e6bbed6f6d5f"
         },
         {
           "commit": "5e63a28e1b8459d33b7bbebf3ca93a9a6b0cc29f"
@@ -78678,13 +78725,13 @@
       "type": "Module",
       "id": "src/casino.js",
       "label": "src/casino.js",
-      "lines": 1468,
-      "version": "8219d3d6d44793f5",
+      "lines": 1471,
+      "version": "e7a638f202b8298d",
       "provenance": [
         {
           "file": "src/casino.js",
           "line": 1,
-          "version": "8219d3d6d44793f5"
+          "version": "e7a638f202b8298d"
         }
       ]
     },
@@ -79923,13 +79970,13 @@
       "type": "Module",
       "id": "src/primetime.js",
       "label": "src/primetime.js",
-      "lines": 260,
-      "version": "caf0a91412ae9266",
+      "lines": 264,
+      "version": "67eb03903013c73c",
       "provenance": [
         {
           "file": "src/primetime.js",
           "line": 1,
-          "version": "caf0a91412ae9266"
+          "version": "67eb03903013c73c"
         }
       ]
     },
@@ -79953,13 +80000,13 @@
       "type": "Module",
       "id": "src/races.js",
       "label": "src/races.js",
-      "lines": 489,
-      "version": "b8fd7255753c55b8",
+      "lines": 495,
+      "version": "b87c565062e28bc4",
       "provenance": [
         {
           "file": "src/races.js",
           "line": 1,
-          "version": "b8fd7255753c55b8"
+          "version": "b87c565062e28bc4"
         }
       ]
     },
@@ -84318,7 +84365,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "4e6ed925e75e7712118df55876d1a11cc3c52cfb",
+      "revision": "68dea84c55ec19d02a76f5f2a1f50775f8392e8f",
       "currentBranch": "(detached)",
       "defaultBranch": "main",
       "visibility": "public",
@@ -107865,13 +107912,13 @@
       "type": "TestSuite",
       "id": "test/client.js",
       "label": "test/client.js",
-      "lines": 7747,
-      "version": "9b1022bd5b83e1a9",
+      "lines": 7871,
+      "version": "864478b8e4afba33",
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "9b1022bd5b83e1a9"
+          "version": "864478b8e4afba33"
         }
       ]
     },
@@ -158258,6 +158305,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:5b8dd8565c42c34934c1e382d468e6bbed6f6d5f",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "5b8dd8565c42c34934c1e382d468e6bbed6f6d5f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5b8dd8565c42c34934c1e382d468e6bbed6f6d5f",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "5b8dd8565c42c34934c1e382d468e6bbed6f6d5f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5b8dd8565c42c34934c1e382d468e6bbed6f6d5f",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "5b8dd8565c42c34934c1e382d468e6bbed6f6d5f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5b8dd8565c42c34934c1e382d468e6bbed6f6d5f",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "5b8dd8565c42c34934c1e382d468e6bbed6f6d5f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5b8dd8565c42c34934c1e382d468e6bbed6f6d5f",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "5b8dd8565c42c34934c1e382d468e6bbed6f6d5f"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:5be5da68b9e8ac6328070cff43b8f06f04396a87",
       "to": "Artifact:CHAIN-DEPLOY.md",
       "provenance": {
@@ -162926,6 +163013,46 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "commit": "6899d584304f52a9d2237daccf53300b54e0e1ea"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:68dea84c55ec19d02a76f5f2a1f50775f8392e8f",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "68dea84c55ec19d02a76f5f2a1f50775f8392e8f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:68dea84c55ec19d02a76f5f2a1f50775f8392e8f",
+      "to": "Artifact:src/casino.js",
+      "provenance": {
+        "commit": "68dea84c55ec19d02a76f5f2a1f50775f8392e8f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:68dea84c55ec19d02a76f5f2a1f50775f8392e8f",
+      "to": "Artifact:src/primetime.js",
+      "provenance": {
+        "commit": "68dea84c55ec19d02a76f5f2a1f50775f8392e8f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:68dea84c55ec19d02a76f5f2a1f50775f8392e8f",
+      "to": "Artifact:src/races.js",
+      "provenance": {
+        "commit": "68dea84c55ec19d02a76f5f2a1f50775f8392e8f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:68dea84c55ec19d02a76f5f2a1f50775f8392e8f",
+      "to": "Artifact:test/client.js",
+      "provenance": {
+        "commit": "68dea84c55ec19d02a76f5f2a1f50775f8392e8f"
       }
     },
     {
@@ -246732,6 +246859,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:5b8dd8565c42c34934c1e382d468e6bbed6f6d5f",
+      "provenance": {
+        "commit": "5b8dd8565c42c34934c1e382d468e6bbed6f6d5f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:5be5da68b9e8ac6328070cff43b8f06f04396a87",
       "provenance": {
         "commit": "5be5da68b9e8ac6328070cff43b8f06f04396a87"
@@ -247287,6 +247422,14 @@
       "to": "Commit:68a13cef81b6daf08f51ee588e5fcf071a403030",
       "provenance": {
         "commit": "68a13cef81b6daf08f51ee588e5fcf071a403030"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:68dea84c55ec19d02a76f5f2a1f50775f8392e8f",
+      "provenance": {
+        "commit": "68dea84c55ec19d02a76f5f2a1f50775f8392e8f"
       }
     },
     {
@@ -310034,7 +310177,7 @@
       "to": "Table:poker_entries",
       "provenance": {
         "file": "src/casino.js",
-        "line": 1120
+        "line": 1123
       }
     },
     {
@@ -310043,7 +310186,7 @@
       "to": "Table:poker_state",
       "provenance": {
         "file": "src/casino.js",
-        "line": 1090
+        "line": 1093
       }
     },
     {
@@ -310052,7 +310195,7 @@
       "to": "Table:poker_tournaments",
       "provenance": {
         "file": "src/casino.js",
-        "line": 1107
+        "line": 1110
       }
     },
     {
@@ -316451,7 +316594,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/primetime.js",
-        "line": 221
+        "line": 225
       }
     },
     {
@@ -316460,7 +316603,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/primetime.js",
-        "line": 220
+        "line": 224
       }
     },
     {
@@ -316586,7 +316729,7 @@
       "to": "Table:grand_prix_entries",
       "provenance": {
         "file": "src/races.js",
-        "line": 340
+        "line": 344
       }
     },
     {
@@ -316595,7 +316738,7 @@
       "to": "Table:grand_prix_state",
       "provenance": {
         "file": "src/races.js",
-        "line": 329
+        "line": 333
       }
     },
     {
@@ -316604,7 +316747,7 @@
       "to": "Table:grand_prix",
       "provenance": {
         "file": "src/races.js",
-        "line": 330
+        "line": 334
       }
     },
     {
