@@ -7809,6 +7809,122 @@ await app.close();
   console.log('  ✓ wave 70: the den — a stake taken at the deal and never named, and a whole pass line reported as one net figure');
 }
 
+// ── WAVE 73 (freight): the offshore handoff, the tip-off, and the hull that said less than its
+// tune-up ────────────────────────────────────────────────────────────────────────────────────────
+// Its OWN tokens after the main loop: the port needs a fleet standing at the docks, the handoff
+// needs a SECOND captain with an open boat, and the score needs a planned job — none of which the
+// shared fixture has, and a refused drive is skipped in SILENCE and reads on the summary line
+// exactly like a covered one. Every claim is asserted in two halves — the SERVER sent the field,
+// then the driven line reads it — because a synthetic literal passes straight through the mutation
+// that stops the field being sent.
+{
+  const app6 = await buildServer();
+  const inj6 = async (method, url, token, payload) => {
+    const res = await app6.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
+  };
+  const mkF = async (nm, loc) => {
+    const t = (await inj6('POST', '/v1/auth/guest')).body.token;
+    await inj6('POST', '/v1/character', t, { name: nm + Math.random().toString(36).slice(2, 7) });
+    const id = (await inj6('GET', '/v1/me', t)).body.character.id;
+    await app6.pool.query('UPDATE characters SET cash=90000000, respect=5000000, energy=500, health=100, loc=$2 WHERE id=$1', [id, loc]);
+    return { t, id };
+  };
+  const driveF = async (url, tok, payload, what) => {
+    const r = await inj6('POST', url, tok, payload);
+    assert.equal(r.code, 200, `WAVE 73 (freight) could not drive ${what} (${JSON.stringify(r.body)})`);
+    described++;
+    return { r, line: String(describeFn(r.body, 200)) };
+  };
+
+  // ── THE HULL: six of them on one screen, and the buy said less about the boat than the TUNE-UP
+  // one route over ("She carries 35 and runs 25 knots now"). `speed` is a GATE, not a stat — a lane
+  // refuses `too_slow` below its minSpeed — so it decides which runs she can ever take.
+  const capt = await mkF('Skipper ', 'docks');
+  const buyF = await driveF('/v1/port/boat/dinghy', capt.t, {}, 'the hull');
+  const hull = buyF.r.body.boat;
+  assert.ok(hull && hull.hold > 0 && hull.speed > 0, 'WAVE 73 (freight): the buy must SEND the hold and the knots — a hull is chosen on those two numbers');
+  assert.ok(buyF.line.includes(String(hull.hold)) && buyF.line.includes(String(hull.speed)),
+    `WAVE 73 (freight): the buy must name the hold and the knots, as its own tune-up sibling does — got ${buyF.line}`);
+  assert.ok(buyF.line.includes(fmtLike(buyF.r.body.spent)), `WAVE 73 (freight): the buy must still name the price — got ${buyF.line}`);
+
+  // ── THE SALE: `fmt` is toLocaleString and adds no currency marker, and this was the ONE unmarked
+  // money figure in the client — beside a boat whose sibling line quotes hold and knots, so it read
+  // as a quantity. Ground truth is the DATABASE: the refund the reply claims is the cash that moved.
+  const spare = await driveF('/v1/port/boat/dinghy', capt.t, {}, 'a spare hull');
+  const cashPre = Number((await app6.pool.query('SELECT cash FROM characters WHERE id=$1', [capt.id])).rows[0].cash);
+  const sellF = await driveF(`/v1/port/boat/${spare.r.body.boat.id}/sell`, capt.t, {}, 'the sale');
+  const cashPost = Number((await app6.pool.query('SELECT cash FROM characters WHERE id=$1', [capt.id])).rows[0].cash);
+  assert.equal(cashPost - cashPre, sellF.r.body.refund, "WAVE 73 (freight): the reply's refund must be what the DATABASE paid");
+  assert.ok(new RegExp(`\\$${fmtLike(sellF.r.body.refund).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(sellF.line),
+    `WAVE 73 (freight): a dollars-valued figure must carry its currency marker — "+24,000" reads as a quantity: ${sellF.line}`);
+
+  // ── THE OFFSHORE HANDOFF: the whole run changes vessels mid-sea and read "done.". `to` is a BOAT
+  // id and `route` a catalog key, and the client has neither a character catalog nor a route one, so
+  // both display names must ship from the server (the raw-key rule).
+  const mate = await mkF('Partner ', 'docks');
+  const mateBoat = (await driveF('/v1/port/boat/dinghy', mate.t, {}, "the partner's hull")).r.body.boat.id;
+  await driveF(`/v1/port/boat/${mateBoat}/rendezvous`, mate.t, { open: true }, 'the consent flag');
+  await driveF(`/v1/port/run/${hull.id}`, capt.t, { route: 'coastal' }, 'the run');
+  const rdv = await driveF(`/v1/port/rendezvous/${hull.id}`, capt.t, { to: mateBoat }, 'the handoff');
+  const mateName = (await app6.pool.query('SELECT name FROM characters WHERE id=$1', [mate.id])).rows[0].name;
+  assert.equal(rdv.r.body.toName, mateName, "WAVE 73 (freight): the handoff must SEND the partner's name — `to` is a boat id");
+  assert.ok(rdv.r.body.routeName && rdv.r.body.routeName !== rdv.r.body.route,
+    'WAVE 73 (freight): the handoff must SEND the route\'s display name, never only its catalog key');
+  // GROUND TRUTH: the hold the reply claims is the cargo now sitting on the partner's boat.
+  const moved = Number((await app6.pool.query('SELECT run_hold FROM boats WHERE id=$1', [mateBoat])).rows[0].run_hold);
+  assert.equal(moved, rdv.r.body.hold, 'WAVE 73 (freight): the reply must claim the hold the DATABASE actually moved');
+  assert.ok(rdv.line.includes(mateName) && rdv.line.includes(rdv.r.body.routeName),
+    `WAVE 73 (freight): the handoff must name who took it and which run — got ${rdv.line}`);
+  assert.ok(!new RegExp(`\\b${rdv.r.body.to}\\b`).test(rdv.line) && !/\bcoastal\b/.test(rdv.line),
+    `WAVE 73 (freight): the handoff must not print the raw boat id or route key — got ${rdv.line}`);
+  assert.ok(rdv.line.includes(String(moved)), `WAVE 73 (freight): the handoff must name the cargo it handed over — got ${rdv.line}`);
+
+  // ── THE FREIGHT'S REFUSAL rendered a catalog id. describe() shows body.message FIRST, so the
+  // server's own sentence IS what the player reads — and the machine-readable payload must survive,
+  // or the console loses its "go there →" affordance.
+  const hauler = await mkF('Hauler ', 'docks');
+  await driveF('/v1/goods/buy', hauler.t, { goodId: 'gin', qty: 8 }, 'the freight');
+  const conv = await driveF('/v1/convoy', hauler.t, { to: 'neon', goodId: 'gin', qty: 8 }, 'the shipment');
+  await driveF('/v1/convoy/depart', hauler.t, { guards: 'none' }, 'the departure');
+  await app6.pool.query("UPDATE convoys SET arrives_at = now() - interval '1 hour' WHERE id=$1", [conv.r.body.id]);
+  const wrongPlace = await inj6('POST', `/v1/convoy/${conv.r.body.id}/collect`, hauler.t, {});
+  assert.equal(wrongPlace.body.error, 'district', 'WAVE 73 (freight): the collect must refuse away from the destination, or this block is vacuous');
+  assert.equal(wrongPlace.body.district, 'neon', 'WAVE 73 (freight): the machine-readable district payload must survive — the console offers "go there →" off it');
+  const dest = DISTRICTS.find((d) => d.id === 'neon').name;
+  assert.notEqual(dest, 'neon', 'WAVE 73 (freight) precondition: this district must genuinely be named something other than its id');
+  const refused = String(describeFn(wrongPlace.body, wrongPlace.code)); described++;
+  assert.ok(refused.includes(dest), `WAVE 73 (freight): the refusal must name the PLACE — got ${refused}`);
+  assert.ok(!/\bneon\b/.test(refused), `WAVE 73 (freight): the refusal must not print the raw district id — got ${refused}`);
+
+  // ── THE SCORE: the hired hand named the price and not the SEAT, which is material — executeHeist
+  // reads each member's stat FOR THEIR ROLE — and the tip-off said "done." over three terms that
+  // decide whether it is worth making. The design's quiet is the FEED's, not the tipper's receipt.
+  const boss = await mkF('Fence ', 'docks');
+  const plan = await driveF('/v1/heists/plan', boss.t, { job: 'corner', role: 'muscle' }, 'the plan');
+  await app6.pool.query(
+    `INSERT INTO characters (id, account_id, name, loc, alive, is_npc, season, respect, cash)
+     VALUES ($1, $2, $3, 'docks', true, true, 1, 1000, 5000)`,
+    [crypto.randomUUID(), crypto.randomUUID(), 'Hand ' + Math.random().toString(36).slice(2, 7)]);
+  const fill = await driveF(`/v1/heists/${plan.r.body.id}/fill`, boss.t, {}, 'the hired hand');
+  assert.ok(fill.r.body.role, 'WAVE 73 (freight): the fill must SEND which seat it filled — the leader is told a seat is taken and not which');
+  assert.ok(fill.line.includes(fill.r.body.role), `WAVE 73 (freight): the hired hand must name the seat — got ${fill.line}`);
+  assert.ok(fill.line.includes(fmtLike(fill.r.body.fee)), `WAVE 73 (freight): the hired hand must still name the fee — got ${fill.line}`);
+
+  const rat = await driveF(`/v1/heists/${plan.r.body.id}/rat`, boss.t, {}, 'the tip-off');
+  assert.equal(rat.r.body.ratted, true, 'WAVE 73 (freight): the tip-off must mark itself — the reply was a bare {ok}');
+  assert.ok(rat.r.body.name && rat.r.body.name !== rat.r.body.job,
+    "WAVE 73 (freight): the tip-off must SEND the job's display name, never only its catalog key");
+  assert.ok(rat.line.includes(rat.r.body.name), `WAVE 73 (freight): the tip-off must name the job it blows — got ${rat.line}`);
+  assert.match(rat.line, /whatever the roll/, `WAVE 73 (freight): the tip-off must say the job blows regardless — got ${rat.line}`);
+  assert.match(rat.line, /own sentence/, `WAVE 73 (freight): the deal is RELIEF-ONLY and never a cut — got ${rat.line}`);
+  assert.match(rat.line, /hole/, `WAVE 73 (freight): the rat goes to the hole with the crew, which is what keeps the roster from outing them — got ${rat.line}`);
+  assert.ok(!/\bcorner\b/.test(rat.line), `WAVE 73 (freight): the tip-off must not print the raw job key — got ${rat.line}`);
+
+  await app6.close();
+  console.log('  ✓ wave 73: freight — an offshore handoff and a tip-off that said "done.", a refund with no currency on it, a hull that said less than its own tune-up, and a refusal that named the district by its storage key');
+}
+
 console.log(`✅ client wiring test passed — across the console AND /admin: of ${refs.size} routes they can ` +
   `call, ${refs.size - dynamic.length} resolve to a really-mounted route (segment-wise, so ` +
   `/v1/streets/:id/jump cannot match /v1/streets/roster) and the ${dynamic.length} that build their ` +

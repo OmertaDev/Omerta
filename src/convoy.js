@@ -16,7 +16,7 @@ import { postPower } from './roster.js';
 import { GameError, bus, skillMult, trunkCap, npcMult, bumpStanding } from './game.js';
 import { CONVOY, COMMISSION, SKILLS, UNDERWORLD, NOTORIETY, guardTierOf, DISTRICTS, GOODS, goodPriceOf,
   levelOf, rigOf, rigUpgradeCost, haulerRankOf, banditRankOf, haulerTierOf, smuggleRepPerks, pathFx, M3 , jailed, hospitalized, safeHoused, usd, art,
-  REGIMEN, disciplineLvlOf } from './rules.js';
+  REGIMEN, disciplineLvlOf , districtName } from './rules.js';
 import { activeDecree } from './commission.js';
 import { laneHeat, heatLane } from './notoriety.js';
 
@@ -295,7 +295,7 @@ export async function collectConvoy(ch, convoyId, client, h) {
   if (!c || c.owner_character !== ch.id) throw new GameError('no_convoy', 'Not your shipment.');
   if (c.status !== 'transit') throw new GameError('no_convoy', 'Nothing to collect.');
   if (!arrived(c)) throw new GameError('en_route', 'Still on the road.');
-  if (ch.loc !== c.destination) throw new GameError('district', `The freight lands at ${c.destination} — be there.`, { district: c.destination });
+  if (ch.loc !== c.destination) throw new GameError('district', `The freight lands at ${districtName(c.destination)} — be there.`, { district: c.destination });
   const manifest = await manifestOf(client, convoyId);
   const cap = trunkCap(h);
   let space = Math.max(0, cap - cargoCount(h.owned.cargo));

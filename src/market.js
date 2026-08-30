@@ -17,7 +17,7 @@
 // races fall back to the 40P01→contention mapping.
 import crypto from 'node:crypto';
 import { GameError, bus, ledger, notify, skillMult, trunkCap, npcTier, bumpStanding, bumpMastery, masteryFx } from './game.js';
-import { BLACK_MARKET as MARKET, GOODS, SKILLS, UNDERWORLD , jailed, safeHoused, usd, carOf } from './rules.js';
+import { BLACK_MARKET as MARKET, GOODS, SKILLS, UNDERWORLD , jailed, safeHoused, usd, carOf , districtName } from './rules.js';
 import { logCarCollect } from './collection.js';
 
 const uid = () => crypto.randomUUID();
@@ -211,7 +211,7 @@ export async function fillOrder(ch, listingId, qty, client, h) {
     "SELECT * FROM market_listings WHERE id=$1 AND kind='order' AND status='live' FOR UPDATE", [listingId])).rows[0];
   if (!l || expired(l)) throw new GameError('no_order', 'No such order on the board.');
   if (l.seller_character === ch.id) throw new GameError('own', 'Filling your own order is just feeding the house 2%.');
-  if (ch.loc !== l.district) throw new GameError('district', `Delivery is at ${l.district} — be there.`, { district: l.district });
+  if (ch.loc !== l.district) throw new GameError('district', `Delivery is at ${districtName(l.district)} — be there.`, { district: l.district });
   const have = h.owned.cargo[l.good_id] || 0;
   const n = Math.min(Math.max(1, Math.floor(Number(qty) || have)), Number(l.qty), have);
   if (n <= 0) throw new GameError('qty', 'Nothing to deliver.');
@@ -237,7 +237,7 @@ export async function claimOrder(ch, listingId, client, h) {
   const l = (await client.query(
     "SELECT * FROM market_listings WHERE id=$1 AND kind='order' AND seller_character=$2 FOR UPDATE", [listingId, ch.id])).rows[0];
   if (!l) throw new GameError('no_order', 'Not your order.');
-  if (ch.loc !== l.district) throw new GameError('district', `The warehouse is at ${l.district} — be there.`, { district: l.district });
+  if (ch.loc !== l.district) throw new GameError('district', `The warehouse is at ${districtName(l.district)} — be there.`, { district: l.district });
   const avail = Number(l.filled_qty);
   if (avail <= 0) throw new GameError('empty', 'Nothing delivered yet.');
   const space = Math.max(0, trunkCap(h) - cargoCount(h.owned.cargo));
@@ -304,7 +304,7 @@ export async function buyListing(ch, listingId, qty, client, h) {
   // filled at the dock via fillOrder, never bought.
   if (l.kind !== 'good') throw new GameError('not_for_sale', "That's a buy-order — fill it at the dock, you don't buy it.");
   // goods: stand at the dock, take what your trunk holds, pay unit price
-  if (ch.loc !== l.district) throw new GameError('district', `Pickup is at ${l.district} — be there.`, { district: l.district });
+  if (ch.loc !== l.district) throw new GameError('district', `Pickup is at ${districtName(l.district)} — be there.`, { district: l.district });
   const want = Math.max(1, Math.floor(Number(qty) || Number(l.qty)));
   const space = Math.max(0, trunkCap(h) - cargoCount(h.owned.cargo));
   const n = Math.min(want, Number(l.qty), space);

@@ -8,10 +8,9 @@
 // and the payoff is a bounded once-a-day cash faucet (`hustle:payoff` — the clue-casket posture:
 // petty by design, the movement is the product). §10.4: `hustle:` joins the cash vocabulary; the
 // payoff is character_id'd so the per-character cash check reconciles. Dies with the street.
-import { HUSTLE, hustleOf, dayOf, levelOf, DISTRICTS, jailed } from './rules.js';
+import { HUSTLE, hustleOf, dayOf, levelOf, DISTRICTS, jailed, districtName } from './rules.js';
 import { GameError } from './game.js';
 
-const districtName = (id) => (DISTRICTS.find((d) => d.id === id) || {}).name || id;
 
 async function countersOf(client, chId, day) {
   const row = (await client.query('SELECT counters FROM daily_progress WHERE character_id=$1 AND day=$2', [chId, day])).rows[0];

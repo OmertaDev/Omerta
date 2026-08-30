@@ -7,7 +7,7 @@
 // Split out of the 2,003-line src/social.js; every function below is byte-identical to what was
 // there. Import from '../social.js' — it re-exports this package's public surface unchanged.
 import { GameError, bumpFamilyTask, bus, ledger, notify, track, loadOwned, skillMult, npcMult, npcTier, bumpStanding, bumpMastery, masteryFx, trunkCap, gainRespect, bumpCrewObjective, hunterSearchMs } from '../game.js';
-import { M3, CONSTANTS, LOAN, levelOf, rankIdxOf, cityEventOf, dayOf, btkOf, gunObjOf, vestMultOf, fleetValue, effStat, npcHitmanOf, VENDETTA, COMMISSION, SKILLS, UNDERWORLD, LAW, PORT, witproActive, penSafe, inHole, HONOR, HEIST_LOOT_RATE, BUSINESSES, seasonModOf, pathFx, RIVALS, carVal, carOf, boatOf, gearOf, SHIPMENT, usd } from '../rules.js';
+import { M3, CONSTANTS, LOAN, levelOf, rankIdxOf, cityEventOf, dayOf, btkOf, gunObjOf, vestMultOf, fleetValue, effStat, npcHitmanOf, VENDETTA, COMMISSION, SKILLS, UNDERWORLD, LAW, PORT, witproActive, penSafe, inHole, HONOR, HEIST_LOOT_RATE, BUSINESSES, seasonModOf, pathFx, RIVALS, carVal, carOf, boatOf, gearOf, SHIPMENT, usd , districtName } from '../rules.js';
 import { activeDecree } from '../commission.js';
 import { bumpHonor } from '../honor.js';
 import { recordRival, revengeOwed } from '../rivals.js';
@@ -297,7 +297,7 @@ export async function fire(ch, victim, client, h, rounds) {
   // THE CREW — you don't put a body on your own crew (the omertà twin; rat/WANTED forfeit it).
   if (h.owned.crewId && h.victimOwned.crewId === h.owned.crewId && !h.victimAcct.rat && !isWanted(victim))
     return callOff('crew', "They run with your crew now. The hit's off.");
-  if (victim.loc !== ch.loc) throw new GameError('district', `They were placed in ${victim.loc} — you're in ${ch.loc}. Travel there, then fire.`, { district: victim.loc });
+  if (victim.loc !== ch.loc) throw new GameError('district', `They were placed in ${districtName(victim.loc)} — you're in ${districtName(ch.loc)}. Travel there, then fire.`, { district: victim.loc });
 
   ch.energy = Number(ch.energy) - M3.FIRE_ENERGY;
   ch.ammo = Number(ch.ammo) - fired;
@@ -963,7 +963,7 @@ export async function robTrunk(ch, victim, client, h) {
 export async function stealBoat(ch, victim, client, h) {
   const BT = RIVALS.BOAT_THEFT, C = RIVALS.CAR_THEFT;
   assertStreetCrime(ch, victim, h, BT.ENERGY);
-  if (ch.loc !== PORT.DISTRICT) throw new GameError('district', `Boats are stolen where they float — the ${PORT.DISTRICT}.`, { district: PORT.DISTRICT });
+  if (ch.loc !== PORT.DISTRICT) throw new GameError('district', `Boats are stolen where they float — ${districtName(PORT.DISTRICT)}.`, { district: PORT.DISTRICT });
   if (ch.gta_at && Date.now() < new Date(ch.gta_at).getTime() + CONSTANTS.GTA_CD_MS)
     throw new GameError('cooldown', "The heat's still on from the last job — lay off a minute.");
   const fleet = Number((await client.query('SELECT COUNT(*) n FROM boats WHERE character_id=$1 AND NOT minted_onchain', [ch.id])).rows[0].n);

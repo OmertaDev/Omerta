@@ -10,8 +10,7 @@
 // (`corner:job`, a small character_id'd §10.4 faucet) + CORNER.RESPECT (the XP — respect IS
 // levels). Bounded HARD by CORNER.MAX_DAY claims per street per day across all districts.
 import { GameError, gainRespect } from './game.js';
-import { CORNER, DISTRICTS, cornerTasksOf, dayOf , jailed } from './rules.js';
-const districtName = (id) => (DISTRICTS.find((d) => d.id === id) || {}).name || id;
+import { CORNER, DISTRICTS, cornerTasksOf, dayOf , jailed, districtName } from './rules.js';
 
 
 async function countersOf(client, chId, day) {

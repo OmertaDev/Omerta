@@ -15,7 +15,7 @@ import { GameError, cleanText } from './game.js';
 import { vaultHistoryFor, vaultLiveBalances } from './stockdeliver.js';
 import { DEEDS, DISTRICTS, deedRankOf, deedRenown, deedCornerOwed, deedController,
   deedNeighborhoodsOpen, deedNeighborhoodOf,
-  effStat, levelOf, jailed, hospitalized, safeHoused, SAFE_STORED, usd } from './rules.js';
+  effStat, levelOf, jailed, hospitalized, safeHoused, SAFE_STORED, usd, districtName } from './rules.js';
 
 // living-player population (drives the growing map — Phase 4). NPCs/dead excluded (the ops.js count).
 async function livingPlayers(client) {
@@ -23,7 +23,6 @@ async function livingPlayers(client) {
 }
 
 // rules.js doesn't export a district-name helper (hustle.js/citymap.js keep it local), so map it here.
-const districtName = (id) => (DISTRICTS.find((d) => d.id === id) || {}).name || id;
 
 async function loadDeed(client, accountId) {
   return (await client.query('SELECT * FROM street_deeds WHERE account_id=$1', [accountId])).rows[0] || null;

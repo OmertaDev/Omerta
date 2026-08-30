@@ -2533,7 +2533,11 @@
     if (body && body.vouched) return body.mutual ? `\u{1F91D} you vouched ${txt(body.vouched)} back — a mutual bond` : `you vouched for ${txt(body.vouched)} — your name's on them now`;
     if (body && body.pulled) return `pulled your name back from ${txt(body.pulled)}`;
     // THE HIRED GUNS — a merc's firepower counts, but takes no cut. The toast says the crew grew.
-    if (body && body.hired && body.fee != null) return `\u{1F52B} a gun's on the crew — $${fmt(body.fee)} up front, no cut of the score. crew ${body.crew}/${body.crewMax}`;
+    // …and the SEAT, which is material rather than cosmetic: executeHeist reads each member's stat
+    // FOR THEIR ROLE (×3) in the success roll, and when the leader omits one `pickRole` silently
+    // assigns the first open seat — so on the 4- and 5-man jobs they were told a seat was filled and
+    // never which. `role` was in the reply all along.
+    if (body && body.hired && body.fee != null) return `\u{1F52B} a ${txt(body.role || 'gun')} is on the crew — $${fmt(body.fee)} up front, no cut of the score. crew ${body.crew}/${body.crewMax}`;
     // …and the UNDO, which forfeits it. The merc was paid up front and showed up, so the fee stays
     // spent — the line read as tidy crew management with no money in it at all, on the press that
     // burns $75,000. The figure ships from the server; the phrasing mirrors the hire above so the
@@ -3967,14 +3971,35 @@
     if (body.ratted && body.op === 'breakout')
       bits.push('\u{1F4DE} the guards are tipped — that break blows whatever the roll, and nobody hears it from you.'
         + " Your deal is relief only: you dodge the crew's added stretch and the beating, but you serve your own sentence to the day.");
+    // …and its SIBLING on the score, which said "done." for the identical act. Same three terms, and
+    // the crew half is the one worth stating: everybody goes in, the rat included, so the yard roster
+    // never outs the only man walking free. Keyed on the op, never on the absence of a field.
+    if (body.ratted && body.op === 'heist')
+      bits.push(`\u{1F4DE} the tip is in on ${art(txt(body.name || 'the job'))} — it blows whatever the roll, and the feed only ever says somebody talked.`
+        + ' Your deal is relief only: you serve your own sentence to the day, and the whole crew goes to the hole — you with them, so nobody can pick you out of the roster.');
+    // THE OFFSHORE HANDOFF — the whole run changes vessels mid-sea and read "done.". `to` is a BOAT
+    // id and `route` a catalog key, so the display names ship from the server (the raw-key rule);
+    // the flag route one branch up is CONSENT, a different act, which is why this keys on the op.
+    if (body.op === 'rendezvous')
+      bits.push(`\u{1F91D} handed the run to ${txt(body.toName || 'your partner')} — ${fmt(body.hold)} units on ${art(body.routeName || body.route)}.`
+        + ' Her boat carries it in from here, and yours is free to load again.');
     if (body.interdicted === false && body.landed !== undefined) bits.push(`⚓ slipped the Coast Guard — landed the haul, +$${fmt(body.landed)} (net $${fmt(body.net)})`);
     // WAREHOUSING a clean landing carries `warehoused` (its book value) not `landed` — so it had no
     // branch and fell into the catch-all `paid $cost`, reporting a GAIN as a payment.
     if (body.interdicted === false && body.warehoused !== undefined) bits.push(`⚓ slipped the Coast Guard — the haul's in the warehouse, $${fmt(body.warehoused)} on the books to fence when the price is right`);
     if (body.interdicted === true) bits.push(`⚓ BUSTED AT SEA — the Coast Guard seized the cargo, fined $${fmt(body.fine)}${body.sunk ? ' and SANK her' : ''}`);
     if (body.arrivesSeconds !== undefined && body.route) bits.push(`⚓ cast off on ${art(body.routeName || body.route)} — back in ${Math.ceil(body.arrivesSeconds / 60)}m`);
-    if (body.boat && body.boat.name && body.spent !== undefined) bits.push(`bought ${art(body.boat.name)} — $${fmt(body.spent)}`);
-    if (body.refund !== undefined && body.boat === undefined && body.landed === undefined && !bits.length) bits.push(`\u{1F6A4} sold ${art(txt(body.name || 'her'))} back to the yard — +${fmt(body.refund)}`);
+    // THE HULL, at the moment you choose between six of them, said less about the boat than the
+    // TUNE-UP one route over does ("She carries 35 and runs 25 knots now"). Two of the three dropped
+    // terms are decisions rather than flavour: `hold` is the whole point of the hull, and `speed` is
+    // a GATE — a lane refuses `too_slow` below its minSpeed, so it decides which runs she can take.
+    if (body.boat && body.boat.name && body.spent !== undefined)
+      bits.push(`bought ${art(body.boat.name)} — $${fmt(body.spent)}. She carries ${body.boat.hold} and runs ${body.boat.speed} knots`
+        + `${body.boat.rarity && body.boat.rarity !== 'common' ? ` — ${txt(body.boat.rarity)}` : ''}.`);
+    // `fmt` is toLocaleString and adds no currency marker; this was the single unmarked money figure
+    // in the client, and it sits beside a boat whose own sibling line quotes hold and knots — so
+    // "+24,000" read as a quantity rather than cash.
+    if (body.refund !== undefined && body.boat === undefined && body.landed === undefined && !bits.length) bits.push(`\u{1F6A4} sold ${art(txt(body.name || 'her'))} back to the yard — +$${fmt(body.refund)}`);
     // THE SEAL, and its own sibling on the same card got it right. Both are bought from the family's
     // POOLED $OMR reserve — money every member tributed in — and `foundation` one line down names
     // the institution while the seal read "done.": no seal, no reserve left, no next rung, after 150
