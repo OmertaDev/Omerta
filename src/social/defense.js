@@ -112,7 +112,12 @@ export async function hireBodyguard(ch, guard, client, h) {
   ch.guarded_until = new Date(Date.now() + M3.BODYGUARD_MS);
   await h.notify(client, guard.id, 'bodyguard_hired', { by: ch.name, price, hours: M3.BODYGUARD_MS / 3600000 });
   await h.track(client, ch.account_id, 'bodyguard_hire', { guard: guard.id, price });
-  return { ok: true, guard: guard.id, price, until: ch.guarded_until };
+  // `guardSeconds` is the WITHHELD-TERM half: the window was only ever sent as `until`, an ISO
+  // timestamp, and the client has minsTxt and no date parser — so the one term a principal needs
+  // (how long the cover lasts) could not be rendered at all. Every other clock in a reply ships as
+  // *Seconds for exactly that reason (guardSeconds/madeSeconds/safeSeconds). `until` stays: it is
+  // the field the board and the view already read.
+  return { ok: true, guard: guard.id, price, until: ch.guarded_until, guardSeconds: Math.ceil((ch.guarded_until.getTime() - Date.now()) / 1000) };
 }
 
 // The absorb: called at the top of every lethal kill branch. Returns the guard ({name}) if the

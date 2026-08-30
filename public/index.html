@@ -3253,12 +3253,22 @@
     // (these branches were cross-firing: an exhibition win read the race + generic + boxing bits at once).
     // a win/loss response is "specialized" when it carries a marker for its own describe line — casino
     // (game), races (field/wager), boxing (opponent/yourFighter/record), a street jump (stolen/dmg),
-    // an extortion (cut), a convoy hijack (taken/hospSeconds). The generic WIN/LOSS lines below only
-    // fire when NONE of those are present (else e.g. a jump — which carries no cash `net` — read "WIN — +$0").
+    // an extortion (cut), a convoy hijack (taken/hospSeconds), and the FOUR asset crimes below.
+    // The generic WIN/LOSS lines only fire when NONE of those are present (else e.g. a jump — which
+    // carries no cash `net` — read "WIN — +$0").
+    //
+    // The four street thefts were the omission: each has its own line four rows down AND fell to the
+    // generic pair, so stealing a car read "WIN — +$0 · 🚗 GONE IN SIXTY" — gambling wording plus a
+    // FALSE money figure on a verb where no money moves — and every LOSS read "the house keeps it
+    // (−$0)" over a JAIL SENTENCE. Each keys on its own SYSTEM marker (`theft`/`trunk`/`boatTheft`/
+    // `sabotage`, all set by the verb itself), never on the absence of a field. `robbed` needs no
+    // entry and deliberately has none: extortFront sends `cut` on BOTH outcomes (0 on a loss), so it
+    // is already specialized — checked before adding a fifth marker that would have done nothing.
     const spec = body.game || body.field !== undefined || body.wager !== undefined || body.forPinks !== undefined ||
       body.opponent !== undefined || body.yourFighter !== undefined || body.record !== undefined ||
       body.stolen !== undefined || body.cut !== undefined || body.taken !== undefined || body.hospSeconds !== undefined ||
       body.elo !== undefined ||
+      body.theft !== undefined || body.trunk !== undefined || body.boatTheft !== undefined || body.sabotage !== undefined ||
       body.op === 'piracy' ||
       (body.win === false && body.dmg !== undefined);
     if (body.rerolled && body.stats) bits.push(`new build rolled — muscle ${body.stats.muscle} / cunning ${body.stats.cunning} / speed ${body.stats.speed}`);
@@ -3356,7 +3366,7 @@
     if (body.win === true && body.stolen !== undefined) bits.push(`${body.intent === 'message' ? '📢 THE STREET SAW IT' : body.intent === 'rob' ? 'rolled them' : 'they went down'} — lifted $${fmt(body.stolen)}${body.crates ? `, ${body.crates} crate${body.crates > 1 ? 's' : ''}` : ''}${body.rep ? `, +${body.rep} respect` : ''}${body.war ? ' (war point)' : ''}${body.bounty ? ` · contract paid $${fmt(body.bounty)}` : ''}`);
     if (body.win === false && body.dmg !== undefined && body.field === undefined && body.wager === undefined && body.district === undefined) bits.push(`the jump went bad — you took ${body.dmg} damage`);
     if (body.robbed) bits.push(body.win ? `hit the register — skimmed $${fmt(body.cut)} off their ${txt(body.kindName || body.kind)}` : `pinched at the register — ${body.jailedS ? Math.round(body.jailedS / 60) + 'm in' : ''} lockup`);
-    else if (body.theft) bits.push(body.win ? `🚗 GONE IN SIXTY — took their ${body.car.model}` : `caught mid-hotwire — ${body.jailedS ? Math.round(body.jailedS / 60) + 'm in' : ''} lockup`);
+    else if (body.theft) bits.push(body.win ? `🚗 GONE IN SIXTY — took their ${txt(body.car.name || body.car.model)}${body.revenge ? ' · 🗡 payback' : ''}` : `caught mid-hotwire — ${body.jailedS ? Math.round(body.jailedS / 60) + 'm in' : ''} lockup`);
     else if (body.trunk) bits.push(body.win ? `mugged the freight — ${fmt(body.qty)} × ${txt(goodName(body.good))} off their back${body.revenge ? ' · 🗡 payback' : ''}` : `pinched mid-mugging — ${body.jailedS ? Math.round(body.jailedS / 60) + 'm in' : ''} lockup`);
     else if (body.boatTheft) bits.push(body.win ? `⚓ SLIPPED HER MOORINGS — took their ${body.boat.name}${body.revenge ? ' · 🗡 payback' : ''}` : `caught on the gangway — ${body.jailedS ? Math.round(body.jailedS / 60) + 'm in' : ''} lockup`);
     else if (body.sabotage) bits.push(body.win ? `🔧 wrecked their ${body.what} — ${body.name} is laid up${body.revenge ? ' · 🗡 payback' : ''}` : `caught in the stable — ${body.jailedS ? Math.round(body.jailedS / 60) + 'm in' : ''} lockup`);
@@ -3461,7 +3471,16 @@
         : `laid ${paid} into ${body.monument}${worth} (your total: $${fmt(body.yourTotal)})`);
     }
     if (body.win === false && body.hospSeconds !== undefined) bits.push(`the guards drove you off — ${Math.ceil(body.hospSeconds / 60)}m in the hospital`);
-    if (body.kill) bits.push(`THEY'RE DONE.${body.loot ? ` looted $${fmt(body.loot)}` : ''}${body.contraLoot ? ` · seized $${fmt(body.contraLoot)} in contraband` : ''}${body.empireLoot ? ` · 🏢 TOOK OVER their ${body.empireLoot.name}` : ''}${body.bounty ? ` · contract paid $${fmt(body.bounty)}` : ''}${body.ammoBack ? ` · the contract covered ${fmt(body.ammoBack)} rounds` : ''}${body.hitman?.blood?.ours > 1 ? ` · that's ${nth(body.hitman.blood.ours)} body between your bloodlines` : ''}${body.op === 'shank' && body.sentenceSeconds ? ` · a yard killing, so your own stretch runs ${minsTxt(body.sentenceSeconds)} now` : ''}`);
+    // THE KILL, which named ONE of the things it took. The most expensive action in the game — a 3h
+    // search, the energy, the rounds, a 2h trigger cooldown — and the receipt read "THEY'RE DONE.
+    // looted $1,000,000" over a reply that ALSO carried the $OMR stripped off the body (the premium
+    // currency, and the whole Make-Risk-Pay thesis, invisible at the exact instant it moves), a whole
+    // piece of GEAR, the scarce shipment material, the chop off their fleet, the respect, and the
+    // assassin legend the kill just banked. Every figure was in hand; only the line was short — the
+    // forgotten-sibling shape, with the JUMP two rows up already naming its own `+N respect`.
+    // The two raw ids (`gearLoot`, the material) ship their display names from the SERVER, because
+    // describe() has no gear catalog and no handle on the shipment board.
+    if (body.kill) bits.push(`THEY'RE DONE.${body.loot ? ` looted $${fmt(body.loot)}` : ''}${body.chop ? ` · chopped their fleet for $${fmt(body.chop)}` : ''}${body.omrLoot ? ` · took ${fmt(body.omrLoot)} $OMR off them` : ''}${body.gearLootName ? ` · stripped their ${txt(body.gearLootName)}` : ''}${body.matLoot ? ` · ${fmt(body.matLoot)} × ${txt(body.matLootName || 'shipment material')}` : ''}${body.contraLoot ? ` · seized $${fmt(body.contraLoot)} in contraband` : ''}${body.orderLoot ? ` · $${fmt(body.orderLoot)} out of their buy orders` : ''}${body.empireLoot ? ` · 🏢 TOOK OVER their ${body.empireLoot.name}` : ''}${body.bounty ? ` · contract paid $${fmt(body.bounty)}` : ''}${body.ammoBack ? ` · the contract covered ${fmt(body.ammoBack)} rounds` : ''}${body.rep ? ` · +${fmt(body.rep)} respect` : ''}${body.hitman?.repGain ? ` · +${fmt(body.hitman.repGain)} feared${body.hitman.title ? ` (${txt(body.hitman.title)})` : ''}` : ''}${body.vendetta ? ' · 🩸 THE FEUD IS SETTLED — vengeance pays double' : ''}${body.warKill ? ' · ⚔ it scores in your family’s war' : ''}${body.hitman?.blood?.ours > 1 ? ` · that's ${nth(body.hitman.blood.ours)} body between your bloodlines` : ''}${body.op === 'shank' && body.sentenceSeconds ? ` · a yard killing, so your own stretch runs ${minsTxt(body.sentenceSeconds)} now` : ''}`);
     if (body.hospitalized && !body.kill) bits.push('they went down — hospital job');
     if (body.absorbed) bits.push('their cover took the hit');
     // THE SHOT THAT DIDN'T LAND. Found by playing: a hit is the most expensive action in the game —
@@ -3928,7 +3947,13 @@
     else if (body.principal !== undefined && body.owed !== undefined && body.dueSeconds === undefined)
       bits.push(`\uD83E\uDD1D money's on the street — $${fmt(body.principal)} out of your pocket and into escrow, $${fmt(body.owed)} owed back inside ${body.hours}h${body.directed ? ' (spoken for)' : ''}${body.collateralMin > 0 ? `, secured against a car worth $${fmt(body.collateralMin)}+` : ''}${body.collateralOmr > 0 ? `, plus a ${fmt(body.collateralOmr)} $OMR pledge` : ''}. Nobody's on the hook until somebody takes it.`);
     else if (body.principal !== undefined && body.owed !== undefined) bits.push(`took the loan — $${fmt(body.principal)} now, owe $${fmt(body.owed)}${body.collateral ? ' (car pledged)' : ''}${body.pledgedOmr > 0 ? ` — ${fmt(body.pledgedOmr)} $OMR escrowed against it: it comes home when you square up, the shark keeps it if you don't` : ''}${body.dueSeconds ? ` inside ${minsTxt(body.dueSeconds)}` : ''}`);
-    if (body.guard !== undefined && body.price !== undefined) bits.push(`hired protection — $${fmt(body.price)} up front`);
+    // THE BODYGUARD, which named the price and neither TERM — the pad/nut/Port-lane class on the
+    // one purchase whose whole value is a pair of conditions. The cover runs a WINDOW (the reply
+    // sent it only as an ISO `until` the client has no parser for; the server ships guardSeconds
+    // now), and it absorbs exactly ONE lethal blow before it is CONSUMED — the guard hospitalized
+    // in your place — so a principal who read "hired protection" alone had no way to know he was
+    // buying a single shot rather than a shift.
+    if (body.guard !== undefined && body.price !== undefined) bits.push(`hired protection — $${fmt(body.price)} up front${body.guardSeconds ? `, running ${minsTxt(body.guardSeconds)}` : ''} · he takes ONE lethal shot for you and that spends the contract`);
     if (body.hired === true && body.fee !== undefined) bits.push(`hired a hand for the ${body.role} seat — $${fmt(body.fee)}. A body fills the crew, but takes a cut and earns you nothing extra.`);
     if (body.family !== undefined && body.success !== undefined && (body.loot !== undefined || body.hospSeconds !== undefined)) {
       // The `countered` clause opened with a space and the clause before it ends with no stop, so
@@ -8835,7 +8860,7 @@
           <button class="act risk" data-psab="${s.id}"${noStuff || ' title="wreck their stable — one random racer or fighter laid up for hours; stealth. A miss is lockup."'}>sabotage</button>
           <select data-npctier="${s.id}" style="font-size:11px"${noBody}>${npcs.map(([id, n]) => `<option value="${id}">${n}</option>`).join('')}</select>
           <button class="act risk" data-npchit="${s.id}"${noBody}>NPC hit</button>
-          ${s.guardPrice != null ? `<button class="act" data-hire="${s.id}"${noBody || ''}>hire guard</button>` : ''}
+          ${s.guardPrice != null ? `<button class="act" data-hire="${s.id}"${noBody || ''} title="$${fmt(s.guardPrice)} up front — he absorbs ONE lethal shot for you and the contract is spent (he goes to hospital in your place). The window comes back on the receipt.">hire guard</button>` : ''}
           <button class="act" data-feud="${s.id}">feud</button></div>`; }).join('')}</div>`;
 
     t.querySelectorAll('[data-psteal]').forEach((b) => b.onclick = () =>

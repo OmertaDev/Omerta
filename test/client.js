@@ -6914,6 +6914,151 @@ const ACTFNS = new Map();   // route path → the handler names its registration
     `re-opening a line must name whose line it is: ${ubLine}`);
 }
 
+// ── WAVE 73 (combat): the four street thefts read as GAMBLING, and the kill named one thing ─────
+// Its OWN tokens, and deliberately after the main loop: the loss half of every theft is a JAIL
+// SENTENCE, and a jailed fixture refuses nearly everything — a poisoned shared fixture skips rows
+// that then read on the summary line exactly like covered ones (the Pen/club precedent).
+{
+  const mk73 = async (n) => {
+    const t = (await inject('POST', '/v1/auth/guest')).body.token;
+    await inject('POST', '/v1/character', t, { name: n + Math.random().toString(36).slice(2, 7) });
+    return { t, id: (await inject('GET', '/v1/me', t)).body.character.id };
+  };
+  const A = await mk73('Wheelman '), B = await mk73('Mark ');
+  const acctOf = async (cid) => (await app.pool.query('SELECT account_id FROM characters WHERE id=$1', [cid])).rows[0].account_id;
+  const say73 = (r) => { described++; return String(describeFn(r.body, r.code)); };
+
+  // ── THE COLLISION HALF ─────────────────────────────────────────────────────────────────────
+  // Each of the four asset crimes has its own line AND fell through to the generic casino pair,
+  // so a WIN stapled "WIN — +$0" onto a verb where no money moves and a LOSS read "the house keeps
+  // it (−$0)" over a stretch in lockup. Both halves are driven, because the loss is the sharper
+  // one and only the loss can show the arrest being narrated as a lost bet.
+  await app.pool.query("UPDATE characters SET cash=9000000, respect=900000, energy=500, health=100, loc='docks', muscle=900, cunning=900, speed=900 WHERE id=$1", [A.id]);
+  await app.pool.query("UPDATE characters SET cash=4000000, respect=900000, health=100, loc='docks', muscle=1, cunning=1, speed=1, shipment=10 WHERE id=$1", [B.id]);
+  await app.pool.query("INSERT INTO cars (id, character_id, model_id, trim_id, dmg) VALUES ('carw73', $1, 'junker', 'stock', 10)", [B.id]);
+  await app.pool.query("INSERT INTO boats (id, character_id, kind) VALUES ('boatw73', $1, 'dinghy')", [B.id]);
+  await app.pool.query("INSERT INTO character_cargo (character_id, good_id, qty) VALUES ($1,'gin',20) ON CONFLICT (character_id, good_id) DO UPDATE SET qty=20", [B.id]);
+  await app.pool.query("INSERT INTO racers (id, character_id, kind, name, speed, stamina, heart) VALUES ('racew73',$1,'dog','Blue Ruin',5,5,5)", [B.id]);
+  // BOTH sides: the attacker shares one boost/theft window across car and boat (gta_at), and the
+  // VICTIM carries a one-vehicle-a-day shield (car_stolen_at) — so a car theft shields the boat.
+  // BOTH sides, and IN (never = ANY — pg-mem returns zero rows for an array bind, so the reset
+  // would silently do nothing and every row after the first would be refused by a live shield).
+  // The attacker shares ONE boost/theft window across car and boat (gta_at); the victim carries a
+  // per-verb shield each (car_stolen_at / trunk_robbed_at / sabotaged_at), so a landed car theft
+  // shields the boat and a landed mugging shields the next one.
+  const reset73 = () => app.pool.query('UPDATE characters SET jail_until=NULL, gta_at=NULL, car_stolen_at=NULL, trunk_robbed_at=NULL, sabotaged_at=NULL, energy=500, health=100 WHERE id IN ($1,$2)', [A.id, B.id]);
+  const theft73 = async (verb) => {
+    await reset73();
+    // the mugging is refused for a FULL trunk before the roll ever happens, and the win half
+    // above filled it — so a loss drive would be skipped rather than tested.
+    await app.pool.query('DELETE FROM character_cargo WHERE character_id=$1', [A.id]);
+    const r = await inject('POST', `/v1/streets/${B.id}/${verb}`, A.t, null);
+    assert.equal(r.code, 200, `WAVE 73 could not drive ${verb} (${JSON.stringify(r.body)})`);
+    return { r, line: say73(r) };
+  };
+
+  // the two rolled verbs are PINNED win: the p-curve clamps well short of certainty, so leaving
+  // the outcome to the roll is a deterministic assertion resting on a probabilistic precondition
+  // — it passes on luck and fails a run later for no visible reason.
+  const oldWinP = process.env.CAR_THEFT_P; process.env.CAR_THEFT_P = '1';
+  const stealW = await theft73('steal');
+  assert.equal(stealW.r.body.theft, true, 'the theft must carry its own SYSTEM marker — spec keys on it, never on the absence of a field');
+  assert.equal(stealW.r.body.win, true, 'WAVE 73 needed a WIN on the steal (CAR_THEFT_P is pinned) to test the named car');
+  // the RAW-KEY half: `car.model` is a catalog id and describe() has no car resolver, so the name
+  // has to arrive from the SERVER (its own siblings stealBoat/sabotage have always sent one).
+  // Read through ?. so a server that stops sending it fails at THIS message rather than at a
+  // TypeError three lines on — a failure that names the wrong thing is barely better than none.
+  assert.equal(stealW.r.body.car?.name, 'County Auction Junker', 'the theft must SEND the display name, not the catalog id alone');
+  assert(stealW.line.includes('County Auction Junker'), `a stolen car must be NAMED: ${stealW.line}`);
+  const trunkW = await theft73('trunk'), boatW = await theft73('boat'), sabW = await theft73('sabotage');
+  process.env.CAR_THEFT_P = oldWinP === undefined ? '' : oldWinP;
+  if (oldWinP === undefined) delete process.env.CAR_THEFT_P;
+  assert.equal(trunkW.r.body.trunk, true, 'the trunk mugging must carry its own marker');
+  assert.equal(boatW.r.body.boatTheft, true, 'the boat theft must carry its own marker');
+  assert.equal(sabW.r.body.sabotage, true, 'the sabotage must carry its own marker');
+  for (const [v, d] of [['trunk', trunkW], ['boat', boatW], ['sabotage', sabW]])
+    assert.equal(d.r.body.win, true, `WAVE 73 needed a WIN on ${v} — a loss here tests the arrest line twice and the win line never`);
+  for (const [v, d] of [['steal', stealW], ['trunk', trunkW], ['boat', boatW], ['sabotage', sabW]])
+    assert(!/WIN — \+\$/.test(d.line) && !/house keeps it/.test(d.line),
+      `${v} moves no money — it must never read as a settled BET: ${d.line}`);
+
+  // the LOSS half. A is made weak so every contest fails; CAR_THEFT_P pins the two rolled ones.
+  const oldP = process.env.CAR_THEFT_P; process.env.CAR_THEFT_P = '0';
+  await app.pool.query('UPDATE characters SET muscle=1, cunning=1, speed=1 WHERE id=$1', [A.id]);
+  await app.pool.query('UPDATE characters SET muscle=900, cunning=900, speed=900 WHERE id=$1', [B.id]);
+  // the WIN half above actually TOOK these — a mark with nothing on the street is refused
+  // `no_car`/`no_boat` before the roll, and a refusal reads on the summary line as a covered row.
+  await app.pool.query("INSERT INTO cars (id, character_id, model_id, trim_id, dmg) VALUES ('carL73', $1, 'junker', 'stock', 10)", [B.id]);
+  await app.pool.query("INSERT INTO boats (id, character_id, kind) VALUES ('boatL73', $1, 'dinghy')", [B.id]);
+  await app.pool.query("INSERT INTO character_cargo (character_id, good_id, qty) VALUES ($1,'gin',20) ON CONFLICT (character_id, good_id) DO UPDATE SET qty=20", [B.id]);
+  await app.pool.query("UPDATE racers SET injured_until=NULL WHERE id='racew73'");
+  for (const v of ['steal', 'trunk', 'boat', 'sabotage']) {
+    const d = await theft73(v);
+    assert.equal(d.r.body.win, false, `WAVE 73 needed a LOSS on ${v} to test the arrest line (got ${JSON.stringify(d.r.body)})`);
+    assert(d.r.body.jailedS > 0, `a failed ${v} is a stretch in lockup — the reply must say so`);
+    assert(!/house keeps it/.test(d.line) && /lockup/.test(d.line),
+      `a failed ${v} is an ARREST, never a lost bet: ${d.line}`);
+  }
+  process.env.CAR_THEFT_P = oldP === undefined ? '' : oldP;
+  if (oldP === undefined) delete process.env.CAR_THEFT_P;
+
+  // ── THE BODYGUARD ──────────────────────────────────────────────────────────────────────────
+  // The price was named and neither TERM was: the window, and that the cover absorbs exactly ONE
+  // lethal blow before it is spent. `until` is an ISO stamp the client has no parser for, which
+  // is why the window ships as *Seconds like every other clock in a reply.
+  const G = await mk73('Shadow ');
+  await app.pool.query('UPDATE characters SET respect=900000, cash=100000 WHERE id=$1', [G.id]);
+  await inject('POST', '/v1/bodyguard/offer', G.t, { price: 25000 });
+  await app.pool.query('UPDATE characters SET cash=9000000, health=100, jail_until=NULL WHERE id=$1', [A.id]);
+  const hireR = await inject('POST', `/v1/bodyguard/hire/${G.id}`, A.t, null);
+  assert.equal(hireR.code, 200, `WAVE 73 could not drive the hire (${JSON.stringify(hireR.body)})`);
+  assert(hireR.body.guardSeconds > 0, 'the hire must SEND the window in seconds — an ISO `until` renders nothing');
+  const hireLine = say73(hireR);
+  // asserted as AGREEMENT with the seconds the server sent, never against a restated 24h: the
+  // window is a founder lever (M3.BODYGUARD_MS) and a literal here would drift the day it moves.
+  const win73 = /running\s+(\d+)([dhms])/.exec(hireLine);
+  assert(win73, `the hire must state the window the server sent: ${hireLine}`);
+  const secs73 = Number(win73[1]) * { d: 86400, h: 3600, m: 60, s: 1 }[win73[2]];
+  assert(Math.abs(secs73 - hireR.body.guardSeconds) <= 3600,
+    `the window on the line must be the window the server sent (${win73[0]} vs ${hireR.body.guardSeconds}s)`);
+  assert(/ONE lethal shot/i.test(hireLine) && /spends the contract/i.test(hireLine),
+    `the hire must state that it buys a SINGLE shot, not a shift: ${hireLine}`);
+
+  // ── THE KILL, which named ONE of the things it took ────────────────────────────────────────
+  // Ground truth is the DATABASE for the quantity claims: the reply is the thing under test.
+  const gearId = 'knuckles', gearName = 'Brass Knuckles';
+  await app.pool.query('INSERT INTO account_gear (account_id, gear_id) VALUES ($1,$2) ON CONFLICT DO NOTHING', [await acctOf(B.id), gearId]);
+  await app.pool.query('UPDATE account_persistent SET omr=5000 WHERE account_id=$1', [await acctOf(B.id)]);
+  await app.pool.query("INSERT INTO character_guns (character_id, gun_id) VALUES ($1,'undertaker') ON CONFLICT DO NOTHING", [A.id]);
+  await app.pool.query("UPDATE characters SET gun='undertaker', energy=500, health=100, ammo=100000, guarded_by=NULL, guarded_until=NULL, jail_until=NULL WHERE id=$1", [A.id]);
+  await app.pool.query('UPDATE characters SET health=100, cash=4000000, shipment=10 WHERE id=$1', [B.id]);
+  const omrBefore = Number((await app.pool.query('SELECT omr FROM account_persistent WHERE account_id=$1', [await acctOf(B.id)])).rows[0].omr);
+  const oldS = process.env.SEARCH_MS, oldC = process.env.SHOOT_CD_MS, oldG = process.env.GEAR_LOOT_CHANCE;
+  process.env.SEARCH_MS = '1'; process.env.SHOOT_CD_MS = '1'; process.env.GEAR_LOOT_CHANCE = '1';
+  await inject('POST', `/v1/streets/${B.id}/search`, A.t, null);
+  const killR = await inject('POST', `/v1/streets/${B.id}/fire`, A.t, { rounds: 100000 });
+  process.env.SEARCH_MS = oldS; process.env.SHOOT_CD_MS = oldC; process.env.GEAR_LOOT_CHANCE = oldG;
+  assert.equal(killR.code, 200, `WAVE 73 could not drive the kill (${JSON.stringify(killR.body)})`);
+  assert.equal(killR.body.kill, true, 'WAVE 73 needed a KILL to test the receipt');
+  const k = killR.body, killLine = say73(killR);
+  // the SERVER half first, and the two raw ids are the reason it is a server half at all:
+  // describe() has no gear catalog and no handle on the shipment board.
+  assert(k.omrLoot > 0, 'the fixture must strip real $OMR, or the $OMR claim below is vacuous');
+  assert.equal(k.gearLootName, gearName, 'the kill must SEND the gear NAME — `gearLoot` is a catalog id');
+  assert(k.matLoot > 0 && typeof k.matLootName === 'string' && k.matLootName.length > 0,
+    'the kill must SEND the scarce material by name, not by the id the shipment board resolves');
+  assert(k.rep > 0 && k.hitman?.repGain > 0, 'the fixture must bank BOTH respect axes, or the line below proves nothing about either');
+  // the DB is the ground truth for what actually left the body
+  const omrAfter = Number((await app.pool.query('SELECT omr FROM account_persistent WHERE account_id=$1', [await acctOf(B.id)])).rows[0].omr);
+  assert(omrBefore - omrAfter >= k.omrLoot, `the reply must not claim more $OMR than the ledger moved (${omrBefore}→${omrAfter} vs ${k.omrLoot})`);
+  assert(killLine.includes(gearName), `the kill must name the GEAR it stripped: ${killLine}`);
+  assert(new RegExp(`${k.omrLoot.toLocaleString('en-US')}\\s*\\$OMR`).test(killLine),
+    `the kill must name the $OMR it took — the premium currency, invisible at the instant it moves: ${killLine}`);
+  assert(killLine.includes(k.matLootName), `the kill must name the scarce material it took: ${killLine}`);
+  assert(/respect/.test(killLine) && /feared/.test(killLine),
+    `the kill must name BOTH legends it banked — ordinary respect and the assassin's: ${killLine}`);
+}
+
 await app.close();
 // ── WAVE 64 — the lines THE SILENCE LEDGER's first crop now produces. The ledger above proves each
 // reply is no longer mute; these pin what it SAYS, because a branch that fires and says the wrong

@@ -7,7 +7,7 @@
 // Split out of the 2,003-line src/social.js; every function below is byte-identical to what was
 // there. Import from '../social.js' — it re-exports this package's public surface unchanged.
 import { GameError, bumpFamilyTask, bus, ledger, notify, track, loadOwned, skillMult, npcMult, npcTier, bumpStanding, bumpMastery, masteryFx, trunkCap, gainRespect, bumpCrewObjective, hunterSearchMs } from '../game.js';
-import { M3, CONSTANTS, LOAN, levelOf, rankIdxOf, cityEventOf, dayOf, btkOf, gunObjOf, vestMultOf, fleetValue, effStat, npcHitmanOf, VENDETTA, COMMISSION, SKILLS, UNDERWORLD, LAW, PORT, witproActive, penSafe, inHole, HONOR, HEIST_LOOT_RATE, BUSINESSES, seasonModOf, pathFx, RIVALS, carVal, carOf, boatOf , SHIPMENT, usd } from '../rules.js';
+import { M3, CONSTANTS, LOAN, levelOf, rankIdxOf, cityEventOf, dayOf, btkOf, gunObjOf, vestMultOf, fleetValue, effStat, npcHitmanOf, VENDETTA, COMMISSION, SKILLS, UNDERWORLD, LAW, PORT, witproActive, penSafe, inHole, HONOR, HEIST_LOOT_RATE, BUSINESSES, seasonModOf, pathFx, RIVALS, carVal, carOf, boatOf, gearOf, SHIPMENT, usd } from '../rules.js';
 import { activeDecree } from '../commission.js';
 import { bumpHonor } from '../honor.js';
 import { recordRival, revengeOwed } from '../rivals.js';
@@ -556,7 +556,12 @@ export async function fire(ch, victim, client, h, rounds) {
     const estate = await runEstate(client, h, victim, ch.name, { killerCh: ch, vendetta: true, loot: true, bloodOathMult: bloodOath });
     await alertMentor(client, victim.account_id, victim.name, ch.name, 'killed'); // THE MENTOR — the had-my-back moment: the protégé's mentor hears of the killing
     bus.emit('streets', { type: 'kill', by: ch.name, victim: victim.name });
-    return { ok: true, kill: true, rep, chop, loot, omrLoot, gearLoot, contraLoot, matLoot, orderLoot: estate.orderLoot || 0, bounty, jammed, warKill, hitman: hit,
+    // `gearLootName` is the RAW-KEY half: `gearLoot` is a catalog id and describe() has no gear
+    // resolver, so a stripped piece could only ever have rendered 'vest_kevlar' at a player. Every
+    // other display name in this file's replies ships server-side for the same reason.
+    return { ok: true, kill: true, rep, chop, loot, omrLoot, gearLoot, gearLootName: gearLoot ? (gearOf(gearLoot)?.name || gearLoot) : null,
+      contraLoot, matLoot, matLootName: matLoot > 0 ? SHIPMENT.MATERIAL : null,
+      orderLoot: estate.orderLoot || 0, bounty, jammed, warKill, hitman: hit,
       ...(empireLoot ? { empireLoot } : {}), ...(ammoBack ? { ammoBack } : {}), vendetta: !!vend, ...(grudges.length ? { grudges } : {}), estate: { heirId: estate.heirId } };
   }
   // ── THE MISS ──
@@ -847,7 +852,11 @@ export async function stealCar(ch, victim, client, h) {
     await recordRival(client, victim.account_id, ch, 'car_theft', { model: car.model_id });
     if (revenge) await bumpHonor(client, ch, RIVALS.REVENGE_HONOR);
     bus.emit('streets', { type: 'car_theft', by: ch.name, on: victim.name });
-    return { ok: true, win: true, theft: true, car: { id: car.id, model: car.model_id, trim: car.trim_id, dmg: Number(car.dmg) }, revenge };
+    // `name` is the RAW-KEY fix: the reply used to carry the catalog id alone and the client has no
+    // car resolver, so the line read "took their junker" where 'County Auction Junker' belongs. The
+    // value is already computed one line up for the victim's notify, and both sibling thefts
+    // (stealBoat sends `boat.name`, sabotage sends `name`) have shipped a display name all along.
+    return { ok: true, win: true, theft: true, car: { id: car.id, model: car.model_id, name: carOf(car.model_id)?.name || car.model_id, trim: car.trim_id, dmg: Number(car.dmg) }, revenge };
   }
   // pinched mid-hotwire
   ch.jail_until = new Date(Date.now() + T.JAIL_S * 1000);
