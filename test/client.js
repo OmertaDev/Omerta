@@ -6866,6 +6866,52 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   assert(trait72.line.includes(trait72.r.body.name) && trait72.line.includes(trait72.r.body.trackName)
     && trait72.line.includes(trait72.r.body.desc),
     `the trait line must name the trait, the trade and what it bought: ${trait72.line}`);
+
+  // ── WAVE 73: THE CELLPHONE — three routes the raw Console presses and none of them read ───────
+  // The curated screens call the SILENT api() and render their own wording (the thread re-render IS
+  // the feedback on a sent line; the block/unblock buttons toast their own sentence behind a terms
+  // confirm), so the curated half was never wrong. But all three are in the raw deck, whose goBtn
+  // ends in `await act(m, path, body)` — describe() — and each read "done." there. Two needed only
+  // a branch; UNBLOCK needed a SERVER field, because it returned a bare `{ok:true}` while blockLine
+  // three lines above it had named the man all along (the forgotten-sibling shape), so the client
+  // could not say whose line it had just re-opened even with a branch. DRIVEN throughout: every
+  // claim below is about a field the SERVER sends, and a synthetic passes straight through the
+  // mutation that stops it being sent.
+  //
+  // Its own token, because the line has TWO ends: a DM needs a recipient, and the black book gates
+  // dialling a number you do not hold (`no_number`) — so the contact row is seeded, which is the
+  // precondition a refused action would skip in silence, reading on the summary line as covered.
+  const t73 = (await inject('POST', '/v1/auth/guest')).body.token;
+  await inject('POST', '/v1/character', t73, { name: 'Line ' + Math.random().toString(36).slice(2, 7) });
+  const id73 = (await inject('GET', '/v1/me', t73)).body.character.id;
+  const acct = async (cid) => (await app.pool.query('SELECT account_id FROM characters WHERE id=$1', [cid])).rows[0].account_id;
+  await app.pool.query(
+    "INSERT INTO contacts (owner_account, contact_account, how) VALUES ($1,$2,'met') ON CONFLICT DO NOTHING",
+    [await acct(id65), await acct(id73)]);
+  // ground truth for the NAME is the DATABASE, not the reply that claims it
+  const name73 = (await app.pool.query('SELECT name FROM characters WHERE id=$1', [id73])).rows[0].name;
+
+  const dm73 = await drive65(`/v1/phone/dm/${id73}`, { text: 'word from the docks' });
+  assert.equal(dm73.r.body.phone, 'sent', 'the DM must name its SYSTEM — a marker, never the absence of a field');
+  assert.equal(dm73.r.body.to, name73, 'the DM must SEND the line holder it already resolved (the heir answers the phone)');
+  assert(dm73.line !== 'done.' && dm73.line.includes(name73),
+    `a sent line must name who was rung: ${dm73.line}`);
+
+  const blk73 = await drive65(`/v1/phone/block/${id73}`, {});
+  assert.equal(blk73.r.body.phone, 'blocked', 'blocking must name its system');
+  assert.equal(blk73.r.body.blocked, name73, 'blocking must SEND the name of the line it cut');
+  assert(blk73.line !== 'done.' && blk73.line.includes(name73) && /bloodline/.test(blk73.line)
+    && /game events/i.test(blk73.line),
+  `cutting a line must name the man AND the two terms the curated confirm already states: ${blk73.line}`);
+
+  // …and the unblock, whose SERVER half is the whole finding: a bare {ok:true} names nobody.
+  const ubR = await inject('DELETE', `/v1/phone/block/${id73}`, t65, {});
+  assert.equal(ubR.code, 200, `WAVE 73 could not drive the unblock (${JSON.stringify(ubR.body)})`);
+  const ubLine = String(describeFn(ubR.body, 200)); described++;
+  assert.equal(ubR.body.phone, 'unblocked', 'the unblock must name its system');
+  assert.equal(ubR.body.unblocked, name73, 'the unblock must SEND the name its own sibling has always sent');
+  assert(ubLine !== 'done.' && ubLine.includes(name73) && /open again/.test(ubLine),
+    `re-opening a line must name whose line it is: ${ubLine}`);
 }
 
 await app.close();

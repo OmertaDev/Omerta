@@ -2558,6 +2558,18 @@
       return `\u{1F393} sent ${txt(body.to || 'your protégé')} a care package — $${fmt(body.gifted)} out of your own pocket. Once a day.`;
     if (body && body.ok && body.milestones !== undefined && body.cash !== undefined)
       return `\u{1F393} your mentor's cut of the climb — $${fmt(body.cash)} for ${body.milestones.length === 1 ? 'reaching level ' + body.milestones[0] : `levels ${body.milestones.join(', ')}`}${body.graduated ? ". You've GRADUATED — the tie's done, and it's a name on their record forever." : ''}`;
+    // THE CELLPHONE — three routes the curated screens press through the SILENT api() with their own
+    // wording (the thread re-render IS the feedback), but which the raw Console fires through act():
+    // sending a line, cutting one, and re-opening it all read "done." there. `phone` names the SYSTEM
+    // (the crew:'formed' / exchange:'listed' precedent) rather than resting on the absence of a field
+    // — absence holds only until a sibling grows one. The NAMES ship from the server, because the
+    // line's holder is resolved there (the heir answers the phone) and describe() cannot look one up.
+    if (body && body.ok && typeof body.phone === 'string') {
+      if (body.phone === 'sent') return `\u{1F4F1} the message is on its way to ${txt(body.to || 'them')}`;
+      if (body.phone === 'blocked') return `\u{1F4F5} the line to ${txt(body.blocked || 'them')} is cut — they get a dead tone. `
+        + 'The block follows their bloodline until you lift it; game events still reach you.';
+      if (body.phone === 'unblocked') return `\u{1F4F1} the line to ${txt(body.unblocked || 'them')} is open again`;
+    }
     // THE EXCHANGE (the M3 barter board — crates, rounds and crafted goods between players). All
     // three verbs were mute or half-mute: listing and pulling read "done.", and buying read the
     // catch-all "paid $6,000" — so a buyer of rounds and a buyer of crates got the same sentence.

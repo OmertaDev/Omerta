@@ -74,7 +74,10 @@ export async function sendDm(pool, fromAccountId, targetCharacterId, text) {
     const rcpt = await livingChar(pool, target.account_id);
     if (rcpt) await notify(pool, rcpt.id, 'dm', { from: me.name, fromCharacter: me.id, preview: body.slice(0, 80) });
   } catch { /* the ring is decorative — the message stands */ }
-  return { ok: true, id };
+  // `phone` names the SYSTEM (the crew:'formed' / exchange:'listed' precedent) — never the absence
+  // of a field, which holds exactly until a sibling grows one. `to` is the name this function has
+  // already resolved (the heir answers the phone), which describe() has no way to look up itself.
+  return { ok: true, id, phone: 'sent', to: toName };
 }
 
 // ── the phone board: threads (grouped by counterpart account) + an inbox PEEK ──
@@ -140,16 +143,19 @@ export async function blockLine(pool, accountId, targetCharacterId) {
     `INSERT INTO dm_blocks (blocker_account, blocked_account, name) VALUES ($1,$2,$3)
      ON CONFLICT (blocker_account, blocked_account) DO NOTHING`,
     [accountId, target.account_id, live?.name || target.name]);
-  return { ok: true, blocked: live?.name || target.name };
+  return { ok: true, phone: 'blocked', blocked: live?.name || target.name };
 }
 export async function unblockLine(pool, accountId, targetCharacterId) {
-  const target = (await pool.query('SELECT account_id FROM characters WHERE id=$1',
+  const target = (await pool.query('SELECT name, account_id FROM characters WHERE id=$1',
     [targetCharacterId])).rows[0];
   if (!target) throw new GameError('gone', 'Nobody answers that number.');
   const r = await pool.query('DELETE FROM dm_blocks WHERE blocker_account=$1 AND blocked_account=$2',
     [accountId, target.account_id]);
   if (!r.rowCount) throw new GameError('not_blocked', 'That line was never blocked.');
-  return { ok: true };
+  // the forgotten sibling: blockLine three lines up has always named the man, so the client could
+  // not say whose line it had just re-opened. Same resolution — the bloodline's CURRENT holder.
+  const live = await livingChar(pool, target.account_id);
+  return { ok: true, phone: 'unblocked', unblocked: live?.name || target.name };
 }
 // my block list, client-keyed by the blocked bloodline's LIVING character (the no-UUID discipline);
 // a line with no living street still shows (snapshot name) — unblockable once the heir rises.
