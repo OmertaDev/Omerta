@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `68dea84c55ec`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `309beb2f37c5`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1297 |
+| Commits in clone | 1299 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-30 — Play wave 73 (vice): a refunded stake reported as a win, and four entries that took the money without naming the terms |
+| Latest commit | 2026-08-30 — Fix the wave-73 pen absorb synthetic's probabilistic flake |
 
 ## Commit authors
 
@@ -21,7 +21,7 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 434 |
-| Claude | 172 |
+| Claude | 174 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 3 |
 
@@ -40,13 +40,13 @@
 | [package.json](../../package.json) | 142 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
-| knowledge/generated/github-history.md | 117 | historical |
-| knowledge/generated/graph-summary.md | 117 | historical |
-| knowledge/generated/graph.json | 117 | historical |
-| knowledge/generated/inventory.md | 117 | historical |
+| knowledge/generated/github-history.md | 118 | historical |
+| knowledge/generated/graph-summary.md | 118 | historical |
+| knowledge/generated/graph.json | 118 | historical |
+| knowledge/generated/inventory.md | 118 | historical |
 | [src/invariants.js](../../src/invariants.js) | 115 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 114 | yes |
-| [test/client.js](../../test/client.js) | 110 | yes |
+| [test/client.js](../../test/client.js) | 111 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
 | [test/social.js](../../test/social.js) | 84 | yes |
 | [public/wiki.html](../../public/wiki.html) | 80 | yes |
@@ -61,9 +61,9 @@
 | [test/gates.js](../../test/gates.js) | 50 | yes |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 49 | yes |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
+| knowledge/generated/modules.md | 44 | historical |
 | [src/casino.js](../../src/casino.js) | 44 | yes |
 | [src/economy.js](../../src/economy.js) | 44 | yes |
-| knowledge/generated/modules.md | 43 | historical |
 | knowledge/generated/documents.md | 42 | historical |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
 | [src/business.js](../../src/business.js) | 39 | yes |
