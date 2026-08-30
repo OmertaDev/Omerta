@@ -102,7 +102,7 @@
 | [src/payroll.js](../../src/payroll.js) | 110 | enterprise-logistics | 5 / 2 | 1 | 0 | 0 |
 | [src/pen.js](../../src/pen.js) | 652 | law-intelligence | 6 / 6 | 19 | 13 | 2 |
 | [src/people.js](../../src/people.js) | 230 | engagement-growth | 4 / 2 | 4 | 18 | 0 |
-| [src/phone.js](../../src/phone.js) | 192 | platform-core | 2 / 1 | 5 | 7 | 0 |
+| [src/phone.js](../../src/phone.js) | 198 | platform-core | 2 / 1 | 5 | 7 | 0 |
 | [src/population.js](../../src/population.js) | 827 | world-progression | 7 / 9 | 0 | 33 | 5 |
 | [src/port.js](../../src/port.js) | 488 | enterprise-logistics | 5 / 4 | 12 | 9 | 0 |
 | [src/portfolio.js](../../src/portfolio.js) | 51 | economy-ledger | 1 / 3 | 9 | 4 | 1 |

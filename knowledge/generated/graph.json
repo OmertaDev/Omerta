@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "4c8a5f54477852952550b783f67958eacab6cd13",
+  "sourceRevision": "bee33aff6cbfe873db33d1b96bead59164c8a4c3",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5641,
-    "edges": 24750,
+    "nodes": 5643,
+    "edges": 24761,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 56,
-      "Commit": 1283,
+      "Commit": 1285,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 9830,
+      "CHANGED": 9839,
       "CONTAINS": 1846,
       "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1283,
+      "HAS_COMMIT": 1285,
       "IMPLEMENTS": 124,
       "IMPORTS": 1633,
       "INHERITS": 12,
@@ -32493,20 +32493,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1146278,
-      "lines": 11805,
-      "version": "a682edcf76727b25",
+      "bytes": 1147413,
+      "lines": 11817,
+      "version": "533d34a650cf48b5",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "a682edcf76727b25"
+          "version": "533d34a650cf48b5"
         }
       ],
-      "lastChangedAt": "2026-08-30T06:14:38.000Z",
+      "lastChangedAt": "2026-08-30T07:22:37.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "4c8a5f54477852952550b783f67958eacab6cd13"
+      "lastChangedCommit": "bee33aff6cbfe873db33d1b96bead59164c8a4c3"
     },
     {
       "key": "Artifact:public/manifest.json",
@@ -35046,20 +35046,20 @@
       "path": "src/phone.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 11857,
-      "lines": 192,
-      "version": "408fdbc86eebcadf",
+      "bytes": 12522,
+      "lines": 198,
+      "version": "71b64734cd012372",
       "text": true,
       "provenance": [
         {
           "file": "src/phone.js",
           "line": 1,
-          "version": "408fdbc86eebcadf"
+          "version": "71b64734cd012372"
         }
       ],
-      "lastChangedAt": "2026-07-30T16:37:57.000Z",
-      "lastChangedBy": "crvydev",
-      "lastChangedCommit": "ca4642ad55bb04a04aec5bbcc7c9a0d60eb2a512"
+      "lastChangedAt": "2026-08-30T07:22:37.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "bee33aff6cbfe873db33d1b96bead59164c8a4c3"
     },
     {
       "key": "Artifact:src/population.js",
@@ -37553,20 +37553,20 @@
       "path": "test/client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 536262,
-      "lines": 7041,
-      "version": "75e20f38819b0e86",
+      "bytes": 539861,
+      "lines": 7087,
+      "version": "f4096670b970bbdb",
       "text": true,
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "75e20f38819b0e86"
+          "version": "f4096670b970bbdb"
         }
       ],
-      "lastChangedAt": "2026-08-30T05:53:58.000Z",
+      "lastChangedAt": "2026-08-30T07:22:37.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "701116ff1952156ce8c611a447d0a493597a7c57"
+      "lastChangedCommit": "bee33aff6cbfe873db33d1b96bead59164c8a4c3"
     },
     {
       "key": "Artifact:test/clues.js",
@@ -58693,6 +58693,22 @@
       ]
     },
     {
+      "key": "Commit:bee33aff6cbfe873db33d1b96bead59164c8a4c3",
+      "type": "Commit",
+      "id": "bee33aff6cbfe873db33d1b96bead59164c8a4c3",
+      "label": "Play wave 73 (social): the cellphone said \"done.\" on all three of its lines",
+      "title": "Play wave 73 (social): the cellphone said \"done.\" on all three of its lines",
+      "date": "2026-08-30T07:22:37.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/bee33aff6cbfe873db33d1b96bead59164c8a4c3",
+      "provenance": [
+        {
+          "commit": "bee33aff6cbfe873db33d1b96bead59164c8a4c3",
+          "url": "https://github.com/OmertaDev/Omerta/commit/bee33aff6cbfe873db33d1b96bead59164c8a4c3"
+        }
+      ]
+    },
+    {
       "key": "Commit:bf2d3854140ff5eb3174fd0da68f149d75d86eb4",
       "type": "Commit",
       "id": "bf2d3854140ff5eb3174fd0da68f149d75d86eb4",
@@ -61745,6 +61761,22 @@
         {
           "commit": "ea1f4de76331bc04ee4756d377e5d473f91cd21c",
           "url": "https://github.com/OmertaDev/Omerta/commit/ea1f4de76331bc04ee4756d377e5d473f91cd21c"
+        }
+      ]
+    },
+    {
+      "key": "Commit:eac585d42ed6d10215fa321d013872589249383e",
+      "type": "Commit",
+      "id": "eac585d42ed6d10215fa321d013872589249383e",
+      "label": "Knowledge graph regenerated for wave 72 + the article fix",
+      "title": "Knowledge graph regenerated for wave 72 + the article fix",
+      "date": "2026-08-30T06:32:46.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/eac585d42ed6d10215fa321d013872589249383e",
+      "provenance": [
+        {
+          "commit": "eac585d42ed6d10215fa321d013872589249383e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/eac585d42ed6d10215fa321d013872589249383e"
         }
       ]
     },
@@ -76341,6 +76373,9 @@
           "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
         },
         {
+          "commit": "eac585d42ed6d10215fa321d013872589249383e"
+        },
+        {
           "commit": "fe755af07bc20c38e4d354614f57137bb789a644"
         },
         {
@@ -76669,6 +76704,9 @@
         },
         {
           "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
+        },
+        {
+          "commit": "eac585d42ed6d10215fa321d013872589249383e"
         },
         {
           "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
@@ -77013,6 +77051,9 @@
           "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
         },
         {
+          "commit": "eac585d42ed6d10215fa321d013872589249383e"
+        },
+        {
           "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
         },
         {
@@ -77353,6 +77394,9 @@
         },
         {
           "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
+        },
+        {
+          "commit": "eac585d42ed6d10215fa321d013872589249383e"
         },
         {
           "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
@@ -77754,6 +77798,9 @@
           "commit": "e897f9ba38ed6ccfb7699cd39ec6a41a7a9cc857"
         },
         {
+          "commit": "eac585d42ed6d10215fa321d013872589249383e"
+        },
+        {
           "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
         },
         {
@@ -77881,6 +77928,9 @@
         },
         {
           "commit": "e46ddfad5389ba83c55c1ca04cda0469a59e821e"
+        },
+        {
+          "commit": "eac585d42ed6d10215fa321d013872589249383e"
         },
         {
           "commit": "f28acbe2218222ccac1c17f58a44b07df482e269"
@@ -79563,13 +79613,13 @@
       "type": "Module",
       "id": "src/phone.js",
       "label": "src/phone.js",
-      "lines": 192,
-      "version": "408fdbc86eebcadf",
+      "lines": 198,
+      "version": "71b64734cd012372",
       "provenance": [
         {
           "file": "src/phone.js",
           "line": 1,
-          "version": "408fdbc86eebcadf"
+          "version": "71b64734cd012372"
         }
       ]
     },
@@ -84048,7 +84098,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "4c8a5f54477852952550b783f67958eacab6cd13",
+      "revision": "bee33aff6cbfe873db33d1b96bead59164c8a4c3",
       "currentBranch": "claude/next-work-recommendations-x5f2fp",
       "defaultBranch": "main",
       "visibility": "public",
@@ -107595,13 +107645,13 @@
       "type": "TestSuite",
       "id": "test/client.js",
       "label": "test/client.js",
-      "lines": 7041,
-      "version": "75e20f38819b0e86",
+      "lines": 7087,
+      "version": "f4096670b970bbdb",
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "75e20f38819b0e86"
+          "version": "f4096670b970bbdb"
         }
       ]
     },
@@ -187100,6 +187150,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:bee33aff6cbfe873db33d1b96bead59164c8a4c3",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "bee33aff6cbfe873db33d1b96bead59164c8a4c3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bee33aff6cbfe873db33d1b96bead59164c8a4c3",
+      "to": "Artifact:src/phone.js",
+      "provenance": {
+        "commit": "bee33aff6cbfe873db33d1b96bead59164c8a4c3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bee33aff6cbfe873db33d1b96bead59164c8a4c3",
+      "to": "Artifact:test/client.js",
+      "provenance": {
+        "commit": "bee33aff6cbfe873db33d1b96bead59164c8a4c3"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:bf2d3854140ff5eb3174fd0da68f149d75d86eb4",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -200912,6 +200986,54 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "commit": "ea1f4de76331bc04ee4756d377e5d473f91cd21c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eac585d42ed6d10215fa321d013872589249383e",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "eac585d42ed6d10215fa321d013872589249383e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eac585d42ed6d10215fa321d013872589249383e",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "eac585d42ed6d10215fa321d013872589249383e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eac585d42ed6d10215fa321d013872589249383e",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "eac585d42ed6d10215fa321d013872589249383e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eac585d42ed6d10215fa321d013872589249383e",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "eac585d42ed6d10215fa321d013872589249383e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eac585d42ed6d10215fa321d013872589249383e",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "eac585d42ed6d10215fa321d013872589249383e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eac585d42ed6d10215fa321d013872589249383e",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "eac585d42ed6d10215fa321d013872589249383e"
       }
     },
     {
@@ -250262,6 +250384,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:bee33aff6cbfe873db33d1b96bead59164c8a4c3",
+      "provenance": {
+        "commit": "bee33aff6cbfe873db33d1b96bead59164c8a4c3"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:bf2d3854140ff5eb3174fd0da68f149d75d86eb4",
       "provenance": {
         "commit": "bf2d3854140ff5eb3174fd0da68f149d75d86eb4"
@@ -251785,6 +251915,14 @@
       "to": "Commit:ea1f4de76331bc04ee4756d377e5d473f91cd21c",
       "provenance": {
         "commit": "ea1f4de76331bc04ee4756d377e5d473f91cd21c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:eac585d42ed6d10215fa321d013872589249383e",
+      "provenance": {
+        "commit": "eac585d42ed6d10215fa321d013872589249383e"
       }
     },
     {
@@ -315128,7 +315266,7 @@
       "to": "Table:gangs",
       "provenance": {
         "file": "src/phone.js",
-        "line": 83
+        "line": 86
       }
     },
     {
