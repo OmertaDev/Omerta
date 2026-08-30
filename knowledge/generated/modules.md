@@ -82,7 +82,7 @@
 | [src/hustle.js](../../src/hustle.js) | 104 | platform-core | 2 / 3 | 2 | 3 | 0 |
 | [src/invariants.js](../../src/invariants.js) | 801 | economy-ledger | 1 / 86 | 1 | 44 | 81 |
 | [src/kitchen.js](../../src/kitchen.js) | 371 | platform-core | 3 / 3 | 13 | 8 | 0 |
-| [src/landmarks.js](../../src/landmarks.js) | 46 | world-progression | 3 / 1 | 2 | 2 | 0 |
+| [src/landmarks.js](../../src/landmarks.js) | 49 | world-progression | 3 / 1 | 2 | 2 | 0 |
 | [src/law.js](../../src/law.js) | 287 | law-intelligence | 3 / 7 | 9 | 7 | 2 |
 | [src/loans.js](../../src/loans.js) | 815 | enterprise-logistics | 4 / 10 | 13 | 10 | 2 |
 | [src/made.js](../../src/made.js) | 97 | social-combat | 3 / 1 | 2 | 1 | 0 |
@@ -93,7 +93,7 @@
 | [src/mentor.js](../../src/mentor.js) | 232 | social-combat | 2 / 5 | 7 | 7 | 1 |
 | [src/nft.js](../../src/nft.js) | 123 | chain-economy | 3 / 3 | 0 | 2 | 1 |
 | [src/notoriety.js](../../src/notoriety.js) | 31 | world-progression | 1 / 2 | 0 | 2 | 0 |
-| [src/npcwar.js](../../src/npcwar.js) | 575 | world-progression | 2 / 8 | 7 | 8 | 1 |
+| [src/npcwar.js](../../src/npcwar.js) | 585 | world-progression | 2 / 8 | 7 | 8 | 1 |
 | [src/opportunities.js](../../src/opportunities.js) | 156 | engagement-growth | 6 / 2 | 1 | 6 | 0 |
 | [src/ops.js](../../src/ops.js) | 225 | platform-core | 6 / 4 | 4 | 11 | 2 |
 | [src/pass.js](../../src/pass.js) | 118 | platform-core | 3 / 5 | 2 | 3 | 2 |
@@ -177,7 +177,7 @@
 | [src/streak.js](../../src/streak.js) | 108 | world-progression | 2 / 3 | 3 | 3 | 0 |
 | [src/streets.js](../../src/streets.js) | 55 | social-combat | 8 / 3 | 2 | 3 | 1 |
 | [src/tax.js](../../src/tax.js) | 110 | economy-ledger | 1 / 3 | 0 | 4 | 2 |
-| [src/territory.js](../../src/territory.js) | 548 | enterprise-logistics | 3 / 7 | 11 | 6 | 0 |
+| [src/territory.js](../../src/territory.js) | 556 | enterprise-logistics | 3 / 7 | 11 | 6 | 0 |
 | [src/tokenhealth.js](../../src/tokenhealth.js) | 257 | economy-ledger | 2 / 2 | 1 | 10 | 1 |
 | [src/treasury.js](../../src/treasury.js) | 694 | economy-ledger | 4 / 14 | 8 | 12 | 7 |
 | [src/underworld.js](../../src/underworld.js) | 219 | world-progression | 2 / 3 | 7 | 10 | 0 |
@@ -190,4 +190,4 @@
 | [src/watcher.js](../../src/watcher.js) | 486 | chain-economy | 6 / 4 | 0 | 5 | 6 |
 | [src/wire.js](../../src/wire.js) | 463 | law-intelligence | 4 / 7 | 11 | 18 | 2 |
 | [src/worker.js](../../src/worker.js) | 950 | platform-core | 56 / 9 | 0 | 31 | 9 |
-| [src/world.js](../../src/world.js) | 800 | world-progression | 3 / 11 | 14 | 10 | 2 |
+| [src/world.js](../../src/world.js) | 803 | world-progression | 3 / 11 | 14 | 10 | 2 |
