@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58",
+  "sourceRevision": "fb59ebf3cad5d4096a6e810c8989caebe7172bd9",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5681,
-    "edges": 24980,
+    "nodes": 5683,
+    "edges": 24989,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 56,
-      "Commit": 1323,
+      "Commit": 1325,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 10016,
+      "CHANGED": 10023,
       "CONTAINS": 1846,
       "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1323,
+      "HAS_COMMIT": 1325,
       "IMPLEMENTS": 124,
       "IMPORTS": 1634,
       "INHERITS": 12,
@@ -32493,20 +32493,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1177533,
-      "lines": 12105,
-      "version": "8f876d3d12fb1fb6",
+      "bytes": 1177908,
+      "lines": 12109,
+      "version": "480c466b1f6d5889",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "8f876d3d12fb1fb6"
+          "version": "480c466b1f6d5889"
         }
       ],
-      "lastChangedAt": "2026-08-30T15:45:37.000Z",
+      "lastChangedAt": "2026-08-30T15:59:25.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
+      "lastChangedCommit": "fb59ebf3cad5d4096a6e810c8989caebe7172bd9"
     },
     {
       "key": "Artifact:public/manifest.json",
@@ -41463,20 +41463,20 @@
       "path": "tools/mobile.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 48247,
-      "lines": 778,
-      "version": "b9f20d6a7b0c461d",
+      "bytes": 48776,
+      "lines": 788,
+      "version": "b503a09e0d63bc15",
       "text": true,
       "provenance": [
         {
           "file": "tools/mobile.js",
           "line": 1,
-          "version": "b9f20d6a7b0c461d"
+          "version": "b503a09e0d63bc15"
         }
       ],
-      "lastChangedAt": "2026-08-25T23:57:14.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "2fee34e141fcbc27f3169c7a09c1a7134f7a73a4"
+      "lastChangedAt": "2026-08-30T15:59:25.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "fb59ebf3cad5d4096a6e810c8989caebe7172bd9"
     },
     {
       "key": "Artifact:tools/omr-graphic.html",
@@ -57301,6 +57301,22 @@
       ]
     },
     {
+      "key": "Commit:a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a",
+      "type": "Commit",
+      "id": "a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a",
+      "label": "chore(knowledge): refresh generated artifacts for 887e4db5",
+      "title": "chore(knowledge): refresh generated artifacts for 887e4db5",
+      "date": "2026-08-30T15:46:17.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a",
+      "provenance": [
+        {
+          "commit": "a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a"
+        }
+      ]
+    },
+    {
       "key": "Commit:a8bfb97c5d21a81a766a04efd3cbc4e8fce630b3",
       "type": "Commit",
       "id": "a8bfb97c5d21a81a766a04efd3cbc4e8fce630b3",
@@ -63569,6 +63585,22 @@
         {
           "commit": "fb0c18d3af446d1fa00fa548c65e80f9b2746b2f",
           "url": "https://github.com/OmertaDev/Omerta/commit/fb0c18d3af446d1fa00fa548c65e80f9b2746b2f"
+        }
+      ]
+    },
+    {
+      "key": "Commit:fb59ebf3cad5d4096a6e810c8989caebe7172bd9",
+      "type": "Commit",
+      "id": "fb59ebf3cad5d4096a6e810c8989caebe7172bd9",
+      "label": "fix(mobile): the short-phone fold — a receipt resurrected 200px of coach chrome",
+      "title": "fix(mobile): the short-phone fold — a receipt resurrected 200px of coach chrome",
+      "date": "2026-08-30T15:59:25.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/fb59ebf3cad5d4096a6e810c8989caebe7172bd9",
+      "provenance": [
+        {
+          "commit": "fb59ebf3cad5d4096a6e810c8989caebe7172bd9",
+          "url": "https://github.com/OmertaDev/Omerta/commit/fb59ebf3cad5d4096a6e810c8989caebe7172bd9"
         }
       ]
     },
@@ -77303,6 +77335,9 @@
           "commit": "a89d65db574232d5dd35fda6988c07d45e9da7c1"
         },
         {
+          "commit": "a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a"
+        },
+        {
           "commit": "a9640108187483542bf2aa9c553bf14cd7f5b915"
         },
         {
@@ -77705,6 +77740,9 @@
           "commit": "a89d65db574232d5dd35fda6988c07d45e9da7c1"
         },
         {
+          "commit": "a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a"
+        },
+        {
           "commit": "a9640108187483542bf2aa9c553bf14cd7f5b915"
         },
         {
@@ -78105,6 +78143,9 @@
         },
         {
           "commit": "a89d65db574232d5dd35fda6988c07d45e9da7c1"
+        },
+        {
+          "commit": "a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a"
         },
         {
           "commit": "a9640108187483542bf2aa9c553bf14cd7f5b915"
@@ -78566,6 +78607,9 @@
           "commit": "a89d65db574232d5dd35fda6988c07d45e9da7c1"
         },
         {
+          "commit": "a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a"
+        },
+        {
           "commit": "a9640108187483542bf2aa9c553bf14cd7f5b915"
         },
         {
@@ -78789,6 +78833,9 @@
         },
         {
           "commit": "a89d65db574232d5dd35fda6988c07d45e9da7c1"
+        },
+        {
+          "commit": "a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a"
         },
         {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
@@ -84986,7 +85033,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58",
+      "revision": "fb59ebf3cad5d4096a6e810c8989caebe7172bd9",
       "currentBranch": "claude/next-work-recommendations-x5f2fp",
       "defaultBranch": "main",
       "visibility": "public",
@@ -183014,6 +183061,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:a8bfb97c5d21a81a766a04efd3cbc4e8fce630b3",
       "to": "Artifact:AUDIT-redteam-loop.md",
       "provenance": {
@@ -206954,6 +207041,22 @@
       "to": "Artifact:test/stockcatalogv2.postgres.js",
       "provenance": {
         "commit": "fb0c18d3af446d1fa00fa548c65e80f9b2746b2f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fb59ebf3cad5d4096a6e810c8989caebe7172bd9",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "fb59ebf3cad5d4096a6e810c8989caebe7172bd9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fb59ebf3cad5d4096a6e810c8989caebe7172bd9",
+      "to": "Artifact:tools/mobile.js",
+      "provenance": {
+        "commit": "fb59ebf3cad5d4096a6e810c8989caebe7172bd9"
       }
     },
     {
@@ -251992,6 +252095,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a",
+      "provenance": {
+        "commit": "a8afd8f04d7ae199d94b3850b5aa50ecd3cdb84a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:a8bfb97c5d21a81a766a04efd3cbc4e8fce630b3",
       "provenance": {
         "commit": "a8bfb97c5d21a81a766a04efd3cbc4e8fce630b3"
@@ -255123,6 +255234,14 @@
       "to": "Commit:fb0c18d3af446d1fa00fa548c65e80f9b2746b2f",
       "provenance": {
         "commit": "fb0c18d3af446d1fa00fa548c65e80f9b2746b2f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:fb59ebf3cad5d4096a6e810c8989caebe7172bd9",
+      "provenance": {
+        "commit": "fb59ebf3cad5d4096a6e810c8989caebe7172bd9"
       }
     },
     {

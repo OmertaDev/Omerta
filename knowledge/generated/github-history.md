@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `887e4db5ad5a`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `fb59ebf3cad5`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1323 |
+| Commits in clone | 1325 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-30 — fix: second-round Codex P2 findings A-D — effective forfeiture on the stake receipt, agent gates at the door, won/refunded split, the reserve caveat on a bid |
+| Latest commit | 2026-08-30 — fix(mobile): the short-phone fold — a receipt resurrected 200px of coach chrome |
 
 ## Commit authors
 
@@ -21,7 +21,7 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 435 |
-| Claude | 196 |
+| Claude | 198 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 4 |
 
@@ -30,7 +30,7 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 499 | yes |
-| [public/index.html](../../public/index.html) | 406 | yes |
+| [public/index.html](../../public/index.html) | 407 | yes |
 | [src/server.js](../../src/server.js) | 350 | yes |
 | [SPEC.md](../../SPEC.md) | 275 | yes |
 | [schema.sql](../../schema.sql) | 273 | yes |
@@ -38,10 +38,10 @@
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 170 | yes |
 | [package.json](../../package.json) | 142 | yes |
-| knowledge/generated/github-history.md | 131 | historical |
-| knowledge/generated/graph-summary.md | 131 | historical |
-| knowledge/generated/graph.json | 131 | historical |
-| knowledge/generated/inventory.md | 131 | historical |
+| knowledge/generated/github-history.md | 132 | historical |
+| knowledge/generated/graph-summary.md | 132 | historical |
+| knowledge/generated/graph.json | 132 | historical |
+| knowledge/generated/inventory.md | 132 | historical |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
 | [test/client.js](../../test/client.js) | 117 | yes |
@@ -59,7 +59,7 @@
 | [src/growth.js](../../src/growth.js) | 53 | yes |
 | [test/gates.js](../../test/gates.js) | 51 | yes |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
-| knowledge/generated/modules.md | 49 | historical |
+| knowledge/generated/modules.md | 50 | historical |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 49 | yes |
 | knowledge/generated/documents.md | 47 | historical |
 | [src/casino.js](../../src/casino.js) | 46 | yes |
