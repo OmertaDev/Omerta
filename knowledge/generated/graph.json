@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "20305513621ba94bfc69ae045e243d5d696d5778",
+  "sourceRevision": "e7b0cd2df5f00d051fb7f6db21745b7648d6ff85",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5661,
-    "edges": 24871,
+    "nodes": 5663,
+    "edges": 24879,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 56,
-      "Commit": 1303,
+      "Commit": 1305,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 9931,
+      "CHANGED": 9937,
       "CONTAINS": 1846,
       "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1303,
+      "HAS_COMMIT": 1305,
       "IMPLEMENTS": 124,
       "IMPORTS": 1633,
       "INHERITS": 12,
@@ -38588,20 +38588,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 230085,
-      "lines": 3569,
-      "version": "57486d3ed0aac5a8",
+      "bytes": 231355,
+      "lines": 3584,
+      "version": "37fa7ede623ef0aa",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "57486d3ed0aac5a8"
+          "version": "37fa7ede623ef0aa"
         }
       ],
-      "lastChangedAt": "2026-08-29T23:26:33.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4d78d9cad8adb025ca232f4015c2c3ae1d21fc73"
+      "lastChangedAt": "2026-08-30T11:34:28.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "e7b0cd2df5f00d051fb7f6db21745b7648d6ff85"
     },
     {
       "key": "Artifact:test/genesiscca.js",
@@ -54421,6 +54421,22 @@
       ]
     },
     {
+      "key": "Commit:8ac116c7d61d6c3dc70abf1ebf956152b540cbcb",
+      "type": "Commit",
+      "id": "8ac116c7d61d6c3dc70abf1ebf956152b540cbcb",
+      "label": "Knowledge graph regenerated for wave 73 (empire)",
+      "title": "Knowledge graph regenerated for wave 73 (empire)",
+      "date": "2026-08-30T11:15:43.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8ac116c7d61d6c3dc70abf1ebf956152b540cbcb",
+      "provenance": [
+        {
+          "commit": "8ac116c7d61d6c3dc70abf1ebf956152b540cbcb",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8ac116c7d61d6c3dc70abf1ebf956152b540cbcb"
+        }
+      ]
+    },
+    {
       "key": "Commit:8aec8a7a2c925a5cf75d80d4478bc2be4dd483d9",
       "type": "Commit",
       "id": "8aec8a7a2c925a5cf75d80d4478bc2be4dd483d9",
@@ -61825,6 +61841,22 @@
         {
           "commit": "e7a59f63f86e9a7f721c8e9259ae999da39a2d53",
           "url": "https://github.com/OmertaDev/Omerta/commit/e7a59f63f86e9a7f721c8e9259ae999da39a2d53"
+        }
+      ]
+    },
+    {
+      "key": "Commit:e7b0cd2df5f00d051fb7f6db21745b7648d6ff85",
+      "type": "Commit",
+      "id": "e7b0cd2df5f00d051fb7f6db21745b7648d6ff85",
+      "label": "THE RAW-KEY LEDGER learns the shorthand spelling — both halves, plus one stale waiver deleted",
+      "title": "THE RAW-KEY LEDGER learns the shorthand spelling — both halves, plus one stale waiver deleted",
+      "date": "2026-08-30T11:34:28.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e7b0cd2df5f00d051fb7f6db21745b7648d6ff85",
+      "provenance": [
+        {
+          "commit": "e7b0cd2df5f00d051fb7f6db21745b7648d6ff85",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e7b0cd2df5f00d051fb7f6db21745b7648d6ff85"
         }
       ]
     },
@@ -76883,6 +76915,9 @@
           "commit": "8958d9951447d065d94daf37cdd5e820c644e64c"
         },
         {
+          "commit": "8ac116c7d61d6c3dc70abf1ebf956152b540cbcb"
+        },
+        {
           "commit": "8b295044829a5866b59dae005b3ee80262953333"
         },
         {
@@ -77252,6 +77287,9 @@
           "commit": "8958d9951447d065d94daf37cdd5e820c644e64c"
         },
         {
+          "commit": "8ac116c7d61d6c3dc70abf1ebf956152b540cbcb"
+        },
+        {
           "commit": "8b295044829a5866b59dae005b3ee80262953333"
         },
         {
@@ -77619,6 +77657,9 @@
         },
         {
           "commit": "8958d9951447d065d94daf37cdd5e820c644e64c"
+        },
+        {
+          "commit": "8ac116c7d61d6c3dc70abf1ebf956152b540cbcb"
         },
         {
           "commit": "8b295044829a5866b59dae005b3ee80262953333"
@@ -78047,6 +78088,9 @@
           "commit": "8958d9951447d065d94daf37cdd5e820c644e64c"
         },
         {
+          "commit": "8ac116c7d61d6c3dc70abf1ebf956152b540cbcb"
+        },
+        {
           "commit": "8b295044829a5866b59dae005b3ee80262953333"
         },
         {
@@ -78282,6 +78326,9 @@
         },
         {
           "commit": "8958d9951447d065d94daf37cdd5e820c644e64c"
+        },
+        {
+          "commit": "8ac116c7d61d6c3dc70abf1ebf956152b540cbcb"
         },
         {
           "commit": "8d00c646135d78f5e0ed0b3509248e7b3bbe8fc9"
@@ -84503,7 +84550,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "20305513621ba94bfc69ae045e243d5d696d5778",
+      "revision": "e7b0cd2df5f00d051fb7f6db21745b7648d6ff85",
       "currentBranch": "(detached)",
       "defaultBranch": "main",
       "visibility": "public",
@@ -108665,13 +108712,13 @@
       "type": "TestSuite",
       "id": "test/gates.js",
       "label": "test/gates.js",
-      "lines": 3569,
-      "version": "57486d3ed0aac5a8",
+      "lines": 3584,
+      "version": "37fa7ede623ef0aa",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "57486d3ed0aac5a8"
+          "version": "37fa7ede623ef0aa"
         }
       ]
     },
@@ -174051,6 +174098,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:8ac116c7d61d6c3dc70abf1ebf956152b540cbcb",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "8ac116c7d61d6c3dc70abf1ebf956152b540cbcb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8ac116c7d61d6c3dc70abf1ebf956152b540cbcb",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "8ac116c7d61d6c3dc70abf1ebf956152b540cbcb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8ac116c7d61d6c3dc70abf1ebf956152b540cbcb",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "8ac116c7d61d6c3dc70abf1ebf956152b540cbcb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8ac116c7d61d6c3dc70abf1ebf956152b540cbcb",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "8ac116c7d61d6c3dc70abf1ebf956152b540cbcb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8ac116c7d61d6c3dc70abf1ebf956152b540cbcb",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "8ac116c7d61d6c3dc70abf1ebf956152b540cbcb"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:8aec8a7a2c925a5cf75d80d4478bc2be4dd483d9",
       "to": "Artifact:SPEC.md",
       "provenance": {
@@ -201439,6 +201526,14 @@
       "to": "Artifact:SPEC.md",
       "provenance": {
         "commit": "e7a59f63f86e9a7f721c8e9259ae999da39a2d53"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e7b0cd2df5f00d051fb7f6db21745b7648d6ff85",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "e7b0cd2df5f00d051fb7f6db21745b7648d6ff85"
       }
     },
     {
@@ -249389,6 +249484,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:8ac116c7d61d6c3dc70abf1ebf956152b540cbcb",
+      "provenance": {
+        "commit": "8ac116c7d61d6c3dc70abf1ebf956152b540cbcb"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:8aec8a7a2c925a5cf75d80d4478bc2be4dd483d9",
       "provenance": {
         "commit": "8aec8a7a2c925a5cf75d80d4478bc2be4dd483d9"
@@ -253088,6 +253191,14 @@
       "to": "Commit:e7a59f63f86e9a7f721c8e9259ae999da39a2d53",
       "provenance": {
         "commit": "e7a59f63f86e9a7f721c8e9259ae999da39a2d53"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:e7b0cd2df5f00d051fb7f6db21745b7648d6ff85",
+      "provenance": {
+        "commit": "e7b0cd2df5f00d051fb7f6db21745b7648d6ff85"
       }
     },
     {
@@ -264963,7 +265074,7 @@
       "to": "Artifact:tools/sqlscan.js",
       "provenance": {
         "file": "test/gates.js",
-        "line": 3026
+        "line": 3041
       }
     },
     {
