@@ -115,7 +115,11 @@ export async function respecSkills(ch, client, h) {
   h.owned.skills = new Set();
   ch.respec_at = new Date();
   await h.track(client, ch.account_id, 'skill_respec', { unlearned });
-  return { ok: true, unlearned, omr: SKILLS.RESPEC_OMR, points: pointsOf(ch, h.owned, h.acct?.prestige) };
+  // `names` rides alongside the id array for the reason every other reply in this file sends one:
+  // `unlearned` is a list of KEYS ('doctors_friend'), the client has no skill catalog to resolve
+  // them with, and the wipe's own per-skill sibling (respecOne) has sent `name` since it shipped.
+  return { ok: true, unlearned, names: unlearned.map((id) => skillOf(id)?.name || id),
+    omr: SKILLS.RESPEC_OMR, points: pointsOf(ch, h.owned, h.acct?.prestige) };
 }
 
 // The board — the full tree, what this street knows, and the point budget.

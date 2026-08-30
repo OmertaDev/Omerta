@@ -9,7 +9,7 @@
 // the offshore RENDEZVOUS (a consensual mid-sea handoff of an active run to a partner's boat — §10.4-neutral).
 import crypto from 'node:crypto';
 import { GameError, bus, bumpMastery, masteryFx } from './game.js';
-import { PORT, COMMISSION, NOTORIETY, boatOf, portRouteOf, boatResale, interdictChance, effHold, effSpeed, boatUpgradeCost, portRankOf, fenceMultOf, levelOf, cityHourOf, smugglerTierOf, smuggleRepPerks, notorietyNow, rollRarity, rarityUtilityBps, jailed, hospitalized, safeHoused, usd, art } from './rules.js';
+import { PORT, COMMISSION, NOTORIETY, boatOf, portRouteOf, boatResale, interdictChance, effHold, effSpeed, boatUpgradeCost, portRankOf, fenceMultOf, levelOf, cityHourOf, smugglerTierOf, smuggleRepPerks, notorietyNow, rollRarity, rarityUtilityBps, jailed, hospitalized, safeHoused, usd, art , districtName } from './rules.js';
 import { logCollect } from './collection.js';
 import { activeDecree } from './commission.js';
 import { laneHeat, heatLane } from './notoriety.js';
@@ -71,7 +71,7 @@ function supplyState(ch) {
 // POST /v1/port/boat/:kind — buy a boat at the Docks (a cash sink)
 export async function buyBoat(ch, kind, client, h) {
   if (jailed(ch)) throw new GameError('jailed', 'No dealing from lockup.');
-  if (ch.loc !== PORT.DISTRICT) throw new GameError('district', `The boatyard is at the ${PORT.DISTRICT} — travel there.`, { district: PORT.DISTRICT });
+  if (ch.loc !== PORT.DISTRICT) throw new GameError('district', `The boatyard is at ${districtName(PORT.DISTRICT)} — travel there.`, { district: PORT.DISTRICT });
   if (levelOf(Number(ch.respect)) < PORT.MIN_LEVEL) throw new GameError('level', `The harbormaster deals with level ${PORT.MIN_LEVEL}+.`);
   const spec = boatOf(kind);
   if (!spec) throw new GameError('bad_boat', 'No such vessel at the yard.');
@@ -114,7 +114,7 @@ export async function sellBoat(ch, boatId, client, h) {
 // POST /v1/port/upgrade/:boatId {part} — NAVAL UPGRADE: buy a hull (+cargo) or engine (+knots) level (cash sink)
 export async function upgradeBoat(ch, boatId, part, client, h) {
   if (jailed(ch)) throw new GameError('jailed', 'No work on the boat from lockup.');
-  if (ch.loc !== PORT.DISTRICT) throw new GameError('district', `The dry dock is at the ${PORT.DISTRICT}.`, { district: PORT.DISTRICT });
+  if (ch.loc !== PORT.DISTRICT) throw new GameError('district', `The dry dock is at ${districtName(PORT.DISTRICT)}.`, { district: PORT.DISTRICT });
   if (part !== 'hull' && part !== 'engine') throw new GameError('bad_part', 'Upgrade the hull or the engine.');
   const boat = (await client.query('SELECT * FROM boats WHERE id=$1 AND character_id=$2 FOR UPDATE', [boatId, ch.id])).rows[0];
   if (!boat) throw new GameError('no_boat', 'No such boat in your fleet.');
@@ -139,7 +139,7 @@ export async function launchRun(ch, boatId, routeId, escort, client, h) {
   if (jailed(ch)) throw new GameError('jailed', 'No runs from lockup.');
   if (hospitalized(ch)) throw new GameError('hosp', "You're in no shape to captain a run.");
   if (safeHoused(ch)) throw new GameError('safe', "You can't run contraband from a safehouse."); // P1.3 — an op
-  if (ch.loc !== PORT.DISTRICT) throw new GameError('district', `Load a run at the ${PORT.DISTRICT}.`, { district: PORT.DISTRICT });
+  if (ch.loc !== PORT.DISTRICT) throw new GameError('district', `Load a run at ${districtName(PORT.DISTRICT)}.`, { district: PORT.DISTRICT });
   const boat = (await client.query('SELECT * FROM boats WHERE id=$1 AND character_id=$2 FOR UPDATE', [boatId, ch.id])).rows[0];
   if (!boat) throw new GameError('no_boat', 'No such boat in your fleet.');
   assertAfloat(boat);
@@ -183,7 +183,7 @@ export async function collectRun(ch, boatId, warehouse, client, h) {
   if (jailed(ch)) throw new GameError('jailed', 'No collecting a run from lockup.');
   if (hospitalized(ch)) throw new GameError('hosp', "You're in no shape to work the dock.");
   if (safeHoused(ch)) throw new GameError('safe', 'The take waits for a captain on the dock, not a ghost.'); // D2 collect
-  if (ch.loc !== PORT.DISTRICT) throw new GameError('district', `Collect at the ${PORT.DISTRICT}.`, { district: PORT.DISTRICT });
+  if (ch.loc !== PORT.DISTRICT) throw new GameError('district', `Collect at ${districtName(PORT.DISTRICT)}.`, { district: PORT.DISTRICT });
   const boat = (await client.query('SELECT * FROM boats WHERE id=$1 AND character_id=$2 FOR UPDATE', [boatId, ch.id])).rows[0];
   if (!boat) throw new GameError('no_boat', 'No such boat in your fleet.');
   if (!atSea(boat)) throw new GameError('not_out', "She's docked — nothing to collect.");
@@ -260,7 +260,7 @@ export async function fenceContraband(ch, client, h) {
   if (jailed(ch)) throw new GameError('jailed', 'No fencing from lockup.');
   if (hospitalized(ch)) throw new GameError('hosp', "You're in no shape to meet the fence."); // (red-team R18) parity
   if (safeHoused(ch)) throw new GameError('safe', 'The fence deals face to face, not with a ghost.'); // D2 extraction-ish
-  if (ch.loc !== PORT.DISTRICT) throw new GameError('district', `The fence works out of the ${PORT.DISTRICT}.`, { district: PORT.DISTRICT });
+  if (ch.loc !== PORT.DISTRICT) throw new GameError('district', `The fence works out of ${districtName(PORT.DISTRICT)}.`, { district: PORT.DISTRICT });
   const book = Number((await client.query('SELECT contraband FROM characters WHERE id=$1', [ch.id])).rows[0]?.contraband || 0);
   if (book <= 0) throw new GameError('nothing', "You've got no contraband warehoused.");
   const mult = fenceMultOf();
@@ -279,7 +279,7 @@ export async function fenceContraband(ch, client, h) {
 // POST /v1/port/berth — rent a permanent harbor slip (+1 fleet cap), a one-time cash sink, capped
 export async function rentBerth(ch, client, h) {
   if (jailed(ch)) throw new GameError('jailed', 'No paperwork from lockup.');
-  if (ch.loc !== PORT.DISTRICT) throw new GameError('district', `The harbormaster's office is at the ${PORT.DISTRICT}.`, { district: PORT.DISTRICT });
+  if (ch.loc !== PORT.DISTRICT) throw new GameError('district', `The harbormaster's office is at ${districtName(PORT.DISTRICT)}.`, { district: PORT.DISTRICT });
   const berths = Number(ch.berths) || 0;
   if (berths >= PORT.STEP4.BERTH_MAX) throw new GameError('maxed', `You already lease the max (${PORT.STEP4.BERTH_MAX}) slips.`);
   if (Number(ch.cash) < PORT.STEP4.BERTH_COST) throw new GameError('cash', `A slip runs ${usd(PORT.STEP4.BERTH_COST)}.`);
@@ -301,7 +301,7 @@ export async function interceptRun(ch, targetBoatId, client, h) {
   if (jailed(ch)) throw new GameError('jailed', 'No piracy from lockup.');
   if (hospitalized(ch)) throw new GameError('hosp', 'Not in your condition.');
   if (safeHoused(ch)) throw new GameError('safe', 'No raids while you hide — a safehouse is a shield, not a corsair.'); // P1.3
-  if (ch.loc !== PORT.DISTRICT) throw new GameError('district', `Put to sea from the ${PORT.DISTRICT}.`, { district: PORT.DISTRICT });
+  if (ch.loc !== PORT.DISTRICT) throw new GameError('district', `Put to sea from ${districtName(PORT.DISTRICT)}.`, { district: PORT.DISTRICT });
   if (levelOf(Number(ch.respect)) < S.PIRATE_MIN_LEVEL) throw new GameError('level', `Piracy is level ${S.PIRATE_MIN_LEVEL}+ work.`);
   if (Number(ch.energy) < S.PIRATE_ENERGY) throw new GameError('energy', `Running one down takes ${S.PIRATE_ENERGY} energy.`);
   if ((Number(ch.ammo) || 0) < S.PIRATE_AMMO) throw new GameError('ammo', `Boarding takes ${S.PIRATE_AMMO} rounds.`);
@@ -396,7 +396,12 @@ export async function rendezvous(ch, myBoatId, partnerBoatId, client, h) {
   await clearIntercepts(client, partner.id);
   await h.notify(client, partner.character_id, 'port_handoff', { route: mine.run_route, routeName: route?.name, hold: Number(mine.run_hold) });
   await h.track(client, ch.account_id, 'port', { act: 'rendezvous', route: mine.run_route });
-  return { ok: true, to: partner.id, route: mine.run_route, hold: Number(mine.run_hold) };
+  // `to` is a BOAT id and `route` a catalog key — neither is readable, and describe() has no
+  // character catalog and no route catalog to resolve them from, so the display names ship from
+  // here (the raw-key rule). interceptRun's own WIN branch, one function up, has sent `routeName`
+  // all along; this is the forgotten sibling.
+  const toName = (await client.query('SELECT name FROM characters WHERE id=$1', [partner.character_id])).rows[0]?.name || null;
+  return { ok: true, op: 'rendezvous', to: partner.id, toName, route: mine.run_route, routeName: route?.name, hold: Number(mine.run_hold) };
 }
 
 // a public run's VALUE BAND for the piracy board (never the manifest — the convoy-board rule)

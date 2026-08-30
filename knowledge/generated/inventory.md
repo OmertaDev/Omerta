@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `b0a214cabab9`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `854efe56c451`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,826 |
-| Text lines | 518,287 |
-| Repository bytes inventoried | 313,758,895 |
+| Text lines | 520,566 |
+| Repository bytes inventoried | 313,960,722 |
 | Backend/route modules | 187 |
 | HTTP route registrations / unique routes | 742 / 742 |
 | Database tables | 317 |
 | Solidity declarations | 49 |
-| Git commits | 1,282 |
+| Git commits | 1,331 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 5,640 / 24,755 |
+| Graph nodes / edges | 5,689 / 25,023 |
 
 ## Artifact kinds
 
@@ -47,22 +47,22 @@
 | File | Lines | Kind | Last change |
 |---|---:|---|---|
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
-| [CLAUDE.md](../../CLAUDE.md) | 17,551 | documentation | 2026-08-30 |
-| [public/index.html](../../public/index.html) | 11,792 | web-surface | 2026-08-29 |
+| [CLAUDE.md](../../CLAUDE.md) | 17,635 | documentation | 2026-08-30 |
+| [public/index.html](../../public/index.html) | 12,127 | web-surface | 2026-08-30 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
+| [test/client.js](../../test/client.js) | 8,543 | test-suite | 2026-08-30 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
-| [test/client.js](../../test/client.js) | 6,997 | test-suite | 2026-08-26 |
 | [BALANCE.md](../../BALANCE.md) | 6,472 | documentation | 2026-08-24 |
-| [src/rules.tail.js](../../src/rules.tail.js) | 6,063 | backend-module | 2026-08-29 |
+| [src/rules.tail.js](../../src/rules.tail.js) | 6,071 | backend-module | 2026-08-30 |
 | [schema.sql](../../schema.sql) | 6,009 | data-schema | 2026-08-29 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
 | [test/docs.js](../../test/docs.js) | 4,038 | test-suite | 2026-08-30 |
 | [omerta-contracts/test/AcquisitionConstellationTask3B.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask3B.t.sol) | 3,743 | contract-test | 2026-08-28 |
-| [test/gates.js](../../test/gates.js) | 3,569 | test-suite | 2026-08-29 |
-| [src/server.js](../../src/server.js) | 3,472 | backend-module | 2026-08-29 |
+| [test/gates.js](../../test/gates.js) | 3,584 | test-suite | 2026-08-30 |
+| [src/server.js](../../src/server.js) | 3,472 | backend-module | 2026-08-30 |
 | [omerta-contracts/test/AcquisitionVaultOperator.t.sol](../../omerta-contracts/test/AcquisitionVaultOperator.t.sol) | 3,222 | contract-test | 2026-08-29 |
 | [omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1](../../omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1) | 2,947 | contract-project | 2026-08-28 |
 | [omerta-contracts/fizz_data/contracts.json](../../omerta-contracts/fizz_data/contracts.json) | 2,739 | contract-project | 2026-08-25 |

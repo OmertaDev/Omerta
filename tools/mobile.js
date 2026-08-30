@@ -148,7 +148,17 @@ const MEASURE = (minTap) => {
   const bodies = document.querySelector('#tabbodies');
   const bodyTop = bodies ? Math.round(bodies.getBoundingClientRect().top) : null;
 
-  return { vw, vh, over, widest: widest.slice(0, 5), smallNav, bodyTop };
+  const chrome = [];
+  for (const sel of ['#top', '#coachwrap', '#vitals', '#tabpanel', '#grouprail', '#tabs', '#tabart', '#introwrap']) {
+    const el = document.querySelector(sel);
+    if (!el) { chrome.push(sel + ':missing'); continue; }
+    const cs = getComputedStyle(el);
+    if (cs.display === 'none') { chrome.push(sel + ':none'); continue; }
+    const r = el.getBoundingClientRect();
+    chrome.push(`${sel} top${Math.round(r.top)} h${Math.round(r.height)} mb${cs.marginBottom}`);
+  }
+
+  return { vw, vh, over, widest: widest.slice(0, 5), smallNav, bodyTop, chrome };
 };
 
 const check = async (page, screen, vp, { contentMustShow = false } = {}) => {
@@ -174,7 +184,7 @@ const check = async (page, screen, vp, { contentMustShow = false } = {}) => {
   // B — picking a screen must bring that screen into view
   if (contentMustShow && m.bodyTop !== null && m.bodyTop > m.vh) {
     fail(screen, vp, `the screen's own content starts ${m.bodyTop}px down, below the ${m.vh}px fold — ` +
-      `a player who taps this tab sees none of it and nothing tells them to scroll`);
+      `a player who taps this tab sees none of it and nothing tells them to scroll [${m.chrome.join(' | ')}]`);
   }
   return m;
 };

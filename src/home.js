@@ -44,7 +44,7 @@ export const HOME_BOARDS = [
   ['results',   '/v1/results',   async (ch, client) => ({ results: await resultsBoard(client) })],
   ['explore',   '/v1/explore',   (ch, client, h, ctx) =>
     Explore.exploreBoard(client, ch, h.acct, h.owned, { onlineAccounts: ctx.onlineAccounts || [] })],
-  ['primetime', '/v1/primetime', (ch, client) => Prime.primeTimeBoard(client, ch)],
+  ['primetime', '/v1/primetime', (ch, client, h) => Prime.primeTimeBoard(client, ch, h)],
   ['day',       '/v1/day',       (ch, client, h) => Day.dayBoard(client, ch, h)],
   ['live',      '/v1/live',      (ch, client, h, ctx) => Collision.collisionBoard(client, ch, ctx.online)],
   ['payroll',   '/v1/payroll',   (ch, client, h) => Payroll.payrollBoard(ch, client, h)],

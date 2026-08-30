@@ -5724,6 +5724,90 @@ disabling the rolls branch outright fails at the SILENCE LEDGER (the static half
 driven claim, so it was re-cut to keep the branch and change only its WORDING, which fails at
 *"craps must name the come-out it threw"* with the line printed back. Driven actions 244 → 246.
 
+**PLAY WAVE 72 — THE SEALED BID'S MISSING HALF, AND A PERMANENT CHOICE THAT SAID "done."
+(2026-08-30; numbered 72 because the scarcity drop's commission receipt already claimed WAVE 71 in
+the ledger).** The sweep's surface measured honestly first — INSTRUMENTED, never regexed: the ledger's
+own run dumps 272 driven keys where a static regex reports 49, and against the 368 routes the console
+presses that leaves **165 never driven**. The first gap extractor produced FALSE gaps (it normalized
+only hex-ish segments to `:p`, so driven URLs carrying ids like `docks` never matched their pressed
+pattern — 217 "undriven" against a real 165); *a finding produced by a tool you wrote and did not
+check is not a finding*, for the eleventh session running. Four clusters driven through the REAL
+`describe()`; two findings, several clean lenses.
+**THE HEADLINE IS THE TRAIT — the once-ever level-50 capstone of a whole trade read `"done."`.**
+`chooseTrait` is the Fable moment: master a trade to level 50, choose VIRTUOSO or DYNAST, once,
+permanently, no respec — and the reply carried a raw `track` id with no display name, so no branch
+could claim it and the biggest single decision in the mastery system toasted nothing. The client
+could not have fixed it alone (describe() has no track catalog — the raw-key rule), so the server now
+sends `trackName` + the trait's own `desc`, and the line states the TERMS: *"🎖 Virtuoso — the
+Larceny die is cast, once and for good (it dies with the street). The trade's perk deepens to its
+mastered strength."* The branch keys on `trait` + `trackName` — checked against both near-collisions
+BEFORE shipping rather than after (pen.js sends `trackName` with no `trait`; the soldier hire sends
+`trait` with no `trackName` — absence is not a discriminator, so the PAIR is the key).
+**THE SEALED BID WAS FLUENT AND LEFT THE LOAD-BEARING TERMS OFF.** *"🕶 $1,000,000 on The Docks —
+1 in, 30m to go"* named neither that the stake is the family's TREASURY (the wave-55
+pocket-vs-treasury class — a boss reads a seven-figure spend with nothing saying whose pocket), nor
+`CONTEST_LOSS_BPS` — and per this file's own record that forfeiture **is what makes it a sealed bid
+rather than "always commit everything"**, i.e. the one term a player must weigh before committing.
+A RAISE also read byte-identical to a fresh stake though the reply carried `added` all along. Every
+figure was already in the reply; only the line was short — it now reads *"$1,000,000 of the treasury
+on The Docks … — lose and 50% of it is forfeit"*, and a raise leads with *"raised to $1,200,000
+(+$200,000)"*.
+**Clean lenses, recorded because a sweep that publishes only its hits cannot be audited:** blackmail
+end to end (dig / extort / pay-hush / expose all read with their terms), the feud sit-down (propose +
+accept), diplomacy pacts including the oathbreak, the Commission's weekly vote AND the daily ticker
+pick, the Law's jury buy (*"once per case"* named) and a demanded-trial acquittal, and the skills
+learn line.
+**Guarded by a WAVE 72 driven block** in `test/client.js` — its own holder character and two real
+gang foundings, a genuinely player-held district (the sealed contest's precondition — unheld ground
+falls to an outright claim and would never reach this line), and a real level-50 masteries seed, so
+every claim is asserted server-half first, line second. **Five mutations, five distinct named
+kills** — the server's `trackName` dropped; the client trait branch deleted (reproducing `"done."`
+verbatim); the forfeit term dropped from the line; the raise collapsed to a fresh stake; `lossBps`
+dropped from the server reply. No SQL moved in `src/` (checked with a diff filter, not assumed), so
+the real-Postgres gates do not apply. Driven actions → 285.
+
+**PLAY WAVES 73–74 — THE SWEEP RUN TO COMPLETION: twelve clusters in parallel, the census emptied,
+fifty-nine fixes (founder-directed 2026-08-30: "Use graph engineering and control multiple sub agents
+on Opus to run every single sweep remaining in parallel till completion").** The wave-by-wave sweep
+had been draining the pressed-but-undriven census one cluster per sitting; the directive turned the
+remainder into ONE orchestrated run — **12 parallel finder agents drove all 171 remaining routes**
+through the client's REAL `describe()` (social/combat/pen/market/shylock/world/politics/vice/freight/
+empire/chain/daily — zero undrivable, every refusal traced to a fixture rather than waved), then
+**12 SERIAL appliers fixed the 56 confirmed defects** (59 fixes counting the ones found while fixing)
+in the shared tree, one commit per cluster, each defect RE-DRIVEN and reproduced before it was
+touched, each fix guarded by a driven block asserting the SERVER half first, each mutation-verified
+with distinct named kills on scratchpad copies. **The census is now EMPTY — every route the console
+can press has been driven and read at least once.**
+**THE HEADLINE IS THE CHAIN CLUSTER: the entire extraction rail said "done."** — `/v1/withdraw` (the
+EIP-712 voucher that burns $OMR and issues the on-chain claim), the identity mint, the bond quote AND
+the bond claim, all mute on the one surface where real money moves; the bond-claim fix itself was
+corrected by DRIVING ("released X $OMR" implies tokens landed — the claim is off-chain accounting, so
+the line now says the release itself is on-chain). Beside it, the class's worst instances each in a
+new costume: **combat** — the four asset crimes fell into the casino's WIN/LOSS pair, so stealing a
+car read *"WIN — +$0 · GONE IN SIXTY"* (gambling wording plus a FALSE money figure on a verb where no
+money moves) and every loss read *"the house keeps it (−$0)"* over a JAIL SENTENCE; **shylock** — the
+loan collect stated the GROSS while the lender banked net-of-vig (a $6,000 overstatement growing with
+the debt) and said nothing about the welsher brand, the WANTED window or the broken legs the database
+showed set; **vice** — three settle systems share one byte-shape and the numbers claim's early return
+made the track's own branch UNREACHABLE DEAD CODE, so a SCRATCHED runner's refund rendered
+byte-identical to a genuine win; **pen** — a co-op break blown by its own rat read *"caught at the
+fence"*, telling a betrayed leader he was unlucky. **Freight swept a CLASS mid-fix**: 18 refusal
+sites named a district by its storage key, and nine modules each carried a private `districtName`
+copy — promoted to `rules.tail.js` beside `art`/`usd` per the sixty-nine-copies discipline.
+**THE GUARDS EARNED THEIR KEEP DURING THE FIXES THEMSELVES, which is the argument for having built
+them**: THE COLLISION LEDGER (check 13) caught two first-cut fixes before they shipped — the pen's
+`blown` branch would have claimed the heist's own truthful message, and the daily cluster's favor
+branch was a bare `npcName` catch-all that would have claimed the drill reply — and THE RAW-KEY
+LEDGER caught a correct fix written in the shorthand spelling its matcher did not know
+(`{ kind, kindName }`), which was a GUARD defect: both halves widened to the second legal spelling
+rather than the payload contorted (the extractor-only-knows-one-form class, the CATALOG LEDGER
+lesson). Orchestration mechanics recorded for the next run: appliers are FORBIDDEN from touching
+CLAUDE.md/SPEC.md (this consolidated entry replaces twelve individual ones), every source-only push
+needs a generated-only knowledge companion on the exact head (built in a linked worktree when the
+shared tree is dirty), and the SPEC client line count crossed its 2% guard band mid-sweep and was
+restated rather than the tolerance widened. Suite green at the final head; the two SQL-touching
+clusters were verified through CI's real-Postgres job per push.
+
 ## Sensitive design notes
 *These are standing PRODUCT rules. They bind whatever else is true, and several of them exist
 because breaking one is very hard to walk back.*

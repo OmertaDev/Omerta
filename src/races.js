@@ -272,8 +272,12 @@ export async function pinkSlipRace(ch, opponent, body, client, h) {
   await h.notify(client, opponent.id, 'race_pink', { from: ch.name, theyWon: !win, car: wonCar.model_id, name: carOf(wonCar.model_id)?.name });
   bus.emit('streets', { type: 'race_pink', by: ch.name, vs: opponent.name, win });
   await h.track(client, ch.account_id, 'race', { mode: 'pink', win });
-  return { ok: true, win, forPinks: true, wonCar: win ? { id: wonCar.id, model: wonCar.model_id } : null,
-    lostCar: win ? null : { id: wonCar.id, model: wonCar.model_id }, you: mine, them: theirs };
+  // the DISPLAY name rides with the leg (the notify one line up has sent it all along): describe()
+  // has no car catalog, so without it the loudest ownership transfer in the game names the iron by
+  // its raw catalog key.
+  const slip = { id: wonCar.id, model: wonCar.model_id, name: carOf(wonCar.model_id)?.name || wonCar.model_id };
+  return { ok: true, win, forPinks: true, wonCar: win ? slip : null,
+    lostCar: win ? null : slip, you: mine, them: theirs };
 }
 
 // GET /v1/races — the strip: your cars (power + tune + listing), the PvE card, the open PvP field, your legend.
@@ -346,7 +350,9 @@ export async function enterGrandPrix(ch, carId, client, h) {
   const entrants = Number((await client.query('SELECT COUNT(*) n FROM grand_prix_entries WHERE gp_id=$1', [g.id])).rows[0].n);
   await h.track(client, ch.account_id, 'race', { mode: 'gp', buyin });
   bus.emit('streets', { type: 'gp_entry', who: ch.name, entrants });
+  // the SHORT-FIELD threshold ships from here (never restated client-side — it is a founder lever).
   return { ok: true, grandPrix: g.id, buyin, power, pool: Number(g.pool) + buyin, entrants,
+    minEntrants: RACES.GP.MIN_ENTRANTS,
     closesSeconds: Math.max(0, Math.ceil((new Date(g.resolves_at) - Date.now()) / 1000)) };
 }
 

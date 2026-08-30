@@ -27,8 +27,7 @@
 // the pot: FOR UPDATE on it serializes two runners racing the same request.
 import crypto from 'node:crypto';
 import { GameError, bus, notify, trunkCap } from './game.js';
-import { FAVOR, GOODS, DISTRICTS, M3 , jailed, safeHoused, usd } from './rules.js';
-const districtName = (id) => (DISTRICTS.find((d) => d.id === id) || {}).name || id;
+import { FAVOR, GOODS, DISTRICTS, M3 , jailed, safeHoused, usd, districtName } from './rules.js';
 
 const uid = () => crypto.randomUUID();
 const cargoCount = (cargo) => Object.values(cargo).reduce((a, n) => a + (n || 0), 0);

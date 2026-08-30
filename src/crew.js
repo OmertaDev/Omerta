@@ -23,10 +23,9 @@
 // shield exactly as they forfeit family omertà.
 import crypto from 'node:crypto';
 import { GameError, cleanText, notify, notifyOnce, bus } from './game.js';
-import { CREW, DISTRICTS, levelOf, weekOf, crewObjectiveOf } from './rules.js';
+import { CREW, DISTRICTS, levelOf, weekOf, crewObjectiveOf, districtName } from './rules.js';
 
 const uid = () => crypto.randomUUID();
-const districtName = (id) => (DISTRICTS.find((d) => d.id === id) || {}).name || id;
 
 // the crew this account belongs to (a plain read; null if solo). Used by the routes for gating.
 export async function crewIdOf(client, accountId) {

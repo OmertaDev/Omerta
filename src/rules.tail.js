@@ -386,6 +386,14 @@ export const dayOf=(t=Date.now())=>Math.floor(t/86400000);
 // `art(x)` gives "the X"; the caller passes 'a'/'an'/'The' where the sentence wants those instead.
 export const art = (name, a = 'the') => (/^the\s/i.test(String(name ?? '')) ? String(name ?? '') : `${a} ${String(name ?? '')}`);
 
+// A DISTRICT, AS A PLAYER READS IT. `docks` is the storage key; "The Docks" is the place. A refusal
+// is the most-read line in the game (describe() shows body.message FIRST), and eighteen of them
+// interpolated the id — "The freight lands at neon — be there." — while nine modules each carried
+// their OWN private copy of exactly this three-token lookup. Nine copies of one rule is how they
+// come to disagree (the jailed/penSafe collapse, at sixty-nine), so it lives here with `art` and
+// `usd`. The names already begin with "The", so a caller must NOT write `the ${districtName(x)}`.
+export const districtName = (id) => DISTRICTS.find((d) => d.id === id)?.name || String(id ?? '');
+
 // MONEY, AS A PLAYER READS IT. A refusal is the most-read line in the game — every time you can't
 // afford something, the server's own sentence is what the client shows (describe() takes body.message
 // first). 158 of them interpolated the raw number, so the retainer read "$150000" and a fighter cost

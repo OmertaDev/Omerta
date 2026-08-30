@@ -2994,7 +2994,7 @@ export async function buildServer() {
   // ── PRIME TIME — the nightly synchronous window: answer the call during tonight's hour. Co-present
   // (the value reward scales with turnout, settled at close); the mechanic + mode rotate by the seed. ──
   app.get('/v1/primetime', { preHandler: auth }, async (req) =>
-    G.readCharacter(pool, req.user.sub, (ch, client) => Prime.primeTimeBoard(client, ch)));
+    G.readCharacter(pool, req.user.sub, (ch, client, h) => Prime.primeTimeBoard(client, ch, h)));
   app.post('/v1/primetime/answer', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Prime.answerCall(ch, client, h)));
   app.post('/v1/primetime/round', { preHandler: auth }, async (req) =>   // HAPPY HOUR — buy a round (repeatable)

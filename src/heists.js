@@ -184,7 +184,14 @@ export async function ratHeist(ch, heistId, client, h) {
   const upd = await client.query('UPDATE crew_heist_members SET ratted=true WHERE heist_id=$1 AND character_id=$2', [heistId, ch.id]);
   if (!upd.rowCount) throw new GameError('not_crew', "You're not on that job.");
   await h.track(client, ch.account_id, 'heist_rat', { job: row.job });
-  return { ok: true }; // the response is as quiet as the act
+  // The ANONYMITY this protects is toward the CREW — the feed only ever says "somebody talked", and
+  // nothing here names the rat to anybody else. It was never a reason to tell the RAT nothing: the
+  // terms are knowable at rat time and decide whether the tip is worth it (the job blows regardless
+  // of the roll, the WHOLE crew — the rat included — eats DOUBLE the job's jail time so the roster
+  // can't out them, and the rat's HEIST_RAT_BPS cut lands quietly; this is NOT the pen break-rat's
+  // relief-only deal, and an earlier comment here said it was — Codex P2, verified against the blown
+  // branch below). `job` is a catalog key — the display name ships from here.
+  return { ok: true, op: 'heist', ratted: true, job: row.job, name: heistJobOf(row.job)?.name || row.job };
 }
 
 // THE CASING PHASE (Tier-4 §B) — a crew member spends energy to case the job (once each); every

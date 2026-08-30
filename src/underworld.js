@@ -193,7 +193,11 @@ export async function claimFavor(ch, npcId, client, h) {
   }
   await client.query('INSERT INTO npc_favors (character_id, week, npc_id) VALUES ($1,$2,$3)', [ch.id, week, npcId]);
   await h.track(client, ch.account_id, 'underworld_favor', { npc: npcId, ...favor });
-  return { ok: true, npc: npcId, npcName: n.name, ...favor };
+  // NAME THE SYSTEM. The favor's line was the LAST of four npcName branches and keyed on npcName
+  // ALONE — a catch-all, so the next reply to carry a fixture's name (the trainer drill, one system
+  // over) was claimed by it and read "Bella Bang-Bang does you a favor". Absence is not a
+  // discriminator; a marker of its own is.
+  return { ok: true, op: 'favor', npc: npcId, npcName: n.name, ...favor };
 }
 
 // THE ERRAND CHAIN (step five) — a fixture's storyline: do their DRAWN daily task on

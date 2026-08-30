@@ -11,10 +11,9 @@
 // pays nothing and exists only to gate a sink.
 import { GameError, notify, bus } from './game.js';
 import { SHIPMENT, DISTRICTS, commissionOf, shipmentDistrictOf, shipmentForecast, shipmentCityCap,
-  dayOf, jailed, usd } from './rules.js';
+  dayOf, jailed, usd, districtName } from './rules.js';
 import { logCollect } from './collection.js';
 
-const districtName = (id) => DISTRICTS.find((d) => d.id === id)?.name || id;
 
 // living-player population — what the day's stock is sized against. NPCs and the dead excluded, or
 // the population worker inflates the drop by spawning scenery (the deeds.js livingPlayers twin).

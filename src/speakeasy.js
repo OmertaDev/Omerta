@@ -464,7 +464,10 @@ export async function standoverSpeakeasy(ch, owner, districtId, client, h) {
     await h.notify(client, owner.id, 'standover_repelled', { from: ch.name, district: districtId });
     bus.emit('streets', { type: 'speakeasy_standover', by: ch.name, at: row.name || districtId, won: false });
     await h.track(client, ch.account_id, 'speakeasy_standover', { district: districtId, won: false });
-    return { ok: true, won: false, feePaid: S.FEE };
+    // `district` on BOTH branches: an UNNAMED house sends `name: null`, and the line had nothing
+    // left to place it by — "the club" with no idea which one. The district is the only other thing
+    // that identifies it, and the client resolves the display name off its own published catalog.
+    return { ok: true, won: false, feePaid: S.FEE, district: districtId };
   }
   await bumpMastery(client, h, ch, 'muscle', 'standover'); // THE TRADES — the hostile takeover of a whole club
   // WON — a forced sale at the assessed (build) value: the owner is PAID (taxed, the buyout pattern), loses the club.
@@ -481,7 +484,7 @@ export async function standoverSpeakeasy(ch, owner, districtId, client, h) {
   await h.notify(client, owner.id, 'standover_lost', { from: ch.name, district: districtId, net });
   bus.emit('streets', { type: 'speakeasy_standover', by: ch.name, from: owner.name, at: row.name || districtId, won: true });
   await h.track(client, ch.account_id, 'speakeasy_standover', { district: districtId, won: true, price });
-  return { ok: true, won: true, feePaid: S.FEE, paid: price, toOwner: net, tier: Number(row.tier), name: row.name || null };
+  return { ok: true, won: true, feePaid: S.FEE, paid: price, toOwner: net, tier: Number(row.tier), name: row.name || null, district: districtId };
 }
 
 // GET /v1/leaderboard/nightlife — the scene ranked by RENOWN (the hitmen-board full-scan precedent). Two

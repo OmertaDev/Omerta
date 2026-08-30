@@ -232,7 +232,12 @@ export async function raidFamily(ch, gangId, client, h) {
   // AT THE SCENE now (COUNTER_P, an immediate hospitalization — never a kill, the npcHit precedent), OR
   // you escape and the family REMEMBERS, sending someone after you later (THE MANHUNT — a worker-resolved,
   // shield-honouring strike; one pending per family, the latest raider). Chained, so never double-punished.
-  let countered = false;
+  // The MANHUNT is the silent sibling: `countered` is REPORTED and rendered, and the branch that
+  // schedules a later strike on the raider's own head was reported by nothing at all — so the raid
+  // read as a clean score and the hospitalization arrived 45 minutes later unexplained. The marker
+  // (and the window, which is FAMILY_WAR's own lever and must never be restated client-side) ships
+  // from the same branch that writes the family_aggro row.
+  let countered = false, manhunt = false;
   const cRoll = process.env.FAMILY_RAID_P != null ? (process.env.FAMILY_COUNTER === 'on' ? 0 : 1) : Math.random();
   if (cRoll < FAMILY_WAR.COUNTER_P) {
     countered = true;
@@ -244,10 +249,12 @@ export async function raidFamily(ch, gangId, client, h) {
     await client.query('DELETE FROM family_aggro WHERE gang_id=$1', [gangId]);
     await client.query('INSERT INTO family_aggro (gang_id, target_character, scheduled_at) VALUES ($1,$2,$3)',
       [gangId, ch.id, new Date(now.getTime() + FAMILY_WAR.AGGRO_DELAY_MS)]);
+    manhunt = true;
   }
   await h.track(client, ch.account_id, 'family_raid', { gang: gangId, success: true, loot, countered, conquered });
   bus.emit('streets', { type: 'family_raided', who: ch.name, family: g.name, loot });
-  return { ok: true, success: true, family: g.name, loot, countered, conquered, warWon,
+  return { ok: true, success: true, family: g.name, loot, countered, conquered, warWon, manhunt,
+    manhuntSeconds: manhunt ? Math.round(FAMILY_WAR.AGGRO_DELAY_MS / 1000) : 0,
     hospSeconds: countered ? Math.round(FAMILY_WAR.COUNTER_HOSP_MS / 1000) : 0 };
 }
 
@@ -288,7 +295,10 @@ export async function declareNpcWar(ch, gangId, client, h) {
   await client.query('INSERT INTO npc_wars (attacker_gang, npc_gang, score, ends_at, declared_by) VALUES ($1,$2,0,$3,$4)',
     [h.owned.gangId, gangId, ends, ch.id]);
   bus.emit('streets', { type: 'family_war_declared', who: ch.name, family: g.name });
-  return { ok: true, family: g.name, endsSeconds: Math.round(ms / 1000), winScore: W.WIN_SCORE, points: W.RAID_POINTS };
+  // `cost` ships because the war chest is a TREASURY spend and the receipt named only the objective —
+  // both other treasury spends in this cluster (invade, reinforce) state their figure, and this one
+  // burns $25,000 of the family's money and said nothing. The client has no handle on warBoard.
+  return { ok: true, family: g.name, endsSeconds: Math.round(ms / 1000), winScore: W.WIN_SCORE, points: W.RAID_POINTS, cost: W.COST };
 }
 
 // THE FAMILY WAR — the worker closes EXPIRED campaigns. A win was already granted in raidFamily on the
