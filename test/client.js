@@ -3994,11 +3994,16 @@ if (traceLine) assert(/still listening/i.test(traceLine) && !/swept/i.test(trace
   const reinforceLine = String(describeFn({ ok: true, npc: 'kryl', name: 'The Kryl Syndicate', spent: 50000, garrison: 75000 }, 200));
   assert(/reinforced The Kryl Syndicate's garrison/.test(reinforceLine),
     `reinforcing your own garrison read "done." (its branch was gated on the invade field). Got: ${JSON.stringify(reinforceLine)}`);
+  // These two were written against the WORDING of a standalone hired-gun line that has since been
+  // deleted — it fired alongside the `op === 'npchit'` terms block and printed the outcome and the
+  // fee TWICE in one toast (wave 73). The wording was only ever a proxy for the property, so the
+  // property is what is asserted now: a hire must say what the contractor did, and must never be
+  // the bare catch-all. The echo itself is pinned in the WAVE 73 driven block below.
   const hitKill = String(describeFn({ ok: true, op: 'npchit', hit: true, killed: true, success: 0.5, cost: 1000000 }, 200));
-  assert(/contractor put him down/.test(hitKill) && !/^paid \$/.test(hitKill),
+  assert(/mark is gone/.test(hitKill) && !/^paid \$/.test(hitKill),
     `an npc-hire KILL read the bare "paid $N" catch-all. Got: ${JSON.stringify(hitKill)}`);
   const hitMiss = String(describeFn({ ok: true, op: 'npchit', hit: false, success: 0.5, cost: 50000 }, 200));
-  assert(/contractor missed/.test(hitMiss) && !/^paid \$/.test(hitMiss),
+  assert(/came back empty/.test(hitMiss) && !/^paid \$/.test(hitMiss),
     `an npc-hire MISS read the bare "paid $N" catch-all. Got: ${JSON.stringify(hitMiss)}`);
 
   // WAVE 20 — the MED/LOW mutes + lies across the prestige/family/pen/estate layer. Each shape below
@@ -7057,6 +7062,171 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   assert(killLine.includes(k.matLootName), `the kill must name the scarce material it took: ${killLine}`);
   assert(/respect/.test(killLine) && /feared/.test(killLine),
     `the kill must name BOTH legends it banked — ordinary respect and the assassin's: ${killLine}`);
+}
+// ── WAVE 73 (the Pen): a break BLOWN by a rat read as bad luck at the fence ──────────────────────
+// The Pen cannot sit in ACTIONS at all — jail refuses nearly everything, so a jailed row would
+// silence every row after it and those rows would then read on the summary line as covered (the
+// recorded vacuity class). Own tokens, after the main loop, folding the lines back through the same
+// describeFn so the sweeps above cover them too.
+{
+  const mkP = async (n) => {
+    const t = (await inject('POST', '/v1/auth/guest')).body.token;
+    await inject('POST', '/v1/character', t, { name: n + Math.random().toString(36).slice(2, 7) });
+    return { t, id: (await inject('GET', '/v1/me', t)).body.character.id };
+  };
+  const kit = (id, item, qty) => app.pool.query(
+    'INSERT INTO pen_contraband (character_id, item, qty) VALUES ($1,$2,$3) ON CONFLICT (character_id,item) DO UPDATE SET qty=$3', [id, item, qty]);
+  // every precondition seeded, or the action is REFUSED and a refusal reads on the summary line
+  // exactly like a covered row: inside, out of the hole, with the energy a break costs.
+  const jail = (id, s = 7200) => app.pool.query(
+    `UPDATE characters SET jail_until = now() + interval '${s} seconds', hole_until=NULL, energy=500, health=100 WHERE id=$1`, [id]);
+  const sayP = (r) => { described++; return String(describeFn(r.body, r.code)); };
+  const driveP = async (url, tok, payload, what) => {
+    const r = await inject('POST', url, tok, payload);
+    assert.equal(r.code, 200, `WAVE 73 could not drive ${what} (${JSON.stringify(r.body)})`);
+    return { r, line: sayP(r) };
+  };
+  // the sentence the DATABASE holds — ground truth for every quantity claimed below, because the
+  // reply is the thing under test.
+  const jailLeft = async (id) => Math.round((new Date((await app.pool.query(
+    'SELECT jail_until, health FROM characters WHERE id=$1', [id])).rows[0].jail_until) - Date.now()) / 1000);
+  const healthOf = async (id) => Number((await app.pool.query('SELECT health FROM characters WHERE id=$1', [id])).rows[0].health);
+
+  const oldBP = process.env.PEN_BREAK_P;                 // the roll is pinned: leaving the outcome to
+  const pin = (v) => { process.env.PEN_BREAK_P = v; };   // chance is a deterministic assertion on a
+  const L1 = await mkP('Leader '), M1 = await mkP('Inmate ');   // probabilistic precondition.
+
+  // ── THE RAT: a bare {ok:true} that read the mute word ────────────────────────────────────────
+  pin('1');
+  await kit(L1.id, 'cutkit', 3); await jail(L1.id); await jail(M1.id);
+  const plan73 = await driveP('/v1/pen/break/plan', L1.t, null, 'the break plan');
+  await driveP(`/v1/pen/break/${plan73.r.body.id}/join`, M1.t, null, 'joining the break');
+  const rat73 = await driveP(`/v1/pen/break/${plan73.r.body.id}/rat`, M1.t, null, 'ratting the break');
+  // the SERVER half first — the marker is what makes the line branchable at all. A bare {ok:true}
+  // can never be keyed on, and `op` names the SYSTEM rather than relying on the absence of a field.
+  assert.equal(rat73.r.body.op, 'breakout', 'the rat must name its own system — a bare {ok:true} is unbranchable');
+  assert.equal(rat73.r.body.ratted, true, 'the rat must carry the marker its line keys on');
+  assert(!/^done\.$/.test(rat73.line), `the rat read the mute word: ${rat73.line}`);
+  // the three terms, and the THIRD is the one that makes ratting a decision rather than a free win:
+  // the deal is RELIEF-ONLY (BREAK_RAT_CUT_S was retired for exactly that reason).
+  assert(/tipped|guards/i.test(rat73.line), `the rat must say the tip is registered: ${rat73.line}`);
+  assert(/blows whatever the roll|blows regardless/i.test(rat73.line),
+    `the rat must say the break now blows whatever the roll: ${rat73.line}`);
+  assert(/relief only/i.test(rat73.line) && /own sentence/i.test(rat73.line),
+    `the rat must state the deal is RELIEF-ONLY — no cut below your own sentence: ${rat73.line}`);
+
+  // ── BLOWN BY THE RAT: the sharpest of the three, because the line was FLUENT and FALSE ────────
+  const blown73 = await driveP(`/v1/pen/break/${plan73.r.body.id}/go`, L1.t, null, 'the blown go');
+  assert.equal(blown73.r.body.blown, true, 'a ratted break must SAY it was blown, not merely that nobody escaped');
+  assert(blown73.r.body.crew >= 2 && blown73.r.body.holeSeconds > 0 && blown73.r.body.sentenceSeconds > 0,
+    `the blown go must send the crew and the per-member figures the SOLO break has always sent: ${JSON.stringify(blown73.r.body)}`);
+  assert(/somebody talked/i.test(blown73.line),
+    `a leader who was SOLD OUT must be told so — the one thing he has to learn: ${blown73.line}`);
+  // and it must not read as the roll going against him, which is what it said before.
+  assert(!/^caught at the fence/.test(blown73.line),
+    `a blown break must not read as bad luck at the fence: ${blown73.line}`);
+
+  // ── CAUGHT (the roll): three figures in hand, three figures dropped ───────────────────────────
+  await jail(L1.id); await jail(M1.id); await kit(L1.id, 'cutkit', 3);
+  pin('0');
+  const p2 = await driveP('/v1/pen/break/plan', L1.t, null, 'the second plan');
+  await driveP(`/v1/pen/break/${p2.r.body.id}/join`, M1.t, null, 'joining the second break');
+  const caught73 = await driveP(`/v1/pen/break/${p2.r.body.id}/go`, L1.t, null, 'the caught go');
+  const cb = caught73.r.body;
+  assert.equal(cb.caught, true, 'WAVE 73 needed a CAUGHT co-op go (PEN_BREAK_P is pinned)');
+  assert(cb.dmg > 0 && cb.holeSeconds > 0 && cb.sentenceSeconds > 0 && cb.crew >= 2,
+    'the co-op caught shape must carry the same per-member figures the solo one does: '
+    + JSON.stringify({ crew: cb.crew, dmg: cb.dmg, holeSeconds: cb.holeSeconds, sentenceSeconds: cb.sentenceSeconds }));
+  // ground truth is the DATABASE: the reply may not claim a stretch or a beating the row does not hold.
+  const dbLeft = await jailLeft(L1.id);
+  assert(Math.abs(dbLeft - cb.sentenceSeconds) <= 5,
+    `the reply's stretch must be the stretch the row holds (${cb.sentenceSeconds} vs ${dbLeft})`);
+  assert.equal(await healthOf(L1.id), 100 - cb.dmg, 'the reply must not claim a beating the row did not take');
+  assert(caught73.line.includes(String(cb.dmg)), `a caught break must name the beating: ${caught73.line}`);
+  assert(/in the hole/.test(caught73.line) && /stretch runs/.test(caught73.line),
+    `a caught break must name the hole and the new stretch, not only that they happened: ${caught73.line}`);
+  assert(!/somebody talked/i.test(caught73.line),
+    `an honest roll must not read as a betrayal: ${caught73.line}`);
+
+  // ── OVER THE WALL: the WANTED window is the number that decides what a fugitive does next ─────
+  await jail(L1.id); await jail(M1.id); await kit(L1.id, 'cutkit', 3);
+  pin('1');
+  const p3 = await driveP('/v1/pen/break/plan', L1.t, null, 'the third plan');
+  await driveP(`/v1/pen/break/${p3.r.body.id}/join`, M1.t, null, 'joining the third break');
+  const out73 = await driveP(`/v1/pen/break/${p3.r.body.id}/go`, L1.t, null, 'the escape');
+  assert.equal(out73.r.body.escaped, true, 'WAVE 73 needed an ESCAPE (PEN_BREAK_P is pinned)');
+  assert(out73.r.body.wantedSeconds > 0, 'the escape must SEND the fugitive window in seconds');
+  // asserted as AGREEMENT with the seconds the server sent, never against a restated 48h: the
+  // window is a founder lever (PEN.FUGITIVE_MS) and a literal here would drift the day it moves.
+  const w73 = /WANTED for (\d+)([dhms])/.exec(out73.line);
+  assert(w73, `the escape must state the window the server sent: ${out73.line}`);
+  const wSecs = Number(w73[1]) * { d: 86400, h: 3600, m: 60, s: 1 }[w73[2]];
+  assert(Math.abs(wSecs - out73.r.body.wantedSeconds) <= 3600,
+    `the window on the line must be the window the server sent (${w73[0]} vs ${out73.r.body.wantedSeconds}s)`);
+  assert(out73.line.includes(String(out73.r.body.crew)), `the escape must name the crew that got out: ${out73.line}`);
+
+  // ── THE SOLO BREAK: the same two shapes, one man ──────────────────────────────────────────────
+  const S1 = await mkP('Solo ');
+  await kit(S1.id, 'cutkit', 5); await jail(S1.id);
+  pin('0');
+  const sCaught = await driveP('/v1/pen/break', S1.t, null, 'the solo caught break');
+  assert.equal(sCaught.r.body.caught, true, 'WAVE 73 needed a CAUGHT solo break');
+  assert(sCaught.line.includes(String(sCaught.r.body.dmg)) && /in the hole/.test(sCaught.line)
+    && /stretch runs/.test(sCaught.line),
+    `the solo caught line must quote the three figures it has in hand, as the shank's does: ${sCaught.line}`);
+  await jail(S1.id);
+  pin('1');
+  const sOut = await driveP('/v1/pen/break', S1.t, null, 'the solo escape');
+  assert.equal(sOut.r.body.escaped, true, 'WAVE 73 needed a solo ESCAPE');
+  assert(/WANTED for /.test(sOut.line) && /square your name/i.test(sOut.line),
+    `the solo escape must name the window AND the way out of it: ${sOut.line}`);
+  process.env.PEN_BREAK_P = oldBP === undefined ? '' : oldBP;
+  if (oldBP === undefined) delete process.env.PEN_BREAK_P;
+
+  // ── THE TRUSTY'S SHORTCUT: the shave was stated, the RESULT was not ───────────────────────────
+  // The yard character is a per-day seed draw with no override, so only the effect TODAY draws is
+  // reachable; the two other branches are not asserted here and test/pen.js owns that coverage.
+  const T1 = await mkP('Talker ');
+  await jail(T1.id, 11100);
+  const talk73 = await driveP('/v1/pen/talk', T1.t, null, 'the yard conversation');
+  if (talk73.r.body.effect === 'shortcut') {
+    assert(talk73.r.body.sentenceSeconds > 0, 'the shortcut must SEND the resulting stretch, not only what came off');
+    const tLeft = await jailLeft(T1.id);
+    assert(Math.abs(tLeft - talk73.r.body.sentenceSeconds) <= 5,
+      `the shortcut's stretch must be the stretch the row holds (${talk73.r.body.sentenceSeconds} vs ${tLeft})`);
+    assert(/left to serve/.test(talk73.line),
+      `the shortcut must state what is LEFT, as its sibling workYard does on the same screen: ${talk73.line}`);
+  }
+
+  // ── THE BURNER: the outcome and the price, each printed TWICE in one sentence ─────────────────
+  // The `op === 'npchit'` terms block states the outcome, the fee, the odds and both cooldowns; a
+  // second standalone line fired alongside it and said the outcome and the money again. A figure
+  // stated twice in one toast reads at a glance as two different figures (the wave-36 echo class).
+  const B1 = await mkP('Caller '), V1 = await mkP('Victim ');
+  await app.pool.query('UPDATE characters SET respect=900000, cash=90000000 WHERE id=$1', [B1.id]);
+  await app.pool.query('UPDATE characters SET respect=90000, health=100 WHERE id=$1', [V1.id]);
+  await kit(B1.id, 'burner', 3); await jail(B1.id);
+  const burn73 = await driveP(`/v1/pen/burner/${V1.id}`, B1.t, { tier: 'legbreaker' }, 'the burner call');
+  assert(burn73.r.body.op === 'npchit' && burn73.r.body.burner === true && burn73.r.body.cost > 0,
+    `the burner call must ride the hired-gun terms block: ${JSON.stringify(burn73.r.body)}`);
+  // the ECHO is asserted as a COUNT, not as a wording match — the failure a player saw is the
+  // number appearing twice, and a future branch that mentions the fee must not reintroduce it.
+  const money73 = `$${burn73.r.body.cost.toLocaleString('en-US')}`;
+  const echoes = (s, n) => s.split(n).length - 1;
+  assert.equal(echoes(burn73.line, money73), 1,
+    `the burner line printed its own price ${echoes(burn73.line, money73)} times: ${burn73.line}`);
+  assert.equal(echoes(burn73.line, 'contractor'), 1,
+    `the burner line stated the outcome twice: ${burn73.line}`);
+  // the KILL's own wording, on the DRIVEN reply's real fields with only the outcome flag flipped —
+  // the branch selector is client-side, and the roll has no test knob (the wave-68 precedent).
+  const burnKill = String(describeFn({ ...burn73.r.body, hit: true, killed: true }, 200));
+  assert.equal(echoes(burnKill, money73), 1, `the burner KILL printed its own price twice: ${burnKill}`);
+  assert.equal(echoes(burnKill, 'contractor'), 1, `the burner KILL stated the outcome twice: ${burnKill}`);
+  assert(/mark is gone/.test(burnKill), `the burner KILL must still say the mark is dead: ${burnKill}`);
+  // the guard's NAME was the one thing only the deleted line carried — it moved up rather than out.
+  const burnGuard = String(describeFn({ ...burn73.r.body, hit: true, absorbed: true, guard: 'Big Sal' }, 200));
+  assert(/Big Sal/.test(burnGuard), `an absorbed hire must still NAME the man who ate it: ${burnGuard}`);
+  console.log('  ✓ wave 73: the pen — a break BLOWN by a rat read as bad luck at the fence, a tipper told nothing, and a hired gun that stated its price twice');
 }
 
 await app.close();

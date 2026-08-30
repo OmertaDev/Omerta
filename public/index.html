@@ -3407,7 +3407,11 @@
       if (body.cards) bits.push(`🂠 cards with the crew — +${body.xp} xp at ${art(txt(body.trackName || body.track))} table`);
       if (body.line && body.npc && body.effect) {
         if (body.effect === 'wisdom') bits.push(`🗣 ${body.npc}: “${body.line}” — +${body.xp} xp ${discName(body.discipline)}`);
-        else if (body.effect === 'shortcut') bits.push(`🗣 ${body.npc} knows a guy — ${Math.round(body.cutSeconds / 60)}m off your stretch`);
+        // the shave was named and the RESULT was not, though `sentenceSeconds` is sent — and its
+        // sibling workYard states exactly that on the same screen, so two ways of shaving time read
+        // two different amounts of information.
+        else if (body.effect === 'shortcut') bits.push(`🗣 ${body.npc} knows a guy — ${minsTxt(body.cutSeconds)} off your stretch`
+          + `${body.sentenceSeconds ? `, ${minsTxt(body.sentenceSeconds)} left to serve` : ''}`);
         else bits.push(`🗣 ${body.npc}: “${body.line}” — a war story worth +${body.xp} xp ${txt(body.trackName || body.track)}`);
       } }
     if (body.elo !== undefined && body.stake !== undefined && body.win !== undefined)
@@ -3506,7 +3510,8 @@
     // system. The two cooldowns come from the reply because neither lever is published.
     if (body.op === 'npchit') {
       bits.push(body.killed ? `\uD83D\uDD2B the contractor got it done — the mark is gone, and no reputation comes back to you.`
-        : body.absorbed || body.revived ? 'the contractor reached them — somebody else ate it'
+        : body.absorbed ? `the contractor reached them — ${txt(body.guard || 'a bodyguard')} took the hit instead`
+        : body.revived ? 'the contractor reached them — pre-paid insurance brought the mark back'
         : "the contractor came back empty — they're still walking.");
       bits.push(`$${fmt(body.cost)} gone either way (${Math.round(body.success * 100)}% odds at that tier)`
         + `${body.burner ? " \u00B7 the burner's spent" : ''}`
@@ -3872,8 +3877,36 @@
     if (body.salePrice !== undefined && body.district)
       bits.push(body.salePrice ? `\u{1F37E} the club is on the market for $${fmt(body.salePrice)} — you keep the till until somebody buys it`
                                : '\u{1F37E} the club is off the market — it stays yours');
-    if (body.escaped === true) bits.push("OVER THE WALL — you're out, but WANTED now (no family cover, hunters coming)");
-    if (body.escaped === false) bits.push('caught at the fence — the hole, a longer stretch, and a beating');
+    // THE BREAKOUT — three shapes, and the first of them read as the second. A break BLOWN by a rat
+    // came back with `blown:true` and the server's own sentence ("Somebody talked"), and `escaped
+    // === false` claimed it — so a leader who had been SOLD OUT was told he was unlucky at the
+    // fence, and `message` (the last resort at the end of this function) was discarded with it.
+    // Fluent and FALSE: the one thing a leader must learn is exactly what was withheld. Keyed on
+    // the field the server already sends, ABOVE the roll branches, as an else-chain because a blown
+    // break carries `escaped:false` too. The figures on the other two are the shank's caught branch
+    // verbatim — the two prison consequences should read the same way — and the WANTED window is
+    // the number that decides what a fugitive does next (lie low, or pay to square it).
+    // Keyed on the PAIR, not on `blown` alone: a crew HEIST blown by its own rat sends `blown` too,
+    // and `blown` alone stole that line — telling a street crew they were in the hole (the collision
+    // ledger caught it on the first run, which is what that guard is for). `escaped` is sent by
+    // nothing but a break, so the pair is unique to this system without a marker the early-return
+    // above (`op:'breakout'` + a crew count) would misclaim.
+    if (body.blown && body.escaped === false) bits.push(`\u{1F6A8} the guards were waiting at the fence — SOMEBODY TALKED, and the break blew before the roll`
+      + `${body.crew ? `. All ${body.crew} of you are in the hole for it` : ''}`
+      + `${body.dmg ? ` — ${fmt(body.dmg)} health gone` : ''}${body.holeSeconds ? `, ${minsTxt(body.holeSeconds)} in solitary` : ''}`
+      + `${body.sentenceSeconds ? `, and your stretch runs ${minsTxt(body.sentenceSeconds)} now` : ''}. The kit is spent.`);
+    else if (body.escaped === true) bits.push(`OVER THE WALL — ${body.crew ? `all ${body.crew} of you are out` : "you're out"}`
+      + `, but WANTED${body.wantedSeconds ? ` for ${minsTxt(body.wantedSeconds)}` : ' now'} — no family cover, and the hunters come for you.`
+      + ' Lie the window out, or square your name at the Shylock.');
+    else if (body.escaped === false) bits.push(`caught at the fence${body.crew ? ` — all ${body.crew} of you` : ''}`
+      + `${body.dmg ? ` — ${fmt(body.dmg)} health gone` : ''}${body.holeSeconds ? `, ${minsTxt(body.holeSeconds)} in the hole` : ''}`
+      + `${body.sentenceSeconds ? `, and your stretch runs ${minsTxt(body.sentenceSeconds)} now` : ''}. The kit is spent either way.`);
+    // THE RAT's own toast said "done." — the design's quiet is the public FEED's (which never names
+    // who talked), not the tipper's private receipt. Three terms, and the third is the one that
+    // makes it a decision: the deal is RELIEF-ONLY, so you never serve less than your own sentence.
+    if (body.ratted && body.op === 'breakout')
+      bits.push('\u{1F4DE} the guards are tipped — that break blows whatever the roll, and nobody hears it from you.'
+        + " Your deal is relief only: you dodge the crew's added stretch and the beating, but you serve your own sentence to the day.");
     if (body.interdicted === false && body.landed !== undefined) bits.push(`⚓ slipped the Coast Guard — landed the haul, +$${fmt(body.landed)} (net $${fmt(body.net)})`);
     // WAREHOUSING a clean landing carries `warehoused` (its book value) not `landed` — so it had no
     // branch and fell into the catch-all `paid $cost`, reporting a GAIN as a payment.
@@ -4122,10 +4155,11 @@
       bits.push(body.full
         ? `\u{1FA7A} the Doc signs you out whole — $${fmt(body.cost)}, and you walk out at full strength`
         : `\u{1FA7A} discharged early — $${fmt(body.cost)}${body.hospSeconds > 0 ? `, ${minsTxt(body.hospSeconds)} still on the chart` : ', and the bed is behind you'}`);
-    if (body.op === 'npchit' && body.hit !== undefined)
-      bits.push(body.hit
-        ? `\u{1F3AF} contractor put him down — $${fmt(body.cost)}${body.killed ? ', the target is dead' : body.absorbed ? `, ${txt(body.guard || 'a bodyguard')} took the hit` : body.revived ? ', insurance brought the target back' : ''}`
-        : `\u{1F3AF} contractor missed — $${fmt(body.cost)} burned, and the target knows somebody came looking`);
+    // (the standalone hired-gun line that used to sit here is GONE. The `op === 'npchit'` terms
+    // block above already states the outcome, the fee, the odds and both cooldowns — so this fired
+    // ALONGSIDE it and the toast read the outcome twice and "$50,000" twice in one sentence, which
+    // at a glance reads as two different figures (the wave-36 echo class). The guard's name, the
+    // one thing only this line carried, moved up into that block rather than being lost with it.)
     if (body.op === 'show_of_force' && body.district && body.fortitude !== undefined)
       bits.push(`\u{1F6E1} show of force on ${$dist(body.district)} — the operation is fortified to level ${fmt(body.fortitude)}`);
     if (body.op === 'ghost_route' && body.district && body.ghostSeconds !== undefined)
