@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `22550185d9b4`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `249e318a428e`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1284 |
+| Commits in clone | 1286 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-29 — Merge remote-tracking branch 'origin/main' into claude/game-dev-roadmap-6jtsst |
+| Latest commit | 2026-08-30 — docs(knowledge): the merge case, beside the commit protocol it extends |
 
 ## Commit authors
 
@@ -21,7 +21,7 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 434 |
-| Claude | 159 |
+| Claude | 161 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 3 |
 
@@ -42,10 +42,10 @@
 | [src/worker.js](../../src/worker.js) | 122 | yes |
 | [src/invariants.js](../../src/invariants.js) | 115 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 114 | yes |
-| knowledge/generated/github-history.md | 112 | historical |
-| knowledge/generated/graph-summary.md | 112 | historical |
-| knowledge/generated/graph.json | 112 | historical |
-| knowledge/generated/inventory.md | 112 | historical |
+| knowledge/generated/github-history.md | 113 | historical |
+| knowledge/generated/graph-summary.md | 113 | historical |
+| knowledge/generated/graph.json | 113 | historical |
+| knowledge/generated/inventory.md | 113 | historical |
 | [test/client.js](../../test/client.js) | 101 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
 | [test/social.js](../../test/social.js) | 84 | yes |
