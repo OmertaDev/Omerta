@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "249e318a428edb341dcd75bfc6b11c49cabf4559",
+  "sourceRevision": "dcd12ebee8d0369a1a1749314f6b7ea36ac03fce",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5644,
-    "edges": 24762,
+    "nodes": 5646,
+    "edges": 24770,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 56,
-      "Commit": 1286,
+      "Commit": 1288,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,18 +65,18 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 9838,
+      "CHANGED": 9843,
       "CONTAINS": 1846,
       "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1286,
+      "HAS_COMMIT": 1288,
       "IMPLEMENTS": 124,
       "IMPORTS": 1633,
       "INHERITS": 12,
-      "REFERENCES": 2825,
+      "REFERENCES": 2826,
       "REPRESENTS": 891,
       "TESTS": 583,
       "TRACKS": 126,
@@ -10971,20 +10971,20 @@
       "path": "CLAUDE.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 1693213,
-      "lines": 17520,
-      "version": "af1ce4a9084e8e87",
+      "bytes": 1695999,
+      "lines": 17551,
+      "version": "30b2e926ad90c18f",
       "text": true,
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "af1ce4a9084e8e87"
+          "version": "30b2e926ad90c18f"
         }
       ],
-      "lastChangedAt": "2026-08-29T23:37:21.000Z",
+      "lastChangedAt": "2026-08-30T00:07:13.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "da36af79d3b1ecba70abf8051f3a7c7983f8ac47"
+      "lastChangedCommit": "dcd12ebee8d0369a1a1749314f6b7ea36ac03fce"
     },
     {
       "key": "Artifact:content/packs/bad-batch/pack.json",
@@ -46005,6 +46005,22 @@
       ]
     },
     {
+      "key": "Commit:2a7b9e86f145c58de5b631d3b5b8080e47e71005",
+      "type": "Commit",
+      "id": "2a7b9e86f145c58de5b631d3b5b8080e47e71005",
+      "label": "chore(knowledge): regenerate at the merge-case note",
+      "title": "chore(knowledge): regenerate at the merge-case note",
+      "date": "2026-08-30T00:02:43.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2a7b9e86f145c58de5b631d3b5b8080e47e71005",
+      "provenance": [
+        {
+          "commit": "2a7b9e86f145c58de5b631d3b5b8080e47e71005",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2a7b9e86f145c58de5b631d3b5b8080e47e71005"
+        }
+      ]
+    },
+    {
       "key": "Commit:2a8a2eeabb00cdc2dc8011599a4817425cd2511e",
       "type": "Commit",
       "id": "2a8a2eeabb00cdc2dc8011599a4817425cd2511e",
@@ -60853,6 +60869,22 @@
       ]
     },
     {
+      "key": "Commit:dcd12ebee8d0369a1a1749314f6b7ea36ac03fce",
+      "type": "Commit",
+      "id": "dcd12ebee8d0369a1a1749314f6b7ea36ac03fce",
+      "label": "docs: a PR with no checks reads exactly like a PR that passed",
+      "title": "docs: a PR with no checks reads exactly like a PR that passed",
+      "date": "2026-08-30T00:07:13.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/dcd12ebee8d0369a1a1749314f6b7ea36ac03fce",
+      "provenance": [
+        {
+          "commit": "dcd12ebee8d0369a1a1749314f6b7ea36ac03fce",
+          "url": "https://github.com/OmertaDev/Omerta/commit/dcd12ebee8d0369a1a1749314f6b7ea36ac03fce"
+        }
+      ]
+    },
+    {
       "key": "Commit:dd8e51401f4950ac05a6f8eb8d147a31c778f548",
       "type": "Commit",
       "id": "dd8e51401f4950ac05a6f8eb8d147a31c778f548",
@@ -69228,13 +69260,13 @@
       "id": "CLAUDE.md",
       "label": "CLAUDE.md",
       "documentType": "documentation",
-      "lines": 17520,
-      "version": "af1ce4a9084e8e87",
+      "lines": 17551,
+      "version": "30b2e926ad90c18f",
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "af1ce4a9084e8e87"
+          "version": "30b2e926ad90c18f"
         }
       ]
     },
@@ -76473,6 +76505,9 @@
           "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
         },
         {
+          "commit": "2a7b9e86f145c58de5b631d3b5b8080e47e71005"
+        },
+        {
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
         },
         {
@@ -76821,6 +76856,9 @@
           "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
         },
         {
+          "commit": "2a7b9e86f145c58de5b631d3b5b8080e47e71005"
+        },
+        {
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
         },
         {
@@ -77167,6 +77205,9 @@
         },
         {
           "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
+        },
+        {
+          "commit": "2a7b9e86f145c58de5b631d3b5b8080e47e71005"
         },
         {
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
@@ -77572,6 +77613,9 @@
         },
         {
           "commit": "28e56135435df2e8fbe1a5605c97e02d560551cf"
+        },
+        {
+          "commit": "2a7b9e86f145c58de5b631d3b5b8080e47e71005"
         },
         {
           "commit": "2cc8f0e6bf147db7c7d41d41f82bda2fc4029d6c"
@@ -84123,7 +84167,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "249e318a428edb341dcd75bfc6b11c49cabf4559",
+      "revision": "dcd12ebee8d0369a1a1749314f6b7ea36ac03fce",
       "currentBranch": "claude/game-dev-roadmap-6jtsst",
       "defaultBranch": "main",
       "visibility": "public",
@@ -143111,6 +143155,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:2a7b9e86f145c58de5b631d3b5b8080e47e71005",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "2a7b9e86f145c58de5b631d3b5b8080e47e71005"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2a7b9e86f145c58de5b631d3b5b8080e47e71005",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "2a7b9e86f145c58de5b631d3b5b8080e47e71005"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2a7b9e86f145c58de5b631d3b5b8080e47e71005",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "2a7b9e86f145c58de5b631d3b5b8080e47e71005"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2a7b9e86f145c58de5b631d3b5b8080e47e71005",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "2a7b9e86f145c58de5b631d3b5b8080e47e71005"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:2a8a2eeabb00cdc2dc8011599a4817425cd2511e",
       "to": "Artifact:schema.sql",
       "provenance": {
@@ -195551,6 +195627,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:dcd12ebee8d0369a1a1749314f6b7ea36ac03fce",
+      "to": "Artifact:CLAUDE.md",
+      "provenance": {
+        "commit": "dcd12ebee8d0369a1a1749314f6b7ea36ac03fce"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:dd8e51401f4950ac05a6f8eb8d147a31c778f548",
       "to": "Artifact:.github/workflows/ci.yml",
       "provenance": {
@@ -244057,6 +244141,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2a7b9e86f145c58de5b631d3b5b8080e47e71005",
+      "provenance": {
+        "commit": "2a7b9e86f145c58de5b631d3b5b8080e47e71005"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2a8a2eeabb00cdc2dc8011599a4817425cd2511e",
       "provenance": {
         "commit": "2a8a2eeabb00cdc2dc8011599a4817425cd2511e"
@@ -251476,6 +251568,14 @@
       "to": "Commit:dcbd7a5b94eb92a8553cfed27e04b4121eb8ac09",
       "provenance": {
         "commit": "dcbd7a5b94eb92a8553cfed27e04b4121eb8ac09"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:dcd12ebee8d0369a1a1749314f6b7ea36ac03fce",
+      "provenance": {
+        "commit": "dcd12ebee8d0369a1a1749314f6b7ea36ac03fce"
       }
     },
     {
@@ -286348,6 +286448,15 @@
       "provenance": {
         "file": "CLAUDE.md",
         "line": 3021
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:tools/knowledge-test.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 17540
       }
     },
     {
