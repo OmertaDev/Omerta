@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `fb59ebf3cad5`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `1c45b5855bfe`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,826 |
-| Text lines | 520,473 |
-| Repository bytes inventoried | 313,952,020 |
+| Text lines | 520,515 |
+| Repository bytes inventoried | 313,955,670 |
 | Backend/route modules | 187 |
 | HTTP route registrations / unique routes | 742 / 742 |
 | Database tables | 317 |
 | Solidity declarations | 49 |
-| Git commits | 1,325 |
+| Git commits | 1,327 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 5,683 / 24,989 |
+| Graph nodes / edges | 5,685 / 25,001 |
 
 ## Artifact kinds
 
@@ -48,9 +48,9 @@
 |---|---:|---|---|
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
 | [CLAUDE.md](../../CLAUDE.md) | 17,635 | documentation | 2026-08-30 |
-| [public/index.html](../../public/index.html) | 12,109 | web-surface | 2026-08-30 |
+| [public/index.html](../../public/index.html) | 12,112 | web-surface | 2026-08-30 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
-| [test/client.js](../../test/client.js) | 8,523 | test-suite | 2026-08-30 |
+| [test/client.js](../../test/client.js) | 8,528 | test-suite | 2026-08-30 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |

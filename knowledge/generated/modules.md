@@ -82,7 +82,7 @@
 | [src/hustle.js](../../src/hustle.js) | 103 | platform-core | 2 / 3 | 2 | 3 | 0 |
 | [src/invariants.js](../../src/invariants.js) | 801 | economy-ledger | 1 / 86 | 1 | 44 | 81 |
 | [src/kitchen.js](../../src/kitchen.js) | 371 | platform-core | 3 / 3 | 13 | 8 | 0 |
-| [src/landmarks.js](../../src/landmarks.js) | 49 | world-progression | 3 / 1 | 2 | 2 | 0 |
+| [src/landmarks.js](../../src/landmarks.js) | 53 | world-progression | 3 / 1 | 2 | 2 | 0 |
 | [src/law.js](../../src/law.js) | 287 | law-intelligence | 3 / 7 | 9 | 7 | 2 |
 | [src/loans.js](../../src/loans.js) | 815 | enterprise-logistics | 4 / 10 | 13 | 10 | 2 |
 | [src/made.js](../../src/made.js) | 97 | social-combat | 3 / 1 | 2 | 1 | 0 |
@@ -108,7 +108,7 @@
 | [src/portfolio.js](../../src/portfolio.js) | 51 | economy-ledger | 1 / 3 | 9 | 4 | 1 |
 | [src/portrait.js](../../src/portrait.js) | 337 | engagement-growth | 3 / 4 | 0 | 6 | 2 |
 | [src/preflight.js](../../src/preflight.js) | 476 | platform-core | 0 / 7 | 0 | 7 | 3 |
-| [src/primetime.js](../../src/primetime.js) | 276 | engagement-growth | 2 / 6 | 4 | 5 | 1 |
+| [src/primetime.js](../../src/primetime.js) | 282 | engagement-growth | 2 / 6 | 4 | 5 | 1 |
 | [src/push.js](../../src/push.js) | 226 | engagement-growth | 2 / 4 | 3 | 6 | 1 |
 | [src/races.js](../../src/races.js) | 495 | vice-competition | 4 / 9 | 11 | 9 | 3 |
 | [src/ratelimit.js](../../src/ratelimit.js) | 126 | platform-core | 1 / 2 | 0 | 0 | 0 |

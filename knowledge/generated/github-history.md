@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `fb59ebf3cad5`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `1c45b5855bfe`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1325 |
+| Commits in clone | 1327 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-30 — fix(mobile): the short-phone fold — a receipt resurrected 200px of coach chrome |
+| Latest commit | 2026-08-30 — fix: Codex round 3 — honor sieges admit machines, a self-raise displaces nobody, a flopped shakedown is not a failed jump |
 
 ## Commit authors
 
@@ -21,7 +21,7 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 435 |
-| Claude | 198 |
+| Claude | 200 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 4 |
 
@@ -30,7 +30,7 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 499 | yes |
-| [public/index.html](../../public/index.html) | 407 | yes |
+| [public/index.html](../../public/index.html) | 408 | yes |
 | [src/server.js](../../src/server.js) | 350 | yes |
 | [SPEC.md](../../SPEC.md) | 275 | yes |
 | [schema.sql](../../schema.sql) | 273 | yes |
@@ -38,13 +38,13 @@
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 170 | yes |
 | [package.json](../../package.json) | 142 | yes |
-| knowledge/generated/github-history.md | 132 | historical |
-| knowledge/generated/graph-summary.md | 132 | historical |
-| knowledge/generated/graph.json | 132 | historical |
-| knowledge/generated/inventory.md | 132 | historical |
+| knowledge/generated/github-history.md | 133 | historical |
+| knowledge/generated/graph-summary.md | 133 | historical |
+| knowledge/generated/graph.json | 133 | historical |
+| knowledge/generated/inventory.md | 133 | historical |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
-| [test/client.js](../../test/client.js) | 117 | yes |
+| [test/client.js](../../test/client.js) | 118 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 115 | yes |
 | [src/invariants.js](../../src/invariants.js) | 115 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |

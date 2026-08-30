@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "fb59ebf3cad5d4096a6e810c8989caebe7172bd9",
+  "sourceRevision": "1c45b5855bfe3679d44dd5950219d205794b5d4a",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5683,
-    "edges": 24989,
+    "nodes": 5685,
+    "edges": 25001,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 56,
-      "Commit": 1325,
+      "Commit": 1327,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 10023,
+      "CHANGED": 10033,
       "CONTAINS": 1846,
       "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1325,
+      "HAS_COMMIT": 1327,
       "IMPLEMENTS": 124,
       "IMPORTS": 1634,
       "INHERITS": 12,
@@ -32493,20 +32493,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1177908,
-      "lines": 12109,
-      "version": "480c466b1f6d5889",
+      "bytes": 1178266,
+      "lines": 12112,
+      "version": "fad45ced5e2a15dd",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "480c466b1f6d5889"
+          "version": "fad45ced5e2a15dd"
         }
       ],
-      "lastChangedAt": "2026-08-30T15:59:25.000Z",
+      "lastChangedAt": "2026-08-30T16:45:05.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "fb59ebf3cad5d4096a6e810c8989caebe7172bd9"
+      "lastChangedCommit": "1c45b5855bfe3679d44dd5950219d205794b5d4a"
     },
     {
       "key": "Artifact:public/manifest.json",
@@ -34586,20 +34586,20 @@
       "path": "src/landmarks.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 3622,
-      "lines": 49,
-      "version": "673ceeb676b80500",
+      "bytes": 3942,
+      "lines": 53,
+      "version": "55c0b6fbf655069b",
       "text": true,
       "provenance": [
         {
           "file": "src/landmarks.js",
           "line": 1,
-          "version": "673ceeb676b80500"
+          "version": "55c0b6fbf655069b"
         }
       ],
-      "lastChangedAt": "2026-08-30T09:22:58.000Z",
+      "lastChangedAt": "2026-08-30T16:45:05.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "955eca1176f654510619cc1ad81d831b350bc7b7"
+      "lastChangedCommit": "1c45b5855bfe3679d44dd5950219d205794b5d4a"
     },
     {
       "key": "Artifact:src/law.js",
@@ -35184,20 +35184,20 @@
       "path": "src/primetime.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 19662,
-      "lines": 276,
-      "version": "619d17df9db0ef5c",
+      "bytes": 20276,
+      "lines": 282,
+      "version": "335254baae6778c0",
       "text": true,
       "provenance": [
         {
           "file": "src/primetime.js",
           "line": 1,
-          "version": "619d17df9db0ef5c"
+          "version": "335254baae6778c0"
         }
       ],
-      "lastChangedAt": "2026-08-30T15:45:37.000Z",
+      "lastChangedAt": "2026-08-30T16:45:05.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
+      "lastChangedCommit": "1c45b5855bfe3679d44dd5950219d205794b5d4a"
     },
     {
       "key": "Artifact:src/push.js",
@@ -37553,20 +37553,20 @@
       "path": "test/client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 660649,
-      "lines": 8523,
-      "version": "40eb7873a6fe2836",
+      "bytes": 661089,
+      "lines": 8528,
+      "version": "db883448c8771544",
       "text": true,
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "40eb7873a6fe2836"
+          "version": "db883448c8771544"
         }
       ],
-      "lastChangedAt": "2026-08-30T15:45:37.000Z",
+      "lastChangedAt": "2026-08-30T16:45:05.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
+      "lastChangedCommit": "1c45b5855bfe3679d44dd5950219d205794b5d4a"
     },
     {
       "key": "Artifact:test/clues.js",
@@ -38818,20 +38818,20 @@
       "path": "test/landmarks.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 6745,
-      "lines": 89,
-      "version": "3cc498c6577a24ca",
+      "bytes": 7582,
+      "lines": 98,
+      "version": "6ae141883a8e0e93",
       "text": true,
       "provenance": [
         {
           "file": "test/landmarks.js",
           "line": 1,
-          "version": "3cc498c6577a24ca"
+          "version": "6ae141883a8e0e93"
         }
       ],
-      "lastChangedAt": "2026-08-11T15:47:18.000Z",
-      "lastChangedBy": "CRVYDEV",
-      "lastChangedCommit": "75bab0b18ca25130e86a9706726ca801a4fc8dbf"
+      "lastChangedAt": "2026-08-30T16:45:05.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "1c45b5855bfe3679d44dd5950219d205794b5d4a"
     },
     {
       "key": "Artifact:test/law.js",
@@ -39393,20 +39393,20 @@
       "path": "test/primetime.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 19499,
-      "lines": 285,
-      "version": "4524ffa7ceb0af93",
+      "bytes": 20580,
+      "lines": 300,
+      "version": "b48b2369cb111c0a",
       "text": true,
       "provenance": [
         {
           "file": "test/primetime.js",
           "line": 1,
-          "version": "4524ffa7ceb0af93"
+          "version": "b48b2369cb111c0a"
         }
       ],
-      "lastChangedAt": "2026-08-30T15:45:37.000Z",
+      "lastChangedAt": "2026-08-30T16:45:05.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "887e4db5ad5ad1246413c12f1a764ce2bf14fd58"
+      "lastChangedCommit": "1c45b5855bfe3679d44dd5950219d205794b5d4a"
     },
     {
       "key": "Artifact:test/push.js",
@@ -44865,6 +44865,22 @@
         {
           "commit": "1c3defa059b81fff5cd1122b692c5b5f60ff79d2",
           "url": "https://github.com/OmertaDev/Omerta/commit/1c3defa059b81fff5cd1122b692c5b5f60ff79d2"
+        }
+      ]
+    },
+    {
+      "key": "Commit:1c45b5855bfe3679d44dd5950219d205794b5d4a",
+      "type": "Commit",
+      "id": "1c45b5855bfe3679d44dd5950219d205794b5d4a",
+      "label": "fix: Codex round 3 — honor sieges admit machines, a self-raise displaces nobody, a flopped shakedown is not a failed jump",
+      "title": "fix: Codex round 3 — honor sieges admit machines, a self-raise displaces nobody, a flopped shakedown is not a failed jump",
+      "date": "2026-08-30T16:45:05.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1c45b5855bfe3679d44dd5950219d205794b5d4a",
+      "provenance": [
+        {
+          "commit": "1c45b5855bfe3679d44dd5950219d205794b5d4a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1c45b5855bfe3679d44dd5950219d205794b5d4a"
         }
       ]
     },
@@ -62709,6 +62725,22 @@
       ]
     },
     {
+      "key": "Commit:efd9bc0aa720299f2152aa9f7715b57c038e85c0",
+      "type": "Commit",
+      "id": "efd9bc0aa720299f2152aa9f7715b57c038e85c0",
+      "label": "chore(knowledge): refresh generated artifacts for fb59ebf3",
+      "title": "chore(knowledge): refresh generated artifacts for fb59ebf3",
+      "date": "2026-08-30T16:01:54.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/efd9bc0aa720299f2152aa9f7715b57c038e85c0",
+      "provenance": [
+        {
+          "commit": "efd9bc0aa720299f2152aa9f7715b57c038e85c0",
+          "url": "https://github.com/OmertaDev/Omerta/commit/efd9bc0aa720299f2152aa9f7715b57c038e85c0"
+        }
+      ]
+    },
+    {
       "key": "Commit:f00f929ff548bb5fe8aeaf688ca57ef832435ff4",
       "type": "Commit",
       "id": "f00f929ff548bb5fe8aeaf688ca57ef832435ff4",
@@ -73314,7 +73346,7 @@
         },
         {
           "file": "test/client.js",
-          "line": 8305
+          "line": 8310
         },
         {
           "file": "test/deeds.js",
@@ -77425,6 +77457,9 @@
           "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
         },
         {
+          "commit": "efd9bc0aa720299f2152aa9f7715b57c038e85c0"
+        },
+        {
           "commit": "f0d1a04c5f1f37f3667a87ffbb3a5005531f3b7a"
         },
         {
@@ -77830,6 +77865,9 @@
           "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
         },
         {
+          "commit": "efd9bc0aa720299f2152aa9f7715b57c038e85c0"
+        },
+        {
           "commit": "f0d1a04c5f1f37f3667a87ffbb3a5005531f3b7a"
         },
         {
@@ -78233,6 +78271,9 @@
         },
         {
           "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
+        },
+        {
+          "commit": "efd9bc0aa720299f2152aa9f7715b57c038e85c0"
         },
         {
           "commit": "f0d1a04c5f1f37f3667a87ffbb3a5005531f3b7a"
@@ -78695,6 +78736,9 @@
         },
         {
           "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
+        },
+        {
+          "commit": "efd9bc0aa720299f2152aa9f7715b57c038e85c0"
         },
         {
           "commit": "f0d1a04c5f1f37f3667a87ffbb3a5005531f3b7a"
@@ -80248,13 +80292,13 @@
       "type": "Module",
       "id": "src/landmarks.js",
       "label": "src/landmarks.js",
-      "lines": 49,
-      "version": "673ceeb676b80500",
+      "lines": 53,
+      "version": "55c0b6fbf655069b",
       "provenance": [
         {
           "file": "src/landmarks.js",
           "line": 1,
-          "version": "673ceeb676b80500"
+          "version": "55c0b6fbf655069b"
         }
       ]
     },
@@ -80638,13 +80682,13 @@
       "type": "Module",
       "id": "src/primetime.js",
       "label": "src/primetime.js",
-      "lines": 276,
-      "version": "619d17df9db0ef5c",
+      "lines": 282,
+      "version": "335254baae6778c0",
       "provenance": [
         {
           "file": "src/primetime.js",
           "line": 1,
-          "version": "619d17df9db0ef5c"
+          "version": "335254baae6778c0"
         }
       ]
     },
@@ -85033,7 +85077,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "fb59ebf3cad5d4096a6e810c8989caebe7172bd9",
+      "revision": "1c45b5855bfe3679d44dd5950219d205794b5d4a",
       "currentBranch": "claude/next-work-recommendations-x5f2fp",
       "defaultBranch": "main",
       "visibility": "public",
@@ -108580,13 +108624,13 @@
       "type": "TestSuite",
       "id": "test/client.js",
       "label": "test/client.js",
-      "lines": 8523,
-      "version": "40eb7873a6fe2836",
+      "lines": 8528,
+      "version": "db883448c8771544",
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "40eb7873a6fe2836"
+          "version": "db883448c8771544"
         }
       ]
     },
@@ -109345,13 +109389,13 @@
       "type": "TestSuite",
       "id": "test/landmarks.js",
       "label": "test/landmarks.js",
-      "lines": 89,
-      "version": "3cc498c6577a24ca",
+      "lines": 98,
+      "version": "6ae141883a8e0e93",
       "provenance": [
         {
           "file": "test/landmarks.js",
           "line": 1,
-          "version": "3cc498c6577a24ca"
+          "version": "6ae141883a8e0e93"
         }
       ]
     },
@@ -109720,13 +109764,13 @@
       "type": "TestSuite",
       "id": "test/primetime.js",
       "label": "test/primetime.js",
-      "lines": 285,
-      "version": "4524ffa7ceb0af93",
+      "lines": 300,
+      "version": "b48b2369cb111c0a",
       "provenance": [
         {
           "file": "test/primetime.js",
           "line": 1,
-          "version": "4524ffa7ceb0af93"
+          "version": "b48b2369cb111c0a"
         }
       ]
     },
@@ -138809,6 +138853,54 @@
       "to": "Artifact:tools/mobile.js",
       "provenance": {
         "commit": "1c3defa059b81fff5cd1122b692c5b5f60ff79d2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1c45b5855bfe3679d44dd5950219d205794b5d4a",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "1c45b5855bfe3679d44dd5950219d205794b5d4a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1c45b5855bfe3679d44dd5950219d205794b5d4a",
+      "to": "Artifact:src/landmarks.js",
+      "provenance": {
+        "commit": "1c45b5855bfe3679d44dd5950219d205794b5d4a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1c45b5855bfe3679d44dd5950219d205794b5d4a",
+      "to": "Artifact:src/primetime.js",
+      "provenance": {
+        "commit": "1c45b5855bfe3679d44dd5950219d205794b5d4a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1c45b5855bfe3679d44dd5950219d205794b5d4a",
+      "to": "Artifact:test/client.js",
+      "provenance": {
+        "commit": "1c45b5855bfe3679d44dd5950219d205794b5d4a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1c45b5855bfe3679d44dd5950219d205794b5d4a",
+      "to": "Artifact:test/landmarks.js",
+      "provenance": {
+        "commit": "1c45b5855bfe3679d44dd5950219d205794b5d4a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1c45b5855bfe3679d44dd5950219d205794b5d4a",
+      "to": "Artifact:test/primetime.js",
+      "provenance": {
+        "commit": "1c45b5855bfe3679d44dd5950219d205794b5d4a"
       }
     },
     {
@@ -204005,6 +204097,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:efd9bc0aa720299f2152aa9f7715b57c038e85c0",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "efd9bc0aa720299f2152aa9f7715b57c038e85c0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:efd9bc0aa720299f2152aa9f7715b57c038e85c0",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "efd9bc0aa720299f2152aa9f7715b57c038e85c0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:efd9bc0aa720299f2152aa9f7715b57c038e85c0",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "efd9bc0aa720299f2152aa9f7715b57c038e85c0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:efd9bc0aa720299f2152aa9f7715b57c038e85c0",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "efd9bc0aa720299f2152aa9f7715b57c038e85c0"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:f00f929ff548bb5fe8aeaf688ca57ef832435ff4",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -245879,6 +246003,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:1c45b5855bfe3679d44dd5950219d205794b5d4a",
+      "provenance": {
+        "commit": "1c45b5855bfe3679d44dd5950219d205794b5d4a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:1ca0d2297fda090f16a82a5ac59c77535ec9e1fd",
       "provenance": {
         "commit": "1ca0d2297fda090f16a82a5ac59c77535ec9e1fd"
@@ -254794,6 +254926,14 @@
       "to": "Commit:efcb97fc4940e5f536ae744fdee5695b18d37a6d",
       "provenance": {
         "commit": "efcb97fc4940e5f536ae744fdee5695b18d37a6d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:efd9bc0aa720299f2152aa9f7715b57c038e85c0",
+      "provenance": {
+        "commit": "efd9bc0aa720299f2152aa9f7715b57c038e85c0"
       }
     },
     {
@@ -264992,7 +265132,7 @@
       "to": "ExternalDependency:viem/accounts",
       "provenance": {
         "file": "test/client.js",
-        "line": 8305
+        "line": 8310
       }
     },
     {
@@ -318578,7 +318718,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/primetime.js",
-        "line": 237
+        "line": 239
       }
     },
     {
@@ -318587,7 +318727,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/primetime.js",
-        "line": 236
+        "line": 238
       }
     },
     {
