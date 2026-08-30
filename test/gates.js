@@ -1894,7 +1894,6 @@ const SCENERY_WAIVED = {
     'races.js:grandPrix':   'a DB row id — the open race the entry posts back to',
     'stable.js:stakes':     'a DB row id — the open stakes race',
     'port.js:boat':         'a boats row id — the vessel is named by its own catalog elsewhere',
-    'port.js:to':           'a CHARACTER id — the rendezvous partner, named by `name` on the board',
     'defense.js:guard':     'a CHARACTER id — the bodyguard hired, not a catalog rung',
     'population.js:band':   'an internal spawn return, never a player-facing reply',
     'favors.js:good':       'the client resolves it through goodName off the published /v1/rules catalog',
@@ -1948,7 +1947,13 @@ const SCENERY_WAIVED = {
         if (k === 'id' || /Id$/.test(k) || /_id$/.test(k)) continue;
         corpus++;
         const named = new RegExp(`\\b(name|title|label|${k}Name)\\s*:`).test(lit)
-          || new RegExp(`:\\s*${src}\\.(name|title|label)\\b`).test(lit);
+          || new RegExp(`:\\s*${src}\\.(name|title|label)\\b`).test(lit)
+          // the SHORTHAND spelling of the same assertion: `{ kind: r.kind, kindName }` ships the
+          // display name exactly as `kindName: kindName` would, and a matcher that only knows the
+          // colon form stops seeing a companion the moment it is written the other legal way — the
+          // extractor-only-knows-one-form class (the CATALOG LEDGER lesson). Only `<k>Name` gets
+          // the shorthand form: a bare `name`/`title` shorthand would be some unrelated variable.
+          || new RegExp(`(?<![\\w$.])${k}Name\\s*[,}]`).test(lit);
         if (named) continue;
         const key = `${base}:${k}`;
         if (WAIVED[key]) { seen.add(key); continue; }
@@ -2031,10 +2036,14 @@ const SCENERY_WAIVED = {
         if (RESOLVE[mm[1]]) raw.add(`${type}.${mm[1]} renders the raw id — resolve it with ${RESOLVE[mm[1]]}`);
       }
       for (const [f, lit] of payloads[type] || []) {
-        // (a) the template naming `d.<k>Name` is an assertion that the server sends it
+        // (a) the template naming `d.<k>Name` is an assertion that the server sends it. Both legal
+        // spellings count — `kindName: x` AND the SHORTHAND `{ kind, kindName }` — or the matcher
+        // reports correct code the moment it is written the other way (the extractor-only-knows-
+        // one-form class, the CATALOG LEDGER lesson; the server half above was widened identically).
         for (const mm of line.matchAll(/\bd\.(\w+)Name\b/g)) {
           watched++;
-          if (!new RegExp(`\\b${mm[1]}Name\\s*:`).test(lit)) {
+          if (!new RegExp(`\\b${mm[1]}Name\\s*:`).test(lit)
+              && !new RegExp(`(?<![\\w$.])${mm[1]}Name\\s*[,}]`).test(lit)) {
             raw.add(`${type}.${mm[1]}Name — the line reads it, ${f} does not send it (it falls back to the id)`);
           }
         }
@@ -2055,9 +2064,15 @@ const SCENERY_WAIVED = {
           // are untouched.
           if (!/^[\w.?]+$/.test(e) || !/\.(id|kind|\w*_id)\b|\w+Id\b/.test(e)) continue;
           watched++;
-          if (!new RegExp(`\\b(name|${k}Name)\\s*:`).test(lit)) {
+          // the shorthand `{ kind, kindName }` ships the name exactly as `kindName: kindName` would —
+          // both spellings satisfy "a display name rides beside the id" (and both arm rule (d) below).
+          const sentName = new RegExp(`\\b(name|${k}Name)\\s*:`).test(lit)
+            || new RegExp(`(?<![\\w$.])${k}Name\\s*[,}]`).test(lit);
+          const sentKName = new RegExp(`\\b${k}Name\\s*:`).test(lit)
+            || new RegExp(`(?<![\\w$.])${k}Name\\s*[,}]`).test(lit);
+          if (!sentName) {
             raw.add(`${type}.${k} — ${f} sends ${e} with no display name beside it`);
-          } else if (new RegExp(`\\b${k}Name\\s*:`).test(lit) && !new RegExp(`\\bd\\.${k}Name\\b`).test(line)) {
+          } else if (sentKName && !new RegExp(`\\bd\\.${k}Name\\b`).test(line)) {
             // (d) the INVERSE of (a): the server went and sent the name and the line still renders the
             // key. Rule (b) above cannot see it — it asks whether the payload carries a name, and it
             // does. This is the half that would have let the seven `d.kind` templates sit unfixed
