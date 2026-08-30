@@ -7348,7 +7348,11 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   assert.equal(echoes(burnKill, 'contractor'), 1, `the burner KILL stated the outcome twice: ${burnKill}`);
   assert(/mark is gone/.test(burnKill), `the burner KILL must still say the mark is dead: ${burnKill}`);
   // the guard's NAME was the one thing only the deleted line carried — it moved up rather than out.
-  const burnGuard = String(describeFn({ ...burn73.r.body, hit: true, absorbed: true, guard: 'Big Sal' }, 200));
+  // flip EVERY outcome flag, not just the one under test: the driven reply's roll is random, and on a
+  // CI run where the 2% burner roll KILLED, a spread carrying killed:true selects the kill arm (it
+  // precedes absorbed in the branch) — a deterministic assertion resting on a probabilistic
+  // precondition, the recorded flake class.
+  const burnGuard = String(describeFn({ ...burn73.r.body, hit: true, killed: false, revived: false, absorbed: true, guard: 'Big Sal' }, 200));
   assert(/Big Sal/.test(burnGuard), `an absorbed hire must still NAME the man who ate it: ${burnGuard}`);
   console.log('  ✓ wave 73: the pen — a break BLOWN by a rat read as bad luck at the fence, a tipper told nothing, and a hired gun that stated its price twice');
 }
