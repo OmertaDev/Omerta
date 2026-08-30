@@ -1272,6 +1272,27 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
   assert.equal(new Set(dates).size, 1,
     `the packet was measured on two different days at once: ${[...new Set(dates)].join(' and ')}`);
 
+  // A FROZEN test count with no compiler named is not evidence. The count is version-DEPENDENT — a
+  // suite holding only `invariant_*` functions counts as ONE test under the older aggregated reporting
+  // model and as N under 1.7.1 — and the toolchain was UNPINNED when these figures were taken
+  // (`foundry-toolchain@v1`, no `version:`, so `stable` resolved at run time). So a reader re-running
+  // the snapshot's own tree cannot tell whether the TREE changed or the COUNTER did, which is exactly
+  // the ambiguity that left the forge gate red and unreproducible for 19 hours. The packet must name
+  // the toolchain, and the version it names must be the one the workflow actually pins — two sources,
+  // one truth, or the note goes stale the first time somebody bumps the pin.
+  const pktForge = /forge v(\d+\.\d+\.\d+)/.exec(pkt);
+  assert(pktForge, 'CHAIN-AUDIT-PACKET.md freezes a Foundry test count and names no toolchain version. '
+    + 'The count is version-dependent (invariant-only suites aggregate differently), so a figure without '
+    + 'a compiler beside it cannot be reproduced — name it');
+  const wfPin = /foundry-toolchain@v1[\s\S]{0,200}?version:\s*v?(\d+\.\d+\.\d+)/
+    .exec(read('.github/workflows/forge.yml'));
+  assert(wfPin, 'the forge workflow has lost its pinned toolchain version — the packet cites one, so '
+    + 'this cross-check has nothing left to hold it to');
+  assert.equal(pktForge[1], wfPin[1],
+    `the packet says its rebuilt measurement will use forge v${pktForge[1]} while the workflow pins `
+    + `v${wfPin[1]}. A stale toolchain claim beside a frozen figure is worse than none: it tells a `
+    + 'reader the count is reproducible under a compiler that is no longer the one that runs');
+
   console.log(`✓ the audit packet agrees with itself (${tableContracts} contracts + ${tableIfaces} `
     + `interfaces, ${pairs[0]} tests/suites, measured ${dates[0]})`);
 }
