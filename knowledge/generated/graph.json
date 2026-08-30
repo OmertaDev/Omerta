@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "14ca7023b93b64e9499636ec8f5b79ea1ea2a98e",
+  "sourceRevision": "abd4987b5924176b2806b793df045695e86b503e",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5667,
-    "edges": 24899,
+    "nodes": 5669,
+    "edges": 24913,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 56,
-      "Commit": 1309,
+      "Commit": 1311,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 9952,
+      "CHANGED": 9964,
       "CONTAINS": 1846,
       "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1309,
+      "HAS_COMMIT": 1311,
       "IMPLEMENTS": 124,
       "IMPORTS": 1634,
       "INHERITS": 12,
@@ -32493,20 +32493,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1171827,
-      "lines": 12050,
-      "version": "5676e75ff89d1df0",
+      "bytes": 1176462,
+      "lines": 12097,
+      "version": "2cd8764bd2786805",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "5676e75ff89d1df0"
+          "version": "2cd8764bd2786805"
         }
       ],
-      "lastChangedAt": "2026-08-30T11:48:05.000Z",
+      "lastChangedAt": "2026-08-30T12:36:08.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "14ca7023b93b64e9499636ec8f5b79ea1ea2a98e"
+      "lastChangedCommit": "abd4987b5924176b2806b793df045695e86b503e"
     },
     {
       "key": "Artifact:public/manifest.json",
@@ -34011,20 +34011,20 @@
       "path": "src/economy.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 43443,
-      "lines": 632,
-      "version": "bc9463c9a46f6cb8",
+      "bytes": 43755,
+      "lines": 635,
+      "version": "575cc90849ccf87b",
       "text": true,
       "provenance": [
         {
           "file": "src/economy.js",
           "line": 1,
-          "version": "bc9463c9a46f6cb8"
+          "version": "575cc90849ccf87b"
         }
       ],
-      "lastChangedAt": "2026-08-22T16:14:13.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "ff7b15d8a510f9c8c4e16fa41c328729c9aec587"
+      "lastChangedAt": "2026-08-30T12:36:08.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "abd4987b5924176b2806b793df045695e86b503e"
     },
     {
       "key": "Artifact:src/emission.js",
@@ -34425,20 +34425,20 @@
       "path": "src/growth.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 69752,
-      "lines": 1026,
-      "version": "4883d0cdc7f4cbf3",
+      "bytes": 70391,
+      "lines": 1033,
+      "version": "6a2d4e21329f4eab",
       "text": true,
       "provenance": [
         {
           "file": "src/growth.js",
           "line": 1,
-          "version": "4883d0cdc7f4cbf3"
+          "version": "6a2d4e21329f4eab"
         }
       ],
-      "lastChangedAt": "2026-08-27T05:22:04.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0524f3ce06d49e9409c54a15f8dd8de30444aa01"
+      "lastChangedAt": "2026-08-30T12:36:08.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "abd4987b5924176b2806b793df045695e86b503e"
     },
     {
       "key": "Artifact:src/heists.js",
@@ -35276,20 +35276,20 @@
       "path": "src/regimen.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 7411,
-      "lines": 120,
-      "version": "4edacfdda8cda326",
+      "bytes": 7874,
+      "lines": 125,
+      "version": "cf7abaea8497de0a",
       "text": true,
       "provenance": [
         {
           "file": "src/regimen.js",
           "line": 1,
-          "version": "4edacfdda8cda326"
+          "version": "cf7abaea8497de0a"
         }
       ],
-      "lastChangedAt": "2026-08-03T13:22:40.000Z",
-      "lastChangedBy": "crvydev",
-      "lastChangedCommit": "f38df4d0922c8f9801273178191d79be7621ef37"
+      "lastChangedAt": "2026-08-30T12:36:08.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "abd4987b5924176b2806b793df045695e86b503e"
     },
     {
       "key": "Artifact:src/ring.js",
@@ -36265,20 +36265,20 @@
       "path": "src/skills.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 11028,
-      "lines": 164,
-      "version": "ef0b3d905d3103c6",
+      "bytes": 11383,
+      "lines": 168,
+      "version": "3248951b98f6a7fc",
       "text": true,
       "provenance": [
         {
           "file": "src/skills.js",
           "line": 1,
-          "version": "ef0b3d905d3103c6"
+          "version": "3248951b98f6a7fc"
         }
       ],
-      "lastChangedAt": "2026-08-16T04:53:21.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1b1d3deaf7ae52df04c0857fbb2f4e4ad4764869"
+      "lastChangedAt": "2026-08-30T12:36:08.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "abd4987b5924176b2806b793df045695e86b503e"
     },
     {
       "key": "Artifact:src/social.js",
@@ -36840,20 +36840,20 @@
       "path": "src/underworld.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 15360,
-      "lines": 219,
-      "version": "aaaa3e5d808fb5e9",
+      "bytes": 15709,
+      "lines": 223,
+      "version": "e2af211adc809ab2",
       "text": true,
       "provenance": [
         {
           "file": "src/underworld.js",
           "line": 1,
-          "version": "aaaa3e5d808fb5e9"
+          "version": "e2af211adc809ab2"
         }
       ],
-      "lastChangedAt": "2026-08-23T16:57:04.000Z",
+      "lastChangedAt": "2026-08-30T12:36:08.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "e12cf4dfec1d1d298fd84bee127641745eeff42b"
+      "lastChangedCommit": "abd4987b5924176b2806b793df045695e86b503e"
     },
     {
       "key": "Artifact:src/v4oraclekeeper.js",
@@ -37553,20 +37553,20 @@
       "path": "test/client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 646560,
-      "lines": 8352,
-      "version": "c26f9c37b3dcaa8d",
+      "bytes": 657010,
+      "lines": 8486,
+      "version": "32ca584a28f1ad91",
       "text": true,
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "c26f9c37b3dcaa8d"
+          "version": "32ca584a28f1ad91"
         }
       ],
-      "lastChangedAt": "2026-08-30T11:48:05.000Z",
+      "lastChangedAt": "2026-08-30T12:36:08.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "14ca7023b93b64e9499636ec8f5b79ea1ea2a98e"
+      "lastChangedCommit": "abd4987b5924176b2806b793df045695e86b503e"
     },
     {
       "key": "Artifact:test/clues.js",
@@ -52293,6 +52293,22 @@
       ]
     },
     {
+      "key": "Commit:72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3",
+      "type": "Commit",
+      "id": "72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3",
+      "label": "Knowledge graph regenerated for wave 73 (chain)",
+      "title": "Knowledge graph regenerated for wave 73 (chain)",
+      "date": "2026-08-30T12:03:18.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3",
+      "provenance": [
+        {
+          "commit": "72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3",
+          "url": "https://github.com/OmertaDev/Omerta/commit/72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3"
+        }
+      ]
+    },
+    {
       "key": "Commit:7302ef23e92797fd50f39524e4f0f6c2b258fc17",
       "type": "Commit",
       "id": "7302ef23e92797fd50f39524e4f0f6c2b258fc17",
@@ -57345,6 +57361,22 @@
         {
           "commit": "aba6c29f3c4f8bb7d2d85becd6724b016879b3f5",
           "url": "https://github.com/OmertaDev/Omerta/commit/aba6c29f3c4f8bb7d2d85becd6724b016879b3f5"
+        }
+      ]
+    },
+    {
+      "key": "Commit:abd4987b5924176b2806b793df045695e86b503e",
+      "type": "Commit",
+      "id": "abd4987b5924176b2806b793df045695e86b503e",
+      "label": "Play wave 74 (daily): a burst that named no clock, a burn reported as a balance, a rung paid twice, and a trainer called by their storage key",
+      "title": "Play wave 74 (daily): a burst that named no clock, a burn reported as a balance, a rung paid twice, and a trainer called by their storage key",
+      "date": "2026-08-30T12:36:08.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/abd4987b5924176b2806b793df045695e86b503e",
+      "provenance": [
+        {
+          "commit": "abd4987b5924176b2806b793df045695e86b503e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/abd4987b5924176b2806b793df045695e86b503e"
         }
       ]
     },
@@ -73058,7 +73090,7 @@
         },
         {
           "file": "test/client.js",
-          "line": 8134
+          "line": 8268
         },
         {
           "file": "test/deeds.js",
@@ -76953,6 +76985,9 @@
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
         },
         {
+          "commit": "72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3"
+        },
+        {
           "commit": "7513034368a2281262dc56792b1fba9d09501059"
         },
         {
@@ -77331,6 +77366,9 @@
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
         },
         {
+          "commit": "72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3"
+        },
+        {
           "commit": "7513034368a2281262dc56792b1fba9d09501059"
         },
         {
@@ -77707,6 +77745,9 @@
         },
         {
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
+        },
+        {
+          "commit": "72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3"
         },
         {
           "commit": "7513034368a2281262dc56792b1fba9d09501059"
@@ -78144,6 +78185,9 @@
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
         },
         {
+          "commit": "72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3"
+        },
+        {
           "commit": "7513034368a2281262dc56792b1fba9d09501059"
         },
         {
@@ -78412,6 +78456,9 @@
         },
         {
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
+        },
+        {
+          "commit": "72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3"
         },
         {
           "commit": "7ed7baed755612e19a03f6239471aa91a80dc39a"
@@ -79485,13 +79532,13 @@
       "type": "Module",
       "id": "src/economy.js",
       "label": "src/economy.js",
-      "lines": 632,
-      "version": "bc9463c9a46f6cb8",
+      "lines": 635,
+      "version": "575cc90849ccf87b",
       "provenance": [
         {
           "file": "src/economy.js",
           "line": 1,
-          "version": "bc9463c9a46f6cb8"
+          "version": "575cc90849ccf87b"
         }
       ]
     },
@@ -79755,13 +79802,13 @@
       "type": "Module",
       "id": "src/growth.js",
       "label": "src/growth.js",
-      "lines": 1026,
-      "version": "4883d0cdc7f4cbf3",
+      "lines": 1033,
+      "version": "6a2d4e21329f4eab",
       "provenance": [
         {
           "file": "src/growth.js",
           "line": 1,
-          "version": "4883d0cdc7f4cbf3"
+          "version": "6a2d4e21329f4eab"
         }
       ]
     },
@@ -80310,13 +80357,13 @@
       "type": "Module",
       "id": "src/regimen.js",
       "label": "src/regimen.js",
-      "lines": 120,
-      "version": "4edacfdda8cda326",
+      "lines": 125,
+      "version": "cf7abaea8497de0a",
       "provenance": [
         {
           "file": "src/regimen.js",
           "line": 1,
-          "version": "4edacfdda8cda326"
+          "version": "cf7abaea8497de0a"
         }
       ]
     },
@@ -80955,13 +81002,13 @@
       "type": "Module",
       "id": "src/skills.js",
       "label": "src/skills.js",
-      "lines": 164,
-      "version": "ef0b3d905d3103c6",
+      "lines": 168,
+      "version": "3248951b98f6a7fc",
       "provenance": [
         {
           "file": "src/skills.js",
           "line": 1,
-          "version": "ef0b3d905d3103c6"
+          "version": "3248951b98f6a7fc"
         }
       ]
     },
@@ -81330,13 +81377,13 @@
       "type": "Module",
       "id": "src/underworld.js",
       "label": "src/underworld.js",
-      "lines": 219,
-      "version": "aaaa3e5d808fb5e9",
+      "lines": 223,
+      "version": "e2af211adc809ab2",
       "provenance": [
         {
           "file": "src/underworld.js",
           "line": 1,
-          "version": "aaaa3e5d808fb5e9"
+          "version": "e2af211adc809ab2"
         }
       ]
     },
@@ -84645,7 +84692,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "14ca7023b93b64e9499636ec8f5b79ea1ea2a98e",
+      "revision": "abd4987b5924176b2806b793df045695e86b503e",
       "currentBranch": "(detached)",
       "defaultBranch": "main",
       "visibility": "public",
@@ -108192,13 +108239,13 @@
       "type": "TestSuite",
       "id": "test/client.js",
       "label": "test/client.js",
-      "lines": 8352,
-      "version": "c26f9c37b3dcaa8d",
+      "lines": 8486,
+      "version": "32ca584a28f1ad91",
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "c26f9c37b3dcaa8d"
+          "version": "32ca584a28f1ad91"
         }
       ]
     },
@@ -166281,6 +166328,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:7302ef23e92797fd50f39524e4f0f6c2b258fc17",
       "to": "Artifact:AUDIT-full-sweep.md",
       "provenance": {
@@ -183053,6 +183140,62 @@
       "to": "Artifact:test/pwa.js",
       "provenance": {
         "commit": "aba6c29f3c4f8bb7d2d85becd6724b016879b3f5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:abd4987b5924176b2806b793df045695e86b503e",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "abd4987b5924176b2806b793df045695e86b503e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:abd4987b5924176b2806b793df045695e86b503e",
+      "to": "Artifact:src/economy.js",
+      "provenance": {
+        "commit": "abd4987b5924176b2806b793df045695e86b503e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:abd4987b5924176b2806b793df045695e86b503e",
+      "to": "Artifact:src/growth.js",
+      "provenance": {
+        "commit": "abd4987b5924176b2806b793df045695e86b503e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:abd4987b5924176b2806b793df045695e86b503e",
+      "to": "Artifact:src/regimen.js",
+      "provenance": {
+        "commit": "abd4987b5924176b2806b793df045695e86b503e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:abd4987b5924176b2806b793df045695e86b503e",
+      "to": "Artifact:src/skills.js",
+      "provenance": {
+        "commit": "abd4987b5924176b2806b793df045695e86b503e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:abd4987b5924176b2806b793df045695e86b503e",
+      "to": "Artifact:src/underworld.js",
+      "provenance": {
+        "commit": "abd4987b5924176b2806b793df045695e86b503e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:abd4987b5924176b2806b793df045695e86b503e",
+      "to": "Artifact:test/client.js",
+      "provenance": {
+        "commit": "abd4987b5924176b2806b793df045695e86b503e"
       }
     },
     {
@@ -248635,6 +248778,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3",
+      "provenance": {
+        "commit": "72ecdcc4bdddfb7123529d2b0e71ae77d0c281f3"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:7302ef23e92797fd50f39524e4f0f6c2b258fc17",
       "provenance": {
         "commit": "7302ef23e92797fd50f39524e4f0f6c2b258fc17"
@@ -251158,6 +251309,14 @@
       "to": "Commit:aba6c29f3c4f8bb7d2d85becd6724b016879b3f5",
       "provenance": {
         "commit": "aba6c29f3c4f8bb7d2d85becd6724b016879b3f5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:abd4987b5924176b2806b793df045695e86b503e",
+      "provenance": {
+        "commit": "abd4987b5924176b2806b793df045695e86b503e"
       }
     },
     {
@@ -263908,7 +264067,7 @@
       "to": "ExternalDependency:viem/accounts",
       "provenance": {
         "file": "test/client.js",
-        "line": 8134
+        "line": 8268
       }
     },
     {
@@ -313417,7 +313576,7 @@
       "to": "Table:account_gear",
       "provenance": {
         "file": "src/economy.js",
-        "line": 622
+        "line": 625
       }
     },
     {
@@ -315010,7 +315169,7 @@
       "to": "Table:agent_acquisition_budgets",
       "provenance": {
         "file": "src/growth.js",
-        "line": 971
+        "line": 978
       }
     },
     {
@@ -315019,7 +315178,7 @@
       "to": "Table:agent_referral_claims",
       "provenance": {
         "file": "src/growth.js",
-        "line": 976
+        "line": 983
       }
     },
     {
@@ -315100,7 +315259,7 @@
       "to": "Table:social_claims",
       "provenance": {
         "file": "src/growth.js",
-        "line": 816
+        "line": 823
       }
     },
     {
