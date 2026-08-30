@@ -3800,9 +3800,10 @@
     // line. `toLender` is on the collect and nothing else. Driven.
     // It rendered `seized` — what left the BORROWER — as the shark's own take, and the two differ by
     // the house vig on every collect ($120,000 seized banked $114,000). It also said nothing about
-    // what pressing it DOES to the mark: a beating, a permanent welsher brand, and a WANTED window
+    // what pressing it DOES to the mark: a beating, a welsher brand (cleared only by squaring their
+    // name, or by the street ending — never "for good", squareWanted clears it), and a WANTED window
     // (omertà stripped, NPC hunters rolling). All five figures were already in the reply.
-    if (body.seized && body.toLender !== undefined) bits.push(`collected $${fmt(body.seized)}${body.carSeized ? ' + their car' : ''}${body.omrSeized > 0 ? ` + their ${fmt(body.omrSeized)} $OMR pledge` : ''} — $${fmt(body.toLender)} to you after the $${fmt(body.vig)} vig${body.shortfall > 0 ? ` — still $${fmt(body.shortfall)} short` : ''}${body.wanted ? `. Their legs are broken${body.hospSeconds ? ` (${minsTxt(body.hospSeconds)} in a bed)` : ''}, they're branded a welsher for good, and they're WANTED${body.wantedSeconds ? ` for ${minsTxt(body.wantedSeconds)}` : ''} — omertà stripped, hunters rolling` : ''}`);
+    if (body.seized && body.toLender !== undefined) bits.push(`collected $${fmt(body.seized)}${body.carSeized ? ' + their car' : ''}${body.omrSeized > 0 ? ` + their ${fmt(body.omrSeized)} $OMR pledge` : ''} — $${fmt(body.toLender)} to you after the $${fmt(body.vig)} vig${body.shortfall > 0 ? ` — still $${fmt(body.shortfall)} short` : ''}${body.wanted ? `. Their legs are broken${body.hospSeconds ? ` (${minsTxt(body.hospSeconds)} in a bed)` : ''}, they're branded a welsher until they square their name (it dies with the street too), and they're WANTED${body.wantedSeconds ? ` for ${minsTxt(body.wantedSeconds)}` : ''} — omertà stripped, hunters rolling` : ''}`);
     // `pay` is the generic "what it paid" field, but a FAVOR's pay is the poster's gross — the
     // runner nets it minus the house cut, and the favor branch above already says so. Appending the
     // gross here would report a bigger number than the pocket actually moved.
@@ -4051,12 +4052,14 @@
     if (body.ratted && body.op === 'breakout')
       bits.push('\u{1F4DE} the guards are tipped — that break blows whatever the roll, and nobody hears it from you.'
         + " Your deal is relief only: you dodge the crew's added stretch and the beating, but you serve your own sentence to the day.");
-    // …and its SIBLING on the score, which said "done." for the identical act. Same three terms, and
-    // the crew half is the one worth stating: everybody goes in, the rat included, so the yard roster
-    // never outs the only man walking free. Keyed on the op, never on the absence of a field.
+    // …and its SIBLING on the score, which said "done." for the identical act — but the DEAL is a
+    // different deal (Codex P2, verified against executeHeist): the score's rat is hauled in WITH the
+    // crew for DOUBLE the job's stretch — jail, never the hole — so the roster can't out them, and
+    // their cut of the fronted stake lands quietly all the same. Reusing the break-rat's "relief only /
+    // your own sentence" wording here understated the punishment and hid the payout.
     if (body.ratted && body.op === 'heist')
       bits.push(`\u{1F4DE} the tip is in on ${art(txt(body.name || 'the job'))} — it blows whatever the roll, and the feed only ever says somebody talked.`
-        + ' Your deal is relief only: you serve your own sentence to the day, and the whole crew goes to the hole — you with them, so nobody can pick you out of the roster.');
+        + " When it does, the law hauls the WHOLE crew in for double the job's stretch — you with them, so nobody can pick you out of the roster — and your cut of the fronted stake lands quietly all the same.");
     // THE OFFSHORE HANDOFF — the whole run changes vessels mid-sea and read "done.". `to` is a BOAT
     // id and `route` a catalog key, so the display names ship from the server (the raw-key rule);
     // the flag route one branch up is CONSENT, a different act, which is why this keys on the op.
@@ -4167,7 +4170,7 @@
       // scene and the family REMEMBERS — a worker-resolved strike is scheduled on your own head, and
       // the raid that read as a clean score arrived later as an unexplained hospitalization. The
       // window is the server's (FAMILY_WAR's own lever), never restated here.
-      if (body.success) bits.push(`hit ${body.family} — took $${fmt(body.loot)} off their war chest${body.conquered ? '. ROUTED — your family now holds them as a vassal.' : ''}${body.warWon ? ' \u{2694}\u{FE0F} CAMPAIGN WON — a war-chief trophy for the family.' : ''}${body.countered ? `. Their guns caught you leaving — ${body.hospSeconds ? minsTxt(body.hospSeconds) : 'a spell'} in the hospital.` : ''}${body.manhunt ? `. You got clear, but they marked you — their guns come looking${body.manhuntSeconds ? ` in about ${minsTxt(body.manhuntSeconds)}` : ''}. Be somewhere else.` : ''}`);
+      if (body.success) bits.push(`hit ${body.family} — took $${fmt(body.loot)} off their war chest${body.conquered ? '. ROUTED — your family now holds them as a vassal.' : ''}${body.warWon ? ' \u{2694}\u{FE0F} CAMPAIGN WON — a war-chief trophy for the family.' : ''}${body.countered ? `. Their guns caught you leaving — ${body.hospSeconds ? minsTxt(body.hospSeconds) : 'a spell'} in the hospital.` : ''}${body.manhunt ? `. You got clear, but they marked you — their guns come looking${body.manhuntSeconds ? ` in about ${minsTxt(body.manhuntSeconds)}` : ''}. Travelling won't lose them — go to ground, or be in lockup or a hospital bed when they call.` : ''}`);
       else bits.push(`${body.family} repelled the raid — their guns put you in the hospital${body.hospSeconds ? ` for ${minsTxt(body.hospSeconds)}` : ''}.`);
     }
     // …and it names the OBJECTIVE and never the SPEND: the war chest comes out of the family treasury,

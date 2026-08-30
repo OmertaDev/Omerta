@@ -187,8 +187,10 @@ export async function ratHeist(ch, heistId, client, h) {
   // The ANONYMITY this protects is toward the CREW — the feed only ever says "somebody talked", and
   // nothing here names the rat to anybody else. It was never a reason to tell the RAT nothing: the
   // terms are knowable at rat time and decide whether the tip is worth it (the job blows regardless
-  // of the roll, the deal is relief-only, and everyone including the rat goes to the hole so the
-  // yard roster never outs them). `job` is a catalog key — the display name ships from here.
+  // of the roll, the WHOLE crew — the rat included — eats DOUBLE the job's jail time so the roster
+  // can't out them, and the rat's HEIST_RAT_BPS cut lands quietly; this is NOT the pen break-rat's
+  // relief-only deal, and an earlier comment here said it was — Codex P2, verified against the blown
+  // branch below). `job` is a catalog key — the display name ships from here.
   return { ok: true, op: 'heist', ratted: true, job: row.job, name: heistJobOf(row.job)?.name || row.job };
 }
 

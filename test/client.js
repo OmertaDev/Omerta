@@ -7640,7 +7640,7 @@ await app.close();
     `the line must name what the SHARK banked (${fmtLike(banked)}), not only what left the mark: ${coll.line}`);
   assert(new RegExp(fmtLike(coll.r.body.vig)).test(coll.line) && /vig/.test(coll.line),
     `the vig is the difference between the two figures — name it: ${coll.line}`);
-  // the withheld half: pressing collect hospitalizes the mark, brands them a welsher for good and
+  // the withheld half: pressing collect hospitalizes the mark, brands them a welsher (until they square their name) and
   // marks them WANTED. Measured from the DATABASE, then required on the line.
   const markRow = (await app3.pool.query('SELECT welsher, wanted_until, hosp_until FROM characters WHERE id=$1', [Mk.id])).rows[0];
   assert.equal(markRow.welsher, true, 'the collect must genuinely brand the mark (or the line below asserts nothing)');
@@ -8049,8 +8049,14 @@ await app.close();
     "WAVE 73 (freight): the tip-off must SEND the job's display name, never only its catalog key");
   assert.ok(rat.line.includes(rat.r.body.name), `WAVE 73 (freight): the tip-off must name the job it blows — got ${rat.line}`);
   assert.match(rat.line, /whatever the roll/, `WAVE 73 (freight): the tip-off must say the job blows regardless — got ${rat.line}`);
-  assert.match(rat.line, /own sentence/, `WAVE 73 (freight): the deal is RELIEF-ONLY and never a cut — got ${rat.line}`);
-  assert.match(rat.line, /hole/, `WAVE 73 (freight): the rat goes to the hole with the crew, which is what keeps the roster from outing them — got ${rat.line}`);
+  // the REAL heist-rat deal (Codex P2, verified against executeHeist's blown branch): the whole crew
+  // — the rat included — eats DOUBLE the job's stretch (jail, never the hole), and the rat's cut of
+  // the fronted stake lands quietly. The first cut of this block pinned the PEN break-rat's
+  // relief-only/hole wording here, which understated the punishment and hid the payout.
+  assert.match(rat.line, /double/i, `WAVE 73 (freight): the rat must be told the whole crew — them included — eats DOUBLE the stretch — got ${rat.line}`);
+  assert.match(rat.line, /cut/i, `WAVE 73 (freight): the rat must be told their cut lands quietly — got ${rat.line}`);
+  // \bhole\b, not /hole/ — the corrected line legitimately says "WHOLE crew" (the /rat/-matches-geneRATion class)
+  assert(!/own sentence|\bhole\b/i.test(rat.line), `WAVE 73 (freight): the heist rat must NOT be sold the break-rat's relief-only/hole deal — got ${rat.line}`);
   assert.ok(!/\bcorner\b/.test(rat.line), `WAVE 73 (freight): the tip-off must not print the raw job key — got ${rat.line}`);
 
   await app6.close();
