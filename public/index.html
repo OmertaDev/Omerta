@@ -2528,7 +2528,13 @@
     if (body && body.pulled) return `pulled your name back from ${txt(body.pulled)}`;
     // THE HIRED GUNS — a merc's firepower counts, but takes no cut. The toast says the crew grew.
     if (body && body.hired && body.fee != null) return `\u{1F52B} a gun's on the crew — $${fmt(body.fee)} up front, no cut of the score. crew ${body.crew}/${body.crewMax}`;
-    if (body && body.dismissed && body.crewMax !== undefined) return `sent a gun home — a slot's open for a real crewman. crew ${body.crew}/${body.crewMax}`;
+    // …and the UNDO, which forfeits it. The merc was paid up front and showed up, so the fee stays
+    // spent — the line read as tidy crew management with no money in it at all, on the press that
+    // burns $75,000. The figure ships from the server; the phrasing mirrors the hire above so the
+    // pair reads as one transaction.
+    if (body && body.dismissed && body.crewMax !== undefined)
+      return `sent a gun home — a slot's open for a real crewman. crew ${body.crew}/${body.crewMax}`
+        + (body.fee != null ? ` The $${fmt(body.fee)} paid up front stays spent — no refund.` : '');
     // THE CREW (the account-level social pact) — the lifecycle toasts. `crew` is a string status here,
     // distinct from the hired-guns branches above where it's a member count.
     if (body && typeof body.crew === 'string') {
@@ -3796,7 +3802,15 @@
     if (body.plate && body.carId) bits.push(`\u{1F516} the plate reads ${txt(body.plate)}${body.car ? ` on ${art(body.car)}` : ''}${body.omr ? ` — ${fmt(body.omr)} $OMR` : ''}`);
     if (body.feature && body.name) bits.push(`built ${art(body.name)}` + (body.omr ? ` — ${fmt(body.omr)} $OMR, ${fmt(body.spent)} sunk into the place all told` : ''));
     if (body.bid !== undefined && body.name && body.youLead) bits.push(`bid ${fmt(body.bid)} $OMR on ${body.name} — you lead`);
-    if (body.place && body.amount !== undefined) bits.push(`dedicated ${body.place} to ${body.name} (${fmt(body.amount)} $OMR)`);
+    // A plaque BURNS the premium currency and can be taken off you at any moment by a bigger flex,
+    // with no refund — the handler says so in its own header ("it's a flex, not escrow") and the
+    // receipt named neither, though the no-refund term is exactly what decides whether to bid 150 or
+    // 1,020. A takeover also rendered byte-identically to planting one on open ground; the server
+    // sends the displaced holder now, so the line can say whose plaque came down.
+    if (body.place && body.amount !== undefined)
+      bits.push(`dedicated ${body.place} to ${txt(body.name)} — ${fmt(body.amount)} $OMR BURNED`
+        + (body.took ? `, and ${txt(body.took)}'s plaque comes down` : '')
+        + `. A bigger flex takes it off you the same way, and neither of you gets a refund.`);
     // The price leads, because it is what LEFT YOUR POCKET — this line used to state only the
     // owner's cut, and the bare-figure catch-all stapled the price in front of it, which is how two
     // figures came to sit side by side with nothing saying which was which. Say both, in order.
@@ -4010,10 +4024,17 @@
       // raid, not an edge case. And BOTH halves knew you were hospitalised and neither said for how
       // long — the number is right there in the reply, and being off the board for half an hour is
       // the thing you plan the next move around.
-      if (body.success) bits.push(`hit ${body.family} — took $${fmt(body.loot)} off their war chest${body.conquered ? '. ROUTED — your family now holds them as a vassal.' : ''}${body.warWon ? ' \u{2694}\u{FE0F} CAMPAIGN WON — a war-chief trophy for the family.' : ''}${body.countered ? `. Their guns caught you leaving — ${body.hospSeconds ? minsTxt(body.hospSeconds) : 'a spell'} in the hospital.` : ''}`);
+      // THE MANHUNT is the silent sibling of `countered`, one branch apart in the handler: escape the
+      // scene and the family REMEMBERS — a worker-resolved strike is scheduled on your own head, and
+      // the raid that read as a clean score arrived later as an unexplained hospitalization. The
+      // window is the server's (FAMILY_WAR's own lever), never restated here.
+      if (body.success) bits.push(`hit ${body.family} — took $${fmt(body.loot)} off their war chest${body.conquered ? '. ROUTED — your family now holds them as a vassal.' : ''}${body.warWon ? ' \u{2694}\u{FE0F} CAMPAIGN WON — a war-chief trophy for the family.' : ''}${body.countered ? `. Their guns caught you leaving — ${body.hospSeconds ? minsTxt(body.hospSeconds) : 'a spell'} in the hospital.` : ''}${body.manhunt ? `. You got clear, but they marked you — their guns come looking${body.manhuntSeconds ? ` in about ${minsTxt(body.manhuntSeconds)}` : ''}. Be somewhere else.` : ''}`);
       else bits.push(`${body.family} repelled the raid — their guns put you in the hospital${body.hospSeconds ? ` for ${minsTxt(body.hospSeconds)}` : ''}.`);
     }
-    if (body.winScore !== undefined && body.endsSeconds !== undefined) bits.push(`\u{2694}\u{FE0F} war declared on ${body.family} — land ${body.winScore} raids inside ${minsTxt(body.endsSeconds)} to win the campaign`);
+    // …and it names the OBJECTIVE and never the SPEND: the war chest comes out of the family treasury,
+    // and both other treasury spends in this cluster (invade, reinforce) state their figure. A boss
+    // read a fluent objective line and never learned the treasury moved.
+    if (body.winScore !== undefined && body.endsSeconds !== undefined) bits.push(`\u{2694}\u{FE0F} war declared on ${body.family} — land ${body.winScore} raids inside ${minsTxt(body.endsSeconds)} to win the campaign${body.cost != null ? ` (−$${fmt(body.cost)} war chest from the treasury)` : ''}`);
     // A MARKET BID named neither the iron nor the money. Two terms, both the server's to send: the
     // reply carried only an opaque listing UUID, so a player watching three car lots read three
     // identical lines (both auction siblings send a name and render it), and the cash LEFT the
@@ -8386,7 +8407,8 @@
     $('#landmark-slot').innerHTML = `<div class="grid">${(lm?.landmarks || []).map((l) => `
       <div class="card"><span class="t">${l.place}</span>
         <div class="d">${l.holder ? `held by <b>${l.holder}</b> (${fmt(l.amount)} $OMR)` : 'open — no plaque yet'}</div>
-        <input data-lmamt="${l.district}" placeholder="≥${fmt(l.nextMin)} $OMR" size="8"> <button class="act" data-lm="${l.district}">dedicate</button></div>`).join('')}</div>`;
+        <input data-lmamt="${l.district}" placeholder="≥${fmt(l.nextMin)} $OMR" size="8"> <button class="act" data-lm="${l.district}">dedicate</button>
+        <div class="d" style="font-size:11px;margin-top:4px">the $OMR is BURNED, and a bigger flex takes the plaque off you — no refund, ever. Bid what the glory is worth.</div></div>`).join('')}</div>`;
     $('#landmark-slot').querySelectorAll('[data-lm]').forEach((b) => b.onclick = () =>
       act('POST', `/v1/landmarks/${b.dataset.lm}`, { amount: Number($('#landmark-slot').querySelector(`[data-lmamt="${b.dataset.lm}"]`).value) }).then(() => renderCity()));
   }

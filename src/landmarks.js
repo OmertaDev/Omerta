@@ -16,7 +16,10 @@ export async function dedicateLandmark(ch, districtId, amount, client, h) {
   if (!Number.isFinite(amt) || amt < LANDMARKS.MIN_DEDICATE)
     throw new GameError('amount', `A dedication runs at least ${LANDMARKS.MIN_DEDICATE} $OMR.`);
   // lock the plaque row (SELECT-then-write; the current flex must be strictly beaten)
-  const cur = (await client.query('SELECT amount FROM landmarks WHERE district_id=$1 FOR UPDATE', [districtId])).rows[0];
+  // holder_name comes back too: taking a plaque OFF somebody rendered byte-identically to planting one
+  // on open ground, so nothing marked that a displaced holder existed — and the displacement IS the
+  // term (their $OMR is burned, not refunded, and yours goes the same way to the next bigger flex).
+  const cur = (await client.query('SELECT amount, holder_name FROM landmarks WHERE district_id=$1 FOR UPDATE', [districtId])).rows[0];
   if (cur && amt <= Number(cur.amount))
     throw new GameError('outbid', `The current flex is ${Math.floor(Number(cur.amount))} $OMR — beat it to take the plaque.`);
   await spendOmr(client, h, amt, 'vanity:landmark'); // gates h.acct.omr, debits in-memory, ledgers the burn (vanity:% term)
@@ -26,7 +29,7 @@ export async function dedicateLandmark(ch, districtId, amount, client, h) {
   if (cur) await client.query('UPDATE landmarks SET holder_account=$2, holder_name=$3, amount=$4, dedicated_at=now() WHERE district_id=$1', [districtId, ch.account_id, name, amt]);
   else await client.query('INSERT INTO landmarks (district_id, holder_account, holder_name, amount) VALUES ($1,$2,$3,$4)', [districtId, ch.account_id, name, amt]);
   await h.track(client, ch.account_id, 'landmark', { district: districtId, omr: amt });
-  return { ok: true, district: districtId, place, name, amount: amt, spent: amt };
+  return { ok: true, district: districtId, place, name, amount: amt, spent: amt, took: cur ? cur.holder_name : null };
 }
 
 // GET /v1/landmarks — the map of dedicated plaques (every district, holder + flex, or open).

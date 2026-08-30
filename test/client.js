@@ -7394,6 +7394,108 @@ await app.close();
   console.log('  ✓ wave 73: the shylock — a collect paid the wrong man’s number and hid what it did to the mark; a pledged take stapled the deadline to the wrong sentence');
 }
 
+// ── WAVE 73 (world): four presses that moved a family's money, or a player's own head, in silence ──
+// Its OWN tokens, after the main loop: three of the four need a FAMILY (a boss with a treasury) and
+// one needs an NPC family, which is a WORKER artifact runPopulation founds and the worker never runs
+// here — so both are seeded, and nothing in this block is conditional. A drive that does not land is
+// a failure, not a shrug: a refused action is skipped in silence and reads on the summary line
+// exactly like a covered one. The two money claims are measured from the DATABASE rather than from
+// the reply under test.
+{
+  const app4 = await buildServer();
+  const inj4 = async (method, url, token, payload) => {
+    const res = await app4.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
+  };
+  const mk73w = async (nm) => {
+    const t = (await inj4('POST', '/v1/auth/guest')).body.token;
+    await inj4('POST', '/v1/character', t, { name: nm + Math.random().toString(36).slice(2, 7) });
+    const id = (await inj4('GET', '/v1/me', t)).body.character.id;
+    await app4.pool.query('UPDATE characters SET cash=50000000, respect=5000000, energy=100, ammo=5000, health=100 WHERE id=$1', [id]);
+    const account = (await app4.pool.query('SELECT account_id FROM characters WHERE id=$1', [id])).rows[0].account_id;
+    await app4.pool.query('UPDATE account_persistent SET omr=100000 WHERE account_id=$1', [account]);
+    return { t, id, account };
+  };
+  const drive73w = async (url, tok, payload, what) => {
+    const r = await inj4('POST', url, tok, payload || null);
+    assert.equal(r.code, 200, `WAVE 73 (world) could not drive ${what} (${JSON.stringify(r.body)})`);
+    return { r, line: String(describeFn(r.body, 200)) };
+  };
+  const boss73 = await mk73w('Warboss ');
+  await inj4('POST', '/v1/gangs', boss73.t, { name: 'Wave73 Fam ' + Math.random().toString(36).slice(2, 5), tag: 'W7' + Math.random().toString(36).slice(2, 4) });
+  const myGang = (await app4.pool.query('SELECT id FROM gangs ORDER BY created_at DESC LIMIT 1')).rows[0];
+  await app4.pool.query('UPDATE gangs SET treasury=90000000 WHERE id=$1', [myGang.id]);
+  const ghost73 = await mk73w('Ghostfam ');
+  await inj4('POST', '/v1/gangs', ghost73.t, { name: 'Wave73 Syndicate ' + Math.random().toString(36).slice(2, 5), tag: 'W8' + Math.random().toString(36).slice(2, 4) });
+  const npcFam73 = (await app4.pool.query('SELECT id, name FROM gangs ORDER BY created_at DESC LIMIT 1')).rows[0];
+  await app4.pool.query('UPDATE gangs SET npc_flag=true, treasury=9000000 WHERE id=$1', [npcFam73.id]);
+
+  // ── THE MANHUNT: the raid that reads as a clean score puts a strike on your own head ────────────
+  // Pinned to the LANDED, NON-COUNTERED branch — the one the handler leaves silent. `countered` is
+  // the sibling that IS rendered; its escape twin schedules a worker-resolved hit on the raider and
+  // was reported by nothing, so the hospitalization arrived 45 minutes later unexplained.
+  process.env.FAMILY_RAID_P = '1'; process.env.FAMILY_COUNTER = 'off';
+  const raid73 = await drive73w(`/v1/npcfamily/${npcFam73.id}/raid`, boss73.t, null, 'the landed raid');
+  delete process.env.FAMILY_RAID_P; delete process.env.FAMILY_COUNTER;
+  assert.equal(raid73.r.body.countered, false,
+    'this block is vacuous unless the raid landed WITHOUT a counter — the counter branch is the one that already reads');
+  // GROUND TRUTH is the database: the strike really is scheduled, on THIS raider, or the line below
+  // would be asserting a term the game does not actually impose.
+  const aggro = (await app4.pool.query('SELECT target_character, scheduled_at FROM family_aggro WHERE gang_id=$1', [npcFam73.id])).rows;
+  assert.equal(aggro.length, 1, 'the escape branch must genuinely schedule the manhunt (or there is no term to state)');
+  assert.equal(aggro[0].target_character, boss73.id, 'the manhunt is on the RAIDER — the reply names a consequence for him');
+  assert.equal(raid73.r.body.manhunt, true, 'the reply must MARK the manhunt — the client has no way to know a row was written');
+  assert(raid73.r.body.manhuntSeconds > 0,
+    "the window is FAMILY_WAR's own lever and must ship from the server, never be restated client-side");
+  // the window is asserted from the reply's OWN figure, never a literal — a literal passes straight
+  // through the mutation that stops the field being sent
+  const mhMins = Math.round(raid73.r.body.manhuntSeconds / 60);
+  assert(/looking/i.test(raid73.line) && new RegExp(`\\b${mhMins}m\\b`).test(raid73.line),
+    `a raid that put a strike on your own head read as a clean score: ${raid73.line}`);
+  assert(/\$6,000|\$[\d,]+ off their war chest/.test(raid73.line), `the loot must survive the addition: ${raid73.line}`);
+
+  // ── THE WAR CHEST: the objective was named and the spend was not ────────────────────────────────
+  const tBefore = Number((await app4.pool.query('SELECT treasury FROM gangs WHERE id=$1', [myGang.id])).rows[0].treasury);
+  const war73 = await drive73w(`/v1/npcfamily/${npcFam73.id}/war`, boss73.t, null, 'declaring the war');
+  const tAfter = Number((await app4.pool.query('SELECT treasury FROM gangs WHERE id=$1', [myGang.id])).rows[0].treasury);
+  assert(tBefore - tAfter > 0, 'this block is vacuous unless declaring a war genuinely moves the treasury');
+  assert.equal(war73.r.body.cost, tBefore - tAfter,
+    "the reply's cost must be what actually LEFT the treasury — the client has no handle on warBoard");
+  assert(new RegExp(fmtLike(tBefore - tAfter)).test(war73.line) && /treasur/i.test(war73.line),
+    `a war burns the family's money and the receipt named only the objective: ${war73.line}`);
+  assert(/land \d+ raids/.test(war73.line), `the objective must survive the addition: ${war73.line}`);
+
+  // ── THE PLAQUE: a $OMR BURN with a no-refund displacement term, and neither was on the receipt ──
+  const lmA = await drive73w('/v1/landmarks/docks', boss73.t, { amount: 150 }, 'the fresh dedication');
+  assert.equal(lmA.r.body.took, null, 'open ground displaces nobody — the takeover clause must not fire here');
+  assert(/BURNED/.test(lmA.line) && /refund/i.test(lmA.line),
+    `the $OMR is burned and a bigger flex takes the plaque with no refund — the receipt said neither: ${lmA.line}`);
+  const bidder73 = await mk73w('Outbidder ');
+  const lmB = await drive73w('/v1/landmarks/docks', bidder73.t, { amount: 1020 }, 'the takeover');
+  assert.equal(lmB.r.body.took, lmA.r.body.name,
+    'the server must name the DISPLACED holder — the client cannot read a row it never saw');
+  assert(new RegExp(String(lmA.r.body.name).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).test(lmB.line),
+    `taking a plaque OFF somebody rendered byte-identically to planting one on open ground: ${lmB.line}`);
+  assert(/BURNED/.test(lmB.line) && /refund/i.test(lmB.line), `the takeover states the same two terms: ${lmB.line}`);
+
+  // ── THE DISMISSED GUN: the fee stays spent, and the undo said nothing about money ───────────────
+  // A hired gun is a free NPC resident meeting the outfit's level floor; the population worker never
+  // runs here, so one is seeded — without it the hire 404s `no_gun` and BOTH assertions below skip.
+  const merc73 = await mk73w('Merc ');
+  await app4.pool.query('UPDATE characters SET is_npc=true, respect=5000000 WHERE id=$1', [merc73.id]);
+  const lead73 = await mk73w('Raidleader ');
+  const plan73 = await drive73w('/v1/world/volkov/plan', lead73.t, null, 'planning the apex raid');
+  const hire73 = await drive73w(`/v1/world/raids/${plan73.r.body.id}/hire`, lead73.t, null, 'hiring a gun');
+  assert(hire73.r.body.fee > 0, 'this block is vacuous unless the hire genuinely charged a fee to forfeit');
+  const dis73 = await drive73w(`/v1/world/raids/${plan73.r.body.id}/dismiss`, lead73.t, null, 'sending the gun home');
+  assert.equal(dis73.r.body.fee, hire73.r.body.fee,
+    'the dismiss must SEND the forfeited figure — restating a lever client-side is how the two come to disagree');
+  assert(new RegExp(fmtLike(hire73.r.body.fee)).test(dis73.line) && /(spent|no refund)/i.test(dis73.line),
+    `sending a gun home forfeits the fee already paid and the toast read as tidy crew management: ${dis73.line}`);
+  await app4.close();
+  console.log('  ✓ wave 73: the world — a raid that put a strike on your own head read as a clean score, a war burned the treasury in silence, a plaque hid its burn and its displacement, and a dismissed gun hid the forfeit');
+}
+
 // ── WAVE 64 — the lines THE SILENCE LEDGER's first crop now produces. The ledger above proves each
 // reply is no longer mute; these pin what it SAYS, because a branch that fires and says the wrong
 // thing is the same defect one step later. Synthetic on the exact shapes the servers return (the

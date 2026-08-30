@@ -442,7 +442,10 @@ export async function dismissGun(ch, raidId, client, h) {
   if (!gun) throw new GameError('no_gun', 'No hired guns on this crew to send home.');
   await client.query('DELETE FROM world_raid_members WHERE raid_id=$1 AND character_id=$2', [raidId, gun.character_id]);
   const crew = Number((await client.query('SELECT COUNT(*) n FROM world_raid_members WHERE raid_id=$1', [raidId])).rows[0].n);
-  return { ok: true, id: raidId, dismissed: true, crew, crewMax: WORLD.COOP_MAX_CREW };
+  // `fee` ships so the receipt can state the forfeit the header above describes: the merc was paid up
+  // front and the money stays spent. The HIRE line one branch away names both its price and its terms;
+  // its own undo named neither, and a title attribute is invisible on the phone the PWA targets.
+  return { ok: true, id: raidId, dismissed: true, crew, crewMax: WORLD.COOP_MAX_CREW, fee: WORLD.HIRE_FEE, refunded: 0 };
 }
 
 // POST /v1/world/raids/:id/leave — a raider walks; the LEADER walking disbands the op (no stake to refund).
