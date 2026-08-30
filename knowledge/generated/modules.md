@@ -76,7 +76,7 @@
 | [src/genesislaunch.js](../../src/genesislaunch.js) | 72 | platform-core | 1 / 3 | 0 | 1 | 0 |
 | [src/genesisrelease.js](../../src/genesisrelease.js) | 389 | platform-core | 2 / 0 | 0 | 1 | 0 |
 | [src/growth.js](../../src/growth.js) | 1033 | engagement-growth | 4 / 15 | 16 | 17 | 6 |
-| [src/heists.js](../../src/heists.js) | 581 | social-combat | 3 / 9 | 10 | 10 | 3 |
+| [src/heists.js](../../src/heists.js) | 583 | social-combat | 3 / 9 | 10 | 10 | 3 |
 | [src/home.js](../../src/home.js) | 54 | engagement-growth | 13 / 3 | 1 | 0 | 1 |
 | [src/honor.js](../../src/honor.js) | 74 | social-combat | 1 / 12 | 1 | 5 | 1 |
 | [src/hustle.js](../../src/hustle.js) | 103 | platform-core | 2 / 3 | 2 | 3 | 0 |

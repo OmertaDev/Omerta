@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `50f09692b462`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `01bef7c6dad7`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1319 |
+| Commits in clone | 1321 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-30 — Merge remote-tracking branch 'origin/main' into claude/next-work-recommendations-x5f2fp |
+| Latest commit | 2026-08-30 — The heist rat's receipt sold the break-rat's deal, the manhunt toast advised a shield that isn't one, and the welsher brand isn't permanent (Codex P2 x3, each verified against source) |
 
 ## Commit authors
 
@@ -21,7 +21,7 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 435 |
-| Claude | 192 |
+| Claude | 194 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 4 |
 
@@ -30,7 +30,7 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 499 | yes |
-| [public/index.html](../../public/index.html) | 404 | yes |
+| [public/index.html](../../public/index.html) | 405 | yes |
 | [src/server.js](../../src/server.js) | 350 | yes |
 | [SPEC.md](../../SPEC.md) | 275 | yes |
 | [schema.sql](../../schema.sql) | 273 | yes |
@@ -38,13 +38,13 @@
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 170 | yes |
 | [package.json](../../package.json) | 142 | yes |
-| knowledge/generated/github-history.md | 129 | historical |
-| knowledge/generated/graph-summary.md | 129 | historical |
-| knowledge/generated/graph.json | 129 | historical |
-| knowledge/generated/inventory.md | 129 | historical |
+| knowledge/generated/github-history.md | 130 | historical |
+| knowledge/generated/graph-summary.md | 130 | historical |
+| knowledge/generated/graph.json | 130 | historical |
+| knowledge/generated/inventory.md | 130 | historical |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
-| [test/client.js](../../test/client.js) | 115 | yes |
+| [test/client.js](../../test/client.js) | 116 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 115 | yes |
 | [src/invariants.js](../../src/invariants.js) | 115 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |

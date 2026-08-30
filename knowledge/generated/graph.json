@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "50f09692b462fbf8718f3e2e9472c95939306661",
+  "sourceRevision": "01bef7c6dad7f2b11283700e5e638be5195a4485",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5677,
-    "edges": 24956,
+    "nodes": 5679,
+    "edges": 24965,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 56,
-      "Commit": 1319,
+      "Commit": 1321,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 9996,
+      "CHANGED": 10003,
       "CONTAINS": 1846,
       "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1319,
+      "HAS_COMMIT": 1321,
       "IMPLEMENTS": 124,
       "IMPORTS": 1634,
       "INHERITS": 12,
@@ -32493,20 +32493,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1176462,
-      "lines": 12097,
-      "version": "2cd8764bd2786805",
+      "bytes": 1176930,
+      "lines": 12100,
+      "version": "f4d341e1ca5d695d",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "2cd8764bd2786805"
+          "version": "f4d341e1ca5d695d"
         }
       ],
-      "lastChangedAt": "2026-08-30T12:36:08.000Z",
+      "lastChangedAt": "2026-08-30T15:24:26.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "abd4987b5924176b2806b793df045695e86b503e"
+      "lastChangedCommit": "01bef7c6dad7f2b11283700e5e638be5195a4485"
     },
     {
       "key": "Artifact:public/manifest.json",
@@ -34448,20 +34448,20 @@
       "path": "src/heists.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 42761,
-      "lines": 581,
-      "version": "6fe6c56bc1f92e9c",
+      "bytes": 42956,
+      "lines": 583,
+      "version": "d3f11b5db1512fbe",
       "text": true,
       "provenance": [
         {
           "file": "src/heists.js",
           "line": 1,
-          "version": "6fe6c56bc1f92e9c"
+          "version": "d3f11b5db1512fbe"
         }
       ],
-      "lastChangedAt": "2026-08-30T10:40:34.000Z",
+      "lastChangedAt": "2026-08-30T15:24:26.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "f677e6b30a62523c7b1d1d5fed69fa7d75a45e48"
+      "lastChangedCommit": "01bef7c6dad7f2b11283700e5e638be5195a4485"
     },
     {
       "key": "Artifact:src/home.js",
@@ -37553,20 +37553,20 @@
       "path": "test/client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 657010,
-      "lines": 8486,
-      "version": "32ca584a28f1ad91",
+      "bytes": 657695,
+      "lines": 8492,
+      "version": "4092118a7d26672d",
       "text": true,
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "32ca584a28f1ad91"
+          "version": "4092118a7d26672d"
         }
       ],
-      "lastChangedAt": "2026-08-30T12:36:08.000Z",
+      "lastChangedAt": "2026-08-30T15:24:26.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "abd4987b5924176b2806b793df045695e86b503e"
+      "lastChangedCommit": "01bef7c6dad7f2b11283700e5e638be5195a4485"
     },
     {
       "key": "Artifact:test/clues.js",
@@ -42961,6 +42961,22 @@
         {
           "commit": "018500a04bfeb136b3ccaa8928eb58e4e2ae34d7",
           "url": "https://github.com/OmertaDev/Omerta/commit/018500a04bfeb136b3ccaa8928eb58e4e2ae34d7"
+        }
+      ]
+    },
+    {
+      "key": "Commit:01bef7c6dad7f2b11283700e5e638be5195a4485",
+      "type": "Commit",
+      "id": "01bef7c6dad7f2b11283700e5e638be5195a4485",
+      "label": "The heist rat's receipt sold the break-rat's deal, the manhunt toast advised a shield that isn't one, and the welsher brand isn't permanent (Codex P2 x3, each verified against source)",
+      "title": "The heist rat's receipt sold the break-rat's deal, the manhunt toast advised a shield that isn't one, and the welsher brand isn't permanent (Codex P2 x3, each verified against source)",
+      "date": "2026-08-30T15:24:26.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/01bef7c6dad7f2b11283700e5e638be5195a4485",
+      "provenance": [
+        {
+          "commit": "01bef7c6dad7f2b11283700e5e638be5195a4485",
+          "url": "https://github.com/OmertaDev/Omerta/commit/01bef7c6dad7f2b11283700e5e638be5195a4485"
         }
       ]
     },
@@ -49297,6 +49313,22 @@
         {
           "commit": "4ae76a6a7ecb9ce10f70a55702da6950a5bbd7e0",
           "url": "https://github.com/OmertaDev/Omerta/commit/4ae76a6a7ecb9ce10f70a55702da6950a5bbd7e0"
+        }
+      ]
+    },
+    {
+      "key": "Commit:4af4db4342755a97ecbc6a8ebf1858c1a003e584",
+      "type": "Commit",
+      "id": "4af4db4342755a97ecbc6a8ebf1858c1a003e584",
+      "label": "Knowledge graph regenerated for the main merge",
+      "title": "Knowledge graph regenerated for the main merge",
+      "date": "2026-08-30T15:15:55.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4af4db4342755a97ecbc6a8ebf1858c1a003e584",
+      "provenance": [
+        {
+          "commit": "4af4db4342755a97ecbc6a8ebf1858c1a003e584",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4af4db4342755a97ecbc6a8ebf1858c1a003e584"
         }
       ]
     },
@@ -73218,7 +73250,7 @@
         },
         {
           "file": "test/client.js",
-          "line": 8268
+          "line": 8274
         },
         {
           "file": "test/deeds.js",
@@ -77089,6 +77121,9 @@
           "commit": "4a6682dcd42077048bc93ee02136352c854bf1fc"
         },
         {
+          "commit": "4af4db4342755a97ecbc6a8ebf1858c1a003e584"
+        },
+        {
           "commit": "4d78d9cad8adb025ca232f4015c2c3ae1d21fc73"
         },
         {
@@ -77485,6 +77520,9 @@
           "commit": "4a6682dcd42077048bc93ee02136352c854bf1fc"
         },
         {
+          "commit": "4af4db4342755a97ecbc6a8ebf1858c1a003e584"
+        },
+        {
           "commit": "4d78d9cad8adb025ca232f4015c2c3ae1d21fc73"
         },
         {
@@ -77879,6 +77917,9 @@
         },
         {
           "commit": "4a6682dcd42077048bc93ee02136352c854bf1fc"
+        },
+        {
+          "commit": "4af4db4342755a97ecbc6a8ebf1858c1a003e584"
         },
         {
           "commit": "4d78d9cad8adb025ca232f4015c2c3ae1d21fc73"
@@ -78332,6 +78373,9 @@
         },
         {
           "commit": "4a6682dcd42077048bc93ee02136352c854bf1fc"
+        },
+        {
+          "commit": "4af4db4342755a97ecbc6a8ebf1858c1a003e584"
         },
         {
           "commit": "4d78d9cad8adb025ca232f4015c2c3ae1d21fc73"
@@ -80020,13 +80064,13 @@
       "type": "Module",
       "id": "src/heists.js",
       "label": "src/heists.js",
-      "lines": 581,
-      "version": "6fe6c56bc1f92e9c",
+      "lines": 583,
+      "version": "d3f11b5db1512fbe",
       "provenance": [
         {
           "file": "src/heists.js",
           "line": 1,
-          "version": "6fe6c56bc1f92e9c"
+          "version": "d3f11b5db1512fbe"
         }
       ]
     },
@@ -84895,7 +84939,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "50f09692b462fbf8718f3e2e9472c95939306661",
+      "revision": "01bef7c6dad7f2b11283700e5e638be5195a4485",
       "currentBranch": "claude/next-work-recommendations-x5f2fp",
       "defaultBranch": "main",
       "visibility": "public",
@@ -108442,13 +108486,13 @@
       "type": "TestSuite",
       "id": "test/client.js",
       "label": "test/client.js",
-      "lines": 8486,
-      "version": "32ca584a28f1ad91",
+      "lines": 8492,
+      "version": "4092118a7d26672d",
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "32ca584a28f1ad91"
+          "version": "4092118a7d26672d"
         }
       ]
     },
@@ -128839,6 +128883,30 @@
       "to": "Artifact:test/economy.js",
       "provenance": {
         "commit": "018500a04bfeb136b3ccaa8928eb58e4e2ae34d7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:01bef7c6dad7f2b11283700e5e638be5195a4485",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "01bef7c6dad7f2b11283700e5e638be5195a4485"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:01bef7c6dad7f2b11283700e5e638be5195a4485",
+      "to": "Artifact:src/heists.js",
+      "provenance": {
+        "commit": "01bef7c6dad7f2b11283700e5e638be5195a4485"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:01bef7c6dad7f2b11283700e5e638be5195a4485",
+      "to": "Artifact:test/client.js",
+      "provenance": {
+        "commit": "01bef7c6dad7f2b11283700e5e638be5195a4485"
       }
     },
     {
@@ -155791,6 +155859,38 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "commit": "4ae76a6a7ecb9ce10f70a55702da6950a5bbd7e0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4af4db4342755a97ecbc6a8ebf1858c1a003e584",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "4af4db4342755a97ecbc6a8ebf1858c1a003e584"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4af4db4342755a97ecbc6a8ebf1858c1a003e584",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "4af4db4342755a97ecbc6a8ebf1858c1a003e584"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4af4db4342755a97ecbc6a8ebf1858c1a003e584",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "4af4db4342755a97ecbc6a8ebf1858c1a003e584"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4af4db4342755a97ecbc6a8ebf1858c1a003e584",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "4af4db4342755a97ecbc6a8ebf1858c1a003e584"
       }
     },
     {
@@ -244573,6 +244673,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:01bef7c6dad7f2b11283700e5e638be5195a4485",
+      "provenance": {
+        "commit": "01bef7c6dad7f2b11283700e5e638be5195a4485"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:01e4ab1547cec636d6e74267118ec3f276e60e58",
       "provenance": {
         "commit": "01e4ab1547cec636d6e74267118ec3f276e60e58"
@@ -247736,6 +247844,14 @@
       "to": "Commit:4ae76a6a7ecb9ce10f70a55702da6950a5bbd7e0",
       "provenance": {
         "commit": "4ae76a6a7ecb9ce10f70a55702da6950a5bbd7e0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:4af4db4342755a97ecbc6a8ebf1858c1a003e584",
+      "provenance": {
+        "commit": "4af4db4342755a97ecbc6a8ebf1858c1a003e584"
       }
     },
     {
@@ -264590,7 +264706,7 @@
       "to": "ExternalDependency:viem/accounts",
       "provenance": {
         "file": "test/client.js",
-        "line": 8268
+        "line": 8274
       }
     },
     {
@@ -315908,7 +316024,7 @@
       "to": "Table:gang_members",
       "provenance": {
         "file": "src/heists.js",
-        "line": 282
+        "line": 284
       }
     },
     {
@@ -315926,7 +316042,7 @@
       "to": "Table:stash",
       "provenance": {
         "file": "src/heists.js",
-        "line": 212
+        "line": 214
       }
     },
     {
@@ -315935,7 +316051,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/heists.js",
-        "line": 569
+        "line": 571
       }
     },
     {
