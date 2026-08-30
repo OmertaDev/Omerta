@@ -100,7 +100,7 @@
 | [src/path-funnel.js](../../src/path-funnel.js) | 379 | platform-core | 0 / 4 | 0 | 7 | 2 |
 | [src/path-pages.js](../../src/path-pages.js) | 326 | platform-core | 0 / 2 | 0 | 1 | 1 |
 | [src/payroll.js](../../src/payroll.js) | 110 | enterprise-logistics | 5 / 2 | 1 | 0 | 0 |
-| [src/pen.js](../../src/pen.js) | 652 | law-intelligence | 6 / 6 | 19 | 13 | 2 |
+| [src/pen.js](../../src/pen.js) | 670 | law-intelligence | 6 / 6 | 19 | 13 | 2 |
 | [src/people.js](../../src/people.js) | 230 | engagement-growth | 4 / 2 | 4 | 18 | 0 |
 | [src/phone.js](../../src/phone.js) | 198 | platform-core | 2 / 1 | 5 | 7 | 0 |
 | [src/population.js](../../src/population.js) | 827 | world-progression | 7 / 9 | 0 | 33 | 5 |

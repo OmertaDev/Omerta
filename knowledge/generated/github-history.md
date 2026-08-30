@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `8cb5147bd085`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `67f3e72e51aa`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1287 |
+| Commits in clone | 1289 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-30 — Play wave 73 (combat): the four street thefts read as GAMBLING, and the kill named one thing it took |
+| Latest commit | 2026-08-30 — Play wave 73 (the pen): a break BLOWN by a rat read as bad luck at the fence |
 
 ## Commit authors
 
@@ -21,7 +21,7 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 434 |
-| Claude | 162 |
+| Claude | 164 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 3 |
 
@@ -30,7 +30,7 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 497 | yes |
-| [public/index.html](../../public/index.html) | 394 | yes |
+| [public/index.html](../../public/index.html) | 395 | yes |
 | [src/server.js](../../src/server.js) | 350 | yes |
 | [SPEC.md](../../SPEC.md) | 273 | yes |
 | [schema.sql](../../schema.sql) | 273 | yes |
@@ -41,12 +41,12 @@
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
 | [src/invariants.js](../../src/invariants.js) | 115 | yes |
+| knowledge/generated/github-history.md | 114 | historical |
+| knowledge/generated/graph-summary.md | 114 | historical |
+| knowledge/generated/graph.json | 114 | historical |
+| knowledge/generated/inventory.md | 114 | historical |
 | [src/rules.tail.js](../../src/rules.tail.js) | 114 | yes |
-| knowledge/generated/github-history.md | 113 | historical |
-| knowledge/generated/graph-summary.md | 113 | historical |
-| knowledge/generated/graph.json | 113 | historical |
-| knowledge/generated/inventory.md | 113 | historical |
-| [test/client.js](../../test/client.js) | 104 | yes |
+| [test/client.js](../../test/client.js) | 105 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
 | [test/social.js](../../test/social.js) | 84 | yes |
 | [public/wiki.html](../../public/wiki.html) | 80 | yes |
@@ -65,7 +65,7 @@
 | [src/casino.js](../../src/casino.js) | 43 | yes |
 | knowledge/generated/documents.md | 42 | historical |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
-| knowledge/generated/modules.md | 39 | historical |
+| knowledge/generated/modules.md | 40 | historical |
 | [src/business.js](../../src/business.js) | 39 | yes |
 | [test/docs.js](../../test/docs.js) | 38 | yes |
 | [src/chain.js](../../src/chain.js) | 37 | yes |
