@@ -4257,10 +4257,17 @@
     if (body.dynasty === 'voucher')
       bits.push(`\u{1F5BC} the mint voucher is signed and bound to ${body.voucher?.to ? `${body.voucher.to.slice(0, 6)}…${body.voucher.to.slice(-4)}` : 'your linked wallet'} — claim it on-chain${
         body.voucher?.deadline ? ` within ${untilTxt(body.voucher.deadline)}` : ''} or it lapses. One portrait per bloodline, ever.`);
+    // CODEX R5: the old line said "claimed ... the release itself is on-chain" — a fact, not a
+    // direction — and the refresh then zeroed claimableOmr and removed the button, so a holder
+    // could reasonably believe the tokens were released and leave them in the contract forever.
+    // The receipt now DIRECTS the wallet step still owed on a REAL bond; a comp/QA bond has no
+    // on-chain half, and sending its holder to the contract would be the opposite lie.
     if (body.bond === 'claimed')
-      bits.push(`\u{1F4B0} claimed ${fmt(body.claimed)} $OMR off the bond${body.unvested > 0
-        ? ` — ${fmt(body.unvested)} $OMR is still vesting behind it` : ' — that bond is fully claimed'}`
-        + ' · the release itself is on-chain, from the OmertaBond contract');
+      bits.push(`\u{1F4B0} ${fmt(body.claimed)} $OMR vested clear on the bond${body.unvested > 0
+        ? ` — ${fmt(body.unvested)} $OMR is still vesting behind it` : ' — the bond is fully vested'}`
+        + (body.onchain
+          ? '. That squared the BOOKS only: the tokens sit in the OmertaBond contract until YOUR wallet submits claim() for this bond — nothing moved on-chain yet.'
+          : ' · a comp/QA bond — off-chain accounting is the whole record; it has no on-chain release'));
     if (body.bond === 'quote')
       bits.push(`\u{1F4DD} quote signed — ${fmt(body.payoutOmr)} $OMR at ${body.discountBps / 100}% off the market price, vesting over ${
         minsTxt(body.vestSeconds)} · submit bond(quote, signature) with your wallet within ${untilTxt(body.deadline)} or it lapses`);
@@ -10943,8 +10950,12 @@
       </div>
       <div class="card">
         <span class="t">Your Bonds</span>
-        ${(bd.yours || []).length ? (bd.yours || []).map((b) => `<div class="row"><span class="k">bond #${b.id} — ${fmt(b.payoutOmr)} $OMR${b.fullyVested ? ' <span class="chip good">fully released</span>' : ''}</span>
-          <span>${b.claimableOmr ? `${fmt(b.claimableOmr)} ready <button class="act" data-bondclaim="${b.id}">claim</button>` : `<span class="chip">${fmt(b.claimedOmr)} taken</span>`}</span></div>`).join('')
+        ${(bd.yours || []).length ? (bd.yours || []).map((b) => `<div class="row"><span class="k">bond #${b.id} — ${fmt(b.payoutOmr)} $OMR${b.fullyVested ? ' <span class="chip good">fully vested</span>' : ''}</span>
+          <span>${b.claimableOmr ? `${fmt(b.claimableOmr)} ready <button class="act" data-bondclaim="${b.id}">claim</button>`
+            /* CODEX R5: once the off-chain claim zeroes claimableOmr the button goes away, so this
+               residual chip must carry the wallet step a REAL bond still owes — without it the row
+               read "N taken" over tokens still sitting in the OmertaBond contract. */
+            : `<span class="chip">${fmt(b.claimedOmr)} squared${b.onchain ? ' — tokens claim on-chain from your wallet' : ''}</span>`}</span></div>`).join('')
         : '<div class="d" style="color:var(--dim)">You hold none. Anyone who does is a <b>Treasury Backer</b> — a standing the city can see.</div>'}
       </div>`; })()}
 

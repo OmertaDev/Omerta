@@ -146,7 +146,13 @@ export async function claimBond(pool, accountId, bondId) {
     // satisfy, and it matched no branch at all — so a five-figure vested release read "done.", with
     // nothing saying how much of the bond is still vesting behind it.
     const unvested = round6(Number(b.payout_omr) - Number(b.claimed_omr) - claimable);
+    // CODEX R5: this button squares the GAME's books and moves no token — the reply must say which
+    // KIND of bond it squared, because the truthful receipt differs: a REAL bond's OMR sits in the
+    // OmertaBond contract until the holder's own wallet submits claim(), while a comp/QA bond
+    // (tx_hash NULL) has no on-chain half at all, and directing its holder to a contract holding
+    // nothing of theirs would be the opposite lie. Only the server knows which this is.
     return { bond: 'claimed', ok: true, claimed: claimable, unvested: unvested > 0 ? unvested : 0,
+      onchain: !!b.tx_hash,
       note: 'Off-chain accounting — the on-chain OmertaBond contract releases the real OMR (mainnet, dormant).' };
   } catch (e) { await client.query('ROLLBACK'); throw e; } finally { client.release(); }
 }
@@ -407,6 +413,10 @@ export async function bondBoard(pool, accountId) {
       return { id: b.id, principalEth: round6(Number(b.principal_eth)), payoutOmr: round6(Number(b.payout_omr)),
         discountBps: Number(b.discount_bps), vestedOmr: vested, claimedOmr: round6(Number(b.claimed_omr)),
         claimableOmr: round6(Math.max(0, vested - Number(b.claimed_omr))),
+        // CODEX R5: after the off-chain claim zeroes claimableOmr the button goes away, so the row's
+        // residual chip is the only place left to say a REAL bond's tokens still want the wallet's
+        // own OmertaBond.claim() — a comp bond (tx_hash NULL) has no on-chain half to direct to.
+        onchain: !!b.tx_hash,
         fullyVested: now - new Date(b.opened_at).getTime() >= Number(b.vest_ms) };
     }),
     isBacker: mine.length > 0, // "Treasury Backer" — pure STATUS (derived; no gameplay power, no §10.4 surface)

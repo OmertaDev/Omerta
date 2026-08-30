@@ -8443,6 +8443,21 @@ await app.close();
   assert.ok(bc.line.includes(fmtC(bc.r.body.claimed)), `WAVE 73 (chain): the claim must name what it released — got ${bc.line}`);
   assert.ok(bc.line.includes(fmtC(bc.r.body.unvested)) && /still vesting/.test(bc.line),
     `WAVE 73 (chain): the claim must name what is STILL LOCKED behind it — got ${bc.line}`);
+  // CODEX R5: "the release is on-chain" was a FACT where a DIRECTION was owed — the refresh zeroes
+  // claimableOmr and removes the button, so a holder could read "claimed", watch the affordance
+  // vanish, and leave real OMR in the contract forever. The server names which KIND of bond it
+  // squared (only it knows), and the receipt for a REAL one directs the wallet step still owed.
+  assert.equal(bc.r.body.onchain, true, 'CODEX R5: a real bond\'s claim must SAY it has an on-chain half — the receipt branches on it');
+  assert.match(bc.line, /YOUR wallet submits claim/, `CODEX R5: a real bond's receipt must DIRECT the on-chain claim still owed, never merely state the fact — got ${bc.line}`);
+  // …and a comp/QA bond (tx_hash NULL) has NO on-chain half: directing its holder to a contract
+  // holding nothing of theirs would be the opposite lie.
+  await app8.pool.query(
+    `INSERT INTO bonds (id, nonce, account_id, principal_eth, payout_omr, oracle_price, discount_bps, claimed_omr, vest_ms, tx_hash, opened_at)
+       VALUES ('w73-comp', 424243, $1, 1, 500, 3000, 800, 0, 3600000, NULL, now() - interval '2 hours')`, [acctC]);
+  const bcc = await driveC('/v1/bonds/w73-comp/claim', tC, {}, 'the comp bond claim');
+  assert.equal(bcc.r.body.onchain, false, 'CODEX R5: a comp bond\'s claim must say it has NO on-chain half');
+  assert.ok(!/wallet submits claim/.test(bcc.line) && /no on-chain release/.test(bcc.line),
+    `CODEX R5: a comp bond's receipt must NOT send its holder to the contract — got ${bcc.line}`);
 
   // ── THE RARITY UPGRADE named the price and the TIER and never what the tier DOES. `utility.pct`
   // is exactly what the $OMR bought and is not derivable from the tier's NAME.
