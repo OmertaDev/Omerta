@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "bee33aff6cbfe873db33d1b96bead59164c8a4c3",
+  "sourceRevision": "8cb5147bd0852a9f8b9959d2de7753a23e4b378a",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5643,
-    "edges": 24761,
+    "nodes": 5645,
+    "edges": 24772,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 56,
-      "Commit": 1285,
+      "Commit": 1287,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 9839,
+      "CHANGED": 9848,
       "CONTAINS": 1846,
       "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1285,
+      "HAS_COMMIT": 1287,
       "IMPLEMENTS": 124,
       "IMPORTS": 1633,
       "INHERITS": 12,
@@ -32493,20 +32493,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1147413,
-      "lines": 11817,
-      "version": "533d34a650cf48b5",
+      "bytes": 1150810,
+      "lines": 11842,
+      "version": "e718e8c411ddcc39",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "533d34a650cf48b5"
+          "version": "e718e8c411ddcc39"
         }
       ],
-      "lastChangedAt": "2026-08-30T07:22:37.000Z",
+      "lastChangedAt": "2026-08-30T08:05:04.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "bee33aff6cbfe873db33d1b96bead59164c8a4c3"
+      "lastChangedCommit": "8cb5147bd0852a9f8b9959d2de7753a23e4b378a"
     },
     {
       "key": "Artifact:public/manifest.json",
@@ -36311,20 +36311,20 @@
       "path": "src/social/combat.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 83253,
-      "lines": 1039,
-      "version": "3cf470218282e4e7",
+      "bytes": 84124,
+      "lines": 1048,
+      "version": "efddfff85efcc12d",
       "text": true,
       "provenance": [
         {
           "file": "src/social/combat.js",
           "line": 1,
-          "version": "3cf470218282e4e7"
+          "version": "efddfff85efcc12d"
         }
       ],
-      "lastChangedAt": "2026-08-23T13:49:13.000Z",
+      "lastChangedAt": "2026-08-30T08:05:04.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "2c550c7c8afb3f709eea492abd9938e5941bf2f2"
+      "lastChangedCommit": "8cb5147bd0852a9f8b9959d2de7753a23e4b378a"
     },
     {
       "key": "Artifact:src/social/contracts.js",
@@ -36357,20 +36357,20 @@
       "path": "src/social/defense.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 12691,
-      "lines": 166,
-      "version": "dabe92dc4f09de86",
+      "bytes": 13213,
+      "lines": 171,
+      "version": "a29c0508630e51c3",
       "text": true,
       "provenance": [
         {
           "file": "src/social/defense.js",
           "line": 1,
-          "version": "dabe92dc4f09de86"
+          "version": "a29c0508630e51c3"
         }
       ],
-      "lastChangedAt": "2026-08-20T00:38:39.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3bbc776387d45bb0daa76d3db9db43788fdceb8a"
+      "lastChangedAt": "2026-08-30T08:05:04.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "8cb5147bd0852a9f8b9959d2de7753a23e4b378a"
     },
     {
       "key": "Artifact:src/social/estate.js",
@@ -37553,20 +37553,20 @@
       "path": "test/client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 539861,
-      "lines": 7087,
-      "version": "f4096670b970bbdb",
+      "bytes": 553012,
+      "lines": 7232,
+      "version": "a82945f70db5c11e",
       "text": true,
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "f4096670b970bbdb"
+          "version": "a82945f70db5c11e"
         }
       ],
-      "lastChangedAt": "2026-08-30T07:22:37.000Z",
+      "lastChangedAt": "2026-08-30T08:05:04.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "bee33aff6cbfe873db33d1b96bead59164c8a4c3"
+      "lastChangedCommit": "8cb5147bd0852a9f8b9959d2de7753a23e4b378a"
     },
     {
       "key": "Artifact:test/clues.js",
@@ -54421,6 +54421,22 @@
       ]
     },
     {
+      "key": "Commit:8cb5147bd0852a9f8b9959d2de7753a23e4b378a",
+      "type": "Commit",
+      "id": "8cb5147bd0852a9f8b9959d2de7753a23e4b378a",
+      "label": "Play wave 73 (combat): the four street thefts read as GAMBLING, and the kill named one thing it took",
+      "title": "Play wave 73 (combat): the four street thefts read as GAMBLING, and the kill named one thing it took",
+      "date": "2026-08-30T08:05:04.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8cb5147bd0852a9f8b9959d2de7753a23e4b378a",
+      "provenance": [
+        {
+          "commit": "8cb5147bd0852a9f8b9959d2de7753a23e4b378a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8cb5147bd0852a9f8b9959d2de7753a23e4b378a"
+        }
+      ]
+    },
+    {
       "key": "Commit:8cc5e76a75bba54553d24a391dee75740f185c2c",
       "type": "Commit",
       "id": "8cc5e76a75bba54553d24a391dee75740f185c2c",
@@ -62545,6 +62561,22 @@
         {
           "commit": "f4e1716db32f9f9430d36cb2878d832af1400232",
           "url": "https://github.com/OmertaDev/Omerta/commit/f4e1716db32f9f9430d36cb2878d832af1400232"
+        }
+      ]
+    },
+    {
+      "key": "Commit:f506fad1d290c5ba7f6a1c983385e18aa79316f8",
+      "type": "Commit",
+      "id": "f506fad1d290c5ba7f6a1c983385e18aa79316f8",
+      "label": "Knowledge graph regenerated for wave 73",
+      "title": "Knowledge graph regenerated for wave 73",
+      "date": "2026-08-30T07:38:22.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f506fad1d290c5ba7f6a1c983385e18aa79316f8",
+      "provenance": [
+        {
+          "commit": "f506fad1d290c5ba7f6a1c983385e18aa79316f8",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f506fad1d290c5ba7f6a1c983385e18aa79316f8"
         }
       ]
     },
@@ -76718,6 +76750,9 @@
           "commit": "f3226302da271c6c2ccea2f3101026dd2d3548ff"
         },
         {
+          "commit": "f506fad1d290c5ba7f6a1c983385e18aa79316f8"
+        },
+        {
           "commit": "f688a689aba5812eb7dd8852a0f1d171b37844d9"
         },
         {
@@ -77063,6 +77098,9 @@
           "commit": "f3226302da271c6c2ccea2f3101026dd2d3548ff"
         },
         {
+          "commit": "f506fad1d290c5ba7f6a1c983385e18aa79316f8"
+        },
+        {
           "commit": "f688a689aba5812eb7dd8852a0f1d171b37844d9"
         },
         {
@@ -77406,6 +77444,9 @@
         },
         {
           "commit": "f3226302da271c6c2ccea2f3101026dd2d3548ff"
+        },
+        {
+          "commit": "f506fad1d290c5ba7f6a1c983385e18aa79316f8"
         },
         {
           "commit": "f688a689aba5812eb7dd8852a0f1d171b37844d9"
@@ -77810,6 +77851,9 @@
           "commit": "f3226302da271c6c2ccea2f3101026dd2d3548ff"
         },
         {
+          "commit": "f506fad1d290c5ba7f6a1c983385e18aa79316f8"
+        },
+        {
           "commit": "f688a689aba5812eb7dd8852a0f1d171b37844d9"
         },
         {
@@ -77934,6 +77978,9 @@
         },
         {
           "commit": "f28acbe2218222ccac1c17f58a44b07df482e269"
+        },
+        {
+          "commit": "f506fad1d290c5ba7f6a1c983385e18aa79316f8"
         },
         {
           "commit": "fe755af07bc20c38e4d354614f57137bb789a644"
@@ -80438,13 +80485,13 @@
       "type": "Module",
       "id": "src/social/combat.js",
       "label": "src/social/combat.js",
-      "lines": 1039,
-      "version": "3cf470218282e4e7",
+      "lines": 1048,
+      "version": "efddfff85efcc12d",
       "provenance": [
         {
           "file": "src/social/combat.js",
           "line": 1,
-          "version": "3cf470218282e4e7"
+          "version": "efddfff85efcc12d"
         }
       ]
     },
@@ -80468,13 +80515,13 @@
       "type": "Module",
       "id": "src/social/defense.js",
       "label": "src/social/defense.js",
-      "lines": 166,
-      "version": "dabe92dc4f09de86",
+      "lines": 171,
+      "version": "a29c0508630e51c3",
       "provenance": [
         {
           "file": "src/social/defense.js",
           "line": 1,
-          "version": "dabe92dc4f09de86"
+          "version": "a29c0508630e51c3"
         }
       ]
     },
@@ -84098,7 +84145,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "bee33aff6cbfe873db33d1b96bead59164c8a4c3",
+      "revision": "8cb5147bd0852a9f8b9959d2de7753a23e4b378a",
       "currentBranch": "claude/next-work-recommendations-x5f2fp",
       "defaultBranch": "main",
       "visibility": "public",
@@ -107645,13 +107692,13 @@
       "type": "TestSuite",
       "id": "test/client.js",
       "label": "test/client.js",
-      "lines": 7087,
-      "version": "f4096670b970bbdb",
+      "lines": 7232,
+      "version": "a82945f70db5c11e",
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "f4096670b970bbdb"
+          "version": "a82945f70db5c11e"
         }
       ]
     },
@@ -173678,6 +173725,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:8cb5147bd0852a9f8b9959d2de7753a23e4b378a",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "8cb5147bd0852a9f8b9959d2de7753a23e4b378a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8cb5147bd0852a9f8b9959d2de7753a23e4b378a",
+      "to": "Artifact:src/social/combat.js",
+      "provenance": {
+        "commit": "8cb5147bd0852a9f8b9959d2de7753a23e4b378a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8cb5147bd0852a9f8b9959d2de7753a23e4b378a",
+      "to": "Artifact:src/social/defense.js",
+      "provenance": {
+        "commit": "8cb5147bd0852a9f8b9959d2de7753a23e4b378a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8cb5147bd0852a9f8b9959d2de7753a23e4b378a",
+      "to": "Artifact:test/client.js",
+      "provenance": {
+        "commit": "8cb5147bd0852a9f8b9959d2de7753a23e4b378a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:8cc5e76a75bba54553d24a391dee75740f185c2c",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -203474,6 +203553,46 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "commit": "f4c9c9dd6f9b9cfcd7fa22d2a24dc664eab8cf30"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f506fad1d290c5ba7f6a1c983385e18aa79316f8",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "f506fad1d290c5ba7f6a1c983385e18aa79316f8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f506fad1d290c5ba7f6a1c983385e18aa79316f8",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "f506fad1d290c5ba7f6a1c983385e18aa79316f8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f506fad1d290c5ba7f6a1c983385e18aa79316f8",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "f506fad1d290c5ba7f6a1c983385e18aa79316f8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f506fad1d290c5ba7f6a1c983385e18aa79316f8",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "f506fad1d290c5ba7f6a1c983385e18aa79316f8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f506fad1d290c5ba7f6a1c983385e18aa79316f8",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "f506fad1d290c5ba7f6a1c983385e18aa79316f8"
       }
     },
     {
@@ -248248,6 +248367,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:8cb5147bd0852a9f8b9959d2de7753a23e4b378a",
+      "provenance": {
+        "commit": "8cb5147bd0852a9f8b9959d2de7753a23e4b378a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:8cc5e76a75bba54553d24a391dee75740f185c2c",
       "provenance": {
         "commit": "8cc5e76a75bba54553d24a391dee75740f185c2c"
@@ -252307,6 +252434,14 @@
       "to": "Commit:f4e1716db32f9f9430d36cb2878d832af1400232",
       "provenance": {
         "commit": "f4e1716db32f9f9430d36cb2878d832af1400232"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f506fad1d290c5ba7f6a1c983385e18aa79316f8",
+      "provenance": {
+        "commit": "f506fad1d290c5ba7f6a1c983385e18aa79316f8"
       }
     },
     {
@@ -318569,7 +318704,7 @@
       "to": "Table:boats",
       "provenance": {
         "file": "src/social/combat.js",
-        "line": 948
+        "line": 957
       }
     },
     {
@@ -318605,7 +318740,7 @@
       "to": "Table:character_cargo",
       "provenance": {
         "file": "src/social/combat.js",
-        "line": 913
+        "line": 922
       }
     },
     {
@@ -318623,7 +318758,7 @@
       "to": "Table:contacts",
       "provenance": {
         "file": "src/social/combat.js",
-        "line": 587
+        "line": 592
       }
     },
     {
@@ -318641,7 +318776,7 @@
       "to": "Table:fighters",
       "provenance": {
         "file": "src/social/combat.js",
-        "line": 1000
+        "line": 1009
       }
     },
     {
@@ -318668,7 +318803,7 @@
       "to": "Table:npc_grudges",
       "provenance": {
         "file": "src/social/combat.js",
-        "line": 733
+        "line": 738
       }
     },
     {
@@ -318677,7 +318812,7 @@
       "to": "Table:npc_hits",
       "provenance": {
         "file": "src/social/combat.js",
-        "line": 610
+        "line": 615
       }
     },
     {
@@ -318686,7 +318821,7 @@
       "to": "Table:port_intercepts",
       "provenance": {
         "file": "src/social/combat.js",
-        "line": 985
+        "line": 994
       }
     },
     {
@@ -318695,7 +318830,7 @@
       "to": "Table:racers",
       "provenance": {
         "file": "src/social/combat.js",
-        "line": 1008
+        "line": 1017
       }
     },
     {
@@ -318857,7 +318992,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/social/defense.js",
-        "line": 145
+        "line": 150
       }
     },
     {
