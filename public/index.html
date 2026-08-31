@@ -2363,7 +2363,7 @@
   // ── the street talks back: turn a raw response into one human line ──
   // known single-word server rejections → plain talk (the server returns codes, not sentences)
   const ERRMAP = {
-    bust_cap: "the guards know your face — no more bust runs today. The jailhouse allowance rolls back over 24h.",
+    bust_cap: "the guards know your face — the jailhouse allowance refills over 24h, so an attempt comes back before the day does.",
     // THE ROSTER
     bad_post: 'No such post.',
     already: 'He already holds that one.',
@@ -9130,6 +9130,7 @@
           <button class="act" data-story="${r.street.id}" data-story-name="${esc(r.street.name)}" title="everything recorded between your bloodlines">the story</button>
           ${dmBtn(r.street.id)}` : ''}</div>`).join('')}</div>` : ''}
       <h2 style="margin-top:12px">The Streets (${streets.length})</h2>
+      ${me.bustAttemptsLeft != null && streets.some((s) => s.jailed) ? `<div class="d" style="font-size:11px;color:var(--dim);margin-bottom:6px">springing anyone runs on a daily allowance — <b>${me.bustAttemptsLeft}</b> ${me.bustAttemptsLeft === 1 ? 'try' : 'tries'} left${me.bustAttemptsLeft === 0 && me.bustRefillSeconds ? `, the next in ${minsTxt(me.bustRefillSeconds)}` : ''} (a miss spends one too)</div>` : ''}
       <div class="grid">${streets.map((s) => {
         // The mark's own state decides what the server will even entertain, and it SENDS both flags
         // (jailed/hospitalized) on every row — so read them here rather than letting the player find
@@ -11009,7 +11010,8 @@
         <div class="d">the house never owes ETH it doesn't hold · claims ${vault.claimMin ?? 150}–${fmt(vault.claimDailyOmr ?? 12000)} $OMR/day per house · big moves draw the Bureau's eye</div>
         ${vault.availableEth > 0 ? `
         <div class="d" style="margin-top:6px"><b>${vault.availableEth} ETH</b> unclaimed of ${vault.heldEth} held · ${fmt(vault.omrPerEth)} $OMR per ETH
-          <input id="vault-amt" placeholder="$OMR" size="7"> <button class="act" id="vault-claim"${groundOff('The vault')}>claim</button></div>`
+          <input id="vault-amt" placeholder="$OMR" size="7"> <button class="act" id="vault-claim"${groundOff('The vault')}>claim</button></div>
+        ${vault.claimHeadroomOmr != null ? `<div class="d" style="font-size:11px;color:var(--dim)">the vault takes ${fmt(vault.claimDailyOmr)} $OMR a day per house — <b>${fmt(vault.claimHeadroomOmr)}</b> of that is still open to you today (it refills as the day runs)</div>` : ''}`
         : '<div class="d" style="color:var(--dim)">the vault is fully claimed — the next revenue refills it (the ETH streams are accumulating)</div>'}
         ${vault.mine?.eth > 0 ? `<div class="d" style="margin-top:6px">your vault: <b>${vault.mine.eth} ETH</b> (${fmt(vault.mine.costOmr)} $OMR burned) <span class="chip good">BACKED</span></div>` : ''}
         ${vault.funding ? `<div class="d" style="font-size:11px;margin-top:6px">WHAT'S BEHIND IT — ${

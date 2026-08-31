@@ -17680,3 +17680,61 @@ not a hole: the older nets are broader and fire first, and the wave-75 claim is 
 net. Every regression is DRIVEN on a real reply — the rout's `routUnits` is asserted against the
 reply AND re-read from the database, because a literal passes straight through the mutation that
 stops a field being sent.
+
+**PLAY WAVE 77 — A REFILL IS NOT A DAY: the class wave 76 fixed and never swept (2026-08-31).**
+Wave 76 found `src/exchange.js` refusing a redemption by naming its daily CEILING when the actionable
+number was the REMAINDER of a bucket that refills continuously, fixed it there, and stopped — the RT#7
+shape ("a class fixed where it was discovered, never swept to its edge"). The class is **fluent and
+false**, so no silence pattern can see it and check 14 (THE SILENCE LEDGER) is structurally blind to
+it: the line reads like an answer, states a real number, and the number is not the one the player can
+act on. Swept by enumerating every `*_used` column — **11 rolling buckets, 4 with a live refusal** —
+and the three that had never been swept were all telling players to come back tomorrow for something
+that comes back in hours.
+**The arithmetic is the finding.** Every one of these is `used = max(0, stored − elapsed/window ×
+cap)`, so at `BUST_ATTEMPTS_DAY` 5 the next jailhouse try lands **~4.8h** out — the refusal's "no more
+bust runs today" **overstated the wait by up to 19 hours**, on the daily contract the M4 pool draws.
+The vault's daily claim named its cap while a player sat on a partially-spent bucket with headroom
+they could have used immediately; the safehouse named its bound and neither the minutes of shelter
+left nor when a full stay reopens. All three figures were **already computed one line above the
+throw** and thrown away — the wave-67 shape (a branch guarding on a field it never renders).
+**The remedy is the `headroomOf` pattern, and the collapse is half the point.** Each bucket's
+arithmetic existed in the till AND (for the safehouse and the jailhouse) in the VIEW — two copies of
+one expression, identical today and free to drift the first time either side was touched, which is
+the sixty-nine-private-copies lesson. Seven helpers now live in `rules.tail.js` (the universal leaf
+both sides already import): `vaultSpentToday`/`vaultHeadroomOf`/`vaultRefillSeconds`,
+`bustSpentToday`/`bustAttemptsLeft`/`bustRefillSeconds`, `safehouseSpentToday`/`safehouseLeftMs`/
+`safehouseRefillSeconds`. Each refusal branches on whether headroom remains and carries a
+machine-readable payload (`{headroomOmr, dailyCapOmr, refillSeconds}` / `{refillSeconds, attemptsDay}`
+/ `{leftMs, stayMs, capMs, refillSeconds}`) — the `{district}`/`{lockSeconds}` rule, so a client can
+count it down rather than guess. **The terms ride with the price on the board too**: the vault card
+publishes `claimHeadroomOmr` off the SAME helper the till refuses on (a new `SELECT vault_used,
+vault_at`), and the streets roster states the jailhouse allowance and the next try above the bust
+buttons — board and till structurally cannot disagree. The ERRMAP fallback moved with it, since it is
+a fallback only (`body.message || ERRMAP[e]`) and a stale entry is a dead-but-wrong line.
+**One branch threshold is deliberate**: the safehouse names the remainder only at `>= 60000`ms,
+because "0 min of safehouse time left today" is not a remainder a player can act on.
+**THE BUCKET LEDGER** (`test/gates.js`, the thirteenth catalogue-or-declare guard) is the durable
+half: the corpus is derived from the TREE (every `*_used` in `src/`, never the lists), each bucket is
+ENFORCED or DECLARED with the property that makes it safe, an ENFORCED code's `GameError` argument
+list is walked by balanced parens and split on depth-0 commas so a refusal that carries no
+remainder-shaped payload fails by name, a mapping that matches no `GameError` at all fails (a rule
+pointing at a refusal that has moved reads exactly like a rule that holds), and an anti-vacuity floor
+catches an extractor that has stopped seeing buckets. Seven buckets refuse nobody and each says why
+in one line — the port already names its remainder; the wash and launder caps are retired; the RICO
+structuring window ADDS HEAT rather than refusing; club notoriety is an internal clamp; stat-by-use
+and the level-up refill are metered SILENTLY by design.
+**`src/chain.js`'s withdrawal cap was READ and DISSOLVED** rather than pattern-matched: it is a
+per-withdrawal flat ceiling with no consumed component, and its message already names the actionable
+number and the remedy. Not the class.
+**Two fixture errors of my own, both the recorded discipline.** The bust regression seeded
+`bust_used=99` against a cap of 5 and the wait arithmetic correctly produced ~19 days — the CODE was
+right and the fixture wrong, so every cap is now DERIVED from the server (`claimDailyOmr` off
+`/v1/vault`, `bustAttemptsLeft`/`safeCapSeconds` off a fresh `/v1/me`) rather than restating a founder
+lever. And seeding the safehouse bucket exactly AT its cap raced the milliseconds of wall-clock refill
+between the UPDATE and the read, so the wrong branch fired — fixed by GUARANTEEING the precondition
+(seed past the cap), never by loosening the assertion. Three mutations, each caught at its own named
+assertion (the vault board's headroom reverted → "THE TERMS BEFORE THE PRESS"; the jailhouse back to
+"come back tomorrow"; the safehouse back to "it refills over the day"), plus three on the ledger
+itself — including the stale-declaration check verified by ADDING a bogus bucket, since renaming a
+live one trips the main assertion first and proves something else. Suite green + pgquery 3000+
+statements + pgcheck 63/63 on a FRESH real Postgres (`src/treasury.js` gained SQL).

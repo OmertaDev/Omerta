@@ -16,7 +16,7 @@ import { CRIMES, DISTRICTS, DRUGS, RECRUIT_MILESTONES, CONSTANTS, RANKS,
          KITCHENS, labModuleCost, recyclesToDesk, DESK_RECYCLE_REASON, isMade, madeSeconds,
          MADE_LADDER, madeRungIdx, madeRungOf, ladderFx, STAKE_LOCKS, stakeLockActive, effectiveStake,
          ASSETS, OPERATIONS, opSlotsOf, nextOpSlotLevel, MISSIONS, dailyGuidanceFor, dailyLiveFor, jailed, safeHoused,
-         STABLE, SPEAKEASY, ESTATE, MADE, CREW, crewObjectiveOf, DEEDS, deedController , runOf, npcOf, usd, WALLET_FORGE } from './rules.js';
+         STABLE, SPEAKEASY, ESTATE, MADE, CREW, crewObjectiveOf, DEEDS, deedController , runOf, npcOf, usd, WALLET_FORGE, bustAttemptsLeft, bustRefillSeconds, safehouseLeftMs } from './rules.js';
 import { dbCaps } from './db.js';
 import { accrue } from './accrual.js';
 import { logCollect } from './collection.js';
@@ -1676,16 +1676,14 @@ export function view(ch, acct = {}, owned = {}) {
     gtaSeconds: ch.gta_at && Date.now() < new Date(ch.gta_at).getTime() + CONSTANTS.GTA_CD_MS
       ? Math.ceil((new Date(ch.gta_at).getTime() + CONSTANTS.GTA_CD_MS - Date.now()) / 1000) : 0,
     safeSeconds: ch.safe_until ? Math.max(0, Math.ceil((new Date(ch.safe_until) - Date.now()) / 1000)) : 0,
-    // L3b — the safehouse daily-cap bucket remaining (seconds of off-grid time left today; the wash-cap twin)
-    safeCapSeconds: (() => { const cap = M3.SAFEHOUSE_DAILY_CAP_MS; if (!cap) return null;
-      const refill = ch.safehouse_at ? (Date.now() - new Date(ch.safehouse_at).getTime()) / 86400000 * cap : cap;
-      const used = Math.max(0, Number(ch.safehouse_used || 0) - Math.max(0, refill));
-      return Math.max(0, Math.floor((cap - used) / 1000)); })(),
-    // D15 — bust attempts left today (the rolling-24h bucket; same math the till charges)
-    bustAttemptsLeft: (() => { const cap = M3.BUST_ATTEMPTS_DAY || 0; if (!cap) return null;
-      const refill = ch.bust_at ? (Date.now() - new Date(ch.bust_at).getTime()) / 86400000 * cap : cap;
-      const used = Math.max(0, Number(ch.bust_used || 0) - Math.max(0, refill));
-      return Math.max(0, Math.floor(cap - used)); })(),
+    // L3b — the safehouse daily-cap bucket remaining (seconds of off-grid time left today; the wash-cap
+    // twin), read through the SHARED helper the till refuses on. This was a second copy of that
+    // expression, identical today and free to drift the first time either side was touched.
+    safeCapSeconds: (() => { const left = safehouseLeftMs(ch); return left == null ? null : Math.floor(left / 1000); })(),
+    // D15 — bust attempts left today, and when the next one lands. Both read the SHARED helper the
+    // till refuses on: this was a second copy of that expression, identical today and free to drift.
+    bustAttemptsLeft: bustAttemptsLeft(ch),
+    bustRefillSeconds: bustRefillSeconds(ch),
     guardPrice: ch.guard_price != null ? Math.floor(Number(ch.guard_price)) : null,
     fadeLimit: ch.fade_limit != null ? Math.floor(Number(ch.fade_limit)) : null,
     pokerLimit: ch.poker_limit != null ? Math.floor(Number(ch.poker_limit)) : null,

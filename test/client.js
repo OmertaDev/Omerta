@@ -8852,3 +8852,118 @@ console.log(`✅ client wiring test passed — across the console AND /admin: of
   + `welsher brand together; fencing a score framed money RECEIVED as money spent; and the `
   + `sovereignty pad's nothing-owed early return had dropped the one field its own branch reads, `
   + `so the line written for exactly that case was unreachable.`);
+
+// ═══ WAVE 77 — A REFILL IS NOT A DAY ══════════════════════════════════════════════════════════════
+// Wave 76 fixed one instance of a class and did not sweep it (the RT#7 shape). The class: a refusal
+// naming the BOUND when the actionable number is the REMAINDER of a rolling token bucket. Eleven
+// buckets meter this game and all of them refill CONTINUOUSLY — so "come back tomorrow" is false in
+// the ordinary partially-spent state, and false by a lot: at 5 bust attempts a day one comes back
+// every ~4.8h, which that line overstated by up to nineteen hours.
+//
+// Fluent-but-false, which is the one class no silence pattern can see — check 14 proves a handler is
+// not MUTE and is structurally blind to a handler that speaks and is wrong.
+//
+// Three fixed, each at the SOURCE on the exchange's own `headroomOf` pattern (ONE implementation read
+// by both till and board, so a card can never advertise headroom the till would reject): the vault's
+// daily claim, the jailhouse allowance, and the safehouse — whose bucket expression was living in the
+// till AND the sheet, identical today and free to drift (the sixty-nine-private-copies shape).
+//
+// DRIVEN, never synthetic: every claim here is that the LINE reads a figure the SERVER sent, and a
+// literal passes straight through the mutation that stops it being sent. THE BUCKET LEDGER in
+// test/gates.js holds the payload half and the completeness half.
+{
+  const app11 = await buildServer();
+  const inj11 = async (method, url, token, payload) => {
+    const res = await app11.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
+  };
+  const mk11 = async (nm) => {
+    const token = (await inj11('POST', '/v1/auth/guest')).body.token;
+    await inj11('POST', '/v1/character', token, { name: nm + ' ' + Math.random().toString(36).slice(2, 7) });
+    const me = (await inj11('GET', '/v1/me', token)).body.character;
+    await app11.pool.query("UPDATE characters SET cash=90000000, respect=500000, loc='docks' WHERE id=$1", [me.id]);
+    return { token, id: me.id };
+  };
+
+  // ── F1: THE VAULT. A partially-spent bucket must name what is LEFT, not the day's ceiling.
+  const vw = await mk11('W77v');
+  const acctV = (await app11.pool.query('SELECT account_id FROM characters WHERE id=$1', [vw.id])).rows[0].account_id;
+  await app11.pool.query('UPDATE account_persistent SET minted=true WHERE account_id=$1', [acctV]);
+  // DERIVE the cap from the server rather than restating the lever — a literal here is a second copy
+  // of a founder dial, and the whole point of this wave is that two copies drift.
+  const capV = (await inj11('GET', '/v1/vault', vw.token)).body.claimDailyOmr;
+  const leftV = 400; // seed the bucket JUST short: the ordinary state, where "tomorrow" is a lie
+  assert(capV > leftV, `WAVE 77 fixture: the vault cap must exceed the seeded remainder (got ${capV})`);
+  await app11.pool.query('UPDATE account_persistent SET vault_used=$2, vault_at=now() WHERE account_id=$1',
+    [acctV, capV - leftV]);
+  const boardV = await inj11('GET', '/v1/vault', vw.token);
+  assert.equal(boardV.code, 200, `WAVE 77 fixture: the vault board must answer (${JSON.stringify(boardV.body)})`);
+  assert.equal(boardV.body.claimHeadroomOmr, leftV,
+    'WAVE 77: THE TERMS BEFORE THE PRESS — the card must publish what is still open TODAY, read through '
+    + `the same helper the till refuses on, or the two drift. Got ${boardV.body.claimHeadroomOmr}`);
+  const overV = await inj11('POST', '/v1/vault/claim', vw.token, { omr: 5000 });
+  assert.equal(overV.code, 400, `WAVE 77 fixture: a claim past the bucket must be refused (${JSON.stringify(overV.body)})`);
+  assert.equal(overV.body.error, 'daily_cap', `WAVE 77 fixture: expected the cap refusal, got ${overV.body.error}`);
+  assert.equal(overV.body.headroomOmr, leftV,
+    'WAVE 77: the refusal must CARRY the remainder (the {district}/{lockSeconds} rule) so a client can '
+    + `offer the ask instead of sending the player to a board that never said so. Got ${overV.body.headroomOmr}`);
+  assert(overV.body.message.includes(String(leftV)),
+    `WAVE 77: the sentence must name what is LEFT, not only the bound — got "${overV.body.message}"`);
+  // and when the bucket is genuinely SPENT, the honest figure is WHEN it reopens, never "tomorrow"
+  await app11.pool.query('UPDATE account_persistent SET vault_used=$2, vault_at=now() WHERE account_id=$1', [acctV, capV]);
+  const dryV = await inj11('POST', '/v1/vault/claim', vw.token, { omr: 200 });
+  assert.equal(dryV.body.error, 'daily_cap', `WAVE 77 fixture: a spent bucket must still refuse (${JSON.stringify(dryV.body)})`);
+  assert(dryV.body.refillSeconds > 0 && dryV.body.refillSeconds < 86400,
+    'WAVE 77: a spent bucket refills CONTINUOUSLY — the wait to the minimum claim is a fraction of a '
+    + `day, and it is the number a capped player needs. Got ${dryV.body.refillSeconds}s`);
+  assert(!/tomorrow/i.test(dryV.body.message),
+    `WAVE 77: "come back tomorrow" is false for a wall-clock bucket — got "${dryV.body.message}"`);
+
+  // ── F2: THE JAILHOUSE. 5 tries a day is one back every ~4.8h, never "today".
+  const bw = await mk11('W77b'), mark = await mk11('W77m');
+  await app11.pool.query("UPDATE characters SET jail_until=now() + interval '20 minutes' WHERE id=$1", [mark.id]);
+  // the cap comes from the SHEET (a fresh street reads the full allowance) — never a literal
+  const capB = (await inj11('GET', '/v1/me', bw.token)).body.character.bustAttemptsLeft;
+  assert(capB > 0, `WAVE 77 fixture: the jailhouse allowance must be live (got ${capB})`);
+  await app11.pool.query('UPDATE characters SET bust_used=$2, bust_at=now() WHERE id=$1', [bw.id, capB]);
+  const sheetB = (await inj11('GET', '/v1/me', bw.token)).body.character;
+  assert.equal(sheetB.bustAttemptsLeft, 0,
+    `WAVE 77 fixture: the sheet must show the spent bucket (got ${sheetB.bustAttemptsLeft}) — this is the `
+    + 'figure the roster states BEFORE the press, read through the shared helper the till refuses on');
+  assert(sheetB.bustRefillSeconds > 0 && sheetB.bustRefillSeconds < 86400,
+    `WAVE 77: the sheet must say WHEN the next try lands — got ${sheetB.bustRefillSeconds}s`);
+  const busted = await inj11('POST', `/v1/streets/${mark.id}/bust`, bw.token, {});
+  assert.equal(busted.body?.error, 'bust_cap', `WAVE 77 fixture: expected the jailhouse cap (${JSON.stringify(capB.body)})`);
+  assert(busted.body.refillSeconds > 0 && busted.body.refillSeconds < 86400,
+    'WAVE 77: the refusal carries the wait, and it is HOURS not a day — the bucket refills on the wall '
+    + `clock. Got ${busted.body.refillSeconds}s`);
+  assert(!/tomorrow/i.test(busted.body.message) && /\dm out/.test(busted.body.message),
+    `WAVE 77: the line must name the wait rather than "tomorrow" — got "${busted.body.message}"`);
+
+  // ── F3: THE SAFEHOUSE. Short of a full stay is not the same as spent, and neither is "over the day".
+  const sw = await mk11('W77s');
+  // both derived: the cap off the sheet, the stay off the server's own refusal below
+  const capS = (await inj11('GET', '/v1/me', sw.token)).body.character.safeCapSeconds * 1000;
+  assert(capS > 0, `WAVE 77 fixture: the shield cap must be live (got ${capS})`);
+  const stayS = Math.floor(capS / 3);
+  await app11.pool.query('UPDATE characters SET safehouse_used=$2, safehouse_at=now() WHERE id=$1',
+    [sw.id, capS - Math.floor(stayS / 2)]); // half a stay left: refused, but NOT empty
+  const sheetS = (await inj11('GET', '/v1/me', sw.token)).body.character;
+  assert(Math.abs(sheetS.safeCapSeconds - stayS / 2000) < 60,
+    `WAVE 77: the sheet's own bucket read must agree with the till's — got ${sheetS.safeCapSeconds}s`);
+  const shortS = await inj11('POST', '/v1/safehouse', sw.token, {});
+  assert.equal(shortS.body?.error, 'safe_cap', `WAVE 77 fixture: expected the shield cap (${JSON.stringify(shortS.body)})`);
+  assert(shortS.body.leftMs > 0 && shortS.body.refillSeconds > 0,
+    'WAVE 77: a bucket short of a full stay still has time in it — the refusal must carry BOTH what is '
+    + `left and when a whole stay reopens. Got ${JSON.stringify({ leftMs: shortS.body.leftMs, refillSeconds: shortS.body.refillSeconds })}`);
+  assert(/until a full stay/i.test(shortS.body.message),
+    `WAVE 77: "it refills over the day" is not a number — the line must say WHEN. Got "${shortS.body.message}"`);
+  // seed PAST the cap, not at it: the bucket refills on the wall clock, so a seed exactly at the cap
+  // is a race with the milliseconds between the UPDATE and the read (the recorded boundary class).
+  await app11.pool.query('UPDATE characters SET safehouse_used=$2, safehouse_at=now() WHERE id=$1', [sw.id, capS + stayS]);
+  const dryS = await inj11('POST', '/v1/safehouse', sw.token, {});
+  assert.equal(dryS.body?.leftMs, 0, `WAVE 77 fixture: the spent branch must report an empty bucket (${JSON.stringify(dryS.body)})`);
+  assert(/until a stay is open/i.test(dryS.body.message),
+    `WAVE 77: a spent shield says WHEN it reopens, not merely that it is spent — got "${dryS.body.message}"`);
+  console.log('  ✓ WAVE 77: three rolling buckets name the REMAINDER (and when they reopen), on the board and at the till');
+}

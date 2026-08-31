@@ -1762,6 +1762,55 @@ export const jailed = (ch, now = Date.now()) => !!ch?.jail_until && new Date(ch.
 export const hospitalized = (ch, now = Date.now()) => !!ch?.hosp_until && new Date(ch.hosp_until).getTime() > now;
 export const safeHoused = (ch, now = Date.now()) => !!ch?.safe_until && new Date(ch.safe_until).getTime() > now;
 
+// THE JAILHOUSE BUCKET (D15) — ONE implementation, read by the till (`bustOut`) and by the sheet's
+// `bustAttemptsLeft`. It lived as two copies of the same expression, and the refusal named the BOUND:
+// "come back tomorrow" is false for a bucket that refills continuously — at 5 a day one attempt comes
+// back every ~4.8h, so the line overstated the wait by up to a day. A wait a player is told must be
+// derived from the thing that refuses them.
+export function bustSpentToday(ch, now = Date.now()) {
+  const cap = M3.BUST_ATTEMPTS_DAY || 0;
+  if (!cap) return 0;
+  const refill = ch?.bust_at ? Math.max(0, now - new Date(ch.bust_at).getTime()) / 86400000 * cap : cap;
+  return Math.max(0, Number(ch?.bust_used || 0) - refill);
+}
+export const bustAttemptsLeft = (ch, now = Date.now()) => {
+  const cap = M3.BUST_ATTEMPTS_DAY || 0;
+  return cap ? Math.max(0, Math.floor(cap - bustSpentToday(ch, now))) : null;
+};
+// Seconds until the NEXT attempt refills — the figure a capped-out player needs, and the one the
+// wall-clock bucket makes knowable. Zero when an attempt is already available.
+export function bustRefillSeconds(ch, now = Date.now()) {
+  const cap = M3.BUST_ATTEMPTS_DAY || 0;
+  if (!cap) return 0;
+  const need = 1 - (cap - bustSpentToday(ch, now));
+  if (need <= 0) return 0;
+  return Math.max(1, Math.ceil(need / cap * 86400));
+}
+
+// THE SAFEHOUSE BUCKET (L3b) — the same collapse, for the same reason: the till and the sheet each
+// carried this expression. The till already named the REMAINDER (it was the pattern the others should
+// have followed), so what changes is that both sides now read one implementation, and an exhausted
+// bucket says WHEN rather than only that it is empty.
+export function safehouseSpentToday(ch, now = Date.now()) {
+  const cap = M3.SAFEHOUSE_DAILY_CAP_MS || 0;
+  if (!cap) return 0;
+  const refill = ch?.safehouse_at ? Math.max(0, now - new Date(ch.safehouse_at).getTime()) / 86400000 * cap : cap;
+  return Math.max(0, Number(ch?.safehouse_used || 0) - refill);
+}
+export const safehouseLeftMs = (ch, now = Date.now()) => {
+  const cap = M3.SAFEHOUSE_DAILY_CAP_MS || 0;
+  return cap ? Math.max(0, Math.floor(cap - safehouseSpentToday(ch, now))) : null;
+};
+// Seconds until `needMs` of shelter is available again — the figure a capped-out player needs, and the
+// one a wall-clock bucket makes knowable. Headroom recovers at cap-ms of shelter per day of real time.
+export function safehouseRefillSeconds(ch, needMs, now = Date.now()) {
+  const cap = M3.SAFEHOUSE_DAILY_CAP_MS || 0;
+  if (!cap) return 0;
+  const need = needMs - safehouseLeftMs(ch, now);
+  if (need <= 0) return 0;
+  return Math.max(1, Math.ceil(need / cap * 86400));
+}
+
 // LOAN SHARKING — the Shylock (design omerta-loan-sharking-design.md). The game's first player-to-
 // player CASH primitive: a lender escrows capital at usurious interest (the bounty-escrow pattern), a
 // borrower takes it and must repay by a deadline, and a DEFAULT is enforced (the seizure + the beating
