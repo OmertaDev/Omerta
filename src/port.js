@@ -171,7 +171,9 @@ export async function launchRun(ch, boatId, routeId, escort, client, h) {
   const rep = await smugglerRep(client, ch.account_id);
   const heat = await heatLane(client, ch.id, portLaneKey(route.id), rep.decayMult, rep.gainMult);
   await h.track(client, ch.account_id, 'port', { act: 'launch', route: route.id, hold });
-  return { ok: true, boat: boat.id, route: route.id, routeName: route.name, hold, cost, escort: !!escort, notoriety: Math.round(heat), arrivesSeconds: Math.ceil(runMsOf(route) / 1000) };
+  // escortCost rides the reply (wave 75): the line names what left the pocket, and the client must
+  // not restate PORT.ESCORT_COST — a founder lever, and a second copy is how the two disagree.
+  return { ok: true, boat: boat.id, route: route.id, routeName: route.name, hold, cost, escort: !!escort, escortCost, notoriety: Math.round(heat), arrivesSeconds: Math.ceil(runMsOf(route) / 1000) };
 }
 
 // POST /v1/port/collect/:boatId {warehouse} — the boat's home: roll the Coast Guard, then land the cargo
@@ -230,7 +232,11 @@ export async function collectRun(ch, boatId, warehouse, client, h) {
     await clearRun();
     if (sale >= 250000) bus.emit('streets', { type: 'port_landing', by: ch.name, route: route.id, routeName: route.name, value: sale });
     await h.track(client, ch.account_id, 'port', { act: 'land', route: route.id, sale, toll });
-    return { ok: true, interdicted: false, landed: sale, cost: Number(boat.run_cost), net: sale - Number(boat.run_cost) - toll, toll, route: route.id, routeName: route.name };
+    // NOMINAL vs ACTUAL (wave 75): `net` excluded the escort, so an escorted run reported its take
+    // $15,000 high — a wrong number where the whole point of the field is the margin. The escort
+    // was paid at launch, so it belongs in the run's book exactly like run_cost does.
+    const escortSpent = boat.run_escort ? PORT.ESCORT_COST : 0;
+    return { ok: true, interdicted: false, landed: sale, cost: Number(boat.run_cost), escortCost: escortSpent, net: sale - Number(boat.run_cost) - escortSpent - toll, toll, route: route.id, routeName: route.name };
   }
   // INTERDICTED — cargo seized, a fine (pocket then bank, the raid-fine precedent), heat, and maybe the boat sinks
   const fine = Math.min(Math.floor(Number(boat.run_cost) * PORT.FINE_RATE), Math.max(0, Math.floor(Number(ch.cash) + Number(ch.bank))));

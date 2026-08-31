@@ -132,8 +132,11 @@ export async function raceCircuit(ch, racerId, meetId, client, h) {
   await bumpStanding(client, h, ch, 'cornerman', 1, { action: 'race' }); // race day is the corner's business
   await h.rngLog(client, ch.id, `stable:circuit:${meet.id}`, mine, `${win ? 'win' : 'loss'} vs ${meet.name} (${mine} vs ${theirs})`);
   await h.track(client, ch.account_id, 'stable_circuit', { kind: r.kind, meet: meet.id, win });
+  // A loss lays the animal up + every run rests it (wave 75): both clocks were set on the row and
+  // neither ever reached the reply — the owner learned them when the next circuit refused.
   return { ok: true, game: 'circuit', win, meet: meet.name, fee: meet.fee, purse: win ? meet.purse : 0,
     net: win ? meet.purse - meet.fee : -meet.fee, you: { name: r.name, score: mine }, them: { name: meet.name, score: theirs },
+    injuredSeconds: win ? 0 : Math.ceil(STABLE.INJURY_MS / 1000), circuitCdSeconds: Math.ceil(STABLE.CIRCUIT_CD_MS / 1000),
     record: win ? `${Number(r.wins) + 1}-${r.losses}` : `${r.wins}-${Number(r.losses) + 1}` };
 }
 
@@ -188,6 +191,8 @@ export async function matchRace(ch, opponent, body, client, h) {
   await h.track(client, ch.account_id, 'stable_race', { amt, win });
   return { ok: true, game: 'race', win, wager: amt, rake, net: win ? amt - rake : -amt,
     you: { name: r.name, score: mine }, them: { name: or.name, score: theirs },
+    // a lost match lays YOUR racer up — the term the reply withheld (wave 75)
+    injuredSeconds: win ? 0 : Math.ceil(STABLE.INJURY_MS / 1000),
     yourRacer: win ? `${Number(r.wins) + 1}-${r.losses}` : `${r.wins}-${Number(r.losses) + 1}` };
 }
 

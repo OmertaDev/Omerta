@@ -2643,7 +2643,9 @@
       return `\u{1F396} ${txt(body.name)} \u2014 ${art(txt(body.trackName))} die is cast, once and for good (it dies with the street). ${txt(body.desc)}`;
     // THE OPERATION SLOTS — retiring a racket. Leads with the freed seat, which is the whole point.
     if (body && body.slotsUsed !== undefined && body.slots !== undefined && body.racket)
-      return `\u{1F91D} you're out of ${art(body.name || body.racket)}${body.back ? ` — $${fmt(body.back)} back` : ''} — ${body.slotsUsed} of ${body.slots} seats running`;
+      // wave 75: walking away at RACKET_RETIRE_BPS 0 returns NOTHING, and the line just omitted it —
+      // the shutter sibling has said "nothing back" all along. The term rides the line either way.
+      return `\u{1F91D} you're out of ${art(body.name || body.racket)}${body.back ? ` — $${fmt(body.back)} back` : ' — nothing back'} — ${body.slotsUsed} of ${body.slots} seats running`;
     // ── THE ACTION LEDGER ──────────────────────────────────────────────────────────────────────
     // Every one of these was pressed for real and read back "done." — the same class as the wire's
     // type-name fallback, one surface over: `act()` toasts describe() with no override, so a route
@@ -3053,6 +3055,15 @@
       return `\u{1F37E} built out to ${txt(body.name)} — $${fmt(body.spent)}${body.collected > 0 ? `, and $${fmt(body.collected)} swept out of the till first` : ''}. The room draws a better class of patron now.`;
     if (body && body.ok && body.district && body.name && body.currency === 'omr' && body.spent !== undefined)
       return `\u{1F37E} the house goes by ${txt(body.name)} now — ${fmt(body.spent)} $OMR`;
+    // THE CRACKDOWN WAS RENDERED AS AN EMPTY TILL (wave 75). A Bureau raid on a territory racket
+    // arrives on the COLLECT reply as `raided: [{district, seized, fine}]` — the pending take seized
+    // off the books plus a treasury fine — and the branch below keyed only on `collected === 0`, so
+    // a boss who had just lost $5.2M of pending income and paid a $2M fine was told "the operations
+    // have nothing banked yet — come back when the day has run": fluent, confident and FALSE about
+    // the family's money. The reply has carried `raided` since the crackdown shipped — client-only.
+    const terrRaided = (rows) => (rows || []).map((r) => `\u{1F6A8} the Bureau CRACKED DOWN on ${txt($dist(r.district))} — $${fmt(r.seized)} seized off the books + a $${fmt(r.fine)} fine out of the treasury`).join(' · ');
+    if (body && body.ok && body.collect === 'territory' && Array.isArray(body.raided) && body.raided.length && !body.collected)
+      return terrRaided(body.raided);
     if (body && body.ok && body.collected === 0 && body.total === undefined)
       return body.collect === 'territory' ? 'the operations have nothing banked yet — come back when the day has run'
         : body.collect === 'frontier' || body.collect === 'vassals' ? 'no tribute owed yet — come back when the day has run'
@@ -3088,7 +3099,13 @@
     // and this branch read only the shared half — so selling the pawn shop said "the pawn shop is
     // yours": the exact inverse of what happened, with the price thrown away. Driven.
     if (body && body.ok && body.asset && body.earned !== undefined) return `sold ${art(body.name || body.asset)} on — $${fmt(body.earned)} back in your pocket`;
-    if (body && body.ok && body.asset && body.income === undefined) return `${art(body.name || body.asset)} is yours`;
+    // …and the BUY (wave 75): an INCOME asset's whole point is the drip, and the line said only "is
+    // yours" — the racket sibling above has rendered its hourly figure all along. The server now sends
+    // `income` (per-MINUTE — rendered ×60, the racket idiom) + `spent` (price + the 2% house take);
+    // Wheels/Property carry no income field and keep the plain line, so the guard is sell-vs-buy
+    // (`earned`), never income-presence.
+    if (body && body.ok && body.asset && body.earned === undefined)
+      return `${art(body.name || body.asset)} is yours${body.income !== undefined ? ` — about $${fmt(Math.round(body.income * 60))} an hour while you're not looking` : ''}${body.spent ? ` · $${fmt(body.spent)} down (price + the house's cut)` : ''}`;
     if (body && body.ok && body.omrSpent !== undefined && body.kind)
       return body.kind === 'respawn'
         ? `\u{1F489} revive insurance paid — ${fmt(body.omrSpent)} $OMR. One killing blow gets walked off; you hold ${body.respawnTokens}.`
@@ -3281,7 +3298,7 @@
         + `Betting closes in ${minsTxt(body.closesSeconds)}; both fighters are booked until it settles.`;
     if (body && body.ok && 'title' in body && body.tier === undefined)
       return body.title ? `they call you ${txt(body.title)} now${body.omr ? ` \u00B7 ${fmt(body.omr)} $OMR` : ''}` : 'title dropped — just your name from here, and that costs nothing';
-    if (body && body.ok && body.lab && body.cap !== undefined) return `\u{1F9EA} the lab is ${art(body.name || body.lab, 'a')} now — ${body.cap} units a batch`;
+    if (body && body.ok && body.lab && body.cap !== undefined) return `\u{1F9EA} the lab is ${art(body.name || body.lab, 'a')} now — ${body.cap} units a batch${body.cost ? ` · $${fmt(body.cost)}` : ''}${body.omr ? ` + ${fmt(body.omr)} $OMR` : ''}`;
     // A LAB MODULE is $60k+ of bench and read "done." — no level, no price, and above all no word on
     // what it buys. The effect comes from `rules.kitchen.modules` rather than a new server field:
     // the catalog is already published, so there is nothing to keep in lockstep.
@@ -3386,7 +3403,7 @@
     // field, and `routUnits`/`material` with it: the forgotten-sibling shape with the sibling that
     // gets it right in the same block. Both terms are guarded, so a raid that takes neither is
     // unchanged — and if the solo path is ever given the material, the line already says so.
-    if (body.success === true && body.npc && body.loot !== undefined && body.family === undefined) bits.push(`raided ${art(body.outfit || body.npc)} — took $${fmt(body.loot)}${body.routBonus ? ` + a $${fmt(body.routBonus)} rout bonus` : ''}${body.routed ? ' · ROUTED' : ''}${body.routUnits ? ` · ${body.routUnits} of ${body.material} out of the hold` : ''}${body.frontier ? ' · your family plants its flag on their turf' : ''}`);
+    if (body.success === true && body.npc && body.loot !== undefined && body.family === undefined) bits.push(`raided ${art(body.outfit || body.npc)} — took $${fmt(body.loot)}${body.routBonus ? ` + a $${fmt(body.routBonus)} rout bonus` : ''}${body.routed ? ' · ROUTED' : ''}${body.routUnits ? ` · ${body.routUnits} units of ${body.material} out of the hold` : ''}${body.frontier ? ' · your family plants its flag on their turf' : ''}`);
     // THE CO-OP RAID has its OWN shape — a crew splits a `pot` into a `share` where a soloist takes
     // `loot` — so the line above (keyed on `loot`) never fired for it and the deepest co-operative
     // content in the game reported "done." for a rout and "it went sideways" for a repel that put the
@@ -3402,7 +3419,7 @@
       // phrased like the PLAN line above it ("the hit on X"): every outfit's name already carries its
       // own article, so "the ${name} job" reads "the The Volkov Bratva job".
       return `\u{1F52B} you're in on the hit on ${txt(body.outfit || body.name || body.npc)} — ${body.crew} of ${body.crewMax} on the crew`;
-    if (coop && body.success === true) bits.push(`cracked ${art(body.outfit || body.npc)} ${body.crew}-handed — your cut $${fmt(body.share)}${body.routed ? ' · ROUTED — the outfit is broken' : ''}${body.routUnits ? ` · ${body.routUnits} of ${body.material} out of the hold` : ''}${body.frontier ? ' · your family plants its flag on their turf' : ''}`);
+    if (coop && body.success === true) bits.push(`cracked ${art(body.outfit || body.npc)} ${body.crew}-handed — your cut $${fmt(body.share)}${body.routed ? ' · ROUTED — the outfit is broken' : ''}${body.routUnits ? ` · ${body.routUnits} units of ${body.material} out of the hold` : ''}${body.frontier ? ' · your family plants its flag on their turf' : ''}`);
     if (coop && body.success === false) bits.push(`${art(body.outfit || body.npc, 'The')} held — their guns put the whole crew in hospital${body.hospSeconds ? ` for ${minsTxt(body.hospSeconds)}` : ''}`);
     // THE CREW HEIST is the same class again: the SOLO score returns `take`/`success` (the line above),
     // the crew job returns `score`/`share`/`pot`/`hot` — so the flagship co-op content reported "done."
@@ -3680,7 +3697,7 @@
     // each, keyed on the system the server now names, and the shared line is gone. Absence is not a
     // discriminator: these five were told apart by which fields they happened to omit until one of
     // them grew a field, which is exactly how they came to collide.
-    else if (body.collected && body.collect === 'territory') bits.push(`\u{1F3E6} banked $${fmt(body.collected)} off ${body.rackets} operation${body.rackets === 1 ? '' : 's'} — into the FAMILY TREASURY, not your pocket`);
+    else if (body.collected && body.collect === 'territory') bits.push(`\u{1F3E6} banked $${fmt(body.collected)} off ${body.rackets} operation${body.rackets === 1 ? '' : 's'} — into the FAMILY TREASURY, not your pocket${Array.isArray(body.raided) && body.raided.length ? ` · ${terrRaided(body.raided)}` : ''}`);
     else if (body.collected && body.collect === 'vassals') bits.push(`\u{1F3E6} collected $${fmt(body.collected)} in vassal tribute — into the FAMILY TREASURY, not your pocket`);
     else if (body.collected && body.collect === 'frontier') bits.push(`\u{1F3E6} collected $${fmt(body.collected)} in frontier tribute off ${body.tributes ? body.tributes.length : 0} outpost${body.tributes && body.tributes.length === 1 ? '' : 's'} — into the FAMILY TREASURY, not your pocket`);
     // A NO-OP MUST NOT READ AS A SUCCESS. The server has always answered honestly here — a COLD
@@ -3771,7 +3788,7 @@
       bits.push(`\u{1F6AA} the household walked — you were too far behind on the wages, and they've gone. The back pay went with them (nothing charged), but the house is empty: hire again from scratch.`);
     else if (body.paid === 0 && body.perDay !== undefined)
       bits.push(`the book was already square — nothing owed. The household runs ${fmt(body.perDay)} $OMR a day.`);
-    if (body.wageOmrDay !== undefined && body.staff) bits.push(`${txt(body.name)} is on the household — ${fmt(body.wageOmrDay)} $OMR a day, and they down tools if the wages go unpaid`);
+    if (body.wageOmrDay !== undefined && body.staff) bits.push(`${txt(body.name)} is on the household${body.hireOmr ? ` — ${fmt(body.hireOmr)} $OMR to bring them on,` : ' —'} ${fmt(body.wageOmrDay)} $OMR a day, and they down tools if the wages go unpaid`);
     else if (body.walked !== undefined && body.crew !== undefined) bits.push(body.walked
       ? `they'd already downed tools — one hand walks, ${body.crew} left on the corner`
       : `settled $${fmt(body.settled)} and let one go — ${body.crew} left on the corner`);
@@ -3785,7 +3802,7 @@
       const margin = (body.power !== undefined && body.field !== undefined) ? ` — your ${body.power} vs the field's ${body.field}` : '';
       const said = saidNet();
       bits.push((body.win ? `\u{1F3C1} took the checkered${margin}${said ? '' : ` — ${body.net >= 0 ? '+' : ''}$${fmt(body.net)}`}`
-                          : `\u{1F3C1} ate the loss${margin}${said ? '' : ` — $${fmt(Math.abs(body.net))}`}${body.dmg ? ` (car ${body.dmg}% dmg)` : ''}`)
+                          : `\u{1F3C1} ate the loss${margin}${said ? '' : ` — −$${fmt(Math.abs(body.net))}`}${body.dmg ? ` (car ${body.dmg}% dmg)` : ''}`)
         + (body.nos ? ' · NOS burned' : ''));
     }
     // the iron is named by its DISPLAY name (the server sends it — a catalog key is not a car), and
@@ -3802,7 +3819,7 @@
     // which is the same shape. It also MOVES: the Wheelman mastery discounts it, so the figure the
     // player is charged is not a constant they could have read off a card, and the DISCOUNTED number
     // is the one the server ledgers. Say what left the pocket.
-    if (body.tune != null && body.power != null) bits.push(`tuned up — engine at ${body.tune}, power ${body.power}${body.spent ? ` · $${fmt(body.spent)}` : ''}`);
+    if (body.tune != null && body.power != null) bits.push(`tuned up ${art(txt(body.name || 'the car'))} — engine at ${body.tune}, power ${body.power}${body.spent ? ` · $${fmt(body.spent)}` : ''}`);
     // `seized` is a lender collecting a defaulted marker AND the Coast Guard taking your cargo, and
     // this line — written for the lender, in DOLLARS — fired for the interdiction too, where the field
     // counts UNITS: 20 units of contraband and a $1,200 fine read "collected $20" ahead of the real
@@ -3859,7 +3876,7 @@
     // the eight drugs you were running. The reply carries the name now (the `cook` line above has
     // since it shipped; its three siblings did not — the forgotten-sibling shape one loop over).
     else if (body.qty && body.quality) bits.push(`pulled ${body.qty}${body.name || body.drug ? ` × ${txt(body.name || body.drug)}` : ' units'} at q${body.quality}`);
-    if (body.fire) bits.push('THE BATCH BURNED — you got out with your skin');
+    if (body.fire) bits.push(`THE BATCH${body.name ? ` of ${txt(body.name)}` : ''} BURNED — you got out with your skin`);
     // The cook debits a SECOND currency (crates) and the only thing a player needs back is when to
     // return for it, so the old line — which named neither, nor even what was cooking — reported the
     // least useful third of the action.
@@ -4020,13 +4037,15 @@
     // the result read "+$6,000 · … took $6,000", the same figure twice in one toast. Written as a
     // SCAN of what has already been said rather than a shape test (the heat-echo precedent), so a
     // future branch that mentions the purse cannot reintroduce the echo.
-    if ((body.opponent !== undefined || body.yourFighter !== undefined) && body.you && typeof body.win === 'boolean') { const rec = body.record || body.yourFighter; const m = saidNet() ? '' : ` — ${body.win ? 'took' : 'lost'} $${fmt(Math.abs(body.net))}`; bits.push(`${body.you.name} ${body.win ? 'WINS' : 'dropped it'}${m}${rec ? ` (${rec})` : ''}`); }
+    if ((body.opponent !== undefined || body.yourFighter !== undefined) && body.you && typeof body.win === 'boolean') { const rec = body.record || body.yourFighter; const m = saidNet() ? '' : ` — ${body.win ? 'took' : 'lost'} $${fmt(Math.abs(body.net))}`; bits.push(`${body.you.name} ${body.win ? 'WINS' : 'dropped it'}${m}${rec ? ` (${rec})` : ''}${!body.win && body.injuredSeconds ? ` · laid up ${minsTxt(body.injuredSeconds)}` : ''}`); }
     if (body.sire && body.dam && body.speed !== undefined) bits.push(`🐎 ${body.name} is born — out of ${body.dam} by ${body.sire} (speed ${body.speed} / stamina ${body.stamina} / heart ${body.heart})`);
     if (body.stakes && body.form !== undefined && body.racer) bits.push(`${body.racer} is in the stakes (form ${body.form}) — $${fmt(body.buyin)} in, purse $${fmt(body.pool)} (${body.entrants} entered)${body.closesSeconds ? `. It runs in ${minsTxt(body.closesSeconds)}` : ''}${body.minEntrants ? `; under ${body.minEntrants} in the field and the buy-in comes back` : ''}.`);
     if ((body.game === 'circuit' || body.game === 'race') && body.you && typeof body.win === 'boolean') { const rec = body.record || body.yourRacer;
       const m = saidNet() ? (body.game === 'circuit' && body.win ? ' — the purse is yours' : '')
         : (body.win ? ` — ${body.game === 'circuit' ? `took ${art(body.name || 'the meet')}, +$${fmt(Math.abs(body.net))} purse` : `took $${fmt(Math.abs(body.net))}`}` : ` — −$${fmt(Math.abs(body.net))}`);
-      bits.push(`${body.you.name} ${body.win ? 'WINS at the wire' : 'got beat'}${m}${rec ? ` (${rec})` : ''}`); }
+      // …and a LOSS lays the animal up (wave 75): the reply has always set injured_until and never
+      // said so — the owner learned it when the next circuit refused, which is how it played too.
+      bits.push(`${body.you.name} ${body.win ? 'WINS at the wire' : 'got beat'}${m}${rec ? ` (${rec})` : ''}${!body.win && body.injuredSeconds ? ` · laid up ${minsTxt(body.injuredSeconds)}` : ''}`); }
     if (body.decor !== undefined && body.district) bits.push(body.decor ? `re-decorated in ${body.decorName}` : 'stripped the club back to stock');
     if (body.salePrice !== undefined && body.district)
       bits.push(body.salePrice ? `\u{1F37E} the club is on the market for $${fmt(body.salePrice)} — you keep the till until somebody buys it`
@@ -4080,7 +4099,9 @@
     // branch and fell into the catch-all `paid $cost`, reporting a GAIN as a payment.
     if (body.interdicted === false && body.warehoused !== undefined) bits.push(`⚓ slipped the Coast Guard — the haul's in the warehouse, $${fmt(body.warehoused)} on the books to fence when the price is right`);
     if (body.interdicted === true) bits.push(`⚓ BUSTED AT SEA — the Coast Guard seized the cargo, fined $${fmt(body.fine)}${body.sunk ? ' and SANK her' : ''}`);
-    if (body.arrivesSeconds !== undefined && body.route) bits.push(`⚓ cast off on ${art(body.routeName || body.route)} — back in ${Math.ceil(body.arrivesSeconds / 60)}m`);
+    // …naming the SPEND (wave 75): a Deep Run puts ~$180k of cargo + escort on the water and the
+    // line said only when she's back — the terms class, on the priciest recurring buy at the docks.
+    if (body.arrivesSeconds !== undefined && body.route) bits.push(`⚓ cast off on ${art(body.routeName || body.route)} — $${fmt(body.cost)} of cargo aboard${body.escortCost ? ` + a $${fmt(body.escortCost)} escort` : ''}, back in ${Math.ceil(body.arrivesSeconds / 60)}m`);
     // THE HULL, at the moment you choose between six of them, said less about the boat than the
     // TUNE-UP one route over does ("She carries 35 and runs 25 knots now"). Two of the three dropped
     // terms are decisions rather than flavour: `hold` is the whole point of the hull, and `speed` is
@@ -8665,6 +8686,10 @@
       <h2>Street Craps <span class="d" style="font-size:11px">(neon only — pays 1:1)</span></h2>
       <input id="dice-amt" placeholder="stake" size="10" value="1000">
       <button class="act" id="dice-go">roll</button>
+      ${(() => { const d = den.dice || {}, hs = d.highStakes || {}; if (!d.maxBet) return '';
+        // the table's LIVE limit + the way up (wave 75): the server publishes both conditions on
+        // this very board, and the card rendered neither — so the $250k refusal arrived unexplained.
+        return `<div class="d" style="color:var(--dim);font-size:12.5px;margin-top:4px">table: $${fmt(d.minBet)}–$${fmt(d.maxBet)}${hs.maxBet ? ` · the HIGH-STAKES room runs to $${fmt(hs.maxBet)} — level ${hs.level}+ (or the Madame's velvet rope) with ${hs.stakeOmr} $OMR staked${hs.stakeMet ? ' ✓ your stake covers the seat' : ` (you hold ${fmt(hs.staked || 0)})`}` : ''}</div>`; })()}
       <h2 style="margin-top:14px">The Numbers <span class="d" style="font-size:11px">(0–999, pays ${den.numbers?.pays || '600:1'}, one/day${den.numbers?.nearBand ? ` — a NEAR MISS within ±${den.numbers.nearBand} pays ${den.numbers.nearMult}× back` : ''})</span></h2>
       <input id="num-pick" placeholder="pick" size="6"> <input id="num-amt" placeholder="stake" size="8" value="100">
       <button class="act" id="num-go">play</button>
@@ -10731,7 +10756,7 @@
       <div class="card" style="border-color:var(--gold)"><span class="t" style="color:var(--gold)">THE MADE MAN ${me.made ? '— YOU ARE MADE' : ''}</span>
         <div class="d">${me.made
           ? `Standing runs another <b>${Math.floor((me.madeSeconds || 0) / 86400)}d</b>. Your fronts pay their own pad when you touch them.`
-          : `Pay the dues and you're <i>made</i>: the badge, the upper compound, a club of your own, a seat in the high-stakes room, and a rung up the ladder.`}</div>
+          : `Pay the dues and you're <i>made</i>: the badge, the upper compound, a club of your own, a seat in the high-stakes room (with ${rules?.accessStake?.highOmr ?? 300} $OMR staked — the seat AND the stake, both), and a rung up the ladder.`}</div>
         <div class="d" style="color:var(--dim);font-size:11.5px;margin-top:4px">It buys <b>real advantage</b> — but there is a <b>ceiling</b>, and holding ${rules?.made?.ceilingOmr ?? 900} $OMR reaches it without paying a subscription. Nothing dues buy helps you fight. A free man runs the whole city, and can still hunt you for your $OMR.</div>
         <div class="row" style="margin-top:6px"><button data-do="POST /v1/made">${me.made ? 'ANOTHER 30 DAYS' : 'PAY THE DUES'} — ${rules?.made?.omr ?? 120} $OMR</button></div></div>
       <h2 class="capital-anchor" id="capital-bank" style="margin-top:12px">The Bank <span class="d" style="font-size:11px">(borrowers pay to use it — that profit buys $OMR and goes to the people who play)</span></h2>

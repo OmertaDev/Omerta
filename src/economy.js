@@ -427,7 +427,10 @@ export async function buyAsset(ch, assetId, client, h) {
   h.owned.assets.push(a.id);
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -(a.price + fee + tax), reason: `asset:buy:${a.id}` });
   await takeHouse(client, tax);
-  return { ok: true, asset: a.id, name: a.name };
+  // wave-75: the reply states what left (price + 2% house take) and — for an INCOME asset — what it
+  // drips (a.income is PER-MINUTE; the client renders ×60 as an hourly figure, the racket-line idiom).
+  // Wheels/Property carry no income field, so `income` is absent on those and the client's plain line stands.
+  return { ok: true, asset: a.id, name: a.name, income: a.income, spent: a.price + fee + tax };
 }
 
 export async function sellAsset(ch, assetId, client, h) {

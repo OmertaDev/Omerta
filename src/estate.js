@@ -270,7 +270,9 @@ export async function hireStaff(ch, staffId, client, h) {
     staff_paid_at: r.staff.length ? r.estate.staff_paid_at : new Date(),
     spent_omr: Number(r.estate.spent_omr || 0) + s.hireOmr });
   await h.track(client, ch.account_id, 'estate_staff_hire', { staff: s.id, omr: s.hireOmr });
-  return { ok: true, staff: s.id, name: s.name, wageOmrDay: s.wageOmrDay, walked: r.walked };
+  // wave-75: the hire BURNS $OMR up front (estate:staff:hire) and the line named only the wage — the
+  // price left the account unstated. The client has no staff catalog to price it from, so it ships.
+  return { ok: true, staff: s.id, name: s.name, wageOmrDay: s.wageOmrDay, hireOmr: s.hireOmr, walked: r.walked };
 }
 
 // Dismiss — free, but wages must be settled first (no stiffing on the way out; the walk window is
