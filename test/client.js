@@ -8696,6 +8696,99 @@ await app.close();
   console.log('  ✓ wave 75: the parallel sweep\'s 15 findings driven — the buy verbs price themselves, the crackdown stopped reading as an empty till, the loss lines state the lay-up, the cast-off and the hire carry their terms, the high-stakes refusal explains itself both ways, and the co-op rout splits its material with the database agreeing');
 }
 
+// ── WAVE 76: THE SEVEN-FIGURE RECEIPT AND THE LINE THAT VANISHED ────────────────────────────────
+// Two findings, both client-side, and the second is not a silence but a DISAPPEARANCE.
+//
+// (1) Buying a Street Deed is the largest single press on that screen and the receipt named only the
+// street — the reply has carried `price` and `net` since the market shipped and the line dropped
+// both. The board's own card prints the price BEFORE the press and the LIST line states its own
+// figure; only the moment the money leaves was silent about it. Driven, never synthetic: the claim
+// is that the LINE reads the figure the SERVER sent, and a literal passes straight through the
+// mutation that stops it being sent, so the assertion is built from the reply's own number.
+//
+// (2) The crew room was the ONE api() mutation site in the whole client with no code check. It
+// discarded the reply, cleared the input UNCONDITIONALLY, and re-rendered — so on a refusal the
+// player's typed line vanished, the room was unchanged and nothing was said. api() is SILENT
+// (describe() never runs on it), so there was nothing behind it. Two of the four refusals are
+// reachable in ORDINARY play — two lines inside two seconds, or a whitespace-only line — which is
+// what the driven half proves, because a check against an unreachable refusal is vacuous. All three
+// siblings of this exact call handle it: city/family chat branches on three codes by name, and the
+// DM sender decisively NEVER clears its input on failure. That last is the rule: a cleared box with
+// nothing said is indistinguishable from a sent message.
+{
+  const app10 = await buildServer();
+  const inj10 = async (method, url, token, payload) => {
+    const res = await app10.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
+  };
+  const fmtD = (n) => { const v = Number(n);
+    if (v !== 0 && Math.abs(v) < 0.01) return Number(v.toPrecision(2)).toString();
+    return v.toLocaleString('en-US', { maximumFractionDigits: 2 }); };
+  const mk10 = async (nm) => {
+    const token = (await inj10('POST', '/v1/auth/guest')).body.token;
+    await inj10('POST', '/v1/character', token, { name: nm + ' ' + Math.random().toString(36).slice(2, 7) });
+    const id = (await inj10('GET', '/v1/me', token)).body.character.id;
+    await app10.pool.query(
+      "UPDATE characters SET cash=90000000, respect=500000, loc='docks' WHERE id=$1", [id]);
+    return { token, id };
+  };
+
+  // ── F1: the deed receipt names the price the server sent.
+  const sellerW = await mk10('W76s'), buyerW = await mk10('W76b');
+  const streetW = 'Wave76 Row ' + Math.random().toString(36).slice(2, 6);
+  const clm = await inj10('POST', '/v1/deeds/claim', sellerW.token, { district: 'docks', name: streetW });
+  assert.equal(clm.code, 200, `WAVE 76 fixture: the seller must hold a street (${JSON.stringify(clm.body)})`);
+  const askW = 4321000;
+  assert.equal((await inj10('POST', '/v1/deeds/list', sellerW.token, { price: askW })).code, 200,
+    'WAVE 76 fixture: the street must be on the market before it can be bought');
+  const bought = await inj10('POST', '/v1/deeds/buy/' + sellerW.id, buyerW.token, {});
+  assert.equal(bought.code, 200, `WAVE 76 could not drive the deed buy (${JSON.stringify(bought.body)})`);
+  described++;
+  assert.equal(bought.body.price, askW,
+    `WAVE 76: the buy must SEND the price it charged — got ${JSON.stringify(bought.body)}`);
+  const lineW = String(describeFn(bought.body, 200));
+  assert.ok(lineW.includes(fmtD(bought.body.price)),
+    `WAVE 76: a seven-figure purchase must NAME what left the pocket — the reply carries ` +
+    `${bought.body.price} and the line said: ${lineW}`);
+  assert.ok(/you bought/.test(lineW) && lineW.includes(streetW) && !/undefined/.test(lineW),
+    `WAVE 76: the buy line must still name the street it bought — got ${lineW}`);
+
+  // ── F2: the crew room's refusals are REACHABLE in ordinary play, and the handler must survive them.
+  const chatW = await mk10('W76c');
+  const noCrew = await inj10('POST', '/v1/crew/chat', chatW.token, { text: 'anyone home?' });
+  assert.equal(noCrew.code, 400, 'WAVE 76: a crewless player is refused the crew room');
+  assert.equal((await inj10('POST', '/v1/crew', chatW.token,
+    { name: 'W76 Crew ' + Math.random().toString(36).slice(2, 6) })).code, 200,
+    'WAVE 76 fixture: the crew must exist before the room can be talked in');
+  assert.equal((await inj10('POST', '/v1/crew/chat', chatW.token, { text: 'first' })).code, 200,
+    'WAVE 76 fixture: the first line must land, or the flood brake below is testing nothing');
+  const flooded = await inj10('POST', '/v1/crew/chat', chatW.token, { text: 'second' });
+  assert.equal(flooded.body?.error, 'slow_down',
+    `WAVE 76: two lines inside two seconds is ORDINARY play and the server refuses it — ` +
+    `without a reachable refusal the client check below is vacuous (got ${JSON.stringify(flooded.body)})`);
+  const room = (await inj10('GET', '/v1/crew/chat', chatW.token)).body.messages;
+  assert.equal(room.length, 1,
+    'WAVE 76: the refused line never landed — which is why a cleared box with nothing said is a lie');
+  assert.ok(flooded.body.message,
+    'WAVE 76: the server writes a sentence for this refusal, so the client has something honest to say');
+  {
+    const i = html.indexOf("t.querySelector('#crew-say')");
+    assert(i > -1, 'WAVE 76: the crew-room send moved — this regression is vacuous. Find it and re-anchor.');
+    const handler = html.slice(html.lastIndexOf('sb.onclick', i), html.indexOf('};', i) + 2);
+    assert(/r\.code\s*>=\s*400/.test(handler) && /toast\(/.test(handler),
+      'WAVE 76: the crew-room send ignores the reply code — api() is SILENT, so a refused line is ' +
+      'swallowed and the player is told nothing. Its three siblings all check (family chat branches ' +
+      'on the codes by name; the DM sender toasts the server\'s own message). Got: ' + handler);
+    assert(/return\s+toast\(|toast\([^;]*\);\s*return/.test(handler),
+      'WAVE 76: the crew-room send does not RETURN on a refusal, so it clears the input anyway — the ' +
+      'player\'s typed line vanishes and the room is unchanged. The DM sender\'s rule: a refused line ' +
+      'must keep its text. Got: ' + handler);
+  }
+
+  await app10.close();
+  console.log('  ✓ wave 76: the deed receipt names the seven figures it charged, and the crew room stopped swallowing a refusal that costs a player their typed line');
+}
+
 console.log(`✅ client wiring test passed — across the console AND /admin: of ${refs.size} routes they can ` +
   `call, ${refs.size - dynamic.length} resolve to a really-mounted route (segment-wise, so ` +
   `/v1/streets/:id/jump cannot match /v1/streets/roster) and the ${dynamic.length} that build their ` +
