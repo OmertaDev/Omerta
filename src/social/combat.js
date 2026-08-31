@@ -7,7 +7,7 @@
 // Split out of the 2,003-line src/social.js; every function below is byte-identical to what was
 // there. Import from '../social.js' — it re-exports this package's public surface unchanged.
 import { GameError, bumpFamilyTask, bus, ledger, notify, track, loadOwned, skillMult, npcMult, npcTier, bumpStanding, bumpMastery, masteryFx, trunkCap, gainRespect, bumpCrewObjective, hunterSearchMs } from '../game.js';
-import { M3, CONSTANTS, LOAN, levelOf, rankIdxOf, cityEventOf, dayOf, btkOf, gunObjOf, vestMultOf, fleetValue, effStat, npcHitmanOf, VENDETTA, COMMISSION, SKILLS, UNDERWORLD, LAW, PORT, witproActive, penSafe, inHole, HONOR, HEIST_LOOT_RATE, BUSINESSES, seasonModOf, pathFx, RIVALS, carVal, carOf, boatOf, gearOf, SHIPMENT, usd , districtName } from '../rules.js';
+import { M3, CONSTANTS, LOAN, levelOf, rankIdxOf, cityEventOf, dayOf, btkOf, gunObjOf, vestMultOf, fleetValue, effStat, npcHitmanOf, VENDETTA, COMMISSION, SKILLS, UNDERWORLD, LAW, PORT, witproActive, penSafe, inHole, HONOR, HEIST_LOOT_RATE, BUSINESSES, seasonModOf, pathFx, RIVALS, carVal, carOf, boatOf, gearOf, SHIPMENT, usd , districtName, bustSpentToday, bustRefillSeconds } from '../rules.js';
 import { activeDecree } from '../commission.js';
 import { bumpHonor } from '../honor.js';
 import { recordRival, revengeOwed } from '../rivals.js';
@@ -756,10 +756,16 @@ export async function bust(ch, victim, client, h) {
   // Direct SQL under the held char lock (the columns are off the positional persist — clobber-safe).
   const bustCap = M3.BUST_ATTEMPTS_DAY || 0;
   if (bustCap > 0) {
-    const refill = ch.bust_at ? (Date.now() - new Date(ch.bust_at).getTime()) / 86400000 * bustCap : bustCap;
-    const used = Math.max(0, Number(ch.bust_used || 0) - Math.max(0, refill));
-    if (used + 1 > bustCap)
-      throw new GameError('bust_cap', "You've pushed your luck at the jailhouse today — the guards know your face. Come back tomorrow.");
+    const used = bustSpentToday(ch);
+    if (used + 1 > bustCap) {
+      // Name the WAIT, not the bound. The bucket refills on the wall clock, so at 5 a day the next
+      // attempt is ~4.8h out, never "tomorrow" — and that figure is in hand right here (the
+      // {district}/{lockSeconds} payload rule, so a client can count it down rather than guess).
+      const wait = bustRefillSeconds(ch);
+      throw new GameError('bust_cap',
+        `You've pushed your luck at the jailhouse today — the guards know your face. ${bustCap} tries a day, and the next one is ${Math.ceil(wait / 60)}m out.`,
+        { refillSeconds: wait, attemptsDay: bustCap });
+    }
     await client.query('UPDATE characters SET bust_used=$2, bust_at=now() WHERE id=$1', [ch.id, used + 1]);
     ch.bust_used = used + 1; ch.bust_at = new Date();
   }

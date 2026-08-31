@@ -3581,3 +3581,105 @@ scopedSocialContext = async function(db) {
   console.log(`✓ every relative import reachable from ${pkgs.length} publishable package `
     + `(${walked} source file${walked === 1 ? '' : 's'}) is in the tarball npm would publish`);
 }
+
+// ═══ THE BUCKET LEDGER — a refill is not a day ════════════════════════════════════════════════════
+// Eleven rolling token buckets meter this game (`*_used`/`*_at` pairs: the exchange window, the
+// vault's daily claim, jailhouse attempts, safehouse time, the public wash, the port supplier, the
+// level-up refill, stat-by-use, RICO structuring, club notoriety, the retired launder cap). They all
+// REFILL CONTINUOUSLY on the wall clock — `used = max(0, stored − elapsed/window × cap)` — which
+// makes "come back tomorrow" false in the ordinary partially-spent state, and false by a lot: at 5
+// bust attempts a day one comes back every ~4.8h, so that line overstated the wait by up to 19 hours.
+//
+// This is the fluent-but-false class, which no silence pattern can see — check 14 (THE SILENCE
+// LEDGER) proves a handler is not MUTE and is structurally blind to a handler that speaks and is
+// wrong. Wave 76 fixed it in `exchange.js` and did not sweep it; the sweep found two more (the vault
+// and the jailhouse) and a third bucket carrying the same expression in two copies (the safehouse,
+// in the till AND the sheet — the sixty-nine-private-copies shape, waiting).
+//
+// THE RULE: a bucket whose guard REFUSES must name the remainder, and must carry it as a payload —
+// the {district}/{lockSeconds} discipline, so a client can offer the ask instead of sending the
+// player to read a board that never said so. Catalogue-or-declare, both directions: a bucket in
+// neither list fails, and so does a declaration for a bucket the tree no longer has.
+{
+  const REMAINDER = /\b(headroom|left|Left|refill|Refill|remaining|pool|Pool)/;
+  // bucket → the refusal it guards. The payload is what makes it machine-readable; the sentence is
+  // checked by the wave regressions in test/client.js, which drive the real reply.
+  const ENFORCED = {
+    exchange_used: { file: 'src/exchange.js', codes: ['cap', 'dry'] },
+    vault_used: { file: 'src/treasury.js', codes: ['daily_cap'] },
+    bust_used: { file: 'src/social/combat.js', codes: ['bust_cap'] },
+    safehouse_used: { file: 'src/social/defense.js', codes: ['safe_cap'] },
+  };
+  // Declared: a bucket that REFUSES NOBODY has no remainder to name. Each reason is a property of
+  // the bucket, not a preference — meter silently and there is no sentence to get wrong.
+  const DECLARED = {
+    port_used: 'refuses, and already names the remainder — `The supplier can only move ${usd(left)} more contraband today` (this was the pattern the others should have followed)',
+    wash_used: 'the D3 public wash cap guarded swap-buy, which tokenomics v3 severed — no live refusal reads it',
+    launder_used: 'business laundering is retired (`launderAtBusiness` throws `retired`); the column and its board figure are vestigial',
+    rwa_used: 'the RICO structuring window ADDS HEAT rather than refusing — there is no refusal to name a figure in',
+    noto_used: 'an internal per-patron clamp on how much notoriety one account can put on a club — it silences a grief vector, it never refuses the player',
+    statuse_used: 'the stats-by-use drip is metered SILENTLY by design — a gift that scolds you for taking it too often is worse than one that simply stops',
+    refill_used: 'the level-up refill ceiling is metered SILENTLY for the same reason (BALANCE § THE REFILL CEILING) — the crossing still happens, only the gift is bounded',
+  };
+
+  // the corpus is every bucket the TREE has, never the two lists — a ledger that enumerates itself
+  // cannot notice a twelfth bucket landing tomorrow.
+  const found = new Set();
+  for (const f of files) for (const m of fs.readFileSync(f, 'utf8').matchAll(/\b(\w+)_used\b/g)) found.add(`${m[1]}_used`);
+  assert(found.size >= 8, `THE BUCKET LEDGER found only ${found.size} token buckets — the extractor is `
+    + 'broken, not the tree. A scan that sees nothing passes for a clean sweep.');
+
+  const undeclared = [...found].filter((b) => !ENFORCED[b] && !DECLARED[b]);
+  assert.deepEqual(undeclared, [], 'rolling token bucket(s) in neither list. A bucket that REFUSES must '
+    + 'name what is LEFT (and carry it as a payload) — "come back tomorrow" is false for anything that '
+    + 'refills on the wall clock. One that refuses nobody is declared with the property that makes it '
+    + `silent:\n   - ${undeclared.join('\n   - ')}`);
+  const stale = [...Object.keys(ENFORCED), ...Object.keys(DECLARED)].filter((b) => !found.has(b));
+  assert.deepEqual(stale, [], 'declaration(s) for a bucket the tree no longer has. A stale waiver '
+    + `silently re-covers the next bucket that takes the name:\n   - ${stale.join('\n   - ')}`);
+
+  const mute = [];
+  for (const [bucket, { file, codes }] of Object.entries(ENFORCED)) {
+    const s = fs.readFileSync(file, 'utf8');
+    for (const code of codes) {
+      const re = new RegExp(`\\bGameError\\(\\s*'${code}'`, 'g');
+      let seen = 0;
+      for (const m of s.matchAll(re)) {
+        // walk the balanced argument list (skipping string bodies so a `)` in a message cannot
+        // miscount), then split on DEPTH-0 commas: the third argument is the payload.
+        let i = m.index + m[0].length - `'${code}'`.length, depth = 1, str = null;
+        const start = i;
+        while (i < s.length && depth > 0) {
+          const c = s[i];
+          if (str) { if (c === '\\') { i += 2; continue; } if (c === str) str = null; }
+          else if (c === "'" || c === '"' || c === '`') str = c;
+          else if (c === '(' || c === '{' || c === '[') depth++;
+          else if (c === ')' || c === '}' || c === ']') depth--;
+          i++;
+        }
+        const args = s.slice(start, i - 1);
+        const parts = []; let d = 0, q = null, last = 0;
+        for (let j = 0; j < args.length; j++) {
+          const c = args[j];
+          if (q) { if (c === '\\') { j++; continue; } if (c === q) q = null; continue; }
+          if (c === "'" || c === '"' || c === '`') { q = c; continue; }
+          if ('([{'.includes(c)) d++;
+          else if (')]}'.includes(c)) d--;
+          else if (c === ',' && d === 0) { parts.push(args.slice(last, j)); last = j + 1; }
+        }
+        parts.push(args.slice(last));
+        seen++;
+        if (parts.length < 3 || !REMAINDER.test(parts.slice(2).join(',')))
+          mute.push(`${file} — GameError('${code}', …) guards ${bucket} and carries no remainder in its payload`);
+      }
+      assert(seen > 0, `THE BUCKET LEDGER found no GameError('${code}') in ${file} — the ENFORCED entry `
+        + 'for ' + bucket + ' points at a refusal that has moved or gone. A mapping that matches nothing '
+        + 'reads exactly like a rule that holds.');
+    }
+  }
+  assert.deepEqual(mute, [], 'bucket refusal(s) naming the BOUND with no machine-readable remainder. The '
+    + 'figure a capped player needs is what is LEFT (or when it reopens), and it is computed one line '
+    + 'above the throw — pass it as the third GameError argument so a client can offer the ask:\n   - '
+    + mute.join('\n   - '));
+  console.log(`✓ all ${found.size} rolling token buckets classified — ${Object.keys(ENFORCED).length} refuse and name what is left, ${Object.keys(DECLARED).length} refuse nobody`);
+}
