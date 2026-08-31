@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `adc2fdb7af84`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f44970d3f12c`.
 
 ## Repository
 
@@ -13,15 +13,15 @@
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-31 — play wave 77: a refill is not a day — the three unswept rolling buckets name the remainder |
+| Latest commit | 2026-08-31 — play wave 77: a refill is not a day — the three unswept rolling buckets name the remainder (#155) |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 438 |
-| Claude | 157 |
+| OmertaDev | 439 |
+| Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 7 |
 
@@ -40,10 +40,10 @@
 | [package.json](../../package.json) | 142 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
-| knowledge/generated/github-history.md | 119 | historical |
-| knowledge/generated/graph-summary.md | 119 | historical |
-| knowledge/generated/graph.json | 119 | historical |
-| knowledge/generated/inventory.md | 119 | historical |
+| knowledge/generated/github-history.md | 120 | historical |
+| knowledge/generated/graph-summary.md | 120 | historical |
+| knowledge/generated/graph.json | 120 | historical |
+| knowledge/generated/inventory.md | 120 | historical |
 | [src/rules.tail.js](../../src/rules.tail.js) | 116 | yes |
 | [src/invariants.js](../../src/invariants.js) | 115 | yes |
 | [test/client.js](../../test/client.js) | 105 | yes |
@@ -61,11 +61,11 @@
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 49 | yes |
 | [src/economy.js](../../src/economy.js) | 47 | yes |
+| knowledge/generated/documents.md | 46 | historical |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
-| knowledge/generated/documents.md | 45 | historical |
 | [src/casino.js](../../src/casino.js) | 45 | yes |
+| knowledge/generated/modules.md | 41 | historical |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
-| knowledge/generated/modules.md | 40 | historical |
 | [src/business.js](../../src/business.js) | 40 | yes |
 | [test/docs.js](../../test/docs.js) | 39 | yes |
 | [src/chain.js](../../src/chain.js) | 38 | yes |
