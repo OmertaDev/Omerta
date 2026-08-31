@@ -17632,3 +17632,51 @@ the token's presence was verified before the result was believed. And a check-ru
 from `git rev-parse HEAD` now, and the real answer was still 0, which is what made the dirty-PR
 diagnosis trustworthy rather than an artifact of a bad query. *A confident zero is not a measurement
 until you have proven the query could ever have returned anything else.*
+
+**PLAY WAVES 72–75 — THE PARALLEL SWEEP, AND THE CRACKDOWN THAT READ AS AN EMPTY TILL
+(2026-08-30).** The sweep classes waves 45–71 hunted one cluster at a time were finally run in
+PARALLEL — twelve clusters across waves 72–74 (59 fixes) and a thirteenth pass whose fifteen findings
+are wave 75. The orchestration lesson first, because it decided the shape: **appliers commit from a
+SHARED tree**, so anything uncommitted when a workflow resumes is swept into somebody else's commit —
+my own wave-75 work was committed and pushed BEFORE the run resumed for exactly that reason. Finders
+report `clean[]` alongside `findings[]` and are told to (the sweep-that-publishes-only-its-hits rule);
+every applier RE-DRIVES its assigned finding first and **DISSOLVES** what does not reproduce.
+**THE HEADLINE IS FLUENT, CONFIDENT AND FALSE ABOUT THE FAMILY'S MONEY, and it is client-only.** A
+Bureau crackdown on a territory operation arrives on the COLLECT reply as
+`raided: [{district, seized, fine}]` — the pending take seized off the books plus a treasury fine —
+and `describe()`'s branch keyed only on `collected === 0`, so a boss who had just lost **$5.2M of
+pending income and paid a $2M fine** was told *"the operations have nothing banked yet — come back
+when the day has run"*. The reply has carried `raided` since the crackdown shipped; the line simply
+never read it. Worst class in the sweep (a silence pattern walks straight past a line that reads
+well), on the largest figures in the game.
+**AND ONE NOMINAL-VS-ACTUAL: the port's `net` was $15,000 high on every escorted run.** The escort is
+paid at LAUNCH and `collectRun` excluded it from the run's book, so the field whose whole purpose is
+the margin overstated it by exactly the escort — the wave-47 class (a number that reports what was
+asked for rather than what landed) on a figure a smuggler plans the next lane off. Fixed in the book,
+not the copy.
+**The other thirteen are the two standing classes.** WITHHELD TERMS: an INCOME asset's buy line said
+only *"is yours"* while its racket sibling has rendered an hourly figure all along (the server now
+sends `income` per-MINUTE + `spent` = price + the 2% house take); the Cathedral lab named neither its
+$10M nor its 1,200 $OMR; the estate hire named the daily wage and not the $OMR it burns to bring them
+on; a Deep Run cast off with ~$180k of cargo and an escort on the water and said only when she was
+back; **three loss lines never stated the lay-up** (a boxing exhibition, a stable circuit, a match
+race — every one sets `injured_until` and told the owner nothing, so they learned it when the next
+card refused, which is how it played too); retiring a racket at `RACKET_RETIRE_BPS` 0 omitted that
+**nothing comes back** (its shutter sibling has said so since it shipped). COSMETIC/RAW: a tune named
+no iron in a garage that holds several (its `buyNos` sibling ships the name); a burned batch named no
+drug; the rout's material read *"3 of hooch"* rather than *"3 units of"*; a race loss printed its
+figure without the minus sign.
+**THE HIGH-STAKES REFUSAL EXPLAINED ITSELF BOTH WAYS, and that is the terms class at a REFUSAL.**
+*"Table maximum is $250,000"* told a player nothing about why the big table refused them — the seat
+(level or the Madame's rope) and the held access stake are the published gates and the one refusal
+enforcing the ceiling named neither. `highRoomTerms` is computed **beside `tableMax`, off the SAME
+seat/stake reads**, so the refusal and the gate structurally cannot disagree, and it returns null once
+you are at the big table (the max is then just the max). The den card and the made card now quote the
+same two conditions off `/v1/rules`, so board and till agree.
+**Ten mutation kills, each at its own named assertion — and two of them are the MULTI-NET shape worth
+recording.** M7 and M8 were each killed by an EARLIER sibling assertion guarding the same property
+(line 8643, and wave 44's line 4700) before reaching the wave-75 assertion written for them. That is
+not a hole: the older nets are broader and fire first, and the wave-75 claim is the narrower third
+net. Every regression is DRIVEN on a real reply — the rout's `routUnits` is asserted against the
+reply AND re-read from the database, because a literal passes straight through the mutation that
+stops a field being sent.
