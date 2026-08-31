@@ -528,8 +528,12 @@ export async function unstake(ch, client, h) {
   // which is why the ladder paid you ×mult for it.
   if (staked > 0 && stakeLockActive(h.acct)) {
     const left = Math.ceil((new Date(h.acct.stake_lock_until).getTime() - Date.now()) / 1000);
+    // ONE QUANTITY, ONE UNIT: the tiers the game SELLS are 7d/30d/90d and lockStake's own success
+    // line says "for 90d", so a refusal reading "another 2160h" states the same window in the
+    // unreadable unit — worst on the tier the ladder pays most for. Days past a day, hours below.
+    const w = left >= 86400 ? `${Math.ceil(left / 86400)}d` : `${Math.ceil(left / 3600)}h`;
     throw new GameError('locked',
-      `You gave your word on that stake — it stays put another ${Math.ceil(left / 3600)}h. That commitment is what the ladder is paying you for.`,
+      `You gave your word on that stake — it stays put another ${w}. That commitment is what the ladder is paying you for.`,
       { lockSeconds: left });
   }
   // Make-Risk-Pay: principal still ALWAYS returns whole (a bucket move, never pool-gated) — but it
