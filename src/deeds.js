@@ -270,7 +270,27 @@ export async function collectCorner(ch, client, h) {
     await client.query('UPDATE street_deeds SET corner_at=now() WHERE account_id=$1', [d.account_id]);
     total += owed; collected.push({ name: d.name, district: d.district, owed });
   }
-  if (total <= 0) throw new GameError('nothing', 'No corner take to collect yet.');
+  // A SEIZED OWNER IS NOT AN EMPTY TILL. The loop above SKIPS a deed a rival currently holds, so an
+  // owner whose corner has been muscled in on fell through to the shared `nothing` — "No corner take
+  // to collect yet", where "yet" reads as *nothing has accrued, come back later* when in fact a named
+  // rival is banking this corner for the rest of their window and the owner banks nothing until it
+  // lapses OR they take it back. Fluent and false about STATE (the F15 class): the BOARD already
+  // carries the whole truth (`seized`, `seizedForSeconds`, `canReclaim`) — only the refusal was wrong,
+  // which is why it reaches the raw API and the agents who read these lines rather than the console
+  // button (the console hides it behind `collectable > 0`). The seconds ride the payload so a client
+  // can render the countdown rather than parse it out of English (the district-refusal discipline).
+  if (total <= 0) {
+    const seized = rows.find((d) => d.account_id === ch.account_id && deedController(d, now) !== ch.account_id);
+    if (seized) {
+      const left = Math.max(0, Math.ceil((new Date(seized.control_until).getTime() - now) / 1000));
+      const hrs = Math.floor(left / 3600), mins = Math.ceil((left % 3600) / 60);
+      const when = hrs ? `${hrs}h${mins ? ` ${mins}m` : ''}` : `${Math.max(1, mins)}m`;
+      throw new GameError('seized',
+        `Somebody else is running ${seized.name} — their hold lapses in ${when}. Take it back, or wait it out.`,
+        { street: seized.name, district: seized.district, seizedForSeconds: left });
+    }
+    throw new GameError('nothing', 'No corner take to collect yet.');
+  }
   await h.track(client, ch.account_id, 'deed_corner', { total, deeds: collected.length });
   return { ok: true, total, collected };
 }
