@@ -125,6 +125,29 @@ await pool.query('UPDATE account_persistent SET wallet_address=$2 WHERE account_
   assert.equal(b.eligible, null, 'the envelope stays SEALED until the window opens');
   assert.equal(b.amount, null);
   assert.ok(b.opensSeconds > 0, 'the board counts down to the open');
+  // ── THE SHUT WINDOW SPEAKS THREE WAYS (not one after-the-fact sentence for two opposite states):
+  // an hour EARLY must not read like an hour LATE, and the early one names the clock the board
+  // already knows. Driven, because the claim is about a field the SERVER sends.
+  const early = await call('POST', '/v1/drop/claim', { token: alice.token });
+  assert.equal(early.body.error, 'not_yet', 'a window announced but not yet open is NOT "closed"');
+  assert.ok(early.body.opensSeconds > 0, 'and the refusal carries the clock');
+  assert.ok(/open in \d+[dhm]\b/.test(early.body.message),
+    `the early refusal names when the envelopes open, got: ${early.body.message}`);
+  assert.ok(!/closed|never left/i.test(early.body.message),
+    `an hour early must not read as the aftermath, got: ${early.body.message}`);
+  // the Solana leg throws through the SAME core — the sentence cannot drift between rails
+  const earlySol = await call('POST', '/v1/drop/solana', { token: alice.token,
+    body: { address: 'So11111111111111111111111111111111111111112', signature: 'x' } });
+  assert.equal(earlySol.body.error, 'not_yet', 'both claim legs share one window refusal');
+  assert.equal(earlySol.body.message, early.body.message);
+  // and a window genuinely PAST says so, differently
+  await call('POST', '/v1/mod/drop/window', { mod: true, body: {
+    opensAt: new Date(Date.now() - 7200e3).toISOString(), closesAt: new Date(Date.now() - 60e3).toISOString() } });
+  const late = await call('POST', '/v1/drop/claim', { token: alice.token });
+  assert.equal(late.body.error, 'closed', 'a lapsed window is closed');
+  assert.notEqual(late.body.message, early.body.message,
+    'not-open-yet and closed-for-good must not read the same');
+  assert.equal(late.body.opensSeconds, undefined, 'and a closed window has no clock to offer');
 }
 
 // OPEN the window; the gates fire in order
