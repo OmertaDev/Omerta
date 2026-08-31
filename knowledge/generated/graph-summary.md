@@ -4,7 +4,7 @@
 
 ## Census
 
-5,644 nodes and 24,839 edges at `8c8e36af96a0`.
+5,644 nodes and 24,844 edges at `1d868547fb31`.
 
 ### Nodes
 
@@ -32,7 +32,7 @@
 | Type | Count |
 |---|---:|
 | BELONGS_TO | 1979 |
-| CHANGED | 9912 |
+| CHANGED | 9917 |
 | CONTAINS | 1846 |
 | DECLARES | 56 |
 | DEFINED_IN | 1108 |
