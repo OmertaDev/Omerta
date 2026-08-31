@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `d031f61c1cf2`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `1d868547fb31`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1293 |
+| Commits in clone | 1286 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-31 — play sweep (refusals/parity): the deed receipt names its seven figures, and the crew room stops swallowing a refusal |
+| Latest commit | 2026-08-31 — play wave 75: the parallel sweep's 15 findings, driven and mutation-verified (#153) |
 
 ## Commit authors
 
@@ -21,7 +21,7 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 437 |
-| Claude | 163 |
+| Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 5 |
 
@@ -29,8 +29,8 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| [CLAUDE.md](../../CLAUDE.md) | 499 | yes |
-| [public/index.html](../../public/index.html) | 393 | yes |
+| [CLAUDE.md](../../CLAUDE.md) | 498 | yes |
+| [public/index.html](../../public/index.html) | 392 | yes |
 | [src/server.js](../../src/server.js) | 351 | yes |
 | [SPEC.md](../../SPEC.md) | 274 | yes |
 | [schema.sql](../../schema.sql) | 273 | yes |
@@ -46,7 +46,7 @@
 | knowledge/generated/inventory.md | 116 | historical |
 | [src/rules.tail.js](../../src/rules.tail.js) | 115 | yes |
 | [src/invariants.js](../../src/invariants.js) | 115 | yes |
-| [test/client.js](../../test/client.js) | 104 | yes |
+| [test/client.js](../../test/client.js) | 103 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
 | [test/social.js](../../test/social.js) | 84 | yes |
 | [public/wiki.html](../../public/wiki.html) | 80 | yes |
@@ -60,7 +60,7 @@
 | [test/gates.js](../../test/gates.js) | 51 | yes |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 49 | yes |
-| [src/economy.js](../../src/economy.js) | 47 | yes |
+| [src/economy.js](../../src/economy.js) | 46 | yes |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
 | [src/casino.js](../../src/casino.js) | 45 | yes |
 | knowledge/generated/documents.md | 44 | historical |
