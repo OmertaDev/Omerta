@@ -2498,7 +2498,7 @@
         : `they held the corner — ${txt(body.street)} stayed theirs`;
     // STREET DEEDS Phase 3 — the market: buy ({ok,street,price,net}), list ({ok,name,price}), unlist ({ok,name})
     if (body && body.ok && body.street && typeof body.net === 'number')
-      return `\u{1F3D8} you bought ${txt(body.street)} — the street and its whole legend are yours. The corner, you'll have to earn.`;
+      return `\u{1F3D8} you bought ${txt(body.street)} for $${fmt(body.price)} — the street and its whole legend are yours. The corner, you'll have to earn.`;
     if (body && body.ok && body.name && typeof body.price === 'number')
       return `\u{1F3F7} ${txt(body.name)} is on the market for $${body.price.toLocaleString()}`;
     // IDENTITY — the "about me" blurb (the setBio response is exactly {ok, bio})
@@ -7046,7 +7046,14 @@
     };
     await load();
     const sb = t.querySelector('#crew-send');
-    if (sb) sb.onclick = async () => { const v = t.querySelector('#crew-say').value; if (!v) return; await api('POST', '/v1/crew/chat', { text: v }); t.querySelector('#crew-say').value = ''; load(); };
+    // api() is SILENT, so a refusal must be toasted here — and the typed line must SURVIVE it
+    // (the DM sender's rule): a cleared box with nothing said is indistinguishable from a sent message.
+    if (sb) sb.onclick = async () => {
+      const v = t.querySelector('#crew-say').value; if (!v) return;
+      const r = await api('POST', '/v1/crew/chat', { text: v });
+      if (r.code >= 400) return toast(r.body?.message || r.body?.error || 'the line is dead — try again', true);
+      t.querySelector('#crew-say').value = ''; load();
+    };
     const lb = t.querySelector('#crew-lb');
     if (lb) lb.onclick = async (e) => { e.preventDefault();
       const crews = ((await api('GET', '/v1/leaderboard/crews')).body || {}).crews || [];

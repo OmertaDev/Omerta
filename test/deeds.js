@@ -189,8 +189,22 @@ assert.equal(aSeized.iControl, false, 'a no longer controls their own corner');
 assert.equal(aSeized.seized, true, 'a sees the corner seized');
 assert.equal(aSeized.owed, 0, 'a can collect nothing off a corner a rival holds');
 
+// THE SEIZED OWNER'S REFUSAL — driven, because the claim is about a field the SERVER sends. `a` still
+// owns the street and pressing collect used to read "No corner take to collect yet", which is fluent
+// and FALSE about state: a named rival is banking this corner for the rest of their window. The board
+// already knew (seized/seizedForSeconds/canReclaim above); only the refusal did not.
+await backdate(a.acct, 5);   // real take on the clock — the refusal is about CONTROL, not an empty till
+const seizedRefusal = await call('POST', '/v1/deeds/corner', { token: a.token });
+assert.equal(seizedRefusal.code, 400, 'the seized owner is still refused');
+assert.equal(seizedRefusal.body.error, 'seized',
+  'a corner a rival holds refuses `seized`, never `nothing` — "yet" would say nothing has accrued');
+assert.equal(seizedRefusal.body.street, 'Corvino Way', 'the refusal SENDS the street it is about');
+assert(seizedRefusal.body.seizedForSeconds > 0,
+  'the refusal SENDS the remaining window so a client renders a countdown instead of parsing English');
+assert(/Corvino Way/.test(seizedRefusal.body.message) && /lapses in/.test(seizedRefusal.body.message),
+  `the line names the street and the remaining hold: ${seizedRefusal.body.message}`);
+
 // b collects the seized corner (backdate it — the seize reset the clock)
-await backdate(a.acct, 5);
 const cashB0 = await cashOf(b.id);
 const bcol = await call('POST', '/v1/deeds/corner', { token: b.token });
 assert.equal(bcol.code, 200, 'b collects the corner they muscled in on');
@@ -203,6 +217,10 @@ const reclaim = await call('POST', `/v1/deeds/shakedown/${a.id}`, { token: a.tok
 assert.equal(reclaim.body.reclaim, true, 'the owner taking their own corner back is a reclaim');
 const aBack = (await call('GET', '/v1/deeds', { token: a.token })).body.corner;
 assert.equal(aBack.iControl, true, 'the owner controls their corner again');
+// …and the OTHER half, which is what stops the fix claiming a seizure that is not there: an owner who
+// controls their own corner with nothing on the clock still reads `nothing`, not `seized`.
+assert.equal((await call('POST', '/v1/deeds/corner', { token: a.token })).body.error, 'nothing',
+  'an UNSEIZED owner with an empty till still reads `nothing` — the seizure line must not claim a hold nobody has');
 delete process.env.DEEDS_SHAKE_P;
 
 // CONTROL LAPSES — a rival's window expires and control falls back to the owner with no action.
