@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `658ef36b98e7`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `3ed1cdf0accd`.
 
 ## Repository
 
@@ -13,15 +13,15 @@
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-31 — play wave 78: a bid is an escrow, and two lenses that came back clean |
+| Latest commit | 2026-09-01 — play wave 78: a bid is an escrow, and two lenses that came back clean (#156) |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 439 |
-| Claude | 157 |
+| OmertaDev | 440 |
+| Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 8 |
 
@@ -39,11 +39,11 @@
 | [src/game.js](../../src/game.js) | 171 | yes |
 | [package.json](../../package.json) | 142 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
+| knowledge/generated/github-history.md | 122 | historical |
+| knowledge/generated/graph-summary.md | 122 | historical |
+| knowledge/generated/graph.json | 122 | historical |
+| knowledge/generated/inventory.md | 122 | historical |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
-| knowledge/generated/github-history.md | 121 | historical |
-| knowledge/generated/graph-summary.md | 121 | historical |
-| knowledge/generated/graph.json | 121 | historical |
-| knowledge/generated/inventory.md | 121 | historical |
 | [src/rules.tail.js](../../src/rules.tail.js) | 116 | yes |
 | [src/invariants.js](../../src/invariants.js) | 115 | yes |
 | [test/client.js](../../test/client.js) | 106 | yes |
@@ -60,8 +60,8 @@
 | [test/gates.js](../../test/gates.js) | 52 | yes |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 49 | yes |
+| knowledge/generated/documents.md | 47 | historical |
 | [src/economy.js](../../src/economy.js) | 47 | yes |
-| knowledge/generated/documents.md | 46 | historical |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
 | [src/casino.js](../../src/casino.js) | 45 | yes |
 | knowledge/generated/modules.md | 41 | historical |
