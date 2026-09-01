@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "f44970d3f12c967a23a5f2f58b2a9174ffac0c40",
+  "sourceRevision": "658ef36b98e7ef048d4c3ff592bc396f80ed2548",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5648,
-    "edges": 24894,
+    "nodes": 5650,
+    "edges": 24904,
     "byNodeType": {
       "Artifact": 1826,
       "Command": 56,
-      "Commit": 1290,
+      "Commit": 1292,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,18 +65,18 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1979,
-      "CHANGED": 9959,
+      "CHANGED": 9966,
       "CONTAINS": 1846,
       "DECLARES": 56,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 203,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1290,
+      "HAS_COMMIT": 1292,
       "IMPLEMENTS": 124,
       "IMPORTS": 1634,
       "INHERITS": 12,
-      "REFERENCES": 2831,
+      "REFERENCES": 2832,
       "REPRESENTS": 891,
       "TESTS": 583,
       "TRACKS": 126,
@@ -10971,20 +10971,20 @@
       "path": "CLAUDE.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 1713608,
-      "lines": 17741,
-      "version": "00758a00bf506985",
+      "bytes": 1718032,
+      "lines": 17788,
+      "version": "068512ebcf18adc3",
       "text": true,
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "00758a00bf506985"
+          "version": "068512ebcf18adc3"
         }
       ],
-      "lastChangedAt": "2026-08-31T14:50:10.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f44970d3f12c967a23a5f2f58b2a9174ffac0c40"
+      "lastChangedAt": "2026-08-31T15:25:13.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "658ef36b98e7ef048d4c3ff592bc396f80ed2548"
     },
     {
       "key": "Artifact:content/packs/bad-batch/pack.json",
@@ -32493,20 +32493,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1184441,
-      "lines": 12161,
-      "version": "b8e07dec3925b878",
+      "bytes": 1184932,
+      "lines": 12165,
+      "version": "73ba3e9526d1d61a",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "b8e07dec3925b878"
+          "version": "73ba3e9526d1d61a"
         }
       ],
-      "lastChangedAt": "2026-08-31T14:50:10.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f44970d3f12c967a23a5f2f58b2a9174ffac0c40"
+      "lastChangedAt": "2026-08-31T15:25:13.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "658ef36b98e7ef048d4c3ff592bc396f80ed2548"
     },
     {
       "key": "Artifact:public/manifest.json",
@@ -37553,20 +37553,20 @@
       "path": "test/client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 696885,
-      "lines": 8970,
-      "version": "434cba551ad87628",
+      "bytes": 699851,
+      "lines": 9008,
+      "version": "5fc807450ca5deac",
       "text": true,
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "434cba551ad87628"
+          "version": "5fc807450ca5deac"
         }
       ],
-      "lastChangedAt": "2026-08-31T14:50:10.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f44970d3f12c967a23a5f2f58b2a9174ffac0c40"
+      "lastChangedAt": "2026-08-31T15:25:13.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "658ef36b98e7ef048d4c3ff592bc396f80ed2548"
     },
     {
       "key": "Artifact:test/clues.js",
@@ -51093,6 +51093,22 @@
       ]
     },
     {
+      "key": "Commit:658ef36b98e7ef048d4c3ff592bc396f80ed2548",
+      "type": "Commit",
+      "id": "658ef36b98e7ef048d4c3ff592bc396f80ed2548",
+      "label": "play wave 78: a bid is an escrow, and two lenses that came back clean",
+      "title": "play wave 78: a bid is an escrow, and two lenses that came back clean",
+      "date": "2026-08-31T15:25:13.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/658ef36b98e7ef048d4c3ff592bc396f80ed2548",
+      "provenance": [
+        {
+          "commit": "658ef36b98e7ef048d4c3ff592bc396f80ed2548",
+          "url": "https://github.com/OmertaDev/Omerta/commit/658ef36b98e7ef048d4c3ff592bc396f80ed2548"
+        }
+      ]
+    },
+    {
       "key": "Commit:65b283debfa4be7bd3b927688882cd13215a0517",
       "type": "Commit",
       "id": "65b283debfa4be7bd3b927688882cd13215a0517",
@@ -62309,6 +62325,22 @@
       ]
     },
     {
+      "key": "Commit:f1e51ae2b8de3767fd8673ebd2e29209d799cf96",
+      "type": "Commit",
+      "id": "f1e51ae2b8de3767fd8673ebd2e29209d799cf96",
+      "label": "chore(knowledge): refresh generated artifacts for f44970d3",
+      "title": "chore(knowledge): refresh generated artifacts for f44970d3",
+      "date": "2026-08-31T14:51:07.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f1e51ae2b8de3767fd8673ebd2e29209d799cf96",
+      "provenance": [
+        {
+          "commit": "f1e51ae2b8de3767fd8673ebd2e29209d799cf96",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f1e51ae2b8de3767fd8673ebd2e29209d799cf96"
+        }
+      ]
+    },
+    {
       "key": "Commit:f2034daa0b17bb2958eb635b444ff64b326af56b",
       "type": "Commit",
       "id": "f2034daa0b17bb2958eb635b444ff64b326af56b",
@@ -69292,13 +69324,13 @@
       "id": "CLAUDE.md",
       "label": "CLAUDE.md",
       "documentType": "documentation",
-      "lines": 17741,
-      "version": "00758a00bf506985",
+      "lines": 17788,
+      "version": "068512ebcf18adc3",
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "00758a00bf506985"
+          "version": "068512ebcf18adc3"
         }
       ]
     },
@@ -76829,6 +76861,9 @@
           "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
         },
         {
+          "commit": "f1e51ae2b8de3767fd8673ebd2e29209d799cf96"
+        },
+        {
           "commit": "f28acbe2218222ccac1c17f58a44b07df482e269"
         },
         {
@@ -77198,6 +77233,9 @@
           "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
         },
         {
+          "commit": "f1e51ae2b8de3767fd8673ebd2e29209d799cf96"
+        },
+        {
           "commit": "f28acbe2218222ccac1c17f58a44b07df482e269"
         },
         {
@@ -77565,6 +77603,9 @@
         },
         {
           "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
+        },
+        {
+          "commit": "f1e51ae2b8de3767fd8673ebd2e29209d799cf96"
         },
         {
           "commit": "f28acbe2218222ccac1c17f58a44b07df482e269"
@@ -77991,6 +78032,9 @@
         },
         {
           "commit": "ec4a13c4df03341df744d4c73e9c2ec2f531ac6c"
+        },
+        {
+          "commit": "f1e51ae2b8de3767fd8673ebd2e29209d799cf96"
         },
         {
           "commit": "f28acbe2218222ccac1c17f58a44b07df482e269"
@@ -84299,8 +84343,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "f44970d3f12c967a23a5f2f58b2a9174ffac0c40",
-      "currentBranch": "main",
+      "revision": "658ef36b98e7ef048d4c3ff592bc396f80ed2548",
+      "currentBranch": "claude/next-work-recommendations-x5f2fp",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -107846,13 +107890,13 @@
       "type": "TestSuite",
       "id": "test/client.js",
       "label": "test/client.js",
-      "lines": 8970,
-      "version": "434cba551ad87628",
+      "lines": 9008,
+      "version": "5fc807450ca5deac",
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "434cba551ad87628"
+          "version": "5fc807450ca5deac"
         }
       ]
     },
@@ -162087,6 +162131,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:658ef36b98e7ef048d4c3ff592bc396f80ed2548",
+      "to": "Artifact:CLAUDE.md",
+      "provenance": {
+        "commit": "658ef36b98e7ef048d4c3ff592bc396f80ed2548"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:658ef36b98e7ef048d4c3ff592bc396f80ed2548",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "658ef36b98e7ef048d4c3ff592bc396f80ed2548"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:658ef36b98e7ef048d4c3ff592bc396f80ed2548",
+      "to": "Artifact:test/client.js",
+      "provenance": {
+        "commit": "658ef36b98e7ef048d4c3ff592bc396f80ed2548"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:65b283debfa4be7bd3b927688882cd13215a0517",
       "to": "Artifact:SPEC.md",
       "provenance": {
@@ -203267,6 +203335,38 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "commit": "f1d2aac9c719d1d6b9d31f142f06bc7c098741d0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f1e51ae2b8de3767fd8673ebd2e29209d799cf96",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "f1e51ae2b8de3767fd8673ebd2e29209d799cf96"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f1e51ae2b8de3767fd8673ebd2e29209d799cf96",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "f1e51ae2b8de3767fd8673ebd2e29209d799cf96"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f1e51ae2b8de3767fd8673ebd2e29209d799cf96",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "f1e51ae2b8de3767fd8673ebd2e29209d799cf96"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f1e51ae2b8de3767fd8673ebd2e29209d799cf96",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "f1e51ae2b8de3767fd8673ebd2e29209d799cf96"
       }
     },
     {
@@ -247745,6 +247845,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:658ef36b98e7ef048d4c3ff592bc396f80ed2548",
+      "provenance": {
+        "commit": "658ef36b98e7ef048d4c3ff592bc396f80ed2548"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:65b283debfa4be7bd3b927688882cd13215a0517",
       "provenance": {
         "commit": "65b283debfa4be7bd3b927688882cd13215a0517"
@@ -253348,6 +253456,14 @@
       "to": "Commit:f1d2aac9c719d1d6b9d31f142f06bc7c098741d0",
       "provenance": {
         "commit": "f1d2aac9c719d1d6b9d31f142f06bc7c098741d0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f1e51ae2b8de3767fd8673ebd2e29209d799cf96",
+      "provenance": {
+        "commit": "f1e51ae2b8de3767fd8673ebd2e29209d799cf96"
       }
     },
     {
@@ -282853,6 +282969,15 @@
       "provenance": {
         "file": "CLAUDE.md",
         "line": 17302
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:test/client.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 17751
       }
     },
     {

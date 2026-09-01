@@ -17738,3 +17738,50 @@ assertion (the vault board's headroom reverted → "THE TERMS BEFORE THE PRESS";
 itself — including the stale-declaration check verified by ADDING a bogus bucket, since renaming a
 live one trips the main assertion first and proves something else. Suite green + pgquery 3000+
 statements + pgcheck 63/63 on a FRESH real Postgres (`src/treasury.js` gained SQL).
+
+
+**PLAY WAVE 78 — A BID IS AN ESCROW, AND TWO LENSES THAT CAME BACK CLEAN (2026-08-31).** Wave 77
+closed the rolling-bucket class; picking the next recommendation started with two candidates that were
+**MEASURED and rejected before any code was written**, which is most of this entry. **(1) Board/till
+price parity** looked promising (125 price-shaped fields) and dissolved on counting: ~30 shared
+helpers already enforce the convention (`goodPriceOf`, `bribeCostOf`, `racketUpgradeCost`,
+`labModuleCost`, `intelCost`, `territoryFortCost`, `deedCornerOwed`, `liberationCost`, `loanOwed`,
+`auctionPriceAt`, plus `upkeepOwed`/`healCostOf`/`checkinQuoteOf` in modules), so a guard would have
+been mostly waivers — *the mostly-wrong advisory people route around*. **(2) The mirror's own STATED
+nested-read gap** (`test/client.js` covers top-level fields, one alias hop and list elements, and says
+deeper chains are out of scope) — **814 distinct two-hop reads in the client, checked by nothing**. A
+report-only patched copy of the guard in the scratchpad produced **33 reports: 32 `ABSENT/null`** — the
+parent legitimately missing for the fixture (no war, no spouse, no champion, no decree), i.e. the
+benign empty-state case a guard must never report — **and exactly ONE key-set drift**:
+`/v1/races .grandPrix.{pool,entrants,closesSeconds,entered} MISSING`, the recorded `dormantView`
+two-shape class (fixed once for `bankPosition`, never swept). **It DISSOLVED on checking**: the client
+branches on `b.grandPrix.open` and the closed branch reads only keys the closed shape carries, so it is
+a latent fragility rather than a live `undefined` render, and churning it would buy nothing. **The
+landing-imagery flag from the page-weight drop is stale too** — measured, it is already fixed
+(responsive webp at 16–74 KB against the 630/732 KB jpgs, `preload="none"`, `data-lazy-src`). Three
+lenses, no hit: recorded because a sweep that publishes only its hits cannot be audited.
+**THE FINDING is the withheld-terms class on the $OMR rail — the shape check 14 is structurally blind
+to, since the line is FLUENT.** An auction bid read *"bid 500 $OMR on A Dead Don's Watch — you lead"*,
+and `bidAuction` **debits the account ON THE SPOT** (`h.acct.omr -= amt`, ledgered `auction:bid`),
+refunding only when somebody outbids you — a WIN never returns it (`auction:win` is in
+`DESK.SINK_REASONS`). So the sentence describes an escrow as an intention, which is
+**the pledge-read-like-a-deposit class (wave 66) one rail over**; and `minNext` — the figure that
+actually beats you — **was in the reply and dropped**. Both halves needed no server change: the fields
+were already sent. `bidConsignment` was checked rather than assumed and is **byte-for-byte the same
+shape and the same escrow semantics**, so it hits the same branch and one fix covers both — and the
+player-side truth is identical on both (out of your hands; back only on an outbid) even though the
+winning bid's destination differs (sunk to the desk vs. paid to the seller), which is why the line
+states the player-side term rather than branching.
+**The guard is DRIVEN, never synthetic** — both claims are about fields the SERVER sends, and a literal
+passes straight through the mutation that stops one being sent — so it asserts the escrow **from the
+DATABASE** (the account's $OMR really fell by the bid) before asserting the line, and quotes the
+server's own `minNext` through `fmtLike` rather than a restated raise. Three mutations, three distinct
+named kills (the line reverted → *"a bid that has already taken the money must SAY so"*, printing the
+original sentence verbatim; the client dropping `minNext`; the SERVER dropping `minNext` → the
+database-half assertion). One fixture error of my own, caught immediately: `mk11` returns
+`{token, id}` and not an account id, so the first run died on `bidder.acct` — the account is resolved
+from the character row the way its sibling block already does it. It rides on its own token
+(the wave-11 fixture idiom) rather than in the ACTIONS list, so check 8's driven count is unchanged at
+285 — what it adds is a claim that block cannot make, since check 8 proves a line is not MUTE and this
+one is fluent. §10.4 untouched (a display line moves no value; sim drift-0), and **no SQL moved in `src/`** — checked with a
+diff filter, not assumed — so the real-Postgres gates do not apply.

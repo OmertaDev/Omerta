@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f44970d3f12c`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `658ef36b98e7`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1290 |
+| Commits in clone | 1292 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-08-31 — play wave 77: a refill is not a day — the three unswept rolling buckets name the remainder (#155) |
+| Latest commit | 2026-08-31 — play wave 78: a bid is an escrow, and two lenses that came back clean |
 
 ## Commit authors
 
@@ -21,16 +21,16 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 439 |
-| Claude | 156 |
+| Claude | 157 |
 | CRVYDEV | 41 |
-| github-actions[bot] | 7 |
+| github-actions[bot] | 8 |
 
 ## Historical hotspots
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| [CLAUDE.md](../../CLAUDE.md) | 500 | yes |
-| [public/index.html](../../public/index.html) | 394 | yes |
+| [CLAUDE.md](../../CLAUDE.md) | 501 | yes |
+| [public/index.html](../../public/index.html) | 395 | yes |
 | [src/server.js](../../src/server.js) | 351 | yes |
 | [SPEC.md](../../SPEC.md) | 274 | yes |
 | [schema.sql](../../schema.sql) | 273 | yes |
@@ -40,13 +40,13 @@
 | [package.json](../../package.json) | 142 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
-| knowledge/generated/github-history.md | 120 | historical |
-| knowledge/generated/graph-summary.md | 120 | historical |
-| knowledge/generated/graph.json | 120 | historical |
-| knowledge/generated/inventory.md | 120 | historical |
+| knowledge/generated/github-history.md | 121 | historical |
+| knowledge/generated/graph-summary.md | 121 | historical |
+| knowledge/generated/graph.json | 121 | historical |
+| knowledge/generated/inventory.md | 121 | historical |
 | [src/rules.tail.js](../../src/rules.tail.js) | 116 | yes |
 | [src/invariants.js](../../src/invariants.js) | 115 | yes |
-| [test/client.js](../../test/client.js) | 105 | yes |
+| [test/client.js](../../test/client.js) | 106 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
 | [test/social.js](../../test/social.js) | 84 | yes |
 | [public/wiki.html](../../public/wiki.html) | 80 | yes |

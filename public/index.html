@@ -3938,7 +3938,11 @@
       bits.push(`\u{1F942} the doors are open — ${fmt(body.cost)} $OMR, and the city has ${body.hoursOpen}h to come be seen. Every guest signs the book.`);
     if (body.plate && body.carId) bits.push(`\u{1F516} the plate reads ${txt(body.plate)}${body.car ? ` on ${art(body.car)}` : ''}${body.omr ? ` — ${fmt(body.omr)} $OMR` : ''}`);
     if (body.feature && body.name) bits.push(`built ${art(body.name)}` + (body.omr ? ` — ${fmt(body.omr)} $OMR, ${fmt(body.spent)} sunk into the place all told` : ''));
-    if (body.bid !== undefined && body.name && body.youLead) bits.push(`bid ${fmt(body.bid)} $OMR on ${body.name} — you lead`);
+    // THE BID IS AN ESCROW, not a promise to pay: auction.js debits the account on the spot and
+    // refunds only on an outbid (a win never returns it). Saying "bid" alone reads like the money is
+    // still yours — the pledge-read-like-a-deposit class. `minNext` is what actually beats you and the
+    // reply has carried it all along.
+    if (body.bid !== undefined && body.name && body.youLead) bits.push(`bid ${fmt(body.bid)} $OMR on ${txt(body.name)} — you lead. It's escrowed: out of your hands now, and back only if somebody outbids you${body.minNext ? `, which takes ${fmt(body.minNext)} $OMR` : ''}.`);
     // A plaque BURNS the premium currency and can be taken off you at any moment by a bigger flex,
     // with no refund — the handler says so in its own header ("it's a flex, not escrow") and the
     // receipt named neither, though the no-refund term is exactly what decides whether to bid 150 or

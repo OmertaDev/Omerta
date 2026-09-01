@@ -8966,4 +8966,42 @@ console.log(`✅ client wiring test passed — across the console AND /admin: of
   assert(/until a stay is open/i.test(dryS.body.message),
     `WAVE 77: a spent shield says WHEN it reopens, not merely that it is spent — got "${dryS.body.message}"`);
   console.log('  ✓ WAVE 77: three rolling buckets name the REMAINDER (and when they reopen), on the board and at the till');
+  // ── WAVE 78: A BID IS AN ESCROW, and the line called it a bid.
+  // auction.js debits the account ON THE SPOT and refunds only when somebody outbids you — a win never
+  // returns it. "bid 500 $OMR on X — you lead" reads like the money is still yours, which is the
+  // pledge-read-like-a-deposit class (wave 66) on the $OMR rail. `minNext` — the figure that actually
+  // beats you — was in the reply and dropped. DRIVEN, never synthetic: both halves are claims about
+  // fields the SERVER sends, and a literal passes straight through the mutation that stops one being sent.
+  const bidder = await mk11('W78a');
+  const acct78 = (await app11.pool.query('SELECT account_id FROM characters WHERE id=$1', [bidder.id])).rows[0].account_id;
+  const lots = await inj11('GET', '/v1/auction', bidder.token);
+  assert.equal(lots.code, 200, `WAVE 78 fixture: the block must answer (${JSON.stringify(lots.body)})`);
+  const lot78 = (lots.body.lots || [])[0];
+  assert(lot78 && lot78.id && lot78.minBid > 0,
+    `WAVE 78 fixture: this week's block must carry a lot with a floor (${JSON.stringify(lots.body.lots)})`);
+  await app11.pool.query('UPDATE account_persistent SET omr = omr + $2 WHERE account_id=$1',
+    [acct78, lot78.minBid + 5000]);
+  const omrBefore = Number((await app11.pool.query(
+    'SELECT omr FROM account_persistent WHERE account_id=$1', [acct78])).rows[0].omr);
+  const bid78 = await inj11('POST', `/v1/auction/${lot78.id}/bid`, bidder.token, { amount: lot78.minBid });
+  assert.equal(bid78.code, 200, `WAVE 78 fixture: the bid must land (${JSON.stringify(bid78.body)})`);
+  // the SERVER half — the escrow really happened, and the reply carries what beats it
+  const omrAfter = Number((await app11.pool.query(
+    'SELECT omr FROM account_persistent WHERE account_id=$1', [acct78])).rows[0].omr);
+  assert.equal(omrAfter, omrBefore - lot78.minBid,
+    'WAVE 78: the bid is an ESCROW — the $OMR leaves the account at the press, which is exactly what the '
+    + `line has to say. Got ${omrBefore} → ${omrAfter} against a bid of ${lot78.minBid}`);
+  assert(bid78.body.minNext > lot78.minBid,
+    `WAVE 78: the reply must carry the figure that BEATS you — got ${bid78.body.minNext}`);
+  // the LINE half — it names the escrow, the way back, and the number
+  const line78 = String(describeFn(bid78.body, 200));
+  assert(/escrow/i.test(line78),
+    `WAVE 78: a bid that has already taken the money must SAY so — got "${line78}"`);
+  assert(/outbid/i.test(line78),
+    'WAVE 78: the only way the $OMR comes back is an outbid — a win never returns it, so the line must '
+    + `name the one route home. Got "${line78}"`);
+  assert(line78.includes(fmtLike(bid78.body.minNext)),
+    `WAVE 78: the line must quote the server's own minNext (${bid78.body.minNext}), never a restated `
+    + `raise — got "${line78}"`);
+  console.log('  ✓ WAVE 78: an auction bid names the ESCROW, the one way back, and the figure that beats it');
 }
