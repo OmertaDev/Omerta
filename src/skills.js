@@ -10,7 +10,7 @@
 // Every effect is a NEW single-touchpoint modifier read via game.js `hasSkill`/`skillMult`/
 // `trunkCap` — deliberately OFF the audit-locked surfaces. All numbers are sign-off levers.
 import { GameError } from './game.js';
-import { SKILLS, skillOf, activeOf, ultimateOf, grandmasteriesFor, activeCdFor, levelOf, assetEnergyCap, M8, jailed } from './rules.js';
+import { SKILLS, skillOf, activeOf, ultimateOf, grandmasteriesFor, activeCdFor, levelOf, assetEnergyCap, M8, jailed , coolLeft, coolWait } from './rules.js';
 import { spendOmr } from './vanity.js';
 import { claimFirst } from './firsts.js';
 
@@ -66,8 +66,9 @@ export async function useActive(ch, abilityId, client, h) {
   if (jailed(ch)) throw new GameError('jailed', "You can't pull that off from a cell.");
   // a GRANDMASTER (owns any grandmastery pair) cycles the shared active cooldown faster
   const cd = activeCdFor(h.owned.skills);
-  if (ch.active_at && Date.now() - new Date(ch.active_at).getTime() < cd)
-    throw new GameError('cooldown', 'You need to catch your breath before the next one.');
+  const actCool = coolLeft(new Date(ch.active_at).getTime() + cd);
+  if (actCool)
+    throw new GameError('cooldown', `You need ${coolWait(actCool)} to catch your breath before the next one.`, { cooldownSeconds: actCool });
   const energyMax = 50 + 2 * levelOf(Number(ch.respect)) + assetEnergyCap(h.owned.assets || []);
   const nerveMax = 10 + levelOf(Number(ch.respect));
   const name = a ? a.name : ult.active.name;
@@ -94,8 +95,9 @@ export async function respecOne(ch, skillId, client, h) {
   const dependent = SKILLS.TREE.find((x) => x.branch === s.branch && x.tier === s.tier + 1);
   if (dependent && h.owned.skills.has(dependent.id))
     throw new GameError('dependent', `Unlearn ${dependent.name} first — it builds on this.`);
-  if (ch.respec_at && Date.now() - new Date(ch.respec_at).getTime() < M8.RESPEC_CD_MS)
-    throw new GameError('cooldown', 'The trainer sees you once a day.');
+  const respecCool = coolLeft(new Date(ch.respec_at).getTime() + M8.RESPEC_CD_MS);
+  if (respecCool)
+    throw new GameError('cooldown', `The trainer sees you once a day — ${coolWait(respecCool)} to go.`, { cooldownSeconds: respecCool });
   await spendOmr(client, h, SKILLS.RESPEC_ONE_OMR, 'respec:skills'); // rides the respec omr vocabulary — zero invariant change
   await client.query('DELETE FROM character_skills WHERE character_id=$1 AND skill_id=$2', [ch.id, s.id]);
   h.owned.skills.delete(s.id);
@@ -107,8 +109,9 @@ export async function respecOne(ch, skillId, client, h) {
 // RESPEC — unlearn everything for RESPEC_OMR (a §10.4 burn), on the shared respec cooldown.
 export async function respecSkills(ch, client, h) {
   if (!h.owned.skills.size) throw new GameError('none', 'Nothing to unlearn.');
-  if (ch.respec_at && Date.now() - new Date(ch.respec_at).getTime() < M8.RESPEC_CD_MS)
-    throw new GameError('cooldown', 'The trainer sees you once a day.');
+  const respecCool = coolLeft(new Date(ch.respec_at).getTime() + M8.RESPEC_CD_MS);
+  if (respecCool)
+    throw new GameError('cooldown', `The trainer sees you once a day — ${coolWait(respecCool)} to go.`, { cooldownSeconds: respecCool });
   await spendOmr(client, h, SKILLS.RESPEC_OMR, 'respec:skills'); // balance-guarded burn
   await client.query('DELETE FROM character_skills WHERE character_id=$1', [ch.id]);
   const unlearned = [...h.owned.skills];

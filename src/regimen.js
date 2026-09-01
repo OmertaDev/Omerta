@@ -10,7 +10,7 @@
 // §10.4: ZERO surface. Training costs energy + the shared clock, never cash; XP and levels are not
 // currencies; nothing here writes a transactions row (the regimen test proves it). Discipline state
 // DIES WITH THE STREET (runEstate wipes character_disciplines + npc_drills).
-import { REGIMEN, UNDERWORLD, PACING, disciplineLvlOf, drillOf, dayOf, jailed, npcOf } from './rules.js';
+import { REGIMEN, UNDERWORLD, PACING, disciplineLvlOf, drillOf, dayOf, jailed, npcOf , coolLeft, coolWait } from './rules.js';
 import { GameError } from './game.js';
 
 const DISC_IDS = REGIMEN.DISCIPLINES.map((d) => d.id);
@@ -35,8 +35,9 @@ export async function trainDiscipline(ch, id, client, h, { fromYard = false } = 
   if (!fromYard && jailed(ch)) throw new GameError('jailed', 'No gym in lockup — but there\'s an iron pile in the yard.');
   if (Number(ch.energy) < REGIMEN.ENERGY) throw new GameError('energy', 'Too tired to train.');
   const trainCd = Number(process.env.TRAIN_CD_MS ?? PACING.TRAIN_CD_MS);
-  if (trainCd > 0 && ch.train_at && new Date(ch.train_at) > new Date())
-    throw new GameError('cooldown', `The body needs a minute. Back to the gym in ${Math.max(1, Math.ceil((new Date(ch.train_at) - Date.now()) / 60000))}m.`);
+  const gymCool = trainCd > 0 ? coolLeft(ch.train_at) : 0;
+  if (gymCool)
+    throw new GameError('cooldown', `The body needs a minute. Back to the gym in ${coolWait(gymCool)}.`, { cooldownSeconds: gymCool });
   const cur = Number(h.owned.disciplines?.[id] || 0);
   if (disciplineLvlOf(cur) >= REGIMEN.CAP) throw new GameError('capped', 'You\'ve mastered that discipline.');
   ch.energy = Number(ch.energy) - REGIMEN.ENERGY;

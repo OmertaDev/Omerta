@@ -12,7 +12,7 @@
 // held); the worker's deadline sweep locks the mark's char row before the meter write.
 import crypto from 'node:crypto';
 import { GameError, bus, notify } from './game.js';
-import { SECRETS, secretKindOf, WIRE, intelCost, spyPerksOf, disinfoActive, usd } from './rules.js';
+import { SECRETS, secretKindOf, WIRE, intelCost, spyPerksOf, disinfoActive, usd , coolLeft, coolWait } from './rules.js';
 import { spendOmr } from './vanity.js';
 
 const uid = () => crypto.randomUUID();
@@ -46,8 +46,9 @@ export async function digSecret(ch, targetId, client, h) {
     throw new GameError('already', 'You already hold something on that house.');
   const dug = (await client.query(
     'SELECT at FROM digs WHERE character_id=$1 AND target_account=$2', [ch.id, target.account_id])).rows[0];
-  if (dug && Date.now() - new Date(dug.at).getTime() < SECRETS.DIG_CD_MS)
-    throw new GameError('cooldown', 'You just went through their trash — give it a day.');
+  const digCool = dug ? coolLeft(new Date(dug.at).getTime() + SECRETS.DIG_CD_MS) : 0;
+  if (digCool)
+    throw new GameError('cooldown', `You just went through their trash — ${coolWait(digCool)} before the next dig.`, { cooldownSeconds: digCool });
   // the shovel burns win or lose (the npchit-fee posture); rank discount + spymaster credit apply
   const ops = await spyOps(client, ch.account_id);
   const cost = intelCost(SECRETS.DIG_OMR, ops);

@@ -6,7 +6,7 @@ import { logCollect } from './collection.js';
 // (tokenomics v2 step 2) the early-exit surcharge + toll split now live only on the WITHDRAWAL
 // boundary in chain.js — the AMM sell that used to carry them here is retired with the pool.
 import { GameError, bumpFamilyTask, skillMult, trunkCap, npcMult, bumpStanding, bumpMastery, bus, notify } from './game.js';
-import { CONSUMABLES, RACKETS, ASSETS, GOODS, GUNS, VESTS, CONSTANTS, SKILLS, UNDERWORLD, LIMITED_RUNS, runOf, limitedRunP, levelOf, cityEventOf, dayOf, carOf, carVal, carMelt, rollCar, rollTrim, effStat, cargoCapacity, goodPriceOf, gearOf, gunObjOf, RACKET_EMPIRE, racketUpgradeCost, racketIncomeLeveled, tycoonRankOf, seasonModOf, pathFx, rollRarity, ladderFx, ladderFenceMult, STAKE_LOCKS, stakeLockActive, effectiveStake, OPERATIONS, opSlotsOf, nextOpSlotLevel, jailed, usd, art } from './rules.js';
+import { CONSUMABLES, RACKETS, ASSETS, GOODS, GUNS, VESTS, CONSTANTS, SKILLS, UNDERWORLD, LIMITED_RUNS, runOf, limitedRunP, levelOf, cityEventOf, dayOf, carOf, carVal, carMelt, rollCar, rollTrim, effStat, cargoCapacity, goodPriceOf, gearOf, gunObjOf, RACKET_EMPIRE, racketUpgradeCost, racketIncomeLeveled, tycoonRankOf, seasonModOf, pathFx, rollRarity, ladderFx, ladderFenceMult, STAKE_LOCKS, stakeLockActive, effectiveStake, OPERATIONS, opSlotsOf, nextOpSlotLevel, jailed, usd, art , coolLeft, coolWait } from './rules.js';
 
 const uid = () => crypto.randomUUID();
 const cargoCount = (cargo) => Object.values(cargo).reduce((a, n) => a + (n || 0), 0);
@@ -65,8 +65,9 @@ export async function mintLimitedRun(client, modelId, roll) {
 export async function boostCar(ch, client, h) {
   if (jailed(ch)) throw new GameError('jailed', 'No boosting from lockup.');
   const cd = CONSTANTS.GTA_CD_MS;
-  if (ch.gta_at && Date.now() < new Date(ch.gta_at).getTime() + cd)
-    throw new GameError('cooldown', `The heat's still on — wait ${Math.ceil((new Date(ch.gta_at).getTime() + cd - Date.now()) / 1000)}s.`);
+  const boostCool = coolLeft(new Date(ch.gta_at).getTime() + cd);
+  if (boostCool)
+    throw new GameError('cooldown', `The heat's still on — wait ${coolWait(boostCool)}.`, { cooldownSeconds: boostCool });
   // THE LADDER (D8=D): held $OMR parks more iron. One expression for the bound AND the message,
   // so the refusal can never quote a number the check does not use.
   const garageCap = CONSTANTS.GARAGE_CAP + ladderFx(h.acct, 'garage');

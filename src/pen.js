@@ -7,7 +7,7 @@
 import crypto from 'node:crypto';
 import { GameError, bus, bumpMastery } from './game.js';
 import { PEN, penContrabandOf, penFactionOf, jailSecondsLeft, penSafe, inHole, levelOf, effStat, witproActive,
-         yardEventOf, yardEventById, dayOf, yardCharacterOf, MASTERY, disciplineLvlOf, usd } from './rules.js';
+         yardEventOf, yardEventById, dayOf, yardCharacterOf, MASTERY, disciplineLvlOf, usd , coolLeft, coolWait } from './rules.js';
 import { trainDiscipline, addXp } from './regimen.js';
 import { runEstate, claimBounty, npcHit } from './social.js';
 import { isWanted } from './social/shared.js';
@@ -578,8 +578,9 @@ export async function shank(ch, victim, client, h) {
   // (outside persistCharacter's positional UPDATE — the active_at pattern), set win OR lose below.
   // PEN_SHANK_CD_MS is a TEST-ONLY knob (the SEARCH_MS / SHOOT_CD_MS precedent) — never in production.
   const shankCd = Number(process.env.PEN_SHANK_CD_MS ?? PEN.SHANK_CD_MS);
-  if (ch.shank_at && new Date(ch.shank_at) > new Date())
-    throw new GameError('cooldown', `Too soon — the guards are still watching you. ${Math.ceil((new Date(ch.shank_at) - Date.now()) / 60000)}m.`);
+  const shankCool = coolLeft(ch.shank_at);
+  if (shankCool)
+    throw new GameError('cooldown', `Too soon — the guards are still watching you. ${coolWait(shankCool)}.`, { cooldownSeconds: shankCool });
 
   ch.energy = Number(ch.energy) - PEN.SHANK_ENERGY;
   const shankUntil = new Date(Date.now() + shankCd);

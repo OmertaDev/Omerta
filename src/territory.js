@@ -8,7 +8,7 @@
 // tradeable-NFT layer (minted_onchain) is dormant/deferred, the M6 pattern.
 import { postPower } from './roster.js';
 import { GameError, bus } from './game.js';
-import { DISTRICTS, TERRITORY_RACKETS, TERRITORY_TYPES, territoryTierOf, territoryTypeOf, territoryBuildCost, territoryFortCost, territoryRankOf, syndicateOf, TERRITORY_SYNDICATE_MIN, levelOf, CONSTANTS, rosterMult, charterFx, M3, jailed, hospitalized, safeHoused, usd, art } from './rules.js';
+import { DISTRICTS, TERRITORY_RACKETS, TERRITORY_TYPES, territoryTierOf, territoryTypeOf, territoryBuildCost, territoryFortCost, territoryRankOf, syndicateOf, TERRITORY_SYNDICATE_MIN, levelOf, CONSTANTS, rosterMult, charterFx, M3, jailed, hospitalized, safeHoused, usd, art , coolLeft, coolWait } from './rules.js';
 
 const canCommand = (h) => h.owned.gangRole === 'boss' || h.owned.gangRole === 'underboss';
 
@@ -308,7 +308,8 @@ export async function raidRivalRacket(ch, districtId, client, h) {
   if (!r) throw new GameError('no_racket', 'No operation runs there.');
   if (r.owner_gang === h.owned.gangId) throw new GameError('own', "That's your own family's operation.");
   const now = Date.now();
-  if (r.raid_cd_until && new Date(r.raid_cd_until) > new Date(now)) throw new GameError('cooldown', 'That operation is on alert — muscle in later.');
+  const alertCool = coolLeft(r.raid_cd_until, now);
+  if (alertCool) throw new GameError('cooldown', `That operation is on alert — muscle in again in ${coolWait(alertCool)}.`, { cooldownSeconds: alertCool });
   const pending = accrued(r);
   if (pending <= 0) throw new GameError('nothing', "There's nothing in the till to grab right now.");
   const eff = Number(ch.muscle) + Number(ch.cunning) / 2;
@@ -407,8 +408,9 @@ export async function runTerritoryOp(ch, districtId, client, h) {
   if (!r || r.owner_gang !== h.owned.gangId) throw new GameError('no_racket', "Your family doesn't run that operation.");
   if (!r.specialist) throw new GameError('no_specialist', 'Assign a specialist to run a special operation.');
   const now = Date.now();
-  if (r.op_at && now - new Date(r.op_at).getTime() < CONSTANTS.TERRITORY_OP_CD_MS)
-    throw new GameError('cooldown', 'That operation just ran a special job — give it time.');
+  const opCool = coolLeft(new Date(r.op_at).getTime() + CONSTANTS.TERRITORY_OP_CD_MS, now);
+  if (opCool)
+    throw new GameError('cooldown', `That operation just ran a special job — give it ${coolWait(opCool)}.`, { cooldownSeconds: opCool });
   let op, result;
   if (r.kind === 'protection') {
     const lvl = Math.min(CONSTANTS.TERRITORY_FORT_MAX, Number(r.fortitude) + CONSTANTS.TERRITORY_OP_FORT);

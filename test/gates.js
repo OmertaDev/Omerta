@@ -3582,6 +3582,63 @@ scopedSocialContext = async function(db) {
     + `(${walked} source file${walked === 1 ? '' : 's'}) is in the tarball npm would publish`);
 }
 
+// ═══ THE COOLDOWN LEDGER — "not yet" is not a wait ════════════════════════════════════════════════
+// 38 of 39 cooldown refusals held the exact expiry IN THE COMPARISON ONE LINE ABOVE THE THROW and
+// threw it away. The FIRE path — the most expensive verb in the game, a two-hour trigger cooldown —
+// said only "Your trigger's still hot."; three street-race sites said "cool down" with no number;
+// `world.js` literally said "later". Six siblings already named their wait (the gym, the charter,
+// the mission ladder, the shank, the boost, the social verify), which is what makes this the
+// forgotten-sibling shape rather than a convention nobody had adopted.
+//
+// It is the WITHHELD-TERM class — the line is FLUENT and the actionable number is left off — so
+// check 14 (THE SILENCE LEDGER), which proves a handler is not MUTE, is structurally blind to it.
+// And it costs agents more than people: agents are first-class players here, they read these codes,
+// and with nothing machine-readable to back off on they retry blind into a 1/3s throttle.
+//
+// THE RULE: every `GameError('cooldown', …)` carries `cooldownSeconds` — the {district}/{lockSeconds}
+// discipline — so a client can count it down and an agent can sleep on it. The SENTENCE is checked by
+// the wave regression in test/client.js, which drives the real reply; this checks the payload, which
+// is the half a driven test cannot cover for 39 sites. Catalogue-or-declare, both directions.
+{
+  const DECLARED = {
+    // none today: every cooldown refusal in the tree holds its own expiry at the throw. A site that
+    // genuinely cannot (a cooldown whose end is not knowable at the refusal) is declared here WITH
+    // that property — never because computing it was awkward.
+  };
+  const sites = [];
+  for (const f of files) {
+    const src = decomment(fs.readFileSync(f, 'utf8'));
+    for (const m of src.matchAll(/\bnew GameError\(\s*'cooldown'/g)) {
+      let i = m.index + m[0].length, depth = 1, q = null;
+      const start = i;
+      while (i < src.length && depth > 0) {
+        const c = src[i];
+        if (q) { if (c === '\\') { i += 2; continue; } if (c === q) q = null; }
+        else if (c === "'" || c === '"' || c === '`') q = c;
+        else if ('([{'.includes(c)) depth++;
+        else if (')]}'.includes(c)) depth--;
+        i++;
+      }
+      const args = src.slice(start, i - 1);
+      const rel = f.replace(/^.*\/src\//, 'src/');
+      const line = src.slice(0, m.index).split('\n').length;
+      sites.push({ at: `${rel}:${line}`, args });
+    }
+  }
+  assert(sites.length >= 30, `THE COOLDOWN LEDGER found only ${sites.length} cooldown refusals — the `
+    + 'extractor is broken, not the tree. A scan that sees nothing passes for a clean sweep.');
+
+  const mute = sites.filter((s) => !/cooldownSeconds/.test(s.args) && !DECLARED[s.at]);
+  assert.deepEqual(mute.map((s) => s.at), [], 'cooldown refusal(s) that never say WHEN. The expiry is '
+    + 'in the comparison one line above the throw — pass it as `{ cooldownSeconds }` so a client can '
+    + 'count it down and an agent can back off instead of retrying blind:\n   - '
+    + mute.map((s) => s.at).join('\n   - '));
+  const stale = Object.keys(DECLARED).filter((at) => !sites.some((s) => s.at === at));
+  assert.deepEqual(stale, [], 'declaration(s) for a cooldown refusal the tree no longer has at that '
+    + `line. A stale waiver silently re-covers the next site that lands there:\n   - ${stale.join('\n   - ')}`);
+  console.log(`✓ all ${sites.length} cooldown refusals carry the remainder — none says only "not yet"`);
+}
+
 // ═══ THE BUCKET LEDGER — a refill is not a day ════════════════════════════════════════════════════
 // Eleven rolling token buckets meter this game (`*_used`/`*_at` pairs: the exchange window, the
 // vault's daily claim, jailhouse attempts, safehouse time, the public wash, the port supplier, the

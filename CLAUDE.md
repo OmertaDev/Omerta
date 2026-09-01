@@ -17785,3 +17785,56 @@ from the character row the way its sibling block already does it. It rides on it
 285 — what it adds is a claim that block cannot make, since check 8 proves a line is not MUTE and this
 one is fluent. §10.4 untouched (a display line moves no value; sim drift-0), and **no SQL moved in `src/`** — checked with a
 diff filter, not assumed — so the real-Postgres gates do not apply.
+
+**PLAY WAVE 79 — THE COOLDOWN LEDGER: "not yet" is not a wait (2026-08-31).** Wave 78's own write-up
+ends by naming what check 14 (THE SILENCE LEDGER) is structurally blind to — a line that is FLUENT and
+leaves the actionable TERM off — and the largest untouched instance of it was measured rather than
+guessed: **39 `GameError('cooldown', …)` refusals across 23 modules, 38 carrying no machine-readable
+remainder and only 6 naming a time in prose.** In every one of them the exact expiry sits **in the
+comparison ONE LINE ABOVE the throw** and is discarded. The sharpest is the FIRE path — the most
+expensive verb in the game, a two-hour clock behind a 3h search — which said only *"Your trigger's
+still hot."*; three street-race sites said *"cool down"* with no number, and `world.js` literally said
+*"later"*. Six siblings already named their wait (the gym, the charter, the mission ladder, the shank,
+the boost, the social verify), which is what makes it the **forgotten-sibling** shape rather than a
+convention nobody had adopted — and the remedy is wave 77's rolling buckets and wave 54's `{district}`
+payload verbatim.
+**THE COST FALLS HARDEST ON AGENTS, who are first-class players here**: they read these codes, and with
+nothing to back off on they retry blind into a 1/3s throttle. So every refusal now carries
+`{ cooldownSeconds }` alongside a sentence that says WHEN.
+**ONE HELPER PAIR ON THE UNIVERSAL LEAF, never 39 inline expressions** (`coolLeft`/`coolWait` in
+`rules.tail.js`, beside `usd`/`art`) — so the number a player is TOLD, the number the payload CARRIES
+and the number the till ENFORCES cannot drift; the sixty-nine-private-copies lesson, and the
+`headroomOf` shape THE BUCKET LEDGER already uses. `coolLeft` is a **behaviour-preserving drop-in for
+both predicate forms it replaces** — `x && new Date(x) > new Date()` and `now - at < CD` — because
+`ceil((t-now)/1000) > 0` is exactly the strict comparison, and a null/undefined/garbage clock yields 0,
+which is the falsy the old guards produced. Five predicate helpers (`boxing.js:onCooldown`,
+`heists.js`/`npcwar.js`/`world.js:cooling`, `stable.js:onCooldown`) return seconds now instead of a
+boolean, truthiness unchanged. `coolWait` coarsens as it grows, because **"7231s" is not a wait a
+person can act on**.
+**THE GUARD IS THE DURABLE HALF — THE COOLDOWN LEDGER** (`test/gates.js`, the fourteenth
+catalogue-or-declare ledger): the corpus is derived from the TREE, each `GameError('cooldown')`'s
+argument list is walked by **string-aware balanced parens**, every site must carry the payload or be
+DECLARED with the property that makes it unknowable (**none is today**, and the declaration block says
+so — a site would be declared for that property "never because computing it was awkward"), plus a
+stale-declaration check and an **anti-vacuity floor**, since a scan that sees nothing reads exactly
+like a clean sweep.
+**AND THE LEDGER FOUND THE SITE MY OWN SCANNER HAD CLEARED.** The scratchpad measurement script split
+the argument list on depth-0 commas **without tracking string bodies**, so the comma inside
+*"The trainer works miracles, not shift changes"* made `growth.js`'s two-argument respec throw read as
+three and it was reported as already-carrying. The recorded lesson — *a finding produced by a tool you
+wrote and did not check is not a finding* — this time in the **inverse** direction, a false PASS rather
+than a false finding, which is the more dangerous one because nothing prompts you to look again. A
+second batch script silently skipped five identical sites (three in `races.js`, two in `skills.js`)
+because it asserts `count == 1` and never fired: **an edit that does not apply reads exactly like an
+edit that landed.**
+**The regression is DRIVEN at BOTH ends of the class** (`test/client.js` WAVE 79, on its own token):
+the headline FIRE refusal (a real search, backdated past any hunter clock, a seeded 95-minute trigger)
+and the boost — deliberately two different **clock shapes**, so the helper is proven against both
+predicate forms — each asserted in two halves, the SERVER sent the remainder and then the driven line
+NAMES it, because a synthetic literal passes straight through the mutation that stops a field being
+sent. Five mutations, each caught at its own named assertion (the fire payload dropped → *"Got
+undefined for a 95-minute clock"*; the fire line reverted to *"Your trigger's still hot."*; the boost
+payload dropped; `coolWait`'s minutes band collapsed to *"soon"*; the extractor blinded → the
+anti-vacuity floor, and a bogus declaration → the stale check). §10.4 untouched (a refusal message and
+a 400 body move no value), and **no SQL moved in `src/`** — checked with a diff filter over the whole
+diff, not assumed — so the real-Postgres gates do not apply.
