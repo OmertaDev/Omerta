@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "b9118553fa68ccba9e2f930756bfbce91a1b9d1d",
+  "sourceRevision": "162afefcb7eb36da2cf90e59a816c6ee3187ec8f",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5652,
-    "edges": 24951,
+    "nodes": 5658,
+    "edges": 24984,
     "byNodeType": {
-      "Artifact": 1826,
-      "Command": 56,
-      "Commit": 1294,
+      "Artifact": 1827,
+      "Command": 57,
+      "Commit": 1298,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -64,19 +64,19 @@
       "Workflow": 4
     },
     "byEdgeType": {
-      "BELONGS_TO": 1979,
-      "CHANGED": 10009,
-      "CONTAINS": 1846,
-      "DECLARES": 56,
+      "BELONGS_TO": 1980,
+      "CHANGED": 10020,
+      "CONTAINS": 1847,
+      "DECLARES": 57,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
-      "EXECUTES": 203,
+      "EXECUTES": 204,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1294,
+      "HAS_COMMIT": 1298,
       "IMPLEMENTS": 124,
-      "IMPORTS": 1634,
+      "IMPORTS": 1642,
       "INHERITS": 12,
-      "REFERENCES": 2834,
+      "REFERENCES": 2840,
       "REPRESENTS": 891,
       "TESTS": 583,
       "TRACKS": 126,
@@ -10005,20 +10005,20 @@
       "path": "BALANCE.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 523836,
-      "lines": 6472,
-      "version": "ccd8d33369e437d8",
+      "bytes": 528932,
+      "lines": 6534,
+      "version": "7aa1fb3e193f4159",
       "text": true,
       "provenance": [
         {
           "file": "BALANCE.md",
           "line": 1,
-          "version": "ccd8d33369e437d8"
+          "version": "7aa1fb3e193f4159"
         }
       ],
-      "lastChangedAt": "2026-08-24T18:49:55.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dee7593a66b955d677656afab4516cb68edb918d"
+      "lastChangedAt": "2026-09-02T03:43:34.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "162afefcb7eb36da2cf90e59a816c6ee3187ec8f"
     },
     {
       "key": "Artifact:brand/agent-campaign/art/dormant-vault.png",
@@ -10971,20 +10971,20 @@
       "path": "CLAUDE.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 1722858,
-      "lines": 17841,
-      "version": "ccd4423443aa1758",
+      "bytes": 1725307,
+      "lines": 17867,
+      "version": "5462508a8e6d7bc0",
       "text": true,
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "ccd4423443aa1758"
+          "version": "5462508a8e6d7bc0"
         }
       ],
-      "lastChangedAt": "2026-09-02T03:01:16.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b9118553fa68ccba9e2f930756bfbce91a1b9d1d"
+      "lastChangedAt": "2026-09-02T03:43:34.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "162afefcb7eb36da2cf90e59a816c6ee3187ec8f"
     },
     {
       "key": "Artifact:content/packs/bad-batch/pack.json",
@@ -19958,20 +19958,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 12000,
-      "lines": 84,
-      "version": "b6ff464e9eff62fe",
+      "bytes": 12036,
+      "lines": 85,
+      "version": "d1913961418656fc",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "b6ff464e9eff62fe"
+          "version": "d1913961418656fc"
         }
       ],
-      "lastChangedAt": "2026-08-29T13:12:18.000Z",
+      "lastChangedAt": "2026-09-02T03:32:01.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "ffe20171a9ae64a13067a8aa15f2f15bad80c250"
+      "lastChangedCommit": "94da01266565c84801b2f43431c69eaca6b1b265"
     },
     {
       "key": "Artifact:Procfile",
@@ -32769,20 +32769,20 @@
       "path": "SPEC.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 52606,
+      "bytes": 52692,
       "lines": 716,
-      "version": "472ca53f6bb7a2d8",
+      "version": "64ffa1a07b155a96",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "472ca53f6bb7a2d8"
+          "version": "64ffa1a07b155a96"
         }
       ],
-      "lastChangedAt": "2026-08-30T17:37:22.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "90a07070d3efd08fe3e70d1c78def530cf79f184"
+      "lastChangedAt": "2026-09-02T03:43:34.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "162afefcb7eb36da2cf90e59a816c6ee3187ec8f"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -40743,6 +40743,29 @@
       "lastChangedCommit": "ca8505a0c2b896cc3f2c7b43ba82838c8675f0c7"
     },
     {
+      "key": "Artifact:tools/arena.js",
+      "type": "Artifact",
+      "id": "tools/arena.js",
+      "label": "arena.js",
+      "path": "tools/arena.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 34745,
+      "lines": 430,
+      "version": "be8efcc7ec82858a",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/arena.js",
+          "line": 1,
+          "version": "be8efcc7ec82858a"
+        }
+      ],
+      "lastChangedAt": "2026-09-02T03:36:35.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "92f1144314c7b525ca68d72830cd4df1d3cbda92"
+    },
+    {
       "key": "Artifact:tools/art-prompts.js",
       "type": "Artifact",
       "id": "tools/art-prompts.js",
@@ -42075,6 +42098,19 @@
       "lastChangedAt": "2026-08-25T04:11:25.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "62b32308c476f7616b9e32d30104be07d46a36ca"
+    },
+    {
+      "key": "Command:npm:arena",
+      "type": "Command",
+      "id": "npm:arena",
+      "label": "npm run arena",
+      "command": "node tools/arena.js",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
     },
     {
       "key": "Command:npm:art:responsive",
@@ -44353,6 +44389,22 @@
         {
           "commit": "1601cb2542ca6d8be1f075a8d2673f68414ca7af",
           "url": "https://github.com/OmertaDev/Omerta/commit/1601cb2542ca6d8be1f075a8d2673f68414ca7af"
+        }
+      ]
+    },
+    {
+      "key": "Commit:162afefcb7eb36da2cf90e59a816c6ee3187ec8f",
+      "type": "Commit",
+      "id": "162afefcb7eb36da2cf90e59a816c6ee3187ec8f",
+      "label": "BALANCE/CLAUDE/SPEC: THE ARENA — findings from the adaptive-agent economy red team",
+      "title": "BALANCE/CLAUDE/SPEC: THE ARENA — findings from the adaptive-agent economy red team",
+      "date": "2026-09-02T03:43:34.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/162afefcb7eb36da2cf90e59a816c6ee3187ec8f",
+      "provenance": [
+        {
+          "commit": "162afefcb7eb36da2cf90e59a816c6ee3187ec8f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/162afefcb7eb36da2cf90e59a816c6ee3187ec8f"
         }
       ]
     },
@@ -51429,6 +51481,22 @@
       ]
     },
     {
+      "key": "Commit:69f0b4bf056eafbeff2133402858e5be019e5536",
+      "type": "Commit",
+      "id": "69f0b4bf056eafbeff2133402858e5be019e5536",
+      "label": "chore(knowledge): refresh generated artifacts for b9118553",
+      "title": "chore(knowledge): refresh generated artifacts for b9118553",
+      "date": "2026-09-02T03:02:13.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/69f0b4bf056eafbeff2133402858e5be019e5536",
+      "provenance": [
+        {
+          "commit": "69f0b4bf056eafbeff2133402858e5be019e5536",
+          "url": "https://github.com/OmertaDev/Omerta/commit/69f0b4bf056eafbeff2133402858e5be019e5536"
+        }
+      ]
+    },
+    {
       "key": "Commit:6a78afd6d5d8d9dda18d2f48b693f9a9f2b6501d",
       "type": "Commit",
       "id": "6a78afd6d5d8d9dda18d2f48b693f9a9f2b6501d",
@@ -55125,6 +55193,22 @@
       ]
     },
     {
+      "key": "Commit:92f1144314c7b525ca68d72830cd4df1d3cbda92",
+      "type": "Commit",
+      "id": "92f1144314c7b525ca68d72830cd4df1d3cbda92",
+      "label": "tools/arena.js: lenders read the loans board's real field",
+      "title": "tools/arena.js: lenders read the loans board's real field",
+      "date": "2026-09-02T03:36:35.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/92f1144314c7b525ca68d72830cd4df1d3cbda92",
+      "provenance": [
+        {
+          "commit": "92f1144314c7b525ca68d72830cd4df1d3cbda92",
+          "url": "https://github.com/OmertaDev/Omerta/commit/92f1144314c7b525ca68d72830cd4df1d3cbda92"
+        }
+      ]
+    },
+    {
       "key": "Commit:930d27e2756e9a22b6941981b2cec5b1f89ea950",
       "type": "Commit",
       "id": "930d27e2756e9a22b6941981b2cec5b1f89ea950",
@@ -55297,6 +55381,22 @@
         {
           "commit": "94cf49376a25679fd28b90509d6c30236c3ba3fc",
           "url": "https://github.com/OmertaDev/Omerta/commit/94cf49376a25679fd28b90509d6c30236c3ba3fc"
+        }
+      ]
+    },
+    {
+      "key": "Commit:94da01266565c84801b2f43431c69eaca6b1b265",
+      "type": "Commit",
+      "id": "94da01266565c84801b2f43431c69eaca6b1b265",
+      "label": "tools/arena.js: the adaptive-agent economy red team (harness, step one)",
+      "title": "tools/arena.js: the adaptive-agent economy red team (harness, step one)",
+      "date": "2026-09-02T03:32:01.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/94da01266565c84801b2f43431c69eaca6b1b265",
+      "provenance": [
+        {
+          "commit": "94da01266565c84801b2f43431c69eaca6b1b265",
+          "url": "https://github.com/OmertaDev/Omerta/commit/94da01266565c84801b2f43431c69eaca6b1b265"
         }
       ]
     },
@@ -69276,13 +69376,13 @@
       "id": "BALANCE.md",
       "label": "BALANCE.md",
       "documentType": "documentation",
-      "lines": 6472,
-      "version": "ccd8d33369e437d8",
+      "lines": 6534,
+      "version": "7aa1fb3e193f4159",
       "provenance": [
         {
           "file": "BALANCE.md",
           "line": 1,
-          "version": "ccd8d33369e437d8"
+          "version": "7aa1fb3e193f4159"
         }
       ]
     },
@@ -69356,13 +69456,13 @@
       "id": "CLAUDE.md",
       "label": "CLAUDE.md",
       "documentType": "documentation",
-      "lines": 17841,
-      "version": "ccd4423443aa1758",
+      "lines": 17867,
+      "version": "5462508a8e6d7bc0",
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "ccd4423443aa1758"
+          "version": "5462508a8e6d7bc0"
         }
       ]
     },
@@ -71885,12 +71985,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 716,
-      "version": "472ca53f6bb7a2d8",
+      "version": "64ffa1a07b155a96",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "472ca53f6bb7a2d8"
+          "version": "64ffa1a07b155a96"
         }
       ]
     },
@@ -76473,6 +76573,9 @@
           "commit": "62b32308c476f7616b9e32d30104be07d46a36ca"
         },
         {
+          "commit": "69f0b4bf056eafbeff2133402858e5be019e5536"
+        },
+        {
           "commit": "6c59995e7b8af1dea38ef846751a1e072dacbba8"
         },
         {
@@ -76720,6 +76823,9 @@
         },
         {
           "commit": "65b283debfa4be7bd3b927688882cd13215a0517"
+        },
+        {
+          "commit": "69f0b4bf056eafbeff2133402858e5be019e5536"
         },
         {
           "commit": "6ae9b8e9eb158180f3c98cfc4e19a645c4cc9b87"
@@ -77103,6 +77209,9 @@
           "commit": "65b283debfa4be7bd3b927688882cd13215a0517"
         },
         {
+          "commit": "69f0b4bf056eafbeff2133402858e5be019e5536"
+        },
+        {
           "commit": "6ae9b8e9eb158180f3c98cfc4e19a645c4cc9b87"
         },
         {
@@ -77482,6 +77591,9 @@
         },
         {
           "commit": "65b283debfa4be7bd3b927688882cd13215a0517"
+        },
+        {
+          "commit": "69f0b4bf056eafbeff2133402858e5be019e5536"
         },
         {
           "commit": "6ae9b8e9eb158180f3c98cfc4e19a645c4cc9b87"
@@ -77920,6 +78032,9 @@
         },
         {
           "commit": "65b283debfa4be7bd3b927688882cd13215a0517"
+        },
+        {
+          "commit": "69f0b4bf056eafbeff2133402858e5be019e5536"
         },
         {
           "commit": "6ae9b8e9eb158180f3c98cfc4e19a645c4cc9b87"
@@ -84423,12 +84538,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "b9118553fa68ccba9e2f930756bfbce91a1b9d1d",
-      "currentBranch": "main",
+      "revision": "162afefcb7eb36da2cf90e59a816c6ee3187ec8f",
+      "currentBranch": "claude/next-work-recommendations-x5f2fp",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 1826,
+      "currentArtifactCount": 1827,
       "provenance": [
         {
           "file": "README.md",
@@ -120644,6 +120759,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:tools/arena.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/arena.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:tools/art-prompts.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -133591,6 +133715,30 @@
       "to": "Artifact:test/finalizedobservation.js",
       "provenance": {
         "commit": "1601cb2542ca6d8be1f075a8d2673f68414ca7af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:162afefcb7eb36da2cf90e59a816c6ee3187ec8f",
+      "to": "Artifact:BALANCE.md",
+      "provenance": {
+        "commit": "162afefcb7eb36da2cf90e59a816c6ee3187ec8f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:162afefcb7eb36da2cf90e59a816c6ee3187ec8f",
+      "to": "Artifact:CLAUDE.md",
+      "provenance": {
+        "commit": "162afefcb7eb36da2cf90e59a816c6ee3187ec8f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:162afefcb7eb36da2cf90e59a816c6ee3187ec8f",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "162afefcb7eb36da2cf90e59a816c6ee3187ec8f"
       }
     },
     {
@@ -163235,6 +163383,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:69f0b4bf056eafbeff2133402858e5be019e5536",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "69f0b4bf056eafbeff2133402858e5be019e5536"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:69f0b4bf056eafbeff2133402858e5be019e5536",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "69f0b4bf056eafbeff2133402858e5be019e5536"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:69f0b4bf056eafbeff2133402858e5be019e5536",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "69f0b4bf056eafbeff2133402858e5be019e5536"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:69f0b4bf056eafbeff2133402858e5be019e5536",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "69f0b4bf056eafbeff2133402858e5be019e5536"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:69f0b4bf056eafbeff2133402858e5be019e5536",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "69f0b4bf056eafbeff2133402858e5be019e5536"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:6a78afd6d5d8d9dda18d2f48b693f9a9f2b6501d",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -176563,6 +176751,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:92f1144314c7b525ca68d72830cd4df1d3cbda92",
+      "to": "Artifact:tools/arena.js",
+      "provenance": {
+        "commit": "92f1144314c7b525ca68d72830cd4df1d3cbda92"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:930d27e2756e9a22b6941981b2cec5b1f89ea950",
       "to": "Artifact:AGENTS.md",
       "provenance": {
@@ -177095,6 +177291,22 @@
       "to": "Artifact:tools/loadtest.js",
       "provenance": {
         "commit": "94cf49376a25679fd28b90509d6c30236c3ba3fc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:94da01266565c84801b2f43431c69eaca6b1b265",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "94da01266565c84801b2f43431c69eaca6b1b265"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:94da01266565c84801b2f43431c69eaca6b1b265",
+      "to": "Artifact:tools/arena.js",
+      "provenance": {
+        "commit": "94da01266565c84801b2f43431c69eaca6b1b265"
       }
     },
     {
@@ -218618,6 +218830,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:tools/arena.js",
+      "provenance": {
+        "file": "tools/arena.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:tools/art-prompts.js",
       "provenance": {
         "file": "tools/art-prompts.js",
@@ -224438,6 +224659,15 @@
       "type": "CONTAINS",
       "from": "Subsystem:web",
       "to": "Domain:client-experience"
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:arena",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
     },
     {
       "type": "DECLARES",
@@ -234955,7 +235185,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:economy-ledger",
-      "weight": 140
+      "weight": 142
     },
     {
       "type": "DEPENDS_ON",
@@ -234967,7 +235197,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:enterprise-logistics",
-      "weight": 10
+      "weight": 11
     },
     {
       "type": "DEPENDS_ON",
@@ -234979,13 +235209,13 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 406
+      "weight": 409
     },
     {
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:social-combat",
-      "weight": 22
+      "weight": 23
     },
     {
       "type": "DEPENDS_ON",
@@ -234997,7 +235227,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:world-progression",
-      "weight": 22
+      "weight": 23
     },
     {
       "type": "DEPENDS_ON",
@@ -235274,6 +235504,15 @@
       "from": "Domain:world-progression",
       "to": "Domain:vice-competition",
       "weight": 5
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:arena",
+      "to": "Artifact:tools/arena.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
     },
     {
       "type": "EXECUTES",
@@ -244901,6 +245140,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:162afefcb7eb36da2cf90e59a816c6ee3187ec8f",
+      "provenance": {
+        "commit": "162afefcb7eb36da2cf90e59a816c6ee3187ec8f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:16a74ee507250e31771eb2c90bd26e382391f3c4",
       "provenance": {
         "commit": "16a74ee507250e31771eb2c90bd26e382391f3c4"
@@ -248437,6 +248684,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:69f0b4bf056eafbeff2133402858e5be019e5536",
+      "provenance": {
+        "commit": "69f0b4bf056eafbeff2133402858e5be019e5536"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:6a78afd6d5d8d9dda18d2f48b693f9a9f2b6501d",
       "provenance": {
         "commit": "6a78afd6d5d8d9dda18d2f48b693f9a9f2b6501d"
@@ -250285,6 +250540,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:92f1144314c7b525ca68d72830cd4df1d3cbda92",
+      "provenance": {
+        "commit": "92f1144314c7b525ca68d72830cd4df1d3cbda92"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:930d27e2756e9a22b6941981b2cec5b1f89ea950",
       "provenance": {
         "commit": "930d27e2756e9a22b6941981b2cec5b1f89ea950"
@@ -250368,6 +250631,14 @@
       "to": "Commit:94cf49376a25679fd28b90509d6c30236c3ba3fc",
       "provenance": {
         "commit": "94cf49376a25679fd28b90509d6c30236c3ba3fc"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:94da01266565c84801b2f43431c69eaca6b1b265",
+      "provenance": {
+        "commit": "94da01266565c84801b2f43431c69eaca6b1b265"
       }
     },
     {
@@ -268959,6 +269230,78 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:tools/arena.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "tools/arena.js",
+        "line": 52
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/arena.js",
+      "to": "Artifact:src/loans.js",
+      "provenance": {
+        "file": "tools/arena.js",
+        "line": 55
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/arena.js",
+      "to": "Artifact:src/market.js",
+      "provenance": {
+        "file": "tools/arena.js",
+        "line": 56
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/arena.js",
+      "to": "Artifact:src/population.js",
+      "provenance": {
+        "file": "tools/arena.js",
+        "line": 53
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/arena.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "tools/arena.js",
+        "line": 58
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/arena.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "tools/arena.js",
+        "line": 51
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/arena.js",
+      "to": "Artifact:src/social.js",
+      "provenance": {
+        "file": "tools/arena.js",
+        "line": 54
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/arena.js",
+      "to": "Artifact:src/worker.js",
+      "provenance": {
+        "file": "tools/arena.js",
+        "line": 57
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:tools/art-prompts.js",
       "to": "Artifact:src/assets.js",
       "provenance": {
@@ -276610,6 +276953,15 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:BALANCE.md",
+      "to": "Artifact:tools/arena.js",
+      "provenance": {
+        "file": "BALANCE.md",
+        "line": 6476
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:BALANCE.md",
       "to": "Artifact:tools/bond-dials.js",
       "provenance": {
         "file": "BALANCE.md",
@@ -276704,6 +277056,15 @@
       "provenance": {
         "file": "BALANCE.md",
         "line": 4998
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:BALANCE.md",
+      "to": "Artifact:tools/playthrough.js",
+      "provenance": {
+        "file": "BALANCE.md",
+        "line": 6475
       }
     },
     {
@@ -276839,6 +277200,15 @@
       "provenance": {
         "file": "BALANCE.md",
         "line": 6107
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:BALANCE.md",
+      "to": "Artifact:tools/sim.js",
+      "provenance": {
+        "file": "BALANCE.md",
+        "line": 6475
       }
     },
     {
@@ -287959,6 +288329,15 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:tools/arena.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 17844
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
       "to": "Artifact:tools/art.js",
       "provenance": {
         "file": "CLAUDE.md",
@@ -288530,6 +288909,15 @@
       "provenance": {
         "file": "CLAUDE.md",
         "line": 13266
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:tools/sim.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 17843
       }
     },
     {
@@ -295631,6 +296019,15 @@
       "provenance": {
         "file": "SPEC.md",
         "line": 215
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:SPEC.md",
+      "to": "Artifact:tools/arena.js",
+      "provenance": {
+        "file": "SPEC.md",
+        "line": 20
       }
     },
     {

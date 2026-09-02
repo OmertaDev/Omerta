@@ -61,7 +61,8 @@
     "test:genesis": "node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js",
     "test:stockcatalogv2:postgres": "node test/stockcatalogv2.postgres.js",
     "test:rwahealth:postgres": "node test/rwahealth.postgres.js",
-    "test:rwaregistrylifecycle:postgres": "node test/rwaregistrylifecycle.postgres.js"
+    "test:rwaregistrylifecycle:postgres": "node test/rwaregistrylifecycle.postgres.js",
+    "arena": "node tools/arena.js"
   },
   "dependencies": {
     "@fastify/jwt": "^10.2.0",
