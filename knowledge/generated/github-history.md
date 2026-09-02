@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `8c6720bef488`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `b9118553fa68`.
 
 ## Repository
 
@@ -13,15 +13,15 @@
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-01 — play wave 79: cooldown refusals name the wait and carry it as data |
+| Latest commit | 2026-09-02 — Wave 79: THE COOLDOWN LEDGER — every cooldown refusal names the wait and carries it as data (#157) |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 440 |
-| Claude | 157 |
+| OmertaDev | 441 |
+| Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 9 |
 
@@ -39,10 +39,10 @@
 | [src/game.js](../../src/game.js) | 172 | yes |
 | [package.json](../../package.json) | 142 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
-| knowledge/generated/github-history.md | 123 | historical |
-| knowledge/generated/graph-summary.md | 123 | historical |
-| knowledge/generated/graph.json | 123 | historical |
-| knowledge/generated/inventory.md | 123 | historical |
+| knowledge/generated/github-history.md | 124 | historical |
+| knowledge/generated/graph-summary.md | 124 | historical |
+| knowledge/generated/graph.json | 124 | historical |
+| knowledge/generated/inventory.md | 124 | historical |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
 | [src/invariants.js](../../src/invariants.js) | 115 | yes |
@@ -59,13 +59,13 @@
 | [src/growth.js](../../src/growth.js) | 54 | yes |
 | [test/gates.js](../../test/gates.js) | 53 | yes |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
+| knowledge/generated/documents.md | 49 | historical |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 49 | yes |
 | [src/economy.js](../../src/economy.js) | 48 | yes |
-| knowledge/generated/documents.md | 48 | historical |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
 | [src/casino.js](../../src/casino.js) | 45 | yes |
+| knowledge/generated/modules.md | 42 | historical |
 | [src/business.js](../../src/business.js) | 41 | yes |
-| knowledge/generated/modules.md | 41 | historical |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
 | [test/docs.js](../../test/docs.js) | 39 | yes |
 | [src/chain.js](../../src/chain.js) | 38 | yes |
