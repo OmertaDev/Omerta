@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `d56c6e949fb7`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `baaeb2427195`.
 
 ## Repository
 
@@ -9,19 +9,19 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1305 |
+| Commits in clone | 1302 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-02 — Merge remote-tracking branch 'origin/main' into claude/next-work-recommendations-x5f2fp |
+| Latest commit | 2026-09-02 — Arena step four: the pot that hires a gun — refuted, measured, not built (#161) |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 444 |
-| Claude | 160 |
+| OmertaDev | 445 |
+| Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 13 |
 
