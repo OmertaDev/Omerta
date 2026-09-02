@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `34b908b6d36d`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `baaeb2427195`.
 
 ## Repository
 
@@ -9,19 +9,19 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1307 |
+| Commits in clone | 1302 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-02 — guard(locks): widen THE LOCK LEDGER to write-form acquisitions on contended rows |
+| Latest commit | 2026-09-02 — Arena step four: the pot that hires a gun — refuted, measured, not built (#161) |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 444 |
-| Claude | 162 |
+| OmertaDev | 445 |
+| Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 13 |
 
@@ -29,7 +29,7 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| [CLAUDE.md](../../CLAUDE.md) | 507 | yes |
+| [CLAUDE.md](../../CLAUDE.md) | 506 | yes |
 | [public/index.html](../../public/index.html) | 395 | yes |
 | [src/server.js](../../src/server.js) | 351 | yes |
 | [SPEC.md](../../SPEC.md) | 276 | yes |
@@ -38,10 +38,10 @@
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 172 | yes |
 | [package.json](../../package.json) | 143 | yes |
-| knowledge/generated/github-history.md | 133 | historical |
-| knowledge/generated/graph-summary.md | 133 | historical |
-| knowledge/generated/graph.json | 133 | historical |
-| knowledge/generated/inventory.md | 133 | historical |
+| knowledge/generated/github-history.md | 132 | historical |
+| knowledge/generated/graph-summary.md | 132 | historical |
+| knowledge/generated/graph.json | 132 | historical |
+| knowledge/generated/inventory.md | 132 | historical |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
@@ -56,9 +56,9 @@
 | [tools/sim.js](../../tools/sim.js) | 59 | yes |
 | [src/preflight.js](../../src/preflight.js) | 55 | yes |
 | [README.md](../../README.md) | 55 | yes |
-| [test/gates.js](../../test/gates.js) | 54 | yes |
 | knowledge/generated/documents.md | 54 | historical |
 | [src/growth.js](../../src/growth.js) | 54 | yes |
+| [test/gates.js](../../test/gates.js) | 53 | yes |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 49 | yes |
 | [src/economy.js](../../src/economy.js) | 48 | yes |
