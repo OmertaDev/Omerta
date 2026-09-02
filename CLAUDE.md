@@ -17895,3 +17895,45 @@ is noise, and the sim says so every run (P9.40)**: σ ≈ s·√N against 0.0141
 prose. Everything is a founder read in BALANCE.md § THE DEFENDED MONTH — nothing retuned. Also fixed
 en route: `tools/chaos.js` sized its scenario-6 boot wait by loop count, which under load reads a slow
 boot as a dead one (now wall clock).
+
+
+**THE ADAPTIVE HUNTERS — arena step three, and the last hunter standing (2026-09-02).** Step two
+left two stated limits — no adaptive seat ever adapted INTO hunting, and the guard market absorbed
+zero because a 24h contract sits on the day warp — and one question neither month could answer:
+does a town that can price heads DETER the next hunter? `tools/arena.js` now runs 90 days, gives
+the adaptive seats `hunter` as a policy (`ARENA_HUNT_SEATS`, `off` = a controlled pair on the same
+`ARENA_SEED`), and warps the clock per ROUND (`ARENA_WARP=round`), three seeded pairs, every run
+§10.4 34 checks drift 0 and no sink routed around. **The answer inverts the thesis step two
+measured: the retaliation rail deters exactly as long as somebody is left to COLLECT.** Read in
+kill order, the six career hunters contract-kill each other first in every run (five of six dead by
+kill #18–24, every seed, every arm), and then the last one standing carries every remaining pot on
+his head with nobody who can execute it — the pots expire and refund (20–23, $2.2–2.5M in every run a hunter survived; open
+pots on a living hunter at day 90: zero) — and farms the town unopposed: **60 / 60 / **50** kills
+after the 5th hunter death in the controls**, the survivor ending on 54–63 kills and a $16–26M pocket
+against a town where every landlord and lender is dead and the top decile holds 97–98%. What breaks
+it is a seat willing to take up the gun: in hunt seeds 1 and 3 **Adaptive 461 killed the last career
+hunter (kill #24 and #23) and killing stopped for the rest of the quarter** (estate 46% / 43% against
+153% / 160%, Gini 0.678 / 0.706 against 0.921 / 0.929, landlords +628% / +450% against −100%), while in
+hunt seed 2 no adaptive gun landed
+and the run ended like a control — the pair is really "was the last executor killed", and only a
+hunting seat can do it, at −$12.5k to −$212.6k a day while it holds the gun. Deterrence-vs-broke is
+answered by the same read: a hunter with no rival to collect on is broke (pockets $0–750 all
+quarter), a hunter with one is funded. The guard market now ABSORBS (26 / 37 / 14 lethal shots per hunt
+run against 0 in every step-two run), so `bodyguardAbsorbs` is proven by the arena at last.
+**Recorded, nothing retuned** — BALANCE.md § THE ADAPTIVE HUNTERS is the founder read, and the
+open question it names is a design call on the signed kill economy (whether a pot should be able to
+HIRE the NPC hitman when no player collects — the arena does not model `npcHit`, so its number is
+the worst case; only PREY retaliate, guards never re-list, heirs cannot re-arm).
+**THREE HARNESS LESSONS, each of the recorded shape.** (1) *Orphaned searches*: a hunter whose
+mark died or sheltered kept his one search open forever and could never open another, so step two's
+"kills stop at day 10" was PARTLY a stuck clock — the retaliation deaths were real (the persisted
+databases confirm hunters die to hunters), the silence after them partly the artifact; the harness
+now calls the search off on a dead/sheltered mark and prints the count (38–68 per run). (2)
+*`kill_log.id` is a UUID*: the first kill-order analysis ordered by it and produced a plausible,
+confident, WRONG story ("grinders and turtles die first"); ordering by `at` — real wall time, never
+warped, like `bloodline.died_at` — is what showed the hunters killing each other, and the whole
+finding rests on the correction. A column named `id` is not an order. (3) *The knowledge
+companion*: a source push without its generated pair fails the pg-mem job at
+`tools/knowledge-test.js:386`, and after main's automated refresh landed on top of the merge the PR
+went `dirty` with zero checks — resolved the recorded way (merge main, either side for generated
+paths, regenerate on the clean merged tree, commit artifacts alone).

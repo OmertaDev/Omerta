@@ -69,17 +69,59 @@ import { GUNS, GOODS, BUSINESSES, RACKETS, CRIMES, DISTRICTS, EXCHANGE, LOAN, CA
 
 const DAYS = Number(process.env.ARENA_DAYS || 30);
 const ROUNDS = Number(process.env.ARENA_ROUNDS || 3);
+assert(Number.isInteger(DAYS) && DAYS > 0 && Number.isInteger(ROUNDS) && ROUNDS > 0, `ARENA_DAYS/ARENA_ROUNDS must be positive integers (got ${DAYS}/${ROUNDS})`);
 const DEFENDED = process.env.ARENA_DEFENDED !== 'off';
+// STEP THREE — THE ADAPTIVE HUNTERS. Two knobs, both defaulting to the new posture, both reversible so
+// the step-two month can be reproduced on the same tree (ARENA_HUNT_SEATS=off ARENA_WARP=day).
+//   ARENA_HUNT_SEATS=on|off  — 'hunter' joins the adaptive seats' policy set, so a seat can take up
+//                              the gun when the bandit says killing pays. The step-two month's own
+//                              stated limit: no seat ever adapted INTO hunting, because none could.
+//   ARENA_WARP=round|day     — warp the clock 24h/ROUNDS after EVERY round instead of 24h at day end.
+//   ARENA_SEED=<int>         — the one generator behind every harness coin (the bandit's explore, the
+//                              round order, the gambler's stake); a pair at one seed differs in the regime
+//                              alone, and the read is taken over ≥3 seeds (one pair is noise at this N).
+//                              Step two's guard artifact: every round of a day ran at one wall-clock
+//                              instant and the day-end warp pulled exactly 24h, so a 24h contract bought
+//                              on day N ALWAYS lapsed at the day-N+1 warp and the hunters acting before
+//                              the prey in round 0 hit lapsed or unguarded marks (5 of 12, then 7 bare).
+//                              Per-round warp puts the lapse at the same ROUND next day, so the only gap
+//                              left is the acting order inside that one round — the real-world gap, a
+//                              contract that runs out an hour before you notice. THE WARP CHANGES MORE
+//                              THAN THE GUARD, and each is a consequence, not a tuning: regen refills
+//                              THREE tanks a day instead of one (every crime strategy's throughput ×3);
+//                              the 8h-capped passive accruals burst three times against their 12h daily
+//                              bucket (rackets/interest ~12h of income a day instead of 8h — the landlord
+//                              and lender rows move for a reason unrelated to hunting); a 4h safehouse
+//                              lapses at the first round-warp, so the prey re-shelters every round (three
+//                              stays a day, the shield cap's own maximum, at 3× the cost); and the
+//                              day-end sweeps run after the whole day has already been pulled, so a 24h
+//                              loan taken in round 0 is overdue at the SAME day's sweep. It ALSO brings the 3h
+//                              search and 2h trigger clocks inside a day (a hunter can now search in one
+//                              round and fire in the next), so step-three figures are NOT byte-comparable
+//                              with step two's: the day is the same length, the tick is finer.
+const HUNT_SEATS = DEFENDED && process.env.ARENA_HUNT_SEATS !== 'off';
+// Defaults to 'round' ONLY with the hunt seats on: the step-one (ARENA_DEFENDED=off) and step-two
+// (ARENA_HUNT_SEATS=off) months reproduce on this tree unchanged, and the step-three CONTROL (hunt seats off,
+// warp per round) is asked for explicitly — ARENA_HUNT_SEATS=off ARENA_WARP=round — so a pair differs in
+// exactly one variable.
+const WARP = process.env.ARENA_WARP === 'day' ? 'day' : process.env.ARENA_WARP === 'round' ? 'round' : HUNT_SEATS ? 'round' : 'day';
 // The cast. Counts are levers; the SHAPE is the point — several predators, several prey, one ring.
 // The ADAPTIVE seats exist only in the defended month, so `off` is byte-comparable with step one.
 const CAST = { hunter: 6, landlord: 8, arb: 8, ringboss: 1, alt: 8, lender: 6, broker: 6, gambler: 4, turtle: 4, grinder: 6, ...(DEFENDED ? { adaptive: 8 } : {}) };
 // PREY = the strategies that hold wealth in a body a hunter can reach. They get the toolkit.
 const PREY = new Set(['landlord', 'lender', 'broker', 'adaptive']);
-const ADAPTIVE_POLICIES = ['landlord', 'arb', 'grinder', 'lender', 'turtle'];
+const ADAPTIVE_POLICIES = ['landlord', 'arb', 'grinder', 'lender', 'turtle', ...(HUNT_SEATS ? ['hunter'] : [])];
 const EPSILON = 0.2;   // the bandit's explore rate — a lever, not a finding
+// ONE seeded generator for every random choice the harness makes (the bandit's explore, the gambler's
+// coin, the landlord's racket pick, the round order), so a pair at the same ARENA_SEED differs in the
+// regime alone and a different seed is a genuinely different month — the economy refuter's point that
+// at 10–40 kills a run one pair is noise-dominated (the P9.40 argument), so the read is over ≥3 seeds.
+const SEED = Number(process.env.ARENA_SEED || 1);
+let gseed = (Math.imul(SEED, 2654435761) + 1) >>> 0;
+const grnd = () => { gseed = (Math.imul(gseed, 1664525) + 1013904223) >>> 0; return gseed / 4294967296; };
 const money = (n) => `$${Math.round(Number(n) || 0).toLocaleString('en-US')}`;
 const pct = (num, den) => (den ? `${Math.round((num / den) * 100)}%` : '—');
-const pick = (a) => a[Math.floor(Math.random() * a.length)];
+const pick = (a) => a[Math.floor(grnd() * a.length)];
 const median = (xs) => { if (!xs.length) return 0; const s = [...xs].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
 const gini = (xs) => { const s = [...xs].map((x) => Math.max(0, x)).sort((a, b) => a - b); const n = s.length; const sum = s.reduce((a, b) => a + b, 0); if (!n || !sum) return 0; let acc = 0; s.forEach((x, i) => { acc += (2 * (i + 1) - n - 1) * x; }); return acc / (n * sum); };
 
@@ -99,12 +141,27 @@ const call = async (method, url, token, body) => {
 // floor, because a strategy whose every call failed reads on the summary line like one that played.
 const refused = {};   // strat -> code -> n
 const acted = {};     // strat -> n
+// The thirds `per()` reports over — ONE definition, so a refusal is charged to the same third a kill is.
+const THIRD = Math.max(1, Math.floor(DAYS / 3));
+const thirdOf = (d) => Math.min(2, Math.floor((d - 1) / THIRD));
+// Hunter-POLICY refusals per third, career and adaptive kept apart (an adaptive seat's hunter refusals
+// used to bucket under 'adaptive' with its five peaceful policies). `cash`/`ammo` here is the economy
+// refuter's F4: a hunter starved of ammo money stops killing whether or not anybody priced his head, and
+// the DETERRENCE thirds cannot tell the two apart unless this is printed beside them.
+const hunterRef = { hunter: {}, adaptive: {} };   // strat -> code -> [n, n, n]
 const note = (p, r) => {
   if (r.code === 200) acted[p.strat] = (acted[p.strat] || 0) + 1;
-  else if (r.body?.error) { const m = (refused[p.strat] ||= {}); m[r.body.error] = (m[r.body.error] || 0) + 1; }
+  else if (r.body?.error) {
+    const m = (refused[p.strat] ||= {}); m[r.body.error] = (m[r.body.error] || 0) + 1;
+    if (p.strat === 'hunter' || (p.strat === 'adaptive' && p.st?.policy === 'hunter')) { const t = (hunterRef[p.strat][r.body.error] ||= [0, 0, 0]); t[thirdOf(Math.max(1, dayNow))]++; }
+  }
   return r;
 };
-const ev = { missSample: [], search: 0, fire: 0, kill: 0, miss: 0, absorbed: 0, revived: 0, calledOff: 0, hunterDeaths: 0 };
+const ev = { missSample: [], search: 0, fire: 0, kill: 0, miss: 0, absorbed: 0, revived: 0, calledOff: 0, hunterDeaths: 0, killDays: [], cashSnaps: [] };
+// THE ADAPTIVE HUNTERS: the same counters for shots fired by an adaptive seat holding the hunter policy,
+// kept apart from the six career hunters — the question is whether a seat that CAN take up the gun does,
+// keeps it, and lives; the career seats have no choice and are the step-two control.
+const ah = { search: 0, fire: 0, kill: 0, miss: 0, absorbed: 0, revived: 0, calledOff: 0, calledOffOnSwitch: 0, killDays: [], deathsWhileHunting: 0, holdDays: 0, seatsTried: new Set(), dropped: 0, dist: [] };
 const chain = { funnelFills: 0, funnelCash: 0, loansPosted: 0, loansTaken: 0, loansRepaid: 0, loansCollected: 0, redeemed: 0, redeemedOmr: 0, safehouses: 0, dice: 0, diceStakes: [] };
 // THE DEFENCES — every count here is something a prey did to NOT die, and the assertions at the end
 // require each to have happened, because a toolkit nobody used reads exactly like a toolkit that failed.
@@ -142,7 +199,7 @@ await pool.query(`UPDATE characters SET respect=25000, cash=4000000, energy=100,
 await pool.query(`UPDATE characters SET respect=2000, cash=50000, energy=100, nerve=50 WHERE id IN (${alts})`);
 await pool.query(`UPDATE account_persistent SET made_until = now() + interval '90 days' WHERE account_id IN (SELECT account_id FROM characters WHERE id IN (${est}))`);
 await pool.query(`UPDATE account_persistent SET omr = 3000 WHERE account_id IN (${by('broker').map((p) => `'${p.acct}'`).join(',')})`);
-await pool.query(`UPDATE characters SET cb = 200 WHERE id IN (${by('hunter').map((p) => `'${p.id}'`).join(',')})`);   // crates for the iron
+await pool.query(`UPDATE characters SET cb = 200 WHERE id IN (${by('hunter').concat(HUNT_SEATS ? by('adaptive') : []).map((p) => `'${p.id}'`).join(',')})`);   // crates for the iron (an adaptive seat that takes up the gun needs them too)
 for (const p of players) await call('POST', '/v1/path', p.token, { path: p.strat === 'hunter' ? 'gun' : p.strat === 'landlord' ? 'ledger' : pick(['gun', 'ledger', 'kitchen']) });
 if (DEFENDED) {
   // RESPAWN INSURANCE: half the prey arrive insured (two tokens each — the real-ETH entitlement the
@@ -175,7 +232,11 @@ const baseline = Object.fromEntries(before.checks.map((c) => [c.name, c.drift]))
 const t0 = Date.now();
 
 // ── helpers ─────────────────────────────────────────────────────────────────────────────────────
-const me = async (p) => { const r = await call('GET', '/v1/me', p.token); const c = r.body?.character; if (c) { p.loc = c.loc; p.id = c.id; } return c; };
+// A death hands the seat a fresh street with NO iron, no belt and no search — `p.st` is the OLD street's
+// memory, so anything keyed to the body is cleared when the id changes. Without this a dead hunter's heir
+// never re-attempts the gun buy and every later fire refuses `gun` (a refuter's find over step two: part of
+// "their heirs could not re-arm" was the harness never trying).
+const me = async (p) => { const r = await call('GET', '/v1/me', p.token); const c = r.body?.character; if (c) { if (p.id && c.id !== p.id) { p.st.gun = false; p.st.btk = null; p.st.mark = null; p.st.markSrc = null; } p.loc = c.loc; p.id = c.id; } return c; };
 const goTo = async (p, d) => { if (p.loc === d) return true; const r = note(p, await call('POST', `/v1/travel/${d}`, p.token)); if (r.code === 200) p.loc = d; return r.code === 200; };
 const bestCrime = (c) => { const lvl = levelOf(Number(c.respect)); const ok = CRIMES.filter((x) => x.lvl <= lvl && x.nerve <= c.nerve); return ok.length ? ok[ok.length - 1] : null; };
 const crime = async (p, c) => { const x = bestCrime(c); if (!x) return null; return note(p, await call('POST', `/v1/crimes/${x.id}`, p.token, {})); };
@@ -197,8 +258,10 @@ const hireGuard = async (p, c) => {
 // for the rest of the day. The cost is 1% of cash+bank from POCKET, so the policy's own banking floor
 // is what keeps the door open. This is the cadence a careful player would run; whether it holds
 // against six hunters who all act FIRST in the round order is the measurement.
+// Under the per-round warp a 4h stay lapses at the first 8h warp, so the prey re-buys every round — three
+// stays a day, which is exactly M3.SAFEHOUSE_DAILY_CAP_MS (12h/day); under the day warp one stay per day.
 const shelter = async (p, c) => {
-  if (roundNow !== 0) return;
+  if (WARP === 'day' && roundNow !== 0) return;
   const c2 = await me(p); if (!c2 || c2.safeSeconds > 0) return;
   const r = note(p, await call('POST', '/v1/safehouse', p.token));
   if (r.code === 200) { def.preyShelters++; def.shelterCash += Number(r.body?.cost || 0); }
@@ -284,7 +347,8 @@ const STRAT = {
       const v = (await pool.query('SELECT g.alive, g.jail_until, g.hosp_until, g.name AS gname, c.guarded_until FROM characters c LEFT JOIN characters g ON g.id=c.guarded_by WHERE c.id=$1', [p.st.mark])).rows[0];
       const r = note(p, await call('POST', `/v1/streets/${p.st.mark}/fire`, p.token, { rounds }));
       if (r.code === 200) {
-        ev.fire++;
+        const tally = p.strat === 'adaptive' ? ah : ev;
+        tally.fire++;
         if (v && v.guarded_until) {
           const now = new Date();
           let state = 'available';
@@ -296,11 +360,19 @@ const STRAT = {
         if (p.st.markSrc === 'vendetta') { def.vendettaShots++; if (r.body.kill && r.body.vendetta) def.vendettaKills++; }
         else if (p.st.markSrc === 'contract') { def.contractShots++; if (r.body.kill) def.contractKills++; }
         else def.boardShots++;
-        if (r.body.kill) ev.kill++; else if (r.body.absorbed) ev.absorbed++; else if (r.body.revived) ev.revived++; else if (r.body.calledOff) ev.calledOff++;
-        else { ev.miss++; if (r.body.btk) p.st.btk = Number(r.body.btk); if (ev.missSample.length < 4) ev.missSample.push({ eff: r.body.effective, btk: r.body.btk, keys: Object.keys(r.body).join(',') }); }
+        if (r.body.kill) { tally.kill++; tally.killDays.push(dayNow); } else if (r.body.absorbed) tally.absorbed++; else if (r.body.revived) tally.revived++; else if (r.body.calledOff) tally.calledOff++;
+        else { tally.miss++; if (r.body.btk) p.st.btk = Number(r.body.btk); if (ev.missSample.length < 4) ev.missSample.push({ eff: r.body.effective, btk: r.body.btk, keys: Object.keys(r.body).join(',') }); }
         p.st.mark = null;
       }
-      else if (['no_search', 'no_target', 'gone', 'safe', 'witpro', 'family'].includes(r.body?.error)) p.st.mark = null;
+      else if (['no_search', 'no_target', 'gone', 'safe', 'witpro', 'family'].includes(r.body?.error)) {
+        // A refused shot that ends this hunt (the mark went to ground, died, went into witpro) must ALSO call the
+        // search OFF: the harness cleared its local mark and left the DB search standing, so every later search
+        // was refused `searching` for the rest of the month. The first 90-day pair had all six control hunters
+        // and four of six hunt-side hunters frozen that way from day 1–3, and the DETERRENCE thirds read 10/0/0 —
+        // zeros that were the harness, not the town. A real player calls the search off and picks a new mark.
+        p.st.mark = null;
+        if (r.body.error !== 'no_search') { const off = note(p, await call('DELETE', '/v1/streets/search', p.token)); if (off.code === 200) (p.strat === 'adaptive' ? ah : ev).calledOffDead = ((p.strat === 'adaptive' ? ah : ev).calledOffDead || 0) + 1; }
+      }
       // `cooldown`/`search` (not ready yet) keep the mark — the day warp brings the clock forward.
       return;
     }
@@ -326,7 +398,7 @@ const STRAT = {
     }
     if (!mark) return;
     const r = note(p, await call('POST', `/v1/streets/${mark.id}/search`, p.token));
-    if (r.code === 200) { ev.search++; p.st.mark = mark.id; p.st.markSrc = src; }
+    if (r.code === 200) { (p.strat === 'adaptive' ? ah : ev).search++; p.st.mark = mark.id; p.st.markSrc = src; }
   },
   // THE PASSIVE LANDLORD: every front the level allows, cheapest first; collect; pay the pad; buy
   // rackets with the surplus; bank the rest. Never fights, never hides.
@@ -338,7 +410,7 @@ const STRAT = {
     note(p, await call('POST', '/v1/business/collect', p.token));
     note(p, await call('POST', '/v1/business/upkeep', p.token));
     const rk = RACKETS.filter((r) => r.lvl <= lvl && r.cost * 3 < c.cash);
-    if (rk.length && Math.random() < 0.5) note(p, await call('POST', `/v1/rackets/${pick(rk).id}/buy`, p.token));
+    if (rk.length && grnd() < 0.5) note(p, await call('POST', `/v1/rackets/${pick(rk).id}/buy`, p.token));
     const c2 = await me(p); if (c2 && c2.cash > 600000) await bank(p, c2.cash - 500000);
   },
   // THE ARBITRAGEUR: read the price board, buy the widest spread where it is cheapest, haul it to
@@ -369,11 +441,11 @@ const STRAT = {
   // the 1%+2% the house keeps. The harness measures what it MOVES, and what the alts could earn.
   async alt(p, c) {
     await crime(p, c);
-    if (c.cash < 60000 && Math.random() < 0.5) {
+    if (c.cash < 60000 && grnd() < 0.5) {
       const offers = ((await call('GET', '/v1/loans', p.token)).body?.offers || []).filter((o) => !o.mine).sort((a, b) => a.owed - b.owed);
       if (offers[0]) { const r = note(p, await call('POST', `/v1/loans/${offers[0].id}/take`, p.token, {})); if (r.code === 200) chain.loansTaken++; }
     }
-    if (c.cash > 30000 && Math.random() < 0.4) {
+    if (c.cash > 30000 && grnd() < 0.4) {
       const price = Math.floor((c.cash * 0.85) / 10);
       const r = note(p, await call('POST', '/v1/market/order', p.token, { goodId: 'gin', qty: 10, price }));
       if (r.code === 200) ring.orders.push({ id: r.body?.id, district: p.loc, alt: p });
@@ -449,13 +521,32 @@ const STRAT = {
     p.st.policy ||= ADAPTIVE_POLICIES[p.k % ADAPTIVE_POLICIES.length];
     const worth = Number(c.cash || 0) + Number(c.bank || 0) + Number(c.bank_intransit || 0);
     if (roundNow === 0) {
+      // A death is the sharpest reward the bandit ever sees: the heir's worth is a few thousand dollars
+      // against millions, so the policy that was held when the street fell is charged the whole estate.
+      // That is what "deterrence" means to a bandit — counted here so the report can say how often the
+      // gun was the policy in hand at the moment the town collected.
+      // The view carries `generation` (deaths live on the account row and never reach /v1/me), and a death is
+      // exactly a generation crossing — the first cut read `c.deaths` and counted a confident zero forever.
+      if (p.st.lastGen != null && Number(c.generation || 1) > p.st.lastGen && p.st.policy === 'hunter') ah.deathsWhileHunting++;
+      p.st.lastGen = Number(c.generation || 1);
       if (p.st.lastWorth != null) { const b = (bandit[p.st.policy] ||= { n: 0, sum: 0 }); b.n++; b.sum += worth - p.st.lastWorth; }
       p.st.lastWorth = worth;
       const tried = ADAPTIVE_POLICIES.filter((x) => bandit[x]?.n);
       let next = p.st.policy;
-      if (Math.random() < EPSILON || tried.length < ADAPTIVE_POLICIES.length) next = pick(ADAPTIVE_POLICIES.filter((x) => !bandit[x]?.n).concat(tried.length === ADAPTIVE_POLICIES.length ? ADAPTIVE_POLICIES : []));
+      if (grnd() < EPSILON || tried.length < ADAPTIVE_POLICIES.length) next = pick(ADAPTIVE_POLICIES.filter((x) => !bandit[x]?.n).concat(tried.length === ADAPTIVE_POLICIES.length ? ADAPTIVE_POLICIES : []));
       else next = tried.sort((a, b) => bandit[b].sum / bandit[b].n - bandit[a].sum / bandit[a].n)[0];
-      if (next !== p.st.policy) { def.adaptiveSwitches++; p.st.policy = next; p.st.hold = null; }
+      if (next !== p.st.policy) {
+        def.adaptiveSwitches++;
+        // Dropping the gun CALLS OFF the search: the row lives until fire/call-off/estate, so a seat that
+        // came back to the gun later refused `searching` until its old mark died — the gun then read as
+        // idle hold-days for a reason unrelated to how the town prices heads (the economy refuter's F3).
+        if (p.st.policy === 'hunter') { ah.dropped++; if (p.st.mark) { const r = note(p, await call('DELETE', '/v1/streets/search', p.token)); if (r.code === 200) ah.calledOffOnSwitch++; } }
+        p.st.policy = next; p.st.hold = null; p.st.mark = null;
+      }
+      // Tallied AFTER the switch so a seat-day is charged to the policy that actually runs it — charged before,
+      // the seeded 'hunter' seat counted a hold and a try on day 1 with the gun never in hand, and a seat
+      // still holding the gun on the last day was never counted at all.
+      if (p.st.policy === 'hunter') { ah.holdDays++; ah.seatsTried.add(p.k); }
     }
     await STRAT[p.st.policy](p, c);
   },
@@ -464,7 +555,8 @@ const ring = { orders: [] };
 
 // ── the month ───────────────────────────────────────────────────────────────────────────────────
 // A DAY = ROUNDS rounds of every agent acting once, then the worker's sweeps (contracts expire, loans
-// default, listings lapse), the residents act, and the clock warps a day: every timestamptz on the
+// default, listings lapse), the residents act, and the clock warps a day (or 24h/ROUNDS after every round
+// under the per-round warp — see ARENA_WARP above for everything that changes): every timestamptz on the
 // tables that carry a player's clocks moves back 24h, which is the same trick tools/sim.js uses on one
 // character, applied to the town. Regen is refilled because a real day regenerates it.
 const WARP_TABLES = ['characters', 'account_persistent', 'searches', 'loans', 'businesses', 'bounties', 'market_listings', 'brokers_activations', 'racers', 'fighters'];
@@ -473,12 +565,17 @@ for (const t of WARP_TABLES) {
   const r = await pool.query(`SELECT column_name FROM information_schema.columns WHERE table_name=$1 AND data_type='timestamp with time zone'`, [t]);
   if (r.rows.length) warpCols[t] = r.rows.map((x) => x.column_name);
 }
-const warpDay = async () => {
+const warp = async (seconds) => {
   for (const [t, cols] of Object.entries(warpCols)) {
-    await pool.query(`UPDATE ${t} SET ${cols.map((c) => `${c} = ${c} - interval '1 day'`).join(', ')}`);
+    await pool.query(`UPDATE ${t} SET ${cols.map((c) => `${c} = ${c} - interval '${seconds} seconds'`).join(', ')}`);
   }
+  // Regen refills with the warp: 8 real hours regenerate energy (12/min) and nerve (6/min) to cap many
+  // times over, so a per-round refill is what the game would actually do — the step-two day-end refill
+  // was the conservative reading of the same fact, and it is kept under ARENA_WARP=day.
   await pool.query('UPDATE characters SET energy=100, nerve=50 WHERE NOT is_npc');
 };
+const warpDay = () => warp(86400);
+const warpRound = () => warp(Math.round(86400 / ROUNDS));
 
 const deathsAt = async () => Number((await pool.query('SELECT COALESCE(SUM(deaths),0) n FROM account_persistent')).rows[0].n);
 const deaths0 = await deathsAt();
@@ -490,7 +587,7 @@ for (let day = 1; day <= DAYS; day++) {
     // every characters timestamp back a day, so a 24h guard contract and a 4h shelter both LAPSE at the
     // day boundary; the hunters then fired before any prey re-bought either. 491 guards hired, 0 absorbed,
     // was that ordering, not the game. A seeded LCG keeps the run reproducible.
-    let seed = (day * 7919 + r * 104729 + 12345) >>> 0;
+    let seed = (day * 7919 + r * 104729 + 12345 + SEED * 7) >>> 0;
     const rnd = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
     const order = [...players];
     for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
@@ -501,14 +598,24 @@ for (let day = 1; day <= DAYS; day++) {
         if (prey) { await retaliate(p, c); if (p.strat === 'landlord') await family(p, c); await hireGuard(p, c); }
         if (DEFENDED && (p.strat === 'grinder' || p.strat === 'turtle') && !p.st.offered) { const g = note(p, await call('POST', '/v1/bodyguard/offer', p.token, { price: M3.BODYGUARD_MIN_PRICE })); if (g.code === 200) p.st.offered = true; }
         await STRAT[p.strat](p, c);
-        if (prey && !(p.strat === 'adaptive' && p.st.policy === 'turtle')) await shelter(p, c);
+        // a seat holding the gun does not go to ground — the safehouse blocks offence (the signed P1.3
+        // rule), so shelter and hunt are exclusive; the turtle policy buys its own stays
+        if (prey && !(p.strat === 'adaptive' && (p.st.policy === 'turtle' || p.st.policy === 'hunter'))) await shelter(p, c);
       } catch (e) { (refused[p.strat] ||= {})[`THREW:${e.message}`] = 1 + ((refused[p.strat] || {})[`THREW:${e.message}`] || 0); }
     }
+    if (WARP === 'round') await warpRound();
   }
+  // The hunters' pockets at each third's close: the number that separates "deterred" from "broke".
+  if (day % THIRD === 0 || day === DAYS) {
+    const ids = by('hunter').map((p) => p.id).filter(Boolean);
+    const cash = ids.length ? (await pool.query(`SELECT cash FROM characters WHERE id IN (${ids.map((_, k) => `$${k + 1}`).join(',')}) ORDER BY cash`, ids)).rows.map((x) => Number(x.cash)) : [];
+    if (!ev.cashSnaps.some((x) => x.day === day)) ev.cashSnaps.push({ day, median: cash.length ? cash[Math.floor(cash.length / 2)] : 0, broke: cash.filter((x) => x < 2000).length, n: cash.length });
+  }
+  if (HUNT_SEATS && (day === 1 || day % 10 === 0 || day === DAYS)) { const d = {}; for (const p of by('adaptive')) d[p.st.policy] = (d[p.st.policy] || 0) + 1; if (!ah.dist.some((x) => x.day === day)) ah.dist.push({ day, d }); }
   await sweepExpiredBounties(pool); await sweepLoans(pool); await sweepMarket(pool);
   await runBuyback(pool, { force: true }); await runBuyback(pool, { force: true });   // two 12h carves a day → the Window's till (else every redemption reads `dry`)
   await runPopulation(pool); await runResidentBehaviour(pool);
-  await warpDay();
+  if (WARP === 'day') await warpDay();
   if (day % 5 === 0) process.stdout.write(`  day ${day}/${DAYS} · kills ${ev.kill} · funnel ${money(chain.funnelCash)} · ${Math.round((Date.now() - t0) / 1000)}s\n`);
 }
 
@@ -535,6 +642,8 @@ for (const p of players) {
 }
 const hunterAccts = by('hunter').map((p) => p.acct);
 const kills = Number((await pool.query(`SELECT COUNT(*) n FROM kill_log WHERE killer_account IN (${hunterAccts.map((_, k) => `$${k + 1}`).join(',')})`, hunterAccts)).rows[0].n);
+const adaptiveAccts = by('adaptive').map((p) => p.acct);
+const adaptiveKills = HUNT_SEATS ? Number((await pool.query(`SELECT COUNT(*) n FROM kill_log WHERE killer_account IN (${adaptiveAccts.map((_, k) => `$${k + 1}`).join(',')})`, adaptiveAccts)).rows[0].n) : 0;
 const hf = flows.hunter || {};
 const lootCash = hf['whack:loot'] || 0;
 const lootOmr = Number((await pool.query(`SELECT COALESCE(SUM(amount),0) s FROM transactions WHERE currency='omr' AND reason='whack:loot' AND amount>0 AND account_id IN (${hunterAccts.map((_, k) => `$${k + 1}`).join(',')})`, hunterAccts)).rows[0].s);
@@ -543,7 +652,8 @@ const ammoOut = -(hf['ammo:buy'] || 0);
 const gunOut = -(Object.entries(hf).filter(([r]) => r.startsWith('gun:') || r === 'armory:gun').reduce((a, [, v]) => a + v, 0));
 const deaths = await deathsAt() - deaths0;
 
-console.log(`\n════ THE ARENA — ${DEFENDED ? 'THE DEFENDED MONTH' : 'THE UNDEFENDED MONTH'} — ${players.length} agents · ${DAYS} warped days × ${ROUNDS} rounds · real Postgres · ${Math.round((Date.now() - t0) / 1000)}s ════\n`);
+console.log(`\n════ THE ARENA — ${HUNT_SEATS ? 'THE ADAPTIVE HUNTERS' : DEFENDED ? 'THE DEFENDED MONTH' : 'THE UNDEFENDED MONTH'} (warp per ${WARP}) — ${players.length} agents · ${DAYS} warped days × ${ROUNDS} rounds · real Postgres · ${Math.round((Date.now() - t0) / 1000)}s ════\n`);
+console.log(`  regime: DEFENDED=${DEFENDED} HUNT_SEATS=${HUNT_SEATS} WARP=${WARP} SEED=${SEED} EPSILON=${EPSILON} ROUNDS=${ROUNDS} DAYS=${DAYS}\n`);
 console.log('  WHO WON — net worth ($ + $OMR at the Window rate), by strategy:');
 console.log(`  ${'strategy'.padEnd(10)}${'n'.padStart(3)}${'start'.padStart(13)}${'median'.padStart(13)}${'mean'.padStart(13)}${'max'.padStart(13)}${'Δ median'.padStart(11)}${'deaths'.padStart(8)}  top refusal`);
 const rows = [];
@@ -563,7 +673,7 @@ console.log(`\n  CONCENTRATION: Gini ${gini(allW).toFixed(3)} · top 10% hold ${
 
 console.log('\n  DID KILLING PAY — the whale-hunters, realized:');
 if (ev.missSample.length) console.log(`    miss readings (effective vs btk): ${ev.missSample.map((m) => `${m.eff}/${m.btk}`).join(' ')} [keys: ${ev.missSample[0].keys}]`);
-console.log(`    searches ${ev.search} · shots ${ev.fire} · kills ${kills} · misses ${ev.miss} · absorbed ${ev.absorbed} · revived ${ev.revived} · hunters died ${sheets.filter((x) => x.p.strat === 'hunter').reduce((a, x) => a + x.deaths, 0)}`);
+console.log(`    searches ${ev.search} · shots ${ev.fire} · kills ${kills} · misses ${ev.miss} · absorbed ${ev.absorbed} · revived ${ev.revived} · hunters died ${sheets.filter((x) => x.p.strat === 'hunter').reduce((a, x) => a + x.deaths, 0)} · searches called off on a dead/sheltered mark ${ev.calledOffDead || 0}`);
 console.log(`    loot ${money(lootCash)} cash + ${lootOmr.toFixed(2)} $OMR (${money(lootOmr * RATE)}) · contracts ${money(bountyIn)} · iron ${money(gunOut)} · ammo ${money(ammoOut)}`);
 const evPerKill = kills ? (lootCash + lootOmr * RATE + bountyIn - ammoOut - gunOut) / kills : null;
 console.log(`    realized EV per kill ${evPerKill == null ? 'n/a (no kill landed)' : money(evPerKill)} · per SHOT ${ev.fire ? money((lootCash + lootOmr * RATE + bountyIn - ammoOut - gunOut) / ev.fire) : 'n/a'}`);
@@ -594,12 +704,25 @@ if (DEFENDED) {
   for (const g of def.guardShotRows.filter((x) => x.state === 'available' && x.outcome !== 'absorbed' && x.outcome !== 'miss')) console.log(`      ⚠ day ${g.day}: a lethal shot at a mark with a LIVE, AVAILABLE guard (${g.guard}) was NOT absorbed — outcome ${g.outcome}`);
   console.log(`    bodyguards: ${def.guardHires} hires (${money(def.guardCash)}) · shots ABSORBED by a guard ${ev.absorbed} · shots at a GUARDED mark ${def.guardedShots} (guard in lockup ${def.guardJailed} / infirmary ${def.guardHosp} / dead ${def.guardDead}) · contract lapsed at the shot ${def.guardLapsed}`);
   console.log(`    insurance: ${def.insured} prey arrived with 2 respawn tokens · shots REVIVED ${ev.revived}`);
-  console.log(`    shelter: ${def.preyShelters} prey safehouse stays (${money(def.shelterCash)}) — a 4h stay lapses at the day warp, so the acting order inside a day decides what it covers`);
+  console.log(`    shelter: ${def.preyShelters} prey safehouse stays (${money(def.shelterCash)}) — a 4h stay lapses at the ${WARP === 'round' ? 'round warp, so the prey re-buys every round and the acting order inside each round' : 'day warp, so the acting order inside a day'} decides what it covers`);
   console.log(`    contracts on hunters: ${def.playerContracts} personal (${money(def.playerContractCash)}) + ${def.familyContracts} family (${money(def.familyContractCash)}, ${def.tributes} tributes) · marked killers ${syn.hits.size}`);
   console.log(`    the hunters' own targeting: vendetta ${def.vendettaShots} shots / ${def.vendettaKills} settled · contract ${def.contractShots} shots / ${def.contractKills} kills · board ${def.boardShots} shots`);
   const preyDeaths = (s) => sheets.filter((x) => x.p.strat === s).reduce((a, x) => a + x.deaths, 0);
   const ins = sheets.filter((x) => PREY.has(x.p.strat) && x.p.st.insured), unins = sheets.filter((x) => PREY.has(x.p.strat) && !x.p.st.insured);
   console.log(`    insured prey died ${ins.reduce((a, x) => a + x.deaths, 0)}× (median worth ${money(median(ins.map((x) => x.worth)))}) · uninsured prey died ${unins.reduce((a, x) => a + x.deaths, 0)}× (median ${money(median(unins.map((x) => x.worth)))}) · landlord/lender/broker/adaptive deaths ${['landlord', 'lender', 'broker', 'adaptive'].map((s) => `${s} ${preyDeaths(s)}`).join(', ')}`);
+  if (HUNT_SEATS) {
+    // DETERRENCE, measured: kills by ANY killer per third of the run (a town that prices heads should
+    // see the rate FALL), the gun's own bandit reward against the peaceful policies, and what happened
+    // to the seats that took it up.
+    const per = (days) => [0, 1, 2].map((t) => days.filter((d) => thirdOf(d) === t).length);
+    const all = ev.killDays.concat(ah.killDays);
+    console.log(`    DETERRENCE — kills per third of the ${DAYS} days: career hunters ${per(ev.killDays).join(' / ')} · adaptive hunters ${per(ah.killDays).join(' / ')} · all ${per(all).join(' / ')}`);
+    const refLine = (m) => ['cash', 'ammo', 'gun', 'searching', 'cooldown', 'no_target', 'safe'].filter((k) => m[k]).map((k) => `${k} ${m[k].join('/')}`).join(' · ') || '—';
+    console.log(`    ...or BROKE? hunter-policy refusals per third — career: ${refLine(hunterRef.hunter)} · adaptive: ${refLine(hunterRef.adaptive)}`);
+    console.log(`    the career hunters' pockets at each third's close: ${ev.cashSnaps.map((x) => `d${x.day} median ${money(x.median)} (${x.broke} of ${x.n} under $2k)`).join(' · ') || '—'}`);
+    console.log(`    the gun as a policy: ${ah.seatsTried.size} of ${CAST.adaptive} seats took it up · held ${ah.holdDays} seat-days · dropped it ${ah.dropped}× (${ah.calledOffOnSwitch} searches called off with it) · died holding it ${ah.deathsWhileHunting}× · searches ${ah.search} · shots ${ah.fire} · kills ${adaptiveKills} (${ah.kill} landed in-run) · misses ${ah.miss} · absorbed ${ah.absorbed} · revived ${ah.revived} · called off on a dead/sheltered mark ${ah.calledOffDead || 0}`);
+    console.log(`    the seats over time: ${ah.dist.map((x) => `d${x.day} ${Object.entries(x.d).map(([k, v]) => `${k}×${v}`).join(' ')}`).join(' | ') || '—'}`);
+  }
   const dist = {}; for (const p of by('adaptive')) dist[p.st.policy] = (dist[p.st.policy] || 0) + 1;
   console.log(`    the adaptive seats: ${def.adaptiveSwitches} switches · ended as ${Object.entries(dist).map(([k, v]) => `${k}×${v}`).join(' ')} · mean daily gain by policy: ${ADAPTIVE_POLICIES.map((x) => `${x} ${bandit[x]?.n ? money(bandit[x].sum / bandit[x].n) : '—'}${bandit[x]?.n ? ` (n=${bandit[x].n})` : ''}`).join(', ')}`);
 }
@@ -645,6 +768,17 @@ if (DEFENDED) {
   assert(def.preyShelters >= DAYS, `prey bought only ${def.preyShelters} safehouse stays in ${DAYS} days — the shelter cadence was not exercised`);
   assert(def.playerContracts + def.familyContracts >= 1 || syn.hits.size === 0, 'killers were marked but no contract was ever posted on one — retaliation was not exercised');
   assert(ev.absorbed + ev.revived + def.preyShelters > 0, 'not one shot was absorbed, revived or sheltered against');
+}
+if (HUNT_SEATS) {
+  // The bandit's exploration phase makes every policy get tried at least once, so a seat holding the gun
+  // is guaranteed — but a seat that held it and never got a shot off measured nothing about whether
+  // killing pays a seat that chose it. The floor is a fired shot, the same line the career seats have.
+  assert(ah.seatsTried.size >= 1, 'no adaptive seat ever took up the gun — the hunter policy was never explored');
+  // A shot needs a search in one round and the trigger in the next, on a seat that only holds the gun for
+  // one day during exploration — a 3-day smoke can legitimately end with searches and no shot (the mark
+  // died to a career hunter first, or went to ground). The floor is a claim about a MONTH, not a smoke.
+  assert(ah.search >= 1, 'an adaptive seat took up the gun and never once searched — the hunter policy did not run');
+  if (DAYS >= 30) assert(ah.fire >= 1, `adaptive seats held the gun ${ah.holdDays} seat-days and fired ${ah.fire} lethal shots — the adaptive-hunter loop was not exercised`);
 }
 console.log('✓ every strategy played, every chain ran' + (DEFENDED ? ', every defence was bought' : ''));
 await app.close();
