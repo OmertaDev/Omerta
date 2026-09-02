@@ -311,10 +311,10 @@
 | [AUDIT-world-occupation.md](../../AUDIT-world-occupation.md) | audit | 71 | 2026-07-21 |
 | [AUDIT-world-uprising.md](../../AUDIT-world-uprising.md) | audit | 80 | 2026-07-22 |
 | [AUDIT.md](../../AUDIT.md) | audit | 52 | 2026-07-14 |
-| [BALANCE.md](../../BALANCE.md) | documentation | 6738 | 2026-09-02 |
+| [BALANCE.md](../../BALANCE.md) | documentation | 6822 | 2026-09-02 |
 | [CHAIN-AUDIT-PACKET.md](../../CHAIN-AUDIT-PACKET.md) | documentation | 317 | 2026-08-30 |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 2001 | 2026-08-29 |
-| [CLAUDE.md](../../CLAUDE.md) | documentation | 17940 | 2026-09-02 |
+| [CLAUDE.md](../../CLAUDE.md) | documentation | 18003 | 2026-09-02 |
 | [content/README.md](../../content/README.md) | documentation | 281 | 2026-08-29 |
 | [DEPLOY-CHECKLIST.md](../../DEPLOY-CHECKLIST.md) | operations | 147 | 2026-08-13 |
 | [DEPLOY.md](../../DEPLOY.md) | operations | 568 | 2026-08-29 |
@@ -423,6 +423,7 @@
 | [omerta-phase1-riskpay-design.md](../../omerta-phase1-riskpay-design.md) | design | 235 | 2026-08-13 |
 | [omerta-phase2-vig-design.md](../../omerta-phase2-vig-design.md) | design | 294 | 2026-08-13 |
 | [omerta-phase4-emission-design.md](../../omerta-phase4-emission-design.md) | design | 99 | 2026-08-13 |
+| [omerta-pot-hires-a-gun-design.md](../../omerta-pot-hires-a-gun-design.md) | design | 355 | 2026-09-02 |
 | [omerta-recurring-sinks-design.md](../../omerta-recurring-sinks-design.md) | design | 79 | 2026-07-17 |
 | [omerta-reserve-bond-design.md](../../omerta-reserve-bond-design.md) | design | 140 | 2026-08-13 |
 | [omerta-residents-in-crews-design.md](../../omerta-residents-in-crews-design.md) | design | 159 | 2026-08-03 |

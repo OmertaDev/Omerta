@@ -6735,3 +6735,87 @@ open question is whether a mark's contract should be able to HIRE one (a pot tha
 contractor when no player collects inside its TTL), which is a design call on the kill economy's
 signed levers and not a harness finding. The arena models nothing of the kind, so the number it
 measured is the worst case.
+
+---
+
+## THE CONTRACTOR — arena step four: the pot that hires a gun, refuted before it was built, and the instrument that cannot settle the question (2026-09-02)
+
+Step three (§ THE ADAPTIVE HUNTERS) ended on one open design call: a contract pot on the last hunter
+standing **refunds unclaimed** because no player is left who can execute it, and he farms the town for
+the rest of the quarter. The proposal was a mechanic letting an uncollected pot **hire the NPC hitman**
+after a grace window. It went to four independent adversarial refuters before any code, and **all four
+returned REFUTED**. It is **NOT BUILT**: no `src/` change, no signed lever touched. The full record is
+`omerta-pot-hires-a-gun-design.md`, which now opens with its own refusal banner.
+
+**1. The premise was false, and the evidence was in this file.** The mechanic exists to reach an
+executor the town cannot otherwise reach — but `npcHit` is a **hunter-independent** executor that is
+already shipped: a fee, a 6h payer clock, a 24h per-target clock, a server-rolled chance at a
+level-scaled kill, and it needs no search, no gun and no rival hunter. What §1 of step three actually
+measured is a town that never called it, because **the harness never called it**: `grep -c npcHit
+tools/arena.js` returned **0**, and the step-three write-up says so in its own words — *"the prey never
+hire NPC hitmen … the arena does not model it, so §1 is the ceiling of the problem, not the floor."*
+The proposal cited that section as its motivation while the section's own caveat refuted it. So the
+task was redefined from BUILD to MEASURE, with the outcome pre-committed both ways: if a town of prey
+each entitled to a contractor still gets farmed, there is a problem to solve; if it does not, the
+finding was a harness artifact and nothing in the game moves.
+
+**2. What was built is the missing call.** `tools/arena.js` gains `hireContractor` behind
+`ARENA_PREY_NPCHIT` (`off` reproduces step three's arm byte-for-byte): a prey seat with a killer on its
+own list withdraws from the bank if it must, buys the dearest tier it can afford
+(`professional` $1M / `journeyman` $250k / `legbreaker` $50k) and stops for the round — one contractor
+per prey per round, because the 6h payer cooldown is all the game allows. Hires, spend, kills, absorbs
+and revives are **counted and PRINTED**, since a counter nobody reads is the vacuity class.
+
+**3. Seven 90-day runs, three seeds, both arms — every one `✓ §10.4 held: 34 checks, drift delta 0`
+with `SINKS ROUTED AROUND: none`.**
+
+| run | kills | hunters died | Gini | top 10% | estate burn | town at day 90 | kills per third | the contractor |
+|---|---|---|---|---|---|---|---|---|
+| s1 `on` (first) | 17 | 6 | 0.793 | 59% | 45% | $613,547,986 | 19 / 1 / 0 | ~$14.5M `npchit:hire` in the ledger |
+| s1 `on` (re-run) | **66** | 5 | 0.945 | 96% | 174% | $158,114,844 | 29 / 15 / 26 | 62 hires ($12,670,000) · killed 6 |
+| s1 `off` | 69 | 5 | 0.947 | 98% | 180% | $95,478,743 | 21 / 20 / 29 | — (no `npchit:hire` anywhere) |
+| s2 `on` | 14 | 6 | 0.744 | 48% | 36% | $838,412,010 | 16 / 0 / 0 | 36 hires ($7,150,000) · killed 6 |
+| s2 `off` | 24 | 6 | 0.724 | 46% | 63% | $656,880,131 | 20 / 6 / 0 | **0 hires ($0) · killed 0** |
+| s3 `on` | 16 | 6 | 0.761 | 53% | 46% | $688,328,170 | 17 / 1 / 0 | 89 hires ($18,315,000) · killed 5 |
+| s3 `off` | 20 | 6 | 0.710 | 48% | 40% | $898,078,811 | 22 / 0 / 0 | **0 hires ($0) · killed 0** |
+
+**The arm is real and it works.** `off` reads **0 hires** in both runs that could print it, which is
+the vacuity control — the knob genuinely gates the behaviour, so the `on` numbers are not measuring
+something the harness was doing anyway. And contractors demonstrably kill career hunters: **5–6 per
+`on` run**, at $50k–$1M a hire, through the shipped route with no game change of any kind. The
+executor the design was invented to supply was already there.
+
+**4. THE HEADLINE IS THE INSTRUMENT, and it disqualifies the conclusion the table looks like it
+supports.** `ARENA_SEED` seeds only the harness's **own** coins — the bandit's explore, the gambler's
+flip, the landlord's racket pick, the round order. The **server** carries **125 unseeded
+`Math.random()` calls across 36 files** (every crime roll, every `npcHit` roll, every `fire` outcome,
+every casino roll), and the market seed feeds the deterministic §7.11 price hash and nothing that rolls.
+So a "seeded pair" is not a controlled pair: it differs in the arm **and in every roll the game makes**.
+Measured directly — **two runs at `ARENA_SEED=1`, arm `on`, on the same tree: 17 kills and 66 kills**,
+estate burn 45% against 174%, Gini 0.793 against 0.945, town wealth $613M against $158M. The arms'
+ranges then overlap almost entirely (`on` 14–66, `off` 20–69), and the run-to-run spread at a fixed
+seed swamps any arm effect this instrument could resolve at n=1.
+
+**5. So §1's unopposed farming is a DRAW, not a property.** It appears in **one of three controls** and
+in an `on` run as well. What separates the two regimes in all seven runs is not the arm but whether the
+**sixth career hunter dies**: hunters died 6 → kills stop inside the first third (19/1/0, 16/0/0,
+17/1/0, 22/0/0); hunters died 5 → the survivor farms to the bell (29/15/26, 21/20/29). That happens in
+both arms. The pre-committed "DIES" outcome therefore holds, by a stronger route than the one it was
+written for: **nothing in `src/` changed and no signed lever moved.**
+
+**6. A retroactive qualification is owed to the two sections above.** The step-two and step-three arena
+figures are **single runs of a noise-dominated instrument**, and `tools/arena.js` carried a comment
+claiming *"a pair at the same ARENA_SEED differs in the regime alone"* — false, and now corrected at the
+site with the measurement that falsifies it. Their directional reads survive (defence changes the
+regime; a hunter with no rival to collect on is broke; retaliation deters while an executor exists),
+because those are supported by mechanism and by repeated runs. Their **numbers are draws**. Any future
+arena claim needs repeated runs **per arm**, not a seeded pair.
+
+| Harness knob | Default | What it decides |
+|---|---|---|
+| `ARENA_PREY_NPCHIT` | `on` (with `ARENA_DEFENDED`) | `off` reproduces step three's arm — prey never hire a contractor. |
+
+Nothing here is a lever of the game. **Founder read:** the town can already answer a lone hunter
+without any new mechanic — it hires the contractor the game ships — and the arena's own inability to
+distinguish the arms is the more important finding, because it is the standard every earlier arena
+number should be read against.
