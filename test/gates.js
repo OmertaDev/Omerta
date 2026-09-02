@@ -1238,6 +1238,20 @@ const SCENERY_WAIVED = {
 // reaches a pot, that implicit lock makes characters→singleton the universal order, and rule (1)
 // cannot see a lock the enclosing wrapper took.
 //
+// WHAT IT CANNOT SEE, stated because a green ledger is otherwise read as "no lock cycles exist".
+// (a) CROSS-MODULE ACQUISITIONS. A lock taken inside a function this transaction CALLS is invisible —
+//     `runEstate` holds a bounties row and then reaches third-party `characters` rows through
+//     `refundPot` and `voidListingsAtDeath`, an AB-BA against `sweepExpiredBounties` that a refuter
+//     found by reading and this scan structurally cannot. Following calls would need a call graph
+//     across 150 modules; the honest bound is that this is a per-transaction TEXT scan.
+// (b) WHOSE ROW, not which table. `UPDATE characters SET cash = cash + $2 WHERE id=$1` is a fresh
+//     acquisition when $1 is a third party and a no-op re-touch when it is the wrapper-held actor,
+//     and nothing in the text says which. That is why the write-form half is scoped to contended
+//     rows, where the question does not arise — and why the class in (a) is out of reach for a
+//     table-granularity rule at all, rather than merely unimplemented.
+// Both classes land as 40P01, which `deadlockToRetry` maps to a retryable `contention`. That is the
+// remedy for them, not a reason to widen this rule until it reports noise.
+//
 // SPLITTING ON TRANSACTION BOUNDARIES IS WHAT MAKES IT USABLE. A function may open several
 // independent transactions — the ring sweep has two, a route-registration function has dozens — and
 // concatenating them invents pairs no single transaction ever holds together. Without the split this
@@ -1251,15 +1265,17 @@ const SCENERY_WAIVED = {
     }
   })(SRC);
 
-  // the global pots and singletons a player path reaches while already holding its own character row
-  const SINGLETON = /^(street_tax|den_volume|desk_inventory|chain_reserve|bond_reserve|family_yield_pool|vig_prize_pool|stake_pool|event_fund|dev_fund|world_npcs|poker_state|stakes_state|futurity_state|population_state|loan_house|convoy_insurance|megaprojects|boxing_title|rwa_dividend_pool|rwa_family_dividend_pool|community_revenue|exchange_pool)$/;
+  // The contended shared rows a player path reaches while already holding its own character row.
+  // Not literally one-row tables (world_npcs is per-outfit, bounties per (target,kind)) — the property
+  // that matters is that many actors converge on the SAME row, which is what makes an inversion bite.
+  const SINGLETON = /^(street_tax|den_volume|desk_inventory|chain_reserve|bond_reserve|family_yield_pool|vig_prize_pool|stake_pool|event_fund|dev_fund|world_npcs|poker_state|stakes_state|futurity_state|population_state|loan_house|convoy_insurance|megaprojects|boxing_title|rwa_dividend_pool|rwa_family_dividend_pool|community_revenue|exchange_pool|bounties|poker_tournaments|stakes_races|futurities|boxing_bouts|market_listings|auctions|auction_consignments|loans|crew_heists|world_raids|pen_breaks|favors|district_bids|grand_prix|grand_prix_state)$/;
 
   // A pair may be waived only with a reason that is a PROPERTY of the pair — never "it's rare" or
   // "the retry catches it", which are true of every deadlock and would waive the whole ledger.
   const WAIVED = new Map([]);
 
   const order = new Map();          // "a|b" → Set(sites that lock a before b)
-  let segments = 0, singletonSites = 0, sequences = 0;
+  let segments = 0, singletonSites = 0, sequences = 0, writeLocks = 0;
   const singletonFirst = [];
 
   for (const f of files) {
@@ -1270,9 +1286,28 @@ const SCENERY_WAIVED = {
       const body = src.slice(marks[i].at, i + 1 < marks.length ? marks[i + 1].at : src.length);
       for (const part of body.split(/query\(\s*['"`]BEGIN/)) {
         const seg = part.split(/query\(\s*['"`](?:COMMIT|ROLLBACK)/)[0];
-        const locks = [];
-        for (const q of seg.matchAll(/FROM\s+([a-z_]+)[^'`"]*?FOR\s+UPDATE/gi)) locks.push(q[1].toLowerCase());
-        if (!locks.length) continue;
+        // An UPDATE/DELETE takes a row-exclusive lock held to COMMIT exactly as FOR UPDATE does, so
+        // those are acquisitions too. They are admitted ONLY for the contended rows above, and that
+        // scoping is the whole reason this half is a hard rule rather than noise: a singleton/pot is
+        // ONE row, so any write to it unambiguously acquires THAT row — while `UPDATE characters SET
+        // cash = cash + $2 WHERE id=$1` is a fresh acquisition for a THIRD PARTY and a no-op re-touch
+        // for the wrapper-held actor, and which one it is cannot be decided from the text. Measured:
+        // admitting every table yields 42 candidate pairs dominated by that ambiguity (this ledger's
+        // own "a mostly-wrong advisory is worse than none" rule forbids shipping that); admitting only
+        // contended rows yields 0 and sees 104 acquisitions the FOR-UPDATE-only half was blind to.
+        const hits = [];
+        for (const q of seg.matchAll(/FROM\s+([a-z_]+)[^'`"]*?FOR\s+UPDATE/gi)) hits.push({ i: q.index, t: q[1].toLowerCase(), w: false });
+        for (const q of seg.matchAll(/\bUPDATE\s+([a-z_]+)\s+SET\b/gi)) if (SINGLETON.test(q[1].toLowerCase())) hits.push({ i: q.index, t: q[1].toLowerCase(), w: true });
+        for (const q of seg.matchAll(/\bDELETE\s+FROM\s+([a-z_]+)/gi)) if (SINGLETON.test(q[1].toLowerCase())) hits.push({ i: q.index, t: q[1].toLowerCase(), w: true });
+        if (!hits.length) continue;
+        hits.sort((a, b) => a.i - b.i);
+        // A row lock is held to COMMIT, so only the FIRST acquisition of a table orders anything.
+        // Counting a later re-touch as a second acquisition emits BOTH orderings for one transaction
+        // and invents a conflict against itself — measured at 96 phantom pairs before this collapsed them.
+        const firstAt = new Map();
+        for (const h of hits) if (!firstAt.has(h.t)) firstAt.set(h.t, h);
+        writeLocks += [...firstAt.values()].filter((h) => h.w).length;
+        const locks = [...firstAt.keys()];
         segments++;
         singletonSites += locks.filter((t) => SINGLETON.test(t)).length;
         const site = `${relPath(SRC, f)}:${marks[i].name}`;
@@ -1308,6 +1343,10 @@ const SCENERY_WAIVED = {
   assert(singletonSites >= 30,
     `the lock scan matched only ${singletonSites} singleton lock site(s) — the SINGLETON list has drifted `
     + 'off the real table names, so rule 2 is checking nothing');
+  assert(writeLocks >= 70,
+    `the lock scan matched only ${writeLocks} write-form acquisition(s) on a contended row — the `
+    + 'UPDATE/DELETE half of the extractor has broken, and this ledger has silently reverted to the '
+    + 'FOR-UPDATE-only state it was widened out of, which looks exactly as clean as the widened one');
 
   const conflicts = [];
   for (const k of order.keys()) {
@@ -1334,7 +1373,7 @@ const SCENERY_WAIVED = {
     + `   - ${singletonFirst.join('\n   - ')}`);
 
   console.log(`✓ all ${sequences} multi-lock transactions agree on one order for each of ${order.size} pairs`
-    + `, and no singleton (${singletonSites} lock sites) is taken before a character row`);
+    + `, and no contended row (${singletonSites} lock sites, ${writeLocks} of them write-form) is taken before a character row`);
 }
 
 // ═══ THE CONNECTION-SHARING LEDGER — one client cannot run two queries at once ═══════════════════
