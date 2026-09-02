@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `baaeb2427195`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `bb8c1de3a806`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,828 |
-| Text lines | 523,623 |
-| Repository bytes inventoried | 314,206,643 |
+| Text lines | 523,701 |
+| Repository bytes inventoried | 314,214,233 |
 | Backend/route modules | 187 |
 | HTTP route registrations / unique routes | 742 / 742 |
 | Database tables | 317 |
 | Solidity declarations | 49 |
-| Git commits | 1,302 |
+| Git commits | 1,311 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 5,664 / 25,055 |
+| Graph nodes / edges | 5,673 / 25,090 |
 
 ## Artifact kinds
 
@@ -47,7 +47,7 @@
 | File | Lines | Kind | Last change |
 |---|---:|---|---|
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
-| [CLAUDE.md](../../CLAUDE.md) | 18,003 | documentation | 2026-09-02 |
+| [CLAUDE.md](../../CLAUDE.md) | 18,042 | documentation | 2026-09-02 |
 | [public/index.html](../../public/index.html) | 12,165 | web-surface | 2026-09-01 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [test/client.js](../../test/client.js) | 9,049 | test-suite | 2026-09-02 |
@@ -60,8 +60,8 @@
 | [schema.sql](../../schema.sql) | 6,009 | data-schema | 2026-08-29 |
 | [reference-prototype-v24.jsx](../../reference-prototype-v24.jsx) | 4,235 | artifact | 2026-08-11 |
 | [test/docs.js](../../test/docs.js) | 4,038 | test-suite | 2026-08-30 |
+| [test/gates.js](../../test/gates.js) | 3,782 | test-suite | 2026-09-02 |
 | [omerta-contracts/test/AcquisitionConstellationTask3B.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask3B.t.sol) | 3,743 | contract-test | 2026-08-28 |
-| [test/gates.js](../../test/gates.js) | 3,743 | test-suite | 2026-09-02 |
 | [src/server.js](../../src/server.js) | 3,472 | backend-module | 2026-08-30 |
 | [omerta-contracts/test/AcquisitionVaultOperator.t.sol](../../omerta-contracts/test/AcquisitionVaultOperator.t.sol) | 3,222 | contract-test | 2026-08-29 |
 | [omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1](../../omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1) | 2,947 | contract-project | 2026-08-28 |
