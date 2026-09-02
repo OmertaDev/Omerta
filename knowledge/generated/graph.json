@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "be2d3daf95902347449ce5f2e5aacac64f03e553",
+  "sourceRevision": "cce43ee0afccc10f34ab09d96c2cf8f44f8474f4",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5662,
-    "edges": 25017,
+    "nodes": 5658,
+    "edges": 25009,
     "byNodeType": {
       "Artifact": 1827,
       "Command": 57,
-      "Commit": 1302,
+      "Commit": 1298,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1980,
-      "CHANGED": 10044,
+      "CHANGED": 10040,
       "CONTAINS": 1847,
       "DECLARES": 57,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 204,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1302,
+      "HAS_COMMIT": 1298,
       "IMPLEMENTS": 124,
       "IMPORTS": 1642,
       "INHERITS": 12,
@@ -40750,20 +40750,20 @@
       "path": "tools/arena.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 68822,
-      "lines": 786,
-      "version": "c35964e2e590f630",
+      "bytes": 54418,
+      "lines": 652,
+      "version": "8a27da4c4d4b062a",
       "text": true,
       "provenance": [
         {
           "file": "tools/arena.js",
           "line": 1,
-          "version": "c35964e2e590f630"
+          "version": "8a27da4c4d4b062a"
         }
       ],
-      "lastChangedAt": "2026-09-02T15:01:45.000Z",
-      "lastChangedBy": "Claude",
-      "lastChangedCommit": "be2d3daf95902347449ce5f2e5aacac64f03e553"
+      "lastChangedAt": "2026-09-02T13:51:20.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "cce43ee0afccc10f34ab09d96c2cf8f44f8474f4"
     },
     {
       "key": "Artifact:tools/art-prompts.js",
@@ -46885,22 +46885,6 @@
         {
           "commit": "3252c5b66bdad4cfd29c05519aae320f4139b3ae",
           "url": "https://github.com/OmertaDev/Omerta/commit/3252c5b66bdad4cfd29c05519aae320f4139b3ae"
-        }
-      ]
-    },
-    {
-      "key": "Commit:326b048d11e0b207318cab531a08756fc173aa9f",
-      "type": "Commit",
-      "id": "326b048d11e0b207318cab531a08756fc173aa9f",
-      "label": "arena: seeded generator, per-third refusal tallies, call-off on switch, pocket snapshots, regime line",
-      "title": "arena: seeded generator, per-third refusal tallies, call-off on switch, pocket snapshots, regime line",
-      "date": "2026-09-02T14:24:05.000Z",
-      "author": "Claude",
-      "url": "https://github.com/OmertaDev/Omerta/commit/326b048d11e0b207318cab531a08756fc173aa9f",
-      "provenance": [
-        {
-          "commit": "326b048d11e0b207318cab531a08756fc173aa9f",
-          "url": "https://github.com/OmertaDev/Omerta/commit/326b048d11e0b207318cab531a08756fc173aa9f"
         }
       ]
     },
@@ -58873,22 +58857,6 @@
       ]
     },
     {
-      "key": "Commit:be2d3daf95902347449ce5f2e5aacac64f03e553",
-      "type": "Commit",
-      "id": "be2d3daf95902347449ce5f2e5aacac64f03e553",
-      "label": "arena: a fire refused on a dead/sheltered mark calls the search off",
-      "title": "arena: a fire refused on a dead/sheltered mark calls the search off",
-      "date": "2026-09-02T15:01:45.000Z",
-      "author": "Claude",
-      "url": "https://github.com/OmertaDev/Omerta/commit/be2d3daf95902347449ce5f2e5aacac64f03e553",
-      "provenance": [
-        {
-          "commit": "be2d3daf95902347449ce5f2e5aacac64f03e553",
-          "url": "https://github.com/OmertaDev/Omerta/commit/be2d3daf95902347449ce5f2e5aacac64f03e553"
-        }
-      ]
-    },
-    {
       "key": "Commit:be4369e01a92da93939d81c18d4b9e7bfb21ed09",
       "type": "Commit",
       "id": "be4369e01a92da93939d81c18d4b9e7bfb21ed09",
@@ -61577,22 +61545,6 @@
       ]
     },
     {
-      "key": "Commit:e3d9bc7ec219563e35d8769391b597a987099f66",
-      "type": "Commit",
-      "id": "e3d9bc7ec219563e35d8769391b597a987099f66",
-      "label": "THE ADAPTIVE HUNTERS — arena step three: seats that can take up the gun, per-round warp",
-      "title": "THE ADAPTIVE HUNTERS — arena step three: seats that can take up the gun, per-round warp",
-      "date": "2026-09-02T14:07:55.000Z",
-      "author": "Claude",
-      "url": "https://github.com/OmertaDev/Omerta/commit/e3d9bc7ec219563e35d8769391b597a987099f66",
-      "provenance": [
-        {
-          "commit": "e3d9bc7ec219563e35d8769391b597a987099f66",
-          "url": "https://github.com/OmertaDev/Omerta/commit/e3d9bc7ec219563e35d8769391b597a987099f66"
-        }
-      ]
-    },
-    {
       "key": "Commit:e45c539124aeb46d5c535b63bd8d729955d3ce72",
       "type": "Commit",
       "id": "e45c539124aeb46d5c535b63bd8d729955d3ce72",
@@ -62821,22 +62773,6 @@
         {
           "commit": "f4e1716db32f9f9430d36cb2878d832af1400232",
           "url": "https://github.com/OmertaDev/Omerta/commit/f4e1716db32f9f9430d36cb2878d832af1400232"
-        }
-      ]
-    },
-    {
-      "key": "Commit:f5f8c832026768c851659a9707ff800c521a51de",
-      "type": "Commit",
-      "id": "f5f8c832026768c851659a9707ff800c521a51de",
-      "label": "arena step three: the harness refuter's seven fixes",
-      "title": "arena step three: the harness refuter's seven fixes",
-      "date": "2026-09-02T14:17:12.000Z",
-      "author": "Claude",
-      "url": "https://github.com/OmertaDev/Omerta/commit/f5f8c832026768c851659a9707ff800c521a51de",
-      "provenance": [
-        {
-          "commit": "f5f8c832026768c851659a9707ff800c521a51de",
-          "url": "https://github.com/OmertaDev/Omerta/commit/f5f8c832026768c851659a9707ff800c521a51de"
         }
       ]
     },
@@ -84650,8 +84586,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "be2d3daf95902347449ce5f2e5aacac64f03e553",
-      "currentBranch": "claude/next-work-recommendations-x5f2fp",
+      "revision": "cce43ee0afccc10f34ab09d96c2cf8f44f8474f4",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -146279,14 +146215,6 @@
     },
     {
       "type": "CHANGED",
-      "from": "Commit:326b048d11e0b207318cab531a08756fc173aa9f",
-      "to": "Artifact:tools/arena.js",
-      "provenance": {
-        "commit": "326b048d11e0b207318cab531a08756fc173aa9f"
-      }
-    },
-    {
-      "type": "CHANGED",
       "from": "Commit:3284ae86bb27da4f0bff92b93dc0f79b1cf09506",
       "to": "Artifact:AUDIT-tier3-deepening.md",
       "provenance": {
@@ -188839,14 +188767,6 @@
     },
     {
       "type": "CHANGED",
-      "from": "Commit:be2d3daf95902347449ce5f2e5aacac64f03e553",
-      "to": "Artifact:tools/arena.js",
-      "provenance": {
-        "commit": "be2d3daf95902347449ce5f2e5aacac64f03e553"
-      }
-    },
-    {
-      "type": "CHANGED",
       "from": "Commit:be4369e01a92da93939d81c18d4b9e7bfb21ed09",
       "to": "Artifact:docs/WIKI.md",
       "provenance": {
@@ -201999,14 +201919,6 @@
     },
     {
       "type": "CHANGED",
-      "from": "Commit:e3d9bc7ec219563e35d8769391b597a987099f66",
-      "to": "Artifact:tools/arena.js",
-      "provenance": {
-        "commit": "e3d9bc7ec219563e35d8769391b597a987099f66"
-      }
-    },
-    {
-      "type": "CHANGED",
       "from": "Commit:e45c539124aeb46d5c535b63bd8d729955d3ce72",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -205571,14 +205483,6 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "commit": "f4c9c9dd6f9b9cfcd7fa22d2a24dc664eab8cf30"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:f5f8c832026768c851659a9707ff800c521a51de",
-      "to": "Artifact:tools/arena.js",
-      "provenance": {
-        "commit": "f5f8c832026768c851659a9707ff800c521a51de"
       }
     },
     {
@@ -246692,14 +246596,6 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
-      "to": "Commit:326b048d11e0b207318cab531a08756fc173aa9f",
-      "provenance": {
-        "commit": "326b048d11e0b207318cab531a08756fc173aa9f"
-      }
-    },
-    {
-      "type": "HAS_COMMIT",
-      "from": "Repository:omerta",
       "to": "Commit:3284ae86bb27da4f0bff92b93dc0f79b1cf09506",
       "provenance": {
         "commit": "3284ae86bb27da4f0bff92b93dc0f79b1cf09506"
@@ -252684,14 +252580,6 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
-      "to": "Commit:be2d3daf95902347449ce5f2e5aacac64f03e553",
-      "provenance": {
-        "commit": "be2d3daf95902347449ce5f2e5aacac64f03e553"
-      }
-    },
-    {
-      "type": "HAS_COMMIT",
-      "from": "Repository:omerta",
       "to": "Commit:be4369e01a92da93939d81c18d4b9e7bfb21ed09",
       "provenance": {
         "commit": "be4369e01a92da93939d81c18d4b9e7bfb21ed09"
@@ -254036,14 +253924,6 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
-      "to": "Commit:e3d9bc7ec219563e35d8769391b597a987099f66",
-      "provenance": {
-        "commit": "e3d9bc7ec219563e35d8769391b597a987099f66"
-      }
-    },
-    {
-      "type": "HAS_COMMIT",
-      "from": "Repository:omerta",
       "to": "Commit:e45c539124aeb46d5c535b63bd8d729955d3ce72",
       "provenance": {
         "commit": "e45c539124aeb46d5c535b63bd8d729955d3ce72"
@@ -254655,14 +254535,6 @@
       "to": "Commit:f4e1716db32f9f9430d36cb2878d832af1400232",
       "provenance": {
         "commit": "f4e1716db32f9f9430d36cb2878d832af1400232"
-      }
-    },
-    {
-      "type": "HAS_COMMIT",
-      "from": "Repository:omerta",
-      "to": "Commit:f5f8c832026768c851659a9707ff800c521a51de",
-      "provenance": {
-        "commit": "f5f8c832026768c851659a9707ff800c521a51de"
       }
     },
     {

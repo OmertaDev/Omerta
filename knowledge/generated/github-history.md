@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `be2d3daf9590`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `cce43ee0afcc`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1302 |
+| Commits in clone | 1298 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-02 — arena: a fire refused on a dead/sheltered mark calls the search off |
+| Latest commit | 2026-09-02 — THE DEFENDED MONTH — arena step two + sim P9.40 den variance (#159) |
 
 ## Commit authors
 
@@ -21,7 +21,7 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 443 |
-| Claude | 160 |
+| Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 11 |
 
