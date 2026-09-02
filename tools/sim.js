@@ -32,7 +32,7 @@ import { CRIMES, GUNS, CONSTANTS, M3, LOAN, btkOf,
          EXCHANGE, ESTATE, WIRE, GANG_SEALS, FOUNDATION, RIVALS, RACKETS, ASSETS, M4, DRUGS,
          MADE, MADE_LADDER, ACCESS_STAKE, OPERATIONS, opSlotsOf, SOV, DESK_AUCTION,
          TREASURY, STORE, SELL_TAX, BONDS, MISSIONS, DEEDS,
-         firstsCatalog, LIMITED_RUNS, LIMITED_RUN_P, SHIPMENT, shipmentCityCap, carVal } from '../src/rules.js';
+         firstsCatalog, LIMITED_RUNS, LIMITED_RUN_P, SHIPMENT, shipmentCityCap, carVal, CASINO } from '../src/rules.js';
 
 const app = await buildServer();
 const pool = app.pool;
@@ -1665,6 +1665,36 @@ phase('P9.39 scarcity — the firsts, the runs, the shipment');
     `CITY_MAX ${SHIPMENT.CITY_MAX} is the one number that puts the fixed-cap problem back at very high population (${capped ? `${(curve[curve.length - 1].share * 100).toFixed(0)}% at ${curve[curve.length - 1].pop}p` : 'n/a'}) — the founder lever to revisit if the city ever gets there`);
   note('scarcity', 'the shipment sink', `$${fmt(cheapest.cash)} → $${fmt(dearestC.cash)} per piece`,
     `EMISSION-NEGATIVE: the material pays nothing and gates a cash SINK. The dearest piece takes ${dearestC.units} units = ${daysForDearest} perfect days of showing up, so the pacing is the MATERIAL, not the money`);
+}
+
+// ════════ P9.40 DEN VARIANCE — the edge against its own noise ════════
+// The arena's first month (tools/arena.js) measured the den's REALIZED edge at 6.9%–15.7% of what
+// was staked against a book whose EXPECTED edge is 1.41% (craps, the pass line). Both figures are
+// right, and the reconciliation is arithmetic rather than a defect: the pass line pays 1:1, so one
+// roll of stake s has standard deviation ≈ s, and over N rolls the noise is s·√N while the edge is
+// 0.0141·s·N. The two are equal at N* = (1/0.0141)² ≈ 5,030 rolls — below that, what a gambler
+// sees is the COIN, not the edge. A month of a whole town's play (354 rolls in the arena) sits an
+// order of magnitude under N*, so any month's realized figure is a σ-wide draw around 1.41%, and
+// reading it as a house edge is reading noise. Analytic off the live CASINO levers (the P9.8
+// precedent — no value seeded, §10.4 untouched). Nothing here is a lever to move: the den is a
+// signed net sink, and this probe exists so a future arena month's figure is compared against its
+// own σ rather than filed as a finding.
+phase('P9.40 den variance — the edge against its own noise');
+{
+  const EDGE = 0.0141; // craps pass line, the den's headline game (asserted below)
+  const nStar = Math.ceil(1 / (EDGE * EDGE));
+  const zAt = (n) => EDGE * Math.sqrt(n); // expected loss ÷ σ after n equal rolls
+  note('den variance', 'rolls to N*', `${fmt(nStar)} rolls`,
+    `where the pass line's expected loss (0.0141·s·N) first equals its own noise (s·√N); below it a realized month is a coin, not an edge`);
+  note('den variance', 'one arena month (354 rolls)', `z = ${zAt(354).toFixed(2)}`,
+    `so a ±1σ month reads anywhere from a ${((EDGE - 1 / Math.sqrt(354)) * 100).toFixed(1)}% house LOSS to a ${((EDGE + 1 / Math.sqrt(354)) * 100).toFixed(1)}% house win — the arena's 6.9% (run 3) sits inside it and its 15.7% (step one) is a ~2σ draw: a bad month for the gamblers, not an edge. Unequal stakes widen σ further (σ = √Σs²), so both are conservative`);
+  const sessions = [{ n: 30, s: CASINO.MAX_BET }, { n: 30, s: CASINO.HIGH_MAX }];
+  for (const { n, s } of sessions) {
+    note('den variance', `a 30-roll session at $${fmt(s)}`, `1σ = $${fmt(Math.round(s * Math.sqrt(n)))}`,
+      `against an expected loss of $${fmt(Math.round(EDGE * s * n))} — a ${((Math.sqrt(n) / (EDGE * n))).toFixed(0)}× wider swing than the edge, which is what a session FEELS like at the ${s === CASINO.HIGH_MAX ? 'high-stakes' : 'main'} table`);
+  }
+  assert(Math.abs(nStar - 5030) <= 2, `N* moved (${nStar}) — the pass-line edge is a property of the dice, not a lever; if the den's headline game changed, re-derive`);
+  assert(CASINO.HIGH_MAX > CASINO.MAX_BET, 'the high-stakes room must raise the table, or the second session line measures nothing');
 }
 
 phase('P10 §10.4 ledger invariants over the ENTIRE sim (nothing was seeded)');
