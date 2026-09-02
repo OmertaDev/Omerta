@@ -247,7 +247,7 @@ const STRAT = {
   // THE LENDER: one usurious offer standing at all times; collect the moment a debt is overdue.
   async lender(p, c) {
     const b = (await call('GET', '/v1/loans', p.token)).body || {};
-    for (const l of (b.active || []).filter((l) => l.lender && l.overdue)) { const r = note(p, await call('POST', `/v1/loans/${l.id}/collect`, p.token)); if (r.code === 200) chain.loansCollected++; }
+    for (const l of (b.active || []).filter((l) => l.role === 'lender' && l.overdue)) { const r = note(p, await call('POST', `/v1/loans/${l.id}/collect`, p.token)); if (r.code === 200) chain.loansCollected++; }
     if (!(b.offers || []).some((o) => o.mine) && c.cash > 300000) {
       const r = note(p, await call('POST', '/v1/loans', p.token, { amount: 200000, rate: LOAN.RATE_MAX, hours: 24 }));
       if (r.code === 200) chain.loansPosted++;
@@ -291,7 +291,7 @@ const STRAT = {
     if (c.health < 40) note(p, await call('POST', '/v1/heal', p.token));
     await crime(p, c); await crime(p, c);
     const b = (await call('GET', '/v1/loans', p.token)).body || {};
-    for (const l of (b.active || []).filter((l) => !l.lender)) if (c.cash > l.owed) { const r = note(p, await call('POST', `/v1/loans/${l.id}/repay`, p.token)); if (r.code === 200) chain.loansRepaid++; }
+    for (const l of (b.active || []).filter((l) => l.role === 'borrower')) if (c.cash > l.owed) { const r = note(p, await call('POST', `/v1/loans/${l.id}/repay`, p.token)); if (r.code === 200) chain.loansRepaid++; }
     if (c.cash < 20000) { const offers = (b.offers || []).filter((o) => !o.mine); if (offers[0]) { const r = note(p, await call('POST', `/v1/loans/${offers[0].id}/take`, p.token, {})); if (r.code === 200) chain.loansTaken++; } }
     if (c.cash > 300000) await bank(p, c.cash - 200000);
   },
