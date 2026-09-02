@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `c5849a57bc93`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `cce43ee0afcc`.
 
 ## Repository
 
@@ -9,19 +9,19 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1300 |
+| Commits in clone | 1298 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-02 — arena: the defended month — a shots-per-seat vacuity floor, the controlled pair, and the record |
+| Latest commit | 2026-09-02 — THE DEFENDED MONTH — arena step two + sim P9.40 den variance (#159) |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 442 |
-| Claude | 159 |
+| OmertaDev | 443 |
+| Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 11 |
 
@@ -38,10 +38,10 @@
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 172 | yes |
 | [package.json](../../package.json) | 143 | yes |
-| knowledge/generated/github-history.md | 127 | historical |
-| knowledge/generated/graph-summary.md | 127 | historical |
-| knowledge/generated/graph.json | 127 | historical |
-| knowledge/generated/inventory.md | 127 | historical |
+| knowledge/generated/github-history.md | 128 | historical |
+| knowledge/generated/graph-summary.md | 128 | historical |
+| knowledge/generated/graph.json | 128 | historical |
+| knowledge/generated/inventory.md | 128 | historical |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
@@ -58,7 +58,7 @@
 | [README.md](../../README.md) | 55 | yes |
 | [src/growth.js](../../src/growth.js) | 54 | yes |
 | [test/gates.js](../../test/gates.js) | 53 | yes |
-| knowledge/generated/documents.md | 51 | historical |
+| knowledge/generated/documents.md | 52 | historical |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 49 | yes |
 | [src/economy.js](../../src/economy.js) | 48 | yes |
