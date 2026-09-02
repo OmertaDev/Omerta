@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `162afefcb7eb`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `fd41232dffa3`.
 
 ## Repository
 
@@ -9,19 +9,19 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1298 |
+| Commits in clone | 1296 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-02 — BALANCE/CLAUDE/SPEC: THE ARENA — findings from the adaptive-agent economy red team |
+| Latest commit | 2026-09-02 — THE ARENA — the adaptive-agent economy red team (tools/arena.js) (#158) |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 441 |
-| Claude | 159 |
+| OmertaDev | 442 |
+| Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 10 |
 
@@ -38,10 +38,10 @@
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 172 | yes |
 | [package.json](../../package.json) | 143 | yes |
-| knowledge/generated/github-history.md | 125 | historical |
-| knowledge/generated/graph-summary.md | 125 | historical |
-| knowledge/generated/graph.json | 125 | historical |
-| knowledge/generated/inventory.md | 125 | historical |
+| knowledge/generated/github-history.md | 126 | historical |
+| knowledge/generated/graph-summary.md | 126 | historical |
+| knowledge/generated/graph.json | 126 | historical |
+| knowledge/generated/inventory.md | 126 | historical |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
@@ -58,13 +58,13 @@
 | [README.md](../../README.md) | 55 | yes |
 | [src/growth.js](../../src/growth.js) | 54 | yes |
 | [test/gates.js](../../test/gates.js) | 53 | yes |
+| knowledge/generated/documents.md | 51 | historical |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
-| knowledge/generated/documents.md | 50 | historical |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 49 | yes |
 | [src/economy.js](../../src/economy.js) | 48 | yes |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
 | [src/casino.js](../../src/casino.js) | 45 | yes |
-| knowledge/generated/modules.md | 42 | historical |
+| knowledge/generated/modules.md | 43 | historical |
 | [src/business.js](../../src/business.js) | 41 | yes |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | 41 | yes |
 | [test/docs.js](../../test/docs.js) | 39 | yes |
