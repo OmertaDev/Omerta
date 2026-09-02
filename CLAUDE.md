@@ -17864,3 +17864,34 @@ game, and only checking the board's shape separated the two. Four earlier harnes
 class (cargo read as an array, the season twist and JWT refused by preflight under a real
 DATABASE_URL — pins are set post-boot, hunters firing 600 rounds at a 5,050-btk mark from the wrong
 district). Suite green; no SQL moved in `src/`.
+
+**THE DEFENDED MONTH — arena step two, and the answer to step one's question (2026-09-02).** Step one
+measured a town with NO defence (six hunters, fifty kills, `death:estate` burning 93% of the town's
+wealth, Gini 0.907) and left the founder a read: is that the design or a defect? `tools/arena.js`
+now gives every prey strategy the toolkit the harness had omitted — a bodyguard market, a safehouse
+cadence, two respawn tokens, contracts on any hunter who kills a member, a family pricing its members'
+killers, settleable vendettas — plus eight ADAPTIVE seats switching on rolling P&L
+(`ARENA_DEFENDED=off` reproduces step one on the same tree, so the pair is controlled). **Same six
+hunters, ten kills instead of thirty-eight, all before day 10; estate burn $186.5M (91%) → $39.0M (16%);
+Gini 0.856 → 0.490; landlords +165% instead of dead** — against a CONTROLLED baseline
+(`ARENA_DEFENDED=off` on the same tree; step one's 50 / 0.907 predate the per-round shuffle, so the
+only comparison that supports a conclusion is the one-variable pair). The undefended month was a HARNESS artifact. What
+did it was not the guard or the shelter but the RETALIATION RAIL: 77 personal + 3 family contracts on
+the three hunters who killed, all three died to them, their heirs could not re-arm (`cash×239
+gun×229`), and kills stopped — killing stays +EV per kill ($770k) and becomes −EV as a career once the
+town can price your head, which is the hitman-contracts thesis measured for the first time. Insurance
+worked exactly as built (two shots REVIVED, insured prey died 0× vs 3×); the shelter is a $35M tax on
+the rich; the adaptive seats converged on grinder×6 and nobody adapted INTO hunting. **The guard market
+absorbed nothing across four runs, and the reason is stated rather than smoothed**: a 24h contract sits
+exactly on the day warp, so a shot landing before the prey's daily re-hire in the shuffled order finds
+a lapsed one (5 of 12) and the rest hit unguarded marks — `bodyguardAbsorbs` is proven by
+`test/social.js`, not the arena. **Four runs to get true numbers, each a harness lesson**: hunters
+acting FIRST every round (a per-round shuffle); the vendetta notice reaching a broke heir; a diagnostic
+that counted fire ATTEMPTS (26 against 17 real shots — now tallied on a 200 with a per-shot row naming
+the guard's state); and a search-count vacuity floor that read a successful defence as an unexercised
+kill economy (a dead hunter's heir cannot search — the floor is on SHOTS now). **The den's 15% edge
+is noise, and the sim says so every run (P9.40)**: σ ≈ s·√N against 0.0141·s·N meets only at N* ≈
+5,030 rolls, so a 354-roll month has z ≈ 0.27 and a 15% month is a ~2σ draw; asserted rather than
+prose. Everything is a founder read in BALANCE.md § THE DEFENDED MONTH — nothing retuned. Also fixed
+en route: `tools/chaos.js` sized its scenario-6 boot wait by loop count, which under load reads a slow
+boot as a dead one (now wall clock).

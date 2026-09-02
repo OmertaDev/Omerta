@@ -629,7 +629,12 @@ const moved = after.checks.filter((c) => Math.abs(c.drift - (baseline[c.name] ??
 assert.equal(moved.length, 0, `§10.4 MOVED during the run — a population of predators found a leak the sim cannot see:\n  ${moved.join('\n  ')}`);
 console.log(`\n✓ §10.4 held: ${after.checks.length} checks, drift delta 0 across a month of ${players.length} agents`);
 for (const s of Object.keys(CAST)) assert((acted[s] || 0) >= DAYS, `strategy ${s} acted only ${acted[s] || 0} times in ${DAYS} days — a strategy that never plays is not measured, it is missing`);
-assert(ev.search >= DAYS, `the hunters started only ${ev.search} searches in ${DAYS} days — the kill economy was not exercised`);
+// The floor is on SHOTS, not searches, and the reason is the defended month itself: the retaliation
+// rail KILLS hunters (run 4: three of six, $12.1M of hunter wealth burned at the estate) and a dead
+// hunter's heir cannot re-arm, so searches FALL with the retaliation working — a search floor read a
+// successful defence as an unexercised kill economy. A shot per hunter seat is the vacuity line: below
+// it no lethal roll ran and nothing about kills was measured.
+assert(ev.fire >= CAST.hunter, `the hunters fired only ${ev.fire} lethal shots in ${DAYS} days (${CAST.hunter} seats) — the kill economy was not exercised`);
 assert(chain.loansTaken >= 1, 'nobody ever took a loan — the shylock chain was not exercised');
 assert(chain.funnelFills >= 1, 'the ring never funnelled — the alt chain was not exercised');
 assert(chain.redeemed >= 1, 'no broker ever redeemed at the window — the $OMR chain was not exercised');

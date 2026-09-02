@@ -6531,3 +6531,91 @@ worth one sim probe; arbitrage cleared a 2.3× margin on penicillin and then die
 Nothing here is a lever of the game — the arena moves no signed number. It is the measurement that
 `omerta-risk-to-earn-design.md`'s "spenders fund earners" model never had: a month with everyone
 optimizing at once.
+
+## THE DEFENDED MONTH — arena step two: the toolkit, the adaptive seats, and the den's noise (2026-09-02)
+
+Step one measured a town with NO defence and called the result a founder read ("is the undefended
+month the design or a balance defect?"). Step two answers it by giving every prey strategy the whole
+defensive toolkit the harness had omitted — a bodyguard market, a safehouse cadence, two respawn
+tokens, contracts on any hunter who kills a member, a family that prices its members' killers, and
+vendettas the heirs can settle — and adding eight ADAPTIVE seats that switch strategy on their own
+rolling P&L. Same chassis, same §10.4 delta-zero assertion (34 checks), `ARENA_DEFENDED=off`
+reproduces step one on the same tree so the two months are a controlled pair. Four defended runs were
+needed before the numbers meant anything (§3 below); the figures are run 4 unless stated.
+
+| | undefended (`ARENA_DEFENDED=off`, same tree) | defended (step two, run 4) |
+|---|---|---|
+| kills in 30 days | 38 (51 searches, 40 shots) | **10** (26 searches, 12 shots — all by day 10) |
+| hunters who died | 4 of 6 | 3 of 6 |
+| `death:estate` burned | $186.5M (91% of $205.4M) | **$39.0M (16% of $237.4M)** |
+| Gini / top-10% share | 0.856 / 67% | **0.490 / 26%** |
+| richest seat | a surviving hunter ($21.1M) | the median grinder |
+| landlord median Δ | −100% (7 of 8 dead) | **+165%** |
+| hunter median Δ | −93% | −54% |
+| realized EV per kill | +$369k (per shot $350k) | +$770k (per shot $642k) |
+| contracts posted | $0 | $7.7M + 3 family |
+| gamblers, realized den edge | 5.1% (204 rolls, z −0.5) | 15.1% (360 rolls, z −2.5) |
+
+The "undefended" column is the CONTROLLED baseline — the same tree with the toolkit switched off — not
+step one's published figures (50 kills / Gini 0.907 / 93% burned). Step one predates the per-round
+shuffle (hunters acted first every round), which is why it read harsher; the pair above differs in ONE
+variable, and that is the only comparison that supports a conclusion.
+
+**1. The answer to the founder's question: the undefended month is a HARNESS artifact, not the
+design.** With the toolkit in play the same six hunters kill ten times instead of thirty-eight, and the
+concentration measure falls from 0.856 (67% in the top decile) to 0.49 (26%). What did it is not the guard and not
+the shelter — it is the RETALIATION RAIL. Marks put **77 personal contracts ($7.7M) and 3 family
+contracts ($600k, 182 tributes)** on the three hunters who killed, all three died to those contracts,
+the estate burned **$12.1M of hunter wealth**, and their heirs could not re-arm (an undertaker is
+$400k plus ammo; the hunters' own refusals read `cash×239 gun×229`) — so kills stop at day 10 and the
+hunter seat ends the month −54%. Killing is still +EV per kill (the surviving hunters banked $8.3M of
+bounties on each other and $2.6M of loot), but a career of it is −EV once the town can price your head.
+That is `omerta-hitman-contracts-design.md`'s thesis measured for the first time: the kill economy is
+CONTRACT-driven in both directions.
+
+**2. What each defence actually did.** *Insurance worked exactly as built*: 14 prey arrived with two
+respawn tokens, two lethal shots were REVIVED, and insured prey died 0× against uninsured 3×. *The
+shelter is the second-largest sink in the defended town* — 638 prey stays cost $35.0M against $34.5M
+of landlord income — so the safehouse cadence is a real tax on being rich, not a free harbour. *The
+guard market moved $7.5M across 749 hires and absorbed NOTHING*, and the reason is the harness, stated
+rather than smoothed: a 24h contract sits exactly on the day warp, so a shot that lands before the
+prey's daily re-hire in the shuffled acting order finds a lapsed contract (5 of the 12 lethal shots)
+and the other 7 landed on marks that had none. Across four runs no lethal shot ever met a live,
+available guard, so `bodyguardAbsorbs` is proven by `test/social.js`, not by the arena. *Vendettas
+were never settled* — the heirs were broke, and the hunters' own vendetta targeting fired 0 shots.
+
+**3. The adaptive seats converged, and on the boring answer.** Eight seats started as landlords and
+made 86 switches on their 3-day P&L; they ended as **grinder×6, turtle×1, arb×1**, and the policy
+table says why — grinding paid $195k/day mean over 182 seat-days while lending lost $193k/day (every
+loan the lenders made was to a broke alt) and landlording lost $59k/day once the shelter and pad are
+paid. Nobody adapted INTO hunting, because the retaliation rail makes the seat −EV. The adaptive seats
+finished +106% median with zero deaths.
+
+**4. The den's edge against its own noise (sim P9.40).** Both months read a den edge ~10× the nominal
+1.41% (15.7% on 123 rolls in step one, 15.1% on 360 in run 4, 5.1% on 204 in the baseline), and the question was whether that is a defect in the book. It
+is the noise: a pass-line stake has σ ≈ s·√N against an edge of 0.0141·s·N, so the two are equal only
+at **N* ≈ 5,030 rolls**; one arena month at ~354 rolls has z ≈ 0.27 and a ±1σ band of −3.9%..+6.7%,
+so a 15% month is a ~2σ draw — a bad month for the gamblers, not an edge. The probe prints every run
+(`tools/sim.js` P9.40, with the MAX_BET/HIGH_MAX session σ at 13× the expected loss) so a retune of
+the den's edge is re-measured against its own variance. Nothing retuned.
+
+**5. Four runs, three harness lessons, recorded because a harness that publishes only its final
+numbers cannot be audited.** Run 1: 491 hires, 0 absorbed — the hunters acted FIRST in every round, so
+every mark was hit before it could buy anything (a deterministic per-round shuffle fixed it). Run 2: 0
+absorbed again — guards were dead or jailed, and the vendetta notice went to a broke heir (turtles
+now guard too; contracts are town-wide). Run 3: 18 "guarded shots", 0 absorbed — the diagnostic
+counted every fire ATTEMPT including cooldown refusals, 26 against 17 real shots (now tallied only on a
+200, with a per-shot row naming the guard's state). Run 4 is the first whose guard numbers are true.
+The search-count vacuity floor also had to become a SHOT floor: a dead hunter's heir cannot search, so
+the assert read a successful defence as an unexercised kill economy.
+
+| Harness knob | Default | What it decides |
+|---|---|---|
+| `ARENA_DEFENDED` | `on` | `off` reproduces step one (no toolkit, no adaptive seats). |
+| `CAST.adaptive` | 8 | Seats that switch on rolling P&L; 0 removes the convergence measurement. |
+
+Nothing here is a lever of the game. **Founder read, downgraded from step one:** the tempo question
+("is 25% loot / ~75% burn against a 12h/day shelter cap the intended tempo when 10% of a population
+hunts?") stands only for a town that never buys the defences it is sold; a town that does holds its
+wealth. What the defended month leaves open is narrower — a hunter's heir cannot re-arm after the
+estate, so a career hunter has one death in them, which is the design's own "who survives" reading.
