@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "d56c6e949fb7ed5cbb84a2069d5140d816a373ad",
+  "sourceRevision": "34b908b6d36d7d322ccd561156a7677b18f14f38",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5667,
-    "edges": 25059,
+    "nodes": 5669,
+    "edges": 25067,
     "byNodeType": {
       "Artifact": 1828,
       "Command": 57,
-      "Commit": 1305,
+      "Commit": 1307,
       "Contract": 49,
       "Document": 475,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1980,
-      "CHANGED": 10067,
+      "CHANGED": 10073,
       "CONTAINS": 1848,
       "DECLARES": 57,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 204,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1305,
+      "HAS_COMMIT": 1307,
       "IMPLEMENTS": 124,
       "IMPORTS": 1642,
       "INHERITS": 12,
@@ -10971,20 +10971,20 @@
       "path": "CLAUDE.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 1737916,
-      "lines": 18003,
-      "version": "f5142d5ca8e81713",
+      "bytes": 1741620,
+      "lines": 18042,
+      "version": "c1c7830b94eb7bad",
       "text": true,
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "f5142d5ca8e81713"
+          "version": "c1c7830b94eb7bad"
         }
       ],
-      "lastChangedAt": "2026-09-02T20:38:46.000Z",
+      "lastChangedAt": "2026-09-02T23:26:03.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "f5694e270db1aa5f7cfb8324324f919ef34b9a33"
+      "lastChangedCommit": "34b908b6d36d7d322ccd561156a7677b18f14f38"
     },
     {
       "key": "Artifact:content/packs/bad-batch/pack.json",
@@ -38611,20 +38611,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 242391,
-      "lines": 3743,
-      "version": "8097019661367d0b",
+      "bytes": 246277,
+      "lines": 3782,
+      "version": "bb22d55e40e9afd3",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "8097019661367d0b"
+          "version": "bb22d55e40e9afd3"
         }
       ],
-      "lastChangedAt": "2026-09-02T03:01:16.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b9118553fa68ccba9e2f930756bfbce91a1b9d1d"
+      "lastChangedAt": "2026-09-02T23:26:03.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "34b908b6d36d7d322ccd561156a7677b18f14f38"
     },
     {
       "key": "Artifact:test/genesiscca.js",
@@ -46928,6 +46928,22 @@
       ]
     },
     {
+      "key": "Commit:32d1a31f6a2338b3d91406867c07e2757e0f1af8",
+      "type": "Commit",
+      "id": "32d1a31f6a2338b3d91406867c07e2757e0f1af8",
+      "label": "chore(knowledge): refresh generated artifacts for d56c6e94",
+      "title": "chore(knowledge): refresh generated artifacts for d56c6e94",
+      "date": "2026-09-02T20:42:53.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/32d1a31f6a2338b3d91406867c07e2757e0f1af8",
+      "provenance": [
+        {
+          "commit": "32d1a31f6a2338b3d91406867c07e2757e0f1af8",
+          "url": "https://github.com/OmertaDev/Omerta/commit/32d1a31f6a2338b3d91406867c07e2757e0f1af8"
+        }
+      ]
+    },
+    {
       "key": "Commit:33546fff59bd25f7937901c4932ed2cb497b9798",
       "type": "Commit",
       "id": "33546fff59bd25f7937901c4932ed2cb497b9798",
@@ -47036,6 +47052,22 @@
         {
           "commit": "3440ef8bce6797e0b62fc08441a1e1b0e49ce9da",
           "url": "https://github.com/OmertaDev/Omerta/commit/3440ef8bce6797e0b62fc08441a1e1b0e49ce9da"
+        }
+      ]
+    },
+    {
+      "key": "Commit:34b908b6d36d7d322ccd561156a7677b18f14f38",
+      "type": "Commit",
+      "id": "34b908b6d36d7d322ccd561156a7677b18f14f38",
+      "label": "guard(locks): widen THE LOCK LEDGER to write-form acquisitions on contended rows",
+      "title": "guard(locks): widen THE LOCK LEDGER to write-form acquisitions on contended rows",
+      "date": "2026-09-02T23:26:03.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/34b908b6d36d7d322ccd561156a7677b18f14f38",
+      "provenance": [
+        {
+          "commit": "34b908b6d36d7d322ccd561156a7677b18f14f38",
+          "url": "https://github.com/OmertaDev/Omerta/commit/34b908b6d36d7d322ccd561156a7677b18f14f38"
         }
       ]
     },
@@ -69591,13 +69623,13 @@
       "id": "CLAUDE.md",
       "label": "CLAUDE.md",
       "documentType": "documentation",
-      "lines": 18003,
-      "version": "f5142d5ca8e81713",
+      "lines": 18042,
+      "version": "c1c7830b94eb7bad",
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "f5142d5ca8e81713"
+          "version": "c1c7830b94eb7bad"
         }
       ]
     },
@@ -76919,6 +76951,9 @@
           "commit": "30514acce0345f7ed2d7ebde333e5de343c699e5"
         },
         {
+          "commit": "32d1a31f6a2338b3d91406867c07e2757e0f1af8"
+        },
+        {
           "commit": "33e8c06d6372c68a97ac8b6cdee8b5c17caf4f4e"
         },
         {
@@ -77324,6 +77359,9 @@
           "commit": "30514acce0345f7ed2d7ebde333e5de343c699e5"
         },
         {
+          "commit": "32d1a31f6a2338b3d91406867c07e2757e0f1af8"
+        },
+        {
           "commit": "33e8c06d6372c68a97ac8b6cdee8b5c17caf4f4e"
         },
         {
@@ -77727,6 +77765,9 @@
         },
         {
           "commit": "30514acce0345f7ed2d7ebde333e5de343c699e5"
+        },
+        {
+          "commit": "32d1a31f6a2338b3d91406867c07e2757e0f1af8"
         },
         {
           "commit": "33e8c06d6372c68a97ac8b6cdee8b5c17caf4f4e"
@@ -78192,6 +78233,9 @@
         },
         {
           "commit": "30514acce0345f7ed2d7ebde333e5de343c699e5"
+        },
+        {
+          "commit": "32d1a31f6a2338b3d91406867c07e2757e0f1af8"
         },
         {
           "commit": "33e8c06d6372c68a97ac8b6cdee8b5c17caf4f4e"
@@ -84791,7 +84835,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "d56c6e949fb7ed5cbb84a2069d5140d816a373ad",
+      "revision": "34b908b6d36d7d322ccd561156a7677b18f14f38",
       "currentBranch": "claude/next-work-recommendations-x5f2fp",
       "defaultBranch": "main",
       "visibility": "public",
@@ -108953,13 +108997,13 @@
       "type": "TestSuite",
       "id": "test/gates.js",
       "label": "test/gates.js",
-      "lines": 3743,
-      "version": "8097019661367d0b",
+      "lines": 3782,
+      "version": "bb22d55e40e9afd3",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "8097019661367d0b"
+          "version": "bb22d55e40e9afd3"
         }
       ]
     },
@@ -146444,6 +146488,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:32d1a31f6a2338b3d91406867c07e2757e0f1af8",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "32d1a31f6a2338b3d91406867c07e2757e0f1af8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:32d1a31f6a2338b3d91406867c07e2757e0f1af8",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "32d1a31f6a2338b3d91406867c07e2757e0f1af8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:32d1a31f6a2338b3d91406867c07e2757e0f1af8",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "32d1a31f6a2338b3d91406867c07e2757e0f1af8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:32d1a31f6a2338b3d91406867c07e2757e0f1af8",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "32d1a31f6a2338b3d91406867c07e2757e0f1af8"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:33546fff59bd25f7937901c4932ed2cb497b9798",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -146816,6 +146892,22 @@
       "to": "Artifact:test/loans.js",
       "provenance": {
         "commit": "3440ef8bce6797e0b62fc08441a1e1b0e49ce9da"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:34b908b6d36d7d322ccd561156a7677b18f14f38",
+      "to": "Artifact:CLAUDE.md",
+      "provenance": {
+        "commit": "34b908b6d36d7d322ccd561156a7677b18f14f38"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:34b908b6d36d7d322ccd561156a7677b18f14f38",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "34b908b6d36d7d322ccd561156a7677b18f14f38"
       }
     },
     {
@@ -247034,6 +247126,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:32d1a31f6a2338b3d91406867c07e2757e0f1af8",
+      "provenance": {
+        "commit": "32d1a31f6a2338b3d91406867c07e2757e0f1af8"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:33546fff59bd25f7937901c4932ed2cb497b9798",
       "provenance": {
         "commit": "33546fff59bd25f7937901c4932ed2cb497b9798"
@@ -247085,6 +247185,14 @@
       "to": "Commit:3440ef8bce6797e0b62fc08441a1e1b0e49ce9da",
       "provenance": {
         "commit": "3440ef8bce6797e0b62fc08441a1e1b0e49ce9da"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:34b908b6d36d7d322ccd561156a7677b18f14f38",
+      "provenance": {
+        "commit": "34b908b6d36d7d322ccd561156a7677b18f14f38"
       }
     },
     {
@@ -266409,7 +266517,7 @@
       "to": "Artifact:tools/sqlscan.js",
       "provenance": {
         "file": "test/gates.js",
-        "line": 3041
+        "line": 3080
       }
     },
     {
@@ -284535,7 +284643,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17830
+        "line": 17869
       }
     },
     {
@@ -285831,7 +285939,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17814
+        "line": 17853
       }
     },
     {
@@ -285840,7 +285948,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17990
+        "line": 18029
       }
     },
     {
@@ -288162,7 +288270,7 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17888
+        "line": 17927
       }
     },
     {
@@ -289089,7 +289197,7 @@
       "to": "Artifact:tools/arena.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17844
+        "line": 17883
       }
     },
     {
@@ -289098,7 +289206,7 @@
       "to": "Artifact:tools/arena.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17870
+        "line": 17909
       }
     },
     {
@@ -289107,7 +289215,7 @@
       "to": "Artifact:tools/arena.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17903
+        "line": 17942
       }
     },
     {
@@ -289116,7 +289224,7 @@
       "to": "Artifact:tools/arena.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17957
+        "line": 17996
       }
     },
     {
@@ -289125,7 +289233,7 @@
       "to": "Artifact:tools/arena.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17981
+        "line": 18020
       }
     },
     {
@@ -289278,7 +289386,7 @@
       "to": "Artifact:tools/chaos.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17896
+        "line": 17935
       }
     },
     {
@@ -289719,7 +289827,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17843
+        "line": 17882
       }
     },
     {
