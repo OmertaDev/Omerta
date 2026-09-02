@@ -364,7 +364,15 @@ const STRAT = {
         else { tally.miss++; if (r.body.btk) p.st.btk = Number(r.body.btk); if (ev.missSample.length < 4) ev.missSample.push({ eff: r.body.effective, btk: r.body.btk, keys: Object.keys(r.body).join(',') }); }
         p.st.mark = null;
       }
-      else if (['no_search', 'no_target', 'gone', 'safe', 'witpro', 'family'].includes(r.body?.error)) p.st.mark = null;
+      else if (['no_search', 'no_target', 'gone', 'safe', 'witpro', 'family'].includes(r.body?.error)) {
+        // A refused shot that ends this hunt (the mark went to ground, died, went into witpro) must ALSO call the
+        // search OFF: the harness cleared its local mark and left the DB search standing, so every later search
+        // was refused `searching` for the rest of the month. The first 90-day pair had all six control hunters
+        // and four of six hunt-side hunters frozen that way from day 1–3, and the DETERRENCE thirds read 10/0/0 —
+        // zeros that were the harness, not the town. A real player calls the search off and picks a new mark.
+        p.st.mark = null;
+        if (r.body.error !== 'no_search') { const off = note(p, await call('DELETE', '/v1/streets/search', p.token)); if (off.code === 200) (p.strat === 'adaptive' ? ah : ev).calledOffDead = ((p.strat === 'adaptive' ? ah : ev).calledOffDead || 0) + 1; }
+      }
       // `cooldown`/`search` (not ready yet) keep the mark — the day warp brings the clock forward.
       return;
     }
@@ -665,7 +673,7 @@ console.log(`\n  CONCENTRATION: Gini ${gini(allW).toFixed(3)} · top 10% hold ${
 
 console.log('\n  DID KILLING PAY — the whale-hunters, realized:');
 if (ev.missSample.length) console.log(`    miss readings (effective vs btk): ${ev.missSample.map((m) => `${m.eff}/${m.btk}`).join(' ')} [keys: ${ev.missSample[0].keys}]`);
-console.log(`    searches ${ev.search} · shots ${ev.fire} · kills ${kills} · misses ${ev.miss} · absorbed ${ev.absorbed} · revived ${ev.revived} · hunters died ${sheets.filter((x) => x.p.strat === 'hunter').reduce((a, x) => a + x.deaths, 0)}`);
+console.log(`    searches ${ev.search} · shots ${ev.fire} · kills ${kills} · misses ${ev.miss} · absorbed ${ev.absorbed} · revived ${ev.revived} · hunters died ${sheets.filter((x) => x.p.strat === 'hunter').reduce((a, x) => a + x.deaths, 0)} · searches called off on a dead/sheltered mark ${ev.calledOffDead || 0}`);
 console.log(`    loot ${money(lootCash)} cash + ${lootOmr.toFixed(2)} $OMR (${money(lootOmr * RATE)}) · contracts ${money(bountyIn)} · iron ${money(gunOut)} · ammo ${money(ammoOut)}`);
 const evPerKill = kills ? (lootCash + lootOmr * RATE + bountyIn - ammoOut - gunOut) / kills : null;
 console.log(`    realized EV per kill ${evPerKill == null ? 'n/a (no kill landed)' : money(evPerKill)} · per SHOT ${ev.fire ? money((lootCash + lootOmr * RATE + bountyIn - ammoOut - gunOut) / ev.fire) : 'n/a'}`);
@@ -712,7 +720,7 @@ if (DEFENDED) {
     const refLine = (m) => ['cash', 'ammo', 'gun', 'searching', 'cooldown', 'no_target', 'safe'].filter((k) => m[k]).map((k) => `${k} ${m[k].join('/')}`).join(' · ') || '—';
     console.log(`    ...or BROKE? hunter-policy refusals per third — career: ${refLine(hunterRef.hunter)} · adaptive: ${refLine(hunterRef.adaptive)}`);
     console.log(`    the career hunters' pockets at each third's close: ${ev.cashSnaps.map((x) => `d${x.day} median ${money(x.median)} (${x.broke} of ${x.n} under $2k)`).join(' · ') || '—'}`);
-    console.log(`    the gun as a policy: ${ah.seatsTried.size} of ${CAST.adaptive} seats took it up · held ${ah.holdDays} seat-days · dropped it ${ah.dropped}× (${ah.calledOffOnSwitch} searches called off with it) · died holding it ${ah.deathsWhileHunting}× · searches ${ah.search} · shots ${ah.fire} · kills ${adaptiveKills} (${ah.kill} landed in-run) · misses ${ah.miss} · absorbed ${ah.absorbed} · revived ${ah.revived}`);
+    console.log(`    the gun as a policy: ${ah.seatsTried.size} of ${CAST.adaptive} seats took it up · held ${ah.holdDays} seat-days · dropped it ${ah.dropped}× (${ah.calledOffOnSwitch} searches called off with it) · died holding it ${ah.deathsWhileHunting}× · searches ${ah.search} · shots ${ah.fire} · kills ${adaptiveKills} (${ah.kill} landed in-run) · misses ${ah.miss} · absorbed ${ah.absorbed} · revived ${ah.revived} · called off on a dead/sheltered mark ${ah.calledOffDead || 0}`);
     console.log(`    the seats over time: ${ah.dist.map((x) => `d${x.day} ${Object.entries(x.d).map(([k, v]) => `${k}×${v}`).join(' ')}`).join(' | ') || '—'}`);
   }
   const dist = {}; for (const p of by('adaptive')) dist[p.st.policy] = (dist[p.st.policy] || 0) + 1;
