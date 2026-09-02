@@ -17838,3 +17838,29 @@ payload dropped; `coolWait`'s minutes band collapsed to *"soon"*; the extractor 
 anti-vacuity floor, and a bogus declaration → the stale check). §10.4 untouched (a refusal message and
 a 400 body move no value), and **no SQL moved in `src/`** — checked with a diff filter over the whole
 diff, not assumed — so the real-Postgres gates do not apply.
+
+**THE ARENA — the adaptive-agent economy red team, and the month that killed everybody (2026-09-02).**
+Eighty audits read the economy one lens at a time and `tools/sim.js` measures faucets one at a time;
+nothing had ever run a POPULATION of EV-optimizing agents against the live economy. `tools/arena.js`
+(`npm run arena`, the 15th harness, real Postgres only — not in CI, a measurement not a gate) drives
+57 scripted strategies (whale-hunters, landlords, arbitrageurs, an alt-ring, lenders, brokers,
+gamblers, turtles, grinders) through the PUBLIC API for a warped month with the full §10.4 sweep
+asserted as a before/after DELTA of zero (agents are SQL-seeded, so only the delta is a claim — the
+scale/loadtest posture). **The headline is the signed design at a scale no lens had shown: six
+hunters killed 50 times in 30 days, every non-hunter strategy ended at the heir's stake, and
+`death:estate` burned ~$213M of ~$228M starting wealth while loot moved $21M — Gini 0.907.** Realized
+kill EV read **+$352k** where the sim's D1 probe reads −$72k, and both are right: the sim prices a
+mid mark, the arena a town of undefended whales. The concentration is death, not loot; the passive
+stack (landlords grossed $40M in a month) is worth nothing without survival; the alt-ring launders
+through the market at the house take and the shylock is structurally its bank (0 voluntary repayments —
+borrowers only borrow when broke — 66% recovered by force); the Window redeemed 700 $OMR against
+`dry×491` (extraction ≤ inflow holding by construction, i.e. shut for a town this size). No sink was
+routed around. All recorded as founder reads in BALANCE.md § THE ARENA, nothing retuned (ground rule
+#1); the arena's honest limits are stated in the report (no bodyguards/respawn tokens/contracts, a
+conservative kill cadence). **The recorded lesson arrived on schedule**: the first month printed
+"0 collected by force" because the lender strategy read a `lender` field the loans board never sends
+(it sends `role`) — a harness reading a field that does not exist reports a confident zero about the
+game, and only checking the board's shape separated the two. Four earlier harness bugs were the same
+class (cargo read as an array, the season twist and JWT refused by preflight under a real
+DATABASE_URL — pins are set post-boot, hunters firing 600 rounds at a 5,050-btk mark from the wrong
+district). Suite green; no SQL moved in `src/`.

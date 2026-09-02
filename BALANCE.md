@@ -6469,3 +6469,65 @@ NFTs remain inert until re-imported, preserving the safe-versus-useful choice.
 
 The economic boundary is unchanged: rarity never changes item book/resale value or melt yield, and
 the existing upgrade is still a known tier for a known $OMR price rather than a random paid outcome.
+
+## THE ARENA — a population of EV-optimizing agents against the live economy (2026-09-02)
+
+`tools/sim.js` measures faucets ONE AT A TIME and `tools/playthrough.js` measures ONE player;
+neither can see what happens when strategies play AGAINST each other. `tools/arena.js`
+(`npm run arena`, real Postgres only, not in CI) drives **57 scripted strategies** — six
+whale-hunters, eight passive landlords, eight arbitrageurs, an alt-ring (one boss, eight alts), six
+lenders, six brokers, four gamblers, four turtles, six grinders — through the PUBLIC API for a
+warped month (30 days × 3 rounds; a day = the worker's sweeps + two forced buybacks + the population
+tick + the clock warp), and asserts the full §10.4 sweep as a before/after DELTA of zero (agents are
+SQL-seeded with $4M, so the baseline drift is non-zero by construction — the scale/loadtest posture).
+Measured on the corrected run (the first run's lender strategy read a `lender` field the loans board
+never sends — it sends `role` — so it printed "0 collected by force" as if that were a game finding).
+
+**1. THE UNDEFENDED MONTH is the headline, and it is the signed design at a scale no lens had seen.**
+Six hunters — 10% of the town — killed **50 times in 30 days**: every non-hunter strategy ended the
+month at the heir's stake ($3k median for landlords, lenders, gamblers, turtles), and **`death:estate`
+burned ~$213M of the town's ~$228M starting wealth** while `whack:loot` moved $21M cash + 8,918 $OMR
+to the killers. Realized kill EV was **+$352k per kill** (loot $25.5M against $2.4M iron + $5.5M ammo)
+— the sim's standing D1 probe reads −$72k against a *mid* mark, and both are right: this town is all
+whales, which is the "hunt whales" economics the founder signed, landing on marks that never defended.
+Gini **0.907**, top 10% holding 82%. The concentration is not loot, it is DEATH: 90% of a victim's
+wealth leaves the world and the killer takes the rest. Two things bound it in production that the
+arena deliberately does not model: the marks bought no bodyguards, held no respawn tokens and posted
+no contracts (only the turtles sheltered — 14 stays under the 12h/day cap, and they still died 4
+times), and a warped day gives each hunter under one kill where a real 3h search + 2h trigger allows
+~4 — so the arena is CONSERVATIVE on cadence and OPTIMISTIC on defence. **Founder read, not a retune:**
+whether a 25%-loot / ~75%-burn death against a 12h/day shelter cap is the intended tempo when 10% of a
+population hunts. Hunters were also the richest marks — 5 hunter deaths, all to other hunters — so the
+winner-take-all is "who survives" (hunter median −94%, max $17.6M).
+
+**2. The passive stack is worth nothing without survival.** Landlords grossed $33.1M of front income
+plus $6.6M of racket income in a month and paid $6.7M of pad — the L1a/L1b curve working exactly as
+signed — and all eight ended at $3k because every one of them died. The sim's P9.20 "$21.6M/day maxed
+stack" is an income figure; the arena measures what a landlord KEEPS, which is what the hunters leave.
+
+**3. The alt-ring works as a laundering rail and the shylock funds it.** 18 order fills moved $745k
+alt→boss through the Black Market at the house's 2% take; the alts borrowed $400k from the lenders,
+never repaid voluntarily (the borrowers — alts, gamblers, grinders — only borrow when BROKE, so
+`cash > owed` never comes), and forced collection recovered **$1.59M of $2.4M lent (66%)** with 0
+voluntary repayments across 9 loans. The lender's real loss was death ($25M estate), not defaults —
+the signed "the lender vets their counterparties" posture holds; what the arena adds is that the
+natural borrowers are the alts, so the shylock is structurally the ring's bank.
+
+**4. The Window is the binding constraint on token→cash.** Six brokers holding 9,000 $OMR redeemed
+**700 $OMR → $350k in a month** against `dry×491` refusals — with two forced buybacks a day. The till
+holds only what sinks fed the street take, so "extraction ≤ inflow" is holding by construction and the
+rail is effectively shut for a town this size. A founder read on whether that throughput is intended.
+
+**5. Recorded, not findings:** no strategy routed around the sink its loop is priced by (every
+strategy paid it — asserted); the den's realized edge was 15.7% on $26.5M over 123 rolls (5.5% on the
+first run) against a 1.41% nominal — within variance at that roll count, but two negative runs are
+worth one sim probe; arbitrage cleared a 2.3× margin on penicillin and then died eight times.
+
+| Harness knob | Default | What it decides |
+|---|---|---|
+| `ARENA_DAYS` / `ARENA_ROUNDS` | 30 / 3 | A warped day is ROUNDS rounds of every agent acting once. Fewer rounds under-count kills. |
+| `CAST` (in the file) | 57 agents | The population mix; the hunter share is the tempo dial. |
+
+Nothing here is a lever of the game — the arena moves no signed number. It is the measurement that
+`omerta-risk-to-earn-design.md`'s "spenders fund earners" model never had: a month with everyone
+optimizing at once.
