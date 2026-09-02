@@ -29,7 +29,17 @@
 // chain — not the equilibrium a real population of humans would find.
 //
 //   DATABASE_URL='postgres://postgres@/arena?host=/tmp&port=5433' npm run arena
-//   ARENA_DAYS=30 ARENA_ROUNDS=3
+//   ARENA_DAYS=30 ARENA_ROUNDS=3 ARENA_DEFENDED=on|off
+//
+// STEP TWO — THE DEFENDED MONTH (ARENA_DEFENDED=on, the default; `off` reproduces step one). Step one
+// measured a town with NO defence: six hunters killed 50 times in 30 days and `death:estate` burned
+// ~93% of the town's starting wealth. That is either the design or a balance defect, and the only way
+// to tell is to hand every prey the full defensive toolkit the game already ships — a bodyguard
+// market, a safehouse cadence, respawn insurance, contracts on the hunters, a family that puts a
+// price on its members' killers, and vendettas the hunters can settle — and see whether the same
+// six predators still empty the town. Plus ADAPTIVE agents: eight seats that switch between the
+// passive/active policies on their own realized P&L (an ε-greedy bandit over daily net-worth
+// gain), because a fixed-strategy town cannot tell you what a population would actually CONVERGE to.
 process.env.MOD_KEY = process.env.MOD_KEY || 'arena-mod-key';
 process.env.MARKET_SEED = process.env.MARKET_SEED || 'arena-harness-seed-000000000000';
 process.env.SOCIAL_VERIFY_MODE = 'off';
@@ -59,8 +69,14 @@ import { GUNS, GOODS, BUSINESSES, RACKETS, CRIMES, DISTRICTS, EXCHANGE, LOAN, CA
 
 const DAYS = Number(process.env.ARENA_DAYS || 30);
 const ROUNDS = Number(process.env.ARENA_ROUNDS || 3);
+const DEFENDED = process.env.ARENA_DEFENDED !== 'off';
 // The cast. Counts are levers; the SHAPE is the point — several predators, several prey, one ring.
-const CAST = { hunter: 6, landlord: 8, arb: 8, ringboss: 1, alt: 8, lender: 6, broker: 6, gambler: 4, turtle: 4, grinder: 6 };
+// The ADAPTIVE seats exist only in the defended month, so `off` is byte-comparable with step one.
+const CAST = { hunter: 6, landlord: 8, arb: 8, ringboss: 1, alt: 8, lender: 6, broker: 6, gambler: 4, turtle: 4, grinder: 6, ...(DEFENDED ? { adaptive: 8 } : {}) };
+// PREY = the strategies that hold wealth in a body a hunter can reach. They get the toolkit.
+const PREY = new Set(['landlord', 'lender', 'broker', 'adaptive']);
+const ADAPTIVE_POLICIES = ['landlord', 'arb', 'grinder', 'lender', 'turtle'];
+const EPSILON = 0.2;   // the bandit's explore rate — a lever, not a finding
 const money = (n) => `$${Math.round(Number(n) || 0).toLocaleString('en-US')}`;
 const pct = (num, den) => (den ? `${Math.round((num / den) * 100)}%` : '—');
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
@@ -89,7 +105,15 @@ const note = (p, r) => {
   return r;
 };
 const ev = { missSample: [], search: 0, fire: 0, kill: 0, miss: 0, absorbed: 0, revived: 0, calledOff: 0, hunterDeaths: 0 };
-const chain = { funnelFills: 0, funnelCash: 0, loansPosted: 0, loansTaken: 0, loansRepaid: 0, loansCollected: 0, redeemed: 0, redeemedOmr: 0, safehouses: 0, dice: 0 };
+const chain = { funnelFills: 0, funnelCash: 0, loansPosted: 0, loansTaken: 0, loansRepaid: 0, loansCollected: 0, redeemed: 0, redeemedOmr: 0, safehouses: 0, dice: 0, diceStakes: [] };
+// THE DEFENCES — every count here is something a prey did to NOT die, and the assertions at the end
+// require each to have happened, because a toolkit nobody used reads exactly like a toolkit that failed.
+const def = { guardHires: 0, guardCash: 0, preyShelters: 0, shelterCash: 0, playerContracts: 0, playerContractCash: 0, familyContracts: 0, familyContractCash: 0, tributes: 0,
+  vendettaShots: 0, vendettaKills: 0, contractShots: 0, contractKills: 0, boardShots: 0, adaptiveSwitches: 0, insured: 0,
+  guardedShots: 0, guardJailed: 0, guardHosp: 0, guardDead: 0, guardLapsed: 0, guardShotRows: [] };
+const bandit = {};   // policy -> { n, sum } of DAILY net-worth gain, shared across every adaptive seat
+const syn = { gid: null, hits: new Set(), hitNames: new Set() };   // the prey family and the killers it has marked
+let roundNow = 0, dayNow = 0;
 
 // ── the cast ────────────────────────────────────────────────────────────────────────────────────
 const players = [];
@@ -120,6 +144,24 @@ await pool.query(`UPDATE account_persistent SET made_until = now() + interval '9
 await pool.query(`UPDATE account_persistent SET omr = 3000 WHERE account_id IN (${by('broker').map((p) => `'${p.acct}'`).join(',')})`);
 await pool.query(`UPDATE characters SET cb = 200 WHERE id IN (${by('hunter').map((p) => `'${p.id}'`).join(',')})`);   // crates for the iron
 for (const p of players) await call('POST', '/v1/path', p.token, { path: p.strat === 'hunter' ? 'gun' : p.strat === 'landlord' ? 'ledger' : pick(['gun', 'ledger', 'kitchen']) });
+if (DEFENDED) {
+  // RESPAWN INSURANCE: half the prey arrive insured (two tokens each — the real-ETH entitlement the
+  // fees.js rail credits; an out-of-band entitlement, so seeding it is not a §10.4 event). The other
+  // half are the control: same strategy, same wealth, no insurance.
+  const insured = players.filter((p) => PREY.has(p.strat) && p.k % 2 === 0);
+  for (const p of insured) p.st.insured = true;
+  def.insured = insured.length;
+  await pool.query(`UPDATE account_persistent SET respawn_tokens = 2 WHERE account_id IN (${insured.map((p) => `'${p.acct}'`).join(',')})`);
+  // THE SYNDICATE: the landlords are a FAMILY, so omertà covers them from each other, the treasury can
+  // put a price on a member's killer, and the heir of a murdered landlord is sworn against the
+  // killer's bloodline. Landlord 0 is the boss; the rest join (a heir rejoins in the policy).
+  const boss = by('landlord')[0];
+  const g = await call('POST', '/v1/gangs', boss.token, { name: 'The Syndicate', tag: 'SYN' });
+  if (g.code === 200) {
+    syn.gid = (await call('GET', '/v1/gangs', boss.token)).body?.gangs?.find((x) => x.tag === 'SYN')?.id;
+    for (const l of by('landlord').slice(1)) await call('POST', `/v1/gangs/${syn.gid}/join`, l.token);
+  }
+}
 // The ring is ONE family (so alts and boss are omertà-safe from each other — the only family here, so
 // every other pair is fair game and the hunters' targeting is unconstrained).
 {
@@ -139,6 +181,75 @@ const bestCrime = (c) => { const lvl = levelOf(Number(c.respect)); const ok = CR
 const crime = async (p, c) => { const x = bestCrime(c); if (!x) return null; return note(p, await call('POST', `/v1/crimes/${x.id}`, p.token, {})); };
 const bank = async (p, amount) => amount >= 1 && note(p, await call('POST', '/v1/bank/deposit', p.token, { amount: Math.floor(amount) }));
 const roster = async (p) => ((await call('GET', '/v1/streets', p.token)).body?.streets || []);
+// ── the defensive toolkit (every prey runs these around its own policy when DEFENDED) ──────────────
+// HIRE A GUARD: the cheapest listed bodyguard on the roster. One lethal shot is absorbed (the guard is
+// hospitalized in the principal's place) and the contract is consumed, so this is bought again the
+// day after it fires. The grinders are the guards — they list once, at the floor.
+const hireGuard = async (p, c) => {
+  if (c.guardedBy) return;
+  const guards = (await roster(p)).filter((m) => !m.npc && m.id !== p.id && m.guardPrice && !m.jailed && !m.hospitalized).sort((a, b) => a.guardPrice - b.guardPrice);
+  const g = guards[0]; if (!g || c.cash < g.guardPrice * 2) return;
+  const r = note(p, await call('POST', `/v1/bodyguard/hire/${g.id}`, p.token));
+  if (r.code === 200) { def.guardHires++; def.guardCash += Number(r.body?.price || g.guardPrice); }
+};
+// SHELTER: go to ground AFTER acting in the first round of the day — a safehouse blocks collection,
+// banking and offence (the signed "shield, not bunker" rule), so the prey collects, banks, then hides
+// for the rest of the day. The cost is 1% of cash+bank from POCKET, so the policy's own banking floor
+// is what keeps the door open. This is the cadence a careful player would run; whether it holds
+// against six hunters who all act FIRST in the round order is the measurement.
+const shelter = async (p, c) => {
+  if (roundNow !== 0) return;
+  const c2 = await me(p); if (!c2 || c2.safeSeconds > 0) return;
+  const r = note(p, await call('POST', '/v1/safehouse', p.token));
+  if (r.code === 200) { def.preyShelters++; def.shelterCash += Number(r.body?.cost || 0); }
+};
+// RETALIATE: the heir of a murdered prey reads its own notifications — `vendetta` names the killer —
+// resolves the name on the roster, and puts a price on their head: a personal kill contract from the
+// pocket, and (for the Syndicate) a family contract from the treasury posted by the boss/underboss.
+// The hunters read the SAME board, so a contract on a hunter is a hunter's own prey pointed at him.
+const retaliate = async (p, c) => {
+  const notes = (await call('GET', '/v1/notifications', p.token)).body?.notifications || [];
+  for (const n of notes) {
+    if (n.type !== 'vendetta' || !n.payload?.against) continue;
+    if (syn.hitNames.has(n.payload.against)) continue;
+    syn.hitNames.add(n.payload.against);
+    const k = (await roster(p)).find((m) => m.name === n.payload.against);
+    if (!k) continue;
+    syn.hits.add(k.id);
+  }
+  // THE TOWN'S PRICE: every prey puts $100k on every killer it knows of, once per killer. The vendetta notice
+  // reaches only the HEIR — who inherits a few thousand dollars, so the victim's own bloodline can never
+  // afford the board; the first run measured exactly 0 personal contracts for that reason. The price is
+  // paid from the pocket, so a banked prey pulls it out first (the board wants cash on the counter).
+  for (const kid of syn.hits) {
+    if (kid === p.id || (p.st.posted ||= new Set()).has(kid)) continue;
+    if (c.cash < 150000 && (c.bank || 0) >= 200000) {
+      const w = note(p, await call('POST', '/v1/bank/withdraw', p.token, { amount: 200000 }));
+      if (w.code === 200) c.cash += 200000;
+    }
+    if (c.cash < 150000) break;
+    const r = note(p, await call('POST', `/v1/streets/${kid}/bounty`, p.token, { amount: 100000, kind: 'kill', reason: 'the town remembers', hours: 168 }));
+    if (r.code === 200) { def.playerContracts++; def.playerContractCash += 100000; c.cash -= 100000; }
+    if (r.code === 200 || r.body?.error !== 'cash') p.st.posted.add(kid);
+  }
+  // the family's price: whoever holds the chair posts it, once per killer, from the treasury
+  const role = c.gang?.role;
+  if (c.gang?.tag === 'SYN' && (role === 'boss' || role === 'underboss')) {
+    for (const kid of syn.hits) {
+      if ((p.st.familyPosted ||= new Set()).has(kid)) continue;
+      const r = note(p, await call('POST', `/v1/gangs/contract/${kid}`, p.token, { amount: 200000, kind: 'kill', reason: 'the Syndicate remembers', hours: 168 }));
+      if (r.code === 200) { def.familyContracts++; def.familyContractCash += 200000; }
+      if (r.code === 200 || ['cash', 'treasury'].includes(r.body?.error) === false) p.st.familyPosted.add(kid);
+    }
+  }
+};
+// THE FAMILY: a landlord heir who woke up gangless rejoins; every member tithes 5% of pocket a day so
+// the treasury can afford the price it puts on a killer.
+const family = async (p, c) => {
+  if (!syn.gid) return;
+  if (!c.gang) { note(p, await call('POST', `/v1/gangs/${syn.gid}/join`, p.token)); return; }
+  if (roundNow === 0 && c.cash > 200000) { const r = note(p, await call('POST', '/v1/gangs/tribute', p.token, { amount: Math.floor(c.cash * 0.05) })); if (r.code === 200) def.tributes++; }
+};
 // ROUNDS: the first smoke fired 600 rounds and read `effective 1311 vs btk 5050` — a lvl-51 mark with
 // trained stats wants ~2,300 effective, so the magazine is sized off the LAST miss's btk (rounds are
 // spent whether or not they were needed, the recorded fire term) and starts at 2,500 for a cold mark.
@@ -161,9 +272,30 @@ const STRAT = {
       // fire is district-pinned (the first smoke: `district` ×6) — go stand where the mark stands
       const where = (await roster(p)).find((m) => m.id === p.st.mark)?.loc;
       if (where && !(await goTo(p, where))) return;
+      // WHY a guard did or did not step in: read the mark's contract from the DATABASE before the shot
+      // (the hunter cannot see it — which is the point of the market — but the harness can), so the
+      // 'absorbed' figure comes with the reason when it is 0: no guard, a lapsed contract, or a guard
+      // who was in lockup / the infirmary / the ground at the moment it mattered.
+      // Read BEFORE the shot (the estate clears `guarded_by` on a kill), tally AFTER it — and only for a
+      // shot that LANDED (code 200). A refused attempt (`cooldown`, `search` not ready) keeps the mark
+      // and comes back next round, so tallying at the read counted the same mark several times over: the
+      // third defended month reported 26 classified 'shots' against 17 fired, i.e. a diagnostic that
+      // could not have explained anything. Per-shot rows are kept so the report can name each one.
+      const v = (await pool.query('SELECT g.alive, g.jail_until, g.hosp_until, g.name AS gname, c.guarded_until FROM characters c LEFT JOIN characters g ON g.id=c.guarded_by WHERE c.id=$1', [p.st.mark])).rows[0];
       const r = note(p, await call('POST', `/v1/streets/${p.st.mark}/fire`, p.token, { rounds }));
       if (r.code === 200) {
         ev.fire++;
+        if (v && v.guarded_until) {
+          const now = new Date();
+          let state = 'available';
+          if (new Date(v.guarded_until) <= now) { def.guardLapsed++; state = 'lapsed'; }
+          else { def.guardedShots++; if (v.alive === false) { def.guardDead++; state = 'dead'; } else if (v.jail_until && new Date(v.jail_until) > now) { def.guardJailed++; state = 'jailed'; } else if (v.hosp_until && new Date(v.hosp_until) > now) { def.guardHosp++; state = 'hospital'; } }
+          const outcome = r.body.kill ? 'kill' : r.body.absorbed ? 'absorbed' : r.body.revived ? 'revived' : r.body.calledOff ? 'calledOff' : 'miss';
+          def.guardShotRows.push({ day: dayNow, mark: p.st.mark, guard: v.gname, state, outcome });
+        }
+        if (p.st.markSrc === 'vendetta') { def.vendettaShots++; if (r.body.kill && r.body.vendetta) def.vendettaKills++; }
+        else if (p.st.markSrc === 'contract') { def.contractShots++; if (r.body.kill) def.contractKills++; }
+        else def.boardShots++;
         if (r.body.kill) ev.kill++; else if (r.body.absorbed) ev.absorbed++; else if (r.body.revived) ev.revived++; else if (r.body.calledOff) ev.calledOff++;
         else { ev.miss++; if (r.body.btk) p.st.btk = Number(r.body.btk); if (ev.missSample.length < 4) ev.missSample.push({ eff: r.body.effective, btk: r.body.btk, keys: Object.keys(r.body).join(',') }); }
         p.st.mark = null;
@@ -172,15 +304,29 @@ const STRAT = {
       // `cooldown`/`search` (not ready yet) keep the mark — the day warp brings the clock forward.
       return;
     }
-    const marks = (await roster(p)).filter((m) => !m.npc && m.id !== p.id && !m.tag && !m.jailed && !m.hospitalized);
-    // The board is sorted by respect and wealth is BANDED (the game's own rule), so every hunter's best
-    // guess is the top of the board — and the first smoke showed all six converging on ONE whale
-    // (`no_target` ×10 as five of them found the corpse). Spread across the top of the board instead:
-    // hunter k takes the k-th richest-looking mark. Whether they still converge is the measurement.
-    const mark = marks[p.k % Math.min(marks.length, CAST.hunter)];
+    const board = (await roster(p)).filter((m) => !m.npc && m.id !== p.id && !m.jailed && !m.hospitalized);
+    const alive = new Set(board.map((m) => m.id));
+    // TARGETING, in the order a hunter with a memory would use: (1) a VENDETTA target — a bloodline
+    // that killed this hunter's last street pays double feared-rep to settle; (2) the biggest OPEN
+    // CONTRACT on the board that is not on him (a contract is the one thing that makes a kill +EV
+    // against a mid mark — the econ pass's own finding); (3) the respect board, spread across the
+    // top so six hunters do not all find the same corpse. Step one filtered `!m.tag` — a field the
+    // roster never sends (it is `gangTag`) — so the family gate was never applied; it is now, on the
+    // hunter's OWN family only, which is what omertà actually refuses.
+    let mark = null, src = 'board';
+    const v = (c.vendettas || []).find((x) => x.targetId && alive.has(x.targetId));
+    if (v) { mark = board.find((m) => m.id === v.targetId); src = 'vendetta'; }
+    if (!mark) {
+      const pots = ((await call('GET', '/v1/contracts', p.token)).body?.contracts || []).filter((x) => x.kind === 'kill' && x.target?.id !== p.id && alive.has(x.target?.id) && !x.directedTo).sort((a, b) => b.pot - a.pot);
+      if (pots[0]) { mark = board.find((m) => m.id === pots[0].target.id); src = 'contract'; }
+    }
+    if (!mark) {
+      const marks = board.filter((m) => !(c.gang?.tag && m.gangTag === c.gang.tag));
+      mark = marks[p.k % Math.min(marks.length, CAST.hunter)];
+    }
     if (!mark) return;
     const r = note(p, await call('POST', `/v1/streets/${mark.id}/search`, p.token));
-    if (r.code === 200) { ev.search++; p.st.mark = mark.id; }
+    if (r.code === 200) { ev.search++; p.st.mark = mark.id; p.st.markSrc = src; }
   },
   // THE PASSIVE LANDLORD: every front the level allows, cheapest first; collect; pay the pad; buy
   // rackets with the surplus; bank the rest. Never fights, never hides.
@@ -273,7 +419,7 @@ const STRAT = {
     }
     if (!(await goTo(p, CASINO.DISTRICT))) return;
     const amount = Math.max(CASINO.MIN_BET, Math.min(CASINO.MAX_BET, Math.floor(c.cash * 0.1)));
-    const r = note(p, await call('POST', '/v1/casino/dice', p.token, { amount })); if (r.code === 200) chain.dice++;
+    const r = note(p, await call('POST', '/v1/casino/dice', p.token, { amount })); if (r.code === 200) { chain.dice++; chain.diceStakes.push(amount); }
   },
   // THE TURTLE: bank everything, go to ground every day, pull one job. The strategy that tests whether
   // the shields are a bunker.
@@ -294,6 +440,24 @@ const STRAT = {
     for (const l of (b.active || []).filter((l) => l.role === 'borrower')) if (c.cash > l.owed) { const r = note(p, await call('POST', `/v1/loans/${l.id}/repay`, p.token)); if (r.code === 200) chain.loansRepaid++; }
     if (c.cash < 20000) { const offers = (b.offers || []).filter((o) => !o.mine); if (offers[0]) { const r = note(p, await call('POST', `/v1/loans/${offers[0].id}/take`, p.token, {})); if (r.code === 200) chain.loansTaken++; } }
     if (c.cash > 300000) await bank(p, c.cash - 200000);
+  },
+  // THE ADAPTIVE SEAT: an ε-greedy bandit over the five non-predator policies, rewarded on its OWN
+  // realized daily net-worth gain (cash + bank + in-transit off the sheet — $OMR is not in play for
+  // these seats). Eight seats share one reward table, so a policy that pays one of them pulls the
+  // others toward it: the closest thing this harness has to "what a population converges to".
+  async adaptive(p, c) {
+    p.st.policy ||= ADAPTIVE_POLICIES[p.k % ADAPTIVE_POLICIES.length];
+    const worth = Number(c.cash || 0) + Number(c.bank || 0) + Number(c.bank_intransit || 0);
+    if (roundNow === 0) {
+      if (p.st.lastWorth != null) { const b = (bandit[p.st.policy] ||= { n: 0, sum: 0 }); b.n++; b.sum += worth - p.st.lastWorth; }
+      p.st.lastWorth = worth;
+      const tried = ADAPTIVE_POLICIES.filter((x) => bandit[x]?.n);
+      let next = p.st.policy;
+      if (Math.random() < EPSILON || tried.length < ADAPTIVE_POLICIES.length) next = pick(ADAPTIVE_POLICIES.filter((x) => !bandit[x]?.n).concat(tried.length === ADAPTIVE_POLICIES.length ? ADAPTIVE_POLICIES : []));
+      else next = tried.sort((a, b) => bandit[b].sum / bandit[b].n - bandit[a].sum / bandit[a].n)[0];
+      if (next !== p.st.policy) { def.adaptiveSwitches++; p.st.policy = next; p.st.hold = null; }
+    }
+    await STRAT[p.st.policy](p, c);
   },
 };
 const ring = { orders: [] };
@@ -320,9 +484,25 @@ const deathsAt = async () => Number((await pool.query('SELECT COALESCE(SUM(death
 const deaths0 = await deathsAt();
 for (let day = 1; day <= DAYS; day++) {
   for (let r = 0; r < ROUNDS; r++) {
-    for (const p of players) {
+    roundNow = r; dayNow = day;
+    // ROUND ORDER: a deterministic shuffle per (day, round), so no strategy systematically acts first.
+    // The first defended run had the hunters at the head of `players` every round — and warpDay pulls
+    // every characters timestamp back a day, so a 24h guard contract and a 4h shelter both LAPSE at the
+    // day boundary; the hunters then fired before any prey re-bought either. 491 guards hired, 0 absorbed,
+    // was that ordering, not the game. A seeded LCG keeps the run reproducible.
+    let seed = (day * 7919 + r * 104729 + 12345) >>> 0;
+    const rnd = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
+    const order = [...players];
+    for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+    for (const p of order) {
       const c = await me(p); if (!c) continue;
-      try { await STRAT[p.strat](p, c); } catch (e) { (refused[p.strat] ||= {})[`THREW:${e.message}`] = 1 + ((refused[p.strat] || {})[`THREW:${e.message}`] || 0); }
+      try {
+        const prey = DEFENDED && PREY.has(p.strat);
+        if (prey) { await retaliate(p, c); if (p.strat === 'landlord') await family(p, c); await hireGuard(p, c); }
+        if (DEFENDED && (p.strat === 'grinder' || p.strat === 'turtle') && !p.st.offered) { const g = note(p, await call('POST', '/v1/bodyguard/offer', p.token, { price: M3.BODYGUARD_MIN_PRICE })); if (g.code === 200) p.st.offered = true; }
+        await STRAT[p.strat](p, c);
+        if (prey && !(p.strat === 'adaptive' && p.st.policy === 'turtle')) await shelter(p, c);
+      } catch (e) { (refused[p.strat] ||= {})[`THREW:${e.message}`] = 1 + ((refused[p.strat] || {})[`THREW:${e.message}`] || 0); }
     }
   }
   await sweepExpiredBounties(pool); await sweepLoans(pool); await sweepMarket(pool);
@@ -363,7 +543,7 @@ const ammoOut = -(hf['ammo:buy'] || 0);
 const gunOut = -(Object.entries(hf).filter(([r]) => r.startsWith('gun:') || r === 'armory:gun').reduce((a, [, v]) => a + v, 0));
 const deaths = await deathsAt() - deaths0;
 
-console.log(`\n════ THE ARENA — ${players.length} agents · ${DAYS} warped days × ${ROUNDS} rounds · real Postgres · ${Math.round((Date.now() - t0) / 1000)}s ════\n`);
+console.log(`\n════ THE ARENA — ${DEFENDED ? 'THE DEFENDED MONTH' : 'THE UNDEFENDED MONTH'} — ${players.length} agents · ${DAYS} warped days × ${ROUNDS} rounds · real Postgres · ${Math.round((Date.now() - t0) / 1000)}s ════\n`);
 console.log('  WHO WON — net worth ($ + $OMR at the Window rate), by strategy:');
 console.log(`  ${'strategy'.padEnd(10)}${'n'.padStart(3)}${'start'.padStart(13)}${'median'.padStart(13)}${'mean'.padStart(13)}${'max'.padStart(13)}${'Δ median'.padStart(11)}${'deaths'.padStart(8)}  top refusal`);
 const rows = [];
@@ -394,6 +574,35 @@ console.log(`    the shylock: ${chain.loansPosted} offers · ${chain.loansTaken}
 console.log(`    the window: ${chain.redeemed} redemptions · ${chain.redeemedOmr} $OMR → ${money((flows.broker || {})['window:payout'] || 0)} cash`);
 console.log(`    the den: ${chain.dice} rolls · gamblers net ${money(((flows.gambler || {})['casino:win:dice'] || 0) + ((flows.gambler || {})['casino:bet:dice'] || 0))}`);
 console.log(`    shelters: ${chain.safehouses} safehouse stays bought by turtles · deaths town-wide ${deaths}`);
+// THE DEN'S VARIANCE: with 1:1 pays the standard deviation of the house's take over N rolls is
+// ≈ √(Σ stake²), and the edge only equals its own noise past N* = (1/0.0141)² ≈ 5,030 equal rolls —
+// so a month of a few gamblers is a coin flip against the edge, and the realized figure is REPORTED
+// as a z-score rather than compared to 1.41% as if it were a rate. (sim.js P9.40 prints the analytic.)
+{
+  const stakes = chain.diceStakes; const sum = stakes.reduce((a, b) => a + b, 0);
+  const sigma = Math.sqrt(stakes.reduce((a, b) => a + b * b, 0));
+  const expected = -0.0141 * sum;
+  const realized = ((flows.gambler || {})['casino:win:dice'] || 0) + ((flows.gambler || {})['casino:bet:dice'] || 0);
+  const z = sigma ? (realized - expected) / sigma : 0;
+  console.log(`    den variance: ${stakes.length} rolls · staked ${money(sum)} · expected ${money(expected)} (1.41%) · realized ${money(realized)} (${sum ? (100 * -realized / sum).toFixed(1) : '—'}%) · σ ${money(sigma)} · z ${z.toFixed(2)} — the edge equals its noise only past ~${Math.round(1 / 0.0141 ** 2).toLocaleString('en-US')} rolls`);
+}
+const estateBurn = -Number((await pool.query(`SELECT COALESCE(SUM(amount),0) s FROM transactions WHERE reason='death:estate' AND currency='cash'`)).rows[0].s);
+const startTotal = players.reduce((a, p) => a + start(p), 0);
+console.log(`    the estate: ${money(estateBurn)} burned at death town-wide = ${pct(estateBurn, startTotal)} of the ${money(startTotal)} the town started with`);
+if (DEFENDED) {
+  console.log('\n  THE DEFENCES — what the prey bought to stay alive, and whether it worked:');
+  for (const g of def.guardShotRows.filter((x) => x.state === 'available' && x.outcome !== 'absorbed' && x.outcome !== 'miss')) console.log(`      ⚠ day ${g.day}: a lethal shot at a mark with a LIVE, AVAILABLE guard (${g.guard}) was NOT absorbed — outcome ${g.outcome}`);
+  console.log(`    bodyguards: ${def.guardHires} hires (${money(def.guardCash)}) · shots ABSORBED by a guard ${ev.absorbed} · shots at a GUARDED mark ${def.guardedShots} (guard in lockup ${def.guardJailed} / infirmary ${def.guardHosp} / dead ${def.guardDead}) · contract lapsed at the shot ${def.guardLapsed}`);
+  console.log(`    insurance: ${def.insured} prey arrived with 2 respawn tokens · shots REVIVED ${ev.revived}`);
+  console.log(`    shelter: ${def.preyShelters} prey safehouse stays (${money(def.shelterCash)}) — a 4h stay lapses at the day warp, so the acting order inside a day decides what it covers`);
+  console.log(`    contracts on hunters: ${def.playerContracts} personal (${money(def.playerContractCash)}) + ${def.familyContracts} family (${money(def.familyContractCash)}, ${def.tributes} tributes) · marked killers ${syn.hits.size}`);
+  console.log(`    the hunters' own targeting: vendetta ${def.vendettaShots} shots / ${def.vendettaKills} settled · contract ${def.contractShots} shots / ${def.contractKills} kills · board ${def.boardShots} shots`);
+  const preyDeaths = (s) => sheets.filter((x) => x.p.strat === s).reduce((a, x) => a + x.deaths, 0);
+  const ins = sheets.filter((x) => PREY.has(x.p.strat) && x.p.st.insured), unins = sheets.filter((x) => PREY.has(x.p.strat) && !x.p.st.insured);
+  console.log(`    insured prey died ${ins.reduce((a, x) => a + x.deaths, 0)}× (median worth ${money(median(ins.map((x) => x.worth)))}) · uninsured prey died ${unins.reduce((a, x) => a + x.deaths, 0)}× (median ${money(median(unins.map((x) => x.worth)))}) · landlord/lender/broker/adaptive deaths ${['landlord', 'lender', 'broker', 'adaptive'].map((s) => `${s} ${preyDeaths(s)}`).join(', ')}`);
+  const dist = {}; for (const p of by('adaptive')) dist[p.st.policy] = (dist[p.st.policy] || 0) + 1;
+  console.log(`    the adaptive seats: ${def.adaptiveSwitches} switches · ended as ${Object.entries(dist).map(([k, v]) => `${k}×${v}`).join(' ')} · mean daily gain by policy: ${ADAPTIVE_POLICIES.map((x) => `${x} ${bandit[x]?.n ? money(bandit[x].sum / bandit[x].n) : '—'}${bandit[x]?.n ? ` (n=${bandit[x].n})` : ''}`).join(', ')}`);
+}
 
 console.log('\n  WHERE THE MONEY WENT — per strategy, the top sinks paid and faucets drawn (net cash, whole run):');
 for (const s of Object.keys(CAST)) {
@@ -420,10 +629,23 @@ const moved = after.checks.filter((c) => Math.abs(c.drift - (baseline[c.name] ??
 assert.equal(moved.length, 0, `§10.4 MOVED during the run — a population of predators found a leak the sim cannot see:\n  ${moved.join('\n  ')}`);
 console.log(`\n✓ §10.4 held: ${after.checks.length} checks, drift delta 0 across a month of ${players.length} agents`);
 for (const s of Object.keys(CAST)) assert((acted[s] || 0) >= DAYS, `strategy ${s} acted only ${acted[s] || 0} times in ${DAYS} days — a strategy that never plays is not measured, it is missing`);
-assert(ev.search >= DAYS, `the hunters started only ${ev.search} searches in ${DAYS} days — the kill economy was not exercised`);
+// The floor is on SHOTS, not searches, and the reason is the defended month itself: the retaliation
+// rail KILLS hunters (run 4: three of six, $12.1M of hunter wealth burned at the estate) and a dead
+// hunter's heir cannot re-arm, so searches FALL with the retaliation working — a search floor read a
+// successful defence as an unexercised kill economy. A shot per hunter seat is the vacuity line: below
+// it no lethal roll ran and nothing about kills was measured.
+assert(ev.fire >= CAST.hunter, `the hunters fired only ${ev.fire} lethal shots in ${DAYS} days (${CAST.hunter} seats) — the kill economy was not exercised`);
 assert(chain.loansTaken >= 1, 'nobody ever took a loan — the shylock chain was not exercised');
 assert(chain.funnelFills >= 1, 'the ring never funnelled — the alt chain was not exercised');
 assert(chain.redeemed >= 1, 'no broker ever redeemed at the window — the $OMR chain was not exercised');
-console.log('✓ every strategy played, every chain ran');
+if (DEFENDED) {
+  // ANTI-VACUITY for the toolkit: a defence nobody bought reads on the summary line exactly like a
+  // defence that failed, and the whole point of this month is the difference between the two.
+  assert(def.guardHires >= 1, 'no prey ever hired a bodyguard — the guard market was not exercised');
+  assert(def.preyShelters >= DAYS, `prey bought only ${def.preyShelters} safehouse stays in ${DAYS} days — the shelter cadence was not exercised`);
+  assert(def.playerContracts + def.familyContracts >= 1 || syn.hits.size === 0, 'killers were marked but no contract was ever posted on one — retaliation was not exercised');
+  assert(ev.absorbed + ev.revived + def.preyShelters > 0, 'not one shot was absorbed, revived or sheltered against');
+}
+console.log('✓ every strategy played, every chain ran' + (DEFENDED ? ', every defence was bought' : ''));
 await app.close();
 console.log('\n✅ arena complete.');
