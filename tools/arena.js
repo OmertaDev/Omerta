@@ -65,7 +65,7 @@ import { sweepExpiredBounties } from '../src/social.js';
 import { sweepLoans } from '../src/loans.js';
 import { sweepMarket } from '../src/market.js';
 import { runBuyback } from '../src/worker.js';
-import { GUNS, GOODS, BUSINESSES, RACKETS, CRIMES, DISTRICTS, EXCHANGE, LOAN, CASINO, BROKERS, M3, levelOf } from '../src/rules.js';
+import { GUNS, GOODS, BUSINESSES, RACKETS, CRIMES, DISTRICTS, EXCHANGE, LOAN, CASINO, BROKERS, NPC_HITMEN, M3, levelOf } from '../src/rules.js';
 
 const DAYS = Number(process.env.ARENA_DAYS || 30);
 const ROUNDS = Number(process.env.ARENA_ROUNDS || 3);
@@ -100,6 +100,13 @@ const DEFENDED = process.env.ARENA_DEFENDED !== 'off';
 //                              round and fire in the next), so step-three figures are NOT byte-comparable
 //                              with step two's: the day is the same length, the tick is finer.
 const HUNT_SEATS = DEFENDED && process.env.ARENA_HUNT_SEATS !== 'off';
+// PREY HIRE NPC CONTRACTORS. The gap BALANCE § THE ADAPTIVE HUNTERS named as its own scoping limit —
+// "the prey never hire NPC hitmen (`npcHit` is a hunter-independent executor in the real game and
+// would collect on the last hunter standing — the arena does not model it, so §1 is the ceiling of
+// the problem, not the floor)". §1's unopposed 60-kill run rests on there being NO executor once the
+// career hunters have thinned each other out; the real game hands every prey with a pocket a
+// contractor on a 6h payer / 24h per-target clock. `off` reproduces §1's arm.
+const PREY_NPCHIT = DEFENDED && process.env.ARENA_PREY_NPCHIT !== 'off';
 // Defaults to 'round' ONLY with the hunt seats on: the step-one (ARENA_DEFENDED=off) and step-two
 // (ARENA_HUNT_SEATS=off) months reproduce on this tree unchanged, and the step-three CONTROL (hunt seats off,
 // warp per round) is asked for explicitly — ARENA_HUNT_SEATS=off ARENA_WARP=round — so a pair differs in
@@ -112,10 +119,15 @@ const CAST = { hunter: 6, landlord: 8, arb: 8, ringboss: 1, alt: 8, lender: 6, b
 const PREY = new Set(['landlord', 'lender', 'broker', 'adaptive']);
 const ADAPTIVE_POLICIES = ['landlord', 'arb', 'grinder', 'lender', 'turtle', ...(HUNT_SEATS ? ['hunter'] : [])];
 const EPSILON = 0.2;   // the bandit's explore rate — a lever, not a finding
-// ONE seeded generator for every random choice the harness makes (the bandit's explore, the gambler's
-// coin, the landlord's racket pick, the round order), so a pair at the same ARENA_SEED differs in the
-// regime alone and a different seed is a genuinely different month — the economy refuter's point that
-// at 10–40 kills a run one pair is noise-dominated (the P9.40 argument), so the read is over ≥3 seeds.
+// ONE seeded generator for every random choice the HARNESS makes (the bandit's explore, the gambler's
+// coin, the landlord's racket pick, the round order). It does NOT make a run reproducible, and an
+// earlier version of this comment claimed it did — measured and false: `src/` carries 125 unseeded
+// `Math.random()` calls (every crime roll, `npcHit` roll, `fire` outcome, casino roll), and MARKET_SEED
+// seeds only the deterministic §7.11 price hash, never a roll. Two runs at ARENA_SEED=1 on the same
+// tree and the same arm measured 17 kills and 66 kills — estate burn 45% vs 174%, Gini 0.793 vs 0.945.
+// So ARENA_SEED varies the harness's own coins and nothing else, a same-seed pair differs in the regime
+// AND in every server roll, and NO single run of this instrument is a property: at 10–40 kills a month
+// the variance swamps most arm effects (the P9.40 argument). Read repeated runs PER ARM, never a pair.
 const SEED = Number(process.env.ARENA_SEED || 1);
 let gseed = (Math.imul(SEED, 2654435761) + 1) >>> 0;
 const grnd = () => { gseed = (Math.imul(gseed, 1664525) + 1013904223) >>> 0; return gseed / 4294967296; };
@@ -167,7 +179,8 @@ const chain = { funnelFills: 0, funnelCash: 0, loansPosted: 0, loansTaken: 0, lo
 // require each to have happened, because a toolkit nobody used reads exactly like a toolkit that failed.
 const def = { guardHires: 0, guardCash: 0, preyShelters: 0, shelterCash: 0, playerContracts: 0, playerContractCash: 0, familyContracts: 0, familyContractCash: 0, tributes: 0,
   vendettaShots: 0, vendettaKills: 0, contractShots: 0, contractKills: 0, boardShots: 0, adaptiveSwitches: 0, insured: 0,
-  guardedShots: 0, guardJailed: 0, guardHosp: 0, guardDead: 0, guardLapsed: 0, guardShotRows: [] };
+  guardedShots: 0, guardJailed: 0, guardHosp: 0, guardDead: 0, guardLapsed: 0, guardShotRows: [],
+  npcHires: 0, npcHireCash: 0, npcKills: 0, npcAbsorbed: 0, npcRevived: 0 };
 const bandit = {};   // policy -> { n, sum } of DAILY net-worth gain, shared across every adaptive seat
 const syn = { gid: null, hits: new Set(), hitNames: new Set() };   // the prey family and the killers it has marked
 let roundNow = 0, dayNow = 0;
@@ -304,6 +317,34 @@ const retaliate = async (p, c) => {
       if (r.code === 200) { def.familyContracts++; def.familyContractCash += 200000; }
       if (r.code === 200 || ['cash', 'treasury'].includes(r.body?.error) === false) p.st.familyPosted.add(kid);
     }
+  }
+};
+// HIRE A CONTRACTOR: the executor that does not depend on a rival hunter. Every prey that knows a
+// killer's name and can cover a tier buys the NPC hitman on him — the fee burns win or lose, the odds
+// are `tier.base - level x NPC_DEF_PER_LVL` clamped [.02,.60], and the server's own cooldowns (6h per
+// payer, 24h per (payer,target)) bound the rate, so one attempt per prey per round is what the game
+// allows. Best AFFORDABLE tier: a hunter's level rises with every body, so the odds fall as he earns.
+const hireContractor = async (p, c) => {
+  if (!PREY_NPCHIT || !syn.hits.size) return;
+  const tiers = [...NPC_HITMEN].sort((a, b) => b.cost - a.cost);
+  for (const kid of syn.hits) {
+    if (kid === p.id) continue;
+    let cash = c.cash;
+    if (cash < tiers[tiers.length - 1].cost && (c.bank || 0) >= 200000) {
+      const w = note(p, await call('POST', '/v1/bank/withdraw', p.token, { amount: 200000 }));
+      if (w.code === 200) { c.cash += 200000; cash = c.cash; }
+    }
+    const tier = tiers.find((t) => t.cost <= cash);
+    if (!tier) return;
+    const r = note(p, await call('POST', `/v1/streets/${kid}/npchit`, p.token, { tier: tier.id }));
+    if (r.code === 200) {
+      def.npcHires++; def.npcHireCash += Number(r.body?.cost || tier.cost); c.cash -= Number(r.body?.cost || tier.cost);
+      if (r.body?.killed) def.npcKills++;
+      if (r.body?.absorbed) def.npcAbsorbed++;
+      if (r.body?.revived) def.npcRevived++;
+      return;   // the payer cooldown is 6h — one contractor per prey per round is all the game allows
+    }
+    if (r.body?.error === 'cooldown') return;   // this prey has already sent one; the rest of the list is moot
   }
 };
 // THE FAMILY: a landlord heir who woke up gangless rejoins; every member tithes 5% of pocket a day so
@@ -595,7 +636,7 @@ for (let day = 1; day <= DAYS; day++) {
       const c = await me(p); if (!c) continue;
       try {
         const prey = DEFENDED && PREY.has(p.strat);
-        if (prey) { await retaliate(p, c); if (p.strat === 'landlord') await family(p, c); await hireGuard(p, c); }
+        if (prey) { await retaliate(p, c); await hireContractor(p, c); if (p.strat === 'landlord') await family(p, c); await hireGuard(p, c); }
         if (DEFENDED && (p.strat === 'grinder' || p.strat === 'turtle') && !p.st.offered) { const g = note(p, await call('POST', '/v1/bodyguard/offer', p.token, { price: M3.BODYGUARD_MIN_PRICE })); if (g.code === 200) p.st.offered = true; }
         await STRAT[p.strat](p, c);
         // a seat holding the gun does not go to ground — the safehouse blocks offence (the signed P1.3
@@ -705,6 +746,10 @@ if (DEFENDED) {
   console.log(`    bodyguards: ${def.guardHires} hires (${money(def.guardCash)}) · shots ABSORBED by a guard ${ev.absorbed} · shots at a GUARDED mark ${def.guardedShots} (guard in lockup ${def.guardJailed} / infirmary ${def.guardHosp} / dead ${def.guardDead}) · contract lapsed at the shot ${def.guardLapsed}`);
   console.log(`    insurance: ${def.insured} prey arrived with 2 respawn tokens · shots REVIVED ${ev.revived}`);
   console.log(`    shelter: ${def.preyShelters} prey safehouse stays (${money(def.shelterCash)}) — a 4h stay lapses at the ${WARP === 'round' ? 'round warp, so the prey re-buys every round and the acting order inside each round' : 'day warp, so the acting order inside a day'} decides what it covers`);
+  // THE CONTRACTOR. `npcHit` is the executor a pot-less prey can reach: it needs no search, no gun and no
+  // hunter-independent collector — only cash and a 6h payer clock. §1's unopposed run measured a town that
+  // could not reach it because the harness never called it, so this line is the difference between the two arms.
+  console.log(`    the contractor: ${def.npcHires} hires (${money(def.npcHireCash)}) · killed ${def.npcKills} · absorbed ${def.npcAbsorbed} · revived ${def.npcRevived}`);
   console.log(`    contracts on hunters: ${def.playerContracts} personal (${money(def.playerContractCash)}) + ${def.familyContracts} family (${money(def.familyContractCash)}, ${def.tributes} tributes) · marked killers ${syn.hits.size}`);
   console.log(`    the hunters' own targeting: vendetta ${def.vendettaShots} shots / ${def.vendettaKills} settled · contract ${def.contractShots} shots / ${def.contractKills} kills · board ${def.boardShots} shots`);
   const preyDeaths = (s) => sheets.filter((x) => x.p.strat === s).reduce((a, x) => a + x.deaths, 0);

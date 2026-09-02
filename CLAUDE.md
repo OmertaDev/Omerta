@@ -17937,3 +17937,66 @@ companion*: a source push without its generated pair fails the pg-mem job at
 `tools/knowledge-test.js:386`, and after main's automated refresh landed on top of the merge the PR
 went `dirty` with zero checks — resolved the recorded way (merge main, either side for generated
 paths, regenerate on the clean merged tree, commit artifacts alone).
+
+**THE POT THAT HIRES A GUN — refuted before it was built, and the arena cannot settle the question it
+was built for (2026-09-02).** Step three left one open design call: a contract pot on the last hunter
+standing refunds unclaimed because nobody is left who can execute it, and he farms the town. The
+proposal — let an uncollected pot **hire the NPC hitman** after a grace window — went to four
+independent adversarial refuters BEFORE any code, and **all four returned REFUTED**. Not built: no
+`src/` change, no signed lever touched. `omerta-pot-hires-a-gun-design.md` now opens with its own
+refusal banner; `BALANCE.md § THE CONTRACTOR` is the founder read.
+**THE PREMISE DIED ON A GREP, AND THE EVIDENCE WAS IN THE DOCUMENT THAT MOTIVATED IT.** `npcHit` is
+ALREADY the hunter-independent executor the mechanic was invented to supply — a fee, a 6h payer clock,
+a 24h per-target clock, a server-rolled level-scaled kill, needing no search, no gun and no rival
+hunter. What step three measured is a town that never called it, because **the harness never called
+it**: `grep -c npcHit tools/arena.js` → **0**, and step three's own write-up says so in its own words
+(*"the arena does not model it, so §1 is the ceiling of the problem, not the floor"*). The proposal
+cited that section while the section's caveat refuted it. So the task was redefined BUILD → MEASURE
+with both outcomes pre-committed: survive the contractor and there is a problem; die and it was a
+harness artifact.
+**WHAT SHIPPED IS THE MISSING CALL.** `tools/arena.js` gains `hireContractor` behind
+`ARENA_PREY_NPCHIT` (`off` reproduces step three byte-for-byte): a prey seat with a killer on its list
+withdraws from the bank if it must, buys the dearest affordable tier and stops for the round — one
+contractor per prey per round, because the 6h payer cooldown is all the game allows — with hires,
+spend, kills, absorbs and revives **counted and PRINTED**, since a counter nobody reads is the vacuity
+class. Also fixed: `NPC_HITMEN` was used and never imported (a runtime ReferenceError `node --check`
+cannot see).
+**SEVEN 90-DAY RUNS, THREE SEEDS, BOTH ARMS, every one `✓ §10.4 held: 34 checks, drift delta 0` with
+no sink routed around.** The arm is real — `off` reads **0 hires** (the vacuity control: the knob
+genuinely gates it) and `on` runs land **36 / 62 / 89 hires** killing **5–6 career hunters each**,
+through the shipped route with no game change. **And the conclusion the table looks like it supports
+is disqualified by the instrument.** `ARENA_SEED` seeds only the HARNESS's coins; the server carries
+**125 unseeded `Math.random()` calls across 36 files** (every crime roll, `npcHit` roll, `fire`
+outcome, casino roll) and `MARKET_SEED` seeds only the deterministic §7.11 price hash. Measured
+directly: **two runs at `ARENA_SEED=1`, arm `on`, same tree — 17 kills and 66 kills**, estate burn 45%
+vs 174%, Gini 0.793 vs 0.945. The arms overlap almost entirely (`on` 14–66, `off` 20–69). **My own
+preliminary read was falsified by that re-run** — after seed 1's first pair I had written the
+contractor arm up as decisive, and the second run of the SAME arm at the SAME seed landed on top of
+the control.
+**So step three's unopposed farming is a DRAW, not a property**: it appears in one of three controls
+AND in an `on` run, and what actually separates the regimes in all seven runs is whether the sixth
+career hunter dies (died 6 → kills stop in the first third; died 5 → the survivor farms to the bell),
+which happens in both arms. The pre-committed "DIES" outcome holds by a stronger route than the one it
+was written for. **A retroactive qualification is owed**: the step-two and step-three arena figures are
+single runs of a noise-dominated instrument, and `tools/arena.js` carried a comment claiming *"a pair
+at the same ARENA_SEED differs in the regime alone"* — false, corrected at the site with the
+measurement that falsifies it, and any future arena claim needs repeated runs **per arm**, never a
+seeded pair. Their directional reads survive (they rest on mechanism and repetition); their numbers do
+not.
+**TWO FINDINGS FROM THE REFUTATION ARE WORTH MORE THAN THE MECHANIC.** (a) **THE LOCK LEDGER is blind
+to a real AB-BA class.** `runEstate` reaches third-party `characters` rows (`estate.js:337` →
+`market.js:623`, `contracts.js:410`) while holding a bounty pot — a genuine cycle against
+`sweepExpiredBounties` — and it is **PRE-EXISTING** (`fire` already takes it), so the remedy is the
+40P01 → `contention` mapping rather than a reorder. `test/gates.js`'s ledger matches only
+`FROM <t> … FOR UPDATE`, and those third-party locks are `UPDATE … SET` form while `bounties` is
+absent from its SINGLETON list — **so a green ledger is compatible with the CRITICAL**, which is the
+more useful half. (b) **The accounting lens PASSED and its failed attacks are recorded** (a refutation
+that publishes only its hits cannot be audited): `bounty:hire` rides the existing `bounty:` prefix so
+there is no vocabulary collision; check (b) matches the EXACT reason `bounty:refund` with
+`character_id IS NULL`, so a distinct negative reason is invisible to it; the escrow identity
+reconciles on both the kill and the miss path; the carve arithmetic and the `death:bounty` burn are
+sound; nothing recycles to the desk. **The mechanic was accounting-clean and still wrong.**
+**One harness lesson re-paid:** two strays were launched with `env SEED=3 ARM=on` against a runner that
+reads positional `$1 $2`, so they ran with an empty seed into a shared database writing over one log —
+caught by listing the log directory rather than by a failure, since a run against the wrong database
+reports a confident, complete, meaningless result.

@@ -1,6 +1,50 @@
 # THE POT HIRES A GUN — an uncollected contract pot buys the NPC hitman
 
-**Status:** design, awaiting adversarial refutation → build. Every number in it is a founder
+> ## ⛔ REFUTED — NOT BUILT (2026-09-02)
+>
+> Four independent Opus refuters ran against this design before a line of it was written. **All four
+> returned REFUTED**, and the third killed the premise rather than the mechanic. **No `src/` change
+> shipped; no signed lever was touched.** The document is kept whole below as the record of what was
+> proposed and why it was rejected — the rejection is the deliverable.
+>
+> **The premise-kill (refuter C).** §1's motivating measurement is a HARNESS ARTIFACT.
+> `git show HEAD:tools/arena.js | grep -c npcHit` returns **0** — the harness has never once called
+> the very executor this design exists to reach — and `BALANCE.md § THE ADAPTIVE HUNTERS` says so in
+> its own words, in the same paragraph §1 quotes as provenance: *"the prey never hire NPC hitmen
+> (`npcHit` is a hunter-independent executor in the real game and would collect on the last hunter
+> standing — the arena does not model it, so §1 is the ceiling of the problem, not the floor)."*
+> So §1 read a caveat that names the gap, and built on the number anyway. **The self-refutation is
+> visible in this document's own header.** `npcHit` needs no search, no gun and no
+> hunter-independent collector — only cash and a 6h payer clock — so a town of forty funded prey can
+> already reach a contractor today, on the shipped game, with no mechanic added. The burden of proof
+> is a measurement, not a document: teach the harness the one call it lacks, then re-run the seeded
+> pair. **That measurement is what shipped instead** — see `BALANCE.md § THE CONTRACTOR`.
+>
+> **The concurrency CRITICAL (refuter D).** `runEstate` reaches THIRD-PARTY `characters` rows while
+> holding the pot (`estate.js:337` → `market.js:623`, `contracts.js:410`), which is a real AB-BA
+> against `sweepExpiredBounties`. It is **pre-existing** — `fire` already takes that order
+> (`combat.js:496`→`557`) — so the remedy is the 40P01→`contention` mapping, never a reorder; but a
+> mechanic that fires the pot from a SWEEP would have widened the window from a player action to a
+> worker tick. Refuter D also found that **THE LOCK LEDGER is blind to this class**: `test/gates.js`
+> matches only `FROM … FOR UPDATE` (line 1268), while `runEstate`'s third-party locks are
+> `UPDATE … SET` form, and `bounties` is absent from the SINGLETON regex — so a **green ledger is
+> compatible with the CRITICAL**, which is the more useful finding of the two.
+>
+> **The accounting lens PASSED, and that is recorded because a refutation that publishes only its
+> hits cannot be audited (refuter A).** Every attack on the §10.4 half FAILED, correctly: `bounty:hire`
+> rides the existing `bounty:` prefix (`invariants.js:20`) so the vocabulary stays silent and there is
+> no prefix collision; check (b) matches the EXACT reason `bounty:refund` with a NULL character
+> (`invariants.js:190`), so a distinct negative reason is invisible to it; the escrow identity
+> (`invariants.js:239-251`) reconciles on both the kill and the miss path; the carve arithmetic is
+> sound; `death:bounty`'s burn holds; nothing recycles to the desk; the lock order is acyclic. **The
+> mechanic was accounting-clean and still wrong** — which is exactly why the premise, not the ledger,
+> is what a refutation has to attack first.
+>
+> **What ships from this work:** `tools/arena.js` learns `npcHit` (the one call it lacked) and the
+> seeded pair is re-run to settle §1 empirically. Everything below the line is the refuted proposal.
+
+
+**Status:** REFUTED 2026-09-02 (see the banner above) — proposed, refuted, NOT built. Every number in it is a founder
 sign-off lever. Nothing signed is retuned (ground rule #1).
 
 **Provenance.** This answers the one open design call `BALANCE.md § THE ADAPTIVE HUNTERS` leaves
