@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "60a0ad0ad27456d0548f95df0e2740baa93c03f1",
+  "sourceRevision": "73840305905c56cddd174c5b66dc899ae5bf7dfe",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5665,
-    "edges": 25028,
+    "nodes": 5667,
+    "edges": 25038,
     "byNodeType": {
       "Artifact": 1827,
       "Command": 57,
-      "Commit": 1305,
+      "Commit": 1307,
       "Contract": 49,
       "Document": 474,
       "Domain": 12,
@@ -65,18 +65,18 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1980,
-      "CHANGED": 10052,
+      "CHANGED": 10058,
       "CONTAINS": 1847,
       "DECLARES": 57,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 204,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1305,
+      "HAS_COMMIT": 1307,
       "IMPLEMENTS": 124,
       "IMPORTS": 1642,
       "INHERITS": 12,
-      "REFERENCES": 2845,
+      "REFERENCES": 2847,
       "REPRESENTS": 891,
       "TESTS": 583,
       "TRACKS": 126,
@@ -10005,20 +10005,20 @@
       "path": "BALANCE.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 535972,
-      "lines": 6622,
-      "version": "80161466676a749e",
+      "bytes": 546877,
+      "lines": 6738,
+      "version": "231a3cd9b8b7bff1",
       "text": true,
       "provenance": [
         {
           "file": "BALANCE.md",
           "line": 1,
-          "version": "80161466676a749e"
+          "version": "231a3cd9b8b7bff1"
         }
       ],
-      "lastChangedAt": "2026-09-02T13:51:20.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "cce43ee0afccc10f34ab09d96c2cf8f44f8474f4"
+      "lastChangedAt": "2026-09-02T16:34:15.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "73840305905c56cddd174c5b66dc899ae5bf7dfe"
     },
     {
       "key": "Artifact:brand/agent-campaign/art/dormant-vault.png",
@@ -10971,20 +10971,20 @@
       "path": "CLAUDE.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 1728296,
-      "lines": 17898,
-      "version": "50ce760bcc0da455",
+      "bytes": 1732153,
+      "lines": 17940,
+      "version": "807ad88867bbe272",
       "text": true,
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "50ce760bcc0da455"
+          "version": "807ad88867bbe272"
         }
       ],
-      "lastChangedAt": "2026-09-02T13:51:20.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "cce43ee0afccc10f34ab09d96c2cf8f44f8474f4"
+      "lastChangedAt": "2026-09-02T16:34:15.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "73840305905c56cddd174c5b66dc899ae5bf7dfe"
     },
     {
       "key": "Artifact:content/packs/bad-batch/pack.json",
@@ -52297,6 +52297,22 @@
       ]
     },
     {
+      "key": "Commit:73840305905c56cddd174c5b66dc899ae5bf7dfe",
+      "type": "Commit",
+      "id": "73840305905c56cddd174c5b66dc899ae5bf7dfe",
+      "label": "docs(arena): THE ADAPTIVE HUNTERS — the three-seed 90-day read",
+      "title": "docs(arena): THE ADAPTIVE HUNTERS — the three-seed 90-day read",
+      "date": "2026-09-02T16:34:15.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/73840305905c56cddd174c5b66dc899ae5bf7dfe",
+      "provenance": [
+        {
+          "commit": "73840305905c56cddd174c5b66dc899ae5bf7dfe",
+          "url": "https://github.com/OmertaDev/Omerta/commit/73840305905c56cddd174c5b66dc899ae5bf7dfe"
+        }
+      ]
+    },
+    {
       "key": "Commit:7393eee8f8e52c1598a7f60cad68defa299bd6cb",
       "type": "Commit",
       "id": "7393eee8f8e52c1598a7f60cad68defa299bd6cb",
@@ -53989,6 +54005,22 @@
         {
           "commit": "844738f35c3916b29ef5f09cedde0b2c0546dd2f",
           "url": "https://github.com/OmertaDev/Omerta/commit/844738f35c3916b29ef5f09cedde0b2c0546dd2f"
+        }
+      ]
+    },
+    {
+      "key": "Commit:8478a771cf94d9862a5c38a4377c97c441d47956",
+      "type": "Commit",
+      "id": "8478a771cf94d9862a5c38a4377c97c441d47956",
+      "label": "chore(knowledge): refresh generated artifacts for 60a0ad0a",
+      "title": "chore(knowledge): refresh generated artifacts for 60a0ad0a",
+      "date": "2026-09-02T15:35:35.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8478a771cf94d9862a5c38a4377c97c441d47956",
+      "provenance": [
+        {
+          "commit": "8478a771cf94d9862a5c38a4377c97c441d47956",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8478a771cf94d9862a5c38a4377c97c441d47956"
         }
       ]
     },
@@ -69488,13 +69520,13 @@
       "id": "BALANCE.md",
       "label": "BALANCE.md",
       "documentType": "documentation",
-      "lines": 6622,
-      "version": "80161466676a749e",
+      "lines": 6738,
+      "version": "231a3cd9b8b7bff1",
       "provenance": [
         {
           "file": "BALANCE.md",
           "line": 1,
-          "version": "80161466676a749e"
+          "version": "231a3cd9b8b7bff1"
         }
       ]
     },
@@ -69568,13 +69600,13 @@
       "id": "CLAUDE.md",
       "label": "CLAUDE.md",
       "documentType": "documentation",
-      "lines": 17898,
-      "version": "50ce760bcc0da455",
+      "lines": 17940,
+      "version": "807ad88867bbe272",
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "50ce760bcc0da455"
+          "version": "807ad88867bbe272"
         }
       ]
     },
@@ -76994,6 +77026,9 @@
           "commit": "83d19c0f0a798b0b59bed8d79b856659f08bba83"
         },
         {
+          "commit": "8478a771cf94d9862a5c38a4377c97c441d47956"
+        },
+        {
           "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
         },
         {
@@ -77393,6 +77428,9 @@
           "commit": "83d19c0f0a798b0b59bed8d79b856659f08bba83"
         },
         {
+          "commit": "8478a771cf94d9862a5c38a4377c97c441d47956"
+        },
+        {
           "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
         },
         {
@@ -77790,6 +77828,9 @@
         },
         {
           "commit": "83d19c0f0a798b0b59bed8d79b856659f08bba83"
+        },
+        {
+          "commit": "8478a771cf94d9862a5c38a4377c97c441d47956"
         },
         {
           "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
@@ -78249,6 +78290,9 @@
         },
         {
           "commit": "83d19c0f0a798b0b59bed8d79b856659f08bba83"
+        },
+        {
+          "commit": "8478a771cf94d9862a5c38a4377c97c441d47956"
         },
         {
           "commit": "87dcba16b25eeab66b51432844acf1d4e8a5db0b"
@@ -84722,7 +84766,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "60a0ad0ad27456d0548f95df0e2740baa93c03f1",
+      "revision": "73840305905c56cddd174c5b66dc899ae5bf7dfe",
       "currentBranch": "claude/next-work-recommendations-x5f2fp",
       "defaultBranch": "main",
       "visibility": "public",
@@ -166447,6 +166491,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:73840305905c56cddd174c5b66dc899ae5bf7dfe",
+      "to": "Artifact:BALANCE.md",
+      "provenance": {
+        "commit": "73840305905c56cddd174c5b66dc899ae5bf7dfe"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:73840305905c56cddd174c5b66dc899ae5bf7dfe",
+      "to": "Artifact:CLAUDE.md",
+      "provenance": {
+        "commit": "73840305905c56cddd174c5b66dc899ae5bf7dfe"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:7393eee8f8e52c1598a7f60cad68defa299bd6cb",
       "to": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
       "provenance": {
@@ -172795,6 +172855,38 @@
       "to": "Artifact:tools/validate-fee-splits.js",
       "provenance": {
         "commit": "844738f35c3916b29ef5f09cedde0b2c0546dd2f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8478a771cf94d9862a5c38a4377c97c441d47956",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "8478a771cf94d9862a5c38a4377c97c441d47956"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8478a771cf94d9862a5c38a4377c97c441d47956",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "8478a771cf94d9862a5c38a4377c97c441d47956"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8478a771cf94d9862a5c38a4377c97c441d47956",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "8478a771cf94d9862a5c38a4377c97c441d47956"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8478a771cf94d9862a5c38a4377c97c441d47956",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "8478a771cf94d9862a5c38a4377c97c441d47956"
       }
     },
     {
@@ -249532,6 +249624,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:73840305905c56cddd174c5b66dc899ae5bf7dfe",
+      "provenance": {
+        "commit": "73840305905c56cddd174c5b66dc899ae5bf7dfe"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:7393eee8f8e52c1598a7f60cad68defa299bd6cb",
       "provenance": {
         "commit": "7393eee8f8e52c1598a7f60cad68defa299bd6cb"
@@ -250375,6 +250475,14 @@
       "to": "Commit:844738f35c3916b29ef5f09cedde0b2c0546dd2f",
       "provenance": {
         "commit": "844738f35c3916b29ef5f09cedde0b2c0546dd2f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:8478a771cf94d9862a5c38a4377c97c441d47956",
+      "provenance": {
+        "commit": "8478a771cf94d9862a5c38a4377c97c441d47956"
       }
     },
     {
@@ -277377,6 +277485,15 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:BALANCE.md",
+      "to": "Artifact:test/social.js",
+      "provenance": {
+        "file": "BALANCE.md",
+        "line": 6692
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:BALANCE.md",
       "to": "Artifact:test/speakeasy.js",
       "provenance": {
         "file": "BALANCE.md",
@@ -288865,6 +288982,15 @@
       "provenance": {
         "file": "CLAUDE.md",
         "line": 17870
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:tools/arena.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 17903
       }
     },
     {
