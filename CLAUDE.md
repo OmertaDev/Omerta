@@ -17786,6 +17786,45 @@ from the character row the way its sibling block already does it. It rides on it
 one is fluent. §10.4 untouched (a display line moves no value; sim drift-0), and **no SQL moved in `src/`** — checked with a
 diff filter, not assumed — so the real-Postgres gates do not apply.
 
+**THE LOCK LEDGER'S BLIND THIRD — the widening, and the premise it refuted (2026-09-02).**
+THE LOCK LEDGER extracted only `FROM <t> … FOR UPDATE`, and refuter D had already found a real AB-BA
+through the half it could not see — so a **GREEN ledger was compatible with a known CRITICAL**, which
+is the RT#7 shape on the guard rather than in the game. **An `UPDATE … SET` and a `DELETE FROM` take a
+row-exclusive lock held to COMMIT exactly as `FOR UPDATE` does**; the ledger had never counted one.
+**THE DECIDABILITY LINE IS WHAT MADE THE WIDENING SHIPPABLE, and it is not a preference.** Admitting
+every table yields **42 candidate pairs** dominated by an ambiguity no static rule can resolve:
+`UPDATE characters SET cash = cash + $2 WHERE id=$1` is a **fresh acquisition** when `$1` is a third
+party and a **no-op re-touch** when it is the wrapper-held actor, and nothing in the text says which
+(measured: 127 `UPDATE characters SET` against 43 `FROM characters … FOR UPDATE`, so the re-touches
+dominate). Shipping that as a hard rule would violate this ledger's own founding sentence — *a
+mostly-wrong advisory is worse than none*. So write-form acquisitions are admitted **only for the
+contended rows rule 2 already enumerates**, where the question does not arise: a pot is ONE row, so
+any write to it unambiguously acquires THAT row. **Measured: 0 conflicts, and the extractor sees 104
+acquisitions it was blind to — 72 transactions / 62 pairs / 74 lock sites → 108 / 113 / 181.**
+**A CORRECTNESS BUG WAS FIXED ON THE WAY IN, and it was mine to make.** The first widening reported
+**138 conflicts — 96 of them phantom**: a row lock is held to COMMIT, so **only the FIRST acquisition
+of a table orders anything**, and counting a later re-touch emits BOTH orderings for one transaction
+and invents a conflict against itself. The dedupe is behaviour-preserving for the shipped
+FOR-UPDATE-only half (0 conflicts / 62 pairs either way), so it is a latent fix rather than a
+consequence of the widening.
+**THE OPTION'S PREMISE WAS REFUTED, and that is the more useful half.** Widening does **NOT** make the
+ledger see refuter D's CRITICAL, and **no table-granularity rule can**: `runEstate` holds a `bounties`
+row and then reaches third-party `characters` rows **through `refundPot` and `voidListingsAtDeath`**,
+so (a) the acquisition lives inside a function this transaction CALLS — invisible to a per-transaction
+TEXT scan — and (b) the distinguishing feature is **whose row**, not which table. Both are now written
+into the ledger's header as WHAT IT CANNOT SEE, because a green ledger is otherwise read as *no lock
+cycles exist*; both land as 40P01 → the `deadlockToRetry` `contention` mapping, which is the remedy
+for them rather than a reason to widen until the rule reports noise. **The planned per-cluster
+adjudication fan-out was therefore NOT run** — the 42 candidates are that ambiguity, not 42 defects.
+**Three mutations, each caught at its own named assertion** — the write-form regexes blinded → the new
+`writeLocks >= 70` floor fires (*"silently reverted to the FOR-UPDATE-only state … which looks exactly
+as clean as the widened one"*); the dedupe removed → the conflicts return; and **the load-bearing
+one: a genuine inversion written entirely in write-form** (`UPDATE den_volume` then `UPDATE street_tax`)
+is caught and named against the real canonical site `takeHouse` — **with a control proving the
+pre-widening extractor passes GREEN over that same planted AB-BA**, which demonstrates the blind third
+rather than arguing it. Suite green; **no SQL moved in `src/`** (checked with a diff filter, not
+assumed), so the real-Postgres gates do not apply.
+
 **PLAY WAVE 79 — THE COOLDOWN LEDGER: "not yet" is not a wait (2026-08-31).** Wave 78's own write-up
 ends by naming what check 14 (THE SILENCE LEDGER) is structurally blind to — a line that is FLUENT and
 leaves the actionable TERM off — and the largest untouched instance of it was measured rather than
