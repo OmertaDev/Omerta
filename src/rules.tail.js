@@ -409,6 +409,31 @@ export const usd = (n) => {
   return '$' + v.toLocaleString('en-US', { maximumFractionDigits: 2 });
 };
 
+// ── THE COOLDOWN REMAINDER ──────────────────────────────────────────────────
+// 38 of 39 cooldown refusals held the exact expiry IN THE COMPARISON ONE LINE ABOVE THE THROW and
+// discarded it — the FIRE path, a two-hour wait, said only "Your trigger's still hot." Six siblings
+// already named their wait, which is what makes it the forgotten-sibling shape rather than a
+// convention. The class is the WITHHELD TERM (fluent, and the actionable number left off), so check
+// 14 — which only catches a MUTE reply — is structurally blind to it, and it costs agents more than
+// people: they read these codes, and with nothing machine-readable to back off on they retry blind
+// into a 1/3s throttle. ONE implementation on the universal leaf, so the number a player is told,
+// the number the payload carries and the number the till enforces cannot drift (the headroomOf
+// pattern of THE BUCKET LEDGER). `coolLeft` is null/undefined/garbage-safe (→ 0, i.e. "not cooling"),
+// so it is a drop-in for every `x && new Date(x) > new Date()` predicate it replaces.
+export const coolLeft = (until, now = Date.now()) => {
+  const t = until instanceof Date ? until.getTime() : typeof until === 'number' ? until : Date.parse(until);
+  return Number.isFinite(t) ? Math.max(0, Math.ceil((t - now) / 1000)) : 0;
+};
+// The prose half. Coarsens as it grows, because "7231s" is not a wait a person can act on.
+export const coolWait = (seconds) => {
+  const s = Math.max(0, Math.ceil(Number(seconds) || 0));
+  if (s < 60) return `${s}s`;
+  if (s < 3600) return `${Math.ceil(s / 60)}m`;
+  if (s < 86400) { const h = Math.floor(s / 3600), m = Math.round((s % 3600) / 60); return m ? `${h}h ${m}m` : `${h}h`; }
+  const d = Math.floor(s / 86400), h = Math.round((s % 86400) / 3600);
+  return h ? `${d}d ${h}h` : `${d}d`;
+};
+
 // ── §7.11 deterministic markets — FNV-1a hash, ported byte-for-byte from v24 ──
 // SEED is a per-season server secret so future price blocks can't be precomputed.
 // GET /market/prices returns the current block's numbers; the client never hashes.

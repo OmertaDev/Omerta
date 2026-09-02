@@ -16,7 +16,7 @@ import { CRIMES, DISTRICTS, DRUGS, RECRUIT_MILESTONES, CONSTANTS, RANKS,
          KITCHENS, labModuleCost, recyclesToDesk, DESK_RECYCLE_REASON, isMade, madeSeconds,
          MADE_LADDER, madeRungIdx, madeRungOf, ladderFx, STAKE_LOCKS, stakeLockActive, effectiveStake,
          ASSETS, OPERATIONS, opSlotsOf, nextOpSlotLevel, MISSIONS, dailyGuidanceFor, dailyLiveFor, jailed, safeHoused,
-         STABLE, SPEAKEASY, ESTATE, MADE, CREW, crewObjectiveOf, DEEDS, deedController , runOf, npcOf, usd, WALLET_FORGE, bustAttemptsLeft, bustRefillSeconds, safehouseLeftMs } from './rules.js';
+         STABLE, SPEAKEASY, ESTATE, MADE, CREW, crewObjectiveOf, DEEDS, deedController , runOf, npcOf, usd, WALLET_FORGE, bustAttemptsLeft, bustRefillSeconds, safehouseLeftMs , coolLeft, coolWait } from './rules.js';
 import { dbCaps } from './db.js';
 import { accrue } from './accrual.js';
 import { logCollect } from './collection.js';
@@ -2098,8 +2098,9 @@ export async function train(ch, stat, client, h) {
   // A per-session cooldown makes stat gates a multi-day investment. TRAIN_CD_MS = 0 disables it;
   // `train_at` is direct-SQL (outside persistCharacter's positional UPDATE — the active_at pattern).
   const trainCd = Number(process.env.TRAIN_CD_MS ?? PACING.TRAIN_CD_MS);
-  if (trainCd > 0 && ch.train_at && new Date(ch.train_at) > new Date())
-    throw new GameError('cooldown', `The body needs a minute. Back to the gym in ${Math.max(1, Math.ceil((new Date(ch.train_at) - Date.now()) / 60000))}m.`);
+  const gymCool = trainCd > 0 ? coolLeft(ch.train_at) : 0;
+  if (gymCool)
+    throw new GameError('cooldown', `The body needs a minute. Back to the gym in ${coolWait(gymCool)}.`, { cooldownSeconds: gymCool });
   ch.energy = Number(ch.energy) - PACING.TRAIN_ENERGY;
   const trainAt = new Date(Date.now() + trainCd);
   await client.query('UPDATE characters SET train_at=$2 WHERE id=$1', [ch.id, trainAt]);

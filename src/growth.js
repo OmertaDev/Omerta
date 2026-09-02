@@ -1,7 +1,7 @@
 // M4 — growth systems: paths, the Daily Score, missions, daily contracts, and
 // the First Week (GRASSROOTS). Every formula cites spec §5.1/§7.3–7.4 / v24.
 import { GameError, cleanText, assignedSoldier, soldierResult, bumpMastery, masteryFx, gainRespect } from './game.js';
-import { soldierFxOf, SOLDIERS, PATH_SWITCH_CD_MS, referralXpBonus, CAPO, capoPerksOf, usd } from './rules.js';
+import { soldierFxOf, SOLDIERS, PATH_SWITCH_CD_MS, referralXpBonus, CAPO, capoPerksOf, usd , coolLeft, coolWait } from './rules.js';
 import {
   PATHS, MISSIONS, ONBOARD_TASKS, CAREER, CONSTANTS, M4, M8, SOCIAL_TASKS, socialShareUrl, SOCIAL_LINKS,
   levelOf, dayOf, dailyJobsOf, dailyGuidanceFor, dailyBlockedFor, effStat, gunObjOf, assetEnergyCap, recruitRankOf, PACING,
@@ -18,8 +18,9 @@ export async function choosePath(ch, pathId, client, h) {
   if (levelOf(Number(ch.respect)) < 5) throw new GameError('level', 'Pick a career at level 5.');
   // PATHS v2 — the switch cooldown: home/rival XP rates make hopping careers between activities a
   // rate arbitrage the switch burn alone doesn't price; a week between moves makes it a COMMITMENT
-  if (ch.path && ch.path_at && Date.now() < new Date(ch.path_at).getTime() + PATH_SWITCH_CD_MS)
-    throw new GameError('cooldown', 'You just changed careers — the street needs a week to take you seriously.');
+  const pathCool = ch.path ? coolLeft(new Date(ch.path_at).getTime() + PATH_SWITCH_CD_MS) : 0;
+  if (pathCool)
+    throw new GameError('cooldown', `You just changed careers — the street needs ${coolWait(pathCool)} more to take you seriously.`, { cooldownSeconds: pathCool });
   if (!ch.path) {
     if (Number(ch.cash) < CONSTANTS.PATH_FIRST_COST) throw new GameError('cash', `Declaring a path costs ${usd(CONSTANTS.PATH_FIRST_COST)}.`);
     ch.cash = Number(ch.cash) - CONSTANTS.PATH_FIRST_COST;
@@ -54,8 +55,9 @@ export async function respec(ch, alloc, client, h) {
     throw new GameError('same', "That's already you.");
   // BALANCE D7 — opposed rolls (shakedowns, jumps) are shape-sensitive: no re-shaping between
   // fights. One respec a day; failed attempts above never arm the clock.
-  if (ch.respec_at && Date.now() - new Date(ch.respec_at).getTime() < M8.RESPEC_CD_MS)
-    throw new GameError('cooldown', 'The trainer works miracles, not shift changes — one re-shaping a day.');
+  const reshapeCool = coolLeft(new Date(ch.respec_at).getTime() + M8.RESPEC_CD_MS);
+  if (reshapeCool)
+    throw new GameError('cooldown', `The trainer works miracles, not shift changes — one re-shaping a day, ${coolWait(reshapeCool)} to go.`, { cooldownSeconds: reshapeCool });
   await spendOmr(client, h, M8.RESPEC_OMR, 'respec');
   ch.respec_at = new Date();
   ch.muscle = want.muscle; ch.cunning = want.cunning; ch.speed = want.speed;
@@ -73,8 +75,9 @@ export async function respec(ch, alloc, client, h) {
 export async function heist(ch, client, h) {
   if (jailed(ch)) throw new GameError('jailed', "The Score doesn't wait for jailbirds.");
   if (Number(ch.health) < 20) throw new GameError('health', 'Not in your condition. See the Doc.');
-  if (ch.heist_at && new Date(ch.heist_at) > new Date())
-    throw new GameError('cooldown', 'The next job lines up later.');
+  const scoreCool = coolLeft(ch.heist_at);
+  if (scoreCool)
+    throw new GameError('cooldown', `The next job lines up in ${coolWait(scoreCool)}.`, { cooldownSeconds: scoreCool });
   const lvl = levelOf(Number(ch.respect));
   let take = 1200 * lvl + Math.floor(Math.random() * (400 * lvl + 1));
   const rep = 8 * lvl;
@@ -146,8 +149,9 @@ export async function doMission(ch, missionId, client, h) {
   // MISSION_CD_MS = 0 restores the old cascade. `mission_at` is direct-SQL (outside
   // persistCharacter's positional UPDATE — the active_at pattern), so it can't be clobbered.
   const missionCd = Number(process.env.MISSION_CD_MS ?? PACING.MISSION_CD_MS);
-  if (missionCd > 0 && ch.mission_at && new Date(ch.mission_at) > new Date())
-    throw new GameError('cooldown', `The family gives you one job at a time. Next one in ${Math.ceil((new Date(ch.mission_at) - Date.now()) / 60000)}m.`);
+  const missionCool = missionCd > 0 ? coolLeft(ch.mission_at) : 0;
+  if (missionCool)
+    throw new GameError('cooldown', `The family gives you one job at a time. Next one in ${coolWait(missionCool)}.`, { cooldownSeconds: missionCool });
   await client.query('INSERT INTO missions_done (character_id, mission_id) VALUES ($1,$2)', [ch.id, missionId]);
   const missionAt = new Date(Date.now() + missionCd);
   await client.query('UPDATE characters SET mission_at=$2 WHERE id=$1', [ch.id, missionAt]);

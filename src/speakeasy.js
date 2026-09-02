@@ -5,7 +5,7 @@
 // list. Prestige ranks the nightlife. §10.4: `speakeasy:` is a cash SINK/FAUCET/TRANSFER vocabulary (all
 // character_id'd → the per-character cash check reconciles); bottles/naming ride `vanity:%` (no omr change).
 import { GameError, bus, skillMult, bumpMastery } from './game.js';
-import { SPEAKEASY, DISTRICTS, speakeasyTierOf, speakeasyRoundOf, speakeasyBottleOf, levelOf, renownRankOf, decorStyleOf, styleUnlockOf, assessedValueOf, effStat, SKILLS, isMade, jailed, hospitalized, safeHoused, usd, art } from './rules.js';
+import { SPEAKEASY, DISTRICTS, speakeasyTierOf, speakeasyRoundOf, speakeasyBottleOf, levelOf, renownRankOf, decorStyleOf, styleUnlockOf, assessedValueOf, effStat, SKILLS, isMade, jailed, hospitalized, safeHoused, usd, art , coolLeft, coolWait } from './rules.js';
 import { spendOmr } from './vanity.js';
 
 const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
@@ -226,8 +226,9 @@ export async function visitSpeakeasy(ch, owner, districtId, roundId, client, h) 
   if (Number(ch.cash) < round.cost) throw new GameError('cash', `That round runs ${usd(round.cost)}.`);
   // cooldown FIRST (ch is locked by withTwoCharacters, so same-patron rounds serialize — no TOCTOU)
   const prior = (await client.query('SELECT last_at FROM speakeasy_patrons WHERE district_id=$1 AND character_id=$2', [districtId, ch.id])).rows[0];
-  if (prior && Date.now() - new Date(prior.last_at).getTime() < SPEAKEASY.VISIT_CD_MS)
-    throw new GameError('cooldown', 'You were just here — give the room a while.');
+  const roundCool = prior ? coolLeft(new Date(prior.last_at).getTime() + SPEAKEASY.VISIT_CD_MS) : 0;
+  if (roundCool)
+    throw new GameError('cooldown', `You were just here — give the room ${coolWait(roundCool)}.`, { cooldownSeconds: roundCool });
   // the standard 2% house take (1% street tax → buyback + 1% dev off-ledger), the bodyguard/exchange
   // parity — an untaxed unlimited P2P transfer is the cheapest value pipe in the game. Owner nets 98%.
   const fee = Math.ceil(round.cost * 0.01), tax = Math.ceil(round.cost * 0.01);
@@ -439,8 +440,9 @@ export async function standoverSpeakeasy(ch, owner, districtId, client, h) {
   const row = (await client.query('SELECT * FROM speakeasies WHERE district_id=$1 FOR UPDATE', [districtId])).rows[0];
   if (!row || row.owner_character !== owner.id) throw new GameError('gone', 'The club changed hands — try again.');
   if (isShut(row)) throw new GameError('shut', 'The place is already dark — nothing to take.');
-  if (row.standover_cd_until && new Date(row.standover_cd_until) > new Date())
-    throw new GameError('cooldown', 'Someone leaned on this place recently — let it cool off.');
+  const overCool = coolLeft(row.standover_cd_until);
+  if (overCool)
+    throw new GameError('cooldown', `Someone leaned on this place recently — let it cool off for ${coolWait(overCool)}.`, { cooldownSeconds: overCool });
   const price = assessedValueOf(row.tier);
   if (Number(ch.cash) < S.FEE + price)
     throw new GameError('cash', `A standover runs ${usd(S.FEE)} up front and you'd owe ${usd(price)} for the place on a win — bring ${usd(S.FEE + price)}.`);

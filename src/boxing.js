@@ -8,10 +8,10 @@
 import crypto from 'node:crypto';
 import { GameError, bus, ledger, notify, rngLog, bumpStanding, bumpMastery, masteryFx, npcMult, npcTier } from './game.js';
 import { recordEventResult } from './events.js';
-import { BOXING, UNDERWORLD, boxerRankOf, boxerLegendOf, npcBoxerOf, levelOf, pathFx, jailed, hospitalized, usd, art } from './rules.js';
+import { BOXING, UNDERWORLD, boxerRankOf, boxerLegendOf, npcBoxerOf, levelOf, pathFx, jailed, hospitalized, usd, art , coolLeft, coolWait } from './rules.js';
 
 const injured = (f) => f.injured_until && new Date(f.injured_until) > new Date();
-const onCooldown = (f) => f.exhib_at && new Date(f.exhib_at) > new Date();
+const onCooldown = (f) => coolLeft(f.exhib_at);
 const booked = (f) => f.booked_until && new Date(f.booked_until) > new Date(); // (step three) on a MAIN EVENT card
 const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 const form = (f) => Number(f.power) + Number(f.chin) + Number(f.speed);
@@ -268,7 +268,8 @@ export async function exhibitionBout(ch, fighterId, tierId, client, h) {
   const f = await myFighter(client, ch, fighterId);
   if (injured(f)) throw new GameError('injured', 'Your fighter is laid up — let them heal.');
   if (booked(f)) throw new GameError('booked', "That fighter is booked on a main event card.");
-  if (onCooldown(f)) throw new GameError('cooldown', `${f.name} needs to rest before another exhibition.`);
+  const fCool = onCooldown(f);
+  if (fCool) throw new GameError('cooldown', `${f.name} needs to rest before another exhibition — ${coolWait(fCool)} to go.`, { cooldownSeconds: fCool });
   if (Number(ch.cash) < tier.fee) throw new GameError('cash', `${art(tier.name, 'The')} card runs a ${usd(tier.fee)} sanction fee.`);
   // the sanction fee burns win or lose
   ch.cash = Number(ch.cash) - tier.fee;

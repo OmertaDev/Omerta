@@ -15,9 +15,9 @@
 // sending someone after you later (THE MANHUNT — sweepFamilyAggro, a worker-resolved, shield-honouring
 // strike; one pending per family). Chained so you're never double-punished. A raid is a real risk decision.
 import { GameError, bus, notify } from './game.js';
-import { FAMILY_WAR, familyWarRankOf, familyWarWinRankOf, levelOf, jailed, hospitalized, safeHoused, witproActive, penSafe, inHole, usd } from './rules.js';
+import { FAMILY_WAR, familyWarRankOf, familyWarWinRankOf, levelOf, jailed, hospitalized, safeHoused, witproActive, penSafe, inHole, usd , coolLeft, coolWait } from './rules.js';
 
-const cooling = (ch) => ch.family_raid_at && new Date(ch.family_raid_at) > new Date();
+const cooling = (ch) => coolLeft(ch.family_raid_at);
 // an ACTIVE peace pact between two families (inline read — a local one-liner dodges the diplomacy.js
 // import so there's no cycle risk, the canCommand precedent; the pactActive shape verbatim). §10.4-none.
 const pactBetween = async (client, a, b) => {
@@ -130,7 +130,8 @@ export async function raidFamily(ch, gangId, client, h) {
   if (hospitalized(ch)) throw new GameError('hosp', 'Not in any shape to run an op — see the Doc first.');
   if (safeHoused(ch)) throw new GameError('safe', "You can't run an op from a safehouse.");
   if (levelOf(Number(ch.respect)) < FAMILY_WAR.RAID_MIN_LVL) throw new GameError('level', `A blood-war raid takes level ${FAMILY_WAR.RAID_MIN_LVL}.`);
-  if (cooling(ch)) throw new GameError('cooldown', 'Your crew needs to regroup before the next hit.');
+  const raidCool = cooling(ch);
+  if (raidCool) throw new GameError('cooldown', `Your crew needs ${coolWait(raidCool)} to regroup before the next hit.`, { cooldownSeconds: raidCool });
   if (Number(ch.energy) < FAMILY_WAR.RAID_ENERGY) throw new GameError('energy', `A raid takes ${FAMILY_WAR.RAID_ENERGY} energy.`);
   if (Number(ch.ammo) < FAMILY_WAR.RAID_AMMO) throw new GameError('ammo', `Bring at least ${FAMILY_WAR.RAID_AMMO} rounds.`);
 

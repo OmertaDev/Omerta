@@ -7,7 +7,7 @@
 // Split out of the 2,003-line src/social.js; every function below is byte-identical to what was
 // there. Import from '../social.js' — it re-exports this package's public surface unchanged.
 import { GameError, bumpFamilyTask, bus, ledger, notify, track, loadOwned, skillMult, npcMult, npcTier, bumpStanding, bumpMastery, masteryFx, trunkCap, gainRespect, bumpCrewObjective, hunterSearchMs } from '../game.js';
-import { M3, CONSTANTS, LOAN, levelOf, rankIdxOf, cityEventOf, dayOf, btkOf, gunObjOf, vestMultOf, fleetValue, effStat, npcHitmanOf, VENDETTA, COMMISSION, SKILLS, UNDERWORLD, LAW, PORT, witproActive, penSafe, inHole, HONOR, HEIST_LOOT_RATE, BUSINESSES, seasonModOf, pathFx, RIVALS, carVal, carOf, boatOf, gearOf, SHIPMENT, usd , districtName, bustSpentToday, bustRefillSeconds } from '../rules.js';
+import { M3, CONSTANTS, LOAN, levelOf, rankIdxOf, cityEventOf, dayOf, btkOf, gunObjOf, vestMultOf, fleetValue, effStat, npcHitmanOf, VENDETTA, COMMISSION, SKILLS, UNDERWORLD, LAW, PORT, witproActive, penSafe, inHole, HONOR, HEIST_LOOT_RATE, BUSINESSES, seasonModOf, pathFx, RIVALS, carVal, carOf, boatOf, gearOf, SHIPMENT, usd , districtName, bustSpentToday, bustRefillSeconds , coolLeft, coolWait } from '../rules.js';
 import { activeDecree } from '../commission.js';
 import { bumpHonor } from '../honor.js';
 import { recordRival, revengeOwed } from '../rivals.js';
@@ -259,8 +259,9 @@ export async function fire(ch, victim, client, h, rounds) {
   if (safeHoused(ch)) throw new GameError('safe', "No wet work while you're to ground — hiding, not hunting.");
   if (witproActive(ch)) throw new GameError('witpro', "No wet work from witness protection — untargetable is a shield, not a licence to kill.");
   if (hospitalized(ch)) throw new GameError('hosp_self', "You're laid up under the Doc's care — no wet work from a hospital bed. (R40: the offense action-lock every sibling enforces.)");
-  if (ch.shoot_cd_until && new Date(ch.shoot_cd_until) > new Date())
-    throw new GameError('cooldown', "Your trigger's still hot.");
+  const triggerCool = coolLeft(ch.shoot_cd_until);
+  if (triggerCool)
+    throw new GameError('cooldown', `Your trigger's still hot — ${coolWait(triggerCool)} before the next shot.`, { cooldownSeconds: triggerCool });
   const gun = gunObjOf(ch.gun);
   if (!gun) throw new GameError('gun', 'You need iron equipped for this kind of work.');
   if (Number(ch.energy) < M3.FIRE_ENERGY) throw new GameError('energy', `A hit takes ${M3.FIRE_ENERGY} energy.`);
@@ -608,7 +609,8 @@ export async function npcHit(ch, victim, client, h, tierId, opts = {}) {
   // a bare jailed inmate is street-unreachable too (parity with fire/huntWanted; AUDIT-full-system-v2
   // C-MED-1) — a contractor can't walk into a cell; the shank is the in-jail path.
   if (jailed(victim)) throw new GameError('jailed', "They're in lockup — no contractor reaches them on the street.");
-  if (ch.npchit_at && new Date(ch.npchit_at) > new Date()) throw new GameError('cooldown', 'Your contact needs time between jobs.');
+  const contactCool = coolLeft(ch.npchit_at);
+  if (contactCool) throw new GameError('cooldown', `Your contact needs ${coolWait(contactCool)} between jobs.`, { cooldownSeconds: contactCool });
   // BALANCE D4 — per-TARGET cooldown: a whale could repeat-reset ONE rival every 6h by cycling
   // the payer cooldown; now each (payer, target) pair rests NPC_HIT_TARGET_CD_MS between attempts
   // (stamped win or lose — the griefing is the attempt cadence, not the kill).
@@ -812,8 +814,9 @@ export async function stealCar(ch, victim, client, h) {
   if (witproActive(ch)) throw new GameError('witpro', "You're in protective custody — the marshals didn't relocate you to boost cars.");
   if (hospitalized(ch)) throw new GameError('hosp_self', "You're laid up under the Doc's care.");
   if (Number(ch.energy) < T.ENERGY) throw new GameError('energy', `Boosting takes ${T.ENERGY} energy.`);
-  if (ch.gta_at && Date.now() < new Date(ch.gta_at).getTime() + CONSTANTS.GTA_CD_MS)
-    throw new GameError('cooldown', "The heat's still on from the last job — lay off the iron a minute.");
+  const ironCool = coolLeft(new Date(ch.gta_at).getTime() + CONSTANTS.GTA_CD_MS);
+  if (ironCool)
+    throw new GameError('cooldown', `The heat's still on from the last job — lay off the iron for ${coolWait(ironCool)}.`, { cooldownSeconds: ironCool });
   if (h.owned.cars.length >= CONSTANTS.GARAGE_CAP)
     throw new GameError('full', `The garage holds ${CONSTANTS.GARAGE_CAP} — theft is opportunism, not a purchase. Make room first.`);
   if (hospitalized(victim)) throw new GameError('hosp', "They're under the Doc's care. Even we have rules.");
@@ -970,8 +973,9 @@ export async function stealBoat(ch, victim, client, h) {
   const BT = RIVALS.BOAT_THEFT, C = RIVALS.CAR_THEFT;
   assertStreetCrime(ch, victim, h, BT.ENERGY);
   if (ch.loc !== PORT.DISTRICT) throw new GameError('district', `Boats are stolen where they float — ${districtName(PORT.DISTRICT)}.`, { district: PORT.DISTRICT });
-  if (ch.gta_at && Date.now() < new Date(ch.gta_at).getTime() + CONSTANTS.GTA_CD_MS)
-    throw new GameError('cooldown', "The heat's still on from the last job — lay off a minute.");
+  const boatCool = coolLeft(new Date(ch.gta_at).getTime() + CONSTANTS.GTA_CD_MS);
+  if (boatCool)
+    throw new GameError('cooldown', `The heat's still on from the last job — lay off for ${coolWait(boatCool)}.`, { cooldownSeconds: boatCool });
   const fleet = Number((await client.query('SELECT COUNT(*) n FROM boats WHERE character_id=$1 AND NOT minted_onchain', [ch.id])).rows[0].n);
   if (fleet >= PORT.FLEET_MAX + (Number(ch.berths) || 0))
     throw new GameError('fleet', 'Your berths are full — theft is opportunism, not a purchase.');

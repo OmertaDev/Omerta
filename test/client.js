@@ -9004,4 +9004,45 @@ console.log(`✅ client wiring test passed — across the console AND /admin: of
     `WAVE 78: the line must quote the server's own minNext (${bid78.body.minNext}), never a restated `
     + `raise — got "${line78}"`);
   console.log('  ✓ WAVE 78: an auction bid names the ESCROW, the one way back, and the figure that beats it');
+  // ── WAVE 79: A COOLDOWN THAT NEVER SAYS WHEN. 39 refusals across 23 modules told a player "not yet"
+  // while the exact expiry sat in the comparison ONE LINE ABOVE the throw and was discarded. Fluent, so
+  // check 14 (THE SILENCE LEDGER) is structurally blind to it — the withheld-terms class, same as wave
+  // 77's rolling buckets and wave 54's {district} payload, with the same remedy: one leaf helper pair
+  // (coolLeft/coolWait) so the number the player is TOLD, the number the payload CARRIES and the number
+  // the till ENFORCES cannot drift, plus a machine-readable {cooldownSeconds} so an agent can back off
+  // instead of retrying blind into a 1/3s throttle. THE COOLDOWN LEDGER (test/gates.js) holds the class
+  // statically over all 39; this block DRIVES the two ends of it — the headline FIRE path (the most
+  // expensive verb in the game, a 2h clock, which used to say only "Your trigger's still hot.") and the
+  // boost. Both halves asserted separately: the SERVER sent the remainder, then the line NAMES it — a
+  // synthetic literal passes straight through the mutation that stops a field being sent.
+  const hunter79 = await mk11('W79h');
+  const mark79 = await mk11('W79m');
+  const srch79 = await inj11('POST', `/v1/streets/${mark79.id}/search`, hunter79.token, {});
+  assert.equal(srch79.code, 200, `WAVE 79 fixture: the search must be placed (${JSON.stringify(srch79.body)})`);
+  // backdate the search past ANY hunter clock, and arm the trigger — the cooldown gate sits directly
+  // below the placed check, so this is the real route refusing for the real reason.
+  await app11.pool.query("UPDATE searches SET started_at = now() - interval '30 days' WHERE hunter=$1", [hunter79.id]);
+  await app11.pool.query("UPDATE characters SET shoot_cd_until = now() + interval '95 minutes' WHERE id=$1", [hunter79.id]);
+  const hot79 = await inj11('POST', `/v1/streets/${mark79.id}/fire`, hunter79.token, { rounds: 100 });
+  assert.equal(hot79.body?.error, 'cooldown',
+    `WAVE 79 fixture: the trigger gate must be what refuses (${JSON.stringify(hot79.body)})`);
+  assert(hot79.body.cooldownSeconds > 5000 && hot79.body.cooldownSeconds <= 5700,
+    'WAVE 79: the refusal must carry the remainder as DATA — an agent with nothing machine-readable to '
+    + `back off on retries blind. Got ${JSON.stringify(hot79.body.cooldownSeconds)} for a 95-minute clock`);
+  assert(/\d/.test(hot79.body.message) && /\b(h|m|s)\b|\dh|\dm|\ds/.test(hot79.body.message),
+    `WAVE 79: "not yet" is not a wait a player can act on — the line must say WHEN. Got "${hot79.body.message}"`);
+  assert(/1h|9[0-9]m/.test(hot79.body.message),
+    'WAVE 79: the wait the line quotes must be the wait the gate is enforcing, not a restated constant — '
+    + `a 95-minute clock reads as hours-and-minutes. Got "${hot79.body.message}"`);
+  // the second end of the class, on a different module and a different clock shape (now - at < CD
+  // rather than until > now), so the helper is proven against BOTH predicate forms it replaced.
+  await app11.pool.query('UPDATE characters SET gta_at = now() WHERE id=$1', [hunter79.id]);
+  const iron79 = await inj11('POST', '/v1/garage/boost', hunter79.token, {});
+  assert.equal(iron79.body?.error, 'cooldown',
+    `WAVE 79 fixture: the boost clock must be what refuses (${JSON.stringify(iron79.body)})`);
+  assert(iron79.body.cooldownSeconds > 0,
+    `WAVE 79: the boost refusal must carry its remainder too — got ${JSON.stringify(iron79.body.cooldownSeconds)}`);
+  assert(/\d+\s*(s|m|h)\b/.test(iron79.body.message),
+    `WAVE 79: the boost line must name the wait — got "${iron79.body.message}"`);
+  console.log('  ✓ WAVE 79: cooldown refusals name the wait AND carry it as data (fire + boost, both clock shapes)');
 }

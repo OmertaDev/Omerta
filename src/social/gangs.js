@@ -7,7 +7,7 @@
 // Split out of the 2,003-line src/social.js; every function below is byte-identical to what was
 // there. Import from '../social.js' — it re-exports this package's public surface unchanged.
 import { GameError, bumpFamilyTask, bus, ledger, cleanText, notify } from '../game.js';
-import { DISTRICTS, M3, M8, MAP, districtNeighbours, ROSTER_POSTS, rosterPostOf, rosterMult, levelOf, dayOf, territoryBuildCost, worldNpcOf, liberationCost, DIPLOMACY, cityHourOf, seasonFx, CHARTERS, familyCharterOf, charterFx, FAMILY_CHARTER, usd } from '../rules.js';
+import { DISTRICTS, M3, M8, MAP, districtNeighbours, ROSTER_POSTS, rosterPostOf, rosterMult, levelOf, dayOf, territoryBuildCost, worldNpcOf, liberationCost, DIPLOMACY, cityHourOf, seasonFx, CHARTERS, familyCharterOf, charterFx, FAMILY_CHARTER, usd , coolLeft, coolWait } from '../rules.js';
 import { seizeTerritoryRackets, releaseTerritoryRackets } from '../territory.js';
 import { releaseFrontierHolds, outfitStrengthFrac } from '../world.js';
 import { releaseFamilyHolds } from '../npcwar.js';
@@ -447,8 +447,9 @@ export async function chooseCharter(ch, charterId, client, h) {
   let cost = 0;
   if (!first) {
     const since = g.charter_at ? Date.now() - new Date(g.charter_at).getTime() : Infinity;
-    if (since < FAMILY_CHARTER.CHANGE_CD_MS)
-      throw new GameError('cooldown', `The family only re-founds itself so often — ${Math.ceil((FAMILY_CHARTER.CHANGE_CD_MS - since) / 3600000)}h to go.`);
+    const charterCool = Number.isFinite(since) ? coolLeft(Date.now() + (FAMILY_CHARTER.CHANGE_CD_MS - since)) : 0;
+    if (charterCool)
+      throw new GameError('cooldown', `The family only re-founds itself so often — ${coolWait(charterCool)} to go.`, { cooldownSeconds: charterCool });
     cost = FAMILY_CHARTER.CHANGE_OMR;
     if (Number(g.omr_reserve) < cost)
       throw new GameError('reserve', `Re-founding the family takes ${cost} $OMR from the reserve (${Math.floor(Number(g.omr_reserve))} on hand).`);

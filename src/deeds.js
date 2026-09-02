@@ -15,7 +15,7 @@ import { GameError, cleanText } from './game.js';
 import { vaultHistoryFor, vaultLiveBalances } from './stockdeliver.js';
 import { DEEDS, DISTRICTS, deedRankOf, deedRenown, deedCornerOwed, deedController,
   deedNeighborhoodsOpen, deedNeighborhoodOf,
-  effStat, levelOf, jailed, hospitalized, safeHoused, SAFE_STORED, usd, districtName } from './rules.js';
+  effStat, levelOf, jailed, hospitalized, safeHoused, SAFE_STORED, usd, districtName , coolLeft, coolWait } from './rules.js';
 
 // living-player population (drives the growing map — Phase 4). NPCs/dead excluded (the ops.js count).
 async function livingPlayers(client) {
@@ -320,8 +320,9 @@ export async function shakedownCorner(ch, targetCharacterId, client, h) {
   if (controller === ch.account_id) throw new GameError('own', 'You already run this corner.');
   if (deed.account_id === ch.account_id && controller === ch.account_id)
     throw new GameError('own', 'This corner is already yours.');
-  if (deed.shakedown_at && now - new Date(deed.shakedown_at).getTime() < DEEDS.SHAKEDOWN_CD_MS)
-    throw new GameError('cooldown', 'That corner just changed hands — let the dust settle.');
+  const cornerCool = coolLeft(new Date(deed.shakedown_at).getTime() + DEEDS.SHAKEDOWN_CD_MS, now);
+  if (cornerCool)
+    throw new GameError('cooldown', `That corner just changed hands — let the dust settle for ${coolWait(cornerCool)}.`, { cooldownSeconds: cornerCool });
   // the contest — attacker's effective muscle+cunning/2 vs the incumbent controller's base (read unlocked)
   const defender = (await client.query(
     'SELECT muscle, cunning FROM characters WHERE account_id=$1 AND alive ORDER BY id LIMIT 1', [controller])).rows[0]

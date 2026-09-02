@@ -10,7 +10,7 @@
 import crypto from 'node:crypto';
 import { recordEventResult } from './events.js';
 import { GameError, bus, ledger, notify, rngLog, bumpMastery, masteryFx } from './game.js';
-import { RACES, POPULATION, REGIMEN, raceTierOf, raceRankOf, carOf, carPower, carVal, levelOf, disciplineLvlOf, jailed, hospitalized, usd } from './rules.js';
+import { RACES, POPULATION, REGIMEN, raceTierOf, raceRankOf, carOf, carPower, carVal, levelOf, disciplineLvlOf, jailed, hospitalized, usd, coolLeft, coolWait } from './rules.js';
 import { logCarCollect } from './collection.js';
 
 const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
@@ -50,7 +50,8 @@ export async function raceNpc(ch, carId, tierId, useNos, client, h) {
   if (!tier) throw new GameError('bad_tier', 'No such race on the card.');
   if (lvl < tier.minLvl) throw new GameError('tier_level', `${tier.name} runs at level ${tier.minLvl}.`);
   const now = new Date();
-  if (ch.race_at && new Date(ch.race_at) > now) throw new GameError('cooldown', 'Your ride needs to cool down before the next run.');
+  const rideCool = coolLeft(ch.race_at, now.getTime());
+  if (rideCool) throw new GameError('cooldown', `Your ride needs ${coolWait(rideCool)} to cool down before the next run.`, { cooldownSeconds: rideCool });
   const car = raceable(h, carId);
   if (Number(ch.cash) < tier.fee) throw new GameError('cash', `The buy-in is ${usd(tier.fee)}.`);
   // the fee burns (a §10.4 cash sink) win or lose; stamp the cooldown (direct SQL — outside persist)
@@ -157,7 +158,8 @@ export async function raceChallenge(ch, opponent, body, client, h) {
   if (!(Number.isFinite(amt) && amt >= RACES.WAGER_MIN)) throw new GameError('min', `The minimum wager is ${usd(RACES.WAGER_MIN)}.`);
   if (amt > RACES.WAGER_MAX) throw new GameError('max', `The strip caps wagers at ${usd(RACES.WAGER_MAX)}.`);
   const now = new Date();
-  if (ch.race_at && new Date(ch.race_at) > now) throw new GameError('cooldown', 'Your ride needs to cool down before the next run.');
+  const rideCool = coolLeft(ch.race_at, now.getTime());
+  if (rideCool) throw new GameError('cooldown', `Your ride needs ${coolWait(rideCool)} to cool down before the next run.`, { cooldownSeconds: rideCool });
   // lock the two car rows in sorted id order (leaf ordering; the char rows are already locked)
   const [first, second] = [String(body?.myCar || ''), String(body?.theirCar || '')].sort();
   await client.query('SELECT 1 FROM cars WHERE id=$1 FOR UPDATE', [first]);
@@ -229,7 +231,8 @@ export async function pinkSlipRace(ch, opponent, body, client, h) {
   if (h.owned.gangId && h.victimOwned.gangId === h.owned.gangId) throw new GameError('family', 'No taking family iron.');
   if (jailed(opponent) || hospitalized(opponent)) throw new GameError('unavailable', "They can't make the start line right now.");
   const now = new Date();
-  if (ch.race_at && new Date(ch.race_at) > now) throw new GameError('cooldown', 'Your ride needs to cool down before the next run.');
+  const rideCool = coolLeft(ch.race_at, now.getTime());
+  if (rideCool) throw new GameError('cooldown', `Your ride needs ${coolWait(rideCool)} to cool down before the next run.`, { cooldownSeconds: rideCool });
   const [first, second] = [String(body?.myCar || ''), String(body?.theirCar || '')].sort();
   await client.query('SELECT 1 FROM cars WHERE id=$1 FOR UPDATE', [first]);
   await client.query('SELECT 1 FROM cars WHERE id=$1 FOR UPDATE', [second]);

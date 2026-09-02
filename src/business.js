@@ -9,7 +9,7 @@
 // `swap:buy` ledger (no new reason). Step-two scrutiny/raid/extortion risk is deferred by design.
 import crypto from 'node:crypto';
 import { GameError, bus, skillMult, trunkCap, bumpMastery, masteryFx } from './game.js';
-import { CONSTANTS, M3, CASINO, BUSINESSES, SKILLS, BUSINESS_EMPIRE, RIVALS, POPULATION, businessOf, businessTierOf, businessMaxTier, businessAssessedValue, launderRankOf, levelOf, effStat, pathFx, isMade, jailed, hospitalized, safeHoused, usd, art } from './rules.js';
+import { CONSTANTS, M3, CASINO, BUSINESSES, SKILLS, BUSINESS_EMPIRE, RIVALS, POPULATION, businessOf, businessTierOf, businessMaxTier, businessAssessedValue, launderRankOf, levelOf, effStat, pathFx, isMade, jailed, hospitalized, safeHoused, usd, art , coolLeft, coolWait } from './rules.js';
 import { recordRival, revengeOwed } from './rivals.js';
 import { bumpHonor } from './honor.js';
 import { denAvailable, denDistribute } from './casino.js';
@@ -416,8 +416,9 @@ async function extortFront(ch, victim, businessId, client, h, verb) {
     throw new GameError('rookie', 'Nothing worth taking off a corner kid — pick a made mark.');
   const r = (await client.query('SELECT * FROM businesses WHERE id=$1 FOR UPDATE', [businessId])).rows[0];
   if (!r || r.character_id !== victim.id) throw new GameError('bad_business', 'No such front on them.');
-  if (r.shakedown_at && Date.now() - new Date(r.shakedown_at).getTime() < CONSTANTS.SHAKEDOWN_CD_MS)
-    throw new GameError('cooldown', 'That front just had a visit — let the dust settle.');
+  const visitCool = coolLeft(new Date(r.shakedown_at).getTime() + CONSTANTS.SHAKEDOWN_CD_MS);
+  if (visitCool)
+    throw new GameError('cooldown', `That front just had a visit — let the dust settle for ${coolWait(visitCool)}.`, { cooldownSeconds: visitCool });
   const kindName = businessOf(r.kind)?.name || r.kind;
   ch.energy = Number(ch.energy) - energy;
   ch.heat = Math.min(100, Number(ch.heat || 0) + heat); // exposure win or lose (clamp 100, audit LOW-2)
@@ -552,8 +553,9 @@ export async function takeoverBusiness(ch, owner, businessId, client, h) {
   // you can't run two of one kind — a UNIQUE(character_id,kind) collision would 500; gate before the roll
   if ((await client.query('SELECT 1 FROM businesses WHERE character_id=$1 AND kind=$2', [ch.id, r.kind])).rows[0])
     throw new GameError('have_kind', `You already run ${art(businessOf(r.kind).name, 'a')} — you can only hold one.`);
-  if (r.takeover_cd_until && new Date(r.takeover_cd_until) > new Date())
-    throw new GameError('cooldown', 'That front just fought off a move — let it settle.');
+  const takeCool = coolLeft(r.takeover_cd_until);
+  if (takeCool)
+    throw new GameError('cooldown', `That front just fought off a move — let it settle for ${coolWait(takeCool)}.`, { cooldownSeconds: takeCool });
   const fee = BUSINESS_EMPIRE.TAKEOVER.FEE;
   const price = businessAssessedValue(r.kind, r.tier);
   if (Number(ch.cash) < fee + price) throw new GameError('cash', `A takeover runs ${usd(fee)} fee + ${usd(price)} to buy it out.`);

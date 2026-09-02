@@ -9,12 +9,12 @@
 import crypto from 'node:crypto';
 import { recordEventResult } from './events.js';
 import { GameError, bus, ledger, notify, rngLog, bumpStanding, npcMult, npcTier } from './game.js';
-import { STABLE, UNDERWORLD, POPULATION, stableKindOf, stableMeetOf, racerRankOf, racerLegendOf, levelOf, jailed, hospitalized, usd, art } from './rules.js';
+import { STABLE, UNDERWORLD, POPULATION, stableKindOf, stableMeetOf, racerRankOf, racerLegendOf, levelOf, jailed, hospitalized, usd, art , coolLeft, coolWait } from './rules.js';
 
 const stakesMs = () => Number(process.env.STAKES_MS) || STABLE.STAKES.REGISTER_MS; // TEST-ONLY env (SEARCH_MS pattern)
 
 const injured = (r) => r.injured_until && new Date(r.injured_until) > new Date();
-const onCooldown = (r) => r.circuit_at && new Date(r.circuit_at) > new Date();
+const onCooldown = (r) => coolLeft(r.circuit_at);
 const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 const form = (r) => Number(r.speed) + Number(r.stamina) + Number(r.heart);
 const secsTo = (t) => (t && new Date(t) > new Date()) ? Math.ceil((new Date(t).getTime() - Date.now()) / 1000) : 0;
@@ -112,7 +112,8 @@ export async function raceCircuit(ch, racerId, meetId, client, h) {
   const meet = stableMeetOf(r.kind, meetId);
   if (!meet) throw new GameError('bad_meet', 'No such meet on that card.');
   if (injured(r)) throw new GameError('injured', 'That racer is laid up — let them heal.');
-  if (onCooldown(r)) throw new GameError('cooldown', `${r.name} needs to rest before another race.`);
+  const rCool = onCooldown(r);
+  if (rCool) throw new GameError('cooldown', `${r.name} needs to rest before another race — ${coolWait(rCool)} to go.`, { cooldownSeconds: rCool });
   if (Number(ch.cash) < meet.fee) throw new GameError('cash', `${art(meet.name, 'The')} entry runs ${usd(meet.fee)}.`);
   // the entry fee burns win or lose
   ch.cash = Number(ch.cash) - meet.fee;
