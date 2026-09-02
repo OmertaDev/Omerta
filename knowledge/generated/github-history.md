@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f5694e270db1`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `9bc5cb12a95a`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1302 |
+| Commits in clone | 1300 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-02 — arena step four: the pot that hires a gun — refuted, measured, not built |
+| Latest commit | 2026-09-02 — Arena step three: THE ADAPTIVE HUNTERS — the 90-day seeded pairs (#160) |
 
 ## Commit authors
 
@@ -21,7 +21,7 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 444 |
-| Claude | 158 |
+| Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 12 |
 
@@ -29,12 +29,12 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| [CLAUDE.md](../../CLAUDE.md) | 506 | yes |
+| [CLAUDE.md](../../CLAUDE.md) | 505 | yes |
 | [public/index.html](../../public/index.html) | 395 | yes |
 | [src/server.js](../../src/server.js) | 351 | yes |
-| [SPEC.md](../../SPEC.md) | 276 | yes |
+| [SPEC.md](../../SPEC.md) | 275 | yes |
 | [schema.sql](../../schema.sql) | 273 | yes |
-| [BALANCE.md](../../BALANCE.md) | 253 | yes |
+| [BALANCE.md](../../BALANCE.md) | 252 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 172 | yes |
 | [package.json](../../package.json) | 143 | yes |

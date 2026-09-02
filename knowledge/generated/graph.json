@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "f5694e270db1aa5f7cfb8324324f919ef34b9a33",
+  "sourceRevision": "9bc5cb12a95a68f3bbdc05b3b5bc742afd610636",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 5664,
-    "edges": 25047,
+    "nodes": 5660,
+    "edges": 25025,
     "byNodeType": {
-      "Artifact": 1828,
+      "Artifact": 1827,
       "Command": 57,
-      "Commit": 1302,
+      "Commit": 1300,
       "Contract": 49,
-      "Document": 475,
+      "Document": 474,
       "Domain": 12,
       "ExternalDependency": 24,
       "HistoricalArtifact": 306,
@@ -65,19 +65,19 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1980,
-      "CHANGED": 10058,
-      "CONTAINS": 1848,
+      "CHANGED": 10052,
+      "CONTAINS": 1847,
       "DECLARES": 57,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 204,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1302,
+      "HAS_COMMIT": 1300,
       "IMPLEMENTS": 124,
       "IMPORTS": 1642,
       "INHERITS": 12,
-      "REFERENCES": 2859,
-      "REPRESENTS": 892,
+      "REFERENCES": 2847,
+      "REPRESENTS": 891,
       "TESTS": 583,
       "TRACKS": 126,
       "USES_TABLE": 1490
@@ -10005,20 +10005,20 @@
       "path": "BALANCE.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 553556,
-      "lines": 6822,
-      "version": "ae7e765317aa1fcd",
+      "bytes": 546877,
+      "lines": 6738,
+      "version": "231a3cd9b8b7bff1",
       "text": true,
       "provenance": [
         {
           "file": "BALANCE.md",
           "line": 1,
-          "version": "ae7e765317aa1fcd"
+          "version": "231a3cd9b8b7bff1"
         }
       ],
-      "lastChangedAt": "2026-09-02T20:38:46.000Z",
-      "lastChangedBy": "Claude",
-      "lastChangedCommit": "f5694e270db1aa5f7cfb8324324f919ef34b9a33"
+      "lastChangedAt": "2026-09-02T16:57:57.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "9bc5cb12a95a68f3bbdc05b3b5bc742afd610636"
     },
     {
       "key": "Artifact:brand/agent-campaign/art/dormant-vault.png",
@@ -10971,20 +10971,20 @@
       "path": "CLAUDE.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 1737916,
-      "lines": 18003,
-      "version": "f5142d5ca8e81713",
+      "bytes": 1732153,
+      "lines": 17940,
+      "version": "807ad88867bbe272",
       "text": true,
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "f5142d5ca8e81713"
+          "version": "807ad88867bbe272"
         }
       ],
-      "lastChangedAt": "2026-09-02T20:38:46.000Z",
-      "lastChangedBy": "Claude",
-      "lastChangedCommit": "f5694e270db1aa5f7cfb8324324f919ef34b9a33"
+      "lastChangedAt": "2026-09-02T16:57:57.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "9bc5cb12a95a68f3bbdc05b3b5bc742afd610636"
     },
     {
       "key": "Artifact:content/packs/bad-batch/pack.json",
@@ -19167,29 +19167,6 @@
       "lastChangedAt": "2026-08-13T01:32:44.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "29b6b4d3a662d91c824dc3f0dd69421124c4cd2c"
-    },
-    {
-      "key": "Artifact:omerta-pot-hires-a-gun-design.md",
-      "type": "Artifact",
-      "id": "omerta-pot-hires-a-gun-design.md",
-      "label": "omerta-pot-hires-a-gun-design.md",
-      "path": "omerta-pot-hires-a-gun-design.md",
-      "kind": "design",
-      "extension": ".md",
-      "bytes": 18844,
-      "lines": 355,
-      "version": "35ecdaa9348a4898",
-      "text": true,
-      "provenance": [
-        {
-          "file": "omerta-pot-hires-a-gun-design.md",
-          "line": 1,
-          "version": "35ecdaa9348a4898"
-        }
-      ],
-      "lastChangedAt": "2026-09-02T20:38:46.000Z",
-      "lastChangedBy": "Claude",
-      "lastChangedCommit": "f5694e270db1aa5f7cfb8324324f919ef34b9a33"
     },
     {
       "key": "Artifact:omerta-recurring-sinks-design.md",
@@ -32794,18 +32771,18 @@
       "extension": ".md",
       "bytes": 52692,
       "lines": 716,
-      "version": "0210d2f01de7e787",
+      "version": "64ffa1a07b155a96",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "0210d2f01de7e787"
+          "version": "64ffa1a07b155a96"
         }
       ],
-      "lastChangedAt": "2026-09-02T18:59:42.000Z",
-      "lastChangedBy": "Claude",
-      "lastChangedCommit": "772cff41dba86ff6f74d8f20699f5a94ed8d848b"
+      "lastChangedAt": "2026-09-02T04:48:35.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "fd41232dffa31491628830869916fe246609b20f"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -40773,20 +40750,20 @@
       "path": "tools/arena.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 72287,
-      "lines": 831,
-      "version": "71106b57c2d18a23",
+      "bytes": 68822,
+      "lines": 786,
+      "version": "c35964e2e590f630",
       "text": true,
       "provenance": [
         {
           "file": "tools/arena.js",
           "line": 1,
-          "version": "71106b57c2d18a23"
+          "version": "c35964e2e590f630"
         }
       ],
-      "lastChangedAt": "2026-09-02T20:38:46.000Z",
-      "lastChangedBy": "Claude",
-      "lastChangedCommit": "f5694e270db1aa5f7cfb8324324f919ef34b9a33"
+      "lastChangedAt": "2026-09-02T16:57:57.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "9bc5cb12a95a68f3bbdc05b3b5bc742afd610636"
     },
     {
       "key": "Artifact:tools/art-prompts.js",
@@ -52672,22 +52649,6 @@
       ]
     },
     {
-      "key": "Commit:772cff41dba86ff6f74d8f20699f5a94ed8d848b",
-      "type": "Commit",
-      "id": "772cff41dba86ff6f74d8f20699f5a94ed8d848b",
-      "label": "design: the pot hires a gun — an uncollected KILL pot buys the NPC hitman",
-      "title": "design: the pot hires a gun — an uncollected KILL pot buys the NPC hitman",
-      "date": "2026-09-02T18:59:42.000Z",
-      "author": "Claude",
-      "url": "https://github.com/OmertaDev/Omerta/commit/772cff41dba86ff6f74d8f20699f5a94ed8d848b",
-      "provenance": [
-        {
-          "commit": "772cff41dba86ff6f74d8f20699f5a94ed8d848b",
-          "url": "https://github.com/OmertaDev/Omerta/commit/772cff41dba86ff6f74d8f20699f5a94ed8d848b"
-        }
-      ]
-    },
-    {
       "key": "Commit:773018c801581b50b27882e3171e9536c6ca46e6",
       "type": "Commit",
       "id": "773018c801581b50b27882e3171e9536c6ca46e6",
@@ -62848,22 +62809,6 @@
       ]
     },
     {
-      "key": "Commit:f5694e270db1aa5f7cfb8324324f919ef34b9a33",
-      "type": "Commit",
-      "id": "f5694e270db1aa5f7cfb8324324f919ef34b9a33",
-      "label": "arena step four: the pot that hires a gun — refuted, measured, not built",
-      "title": "arena step four: the pot that hires a gun — refuted, measured, not built",
-      "date": "2026-09-02T20:38:46.000Z",
-      "author": "Claude",
-      "url": "https://github.com/OmertaDev/Omerta/commit/f5694e270db1aa5f7cfb8324324f919ef34b9a33",
-      "provenance": [
-        {
-          "commit": "f5694e270db1aa5f7cfb8324324f919ef34b9a33",
-          "url": "https://github.com/OmertaDev/Omerta/commit/f5694e270db1aa5f7cfb8324324f919ef34b9a33"
-        }
-      ]
-    },
-    {
       "key": "Commit:f5fd8b4e0cefb72e1ea20640016b92da76702cd1",
       "type": "Commit",
       "id": "f5fd8b4e0cefb72e1ea20640016b92da76702cd1",
@@ -69463,13 +69408,13 @@
       "id": "BALANCE.md",
       "label": "BALANCE.md",
       "documentType": "documentation",
-      "lines": 6822,
-      "version": "ae7e765317aa1fcd",
+      "lines": 6738,
+      "version": "231a3cd9b8b7bff1",
       "provenance": [
         {
           "file": "BALANCE.md",
           "line": 1,
-          "version": "ae7e765317aa1fcd"
+          "version": "231a3cd9b8b7bff1"
         }
       ]
     },
@@ -69543,13 +69488,13 @@
       "id": "CLAUDE.md",
       "label": "CLAUDE.md",
       "documentType": "documentation",
-      "lines": 18003,
-      "version": "f5142d5ca8e81713",
+      "lines": 17940,
+      "version": "807ad88867bbe272",
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "f5142d5ca8e81713"
+          "version": "807ad88867bbe272"
         }
       ]
     },
@@ -71474,22 +71419,6 @@
       ]
     },
     {
-      "key": "Document:omerta-pot-hires-a-gun-design.md",
-      "type": "Document",
-      "id": "omerta-pot-hires-a-gun-design.md",
-      "label": "omerta-pot-hires-a-gun-design.md",
-      "documentType": "design",
-      "lines": 355,
-      "version": "35ecdaa9348a4898",
-      "provenance": [
-        {
-          "file": "omerta-pot-hires-a-gun-design.md",
-          "line": 1,
-          "version": "35ecdaa9348a4898"
-        }
-      ]
-    },
-    {
       "key": "Document:omerta-recurring-sinks-design.md",
       "type": "Document",
       "id": "omerta-recurring-sinks-design.md",
@@ -72088,12 +72017,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 716,
-      "version": "0210d2f01de7e787",
+      "version": "64ffa1a07b155a96",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "0210d2f01de7e787"
+          "version": "64ffa1a07b155a96"
         }
       ]
     },
@@ -84716,12 +84645,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "f5694e270db1aa5f7cfb8324324f919ef34b9a33",
-      "currentBranch": "claude/next-work-recommendations-x5f2fp",
+      "revision": "9bc5cb12a95a68f3bbdc05b3b5bc742afd610636",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 1828,
+      "currentArtifactCount": 1827,
       "provenance": [
         {
           "file": "README.md",
@@ -168833,22 +168762,6 @@
     },
     {
       "type": "CHANGED",
-      "from": "Commit:772cff41dba86ff6f74d8f20699f5a94ed8d848b",
-      "to": "Artifact:omerta-pot-hires-a-gun-design.md",
-      "provenance": {
-        "commit": "772cff41dba86ff6f74d8f20699f5a94ed8d848b"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:772cff41dba86ff6f74d8f20699f5a94ed8d848b",
-      "to": "Artifact:SPEC.md",
-      "provenance": {
-        "commit": "772cff41dba86ff6f74d8f20699f5a94ed8d848b"
-      }
-    },
-    {
-      "type": "CHANGED",
       "from": "Commit:773018c801581b50b27882e3171e9536c6ca46e6",
       "to": "Artifact:src/auction.js",
       "provenance": {
@@ -205729,38 +205642,6 @@
     },
     {
       "type": "CHANGED",
-      "from": "Commit:f5694e270db1aa5f7cfb8324324f919ef34b9a33",
-      "to": "Artifact:BALANCE.md",
-      "provenance": {
-        "commit": "f5694e270db1aa5f7cfb8324324f919ef34b9a33"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:f5694e270db1aa5f7cfb8324324f919ef34b9a33",
-      "to": "Artifact:CLAUDE.md",
-      "provenance": {
-        "commit": "f5694e270db1aa5f7cfb8324324f919ef34b9a33"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:f5694e270db1aa5f7cfb8324324f919ef34b9a33",
-      "to": "Artifact:omerta-pot-hires-a-gun-design.md",
-      "provenance": {
-        "commit": "f5694e270db1aa5f7cfb8324324f919ef34b9a33"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:f5694e270db1aa5f7cfb8324324f919ef34b9a33",
-      "to": "Artifact:tools/arena.js",
-      "provenance": {
-        "commit": "f5694e270db1aa5f7cfb8324324f919ef34b9a33"
-      }
-    },
-    {
-      "type": "CHANGED",
       "from": "Commit:f5fd8b4e0cefb72e1ea20640016b92da76702cd1",
       "to": "Artifact:omerta-bank-protocol-design.md",
       "provenance": {
@@ -216480,15 +216361,6 @@
       "to": "Artifact:omerta-phase4-emission-design.md",
       "provenance": {
         "file": "omerta-phase4-emission-design.md",
-        "line": 1
-      }
-    },
-    {
-      "type": "CONTAINS",
-      "from": "Subsystem:documentation",
-      "to": "Artifact:omerta-pot-hires-a-gun-design.md",
-      "provenance": {
-        "file": "omerta-pot-hires-a-gun-design.md",
         "line": 1
       }
     },
@@ -249759,14 +249631,6 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
-      "to": "Commit:772cff41dba86ff6f74d8f20699f5a94ed8d848b",
-      "provenance": {
-        "commit": "772cff41dba86ff6f74d8f20699f5a94ed8d848b"
-      }
-    },
-    {
-      "type": "HAS_COMMIT",
-      "from": "Repository:omerta",
       "to": "Commit:773018c801581b50b27882e3171e9536c6ca46e6",
       "provenance": {
         "commit": "773018c801581b50b27882e3171e9536c6ca46e6"
@@ -254842,14 +254706,6 @@
       "to": "Commit:f4e1716db32f9f9430d36cb2878d832af1400232",
       "provenance": {
         "commit": "f4e1716db32f9f9430d36cb2878d832af1400232"
-      }
-    },
-    {
-      "type": "HAS_COMMIT",
-      "from": "Repository:omerta",
-      "to": "Commit:f5694e270db1aa5f7cfb8324324f919ef34b9a33",
-      "provenance": {
-        "commit": "f5694e270db1aa5f7cfb8324324f919ef34b9a33"
       }
     },
     {
@@ -277503,24 +277359,6 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:BALANCE.md",
-      "to": "Artifact:tools/arena.js",
-      "provenance": {
-        "file": "BALANCE.md",
-        "line": 6762
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:BALANCE.md",
-      "to": "Artifact:tools/arena.js",
-      "provenance": {
-        "file": "BALANCE.md",
-        "line": 6807
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:BALANCE.md",
       "to": "Artifact:tools/bond-dials.js",
       "provenance": {
         "file": "BALANCE.md",
@@ -285669,15 +285507,6 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17990
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:CLAUDE.md",
-      "to": "Artifact:test/gates.js",
-      "provenance": {
-        "file": "CLAUDE.md",
         "line": 4192
       }
     },
@@ -288937,24 +288766,6 @@
       "provenance": {
         "file": "CLAUDE.md",
         "line": 17903
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:CLAUDE.md",
-      "to": "Artifact:tools/arena.js",
-      "provenance": {
-        "file": "CLAUDE.md",
-        "line": 17957
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:CLAUDE.md",
-      "to": "Artifact:tools/arena.js",
-      "provenance": {
-        "file": "CLAUDE.md",
-        "line": 17981
       }
     },
     {
@@ -295205,69 +295016,6 @@
     },
     {
       "type": "REFERENCES",
-      "from": "Artifact:omerta-pot-hires-a-gun-design.md",
-      "to": "Artifact:src/preflight.js",
-      "provenance": {
-        "file": "omerta-pot-hires-a-gun-design.md",
-        "line": 281
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:omerta-pot-hires-a-gun-design.md",
-      "to": "Artifact:src/social/combat.js",
-      "provenance": {
-        "file": "omerta-pot-hires-a-gun-design.md",
-        "line": 187
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:omerta-pot-hires-a-gun-design.md",
-      "to": "Artifact:test/gates.js",
-      "provenance": {
-        "file": "omerta-pot-hires-a-gun-design.md",
-        "line": 28
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:omerta-pot-hires-a-gun-design.md",
-      "to": "Artifact:test/levers.js",
-      "provenance": {
-        "file": "omerta-pot-hires-a-gun-design.md",
-        "line": 268
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:omerta-pot-hires-a-gun-design.md",
-      "to": "Artifact:tools/arena.js",
-      "provenance": {
-        "file": "omerta-pot-hires-a-gun-design.md",
-        "line": 337
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:omerta-pot-hires-a-gun-design.md",
-      "to": "Artifact:tools/arena.js",
-      "provenance": {
-        "file": "omerta-pot-hires-a-gun-design.md",
-        "line": 43
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:omerta-pot-hires-a-gun-design.md",
-      "to": "Artifact:tools/arena.js",
-      "provenance": {
-        "file": "omerta-pot-hires-a-gun-design.md",
-        "line": 61
-      }
-    },
-    {
-      "type": "REFERENCES",
       "from": "Artifact:omerta-recurring-sinks-design.md",
       "to": "Artifact:test/growth.js",
       "provenance": {
@@ -300780,15 +300528,6 @@
       "to": "Artifact:omerta-phase4-emission-design.md",
       "provenance": {
         "file": "omerta-phase4-emission-design.md",
-        "line": 1
-      }
-    },
-    {
-      "type": "REPRESENTS",
-      "from": "Document:omerta-pot-hires-a-gun-design.md",
-      "to": "Artifact:omerta-pot-hires-a-gun-design.md",
-      "provenance": {
-        "file": "omerta-pot-hires-a-gun-design.md",
         "line": 1
       }
     },
