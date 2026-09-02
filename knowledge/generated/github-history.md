@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `cce43ee0afcc`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `60a0ad0ad274`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1298 |
+| Commits in clone | 1305 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-02 — THE DEFENDED MONTH — arena step two + sim P9.40 den variance (#159) |
+| Latest commit | 2026-09-02 — Merge remote-tracking branch 'origin/main' into claude/next-work-recommendations-x5f2fp |
 
 ## Commit authors
 
@@ -21,9 +21,9 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 443 |
-| Claude | 156 |
+| Claude | 162 |
 | CRVYDEV | 41 |
-| github-actions[bot] | 11 |
+| github-actions[bot] | 12 |
 
 ## Historical hotspots
 
@@ -38,10 +38,10 @@
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 172 | yes |
 | [package.json](../../package.json) | 143 | yes |
-| knowledge/generated/github-history.md | 128 | historical |
-| knowledge/generated/graph-summary.md | 128 | historical |
-| knowledge/generated/graph.json | 128 | historical |
-| knowledge/generated/inventory.md | 128 | historical |
+| knowledge/generated/github-history.md | 130 | historical |
+| knowledge/generated/graph-summary.md | 130 | historical |
+| knowledge/generated/graph.json | 130 | historical |
+| knowledge/generated/inventory.md | 130 | historical |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
