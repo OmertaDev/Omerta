@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `81583e991da5`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `642433f06d11`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1306 |
+| Commits in clone | 1308 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-03 — Prove the pot/funder AB-BA lands as contention (pgcheck §9e) (#163) |
+| Latest commit | 2026-09-03 — Sweep the AB-BA class the lock ledger cannot see (pgcheck §9f) |
 
 ## Commit authors
 
@@ -21,16 +21,16 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 446 |
-| Claude | 156 |
+| Claude | 157 |
 | CRVYDEV | 41 |
-| github-actions[bot] | 15 |
+| github-actions[bot] | 16 |
 | claude[bot] | 1 |
 
 ## Historical hotspots
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| [CLAUDE.md](../../CLAUDE.md) | 508 | yes |
+| [CLAUDE.md](../../CLAUDE.md) | 509 | yes |
 | [public/index.html](../../public/index.html) | 395 | yes |
 | [src/server.js](../../src/server.js) | 351 | yes |
 | [SPEC.md](../../SPEC.md) | 276 | yes |
@@ -39,10 +39,10 @@
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 172 | yes |
 | [package.json](../../package.json) | 143 | yes |
-| knowledge/generated/github-history.md | 136 | historical |
-| knowledge/generated/graph-summary.md | 136 | historical |
-| knowledge/generated/graph.json | 136 | historical |
-| knowledge/generated/inventory.md | 136 | historical |
+| knowledge/generated/github-history.md | 137 | historical |
+| knowledge/generated/graph-summary.md | 137 | historical |
+| knowledge/generated/graph.json | 137 | historical |
+| knowledge/generated/inventory.md | 137 | historical |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |

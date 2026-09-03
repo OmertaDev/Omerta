@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "81583e991da50050e65c67b80120a1b2406a804f",
+  "sourceRevision": "642433f06d11b852706eea67bffcf8ee26f6b376",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5668,
-    "edges": 25089,
+    "nodes": 5670,
+    "edges": 25100,
     "byNodeType": {
       "Artifact": 1828,
       "Command": 57,
-      "Commit": 1306,
+      "Commit": 1308,
       "Contract": 49,
       "Document": 475,
       "Domain": 12,
@@ -65,18 +65,18 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1980,
-      "CHANGED": 10090,
+      "CHANGED": 10096,
       "CONTAINS": 1848,
       "DECLARES": 57,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 204,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1306,
+      "HAS_COMMIT": 1308,
       "IMPLEMENTS": 124,
-      "IMPORTS": 1645,
+      "IMPORTS": 1647,
       "INHERITS": 12,
-      "REFERENCES": 2862,
+      "REFERENCES": 2863,
       "REPRESENTS": 892,
       "TESTS": 583,
       "TRACKS": 126,
@@ -10971,20 +10971,20 @@
       "path": "CLAUDE.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 1745989,
-      "lines": 18087,
-      "version": "70921d81271b1066",
+      "bytes": 1751681,
+      "lines": 18149,
+      "version": "ce3d226c7cc2e8d0",
       "text": true,
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "70921d81271b1066"
+          "version": "ce3d226c7cc2e8d0"
         }
       ],
-      "lastChangedAt": "2026-09-03T01:09:55.000Z",
-      "lastChangedBy": "claude[bot]",
-      "lastChangedCommit": "81583e991da50050e65c67b80120a1b2406a804f"
+      "lastChangedAt": "2026-09-03T01:48:12.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "642433f06d11b852706eea67bffcf8ee26f6b376"
     },
     {
       "key": "Artifact:content/packs/bad-batch/pack.json",
@@ -41578,20 +41578,20 @@
       "path": "tools/pgcheck.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 63584,
-      "lines": 898,
-      "version": "e0e3627fd43d555d",
+      "bytes": 71877,
+      "lines": 1018,
+      "version": "73f1a039bfb21e31",
       "text": true,
       "provenance": [
         {
           "file": "tools/pgcheck.js",
           "line": 1,
-          "version": "e0e3627fd43d555d"
+          "version": "73f1a039bfb21e31"
         }
       ],
-      "lastChangedAt": "2026-09-03T01:09:55.000Z",
-      "lastChangedBy": "claude[bot]",
-      "lastChangedCommit": "81583e991da50050e65c67b80120a1b2406a804f"
+      "lastChangedAt": "2026-09-03T01:48:12.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "642433f06d11b852706eea67bffcf8ee26f6b376"
     },
     {
       "key": "Artifact:tools/pgquery.js",
@@ -51200,6 +51200,22 @@
       ]
     },
     {
+      "key": "Commit:642433f06d11b852706eea67bffcf8ee26f6b376",
+      "type": "Commit",
+      "id": "642433f06d11b852706eea67bffcf8ee26f6b376",
+      "label": "Sweep the AB-BA class the lock ledger cannot see (pgcheck §9f)",
+      "title": "Sweep the AB-BA class the lock ledger cannot see (pgcheck §9f)",
+      "date": "2026-09-03T01:48:12.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/642433f06d11b852706eea67bffcf8ee26f6b376",
+      "provenance": [
+        {
+          "commit": "642433f06d11b852706eea67bffcf8ee26f6b376",
+          "url": "https://github.com/OmertaDev/Omerta/commit/642433f06d11b852706eea67bffcf8ee26f6b376"
+        }
+      ]
+    },
+    {
       "key": "Commit:642e4d193337ab646cfee4863f8514141775db9b",
       "type": "Commit",
       "id": "642e4d193337ab646cfee4863f8514141775db9b",
@@ -56828,6 +56844,22 @@
         {
           "commit": "a6d0cc888ce0bd317f7061515a086db9a782c9c9",
           "url": "https://github.com/OmertaDev/Omerta/commit/a6d0cc888ce0bd317f7061515a086db9a782c9c9"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a6e25ae0fbf3479c3185faacf85ee11484b7278f",
+      "type": "Commit",
+      "id": "a6e25ae0fbf3479c3185faacf85ee11484b7278f",
+      "label": "chore(knowledge): refresh generated artifacts for 81583e99",
+      "title": "chore(knowledge): refresh generated artifacts for 81583e99",
+      "date": "2026-09-03T01:10:54.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a6e25ae0fbf3479c3185faacf85ee11484b7278f",
+      "provenance": [
+        {
+          "commit": "a6e25ae0fbf3479c3185faacf85ee11484b7278f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a6e25ae0fbf3479c3185faacf85ee11484b7278f"
         }
       ]
     },
@@ -69607,13 +69639,13 @@
       "id": "CLAUDE.md",
       "label": "CLAUDE.md",
       "documentType": "documentation",
-      "lines": 18087,
-      "version": "70921d81271b1066",
+      "lines": 18149,
+      "version": "ce3d226c7cc2e8d0",
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "70921d81271b1066"
+          "version": "ce3d226c7cc2e8d0"
         }
       ]
     },
@@ -77127,6 +77159,9 @@
           "commit": "a5821372d39e6145ce40b5d6ade9cda6325e3a0a"
         },
         {
+          "commit": "a6e25ae0fbf3479c3185faacf85ee11484b7278f"
+        },
+        {
           "commit": "a7e5fc0c072ea8ab8973c23d8ff7f11522b41776"
         },
         {
@@ -77544,6 +77579,9 @@
           "commit": "a5821372d39e6145ce40b5d6ade9cda6325e3a0a"
         },
         {
+          "commit": "a6e25ae0fbf3479c3185faacf85ee11484b7278f"
+        },
+        {
           "commit": "a7e5fc0c072ea8ab8973c23d8ff7f11522b41776"
         },
         {
@@ -77959,6 +77997,9 @@
         },
         {
           "commit": "a5821372d39e6145ce40b5d6ade9cda6325e3a0a"
+        },
+        {
+          "commit": "a6e25ae0fbf3479c3185faacf85ee11484b7278f"
         },
         {
           "commit": "a7e5fc0c072ea8ab8973c23d8ff7f11522b41776"
@@ -78439,6 +78480,9 @@
         },
         {
           "commit": "a5821372d39e6145ce40b5d6ade9cda6325e3a0a"
+        },
+        {
+          "commit": "a6e25ae0fbf3479c3185faacf85ee11484b7278f"
         },
         {
           "commit": "a7e5fc0c072ea8ab8973c23d8ff7f11522b41776"
@@ -84867,8 +84911,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "81583e991da50050e65c67b80120a1b2406a804f",
-      "currentBranch": "main",
+      "revision": "642433f06d11b852706eea67bffcf8ee26f6b376",
+      "currentBranch": "claude/next-work-recommendations-x5f2fp",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -162832,6 +162876,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:642433f06d11b852706eea67bffcf8ee26f6b376",
+      "to": "Artifact:CLAUDE.md",
+      "provenance": {
+        "commit": "642433f06d11b852706eea67bffcf8ee26f6b376"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:642433f06d11b852706eea67bffcf8ee26f6b376",
+      "to": "Artifact:tools/pgcheck.js",
+      "provenance": {
+        "commit": "642433f06d11b852706eea67bffcf8ee26f6b376"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:642e4d193337ab646cfee4863f8514141775db9b",
       "to": "Artifact:docs/superpowers/plans/2026-08-26-grill-completion-umbrella.md",
       "provenance": {
@@ -182108,6 +182168,38 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "commit": "a6d0cc888ce0bd317f7061515a086db9a782c9c9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a6e25ae0fbf3479c3185faacf85ee11484b7278f",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "a6e25ae0fbf3479c3185faacf85ee11484b7278f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a6e25ae0fbf3479c3185faacf85ee11484b7278f",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "a6e25ae0fbf3479c3185faacf85ee11484b7278f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a6e25ae0fbf3479c3185faacf85ee11484b7278f",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "a6e25ae0fbf3479c3185faacf85ee11484b7278f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a6e25ae0fbf3479c3185faacf85ee11484b7278f",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "a6e25ae0fbf3479c3185faacf85ee11484b7278f"
       }
     },
     {
@@ -236083,7 +236175,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:economy-ledger",
-      "weight": 143
+      "weight": 144
     },
     {
       "type": "DEPENDS_ON",
@@ -236107,7 +236199,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 411
+      "weight": 412
     },
     {
       "type": "DEPENDS_ON",
@@ -249430,6 +249522,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:642433f06d11b852706eea67bffcf8ee26f6b376",
+      "provenance": {
+        "commit": "642433f06d11b852706eea67bffcf8ee26f6b376"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:642e4d193337ab646cfee4863f8514141775db9b",
       "provenance": {
         "commit": "642e4d193337ab646cfee4863f8514141775db9b"
@@ -252241,6 +252341,14 @@
       "to": "Commit:a6d0cc888ce0bd317f7061515a086db9a782c9c9",
       "provenance": {
         "commit": "a6d0cc888ce0bd317f7061515a086db9a782c9c9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a6e25ae0fbf3479c3185faacf85ee11484b7278f",
+      "provenance": {
+        "commit": "a6e25ae0fbf3479c3185faacf85ee11484b7278f"
       }
     },
     {
@@ -270733,6 +270841,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/pgcheck.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "tools/pgcheck.js",
+        "line": 906
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/pgcheck.js",
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/pgcheck.js",
@@ -270746,6 +270863,15 @@
       "provenance": {
         "file": "tools/pgcheck.js",
         "line": 794
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/pgcheck.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "tools/pgcheck.js",
+        "line": 907
       }
     },
     {
@@ -289808,6 +289934,15 @@
       "provenance": {
         "file": "CLAUDE.md",
         "line": 17952
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:tools/pgcheck.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 18122
       }
     },
     {
