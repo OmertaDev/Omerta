@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "c2f9ea3b4baac529fb0193b8c2b0e9003373d78f",
+  "sourceRevision": "81583e991da50050e65c67b80120a1b2406a804f",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -44,7 +44,7 @@
   },
   "census": {
     "nodes": 5668,
-    "edges": 25082,
+    "edges": 25089,
     "byNodeType": {
       "Artifact": 1828,
       "Command": 57,
@@ -65,7 +65,7 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1980,
-      "CHANGED": 10083,
+      "CHANGED": 10090,
       "CONTAINS": 1848,
       "DECLARES": 57,
       "DEFINED_IN": 1108,
@@ -10982,9 +10982,9 @@
           "version": "70921d81271b1066"
         }
       ],
-      "lastChangedAt": "2026-09-03T00:49:52.000Z",
-      "lastChangedBy": "Claude",
-      "lastChangedCommit": "c2f9ea3b4baac529fb0193b8c2b0e9003373d78f"
+      "lastChangedAt": "2026-09-03T01:09:55.000Z",
+      "lastChangedBy": "claude[bot]",
+      "lastChangedCommit": "81583e991da50050e65c67b80120a1b2406a804f"
     },
     {
       "key": "Artifact:content/packs/bad-batch/pack.json",
@@ -41589,9 +41589,9 @@
           "version": "e0e3627fd43d555d"
         }
       ],
-      "lastChangedAt": "2026-09-03T00:49:52.000Z",
-      "lastChangedBy": "Claude",
-      "lastChangedCommit": "c2f9ea3b4baac529fb0193b8c2b0e9003373d78f"
+      "lastChangedAt": "2026-09-03T01:09:55.000Z",
+      "lastChangedBy": "claude[bot]",
+      "lastChangedCommit": "81583e991da50050e65c67b80120a1b2406a804f"
     },
     {
       "key": "Artifact:tools/pgquery.js",
@@ -53664,6 +53664,22 @@
       ]
     },
     {
+      "key": "Commit:81583e991da50050e65c67b80120a1b2406a804f",
+      "type": "Commit",
+      "id": "81583e991da50050e65c67b80120a1b2406a804f",
+      "label": "Prove the pot/funder AB-BA lands as contention (pgcheck §9e) (#163)",
+      "title": "Prove the pot/funder AB-BA lands as contention (pgcheck §9e) (#163)",
+      "date": "2026-09-03T01:09:55.000Z",
+      "author": "claude[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/81583e991da50050e65c67b80120a1b2406a804f",
+      "provenance": [
+        {
+          "commit": "81583e991da50050e65c67b80120a1b2406a804f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/81583e991da50050e65c67b80120a1b2406a804f"
+        }
+      ]
+    },
+    {
       "key": "Commit:8175fd0f001d884da9c02ebf4f04924a0ef70ead",
       "type": "Commit",
       "id": "8175fd0f001d884da9c02ebf4f04924a0ef70ead",
@@ -59340,22 +59356,6 @@
         {
           "commit": "c2e9306bebe537f396c71fa76f1902174eb3dfbf",
           "url": "https://github.com/OmertaDev/Omerta/commit/c2e9306bebe537f396c71fa76f1902174eb3dfbf"
-        }
-      ]
-    },
-    {
-      "key": "Commit:c2f9ea3b4baac529fb0193b8c2b0e9003373d78f",
-      "type": "Commit",
-      "id": "c2f9ea3b4baac529fb0193b8c2b0e9003373d78f",
-      "label": "Prove the pot/funder AB-BA lands as contention (pgcheck §9e)",
-      "title": "Prove the pot/funder AB-BA lands as contention (pgcheck §9e)",
-      "date": "2026-09-03T00:49:52.000Z",
-      "author": "Claude",
-      "url": "https://github.com/OmertaDev/Omerta/commit/c2f9ea3b4baac529fb0193b8c2b0e9003373d78f",
-      "provenance": [
-        {
-          "commit": "c2f9ea3b4baac529fb0193b8c2b0e9003373d78f",
-          "url": "https://github.com/OmertaDev/Omerta/commit/c2f9ea3b4baac529fb0193b8c2b0e9003373d78f"
         }
       ]
     },
@@ -76749,6 +76749,9 @@
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
         },
         {
+          "commit": "81583e991da50050e65c67b80120a1b2406a804f"
+        },
+        {
           "commit": "8958d9951447d065d94daf37cdd5e820c644e64c"
         },
         {
@@ -77050,6 +77053,9 @@
         },
         {
           "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
+        },
+        {
+          "commit": "81583e991da50050e65c67b80120a1b2406a804f"
         },
         {
           "commit": "8185471eb5aa6dbff71435b99a11f741b38b7263"
@@ -77466,6 +77472,9 @@
           "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
         },
         {
+          "commit": "81583e991da50050e65c67b80120a1b2406a804f"
+        },
+        {
           "commit": "8185471eb5aa6dbff71435b99a11f741b38b7263"
         },
         {
@@ -77880,6 +77889,9 @@
           "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
         },
         {
+          "commit": "81583e991da50050e65c67b80120a1b2406a804f"
+        },
+        {
           "commit": "8185471eb5aa6dbff71435b99a11f741b38b7263"
         },
         {
@@ -78103,6 +78115,9 @@
         },
         {
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
+        },
+        {
+          "commit": "81583e991da50050e65c67b80120a1b2406a804f"
         },
         {
           "commit": "83d19c0f0a798b0b59bed8d79b856659f08bba83"
@@ -78352,6 +78367,9 @@
         },
         {
           "commit": "7eb3399336734357d23791d6dfa776edb2480d3f"
+        },
+        {
+          "commit": "81583e991da50050e65c67b80120a1b2406a804f"
         },
         {
           "commit": "8185471eb5aa6dbff71435b99a11f741b38b7263"
@@ -78613,6 +78631,9 @@
         },
         {
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
+        },
+        {
+          "commit": "81583e991da50050e65c67b80120a1b2406a804f"
         },
         {
           "commit": "83d19c0f0a798b0b59bed8d79b856659f08bba83"
@@ -84846,8 +84867,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "c2f9ea3b4baac529fb0193b8c2b0e9003373d78f",
-      "currentBranch": "claude/next-work-recommendations-x5f2fp",
+      "revision": "81583e991da50050e65c67b80120a1b2406a804f",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -171827,6 +171848,78 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:81583e991da50050e65c67b80120a1b2406a804f",
+      "to": "Artifact:CLAUDE.md",
+      "provenance": {
+        "commit": "81583e991da50050e65c67b80120a1b2406a804f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:81583e991da50050e65c67b80120a1b2406a804f",
+      "to": "Artifact:tools/pgcheck.js",
+      "provenance": {
+        "commit": "81583e991da50050e65c67b80120a1b2406a804f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:81583e991da50050e65c67b80120a1b2406a804f",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "81583e991da50050e65c67b80120a1b2406a804f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:81583e991da50050e65c67b80120a1b2406a804f",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "81583e991da50050e65c67b80120a1b2406a804f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:81583e991da50050e65c67b80120a1b2406a804f",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "81583e991da50050e65c67b80120a1b2406a804f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:81583e991da50050e65c67b80120a1b2406a804f",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "81583e991da50050e65c67b80120a1b2406a804f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:81583e991da50050e65c67b80120a1b2406a804f",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "81583e991da50050e65c67b80120a1b2406a804f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:81583e991da50050e65c67b80120a1b2406a804f",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "81583e991da50050e65c67b80120a1b2406a804f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:81583e991da50050e65c67b80120a1b2406a804f",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "81583e991da50050e65c67b80120a1b2406a804f"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:8175fd0f001d884da9c02ebf4f04924a0ef70ead",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -191807,22 +191900,6 @@
       "to": "Artifact:test/casino.js",
       "provenance": {
         "commit": "c2e9306bebe537f396c71fa76f1902174eb3dfbf"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:c2f9ea3b4baac529fb0193b8c2b0e9003373d78f",
-      "to": "Artifact:CLAUDE.md",
-      "provenance": {
-        "commit": "c2f9ea3b4baac529fb0193b8c2b0e9003373d78f"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:c2f9ea3b4baac529fb0193b8c2b0e9003373d78f",
-      "to": "Artifact:tools/pgcheck.js",
-      "provenance": {
-        "commit": "c2f9ea3b4baac529fb0193b8c2b0e9003373d78f"
       }
     },
     {
@@ -250585,6 +250662,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:81583e991da50050e65c67b80120a1b2406a804f",
+      "provenance": {
+        "commit": "81583e991da50050e65c67b80120a1b2406a804f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:8175fd0f001d884da9c02ebf4f04924a0ef70ead",
       "provenance": {
         "commit": "8175fd0f001d884da9c02ebf4f04924a0ef70ead"
@@ -253420,14 +253505,6 @@
       "to": "Commit:c2e9306bebe537f396c71fa76f1902174eb3dfbf",
       "provenance": {
         "commit": "c2e9306bebe537f396c71fa76f1902174eb3dfbf"
-      }
-    },
-    {
-      "type": "HAS_COMMIT",
-      "from": "Repository:omerta",
-      "to": "Commit:c2f9ea3b4baac529fb0193b8c2b0e9003373d78f",
-      "provenance": {
-        "commit": "c2f9ea3b4baac529fb0193b8c2b0e9003373d78f"
       }
     },
     {
