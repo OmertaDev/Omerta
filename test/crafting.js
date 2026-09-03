@@ -12,6 +12,7 @@ import {
   recipeCatalog,
   salvageCar,
 } from '../src/crafting.js';
+import { carMatchesGraphSelector } from '../src/economy.js';
 import { AUTOMOTIVE_SALVAGE_PACKAGE } from '../src/content/automotive-salvage.js';
 
 const pool = await makeDb();
@@ -66,6 +67,18 @@ try {
     'recipe:hardened_steel',
     'recipe:precision_lock_tool',
   ], 'the demo chain is graph content, not handler constants');
+  const selectorCar = {
+    id: 'selector-car', model_id: 'junker', trim_id: 'stock', rarity: 'common',
+  };
+  assert(carMatchesGraphSelector(selectorCar, { kind: 'carId', value: 'selector-car' }));
+  assert(carMatchesGraphSelector(selectorCar, { kind: 'carType', value: 'junker' }));
+  assert(carMatchesGraphSelector(selectorCar, { kind: 'value', value: 'stock' }),
+    'the generic selector may name the authoritative trim');
+  assert(carMatchesGraphSelector(selectorCar, { kind: 'vehicleClass', value: 'common' }),
+    'the class selector reads the authoritative persisted classification');
+  assert(carMatchesGraphSelector(selectorCar, { kind: 'assetType', value: 'car' }));
+  assert.equal(carMatchesGraphSelector(selectorCar, { kind: 'carId', value: 'junker' }), false,
+    'a carId alias cannot accidentally match the model');
 
   await pool.query(
     `INSERT INTO characters (id,account_id,name,season,loc,respect,cash)
@@ -109,6 +122,23 @@ try {
     .blockedBy.some((blocker) => blocker.adapter === 'skill'));
   assert.equal(catalog.find((entry) => entry.id === 'recipe:hardened_steel').cashCost, 300,
     'the preview publishes the validated graph cash cost');
+
+  const salvagePreview = (car) => recipeCatalog({
+    character: { id: CHARACTER, loc: 'foundry', level: 10 },
+    skills: new Set(['fence_network']),
+    cars: [car],
+  }).find((entry) => entry.id === 'recipe:car_salvage_basic');
+  assert.equal(salvagePreview({
+    id: 'preview-junker', model_id: 'junker', trim_id: 'stock', rarity: 'common',
+  }).available, true, 'a matching graph-selected model is eligible in the catalog');
+  const mismatchedPreview = salvagePreview({
+    id: 'preview-falcone', model_id: 'falcone', trim_id: 'base', rarity: 'rare',
+  });
+  assert.equal(mismatchedPreview.available, false,
+    'a non-matching model cannot satisfy the graph selector in the catalog');
+  assert(mismatchedPreview.blockedBy.some((blocker) => (
+    blocker.adapter === 'owns_car' && blocker.required === 'junker'
+  )), 'the catalog publishes the same selector enforced by mutation');
 
   const ineligiblePreviewCars = [
     { id: BLOCKED_CARS.listed, listed: true },
@@ -198,6 +228,22 @@ try {
     'SELECT COUNT(*) AS n FROM cars WHERE id=$1 AND character_id=$2',
     [COLLISION_CAR, CHARACTER],
   )).rows[0].n), 1, 'the collision is rejected before consuming the other car');
+  await assert.rejects(
+    tx((client) => salvageCar(
+      client, h, COLLISION_CAR, 'recipe:car_salvage_basic', 'salvage-selector-mismatch',
+    )),
+    (error) => error?.code === 'no_car',
+    'direct mutation cannot bypass the graph-declared locked-car selector',
+  );
+  assert.equal(Number((await pool.query(
+    'SELECT COUNT(*) AS n FROM cars WHERE id=$1 AND character_id=$2',
+    [COLLISION_CAR, CHARACTER],
+  )).rows[0].n), 1, 'a selector mismatch leaves the concrete car untouched');
+  assert.equal(stackQty(await inventoryBoard(pool, OWNER), 'mat:scrap_steel'), 6,
+    'a selector mismatch creates no graph output');
+  assert.equal(Number((await pool.query(
+    "SELECT COUNT(*) AS n FROM item_mutation_guards WHERE idempotency_key='salvage-selector-mismatch'",
+  )).rows[0].n), 0, 'a selector mismatch leaves no replay reservation');
   await assert.rejects(
     tx((client) => salvageCar(
       client, h, CAR, 'recipe:car_salvage_basic', 'salvage-car-2',

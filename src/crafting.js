@@ -8,7 +8,10 @@
 // mutation authority (living character, location, level, skill, car, quantities, and templates) is
 // resolved again from locked rows and the validated immutable graph.
 import { GameError, ledger } from './game.js';
-import { consumeOwnedCarForItemMutation } from './economy.js';
+import {
+  carMatchesGraphSelector,
+  consumeOwnedCarForItemMutation,
+} from './economy.js';
 import {
   consumeItem,
   consumeStack,
@@ -46,6 +49,13 @@ function canonicalString(value, label) {
 function conditionValue(condition, names) {
   for (const name of names) if (condition?.[name] !== undefined) return condition[name];
   return undefined;
+}
+
+function graphCarSelector(condition) {
+  for (const kind of ['value', 'carId', 'carType', 'vehicleClass', 'assetType']) {
+    if (condition?.[kind] !== undefined) return { kind, value: condition[kind] };
+  }
+  return null;
 }
 
 function conditionsOf(recipe) {
@@ -124,6 +134,9 @@ function normalizedCar(car) {
     mintedOnchain: !!(car.mintedOnchain ?? car.minted_onchain),
     raceLimit: car.raceLimit ?? car.race_limit ?? null,
     pinkSlip: !!(car.pinkSlip ?? car.pink_slip),
+    rarity: car.rarity ?? null,
+    vehicleClass: car.vehicleClass ?? car.vehicle_class ?? car.carClass ?? car.car_class
+      ?? car.class ?? null,
   };
 }
 
@@ -132,8 +145,13 @@ function matchesCar(car, selector, selectedCarId = null) {
   if (!normalized || normalized.listed || normalized.pledged || normalized.mintedOnchain
     || normalized.raceLimit !== null || normalized.pinkSlip) return false;
   if (selectedCarId && normalized.id !== selectedCarId) return false;
-  return selector === 'any' || selector === 'car'
-    || selector === normalized.id || selector === normalized.modelId || selector === normalized.trimId;
+  return carMatchesGraphSelector(normalized, selector);
+}
+
+function ownsCarSelectors(recipe) {
+  return conditionsOf(recipe)
+    .filter((condition) => (condition?.adapter || condition?.type || condition?.kind) === 'owns_car')
+    .map(graphCarSelector);
 }
 
 function previewContext(ctx = {}) {
@@ -171,11 +189,9 @@ function blockerFor(condition, context, { selectedCarId = null, deferOwnsCar = f
     return context.skills.has(required) ? null : { adapter, required };
   }
   if (deferOwnsCar) return null;
-  const required = conditionValue(condition, [
-    'value', 'carId', 'carType', 'vehicleClass', 'assetType',
-  ]);
-  return context.cars.some((car) => matchesCar(car, required, selectedCarId))
-    ? null : { adapter, required, carId: selectedCarId };
+  const selector = graphCarSelector(condition);
+  return context.cars.some((car) => matchesCar(car, selector, selectedCarId))
+    ? null : { adapter, required: selector?.value, carId: selectedCarId };
 }
 
 function recipeBlockers(recipe, context, options) {
@@ -448,7 +464,7 @@ export async function salvageCar(client, h, carIdValue, recipeId, idempotencyKey
       assertRequirements(recipe, actor, { selectedCarId: carId, deferOwnsCar: true });
       const cash = await debitRecipeCash(client, actor, recipe);
       const car = await consumeOwnedCarForItemMutation(
-        client, h, actor.character.id, carId,
+        client, h, actor.character.id, carId, ownsCarSelectors(recipe),
       );
       const outputs = await produceRecipeOutputs(
         client, owner, recipe, mutation, 'salvaged',

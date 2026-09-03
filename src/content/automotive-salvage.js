@@ -35,7 +35,7 @@ export const AUTOMOTIVE_SALVAGE_PACKAGE = Object.freeze({
       ],
       conditions: [
         condition('location', { value: 'foundry' }),
-        condition('owns_car', { value: 'any' }),
+        condition('owns_car', { carType: 'junker' }),
       ],
     }),
     recipe({

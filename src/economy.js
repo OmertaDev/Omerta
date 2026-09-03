@@ -142,11 +142,46 @@ async function removeCar(client, h, carId) {
   h.owned.cars = h.owned.cars.filter((c) => c.id !== carId);
 }
 
+// One selector vocabulary for graph preview and the locked mutation adapter. Named aliases retain
+// their meaning (`carId`, model-like `carType`, `vehicleClass`, `assetType`), while the validator's
+// generic `value` form can name a concrete row, model, trim, or class. `assetType: car` is the generic
+// asset selector; `value: any` is its legacy spelling.
+export function carMatchesGraphSelector(car, selector) {
+  if (!car) return false;
+  const descriptor = typeof selector === 'string'
+    ? { kind: 'value', value: selector }
+    : selector;
+  if (!descriptor || typeof descriptor !== 'object' || Array.isArray(descriptor)
+    || typeof descriptor.value !== 'string') return false;
+  const value = descriptor.value.trim();
+  if (!value) return false;
+  const model = car.modelId ?? car.model_id;
+  const trim = car.trimId ?? car.trim_id;
+  const classes = [
+    car.vehicleClass ?? car.vehicle_class,
+    car.carClass ?? car.car_class,
+    car.class,
+    // The current authoritative car schema calls its only persisted classification `rarity`.
+    car.rarity,
+  ];
+  if (descriptor.kind === 'carId') return car.id === value;
+  if (descriptor.kind === 'carType') return model === value;
+  if (descriptor.kind === 'vehicleClass') {
+    return classes.some((candidate) => candidate === value);
+  }
+  if (descriptor.kind === 'assetType') return value === 'car' || value === 'any';
+  if (descriptor.kind !== 'value') return false;
+  const candidates = ['any', 'car', car.id, model, trim, ...classes];
+  return candidates.some((candidate) => candidate === value);
+}
+
 // WORLD-GRAPH SALVAGE — consume one concrete car through the garage's authoritative row rather
 // than a client array index or caller-provided model. The caller is already inside the item module's
 // compound transaction. Registering the exact pre-image with that module gives pg-mem the same
 // rollback semantics PostgreSQL gets from the real transaction; graph data never receives this hook.
-export async function consumeOwnedCarForItemMutation(client, h, characterId, carId) {
+export async function consumeOwnedCarForItemMutation(
+  client, h, characterId, carId, graphSelectors = [],
+) {
   const row = (await client.query(
     `SELECT id, character_id, model_id, trim_id, dmg, plate, listed, pledged, tune,
             race_limit, pink_slip, nos, rarity, minted_onchain, created_at, run_id, serial
@@ -160,6 +195,12 @@ export async function consumeOwnedCarForItemMutation(client, h, characterId, car
   if (row.pledged) throw new GameError('pledged', "It's pledged as loan collateral — square the debt first.");
   if (row.race_limit !== null || row.pink_slip) {
     throw new GameError('race_reserved', "It's reserved on the race board — withdraw it first.");
+  }
+  if (!Array.isArray(graphSelectors) || graphSelectors.length < 1
+    || !graphSelectors.every((selector) => carMatchesGraphSelector(row, selector))) {
+    // This deliberately reads like absence. A caller that knows a raw car id cannot use selector
+    // mismatch to learn another recipe's eligible model/class, and no mutation side effect has run.
+    throw new GameError('no_car', 'No matching car is available in this garage.');
   }
 
   const cached = h?.owned?.cars?.find((car) => car.id === row.id) || null;
@@ -181,9 +222,10 @@ export async function consumeOwnedCarForItemMutation(client, h, characterId, car
 
   const removed = await client.query(
     `DELETE FROM cars
-      WHERE id=$1 AND character_id=$2 AND NOT listed AND NOT pledged AND NOT minted_onchain
+      WHERE id=$1 AND character_id=$2 AND model_id=$3 AND trim_id=$4 AND rarity=$5
+        AND NOT listed AND NOT pledged AND NOT minted_onchain
         AND race_limit IS NULL AND NOT pink_slip`,
-    [row.id, characterId],
+    [row.id, characterId, row.model_id, row.trim_id, row.rarity],
   );
   if (removed.rowCount !== 1) {
     throw new GameError('contention', 'That car changed while the salvage crew was moving it.');
