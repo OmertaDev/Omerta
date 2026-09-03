@@ -70,14 +70,17 @@ export async function raceNpc(ch, carId, tierId, useNos, client, h) {
     await bumpWheel(client, ch.account_id);
     await h.track(client, ch.account_id, 'race', { mode: 'npc', tier: tier.id, win: true });
     bus.emit('streets', { type: 'race_win', by: ch.name, race: tier.name, purse: tier.purse });
-    return { ok: true, win: true, tier: tier.id, name: tier.name, purse: tier.purse, fee: tier.fee, net: tier.purse - tier.fee, power: mine, field, nos: nos > 0 };
+    // WAVE 80 — the per-driver cooldown lands EVERY run (stamped above, win or lose) and rode
+    // on neither reply, so the next press refused with a clock the winner had never been told about.
+    // `raceCdMs()` is a TEST-ONLY-overridable lever, so only the server can state it.
+    return { ok: true, win: true, tier: tier.id, name: tier.name, purse: tier.purse, fee: tier.fee, net: tier.purse - tier.fee, power: mine, field, nos: nos > 0, cooldownSeconds: Math.ceil(raceCdMs() / 1000) };
   }
   // a loss dings the car (the existing damage mechanic — absolute write, pg-mem-safe)
   const nd = Math.min(100, Number(car.dmg) + RACES.LOSS_DMG);
   await client.query('UPDATE cars SET dmg=$2 WHERE id=$1', [car.id, nd]);
   car.dmg = nd;
   await h.track(client, ch.account_id, 'race', { mode: 'npc', tier: tier.id, win: false });
-  return { ok: true, win: false, tier: tier.id, name: tier.name, fee: tier.fee, net: -tier.fee, dmg: nd, power: mine, field, nos: nos > 0 };
+  return { ok: true, win: false, tier: tier.id, name: tier.name, fee: tier.fee, net: -tier.fee, dmg: nd, power: mine, field, nos: nos > 0, cooldownSeconds: Math.ceil(raceCdMs() / 1000) };
 }
 
 // POST /v1/races/nos/:carId — buy a NITROUS charge for a car (a §10.4 cash sink; capped NOS_MAX).
@@ -216,7 +219,11 @@ export async function raceChallenge(ch, opponent, body, client, h) {
   await h.notify(client, opponent.id, 'race_pvp', { from: ch.name, amount: amt, theyWon: !win });
   bus.emit('streets', { type: 'race_pvp', by: ch.name, vs: opponent.name, amount: pot, win });
   await h.track(client, ch.account_id, 'race', { mode: 'pvp', amt, win });
+  // WAVE 80 — the same per-driver clock raceNpc names: it is stamped on the CHALLENGER win or lose
+  // (two lines up), so the next press refuses with a wait this reply had never mentioned. Its sibling
+  // shipped `cooldownSeconds` and these two did not — the forgotten-sibling shape inside one file.
   return { ok: true, game: 'street', win, wager: amt, rake, net: win ? amt - rake : -amt,
+    cooldownSeconds: Math.ceil(raceCdMs() / 1000),
     you: { car: winCar === my ? my.model_id : my.model_id, score: mine }, them: { score: theirs } };
 }
 
@@ -282,6 +289,7 @@ export async function pinkSlipRace(ch, opponent, body, client, h) {
   // its raw catalog key.
   const slip = { id: wonCar.id, model: wonCar.model_id, name: carOf(wonCar.model_id)?.name || wonCar.model_id };
   return { ok: true, win, forPinks: true, wonCar: win ? slip : null,
+    cooldownSeconds: Math.ceil(raceCdMs() / 1000), // stamped on the challenger win or lose (above)
     lostCar: win ? null : slip, you: mine, them: theirs };
 }
 

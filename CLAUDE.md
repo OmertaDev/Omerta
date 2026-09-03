@@ -18182,3 +18182,65 @@ in `src/` changed and no signed lever moved: this drop makes the instrument tell
 own resolution, and the truth is that the step-two and step-three arena FIGURES were single samples
 of a noise-dominated instrument (their directional reads survive; their numbers do not). SPEC's
 harness row carries the sweep as the 16th.
+
+**PLAY WAVE 80 — THE CLOCK THE SUCCESS REPLY NEVER NAMED, and a forgotten sibling INSIDE ONE FILE
+(2026-09-03).** Wave 79 built THE COOLDOWN LEDGER over the **REFUSAL** half — 39 `GameError('cooldown')`
+sites now carry `{cooldownSeconds}` and say when. **The other half was never swept: the SUCCESS reply
+that ARMS the clock and does not mention it.** A player who has just spent 25 energy and a $2,000 fee
+learns about the two-hour wait by pressing the button again and being refused — which is the pad, the
+nut and the Port lane in a new costume: the game knowing a term of the player's own action and saying
+nothing until it costs them. Check 14 (THE SILENCE LEDGER) is structurally blind to it, because these
+lines are FLUENT and specific (*"WON 46–35 vs them · +$900"*) and simply leave the clock off.
+**THE SHARPEST INSTANCE IS THE FORGOTTEN-SIBLING SHAPE INSIDE ONE FILE.** `grep -n race_at src/races.js`
+shows the per-driver cooldown STAMPED BY THREE FUNCTIONS — `raceNpc`, `raceChallenge`, `pinkSlipRace` —
+and only `raceNpc`'s two returns carried the field, so the wager and the **pinks** races (where losing
+hands over the car) armed a 2h clock in silence. RT#7 says sweep to the edge, so all three server halves
+and their **three distinct render sites** are fixed: the NPC circuit's own line, the SHARED `you`/`them`
+score line (gated `body.game === 'street'`, since the stable's match race hits the same branch), and the
+`forPinks` branch's own `cool` local — which needs its own clause precisely because `pinkSlipRace`
+returns raw score NUMBERS in `you`/`them` and never reaches the shared line.
+**AND THE COMMENT CLAIMED THE WORK WAS ALREADY DONE.** `src/boxing.js` asserted in its own words that
+wave 75 shipped the exhibition cooldown; only `injuredSeconds` ever rode the reply, so **the 6h rest that
+lands WIN OR LOSE was the half a WINNER never heard about at all** — a loser at least saw the lay-up.
+Corrected in the same edit (`restSeconds`), with the rest clause placed OUTSIDE the loss-only guard, and
+its twin `src/stable.js` had been sending `circuitCdSeconds` all along.
+**A BLANKET CLAUSE WAS CONSIDERED AND REJECTED BY MEASUREMENT** — 10+ successful replies already carry
+`cooldownSeconds`, so a trailing "you can go again in …" on every reply would have doubled the term on
+each of them (the echo class); the fix is two precisely-gated clauses instead.
+**THE REGRESSION'S OWN LEVER DECISION IS THE LOAD-BEARING ONE: `RACE_CD_MS` is deliberately NOT pinned.**
+It is the races TEST-ONLY knob and pinning it low collapses the asserted figure to 1 second, after which
+"the line names the wait" proves nothing about a real clock — so `race_at` is CLEARED between the three
+legs instead, and every claim is asserted in **two halves** (the SERVER sent the figure, then the LINE
+names it), because a synthetic literal passes straight through the mutation that stops a field being
+sent. The rendered duration is matched as a **token** (`/\d+\s*(s|m|h|d)\b/`) plus the phrase, never by
+re-implementing `minsTxt` in the test — a second copy of the formatter is the very class this wave is
+about. `BOXING`/`RACES` are not imported into `test/client.js`, so the expectation is derived from the
+reply (`> 0`) rather than from a lever (the F1 vault-leg discipline).
+**Eight mutations, eight distinct named kills**, each quoting the DRIVEN reply — the server field dropped
+on all three verbs (`got undefined`) and the client clause dropped on all four render sites, the last one
+reproducing the original sentence verbatim (*"🎀 PINKS — the County Auction Junker is theirs now — 30 to
+62"*). **Applied with it, eleven more findings from the same parallel sweep**: THE PEEK never naming the
+30 $OMR it burned; a fire KILL and a fire MISS both omitting the +20 law heat (DB-verified 0→20), the
+rounds and the energy; a FAILED bust silent that one of five daily attempts was spent (charged BEFORE the
+roll); the pass claim reading a stipend that did not land; PRIME TIME's value night naming neither the
+cut nor that it grows per head; THE DISPATCH claiming a digest was sent when the provider is unconfigured;
+an UNNAMED estate rendering *"you were seen at host2b9f1's place — ,"*; and the shipment take reading
+*"took 4 of Cut Swiss steel"* as though it were a fraction.
+**Flagged, NOT retuned (ground rule #1): a fire KILL never sets `shoot_cd_until`** — only a MISS does
+(verified NULL after a kill), so a killer can search and fire again immediately while a misser waits out
+the trigger. That is a signed PvP surface and a founder call, not a copy fix.
+**FOUR PROCESS LESSONS, each caught before it became a wrong conclusion.** (1) **`git diff --stat` on a
+fully-STAGED tree is empty**, so a "no SQL moved" scan run against the unstaged diff is VACUOUS and reads
+exactly like a clean bill of health — the savepoint stages everything, so the scan must read
+`--cached`. (2) **A stale line number reads exactly like a wrong diagnosis of the branch you land on**:
+the finder reports' client line numbers had drifted (4069 → 4068, "3823-3826" → 3829) and two earlier
+`sed` reads landed on unrelated code, so every mutation anchors on exact TEXT with a `count != 0`
+assertion and an "anchor is gone" assertion after the replace. (3) **`public/index.html` stores LITERAL
+UTF-8 em dashes** while `\u{1F303}`-style sequences are literal backslash escapes — a python anchor
+written `\\u2014` matches zero occurrences, which is an edit that silently does not apply. (4) **A killed
+mutation run can leave the tree mutated**, and a mutated tree reads exactly like a code defect, so the
+pristine copies are restored BEFORE any partial log is read — and an 8-mutation harness needs ~13 minutes
+at ~95s a run, so it belongs in the background with its own `EXIT=` marker rather than in a foreground
+10-minute window. **One candidate DISSOLVED on checking**: a suspected `busts` collision, because
+`withCharacter` returns `{ character, events, ...result }` — every `view()` field is NESTED, so it can
+never reach a top-level `body.busts` branch.

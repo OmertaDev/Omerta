@@ -369,7 +369,10 @@ export async function peekContracts(ch, client, h) {
        LEFT JOIN gangs g ON g.id = bc.contributor
       WHERE bc.target_character=$1`, [ch.id])).rows;
   await h.track(client, ch.account_id, 'intel_peek', { pots: pots.length });
-  return { ok: true, contracts: pots.map((p) => ({
+  // WAVE 80 — the peek is a $OMR BURN and the line named only what it bought. The charge above is
+  // real (verified 5000 -> 4970) and the reply carried no figure, so the client could not have said
+  // otherwise — the anon twin at :102 has the same shape. Piercing anonymity has a price; say it.
+  return { ok: true, omr: M8.INTEL_PEEK_OMR, contracts: pots.map((p) => ({
     kind: p.kind, pot: Math.floor(Number(p.amount)), reason: p.reason || null,
     hitman: p.hitman_name || null,
     expiresInSeconds: p.expires_at ? Math.max(0, Math.ceil((new Date(p.expires_at) - Date.now()) / 1000)) : null,

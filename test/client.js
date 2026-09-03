@@ -9045,4 +9045,74 @@ console.log(`✅ client wiring test passed — across the console AND /admin: of
   assert(/\d+\s*(s|m|h)\b/.test(iron79.body.message),
     `WAVE 79: the boost line must name the wait — got "${iron79.body.message}"`);
   console.log('  ✓ WAVE 79: cooldown refusals name the wait AND carry it as data (fire + boost, both clock shapes)');
+
+  // ── WAVE 80 — THE CLOCK THAT LANDS WIN OR LOSE ────────────────────────────────────────
+  // Wave 79 fixed the REFUSAL half of the cooldown class: a 'come back later' that named no wait.
+  // This is the half that comes FIRST in play — the SUCCESS reply that armed the clock and never
+  // mentioned it, so the player learns the wait only by being turned away. Two systems, and in
+  // races it was the forgotten-sibling shape INSIDE ONE FILE: `race_at` is stamped by three
+  // functions and only `raceNpc` ever carried the field.
+  //
+  // DRIVEN, never synthetic, and asserted in TWO halves per this scope's own rule: the SERVER
+  // sent the figure, and THEN the line names it. A literal expectation passes straight through
+  // the mutation that stops the field being sent — and a re-implementation of the client's own
+  // `minsTxt` here would be a second copy of the formatter, which is the class this wave is about.
+  // The duration is matched as a TOKEN (the WAVE 79 idiom), never as a reconstructed string.
+  const dur80 = /\d+\s*(s|m|h|d)\b/;
+
+  // (a) the cutman's rest — a per-fighter clock that rides WIN OR LOSE, so the clause sits outside
+  // the loss-only lay-up guard. Only the server knows it: the Cornerman's tier scales it, so a
+  // restated constant is wrong for anyone the perk touches.
+  const mgr80 = await mk11('Manager');
+  const sign80 = await inj11('POST', '/v1/boxing/recruit', mgr80.token, { name: 'Kid Malone' });
+  assert.equal(sign80.code, 200, `WAVE 80 fixture: the fighter must be signed (${JSON.stringify(sign80.body)})`);
+  const bout80 = await inj11('POST', '/v1/boxing/exhibition', mgr80.token, { fighter: sign80.body.id, tier: 'clubfighter' });
+  assert.equal(bout80.code, 200, `WAVE 80 fixture: the exhibition must be fought (${JSON.stringify(bout80.body)})`);
+  assert(bout80.body.restSeconds > 0,
+    `WAVE 80: the exhibition reply must CARRY the rest clock it just armed — got ${JSON.stringify(bout80.body.restSeconds)}`);
+  const boutLine80 = String(describeFn(bout80.body, 200));
+  assert(/rests\s+\S+\s+before the next card/.test(boutLine80) && dur80.test(boutLine80),
+    'WAVE 80: the card must say when the fighter is next available — the rest lands win OR lose, so a '
+    + `winner heard about it least of all. Got "${boutLine80}"`);
+
+  // (b) the ride — all THREE race verbs stamp the same `characters.race_at`, and the class was swept
+  // to its edge rather than patched at the one site it was found on (the RT#7 discipline). The
+  // clock is NOT pinned low here on purpose: `RACE_CD_MS` would collapse the asserted figure to 1
+  // and the 'names the wait' half would prove nothing about a real clock. Clear the stamp instead.
+  const drv80 = await mk11('Driver'), riv80 = await mk11('Rival');
+  const car80 = async (id, owner) => app11.pool.query(
+    "INSERT INTO cars (id, character_id, model_id, trim_id, dmg) VALUES ($1,$2,'junker','stock',0)", [id, owner]);
+  await car80('w80drv', drv80.id); await car80('w80wager', riv80.id); await car80('w80pinks', riv80.id);
+  const cool80 = () => app11.pool.query('UPDATE characters SET race_at=NULL WHERE id=$1 OR id=$2', [drv80.id, riv80.id]);
+
+  const npc80 = await inj11('POST', '/v1/races/npc', drv80.token, { car: 'w80drv', tier: 'backalley' });
+  assert.equal(npc80.code, 200, `WAVE 80 fixture: the circuit run must go (${JSON.stringify(npc80.body)})`);
+  assert(npc80.body.cooldownSeconds > 0,
+    `WAVE 80: the circuit reply must carry the per-driver clock it stamped — got ${JSON.stringify(npc80.body.cooldownSeconds)}`);
+  const npcLine80 = String(describeFn(npc80.body, 200));
+  assert(/run again in \S+/.test(npcLine80) && dur80.test(npcLine80),
+    `WAVE 80: the circuit line must name when the ride is free again — got "${npcLine80}"`);
+
+  await cool80();
+  const listed80 = await inj11('POST', '/v1/races/list/w80wager', riv80.token, { limit: 5000 });
+  assert.equal(listed80.code, 200, `WAVE 80 fixture: the rival must be on the strip (${JSON.stringify(listed80.body)})`);
+  const wager80 = await inj11('POST', `/v1/races/challenge/${riv80.id}`, drv80.token, { myCar: 'w80drv', theirCar: 'w80wager', wager: 1000 });
+  assert.equal(wager80.code, 200, `WAVE 80 fixture: the wager race must run (${JSON.stringify(wager80.body)})`);
+  assert(wager80.body.cooldownSeconds > 0,
+    `WAVE 80: the wager reply must carry the same clock — got ${JSON.stringify(wager80.body.cooldownSeconds)}`);
+  const wagerLine80 = String(describeFn(wager80.body, 200));
+  assert(/the ride cools for \S+/.test(wagerLine80) && dur80.test(wagerLine80),
+    `WAVE 80: the wager line must name the wait — got "${wagerLine80}"`);
+
+  await cool80();
+  const pinked80 = await inj11('POST', '/v1/races/pinkslip/w80pinks', riv80.token, { on: true });
+  assert.equal(pinked80.code, 200, `WAVE 80 fixture: the rival must put a slip up (${JSON.stringify(pinked80.body)})`);
+  const pinks80 = await inj11('POST', `/v1/races/pinks/${riv80.id}`, drv80.token, { myCar: 'w80drv', theirCar: 'w80pinks' });
+  assert.equal(pinks80.code, 200, `WAVE 80 fixture: the pinks race must run (${JSON.stringify(pinks80.body)})`);
+  assert(pinks80.body.cooldownSeconds > 0,
+    `WAVE 80: the pinks reply must carry the clock too — got ${JSON.stringify(pinks80.body.cooldownSeconds)}`);
+  const pinksLine80 = String(describeFn(pinks80.body, 200));
+  assert(/PINKS/.test(pinksLine80) && /the ride cools for \S+/.test(pinksLine80) && dur80.test(pinksLine80),
+    `WAVE 80: the pinks line must name the wait — got "${pinksLine80}"`);
+  console.log('  ✓ WAVE 80: the SUCCESS reply names the clock it just armed (the cutman\'s rest + all three race verbs)');
 }
