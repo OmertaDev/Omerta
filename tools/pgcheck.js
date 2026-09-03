@@ -755,6 +755,127 @@ console.log('\n9d. THE RETENTION SWEEPS DO NOT SCAN');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// THE ESTATE AND THE SWEEP TAKE THE SAME TWO ROWS IN OPPOSITE ORDERS. Two comments in
+// src/social/contracts.js describe the lock order and they contradict each other:
+//
+//   refundPot            "The caller must already hold the pot row lock; everyone locks the
+//                         pot BEFORE funder rows (stable order)."
+//   sweepExpiredBounties "funder character rows locked in sorted order BEFORE the pot row — the
+//                         global lock order every player path follows (characters → pots → gangs)."
+//
+// The sweep's claim is false for FUNDER rows specifically: a player path holds the ACTOR's row
+// before the pot, then takes the FUNDERS after it. So `postBounty` on a lapsed pot holds the pot
+// and wants a funder while `sweepExpiredBounties` (and `runEstate`, which reaches third-party
+// character rows through refundPot while holding a bounty row) holds that funder and wants the pot.
+// A real cycle, and the whole point is that THE LOCK LEDGER cannot see it: the acquisition lives
+// inside a function the transaction CALLS, and the distinguishing feature is WHOSE row, not which
+// table — so a green ledger is compatible with this being live, which is why it is measured here.
+//
+// The remedy has been asserted and never driven: 40P01 → a retryable `contention`, the sweep's per-pot
+// catch leaving the pot for the next tick, and the aborted transaction rolling back whole so the escrow
+// cannot half-resolve. pg-mem is single-caller, so no suite can reach any of it.
+//
+// The remedy is DOUBLE-NETTED, which is measured rather than assumed and is not what the first cut of
+// this comment claimed. `withCharacter`'s own catch (game.js:1105) maps it, AND server.js's error
+// handler maps whatever escapes; neutering EITHER one alone leaves every assertion below green, so the
+// only honest mutation for the two lines under it is to take both down at once. That survival is a
+// claim about the test before it is a claim about the code — here it corrected the layer this very
+// comment named — and it is also the property worth knowing: the route is covered twice over.
+//
+// Driven by HOLDING the funder row rather than by racing a real sweep — §9's reason: a race depends
+// on two backends overlapping inside a millisecond-wide window and timing luck reads exactly like a
+// proof. The victim IS deterministic: Postgres aborts the backend whose deadlock_timeout (1s) expires
+// first, which is whoever started waiting first, and the player is made to wait a full second before
+// the holder closes the cycle.
+console.log('\n9e. THE POT/FUNDER CYCLE LANDS AS CONTENTION, NEVER A 500');
+{
+  const { sweepExpiredBounties } = await import('../src/social/contracts.js');
+  const { runLedgerInvariants } = await import('../src/invariants.js');
+  const { M3 } = await import('../src/rules.js');
+  const escrowDrift = async () => {
+    const inv = await runLedgerInvariants(pool, { alert: false });
+    return inv.checks.find((c) => c.name === 'bounty escrow')?.drift;
+  };
+
+  const mk = async (label) => {
+    const { body: { token } } = await call('POST', '/v1/auth/guest');
+    await call('POST', '/v1/character', { token, body: { name: `${label} ${Date.now() % 1000000}` } });
+    const me = (await call('GET', '/v1/me', { token })).body.character;
+    await pool.query('UPDATE characters SET cash=$2 WHERE id=$1', [me.id, 5_000_000]);
+    return { token, id: me.id };
+  };
+  const mark = await mk('Mark');
+  const funder = await mk('Funder');
+  const poster = await mk('Poster');
+  const cashOf = async (id) => Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [id])).rows[0].cash);
+
+  const stake = M3.BOUNTY_MIN * 4;
+  const drift0 = await escrowDrift();
+  // pg_stat_database.deadlocks is the ONLY place a real deadlock is visible — the codebase maps 40P01
+  // to `contention` deliberately, and so is `lock_timeout` (55P03, the 8s pool valve), so the 400
+  // alone cannot tell a deadlock from a slow queue. This section's whole claim is about the CYCLE, so
+  // the mechanism is asserted rather than inferred from the elapsed time.
+  const deadlockCount = async () => Number((await pool.query(
+    'SELECT deadlocks FROM pg_stat_database WHERE datname = current_database()')).rows[0]?.deadlocks || 0);
+  const deadlocks0 = await deadlockCount();
+  const posted = await call('POST', `/v1/streets/${mark.id}/bounty`, { token: funder.token, body: { amount: stake, kind: 'kill' } });
+  check(posted.code === 200, 'a pot with a third-party funder is on the board',
+    `got ${posted.code} ${posted.body?.error || ''}`);
+  // lapse it: an EXPIRED-but-unswept pot is what sends postBounty down the refundPot path, and it is
+  // the same pot the sweep is coming for — the two paths meeting on one row is the whole cycle.
+  await pool.query("UPDATE bounties SET expires_at = now() - interval '1 hour' WHERE target_character=$1 AND kind='kill'", [mark.id]);
+  const funderCashBefore = await cashOf(funder.id);
+
+  const holder = await pool.connect();
+  let inflight, holderTook = null, raced = null;
+  try {
+    await holder.query('BEGIN');
+    // exactly what sweepExpiredBounties (and runEstate, through refundPot) does first: the funder's row.
+    await holder.query('SELECT 1 FROM characters WHERE id=$1 FOR UPDATE', [funder.id]);
+    // the poster takes the pot, then blocks reaching the funder inside refundPot.
+    inflight = call('POST', `/v1/streets/${mark.id}/bounty`, { token: poster.token, body: { amount: stake, kind: 'kill' } });
+    await new Promise((r) => setTimeout(r, 1000));   // > deadlock_timeout, so the player's timer fires first
+    // close the cycle: we hold the funder and now want the pot the player is holding.
+    holderTook = holder.query('SELECT 1 FROM bounties WHERE target_character=$1 AND kind=$2 FOR UPDATE', [mark.id, 'kill'])
+      .then(() => null, (e) => e);
+    raced = await inflight;
+    await holderTook;
+  } finally { await holder.query('ROLLBACK').catch(() => {}); holder.release(); }
+
+  check(raced.code !== 500, 'the player is NOT told the server broke',
+    `got ${raced.code} ${raced.body?.error || ''} — "${raced.body?.message || ''}"`);
+  check(raced.code === 400 && raced.body?.error === 'contention',
+    'a deadlocked contract post comes back as a retryable contention',
+    `got ${raced.code} ${raced.body?.error || ''}`);
+  check((await deadlockCount()) > deadlocks0, 'and it was the CYCLE, not the lock_timeout valve',
+    'pg_stat_database.deadlocks did not move — a 55P03 maps to `contention` too, so this ran but proved'
+    + ' nothing about the pot/funder cycle');
+
+  // the aborted transaction rolled back WHOLE: the escrow is untouched, so the pot cannot have
+  // half-resolved (a partial refund with the pot still standing is the drift this guards).
+  const stillThere = (await pool.query("SELECT amount FROM bounties WHERE target_character=$1 AND kind='kill'", [mark.id])).rows[0];
+  check(!!stillThere && Number(stillThere.amount) === stake, 'the pot survived the deadlock intact',
+    stillThere ? `amount ${stillThere.amount} vs ${stake}` : 'the pot is gone');
+  check((await cashOf(funder.id)) === funderCashBefore, 'and the funder was not part-refunded',
+    `cash moved by ${(await cashOf(funder.id)) - funderCashBefore}`);
+
+  // the worker side self-heals on its next tick — the pot the deadlock left standing is settled.
+  const swept = await sweepExpiredBounties(pool);
+  check(Number(swept?.refunded || 0) === stake, 'the next sweep tick settles the pot the deadlock left',
+    `refunded ${swept?.refunded}`);
+  const gone = (await pool.query("SELECT 1 FROM bounties WHERE target_character=$1 AND kind='kill'", [mark.id])).rowCount;
+  check(gone === 0 && (await cashOf(funder.id)) === funderCashBefore + stake,
+    'and the funder is made whole exactly once', `pot rows ${gone}, cash +${(await cashOf(funder.id)) - funderCashBefore}`);
+  const resolutions = (await pool.query(
+    "SELECT reason FROM transactions WHERE counterparty=$1 AND reason IN ('bounty:refund','death:bounty')", [mark.id])).rows;
+  check(resolutions.length === 1 && resolutions[0].reason === 'bounty:refund',
+    'the pot resolved ONCE — it cannot both refund and burn',
+    resolutions.map((r) => r.reason).join(', ') || 'nothing resolved it');
+  check((await escrowDrift()) === drift0, 'the bounty escrow identity is where it started',
+    `drift ${await escrowDrift()} vs ${drift0}`);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 console.log('\n10. NO node-pg DEPRECATIONS');
 await app.close();
 await new Promise((r) => setTimeout(r, 200));                // let any late warning land

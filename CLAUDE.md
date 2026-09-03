@@ -17936,6 +17936,51 @@ en route: `tools/chaos.js` sized its scenario-6 boot wait by loop count, which u
 boot as a dead one (now wall clock).
 
 
+**THE POT/FUNDER CYCLE, DRIVEN — the CRITICAL the ledger provably cannot see (2026-09-03).** The
+lock-ledger widening ended by naming what no table-granularity rule can reach, and this measures it.
+Two comments in `src/social/contracts.js` describe the lock order and **contradict each other**:
+`refundPot` says *"everyone locks the pot BEFORE funder rows (stable order)"*, while
+`sweepExpiredBounties` says *"funder character rows locked in sorted order BEFORE the pot row — the
+global lock order every player path follows"*. The sweep's claim is false for FUNDER rows
+specifically, and both are describing the same two rows. `postBounty` on a LAPSED pot holds
+`bounties` FOR UPDATE and then blocks writing a funder's `characters` row inside `refundPot` (which
+does **no** pre-lock — checked, which is what makes the ordering real rather than theoretical), while
+the sweep — and `runEstate`, reaching third-party rows through the same helper — holds that funder and
+wants the pot. **THE LOCK LEDGER is blind to it by construction**: the acquisition lives inside a
+function the transaction CALLS, and the distinguishing feature is WHOSE row rather than which table —
+so a green ledger is compatible with the cycle being live, which is exactly why it had to be driven.
+**`tools/pgcheck.js` §9e** drives it, because pg-mem is single-caller and no suite can reach a
+two-writer race. **Driven by HOLDING the funder row, never by racing a real sweep** (the §9/§9b
+reason: a race depends on two backends overlapping inside a millisecond-wide window, and timing luck
+reads exactly like a proof) — and **the victim is made deterministic**: Postgres aborts whichever
+backend's `deadlock_timeout` (1s) expires first, i.e. whoever started waiting first, so the player is
+given a full second before the holder closes the cycle. Ten checks: a fixture precondition, the
+mechanism assertion below, and eight properties — the player is not told the server broke, the 400 is
+a retryable `contention`, the pot survived intact, the funder was not part-refunded, the next sweep
+tick settles the pot the deadlock left, the funder is made whole exactly once, **the pot resolved
+ONCE — it cannot both refund and burn**, and the `bounty escrow` §10.4 identity is where it started. **THE VACUITY GAP CLOSED BEFORE THE GREEN RUN WAS BELIEVED: a 400
+`contention` is produced by TWO mechanisms** — 40P01 and `lock_timeout` 55P03, the 8s pool valve —
+both mapped deliberately, so the ~1s elapsed time was an INFERENCE about which fired.
+`pg_stat_database.deadlocks` before/after (the `tools/loadtest.js` instrument, for the same reason)
+asserts the mechanism instead, and its failure message says so: *a 55P03 maps to `contention` too, so
+this ran but proved nothing about the pot/funder cycle*.
+**THE MUTATION SURVIVED TWICE AND CORRECTED THIS ENTRY'S OWN PROSE, which is the more useful half.**
+Neutering `deadlockToRetry` at the global error handler (`server.js:774`) left every assertion green,
+so the comment was rewritten to name `withCharacter`'s own catch (`game.js:1105`) as the load-bearing
+layer — **and neutering THAT alone left them green too.** The remedy is **DOUBLE-NETTED**: the wrapper
+maps it, and the handler maps whatever escapes, so the only honest mutation is to take both down at
+once — which fails at its own two named assertions with the raw `40P01` report naming
+`refundPot`/`postBounty` and `while updating tuple … in relation "characters"`, i.e. direct evidence
+the cycle is the one reconstructed from source. *A mutation that survives is a claim about the TEST
+before it is a claim about the code* — here it twice corrected the layer my own comment named, and the
+property it uncovered (the route is covered twice over) is worth more than the line it replaced.
+Three mutations, each caught at its own named assertion and at NO other section: both nets down → the
+two contention claims; `refundPot` leaving the pot standing → *"the funder is made whole exactly once"*
+(pot rows 1) and the escrow identity **drifting by exactly the stake**; the sweep's expired-pot
+selector narrowed → *"the next sweep tick settles the pot the deadlock left"* (refunded 0) and the
+resolved-ONCE claim. **Nothing in `src/` changed** — the remedy was already correct; what was missing
+was any proof of it. pgcheck 73/73 on a FRESH real Postgres.
+
 **THE ADAPTIVE HUNTERS — arena step three, and the last hunter standing (2026-09-02).** Step two
 left two stated limits — no adaptive seat ever adapted INTO hunting, and the guard market absorbed
 zero because a 24h contract sits on the day warp — and one question neither month could answer:
