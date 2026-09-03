@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import coreMaterials from '../src/content/core-materials.js';
 import {
+  isWorldGraphRegistry,
   loadGraphPackages,
   nodeOf,
   registerGraphPackage,
@@ -28,6 +29,11 @@ const core = {
 };
 
 const graph = loadGraphPackages([core]);
+assert.equal(isWorldGraphRegistry(graph), true,
+  'the loader brands authentic immutable registries for downstream runtimes');
+assert.equal(isWorldGraphRegistry(Object.freeze({
+  byPackage: new Map(), nodes: new Map(),
+})), false, 'a frozen wrapper around mutable Maps cannot forge registry authority');
 assert.notEqual(graph.byPackage.get(core.id), core,
   'the registry stores an isolated package snapshot');
 assert.deepEqual(graph.byPackage.get(core.id), core);

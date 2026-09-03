@@ -10,6 +10,7 @@ import {
 } from '../src/items.js';
 import { loadAndValidateGraphPackages } from '../src/worldgraph-validate.js';
 import {
+  cancelMystery,
   commitChoice,
   completeNode,
   createMysteryContext,
@@ -17,6 +18,7 @@ import {
   mysteryBoard,
   startMystery,
 } from '../src/mysteries.js';
+import { isWorldGraphRegistry, loadGraphPackages } from '../src/worldgraph.js';
 
 const ACCOUNT = 'mystery-account';
 const CHARACTER = 'mystery-character';
@@ -93,7 +95,7 @@ const mysteryNodes = Object.freeze([
     ]),
   }),
   Object.freeze({
-    id: 'choice:path', type: 'choice', version: 1, visibility: 'public',
+    id: 'choice:path', type: 'choice', version: 1, visibility: 'hidden',
     requires: Object.freeze(['m:or']),
     options: Object.freeze([
       Object.freeze({
@@ -192,8 +194,34 @@ const mysteryNodes = Object.freeze([
     ]),
   }),
   Object.freeze({
+    id: 'choice:conflict', type: 'choice', version: 1, visibility: 'public',
+    requires: Object.freeze(['m:start']),
+    options: Object.freeze([Object.freeze({
+      id: 'too_late', excludes: Object.freeze(['m:alternative']),
+    })]),
+  }),
+  Object.freeze({
+    id: 'm:cancel-deposit', type: 'mystery_step', version: 1, visibility: 'public',
+    conditions: Object.freeze([
+      Object.freeze({ adapter: 'item_ownership', templateId: 'item:mystery_tool' }),
+    ]),
+    effects: Object.freeze([
+      Object.freeze({ adapter: 'item_escrow', templateId: 'item:mystery_tool' }),
+    ]),
+  }),
+  Object.freeze({
+    id: 'm:terminal', type: 'mystery_step', version: 1, visibility: 'public',
+    requires: Object.freeze(['m:award', 'm:escrow']),
+    metadata: Object.freeze({ terminal: true, title: 'Close the Belladonna File' }),
+  }),
+  Object.freeze({
     id: 'm:role-secret', type: 'mystery_step', version: 1, visibility: 'role_private',
     metadata: Object.freeze({ roleId: 'investigator', secret: 'never publish me here' }),
+  }),
+  Object.freeze({
+    id: 'choice:role-secret', type: 'choice', version: 1, visibility: 'role_private',
+    metadata: Object.freeze({ roleId: 'investigator', secret: 'never publish this choice' }),
+    options: Object.freeze([Object.freeze({ id: 'private-option' })]),
   }),
 ]);
 
@@ -225,6 +253,37 @@ const otherContext = createMysteryContext({
 assert(Object.isFrozen(context));
 assert(Object.isFrozen(context.timeWindows));
 assert.equal(context.registry, registry);
+assert.equal(isWorldGraphRegistry(registry), true);
+
+const spoofPackage = Object.freeze({
+  id: 'spoof', version: 1, season: 'core', dependsOn: Object.freeze([]), nodes: Object.freeze([]),
+});
+assert.throws(
+  () => createMysteryContext({
+    registry: Object.freeze({
+      byPackage: new Map([['spoof', spoofPackage]]), nodes: new Map(),
+    }),
+    accountId: ACCOUNT,
+    now: NOW,
+  }),
+  (error) => error?.code === 'bad_mystery_context',
+  'freezing a wrapper around caller-mutable Maps cannot forge world-graph registry authority',
+);
+
+const mutableEffects = [];
+const mutableNode = {
+  id: 'm:immutable', type: 'mystery_step', visibility: 'public', effects: mutableEffects,
+};
+const authenticImmutableRegistry = loadGraphPackages([{
+  id: 'immutable-mystery', version: 1, season: 'core', dependsOn: [], nodes: [mutableNode],
+}]);
+const immutableContext = createMysteryContext({
+  registry: authenticImmutableRegistry, accountId: ACCOUNT, now: NOW,
+});
+mutableEffects.push({ adapter: 'cash', amount: 1000 });
+mutableNode.effects = mutableEffects;
+assert.equal(immutableContext.registry.nodes.get('m:immutable').effects.length, 0,
+  'post-context caller mutation cannot add executable effects to an authentic registry');
 
 const pool = await makeDb();
 const tx = (action) => withItemTransaction(pool, action);
@@ -280,6 +339,11 @@ try {
   assert.equal(started.graph.id, GRAPH_ID);
   assert.equal(started.graph.version, 1);
   assert.match(started.instanceId, /^[0-9a-f-]{36}$/i);
+  await pool.query(
+    `INSERT INTO mystery_choices (instance_id,node_id,choice_id,result_json)
+     VALUES ($1,'choice:role-secret','private-option','{}')`,
+    [started.instanceId],
+  );
 
   const characterOwner = Object.freeze({ scope: 'character', id: CHARACTER });
   const characterStarted = await act(startMystery, characterOwner, GRAPH_ID, 1);
@@ -292,14 +356,47 @@ try {
     (error) => error?.code === 'mystery_owner_forbidden',
     'another account cannot drive a character-rooted mystery by guessing its character id',
   );
+  const cancelTool = await tx((client) => createItem(
+    client, characterOwner, 'item:mystery_tool', 'crafted', 'm-cancel-tool-create',
+  ));
+  await act(
+    completeNode, characterOwner, GRAPH_ID, 'm:cancel-deposit',
+    { idempotencyKey: 'm-cancel-deposit-1' },
+  );
+  assert.deepEqual((await inventoryBoard(pool, { scope: 'operation', id: characterStarted.instanceId }))
+    .items.map(({ id }) => id), [cancelTool.id]);
+  const canceled = await act(
+    cancelMystery, characterOwner, GRAPH_ID, { idempotencyKey: 'm-cancel-1' },
+  );
+  assert.equal(canceled.status, 'canceled');
+  assert.equal(canceled.releasedEscrowCount, 1);
+  assert.deepEqual((await inventoryBoard(pool, characterOwner)).items.map(({ id }) => id),
+    [cancelTool.id], 'cancel returns mystery custody to the original depositor atomically');
+  assert.deepEqual(await act(
+    cancelMystery, characterOwner, GRAPH_ID, { idempotencyKey: 'm-cancel-1' },
+  ), canceled, 'cancel is exact on logical replay');
+  assert.equal((await act(startMystery, characterOwner, GRAPH_ID, 1)).status, 'canceled',
+    'start cannot reopen or misreport a canceled graph-pinned instance');
+  await assert.rejects(
+    act(
+      completeNode, characterOwner, GRAPH_ID, 'm:start',
+      { idempotencyKey: 'm-canceled-cannot-act', interactionId: 'inspect_manifest' },
+    ),
+    (error) => error?.code === 'mystery_closed',
+    'a canceled instance cannot continue',
+  );
 
   let board = await mysteryBoard(pool, context, OWNER, GRAPH_ID);
   assert.equal(board.instanceId, started.instanceId);
   assert.equal(board.graph.version, 1);
   assert.equal(board.nodes.some((node) => node.id === 'm:hidden'), false,
     'an undiscovered hidden node is absent, not redacted into an oracle');
+  assert.equal(JSON.stringify(board).includes('m:hidden'), false,
+    'public-node blockers cannot disclose an undiscovered hidden dependency id');
   assert.equal(board.nodes.some((node) => node.id === 'm:role-secret'), false,
     'Task 5 never publishes role-private nodes');
+  assert.equal(JSON.stringify(board).includes('choice:role-secret'), false,
+    'the choice summary also fails closed around role-private graph state');
   assert.equal(JSON.stringify(board).includes('effects'), false,
     'the board never publishes private effect authority');
   assert.equal(JSON.stringify(board).includes('never publish me here'), false);
@@ -395,10 +492,25 @@ try {
   );
   assert.equal(completedOr.node.status, 'completed', 'one member of each OR group is sufficient');
 
+  await assert.rejects(
+    act(
+      commitChoice, OWNER, GRAPH_ID, 'choice:path', 'left',
+      { idempotencyKey: 'm-choice-guessed-hidden' },
+    ),
+    (error) => error?.code === 'mystery_hidden',
+    'guessing a hidden choice id cannot bypass discovery',
+  );
+  await act(
+    discoverNode, OWNER, GRAPH_ID, 'choice:path',
+    { idempotencyKey: 'm-choice-discover-1' },
+  );
+
   const choice = await act(
     commitChoice, OWNER, GRAPH_ID, 'choice:path', 'left', { idempotencyKey: 'm-choice-1' },
   );
   assert.equal(choice.choice.id, 'left');
+  assert.equal(JSON.stringify(choice).includes('m:right'), false,
+    'choice responses do not leak directly or transitively excluded hidden node ids');
   assert.equal((await nodeState(started.instanceId, 'm:right')).state, 'excluded');
   assert.equal((await nodeState(started.instanceId, 'm:right-tail')).state, 'excluded',
     'closing a branch transitively closes nodes whose prerequisites can no longer be satisfied');
@@ -414,6 +526,19 @@ try {
     (error) => error?.code === 'choice_committed',
     'a committed branch is irreversible',
   );
+
+  await act(
+    completeNode, OWNER, GRAPH_ID, 'm:alternative',
+    { idempotencyKey: 'm-alternative-1' },
+  );
+  await assert.rejects(
+    act(
+      commitChoice, OWNER, GRAPH_ID, 'choice:conflict', 'too_late',
+      { idempotencyKey: 'm-choice-contradiction' },
+    ),
+    (error) => error?.code === 'choice_conflict',
+    'an option cannot exclude an already completed or chosen branch',
+  );
   await assert.rejects(
     act(completeNode, OWNER, GRAPH_ID, 'm:right', { idempotencyKey: 'm-right-closed' }),
     (error) => error?.code === 'mystery_excluded',
@@ -423,7 +548,8 @@ try {
     completeNode, OWNER, GRAPH_ID, 'm:evidence-source',
     { idempotencyKey: 'm-evidence-source-1' },
   );
-  assert.equal(evidenceSource.effects[0].kind, 'evidence');
+  assert.equal(JSON.stringify(evidenceSource).includes('evidence:belladonna'), false,
+    'completion results do not reveal hidden effect targets');
   assert.equal((await nodeState(started.instanceId, 'evidence:belladonna')).state, 'completed');
   await act(
     completeNode, OWNER, GRAPH_ID, 'm:evidence-gate',
@@ -442,8 +568,9 @@ try {
   const consumeResult = await act(
     completeNode, OWNER, GRAPH_ID, 'm:consume', { idempotencyKey: 'm-consume-1' },
   );
-  assert.equal(consumeResult.effects[0].item.id, consumeTool.id);
-  assert.equal(consumeResult.effects[0].item.state, 'consumed');
+  assert.equal((await pool.query(
+    'SELECT state FROM item_instances WHERE id=$1', [consumeTool.id],
+  )).rows[0].state, 'consumed');
   assert.deepEqual(await act(
     completeNode, OWNER, GRAPH_ID, 'm:consume', { idempotencyKey: 'm-consume-1' },
   ), consumeResult, 'same-key completion replay returns the original effect result');
@@ -460,10 +587,8 @@ try {
   const escrowResult = await act(
     completeNode, OWNER, GRAPH_ID, 'm:escrow', { idempotencyKey: 'm-escrow-1' },
   );
-  assert.deepEqual(escrowResult.effects[0].item.owner, {
-    scope: 'operation', id: started.instanceId,
-  });
-  assert.equal(escrowResult.effects[0].item.id, escrowTool.id);
+  assert.equal(JSON.stringify(escrowResult).includes(escrowTool.id), false,
+    'item effect identities stay inside the authoritative inventory board');
   assert.equal(await count(
     'SELECT COUNT(*) AS n FROM operation_escrow WHERE item_id=$1 AND operation_id=$2',
     [escrowTool.id, started.instanceId],
@@ -491,10 +616,30 @@ try {
   const award = await act(
     completeNode, OWNER, GRAPH_ID, 'm:award', { idempotencyKey: 'm-award-1' },
   );
-  assert.equal(award.effects[0].kind, 'unique_item_award');
-  assert.equal(award.effects[0].item.templateId, 'item:mystery_artifact');
-  assert.equal(award.effects[1].kind, 'status');
+  assert.equal(JSON.stringify(award).includes('item:mystery_artifact'), false);
+  assert.equal(JSON.stringify(award).includes('reward:mystery_status'), false,
+    'award effect targets are not exposed in mutation responses');
   assert.equal((await nodeState(started.instanceId, 'reward:mystery_status')).state, 'completed');
+
+  const terminal = await act(
+    completeNode, OWNER, GRAPH_ID, 'm:terminal', { idempotencyKey: 'm-terminal-1' },
+  );
+  assert.equal(terminal.status, 'completed');
+  assert.equal(terminal.releasedEscrowCount, 1);
+  assert.deepEqual((await inventoryBoard(pool, OWNER)).items
+    .filter(({ id }) => id === escrowTool.id).map(({ id }) => id), [escrowTool.id],
+  'successful graph-declared terminal completion releases mystery escrow');
+  assert.equal(await count(
+    'SELECT COUNT(*) AS n FROM operation_escrow WHERE operation_id=$1', [started.instanceId],
+  ), 0);
+  assert.deepEqual(await act(
+    completeNode, OWNER, GRAPH_ID, 'm:terminal', { idempotencyKey: 'm-terminal-1' },
+  ), terminal, 'terminal completion replays after the instance closes');
+  await assert.rejects(
+    act(completeNode, OWNER, GRAPH_ID, 'm:left', { idempotencyKey: 'm-after-terminal' }),
+    (error) => error?.code === 'mystery_closed',
+    'a successfully completed instance cannot continue',
+  );
 
   board = await mysteryBoard(pool, context, OWNER, GRAPH_ID);
   assert.deepEqual(board.choices, [{ nodeId: 'choice:path', choiceId: 'left' }]);
@@ -555,6 +700,51 @@ try {
     () => createMysteryContext({ registry: unsafeRegistry, accountId: ACCOUNT, now: NOW }),
     (error) => error?.code === 'unsupported_mystery_effect',
     'content cannot smuggle cash, OMR, SQL, or arbitrary execution through an effect',
+  );
+
+  for (const adapter of ['discover', 'complete']) {
+    const choiceEffectRegistry = loadAndValidateGraphPackages([Object.freeze({
+      id: `choice-effect-mystery-${adapter}`,
+      version: 1,
+      season: 'core',
+      dependsOn: Object.freeze([]),
+      nodes: Object.freeze([
+        Object.freeze({
+          id: `m:choice-effect-${adapter}`, type: 'mystery_step', visibility: 'public',
+          effects: Object.freeze([
+            Object.freeze({ adapter, nodeId: `choice:forbidden-target-${adapter}` }),
+          ]),
+        }),
+        Object.freeze({
+          id: `choice:forbidden-target-${adapter}`, type: 'choice', visibility: 'public',
+          options: Object.freeze([Object.freeze({ id: 'one' })]),
+        }),
+      ]),
+    })]);
+    assert.throws(
+      () => createMysteryContext({ registry: choiceEffectRegistry, accountId: ACCOUNT, now: NOW }),
+      (error) => error?.code === 'bad_mystery_effect',
+      `${adapter} effects cannot bypass commitChoice to complete choice nodes`,
+    );
+  }
+
+  const invalidTerminalRegistry = loadAndValidateGraphPackages([Object.freeze({
+    id: 'invalid-terminal-mystery',
+    version: 1,
+    season: 'core',
+    dependsOn: Object.freeze([]),
+    nodes: Object.freeze([Object.freeze({
+      id: 'choice:invalid-terminal', type: 'choice', visibility: 'public',
+      metadata: Object.freeze({ terminal: true }),
+      options: Object.freeze([Object.freeze({ id: 'one' })]),
+    })]),
+  })]);
+  assert.throws(
+    () => createMysteryContext({
+      registry: invalidTerminalRegistry, accountId: ACCOUNT, now: NOW,
+    }),
+    (error) => error?.code === 'bad_mystery_terminal',
+    'only an explicit terminal action node may close a mystery and release escrow',
   );
 
   console.log('✓ data-defined mystery runtime passed');

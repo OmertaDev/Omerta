@@ -500,6 +500,31 @@ try {
     ),
   ));
   assert.deepEqual(boundEscrow.owner, { scope: 'operation', id: 'operation-bound' });
+  await assert.rejects(
+    inTransaction((client) => withItemMutation(
+      client, characterA, 'mystery_action', 'authority-unbound-release-1', {
+        actionId: 'unbound-release', itemAuthority: { destinations: [characterA] },
+      },
+      (mutation) => releaseEscrow(
+        client, 'operation-bound', characterA, operationItem.id,
+        'unbound release', mutation,
+      ),
+    )),
+    (error) => error?.code === 'item_mutation_authority',
+    'compound release cannot invent an undeclared escrow operation',
+  );
+  const boundRelease = await inTransaction((client) => withItemMutation(
+    client, characterA, 'mystery_action', 'authority-bound-release-1', {
+      actionId: 'bound-release',
+      itemAuthority: { operations: ['operation-bound'], destinations: [characterA] },
+    },
+    (mutation) => releaseEscrow(
+      client, 'operation-bound', characterA, operationItem.id,
+      'bound release', mutation,
+    ),
+  ));
+  assert.deepEqual(boundRelease.owner, characterA,
+    'a compound action may release only a bound operation to a bound destination');
 
   const socialItem = await inTransaction((client) => createItem(
     client, characterA, 'item:social_contribution', 'awarded', 'social-item-create-1',

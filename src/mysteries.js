@@ -20,10 +20,11 @@ import {
   createItem,
   escrowItem,
   registerItemTransactionUndo,
+  releaseEscrow,
   withItemMutation,
 } from './items.js';
 import { levelOf } from './rules.js';
-import { nodeOf } from './worldgraph.js';
+import { isWorldGraphRegistry, nodeOf } from './worldgraph.js';
 import { validateGraph } from './worldgraph-validate.js';
 
 const CONTEXTS = new WeakSet();
@@ -129,7 +130,8 @@ function assertEffectTarget(registry, packageId, effect, adapter) {
   if (adapter === 'evidence_grant' && target.type !== 'evidence') {
     fail('bad_mystery_effect', 'Evidence grants require an evidence target.');
   }
-  if (['discover', 'complete'].includes(adapter) && !BOARD_NODE_TYPES.has(target.type)) {
+  if (['discover', 'complete'].includes(adapter)
+    && (!BOARD_NODE_TYPES.has(target.type) || target.type === 'choice')) {
     fail('bad_mystery_effect', `Mystery effect ${adapter} requires a runtime-state node target.`);
   }
   if (adapter === 'status_award') {
@@ -194,8 +196,21 @@ function validateMysteryDefinitions(registry) {
           `Mystery node ${node.id} has an invalid branch exclusion ${excludedId}.`);
       }
     }
+    const nodeCompletedTargets = new Set((Array.isArray(node.effects) ? node.effects : [])
+      .filter((effect) => ['complete', 'evidence_grant', 'status_award'].includes(effect.adapter))
+      .map((effect) => effect.nodeId));
+    if ((node.excludes || []).some((id) => id === node.id || nodeCompletedTargets.has(id))) {
+      fail('bad_mystery_exclusion',
+        `Mystery node ${node.id} cannot complete and exclude the same branch.`);
+    }
     if (node.effect !== undefined || node.action !== undefined || node.actions !== undefined) {
       fail('bad_mystery_effect', `Mystery node ${node.id} must use the effects array only.`);
+    }
+    if (node.metadata?.terminal !== undefined
+      && (node.metadata.terminal !== true || !ACTION_NODE_TYPES.has(node.type)
+        || node.visibility === 'role_private')) {
+      fail('bad_mystery_terminal',
+        `Mystery node ${node.id} has invalid terminal semantics.`);
     }
     assertEffects(registry, node, node.effects);
     if (node.type !== 'choice') continue;
@@ -224,6 +239,13 @@ function validateMysteryDefinitions(registry) {
         }
       }
       assertEffects(registry, node, option.effects);
+      const optionCompletedTargets = new Set([...(node.effects || []), ...(option.effects || [])]
+        .filter((effect) => ['complete', 'evidence_grant', 'status_award'].includes(effect.adapter))
+        .map((effect) => effect.nodeId));
+      if ((option.excludes || []).some((id) => id === node.id || optionCompletedTargets.has(id))) {
+        fail('bad_mystery_choice',
+          `Choice option ${optionId} cannot complete and exclude the same branch.`);
+      }
     }
   }
 }
@@ -240,8 +262,7 @@ export function createMysteryContext({
   now = new Date().toISOString(),
   timeWindows = {},
 } = {}) {
-  if (!registry || !Object.isFrozen(registry)
-    || !registry.byPackage || !registry.nodes) {
+  if (!isWorldGraphRegistry(registry)) {
     fail('bad_mystery_context', 'Mystery context requires an immutable world-graph registry.');
   }
   validateGraph(registry);
@@ -336,6 +357,7 @@ function instanceProjection(row) {
     createdAt: dateString(row.created_at),
     completedAt: dateString(row.completed_at),
     failedAt: dateString(row.failed_at),
+    canceledAt: dateString(row.canceled_at),
   };
 }
 
@@ -349,7 +371,7 @@ function startKey(owner, graphId, version) {
 async function instanceFor(client, owner, graphId, { lock = false } = {}) {
   return (await client.query(
     `SELECT id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,status,
-            created_at,updated_at,completed_at,failed_at
+            created_at,updated_at,completed_at,failed_at,canceled_at
        FROM mystery_instances
       WHERE owner_scope=$1 AND owner_id=$2 AND graph_id=$3${lock ? ' FOR UPDATE' : ''}`,
     [owner.scope, owner.id, graphId],
@@ -373,6 +395,20 @@ export async function startMystery(client, contextValue, ownerValue, graphIdValu
   const pkg = packageOf(context, graphIdValue, version);
   await authorizeOwner(client, context, owner);
   const graph = graphIdentity(pkg);
+  const existing = await instanceFor(client, owner, pkg.id);
+  if (existing) {
+    if (existing.authority_account_id !== context.accountId) {
+      fail('mystery_owner_forbidden', 'That account cannot control this mystery instance.');
+    }
+    if (Number(existing.graph_version) !== Number(pkg.version)) {
+      fail('graph_version_pinned', 'That owner already has this mystery pinned to another version.', {
+        graphId: pkg.id,
+        pinnedVersion: Number(existing.graph_version),
+        requestedVersion: Number(pkg.version),
+      });
+    }
+    return { ok: true, ...instanceProjection(existing) };
+  }
   return withItemMutation(
     client,
     owner,
@@ -599,7 +635,9 @@ function throwBlocker(blocker) {
     fail('item_unavailable', 'The required unique item is not held by this mystery owner.');
   }
   if (blocker.adapter === 'material_quantity') {
-    fail('materials', 'The mystery owner lacks the required material quantity.', blocker);
+    fail('materials', 'The mystery owner lacks the required material quantity.', {
+      required: blocker.required, current: blocker.current,
+    });
   }
   if (blocker.adapter === 'evidence') {
     fail('evidence', 'The required evidence has not been established.');
@@ -610,17 +648,18 @@ function throwBlocker(blocker) {
   if (blocker.adapter === 'explicit_interaction') {
     fail('interaction', 'That mystery node requires its exact explicit interaction.');
   }
-  fail('mystery_prerequisite', 'That mystery node has unmet graph prerequisites.', blocker);
+  fail('mystery_prerequisite', 'That mystery node has unmet graph prerequisites.');
 }
 
-function actionNode(context, graphId, nodeIdValue, expectedType = null) {
+function actionNode(context, graphId, nodeIdValue, expectedType = null, { discovery = false } = {}) {
   const nodeId = canonical(nodeIdValue, 'Mystery node id');
   const node = nodeOf(context.registry, nodeId);
   if (!node || node.packageId !== graphId) fail('mystery_node', 'No such node in this mystery graph.');
   if (expectedType && node.type !== expectedType) {
     fail('mystery_node_type', `Mystery node ${nodeId} is not a ${expectedType}.`);
   }
-  if (!expectedType && !ACTION_NODE_TYPES.has(node.type)) {
+  if (!expectedType && !ACTION_NODE_TYPES.has(node.type)
+    && !(discovery && node.type === 'choice')) {
     fail('mystery_node_type', `Mystery node ${nodeId} is not directly completable.`);
   }
   if (node.visibility === 'role_private') {
@@ -653,7 +692,7 @@ async function actionAuthority(client, context, owner, graphId) {
   return { pkg, instance };
 }
 
-async function lockedActionInstance(client, authority, context) {
+async function lockedActionInstance(client, authority, context, { allowClosed = false } = {}) {
   const instance = await instanceFor(
     client,
     { scope: authority.instance.owner_scope, id: authority.instance.owner_id },
@@ -665,8 +704,33 @@ async function lockedActionInstance(client, authority, context) {
     fail('mystery_owner_forbidden', 'Mystery instance authority changed.');
   }
   assertPinned(instance, authority.pkg);
-  if (instance.status !== 'active') fail('mystery_closed', 'That mystery instance is not active.');
+  if (!allowClosed && instance.status !== 'active') {
+    fail('mystery_closed', 'That mystery instance is not active.');
+  }
   return instance;
+}
+
+async function setInstanceStatus(client, instance, status) {
+  const prior = { ...instance };
+  registerItemTransactionUndo(client, () => client.query(
+    `UPDATE mystery_instances
+        SET status=$2,updated_at=$3,completed_at=$4,failed_at=$5,canceled_at=$6
+      WHERE id=$1`,
+    [prior.id, prior.status, prior.updated_at, prior.completed_at, prior.failed_at, prior.canceled_at],
+  ));
+  const completedAt = status === 'completed' ? new Date() : null;
+  const failedAt = status === 'failed' ? new Date() : null;
+  const canceledAt = status === 'canceled' ? new Date() : null;
+  const changed = await client.query(
+    `UPDATE mystery_instances
+        SET status=$2,updated_at=now(),completed_at=$3,failed_at=$4,canceled_at=$5
+      WHERE id=$1 AND status='active'
+      RETURNING id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,status,
+                created_at,updated_at,completed_at,failed_at,canceled_at`,
+    [instance.id, status, completedAt, failedAt, canceledAt],
+  );
+  if (changed.rowCount !== 1) fail('mystery_closed', 'That mystery instance is not active.');
+  return changed.rows[0];
 }
 
 async function selectOwnedItem(client, owner, templateId) {
@@ -678,6 +742,32 @@ async function selectOwnedItem(client, owner, templateId) {
   )).rows[0];
   if (!row) fail('item_unavailable', 'The required unique item is not spendable by this owner.');
   return row.id;
+}
+
+async function releaseMysteryEscrow(client, owner, instance, mutation) {
+  const rows = (await client.query(
+    `SELECT item_id,depositor_scope,depositor_id
+       FROM operation_escrow WHERE operation_id=$1
+       ORDER BY created_at,item_id FOR UPDATE`,
+    [instance.id],
+  )).rows;
+  for (const row of rows) {
+    if (row.depositor_scope !== owner.scope || row.depositor_id !== owner.id) {
+      fail('mystery_escrow_authority',
+        'A mystery instance may release only its root owner\'s escrow.');
+    }
+  }
+  for (const row of rows) {
+    await releaseEscrow(
+      client,
+      instance.id,
+      owner,
+      row.item_id,
+      `mystery ${instance.graph_id} release`,
+      mutation,
+    );
+  }
+  return rows.length;
 }
 
 async function closeExcludedBranches(client, context, instance, initialIds) {
@@ -710,7 +800,6 @@ async function closeExcludedBranches(client, context, instance, initialIds) {
     if (current?.state === 'completed' || current?.state === 'excluded') continue;
     await setNodeState(client, instance.id, nodeId, 'excluded');
   }
-  return [...closed].sort();
 }
 
 async function applyEffects({ client, context, owner, instance, effects, mutation }) {
@@ -785,18 +874,24 @@ async function completeGraphNode({
     client, context, owner, actor, instance, states, node, interactionId, lock: true,
   });
   if (blockers.length) throwBlocker(blockers[0]);
-  const effects = await applyEffects({
+  await applyEffects({
     client, context, owner, instance, effects: [...(node.effects || []), ...extraEffects], mutation,
   });
   const row = await setNodeState(client, instance.id, node.id, 'completed');
-  const closed = await closeExcludedBranches(client, context, instance, node.excludes || []);
+  await closeExcludedBranches(client, context, instance, node.excludes || []);
   const result = {
     ok: true,
     instanceId: instance.id,
     node: { id: node.id, status: 'completed', completedAt: dateString(row.completed_at) },
-    effects,
-    ...(closed.length ? { excluded: closed } : {}),
   };
+  if (node.metadata?.terminal === true) {
+    result.releasedEscrowCount = await releaseMysteryEscrow(
+      client, owner, instance, mutation,
+    );
+    const completedInstance = await setInstanceStatus(client, instance, 'completed');
+    result.status = completedInstance.status;
+    result.completedAt = dateString(completedInstance.completed_at);
+  }
   await saveNodeResult(client, instance.id, node.id, result);
   return result;
 }
@@ -810,7 +905,7 @@ export async function discoverNode(
   const graphId = canonical(graphIdValue, 'Mystery graph id');
   const options = mutationOptions(optionsValue);
   const authority = await actionAuthority(client, context, owner, graphId);
-  const node = actionNode(context, graphId, nodeIdValue);
+  const node = actionNode(context, graphId, nodeIdValue, null, { discovery: true });
   return withItemMutation(
     client,
     owner,
@@ -868,7 +963,10 @@ export async function completeNode(
     {
       action: 'complete', graph: graphIdentity(authority.pkg), nodeId: node.id,
       interactionId: options.interactionId,
-      itemAuthority: { operations: [authority.instance.id] },
+      itemAuthority: {
+        operations: [authority.instance.id],
+        ...(node.metadata?.terminal === true ? { destinations: [owner] } : {}),
+      },
     },
     async (mutation) => {
       const instance = await lockedActionInstance(client, authority, context);
@@ -933,6 +1031,22 @@ export async function commitChoice(
         return JSON.parse(existing.result_json);
       }
       let states = stateMap(await stateRows(client, instance.id));
+      const current = states.get(node.id);
+      if (node.visibility !== 'public' && current?.state !== 'discovered') {
+        fail('mystery_hidden', 'Discover that mystery choice before committing it.');
+      }
+      const exclusionIds = [...new Set([
+        ...(node.excludes || []), ...(option.excludes || []),
+      ])];
+      const committedChoices = new Set((await client.query(
+        'SELECT node_id FROM mystery_choices WHERE instance_id=$1', [instance.id],
+      )).rows.map(({ node_id: id }) => id));
+      const contradictory = exclusionIds.find((id) => (
+        states.get(id)?.state === 'completed' || committedChoices.has(id)
+      ));
+      if (contradictory) {
+        fail('choice_conflict', 'That option contradicts an already completed mystery branch.');
+      }
       const actor = await actorOf(client, context, owner);
       states = stateMap(await stateRows(client, instance.id));
       const blockers = await nodeBlockers({
@@ -941,21 +1055,17 @@ export async function commitChoice(
       });
       if (blockers.length) throwBlocker(blockers[0]);
       const committed = await insertChoice(client, instance.id, node.id, choiceId);
-      const effects = await applyEffects({
+      await applyEffects({
         client, context, owner, instance,
         effects: [...(node.effects || []), ...(option.effects || [])], mutation,
       });
       const completed = await setNodeState(client, instance.id, node.id, 'completed');
-      const excluded = await closeExcludedBranches(
-        client, context, instance, [...(node.excludes || []), ...(option.excludes || [])],
-      );
+      await closeExcludedBranches(client, context, instance, exclusionIds);
       const result = {
         ok: true,
         instanceId: instance.id,
         node: { id: node.id, status: 'completed', completedAt: dateString(completed.completed_at) },
         choice: { id: choiceId, committedAt: dateString(committed.committed_at) },
-        effects,
-        ...(excluded.length ? { excluded } : {}),
       };
       await client.query(
         `UPDATE mystery_choices SET result_json=$3
@@ -964,6 +1074,51 @@ export async function commitChoice(
       );
       await saveNodeResult(client, instance.id, node.id, result);
       return result;
+    },
+  );
+}
+
+/**
+ * Cancel one active mystery and atomically return every item held by that mystery to its original
+ * root owner. Cancellation needs no living-character eligibility, so a durable account can recover
+ * custody after street replacement and a character owner can recover while its historical row still
+ * proves the authenticated account relationship.
+ */
+export async function cancelMystery(
+  client, contextValue, ownerValue, graphIdValue, optionsValue,
+) {
+  const context = contextOf(contextValue);
+  const owner = ownerOf(ownerValue);
+  const graphId = canonical(graphIdValue, 'Mystery graph id');
+  const options = mutationOptions(optionsValue);
+  const authority = await actionAuthority(client, context, owner, graphId);
+  return withItemMutation(
+    client,
+    owner,
+    'mystery_action',
+    options.idempotencyKey,
+    {
+      action: 'cancel', graph: graphIdentity(authority.pkg),
+      itemAuthority: {
+        operations: [authority.instance.id],
+        destinations: [owner],
+      },
+    },
+    async (mutation) => {
+      const instance = await lockedActionInstance(
+        client, authority, context, { allowClosed: true },
+      );
+      if (instance.status === 'canceled') {
+        return { ok: true, ...instanceProjection(instance), releasedEscrowCount: 0 };
+      }
+      if (instance.status !== 'active') {
+        fail('mystery_closed', 'A completed or failed mystery cannot be canceled.');
+      }
+      const releasedEscrowCount = await releaseMysteryEscrow(
+        client, owner, instance, mutation,
+      );
+      const canceled = await setInstanceStatus(client, instance, 'canceled');
+      return { ok: true, ...instanceProjection(canceled), releasedEscrowCount };
     },
   );
 }
@@ -982,6 +1137,26 @@ function publicNode(node, row, blockers) {
   };
   if (node.type === 'choice') {
     projection.options = node.options.map(({ id, title }) => ({ id, title: title || id }));
+  }
+  return projection;
+}
+
+function publicBlocker(context, states, blocker) {
+  const visibleReference = (id) => {
+    const target = nodeOf(context.registry, id);
+    if (!target) return true;
+    if (target.visibility === 'public') return true;
+    if (target.visibility === 'role_private') return false;
+    const state = states.get(id);
+    return !!state?.discovered_at || state?.state === 'completed';
+  };
+  const projection = { ...blocker };
+  if (projection.nodeId && !visibleReference(projection.nodeId)) delete projection.nodeId;
+  if (projection.templateId && !visibleReference(projection.templateId)) delete projection.templateId;
+  if (Array.isArray(projection.nodeIds)) {
+    const visible = projection.nodeIds.filter(visibleReference);
+    if (visible.length) projection.nodeIds = visible;
+    else delete projection.nodeIds;
   }
   return projection;
 }
@@ -1014,12 +1189,19 @@ export async function mysteryBoard(client, contextValue, ownerValue, graphIdValu
     const blockers = await nodeBlockers({
       client, context, owner, actor, instance, states, node, lock: false,
     });
-    nodes.push(publicNode(node, row, blockers));
+    nodes.push(publicNode(
+      node, row, blockers.map((blocker) => publicBlocker(context, states, blocker)),
+    ));
   }
   const choices = (await client.query(
     `SELECT node_id,choice_id FROM mystery_choices
       WHERE instance_id=$1 ORDER BY committed_at,node_id`, [instance.id],
-  )).rows.map((row) => ({ nodeId: row.node_id, choiceId: row.choice_id }));
+  )).rows.filter((row) => {
+    const choice = nodeOf(context.registry, row.node_id);
+    if (!choice || choice.type !== 'choice' || choice.visibility === 'role_private') return false;
+    const state = states.get(row.node_id);
+    return choice.visibility === 'public' || !!state?.discovered_at || state?.state === 'completed';
+  }).map((row) => ({ nodeId: row.node_id, choiceId: row.choice_id }));
   return {
     ...instanceProjection(instance),
     graph: { ...graphIdentity(pkg), version: Number(instance.graph_version) },

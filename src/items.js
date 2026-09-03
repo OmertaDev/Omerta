@@ -263,10 +263,19 @@ function compositeAuthority(request) {
 }
 
 function assertCompositeAuthority(composite, kind, owner, request) {
+  if (kind === 'release_escrow') {
+    if (owner.scope !== 'operation' || !composite.authority.operations.has(owner.id)) {
+      fail('item_mutation_authority', 'The compound mutation did not bind that escrow operation.');
+    }
+    if (!composite.authority.destinations.has(ownerKey(request.to))) {
+      fail('item_mutation_authority', 'The compound mutation did not bind that destination owner.');
+    }
+    return;
+  }
   if (ownerKey(owner) !== ownerKey(composite.rootOwner)) {
     fail('item_mutation_authority', 'A compound item mutation cannot spend or grant for another owner.');
   }
-  if (kind === 'transfer_item' || kind === 'release_escrow') {
+  if (kind === 'transfer_item') {
     if (!composite.authority.destinations.has(ownerKey(request.to))) {
       fail('item_mutation_authority', 'The compound mutation did not bind that destination owner.');
     }

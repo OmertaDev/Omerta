@@ -4612,6 +4612,7 @@ CREATE TABLE IF NOT EXISTS mystery_instances (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   completed_at TIMESTAMPTZ,
   failed_at TIMESTAMPTZ,
+  canceled_at TIMESTAMPTZ,
   UNIQUE (owner_scope, owner_id, graph_id),
   CONSTRAINT mystery_instance_id CHECK (char_length(id) BETWEEN 1 AND 200),
   CONSTRAINT mystery_instance_owner_scope CHECK (owner_scope IN ('character','account')),
@@ -4619,13 +4620,27 @@ CREATE TABLE IF NOT EXISTS mystery_instances (
   CONSTRAINT mystery_instance_authority CHECK (char_length(authority_account_id) BETWEEN 1 AND 200),
   CONSTRAINT mystery_instance_graph_id CHECK (char_length(graph_id) BETWEEN 1 AND 200),
   CONSTRAINT mystery_instance_graph_version CHECK (graph_version > 0),
-  CONSTRAINT mystery_instance_status CHECK (status IN ('active','completed','failed')),
+  CONSTRAINT mystery_instance_status CHECK (status IN ('active','completed','failed','canceled')),
   CONSTRAINT mystery_instance_status_time CHECK (
-    (status = 'active' AND completed_at IS NULL AND failed_at IS NULL)
-    OR (status = 'completed' AND completed_at IS NOT NULL AND failed_at IS NULL)
-    OR (status = 'failed' AND completed_at IS NULL AND failed_at IS NOT NULL)
+    (status = 'active' AND completed_at IS NULL AND failed_at IS NULL AND canceled_at IS NULL)
+    OR (status = 'completed' AND completed_at IS NOT NULL AND failed_at IS NULL AND canceled_at IS NULL)
+    OR (status = 'failed' AND completed_at IS NULL AND failed_at IS NOT NULL AND canceled_at IS NULL)
+    OR (status = 'canceled' AND completed_at IS NULL AND failed_at IS NULL AND canceled_at IS NOT NULL)
   )
 );
+ALTER TABLE mystery_instances ADD COLUMN IF NOT EXISTS canceled_at TIMESTAMPTZ;
+ALTER TABLE mystery_instances DROP CONSTRAINT IF EXISTS mystery_instance_status;
+ALTER TABLE mystery_instances
+  ADD CONSTRAINT mystery_instance_status
+  CHECK (status IN ('active','completed','failed','canceled'));
+ALTER TABLE mystery_instances DROP CONSTRAINT IF EXISTS mystery_instance_status_time;
+ALTER TABLE mystery_instances
+  ADD CONSTRAINT mystery_instance_status_time CHECK (
+    (status = 'active' AND completed_at IS NULL AND failed_at IS NULL AND canceled_at IS NULL)
+    OR (status = 'completed' AND completed_at IS NOT NULL AND failed_at IS NULL AND canceled_at IS NULL)
+    OR (status = 'failed' AND completed_at IS NULL AND failed_at IS NOT NULL AND canceled_at IS NULL)
+    OR (status = 'canceled' AND completed_at IS NULL AND failed_at IS NULL AND canceled_at IS NOT NULL)
+  );
 CREATE INDEX IF NOT EXISTS ix_mystery_instances_authority
   ON mystery_instances (authority_account_id, status, created_at);
 

@@ -12,6 +12,7 @@ const TYPES = new Set([
   'choice',
   'reward',
 ]);
+const WORLD_GRAPH_REGISTRIES = new WeakSet();
 
 function immutableData(value, seen = new WeakMap()) {
   if (typeof value === 'function') {
@@ -77,8 +78,17 @@ export function loadGraphPackages(packages) {
     }
   }
 
-  return Object.freeze({ byPackage: readonlyMap(byPackage), nodes: readonlyMap(nodes) });
+  const registry = Object.freeze({ byPackage: readonlyMap(byPackage), nodes: readonlyMap(nodes) });
+  WORLD_GRAPH_REGISTRIES.add(registry);
+  return registry;
 }
+
+// An Object.freeze check is forgeable: a caller can freeze a wrapper around still-mutable Maps.
+// Runtime authority accepts only registries minted by this module after deep-copying/freezing every
+// package and node. The private WeakSet cannot be reproduced by content or an HTTP caller.
+export const isWorldGraphRegistry = (registry) => (
+  !!registry && typeof registry === 'object' && WORLD_GRAPH_REGISTRIES.has(registry)
+);
 
 export const nodeOf = (registry, id) => registry.nodes.get(id) || null;
 
