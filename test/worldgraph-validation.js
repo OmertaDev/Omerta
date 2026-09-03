@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import { loadGraphPackages } from '../src/worldgraph.js';
-import { GraphValidationError, validateGraph } from '../src/worldgraph-validate.js';
+import {
+  GraphValidationError,
+  loadAndValidateGraphPackages,
+  validateGraph,
+} from '../src/worldgraph-validate.js';
 
 function registry(nodes, overrides = {}) {
   return loadGraphPackages([{
@@ -78,6 +82,22 @@ expectCode(() => validateGraph(registry([
 ])), 'unsupported_condition_adapter', /unsupported condition adapter/i);
 
 expectCode(() => validateGraph(registry([
+  { id: 'm:a', type: 'mystery_step', conditions: [{ adapter: 'material_quantity', quantity: 1 }] },
+])), 'malformed_condition', /material_quantity.*template/i);
+
+expectCode(() => validateGraph(registry([
+  { id: 'm:a', type: 'mystery_step', conditions: [{ adapter: 'graph_dependency' }] },
+])), 'malformed_condition', /graph_dependency.*node/i);
+
+expectCode(() => validateGraph(registry([
+  { id: 'mat:not-item', type: 'material' },
+  {
+    id: 'm:a', type: 'mystery_step',
+    conditions: [{ adapter: 'item_ownership', templateId: 'mat:not-item' }],
+  },
+])), 'invalid_condition_target', /item_template/i);
+
+expectCode(() => validateGraph(registry([
   {
     id: 'op:bad-adapter', type: 'social_gate',
     metadata: { roles: [{ id: 'driver', conditions: [{ adapter: 'run_javascript' }] }] },
@@ -92,6 +112,25 @@ expectCode(() => validateGraph(registry([
     },
   },
 ])), 'missing_node_dependency', /missing dependency/i);
+
+expectCode(() => validateGraph(loadGraphPackages([
+  {
+    id: 'core', version: 1, season: 'core', dependsOn: [],
+    nodes: [{ id: 'item:core-tool', type: 'item_template' }],
+  },
+  {
+    id: 'social', version: 1, season: 'season:1', dependsOn: [],
+    nodes: [{
+      id: 'op:role-ref', type: 'social_gate',
+      metadata: {
+        roles: [{
+          id: 'mechanic',
+          conditions: [{ adapter: 'item_ownership', templateId: 'item:core-tool' }],
+        }],
+      },
+    }],
+  },
+])), 'undeclared_package_dependency', /does not declare package dependency/i);
 
 expectCode(() => validateGraph(registry([
   { id: 'mat:ore', type: 'material', metadata: { inventoryClass: 'stack' } },
@@ -115,12 +154,20 @@ assert.equal(validateGraph(registry([
     id: 'recipe:salvage-car', type: 'recipe',
     consumes: [{ assetType: 'car', quantity: 1 }],
     produces: [{ templateId: 'mat:scrap', quantity: 2 }],
-    conditions: [{ adapter: 'owns_car' }],
+    conditions: [{ adapter: 'owns_car', value: 'any' }],
   },
 ])).ok, true, 'a declared car asset is a valid non-graph salvage input');
 
+expectCode(() => validateGraph(registry([{
+  id: 'recipe:missing-car-selector', type: 'recipe',
+  conditions: [{ adapter: 'owns_car' }],
+}])), 'malformed_condition', /owns_car.*selector/i);
+
 expectCode(() => validateGraph(registry([
-  { id: 'mat:a', type: 'material', metadata: { inventoryClass: 'stack' } },
+  {
+    id: 'mat:a', type: 'material',
+    metadata: { inventoryClass: 'stack', administratorSeeded: true },
+  },
   { id: 'mat:b', type: 'material', metadata: { inventoryClass: 'stack' } },
   {
     id: 'recipe:a-from-b', type: 'recipe',
@@ -132,23 +179,189 @@ expectCode(() => validateGraph(registry([
     consumes: [{ templateId: 'mat:a', quantity: 1 }],
     produces: [{ templateId: 'mat:b', quantity: 1 }],
   },
-])), 'zero_cost_recipe_cycle', /zero-cost recursive recipe ancestor/i);
+])), 'undeclared_recipe_cycle', /recursive recipe.*repeatable/i);
 
-const paidCycle = validateGraph(registry([
-  { id: 'mat:a', type: 'material', metadata: { inventoryClass: 'stack' } },
+const destructiveCycle = validateGraph(registry([
+  {
+    id: 'mat:a', type: 'material',
+    metadata: { inventoryClass: 'stack', administratorSeeded: true },
+  },
   { id: 'mat:b', type: 'material', metadata: { inventoryClass: 'stack' } },
   {
-    id: 'recipe:a-from-b', type: 'recipe', cashCost: 25,
+    id: 'recipe:b-from-a', type: 'recipe', repeatability: 'repeatable',
+    consumes: [{ templateId: 'mat:a', quantity: 2 }],
+    produces: [{ templateId: 'mat:b', quantity: 1 }],
+  },
+  {
+    id: 'recipe:a-from-b', type: 'recipe', repeatability: 'repeatable',
+    consumes: [{ templateId: 'mat:b', quantity: 2 }],
+    produces: [{ templateId: 'mat:a', quantity: 1 }],
+  },
+]));
+assert.equal(destructiveCycle.ok, true,
+  'an explicitly repeatable destructive recipe SCC is conservation-safe');
+
+const multiInputDestructiveCycle = validateGraph(registry([
+  { id: 'mat:a', type: 'material', metadata: { administratorSeeded: true } },
+  { id: 'mat:b', type: 'material', metadata: { administratorSeeded: true } },
+  { id: 'mat:c', type: 'material' },
+  {
+    id: 'recipe:c', type: 'recipe', repeatability: 'repeatable',
+    consumes: [
+      { templateId: 'mat:a', quantity: 1 },
+      { templateId: 'mat:b', quantity: 100 },
+    ],
+    produces: [{ templateId: 'mat:c', quantity: 2 }],
+  },
+  {
+    id: 'recipe:ab', type: 'recipe', repeatability: 'repeatable',
+    consumes: [{ templateId: 'mat:c', quantity: 1 }],
+    produces: [
+      { templateId: 'mat:a', quantity: 1 },
+      { templateId: 'mat:b', quantity: 1 },
+    ],
+  },
+]));
+assert.equal(multiInputDestructiveCycle.ok, true,
+  'cycle conservation includes every co-input and co-output of participating recipes');
+
+expectCode(() => validateGraph(registry([
+  { id: 'mat:a', type: 'material', metadata: { administratorSeeded: true } },
+  { id: 'mat:b', type: 'material' },
+  {
+    id: 'recipe:b', type: 'recipe', repeatability: 'repeatable',
+    consumes: [{ templateId: 'mat:a', quantity: 1 }],
+    produces: [{ templateId: 'mat:b', quantity: 2 }],
+  },
+  {
+    id: 'recipe:a', type: 'recipe', repeatability: 'repeatable',
+    consumes: [{ templateId: 'mat:b', quantity: 3 }],
+    produces: [{ templateId: 'mat:a', quantity: 2 }],
+  },
+])), 'inflationary_recipe_cycle', /inflationary recursive recipe/i);
+
+assert.equal(validateGraph(registry([
+  { id: 'mat:a', type: 'material', metadata: { administratorSeeded: true } },
+  { id: 'mat:b', type: 'material' },
+  {
+    id: 'recipe:b', type: 'recipe', repeatability: 'repeatable',
+    consumes: [{ templateId: 'mat:a', quantity: 10 }],
+    produces: [{ templateId: 'mat:b', quantity: 20 }],
+  },
+  {
+    id: 'recipe:a', type: 'recipe', repeatability: 'repeatable',
+    consumes: [{ templateId: 'mat:b', quantity: 10 }],
+    produces: [{ templateId: 'mat:a', quantity: 4 }],
+  },
+])).ok, true, 'stoichiometric recipe multiplicities preserve a destructive cycle');
+
+expectCode(() => validateGraph(registry([
+  {
+    id: 'mat:a', type: 'material',
+    metadata: { inventoryClass: 'stack', administratorSeeded: true },
+  },
+  { id: 'mat:b', type: 'material', metadata: { inventoryClass: 'stack' } },
+  {
+    id: 'recipe:b-from-a', type: 'recipe', repeatability: 'repeatable',
+    consumes: [{ templateId: 'mat:a', quantity: 1 }],
+    produces: [{ templateId: 'mat:b', quantity: 2 }],
+  },
+  {
+    id: 'recipe:a-from-b', type: 'recipe', repeatability: 'repeatable',
     consumes: [{ templateId: 'mat:b', quantity: 1 }],
     produces: [{ templateId: 'mat:a', quantity: 1 }],
   },
+])), 'inflationary_recipe_cycle', /inflationary recursive recipe/i);
+
+expectCode(() => validateGraph(registry([
+  { id: 'mat:a', type: 'material', metadata: { inventoryClass: 'stack' } },
+  { id: 'mat:b', type: 'material', metadata: { inventoryClass: 'stack' } },
   {
-    id: 'recipe:b-from-a', type: 'recipe',
+    id: 'recipe:b-from-a', type: 'recipe', repeatability: 'repeatable', cashCost: 50,
     consumes: [{ templateId: 'mat:a', quantity: 1 }],
     produces: [{ templateId: 'mat:b', quantity: 1 }],
   },
+  {
+    id: 'recipe:a-from-b', type: 'recipe', repeatability: 'repeatable',
+    consumes: [{ templateId: 'mat:b', quantity: 1 }],
+    produces: [{ templateId: 'mat:a', quantity: 1 }],
+  },
+])), 'unsourced_material', /no reachable source/i);
+
+expectCode(() => validateGraph(registry([
+  { id: 'mat:catalyst', type: 'material' },
+  { id: 'mat:output', type: 'material' },
+  {
+    id: 'recipe:catalyst', type: 'recipe',
+    catalystInputs: [{ templateId: 'mat:catalyst', quantity: 1 }],
+    produces: [{ templateId: 'mat:output', quantity: 1 }],
+  },
+])), 'unsourced_material', /mat:catalyst.*no reachable source/i);
+
+expectCode(() => validateGraph(registry([
+  { id: 'mat:condition', type: 'material' },
+  {
+    id: 'm:condition', type: 'mystery_step',
+    conditions: [{ adapter: 'material_quantity', templateId: 'mat:condition', quantity: 2 }],
+  },
+])), 'unsourced_material', /mat:condition.*no reachable source/i);
+
+const recursiveSourceChain = validateGraph(registry([
+  { id: 'mat:raw', type: 'material' },
+  { id: 'mat:middle', type: 'material' },
+  { id: 'mat:final', type: 'material' },
+  { id: 'source:raw', type: 'source', produces: [{ templateId: 'mat:raw', quantity: 1 }] },
+  {
+    id: 'recipe:middle', type: 'recipe',
+    consumes: [{ templateId: 'mat:raw', quantity: 1 }],
+    produces: [{ templateId: 'mat:middle', quantity: 1 }],
+  },
+  {
+    id: 'recipe:final', type: 'recipe',
+    consumes: [{ templateId: 'mat:middle', quantity: 1 }],
+    produces: [{ templateId: 'mat:final', quantity: 1 }],
+  },
 ]));
-assert.equal(paidCycle.ok, true, 'an explicit positive economic cost breaks a zero-cost loop');
+assert.equal(recursiveSourceChain.ok, true,
+  'recipe outputs become reachable only after all upstream material requirements are reachable');
+
+const catalystSource = validateGraph(registry([
+  { id: 'mat:catalyst', type: 'material' },
+  { id: 'mat:product', type: 'material' },
+  {
+    id: 'source:catalyst', type: 'source',
+    produces: [{ templateId: 'mat:catalyst', quantity: 1 }],
+  },
+  {
+    id: 'recipe:catalyzed', type: 'recipe',
+    catalystInputs: [{ templateId: 'mat:catalyst', quantity: 1 }],
+    produces: [{ templateId: 'mat:product', quantity: 1 }],
+  },
+]));
+assert.equal(catalystSource.warnings.some(({ code, nodeId }) => (
+  code === 'orphaned_source' && nodeId === 'source:catalyst'
+)), false, 'a catalyst is a real downstream use for source diagnostics');
+
+expectCode(() => validateGraph(loadGraphPackages([
+  {
+    id: 'core-material', version: 1, season: 'core', dependsOn: [],
+    nodes: [{ id: 'mat:shared', type: 'material' }],
+  },
+  {
+    id: 'unrelated-provider', version: 1, season: 'core', dependsOn: ['core-material'],
+    nodes: [{
+      id: 'source:shared', type: 'source',
+      produces: [{ templateId: 'mat:shared', quantity: 1 }],
+    }],
+  },
+  {
+    id: 'consumer', version: 1, season: 'core', dependsOn: ['core-material'],
+    nodes: [{
+      id: 'sink:shared', type: 'sink',
+      consumes: [{ templateId: 'mat:shared', quantity: 1 }],
+    }],
+  },
+])), 'unsourced_material', /consumer.*dependency set/i);
 
 expectCode(() => validateGraph(registry([
   {
@@ -188,7 +401,78 @@ expectCode(() => validateGraph(registry([
       roles: [{ id: 'investigator' }, { id: 'driver' }],
     },
   },
-])), 'impossible_social_operation', /minimumDistinctAccounts.*roles/i);
+])), 'impossible_social_operation', /minimumDistinctAccounts.*maximum feasible/i);
+
+expectCode(() => validateGraph(registry([
+  {
+    id: 'op:same-account', type: 'social_gate',
+    metadata: {
+      minimumDistinctAccounts: 3,
+      roles: [
+        { id: 'driver' },
+        { id: 'navigator', sameAccountAs: 'driver' },
+        { id: 'lookout' },
+      ],
+    },
+  },
+])), 'impossible_social_operation', /maximum feasible.*2/i);
+
+expectCode(() => validateGraph(registry([{
+  id: 'op:one-account-only', type: 'social_gate',
+  metadata: {
+    minimumDistinctAccounts: 2,
+    roles: [{ id: 'driver' }, { id: 'navigator', sameAccountAs: 'driver' }],
+  },
+}])), 'impossible_social_operation', /maximum feasible.*1/i);
+
+const socialSolver = validateGraph(registry([
+  {
+    id: 'op:solver', type: 'social_gate',
+    metadata: {
+      roles: [
+        {
+          id: 'investigator', distinct: true,
+          conditions: [
+            { adapter: 'owns_car', value: 'sedan' },
+            { adapter: 'owns_car', value: 'coupe' },
+          ],
+        },
+        { id: 'driver' },
+        { id: 'lookout', sameAccountAs: 'driver' },
+      ],
+    },
+  },
+]));
+assert.deepEqual(socialSolver.reports.socialOperations[0], {
+  nodeId: 'op:solver',
+  packageId: 'test-world',
+  minimumDistinctAccounts: 2,
+  maximumDistinctAccounts: 2,
+  requiredRoles: ['investigator', 'driver', 'lookout'],
+  rolesMayShareAccounts: true,
+});
+
+const singleRoleSocial = validateGraph(registry([{
+  id: 'op:single-role', type: 'social_gate',
+  metadata: { roles: [{ id: 'observer' }] },
+}]));
+assert.equal(singleRoleSocial.reports.socialOperations[0].minimumDistinctAccounts, 1,
+  'a non-empty social operation always requires at least one account');
+
+expectCode(() => validateGraph(registry([
+  {
+    id: 'op:locations', type: 'social_gate',
+    metadata: {
+      roles: [{
+        id: 'driver',
+        conditions: [
+          { adapter: 'location', value: 'docks' },
+          { adapter: 'location', value: 'foundry' },
+        ],
+      }],
+    },
+  },
+])), 'impossible_condition_set', /conflicting location/i);
 
 for (const [node, code, pattern] of [
   [{ id: 'reward:omr', type: 'reward', metadata: { currency: 'OMR' } },
@@ -211,12 +495,94 @@ for (const [node, code, pattern] of [
     metadata: { currency: 'OMR', allocationId: 'season-1-vault', claimKey: 'claim:omr' },
   }, 'invalid_omr_reward', /mint/i],
   [{
+    id: 'reward:omr', type: 'reward', repeatability: 'once',
+    metadata: {
+      assetType: 'OMR', allocationId: 'season-1-vault', claimKey: 'claim:omr',
+      payout: { effect: { kind: 'directMint' } },
+    },
+  }, 'invalid_omr_reward', /mint/i],
+  [{
     id: 'reward:omr', type: 'reward', currency: 'cash', repeatability: 'repeatable',
     metadata: { currency: 'OMR' },
-  }, 'invalid_omr_reward', /finite seasonal allocation/i],
+  }, 'conflicting_reward_asset', /conflicting reward asset/i],
+  [{
+    id: 'reward:omr', type: 'reward', repeatability: 'once',
+    metadata: {
+      reward: { assetType: '$OMR' }, allocationId: 'season-1-vault',
+      claimKey: 'claim:omr', repeatable: true,
+    },
+  }, 'invalid_omr_reward', /repeatable alias/i],
+  [{
+    id: 'reward:omr', type: 'reward', repeatability: 'once',
+    metadata: {
+      reward: { asset_type: 'omr' }, allocationId: 'season-1-vault', claimKey: 'claim:omr',
+      trigger: { selection: 'random_weighted' },
+    },
+  }, 'invalid_omr_reward', /random/i],
+  [{
+    id: 'reward:omr', type: 'reward', repeatability: 'once',
+    metadata: {
+      reward: { asset: { type: 'currency', symbol: 'OMR' } },
+      allocationId: 'season-1-vault', claimKey: 'claim:omr',
+      trigger: { type: 'random' },
+    },
+  }, 'invalid_omr_reward', /random/i],
+  [{
+    id: 'reward:omr', type: 'reward', repeatability: 'once',
+    metadata: {
+      assetType: 'OMR', allocationId: 'season-1-vault', claimKey: 'claim:omr',
+      trigger: { random: 0.5 },
+    },
+  }, 'invalid_omr_reward', /random/i],
+  [{
+    id: 'reward:omr', type: 'reward', repeatability: 'once',
+    metadata: {
+      assetType: 'OMR', allocationId: 'season-1-vault', claimKey: 'claim:omr',
+      effects: [{ mint: { amount: 1 } }],
+    },
+  }, 'invalid_omr_reward', /mint/i],
 ]) {
   expectCode(() => validateGraph(registry([node])), code, pattern);
 }
+
+expectCode(() => validateGraph(registry([{
+  id: 'reward:core-omr', type: 'reward', repeatability: 'once',
+  metadata: {
+    currency: 'OMR', season: 'season:forged',
+    allocationId: 'season-vault', claimKey: 'claim:core-omr',
+  },
+}], { season: 'core' })), 'invalid_omr_reward', /finite seasonal allocation/i);
+
+assert.equal(validateGraph(registry([{
+  id: 'reward:fixed-omr', type: 'reward', repeatability: 'once',
+  metadata: {
+    currency: 'OMR', allocationId: 'season-1-vault', claimKey: 'claim:fixed-omr',
+    payout: { type: 'fixed' },
+  },
+}])).ok, true, 'generic payout shape fields are not conflicting asset identities');
+
+expectCode(() => loadAndValidateGraphPackages([
+  { id: 'duplicate', version: 1, season: 'core', dependsOn: [], nodes: [] },
+  { id: 'duplicate', version: 1, season: 'core', dependsOn: [], nodes: [] },
+]), 'duplicate_package', /duplicate package/i);
+expectCode(() => loadAndValidateGraphPackages([{
+  id: 'duplicates', version: 1, season: 'core', dependsOn: [],
+  nodes: [
+    { id: 'mat:x', type: 'material' },
+    { id: 'mat:x', type: 'material' },
+  ],
+}]), 'duplicate_node', /duplicate node/i);
+expectCode(() => loadAndValidateGraphPackages([{
+  id: 'invalid-type', version: 1, season: 'core', dependsOn: [],
+  nodes: [{ id: 'unsafe:callback', type: 'javascript' }],
+}]), 'invalid_node_type', /invalid node type/i);
+expectCode(() => loadAndValidateGraphPackages([{
+  version: 1, season: 'core', dependsOn: [], nodes: [],
+}]), 'malformed_package', /stable ID/i);
+const accepted = loadAndValidateGraphPackages([{
+  id: 'accepted', version: 1, season: 'core', dependsOn: [], nodes: [],
+}]);
+assert.equal(accepted.byPackage.has('accepted'), true);
 
 const success = validateGraph(registry([
   { id: 'mat:seeded', type: 'material', metadata: { inventoryClass: 'stack', seasonalSeeded: true } },
@@ -263,6 +629,7 @@ assert.deepEqual(success.reports.socialOperations, [{
   nodeId: 'op:four-roles',
   packageId: 'test-world',
   minimumDistinctAccounts: 4,
+  maximumDistinctAccounts: 4,
   requiredRoles: ['investigator', 'driver', 'mechanic', 'enforcer'],
   rolesMayShareAccounts: false,
 }]);

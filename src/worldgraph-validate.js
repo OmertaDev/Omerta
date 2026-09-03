@@ -1,3 +1,5 @@
+import { loadGraphPackages } from './worldgraph.js';
+
 const CONDITION_ADAPTERS = new Set([
   'graph_dependency',
   'location',
@@ -208,38 +210,152 @@ function conditionAdapter(condition) {
   return null;
 }
 
-function validateConditions(node) {
-  if (node.conditions === undefined) return [];
-  if (!Array.isArray(node.conditions)) {
-    fail('malformed_condition', `Node ${node.id} conditions must be an array`, { nodeId: node.id });
+function conditionField(condition, fields) {
+  if (!condition || typeof condition !== 'object' || Array.isArray(condition)) return undefined;
+  return fields.map((field) => condition[field]).find((value) => value !== undefined);
+}
+
+function assertConditionReference({
+  registry, packageClosures, packageId, nodeId, roleId, adapter, targetId, targetType,
+}) {
+  const owner = roleId ? `Social role ${roleId}` : `Node ${nodeId}`;
+  if (!nonEmptyString(targetId)) {
+    fail('malformed_condition',
+      `${owner} ${adapter} condition requires a ${targetType || 'node'} template reference`,
+      { nodeId, roleId, adapter });
   }
-  for (const condition of node.conditions) {
+  const target = registry.nodes.get(targetId);
+  if (!target) {
+    fail('missing_node_dependency', `${owner} has missing dependency ${targetId}`,
+      { nodeId, roleId, adapter, dependencyId: targetId });
+  }
+  if (targetType && target.type !== targetType) {
+    fail('invalid_condition_target',
+      `${owner} ${adapter} condition must reference a ${targetType}, not ${target.type}`,
+      { nodeId, roleId, adapter, dependencyId: targetId, expectedType: targetType });
+  }
+  if (target.packageId !== packageId && !packageClosures.get(packageId).has(target.packageId)) {
+    fail('undeclared_package_dependency',
+      `${owner} references ${targetId} but package ${packageId} does not declare package dependency ${target.packageId}`,
+      {
+        nodeId,
+        roleId,
+        dependencyId: targetId,
+        packageId,
+        requiredPackageId: target.packageId,
+      });
+  }
+  return target;
+}
+
+function validateConditionList({
+  registry, packageClosures, packageId, nodeId, roleId = null, conditions,
+}) {
+  const owner = roleId ? `Social role ${roleId}` : `Node ${nodeId}`;
+  if (conditions === undefined) return [];
+  if (!Array.isArray(conditions)) {
+    fail('malformed_condition', `${owner} conditions must be an array`, { nodeId, roleId });
+  }
+
+  const descriptors = [];
+  const locations = new Set();
+  for (const condition of conditions) {
     const adapter = conditionAdapter(condition);
     if (!nonEmptyString(adapter)) {
-      fail('malformed_condition',
-        `Node ${node.id} has a condition without a named adapter`, { nodeId: node.id });
+      fail('malformed_condition', `${owner} has a condition without a named adapter`,
+        { nodeId, roleId });
     }
     if (!CONDITION_ADAPTERS.has(adapter)) {
       fail('unsupported_condition_adapter',
-        `Node ${node.id} uses unsupported condition adapter ${adapter}`,
-        { nodeId: node.id, adapter });
+        `${owner} uses unsupported condition adapter ${adapter}`,
+        { nodeId, roleId, adapter });
     }
-  }
-  return node.conditions;
-}
 
-function conditionReference(condition) {
-  if (!condition || typeof condition !== 'object' || Array.isArray(condition)) return null;
-  const adapter = conditionAdapter(condition);
-  if (adapter === 'graph_dependency') return condition.nodeId || condition.id || condition.value || null;
-  if (adapter === 'item_ownership' || adapter === 'owns_item') {
-    return condition.templateId || condition.itemTemplateId || condition.nodeId || null;
+    let targetId = null;
+    let targetType = null;
+    if (adapter === 'graph_dependency') {
+      targetId = conditionField(condition, ['nodeId', 'id', 'value']);
+    } else if (adapter === 'item_ownership' || adapter === 'owns_item') {
+      targetId = conditionField(condition, ['templateId', 'itemTemplateId', 'nodeId']);
+      targetType = 'item_template';
+    } else if (adapter === 'material_quantity') {
+      targetId = conditionField(condition, ['templateId', 'materialId', 'nodeId']);
+      targetType = 'material';
+      const quantity = conditionField(condition, ['quantity', 'minimumQuantity', 'amount']);
+      if (!positiveInteger(quantity)) {
+        fail('malformed_condition',
+          `${owner} material_quantity condition requires a positive integer quantity`,
+          { nodeId, roleId, adapter, quantity });
+      }
+    } else if (adapter === 'evidence') {
+      targetId = conditionField(condition, ['evidenceId', 'nodeId']);
+      targetType = 'evidence';
+    } else if (adapter === 'location') {
+      const location = conditionField(condition, ['value', 'locationId', 'district']);
+      if (!nonEmptyString(location)) {
+        fail('malformed_condition', `${owner} location condition requires a location`,
+          { nodeId, roleId, adapter });
+      }
+      locations.add(location);
+    } else if (adapter === 'level') {
+      const level = conditionField(condition, ['value', 'minimumLevel', 'level']);
+      if (!positiveInteger(level)) {
+        fail('malformed_condition', `${owner} level condition requires a positive integer level`,
+          { nodeId, roleId, adapter, level });
+      }
+    } else if (adapter === 'skill') {
+      const skillId = conditionField(condition, ['skillId', 'id', 'value']);
+      if (!nonEmptyString(skillId)) {
+        fail('malformed_condition', `${owner} skill condition requires a skillId`,
+          { nodeId, roleId, adapter });
+      }
+    } else if (adapter === 'time_window') {
+      const windowId = conditionField(condition, ['windowId', 'value']);
+      const start = conditionField(condition, ['start', 'startsAt']);
+      const end = conditionField(condition, ['end', 'endsAt']);
+      if (!nonEmptyString(windowId) && !(nonEmptyString(start) && nonEmptyString(end))) {
+        fail('malformed_condition',
+          `${owner} time_window condition requires a windowId or start and end`,
+          { nodeId, roleId, adapter });
+      }
+    } else if (adapter === 'explicit_interaction') {
+      const interactionId = conditionField(condition, ['interactionId', 'id', 'value']);
+      if (!nonEmptyString(interactionId)) {
+        fail('malformed_condition',
+          `${owner} explicit_interaction condition requires an interactionId`,
+          { nodeId, roleId, adapter });
+      }
+    } else if (adapter === 'owns_car') {
+      const carSelector = conditionField(condition, [
+        'value', 'carId', 'carType', 'vehicleClass', 'assetType',
+      ]);
+      if (!nonEmptyString(carSelector)) {
+        fail('malformed_condition', `${owner} owns_car condition requires a car selector`,
+          { nodeId, roleId, adapter });
+      }
+    }
+
+    if (targetId !== null) {
+      assertConditionReference({
+        registry,
+        packageClosures,
+        packageId,
+        nodeId,
+        roleId,
+        adapter,
+        targetId,
+        targetType,
+      });
+    }
+    descriptors.push(Object.freeze({ adapter, targetId, targetType }));
   }
-  if (adapter === 'material_quantity') {
-    return condition.templateId || condition.materialId || condition.nodeId || null;
+
+  if (locations.size > 1) {
+    fail('impossible_condition_set',
+      `${owner} has conflicting location conditions: ${[...locations].join(', ')}`,
+      { nodeId, roleId, adapter: 'location', values: [...locations] });
   }
-  if (adapter === 'evidence') return condition.evidenceId || condition.nodeId || null;
-  return null;
+  return descriptors;
 }
 
 function dependencyClosure(packageEdges, packageId, result = new Set()) {
@@ -254,6 +370,7 @@ function dependencyClosure(packageEdges, packageId, result = new Set()) {
 function validateNodeReferences(registry, packageEdges) {
   const dependencyEdges = new Map();
   const quantityByNode = new Map();
+  const conditionByNode = new Map();
   const packageClosures = new Map();
   for (const packageId of registry.byPackage.keys()) {
     packageClosures.set(packageId, dependencyClosure(packageEdges, packageId));
@@ -270,8 +387,13 @@ function validateNodeReferences(registry, packageEdges) {
       quantities[field] = quantityEntries(node, field, { recipe: node.type === 'recipe' });
       references.push(...quantities[field].filter(({ external }) => !external).map(({ id }) => id));
     }
-    const conditions = validateConditions(node);
-    references.push(...conditions.map(conditionReference).filter(Boolean));
+    const conditions = validateConditionList({
+      registry,
+      packageClosures,
+      packageId: node.packageId,
+      nodeId,
+      conditions: node.conditions,
+    });
 
     for (const dependencyId of references) {
       const dependency = registry.nodes.get(dependencyId);
@@ -296,13 +418,14 @@ function validateNodeReferences(registry, packageEdges) {
       ...validateDependencyList(node, 'requires'),
       ...validateRequiresAny(node),
       ...conditions
-        .filter((condition) => conditionAdapter(condition) === 'graph_dependency')
-        .map(conditionReference)
+        .filter(({ adapter }) => adapter === 'graph_dependency')
+        .map(({ targetId }) => targetId)
         .filter(Boolean),
     ]);
     quantityByNode.set(nodeId, quantities);
+    conditionByNode.set(nodeId, conditions);
   }
-  return { dependencyEdges, quantityByNode };
+  return { conditionByNode, dependencyEdges, packageClosures, quantityByNode };
 }
 
 function validateMysteryCycles(registry, dependencyEdges) {
@@ -376,53 +499,178 @@ function validateRecipeClasses(registry, quantityByNode) {
   return recipes;
 }
 
-function hasPositiveCost(node) {
-  const candidates = [node.cashCost, node.cost, node.metadata?.cashCost, node.metadata?.cost];
-  if (candidates.some((value) => typeof value === 'number' && value > 0)) return true;
-  const costs = node.costs || node.metadata?.costs;
-  return !!costs && typeof costs === 'object'
-    && Object.values(costs).some((value) => typeof value === 'number' && value > 0);
+function aggregateQuantities(entries) {
+  const quantities = new Map();
+  for (const entry of entries) {
+    if (entry.external) continue;
+    quantities.set(entry.id, (quantities.get(entry.id) || 0) + entry.quantity);
+  }
+  return quantities;
 }
 
-function validateZeroCostRecipeCycles(registry, quantityByNode) {
-  const edges = new Map();
+function recipeDeclaresRepeatable(node) {
+  const repeatability = node.repeatability || node.metadata?.repeatability;
+  return node.repeatable === true || node.metadata?.repeatable === true
+    || ['repeatable', 'capped'].includes(repeatability);
+}
+
+function recipeConversionGraph(registry, quantityByNode) {
+  const vertices = new Set();
+  const edges = [];
   for (const [nodeId, node] of registry.nodes) {
-    if (node.type !== 'recipe' || hasPositiveCost(node)) continue;
+    if (node.type !== 'recipe') continue;
     const quantities = quantityByNode.get(nodeId);
-    const inputs = [...quantities.consumes, ...quantities.inputs]
-      .filter(({ external }) => !external);
-    const outputs = [...quantities.produces, ...quantities.outputs]
-      .filter(({ external }) => !external);
-    for (const output of outputs) {
-      const outputEdges = edges.get(output.id) || [];
-      for (const input of inputs) outputEdges.push({ templateId: input.id, recipeId: nodeId });
-      edges.set(output.id, outputEdges);
+    const inputs = aggregateQuantities([...quantities.consumes, ...quantities.inputs]);
+    const outputs = aggregateQuantities([...quantities.produces, ...quantities.outputs]);
+    for (const [inputId, inputQuantity] of inputs) {
+      vertices.add(inputId);
+      for (const [outputId, outputQuantity] of outputs) {
+        vertices.add(outputId);
+        edges.push({
+          from: inputId,
+          to: outputId,
+          recipeId: nodeId,
+          inputQuantity,
+          outputQuantity,
+          ratio: outputQuantity / inputQuantity,
+        });
+      }
+    }
+  }
+  return { edges, vertices };
+}
+
+function stronglyConnectedComponents(vertices, edges) {
+  const adjacency = new Map([...vertices].map((vertex) => [vertex, []]));
+  for (const edge of edges) adjacency.get(edge.from).push(edge.to);
+  const indices = new Map();
+  const lowLinks = new Map();
+  const stack = [];
+  const onStack = new Set();
+  const components = [];
+  let nextIndex = 0;
+
+  function connect(vertex) {
+    indices.set(vertex, nextIndex);
+    lowLinks.set(vertex, nextIndex);
+    nextIndex += 1;
+    stack.push(vertex);
+    onStack.add(vertex);
+
+    for (const target of adjacency.get(vertex)) {
+      if (!indices.has(target)) {
+        connect(target);
+        lowLinks.set(vertex, Math.min(lowLinks.get(vertex), lowLinks.get(target)));
+      } else if (onStack.has(target)) {
+        lowLinks.set(vertex, Math.min(lowLinks.get(vertex), indices.get(target)));
+      }
+    }
+
+    if (lowLinks.get(vertex) === indices.get(vertex)) {
+      const component = [];
+      let member;
+      do {
+        member = stack.pop();
+        onStack.delete(member);
+        component.push(member);
+      } while (member !== vertex);
+      components.push(component);
     }
   }
 
-  const visiting = new Set();
-  const visited = new Set();
-  const path = [];
-  function visit(templateId) {
-    if (visiting.has(templateId)) {
-      const start = path.findIndex((entry) => entry.templateId === templateId);
-      const cycleEntries = path.slice(start);
-      const cycle = [...cycleEntries.map((entry) => entry.templateId), templateId];
-      fail('zero_cost_recipe_cycle',
-        `Zero-cost recursive recipe ancestor detected: ${cycle.join(' -> ')}`,
-        { cycle, recipeIds: cycleEntries.map((entry) => entry.recipeId).filter(Boolean) });
-    }
-    if (visited.has(templateId)) return;
-    visiting.add(templateId);
-    for (const edge of edges.get(templateId) || []) {
-      path.push({ templateId, recipeId: edge.recipeId });
-      visit(edge.templateId);
-      path.pop();
-    }
-    visiting.delete(templateId);
-    visited.add(templateId);
+  for (const vertex of vertices) if (!indices.has(vertex)) connect(vertex);
+  return components;
+}
+
+function canonicalCycleKey(cycle) {
+  const tokens = cycle.map(({ from, to, recipeId }) => `${from}>${recipeId}>${to}`);
+  const rotations = tokens.map((_, index) => (
+    [...tokens.slice(index), ...tokens.slice(0, index)].join('|')
+  ));
+  return rotations.sort()[0];
+}
+
+function conversionCycles(component, edges) {
+  const members = new Set(component);
+  const ordered = [...component].sort();
+  const order = new Map(ordered.map((vertex, index) => [vertex, index]));
+  const adjacency = new Map(ordered.map((vertex) => [vertex, []]));
+  for (const edge of edges) if (members.has(edge.from) && members.has(edge.to)) {
+    adjacency.get(edge.from).push(edge);
   }
-  for (const templateId of edges.keys()) visit(templateId);
+  const result = new Map();
+
+  function walk(start, current, visited, path) {
+    for (const edge of adjacency.get(current)) {
+      const nextPath = [...path, edge];
+      if (edge.to === start) {
+        result.set(canonicalCycleKey(nextPath), nextPath);
+        continue;
+      }
+      if (visited.has(edge.to) || order.get(edge.to) < order.get(start)) continue;
+      visited.add(edge.to);
+      walk(start, edge.to, visited, nextPath);
+      visited.delete(edge.to);
+    }
+  }
+  for (const start of ordered) walk(start, start, new Set([start]), []);
+  return [...result.values()];
+}
+
+function cycleRecipeMultipliers(cycle) {
+  const multipliers = new Map();
+  let executionMultiplier = 1;
+  for (let index = 0; index < cycle.length; index += 1) {
+    const edge = cycle[index];
+    multipliers.set(edge.recipeId,
+      (multipliers.get(edge.recipeId) || 0) + executionMultiplier);
+    const nextEdge = cycle[(index + 1) % cycle.length];
+    executionMultiplier = (executionMultiplier * edge.outputQuantity) / nextEdge.inputQuantity;
+  }
+  return multipliers;
+}
+
+function recipeConservedTotals(cycle, quantityByNode) {
+  let inputs = 0;
+  let outputs = 0;
+  const multipliers = cycleRecipeMultipliers(cycle);
+  for (const [recipeId, multiplier] of multipliers) {
+    const quantities = quantityByNode.get(recipeId);
+    inputs += [...quantities.consumes, ...quantities.inputs]
+      .reduce((total, entry) => total + (entry.quantity * multiplier), 0);
+    outputs += [...quantities.produces, ...quantities.outputs]
+      .reduce((total, entry) => total + (entry.quantity * multiplier), 0);
+  }
+  return { inputs, outputs, multipliers: Object.fromEntries(multipliers) };
+}
+
+function validateRecipeCycles(registry, quantityByNode) {
+  const { edges, vertices } = recipeConversionGraph(registry, quantityByNode);
+  for (const component of stronglyConnectedComponents(vertices, edges)) {
+    const members = new Set(component);
+    const internalEdges = edges.filter(({ from, to }) => members.has(from) && members.has(to));
+    const cyclic = component.length > 1 || internalEdges.some(({ from, to }) => from === to);
+    if (!cyclic) continue;
+
+    const recipeIds = [...new Set(internalEdges.map(({ recipeId }) => recipeId))];
+    const undeclared = recipeIds.filter((recipeId) => (
+      !recipeDeclaresRepeatable(registry.nodes.get(recipeId))
+    ));
+    if (undeclared.length > 0) {
+      fail('undeclared_recipe_cycle',
+        `Recursive recipe SCC must be explicitly declared repeatable: ${undeclared.join(', ')}`,
+        { templates: component, recipeIds, undeclaredRecipeIds: undeclared });
+    }
+    for (const cycle of conversionCycles(component, internalEdges)) {
+      const totals = recipeConservedTotals(cycle, quantityByNode);
+      if (totals.outputs > totals.inputs + 1e-12) {
+        const cycleRecipeIds = [...new Set(cycle.map(({ recipeId }) => recipeId))];
+        fail('inflationary_recipe_cycle',
+          `Inflationary recursive recipe SCC detected across ${component.join(', ')}`,
+          { templates: component, recipeIds: cycleRecipeIds, ...totals });
+      }
+    }
+  }
 }
 
 function roleDefinitions(node) {
@@ -434,41 +682,104 @@ function roleRequirementContradiction(role) {
   const excluded = new Set(Array.isArray(role.excludes) ? role.excludes : []);
   if ([...required].some((requirement) => excluded.has(requirement))) return true;
 
-  const byAdapter = new Map();
-  for (const condition of Array.isArray(role.conditions) ? role.conditions : []) {
-    if (!condition || typeof condition !== 'object' || Array.isArray(condition)) continue;
-    const adapter = conditionAdapter(condition);
-    const value = condition.value ?? condition.id ?? condition.nodeId;
-    if (byAdapter.has(adapter) && byAdapter.get(adapter) !== value
-      && ['location', 'owns_car'].includes(adapter)) return true;
-    byAdapter.set(adapter, value);
-  }
   return false;
 }
 
-function validateRoleConditions(nodeId, role) {
-  if (role.conditions === undefined) return;
-  if (!Array.isArray(role.conditions)) {
-    fail('malformed_condition',
-      `Social role ${role.id} conditions must be an array`, { nodeId, roleId: role.id });
-  }
-  for (const condition of role.conditions) {
-    const adapter = conditionAdapter(condition);
-    if (!nonEmptyString(adapter)) {
-      fail('malformed_condition',
-        `Social role ${role.id} has a condition without a named adapter`,
-        { nodeId, roleId: role.id });
+function minimumGraphColors(vertices, adjacency) {
+  if (vertices.length === 0) return 0;
+  const ordered = [...vertices].sort((a, b) => adjacency.get(b).size - adjacency.get(a).size);
+  function canColor(limit, index = 0, colors = new Map()) {
+    if (index === ordered.length) return true;
+    const vertex = ordered[index];
+    for (let color = 0; color < limit; color += 1) {
+      if ([...adjacency.get(vertex)].some((neighbor) => colors.get(neighbor) === color)) continue;
+      colors.set(vertex, color);
+      if (canColor(limit, index + 1, colors)) return true;
+      colors.delete(vertex);
     }
-    if (!CONDITION_ADAPTERS.has(adapter)) {
-      fail('unsupported_condition_adapter',
-        `Social role ${role.id} uses unsupported condition adapter ${adapter}`,
-        { nodeId, roleId: role.id, adapter });
-    }
+    return false;
   }
+  for (let limit = 1; limit <= ordered.length; limit += 1) {
+    if (canColor(limit)) return limit;
+  }
+  return ordered.length;
 }
 
-function validateSocialOperations(registry) {
+function socialAccountConstraints(nodeId, roles, byId) {
+  const parent = new Map(roles.map(({ id }) => [id, id]));
+  function find(roleId) {
+    const direct = parent.get(roleId);
+    if (direct === roleId) return roleId;
+    const root = find(direct);
+    parent.set(roleId, root);
+    return root;
+  }
+  function union(left, right) {
+    const leftRoot = find(left);
+    const rightRoot = find(right);
+    if (leftRoot !== rightRoot) parent.set(rightRoot, leftRoot);
+  }
+  function referencedRoles(role, fields) {
+    const result = [];
+    for (const field of fields) {
+      if (role[field] === undefined) continue;
+      result.push(...(Array.isArray(role[field]) ? role[field] : [role[field]]));
+    }
+    for (const referencedRoleId of result) {
+      if (!nonEmptyString(referencedRoleId) || !byId.has(referencedRoleId)) {
+        fail('invalid_social_role_reference',
+          `Social role ${role.id} references unknown social role ${String(referencedRoleId)}`,
+          { nodeId, roleId: role.id, referencedRoleId });
+      }
+    }
+    return result;
+  }
+
+  for (const role of roles) {
+    for (const target of referencedRoles(role, ['sameAccountAs'])) union(role.id, target);
+  }
+
+  const groups = new Map();
+  for (const role of roles) {
+    const root = find(role.id);
+    const members = groups.get(root) || [];
+    members.push(role.id);
+    groups.set(root, members);
+  }
+  const adjacency = new Map([...groups.keys()].map((root) => [root, new Set()]));
+  function requireDifferent(leftRoleId, rightRoleId) {
+    const left = find(leftRoleId);
+    const right = find(rightRoleId);
+    if (left === right) {
+      fail('impossible_social_role',
+        `Social operation ${nodeId} requires ${leftRoleId} to both share and not share an account with ${rightRoleId}`,
+        { nodeId, roleId: leftRoleId, referencedRoleId: rightRoleId });
+    }
+    adjacency.get(left).add(right);
+    adjacency.get(right).add(left);
+  }
+
+  for (const role of roles) {
+    if (role.distinct === true) {
+      for (const other of roles) {
+        if (other.id !== role.id) requireDifferent(role.id, other.id);
+      }
+    }
+    for (const target of referencedRoles(role, ['distinctFrom', 'differentAccountFrom'])) {
+      requireDifferent(role.id, target);
+    }
+  }
+
+  const vertices = [...groups.keys()];
+  return {
+    minimum: minimumGraphColors(vertices, adjacency),
+    maximum: vertices.length,
+  };
+}
+
+function validateSocialOperations(registry, packageClosures) {
   const reports = [];
+  const materialConditions = [];
   for (const [nodeId, node] of registry.nodes) {
     const roles = roleDefinitions(node);
     if (roles === null) continue;
@@ -500,15 +811,17 @@ function validateSocialOperations(registry) {
         fail('malformed_social_role',
           `Social role ${role.id} excludes must be an array`, { nodeId, roleId: role.id });
       }
-      validateRoleConditions(nodeId, role);
-      for (const condition of role.conditions || []) {
-        const dependencyId = conditionReference(condition);
-        if (dependencyId && !registry.nodes.has(dependencyId)) {
-          fail('missing_node_dependency',
-            `Social role ${role.id} has missing dependency ${dependencyId}`,
-            { nodeId, roleId: role.id, dependencyId });
-        }
-      }
+      const conditions = validateConditionList({
+        registry,
+        packageClosures,
+        packageId: node.packageId,
+        nodeId,
+        roleId: role.id,
+        conditions: role.conditions,
+      });
+      materialConditions.push(...conditions
+        .filter(({ adapter }) => adapter === 'material_quantity')
+        .map(({ targetId }) => ({ nodeId, roleId: role.id, targetId })));
       if (roleRequirementContradiction(role)) {
         fail('impossible_social_role',
           `Social operation ${nodeId} has impossible role requirements for ${role.id}`,
@@ -516,107 +829,188 @@ function validateSocialOperations(registry) {
       }
     }
 
-    for (const role of roles) {
-      if (role.sameAccountAs !== undefined) {
-        if (!nonEmptyString(role.sameAccountAs) || !byId.has(role.sameAccountAs)) {
-          fail('invalid_social_role_reference',
-            `Social role ${role.id} references unknown social role ${String(role.sameAccountAs)}`,
-            { nodeId, roleId: role.id, referencedRoleId: role.sameAccountAs });
-        }
-        if (role.sameAccountAs === role.id || role.distinct === true
-          || byId.get(role.sameAccountAs).distinct === true) {
-          fail('impossible_social_role',
-            `Social operation ${nodeId} has impossible role requirements: ${role.id} cannot be both distinct and share an account`,
-            { nodeId, roleId: role.id, referencedRoleId: role.sameAccountAs });
-        }
-      }
-    }
-
-    const distinctRoleCount = roles.filter((role) => role.distinct === true).length;
+    const feasible = socialAccountConstraints(nodeId, roles, byId);
     const declared = node.minimumDistinctAccounts ?? node.metadata?.minimumDistinctAccounts;
     if (declared !== undefined && !positiveInteger(declared)) {
       fail('invalid_social_minimum',
         `Social operation ${nodeId} minimumDistinctAccounts must be a positive integer`,
         { nodeId, minimumDistinctAccounts: declared });
     }
-    if (declared !== undefined && declared < distinctRoleCount) {
+    if (declared !== undefined && declared < feasible.minimum) {
       fail('invalid_social_minimum',
-        `Social operation ${nodeId} minimumDistinctAccounts cannot be lower than its distinct roles`,
-        { nodeId, minimumDistinctAccounts: declared, distinctRoleCount });
+        `Social operation ${nodeId} minimumDistinctAccounts cannot be lower than the feasible constraint minimum ${feasible.minimum}`,
+        { nodeId, minimumDistinctAccounts: declared, constraintMinimum: feasible.minimum });
     }
-    const minimumDistinctAccounts = Math.max(declared || 0, distinctRoleCount);
-    if (minimumDistinctAccounts > roles.length) {
+    const minimumDistinctAccounts = Math.max(declared || 1, feasible.minimum);
+    if (minimumDistinctAccounts > feasible.maximum) {
       fail('impossible_social_operation',
-        `Social operation ${nodeId} minimumDistinctAccounts exceeds its ${roles.length} roles`,
-        { nodeId, minimumDistinctAccounts, roleCount: roles.length });
+        `Social operation ${nodeId} minimumDistinctAccounts exceeds the maximum feasible ${feasible.maximum}`,
+        { nodeId, minimumDistinctAccounts, maximumDistinctAccounts: feasible.maximum });
     }
     reports.push({
       nodeId,
       packageId: node.packageId,
       minimumDistinctAccounts,
+      maximumDistinctAccounts: feasible.maximum,
       requiredRoles: roles.map((role) => role.id),
       rolesMayShareAccounts: minimumDistinctAccounts < roles.length,
     });
   }
-  return reports;
+  return { materialConditions, reports };
 }
 
-function containsRandomTrigger(value, seen = new Set()) {
-  if (!value || typeof value !== 'object' || seen.has(value)) return false;
-  seen.add(value);
+function contextSeen(seen, value, contextual) {
+  const bucket = contextual ? seen.contextual : seen.plain;
+  if (bucket.has(value)) return true;
+  bucket.add(value);
+  return false;
+}
+
+function containsRandomTrigger(value, seen = {
+  plain: new WeakSet(), contextual: new WeakSet(),
+}, triggerContext = false) {
+  if (triggerContext && typeof value === 'string'
+    && value.toLowerCase().includes('random')) return true;
+  if (!value || typeof value !== 'object' || contextSeen(seen, value, triggerContext)) return false;
   for (const [key, child] of Object.entries(value)) {
-    if (key === 'random' && child === true) return true;
-    if (['trigger', 'selection', 'mode'].includes(key)
+    const normalizedKey = key.replace(/[^a-z0-9]/gi, '').toLowerCase();
+    if (['random', 'israndom', 'randomized', 'israndomized'].includes(normalizedKey)
+      && (child === true || (typeof child === 'number' && child > 0))) return true;
+    if (['chance', 'probability', 'randomweight'].includes(normalizedKey)
+      && typeof child === 'number' && child > 0) return true;
+    if (['trigger', 'selection', 'mode', 'strategy'].includes(normalizedKey)
       && typeof child === 'string' && child.toLowerCase().includes('random')) return true;
-    if (containsRandomTrigger(child, seen)) return true;
+    const childContext = triggerContext
+      || ['trigger', 'selection', 'randomizer', 'rng'].includes(normalizedKey);
+    if (containsRandomTrigger(child, seen, childContext)) return true;
   }
   return false;
 }
 
-function containsMintEffect(value, seen = new Set(), effectContext = false) {
-  if (effectContext && typeof value === 'string' && /(^|_)mint($|_)/i.test(value)) return true;
-  if (!value || typeof value !== 'object' || seen.has(value)) return false;
-  seen.add(value);
+function containsMintEffect(value, seen = {
+  plain: new WeakSet(), contextual: new WeakSet(),
+}, effectContext = false) {
+  if (effectContext && typeof value === 'string'
+    && normalizedObjectKey(value).includes('mint')) return true;
+  if (!value || typeof value !== 'object' || contextSeen(seen, value, effectContext)) return false;
   for (const [key, child] of Object.entries(value)) {
+    const normalizedKey = key.replace(/[^a-z0-9]/gi, '').toLowerCase();
     const childEffectContext = effectContext
-      || ['effect', 'effects', 'action', 'actions'].includes(key);
-    if (['effect', 'effects', 'action', 'actions', 'adapter'].includes(key)) {
+      || ['effect', 'effects', 'action', 'actions'].includes(normalizedKey);
+    if (['effect', 'effects', 'action', 'actions', 'adapter'].includes(normalizedKey)) {
       const values = Array.isArray(child) ? child : [child];
       if (values.some((entry) => typeof entry === 'string'
-        && /(^|_)mint($|_)/i.test(entry))) return true;
+        && normalizedObjectKey(entry).includes('mint'))) return true;
     }
-    if (key === 'mint' && child === true) return true;
+    if (normalizedKey.includes('mint')
+      && child !== false && child !== null && child !== undefined) return true;
+    if (['type', 'kind', 'mode', 'strategy'].includes(normalizedKey)
+      && typeof child === 'string' && normalizedObjectKey(child).includes('mint')) return true;
     if (containsMintEffect(child, seen, childEffectContext)) return true;
   }
   return false;
 }
 
+function normalizedObjectKey(key) {
+  return key.replace(/[^a-z0-9]/gi, '').toLowerCase();
+}
+
+function normalizedAsset(value) {
+  if (!nonEmptyString(value)) return null;
+  const normalized = value.replace(/[$\s_-]/g, '').toUpperCase();
+  if (['CURRENCY', 'TOKEN', 'ASSET', 'REWARD', 'FUNGIBLE'].includes(normalized)) return null;
+  if (['OMR', 'OMERTA', 'OMERTAREWARD', 'OMERTATOKEN'].includes(normalized)) return 'OMR';
+  return normalized;
+}
+
+function rewardAssetDeclarations(value, seen = {
+  plain: new WeakSet(), contextual: new WeakSet(),
+}, assetContext = false, result = []) {
+  if (!value || typeof value !== 'object' || contextSeen(seen, value, assetContext)) return result;
+  const identityKeys = new Set([
+    'asset', 'assettype', 'currency', 'currencytype', 'rewardasset', 'rewardcurrency',
+    'symbol', 'token', 'tokensymbol',
+  ]);
+  for (const [key, child] of Object.entries(value)) {
+    const normalizedKey = normalizedObjectKey(key);
+    const identityField = identityKeys.has(normalizedKey)
+      || (assetContext && ['id', 'name', 'type'].includes(normalizedKey));
+    if (identityField && typeof child === 'string') {
+      const asset = normalizedAsset(child);
+      if (asset) result.push({ asset, pathKey: key, value: child });
+    }
+    const childContext = assetContext || identityKeys.has(normalizedKey);
+    rewardAssetDeclarations(child, seen, childContext, result);
+  }
+  return result;
+}
+
+function namedScalars(value, names, seen = new Set(), result = []) {
+  if (!value || typeof value !== 'object' || seen.has(value)) return result;
+  seen.add(value);
+  for (const [key, child] of Object.entries(value)) {
+    if (names.has(normalizedObjectKey(key)) && (child === null || typeof child !== 'object')) {
+      result.push(child);
+    }
+    namedScalars(child, names, seen, result);
+  }
+  return result;
+}
+
+function unsafeRepeatAlias(node) {
+  const aliases = namedScalars(node, new Set([
+    'repeat', 'repeatable', 'isrepeatable', 'repeats', 'recurring', 'isrecurring',
+    'repeatevery',
+  ]));
+  return aliases.some((value) => value === true || (typeof value === 'number' && value > 0)
+    || (typeof value === 'string' && !['false', 'no', 'never'].includes(value.toLowerCase())));
+}
+
 function validateOmrRewards(registry) {
   let count = 0;
   for (const [, node] of registry.nodes) {
-    const currencies = [node.currency, node.metadata?.currency]
-      .filter((currency) => currency !== undefined)
-      .map((currency) => String(currency).toUpperCase());
-    if (node.type !== 'reward' || !currencies.includes('OMR')) continue;
+    if (node.type !== 'reward') continue;
+    const declarations = rewardAssetDeclarations(node);
+    const assets = [...new Set(declarations.map(({ asset }) => asset))];
+    if (assets.length > 1) {
+      fail('conflicting_reward_asset',
+        `Reward ${node.id} has conflicting reward asset declarations: ${assets.join(', ')}`,
+        { nodeId: node.id, assets, declarations });
+    }
+    if (!assets.includes('OMR')) continue;
     count += 1;
-    const metadata = node.metadata || {};
     const pkg = registry.byPackage.get(node.packageId);
-    if (!nonEmptyString(node.allocationId || metadata.allocationId)
-      || !nonEmptyString(pkg?.season) || pkg.season === 'core') {
+    if (unsafeRepeatAlias(node)) {
+      fail('invalid_omr_reward',
+        `OMR reward ${node.id} cannot set repeatable:true or an equivalent repeatable alias`,
+        { nodeId: node.id });
+    }
+    const allocationIds = namedScalars(node, new Set(['allocationid']))
+      .filter(nonEmptyString);
+    if (allocationIds.length === 0 || !nonEmptyString(pkg?.season) || pkg.season === 'core') {
       fail('invalid_omr_reward',
         `OMR reward ${node.id} requires a finite seasonal allocationId`, { nodeId: node.id });
     }
-    if (!nonEmptyString(node.claimKey || metadata.claimKey)) {
+    if (namedScalars(node, new Set(['claimkey', 'idempotencykey'])).filter(nonEmptyString).length === 0) {
       fail('invalid_omr_reward',
         `OMR reward ${node.id} requires an idempotent claimKey`, { nodeId: node.id });
     }
-    const repeatability = node.repeatability || metadata.repeatability;
+    const repeatabilities = namedScalars(node, new Set(['repeatability', 'claimrule']))
+      .filter(nonEmptyString)
+      .map((value) => value.toLowerCase());
+    const distinctRepeatabilities = [...new Set(repeatabilities)];
+    if (distinctRepeatabilities.length > 1) {
+      fail('invalid_omr_reward',
+        `OMR reward ${node.id} has conflicting repeatability declarations`,
+        { nodeId: node.id, repeatabilities: distinctRepeatabilities });
+    }
+    const repeatability = distinctRepeatabilities[0];
     if (!['once', 'capped'].includes(repeatability)) {
       fail('invalid_omr_reward',
         `OMR reward ${node.id} repeatability must be once or capped`, { nodeId: node.id });
     }
-    const cap = node.claimCap ?? node.cap ?? metadata.claimCap ?? metadata.cap;
-    if (repeatability === 'capped' && !positiveInteger(cap)) {
+    const caps = namedScalars(node, new Set(['claimcap', 'maxclaims', 'cap']));
+    if (repeatability === 'capped' && !caps.some(positiveInteger)) {
       fail('invalid_omr_reward',
         `Capped OMR reward ${node.id} requires a positive finite claim cap`, { nodeId: node.id });
     }
@@ -633,47 +1027,133 @@ function validateOmrRewards(registry) {
 }
 
 function isSeeded(node) {
-  return SEEDED_FLAGS.some((flag) => node[flag] === true || node.metadata?.[flag] === true);
+  if (SEEDED_FLAGS.some((flag) => node[flag] === true || node.metadata?.[flag] === true)) return true;
+  for (const source of [node, node.metadata || {}]) {
+    for (const [key, value] of Object.entries(source)) {
+      const normalizedKey = normalizedObjectKey(key);
+      if (['administratorseeded', 'adminseeded', 'seasonalseeded'].includes(normalizedKey)
+        && value === true) return true;
+      if (['seeded', 'seededby', 'seedsource'].includes(normalizedKey)
+        && typeof value === 'string'
+        && ['administrator', 'admin', 'seasonal', 'season'].includes(value.toLowerCase())) return true;
+    }
+  }
+  return false;
 }
 
-function buildMaterialDiagnostics(registry, quantityByNode) {
+function materialEntryIds(registry, entries) {
+  return entries
+    .filter(({ external, id }) => !external && registry.nodes.get(id)?.type === 'material')
+    .map(({ id }) => id);
+}
+
+function buildMaterialDiagnostics({
+  registry, quantityByNode, conditionByNode, socialMaterialConditions, packageClosures,
+}) {
   const producedBy = new Map();
   const consumedBy = new Map();
+  const producers = [];
   for (const [nodeId, node] of registry.nodes) {
     const quantities = quantityByNode.get(nodeId);
     for (const { id, external } of [...quantities.produces, ...quantities.outputs]) {
       if (external) continue;
-      const producers = producedBy.get(id) || [];
-      producers.push(nodeId);
-      producedBy.set(id, producers);
+      const producerIds = producedBy.get(id) || [];
+      producerIds.push(nodeId);
+      producedBy.set(id, producerIds);
     }
-    for (const { id, external } of [...quantities.consumes, ...quantities.inputs]) {
-      if (external) continue;
+    const materialInputs = materialEntryIds(registry, [
+      ...quantities.consumes,
+      ...quantities.inputs,
+      ...quantities.catalysts,
+      ...quantities.catalystInputs,
+    ]);
+    for (const id of materialInputs) {
       const consumers = consumedBy.get(id) || [];
-      consumers.push(nodeId);
+      consumers.push({ consumerId: nodeId, packageId: node.packageId });
       consumedBy.set(id, consumers);
     }
-    for (const condition of node.conditions || []) {
-      if (conditionAdapter(condition) !== 'material_quantity') continue;
-      const id = conditionReference(condition);
-      if (!id) continue;
+    const conditionMaterials = conditionByNode.get(nodeId)
+      .filter(({ adapter }) => adapter === 'material_quantity')
+      .map(({ targetId }) => targetId);
+    for (const id of conditionMaterials) {
       const consumers = consumedBy.get(id) || [];
-      consumers.push(nodeId);
+      consumers.push({ consumerId: nodeId, packageId: node.packageId });
       consumedBy.set(id, consumers);
     }
+    if (['source', 'recipe'].includes(node.type)) {
+      const outputs = materialEntryIds(registry, [
+        ...quantities.produces,
+        ...quantities.outputs,
+      ]);
+      if (outputs.length > 0) {
+        producers.push({
+          nodeId,
+          packageId: node.packageId,
+          outputs,
+          requirements: [...new Set([...materialInputs, ...conditionMaterials])],
+        });
+      }
+    }
+  }
+  for (const { nodeId, roleId, targetId } of socialMaterialConditions) {
+    const consumers = consumedBy.get(targetId) || [];
+    consumers.push({
+      consumerId: `${nodeId}#${roleId}`,
+      packageId: registry.nodes.get(nodeId).packageId,
+    });
+    consumedBy.set(targetId, consumers);
   }
 
   const requiredMaterials = new Set();
-  const sourcedMaterials = new Set();
   const sinklessMaterials = [];
   for (const [nodeId, node] of registry.nodes) {
     if (node.type !== 'material') continue;
     if (consumedBy.has(nodeId)) requiredMaterials.add(nodeId);
-    if (producedBy.has(nodeId) || isSeeded(node)) sourcedMaterials.add(nodeId);
-    if (requiredMaterials.has(nodeId) && !sourcedMaterials.has(nodeId)) {
-      fail('unsourced_material',
-        `Required material ${nodeId} has no valid source and is not administrator- or seasonal-seeded`,
-        { nodeId, consumers: consumedBy.get(nodeId) });
+  }
+
+  const reachableCache = new Map();
+  function accessiblePackages(packageId) {
+    return new Set([packageId, ...(packageClosures.get(packageId) || [])]);
+  }
+  function reachableFor(packageId) {
+    if (reachableCache.has(packageId)) return reachableCache.get(packageId);
+    const accessible = accessiblePackages(packageId);
+    const reachable = new Set();
+    for (const [nodeId, node] of registry.nodes) {
+      if (node.type === 'material' && accessible.has(node.packageId) && isSeeded(node)) {
+        reachable.add(nodeId);
+      }
+    }
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const producer of producers) {
+        if (!accessible.has(producer.packageId)
+          || !producer.requirements.every((id) => reachable.has(id))) continue;
+        for (const outputId of producer.outputs) {
+          if (reachable.has(outputId)) continue;
+          reachable.add(outputId);
+          changed = true;
+        }
+      }
+    }
+    reachableCache.set(packageId, reachable);
+    return reachable;
+  }
+
+  for (const [nodeId, node] of registry.nodes) {
+    if (node.type !== 'material') continue;
+    for (const consumer of consumedBy.get(nodeId) || []) {
+      if (!reachableFor(consumer.packageId).has(nodeId)) {
+        fail('unsourced_material',
+          `Required material ${nodeId} has no reachable source or administrator/season seed in package ${consumer.packageId}'s dependency set`,
+          {
+            nodeId,
+            consumer: consumer.consumerId,
+            consumerPackageId: consumer.packageId,
+            declaredProducers: producedBy.get(nodeId) || [],
+          });
+      }
     }
     if (!consumedBy.has(nodeId) && node.metadata?.economySignificant !== false) {
       sinklessMaterials.push(nodeId);
@@ -684,13 +1164,22 @@ function buildMaterialDiagnostics(registry, quantityByNode) {
   for (const [nodeId, node] of registry.nodes) {
     if (node.type !== 'source') continue;
     const outputs = [...quantityByNode.get(nodeId).produces, ...quantityByNode.get(nodeId).outputs];
-    if (outputs.length === 0 || outputs.every(({ id }) => !consumedBy.has(id))) {
+    if (outputs.length === 0 || outputs.every(({ id }) => (
+      !(consumedBy.get(id) || []).some(({ packageId }) => (
+        accessiblePackages(packageId).has(node.packageId)
+      ))
+    ))) {
       orphanedSources.push(nodeId);
     }
   }
+  const reachableMaterials = new Set();
+  for (const packageId of registry.byPackage.keys()) {
+    for (const materialId of reachableFor(packageId)) reachableMaterials.add(materialId);
+  }
   return {
     required: requiredMaterials.size,
-    sourced: [...requiredMaterials].filter((id) => sourcedMaterials.has(id)).length,
+    sourced: requiredMaterials.size,
+    reachable: reachableMaterials.size,
     sinkless: sinklessMaterials.length,
     sinklessMaterials,
     orphanedSources,
@@ -709,13 +1198,21 @@ export function validateGraph(registry) {
   }
 
   const packageEdges = validatePackageDependencies(registry);
-  const { dependencyEdges, quantityByNode } = validateNodeReferences(registry, packageEdges);
+  const {
+    conditionByNode, dependencyEdges, packageClosures, quantityByNode,
+  } = validateNodeReferences(registry, packageEdges);
   validateMysteryCycles(registry, dependencyEdges);
   const recipes = validateRecipeClasses(registry, quantityByNode);
-  validateZeroCostRecipeCycles(registry, quantityByNode);
-  const socialOperations = validateSocialOperations(registry);
+  const social = validateSocialOperations(registry, packageClosures);
   const omrRewards = validateOmrRewards(registry);
-  const materials = buildMaterialDiagnostics(registry, quantityByNode);
+  const materials = buildMaterialDiagnostics({
+    registry,
+    quantityByNode,
+    conditionByNode,
+    socialMaterialConditions: social.materialConditions,
+    packageClosures,
+  });
+  validateRecipeCycles(registry, quantityByNode);
 
   const warnings = [
     ...materials.sinklessMaterials.map((nodeId) => ({
@@ -739,9 +1236,75 @@ export function validateGraph(registry) {
       recipes,
       omrRewards,
       materials: Object.freeze(materials),
-      socialOperations: Object.freeze(socialOperations.map((report) => Object.freeze(report))),
+      socialOperations: Object.freeze(social.reports.map((report) => Object.freeze(report))),
     }),
   });
+}
+
+function assertRawPackageStructure(packages) {
+  if (!Array.isArray(packages)) {
+    fail('malformed_graph_packages', 'Graph packages must be provided as an array');
+  }
+  for (const [packageIndex, pkg] of packages.entries()) {
+    if (!pkg || typeof pkg !== 'object' || Array.isArray(pkg)
+      || !nonEmptyString(pkg.id) || !positiveInteger(pkg.version)) {
+      fail('malformed_package',
+        `Graph package at index ${packageIndex} requires a stable ID and positive integer version`,
+        { packageIndex });
+    }
+    if (!Array.isArray(pkg.dependsOn)) {
+      fail('malformed_package_dependency',
+        `Package ${pkg.id} dependsOn must be an array`, { packageId: pkg.id });
+    }
+    if (!Array.isArray(pkg.nodes)) {
+      fail('malformed_package', `Package ${pkg.id} nodes must be an array`, { packageId: pkg.id });
+    }
+    for (const [nodeIndex, node] of pkg.nodes.entries()) {
+      if (!node || typeof node !== 'object' || Array.isArray(node) || !nonEmptyString(node.id)) {
+        fail('malformed_node',
+          `Package ${pkg.id} node at index ${nodeIndex} requires a stable ID`,
+          { packageId: pkg.id, nodeIndex });
+      }
+      if (!nonEmptyString(node.type)) {
+        fail('invalid_node_type',
+          `Node ${node.id} requires a valid node type`,
+          { packageId: pkg.id, nodeId: node.id });
+      }
+    }
+  }
+}
+
+function normalizedLoaderError(error) {
+  const message = error instanceof Error ? error.message : String(error);
+  const mappings = [
+    [/^duplicate package\s+(.+)$/i, 'duplicate_package'],
+    [/^duplicate node\s+(.+)$/i, 'duplicate_node'],
+    [/^invalid node type\s+(.+)$/i, 'invalid_node_type'],
+    [/executable functions/i, 'executable_graph_data'],
+    [/plain objects and arrays/i, 'invalid_graph_data'],
+  ];
+  for (const [pattern, code] of mappings) {
+    if (pattern.test(message)) return new GraphValidationError(code, message);
+  }
+  return new GraphValidationError('invalid_graph_package', message);
+}
+
+/**
+ * Content-acceptance entry point for untrusted raw packages. Task 1's loader is
+ * intentionally unchanged; this wrapper gives every loader/validator failure a
+ * stable machine code and returns the accepted immutable registry.
+ */
+export function loadAndValidateGraphPackages(packages) {
+  assertRawPackageStructure(packages);
+  let registry;
+  try {
+    registry = loadGraphPackages(packages);
+  } catch (error) {
+    if (error instanceof GraphValidationError) throw error;
+    throw normalizedLoaderError(error);
+  }
+  validateGraph(registry);
+  return registry;
 }
 
 export const SUPPORTED_WORLD_GRAPH_CONDITION_ADAPTERS = Object.freeze([...CONDITION_ADAPTERS]);
