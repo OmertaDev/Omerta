@@ -25,6 +25,8 @@ const MAX_EXACT_RECIPE_SCC_TEMPLATES = 8;
 const MAX_EXACT_RECIPE_SCC_EDGES = MAX_EXACT_RECIPE_SCC_TEMPLATES ** 2;
 const MAX_EXACT_RECIPE_CYCLES = 20_000;
 const MAX_GRAPH_WITNESSES_PER_NODE = 128;
+// Phase 1 ships four-seat operations; eight bounds the exact coloring solver with headroom.
+const MAX_PHASE1_SOCIAL_ROLES = 8;
 
 export class GraphValidationError extends Error {
   constructor(code, message, details = {}) {
@@ -514,6 +516,55 @@ function inventoryClass(node) {
     : node.type === 'item_template' ? 'unique' : null);
 }
 
+function recipeNumericDeclarations(node, names) {
+  const declarations = [];
+  for (const [prefix, container] of [['recipe', node], ['recipe.metadata', node.metadata]]) {
+    if (!container || typeof container !== 'object' || Array.isArray(container)) continue;
+    for (const [key, value] of Object.entries(container)) {
+      if (names.has(normalizedObjectKey(key))) {
+        declarations.push({ path: `${prefix}.${key}`, value });
+      }
+    }
+  }
+  return declarations;
+}
+
+function recipeCap(node) {
+  const declarations = recipeNumericDeclarations(node, new Set([
+    'maxcrafts', 'claimcap', 'cap',
+  ]));
+  if (declarations.some(({ value }) => !positiveInteger(value))) {
+    fail('invalid_recipe_cap',
+      `Recipe ${node.id} craft-cap declarations must be positive integers`,
+      { nodeId: node.id, declarations });
+  }
+  const values = [...new Set(declarations.map(({ value }) => value))];
+  if (values.length > 1) {
+    fail('conflicting_recipe_authority',
+      `Recipe ${node.id} has conflicting craft-cap declarations`,
+      { nodeId: node.id, declarations });
+  }
+  return values[0];
+}
+
+function recipeCashCost(node) {
+  const declarations = recipeNumericDeclarations(node, new Set([
+    'cashcost', 'costcash', 'cost',
+  ]));
+  if (declarations.some(({ value }) => !Number.isFinite(value) || value <= 0)) {
+    fail('invalid_recipe_cost',
+      `Recipe ${node.id} cash-cost declarations must be positive finite numbers`,
+      { nodeId: node.id, declarations });
+  }
+  const values = [...new Set(declarations.map(({ value }) => value))];
+  if (values.length > 1) {
+    fail('conflicting_recipe_authority',
+      `Recipe ${node.id} has conflicting cash-cost declarations`,
+      { nodeId: node.id, declarations });
+  }
+  return values[0];
+}
+
 function recipePolicy(node) {
   const declarations = [node.repeatability, node.metadata?.repeatability]
     .filter((value) => value !== undefined);
@@ -551,8 +602,8 @@ function recipePolicy(node) {
       { nodeId: node.id, repeatability, repeatable });
   }
 
-  const cap = node.maxCrafts ?? node.claimCap ?? node.cap
-    ?? node.metadata?.maxCrafts ?? node.metadata?.claimCap ?? node.metadata?.cap;
+  const cap = recipeCap(node);
+  const cashCost = recipeCashCost(node);
   if (repeatability === 'capped' && !positiveInteger(cap)) {
     fail('invalid_recipe_repeatability',
       `Capped recipe ${node.id} requires a positive finite craft cap`,
@@ -561,6 +612,7 @@ function recipePolicy(node) {
   return {
     repeatable: repeatable === true || ['repeatable', 'capped'].includes(repeatability),
     finite: repeatability === 'once' || positiveInteger(cap),
+    hasEconomicCost: cashCost !== undefined,
   };
 }
 
@@ -816,8 +868,9 @@ function validateRecipeCycles(registry, quantityByNode) {
   }
 }
 
-function recipeHasFiniteSourceSemantics(node) {
-  return recipePolicy(node).finite;
+function recipeHasSourceConstraint(node) {
+  const policy = recipePolicy(node);
+  return policy.finite || policy.hasEconomicCost;
 }
 
 function validateRecipeSources(registry, quantityByNode) {
@@ -827,7 +880,7 @@ function validateRecipeSources(registry, quantityByNode) {
     const outputs = [...quantities.produces, ...quantities.outputs];
     if (outputs.length === 0 || !recipeDeclaresRepeatable(node)) continue;
     const consumedInputs = [...quantities.consumes, ...quantities.inputs];
-    if (consumedInputs.length > 0 || recipeHasFiniteSourceSemantics(node)) continue;
+    if (consumedInputs.length > 0 || recipeHasSourceConstraint(node)) continue;
     fail('unbounded_recipe_source',
       `Repeatable producer ${nodeId} requires a real consumed/external input or explicit finite source semantics`,
       { nodeId });
@@ -946,13 +999,14 @@ function socialAccountConstraints(nodeId, roles, byId) {
   return {
     minimum: minimumGraphColors(vertices, adjacency),
     maximum: vertices.length,
+    accountGroups: [...groups.values()].map((members) => [...members]),
   };
 }
 
 function validateSocialOperations(registry, packageClosures) {
   const reports = [];
   const materialConditions = [];
-  const conditionRequirements = [];
+  const conditionRequirementGroups = [];
   for (const [nodeId, node] of registry.nodes) {
     const roles = roleDefinitions(node);
     if (roles === null) continue;
@@ -961,8 +1015,14 @@ function validateSocialOperations(registry, packageClosures) {
       fail('malformed_social_operation',
         `Node ${nodeId} has malformed social role definitions`, { nodeId });
     }
+    if (roles.length > MAX_PHASE1_SOCIAL_ROLES) {
+      fail('social_solver_too_complex',
+        `Social operation ${nodeId} has ${roles.length} roles, exceeding the Phase 1 limit ${MAX_PHASE1_SOCIAL_ROLES}`,
+        { nodeId, roles: roles.length, maximumRoles: MAX_PHASE1_SOCIAL_ROLES });
+    }
 
     const byId = new Map();
+    const requirementsByRole = new Map();
     for (const role of roles) {
       if (!role || typeof role !== 'object' || Array.isArray(role) || !nonEmptyString(role.id)) {
         fail('malformed_social_role',
@@ -995,9 +1055,8 @@ function validateSocialOperations(registry, packageClosures) {
       materialConditions.push(...conditions
         .filter(({ adapter }) => adapter === 'material_quantity')
         .map(({ targetId }) => ({ nodeId, roleId: role.id, targetId })));
-      conditionRequirements.push(...conditions
-        .filter(({ targetId }) => targetId)
-        .map(({ targetId }) => ({ nodeId, roleId: role.id, targetId })));
+      requirementsByRole.set(role.id,
+        conditions.map(({ targetId }) => targetId).filter(Boolean));
       if (roleRequirementContradiction(role)) {
         fail('impossible_social_role',
           `Social operation ${nodeId} has impossible role requirements for ${role.id}`,
@@ -1006,6 +1065,14 @@ function validateSocialOperations(registry, packageClosures) {
     }
 
     const feasible = socialAccountConstraints(nodeId, roles, byId);
+    conditionRequirementGroups.push({
+      nodeId,
+      groups: feasible.accountGroups
+        .map((roleIds) => [...new Set(roleIds.flatMap((roleId) => (
+          requirementsByRole.get(roleId) || []
+        )))])
+        .filter((requirements) => requirements.length > 0),
+    });
     const declared = node.minimumDistinctAccounts ?? node.metadata?.minimumDistinctAccounts;
     if (declared !== undefined && !positiveInteger(declared)) {
       fail('invalid_social_minimum',
@@ -1032,7 +1099,7 @@ function validateSocialOperations(registry, packageClosures) {
       rolesMayShareAccounts: minimumDistinctAccounts < roles.length,
     });
   }
-  return { conditionRequirements, materialConditions, reports };
+  return { conditionRequirementGroups, materialConditions, reports };
 }
 
 function normalizedObjectKey(key) {
@@ -1061,6 +1128,30 @@ function canonicalRewardContainers(node) {
   ].filter(([, value]) => value && typeof value === 'object' && !Array.isArray(value));
 }
 
+function declaredEffectActionContainers(node) {
+  const result = [];
+  const seen = new WeakSet();
+  const effectKeys = new Set(['effect', 'effects', 'action', 'actions']);
+  function collect(value, path) {
+    if (!value || typeof value !== 'object' || seen.has(value)) return;
+    seen.add(value);
+    if (Array.isArray(value)) {
+      value.forEach((entry, index) => collect(entry, `${path}[${index}]`));
+      return;
+    }
+    result.push([path, value]);
+    for (const [key, child] of Object.entries(value)) {
+      if (effectKeys.has(normalizedObjectKey(key))) collect(child, `${path}.${key}`);
+    }
+  }
+  for (const [path, container] of canonicalRewardContainers(node)) {
+    for (const [key, value] of Object.entries(container)) {
+      if (effectKeys.has(normalizedObjectKey(key))) collect(value, `${path}.${key}`);
+    }
+  }
+  return result;
+}
+
 function rewardAssetDeclarations(node) {
   const identityKeys = new Set([
     'asset', 'assettype', 'currency', 'currencytype', 'rewardasset', 'rewardcurrency',
@@ -1069,7 +1160,10 @@ function rewardAssetDeclarations(node) {
   ]);
   const nestedIdentityKeys = new Set(['id', 'name', 'type', 'symbol']);
   const declarations = [];
-  for (const [path, container] of canonicalRewardContainers(node)) {
+  for (const [path, container] of [
+    ...canonicalRewardContainers(node),
+    ...declaredEffectActionContainers(node),
+  ]) {
     for (const [key, value] of Object.entries(container)) {
       if (!identityKeys.has(normalizedObjectKey(key))) continue;
       if (typeof value === 'string') {
@@ -1152,7 +1246,10 @@ function triggerIsRandom(value, seen = new WeakSet()) {
 }
 
 function containsCanonicalRandom(node) {
-  for (const [, container] of canonicalRewardContainers(node)) {
+  for (const [, container] of [
+    ...canonicalRewardContainers(node),
+    ...declaredEffectActionContainers(node),
+  ]) {
     for (const [key, value] of Object.entries(container)) {
       const normalizedKey = normalizedObjectKey(key);
       if (['random', 'israndom', 'randomized', 'israndomized'].includes(normalizedKey)
@@ -1212,7 +1309,8 @@ function validateOmrRewards(registry) {
     if (!assets.includes('OMR')) continue;
     count += 1;
     const pkg = registry.byPackage.get(node.packageId);
-    if (canonicalRewardContainers(node).some(([, container]) => truthyRepeatAlias(container))) {
+    if ([...canonicalRewardContainers(node), ...declaredEffectActionContainers(node)]
+      .some(([, container]) => truthyRepeatAlias(container))) {
       fail('invalid_omr_reward',
         `OMR reward ${node.id} cannot set repeatable:true or an equivalent repeatable alias`,
         { nodeId: node.id });
@@ -1282,14 +1380,10 @@ function materialEntryIds(registry, entries) {
 }
 
 function graphReachability({
-  registry, quantityByNode, conditionByNode, packageClosures, socialConditionRequirements,
+  registry, quantityByNode, conditionByNode, packageClosures, socialConditionRequirementGroups,
 }) {
-  const roleRequirements = new Map();
-  for (const { nodeId, targetId } of socialConditionRequirements) {
-    const targets = roleRequirements.get(nodeId) || [];
-    targets.push(targetId);
-    roleRequirements.set(nodeId, targets);
-  }
+  const roleRequirementGroups = new Map(socialConditionRequirementGroups
+    .map(({ nodeId, groups }) => [nodeId, groups]));
 
   const cache = new Map();
   function accessiblePackages(packageId) {
@@ -1306,7 +1400,6 @@ function graphReachability({
     return [...new Set([
       ...(node.requires || []),
       ...conditionByNode.get(nodeId).map(({ targetId }) => targetId).filter(Boolean),
-      ...(roleRequirements.get(nodeId) || []),
       ...quantityTargets,
     ])];
   }
@@ -1319,7 +1412,7 @@ function graphReachability({
       const quantities = quantityByNode.get(nodeId);
       const hasExternalInput = [...quantities.consumes, ...quantities.inputs]
         .some(({ external }) => external);
-      if (!hasExternalInput && !recipeHasFiniteSourceSemantics(node)) return false;
+      if (!hasExternalInput && !recipeHasSourceConstraint(node)) return false;
     }
     if (['hidden', 'role_private'].includes(node.visibility)
       && node.type !== 'source' && !hasUnlock) return false;
@@ -1358,8 +1451,35 @@ function graphReachability({
       forbidden: new Set(node.excludes || []),
     });
   }
+  function socialRequirementGroupsAreFeasible(nodeId, witnesses) {
+    for (const requirements of roleRequirementGroups.get(nodeId) || []) {
+      let combinations = [{ completed: new Set(), forbidden: new Set() }];
+      let work = 0;
+      for (const targetId of requirements) {
+        const options = witnesses.get(targetId) || [];
+        if (options.length === 0) return false;
+        const next = [];
+        for (const combination of combinations) {
+          for (const option of options) {
+            work += 1;
+            if (work > MAX_GRAPH_WITNESSES_PER_NODE ** 2) {
+              fail('graph_reachability_too_complex',
+                `Social operation ${nodeId} exceeds the Phase 1 role-reachability budget`,
+                { nodeId, maximumCombinations: MAX_GRAPH_WITNESSES_PER_NODE ** 2 });
+            }
+            const merged = mergeWitnesses(combination, option);
+            if (merged) addWitness(next, merged, nodeId);
+          }
+        }
+        combinations = next;
+        if (combinations.length === 0) return false;
+      }
+    }
+    return true;
+  }
   function deriveWitnesses(nodeId, node, witnesses) {
     if (!canUnlock(nodeId, node)) return [];
+    if (!socialRequirementGroupsAreFeasible(nodeId, witnesses)) return [];
     const requirementGroups = [];
     for (const targetId of requirementsFor(nodeId, node)) {
       const targetWitnesses = witnesses.get(targetId) || [];
@@ -1588,7 +1708,7 @@ export function validateGraph(registry) {
     quantityByNode,
     conditionByNode,
     packageClosures,
-    socialConditionRequirements: social.conditionRequirements,
+    socialConditionRequirementGroups: social.conditionRequirementGroups,
   });
   const materials = buildMaterialDiagnostics({
     registry,

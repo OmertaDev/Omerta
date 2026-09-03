@@ -460,6 +460,42 @@ assert.equal(validateGraph(registry([
   },
 ])).ok, true, 'an explicit finite craft cap bounds an otherwise inputless producer');
 
+assert.equal(validateGraph(registry([
+  { id: 'mat:paid-source', type: 'material' },
+  {
+    id: 'recipe:paid-source', type: 'recipe', repeatability: 'repeatable',
+    cashCost: 25, metadata: { cost_cash: 25 },
+    outputs: [{ templateId: 'mat:paid-source', quantity: 1 }],
+  },
+  {
+    id: 'sink:paid-source', type: 'sink',
+    consumes: [{ templateId: 'mat:paid-source', quantity: 1 }],
+  },
+])).ok, true, 'a positive canonical cash cost constrains an inputless repeatable producer');
+
+expectCode(() => validateGraph(registry([{
+  id: 'recipe:conflicting-cost', type: 'recipe', cashCost: 25,
+  metadata: { cost: 30 },
+}])), 'conflicting_recipe_authority', /conflicting cash-cost/i);
+
+expectCode(() => validateGraph(registry([{
+  id: 'recipe:zero-cost', type: 'recipe', cashCost: 0,
+}])), 'invalid_recipe_cost', /positive finite/i);
+
+expectCode(() => validateGraph(registry([{
+  id: 'recipe:conflicting-cap', type: 'recipe', maxCrafts: 2,
+  metadata: { cap: 3 },
+}])), 'conflicting_recipe_authority', /conflicting craft-cap/i);
+
+expectCode(() => validateGraph(registry([{
+  id: 'recipe:negative-cap', type: 'recipe', metadata: { claimCap: -1 },
+}])), 'invalid_recipe_cap', /positive integers/i);
+
+assert.equal(validateGraph(registry([{
+  id: 'recipe:matching-cap', type: 'recipe', maxCrafts: 2,
+  metadata: { claimCap: 2, cap: 2 },
+}])).ok, true, 'equivalent positive craft-cap aliases agree');
+
 expectCode(() => validateGraph(registry([
   { id: 'item:missing-tool', type: 'item_template', visibility: 'hidden' },
   { id: 'mat:tool-output', type: 'material' },
@@ -533,6 +569,56 @@ expectCode(() => validateGraph(registry([
     },
   },
 ])), 'unreachable_terminal', /tool-gated.*not reachable/i);
+
+const independentRolePaths = [
+  { id: 'item:path-a', type: 'item_template', visibility: 'hidden' },
+  { id: 'item:path-b', type: 'item_template', visibility: 'hidden' },
+  {
+    id: 'm:path-a', type: 'mystery_step', visibility: 'public', excludes: ['m:path-b'],
+    produces: [{ templateId: 'item:path-a', quantity: 1 }],
+  },
+  {
+    id: 'm:path-b', type: 'mystery_step', visibility: 'public', excludes: ['m:path-a'],
+    produces: [{ templateId: 'item:path-b', quantity: 1 }],
+  },
+];
+assert.equal(validateGraph(registry([
+  ...independentRolePaths,
+  {
+    id: 'op:independent-role-paths', type: 'social_gate', visibility: 'public',
+    metadata: {
+      roles: [
+        {
+          id: 'a', distinct: true,
+          conditions: [{ adapter: 'item_ownership', templateId: 'item:path-a' }],
+        },
+        {
+          id: 'b',
+          conditions: [{ adapter: 'item_ownership', templateId: 'item:path-b' }],
+        },
+      ],
+    },
+  },
+])).ok, true, 'distinct account groups may satisfy mutually exclusive item paths independently');
+
+expectCode(() => validateGraph(registry([
+  ...independentRolePaths,
+  {
+    id: 'op:shared-incompatible-paths', type: 'social_gate', visibility: 'public',
+    metadata: {
+      roles: [
+        {
+          id: 'a', sameAccountAs: 'b',
+          conditions: [{ adapter: 'item_ownership', templateId: 'item:path-a' }],
+        },
+        {
+          id: 'b',
+          conditions: [{ adapter: 'item_ownership', templateId: 'item:path-b' }],
+        },
+      ],
+    },
+  },
+])), 'unreachable_terminal', /shared-incompatible-paths.*not reachable/i);
 
 const recursiveSourceChain = validateGraph(registry([
   { id: 'mat:raw', type: 'material' },
@@ -688,6 +774,17 @@ assert.equal(singleRoleSocial.reports.socialOperations[0].minimumDistinctAccount
   'a non-empty social operation always requires at least one account');
 
 expectCode(() => validateGraph(registry([{
+  id: 'op:too-complex', type: 'social_gate',
+  metadata: {
+    roles: Array.from({ length: 32 }, (_, index) => ({
+      id: `role:${index}`,
+      distinctFrom: index === 0
+        ? Array.from({ length: 31 }, (__, offset) => `role:${offset + 1}`) : [],
+    })),
+  },
+}])), 'social_solver_too_complex', /32 roles.*limit 8/i);
+
+expectCode(() => validateGraph(registry([{
   id: 'op:forced-incompatible', type: 'social_gate',
   metadata: {
     roles: [
@@ -725,6 +822,21 @@ expectCode(() => validateGraph(registry([
 ])), 'impossible_condition_set', /conflicting location/i);
 
 for (const [node, code, pattern] of [
+  [{
+    id: 'reward:effect-omr', type: 'reward', repeatability: 'once',
+    allocationId: 'season-1-vault', claimKey: 'claim:effect-omr',
+    effect: { type: 'mint', currency: 'OMR' },
+  }, 'invalid_omr_reward', /mint/i],
+  [{
+    id: 'reward:effects-omr', type: 'reward', repeatability: 'once',
+    allocationId: 'season-1-vault', claimKey: 'claim:effects-omr',
+    effects: [{ type: 'direct_mint', assetType: 'OMR' }],
+  }, 'invalid_omr_reward', /mint/i],
+  [{
+    id: 'reward:action-omr', type: 'reward', repeatability: 'once',
+    allocationId: 'season-1-vault', claimKey: 'claim:action-omr',
+    action: { verb: 'mint', tokenSymbol: 'OMR' },
+  }, 'invalid_omr_reward', /mint/i],
   [{ id: 'reward:omr', type: 'reward', metadata: { currency: 'OMR' } },
     'invalid_omr_reward', /finite seasonal allocation/i],
   [{
@@ -867,6 +979,14 @@ assert.equal(validateGraph(registry([{
     effects: [{ type: 'grant', description: 'commemorates mint day', mintedAt: 'archived' }],
   },
 }])).ok, true, 'only declared effect verbs, not descriptive effect provenance, imply minting');
+
+assert.equal(validateGraph(registry([{
+  id: 'reward:effect-only-provenance', type: 'reward', repeatability: 'once',
+  allocationId: 'vault:a', claimKey: 'claim:effect-only-provenance',
+  effect: {
+    type: 'grant', currency: 'OMR', description: 'commemorates mint day', mintedAt: 'archived',
+  },
+}])).ok, true, 'effect-level OMR classification still ignores non-verb mint provenance');
 
 assert.equal(validateGraph(registry([{
   id: 'reward:fixed-omr', type: 'reward', repeatability: 'once',
