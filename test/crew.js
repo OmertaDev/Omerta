@@ -265,9 +265,13 @@ assert.equal((await sweepCrewInvites(pool)).swept >= 2, true, 'the worker sweeps
   let obj = (await call('GET', '/v1/crew', { token: cap.token })).body.crew.objective;
   assert.equal(obj.progress, 1, 'the crew total is the sum of contributions'); assert.equal(obj.done, false, 'not cracked at 1 of 2');
   await bumpCrewObjective(pool, { owned: { crewId: cid } }, { id: hand.id, account_id: handA }, { crimes: 1 });
-  obj = (await call('GET', '/v1/crew', { token: cap.token })).body.crew.objective;
+  const completedBoard = (await call('GET', '/v1/crew', { token: cap.token })).body.crew;
+  obj = completedBoard.objective;
   assert.equal(obj.done, true, 'the target is cracked'); assert.equal(obj.progress, 2, 'progress at target');
-  assert.equal(await one('SELECT objectives_done n FROM crews WHERE id=$1', [cid]), 1, 'the crew legend bumped once on completion');
+  assert.equal(completedBoard.objectivesDone, 1,
+    'the crew legend derives one completed objective from the authoritative done rows');
+  assert.equal(await one('SELECT objectives_done n FROM crews WHERE id=$1', [cid]), 0,
+    'character-held objective completion never takes the Crew row to maintain a denormalized count');
   // the per-member contribution texture ("what your crew did")
   assert.equal(obj.contributions.length, 2, 'both contributors listed');
   assert.equal(obj.mine, 1, 'the caller sees their own contribution');
@@ -292,8 +296,13 @@ assert.equal((await sweepCrewInvites(pool)).swept >= 2, true, 'the worker sweeps
   // progress / delay completion a bump. pg-mem is single-caller — a labelled source tripwire.
   {
     const gameSrc = _readSrc(new URL('../src/game.js', import.meta.url), 'utf8');
-    const bump = gameSrc.slice(gameSrc.indexOf('export async function bumpCrewObjective'), gameSrc.indexOf('export async function bumpCrewObjective') + 1600);
+    const bump = gameSrc.slice(
+      gameSrc.indexOf('export async function bumpCrewObjective'),
+      gameSrc.indexOf('async function advanceCampaignsInline'),
+    );
     assert(/FROM crew_objectives WHERE crew_id=\$1 AND week=\$2 FOR UPDATE/.test(bump), 'bumpCrewObjective locks the objective row FOR UPDATE');
+    assert(!/UPDATE crews\b/.test(bump),
+      'character-held objective progress never acquires a later Crew-row lock');
   }
   assert.equal(obj.claimable, true, 'a contributor can claim a cracked objective');
   // everyone was pinged (the synchronous "your crew is active" moment) — scoped to THIS crew's three

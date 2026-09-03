@@ -32,6 +32,41 @@ export async function crewIdOf(client, accountId) {
   return (await client.query('SELECT crew_id FROM crew_members WHERE account_id=$1', [accountId])).rows[0]?.crew_id || null;
 }
 
+// Existing-member Crew mutations share a Crew -> character -> account -> membership lock order with world
+// operation opening. The generic request wrapper normally locks the character first; these hooks
+// move only the Crew authority boundary ahead of it, then re-lock/re-read the membership afterward.
+// This prevents both membership TOCTOU and Crew/character ABBA cycles without bypassing accrual,
+// persistence, account locks, or post-commit behavior in withCharacter.
+export const CREW_FIRST_CHARACTER_LOCKS = Object.freeze({
+  async beforeCharacterLock(client, accountId) {
+    const snapshot = (await client.query(
+      'SELECT crew_id FROM crew_members WHERE account_id=$1', [accountId],
+    )).rows[0];
+    if (!snapshot) throw new GameError('no_crew', "You're not in a crew.");
+    const crew = (await client.query(
+      'SELECT id FROM crews WHERE id=$1 FOR UPDATE', [snapshot.crew_id],
+    )).rows[0];
+    if (!crew) throw new GameError('no_crew', 'That crew no longer exists.');
+    return crew.id;
+  },
+  async afterAccountLock(client, accountId, _character, crewId) {
+    const membership = (await client.query(
+      'SELECT crew_id FROM crew_members WHERE account_id=$1 FOR UPDATE', [accountId],
+    )).rows[0];
+    if (!membership || membership.crew_id !== crewId) {
+      throw new GameError('crew_changed', 'Your Crew membership changed during this action.');
+    }
+  },
+});
+
+// Lock posture is selected only from the server-authored Agent Turn action-id shape. The caller's
+// id still grants no authority: /v1/agent/act recomputes the turn and resolves the exact issued
+// action inside this transaction after the Crew-first boundary is held.
+export function agentActionLockHooks(actionId) {
+  return /^organization:crew:[^:]{1,200}:recruiting:open$/.test(String(actionId || ''))
+    ? CREW_FIRST_CHARACTER_LOCKS : null;
+}
+
 // ── FORM A CREW ────────────────────────────────────────────────────────────────────────────────
 export async function createCrew(ch, name, client, h) {
   if (await crewIdOf(client, ch.account_id)) throw new GameError('in_crew', "You already run with a crew.");
@@ -222,6 +257,11 @@ export async function crewBoard(ch, client) {
   if (!crewId) return { crew: null, invites, maxMembers: CREW.MAX_MEMBERS, minLevel: CREW.MIN_LEVEL, nameMax: CREW.NAME_MAX, bringOne: CREW.BRING_ONE };
 
   const crew = (await client.query('SELECT * FROM crews WHERE id=$1', [crewId])).rows[0];
+  // The completed objective rows are the authoritative history. Deriving this display counter keeps
+  // ordinary character-held crime/combat transactions from ever needing a later Crew-row lock.
+  const objectivesDone = Number((await client.query(
+    'SELECT COUNT(*) n FROM crew_objectives WHERE crew_id=$1 AND done', [crewId],
+  )).rows[0].n);
   // members' live state — flat JOIN, never `= ANY($1)` (pg-mem returns zero rows for it — the rivals lesson)
   const mem = (await client.query(
     `SELECT cm.account_id, cm.name AS snap, cm.joined_at, c.id AS char_id, c.name, c.loc, c.respect,
@@ -254,7 +294,7 @@ export async function crewBoard(ch, client) {
   const objective = await crewObjective(client, crewId, ch.account_id);   // THE CREW OBJECTIVE — the weekly shared goal
   return {
     crew: { id: crewId, name: crew.name, leader: crew.leader_account === ch.account_id, members, pending,
-      recruiting: !!crew.recruiting, requests, target, objective, objectivesDone: Number(crew.objectives_done || 0) },
+      recruiting: !!crew.recruiting, requests, target, objective, objectivesDone },
     invites, maxMembers: CREW.MAX_MEMBERS, minLevel: CREW.MIN_LEVEL, nameMax: CREW.NAME_MAX, bringOne: CREW.BRING_ONE,
   };
 }

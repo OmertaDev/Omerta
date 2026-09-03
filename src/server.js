@@ -2476,6 +2476,10 @@ export async function buildServer() {
     const turnId = typeof req.body?.turnId === 'string' ? req.body.turnId : '';
     const actionId = typeof req.body?.actionId === 'string' ? req.body.actionId : '';
     if (!turnId || !actionId) throw new G.GameError('invalid_turn', 'Send both turnId and actionId from the latest agent turn.');
+    // Crew recruiting mutates the Crew row. Select its lock posture from the closed, server-authored
+    // action-id shape, then still recompute and authorize the exact turn/action inside the lock.
+    // A forged matching shape can at most request the stronger lock; it grants no action authority.
+    const agentActionLocks = Crew.agentActionLockHooks(actionId);
 
     let result;
     try {
@@ -2494,12 +2498,12 @@ export async function buildServer() {
           // invented id reports unknown_action), rather than leaking an unrelated lookup result.
           result = await G.withCharacter(pool, req.user.sub, async (ch, client, h) => {
             return executeAgentAction(client, ch, h, turnId, actionId);
-          });
+          }, agentActionLocks);
         }
       } else {
         result = await G.withCharacter(pool, req.user.sub, async (ch, client, h) => {
           return executeAgentAction(client, ch, h, turnId, actionId);
-        });
+        }, agentActionLocks);
       }
     } catch (e) {
       if (!(e instanceof AgentTurnConflict)) throw e;
@@ -2911,9 +2915,12 @@ export async function buildServer() {
   app.post('/v1/crew/decline/:crewId', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Crew.declineInvite(ch, req.params.crewId, client)));
   app.post('/v1/crew/leave', { preHandler: auth }, async (req) =>
-    G.withCharacter(pool, req.user.sub, (ch, client, h) => Crew.leaveCrew(ch, client, h)));
+    G.withCharacter(pool, req.user.sub, (ch, client, h) => Crew.leaveCrew(ch, client, h),
+      Crew.CREW_FIRST_CHARACTER_LOCKS));
   app.delete('/v1/crew/member/:characterId', { preHandler: auth }, async (req) =>
-    G.withCharacter(pool, req.user.sub, (ch, client, h) => Crew.kickMember(ch, req.params.characterId, client, h)));
+    G.withCharacter(pool, req.user.sub,
+      (ch, client, h) => Crew.kickMember(ch, req.params.characterId, client, h),
+      Crew.CREW_FIRST_CHARACTER_LOCKS));
   // THE CREW HIT (step two) — the leader calls a shared target; the crew chips in via the EXISTING
   // contract board (POST /v1/streets/:id/bounty), so this sets a pointer and moves no value.
   app.post('/v1/crew/target', { preHandler: auth }, async (req) =>
@@ -2923,11 +2930,15 @@ export async function buildServer() {
   // THE ROLODEX step two — RECRUITING (the crew advertises) + join REQUESTS (a solo player asks, the
   // leader accepts). The push half of discovery; status/coordination only, zero §10.4.
   app.post('/v1/crew/recruiting', { preHandler: auth }, async (req) =>
-    G.withCharacter(pool, req.user.sub, (ch, client, h) => Crew.setRecruiting(ch, req.body?.on, client, h)));
+    G.withCharacter(pool, req.user.sub,
+      (ch, client, h) => Crew.setRecruiting(ch, req.body?.on, client, h),
+      Crew.CREW_FIRST_CHARACTER_LOCKS));
   app.post('/v1/crew/request/:crewId', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Crew.requestJoin(ch, req.params.crewId, client, h)));
   app.post('/v1/crew/request/:characterId/accept', { preHandler: auth }, async (req) =>
-    G.withCharacter(pool, req.user.sub, (ch, client, h) => Crew.acceptRequest(ch, req.params.characterId, client, h)));
+    G.withCharacter(pool, req.user.sub,
+      (ch, client, h) => Crew.acceptRequest(ch, req.params.characterId, client, h),
+      Crew.CREW_FIRST_CHARACTER_LOCKS));
   app.delete('/v1/crew/request/:characterId', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Crew.declineRequest(ch, req.params.characterId, client, h)));
   app.get('/v1/leaderboard/crews', { preHandler: auth }, async () => Crew.crewLeaderboard(pool));

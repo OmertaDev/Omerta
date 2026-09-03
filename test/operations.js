@@ -2,6 +2,7 @@
 // asymmetric evidence, ordered contributions, conserved escrow, convergence, and closed-state safety.
 import assert from 'node:assert/strict';
 import { makeDb } from '../src/db.js';
+import { CREW_FIRST_CHARACTER_LOCKS } from '../src/crew.js';
 import { createItem, inventoryBoard, withItemTransaction } from '../src/items.js';
 import {
   assignRole,
@@ -216,6 +217,30 @@ const social = Object.freeze({
       metadata: Object.freeze({ operationId: 'op:cancel-test', roleId, order: index + 1 }),
     })),
     Object.freeze({
+      id: 'op:cancel-recovery', type: 'social_gate', visibility: 'public',
+      minimumDistinctAccounts: 4, roles: Object.freeze(roles()),
+      metadata: Object.freeze({
+        phase1Proof: true,
+        closerRoleId: 'investigator',
+        completionRequires: Object.freeze(ROLES.map((roleId) => `recovery:${roleId}`)),
+      }),
+    }),
+    ...ROLES.map((roleId, index) => Object.freeze({
+      id: `recovery:${roleId}`, type: 'operation_step', visibility: 'public',
+      requires: Object.freeze(['op:cancel-recovery']),
+      metadata: Object.freeze({
+        operationId: 'op:cancel-recovery', roleId, order: index + 1,
+      }),
+      ...(['investigator', 'mechanic'].includes(roleId) ? {
+        conditions: Object.freeze([Object.freeze({
+          adapter: 'item_ownership', templateId: 'item:operation_tool',
+        })]),
+        effects: Object.freeze([Object.freeze({
+          adapter: 'item_escrow', templateId: 'item:operation_tool',
+        })]),
+      } : {}),
+    })),
+    Object.freeze({
       id: 'op:different-vocabulary', type: 'social_gate', visibility: 'public',
       minimumDistinctAccounts: 2,
       roles: Object.freeze([
@@ -310,6 +335,21 @@ const tx = (action) => withItemTransaction(pool, action);
 const act = (index, fn, ...args) => tx((client) => fn(client, contexts[index], ...args));
 const count = async (sql, params = []) => Number((await pool.query(sql, params)).rows[0].n);
 const safeJson = (value) => JSON.stringify(value);
+const tracingPool = (queries) => ({
+  async connect() {
+    const inner = await pool.connect();
+    return new Proxy(inner, {
+      get(target, property) {
+        if (property === 'query') return async (sql, params) => {
+          queries.push(String(sql).replace(/\s+/g, ' ').trim());
+          return target.query(sql, params);
+        };
+        const value = target[property];
+        return typeof value === 'function' ? value.bind(target) : value;
+      },
+    });
+  },
+});
 
 try {
   await pool.query(
@@ -335,6 +375,35 @@ try {
     "INSERT INTO character_skills (character_id,skill_id) VALUES ($1,'fence_network')",
     [CHARACTERS[2]],
   );
+
+  const crewWrapperTrace = [];
+  await withItemTransaction(tracingPool(crewWrapperTrace), async (client) => {
+    const crewId = await CREW_FIRST_CHARACTER_LOCKS.beforeCharacterLock(client, ACCOUNTS[0]);
+    const character = (await client.query(
+      'SELECT * FROM characters WHERE account_id = $1 AND alive FOR UPDATE', [ACCOUNTS[0]],
+    )).rows[0];
+    await client.query(
+      'SELECT * FROM account_persistent WHERE account_id = $1 FOR UPDATE', [ACCOUNTS[0]],
+    );
+    await CREW_FIRST_CHARACTER_LOCKS.afterAccountLock(
+      client, ACCOUNTS[0], character, crewId,
+    );
+  });
+  const crewWrapperCrew = crewWrapperTrace.findIndex((sql) => (
+    /FROM crews WHERE id=\$1 FOR UPDATE/i.test(sql)
+  ));
+  const crewWrapperCharacter = crewWrapperTrace.findIndex((sql) => (
+    /FROM characters WHERE account_id = \$1 AND alive FOR UPDATE/i.test(sql)
+  ));
+  const crewWrapperAccount = crewWrapperTrace.findIndex((sql) => (
+    /FROM account_persistent WHERE account_id = \$1 FOR UPDATE/i.test(sql)
+  ));
+  const crewWrapperMembership = crewWrapperTrace.findIndex((sql) => (
+    /FROM crew_members WHERE account_id=\$1 FOR UPDATE/i.test(sql)
+  ));
+  assert(crewWrapperCrew >= 0 && crewWrapperCharacter > crewWrapperCrew
+    && crewWrapperAccount > crewWrapperCharacter && crewWrapperMembership > crewWrapperAccount,
+  'Crew mutation wrapper locks Crew, character, account, then membership');
 
   const moneyBefore = await Promise.all(ACCOUNTS.map(async (accountId, index) => ({
     cash: Number((await pool.query(
@@ -632,15 +701,33 @@ try {
   assert.equal(abandoned.releasedEscrowCount, 1);
   const recovered = await inventoryBoard(pool, { scope: 'account', id: ACCOUNTS[0] });
   assert(recovered.items.some(({ id, state }) => id === deathTool.id && state === 'active'));
+  await pool.query('UPDATE characters SET alive=true WHERE id=$1', [CHARACTERS[2]]);
 
   // Assignment itself audits already-filled seats before accepting another account. This also
   // proves a second operation in one package may use a completely different private-role vocabulary.
   const different = await act(
     0, openOperation, GRAPH_ID, 'op:different-vocabulary', 1, 'op-open-different-vocabulary',
   );
-  await act(0, assignRole, different.operationId, 'chemist', {
-    idempotencyKey: 'op-assign-different-chemist',
-  });
+  const authorityTrace = [];
+  await withItemTransaction(tracingPool(authorityTrace), (client) => assignRole(
+    client, contexts[0], different.operationId, 'chemist', {
+      idempotencyKey: 'op-assign-different-chemist',
+    },
+  ));
+  const operationLockIndex = authorityTrace.findIndex((sql) => (
+    /FROM world_operations WHERE id=\$1 FOR UPDATE/i.test(sql)
+  ));
+  const characterLockIndex = authorityTrace.findIndex((sql) => (
+    /FROM characters WHERE id IN \(.+\) ORDER BY id FOR UPDATE/i.test(sql)
+  ));
+  const membershipLockIndex = authorityTrace.findIndex((sql) => (
+    /FROM crew_members WHERE account_id IN \(.+\) ORDER BY account_id FOR UPDATE/i.test(sql)
+  ));
+  assert(operationLockIndex >= 0 && characterLockIndex > operationLockIndex
+    && membershipLockIndex > characterLockIndex,
+  'role admission locks operation, then exact characters, then memberships');
+  assert.equal(authorityTrace.some((sql) => /LEFT JOIN (characters|crew_members)/i.test(sql)), false,
+    'participant authority never locks nullable outer-join rows');
   await pool.query('UPDATE characters SET alive=false WHERE id=$1', [CHARACTERS[0]]);
   const assignmentAbandoned = await act(1, assignRole, different.operationId, 'lookout', {
     idempotencyKey: 'op-assign-detects-death',
@@ -670,8 +757,130 @@ try {
   await pool.query('UPDATE crew_members SET crew_id=$1 WHERE account_id=$2', [CREW_ID, ACCOUNTS[0]]);
   await pool.query("DELETE FROM crews WHERE id='temporary-other-crew'");
 
+  // Cancellation is a recovery path, not participant validation: it locks the same authority rows
+  // but still returns multi-owner escrow after death, Crew movement, and membership deletion.
+  const recovery = await act(
+    0, openOperation, GRAPH_ID, 'op:cancel-recovery', 1, 'op-open-cancel-recovery',
+  );
+  for (let index = 0; index < ROLES.length; index += 1) {
+    await act(index, assignRole, recovery.operationId, ROLES[index], {
+      idempotencyKey: `op-recovery-assign-${index}`,
+    });
+  }
+  await tx((client) => createItem(
+    client, { scope: 'account', id: ACCOUNTS[0] }, 'item:operation_tool',
+    'crafted', 'op-recovery-tool-investigator',
+  ));
+  await tx((client) => createItem(
+    client, { scope: 'account', id: ACCOUNTS[2] }, 'item:operation_tool',
+    'crafted', 'op-recovery-tool-mechanic',
+  ));
+  for (let index = 0; index < ROLES.length; index += 1) {
+    await act(index, contribute, recovery.operationId, `recovery:${ROLES[index]}`, {
+      idempotencyKey: `op-recovery-contribute-${index}`,
+    });
+  }
+  assert.equal(await count(
+    'SELECT COUNT(*) AS n FROM operation_escrow WHERE operation_id=$1', [recovery.operationId],
+  ), 2);
+  const recoveryCustody = (await pool.query(
+    `SELECT item_id,depositor_id FROM operation_escrow
+      WHERE operation_id=$1 ORDER BY depositor_id,item_id`, [recovery.operationId],
+  )).rows;
+  assert.deepEqual(
+    recoveryCustody.map(({ depositor_id }) => depositor_id),
+    [ACCOUNTS[0], ACCOUNTS[2]],
+    'the active recovery fixture holds escrow deposited by two different participant accounts',
+  );
+  const recoveryInvestigatorItemId = recoveryCustody[0].item_id;
+  const recoveryMechanicItemId = recoveryCustody[1].item_id;
+  const recoveryReleaseCountsBefore = new Map();
+  for (const itemId of [recoveryInvestigatorItemId, recoveryMechanicItemId]) {
+    recoveryReleaseCountsBefore.set(itemId, await count(
+      `SELECT COUNT(*) AS n FROM item_events
+        WHERE item_id=$1 AND event_kind='released'`, [itemId],
+    ));
+  }
+  const recoveryAwardsBefore = await count(
+    `SELECT COUNT(*) AS n FROM item_instances
+      WHERE template_id IN ('item:operation_artifact','item:mechanic_artifact')`,
+  );
+  await pool.query('UPDATE characters SET alive=false WHERE id=$1', [CHARACTERS[1]]);
+  await pool.query(
+    `INSERT INTO crews (id,name,leader_account)
+     VALUES ('cancel-recovery-other','Cancel Recovery Other',$1)`, [ACCOUNTS[2]],
+  );
+  await pool.query(
+    `UPDATE crew_members SET crew_id='cancel-recovery-other' WHERE account_id=$1`, [ACCOUNTS[2]],
+  );
+  await pool.query('DELETE FROM crew_members WHERE account_id=$1', [ACCOUNTS[3]]);
+  const recoveredCancellation = await act(0, cancelOperation, recovery.operationId, {
+    idempotencyKey: 'op-cancel-invalid-active',
+  });
+  assert.equal(recoveredCancellation.status, 'canceled');
+  assert.equal(recoveredCancellation.releasedEscrowCount, 2);
+  assert.equal(await count(
+    'SELECT COUNT(*) AS n FROM operation_escrow WHERE operation_id=$1', [recovery.operationId],
+  ), 0);
+  assert((await inventoryBoard(pool, { scope: 'account', id: ACCOUNTS[0] })).items
+    .some(({ id, state }) => id === recoveryInvestigatorItemId && state === 'active'));
+  assert((await inventoryBoard(pool, { scope: 'account', id: ACCOUNTS[2] })).items
+    .some(({ id, state }) => id === recoveryMechanicItemId && state === 'active'));
+  assert.equal(await count(
+    `SELECT COUNT(*) AS n FROM item_events
+      WHERE item_id=$1 AND event_kind='released'`, [recoveryInvestigatorItemId],
+  ), recoveryReleaseCountsBefore.get(recoveryInvestigatorItemId) + 1);
+  assert.equal(await count(
+    `SELECT COUNT(*) AS n FROM item_events
+      WHERE item_id=$1 AND event_kind='released'`, [recoveryMechanicItemId],
+  ), recoveryReleaseCountsBefore.get(recoveryMechanicItemId) + 1);
+  assert.equal(await count(
+    `SELECT COUNT(*) AS n FROM item_instances
+      WHERE template_id IN ('item:operation_artifact','item:mechanic_artifact')`,
+  ), recoveryAwardsBefore, 'recovery cancellation cannot execute completion awards');
+  assert.deepEqual(
+    await act(0, cancelOperation, recovery.operationId, {
+      idempotencyKey: 'op-cancel-invalid-active',
+    }),
+    recoveredCancellation,
+    'invalid-party cancellation replays exactly without releasing twice',
+  );
+  for (const itemId of [recoveryInvestigatorItemId, recoveryMechanicItemId]) {
+    assert.equal(await count(
+      `SELECT COUNT(*) AS n FROM item_events
+        WHERE item_id=$1 AND event_kind='released'`, [itemId],
+    ), recoveryReleaseCountsBefore.get(itemId) + 1,
+    'an exact cancellation replay cannot append a second release event');
+  }
+  await pool.query('UPDATE characters SET alive=true WHERE id=$1', [CHARACTERS[1]]);
+  await pool.query('UPDATE crew_members SET crew_id=$1 WHERE account_id=$2', [CREW_ID, ACCOUNTS[2]]);
+  await pool.query(
+    'INSERT INTO crew_members (crew_id,account_id,name) VALUES ($1,$2,$3)',
+    [CREW_ID, ACCOUNTS[3], 'Operation Four'],
+  );
+  await pool.query("DELETE FROM crews WHERE id='cancel-recovery-other'");
+
   // An opener may cancel a forming run without a living street; closure is exact and replay-safe.
-  const cancel = await act(0, openOperation, GRAPH_ID, 'op:cancel-test', 1, 'op-open-cancel');
+  const openAuthorityTrace = [];
+  const cancel = await withItemTransaction(tracingPool(openAuthorityTrace), (client) => openOperation(
+    client, contexts[0], GRAPH_ID, 'op:cancel-test', 1, 'op-open-cancel',
+  ));
+  const crewLockIndex = openAuthorityTrace.findIndex((sql) => (
+    /FROM crews WHERE id=\$1 FOR UPDATE/i.test(sql)
+  ));
+  const existingOperationLockIndex = openAuthorityTrace.findIndex((sql) => (
+    /FROM world_operations WHERE crew_id=\$1.+FOR UPDATE/i.test(sql)
+  ));
+  const openerMembershipLockIndex = openAuthorityTrace.findIndex((sql) => (
+    /FROM crew_members WHERE account_id=\$1 FOR UPDATE/i.test(sql)
+  ));
+  const openerCharacterLockIndex = openAuthorityTrace.findIndex((sql) => (
+    /FROM characters WHERE id=\$1 FOR UPDATE/i.test(sql)
+  ));
+  assert(crewLockIndex >= 0 && existingOperationLockIndex > crewLockIndex
+    && openerCharacterLockIndex > existingOperationLockIndex
+    && openerMembershipLockIndex > openerCharacterLockIndex,
+  'opening locks Crew, existing operation, character, then membership authority');
   const roleRace = await Promise.allSettled([
     act(0, assignRole, cancel.operationId, 'investigator', {
       idempotencyKey: 'op-cancel-role-race-a',

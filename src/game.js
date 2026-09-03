@@ -742,7 +742,9 @@ export async function bumpMastery(client, h, ch, trackId, action) {
 // {crimes?, kills?, earn?}; only the WEEK'S DRAWN kind increments, so each hook passes whatever it can
 // offer and the draw decides what counts. Reads the loaded crewId off h.owned — solo/headless is a
 // clean no-op. When the target is cracked, EVERY member is pinged (the synchronous "your crew is
-// active" moment) and the crew legend is bumped once. ═══
+// active" moment). The board derives the all-time completed count from the latched objective rows;
+// this character-held path never takes the Crew row and therefore cannot invert Crew-first social
+// operation admission. ═══
 export async function bumpCrewObjective(client, h, ch, deltas) {
   const crewId = h?.owned?.crewId;
   if (!crewId || !deltas) return null;
@@ -774,12 +776,13 @@ export async function bumpCrewObjective(client, h, ch, deltas) {
   // the crew total (= Σ contributions) — the authoritative progress the completion is judged on
   const total = Number((await client.query('SELECT COALESCE(SUM(n),0) s FROM crew_objective_progress WHERE crew_id=$1 AND week=$2', [crewId, week])).rows[0].s);
   await client.query('UPDATE crew_objectives SET progress=$3 WHERE crew_id=$1 AND week=$2', [crewId, week, total]);
-  // crossing the target — fire the completion ONCE (the `done` latch), ping every living member, and
-  // bump the crew legend. Pure notification here; the cash cut is CLAIMED per member (crew.js).
+  // crossing the target — fire the completion ONCE (the `done` latch) and ping every living member.
+  // `crew_objectives.done` is also the authoritative, derivable crew-legend history. Deliberately do
+  // not update `crews` here: callers already hold character/account rows, while operation opening
+  // takes Crew first, so a later Crew-row write would create a character <-> Crew deadlock cycle.
   if (!obj.done && total >= Number(obj.target)) {
     const claim = await client.query('UPDATE crew_objectives SET done=true WHERE crew_id=$1 AND week=$2 AND NOT done RETURNING crew_id', [crewId, week]);
     if (claim.rowCount) {
-      await client.query('UPDATE crews SET objectives_done = objectives_done + 1 WHERE id=$1', [crewId]);
       const mem = (await client.query("SELECT c.id FROM crew_members cm JOIN characters c ON c.account_id=cm.account_id AND c.alive WHERE cm.crew_id=$1", [crewId])).rows;
       for (const m of mem) await notify(client, m.id, 'crew_objective_done', { reward: CREW.OBJECTIVE.REWARD }).catch(() => {});
       bus.emit(`crew:${crewId}`, { type: 'crew_objective_done' });
@@ -1022,10 +1025,12 @@ export function gainRespect(h, ch, rep) {
   return gained;
 }
 
-export async function withCharacter(pool, accountId, fn) {
+export async function withCharacter(pool, accountId, fn, lockHooks = null) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+    const prelockState = lockHooks?.beforeCharacterLock
+      ? await lockHooks.beforeCharacterLock(client, accountId) : null;
     // THE DEATH RACE. Found by playing: get killed with the tab open and the very next request
     // comes back `400 no_character — "Create a character first."` to a player whose heir is
     // standing right there. It is not a logic bug, it is READ COMMITTED: a `SELECT … FOR UPDATE`
@@ -1062,6 +1067,9 @@ export async function withCharacter(pool, accountId, fn) {
     if (!r.rows.length) throw new GameError('no_character', 'Create a character first.');
     const ch = r.rows[0];
     const acct = (await client.query('SELECT * FROM account_persistent WHERE account_id = $1 FOR UPDATE', [accountId])).rows[0];
+    if (lockHooks?.afterAccountLock) {
+      await lockHooks.afterAccountLock(client, accountId, ch, prelockState);
+    }
     const owned = await loadOwned(client, ch);
     await accrueAndLedger(client, ch, acct, owned);
 

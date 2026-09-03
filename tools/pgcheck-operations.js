@@ -10,8 +10,16 @@ import {
   openOperation,
 } from '../src/operations.js';
 import { dbCaps } from '../src/db.js';
+import { bumpCrewObjective, withCharacter } from '../src/game.js';
+import {
+  agentActionLockHooks,
+  CREW_FIRST_CHARACTER_LOCKS,
+  leaveCrew,
+  setRecruiting,
+} from '../src/crew.js';
 import { createItem, withItemTransaction } from '../src/items.js';
 import { loadAndValidateGraphPackages } from '../src/worldgraph-validate.js';
+import { weekOf } from '../src/rules.js';
 
 const ROLES = ['investigator', 'driver', 'mechanic', 'enforcer'];
 
@@ -78,6 +86,149 @@ function timeoutPool(pool, { failTerminalUpdate = false } = {}) {
   };
 }
 
+function trackedTimeoutPool(pool) {
+  let signalPid;
+  const pid = new Promise((resolve) => { signalPid = resolve; });
+  return {
+    pid,
+    pool: {
+      async connect() {
+        const inner = await pool.connect();
+        return new Proxy(inner, {
+          get(target, property) {
+            if (property === 'query') return async (sql, params) => {
+              const result = await target.query(sql, params);
+              if (/^\s*BEGIN\s*$/i.test(String(sql))) {
+                await target.query("SET LOCAL lock_timeout='3s'");
+                signalPid(Number((await target.query(
+                  'SELECT pg_backend_pid() AS pid',
+                )).rows[0].pid));
+              }
+              return result;
+            };
+            const value = target[property];
+            return typeof value === 'function' ? value.bind(target) : value;
+          },
+        });
+      },
+    },
+  };
+}
+
+function pausedOpenCrewPool(pool) {
+  let signalLocked;
+  let releaseLock;
+  let crewLocked = false;
+  let paused = false;
+  const locked = new Promise((resolve) => { signalLocked = resolve; });
+  const released = new Promise((resolve) => { releaseLock = resolve; });
+  const tracked = trackedTimeoutPool(pool);
+  return {
+    locked,
+    pid: tracked.pid,
+    release: () => releaseLock(),
+    pool: {
+      async connect() {
+        const inner = await tracked.pool.connect();
+        return new Proxy(inner, {
+          get(target, property) {
+            if (property === 'query') return async (sql, params) => {
+              if (crewLocked && !paused) {
+                paused = true;
+                signalLocked();
+                await released;
+              }
+              const result = await target.query(sql, params);
+              if (/FROM\s+crews\s+WHERE\s+id=\$1\s+FOR (?:NO KEY )?UPDATE/i.test(String(sql))) {
+                crewLocked = true;
+              }
+              return result;
+            };
+            const value = target[property];
+            return typeof value === 'function' ? value.bind(target) : value;
+          },
+        });
+      },
+    },
+  };
+}
+
+function pausedAuthorityPool(pool) {
+  let signalLocked;
+  let releaseLocks;
+  let paused = false;
+  let authorityLocked = false;
+  const locked = new Promise((resolve) => { signalLocked = resolve; });
+  const released = new Promise((resolve) => { releaseLocks = resolve; });
+  const tracked = trackedTimeoutPool(pool);
+  return {
+    locked,
+    pid: tracked.pid,
+    release: () => releaseLocks(),
+    pool: {
+      async connect() {
+        const inner = await tracked.pool.connect();
+        return new Proxy(inner, {
+          get(target, property) {
+            if (property === 'query') return async (sql, params) => {
+              if (authorityLocked && !paused) {
+                paused = true;
+                signalLocked();
+                await released;
+              }
+              const result = await target.query(sql, params);
+              if (/FROM\s+crew_members\s+WHERE\s+account_id\s+IN\s*\(.+\)\s+ORDER BY\s+account_id\s+FOR UPDATE/is
+                .test(String(sql))) authorityLocked = true;
+              return result;
+            };
+            const value = target[property];
+            return typeof value === 'function' ? value.bind(target) : value;
+          },
+        });
+      },
+    },
+  };
+}
+
+async function beginConcurrentWrite(pool, sql, params) {
+  const client = await pool.connect();
+  await client.query('BEGIN');
+  await client.query("SET LOCAL lock_timeout='3s'");
+  const pid = Number((await client.query('SELECT pg_backend_pid() AS pid')).rows[0].pid);
+  let settled = false;
+  const finished = (async () => {
+    try {
+      const result = await client.query(sql, params);
+      await client.query('COMMIT');
+      return result;
+    } catch (error) {
+      await client.query('ROLLBACK').catch(() => {});
+      throw error;
+    } finally {
+      settled = true;
+      client.release();
+    }
+  })();
+  return { pid, finished, settled: () => settled };
+}
+
+const shortDelay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function waitForBlockers(pool, pids, expectedBlockerPid, timeoutMs = 2000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const blocked = await Promise.all(pids.map(async (pid) => {
+      const blockers = (await pool.query(
+        'SELECT pg_blocking_pids($1) AS pids', [pid],
+      )).rows[0].pids || [];
+      return blockers.map(Number).includes(Number(expectedBlockerPid));
+    }));
+    if (blocked.every(Boolean)) return true;
+    await shortDelay(20);
+  }
+  return false;
+}
+
 const fulfilled = (results) => results.filter(({ status }) => status === 'fulfilled').length;
 const rejectedWith = (results, codes) => results.filter((result) => (
   result.status === 'rejected' && codes.includes(result.reason?.code)
@@ -87,6 +238,7 @@ export async function runOperationPgChecks({ pool, check }) {
   const prefix = `pgcheck-operation-runtime-${process.pid}-${Date.now()}`;
   const graphId = `${prefix}-graph`;
   const crewId = `${prefix}-crew`;
+  const otherCrewId = `${prefix}-other-crew`;
   const accounts = Array.from({ length: 5 }, (_, index) => `${prefix}-account-${index}`);
   const characters = Array.from({ length: 5 }, (_, index) => `${prefix}-character-${index}`);
   const roots = {
@@ -96,6 +248,14 @@ export async function runOperationPgChecks({ pool, check }) {
     cancel: `${prefix}:cancel`,
     rollback: `${prefix}:rollback`,
     invalid: `${prefix}:invalid`,
+    invalidCrew: `${prefix}:invalid-crew`,
+    authority: `${prefix}:authority`,
+    openLeaveAfter: `${prefix}:open-leave-after`,
+    openLeaveBefore: `${prefix}:open-leave-before`,
+    openObjective: `${prefix}:open-objective`,
+    openRecruiting: `${prefix}:open-recruiting`,
+    beforeDeath: `${prefix}:before-death`,
+    beforeCrew: `${prefix}:before-crew`,
   };
   const graph = loadAndValidateGraphPackages([{
     id: graphId,
@@ -135,6 +295,18 @@ export async function runOperationPgChecks({ pool, check }) {
         escrowRoles: ['investigator', 'mechanic'],
       }),
       ...operationNodes(roots.invalid, `${prefix}:invalid-step`, { rewards: false }),
+      ...operationNodes(roots.invalidCrew, `${prefix}:invalid-crew-step`, { rewards: false }),
+      ...operationNodes(roots.authority, `${prefix}:authority-step`, { rewards: false }),
+      ...operationNodes(roots.openLeaveAfter, `${prefix}:open-leave-after-step`, { rewards: false }),
+      ...operationNodes(roots.openLeaveBefore, `${prefix}:open-leave-before-step`, { rewards: false }),
+      ...operationNodes(roots.openObjective, `${prefix}:open-objective-step`, { rewards: false }),
+      ...operationNodes(roots.openRecruiting, `${prefix}:open-recruiting-step`, { rewards: false }),
+      ...operationNodes(roots.beforeDeath, `${prefix}:before-death-step`, {
+        escrowRoles: ['investigator', 'mechanic'],
+      }),
+      ...operationNodes(roots.beforeCrew, `${prefix}:before-crew-step`, {
+        escrowRoles: ['investigator', 'mechanic'],
+      }),
     ],
   }]);
   const contexts = accounts.map((accountId) => createOperationContext({ registry: graph, accountId }));
@@ -162,6 +334,37 @@ export async function runOperationPgChecks({ pool, check }) {
       'crafted', key(suffix),
     ),
   );
+  const raceAfterAuthorityLocks = async (label, action, writes) => {
+    const paused = pausedAuthorityPool(pool);
+    const actionPromise = withItemTransaction(paused.pool, action);
+    const reached = await Promise.race([
+      paused.locked.then(() => true),
+      shortDelay(3000).then(() => false),
+    ]);
+    if (!reached) {
+      paused.release();
+      await actionPromise.catch(() => {});
+      throw new Error(`${label}: operation never reached the participant authority lock boundary`);
+    }
+    const actionPid = await paused.pid;
+    const writers = await Promise.all(writes.map(({ sql, params }) => (
+      beginConcurrentWrite(pool, sql, params)
+    )));
+    const waited = await waitForBlockers(
+      pool, writers.map(({ pid }) => pid), actionPid,
+    );
+    check(waited, `${label} waits behind the participant authority boundary`,
+      `operation pid ${actionPid}, writer pids: ${writers.map(({ pid }) => pid).join(', ')}`);
+    paused.release();
+    const [result, writeResults] = await Promise.all([
+      actionPromise,
+      Promise.all(writers.map(({ finished }) => finished)),
+    ]);
+    check(writeResults.every(({ rowCount }) => rowCount === 1),
+      `${label} invalidation commits only after the valid operation action`,
+      `row counts: ${writeResults.map(({ rowCount }) => rowCount).join(', ')}`);
+    return result;
+  };
 
   const operationIds = [];
   try {
@@ -169,7 +372,14 @@ export async function runOperationPgChecks({ pool, check }) {
       'INSERT INTO crews (id,name,leader_account) VALUES ($1,$2,$3)',
       [crewId, `${prefix}-crew-name`, accounts[0]],
     );
+    await pool.query(
+      'INSERT INTO crews (id,name,leader_account) VALUES ($1,$2,$3)',
+      [otherCrewId, `${prefix}-other-crew-name`, accounts[4]],
+    );
     for (let index = 0; index < accounts.length; index += 1) {
+      await pool.query(
+        'INSERT INTO account_persistent (account_id) VALUES ($1)', [accounts[index]],
+      );
       await pool.query(
         `INSERT INTO characters (id,account_id,name,season,loc,respect,cash)
          VALUES ($1,$2,$3,1,'docks',10000,5000)`,
@@ -189,9 +399,12 @@ export async function runOperationPgChecks({ pool, check }) {
     const cancel = await act(0, openOperation, graphId, roots.cancel, 1, key('open-cancel'));
     const rollback = await act(0, openOperation, graphId, roots.rollback, 1, key('open-rollback'));
     const invalid = await act(0, openOperation, graphId, roots.invalid, 1, key('open-invalid'));
+    const invalidCrew = await act(
+      0, openOperation, graphId, roots.invalidCrew, 1, key('open-invalid-crew'),
+    );
     operationIds.push(
       left.operationId, right.operationId, completion.operationId, cancel.operationId,
-      rollback.operationId, invalid.operationId,
+      rollback.operationId, invalid.operationId, invalidCrew.operationId,
     );
 
     // Same role, two accounts: the operation row serializes both clients and storage admits one.
@@ -381,6 +594,319 @@ export async function runOperationPgChecks({ pool, check }) {
       idempotencyKey: key('forced-terminal-retry'),
     });
 
+    if (dbCaps.skipLocked) {
+      // OPEN versus LEAVE, forward order: opening holds the Crew row before touching character
+      // authority. The production Crew-first wrapper must wait on Crew rather than seize character
+      // and form an ABBA cycle.
+      const pausedOpen = pausedOpenCrewPool(pool);
+      const openAfterPromise = withItemTransaction(pausedOpen.pool, (client) => openOperation(
+        client, contexts[4], graphId, roots.openLeaveAfter, 1, key('open-leave-after'),
+      ));
+      await pausedOpen.locked;
+      const trackedLeave = trackedTimeoutPool(pool);
+      const leavePromise = withCharacter(
+        trackedLeave.pool, accounts[4],
+        (character, client, helpers) => leaveCrew(character, client, helpers),
+        CREW_FIRST_CHARACTER_LOCKS,
+      );
+      const openPid = await pausedOpen.pid;
+      const leavePid = await trackedLeave.pid;
+      const leaveBlocked = await waitForBlockers(pool, [leavePid], openPid);
+      check(leaveBlocked, 'production Crew leave waits behind operation opening at the Crew boundary',
+        `open pid ${openPid}, leave pid ${leavePid}`);
+      pausedOpen.release();
+      const [openAfter, leaveAfter] = await Promise.all([openAfterPromise, leavePromise]);
+      operationIds.push(openAfter.operationId);
+      check(openAfter.status === 'forming' && leaveAfter.crew === 'left',
+        'open then leave converge without a deadlock or split authority');
+      await pool.query(
+        'INSERT INTO crew_members (crew_id,account_id,name) VALUES ($1,$2,$3)',
+        [crewId, accounts[4], `${prefix}-member-4`],
+      );
+
+      // Reverse order: a committed production leave removes the only membership authority before
+      // opening begins, so opening refuses and cannot create the second operation.
+      await withCharacter(
+        boundedPool, accounts[4],
+        (character, client, helpers) => leaveCrew(character, client, helpers),
+        CREW_FIRST_CHARACTER_LOCKS,
+      );
+      let reverseOpenCode = '';
+      try {
+        await act(4, openOperation, graphId, roots.openLeaveBefore, 1, key('open-leave-before'));
+      } catch (error) { reverseOpenCode = error.code; }
+      const reverseOpenCount = Number((await pool.query(
+        'SELECT COUNT(*) AS n FROM world_operations WHERE graph_id=$1 AND operation_node_id=$2',
+        [graphId, roots.openLeaveBefore],
+      )).rows[0].n);
+      check(reverseOpenCode === 'no_crew' && reverseOpenCount === 0,
+        'leave ordered before open rejects without inserting an operation',
+        `error ${reverseOpenCode || 'none'}, operations ${reverseOpenCount}`);
+      await pool.query(
+        'INSERT INTO crew_members (crew_id,account_id,name) VALUES ($1,$2,$3)',
+        [crewId, accounts[4], `${prefix}-member-4`],
+      );
+
+      // A normal character-held objective completion must not acquire the Crew row. Hold Crew in
+      // an opening transaction, then prove the gameplay transaction finishes before opening is
+      // released. The historical denormalized Crew update would block here and complete the ABBA
+      // cycle once opening attempted to lock this same character.
+      const objectiveWeek = weekOf();
+      const pausedObjectiveOpen = pausedOpenCrewPool(pool);
+      const objectiveOpenPromise = withItemTransaction(
+        pausedObjectiveOpen.pool,
+        (client) => openOperation(
+          client, contexts[4], graphId, roots.openObjective, 1, key('open-objective'),
+        ),
+      );
+      await pausedObjectiveOpen.locked;
+      const trackedObjective = trackedTimeoutPool(pool);
+      const objectivePromise = withCharacter(
+        trackedObjective.pool, accounts[4],
+        (character, client, helpers) => bumpCrewObjective(
+          client, helpers, character,
+          { crimes: 1000000, kills: 1000000, earn: 1000000000 },
+        ),
+      );
+      const objectivePid = await trackedObjective.pid;
+      const objectiveBeforeRelease = await Promise.race([
+        objectivePromise.then(
+          (value) => ({ settled: true, value }),
+          (error) => ({ settled: true, error }),
+        ),
+        shortDelay(2000).then(() => ({ settled: false })),
+      ]);
+      let objectiveBlockers = [];
+      if (!objectiveBeforeRelease.settled) {
+        objectiveBlockers = (await pool.query(
+          'SELECT pg_blocking_pids($1) AS pids', [objectivePid],
+        )).rows[0].pids || [];
+      }
+      check(objectiveBeforeRelease.settled && !objectiveBeforeRelease.error
+        && objectiveBlockers.length === 0,
+        'objective completion finishes while operation opening holds the Crew row',
+        `objective pid ${objectivePid}, blockers ${objectiveBlockers.join(', ') || 'none'}, error ${objectiveBeforeRelease.error?.code || 'none'}`);
+      pausedObjectiveOpen.release();
+      const [objectiveOpen, objectiveResult] = await Promise.all([
+        objectiveOpenPromise, objectivePromise,
+      ]);
+      operationIds.push(objectiveOpen.operationId);
+      const objectiveState = (await pool.query(
+        'SELECT progress,done FROM crew_objectives WHERE crew_id=$1 AND week=$2',
+        [crewId, objectiveWeek],
+      )).rows[0];
+      const denormalizedCount = Number((await pool.query(
+        'SELECT objectives_done AS n FROM crews WHERE id=$1', [crewId],
+      )).rows[0].n);
+      check(objectiveOpen.status === 'forming' && Number(objectiveResult?.total) > 0
+        && Number(objectiveState?.progress) > 0 && objectiveState?.done === true
+        && denormalizedCount === 0,
+      'objective completion and later open converge without Crew/character inversion',
+      `progress ${objectiveState?.progress}, done ${objectiveState?.done}, Crew counter ${denormalizedCount}`);
+
+      // Agent Turn's Crew-recruiting dispatcher uses the same server-authored action-id selector as
+      // production. It must wait on Crew before it can acquire the leader character.
+      const pausedRecruitingOpen = pausedOpenCrewPool(pool);
+      const recruitingOpenPromise = withItemTransaction(
+        pausedRecruitingOpen.pool,
+        (client) => openOperation(
+          client, contexts[0], graphId, roots.openRecruiting, 1, key('open-recruiting'),
+        ),
+      );
+      await pausedRecruitingOpen.locked;
+      const recruitingActionId = `organization:crew:${crewId}:recruiting:open`;
+      const trackedRecruiting = trackedTimeoutPool(pool);
+      const recruitingPromise = withCharacter(
+        trackedRecruiting.pool, accounts[0],
+        (character, client, helpers) => setRecruiting(character, true, client, helpers),
+        agentActionLockHooks(recruitingActionId),
+      );
+      const recruitingOpenPid = await pausedRecruitingOpen.pid;
+      const recruitingPid = await trackedRecruiting.pid;
+      const recruitingBlocked = await waitForBlockers(
+        pool, [recruitingPid], recruitingOpenPid,
+      );
+      check(recruitingBlocked,
+        'Agent Turn Crew recruiting waits behind opening at the Crew-first boundary',
+        `open pid ${recruitingOpenPid}, recruiting pid ${recruitingPid}`);
+      pausedRecruitingOpen.release();
+      const [recruitingOpen, recruitingResult] = await Promise.all([
+        recruitingOpenPromise, recruitingPromise,
+      ]);
+      operationIds.push(recruitingOpen.operationId);
+      const recruitingState = (await pool.query(
+        'SELECT recruiting FROM crews WHERE id=$1', [crewId],
+      )).rows[0]?.recruiting;
+      check(recruitingOpen.status === 'forming' && recruitingResult?.crew === 'recruiting'
+        && recruitingState === true,
+      'Agent Turn recruiting and operation opening converge without Crew/character inversion');
+
+      const authority = await act(
+        0, openOperation, graphId, roots.authority, 1, key('open-authority'),
+      );
+      operationIds.push(authority.operationId);
+
+      // Existing open versus operation mutation: the open takes Crew then waits on operation; it
+      // cannot hold a character needed by the mutation that owns the operation lock.
+      const pausedAdmission = pausedAuthorityPool(pool);
+      const firstAdmissionPromise = withItemTransaction(
+        pausedAdmission.pool,
+        (client) => assignRole(client, contexts[0], authority.operationId, 'investigator', {
+          idempotencyKey: key('authority-assign-investigator'),
+        }),
+      );
+      await pausedAdmission.locked;
+      const trackedExistingOpen = trackedTimeoutPool(pool);
+      const existingOpenPromise = withItemTransaction(
+        trackedExistingOpen.pool,
+        (client) => openOperation(
+          client, contexts[0], graphId, roots.authority, 1, key('open-authority-existing'),
+        ),
+      );
+      const admissionPid = await pausedAdmission.pid;
+      const existingOpenPid = await trackedExistingOpen.pid;
+      const existingOpenBlocked = await waitForBlockers(
+        pool, [existingOpenPid], admissionPid,
+      );
+      check(existingOpenBlocked,
+        'existing open waits on operation before acquiring participant character authority',
+        `admission pid ${admissionPid}, open pid ${existingOpenPid}`);
+      pausedAdmission.release();
+      const [firstAdmission, existingOpen] = await Promise.all([
+        firstAdmissionPromise, existingOpenPromise,
+      ]);
+      check(firstAdmission.assignment.roleId === 'investigator'
+        && existingOpen.operationId === authority.operationId,
+      'existing open and role admission converge without deadlock');
+
+      await raceAfterAuthorityLocks(
+        'role admission versus character death',
+        (client) => assignRole(client, contexts[1], authority.operationId, 'driver', {
+          idempotencyKey: key('authority-assign-driver'),
+        }),
+        [{ sql: 'UPDATE characters SET alive=false WHERE id=$1', params: [characters[1]] }],
+      );
+      await pool.query('UPDATE characters SET alive=true WHERE id=$1', [characters[1]]);
+      await raceAfterAuthorityLocks(
+        'role admission versus Crew membership deletion',
+        (client) => assignRole(client, contexts[2], authority.operationId, 'mechanic', {
+          idempotencyKey: key('authority-assign-mechanic'),
+        }),
+        [{ sql: 'DELETE FROM crew_members WHERE account_id=$1', params: [accounts[2]] }],
+      );
+      await pool.query(
+        'INSERT INTO crew_members (crew_id,account_id,name) VALUES ($1,$2,$3)',
+        [crewId, accounts[2], `${prefix}-member-2`],
+      );
+      await assign(authority.operationId, 'enforcer', 3, 'authority-assign-enforcer');
+
+      await raceAfterAuthorityLocks(
+        'contribution versus character death',
+        (client) => contribute(
+          client, contexts[0], authority.operationId, `${prefix}:authority-step:investigator`,
+          { idempotencyKey: key('authority-contribute-investigator') },
+        ),
+        [{ sql: 'UPDATE characters SET alive=false WHERE id=$1', params: [characters[0]] }],
+      );
+      await pool.query('UPDATE characters SET alive=true WHERE id=$1', [characters[0]]);
+      await raceAfterAuthorityLocks(
+        'contribution versus Crew membership movement',
+        (client) => contribute(
+          client, contexts[1], authority.operationId, `${prefix}:authority-step:driver`,
+          { idempotencyKey: key('authority-contribute-driver') },
+        ),
+        [{
+          sql: 'UPDATE crew_members SET crew_id=$2 WHERE account_id=$1',
+          params: [accounts[1], otherCrewId],
+        }],
+      );
+      await pool.query(
+        'UPDATE crew_members SET crew_id=$2 WHERE account_id=$1', [accounts[1], crewId],
+      );
+      await contributeRole(authority, 'authority', 'mechanic', 2, 'authority-contribute-mechanic');
+      await contributeRole(authority, 'authority', 'enforcer', 3, 'authority-contribute-enforcer');
+
+      const terminalRace = await raceAfterAuthorityLocks(
+        'completion versus death and Crew movement',
+        (client) => completeOperation(client, contexts[0], authority.operationId, {
+          idempotencyKey: key('authority-complete'),
+        }),
+        [
+          { sql: 'UPDATE characters SET alive=false WHERE id=$1', params: [characters[2]] },
+          {
+            sql: 'UPDATE crew_members SET crew_id=$2 WHERE account_id=$1',
+            params: [accounts[3], otherCrewId],
+          },
+        ],
+      );
+      check(terminalRace.status === 'completed',
+        'completion commits atomically before waiting participant invalidations');
+      await pool.query('UPDATE characters SET alive=true WHERE id=$1', [characters[2]]);
+      await pool.query(
+        'UPDATE crew_members SET crew_id=$2 WHERE account_id=$1', [accounts[3], crewId],
+      );
+    }
+
+    // Reverse ordering for terminal convergence: invalidation commits first, so completion must
+    // abandon, create no awards, and return both owners' escrow.
+    const beforeDeath = await act(
+      0, openOperation, graphId, roots.beforeDeath, 1, key('open-before-death'),
+    );
+    operationIds.push(beforeDeath.operationId);
+    await assignCanonical(beforeDeath, 'before-death');
+    await seedAndContribute(beforeDeath, 'before-death', { twoOwners: true });
+    const deathAwardsBefore = Number((await pool.query(
+      `SELECT COUNT(*) AS n FROM item_instances
+        WHERE template_id IN ('item:pgop_award_a','item:pgop_award_b')
+          AND owner_id = ANY($1::text[])`, [accounts],
+    )).rows[0].n);
+    await pool.query('UPDATE characters SET alive=false WHERE id=$1', [characters[1]]);
+    const beforeDeathResult = await act(0, completeOperation, beforeDeath.operationId, {
+      idempotencyKey: key('complete-after-death'),
+    });
+    const deathAwardsAfter = Number((await pool.query(
+      `SELECT COUNT(*) AS n FROM item_instances
+        WHERE template_id IN ('item:pgop_award_a','item:pgop_award_b')
+          AND owner_id = ANY($1::text[])`, [accounts],
+    )).rows[0].n);
+    check(beforeDeathResult.status === 'abandoned'
+      && beforeDeathResult.closeReason === 'participant_dead'
+      && beforeDeathResult.releasedEscrowCount === 2
+      && deathAwardsAfter === deathAwardsBefore,
+    'death committed before completion abandons with full recovery and no awards');
+    await pool.query('UPDATE characters SET alive=true WHERE id=$1', [characters[1]]);
+
+    const beforeCrew = await act(
+      0, openOperation, graphId, roots.beforeCrew, 1, key('open-before-crew'),
+    );
+    operationIds.push(beforeCrew.operationId);
+    await assignCanonical(beforeCrew, 'before-crew');
+    await seedAndContribute(beforeCrew, 'before-crew', { twoOwners: true });
+    const crewAwardsBefore = Number((await pool.query(
+      `SELECT COUNT(*) AS n FROM item_instances
+        WHERE template_id IN ('item:pgop_award_a','item:pgop_award_b')
+          AND owner_id = ANY($1::text[])`, [accounts],
+    )).rows[0].n);
+    await pool.query(
+      'UPDATE crew_members SET crew_id=$2 WHERE account_id=$1', [accounts[1], otherCrewId],
+    );
+    const beforeCrewResult = await act(0, completeOperation, beforeCrew.operationId, {
+      idempotencyKey: key('complete-after-crew-change'),
+    });
+    const crewAwardsAfter = Number((await pool.query(
+      `SELECT COUNT(*) AS n FROM item_instances
+        WHERE template_id IN ('item:pgop_award_a','item:pgop_award_b')
+          AND owner_id = ANY($1::text[])`, [accounts],
+    )).rows[0].n);
+    check(beforeCrewResult.status === 'abandoned'
+      && beforeCrewResult.closeReason === 'crew_changed'
+      && beforeCrewResult.releasedEscrowCount === 2
+      && crewAwardsAfter === crewAwardsBefore,
+    'Crew change committed before completion abandons with full recovery and no awards');
+    await pool.query(
+      'UPDATE crew_members SET crew_id=$2 WHERE account_id=$1', [accounts[1], crewId],
+    );
+
     await assign(invalid.operationId, 'investigator', 0, 'invalid-investigator');
     await pool.query('UPDATE characters SET alive=false WHERE id=$1', [characters[0]]);
     const invalidated = await assign(
@@ -392,9 +918,28 @@ export async function runOperationPgChecks({ pool, check }) {
     )).rows[0].n);
     check(invalidated.status === 'abandoned' && invalidated.closeReason === 'participant_dead'
       && invalidRoleCount === 1,
-    'assignment detects a dead pinned participant before admitting another account',
+    'death committed before admission abandons before another account is inserted',
     `status ${invalidated.status}, roles ${invalidRoleCount}`);
     await pool.query('UPDATE characters SET alive=true WHERE id=$1', [characters[0]]);
+
+    await assign(invalidCrew.operationId, 'investigator', 0, 'invalid-crew-investigator');
+    await pool.query(
+      'UPDATE crew_members SET crew_id=$2 WHERE account_id=$1', [accounts[0], otherCrewId],
+    );
+    const invalidatedCrew = await assign(
+      invalidCrew.operationId, 'driver', 1, 'invalid-crew-trigger-assignment',
+    );
+    const invalidCrewRoleCount = Number((await pool.query(
+      'SELECT COUNT(*) AS n FROM world_operation_roles WHERE operation_id=$1',
+      [invalidCrew.operationId],
+    )).rows[0].n);
+    check(invalidatedCrew.status === 'abandoned' && invalidatedCrew.closeReason === 'crew_changed'
+      && invalidCrewRoleCount === 1,
+    'Crew change committed before admission abandons before another account is inserted',
+    `status ${invalidatedCrew.status}, roles ${invalidCrewRoleCount}`);
+    await pool.query(
+      'UPDATE crew_members SET crew_id=$2 WHERE account_id=$1', [accounts[0], crewId],
+    );
   } finally {
     // Every fixture uses the unique prefix. Keep the real-Postgres harness re-runnable even after a
     // failed check; deletes are ordered around escrow and provenance FKs.
@@ -423,6 +968,8 @@ export async function runOperationPgChecks({ pool, check }) {
     await pool.query('DELETE FROM world_operations WHERE graph_id=$1', [graphId]);
     await pool.query('DELETE FROM crew_members WHERE crew_id=$1', [crewId]);
     await pool.query('DELETE FROM crews WHERE id=$1', [crewId]);
+    await pool.query('DELETE FROM crews WHERE id=$1', [otherCrewId]);
     await pool.query('DELETE FROM characters WHERE id = ANY($1::text[])', [characters]);
+    await pool.query('DELETE FROM account_persistent WHERE account_id = ANY($1::text[])', [accounts]);
   }
 }

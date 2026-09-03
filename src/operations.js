@@ -5,6 +5,7 @@
 // server state. Graph packages are immutable data; this module exposes no callback, SQL, cash, OMR,
 // or transaction-ledger adapter.
 import crypto from 'node:crypto';
+import { dbCaps } from './db.js';
 import { GameError } from './game.js';
 import {
   awaitItemReadBarrier,
@@ -352,28 +353,61 @@ function mutationOptions(value, { interaction = false } = {}) {
   };
 }
 
-async function actorOf(client, context) {
-  const row = (await client.query(
-    `SELECT id,account_id,loc,respect FROM characters
-      WHERE account_id=$1 AND alive ORDER BY created_at DESC,id LIMIT 1 FOR UPDATE`,
-    [context.accountId],
-  )).rows[0];
-  if (!row) fail('no_character', 'A living character is required for this operation action.');
+async function actorProjection(client, row, crewId) {
   const skills = (await client.query(
     'SELECT skill_id FROM character_skills WHERE character_id=$1', [row.id],
   )).rows.map(({ skill_id: id }) => id);
-  const crew = (await client.query(
-    'SELECT crew_id FROM crew_members WHERE account_id=$1', [context.accountId],
-  )).rows[0];
-  if (!crew) fail('no_crew', 'A Crew membership is required for this operation.');
   return {
     id: row.id,
     accountId: row.account_id,
     location: row.loc,
     level: levelOf(Number(row.respect || 0)),
     skills: new Set(skills),
-    crewId: crew.crew_id,
+    crewId,
   };
+}
+
+// Opening has no operation row to serialize on yet. Resolve a snapshot Crew id without authority
+// and lock that Crew first, matching the Crew lifecycle wrapper.
+async function lockOpenCrew(client, context) {
+  const snapshotMembership = (await client.query(
+    'SELECT crew_id FROM crew_members WHERE account_id=$1', [context.accountId],
+  )).rows[0];
+  if (!snapshotMembership) fail('no_crew', 'A Crew membership is required for this operation.');
+  const crew = (await client.query(
+    `SELECT id FROM crews WHERE id=$1 ${dbCaps.skipLocked ? 'FOR NO KEY UPDATE' : 'FOR UPDATE'}`,
+    [snapshotMembership.crew_id],
+  )).rows[0];
+  if (!crew) fail('no_crew', 'The current Crew no longer exists.');
+  return crew;
+}
+
+// Once Crew and any pre-existing operation row are locked, lock the exact character snapshot and
+// then its membership. Existing-operation mutations use the same character -> membership suffix.
+async function lockOpenActor(client, context, crewId) {
+  const snapshotCharacter = (await client.query(
+    `SELECT id FROM characters
+      WHERE account_id=$1 AND alive ORDER BY created_at DESC,id LIMIT 1`,
+    [context.accountId],
+  )).rows[0];
+  if (!snapshotCharacter) {
+    fail('no_character', 'A living character is required for this operation action.');
+  }
+  const row = (await client.query(
+    `SELECT id,account_id,loc,respect,alive FROM characters
+      WHERE id=$1 FOR UPDATE`, [snapshotCharacter.id],
+  )).rows[0];
+  if (!row || row.account_id !== context.accountId || row.alive !== true) {
+    fail('no_character', 'A living character is required for this operation action.');
+  }
+  const membership = (await client.query(
+    'SELECT account_id,crew_id FROM crew_members WHERE account_id=$1 FOR UPDATE',
+    [context.accountId],
+  )).rows[0];
+  if (!membership || membership.crew_id !== crewId) {
+    fail('no_crew', 'The Crew membership changed before this operation opened.');
+  }
+  return actorProjection(client, row, crewId);
 }
 
 async function mysteryBridgeState(client, context, actor, root) {
@@ -546,7 +580,7 @@ async function destinationsFor(client, operationId) {
 async function releaseAllEscrow(client, operationId, mutation) {
   const custody = (await client.query(
     `SELECT item_id,depositor_scope,depositor_id FROM operation_escrow
-      WHERE operation_id=$1 ORDER BY created_at,item_id FOR UPDATE`, [operationId],
+      WHERE operation_id=$1 ORDER BY item_id`, [operationId],
   )).rows;
   for (const row of custody) {
     await releaseEscrow(
@@ -557,22 +591,71 @@ async function releaseAllEscrow(client, operationId, mutation) {
   return custody.length;
 }
 
-async function participantInvalidReason(client, operation) {
-  const rows = (await client.query(
-    `SELECT r.account_id,r.character_id,c.alive,cm.crew_id
-       FROM world_operation_roles r
-       LEFT JOIN characters c ON c.id=r.character_id
-       LEFT JOIN crew_members cm ON cm.account_id=r.account_id
-      WHERE r.operation_id=$1`, [operation.id],
-  )).rows;
-  if (rows.some((row) => row.alive !== true)) return 'participant_dead';
-  if (rows.some((row) => row.crew_id !== operation.crew_id)) return 'crew_changed';
-  return null;
+async function lockOperationAuthorityRows(
+  client, operation, { candidateAccountId = null } = {},
+) {
+  // The operation row is already locked by authorizeOperation, so the assignment set is stable.
+  // PostgreSQL rejects FOR UPDATE on the nullable side of an outer join; lock the two authority
+  // tables independently, in globally deterministic character/account order, then compare the
+  // complete pinned sets in memory.
+  const assignments = await roleRows(client, operation.id);
+  const candidateCharacter = candidateAccountId ? (await client.query(
+    `SELECT id FROM characters
+      WHERE account_id=$1 AND alive ORDER BY created_at DESC,id LIMIT 1`,
+    [candidateAccountId],
+  )).rows[0] : null;
+  const characterIds = [...new Set([
+    ...assignments.map(({ character_id: id }) => id),
+    ...(candidateCharacter ? [candidateCharacter.id] : []),
+  ])].sort();
+  const characterPlaceholders = characterIds.map((_, index) => `$${index + 1}`).join(',');
+  const characters = characterIds.length ? (await client.query(
+    `SELECT id,account_id,loc,respect,alive FROM characters
+      WHERE id IN (${characterPlaceholders}) ORDER BY id FOR UPDATE`, characterIds,
+  )).rows : [];
+  const accountIds = [...new Set([
+    ...assignments.map(({ account_id: id }) => id),
+    ...(candidateAccountId ? [candidateAccountId] : []),
+  ])].sort();
+  const accountPlaceholders = accountIds.map((_, index) => `$${index + 1}`).join(',');
+  const memberships = accountIds.length ? (await client.query(
+    `SELECT account_id,crew_id FROM crew_members
+      WHERE account_id IN (${accountPlaceholders}) ORDER BY account_id FOR UPDATE`, accountIds,
+  )).rows : [];
+  const characterById = new Map(characters.map((row) => [row.id, row]));
+  const membershipByAccount = new Map(memberships.map((row) => [row.account_id, row]));
+  const dead = assignments.some((assignment) => {
+    const character = characterById.get(assignment.character_id);
+    return !character || character.account_id !== assignment.account_id || character.alive !== true;
+  });
+  const moved = assignments.some((assignment) => (
+    membershipByAccount.get(assignment.account_id)?.crew_id !== operation.crew_id
+  ));
+  return {
+    assignments,
+    characterById,
+    membershipByAccount,
+    candidateCharacterId: candidateCharacter?.id || null,
+    invalidReason: dead ? 'participant_dead' : moved ? 'crew_changed' : null,
+  };
 }
 
-async function abandonIfInvalid(client, operation, mutation) {
+async function candidateActor(client, operation, accountId, authority) {
+  const character = authority.characterById.get(authority.candidateCharacterId);
+  if (!character || character.account_id !== accountId || character.alive !== true) {
+    fail('no_character', 'A living character is required for this operation action.');
+  }
+  const membership = authority.membershipByAccount.get(accountId);
+  if (!membership) fail('no_crew', 'A Crew membership is required for this operation.');
+  if (membership.crew_id !== operation.crew_id) {
+    fail('operation_forbidden', 'This account is not in that Crew.');
+  }
+  return actorProjection(client, character, membership.crew_id);
+}
+
+async function abandonIfInvalid(client, operation, mutation, authority) {
   if (!['forming', 'active'].includes(operation.status)) return null;
-  const reason = await participantInvalidReason(client, operation);
+  const reason = authority.invalidReason;
   if (!reason) return null;
   const releasedEscrowCount = await releaseAllEscrow(client, operation.id, mutation);
   const abandoned = await setStatus(client, operation, 'abandoned', reason);
@@ -721,16 +804,15 @@ export async function openOperation(
     client, owner, 'operation_action', key,
     { action: 'open', graph: graphIdentity(pkg, root) },
     async () => {
-      const actor = await actorOf(client, context);
-      const crew = (await client.query('SELECT id FROM crews WHERE id=$1 FOR UPDATE', [actor.crewId])).rows[0];
-      if (!crew) fail('no_crew', 'The current Crew no longer exists.');
+      const crew = await lockOpenCrew(client, context);
       const existing = (await client.query(
         `SELECT id,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id,status,
                 close_reason,created_at,updated_at,activated_at,completed_at,canceled_at,abandoned_at
            FROM world_operations
           WHERE crew_id=$1 AND graph_id=$2 AND graph_version=$3 AND operation_node_id=$4 FOR UPDATE`,
-        [actor.crewId, pkg.id, Number(pkg.version), root.id],
+        [crew.id, pkg.id, Number(pkg.version), root.id],
       )).rows[0];
+      const actor = await lockOpenActor(client, context, crew.id);
       if (existing) return { ok: true, ...operationProjection(existing) };
       const bridgeStates = await mysteryBridgeState(client, context, actor, root);
       assertRootGraphGate(root, bridgeStates);
@@ -770,11 +852,14 @@ export async function assignRole(
     async (mutation) => {
       const authority = await authorizeOperation(client, context, operationId, { lock: true });
       const { row, root } = authority;
-      const abandoned = await abandonIfInvalid(client, row, mutation);
+      const participantAuthority = await lockOperationAuthorityRows(
+        client, row, { candidateAccountId: context.accountId },
+      );
+      const abandoned = await abandonIfInvalid(client, row, mutation, participantAuthority);
       if (abandoned) return abandoned;
       const role = rolesOf(root).find((candidate) => candidate.id === roleId);
       if (!role) fail('operation_role', 'No such role exists in this operation.');
-      const existingRoles = await roleRows(client, row.id);
+      const existingRoles = participantAuthority.assignments;
       const existing = existingRoles.find((candidate) => candidate.role_id === roleId);
       if (existing) {
         if (existing.account_id !== context.accountId) fail('operation_role_taken', 'That role is filled.');
@@ -787,8 +872,7 @@ export async function assignRole(
       if (existingRoles.some((candidate) => candidate.account_id === context.accountId)) {
         fail('operation_distinct_account', 'One account cannot occupy two operation roles.');
       }
-      const actor = await actorOf(client, context);
-      if (actor.crewId !== row.crew_id) fail('operation_forbidden', 'This account is not in that Crew.');
+      const actor = await candidateActor(client, row, context.accountId, participantAuthority);
       await assertConditions(client, actor, row, stateMap(await stateRows(client, row.id)), role.conditions, null);
       registerItemTransactionUndo(client, () => client.query(
         'DELETE FROM world_operation_roles WHERE operation_id=$1 AND role_id=$2', [row.id, roleId],
@@ -846,7 +930,10 @@ export async function contribute(
       });
       const { row, assignment, root } = authority;
       if (row.status !== 'active') fail('operation_not_active', 'Fill every role before contributing.');
-      const abandoned = await abandonIfInvalid(client, row, mutation);
+      const participantAuthority = await lockOperationAuthorityRows(
+        client, row, { candidateAccountId: context.accountId },
+      );
+      const abandoned = await abandonIfInvalid(client, row, mutation, participantAuthority);
       if (abandoned) return abandoned;
       const step = stepOf(context, authority, nodeId, assignment.role_id);
       if (step.metadata?.roleId !== assignment.role_id) {
@@ -884,7 +971,7 @@ export async function contribute(
           fail('operation_order', 'An earlier operation contribution must be completed first.');
         }
       }
-      const actor = await actorOf(client, context);
+      const actor = await candidateActor(client, row, context.accountId, participantAuthority);
       if (actor.id !== assignment.character_id || actor.crewId !== row.crew_id) {
         fail('operation_participant_changed', 'The assigned participant is no longer available.');
       }
@@ -960,7 +1047,8 @@ export async function completeOperation(client, contextValue, operationIdValue, 
         };
       }
       if (row.status !== 'active') fail('operation_closed', 'That operation is not active.');
-      const abandoned = await abandonIfInvalid(client, row, mutation);
+      const participantAuthority = await lockOperationAuthorityRows(client, row);
+      const abandoned = await abandonIfInvalid(client, row, mutation, participantAuthority);
       if (abandoned) return abandoned;
       const states = stateMap(await stateRows(client, row.id));
       if (completionRequires(root).some((id) => states.get(id)?.state !== 'completed')) {
@@ -973,7 +1061,7 @@ export async function completeOperation(client, contextValue, operationIdValue, 
       if (assignment.role_id !== root.metadata?.closerRoleId) {
         fail('operation_completion_role', 'The graph-declared closer role must close this operation.');
       }
-      const assignments = await roleRows(client, row.id);
+      const assignments = participantAuthority.assignments;
       const effects = await applyCompletionEffects(client, root, assignments, mutation);
       for (const effect of root.effects || []) {
         if (effect.adapter === 'status_award') {
@@ -1009,6 +1097,9 @@ export async function cancelOperation(client, contextValue, operationIdValue, op
       if (row.opened_by_account_id !== context.accountId) {
         fail('operation_cancel_forbidden', 'Only the account that opened this operation may cancel it.');
       }
+      // Cancellation remains a recovery action even for an already-invalid party, but it shares the
+      // same participant lock boundary so death/Crew mutations cannot cross escrow release.
+      await lockOperationAuthorityRows(client, row);
       if (row.status === 'canceled') return { ok: true, ...operationProjection(row), releasedEscrowCount: 0 };
       if (!['forming', 'active'].includes(row.status)) fail('operation_closed', 'That operation is closed.');
       const releasedEscrowCount = await releaseAllEscrow(client, row.id, mutation);
