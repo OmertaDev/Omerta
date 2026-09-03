@@ -4593,6 +4593,81 @@ CREATE INDEX IF NOT EXISTS ix_item_events_item
 CREATE INDEX IF NOT EXISTS ix_item_events_owner
   ON item_events (to_owner_scope, to_owner_id, sequence);
 
+-- ── WORLD-GRAPH MYSTERIES — graph-pinned runtime state, never content authority ─────────────
+-- Definitions stay in immutable, validated source packages. These rows contain only one root
+-- owner's progress through one pinned package version. Account roots survive street replacement;
+-- character roots remain attached to that historical street and cannot be driven by its heir.
+-- Neither disposition is a currency/value transfer, so the estate path intentionally does not wipe
+-- or rewrite these generic owner tuples. Any item placed in mystery custody is separately governed
+-- by item_instances + operation_escrow and never duplicated in these tables.
+CREATE TABLE IF NOT EXISTS mystery_instances (
+  id TEXT PRIMARY KEY,
+  owner_scope TEXT NOT NULL,
+  owner_id TEXT NOT NULL,
+  authority_account_id TEXT NOT NULL,
+  graph_id TEXT NOT NULL,
+  graph_version INT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'active',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  completed_at TIMESTAMPTZ,
+  failed_at TIMESTAMPTZ,
+  UNIQUE (owner_scope, owner_id, graph_id),
+  CONSTRAINT mystery_instance_id CHECK (char_length(id) BETWEEN 1 AND 200),
+  CONSTRAINT mystery_instance_owner_scope CHECK (owner_scope IN ('character','account')),
+  CONSTRAINT mystery_instance_owner_id CHECK (char_length(owner_id) BETWEEN 1 AND 200),
+  CONSTRAINT mystery_instance_authority CHECK (char_length(authority_account_id) BETWEEN 1 AND 200),
+  CONSTRAINT mystery_instance_graph_id CHECK (char_length(graph_id) BETWEEN 1 AND 200),
+  CONSTRAINT mystery_instance_graph_version CHECK (graph_version > 0),
+  CONSTRAINT mystery_instance_status CHECK (status IN ('active','completed','failed')),
+  CONSTRAINT mystery_instance_status_time CHECK (
+    (status = 'active' AND completed_at IS NULL AND failed_at IS NULL)
+    OR (status = 'completed' AND completed_at IS NOT NULL AND failed_at IS NULL)
+    OR (status = 'failed' AND completed_at IS NULL AND failed_at IS NOT NULL)
+  )
+);
+CREATE INDEX IF NOT EXISTS ix_mystery_instances_authority
+  ON mystery_instances (authority_account_id, status, created_at);
+
+-- One row is the complete state of one graph node for one instance. `result_json` is the safe,
+-- server-produced replay result only; raw conditions/effects never enter storage. Excluded nodes use
+-- failed_at as their closure timestamp so irreversible and transitively closed branches are durable.
+CREATE TABLE IF NOT EXISTS mystery_node_state (
+  instance_id TEXT NOT NULL REFERENCES mystery_instances(id) ON DELETE CASCADE,
+  node_id TEXT NOT NULL,
+  state TEXT NOT NULL,
+  result_json TEXT,
+  discovered_at TIMESTAMPTZ,
+  completed_at TIMESTAMPTZ,
+  failed_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (instance_id, node_id),
+  CONSTRAINT mystery_node_id CHECK (char_length(node_id) BETWEEN 1 AND 200),
+  CONSTRAINT mystery_node_status CHECK (state IN ('discovered','completed','failed','excluded')),
+  CONSTRAINT mystery_node_status_time CHECK (
+    (state = 'discovered' AND discovered_at IS NOT NULL AND completed_at IS NULL AND failed_at IS NULL)
+    OR (state = 'completed' AND discovered_at IS NOT NULL AND completed_at IS NOT NULL AND failed_at IS NULL)
+    OR (state IN ('failed','excluded') AND completed_at IS NULL AND failed_at IS NOT NULL)
+  )
+);
+CREATE INDEX IF NOT EXISTS ix_mystery_node_state_status
+  ON mystery_node_state (instance_id, state, node_id);
+
+-- A choice point can be committed exactly once. New logical keys may retrieve the same decision,
+-- but storage makes changing it impossible even if two requests race on real PostgreSQL.
+CREATE TABLE IF NOT EXISTS mystery_choices (
+  instance_id TEXT NOT NULL REFERENCES mystery_instances(id) ON DELETE CASCADE,
+  node_id TEXT NOT NULL,
+  choice_id TEXT NOT NULL,
+  result_json TEXT NOT NULL,
+  committed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (instance_id, node_id),
+  CONSTRAINT mystery_choice_node_id CHECK (char_length(node_id) BETWEEN 1 AND 200),
+  CONSTRAINT mystery_choice_id CHECK (char_length(choice_id) BETWEEN 1 AND 200)
+);
+CREATE INDEX IF NOT EXISTS ix_mystery_choices_instance
+  ON mystery_choices (instance_id, committed_at, node_id);
+
 -- ── AUTHORED CONTENT SUPPLY — exact-hash lots + globally finite sources ───────────────────────
 -- Authored inventory is account-owned and therefore survives street death. Every lot is pinned to
 -- the exact activated bundle hash that defined it; a later version cannot reinterpret old inputs.
