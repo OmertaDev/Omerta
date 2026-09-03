@@ -3300,6 +3300,16 @@
       const money = [body.won ? `$${fmt(body.won)} at the window` : '', body.refunded ? `$${fmt(body.refunded)} refunded` : ''].filter(Boolean).join(', ');
       return `\u{1F3C7} ${lines.join(' · ')}${money ? ` — ${money}` : ''}`;
     }
+    // WAVE 80: the weekly FIGHT settles into the shared ticket line below, which renders it as a
+    // bare "$N collected" and never names the fighter — though the card names both and the server
+    // now ships them. Keyed on results[0].side, which is fight-unique: the track carries race, the
+    // numbers carry pick. Read BEFORE the shared line, which fires first.
+    if (body && body.ok && body.settled !== undefined && Array.isArray(body.results) && body.results[0] && body.results[0].side) {
+      const lines = body.results.map((r) => r.hit
+        ? `${txt(r.winnerName)} took the fight — your ticket HIT`
+        : `${txt(r.winnerName)} took the fight — you had ${txt(r.pickName)}`);
+      return `\u{1F94A} ${lines.join(' \u00b7 ')}${body.won ? ` — $${fmt(body.won)} at the window` : ' — nothing came in'}`;
+    }
     if (body && body.ok && body.settled !== undefined && body.won !== undefined)
       return body.settled ? (body.won ? `\u{1F4B0} ${body.settled} ticket${body.settled === 1 ? '' : 's'} settled — $${fmt(body.won)} collected${body.nearWins ? ` (${body.nearWins} a near miss — the runner pays a consolation)` : ''}${body.jackpot ? ` — AND THE VIG POT CRACKED: $${fmt(body.jackpot)} on top` : ''}` : `${body.settled} ticket${body.settled === 1 ? '' : 's'} settled — nothing came in`)
         : 'nothing to collect — no tickets have come up yet';
@@ -3511,10 +3521,14 @@
     // THE CALL — settled a contact's request (paid from THEIR pocket). A voided call is a 200
     // (the delete must COMMIT — a thrown error would roll it back and jam the slot), so it
     // renders here, not through ERRMAP.
+    // WAVE 80: the reply carries `jobs` and `standing` and the line dropped both. Standing is not
+    // flavour — it SCALES what they ask for next (qty and tip both climb with it), so a player who
+    // is never told it cannot tell a bigger ask from a bug. One suffix, both arms.
+    const callStanding = body.standing ? ` — ${body.jobs} job${body.jobs === 1 ? '' : 's'} for them now, so you're ${body.standing} to ${body.from}: the better they know you, the bigger they ask` : '';
     if (body.call === true && body.voided) bits.push(`📞 ${body.message || "the job's off — they got turned over since they called."}`);
     else if (body.call === true && body.from) bits.push(body.kind === 'freight'
-      ? `📞 delivered ${fmt(body.qty)} ${goodName(body.good)} to ${body.from} — they paid $${fmt(body.pay)}`
-      : `📞 paid ${body.from} a visit — worth $${fmt(body.pay)}`);
+      ? `📞 delivered ${fmt(body.qty)} ${goodName(body.good)} to ${body.from} — they paid $${fmt(body.pay)}${callStanding}`
+      : `📞 paid ${body.from} a visit — worth $${fmt(body.pay)}${callStanding}`);
     if (body.favor === 'posted') bits.push(`🤝 the word's out — ${fmt(body.qty)} ${goodName(body.good)} wanted at ${txt($dist(body.district))}, $${fmt(body.pay)} held up front${body.expiresSeconds ? `. It stands ${minsTxt(body.expiresSeconds)}; whatever nobody runs comes back to you` : ''}.`);
     if (body.favor === 'ran') bits.push(`🤝 ran the favor — ${fmt(body.qty)} ${goodName(body.good)} delivered, +$${fmt(body.net)} (house took $${fmt(body.take)})`);
     if (body.favor === 'pulled') bits.push(`🤝 pulled it back — $${fmt(body.refund)} returned`);
@@ -3529,7 +3543,7 @@
     if (body.win === true && !spec) bits.push(`WIN — +$${fmt(Math.abs(body.net ?? 0))}`);
     if (body.win === false && !spec) bits.push(`the house keeps it (−$${fmt(Math.abs(body.net ?? 0))})`);
     // street jump / extortion / convoy hijack — carry a `win` but no cash `net`, so each gets its own line
-    if (body.win === true && body.stolen !== undefined) bits.push(`${body.intent === 'message' ? '📢 THE STREET SAW IT' : body.intent === 'rob' ? 'rolled them' : 'they went down'} — lifted $${fmt(body.stolen)}${body.crates ? `, ${body.crates} crate${body.crates > 1 ? 's' : ''}` : ''}${body.rep ? `, +${body.rep} respect` : ''}${body.war ? ' (war point)' : ''}${body.bounty ? ` · contract paid $${fmt(body.bounty)}` : ''}`);
+    if (body.win === true && body.stolen !== undefined) bits.push(`${body.intent === 'message' ? '📢 THE STREET SAW IT' : body.intent === 'rob' ? 'rolled them' : 'they went down'} — lifted $${fmt(body.stolen)}${body.crates ? `, ${body.crates} crate${body.crates > 1 ? 's' : ''}` : ''}${body.rep ? `, +${body.rep} respect` : ''}${body.war ? ' (war point)' : ''}${body.bounty ? ` · contract paid $${fmt(body.bounty)}` : ''}${body.energy ? ` · ${body.energy} energy` : ''}${body.hospSeconds ? ` · they're in a bed for ${minsTxt(body.hospSeconds)} — off the street, and out of your reach too` : ''}`);
     // `cut`/`kind` ride every front shakedown/rob reply (cut:0 on a loss), and those render their own
     // flop line below — without this exclusion a flopped shakedown ALSO read "the jump went bad", two
     // lines with one claiming the wrong system (the WAVE 55/61 collision class, Codex round 3).
@@ -3547,6 +3561,13 @@
     else if (body.cut !== undefined && body.kind) bits.push(body.win
       ? `shook 'em down — took $${fmt(body.cut)} out of their ${txt(body.kindName || body.name || body.kind)}`
       : `the shakedown at their ${txt(body.kindName || body.name || body.kind)} flopped${body.dmg ? ` — their security put ${body.dmg} damage on you` : ' — nothing to show for it'}`);
+    // WAVE 80: the visit is charged win OR lose and all three charges went unstated. The venue
+    // window is the one a player cannot infer — it is SHARED with rob, so a flop here also shuts
+    // the door on a robbery, and the only way to learn that was to be refused. Gated on the
+    // kindName+cooldownSeconds pair, which no other reply in the game carries (checked, not
+    // assumed). Saying "heat" here suppresses the generic heat push below by its own scan.
+    if (body.kindName !== undefined && body.cooldownSeconds !== undefined && body.energy !== undefined)
+      bits.push(`the visit cost ${body.energy} energy and +${body.heat} law heat — and that front is shut to you, rob or shakedown, for ${minsTxt(body.cooldownSeconds)}`);
     if (body.district && body.win === true && body.cut !== undefined && !body.kind) bits.push(`muscled the block — grabbed $${fmt(body.cut)} from their operation`);
     if (body.district && body.win === false && body.dmg !== undefined && body.field === undefined) bits.push(`they held the block — you took ${body.dmg} damage`);
     if (body.fortitude !== undefined && body.cost !== undefined) bits.push(`\u{1F6E1} ${body.name || 'the operation'} in ${$dist(body.district)} is dug in to level ${body.fortitude}${body.max ? `/${body.max}` : ''} — $${fmt(body.cost)} out of the treasury. A rival raid has less chance of taking the till.`);
@@ -3570,7 +3591,9 @@
     // `riddle`, not bare `cold`: the clue dig owns this phrasing but not the field name, and a cold
     // business front (`{cold: 1}`) was announcing itself as a failed excavation — live since the
     // Empire's pad shipped. The clue dig always carries its riddle back; nothing else does.
-    else if (body.cold && body.riddle) bits.push(body.hint || 'cold ground');
+    // WAVE 80: the shovel is paid win or lose (the handler says so in its own comment) and the
+    // cold-ground line never said the energy had gone — so a wrong guess read as free.
+    else if (body.cold && body.riddle) bits.push(`${body.hint || 'cold ground'}${body.energy ? ` — ${body.energy} energy for the dig either way` : ''}`);
     else if (body.riddle && body.step) bits.push(`the trail continues — “${body.riddle}” (step ${body.step} of ${body.of})`);
     if (body.clue) bits.push(`🗺 a CLUE SCROLL fell out of the job — “${body.clue.riddle}”`);
     // THE REGIMEN — a discipline session (levelUp marker) vs a claimed trainer drill (npc marker).
@@ -4080,6 +4103,7 @@
     // to collect it. The ask alone cannot say that, so the server sends what is OWED, by WHOM, and
     // whether a car stands behind it — the difference between secured and unsecured paper.
     if (body.paper === 'listed') bits.push(`\uD83D\uDCC3 the paper's on the market — $${fmt(body.price)} for a claim on $${fmt(body.owed)}`
+      + `${body.net !== undefined && body.net !== body.price ? ` (you bank $${fmt(body.net)} — the house takes the rest)` : ''}`
       + `${body.borrower ? ` owed by ${body.borrower}` : ''}${body.secured ? ', with a car pledged behind it' : ' (unsecured)'}.`
       + ' Whoever buys it takes over the right to collect.');
     if (body.paper === 'pulled') bits.push("pulled the paper off the market — the claim's yours again, and nobody can buy it out from under you.");
@@ -4240,14 +4264,21 @@
     // escrowed $50,000 out of their own pocket and is owed $60,000 — was told "took the loan —
     // $50,000 now, owe $60,000": the two sides of the table, one line, and it named the wrong one.
     // `dueSeconds` is on the borrower's reply only; `hours` and `directed` are the poster's.
+    // WAVE 80: both TAKE lines named the money and the deadline and never what MISSING it costs —
+    // and the four consequences are not guessable from a loan screen: the shark collects your pocket
+    // AND anything still in transit, puts you in a bed, brands you a welsher (no shark lends past it)
+    // and the underworld posts a price on your head. Read off collectLoan, not off this finding.
+    // Stated qualitatively on purpose: restating LOAN.WANTED_MS/COLLECT_HOSP_MS here is the copy-drift
+    // class. Defined ONCE — two copies of one sentence is how the two lines come to disagree.
+    const owedTerms = ' — miss it and they collect: your pocket and anything still in transit (cleared bank is safe), a beating, the welsher brand nobody lends past, and a price on your head';
     if (body.house === true && body.principal !== undefined && body.owed !== undefined)
-      bits.push(`\u{1F3E6} the house lent you $${fmt(body.principal)} — $${fmt(body.owed)} owed back inside ${body.dueHours}h`);
+      bits.push(`\u{1F3E6} the house lent you $${fmt(body.principal)} — $${fmt(body.owed)} owed back inside ${body.dueHours}h${owedTerms}`);
     else if (body.principal !== undefined && body.owed !== undefined && body.dueSeconds === undefined)
       bits.push(`\uD83E\uDD1D money's on the street — $${fmt(body.principal)} out of your pocket and into escrow, $${fmt(body.owed)} owed back inside ${body.hours}h${body.directed ? ' (spoken for)' : ''}${body.collateralMin > 0 ? `, secured against a car worth $${fmt(body.collateralMin)}+` : ''}${body.collateralOmr > 0 ? `, plus a ${fmt(body.collateralOmr)} $OMR pledge` : ''}. Nobody's on the hook until somebody takes it.`);
     // the deadline is the DEBT'S, so it has to attach to the debt. Trailing it after the pledge
     // clause read "the shark keeps it if you don't inside 24h" — a deadline stapled to the wrong
     // sentence, on a term the borrower is being asked to accept.
-    else if (body.principal !== undefined && body.owed !== undefined) bits.push(`took the loan — $${fmt(body.principal)} now, owe $${fmt(body.owed)}${body.dueSeconds ? ` inside ${minsTxt(body.dueSeconds)}` : ''}${body.collateral ? ' (car pledged)' : ''}${body.pledgedOmr > 0 ? ` — ${fmt(body.pledgedOmr)} $OMR escrowed against it: it comes home when you square up, the shark keeps it if you don't` : ''}`);
+    else if (body.principal !== undefined && body.owed !== undefined) bits.push(`took the loan — $${fmt(body.principal)} now, owe $${fmt(body.owed)}${body.dueSeconds ? ` inside ${minsTxt(body.dueSeconds)}` : ''}${body.collateral ? ' (car pledged)' : ''}${body.pledgedOmr > 0 ? ` — ${fmt(body.pledgedOmr)} $OMR escrowed against it: it comes home when you square up, the shark keeps it if you don't` : ''}${owedTerms}`);
     // THE BODYGUARD, which named the price and neither TERM — the pad/nut/Port-lane class on the
     // one purchase whose whole value is a pair of conditions. The cover runs a WINDOW (the reply
     // sent it only as an ISO `until` the client has no parser for; the server ships guardSeconds
@@ -4298,7 +4329,9 @@
     if (body.kind === 'order' && body.wanted !== undefined)
       bits.push(`📇 WANTED: ${body.wanted} × ${txt(goodName(body.good))} at $${fmt(body.price)} in ${$dist(body.district)} — $${fmt(body.escrow)} is ESCROWED out of your pocket until it fills or you pull it (fee $${fmt(body.fee)}). Sellers deliver to that dock; you claim it from there.`);
     if (body.delivered !== undefined && body.earned !== undefined)
-      bits.push(`🚚 delivered ${body.delivered}${body.good ? ` × ${txt(goodName(body.good))}` : ''} — $${fmt(body.earned)} in${body.remaining > 0 ? `, the order still wants ${body.remaining}` : ' (order filled)'}`);
+      // WAVE 80: `earned` is NET. A filler who read $400/unit on the board and banked $1,176 on
+      // three had no reason for the missing $24 — the house take is stated where the money lands.
+      bits.push(`🚚 delivered ${body.delivered}${body.good ? ` × ${txt(goodName(body.good))}` : ''} — $${fmt(body.earned)} in${body.take ? ` ($${fmt(body.gross)} gross, $${fmt(body.take)} house take)` : ''}${body.remaining > 0 ? `, the order still wants ${body.remaining}` : ' (order filled)'}`);
     if (body.claimed !== undefined && body.awaiting !== undefined)
       bits.push(`picked up ${body.claimed}${body.good ? ` × ${txt(goodName(body.good))}` : ''} into the trunk${body.awaiting > 0 ? ` — ${body.awaiting} still waiting at the dock` : ''}`);
     // THREE ESCROWS COME BACK AND ONLY ONE OF THEM SPOKE. `refunded` is what the game says when
@@ -4325,7 +4358,7 @@
     // LEFT on the mark's head (a pot several funders share, so pulling your share does not
     // necessarily clear it), the shark's has neither and is the plainer sentence.
     else if (body.refunded !== undefined && body.potRemaining !== undefined)
-      bits.push(`pulled your stake off the contract — $${fmt(body.refunded)} back${body.potRemaining > 0 ? `. There's still $${fmt(body.potRemaining)} on their head from other funders.` : `, and there's nothing left on their head.`}`);
+      bits.push(`pulled your stake off the contract — $${fmt(body.refunded)} back (your share of the pot — the board's take stays kept)${body.potRemaining > 0 ? `. There's still $${fmt(body.potRemaining)} on their head from other funders.` : `, and there's nothing left on their head.`}`);
     else if (body.refunded !== undefined && body.ok)
       bits.push(`\u{1F91D} took the offer off the street — $${fmt(body.refunded)} out of escrow and back in your pocket`);
     // ── THE CHAIN RAIL, which said "done." over every receipt it issues ──────────────────────────
@@ -4409,7 +4442,7 @@
     // PUTTING A PRICE ON SOMEBODY. The escrow is posted, the take is kept, and the MARK IS TOLD —
     // it is the loudest thing you can do to another player, and it said "done."
     if (body.total !== undefined && body.expiresHours !== undefined && body.kind)
-      bits.push(`\u{1F4B0} the contract is on the board — $${fmt(body.total)} to ${body.kind === 'kill' ? 'put them down' : 'put them in hospital'}, good for ${body.expiresHours}h. They've been told somebody wants them.`);
+      bits.push(`\u{1F4B0} the contract is on the board — $${fmt(body.total)} to ${body.kind === 'kill' ? 'put them down' : 'put them in hospital'}, good for ${body.expiresHours}h${body.take ? `, and the board kept $${fmt(body.take)} on top — that part never comes back` : ''}. They've been told somebody wants them.`);
     // THE HUNT. `placedAt` is misnamed — the server sends the moment the SHOT becomes takeable
     // (now + hunterSearchMs), and that clock is stacked by four different modifiers, so the client
     // cannot honestly state it from a constant. It had the figure all along and said "done." over it,

@@ -224,7 +224,7 @@ export async function fillOrder(ch, listingId, qty, client, h) {
   const gross = n * Number(l.price);
   h.owned.cargo[l.good_id] = have - n; // trunk → the order's warehouse
   await setCargo(client, ch.id, l.good_id, have - n);
-  const { net } = await paySeller(client, h, ch.id, gross, { reason: 'market:fill', inMemoryCh: ch });
+  const { net, take } = await paySeller(client, h, ch.id, gross, { reason: 'market:fill', inMemoryCh: ch });
   await bumpMastery(client, h, ch, 'commerce', 'fill');
   // absolute writes (the pg-mem INT quirk); the row stays live at qty=0 until the buyer claims
   await client.query('UPDATE market_listings SET qty=$2, filled_qty=$3 WHERE id=$1',
@@ -232,7 +232,9 @@ export async function fillOrder(ch, listingId, qty, client, h) {
   await h.notify(client, l.seller_character, 'order_filled', { listing: l.id, good: l.good_id, qty: n });
   await h.track(client, ch.account_id, 'market_fill', { good: l.good_id, qty: n });
   bus.emit('streets', { type: 'market_sale', kind: 'order' });
-  return { ok: true, delivered: n, earned: net, remaining: Number(l.qty) - n, good: l.good_id };
+  // WAVE 80: `earned` is NET of the house take, so a filler reading a $400/unit board and banking
+  // $1,176 on three units had no reason for the $24. The gross and the take ride so the line can say.
+  return { ok: true, delivered: n, earned: net, gross, take, remaining: Number(l.qty) - n, good: l.good_id };
 }
 
 // CLAIM — the buyer collects delivered goods from the warehouse, at the dock, into trunk space.

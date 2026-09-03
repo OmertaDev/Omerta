@@ -134,7 +134,9 @@ export async function jump(ch, victim, client, h, intent) {
     await bumpFamilyTask(client, h, 'jump', 1);
     await bumpMastery(client, h, ch, 'muscle', 'jump'); // THE TRADES — a won jump works the protection racketeer's craft
     bus.emit('streets', { type: 'jump', by: ch.name, on: victim.name, war: !!war });
-    return { ok: true, win: true, intent: it.id, energy: energyCost, stolen, crates, rep, bounty, war: !!war, revenge, firstBlood };
+    // WAVE 80: hospMs rode the victim's notify and never the attacker's own reply, so the man who
+    // put them there was the one person not told the mark is off the street.
+    return { ok: true, win: true, intent: it.id, energy: energyCost, hospSeconds: Math.round(hospMs / 1000), stolen, crates, rep, bounty, war: !!war, revenge, firstBlood };
   }
   const dmg = rand(10, 25);
   ch.health = Math.max(1, Number(ch.health) - dmg);

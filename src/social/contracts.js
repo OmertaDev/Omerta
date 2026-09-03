@@ -119,7 +119,10 @@ export async function postBounty(ch, targetCharacterId, amount, client, h, opts 
   await h.notify(client, targetCharacterId, 'bounty_on_you', { kind, amount: amt }); // the mark can react (lay low, etc.)
   if (hitmanId && !live) await h.notify(client, hitmanId, 'contract_offer', { target: t.name, kind, amount: amt }); // the named hitman is tapped
   await h.track(client, ch.account_id, 'contract_post', { kind, amount: amt, directed: !!hitmanId });
-  return { ok: true, kind, total: (live ? Number(existing.amount) : 0) + amt, expiresHours: ttlH, hitman: hitmanId || undefined };
+  // WAVE 80: the poster pays amt + fee + tax and the reply named only the pot — so the take was
+  // invisible at the one moment it is charged, and invisible again at cancel (which refunds the
+  // POT share alone: the take never comes back).
+  return { ok: true, kind, total: (live ? Number(existing.amount) : 0) + amt, take: fee + tax, expiresHours: ttlH, hitman: hitmanId || undefined };
 }
 
 // Collect every claimable pot on the victim: `kinds` is what this takedown fulfils — a jump

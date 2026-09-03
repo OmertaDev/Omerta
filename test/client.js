@@ -51,7 +51,7 @@ import { buildServer } from '../src/server.js';
 import { M3, M4, PATHS, NPC_HITMEN, HEIST_ROLES, HEIST_JOBS, DRUGS, GOODS, DISTRICTS,
   COMMISSION, CONVOY, DUELS, TERRITORY_TYPES, CARS, TRIMS, ASSETS, RACKETS, BUSINESSES, ESTATE, WIRE, SECRETS, STABLE, WORLD, WORLD_NPCS,
   PEN, HONOR, MARRIAGE, CAMPAIGNS, LIMITED_RUNS, SHIPMENT, VANITY,
-  BUSINESS_EMPIRE, CORNER, cornerTasksOf, charterFx } from '../src/rules.js';
+  BUSINESS_EMPIRE, CORNER, cornerTasksOf, charterFx, CLUES, clueStepOf } from '../src/rules.js';
 import { bumpHonor } from '../src/honor.js';
 import { mintLimitedRun } from '../src/economy.js';
 
@@ -6560,11 +6560,18 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   // field and a file-wide match is satisfied by any one of them, so dropping it from the fill left
   // the check green (a substring elsewhere proves nothing about the reply under test).
   {
+    // anchored on each reply's own DISCRIMINATOR rather than its whole literal: a reply legitimately
+    // GROWS fields (the fill gained `gross, take` when the house cut got named), and a pin that
+    // restates the entire line rots on that — reporting a rename it never checked for as a missing
+    // field it did. The scoping is what matters and is kept: the field must sit inside THIS reply.
     const mk = readFileSync(new URL('../src/market.js', import.meta.url), 'utf8');
-    for (const src of ['delivered: n, earned: net, remaining: Number(l.qty) - n, good: l.good_id',
-                       'claimed: n, awaiting: left, good: l.good_id',
-                       'cancelled: l.id, refunded: remaining, awaiting: Number(l.filled_qty), good: l.good_id'])
-      assert(mk.includes(src), `market.js reply must carry the good id — the client has no way to name the freight without it: ${src}`);
+    for (const anchor of ['delivered: n', 'claimed: n', 'cancelled: l.id']) {
+      const at = mk.indexOf(anchor);
+      assert(at > 0, `market.js no longer has the reply anchored on \`${anchor}\` — relocate this pin rather than deleting it`);
+      const lit = mk.slice(at, mk.indexOf('}', at));
+      assert(lit.includes('good: l.good_id'),
+        `market.js reply must carry the good id — the client has no way to name the freight without it: ${anchor} → ${lit}`);
+    }
   }
   // the races: four replies sent car.model_id raw, so a tune, a NOS charge, a wager listing and a
   // pinks offer all named a key. The notify one line down had sent the NAME all along.
@@ -9118,4 +9125,151 @@ console.log(`✅ client wiring test passed — across the console AND /admin: of
   assert(/PINKS/.test(pinksLine80) && /the ride cools for \S+/.test(pinksLine80) && dur80.test(pinksLine80),
     `WAVE 80: the pinks line must name the wait — got "${pinksLine80}"`);
   console.log('  ✓ WAVE 80: the SUCCESS reply names the clock it just armed (the cutman\'s rest + all three race verbs)');
+
+  // ── WAVE 80 (c1-7) — THE COST THAT LANDS WIN OR LOSE, AND THE TAKE THAT NEVER COMES BACK ──
+  // The same class one step over: a SUCCESS reply that CHARGED something and never named it. Three
+  // sites, three different reasons the player could not have known:
+  //   • the shovel is paid on COLD ground too (the handler says so in its own comment) — so a wrong
+  //     guess read as free, and a scroll ran a player's tank down with nothing on screen saying why;
+  //   • `hospMs` rode the VICTIM'S notify and never the attacker's own reply — the forgotten-sibling
+  //     shape, so the one man who put the mark in a bed was the one person not told they were there
+  //     (and therefore out of HIS reach too, which is the half that changes what he does next);
+  //   • a contract charges amt + fee + tax and the reply named the POT alone, so the take was
+  //     invisible at the moment it was charged AND at cancel, which refunds the pot share only.
+  //
+  // Asserted in TWO halves throughout, per this scope's own rule: the SERVER sent the figure, and
+  // THEN the line names it. A synthetic literal passes straight through the mutation that stops a
+  // field being sent, which is exactly the mutation these fixes exist to fail.
+
+  // (c) the shovel. The wrong district is COMPUTED off the scroll's own salt rather than guessed —
+  // `clueStepOf` is deterministic, so a hardcoded district would be right one day in six and the
+  // assertion would rest on a probabilistic precondition (the recorded flake class).
+  const dig80 = await mk11('Digger');
+  const salt80 = 'w80saltclue';
+  const right80 = clueStepOf(salt80, 1).district;
+  const wrong80 = DISTRICTS.map((d) => d.id).find((d) => d !== right80);
+  assert(wrong80, 'WAVE 80 fixture: there must be a district that is NOT the scroll\'s answer');
+  await app11.pool.query('INSERT INTO clue_scrolls (character_id, salt, step, steps) VALUES ($1,$2,1,3)', [dig80.id, salt80]);
+  await app11.pool.query('UPDATE characters SET loc=$2, energy=90 WHERE id=$1', [dig80.id, wrong80]);
+  const cold80 = await inj11('POST', '/v1/clues/dig', dig80.token, {});
+  assert.equal(cold80.code, 200, `WAVE 80 fixture: a cold dig is a 200, not a refusal (${JSON.stringify(cold80.body)})`);
+  assert.equal(cold80.body?.cold, true, `WAVE 80 fixture: the dig must land on COLD ground (${JSON.stringify(cold80.body)})`);
+  assert.equal(cold80.body.energy, CLUES.DIG_ENERGY,
+    `WAVE 80: the cold-ground reply must CARRY the energy the shovel still cost — got ${JSON.stringify(cold80.body.energy)}`);
+  const coldLine80 = String(describeFn(cold80.body, 200));
+  assert(new RegExp(`${CLUES.DIG_ENERGY} energy for the dig either way`).test(coldLine80),
+    `WAVE 80: a wrong guess must not read as free — the shovel is paid win or lose. Got "${coldLine80}"`);
+
+  // (d) the beating. The stat gap is seeded far past the contest's own noise term: BOTH sides add
+  // Math.random() * 25, so a gap under 25 would make this a coin toss dressed as an assertion.
+  const bru80 = await mk11('Bruiser'), mark80 = await mk11('Mark');
+  await app11.pool.query('UPDATE characters SET muscle=200, speed=200, energy=100, ammo=100, health=100 WHERE id=$1', [bru80.id]);
+  await app11.pool.query('UPDATE characters SET muscle=1, speed=1, cash=50000 WHERE id=$1', [mark80.id]);
+  const beat80 = await inj11('POST', `/v1/streets/${mark80.id}/jump`, bru80.token, {});
+  assert.equal(beat80.code, 200, `WAVE 80 fixture: the jump must land (${JSON.stringify(beat80.body)})`);
+  assert.equal(beat80.body?.win, true, `WAVE 80 fixture: the seeded gap must guarantee the WIN branch (${JSON.stringify(beat80.body)})`);
+  assert.equal(beat80.body.energy, M3.JUMP_ENERGY,
+    `WAVE 80: the jump reply must carry what the swing cost — got ${JSON.stringify(beat80.body.energy)}`);
+  assert(beat80.body.hospSeconds > 0,
+    `WAVE 80: the jump reply must carry the bed it just put them in — got ${JSON.stringify(beat80.body.hospSeconds)}`);
+  const beatLine80 = String(describeFn(beat80.body, 200));
+  assert(new RegExp(`${M3.JUMP_ENERGY} energy`).test(beatLine80),
+    `WAVE 80: the jump line must name the energy it spent — got "${beatLine80}"`);
+  assert(/in a bed for \S+/.test(beatLine80) && dur80.test(beatLine80) && /out of your reach too/.test(beatLine80),
+    'WAVE 80: the attacker must be told the mark is in a bed AND that it puts them beyond his own '
+    + `reach — the consequence that decides what he does next. Got "${beatLine80}"`);
+
+  // (e) the board's cut. Charged on top of the pot at post, and NOT returned at cancel — so it is
+  // stated at both ends, because a refund that quietly returns less than was charged is the shape
+  // this whole sweep is about. The take is read off the SERVER's own reply, never restated here.
+  const poster80 = await mk11('Poster'), quarry80 = await mk11('Quarry');
+  await app11.pool.query('UPDATE characters SET cash=500000 WHERE id=$1', [poster80.id]);
+  const post80 = await inj11('POST', `/v1/streets/${quarry80.id}/bounty`, poster80.token, { amount: 100000, kind: 'kill' });
+  assert.equal(post80.code, 200, `WAVE 80 fixture: the contract must go up (${JSON.stringify(post80.body)})`);
+  assert(post80.body.take > 0,
+    `WAVE 80: the post reply must carry the take charged ON TOP of the pot — got ${JSON.stringify(post80.body.take)}`);
+  const postLine80 = String(describeFn(post80.body, 200));
+  assert(/the board kept \S+ on top/.test(postLine80) && /never comes back/.test(postLine80),
+    `WAVE 80: the post line must name the cut it kept on top of the pot — got "${postLine80}"`);
+  const pull80 = await inj11('POST', `/v1/contracts/${quarry80.id}/kill/cancel`, poster80.token, {});
+  assert.equal(pull80.code, 200, `WAVE 80 fixture: the poster must be able to pull their own stake (${JSON.stringify(pull80.body)})`);
+  assert(pull80.body.refunded > 0 && pull80.body.refunded < 100000 + post80.body.take,
+    `WAVE 80 fixture: the refund is the POT share, never the whole charge (${JSON.stringify(pull80.body)})`);
+  const pullLine80 = String(describeFn(pull80.body, 200));
+  assert(/the board's take stays kept/.test(pullLine80),
+    `WAVE 80: the cancel line must say what does NOT come back — got "${pullLine80}"`);
+  console.log('  ✓ WAVE 80: the SUCCESS reply names what it CHARGED too (the shovel on cold ground, the jump\'s energy + the bed, the board\'s take at post and at cancel)');
+
+  // ── WAVE 80 (appliers) — FOUR MORE SUCCESS REPLIES THAT CHARGED OR SETTLED IN SILENCE ──
+  // Same class, four sites the coverage sweep reached that the c1-7 pass did not:
+  //   • a shakedown/rob shuts that front to BOTH verbs for a shared window — the one term that
+  //     decides whether you can come back, and the reply named neither it nor what the visit cost;
+  //   • the weekly fight settled into the shared ticket line as a bare figure, though the card names
+  //     both fighters and the TRACK twin has shipped `winnerName` since it landed (forgotten sibling);
+  //   • listing paper named the ASK and never the NET — the house take is the difference between the
+  //     number on the board and the number that reaches you;
+  //   • filling an order banked NET off a board quoting GROSS, so the missing cut had no explanation.
+  // Two halves throughout, as above: the SERVER sent the figure, and THEN the line names it.
+
+  // (f) THE SHARED WINDOW. Outcome-independent on purpose — `...terms` rides all three of
+  // extortFront's branches, so nothing here pins a roll (which would be a coin toss wearing a proof).
+  const lean80 = await mk11('Leaner');
+  const front80 = await mk11('Frontman');
+  await app11.pool.query('UPDATE characters SET energy=90, health=100 WHERE id=$1', [lean80.id]);
+  const biz80 = 'w80biz' + Math.random().toString(36).slice(2, 8);
+  await app11.pool.query('INSERT INTO businesses (id, character_id, kind) VALUES ($1,$2,$3)', [biz80, front80.id, 'laundromat']);
+  const shake80 = await inj11('POST', `/v1/business/${biz80}/shakedown`, lean80.token, {});
+  assert.equal(shake80.code, 200, `WAVE 80 fixture: the shakedown must land (${JSON.stringify(shake80.body)})`);
+  assert(shake80.body.cooldownSeconds > 0 && shake80.body.energy > 0 && shake80.body.heat > 0,
+    `WAVE 80: the shakedown reply must carry what the visit COST and how long the front is shut — got ${JSON.stringify(shake80.body)}`);
+  const shakeLine80 = String(describeFn(shake80.body, 200));
+  assert(/rob or shakedown/.test(shakeLine80) && dur80.test(shakeLine80),
+    `WAVE 80: the shakedown line must name the shared window it just armed — got "${shakeLine80}"`);
+
+  // (g) THE FIGHT. week 0 is guaranteed < weekOf(), so the claim always matures.
+  const punt80 = await mk11('Punter');
+  await app11.pool.query('INSERT INTO fight_bets (character_id, week, side, stake) VALUES ($1,0,$2,$3)', [punt80.id, 'a', 500]);
+  const fight80 = await inj11('POST', '/v1/casino/fight/claim', punt80.token, {});
+  assert.equal(fight80.code, 200, `WAVE 80 fixture: the ticket must settle (${JSON.stringify(fight80.body)})`);
+  assert.equal(fight80.body.settled, 1, `WAVE 80 fixture: exactly one matured ticket (${JSON.stringify(fight80.body)})`);
+  const r80 = fight80.body.results && fight80.body.results[0];
+  assert(r80 && typeof r80.winnerName === 'string' && r80.winnerName.length > 0 && typeof r80.pickName === 'string' && r80.pickName.length > 0,
+    `WAVE 80: the settle reply must NAME the fighters — got ${JSON.stringify(fight80.body.results)}`);
+  const fightLine80 = String(describeFn(fight80.body, 200));
+  assert(fightLine80.includes(r80.winnerName) && /took the fight/.test(fightLine80),
+    `WAVE 80: the fight line must name who took it — got "${fightLine80}"`);
+
+  // (h) THE PAPER'S NET. Asserted as a RELATION off the reply rather than against an imported lever —
+  // a restated take is a second copy of a founder dial, and the copies drift.
+  const shark80 = await mk11('Shylock');
+  const owes80 = await mk11('Debtor');
+  const loan80 = 'w80loan' + Math.random().toString(36).slice(2, 8);
+  await app11.pool.query(
+    "INSERT INTO loans (id, lender_character, borrower_character, principal, rate, hours, status, due_at) VALUES ($1,$2,$3,50000,0.25,24,'active', now() + interval '24 hours')",
+    [loan80, shark80.id, owes80.id]);
+  const sell80 = await inj11('POST', `/v1/loans/${loan80}/sell`, shark80.token, { price: 40000 });
+  assert.equal(sell80.code, 200, `WAVE 80 fixture: the lender must be able to list their own paper (${JSON.stringify(sell80.body)})`);
+  assert(sell80.body.net > 0 && sell80.body.net < sell80.body.price,
+    `WAVE 80: the listing must carry the NET the lender banks, below the ask — got ${JSON.stringify(sell80.body)}`);
+  const sellLine80 = String(describeFn(sell80.body, 200));
+  assert(/you bank/.test(sellLine80) && new RegExp(fmtLike(sell80.body.net)).test(sellLine80),
+    `WAVE 80: the listing line must say what reaches the lender, not just the ask — got "${sellLine80}"`);
+
+  // (i) THE FILL. Posted through the REAL route — a hand-seeded listing would have paySeller pay out
+  // of escrow that was never debited, which is a fixture that proves the wrong thing.
+  const buyer80 = await mk11('Buyer');
+  const seller80 = await mk11('Runner');
+  const g80 = GOODS[0].id;
+  const order80 = await inj11('POST', '/v1/market/order', buyer80.token, { goodId: g80, qty: 5, price: 4000, hours: 24 });
+  assert.equal(order80.code, 200, `WAVE 80 fixture: the order must post (${JSON.stringify(order80.body)})`);
+  await app11.pool.query('INSERT INTO character_cargo (character_id, good_id, qty) VALUES ($1,$2,5) ON CONFLICT (character_id, good_id) DO UPDATE SET qty=5', [seller80.id, g80]);
+  const fill80 = await inj11('POST', `/v1/market/${order80.body.id}/fill`, seller80.token, { qty: 3 });
+  assert.equal(fill80.code, 200, `WAVE 80 fixture: the delivery must land (${JSON.stringify(fill80.body)})`);
+  assert(fill80.body.gross > fill80.body.earned && fill80.body.take > 0 && fill80.body.gross - fill80.body.take === fill80.body.earned,
+    `WAVE 80: the fill must carry the GROSS the board quoted and the TAKE that explains the difference — got ${JSON.stringify(fill80.body)}`);
+  const fillLine80 = String(describeFn(fill80.body, 200));
+  assert(/house take/.test(fillLine80) && new RegExp(fmtLike(fill80.body.take)).test(fillLine80),
+    `WAVE 80: the fill line must explain the gap between the board's price and what landed — got "${fillLine80}"`);
+
+  console.log('  ✓ WAVE 80: the shared front window, the fighter who took it, the paper\'s net and the fill\'s house take all reach the player');
 }
