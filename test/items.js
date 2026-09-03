@@ -103,11 +103,10 @@ try {
       'the actual checked-out pg-mem client is rejected until withItemTransaction brands it',
     );
   } finally { unbegun.release(); }
-  await assert.rejects(
-    inventoryBoard({ query: pool.query.bind(pool) }, characterA),
-    (error) => error?.code === 'item_transaction_required',
-    'an unassociated pg-mem query client cannot bypass the pool transaction-tail read barrier',
-  );
+  const queryAliasBoard = await inventoryBoard({ query: pool.query.bind(pool) }, characterA);
+  assert.equal(queryAliasBoard.stacks
+    .find((stack) => stack.templateId === 'mat:scrap_steel').qty, 6,
+  'a query-only alias can read safely through the module-global pg-mem barrier');
   await assert.rejects(
     withItemTransaction(pool, async () => withItemTransaction(pool, async () => null)),
     (error) => error?.code === 'item_transaction_nested',
@@ -300,93 +299,122 @@ try {
     "SELECT COUNT(*) AS n FROM item_mutation_guards WHERE idempotency_key='atomic-failure-1'",
   )).rows[0].n), 0, 'a failed compound mutation leaves no blocked replay guard');
 
-  // Compensation must not restore a stale pre-image over a different committed transaction. pg-mem
-  // ignores both rollback and row locks, so its module-owned boundaries serialize on this pool.
-  await inTransaction((client) => grantStack(
-    client, characterA, 'mat:atomic_race', 10, 'standard', 'fixture', 'atomic-race-seed-1',
-  ));
-  let signalFirstMutation;
-  let releaseFirstFailure;
-  const firstMutationApplied = new Promise((resolve) => { signalFirstMutation = resolve; });
-  const failFirstMutation = new Promise((resolve) => { releaseFirstFailure = resolve; });
-  const failingTransaction = inTransaction((client) => withItemMutation(
-    client, characterA, 'craft', 'atomic-race-failure-1', { recipeId: 'recipe:race-fails' },
-    async (mutation) => {
-      await grantStack(
-        client, characterA, 'mat:atomic_race', 1, 'standard', 'temporary grant', mutation,
-      );
-      signalFirstMutation();
-      await failFirstMutation;
-      throw new Error('injected concurrent compound failure');
-    },
-  ));
-  const failingExpectation = assert.rejects(
-    failingTransaction, /injected concurrent compound failure/,
-  );
-  await firstMutationApplied;
-  await assert.rejects(
-    grantStack(
-      pool, characterA, 'mat:atomic_race', 99, 'standard',
-      'attempted brand hijack', 'atomic-race-hijack-1',
-    ),
-    (error) => error?.code === 'item_transaction_required',
-    'a concurrent async flow cannot borrow the pg-mem pool object while another flow branded it',
-  );
-  let concurrentSettled = false;
-  const concurrentTransaction = inTransaction((client) => grantStack(
-    client, characterA, 'mat:atomic_race', 2, 'standard', 'concurrent grant',
-    'atomic-race-success-1',
-  )).then((result) => {
-    concurrentSettled = true;
-    return result;
-  });
-  const externalReader = await pool.connect();
-  let readerSettled = false;
-  let readerRejected = false;
-  const guardedRead = inventoryBoard(externalReader, characterA).then(
-    (result) => {
+  // A caller-supplied object identity cannot define the serialization domain. Proxy and forwarding
+  // aliases over the same pg-mem database must queue behind the same failed mutation and read tail.
+  const runAliasRace = async (label, alias) => {
+    const templateId = `mat:atomic_race_${label}`;
+    const seedKey = `atomic-race-${label}-seed`;
+    const failureKey = `atomic-race-${label}-failure`;
+    const successKey = `atomic-race-${label}-success`;
+    await inTransaction((client) => grantStack(
+      client, characterA, templateId, 10, 'standard', 'fixture', seedKey,
+    ));
+
+    let signalFirstMutation;
+    let releaseFirstFailure;
+    const firstMutationApplied = new Promise((resolve) => { signalFirstMutation = resolve; });
+    const failFirstMutation = new Promise((resolve) => { releaseFirstFailure = resolve; });
+    const failingTransaction = inTransaction((client) => withItemMutation(
+      client, characterA, 'craft', failureKey, { recipeId: `recipe:${label}-fails` },
+      async (mutation) => {
+        await grantStack(
+          client, characterA, templateId, 1, 'standard', 'temporary grant', mutation,
+        );
+        signalFirstMutation();
+        await failFirstMutation;
+        throw new Error(`injected ${label} alias failure`);
+      },
+    ));
+    const failingExpectation = assert.rejects(
+      failingTransaction, new RegExp(`injected ${label} alias failure`),
+    );
+    await firstMutationApplied;
+
+    await assert.rejects(
+      grantStack(
+        alias, characterA, templateId, 99, 'standard',
+        'attempted brand hijack', `atomic-race-${label}-hijack`,
+      ),
+      (error) => error?.code === 'item_transaction_required',
+      `${label} alias cannot borrow another async flow's transaction brand`,
+    );
+
+    let concurrentSettled = false;
+    const concurrentTransaction = withItemTransaction(alias, (client) => grantStack(
+      client, characterA, templateId, 2, 'standard', 'concurrent grant', successKey,
+    )).then((result) => {
+      concurrentSettled = true;
+      return result;
+    });
+    let readerSettled = false;
+    const guardedRead = inventoryBoard(alias, characterA).then((result) => {
       readerSettled = true;
       return result;
-    },
-    (error) => {
-      readerSettled = true;
-      if (error?.code !== 'item_transaction_required') throw error;
-      readerRejected = true;
-      return null;
-    },
-  );
-  await new Promise((resolve) => setTimeout(resolve, 10));
-  assert.equal(concurrentSettled, false,
-    'a second pg-mem item transaction waits until failed work is fully compensated');
-  if (externalReader === pool) {
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    assert.equal(concurrentSettled, false,
+      `${label} alias transaction B queues behind failing transaction A`);
     assert.equal(readerSettled, false,
-      'the pg-mem adapter pool/client identity waits on the complete serialized tail');
-  } else {
-    await guardedRead;
-    assert.equal(readerRejected, true,
-      'a distinct unbranded pg-mem client fails closed because it cannot resolve the pool tail');
-  }
-  releaseFirstFailure();
-  await failingExpectation;
-  const concurrentResult = await concurrentTransaction;
-  const concurrentBoard = await guardedRead;
-  externalReader.release();
-  assert.equal(concurrentResult.qty, 12,
-    'the later transaction applies to the compensated quantity, not the failed partial quantity');
-  if (concurrentBoard) {
+      `${label} alias board read waits through A compensation and queued B`);
+
+    releaseFirstFailure();
+    await failingExpectation;
+    const concurrentResult = await concurrentTransaction;
+    const concurrentBoard = await guardedRead;
+    assert.equal(concurrentResult.qty, 12,
+      `${label} alias transaction B applies to A's compensated pre-image`);
     assert.equal(concurrentBoard.stacks
-      .find((stack) => stack.templateId === 'mat:atomic_race').qty, 12,
-    'a pool-shaped pg-mem board read waits through compensation and the queued commit');
-  }
-  assert.equal((await inventoryBoard(pool, characterA)).stacks
-    .find((stack) => stack.templateId === 'mat:atomic_race').qty, 12,
-  'failed compensation preserves the later committed transaction');
-  assert.equal(Number((await pool.query(
-    "SELECT COUNT(*) AS n FROM item_events WHERE idempotency_key='atomic-race-failure-1'",
-  )).rows[0].n), 0, 'the failed side of a serialized race leaves no provenance');
-  assert.equal(Number((await pool.query(
-    "SELECT COUNT(*) AS n FROM item_events WHERE idempotency_key='atomic-race-success-1'",
-  )).rows[0].n), 1, 'the successful side of a serialized race retains exactly one provenance event');
+      .find((stack) => stack.templateId === templateId).qty, 12,
+    `${label} alias read returns the committed final quantity`);
+
+    const finalStack = (await pool.query(
+      `SELECT quantity FROM item_stacks
+        WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality='standard'`,
+      [characterA.scope, characterA.id, templateId],
+    )).rows[0];
+    assert.equal(Number(finalStack.quantity), 12,
+      `${label} alias cannot split pg-mem into an unsafe second serialization domain`);
+    assert.equal(Number((await pool.query(
+      'SELECT COUNT(*) AS n FROM item_events WHERE idempotency_key=$1', [failureKey],
+    )).rows[0].n), 0, `${label} failed A leaves no event`);
+    assert.equal(Number((await pool.query(
+      'SELECT COUNT(*) AS n FROM item_mutation_guards WHERE idempotency_key=$1', [failureKey],
+    )).rows[0].n), 0, `${label} failed A leaves no guard`);
+
+    const successGuard = (await pool.query(
+      `SELECT mutation_kind, owner_scope, owner_id, result_json
+         FROM item_mutation_guards WHERE idempotency_key=$1`, [successKey],
+    )).rows[0];
+    assert.equal(successGuard.mutation_kind, 'grant_stack');
+    assert.equal(successGuard.owner_scope, characterA.scope);
+    assert.equal(successGuard.owner_id, characterA.id);
+    assert.deepEqual(JSON.parse(successGuard.result_json), concurrentResult,
+      `${label} B guard stores the final committed result`);
+    const successEvents = (await pool.query(
+      `SELECT event_kind, quantity_delta, quantity_before, quantity_after,
+              to_owner_scope, to_owner_id
+         FROM item_events WHERE idempotency_key=$1`, [successKey],
+    )).rows;
+    assert.equal(successEvents.length, 1, `${label} B writes exactly one event`);
+    assert.deepEqual({
+      kind: successEvents[0].event_kind,
+      delta: Number(successEvents[0].quantity_delta),
+      before: Number(successEvents[0].quantity_before),
+      after: Number(successEvents[0].quantity_after),
+      to: { scope: successEvents[0].to_owner_scope, id: successEvents[0].to_owner_id },
+    }, {
+      kind: 'stack_granted', delta: 2, before: 10, after: 12, to: characterA,
+    }, `${label} B provenance matches the final conserved state`);
+  };
+
+  const proxyAlias = new Proxy(pool, {});
+  const forwardingAlias = {
+    connect: () => pool.connect(),
+    query: (...args) => pool.query(...args),
+  };
+  await runAliasRace('proxy', proxyAlias);
+  await runAliasRace('forwarding', forwardingAlias);
 
   // The root owner on a compound guard is authority, not metadata. Leaf sources/beneficiaries must
   // match it, while intentional destinations must appear in the typed itemAuthority request.

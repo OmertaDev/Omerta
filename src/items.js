@@ -17,9 +17,8 @@ const CREATION_PROVENANCE_KINDS = new Set(['crafted', 'salvaged', 'awarded', 'im
 const ESCROW_PROVENANCE_KINDS = new Set(['used_in_mystery', 'used_in_operation']);
 const MUTATION_CONTEXTS = new WeakMap();
 const ITEM_TRANSACTIONS = new WeakMap();
-const ITEM_TRANSACTION_POOLS = new WeakSet();
-const PG_MEM_TRANSACTION_TAILS = new WeakMap();
 const TRANSACTION_SCOPE = new AsyncLocalStorage();
+let PG_MEM_TRANSACTION_TAIL = Promise.resolve();
 const INT_MAX = 2147483647;
 
 const fail = (code, message, data) => { throw new GameError(code, message, data); };
@@ -86,7 +85,7 @@ async function activeTransaction(client) {
 
 async function compensateItemTransaction(client, transaction) {
   // pg-mem parses BEGIN/COMMIT/ROLLBACK but ROLLBACK does not undo writes. Its test path is
-  // serialized per pool below, so a transaction-local inverse log gives the same externally visible
+  // serialized module-wide below, so a transaction-local inverse log gives the same externally visible
   // atomicity contract without overwriting a later successful item transaction. Events go first
   // because they reference both guards and permanent item rows; guards go last.
   for (const key of transaction.guardKeys) {
@@ -98,20 +97,23 @@ async function compensateItemTransaction(client, transaction) {
   }
 }
 
-async function acquirePgMemTransaction(pool) {
+async function acquirePgMemTransaction() {
   if (dbCaps.skipLocked) return () => {};
-  const previous = PG_MEM_TRANSACTION_TAILS.get(pool) || Promise.resolve();
+  // pg-mem pool/client wrappers have no trustworthy canonical database identity: a Proxy or a
+  // forwarding object can reach the same MemPg instance while carrying another object identity.
+  // One module-global tail is deliberately conservative but cannot be split by caller aliases.
+  const previous = PG_MEM_TRANSACTION_TAIL;
   let releaseGate;
   const gate = new Promise((resolve) => { releaseGate = resolve; });
   const tail = previous.then(() => gate);
-  PG_MEM_TRANSACTION_TAILS.set(pool, tail);
+  PG_MEM_TRANSACTION_TAIL = tail;
   await previous;
   let released = false;
   return () => {
     if (released) return;
     released = true;
     releaseGate();
-    if (PG_MEM_TRANSACTION_TAILS.get(pool) === tail) PG_MEM_TRANSACTION_TAILS.delete(pool);
+    if (PG_MEM_TRANSACTION_TAIL === tail) PG_MEM_TRANSACTION_TAIL = Promise.resolve();
   };
 }
 
@@ -119,22 +121,10 @@ async function waitForPgMemTransactions(queryable) {
   if (dbCaps.skipLocked) return;
   const transaction = ITEM_TRANSACTIONS.get(queryable);
   if (transaction && TRANSACTION_SCOPE.getStore()?.transaction === transaction) return;
-  // A checked-out pg-mem client does not expose which pool produced it, so it cannot find that
-  // pool's serialization tail. Fail closed rather than advertise a read that can observe a write
-  // which compensation later removes. A pool is recognized by its query+connect shape on a fresh
-  // read or registered when it enters the module-owned boundary; a branded client is handled above
-  // and may read its own transaction without waiting on itself. (The current pg-mem adapter returns
-  // the pool itself from connect(), which is safe: both identities then resolve to the same tail.)
-  if (!ITEM_TRANSACTION_POOLS.has(queryable)) {
-    if (typeof queryable.connect !== 'function') {
-      fail('item_transaction_required',
-        'A pg-mem inventory read requires its database pool or the active item transaction client.');
-    }
-    // Read-first callers are valid: recognize a Pool-shaped adapter before its first mutation.
-    ITEM_TRANSACTION_POOLS.add(queryable);
-  }
-  const tail = PG_MEM_TRANSACTION_TAILS.get(queryable);
-  if (tail) await tail;
+  // All external pg-mem readers join the same barrier regardless of whether their query handle is
+  // the pool, a checked-out adapter, a Proxy, or a forwarding alias. This prevents identity aliases
+  // from observing writes which the active boundary may still compensate.
+  await PG_MEM_TRANSACTION_TAIL;
 }
 
 /**
@@ -144,7 +134,7 @@ async function waitForPgMemTransactions(queryable) {
  * `client` it receives, and uses withItemMutation for one aggregate replay guard. Independent calls
  * may still run concurrently because AsyncLocalStorage scopes the nesting check to one async flow.
  * Real PostgreSQL supplies that concurrency with transactions and row locks. pg-mem's transaction
- * and lock statements are non-atomic simulations, so its branded boundaries serialize per pool;
+ * and lock statements are non-atomic simulations, so its branded boundaries serialize module-wide;
  * otherwise compensation from a failed transaction could erase a later committed mutation.
  */
 export async function withItemTransaction(pool, action) {
@@ -154,10 +144,9 @@ export async function withItemTransaction(pool, action) {
   if (TRANSACTION_SCOPE.getStore()) {
     fail('item_transaction_nested', 'Item transactions cannot be nested; reuse the active client.');
   }
-  ITEM_TRANSACTION_POOLS.add(pool);
   return TRANSACTION_SCOPE.run({ active: true }, async () => {
     const scope = TRANSACTION_SCOPE.getStore();
-    const releasePgMemTransaction = await acquirePgMemTransaction(pool);
+    const releasePgMemTransaction = await acquirePgMemTransaction();
     let client = null;
     const transaction = { active: false, failed: null, guardKeys: new Set(), undo: [] };
     try {
@@ -752,9 +741,9 @@ export async function inventoryBoard(client, ownerValue) {
   if (!client || typeof client.query !== 'function') {
     fail('item_transaction_required', 'Inventory read requires a database query client.');
   }
-  // The pg-mem Pool and checked-out client are the same adapter object. Waiting on that pool's
-  // serialized tail prevents the supported board read from observing a compensatable partial write.
-  // A read made inside the active branded transaction skips the wait, avoiding self-deadlock.
+  // Waiting on the module-wide pg-mem tail prevents pool/client aliases from observing a
+  // compensatable partial write. A read made inside the active branded transaction skips the wait,
+  // avoiding self-deadlock.
   await waitForPgMemTransactions(client);
   const owner = itemOwner(ownerValue);
   const stacks = (await client.query(
