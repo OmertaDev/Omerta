@@ -1004,8 +1004,11 @@
     /* No receipt exemption here: the moment a player pulls one job a receipt exists, the history
        block re-appears (~200px of chrome) and every screen's own content drops below a 568px fold —
        which is how the 320x568 harness check went red on exactly the player who had done anything.
-       The receipts still reach the toast and the session feed; on a short phone the operation wins. */
+       Ordinary receipts still reach the toast; on a short phone the operation wins. An actionable
+       error is different: its recovery control may be the only idempotency-safe way to continue. */
     #operation-desk .operation-desk__history { display: none; }
+    #operation-desk:has(.operation-receipt--error [data-operation-retry],
+      .operation-receipt--error [data-operation-tab]) .operation-desk__history { display: block; }
     #vitals { min-height: 44px; padding-block: 4px; }
     #tabpanel { padding-top: 8px; }
     #grouprail, #tabs { padding-bottom: 4px; }
@@ -1183,7 +1186,7 @@
 .toast-x{margin-left:6px;background:none;border:0;color:inherit;opacity:.6;cursor:pointer;font-size:13px}
 
 </style>
-<link rel="stylesheet" href="/omerta-ui.css?v=20260827-agent-player-stack">
+<link rel="stylesheet" href="/omerta-ui.css?v=20260829-content-desk">
 </head>
 <body>
 <svg style="display:none" aria-hidden="true"><defs>
@@ -1716,7 +1719,7 @@
   // screen. Game PROSE (job names, event copy, toasts) stays English this pass — the pack
   // structure makes each further surface a pure dictionary add. Arabic flips the page RTL. ═══
   const I18N = {
-    en: { name: 'English', t_start: 'Start Here', t_profile: 'My Profile', t_streets: 'Streets', t_garage: 'The Garage', t_life: 'The Life', t_city: 'The City', t_kitchen: 'The Kitchen', t_empire: 'The Empire', t_scores: 'Big Scores', t_market: 'Black Market', t_port: 'The Port', t_den: 'The Den', t_speakeasy: 'The Speakeasy', t_boxing: 'The Fights', t_races: 'Street Races', t_stable: 'The Stable', t_pvp: 'Wet Work', t_loans: 'The Shylock', t_law: 'The Law', t_pen: 'The Pen', t_wire: 'The Wire', t_family: 'The Family', t_map: 'The Map', t_deeds: 'Street Deeds', t_crew: 'The Crew', t_discover: 'Find People', t_portfolio: 'Going Legit', t_estate: 'The Estate', t_store: 'The Store', t_deck: 'The Console', g_streets: 'Streets', g_earners: 'Earners', g_vice: 'Vice', g_blood: 'Blood', g_family: 'Family', g_legit: 'Legit', k_bank: 'bank', k_respect: 'respect', k_energy: 'energy', k_nerve: 'nerve', k_health: 'health', k_heat: 'heat', k_stats: 'muscle / cunning / speed', k_gun: 'gun', k_ammo: 'ammo / crates', k_cars: 'cars', k_liquid: 'liquid', k_staked: 'staked', k_intransit: 'in transit', b_heal: 'heal', b_checkin: 'check in', b_refresh: 'refresh', b_takeme: 'take me there →', b_send: 'send', b_burn: 'burn the papers', b_wholecity: '+ the whole city…', w_sheet: 'The Sheet', w_lastword: 'Last Word', w_panel: 'The Street', w_feed: 'LIVE FEED', w_city: 'CITY CHAT', w_family: 'FAMILY', w_sayit: 'say it to the city…', w_famonly: 'family only — talk business…', w_incity: 'in the city', e_ghost: 'START A GUEST STREET — NO SIGNUP', e_bones: 'ENTER THE CITY →' },
+    en: { name: 'English', t_start: 'Start Here', t_profile: 'My Profile', t_streets: 'Streets', t_garage: 'The Garage', t_life: 'The Life', t_city: 'The City', t_kitchen: 'The Kitchen', t_empire: 'The Empire', t_scores: 'Big Scores', t_market: 'Black Market', t_port: 'The Port', t_den: 'The Den', t_speakeasy: 'The Speakeasy', t_boxing: 'The Fights', t_races: 'Street Races', t_stable: 'The Stable', t_pvp: 'Wet Work', t_loans: 'The Shylock', t_law: 'The Law', t_pen: 'The Pen', t_wire: 'The Wire', t_family: 'The Family', t_map: 'The Map', t_deeds: 'Street Deeds', t_crew: 'The Crew', t_discover: 'Find People', t_portfolio: 'Going Legit', t_estate: 'The Estate', t_store: 'The Store', t_desk: 'Content Desk', t_deck: 'The Console', g_streets: 'Streets', g_earners: 'Earners', g_vice: 'Vice', g_blood: 'Blood', g_family: 'Family', g_legit: 'Legit', g_desk: 'Desk', k_bank: 'bank', k_respect: 'respect', k_energy: 'energy', k_nerve: 'nerve', k_health: 'health', k_heat: 'heat', k_stats: 'muscle / cunning / speed', k_gun: 'gun', k_ammo: 'ammo / crates', k_cars: 'cars', k_liquid: 'liquid', k_staked: 'staked', k_intransit: 'in transit', b_heal: 'heal', b_checkin: 'check in', b_refresh: 'refresh', b_takeme: 'take me there →', b_send: 'send', b_burn: 'burn the papers', b_wholecity: '+ the whole city…', w_sheet: 'The Sheet', w_lastword: 'Last Word', w_panel: 'The Street', w_feed: 'LIVE FEED', w_city: 'CITY CHAT', w_family: 'FAMILY', w_sayit: 'say it to the city…', w_famonly: 'family only — talk business…', w_incity: 'in the city', e_ghost: 'START A GUEST STREET — NO SIGNUP', e_bones: 'ENTER THE CITY →' },
     es: { name: 'Español', t_start: 'Empieza Aquí', t_profile: 'Mi Perfil', t_streets: 'Las Calles', t_garage: 'El Garaje', t_life: 'La Vida', t_city: 'La Ciudad', t_kitchen: 'La Cocina', t_empire: 'El Imperio', t_scores: 'Grandes Golpes', t_market: 'Mercado Negro', t_port: 'El Puerto', t_den: 'El Casino', t_speakeasy: 'El Clandestino', t_boxing: 'Las Peleas', t_races: 'Carreras Callejeras', t_stable: 'El Establo', t_pvp: 'Trabajo Sucio', t_loans: 'El Usurero', t_law: 'La Ley', t_pen: 'La Prisión', t_wire: 'El Cable', t_family: 'La Familia', t_map: 'El Mapa', t_crew: 'La Banda', t_discover: 'Buscar Gente', t_portfolio: 'A Lo Legal', t_estate: 'La Mansión', t_store: 'La Tienda', t_deck: 'La Consola', g_streets: 'Calles', g_earners: 'Negocios', g_vice: 'Vicio', g_blood: 'Sangre', g_family: 'Familia', g_legit: 'Legal', k_bank: 'banco', k_respect: 'respeto', k_energy: 'energía', k_nerve: 'nervio', k_health: 'salud', k_heat: 'calor policial', k_stats: 'músculo / astucia / velocidad', k_gun: 'arma', k_ammo: 'munición / cajas', k_cars: 'autos', k_liquid: 'líquido', k_staked: 'en staking', k_intransit: 'en tránsito', b_heal: 'curarse', b_checkin: 'pasar lista', b_refresh: 'actualizar', b_takeme: 'llévame ahí →', b_send: 'enviar', b_burn: 'quemar los papeles', b_wholecity: '+ toda la ciudad…', w_sheet: 'La Ficha', w_lastword: 'Última Palabra', w_panel: 'La Calle', w_feed: 'EN VIVO', w_city: 'CHAT CIUDAD', w_family: 'FAMILIA', w_sayit: 'dilo a la ciudad…', w_famonly: 'solo familia — hablemos de negocios…', w_incity: 'en la ciudad', e_ghost: 'ENTRA COMO FANTASMA', e_bones: 'HAZTE UN NOMBRE →' },
     pt: { name: 'Português', t_start: 'Comece Aqui', t_profile: 'Meu Perfil', t_streets: 'As Ruas', t_garage: 'A Garagem', t_life: 'A Vida', t_city: 'A Cidade', t_kitchen: 'A Cozinha', t_empire: 'O Império', t_scores: 'Grandes Golpes', t_market: 'Mercado Negro', t_port: 'O Porto', t_den: 'O Cassino', t_speakeasy: 'O Clandestino', t_boxing: 'As Lutas', t_races: 'Rachas de Rua', t_stable: 'O Estábulo', t_pvp: 'Serviço Sujo', t_loans: 'O Agiota', t_law: 'A Lei', t_pen: 'A Cadeia', t_wire: 'A Escuta', t_family: 'A Família', t_map: 'O Mapa', t_crew: 'O Bando', t_discover: 'Achar Gente', t_portfolio: 'Na Legalidade', t_estate: 'A Mansão', t_store: 'A Loja', t_deck: 'O Console', g_streets: 'Ruas', g_earners: 'Negócios', g_vice: 'Vício', g_blood: 'Sangue', g_family: 'Família', g_legit: 'Legal', k_bank: 'banco', k_respect: 'respeito', k_energy: 'energia', k_nerve: 'coragem', k_health: 'saúde', k_heat: 'pressão policial', k_stats: 'músculo / astúcia / velocidade', k_gun: 'arma', k_ammo: 'munição / caixas', k_cars: 'carros', k_liquid: 'líquido', k_staked: 'em staking', k_intransit: 'em trânsito', b_heal: 'curar', b_checkin: 'dar presença', b_refresh: 'atualizar', b_takeme: 'me leva lá →', b_send: 'enviar', b_burn: 'queimar os papéis', b_wholecity: '+ a cidade inteira…', w_sheet: 'A Ficha', w_lastword: 'Última Palavra', w_panel: 'A Rua', w_feed: 'AO VIVO', w_city: 'CHAT CIDADE', w_family: 'FAMÍLIA', w_sayit: 'fala pra cidade…', w_famonly: 'só família — papo de negócios…', w_incity: 'na cidade', e_ghost: 'ENTRE COMO FANTASMA', e_bones: 'FAÇA SEU NOME →' },
     fr: { name: 'Français', t_start: 'Commencer Ici', t_profile: 'Mon Profil', t_streets: 'La Rue', t_garage: 'Le Garage', t_life: 'La Vie', t_city: 'La Ville', t_kitchen: 'La Cuisine', t_empire: "L'Empire", t_scores: 'Les Gros Coups', t_market: 'Marché Noir', t_port: 'Le Port', t_den: 'Le Tripot', t_speakeasy: 'Le Clandestin', t_boxing: 'La Boxe', t_races: 'Courses de Rue', t_stable: "L'Écurie", t_pvp: 'Basses Œuvres', t_loans: "L'Usurier", t_law: 'La Loi', t_pen: 'La Taule', t_wire: 'Les Écoutes', t_family: 'La Famille', t_map: 'La Carte', t_crew: "L'Équipe", t_discover: 'Trouver du Monde', t_portfolio: 'Devenir Clean', t_estate: 'Le Domaine', t_store: 'La Boutique', t_deck: 'La Console', g_streets: 'Rue', g_earners: 'Affaires', g_vice: 'Vice', g_blood: 'Sang', g_family: 'Famille', g_legit: 'Légal', k_bank: 'banque', k_respect: 'respect', k_energy: 'énergie', k_nerve: 'cran', k_health: 'santé', k_heat: 'pression policière', k_stats: 'muscle / ruse / vitesse', k_gun: 'arme', k_ammo: 'munitions / caisses', k_cars: 'voitures', k_liquid: 'liquide', k_staked: 'en staking', k_intransit: 'en transit', b_heal: 'se soigner', b_checkin: 'pointer', b_refresh: 'actualiser', b_takeme: 'emmène-moi →', b_send: 'envoyer', b_burn: 'brûler les papiers', b_wholecity: '+ toute la ville…', w_sheet: 'La Fiche', w_lastword: 'Dernier Mot', w_panel: 'La Rue', w_feed: 'EN DIRECT', w_city: 'CHAT VILLE', w_family: 'FAMILLE', w_sayit: 'dis-le à la ville…', w_famonly: 'famille seulement — parlons affaires…', w_incity: 'en ville', e_ghost: 'ENTRER EN FANTÔME', e_bones: 'FAIS TES PREUVES →' },
@@ -2452,6 +2455,34 @@
     // them. Deliberately NOT the module-scope esc(): that one is right for the ~100 innerHTML
     // renderers and wrong here, and naming them apart is what stops the next reader mixing them up.
     const txt = (s) => String(s == null ? '' : s);
+    const contentItems = (items) => (Array.isArray(items) ? items : [])
+      .map((item) => `${fmt(item.quantity || 0)}× ${txt(item.title || item.itemId || 'material')}`).join(', ');
+    // THE CONTENT DESK. These mutations move story authority and exact-hash authored objects, not
+    // ordinary inventory. Naming the file, lot, or durable result is the confirmation that matters.
+    if (body?.left === true && body.instance) return 'you left the forming case; your seat is open again';
+    if (Array.isArray(body?.claimed) && body.instance)
+      return `case record claimed: ${body.claimed.map((item) => txt(item.title || item.kind)).join(', ') || 'filed'}`;
+    if (body?.instance?.namespace && body.instance?.title) {
+      if (body.instance.status === 'completed') return `case closed: ${txt(body.instance.title)}. Your ending is on the permanent record.`;
+      if (body.instance.status === 'active') return `case advanced: ${txt(body.instance.title)}. The next issued move is on the Desk.`;
+      return `party file updated: ${txt(body.instance.title)}. ${body.instance.members?.length || 1} seat${body.instance.members?.length === 1 ? '' : 's'} filled.`;
+    }
+    if (body?.workshop && body?.run?.jobId)
+      return `work started: ${txt(body.run.title)}. Collection opens in ${minsTxt(body.run.durationSeconds || 0)}.`;
+    if (body?.workshop && body?.receipt?.kind === 'source')
+      return `salvage collected: ${contentItems(body.receipt.outputs) || 'the issued lot'}`;
+    if (body?.workshop && body?.receipt?.kind === 'job')
+      return `work collected: ${contentItems(body.receipt.outputs) || 'the finished lot'}${body.receipt.skill ? `; +${fmt(body.receipt.skill.xpAwarded)} ${txt(body.receipt.skill.title)} XP` : ''}`;
+    if (body?.workshop && body?.receipt?.kind === 'recipe')
+      return `recipe completed: ${contentItems(body.receipt.outputs) || 'the finished object'}`;
+    if (body?.workshop && body?.receipt?.kind === 'tool_repair')
+      return `${txt(body.receipt.tool?.title || 'workshop tool')} repaired to ${fmt(body.receipt.tool?.durabilityAfter || 0)} durability`;
+    if (body?.workshop && body?.receipt?.kind === 'exchange_list')
+      return `material offer posted: ${contentItems([body.receipt.offered])} for ${contentItems([body.receipt.requested])}`;
+    if (body?.workshop && body?.receipt?.kind === 'exchange_cancel')
+      return `offer cancelled; ${contentItems([body.receipt.returned])} returned from escrow`;
+    if (body?.workshop && body?.receipt?.kind === 'exchange_fill')
+      return `barter settled with ${txt(body.receipt.seller)}: received ${contentItems([body.receipt.received])}, delivered ${contentItems([body.receipt.delivered])}`;
     // v3 step 7 — the rarity NFTs. The extraction line says the tradeoff out loud, because it is the
     // one action in the game with no way back.
     // …and it named the price and the TIER and never what the tier DOES. `utility.pct` is exactly
@@ -6091,7 +6122,7 @@
   // tab labels come from the language packs (T falls back to English if a pack misses a key)
   const TABS = Object.fromEntries(['start', 'profile', 'streets', 'pvp', 'kitchen', 'family', 'map', 'deeds', 'crew', 'discover', 'market', 'garage', 'empire',
     'speakeasy', 'boxing', 'races', 'stable', 'scores', 'loans', 'portfolio', 'estate', 'life', 'pen', 'law',
-    'wire', 'store', 'city', 'den', 'port', 'deck'].map((id) => [id, T('t_' + id)]));
+    'wire', 'store', 'city', 'den', 'port', 'desk', 'deck'].map((id) => [id, T('t_' + id)]));
   // Player language, not implementation taxonomy. Quick jump accepts the job somebody has in mind.
   const TAB_SEARCH = {
     start: ['now', 'today', 'next move', 'home', 'missions'],
@@ -6123,6 +6154,7 @@
     portfolio: ['finance', 'crypto', 'defi', 'omr', 'wallet', 'stake', 'bonds', 'the desk', 'genesis auction', 'withdraw', 'legit assets'],
     estate: ['safe assets', 'legacy', 'heir', 'country estate'],
     store: ['buy omr', 'shop', 'made man', 'subscription'],
+    desk: ['story', 'case', 'content', 'workshop', 'crafting', 'material exchange', 'archive', 'memento'],
     deck: ['raw json', 'api response', 'console', 'developer'],
   };
   // grouped + journey-ordered so the 22 screens read as clusters, not a flat wall
@@ -6134,6 +6166,7 @@
     ['Blood', ['pvp', 'loans', 'law', 'pen', 'wire']],
     ['Family', ['family', 'map', 'deeds', 'crew', 'discover', 'profile']],
     ['Legit', ['portfolio', 'estate', 'store']],
+    ['Desk', ['desk']],
     ['', ['deck']],
   ];
   // THE SCREEN PLATES — one image per screen (public/art, served by GET /art/:file). A screen that
@@ -6147,7 +6180,7 @@
     boxing: 'interior-gym', races: 'interior-races', stable: 'interior-stable',
     pvp: 'interior-pvp', loans: 'interior-loans', law: 'interior-law', pen: 'interior-pen',
     wire: 'interior-wire', family: 'interior-family', map: 'landing-break', deeds: 'landing-break', crew: 'interior-family', discover: 'interior-family', portfolio: 'interior-legit',
-    estate: 'interior-estate', store: 'interior-store',
+    estate: 'interior-estate', store: 'interior-store', desk: 'interior-wire',
   };
   // the six core districts have plates too — used on the landing pills, and on the City tab's Trade
   // Winds board so the arbitrage map is a map rather than six identical grey boxes.
@@ -6161,12 +6194,12 @@
     ['start', ic('map'), T('t_start')], ['streets', ic('lamp'), T('g_streets')], ['garage', ic('car'), T('t_garage')], ['city', ic('moon'), T('t_city')],
     ['kitchen', ic('cash'), T('g_earners')], ['den', ic('die'), T('g_vice')],
     ['pvp', ic('blade'), T('g_blood')], ['family', ic('fedora'), T('g_family')], ['portfolio', ic('bank'), T('g_legit')] ];
-  // ── PROGRESSIVE DISCLOSURE (founder: onboarding is overwhelming) — a fresh player sees SIX
+  // ── PROGRESSIVE DISCLOSURE (founder: onboarding is overwhelming) — a fresh player sees SEVEN
   // screens, not twenty-five. The full city unlocks at level 8, or the moment they ask for it
   // (the choice sticks per browser). Veterans are untouched. My Profile stays visible in simple
   // mode ON PURPOSE — it carries the referral share link, and hiding it from exactly the new
   // players who should be sharing it defeats the growth loop.
-  const SIMPLE_TABS = ['start', 'profile', 'streets', 'garage', 'city', 'family'];
+  const SIMPLE_TABS = ['start', 'profile', 'streets', 'garage', 'city', 'family', 'desk'];
   const simpleMode = () => !localStorage.getItem('omerta_alltabs') && (me?.level || 1) < 8;
   // THE TWO-TIER NAV (tester feedback): full mode shows the GROUP rail + only the active group's
   // screens beneath it — never all 24 at once. Simple mode keeps the flat five-tab starter rail
@@ -6289,7 +6322,7 @@
     garage: renderGarage, empire: renderEmpire, speakeasy: renderSpeakeasy, boxing: renderBoxing,
     scores: renderScores, loans: renderLoans, portfolio: renderPortfolio, estate: renderEstate,
     life: renderLife, pen: renderPen, wire: renderWire, store: renderStore, races: renderRaces, port: renderPort, stable: renderStable,
-    crew: renderCrew, discover: renderDiscover, map: renderMap, deeds: renderDeeds };
+    crew: renderCrew, discover: renderDiscover, map: renderMap, deeds: renderDeeds, desk: renderContentDesk };
   // ── FIRST-VISIT SYSTEM INTROS — the tutorial, scaled across the whole city: the first time a
   // player opens a system they get ONE illustrated sentence on what it is and what to do first.
   // Dismiss is remembered per tab. Prose is English like all game prose (the i18n chrome rule).
@@ -6318,6 +6351,7 @@
     estate: 'The compound: a $OMR monument to your bloodline — tiers, wings, staff, galas, the auction block. Pure status, survives death, and status is the point.',
     store: 'Real-money support: revives, passes, cosmetics — never power. A skilled free player still tops every board; spending here funds the prize pools.',
     life: 'Who you are and who you know: skills, the Trades, your Path, and the six fixtures of the Underworld — earn their trust and the whole city gets cheaper.',
+    desk: 'The city’s authored files live here: work a case, follow the evidence, restore rare objects, barter exact materials, and keep the permanent record of the choices you made.',
   };
   function renderIntro(id) {
     const w = $('#introwrap'); if (!w) return;
@@ -6458,6 +6492,469 @@
       if (ae && /^(INPUT|SELECT|TEXTAREA)$/.test(ae.tagName)) return; // don't nuke a field mid-type
       try { RENDERERS[currentTab]?.(); } catch { /* transient */ }
     }, 350);
+  }
+
+  // ── THE CONTENT DESK ──────────────────────────────────────────────────────────────────────────
+  // Authored stories and exact-hash workshops used to exist only as machine surfaces. This is the
+  // human working file for the same server projections. The client never invents a story action,
+  // material, quantity, recipe, or revision: every executable control is bound back to the action
+  // most recently issued by GET /v1/content.
+  const deskState = {
+    board: null, loading: false, error: null, request: 0,
+    view: 'cases', selectedCase: '', selectedWorkshop: '',
+  };
+  const deskViews = [
+    ['cases', 'Cases'], ['workshop', 'Workshop'], ['exchange', 'Exchange'], ['archive', 'Archive'],
+  ];
+  const deskList = (value) => Array.isArray(value) ? value : [];
+  const deskWords = (value) => String(value || '').replace(/[_-]+/g, ' ');
+  const deskWhen = (value, fallback = 'Not dated') => {
+    const date = new Date(value);
+    return Number.isFinite(date.getTime())
+      ? date.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : fallback;
+  };
+  const deskRelative = (value) => {
+    const left = Math.ceil((new Date(value).getTime() - Date.now()) / 1000);
+    return Number.isFinite(left) && left > 0 ? cd(left, 'DUE') : '<span class="cdt cd-ready">DUE</span>';
+  };
+  const deskStamp = (label, tone = '') => `<span class="desk-stamp${tone ? ` desk-stamp--${tone}` : ''}">${esc(label)}</span>`;
+  const deskItemText = (item) => `${fmt(item?.quantity ?? 0)}× ${item?.title || item?.itemId || 'Unnamed material'}`;
+  const deskItems = (items, empty = 'Nothing recorded') => deskList(items).length
+    ? `<ul class="desk-item-list">${deskList(items).map((item) => `<li><b>${esc(deskItemText(item))}</b>${item?.owned !== undefined ? `<span>${fmt(item.owned)} held / ${fmt(item.required)}</span>` : ''}</li>`).join('')}</ul>`
+    : `<p class="desk-empty-note">${esc(empty)}</p>`;
+  function deskGateDetail(gate) {
+    if (gate?.location?.title) return `Go to ${gate.location.title}`;
+    if (['number', 'string'].includes(typeof gate?.current)
+      && ['number', 'string'].includes(typeof gate?.required)) {
+      return `${deskWords(gate.current)} / ${deskWords(gate.required)}`;
+    }
+    return '';
+  }
+  function deskBlockers(blockers, empty = '') {
+    const list = deskList(blockers);
+    if (!list.length) return empty ? `<p class="desk-clear">${esc(empty)}</p>` : '';
+    return `<ul class="desk-blockers">${list.map((gate) => {
+      const detail = deskGateDetail(gate);
+      return `<li><span aria-hidden="true">×</span><div><b>${esc(gate?.label || 'Requirement not met')}</b>${detail ? `<small>${esc(detail)}</small>` : ''}</div></li>`;
+    }).join('')}</ul>`;
+  }
+  function deskCaseRecords(board) {
+    const records = [];
+    for (const item of deskList(board?.instances).filter((x) => x.status !== 'abandoned'
+      && (x.status !== 'completed' || deskList(x.awards?.mine).some((award) => award.state === 'pending')))) {
+      const claimReady = item.status === 'completed';
+      records.push({ key: `instance:${item.id}`, type: 'instance', item, title: item.title,
+        stamp: claimReady ? 'Claim record' : item.status === 'active' ? 'In progress' : 'Forming party',
+        tone: claimReady ? 'ready' : item.status === 'active' ? 'ready' : 'caution' });
+    }
+    for (const item of deskList(board?.lobbies)) {
+      records.push({ key: `lobby:${item.id}`, type: 'lobby', item, title: item.title,
+        stamp: 'Open lobby', tone: 'notice' });
+    }
+    for (const item of deskList(board?.experiences)) {
+      const travel = item.location && !item.availableHere;
+      records.push({ key: `experience:${item.namespace}`, type: 'experience', item, title: item.title,
+        stamp: item.eligible ? 'Available' : travel ? 'Travel needed' : 'Locked',
+        tone: item.eligible ? 'ready' : travel ? 'caution' : 'locked' });
+    }
+    return records;
+  }
+  function deskWorkshop(board, exchangeOnly = false) {
+    const choices = deskList(board?.crafting).filter((workshop) => !exchangeOnly || workshop.exchange);
+    if (!choices.length) return null;
+    let found = choices.find((workshop) => workshop.namespace === deskState.selectedWorkshop);
+    if (!found) {
+      found = choices[0];
+      deskState.selectedWorkshop = found.namespace;
+    }
+    return found;
+  }
+  function deskRole(experience, roleId) {
+    return deskList(experience?.roles).find((role) => role.id === roleId);
+  }
+  function deskExperienceFor(board, instance) {
+    return deskList(board?.experiences).find((item) => item.namespace === instance?.namespace);
+  }
+  function deskMemberRoster(members, roles) {
+    return `<div class="desk-roster">${deskList(members).map((member) => {
+      const role = deskRole({ roles }, member.roleId);
+      const consentMark = role?.consentRequired
+        ? member.consented ? deskStamp('Ready', 'ready') : deskStamp('Awaiting consent', 'caution')
+        : deskStamp('Seated', 'notice');
+      return `<div class="desk-member${member.isMe ? ' desk-member--me' : ''}">
+      <div><b>${esc(member.name || 'Unnamed')}</b><span>${esc(member.roleTitle || deskWords(member.roleId))}</span></div>
+      <div class="desk-member__marks">${member.leader ? deskStamp('Lead', 'notice') : ''}${consentMark}</div>
+    </div>`; }).join('')}</div>`;
+  }
+  function deskCaseIndex(records) {
+    if (!records.length) return `<div class="desk-empty"><b>No case files are active.</b><span>When an operator activates authored content, it will be indexed here.</span></div>`;
+    return `<div class="desk-index" aria-label="Case files">${records.map((record) => `<button type="button" class="desk-file${record.key === deskState.selectedCase ? ' on' : ''}" data-desk-case="${esc(record.key)}" aria-pressed="${record.key === deskState.selectedCase}">
+      <span class="desk-file__ref">${record.type === 'experience' ? 'CASE' : record.type === 'lobby' ? 'PARTY' : 'RUN'} / ${esc(String(record.item.version || 1).padStart(2, '0'))}</span>
+      <b>${esc(record.title || 'Untitled file')}</b>${deskStamp(record.stamp, record.tone)}
+    </button>`).join('')}</div>`;
+  }
+  function deskExperienceDetail(experience) {
+    const roles = deskList(experience.roles);
+    const scopes = deskList(experience.scopes);
+    const role = roles[0];
+    const place = experience.location?.title;
+    return `<article class="desk-detail" aria-labelledby="desk-case-title">
+      <header class="desk-file-head">
+        <div><span class="desk-kicker">Case prospectus · v${esc(experience.version)}</span><h2 id="desk-case-title">${esc(experience.title)}</h2></div>
+        ${deskStamp(experience.eligible ? 'Cleared to open' : 'Held', experience.eligible ? 'ready' : 'locked')}
+      </header>
+      <div class="desk-meta">
+        <span><b>Scope</b>${esc(scopes.map(deskWords).join(' / ') || 'Not issued')}</span>
+        <span><b>Location</b>${esc(place || 'Any district')}</span>
+        <span><b>Run</b>${esc(deskWords(experience.runPolicy || 'once'))}</span>
+        ${experience.season ? `<span><b>Season ${fmt(experience.season.index)}</b>${esc(deskWords(experience.season.current))}, ${fmt(experience.season.daysUntilChange)}d to change</span>` : ''}
+      </div>
+      ${deskList(experience.systems).length ? `<section class="desk-brief"><span class="desk-kicker">Systems on the file</span><p>${experience.systems.map((x) => esc(deskWords(x))).join(' · ')}</p></section>` : ''}
+      ${deskBlockers(experience.blockedBy, 'Every entry requirement is clear.')}
+      <form class="desk-form desk-create-form" data-desk-create>
+        <div class="desk-form-grid">
+          <label>Organization<select name="scopeKind"${scopes.length ? '' : ' disabled'}>${scopes.map((scope) => `<option value="${esc(scope)}">${esc(deskWords(scope))}</option>`).join('')}</select></label>
+          <label>Your role<select name="roleId"${roles.length ? '' : ' disabled'}>${roles.map((item) => `<option value="${esc(item.id)}" data-consent="${item.consentRequired}">${esc(item.title)}</option>`).join('')}</select></label>
+        </div>
+        <label class="desk-consent${role?.consentRequired ? '' : ' hidden'}"><input type="checkbox" name="consent"> I consent to occupy this role for the run.</label>
+        <div class="desk-actions">
+          ${experience.location && !experience.availableHere ? `<button class="act" type="button" data-desk-travel="${esc(experience.location.districtId)}">Travel to ${esc(place)}</button>` : ''}
+          <button class="act prime" type="submit"${experience.eligible && scopes.length && roles.length ? '' : ' disabled'}>open this case</button>
+        </div>
+      </form>
+    </article>`;
+  }
+  function deskLobbyDetail(lobby, board) {
+    const roles = deskList(lobby.openRoles);
+    const role = roles[0];
+    return `<article class="desk-detail" aria-labelledby="desk-case-title">
+      <header class="desk-file-head"><div><span class="desk-kicker">Organization lobby · ${esc(deskWords(lobby.scopeKind))}</span><h2 id="desk-case-title">${esc(lobby.title)}</h2></div>${deskStamp('Seats open', 'notice')}</header>
+      <div class="desk-deadline"><span>Party expires ${esc(deskWhen(lobby.formingExpiresAt))}</span>${deskRelative(lobby.formingExpiresAt)}</div>
+      <section class="desk-section-static"><h3>The party</h3>${deskMemberRoster(lobby.members, deskExperienceFor(board, lobby)?.roles)}</section>
+      <form class="desk-form desk-join-form" data-desk-join>
+        <label>Open role<select name="roleId"${roles.length ? '' : ' disabled'}>${roles.map((item) => `<option value="${esc(item.id)}" data-consent="${item.consentRequired}">${esc(item.title)}</option>`).join('')}</select></label>
+        <label class="desk-consent${role?.consentRequired ? '' : ' hidden'}"><input type="checkbox" name="consent"> I consent to occupy this role for the run.</label>
+        <div class="desk-actions"><button class="act prime" type="submit"${roles.length ? '' : ' disabled'}>take the seat</button></div>
+      </form>
+    </article>`;
+  }
+  function deskNodeTimeline(instance) {
+    const nodes = deskList(instance.nodes);
+    if (!nodes.length) return `<div class="desk-empty desk-empty--compact"><b>No evidence is visible yet.</b><span>The file will reveal only what your party has earned.</span></div>`;
+    return `<ol class="desk-progress">${nodes.map((node) => `<li class="desk-progress__${esc(node.state || 'filed')}">
+      <span class="desk-progress__mark" aria-hidden="true"></span><div><b>${esc(node.title || deskWords(node.type))}</b>
+      ${node.summary ? `<p>${esc(node.summary)}</p>` : node.prompt ? `<p>${esc(node.prompt)}</p>` : ''}
+      ${node.choiceId ? `<small>Decision recorded</small>` : `<small>${esc(deskWords(node.state || 'filed'))}</small>`}</div>
+    </li>`).join('')}</ol>`;
+  }
+  function deskIssuedActions(instance) {
+    const actions = deskList(instance.actions);
+    if (!actions.length) return instance.status === 'active'
+      ? `<div class="desk-empty desk-empty--compact"><b>No move is issued to you.</b><span>Another party role may need to act before this file advances.</span></div>` : '';
+    return `<div class="desk-issued">${actions.map((action) => {
+      if (action.kind === 'start_instance') return `<section class="desk-prompt"><span class="desk-kicker">Party authority</span><h3>Every required seat is ready.</h3><button class="act prime" type="button" data-desk-instance-action="${esc(action.id)}">start the case</button></section>`;
+      if (action.kind === 'solve') return `<form class="desk-prompt" data-desk-solve="${esc(action.id)}"><span class="desk-kicker">Evidence question</span><h3>${esc(action.title || 'Submit an answer')}</h3>${action.prompt ? `<p>${esc(action.prompt)}</p>` : ''}
+        <label>Your answer<input name="answer" autocomplete="off" required placeholder="Type the answer from the evidence"></label><button class="act prime" type="submit">submit answer</button></form>`;
+      if (action.kind === 'choose') return `<section class="desk-prompt"><span class="desk-kicker">Decision required</span><h3>${esc(action.title || 'Choose how this ends')}</h3>${action.prompt ? `<p>${esc(action.prompt)}</p>` : ''}
+        <div class="desk-choice-list">${deskList(action.options).map((option) => `<div class="desk-choice"><button class="act${option.available ? ' prime' : ''}" type="button" data-desk-choice-action="${esc(action.id)}" data-desk-choice="${esc(option.id)}"${option.available ? '' : ' disabled'}>${esc(option.label)}</button>${deskBlockers(option.blockedBy)}</div>`).join('')}</div></section>`;
+      return '';
+    }).join('')}</div>`;
+  }
+  function deskInstanceDetail(instance, board) {
+    const mine = deskList(instance.members).find((member) => member.isMe);
+    const experience = deskExperienceFor(board, instance);
+    const role = deskRole(experience, mine?.roleId);
+    const minePending = deskList(instance.awards?.mine).filter((award) => award.state === 'pending');
+    return `<article class="desk-detail" aria-labelledby="desk-case-title">
+      <header class="desk-file-head"><div><span class="desk-kicker">Working file · revision ${fmt(instance.revision)}</span><h2 id="desk-case-title">${esc(instance.title)}</h2></div>
+        ${deskStamp(instance.status === 'active' ? 'In progress' : instance.status === 'forming' ? 'Forming' : deskWords(instance.status), instance.status === 'completed' ? 'ready' : instance.status === 'active' ? 'notice' : 'caution')}</header>
+      <div class="desk-meta"><span><b>Your seat</b>${esc(mine?.roleTitle || 'Unassigned')}</span><span><b>Scope</b>${esc(deskWords(instance.scopeKind))}</span><span><b>Opened</b>${esc(deskWhen(instance.createdAt))}</span><span><b>File key</b>${esc(instance.runKey || 'once')}</span></div>
+      ${instance.status === 'forming' ? `<section class="desk-section-static"><h3>The party</h3>${deskMemberRoster(instance.members, experience?.roles)}
+        ${role?.consentRequired && mine ? `<div class="desk-consent-control"><span>${mine.consented ? 'Your consent is on the file.' : 'Your role still needs affirmative consent.'}</span><button class="act" type="button" data-desk-consent="${mine.consented ? 'false' : 'true'}">${mine.consented ? 'withdraw consent' : 'give consent'}</button></div>` : ''}</section>` : ''}
+      ${instance.status !== 'forming' ? `<section class="desk-section-static"><h3>Evidence and progress</h3>${deskNodeTimeline(instance)}</section>` : ''}
+      ${instance.status === 'completed' ? `<section class="desk-section-static"><h3>Your record</h3>${deskList(instance.awards?.mine).length ? `<div class="desk-awards">${instance.awards.mine.map((award) => `<div><span>${esc(award.title || deskWords(award.kind))}</span>${deskStamp(deskWords(award.state), award.state === 'applied' ? 'ready' : 'caution')}</div>`).join('')}</div>` : '<p class="desk-empty-note">This case closed without a personal keepsake.</p>'}
+        ${minePending.length ? '<button class="act prime" type="button" data-desk-claim>claim my case record</button>' : ''}</section>` : deskIssuedActions(instance)}
+      ${instance.status === 'forming' ? `<div class="desk-actions desk-actions--footer"><button class="act risk" type="button" data-desk-leave>${instance.leader ? 'abandon this lobby' : 'leave this lobby'}</button></div>` : ''}
+    </article>`;
+  }
+  function renderDeskCases(board) {
+    const records = deskCaseRecords(board);
+    // A successful create/join names the new instance before the replacement board arrives. While
+    // that read is in flight the cached board cannot know the new key yet, so it must not "help"
+    // by selecting the old prospectus again. Once the fresh board lands, ordinary stale selection
+    // recovery resumes.
+    if (!deskState.loading && !records.some((record) => record.key === deskState.selectedCase)) {
+      deskState.selectedCase = records[0]?.key || '';
+    }
+    const selected = records.find((record) => record.key === deskState.selectedCase);
+    const detail = !selected ? `<div class="desk-detail desk-empty"><b>The drawers are empty.</b><span>Activated cases will appear here without a client update.</span></div>`
+      : selected.type === 'experience' ? deskExperienceDetail(selected.item)
+      : selected.type === 'lobby' ? deskLobbyDetail(selected.item, board)
+      : deskInstanceDetail(selected.item, board);
+    return `<div class="desk-layout">${deskCaseIndex(records)}${detail}</div>`;
+  }
+  function deskWorkshopIndex(workshops, exchangeOnly = false) {
+    const choices = deskList(workshops).filter((workshop) => !exchangeOnly || workshop.exchange);
+    return choices.length ? `<div class="desk-index" aria-label="Workshop files">${choices.map((workshop) => {
+      const active = workshop.namespace === deskState.selectedWorkshop;
+      const ready = workshop.activeJob?.ready;
+      return `<button type="button" class="desk-file${active ? ' on' : ''}" data-desk-workshop="${esc(workshop.namespace)}" aria-pressed="${active}"><span class="desk-file__ref">WORKSHOP / ${esc(String(workshop.version).padStart(2, '0'))}</span><b>${esc(workshop.title)}</b>${deskStamp(ready ? 'Collection ready' : workshop.activeJob ? 'Work under way' : 'Bench open', ready ? 'ready' : workshop.activeJob ? 'caution' : 'notice')}</button>`;
+    }).join('')}</div>` : '';
+  }
+  function deskInventory(workshop) {
+    const held = deskList(workshop.inventory).filter((item) => item.quantity || item.escrowed);
+    return held.length ? `<div class="desk-ledger">${held.map((item) => `<div class="desk-ledger-row"><div><b>${esc(item.title)}</b><span>${esc(deskWords(item.category))}${item.tradeable ? ' · exchange-approved' : ''}</span></div><div class="desk-ledger-row__value"><b>${fmt(item.quantity)}</b>${item.escrowed ? `<span>${fmt(item.escrowed)} in escrow</span>` : `<span>cap ${fmt(item.maxOwned)}</span>`}</div></div>`).join('')}</div>`
+      : `<div class="desk-empty desk-empty--compact"><b>No exact-hash materials held.</b><span>Check the salvage sources below for a first lot.</span></div>`;
+  }
+  function deskOperation(kind, item, executable, button) {
+    return `<article class="desk-operation"><header><div><span class="desk-kicker">${esc(kind)}</span><h4>${esc(item.title)}</h4></div>${deskStamp(executable ? 'Ready' : 'Held', executable ? 'ready' : 'locked')}</header>
+      ${item.durationSeconds ? `<p class="desk-operation__terms">Clock: <b>${esc(minsTxt(item.durationSeconds))}</b>${item.skill ? ` · trains ${esc(item.skill.title)} +${fmt(item.skill.xpReward)} XP` : ''}</p>` : ''}
+      ${item.inputs ? `<div class="desk-operation__flow"><div><span>USES</span>${deskItems(item.inputs, 'No inputs')}</div><span aria-hidden="true">→</span><div><span>ISSUES</span>${deskItems(item.outputs, 'No outputs')}</div></div>` : deskItems(item.outputs, 'No outputs')}
+      ${item.missing?.length ? `<div class="desk-missing"><b>Short on:</b> ${item.missing.map((part) => `${esc(part.title)} ${fmt(part.owned)}/${fmt(part.required)}`).join(' · ')}</div>` : ''}
+      ${deskBlockers(item.blockedBy)}<div class="desk-actions">${button}</div></article>`;
+  }
+  function deskWorkshopDetail(workshop) {
+    const job = workshop.activeJob;
+    return `<article class="desk-detail" aria-labelledby="desk-work-title">
+      <header class="desk-file-head"><div><span class="desk-kicker">Exact-hash workshop · v${fmt(workshop.version)}</span><h2 id="desk-work-title">${esc(workshop.title)}</h2></div>${deskStamp(job?.ready ? 'Collection ready' : job ? 'Clock running' : 'Bench open', job?.ready ? 'ready' : job ? 'caution' : 'notice')}</header>
+      <div class="desk-meta"><span><b>Bundle</b>${esc(workshop.contentHash.slice(0, 10))}…</span><span><b>Inventory lots</b>${fmt(deskList(workshop.inventory).reduce((sum, item) => sum + Number(item.quantity || 0), 0))}</span><span><b>Open sources</b>${fmt(deskList(workshop.sources).filter((item) => item.eligible).length)}</span><span><b>Facility</b>${esc(deskList(workshop.facilities).find((item) => item.available)?.title || 'Not on site')}</span></div>
+      ${job ? `<section class="desk-active-job"><div><span class="desk-kicker">Work order on the bench</span><h3>${esc(job.title)}</h3><div>${deskItems(job.outputs, 'Output not disclosed')}</div></div><div class="desk-active-job__clock"><span>${job.ready ? 'READY TO COLLECT' : 'READY IN'}</span>${job.ready ? '<b>READY</b>' : cd(job.secondsRemaining, 'READY')}</div><button class="act prime" type="button" data-desk-work-kind="active" data-desk-work-id="${esc(job.jobId)}"${job.ready ? '' : ' disabled'}>collect work</button></section>` : ''}
+      <details class="desk-section" open><summary><span>Inventory</span><small>${fmt(deskList(workshop.inventory).filter((item) => item.quantity || item.escrowed).length)} kinds held</small></summary>${deskInventory(workshop)}</details>
+      <details class="desk-section" open><summary><span>Salvage sources</span><small>${fmt(deskList(workshop.sources).filter((item) => item.eligible).length)} ready</small></summary><div class="desk-operation-list">${deskList(workshop.sources).map((source) => deskOperation('Daily source', source, source.eligible, `<button class="act${source.eligible ? ' prime' : ''}" type="button" data-desk-work-kind="source" data-desk-work-id="${esc(source.id)}"${source.eligible ? '' : ' disabled'}>${source.claimed ? 'claimed this epoch' : 'collect lot'}</button>`)).join('') || '<p class="desk-empty-note">No sources are issued for this workshop.</p>'}</div></details>
+      <details class="desk-section" open><summary><span>Timed work orders</span><small>${fmt(deskList(workshop.jobs).filter((item) => item.startable).length)} startable</small></summary><div class="desk-operation-list">${deskList(workshop.jobs).map((item) => deskOperation('Work order', item, item.startable, `<button class="act${item.startable ? ' prime' : ''}" type="button" data-desk-work-kind="job" data-desk-work-id="${esc(item.id)}"${item.startable ? '' : ' disabled'}>start ${esc(minsTxt(item.durationSeconds))} job</button>`)).join('') || '<p class="desk-empty-note">No timed work is issued.</p>'}</div></details>
+      <details class="desk-section"><summary><span>Final recipes</span><small>${fmt(deskList(workshop.recipes).filter((item) => item.craftable).length)} craftable</small></summary><div class="desk-operation-list">${deskList(workshop.recipes).map((item) => deskOperation('Recipe', item, item.craftable, `<button class="act${item.craftable ? ' prime' : ''}" type="button" data-desk-work-kind="recipe" data-desk-work-id="${esc(item.id)}"${item.craftable ? '' : ' disabled'}>craft once</button>`)).join('') || '<p class="desk-empty-note">No recipes are issued.</p>'}</div></details>
+      ${deskList(workshop.tools).length ? `<details class="desk-section"><summary><span>Durable tools</span><small>${fmt(workshop.tools.filter((tool) => tool.owned).length)} assembled</small></summary><div class="desk-operation-list">${workshop.tools.map((tool) => `<article class="desk-operation"><header><div><span class="desk-kicker">Workshop tool</span><h4>${esc(tool.title)}</h4></div>${deskStamp(tool.broken ? 'Broken' : tool.owned ? `${fmt(tool.durabilityRemaining)} / ${fmt(tool.maxDurability)}` : 'Not assembled', tool.broken ? 'locked' : tool.owned ? 'notice' : 'caution')}</header><p class="desk-operation__terms">Wear per requiring job: <b>${fmt(tool.durabilityCost)}</b></p>${deskItems(tool.repairInputs, 'No repair inputs')}${deskBlockers(tool.blockedBy)}<div class="desk-actions"><button class="act${tool.repairable ? ' prime' : ''}" type="button" data-desk-work-kind="tool" data-desk-work-id="${esc(tool.id)}"${tool.repairable ? '' : ' disabled'}>repair to full</button></div></article>`).join('')}</div></details>` : ''}
+      ${deskList(workshop.skills).length ? `<section class="desk-skill-strip" aria-label="Workshop skills">${workshop.skills.map((skill) => `<div><span>${esc(skill.title)}</span><b>Level ${fmt(skill.level)} / ${fmt(skill.maxLevel)}</b><small>${fmt(skill.xp)} XP${skill.nextLevelXp ? ` · ${fmt(skill.nextLevelXp - skill.xp)} to next` : ' · mastered'}</small></div>`).join('')}</section>` : ''}
+    </article>`;
+  }
+  function renderDeskWorkshop(board) {
+    const workshop = deskWorkshop(board);
+    if (!workshop) return `<div class="desk-empty"><b>No workshop is active.</b><span>The operator must activate an exact compiled bundle before a bench appears.</span></div>`;
+    return `<div class="desk-layout">${deskWorkshopIndex(board.crafting)}${deskWorkshopDetail(workshop)}</div>`;
+  }
+  function deskExchangeDetail(workshop) {
+    const exchange = workshop.exchange;
+    const items = deskList(exchange.items);
+    const capped = exchange.ownOpenListings >= exchange.maxOpenListingsPerAccount;
+    const canPost = !capped && items.length > 1 && items.some((item) => item.available > 0);
+    return `<article class="desk-detail" aria-labelledby="desk-exchange-title">
+      <header class="desk-file-head"><div><span class="desk-kicker">Sealed material board · v${fmt(workshop.version)}</span><h2 id="desk-exchange-title">${esc(workshop.title)}</h2></div>${deskStamp(`${fmt(exchange.ownOpenListings)} / ${fmt(exchange.maxOpenListingsPerAccount)} posted`, capped ? 'caution' : 'notice')}</header>
+      <aside class="desk-rule"><b>No cash. No $OMR. Whole lots only.</b><span>Only active-bundle materials named on this board can cross between players. Every fill conserves both sides.</span></aside>
+      <form class="desk-form desk-exchange-form" data-desk-list-exchange>
+        <div class="desk-exchange-builder"><label>You escrow<select name="offeredItemId"${items.length > 1 ? '' : ' disabled'}>${items.map((item) => `<option value="${esc(item.itemId)}" data-available="${fmt(item.available)}">${esc(item.title)} · ${fmt(item.available)} available</option>`).join('')}</select></label><label>Quantity<input type="number" name="offeredQuantity" min="1" max="10000" value="1" inputmode="numeric" required></label><span class="desk-exchange-arrow" aria-hidden="true">for</span><label>You request<select name="requestedItemId"${items.length > 1 ? '' : ' disabled'}>${items.map((item, index) => `<option value="${esc(item.itemId)}"${index === 1 ? ' selected' : ''}>${esc(item.title)}</option>`).join('')}</select></label><label>Quantity<input type="number" name="requestedQuantity" min="1" max="10000" value="1" inputmode="numeric" required></label></div>
+        <div class="desk-actions"><span class="desk-form-note">${canPost ? `Offer remains open for ${fmt(exchange.listingTtlHours)} hours.` : capped ? 'Pull an open offer before posting another.' : 'Collect an exchange-approved lot before posting.'}</span><button class="act prime" type="submit"${canPost ? '' : ' disabled'}>post whole-lot offer</button></div>
+      </form>
+      <section class="desk-section-static"><div class="desk-section-heading"><h3>Open offers</h3><span>${fmt(deskList(exchange.listings).length)} on the board</span></div>
+        <div class="desk-offers">${deskList(exchange.listings).map((listing) => `<article class="desk-offer"><header><div><span class="desk-kicker">${listing.mine ? 'Your offer' : `Filed by ${esc(listing.seller)}`}</span><b>${esc(deskItemText(listing.offered))} <span aria-hidden="true">for</span> ${esc(deskItemText(listing.requested))}</b></div>${deskStamp(listing.currentVersion ? 'Current bundle' : 'Archived terms', listing.currentVersion ? 'notice' : 'caution')}</header><div class="desk-offer__foot"><span>Expires ${esc(deskWhen(listing.expiresAt))} · ${deskRelative(listing.expiresAt)}</span>${listing.action ? `<button class="act${listing.action.kind === 'fill' ? ' prime' : ''}" type="button" data-desk-exchange-action="${esc(listing.id)}">${listing.action.kind === 'fill' ? 'fill exact barter' : 'cancel and recover'}</button>` : ''}</div>${deskBlockers(listing.blockedBy)}</article>`).join('') || '<div class="desk-empty desk-empty--compact"><b>No live offers.</b><span>Post the first exact-hash material swap for this workshop.</span></div>'}</div>
+      </section>
+    </article>`;
+  }
+  function renderDeskExchange(board) {
+    const workshop = deskWorkshop(board, true);
+    if (!workshop) return `<div class="desk-empty"><b>No authored exchange is active.</b><span>A workshop must explicitly allow its materials before player barter appears here.</span></div>`;
+    return `<div class="desk-layout">${deskWorkshopIndex(board.crafting, true)}${deskExchangeDetail(workshop)}</div>`;
+  }
+  function renderDeskArchive(board) {
+    const completed = deskList(board.instances).filter((item) => item.status === 'completed');
+    const flags = deskList(board.storyFlags);
+    const archivedInventory = deskList(board.crafting).flatMap((workshop) => deskList(workshop.archivedInventory).map((item) => ({ ...item, workshop: workshop.title })));
+    const archivedSkills = deskList(board.crafting).flatMap((workshop) => deskList(workshop.archivedSkills).map((item) => ({ ...item, workshop: workshop.title })));
+    const archivedTools = deskList(board.crafting).flatMap((workshop) => deskList(workshop.archivedTools).map((item) => ({ ...item, workshop: workshop.title })));
+    return `<div class="desk-archive">
+      <section class="desk-archive__lead"><span class="desk-kicker">Permanent record</span><h2>What your street chose and kept</h2><p>Story decisions are write-once. Old workshop versions stay visible here, but cannot enter the active bundle.</p></section>
+      <div class="desk-archive-grid"><section class="desk-section-static"><div class="desk-section-heading"><h3>Story flags</h3><span>${fmt(flags.length)} recorded</span></div>${flags.length ? `<div class="desk-ledger">${flags.map((flag) => `<div class="desk-ledger-row"><div><b>${esc(flag.title || deskWords(flag.key))}</b><span>${esc(deskWords(flag.kind))}</span></div><div class="desk-ledger-row__value"><b>${esc(deskWords(flag.value))}</b><span>${esc(deskWhen(flag.recordedAt))}</span></div></div>`).join('')}</div>` : '<p class="desk-empty-note">No lasting story choice has been recorded.</p>'}</section>
+      <section class="desk-section-static"><div class="desk-section-heading"><h3>Closed cases</h3><span>${fmt(completed.length)} filed</span></div>${completed.length ? `<div class="desk-ledger">${completed.map((item) => `<div class="desk-ledger-row"><div><b>${esc(item.title)}</b><span>${esc(deskWords(item.scopeKind))}</span></div><div class="desk-ledger-row__value">${deskStamp('Closed', 'ready')}<span>${esc(deskWhen(item.completedAt))}</span></div></div>`).join('')}</div>` : '<p class="desk-empty-note">No authored case has reached its ending.</p>'}</section></div>
+      <details class="desk-section"${archivedInventory.length || archivedSkills.length || archivedTools.length ? ' open' : ''}><summary><span>Archived workshop versions</span><small>${fmt(archivedInventory.length + archivedSkills.length + archivedTools.length)} records</small></summary>
+        ${archivedInventory.length ? `<h4 class="desk-subhead">Materials and workpieces</h4><div class="desk-ledger">${archivedInventory.map((item) => `<div class="desk-ledger-row"><div><b>${esc(item.title || item.itemId)}</b><span>${esc(item.workshop)} · v${fmt(item.version)}</span></div><div class="desk-ledger-row__value"><b>${fmt(item.quantity)}</b><span>${esc(String(item.contentHash || '').slice(0, 8))}…</span></div></div>`).join('')}</div>` : ''}
+        ${archivedSkills.length ? `<h4 class="desk-subhead">Skills</h4><div class="desk-ledger">${archivedSkills.map((item) => `<div class="desk-ledger-row"><div><b>${esc(item.title || item.skillId)}</b><span>${esc(item.workshop)} · v${fmt(item.version)}</span></div><div class="desk-ledger-row__value"><b>Level ${fmt(item.level)}</b><span>${fmt(item.xp)} XP</span></div></div>`).join('')}</div>` : ''}
+        ${archivedTools.length ? `<h4 class="desk-subhead">Tools</h4><div class="desk-ledger">${archivedTools.map((item) => `<div class="desk-ledger-row"><div><b>${esc(item.title || item.toolId)}</b><span>${esc(item.workshop)} · v${fmt(item.version)}</span></div><div class="desk-ledger-row__value"><b>${fmt(item.durabilityRemaining)} / ${fmt(item.maxDurability)}</b><span>archived</span></div></div>`).join('')}</div>` : ''}
+        ${!archivedInventory.length && !archivedSkills.length && !archivedTools.length ? '<p class="desk-empty-note">No superseded workshop state is on your account.</p>' : ''}</details>
+    </div>`;
+  }
+  function deskShell(board) {
+    const activeCases = deskList(board.instances).filter((item) => ['forming', 'active'].includes(item.status)).length;
+    const readySources = deskList(board.crafting).reduce((sum, workshop) => sum + deskList(workshop.sources).filter((item) => item.eligible).length, 0);
+    const openOffers = deskList(board.crafting).reduce((sum, workshop) => sum + deskList(workshop.exchange?.listings).length, 0);
+    const archiveCount = deskList(board.storyFlags).length + deskList(board.instances).filter((item) => item.status === 'completed').length;
+    const body = deskState.view === 'workshop' ? renderDeskWorkshop(board)
+      : deskState.view === 'exchange' ? renderDeskExchange(board)
+      : deskState.view === 'archive' ? renderDeskArchive(board) : renderDeskCases(board);
+    return `<div class="content-desk${deskState.loading ? ' is-loading' : ''}" aria-busy="${deskState.loading}">
+      <header class="desk-mast"><div><span class="desk-kicker">Municipal bureau of unfinished business</span><h1>Content Desk</h1><p>Cases, evidence, restoration work, and the choices that stay on your record.</p></div><button class="act desk-refresh" type="button" data-desk-reload aria-label="Refresh the Content Desk">refresh file</button></header>
+      <div class="desk-summary" aria-label="Content Desk summary"><div><b>${fmt(activeCases)}</b><span>active cases</span></div><div><b>${fmt(readySources)}</b><span>sources ready</span></div><div><b>${fmt(openOffers)}</b><span>open offers</span></div><div><b>${fmt(archiveCount)}</b><span>archive marks</span></div></div>
+      <nav class="desk-nav" aria-label="Content Desk sections">${deskViews.map(([id, label]) => `<button type="button" data-desk-view="${id}" class="${deskState.view === id ? 'on' : ''}" aria-pressed="${deskState.view === id}">${label}</button>`).join('')}</nav>
+      ${deskState.error ? `<div class="desk-error" role="alert"><b>The file room did not answer.</b><span>${esc(deskState.error)}</span><button class="act" type="button" data-desk-reload>try again</button></div>` : body}
+    </div>`;
+  }
+  function deskLoading() {
+    return `<div class="content-desk" aria-busy="true"><header class="desk-mast"><div><span class="desk-kicker">Municipal bureau of unfinished business</span><h1>Content Desk</h1><p>Pulling the latest stamped projections from the file room.</p></div></header><div class="desk-loading" aria-label="Loading Content Desk"><span></span><span></span><span></span><span></span></div></div>`;
+  }
+  function drawContentDesk() {
+    const panel = $('#tab-desk');
+    if (!panel) return;
+    panel.innerHTML = deskState.board ? deskShell(deskState.board) : deskLoading();
+    bindContentDesk();
+  }
+  async function reloadContentDesk() {
+    if (deskState.loading) return;
+    const request = ++deskState.request;
+    deskState.loading = true;
+    deskState.error = null;
+    drawContentDesk();
+    const result = await api('GET', '/v1/content');
+    const payload = result.body;
+    if (request !== deskState.request) return;
+    deskState.loading = false;
+    if (result.code >= 400 || !payload || typeof payload !== 'object') {
+      deskState.error = describe(payload, result.code);
+    } else {
+      deskState.board = payload;
+      deskState.error = null;
+    }
+    drawContentDesk();
+  }
+  function renderContentDesk() {
+    drawContentDesk();
+    reloadContentDesk();
+  }
+  async function deskMutate(action, label) {
+    if (!action?.path || !action?.method) return;
+    const result = await act(action.method, action.path, action.body, { label });
+    if (result.code < 400 && result.body?.instance?.namespace) {
+      deskState.selectedCase = `instance:${result.body.instance.id}`;
+    } else if (result.code < 400 && result.body?.left) {
+      deskState.selectedCase = '';
+    }
+    if (result.code < 400 && result.body?.workshop?.namespace) {
+      deskState.selectedWorkshop = result.body.workshop.namespace;
+    }
+    await reloadContentDesk();
+    return result;
+  }
+  function deskBindConsent(form) {
+    const select = form?.querySelector('[name="roleId"]');
+    const line = form?.querySelector('.desk-consent');
+    if (!select || !line) return;
+    const sync = () => line.classList.toggle('hidden', select.selectedOptions[0]?.dataset.consent !== 'true');
+    select.onchange = sync;
+    sync();
+  }
+  function bindContentDesk() {
+    const panel = $('#tab-desk');
+    const board = deskState.board;
+    if (!panel) return;
+    panel.querySelectorAll('[data-desk-reload]').forEach((button) => { button.onclick = () => reloadContentDesk(); });
+    panel.querySelectorAll('[data-desk-view]').forEach((button) => {
+      button.onclick = () => { deskState.view = button.dataset.deskView; drawContentDesk(); };
+    });
+    panel.querySelectorAll('[data-desk-case]').forEach((button) => {
+      button.onclick = () => { deskState.selectedCase = button.dataset.deskCase; drawContentDesk(); };
+    });
+    panel.querySelectorAll('[data-desk-workshop]').forEach((button) => {
+      button.onclick = () => { deskState.selectedWorkshop = button.dataset.deskWorkshop; drawContentDesk(); };
+    });
+    panel.querySelectorAll('[data-desk-travel]').forEach((button) => {
+      button.onclick = () => travelTo(button.dataset.deskTravel).then(() => reloadContentDesk());
+    });
+    const selectedRecord = deskCaseRecords(board).find((record) => record.key === deskState.selectedCase);
+    const create = panel.querySelector('[data-desk-create]');
+    if (create && selectedRecord?.type === 'experience') {
+      deskBindConsent(create);
+      create.onsubmit = async (event) => {
+        event.preventDefault();
+        const data = new FormData(create);
+        const roleId = String(data.get('roleId') || '');
+        const role = deskRole(selectedRecord.item, roleId);
+        const body = { scopeKind: String(data.get('scopeKind') || ''), roleId };
+        if (role?.consentRequired) body.consent = data.get('consent') === 'on';
+        await deskMutate({ method: 'POST', path: `/v1/content/${encodeURIComponent(selectedRecord.item.namespace)}/instances`, body }, `open ${selectedRecord.item.title}`);
+      };
+    }
+    const join = panel.querySelector('[data-desk-join]');
+    if (join && selectedRecord?.type === 'lobby') {
+      deskBindConsent(join);
+      join.onsubmit = async (event) => {
+        event.preventDefault();
+        const data = new FormData(join);
+        const roleId = String(data.get('roleId') || '');
+        const role = deskList(selectedRecord.item.openRoles).find((item) => item.id === roleId);
+        const body = { expectedRevision: selectedRecord.item.revision, roleId };
+        if (role?.consentRequired) body.consent = data.get('consent') === 'on';
+        await deskMutate({ method: 'POST', path: `/v1/content/instances/${encodeURIComponent(selectedRecord.item.id)}/join`, body }, `join ${selectedRecord.item.title}`);
+      };
+    }
+    const instance = selectedRecord?.type === 'instance' ? selectedRecord.item : null;
+    if (instance) {
+      const issued = (id) => deskList(instance.actions).find((action) => action.id === id);
+      panel.querySelectorAll('[data-desk-instance-action]').forEach((button) => {
+        button.onclick = () => deskMutate({ method: 'POST', path: `/v1/content/instances/${encodeURIComponent(instance.id)}/act`, body: { expectedRevision: instance.revision, actionId: button.dataset.deskInstanceAction } }, `start ${instance.title}`);
+      });
+      panel.querySelectorAll('[data-desk-solve]').forEach((form) => {
+        form.onsubmit = async (event) => {
+          event.preventDefault();
+          const answer = String(new FormData(form).get('answer') || '').trim();
+          if (!answer) return toast('put an answer on the line first', true);
+          const action = issued(form.dataset.deskSolve);
+          if (!action) return reloadContentDesk();
+          await deskMutate({ method: 'POST', path: `/v1/content/instances/${encodeURIComponent(instance.id)}/act`, body: { expectedRevision: instance.revision, actionId: action.id, answer } }, `answer ${action.title || instance.title}`);
+        };
+      });
+      panel.querySelectorAll('[data-desk-choice]').forEach((button) => {
+        button.onclick = async () => {
+          const action = issued(button.dataset.deskChoiceAction);
+          const option = deskList(action?.options).find((item) => item.id === button.dataset.deskChoice);
+          if (!action || !option?.available) return reloadContentDesk();
+          if (!await ask('Put this choice on the permanent record?', option.label, { yes: 'record this choice', no: 'read it again' })) return;
+          await deskMutate({ method: 'POST', path: `/v1/content/instances/${encodeURIComponent(instance.id)}/act`, body: { expectedRevision: instance.revision, actionId: action.id, choiceId: option.id } }, `choose ${option.label}`);
+        };
+      });
+      const consent = panel.querySelector('[data-desk-consent]');
+      if (consent) consent.onclick = () => deskMutate({ method: 'POST', path: `/v1/content/instances/${encodeURIComponent(instance.id)}/consent`, body: { expectedRevision: instance.revision, on: consent.dataset.deskConsent === 'true' } }, consent.dataset.deskConsent === 'true' ? 'give story consent' : 'withdraw story consent');
+      const leave = panel.querySelector('[data-desk-leave]');
+      if (leave) leave.onclick = async () => {
+        if (!await ask(instance.leader ? 'Abandon this lobby?' : 'Leave this lobby?', instance.leader ? 'The forming party closes and every seat is released.' : 'Your seat opens for another member.', { yes: instance.leader ? 'abandon it' : 'leave it', danger: instance.leader })) return;
+        await deskMutate({ method: 'POST', path: `/v1/content/instances/${encodeURIComponent(instance.id)}/leave`, body: { expectedRevision: instance.revision } }, instance.leader ? `abandon ${instance.title}` : `leave ${instance.title}`);
+      };
+      const claim = panel.querySelector('[data-desk-claim]');
+      if (claim) claim.onclick = () => deskMutate({ method: 'POST', path: `/v1/content/instances/${encodeURIComponent(instance.id)}/claim`, body: { expectedRevision: instance.revision } }, `claim ${instance.title} record`);
+    }
+    const workshop = deskWorkshop(board, deskState.view === 'exchange');
+    panel.querySelectorAll('[data-desk-work-kind]').forEach((button) => {
+      button.onclick = () => {
+        if (!workshop) return;
+        const kind = button.dataset.deskWorkKind;
+        const id = button.dataset.deskWorkId;
+        const item = kind === 'active' ? workshop.activeJob
+          : deskList(workshop[kind === 'source' ? 'sources' : kind === 'job' ? 'jobs' : kind === 'recipe' ? 'recipes' : 'tools']).find((entry) => entry.id === id);
+        if (!item?.action) return reloadContentDesk();
+        const verb = kind === 'active' ? `collect ${item.title}` : kind === 'source' ? `collect ${item.title}` : kind === 'job' ? `start ${item.title}` : kind === 'tool' ? `repair ${item.title}` : `craft ${item.title}`;
+        return deskMutate(item.action, verb);
+      };
+    });
+    const listExchange = panel.querySelector('[data-desk-list-exchange]');
+    if (listExchange && workshop?.exchange) {
+      listExchange.onsubmit = async (event) => {
+        event.preventDefault();
+        const data = new FormData(listExchange);
+        const offeredItemId = String(data.get('offeredItemId') || '');
+        const requestedItemId = String(data.get('requestedItemId') || '');
+        const offeredQuantity = Number(data.get('offeredQuantity'));
+        const requestedQuantity = Number(data.get('requestedQuantity'));
+        if (offeredItemId === requestedItemId) return toast('offer and request two different materials', true);
+        const held = deskList(workshop.exchange.items).find((item) => item.itemId === offeredItemId)?.available || 0;
+        if (!Number.isInteger(offeredQuantity) || offeredQuantity < 1 || offeredQuantity > held) return toast(`you only have ${fmt(held)} of that material available`, true);
+        if (!Number.isInteger(requestedQuantity) || requestedQuantity < 1) return toast('request at least one material', true);
+        const body = { expectedContentHash: workshop.contentHash, offeredItemId, offeredQuantity, requestedItemId, requestedQuantity };
+        await deskMutate({ method: 'POST', path: `/v1/content/${encodeURIComponent(workshop.namespace)}/exchange/list`, body }, 'post authored material offer');
+      };
+    }
+    panel.querySelectorAll('[data-desk-exchange-action]').forEach((button) => {
+      button.onclick = () => {
+        const listing = deskList(workshop?.exchange?.listings).find((item) => item.id === button.dataset.deskExchangeAction);
+        if (!listing?.action) return reloadContentDesk();
+        return deskMutate(listing.action, listing.action.kind === 'fill' ? `fill ${deskItemText(listing.offered)} barter` : 'cancel authored material offer');
+      };
+    });
   }
   const drugName = (id) => (rules?.drugs || []).find((d) => d.id === id)?.name || id;
   const discName = (id) => (rules?.regimen?.disciplines || []).find((x) => x.id === id)?.name || id;
