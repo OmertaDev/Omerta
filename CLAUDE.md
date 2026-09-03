@@ -18084,3 +18084,65 @@ sound; nothing recycles to the desk. **The mechanic was accounting-clean and sti
 reads positional `$1 $2`, so they ran with an empty seed into a shared database writing over one log —
 caught by listing the log directory rather than by a failure, since a run against the wrong database
 reports a confident, complete, meaningless result.
+
+**THE CLASS SWEPT TO ITS EDGE — six candidates, four dissolutions, two cycles (2026-09-03).** §9e
+proved ONE instance of the class THE LOCK LEDGER structurally cannot see; this is the RT#7
+discipline applied to it — *a class fixed where it was found and never taken to its edge*. The
+shape: **a helper that acquires a THIRD-PARTY `characters` row while its caller already holds an
+escrow row.** The ledger is blind twice over — the acquisition lives inside a function the
+transaction CALLS (a per-transaction text scan never reaches it) and the distinguishing feature is
+**WHOSE row rather than which table** — so a green ledger is compatible with the cycle being live,
+which is exactly why each has to be DRIVEN.
+**THE ENUMERATION, and the four dissolutions are half the result** (a sweep that publishes only its
+hits cannot be audited). Every function in `src/` holding an escrow row `FOR UPDATE` was split on
+whether the escrow lock or the character acquisition comes first: **six candidate tables, four
+DISSOLVED on reading.** `residentEnterTournament` (casino.js:1176), `residentNominateFuturity`
+(casino.js:617), `residentEnterStakes` (stable.js:279) and `residentEnterGrandPrix` (races.js:370)
+all write **`r.id` — the resident's OWN row**, which `runResidentBehaviour` already holds
+`FOR UPDATE` before calling them (`population.js:815`). Not third-party acquisitions, so not the
+class.
+**TWO SURVIVED, AND ONLY ONE IS DRIVEN — the choice is reachability, not effort.** `market_listings`:
+`cancelListing` (market.js:336) holds the listing then `UPDATE characters SET cash` on `l.bidder`,
+while `bidListing`/`buyListing`/`sweepMarket` every one lock the counterparty characters FIRST,
+sorted, then the listing (`sweepMarket` says so in its own header). It is driven because its inverted
+holder is reachable from a **PLAYER ROUTE** (`POST /v1/market/:id/cancel`) rather than only from the
+estate — the pot cycle's `voidListingsAtDeath` twin is the same shape, estate-only. The other is
+`boxing_bouts` (`cancelBout` 441 ↔ `resolveMainEvent` 479), whose inverted holder is reachable ONLY
+through `runEstate`, and whose own comment claims no AB-BA and is **right about a live bettor and
+wrong about the estate path** — the same *right about itself, wrong about its sibling* shape as
+`refundPot`/`sweepExpiredBounties`. Same remedy, same double net; not driven twice.
+**THE AUDIT-#5 RESERVE EXCEPTION IS WHAT PUTS THE PLAYER ROUTE ON THE PATH, and it took reading the
+gate to find it.** A standing bid normally BLOCKS a cancel (`bid_standing` — the hammer decides), so
+the third-party refund looks unreachable. The exception is a bid that can never clear an **unmet
+hidden reserve**, which was only ever a lock on the seller's iron: that one the seller may pull out
+from under, refunding the bidder by SQL. So a **reserved** lot is the precondition, and the section
+asserts it (`a lot with a third-party bid under an unmet reserve is on the block`) rather than
+assuming it — without the reserve the drive would be refused and read on the summary line exactly
+like coverage.
+**`tools/pgcheck.js` §9f** drives it the §9/§9b way — by **HOLDING** the bidder's row, never by racing
+a real bidder, because a race depends on two backends overlapping inside a millisecond-wide window and
+timing luck reads exactly like a proof — and gives the player a full second before closing the cycle,
+so the victim is deterministic (Postgres aborts whoever started waiting first). Ten checks: the
+precondition, not-a-500, a retryable `contention`, **the mechanism** (`pg_stat_database.deadlocks`
+moved — *a 55P03 maps to `contention` too, so this ran but proved nothing about the listing/bidder
+cycle*), the lot intact (status/bidder/bid), the bidder not part-refunded, **the iron still on the
+block** (`cars.listed` — a half-cancelled lot is the ownership half of the drift), the retry the
+contention asked for going through, the bidder made whole **exactly once**, and the `market escrow`
+§10.4 identity where it started. **83 passed, 0 failed** on a fresh real Postgres.
+**Three mutations, each caught at its own named assertion.** **M1** — both contention nets down
+(`withCharacter`'s own catch AND the global handler; **neutering either alone leaves every assertion
+green**, the §9e finding holding one system over) → `the seller is NOT told the server broke — got 500`,
+with the raw 40P01 naming `cancelListing (market.js:349)` and `while updating tuple … in relation
+"characters"`, i.e. direct evidence the cycle is the one reconstructed from source. **M2** —
+`PG_LOCK_TIMEOUT_MS=400`, below `deadlock_timeout` → the two contention assertions still PASS and only
+`and it was the CYCLE, not the lock_timeout valve` fires: exactly the ambiguity the vacuity guard
+closes. **M3** — the third-party refund dropped → seven named failures, including the escrow identity
+drifting by exactly the stake.
+**Two process lessons re-paid.** A real `DATABASE_URL` **ARMS preflight**, so a local pgcheck run
+needs CI's own env values or the server refuses to boot naming four unset vars — a harness failure
+wearing a code failure's clothes. And **M3's first anchor was not unique**: the same
+`UPDATE characters SET cash = cash + $2` line occurs twice in `market.js`, the anchor assertion fired
+(`AssertionError: 2`), and the run that followed was the **UNMUTATED** tree reading `83 passed, 0
+failed` — *a mutation that does not apply reads exactly like a fix that holds*, which is why every
+mutation asserts its own anchor landed before the result is believed. Nothing in `src/` changed —
+the remedy was already correct; what was missing was any proof of it.

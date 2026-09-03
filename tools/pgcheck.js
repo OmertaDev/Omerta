@@ -876,6 +876,126 @@ console.log('\n9e. THE POT/FUNDER CYCLE LANDS AS CONTENTION, NEVER A 500');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// §9e proved ONE instance of the class THE LOCK LEDGER structurally cannot see: a helper that
+// acquires a THIRD-PARTY `characters` row while its caller already holds an escrow row. The ledger
+// is blind to it twice over — the acquisition lives inside a function the transaction CALLS (a
+// per-transaction text scan never reaches it), and the distinguishing feature is WHOSE row rather
+// than which table. So a green ledger is compatible with the cycle being live, which is why it has
+// to be driven.
+//
+// Enumerating the class across `src/` (every function holding an escrow row FOR UPDATE, split on
+// whether the escrow lock or the character acquisition comes first) turned up six candidate tables.
+// Four DISSOLVED on reading: residentEnterTournament/residentEnterStakes/residentEnterGrandPrix/
+// residentNominateFuturity all write `r.id` — the resident's OWN row, which runResidentBehaviour
+// already holds FOR UPDATE before calling them (population.js:815). Not third-party acquisitions.
+//
+// Two survived, and MARKET_LISTINGS is the one driven here because its inverted holder is reachable
+// from a PLAYER ROUTE rather than only from the estate:
+//   ESCROW→chars   cancelListing (market.js:336, POST /v1/market/:id/cancel) — holds the listing
+//                  FOR UPDATE, then `UPDATE characters SET cash` on l.bidder (a third party)
+//                  voidListingsAtDeath (market.js:599, runEstate) — same shape, estate-only
+//   chars→ESCROW   bidListing (118) / buyListing (262) / sweepMarket (514) — every one locks the
+//                  counterparty character rows FIRST, sorted, then the listing. sweepMarket says so
+//                  in its own header: "counterparty characters sorted FOR UPDATE → the listing".
+// The other survivor is BOXING_BOUTS (cancelBout 441 ↔ resolveMainEvent 479), whose inverted holder
+// is reachable ONLY through runEstate — resolveMainEvent's own comment claims no AB-BA and is right
+// about a live bettor and wrong about the estate path, the same "right about itself, wrong about its
+// sibling" shape as refundPot/sweepExpiredBounties. Same remedy, same double net; not driven twice.
+console.log('\n9f. THE LISTING/BIDDER CYCLE LANDS AS CONTENTION, NEVER A 500');
+{
+  const { runLedgerInvariants } = await import('../src/invariants.js');
+  const { BLACK_MARKET } = await import('../src/rules.js');
+  const escrowDrift = async () => {
+    const inv = await runLedgerInvariants(pool, { alert: false });
+    return inv.checks.find((c) => c.name === 'market escrow')?.drift;
+  };
+  const mkm = async (label) => {
+    const { body: { token } } = await call('POST', '/v1/auth/guest');
+    await call('POST', '/v1/character', { token, body: { name: `${label} ${Date.now() % 1000000}` } });
+    const me = (await call('GET', '/v1/me', { token })).body.character;
+    await pool.query('UPDATE characters SET cash=$2 WHERE id=$1', [me.id, 5_000_000]);
+    return { token, id: me.id };
+  };
+  const seller = await mkm('Seller');
+  const bidder = await mkm('Bidder');
+  const cashOfM = async (id) => Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [id])).rows[0].cash);
+
+  const carId = 'pgcheck9f-' + Date.now();
+  await pool.query('INSERT INTO cars (id, character_id, model_id, trim_id) VALUES ($1,$2,$3,$4)',
+    [carId, seller.id, 'junker', 'stock']);
+
+  const drift0m = await escrowDrift();
+  const bid = BLACK_MARKET.MIN_PRICE * 10;
+  // A standing bid normally BLOCKS a cancel — the hammer decides. The one exception (audit #5) is a
+  // bid that can never clear an unmet hidden reserve, which was only ever a lock on the seller's
+  // iron: that one the seller may pull out from under, refunding the bidder. That refund is the
+  // third-party character acquisition, so a reserved lot is what puts cancelListing on this path.
+  const listed = await call('POST', '/v1/market', { token: seller.token,
+    body: { carId, minBid: BLACK_MARKET.MIN_PRICE, reserve: bid * 10 } });
+  const listingId = listed.body?.id;
+  const placed = listingId
+    ? await call('POST', `/v1/market/${listingId}/bid`, { token: bidder.token, body: { amount: bid } })
+    : { code: 0 };
+  check(listed.code === 200 && placed.code === 200,
+    'a lot with a third-party bid under an unmet reserve is on the block',
+    `list ${listed.code} ${listed.body?.error || ''} / bid ${placed.code} ${placed.body?.error || ''}`);
+
+  const bidderCashBefore = await cashOfM(bidder.id);
+  const deadlockCountM = async () => Number((await pool.query(
+    'SELECT deadlocks FROM pg_stat_database WHERE datname = current_database()')).rows[0]?.deadlocks || 0);
+  const deadlocks0m = await deadlockCountM();
+
+  const holderM = await pool.connect();
+  let inflightM, raced2 = null, holderTook2 = null;
+  try {
+    await holderM.query('BEGIN');
+    // exactly what bidListing/buyListing/sweepMarket do FIRST: the counterparty's character row.
+    await holderM.query('SELECT 1 FROM characters WHERE id=$1 FOR UPDATE', [bidder.id]);
+    // the seller takes the listing, then blocks reaching the bidder to refund them.
+    inflightM = call('POST', `/v1/market/${listingId}/cancel`, { token: seller.token });
+    await new Promise((r) => setTimeout(r, 1000));   // > deadlock_timeout, so the player's timer fires first
+    // close the cycle: we hold the bidder and now want the listing the player is holding.
+    holderTook2 = holderM.query('SELECT 1 FROM market_listings WHERE id=$1 FOR UPDATE', [listingId])
+      .then(() => null, (e) => e);
+    raced2 = await inflightM;
+    await holderTook2;
+  } finally { await holderM.query('ROLLBACK').catch(() => {}); holderM.release(); }
+
+  check(raced2.code !== 500, 'the seller is NOT told the server broke',
+    `got ${raced2.code} ${raced2.body?.error || ''} — "${raced2.body?.message || ''}"`);
+  check(raced2.code === 400 && raced2.body?.error === 'contention',
+    'a deadlocked cancel comes back as a retryable contention',
+    `got ${raced2.code} ${raced2.body?.error || ''}`);
+  check((await deadlockCountM()) > deadlocks0m, 'and it was the CYCLE, not the lock_timeout valve',
+    'pg_stat_database.deadlocks did not move — a 55P03 maps to `contention` too, so this ran but proved'
+    + ' nothing about the listing/bidder cycle');
+
+  // the aborted transaction rolled back WHOLE: a half-cancelled lot (bidder refunded, listing still
+  // live) is the drift this guards, and an unlisted car under a live listing is the ownership half.
+  const still = (await pool.query('SELECT status, bidder, bid FROM market_listings WHERE id=$1', [listingId])).rows[0];
+  check(still && still.status === 'live' && still.bidder === bidder.id && Number(still.bid) === bid,
+    'the lot survived the deadlock intact',
+    still ? `status ${still.status}, bid ${still.bid}` : 'the listing is gone');
+  check((await cashOfM(bidder.id)) === bidderCashBefore, 'and the bidder was not part-refunded',
+    `cash moved by ${(await cashOfM(bidder.id)) - bidderCashBefore}`);
+  const carRow = (await pool.query('SELECT listed FROM cars WHERE id=$1', [carId])).rows[0];
+  check(carRow?.listed === true, 'and the iron is still on the block',
+    `cars.listed = ${carRow?.listed}`);
+
+  // the player's own remedy works: `contention` says retry, so retrying must actually settle it.
+  const retry = await call('POST', `/v1/market/${listingId}/cancel`, { token: seller.token });
+  check(retry.code === 200, 'the retry the contention asked for goes through',
+    `got ${retry.code} ${retry.body?.error || ''}`);
+  const refunds = (await pool.query(
+    "SELECT amount FROM transactions WHERE character_id=$1 AND reason='market:refund'", [bidder.id])).rows;
+  check(refunds.length === 1 && Number(refunds[0].amount) === bid
+    && (await cashOfM(bidder.id)) === bidderCashBefore + bid,
+    'and the bidder is made whole exactly once',
+    `${refunds.length} refund rows, cash +${(await cashOfM(bidder.id)) - bidderCashBefore}`);
+  check((await escrowDrift()) === drift0m, 'the market escrow identity is where it started',
+    `drift ${await escrowDrift()} vs ${drift0m}`);
+}
+// ─────────────────────────────────────────────────────────────────────────────
 console.log('\n10. NO node-pg DEPRECATIONS');
 await app.close();
 await new Promise((r) => setTimeout(r, 200));                // let any late warning land
