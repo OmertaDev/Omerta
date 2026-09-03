@@ -28,7 +28,9 @@ const core = {
 };
 
 const graph = loadGraphPackages([core]);
-assert.equal(graph.byPackage.get(core.id), core);
+assert.notEqual(graph.byPackage.get(core.id), core,
+  'the registry stores an isolated package snapshot');
+assert.deepEqual(graph.byPackage.get(core.id), core);
 assert.equal(nodeOf(graph, 'mat:test_scrap').type, 'material');
 assert.equal(nodeOf(graph, 'missing'), null);
 assert.equal(nodeOf(graph, 'item:test_lock_tool').packageId, core.id);
@@ -56,6 +58,76 @@ assert.equal(requirementsMet(lockTool, {
 assert.equal(visibleNode(nodeOf(graph, 'mat:test_scrap'), {}), true);
 assert.equal(visibleNode(lockTool, {}), false);
 assert.equal(visibleNode(lockTool, { discovered: new Set([lockTool.id]) }), true);
+
+const rolePrivate = {
+  id: 'evidence:test_mechanic_notes',
+  type: 'evidence',
+  version: 1,
+  visibility: 'role_private',
+  metadata: { roleId: 'mechanic' },
+};
+assert.equal(visibleNode(rolePrivate, {
+  discovered: new Set([rolePrivate.id]),
+}), false, 'discovery does not leak role-private evidence without an assignment');
+assert.equal(visibleNode(rolePrivate, {
+  discovered: new Set([rolePrivate.id]),
+  assignedRoles: new Set(['investigator']),
+}), false, 'a different assigned role cannot see role-private evidence');
+assert.equal(visibleNode(rolePrivate, {
+  discovered: new Set([rolePrivate.id]),
+  assignedRoles: new Set(['mechanic']),
+}), true, 'a discovered node is visible to its server-assigned role');
+assert.equal(visibleNode(rolePrivate, {
+  assignedRoles: new Set(['mechanic']),
+}), false, 'role assignment does not bypass discovery');
+
+const callerDependsOn = [];
+const callerMetadata = { title: 'Original', detail: { tags: ['safe'] } };
+const callerNodes = [{
+  id: 'mat:isolated',
+  type: 'material',
+  version: 1,
+  visibility: 'public',
+  metadata: callerMetadata,
+}];
+const callerPackage = {
+  id: 'caller-isolation',
+  version: 1,
+  season: 'core',
+  dependsOn: callerDependsOn,
+  nodes: callerNodes,
+};
+const isolated = loadGraphPackages([callerPackage]);
+callerDependsOn.push('injected-package');
+callerMetadata.title = 'Mutated';
+callerMetadata.detail.tags.push('injected');
+callerNodes.push({ id: 'mat:injected', type: 'material' });
+callerPackage.id = 'renamed-by-caller';
+
+assert.equal(isolated.byPackage.has('caller-isolation'), true);
+assert.equal(isolated.byPackage.has('renamed-by-caller'), false);
+assert.deepEqual(isolated.byPackage.get('caller-isolation').dependsOn, []);
+assert.equal(isolated.byPackage.get('caller-isolation').nodes.length, 1);
+assert.equal(nodeOf(isolated, 'mat:injected'), null);
+assert.deepEqual(nodeOf(isolated, 'mat:isolated').metadata, {
+  title: 'Original', detail: { tags: ['safe'] },
+}, 'caller mutation cannot change nested registry data');
+assert.equal(Object.isFrozen(nodeOf(isolated, 'mat:isolated').metadata.detail.tags), true);
+
+assert.equal(typeof isolated.nodes.set, 'undefined');
+assert.equal(typeof isolated.byPackage.set, 'undefined');
+assert.throws(() => isolated.nodes.set('mat:injected', rolePrivate), TypeError,
+  'registry consumers cannot inject a node');
+assert.throws(() => isolated.byPackage.set('injected-package', callerPackage), TypeError,
+  'registry consumers cannot inject a package');
+assert.equal(nodeOf(isolated, 'mat:injected'), null);
+assert.equal(isolated.byPackage.has('injected-package'), false);
+assert.throws(() => {
+  nodeOf(isolated, 'mat:isolated').metadata.detail.tags.push('consumer-injection');
+}, TypeError, 'registry consumers cannot mutate nested node data');
+assert.throws(() => {
+  isolated.byPackage.get('caller-isolation').dependsOn.push('consumer-injection');
+}, TypeError, 'registry consumers cannot mutate nested package data');
 
 assert.throws(() => loadGraphPackages([core, core]), /duplicate package test-core-materials/i);
 assert.throws(() => loadGraphPackages([
