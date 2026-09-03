@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "f06e261603161ca8131996e8bfc9b8dc177663c4",
+  "sourceRevision": "c2f9ea3b4baac529fb0193b8c2b0e9003373d78f",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5666,
-    "edges": 25068,
+    "nodes": 5668,
+    "edges": 25082,
     "byNodeType": {
       "Artifact": 1828,
       "Command": 57,
-      "Commit": 1304,
+      "Commit": 1306,
       "Contract": 49,
       "Document": 475,
       "Domain": 12,
@@ -65,18 +65,18 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1980,
-      "CHANGED": 10077,
+      "CHANGED": 10083,
       "CONTAINS": 1848,
       "DECLARES": 57,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 204,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1304,
+      "HAS_COMMIT": 1306,
       "IMPLEMENTS": 124,
-      "IMPORTS": 1642,
+      "IMPORTS": 1645,
       "INHERITS": 12,
-      "REFERENCES": 2859,
+      "REFERENCES": 2862,
       "REPRESENTS": 892,
       "TESTS": 583,
       "TRACKS": 126,
@@ -10971,20 +10971,20 @@
       "path": "CLAUDE.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 1741620,
-      "lines": 18042,
-      "version": "c1c7830b94eb7bad",
+      "bytes": 1745989,
+      "lines": 18087,
+      "version": "70921d81271b1066",
       "text": true,
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "c1c7830b94eb7bad"
+          "version": "70921d81271b1066"
         }
       ],
-      "lastChangedAt": "2026-09-02T23:59:53.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f06e261603161ca8131996e8bfc9b8dc177663c4"
+      "lastChangedAt": "2026-09-03T00:49:52.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "c2f9ea3b4baac529fb0193b8c2b0e9003373d78f"
     },
     {
       "key": "Artifact:content/packs/bad-batch/pack.json",
@@ -41578,20 +41578,20 @@
       "path": "tools/pgcheck.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 54916,
-      "lines": 777,
-      "version": "b3be4a38fe39a6d4",
+      "bytes": 63584,
+      "lines": 898,
+      "version": "e0e3627fd43d555d",
       "text": true,
       "provenance": [
         {
           "file": "tools/pgcheck.js",
           "line": 1,
-          "version": "b3be4a38fe39a6d4"
+          "version": "e0e3627fd43d555d"
         }
       ],
-      "lastChangedAt": "2026-08-24T19:44:53.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b1a180875960a09974d306bf774ea2949d071ff8"
+      "lastChangedAt": "2026-09-03T00:49:52.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "c2f9ea3b4baac529fb0193b8c2b0e9003373d78f"
     },
     {
       "key": "Artifact:tools/pgquery.js",
@@ -48460,6 +48460,22 @@
         {
           "commit": "40e900b37ededaba93ed3ce60f2818a8ddd73bd7",
           "url": "https://github.com/OmertaDev/Omerta/commit/40e900b37ededaba93ed3ce60f2818a8ddd73bd7"
+        }
+      ]
+    },
+    {
+      "key": "Commit:4100a933fb52c0a678001209f549b2fb1b399179",
+      "type": "Commit",
+      "id": "4100a933fb52c0a678001209f549b2fb1b399179",
+      "label": "chore(knowledge): refresh generated artifacts for f06e2616",
+      "title": "chore(knowledge): refresh generated artifacts for f06e2616",
+      "date": "2026-09-03T00:00:47.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4100a933fb52c0a678001209f549b2fb1b399179",
+      "provenance": [
+        {
+          "commit": "4100a933fb52c0a678001209f549b2fb1b399179",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4100a933fb52c0a678001209f549b2fb1b399179"
         }
       ]
     },
@@ -59328,6 +59344,22 @@
       ]
     },
     {
+      "key": "Commit:c2f9ea3b4baac529fb0193b8c2b0e9003373d78f",
+      "type": "Commit",
+      "id": "c2f9ea3b4baac529fb0193b8c2b0e9003373d78f",
+      "label": "Prove the pot/funder AB-BA lands as contention (pgcheck §9e)",
+      "title": "Prove the pot/funder AB-BA lands as contention (pgcheck §9e)",
+      "date": "2026-09-03T00:49:52.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c2f9ea3b4baac529fb0193b8c2b0e9003373d78f",
+      "provenance": [
+        {
+          "commit": "c2f9ea3b4baac529fb0193b8c2b0e9003373d78f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c2f9ea3b4baac529fb0193b8c2b0e9003373d78f"
+        }
+      ]
+    },
+    {
       "key": "Commit:c36703cd49f2b8bd41d41a900dd5dbc2a1cfc7aa",
       "type": "Commit",
       "id": "c36703cd49f2b8bd41d41a900dd5dbc2a1cfc7aa",
@@ -69575,13 +69607,13 @@
       "id": "CLAUDE.md",
       "label": "CLAUDE.md",
       "documentType": "documentation",
-      "lines": 18042,
-      "version": "c1c7830b94eb7bad",
+      "lines": 18087,
+      "version": "70921d81271b1066",
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "c1c7830b94eb7bad"
+          "version": "70921d81271b1066"
         }
       ]
     },
@@ -76942,6 +76974,9 @@
           "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
         },
         {
+          "commit": "4100a933fb52c0a678001209f549b2fb1b399179"
+        },
+        {
           "commit": "41cfea04c15b94c79321067d0f957d6f1088e738"
         },
         {
@@ -77353,6 +77388,9 @@
           "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
         },
         {
+          "commit": "4100a933fb52c0a678001209f549b2fb1b399179"
+        },
+        {
           "commit": "41cfea04c15b94c79321067d0f957d6f1088e738"
         },
         {
@@ -77762,6 +77800,9 @@
         },
         {
           "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
+        },
+        {
+          "commit": "4100a933fb52c0a678001209f549b2fb1b399179"
         },
         {
           "commit": "41cfea04c15b94c79321067d0f957d6f1088e738"
@@ -78233,6 +78274,9 @@
         },
         {
           "commit": "3ed630a46a39283b60bad0d2222a6cec2ac5c06b"
+        },
+        {
+          "commit": "4100a933fb52c0a678001209f549b2fb1b399179"
         },
         {
           "commit": "41cfea04c15b94c79321067d0f957d6f1088e738"
@@ -84802,8 +84846,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "f06e261603161ca8131996e8bfc9b8dc177663c4",
-      "currentBranch": "main",
+      "revision": "c2f9ea3b4baac529fb0193b8c2b0e9003373d78f",
+      "currentBranch": "claude/next-work-recommendations-x5f2fp",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -152863,6 +152907,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:4100a933fb52c0a678001209f549b2fb1b399179",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "4100a933fb52c0a678001209f549b2fb1b399179"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4100a933fb52c0a678001209f549b2fb1b399179",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "4100a933fb52c0a678001209f549b2fb1b399179"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4100a933fb52c0a678001209f549b2fb1b399179",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "4100a933fb52c0a678001209f549b2fb1b399179"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4100a933fb52c0a678001209f549b2fb1b399179",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "4100a933fb52c0a678001209f549b2fb1b399179"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:4104c52b40cb55b584477080a1cfd31dd3eeca63",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -191731,6 +191807,22 @@
       "to": "Artifact:test/casino.js",
       "provenance": {
         "commit": "c2e9306bebe537f396c71fa76f1902174eb3dfbf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c2f9ea3b4baac529fb0193b8c2b0e9003373d78f",
+      "to": "Artifact:CLAUDE.md",
+      "provenance": {
+        "commit": "c2f9ea3b4baac529fb0193b8c2b0e9003373d78f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c2f9ea3b4baac529fb0193b8c2b0e9003373d78f",
+      "to": "Artifact:tools/pgcheck.js",
+      "provenance": {
+        "commit": "c2f9ea3b4baac529fb0193b8c2b0e9003373d78f"
       }
     },
     {
@@ -235914,7 +236006,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:economy-ledger",
-      "weight": 142
+      "weight": 143
     },
     {
       "type": "DEPENDS_ON",
@@ -235938,7 +236030,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 409
+      "weight": 411
     },
     {
       "type": "DEPENDS_ON",
@@ -247893,6 +247985,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:4100a933fb52c0a678001209f549b2fb1b399179",
+      "provenance": {
+        "commit": "4100a933fb52c0a678001209f549b2fb1b399179"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:4104c52b40cb55b584477080a1cfd31dd3eeca63",
       "provenance": {
         "commit": "4104c52b40cb55b584477080a1cfd31dd3eeca63"
@@ -253320,6 +253420,14 @@
       "to": "Commit:c2e9306bebe537f396c71fa76f1902174eb3dfbf",
       "provenance": {
         "commit": "c2e9306bebe537f396c71fa76f1902174eb3dfbf"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:c2f9ea3b4baac529fb0193b8c2b0e9003373d78f",
+      "provenance": {
+        "commit": "c2f9ea3b4baac529fb0193b8c2b0e9003373d78f"
       }
     },
     {
@@ -270539,6 +270647,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/pgcheck.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "tools/pgcheck.js",
+        "line": 793
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/pgcheck.js",
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/pgcheck.js",
@@ -270548,10 +270665,28 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/pgcheck.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "tools/pgcheck.js",
+        "line": 794
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/pgcheck.js",
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "tools/pgcheck.js",
         "line": 47
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/pgcheck.js",
+      "to": "Artifact:src/social/contracts.js",
+      "provenance": {
+        "file": "tools/pgcheck.js",
+        "line": 792
       }
     },
     {
@@ -283049,6 +283184,15 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:src/social/contracts.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 17941
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
       "to": "Artifact:src/social/gangs.js",
       "provenance": {
         "file": "CLAUDE.md",
@@ -285923,7 +286067,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 18029
+        "line": 18074
       }
     },
     {
@@ -289190,7 +289334,7 @@
       "to": "Artifact:tools/arena.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17942
+        "line": 17987
       }
     },
     {
@@ -289199,7 +289343,7 @@
       "to": "Artifact:tools/arena.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17996
+        "line": 18041
       }
     },
     {
@@ -289208,7 +289352,7 @@
       "to": "Artifact:tools/arena.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 18020
+        "line": 18065
       }
     },
     {
@@ -289451,6 +289595,15 @@
       "to": "Artifact:tools/loadtest.js",
       "provenance": {
         "file": "CLAUDE.md",
+        "line": 17964
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:tools/loadtest.js",
+      "provenance": {
+        "file": "CLAUDE.md",
         "line": 7675
       }
     },
@@ -289569,6 +289722,15 @@
       "provenance": {
         "file": "CLAUDE.md",
         "line": 17069
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:tools/pgcheck.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 17952
       }
     },
     {

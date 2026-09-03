@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f06e26160316`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `c2f9ea3b4baa`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1304 |
+| Commits in clone | 1306 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-02 — THE LOCK LEDGER's blind third — widen to write-form locks on contended rows (#162) |
+| Latest commit | 2026-09-03 — Prove the pot/funder AB-BA lands as contention (pgcheck §9e) |
 
 ## Commit authors
 
@@ -21,15 +21,15 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 446 |
-| Claude | 156 |
+| Claude | 157 |
 | CRVYDEV | 41 |
-| github-actions[bot] | 14 |
+| github-actions[bot] | 15 |
 
 ## Historical hotspots
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| [CLAUDE.md](../../CLAUDE.md) | 507 | yes |
+| [CLAUDE.md](../../CLAUDE.md) | 508 | yes |
 | [public/index.html](../../public/index.html) | 395 | yes |
 | [src/server.js](../../src/server.js) | 351 | yes |
 | [SPEC.md](../../SPEC.md) | 276 | yes |
@@ -38,10 +38,10 @@
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 172 | yes |
 | [package.json](../../package.json) | 143 | yes |
-| knowledge/generated/github-history.md | 134 | historical |
-| knowledge/generated/graph-summary.md | 134 | historical |
-| knowledge/generated/graph.json | 134 | historical |
-| knowledge/generated/inventory.md | 134 | historical |
+| knowledge/generated/github-history.md | 135 | historical |
+| knowledge/generated/graph-summary.md | 135 | historical |
+| knowledge/generated/graph.json | 135 | historical |
+| knowledge/generated/inventory.md | 135 | historical |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
