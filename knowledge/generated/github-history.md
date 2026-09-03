@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `c6c9da297132`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `6e4d53e49671`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1311 |
+| Commits in clone | 1313 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-03 — chore(knowledge): refresh generated artifacts for 45b7cad2 |
+| Latest commit | 2026-09-03 — Merge pull request #166 from OmertaDev/codex/graph-windows-cli |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 448 |
+| OmertaDev | 450 |
 | Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 18 |
@@ -39,10 +39,10 @@
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 172 | yes |
 | [package.json](../../package.json) | 144 | yes |
-| knowledge/generated/github-history.md | 141 | historical |
-| knowledge/generated/graph-summary.md | 141 | historical |
-| knowledge/generated/graph.json | 141 | historical |
-| knowledge/generated/inventory.md | 141 | historical |
+| knowledge/generated/github-history.md | 142 | historical |
+| knowledge/generated/graph-summary.md | 142 | historical |
+| knowledge/generated/graph.json | 142 | historical |
+| knowledge/generated/inventory.md | 142 | historical |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
