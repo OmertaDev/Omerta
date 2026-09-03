@@ -1,11 +1,11 @@
 // Conserved inventory primitives for authored world graphs.
 //
-// Mutation callers MUST provide the query client that owns their transaction. That lets a recipe,
-// salvage, mystery, or social operation lock its own authority rows and inventory rows under one
-// COMMIT. These helpers do not open nested transactions. Every mutation reserves a globally unique
-// logical key, applies conditional DML, appends provenance, and completes the replay result under
-// that caller-owned transaction.
+// Mutation callers enter through withItemTransaction and receive its branded client. That lets a
+// recipe, salvage, mystery, or social operation lock its authority rows and inventory rows under one
+// module-owned COMMIT. Every mutation reserves a globally unique logical key, applies conditional
+// DML, appends provenance, and completes the replay result inside that boundary.
 import crypto from 'node:crypto';
+import { AsyncLocalStorage } from 'node:async_hooks';
 import { dbCaps } from './db.js';
 import { GameError } from './game.js';
 
@@ -16,6 +16,10 @@ const COMPOSITE_MUTATION_KINDS = new Set([
 const CREATION_PROVENANCE_KINDS = new Set(['crafted', 'salvaged', 'awarded', 'imported']);
 const ESCROW_PROVENANCE_KINDS = new Set(['used_in_mystery', 'used_in_operation']);
 const MUTATION_CONTEXTS = new WeakMap();
+const ITEM_TRANSACTIONS = new WeakMap();
+const ITEM_TRANSACTION_POOLS = new WeakSet();
+const PG_MEM_TRANSACTION_TAILS = new WeakMap();
+const TRANSACTION_SCOPE = new AsyncLocalStorage();
 const INT_MAX = 2147483647;
 
 const fail = (code, message, data) => { throw new GameError(code, message, data); };
@@ -54,12 +58,13 @@ const logicalKey = (value) => boundedText(value, 'Item idempotency key', 200, 'b
 const digest = (value) => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
 
 function transactionClient(client) {
-  // Every production transaction in this repository is a checked-out PoolClient and therefore has
-  // `release`. A Pool has query+connect but no release; accepting it would autocommit each step.
-  if (!client || typeof client.query !== 'function' || typeof client.release !== 'function') {
-    fail('item_transaction_required', 'Item mutation requires a checked-out transaction client.');
+  const transaction = client && typeof client === 'object' ? ITEM_TRANSACTIONS.get(client) : null;
+  const scope = TRANSACTION_SCOPE.getStore();
+  if (!client || typeof client.query !== 'function' || !transaction || !transaction.active
+    || scope?.transaction !== transaction) {
+    fail('item_transaction_required', 'Item mutation requires an active withItemTransaction client.');
   }
-  return client;
+  return transaction;
 }
 
 async function activeTransaction(client) {
@@ -76,7 +81,119 @@ async function activeTransaction(client) {
     }
     throw error;
   }
-  return client;
+  return transactionClient(client);
+}
+
+async function compensateItemTransaction(client, transaction) {
+  // pg-mem parses BEGIN/COMMIT/ROLLBACK but ROLLBACK does not undo writes. Its test path is
+  // serialized per pool below, so a transaction-local inverse log gives the same externally visible
+  // atomicity contract without overwriting a later successful item transaction. Events go first
+  // because they reference both guards and permanent item rows; guards go last.
+  for (const key of transaction.guardKeys) {
+    await client.query('DELETE FROM item_events WHERE idempotency_key=$1', [key]);
+  }
+  for (let i = transaction.undo.length - 1; i >= 0; i--) await transaction.undo[i]();
+  for (const key of transaction.guardKeys) {
+    await client.query('DELETE FROM item_mutation_guards WHERE idempotency_key=$1', [key]);
+  }
+}
+
+async function acquirePgMemTransaction(pool) {
+  if (dbCaps.skipLocked) return () => {};
+  const previous = PG_MEM_TRANSACTION_TAILS.get(pool) || Promise.resolve();
+  let releaseGate;
+  const gate = new Promise((resolve) => { releaseGate = resolve; });
+  const tail = previous.then(() => gate);
+  PG_MEM_TRANSACTION_TAILS.set(pool, tail);
+  await previous;
+  let released = false;
+  return () => {
+    if (released) return;
+    released = true;
+    releaseGate();
+    if (PG_MEM_TRANSACTION_TAILS.get(pool) === tail) PG_MEM_TRANSACTION_TAILS.delete(pool);
+  };
+}
+
+async function waitForPgMemTransactions(queryable) {
+  if (dbCaps.skipLocked) return;
+  const transaction = ITEM_TRANSACTIONS.get(queryable);
+  if (transaction && TRANSACTION_SCOPE.getStore()?.transaction === transaction) return;
+  // A checked-out pg-mem client does not expose which pool produced it, so it cannot find that
+  // pool's serialization tail. Fail closed rather than advertise a read that can observe a write
+  // which compensation later removes. A pool is recognized by its query+connect shape on a fresh
+  // read or registered when it enters the module-owned boundary; a branded client is handled above
+  // and may read its own transaction without waiting on itself. (The current pg-mem adapter returns
+  // the pool itself from connect(), which is safe: both identities then resolve to the same tail.)
+  if (!ITEM_TRANSACTION_POOLS.has(queryable)) {
+    if (typeof queryable.connect !== 'function') {
+      fail('item_transaction_required',
+        'A pg-mem inventory read requires its database pool or the active item transaction client.');
+    }
+    // Read-first callers are valid: recognize a Pool-shaped adapter before its first mutation.
+    ITEM_TRANSACTION_POOLS.add(queryable);
+  }
+  const tail = PG_MEM_TRANSACTION_TAILS.get(queryable);
+  if (tail) await tail;
+}
+
+/**
+ * Own the only valid item-ledger transaction boundary.
+ *
+ * Nesting is rejected explicitly: a later runtime composes leaf operations through the branded
+ * `client` it receives, and uses withItemMutation for one aggregate replay guard. Independent calls
+ * may still run concurrently because AsyncLocalStorage scopes the nesting check to one async flow.
+ * Real PostgreSQL supplies that concurrency with transactions and row locks. pg-mem's transaction
+ * and lock statements are non-atomic simulations, so its branded boundaries serialize per pool;
+ * otherwise compensation from a failed transaction could erase a later committed mutation.
+ */
+export async function withItemTransaction(pool, action) {
+  if (!pool || typeof pool.connect !== 'function' || typeof action !== 'function') {
+    fail('item_transaction_required', 'Item transaction requires a database pool and callback.');
+  }
+  if (TRANSACTION_SCOPE.getStore()) {
+    fail('item_transaction_nested', 'Item transactions cannot be nested; reuse the active client.');
+  }
+  ITEM_TRANSACTION_POOLS.add(pool);
+  return TRANSACTION_SCOPE.run({ active: true }, async () => {
+    const scope = TRANSACTION_SCOPE.getStore();
+    const releasePgMemTransaction = await acquirePgMemTransaction(pool);
+    let client = null;
+    const transaction = { active: false, failed: null, guardKeys: new Set(), undo: [] };
+    try {
+      client = await pool.connect();
+      await client.query('BEGIN');
+      transaction.active = true;
+      ITEM_TRANSACTIONS.set(client, transaction);
+      scope.transaction = transaction;
+      const result = await action(client);
+      if (transaction.failed) throw transaction.failed;
+      await client.query('COMMIT');
+      return result;
+    } catch (error) {
+      if (client) await client.query('ROLLBACK').catch(() => {});
+      if (client && !dbCaps.skipLocked && transaction.active) {
+        try { await compensateItemTransaction(client, transaction); }
+        catch (compensationError) {
+          compensationError.cause = error;
+          throw compensationError;
+        }
+      }
+      throw error;
+    } finally {
+      transaction.active = false;
+      if (client) {
+        ITEM_TRANSACTIONS.delete(client);
+        client.release();
+      }
+      releasePgMemTransaction();
+    }
+  });
+}
+
+function registerUndo(client, undo) {
+  const transaction = transactionClient(client);
+  transaction.undo.push(undo);
 }
 
 async function beginMutation(client, kind, owner, idempotencyKey, request) {
@@ -106,16 +223,52 @@ async function beginMutation(client, kind, owner, idempotencyKey, request) {
   if (row.reservation_id !== reservationId) {
     fail('idempotency_in_progress', 'That item mutation is still in progress.');
   }
+  transactionClient(client).guardKeys.add(key);
   return { key, reservationId, replay: null };
 }
 
 async function abandonMutation(client, guard) {
   if (!guard?.reservationId) return;
+  await client.query('DELETE FROM item_events WHERE idempotency_key=$1', [guard.key]).catch(() => {});
   await client.query(
     `DELETE FROM item_mutation_guards
       WHERE idempotency_key=$1 AND reservation_id=$2 AND result_json IS NULL`,
     [guard.key, guard.reservationId],
   ).catch(() => {});
+}
+
+const ownerKey = (owner) => `${owner.scope}:${owner.id}`;
+
+function compositeAuthority(request) {
+  const raw = request?.itemAuthority;
+  if (raw === undefined) return { destinations: new Set(), operations: new Set() };
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)
+    || Object.keys(raw).some((key) => !['destinations', 'operations'].includes(key))
+    || (raw.destinations !== undefined && !Array.isArray(raw.destinations))
+    || (raw.operations !== undefined && !Array.isArray(raw.operations))) {
+    fail('bad_item_request', 'itemAuthority accepts only destinations and operations arrays.');
+  }
+  const destinations = new Set((raw.destinations || []).map((owner) => (
+    ownerKey(itemOwner(owner, { allowOperation: false }))
+  )));
+  const operations = new Set((raw.operations || []).map((id) => (
+    itemOwner({ scope: 'operation', id }).id
+  )));
+  return { destinations, operations };
+}
+
+function assertCompositeAuthority(composite, kind, owner, request) {
+  if (ownerKey(owner) !== ownerKey(composite.rootOwner)) {
+    fail('item_mutation_authority', 'A compound item mutation cannot spend or grant for another owner.');
+  }
+  if (kind === 'transfer_item' || kind === 'release_escrow') {
+    if (!composite.authority.destinations.has(ownerKey(request.to))) {
+      fail('item_mutation_authority', 'The compound mutation did not bind that destination owner.');
+    }
+  }
+  if (kind === 'escrow_item' && !composite.authority.operations.has(request.operation.id)) {
+    fail('item_mutation_authority', 'The compound mutation did not bind that operation destination.');
+  }
 }
 
 async function completeMutation(client, guard, result) {
@@ -138,8 +291,17 @@ async function executeMutation(client, kind, owner, key, request, action) {
     if (composite.client !== client || composite.closed) {
       fail('item_transaction_required', 'That item mutation context is not active on this transaction.');
     }
-    composite.ordinal += 1;
-    return action(composite.guard, `${String(composite.ordinal).padStart(4, '0')}:${kind}`);
+    try {
+      assertCompositeAuthority(composite, kind, owner, request);
+      composite.ordinal += 1;
+      return await action(
+        composite.guard, `${String(composite.ordinal).padStart(4, '0')}:${kind}`,
+      );
+    } catch (error) {
+      composite.failed = error;
+      transactionClient(client).failed ||= error;
+      throw error;
+    }
   }
   const guard = await beginMutation(client, kind, owner, key, request);
   if (guard.replay !== null) return guard.replay;
@@ -147,17 +309,18 @@ async function executeMutation(client, kind, owner, key, request, action) {
     const result = await action(guard, 'result');
     return await completeMutation(client, guard, result);
   } catch (error) {
-    // Real PostgreSQL rolls this reservation back with its enclosing transaction. pg-mem does not
-    // implement rollback, so removing an uncompleted reservation also keeps focused tests truthful.
+    // Remove an unfinished logical claim before the module-owned boundary rolls back/compensates.
+    // Events go first because their FK deliberately prevents orphaned provenance.
     await abandonMutation(client, guard);
+    transactionClient(client).failed ||= error;
     throw error;
   }
 }
 
 // One logical action may consume several stacks and create/escrow several instances. The opaque
 // context lets those leaf primitives share exactly one guard and append distinct ordinal events;
-// replay returns the aggregate result without entering `action` at all. The caller still owns BEGIN,
-// COMMIT, and ROLLBACK so its non-item authority rows remain atomic with inventory.
+// replay returns the aggregate result without entering `action` at all. withItemTransaction owns the
+// surrounding BEGIN/COMMIT/ROLLBACK and pg-mem compensation boundary.
 export async function withItemMutation(
   client, ownerValue, mutationKindValue, idempotencyKey, request, action,
 ) {
@@ -173,20 +336,26 @@ export async function withItemMutation(
   } catch {
     fail('bad_item_request', 'Composite item mutation request must be JSON-serializable.');
   }
+  const authority = compositeAuthority(requestHashInput);
   const guard = await beginMutation(
     client, mutationKind, owner, idempotencyKey, requestHashInput,
   );
   if (guard.replay !== null) return guard.replay;
   const context = Object.freeze({});
-  const state = { client, guard, ordinal: 0, closed: false };
+  const state = {
+    client, guard, rootOwner: owner, authority,
+    ordinal: 0, closed: false, failed: null,
+  };
   MUTATION_CONTEXTS.set(context, state);
   try {
     const result = await action(context);
+    if (state.failed) throw state.failed;
     state.closed = true;
     return await completeMutation(client, guard, result);
   } catch (error) {
     state.closed = true;
     await abandonMutation(client, guard);
+    transactionClient(client).failed ||= error;
     throw error;
   }
 }
@@ -230,6 +399,33 @@ async function lockedItem(client, itemId) {
   )).rows[0];
 }
 
+function registerItemRestore(client, row, custody = null) {
+  registerUndo(client, async () => {
+    await client.query('DELETE FROM operation_escrow WHERE item_id=$1', [row.id]);
+    await client.query(
+      `UPDATE item_instances
+          SET template_id=$2, owner_scope=$3, owner_id=$4, state=$5,
+              created_at=$6, updated_at=$7, consumed_at=$8
+        WHERE id=$1`,
+      [row.id, row.template_id, row.owner_scope, row.owner_id, row.state,
+        row.created_at, row.updated_at, row.consumed_at],
+    );
+    if (custody) {
+      await client.query(
+        `INSERT INTO operation_escrow
+           (item_id, owner_scope, operation_id, item_state,
+            depositor_scope, depositor_id, created_at)
+         VALUES ($1,$2,$3,$4,$5,$6,$7)
+         ON CONFLICT (item_id) DO UPDATE SET
+           owner_scope=$2, operation_id=$3, item_state=$4,
+           depositor_scope=$5, depositor_id=$6, created_at=$7`,
+        [custody.item_id, custody.owner_scope, custody.operation_id, custody.item_state,
+          custody.depositor_scope, custody.depositor_id, custody.created_at],
+      );
+    }
+  });
+}
+
 function assertHeld(row, owner, { activeOnly = false } = {}) {
   if (!row || row.owner_scope !== owner.scope || row.owner_id !== owner.id
     || row.state === 'consumed' || (activeOnly && row.state !== 'active')) {
@@ -249,6 +445,28 @@ export async function grantStack(
   const reason = mutationReason(reasonValue);
   return executeMutation(client, 'grant_stack', owner, idempotencyKey,
     { templateId, qty, quality, reason }, async (guard, eventKey) => {
+      const prior = (await client.query(
+        `SELECT quantity, created_at, updated_at FROM item_stacks
+          WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality=$4
+          FOR UPDATE`,
+        [owner.scope, owner.id, templateId, quality],
+      )).rows[0];
+      registerUndo(client, async () => {
+        if (!prior) {
+          await client.query(
+            `DELETE FROM item_stacks
+              WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality=$4`,
+            [owner.scope, owner.id, templateId, quality],
+          );
+        } else {
+          await client.query(
+            `UPDATE item_stacks SET quantity=$5, created_at=$6, updated_at=$7
+              WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality=$4`,
+            [owner.scope, owner.id, templateId, quality, Number(prior.quantity),
+              prior.created_at, prior.updated_at],
+          );
+        }
+      });
       const result = await client.query(
         `INSERT INTO item_stacks
            (owner_scope, owner_id, template_id, quality, quantity)
@@ -285,7 +503,7 @@ export async function consumeStack(
   return executeMutation(client, 'consume_stack', owner, idempotencyKey,
     { templateId, qty, quality, reason }, async (guard, eventKey) => {
       const row = (await client.query(
-        `SELECT quantity FROM item_stacks
+        `SELECT quantity, created_at, updated_at FROM item_stacks
           WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality=$4
           FOR UPDATE`,
         [owner.scope, owner.id, templateId, quality],
@@ -296,6 +514,11 @@ export async function consumeStack(
           templateId, quality, current: before, required: qty,
         });
       }
+      registerUndo(client, () => client.query(
+        `UPDATE item_stacks SET quantity=$5, created_at=$6, updated_at=$7
+          WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality=$4`,
+        [owner.scope, owner.id, templateId, quality, before, row.created_at, row.updated_at],
+      ));
       const expectedAfter = before - qty;
       const changed = await client.query(
         `UPDATE item_stacks SET quantity=$6, updated_at=now()
@@ -329,6 +552,7 @@ export async function createItem(
   return executeMutation(client, 'create_item', owner, idempotencyKey,
     { templateId, reason }, async (guard, eventKey) => {
       const id = crypto.randomUUID();
+      registerUndo(client, () => client.query('DELETE FROM item_instances WHERE id=$1', [id]));
       const row = (await client.query(
         `INSERT INTO item_instances (id, template_id, owner_scope, owner_id)
          VALUES ($1,$2,$3,$4)
@@ -358,6 +582,7 @@ export async function transferItem(
     { to, itemId, reason }, async (guard, eventKey) => {
       const current = await lockedItem(client, itemId);
       assertHeld(current, from, { activeOnly: true });
+      registerItemRestore(client, current);
       const changed = await client.query(
         `UPDATE item_instances
             SET owner_scope=$2, owner_id=$3, updated_at=now()
@@ -388,7 +613,20 @@ export async function consumeItem(
     { itemId, reason }, async (guard, eventKey) => {
       const current = await lockedItem(client, itemId);
       assertHeld(current, owner);
+      let custody = null;
       if (current.state === 'escrowed') {
+        custody = (await client.query(
+          `SELECT item_id, owner_scope, operation_id, item_state,
+                  depositor_scope, depositor_id, created_at
+             FROM operation_escrow WHERE item_id=$1 FOR UPDATE`,
+          [itemId],
+        )).rows[0];
+        if (!custody || custody.operation_id !== owner.id) {
+          fail('item_not_escrowed', 'The operation does not hold this item escrow.');
+        }
+      }
+      registerItemRestore(client, current, custody);
+      if (custody) {
         const removed = await client.query(
           'DELETE FROM operation_escrow WHERE item_id=$1 AND operation_id=$2',
           [itemId, owner.id],
@@ -433,12 +671,7 @@ export async function escrowItem(
     { operation, itemId, reason, provenanceKind }, async (guard, eventKey) => {
       const current = await lockedItem(client, itemId);
       assertHeld(current, from, { activeOnly: true });
-      await client.query(
-        `INSERT INTO operation_escrow
-           (item_id, operation_id, depositor_scope, depositor_id)
-         VALUES ($1,$2,$3,$4)`,
-        [itemId, operation.id, from.scope, from.id],
-      );
+      registerItemRestore(client, current);
       const changed = await client.query(
         `UPDATE item_instances
             SET owner_scope='operation', owner_id=$2, state='escrowed', updated_at=now()
@@ -449,6 +682,12 @@ export async function escrowItem(
       if (changed.rowCount !== 1) {
         fail('contention', 'The item owner changed; retry the operation.');
       }
+      await client.query(
+        `INSERT INTO operation_escrow
+           (item_id, operation_id, depositor_scope, depositor_id)
+         VALUES ($1,$2,$3,$4)`,
+        [itemId, operation.id, from.scope, from.id],
+      );
       await appendEvent(client, guard, {
         eventKey, eventKind: 'escrowed', provenanceKind,
         itemId, templateId: current.template_id,
@@ -474,10 +713,20 @@ export async function releaseEscrow(
         fail('item_not_escrowed', 'That operation does not hold this item escrow.');
       }
       const custody = (await client.query(
-        'SELECT operation_id FROM operation_escrow WHERE item_id=$1 FOR UPDATE', [itemId],
+        `SELECT item_id, owner_scope, operation_id, item_state,
+                depositor_scope, depositor_id, created_at
+           FROM operation_escrow WHERE item_id=$1 FOR UPDATE`, [itemId],
       )).rows[0];
       if (!custody || custody.operation_id !== operation.id) {
         fail('item_not_escrowed', 'That operation does not hold this item escrow.');
+      }
+      registerItemRestore(client, current, custody);
+      const removed = await client.query(
+        'DELETE FROM operation_escrow WHERE item_id=$1 AND operation_id=$2',
+        [itemId, operation.id],
+      );
+      if (removed.rowCount !== 1) {
+        fail('contention', 'The item escrow changed; retry the operation.');
       }
       const changed = await client.query(
         `UPDATE item_instances
@@ -487,13 +736,6 @@ export async function releaseEscrow(
         [itemId, to.scope, to.id, operation.id],
       );
       if (changed.rowCount !== 1) {
-        fail('contention', 'The item escrow changed; retry the operation.');
-      }
-      const removed = await client.query(
-        'DELETE FROM operation_escrow WHERE item_id=$1 AND operation_id=$2',
-        [itemId, operation.id],
-      );
-      if (removed.rowCount !== 1) {
         fail('contention', 'The item escrow changed; retry the operation.');
       }
       await appendEvent(client, guard, {
@@ -510,6 +752,10 @@ export async function inventoryBoard(client, ownerValue) {
   if (!client || typeof client.query !== 'function') {
     fail('item_transaction_required', 'Inventory read requires a database query client.');
   }
+  // The pg-mem Pool and checked-out client are the same adapter object. Waiting on that pool's
+  // serialized tail prevents the supported board read from observing a compensatable partial write.
+  // A read made inside the active branded transaction skips the wait, avoiding self-deadlock.
+  await waitForPgMemTransactions(client);
   const owner = itemOwner(ownerValue);
   const stacks = (await client.query(
     `SELECT template_id, quality, quantity, created_at, updated_at

@@ -512,21 +512,28 @@ console.log('\n7a. ITEM CONSERVATION CONSTRAINTS ARE REAL DATABASE AUTHORITY');
     `error ${stateCode || 'none'}`);
   await pool.query('DELETE FROM item_instances WHERE id=$1', [`pgcheck-impossible-${process.pid}`]);
 
+  const parityId = `pgcheck-escrow-parity-${process.pid}`;
+  await pool.query(
+    `INSERT INTO item_instances (id,template_id,owner_scope,owner_id)
+     VALUES ($1,'item:pgcheck-parity','account',$2)`, [parityId, ownerId],
+  );
+  let parityCode = '';
+  try {
+    await pool.query(
+      `INSERT INTO operation_escrow (item_id,operation_id,depositor_scope,depositor_id)
+       VALUES ($1,'pgcheck-operation','account',$2)`, [parityId, ownerId],
+    );
+  } catch (error) { parityCode = error.code; }
+  check(parityCode === '23503',
+    'operation escrow must match the item authoritative operation owner and escrowed state',
+    `error ${parityCode || 'none'}`);
+  await pool.query('DELETE FROM operation_escrow WHERE item_id=$1', [parityId]);
+  await pool.query('DELETE FROM item_instances WHERE id=$1', [parityId]);
+
   const {
-    consumeStack, createItem, grantStack, transferItem,
+    consumeStack, createItem, grantStack, transferItem, withItemTransaction,
   } = await import('../src/items.js');
-  const tx = async (action) => {
-    const client = await pool.connect();
-    try {
-      await client.query('BEGIN');
-      const result = await action(client);
-      await client.query('COMMIT');
-      return result;
-    } catch (error) {
-      await client.query('ROLLBACK').catch(() => {});
-      throw error;
-    } finally { client.release(); }
-  };
+  const tx = (action) => withItemTransaction(pool, action);
   const prefix = `pgcheck-item-${process.pid}-`;
   const actor = { scope: 'account', id: `${prefix}actor` };
   const rivalA = { scope: 'account', id: `${prefix}rival-a` };
@@ -609,6 +616,10 @@ console.log('\n7a. ITEM CONSERVATION CONSTRAINTS ARE REAL DATABASE AUTHORITY');
   const itemRow = (await pool.query(
     'SELECT owner_scope, owner_id, state FROM item_instances WHERE id=$1', [item.id],
   )).rows[0];
+  const transferEvents = (await pool.query(
+    `SELECT from_owner_scope, from_owner_id, to_owner_scope, to_owner_id
+       FROM item_events WHERE item_id=$1 AND event_kind='transferred'`, [item.id],
+  )).rows;
   check(transfers.filter((result) => result.status === 'fulfilled').length === 1
       && transfers.filter((result) => result.status === 'rejected'
         && result.reason?.code === 'item_unavailable').length === 1
@@ -617,6 +628,13 @@ console.log('\n7a. ITEM CONSERVATION CONSTRAINTS ARE REAL DATABASE AUTHORITY');
   'competing transfers leave one authoritative owner and one provenance transition',
   `outcomes ${transfers.map((result) => result.status === 'fulfilled'
     ? 'ok' : result.reason?.code).join(', ')}, owner ${itemRow?.owner_id || 'none'}`);
+  check(transferEvents.length === 1
+      && transferEvents[0].from_owner_scope === actor.scope
+      && transferEvents[0].from_owner_id === actor.id
+      && transferEvents[0].to_owner_scope === itemRow?.owner_scope
+      && transferEvents[0].to_owner_id === itemRow?.owner_id,
+  'the winning concurrent transfer writes exactly one correct provenance event',
+  `${transferEvents.length} event(s), ${transferEvents[0]?.from_owner_id || 'none'} → ${transferEvents[0]?.to_owner_id || 'none'}`);
 
   await pool.query('DELETE FROM item_events WHERE idempotency_key = ANY($1::text[])', [keys]);
   await pool.query('DELETE FROM item_mutation_guards WHERE idempotency_key = ANY($1::text[])', [keys]);

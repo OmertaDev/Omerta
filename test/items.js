@@ -12,6 +12,7 @@ import {
   releaseEscrow,
   transferItem,
   withItemMutation,
+  withItemTransaction,
 } from '../src/items.js';
 
 const pool = await makeDb();
@@ -19,22 +20,14 @@ const characterA = { scope: 'character', id: 'character-a' };
 const characterB = { scope: 'character', id: 'character-b' };
 const accountA = { scope: 'account', id: 'account-a' };
 
-const inTransaction = async (fn) => {
-  const client = await pool.connect();
-  try {
-    await client.query('BEGIN');
-    const result = await fn(client);
-    await client.query('COMMIT');
-    return result;
-  } catch (error) {
-    await client.query('ROLLBACK').catch(() => {});
-    throw error;
-  } finally {
-    client.release();
-  }
-};
+const inTransaction = (fn) => withItemTransaction(pool, fn);
 
 try {
+  const freshBoard = await inventoryBoard(pool, { scope: 'account', id: 'read-first-account' });
+  assert.deepEqual(freshBoard, {
+    owner: { scope: 'account', id: 'read-first-account' }, stacks: [], items: [],
+  }, 'a fresh pg-mem pool supports an empty inventory read before its first item transaction');
+
   // Grant/consume conservation and exact replay.
   const firstGrant = await inTransaction((client) => grantStack(
     client, characterA, 'mat:scrap_steel', 10, 'standard', 'test grant', 'grant-1',
@@ -99,13 +92,26 @@ try {
     )),
     (error) => error?.code === 'qty',
   );
+  const unbegun = await pool.connect();
+  try {
+    await assert.rejects(
+      grantStack(
+        unbegun, characterA, 'mat:scrap_steel', 1,
+        'standard', 'autocommit', 'bad-client-1',
+      ),
+      (error) => error?.code === 'item_transaction_required',
+      'the actual checked-out pg-mem client is rejected until withItemTransaction brands it',
+    );
+  } finally { unbegun.release(); }
   await assert.rejects(
-    grantStack(
-      { query: pool.query.bind(pool) }, characterA, 'mat:scrap_steel', 1,
-      'standard', 'autocommit', 'bad-client-1',
-    ),
+    inventoryBoard({ query: pool.query.bind(pool) }, characterA),
     (error) => error?.code === 'item_transaction_required',
-    'mutation primitives fail closed on an unowned query/autocommit handle',
+    'an unassociated pg-mem query client cannot bypass the pool transaction-tail read barrier',
+  );
+  await assert.rejects(
+    withItemTransaction(pool, async () => withItemTransaction(pool, async () => null)),
+    (error) => error?.code === 'item_transaction_nested',
+    'nested item transactions fail closed; compound work must reuse the active client',
   );
   await assert.rejects(
     pool.query(
@@ -140,6 +146,16 @@ try {
     )),
     (error) => error?.code === 'bad_item_owner',
     'ordinary transfers cannot bypass the escrow authority',
+  );
+  await assert.rejects(
+    pool.query(
+      `INSERT INTO operation_escrow
+         (item_id,operation_id,depositor_scope,depositor_id)
+       VALUES ($1,'operation-bypass','character',$2)`,
+      [created.id, characterA.id],
+    ),
+    /foreign key|constraint/i,
+    'storage rejects escrow whose item owner/state does not match its operation custody tuple',
   );
 
   const transferred = await inTransaction((client) => transferItem(
@@ -251,6 +267,211 @@ try {
   )).rows[0];
   assert.equal(provenance.provenance_kind, 'crafted',
     'created-item provenance uses the approved structured vocabulary');
+
+  // pg-mem does not implement transaction rollback. The module-owned boundary compensates every
+  // leaf effect, event, and guard when a compound callback fails after making partial progress.
+  await inTransaction((client) => grantStack(
+    client, characterA, 'mat:atomic_fixture', 5, 'standard', 'fixture', 'atomic-fixture-1',
+  ));
+  await assert.rejects(
+    inTransaction((client) => withItemMutation(
+      client, characterA, 'craft', 'atomic-failure-1', { recipeId: 'recipe:fails' },
+      async (mutation) => {
+        await consumeStack(
+          client, characterA, 'mat:atomic_fixture', 2, 'standard',
+          'failed recipe input', mutation,
+        );
+        await createItem(client, characterA, 'item:must_rollback', 'crafted', mutation);
+        throw new Error('injected compound failure');
+      },
+    )),
+    /injected compound failure/,
+  );
+  assert.equal((await inventoryBoard(pool, characterA)).stacks
+    .find((stack) => stack.templateId === 'mat:atomic_fixture').qty, 5,
+  'a failed compound mutation restores its stack exactly on pg-mem');
+  assert.equal(Number((await pool.query(
+    "SELECT COUNT(*) AS n FROM item_instances WHERE template_id='item:must_rollback'",
+  )).rows[0].n), 0, 'a failed compound mutation leaves no unique output');
+  assert.equal(Number((await pool.query(
+    "SELECT COUNT(*) AS n FROM item_events WHERE idempotency_key='atomic-failure-1'",
+  )).rows[0].n), 0, 'a failed compound mutation leaves no provenance fragments');
+  assert.equal(Number((await pool.query(
+    "SELECT COUNT(*) AS n FROM item_mutation_guards WHERE idempotency_key='atomic-failure-1'",
+  )).rows[0].n), 0, 'a failed compound mutation leaves no blocked replay guard');
+
+  // Compensation must not restore a stale pre-image over a different committed transaction. pg-mem
+  // ignores both rollback and row locks, so its module-owned boundaries serialize on this pool.
+  await inTransaction((client) => grantStack(
+    client, characterA, 'mat:atomic_race', 10, 'standard', 'fixture', 'atomic-race-seed-1',
+  ));
+  let signalFirstMutation;
+  let releaseFirstFailure;
+  const firstMutationApplied = new Promise((resolve) => { signalFirstMutation = resolve; });
+  const failFirstMutation = new Promise((resolve) => { releaseFirstFailure = resolve; });
+  const failingTransaction = inTransaction((client) => withItemMutation(
+    client, characterA, 'craft', 'atomic-race-failure-1', { recipeId: 'recipe:race-fails' },
+    async (mutation) => {
+      await grantStack(
+        client, characterA, 'mat:atomic_race', 1, 'standard', 'temporary grant', mutation,
+      );
+      signalFirstMutation();
+      await failFirstMutation;
+      throw new Error('injected concurrent compound failure');
+    },
+  ));
+  const failingExpectation = assert.rejects(
+    failingTransaction, /injected concurrent compound failure/,
+  );
+  await firstMutationApplied;
+  await assert.rejects(
+    grantStack(
+      pool, characterA, 'mat:atomic_race', 99, 'standard',
+      'attempted brand hijack', 'atomic-race-hijack-1',
+    ),
+    (error) => error?.code === 'item_transaction_required',
+    'a concurrent async flow cannot borrow the pg-mem pool object while another flow branded it',
+  );
+  let concurrentSettled = false;
+  const concurrentTransaction = inTransaction((client) => grantStack(
+    client, characterA, 'mat:atomic_race', 2, 'standard', 'concurrent grant',
+    'atomic-race-success-1',
+  )).then((result) => {
+    concurrentSettled = true;
+    return result;
+  });
+  const externalReader = await pool.connect();
+  let readerSettled = false;
+  let readerRejected = false;
+  const guardedRead = inventoryBoard(externalReader, characterA).then(
+    (result) => {
+      readerSettled = true;
+      return result;
+    },
+    (error) => {
+      readerSettled = true;
+      if (error?.code !== 'item_transaction_required') throw error;
+      readerRejected = true;
+      return null;
+    },
+  );
+  await new Promise((resolve) => setTimeout(resolve, 10));
+  assert.equal(concurrentSettled, false,
+    'a second pg-mem item transaction waits until failed work is fully compensated');
+  if (externalReader === pool) {
+    assert.equal(readerSettled, false,
+      'the pg-mem adapter pool/client identity waits on the complete serialized tail');
+  } else {
+    await guardedRead;
+    assert.equal(readerRejected, true,
+      'a distinct unbranded pg-mem client fails closed because it cannot resolve the pool tail');
+  }
+  releaseFirstFailure();
+  await failingExpectation;
+  const concurrentResult = await concurrentTransaction;
+  const concurrentBoard = await guardedRead;
+  externalReader.release();
+  assert.equal(concurrentResult.qty, 12,
+    'the later transaction applies to the compensated quantity, not the failed partial quantity');
+  if (concurrentBoard) {
+    assert.equal(concurrentBoard.stacks
+      .find((stack) => stack.templateId === 'mat:atomic_race').qty, 12,
+    'a pool-shaped pg-mem board read waits through compensation and the queued commit');
+  }
+  assert.equal((await inventoryBoard(pool, characterA)).stacks
+    .find((stack) => stack.templateId === 'mat:atomic_race').qty, 12,
+  'failed compensation preserves the later committed transaction');
+  assert.equal(Number((await pool.query(
+    "SELECT COUNT(*) AS n FROM item_events WHERE idempotency_key='atomic-race-failure-1'",
+  )).rows[0].n), 0, 'the failed side of a serialized race leaves no provenance');
+  assert.equal(Number((await pool.query(
+    "SELECT COUNT(*) AS n FROM item_events WHERE idempotency_key='atomic-race-success-1'",
+  )).rows[0].n), 1, 'the successful side of a serialized race retains exactly one provenance event');
+
+  // The root owner on a compound guard is authority, not metadata. Leaf sources/beneficiaries must
+  // match it, while intentional destinations must appear in the typed itemAuthority request.
+  await assert.rejects(
+    inTransaction((client) => withItemMutation(
+      client, characterA, 'reward_claim', 'authority-cross-grant-1', { rewardId: 'bad' },
+      (mutation) => grantStack(
+        client, characterB, 'mat:cross_owner', 1, 'standard', 'bad grant', mutation,
+      ),
+    )),
+    (error) => error?.code === 'item_mutation_authority',
+    'account A cannot use its compound guard to grant a stack to B',
+  );
+  assert.equal((await inventoryBoard(pool, characterB)).stacks
+    .some((stack) => stack.templateId === 'mat:cross_owner'), false);
+
+  const ownedByB = await inTransaction((client) => createItem(
+    client, characterB, 'item:authority_source_b', 'awarded', 'authority-source-b-1',
+  ));
+  await assert.rejects(
+    inTransaction((client) => withItemMutation(
+      client, characterA, 'operation_action', 'authority-cross-source-1', {
+        actionId: 'bad-source',
+        itemAuthority: { destinations: [characterA] },
+      },
+      (mutation) => transferItem(
+        client, characterB, characterA, ownedByB.id, 'bad source', mutation,
+      ),
+    )),
+    (error) => error?.code === 'item_mutation_authority',
+    'account A cannot transfer an item whose source owner is B',
+  );
+  assert.deepEqual((await inventoryBoard(pool, characterB)).items
+    .filter((item) => item.id === ownedByB.id).map((item) => item.id), [ownedByB.id]);
+
+  const ownedByA = await inTransaction((client) => createItem(
+    client, characterA, 'item:authority_destination', 'awarded', 'authority-source-a-1',
+  ));
+  await assert.rejects(
+    inTransaction((client) => withItemMutation(
+      client, characterA, 'operation_action', 'authority-unbound-destination-1',
+      { actionId: 'unbound-destination' },
+      (mutation) => transferItem(
+        client, characterA, characterB, ownedByA.id, 'unbound destination', mutation,
+      ),
+    )),
+    (error) => error?.code === 'item_mutation_authority',
+    'a compound transfer cannot invent an undeclared destination',
+  );
+  const boundTransfer = await inTransaction((client) => withItemMutation(
+    client, characterA, 'operation_action', 'authority-bound-destination-1', {
+      actionId: 'bound-destination', itemAuthority: { destinations: [characterB] },
+    },
+    (mutation) => transferItem(
+      client, characterA, characterB, ownedByA.id, 'bound destination', mutation,
+    ),
+  ));
+  assert.deepEqual(boundTransfer.owner, characterB,
+    'the typed request can deliberately authorize one destination');
+
+  const operationItem = await inTransaction((client) => createItem(
+    client, characterA, 'item:authority_operation', 'awarded', 'authority-operation-item-1',
+  ));
+  await assert.rejects(
+    inTransaction((client) => withItemMutation(
+      client, characterA, 'mystery_action', 'authority-unbound-operation-1',
+      { nodeId: 'unbound-operation' },
+      (mutation) => escrowItem(
+        client, characterA, 'operation-bound', operationItem.id,
+        'unbound operation', mutation,
+      ),
+    )),
+    (error) => error?.code === 'item_mutation_authority',
+    'compound escrow cannot invent an undeclared operation destination',
+  );
+  const boundEscrow = await inTransaction((client) => withItemMutation(
+    client, characterA, 'mystery_action', 'authority-bound-operation-1', {
+      nodeId: 'bound-operation', itemAuthority: { operations: ['operation-bound'] },
+    },
+    (mutation) => escrowItem(
+      client, characterA, 'operation-bound', operationItem.id,
+      'bound operation', mutation,
+    ),
+  ));
+  assert.deepEqual(boundEscrow.owner, { scope: 'operation', id: 'operation-bound' });
 
   const socialItem = await inTransaction((client) => createItem(
     client, characterA, 'item:social_contribution', 'awarded', 'social-item-create-1',

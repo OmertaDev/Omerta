@@ -4468,7 +4468,8 @@ CREATE TABLE IF NOT EXISTS item_instances (
     (state = 'active' AND owner_scope IN ('character','account'))
     OR (state = 'escrowed' AND owner_scope = 'operation')
     OR state = 'consumed'
-  )
+  ),
+  UNIQUE (id, owner_scope, owner_id, state)
 );
 CREATE INDEX IF NOT EXISTS ix_item_instances_owner
   ON item_instances (owner_scope, owner_id, state, template_id);
@@ -4478,11 +4479,17 @@ CREATE INDEX IF NOT EXISTS ix_item_instances_owner
 -- two operation escrows. Release/consumption removes this live custody claim; item_events preserves
 -- the full append-only history.
 CREATE TABLE IF NOT EXISTS operation_escrow (
-  item_id TEXT PRIMARY KEY REFERENCES item_instances(id) ON DELETE RESTRICT,
+  item_id TEXT PRIMARY KEY,
+  owner_scope TEXT NOT NULL DEFAULT 'operation',
   operation_id TEXT NOT NULL,
+  item_state TEXT NOT NULL DEFAULT 'escrowed',
   depositor_scope TEXT NOT NULL,
   depositor_id TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  FOREIGN KEY (item_id, owner_scope, operation_id, item_state)
+    REFERENCES item_instances(id, owner_scope, owner_id, state) ON DELETE RESTRICT,
+  CONSTRAINT operation_escrow_owner_scope CHECK (owner_scope = 'operation'),
+  CONSTRAINT operation_escrow_item_state CHECK (item_state = 'escrowed'),
   CONSTRAINT operation_escrow_operation_id CHECK (char_length(operation_id) BETWEEN 1 AND 200),
   CONSTRAINT operation_escrow_depositor_scope CHECK (depositor_scope IN ('character','account')),
   CONSTRAINT operation_escrow_depositor_id CHECK (char_length(depositor_id) BETWEEN 1 AND 200)
@@ -4493,7 +4500,8 @@ CREATE INDEX IF NOT EXISTS ix_operation_escrow_operation
 -- A logical mutation key is global, not merely owner-local. The request digest binds the key to its
 -- operation, owner and complete arguments; a collision therefore fails visibly instead of replaying
 -- somebody else's result. A NULL result exists only inside the transaction currently performing the
--- mutation. Rollback removes both the reservation and every item write.
+-- mutation. PostgreSQL rollback, or the item module's explicit pg-mem compensation, removes the
+-- reservation together with every item write.
 CREATE TABLE IF NOT EXISTS item_mutation_guards (
   idempotency_key TEXT PRIMARY KEY,
   mutation_kind TEXT NOT NULL,
