@@ -68,6 +68,11 @@ expectCode(() => validateGraph(registry([
 ])), 'malformed_dependency', /requiresAny.*array of non-empty arrays/i);
 
 expectCode(() => validateGraph(registry([
+  { id: 'm:a', type: 'mystery_step', requires: ['evidence:a'], excludes: ['evidence:a'] },
+  { id: 'evidence:a', type: 'evidence' },
+])), 'contradictory_dependency', /both requires and excludes/i);
+
+expectCode(() => validateGraph(registry([
   { id: 'm:a', type: 'mystery_step', requires: ['m:b'] },
   { id: 'm:b', type: 'mystery_step', requires: ['m:a'] },
 ])), 'mystery_prerequisite_cycle', /mystery cycle/i);
@@ -96,6 +101,47 @@ expectCode(() => validateGraph(registry([
     conditions: [{ adapter: 'item_ownership', templateId: 'mat:not-item' }],
   },
 ])), 'invalid_condition_target', /item_template/i);
+
+expectCode(() => validateGraph(registry([{
+  id: 'm:location-alias', type: 'mystery_step',
+  conditions: [{ adapter: 'location', value: 'docks', district: 'foundry' }],
+}])), 'conflicting_condition_alias', /conflicting location aliases/i);
+
+expectCode(() => loadAndValidateGraphPackages([{
+  id: 'unsafe-alias-value', version: 1, season: 'season:1', dependsOn: [],
+  nodes: [{
+    id: 'm:bigint-alias', type: 'mystery_step',
+    conditions: [{ adapter: 'location', value: 1n, district: 2n }],
+  }],
+}]), 'conflicting_condition_alias', /conflicting location aliases/i);
+
+const circularAliasLeft = {};
+circularAliasLeft.self = circularAliasLeft;
+const circularAliasRight = {};
+circularAliasRight.self = circularAliasRight;
+expectCode(() => loadAndValidateGraphPackages([{
+  id: 'circular-alias-value', version: 1, season: 'season:1', dependsOn: [],
+  nodes: [{
+    id: 'm:circular-alias', type: 'mystery_step',
+    conditions: [{
+      adapter: 'location', value: circularAliasLeft, district: circularAliasRight,
+    }],
+  }],
+}]), 'conflicting_condition_alias', /conflicting location aliases/i);
+
+expectCode(() => validateGraph(registry([{
+  id: 'm:bad-window', type: 'mystery_step',
+  conditions: [{ adapter: 'time_window', start: 'not-a-time', end: 'also-not-a-time' }],
+}])), 'malformed_condition', /valid timestamps/i);
+
+expectCode(() => validateGraph(registry([{
+  id: 'm:reversed-window', type: 'mystery_step',
+  conditions: [{ adapter: 'time_window', start: '2026-09-04', end: '2026-09-03' }],
+}])), 'malformed_condition', /start before end/i);
+
+expectCode(() => validateGraph(registry([{
+  id: 'm:bad-visibility', type: 'mystery_step', visibility: 'telepathic',
+}])), 'invalid_visibility', /unsupported visibility/i);
 
 expectCode(() => validateGraph(registry([
   {
@@ -255,6 +301,50 @@ assert.equal(validateGraph(registry([
   },
 ])).ok, true, 'stoichiometric recipe multiplicities preserve a destructive cycle');
 
+for (const materialCount of [8, 9]) {
+  const materialNodes = Array.from({ length: materialCount }, (_, index) => ({
+    id: `mat:dense-${materialCount}-${index}`,
+    type: 'material',
+    metadata: { administratorSeeded: true },
+  }));
+  const denseRecipe = {
+    id: `recipe:dense-${materialCount}`,
+    type: 'recipe',
+    repeatability: 'repeatable',
+    consumes: materialNodes.map(({ id }) => ({ templateId: id, quantity: 1 })),
+    outputs: materialNodes.map(({ id }) => ({ templateId: id, quantity: 1 })),
+  };
+  if (materialCount === 8) {
+    assert.equal(validateGraph(registry([...materialNodes, denseRecipe])).ok, true,
+      'the documented exact SCC boundary remains supported');
+  } else {
+    expectCode(() => validateGraph(registry([...materialNodes, denseRecipe])),
+      'recipe_cycle_too_complex', /exceeds.*8/i);
+  }
+}
+
+const parallelCycleMaterials = Array.from({ length: 8 }, (_, index) => ({
+  id: `mat:parallel-${index}`,
+  type: 'material',
+  metadata: { administratorSeeded: true },
+}));
+const parallelCycleRecipes = parallelCycleMaterials.flatMap((material, index) => (
+  Array.from({ length: 6 }, (_, parallelIndex) => ({
+    id: `recipe:parallel-${index}-${parallelIndex}`,
+    type: 'recipe',
+    repeatability: 'repeatable',
+    consumes: [{ templateId: material.id, quantity: 1 }],
+    outputs: [{
+      templateId: parallelCycleMaterials[(index + 1) % parallelCycleMaterials.length].id,
+      quantity: 1,
+    }],
+  }))
+));
+expectCode(() => validateGraph(registry([
+  ...parallelCycleMaterials,
+  ...parallelCycleRecipes,
+])), 'recipe_cycle_too_complex', /cycle validation budget/i);
+
 expectCode(() => validateGraph(registry([
   {
     id: 'mat:a', type: 'material',
@@ -305,6 +395,144 @@ expectCode(() => validateGraph(registry([
     conditions: [{ adapter: 'material_quantity', templateId: 'mat:condition', quantity: 2 }],
   },
 ])), 'unsourced_material', /mat:condition.*no reachable source/i);
+
+expectCode(() => validateGraph(registry([
+  { id: 'mat:a', type: 'material', metadata: { administratorSeeded: true } },
+  {
+    id: 'recipe:catalyst-faucet', type: 'recipe', repeatability: 'repeatable',
+    catalystInputs: [{ templateId: 'mat:a', quantity: 1 }],
+    outputs: [{ templateId: 'mat:a', quantity: 1 }],
+  },
+])), 'unbounded_recipe_source', /real consumed.*finite source/i);
+
+expectCode(() => validateGraph(registry([
+  { id: 'mat:contradictory-source', type: 'material' },
+  {
+    id: 'recipe:contradictory-source', type: 'recipe',
+    repeatability: 'once', repeatable: true,
+    outputs: [{ templateId: 'mat:contradictory-source', quantity: 1 }],
+  },
+  {
+    id: 'sink:contradictory-source', type: 'sink',
+    consumes: [{ templateId: 'mat:contradictory-source', quantity: 1 }],
+  },
+])), 'conflicting_recipe_authority', /contradictory repeatability/i);
+
+expectCode(() => validateGraph(registry([
+  { id: 'mat:free', type: 'material' },
+  {
+    id: 'recipe:free', type: 'recipe', repeatability: 'repeatable',
+    outputs: [{ templateId: 'mat:free', quantity: 1 }],
+  },
+  { id: 'sink:free', type: 'sink', consumes: [{ templateId: 'mat:free', quantity: 1 }] },
+])), 'unbounded_recipe_source', /real consumed.*finite source/i);
+
+expectCode(() => validateGraph(registry([
+  { id: 'mat:implicit-free', type: 'material' },
+  {
+    id: 'recipe:implicit-free', type: 'recipe',
+    outputs: [{ templateId: 'mat:implicit-free', quantity: 1 }],
+  },
+  {
+    id: 'sink:implicit-free', type: 'sink',
+    consumes: [{ templateId: 'mat:implicit-free', quantity: 1 }],
+  },
+])), 'unsourced_material', /mat:implicit-free.*no reachable source/i);
+
+assert.equal(validateGraph(registry([
+  { id: 'mat:finite', type: 'material' },
+  {
+    id: 'recipe:finite', type: 'recipe', repeatability: 'once',
+    outputs: [{ templateId: 'mat:finite', quantity: 1 }],
+  },
+  { id: 'sink:finite', type: 'sink', consumes: [{ templateId: 'mat:finite', quantity: 1 }] },
+])).ok, true, 'an explicitly once-only inputless recipe is a finite authored source');
+
+assert.equal(validateGraph(registry([
+  { id: 'mat:capped-source', type: 'material' },
+  {
+    id: 'recipe:capped-source', type: 'recipe', repeatable: true, maxCrafts: 2,
+    outputs: [{ templateId: 'mat:capped-source', quantity: 1 }],
+  },
+  {
+    id: 'sink:capped-source', type: 'sink',
+    consumes: [{ templateId: 'mat:capped-source', quantity: 1 }],
+  },
+])).ok, true, 'an explicit finite craft cap bounds an otherwise inputless producer');
+
+expectCode(() => validateGraph(registry([
+  { id: 'item:missing-tool', type: 'item_template', visibility: 'hidden' },
+  { id: 'mat:tool-output', type: 'material' },
+  {
+    id: 'recipe:tool-output', type: 'recipe',
+    consumes: [{ templateId: 'item:missing-tool', quantity: 1 }],
+    outputs: [{ templateId: 'mat:tool-output', quantity: 1 }],
+  },
+  { id: 'sink:tool-output', type: 'sink', consumes: [{ templateId: 'mat:tool-output', quantity: 1 }] },
+])), 'unsourced_material', /mat:tool-output.*no reachable source/i);
+
+expectCode(() => validateGraph(registry([
+  { id: 'evidence:hidden-producer-gate', type: 'evidence', visibility: 'hidden' },
+  { id: 'item:hidden-output', type: 'item_template', visibility: 'hidden' },
+  {
+    id: 'recipe:unreachable-public', type: 'recipe', visibility: 'public',
+    requires: ['evidence:hidden-producer-gate'],
+    outputs: [{ templateId: 'item:hidden-output', quantity: 1 }],
+  },
+])), 'unreachable_producer', /unreachable-public.*not reachable/i);
+
+expectCode(() => validateGraph(registry([
+  { id: 'evidence:unobtainable', type: 'evidence', visibility: 'hidden' },
+  {
+    id: 'm:public-terminal', type: 'mystery_step', visibility: 'public',
+    requires: ['evidence:unobtainable'],
+  },
+])), 'unreachable_terminal', /public-terminal.*not reachable/i);
+
+expectCode(() => validateGraph(registry([
+  { id: 'm:required-b', type: 'mystery_step' },
+  { id: 'm:requires-b', type: 'mystery_step', requires: ['m:required-b'] },
+  {
+    id: 'm:transitive-exclusion', type: 'mystery_step', visibility: 'public',
+    requires: ['m:requires-b'], excludes: ['m:required-b'],
+  },
+])), 'unreachable_terminal', /transitive-exclusion.*not reachable/i);
+
+assert.equal(validateGraph(registry([
+  { id: 'm:blocked-b', type: 'mystery_step' },
+  { id: 'm:blocked-via-b', type: 'mystery_step', requires: ['m:blocked-b'] },
+  { id: 'm:open-alternative', type: 'mystery_step' },
+  {
+    id: 'm:or-compatible', type: 'mystery_step', visibility: 'public',
+    requiresAny: [['m:blocked-via-b', 'm:open-alternative']],
+    excludes: ['m:blocked-b'],
+  },
+])).ok, true, 'reachability preserves a compatible requiresAny witness');
+
+assert.equal(validateGraph(registry([
+  { id: 'evidence:obtainable', type: 'evidence', visibility: 'hidden' },
+  {
+    id: 'source:evidence', type: 'source', visibility: 'public',
+    produces: [{ templateId: 'evidence:obtainable', quantity: 1 }],
+  },
+  {
+    id: 'm:reachable-terminal', type: 'mystery_step', visibility: 'public',
+    requires: ['evidence:obtainable'],
+  },
+])).ok, true, 'general reachability follows produced evidence into public terminal nodes');
+
+expectCode(() => validateGraph(registry([
+  { id: 'item:unobtainable-role-tool', type: 'item_template', visibility: 'hidden' },
+  {
+    id: 'op:tool-gated', type: 'social_gate', visibility: 'public',
+    metadata: {
+      roles: [{
+        id: 'mechanic',
+        conditions: [{ adapter: 'item_ownership', templateId: 'item:unobtainable-role-tool' }],
+      }],
+    },
+  },
+])), 'unreachable_terminal', /tool-gated.*not reachable/i);
 
 const recursiveSourceChain = validateGraph(registry([
   { id: 'mat:raw', type: 'material' },
@@ -459,6 +687,28 @@ const singleRoleSocial = validateGraph(registry([{
 assert.equal(singleRoleSocial.reports.socialOperations[0].minimumDistinctAccounts, 1,
   'a non-empty social operation always requires at least one account');
 
+expectCode(() => validateGraph(registry([{
+  id: 'op:forced-incompatible', type: 'social_gate',
+  metadata: {
+    roles: [
+      { id: 'a', sameAccountAs: 'b', requires: ['skill:x'] },
+      { id: 'b', excludes: ['skill:x'] },
+    ],
+  },
+}])), 'impossible_social_role', /share and not share/i);
+
+const incompatibleRoles = validateGraph(registry([{
+  id: 'op:incompatible', type: 'social_gate',
+  metadata: {
+    roles: [
+      { id: 'a', requires: ['skill:x'] },
+      { id: 'b', excludes: ['skill:x'] },
+    ],
+  },
+}]));
+assert.equal(incompatibleRoles.reports.socialOperations[0].minimumDistinctAccounts, 2,
+  'cross-role requires/excludes incompatibility raises the account minimum');
+
 expectCode(() => validateGraph(registry([
   {
     id: 'op:locations', type: 'social_gate',
@@ -515,6 +765,13 @@ for (const [node, code, pattern] of [
   [{
     id: 'reward:omr', type: 'reward', repeatability: 'once',
     metadata: {
+      reward: { assetType: '$OMR', repeatable: true },
+      allocationId: 'season-1-vault', claimKey: 'claim:omr',
+    },
+  }, 'invalid_omr_reward', /repeatable alias/i],
+  [{
+    id: 'reward:omr', type: 'reward', repeatability: 'once',
+    metadata: {
       reward: { asset_type: 'omr' }, allocationId: 'season-1-vault', claimKey: 'claim:omr',
       trigger: { selection: 'random_weighted' },
     },
@@ -552,6 +809,64 @@ expectCode(() => validateGraph(registry([{
     allocationId: 'season-vault', claimKey: 'claim:core-omr',
   },
 }], { season: 'core' })), 'invalid_omr_reward', /finite seasonal allocation/i);
+
+expectCode(() => validateGraph(registry([{
+  id: 'reward:upper-core-omr', type: 'reward', repeatability: 'once',
+  metadata: { currency: 'OMR', allocationId: 'vault', claimKey: 'claim:upper-core' },
+}], { season: '  CORE  ' })), 'invalid_omr_reward', /finite seasonal allocation/i);
+
+expectCode(() => validateGraph(registry([{
+  id: 'reward:allocation-conflict', type: 'reward', repeatability: 'once',
+  allocationId: 'vault:a', claimKey: 'claim:a',
+  metadata: { currency: 'OMR', allocationId: 'vault:b', claimKey: 'claim:a' },
+}])), 'conflicting_omr_authority', /conflicting allocationId/i);
+
+expectCode(() => validateGraph(registry([{
+  id: 'reward:claim-conflict', type: 'reward', repeatability: 'once',
+  allocationId: 'vault:a', claimKey: 'claim:a',
+  metadata: { currency: 'OMR', allocationId: 'vault:a', claimKey: 'claim:b' },
+}])), 'conflicting_omr_authority', /conflicting claimKey/i);
+
+expectCode(() => validateGraph(registry([{
+  id: 'reward:lore-authority', type: 'reward', repeatability: 'once',
+  metadata: {
+    currency: 'OMR',
+    lore: { allocationId: 'not-authority', claimKey: 'not-authority' },
+  },
+}])), 'invalid_omr_reward', /finite seasonal allocation/i);
+
+expectCode(() => validateGraph(registry([{
+  id: 'reward:unrelated-cap', type: 'reward', repeatability: 'capped',
+  metadata: {
+    currency: 'OMR', allocationId: 'vault:a', claimKey: 'claim:a',
+    damage: { cap: 10 },
+  },
+}])), 'invalid_omr_reward', /positive finite claim cap/i);
+
+assert.equal(validateGraph(registry([{
+  id: 'reward:innocent-provenance', type: 'reward', repeatability: 'once',
+  metadata: {
+    currency: 'OMR', allocationId: 'vault:a', claimKey: 'claim:a',
+    adminTimestamp: '2026-09-03T00:00:00Z',
+    provenance: { mintedAt: '2026-09-03T00:00:00Z' },
+  },
+}])).ok, true, 'non-effect provenance fields containing mint/admin text are inert');
+
+assert.equal(validateGraph(registry([{
+  id: 'reward:inert-lore', type: 'reward', repeatability: 'once',
+  metadata: {
+    currency: 'OMR', allocationId: 'vault:a', claimKey: 'claim:inert-lore',
+    lore: { random: true, mintedAt: 'the first bell' },
+  },
+}])).ok, true, 'unrelated lore is not interpreted as reward authority or an effect verb');
+
+assert.equal(validateGraph(registry([{
+  id: 'reward:effect-provenance', type: 'reward', repeatability: 'once',
+  metadata: {
+    currency: 'OMR', allocationId: 'vault:a', claimKey: 'claim:effect-provenance',
+    effects: [{ type: 'grant', description: 'commemorates mint day', mintedAt: 'archived' }],
+  },
+}])).ok, true, 'only declared effect verbs, not descriptive effect provenance, imply minting');
 
 assert.equal(validateGraph(registry([{
   id: 'reward:fixed-omr', type: 'reward', repeatability: 'once',

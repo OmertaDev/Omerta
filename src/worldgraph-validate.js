@@ -14,12 +14,17 @@ const CONDITION_ADAPTERS = new Set([
   'owns_car',
 ]);
 
-const DEPENDENCY_FIELDS = ['requires', 'excludes'];
 const QUANTITY_FIELDS = [
   'consumes', 'produces', 'inputs', 'outputs', 'catalysts', 'catalystInputs',
 ];
 const SEEDED_FLAGS = ['administratorSeeded', 'adminSeeded', 'seasonalSeeded'];
 const EXTERNAL_ASSET_TYPES = new Set(['car']);
+const VISIBILITIES = new Set(['public', 'discovered', 'hidden', 'role_private']);
+// Exact simple-cycle analysis is deliberately fail-closed above this Phase 1 boundary.
+const MAX_EXACT_RECIPE_SCC_TEMPLATES = 8;
+const MAX_EXACT_RECIPE_SCC_EDGES = MAX_EXACT_RECIPE_SCC_TEMPLATES ** 2;
+const MAX_EXACT_RECIPE_CYCLES = 20_000;
+const MAX_GRAPH_WITNESSES_PER_NODE = 128;
 
 export class GraphValidationError extends Error {
   constructor(code, message, details = {}) {
@@ -210,9 +215,24 @@ function conditionAdapter(condition) {
   return null;
 }
 
-function conditionField(condition, fields) {
+function conditionField(condition, fields, context = {}) {
   if (!condition || typeof condition !== 'object' || Array.isArray(condition)) return undefined;
-  return fields.map((field) => condition[field]).find((value) => value !== undefined);
+  const declared = fields
+    .filter((field) => condition[field] !== undefined)
+    .map((field) => ({ field, value: condition[field] }));
+  const normalized = [];
+  for (const { value } of declared) {
+    const comparable = typeof value === 'string' ? value.trim() : value;
+    if (!normalized.some((candidate) => Object.is(candidate, comparable))) {
+      normalized.push(comparable);
+    }
+  }
+  if (normalized.length > 1) {
+    fail('conflicting_condition_alias',
+      `${context.owner || 'Condition'} has conflicting ${context.adapter || 'condition'} aliases: ${declared.map(({ field }) => field).join(', ')}`,
+      { ...context, aliases: declared.map(({ field }) => field) });
+  }
+  return declared[0]?.value;
 }
 
 function assertConditionReference({
@@ -270,63 +290,79 @@ function validateConditionList({
         `${owner} uses unsupported condition adapter ${adapter}`,
         { nodeId, roleId, adapter });
     }
+    const field = (fields) => conditionField(condition, fields, {
+      owner, nodeId, roleId, adapter,
+    });
 
     let targetId = null;
     let targetType = null;
     if (adapter === 'graph_dependency') {
-      targetId = conditionField(condition, ['nodeId', 'id', 'value']);
+      targetId = field(['nodeId', 'id', 'value']);
     } else if (adapter === 'item_ownership' || adapter === 'owns_item') {
-      targetId = conditionField(condition, ['templateId', 'itemTemplateId', 'nodeId']);
+      targetId = field(['templateId', 'itemTemplateId', 'nodeId']);
       targetType = 'item_template';
     } else if (adapter === 'material_quantity') {
-      targetId = conditionField(condition, ['templateId', 'materialId', 'nodeId']);
+      targetId = field(['templateId', 'materialId', 'nodeId']);
       targetType = 'material';
-      const quantity = conditionField(condition, ['quantity', 'minimumQuantity', 'amount']);
+      const quantity = field(['quantity', 'minimumQuantity', 'amount']);
       if (!positiveInteger(quantity)) {
         fail('malformed_condition',
           `${owner} material_quantity condition requires a positive integer quantity`,
           { nodeId, roleId, adapter, quantity });
       }
     } else if (adapter === 'evidence') {
-      targetId = conditionField(condition, ['evidenceId', 'nodeId']);
+      targetId = field(['evidenceId', 'nodeId']);
       targetType = 'evidence';
     } else if (adapter === 'location') {
-      const location = conditionField(condition, ['value', 'locationId', 'district']);
+      const location = field(['value', 'locationId', 'district']);
       if (!nonEmptyString(location)) {
         fail('malformed_condition', `${owner} location condition requires a location`,
           { nodeId, roleId, adapter });
       }
       locations.add(location);
     } else if (adapter === 'level') {
-      const level = conditionField(condition, ['value', 'minimumLevel', 'level']);
+      const level = field(['value', 'minimumLevel', 'level']);
       if (!positiveInteger(level)) {
         fail('malformed_condition', `${owner} level condition requires a positive integer level`,
           { nodeId, roleId, adapter, level });
       }
     } else if (adapter === 'skill') {
-      const skillId = conditionField(condition, ['skillId', 'id', 'value']);
+      const skillId = field(['skillId', 'id', 'value']);
       if (!nonEmptyString(skillId)) {
         fail('malformed_condition', `${owner} skill condition requires a skillId`,
           { nodeId, roleId, adapter });
       }
     } else if (adapter === 'time_window') {
-      const windowId = conditionField(condition, ['windowId', 'value']);
-      const start = conditionField(condition, ['start', 'startsAt']);
-      const end = conditionField(condition, ['end', 'endsAt']);
+      const windowId = field(['windowId', 'value']);
+      const start = field(['start', 'startsAt']);
+      const end = field(['end', 'endsAt']);
       if (!nonEmptyString(windowId) && !(nonEmptyString(start) && nonEmptyString(end))) {
         fail('malformed_condition',
           `${owner} time_window condition requires a windowId or start and end`,
           { nodeId, roleId, adapter });
       }
+      if (start !== undefined || end !== undefined) {
+        if (!nonEmptyString(start) || !nonEmptyString(end)
+          || !Number.isFinite(Date.parse(start)) || !Number.isFinite(Date.parse(end))) {
+          fail('malformed_condition',
+            `${owner} time_window condition requires valid timestamps`,
+            { nodeId, roleId, adapter, start, end });
+        }
+        if (Date.parse(start) >= Date.parse(end)) {
+          fail('malformed_condition',
+            `${owner} time_window condition requires start before end`,
+            { nodeId, roleId, adapter, start, end });
+        }
+      }
     } else if (adapter === 'explicit_interaction') {
-      const interactionId = conditionField(condition, ['interactionId', 'id', 'value']);
+      const interactionId = field(['interactionId', 'id', 'value']);
       if (!nonEmptyString(interactionId)) {
         fail('malformed_condition',
           `${owner} explicit_interaction condition requires an interactionId`,
           { nodeId, roleId, adapter });
       }
     } else if (adapter === 'owns_car') {
-      const carSelector = conditionField(condition, [
+      const carSelector = field([
         'value', 'carId', 'carType', 'vehicleClass', 'assetType',
       ]);
       if (!nonEmptyString(carSelector)) {
@@ -379,9 +415,31 @@ function validateNodeReferences(registry, packageEdges) {
     if (!nonEmptyString(nodeId) || !nonEmptyString(node.type)) {
       fail('malformed_node', `Graph node ${String(nodeId)} requires a stable ID and type`, { nodeId });
     }
+    if (node.visibility !== undefined && !VISIBILITIES.has(node.visibility)) {
+      fail('invalid_visibility',
+        `Node ${nodeId} has unsupported visibility ${String(node.visibility)}`,
+        { nodeId, visibility: node.visibility });
+    }
+    const required = validateDependencyList(node, 'requires');
+    const excluded = validateDependencyList(node, 'excludes');
+    const requiredAlternatives = validateRequiresAny(node);
+    const contradictory = required.find((dependencyId) => excluded.includes(dependencyId));
+    if (contradictory) {
+      fail('contradictory_dependency',
+        `Node ${nodeId} both requires and excludes ${contradictory}`,
+        { nodeId, dependencyId: contradictory });
+    }
+    const blockedAlternativeGroup = (node.requiresAny || []).find((group) => (
+      group.every((dependencyId) => excluded.includes(dependencyId))
+    ));
+    if (blockedAlternativeGroup) {
+      fail('contradictory_dependency',
+        `Node ${nodeId} excludes every option in a requiresAny group`,
+        { nodeId, dependencyIds: blockedAlternativeGroup });
+    }
     const references = [];
-    for (const field of DEPENDENCY_FIELDS) references.push(...validateDependencyList(node, field));
-    references.push(...validateRequiresAny(node));
+    references.push(...required, ...excluded);
+    references.push(...requiredAlternatives);
     const quantities = {};
     for (const field of QUANTITY_FIELDS) {
       quantities[field] = quantityEntries(node, field, { recipe: node.type === 'recipe' });
@@ -415,10 +473,9 @@ function validateNodeReferences(registry, packageEdges) {
       }
     }
     dependencyEdges.set(nodeId, [
-      ...validateDependencyList(node, 'requires'),
-      ...validateRequiresAny(node),
+      ...required,
+      ...requiredAlternatives,
       ...conditions
-        .filter(({ adapter }) => adapter === 'graph_dependency')
         .map(({ targetId }) => targetId)
         .filter(Boolean),
     ]);
@@ -457,11 +514,62 @@ function inventoryClass(node) {
     : node.type === 'item_template' ? 'unique' : null);
 }
 
+function recipePolicy(node) {
+  const declarations = [node.repeatability, node.metadata?.repeatability]
+    .filter((value) => value !== undefined);
+  if (declarations.some((value) => !nonEmptyString(value))) {
+    fail('invalid_recipe_repeatability',
+      `Recipe ${node.id} repeatability must be once, repeatable, or capped`,
+      { nodeId: node.id, declarations });
+  }
+  const policies = [...new Set(declarations.map((value) => value.trim().toLowerCase()))];
+  if (policies.length > 1) {
+    fail('conflicting_recipe_authority',
+      `Recipe ${node.id} has conflicting repeatability declarations`,
+      { nodeId: node.id, declarations });
+  }
+  const repeatability = policies[0];
+  if (repeatability !== undefined
+    && !['once', 'repeatable', 'capped'].includes(repeatability)) {
+    fail('invalid_recipe_repeatability',
+      `Recipe ${node.id} repeatability must be once, repeatable, or capped`,
+      { nodeId: node.id, repeatability });
+  }
+
+  const flags = [node.repeatable, node.metadata?.repeatable]
+    .filter((value) => value !== undefined);
+  if (flags.some((value) => typeof value !== 'boolean') || new Set(flags).size > 1) {
+    fail('conflicting_recipe_authority',
+      `Recipe ${node.id} has conflicting repeatable aliases`,
+      { nodeId: node.id, repeatable: flags });
+  }
+  const repeatable = flags[0];
+  if ((repeatable === true && repeatability === 'once')
+    || (repeatable === false && ['repeatable', 'capped'].includes(repeatability))) {
+    fail('conflicting_recipe_authority',
+      `Recipe ${node.id} has contradictory repeatability and repeatable declarations`,
+      { nodeId: node.id, repeatability, repeatable });
+  }
+
+  const cap = node.maxCrafts ?? node.claimCap ?? node.cap
+    ?? node.metadata?.maxCrafts ?? node.metadata?.claimCap ?? node.metadata?.cap;
+  if (repeatability === 'capped' && !positiveInteger(cap)) {
+    fail('invalid_recipe_repeatability',
+      `Capped recipe ${node.id} requires a positive finite craft cap`,
+      { nodeId: node.id, cap });
+  }
+  return {
+    repeatable: repeatable === true || ['repeatable', 'capped'].includes(repeatability),
+    finite: repeatability === 'once' || positiveInteger(cap),
+  };
+}
+
 function validateRecipeClasses(registry, quantityByNode) {
   let recipes = 0;
   for (const [nodeId, node] of registry.nodes) {
     if (node.type !== 'recipe') continue;
     recipes += 1;
+    recipePolicy(node);
     const quantities = quantityByNode.get(nodeId);
     for (const field of [
       'consumes', 'inputs', 'catalysts', 'catalystInputs', 'produces', 'outputs',
@@ -509,9 +617,7 @@ function aggregateQuantities(entries) {
 }
 
 function recipeDeclaresRepeatable(node) {
-  const repeatability = node.repeatability || node.metadata?.repeatability;
-  return node.repeatable === true || node.metadata?.repeatable === true
-    || ['repeatable', 'capped'].includes(repeatability);
+  return recipePolicy(node).repeatable;
 }
 
 function recipeConversionGraph(registry, quantityByNode) {
@@ -520,7 +626,12 @@ function recipeConversionGraph(registry, quantityByNode) {
   for (const [nodeId, node] of registry.nodes) {
     if (node.type !== 'recipe') continue;
     const quantities = quantityByNode.get(nodeId);
-    const inputs = aggregateQuantities([...quantities.consumes, ...quantities.inputs]);
+    const inputs = aggregateQuantities([
+      ...quantities.consumes,
+      ...quantities.inputs,
+      ...quantities.catalysts,
+      ...quantities.catalystInputs,
+    ]);
     const outputs = aggregateQuantities([...quantities.produces, ...quantities.outputs]);
     for (const [inputId, inputQuantity] of inputs) {
       vertices.add(inputId);
@@ -590,7 +701,7 @@ function canonicalCycleKey(cycle) {
   return rotations.sort()[0];
 }
 
-function conversionCycles(component, edges) {
+function conversionCycles(component, edges, maximumCycles) {
   const members = new Set(component);
   const ordered = [...component].sort();
   const order = new Map(ordered.map((vertex, index) => [vertex, index]));
@@ -605,6 +716,15 @@ function conversionCycles(component, edges) {
       const nextPath = [...path, edge];
       if (edge.to === start) {
         result.set(canonicalCycleKey(nextPath), nextPath);
+        if (result.size > maximumCycles) {
+          fail('recipe_cycle_too_complex',
+            `Recursive recipe SCC exceeds exact cycle validation budget ${maximumCycles}`,
+            {
+              templates: component,
+              conversions: edges.length,
+              maximumCycles,
+            });
+        }
         continue;
       }
       if (visited.has(edge.to) || order.get(edge.to) < order.get(start)) continue;
@@ -651,8 +771,27 @@ function validateRecipeCycles(registry, quantityByNode) {
     const internalEdges = edges.filter(({ from, to }) => members.has(from) && members.has(to));
     const cyclic = component.length > 1 || internalEdges.some(({ from, to }) => from === to);
     if (!cyclic) continue;
+    if (component.length > MAX_EXACT_RECIPE_SCC_TEMPLATES) {
+      fail('recipe_cycle_too_complex',
+        `Recursive recipe SCC size ${component.length} exceeds exact validation limit ${MAX_EXACT_RECIPE_SCC_TEMPLATES}`,
+        {
+          templates: component,
+          size: component.length,
+          maximum: MAX_EXACT_RECIPE_SCC_TEMPLATES,
+        });
+    }
 
     const recipeIds = [...new Set(internalEdges.map(({ recipeId }) => recipeId))];
+    if (internalEdges.length > MAX_EXACT_RECIPE_SCC_EDGES) {
+      fail('recipe_cycle_too_complex',
+        `Recursive recipe SCC has ${internalEdges.length} conversions, exceeding exact validation limit ${MAX_EXACT_RECIPE_SCC_EDGES}`,
+        {
+          templates: component,
+          size: component.length,
+          conversions: internalEdges.length,
+          maximumConversions: MAX_EXACT_RECIPE_SCC_EDGES,
+        });
+    }
     const undeclared = recipeIds.filter((recipeId) => (
       !recipeDeclaresRepeatable(registry.nodes.get(recipeId))
     ));
@@ -661,7 +800,11 @@ function validateRecipeCycles(registry, quantityByNode) {
         `Recursive recipe SCC must be explicitly declared repeatable: ${undeclared.join(', ')}`,
         { templates: component, recipeIds, undeclaredRecipeIds: undeclared });
     }
-    for (const cycle of conversionCycles(component, internalEdges)) {
+    for (const cycle of conversionCycles(
+      component,
+      internalEdges,
+      MAX_EXACT_RECIPE_CYCLES,
+    )) {
       const totals = recipeConservedTotals(cycle, quantityByNode);
       if (totals.outputs > totals.inputs + 1e-12) {
         const cycleRecipeIds = [...new Set(cycle.map(({ recipeId }) => recipeId))];
@@ -670,6 +813,24 @@ function validateRecipeCycles(registry, quantityByNode) {
           { templates: component, recipeIds: cycleRecipeIds, ...totals });
       }
     }
+  }
+}
+
+function recipeHasFiniteSourceSemantics(node) {
+  return recipePolicy(node).finite;
+}
+
+function validateRecipeSources(registry, quantityByNode) {
+  for (const [nodeId, node] of registry.nodes) {
+    if (node.type !== 'recipe') continue;
+    const quantities = quantityByNode.get(nodeId);
+    const outputs = [...quantities.produces, ...quantities.outputs];
+    if (outputs.length === 0 || !recipeDeclaresRepeatable(node)) continue;
+    const consumedInputs = [...quantities.consumes, ...quantities.inputs];
+    if (consumedInputs.length > 0 || recipeHasFiniteSourceSemantics(node)) continue;
+    fail('unbounded_recipe_source',
+      `Repeatable producer ${nodeId} requires a real consumed/external input or explicit finite source semantics`,
+      { nodeId });
   }
 }
 
@@ -769,6 +930,17 @@ function socialAccountConstraints(nodeId, roles, byId) {
       requireDifferent(role.id, target);
     }
   }
+  for (let leftIndex = 0; leftIndex < roles.length; leftIndex += 1) {
+    const left = roles[leftIndex];
+    const leftRequires = new Set(left.requires || []);
+    const leftExcludes = new Set(left.excludes || []);
+    for (let rightIndex = leftIndex + 1; rightIndex < roles.length; rightIndex += 1) {
+      const right = roles[rightIndex];
+      const incompatible = (right.excludes || []).some((entry) => leftRequires.has(entry))
+        || (right.requires || []).some((entry) => leftExcludes.has(entry));
+      if (incompatible) requireDifferent(left.id, right.id);
+    }
+  }
 
   const vertices = [...groups.keys()];
   return {
@@ -780,6 +952,7 @@ function socialAccountConstraints(nodeId, roles, byId) {
 function validateSocialOperations(registry, packageClosures) {
   const reports = [];
   const materialConditions = [];
+  const conditionRequirements = [];
   for (const [nodeId, node] of registry.nodes) {
     const roles = roleDefinitions(node);
     if (roles === null) continue;
@@ -822,6 +995,9 @@ function validateSocialOperations(registry, packageClosures) {
       materialConditions.push(...conditions
         .filter(({ adapter }) => adapter === 'material_quantity')
         .map(({ targetId }) => ({ nodeId, roleId: role.id, targetId })));
+      conditionRequirements.push(...conditions
+        .filter(({ targetId }) => targetId)
+        .map(({ targetId }) => ({ nodeId, roleId: role.id, targetId })));
       if (roleRequirementContradiction(role)) {
         fail('impossible_social_role',
           `Social operation ${nodeId} has impossible role requirements for ${role.id}`,
@@ -856,59 +1032,7 @@ function validateSocialOperations(registry, packageClosures) {
       rolesMayShareAccounts: minimumDistinctAccounts < roles.length,
     });
   }
-  return { materialConditions, reports };
-}
-
-function contextSeen(seen, value, contextual) {
-  const bucket = contextual ? seen.contextual : seen.plain;
-  if (bucket.has(value)) return true;
-  bucket.add(value);
-  return false;
-}
-
-function containsRandomTrigger(value, seen = {
-  plain: new WeakSet(), contextual: new WeakSet(),
-}, triggerContext = false) {
-  if (triggerContext && typeof value === 'string'
-    && value.toLowerCase().includes('random')) return true;
-  if (!value || typeof value !== 'object' || contextSeen(seen, value, triggerContext)) return false;
-  for (const [key, child] of Object.entries(value)) {
-    const normalizedKey = key.replace(/[^a-z0-9]/gi, '').toLowerCase();
-    if (['random', 'israndom', 'randomized', 'israndomized'].includes(normalizedKey)
-      && (child === true || (typeof child === 'number' && child > 0))) return true;
-    if (['chance', 'probability', 'randomweight'].includes(normalizedKey)
-      && typeof child === 'number' && child > 0) return true;
-    if (['trigger', 'selection', 'mode', 'strategy'].includes(normalizedKey)
-      && typeof child === 'string' && child.toLowerCase().includes('random')) return true;
-    const childContext = triggerContext
-      || ['trigger', 'selection', 'randomizer', 'rng'].includes(normalizedKey);
-    if (containsRandomTrigger(child, seen, childContext)) return true;
-  }
-  return false;
-}
-
-function containsMintEffect(value, seen = {
-  plain: new WeakSet(), contextual: new WeakSet(),
-}, effectContext = false) {
-  if (effectContext && typeof value === 'string'
-    && normalizedObjectKey(value).includes('mint')) return true;
-  if (!value || typeof value !== 'object' || contextSeen(seen, value, effectContext)) return false;
-  for (const [key, child] of Object.entries(value)) {
-    const normalizedKey = key.replace(/[^a-z0-9]/gi, '').toLowerCase();
-    const childEffectContext = effectContext
-      || ['effect', 'effects', 'action', 'actions'].includes(normalizedKey);
-    if (['effect', 'effects', 'action', 'actions', 'adapter'].includes(normalizedKey)) {
-      const values = Array.isArray(child) ? child : [child];
-      if (values.some((entry) => typeof entry === 'string'
-        && normalizedObjectKey(entry).includes('mint'))) return true;
-    }
-    if (normalizedKey.includes('mint')
-      && child !== false && child !== null && child !== undefined) return true;
-    if (['type', 'kind', 'mode', 'strategy'].includes(normalizedKey)
-      && typeof child === 'string' && normalizedObjectKey(child).includes('mint')) return true;
-    if (containsMintEffect(child, seen, childEffectContext)) return true;
-  }
-  return false;
+  return { conditionRequirements, materialConditions, reports };
 }
 
 function normalizedObjectKey(key) {
@@ -919,51 +1043,159 @@ function normalizedAsset(value) {
   if (!nonEmptyString(value)) return null;
   const normalized = value.replace(/[$\s_-]/g, '').toUpperCase();
   if (['CURRENCY', 'TOKEN', 'ASSET', 'REWARD', 'FUNGIBLE'].includes(normalized)) return null;
-  if (['OMR', 'OMERTA', 'OMERTAREWARD', 'OMERTATOKEN'].includes(normalized)) return 'OMR';
+  if ([
+    'OMR', 'OMERTA', 'OMRTOKEN', 'OMRCURRENCY', 'OMERTAREWARD', 'OMERTATOKEN',
+    'OMERTACURRENCY', 'OMERTACOIN',
+  ].includes(normalized)) return 'OMR';
   return normalized;
 }
 
-function rewardAssetDeclarations(value, seen = {
-  plain: new WeakSet(), contextual: new WeakSet(),
-}, assetContext = false, result = []) {
-  if (!value || typeof value !== 'object' || contextSeen(seen, value, assetContext)) return result;
+function canonicalRewardContainers(node) {
+  return [
+    ['reward', node],
+    ['reward.metadata', node.metadata],
+    ['reward.reward', node.reward],
+    ['reward.payout', node.payout],
+    ['reward.metadata.reward', node.metadata?.reward],
+    ['reward.metadata.payout', node.metadata?.payout],
+  ].filter(([, value]) => value && typeof value === 'object' && !Array.isArray(value));
+}
+
+function rewardAssetDeclarations(node) {
   const identityKeys = new Set([
     'asset', 'assettype', 'currency', 'currencytype', 'rewardasset', 'rewardcurrency',
-    'symbol', 'token', 'tokensymbol',
+    'symbol', 'token', 'tokensymbol', 'assetid', 'currencyid', 'currencycode',
+    'rewardassettype', 'rewardcurrencytype', 'tokentype',
   ]);
-  for (const [key, child] of Object.entries(value)) {
-    const normalizedKey = normalizedObjectKey(key);
-    const identityField = identityKeys.has(normalizedKey)
-      || (assetContext && ['id', 'name', 'type'].includes(normalizedKey));
-    if (identityField && typeof child === 'string') {
-      const asset = normalizedAsset(child);
-      if (asset) result.push({ asset, pathKey: key, value: child });
+  const nestedIdentityKeys = new Set(['id', 'name', 'type', 'symbol']);
+  const declarations = [];
+  for (const [path, container] of canonicalRewardContainers(node)) {
+    for (const [key, value] of Object.entries(container)) {
+      if (!identityKeys.has(normalizedObjectKey(key))) continue;
+      if (typeof value === 'string') {
+        const asset = normalizedAsset(value);
+        if (asset) declarations.push({ asset, path: `${path}.${key}`, value });
+      } else if (value && typeof value === 'object' && !Array.isArray(value)) {
+        for (const [nestedKey, nestedValue] of Object.entries(value)) {
+          if (!nestedIdentityKeys.has(normalizedObjectKey(nestedKey))
+            || typeof nestedValue !== 'string') continue;
+          const asset = normalizedAsset(nestedValue);
+          if (asset) {
+            declarations.push({
+              asset,
+              path: `${path}.${key}.${nestedKey}`,
+              value: nestedValue,
+            });
+          }
+        }
+      }
     }
-    const childContext = assetContext || identityKeys.has(normalizedKey);
-    rewardAssetDeclarations(child, seen, childContext, result);
   }
-  return result;
+  return declarations;
 }
 
-function namedScalars(value, names, seen = new Set(), result = []) {
-  if (!value || typeof value !== 'object' || seen.has(value)) return result;
-  seen.add(value);
-  for (const [key, child] of Object.entries(value)) {
-    if (names.has(normalizedObjectKey(key)) && (child === null || typeof child !== 'object')) {
-      result.push(child);
-    }
-    namedScalars(child, names, seen, result);
-  }
-  return result;
+function canonicalAuthority(node, field) {
+  return [
+    { path: `reward.${field}`, value: node[field] },
+    { path: `reward.metadata.${field}`, value: node.metadata?.[field] },
+  ].filter(({ value }) => value !== undefined);
 }
 
-function unsafeRepeatAlias(node) {
-  const aliases = namedScalars(node, new Set([
+function assertedAuthority(node, field, missingMessage) {
+  const declarations = canonicalAuthority(node, field);
+  if (declarations.some(({ value }) => !nonEmptyString(value))) {
+    fail('invalid_omr_reward', missingMessage, { nodeId: node.id, field, declarations });
+  }
+  const values = [...new Set(declarations.map(({ value }) => value.trim()))];
+  if (values.length > 1) {
+    fail('conflicting_omr_authority',
+      `OMR reward ${node.id} has conflicting ${field} declarations`,
+      { nodeId: node.id, field, declarations });
+  }
+  if (values.length === 0) fail('invalid_omr_reward', missingMessage, { nodeId: node.id, field });
+  return values[0];
+}
+
+function truthyRepeatAlias(container) {
+  if (!container || typeof container !== 'object' || Array.isArray(container)) return false;
+  const aliases = new Set([
     'repeat', 'repeatable', 'isrepeatable', 'repeats', 'recurring', 'isrecurring',
     'repeatevery',
-  ]));
-  return aliases.some((value) => value === true || (typeof value === 'number' && value > 0)
-    || (typeof value === 'string' && !['false', 'no', 'never'].includes(value.toLowerCase())));
+  ]);
+  return Object.entries(container).some(([key, value]) => (
+    aliases.has(normalizedObjectKey(key))
+    && (value === true || (typeof value === 'number' && value > 0)
+      || (typeof value === 'string'
+        && !['', 'false', 'no', 'never', '0'].includes(value.trim().toLowerCase())))
+  ));
+}
+
+function triggerIsRandom(value, seen = new WeakSet()) {
+  if (typeof value === 'string') return normalizedObjectKey(value).includes('random');
+  if (!value || typeof value !== 'object' || seen.has(value)) return false;
+  seen.add(value);
+  return Object.entries(value).some(([key, child]) => {
+    const normalizedKey = normalizedObjectKey(key);
+    if (['random', 'israndom', 'randomized', 'israndomized'].includes(normalizedKey)) {
+      return child !== false && child !== null && child !== undefined
+        && child !== 0 && child !== '0' && child !== 'false';
+    }
+    if (['chance', 'probability', 'randomweight'].includes(normalizedKey)) {
+      return (typeof child === 'number' && child > 0)
+        || (typeof child === 'string' && Number(child) > 0);
+    }
+    if (typeof child === 'string'
+      && ['type', 'kind', 'selection', 'mode', 'strategy', 'adapter'].includes(normalizedKey)
+      && normalizedObjectKey(child).includes('random')) return true;
+    return triggerIsRandom(child, seen);
+  });
+}
+
+function containsCanonicalRandom(node) {
+  for (const [, container] of canonicalRewardContainers(node)) {
+    for (const [key, value] of Object.entries(container)) {
+      const normalizedKey = normalizedObjectKey(key);
+      if (['random', 'israndom', 'randomized', 'israndomized'].includes(normalizedKey)
+        && value !== false && value !== null && value !== undefined
+        && value !== 0 && value !== '0' && value !== 'false') return true;
+      if (['chance', 'probability', 'randomweight'].includes(normalizedKey)
+        && ((typeof value === 'number' && value > 0)
+          || (typeof value === 'string' && Number(value) > 0))) return true;
+      if (['trigger', 'selection'].includes(normalizedKey) && triggerIsRandom(value)) return true;
+    }
+  }
+  return false;
+}
+
+function effectMints(value, seen = new WeakSet(), verbContext = true) {
+  if (typeof value === 'string') {
+    return verbContext && normalizedObjectKey(value).includes('mint');
+  }
+  if (!value || typeof value !== 'object' || seen.has(value)) return false;
+  seen.add(value);
+  if (Array.isArray(value)) {
+    return value.some((entry) => effectMints(entry, seen, verbContext));
+  }
+  const verbKeys = new Set(['type', 'kind', 'adapter', 'action', 'effect', 'verb']);
+  return Object.entries(value).some(([key, child]) => {
+    const normalizedKey = normalizedObjectKey(key);
+    if (['mint', 'directmint'].includes(normalizedKey) && child !== false && child !== null
+      && child !== undefined) return true;
+    return effectMints(child, seen, verbKeys.has(normalizedKey));
+  });
+}
+
+function containsCanonicalMint(node) {
+  const effectKeys = new Set(['effect', 'effects', 'action', 'actions']);
+  for (const [, container] of canonicalRewardContainers(node)) {
+    for (const [key, value] of Object.entries(container)) {
+      const normalizedKey = normalizedObjectKey(key);
+      if (effectKeys.has(normalizedKey) && effectMints(value)) return true;
+      if (['mint', 'directmint'].includes(normalizedKey)
+        && value !== false && value !== null && value !== undefined) return true;
+    }
+  }
+  return false;
 }
 
 function validateOmrRewards(registry) {
@@ -980,24 +1212,21 @@ function validateOmrRewards(registry) {
     if (!assets.includes('OMR')) continue;
     count += 1;
     const pkg = registry.byPackage.get(node.packageId);
-    if (unsafeRepeatAlias(node)) {
+    if (canonicalRewardContainers(node).some(([, container]) => truthyRepeatAlias(container))) {
       fail('invalid_omr_reward',
         `OMR reward ${node.id} cannot set repeatable:true or an equivalent repeatable alias`,
         { nodeId: node.id });
     }
-    const allocationIds = namedScalars(node, new Set(['allocationid']))
-      .filter(nonEmptyString);
-    if (allocationIds.length === 0 || !nonEmptyString(pkg?.season) || pkg.season === 'core') {
+    if (!nonEmptyString(pkg?.season) || pkg.season.trim().toLowerCase() === 'core') {
       fail('invalid_omr_reward',
         `OMR reward ${node.id} requires a finite seasonal allocationId`, { nodeId: node.id });
     }
-    if (namedScalars(node, new Set(['claimkey', 'idempotencykey'])).filter(nonEmptyString).length === 0) {
-      fail('invalid_omr_reward',
-        `OMR reward ${node.id} requires an idempotent claimKey`, { nodeId: node.id });
-    }
-    const repeatabilities = namedScalars(node, new Set(['repeatability', 'claimrule']))
-      .filter(nonEmptyString)
-      .map((value) => value.toLowerCase());
+    assertedAuthority(node, 'allocationId',
+      `OMR reward ${node.id} requires a finite seasonal allocationId`);
+    assertedAuthority(node, 'claimKey',
+      `OMR reward ${node.id} requires an idempotent claimKey`);
+    const repeatabilities = canonicalAuthority(node, 'repeatability')
+      .map(({ value }) => (nonEmptyString(value) ? value.trim().toLowerCase() : value));
     const distinctRepeatabilities = [...new Set(repeatabilities)];
     if (distinctRepeatabilities.length > 1) {
       fail('invalid_omr_reward',
@@ -1009,16 +1238,21 @@ function validateOmrRewards(registry) {
       fail('invalid_omr_reward',
         `OMR reward ${node.id} repeatability must be once or capped`, { nodeId: node.id });
     }
-    const caps = namedScalars(node, new Set(['claimcap', 'maxclaims', 'cap']));
-    if (repeatability === 'capped' && !caps.some(positiveInteger)) {
+    const caps = [
+      node.claimCap, node.maxClaims, node.cap,
+      node.metadata?.claimCap, node.metadata?.maxClaims, node.metadata?.cap,
+    ].filter((value) => value !== undefined);
+    if (repeatability === 'capped'
+      && (caps.length === 0 || caps.some((cap) => !positiveInteger(cap))
+        || new Set(caps).size > 1)) {
       fail('invalid_omr_reward',
         `Capped OMR reward ${node.id} requires a positive finite claim cap`, { nodeId: node.id });
     }
-    if (containsRandomTrigger(node)) {
+    if (containsCanonicalRandom(node)) {
       fail('invalid_omr_reward',
         `OMR reward ${node.id} cannot use a random trigger`, { nodeId: node.id });
     }
-    if (containsMintEffect(node)) {
+    if (containsCanonicalMint(node)) {
       fail('invalid_omr_reward',
         `OMR reward ${node.id} cannot mint or directly mint OMR`, { nodeId: node.id });
     }
@@ -1047,12 +1281,197 @@ function materialEntryIds(registry, entries) {
     .map(({ id }) => id);
 }
 
+function graphReachability({
+  registry, quantityByNode, conditionByNode, packageClosures, socialConditionRequirements,
+}) {
+  const roleRequirements = new Map();
+  for (const { nodeId, targetId } of socialConditionRequirements) {
+    const targets = roleRequirements.get(nodeId) || [];
+    targets.push(targetId);
+    roleRequirements.set(nodeId, targets);
+  }
+
+  const cache = new Map();
+  function accessiblePackages(packageId) {
+    return new Set([packageId, ...(packageClosures.get(packageId) || [])]);
+  }
+  function requirementsFor(nodeId, node) {
+    const quantities = quantityByNode.get(nodeId);
+    const quantityTargets = [
+      ...quantities.consumes,
+      ...quantities.inputs,
+      ...quantities.catalysts,
+      ...quantities.catalystInputs,
+    ].filter(({ external }) => !external).map(({ id }) => id);
+    return [...new Set([
+      ...(node.requires || []),
+      ...conditionByNode.get(nodeId).map(({ targetId }) => targetId).filter(Boolean),
+      ...(roleRequirements.get(nodeId) || []),
+      ...quantityTargets,
+    ])];
+  }
+  function canUnlock(nodeId, node) {
+    const requirements = requirementsFor(nodeId, node);
+    const isDefinition = ['material', 'item_template', 'evidence'].includes(node.type);
+    const hasUnlock = requirements.length > 0 || (node.requiresAny || []).length > 0;
+    if (isDefinition && !hasUnlock) return false;
+    if (node.type === 'recipe' && !hasUnlock) {
+      const quantities = quantityByNode.get(nodeId);
+      const hasExternalInput = [...quantities.consumes, ...quantities.inputs]
+        .some(({ external }) => external);
+      if (!hasExternalInput && !recipeHasFiniteSourceSemantics(node)) return false;
+    }
+    if (['hidden', 'role_private'].includes(node.visibility)
+      && node.type !== 'source' && !hasUnlock) return false;
+    return true;
+  }
+
+  function setIsSubset(left, right) {
+    return [...left].every((value) => right.has(value));
+  }
+  function witnessDominates(left, right) {
+    return setIsSubset(left.completed, right.completed)
+      && setIsSubset(left.forbidden, right.forbidden);
+  }
+  function mergeWitnesses(left, right) {
+    const completed = new Set([...left.completed, ...right.completed]);
+    const forbidden = new Set([...left.forbidden, ...right.forbidden]);
+    if ([...completed].some((nodeId) => forbidden.has(nodeId))) return null;
+    return { completed, forbidden };
+  }
+  function addWitness(collection, witness, nodeId) {
+    if (collection.some((existing) => witnessDominates(existing, witness))) return false;
+    for (let index = collection.length - 1; index >= 0; index -= 1) {
+      if (witnessDominates(witness, collection[index])) collection.splice(index, 1);
+    }
+    if (collection.length >= MAX_GRAPH_WITNESSES_PER_NODE) {
+      fail('graph_reachability_too_complex',
+        `Node ${nodeId} exceeds the Phase 1 reachability witness limit ${MAX_GRAPH_WITNESSES_PER_NODE}`,
+        { nodeId, maximumWitnesses: MAX_GRAPH_WITNESSES_PER_NODE });
+    }
+    collection.push(witness);
+    return true;
+  }
+  function extendForNode(witness, nodeId, node) {
+    return mergeWitnesses(witness, {
+      completed: new Set([nodeId]),
+      forbidden: new Set(node.excludes || []),
+    });
+  }
+  function deriveWitnesses(nodeId, node, witnesses) {
+    if (!canUnlock(nodeId, node)) return [];
+    const requirementGroups = [];
+    for (const targetId of requirementsFor(nodeId, node)) {
+      const targetWitnesses = witnesses.get(targetId) || [];
+      if (targetWitnesses.length === 0) return [];
+      requirementGroups.push(targetWitnesses);
+    }
+    for (const alternatives of node.requiresAny || []) {
+      const targetWitnesses = alternatives.flatMap((targetId) => witnesses.get(targetId) || []);
+      if (targetWitnesses.length === 0) return [];
+      requirementGroups.push(targetWitnesses);
+    }
+
+    let combinations = [{ completed: new Set(), forbidden: new Set() }];
+    let work = 0;
+    for (const options of requirementGroups) {
+      const next = [];
+      for (const combination of combinations) {
+        for (const option of options) {
+          work += 1;
+          if (work > MAX_GRAPH_WITNESSES_PER_NODE ** 2) {
+            fail('graph_reachability_too_complex',
+              `Node ${nodeId} exceeds the Phase 1 reachability combination budget`,
+              { nodeId, maximumCombinations: MAX_GRAPH_WITNESSES_PER_NODE ** 2 });
+          }
+          const merged = mergeWitnesses(combination, option);
+          if (merged) addWitness(next, merged, nodeId);
+        }
+      }
+      combinations = next;
+      if (combinations.length === 0) return [];
+    }
+    return combinations
+      .map((witness) => extendForNode(witness, nodeId, node))
+      .filter(Boolean);
+  }
+
+  function reachableFor(packageId) {
+    if (cache.has(packageId)) return cache.get(packageId);
+    const accessible = accessiblePackages(packageId);
+    const witnesses = new Map();
+    for (const [nodeId, node] of registry.nodes) {
+      if (!accessible.has(node.packageId) || !isSeeded(node)) continue;
+      const seeded = extendForNode(
+        { completed: new Set(), forbidden: new Set() }, nodeId, node,
+      );
+      if (seeded) witnesses.set(nodeId, [seeded]);
+    }
+
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const [nodeId, node] of registry.nodes) {
+        if (!accessible.has(node.packageId)) continue;
+        const nodeWitnesses = witnesses.get(nodeId) || [];
+        for (const witness of deriveWitnesses(nodeId, node, witnesses)) {
+          if (addWitness(nodeWitnesses, witness, nodeId)) changed = true;
+        }
+        if (nodeWitnesses.length === 0) continue;
+        witnesses.set(nodeId, nodeWitnesses);
+
+        const quantities = quantityByNode.get(nodeId);
+        for (const { id, external } of [...quantities.produces, ...quantities.outputs]) {
+          if (external) continue;
+          const outputNode = registry.nodes.get(id);
+          const outputWitnesses = witnesses.get(id) || [];
+          for (const witness of nodeWitnesses) {
+            const produced = extendForNode(witness, id, outputNode);
+            if (produced && addWitness(outputWitnesses, produced, id)) changed = true;
+          }
+          if (outputWitnesses.length > 0) witnesses.set(id, outputWitnesses);
+        }
+      }
+    }
+    const reachable = new Set(witnesses.keys());
+    cache.set(packageId, reachable);
+    return reachable;
+  }
+
+  return { accessiblePackages, reachableFor };
+}
+
+function validateTerminalReachability(registry, dependencyEdges, quantityByNode, reachability) {
+  const referenced = new Set();
+  for (const dependencies of dependencyEdges.values()) {
+    for (const dependencyId of dependencies) referenced.add(dependencyId);
+  }
+  const terminalTypes = new Set([
+    'mystery_step', 'operation_step', 'social_gate', 'world_gate', 'choice', 'reward', 'sink',
+  ]);
+  for (const [nodeId, node] of registry.nodes) {
+    if (['hidden', 'role_private'].includes(node.visibility)) continue;
+    const reachable = reachability.reachableFor(node.packageId).has(nodeId);
+    const quantities = quantityByNode.get(nodeId);
+    const isProducer = quantities.produces.length > 0 || quantities.outputs.length > 0;
+    if (isProducer && !reachable) {
+      fail('unreachable_producer',
+        `Non-secret producer node ${nodeId} is not reachable from a valid start`,
+        { nodeId, packageId: node.packageId });
+    }
+    if (terminalTypes.has(node.type) && !referenced.has(nodeId) && !reachable) {
+      fail('unreachable_terminal',
+        `Non-secret terminal node ${nodeId} is not reachable from a valid start`,
+        { nodeId, packageId: node.packageId });
+    }
+  }
+}
+
 function buildMaterialDiagnostics({
-  registry, quantityByNode, conditionByNode, socialMaterialConditions, packageClosures,
+  registry, quantityByNode, conditionByNode, socialMaterialConditions, reachability,
 }) {
   const producedBy = new Map();
   const consumedBy = new Map();
-  const producers = [];
   for (const [nodeId, node] of registry.nodes) {
     const quantities = quantityByNode.get(nodeId);
     for (const { id, external } of [...quantities.produces, ...quantities.outputs]) {
@@ -1080,20 +1499,6 @@ function buildMaterialDiagnostics({
       consumers.push({ consumerId: nodeId, packageId: node.packageId });
       consumedBy.set(id, consumers);
     }
-    if (['source', 'recipe'].includes(node.type)) {
-      const outputs = materialEntryIds(registry, [
-        ...quantities.produces,
-        ...quantities.outputs,
-      ]);
-      if (outputs.length > 0) {
-        producers.push({
-          nodeId,
-          packageId: node.packageId,
-          outputs,
-          requirements: [...new Set([...materialInputs, ...conditionMaterials])],
-        });
-      }
-    }
   }
   for (const { nodeId, roleId, targetId } of socialMaterialConditions) {
     const consumers = consumedBy.get(targetId) || [];
@@ -1111,40 +1516,10 @@ function buildMaterialDiagnostics({
     if (consumedBy.has(nodeId)) requiredMaterials.add(nodeId);
   }
 
-  const reachableCache = new Map();
-  function accessiblePackages(packageId) {
-    return new Set([packageId, ...(packageClosures.get(packageId) || [])]);
-  }
-  function reachableFor(packageId) {
-    if (reachableCache.has(packageId)) return reachableCache.get(packageId);
-    const accessible = accessiblePackages(packageId);
-    const reachable = new Set();
-    for (const [nodeId, node] of registry.nodes) {
-      if (node.type === 'material' && accessible.has(node.packageId) && isSeeded(node)) {
-        reachable.add(nodeId);
-      }
-    }
-    let changed = true;
-    while (changed) {
-      changed = false;
-      for (const producer of producers) {
-        if (!accessible.has(producer.packageId)
-          || !producer.requirements.every((id) => reachable.has(id))) continue;
-        for (const outputId of producer.outputs) {
-          if (reachable.has(outputId)) continue;
-          reachable.add(outputId);
-          changed = true;
-        }
-      }
-    }
-    reachableCache.set(packageId, reachable);
-    return reachable;
-  }
-
   for (const [nodeId, node] of registry.nodes) {
     if (node.type !== 'material') continue;
     for (const consumer of consumedBy.get(nodeId) || []) {
-      if (!reachableFor(consumer.packageId).has(nodeId)) {
+      if (!reachability.reachableFor(consumer.packageId).has(nodeId)) {
         fail('unsourced_material',
           `Required material ${nodeId} has no reachable source or administrator/season seed in package ${consumer.packageId}'s dependency set`,
           {
@@ -1166,7 +1541,7 @@ function buildMaterialDiagnostics({
     const outputs = [...quantityByNode.get(nodeId).produces, ...quantityByNode.get(nodeId).outputs];
     if (outputs.length === 0 || outputs.every(({ id }) => (
       !(consumedBy.get(id) || []).some(({ packageId }) => (
-        accessiblePackages(packageId).has(node.packageId)
+        reachability.accessiblePackages(packageId).has(node.packageId)
       ))
     ))) {
       orphanedSources.push(nodeId);
@@ -1174,7 +1549,9 @@ function buildMaterialDiagnostics({
   }
   const reachableMaterials = new Set();
   for (const packageId of registry.byPackage.keys()) {
-    for (const materialId of reachableFor(packageId)) reachableMaterials.add(materialId);
+    for (const nodeId of reachability.reachableFor(packageId)) {
+      if (registry.nodes.get(nodeId)?.type === 'material') reachableMaterials.add(nodeId);
+    }
   }
   return {
     required: requiredMaterials.size,
@@ -1205,13 +1582,22 @@ export function validateGraph(registry) {
   const recipes = validateRecipeClasses(registry, quantityByNode);
   const social = validateSocialOperations(registry, packageClosures);
   const omrRewards = validateOmrRewards(registry);
+  validateRecipeSources(registry, quantityByNode);
+  const reachability = graphReachability({
+    registry,
+    quantityByNode,
+    conditionByNode,
+    packageClosures,
+    socialConditionRequirements: social.conditionRequirements,
+  });
   const materials = buildMaterialDiagnostics({
     registry,
     quantityByNode,
     conditionByNode,
     socialMaterialConditions: social.materialConditions,
-    packageClosures,
+    reachability,
   });
+  validateTerminalReachability(registry, dependencyEdges, quantityByNode, reachability);
   validateRecipeCycles(registry, quantityByNode);
 
   const warnings = [
@@ -1308,5 +1694,6 @@ export function loadAndValidateGraphPackages(packages) {
 }
 
 export const SUPPORTED_WORLD_GRAPH_CONDITION_ADAPTERS = Object.freeze([...CONDITION_ADAPTERS]);
+export const MAX_EXACT_RECIPE_SCC_SIZE = MAX_EXACT_RECIPE_SCC_TEMPLATES;
 
 export default validateGraph;
