@@ -1004,8 +1004,11 @@
     /* No receipt exemption here: the moment a player pulls one job a receipt exists, the history
        block re-appears (~200px of chrome) and every screen's own content drops below a 568px fold —
        which is how the 320x568 harness check went red on exactly the player who had done anything.
-       The receipts still reach the toast and the session feed; on a short phone the operation wins. */
+       Ordinary receipts still reach the toast; on a short phone the operation wins. An actionable
+       error is different: its recovery control may be the only idempotency-safe way to continue. */
     #operation-desk .operation-desk__history { display: none; }
+    #operation-desk:has(.operation-receipt--error [data-operation-retry],
+      .operation-receipt--error [data-operation-tab]) .operation-desk__history { display: block; }
     #vitals { min-height: 44px; padding-block: 4px; }
     #tabpanel { padding-top: 8px; }
     #grouprail, #tabs { padding-bottom: 4px; }
