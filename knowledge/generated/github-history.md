@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `33abbf6c854f`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `5c535973f697`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1315 |
+| Commits in clone | 1317 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-03 — fix(deps): patch Fastify and URI advisories |
+| Latest commit | 2026-09-03 — Merge pull request #167 from OmertaDev/codex/production-dependency-security |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 451 |
+| OmertaDev | 453 |
 | Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 19 |
@@ -39,10 +39,10 @@
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 172 | yes |
 | [package.json](../../package.json) | 145 | yes |
-| knowledge/generated/github-history.md | 143 | historical |
-| knowledge/generated/graph-summary.md | 143 | historical |
-| knowledge/generated/graph.json | 143 | historical |
-| knowledge/generated/inventory.md | 143 | historical |
+| knowledge/generated/github-history.md | 144 | historical |
+| knowledge/generated/graph-summary.md | 144 | historical |
+| knowledge/generated/graph.json | 144 | historical |
+| knowledge/generated/inventory.md | 144 | historical |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
