@@ -149,9 +149,10 @@ export async function bumpFamilyTask(client, h, kind, amount) {
 }
 
 export async function ledger(client, { characterId = null, accountId = null, currency, amount, reason, counterparty = null }) {
+  const transactionId = uid();
   await client.query(
     'INSERT INTO transactions (id, character_id, account_id, currency, amount, reason, counterparty) VALUES ($1,$2,$3,$4,$5,$6,$7)',
-    [uid(), characterId, accountId, currency, amount, reason, counterparty]);
+    [transactionId, characterId, accountId, currency, amount, reason, counterparty]);
   // THE RECYCLE (economy v3 step 2). A $OMR sink no longer destroys the token — it hands it to the
   // desk, which sells it back at the daily auction. Design §3.3/§4.2: every sink is the house's cut,
   // so revenue ≈ sink volume × price and the KPI is how often a token comes home, not how few exist.
@@ -174,6 +175,10 @@ export async function ledger(client, { characterId = null, accountId = null, cur
       'INSERT INTO transactions (id, currency, amount, reason, counterparty) VALUES ($1,$2,$3,$4,$5)',
       [uid(), 'omr', back, DESK_RECYCLE_REASON, reason]);
   }
+  // Most callers need only the durable audit side effect. Compound item mutations additionally use
+  // the exact row identity for pg-mem compensation; returning it is backward-compatible for every
+  // existing fire-and-forget caller and avoids a broad reason-based cleanup.
+  return transactionId;
 }
 export async function rngLog(client, characterId, action, roll, outcome) {
   await client.query('INSERT INTO rng_audit (id, character_id, action, roll, outcome) VALUES ($1,$2,$3,$4,$5)',

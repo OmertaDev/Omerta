@@ -185,6 +185,22 @@ function registerUndo(client, undo) {
   transaction.undo.push(undo);
 }
 
+/**
+ * Register compensation for non-item authority consumed by a compound item action.
+ *
+ * This is an internal integration seam for authoritative adapters such as vehicle salvage. The
+ * callback is used only by pg-mem, whose ROLLBACK does not undo writes; real PostgreSQL relies on
+ * the surrounding transaction. Callers must already be inside `withItemTransaction`, and graph
+ * content never receives this capability.
+ */
+export function registerItemTransactionUndo(client, undo) {
+  transactionClient(client);
+  if (typeof undo !== 'function') {
+    fail('bad_item_request', 'Item transaction compensation requires a callback.');
+  }
+  registerUndo(client, undo);
+}
+
 async function beginMutation(client, kind, owner, idempotencyKey, request) {
   await activeTransaction(client);
   const key = logicalKey(idempotencyKey);
@@ -440,6 +456,13 @@ export async function grantStack(
           FOR UPDATE`,
         [owner.scope, owner.id, templateId, quality],
       )).rows[0];
+      const priorQuantity = Number(prior?.quantity || 0);
+      // Keep the application-side bound explicit. PostgreSQL's integer type also rejects overflow,
+      // but pg-mem does not reliably honor the conditional ON CONFLICT WHERE clause at INT_MAX;
+      // compound rollback tests need both engines to reject the same late grant.
+      if (!Number.isSafeInteger(priorQuantity) || priorQuantity > INT_MAX - qty) {
+        fail('inventory_cap', 'That material grant would exceed the inventory quantity limit.');
+      }
       registerUndo(client, async () => {
         if (!prior) {
           await client.query(
@@ -451,7 +474,7 @@ export async function grantStack(
           await client.query(
             `UPDATE item_stacks SET quantity=$5, created_at=$6, updated_at=$7
               WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality=$4`,
-            [owner.scope, owner.id, templateId, quality, Number(prior.quantity),
+            [owner.scope, owner.id, templateId, quality, priorQuantity,
               prior.created_at, prior.updated_at],
           );
         }

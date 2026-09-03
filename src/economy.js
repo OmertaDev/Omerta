@@ -3,6 +3,7 @@
 // row (ch), the txn client, and the helper bag h = {ledger, rngLog, events, acct, owned}.
 import crypto from 'node:crypto';
 import { logCollect } from './collection.js';
+import { registerItemTransactionUndo } from './items.js';
 // (tokenomics v2 step 2) the early-exit surcharge + toll split now live only on the WITHDRAWAL
 // boundary in chain.js — the AMM sell that used to carry them here is retired with the pool.
 import { GameError, bumpFamilyTask, skillMult, trunkCap, npcMult, bumpStanding, bumpMastery, bus, notify } from './game.js';
@@ -139,6 +140,61 @@ function findCar(h, carId) {
 async function removeCar(client, h, carId) {
   await client.query('DELETE FROM cars WHERE id=$1', [carId]);
   h.owned.cars = h.owned.cars.filter((c) => c.id !== carId);
+}
+
+// WORLD-GRAPH SALVAGE — consume one concrete car through the garage's authoritative row rather
+// than a client array index or caller-provided model. The caller is already inside the item module's
+// compound transaction. Registering the exact pre-image with that module gives pg-mem the same
+// rollback semantics PostgreSQL gets from the real transaction; graph data never receives this hook.
+export async function consumeOwnedCarForItemMutation(client, h, characterId, carId) {
+  const row = (await client.query(
+    `SELECT id, character_id, model_id, trim_id, dmg, plate, listed, pledged, tune,
+            race_limit, pink_slip, nos, rarity, minted_onchain, created_at, run_id, serial
+       FROM cars WHERE id=$1 AND character_id=$2 FOR UPDATE`,
+    [carId, characterId],
+  )).rows[0];
+  // Extracted cars are deliberately absent from the in-play garage and must read like no car here,
+  // matching loadOwned/findCar. This also avoids leaking another owner's car state by raw ID.
+  if (!row || row.minted_onchain) throw new GameError('no_car', 'No such car in the garage.');
+  if (row.listed) throw new GameError('listed', "It's on the block — cancel the listing first.");
+  if (row.pledged) throw new GameError('pledged', "It's pledged as loan collateral — square the debt first.");
+  if (row.race_limit !== null || row.pink_slip) {
+    throw new GameError('race_reserved', "It's reserved on the race board — withdraw it first.");
+  }
+
+  const cached = h?.owned?.cars?.find((car) => car.id === row.id) || null;
+  registerItemTransactionUndo(client, async () => {
+    await client.query(
+      `INSERT INTO cars
+         (id,character_id,model_id,trim_id,dmg,plate,listed,pledged,tune,race_limit,
+          pink_slip,nos,rarity,minted_onchain,created_at,run_id,serial)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
+       ON CONFLICT (id) DO NOTHING`,
+      [row.id, row.character_id, row.model_id, row.trim_id, row.dmg, row.plate,
+        row.listed, row.pledged, row.tune, row.race_limit, row.pink_slip, row.nos,
+        row.rarity, row.minted_onchain, row.created_at, row.run_id, row.serial],
+    );
+    if (cached && h?.owned?.cars && !h.owned.cars.some((car) => car.id === cached.id)) {
+      h.owned.cars.push(cached);
+    }
+  });
+
+  const removed = await client.query(
+    `DELETE FROM cars
+      WHERE id=$1 AND character_id=$2 AND NOT listed AND NOT pledged AND NOT minted_onchain
+        AND race_limit IS NULL AND NOT pink_slip`,
+    [row.id, characterId],
+  );
+  if (removed.rowCount !== 1) {
+    throw new GameError('contention', 'That car changed while the salvage crew was moving it.');
+  }
+  if (h?.owned?.cars) h.owned.cars = h.owned.cars.filter((car) => car.id !== row.id);
+  return {
+    id: row.id,
+    modelId: row.model_id,
+    trimId: row.trim_id,
+    damage: Number(row.dmg || 0),
+  };
 }
 
 export async function meltCar(ch, carId, client, h) {

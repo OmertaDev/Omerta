@@ -646,6 +646,174 @@ console.log('\n7a. ITEM CONSERVATION CONSTRAINTS ARE REAL DATABASE AUTHORITY');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+console.log('\n7a2. GRAPH CRAFTING AND SALVAGE HOLD UNDER REAL ROW LOCKS');
+// pg-mem needs an inverse log because its ROLLBACK is cosmetic, and it serializes item transactions
+// because it has no row locks. This probe reaches the production half of the contract: native
+// rollback, concurrent same/different logical keys, one car deletion, and one cash ledger debit.
+{
+  const { craft, salvageCar } = await import('../src/crafting.js');
+  const { grantStack, inventoryBoard, withItemTransaction } = await import('../src/items.js');
+  const tx = (action) => withItemTransaction(pool, action);
+  const prefix = `pgcheck-crafting-${process.pid}-${Date.now()}`;
+  const craftAccount = `${prefix}-cash-account`;
+  const craftCharacter = `${prefix}-cash-character`;
+  const salvageAccount = `${prefix}-car-account`;
+  const salvageCharacter = `${prefix}-car-character`;
+  const craftH = { accountId: craftAccount, owned: { cars: [] } };
+  const salvageH = { accountId: salvageAccount, owned: { cars: [] } };
+  const craftOwner = { scope: 'account', id: craftAccount };
+  const salvageOwner = { scope: 'account', id: salvageAccount };
+  const sameCar = `${prefix}-same-car`;
+  const differentCar = `${prefix}-different-car`;
+  const rollbackCar = `${prefix}-rollback-car`;
+  const keys = [
+    `${prefix}-craft-seed`, `${prefix}-craft-cap`, `${prefix}-craft-fail`,
+    `${prefix}-craft-same`, `${prefix}-salvage-same`, `${prefix}-salvage-a`,
+    `${prefix}-salvage-b`, `${prefix}-salvage-rollback`,
+  ];
+  const stackQty = (board, templateId) => Number(
+    board.stacks.find((stack) => stack.templateId === templateId)?.qty || 0,
+  );
+
+  await pool.query(
+    `INSERT INTO characters (id,account_id,name,season,loc,respect,cash)
+     VALUES ($1,$2,$3,1,'foundry',10000,1000),
+            ($4,$5,$6,1,'foundry',10000,1000)`,
+    [craftCharacter, craftAccount, `${prefix}-cash`,
+      salvageCharacter, salvageAccount, `${prefix}-car`],
+  );
+  await pool.query(
+    `INSERT INTO cars (id,character_id,model_id,trim_id,dmg)
+     VALUES ($1,$4,'junker','stock',10),
+            ($2,$4,'junker','stock',20),
+            ($3,$4,'junker','stock',30)`,
+    [sameCar, differentCar, rollbackCar, salvageCharacter],
+  );
+
+  await tx((client) => grantStack(
+    client, craftOwner, 'mat:scrap_steel', 4, 'standard', 'pgcheck craft seed', keys[0],
+  ));
+  await tx((client) => grantStack(
+    client, craftOwner, 'mat:hardened_steel', 2147483647, 'standard',
+    'pgcheck craft cap', keys[1],
+  ));
+  let lateCraftCode = '';
+  try {
+    await tx((client) => craft(
+      client, craftH, 'recipe:hardened_steel', keys[2],
+    ));
+  } catch (error) { lateCraftCode = error.code; }
+  let craftBoard = await inventoryBoard(pool, craftOwner);
+  const failedCraftCash = Number((await pool.query(
+    'SELECT cash FROM characters WHERE id=$1', [craftCharacter],
+  )).rows[0].cash);
+  const failedCraftLedger = Number((await pool.query(
+    "SELECT COUNT(*) AS n FROM transactions WHERE character_id=$1 AND reason='craft:recipe:hardened_steel'",
+    [craftCharacter],
+  )).rows[0].n);
+  check(lateCraftCode === 'inventory_cap' && failedCraftCash === 1000
+      && stackQty(craftBoard, 'mat:scrap_steel') === 4
+      && stackQty(craftBoard, 'mat:hardened_steel') === 2147483647
+      && failedCraftLedger === 0,
+  'native rollback restores cash, input, capped output, and exact ledger state after late failure',
+  `error ${lateCraftCode || 'none'}, cash ${failedCraftCash}, ledger ${failedCraftLedger}`);
+
+  // Remove only the fixture cap so two real clients can contend on one character and logical key.
+  await pool.query(
+    `DELETE FROM item_stacks WHERE owner_scope='account' AND owner_id=$1
+      AND template_id='mat:hardened_steel' AND quality='standard'`, [craftAccount],
+  );
+  const sameCraft = await Promise.all([
+    tx((client) => craft(client, craftH, 'recipe:hardened_steel', keys[3])),
+    tx((client) => craft(client, craftH, 'recipe:hardened_steel', keys[3])),
+  ]);
+  craftBoard = await inventoryBoard(pool, craftOwner);
+  const craftCash = Number((await pool.query(
+    'SELECT cash FROM characters WHERE id=$1', [craftCharacter],
+  )).rows[0].cash);
+  const craftLedger = Number((await pool.query(
+    "SELECT COUNT(*) AS n FROM transactions WHERE character_id=$1 AND currency='cash'"
+      + " AND amount=-300 AND reason='craft:recipe:hardened_steel'",
+    [craftCharacter],
+  )).rows[0].n);
+  check(JSON.stringify(sameCraft[0]) === JSON.stringify(sameCraft[1])
+      && craftCash === 700 && craftLedger === 1
+      && stackQty(craftBoard, 'mat:scrap_steel') === 0
+      && stackQty(craftBoard, 'mat:hardened_steel') === 1,
+  'competing same-key cash craft applies one debit, one ledger row, and one output',
+  `cash ${craftCash}, ledger ${craftLedger}, hardened ${stackQty(craftBoard, 'mat:hardened_steel')}`);
+
+  const sameSalvage = await Promise.all([
+    tx((client) => salvageCar(
+      client, salvageH, sameCar, 'recipe:car_salvage_basic', keys[4],
+    )),
+    tx((client) => salvageCar(
+      client, salvageH, sameCar, 'recipe:car_salvage_basic', keys[4],
+    )),
+  ]);
+  const differentSalvage = await Promise.allSettled([
+    tx((client) => salvageCar(
+      client, salvageH, differentCar, 'recipe:car_salvage_basic', keys[5],
+    )),
+    tx((client) => salvageCar(
+      client, salvageH, differentCar, 'recipe:car_salvage_basic', keys[6],
+    )),
+  ]);
+  let salvageBoard = await inventoryBoard(pool, salvageOwner);
+  check(JSON.stringify(sameSalvage[0]) === JSON.stringify(sameSalvage[1])
+      && Number((await pool.query('SELECT COUNT(*) AS n FROM cars WHERE id=$1', [sameCar])).rows[0].n) === 0,
+  'competing same-key salvage deletes the locked car once and replays the exact result');
+  check(differentSalvage.filter((result) => result.status === 'fulfilled').length === 1
+      && differentSalvage.filter((result) => result.status === 'rejected'
+        && result.reason?.code === 'no_car').length === 1
+      && Number((await pool.query(
+        'SELECT COUNT(*) AS n FROM cars WHERE id=$1', [differentCar],
+      )).rows[0].n) === 0
+      && stackQty(salvageBoard, 'mat:scrap_steel') === 12,
+  'competing different-key salvage serializes on authority and cannot double-consume the car',
+  `outcomes ${differentSalvage.map((result) => result.status === 'fulfilled'
+    ? 'ok' : result.reason?.code).join(', ')}, scrap ${stackQty(salvageBoard, 'mat:scrap_steel')}`);
+
+  // Force the second graph output to fail. Native PostgreSQL must put back both the car row and the
+  // preceding scrap grant without relying on the pg-mem inverse log.
+  await pool.query(
+    `UPDATE item_stacks SET quantity=2147483647
+      WHERE owner_scope='account' AND owner_id=$1
+        AND template_id='mat:wire' AND quality='standard'`, [salvageAccount],
+  );
+  let rollbackCode = '';
+  try {
+    await tx((client) => salvageCar(
+      client, salvageH, rollbackCar, 'recipe:car_salvage_basic', keys[7],
+    ));
+  } catch (error) { rollbackCode = error.code; }
+  salvageBoard = await inventoryBoard(pool, salvageOwner);
+  const rollbackGuard = Number((await pool.query(
+    'SELECT COUNT(*) AS n FROM item_mutation_guards WHERE idempotency_key=$1', [keys[7]],
+  )).rows[0].n);
+  check(rollbackCode === 'inventory_cap'
+      && Number((await pool.query('SELECT COUNT(*) AS n FROM cars WHERE id=$1', [rollbackCar])).rows[0].n) === 1
+      && stackQty(salvageBoard, 'mat:scrap_steel') === 12
+      && stackQty(salvageBoard, 'mat:wire') === 2147483647
+      && rollbackGuard === 0,
+  'native salvage rollback restores the car and every preceding output with no stranded guard',
+  `error ${rollbackCode || 'none'}, scrap ${stackQty(salvageBoard, 'mat:scrap_steel')}, guard ${rollbackGuard}`);
+
+  await pool.query('DELETE FROM item_events WHERE idempotency_key = ANY($1::text[])', [keys]);
+  await pool.query('DELETE FROM item_mutation_guards WHERE idempotency_key = ANY($1::text[])', [keys]);
+  await pool.query(
+    `DELETE FROM item_stacks WHERE owner_scope='account' AND owner_id = ANY($1::text[])`,
+    [[craftAccount, salvageAccount]],
+  );
+  await pool.query('DELETE FROM transactions WHERE character_id = ANY($1::text[])',
+    [[craftCharacter, salvageCharacter]]);
+  await pool.query('DELETE FROM cars WHERE id = ANY($1::text[])',
+    [[sameCar, differentCar, rollbackCar]]);
+  await pool.query('DELETE FROM characters WHERE id = ANY($1::text[])',
+    [[craftCharacter, salvageCharacter]]);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 console.log('\n7b. THE BUILD BOOTS AGAINST A DATABASE OLDER THAN ITSELF');
 // THE OUTAGE THIS PINS (2026-08-06): `CREATE TABLE IF NOT EXISTS` is a NO-OP on a live database, so
 // three columns added INLINE to the already-existing `gang_members` never landed — and the very next
