@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `24788d5e57d9`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `d9e869d2f51a`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 1,828 |
-| Text lines | 524,049 |
-| Repository bytes inventoried | 314,241,255 |
+| Current artifacts | 1,829 |
+| Text lines | 524,300 |
+| Repository bytes inventoried | 314,259,073 |
 | Backend/route modules | 187 |
 | HTTP route registrations / unique routes | 742 / 742 |
 | Database tables | 317 |
 | Solidity declarations | 49 |
-| Git commits | 1,308 |
+| Git commits | 1,310 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 5,670 / 25,106 |
+| Graph nodes / edges | 5,674 / 25,126 |
 
 ## Artifact kinds
 
@@ -31,7 +31,7 @@
 | design | 78 |
 | contract-test | 73 |
 | contract-project | 67 |
-| engineering-harness | 60 |
+| engineering-harness | 61 |
 | contract-source | 40 |
 | route-module | 21 |
 | web-surface | 13 |
@@ -47,7 +47,7 @@
 | File | Lines | Kind | Last change |
 |---|---:|---|---|
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
-| [CLAUDE.md](../../CLAUDE.md) | 18,149 | documentation | 2026-09-03 |
+| [CLAUDE.md](../../CLAUDE.md) | 18,185 | documentation | 2026-09-03 |
 | [public/index.html](../../public/index.html) | 12,165 | web-surface | 2026-09-01 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [test/client.js](../../test/client.js) | 9,049 | test-suite | 2026-09-02 |

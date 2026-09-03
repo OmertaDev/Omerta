@@ -58,6 +58,8 @@ if (!process.env.DATABASE_URL) {
   process.exit(1);
 }
 import assert from 'node:assert';
+import fs from 'node:fs';
+import crypto from 'node:crypto';
 import { buildServer } from '../src/server.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { runPopulation, runResidentBehaviour } from '../src/population.js';
@@ -119,24 +121,72 @@ const CAST = { hunter: 6, landlord: 8, arb: 8, ringboss: 1, alt: 8, lender: 6, b
 const PREY = new Set(['landlord', 'lender', 'broker', 'adaptive']);
 const ADAPTIVE_POLICIES = ['landlord', 'arb', 'grinder', 'lender', 'turtle', ...(HUNT_SEATS ? ['hunter'] : [])];
 const EPSILON = 0.2;   // the bandit's explore rate — a lever, not a finding
-// ONE seeded generator for every random choice the HARNESS makes (the bandit's explore, the gambler's
-// coin, the landlord's racket pick, the round order). It does NOT make a run reproducible, and an
-// earlier version of this comment claimed it did — measured and false: `src/` carries 125 unseeded
-// `Math.random()` calls (every crime roll, `npcHit` roll, `fire` outcome, casino roll), and MARKET_SEED
-// seeds only the deterministic §7.11 price hash, never a roll. Two runs at ARENA_SEED=1 on the same
-// tree and the same arm measured 17 kills and 66 kills — estate burn 45% vs 174%, Gini 0.793 vs 0.945.
-// So ARENA_SEED varies the harness's own coins and nothing else, a same-seed pair differs in the regime
-// AND in every server roll, and NO single run of this instrument is a property: at 10–40 kills a month
-// the variance swamps most arm effects (the P9.40 argument). Read repeated runs PER ARM, never a pair.
+// SEEDING — three streams, and the reason there are three is that mixing them defeats the point.
+// ARENA_SEED seeds the HARNESS's own coins (the bandit's explore, the gambler's stake, the landlord's
+// racket pick, the round order) on `grnd`; ARENA_SEED_SERVER (default on) additionally patches the
+// SERVER's randomness — `Math.random` on `srnd`, `crypto.randomUUID` on `urnd` — before the server
+// is built. Separate streams so a harness coin cannot shift the server's roll sequence: with one
+// stream, changing EPSILON would silently re-roll every crime in the month and a "same seed" pair
+// would not be one.
+//   Why a harness patch and not a seedable rng threaded through `src/`: the arena boots the server
+//   IN-PROCESS (`buildServer()` + `app.inject`) and drives it strictly sequentially, so one generator in
+//   this process yields a deterministic call sequence — against 128 `Math.random()` sites across 38
+//   files in `src/` that would otherwise each need a knob preflight treats as production risk, plus a
+//   ledger to keep them enumerated. Zero production surface; a site added tomorrow is covered for free.
+//   Two sites are NOT reachable and are a stated residual: `src/rivals.js` and
+//   `src/rwaregistrylifecycle.js` destructure `randomUUID` at import, so they bind the real function
+//   before any patch can land. `rwaregistrylifecycle` is off every arena path; `rivals` is not, so a
+//   rival-event id is one value a same-seed pair may differ in.
+// SEEDING THE SERVER DOES NOT MAKE A RUN REPRODUCIBLE, AND THAT WAS MEASURED RATHER THAN ASSUMED.
+// The patch above was built to make a same-seed run repeatable. It does not, and the honest before/after
+// is flat: TEN patched runs at ARENA_SEED=1, 4 days × 2 rounds, landed on kills {5,5,7,7,8,8,8,8,9,9},
+// estate {14,14,15,16,19,19,21,21,22,22}% and Gini {0.307,0.315,0.321,0.326,0.349,0.349,0.360,0.362,
+// 0.370,0.382} — and FOUR unpatched controls at the same seed landed on kills {7,8,8,9}, estate
+// {16,17,20,22}% and Gini {0.331,0.345,0.366,0.372}, i.e. INSIDE the patched spread on all three. The
+// seeding removes one noise source and the headline metrics do not notice, so no arena claim may rest
+// on a same-seed pair even now.
+//   WHAT IT DOES PIN, also measured: the ROLLS. Driven as a same-seed pair, the two halves land on
+//   IDENTICAL cash, bank, respect, heat and alive for every character at the first round, and differ in
+//   `energy`/`nerve` in the 3rd–4th decimal on 57 of 65 rows. That is §7.1 lazy accrual reading REAL
+//   elapsed wall-clock milliseconds between requests, and no two runs take the same number of them; the
+//   fractional drift crosses a threshold now and then (enough nerve for one more crime) and cascades.
+//   So the value the patch retains is DIAGNOSTIC and narrow: when two runs diverge it is provably the
+//   clock rather than any of 128 rolls, which is what let the clock be identified at all. It is kept for
+//   that and for nothing else; `ARENA_SEED_SERVER=off` reproduces the unpatched harness exactly.
+//   Virtualizing the clock was considered and rejected: the server reads time from JS (`Date.now()` for
+//   accrual) AND from SQL (`now()` for `jail_until` and every other timestamp, which `warp()` rolls
+//   back), so a fake JS clock desyncs from Postgres and produces inconsistent state — too invasive for a
+//   measurement harness, and on this evidence it would buy less than it looks like it would.
+// SO THE DISTRIBUTION IS THE INSTRUMENT, NOT THE SEED. A claim about an arm needs repeated runs PER ARM
+// over several seeds — never a pair, however reproducible each half of it is. Two runs at ARENA_SEED=1
+// on one arm once measured 17 kills and 66 kills; at 10–40 kills a month the variance swamps most arm
+// effects (the P9.40 argument). `ARENA_JSON=<path>` emits this run's headline metrics for
+// `tools/arena-sweep.js`, which runs N seeds × `--reps` replicates per arm and reports median/[min…max]
+// — and refuses to call two arms different unless their ranges are disjoint. The replicates are not
+// optional decoration: one run per cell once printed three ✔ SEPARATED lines between the patched and
+// unpatched arms above, and two replicates per cell collapsed all four metrics to overlap.
 const SEED = Number(process.env.ARENA_SEED || 1);
-let gseed = (Math.imul(SEED, 2654435761) + 1) >>> 0;
-const grnd = () => { gseed = (Math.imul(gseed, 1664525) + 1013904223) >>> 0; return gseed / 4294967296; };
+const SEED_SERVER = process.env.ARENA_SEED_SERVER !== 'off';
+const lcg = (n) => { let s = (Math.imul(n, 2654435761) + 1) >>> 0; return () => { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; }; };
+const grnd = lcg(SEED);
 const money = (n) => `$${Math.round(Number(n) || 0).toLocaleString('en-US')}`;
 const pct = (num, den) => (den ? `${Math.round((num / den) * 100)}%` : '—');
 const pick = (a) => a[Math.floor(grnd() * a.length)];
 const median = (xs) => { if (!xs.length) return 0; const s = [...xs].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
 const gini = (xs) => { const s = [...xs].map((x) => Math.max(0, x)).sort((a, b) => a - b); const n = s.length; const sum = s.reduce((a, b) => a + b, 0); if (!n || !sum) return 0; let acc = 0; s.forEach((x, i) => { acc += (2 * (i + 1) - n - 1) * x; }); return acc / (n * sum); };
 
+// Installed BEFORE the server is built. `Math.random` is replaced wholesale; `crypto.randomUUID` is
+// replaced on the default namespace object every `src/` module holds (verified: a patch there IS visible
+// to importers that did `import crypto from 'node:crypto'`). The uuid comes from a seeded STREAM rather
+// than a counter on purpose — a counter makes `ORDER BY id` creation-ordered, which would silently bias
+// every stable-prefix selection in the game (a mark picker, a funder list) toward whoever was made first.
+if (SEED_SERVER) {
+  const srnd = lcg(SEED ^ 0x5f3759df);
+  const urnd = lcg(SEED ^ 0x9e3779b9);
+  Math.random = srnd;
+  const hx = (n) => Math.floor(urnd() * 16 ** n).toString(16).padStart(n, '0');
+  crypto.randomUUID = () => `${hx(8)}-${hx(4)}-4${hx(3)}-${'89ab'[Math.floor(urnd() * 4)]}${hx(3)}-${hx(12)}`;
+}
 const app = await buildServer();
 const pool = app.pool;
 process.env.SEASON_PHASE = process.env.SEASON_PHASE || 'long_game'; // TEST_ONLY — set post-boot on purpose (see the env block)
@@ -169,7 +219,7 @@ const note = (p, r) => {
   }
   return r;
 };
-const ev = { missSample: [], search: 0, fire: 0, kill: 0, miss: 0, absorbed: 0, revived: 0, calledOff: 0, hunterDeaths: 0, killDays: [], cashSnaps: [] };
+const ev = { search: 0, fire: 0, kill: 0, miss: 0, absorbed: 0, revived: 0, calledOff: 0, hunterDeaths: 0, killDays: [], cashSnaps: [] };
 // THE ADAPTIVE HUNTERS: the same counters for shots fired by an adaptive seat holding the hunter policy,
 // kept apart from the six career hunters — the question is whether a seat that CAN take up the gun does,
 // keeps it, and lives; the career seats have no choice and are the step-two control.
@@ -402,7 +452,7 @@ const STRAT = {
         else if (p.st.markSrc === 'contract') { def.contractShots++; if (r.body.kill) def.contractKills++; }
         else def.boardShots++;
         if (r.body.kill) { tally.kill++; tally.killDays.push(dayNow); } else if (r.body.absorbed) tally.absorbed++; else if (r.body.revived) tally.revived++; else if (r.body.calledOff) tally.calledOff++;
-        else { tally.miss++; if (r.body.btk) p.st.btk = Number(r.body.btk); if (ev.missSample.length < 4) ev.missSample.push({ eff: r.body.effective, btk: r.body.btk, keys: Object.keys(r.body).join(',') }); }
+        else { tally.miss++; if (r.body.btk) p.st.btk = Number(r.body.btk); }
         p.st.mark = null;
       }
       else if (['no_search', 'no_target', 'gone', 'safe', 'witpro', 'family'].includes(r.body?.error)) {
@@ -713,7 +763,6 @@ const winner = [...rows].sort((a, b) => b.med - a.med)[0];
 console.log(`\n  CONCENTRATION: Gini ${gini(allW).toFixed(3)} · top 10% hold ${pct(top10, total)} of ${money(total)} · the median ${winner.s} is the richest seat`);
 
 console.log('\n  DID KILLING PAY — the whale-hunters, realized:');
-if (ev.missSample.length) console.log(`    miss readings (effective vs btk): ${ev.missSample.map((m) => `${m.eff}/${m.btk}`).join(' ')} [keys: ${ev.missSample[0].keys}]`);
 console.log(`    searches ${ev.search} · shots ${ev.fire} · kills ${kills} · misses ${ev.miss} · absorbed ${ev.absorbed} · revived ${ev.revived} · hunters died ${sheets.filter((x) => x.p.strat === 'hunter').reduce((a, x) => a + x.deaths, 0)} · searches called off on a dead/sheltered mark ${ev.calledOffDead || 0}`);
 console.log(`    loot ${money(lootCash)} cash + ${lootOmr.toFixed(2)} $OMR (${money(lootOmr * RATE)}) · contracts ${money(bountyIn)} · iron ${money(gunOut)} · ammo ${money(ammoOut)}`);
 const evPerKill = kills ? (lootCash + lootOmr * RATE + bountyIn - ammoOut - gunOut) / kills : null;
@@ -826,5 +875,22 @@ if (HUNT_SEATS) {
   if (DAYS >= 30) assert(ah.fire >= 1, `adaptive seats held the gun ${ah.holdDays} seat-days and fired ${ah.fire} lethal shots — the adaptive-hunter loop was not exercised`);
 }
 console.log('✓ every strategy played, every chain ran' + (DEFENDED ? ', every defence was bought' : ''));
+// MACHINE-READABLE OUTPUT. The prose report above is for a person reading one run; this is for
+// `tools/arena-sweep.js`, which runs N seeds per arm and reads the DISTRIBUTION — which is the only
+// instrument here that can support a claim about an arm (one run, however reproducible, is one sample).
+if (process.env.ARENA_JSON) {
+  const out = {
+    seed: SEED, seedServer: SEED_SERVER, days: DAYS, rounds: ROUNDS, warp: WARP,
+    arms: { defended: DEFENDED, huntSeats: HUNT_SEATS, preyNpcHit: PREY_NPCHIT },
+    kills, shots: ev.fire, searches: ev.search, misses: ev.miss,
+    absorbed: ev.absorbed, revived: ev.revived,
+    huntersDied: sheets.filter((x) => x.p.strat === 'hunter').reduce((a, x) => a + x.deaths, 0),
+    estateBurn, startTotal, estatePct: startTotal ? estateBurn / startTotal : null,
+    gini: Number(gini(allW).toFixed(4)), top10Pct: total ? top10 / total : null, townWorth: total,
+    evPerKill, strategies: rows.map((r) => ({ s: r.s, n: r.n, start: r.st, median: r.med, dead: r.dead })),
+  };
+  fs.writeFileSync(process.env.ARENA_JSON, JSON.stringify(out, null, 2));
+  console.log(`  [json] wrote ${process.env.ARENA_JSON}`);
+}
 await app.close();
 console.log('\n✅ arena complete.');
