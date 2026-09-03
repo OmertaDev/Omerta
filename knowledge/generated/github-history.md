@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `6e4d53e49671`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `33abbf6c854f`.
 
 ## Repository
 
@@ -9,21 +9,21 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1313 |
+| Commits in clone | 1315 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-03 — Merge pull request #166 from OmertaDev/codex/graph-windows-cli |
+| Latest commit | 2026-09-03 — fix(deps): patch Fastify and URI advisories |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 450 |
+| OmertaDev | 451 |
 | Claude | 156 |
 | CRVYDEV | 41 |
-| github-actions[bot] | 18 |
+| github-actions[bot] | 19 |
 | claude[bot] | 1 |
 
 ## Historical hotspots
@@ -38,11 +38,11 @@
 | [BALANCE.md](../../BALANCE.md) | 253 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 172 | yes |
-| [package.json](../../package.json) | 144 | yes |
-| knowledge/generated/github-history.md | 142 | historical |
-| knowledge/generated/graph-summary.md | 142 | historical |
-| knowledge/generated/graph.json | 142 | historical |
-| knowledge/generated/inventory.md | 142 | historical |
+| [package.json](../../package.json) | 145 | yes |
+| knowledge/generated/github-history.md | 143 | historical |
+| knowledge/generated/graph-summary.md | 143 | historical |
+| knowledge/generated/graph.json | 143 | historical |
+| knowledge/generated/inventory.md | 143 | historical |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
