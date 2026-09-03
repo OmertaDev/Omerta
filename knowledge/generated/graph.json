@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "e4e548ee4717974cee21ab64217acf8fde3abf7d",
+  "sourceRevision": "41b578924461d0bbda511561d42b0583d217a69e",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5687,
-    "edges": 25182,
+    "nodes": 5691,
+    "edges": 25209,
     "byNodeType": {
       "Artifact": 1829,
       "Command": 58,
-      "Commit": 1323,
+      "Commit": 1327,
       "Contract": 49,
       "Document": 475,
       "Domain": 12,
@@ -65,18 +65,18 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1981,
-      "CHANGED": 10154,
+      "CHANGED": 10173,
       "CONTAINS": 1849,
       "DECLARES": 58,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 205,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1323,
+      "HAS_COMMIT": 1327,
       "IMPLEMENTS": 124,
       "IMPORTS": 1647,
       "INHERITS": 12,
-      "REFERENCES": 2868,
+      "REFERENCES": 2872,
       "REPRESENTS": 892,
       "TESTS": 583,
       "TRACKS": 126,
@@ -10971,20 +10971,20 @@
       "path": "CLAUDE.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 1755037,
-      "lines": 18185,
-      "version": "ba434b7345cde5fa",
+      "bytes": 1761131,
+      "lines": 18247,
+      "version": "24c12d04b6de51d1",
       "text": true,
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "ba434b7345cde5fa"
+          "version": "24c12d04b6de51d1"
         }
       ],
-      "lastChangedAt": "2026-09-03T05:16:19.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "45b7cad2d93144433b1bf27f33dd41f7f62ba2af"
+      "lastChangedAt": "2026-09-03T16:36:08.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "a026710c10647a495ff0294a3766e77fc988e20d"
     },
     {
       "key": "Artifact:content/packs/bad-batch/pack.json",
@@ -32516,20 +32516,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1233704,
-      "lines": 12662,
-      "version": "6228897a275a85aa",
+      "bytes": 1237307,
+      "lines": 12695,
+      "version": "4c498b556786b0bf",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "6228897a275a85aa"
+          "version": "4c498b556786b0bf"
         }
       ],
-      "lastChangedAt": "2026-09-03T14:22:46.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a9fb40b0f9a0c6fb902d5eda5ab2227489037b85"
+      "lastChangedAt": "2026-09-03T16:36:08.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "a026710c10647a495ff0294a3766e77fc988e20d"
     },
     {
       "key": "Artifact:public/manifest.json",
@@ -32794,18 +32794,18 @@
       "extension": ".md",
       "bytes": 52811,
       "lines": 716,
-      "version": "bd6724f22a8fd634",
+      "version": "ec0f5bf59dd12b47",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "bd6724f22a8fd634"
+          "version": "ec0f5bf59dd12b47"
         }
       ],
-      "lastChangedAt": "2026-09-03T13:51:26.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a0a2248aa1cb45905ff299d9024e9cb9228c2aa1"
+      "lastChangedAt": "2026-09-03T16:36:08.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "a026710c10647a495ff0294a3766e77fc988e20d"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -33114,20 +33114,20 @@
       "path": "src/boxing.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 57426,
-      "lines": 705,
-      "version": "68a66f2c4ac67950",
+      "bytes": 57660,
+      "lines": 708,
+      "version": "50c085afb038020c",
       "text": true,
       "provenance": [
         {
           "file": "src/boxing.js",
           "line": 1,
-          "version": "68a66f2c4ac67950"
+          "version": "50c085afb038020c"
         }
       ],
-      "lastChangedAt": "2026-09-02T03:01:16.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b9118553fa68ccba9e2f930756bfbce91a1b9d1d"
+      "lastChangedAt": "2026-09-03T16:36:08.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "a026710c10647a495ff0294a3766e77fc988e20d"
     },
     {
       "key": "Artifact:src/brokers.js",
@@ -35207,20 +35207,20 @@
       "path": "src/primetime.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 20707,
-      "lines": 287,
-      "version": "e58a37bd02a18092",
+      "bytes": 21228,
+      "lines": 292,
+      "version": "48c4def2e7a270ee",
       "text": true,
       "provenance": [
         {
           "file": "src/primetime.js",
           "line": 1,
-          "version": "e58a37bd02a18092"
+          "version": "48c4def2e7a270ee"
         }
       ],
-      "lastChangedAt": "2026-08-30T17:37:22.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "90a07070d3efd08fe3e70d1c78def530cf79f184"
+      "lastChangedAt": "2026-09-03T16:36:08.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "a026710c10647a495ff0294a3766e77fc988e20d"
     },
     {
       "key": "Artifact:src/push.js",
@@ -35253,20 +35253,20 @@
       "path": "src/races.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 40017,
-      "lines": 500,
-      "version": "8723a4c2e4a7fc20",
+      "bytes": 40855,
+      "lines": 508,
+      "version": "18d9d4932745f75b",
       "text": true,
       "provenance": [
         {
           "file": "src/races.js",
           "line": 1,
-          "version": "8723a4c2e4a7fc20"
+          "version": "18d9d4932745f75b"
         }
       ],
-      "lastChangedAt": "2026-09-02T03:01:16.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b9118553fa68ccba9e2f930756bfbce91a1b9d1d"
+      "lastChangedAt": "2026-09-03T16:36:08.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "a026710c10647a495ff0294a3766e77fc988e20d"
     },
     {
       "key": "Artifact:src/ratelimit.js",
@@ -36334,20 +36334,20 @@
       "path": "src/social/combat.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 84808,
-      "lines": 1058,
-      "version": "3eb41c0acdcfcb12",
+      "bytes": 86078,
+      "lines": 1069,
+      "version": "010f77c733f1b0d8",
       "text": true,
       "provenance": [
         {
           "file": "src/social/combat.js",
           "line": 1,
-          "version": "3eb41c0acdcfcb12"
+          "version": "010f77c733f1b0d8"
         }
       ],
-      "lastChangedAt": "2026-09-02T03:01:16.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b9118553fa68ccba9e2f930756bfbce91a1b9d1d"
+      "lastChangedAt": "2026-09-03T16:36:08.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "a026710c10647a495ff0294a3766e77fc988e20d"
     },
     {
       "key": "Artifact:src/social/contracts.js",
@@ -36357,20 +36357,20 @@
       "path": "src/social/contracts.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 46779,
-      "lines": 598,
-      "version": "51d4ec3645e171f6",
+      "bytes": 47106,
+      "lines": 601,
+      "version": "ff44a29fead4eb83",
       "text": true,
       "provenance": [
         {
           "file": "src/social/contracts.js",
           "line": 1,
-          "version": "51d4ec3645e171f6"
+          "version": "ff44a29fead4eb83"
         }
       ],
-      "lastChangedAt": "2026-08-24T18:49:55.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dee7593a66b955d677656afab4516cb68edb918d"
+      "lastChangedAt": "2026-09-03T16:36:08.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "a026710c10647a495ff0294a3766e77fc988e20d"
     },
     {
       "key": "Artifact:src/social/defense.js",
@@ -37576,20 +37576,20 @@
       "path": "test/client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 703879,
-      "lines": 9052,
-      "version": "50505c32203643e0",
+      "bytes": 709617,
+      "lines": 9122,
+      "version": "76b7a6d65f8c8ddb",
       "text": true,
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "50505c32203643e0"
+          "version": "76b7a6d65f8c8ddb"
         }
       ],
-      "lastChangedAt": "2026-09-03T13:51:26.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a0a2248aa1cb45905ff299d9024e9cb9228c2aa1"
+      "lastChangedAt": "2026-09-03T16:36:08.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "a026710c10647a495ff0294a3766e77fc988e20d"
     },
     {
       "key": "Artifact:test/clues.js",
@@ -43380,6 +43380,22 @@
       ]
     },
     {
+      "key": "Commit:0722476700eee2c799eb0a40f7fefe6b7b7cd459",
+      "type": "Commit",
+      "id": "0722476700eee2c799eb0a40f7fefe6b7b7cd459",
+      "label": "chore(knowledge): refresh generated artifacts for e4e548ee",
+      "title": "chore(knowledge): refresh generated artifacts for e4e548ee",
+      "date": "2026-09-03T14:47:39.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0722476700eee2c799eb0a40f7fefe6b7b7cd459",
+      "provenance": [
+        {
+          "commit": "0722476700eee2c799eb0a40f7fefe6b7b7cd459",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0722476700eee2c799eb0a40f7fefe6b7b7cd459"
+        }
+      ]
+    },
+    {
       "key": "Commit:07988f89f47c3c78919f97ceb1176bd19c12b007",
       "type": "Commit",
       "id": "07988f89f47c3c78919f97ceb1176bd19c12b007",
@@ -48640,6 +48656,22 @@
         {
           "commit": "41a3e1219dcdcacc1b4cdaeea1494a87f920067e",
           "url": "https://github.com/OmertaDev/Omerta/commit/41a3e1219dcdcacc1b4cdaeea1494a87f920067e"
+        }
+      ]
+    },
+    {
+      "key": "Commit:41b578924461d0bbda511561d42b0583d217a69e",
+      "type": "Commit",
+      "id": "41b578924461d0bbda511561d42b0583d217a69e",
+      "label": "Merge remote-tracking branch 'origin/main' into claude/next-work-recommendations-x5f2fp",
+      "title": "Merge remote-tracking branch 'origin/main' into claude/next-work-recommendations-x5f2fp",
+      "date": "2026-09-03T16:44:57.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/41b578924461d0bbda511561d42b0583d217a69e",
+      "provenance": [
+        {
+          "commit": "41b578924461d0bbda511561d42b0583d217a69e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/41b578924461d0bbda511561d42b0583d217a69e"
         }
       ]
     },
@@ -56500,6 +56532,22 @@
       ]
     },
     {
+      "key": "Commit:a026710c10647a495ff0294a3766e77fc988e20d",
+      "type": "Commit",
+      "id": "a026710c10647a495ff0294a3766e77fc988e20d",
+      "label": "play wave 80: the clock the success reply never named",
+      "title": "play wave 80: the clock the success reply never named",
+      "date": "2026-09-03T16:36:08.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a026710c10647a495ff0294a3766e77fc988e20d",
+      "provenance": [
+        {
+          "commit": "a026710c10647a495ff0294a3766e77fc988e20d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a026710c10647a495ff0294a3766e77fc988e20d"
+        }
+      ]
+    },
+    {
       "key": "Commit:a0320ce02b4c58b73576476ccea9fb66be65745c",
       "type": "Commit",
       "id": "a0320ce02b4c58b73576476ccea9fb66be65745c",
@@ -56800,6 +56848,22 @@
         {
           "commit": "a361f3b7a472434c590a05678d8e3eba41314bf9",
           "url": "https://github.com/OmertaDev/Omerta/commit/a361f3b7a472434c590a05678d8e3eba41314bf9"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a379bc44448fe43254394dfe19c2d0e4a245c468",
+      "type": "Commit",
+      "id": "a379bc44448fe43254394dfe19c2d0e4a245c468",
+      "label": "chore(knowledge): refresh generated artifacts for a026710c",
+      "title": "chore(knowledge): refresh generated artifacts for a026710c",
+      "date": "2026-09-03T16:37:10.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a379bc44448fe43254394dfe19c2d0e4a245c468",
+      "provenance": [
+        {
+          "commit": "a379bc44448fe43254394dfe19c2d0e4a245c468",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a379bc44448fe43254394dfe19c2d0e4a245c468"
         }
       ]
     },
@@ -69915,13 +69979,13 @@
       "id": "CLAUDE.md",
       "label": "CLAUDE.md",
       "documentType": "documentation",
-      "lines": 18185,
-      "version": "ba434b7345cde5fa",
+      "lines": 18247,
+      "version": "24c12d04b6de51d1",
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "ba434b7345cde5fa"
+          "version": "24c12d04b6de51d1"
         }
       ]
     },
@@ -72460,12 +72524,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 716,
-      "version": "bd6724f22a8fd634",
+      "version": "ec0f5bf59dd12b47",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "bd6724f22a8fd634"
+          "version": "ec0f5bf59dd12b47"
         }
       ]
     },
@@ -77081,6 +77145,9 @@
           "commit": "9bc5cb12a95a68f3bbdc05b3b5bc742afd610636"
         },
         {
+          "commit": "a379bc44448fe43254394dfe19c2d0e4a245c468"
+        },
+        {
           "commit": "a89d65db574232d5dd35fda6988c07d45e9da7c1"
         },
         {
@@ -77172,6 +77239,9 @@
         },
         {
           "commit": "069994c0b82d8819078d0f8e6d7b8f3bfc4077fe"
+        },
+        {
+          "commit": "0722476700eee2c799eb0a40f7fefe6b7b7cd459"
         },
         {
           "commit": "0a412baaf02ffac43416df687184b9223e8258cc"
@@ -77448,6 +77518,9 @@
         },
         {
           "commit": "a04a1ad41d94a41c7118e46b5d2ae249d27470bc"
+        },
+        {
+          "commit": "a379bc44448fe43254394dfe19c2d0e4a245c468"
         },
         {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
@@ -77621,6 +77694,9 @@
           "commit": "069994c0b82d8819078d0f8e6d7b8f3bfc4077fe"
         },
         {
+          "commit": "0722476700eee2c799eb0a40f7fefe6b7b7cd459"
+        },
+        {
           "commit": "0a412baaf02ffac43416df687184b9223e8258cc"
         },
         {
@@ -77895,6 +77971,9 @@
         },
         {
           "commit": "a04a1ad41d94a41c7118e46b5d2ae249d27470bc"
+        },
+        {
+          "commit": "a379bc44448fe43254394dfe19c2d0e4a245c468"
         },
         {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
@@ -78068,6 +78147,9 @@
           "commit": "069994c0b82d8819078d0f8e6d7b8f3bfc4077fe"
         },
         {
+          "commit": "0722476700eee2c799eb0a40f7fefe6b7b7cd459"
+        },
+        {
           "commit": "0a412baaf02ffac43416df687184b9223e8258cc"
         },
         {
@@ -78342,6 +78424,9 @@
         },
         {
           "commit": "a04a1ad41d94a41c7118e46b5d2ae249d27470bc"
+        },
+        {
+          "commit": "a379bc44448fe43254394dfe19c2d0e4a245c468"
         },
         {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
@@ -78584,6 +78669,9 @@
           "commit": "069994c0b82d8819078d0f8e6d7b8f3bfc4077fe"
         },
         {
+          "commit": "0722476700eee2c799eb0a40f7fefe6b7b7cd459"
+        },
+        {
           "commit": "0a412baaf02ffac43416df687184b9223e8258cc"
         },
         {
@@ -78858,6 +78946,9 @@
         },
         {
           "commit": "a04a1ad41d94a41c7118e46b5d2ae249d27470bc"
+        },
+        {
+          "commit": "a379bc44448fe43254394dfe19c2d0e4a245c468"
         },
         {
           "commit": "a44fa132d4b79b316022cddf6d6a78eb41341fbe"
@@ -79101,6 +79192,9 @@
         },
         {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
+        },
+        {
+          "commit": "a379bc44448fe43254394dfe19c2d0e4a245c468"
         },
         {
           "commit": "a89d65db574232d5dd35fda6988c07d45e9da7c1"
@@ -79550,13 +79644,13 @@
       "type": "Module",
       "id": "src/boxing.js",
       "label": "src/boxing.js",
-      "lines": 705,
-      "version": "68a66f2c4ac67950",
+      "lines": 708,
+      "version": "50c085afb038020c",
       "provenance": [
         {
           "file": "src/boxing.js",
           "line": 1,
-          "version": "68a66f2c4ac67950"
+          "version": "50c085afb038020c"
         }
       ]
     },
@@ -80915,13 +81009,13 @@
       "type": "Module",
       "id": "src/primetime.js",
       "label": "src/primetime.js",
-      "lines": 287,
-      "version": "e58a37bd02a18092",
+      "lines": 292,
+      "version": "48c4def2e7a270ee",
       "provenance": [
         {
           "file": "src/primetime.js",
           "line": 1,
-          "version": "e58a37bd02a18092"
+          "version": "48c4def2e7a270ee"
         }
       ]
     },
@@ -80945,13 +81039,13 @@
       "type": "Module",
       "id": "src/races.js",
       "label": "src/races.js",
-      "lines": 500,
-      "version": "8723a4c2e4a7fc20",
+      "lines": 508,
+      "version": "18d9d4932745f75b",
       "provenance": [
         {
           "file": "src/races.js",
           "line": 1,
-          "version": "8723a4c2e4a7fc20"
+          "version": "18d9d4932745f75b"
         }
       ]
     },
@@ -81650,13 +81744,13 @@
       "type": "Module",
       "id": "src/social/combat.js",
       "label": "src/social/combat.js",
-      "lines": 1058,
-      "version": "3eb41c0acdcfcb12",
+      "lines": 1069,
+      "version": "010f77c733f1b0d8",
       "provenance": [
         {
           "file": "src/social/combat.js",
           "line": 1,
-          "version": "3eb41c0acdcfcb12"
+          "version": "010f77c733f1b0d8"
         }
       ]
     },
@@ -81665,13 +81759,13 @@
       "type": "Module",
       "id": "src/social/contracts.js",
       "label": "src/social/contracts.js",
-      "lines": 598,
-      "version": "51d4ec3645e171f6",
+      "lines": 601,
+      "version": "ff44a29fead4eb83",
       "provenance": [
         {
           "file": "src/social/contracts.js",
           "line": 1,
-          "version": "51d4ec3645e171f6"
+          "version": "ff44a29fead4eb83"
         }
       ]
     },
@@ -85310,8 +85404,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "e4e548ee4717974cee21ab64217acf8fde3abf7d",
-      "currentBranch": "main",
+      "revision": "41b578924461d0bbda511561d42b0583d217a69e",
+      "currentBranch": "claude/next-work-recommendations-x5f2fp",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -108857,13 +108951,13 @@
       "type": "TestSuite",
       "id": "test/client.js",
       "label": "test/client.js",
-      "lines": 9052,
-      "version": "50505c32203643e0",
+      "lines": 9122,
+      "version": "76b7a6d65f8c8ddb",
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "50505c32203643e0"
+          "version": "76b7a6d65f8c8ddb"
         }
       ]
     },
@@ -130368,6 +130462,38 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "commit": "0709bb22d2863ce5a9cf8e49628d8c73a8aff054"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0722476700eee2c799eb0a40f7fefe6b7b7cd459",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "0722476700eee2c799eb0a40f7fefe6b7b7cd459"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0722476700eee2c799eb0a40f7fefe6b7b7cd459",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "0722476700eee2c799eb0a40f7fefe6b7b7cd459"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0722476700eee2c799eb0a40f7fefe6b7b7cd459",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "0722476700eee2c799eb0a40f7fefe6b7b7cd459"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0722476700eee2c799eb0a40f7fefe6b7b7cd459",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "0722476700eee2c799eb0a40f7fefe6b7b7cd459"
       }
     },
     {
@@ -181460,6 +181586,78 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:a026710c10647a495ff0294a3766e77fc988e20d",
+      "to": "Artifact:CLAUDE.md",
+      "provenance": {
+        "commit": "a026710c10647a495ff0294a3766e77fc988e20d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a026710c10647a495ff0294a3766e77fc988e20d",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "a026710c10647a495ff0294a3766e77fc988e20d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a026710c10647a495ff0294a3766e77fc988e20d",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "a026710c10647a495ff0294a3766e77fc988e20d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a026710c10647a495ff0294a3766e77fc988e20d",
+      "to": "Artifact:src/boxing.js",
+      "provenance": {
+        "commit": "a026710c10647a495ff0294a3766e77fc988e20d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a026710c10647a495ff0294a3766e77fc988e20d",
+      "to": "Artifact:src/primetime.js",
+      "provenance": {
+        "commit": "a026710c10647a495ff0294a3766e77fc988e20d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a026710c10647a495ff0294a3766e77fc988e20d",
+      "to": "Artifact:src/races.js",
+      "provenance": {
+        "commit": "a026710c10647a495ff0294a3766e77fc988e20d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a026710c10647a495ff0294a3766e77fc988e20d",
+      "to": "Artifact:src/social/combat.js",
+      "provenance": {
+        "commit": "a026710c10647a495ff0294a3766e77fc988e20d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a026710c10647a495ff0294a3766e77fc988e20d",
+      "to": "Artifact:src/social/contracts.js",
+      "provenance": {
+        "commit": "a026710c10647a495ff0294a3766e77fc988e20d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a026710c10647a495ff0294a3766e77fc988e20d",
+      "to": "Artifact:test/client.js",
+      "provenance": {
+        "commit": "a026710c10647a495ff0294a3766e77fc988e20d"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:a0320ce02b4c58b73576476ccea9fb66be65745c",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -182264,6 +182462,54 @@
       "to": "Artifact:public/omerta-ui.css",
       "provenance": {
         "commit": "a361f3b7a472434c590a05678d8e3eba41314bf9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a379bc44448fe43254394dfe19c2d0e4a245c468",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "a379bc44448fe43254394dfe19c2d0e4a245c468"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a379bc44448fe43254394dfe19c2d0e4a245c468",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "a379bc44448fe43254394dfe19c2d0e4a245c468"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a379bc44448fe43254394dfe19c2d0e4a245c468",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "a379bc44448fe43254394dfe19c2d0e4a245c468"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a379bc44448fe43254394dfe19c2d0e4a245c468",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "a379bc44448fe43254394dfe19c2d0e4a245c468"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a379bc44448fe43254394dfe19c2d0e4a245c468",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "a379bc44448fe43254394dfe19c2d0e4a245c468"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a379bc44448fe43254394dfe19c2d0e4a245c468",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "a379bc44448fe43254394dfe19c2d0e4a245c468"
       }
     },
     {
@@ -246493,6 +246739,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:0722476700eee2c799eb0a40f7fefe6b7b7cd459",
+      "provenance": {
+        "commit": "0722476700eee2c799eb0a40f7fefe6b7b7cd459"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:07988f89f47c3c78919f97ceb1176bd19c12b007",
       "provenance": {
         "commit": "07988f89f47c3c78919f97ceb1176bd19c12b007"
@@ -249120,6 +249374,14 @@
       "to": "Commit:41a3e1219dcdcacc1b4cdaeea1494a87f920067e",
       "provenance": {
         "commit": "41a3e1219dcdcacc1b4cdaeea1494a87f920067e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:41b578924461d0bbda511561d42b0583d217a69e",
+      "provenance": {
+        "commit": "41b578924461d0bbda511561d42b0583d217a69e"
       }
     },
     {
@@ -253053,6 +253315,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:a026710c10647a495ff0294a3766e77fc988e20d",
+      "provenance": {
+        "commit": "a026710c10647a495ff0294a3766e77fc988e20d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:a0320ce02b4c58b73576476ccea9fb66be65745c",
       "provenance": {
         "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
@@ -253200,6 +253470,14 @@
       "to": "Commit:a361f3b7a472434c590a05678d8e3eba41314bf9",
       "provenance": {
         "commit": "a361f3b7a472434c590a05678d8e3eba41314bf9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a379bc44448fe43254394dfe19c2d0e4a245c468",
+      "provenance": {
+        "commit": "a379bc44448fe43254394dfe19c2d0e4a245c468"
       }
     },
     {
@@ -280188,6 +280466,15 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
+        "line": 18238
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "file": "CLAUDE.md",
         "line": 2149
       }
     },
@@ -280819,6 +281106,15 @@
       "provenance": {
         "file": "CLAUDE.md",
         "line": 6929
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:src/boxing.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 18202
       }
     },
     {
@@ -284580,6 +284876,15 @@
       "to": "Artifact:src/stable.js",
       "provenance": {
         "file": "CLAUDE.md",
+        "line": 18206
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:src/stable.js",
+      "provenance": {
+        "file": "CLAUDE.md",
         "line": 885
       }
     },
@@ -286003,6 +286308,15 @@
       "provenance": {
         "file": "CLAUDE.md",
         "line": 17869
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:test/client.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 18217
       }
     },
     {
@@ -313506,7 +313820,7 @@
       "to": "Table:boxing_bets",
       "provenance": {
         "file": "src/boxing.js",
-        "line": 428
+        "line": 431
       }
     },
     {
@@ -313551,7 +313865,7 @@
       "to": "Table:gangs",
       "provenance": {
         "file": "src/boxing.js",
-        "line": 588
+        "line": 591
       }
     },
     {
@@ -313560,7 +313874,7 @@
       "to": "Table:street_tax",
       "provenance": {
         "file": "src/boxing.js",
-        "line": 358
+        "line": 361
       }
     },
     {
@@ -320463,7 +320777,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/primetime.js",
-        "line": 244
+        "line": 249
       }
     },
     {
@@ -320472,7 +320786,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/primetime.js",
-        "line": 243
+        "line": 248
       }
     },
     {
@@ -320598,7 +320912,7 @@
       "to": "Table:grand_prix_entries",
       "provenance": {
         "file": "src/races.js",
-        "line": 349
+        "line": 357
       }
     },
     {
@@ -320607,7 +320921,7 @@
       "to": "Table:grand_prix_state",
       "provenance": {
         "file": "src/races.js",
-        "line": 338
+        "line": 346
       }
     },
     {
@@ -320616,7 +320930,7 @@
       "to": "Table:grand_prix",
       "provenance": {
         "file": "src/races.js",
-        "line": 339
+        "line": 347
       }
     },
     {
@@ -320625,7 +320939,7 @@
       "to": "Table:listings",
       "provenance": {
         "file": "src/races.js",
-        "line": 258
+        "line": 265
       }
     },
     {
@@ -320634,7 +320948,7 @@
       "to": "Table:street_tax",
       "provenance": {
         "file": "src/races.js",
-        "line": 197
+        "line": 200
       }
     },
     {
@@ -323217,7 +323531,7 @@
       "to": "Table:boats",
       "provenance": {
         "file": "src/social/combat.js",
-        "line": 966
+        "line": 977
       }
     },
     {
@@ -323253,7 +323567,7 @@
       "to": "Table:character_cargo",
       "provenance": {
         "file": "src/social/combat.js",
-        "line": 931
+        "line": 942
       }
     },
     {
@@ -323271,7 +323585,7 @@
       "to": "Table:contacts",
       "provenance": {
         "file": "src/social/combat.js",
-        "line": 593
+        "line": 601
       }
     },
     {
@@ -323289,7 +323603,7 @@
       "to": "Table:fighters",
       "provenance": {
         "file": "src/social/combat.js",
-        "line": 1019
+        "line": 1030
       }
     },
     {
@@ -323316,7 +323630,7 @@
       "to": "Table:npc_grudges",
       "provenance": {
         "file": "src/social/combat.js",
-        "line": 740
+        "line": 748
       }
     },
     {
@@ -323325,7 +323639,7 @@
       "to": "Table:npc_hits",
       "provenance": {
         "file": "src/social/combat.js",
-        "line": 617
+        "line": 625
       }
     },
     {
@@ -323334,7 +323648,7 @@
       "to": "Table:port_intercepts",
       "provenance": {
         "file": "src/social/combat.js",
-        "line": 1004
+        "line": 1015
       }
     },
     {
@@ -323343,7 +323657,7 @@
       "to": "Table:racers",
       "provenance": {
         "file": "src/social/combat.js",
-        "line": 1027
+        "line": 1038
       }
     },
     {
@@ -323388,7 +323702,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/social/contracts.js",
-        "line": 575
+        "line": 578
       }
     },
     {
@@ -323469,7 +323783,7 @@
       "to": "Table:kill_log",
       "provenance": {
         "file": "src/social/contracts.js",
-        "line": 549
+        "line": 552
       }
     },
     {
@@ -323487,7 +323801,7 @@
       "to": "Table:street_tax",
       "provenance": {
         "file": "src/social/contracts.js",
-        "line": 408
+        "line": 411
       }
     },
     {
