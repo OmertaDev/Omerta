@@ -7,6 +7,7 @@
 import crypto from 'node:crypto';
 import { GameError } from './game.js';
 import {
+  awaitItemReadBarrier,
   createItem,
   escrowItem,
   registerItemTransactionUndo,
@@ -26,6 +27,9 @@ const CONDITION_ADAPTERS = new Set([
 const CONTRIBUTION_EFFECTS = new Set(['evidence_grant', 'item_escrow']);
 const COMPLETION_EFFECTS = new Set(['unique_item_award', 'status_award']);
 const GRAPH_STATE_TYPES = new Set(['social_gate', 'operation_step', 'evidence', 'reward']);
+const MYSTERY_BRIDGE_NODE_TYPES = new Set([
+  'mystery_step', 'world_gate', 'choice', 'evidence', 'reward',
+]);
 
 const fail = (code, message, data) => { throw new GameError(code, message, data); };
 
@@ -69,11 +73,57 @@ function assertCondition(condition, owner) {
   }
 }
 
-function assertRolePrivate(node, roleIds) {
+function assertRolePrivate(node, roleIds, operationId) {
   if (node.visibility !== 'role_private') return;
   const roleId = node.metadata?.roleId;
-  if (!roleIds.has(roleId)) {
+  if (!roleIds.has(roleId) || node.metadata?.operationId !== operationId) {
     fail('bad_operation_definition', `Role-private node ${node.id} needs a declared role.`);
+  }
+}
+
+function assertOperationReference(registry, root, id, label) {
+  const target = nodeOf(registry, id);
+  if (!target || target.packageId !== root.packageId
+    || (target.id !== root.id && target.metadata?.operationId !== root.id)) {
+    fail('bad_operation_definition', `${label} crosses an operation boundary.`);
+  }
+  return target;
+}
+
+function validateMysteryBridge(registry, root) {
+  const gate = root.metadata?.mysteryGate;
+  const dependencies = [
+    ...(root.requires || []),
+    ...(root.requiresAny || []).flat(),
+    ...(root.excludes || []),
+  ];
+  if (!gate) {
+    if (dependencies.length) {
+      fail('bad_operation_definition',
+        `Operation ${root.id} graph gates require an explicit mystery bridge.`);
+    }
+    return;
+  }
+  if (!gate || typeof gate !== 'object' || Array.isArray(gate)
+    || Object.getPrototypeOf(gate) !== Object.prototype
+    || Object.keys(gate).some((key) => ![
+      'graphId', 'graphVersion', 'ownerScope', 'requiredStatus',
+    ].includes(key))
+    || typeof gate.graphId !== 'string' || !Number.isInteger(gate.graphVersion)
+    || gate.graphVersion < 1 || !['account', 'character'].includes(gate.ownerScope)
+    || !['active', 'completed'].includes(gate.requiredStatus)) {
+    fail('bad_operation_definition', `Operation ${root.id} has a malformed mystery bridge.`);
+  }
+  const pkg = registry.byPackage.get(gate.graphId);
+  if (!pkg || Number(pkg.version) !== gate.graphVersion) {
+    fail('bad_operation_definition', `Operation ${root.id} mystery bridge version is unavailable.`);
+  }
+  for (const id of dependencies) {
+    const target = nodeOf(registry, id);
+    if (!target || target.packageId !== gate.graphId || !MYSTERY_BRIDGE_NODE_TYPES.has(target.type)) {
+      fail('bad_operation_definition',
+        `Operation ${root.id} mystery bridge references an invalid graph node.`);
+    }
   }
 }
 
@@ -106,6 +156,9 @@ function assertEffect(registry, root, source, effect, allowed, roleIds) {
       && target.metadata?.roleId !== source.metadata?.roleId) {
       fail('bad_operation_effect', 'Private evidence must belong to the contributing role.');
     }
+    if (target.metadata?.operationId !== root.id) {
+      fail('bad_operation_effect', 'Operation evidence must be scoped to its graph root.');
+    }
   }
   if (adapter === 'item_escrow' && target.type !== 'item_template') {
     fail('bad_operation_effect', 'Operation escrow requires a unique item template.');
@@ -117,15 +170,19 @@ function assertEffect(registry, root, source, effect, allowed, roleIds) {
   }
   if (adapter === 'status_award') {
     if (target.type !== 'reward' || target.metadata?.inert !== true
-      || target.metadata?.rewardType !== 'status') {
+      || target.metadata?.rewardType !== 'status'
+      || target.metadata?.operationId !== root.id) {
       fail('unsafe_operation_reward', 'Operation status rewards must be explicitly inert.');
     }
   }
 }
 
 function validateOperationDefinitions(registry) {
-  for (const root of registry.nodes.values()) {
-    if (root.type !== 'social_gate' || rolesOf(root).length === 0) continue;
+  const operationRoots = [...registry.nodes.values()].filter((node) => (
+    node.type === 'social_gate' && rolesOf(node).length > 0
+  ));
+  const rootById = new Map(operationRoots.map((root) => [root.id, root]));
+  for (const root of operationRoots) {
     if (root.visibility === 'role_private') {
       fail('bad_operation_definition', 'An operation root cannot be role-private.');
     }
@@ -148,6 +205,12 @@ function validateOperationDefinitions(registry) {
       fail('bad_operation_definition',
         `Phase 1 proof operation ${root.id} requires the canonical four roles.`);
     }
+    const closerRoleId = root.metadata?.closerRoleId;
+    if (!roleIds.has(closerRoleId)) {
+      fail('bad_operation_definition',
+        `Operation ${root.id} requires one declared closer role.`);
+    }
+    validateMysteryBridge(registry, root);
     for (const role of roles) {
       for (const condition of role.conditions || []) assertCondition(condition, `Role ${role.id}`);
     }
@@ -173,7 +236,10 @@ function validateOperationDefinitions(registry) {
       if (!roleIds.has(roleId)) {
         fail('bad_operation_definition', `Operation step ${step.id} has no declared role.`);
       }
-      assertRolePrivate(step, roleIds);
+      assertRolePrivate(step, roleIds, root.id);
+      for (const requiredId of [
+        ...(step.requires || []), ...(step.requiresAny || []).flat(), ...(step.excludes || []),
+      ]) assertOperationReference(registry, root, requiredId, `Operation step ${step.id}`);
       const order = step.metadata?.order;
       if (order !== undefined && (!Number.isInteger(order) || order < 1 || orders.has(order))) {
         fail('bad_operation_definition', `Operation step ${step.id} has an invalid order.`);
@@ -190,14 +256,23 @@ function validateOperationDefinitions(registry) {
         assertEffect(registry, root, step, effect, CONTRIBUTION_EFFECTS, roleIds);
       }
     }
-    for (const node of registry.nodes.values()) {
-      if (node.packageId === root.packageId && GRAPH_STATE_TYPES.has(node.type)) {
-        assertRolePrivate(node, roleIds);
-      }
-    }
     for (const effect of root.effects || []) {
       assertEffect(registry, root, root, effect, COMPLETION_EFFECTS, roleIds);
     }
+  }
+  // A role-private graph-state node in a package that defines social operations must belong to one
+  // explicit operation root. This prevents orphan or cross-vocabulary private content while still
+  // allowing several unrelated operations in one immutable package.
+  for (const node of registry.nodes.values()) {
+    if (node.visibility !== 'role_private' || !GRAPH_STATE_TYPES.has(node.type)) continue;
+    const packageHasOperation = operationRoots.some((root) => root.packageId === node.packageId);
+    if (!packageHasOperation) continue;
+    const root = rootById.get(node.metadata?.operationId);
+    if (!root || root.packageId !== node.packageId) {
+      fail('bad_operation_definition',
+        `Role-private node ${node.id} must declare its owning operation.`);
+    }
+    assertRolePrivate(node, new Set(rolesOf(root).map((role) => role.id)), root.id);
   }
 }
 
@@ -299,6 +374,42 @@ async function actorOf(client, context) {
     skills: new Set(skills),
     crewId: crew.crew_id,
   };
+}
+
+async function mysteryBridgeState(client, context, actor, root) {
+  const gate = root.metadata?.mysteryGate;
+  if (!gate) return new Map();
+  const ownerId = gate.ownerScope === 'account' ? context.accountId : actor.id;
+  const instance = (await client.query(
+    `SELECT id,graph_version,status FROM mystery_instances
+      WHERE owner_scope=$1 AND owner_id=$2 AND authority_account_id=$3 AND graph_id=$4
+      FOR UPDATE`,
+    [gate.ownerScope, ownerId, context.accountId, gate.graphId],
+  )).rows[0];
+  // The owner tuple is deterministic: durable account for an account bridge, or the currently
+  // locked living street for a character bridge. A version mismatch never falls through to a
+  // different historical instance and all missing/status failures share one non-enumerating code.
+  if (!instance || Number(instance.graph_version) !== gate.graphVersion
+    || instance.status !== gate.requiredStatus) {
+    fail('operation_locked', 'The authenticated mystery path has not unlocked this operation.');
+  }
+  const rows = (await client.query(
+    `SELECT node_id,state,completed_at,failed_at AS excluded_at
+       FROM mystery_node_state WHERE instance_id=$1`, [instance.id],
+  )).rows;
+  return stateMap(rows);
+}
+
+function assertRootGraphGate(root, states) {
+  if ((root.excludes || []).some((id) => states.get(id)?.state === 'completed')) {
+    fail('operation_excluded', 'The authenticated mystery path closed this operation.');
+  }
+  if ((root.requires || []).some((id) => states.get(id)?.state !== 'completed')
+    || (root.requiresAny || []).some((group) => (
+      !group.some((id) => states.get(id)?.state === 'completed')
+    ))) {
+    fail('operation_locked', 'The authenticated mystery path has not unlocked this operation.');
+  }
 }
 
 async function operationRow(client, operationIdValue, { lock = false } = {}) {
@@ -426,8 +537,8 @@ async function destinationsFor(client, operationId) {
      SELECT 'account' AS scope,account_id AS id FROM world_operation_roles
       WHERE operation_id=$1`, [operationId],
   )).rows;
-  // This server-derived authority is part of the aggregate replay digest. Canonical ordering and
-  // de-duplication keep it stable after an already-authorized participant actually deposits escrow.
+  // This server-derived authority is deliberately separate from the logical replay digest. Its
+  // canonical ordering still keeps execution deterministic as roles and escrow are resolved.
   return [...new Map(rows.map(({ scope, id }) => [`${scope}:${id}`, { scope, id }])).values()]
     .sort((left, right) => `${left.scope}:${left.id}`.localeCompare(`${right.scope}:${right.id}`));
 }
@@ -577,6 +688,7 @@ async function closeExcluded(client, context, operation, initialIds) {
   const closed = new Set(initialIds);
   const nodes = [...context.registry.nodes.values()].filter((node) => (
     node.packageId === operation.graph_id && ['operation_step', 'evidence'].includes(node.type)
+    && node.metadata?.operationId === operation.operation_node_id
   ));
   let changed = true;
   while (changed) {
@@ -620,7 +732,9 @@ export async function openOperation(
         [actor.crewId, pkg.id, Number(pkg.version), root.id],
       )).rows[0];
       if (existing) return { ok: true, ...operationProjection(existing) };
-      await assertConditions(client, actor, null, new Map(), root.conditions, null);
+      const bridgeStates = await mysteryBridgeState(client, context, actor, root);
+      assertRootGraphGate(root, bridgeStates);
+      await assertConditions(client, actor, null, bridgeStates, root.conditions, null);
       const id = crypto.randomUUID();
       registerItemTransactionUndo(client, () => client.query(
         'DELETE FROM world_operations WHERE id=$1', [id],
@@ -646,12 +760,18 @@ export async function assignRole(
   const operationId = canonical(operationIdValue, 'Operation id');
   const roleId = canonical(roleIdValue, 'Role id', 'bad_operation_request', 80);
   const options = mutationOptions(optionsValue);
+  const destinations = await destinationsFor(client, operationId);
   return withItemMutation(
     client, { scope: 'account', id: context.accountId }, 'operation_action', options.idempotencyKey,
-    { action: 'assign_role', operationId, roleId },
-    async () => {
+    {
+      action: 'assign_role', operationId, roleId,
+      itemAuthority: { operations: [operationId], destinations },
+    },
+    async (mutation) => {
       const authority = await authorizeOperation(client, context, operationId, { lock: true });
       const { row, root } = authority;
+      const abandoned = await abandonIfInvalid(client, row, mutation);
+      if (abandoned) return abandoned;
       const role = rolesOf(root).find((candidate) => candidate.id === roleId);
       if (!role) fail('operation_role', 'No such role exists in this operation.');
       const existingRoles = await roleRows(client, row.id);
@@ -691,12 +811,16 @@ export async function assignRole(
   );
 }
 
-function stepOf(context, authority, nodeIdValue) {
+function stepOf(context, authority, nodeIdValue, callerRoleId) {
   const nodeId = canonical(nodeIdValue, 'Contribution node id');
   const step = nodeOf(context.registry, nodeId);
   if (!step || step.packageId !== authority.row.graph_id || step.type !== 'operation_step'
-    || step.metadata?.operationId !== authority.root.id) {
-    fail('operation_step', 'No such contribution step exists in this operation.');
+    || step.metadata?.operationId !== authority.root.id || step.visibility === 'hidden'
+    || (step.visibility === 'role_private' && step.metadata?.roleId !== callerRoleId)) {
+    // One response for absent IDs, hidden IDs, other operations, and another role's private IDs.
+    // This function runs only after caller assignment is authenticated, so it cannot be used as an
+    // existence oracle for private content by either an outsider or a different role.
+    fail('operation_step_unavailable', 'That operation contribution is unavailable.');
   }
   return step;
 }
@@ -724,7 +848,7 @@ export async function contribute(
       if (row.status !== 'active') fail('operation_not_active', 'Fill every role before contributing.');
       const abandoned = await abandonIfInvalid(client, row, mutation);
       if (abandoned) return abandoned;
-      const step = stepOf(context, authority, nodeId);
+      const step = stepOf(context, authority, nodeId, assignment.role_id);
       if (step.metadata?.roleId !== assignment.role_id) {
         fail('operation_role_forbidden', 'Only the assigned role may make that contribution.');
       }
@@ -791,19 +915,21 @@ export async function contribute(
   );
 }
 
-async function applyCompletionEffects(client, root, assignment, mutation) {
+async function applyCompletionEffects(client, root, assignments, mutation) {
   const effects = [];
+  const byRole = new Map(assignments.map((assignment) => [assignment.role_id, assignment]));
   for (const effect of root.effects || []) {
     if (effect.adapter === 'unique_item_award') {
-      if (effect.recipientRoleId !== assignment.role_id) {
-        fail('operation_completion_role', 'The designated role must close this operation.');
-      }
-      const item = await createItem(
-        client, { scope: 'account', id: assignment.account_id }, effect.templateId, 'awarded', mutation,
+      const recipient = byRole.get(effect.recipientRoleId);
+      if (!recipient) fail('operation_incomplete', 'Every reward role must be assigned.');
+      await createItem(
+        client, { scope: 'account', id: recipient.account_id }, effect.templateId, 'awarded', mutation,
       );
-      effects.push({ kind: 'unique_item_award', item: safeItem(item) });
+      effects.push({
+        kind: 'unique_item_award', recipientRoleId: effect.recipientRoleId,
+      });
     } else if (effect.adapter === 'status_award') {
-      effects.push({ kind: 'status_award', nodeId: effect.nodeId });
+      effects.push({ kind: 'status_award' });
     } else {
       fail('unsupported_operation_effect', 'The operation completion effect is not executable.');
     }
@@ -844,7 +970,11 @@ export async function completeOperation(client, contextValue, operationIdValue, 
         `SELECT role_id,account_id,character_id FROM world_operation_roles
           WHERE operation_id=$1 AND account_id=$2`, [row.id, context.accountId],
       )).rows[0];
-      const effects = await applyCompletionEffects(client, root, assignment, mutation);
+      if (assignment.role_id !== root.metadata?.closerRoleId) {
+        fail('operation_completion_role', 'The graph-declared closer role must close this operation.');
+      }
+      const assignments = await roleRows(client, row.id);
+      const effects = await applyCompletionEffects(client, root, assignments, mutation);
       for (const effect of root.effects || []) {
         if (effect.adapter === 'status_award') {
           await insertNodeState(client, row.id, effect.nodeId, 'completed');
@@ -876,6 +1006,9 @@ export async function cancelOperation(client, contextValue, operationIdValue, op
         requireCrew: false, lock: true,
       });
       const { row } = authority;
+      if (row.opened_by_account_id !== context.accountId) {
+        fail('operation_cancel_forbidden', 'Only the account that opened this operation may cancel it.');
+      }
       if (row.status === 'canceled') return { ok: true, ...operationProjection(row), releasedEscrowCount: 0 };
       if (!['forming', 'active'].includes(row.status)) fail('operation_closed', 'That operation is closed.');
       const releasedEscrowCount = await releaseAllEscrow(client, row.id, mutation);
@@ -904,6 +1037,7 @@ function maySeeNode(node, states, roleId = null) {
 /** Safe shared projection: role slots and public progress, never account/character/Crew identities. */
 export async function operationBoard(client, contextValue, operationIdValue) {
   const context = contextOf(contextValue);
+  await awaitItemReadBarrier(client);
   const authority = await authorizeOperation(client, context, operationIdValue, { requireCrew: false });
   const { row, root } = authority;
   const roles = await roleRows(client, row.id);
@@ -915,7 +1049,8 @@ export async function operationBoard(client, contextValue, operationIdValue) {
   const states = stateMap(await stateRows(client, row.id));
   const nodes = [...context.registry.nodes.values()].filter((node) => (
     node.packageId === row.graph_id && GRAPH_STATE_TYPES.has(node.type)
-    && (node.id === root.id || node.metadata?.operationId === root.id || states.has(node.id))
+    && (node.id === root.id || node.metadata?.operationId === root.id)
+    && (node.id === root.id || node.type === 'operation_step' || states.has(node.id))
     && maySeeNode(node, states)
   )).map((node) => boardNode(node, states.get(node.id)));
   return {
@@ -935,6 +1070,7 @@ export async function operationBoard(client, contextValue, operationIdValue) {
 /** Assigned-role projection: shared state plus only the caller's role-private evidence and steps. */
 export async function roleBoard(client, contextValue, operationIdValue) {
   const context = contextOf(contextValue);
+  await awaitItemReadBarrier(client);
   const authority = await authorizeOperation(client, context, operationIdValue, {
     requireAssignment: true, requireCrew: false,
   });
@@ -942,7 +1078,8 @@ export async function roleBoard(client, contextValue, operationIdValue) {
   const states = stateMap(await stateRows(client, row.id));
   const nodes = [...context.registry.nodes.values()].filter((node) => (
     node.packageId === row.graph_id && GRAPH_STATE_TYPES.has(node.type)
-    && (node.id === root.id || node.metadata?.operationId === root.id || states.has(node.id))
+    && (node.id === root.id || node.metadata?.operationId === root.id)
+    && (node.id === root.id || node.type === 'operation_step' || states.has(node.id))
     && maySeeNode(node, states, assignment.role_id)
   )).map((node) => boardNode(node, states.get(node.id)));
   return {

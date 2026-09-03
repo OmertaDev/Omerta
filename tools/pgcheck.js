@@ -851,6 +851,13 @@ console.log('\n7a2. GRAPH CRAFTING AND SALVAGE HOLD UNDER REAL ROW LOCKS');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+console.log('\n7a3. WORLD-GRAPH OPERATIONS HOLD UNDER REAL ROW LOCKS');
+{
+  const { runOperationPgChecks } = await import('./pgcheck-operations.js');
+  await runOperationPgChecks({ pool, check });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 console.log('\n7b. THE BUILD BOOTS AGAINST A DATABASE OLDER THAN ITSELF');
 // THE OUTAGE THIS PINS (2026-08-06): `CREATE TABLE IF NOT EXISTS` is a NO-OP on a live database, so
 // three columns added INLINE to the already-existing `gang_members` never landed — and the very next

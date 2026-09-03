@@ -128,6 +128,18 @@ async function waitForPgMemTransactions(queryable) {
 }
 
 /**
+ * Keep non-item projections from observing a compensatable pg-mem write in another async flow.
+ * Real PostgreSQL uses MVCC and this is a no-op there; callers inside the active branded item
+ * transaction also skip the wait to avoid self-deadlock.
+ */
+export async function awaitItemReadBarrier(queryable) {
+  if (!queryable || typeof queryable.query !== 'function') {
+    fail('item_transaction_required', 'The item read barrier requires a database query client.');
+  }
+  await waitForPgMemTransactions(queryable);
+}
+
+/**
  * Own the only valid item-ledger transaction boundary.
  *
  * Nesting is rejected explicitly: a later runtime composes leaf operations through the branded
@@ -272,6 +284,12 @@ function assertCompositeAuthority(composite, kind, owner, request) {
     }
     return;
   }
+  // Social-operation completion may atomically award different participants. The operation module
+  // binds those server-resolved account destinations into the fresh execution authority envelope.
+  // Other mutation kinds retain the root-owner-only rule, and an undeclared destination remains
+  // impossible even for an operation action.
+  if (kind === 'create_item' && composite.mutationKind === 'operation_action'
+    && composite.authority.destinations.has(ownerKey(owner))) return;
   if (ownerKey(owner) !== ownerKey(composite.rootOwner)) {
     fail('item_mutation_authority', 'A compound item mutation cannot spend or grant for another owner.');
   }
@@ -351,13 +369,19 @@ export async function withItemMutation(
     fail('bad_item_request', 'Composite item mutation request must be JSON-serializable.');
   }
   const authority = compositeAuthority(requestHashInput);
+  // itemAuthority is server-derived execution capability, not client-nominated logical input. It
+  // may legitimately change between an action and its exact replay (for example, more participants
+  // may join an operation), so binding it into the replay digest would turn a successful retry into
+  // idempotency_conflict. A replay returns before executing any leaf mutation; a fresh execution
+  // still receives and enforces only the authority derived for that request.
+  delete requestHashInput.itemAuthority;
   const guard = await beginMutation(
     client, mutationKind, owner, idempotencyKey, requestHashInput,
   );
   if (guard.replay !== null) return guard.replay;
   const context = Object.freeze({});
   const state = {
-    client, guard, rootOwner: owner, authority,
+    client, guard, rootOwner: owner, authority, mutationKind,
     ordinal: 0, closed: false, failed: null,
   };
   MUTATION_CONTEXTS.set(context, state);
