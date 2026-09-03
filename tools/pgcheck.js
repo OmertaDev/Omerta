@@ -462,14 +462,51 @@ console.log('\n7a. ITEM CONSERVATION CONSTRAINTS ARE REAL DATABASE AUTHORITY');
 // row, a rejected negative mutation, and a rejected impossible consumed-instance state.
 {
   const tables = ['item_stacks', 'item_instances', 'item_events',
-    'item_mutation_guards', 'operation_escrow'];
+    'item_mutation_guards', 'operation_escrow', 'world_operations',
+    'world_operation_roles', 'world_operation_node_state', 'world_operation_contributions'];
   const present = (await pool.query(
     `SELECT relname FROM pg_class
       WHERE relkind='r' AND relname = ANY($1::text[])`, [tables],
   )).rows.map((row) => row.relname);
   check(tables.every((table) => present.includes(table)),
-    'all five item authority tables exist on real PostgreSQL',
+    'all item and world-operation authority tables exist on real PostgreSQL',
     `present: ${present.sort().join(', ')}`);
+
+  const operationProbe = `pgcheck-world-operation-${process.pid}-${Date.now()}`;
+  await pool.query(
+    `INSERT INTO world_operations
+       (id,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id)
+     VALUES ($1,'pgcheck-graph',1,'pgcheck-operation','pgcheck-crew','pgcheck-account-a')`,
+    [operationProbe],
+  );
+  await pool.query(
+    `INSERT INTO world_operation_roles (operation_id,role_id,account_id,character_id)
+     VALUES ($1,'investigator','pgcheck-account-a','pgcheck-character-a')`,
+    [operationProbe],
+  );
+  let distinctAccountCode = '';
+  try {
+    await pool.query(
+      `INSERT INTO world_operation_roles (operation_id,role_id,account_id,character_id)
+       VALUES ($1,'driver','pgcheck-account-a','pgcheck-character-a')`,
+      [operationProbe],
+    );
+  } catch (error) { distinctAccountCode = error.code; }
+  check(distinctAccountCode === '23505',
+    'PostgreSQL enforces one account per world-operation role assignment',
+    `error ${distinctAccountCode || 'none'}`);
+  let operationTupleCode = '';
+  try {
+    await pool.query("UPDATE world_operations SET status='completed' WHERE id=$1", [operationProbe]);
+  } catch (error) { operationTupleCode = error.code; }
+  const operationStatus = (await pool.query(
+    'SELECT status FROM world_operations WHERE id=$1', [operationProbe],
+  )).rows[0]?.status;
+  check(operationTupleCode === '23514' && operationStatus === 'forming',
+    'PostgreSQL rejects a closed operation without its matching terminal timestamp tuple',
+    `error ${operationTupleCode || 'none'}, status ${operationStatus || 'missing'}`);
+  await pool.query('DELETE FROM world_operation_roles WHERE operation_id=$1', [operationProbe]);
+  await pool.query('DELETE FROM world_operations WHERE id=$1', [operationProbe]);
 
   const ownerId = `pgcheck-item-${process.pid}`;
   await pool.query(

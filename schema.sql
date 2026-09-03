@@ -4683,6 +4683,109 @@ CREATE TABLE IF NOT EXISTS mystery_choices (
 CREATE INDEX IF NOT EXISTS ix_mystery_choices_instance
   ON mystery_choices (instance_id, committed_at, node_id);
 
+-- ── WORLD-GRAPH SOCIAL OPERATIONS — account-distinct graph convergence ───────────────
+-- Runtime rows pin immutable graph content and server-derived Crew authority. Crew/account/character
+-- identifiers are never client-nominated. Operation escrow remains authoritative in item_instances
+-- plus operation_escrow; these tables store coordination state and no cash/OMR authority.
+CREATE TABLE IF NOT EXISTS world_operations (
+  id TEXT PRIMARY KEY,
+  graph_id TEXT NOT NULL,
+  graph_version INT NOT NULL,
+  operation_node_id TEXT NOT NULL,
+  crew_id TEXT NOT NULL,
+  opened_by_account_id TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'forming',
+  close_reason TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  activated_at TIMESTAMPTZ,
+  completed_at TIMESTAMPTZ,
+  canceled_at TIMESTAMPTZ,
+  abandoned_at TIMESTAMPTZ,
+  UNIQUE (crew_id, graph_id, graph_version, operation_node_id),
+  CONSTRAINT world_operation_id CHECK (char_length(id) BETWEEN 1 AND 200),
+  CONSTRAINT world_operation_graph CHECK (
+    char_length(graph_id) BETWEEN 1 AND 200 AND graph_version > 0
+    AND char_length(operation_node_id) BETWEEN 1 AND 200
+  ),
+  CONSTRAINT world_operation_authority CHECK (
+    char_length(crew_id) BETWEEN 1 AND 200
+    AND char_length(opened_by_account_id) BETWEEN 1 AND 200
+  ),
+  CONSTRAINT world_operation_status CHECK (
+    status IN ('forming','active','completed','canceled','abandoned')
+  ),
+  CONSTRAINT world_operation_close_reason CHECK (
+    close_reason IS NULL OR char_length(close_reason) BETWEEN 1 AND 80
+  ),
+  CONSTRAINT world_operation_status_time CHECK (
+    (status = 'forming' AND activated_at IS NULL AND completed_at IS NULL
+      AND canceled_at IS NULL AND abandoned_at IS NULL AND close_reason IS NULL)
+    OR (status = 'active' AND activated_at IS NOT NULL AND completed_at IS NULL
+      AND canceled_at IS NULL AND abandoned_at IS NULL AND close_reason IS NULL)
+    OR (status = 'completed' AND activated_at IS NOT NULL AND completed_at IS NOT NULL
+      AND canceled_at IS NULL AND abandoned_at IS NULL AND close_reason = 'completed')
+    OR (status = 'canceled' AND completed_at IS NULL AND canceled_at IS NOT NULL
+      AND abandoned_at IS NULL AND close_reason = 'canceled')
+    OR (status = 'abandoned' AND completed_at IS NULL AND canceled_at IS NULL
+      AND abandoned_at IS NOT NULL AND close_reason IN ('participant_dead','crew_changed'))
+  )
+);
+CREATE INDEX IF NOT EXISTS ix_world_operations_crew
+  ON world_operations (crew_id, status, created_at);
+
+-- Role uniqueness plus account uniqueness is the storage-level distinct-account guarantee.
+CREATE TABLE IF NOT EXISTS world_operation_roles (
+  operation_id TEXT NOT NULL REFERENCES world_operations(id) ON DELETE CASCADE,
+  role_id TEXT NOT NULL,
+  account_id TEXT NOT NULL,
+  character_id TEXT NOT NULL,
+  assigned_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (operation_id, role_id),
+  UNIQUE (operation_id, account_id),
+  CONSTRAINT world_operation_role_id CHECK (char_length(role_id) BETWEEN 1 AND 80),
+  CONSTRAINT world_operation_role_account CHECK (char_length(account_id) BETWEEN 1 AND 200),
+  CONSTRAINT world_operation_role_character CHECK (char_length(character_id) BETWEEN 1 AND 200)
+);
+CREATE INDEX IF NOT EXISTS ix_world_operation_roles_account
+  ON world_operation_roles (account_id, operation_id);
+
+CREATE TABLE IF NOT EXISTS world_operation_node_state (
+  operation_id TEXT NOT NULL REFERENCES world_operations(id) ON DELETE CASCADE,
+  node_id TEXT NOT NULL,
+  state TEXT NOT NULL,
+  completed_at TIMESTAMPTZ,
+  excluded_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (operation_id, node_id),
+  CONSTRAINT world_operation_state_node CHECK (char_length(node_id) BETWEEN 1 AND 200),
+  CONSTRAINT world_operation_state CHECK (state IN ('completed','excluded')),
+  CONSTRAINT world_operation_state_time CHECK (
+    (state = 'completed' AND completed_at IS NOT NULL AND excluded_at IS NULL)
+    OR (state = 'excluded' AND completed_at IS NULL AND excluded_at IS NOT NULL)
+  )
+);
+CREATE INDEX IF NOT EXISTS ix_world_operation_node_state
+  ON world_operation_node_state (operation_id, state, node_id);
+
+CREATE TABLE IF NOT EXISTS world_operation_contributions (
+  operation_id TEXT NOT NULL REFERENCES world_operations(id) ON DELETE CASCADE,
+  node_id TEXT NOT NULL,
+  role_id TEXT NOT NULL,
+  account_id TEXT NOT NULL,
+  character_id TEXT NOT NULL,
+  contributed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (operation_id, node_id),
+  CONSTRAINT world_operation_contribution_node CHECK (char_length(node_id) BETWEEN 1 AND 200),
+  CONSTRAINT world_operation_contribution_role CHECK (char_length(role_id) BETWEEN 1 AND 80),
+  CONSTRAINT world_operation_contribution_account CHECK (char_length(account_id) BETWEEN 1 AND 200),
+  CONSTRAINT world_operation_contribution_character CHECK (char_length(character_id) BETWEEN 1 AND 200),
+  FOREIGN KEY (operation_id, role_id)
+    REFERENCES world_operation_roles(operation_id, role_id)
+);
+CREATE INDEX IF NOT EXISTS ix_world_operation_contributions_role
+  ON world_operation_contributions (operation_id, role_id, contributed_at);
+
 -- ── AUTHORED CONTENT SUPPLY — exact-hash lots + globally finite sources ───────────────────────
 -- Authored inventory is account-owned and therefore survives street death. Every lot is pinned to
 -- the exact activated bundle hash that defined it; a later version cannot reinterpret old inputs.

@@ -560,6 +560,8 @@ const DISPOSITION = {
   poker_ring_seats: 'special', // RING POKER: wipeRingAtDeath folds the seat + BURNS the stack (casino:ring:death) under the table lock — never a bare DELETE (the stack is escrowed cash)
   chat_messages: 'log', // troll-box lines keep their name snapshot — a dead man's words stand (7d worker retention)
   nft_reimports: 'log', // NFT RE-IMPORT (Option A): a chain-event audit record keyed by the log ref. `applied_character` RECORDS where the re-created car went (it dies via the normal cars estate path); this record persists past that death — the chat_messages precedent.
+  world_operation_roles: 'ledger', // pinned assignment: a dead assignee invalidates/abandons the operation; replacing the ID would let an heir impersonate the role
+  world_operation_contributions: 'ledger', // immutable participation audit; the operation close path returns escrow and preserves who contributed
   // ── the `%_character` half (audit F4): sixteen tables that scope themselves by a named role rather
   // than by `character_id`, and were invisible to this guard until it learned the suffix. Every one is
   // handled today — that is precisely why the blind spot mattered: nothing was ENFORCING it.
