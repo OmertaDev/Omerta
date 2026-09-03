@@ -37,7 +37,8 @@ const relPath = (from, to) => path.relative(from, to).replaceAll('\\', '/');
 // and a scanner that reads prose produces the mostly-wrong advisory people learn to route around —
 // this file's own recorded class. One implementation, because two copies of a rule is how the two
 // come to disagree. `//` is left alone after a colon so a URL in a string does not eat its own line.
-const decomment = (t) => t.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/[^\n]*/g, '$1');
+const decomment = (t) => t.replaceAll('\r\n', '\n')
+  .replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/[^\n]*/g, '$1');
 const GATES = ['jailed', 'hospitalized', 'safeHoused', 'penSafe', 'inHole', 'witproActive'];
 // The column each gate reads, so a hand-written inline check counts as enforcement. Matched as a
 // PROPERTY ACCESS (`ch.safe_until`) rather than the bare column, because the bare name also appears
@@ -3471,7 +3472,8 @@ scopedSocialContext = async function(db) {
     // behind — my own first run flagged two sites whose only `await` was in the sentence explaining
     // why they capture at spawn, and a mostly-wrong advisory is the kind people route around. Line
     // positions are preserved so the failure still names the real line.
-    const lines = fs.readFileSync(f, 'utf8').split('\n').map((l) => l.replace(/\/\/.*$/, ''));
+    const lines = fs.readFileSync(f, 'utf8').replaceAll('\r\n', '\n')
+      .split('\n').map((l) => l.replace(/\/\/.*$/, ''));
     for (let i = 0; i < lines.length; i++) {
       const m = /(?:const|let|var)?\s*\b(\w+)\s*=\s*spawn\(/.exec(lines[i]);
       if (!m) continue;
@@ -3572,10 +3574,14 @@ scopedSocialContext = async function(db) {
 
   const missing = [];
   let walked = 0;
+  const npmCommand = process.platform === 'win32' ? process.env.ComSpec || 'cmd.exe' : 'npm';
+  const npmArgs = process.platform === 'win32'
+    ? ['/d', '/s', '/c', 'npm.cmd', 'pack', '--dry-run', '--json']
+    : ['pack', '--dry-run', '--json'];
   for (const { rel, dir, json } of pkgs) {
     let shipped;
     try {
-      const out = execFileSync('npm', ['pack', '--dry-run', '--json'], { cwd: dir, encoding: 'utf8',
+      const out = execFileSync(npmCommand, npmArgs, { cwd: dir, encoding: 'utf8',
         stdio: ['ignore', 'pipe', 'ignore'] });
       shipped = new Set(JSON.parse(out)[0].files.map((f) => f.path));
     } catch (e) {

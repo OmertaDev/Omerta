@@ -460,6 +460,9 @@ const NOT_API = new Set([
   'cls',        // heroBand()'s stat class ('neon'/'warn') — the focal-header CSS accent, never sent
   'tone',       // Operation Desk readiness state ('ready'/'caution'/'blocked') — render-only CSS modifier
   'label',      // heroBand()'s stat label — the render caption under the big number, never sent
+  'dateStyle',  // Intl.DateTimeFormat presentation option used by the Content Desk
+  'timeStyle',  // Intl.DateTimeFormat presentation option used by the Content Desk
+  'view',       // Content Desk's local cases/workshop/exchange/archive selection
 ]);
 // `field: 'value'` (deck bodies, JS objects) and `"field":"value"` (data-body attributes).
 // A TERNARY's colon looks exactly like a key's: `alt: guest ? null : 'everywhere'` contains the

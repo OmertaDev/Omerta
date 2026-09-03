@@ -38,7 +38,7 @@
 | [src/commission.js](../../src/commission.js) | 1395 | platform-core | 5 / 16 | 9 | 17 | 4 |
 | [src/community.js](../../src/community.js) | 220 | engagement-growth | 3 / 7 | 2 | 8 | 1 |
 | [src/contacts.js](../../src/contacts.js) | 247 | engagement-growth | 2 / 9 | 3 | 10 | 2 |
-| [src/content/compiler.js](../../src/content/compiler.js) | 1214 | platform-core | 1 / 11 | 0 | 0 | 8 |
+| [src/content/compiler.js](../../src/content/compiler.js) | 1214 | platform-core | 1 / 12 | 0 | 0 | 8 |
 | [src/content/crafting.js](../../src/content/crafting.js) | 1064 | platform-core | 4 / 0 | 0 | 11 | 0 |
 | [src/content/exchange.js](../../src/content/exchange.js) | 412 | economy-ledger | 1 / 0 | 0 | 6 | 0 |
 | [src/content/runtime.js](../../src/content/runtime.js) | 1095 | platform-core | 2 / 1 | 9 | 12 | 0 |
