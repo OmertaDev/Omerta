@@ -17,7 +17,7 @@
 | [src/bank.js](../../src/bank.js) | 519 | platform-core | 3 / 5 | 4 | 14 | 1 |
 | [src/bloodline.js](../../src/bloodline.js) | 80 | platform-core | 1 / 3 | 2 | 4 | 0 |
 | [src/bonds.js](../../src/bonds.js) | 506 | platform-core | 4 / 11 | 9 | 15 | 3 |
-| [src/boxing.js](../../src/boxing.js) | 705 | vice-competition | 3 / 12 | 11 | 8 | 4 |
+| [src/boxing.js](../../src/boxing.js) | 708 | vice-competition | 3 / 12 | 11 | 8 | 4 |
 | [src/brokers.js](../../src/brokers.js) | 302 | platform-core | 4 / 4 | 5 | 10 | 1 |
 | [src/bulletin.js](../../src/bulletin.js) | 89 | engagement-growth | 2 / 1 | 1 | 2 | 0 |
 | [src/business.js](../../src/business.js) | 677 | enterprise-logistics | 6 / 7 | 13 | 7 | 1 |
@@ -108,9 +108,9 @@
 | [src/portfolio.js](../../src/portfolio.js) | 51 | economy-ledger | 1 / 3 | 9 | 4 | 1 |
 | [src/portrait.js](../../src/portrait.js) | 337 | engagement-growth | 3 / 4 | 0 | 6 | 2 |
 | [src/preflight.js](../../src/preflight.js) | 476 | platform-core | 0 / 7 | 0 | 7 | 3 |
-| [src/primetime.js](../../src/primetime.js) | 287 | engagement-growth | 2 / 6 | 4 | 5 | 1 |
+| [src/primetime.js](../../src/primetime.js) | 292 | engagement-growth | 2 / 6 | 4 | 5 | 1 |
 | [src/push.js](../../src/push.js) | 226 | engagement-growth | 2 / 4 | 3 | 6 | 1 |
-| [src/races.js](../../src/races.js) | 500 | vice-competition | 4 / 9 | 11 | 9 | 3 |
+| [src/races.js](../../src/races.js) | 508 | vice-competition | 4 / 9 | 11 | 9 | 3 |
 | [src/ratelimit.js](../../src/ratelimit.js) | 126 | platform-core | 1 / 2 | 0 | 0 | 0 |
 | [src/regimen.js](../../src/regimen.js) | 126 | platform-core | 2 / 5 | 3 | 5 | 0 |
 | [src/ring.js](../../src/ring.js) | 444 | vice-competition | 3 / 7 | 7 | 4 | 2 |
@@ -157,8 +157,8 @@
 | [src/shipment.js](../../src/shipment.js) | 175 | enterprise-logistics | 2 / 2 | 3 | 8 | 0 |
 | [src/skills.js](../../src/skills.js) | 171 | world-progression | 4 / 3 | 5 | 4 | 0 |
 | [src/social.js](../../src/social.js) | 27 | social-combat | 6 / 13 | 44 | 3 | 6 |
-| [src/social/combat.js](../../src/social/combat.js) | 1058 | platform-core | 13 / 4 | 0 | 21 | 0 |
-| [src/social/contracts.js](../../src/social/contracts.js) | 598 | platform-core | 5 / 5 | 0 | 14 | 0 |
+| [src/social/combat.js](../../src/social/combat.js) | 1069 | platform-core | 13 / 4 | 0 | 21 | 0 |
+| [src/social/contracts.js](../../src/social/contracts.js) | 601 | platform-core | 5 / 5 | 0 | 14 | 0 |
 | [src/social/defense.js](../../src/social/defense.js) | 177 | platform-core | 7 / 3 | 0 | 2 | 0 |
 | [src/social/estate.js](../../src/social/estate.js) | 529 | enterprise-logistics | 18 / 4 | 0 | 80 | 0 |
 | [src/social/exchange.js](../../src/social/exchange.js) | 128 | economy-ledger | 3 / 1 | 0 | 2 | 0 |

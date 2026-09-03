@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `45b7cad2d931`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `a026710c1064`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1310 |
+| Commits in clone | 1312 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-03 — Make the arena instrument honest: seeding refuted, replicates required (#165) |
+| Latest commit | 2026-09-03 — play wave 80: the clock the success reply never named |
 
 ## Commit authors
 
@@ -21,33 +21,33 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 448 |
-| Claude | 156 |
+| Claude | 157 |
 | CRVYDEV | 41 |
-| github-actions[bot] | 17 |
+| github-actions[bot] | 18 |
 | claude[bot] | 1 |
 
 ## Historical hotspots
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| [CLAUDE.md](../../CLAUDE.md) | 510 | yes |
-| [public/index.html](../../public/index.html) | 395 | yes |
+| [CLAUDE.md](../../CLAUDE.md) | 511 | yes |
+| [public/index.html](../../public/index.html) | 396 | yes |
 | [src/server.js](../../src/server.js) | 351 | yes |
-| [SPEC.md](../../SPEC.md) | 277 | yes |
+| [SPEC.md](../../SPEC.md) | 278 | yes |
 | [schema.sql](../../schema.sql) | 273 | yes |
 | [BALANCE.md](../../BALANCE.md) | 253 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 172 | yes |
 | [package.json](../../package.json) | 144 | yes |
-| knowledge/generated/github-history.md | 140 | historical |
-| knowledge/generated/graph-summary.md | 140 | historical |
-| knowledge/generated/graph.json | 140 | historical |
-| knowledge/generated/inventory.md | 140 | historical |
+| knowledge/generated/github-history.md | 141 | historical |
+| knowledge/generated/graph-summary.md | 141 | historical |
+| knowledge/generated/graph.json | 141 | historical |
+| knowledge/generated/inventory.md | 141 | historical |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 117 | yes |
 | [src/invariants.js](../../src/invariants.js) | 115 | yes |
-| [test/client.js](../../test/client.js) | 107 | yes |
+| [test/client.js](../../test/client.js) | 108 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
 | [test/social.js](../../test/social.js) | 84 | yes |
 | [public/wiki.html](../../public/wiki.html) | 80 | yes |
