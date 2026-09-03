@@ -18146,3 +18146,39 @@ wearing a code failure's clothes. And **M3's first anchor was not unique**: the 
 failed` — *a mutation that does not apply reads exactly like a fix that holds*, which is why every
 mutation asserts its own anchor landed before the result is believed. Nothing in `src/` changed —
 the remedy was already correct; what was missing was any proof of it.
+
+**THE ARENA INSTRUMENT MADE HONEST — the seed that pins nothing, and the replicate that does
+(2026-09-03).** The last arena write-up ended by naming its own instrument as broken: two runs at
+`ARENA_SEED=1`, same arm, same tree, landed on 17 and 66 kills, and the seed pins only the harness's
+coins while the server carries 128 unseeded `Math.random()` sites across 38 files. The task was the
+obvious one — seed the server under a test-only knob so an arm is reproducible, and report N runs per
+arm as a distribution. **Half of it was REFUTED by its own measurement and is shipped as a diagnostic
+only.** `tools/arena.js` now patches three LCG streams (`grnd`/`srnd`/`urnd`) over `Math.random` and
+the id/ordering helpers before `buildServer()` (`ARENA_SEED_SERVER=off` reproduces the unpatched
+harness), and the before/after is FLAT: TEN patched runs at seed 1 (4 days × 2 rounds) landed on
+kills {5,5,7,7,8,8,8,8,9,9}, estate burn 14–22%, Gini 0.307–0.382 — and FOUR unpatched controls at
+the same seed landed on kills {7,8,8,9}, estate 16–22%, Gini 0.331–0.372, i.e. INSIDE the patched
+spread on every metric. **Seeding pins the ROLLS and nothing else**: §7.1 lazy accrual reads the real
+wall-clock millisecond on every authed request, so energy and nerve drift by however long the
+previous request took, that drift changes which action a strategy can afford, and the cascade
+swallows the seeded rolls within the first round. Clock virtualization was considered and rejected
+(it would virtualize the very thing §7.1 is a contract about); two residual sites (`src/rivals.js`,
+`src/rwaregistrylifecycle.js`) destructure `randomUUID` at import and stay unreachable, stated at the
+patch. The refutation is written INTO the file with the samples, so no future arena claim can rest on
+a same-seed pair "now that the server is seeded".
+**THE SURVIVING DELIVERABLE IS `tools/arena-sweep.js` (`npm run arena-sweep`), and its own first
+verdict was false — which is why `--reps` exists.** It runs N seeds × `--reps` replicates per arm,
+each in a fresh database (a reused one reads exactly like a code defect), reports median and
+[min…max] per arm, and refuses to call two arms different unless their ranges are DISJOINT — no
+statistical test is honest at N in the single digits, and the arena had already produced one
+confident arm conclusion a re-run of the same arm falsified. Its first run, one replicate per
+(arm, seed), printed **✔ SEPARATED on kills, estate AND Gini** between two arms that are the same
+economy with the server seeded or not; at `--reps 2` all four metrics collapsed to `· overlap`
+(8 runs, 0 failed). A single draw per cell is a sample of an unsampled distribution, and a
+disjointness test over single draws is a coin flip wearing a verdict — so a `REPS === 1` run prints
+that warning under its own table, a failed replicate is reported rather than silently dropped from
+the distribution it claims to measure, and the false-verdict episode is in the file header. Nothing
+in `src/` changed and no signed lever moved: this drop makes the instrument tell the truth about its
+own resolution, and the truth is that the step-two and step-three arena FIGURES were single samples
+of a noise-dominated instrument (their directional reads survive; their numbers do not). SPEC's
+harness row carries the sweep as the 16th.
