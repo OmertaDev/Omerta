@@ -130,9 +130,17 @@ function assertEffectTarget(registry, packageId, effect, adapter) {
   if (adapter === 'evidence_grant' && target.type !== 'evidence') {
     fail('bad_mystery_effect', 'Evidence grants require an evidence target.');
   }
+  if (target.visibility === 'role_private') {
+    fail('bad_mystery_effect',
+      `Task 5 mystery effects cannot mutate role-private state through ${adapter}.`);
+  }
   if (['discover', 'complete'].includes(adapter)
     && (!BOARD_NODE_TYPES.has(target.type) || target.type === 'choice')) {
     fail('bad_mystery_effect', `Mystery effect ${adapter} requires a runtime-state node target.`);
+  }
+  if (adapter === 'complete' && target.metadata?.terminal === true) {
+    fail('bad_mystery_effect',
+      'Terminal mystery nodes may be completed only through their canonical direct action.');
   }
   if (adapter === 'status_award') {
     const metadata = target.metadata || {};

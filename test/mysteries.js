@@ -728,6 +728,65 @@ try {
     );
   }
 
+  for (const [adapter, targetType, targetMetadata] of [
+    ['discover', 'mystery_step', {}],
+    ['complete', 'mystery_step', {}],
+    ['evidence_grant', 'evidence', {}],
+    ['status_award', 'reward', { inert: true, rewardType: 'status' }],
+  ]) {
+    const rolePrivateEffectRegistry = loadAndValidateGraphPackages([Object.freeze({
+      id: `role-private-effect-mystery-${adapter}`,
+      version: 1,
+      season: 'core',
+      dependsOn: Object.freeze([]),
+      nodes: Object.freeze([
+        Object.freeze({
+          id: `m:role-private-effect-${adapter}`, type: 'mystery_step', visibility: 'public',
+          effects: Object.freeze([Object.freeze({
+            adapter, nodeId: `target:role-private-${adapter}`,
+          })]),
+        }),
+        Object.freeze({
+          id: `target:role-private-${adapter}`, type: targetType, visibility: 'role_private',
+          metadata: Object.freeze(targetMetadata),
+        }),
+      ]),
+    })]);
+    assert.throws(
+      () => createMysteryContext({
+        registry: rolePrivateEffectRegistry, accountId: ACCOUNT, now: NOW,
+      }),
+      (error) => error?.code === 'bad_mystery_effect',
+      `${adapter} cannot smuggle Task 6 role-private graph-state authority into Task 5`,
+    );
+  }
+
+  const terminalEffectRegistry = loadAndValidateGraphPackages([Object.freeze({
+    id: 'terminal-effect-mystery',
+    version: 1,
+    season: 'core',
+    dependsOn: Object.freeze([]),
+    nodes: Object.freeze([
+      Object.freeze({
+        id: 'm:terminal-effect-source', type: 'mystery_step', visibility: 'public',
+        effects: Object.freeze([Object.freeze({
+          adapter: 'complete', nodeId: 'm:terminal-effect-target',
+        })]),
+      }),
+      Object.freeze({
+        id: 'm:terminal-effect-target', type: 'mystery_step', visibility: 'public',
+        metadata: Object.freeze({ terminal: true }),
+      }),
+    ]),
+  })]);
+  assert.throws(
+    () => createMysteryContext({
+      registry: terminalEffectRegistry, accountId: ACCOUNT, now: NOW,
+    }),
+    (error) => error?.code === 'bad_mystery_effect',
+    'a generic complete effect cannot pre-complete a terminal while leaving the instance active',
+  );
+
   const invalidTerminalRegistry = loadAndValidateGraphPackages([Object.freeze({
     id: 'invalid-terminal-mystery',
     version: 1,
