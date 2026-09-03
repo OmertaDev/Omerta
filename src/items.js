@@ -1,0 +1,535 @@
+// Conserved inventory primitives for authored world graphs.
+//
+// Mutation callers MUST provide the query client that owns their transaction. That lets a recipe,
+// salvage, mystery, or social operation lock its own authority rows and inventory rows under one
+// COMMIT. These helpers do not open nested transactions. Every mutation reserves a globally unique
+// logical key, applies conditional DML, appends provenance, and completes the replay result under
+// that caller-owned transaction.
+import crypto from 'node:crypto';
+import { dbCaps } from './db.js';
+import { GameError } from './game.js';
+
+const OWNER_SCOPES = new Set(['character', 'account', 'operation']);
+const COMPOSITE_MUTATION_KINDS = new Set([
+  'craft', 'salvage_car', 'mystery_action', 'operation_action', 'reward_claim',
+]);
+const CREATION_PROVENANCE_KINDS = new Set(['crafted', 'salvaged', 'awarded', 'imported']);
+const ESCROW_PROVENANCE_KINDS = new Set(['used_in_mystery', 'used_in_operation']);
+const MUTATION_CONTEXTS = new WeakMap();
+const INT_MAX = 2147483647;
+
+const fail = (code, message, data) => { throw new GameError(code, message, data); };
+
+function boundedText(value, label, max, code = 'bad_item_request') {
+  if (typeof value !== 'string' || value.length < 1 || value.length > max
+    || value.trim() !== value || !value.trim()) {
+    fail(code, `${label} must be a non-empty canonical string of at most ${max} characters.`);
+  }
+  return value;
+}
+
+function itemOwner(owner, { allowOperation = true } = {}) {
+  if (!owner || typeof owner !== 'object' || Array.isArray(owner)
+    || !OWNER_SCOPES.has(owner.scope) || (!allowOperation && owner.scope === 'operation')) {
+    fail('bad_item_owner', 'Item owner scope must be character, account, or operation.');
+  }
+  return {
+    scope: owner.scope,
+    id: boundedText(owner.id, 'Item owner id', 200, 'bad_item_owner'),
+  };
+}
+
+function positiveQuantity(value) {
+  if (!Number.isSafeInteger(value) || value < 1 || value > INT_MAX) {
+    fail('qty', 'Item quantity must be a positive whole number within the inventory limit.');
+  }
+  return value;
+}
+
+const template = (value) => boundedText(value, 'Item template id', 200);
+const qualityBand = (value) => boundedText(value ?? 'standard', 'Item quality', 80);
+const mutationReason = (value) => boundedText(value, 'Item mutation reason', 500);
+const logicalKey = (value) => boundedText(value, 'Item idempotency key', 200, 'bad_idempotency_key');
+
+const digest = (value) => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
+
+function transactionClient(client) {
+  // Every production transaction in this repository is a checked-out PoolClient and therefore has
+  // `release`. A Pool has query+connect but no release; accepting it would autocommit each step.
+  if (!client || typeof client.query !== 'function' || typeof client.release !== 'function') {
+    fail('item_transaction_required', 'Item mutation requires a checked-out transaction client.');
+  }
+  return client;
+}
+
+async function activeTransaction(client) {
+  transactionClient(client);
+  if (!dbCaps.skipLocked) return client; // pg-mem has no SAVEPOINT syntax; focused tests own BEGIN.
+  try {
+    // PostgreSQL rejects SAVEPOINT outside an explicit transaction with 25P01. This is a real
+    // transaction-state probe, not a PoolClient-shape guess, and RELEASE leaves no nested scope.
+    await client.query('SAVEPOINT item_transaction_probe');
+    await client.query('RELEASE SAVEPOINT item_transaction_probe');
+  } catch (error) {
+    if (error?.code === '25P01') {
+      fail('item_transaction_required', 'Item mutation requires an active caller-owned transaction.');
+    }
+    throw error;
+  }
+  return client;
+}
+
+async function beginMutation(client, kind, owner, idempotencyKey, request) {
+  await activeTransaction(client);
+  const key = logicalKey(idempotencyKey);
+  const requestHash = digest({ kind, owner, request });
+  const reservationId = crypto.randomUUID();
+  await client.query(
+    `INSERT INTO item_mutation_guards
+       (idempotency_key, mutation_kind, owner_scope, owner_id, request_hash, reservation_id)
+     VALUES ($1,$2,$3,$4,$5,$6)
+     ON CONFLICT (idempotency_key) DO NOTHING`,
+    [key, kind, owner.scope, owner.id, requestHash, reservationId],
+  );
+  const row = (await client.query(
+    `SELECT mutation_kind, owner_scope, owner_id, request_hash, reservation_id, result_json
+       FROM item_mutation_guards WHERE idempotency_key=$1 FOR UPDATE`,
+    [key],
+  )).rows[0];
+  if (!row || row.mutation_kind !== kind || row.owner_scope !== owner.scope
+    || row.owner_id !== owner.id || row.request_hash !== requestHash) {
+    fail('idempotency_conflict', 'That item idempotency key is already bound to another mutation.');
+  }
+  if (row.result_json !== null && row.result_json !== undefined) {
+    return { key, replay: JSON.parse(row.result_json) };
+  }
+  if (row.reservation_id !== reservationId) {
+    fail('idempotency_in_progress', 'That item mutation is still in progress.');
+  }
+  return { key, reservationId, replay: null };
+}
+
+async function abandonMutation(client, guard) {
+  if (!guard?.reservationId) return;
+  await client.query(
+    `DELETE FROM item_mutation_guards
+      WHERE idempotency_key=$1 AND reservation_id=$2 AND result_json IS NULL`,
+    [guard.key, guard.reservationId],
+  ).catch(() => {});
+}
+
+async function completeMutation(client, guard, result) {
+  const updated = await client.query(
+    `UPDATE item_mutation_guards
+        SET result_json=$3, completed_at=now()
+      WHERE idempotency_key=$1 AND reservation_id=$2 AND result_json IS NULL`,
+    [guard.key, guard.reservationId, JSON.stringify(result)],
+  );
+  if (updated.rowCount !== 1) {
+    fail('idempotency_conflict', 'The item mutation lost its logical-key authority.');
+  }
+  return result;
+}
+
+async function executeMutation(client, kind, owner, key, request, action) {
+  transactionClient(client);
+  const composite = key && typeof key === 'object' ? MUTATION_CONTEXTS.get(key) : null;
+  if (composite) {
+    if (composite.client !== client || composite.closed) {
+      fail('item_transaction_required', 'That item mutation context is not active on this transaction.');
+    }
+    composite.ordinal += 1;
+    return action(composite.guard, `${String(composite.ordinal).padStart(4, '0')}:${kind}`);
+  }
+  const guard = await beginMutation(client, kind, owner, key, request);
+  if (guard.replay !== null) return guard.replay;
+  try {
+    const result = await action(guard, 'result');
+    return await completeMutation(client, guard, result);
+  } catch (error) {
+    // Real PostgreSQL rolls this reservation back with its enclosing transaction. pg-mem does not
+    // implement rollback, so removing an uncompleted reservation also keeps focused tests truthful.
+    await abandonMutation(client, guard);
+    throw error;
+  }
+}
+
+// One logical action may consume several stacks and create/escrow several instances. The opaque
+// context lets those leaf primitives share exactly one guard and append distinct ordinal events;
+// replay returns the aggregate result without entering `action` at all. The caller still owns BEGIN,
+// COMMIT, and ROLLBACK so its non-item authority rows remain atomic with inventory.
+export async function withItemMutation(
+  client, ownerValue, mutationKindValue, idempotencyKey, request, action,
+) {
+  transactionClient(client);
+  const owner = itemOwner(ownerValue);
+  const mutationKind = boundedText(mutationKindValue, 'Item mutation kind', 80);
+  if (!COMPOSITE_MUTATION_KINDS.has(mutationKind) || typeof action !== 'function') {
+    fail('bad_item_request', 'Unsupported composite item mutation.');
+  }
+  let requestHashInput;
+  try {
+    requestHashInput = JSON.parse(JSON.stringify(request ?? {}));
+  } catch {
+    fail('bad_item_request', 'Composite item mutation request must be JSON-serializable.');
+  }
+  const guard = await beginMutation(
+    client, mutationKind, owner, idempotencyKey, requestHashInput,
+  );
+  if (guard.replay !== null) return guard.replay;
+  const context = Object.freeze({});
+  const state = { client, guard, ordinal: 0, closed: false };
+  MUTATION_CONTEXTS.set(context, state);
+  try {
+    const result = await action(context);
+    state.closed = true;
+    return await completeMutation(client, guard, result);
+  } catch (error) {
+    state.closed = true;
+    await abandonMutation(client, guard);
+    throw error;
+  }
+}
+
+async function appendEvent(client, guard, {
+  eventKey, eventKind, provenanceKind = null, itemId = null, templateId, quantityDelta = null,
+  quantityBefore = null, quantityAfter = null, from = null, to = null, reason,
+}) {
+  await client.query(
+    `INSERT INTO item_events
+       (id, event_key, event_kind, provenance_kind, item_id, template_id,
+        quantity_delta, quantity_before, quantity_after,
+        from_owner_scope, from_owner_id, to_owner_scope, to_owner_id, reason, idempotency_key)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`,
+    [crypto.randomUUID(), eventKey, eventKind, provenanceKind, itemId, templateId,
+      quantityDelta, quantityBefore, quantityAfter, from?.scope || null, from?.id || null,
+      to?.scope || null, to?.id || null, reason, guard.key],
+  );
+}
+
+const dateString = (value) => value == null ? null : new Date(value).toISOString();
+
+function itemProjection(row) {
+  return {
+    id: row.id,
+    templateId: row.template_id,
+    owner: { scope: row.owner_scope, id: row.owner_id },
+    state: row.state,
+    escrowed: row.state === 'escrowed',
+    createdAt: dateString(row.created_at),
+    updatedAt: dateString(row.updated_at),
+    consumedAt: dateString(row.consumed_at),
+  };
+}
+
+async function lockedItem(client, itemId) {
+  return (await client.query(
+    `SELECT id, template_id, owner_scope, owner_id, state, created_at, updated_at, consumed_at
+       FROM item_instances WHERE id=$1 FOR UPDATE`,
+    [itemId],
+  )).rows[0];
+}
+
+function assertHeld(row, owner, { activeOnly = false } = {}) {
+  if (!row || row.owner_scope !== owner.scope || row.owner_id !== owner.id
+    || row.state === 'consumed' || (activeOnly && row.state !== 'active')) {
+    fail('item_unavailable', 'That item is not spendable by this owner.');
+  }
+}
+
+/** Grant a fungible stack quantity. Exact replay returns the first result. */
+export async function grantStack(
+  client, ownerValue, templateIdValue, qtyValue, qualityValue,
+  reasonValue, idempotencyKey,
+) {
+  const owner = itemOwner(ownerValue);
+  const templateId = template(templateIdValue);
+  const qty = positiveQuantity(qtyValue);
+  const quality = qualityBand(qualityValue);
+  const reason = mutationReason(reasonValue);
+  return executeMutation(client, 'grant_stack', owner, idempotencyKey,
+    { templateId, qty, quality, reason }, async (guard, eventKey) => {
+      const result = await client.query(
+        `INSERT INTO item_stacks
+           (owner_scope, owner_id, template_id, quality, quantity)
+         VALUES ($1,$2,$3,$4,$5)
+         ON CONFLICT (owner_scope, owner_id, template_id, quality)
+         DO UPDATE SET quantity=item_stacks.quantity + EXCLUDED.quantity, updated_at=now()
+           WHERE item_stacks.quantity <= $6 - EXCLUDED.quantity
+         RETURNING quantity`,
+        [owner.scope, owner.id, templateId, quality, qty, INT_MAX],
+      );
+      const after = Number(result.rows[0]?.quantity);
+      if (!Number.isSafeInteger(after)) {
+        fail('inventory_cap', 'That material grant would exceed the inventory quantity limit.');
+      }
+      const before = after - qty;
+      await appendEvent(client, guard, {
+        eventKey, eventKind: 'stack_granted', templateId, quantityDelta: qty,
+        quantityBefore: before, quantityAfter: after, to: owner, reason,
+      });
+      return { owner, templateId, quality, qty: after, delta: qty };
+    });
+}
+
+/** Consume a fungible stack quantity under a row lock and nonnegative conditional update. */
+export async function consumeStack(
+  client, ownerValue, templateIdValue, qtyValue, qualityValue,
+  reasonValue, idempotencyKey,
+) {
+  const owner = itemOwner(ownerValue);
+  const templateId = template(templateIdValue);
+  const qty = positiveQuantity(qtyValue);
+  const quality = qualityBand(qualityValue);
+  const reason = mutationReason(reasonValue);
+  return executeMutation(client, 'consume_stack', owner, idempotencyKey,
+    { templateId, qty, quality, reason }, async (guard, eventKey) => {
+      const row = (await client.query(
+        `SELECT quantity FROM item_stacks
+          WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality=$4
+          FOR UPDATE`,
+        [owner.scope, owner.id, templateId, quality],
+      )).rows[0];
+      const before = Number(row?.quantity || 0);
+      if (before < qty) {
+        fail('materials', 'This owner does not hold enough of that material.', {
+          templateId, quality, current: before, required: qty,
+        });
+      }
+      const expectedAfter = before - qty;
+      const changed = await client.query(
+        `UPDATE item_stacks SET quantity=$6, updated_at=now()
+          WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality=$4
+            AND quantity=$5
+          RETURNING quantity`,
+        [owner.scope, owner.id, templateId, quality, before, expectedAfter],
+      );
+      if (changed.rowCount !== 1) {
+        fail('contention', 'The material inventory changed; retry the operation.');
+      }
+      const after = Number(changed.rows[0].quantity);
+      await appendEvent(client, guard, {
+        eventKey, eventKind: 'stack_consumed', templateId, quantityDelta: -qty,
+        quantityBefore: before, quantityAfter: after, from: owner, reason,
+      });
+      return { owner, templateId, quality, qty: after, delta: -qty };
+    });
+}
+
+/** Create one unique/stateful item with a permanent server-generated ID. */
+export async function createItem(
+  client, ownerValue, templateIdValue, reasonValue, idempotencyKey,
+) {
+  const owner = itemOwner(ownerValue, { allowOperation: false });
+  const templateId = template(templateIdValue);
+  const reason = mutationReason(reasonValue);
+  if (!CREATION_PROVENANCE_KINDS.has(reason)) {
+    fail('bad_item_provenance', 'Created items require a crafted, salvaged, awarded, or imported provenance.');
+  }
+  return executeMutation(client, 'create_item', owner, idempotencyKey,
+    { templateId, reason }, async (guard, eventKey) => {
+      const id = crypto.randomUUID();
+      const row = (await client.query(
+        `INSERT INTO item_instances (id, template_id, owner_scope, owner_id)
+         VALUES ($1,$2,$3,$4)
+         RETURNING id, template_id, owner_scope, owner_id, state, created_at, updated_at, consumed_at`,
+        [id, templateId, owner.scope, owner.id],
+      )).rows[0];
+      await appendEvent(client, guard, {
+        eventKey, eventKind: 'created', provenanceKind: reason,
+        itemId: id, templateId, to: owner, reason,
+      });
+      return itemProjection(row);
+    });
+}
+
+/** Transfer an active unique item between authoritative owners. */
+export async function transferItem(
+  client, fromOwnerValue, toOwnerValue, itemIdValue, reasonValue, idempotencyKey,
+) {
+  const from = itemOwner(fromOwnerValue, { allowOperation: false });
+  const to = itemOwner(toOwnerValue, { allowOperation: false });
+  const itemId = boundedText(itemIdValue, 'Item id', 200);
+  const reason = mutationReason(reasonValue);
+  if (from.scope === to.scope && from.id === to.id) {
+    fail('same_item_owner', 'An item transfer requires two different owners.');
+  }
+  return executeMutation(client, 'transfer_item', from, idempotencyKey,
+    { to, itemId, reason }, async (guard, eventKey) => {
+      const current = await lockedItem(client, itemId);
+      assertHeld(current, from, { activeOnly: true });
+      const changed = await client.query(
+        `UPDATE item_instances
+            SET owner_scope=$2, owner_id=$3, updated_at=now()
+          WHERE id=$1 AND owner_scope=$4 AND owner_id=$5 AND state='active'
+          RETURNING id, template_id, owner_scope, owner_id, state, created_at, updated_at, consumed_at`,
+        [itemId, to.scope, to.id, from.scope, from.id],
+      );
+      if (changed.rowCount !== 1) {
+        fail('contention', 'The item owner changed; retry the operation.');
+      }
+      await appendEvent(client, guard, {
+        eventKey, eventKind: 'transferred', provenanceKind: 'transferred',
+        itemId, templateId: current.template_id,
+        from, to, reason,
+      });
+      return itemProjection(changed.rows[0]);
+    });
+}
+
+/** Permanently consume an owned or operation-escrowed unique item. */
+export async function consumeItem(
+  client, ownerValue, itemIdValue, reasonValue, idempotencyKey,
+) {
+  const owner = itemOwner(ownerValue);
+  const itemId = boundedText(itemIdValue, 'Item id', 200);
+  const reason = mutationReason(reasonValue);
+  return executeMutation(client, 'consume_item', owner, idempotencyKey,
+    { itemId, reason }, async (guard, eventKey) => {
+      const current = await lockedItem(client, itemId);
+      assertHeld(current, owner);
+      if (current.state === 'escrowed') {
+        const removed = await client.query(
+          'DELETE FROM operation_escrow WHERE item_id=$1 AND operation_id=$2',
+          [itemId, owner.id],
+        );
+        if (removed.rowCount !== 1) {
+          fail('item_not_escrowed', 'The operation does not hold this item escrow.');
+        }
+      }
+      const changed = await client.query(
+        `UPDATE item_instances
+            SET state='consumed', consumed_at=now(), updated_at=now()
+          WHERE id=$1 AND owner_scope=$2 AND owner_id=$3 AND state<>'consumed'
+          RETURNING id, template_id, owner_scope, owner_id, state, created_at, updated_at, consumed_at`,
+        [itemId, owner.scope, owner.id],
+      );
+      if (changed.rowCount !== 1) {
+        fail('contention', 'The item state changed; retry the operation.');
+      }
+      await appendEvent(client, guard, {
+        eventKey, eventKind: 'consumed', provenanceKind: 'consumed',
+        itemId, templateId: current.template_id,
+        from: owner, reason,
+      });
+      return itemProjection(changed.rows[0]);
+    });
+}
+
+/** Move an active character/account item into one operation's sole custody. */
+export async function escrowItem(
+  client, fromOwnerValue, operationIdValue, itemIdValue, reasonValue, idempotencyKey,
+  provenanceKindValue = 'used_in_mystery',
+) {
+  const from = itemOwner(fromOwnerValue, { allowOperation: false });
+  const operation = itemOwner({ scope: 'operation', id: operationIdValue });
+  const itemId = boundedText(itemIdValue, 'Item id', 200);
+  const reason = mutationReason(reasonValue);
+  const provenanceKind = boundedText(provenanceKindValue, 'Escrow provenance kind', 80);
+  if (!ESCROW_PROVENANCE_KINDS.has(provenanceKind)) {
+    fail('bad_item_provenance', 'Escrow provenance must be used_in_mystery or used_in_operation.');
+  }
+  return executeMutation(client, 'escrow_item', from, idempotencyKey,
+    { operation, itemId, reason, provenanceKind }, async (guard, eventKey) => {
+      const current = await lockedItem(client, itemId);
+      assertHeld(current, from, { activeOnly: true });
+      await client.query(
+        `INSERT INTO operation_escrow
+           (item_id, operation_id, depositor_scope, depositor_id)
+         VALUES ($1,$2,$3,$4)`,
+        [itemId, operation.id, from.scope, from.id],
+      );
+      const changed = await client.query(
+        `UPDATE item_instances
+            SET owner_scope='operation', owner_id=$2, state='escrowed', updated_at=now()
+          WHERE id=$1 AND owner_scope=$3 AND owner_id=$4 AND state='active'
+          RETURNING id, template_id, owner_scope, owner_id, state, created_at, updated_at, consumed_at`,
+        [itemId, operation.id, from.scope, from.id],
+      );
+      if (changed.rowCount !== 1) {
+        fail('contention', 'The item owner changed; retry the operation.');
+      }
+      await appendEvent(client, guard, {
+        eventKey, eventKind: 'escrowed', provenanceKind,
+        itemId, templateId: current.template_id,
+        from, to: operation, reason,
+      });
+      return itemProjection(changed.rows[0]);
+    });
+}
+
+/** Release one escrowed item. Only the operation named by the custody row can release it. */
+export async function releaseEscrow(
+  client, operationIdValue, toOwnerValue, itemIdValue, reasonValue, idempotencyKey,
+) {
+  const operation = itemOwner({ scope: 'operation', id: operationIdValue });
+  const to = itemOwner(toOwnerValue, { allowOperation: false });
+  const itemId = boundedText(itemIdValue, 'Item id', 200);
+  const reason = mutationReason(reasonValue);
+  return executeMutation(client, 'release_escrow', operation, idempotencyKey,
+    { to, itemId, reason }, async (guard, eventKey) => {
+      const current = await lockedItem(client, itemId);
+      if (!current || current.state !== 'escrowed'
+        || current.owner_scope !== 'operation' || current.owner_id !== operation.id) {
+        fail('item_not_escrowed', 'That operation does not hold this item escrow.');
+      }
+      const custody = (await client.query(
+        'SELECT operation_id FROM operation_escrow WHERE item_id=$1 FOR UPDATE', [itemId],
+      )).rows[0];
+      if (!custody || custody.operation_id !== operation.id) {
+        fail('item_not_escrowed', 'That operation does not hold this item escrow.');
+      }
+      const changed = await client.query(
+        `UPDATE item_instances
+            SET owner_scope=$2, owner_id=$3, state='active', updated_at=now()
+          WHERE id=$1 AND owner_scope='operation' AND owner_id=$4 AND state='escrowed'
+          RETURNING id, template_id, owner_scope, owner_id, state, created_at, updated_at, consumed_at`,
+        [itemId, to.scope, to.id, operation.id],
+      );
+      if (changed.rowCount !== 1) {
+        fail('contention', 'The item escrow changed; retry the operation.');
+      }
+      const removed = await client.query(
+        'DELETE FROM operation_escrow WHERE item_id=$1 AND operation_id=$2',
+        [itemId, operation.id],
+      );
+      if (removed.rowCount !== 1) {
+        fail('contention', 'The item escrow changed; retry the operation.');
+      }
+      await appendEvent(client, guard, {
+        eventKey, eventKind: 'released', provenanceKind: 'transferred',
+        itemId, templateId: current.template_id,
+        from: operation, to, reason,
+      });
+      return itemProjection(changed.rows[0]);
+    });
+}
+
+/** Read current spendable stacks and unique instances exactly once from their authoritative rows. */
+export async function inventoryBoard(client, ownerValue) {
+  if (!client || typeof client.query !== 'function') {
+    fail('item_transaction_required', 'Inventory read requires a database query client.');
+  }
+  const owner = itemOwner(ownerValue);
+  const stacks = (await client.query(
+    `SELECT template_id, quality, quantity, created_at, updated_at
+       FROM item_stacks
+      WHERE owner_scope=$1 AND owner_id=$2 AND quantity>0
+      ORDER BY template_id, quality`,
+    [owner.scope, owner.id],
+  )).rows.map((row) => ({
+    templateId: row.template_id,
+    quality: row.quality,
+    qty: Number(row.quantity),
+    createdAt: dateString(row.created_at),
+    updatedAt: dateString(row.updated_at),
+  }));
+  const items = (await client.query(
+    `SELECT id, template_id, owner_scope, owner_id, state, created_at, updated_at, consumed_at
+       FROM item_instances
+      WHERE owner_scope=$1 AND owner_id=$2 AND state<>'consumed'
+      ORDER BY created_at, id`,
+    [owner.scope, owner.id],
+  )).rows.map(itemProjection);
+  return { owner, stacks, items };
+}

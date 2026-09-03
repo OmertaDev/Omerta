@@ -456,6 +456,178 @@ console.log('\n7. THE SCHEMA IS RE-APPLIABLE (in-place upgrade)');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+console.log('\n7a. ITEM CONSERVATION CONSTRAINTS ARE REAL DATABASE AUTHORITY');
+// pg-mem proves the runtime behavior but cannot prove that production PostgreSQL accepted every
+// constraint with native semantics. Keep this probe small and self-cleaning: table presence, a valid
+// row, a rejected negative mutation, and a rejected impossible consumed-instance state.
+{
+  const tables = ['item_stacks', 'item_instances', 'item_events',
+    'item_mutation_guards', 'operation_escrow'];
+  const present = (await pool.query(
+    `SELECT relname FROM pg_class
+      WHERE relkind='r' AND relname = ANY($1::text[])`, [tables],
+  )).rows.map((row) => row.relname);
+  check(tables.every((table) => present.includes(table)),
+    'all five item authority tables exist on real PostgreSQL',
+    `present: ${present.sort().join(', ')}`);
+
+  const ownerId = `pgcheck-item-${process.pid}`;
+  await pool.query(
+    `INSERT INTO item_stacks (owner_scope, owner_id, template_id, quality, quantity)
+     VALUES ('account',$1,'mat:pgcheck','standard',1)`, [ownerId],
+  );
+  let negativeCode = '';
+  try {
+    await pool.query(
+      `UPDATE item_stacks SET quantity=-1
+        WHERE owner_scope='account' AND owner_id=$1
+          AND template_id='mat:pgcheck' AND quality='standard'`,
+      [ownerId],
+    );
+  } catch (error) { negativeCode = error.code; }
+  const quantity = Number((await pool.query(
+    `SELECT quantity FROM item_stacks
+      WHERE owner_scope='account' AND owner_id=$1
+        AND template_id='mat:pgcheck' AND quality='standard'`, [ownerId],
+  )).rows[0]?.quantity);
+  check(negativeCode === '23514' && quantity === 1,
+    'PostgreSQL rejects a negative stack without changing its conserved value',
+    `error ${negativeCode || 'none'}, quantity ${quantity}`);
+  await pool.query(
+    `DELETE FROM item_stacks
+      WHERE owner_scope='account' AND owner_id=$1
+        AND template_id='mat:pgcheck' AND quality='standard'`, [ownerId],
+  );
+
+  let stateCode = '';
+  try {
+    await pool.query(
+      `INSERT INTO item_instances (id, template_id, owner_scope, owner_id, state)
+       VALUES ($1,'item:pgcheck','account',$2,'consumed')`,
+      [`pgcheck-impossible-${process.pid}`, ownerId],
+    );
+  } catch (error) { stateCode = error.code; }
+  check(stateCode === '23514',
+    'PostgreSQL rejects a consumed item without its permanent consumption timestamp',
+    `error ${stateCode || 'none'}`);
+  await pool.query('DELETE FROM item_instances WHERE id=$1', [`pgcheck-impossible-${process.pid}`]);
+
+  const {
+    consumeStack, createItem, grantStack, transferItem,
+  } = await import('../src/items.js');
+  const tx = async (action) => {
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const result = await action(client);
+      await client.query('COMMIT');
+      return result;
+    } catch (error) {
+      await client.query('ROLLBACK').catch(() => {});
+      throw error;
+    } finally { client.release(); }
+  };
+  const prefix = `pgcheck-item-${process.pid}-`;
+  const actor = { scope: 'account', id: `${prefix}actor` };
+  const rivalA = { scope: 'account', id: `${prefix}rival-a` };
+  const rivalB = { scope: 'account', id: `${prefix}rival-b` };
+  const keys = [
+    `${prefix}autocommit`, `${prefix}seed`, `${prefix}decrement-a`, `${prefix}decrement-b`,
+    `${prefix}replay`, `${prefix}create`, `${prefix}transfer-a`, `${prefix}transfer-b`,
+  ];
+
+  const autocommitClient = await pool.connect();
+  let autocommitCode = '';
+  try {
+    await grantStack(
+      autocommitClient, actor, 'mat:pgcheck-concurrency', 1,
+      'standard', 'autocommit', keys[0],
+    );
+  } catch (error) { autocommitCode = error.code; }
+  finally { autocommitClient.release(); }
+  check(autocommitCode === 'item_transaction_required',
+    'a checked-out PostgreSQL client without BEGIN cannot mutate inventory',
+    `error ${autocommitCode || 'none'}`);
+
+  await tx((client) => grantStack(
+    client, actor, 'mat:pgcheck-concurrency', 10, 'standard', 'seed', keys[1],
+  ));
+  const decrements = await Promise.allSettled([
+    tx((client) => consumeStack(
+      client, actor, 'mat:pgcheck-concurrency', 7, 'standard', 'decrement', keys[2],
+    )),
+    tx((client) => consumeStack(
+      client, actor, 'mat:pgcheck-concurrency', 7, 'standard', 'decrement', keys[3],
+    )),
+  ]);
+  const afterDecrement = Number((await pool.query(
+    `SELECT quantity FROM item_stacks
+      WHERE owner_scope='account' AND owner_id=$1
+        AND template_id='mat:pgcheck-concurrency' AND quality='standard'`, [actor.id],
+  )).rows[0]?.quantity);
+  check(decrements.filter((result) => result.status === 'fulfilled').length === 1
+      && decrements.filter((result) => result.status === 'rejected'
+        && result.reason?.code === 'materials').length === 1
+      && afterDecrement === 3,
+  'competing decrements serialize and cannot drive a stack negative',
+  `outcomes ${decrements.map((result) => result.status === 'fulfilled'
+    ? 'ok' : result.reason?.code).join(', ')}, quantity ${afterDecrement}`);
+
+  const replayed = await Promise.all([
+    tx((client) => grantStack(
+      client, actor, 'mat:pgcheck-concurrency', 2, 'standard', 'replay', keys[4],
+    )),
+    tx((client) => grantStack(
+      client, actor, 'mat:pgcheck-concurrency', 2, 'standard', 'replay', keys[4],
+    )),
+  ]);
+  const afterReplay = Number((await pool.query(
+    `SELECT quantity FROM item_stacks
+      WHERE owner_scope='account' AND owner_id=$1
+        AND template_id='mat:pgcheck-concurrency' AND quality='standard'`, [actor.id],
+  )).rows[0]?.quantity);
+  check(afterReplay === 5 && JSON.stringify(replayed[0]) === JSON.stringify(replayed[1]),
+    'concurrent same-key grants apply once and return the same replay result',
+    `quantity ${afterReplay}`);
+  let collisionCode = '';
+  try {
+    await tx((client) => grantStack(
+      client, rivalA, 'mat:pgcheck-concurrency', 2, 'standard', 'replay', keys[4],
+    ));
+  } catch (error) { collisionCode = error.code; }
+  check(collisionCode === 'idempotency_conflict',
+    'the same key cannot silently replay for another owner',
+    `error ${collisionCode || 'none'}`);
+
+  const item = await tx((client) => createItem(
+    client, actor, 'item:pgcheck-concurrency', 'awarded', keys[5],
+  ));
+  const transfers = await Promise.allSettled([
+    tx((client) => transferItem(client, actor, rivalA, item.id, 'race', keys[6])),
+    tx((client) => transferItem(client, actor, rivalB, item.id, 'race', keys[7])),
+  ]);
+  const itemRow = (await pool.query(
+    'SELECT owner_scope, owner_id, state FROM item_instances WHERE id=$1', [item.id],
+  )).rows[0];
+  check(transfers.filter((result) => result.status === 'fulfilled').length === 1
+      && transfers.filter((result) => result.status === 'rejected'
+        && result.reason?.code === 'item_unavailable').length === 1
+      && itemRow?.owner_scope === 'account' && itemRow?.state === 'active'
+      && [rivalA.id, rivalB.id].includes(itemRow?.owner_id),
+  'competing transfers leave one authoritative owner and one provenance transition',
+  `outcomes ${transfers.map((result) => result.status === 'fulfilled'
+    ? 'ok' : result.reason?.code).join(', ')}, owner ${itemRow?.owner_id || 'none'}`);
+
+  await pool.query('DELETE FROM item_events WHERE idempotency_key = ANY($1::text[])', [keys]);
+  await pool.query('DELETE FROM item_mutation_guards WHERE idempotency_key = ANY($1::text[])', [keys]);
+  await pool.query('DELETE FROM item_instances WHERE id=$1', [item.id]);
+  await pool.query(
+    `DELETE FROM item_stacks WHERE owner_scope='account' AND owner_id=$1
+      AND template_id='mat:pgcheck-concurrency' AND quality='standard'`, [actor.id],
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 console.log('\n7b. THE BUILD BOOTS AGAINST A DATABASE OLDER THAN ITSELF');
 // THE OUTAGE THIS PINS (2026-08-06): `CREATE TABLE IF NOT EXISTS` is a NO-OP on a live database, so
 // three columns added INLINE to the already-existing `gang_members` never landed — and the very next

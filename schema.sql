@@ -4418,6 +4418,173 @@ ALTER TABLE content_instance_effects ADD COLUMN IF NOT EXISTS target_id TEXT;
 CREATE UNIQUE INDEX IF NOT EXISTS ux_content_effects_entitlement
   ON content_instance_effects (subject_account, kind, target_id);
 
+-- ── WORLD-GRAPH ITEM ECONOMY — conserved stacks + permanent unique instances ─────────────────
+-- This is the ordinary gameplay inventory authority used by data-defined world graphs. It is
+-- deliberately separate from the earlier exact-content-hash workshop lots: authored definitions
+-- may nominate template ids and quantities only through an allow-listed runtime, while every actual
+-- mutation below is performed by src/items.js under a transaction and a globally bound logical key.
+-- Owners are opaque server-side ids. Phase 1 admits living-character, durable-account, and operation
+-- custody; Crew and Family scopes require a later explicit schema/runtime expansion.
+CREATE TABLE IF NOT EXISTS item_stacks (
+  owner_scope TEXT NOT NULL,
+  owner_id TEXT NOT NULL,
+  template_id TEXT NOT NULL,
+  quality TEXT NOT NULL DEFAULT 'standard',
+  quantity INT NOT NULL DEFAULT 0,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (owner_scope, owner_id, template_id, quality),
+  CONSTRAINT item_stack_owner_scope CHECK (owner_scope IN ('character','account','operation')),
+  CONSTRAINT item_stack_owner_id CHECK (char_length(owner_id) BETWEEN 1 AND 200),
+  CONSTRAINT item_stack_template_id CHECK (char_length(template_id) BETWEEN 1 AND 200),
+  CONSTRAINT item_stack_quality CHECK (char_length(quality) BETWEEN 1 AND 80),
+  CONSTRAINT item_stack_quantity CHECK (quantity >= 0)
+);
+CREATE INDEX IF NOT EXISTS ix_item_stacks_owner
+  ON item_stacks (owner_scope, owner_id, template_id);
+
+-- Unique/stateful items are never deleted and never change id. `state` plus this single owner tuple
+-- is the sole spendability/custody authority. A consumed row retains its final custodian for history
+-- but is excluded from every inventory board and every future transition.
+CREATE TABLE IF NOT EXISTS item_instances (
+  id TEXT PRIMARY KEY,
+  template_id TEXT NOT NULL,
+  owner_scope TEXT NOT NULL,
+  owner_id TEXT NOT NULL,
+  state TEXT NOT NULL DEFAULT 'active',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  consumed_at TIMESTAMPTZ,
+  CONSTRAINT item_instance_id CHECK (char_length(id) BETWEEN 1 AND 200),
+  CONSTRAINT item_instance_template_id CHECK (char_length(template_id) BETWEEN 1 AND 200),
+  CONSTRAINT item_instance_owner_scope CHECK (owner_scope IN ('character','account','operation')),
+  CONSTRAINT item_instance_owner_id CHECK (char_length(owner_id) BETWEEN 1 AND 200),
+  CONSTRAINT item_instance_state CHECK (state IN ('active','escrowed','consumed')),
+  CONSTRAINT item_instance_state_time CHECK (
+    (state = 'consumed' AND consumed_at IS NOT NULL)
+    OR (state <> 'consumed' AND consumed_at IS NULL)
+  ),
+  CONSTRAINT item_instance_escrow_owner CHECK (
+    (state = 'active' AND owner_scope IN ('character','account'))
+    OR (state = 'escrowed' AND owner_scope = 'operation')
+    OR state = 'consumed'
+  )
+);
+CREATE INDEX IF NOT EXISTS ix_item_instances_owner
+  ON item_instances (owner_scope, owner_id, state, template_id);
+
+-- The instance row above remains authoritative while this row records which operation may release
+-- escrow and where custody came from. One item id can appear at most once, so an object cannot be in
+-- two operation escrows. Release/consumption removes this live custody claim; item_events preserves
+-- the full append-only history.
+CREATE TABLE IF NOT EXISTS operation_escrow (
+  item_id TEXT PRIMARY KEY REFERENCES item_instances(id) ON DELETE RESTRICT,
+  operation_id TEXT NOT NULL,
+  depositor_scope TEXT NOT NULL,
+  depositor_id TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT operation_escrow_operation_id CHECK (char_length(operation_id) BETWEEN 1 AND 200),
+  CONSTRAINT operation_escrow_depositor_scope CHECK (depositor_scope IN ('character','account')),
+  CONSTRAINT operation_escrow_depositor_id CHECK (char_length(depositor_id) BETWEEN 1 AND 200)
+);
+CREATE INDEX IF NOT EXISTS ix_operation_escrow_operation
+  ON operation_escrow (operation_id, created_at, item_id);
+
+-- A logical mutation key is global, not merely owner-local. The request digest binds the key to its
+-- operation, owner and complete arguments; a collision therefore fails visibly instead of replaying
+-- somebody else's result. A NULL result exists only inside the transaction currently performing the
+-- mutation. Rollback removes both the reservation and every item write.
+CREATE TABLE IF NOT EXISTS item_mutation_guards (
+  idempotency_key TEXT PRIMARY KEY,
+  mutation_kind TEXT NOT NULL,
+  owner_scope TEXT NOT NULL,
+  owner_id TEXT NOT NULL,
+  request_hash TEXT NOT NULL,
+  reservation_id TEXT NOT NULL,
+  result_json TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  completed_at TIMESTAMPTZ,
+  CONSTRAINT item_guard_key CHECK (char_length(idempotency_key) BETWEEN 1 AND 200),
+  CONSTRAINT item_guard_kind CHECK (mutation_kind IN (
+    'grant_stack','consume_stack','create_item','transfer_item','consume_item','escrow_item','release_escrow',
+    'craft','salvage_car','mystery_action','operation_action','reward_claim'
+  )),
+  CONSTRAINT item_guard_owner_scope CHECK (owner_scope IN ('character','account','operation')),
+  CONSTRAINT item_guard_owner_id CHECK (char_length(owner_id) BETWEEN 1 AND 200),
+  CONSTRAINT item_guard_request_hash CHECK (char_length(request_hash) = 64),
+  CONSTRAINT item_guard_reservation_id CHECK (char_length(reservation_id) BETWEEN 1 AND 200),
+  CONSTRAINT item_guard_completion CHECK (
+    (result_json IS NULL AND completed_at IS NULL)
+    OR (result_json IS NOT NULL AND completed_at IS NOT NULL)
+  )
+);
+CREATE INDEX IF NOT EXISTS ix_item_mutation_guards_created
+  ON item_mutation_guards (created_at);
+
+-- All stack movements are recorded too, but unique-item provenance is the hard contract: every
+-- successful instance mutation writes exactly one row in the same transaction. `sequence` gives a
+-- stable history order without allowing callers to choose item or event identity.
+CREATE TABLE IF NOT EXISTS item_events (
+  sequence BIGSERIAL PRIMARY KEY,
+  id TEXT NOT NULL UNIQUE,
+  event_key TEXT NOT NULL,
+  event_kind TEXT NOT NULL,
+  provenance_kind TEXT,
+  item_id TEXT REFERENCES item_instances(id) ON DELETE RESTRICT,
+  template_id TEXT NOT NULL,
+  quantity_delta INT,
+  quantity_before INT,
+  quantity_after INT,
+  from_owner_scope TEXT,
+  from_owner_id TEXT,
+  to_owner_scope TEXT,
+  to_owner_id TEXT,
+  reason TEXT NOT NULL,
+  idempotency_key TEXT NOT NULL REFERENCES item_mutation_guards(idempotency_key) ON DELETE RESTRICT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (idempotency_key, event_key),
+  CONSTRAINT item_event_key CHECK (char_length(event_key) BETWEEN 1 AND 200),
+  CONSTRAINT item_event_kind CHECK (event_kind IN (
+    'stack_granted','stack_consumed','created','transferred','consumed','escrowed','released'
+  )),
+  CONSTRAINT item_event_provenance_kind CHECK (
+    provenance_kind IS NULL OR provenance_kind IN (
+      'crafted','salvaged','transferred','consumed','modified',
+      'used_in_mystery','used_in_operation','awarded','exported','imported'
+    )
+  ),
+  CONSTRAINT item_event_template_id CHECK (char_length(template_id) BETWEEN 1 AND 200),
+  CONSTRAINT item_event_reason CHECK (char_length(reason) BETWEEN 1 AND 500),
+  CONSTRAINT item_event_from_scope CHECK (
+    from_owner_scope IS NULL OR from_owner_scope IN ('character','account','operation')
+  ),
+  CONSTRAINT item_event_to_scope CHECK (
+    to_owner_scope IS NULL OR to_owner_scope IN ('character','account','operation')
+  ),
+  CONSTRAINT item_event_owner_pairs CHECK (
+    (from_owner_scope IS NULL) = (from_owner_id IS NULL)
+    AND (to_owner_scope IS NULL) = (to_owner_id IS NULL)
+  ),
+  CONSTRAINT item_event_quantities CHECK (
+    (
+      event_kind IN ('stack_granted','stack_consumed')
+      AND item_id IS NULL AND provenance_kind IS NULL
+      AND quantity_delta IS NOT NULL AND quantity_delta <> 0
+      AND quantity_before IS NOT NULL AND quantity_before >= 0
+      AND quantity_after IS NOT NULL AND quantity_after >= 0
+      AND quantity_after = quantity_before + quantity_delta
+    ) OR (
+      event_kind NOT IN ('stack_granted','stack_consumed')
+      AND item_id IS NOT NULL AND provenance_kind IS NOT NULL
+      AND quantity_delta IS NULL AND quantity_before IS NULL AND quantity_after IS NULL
+    )
+  )
+);
+CREATE INDEX IF NOT EXISTS ix_item_events_item
+  ON item_events (item_id, sequence);
+CREATE INDEX IF NOT EXISTS ix_item_events_owner
+  ON item_events (to_owner_scope, to_owner_id, sequence);
+
 -- ── AUTHORED CONTENT SUPPLY — exact-hash lots + globally finite sources ───────────────────────
 -- Authored inventory is account-owned and therefore survives street death. Every lot is pinned to
 -- the exact activated bundle hash that defined it; a later version cannot reinterpret old inputs.
