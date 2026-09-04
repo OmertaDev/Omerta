@@ -1683,6 +1683,24 @@ function buildMaterialDiagnostics({
   };
 }
 
+// Role-private evidence is authored data, but it becomes a player-visible secret through the
+// operation runtime. Keep that single escape hatch narrow enough for static acceptance to prove
+// that content cannot smuggle objects, executable values, or oversized payloads into projections.
+function validatePrivateEvidence(registry) {
+  for (const [nodeId, node] of registry.nodes) {
+    const privateEvidence = node.metadata?.privateEvidence;
+    if (privateEvidence === undefined) continue;
+    if (node.type !== 'evidence' || node.visibility !== 'role_private'
+      || typeof privateEvidence !== 'string'
+      || privateEvidence.trim() !== privateEvidence
+      || privateEvidence.length < 1 || privateEvidence.length > 1000) {
+      fail('invalid_private_evidence',
+        `Node ${nodeId} privateEvidence must be 1-1000 canonical characters on role-private evidence`,
+        { nodeId });
+    }
+  }
+}
+
 /**
  * Validate one immutable registry before it is accepted by a runtime or CI.
  * Validation failures throw GraphValidationError with a stable machine code.
@@ -1695,6 +1713,7 @@ export function validateGraph(registry) {
   }
 
   const packageEdges = validatePackageDependencies(registry);
+  validatePrivateEvidence(registry);
   const {
     conditionByNode, dependencyEdges, packageClosures, quantityByNode,
   } = validateNodeReferences(registry, packageEdges);

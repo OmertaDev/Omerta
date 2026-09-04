@@ -265,6 +265,15 @@ function validateOperationDefinitions(registry) {
   // explicit operation root. This prevents orphan or cross-vocabulary private content while still
   // allowing several unrelated operations in one immutable package.
   for (const node of registry.nodes.values()) {
+    if (node.metadata?.privateEvidence !== undefined
+      && (node.type !== 'evidence' || node.visibility !== 'role_private'
+        || typeof node.metadata.privateEvidence !== 'string'
+        || node.metadata.privateEvidence.trim() !== node.metadata.privateEvidence
+        || node.metadata.privateEvidence.length < 1
+        || node.metadata.privateEvidence.length > 1000)) {
+      fail('bad_operation_definition',
+        `Private evidence ${node.id} must be canonical role-private evidence text.`);
+    }
     if (node.visibility !== 'role_private' || !GRAPH_STATE_TYPES.has(node.type)) continue;
     const packageHasOperation = operationRoots.some((root) => root.packageId === node.packageId);
     if (!packageHasOperation) continue;
@@ -752,7 +761,13 @@ async function applyContributionEffects(client, context, operation, step, actor,
   for (const effect of step.effects || []) {
     if (effect.adapter === 'evidence_grant') {
       const state = await insertNodeState(client, operation.id, effect.nodeId, 'completed');
-      effects.push({ kind: 'evidence', nodeId: effect.nodeId, completedAt: dateString(state.completed_at) });
+      const target = nodeOf(context.registry, effect.nodeId);
+      // A private node id is itself discovery information. The assigned role reads both identity
+      // and clue text from roleBoard after the state commits; mutation results (including exact
+      // replays) intentionally carry neither.
+      effects.push(target?.visibility === 'role_private'
+        ? { kind: 'evidence', completedAt: dateString(state.completed_at) }
+        : { kind: 'evidence', nodeId: effect.nodeId, completedAt: dateString(state.completed_at) });
     } else if (effect.adapter === 'item_escrow') {
       const itemId = await selectOwnedItem(client, actor.accountId, effect.templateId);
       const item = await escrowItem(
@@ -1119,6 +1134,15 @@ function boardNode(node, state) {
   };
 }
 
+function roleBoardNode(node, state, roleId) {
+  const projection = boardNode(node, state);
+  if (node.type === 'evidence' && node.visibility === 'role_private'
+    && node.metadata?.roleId === roleId && state?.state === 'completed') {
+    projection.privateEvidence = node.metadata.privateEvidence;
+  }
+  return projection;
+}
+
 function maySeeNode(node, states, roleId = null) {
   if (node.visibility === 'role_private') return roleId === node.metadata?.roleId;
   if (node.visibility === 'public') return true;
@@ -1172,7 +1196,7 @@ export async function roleBoard(client, contextValue, operationIdValue) {
     && (node.id === root.id || node.metadata?.operationId === root.id)
     && (node.id === root.id || node.type === 'operation_step' || states.has(node.id))
     && maySeeNode(node, states, assignment.role_id)
-  )).map((node) => boardNode(node, states.get(node.id)));
+  )).map((node) => roleBoardNode(node, states.get(node.id), assignment.role_id));
   return {
     ...operationProjection(row),
     role: { roleId: assignment.role_id },

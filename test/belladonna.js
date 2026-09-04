@@ -7,11 +7,13 @@ import { AUTOMOTIVE_SALVAGE_PACKAGE } from '../src/content/automotive-salvage.js
 import { BELLADONNA_PACKAGE } from '../src/content/belladonna.js';
 import { CORE_MATERIALS_PACKAGE } from '../src/content/core-materials.js';
 import {
+  createItem,
   inventoryBoard,
   transferItem,
   withItemTransaction,
 } from '../src/items.js';
 import {
+  cancelMystery,
   completeNode,
   createMysteryContext,
   mysteryBoard,
@@ -19,6 +21,7 @@ import {
 } from '../src/mysteries.js';
 import {
   assignRole,
+  cancelOperation,
   completeOperation,
   contribute,
   createOperationContext,
@@ -49,6 +52,8 @@ const CAR_ID = 'belladonna-owned-junker';
 const ACCOUNT_OWNER = Object.freeze({ scope: 'account', id: ACCOUNTS[0] });
 const CHARACTER_OWNER = Object.freeze({ scope: 'character', id: CHARACTERS[0] });
 const MECHANIC_OWNER = Object.freeze({ scope: 'account', id: ACCOUNTS[2] });
+const INVESTIGATOR_EVIDENCE = 'The fourth petal marks the false hinge.';
+const MECHANIC_EVIDENCE = 'The maker reversed the last two gates.';
 
 const registry = loadAndValidateGraphPackages([
   CORE_MATERIALS_PACKAGE,
@@ -76,6 +81,28 @@ assert.deepEqual(
 assert.equal(registry.nodes.get('item:belladonna_artifact').metadata.inert, true);
 assert.equal(registry.nodes.get('item:belladonna_artifact').metadata.tradeable, false);
 assert.equal(registry.nodes.get('reward:belladonna-crew-status').repeatability, 'once');
+const malformedPrivateEvidence = structuredClone(BELLADONNA_PACKAGE);
+malformedPrivateEvidence.nodes.find(
+  ({ id }) => id === 'evidence:belladonna-cipher-fragment',
+).metadata.privateEvidence = { text: INVESTIGATOR_EVIDENCE };
+assert.throws(
+  () => loadAndValidateGraphPackages([
+    CORE_MATERIALS_PACKAGE, AUTOMOTIVE_SALVAGE_PACKAGE, malformedPrivateEvidence,
+  ]),
+  (error) => error?.code === 'invalid_private_evidence',
+  'static acceptance rejects non-string private projection authority',
+);
+const publicPrivateEvidence = structuredClone(BELLADONNA_PACKAGE);
+publicPrivateEvidence.nodes.find(
+  ({ id }) => id === 'evidence:belladonna-cipher-fragment',
+).visibility = 'public';
+assert.throws(
+  () => loadAndValidateGraphPackages([
+    CORE_MATERIALS_PACKAGE, AUTOMOTIVE_SALVAGE_PACKAGE, publicPrivateEvidence,
+  ]),
+  (error) => error?.code === 'invalid_private_evidence',
+  'private clue text cannot be placed on a public node',
+);
 
 const mysteryContexts = ACCOUNTS.map((accountId) => createMysteryContext({
   registry,
@@ -110,6 +137,81 @@ const balances = async () => Promise.all(ACCOUNTS.map(async (accountId, index) =
   )).rows[0].omr),
 })));
 const safeJson = (value) => JSON.stringify(value);
+
+async function prepareRecoveryOperation(label) {
+  const prefix = `belladonna-${label}`;
+  const accounts = ROLES.map((role) => `${prefix}-${role}-account`);
+  const characters = ROLES.map((role) => `${prefix}-${role}-character`);
+  const crewId = `${prefix}-crew`;
+  const contexts = accounts.map((accountId) => createOperationContext({ registry, accountId }));
+  const act = (index, fn, ...args) => tx((client) => fn(client, contexts[index], ...args));
+  await pool.query(
+    'INSERT INTO crews (id,name,leader_account) VALUES ($1,$2,$3)',
+    [crewId, `${prefix}-name`, accounts[0]],
+  );
+  for (let index = 0; index < accounts.length; index += 1) {
+    await pool.query(
+      `INSERT INTO characters (id,account_id,name,season,loc,respect,cash)
+       VALUES ($1,$2,$3,1,'foundry',10000,1000)`,
+      [characters[index], accounts[index], `${prefix}-operator-${index}`],
+    );
+    await pool.query(
+      'INSERT INTO account_persistent (account_id,omr) VALUES ($1,100)', [accounts[index]],
+    );
+    await pool.query(
+      'INSERT INTO crew_members (crew_id,account_id,name) VALUES ($1,$2,$3)',
+      [crewId, accounts[index], `${prefix}-member-${index}`],
+    );
+  }
+  await pool.query(
+    "INSERT INTO character_skills (character_id,skill_id) VALUES ($1,'fence_network')",
+    [characters[2]],
+  );
+  const mysteryId = `${prefix}-mystery`;
+  await pool.query(
+    `INSERT INTO mystery_instances
+       (id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,status,completed_at)
+     VALUES ($1,'character',$2,$3,$4,1,'completed',now())`,
+    [mysteryId, characters[0], accounts[0], GRAPH_ID],
+  );
+  await pool.query(
+    `INSERT INTO mystery_node_state
+       (instance_id,node_id,state,discovered_at,completed_at)
+     VALUES ($1,'mystery:belladonna-file-closed','completed',now(),now())`,
+    [mysteryId],
+  );
+  const tool = await tx((client) => createItem(
+    client,
+    { scope: 'account', id: accounts[2] },
+    'item:precision_lock_tool',
+    'crafted',
+    `${prefix}-crafted-tool`,
+  ));
+  const operation = await act(
+    0, openOperation, GRAPH_ID, OPERATION_ID, 1, `${prefix}-open`,
+  );
+  for (let index = 0; index < ROLES.length; index += 1) {
+    await act(index, assignRole, operation.operationId, ROLES[index], {
+      idempotencyKey: `${prefix}-assign-${ROLES[index]}`,
+    });
+  }
+  await act(0, contribute, operation.operationId, 'operation:belladonna-investigate', {
+    idempotencyKey: `${prefix}-investigate`,
+    interactionId: 'read_belladonna_cipher',
+  });
+  await act(1, contribute, operation.operationId, 'operation:belladonna-drive', {
+    idempotencyKey: `${prefix}-drive`,
+    interactionId: 'stage_belladonna_car',
+  });
+  await act(2, contribute, operation.operationId, 'operation:belladonna-mechanic', {
+    idempotencyKey: `${prefix}-mechanic`,
+  });
+  assert.equal(await count(
+    'SELECT COUNT(*) AS n FROM operation_escrow WHERE operation_id=$1 AND item_id=$2',
+    [operation.operationId, tool.id],
+  ), 1);
+  return { prefix, accounts, characters, crewId, contexts, act, operation, tool };
+}
 
 try {
   await pool.query(
@@ -380,20 +482,88 @@ try {
   assert(!safeJson(publicBoard).includes(CREW_ID));
   assert(!ACCOUNTS.some((id) => safeJson(publicBoard).includes(id)));
 
-  await operationAct(
+  // Every Belladonna branch is ordered. Refused future-role calls leave neither progress nor a
+  // durable replay reservation, so clients cannot skip ahead by guessing contribution ids.
+  for (const [index, nodeId, key, interactionId] of [
+    [1, 'operation:belladonna-drive', 'belladonna-early-driver', 'stage_belladonna_car'],
+    [2, 'operation:belladonna-mechanic', 'belladonna-early-mechanic', null],
+    [3, 'operation:belladonna-enforce', 'belladonna-early-enforcer', 'secure_belladonna_room'],
+  ]) {
+    await assert.rejects(
+      operationAct(index, contribute, opened.operationId, nodeId, {
+        idempotencyKey: key,
+        ...(interactionId ? { interactionId } : {}),
+      }),
+      (error) => ['operation_prerequisite', 'operation_order'].includes(error?.code),
+    );
+    assert.equal(await count(
+      'SELECT COUNT(*) AS n FROM item_mutation_guards WHERE idempotency_key=$1', [key],
+    ), 0);
+  }
+  assert.equal(await count(
+    'SELECT COUNT(*) AS n FROM world_operation_contributions WHERE operation_id=$1',
+    [opened.operationId],
+  ), 0);
+
+  const unavailable = [];
+  for (const nodeId of [
+    'operation:belladonna-does-not-exist',
+    'reward:belladonna-crew-status',
+    'operation:belladonna-mechanic',
+  ]) {
+    let rejection = null;
+    await assert.rejects(
+      operationAct(0, contribute, opened.operationId, nodeId, {
+        idempotencyKey: 'belladonna-private-oracle',
+      }),
+      (error) => {
+        rejection = { code: error.code, message: error.message };
+        return true;
+      },
+      'private contribution guess unexpectedly executed',
+    );
+    unavailable.push(rejection);
+  }
+  assert.deepEqual(unavailable, [unavailable[0], unavailable[0], unavailable[0]],
+    'nonexistent, hidden, and another role-private ids are indistinguishable');
+  assert(!safeJson(unavailable).includes(INVESTIGATOR_EVIDENCE));
+  assert(!safeJson(unavailable).includes(MECHANIC_EVIDENCE));
+
+  const investigatorContribution = await operationAct(
     0, contribute, opened.operationId, 'operation:belladonna-investigate', {
       idempotencyKey: 'belladonna-contribute-investigator',
       interactionId: 'read_belladonna_cipher',
     },
   );
+  assert(!safeJson(investigatorContribution).includes('evidence:belladonna-cipher-fragment'),
+    'private evidence identity is delivered only through the role board');
+  assert(!safeJson(investigatorContribution).includes(INVESTIGATOR_EVIDENCE));
+  assert.deepEqual(await operationAct(
+    0, contribute, opened.operationId, 'operation:belladonna-investigate', {
+      idempotencyKey: 'belladonna-contribute-investigator',
+      interactionId: 'read_belladonna_cipher',
+    },
+  ), investigatorContribution, 'a contribution replay carries no private clue oracle');
+  await assert.rejects(
+    operationAct(0, contribute, opened.operationId, 'operation:belladonna-drive', {
+      idempotencyKey: 'belladonna-contribute-investigator',
+      interactionId: 'stage_belladonna_car',
+    }),
+    (error) => error?.code === 'idempotency_conflict',
+    'one contribution key cannot be rebound to a different Belladonna branch',
+  );
   const investigatorPrivate = await roleBoard(
     pool, operationContexts[0], opened.operationId,
   );
-  assert(investigatorPrivate.nodes.some(({ id }) => id === 'evidence:belladonna-cipher-fragment'));
+  assert.deepEqual(investigatorPrivate.nodes.find(
+    ({ id }) => id === 'evidence:belladonna-cipher-fragment',
+  )?.privateEvidence, INVESTIGATOR_EVIDENCE);
   assert(!investigatorPrivate.nodes.some(({ id }) => id === 'evidence:belladonna-tumbler-pattern'));
+  assert(!safeJson(investigatorPrivate).includes(MECHANIC_EVIDENCE));
   const mechanicBefore = await roleBoard(pool, operationContexts[2], opened.operationId);
   assert(!mechanicBefore.nodes.some(({ id }) => id === 'evidence:belladonna-cipher-fragment'));
   assert(mechanicBefore.nodes.some(({ id }) => id === 'operation:belladonna-mechanic'));
+  assert(!safeJson(mechanicBefore).includes(INVESTIGATOR_EVIDENCE));
 
   await operationAct(
     1, contribute, opened.operationId, 'operation:belladonna-drive', {
@@ -430,6 +600,8 @@ try {
   );
   assert.equal(mechanicContribution.effects.find(({ kind }) => kind === 'item_escrow')
     .item.id, toolId, 'the mechanic contributes the exact uniquely crafted item');
+  assert(!safeJson(mechanicContribution).includes('evidence:belladonna-tumbler-pattern'));
+  assert(!safeJson(mechanicContribution).includes(MECHANIC_EVIDENCE));
   assert.equal(await count(
     'SELECT COUNT(*) AS n FROM operation_escrow WHERE operation_id=$1 AND item_id=$2',
     [opened.operationId, toolId],
@@ -440,8 +612,29 @@ try {
     },
   ), mechanicContribution, 'the mechanic contribution cannot duplicate operation custody');
   const mechanicPrivate = await roleBoard(pool, operationContexts[2], opened.operationId);
-  assert(mechanicPrivate.nodes.some(({ id }) => id === 'evidence:belladonna-tumbler-pattern'));
+  assert.deepEqual(mechanicPrivate.nodes.find(
+    ({ id }) => id === 'evidence:belladonna-tumbler-pattern',
+  )?.privateEvidence, MECHANIC_EVIDENCE);
   assert(!mechanicPrivate.nodes.some(({ id }) => id === 'evidence:belladonna-cipher-fragment'));
+  assert(!safeJson(mechanicPrivate).includes(INVESTIGATOR_EVIDENCE));
+
+  for (const roleIndex of [1, 3]) {
+    const uninvolvedRoleBoard = await roleBoard(
+      pool, operationContexts[roleIndex], opened.operationId,
+    );
+    assert(!safeJson(uninvolvedRoleBoard).includes(INVESTIGATOR_EVIDENCE));
+    assert(!safeJson(uninvolvedRoleBoard).includes(MECHANIC_EVIDENCE));
+    assert(!uninvolvedRoleBoard.nodes.some(({ id }) => (
+      id === 'evidence:belladonna-cipher-fragment'
+      || id === 'evidence:belladonna-tumbler-pattern'
+    )), `${ROLES[roleIndex]} cannot see either role-private evidence id`);
+  }
+
+  const publicAfterEvidence = await operationBoard(pool, operationContexts[1], opened.operationId);
+  assert(!safeJson(publicAfterEvidence).includes(INVESTIGATOR_EVIDENCE));
+  assert(!safeJson(publicAfterEvidence).includes(MECHANIC_EVIDENCE));
+  assert(!safeJson(publicAfterEvidence).includes('evidence:belladonna-cipher-fragment'));
+  assert(!safeJson(publicAfterEvidence).includes('evidence:belladonna-tumbler-pattern'));
 
   await operationAct(
     3, contribute, opened.operationId, 'operation:belladonna-enforce', {
@@ -471,6 +664,16 @@ try {
   assert.equal(completionA.status, 'completed');
   assert.equal(completionB.status, 'completed');
   assert.equal(completionA.releasedEscrowCount + completionB.releasedEscrowCount, 1);
+  assert.deepEqual(await operationAct(0, completeOperation, opened.operationId, {
+    idempotencyKey: 'belladonna-complete-a',
+  }), completionA, 'terminal replay returns the stored result without awarding again');
+  await assert.rejects(
+    operationAct(0, cancelOperation, opened.operationId, {
+      idempotencyKey: 'belladonna-complete-a',
+    }),
+    (error) => error?.code === 'idempotency_conflict',
+    'a terminal key cannot be rebound from completion to cancellation',
+  );
   for (const completion of [completionA, completionB]) {
     assert(!safeJson(completion).includes(CREW_ID));
     assert(!ACCOUNTS.some((id) => safeJson(completion).includes(id)));
@@ -493,6 +696,11 @@ try {
       WHERE operation_id=$1 AND node_id='reward:belladonna-crew-status' AND state='completed'`,
     [opened.operationId],
   ), 1, 'the finite inert shared status is awarded exactly once');
+  assert.equal(await count(
+    `SELECT COUNT(*) AS n FROM item_instances
+      WHERE template_id='item:belladonna_artifact'`,
+  ), 1,
+  'Belladonna deliberately creates one mystery artifact; Task 6 separately proves multi-role awards');
   assert.equal(await count(
     'SELECT COUNT(*) AS n FROM operation_escrow WHERE item_id=$1', [toolId],
   ), 0, 'terminal convergence leaves no item in custody');
@@ -517,6 +725,182 @@ try {
     `SELECT COUNT(*) AS n FROM item_instances
       WHERE id=$1 AND template_id='item:precision_lock_tool'`, [toolId],
   ), 1, 'the complete vertical slice never duplicates its unique tool');
+
+  // A second character-pinned investigation reuses that same permanent tool to prove the recovery
+  // path: cancellation remains available after character death and returns custody exactly once.
+  const mechanicCharacterOwner = Object.freeze({ scope: 'character', id: CHARACTERS[2] });
+  await tx((client) => transferItem(
+    client,
+    MECHANIC_OWNER,
+    mechanicCharacterOwner,
+    toolId,
+    'pin Belladonna tool to mechanic street for cancellation proof',
+    'belladonna-cancel-tool-to-character',
+  ));
+  const cancelInstance = await mysteryAct(
+    2, startMystery, mechanicCharacterOwner, GRAPH_ID, 1,
+  );
+  await mysteryAct(
+    2, completeNode, mechanicCharacterOwner, GRAPH_ID, 'mystery:belladonna-trace', {
+      idempotencyKey: 'belladonna-cancel-trace',
+      interactionId: 'inspect_belladonna_stamp',
+    },
+  );
+  await mysteryAct(
+    2, completeNode, mechanicCharacterOwner, GRAPH_ID, 'mystery:belladonna-lock', {
+      idempotencyKey: 'belladonna-cancel-lock',
+      interactionId: 'set_precision_tumblers',
+    },
+  );
+  assert.equal(await count(
+    'SELECT COUNT(*) AS n FROM operation_escrow WHERE operation_id=$1 AND item_id=$2',
+    [cancelInstance.instanceId, toolId],
+  ), 1);
+  const cancellationReleasesBefore = await count(
+    "SELECT COUNT(*) AS n FROM item_events WHERE item_id=$1 AND event_kind='released'",
+    [toolId],
+  );
+  await pool.query('UPDATE characters SET alive=false WHERE id=$1', [CHARACTERS[2]]);
+  const canceledMystery = await mysteryAct(
+    2, cancelMystery, mechanicCharacterOwner, GRAPH_ID, {
+      idempotencyKey: 'belladonna-cancel-after-death',
+    },
+  );
+  assert.equal(canceledMystery.status, 'canceled');
+  assert.equal(canceledMystery.releasedEscrowCount, 1);
+  assert.deepEqual(await mysteryAct(
+    2, cancelMystery, mechanicCharacterOwner, GRAPH_ID, {
+      idempotencyKey: 'belladonna-cancel-after-death',
+    },
+  ), canceledMystery, 'dead-character cancellation replays without releasing twice');
+  assert.equal(await count(
+    "SELECT COUNT(*) AS n FROM item_events WHERE item_id=$1 AND event_kind='released'",
+    [toolId],
+  ), cancellationReleasesBefore + 1);
+  assert.deepEqual((await pool.query(
+    'SELECT owner_scope,owner_id,state FROM item_instances WHERE id=$1', [toolId],
+  )).rows[0], {
+    owner_scope: 'character', owner_id: CHARACTERS[2], state: 'active',
+  });
+  assert.equal(await count(
+    'SELECT COUNT(*) AS n FROM operation_escrow WHERE operation_id=$1',
+    [cancelInstance.instanceId],
+  ), 0);
+  await assert.rejects(
+    mysteryAct(
+      2, completeNode, mechanicCharacterOwner, GRAPH_ID, 'mystery:belladonna-file-closed', {
+        idempotencyKey: 'belladonna-cancel-after-death',
+        interactionId: 'seal_belladonna_file',
+      },
+    ),
+    (error) => error?.code === 'idempotency_conflict',
+    'the cancellation key cannot be rebound to a terminal mystery action',
+  );
+  await pool.query('UPDATE characters SET alive=true WHERE id=$1', [CHARACTERS[2]]);
+
+  // Belladonna-specific invalidation fixtures stop immediately after the mechanic deposits the
+  // exact declared tool. Death takes the automatic abandonment path; a Crew move takes the explicit
+  // opener-cancellation recovery path. Neither may run terminal rewards.
+  const rewardsBeforeRecovery = await count(
+    "SELECT COUNT(*) AS n FROM item_instances WHERE template_id='item:belladonna_artifact'",
+  );
+  const deathRecovery = await prepareRecoveryOperation('death-recovery');
+  await pool.query(
+    'UPDATE characters SET alive=false WHERE id=$1', [deathRecovery.characters[1]],
+  );
+  const deathReleaseBefore = await count(
+    "SELECT COUNT(*) AS n FROM item_events WHERE item_id=$1 AND event_kind='released'",
+    [deathRecovery.tool.id],
+  );
+  const abandoned = await deathRecovery.act(
+    3, contribute, deathRecovery.operation.operationId, 'operation:belladonna-enforce', {
+      idempotencyKey: `${deathRecovery.prefix}-trigger-death`,
+      interactionId: 'secure_belladonna_room',
+    },
+  );
+  assert.equal(abandoned.status, 'abandoned');
+  assert.equal(abandoned.closeReason, 'participant_dead');
+  assert.equal(abandoned.releasedEscrowCount, 1);
+  assert.deepEqual(await deathRecovery.act(
+    3, contribute, deathRecovery.operation.operationId, 'operation:belladonna-enforce', {
+      idempotencyKey: `${deathRecovery.prefix}-trigger-death`,
+      interactionId: 'secure_belladonna_room',
+    },
+  ), abandoned, 'the abandonment trigger replays without releasing twice');
+  await assert.rejects(
+    deathRecovery.act(0, cancelOperation, deathRecovery.operation.operationId, {
+      idempotencyKey: `${deathRecovery.prefix}-trigger-death`,
+    }),
+    (error) => error?.code === 'idempotency_conflict',
+    'an abandonment trigger key cannot be rebound to cancellation',
+  );
+  assert.equal(await count(
+    "SELECT COUNT(*) AS n FROM item_events WHERE item_id=$1 AND event_kind='released'",
+    [deathRecovery.tool.id],
+  ), deathReleaseBefore + 1);
+  assert.deepEqual((await pool.query(
+    'SELECT owner_scope,owner_id,state FROM item_instances WHERE id=$1',
+    [deathRecovery.tool.id],
+  )).rows[0], {
+    owner_scope: 'account', owner_id: deathRecovery.accounts[2], state: 'active',
+  });
+  assert.equal(await count(
+    `SELECT COUNT(*) AS n FROM world_operation_node_state
+      WHERE operation_id=$1 AND node_id='reward:belladonna-crew-status'`,
+    [deathRecovery.operation.operationId],
+  ), 0);
+
+  const crewRecovery = await prepareRecoveryOperation('crew-recovery');
+  const otherCrewId = `${crewRecovery.prefix}-other-crew`;
+  await pool.query(
+    'INSERT INTO crews (id,name,leader_account) VALUES ($1,$2,$3)',
+    [otherCrewId, `${crewRecovery.prefix}-other`, crewRecovery.accounts[2]],
+  );
+  await pool.query(
+    'UPDATE crew_members SET crew_id=$2 WHERE account_id=$1',
+    [crewRecovery.accounts[2], otherCrewId],
+  );
+  const crewReleaseBefore = await count(
+    "SELECT COUNT(*) AS n FROM item_events WHERE item_id=$1 AND event_kind='released'",
+    [crewRecovery.tool.id],
+  );
+  const canceledOperation = await crewRecovery.act(
+    0, cancelOperation, crewRecovery.operation.operationId, {
+      idempotencyKey: `${crewRecovery.prefix}-cancel-after-move`,
+    },
+  );
+  assert.equal(canceledOperation.status, 'canceled');
+  assert.equal(canceledOperation.releasedEscrowCount, 1);
+  assert.deepEqual(await crewRecovery.act(
+    0, cancelOperation, crewRecovery.operation.operationId, {
+      idempotencyKey: `${crewRecovery.prefix}-cancel-after-move`,
+    },
+  ), canceledOperation, 'Crew-change cancellation returns custody only once');
+  await assert.rejects(
+    crewRecovery.act(0, completeOperation, crewRecovery.operation.operationId, {
+      idempotencyKey: `${crewRecovery.prefix}-cancel-after-move`,
+    }),
+    (error) => error?.code === 'idempotency_conflict',
+    'a Crew-change cancellation key cannot be rebound to completion',
+  );
+  assert.equal(await count(
+    "SELECT COUNT(*) AS n FROM item_events WHERE item_id=$1 AND event_kind='released'",
+    [crewRecovery.tool.id],
+  ), crewReleaseBefore + 1);
+  assert.deepEqual((await pool.query(
+    'SELECT owner_scope,owner_id,state FROM item_instances WHERE id=$1',
+    [crewRecovery.tool.id],
+  )).rows[0], {
+    owner_scope: 'account', owner_id: crewRecovery.accounts[2], state: 'active',
+  });
+  assert.equal(await count(
+    `SELECT COUNT(*) AS n FROM world_operation_node_state
+      WHERE operation_id=$1 AND node_id='reward:belladonna-crew-status'`,
+    [crewRecovery.operation.operationId],
+  ), 0);
+  assert.equal(await count(
+    "SELECT COUNT(*) AS n FROM item_instances WHERE template_id='item:belladonna_artifact'",
+  ), rewardsBeforeRecovery, 'death/Crew recovery paths create no Belladonna artifact');
 
   const finalBalances = await balances();
   assert.deepEqual(finalBalances, afterProduction,

@@ -151,7 +151,7 @@ export const BELLADONNA_PACKAGE = frozen({
       requires: frozen(['operation:belladonna-investigate']),
       metadata: frozen({
         title: 'Cipher Fragment',
-        secret: 'The fourth petal marks the false hinge.',
+        privateEvidence: 'The fourth petal marks the false hinge.',
         operationId,
         roleId: 'investigator',
       }),
@@ -200,7 +200,7 @@ export const BELLADONNA_PACKAGE = frozen({
       requires: frozen(['operation:belladonna-mechanic']),
       metadata: frozen({
         title: 'Tumbler Pattern',
-        secret: 'The maker reversed the last two gates.',
+        privateEvidence: 'The maker reversed the last two gates.',
         operationId,
         roleId: 'mechanic',
       }),
