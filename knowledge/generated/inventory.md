@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `3c8da2205b6f`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `63598c577877`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,854 |
-| Text lines | 542,650 |
-| Repository bytes inventoried | 315,114,083 |
+| Text lines | 542,662 |
+| Repository bytes inventoried | 315,115,329 |
 | Backend/route modules | 198 |
 | HTTP route registrations / unique routes | 762 / 762 |
 | Database tables | 329 |
 | Solidity declarations | 49 |
-| Git commits | 1,349 |
+| Git commits | 1,351 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 5,793 / 25,688 |
+| Graph nodes / edges | 5,795 / 25,706 |
 
 ## Artifact kinds
 
@@ -50,7 +50,7 @@
 | [CLAUDE.md](../../CLAUDE.md) | 18,185 | documentation | 2026-09-03 |
 | [public/index.html](../../public/index.html) | 12,662 | web-surface | 2026-09-03 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
-| [test/client.js](../../test/client.js) | 9,052 | test-suite | 2026-09-03 |
+| [test/client.js](../../test/client.js) | 9,064 | test-suite | 2026-09-04 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
