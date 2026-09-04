@@ -41,6 +41,7 @@ const TAG_DESC = {
   wire: 'The intelligence terminal: wiretaps, sweeps, the Street Wire.',
   underworld: 'Named-NPC relationships: standing, gifts, favors, errands.',
   content: 'Hash-pinned authored stories: personal district storylets and organization-scoped mysteries with exact-once rewards.',
+  worldgraph: 'Conserved Phase 1 inventory, data-defined crafting, mysteries, and four-account Crew operations. Direct actions only; this surface is not autonomous-agent authority.',
   wallet: 'SIWE wallet linking for on-chain extraction.',
   withdraw: 'Withdraw earned $OMR on-chain (EIP-712 voucher, full-reserve backed; rail not yet open — opens when the audit and launch gates clear).',
   gear: 'Withdraw ERC-1155 gear on-chain.', store: 'Real-money packages (entitlements/access/status).',
@@ -71,6 +72,39 @@ const CONTENT_STALE_BUNDLE_RESPONSE = {
   description: 'stale_content — refresh the replacement authored workshop before acting.',
   content: { 'application/json': { schema: { $ref: '#/components/schemas/ContentStaleBundleResponse' } } },
 };
+
+const WORLDGRAPH_IDEMPOTENCY_PARAMETER = {
+  name: 'Idempotency-Key', in: 'header', required: true,
+  description: 'Fresh canonical key for this logical mutation. Exact retries replay; conflicting reuse is refused.',
+  schema: { type: 'string', minLength: 1, maxLength: 200 },
+};
+const WORLDGRAPH_CONFLICT_RESPONSE = {
+  description: 'The logical key is still in progress or locked world state conflicts with another mutation. Refresh or retry as indicated by the stable error code.',
+  content: { 'application/json': { schema: { $ref: '#/components/schemas/WorldGraphError' } } },
+};
+const WORLDGRAPH_KEY_REUSE_RESPONSE = {
+  description: 'The Idempotency-Key belongs to a different logical request and cannot be reused.',
+  content: { 'application/json': { schema: { $ref: '#/components/schemas/WorldGraphError' } } },
+};
+const WORLDGRAPH_EMPTY_BODY = { type: 'object', additionalProperties: false, properties: {} };
+const WORLDGRAPH_INTERACTION_BODY = {
+  type: 'object', additionalProperties: false, properties: {
+    interactionId: { type: 'string', minLength: 1, maxLength: 200 },
+  },
+};
+const WORLDGRAPH_CHOICE_BODY = {
+  type: 'object', additionalProperties: false, required: ['optionId'], properties: {
+    optionId: { type: 'string', minLength: 1, maxLength: 200 },
+    interactionId: { type: 'string', minLength: 1, maxLength: 200 },
+  },
+};
+const worldGraphMutation = (operationId, requestSchema = WORLDGRAPH_EMPTY_BODY) => ({
+  operationId,
+  requestSchema,
+  requestParameters: [WORLDGRAPH_IDEMPOTENCY_PARAMETER],
+  responseSchema: { $ref: '#/components/schemas/WorldGraphMutationReceipt' },
+  extraResponses: { 409: WORLDGRAPH_CONFLICT_RESPONSE, 422: WORLDGRAPH_KEY_REUSE_RESPONSE },
+});
 
 // The first strict contracts cover the autonomous hot path. The route registry still guarantees
 // COMPLETE path discovery; these overlays replace its generic object body where the server itself
@@ -256,6 +290,62 @@ const OPERATION_CONTRACTS = {
     responseSchema: { $ref: '#/components/schemas/ContentReceipt' },
     extraResponses: { 409: CONTENT_STALE_RESPONSE },
   },
+  'GET /v1/worldgraph/inventory': {
+    operationId: 'getWorldGraphInventory',
+    responseSchema: { $ref: '#/components/schemas/WorldGraphInventory' },
+  },
+  'GET /v1/worldgraph/recipes': {
+    operationId: 'getWorldGraphRecipes',
+    responseSchema: { $ref: '#/components/schemas/WorldGraphRecipeCatalog' },
+  },
+  'POST /v1/worldgraph/recipes/:recipeId/craft': worldGraphMutation('craftWorldGraphRecipe'),
+  'POST /v1/worldgraph/recipes/:recipeId/salvage/:carId': worldGraphMutation('salvageCarWithWorldGraphRecipe'),
+  'GET /v1/worldgraph/mysteries': {
+    operationId: 'getWorldGraphMysteries',
+    responseSchema: { $ref: '#/components/schemas/WorldGraphMysteryDiscovery' },
+  },
+  'POST /v1/worldgraph/mysteries/:graphId/start': worldGraphMutation('startWorldGraphMystery'),
+  'GET /v1/worldgraph/mysteries/:graphId': {
+    operationId: 'getWorldGraphMystery',
+    responseSchema: { $ref: '#/components/schemas/WorldGraphMysteryBoard' },
+  },
+  'POST /v1/worldgraph/mysteries/:graphId/nodes/:nodeId/discover': worldGraphMutation(
+    'discoverWorldGraphMysteryNode', WORLDGRAPH_INTERACTION_BODY,
+  ),
+  'POST /v1/worldgraph/mysteries/:graphId/nodes/:nodeId/complete': worldGraphMutation(
+    'completeWorldGraphMysteryNode', WORLDGRAPH_INTERACTION_BODY,
+  ),
+  'POST /v1/worldgraph/mysteries/:graphId/choices/:nodeId': worldGraphMutation(
+    'commitWorldGraphMysteryChoice', WORLDGRAPH_CHOICE_BODY,
+  ),
+  'POST /v1/worldgraph/mysteries/:graphId/cancel': worldGraphMutation('cancelWorldGraphMystery'),
+  'GET /v1/worldgraph/operations': {
+    operationId: 'getWorldGraphOperations',
+    responseSchema: { $ref: '#/components/schemas/WorldGraphOperationDiscovery' },
+  },
+  'POST /v1/worldgraph/operations/:graphId/:operationNodeId/open': worldGraphMutation(
+    'openWorldGraphOperation',
+  ),
+  'GET /v1/worldgraph/operations/:operationId': {
+    operationId: 'getWorldGraphOperation',
+    responseSchema: { $ref: '#/components/schemas/WorldGraphOperationBoard' },
+  },
+  'GET /v1/worldgraph/operations/:operationId/role': {
+    operationId: 'getWorldGraphOperationRole',
+    responseSchema: { $ref: '#/components/schemas/WorldGraphRoleBoard' },
+  },
+  'POST /v1/worldgraph/operations/:operationId/roles/:roleId': worldGraphMutation(
+    'assignWorldGraphOperationRole',
+  ),
+  'POST /v1/worldgraph/operations/:operationId/contributions/:nodeId': worldGraphMutation(
+    'contributeToWorldGraphOperation', WORLDGRAPH_INTERACTION_BODY,
+  ),
+  'POST /v1/worldgraph/operations/:operationId/complete': worldGraphMutation(
+    'completeWorldGraphOperation',
+  ),
+  'POST /v1/worldgraph/operations/:operationId/cancel': worldGraphMutation(
+    'cancelWorldGraphOperation',
+  ),
 };
 
 const AGENT_SCHEMAS = {
@@ -910,6 +1000,275 @@ const AGENT_SCHEMAS = {
       ] },
     },
   },
+  WorldGraphError: {
+    type: 'object', additionalProperties: false, required: ['error', 'message'],
+    properties: { error: { type: 'string' }, message: { type: 'string' } },
+  },
+  WorldGraphInventoryStack: {
+    type: 'object', additionalProperties: false,
+    required: ['templateId', 'quality', 'qty', 'createdAt', 'updatedAt'],
+    properties: {
+      templateId: { type: 'string' }, quality: { type: 'string' },
+      qty: { type: 'integer', minimum: 1 },
+      createdAt: { type: 'string', format: 'date-time' },
+      updatedAt: { type: 'string', format: 'date-time' },
+    },
+  },
+  WorldGraphInventoryItem: {
+    type: 'object', additionalProperties: false,
+    required: ['id', 'templateId', 'state', 'escrowed', 'createdAt', 'updatedAt'],
+    properties: {
+      id: { type: 'string' }, templateId: { type: 'string' }, state: { type: 'string' },
+      escrowed: { type: 'boolean' },
+      createdAt: { type: 'string', format: 'date-time' },
+      updatedAt: { type: 'string', format: 'date-time' },
+    },
+  },
+  WorldGraphInventory: {
+    type: 'object', additionalProperties: false, required: ['stacks', 'items'],
+    properties: {
+      stacks: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphInventoryStack' } },
+      items: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphInventoryItem' } },
+    },
+  },
+  WorldGraphRecipeEntry: {
+    type: 'object', additionalProperties: false,
+    required: ['quantity'],
+    properties: {
+      templateId: { type: 'string' }, assetType: { type: 'string' },
+      quantity: { type: 'integer', minimum: 1 }, quality: { type: 'string' },
+    },
+  },
+  WorldGraphRecipeBlocker: {
+    type: 'object', additionalProperties: false, required: ['adapter'],
+    properties: {
+      adapter: { type: 'string' }, required: {}, current: {}, carId: { type: ['string', 'null'] },
+    },
+  },
+  WorldGraphRecipe: {
+    type: 'object', additionalProperties: false,
+    required: ['packageId', 'packageVersion', 'recipeId', 'recipeVersion', 'id', 'title',
+      'inputs', 'outputs', 'cashCost', 'available', 'blockedBy'],
+    properties: {
+      packageId: { type: 'string' }, packageVersion: { type: 'integer', minimum: 1 },
+      recipeId: { type: 'string' }, recipeVersion: { type: 'integer', minimum: 1 },
+      id: { type: 'string' }, title: { type: 'string' },
+      inputs: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphRecipeEntry' } },
+      outputs: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphRecipeEntry' } },
+      cashCost: { type: 'integer', minimum: 0 }, available: { type: 'boolean' },
+      blockedBy: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphRecipeBlocker' } },
+    },
+  },
+  WorldGraphRecipeCatalog: {
+    type: 'object', additionalProperties: false, required: ['recipes'],
+    properties: { recipes: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphRecipe' } } },
+  },
+  WorldGraphMysterySummary: {
+    type: 'object', additionalProperties: false,
+    required: ['graphId', 'version', 'season', 'title', 'started', 'status'],
+    properties: {
+      graphId: { type: 'string' }, version: { type: 'integer', minimum: 1 },
+      season: { type: ['string', 'null'] }, title: { type: 'string' },
+      started: { type: 'boolean' }, status: { type: 'string' }, instanceId: { type: 'string' },
+    },
+  },
+  WorldGraphMysteryDiscovery: {
+    type: 'object', additionalProperties: false, required: ['mysteries'],
+    properties: { mysteries: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphMysterySummary' } } },
+  },
+  WorldGraphMysteryNode: {
+    type: 'object', additionalProperties: false,
+    required: ['id', 'type', 'title', 'status', 'available', 'blockedBy'],
+    properties: {
+      id: { type: 'string' }, type: { type: 'string' }, title: { type: 'string' },
+      status: { type: 'string' }, available: { type: 'boolean' },
+      blockedBy: { type: 'array', items: { type: 'object' } },
+      options: { type: 'array', items: { type: 'object', additionalProperties: false,
+        required: ['id', 'title'], properties: { id: { type: 'string' }, title: { type: 'string' } } } },
+    },
+  },
+  WorldGraphMysteryBoard: {
+    type: 'object', additionalProperties: false,
+    required: ['instanceId', 'graph', 'status', 'createdAt', 'nodes', 'choices'],
+    properties: {
+      instanceId: { type: 'string' },
+      graph: { type: 'object', additionalProperties: false,
+        required: ['id', 'version', 'season'], properties: {
+          id: { type: 'string' }, version: { type: 'integer', minimum: 1 },
+          season: { type: ['string', 'null'] },
+        } },
+      status: { type: 'string' }, createdAt: { type: 'string', format: 'date-time' },
+      completedAt: { type: ['string', 'null'], format: 'date-time' },
+      failedAt: { type: ['string', 'null'], format: 'date-time' },
+      canceledAt: { type: ['string', 'null'], format: 'date-time' },
+      nodes: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphMysteryNode' } },
+      choices: { type: 'array', items: { type: 'object', additionalProperties: false,
+        required: ['nodeId', 'choiceId'], properties: {
+          nodeId: { type: 'string' }, choiceId: { type: 'string' },
+        } } },
+    },
+  },
+  WorldGraphOperationSummary: {
+    type: 'object', additionalProperties: false,
+    required: ['graphId', 'version', 'operationNodeId', 'title', 'minimumDistinctAccounts',
+      'roles', 'available', 'blockedBy'],
+    properties: {
+      graphId: { type: 'string' }, version: { type: 'integer', minimum: 1 },
+      operationNodeId: { type: 'string' }, title: { type: 'string' },
+      minimumDistinctAccounts: { type: 'integer', minimum: 1 },
+      roles: { type: 'array', items: { type: 'object', additionalProperties: false,
+        required: ['roleId', 'title'], properties: {
+          roleId: { type: 'string' }, title: { type: 'string' },
+        } } },
+      available: { type: 'boolean' },
+      blockedBy: { type: 'array', items: { type: 'object', additionalProperties: false,
+        required: ['code'], properties: { code: { type: 'string' } } } },
+      operationId: { type: 'string' }, status: { type: 'string' },
+    },
+  },
+  WorldGraphOperationDiscovery: {
+    type: 'object', additionalProperties: false, required: ['operations'],
+    properties: { operations: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphOperationSummary' } } },
+  },
+  WorldGraphOperationNode: {
+    type: 'object', additionalProperties: false,
+    required: ['id', 'type', 'title', 'status', 'completedAt'],
+    properties: {
+      id: { type: 'string' }, type: { type: 'string' }, title: { type: 'string' },
+      status: { type: 'string' }, completedAt: { type: ['string', 'null'], format: 'date-time' },
+      privateEvidence: { type: 'string' },
+    },
+  },
+  WorldGraphOperationGraph: {
+    type: 'object', additionalProperties: false,
+    required: ['id', 'version', 'operationNodeId'], properties: {
+      id: { type: 'string' }, version: { type: 'integer', minimum: 1 }, operationNodeId: { type: 'string' },
+    },
+  },
+  WorldGraphOperationBoard: {
+    type: 'object', additionalProperties: false,
+    required: ['operationId', 'graph', 'status', 'closeReason', 'createdAt', 'activatedAt',
+      'completedAt', 'canceledAt', 'abandonedAt', 'roles', 'filledRoleCount',
+      'requiredRoleCount', 'nodes'],
+    properties: {
+      operationId: { type: 'string' }, graph: { $ref: '#/components/schemas/WorldGraphOperationGraph' },
+      status: { type: 'string' }, closeReason: { type: ['string', 'null'] },
+      createdAt: { type: 'string', format: 'date-time' },
+      activatedAt: { type: ['string', 'null'], format: 'date-time' },
+      completedAt: { type: ['string', 'null'], format: 'date-time' },
+      canceledAt: { type: ['string', 'null'], format: 'date-time' },
+      abandonedAt: { type: ['string', 'null'], format: 'date-time' },
+      roles: { type: 'array', items: { type: 'object', additionalProperties: false,
+        required: ['roleId', 'title', 'filled', 'contributions'], properties: {
+          roleId: { type: 'string' }, title: { type: 'string' }, filled: { type: 'boolean' },
+          contributions: { type: 'integer', minimum: 0 },
+        } } },
+      filledRoleCount: { type: 'integer', minimum: 0 },
+      requiredRoleCount: { type: 'integer', minimum: 1 },
+      nodes: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphOperationNode' } },
+    },
+  },
+  WorldGraphRoleBoard: {
+    type: 'object', additionalProperties: false,
+    required: ['operationId', 'graph', 'status', 'closeReason', 'createdAt', 'activatedAt',
+      'completedAt', 'canceledAt', 'abandonedAt', 'role', 'nodes'],
+    properties: {
+      operationId: { type: 'string' }, graph: { $ref: '#/components/schemas/WorldGraphOperationGraph' },
+      status: { type: 'string' }, closeReason: { type: ['string', 'null'] },
+      createdAt: { type: 'string', format: 'date-time' },
+      activatedAt: { type: ['string', 'null'], format: 'date-time' },
+      completedAt: { type: ['string', 'null'], format: 'date-time' },
+      canceledAt: { type: ['string', 'null'], format: 'date-time' },
+      abandonedAt: { type: ['string', 'null'], format: 'date-time' },
+      role: { type: 'object', additionalProperties: false, required: ['roleId'],
+        properties: { roleId: { type: 'string' } } },
+      nodes: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphOperationNode' } },
+    },
+  },
+  WorldGraphMutationEntry: {
+    type: 'object', additionalProperties: false,
+    properties: {
+      id: { type: 'string' }, templateId: { type: 'string' }, assetType: { type: 'string' },
+      quantity: { type: 'integer' }, quality: { type: 'string' }, qty: { type: 'integer' },
+      delta: { type: 'integer' }, state: { type: 'string' }, escrowed: { type: 'boolean' },
+      createdAt: { type: ['string', 'null'], format: 'date-time' },
+      updatedAt: { type: ['string', 'null'], format: 'date-time' },
+      consumedAt: { type: ['string', 'null'], format: 'date-time' },
+      modelId: { type: 'string' }, trimId: { type: 'string' }, damage: { type: 'integer' },
+    },
+  },
+  WorldGraphMutationEffect: {
+    type: 'object', additionalProperties: false, required: ['kind'],
+    properties: {
+      kind: { type: 'string' }, nodeId: { type: 'string' }, recipientRoleId: { type: 'string' },
+      completedAt: { type: ['string', 'null'], format: 'date-time' },
+      item: { $ref: '#/components/schemas/WorldGraphMutationEntry' },
+    },
+  },
+  WorldGraphMutationGraph: {
+    type: 'object', additionalProperties: false, required: ['id', 'version'],
+    properties: {
+      id: { type: 'string' }, version: { type: 'integer', minimum: 1 },
+      season: { type: ['string', 'null'] }, operationNodeId: { type: 'string' },
+    },
+  },
+  WorldGraphMutationNode: {
+    type: 'object', additionalProperties: false, required: ['id', 'status'],
+    properties: {
+      id: { type: 'string' }, status: { type: 'string' },
+      discoveredAt: { type: ['string', 'null'], format: 'date-time' },
+      completedAt: { type: ['string', 'null'], format: 'date-time' },
+    },
+  },
+  WorldGraphMutationChoice: {
+    type: 'object', additionalProperties: false, required: ['id', 'committedAt'],
+    properties: {
+      id: { type: 'string' }, committedAt: { type: 'string', format: 'date-time' },
+    },
+  },
+  WorldGraphMutationAssignment: {
+    type: 'object', additionalProperties: false, required: ['roleId', 'assignedAt'],
+    properties: {
+      roleId: { type: 'string' }, assignedAt: { type: 'string', format: 'date-time' },
+    },
+  },
+  WorldGraphMutationContribution: {
+    type: 'object', additionalProperties: false, required: ['nodeId', 'roleId', 'completedAt'],
+    properties: {
+      nodeId: { type: 'string' }, roleId: { type: 'string' },
+      completedAt: { type: 'string', format: 'date-time' },
+    },
+  },
+  WorldGraphMutationReceipt: {
+    type: 'object', additionalProperties: false, required: ['ok'],
+    properties: {
+      ok: { type: 'boolean' }, kind: { type: 'string' },
+      recipe: { type: 'object', additionalProperties: false,
+        required: ['packageId', 'packageVersion', 'recipeId', 'recipeVersion'], properties: {
+          packageId: { type: 'string' }, packageVersion: { type: 'integer', minimum: 1 },
+          recipeId: { type: 'string' }, recipeVersion: { type: 'integer', minimum: 1 },
+        } },
+      cashCost: { type: 'integer', minimum: 0 }, cashAfter: { type: 'integer', minimum: 0 },
+      inputs: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphMutationEntry' } },
+      outputs: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphMutationEntry' } },
+      car: { $ref: '#/components/schemas/WorldGraphMutationEntry' },
+      instanceId: { type: 'string' }, operationId: { type: 'string' },
+      graph: { $ref: '#/components/schemas/WorldGraphMutationGraph' },
+      status: { type: 'string' }, closeReason: { type: ['string', 'null'] },
+      createdAt: { type: ['string', 'null'], format: 'date-time' },
+      activatedAt: { type: ['string', 'null'], format: 'date-time' },
+      completedAt: { type: ['string', 'null'], format: 'date-time' },
+      failedAt: { type: ['string', 'null'], format: 'date-time' },
+      canceledAt: { type: ['string', 'null'], format: 'date-time' },
+      abandonedAt: { type: ['string', 'null'], format: 'date-time' },
+      releasedEscrowCount: { type: 'integer', minimum: 0 },
+      node: { $ref: '#/components/schemas/WorldGraphMutationNode' },
+      choice: { $ref: '#/components/schemas/WorldGraphMutationChoice' },
+      assignment: { $ref: '#/components/schemas/WorldGraphMutationAssignment' },
+      contribution: { $ref: '#/components/schemas/WorldGraphMutationContribution' },
+      effects: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphMutationEffect' } },
+    },
+  },
   AgentEV: {
     type: 'object', additionalProperties: false,
     required: ['cash', 'treasury', 'inventory', 'liability', 'respect', 'confidence', 'basis'],
@@ -1064,9 +1423,12 @@ export function buildOpenApi(routes, { baseUrl = 'https://www.omerta.fun', versi
       summary: `${method} ${url}`,
       ...(contract?.operationId ? { operationId: contract.operationId } : {}),
       security,
-      parameters: paramsOf(url).map((name) => ({
-        name, in: 'path', required: true, schema: { type: 'string' },
-      })),
+      parameters: [
+        ...paramsOf(url).map((name) => ({
+          name, in: 'path', required: true, schema: { type: 'string' },
+        })),
+        ...(contract?.requestParameters || []),
+      ],
       responses: {
         200: { description: 'OK' },
         400: { description: 'Game error — { error: <stable code>, message }' },
