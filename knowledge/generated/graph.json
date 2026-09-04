@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "9fde053335f2c82df107708b53d16b0c4bc5719f",
+  "sourceRevision": "0c9f7c270412ffadafe32d22f5cf070f14b48b72",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,18 +43,18 @@
     ]
   },
   "census": {
-    "nodes": 5803,
-    "edges": 25752,
+    "nodes": 5807,
+    "edges": 25808,
     "byNodeType": {
-      "Artifact": 1855,
+      "Artifact": 1856,
       "Command": 59,
-      "Commit": 1357,
+      "Commit": 1359,
       "Contract": 49,
       "Document": 477,
       "Domain": 13,
       "ExternalDependency": 24,
       "HistoricalArtifact": 306,
-      "Module": 199,
+      "Module": 200,
       "PullRequest": 126,
       "Repository": 1,
       "Route": 762,
@@ -64,21 +64,21 @@
       "Workflow": 4
     },
     "byEdgeType": {
-      "BELONGS_TO": 2025,
-      "CHANGED": 10345,
-      "CONTAINS": 1876,
+      "BELONGS_TO": 2026,
+      "CHANGED": 10384,
+      "CONTAINS": 1877,
       "DECLARES": 59,
       "DEFINED_IN": 1140,
       "DEPENDS_ON": 64,
       "EXECUTES": 216,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1357,
+      "HAS_COMMIT": 1359,
       "IMPLEMENTS": 124,
-      "IMPORTS": 1724,
+      "IMPORTS": 1731,
       "INHERITS": 12,
-      "REFERENCES": 2913,
-      "REPRESENTS": 914,
-      "TESTS": 610,
+      "REFERENCES": 2915,
+      "REPRESENTS": 915,
+      "TESTS": 613,
       "TRACKS": 126,
       "USES_TABLE": 1545
     }
@@ -7705,20 +7705,20 @@
       "path": "AGENTS.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 37795,
-      "lines": 625,
-      "version": "1bd859cadea118f7",
+      "bytes": 38785,
+      "lines": 639,
+      "version": "a7ca27827c64623c",
       "text": true,
       "provenance": [
         {
           "file": "AGENTS.md",
           "line": 1,
-          "version": "1bd859cadea118f7"
+          "version": "a7ca27827c64623c"
         }
       ],
-      "lastChangedAt": "2026-09-04T02:02:56.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3c8da2205b6f6868194ad8400dcd93773224217a"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:art/art-prompts.json",
@@ -13386,20 +13386,20 @@
       "path": "docs/WIKI.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 223511,
-      "lines": 2751,
-      "version": "4f644f4e5c6236e7",
+      "bytes": 224372,
+      "lines": 2759,
+      "version": "fdf11639cf6fc029",
       "text": true,
       "provenance": [
         {
           "file": "docs/WIKI.md",
           "line": 1,
-          "version": "4f644f4e5c6236e7"
+          "version": "fdf11639cf6fc029"
         }
       ],
-      "lastChangedAt": "2026-09-04T02:02:56.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3c8da2205b6f6868194ad8400dcd93773224217a"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:GRAPH.md",
@@ -13478,20 +13478,20 @@
       "path": "knowledge/architecture.md",
       "kind": "knowledge-base",
       "extension": ".md",
-      "bytes": 7007,
+      "bytes": 7159,
       "lines": 108,
-      "version": "30b69ad845b0e1e7",
+      "version": "5e99169403812603",
       "text": true,
       "provenance": [
         {
           "file": "knowledge/architecture.md",
           "line": 1,
-          "version": "30b69ad845b0e1e7"
+          "version": "5e99169403812603"
         }
       ],
-      "lastChangedAt": "2026-09-04T02:02:56.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3c8da2205b6f6868194ad8400dcd93773224217a"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:knowledge/data-economy.md",
@@ -13501,20 +13501,20 @@
       "path": "knowledge/data-economy.md",
       "kind": "knowledge-base",
       "extension": ".md",
-      "bytes": 6623,
-      "lines": 114,
-      "version": "155277bb8539532b",
+      "bytes": 7434,
+      "lines": 121,
+      "version": "bea1601f408b8e31",
       "text": true,
       "provenance": [
         {
           "file": "knowledge/data-economy.md",
           "line": 1,
-          "version": "155277bb8539532b"
+          "version": "bea1601f408b8e31"
         }
       ],
-      "lastChangedAt": "2026-09-04T02:02:56.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3c8da2205b6f6868194ad8400dcd93773224217a"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:knowledge/decisions-and-risks.md",
@@ -13825,18 +13825,18 @@
       "extension": ".md",
       "bytes": 7058,
       "lines": 128,
-      "version": "a03c83a4887c9024",
+      "version": "cb9d75756896d4e1",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "a03c83a4887c9024"
+          "version": "cb9d75756896d4e1"
         }
       ],
-      "lastChangedAt": "2026-09-04T02:02:56.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3c8da2205b6f6868194ad8400dcd93773224217a"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:MARKETING.md",
@@ -32677,20 +32677,20 @@
       "path": "public/wiki.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 223461,
-      "lines": 2181,
-      "version": "4e652d30eabf2b54",
+      "bytes": 224272,
+      "lines": 2188,
+      "version": "7f41faf430ab40f5",
       "text": true,
       "provenance": [
         {
           "file": "public/wiki.html",
           "line": 1,
-          "version": "4e652d30eabf2b54"
+          "version": "7f41faf430ab40f5"
         }
       ],
-      "lastChangedAt": "2026-09-04T02:02:56.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3c8da2205b6f6868194ad8400dcd93773224217a"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:README.md",
@@ -32769,20 +32769,20 @@
       "path": "schema.sql",
       "kind": "data-schema",
       "extension": ".sql",
-      "bytes": 390209,
-      "lines": 6382,
-      "version": "e70e8b79c1e98270",
+      "bytes": 392224,
+      "lines": 6408,
+      "version": "813f59b0b310a30a",
       "text": true,
       "provenance": [
         {
           "file": "schema.sql",
           "line": 1,
-          "version": "e70e8b79c1e98270"
+          "version": "813f59b0b310a30a"
         }
       ],
-      "lastChangedAt": "2026-09-04T02:02:56.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3c8da2205b6f6868194ad8400dcd93773224217a"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:SIGN-OFF.md",
@@ -32838,20 +32838,20 @@
       "path": "SPEC.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 53928,
-      "lines": 728,
-      "version": "b001626b899b6e03",
+      "bytes": 54581,
+      "lines": 735,
+      "version": "081244621b35c8e5",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "b001626b899b6e03"
+          "version": "081244621b35c8e5"
         }
       ],
-      "lastChangedAt": "2026-09-04T03:21:29.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "20190d3d98f4f90886de98945932b437d5543145"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -32884,20 +32884,20 @@
       "path": "src/agentgateway.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 88028,
+      "bytes": 88731,
       "lines": 1640,
-      "version": "0865a7dee255f60d",
+      "version": "57452a015768f39e",
       "text": true,
       "provenance": [
         {
           "file": "src/agentgateway.js",
           "line": 1,
-          "version": "0865a7dee255f60d"
+          "version": "57452a015768f39e"
         }
       ],
-      "lastChangedAt": "2026-09-04T02:02:56.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3c8da2205b6f6868194ad8400dcd93773224217a"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:src/agentreferrals.js",
@@ -33666,20 +33666,20 @@
       "path": "src/content/belladonna.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 7948,
-      "lines": 242,
-      "version": "12695403c7c4c7e8",
+      "bytes": 7940,
+      "lines": 241,
+      "version": "60b29db9de2fe05d",
       "text": true,
       "provenance": [
         {
           "file": "src/content/belladonna.js",
           "line": 1,
-          "version": "12695403c7c4c7e8"
+          "version": "60b29db9de2fe05d"
         }
       ],
-      "lastChangedAt": "2026-09-04T00:31:41.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e5ec713d3dc29797e369335e3a3ac93b6758850e"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:src/content/compiler.js",
@@ -33781,20 +33781,43 @@
       "path": "src/content/phase1-policy.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 5958,
-      "lines": 131,
-      "version": "2c6ea0c7580cff24",
+      "bytes": 7281,
+      "lines": 161,
+      "version": "af3c53bbc1f8c493",
       "text": true,
       "provenance": [
         {
           "file": "src/content/phase1-policy.js",
           "line": 1,
-          "version": "2c6ea0c7580cff24"
+          "version": "af3c53bbc1f8c493"
         }
       ],
-      "lastChangedAt": "2026-09-04T03:11:49.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "686512e328670bfd0b45616b9c81cb16e508ed6b"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+    },
+    {
+      "key": "Artifact:src/content/phase1-validation.js",
+      "type": "Artifact",
+      "id": "src/content/phase1-validation.js",
+      "label": "phase1-validation.js",
+      "path": "src/content/phase1-validation.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 2350,
+      "lines": 54,
+      "version": "cbbd8c6750d1bc15",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/content/phase1-validation.js",
+          "line": 1,
+          "version": "cbbd8c6750d1bc15"
+        }
+      ],
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:src/content/phase1.js",
@@ -33896,20 +33919,20 @@
       "path": "src/crafting.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 20750,
-      "lines": 551,
-      "version": "2618cc668db3eb0b",
+      "bytes": 33024,
+      "lines": 822,
+      "version": "7794acaf5348244e",
       "text": true,
       "provenance": [
         {
           "file": "src/crafting.js",
           "line": 1,
-          "version": "2618cc668db3eb0b"
+          "version": "7794acaf5348244e"
         }
       ],
-      "lastChangedAt": "2026-09-04T03:11:49.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "686512e328670bfd0b45616b9c81cb16e508ed6b"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:src/crew.js",
@@ -34747,20 +34770,20 @@
       "path": "src/invariants.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 72806,
-      "lines": 939,
-      "version": "d180c8976535e18f",
+      "bytes": 78084,
+      "lines": 1063,
+      "version": "530184cdd2a3723c",
       "text": true,
       "provenance": [
         {
           "file": "src/invariants.js",
           "line": 1,
-          "version": "d180c8976535e18f"
+          "version": "530184cdd2a3723c"
         }
       ],
-      "lastChangedAt": "2026-09-04T03:11:49.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "686512e328670bfd0b45616b9c81cb16e508ed6b"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:src/items.js",
@@ -34770,20 +34793,20 @@
       "path": "src/items.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 37080,
-      "lines": 827,
-      "version": "68f351fff31645ef",
+      "bytes": 37363,
+      "lines": 831,
+      "version": "5e4afd88a498dbe1",
       "text": true,
       "provenance": [
         {
           "file": "src/items.js",
           "line": 1,
-          "version": "68f351fff31645ef"
+          "version": "5e4afd88a498dbe1"
         }
       ],
-      "lastChangedAt": "2026-09-03T23:11:45.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "246c66b808b52cc1e0d5f7d3971b008c617ffaf0"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:src/kitchen.js",
@@ -35023,20 +35046,20 @@
       "path": "src/mysteries.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 54657,
-      "lines": 1273,
-      "version": "b34ed03a6a9466c0",
+      "bytes": 71389,
+      "lines": 1635,
+      "version": "d58a5fa05c1b0329",
       "text": true,
       "provenance": [
         {
           "file": "src/mysteries.js",
           "line": 1,
-          "version": "b34ed03a6a9466c0"
+          "version": "d58a5fa05c1b0329"
         }
       ],
-      "lastChangedAt": "2026-09-04T03:11:49.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "686512e328670bfd0b45616b9c81cb16e508ed6b"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:src/nft.js",
@@ -35115,20 +35138,20 @@
       "path": "src/operations.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 57400,
-      "lines": 1228,
-      "version": "60e7cadcb5e94000",
+      "bytes": 76369,
+      "lines": 1642,
+      "version": "abe5df8eed6aa650",
       "text": true,
       "provenance": [
         {
           "file": "src/operations.js",
           "line": 1,
-          "version": "60e7cadcb5e94000"
+          "version": "abe5df8eed6aa650"
         }
       ],
-      "lastChangedAt": "2026-09-04T02:02:56.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3c8da2205b6f6868194ad8400dcd93773224217a"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:src/opportunities.js",
@@ -36150,20 +36173,20 @@
       "path": "src/routes/worldgraph.js",
       "kind": "route-module",
       "extension": ".js",
-      "bytes": 23262,
-      "lines": 562,
-      "version": "71971dad10580f7e",
+      "bytes": 25191,
+      "lines": 610,
+      "version": "0837a191b7aa1caf",
       "text": true,
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
           "line": 1,
-          "version": "71971dad10580f7e"
+          "version": "0837a191b7aa1caf"
         }
       ],
-      "lastChangedAt": "2026-09-04T03:11:49.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "686512e328670bfd0b45616b9c81cb16e508ed6b"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:src/rules.generated.js",
@@ -37392,20 +37415,20 @@
       "path": "src/worldgraph-validate.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 73686,
-      "lines": 1855,
-      "version": "e4dff859ad9d4321",
+      "bytes": 74482,
+      "lines": 1869,
+      "version": "67c9473bfa66f808",
       "text": true,
       "provenance": [
         {
           "file": "src/worldgraph-validate.js",
           "line": 1,
-          "version": "e4dff859ad9d4321"
+          "version": "67c9473bfa66f808"
         }
       ],
-      "lastChangedAt": "2026-09-04T01:25:23.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d940ac787986cf72c9677abe8072decbe357de84"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:src/worldgraph.js",
@@ -37622,20 +37645,20 @@
       "path": "test/belladonna.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 40003,
-      "lines": 915,
-      "version": "ab55cca440c80d5a",
+      "bytes": 43577,
+      "lines": 980,
+      "version": "e887a268de8a4e9d",
       "text": true,
       "provenance": [
         {
           "file": "test/belladonna.js",
           "line": 1,
-          "version": "ab55cca440c80d5a"
+          "version": "e887a268de8a4e9d"
         }
       ],
-      "lastChangedAt": "2026-09-04T02:33:46.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "63598c577877d2828e964cb703ff72722bd9d672"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:test/bonds.js",
@@ -38335,20 +38358,20 @@
       "path": "test/crafting.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 24911,
-      "lines": 517,
-      "version": "2b4da8ad1fb4a899",
+      "bytes": 35058,
+      "lines": 744,
+      "version": "94b30be9003e7537",
       "text": true,
       "provenance": [
         {
           "file": "test/crafting.js",
           "line": 1,
-          "version": "2b4da8ad1fb4a899"
+          "version": "94b30be9003e7537"
         }
       ],
-      "lastChangedAt": "2026-09-04T02:33:46.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "63598c577877d2828e964cb703ff72722bd9d672"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:test/crew.js",
@@ -38979,20 +39002,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 247194,
-      "lines": 3793,
-      "version": "8a2e0676d26ba6dd",
+      "bytes": 247457,
+      "lines": 3795,
+      "version": "989c02a051cf4624",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "8a2e0676d26ba6dd"
+          "version": "989c02a051cf4624"
         }
       ],
-      "lastChangedAt": "2026-09-03T23:55:20.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e41aad1e517f9a74742f8f7e1963c56a302b9503"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:test/genesiscca.js",
@@ -39071,20 +39094,20 @@
       "path": "test/graph.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 13898,
-      "lines": 201,
-      "version": "5c5a4b9bc5048a3e",
+      "bytes": 14012,
+      "lines": 203,
+      "version": "5928a5029ee4bc84",
       "text": true,
       "provenance": [
         {
           "file": "test/graph.js",
           "line": 1,
-          "version": "5c5a4b9bc5048a3e"
+          "version": "5928a5029ee4bc84"
         }
       ],
-      "lastChangedAt": "2026-09-04T03:11:49.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "686512e328670bfd0b45616b9c81cb16e508ed6b"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:test/growth.js",
@@ -39209,20 +39232,20 @@
       "path": "test/items.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 30647,
-      "lines": 654,
-      "version": "980d99f7025aa107",
+      "bytes": 40204,
+      "lines": 843,
+      "version": "e888921009e70ea2",
       "text": true,
       "provenance": [
         {
           "file": "test/items.js",
           "line": 1,
-          "version": "980d99f7025aa107"
+          "version": "e888921009e70ea2"
         }
       ],
-      "lastChangedAt": "2026-09-04T03:11:49.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "686512e328670bfd0b45616b9c81cb16e508ed6b"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:test/landmarks.js",
@@ -39485,20 +39508,20 @@
       "path": "test/migrate.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 68577,
-      "lines": 1121,
-      "version": "d4b800cf12452957",
+      "bytes": 69265,
+      "lines": 1127,
+      "version": "822d34b064359c5b",
       "text": true,
       "provenance": [
         {
           "file": "test/migrate.js",
           "line": 1,
-          "version": "d4b800cf12452957"
+          "version": "822d34b064359c5b"
         }
       ],
-      "lastChangedAt": "2026-09-04T03:21:29.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "20190d3d98f4f90886de98945932b437d5543145"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:test/mysteries.js",
@@ -39508,20 +39531,20 @@
       "path": "test/mysteries.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 34310,
-      "lines": 818,
-      "version": "84d1a1a8e84edcd0",
+      "bytes": 39087,
+      "lines": 922,
+      "version": "d0bcbb5d24a5de9b",
       "text": true,
       "provenance": [
         {
           "file": "test/mysteries.js",
           "line": 1,
-          "version": "84d1a1a8e84edcd0"
+          "version": "d0bcbb5d24a5de9b"
         }
       ],
-      "lastChangedAt": "2026-09-04T03:11:49.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "686512e328670bfd0b45616b9c81cb16e508ed6b"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:test/nft.js",
@@ -39577,20 +39600,20 @@
       "path": "test/operations.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 42445,
-      "lines": 929,
-      "version": "34459831945db51c",
+      "bytes": 56888,
+      "lines": 1233,
+      "version": "c7b79f051ccf9960",
       "text": true,
       "provenance": [
         {
           "file": "test/operations.js",
           "line": 1,
-          "version": "34459831945db51c"
+          "version": "c7b79f051ccf9960"
         }
       ],
-      "lastChangedAt": "2026-09-04T02:02:56.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3c8da2205b6f6868194ad8400dcd93773224217a"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:test/pass.js",
@@ -41164,20 +41187,20 @@
       "path": "test/worldgraph-api.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 46363,
-      "lines": 941,
-      "version": "120dfde53fd5bc11",
+      "bytes": 50075,
+      "lines": 1011,
+      "version": "40fd8a14da50baec",
       "text": true,
       "provenance": [
         {
           "file": "test/worldgraph-api.js",
           "line": 1,
-          "version": "120dfde53fd5bc11"
+          "version": "40fd8a14da50baec"
         }
       ],
-      "lastChangedAt": "2026-09-04T03:27:35.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9fde053335f2c82df107708b53d16b0c4bc5719f"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:test/worldgraph-validation.js",
@@ -41187,20 +41210,20 @@
       "path": "test/worldgraph-validation.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 46748,
-      "lines": 1204,
-      "version": "965289974d8b14c7",
+      "bytes": 80834,
+      "lines": 1889,
+      "version": "a510baa8c1479e06",
       "text": true,
       "provenance": [
         {
           "file": "test/worldgraph-validation.js",
           "line": 1,
-          "version": "965289974d8b14c7"
+          "version": "a510baa8c1479e06"
         }
       ],
-      "lastChangedAt": "2026-09-04T03:11:49.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "686512e328670bfd0b45616b9c81cb16e508ed6b"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:test/worldgraph.js",
@@ -41371,20 +41394,20 @@
       "path": "tools/backup-selftest.sh",
       "kind": "engineering-harness",
       "extension": ".sh",
-      "bytes": 29523,
-      "lines": 436,
-      "version": "c5405d33398160da",
+      "bytes": 29895,
+      "lines": 441,
+      "version": "ff84fdbeece42ca3",
       "text": true,
       "provenance": [
         {
           "file": "tools/backup-selftest.sh",
           "line": 1,
-          "version": "c5405d33398160da"
+          "version": "ff84fdbeece42ca3"
         }
       ],
-      "lastChangedAt": "2026-09-04T03:11:49.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "686512e328670bfd0b45616b9c81cb16e508ed6b"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:tools/backup.sh",
@@ -41969,20 +41992,20 @@
       "path": "tools/knowledge.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 65276,
+      "bytes": 65312,
       "lines": 1229,
-      "version": "f5a7afb37338fc02",
+      "version": "35d572069ec7e3bd",
       "text": true,
       "provenance": [
         {
           "file": "tools/knowledge.js",
           "line": 1,
-          "version": "f5a7afb37338fc02"
+          "version": "35d572069ec7e3bd"
         }
       ],
-      "lastChangedAt": "2026-09-04T03:11:49.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "686512e328670bfd0b45616b9c81cb16e508ed6b"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:tools/loadtest.js",
@@ -42107,20 +42130,20 @@
       "path": "tools/pgcheck-belladonna.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 26423,
-      "lines": 586,
-      "version": "7ca7f4775a034540",
+      "bytes": 27871,
+      "lines": 608,
+      "version": "15d92ba416fb5ec4",
       "text": true,
       "provenance": [
         {
           "file": "tools/pgcheck-belladonna.js",
           "line": 1,
-          "version": "7ca7f4775a034540"
+          "version": "15d92ba416fb5ec4"
         }
       ],
-      "lastChangedAt": "2026-09-04T02:33:46.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "63598c577877d2828e964cb703ff72722bd9d672"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:tools/pgcheck-mysteries.js",
@@ -42153,20 +42176,20 @@
       "path": "tools/pgcheck-operations.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 45985,
-      "lines": 987,
-      "version": "119be7e2ab2efd38",
+      "bytes": 61265,
+      "lines": 1345,
+      "version": "4e7975ed0ba157c4",
       "text": true,
       "provenance": [
         {
           "file": "tools/pgcheck-operations.js",
           "line": 1,
-          "version": "119be7e2ab2efd38"
+          "version": "4e7975ed0ba157c4"
         }
       ],
-      "lastChangedAt": "2026-09-04T02:02:56.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3c8da2205b6f6868194ad8400dcd93773224217a"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:tools/pgcheck.js",
@@ -42176,20 +42199,20 @@
       "path": "tools/pgcheck.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 94311,
-      "lines": 1463,
-      "version": "e7430234d9a2edb1",
+      "bytes": 100096,
+      "lines": 1570,
+      "version": "57b5325d7dcb9fa0",
       "text": true,
       "provenance": [
         {
           "file": "tools/pgcheck.js",
           "line": 1,
-          "version": "e7430234d9a2edb1"
+          "version": "57b5325d7dcb9fa0"
         }
       ],
-      "lastChangedAt": "2026-09-04T02:33:46.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "63598c577877d2828e964cb703ff72722bd9d672"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:tools/pgquery.js",
@@ -42705,20 +42728,20 @@
       "path": "tools/worldgraph-content.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 2347,
-      "lines": 58,
-      "version": "d64d8aa3ffd11978",
+      "bytes": 1475,
+      "lines": 31,
+      "version": "49ad5108fd889a3c",
       "text": true,
       "provenance": [
         {
           "file": "tools/worldgraph-content.js",
           "line": 1,
-          "version": "d64d8aa3ffd11978"
+          "version": "49ad5108fd889a3c"
         }
       ],
-      "lastChangedAt": "2026-09-04T03:11:49.000Z",
+      "lastChangedAt": "2026-09-04T04:25:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "686512e328670bfd0b45616b9c81cb16e508ed6b"
+      "lastChangedCommit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
     },
     {
       "key": "Artifact:UNISWAP-ROUTING.md",
@@ -44355,6 +44378,22 @@
         {
           "commit": "0c9cc5ffc1e7d8bb506cb02b5ccdc282ba122687",
           "url": "https://github.com/OmertaDev/Omerta/commit/0c9cc5ffc1e7d8bb506cb02b5ccdc282ba122687"
+        }
+      ]
+    },
+    {
+      "key": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "type": "Commit",
+      "id": "0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "label": "feat: close phase one world graph release gates",
+      "title": "feat: close phase one world graph release gates",
+      "date": "2026-09-04T04:25:27.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "provenance": [
+        {
+          "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0c9f7c270412ffadafe32d22f5cf070f14b48b72"
         }
       ]
     },
@@ -52787,6 +52826,22 @@
         {
           "commit": "6cf41869c51219ecb958c77fa73ab7d76be68dcd",
           "url": "https://github.com/OmertaDev/Omerta/commit/6cf41869c51219ecb958c77fa73ab7d76be68dcd"
+        }
+      ]
+    },
+    {
+      "key": "Commit:6cf9f69bbbc2a6dc754af2a4d2f76db52163ac19",
+      "type": "Commit",
+      "id": "6cf9f69bbbc2a6dc754af2a4d2f76db52163ac19",
+      "label": "docs: refresh knowledge graph after estate test fix",
+      "title": "docs: refresh knowledge graph after estate test fix",
+      "date": "2026-09-04T03:28:12.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6cf9f69bbbc2a6dc754af2a4d2f76db52163ac19",
+      "provenance": [
+        {
+          "commit": "6cf9f69bbbc2a6dc754af2a4d2f76db52163ac19",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6cf9f69bbbc2a6dc754af2a4d2f76db52163ac19"
         }
       ]
     },
@@ -69406,13 +69461,13 @@
       "id": "AGENTS.md",
       "label": "AGENTS.md",
       "documentType": "documentation",
-      "lines": 625,
-      "version": "1bd859cadea118f7",
+      "lines": 639,
+      "version": "a7ca27827c64623c",
       "provenance": [
         {
           "file": "AGENTS.md",
           "line": 1,
-          "version": "1bd859cadea118f7"
+          "version": "a7ca27827c64623c"
         }
       ]
     },
@@ -71742,13 +71797,13 @@
       "id": "docs/WIKI.md",
       "label": "docs/WIKI.md",
       "documentType": "documentation",
-      "lines": 2751,
-      "version": "4f644f4e5c6236e7",
+      "lines": 2759,
+      "version": "fdf11639cf6fc029",
       "provenance": [
         {
           "file": "docs/WIKI.md",
           "line": 1,
-          "version": "4f644f4e5c6236e7"
+          "version": "fdf11639cf6fc029"
         }
       ]
     },
@@ -71807,12 +71862,12 @@
       "label": "knowledge/architecture.md",
       "documentType": "knowledge-base",
       "lines": 108,
-      "version": "30b69ad845b0e1e7",
+      "version": "5e99169403812603",
       "provenance": [
         {
           "file": "knowledge/architecture.md",
           "line": 1,
-          "version": "30b69ad845b0e1e7"
+          "version": "5e99169403812603"
         }
       ]
     },
@@ -71822,13 +71877,13 @@
       "id": "knowledge/data-economy.md",
       "label": "knowledge/data-economy.md",
       "documentType": "knowledge-base",
-      "lines": 114,
-      "version": "155277bb8539532b",
+      "lines": 121,
+      "version": "bea1601f408b8e31",
       "provenance": [
         {
           "file": "knowledge/data-economy.md",
           "line": 1,
-          "version": "155277bb8539532b"
+          "version": "bea1601f408b8e31"
         }
       ]
     },
@@ -72031,12 +72086,12 @@
       "label": "MARKETING-POSTS.md",
       "documentType": "documentation",
       "lines": 128,
-      "version": "a03c83a4887c9024",
+      "version": "cb9d75756896d4e1",
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "a03c83a4887c9024"
+          "version": "cb9d75756896d4e1"
         }
       ]
     },
@@ -73646,13 +73701,13 @@
       "id": "SPEC.md",
       "label": "SPEC.md",
       "documentType": "documentation",
-      "lines": 728,
-      "version": "b001626b899b6e03",
+      "lines": 735,
+      "version": "081244621b35c8e5",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "b001626b899b6e03"
+          "version": "081244621b35c8e5"
         }
       ]
     },
@@ -74173,7 +74228,7 @@
         },
         {
           "file": "tools/pgcheck.js",
-          "line": 948
+          "line": 1055
         }
       ]
     },
@@ -78572,6 +78627,9 @@
           "commit": "6cc954ff14e26d07f9c25551f5f8d7d6e1e016d1"
         },
         {
+          "commit": "6cf9f69bbbc2a6dc754af2a4d2f76db52163ac19"
+        },
+        {
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
         },
         {
@@ -79034,6 +79092,9 @@
           "commit": "6cc954ff14e26d07f9c25551f5f8d7d6e1e016d1"
         },
         {
+          "commit": "6cf9f69bbbc2a6dc754af2a4d2f76db52163ac19"
+        },
+        {
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
         },
         {
@@ -79494,6 +79555,9 @@
         },
         {
           "commit": "6cc954ff14e26d07f9c25551f5f8d7d6e1e016d1"
+        },
+        {
+          "commit": "6cf9f69bbbc2a6dc754af2a4d2f76db52163ac19"
         },
         {
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
@@ -80031,6 +80095,9 @@
         },
         {
           "commit": "6cc954ff14e26d07f9c25551f5f8d7d6e1e016d1"
+        },
+        {
+          "commit": "6cf9f69bbbc2a6dc754af2a4d2f76db52163ac19"
         },
         {
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
@@ -80655,12 +80722,12 @@
       "id": "src/agentgateway.js",
       "label": "src/agentgateway.js",
       "lines": 1640,
-      "version": "0865a7dee255f60d",
+      "version": "57452a015768f39e",
       "provenance": [
         {
           "file": "src/agentgateway.js",
           "line": 1,
-          "version": "0865a7dee255f60d"
+          "version": "57452a015768f39e"
         }
       ]
     },
@@ -81164,13 +81231,13 @@
       "type": "Module",
       "id": "src/content/belladonna.js",
       "label": "src/content/belladonna.js",
-      "lines": 242,
-      "version": "12695403c7c4c7e8",
+      "lines": 241,
+      "version": "60b29db9de2fe05d",
       "provenance": [
         {
           "file": "src/content/belladonna.js",
           "line": 1,
-          "version": "12695403c7c4c7e8"
+          "version": "60b29db9de2fe05d"
         }
       ]
     },
@@ -81239,13 +81306,28 @@
       "type": "Module",
       "id": "src/content/phase1-policy.js",
       "label": "src/content/phase1-policy.js",
-      "lines": 131,
-      "version": "2c6ea0c7580cff24",
+      "lines": 161,
+      "version": "af3c53bbc1f8c493",
       "provenance": [
         {
           "file": "src/content/phase1-policy.js",
           "line": 1,
-          "version": "2c6ea0c7580cff24"
+          "version": "af3c53bbc1f8c493"
+        }
+      ]
+    },
+    {
+      "key": "Module:src/content/phase1-validation.js",
+      "type": "Module",
+      "id": "src/content/phase1-validation.js",
+      "label": "src/content/phase1-validation.js",
+      "lines": 54,
+      "version": "cbbd8c6750d1bc15",
+      "provenance": [
+        {
+          "file": "src/content/phase1-validation.js",
+          "line": 1,
+          "version": "cbbd8c6750d1bc15"
         }
       ]
     },
@@ -81314,13 +81396,13 @@
       "type": "Module",
       "id": "src/crafting.js",
       "label": "src/crafting.js",
-      "lines": 551,
-      "version": "2618cc668db3eb0b",
+      "lines": 822,
+      "version": "7794acaf5348244e",
       "provenance": [
         {
           "file": "src/crafting.js",
           "line": 1,
-          "version": "2618cc668db3eb0b"
+          "version": "7794acaf5348244e"
         }
       ]
     },
@@ -81869,13 +81951,13 @@
       "type": "Module",
       "id": "src/invariants.js",
       "label": "src/invariants.js",
-      "lines": 939,
-      "version": "d180c8976535e18f",
+      "lines": 1063,
+      "version": "530184cdd2a3723c",
       "provenance": [
         {
           "file": "src/invariants.js",
           "line": 1,
-          "version": "d180c8976535e18f"
+          "version": "530184cdd2a3723c"
         }
       ]
     },
@@ -81884,13 +81966,13 @@
       "type": "Module",
       "id": "src/items.js",
       "label": "src/items.js",
-      "lines": 827,
-      "version": "68f351fff31645ef",
+      "lines": 831,
+      "version": "5e4afd88a498dbe1",
       "provenance": [
         {
           "file": "src/items.js",
           "line": 1,
-          "version": "68f351fff31645ef"
+          "version": "5e4afd88a498dbe1"
         }
       ]
     },
@@ -82049,13 +82131,13 @@
       "type": "Module",
       "id": "src/mysteries.js",
       "label": "src/mysteries.js",
-      "lines": 1273,
-      "version": "b34ed03a6a9466c0",
+      "lines": 1635,
+      "version": "d58a5fa05c1b0329",
       "provenance": [
         {
           "file": "src/mysteries.js",
           "line": 1,
-          "version": "b34ed03a6a9466c0"
+          "version": "d58a5fa05c1b0329"
         }
       ]
     },
@@ -82109,13 +82191,13 @@
       "type": "Module",
       "id": "src/operations.js",
       "label": "src/operations.js",
-      "lines": 1228,
-      "version": "60e7cadcb5e94000",
+      "lines": 1642,
+      "version": "abe5df8eed6aa650",
       "provenance": [
         {
           "file": "src/operations.js",
           "line": 1,
-          "version": "60e7cadcb5e94000"
+          "version": "abe5df8eed6aa650"
         }
       ]
     },
@@ -82784,13 +82866,13 @@
       "type": "Module",
       "id": "src/routes/worldgraph.js",
       "label": "src/routes/worldgraph.js",
-      "lines": 562,
-      "version": "71971dad10580f7e",
+      "lines": 610,
+      "version": "0837a191b7aa1caf",
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
           "line": 1,
-          "version": "71971dad10580f7e"
+          "version": "0837a191b7aa1caf"
         }
       ]
     },
@@ -83594,13 +83676,13 @@
       "type": "Module",
       "id": "src/worldgraph-validate.js",
       "label": "src/worldgraph-validate.js",
-      "lines": 1855,
-      "version": "e4dff859ad9d4321",
+      "lines": 1869,
+      "version": "67c9473bfa66f808",
       "provenance": [
         {
           "file": "src/worldgraph-validate.js",
           "line": 1,
-          "version": "e4dff859ad9d4321"
+          "version": "67c9473bfa66f808"
         }
       ]
     },
@@ -86774,12 +86856,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "9fde053335f2c82df107708b53d16b0c4bc5719f",
+      "revision": "0c9f7c270412ffadafe32d22f5cf070f14b48b72",
       "currentBranch": "codex/world-graph-item-phase1",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 1855,
+      "currentArtifactCount": 1856,
       "provenance": [
         {
           "file": "README.md",
@@ -93041,13 +93123,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 415
+          "line": 460
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 415
+          "line": 460
         }
       ]
     },
@@ -93065,13 +93147,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 442
+          "line": 489
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 442
+          "line": 489
         }
       ]
     },
@@ -93089,13 +93171,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 458
+          "line": 505
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 458
+          "line": 505
         }
       ]
     },
@@ -93113,13 +93195,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 505
+          "line": 553
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 505
+          "line": 553
         }
       ]
     },
@@ -93137,13 +93219,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 521
+          "line": 569
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 521
+          "line": 569
         }
       ]
     },
@@ -93161,13 +93243,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 529
+          "line": 577
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 529
+          "line": 577
         }
       ]
     },
@@ -93185,13 +93267,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 420
+          "line": 465
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 420
+          "line": 465
         }
       ]
     },
@@ -104777,13 +104859,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 407
+          "line": 452
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 407
+          "line": 452
         }
       ]
     },
@@ -104801,13 +104883,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 494
+          "line": 541
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 494
+          "line": 541
         }
       ]
     },
@@ -104825,13 +104907,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 483
+          "line": 530
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 483
+          "line": 530
         }
       ]
     },
@@ -104849,13 +104931,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 473
+          "line": 520
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 473
+          "line": 520
         }
       ]
     },
@@ -104873,13 +104955,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 463
+          "line": 510
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 463
+          "line": 510
         }
       ]
     },
@@ -104897,13 +104979,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 447
+          "line": 494
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 447
+          "line": 494
         }
       ]
     },
@@ -104921,13 +105003,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 510
+          "line": 558
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 510
+          "line": 558
         }
       ]
     },
@@ -104945,13 +105027,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 556
+          "line": 604
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 556
+          "line": 604
         }
       ]
     },
@@ -104969,13 +105051,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 550
+          "line": 598
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 550
+          "line": 598
         }
       ]
     },
@@ -104993,13 +105075,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 543
+          "line": 591
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 543
+          "line": 591
         }
       ]
     },
@@ -105017,13 +105099,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 537
+          "line": 585
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 537
+          "line": 585
         }
       ]
     },
@@ -105041,13 +105123,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 430
+          "line": 475
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 430
+          "line": 475
         }
       ]
     },
@@ -105065,13 +105147,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 436
+          "line": 482
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 436
+          "line": 482
         }
       ]
     },
@@ -106393,13 +106475,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5002
+          "line": 5028
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5002
+          "line": 5028
         }
       ]
     },
@@ -106411,13 +106493,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4975
+          "line": 5001
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4975
+          "line": 5001
         }
       ]
     },
@@ -106519,13 +106601,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4799
+          "line": 4825
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4799
+          "line": 4825
         }
       ]
     },
@@ -106537,13 +106619,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4957
+          "line": 4983
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4957
+          "line": 4983
         }
       ]
     },
@@ -106555,13 +106637,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4846
+          "line": 4872
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4846
+          "line": 4872
         }
       ]
     },
@@ -106573,13 +106655,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4832
+          "line": 4858
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4832
+          "line": 4858
         }
       ]
     },
@@ -106609,13 +106691,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4860
+          "line": 4886
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4860
+          "line": 4886
         }
       ]
     },
@@ -106627,13 +106709,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4933
+          "line": 4959
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4933
+          "line": 4959
         }
       ]
     },
@@ -106645,13 +106727,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4909
+          "line": 4935
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4909
+          "line": 4935
         }
       ]
     },
@@ -106663,13 +106745,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4880
+          "line": 4906
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4880
+          "line": 4906
         }
       ]
     },
@@ -107221,13 +107303,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5032
+          "line": 5058
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5032
+          "line": 5058
         }
       ]
     },
@@ -107239,13 +107321,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5048
+          "line": 5074
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5048
+          "line": 5074
         }
       ]
     },
@@ -107437,13 +107519,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5105
+          "line": 5131
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5105
+          "line": 5131
         }
       ]
     },
@@ -107923,13 +108005,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4540
+          "line": 4547
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4540
+          "line": 4547
         }
       ]
     },
@@ -108319,13 +108401,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4678
+          "line": 4704
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4678
+          "line": 4704
         }
       ]
     },
@@ -108337,13 +108419,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4608
+          "line": 4628
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4608
+          "line": 4628
         }
       ]
     },
@@ -108355,13 +108437,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4655
+          "line": 4681
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4655
+          "line": 4681
         }
       ]
     },
@@ -109111,13 +109193,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5449
+          "line": 5475
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5449
+          "line": 5475
         }
       ]
     },
@@ -109129,13 +109211,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5476
+          "line": 5502
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5476
+          "line": 5502
         }
       ]
     },
@@ -109147,13 +109229,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5825
+          "line": 5851
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5825
+          "line": 5851
         }
       ]
     },
@@ -109165,13 +109247,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5903
+          "line": 5929
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5903
+          "line": 5929
         }
       ]
     },
@@ -109183,13 +109265,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5917
+          "line": 5943
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5917
+          "line": 5943
         }
       ]
     },
@@ -109201,13 +109283,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6292
+          "line": 6318
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6292
+          "line": 6318
         }
       ]
     },
@@ -109219,13 +109301,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6192
+          "line": 6218
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6192
+          "line": 6218
         }
       ]
     },
@@ -109237,13 +109319,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6101
+          "line": 6127
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6101
+          "line": 6127
         }
       ]
     },
@@ -109255,13 +109337,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5558
+          "line": 5584
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5558
+          "line": 5584
         }
       ]
     },
@@ -109273,13 +109355,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6017
+          "line": 6043
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6017
+          "line": 6043
         }
       ]
     },
@@ -109291,13 +109373,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5742
+          "line": 5768
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5742
+          "line": 5768
         }
       ]
     },
@@ -109309,13 +109391,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5717
+          "line": 5743
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5717
+          "line": 5743
         }
       ]
     },
@@ -109327,13 +109409,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5621
+          "line": 5647
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5621
+          "line": 5647
         }
       ]
     },
@@ -109345,13 +109427,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5977
+          "line": 6003
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5977
+          "line": 6003
         }
       ]
     },
@@ -109363,13 +109445,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5764
+          "line": 5790
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5764
+          "line": 5790
         }
       ]
     },
@@ -109381,13 +109463,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5997
+          "line": 6023
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5997
+          "line": 6023
         }
       ]
     },
@@ -109399,13 +109481,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5616
+          "line": 5642
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5616
+          "line": 5642
         }
       ]
     },
@@ -109417,13 +109499,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5665
+          "line": 5691
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5665
+          "line": 5691
         }
       ]
     },
@@ -109435,13 +109517,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5542
+          "line": 5568
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5542
+          "line": 5568
         }
       ]
     },
@@ -109453,13 +109535,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5527
+          "line": 5553
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5527
+          "line": 5553
         }
       ]
     },
@@ -109471,13 +109553,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 6064
+          "line": 6090
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 6064
+          "line": 6090
         }
       ]
     },
@@ -109489,13 +109571,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5454
+          "line": 5480
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5454
+          "line": 5480
         }
       ]
     },
@@ -109597,13 +109679,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5218
+          "line": 5244
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5218
+          "line": 5244
         }
       ]
     },
@@ -109615,13 +109697,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5265
+          "line": 5291
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5265
+          "line": 5291
         }
       ]
     },
@@ -109633,13 +109715,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5320
+          "line": 5346
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5320
+          "line": 5346
         }
       ]
     },
@@ -109651,13 +109733,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5425
+          "line": 5451
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5425
+          "line": 5451
         }
       ]
     },
@@ -109669,13 +109751,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5132
+          "line": 5158
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5132
+          "line": 5158
         }
       ]
     },
@@ -109687,13 +109769,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5345
+          "line": 5371
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5345
+          "line": 5371
         }
       ]
     },
@@ -109705,13 +109787,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5167
+          "line": 5193
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5167
+          "line": 5193
         }
       ]
     },
@@ -109723,13 +109805,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5127
+          "line": 5153
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5127
+          "line": 5153
         }
       ]
     },
@@ -109741,13 +109823,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5381
+          "line": 5407
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5381
+          "line": 5407
         }
       ]
     },
@@ -109759,13 +109841,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5306
+          "line": 5332
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5306
+          "line": 5332
         }
       ]
     },
@@ -109777,13 +109859,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5292
+          "line": 5318
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5292
+          "line": 5318
         }
       ]
     },
@@ -109831,13 +109913,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5116
+          "line": 5142
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5116
+          "line": 5142
         }
       ]
     },
@@ -110839,13 +110921,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 5072
+          "line": 5098
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 5072
+          "line": 5098
         }
       ]
     },
@@ -110965,13 +111047,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4775
+          "line": 4801
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4775
+          "line": 4801
         }
       ]
     },
@@ -110983,13 +111065,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4757
+          "line": 4783
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4757
+          "line": 4783
         }
       ]
     },
@@ -111001,13 +111083,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4743
+          "line": 4769
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4743
+          "line": 4769
         }
       ]
     },
@@ -111019,13 +111101,13 @@
       "definitions": [
         {
           "file": "schema.sql",
-          "line": 4695
+          "line": 4721
         }
       ],
       "provenance": [
         {
           "file": "schema.sql",
-          "line": 4695
+          "line": 4721
         }
       ]
     },
@@ -112321,13 +112403,13 @@
       "type": "TestSuite",
       "id": "test/belladonna.js",
       "label": "test/belladonna.js",
-      "lines": 915,
-      "version": "ab55cca440c80d5a",
+      "lines": 980,
+      "version": "e887a268de8a4e9d",
       "provenance": [
         {
           "file": "test/belladonna.js",
           "line": 1,
-          "version": "ab55cca440c80d5a"
+          "version": "e887a268de8a4e9d"
         }
       ]
     },
@@ -112786,13 +112868,13 @@
       "type": "TestSuite",
       "id": "test/crafting.js",
       "label": "test/crafting.js",
-      "lines": 517,
-      "version": "2b4da8ad1fb4a899",
+      "lines": 744,
+      "version": "94b30be9003e7537",
       "provenance": [
         {
           "file": "test/crafting.js",
           "line": 1,
-          "version": "2b4da8ad1fb4a899"
+          "version": "94b30be9003e7537"
         }
       ]
     },
@@ -113146,13 +113228,13 @@
       "type": "TestSuite",
       "id": "test/gates.js",
       "label": "test/gates.js",
-      "lines": 3793,
-      "version": "8a2e0676d26ba6dd",
+      "lines": 3795,
+      "version": "989c02a051cf4624",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "8a2e0676d26ba6dd"
+          "version": "989c02a051cf4624"
         }
       ]
     },
@@ -113206,13 +113288,13 @@
       "type": "TestSuite",
       "id": "test/graph.js",
       "label": "test/graph.js",
-      "lines": 201,
-      "version": "5c5a4b9bc5048a3e",
+      "lines": 203,
+      "version": "5928a5029ee4bc84",
       "provenance": [
         {
           "file": "test/graph.js",
           "line": 1,
-          "version": "5c5a4b9bc5048a3e"
+          "version": "5928a5029ee4bc84"
         }
       ]
     },
@@ -113296,13 +113378,13 @@
       "type": "TestSuite",
       "id": "test/items.js",
       "label": "test/items.js",
-      "lines": 654,
-      "version": "980d99f7025aa107",
+      "lines": 843,
+      "version": "e888921009e70ea2",
       "provenance": [
         {
           "file": "test/items.js",
           "line": 1,
-          "version": "980d99f7025aa107"
+          "version": "e888921009e70ea2"
         }
       ]
     },
@@ -113476,13 +113558,13 @@
       "type": "TestSuite",
       "id": "test/migrate.js",
       "label": "test/migrate.js",
-      "lines": 1121,
-      "version": "d4b800cf12452957",
+      "lines": 1127,
+      "version": "822d34b064359c5b",
       "provenance": [
         {
           "file": "test/migrate.js",
           "line": 1,
-          "version": "d4b800cf12452957"
+          "version": "822d34b064359c5b"
         }
       ]
     },
@@ -113491,13 +113573,13 @@
       "type": "TestSuite",
       "id": "test/mysteries.js",
       "label": "test/mysteries.js",
-      "lines": 818,
-      "version": "84d1a1a8e84edcd0",
+      "lines": 922,
+      "version": "d0bcbb5d24a5de9b",
       "provenance": [
         {
           "file": "test/mysteries.js",
           "line": 1,
-          "version": "84d1a1a8e84edcd0"
+          "version": "d0bcbb5d24a5de9b"
         }
       ]
     },
@@ -113536,13 +113618,13 @@
       "type": "TestSuite",
       "id": "test/operations.js",
       "label": "test/operations.js",
-      "lines": 929,
-      "version": "34459831945db51c",
+      "lines": 1233,
+      "version": "c7b79f051ccf9960",
       "provenance": [
         {
           "file": "test/operations.js",
           "line": 1,
-          "version": "34459831945db51c"
+          "version": "c7b79f051ccf9960"
         }
       ]
     },
@@ -114571,13 +114653,13 @@
       "type": "TestSuite",
       "id": "test/worldgraph-api.js",
       "label": "test/worldgraph-api.js",
-      "lines": 941,
-      "version": "120dfde53fd5bc11",
+      "lines": 1011,
+      "version": "40fd8a14da50baec",
       "provenance": [
         {
           "file": "test/worldgraph-api.js",
           "line": 1,
-          "version": "120dfde53fd5bc11"
+          "version": "40fd8a14da50baec"
         }
       ]
     },
@@ -114586,13 +114668,13 @@
       "type": "TestSuite",
       "id": "test/worldgraph-validation.js",
       "label": "test/worldgraph-validation.js",
-      "lines": 1204,
-      "version": "965289974d8b14c7",
+      "lines": 1889,
+      "version": "a510baa8c1479e06",
       "provenance": [
         {
           "file": "test/worldgraph-validation.js",
           "line": 1,
-          "version": "965289974d8b14c7"
+          "version": "a510baa8c1479e06"
         }
       ]
     },
@@ -122542,9 +122624,18 @@
     {
       "type": "BELONGS_TO",
       "from": "Artifact:src/content/phase1-policy.js",
-      "to": "Domain:platform-core",
+      "to": "Domain:world-graph",
       "provenance": {
         "file": "src/content/phase1-policy.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:src/content/phase1-validation.js",
+      "to": "Domain:world-graph",
+      "provenance": {
+        "file": "src/content/phase1-validation.js",
         "line": 1
       }
     },
@@ -128386,7 +128477,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 415
+        "line": 460
       }
     },
     {
@@ -128395,7 +128486,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 442
+        "line": 489
       }
     },
     {
@@ -128404,7 +128495,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 458
+        "line": 505
       }
     },
     {
@@ -128413,7 +128504,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 505
+        "line": 553
       }
     },
     {
@@ -128422,7 +128513,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 521
+        "line": 569
       }
     },
     {
@@ -128431,7 +128522,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 529
+        "line": 577
       }
     },
     {
@@ -128440,7 +128531,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 420
+        "line": 465
       }
     },
     {
@@ -132787,7 +132878,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 407
+        "line": 452
       }
     },
     {
@@ -132796,7 +132887,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 494
+        "line": 541
       }
     },
     {
@@ -132805,7 +132896,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 483
+        "line": 530
       }
     },
     {
@@ -132814,7 +132905,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 473
+        "line": 520
       }
     },
     {
@@ -132823,7 +132914,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 463
+        "line": 510
       }
     },
     {
@@ -132832,7 +132923,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 447
+        "line": 494
       }
     },
     {
@@ -132841,7 +132932,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 510
+        "line": 558
       }
     },
     {
@@ -132850,7 +132941,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 556
+        "line": 604
       }
     },
     {
@@ -132859,7 +132950,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 550
+        "line": 598
       }
     },
     {
@@ -132868,7 +132959,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 543
+        "line": 591
       }
     },
     {
@@ -132877,7 +132968,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 537
+        "line": 585
       }
     },
     {
@@ -132886,7 +132977,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 430
+        "line": 475
       }
     },
     {
@@ -132895,7 +132986,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 436
+        "line": 482
       }
     },
     {
@@ -135704,6 +135795,286 @@
       "to": "Artifact:MARKETING.md",
       "provenance": {
         "commit": "0c9cc5ffc1e7d8bb506cb02b5ccdc282ba122687"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:AGENTS.md",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:docs/WIKI.md",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:knowledge/architecture.md",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:knowledge/data-economy.md",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:MARKETING-POSTS.md",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:public/wiki.html",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:schema.sql",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:src/agentgateway.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:src/content/belladonna.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:src/content/phase1-policy.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:src/content/phase1-validation.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:src/crafting.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:src/mysteries.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:src/operations.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:src/routes/worldgraph.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:src/worldgraph-validate.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:test/belladonna.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:test/crafting.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:test/graph.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:test/items.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:test/migrate.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:test/mysteries.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:test/operations.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:test/worldgraph-api.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:test/worldgraph-validation.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:tools/backup-selftest.sh",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:tools/knowledge.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:tools/pgcheck-belladonna.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:tools/pgcheck-operations.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:tools/pgcheck.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "to": "Artifact:tools/worldgraph-content.js",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
       }
     },
     {
@@ -170136,6 +170507,38 @@
       "to": "Artifact:test/economy.js",
       "provenance": {
         "commit": "6cf41869c51219ecb958c77fa73ab7d76be68dcd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6cf9f69bbbc2a6dc754af2a4d2f76db52163ac19",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "6cf9f69bbbc2a6dc754af2a4d2f76db52163ac19"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6cf9f69bbbc2a6dc754af2a4d2f76db52163ac19",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "6cf9f69bbbc2a6dc754af2a4d2f76db52163ac19"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6cf9f69bbbc2a6dc754af2a4d2f76db52163ac19",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "6cf9f69bbbc2a6dc754af2a4d2f76db52163ac19"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6cf9f69bbbc2a6dc754af2a4d2f76db52163ac19",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "6cf9f69bbbc2a6dc754af2a4d2f76db52163ac19"
       }
     },
     {
@@ -216111,6 +216514,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:backend",
+      "to": "Artifact:src/content/phase1-validation.js",
+      "provenance": {
+        "file": "src/content/phase1-validation.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
       "to": "Artifact:src/content/phase1.js",
       "provenance": {
         "file": "src/content/phase1.js",
@@ -235776,7 +236188,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 415
+        "line": 460
       }
     },
     {
@@ -235785,7 +236197,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 442
+        "line": 489
       }
     },
     {
@@ -235794,7 +236206,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 458
+        "line": 505
       }
     },
     {
@@ -235803,7 +236215,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 505
+        "line": 553
       }
     },
     {
@@ -235812,7 +236224,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 521
+        "line": 569
       }
     },
     {
@@ -235821,7 +236233,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 529
+        "line": 577
       }
     },
     {
@@ -235830,7 +236242,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 420
+        "line": 465
       }
     },
     {
@@ -240177,7 +240589,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 407
+        "line": 452
       }
     },
     {
@@ -240186,7 +240598,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 494
+        "line": 541
       }
     },
     {
@@ -240195,7 +240607,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 483
+        "line": 530
       }
     },
     {
@@ -240204,7 +240616,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 473
+        "line": 520
       }
     },
     {
@@ -240213,7 +240625,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 463
+        "line": 510
       }
     },
     {
@@ -240222,7 +240634,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 447
+        "line": 494
       }
     },
     {
@@ -240231,7 +240643,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 510
+        "line": 558
       }
     },
     {
@@ -240240,7 +240652,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 556
+        "line": 604
       }
     },
     {
@@ -240249,7 +240661,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 550
+        "line": 598
       }
     },
     {
@@ -240258,7 +240670,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 543
+        "line": 591
       }
     },
     {
@@ -240267,7 +240679,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 537
+        "line": 585
       }
     },
     {
@@ -240276,7 +240688,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 430
+        "line": 475
       }
     },
     {
@@ -240285,7 +240697,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 436
+        "line": 482
       }
     },
     {
@@ -240897,7 +241309,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5002
+        "line": 5028
       }
     },
     {
@@ -240906,7 +241318,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4975
+        "line": 5001
       }
     },
     {
@@ -240960,7 +241372,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4799
+        "line": 4825
       }
     },
     {
@@ -240969,7 +241381,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4957
+        "line": 4983
       }
     },
     {
@@ -240978,7 +241390,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4846
+        "line": 4872
       }
     },
     {
@@ -240987,7 +241399,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4832
+        "line": 4858
       }
     },
     {
@@ -241005,7 +241417,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4860
+        "line": 4886
       }
     },
     {
@@ -241014,7 +241426,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4933
+        "line": 4959
       }
     },
     {
@@ -241023,7 +241435,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4909
+        "line": 4935
       }
     },
     {
@@ -241032,7 +241444,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4880
+        "line": 4906
       }
     },
     {
@@ -241311,7 +241723,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5032
+        "line": 5058
       }
     },
     {
@@ -241320,7 +241732,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5048
+        "line": 5074
       }
     },
     {
@@ -241419,7 +241831,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5105
+        "line": 5131
       }
     },
     {
@@ -241662,7 +242074,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4540
+        "line": 4547
       }
     },
     {
@@ -241860,7 +242272,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4678
+        "line": 4704
       }
     },
     {
@@ -241869,7 +242281,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4608
+        "line": 4628
       }
     },
     {
@@ -241878,7 +242290,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4655
+        "line": 4681
       }
     },
     {
@@ -242256,7 +242668,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5449
+        "line": 5475
       }
     },
     {
@@ -242265,7 +242677,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5476
+        "line": 5502
       }
     },
     {
@@ -242274,7 +242686,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5825
+        "line": 5851
       }
     },
     {
@@ -242283,7 +242695,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5903
+        "line": 5929
       }
     },
     {
@@ -242292,7 +242704,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5917
+        "line": 5943
       }
     },
     {
@@ -242301,7 +242713,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6292
+        "line": 6318
       }
     },
     {
@@ -242310,7 +242722,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6192
+        "line": 6218
       }
     },
     {
@@ -242319,7 +242731,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6101
+        "line": 6127
       }
     },
     {
@@ -242328,7 +242740,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5558
+        "line": 5584
       }
     },
     {
@@ -242337,7 +242749,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6017
+        "line": 6043
       }
     },
     {
@@ -242346,7 +242758,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5742
+        "line": 5768
       }
     },
     {
@@ -242355,7 +242767,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5717
+        "line": 5743
       }
     },
     {
@@ -242364,7 +242776,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5621
+        "line": 5647
       }
     },
     {
@@ -242373,7 +242785,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5977
+        "line": 6003
       }
     },
     {
@@ -242382,7 +242794,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5764
+        "line": 5790
       }
     },
     {
@@ -242391,7 +242803,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5997
+        "line": 6023
       }
     },
     {
@@ -242400,7 +242812,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5616
+        "line": 5642
       }
     },
     {
@@ -242409,7 +242821,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5665
+        "line": 5691
       }
     },
     {
@@ -242418,7 +242830,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5542
+        "line": 5568
       }
     },
     {
@@ -242427,7 +242839,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5527
+        "line": 5553
       }
     },
     {
@@ -242436,7 +242848,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 6064
+        "line": 6090
       }
     },
     {
@@ -242445,7 +242857,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5454
+        "line": 5480
       }
     },
     {
@@ -242499,7 +242911,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5218
+        "line": 5244
       }
     },
     {
@@ -242508,7 +242920,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5265
+        "line": 5291
       }
     },
     {
@@ -242517,7 +242929,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5320
+        "line": 5346
       }
     },
     {
@@ -242526,7 +242938,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5425
+        "line": 5451
       }
     },
     {
@@ -242535,7 +242947,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5132
+        "line": 5158
       }
     },
     {
@@ -242544,7 +242956,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5345
+        "line": 5371
       }
     },
     {
@@ -242553,7 +242965,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5167
+        "line": 5193
       }
     },
     {
@@ -242562,7 +242974,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5127
+        "line": 5153
       }
     },
     {
@@ -242571,7 +242983,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5381
+        "line": 5407
       }
     },
     {
@@ -242580,7 +242992,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5306
+        "line": 5332
       }
     },
     {
@@ -242589,7 +243001,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5292
+        "line": 5318
       }
     },
     {
@@ -242616,7 +243028,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5116
+        "line": 5142
       }
     },
     {
@@ -243120,7 +243532,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 5072
+        "line": 5098
       }
     },
     {
@@ -243183,7 +243595,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4775
+        "line": 4801
       }
     },
     {
@@ -243192,7 +243604,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4757
+        "line": 4783
       }
     },
     {
@@ -243201,7 +243613,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4743
+        "line": 4769
       }
     },
     {
@@ -243210,7 +243622,7 @@
       "to": "Artifact:schema.sql",
       "provenance": {
         "file": "schema.sql",
-        "line": 4695
+        "line": 4721
       }
     },
     {
@@ -243289,7 +243701,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:economy-ledger",
-      "weight": 146
+      "weight": 149
     },
     {
       "type": "DEPENDS_ON",
@@ -243313,7 +243725,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 426
+      "weight": 425
     },
     {
       "type": "DEPENDS_ON",
@@ -243331,7 +243743,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:world-graph",
-      "weight": 29
+      "weight": 32
     },
     {
       "type": "DEPENDS_ON",
@@ -243589,7 +244001,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:world-graph",
       "to": "Domain:platform-core",
-      "weight": 15
+      "weight": 14
     },
     {
       "type": "DEPENDS_ON",
@@ -253024,6 +253436,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:0c9f7c270412ffadafe32d22f5cf070f14b48b72",
+      "provenance": {
+        "commit": "0c9f7c270412ffadafe32d22f5cf070f14b48b72"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0d0a38fc4d42f2f982dc80e596cf7eb30f3e1ade",
       "provenance": {
         "commit": "0d0a38fc4d42f2f982dc80e596cf7eb30f3e1ade"
@@ -257235,6 +257655,14 @@
       "to": "Commit:6cf41869c51219ecb958c77fa73ab7d76be68dcd",
       "provenance": {
         "commit": "6cf41869c51219ecb958c77fa73ab7d76be68dcd"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:6cf9f69bbbc2a6dc754af2a4d2f76db52163ac19",
+      "provenance": {
+        "commit": "6cf9f69bbbc2a6dc754af2a4d2f76db52163ac19"
       }
     },
     {
@@ -265707,6 +266135,51 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:src/content/phase1-validation.js",
+      "to": "Artifact:src/content/phase1-policy.js",
+      "provenance": {
+        "file": "src/content/phase1-validation.js",
+        "line": 15
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/phase1-validation.js",
+      "to": "Artifact:src/content/phase1.js",
+      "provenance": {
+        "file": "src/content/phase1-validation.js",
+        "line": 14
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/phase1-validation.js",
+      "to": "Artifact:src/crafting.js",
+      "provenance": {
+        "file": "src/content/phase1-validation.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/phase1-validation.js",
+      "to": "Artifact:src/mysteries.js",
+      "provenance": {
+        "file": "src/content/phase1-validation.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/phase1-validation.js",
+      "to": "Artifact:src/operations.js",
+      "provenance": {
+        "file": "src/content/phase1-validation.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:src/content/phase1.js",
       "to": "Artifact:src/content/automotive-salvage.js",
       "provenance": {
@@ -265807,28 +266280,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/crafting.js",
-      "to": "Artifact:src/content/automotive-salvage.js",
-      "provenance": {
-        "file": "src/crafting.js",
-        "line": 28
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:src/crafting.js",
-      "to": "Artifact:src/content/core-materials.js",
-      "provenance": {
-        "file": "src/crafting.js",
-        "line": 27
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:src/crafting.js",
       "to": "Artifact:src/content/phase1-policy.js",
       "provenance": {
         "file": "src/crafting.js",
         "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/crafting.js",
+      "to": "Artifact:src/content/phase1.js",
+      "provenance": {
+        "file": "src/crafting.js",
+        "line": 27
       }
     },
     {
@@ -268975,19 +269439,10 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/routes/worldgraph.js",
-      "to": "Artifact:src/content/phase1.js",
+      "to": "Artifact:src/content/phase1-validation.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 35
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:src/routes/worldgraph.js",
-      "to": "Artifact:src/crafting.js",
-      "provenance": {
-        "file": "src/routes/worldgraph.js",
-        "line": 10
+        "line": 42
       }
     },
     {
@@ -268997,15 +269452,6 @@
       "provenance": {
         "file": "src/routes/worldgraph.js",
         "line": 9
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:src/routes/worldgraph.js",
-      "to": "Artifact:src/worldgraph-validate.js",
-      "provenance": {
-        "file": "src/routes/worldgraph.js",
-        "line": 36
       }
     },
     {
@@ -272728,10 +273174,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/belladonna.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/belladonna.js",
+        "line": 15
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/belladonna.js",
       "to": "Artifact:src/worldgraph-validate.js",
       "provenance": {
         "file": "test/belladonna.js",
-        "line": 33
+        "line": 34
       }
     },
     {
@@ -272740,7 +273195,7 @@
       "to": "Artifact:src/worldgraph.js",
       "provenance": {
         "file": "test/belladonna.js",
-        "line": 32
+        "line": 33
       }
     },
     {
@@ -273856,7 +274311,16 @@
       "to": "Artifact:src/content/automotive-salvage.js",
       "provenance": {
         "file": "test/crafting.js",
-        "line": 17
+        "line": 19
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/crafting.js",
+      "to": "Artifact:src/content/phase1.js",
+      "provenance": {
+        "file": "test/crafting.js",
+        "line": 20
       }
     },
     {
@@ -273874,7 +274338,16 @@
       "to": "Artifact:src/economy.js",
       "provenance": {
         "file": "test/crafting.js",
-        "line": 16
+        "line": 18
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/crafting.js",
+      "to": "Artifact:src/worldgraph-validate.js",
+      "provenance": {
+        "file": "test/crafting.js",
+        "line": 21
       }
     },
     {
@@ -275824,19 +276297,10 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/operations.js",
-      "to": "Artifact:src/items.js",
-      "provenance": {
-        "file": "test/operations.js",
-        "line": 6
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:test/operations.js",
       "to": "Artifact:src/worldgraph-validate.js",
       "provenance": {
         "file": "test/operations.js",
-        "line": 17
+        "line": 23
       }
     },
     {
@@ -275845,7 +276309,7 @@
       "to": "Artifact:src/worldgraph.js",
       "provenance": {
         "file": "test/operations.js",
-        "line": 18
+        "line": 24
       }
     },
     {
@@ -278398,6 +278862,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/worldgraph-validation.js",
+      "to": "Artifact:src/content/phase1-policy.js",
+      "provenance": {
+        "file": "test/worldgraph-validation.js",
+        "line": 17
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/worldgraph-validation.js",
       "to": "Artifact:src/worldgraph.js",
       "provenance": {
         "file": "test/worldgraph-validation.js",
@@ -278968,7 +279441,16 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "tools/pgcheck-belladonna.js",
-        "line": 560
+        "line": 582
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/pgcheck-belladonna.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "tools/pgcheck-belladonna.js",
+        "line": 18
       }
     },
     {
@@ -278977,7 +279459,7 @@
       "to": "Artifact:src/worldgraph-validate.js",
       "provenance": {
         "file": "tools/pgcheck-belladonna.js",
-        "line": 31
+        "line": 32
       }
     },
     {
@@ -279004,7 +279486,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "tools/pgcheck-operations.js",
-        "line": 13
+        "line": 22
       }
     },
     {
@@ -279013,7 +279495,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "tools/pgcheck-operations.js",
-        "line": 14
+        "line": 23
       }
     },
     {
@@ -279022,7 +279504,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "tools/pgcheck-operations.js",
-        "line": 21
+        "line": 30
       }
     },
     {
@@ -279031,7 +279513,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/pgcheck-operations.js",
-        "line": 23
+        "line": 36
       }
     },
     {
@@ -279040,7 +279522,7 @@
       "to": "Artifact:src/worldgraph-validate.js",
       "provenance": {
         "file": "tools/pgcheck-operations.js",
-        "line": 22
+        "line": 35
       }
     },
     {
@@ -279049,7 +279531,7 @@
       "to": "Artifact:src/crafting.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 720
+        "line": 792
       }
     },
     {
@@ -279085,7 +279567,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 1238
+        "line": 1345
       }
     },
     {
@@ -279094,7 +279576,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 1351
+        "line": 1458
       }
     },
     {
@@ -279109,10 +279591,10 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/pgcheck.js",
-      "to": "Artifact:src/items.js",
+      "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 601
+        "line": 793
       }
     },
     {
@@ -279121,7 +279603,16 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 721
+        "line": 647
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/pgcheck.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "tools/pgcheck.js",
+        "line": 794
       }
     },
     {
@@ -279130,7 +279621,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 1239
+        "line": 1346
       }
     },
     {
@@ -279139,7 +279630,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 1352
+        "line": 1459
       }
     },
     {
@@ -279166,7 +279657,7 @@
       "to": "Artifact:src/social/contracts.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 1237
+        "line": 1344
       }
     },
     {
@@ -279175,7 +279666,7 @@
       "to": "Artifact:tools/pgcheck-belladonna.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 899
+        "line": 1006
       }
     },
     {
@@ -279184,7 +279675,7 @@
       "to": "Artifact:tools/pgcheck-mysteries.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 885
+        "line": 992
       }
     },
     {
@@ -279193,7 +279684,7 @@
       "to": "Artifact:tools/pgcheck-operations.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 892
+        "line": 999
       }
     },
     {
@@ -279202,7 +279693,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 948
+        "line": 1055
       }
     },
     {
@@ -279937,28 +280428,28 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/worldgraph-content.js",
-      "to": "Artifact:src/content/phase1-policy.js",
+      "to": "Artifact:src/content/phase1-validation.js",
+      "provenance": {
+        "file": "tools/worldgraph-content.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/worldgraph-content.js",
+      "to": "Artifact:src/content/phase1-validation.js",
+      "provenance": {
+        "file": "tools/worldgraph-content.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/worldgraph-content.js",
+      "to": "Artifact:src/content/phase1.js",
       "provenance": {
         "file": "tools/worldgraph-content.js",
         "line": 11
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:tools/worldgraph-content.js",
-      "to": "Artifact:src/content/phase1.js",
-      "provenance": {
-        "file": "tools/worldgraph-content.js",
-        "line": 10
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:tools/worldgraph-content.js",
-      "to": "Artifact:src/content/phase1.js",
-      "provenance": {
-        "file": "tools/worldgraph-content.js",
-        "line": 17
       }
     },
     {
@@ -302194,6 +302685,24 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:knowledge/architecture.md",
+      "to": "Artifact:src/content/phase1-policy.js",
+      "provenance": {
+        "file": "knowledge/architecture.md",
+        "line": 28
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:knowledge/architecture.md",
+      "to": "Artifact:src/content/phase1-validation.js",
+      "provenance": {
+        "file": "knowledge/architecture.md",
+        "line": 28
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:knowledge/architecture.md",
       "to": "Artifact:src/content/phase1.js",
       "provenance": {
         "file": "knowledge/architecture.md",
@@ -302314,7 +302823,7 @@
       "to": "Artifact:knowledge/decisions-and-risks.md",
       "provenance": {
         "file": "knowledge/data-economy.md",
-        "line": 101
+        "line": 108
       }
     },
     {
@@ -302323,7 +302832,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "knowledge/data-economy.md",
-        "line": 95
+        "line": 102
       }
     },
     {
@@ -302341,7 +302850,7 @@
       "to": "Artifact:src/fees.js",
       "provenance": {
         "file": "knowledge/data-economy.md",
-        "line": 95
+        "line": 102
       }
     },
     {
@@ -302368,7 +302877,7 @@
       "to": "Artifact:src/router.js",
       "provenance": {
         "file": "knowledge/data-economy.md",
-        "line": 93
+        "line": 100
       }
     },
     {
@@ -302377,7 +302886,7 @@
       "to": "Artifact:src/treasury.js",
       "provenance": {
         "file": "knowledge/data-economy.md",
-        "line": 95
+        "line": 102
       }
     },
     {
@@ -302386,7 +302895,7 @@
       "to": "Artifact:src/vig.js",
       "provenance": {
         "file": "knowledge/data-economy.md",
-        "line": 95
+        "line": 102
       }
     },
     {
@@ -302395,7 +302904,7 @@
       "to": "Artifact:src/watcher.js",
       "provenance": {
         "file": "knowledge/data-economy.md",
-        "line": 95
+        "line": 102
       }
     },
     {
@@ -305833,7 +306342,7 @@
       "to": "Artifact:.github/workflows/ci.yml",
       "provenance": {
         "file": "SPEC.md",
-        "line": 363
+        "line": 370
       }
     },
     {
@@ -305842,7 +306351,7 @@
       "to": "Artifact:.github/workflows/ci.yml",
       "provenance": {
         "file": "SPEC.md",
-        "line": 691
+        "line": 698
       }
     },
     {
@@ -305860,7 +306369,7 @@
       "to": "Artifact:docs/AUDITS.md",
       "provenance": {
         "file": "SPEC.md",
-        "line": 507
+        "line": 514
       }
     },
     {
@@ -305869,7 +306378,7 @@
       "to": "Artifact:docs/AUDITS.md",
       "provenance": {
         "file": "SPEC.md",
-        "line": 512
+        "line": 519
       }
     },
     {
@@ -305878,7 +306387,7 @@
       "to": "Artifact:docs/AUDITS.md",
       "provenance": {
         "file": "SPEC.md",
-        "line": 706
+        "line": 713
       }
     },
     {
@@ -305914,7 +306423,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 557
+        "line": 564
       }
     },
     {
@@ -305923,7 +306432,7 @@
       "to": "Artifact:src/rules.generated.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 450
+        "line": 457
       }
     },
     {
@@ -305932,7 +306441,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 451
+        "line": 458
       }
     },
     {
@@ -305941,7 +306450,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 451
+        "line": 458
       }
     },
     {
@@ -305950,7 +306459,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 505
+        "line": 512
       }
     },
     {
@@ -305959,7 +306468,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 569
+        "line": 576
       }
     },
     {
@@ -305968,7 +306477,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 695
+        "line": 702
       }
     },
     {
@@ -305977,7 +306486,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 707
+        "line": 714
       }
     },
     {
@@ -305986,7 +306495,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 335
+        "line": 342
       }
     },
     {
@@ -305995,7 +306504,7 @@
       "to": "Artifact:test/intrigue.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 348
+        "line": 355
       }
     },
     {
@@ -306004,7 +306513,7 @@
       "to": "Artifact:test/lib/srcfiles.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 446
+        "line": 453
       }
     },
     {
@@ -306013,7 +306522,7 @@
       "to": "Artifact:test/migrate.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 442
+        "line": 449
       }
     },
     {
@@ -306022,7 +306531,7 @@
       "to": "Artifact:test/migrate.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 527
+        "line": 534
       }
     },
     {
@@ -306031,7 +306540,7 @@
       "to": "Artifact:test/port.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 349
+        "line": 356
       }
     },
     {
@@ -306040,7 +306549,7 @@
       "to": "Artifact:test/preflight.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 412
+        "line": 419
       }
     },
     {
@@ -306049,7 +306558,7 @@
       "to": "Artifact:test/preflight.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 445
+        "line": 452
       }
     },
     {
@@ -306058,7 +306567,7 @@
       "to": "Artifact:test/routes.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 409
+        "line": 416
       }
     },
     {
@@ -306067,13 +306576,40 @@
       "to": "Artifact:test/routes.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 508
+        "line": 515
       }
     },
     {
       "type": "REFERENCES",
       "from": "Artifact:SPEC.md",
       "to": "Artifact:test/routes.js",
+      "provenance": {
+        "file": "SPEC.md",
+        "line": 714
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:SPEC.md",
+      "to": "Artifact:test/rules.js",
+      "provenance": {
+        "file": "SPEC.md",
+        "line": 460
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:SPEC.md",
+      "to": "Artifact:test/rules.js",
+      "provenance": {
+        "file": "SPEC.md",
+        "line": 484
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:SPEC.md",
+      "to": "Artifact:test/rules.js",
       "provenance": {
         "file": "SPEC.md",
         "line": 707
@@ -306082,37 +306618,10 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:SPEC.md",
-      "to": "Artifact:test/rules.js",
-      "provenance": {
-        "file": "SPEC.md",
-        "line": 453
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:SPEC.md",
-      "to": "Artifact:test/rules.js",
-      "provenance": {
-        "file": "SPEC.md",
-        "line": 477
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:SPEC.md",
-      "to": "Artifact:test/rules.js",
-      "provenance": {
-        "file": "SPEC.md",
-        "line": 700
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:SPEC.md",
       "to": "Artifact:tools/agent-alpha.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 227
+        "line": 234
       }
     },
     {
@@ -306157,7 +306666,7 @@
       "to": "Artifact:tools/chaos.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 546
+        "line": 553
       }
     },
     {
@@ -306175,7 +306684,7 @@
       "to": "Artifact:tools/extract-rules.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 452
+        "line": 459
       }
     },
     {
@@ -306202,7 +306711,7 @@
       "to": "Artifact:tools/loadtest.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 484
+        "line": 491
       }
     },
     {
@@ -306229,7 +306738,7 @@
       "to": "Artifact:tools/pgcheck.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 363
+        "line": 370
       }
     },
     {
@@ -306265,7 +306774,7 @@
       "to": "Artifact:tools/scale.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 390
+        "line": 397
       }
     },
     {
@@ -306274,7 +306783,7 @@
       "to": "Artifact:tools/scale.js",
       "provenance": {
         "file": "SPEC.md",
-        "line": 598
+        "line": 605
       }
     },
     {
@@ -310950,6 +311459,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Module:src/content/phase1-validation.js",
+      "to": "Artifact:src/content/phase1-validation.js",
+      "provenance": {
+        "file": "src/content/phase1-validation.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Module:src/content/phase1.js",
       "to": "Artifact:src/content/phase1.js",
       "provenance": {
@@ -314794,10 +315312,19 @@
     {
       "type": "TESTS",
       "from": "Artifact:test/belladonna.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/belladonna.js",
+        "line": 15
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/belladonna.js",
       "to": "Artifact:src/worldgraph-validate.js",
       "provenance": {
         "file": "test/belladonna.js",
-        "line": 33
+        "line": 34
       }
     },
     {
@@ -314806,7 +315333,7 @@
       "to": "Artifact:src/worldgraph.js",
       "provenance": {
         "file": "test/belladonna.js",
-        "line": 32
+        "line": 33
       }
     },
     {
@@ -315850,7 +316377,16 @@
       "to": "Artifact:src/content/automotive-salvage.js",
       "provenance": {
         "file": "test/crafting.js",
-        "line": 17
+        "line": 19
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/crafting.js",
+      "to": "Artifact:src/content/phase1.js",
+      "provenance": {
+        "file": "test/crafting.js",
+        "line": 20
       }
     },
     {
@@ -315868,7 +316404,16 @@
       "to": "Artifact:src/economy.js",
       "provenance": {
         "file": "test/crafting.js",
-        "line": 16
+        "line": 18
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/crafting.js",
+      "to": "Artifact:src/worldgraph-validate.js",
+      "provenance": {
+        "file": "test/crafting.js",
+        "line": 21
       }
     },
     {
@@ -317665,19 +318210,10 @@
     {
       "type": "TESTS",
       "from": "Artifact:test/operations.js",
-      "to": "Artifact:src/items.js",
-      "provenance": {
-        "file": "test/operations.js",
-        "line": 6
-      }
-    },
-    {
-      "type": "TESTS",
-      "from": "Artifact:test/operations.js",
       "to": "Artifact:src/worldgraph-validate.js",
       "provenance": {
         "file": "test/operations.js",
-        "line": 17
+        "line": 23
       }
     },
     {
@@ -317686,7 +318222,7 @@
       "to": "Artifact:src/worldgraph.js",
       "provenance": {
         "file": "test/operations.js",
-        "line": 18
+        "line": 24
       }
     },
     {
@@ -319982,6 +320518,15 @@
       "provenance": {
         "file": "test/worldgraph-api.js",
         "line": 6
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/worldgraph-validation.js",
+      "to": "Artifact:src/content/phase1-policy.js",
+      "provenance": {
+        "file": "test/worldgraph-validation.js",
+        "line": 17
       }
     },
     {
@@ -323635,7 +324180,7 @@
       "to": "Table:cars",
       "provenance": {
         "file": "src/crafting.js",
-        "line": 170
+        "line": 419
       }
     },
     {
@@ -323644,7 +324189,7 @@
       "to": "Table:character_skills",
       "provenance": {
         "file": "src/crafting.js",
-        "line": 339
+        "line": 603
       }
     },
     {
@@ -323653,7 +324198,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/crafting.js",
-        "line": 332
+        "line": 596
       }
     },
     {
@@ -323662,7 +324207,7 @@
       "to": "Table:item_instances",
       "provenance": {
         "file": "src/crafting.js",
-        "line": 421
+        "line": 685
       }
     },
     {
@@ -323671,7 +324216,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/crafting.js",
-        "line": 406
+        "line": 670
       }
     },
     {
@@ -326578,7 +327123,7 @@
       "to": "Table:agent_acquisition_budgets",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 663
+        "line": 710
       }
     },
     {
@@ -326587,7 +327132,7 @@
       "to": "Table:agent_referral_claims",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 666
+        "line": 713
       }
     },
     {
@@ -326632,7 +327177,7 @@
       "to": "Table:boxing_bets",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 571
+        "line": 618
       }
     },
     {
@@ -326641,7 +327186,7 @@
       "to": "Table:boxing_bouts",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 571
+        "line": 618
       }
     },
     {
@@ -326659,7 +327204,7 @@
       "to": "Table:cars",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 435
+        "line": 480
       }
     },
     {
@@ -326686,7 +327231,7 @@
       "to": "Table:convoy_insurance",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 463
+        "line": 510
       }
     },
     {
@@ -326695,7 +327240,7 @@
       "to": "Table:den_volume",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 586
+        "line": 633
       }
     },
     {
@@ -326722,7 +327267,7 @@
       "to": "Table:district_bids",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 540
+        "line": 587
       }
     },
     {
@@ -326731,7 +327276,7 @@
       "to": "Table:drop_allocations",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 521
+        "line": 568
       }
     },
     {
@@ -326749,7 +327294,7 @@
       "to": "Table:favors",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 530
+        "line": 577
       }
     },
     {
@@ -326758,7 +327303,7 @@
       "to": "Table:futurities",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 644
+        "line": 691
       }
     },
     {
@@ -326776,7 +327321,7 @@
       "to": "Table:grand_prix",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 624
+        "line": 671
       }
     },
     {
@@ -326785,7 +327330,7 @@
       "to": "Table:item_events",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 722
+        "line": 769
       }
     },
     {
@@ -326794,7 +327339,7 @@
       "to": "Table:item_instances",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 745
+        "line": 797
       }
     },
     {
@@ -326803,7 +327348,7 @@
       "to": "Table:item_mutation_guards",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 817
+        "line": 439
       }
     },
     {
@@ -326812,7 +327357,7 @@
       "to": "Table:item_stacks",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 717
+        "line": 764
       }
     },
     {
@@ -326821,7 +327366,7 @@
       "to": "Table:listings",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 454
+        "line": 501
       }
     },
     {
@@ -326830,7 +327375,7 @@
       "to": "Table:loan_house",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 555
+        "line": 602
       }
     },
     {
@@ -326857,7 +327402,7 @@
       "to": "Table:market_listings",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 474
+        "line": 521
       }
     },
     {
@@ -326875,7 +327420,7 @@
       "to": "Table:operation_escrow",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 754
+        "line": 806
       }
     },
     {
@@ -326884,7 +327429,7 @@
       "to": "Table:poker_ring_seats",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 612
+        "line": 659
       }
     },
     {
@@ -326893,7 +327438,7 @@
       "to": "Table:poker_tables",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 613
+        "line": 660
       }
     },
     {
@@ -326902,7 +327447,7 @@
       "to": "Table:poker_tournaments",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 601
+        "line": 648
       }
     },
     {
@@ -326911,7 +327456,7 @@
       "to": "Table:rng_audit",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 436
+        "line": 481
       }
     },
     {
@@ -326965,7 +327510,7 @@
       "to": "Table:stakes_races",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 635
+        "line": 682
       }
     },
     {
@@ -326983,7 +327528,7 @@
       "to": "Table:telemetry",
       "provenance": {
         "file": "src/invariants.js",
-        "line": 434
+        "line": 484
       }
     },
     {
@@ -327001,7 +327546,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/items.js",
-        "line": 29
+        "line": 30
       }
     },
     {
@@ -327010,7 +327555,7 @@
       "to": "Table:idempotency",
       "provenance": {
         "file": "src/items.js",
-        "line": 55
+        "line": 56
       }
     },
     {
@@ -327019,7 +327564,7 @@
       "to": "Table:item_events",
       "provenance": {
         "file": "src/items.js",
-        "line": 92
+        "line": 93
       }
     },
     {
@@ -327028,7 +327573,7 @@
       "to": "Table:item_instances",
       "provenance": {
         "file": "src/items.js",
-        "line": 435
+        "line": 436
       }
     },
     {
@@ -327037,7 +327582,7 @@
       "to": "Table:item_mutation_guards",
       "provenance": {
         "file": "src/items.js",
-        "line": 96
+        "line": 97
       }
     },
     {
@@ -327046,7 +327591,7 @@
       "to": "Table:item_stacks",
       "provenance": {
         "file": "src/items.js",
-        "line": 487
+        "line": 488
       }
     },
     {
@@ -327055,7 +327600,7 @@
       "to": "Table:operation_escrow",
       "provenance": {
         "file": "src/items.js",
-        "line": 442
+        "line": 443
       }
     },
     {
@@ -327064,7 +327609,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/items.js",
-        "line": 148
+        "line": 149
       }
     },
     {
@@ -327604,7 +328149,7 @@
       "to": "Table:character_skills",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 344
+        "line": 689
       }
     },
     {
@@ -327613,7 +328158,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 61
+        "line": 108
       }
     },
     {
@@ -327622,7 +328167,7 @@
       "to": "Table:idempotency",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 436
+        "line": 799
       }
     },
     {
@@ -327631,7 +328176,7 @@
       "to": "Table:item_instances",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 572
+        "line": 930
       }
     },
     {
@@ -327640,7 +328185,7 @@
       "to": "Table:item_stacks",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 587
+        "line": 945
       }
     },
     {
@@ -327649,7 +328194,7 @@
       "to": "Table:mystery_choices",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 451
+        "line": 814
       }
     },
     {
@@ -327658,7 +328203,7 @@
       "to": "Table:mystery_instances",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 384
+        "line": 729
       }
     },
     {
@@ -327667,7 +328212,7 @@
       "to": "Table:mystery_node_state",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 452
+        "line": 815
       }
     },
     {
@@ -327676,7 +328221,7 @@
       "to": "Table:operation_escrow",
       "provenance": {
         "file": "src/mysteries.js",
-        "line": 806
+        "line": 1158
       }
     },
     {
@@ -327793,7 +328338,7 @@
       "to": "Table:character_skills",
       "provenance": {
         "file": "src/operations.js",
-        "line": 367
+        "line": 736
       }
     },
     {
@@ -327802,7 +328347,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/operations.js",
-        "line": 39
+        "line": 67
       }
     },
     {
@@ -327811,7 +328356,7 @@
       "to": "Table:crew_members",
       "provenance": {
         "file": "src/operations.js",
-        "line": 383
+        "line": 752
       }
     },
     {
@@ -327820,7 +328365,7 @@
       "to": "Table:crews",
       "provenance": {
         "file": "src/operations.js",
-        "line": 387
+        "line": 756
       }
     },
     {
@@ -327829,7 +328374,7 @@
       "to": "Table:idempotency",
       "provenance": {
         "file": "src/operations.js",
-        "line": 359
+        "line": 728
       }
     },
     {
@@ -327838,7 +328383,7 @@
       "to": "Table:item_instances",
       "provenance": {
         "file": "src/operations.js",
-        "line": 716
+        "line": 1138
       }
     },
     {
@@ -327847,7 +328392,7 @@
       "to": "Table:item_stacks",
       "provenance": {
         "file": "src/operations.js",
-        "line": 726
+        "line": 1146
       }
     },
     {
@@ -327856,7 +328401,7 @@
       "to": "Table:mystery_instances",
       "provenance": {
         "file": "src/operations.js",
-        "line": 428
+        "line": 797
       }
     },
     {
@@ -327865,7 +328410,7 @@
       "to": "Table:mystery_node_state",
       "provenance": {
         "file": "src/operations.js",
-        "line": 442
+        "line": 812
       }
     },
     {
@@ -327874,7 +328419,7 @@
       "to": "Table:operation_escrow",
       "provenance": {
         "file": "src/operations.js",
-        "line": 584
+        "line": 1012
       }
     },
     {
@@ -327883,7 +328428,7 @@
       "to": "Table:world_operation_contributions",
       "provenance": {
         "file": "src/operations.js",
-        "line": 974
+        "line": 1396
       }
     },
     {
@@ -327892,7 +328437,7 @@
       "to": "Table:world_operation_node_state",
       "provenance": {
         "file": "src/operations.js",
-        "line": 524
+        "line": 952
       }
     },
     {
@@ -327901,7 +328446,7 @@
       "to": "Table:world_operation_roles",
       "provenance": {
         "file": "src/operations.js",
-        "line": 489
+        "line": 859
       }
     },
     {
@@ -327910,7 +328455,7 @@
       "to": "Table:world_operations",
       "provenance": {
         "file": "src/operations.js",
-        "line": 464
+        "line": 834
       }
     },
     {
@@ -329962,7 +330507,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 130
+        "line": 140
       }
     },
     {
@@ -329971,7 +330516,7 @@
       "to": "Table:crew_members",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 279
+        "line": 296
       }
     },
     {
@@ -329980,7 +330525,7 @@
       "to": "Table:idempotency",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 130
+        "line": 140
       }
     },
     {
@@ -329989,7 +330534,7 @@
       "to": "Table:item_instances",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 326
+        "line": 358
       }
     },
     {
@@ -329998,7 +330543,7 @@
       "to": "Table:mystery_instances",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 234
+        "line": 247
       }
     },
     {
@@ -330007,7 +330552,7 @@
       "to": "Table:mystery_node_state",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 266
+        "line": 282
       }
     },
     {
@@ -330016,7 +330561,7 @@
       "to": "Table:world_operations",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 288
+        "line": 304
       }
     },
     {
@@ -334912,7 +335457,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/worldgraph-validate.js",
-        "line": 1698
+        "line": 1712
       }
     }
   ]

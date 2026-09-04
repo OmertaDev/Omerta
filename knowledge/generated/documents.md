@@ -213,7 +213,7 @@
 | [.agents/skills/viem-integration/references/wagmi-react.md](../../.agents/skills/viem-integration/references/wagmi-react.md) | documentation | 624 | 2026-08-27 |
 | [.agents/skills/viem-integration/references/writing-transactions.md](../../.agents/skills/viem-integration/references/writing-transactions.md) | documentation | 467 | 2026-08-27 |
 | [.agents/skills/viem-integration/SKILL.md](../../.agents/skills/viem-integration/SKILL.md) | documentation | 271 | 2026-08-27 |
-| [AGENTS.md](../../AGENTS.md) | documentation | 625 | 2026-09-04 |
+| [AGENTS.md](../../AGENTS.md) | documentation | 639 | 2026-09-04 |
 | [AUDIT-bank-city-leg.md](../../AUDIT-bank-city-leg.md) | audit | 119 | 2026-08-12 |
 | [AUDIT-blood-war.md](../../AUDIT-blood-war.md) | audit | 95 | 2026-08-05 |
 | [AUDIT-blue-team.md](../../AUDIT-blue-team.md) | audit | 178 | 2026-08-13 |
@@ -356,12 +356,12 @@
 | [docs/superpowers/specs/2026-08-26-grill-completion.md](../../docs/superpowers/specs/2026-08-26-grill-completion.md) | documentation | 861 | 2026-08-28 |
 | [docs/superpowers/specs/2026-08-27-authored-content-runtime-design.md](../../docs/superpowers/specs/2026-08-27-authored-content-runtime-design.md) | design | 281 | 2026-08-27 |
 | [docs/superpowers/specs/2026-09-03-world-graph-item-economy-design.md](../../docs/superpowers/specs/2026-09-03-world-graph-item-economy-design.md) | design | 551 | 2026-09-03 |
-| [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2751 | 2026-09-04 |
+| [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2759 | 2026-09-04 |
 | [GRAPH.md](../../GRAPH.md) | documentation | 295 | 2026-08-29 |
 | [GTM.md](../../GTM.md) | documentation | 295 | 2026-08-13 |
 | [HYPE.md](../../HYPE.md) | documentation | 151 | 2026-08-29 |
 | [knowledge/architecture.md](../../knowledge/architecture.md) | knowledge-base | 108 | 2026-09-04 |
-| [knowledge/data-economy.md](../../knowledge/data-economy.md) | knowledge-base | 114 | 2026-09-04 |
+| [knowledge/data-economy.md](../../knowledge/data-economy.md) | knowledge-base | 121 | 2026-09-04 |
 | [knowledge/decisions-and-risks.md](../../knowledge/decisions-and-risks.md) | knowledge-base | 66 | 2026-08-27 |
 | [knowledge/domains.md](../../knowledge/domains.md) | knowledge-base | 53 | 2026-09-04 |
 | [knowledge/github.md](../../knowledge/github.md) | knowledge-base | 57 | 2026-08-24 |
@@ -462,5 +462,5 @@
 | [PRODUCT.md](../../PRODUCT.md) | documentation | 50 | 2026-08-24 |
 | [README.md](../../README.md) | documentation | 166 | 2026-09-04 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 882 | 2026-08-29 |
-| [SPEC.md](../../SPEC.md) | documentation | 728 | 2026-09-04 |
+| [SPEC.md](../../SPEC.md) | documentation | 735 | 2026-09-04 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |
