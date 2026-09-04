@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 import { DataType, newDb } from 'pg-mem';
 import { columnMigrations, migrateColumns, registerPgMemCompatibility } from '../src/db.js';
 import * as dbModule from '../src/db.js';
-import { srcText } from './lib/srcfiles.js';
+import { srcText, walkSrc } from './lib/srcfiles.js';
 
 const SCHEMA = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'schema.sql'), 'utf8');
 
@@ -761,59 +761,141 @@ const PHASE1_OWNER_TUPLE_DISPOSITION = {
   // future exception must name its exact handler, verb, and table here, so adding a generic-owner
   // table to runEstate (directly or through a named death helper) cannot silently become inheritance.
   const PHASE1_DEATH_MUTATION_APPROVALS = new Set([]);
-  const estateSource = fs.readFileSync(path.join(srcDir, 'social', 'estate.js'), 'utf8');
-  const functionBody = (source, functionName) => {
-    const head = new RegExp(`(?:export\\s+)?(?:async\\s+)?function\\s+${functionName}\\s*\\(`).exec(source);
-    assert(head, `death helper ${functionName} must remain statically inspectable`);
-    const open = source.indexOf('{', head.index + head[0].length);
-    assert(open >= 0, `death helper ${functionName} must have a block body`);
-    let depth = 1;
+  const lexicalMask = (source, { keepStrings = false } = {}) => {
+    const out = [...source];
+    const blank = (index) => { if (!/\r|\n/.test(out[index])) out[index] = ' '; };
+    let state = 'code';
     let quote = null;
-    let lineComment = false;
-    let blockComment = false;
-    for (let i = open + 1; i < source.length; i++) {
+    let regexClass = false;
+    for (let i = 0; i < source.length; i++) {
       const ch = source[i];
       const next = source[i + 1];
-      if (lineComment) { if (ch === '\n') lineComment = false; continue; }
-      if (blockComment) { if (ch === '*' && next === '/') { blockComment = false; i++; } continue; }
-      if (quote) {
-        if (ch === '\\') { i++; continue; }
-        if (ch === quote) quote = null;
+      if (state === 'line-comment') {
+        if (ch === '\n') state = 'code'; else blank(i);
         continue;
       }
-      if (ch === '/' && next === '/') { lineComment = true; i++; continue; }
-      if (ch === '/' && next === '*') { blockComment = true; i++; continue; }
-      if (ch === "'" || ch === '"' || ch === '`') { quote = ch; continue; }
-      if (ch === '{') depth++;
-      if (ch === '}' && --depth === 0) return source.slice(open + 1, i);
+      if (state === 'block-comment') {
+        blank(i);
+        if (ch === '*' && next === '/') { blank(++i); state = 'code'; }
+        continue;
+      }
+      if (state === 'string') {
+        if (!keepStrings) blank(i);
+        if (ch === '\\') { if (!keepStrings && i + 1 < source.length) blank(i + 1); i++; continue; }
+        if (ch === quote) state = 'code';
+        continue;
+      }
+      if (state === 'regex') {
+        blank(i);
+        if (ch === '\\') { if (i + 1 < source.length) blank(++i); continue; }
+        if (ch === '[') regexClass = true;
+        else if (ch === ']') regexClass = false;
+        else if (ch === '/' && !regexClass) {
+          state = 'code';
+          while (/[a-z]/i.test(source[i + 1] || '')) blank(++i);
+        }
+        continue;
+      }
+      if (ch === '/' && next === '/') { blank(i); blank(++i); state = 'line-comment'; continue; }
+      if (ch === '/' && next === '*') { blank(i); blank(++i); state = 'block-comment'; continue; }
+      if (ch === "'" || ch === '"' || ch === '`') {
+        quote = ch; state = 'string'; if (!keepStrings) blank(i);
+        continue;
+      }
+      if (ch === '/') {
+        let previous = i - 1;
+        while (previous >= 0 && /\s/.test(source[previous])) previous--;
+        if (previous < 0 || /[=(:,!&|?{};\[]/.test(source[previous])) {
+          blank(i); state = 'regex'; regexClass = false;
+        }
+      }
     }
-    assert.fail(`death helper ${functionName} has an unterminated block body`);
+    return out.join('');
   };
-  const runEstateSource = functionBody(estateSource, 'runEstate');
-  const deathHelperNames = new Set(['runEstate', 'clearInboundPointers']);
-  for (const match of runEstateSource.matchAll(/\b([A-Za-z][A-Za-z0-9]*(?:AtDeath))\s*\(/g)) {
-    deathHelperNames.add(match[1]);
-  }
-  const deathSources = [...deathHelperNames].map((name) => ({
-    name,
-    body: functionBody(allSrc, name),
-  }));
-  const mutations = [];
-  for (const { name, body } of deathSources) {
-    for (const match of body.matchAll(/\b(DELETE\s+FROM|UPDATE)\s+([a-z_][a-z0-9_]*)\b/gi)) {
-      mutations.push({ handler: name, verb: match[1].toUpperCase().replace(/\s+/g, '_'), table: match[2] });
+  const functionBlock = (source, open, label) => {
+    const code = lexicalMask(source);
+    let depth = 1;
+    for (let i = open + 1; i < code.length; i++) {
+      if (code[i] === '{') depth++;
+      else if (code[i] === '}' && --depth === 0) return source.slice(open + 1, i);
     }
-    // runEstate's bounded wipe lists use an interpolated table identifier. Associate every listed
-    // literal with the interpolated verb; otherwise a newly-added Phase 1 name could evade the
-    // direct-SQL matcher merely by being placed in the loop.
-    for (const match of body.matchAll(/for\s*\(\s*const\s+(\w+)\s+of\s+\[([\s\S]*?)\]\s*\)\s*await\s+client\.query\(\s*`(DELETE\s+FROM|UPDATE)\s+\$\{\1\}/gi)) {
-      for (const tableMatch of match[2].matchAll(/['"]([a-z_][a-z0-9_]*)['"]/gi)) {
-        mutations.push({ handler: name, verb: match[3].toUpperCase().replace(/\s+/g, '_'), table: tableMatch[1] });
+    assert.fail(`death helper ${label} has an unterminated block body`);
+  };
+
+  // Build a source-wide named-function index, then crawl every statically resolvable bare helper
+  // call starting at runEstate. This includes helpers such as recordDeath, refundPot, removeMember,
+  // and checkScandal rather than trusting an `*AtDeath` naming convention. Ambiguous names include
+  // every definition, which is the fail-closed choice for a source guard.
+  const functionIndex = new Map();
+  for (const file of walkSrc()) {
+    const source = fs.readFileSync(file, 'utf8');
+    const code = lexicalMask(source);
+    const heads = [
+      /(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][\w$]*)\s*\([^)]*\)\s*\{/g,
+      /(?:export\s+)?const\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s*)?(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*=>\s*\{/g,
+    ];
+    for (const head of heads) {
+      for (const match of code.matchAll(head)) {
+        const open = code.indexOf('{', match.index + match[0].length - 1);
+        const entry = { name: match[1], file, source, open };
+        (functionIndex.get(entry.name) || functionIndex.set(entry.name, []).get(entry.name)).push(entry);
       }
     }
   }
+  assert(functionIndex.has('runEstate'), 'runEstate must remain a statically crawlable named function');
+  const deathSources = [];
+  const reachableNames = new Set();
+  const queue = ['runEstate'];
+  while (queue.length) {
+    const name = queue.shift();
+    if (reachableNames.has(name)) continue;
+    reachableNames.add(name);
+    for (const entry of functionIndex.get(name) || []) {
+      const body = functionBlock(entry.source, entry.open, `${entry.file}:${entry.name}`);
+      deathSources.push({ name: entry.name, file: entry.file, body });
+      const executable = lexicalMask(body);
+      for (const call of executable.matchAll(/(?<![.\w$])([A-Za-z_$][\w$]*)\s*\(/g)) {
+        if (functionIndex.has(call[1]) && !reachableNames.has(call[1])) queue.push(call[1]);
+      }
+    }
+  }
+  for (const helper of [
+    'clearInboundPointers', 'recordDeath', 'recordDeedEvent', 'checkScandal', 'refundPot',
+    'removeMember', 'rememberedSkills', 'abandonRaidsAtDeath', 'voidListingsAtDeath',
+  ]) assert(reachableNames.has(helper), `runEstate call-graph crawl must include ${helper}`);
+
+  const normalizedVerb = (verb) => verb.toUpperCase().trim().replace(/\s+/g, '_');
+  const mutationsFor = (handler, body) => {
+    const mutations = [];
+    const sql = lexicalMask(body, { keepStrings: true });
+    for (const match of sql.matchAll(/\b(DELETE\s+FROM|UPDATE|INSERT\s+INTO|MERGE(?:\s+INTO)?)\s+([a-z_][a-z0-9_]*)\b/gi)) {
+      mutations.push({ handler, verb: normalizedVerb(match[1]), table: match[2] });
+    }
+    const boundedVariables = new Set();
+    for (const match of sql.matchAll(/for\s*\(\s*const\s+(\w+)\s+of\s+\[([\s\S]*?)\]\s*\)[\s\S]{0,160}?client\.query\(\s*`(DELETE\s+FROM|UPDATE|INSERT\s+INTO|MERGE(?:\s+INTO)?)\s+\$\{\1\}/gi)) {
+      boundedVariables.add(match[1]);
+      for (const tableMatch of match[2].matchAll(/['"]([a-z_][a-z0-9_]*)['"]/gi)) {
+        mutations.push({ handler, verb: normalizedVerb(match[3]), table: tableMatch[1] });
+      }
+    }
+    for (const match of sql.matchAll(/\b(DELETE\s+FROM|UPDATE|INSERT\s+INTO|MERGE(?:\s+INTO)?)\s+\$\{([^}]+)\}/gi)) {
+      if (!boundedVariables.has(match[2].trim())) {
+        mutations.push({ handler, verb: normalizedVerb(match[1]), table: `<dynamic:${match[2].trim()}>` });
+      }
+    }
+    return mutations;
+  };
+  assert.deepEqual(mutationsFor('tripwire', [
+    "await client.query('INSERT INTO item_stacks (owner_scope) VALUES ($1)', ['character']);",
+    "await client.query('MERGE INTO operation_escrow target USING source ON false WHEN NOT MATCHED THEN INSERT DEFAULT VALUES');",
+  ].join('\n')).map(({ handler, verb, table }) => `${handler}:${verb}:${table}`), [
+    'tripwire:INSERT_INTO:item_stacks',
+    'tripwire:MERGE_INTO:operation_escrow',
+  ], 'the death-policy source tripwire must detect Phase 1 INSERT and MERGE statements');
+
+  const mutations = deathSources.flatMap(({ name, body }) => mutationsFor(name, body));
   const phase1DeathMutations = mutations
-    .filter(({ table }) => tables.has(table))
+    .filter(({ table }) => tables.has(table) || table.startsWith('<dynamic:'))
     .map(({ handler, verb, table }) => `${handler}:${verb}:${table}`);
   const unapprovedDeathMutations = phase1DeathMutations
     .filter((mutation) => !PHASE1_DEATH_MUTATION_APPROVALS.has(mutation));

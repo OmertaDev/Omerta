@@ -730,7 +730,27 @@ const historicalCustody = async () => {
   ]);
   return { stacks: stacks.rows, item: item.rows, mystery: mystery.rows, escrow: escrow.rows };
 };
+const PHASE1_AUTHORITY_TABLES = Object.freeze([
+  ['item_stacks', 'owner_scope,owner_id,template_id,quality'],
+  ['item_instances', 'id'],
+  ['item_events', 'sequence'],
+  ['item_mutation_guards', 'idempotency_key'],
+  ['operation_escrow', 'item_id'],
+  ['mystery_instances', 'id'],
+  ['mystery_node_state', 'instance_id,node_id'],
+  ['mystery_choices', 'instance_id,node_id'],
+  ['world_operations', 'id'],
+  ['world_operation_roles', 'operation_id,role_id'],
+  ['world_operation_node_state', 'operation_id,node_id'],
+  ['world_operation_contributions', 'operation_id,node_id'],
+]);
+const phase1AuthoritySnapshot = async () => Object.fromEntries(await Promise.all(
+  PHASE1_AUTHORITY_TABLES.map(async ([table, order]) => [
+    table, (await app.pool.query(`SELECT * FROM ${table} ORDER BY ${order}`)).rows,
+  ]),
+));
 const custodyBeforeDeath = await historicalCustody();
+const phase1AuthorityBeforeDeath = await phase1AuthoritySnapshot();
 assert(custodyBeforeDeath.stacks.length > 0, 'the death fixture includes generic stack owner tuples');
 assert.deepEqual(custodyBeforeDeath.item.map(({ owner_scope, owner_id, state }) => (
   { owner_scope, owner_id, state }
@@ -752,6 +772,27 @@ assert.notEqual(replacementCharacterId, players[3].characterId);
 assert.equal(Number((await app.pool.query(
   'SELECT COUNT(*) AS n FROM characters WHERE account_id=$1 AND alive', [players[3].accountId],
 )).rows[0].n), 1, 'the production death path leaves exactly one living replacement');
+assert.deepEqual(await phase1AuthoritySnapshot(), phase1AuthorityBeforeDeath,
+  'runEstate cannot insert, merge, update, delete, inherit, or duplicate any Phase 1 authority row');
+assert.equal(Number((await app.pool.query(
+  `SELECT
+     (SELECT count(*) FROM item_stacks
+       WHERE owner_scope='character' AND owner_id=$1) +
+     (SELECT count(*) FROM item_instances
+       WHERE owner_scope='character' AND owner_id=$1) +
+     (SELECT count(*) FROM item_events
+       WHERE (from_owner_scope='character' AND from_owner_id=$1)
+          OR (to_owner_scope='character' AND to_owner_id=$1)) +
+     (SELECT count(*) FROM item_mutation_guards
+       WHERE owner_scope='character' AND owner_id=$1) +
+     (SELECT count(*) FROM operation_escrow
+       WHERE (owner_scope='character' AND operation_id=$1)
+          OR (depositor_scope='character' AND depositor_id=$1)) +
+     (SELECT count(*) FROM mystery_instances
+       WHERE owner_scope='character' AND owner_id=$1) AS n`,
+  [replacementCharacterId],
+)).rows[0].n), 0,
+'the heir receives no inserted or copied Phase 1 owner/depositor tuple');
 assert.deepEqual(await historicalCustody(), custodyBeforeDeath,
   'runEstate and replacement creation preserve every generic owner and exact historical depositor tuple byte-for-byte');
 const heirDriveHistorical = await mutate(
