@@ -1874,8 +1874,13 @@ const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 
 assert.match(packageJson.scripts['worldgraph:check'], /tools\/worldgraph-content\.js/);
 assert.match(packageJson.scripts.preflight, /tools\/worldgraph-content\.js/,
   'deployment preflight must fail on an invalid Phase 1 graph');
-assert.match(packageJson.scripts['content:check'], /tools\/content\.js check/,
-  'authored content keeps its distinct compiler/check lane');
+assert.equal(packageJson.scripts['content:check'], 'npm run content:check:corpus',
+  'authored content must delegate only to automatic corpus discovery');
+assert.equal(
+  packageJson.scripts['content:check:corpus'],
+  'node tools/content.js check-corpus content/packs',
+  'the automatic authored-content corpus lane must use the fixed production root',
+);
 const ci = fs.readFileSync(path.join(root, '.github', 'workflows', 'ci.yml'), 'utf8');
 assert.match(ci, /npm run worldgraph:check/,
   'CI must invoke the explicit Phase 1 graph-content gate');
