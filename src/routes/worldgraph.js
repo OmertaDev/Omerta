@@ -7,7 +7,7 @@
 // autonomous mutation capability.
 import crypto from 'node:crypto';
 import * as G from '../game.js';
-import { recipeCatalog, craft, salvageCar } from '../crafting.js';
+import { recipeCatalog, craftWorldGraphRecipe, salvageCar } from '../crafting.js';
 import {
   inventoryBoard,
   transferItem,
@@ -428,7 +428,7 @@ export function register(app, { pool, auth }) {
     })));
 
   app.post('/v1/worldgraph/recipes/:recipeId/craft', mutationOptions(auth), async (req, reply) =>
-    mutate(pool, reply, (client) => craft(
+    mutate(pool, reply, (client) => craftWorldGraphRecipe(
       client, { accountId: req.user.sub }, req.params.recipeId,
       innerIdempotencyKey(req.user.sub, req.headers['idempotency-key']),
     )));

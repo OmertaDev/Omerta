@@ -2,7 +2,7 @@
 // character-pinned investigation input, and finally a four-account Crew operation contribution.
 import assert from 'node:assert/strict';
 import { makeDb } from '../src/db.js';
-import { craft, salvageCar } from '../src/crafting.js';
+import { craftWorldGraphRecipe, salvageCar } from '../src/crafting.js';
 import { AUTOMOTIVE_SALVAGE_PACKAGE } from '../src/content/automotive-salvage.js';
 import { BELLADONNA_PACKAGE } from '../src/content/belladonna.js';
 import { CORE_MATERIALS_PACKAGE } from '../src/content/core-materials.js';
@@ -277,7 +277,7 @@ try {
     'belladonna-salvage-car',
   )), salvaged, 'vehicle disposal is exactly replay-safe');
 
-  const hardened = await tx((client) => craft(
+  const hardened = await tx((client) => craftWorldGraphRecipe(
     client, craftingIdentity, 'recipe:hardened_steel', 'belladonna-harden-steel',
   ));
   assert.equal(hardened.inputs[0].templateId, 'mat:scrap_steel');
@@ -286,12 +286,12 @@ try {
   assert.equal(hardened.outputs[0].delta, 1);
   assert.equal(hardened.cashCost, 300);
 
-  const crafted = await tx((client) => craft(
+  const crafted = await tx((client) => craftWorldGraphRecipe(
     client, craftingIdentity, 'recipe:precision_lock_tool', 'belladonna-craft-tool',
   ));
   const toolId = crafted.outputs[0].id;
   assert.equal(crafted.outputs[0].templateId, 'item:precision_lock_tool');
-  assert.deepEqual(await tx((client) => craft(
+  assert.deepEqual(await tx((client) => craftWorldGraphRecipe(
     client, craftingIdentity, 'recipe:precision_lock_tool', 'belladonna-craft-tool',
   )), crafted, 'the permanent unique tool id is stable on replay');
 

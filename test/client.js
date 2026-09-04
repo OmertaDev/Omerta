@@ -6459,12 +6459,24 @@ const ACTFNS = new Map();   // route path → the handler names its registration
     ['settlePassStipend', 'an internal settle called from the pass claim, whose own reply carries the line'],
   ]);
   const muteUsed = new Set();
-  const mute = [];
-  for (const [at, v] of SILENT) {
-    if (!pressedFns.has(v.fn)) continue;
-    if (MUTE_OK.has(v.fn)) { muteUsed.add(v.fn); continue; }
-    mute.push(`\n  ${at} → ${JSON.stringify(v.line)}`);
-  }
+  const silenceViolations = (entries, used = null) => {
+    const violations = [];
+    for (const [at, v] of entries) {
+      if (!pressedFns.has(v.fn)) continue;
+      if (MUTE_OK.has(v.fn)) { if (used) used.add(v.fn); continue; }
+      violations.push(`\n  ${at} → ${JSON.stringify(v.line)}`);
+    }
+    return violations;
+  };
+  // `craft` is the legacy workshop handler behind the browser's act()-pressed route. Keep this
+  // function-name probe here so a future broad waiver cannot hide a real generic-success receipt.
+  // Phase 1's direct-only graph handler has the deliberately distinct craftWorldGraphRecipe name.
+  assert(pressedFns.has('craft'), 'the client workshop craft route fell out of the act()-pressed corpus');
+  const craftProbe = silenceViolations(new Map([
+    ['fixture:1 craft()', { fn: 'craft', line: 'done.' }],
+  ]));
+  assert.equal(craftProbe.length, 1, 'a browser-reachable craft() generic fallback must fail the silence ledger');
+  const mute = silenceViolations(SILENT, muteUsed);
   assert(mute.length === 0, 'THE SILENCE LEDGER: an act()-pressed route renders the catch-all, so the '
     + 'button works and then says nothing a player can act on. Give the reply a branch that names what '
     + 'happened (and its TERMS — a price with the purchase left off is not a line), or declare it in '

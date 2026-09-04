@@ -717,7 +717,7 @@ console.log('\n7a2. GRAPH CRAFTING AND SALVAGE HOLD UNDER REAL ROW LOCKS');
 // because it has no row locks. This probe reaches the production half of the contract: native
 // rollback, concurrent same/different logical keys, one car deletion, and one cash ledger debit.
 {
-  const { craft, salvageCar } = await import('../src/crafting.js');
+  const { craftWorldGraphRecipe, salvageCar } = await import('../src/crafting.js');
   const { grantStack, inventoryBoard, withItemTransaction } = await import('../src/items.js');
   const tx = (action) => withItemTransaction(pool, action);
   const prefix = `pgcheck-crafting-${process.pid}-${Date.now()}`;
@@ -765,7 +765,7 @@ console.log('\n7a2. GRAPH CRAFTING AND SALVAGE HOLD UNDER REAL ROW LOCKS');
   ));
   let lateCraftCode = '';
   try {
-    await tx((client) => craft(
+    await tx((client) => craftWorldGraphRecipe(
       client, craftH, 'recipe:hardened_steel', keys[2],
     ));
   } catch (error) { lateCraftCode = error.code; }
@@ -790,8 +790,8 @@ console.log('\n7a2. GRAPH CRAFTING AND SALVAGE HOLD UNDER REAL ROW LOCKS');
       AND template_id='mat:hardened_steel' AND quality='standard'`, [craftAccount],
   );
   const sameCraft = await Promise.all([
-    tx((client) => craft(client, craftH, 'recipe:hardened_steel', keys[3])),
-    tx((client) => craft(client, craftH, 'recipe:hardened_steel', keys[3])),
+    tx((client) => craftWorldGraphRecipe(client, craftH, 'recipe:hardened_steel', keys[3])),
+    tx((client) => craftWorldGraphRecipe(client, craftH, 'recipe:hardened_steel', keys[3])),
   ]);
   craftBoard = await inventoryBoard(pool, craftOwner);
   const craftCash = Number((await pool.query(

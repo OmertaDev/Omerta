@@ -6,7 +6,7 @@
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import { craft, salvageCar } from '../src/crafting.js';
+import { craftWorldGraphRecipe, salvageCar } from '../src/crafting.js';
 import { AUTOMOTIVE_SALVAGE_PACKAGE } from '../src/content/automotive-salvage.js';
 import { BELLADONNA_PACKAGE } from '../src/content/belladonna.js';
 import { CORE_MATERIALS_PACKAGE } from '../src/content/core-materials.js';
@@ -198,10 +198,10 @@ export async function runBelladonnaPgChecks({
       && stackQty(board, 'mat:salvage_parts') === 2,
     'Belladonna same-key salvage consumes one real car into exact graph quantities');
 
-    await tx((client) => craft(
+    await tx((client) => craftWorldGraphRecipe(
       client, identity, 'recipe:hardened_steel', `${prefix}-harden`,
     ));
-    const crafted = await tx((client) => craft(
+    const crafted = await tx((client) => craftWorldGraphRecipe(
       client, identity, 'recipe:precision_lock_tool', `${prefix}-craft-tool`,
     ));
     toolId = crafted.outputs[0].id;

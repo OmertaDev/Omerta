@@ -1,7 +1,7 @@
 // Data-defined Phase 1 crafting and salvage. Domain callers must enter through:
 //
 //   withItemTransaction(pool, (client) =>
-//     craft(client, { accountId, owned? }, recipeId, idempotencyKey))
+//     craftWorldGraphRecipe(client, { accountId, owned? }, recipeId, idempotencyKey))
 //
 // `client` is the branded client issued by src/items.js. `accountId` comes from authenticated
 // server context; `owned` is optional and is updated only as a response-cache convenience. Every
@@ -469,7 +469,7 @@ async function produceRecipeOutputs(client, owner, recipe, mutation, provenanceK
 }
 
 /** Execute one non-salvage recipe inside an active `withItemTransaction` callback. */
-export async function craft(client, h, recipeId, idempotencyKey) {
+export async function craftWorldGraphRecipe(client, h, recipeId, idempotencyKey) {
   const accountId = canonicalString(h?.accountId, 'Authenticated account id');
   const owner = { scope: 'account', id: accountId };
   const recipe = recipeOf(recipeId);

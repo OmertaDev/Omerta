@@ -8,7 +8,7 @@ import {
   withItemTransaction,
 } from '../src/items.js';
 import {
-  craft,
+  craftWorldGraphRecipe,
   recipeCatalog,
   recipeResourceBlockers,
   salvageCar,
@@ -303,7 +303,7 @@ try {
 
   // Progression is server-derived. A failed conversion spends no material and reserves no key.
   await assert.rejects(
-    tx((client) => craft(client, h, 'recipe:hardened_steel', 'craft-hardened-low-level')),
+    tx((client) => craftWorldGraphRecipe(client, h, 'recipe:hardened_steel', 'craft-hardened-low-level')),
     (error) => error?.code === 'level',
     'the material conversion is progression-gated by graph data',
   );
@@ -312,7 +312,7 @@ try {
 
   await pool.query('UPDATE characters SET cash=299 WHERE id=$1', [CHARACTER]);
   await assert.rejects(
-    tx((client) => craft(client, h, 'recipe:hardened_steel', 'craft-hardened-no-cash')),
+    tx((client) => craftWorldGraphRecipe(client, h, 'recipe:hardened_steel', 'craft-hardened-no-cash')),
     (error) => error?.code === 'cash' && error?.data?.required === 300,
     'the locked cash row cannot be overdrawn for a recipe cost',
   );
@@ -323,7 +323,7 @@ try {
   )).rows[0].n), 0, 'a cash refusal writes no ledger row');
   await pool.query('UPDATE characters SET cash=7777 WHERE id=$1', [CHARACTER]);
 
-  const hardened = await tx((client) => craft(
+  const hardened = await tx((client) => craftWorldGraphRecipe(
     client, h, 'recipe:hardened_steel', 'craft-hardened-1',
   ));
   assert.equal(hardened.inputs[0].delta, -4);
@@ -334,7 +334,7 @@ try {
   assert.equal(Number((await pool.query(
     'SELECT cash FROM characters WHERE id=$1', [CHARACTER],
   )).rows[0].cash), 7477, 'a successful craft debits its exact graph-defined cash cost');
-  assert.deepEqual(await tx((client) => craft(
+  assert.deepEqual(await tx((client) => craftWorldGraphRecipe(
     client, h, 'recipe:hardened_steel', 'craft-hardened-1',
   )), hardened, 'a craft replay neither consumes nor produces again');
   assert.equal(Number((await pool.query(
@@ -342,7 +342,7 @@ try {
     [CHARACTER],
   )).rows[0].n), 1, 'a same-key replay cannot debit or ledger the cash cost twice');
   await assert.rejects(
-    tx((client) => craft(
+    tx((client) => craftWorldGraphRecipe(
       client, h, 'recipe:precision_lock_tool', 'craft-hardened-1',
     )),
     (error) => error?.code === 'idempotency_conflict',
@@ -353,7 +353,7 @@ try {
   )).rows[0].cash), 7477, 'a changed-request conflict cannot charge the character again');
 
   await assert.rejects(
-    tx((client) => craft(client, h, 'recipe:hardened_steel', 'craft-hardened-2')),
+    tx((client) => craftWorldGraphRecipe(client, h, 'recipe:hardened_steel', 'craft-hardened-2')),
     (error) => error?.code === 'materials',
     'a new craft cannot overdraw the remaining material stack',
   );
@@ -362,7 +362,7 @@ try {
   )).rows[0].cash), 7477, 'a late materials refusal rolls the cash debit back');
 
   await assert.rejects(
-    tx((client) => craft(client, h, 'recipe:precision_lock_tool', 'craft-tool-no-skill')),
+    tx((client) => craftWorldGraphRecipe(client, h, 'recipe:precision_lock_tool', 'craft-tool-no-skill')),
     (error) => error?.code === 'skill',
     'the unique tool requires the graph-declared existing skill',
   );
@@ -370,18 +370,18 @@ try {
     "INSERT INTO character_skills (character_id,skill_id) VALUES ($1,'fence_network')",
     [CHARACTER],
   );
-  const toolCraft = await tx((client) => craft(
+  const toolCraft = await tx((client) => craftWorldGraphRecipe(
     client, h, 'recipe:precision_lock_tool', 'craft-tool-1',
   ));
   assert.equal(toolCraft.outputs.length, 1);
   assert.equal(toolCraft.outputs[0].templateId, 'item:precision_lock_tool');
   assert.match(toolCraft.outputs[0].id, /^[0-9a-f-]{36}$/i);
-  const toolReplay = await tx((client) => craft(
+  const toolReplay = await tx((client) => craftWorldGraphRecipe(
     client, h, 'recipe:precision_lock_tool', 'craft-tool-1',
   ));
   assert.deepEqual(toolReplay, toolCraft, 'unique-output replay returns the original permanent item id');
   await assert.rejects(
-    tx((client) => craft(client, h, 'recipe:hardened_steel', 'craft-tool-1')),
+    tx((client) => craftWorldGraphRecipe(client, h, 'recipe:hardened_steel', 'craft-tool-1')),
     (error) => error?.code === 'idempotency_conflict',
     'a craft key cannot be rebound to a different graph recipe',
   );
@@ -410,7 +410,7 @@ try {
     'cash rollback output cap', 'rollback-cash-output-cap',
   ));
   await assert.rejects(
-    tx((client) => craft(
+    tx((client) => craftWorldGraphRecipe(
       client, rollbackH, 'recipe:hardened_steel', 'craft-cash-rollback-1',
     )),
     (error) => error?.code === 'inventory_cap',
@@ -499,7 +499,7 @@ try {
   assert.deepEqual(await tx((client) => salvageCar(
     client, h, CAR, 'recipe:car_salvage_basic', 'salvage-car-1',
   )), salvaged, 'completed salvage replays after the original character dies and is replaced');
-  assert.deepEqual(await tx((client) => craft(
+  assert.deepEqual(await tx((client) => craftWorldGraphRecipe(
     client, h, 'recipe:precision_lock_tool', 'craft-tool-1',
   )), toolCraft, 'completed craft replays before replacement progression and location checks');
   await assert.rejects(
