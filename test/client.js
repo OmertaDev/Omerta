@@ -4090,27 +4090,36 @@ for (const [key, wrong, why] of invert) {
     assert(!wrong.test(line), `${why} — got: ${JSON.stringify(line)}`);
   }
 }
-// Nothing a player reads may ever contain the literal word "undefined". Hiring staff printed it twice,
-// because the branch it landed on read two fields that shape never sends.
-for (const [url, line] of said) assert(!/undefined/.test(line),
-  `describe() rendered the literal word "undefined" to the player for ${url}: ${JSON.stringify(line)}`);
-// Nor may a line stack an article on a name that already carries one. Every secret in the game is
-// called "The <something>" (The Wash Records, The Bodies, The Kitchen Books, The Second Ledger), so
-// the hush line's own "The ${kind}" read "The The Wash Records" on every payment ever made — not an
-// edge case, and invisible to every pattern above because it is fluent. Swept rather than pinned at
-// the one site: the catalogs that start with an article are not going to stop growing.
-// NOR AN HTML ENTITY. Every consumer of describe() is toast(), which assigns to textContent — so an
-// HTML-escaped string is not safer there, it is simply WRONG, and it lands on exactly the names that
-// most need to read right: 94 catalog names carry an apostrophe or an ampersand (Motorcycle 'Wasp',
-// A Dead Don's Watch, The Doc's Friend) and the street-name charset guard allows both, so a player
-// called O'Malley was toasted as O&#39;Malley on every line that named them. Swept rather than pinned
-// at the one site that surfaced it, because the catalogs are not going to stop growing.
-for (const [url, line] of said) assert(!/&(?:amp|lt|gt|quot|#\d+);/.test(line),
-  `describe() rendered an HTML entity to the player for ${url} — its output goes to textContent, so ` +
-  `escaping corrupts the name instead of protecting anything: ${JSON.stringify(line)}`);
-for (const [url, line] of said) assert(!/\bThe The\b/i.test(line),
-  `describe() stacked an article on a name that already had one for ${url} — the catalog entry ` +
-  `already begins with "The": ${JSON.stringify(line)}`);
+// THE CLASS SWEEPS OVER EVERYTHING A PLAYER WAS SHOWN. ONE implementation, called twice — here over
+// everything driven so far, and again at the very END of the file. Wave blocks add to `said` at lines
+// far below this point, so a sweep that ran only here would RECORD those lines and never look at them:
+// a class check that silently stops covering the newest half of the corpus reads on the summary line
+// exactly like one that covers all of it. Copying the three loops down there instead is the
+// two-private-copies shape this file has paid for before.
+function sweepSaidClasses() {
+  // Nothing a player reads may ever contain the literal word "undefined". Hiring staff printed it twice,
+  // because the branch it landed on read two fields that shape never sends.
+  for (const [url, line] of said) assert(!/undefined/.test(line),
+    `describe() rendered the literal word "undefined" to the player for ${url}: ${JSON.stringify(line)}`);
+  // NOR AN HTML ENTITY. Every consumer of describe() is toast(), which assigns to textContent — so an
+  // HTML-escaped string is not safer there, it is simply WRONG, and it lands on exactly the names that
+  // most need to read right: 94 catalog names carry an apostrophe or an ampersand (Motorcycle 'Wasp',
+  // A Dead Don's Watch, The Doc's Friend) and the street-name charset guard allows both, so a player
+  // called O'Malley was toasted as O&#39;Malley on every line that named them. Swept rather than pinned
+  // at the one site that surfaced it, because the catalogs are not going to stop growing.
+  for (const [url, line] of said) assert(!/&(?:amp|lt|gt|quot|#\d+);/.test(line),
+    `describe() rendered an HTML entity to the player for ${url} — its output goes to textContent, so ` +
+    `escaping corrupts the name instead of protecting anything: ${JSON.stringify(line)}`);
+  // Nor may a line stack an article on a name that already carries one. Every secret in the game is
+  // called "The <something>" (The Wash Records, The Bodies, The Kitchen Books, The Second Ledger), so
+  // the hush line's own "The ${kind}" read "The The Wash Records" on every payment ever made — not an
+  // edge case, and invisible to every pattern above because it is fluent. Swept rather than pinned at
+  // the one site: the catalogs that start with an article are not going to stop growing.
+  for (const [url, line] of said) assert(!/\bThe The\b/i.test(line),
+    `describe() stacked an article on a name that already had one for ${url} — the catalog entry ` +
+    `already begins with "The": ${JSON.stringify(line)}`);
+}
+sweepSaidClasses();
 
 // THE PRICE IS A TERM. Six Wire actions burn $OMR and five of them named nothing, so a player pressed
 // them without ever learning what a tap or a dig had just cost — the pad-and-nut shape on a screen
@@ -9273,3 +9282,9 @@ console.log(`✅ client wiring test passed — across the console AND /admin: of
 
   console.log('  ✓ WAVE 80: the shared front window, the fighter who took it, the paper\'s net and the fill\'s house take all reach the player');
 }
+
+// AND AGAIN, over everything the wave blocks above added. `said` is populated in two places separated
+// by five thousand lines — the main ACTIONS drive near the top, and the wave blocks that run on their
+// own tokens down here — and only the first half was ever swept for these three classes. A line
+// recorded but never looked at is the vacuity shape in its quietest form: the summary line counts it.
+sweepSaidClasses();
