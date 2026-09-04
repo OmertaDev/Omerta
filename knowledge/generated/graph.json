@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "349902a2854dfdf15a74c4b195aadf07e994fbc6",
+  "sourceRevision": "321545aac27830f82c6dfa174389ab1726f57fcc",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -13399,7 +13399,7 @@
       ],
       "lastChangedAt": "2026-09-04T12:39:49.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      "lastChangedCommit": "321545aac27830f82c6dfa174389ab1726f57fcc"
     },
     {
       "key": "Artifact:docs/superpowers/specs/2026-09-04-phase-3b-crew-social-puzzle-primitives-design.md",
@@ -13422,7 +13422,7 @@
       ],
       "lastChangedAt": "2026-09-04T12:39:49.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      "lastChangedCommit": "321545aac27830f82c6dfa174389ab1726f57fcc"
     },
     {
       "key": "Artifact:docs/superpowers/specs/2026-09-04-phase-3c-family-hierarchical-investigation-design.md",
@@ -13445,7 +13445,7 @@
       ],
       "lastChangedAt": "2026-09-04T12:39:49.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      "lastChangedCommit": "321545aac27830f82c6dfa174389ab1726f57fcc"
     },
     {
       "key": "Artifact:docs/superpowers/specs/2026-09-04-phase-3d-dynamic-cross-season-mystery-design.md",
@@ -13468,7 +13468,7 @@
       ],
       "lastChangedAt": "2026-09-04T12:39:49.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      "lastChangedCommit": "321545aac27830f82c6dfa174389ab1726f57fcc"
     },
     {
       "key": "Artifact:docs/superpowers/specs/2026-09-04-phase-3e-authoring-corpus-content-desk-design.md",
@@ -13491,7 +13491,7 @@
       ],
       "lastChangedAt": "2026-09-04T12:39:49.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      "lastChangedCommit": "321545aac27830f82c6dfa174389ab1726f57fcc"
     },
     {
       "key": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
@@ -13514,7 +13514,7 @@
       ],
       "lastChangedAt": "2026-09-04T12:39:49.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      "lastChangedCommit": "321545aac27830f82c6dfa174389ab1726f57fcc"
     },
     {
       "key": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
@@ -13537,7 +13537,7 @@
       ],
       "lastChangedAt": "2026-09-04T12:39:49.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      "lastChangedCommit": "321545aac27830f82c6dfa174389ab1726f57fcc"
     },
     {
       "key": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md",
@@ -13560,7 +13560,7 @@
       ],
       "lastChangedAt": "2026-09-04T12:39:49.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      "lastChangedCommit": "321545aac27830f82c6dfa174389ab1726f57fcc"
     },
     {
       "key": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md",
@@ -13583,7 +13583,7 @@
       ],
       "lastChangedAt": "2026-09-04T12:39:49.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      "lastChangedCommit": "321545aac27830f82c6dfa174389ab1726f57fcc"
     },
     {
       "key": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2e-trade-social-provenance-nft-readiness-design.md",
@@ -13606,7 +13606,7 @@
       ],
       "lastChangedAt": "2026-09-04T12:39:49.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      "lastChangedCommit": "321545aac27830f82c6dfa174389ab1726f57fcc"
     },
     {
       "key": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
@@ -13629,7 +13629,7 @@
       ],
       "lastChangedAt": "2026-09-04T12:39:49.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      "lastChangedCommit": "321545aac27830f82c6dfa174389ab1726f57fcc"
     },
     {
       "key": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
@@ -13652,7 +13652,7 @@
       ],
       "lastChangedAt": "2026-09-04T12:39:49.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      "lastChangedCommit": "321545aac27830f82c6dfa174389ab1726f57fcc"
     },
     {
       "key": "Artifact:docs/WIKI.md",
@@ -33127,7 +33127,7 @@
       ],
       "lastChangedAt": "2026-09-04T12:39:49.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      "lastChangedCommit": "321545aac27830f82c6dfa174389ab1726f57fcc"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -48082,6 +48082,22 @@
       ]
     },
     {
+      "key": "Commit:321545aac27830f82c6dfa174389ab1726f57fcc",
+      "type": "Commit",
+      "id": "321545aac27830f82c6dfa174389ab1726f57fcc",
+      "label": "docs: specify world graph phases 2 and 3",
+      "title": "docs: specify world graph phases 2 and 3",
+      "date": "2026-09-04T12:39:49.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/321545aac27830f82c6dfa174389ab1726f57fcc",
+      "provenance": [
+        {
+          "commit": "321545aac27830f82c6dfa174389ab1726f57fcc",
+          "url": "https://github.com/OmertaDev/Omerta/commit/321545aac27830f82c6dfa174389ab1726f57fcc"
+        }
+      ]
+    },
+    {
       "key": "Commit:321d1ab349ba4ba588bdbf877b2a167055ff144f",
       "type": "Commit",
       "id": "321d1ab349ba4ba588bdbf877b2a167055ff144f",
@@ -48302,22 +48318,6 @@
         {
           "commit": "3440ef8bce6797e0b62fc08441a1e1b0e49ce9da",
           "url": "https://github.com/OmertaDev/Omerta/commit/3440ef8bce6797e0b62fc08441a1e1b0e49ce9da"
-        }
-      ]
-    },
-    {
-      "key": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "type": "Commit",
-      "id": "349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "label": "docs: specify world graph phases 2 and 3",
-      "title": "docs: specify world graph phases 2 and 3",
-      "date": "2026-09-04T12:39:49.000Z",
-      "author": "OmertaDev",
-      "url": "https://github.com/OmertaDev/Omerta/commit/349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "provenance": [
-        {
-          "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6",
-          "url": "https://github.com/OmertaDev/Omerta/commit/349902a2854dfdf15a74c4b195aadf07e994fbc6"
         }
       ]
     },
@@ -78907,7 +78907,7 @@
           "commit": "30514acce0345f7ed2d7ebde333e5de343c699e5"
         },
         {
-          "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+          "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
         },
         {
           "commit": "36d5bb2f549adedb207d6627a2197ec550f8db4e"
@@ -79168,10 +79168,10 @@
           "commit": "30514acce0345f7ed2d7ebde333e5de343c699e5"
         },
         {
-          "commit": "33e8c06d6372c68a97ac8b6cdee8b5c17caf4f4e"
+          "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
         },
         {
-          "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+          "commit": "33e8c06d6372c68a97ac8b6cdee8b5c17caf4f4e"
         },
         {
           "commit": "36b737e4e28237323cf2a95680ef0a4125a7dcc6"
@@ -79651,10 +79651,10 @@
           "commit": "30514acce0345f7ed2d7ebde333e5de343c699e5"
         },
         {
-          "commit": "33e8c06d6372c68a97ac8b6cdee8b5c17caf4f4e"
+          "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
         },
         {
-          "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+          "commit": "33e8c06d6372c68a97ac8b6cdee8b5c17caf4f4e"
         },
         {
           "commit": "36b737e4e28237323cf2a95680ef0a4125a7dcc6"
@@ -80134,10 +80134,10 @@
           "commit": "30514acce0345f7ed2d7ebde333e5de343c699e5"
         },
         {
-          "commit": "33e8c06d6372c68a97ac8b6cdee8b5c17caf4f4e"
+          "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
         },
         {
-          "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+          "commit": "33e8c06d6372c68a97ac8b6cdee8b5c17caf4f4e"
         },
         {
           "commit": "36b737e4e28237323cf2a95680ef0a4125a7dcc6"
@@ -80695,10 +80695,10 @@
           "commit": "30514acce0345f7ed2d7ebde333e5de343c699e5"
         },
         {
-          "commit": "33e8c06d6372c68a97ac8b6cdee8b5c17caf4f4e"
+          "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
         },
         {
-          "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+          "commit": "33e8c06d6372c68a97ac8b6cdee8b5c17caf4f4e"
         },
         {
           "commit": "36b737e4e28237323cf2a95680ef0a4125a7dcc6"
@@ -87574,7 +87574,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "revision": "321545aac27830f82c6dfa174389ab1726f57fcc",
       "currentBranch": "codex/world-graph-phases-2-3",
       "defaultBranch": "main",
       "visibility": "public",
@@ -152573,6 +152573,150 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:321545aac27830f82c6dfa174389ab1726f57fcc",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3a-mystery-runtime-evidence-board-design.md",
+      "provenance": {
+        "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:321545aac27830f82c6dfa174389ab1726f57fcc",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3b-crew-social-puzzle-primitives-design.md",
+      "provenance": {
+        "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:321545aac27830f82c6dfa174389ab1726f57fcc",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3c-family-hierarchical-investigation-design.md",
+      "provenance": {
+        "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:321545aac27830f82c6dfa174389ab1726f57fcc",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3d-dynamic-cross-season-mystery-design.md",
+      "provenance": {
+        "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:321545aac27830f82c6dfa174389ab1726f57fcc",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3e-authoring-corpus-content-desk-design.md",
+      "provenance": {
+        "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:321545aac27830f82c6dfa174389ab1726f57fcc",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
+      "provenance": {
+        "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:321545aac27830f82c6dfa174389ab1726f57fcc",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
+      "provenance": {
+        "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:321545aac27830f82c6dfa174389ab1726f57fcc",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md",
+      "provenance": {
+        "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:321545aac27830f82c6dfa174389ab1726f57fcc",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md",
+      "provenance": {
+        "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:321545aac27830f82c6dfa174389ab1726f57fcc",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2e-trade-social-provenance-nft-readiness-design.md",
+      "provenance": {
+        "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:321545aac27830f82c6dfa174389ab1726f57fcc",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "provenance": {
+        "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:321545aac27830f82c6dfa174389ab1726f57fcc",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "provenance": {
+        "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:321545aac27830f82c6dfa174389ab1726f57fcc",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:321545aac27830f82c6dfa174389ab1726f57fcc",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:321545aac27830f82c6dfa174389ab1726f57fcc",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:321545aac27830f82c6dfa174389ab1726f57fcc",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:321545aac27830f82c6dfa174389ab1726f57fcc",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:321545aac27830f82c6dfa174389ab1726f57fcc",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:321d1ab349ba4ba588bdbf877b2a167055ff144f",
       "to": "Artifact:omerta-contracts/test/AcquisitionConstellationTask3A.t.sol",
       "provenance": {
@@ -153209,150 +153353,6 @@
       "to": "Artifact:test/loans.js",
       "provenance": {
         "commit": "3440ef8bce6797e0b62fc08441a1e1b0e49ce9da"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3a-mystery-runtime-evidence-board-design.md",
-      "provenance": {
-        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3b-crew-social-puzzle-primitives-design.md",
-      "provenance": {
-        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3c-family-hierarchical-investigation-design.md",
-      "provenance": {
-        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3d-dynamic-cross-season-mystery-design.md",
-      "provenance": {
-        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3e-authoring-corpus-content-desk-design.md",
-      "provenance": {
-        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
-      "provenance": {
-        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
-      "provenance": {
-        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md",
-      "provenance": {
-        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md",
-      "provenance": {
-        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2e-trade-social-provenance-nft-readiness-design.md",
-      "provenance": {
-        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
-      "provenance": {
-        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
-      "provenance": {
-        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "to": "Artifact:SPEC.md",
-      "provenance": {
-        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "to": "HistoricalArtifact:knowledge/generated/documents.md",
-      "provenance": {
-        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
-      "provenance": {
-        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
-      "provenance": {
-        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "to": "HistoricalArtifact:knowledge/generated/graph.json",
-      "provenance": {
-        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
-      }
-    },
-    {
-      "type": "CHANGED",
-      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
-      "provenance": {
-        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
       }
     },
     {
@@ -256374,6 +256374,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:321545aac27830f82c6dfa174389ab1726f57fcc",
+      "provenance": {
+        "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:321d1ab349ba4ba588bdbf877b2a167055ff144f",
       "provenance": {
         "commit": "321d1ab349ba4ba588bdbf877b2a167055ff144f"
@@ -256481,14 +256489,6 @@
       "to": "Commit:3440ef8bce6797e0b62fc08441a1e1b0e49ce9da",
       "provenance": {
         "commit": "3440ef8bce6797e0b62fc08441a1e1b0e49ce9da"
-      }
-    },
-    {
-      "type": "HAS_COMMIT",
-      "from": "Repository:omerta",
-      "to": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
-      "provenance": {
-        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
       }
     },
     {
