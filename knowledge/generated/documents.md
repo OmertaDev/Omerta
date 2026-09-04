@@ -351,6 +351,7 @@
 | [docs/superpowers/plans/2026-08-28-rwa-health-h2.md](../../docs/superpowers/plans/2026-08-28-rwa-health-h2.md) | documentation | 872 | 2026-08-28 |
 | [docs/superpowers/plans/2026-08-28-rwa-registry-lifecycle-cn6a.md](../../docs/superpowers/plans/2026-08-28-rwa-registry-lifecycle-cn6a.md) | documentation | 507 | 2026-08-28 |
 | [docs/superpowers/plans/2026-09-03-world-graph-item-economy.md](../../docs/superpowers/plans/2026-09-03-world-graph-item-economy.md) | documentation | 311 | 2026-09-03 |
+| [docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md](../../docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md) | documentation | 717 | uncommitted |
 | [docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md](../../docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md) | design | 124 | 2026-08-24 |
 | [docs/superpowers/specs/2026-08-25-agent-alpha-deep-city-design.md](../../docs/superpowers/specs/2026-08-25-agent-alpha-deep-city-design.md) | design | 177 | 2026-08-25 |
 | [docs/superpowers/specs/2026-08-26-grill-completion.md](../../docs/superpowers/specs/2026-08-26-grill-completion.md) | documentation | 861 | 2026-08-28 |
