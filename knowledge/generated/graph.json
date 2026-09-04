@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "20190d3d98f4f90886de98945932b437d5543145",
+  "sourceRevision": "9fde053335f2c82df107708b53d16b0c4bc5719f",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5801,
-    "edges": 25745,
+    "nodes": 5803,
+    "edges": 25752,
     "byNodeType": {
       "Artifact": 1855,
       "Command": 59,
-      "Commit": 1355,
+      "Commit": 1357,
       "Contract": 49,
       "Document": 477,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 2025,
-      "CHANGED": 10340,
+      "CHANGED": 10345,
       "CONTAINS": 1876,
       "DECLARES": 59,
       "DEFINED_IN": 1140,
       "DEPENDS_ON": 64,
       "EXECUTES": 216,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1355,
+      "HAS_COMMIT": 1357,
       "IMPLEMENTS": 124,
       "IMPORTS": 1724,
       "INHERITS": 12,
@@ -41164,20 +41164,20 @@
       "path": "test/worldgraph-api.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 46092,
-      "lines": 932,
-      "version": "1d83910d3cf01422",
+      "bytes": 46363,
+      "lines": 941,
+      "version": "120dfde53fd5bc11",
       "text": true,
       "provenance": [
         {
           "file": "test/worldgraph-api.js",
           "line": 1,
-          "version": "1d83910d3cf01422"
+          "version": "120dfde53fd5bc11"
         }
       ],
-      "lastChangedAt": "2026-09-04T03:21:29.000Z",
+      "lastChangedAt": "2026-09-04T03:27:35.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "20190d3d98f4f90886de98945932b437d5543145"
+      "lastChangedCommit": "9fde053335f2c82df107708b53d16b0c4bc5719f"
     },
     {
       "key": "Artifact:test/worldgraph-validation.js",
@@ -51015,6 +51015,22 @@
       ]
     },
     {
+      "key": "Commit:55af0548f88f9efeb4237b256576a5a5811ff528",
+      "type": "Commit",
+      "id": "55af0548f88f9efeb4237b256576a5a5811ff528",
+      "label": "docs: refresh estate authority knowledge",
+      "title": "docs: refresh estate authority knowledge",
+      "date": "2026-09-04T03:21:58.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/55af0548f88f9efeb4237b256576a5a5811ff528",
+      "provenance": [
+        {
+          "commit": "55af0548f88f9efeb4237b256576a5a5811ff528",
+          "url": "https://github.com/OmertaDev/Omerta/commit/55af0548f88f9efeb4237b256576a5a5811ff528"
+        }
+      ]
+    },
+    {
       "key": "Commit:55b901c37764049debf80f7134a2ae7be3a7c38a",
       "type": "Commit",
       "id": "55b901c37764049debf80f7134a2ae7be3a7c38a",
@@ -57459,6 +57475,22 @@
         {
           "commit": "9fba2a5ddd9d53533b47205793e017579d26b537",
           "url": "https://github.com/OmertaDev/Omerta/commit/9fba2a5ddd9d53533b47205793e017579d26b537"
+        }
+      ]
+    },
+    {
+      "key": "Commit:9fde053335f2c82df107708b53d16b0c4bc5719f",
+      "type": "Commit",
+      "id": "9fde053335f2c82df107708b53d16b0c4bc5719f",
+      "label": "test: canonicalize estate ledger assertion",
+      "title": "test: canonicalize estate ledger assertion",
+      "date": "2026-09-04T03:27:35.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9fde053335f2c82df107708b53d16b0c4bc5719f",
+      "provenance": [
+        {
+          "commit": "9fde053335f2c82df107708b53d16b0c4bc5719f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9fde053335f2c82df107708b53d16b0c4bc5719f"
         }
       ]
     },
@@ -78507,6 +78539,9 @@
           "commit": "5342b0b5e230b68eda89ff7f78178b88b189f602"
         },
         {
+          "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
+        },
+        {
           "commit": "57815f7b7830d17990d099d4e894fa7d67d7b1b5"
         },
         {
@@ -78966,6 +79001,9 @@
           "commit": "5342b0b5e230b68eda89ff7f78178b88b189f602"
         },
         {
+          "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
+        },
+        {
           "commit": "57815f7b7830d17990d099d4e894fa7d67d7b1b5"
         },
         {
@@ -79423,6 +79461,9 @@
         },
         {
           "commit": "5342b0b5e230b68eda89ff7f78178b88b189f602"
+        },
+        {
+          "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
         },
         {
           "commit": "57815f7b7830d17990d099d4e894fa7d67d7b1b5"
@@ -79957,6 +79998,9 @@
         },
         {
           "commit": "5342b0b5e230b68eda89ff7f78178b88b189f602"
+        },
+        {
+          "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
         },
         {
           "commit": "57815f7b7830d17990d099d4e894fa7d67d7b1b5"
@@ -86730,7 +86774,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "20190d3d98f4f90886de98945932b437d5543145",
+      "revision": "9fde053335f2c82df107708b53d16b0c4bc5719f",
       "currentBranch": "codex/world-graph-item-phase1",
       "defaultBranch": "main",
       "visibility": "public",
@@ -114527,13 +114571,13 @@
       "type": "TestSuite",
       "id": "test/worldgraph-api.js",
       "label": "test/worldgraph-api.js",
-      "lines": 932,
-      "version": "1d83910d3cf01422",
+      "lines": 941,
+      "version": "120dfde53fd5bc11",
       "provenance": [
         {
           "file": "test/worldgraph-api.js",
           "line": 1,
-          "version": "1d83910d3cf01422"
+          "version": "120dfde53fd5bc11"
         }
       ]
     },
@@ -163408,6 +163452,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:55af0548f88f9efeb4237b256576a5a5811ff528",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:55af0548f88f9efeb4237b256576a5a5811ff528",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:55af0548f88f9efeb4237b256576a5a5811ff528",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:55af0548f88f9efeb4237b256576a5a5811ff528",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:55b901c37764049debf80f7134a2ae7be3a7c38a",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -186564,6 +186640,14 @@
       "to": "Artifact:omerta-contracts/test/AcquisitionConstellationTask1.t.sol",
       "provenance": {
         "commit": "9fba2a5ddd9d53533b47205793e017579d26b537"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9fde053335f2c82df107708b53d16b0c4bc5719f",
+      "to": "Artifact:test/worldgraph-api.js",
+      "provenance": {
+        "commit": "9fde053335f2c82df107708b53d16b0c4bc5719f"
       }
     },
     {
@@ -256268,6 +256352,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:55af0548f88f9efeb4237b256576a5a5811ff528",
+      "provenance": {
+        "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:55b901c37764049debf80f7134a2ae7be3a7c38a",
       "provenance": {
         "commit": "55b901c37764049debf80f7134a2ae7be3a7c38a"
@@ -259487,6 +259579,14 @@
       "to": "Commit:9fba2a5ddd9d53533b47205793e017579d26b537",
       "provenance": {
         "commit": "9fba2a5ddd9d53533b47205793e017579d26b537"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:9fde053335f2c82df107708b53d16b0c4bc5719f",
+      "provenance": {
+        "commit": "9fde053335f2c82df107708b53d16b0c4bc5719f"
       }
     },
     {

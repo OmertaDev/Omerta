@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `20190d3d98f4`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `9fde053335f2`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1355 |
+| Commits in clone | 1357 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-04 — test: prove estate preserves graph authority |
+| Latest commit | 2026-09-04 — test: canonicalize estate ledger assertion |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 489 |
+| OmertaDev | 491 |
 | Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 21 |
@@ -38,10 +38,10 @@
 | [BALANCE.md](../../BALANCE.md) | 253 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 174 | yes |
-| knowledge/generated/github-history.md | 150 | historical |
-| knowledge/generated/graph-summary.md | 150 | historical |
-| knowledge/generated/graph.json | 150 | historical |
-| knowledge/generated/inventory.md | 150 | historical |
+| knowledge/generated/github-history.md | 151 | historical |
+| knowledge/generated/graph-summary.md | 151 | historical |
+| knowledge/generated/graph.json | 151 | historical |
+| knowledge/generated/inventory.md | 151 | historical |
 | [package.json](../../package.json) | 150 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
