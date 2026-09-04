@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `0c9f7c270412`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `29d24e4d41dd`.
 
 ## Repository
 
@@ -9,18 +9,18 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1359 |
+| Commits in clone | 1361 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-04 — feat: close phase one world graph release gates |
+| Latest commit | 2026-09-04 — docs: correct phase one census and route authority |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
 | crvydev | 647 |
-| OmertaDev | 493 |
+| OmertaDev | 495 |
 | Claude | 156 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 21 |
@@ -33,15 +33,15 @@
 | [CLAUDE.md](../../CLAUDE.md) | 510 | yes |
 | [public/index.html](../../public/index.html) | 397 | yes |
 | [src/server.js](../../src/server.js) | 354 | yes |
-| [SPEC.md](../../SPEC.md) | 284 | yes |
+| [SPEC.md](../../SPEC.md) | 285 | yes |
 | [schema.sql](../../schema.sql) | 280 | yes |
 | [BALANCE.md](../../BALANCE.md) | 253 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 174 | yes |
-| knowledge/generated/github-history.md | 152 | historical |
-| knowledge/generated/graph-summary.md | 152 | historical |
-| knowledge/generated/graph.json | 152 | historical |
-| knowledge/generated/inventory.md | 152 | historical |
+| knowledge/generated/github-history.md | 153 | historical |
+| knowledge/generated/graph-summary.md | 153 | historical |
+| knowledge/generated/graph.json | 153 | historical |
+| knowledge/generated/inventory.md | 153 | historical |
 | [package.json](../../package.json) | 150 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
@@ -54,7 +54,7 @@
 | [test/growth.js](../../test/growth.js) | 79 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 72 | yes |
 | [test/hardening.js](../../test/hardening.js) | 65 | yes |
-| knowledge/generated/documents.md | 59 | historical |
+| knowledge/generated/documents.md | 60 | historical |
 | [tools/sim.js](../../tools/sim.js) | 59 | yes |
 | [test/gates.js](../../test/gates.js) | 57 | yes |
 | [README.md](../../README.md) | 56 | yes |
@@ -63,7 +63,7 @@
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
 | [src/economy.js](../../src/economy.js) | 50 | yes |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 49 | yes |
-| knowledge/generated/modules.md | 47 | historical |
+| knowledge/generated/modules.md | 48 | historical |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
 | [src/casino.js](../../src/casino.js) | 45 | yes |
 | [test/docs.js](../../test/docs.js) | 42 | yes |
