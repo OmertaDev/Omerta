@@ -6,12 +6,12 @@ const material = (id, title) => Object.freeze({
   metadata: Object.freeze({ title, inventoryClass: 'stack' }),
 });
 
-const uniqueItem = (id, title) => Object.freeze({
+const uniqueItem = (id, title, extra = {}) => Object.freeze({
   id,
   type: 'item_template',
   version: 1,
   visibility: 'hidden',
-  metadata: Object.freeze({ title, inventoryClass: 'unique' }),
+  metadata: Object.freeze({ title, inventoryClass: 'unique', ...extra }),
 });
 
 export const CORE_MATERIALS_PACKAGE = Object.freeze({
@@ -25,7 +25,11 @@ export const CORE_MATERIALS_PACKAGE = Object.freeze({
     material('mat:salvage_parts', 'Salvage Parts'),
     material('mat:hardened_steel', 'Hardened Steel'),
     uniqueItem('item:precision_lock_tool', 'Precision Lock Tool'),
-    uniqueItem('item:belladonna_artifact', 'Belladonna Artifact'),
+    uniqueItem('item:belladonna_artifact', 'Belladonna Artifact', {
+      inert: true,
+      tradeable: false,
+      exportEligible: false,
+    }),
   ]),
 });
 
