@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "076ff5659df5e513218bd482207717e29127399c",
+  "sourceRevision": "80bb186f2cc54e8575f1c75067106901e7295bbf",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5813,
-    "edges": 25837,
+    "nodes": 5815,
+    "edges": 25844,
     "byNodeType": {
       "Artifact": 1856,
       "Command": 59,
-      "Commit": 1365,
+      "Commit": 1367,
       "Contract": 49,
       "Document": 477,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 2026,
-      "CHANGED": 10407,
+      "CHANGED": 10412,
       "CONTAINS": 1877,
       "DECLARES": 59,
       "DEFINED_IN": 1140,
       "DEPENDS_ON": 64,
       "EXECUTES": 216,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1365,
+      "HAS_COMMIT": 1367,
       "IMPLEMENTS": 124,
       "IMPORTS": 1731,
       "INHERITS": 12,
@@ -7523,18 +7523,18 @@
       "extension": ".yml",
       "bytes": 16148,
       "lines": 295,
-      "version": "de61fabb45302408",
+      "version": "47bb8f7846136a7a",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "de61fabb45302408"
+          "version": "47bb8f7846136a7a"
         }
       ],
-      "lastChangedAt": "2026-09-04T02:02:56.000Z",
+      "lastChangedAt": "2026-09-04T06:02:20.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3c8da2205b6f6868194ad8400dcd93773224217a"
+      "lastChangedCommit": "80bb186f2cc54e8575f1c75067106901e7295bbf"
     },
     {
       "key": "Artifact:.github/workflows/forge.yml",
@@ -54798,6 +54798,22 @@
       ]
     },
     {
+      "key": "Commit:80bb186f2cc54e8575f1c75067106901e7295bbf",
+      "type": "Commit",
+      "id": "80bb186f2cc54e8575f1c75067106901e7295bbf",
+      "label": "ci: give the full suite a realistic budget",
+      "title": "ci: give the full suite a realistic budget",
+      "date": "2026-09-04T06:02:20.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/80bb186f2cc54e8575f1c75067106901e7295bbf",
+      "provenance": [
+        {
+          "commit": "80bb186f2cc54e8575f1c75067106901e7295bbf",
+          "url": "https://github.com/OmertaDev/Omerta/commit/80bb186f2cc54e8575f1c75067106901e7295bbf"
+        }
+      ]
+    },
+    {
       "key": "Commit:80bd0d0d77c7f0419eb784ee88843bf143e14cca",
       "type": "Commit",
       "id": "80bd0d0d77c7f0419eb784ee88843bf143e14cca",
@@ -59082,6 +59098,22 @@
         {
           "commit": "b0761aa902da39cf0d0f93c0a65f10651a3b5990",
           "url": "https://github.com/OmertaDev/Omerta/commit/b0761aa902da39cf0d0f93c0a65f10651a3b5990"
+        }
+      ]
+    },
+    {
+      "key": "Commit:b0818c3d4591b77087fa97b1bc7402d7950def53",
+      "type": "Commit",
+      "id": "b0818c3d4591b77087fa97b1bc7402d7950def53",
+      "label": "docs: refresh corrected scanner census knowledge",
+      "title": "docs: refresh corrected scanner census knowledge",
+      "date": "2026-09-04T05:16:02.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b0818c3d4591b77087fa97b1bc7402d7950def53",
+      "provenance": [
+        {
+          "commit": "b0818c3d4591b77087fa97b1bc7402d7950def53",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b0818c3d4591b77087fa97b1bc7402d7950def53"
         }
       ]
     },
@@ -78852,6 +78884,9 @@
           "commit": "ac8e339e9bb3dfd0ea354444579162542a670bcf"
         },
         {
+          "commit": "b0818c3d4591b77087fa97b1bc7402d7950def53"
+        },
+        {
           "commit": "b0a214cabab9a6fd301844d88f088bd17884f4b5"
         },
         {
@@ -79326,6 +79361,9 @@
           "commit": "ac8e339e9bb3dfd0ea354444579162542a670bcf"
         },
         {
+          "commit": "b0818c3d4591b77087fa97b1bc7402d7950def53"
+        },
+        {
           "commit": "b0a214cabab9a6fd301844d88f088bd17884f4b5"
         },
         {
@@ -79798,6 +79836,9 @@
         },
         {
           "commit": "ac8e339e9bb3dfd0ea354444579162542a670bcf"
+        },
+        {
+          "commit": "b0818c3d4591b77087fa97b1bc7402d7950def53"
         },
         {
           "commit": "b0a214cabab9a6fd301844d88f088bd17884f4b5"
@@ -80350,6 +80391,9 @@
         },
         {
           "commit": "ac8e339e9bb3dfd0ea354444579162542a670bcf"
+        },
+        {
+          "commit": "b0818c3d4591b77087fa97b1bc7402d7950def53"
         },
         {
           "commit": "b0a214cabab9a6fd301844d88f088bd17884f4b5"
@@ -87003,7 +87047,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "076ff5659df5e513218bd482207717e29127399c",
+      "revision": "80bb186f2cc54e8575f1c75067106901e7295bbf",
       "currentBranch": "codex/world-graph-item-phase1",
       "defaultBranch": "main",
       "visibility": "public",
@@ -114846,12 +114890,12 @@
       "id": ".github/workflows/ci.yml",
       "label": ".github/workflows/ci.yml",
       "lines": 295,
-      "version": "de61fabb45302408",
+      "version": "47bb8f7846136a7a",
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "de61fabb45302408"
+          "version": "47bb8f7846136a7a"
         }
       ]
     },
@@ -178114,6 +178158,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:80bb186f2cc54e8575f1c75067106901e7295bbf",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "commit": "80bb186f2cc54e8575f1c75067106901e7295bbf"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:80bd0d0d77c7f0419eb784ee88843bf143e14cca",
       "to": "Artifact:omerta-phase2-vig-design.md",
       "provenance": {
@@ -191590,6 +191642,38 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "commit": "b0525efc981a100adbac23d9a1407582a4194483"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b0818c3d4591b77087fa97b1bc7402d7950def53",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "b0818c3d4591b77087fa97b1bc7402d7950def53"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b0818c3d4591b77087fa97b1bc7402d7950def53",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "b0818c3d4591b77087fa97b1bc7402d7950def53"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b0818c3d4591b77087fa97b1bc7402d7950def53",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "b0818c3d4591b77087fa97b1bc7402d7950def53"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b0818c3d4591b77087fa97b1bc7402d7950def53",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "b0818c3d4591b77087fa97b1bc7402d7950def53"
       }
     },
     {
@@ -258975,6 +259059,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:80bb186f2cc54e8575f1c75067106901e7295bbf",
+      "provenance": {
+        "commit": "80bb186f2cc54e8575f1c75067106901e7295bbf"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:80bd0d0d77c7f0419eb784ee88843bf143e14cca",
       "provenance": {
         "commit": "80bd0d0d77c7f0419eb784ee88843bf143e14cca"
@@ -261114,6 +261206,14 @@
       "to": "Commit:b0761aa902da39cf0d0f93c0a65f10651a3b5990",
       "provenance": {
         "commit": "b0761aa902da39cf0d0f93c0a65f10651a3b5990"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:b0818c3d4591b77087fa97b1bc7402d7950def53",
+      "provenance": {
+        "commit": "b0818c3d4591b77087fa97b1bc7402d7950def53"
       }
     },
     {
