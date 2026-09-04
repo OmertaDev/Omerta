@@ -20,6 +20,7 @@ flowchart LR
   dom_economy-ledger["economy-ledger"]
   dom_social-combat["social-combat"]
   dom_world-progression["world-progression"]
+  dom_world-graph["world-graph"]
   dom_enterprise-logistics["enterprise-logistics"]
   dom_vice-competition["vice-competition"]
   dom_law-intelligence["law-intelligence"]
@@ -36,12 +37,13 @@ flowchart LR
   sub_backend --> dom_platform-core
   sub_backend --> dom_social-combat
   sub_backend --> dom_vice-competition
+  sub_backend --> dom_world-graph
   sub_backend --> dom_world-progression
   sub_contracts --> dom_chain-economy
   sub_quality --> dom_delivery-assurance
   sub_web --> dom_client-experience
-  dom_delivery-assurance -->|413| dom_platform-core
-  dom_delivery-assurance -->|144| dom_economy-ledger
+  dom_delivery-assurance -->|425| dom_platform-core
+  dom_delivery-assurance -->|146| dom_economy-ledger
   dom_platform-core -->|42| dom_engagement-growth
   dom_world-progression -->|37| dom_platform-core
   dom_platform-core -->|35| dom_world-progression
@@ -51,16 +53,18 @@ flowchart LR
   dom_platform-core -->|32| dom_social-combat
   dom_enterprise-logistics -->|31| dom_platform-core
   dom_platform-core -->|31| dom_economy-ledger
+  dom_delivery-assurance -->|29| dom_world-graph
   dom_social-combat -->|29| dom_platform-core
   dom_delivery-assurance -->|27| dom_chain-economy
   dom_economy-ledger -->|26| dom_platform-core
-  dom_delivery-assurance -->|23| dom_social-combat
+  dom_delivery-assurance -->|25| dom_social-combat
   dom_delivery-assurance -->|23| dom_world-progression
   dom_platform-core -->|22| dom_vice-competition
   dom_delivery-assurance -->|21| dom_vice-competition
   dom_platform-core -->|17| dom_law-intelligence
   dom_vice-competition -->|17| dom_platform-core
   dom_chain-economy -->|14| dom_platform-core
+  dom_world-graph -->|14| dom_platform-core
   dom_delivery-assurance -->|13| dom_law-intelligence
   dom_law-intelligence -->|12| dom_platform-core
   dom_delivery-assurance -->|11| dom_enterprise-logistics
@@ -93,9 +97,11 @@ flowchart LR
   dom_world-progression -->|2| dom_economy-ledger
   dom_chain-economy -->|1| dom_enterprise-logistics
   dom_chain-economy -->|1| dom_social-combat
+  dom_economy-ledger -->|1| dom_world-graph
   dom_engagement-growth -->|1| dom_chain-economy
   dom_enterprise-logistics -->|1| dom_chain-economy
   dom_law-intelligence -->|1| dom_world-progression
+  dom_platform-core -->|1| dom_world-graph
   dom_social-combat -->|1| dom_economy-ledger
   dom_vice-competition -->|1| dom_economy-ledger
   dom_vice-competition -->|1| dom_engagement-growth

@@ -5,7 +5,7 @@
 | Module | Lines | Domain | Imports | Routes | Tables | Direct test imports |
 |---|---:|---|---:|---:|---:|---:|
 | [src/accrual.js](../../src/accrual.js) | 200 | platform-core | 0 / 3 | 0 | 3 | 4 |
-| [src/agentgateway.js](../../src/agentgateway.js) | 1161 | platform-core | 0 / 3 | 0 | 16 | 2 |
+| [src/agentgateway.js](../../src/agentgateway.js) | 1640 | platform-core | 0 / 4 | 0 | 22 | 4 |
 | [src/agentreferrals.js](../../src/agentreferrals.js) | 113 | platform-core | 0 / 1 | 0 | 2 | 0 |
 | [src/agentturn.js](../../src/agentturn.js) | 548 | platform-core | 12 / 1 | 0 | 2 | 0 |
 | [src/aggregate.js](../../src/aggregate.js) | 96 | platform-core | 0 / 4 | 0 | 1 | 1 |
@@ -38,15 +38,20 @@
 | [src/commission.js](../../src/commission.js) | 1395 | platform-core | 5 / 16 | 9 | 17 | 4 |
 | [src/community.js](../../src/community.js) | 220 | engagement-growth | 3 / 7 | 2 | 8 | 1 |
 | [src/contacts.js](../../src/contacts.js) | 247 | engagement-growth | 2 / 9 | 3 | 10 | 2 |
+| [src/content/automotive-salvage.js](../../src/content/automotive-salvage.js) | 72 | world-graph | 0 / 5 | 0 | 0 | 2 |
+| [src/content/belladonna.js](../../src/content/belladonna.js) | 242 | world-graph | 0 / 3 | 0 | 0 | 1 |
 | [src/content/compiler.js](../../src/content/compiler.js) | 1214 | platform-core | 1 / 12 | 0 | 0 | 8 |
-| [src/content/crafting.js](../../src/content/crafting.js) | 1064 | platform-core | 4 / 0 | 0 | 11 | 0 |
+| [src/content/core-materials.js](../../src/content/core-materials.js) | 39 | world-graph | 0 / 5 | 0 | 0 | 2 |
+| [src/content/crafting.js](../../src/content/crafting.js) | 1064 | world-graph | 4 / 0 | 0 | 11 | 0 |
 | [src/content/exchange.js](../../src/content/exchange.js) | 412 | economy-ledger | 1 / 0 | 0 | 6 | 0 |
+| [src/content/phase1.js](../../src/content/phase1.js) | 12 | world-graph | 3 / 2 | 0 | 0 | 0 |
 | [src/content/runtime.js](../../src/content/runtime.js) | 1095 | platform-core | 2 / 1 | 9 | 12 | 0 |
 | [src/convoy.js](../../src/convoy.js) | 581 | enterprise-logistics | 4 / 11 | 10 | 15 | 3 |
 | [src/corner.js](../../src/corner.js) | 158 | platform-core | 2 / 5 | 3 | 4 | 1 |
-| [src/crew.js](../../src/crew.js) | 400 | social-combat | 2 / 6 | 15 | 18 | 1 |
+| [src/crafting.js](../../src/crafting.js) | 550 | world-graph | 6 / 4 | 0 | 5 | 1 |
+| [src/crew.js](../../src/crew.js) | 440 | social-combat | 2 / 8 | 15 | 18 | 3 |
 | [src/day.js](../../src/day.js) | 72 | world-progression | 6 / 2 | 1 | 0 | 0 |
-| [src/db.js](../../src/db.js) | 679 | platform-core | 0 / 42 | 0 | 9 | 23 |
+| [src/db.js](../../src/db.js) | 679 | platform-core | 0 / 51 | 0 | 9 | 28 |
 | [src/dbhealth.js](../../src/dbhealth.js) | 148 | platform-core | 0 / 5 | 0 | 0 | 2 |
 | [src/deeds.js](../../src/deeds.js) | 576 | enterprise-logistics | 2 / 5 | 11 | 8 | 0 |
 | [src/desk.js](../../src/desk.js) | 512 | platform-core | 4 / 8 | 6 | 13 | 4 |
@@ -57,7 +62,7 @@
 | [src/drop.js](../../src/drop.js) | 349 | engagement-growth | 3 / 2 | 9 | 5 | 0 |
 | [src/duels.js](../../src/duels.js) | 213 | social-combat | 2 / 2 | 5 | 8 | 0 |
 | [src/dynasty.js](../../src/dynasty.js) | 249 | chain-economy | 3 / 4 | 7 | 10 | 1 |
-| [src/economy.js](../../src/economy.js) | 643 | economy-ledger | 3 / 4 | 26 | 18 | 2 |
+| [src/economy.js](../../src/economy.js) | 741 | economy-ledger | 4 / 5 | 26 | 18 | 3 |
 | [src/emission.js](../../src/emission.js) | 34 | economy-ledger | 1 / 2 | 1 | 0 | 1 |
 | [src/engagement.js](../../src/engagement.js) | 372 | engagement-growth | 1 / 5 | 1 | 8 | 2 |
 | [src/estate.js](../../src/estate.js) | 395 | enterprise-logistics | 3 / 7 | 11 | 8 | 2 |
@@ -70,7 +75,7 @@
 | [src/finalizedobservation.js](../../src/finalizedobservation.js) | 874 | platform-core | 0 / 0 | 0 | 0 | 0 |
 | [src/firstblood.js](../../src/firstblood.js) | 85 | social-combat | 1 / 2 | 0 | 3 | 0 |
 | [src/firsts.js](../../src/firsts.js) | 144 | world-progression | 1 / 6 | 1 | 7 | 1 |
-| [src/game.js](../../src/game.js) | 2595 | platform-core | 10 / 133 | 29 | 62 | 14 |
+| [src/game.js](../../src/game.js) | 2608 | platform-core | 10 / 139 | 29 | 62 | 14 |
 | [src/genesiscadence.js](../../src/genesiscadence.js) | 152 | platform-core | 0 / 4 | 0 | 0 | 1 |
 | [src/genesiscca.js](../../src/genesiscca.js) | 808 | platform-core | 0 / 3 | 0 | 0 | 1 |
 | [src/genesislaunch.js](../../src/genesislaunch.js) | 72 | platform-core | 1 / 3 | 0 | 1 | 0 |
@@ -80,7 +85,8 @@
 | [src/home.js](../../src/home.js) | 54 | engagement-growth | 13 / 3 | 1 | 0 | 1 |
 | [src/honor.js](../../src/honor.js) | 74 | social-combat | 1 / 12 | 1 | 5 | 1 |
 | [src/hustle.js](../../src/hustle.js) | 103 | platform-core | 2 / 3 | 2 | 3 | 0 |
-| [src/invariants.js](../../src/invariants.js) | 801 | economy-ledger | 1 / 87 | 1 | 44 | 81 |
+| [src/invariants.js](../../src/invariants.js) | 922 | economy-ledger | 1 / 88 | 1 | 49 | 82 |
+| [src/items.js](../../src/items.js) | 827 | world-graph | 2 / 5 | 0 | 8 | 1 |
 | [src/kitchen.js](../../src/kitchen.js) | 374 | platform-core | 3 / 3 | 13 | 8 | 0 |
 | [src/landmarks.js](../../src/landmarks.js) | 53 | world-progression | 3 / 1 | 2 | 2 | 0 |
 | [src/law.js](../../src/law.js) | 287 | law-intelligence | 3 / 7 | 9 | 7 | 2 |
@@ -91,9 +97,11 @@
 | [src/megaproject.js](../../src/megaproject.js) | 296 | enterprise-logistics | 4 / 4 | 6 | 7 | 0 |
 | [src/memo.js](../../src/memo.js) | 39 | economy-ledger | 0 / 3 | 0 | 0 | 1 |
 | [src/mentor.js](../../src/mentor.js) | 233 | social-combat | 2 / 5 | 7 | 7 | 1 |
+| [src/mysteries.js](../../src/mysteries.js) | 1241 | world-graph | 4 / 0 | 0 | 9 | 0 |
 | [src/nft.js](../../src/nft.js) | 123 | chain-economy | 3 / 3 | 0 | 2 | 1 |
 | [src/notoriety.js](../../src/notoriety.js) | 31 | world-progression | 1 / 2 | 0 | 2 | 0 |
 | [src/npcwar.js](../../src/npcwar.js) | 586 | world-progression | 2 / 8 | 7 | 8 | 1 |
+| [src/operations.js](../../src/operations.js) | 1228 | world-graph | 5 / 0 | 0 | 14 | 0 |
 | [src/opportunities.js](../../src/opportunities.js) | 156 | engagement-growth | 6 / 2 | 1 | 6 | 0 |
 | [src/ops.js](../../src/ops.js) | 225 | platform-core | 6 / 4 | 4 | 11 | 2 |
 | [src/pass.js](../../src/pass.js) | 119 | platform-core | 3 / 5 | 2 | 3 | 2 |
@@ -138,8 +146,9 @@
 | [src/routes/stable.js](../../src/routes/stable.js) | 31 | vice-competition | 2 / 1 | 8 | 2 | 0 |
 | [src/routes/territory.js](../../src/routes/territory.js) | 38 | enterprise-logistics | 2 / 1 | 10 | 2 | 0 |
 | [src/routes/underworld.js](../../src/routes/underworld.js) | 27 | world-progression | 2 / 1 | 7 | 1 | 0 |
+| [src/routes/worldgraph.js](../../src/routes/worldgraph.js) | 562 | world-graph | 4 / 2 | 20 | 7 | 1 |
 | [src/rules.generated.js](../../src/rules.generated.js) | 480 | platform-core | 0 / 2 | 0 | 10 | 1 |
-| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 201 | 0 | 0 | 113 |
+| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 205 | 0 | 0 | 113 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6145 | platform-core | 0 / 1 | 0 | 53 | 0 |
 | [src/rwahealth.js](../../src/rwahealth.js) | 684 | platform-core | 1 / 1 | 0 | 0 | 1 |
 | [src/rwahealthclearance.js](../../src/rwahealthclearance.js) | 1092 | platform-core | 4 / 0 | 0 | 6 | 0 |
@@ -153,7 +162,7 @@
 | [src/rwastockkeeper.js](../../src/rwastockkeeper.js) | 125 | platform-core | 0 / 1 | 0 | 5 | 0 |
 | [src/season.js](../../src/season.js) | 141 | world-progression | 1 / 2 | 2 | 8 | 0 |
 | [src/secrets.js](../../src/secrets.js) | 201 | law-intelligence | 3 / 6 | 5 | 6 | 2 |
-| [src/server.js](../../src/server.js) | 3472 | platform-core | 134 / 126 | 418 | 43 | 113 |
+| [src/server.js](../../src/server.js) | 3488 | platform-core | 135 / 127 | 418 | 43 | 114 |
 | [src/shipment.js](../../src/shipment.js) | 175 | enterprise-logistics | 2 / 2 | 3 | 8 | 0 |
 | [src/skills.js](../../src/skills.js) | 171 | world-progression | 4 / 3 | 5 | 4 | 0 |
 | [src/social.js](../../src/social.js) | 27 | social-combat | 6 / 13 | 44 | 3 | 6 |
@@ -191,3 +200,5 @@
 | [src/wire.js](../../src/wire.js) | 463 | law-intelligence | 4 / 7 | 11 | 18 | 2 |
 | [src/worker.js](../../src/worker.js) | 950 | platform-core | 56 / 10 | 0 | 31 | 9 |
 | [src/world.js](../../src/world.js) | 806 | world-progression | 3 / 11 | 14 | 10 | 2 |
+| [src/worldgraph-validate.js](../../src/worldgraph-validate.js) | 1855 | world-graph | 1 / 10 | 0 | 1 | 3 |
+| [src/worldgraph.js](../../src/worldgraph.js) | 111 | world-graph | 0 / 8 | 0 | 0 | 4 |
