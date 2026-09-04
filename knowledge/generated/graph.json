@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "80bb186f2cc54e8575f1c75067106901e7295bbf",
+  "sourceRevision": "349902a2854dfdf15a74c4b195aadf07e994fbc6",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 5815,
-    "edges": 25844,
+    "nodes": 5841,
+    "edges": 25913,
     "byNodeType": {
-      "Artifact": 1856,
+      "Artifact": 1868,
       "Command": 59,
-      "Commit": 1367,
+      "Commit": 1369,
       "Contract": 49,
-      "Document": 477,
+      "Document": 489,
       "Domain": 13,
       "ExternalDependency": 24,
       "HistoricalArtifact": 306,
@@ -65,19 +65,19 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 2026,
-      "CHANGED": 10412,
-      "CONTAINS": 1877,
+      "CHANGED": 10434,
+      "CONTAINS": 1889,
       "DECLARES": 59,
       "DEFINED_IN": 1140,
       "DEPENDS_ON": 64,
       "EXECUTES": 216,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1367,
+      "HAS_COMMIT": 1369,
       "IMPLEMENTS": 124,
       "IMPORTS": 1731,
       "INHERITS": 12,
-      "REFERENCES": 2915,
-      "REPRESENTS": 915,
+      "REFERENCES": 2936,
+      "REPRESENTS": 927,
       "TESTS": 613,
       "TRACKS": 126,
       "USES_TABLE": 1545
@@ -13377,6 +13377,282 @@
       "lastChangedAt": "2026-09-03T17:21:38.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "1153c378e4aaa1e073967e27cfbf202ac36ae54f"
+    },
+    {
+      "key": "Artifact:docs/superpowers/specs/2026-09-04-phase-3a-mystery-runtime-evidence-board-design.md",
+      "type": "Artifact",
+      "id": "docs/superpowers/specs/2026-09-04-phase-3a-mystery-runtime-evidence-board-design.md",
+      "label": "2026-09-04-phase-3a-mystery-runtime-evidence-board-design.md",
+      "path": "docs/superpowers/specs/2026-09-04-phase-3a-mystery-runtime-evidence-board-design.md",
+      "kind": "design",
+      "extension": ".md",
+      "bytes": 31471,
+      "lines": 409,
+      "version": "426ad2f96d362f43",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-phase-3a-mystery-runtime-evidence-board-design.md",
+          "line": 1,
+          "version": "426ad2f96d362f43"
+        }
+      ],
+      "lastChangedAt": "2026-09-04T12:39:49.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+    },
+    {
+      "key": "Artifact:docs/superpowers/specs/2026-09-04-phase-3b-crew-social-puzzle-primitives-design.md",
+      "type": "Artifact",
+      "id": "docs/superpowers/specs/2026-09-04-phase-3b-crew-social-puzzle-primitives-design.md",
+      "label": "2026-09-04-phase-3b-crew-social-puzzle-primitives-design.md",
+      "path": "docs/superpowers/specs/2026-09-04-phase-3b-crew-social-puzzle-primitives-design.md",
+      "kind": "design",
+      "extension": ".md",
+      "bytes": 28327,
+      "lines": 440,
+      "version": "3aa65d63d01e1cda",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-phase-3b-crew-social-puzzle-primitives-design.md",
+          "line": 1,
+          "version": "3aa65d63d01e1cda"
+        }
+      ],
+      "lastChangedAt": "2026-09-04T12:39:49.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+    },
+    {
+      "key": "Artifact:docs/superpowers/specs/2026-09-04-phase-3c-family-hierarchical-investigation-design.md",
+      "type": "Artifact",
+      "id": "docs/superpowers/specs/2026-09-04-phase-3c-family-hierarchical-investigation-design.md",
+      "label": "2026-09-04-phase-3c-family-hierarchical-investigation-design.md",
+      "path": "docs/superpowers/specs/2026-09-04-phase-3c-family-hierarchical-investigation-design.md",
+      "kind": "design",
+      "extension": ".md",
+      "bytes": 31943,
+      "lines": 448,
+      "version": "e2fe30247a3ca2f5",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-phase-3c-family-hierarchical-investigation-design.md",
+          "line": 1,
+          "version": "e2fe30247a3ca2f5"
+        }
+      ],
+      "lastChangedAt": "2026-09-04T12:39:49.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+    },
+    {
+      "key": "Artifact:docs/superpowers/specs/2026-09-04-phase-3d-dynamic-cross-season-mystery-design.md",
+      "type": "Artifact",
+      "id": "docs/superpowers/specs/2026-09-04-phase-3d-dynamic-cross-season-mystery-design.md",
+      "label": "2026-09-04-phase-3d-dynamic-cross-season-mystery-design.md",
+      "path": "docs/superpowers/specs/2026-09-04-phase-3d-dynamic-cross-season-mystery-design.md",
+      "kind": "design",
+      "extension": ".md",
+      "bytes": 35714,
+      "lines": 488,
+      "version": "534b604077ebde6d",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-phase-3d-dynamic-cross-season-mystery-design.md",
+          "line": 1,
+          "version": "534b604077ebde6d"
+        }
+      ],
+      "lastChangedAt": "2026-09-04T12:39:49.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+    },
+    {
+      "key": "Artifact:docs/superpowers/specs/2026-09-04-phase-3e-authoring-corpus-content-desk-design.md",
+      "type": "Artifact",
+      "id": "docs/superpowers/specs/2026-09-04-phase-3e-authoring-corpus-content-desk-design.md",
+      "label": "2026-09-04-phase-3e-authoring-corpus-content-desk-design.md",
+      "path": "docs/superpowers/specs/2026-09-04-phase-3e-authoring-corpus-content-desk-design.md",
+      "kind": "design",
+      "extension": ".md",
+      "bytes": 48931,
+      "lines": 545,
+      "version": "e93e6e2363724bdc",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-phase-3e-authoring-corpus-content-desk-design.md",
+          "line": 1,
+          "version": "e93e6e2363724bdc"
+        }
+      ],
+      "lastChangedAt": "2026-09-04T12:39:49.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+    },
+    {
+      "key": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
+      "type": "Artifact",
+      "id": "docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
+      "label": "2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
+      "path": "docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
+      "kind": "design",
+      "extension": ".md",
+      "bytes": 23305,
+      "lines": 364,
+      "version": "f5f6aa9d96a11c60",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
+          "line": 1,
+          "version": "f5f6aa9d96a11c60"
+        }
+      ],
+      "lastChangedAt": "2026-09-04T12:39:49.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+    },
+    {
+      "key": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
+      "type": "Artifact",
+      "id": "docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
+      "label": "2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
+      "path": "docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
+      "kind": "design",
+      "extension": ".md",
+      "bytes": 22300,
+      "lines": 355,
+      "version": "a35f766ae1090f7b",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
+          "line": 1,
+          "version": "a35f766ae1090f7b"
+        }
+      ],
+      "lastChangedAt": "2026-09-04T12:39:49.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+    },
+    {
+      "key": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md",
+      "type": "Artifact",
+      "id": "docs/superpowers/specs/2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md",
+      "label": "2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md",
+      "path": "docs/superpowers/specs/2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md",
+      "kind": "design",
+      "extension": ".md",
+      "bytes": 25389,
+      "lines": 409,
+      "version": "e4f24442bb3a1730",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md",
+          "line": 1,
+          "version": "e4f24442bb3a1730"
+        }
+      ],
+      "lastChangedAt": "2026-09-04T12:39:49.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+    },
+    {
+      "key": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md",
+      "type": "Artifact",
+      "id": "docs/superpowers/specs/2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md",
+      "label": "2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md",
+      "path": "docs/superpowers/specs/2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md",
+      "kind": "design",
+      "extension": ".md",
+      "bytes": 23818,
+      "lines": 376,
+      "version": "ce1dcd496f65c9c7",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md",
+          "line": 1,
+          "version": "ce1dcd496f65c9c7"
+        }
+      ],
+      "lastChangedAt": "2026-09-04T12:39:49.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+    },
+    {
+      "key": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2e-trade-social-provenance-nft-readiness-design.md",
+      "type": "Artifact",
+      "id": "docs/superpowers/specs/2026-09-04-world-graph-phase-2e-trade-social-provenance-nft-readiness-design.md",
+      "label": "2026-09-04-world-graph-phase-2e-trade-social-provenance-nft-readiness-design.md",
+      "path": "docs/superpowers/specs/2026-09-04-world-graph-phase-2e-trade-social-provenance-nft-readiness-design.md",
+      "kind": "design",
+      "extension": ".md",
+      "bytes": 36578,
+      "lines": 522,
+      "version": "b30625711ccd254a",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2e-trade-social-provenance-nft-readiness-design.md",
+          "line": 1,
+          "version": "b30625711ccd254a"
+        }
+      ],
+      "lastChangedAt": "2026-09-04T12:39:49.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+    },
+    {
+      "key": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "type": "Artifact",
+      "id": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "label": "2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "path": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "kind": "design",
+      "extension": ".md",
+      "bytes": 93622,
+      "lines": 935,
+      "version": "42d28164c7c29255",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+          "line": 1,
+          "version": "42d28164c7c29255"
+        }
+      ],
+      "lastChangedAt": "2026-09-04T12:39:49.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+    },
+    {
+      "key": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "type": "Artifact",
+      "id": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "label": "2026-09-04-world-graph-phases-2-3-program-design.md",
+      "path": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "kind": "design",
+      "extension": ".md",
+      "bytes": 18530,
+      "lines": 221,
+      "version": "e1d13d5144e047bd",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+          "line": 1,
+          "version": "e1d13d5144e047bd"
+        }
+      ],
+      "lastChangedAt": "2026-09-04T12:39:49.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
     },
     {
       "key": "Artifact:docs/WIKI.md",
@@ -32840,18 +33116,18 @@
       "extension": ".md",
       "bytes": 54622,
       "lines": 735,
-      "version": "82f6e6b9ad7e6355",
+      "version": "f2ec4d6f66344c7b",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "82f6e6b9ad7e6355"
+          "version": "f2ec4d6f66344c7b"
         }
       ],
-      "lastChangedAt": "2026-09-04T05:15:30.000Z",
+      "lastChangedAt": "2026-09-04T12:39:49.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "076ff5659df5e513218bd482207717e29127399c"
+      "lastChangedCommit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
     },
     {
       "key": "Artifact:src/accrual.js",
@@ -44350,6 +44626,22 @@
       ]
     },
     {
+      "key": "Commit:0bdc0af79261fbbb00acab5e4516747f40cbe365",
+      "type": "Commit",
+      "id": "0bdc0af79261fbbb00acab5e4516747f40cbe365",
+      "label": "docs: refresh CI budget knowledge",
+      "title": "docs: refresh CI budget knowledge",
+      "date": "2026-09-04T06:02:47.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0bdc0af79261fbbb00acab5e4516747f40cbe365",
+      "provenance": [
+        {
+          "commit": "0bdc0af79261fbbb00acab5e4516747f40cbe365",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0bdc0af79261fbbb00acab5e4516747f40cbe365"
+        }
+      ]
+    },
+    {
       "key": "Commit:0be1b066e7722f9c5e69487bd9489c1829637a23",
       "type": "Commit",
       "id": "0be1b066e7722f9c5e69487bd9489c1829637a23",
@@ -48010,6 +48302,22 @@
         {
           "commit": "3440ef8bce6797e0b62fc08441a1e1b0e49ce9da",
           "url": "https://github.com/OmertaDev/Omerta/commit/3440ef8bce6797e0b62fc08441a1e1b0e49ce9da"
+        }
+      ]
+    },
+    {
+      "key": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "type": "Commit",
+      "id": "349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "label": "docs: specify world graph phases 2 and 3",
+      "title": "docs: specify world graph phases 2 and 3",
+      "date": "2026-09-04T12:39:49.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "provenance": [
+        {
+          "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/349902a2854dfdf15a74c4b195aadf07e994fbc6"
         }
       ]
     },
@@ -71920,6 +72228,198 @@
       ]
     },
     {
+      "key": "Document:docs/superpowers/specs/2026-09-04-phase-3a-mystery-runtime-evidence-board-design.md",
+      "type": "Document",
+      "id": "docs/superpowers/specs/2026-09-04-phase-3a-mystery-runtime-evidence-board-design.md",
+      "label": "docs/superpowers/specs/2026-09-04-phase-3a-mystery-runtime-evidence-board-design.md",
+      "documentType": "design",
+      "lines": 409,
+      "version": "426ad2f96d362f43",
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-phase-3a-mystery-runtime-evidence-board-design.md",
+          "line": 1,
+          "version": "426ad2f96d362f43"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/superpowers/specs/2026-09-04-phase-3b-crew-social-puzzle-primitives-design.md",
+      "type": "Document",
+      "id": "docs/superpowers/specs/2026-09-04-phase-3b-crew-social-puzzle-primitives-design.md",
+      "label": "docs/superpowers/specs/2026-09-04-phase-3b-crew-social-puzzle-primitives-design.md",
+      "documentType": "design",
+      "lines": 440,
+      "version": "3aa65d63d01e1cda",
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-phase-3b-crew-social-puzzle-primitives-design.md",
+          "line": 1,
+          "version": "3aa65d63d01e1cda"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/superpowers/specs/2026-09-04-phase-3c-family-hierarchical-investigation-design.md",
+      "type": "Document",
+      "id": "docs/superpowers/specs/2026-09-04-phase-3c-family-hierarchical-investigation-design.md",
+      "label": "docs/superpowers/specs/2026-09-04-phase-3c-family-hierarchical-investigation-design.md",
+      "documentType": "design",
+      "lines": 448,
+      "version": "e2fe30247a3ca2f5",
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-phase-3c-family-hierarchical-investigation-design.md",
+          "line": 1,
+          "version": "e2fe30247a3ca2f5"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/superpowers/specs/2026-09-04-phase-3d-dynamic-cross-season-mystery-design.md",
+      "type": "Document",
+      "id": "docs/superpowers/specs/2026-09-04-phase-3d-dynamic-cross-season-mystery-design.md",
+      "label": "docs/superpowers/specs/2026-09-04-phase-3d-dynamic-cross-season-mystery-design.md",
+      "documentType": "design",
+      "lines": 488,
+      "version": "534b604077ebde6d",
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-phase-3d-dynamic-cross-season-mystery-design.md",
+          "line": 1,
+          "version": "534b604077ebde6d"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/superpowers/specs/2026-09-04-phase-3e-authoring-corpus-content-desk-design.md",
+      "type": "Document",
+      "id": "docs/superpowers/specs/2026-09-04-phase-3e-authoring-corpus-content-desk-design.md",
+      "label": "docs/superpowers/specs/2026-09-04-phase-3e-authoring-corpus-content-desk-design.md",
+      "documentType": "design",
+      "lines": 545,
+      "version": "e93e6e2363724bdc",
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-phase-3e-authoring-corpus-content-desk-design.md",
+          "line": 1,
+          "version": "e93e6e2363724bdc"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
+      "type": "Document",
+      "id": "docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
+      "label": "docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
+      "documentType": "design",
+      "lines": 364,
+      "version": "f5f6aa9d96a11c60",
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
+          "line": 1,
+          "version": "f5f6aa9d96a11c60"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
+      "type": "Document",
+      "id": "docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
+      "label": "docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
+      "documentType": "design",
+      "lines": 355,
+      "version": "a35f766ae1090f7b",
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
+          "line": 1,
+          "version": "a35f766ae1090f7b"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/superpowers/specs/2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md",
+      "type": "Document",
+      "id": "docs/superpowers/specs/2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md",
+      "label": "docs/superpowers/specs/2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md",
+      "documentType": "design",
+      "lines": 409,
+      "version": "e4f24442bb3a1730",
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md",
+          "line": 1,
+          "version": "e4f24442bb3a1730"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/superpowers/specs/2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md",
+      "type": "Document",
+      "id": "docs/superpowers/specs/2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md",
+      "label": "docs/superpowers/specs/2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md",
+      "documentType": "design",
+      "lines": 376,
+      "version": "ce1dcd496f65c9c7",
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md",
+          "line": 1,
+          "version": "ce1dcd496f65c9c7"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/superpowers/specs/2026-09-04-world-graph-phase-2e-trade-social-provenance-nft-readiness-design.md",
+      "type": "Document",
+      "id": "docs/superpowers/specs/2026-09-04-world-graph-phase-2e-trade-social-provenance-nft-readiness-design.md",
+      "label": "docs/superpowers/specs/2026-09-04-world-graph-phase-2e-trade-social-provenance-nft-readiness-design.md",
+      "documentType": "design",
+      "lines": 522,
+      "version": "b30625711ccd254a",
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2e-trade-social-provenance-nft-readiness-design.md",
+          "line": 1,
+          "version": "b30625711ccd254a"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "type": "Document",
+      "id": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "label": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "documentType": "design",
+      "lines": 935,
+      "version": "42d28164c7c29255",
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+          "line": 1,
+          "version": "42d28164c7c29255"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "type": "Document",
+      "id": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "label": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "documentType": "design",
+      "lines": 221,
+      "version": "e1d13d5144e047bd",
+      "provenance": [
+        {
+          "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+          "line": 1,
+          "version": "e1d13d5144e047bd"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/WIKI.md",
       "type": "Document",
       "id": "docs/WIKI.md",
@@ -73830,12 +74330,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 735,
-      "version": "82f6e6b9ad7e6355",
+      "version": "f2ec4d6f66344c7b",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "82f6e6b9ad7e6355"
+          "version": "f2ec4d6f66344c7b"
         }
       ]
     },
@@ -78407,6 +78907,9 @@
           "commit": "30514acce0345f7ed2d7ebde333e5de343c699e5"
         },
         {
+          "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+        },
+        {
           "commit": "36d5bb2f549adedb207d6627a2197ec550f8db4e"
         },
         {
@@ -78578,6 +79081,9 @@
           "commit": "0a63c20b46b5d90b1541b3829af3d0f6e77404f4"
         },
         {
+          "commit": "0bdc0af79261fbbb00acab5e4516747f40cbe365"
+        },
+        {
           "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
         },
         {
@@ -78663,6 +79169,9 @@
         },
         {
           "commit": "33e8c06d6372c68a97ac8b6cdee8b5c17caf4f4e"
+        },
+        {
+          "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
         },
         {
           "commit": "36b737e4e28237323cf2a95680ef0a4125a7dcc6"
@@ -79055,6 +79564,9 @@
           "commit": "0a63c20b46b5d90b1541b3829af3d0f6e77404f4"
         },
         {
+          "commit": "0bdc0af79261fbbb00acab5e4516747f40cbe365"
+        },
+        {
           "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
         },
         {
@@ -79140,6 +79652,9 @@
         },
         {
           "commit": "33e8c06d6372c68a97ac8b6cdee8b5c17caf4f4e"
+        },
+        {
+          "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
         },
         {
           "commit": "36b737e4e28237323cf2a95680ef0a4125a7dcc6"
@@ -79532,6 +80047,9 @@
           "commit": "0a63c20b46b5d90b1541b3829af3d0f6e77404f4"
         },
         {
+          "commit": "0bdc0af79261fbbb00acab5e4516747f40cbe365"
+        },
+        {
           "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
         },
         {
@@ -79617,6 +80135,9 @@
         },
         {
           "commit": "33e8c06d6372c68a97ac8b6cdee8b5c17caf4f4e"
+        },
+        {
+          "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
         },
         {
           "commit": "36b737e4e28237323cf2a95680ef0a4125a7dcc6"
@@ -80087,6 +80608,9 @@
           "commit": "0a63c20b46b5d90b1541b3829af3d0f6e77404f4"
         },
         {
+          "commit": "0bdc0af79261fbbb00acab5e4516747f40cbe365"
+        },
+        {
           "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
         },
         {
@@ -80172,6 +80696,9 @@
         },
         {
           "commit": "33e8c06d6372c68a97ac8b6cdee8b5c17caf4f4e"
+        },
+        {
+          "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
         },
         {
           "commit": "36b737e4e28237323cf2a95680ef0a4125a7dcc6"
@@ -87047,12 +87574,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "80bb186f2cc54e8575f1c75067106901e7295bbf",
-      "currentBranch": "codex/world-graph-item-phase1",
+      "revision": "349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "currentBranch": "codex/world-graph-phases-2-3",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 1856,
+      "currentArtifactCount": 1868,
       "provenance": [
         {
           "file": "README.md",
@@ -135910,6 +136437,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:0bdc0af79261fbbb00acab5e4516747f40cbe365",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "0bdc0af79261fbbb00acab5e4516747f40cbe365"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0bdc0af79261fbbb00acab5e4516747f40cbe365",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "0bdc0af79261fbbb00acab5e4516747f40cbe365"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0bdc0af79261fbbb00acab5e4516747f40cbe365",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "0bdc0af79261fbbb00acab5e4516747f40cbe365"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0bdc0af79261fbbb00acab5e4516747f40cbe365",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "0bdc0af79261fbbb00acab5e4516747f40cbe365"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:0be1b066e7722f9c5e69487bd9489c1829637a23",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -152650,6 +153209,150 @@
       "to": "Artifact:test/loans.js",
       "provenance": {
         "commit": "3440ef8bce6797e0b62fc08441a1e1b0e49ce9da"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3a-mystery-runtime-evidence-board-design.md",
+      "provenance": {
+        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3b-crew-social-puzzle-primitives-design.md",
+      "provenance": {
+        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3c-family-hierarchical-investigation-design.md",
+      "provenance": {
+        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3d-dynamic-cross-season-mystery-design.md",
+      "provenance": {
+        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3e-authoring-corpus-content-desk-design.md",
+      "provenance": {
+        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
+      "provenance": {
+        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
+      "provenance": {
+        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md",
+      "provenance": {
+        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md",
+      "provenance": {
+        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2e-trade-social-provenance-nft-readiness-design.md",
+      "provenance": {
+        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "provenance": {
+        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "provenance": {
+        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
       }
     },
     {
@@ -223900,6 +224603,114 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3a-mystery-runtime-evidence-board-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-phase-3a-mystery-runtime-evidence-board-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3b-crew-social-puzzle-primitives-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-phase-3b-crew-social-puzzle-primitives-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3c-family-hierarchical-investigation-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-phase-3c-family-hierarchical-investigation-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3d-dynamic-cross-season-mystery-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-phase-3d-dynamic-cross-season-mystery-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3e-authoring-corpus-content-desk-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-phase-3e-authoring-corpus-content-desk-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2e-trade-social-provenance-nft-readiness-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2e-trade-social-provenance-nft-readiness-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/WIKI.md",
       "provenance": {
         "file": "docs/WIKI.md",
@@ -253835,6 +254646,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:0bdc0af79261fbbb00acab5e4516747f40cbe365",
+      "provenance": {
+        "commit": "0bdc0af79261fbbb00acab5e4516747f40cbe365"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0be1b066e7722f9c5e69487bd9489c1829637a23",
       "provenance": {
         "commit": "0be1b066e7722f9c5e69487bd9489c1829637a23"
@@ -255662,6 +256481,14 @@
       "to": "Commit:3440ef8bce6797e0b62fc08441a1e1b0e49ce9da",
       "provenance": {
         "commit": "3440ef8bce6797e0b62fc08441a1e1b0e49ce9da"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:349902a2854dfdf15a74c4b195aadf07e994fbc6",
+      "provenance": {
+        "commit": "349902a2854dfdf15a74c4b195aadf07e994fbc6"
       }
     },
     {
@@ -303001,6 +303828,195 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
+      "to": "Artifact:test/worldgraph-api.js",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
+        "line": 325
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "to": "Artifact:src/content/compiler.js",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+        "line": 82
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "to": "Artifact:src/content/runtime.js",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+        "line": 82
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+        "line": 347
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+        "line": 81
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "to": "Artifact:src/routes/worldgraph.js",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+        "line": 832
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "to": "Artifact:src/worldgraph-validate.js",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+        "line": 81
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "to": "Artifact:src/worldgraph.js",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+        "line": 81
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "to": "Artifact:test/worldgraph-api.js",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+        "line": 832
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "to": "Artifact:test/worldgraph-api.js",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+        "line": 843
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3a-mystery-runtime-evidence-board-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+        "line": 28
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3b-crew-social-puzzle-primitives-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+        "line": 29
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3c-family-hierarchical-investigation-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+        "line": 30
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3d-dynamic-cross-season-mystery-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+        "line": 31
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3e-authoring-corpus-content-desk-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+        "line": 32
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+        "line": 23
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+        "line": 24
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+        "line": 25
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+        "line": 26
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2e-trade-social-provenance-nft-readiness-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+        "line": 27
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+        "line": 22
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/WIKI.md",
       "to": "Artifact:tools/agent-alpha.js",
       "provenance": {
@@ -310466,6 +311482,114 @@
       "to": "Artifact:docs/superpowers/specs/2026-09-03-world-graph-item-economy-design.md",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-03-world-graph-item-economy-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/superpowers/specs/2026-09-04-phase-3a-mystery-runtime-evidence-board-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3a-mystery-runtime-evidence-board-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-phase-3a-mystery-runtime-evidence-board-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/superpowers/specs/2026-09-04-phase-3b-crew-social-puzzle-primitives-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3b-crew-social-puzzle-primitives-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-phase-3b-crew-social-puzzle-primitives-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/superpowers/specs/2026-09-04-phase-3c-family-hierarchical-investigation-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3c-family-hierarchical-investigation-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-phase-3c-family-hierarchical-investigation-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/superpowers/specs/2026-09-04-phase-3d-dynamic-cross-season-mystery-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3d-dynamic-cross-season-mystery-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-phase-3d-dynamic-cross-season-mystery-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/superpowers/specs/2026-09-04-phase-3e-authoring-corpus-content-desk-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-phase-3e-authoring-corpus-content-desk-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-phase-3e-authoring-corpus-content-desk-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2a-materials-salvage-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/superpowers/specs/2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2c-workshops-crafting-durability-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/superpowers/specs/2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2d-ammunition-contraband-equipment-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/superpowers/specs/2026-09-04-world-graph-phase-2e-trade-social-provenance-nft-readiness-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phase-2e-trade-social-provenance-nft-readiness-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phase-2e-trade-social-provenance-nft-readiness-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-cross-cutting-design.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "to": "Artifact:docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
+      "provenance": {
+        "file": "docs/superpowers/specs/2026-09-04-world-graph-phases-2-3-program-design.md",
         "line": 1
       }
     },
