@@ -8,6 +8,7 @@
 // mutation authority (living character, location, level, skill, car, quantities, and templates) is
 // resolved again from locked rows and the validated immutable graph.
 import { GameError, ledger } from './game.js';
+import { phase1CraftReason } from './content/phase1-policy.js';
 import {
   carMatchesGraphSelector,
   consumeOwnedCarForItemMutation,
@@ -399,7 +400,7 @@ async function debitRecipeCash(client, actor, recipe) {
     characterId: actor.character.id,
     currency: 'cash',
     amount: -cashCost,
-    reason: `craft:${recipe.id}`,
+    reason: phase1CraftReason(recipe.id),
   });
   registerItemTransactionUndo(client, () => client.query(
     'DELETE FROM transactions WHERE id=$1', [transactionId],

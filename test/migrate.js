@@ -756,6 +756,74 @@ const PHASE1_OWNER_TUPLE_DISPOSITION = {
   assert.deepEqual(staleTuples, [],
     `stale Phase 1 owner/depositor disposition(s): ${staleTuples.join(', ')}`);
 
+  // The classifications above describe preservation; this source guard proves the production death
+  // path honors it. There are deliberately no Phase 1 death mutations in the approved ledger. A
+  // future exception must name its exact handler, verb, and table here, so adding a generic-owner
+  // table to runEstate (directly or through a named death helper) cannot silently become inheritance.
+  const PHASE1_DEATH_MUTATION_APPROVALS = new Set([]);
+  const estateSource = fs.readFileSync(path.join(srcDir, 'social', 'estate.js'), 'utf8');
+  const functionBody = (source, functionName) => {
+    const head = new RegExp(`(?:export\\s+)?(?:async\\s+)?function\\s+${functionName}\\s*\\(`).exec(source);
+    assert(head, `death helper ${functionName} must remain statically inspectable`);
+    const open = source.indexOf('{', head.index + head[0].length);
+    assert(open >= 0, `death helper ${functionName} must have a block body`);
+    let depth = 1;
+    let quote = null;
+    let lineComment = false;
+    let blockComment = false;
+    for (let i = open + 1; i < source.length; i++) {
+      const ch = source[i];
+      const next = source[i + 1];
+      if (lineComment) { if (ch === '\n') lineComment = false; continue; }
+      if (blockComment) { if (ch === '*' && next === '/') { blockComment = false; i++; } continue; }
+      if (quote) {
+        if (ch === '\\') { i++; continue; }
+        if (ch === quote) quote = null;
+        continue;
+      }
+      if (ch === '/' && next === '/') { lineComment = true; i++; continue; }
+      if (ch === '/' && next === '*') { blockComment = true; i++; continue; }
+      if (ch === "'" || ch === '"' || ch === '`') { quote = ch; continue; }
+      if (ch === '{') depth++;
+      if (ch === '}' && --depth === 0) return source.slice(open + 1, i);
+    }
+    assert.fail(`death helper ${functionName} has an unterminated block body`);
+  };
+  const runEstateSource = functionBody(estateSource, 'runEstate');
+  const deathHelperNames = new Set(['runEstate', 'clearInboundPointers']);
+  for (const match of runEstateSource.matchAll(/\b([A-Za-z][A-Za-z0-9]*(?:AtDeath))\s*\(/g)) {
+    deathHelperNames.add(match[1]);
+  }
+  const deathSources = [...deathHelperNames].map((name) => ({
+    name,
+    body: functionBody(allSrc, name),
+  }));
+  const mutations = [];
+  for (const { name, body } of deathSources) {
+    for (const match of body.matchAll(/\b(DELETE\s+FROM|UPDATE)\s+([a-z_][a-z0-9_]*)\b/gi)) {
+      mutations.push({ handler: name, verb: match[1].toUpperCase().replace(/\s+/g, '_'), table: match[2] });
+    }
+    // runEstate's bounded wipe lists use an interpolated table identifier. Associate every listed
+    // literal with the interpolated verb; otherwise a newly-added Phase 1 name could evade the
+    // direct-SQL matcher merely by being placed in the loop.
+    for (const match of body.matchAll(/for\s*\(\s*const\s+(\w+)\s+of\s+\[([\s\S]*?)\]\s*\)\s*await\s+client\.query\(\s*`(DELETE\s+FROM|UPDATE)\s+\$\{\1\}/gi)) {
+      for (const tableMatch of match[2].matchAll(/['"]([a-z_][a-z0-9_]*)['"]/gi)) {
+        mutations.push({ handler: name, verb: match[3].toUpperCase().replace(/\s+/g, '_'), table: tableMatch[1] });
+      }
+    }
+  }
+  const phase1DeathMutations = mutations
+    .filter(({ table }) => tables.has(table))
+    .map(({ handler, verb, table }) => `${handler}:${verb}:${table}`);
+  const unapprovedDeathMutations = phase1DeathMutations
+    .filter((mutation) => !PHASE1_DEATH_MUTATION_APPROVALS.has(mutation));
+  const staleDeathApprovals = [...PHASE1_DEATH_MUTATION_APPROVALS]
+    .filter((approval) => !phase1DeathMutations.includes(approval));
+  assert.deepEqual(unapprovedDeathMutations, [],
+    `Phase 1 historical owner state must not be mutated by death: ${unapprovedDeathMutations.join(', ')}`);
+  assert.deepEqual(staleDeathApprovals, [],
+    `stale Phase 1 death-mutation approval(s): ${staleDeathApprovals.join(', ')}`);
+
   const phase1MigrationColumns = {
     item_stacks: 'owner_scope', item_instances: 'id', item_events: 'sequence',
     item_mutation_guards: 'idempotency_key', operation_escrow: 'item_id', mystery_instances: 'id',

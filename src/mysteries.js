@@ -718,6 +718,21 @@ async function actionAuthority(client, context, owner, graphId) {
   return { pkg, instance };
 }
 
+// Cancellation is a release-only recovery path. It deliberately binds the stored instance and its
+// immutable owner/version tuple without interpreting nodes or executing effects from either the old
+// or current package. This keeps old-version escrow recoverable after an activation bump while every
+// gameplay action continues to require assertPinned against the current registry.
+async function cancellationAuthority(client, context, owner, graphId) {
+  await authorizeOwner(client, context, owner);
+  packageOf(context, graphId);
+  const instance = await instanceFor(client, owner, graphId);
+  if (!instance) fail('mystery_not_started', 'Start this mystery first.');
+  if (instance.authority_account_id !== context.accountId) {
+    fail('mystery_owner_forbidden', 'That account cannot control this mystery instance.');
+  }
+  return { instance };
+}
+
 async function lockedActionInstance(client, authority, context, { allowClosed = false } = {}) {
   const instance = await instanceFor(
     client,
@@ -732,6 +747,21 @@ async function lockedActionInstance(client, authority, context, { allowClosed = 
   assertPinned(instance, authority.pkg);
   if (!allowClosed && instance.status !== 'active') {
     fail('mystery_closed', 'That mystery instance is not active.');
+  }
+  return instance;
+}
+
+async function lockedCancellationInstance(client, authority, context) {
+  const instance = await instanceFor(
+    client,
+    { scope: authority.instance.owner_scope, id: authority.instance.owner_id },
+    authority.instance.graph_id,
+    { lock: true },
+  );
+  if (!instance || instance.id !== authority.instance.id
+    || instance.authority_account_id !== context.accountId
+    || Number(instance.graph_version) !== Number(authority.instance.graph_version)) {
+    fail('mystery_owner_forbidden', 'Mystery instance authority changed.');
   }
   return instance;
 }
@@ -1117,23 +1147,25 @@ export async function cancelMystery(
   const owner = ownerOf(ownerValue);
   const graphId = canonical(graphIdValue, 'Mystery graph id');
   const options = mutationOptions(optionsValue);
-  const authority = await actionAuthority(client, context, owner, graphId);
+  const authority = await cancellationAuthority(client, context, owner, graphId);
   return withItemMutation(
     client,
     owner,
     'mystery_action',
     options.idempotencyKey,
     {
-      action: 'cancel', graph: graphIdentity(authority.pkg),
+      action: 'cancel',
+      graph: {
+        id: authority.instance.graph_id,
+        version: Number(authority.instance.graph_version),
+      },
       itemAuthority: {
         operations: [authority.instance.id],
         destinations: [owner],
       },
     },
     async (mutation) => {
-      const instance = await lockedActionInstance(
-        client, authority, context, { allowClosed: true },
-      );
+      const instance = await lockedCancellationInstance(client, authority, context);
       if (instance.status === 'canceled') {
         return { ok: true, ...instanceProjection(instance), releasedEscrowCount: 0 };
       }

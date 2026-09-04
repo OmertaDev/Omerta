@@ -249,6 +249,11 @@ const otherContext = createMysteryContext({
   registry, accountId: OTHER_ACCOUNT, now: NOW,
   timeWindows: context.timeWindows,
 });
+const versionTwoRegistry = loadAndValidateGraphPackages([corePackage, mysteryPackage(2)]);
+const versionTwoContext = createMysteryContext({
+  registry: versionTwoRegistry, accountId: ACCOUNT, now: NOW,
+  timeWindows: context.timeWindows,
+});
 
 assert(Object.isFrozen(context));
 assert(Object.isFrozen(context.timeWindows));
@@ -365,16 +370,21 @@ try {
   );
   assert.deepEqual((await inventoryBoard(pool, { scope: 'operation', id: characterStarted.instanceId }))
     .items.map(({ id }) => id), [cancelTool.id]);
-  const canceled = await act(
-    cancelMystery, characterOwner, GRAPH_ID, { idempotencyKey: 'm-cancel-1' },
+  await assert.rejects(
+    mysteryBoard(pool, versionTwoContext, characterOwner, GRAPH_ID),
+    (error) => error?.code === 'stale_graph_version' && error?.data?.pinnedVersion === 1,
+    'a version bump cannot reinterpret the old active mystery or execute its effects',
   );
+  const canceled = await tx((client) => cancelMystery(
+    client, versionTwoContext, characterOwner, GRAPH_ID, { idempotencyKey: 'm-cancel-1' },
+  ));
   assert.equal(canceled.status, 'canceled');
   assert.equal(canceled.releasedEscrowCount, 1);
   assert.deepEqual((await inventoryBoard(pool, characterOwner)).items.map(({ id }) => id),
     [cancelTool.id], 'cancel returns mystery custody to the original depositor atomically');
-  assert.deepEqual(await act(
-    cancelMystery, characterOwner, GRAPH_ID, { idempotencyKey: 'm-cancel-1' },
-  ), canceled, 'cancel is exact on logical replay');
+  assert.deepEqual(await tx((client) => cancelMystery(
+    client, versionTwoContext, characterOwner, GRAPH_ID, { idempotencyKey: 'm-cancel-1' },
+  )), canceled, 'old-version release-only cancellation is exact on logical replay');
   assert.equal((await act(startMystery, characterOwner, GRAPH_ID, 1)).status, 'canceled',
     'start cannot reopen or misreport a canceled graph-pinned instance');
   await assert.rejects(
@@ -646,11 +656,6 @@ try {
   assert.equal(board.nodes.find(({ id }) => id === 'm:award').status, 'completed');
   assert.equal(JSON.stringify(board).includes('item_consume'), false);
 
-  const versionTwoRegistry = loadAndValidateGraphPackages([corePackage, mysteryPackage(2)]);
-  const versionTwoContext = createMysteryContext({
-    registry: versionTwoRegistry, accountId: ACCOUNT, now: NOW,
-    timeWindows: context.timeWindows,
-  });
   await assert.rejects(
     mysteryBoard(pool, versionTwoContext, OWNER, GRAPH_ID),
     (error) => error?.code === 'stale_graph_version' && error?.data?.pinnedVersion === 1,

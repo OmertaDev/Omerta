@@ -8,6 +8,7 @@
 import crypto from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { PHASE1_WORLD_GRAPH_PACKAGES } from '../src/content/phase1.js';
+import { validatePhase1EconomyPolicy } from '../src/content/phase1-policy.js';
 import {
   loadAndValidateGraphPackages,
   validateGraph,
@@ -21,17 +22,19 @@ function canonical(value) {
   return Object.fromEntries(Object.keys(value).sort().map((key) => [key, canonical(value[key])]));
 }
 
-export function validatePhase1WorldGraph() {
-  const registry = loadAndValidateGraphPackages(PHASE1_WORLD_GRAPH_PACKAGES);
+export function validatePhase1WorldGraph(packages = PHASE1_WORLD_GRAPH_PACKAGES) {
+  const registry = loadAndValidateGraphPackages(packages);
   const validation = validateGraph(registry);
+  const economyPolicy = validatePhase1EconomyPolicy(packages);
   const contentHash = crypto.createHash('sha256')
-    .update(JSON.stringify(canonical(PHASE1_WORLD_GRAPH_PACKAGES)))
+    .update(JSON.stringify(canonical(packages)))
     .digest('hex');
   return Object.freeze({
     ok: true,
     contentHash,
     packageIds: Object.freeze([...registry.byPackage.keys()]),
     ...validation.reports,
+    economyPolicy,
     warnings: validation.warnings,
   });
 }
@@ -40,8 +43,9 @@ if (import.meta.url === pathToFileURL(process.argv[1] || '').href) {
   try {
     const report = validatePhase1WorldGraph();
     console.log(JSON.stringify(report, null, 2));
-    console.log(`✅ Phase 1 world graph accepted — ${report.packages} packages, ${report.nodes} nodes, `
-      + `${report.recipes} recipes, ${report.omrRewards} OMR rewards; sha256 ${report.contentHash}`);
+    console.log(`✅ Phase 1 world-graph economy policy compliant — zero OMR authority, zero cash rewards/sources, `
+      + `and the sole cash cost is recipe:hardened_steel at exactly $300; ${report.packages} packages, `
+      + `${report.nodes} nodes, ${report.recipes} recipes; sha256 ${report.contentHash}`);
   } catch (error) {
     console.error(JSON.stringify({
       ok: false,

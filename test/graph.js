@@ -62,8 +62,20 @@ assert.deepEqual(inv.mute.sort(), [
   'character cash',
   'desk inventory backed',
   'reason vocabulary',
+  'world graph stack conservation',
+  'world graph unique custody and provenance',
 ],
   `unexpected checks reconcile no reason — the SQL term parser missed a shape: ${inv.mute.join(', ')}`);
+const NON_CURRENCY_WORLD_GRAPH_CHECKS = new Map([
+  ['world graph stack conservation', 'custody conservation'],
+  ['world graph unique custody and provenance', 'unique custody/provenance'],
+]);
+for (const [name, taxonomy] of NON_CURRENCY_WORLD_GRAPH_CHECKS) {
+  assert(g.nodes.has(`Check:${name}`), `${taxonomy} check disappeared from the invariant graph`);
+  assert.equal(g.edges.some((edge) => (
+    edge.type === 'RECONCILES' && edge.from === `Check:${name}`
+  )), false, `${taxonomy} SQL must not be misclassified as a transaction currency/reason term`);
+}
 console.log('✓ write invariants: provenance, authoring run, content hash, named rubrics, no dangling edges');
 
 // ── extraction really found the things we know are in the tree ───────────────────────────────────

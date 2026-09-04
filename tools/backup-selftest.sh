@@ -308,26 +308,97 @@ GOOD="$(find "$WORK/good" -name 'omerta-*.dump' | head -1)"
 run pg_restore --no-owner --dbname="$(base_url "$RESTORE_DB")" "$GOOD"
 RESTORED="$(psql "$(base_url "$RESTORE_DB")" -tAc 'SELECT count(*) FROM accounts' 2>/dev/null | tr -d ' ')"
 check $([ "${RESTORED:-0}" -ge 2 ] && echo 0 || echo 1) "the dump restores into an empty database with its rows" "accounts=$RESTORED"
-PHASE1_RESTORED="$(psql "$(base_url "$RESTORE_DB")" -tAc \
-  "SELECT
-     (SELECT template_id||':'||owner_scope||':'||owner_id||':'||state
-        FROM item_instances WHERE id='bk-phase1-item')||'|'||
-     (SELECT template_id||':'||owner_scope||':'||owner_id||':'||state
-        FROM item_instances WHERE id='bk-phase1-active-item')||'|'||
-     (SELECT string_agg(event_kind||':'||provenance_kind,',' ORDER BY sequence)
-        FROM item_events WHERE item_id='bk-phase1-item')||'|'||
-     (SELECT owner_scope||':'||operation_id||':'||depositor_scope||':'||depositor_id
-        FROM operation_escrow WHERE item_id='bk-phase1-item')||'|'||
-     (SELECT graph_id||':'||graph_version||':'||status
-        FROM mystery_instances WHERE id='bk-phase1-mystery')||'|'||
-     (SELECT graph_id||':'||graph_version||':'||status
-        FROM world_operations WHERE id='bk-phase1-operation')||'|'||
-     (SELECT count(*) FROM world_operation_roles WHERE operation_id='bk-phase1-operation')" \
+RESTORED_FIXTURE="$(psql "$(base_url "$RESTORE_DB")" -tAc \
+  "SELECT (SELECT count(*) FROM accounts)||'/'||(SELECT count(*) FROM characters)||'/'||
+          (SELECT count(*) FROM item_stacks)||'/'||(SELECT count(*) FROM item_instances)||'/'||
+          (SELECT count(*) FROM item_events)||'/'||(SELECT count(*) FROM item_mutation_guards)||'/'||
+          (SELECT count(*) FROM operation_escrow)||'/'||(SELECT count(*) FROM mystery_instances)||'/'||
+          (SELECT count(*) FROM mystery_node_state)||'/'||(SELECT count(*) FROM mystery_choices)||'/'||
+          (SELECT count(*) FROM world_operations)||'/'||(SELECT count(*) FROM world_operation_roles)||'/'||
+          (SELECT count(*) FROM world_operation_node_state)||'/'||(SELECT count(*) FROM world_operation_contributions)" \
   2>/dev/null | tr -d ' ')"
-EXPECTED_PHASE1="tool:press:operation:bk-phase1-operation:escrowed|item:archive:account:bk-account:active|created:crafted,escrowed:used_in_operation|operation:bk-phase1-operation:character:bk-depositor|graph:backup:7:active|graph:backup:7:active|4"
-check $([ "$PHASE1_RESTORED" = "$EXPECTED_PHASE1" ] && echo 0 || echo 1) \
-  "Phase 1 permanent IDs, provenance, status, custody and historical depositor survive exactly" \
-  "got=$PHASE1_RESTORED"
+check $([ "$RESTORED_FIXTURE" = "$FIXTURE" ] && [ "$RESTORED_FIXTURE" = "2/2/1/2/4/4/1/1/1/1/1/4/1/1" ] && echo 0 || echo 1) \
+  "the restore preserves the complete 14-table Phase 1 fixture census" \
+  "before=$FIXTURE after=$RESTORED_FIXTURE"
+PHASE1_RESTORED="$(psql "$(base_url "$RESTORE_DB")" -tAc \
+  "WITH exact(table_name, matches) AS (VALUES
+     ('item_stacks',
+       (SELECT array_agg(concat_ws('~',owner_scope,owner_id,template_id,quality,quantity) ORDER BY owner_scope,owner_id,template_id,quality)
+          FROM item_stacks) = ARRAY['account~bk-account~mat:steel~standard~4']),
+     ('item_instances',
+       (SELECT array_agg(concat_ws('~',id,template_id,owner_scope,owner_id,state,(consumed_at IS NOT NULL)::text) ORDER BY id)
+          FROM item_instances) = ARRAY[
+            'bk-phase1-active-item~item:archive~account~bk-account~active~false',
+            'bk-phase1-item~tool:press~operation~bk-phase1-operation~escrowed~false'
+          ]),
+     ('item_events',
+       (SELECT array_agg(concat_ws('~',id,event_key,event_kind,coalesce(provenance_kind,'<null>'),
+                    coalesce(item_id,'<null>'),template_id,coalesce(quantity_delta::text,'<null>'),
+                    coalesce(quantity_before::text,'<null>'),coalesce(quantity_after::text,'<null>'),
+                    coalesce(from_owner_scope,'<null>'),coalesce(from_owner_id,'<null>'),
+                    coalesce(to_owner_scope,'<null>'),coalesce(to_owner_id,'<null>'),reason,idempotency_key)
+                ORDER BY id)
+          FROM item_events) = ARRAY[
+            'bk-event-active~created~created~awarded~bk-phase1-active-item~item:archive~<null>~<null>~<null>~<null>~<null>~account~bk-account~backup:selftest:active~bk-phase1-active',
+            'bk-event-create~created~created~crafted~bk-phase1-item~tool:press~<null>~<null>~<null>~<null>~<null>~character~bk-depositor~backup:selftest:create~bk-phase1-create',
+            'bk-event-escrow~escrowed~escrowed~used_in_operation~bk-phase1-item~tool:press~<null>~<null>~<null>~character~bk-depositor~operation~bk-phase1-operation~backup:selftest:escrow~bk-phase1-escrow',
+            'bk-event-stack~stack~stack_granted~<null>~<null>~mat:steel~4~0~4~<null>~<null>~account~bk-account~backup:selftest:stack~bk-phase1-stack'
+          ]),
+     ('item_mutation_guards',
+       (SELECT array_agg(concat_ws('~',idempotency_key,mutation_kind,owner_scope,owner_id,
+                    request_hash,reservation_id,result_json::jsonb::text,(completed_at IS NOT NULL)::text)
+                ORDER BY idempotency_key)
+          FROM item_mutation_guards) = ARRAY[
+            'bk-phase1-active~create_item~account~bk-account~'||repeat('d',64)||'~bk-res-active~{\"ok\": true}~true',
+            'bk-phase1-create~create_item~character~bk-depositor~'||repeat('b',64)||'~bk-res-create~{\"ok\": true}~true',
+            'bk-phase1-escrow~escrow_item~character~bk-depositor~'||repeat('c',64)||'~bk-res-escrow~{\"ok\": true}~true',
+            'bk-phase1-stack~grant_stack~account~bk-account~'||repeat('a',64)||'~bk-res-stack~{\"ok\": true}~true'
+          ]),
+     ('operation_escrow',
+       (SELECT array_agg(concat_ws('~',item_id,owner_scope,operation_id,item_state,depositor_scope,depositor_id) ORDER BY item_id)
+          FROM operation_escrow) = ARRAY['bk-phase1-item~operation~bk-phase1-operation~escrowed~character~bk-depositor']),
+     ('mystery_instances',
+       (SELECT array_agg(concat_ws('~',id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,status,
+                    (completed_at IS NOT NULL)::text,(failed_at IS NOT NULL)::text,(canceled_at IS NOT NULL)::text) ORDER BY id)
+          FROM mystery_instances) = ARRAY['bk-phase1-mystery~character~bk-depositor~bk-account~graph:backup~7~active~false~false~false']),
+     ('mystery_node_state',
+       (SELECT array_agg(concat_ws('~',instance_id,node_id,state,coalesce(result_json::jsonb::text,'<null>'),
+                    (discovered_at IS NOT NULL)::text,(completed_at IS NOT NULL)::text,(failed_at IS NOT NULL)::text)
+                ORDER BY instance_id,node_id)
+          FROM mystery_node_state) = ARRAY['bk-phase1-mystery~node:lead~discovered~<null>~true~false~false']),
+     ('mystery_choices',
+       (SELECT array_agg(concat_ws('~',instance_id,node_id,choice_id,result_json::jsonb::text,(committed_at IS NOT NULL)::text)
+                ORDER BY instance_id,node_id)
+          FROM mystery_choices) = ARRAY['bk-phase1-mystery~node:choice~choice:left~{\"choice\": \"left\"}~true']),
+     ('world_operations',
+       (SELECT array_agg(concat_ws('~',id,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id,status,
+                    coalesce(close_reason,'<null>'),(activated_at IS NOT NULL)::text,(completed_at IS NOT NULL)::text,
+                    (canceled_at IS NOT NULL)::text,(abandoned_at IS NOT NULL)::text) ORDER BY id)
+          FROM world_operations) = ARRAY['bk-phase1-operation~graph:backup~7~node:operation~bk-crew~bk-account~active~<null>~true~false~false~false']),
+     ('world_operation_roles',
+       (SELECT array_agg(concat_ws('~',operation_id,role_id,account_id,character_id,(assigned_at IS NOT NULL)::text)
+                ORDER BY operation_id,role_id)
+          FROM world_operation_roles) = ARRAY[
+            'bk-phase1-operation~role:driver~bk-account-driver~bk-character-driver~true',
+            'bk-phase1-operation~role:enforcer~bk-account-enforcer~bk-character-enforcer~true',
+            'bk-phase1-operation~role:investigator~bk-account-investigator~bk-character-investigator~true',
+            'bk-phase1-operation~role:mechanic~bk-account-mechanic~bk-character-mechanic~true'
+          ]),
+     ('world_operation_node_state',
+       (SELECT array_agg(concat_ws('~',operation_id,node_id,state,(completed_at IS NOT NULL)::text,(excluded_at IS NOT NULL)::text)
+                ORDER BY operation_id,node_id)
+          FROM world_operation_node_state) = ARRAY['bk-phase1-operation~node:checkpoint~completed~true~false']),
+     ('world_operation_contributions',
+       (SELECT array_agg(concat_ws('~',operation_id,node_id,role_id,account_id,character_id,(contributed_at IS NOT NULL)::text)
+                ORDER BY operation_id,node_id)
+          FROM world_operation_contributions) = ARRAY['bk-phase1-operation~node:checkpoint~role:driver~bk-account-driver~bk-character-driver~true'])
+   )
+   SELECT coalesce(string_agg(table_name,',' ORDER BY table_name) FILTER (WHERE NOT coalesce(matches,false)),'ok')
+     FROM exact" \
+  2>/dev/null | tr -d ' ')"
+check $([ "$PHASE1_RESTORED" = "ok" ] && echo 0 || echo 1) \
+  "every restored Phase 1 fixture row keeps its exact ID, custody, provenance and graph state" \
+  "mismatched tables=$PHASE1_RESTORED"
 PHASE1_ORPHANS="$(psql "$(base_url "$RESTORE_DB")" -tAc \
   "SELECT
      (SELECT count(*) FROM item_events e LEFT JOIN item_mutation_guards g

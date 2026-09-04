@@ -1106,7 +1106,65 @@ assert.equal(phase1First.packages, 3);
 assert.equal(phase1First.nodes, 21);
 assert.equal(phase1First.recipes, 3);
 assert.equal(phase1First.omrRewards, 0, 'the Phase 1 graph cannot mint OMR');
+assert.deepEqual(phase1First.economyPolicy, {
+  omrAuthorityPaths: 0,
+  cashRewardSourcePaths: 0,
+  cashCosts: [{ recipeId: 'recipe:hardened_steel', amount: 300 }],
+}, 'the stricter Phase 1 policy records its sole allowed cash sink and zero currency authority');
 assert.match(phase1First.contentHash, /^[0-9a-f]{64}$/);
+
+const expectPhase1PolicyFailure = (packages, kind, message) => {
+  assert.throws(() => validatePhase1WorldGraph(packages), (error) => {
+    assert.equal(error.code, 'phase1_economy_policy');
+    assert.equal(error.details.kind, kind);
+    return true;
+  }, message);
+};
+const omrPackages = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+omrPackages.push({
+  id: 'phase1-forbidden-reward', version: 1, season: 'season:1', dependsOn: [],
+  nodes: [{
+    id: 'reward:phase1-omr', type: 'reward', version: 1, visibility: 'hidden',
+    repeatability: 'once',
+    metadata: {
+      currency: 'OMR', allocationId: 'phase1-test-vault', claimKey: 'phase1-test-claim',
+    },
+  }],
+});
+assert.doesNotThrow(() => validateGraph(loadAndValidateGraphPackages(omrPackages)),
+  'the reusable validator intentionally accepts a finite seasonal OMR reward');
+expectPhase1PolicyFailure(omrPackages, 'omr',
+  'the Phase 1 release policy rejects OMR even when the reusable validator accepts it');
+
+const wrongHardeningCost = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+wrongHardeningCost[1].nodes.find(({ id }) => id === 'recipe:hardened_steel').metadata.cashCost = 301;
+expectPhase1PolicyFailure(wrongHardeningCost, 'cash_cost_census',
+  'the hardening sink must remain exactly $300');
+
+const extraCashCost = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+const extraRecipe = structuredClone(extraCashCost[1].nodes
+  .find(({ id }) => id === 'recipe:hardened_steel'));
+extraRecipe.id = 'recipe:forbidden_cash_cost';
+extraRecipe.metadata.title = 'Forbidden Extra Cash Cost';
+extraRecipe.metadata.cashCost = 1;
+extraCashCost[1].nodes.push(extraRecipe);
+expectPhase1PolicyFailure(extraCashCost, 'cash_cost_census',
+  'no second recipe may gain cash-cost authority');
+
+const cashReward = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+cashReward[2].nodes.push({
+  id: 'reward:forbidden-cash', type: 'reward', version: 1, visibility: 'hidden',
+  repeatability: 'once', metadata: { currency: 'cash', amount: 1 },
+});
+expectPhase1PolicyFailure(cashReward, 'cash_authority',
+  'Phase 1 cash rewards and sources remain prohibited');
+
+const unexpectedPackage = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+unexpectedPackage.push({
+  id: 'phase1-unreviewed-package', version: 1, season: 'core', dependsOn: [], nodes: [],
+});
+expectPhase1PolicyFailure(unexpectedPackage, 'package_census',
+  'the Phase 1 release gate rejects an unreviewed package even when it has no currency definition');
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const packageSources = fs.readdirSync(path.join(root, 'src', 'content'))
@@ -1120,7 +1178,8 @@ const phase1RuntimeFiles = [
   'src/items.js', 'src/crafting.js', 'src/mysteries.js', 'src/operations.js',
   'src/worldgraph.js', 'src/worldgraph-validate.js', 'src/routes/worldgraph.js',
   'src/content/core-materials.js', 'src/content/automotive-salvage.js',
-  'src/content/belladonna.js', 'src/content/phase1.js', 'tools/worldgraph-content.js',
+  'src/content/belladonna.js', 'src/content/phase1.js', 'src/content/phase1-policy.js',
+  'tools/worldgraph-content.js',
 ];
 for (const file of phase1RuntimeFiles) {
   assert.doesNotMatch(fs.readFileSync(path.join(root, file), 'utf8'), /collection_log/i,

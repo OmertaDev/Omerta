@@ -358,7 +358,7 @@ async function historicalMysteryOwner(client, accountId, graphId, instanceId) {
     [instanceId, accountId, graphId],
   )).rows[0];
   const pkg = PHASE1_WORLD_GRAPH.byPackage.get(graphId);
-  if (!row || !pkg || Number(row.graph_version) !== Number(pkg.version)) {
+  if (!row || !pkg) {
     fail('mystery_unavailable', 'That mystery instance is unavailable.');
   }
   return { scope: row.owner_scope, id: row.owner_id };

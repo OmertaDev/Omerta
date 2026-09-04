@@ -600,6 +600,53 @@ try {
     (check) => check.name === 'world graph unique custody and provenance',
   )?.ok, true, 'restoring exact custody returns the invariant to green');
 
+  await pool.query('UPDATE item_instances SET owner_id=$2 WHERE id=$1', [created.id, 'tampered-owner']);
+  checks = await phase1Checks();
+  assert.equal(checks.find(
+    (check) => check.name === 'world graph unique custody and provenance',
+  )?.ok, false, 'a consumed item owner rewrite disagrees with its terminal event and trips provenance');
+  await pool.query('UPDATE item_instances SET owner_id=$2 WHERE id=$1', [created.id, accountA.id]);
+
+  await pool.query('UPDATE operation_escrow SET depositor_id=$2 WHERE item_id=$1',
+    [socialItem.id, 'tampered-depositor']);
+  checks = await phase1Checks();
+  assert.equal(checks.find(
+    (check) => check.name === 'world graph unique custody and provenance',
+  )?.ok, false, 'an escrow depositor rewrite disagrees with its escrow event and trips custody');
+  await pool.query('UPDATE operation_escrow SET depositor_id=$2 WHERE item_id=$1',
+    [socialItem.id, custody.depositor_id]);
+
+  // Legacy Garage crafting owns the broad craft:* vocabulary. Phase 1 reserves only
+  // craft:recipe:*; ordinary cash/CB/ammo workshop rows must not false-red this boundary.
+  await pool.query(
+    `INSERT INTO transactions (id,character_id,currency,amount,reason) VALUES
+       ('legacy-craft-cash',$1,'cash',-400,'craft:ammo'),
+       ('legacy-craft-cb',$1,'cb',-1,'craft:ammo'),
+       ('legacy-craft-ammo',$1,'ammo',30,'craft:ammo'),
+       ('legacy-craft-item-cash',$1,'cash',-250,'craft:medkit'),
+       ('legacy-craft-item-cb',$1,'cb',-2,'craft:medkit')`,
+    [characterA.id],
+  );
+  checks = await phase1Checks();
+  assert.equal(checks.find((check) => check.name === 'world graph currency boundary')?.ok, true,
+    'legitimate legacy craft cash/CB/ammo rows are outside the reserved Phase 1 namespace');
+
+  await pool.query(
+    `INSERT INTO transactions (id,character_id,currency,amount,reason)
+     VALUES ('phase1-omr-tamper',$1,'omr',1,'craft:recipe:hardened_steel')`,
+    [characterA.id],
+  );
+  checks = await phase1Checks();
+  assert.equal(checks.find((check) => check.name === 'world graph currency boundary')?.ok, false,
+    'an OMR row inside the reserved Phase 1 craft namespace trips the currency boundary');
+  await pool.query("DELETE FROM transactions WHERE id='phase1-omr-tamper'");
+  checks = await phase1Checks();
+  const restoredCustodyCheck = checks.find(
+    (check) => check.name === 'world graph unique custody and provenance',
+  );
+  assert.equal(restoredCustodyCheck?.ok, true,
+    `restoring consumed ownership and escrow depositor returns custody to green: ${JSON.stringify(restoredCustodyCheck?.issues)}`);
+
   console.log('✅ test/items.js — conserved stacks, permanent unique items, single-custody operation escrow, provenance, and conflict-safe logical replay');
 } finally {
   await pool.end();

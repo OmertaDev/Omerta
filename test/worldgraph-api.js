@@ -6,6 +6,8 @@ import { buildOpenApi } from '../src/agentgateway.js';
 import { buildServer } from '../src/server.js';
 import { register as registerWorldGraphRoutes } from '../src/routes/worldgraph.js';
 
+process.env.MOD_KEY = 'world-graph-phase1-mod-key';
+
 const routeTable = [
   ['POST', '/v1/worldgraph/items/:itemId/assign-current-character'],
   ['GET', '/v1/worldgraph/inventory'],
@@ -737,21 +739,21 @@ assert.deepEqual(custodyBeforeDeath.escrow.map(({ depositor_scope, depositor_id 
   { depositor_scope, depositor_id }
 )), [{ depositor_scope: 'character', depositor_id: players[3].characterId }]);
 
-await app.pool.query('UPDATE characters SET alive=false WHERE id=$1', [players[3].characterId]);
+const death = await app.inject({
+  method: 'POST',
+  url: '/v1/mod/kill',
+  headers: { 'x-mod-key': process.env.MOD_KEY },
+  payload: { characterId: players[3].characterId, reason: 'Phase 1 estate-policy proof' },
+});
+assert.equal(death.statusCode, 200, death.body);
+const replacementCharacterId = death.json().heirId;
+assert(replacementCharacterId, 'the production runEstate path creates the replacement street');
+assert.notEqual(replacementCharacterId, players[3].characterId);
 assert.equal(Number((await app.pool.query(
   'SELECT COUNT(*) AS n FROM characters WHERE account_id=$1 AND alive', [players[3].accountId],
-)).rows[0].n), 0, 'the historical recovery begins with no living character');
+)).rows[0].n), 1, 'the production death path leaves exactly one living replacement');
 assert.deepEqual(await historicalCustody(), custodyBeforeDeath,
-  'death preserves every generic owner and exact historical depositor tuple byte-for-byte');
-
-const replacement = await call('POST', '/v1/character', {
-  token: players[3].token, body: { name: 'Graph API Recovery Heir' },
-});
-assert.equal(replacement.code, 200, JSON.stringify(replacement.body));
-const replacementCharacterId = replacement.body.id;
-assert.notEqual(replacementCharacterId, players[3].characterId);
-assert.deepEqual(await historicalCustody(), custodyBeforeDeath,
-  'replacement creation neither inherits nor rewrites historical stack, item, mystery, or escrow tuples');
+  'runEstate and replacement creation preserve every generic owner and exact historical depositor tuple byte-for-byte');
 const heirDriveHistorical = await mutate(
   '/v1/worldgraph/mysteries/belladonna-demo/nodes/mystery:belladonna-reward/complete',
   players[3].token, 'api-heir-drive-historical', { interactionId: 'recover_belladonna_lockbox' },
@@ -771,6 +773,15 @@ assert.notEqual(replacementStart.body.instanceId, historicalInstanceId,
   'the replacement street may have its own current instance');
 assert.deepEqual(await historicalCustody(), custodyBeforeDeath,
   'starting the heir\'s distinct instance still does not inherit or duplicate historical custody');
+
+// Simulate the active registry no longer matching the instance's immutable definition. The direct
+// runtime suite drives the natural v1-instance/v2-registry direction; this HTTP seam stores another
+// valid version to prove the route does not demand equality before entering release-only recovery.
+await app.pool.query(
+  'UPDATE mystery_instances SET graph_version=2 WHERE id=$1', [historicalInstanceId],
+);
+const oldVersionCustody = await historicalCustody();
+assert.equal(Number(oldVersionCustody.mystery[0].graph_version), 2);
 
 const historicalCancelUrl = '/v1/worldgraph/mysteries/belladonna-demo/cancel';
 const foreignHistorical = await mutate(
@@ -800,6 +811,8 @@ const canceledMystery = await mutate(
 );
 assert.equal(canceledMystery.code, 200, JSON.stringify(canceledMystery.body));
 assert.equal(canceledMystery.body.status, 'canceled');
+assert.equal(canceledMystery.body.graph.version, 2,
+  'the release receipt retains the stored pinned version rather than relabeling it current');
 assert.equal(canceledMystery.body.releasedEscrowCount, 1);
 const canceledMysteryReplay = await mutate(
   historicalCancelUrl, players[3].token, 'api-historical-cancel',
@@ -843,10 +856,11 @@ assert.deepEqual((await app.pool.query(
 
 const { cash: cashAfter, omr: omrAfter } = await readBalances();
 for (const player of players) {
-  const expectedCash = cashBefore.get(player.accountId)
-    - ([players[0], players[2], players[3]].includes(player) ? 300 : 0);
+  const expectedCash = player === players[3]
+    ? 0 // the production estate closes the dead street after its Phase 1 hardening spend
+    : cashBefore.get(player.accountId) - ([players[0], players[2]].includes(player) ? 300 : 0);
   assert.equal(cashAfter.get(player.accountId), expectedCash,
-    'only the graph-declared hardening cash sink moves cash');
+    'Phase 1 only sinks the declared hardening cash; the driven production estate closes the dead street');
   assert.equal(omrAfter.get(player.accountId), omrBefore.get(player.accountId),
     'Phase 1 HTTP play cannot move OMR');
 }
@@ -854,13 +868,23 @@ const newLedger = (await app.pool.query(
   `SELECT currency,amount,reason FROM transactions
     ORDER BY at,id OFFSET $1`, [ledgerBefore],
 )).rows;
-assert.deepEqual(newLedger, [{
+const phase1Ledger = newLedger.filter(({ reason }) => (
+  reason.startsWith('craft:recipe:') || reason.startsWith('mystery:') || reason.startsWith('operation:')
+));
+assert.deepEqual(phase1Ledger, [{
   currency: 'cash', amount: -300, reason: 'craft:recipe:hardened_steel',
 }, {
   currency: 'cash', amount: -300, reason: 'craft:recipe:hardened_steel',
 }, {
   currency: 'cash', amount: -300, reason: 'craft:recipe:hardened_steel',
-}], 'the HTTP vertical slices create only their three declared crafting sink ledger entries');
+}], 'the Phase 1 HTTP vertical slices create only their three declared crafting sink ledger entries');
+assert.deepEqual(newLedger.filter(({ reason }) => reason.startsWith('death:')), [{
+  currency: 'cash', amount: -9700, reason: 'death:estate',
+}, {
+  currency: 'ammo', amount: -25, reason: 'death:estate',
+}, {
+  currency: 'cash', amount: 1600, reason: 'death:legacy',
+}], 'the additional value rows belong only to the explicitly driven legacy production estate');
 
 console.log('✅ world-graph Phase 1 HTTP authority, replay, privacy, and economy contract passed');
 await app.close();

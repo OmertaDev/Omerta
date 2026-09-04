@@ -4,6 +4,11 @@
 // row with a reason outside the known vocabulary — is an alert.
 import crypto from 'node:crypto';
 import { DESK, DESK_RECYCLE_REASON } from './rules.js';
+import {
+  PHASE1_HARDENING_CASH_COST,
+  PHASE1_HARDENING_CASH_REASON,
+  PHASE1_HARDENING_RECIPE_ID,
+} from './content/phase1-policy.js';
 
 // The complete reason vocabulary, by currency. A row whose reason matches no
 // prefix here is an unenumerated faucet/sink — the loudest possible §10.4 alarm.
@@ -745,7 +750,7 @@ async function collectLedgerChecks(pool) {
        FROM item_events WHERE item_id IS NOT NULL ORDER BY sequence`,
   )).rows;
   const custodyRows = (await pool.query(
-    `SELECT item_id,operation_id,item_state,depositor_scope,depositor_id
+    `SELECT item_id,owner_scope,operation_id,item_state,depositor_scope,depositor_id
        FROM operation_escrow ORDER BY item_id`,
   )).rows;
   const eventsByItem = new Map();
@@ -766,12 +771,21 @@ async function collectLedgerChecks(pool) {
     }
     if (item.state === 'escrowed') {
       if (!custody || custody.operation_id !== item.owner_id || custody.item_state !== 'escrowed'
-        || item.owner_scope !== 'operation' || latest?.event_kind !== 'escrowed') {
+        || custody.owner_scope !== 'operation' || item.owner_scope !== 'operation'
+        || latest?.event_kind !== 'escrowed' || latest?.template_id !== item.template_id
+        || latest?.from_owner_scope !== custody.depositor_scope
+        || latest?.from_owner_id !== custody.depositor_id
+        || latest?.to_owner_scope !== custody.owner_scope
+        || latest?.to_owner_id !== custody.operation_id) {
         itemIssues.push(`${item.id}:escrow`);
       }
     } else if (custody) itemIssues.push(`${item.id}:stale_escrow`);
     if (item.state === 'consumed') {
-      if (item.consumed_at == null || latest?.event_kind !== 'consumed') {
+      if (item.consumed_at == null || latest?.event_kind !== 'consumed'
+        || latest?.template_id !== item.template_id
+        || latest?.from_owner_scope !== item.owner_scope
+        || latest?.from_owner_id !== item.owner_id
+        || latest?.to_owner_scope != null || latest?.to_owner_id != null) {
         itemIssues.push(`${item.id}:consumed`);
       }
     } else if (item.consumed_at != null || latest?.event_kind === 'consumed') {
@@ -806,20 +820,23 @@ async function collectLedgerChecks(pool) {
   const hardeningGuards = craftGuards.filter((row) => {
     try {
       const result = typeof row.result_json === 'string' ? JSON.parse(row.result_json) : row.result_json;
-      return result?.recipe?.recipeId === 'recipe:hardened_steel';
+      return result?.recipe?.recipeId === PHASE1_HARDENING_RECIPE_ID;
     } catch { return false; }
   }).length;
   const hardeningSink = -(await sum(pool,
     "currency='cash' AND reason='craft:recipe:hardened_steel'"));
-  push('world graph hardening cash sink', hardeningSink, hardeningGuards * 300, 0);
+  push('world graph hardening cash sink', hardeningSink,
+    hardeningGuards * PHASE1_HARDENING_CASH_COST, 0);
   const graphCurrencyRows = (await pool.query(
     `SELECT currency,amount,reason FROM transactions
-      WHERE reason LIKE 'craft:%' OR reason LIKE 'mystery:%' OR reason LIKE 'operation:%'`,
+      WHERE reason LIKE 'craft:recipe:%'
+         OR reason LIKE 'mystery:%'
+         OR reason LIKE 'operation:%'`,
   )).rows;
   const graphCurrencyIssues = graphCurrencyRows.filter((row) => (
     row.currency !== 'cash'
-      || row.reason !== 'craft:recipe:hardened_steel'
-      || Number(row.amount) !== -300
+      || row.reason !== PHASE1_HARDENING_CASH_REASON
+      || Number(row.amount) !== -PHASE1_HARDENING_CASH_COST
   )).map((row) => `${row.currency}:${row.reason}:${row.amount}`);
   push('world graph currency boundary', graphCurrencyIssues.length, 0, 0,
     { issues: graphCurrencyIssues.sort() });

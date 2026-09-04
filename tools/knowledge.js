@@ -827,6 +827,11 @@ function build(options = {}) {
   const routes = [];
   for (const [rel, text] of textCache) {
     if (!(rel === 'src/server.js' || rel.startsWith('src/routes/'))) continue;
+    // World-graph mutations use one local, closed wrapper. Recognize it only where its definition
+    // proves both account auth and the logical-mutation key; a same-named helper elsewhere must not
+    // acquire authority by coincidence, and weakening this wrapper must make the knowledge test red.
+    const hasWorldGraphMutationWrapper = rel === 'src/routes/worldgraph.js'
+      && /const\s+mutationOptions\s*=\s*\(auth,[\s\S]{0,240}?preHandler:\s*\[auth,\s*requireIdempotency\]/.test(text);
     const aliases = new Map();
     for (const m of text.matchAll(/import\s+\*\s+as\s+(\w+)\s+from\s+['"]([^'"]+)['"]/g)) {
       const target = relativeImport(rel, m[2], fileSet);
@@ -851,10 +856,13 @@ function build(options = {}) {
       const snippet = routeRegistrationSnippet(text, m.index);
       const registrationArguments = routeRegistrationArguments(snippet);
       const routeOptions = registrationArguments[1] || '';
+      const worldGraphMutationAuth = hasWorldGraphMutationWrapper
+        && /^\s*mutationOptions\(\s*auth(?:\s*,|\s*\))/.test(routeOptions);
       const access = /preHandler:\s*modAuth/.test(routeOptions)
           || /^\s*guarded\(\s*modAuth\b/.test(routeOptions) ? 'moderator'
         : /preHandler:\s*auth/.test(routeOptions)
-          || /^\s*guarded\(\s*auth\b/.test(routeOptions) ? 'authenticated'
+          || /^\s*guarded\(\s*auth\b/.test(routeOptions)
+          || worldGraphMutationAuth ? 'authenticated'
         : /websocket:\s*true/.test(snippet) ? 'token-query'
         : 'public';
       const routeId = `${method} ${url}`;
@@ -899,12 +907,21 @@ function build(options = {}) {
         : url.startsWith('/v1') ? domainFor(handlerFile || rel) || 'platform-core' : 'client-experience';
       const handler = resolvedLocalHandler?.name || resolvedImport?.name
         || (handlerMatch ? `${handlerMatch[1]}.${handlerMatch[2]}` : null);
-      const n = node('Route', routeId, { label: routeId, method, url, access, domain, definitions: [] }, { file: rel, line });
+      const n = node('Route', routeId, {
+        label: routeId, method, url, access, domain,
+        mutationAuthenticated: worldGraphMutationAuth,
+        idempotentMutation: worldGraphMutationAuth,
+        definitions: [],
+      }, { file: rel, line });
       n.definitions.push({ file: rel, line });
       edge('DEFINED_IN', n.key, `Artifact:${rel}`, { file: rel, line });
       edge('BELONGS_TO', n.key, `Domain:${domain}`, { file: rel, line });
       if (handlerFile) edge('HANDLED_BY', n.key, `Artifact:${handlerFile}`, { file: rel, line }, { symbol: handler });
-      routes.push({ method, url, access, domain, file: rel, line, handler, handlerFile });
+      routes.push({
+        method, url, access, domain, file: rel, line, handler, handlerFile,
+        mutationAuthenticated: worldGraphMutationAuth,
+        idempotentMutation: worldGraphMutationAuth,
+      });
     }
   }
 
