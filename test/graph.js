@@ -62,11 +62,13 @@ assert.deepEqual(inv.mute.sort(), [
   'character cash',
   'desk inventory backed',
   'reason vocabulary',
+  'world graph salvage car audit',
   'world graph stack conservation',
   'world graph unique custody and provenance',
 ],
   `unexpected checks reconcile no reason — the SQL term parser missed a shape: ${inv.mute.join(', ')}`);
 const NON_CURRENCY_WORLD_GRAPH_CHECKS = new Map([
+  ['world graph salvage car audit', 'authoritative noncurrency salvage sink'],
   ['world graph stack conservation', 'custody conservation'],
   ['world graph unique custody and provenance', 'unique custody/provenance'],
 ]);

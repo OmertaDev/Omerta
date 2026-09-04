@@ -430,8 +430,53 @@ async function collectLedgerChecks(pool) {
   const aucTake = -(await sum(pool, "currency='omr' AND reason='auction:take'"));
   push('auction escrow', auctionEscrow, aucBids - aucRefunds - aucWins - aucConsign - aucTake, 0.001);
 
-  // (e) CAR CONSERVATION: boost is the only faucet; melt, fence, and death the only
-  // sinks (death events carry the destroyed fleet size in telemetry).
+  // (e) CAR CONSERVATION: boost/resident grants are the faucets; melt, fence, death,
+  // resident retirement, and a completed graph-salvage guard are the sinks. Salvage is
+  // deliberately cashless, so its completed logical mutation guard is the durable authority
+  // instead of a transaction row. Read only the server result: the request digest is opaque and
+  // must never become a client-nominated car-sink counter.
+  const salvageGuardRows = (await pool.query(
+    `SELECT idempotency_key,result_json FROM item_mutation_guards
+      WHERE mutation_kind='salvage_car'
+        AND result_json IS NOT NULL AND completed_at IS NOT NULL`,
+  )).rows;
+  const salvageGuardKeys = new Set();
+  const salvagedCarIds = new Set();
+  const salvageGuardIssues = [];
+  for (const row of salvageGuardRows) {
+    const key = String(row.idempotency_key || '');
+    let result;
+    try {
+      result = typeof row.result_json === 'string'
+        ? JSON.parse(row.result_json) : row.result_json;
+    } catch {
+      salvageGuardIssues.push(`${key || '<missing-key>'}:invalid_json`);
+      continue;
+    }
+    const carId = result?.car?.id;
+    const carInputs = Array.isArray(result?.inputs)
+      ? result.inputs.filter((input) => input?.assetType === 'car') : [];
+    const input = carInputs[0];
+    const validCarId = typeof carId === 'string' && carId.length >= 1 && carId.length <= 200
+      && carId.trim() === carId;
+    const valid = result && typeof result === 'object' && !Array.isArray(result)
+      && result.ok === true && result.kind === 'salvage_car'
+      && validCarId
+      && Array.isArray(result.inputs) && result.inputs.length === 1
+      && carInputs.length === 1 && input?.id === carId && input?.quantity === 1
+      && result.cashCost === 0;
+    if (!valid) {
+      salvageGuardIssues.push(`${key || '<missing-key>'}:invalid_result`);
+      continue;
+    }
+    if (salvagedCarIds.has(carId)) salvageGuardIssues.push(`${key}:duplicate_car:${carId}`);
+    salvageGuardKeys.add(key);
+    salvagedCarIds.add(carId);
+  }
+  const salvageCarSinks = salvageGuardKeys.size;
+  push('world graph salvage car audit', salvageGuardIssues.length, 0, 0,
+    { logicalSinks: salvageCarSinks, carIds: [...salvagedCarIds].sort(),
+      issues: salvageGuardIssues.sort() });
   const carsHeld = await one(pool, 'SELECT COUNT(*) s FROM cars');
   const boosts = await one(pool, "SELECT COUNT(*) s FROM rng_audit WHERE action='gta' AND outcome='success'");
   const melts = await one(pool, "SELECT COUNT(*) s FROM transactions WHERE reason='melt' AND currency='ammo' AND character_id IS NOT NULL");
@@ -445,7 +490,9 @@ async function collectLedgerChecks(pool) {
   // STOLEN resident car just changes hands (rows conserve). PvP theft itself moves rows, never counts.
   const npcCarGrants = await one(pool, "SELECT COUNT(*) s FROM rng_audit WHERE action='npc:car' AND outcome='grant'");
   const npcCarRetires = await one(pool, "SELECT COUNT(*) s FROM rng_audit WHERE action='npc:car' AND outcome='retire'");
-  push('car conservation', carsHeld, boosts + npcCarGrants - melts - fences - deathCars - npcCarRetires, 0);
+  push('car conservation', carsHeld,
+    boosts + npcCarGrants - melts - fences - deathCars - npcCarRetires - salvageCarSinks, 0,
+    { salvageCarSinks });
 
   // (f) CONTRABAND & AMMO: characters + exchange escrow (+ the family armories);
   // ammo starts at 25/character, crates at 0.
@@ -713,17 +760,21 @@ async function collectLedgerChecks(pool) {
   // live custody rows against the append-only mutation history so a direct write, missing event, or
   // one-way escrow transition is loud even when every individual row still satisfies its CHECKs.
   const stackRows = (await pool.query(
-    `SELECT owner_scope,owner_id,template_id,SUM(quantity) quantity
-       FROM item_stacks GROUP BY owner_scope,owner_id,template_id`,
+    `SELECT owner_scope,owner_id,template_id,quality,SUM(quantity) quantity
+       FROM item_stacks GROUP BY owner_scope,owner_id,template_id,quality`,
   )).rows;
   const stackEvents = (await pool.query(
-    `SELECT event_kind,template_id,quantity_delta,
+    `SELECT event_kind,template_id,quality,quantity_delta,
             from_owner_scope,from_owner_id,to_owner_scope,to_owner_id
        FROM item_events WHERE event_kind IN ('stack_granted','stack_consumed')`,
   )).rows;
-  const stackKey = (scope, id, template) => `${scope}:${id}:${template}`;
+  // Opaque ids and template ids may themselves contain colons, so a delimited string is not a
+  // collision-free ledger key. JSON's tuple encoding preserves all four identity boundaries.
+  const stackKey = (scope, id, template, quality) => JSON.stringify([
+    scope, id, template, quality,
+  ]);
   const heldStacks = new Map(stackRows.map((row) => [
-    stackKey(row.owner_scope, row.owner_id, row.template_id), Number(row.quantity),
+    stackKey(row.owner_scope, row.owner_id, row.template_id, row.quality), Number(row.quantity),
   ]));
   const eventStacks = new Map();
   for (const event of stackEvents) {
@@ -732,6 +783,7 @@ async function collectLedgerChecks(pool) {
       grant ? event.to_owner_scope : event.from_owner_scope,
       grant ? event.to_owner_id : event.from_owner_id,
       event.template_id,
+      event.quality,
     );
     eventStacks.set(key, (eventStacks.get(key) || 0) + Number(event.quantity_delta));
   }
@@ -745,8 +797,8 @@ async function collectLedgerChecks(pool) {
        FROM item_instances ORDER BY id`,
   )).rows;
   const uniqueEvents = (await pool.query(
-    `SELECT sequence,item_id,event_kind,template_id,from_owner_scope,from_owner_id,
-            to_owner_scope,to_owner_id
+    `SELECT sequence,item_id,event_kind,provenance_kind,template_id,quality,
+            from_owner_scope,from_owner_id,to_owner_scope,to_owner_id
        FROM item_events WHERE item_id IS NOT NULL ORDER BY sequence`,
   )).rows;
   const custodyRows = (await pool.query(
@@ -761,44 +813,116 @@ async function collectLedgerChecks(pool) {
   const custodyByItem = new Map(custodyRows.map((row) => [row.item_id, row]));
   const itemById = new Map(itemRows.map((row) => [row.id, row]));
   const itemIssues = [];
+  const creationKinds = new Set(['crafted', 'salvaged', 'awarded', 'imported']);
+  const escrowKinds = new Set(['used_in_mystery', 'used_in_operation']);
+  const eventOwner = (event, side) => ({
+    scope: event[`${side}_owner_scope`], id: event[`${side}_owner_id`],
+  });
+  const sameOwner = (left, right) => Boolean(left && right
+    && left.scope === right.scope && left.id === right.id);
+  const emptyOwner = (owner) => owner.scope == null && owner.id == null;
+  const liveOwner = (owner) => ['character', 'account'].includes(owner.scope)
+    && typeof owner.id === 'string' && owner.id.length > 0;
   for (const item of itemRows) {
     const history = eventsByItem.get(item.id) || [];
-    const latest = history.at(-1);
     const created = history.filter(({ event_kind: kind }) => kind === 'created');
     const custody = custodyByItem.get(item.id);
-    if (created.length !== 1 || created[0]?.template_id !== item.template_id) {
-      itemIssues.push(`${item.id}:provenance`);
+    if (created.length !== 1 || history[0]?.event_kind !== 'created') {
+      itemIssues.push(`${item.id}:creation_order`);
     }
-    if (item.state === 'escrowed') {
-      if (!custody || custody.operation_id !== item.owner_id || custody.item_state !== 'escrowed'
-        || custody.owner_scope !== 'operation' || item.owner_scope !== 'operation'
-        || latest?.event_kind !== 'escrowed' || latest?.template_id !== item.template_id
-        || latest?.from_owner_scope !== custody.depositor_scope
-        || latest?.from_owner_id !== custody.depositor_id
-        || latest?.to_owner_scope !== custody.owner_scope
-        || latest?.to_owner_id !== custody.operation_id) {
-        itemIssues.push(`${item.id}:escrow`);
+
+    // Replay every event as a state machine. Checking only creation + latest lets a forged middle
+    // transfer disappear under a later valid-looking event, which is precisely the history an NFT
+    // provenance digest would trust. Invalid transitions do not advance the derived state, making
+    // every later from-owner claim prove continuity from the last valid event.
+    let derivedState = 'absent';
+    let derivedOwner = null;
+    let escrow = null;
+    let terminal = false;
+    for (let index = 0; index < history.length; index++) {
+      const event = history[index];
+      const from = eventOwner(event, 'from');
+      const to = eventOwner(event, 'to');
+      const issue = (kind) => itemIssues.push(`${item.id}:${kind}:${event.sequence}`);
+      if (event.template_id !== item.template_id) issue('template_chain');
+      if (event.quality !== 'standard') issue('unique_quality');
+      if (terminal) {
+        issue('post_consume');
+        continue;
+      }
+      switch (event.event_kind) {
+        case 'created':
+          if (index !== 0 || derivedState !== 'absent' || !emptyOwner(from)
+            || !liveOwner(to) || !creationKinds.has(event.provenance_kind)) {
+            issue('invalid_created');
+            break;
+          }
+          derivedState = 'active';
+          derivedOwner = to;
+          break;
+        case 'transferred':
+          if (derivedState !== 'active' || !sameOwner(from, derivedOwner)
+            || !liveOwner(to) || sameOwner(from, to)
+            || event.provenance_kind !== 'transferred') {
+            issue('invalid_transfer');
+            break;
+          }
+          derivedOwner = to;
+          break;
+        case 'escrowed':
+          if (derivedState !== 'active' || !sameOwner(from, derivedOwner)
+            || to.scope !== 'operation' || typeof to.id !== 'string' || !to.id
+            || !escrowKinds.has(event.provenance_kind)) {
+            issue('invalid_escrow');
+            break;
+          }
+          derivedState = 'escrowed';
+          derivedOwner = to;
+          escrow = { operationId: to.id, depositor: from };
+          break;
+        case 'released':
+          if (derivedState !== 'escrowed' || !escrow
+            || !sameOwner(from, derivedOwner) || from.scope !== 'operation'
+            || from.id !== escrow.operationId || !sameOwner(to, escrow.depositor)
+            || event.provenance_kind !== 'transferred') {
+            issue('invalid_release');
+            break;
+          }
+          derivedState = 'active';
+          derivedOwner = to;
+          escrow = null;
+          break;
+        case 'consumed':
+          if (!['active', 'escrowed'].includes(derivedState)
+            || !sameOwner(from, derivedOwner) || !emptyOwner(to)
+            || event.provenance_kind !== 'consumed') {
+            issue('invalid_consume');
+            break;
+          }
+          derivedState = 'consumed';
+          terminal = true;
+          escrow = null;
+          break;
+        default:
+          issue('unknown_event');
+      }
+    }
+
+    if (derivedState !== item.state
+      || !sameOwner(derivedOwner, { scope: item.owner_scope, id: item.owner_id })) {
+      itemIssues.push(`${item.id}:final_state`);
+    }
+    if ((derivedState === 'consumed') !== (item.consumed_at != null)) {
+      itemIssues.push(`${item.id}:consumed_time`);
+    }
+    if (derivedState === 'escrowed') {
+      if (!escrow || !custody || custody.owner_scope !== 'operation'
+        || custody.item_state !== 'escrowed' || custody.operation_id !== escrow.operationId
+        || custody.depositor_scope !== escrow.depositor.scope
+        || custody.depositor_id !== escrow.depositor.id) {
+        itemIssues.push(`${item.id}:current_escrow`);
       }
     } else if (custody) itemIssues.push(`${item.id}:stale_escrow`);
-    if (item.state === 'consumed') {
-      if (item.consumed_at == null || latest?.event_kind !== 'consumed'
-        || latest?.template_id !== item.template_id
-        || latest?.from_owner_scope !== item.owner_scope
-        || latest?.from_owner_id !== item.owner_id
-        || latest?.to_owner_scope != null || latest?.to_owner_id != null) {
-        itemIssues.push(`${item.id}:consumed`);
-      }
-    } else if (item.consumed_at != null || latest?.event_kind === 'consumed') {
-      itemIssues.push(`${item.id}:live_state`);
-    }
-    if (item.state === 'active') {
-      const toScope = latest?.to_owner_scope;
-      const toId = latest?.to_owner_id;
-      if (!latest || !['created', 'transferred', 'released'].includes(latest.event_kind)
-        || toScope !== item.owner_scope || toId !== item.owner_id) {
-        itemIssues.push(`${item.id}:owner`);
-      }
-    }
   }
   for (const custody of custodyRows) {
     if (!itemById.has(custody.item_id)) itemIssues.push(`${custody.item_id}:orphan_escrow`);

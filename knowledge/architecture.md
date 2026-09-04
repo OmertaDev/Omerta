@@ -25,7 +25,7 @@ flowchart LR
 |---|---|---|
 | API process | `src/server.js`, `src/routes/`, `src/auth.js`, `src/ratelimit.js` | Serves the web surfaces and JSON API; authenticates, throttles and records routes; owns WebSocket presence and the in-process event bus. |
 | Domain layer | `src/*.js`, `src/social/*.js` | Implements gameplay, economy, social state and reads of public/private boards. |
-| Phase 1 world graph | `src/content/phase1.js`, `src/worldgraph*.js`, `src/items.js`, `src/crafting.js`, `src/mysteries.js`, `src/operations.js`, `src/routes/worldgraph.js` | Loads one canonical immutable package manifest; conserves stack and unique-item custody; executes direct-only mystery and Crew-operation graphs. |
+| Phase 1 world graph | `src/content/phase1.js`, `src/content/phase1-policy.js`, `src/content/phase1-validation.js`, `src/worldgraph*.js`, `src/items.js`, `src/crafting.js`, `src/mysteries.js`, `src/operations.js`, `src/routes/worldgraph.js` | Boot-validates one canonical immutable manifest and its closed executable/economy policy; conserves exact-quality stacks, cars, and full unique-item custody; executes direct-only version-pinned mystery and Crew-operation graphs. |
 | Transaction spine | `src/game.js`, `src/accrual.js` | Locks actors in a stable order, applies lazy accrual, persists state, writes ledger/audit records and fires post-commit notifications. |
 | Database | `schema.sql`, `src/db.js` | PostgreSQL is production truth; `pg-mem` provides zero-infrastructure local tests and is explicitly not trusted for PostgreSQL-only behavior. |
 | Worker | `src/worker.js`, `src/watcher.js` | Runs timed settlements, buybacks, season/world sweeps, monitoring and chain-event synchronization. Exactly one worker is intended. |

@@ -35,7 +35,7 @@ in the economy on skill, not by farming faucets. Watching a language model run a
 is as entertaining as we hoped.
 
 **2. The economy is adversarially accounted, and that's most of the engineering.** Every value
-movement writes to a ledger; a conservation sweep runs nightly across 38 invariants and treats a
+movement writes to a ledger; a conservation sweep runs nightly across 39 invariants and treats a
 one-cent drift as an alarm. There are 97 red-team reports in the repo. The in-game cash economy and
 the token economy are severed — grinding cash cannot become the token through any route, which
 means game design decisions stop being secret token-supply decisions (Axie's SLP is the cautionary

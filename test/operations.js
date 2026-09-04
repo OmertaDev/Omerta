@@ -3,7 +3,12 @@
 import assert from 'node:assert/strict';
 import { makeDb } from '../src/db.js';
 import { CREW_FIRST_CHARACTER_LOCKS } from '../src/crew.js';
-import { createItem, inventoryBoard, withItemTransaction } from '../src/items.js';
+import {
+  createItem,
+  grantStack,
+  inventoryBoard,
+  withItemTransaction,
+} from '../src/items.js';
 import {
   assignRole,
   cancelOperation,
@@ -12,6 +17,7 @@ import {
   createOperationContext,
   openOperation,
   operationBoard,
+  operationDefinitions,
   roleBoard,
 } from '../src/operations.js';
 import { loadAndValidateGraphPackages } from '../src/worldgraph-validate.js';
@@ -50,12 +56,27 @@ const core = Object.freeze({
       metadata: Object.freeze({ inventoryClass: 'unique' }),
     }),
     Object.freeze({
+      id: 'item:operation_alias_investigator', type: 'item_template', visibility: 'hidden',
+      metadata: Object.freeze({ inventoryClass: 'unique' }),
+    }),
+    Object.freeze({
+      id: 'item:operation_alias_driver', type: 'item_template', visibility: 'hidden',
+      metadata: Object.freeze({ inventoryClass: 'unique' }),
+    }),
+    Object.freeze({
+      id: 'mat:operation_condition', type: 'material', visibility: 'public',
+      metadata: Object.freeze({ inventoryClass: 'stack' }),
+    }),
+    Object.freeze({
       id: 'source:operation_items', type: 'source', visibility: 'public',
       produces: Object.freeze([
         Object.freeze({ templateId: 'item:operation_tool', quantity: 1 }),
         Object.freeze({ templateId: 'item:missing_operation_tool', quantity: 1 }),
         Object.freeze({ templateId: 'item:operation_artifact', quantity: 1 }),
         Object.freeze({ templateId: 'item:mechanic_artifact', quantity: 1 }),
+        Object.freeze({ templateId: 'item:operation_alias_investigator', quantity: 1 }),
+        Object.freeze({ templateId: 'item:operation_alias_driver', quantity: 1 }),
+        Object.freeze({ templateId: 'mat:operation_condition', quantity: 1 }),
       ]),
     }),
   ]),
@@ -71,6 +92,7 @@ const mainSteps = Object.freeze([
     ]),
     effects: Object.freeze([
       Object.freeze({ adapter: 'evidence_grant', nodeId: 'evidence:investigator' }),
+      Object.freeze({ adapter: 'evidence_grant', nodeId: 'evidence:shared' }),
     ]),
   }),
   Object.freeze({
@@ -89,6 +111,10 @@ const mainSteps = Object.freeze([
     id: 'op:drive', type: 'operation_step', visibility: 'public',
     requires: Object.freeze(['op:lockbox', 'op:mechanic']),
     metadata: Object.freeze({ operationId: 'op:lockbox', roleId: 'driver', order: 3 }),
+    conditions: Object.freeze([
+      Object.freeze({ adapter: 'graph_dependency', nodeId: 'op:mechanic' }),
+      Object.freeze({ adapter: 'evidence', evidenceId: 'evidence:shared' }),
+    ]),
   }),
   Object.freeze({
     id: 'op:enforce', type: 'operation_step', visibility: 'public',
@@ -170,24 +196,33 @@ const social = Object.freeze({
     }),
     Object.freeze({
       id: 'evidence:investigator', type: 'evidence', visibility: 'role_private',
+      requires: Object.freeze(['op:investigate']),
       metadata: Object.freeze({
-        operationId: 'op:lockbox', roleId: 'investigator', secret: 'violet ledger',
+        operationId: 'op:lockbox', roleId: 'investigator', privateEvidence: 'violet ledger',
       }),
     }),
     Object.freeze({
+      id: 'evidence:shared', type: 'evidence', visibility: 'public',
+      requires: Object.freeze(['op:investigate']),
+      metadata: Object.freeze({ operationId: 'op:lockbox' }),
+    }),
+    Object.freeze({
       id: 'evidence:mechanic', type: 'evidence', visibility: 'role_private',
+      requires: Object.freeze(['op:mechanic']),
       metadata: Object.freeze({
-        operationId: 'op:lockbox', roleId: 'mechanic', secret: 'reversed tumblers',
+        operationId: 'op:lockbox', roleId: 'mechanic', privateEvidence: 'reversed tumblers',
       }),
     }),
     Object.freeze({
       id: 'evidence:rollback', type: 'evidence', visibility: 'role_private',
+      requires: Object.freeze(['op:rollback']),
       metadata: Object.freeze({
-        operationId: 'op:lockbox', roleId: 'mechanic', secret: 'must roll back',
+        operationId: 'op:lockbox', roleId: 'mechanic', privateEvidence: 'must roll back',
       }),
     }),
     Object.freeze({
-      id: 'reward:operation_status', type: 'reward', visibility: 'hidden', repeatability: 'once',
+      id: 'reward:operation_status', type: 'reward', visibility: 'hidden',
+      requires: Object.freeze(['op:lockbox']),
       metadata: Object.freeze({
         operationId: 'op:lockbox', inert: true, rewardType: 'status', title: 'Lockbox Witness',
       }),
@@ -240,6 +275,70 @@ const social = Object.freeze({
         })]),
       } : {}),
     })),
+    Object.freeze({
+      id: 'op:version-recovery', type: 'social_gate', visibility: 'public',
+      minimumDistinctAccounts: 4, roles: Object.freeze(roles()),
+      metadata: Object.freeze({
+        phase1Proof: true,
+        closerRoleId: 'investigator',
+        completionRequires: Object.freeze(ROLES.map((roleId) => `version:${roleId}`)),
+      }),
+      effects: Object.freeze([Object.freeze({
+        adapter: 'unique_item_award', templateId: 'item:operation_artifact',
+        recipientRoleId: 'investigator',
+      })]),
+    }),
+    ...ROLES.map((roleId, index) => Object.freeze({
+      id: `version:${roleId}`, type: 'operation_step', visibility: 'public',
+      requires: Object.freeze(['op:version-recovery']),
+      metadata: Object.freeze({
+        operationId: 'op:version-recovery', roleId, order: index + 1,
+      }),
+      ...(roleId === 'investigator' ? {
+        conditions: Object.freeze([Object.freeze({
+          adapter: 'item_ownership', templateId: 'item:operation_tool',
+        })]),
+        effects: Object.freeze([Object.freeze({
+          adapter: 'item_escrow', templateId: 'item:operation_tool',
+        })]),
+      } : {}),
+    })),
+    Object.freeze({
+      id: 'op:condition-aliases', type: 'social_gate', visibility: 'public',
+      metadata: Object.freeze({
+        phase1Proof: true,
+        minimumDistinctAccounts: 4,
+        roles: Object.freeze(roles()),
+        closerRoleId: 'investigator',
+        completionRequires: Object.freeze(ROLES.map((roleId) => `aliases:${roleId}`)),
+      }),
+    }),
+    ...[
+      ['investigator', Object.freeze({
+        adapter: 'item_ownership', itemTemplateId: 'item:operation_alias_investigator',
+      })],
+      ['driver', Object.freeze({
+        adapter: 'owns_item', nodeId: 'item:operation_alias_driver',
+      })],
+      ['mechanic', Object.freeze({
+        adapter: 'material_quantity', materialId: 'mat:operation_condition',
+        minimumQuantity: 2,
+      })],
+      ['enforcer', Object.freeze({
+        adapter: 'material_quantity', nodeId: 'mat:operation_condition', amount: 3,
+      })],
+    ].map(([roleId, condition], index) => Object.freeze({
+      id: `aliases:${roleId}`, type: 'operation_step', visibility: 'public',
+      requires: Object.freeze(['op:condition-aliases']),
+      conditions: Object.freeze([condition]),
+      metadata: Object.freeze({
+        operationId: 'op:condition-aliases', roleId, order: index + 1,
+      }),
+    })),
+    Object.freeze({
+      id: 'gate:public-non-operation', type: 'social_gate', visibility: 'public',
+      metadata: Object.freeze({ title: 'A public graph gate, not an operation' }),
+    }),
     Object.freeze({
       id: 'op:different-vocabulary', type: 'social_gate', visibility: 'public',
       minimumDistinctAccounts: 2,
@@ -296,6 +395,29 @@ const social = Object.freeze({
 });
 
 const registry = loadAndValidateGraphPackages([core, social]);
+const discoverableDefinitions = operationDefinitions(registry, { publicOnly: true });
+assert.equal(discoverableDefinitions.some(({ root }) => root.id === 'gate:public-non-operation'), false,
+  'public social gates without operation roles are excluded from operation discovery');
+const metadataDefinition = discoverableDefinitions
+  .find(({ root }) => root.id === 'op:condition-aliases');
+assert.equal(metadataDefinition.minimumDistinctAccounts, 4);
+assert.deepEqual(metadataDefinition.roles.map(({ id }) => id), ROLES,
+  'metadata role/minimum aliases normalize identically for discovery and runtime');
+const socialV2 = structuredClone(social);
+socialV2.version = 2;
+socialV2.nodes.find(({ id }) => id === 'op:lockbox').metadata.mysteryGate.graphVersion = 2;
+const versionTwoRegistry = loadAndValidateGraphPackages([core, socialV2]);
+const ignoredLifecycleOperationPackage = structuredClone(social);
+ignoredLifecycleOperationPackage.nodes
+  .find(({ id }) => id === 'op:lockbox').failureRules = { onFailure: 'retry' };
+assert.throws(
+  () => createOperationContext({
+    registry: loadGraphPackages([core, ignoredLifecycleOperationPackage]),
+    accountId: ACCOUNTS[0],
+  }),
+  (error) => error?.code === 'unsupported_operation_semantics',
+  'the request-time operation context shares the release gate for ignored lifecycle authority',
+);
 const crossOperationPackage = structuredClone(social);
 crossOperationPackage.nodes.find(({ id }) => id === 'evidence:investigator').metadata.operationId =
   'op:death-test';
@@ -330,9 +452,13 @@ assert.throws(
 const contexts = ACCOUNTS.map((accountId) => createOperationContext({
   registry, accountId, now: '2026-09-03T20:00:00.000Z',
 }));
+const versionTwoContexts = ACCOUNTS.map((accountId) => createOperationContext({
+  registry: versionTwoRegistry, accountId, now: '2026-09-03T20:00:00.000Z',
+}));
 const pool = await makeDb();
 const tx = (action) => withItemTransaction(pool, action);
 const act = (index, fn, ...args) => tx((client) => fn(client, contexts[index], ...args));
+const actV2 = (index, fn, ...args) => tx((client) => fn(client, versionTwoContexts[index], ...args));
 const count = async (sql, params = []) => Number((await pool.query(sql, params)).rows[0].n);
 const safeJson = (value) => JSON.stringify(value);
 const tracingPool = (queries) => ({
@@ -756,6 +882,184 @@ try {
   assert.equal(crewChangeAbandoned.closeReason, 'crew_changed');
   await pool.query('UPDATE crew_members SET crew_id=$1 WHERE account_id=$2', [CREW_ID, ACCOUNTS[0]]);
   await pool.query("DELETE FROM crews WHERE id='temporary-other-crew'");
+
+  // Version-independent cancellation authenticates only the immutable stored operation tuple. A
+  // registry bump cannot strand escrow, cannot execute the old definition, and cannot touch the
+  // distinct current-version operation for the same Crew/root.
+  const versionRecovery = await act(
+    0, openOperation, GRAPH_ID, 'op:version-recovery', 1, 'op-open-version-recovery-v1',
+  );
+  for (let index = 0; index < ROLES.length; index += 1) {
+    await act(index, assignRole, versionRecovery.operationId, ROLES[index], {
+      idempotencyKey: `op-version-recovery-assign-${index}`,
+    });
+  }
+  const versionRecoveryTool = await tx((client) => createItem(
+    client, { scope: 'account', id: ACCOUNTS[0] }, 'item:operation_tool',
+    'crafted', 'op-version-recovery-tool',
+  ));
+  await act(0, contribute, versionRecovery.operationId, 'version:investigator', {
+    idempotencyKey: 'op-version-recovery-contribute',
+  });
+  assert.equal(await count(
+    'SELECT COUNT(*) AS n FROM operation_escrow WHERE operation_id=$1',
+    [versionRecovery.operationId],
+  ), 1);
+  const versionRecoveryEscrowItemId = (await pool.query(
+    'SELECT item_id FROM operation_escrow WHERE operation_id=$1',
+    [versionRecovery.operationId],
+  )).rows[0].item_id;
+  assert(versionRecoveryEscrowItemId,
+    'the historical recovery proof follows the exact FIFO item selected into escrow');
+  await assert.rejects(
+    operationBoard(pool, versionTwoContexts[0], versionRecovery.operationId),
+    (error) => error?.code === 'stale_graph_version',
+    'a version bump cannot reinterpret or continue the old operation definition',
+  );
+  const currentVersionOperation = await actV2(
+    0, openOperation, GRAPH_ID, 'op:version-recovery', 2, 'op-open-version-recovery-v2',
+  );
+  assert.notEqual(currentVersionOperation.operationId, versionRecovery.operationId);
+  assert.equal(currentVersionOperation.graph.version, 2);
+  const currentVersionBeforeRecovery = (await pool.query(
+    `SELECT id,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id,status
+       FROM world_operations WHERE id=$1`, [currentVersionOperation.operationId],
+  )).rows[0];
+  await assert.rejects(
+    actV2(3, cancelOperation, versionRecovery.operationId, {
+      idempotencyKey: 'op-version-recovery-non-opener',
+    }),
+    (error) => error?.code === 'operation_cancel_forbidden',
+    'a participant cannot use version-independent recovery for the opener',
+  );
+  const versionAwardsBefore = await count(
+    "SELECT COUNT(*) AS n FROM item_instances WHERE template_id='item:operation_artifact'",
+  );
+  const versionReleaseBefore = await count(
+    `SELECT COUNT(*) AS n FROM item_events
+      WHERE item_id=$1 AND event_kind='released'`, [versionRecoveryEscrowItemId],
+  );
+  const versionCancelTrace = [];
+  const versionCanceled = await withItemTransaction(tracingPool(versionCancelTrace), (client) => (
+    cancelOperation(client, versionTwoContexts[0], versionRecovery.operationId, {
+      idempotencyKey: 'op-version-recovery-cancel',
+    })
+  ));
+  assert.equal(versionCanceled.status, 'canceled');
+  assert.equal(versionCanceled.graph.version, 1,
+    'the recovery receipt retains the stored immutable version');
+  assert.equal(versionCanceled.releasedEscrowCount, 1);
+  const versionOperationLock = versionCancelTrace.findIndex((sql) => (
+    /FROM world_operations WHERE id=\$1 FOR UPDATE/i.test(sql)
+  ));
+  const versionCharacterLock = versionCancelTrace.findIndex((sql) => (
+    /FROM characters\s+WHERE id=\$1 FOR UPDATE/i.test(sql)
+  ));
+  const versionMembershipLock = versionCancelTrace.findIndex((sql) => (
+    /FROM crew_members\s+WHERE account_id=\$1 FOR UPDATE/i.test(sql)
+  ));
+  assert(versionOperationLock >= 0 && versionCharacterLock > versionOperationLock
+    && versionMembershipLock > versionCharacterLock,
+  'historical cancellation locks operation, then sorted characters, then sorted memberships');
+  assert.equal(await count(
+    'SELECT COUNT(*) AS n FROM operation_escrow WHERE operation_id=$1',
+    [versionRecovery.operationId],
+  ), 0);
+  assert((await inventoryBoard(pool, { scope: 'account', id: ACCOUNTS[0] })).items
+    .some(({ id, state }) => id === versionRecoveryEscrowItemId && state === 'active'));
+  assert.equal(await count(
+    `SELECT COUNT(*) AS n FROM item_events
+      WHERE item_id=$1 AND event_kind='released'`, [versionRecoveryEscrowItemId],
+  ), versionReleaseBefore + 1);
+  assert.equal(await count(
+    "SELECT COUNT(*) AS n FROM item_instances WHERE template_id='item:operation_artifact'",
+  ), versionAwardsBefore, 'release-only recovery cannot execute the old completion award');
+  assert.deepEqual(await actV2(0, cancelOperation, versionRecovery.operationId, {
+    idempotencyKey: 'op-version-recovery-cancel',
+  }), versionCanceled, 'old-version cancellation replays without releasing escrow twice');
+  assert.equal((await actV2(0, cancelOperation, versionRecovery.operationId, {
+    idempotencyKey: 'op-version-recovery-cancel-after-close',
+  })).releasedEscrowCount, 0, 'a fresh recovery request cannot release the same custody twice');
+  assert.deepEqual((await pool.query(
+    `SELECT id,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id,status
+       FROM world_operations WHERE id=$1`, [currentVersionOperation.operationId],
+  )).rows[0], currentVersionBeforeRecovery,
+  'canceling the pinned v1 operation leaves the current v2 operation byte-identical');
+
+  // The same normalized condition vocabulary drives validation and execution. Every documented
+  // target/quantity alias therefore keeps its exact meaning beyond the release gate.
+  const aliases = await act(
+    0, openOperation, GRAPH_ID, 'op:condition-aliases', 1, 'op-open-condition-aliases',
+  );
+  for (let index = 0; index < ROLES.length; index += 1) {
+    await act(index, assignRole, aliases.operationId, ROLES[index], {
+      idempotencyKey: `op-aliases-assign-${index}`,
+    });
+  }
+  await assert.rejects(
+    act(0, contribute, aliases.operationId, 'aliases:investigator', {
+      idempotencyKey: 'op-aliases-item-template-blocked',
+    }),
+    (error) => error?.code === 'item_unavailable',
+    'itemTemplateId remains an enforced item target after validation',
+  );
+  await tx((client) => createItem(
+    client, { scope: 'account', id: ACCOUNTS[0] }, 'item:operation_alias_investigator',
+    'crafted', 'op-aliases-investigator-tool',
+  ));
+  await act(0, contribute, aliases.operationId, 'aliases:investigator', {
+    idempotencyKey: 'op-aliases-item-template-pass',
+  });
+  await assert.rejects(
+    act(1, contribute, aliases.operationId, 'aliases:driver', {
+      idempotencyKey: 'op-aliases-item-node-blocked',
+    }),
+    (error) => error?.code === 'item_unavailable',
+    'nodeId remains an enforced item target after validation',
+  );
+  await tx((client) => createItem(
+    client, { scope: 'account', id: ACCOUNTS[1] }, 'item:operation_alias_driver',
+    'crafted', 'op-aliases-driver-tool',
+  ));
+  await act(1, contribute, aliases.operationId, 'aliases:driver', {
+    idempotencyKey: 'op-aliases-item-node-pass',
+  });
+  await tx((client) => grantStack(
+    client, { scope: 'account', id: ACCOUNTS[2] }, 'mat:operation_condition', 1,
+    'standard', 'op aliases mechanic material', 'op-aliases-mechanic-material-one',
+  ));
+  await assert.rejects(
+    act(2, contribute, aliases.operationId, 'aliases:mechanic', {
+      idempotencyKey: 'op-aliases-minimum-quantity-blocked',
+    }),
+    (error) => error?.code === 'materials',
+    'minimumQuantity greater than one cannot degrade to a default quantity',
+  );
+  await tx((client) => grantStack(
+    client, { scope: 'account', id: ACCOUNTS[2] }, 'mat:operation_condition', 1,
+    'standard', 'op aliases mechanic material', 'op-aliases-mechanic-material-two',
+  ));
+  await act(2, contribute, aliases.operationId, 'aliases:mechanic', {
+    idempotencyKey: 'op-aliases-minimum-quantity-pass',
+  });
+  await tx((client) => grantStack(
+    client, { scope: 'account', id: ACCOUNTS[3] }, 'mat:operation_condition', 2,
+    'standard', 'op aliases enforcer material', 'op-aliases-enforcer-material-two',
+  ));
+  await assert.rejects(
+    act(3, contribute, aliases.operationId, 'aliases:enforcer', {
+      idempotencyKey: 'op-aliases-amount-blocked',
+    }),
+    (error) => error?.code === 'materials',
+    'amount greater than one cannot degrade to a default quantity',
+  );
+  await tx((client) => grantStack(
+    client, { scope: 'account', id: ACCOUNTS[3] }, 'mat:operation_condition', 1,
+    'standard', 'op aliases enforcer material', 'op-aliases-enforcer-material-three',
+  ));
+  await act(3, contribute, aliases.operationId, 'aliases:enforcer', {
+    idempotencyKey: 'op-aliases-amount-pass',
+  });
 
   // Cancellation is a recovery path, not participant validation: it locks the same authority rows
   // but still returns multi-owner escrow after death, Crew movement, and membership deletion.

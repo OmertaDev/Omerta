@@ -11,7 +11,8 @@ import { GameError } from './game.js';
 
 const OWNER_SCOPES = new Set(['character', 'account', 'operation']);
 const COMPOSITE_MUTATION_KINDS = new Set([
-  'craft', 'salvage_car', 'mystery_action', 'operation_action', 'reward_claim',
+  'assign_current_character', 'craft', 'salvage_car', 'mystery_action', 'operation_action',
+  'reward_claim',
 ]);
 const CREATION_PROVENANCE_KINDS = new Set(['crafted', 'salvaged', 'awarded', 'imported']);
 const ESCROW_PROVENANCE_KINDS = new Set(['used_in_mystery', 'used_in_operation']);
@@ -400,15 +401,15 @@ export async function withItemMutation(
 
 async function appendEvent(client, guard, {
   eventKey, eventKind, provenanceKind = null, itemId = null, templateId, quantityDelta = null,
-  quantityBefore = null, quantityAfter = null, from = null, to = null, reason,
+  quality = 'standard', quantityBefore = null, quantityAfter = null, from = null, to = null, reason,
 }) {
   await client.query(
     `INSERT INTO item_events
-       (id, event_key, event_kind, provenance_kind, item_id, template_id,
+       (id, event_key, event_kind, provenance_kind, item_id, template_id, quality,
         quantity_delta, quantity_before, quantity_after,
         from_owner_scope, from_owner_id, to_owner_scope, to_owner_id, reason, idempotency_key)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`,
-    [crypto.randomUUID(), eventKey, eventKind, provenanceKind, itemId, templateId,
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)`,
+    [crypto.randomUUID(), eventKey, eventKind, provenanceKind, itemId, templateId, quality,
       quantityDelta, quantityBefore, quantityAfter, from?.scope || null, from?.id || null,
       to?.scope || null, to?.id || null, reason, guard.key],
   );
@@ -528,7 +529,7 @@ export async function grantStack(
       }
       const before = after - qty;
       await appendEvent(client, guard, {
-        eventKey, eventKind: 'stack_granted', templateId, quantityDelta: qty,
+        eventKey, eventKind: 'stack_granted', templateId, quality, quantityDelta: qty,
         quantityBefore: before, quantityAfter: after, to: owner, reason,
       });
       return { owner, templateId, quality, qty: after, delta: qty };
@@ -577,7 +578,7 @@ export async function consumeStack(
       }
       const after = Number(changed.rows[0].quantity);
       await appendEvent(client, guard, {
-        eventKey, eventKind: 'stack_consumed', templateId, quantityDelta: -qty,
+        eventKey, eventKind: 'stack_consumed', templateId, quality, quantityDelta: -qty,
         quantityBefore: before, quantityAfter: after, from: owner, reason,
       });
       return { owner, templateId, quality, qty: after, delta: -qty };
@@ -764,6 +765,9 @@ export async function releaseEscrow(
       )).rows[0];
       if (!custody || custody.operation_id !== operation.id) {
         fail('item_not_escrowed', 'That operation does not hold this item escrow.');
+      }
+      if (custody.depositor_scope !== to.scope || custody.depositor_id !== to.id) {
+        fail('item_escrow_destination', 'Escrow may be released only to its recorded depositor.');
       }
       registerItemRestore(client, current, custody);
       const removed = await client.query(

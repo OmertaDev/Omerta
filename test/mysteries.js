@@ -128,6 +128,7 @@ const mysteryNodes = Object.freeze([
   }),
   Object.freeze({
     id: 'evidence:belladonna', type: 'evidence', version: 1, visibility: 'hidden',
+    requires: Object.freeze(['m:evidence-source']),
   }),
   Object.freeze({
     id: 'source:belladonna_evidence', type: 'source', version: 1, visibility: 'hidden',
@@ -182,7 +183,7 @@ const mysteryNodes = Object.freeze([
   }),
   Object.freeze({
     id: 'reward:mystery_status', type: 'reward', version: 1, visibility: 'hidden',
-    repeatability: 'once',
+    requires: Object.freeze(['m:award']),
     metadata: Object.freeze({ inert: true, rewardType: 'status', title: 'Belladonna Witness' }),
   }),
   Object.freeze({
@@ -230,7 +231,11 @@ const mysteryPackage = (version = 1) => Object.freeze({
   version,
   season: 'core',
   dependsOn: Object.freeze(['test-mystery-core']),
-  nodes: mysteryNodes,
+  nodes: Object.freeze(mysteryNodes.map((node) => Object.freeze({
+    ...node,
+    ...(['mystery_step', 'world_gate', 'choice', 'evidence', 'reward'].includes(node.type)
+      && node.version !== undefined ? { version } : {}),
+  }))),
 });
 
 const registry = loadAndValidateGraphPackages([corePackage, mysteryPackage(1)]);
@@ -253,6 +258,13 @@ const versionTwoRegistry = loadAndValidateGraphPackages([corePackage, mysteryPac
 const versionTwoContext = createMysteryContext({
   registry: versionTwoRegistry, accountId: ACCOUNT, now: NOW,
   timeWindows: context.timeWindows,
+});
+const retiredRegistry = loadAndValidateGraphPackages([corePackage]);
+const retiredContext = createMysteryContext({
+  registry: retiredRegistry, accountId: ACCOUNT, now: NOW,
+});
+const retiredOtherContext = createMysteryContext({
+  registry: retiredRegistry, accountId: OTHER_ACCOUNT, now: NOW,
 });
 
 assert(Object.isFrozen(context));
@@ -290,6 +302,20 @@ mutableNode.effects = mutableEffects;
 assert.equal(immutableContext.registry.nodes.get('m:immutable').effects.length, 0,
   'post-context caller mutation cannot add executable effects to an authentic registry');
 
+const ignoredLifecycleRegistry = loadGraphPackages([{
+  id: 'ignored-lifecycle-mystery', version: 1, season: 'core', dependsOn: [], nodes: [{
+    id: 'm:ignored-cooldown', type: 'mystery_step', visibility: 'public',
+    metadata: { cooldownSeconds: 60 },
+  }],
+}]);
+assert.throws(
+  () => createMysteryContext({
+    registry: ignoredLifecycleRegistry, accountId: ACCOUNT, now: NOW,
+  }),
+  (error) => error?.code === 'unsupported_mystery_semantics',
+  'the request-time mystery context shares the release gate for ignored lifecycle authority',
+);
+
 const pool = await makeDb();
 const tx = (action) => withItemTransaction(pool, action);
 const act = (fn, ...args) => tx((client) => fn(client, context, ...args));
@@ -298,6 +324,21 @@ const nodeState = async (instanceId, nodeId) => (await pool.query(
   [instanceId, nodeId],
 )).rows[0] || null;
 const count = async (sql, params = []) => Number((await pool.query(sql, params)).rows[0].n);
+const tracingPool = (queries) => ({
+  async connect() {
+    const inner = await pool.connect();
+    return new Proxy(inner, {
+      get(target, property) {
+        if (property === 'query') return async (sql, params) => {
+          queries.push(String(sql).replace(/\s+/g, ' ').trim());
+          return target.query(sql, params);
+        };
+        const value = target[property];
+        return typeof value === 'function' ? value.bind(target) : value;
+      },
+    });
+  },
+});
 
 try {
   await pool.query(
@@ -341,6 +382,33 @@ try {
   const started = await act(startMystery, OWNER, GRAPH_ID, 1);
   const startReplay = await act(startMystery, OWNER, GRAPH_ID, 1);
   assert.deepEqual(startReplay, started, 'start is deterministic and replay-safe without a caller key');
+  const concurrentStarts = await Promise.all(Array.from({ length: 4 }, () => (
+    tx((client) => startMystery(client, context, OWNER, GRAPH_ID, 1))
+  )));
+  assert(concurrentStarts.every(({ instanceId }) => instanceId === started.instanceId));
+  assert.equal(await count(
+    `SELECT COUNT(*) AS n FROM mystery_instances
+      WHERE owner_scope=$1 AND owner_id=$2 AND graph_id=$3 AND graph_version=$4`,
+    [OWNER.scope, OWNER.id, GRAPH_ID, 1],
+  ), 1, 'same-version start races converge on one owner/graph/version lifecycle');
+  const lockTrace = [];
+  await assert.rejects(
+    withItemTransaction(tracingPool(lockTrace), (client) => completeNode(
+      client, context, OWNER, GRAPH_ID, 'm:start', {
+        idempotencyKey: 'm-lock-order-probe', interactionId: 'wrong-interaction',
+      },
+    )),
+    (error) => error?.code === 'interaction',
+  );
+  const actorLock = lockTrace.findIndex((sql) => (
+    /FROM characters WHERE (?:id|account_id)=\$1 AND alive .*FOR UPDATE/i.test(sql)
+  ));
+  const mysteryLock = lockTrace.findIndex((sql) => (
+    /FROM mystery_instances WHERE id=\$1 FOR UPDATE/i.test(sql)
+      || /FROM mystery_instances .*graph_version=\$4 FOR UPDATE/i.test(sql)
+  ));
+  assert(actorLock >= 0 && mysteryLock > actorLock,
+    `every mystery action locks actor character before mystery_instances: ${lockTrace.join(' | ')}`);
   assert.equal(started.graph.id, GRAPH_ID);
   assert.equal(started.graph.version, 1);
   assert.match(started.instanceId, /^[0-9a-f-]{36}$/i);
@@ -372,19 +440,47 @@ try {
     .items.map(({ id }) => id), [cancelTool.id]);
   await assert.rejects(
     mysteryBoard(pool, versionTwoContext, characterOwner, GRAPH_ID),
-    (error) => error?.code === 'stale_graph_version' && error?.data?.pinnedVersion === 1,
-    'a version bump cannot reinterpret the old active mystery or execute its effects',
+    (error) => error?.code === 'mystery_not_started',
+    'current-version discovery never reinterprets or leaks an old active mystery',
   );
+  const versionTwoStarted = await tx((client) => startMystery(
+    client, versionTwoContext, characterOwner, GRAPH_ID, 2, 'm-start-v2-beside-v1-active',
+  ));
+  assert.notEqual(versionTwoStarted.instanceId, characterStarted.instanceId);
+  assert.equal(versionTwoStarted.graph.version, 2);
+  assert.equal(versionTwoStarted.status, 'active',
+    'v2 starts independently while the immutable v1 instance remains active for recovery');
+  for (const [candidateContext, candidateGraph, candidateId, label] of [[
+    retiredOtherContext, GRAPH_ID, characterStarted.instanceId, 'foreign account',
+  ], [
+    retiredContext, 'retired-wrong-graph', characterStarted.instanceId, 'wrong graph',
+  ], [
+    retiredContext, GRAPH_ID, 'retired-missing-instance', 'missing instance',
+  ]]) {
+    await assert.rejects(
+      tx((client) => cancelMystery(
+        client, candidateContext, characterOwner, candidateGraph, candidateId,
+        { idempotencyKey: `m-cancel-refused-${label.replace(/\s/g, '-')}` },
+      )),
+      (error) => error?.code === 'mystery_unavailable',
+      `${label} is indistinguishable during exact-id historical recovery`,
+    );
+  }
   const canceled = await tx((client) => cancelMystery(
-    client, versionTwoContext, characterOwner, GRAPH_ID, { idempotencyKey: 'm-cancel-1' },
+    client, retiredContext, characterOwner, GRAPH_ID, characterStarted.instanceId,
+    { idempotencyKey: 'm-cancel-1' },
   ));
   assert.equal(canceled.status, 'canceled');
   assert.equal(canceled.releasedEscrowCount, 1);
   assert.deepEqual((await inventoryBoard(pool, characterOwner)).items.map(({ id }) => id),
     [cancelTool.id], 'cancel returns mystery custody to the original depositor atomically');
   assert.deepEqual(await tx((client) => cancelMystery(
-    client, versionTwoContext, characterOwner, GRAPH_ID, { idempotencyKey: 'm-cancel-1' },
-  )), canceled, 'old-version release-only cancellation is exact on logical replay');
+    client, retiredContext, characterOwner, GRAPH_ID, characterStarted.instanceId,
+    { idempotencyKey: 'm-cancel-1' },
+  )), canceled, 'removed-package release-only cancellation is exact on logical replay');
+  assert.equal((await mysteryBoard(pool, versionTwoContext, characterOwner, GRAPH_ID)).instanceId,
+    versionTwoStarted.instanceId,
+  'historical v1 cancellation leaves the already-active current v2 instance independent');
   assert.equal((await act(startMystery, characterOwner, GRAPH_ID, 1)).status, 'canceled',
     'start cannot reopen or misreport a canceled graph-pinned instance');
   await assert.rejects(
@@ -658,9 +754,17 @@ try {
 
   await assert.rejects(
     mysteryBoard(pool, versionTwoContext, OWNER, GRAPH_ID),
-    (error) => error?.code === 'stale_graph_version' && error?.data?.pinnedVersion === 1,
-    'an active instance cannot be reinterpreted through another graph package version',
+    (error) => error?.code === 'mystery_not_started',
+    'a completed v1 instance is not exposed as current v2 state',
   );
+  const completedOwnerV2 = await tx((client) => startMystery(
+    client, versionTwoContext, OWNER, GRAPH_ID, 2, 'm-start-v2-after-v1-complete',
+  ));
+  assert.notEqual(completedOwnerV2.instanceId, started.instanceId);
+  assert.equal(completedOwnerV2.status, 'active',
+    'a completed historical version cannot permanently block the owner from the successor');
+  assert.equal((await mysteryBoard(pool, versionTwoContext, OWNER, GRAPH_ID)).instanceId,
+    completedOwnerV2.instanceId);
   assert.equal(Number((await pool.query(
     'SELECT graph_version FROM mystery_instances WHERE id=$1', [started.instanceId],
   )).rows[0].graph_version), 1);

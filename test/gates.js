@@ -3260,6 +3260,8 @@ scopedSocialContext = async function(db) {
     'rwahealthclearance.js:READ_REQUESTS': 'cache: per-request-object marker, scoped to the request being served',
     'items.js:ITEM_TRANSACTIONS': 'cache: per-client active-transaction marker, scoped to the request being served',
     'items.js:MUTATION_CONTEXTS': 'cache: per-opaque-context mutation authority, scoped to its active transaction',
+    'crafting.js:CRAFTING_CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
+    'crafting.js:CRAFTING_DEFINITIONS': 'cache: immutable normalized recipes keyed by each locally authenticated context object',
     'mysteries.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
     'operations.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
     'worldgraph.js:WORLD_GRAPH_REGISTRIES': 'cache: per-registry-object authenticity marker; every box recognizes its own immutable registries',

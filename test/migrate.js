@@ -343,6 +343,7 @@ for (const need of [
   'ALTER TABLE characters ADD COLUMN IF NOT EXISTS heat_exposure NUMERIC NOT NULL DEFAULT 0',
   'ALTER TABLE commission_votes ADD COLUMN IF NOT EXISTS standing',
   'ALTER TABLE gang_members ADD COLUMN IF NOT EXISTS joined_at',
+  "ALTER TABLE item_events ADD COLUMN IF NOT EXISTS quality TEXT NOT NULL DEFAULT 'standard'",
 ]) assert(stmts.some((s) => s.startsWith(need)), `migration must cover: ${need}`);
 // column-level PRIMARY KEY is stripped from the generated def (the ADD COLUMN is always safe)
 const idStmt = stmts.find((s) => s.startsWith('ALTER TABLE characters ADD COLUMN IF NOT EXISTS id '));
@@ -917,6 +918,11 @@ const PHASE1_OWNER_TUPLE_DISPOSITION = {
     assert(stmts.some((statement) => new RegExp(`^ALTER TABLE ${table} ADD COLUMN IF NOT EXISTS ${column}\\b`, 'i').test(statement)),
       `${table}.${column} must be covered by the idempotent migration derivation`);
   }
+  assert(stmts.some((statement) => /^ALTER TABLE item_events ADD COLUMN IF NOT EXISTS quality TEXT NOT NULL DEFAULT 'standard'/i.test(statement)),
+    'item_events.quality must be backfilled safely by the idempotent migration derivation');
+  assert.match(phase1Schema,
+    /DROP CONSTRAINT IF EXISTS mystery_instances_owner_scope_owner_id_graph_id_key[\s\S]*CREATE UNIQUE INDEX IF NOT EXISTS ux_mystery_instance_owner_graph_version[\s\S]*\(owner_scope, owner_id, graph_id, graph_version\)/,
+    'mystery lifecycle migration must preserve history while enforcing one owner/graph/version row');
 
   const rootDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
   const backupSource = fs.readFileSync(path.join(rootDir, 'tools', 'backup.sh'), 'utf8');

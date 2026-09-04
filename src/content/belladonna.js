@@ -97,8 +97,6 @@ export const BELLADONNA_PACKAGE = frozen({
       version: 1,
       visibility: 'public',
       requires: frozen(['mystery:belladonna-file-closed']),
-      minimumDistinctAccounts: 4,
-      roles,
       effects: frozen([
         effect('unique_item_award', {
           templateId: 'item:belladonna_artifact',
@@ -109,6 +107,8 @@ export const BELLADONNA_PACKAGE = frozen({
       metadata: frozen({
         title: 'The Belladonna Lockbox',
         phase1Proof: true,
+        minimumDistinctAccounts: 4,
+        roles,
         closerRoleId: 'investigator',
         mysteryGate: frozen({
           graphId: 'belladonna-demo',
@@ -226,13 +226,12 @@ export const BELLADONNA_PACKAGE = frozen({
       type: 'reward',
       version: 1,
       visibility: 'hidden',
-      repeatability: 'once',
+      requires: frozen([operationId]),
       metadata: frozen({
         title: 'Belladonna Confidants',
         operationId,
         rewardType: 'status',
         inert: true,
-        finite: true,
       }),
     }),
   ]),

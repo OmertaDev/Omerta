@@ -10,18 +10,18 @@ Written 2026-07-25. Every number below was measured from the tree, not recalled.
 
 | | |
 |---|---|
-| Backend modules | **199** files, **84221** lines (`src/`, incl. `src/routes/` and `src/social/`) |
-| Test suites | **161** files, **85191** lines (`test/`) — ratio 1.01 test:src |
+| Backend modules | **200** files, **85540** lines (`src/`, incl. `src/routes/` and `src/social/`) |
+| Test suites | **161** files, **86854** lines (`test/`) — ratio 1.02 test:src |
 | HTTP routes | **766** registrations (**766** unique) |
-| Database tables | **329** (`schema.sql`, 6381 lines) |
+| Database tables | **329** (`schema.sql`, 6407 lines) |
 | Client | **12661** lines (`public/index.html`, single file, zero dependencies) |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **32** top-level Solidity files, **9794** lines, **844** declared top-level Foundry test functions; the release gate re-measures the passing suite |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/bond-dials.js` (sizing the on-chain mint walls), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |
 | Design + audit docs | **490** markdown files, **129954** lines — indexed in `docs/AUDITS.md`, which states they are point-in-time |
-| Ledger invariants | **38** checks — **33** named escrow/identity/custody checks + **5** per-currency conservation, **drift-0** |
+| Ledger invariants | **39** checks — **34** named escrow/identity/custody checks + **5** per-currency conservation, **drift-0** |
 
-Roughly **185,000 lines** of backend code, tests, schema and top-level contracts.
+Roughly **189,000 lines** of backend code, tests, schema and top-level contracts.
 
 ---
 
@@ -154,9 +154,16 @@ the exact `$300` `craft:recipe:hardened_steel` sink, every other action is cash-
 phase is $OMR-neutral. Generic owner and escrow-depositor tuples are immutable historical ledger state,
 not estate assets: death and replacement never wipe, rewrite, auto-inherit, or duplicate them. An
 account-authorized historical cancellation releases once to the exact recorded depositor, while the
-heir cannot drive or claim the old character-scoped instance. All 20 endpoints are authenticated,
+heir cannot drive or claim the old character-scoped instance. Mystery gameplay uniqueness includes
+graph version, so a successor can start while an exact historical instance remains release-only; mystery
+and operation recovery does not depend on the old package remaining loaded and never executes retired
+effects. Stack events carry exact quality, completed zero-cash salvage guards are authoritative car
+sinks, and unique-item invariants validate every ordered custody transition. All aggregates reserve the
+global item guard before character/domain/item locks and revalidate the living street under that order.
+All 20 endpoints are authenticated,
 idempotent direct actions and grant no `/v1/agent/act` authority. `npm run worldgraph:check` validates
-the manifest independently of the authored-content compiler and `content:check` before deployment.
+the manifest, closed executable schemas, and exact zero-OMR/cash policy independently of the authored-
+content compiler and `content:check`; server boot runs that same gate before accepting requests.
 
 **Authored Content** — immutable operator-activated graph bundles, hash/version-pinned instances,
 revision-checked server-issued actions, the playable four-role **Sixth Chair v2**, and six short

@@ -286,6 +286,10 @@ and escrow-depositor tuple as immutable historical ledger state, not an estate
 asset. Death and replacement never wipe, rewrite, inherit, or duplicate those
 tuples; cancellation releases once to the exact recorded historical depositor,
 and an heir cannot drive or claim the old character-scoped instance.
+Current mystery play is keyed by owner + graph + graph version. A newly
+activated version may start independently while the old immutable row remains
+available only through its exact `instanceId` for release-only cancellation;
+retiring the old package cannot strand its escrow.
 
 After the individual graph opens its Crew gate, use
 `GET /v1/worldgraph/operations`, open the listed operation, read the shared
@@ -294,6 +298,11 @@ its ordered steps, and complete or cancel. Shared projections omit private node
 IDs and clues; the role board reveals private evidence only to its assigned
 caller. Foreign, hidden, and nonexistent private identifiers deliberately use
 non-enumerating unavailable errors.
+Operation cancellation follows the same recovery rule: only the authenticated
+stored opener account can release recorded escrow after a version bump or
+package retirement, independent of current Crew membership. The Crew is a
+historical association, not cancellation authority, and recovery executes no
+retired nodes, effects, or rewards.
 
 Every world-graph mutation requires `Idempotency-Key`; exact retries replay and
 a key cannot be rebound to a different request. These are intentional direct
@@ -302,9 +311,14 @@ authority, and neither Agent Turn nor Agent Alpha guesses or executes them. The
 only cash movement is the exact `$300` `craft:recipe:hardened_steel` sink; every
 other Phase 1 action is cash-neutral and all are $OMR-neutral. `item_stacks`,
 permanent `item_instances`, append-only `item_events`, and `operation_escrow`
-are the authority—`collection_log` is not. Operators run `npm run
-worldgraph:check` over the canonical CORE + AUTOMOTIVE + BELLADONNA manifest;
-this gate is separate from the authored-content compiler and `content:check`.
+are the authority—every stack event carries its exact quality, and a completed
+zero-cash salvage guard is the audited car sink. `collection_log` is not item
+authority. Mutations reserve the global item guard before locking the current
+living character and item/domain rows, then revalidate authority under those
+locks. Operators run `npm run worldgraph:check` over the canonical CORE +
+AUTOMOTIVE + BELLADONNA manifest; server boot runs that same closed executable
+definition and zero-OMR policy gate before serving. This gate is separate from
+the authored-content compiler and `content:check`.
 
 ### Authored stories (direct, revision-checked play)
 

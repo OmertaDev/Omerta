@@ -131,7 +131,7 @@ psql_q "$FULL_DB" "INSERT INTO item_mutation_guards
                       'bk-res-active','{\"ok\":true}',now())"
 psql_q "$FULL_DB" "INSERT INTO item_stacks
                      (owner_scope,owner_id,template_id,quality,quantity)
-                   VALUES ('account','bk-account','mat:steel','standard',4)"
+                   VALUES ('account','bk-account','mat:steel','pristine',4)"
 psql_q "$FULL_DB" "INSERT INTO item_instances
                      (id,template_id,owner_scope,owner_id,state)
                    VALUES ('bk-phase1-item','tool:press','operation','bk-phase1-operation','escrowed')"
@@ -139,26 +139,28 @@ psql_q "$FULL_DB" "INSERT INTO item_instances
                      (id,template_id,owner_scope,owner_id,state)
                    VALUES ('bk-phase1-active-item','item:archive','account','bk-account','active')"
 psql_q "$FULL_DB" "INSERT INTO item_events
-                     (id,event_key,event_kind,provenance_kind,item_id,template_id,
+                     (id,event_key,event_kind,provenance_kind,item_id,template_id,quality,
                       from_owner_scope,from_owner_id,to_owner_scope,to_owner_id,reason,idempotency_key)
                    VALUES
-                     ('bk-event-create','created','created','crafted','bk-phase1-item','tool:press',
+                     ('bk-event-create','created','created','crafted','bk-phase1-item','tool:press','standard',
                       NULL,NULL,'character','bk-depositor','backup:selftest:create','bk-phase1-create'),
-                     ('bk-event-escrow','escrowed','escrowed','used_in_operation','bk-phase1-item','tool:press',
+                     ('bk-event-escrow','escrowed','escrowed','used_in_operation','bk-phase1-item','tool:press','standard',
                       'character','bk-depositor','operation','bk-phase1-operation','backup:selftest:escrow','bk-phase1-escrow'),
-                     ('bk-event-active','created','created','awarded','bk-phase1-active-item','item:archive',
+                     ('bk-event-active','created','created','awarded','bk-phase1-active-item','item:archive','standard',
                       NULL,NULL,'account','bk-account','backup:selftest:active','bk-phase1-active')"
 psql_q "$FULL_DB" "INSERT INTO item_events
-                     (id,event_key,event_kind,template_id,quantity_delta,quantity_before,quantity_after,
+                     (id,event_key,event_kind,template_id,quality,quantity_delta,quantity_before,quantity_after,
                       to_owner_scope,to_owner_id,reason,idempotency_key)
-                   VALUES ('bk-event-stack','stack','stack_granted','mat:steel',4,0,4,
+                   VALUES ('bk-event-stack','stack','stack_granted','mat:steel','pristine',4,0,4,
                      'account','bk-account','backup:selftest:stack','bk-phase1-stack')"
 psql_q "$FULL_DB" "INSERT INTO operation_escrow
                      (item_id,operation_id,depositor_scope,depositor_id)
                    VALUES ('bk-phase1-item','bk-phase1-operation','character','bk-depositor')"
 psql_q "$FULL_DB" "INSERT INTO mystery_instances
                      (id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,status)
-                   VALUES ('bk-phase1-mystery','character','bk-depositor','bk-account','graph:backup',7,'active')"
+                   VALUES
+                     ('bk-phase1-mystery','character','bk-depositor','bk-account','graph:backup',7,'active'),
+                     ('bk-phase1-mystery-v8','character','bk-depositor','bk-account','graph:backup',8,'active')"
 psql_q "$FULL_DB" "INSERT INTO mystery_node_state
                      (instance_id,node_id,state,discovered_at)
                    VALUES ('bk-phase1-mystery','node:lead','discovered',now())"
@@ -196,8 +198,8 @@ FIXTURE="$(psql "$(base_url "$FULL_DB")" -tAc \
           (SELECT count(*) FROM world_operations)||'/'||(SELECT count(*) FROM world_operation_roles)||'/'||
           (SELECT count(*) FROM world_operation_node_state)||'/'||(SELECT count(*) FROM world_operation_contributions)" \
   2>/dev/null | tr -d ' ')"
-[ "$FIXTURE" = "2/2/1/2/4/4/1/1/1/1/1/4/1/1" ] || {
-  echo "backup-selftest: linked fixture rows are $FIXTURE, expected 2/2/1/2/4/4/1/1/1/1/1/4/1/1." >&2; exit 2; }
+[ "$FIXTURE" = "2/2/1/2/4/4/1/2/1/1/1/4/1/1" ] || {
+  echo "backup-selftest: linked fixture rows are $FIXTURE, expected 2/2/1/2/4/4/1/2/1/1/1/4/1/1." >&2; exit 2; }
 echo "client: pg_dump $(pg_dump --version | awk '{print $3}'), pg_restore $(pg_restore --version | awk '{print $3}'), psql $(psql --version | awk '{print $3}')"
 echo "server: $(psql "$ADMIN_DB_URL" -tAc 'SHOW server_version' 2>/dev/null | tr -d ' ')   fixture: $FIXTURE linked Phase 1 rows"
 
@@ -317,14 +319,14 @@ RESTORED_FIXTURE="$(psql "$(base_url "$RESTORE_DB")" -tAc \
           (SELECT count(*) FROM world_operations)||'/'||(SELECT count(*) FROM world_operation_roles)||'/'||
           (SELECT count(*) FROM world_operation_node_state)||'/'||(SELECT count(*) FROM world_operation_contributions)" \
   2>/dev/null | tr -d ' ')"
-check $([ "$RESTORED_FIXTURE" = "$FIXTURE" ] && [ "$RESTORED_FIXTURE" = "2/2/1/2/4/4/1/1/1/1/1/4/1/1" ] && echo 0 || echo 1) \
+check $([ "$RESTORED_FIXTURE" = "$FIXTURE" ] && [ "$RESTORED_FIXTURE" = "2/2/1/2/4/4/1/2/1/1/1/4/1/1" ] && echo 0 || echo 1) \
   "the restore preserves the complete 14-table Phase 1 fixture census" \
   "before=$FIXTURE after=$RESTORED_FIXTURE"
 PHASE1_RESTORED="$(psql "$(base_url "$RESTORE_DB")" -tAc \
   "WITH exact(table_name, matches) AS (VALUES
      ('item_stacks',
        (SELECT array_agg(concat_ws('~',owner_scope,owner_id,template_id,quality,quantity) ORDER BY owner_scope,owner_id,template_id,quality)
-          FROM item_stacks) = ARRAY['account~bk-account~mat:steel~standard~4']),
+          FROM item_stacks) = ARRAY['account~bk-account~mat:steel~pristine~4']),
      ('item_instances',
        (SELECT array_agg(concat_ws('~',id,template_id,owner_scope,owner_id,state,(consumed_at IS NOT NULL)::text) ORDER BY id)
           FROM item_instances) = ARRAY[
@@ -333,16 +335,16 @@ PHASE1_RESTORED="$(psql "$(base_url "$RESTORE_DB")" -tAc \
           ]),
      ('item_events',
        (SELECT array_agg(concat_ws('~',id,event_key,event_kind,coalesce(provenance_kind,'<null>'),
-                    coalesce(item_id,'<null>'),template_id,coalesce(quantity_delta::text,'<null>'),
+                    coalesce(item_id,'<null>'),template_id,quality,coalesce(quantity_delta::text,'<null>'),
                     coalesce(quantity_before::text,'<null>'),coalesce(quantity_after::text,'<null>'),
                     coalesce(from_owner_scope,'<null>'),coalesce(from_owner_id,'<null>'),
                     coalesce(to_owner_scope,'<null>'),coalesce(to_owner_id,'<null>'),reason,idempotency_key)
                 ORDER BY id)
           FROM item_events) = ARRAY[
-            'bk-event-active~created~created~awarded~bk-phase1-active-item~item:archive~<null>~<null>~<null>~<null>~<null>~account~bk-account~backup:selftest:active~bk-phase1-active',
-            'bk-event-create~created~created~crafted~bk-phase1-item~tool:press~<null>~<null>~<null>~<null>~<null>~character~bk-depositor~backup:selftest:create~bk-phase1-create',
-            'bk-event-escrow~escrowed~escrowed~used_in_operation~bk-phase1-item~tool:press~<null>~<null>~<null>~character~bk-depositor~operation~bk-phase1-operation~backup:selftest:escrow~bk-phase1-escrow',
-            'bk-event-stack~stack~stack_granted~<null>~<null>~mat:steel~4~0~4~<null>~<null>~account~bk-account~backup:selftest:stack~bk-phase1-stack'
+            'bk-event-active~created~created~awarded~bk-phase1-active-item~item:archive~standard~<null>~<null>~<null>~<null>~<null>~account~bk-account~backup:selftest:active~bk-phase1-active',
+            'bk-event-create~created~created~crafted~bk-phase1-item~tool:press~standard~<null>~<null>~<null>~<null>~<null>~character~bk-depositor~backup:selftest:create~bk-phase1-create',
+            'bk-event-escrow~escrowed~escrowed~used_in_operation~bk-phase1-item~tool:press~standard~<null>~<null>~<null>~character~bk-depositor~operation~bk-phase1-operation~backup:selftest:escrow~bk-phase1-escrow',
+            'bk-event-stack~stack~stack_granted~<null>~<null>~mat:steel~pristine~4~0~4~<null>~<null>~account~bk-account~backup:selftest:stack~bk-phase1-stack'
           ]),
      ('item_mutation_guards',
        (SELECT array_agg(concat_ws('~',idempotency_key,mutation_kind,owner_scope,owner_id,
@@ -360,7 +362,10 @@ PHASE1_RESTORED="$(psql "$(base_url "$RESTORE_DB")" -tAc \
      ('mystery_instances',
        (SELECT array_agg(concat_ws('~',id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,status,
                     (completed_at IS NOT NULL)::text,(failed_at IS NOT NULL)::text,(canceled_at IS NOT NULL)::text) ORDER BY id)
-          FROM mystery_instances) = ARRAY['bk-phase1-mystery~character~bk-depositor~bk-account~graph:backup~7~active~false~false~false']),
+          FROM mystery_instances) = ARRAY[
+            'bk-phase1-mystery~character~bk-depositor~bk-account~graph:backup~7~active~false~false~false',
+            'bk-phase1-mystery-v8~character~bk-depositor~bk-account~graph:backup~8~active~false~false~false'
+          ]),
      ('mystery_node_state',
        (SELECT array_agg(concat_ws('~',instance_id,node_id,state,coalesce(result_json::jsonb::text,'<null>'),
                     (discovered_at IS NOT NULL)::text,(completed_at IS NOT NULL)::text,(failed_at IS NOT NULL)::text)

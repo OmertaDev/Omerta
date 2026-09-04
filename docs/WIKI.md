@@ -2389,21 +2389,29 @@ return once to the authenticated account's historical mystery owner after death 
 guessing which street owned it. Generic owner and escrow-depositor tuples are immutable historical
 ledger state, not estate assets: death/replacement never wipes, rewrites, inherits, or duplicates them.
 Cancellation returns custody only to the exact recorded historical depositor; an heir cannot drive or
-claim the old character-scoped instance.
+claim the old character-scoped instance. Current play is keyed by owner, graph and graph version, so a
+new version can start independently. The exact old `instanceId` remains release-only recovery authority
+even when its package is retired; it can never execute retired nodes or effects.
 
 The completed individual case unlocks `GET /v1/worldgraph/operations`. Open the listed Crew operation,
 fill its four distinct roles, read shared state or the caller's assigned `/role` board, contribute the
 ordered graph steps, then complete or cancel. Shared boards omit private node IDs and clues; role-private
 evidence appears only to its assigned caller. Foreign, hidden, and nonexistent private identifiers use
 the same unavailable responses instead of becoming enumeration oracles.
+Only the authenticated stored opener account may likewise cancel an old-version or retired operation
+and release its recorded escrow once, independent of current Crew membership. The Crew is a historical
+association, not cancellation authority; recovery never interprets retired content, effects or rewards.
 
 Every mutation requires `Idempotency-Key`; exact retries replay, while a key cannot be rebound to another
 request. The demonstration has no $OMR path and its only cash movement is the exact `$300`
-`craft:recipe:hardened_steel` sink. Stacks, permanent item instances, append-only item events and operation
-escrow are the item authority; `collection_log` is not. These are deliberate direct content actions:
+`craft:recipe:hardened_steel` sink. Stacks, permanent item instances, append-only item events (including
+the exact stack quality), operation escrow, and exact completed zero-cash salvage guards are the item/car
+authority; `collection_log` is not. Every aggregate locks the global item guard before revalidating the
+current living character and then locking domain/item rows. These are deliberate direct content actions:
 their discovery never grants `POST /v1/agent/act` authority, and the autonomous queue does not guess or
-execute them. Before release, `npm run worldgraph:check` deterministically validates the canonical CORE +
-AUTOMOTIVE + BELLADONNA graph; it is separate from the authored-content compiler and `content:check`.
+execute them. Before release and again at server boot, `npm run worldgraph:check` deterministically
+validates the canonical CORE + AUTOMOTIVE + BELLADONNA graph, its closed executable definitions and its
+zero-OMR/exact-cash policy; it is separate from the authored-content compiler and `content:check`.
 
 ### The Content Graph — mysteries, crafting, and seasonal hunts
 

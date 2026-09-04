@@ -51,6 +51,25 @@ for (const route of mounted) {
   }
 }
 
+// Lock-order tripwire: route owner discovery must remain a snapshot. The compound assignment owns
+// the only lock-bearing bridge and follows guard -> current living character -> item. This catches
+// reintroducing the character-before-guard ABBA against craft/mystery without weakening their locks.
+const worldGraphRouteSource = readFileSync('src/routes/worldgraph.js', 'utf8');
+const currentOwnerSource = worldGraphRouteSource.match(
+  /async function currentCharacterOwner\([\s\S]*?\n}\n/,
+)?.[0] || '';
+const assignmentSource = worldGraphRouteSource.match(
+  /export async function assignItemToCurrentCharacter\([\s\S]*?\n}\n/,
+)?.[0] || '';
+assert(currentOwnerSource && assignmentSource, 'world-graph custody helpers remain statically auditable');
+assert.doesNotMatch(currentOwnerSource, /FOR UPDATE/i,
+  'route-level current-character discovery is snapshot-only');
+const guardIndex = assignmentSource.indexOf('withItemMutation(');
+const characterIndex = assignmentSource.indexOf('lockCurrentCharacterOwner(');
+const itemIndex = assignmentSource.indexOf('transferItem(');
+assert(guardIndex >= 0 && characterIndex > guardIndex && itemIndex > characterIndex,
+  'assignment retains guard -> current living character -> item order');
+
 const spec = buildOpenApi(routeTable.map(([method, url]) => ({
   method, url, hasAuth: true, isMod: false,
 })), { baseUrl: 'https://example.test', version: '1.1.0-test' });
@@ -323,6 +342,13 @@ const hardened = await mutate(
 );
 assert.equal(hardened.code, 200);
 assert.equal(hardened.body.cashCost, 300);
+const hardenedCatalogIdentity = recipeFrom(recipes, 'recipe:hardened_steel');
+assert.deepEqual(hardened.body.recipe, {
+  packageId: hardenedCatalogIdentity.packageId,
+  packageVersion: hardenedCatalogIdentity.packageVersion,
+  recipeId: hardenedCatalogIdentity.recipeId,
+  recipeVersion: hardenedCatalogIdentity.recipeVersion,
+}, 'HTTP catalog and mutation expose one exact boot-validated package/recipe identity');
 const mechanicHardened = await mutate(
   '/v1/worldgraph/recipes/recipe:hardened_steel/craft',
   players[2].token, 'api-mechanic-hardened',
@@ -612,12 +638,34 @@ const recoverableOperation = await mutate(
   players[0].token, 'api-recovery-operation-open',
 );
 assert.equal(recoverableOperation.code, 200);
+// The route's registry is intentionally immutable in this process. Store a different positive
+// pinned version to simulate an activation bump and prove cancellation enters stored-row recovery
+// without treating the current package as the old operation definition.
+await app.pool.query(
+  'UPDATE world_operations SET graph_version=2 WHERE id=$1',
+  [recoverableOperation.body.operationId],
+);
+const foreignOperationCancel = await mutate(
+  `/v1/worldgraph/operations/${recoverableOperation.body.operationId}/cancel`,
+  players[1].token, 'api-foreign-operation-cancel',
+);
+const missingOperationCancel = await mutate(
+  '/v1/worldgraph/operations/not-a-real-operation/cancel',
+  players[1].token, 'api-missing-operation-cancel',
+);
+assert.equal(foreignOperationCancel.code, 400);
+assert.equal(missingOperationCancel.code, 400);
+assert.equal(foreignOperationCancel.body.error, 'operation_unavailable');
+assert.equal(missingOperationCancel.body.error, foreignOperationCancel.body.error,
+  'foreign and missing operation cancellation are non-enumerating');
 const canceledOperation = await mutate(
   `/v1/worldgraph/operations/${recoverableOperation.body.operationId}/cancel`,
   players[0].token, 'api-cancel-operation',
 );
 assert.equal(canceledOperation.code, 200);
 assert.equal(canceledOperation.body.status, 'canceled');
+assert.equal(canceledOperation.body.graph.version, 2,
+  'HTTP recovery retains the operation row\'s pinned version');
 assert.deepEqual((await mutate(
   `/v1/worldgraph/operations/${recoverableOperation.body.operationId}/cancel`,
   players[0].token, 'api-cancel-operation',
@@ -814,6 +862,28 @@ assert.notEqual(replacementStart.body.instanceId, historicalInstanceId,
   'the replacement street may have its own current instance');
 assert.deepEqual(await historicalCustody(), custodyBeforeDeath,
   'starting the heir\'s distinct instance still does not inherit or duplicate historical custody');
+
+await app.pool.query(
+  `INSERT INTO mystery_instances
+     (id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,status)
+   VALUES ('api-replacement-noncurrent-v2','character',$1,$2,'belladonna-demo',2,'active')`,
+  [replacementCharacterId, players[3].accountId],
+);
+const replacementDiscovery = await call('GET', '/v1/worldgraph/mysteries', {
+  token: players[3].token,
+});
+assert.equal(replacementDiscovery.code, 200);
+const replacementCurrent = replacementDiscovery.body.mysteries
+  .find(({ graphId }) => graphId === 'belladonna-demo');
+assert.deepEqual({
+  version: replacementCurrent.version,
+  status: replacementCurrent.status,
+  instanceId: replacementCurrent.instanceId,
+}, {
+  version: 1,
+  status: 'active',
+  instanceId: replacementStart.body.instanceId,
+}, 'HTTP discovery projects only the exact current graph version and never leaks another version');
 
 // Simulate the active registry no longer matching the instance's immutable definition. The direct
 // runtime suite drives the natural v1-instance/v2-registry direction; this HTTP seam stores another

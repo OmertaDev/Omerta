@@ -472,6 +472,31 @@ console.log('\n7a. ITEM CONSERVATION CONSTRAINTS ARE REAL DATABASE AUTHORITY');
   check(tables.every((table) => present.includes(table)),
     'all 12 Phase 1 item, mystery, and operation authority tables exist on real PostgreSQL',
     `present: ${present.sort().join(', ')}`);
+  const eventQualityColumn = (await pool.query(
+    `SELECT is_nullable,column_default FROM information_schema.columns
+      WHERE table_schema='public' AND table_name='item_events' AND column_name='quality'`,
+  )).rows[0];
+  check(eventQualityColumn?.is_nullable === 'NO'
+      && String(eventQualityColumn?.column_default || '').includes('standard'),
+  'item event quality is a non-null, standard-backfilled production column',
+  JSON.stringify(eventQualityColumn || null));
+  const eventQualityConstraints = (await pool.query(
+    `SELECT conname FROM pg_constraint
+      WHERE conrelid='item_events'::regclass
+        AND conname = ANY($1::text[]) ORDER BY conname`,
+    [['item_event_quality', 'item_event_quality_kind']],
+  )).rows.map((row) => row.conname);
+  check(eventQualityConstraints.length === 2,
+    'PostgreSQL installed both item-event quality constraints',
+    `present: ${eventQualityConstraints.join(', ')}`);
+  const mysteryVersionIndex = (await pool.query(
+    `SELECT indexdef FROM pg_indexes
+      WHERE schemaname='public' AND indexname='ux_mystery_instance_owner_graph_version'`,
+  )).rows[0]?.indexdef || '';
+  check(/CREATE UNIQUE INDEX/i.test(mysteryVersionIndex)
+      && /\(owner_scope, owner_id, graph_id, graph_version\)/i.test(mysteryVersionIndex),
+  'PostgreSQL keys mystery lifecycle authority by owner, graph, and immutable version',
+  mysteryVersionIndex || 'missing index');
 
   const mysteryProbe = `pgcheck-mystery-constraint-${process.pid}-${Date.now()}`;
   await pool.query(
@@ -497,9 +522,30 @@ console.log('\n7a. ITEM CONSERVATION CONSTRAINTS ARE REAL DATABASE AUTHORITY');
   check(mysteryTupleCode === '23514',
     'PostgreSQL rejects a completed mystery without its terminal timestamp tuple',
     `error ${mysteryTupleCode || 'none'}`);
+  const mysteryProbeV2 = `${mysteryProbe}-v2`;
+  await pool.query(
+    `INSERT INTO mystery_instances
+       (id,owner_scope,owner_id,authority_account_id,graph_id,graph_version)
+     VALUES ($1,'account','pgcheck-account','pgcheck-account','pgcheck-graph',2)`,
+    [mysteryProbeV2],
+  );
+  let mysteryDuplicateCode = '';
+  try {
+    await pool.query(
+      `INSERT INTO mystery_instances
+         (id,owner_scope,owner_id,authority_account_id,graph_id,graph_version)
+       VALUES ($1,'account','pgcheck-account','pgcheck-account','pgcheck-graph',1)`,
+      [`${mysteryProbe}-duplicate`],
+    );
+  } catch (error) { mysteryDuplicateCode = error.code; }
+  check(mysteryDuplicateCode === '23505',
+    'PostgreSQL allows successor mystery versions but rejects a same-version owner race',
+    `error ${mysteryDuplicateCode || 'none'}`);
   await pool.query('DELETE FROM mystery_choices WHERE instance_id=$1', [mysteryProbe]);
   await pool.query('DELETE FROM mystery_node_state WHERE instance_id=$1', [mysteryProbe]);
-  await pool.query('DELETE FROM mystery_instances WHERE id=$1', [mysteryProbe]);
+  await pool.query('DELETE FROM mystery_instances WHERE id = ANY($1::text[])', [
+    [mysteryProbe, mysteryProbeV2, `${mysteryProbe}-duplicate`],
+  ]);
 
   const operationProbe = `pgcheck-world-operation-${process.pid}-${Date.now()}`;
   await pool.query(
@@ -607,6 +653,7 @@ console.log('\n7a. ITEM CONSERVATION CONSTRAINTS ARE REAL DATABASE AUTHORITY');
   const keys = [
     `${prefix}autocommit`, `${prefix}seed`, `${prefix}decrement-a`, `${prefix}decrement-b`,
     `${prefix}replay`, `${prefix}create`, `${prefix}transfer-a`, `${prefix}transfer-b`,
+    `${prefix}quality`,
   ];
 
   const autocommitClient = await pool.connect();
@@ -672,6 +719,23 @@ console.log('\n7a. ITEM CONSERVATION CONSTRAINTS ARE REAL DATABASE AUTHORITY');
     'the same key cannot silently replay for another owner',
     `error ${collisionCode || 'none'}`);
 
+  await tx((client) => grantStack(
+    client, actor, 'mat:pgcheck-quality', 4, 'pristine', 'quality', keys[8],
+  ));
+  const exactQuality = (await pool.query(
+    'SELECT quality FROM item_events WHERE idempotency_key=$1', [keys[8]],
+  )).rows[0]?.quality;
+  check(exactQuality === 'pristine',
+    'a nonstandard stack mutation records its exact quality band',
+    `quality ${exactQuality || 'missing'}`);
+  let emptyQualityCode = '';
+  try {
+    await pool.query("UPDATE item_events SET quality='' WHERE idempotency_key=$1", [keys[8]]);
+  } catch (error) { emptyQualityCode = error.code; }
+  check(emptyQualityCode === '23514',
+    'PostgreSQL rejects a noncanonical empty event quality',
+    `error ${emptyQualityCode || 'none'}`);
+
   const item = await tx((client) => createItem(
     client, actor, 'item:pgcheck-concurrency', 'awarded', keys[5],
   ));
@@ -683,7 +747,7 @@ console.log('\n7a. ITEM CONSERVATION CONSTRAINTS ARE REAL DATABASE AUTHORITY');
     'SELECT owner_scope, owner_id, state FROM item_instances WHERE id=$1', [item.id],
   )).rows[0];
   const transferEvents = (await pool.query(
-    `SELECT from_owner_scope, from_owner_id, to_owner_scope, to_owner_id
+    `SELECT from_owner_scope, from_owner_id, to_owner_scope, to_owner_id, quality
        FROM item_events WHERE item_id=$1 AND event_kind='transferred'`, [item.id],
   )).rows;
   check(transfers.filter((result) => result.status === 'fulfilled').length === 1
@@ -698,16 +762,24 @@ console.log('\n7a. ITEM CONSERVATION CONSTRAINTS ARE REAL DATABASE AUTHORITY');
       && transferEvents[0].from_owner_scope === actor.scope
       && transferEvents[0].from_owner_id === actor.id
       && transferEvents[0].to_owner_scope === itemRow?.owner_scope
-      && transferEvents[0].to_owner_id === itemRow?.owner_id,
+      && transferEvents[0].to_owner_id === itemRow?.owner_id
+      && transferEvents[0].quality === 'standard',
   'the winning concurrent transfer writes exactly one correct provenance event',
   `${transferEvents.length} event(s), ${transferEvents[0]?.from_owner_id || 'none'} → ${transferEvents[0]?.to_owner_id || 'none'}`);
+  let uniqueQualityCode = '';
+  try {
+    await pool.query("UPDATE item_events SET quality='pristine' WHERE item_id=$1", [item.id]);
+  } catch (error) { uniqueQualityCode = error.code; }
+  check(uniqueQualityCode === '23514',
+    'PostgreSQL rejects nonstandard quality on every unique-item provenance event',
+    `error ${uniqueQualityCode || 'none'}`);
 
   await pool.query('DELETE FROM item_events WHERE idempotency_key = ANY($1::text[])', [keys]);
   await pool.query('DELETE FROM item_mutation_guards WHERE idempotency_key = ANY($1::text[])', [keys]);
   await pool.query('DELETE FROM item_instances WHERE id=$1', [item.id]);
   await pool.query(
     `DELETE FROM item_stacks WHERE owner_scope='account' AND owner_id=$1
-      AND template_id='mat:pgcheck-concurrency' AND quality='standard'`, [actor.id],
+      AND template_id IN ('mat:pgcheck-concurrency','mat:pgcheck-quality')`, [actor.id],
   );
 }
 
@@ -718,6 +790,7 @@ console.log('\n7a2. GRAPH CRAFTING AND SALVAGE HOLD UNDER REAL ROW LOCKS');
 // rollback, concurrent same/different logical keys, one car deletion, and one cash ledger debit.
 {
   const { craftWorldGraphRecipe, salvageCar } = await import('../src/crafting.js');
+  const { runLedgerInvariants } = await import('../src/invariants.js');
   const { grantStack, inventoryBoard, withItemTransaction } = await import('../src/items.js');
   const tx = (action) => withItemTransaction(pool, action);
   const prefix = `pgcheck-crafting-${process.pid}-${Date.now()}`;
@@ -809,6 +882,14 @@ console.log('\n7a2. GRAPH CRAFTING AND SALVAGE HOLD UNDER REAL ROW LOCKS');
   'competing same-key cash craft applies one debit, one ledger row, and one output',
   `cash ${craftCash}, ledger ${craftLedger}, hardened ${stackQty(craftBoard, 'mat:hardened_steel')}`);
 
+  const invariantCheck = async (name) => (await runLedgerInvariants(pool, { alert: false }))
+    .checks.find((entry) => entry.name === name);
+  const carDriftBeforeSalvage = (await invariantCheck('car conservation')).drift;
+  const salvageSinksBefore = (await invariantCheck('world graph salvage car audit')).logicalSinks;
+  const ledgerRowsBeforeSalvage = Number((await pool.query(
+    'SELECT COUNT(*) AS n FROM transactions',
+  )).rows[0].n);
+
   const sameSalvage = await Promise.all([
     tx((client) => salvageCar(
       client, salvageH, sameCar, 'recipe:car_salvage_basic', keys[4],
@@ -839,6 +920,19 @@ console.log('\n7a2. GRAPH CRAFTING AND SALVAGE HOLD UNDER REAL ROW LOCKS');
   'competing different-key salvage serializes on authority and cannot double-consume the car',
   `outcomes ${differentSalvage.map((result) => result.status === 'fulfilled'
     ? 'ok' : result.reason?.code).join(', ')}, scrap ${stackQty(salvageBoard, 'mat:scrap_steel')}`);
+  const salvageAuditAfterSuccess = await invariantCheck('world graph salvage car audit');
+  const carDriftAfterSuccess = (await invariantCheck('car conservation')).drift;
+  const ledgerRowsAfterSuccess = Number((await pool.query(
+    'SELECT COUNT(*) AS n FROM transactions',
+  )).rows[0].n);
+  check(salvageAuditAfterSuccess.ok
+      && salvageAuditAfterSuccess.logicalSinks === salvageSinksBefore + 2
+      && carDriftAfterSuccess === carDriftBeforeSalvage,
+  'native car conservation moves two deleted cars with two distinct successful logical guards',
+  `sinks ${salvageSinksBefore} -> ${salvageAuditAfterSuccess.logicalSinks}, drift ${carDriftBeforeSalvage} -> ${carDriftAfterSuccess}`);
+  check(ledgerRowsAfterSuccess === ledgerRowsBeforeSalvage,
+    'native successful salvage, same-key replay, and competing failure write no currency rows',
+    `ledger rows ${ledgerRowsBeforeSalvage} -> ${ledgerRowsAfterSuccess}`);
 
   // Force the second graph output to fail. Native PostgreSQL must put back both the car row and the
   // preceding scrap grant without relying on the pg-mem inverse log.
@@ -864,6 +958,19 @@ console.log('\n7a2. GRAPH CRAFTING AND SALVAGE HOLD UNDER REAL ROW LOCKS');
       && rollbackGuard === 0,
   'native salvage rollback restores the car and every preceding output with no stranded guard',
   `error ${rollbackCode || 'none'}, scrap ${stackQty(salvageBoard, 'mat:scrap_steel')}, guard ${rollbackGuard}`);
+  const salvageAuditAfterRollback = await invariantCheck('world graph salvage car audit');
+  const carDriftAfterRollback = (await invariantCheck('car conservation')).drift;
+  const ledgerRowsAfterRollback = Number((await pool.query(
+    'SELECT COUNT(*) AS n FROM transactions',
+  )).rows[0].n);
+  check(salvageAuditAfterRollback.ok
+      && salvageAuditAfterRollback.logicalSinks === salvageSinksBefore + 2
+      && carDriftAfterRollback === carDriftBeforeSalvage,
+  'native failed salvage rollback creates no sink and leaves car conservation unchanged',
+  `sinks ${salvageAuditAfterRollback.logicalSinks}, drift ${carDriftAfterRollback}`);
+  check(ledgerRowsAfterRollback === ledgerRowsBeforeSalvage,
+    'native salvage rollback remains currency-ledger neutral',
+    `ledger rows ${ledgerRowsBeforeSalvage} -> ${ledgerRowsAfterRollback}`);
 
   await pool.query('DELETE FROM item_events WHERE idempotency_key = ANY($1::text[])', [keys]);
   await pool.query('DELETE FROM item_mutation_guards WHERE idempotency_key = ANY($1::text[])', [keys]);

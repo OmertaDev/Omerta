@@ -257,7 +257,7 @@ const DOMAIN_MODULES = {
   'economy-ledger': new Set(['economy','emission','exchange','fees','fairness','invariants','market','memo','router','tax','tokenhealth','treasury','vig','portfolio','stockdeliver','dexbot']),
   'social-combat': new Set(['crew','duels','firstblood','heists','honor','made','marriage','mentor','rivals','roster','soldiers','social','streets','vouch']),
   'world-progression': new Set(['citymap','citywide','day','discovery','events','explore','firsts','landmarks','mastery','notoriety','npcwar','population','season','skills','sov','standing','streak','underworld','world']),
-  'world-graph': new Set(['worldgraph','worldgraph-validate','items','crafting','mysteries','operations','phase1','core-materials','automotive-salvage','belladonna']),
+  'world-graph': new Set(['worldgraph','worldgraph-validate','items','crafting','mysteries','operations','phase1','phase1-policy','phase1-validation','core-materials','automotive-salvage','belladonna']),
   'enterprise-logistics': new Set(['convoy','deeds','estate','loans','market','megaproject','payroll','port','shipment','territory','business','garage']),
   'vice-competition': new Set(['casino','boxing','races','ring','speakeasy','stable']),
   'law-intelligence': new Set(['collection','law','pen','secrets','wire']),

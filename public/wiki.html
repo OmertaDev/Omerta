@@ -623,19 +623,26 @@ const SECTIONS = [
       it never grants control over another account's instance. Generic owner and escrow-depositor tuples are
       immutable historical ledger state, not estate assets: death and replacement never wipe, rewrite, inherit,
       or duplicate them. Recovery returns custody only to the exact recorded historical depositor; an heir cannot
-      drive or claim the old character-scoped instance.</p>
+      drive or claim the old character-scoped instance. Current play is keyed by owner, graph and graph version,
+      so a successor version starts independently; an exact old <code>instanceId</code> remains release-only
+      recovery authority even after package retirement and cannot execute retired nodes or effects.</p>
       <p>A completed individual case unlocks <code>GET /v1/worldgraph/operations</code>. Open the listed Crew
       operation, fill four distinct roles, read shared state or the assigned caller's <code>/role</code> board,
       contribute ordered steps, then complete or cancel. Shared boards omit private node IDs and evidence;
       role-private clues appear only to their assigned caller. Foreign, hidden and nonexistent private IDs share
-      non-enumerating unavailable errors.</p>
+      non-enumerating unavailable errors. Only the authenticated stored opener account can cancel an old-version
+      or retired operation and release recorded escrow once, independent of current Crew membership. The Crew is
+      a historical association, not cancellation authority; recovery never interprets retired content or rewards.</p>
       <p>Every mutation requires <code>Idempotency-Key</code>; exact retries replay and a key cannot be rebound.
       The proof creates no $OMR; its only cash movement is the exact <b>$300</b>
-      <code>craft:recipe:hardened_steel</code> sink. Stacks, permanent item instances, append-only item events and
-      operation escrow are the authority; <code>collection_log</code> is not. These are direct-only actions, not
+      <code>craft:recipe:hardened_steel</code> sink. Stacks, permanent item instances, exact-quality append-only item
+      events, operation escrow and completed zero-cash salvage guards are the authority;
+      <code>collection_log</code> is not. Aggregates reserve the global item guard before revalidating the living
+      character and locking domain/item rows. These are direct-only actions, not
       <code>POST /v1/agent/act</code> authority; the autonomous queue never guesses or executes them.
-      Operators run <code>npm run worldgraph:check</code> over the canonical CORE + AUTOMOTIVE + BELLADONNA graph;
-      that gate is separate from the authored-content compiler and <code>content:check</code>.</p>
+      Operators and server boot run <code>npm run worldgraph:check</code>'s same closed executable and exact economy
+      policy over the canonical CORE + AUTOMOTIVE + BELLADONNA graph; that gate is separate from the authored-
+      content compiler and <code>content:check</code>.</p>
       ${R(`GET /v1/worldgraph/inventory · GET /v1/worldgraph/recipes · GET /v1/worldgraph/mysteries · GET /v1/worldgraph/operations`)}` },
 
   { id: 'contentgraph', group: 'The City & the World', title: 'The Content Graph — Mysteries, Crafting & Seasonal Hunts', tag: 'playable stories · bounded expansion',

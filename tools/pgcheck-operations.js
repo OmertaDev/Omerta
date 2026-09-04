@@ -10,6 +10,15 @@ import {
   createOperationContext,
   openOperation,
 } from '../src/operations.js';
+import {
+  completeNode,
+  createMysteryContext,
+  startMystery,
+} from '../src/mysteries.js';
+import {
+  createCraftingContext,
+  craftWorldGraphRecipe,
+} from '../src/crafting.js';
 import { dbCaps } from '../src/db.js';
 import { bumpCrewObjective, withCharacter } from '../src/game.js';
 import {
@@ -18,7 +27,11 @@ import {
   leaveCrew,
   setRecruiting,
 } from '../src/crew.js';
-import { createItem, withItemTransaction } from '../src/items.js';
+import { createItem, grantStack, withItemTransaction } from '../src/items.js';
+import {
+  assignItemToCurrentCharacter,
+  PHASE1_WORLD_GRAPH,
+} from '../src/routes/worldgraph.js';
 import { loadAndValidateGraphPackages } from '../src/worldgraph-validate.js';
 import { weekOf } from '../src/rules.js';
 
@@ -199,6 +212,116 @@ function pausedAuthorityPool(pool) {
   };
 }
 
+function pausedMysteryActorPool(pool) {
+  let signalLocked;
+  let releaseLock;
+  let paused = false;
+  const locked = new Promise((resolve) => { signalLocked = resolve; });
+  const released = new Promise((resolve) => { releaseLock = resolve; });
+  const tracked = trackedTimeoutPool(pool);
+  return {
+    locked,
+    pid: tracked.pid,
+    release: () => releaseLock(),
+    pool: {
+      query: (...args) => tracked.pool.query(...args),
+      async connect() {
+        const inner = await tracked.pool.connect();
+        return new Proxy(inner, {
+          get(target, property) {
+            if (property === 'query') return async (sql, params) => {
+              const result = await target.query(sql, params);
+              if (!paused
+                && /FROM\s+characters\s+WHERE\s+id=\$1\s+AND\s+alive\s+FOR UPDATE/i
+                  .test(String(sql))) {
+                paused = true;
+                signalLocked();
+                await released;
+              }
+              return result;
+            };
+            const value = target[property];
+            return typeof value === 'function' ? value.bind(target) : value;
+          },
+        });
+      },
+    },
+  };
+}
+
+function pausedItemGuardPool(pool) {
+  let signalLocked;
+  let releaseLock;
+  let paused = false;
+  const locked = new Promise((resolve) => { signalLocked = resolve; });
+  const released = new Promise((resolve) => { releaseLock = resolve; });
+  const tracked = trackedTimeoutPool(pool);
+  return {
+    locked,
+    pid: tracked.pid,
+    release: () => releaseLock(),
+    pool: {
+      query: (...args) => tracked.pool.query(...args),
+      async connect() {
+        const inner = await tracked.pool.connect();
+        return new Proxy(inner, {
+          get(target, property) {
+            if (property === 'query') return async (sql, params) => {
+              const result = await target.query(sql, params);
+              if (!paused
+                && /FROM\s+item_mutation_guards\s+WHERE\s+idempotency_key=\$1\s+FOR UPDATE/i
+                  .test(String(sql))) {
+                paused = true;
+                signalLocked();
+                await released;
+              }
+              return result;
+            };
+            const value = target[property];
+            return typeof value === 'function' ? value.bind(target) : value;
+          },
+        });
+      },
+    },
+  };
+}
+
+function pausedCharacterSnapshotPool(pool) {
+  let signalSnapshot;
+  let releaseSnapshot;
+  let paused = false;
+  const snapshot = new Promise((resolve) => { signalSnapshot = resolve; });
+  const released = new Promise((resolve) => { releaseSnapshot = resolve; });
+  const tracked = trackedTimeoutPool(pool);
+  return {
+    snapshot,
+    release: () => releaseSnapshot(),
+    pool: {
+      query: (...args) => tracked.pool.query(...args),
+      async connect() {
+        const inner = await tracked.pool.connect();
+        return new Proxy(inner, {
+          get(target, property) {
+            if (property === 'query') return async (sql, params) => {
+              const result = await target.query(sql, params);
+              if (!paused
+                && /SELECT\s+id\s+FROM\s+characters\s+WHERE\s+account_id=\$1\s+AND\s+alive\s+ORDER BY[\s\S]*LIMIT 1\s*$/i
+                  .test(String(sql).trim())) {
+                paused = true;
+                signalSnapshot(result.rows[0]?.id || null);
+                await released;
+              }
+              return result;
+            };
+            const value = target[property];
+            return typeof value === 'function' ? value.bind(target) : value;
+          },
+        });
+      },
+    },
+  };
+}
+
 async function beginConcurrentWrite(pool, sql, params) {
   const client = await pool.connect();
   await client.query('BEGIN');
@@ -267,6 +390,19 @@ export async function runOperationPgChecks({ pool, check }) {
     openRecruiting: `${prefix}:open-recruiting`,
     beforeDeath: `${prefix}:before-death`,
     beforeCrew: `${prefix}:before-crew`,
+    mysteryRace: `${prefix}:mystery-race-operation`,
+  };
+  const mysteryTerminal = `${prefix}:mystery-terminal`;
+  const guardRaceMystery = `${prefix}:guard-race-mystery`;
+  const mysteryRaceNodes = operationNodes(
+    roots.mysteryRace, `${prefix}:mystery-race-step`, { rewards: false },
+  );
+  mysteryRaceNodes[0].requires = [mysteryTerminal];
+  mysteryRaceNodes[0].metadata.mysteryGate = {
+    graphId,
+    graphVersion: 1,
+    ownerScope: 'character',
+    requiredStatus: 'completed',
   };
   const graph = loadAndValidateGraphPackages([{
     id: graphId,
@@ -294,6 +430,18 @@ export async function runOperationPgChecks({ pool, check }) {
           { templateId: 'item:pgop_award_b', quantity: 1 },
         ],
       },
+      {
+        id: mysteryTerminal,
+        type: 'mystery_step',
+        visibility: 'public',
+        metadata: { terminal: true },
+      },
+      {
+        id: guardRaceMystery,
+        type: 'mystery_step',
+        visibility: 'public',
+        metadata: { terminal: true },
+      },
       ...operationNodes(roots.left, `${prefix}:left-step`, { escrowRoles: ['mechanic'] }),
       ...operationNodes(roots.right, `${prefix}:right-step`, { escrowRoles: ['mechanic'] }),
       ...operationNodes(roots.completion, `${prefix}:completion-step`, {
@@ -318,9 +466,13 @@ export async function runOperationPgChecks({ pool, check }) {
       ...operationNodes(roots.beforeCrew, `${prefix}:before-crew-step`, {
         escrowRoles: ['investigator', 'mechanic'],
       }),
+      ...mysteryRaceNodes,
     ],
   }]);
   const contexts = accounts.map((accountId) => createOperationContext({ registry: graph, accountId }));
+  const mysteryContexts = accounts.map((accountId) => createMysteryContext({
+    registry: graph, accountId,
+  }));
   const boundedPool = timeoutPool(pool);
   const act = (accountIndex, fn, ...args) => withItemTransaction(
     boundedPool, (client) => fn(client, contexts[accountIndex], ...args),
@@ -376,6 +528,37 @@ export async function runOperationPgChecks({ pool, check }) {
       `row counts: ${writeResults.map(({ rowCount }) => rowCount).join(', ')}`);
     return result;
   };
+  const raceAtItemGuard = async (label, guardKey, firstAction, secondAction) => {
+    const paused = pausedItemGuardPool(pool);
+    const firstPromise = withItemTransaction(paused.pool, firstAction);
+    const reachedGuard = await Promise.race([
+      paused.locked.then(() => true), shortDelay(3000).then(() => false),
+    ]);
+    if (!reachedGuard) {
+      paused.release();
+      await firstPromise.catch(() => {});
+      throw new Error(`${label}: first action never reached the item guard lock`);
+    }
+    const firstPid = await paused.pid;
+    const second = trackedTimeoutPool(pool);
+    const secondPromise = withItemTransaction(second.pool, secondAction);
+    const secondPid = await second.pid;
+    check(await waitForBlockers(pool, [secondPid], firstPid),
+      `${label} contends at the global item guard before any character row`,
+      `first pid ${firstPid}, second pid ${secondPid}`);
+    paused.release();
+    const results = await Promise.allSettled([firstPromise, secondPromise]);
+    check(results[0].status === 'fulfilled'
+      && results[1].status === 'rejected'
+      && results[1].reason?.code === 'idempotency_conflict',
+    `${label} converges without deadlock and admits one logical authority`,
+    results.map((result) => result.status === 'fulfilled' ? 'ok' : result.reason?.code).join(', '));
+    check(Number((await pool.query(
+      'SELECT COUNT(*) AS n FROM item_mutation_guards WHERE idempotency_key=$1', [guardKey],
+    )).rows[0].n) === 1,
+    `${label} persists exactly one completed global item guard`);
+    return results[0].value;
+  };
 
   const operationIds = [];
   try {
@@ -401,6 +584,45 @@ export async function runOperationPgChecks({ pool, check }) {
         [crewId, accounts[index], `${prefix}-member-${index}`],
       );
     }
+
+    // Canonical lock order is character -> mystery -> item. The operation opener first takes its
+    // Crew/root locks but uses that same character -> mystery suffix. Pause terminal completion
+    // after its character lock, prove the blind opener waits there, then release and require both
+    // valid outcomes without a 40P01/500 deadlock.
+    const mysteryOwner = { scope: 'character', id: characters[0] };
+    const raceMystery = await withItemTransaction(boundedPool, (client) => startMystery(
+      client, mysteryContexts[0], mysteryOwner, graphId, 1,
+    ));
+    const pausedMystery = pausedMysteryActorPool(pool);
+    const terminalPromise = withItemTransaction(pausedMystery.pool, (client) => completeNode(
+      client, mysteryContexts[0], mysteryOwner, graphId, mysteryTerminal, {
+        idempotencyKey: key('mystery-race-terminal'),
+      },
+    ));
+    const reachedMysteryActor = await Promise.race([
+      pausedMystery.locked.then(() => true), shortDelay(3000).then(() => false),
+    ]);
+    check(reachedMysteryActor,
+      'terminal mystery action reaches the actor lock before its instance lock');
+    const terminalPid = await pausedMystery.pid;
+    const trackedOpen = trackedTimeoutPool(pool);
+    const openPromise = withItemTransaction(trackedOpen.pool, (client) => openOperation(
+      client, contexts[0], graphId, roots.mysteryRace, 1, key('mystery-race-open'),
+    ));
+    const openPid = await trackedOpen.pid;
+    check(await waitForBlockers(pool, [openPid], terminalPid),
+      'concurrent operation open waits behind terminal mystery actor lock without inversion',
+      `terminal pid ${terminalPid}, open pid ${openPid}`);
+    pausedMystery.release();
+    const [terminalResult, openedAfterTerminal] = await Promise.all([
+      terminalPromise, openPromise,
+    ]);
+    operationIds.push(openedAfterTerminal.operationId);
+    check(terminalResult.status === 'completed'
+      && openedAfterTerminal.status === 'forming'
+      && raceMystery.instanceId === terminalResult.instanceId,
+    'terminal mystery completion and blind operation open serialize to valid committed outcomes',
+    `mystery ${terminalResult.status}, operation ${openedAfterTerminal.status}`);
 
     const left = await act(0, openOperation, graphId, roots.left, 1, key('open-left'));
     const right = await act(0, openOperation, graphId, roots.right, 1, key('open-right'));
@@ -951,6 +1173,131 @@ export async function runOperationPgChecks({ pool, check }) {
     await pool.query(
       'UPDATE crew_members SET crew_id=$2 WHERE account_id=$1', [accounts[0], crewId],
     );
+
+    // Every world-graph item aggregate now enters the global mutation guard before character
+    // authority. Reuse one exact logical key across distinct domains and prove the later caller
+    // waits at that guard rather than taking a character row and forming an ABBA cycle.
+    const phase1Crafting = createCraftingContext({ registry: PHASE1_WORLD_GRAPH });
+    const accountOwner = { scope: 'account', id: accounts[0] };
+    const characterOwner = { scope: 'character', id: characters[0] };
+    await pool.query(
+      "UPDATE characters SET loc='foundry',respect=10000,cash=5000 WHERE id=$1",
+      [characters[0]],
+    );
+    await withItemTransaction(boundedPool, (client) => grantStack(
+      client, accountOwner, 'mat:scrap_steel', 8, 'standard',
+      'pgcheck global-guard race input', key('global-guard-scrap'),
+    ));
+    const guardRaceInstance = await withItemTransaction(boundedPool, (client) => startMystery(
+      client, mysteryContexts[0], characterOwner, graphId, 1,
+      key('global-guard-mystery-start'),
+    ));
+    const craftMysteryKey = key('global-guard-craft-mystery');
+    const craftVsMystery = await raceAtItemGuard(
+      'craft versus mystery action',
+      craftMysteryKey,
+      (client) => craftWorldGraphRecipe(
+        client, { accountId: accounts[0] }, 'recipe:hardened_steel',
+        craftMysteryKey, phase1Crafting,
+      ),
+      (client) => completeNode(
+        client, mysteryContexts[0], characterOwner, graphId, guardRaceMystery,
+        { idempotencyKey: craftMysteryKey },
+      ),
+    );
+    check(craftVsMystery.kind === 'craft'
+      && Number((await pool.query(
+        `SELECT COUNT(*) AS n FROM mystery_node_state
+          WHERE instance_id=$1 AND node_id=$2`,
+        [guardRaceInstance.instanceId, guardRaceMystery],
+      )).rows[0].n) === 0,
+    'craft-versus-mystery collision executes no losing mystery state');
+
+    const assignmentRaceItem = await withItemTransaction(boundedPool, (client) => createItem(
+      client, accountOwner, 'item:precision_lock_tool', 'crafted',
+      key('global-guard-assignment-item'),
+    ));
+    const craftAssignmentKey = key('global-guard-craft-assignment');
+    const craftVsAssignment = await raceAtItemGuard(
+      'craft versus current-character assignment',
+      craftAssignmentKey,
+      (client) => craftWorldGraphRecipe(
+        client, { accountId: accounts[0] }, 'recipe:hardened_steel',
+        craftAssignmentKey, phase1Crafting,
+      ),
+      (client) => assignItemToCurrentCharacter(
+        client, accounts[0], assignmentRaceItem.id, craftAssignmentKey,
+      ),
+    );
+    const assignmentRaceOwner = (await pool.query(
+      'SELECT owner_scope,owner_id,state FROM item_instances WHERE id=$1',
+      [assignmentRaceItem.id],
+    )).rows[0];
+    check(craftVsAssignment.kind === 'craft'
+      && assignmentRaceOwner.owner_scope === 'account'
+      && assignmentRaceOwner.owner_id === accounts[0]
+      && assignmentRaceOwner.state === 'active',
+    'craft-versus-assignment collision cannot partially transfer the losing item');
+
+    // Snapshot an old current street, commit replacement first, then resume assignment. Its fresh
+    // guard-owned FOR UPDATE must observe the new identity, reject the stale destination, and leave
+    // both custody and provenance untouched.
+    const replacementRaceItem = await withItemTransaction(boundedPool, (client) => createItem(
+      client, accountOwner, 'item:precision_lock_tool', 'crafted',
+      key('replacement-assignment-item'),
+    ));
+    const replacementAssignKey = key('replacement-assignment');
+    const pausedAssignment = pausedCharacterSnapshotPool(pool);
+    const assignmentPromise = withItemTransaction(pausedAssignment.pool, (client) => (
+      assignItemToCurrentCharacter(
+        client, accounts[0], replacementRaceItem.id, replacementAssignKey,
+      )
+    ));
+    const snapshottedCharacter = await Promise.race([
+      pausedAssignment.snapshot, shortDelay(3000).then(() => null),
+    ]);
+    check(snapshottedCharacter === characters[0],
+      'assignment snapshots the current street without locking it');
+    const replacementId = crypto.randomUUID();
+    const replacementClient = await pool.connect();
+    try {
+      await replacementClient.query('BEGIN');
+      await replacementClient.query("SET LOCAL lock_timeout='3s'");
+      await replacementClient.query('UPDATE characters SET alive=false WHERE id=$1', [characters[0]]);
+      await replacementClient.query(
+        `INSERT INTO characters (id,account_id,name,season,loc,respect,cash)
+         VALUES ($1,$2,$3,1,'foundry',10000,5000)`,
+        [replacementId, accounts[0], `PG replacement ${Date.now() % 1000000}`],
+      );
+      await replacementClient.query('COMMIT');
+    } catch (error) {
+      await replacementClient.query('ROLLBACK').catch(() => {});
+      throw error;
+    } finally {
+      replacementClient.release();
+    }
+    characters.push(replacementId);
+    pausedAssignment.release();
+    const replacementAssignment = await Promise.allSettled([assignmentPromise]);
+    const replacementItemOwner = (await pool.query(
+      'SELECT owner_scope,owner_id,state FROM item_instances WHERE id=$1',
+      [replacementRaceItem.id],
+    )).rows[0];
+    check(replacementAssignment[0].status === 'rejected'
+      && replacementAssignment[0].reason?.code === 'no_character'
+      && replacementItemOwner.owner_scope === 'account'
+      && replacementItemOwner.owner_id === accounts[0]
+      && Number((await pool.query(
+        "SELECT COUNT(*) AS n FROM item_events WHERE item_id=$1 AND event_kind='transferred'",
+        [replacementRaceItem.id],
+      )).rows[0].n) === 0
+      && Number((await pool.query(
+        'SELECT COUNT(*) AS n FROM item_mutation_guards WHERE idempotency_key=$1',
+        [replacementAssignKey],
+      )).rows[0].n) === 0,
+    'death/replacement committed after snapshot cannot land an item on the dead or stale street',
+    replacementAssignment[0].status === 'rejected'
+      ? replacementAssignment[0].reason?.code : 'unexpected success');
   } finally {
     // Every fixture uses the unique prefix. Keep the real-Postgres harness re-runnable even after a
     // failed check; deletes are ordered around escrow and provenance FKs.
@@ -961,6 +1308,7 @@ export async function runOperationPgChecks({ pool, check }) {
       await pool.query('DELETE FROM operation_escrow WHERE operation_id = ANY($1::text[])', [ids]);
     }
     await pool.query('DELETE FROM item_events WHERE idempotency_key LIKE $1', [`${prefix}%`]);
+    await pool.query('DELETE FROM item_stacks WHERE owner_id = ANY($1::text[])', [accounts]);
     await pool.query('DELETE FROM item_instances WHERE owner_id = ANY($1::text[])', [
       [...accounts, ...ids],
     ]);
@@ -977,9 +1325,19 @@ export async function runOperationPgChecks({ pool, check }) {
       );
     }
     await pool.query('DELETE FROM world_operations WHERE graph_id=$1', [graphId]);
+    await pool.query(
+      'DELETE FROM mystery_choices WHERE instance_id IN (SELECT id FROM mystery_instances WHERE graph_id=$1)',
+      [graphId],
+    );
+    await pool.query(
+      'DELETE FROM mystery_node_state WHERE instance_id IN (SELECT id FROM mystery_instances WHERE graph_id=$1)',
+      [graphId],
+    );
+    await pool.query('DELETE FROM mystery_instances WHERE graph_id=$1', [graphId]);
     await pool.query('DELETE FROM crew_members WHERE crew_id=$1', [crewId]);
     await pool.query('DELETE FROM crews WHERE id=$1', [crewId]);
     await pool.query('DELETE FROM crews WHERE id=$1', [otherCrewId]);
+    await pool.query('DELETE FROM transactions WHERE character_id = ANY($1::text[])', [characters]);
     await pool.query('DELETE FROM characters WHERE id = ANY($1::text[])', [characters]);
     await pool.query('DELETE FROM account_persistent WHERE account_id = ANY($1::text[])', [accounts]);
   }

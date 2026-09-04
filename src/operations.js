@@ -17,7 +17,7 @@ import {
 } from './items.js';
 import { levelOf } from './rules.js';
 import { isWorldGraphRegistry, nodeOf } from './worldgraph.js';
-import { validateGraph } from './worldgraph-validate.js';
+import { rewardAssetDeclarations, validateGraph } from './worldgraph-validate.js';
 
 const CONTEXTS = new WeakSet();
 const PROOF_ROLES = Object.freeze(['investigator', 'driver', 'mechanic', 'enforcer']);
@@ -31,6 +31,34 @@ const GRAPH_STATE_TYPES = new Set(['social_gate', 'operation_step', 'evidence', 
 const MYSTERY_BRIDGE_NODE_TYPES = new Set([
   'mystery_step', 'world_gate', 'choice', 'evidence', 'reward',
 ]);
+const OPERATION_ROOT_FIELDS = new Set([
+  'id', 'type', 'version', 'visibility', 'requires', 'requiresAny', 'excludes',
+  'conditions', 'effects', 'metadata', 'roles', 'minimumDistinctAccounts', 'packageId',
+]);
+const OPERATION_STEP_FIELDS = new Set([
+  'id', 'type', 'version', 'visibility', 'requires', 'requiresAny', 'excludes',
+  'conditions', 'effects', 'metadata', 'packageId',
+]);
+const OPERATION_TARGET_FIELDS = new Set([
+  'id', 'type', 'version', 'visibility', 'requires', 'metadata', 'packageId',
+]);
+const OPERATION_ROOT_METADATA_FIELDS = new Set([
+  'title', 'description', 'lore', 'phase1Proof', 'minimumDistinctAccounts', 'roles',
+  'closerRoleId', 'mysteryGate', 'completionRequires',
+]);
+const OPERATION_STEP_METADATA_FIELDS = new Set([
+  'title', 'description', 'lore', 'operationId', 'roleId', 'order',
+]);
+const OPERATION_EVIDENCE_METADATA_FIELDS = new Set([
+  'title', 'description', 'lore', 'privateEvidence', 'operationId', 'roleId',
+]);
+const OPERATION_REWARD_METADATA_FIELDS = new Set([
+  'title', 'description', 'lore', 'operationId', 'roleId', 'inert', 'rewardType',
+]);
+const OPERATION_ROLE_FIELDS = new Set([
+  'id', 'title', 'description', 'lore', 'distinct', 'conditions',
+]);
+const PRESENTATION_FIELDS = new Set(['title', 'description', 'lore']);
 
 const fail = (code, message, data) => { throw new GameError(code, message, data); };
 
@@ -41,9 +69,161 @@ function canonical(value, label, code = 'bad_operation_request', max = 200) {
   return value;
 }
 
+function plainRecord(value) {
+  return !!value && typeof value === 'object' && !Array.isArray(value)
+    && [Object.prototype, null].includes(Object.getPrototypeOf(value));
+}
+
+function validatePresentation(record, label) {
+  for (const field of PRESENTATION_FIELDS) {
+    const value = record[field];
+    if (value === undefined) continue;
+    const maximum = field === 'title' ? 200 : 1000;
+    if (typeof value !== 'string' || value.trim() !== value || !value
+      || value.length > maximum) {
+      fail('unsupported_operation_semantics',
+        `${label} ${field} must be bounded canonical text.`);
+    }
+  }
+}
+
+// Operations use one durable lifecycle implemented by this module. Closed root/step/role schemas
+// prevent content from declaring ignored clocks, retries, failure/expiry/death rules, recipe-style
+// inputs or outputs, or alternate seasonal authority.
+function validateOperationNodeSchema(registry, node, kind) {
+  const fields = kind === 'root' ? OPERATION_ROOT_FIELDS : OPERATION_STEP_FIELDS;
+  const metadataFields = kind === 'root'
+    ? OPERATION_ROOT_METADATA_FIELDS : OPERATION_STEP_METADATA_FIELDS;
+  const label = kind === 'root' ? `Operation ${node.id}` : `Operation step ${node.id}`;
+  const unsupported = Object.keys(node).filter((key) => !fields.has(key));
+  if (unsupported.length) {
+    fail('unsupported_operation_semantics',
+      `${label} contains unsupported executable fields: ${unsupported.join(', ')}.`);
+  }
+  const pkg = registry.byPackage.get(node.packageId);
+  if (node.version !== undefined && node.version !== pkg?.version) {
+    fail('unsupported_operation_semantics',
+      `${label} version must equal its package version when declared.`);
+  }
+  if (node.metadata === undefined || !plainRecord(node.metadata)) {
+    fail('unsupported_operation_semantics', `${label} requires plain metadata.`);
+  }
+  const unsupportedMetadata = Object.keys(node.metadata)
+    .filter((key) => !metadataFields.has(key));
+  if (unsupportedMetadata.length) {
+    fail('unsupported_operation_semantics',
+      `${label} metadata contains unsupported executable fields: ${unsupportedMetadata.join(', ')}.`);
+  }
+  validatePresentation(node.metadata, label);
+}
+
+function validateOperationTargetSchema(registry, node) {
+  const label = `Operation ${node.type} target ${node.id}`;
+  const unsupported = Object.keys(node).filter((key) => !OPERATION_TARGET_FIELDS.has(key));
+  if (unsupported.length) {
+    fail('unsupported_operation_semantics',
+      `${label} contains unsupported executable fields: ${unsupported.join(', ')}.`);
+  }
+  const pkg = registry.byPackage.get(node.packageId);
+  if (node.version !== undefined && node.version !== pkg?.version) {
+    fail('unsupported_operation_semantics',
+      `${label} version must equal its package version when declared.`);
+  }
+  if (!plainRecord(node.metadata)) {
+    fail('unsupported_operation_semantics', `${label} requires plain metadata.`);
+  }
+  const metadataFields = node.type === 'evidence'
+    ? OPERATION_EVIDENCE_METADATA_FIELDS : OPERATION_REWARD_METADATA_FIELDS;
+  const unsupportedMetadata = Object.keys(node.metadata)
+    .filter((key) => !metadataFields.has(key));
+  if (unsupportedMetadata.length) {
+    fail('unsupported_operation_semantics',
+      `${label} metadata contains unsupported executable fields: ${unsupportedMetadata.join(', ')}.`);
+  }
+  validatePresentation(node.metadata, label);
+  if (node.metadata.privateEvidence !== undefined
+    && (node.type !== 'evidence' || node.visibility !== 'role_private'
+      || typeof node.metadata.privateEvidence !== 'string'
+      || node.metadata.privateEvidence.trim() !== node.metadata.privateEvidence
+      || node.metadata.privateEvidence.length < 1
+      || node.metadata.privateEvidence.length > 1000)) {
+    fail('bad_operation_definition',
+      `Private evidence ${node.id} must be canonical role-private evidence text.`);
+  }
+  if (node.type === 'reward'
+    && (node.metadata.inert !== true || node.metadata.rewardType !== 'status')) {
+    fail('unsafe_operation_reward',
+      `Operation reward target ${node.id} must be an explicitly inert status.`);
+  }
+}
+
+function assertOperationGrantEdge(root, source, target) {
+  if (target.metadata?.operationId !== root.id) {
+    fail('bad_operation_effect',
+      `Operation ${root.id} cannot complete target ${target.id} from another graph domain.`);
+  }
+  if (!Array.isArray(target.requires) || target.requires.length !== 1
+    || target.requires[0] !== source.id) {
+    fail('bad_operation_effect',
+      `Operation target ${target.id} must require exactly its granting node ${source.id}.`);
+  }
+}
+
+function validateOperationRoleSchema(role, root) {
+  if (!plainRecord(role)) {
+    fail('bad_operation_definition', `Operation ${root.id} contains a malformed role.`);
+  }
+  const unsupported = Object.keys(role).filter((key) => !OPERATION_ROLE_FIELDS.has(key));
+  if (unsupported.length) {
+    fail('unsupported_operation_semantics',
+      `Operation ${root.id} role contains unsupported executable fields: ${unsupported.join(', ')}.`);
+  }
+  canonical(role.id, `Operation ${root.id} role id`, 'bad_operation_definition');
+  validatePresentation(role, `Operation ${root.id} role ${role.id}`);
+  if (role.conditions !== undefined && !Array.isArray(role.conditions)) {
+    fail('bad_operation_definition', `Operation ${root.id} role ${role.id} conditions must be an array.`);
+  }
+}
+
 const dateString = (value) => value == null ? null : new Date(value).toISOString();
-const rolesOf = (root) => root.roles || root.metadata?.roles || [];
 const completionRequires = (root) => root.metadata?.completionRequires || [];
+
+// Canonical operation-root interpretation shared by executable validation, runtime, and discovery.
+// A public social_gate without roles is a graph gate, not a callable social operation.
+export function operationDefinition(root) {
+  if (!root || root.type !== 'social_gate') return null;
+  if (root.roles !== undefined && root.metadata?.roles !== undefined) {
+    fail('bad_operation_definition', `Operation ${root.id} declares roles in two locations.`);
+  }
+  const roles = root.roles ?? root.metadata?.roles;
+  if (roles === undefined) return null;
+  if (!Array.isArray(roles) || roles.length === 0) {
+    fail('bad_operation_definition', `Operation ${root.id} requires a non-empty role set.`);
+  }
+  if (root.minimumDistinctAccounts !== undefined
+    && root.metadata?.minimumDistinctAccounts !== undefined) {
+    fail('bad_operation_definition',
+      `Operation ${root.id} declares minimumDistinctAccounts in two locations.`);
+  }
+  const minimumDistinctAccounts = root.minimumDistinctAccounts
+    ?? root.metadata?.minimumDistinctAccounts;
+  return Object.freeze({
+    root,
+    roles,
+    minimumDistinctAccounts: Number(minimumDistinctAccounts),
+  });
+}
+
+export function operationDefinitions(registry, { publicOnly = false } = {}) {
+  if (!isWorldGraphRegistry(registry)) {
+    fail('bad_operation_context', 'Operation discovery requires an authentic world-graph registry.');
+  }
+  return [...registry.nodes.values()].map(operationDefinition).filter((definition) => (
+    definition && (!publicOnly || definition.root.visibility === 'public')
+  ));
+}
+
+const rolesOf = (root) => operationDefinition(root)?.roles || [];
 
 function packageDependencies(registry, packageId, result = new Set()) {
   const pkg = registry.byPackage.get(packageId);
@@ -63,15 +243,83 @@ function assertVisibleTarget(registry, source, target) {
   }
 }
 
-function assertCondition(condition, owner) {
+const CONDITION_ALIASES = Object.freeze({
+  graph_dependency: Object.freeze({ target: ['nodeId', 'id', 'value'] }),
+  location: Object.freeze({ target: ['value', 'locationId', 'district'] }),
+  level: Object.freeze({ target: ['value', 'minimumLevel', 'level'] }),
+  skill: Object.freeze({ target: ['skillId', 'id', 'value'] }),
+  item_ownership: Object.freeze({ target: ['templateId', 'itemTemplateId', 'nodeId'] }),
+  owns_item: Object.freeze({ target: ['templateId', 'itemTemplateId', 'nodeId'] }),
+  material_quantity: Object.freeze({
+    target: ['templateId', 'materialId', 'nodeId'],
+    quantity: ['quantity', 'minimumQuantity', 'amount'],
+    optional: ['quality'],
+  }),
+  evidence: Object.freeze({ target: ['evidenceId', 'nodeId'] }),
+  explicit_interaction: Object.freeze({ target: ['interactionId', 'id', 'value'] }),
+});
+
+function conditionAlias(condition, names, owner, label) {
+  const declared = names.filter((name) => condition[name] !== undefined);
+  if (declared.length > 1) {
+    fail('bad_operation_definition',
+      `${owner} has ambiguous ${label} aliases: ${declared.join(', ')}.`);
+  }
+  return condition[declared[0]];
+}
+
+// This is the single operation-condition vocabulary boundary used by both definition validation
+// and execution. A definition cannot validate under one alias and execute under another fallback.
+function normalizeOperationCondition(condition, owner) {
   if (!condition || typeof condition !== 'object' || Array.isArray(condition)
     || Object.getPrototypeOf(condition) !== Object.prototype) {
     fail('bad_operation_definition', `${owner} has a malformed condition.`);
   }
-  const adapter = condition.adapter || condition.type || condition.kind;
+  const adapter = conditionAlias(condition, ['adapter', 'type', 'kind'], owner, 'adapter');
   if (!CONDITION_ADAPTERS.has(adapter)) {
     fail('unsupported_operation_condition', `${owner} uses unsupported condition ${String(adapter)}.`);
   }
+  const aliases = CONDITION_ALIASES[adapter];
+  const allowed = new Set([
+    'adapter', 'type', 'kind', ...aliases.target,
+    ...(aliases.quantity || []), ...(aliases.optional || []),
+  ]);
+  if (Object.keys(condition).some((key) => !allowed.has(key))) {
+    fail('bad_operation_definition', `${owner} ${adapter} condition has unsupported fields.`);
+  }
+  const target = conditionAlias(condition, aliases.target, owner, `${adapter} target`);
+  const normalized = { adapter };
+  if (adapter === 'level') {
+    const minimumLevel = Number(target);
+    if (!Number.isInteger(minimumLevel) || minimumLevel < 1) {
+      fail('bad_operation_definition', `${owner} level condition requires a positive integer.`);
+    }
+    normalized.minimumLevel = minimumLevel;
+    return Object.freeze(normalized);
+  }
+  const canonicalTarget = canonical(
+    target, `${owner} ${adapter} target`, 'bad_operation_definition',
+  );
+  if (adapter === 'graph_dependency') normalized.nodeId = canonicalTarget;
+  else if (adapter === 'location') normalized.location = canonicalTarget;
+  else if (adapter === 'skill') normalized.skillId = canonicalTarget;
+  else if (adapter === 'item_ownership' || adapter === 'owns_item') {
+    normalized.templateId = canonicalTarget;
+  } else if (adapter === 'material_quantity') {
+    normalized.templateId = canonicalTarget;
+    const quantity = Number(conditionAlias(
+      condition, aliases.quantity, owner, 'material quantity',
+    ));
+    if (!Number.isInteger(quantity) || quantity < 1) {
+      fail('bad_operation_definition',
+        `${owner} material_quantity condition requires a positive integer quantity.`);
+    }
+    normalized.quantity = quantity;
+    normalized.quality = condition.quality === undefined ? 'standard'
+      : canonical(condition.quality, `${owner} material quality`, 'bad_operation_definition');
+  } else if (adapter === 'evidence') normalized.evidenceId = canonicalTarget;
+  else normalized.interactionId = canonicalTarget;
+  return Object.freeze(normalized);
 }
 
 function assertRolePrivate(node, roleIds, operationId) {
@@ -89,6 +337,77 @@ function assertOperationReference(registry, root, id, label) {
     fail('bad_operation_definition', `${label} crosses an operation boundary.`);
   }
   return target;
+}
+
+const ACTOR_CONDITION_ADAPTERS = new Set([
+  'location', 'level', 'skill', 'item_ownership', 'owns_item', 'material_quantity',
+]);
+
+function validatePlacedOperationCondition(registry, root, source, condition, placement) {
+  const label = placement === 'root' ? `Operation ${root.id}`
+    : placement === 'role' ? `Role ${source.id}` : `Step ${source.id}`;
+  const normalized = normalizeOperationCondition(condition, label);
+  if (placement !== 'step' && !ACTOR_CONDITION_ADAPTERS.has(normalized.adapter)) {
+    fail('bad_operation_definition',
+      `${label} cannot use ${normalized.adapter} before operation contribution state exists.`);
+  }
+  if (!['graph_dependency', 'evidence'].includes(normalized.adapter)) return normalized;
+  const targetId = normalized.adapter === 'evidence'
+    ? normalized.evidenceId : normalized.nodeId;
+  const target = assertOperationReference(registry, root, targetId, label);
+  if (target.id === root.id || !GRAPH_STATE_TYPES.has(target.type)) {
+    fail('bad_operation_definition',
+      `${label} condition must target durable state inside its own operation.`);
+  }
+  const sourceRoleId = source.metadata?.roleId;
+  if (normalized.adapter === 'evidence' && target.type !== 'evidence') {
+    fail('bad_operation_definition', `${label} evidence condition must target evidence.`);
+  }
+  if (normalized.adapter === 'evidence' && target.visibility === 'role_private'
+    && target.metadata?.roleId !== sourceRoleId) {
+    fail('bad_operation_definition',
+      `${label} cannot depend on another role's private operation state.`);
+  }
+  return normalized;
+}
+
+function validateOperationDependencyCycles(registry, root) {
+  const candidates = [...registry.nodes.values()].filter((node) => (
+    node.packageId === root.packageId && node.id !== root.id
+    && GRAPH_STATE_TYPES.has(node.type) && node.metadata?.operationId === root.id
+  ));
+  const byId = new Map(candidates.map((node) => [node.id, node]));
+  const edges = new Map(candidates.map((node) => {
+    const conditionTargets = node.type === 'operation_step'
+      ? (node.conditions || []).map((condition) => (
+        normalizeOperationCondition(condition, `Step ${node.id}`)
+      )).flatMap((condition) => (
+        condition.adapter === 'graph_dependency' ? [condition.nodeId]
+          : condition.adapter === 'evidence' ? [condition.evidenceId] : []
+      )) : [];
+    return [node.id, [
+      ...(node.requires || []), ...(node.requiresAny || []).flat(), ...conditionTargets,
+    ].filter((id) => byId.has(id))];
+  }));
+  const visiting = new Set();
+  const visited = new Set();
+  const path = [];
+  const visit = (id) => {
+    if (visiting.has(id)) {
+      const start = path.indexOf(id);
+      const cycle = [...path.slice(start), id];
+      fail('operation_dependency_cycle',
+        `Operation ${root.id} executable dependency cycle: ${cycle.join(' -> ')}`);
+    }
+    if (visited.has(id)) return;
+    visiting.add(id);
+    path.push(id);
+    for (const next of edges.get(id) || []) visit(next);
+    path.pop();
+    visiting.delete(id);
+    visited.add(id);
+  };
+  for (const id of [...edges.keys()].sort()) visit(id);
 }
 
 function validateMysteryBridge(registry, root) {
@@ -161,6 +480,9 @@ function assertEffect(registry, root, source, effect, allowed, roleIds) {
       fail('bad_operation_effect', 'Operation evidence must be scoped to its graph root.');
     }
   }
+  if (['evidence_grant', 'status_award'].includes(adapter)) {
+    assertOperationGrantEdge(root, source, target);
+  }
   if (adapter === 'item_escrow' && target.type !== 'item_template') {
     fail('bad_operation_effect', 'Operation escrow requires a unique item template.');
   }
@@ -168,6 +490,11 @@ function assertEffect(registry, root, source, effect, allowed, roleIds) {
     if (target.type !== 'item_template' || !roleIds.has(effect.recipientRoleId)) {
       fail('bad_operation_effect', 'Unique operation awards require a declared recipient role.');
     }
+  }
+  if (['unique_item_award', 'status_award'].includes(adapter)
+    && rewardAssetDeclarations(target).some(({ asset }) => ['OMR', 'CASH'].includes(asset))) {
+    fail('unsafe_operation_reward',
+      `Operation effect ${adapter} cannot target a currency-bearing definition.`);
   }
   if (adapter === 'status_award') {
     if (target.type !== 'reward' || target.metadata?.inert !== true
@@ -178,25 +505,67 @@ function assertEffect(registry, root, source, effect, allowed, roleIds) {
   }
 }
 
-function validateOperationDefinitions(registry) {
-  const operationRoots = [...registry.nodes.values()].filter((node) => (
-    node.type === 'social_gate' && rolesOf(node).length > 0
-  ));
+// Pure executable-definition validation used both by request contexts and the Phase 1 boot/release
+// gate. It reads only the immutable registry and performs no database or runtime side effects.
+export function validateOperationDefinitions(registry) {
+  for (const node of registry.nodes.values()) {
+    if (node.type !== 'social_gate'
+      && (node.roles !== undefined || node.metadata?.roles !== undefined)) {
+      fail('bad_operation_definition',
+        `Operation roles may be declared only by a social_gate root, not ${node.id}.`);
+    }
+  }
+  const definitions = operationDefinitions(registry);
+  const operationRoots = definitions.map(({ root }) => root);
+  const definitionById = new Map(definitions.map((definition) => [definition.root.id, definition]));
   const rootById = new Map(operationRoots.map((root) => [root.id, root]));
+  const roleIdsByRoot = new Map(definitions.map(({ root, roles }) => [
+    root.id, new Set(roles.map((role) => role?.id)),
+  ]));
+  // Every operation step, and every evidence/reward node that opts into operation ownership, must
+  // name exactly one real root in its own package. Steps also require a role declared by that root;
+  // shared evidence and root-level status rewards may intentionally omit roleId.
+  for (const node of registry.nodes.values()) {
+    const operationId = node.metadata?.operationId;
+    if (operationId === undefined && node.type !== 'operation_step') continue;
+    if (!['operation_step', 'evidence', 'reward'].includes(node.type)) {
+      fail('bad_operation_definition',
+        `Node ${node.id} cannot claim operation ownership.`);
+    }
+    const root = rootById.get(operationId);
+    if (!root || root.packageId !== node.packageId) {
+      fail('bad_operation_definition',
+        `Operation-owned node ${node.id} must name a valid same-package operation root.`);
+    }
+    const roleIds = roleIdsByRoot.get(root.id);
+    if (node.type === 'operation_step' && !roleIds.has(node.metadata?.roleId)) {
+      fail('bad_operation_definition',
+        `Operation step ${node.id} must name a role declared by ${root.id}.`);
+    }
+    if (node.type !== 'operation_step' && node.metadata?.roleId !== undefined
+      && !roleIds.has(node.metadata.roleId)) {
+      fail('bad_operation_definition',
+        `Operation-owned node ${node.id} names an undeclared role.`);
+    }
+    if (node.type !== 'operation_step') validateOperationTargetSchema(registry, node);
+  }
   for (const root of operationRoots) {
-    if (root.visibility === 'role_private') {
-      fail('bad_operation_definition', 'An operation root cannot be role-private.');
+    validateOperationNodeSchema(registry, root, 'root');
+    if (root.visibility !== 'public') {
+      fail('bad_operation_definition',
+        `Operation ${root.id} must be public because direct open accepts its canonical id.`);
     }
     if (root.effect !== undefined || root.action !== undefined || root.actions !== undefined
       || (root.effects !== undefined && !Array.isArray(root.effects))) {
       fail('bad_operation_effect', `Operation ${root.id} must use an effects data array only.`);
     }
-    const roles = rolesOf(root);
+    const definition = definitionById.get(root.id);
+    const roles = definition.roles;
+    for (const role of roles) validateOperationRoleSchema(role, root);
     const roleIds = new Set(roles.map((role) => role.id));
     if (roleIds.size !== roles.length || roles.length < 2 || roles.length > 8
       || roles.some((role) => role.distinct !== true)
-      || Number(root.minimumDistinctAccounts ?? root.metadata?.minimumDistinctAccounts)
-        !== roles.length) {
+      || definition.minimumDistinctAccounts !== roles.length) {
       fail('bad_operation_definition',
         `Operation ${root.id} must declare an all-distinct Phase 1 role set.`);
     }
@@ -212,8 +581,13 @@ function validateOperationDefinitions(registry) {
         `Operation ${root.id} requires one declared closer role.`);
     }
     validateMysteryBridge(registry, root);
+    for (const condition of root.conditions || []) {
+      validatePlacedOperationCondition(registry, root, root, condition, 'root');
+    }
     for (const role of roles) {
-      for (const condition of role.conditions || []) assertCondition(condition, `Role ${role.id}`);
+      for (const condition of role.conditions || []) {
+        validatePlacedOperationCondition(registry, root, role, condition, 'role');
+      }
     }
     const steps = [...registry.nodes.values()].filter((node) => (
       node.packageId === root.packageId && node.type === 'operation_step'
@@ -233,6 +607,7 @@ function validateOperationDefinitions(registry) {
     }
     const orders = new Set();
     for (const step of steps) {
+      validateOperationNodeSchema(registry, step, 'step');
       const roleId = step.metadata?.roleId;
       if (!roleIds.has(roleId)) {
         fail('bad_operation_definition', `Operation step ${step.id} has no declared role.`);
@@ -246,7 +621,9 @@ function validateOperationDefinitions(registry) {
         fail('bad_operation_definition', `Operation step ${step.id} has an invalid order.`);
       }
       if (order !== undefined) orders.add(order);
-      for (const condition of step.conditions || []) assertCondition(condition, `Step ${step.id}`);
+      for (const condition of step.conditions || []) {
+        validatePlacedOperationCondition(registry, root, step, condition, 'step');
+      }
       if (step.effect !== undefined || step.action !== undefined || step.actions !== undefined) {
         fail('bad_operation_effect', `Operation step ${step.id} must use effects data only.`);
       }
@@ -260,20 +637,12 @@ function validateOperationDefinitions(registry) {
     for (const effect of root.effects || []) {
       assertEffect(registry, root, root, effect, COMPLETION_EFFECTS, roleIds);
     }
+    validateOperationDependencyCycles(registry, root);
   }
   // A role-private graph-state node in a package that defines social operations must belong to one
   // explicit operation root. This prevents orphan or cross-vocabulary private content while still
   // allowing several unrelated operations in one immutable package.
   for (const node of registry.nodes.values()) {
-    if (node.metadata?.privateEvidence !== undefined
-      && (node.type !== 'evidence' || node.visibility !== 'role_private'
-        || typeof node.metadata.privateEvidence !== 'string'
-        || node.metadata.privateEvidence.trim() !== node.metadata.privateEvidence
-        || node.metadata.privateEvidence.length < 1
-        || node.metadata.privateEvidence.length > 1000)) {
-      fail('bad_operation_definition',
-        `Private evidence ${node.id} must be canonical role-private evidence text.`);
-    }
     if (node.visibility !== 'role_private' || !GRAPH_STATE_TYPES.has(node.type)) continue;
     const packageHasOperation = operationRoots.some((root) => root.packageId === node.packageId);
     if (!packageHasOperation) continue;
@@ -427,8 +796,9 @@ async function mysteryBridgeState(client, context, actor, root) {
   const instance = (await client.query(
     `SELECT id,graph_version,status FROM mystery_instances
       WHERE owner_scope=$1 AND owner_id=$2 AND authority_account_id=$3 AND graph_id=$4
+        AND graph_version=$5
       FOR UPDATE`,
-    [gate.ownerScope, ownerId, context.accountId, gate.graphId],
+    [gate.ownerScope, ownerId, context.accountId, gate.graphId, gate.graphVersion],
   )).rows[0];
   // The owner tuple is deterministic: durable account for an account bridge, or the currently
   // locked living street for a character bridge. A version mismatch never falls through to a
@@ -478,7 +848,7 @@ function pinnedDefinition(context, row) {
     fail('stale_graph_version', 'The operation is pinned to another graph version.');
   }
   const root = nodeOf(context.registry, row.operation_node_id);
-  if (!root || root.packageId !== pkg.id || root.type !== 'social_gate') {
+  if (!root || root.packageId !== pkg.id || !operationDefinition(root)) {
     fail('operation_graph', 'The pinned operation definition is unavailable.');
   }
   return { pkg, root };
@@ -510,6 +880,64 @@ async function authorizeOperation(client, context, operationId, {
     fail('operation_forbidden', 'This account cannot access that operation.');
   }
   return { row, assignment, ...pinnedDefinition(context, row) };
+}
+
+const operationAuthorityIdentity = (row) => [
+  row.id,
+  row.graph_id,
+  Number(row.graph_version),
+  row.operation_node_id,
+  row.crew_id,
+  row.opened_by_account_id,
+];
+
+const assignmentAuthorityIdentity = (row) => [
+  row.role_id,
+  row.account_id,
+  row.character_id,
+];
+
+const sameAuthorityRows = (left, right, identity) => (
+  JSON.stringify(left.map(identity)) === JSON.stringify(right.map(identity))
+);
+
+// Cancellation authority is stored-row authority only. It intentionally performs no package or
+// node lookup: an authenticated opener must be able to recover exact recorded escrow after the
+// current registry advances beyond the operation's immutable graph version.
+async function cancellationAuthority(client, context, operationId) {
+  const row = await operationRow(client, operationId);
+  if (!row) fail('operation_not_found', 'No such social operation.');
+  if (row.opened_by_account_id !== context.accountId) {
+    const assignment = await callerAssignment(client, row.id, context.accountId);
+    const currentCrew = assignment ? row.crew_id : (await client.query(
+      'SELECT crew_id FROM crew_members WHERE account_id=$1', [context.accountId],
+    )).rows[0]?.crew_id || null;
+    if (!assignment && currentCrew !== row.crew_id) {
+      fail('operation_forbidden', 'This account cannot access that operation.');
+    }
+    fail('operation_cancel_forbidden', 'Only the account that opened this operation may cancel it.');
+  }
+  return { row, assignments: await roleRows(client, row.id) };
+}
+
+async function lockedCancellationAuthority(client, context, authority) {
+  const row = await operationRow(client, authority.row.id, { lock: true });
+  if (!row
+    || row.opened_by_account_id !== context.accountId
+    || JSON.stringify(operationAuthorityIdentity(row))
+      !== JSON.stringify(operationAuthorityIdentity(authority.row))) {
+    fail('operation_cancel_forbidden', 'Operation cancellation authority changed.');
+  }
+  // The operation lock serializes all role mutation. Characters and memberships are then locked in
+  // the module's canonical sorted order; cancellation observes lifecycle invalidation but remains a
+  // release-only recovery even when a participant died or left the stored Crew.
+  const participants = await lockOperationAuthorityRows(client, row);
+  if (!sameAuthorityRows(
+    participants.assignments, authority.assignments, assignmentAuthorityIdentity,
+  )) {
+    fail('contention', 'The operation participants changed; retry cancellation.');
+  }
+  return { row, participants };
 }
 
 async function roleRows(client, operationId) {
@@ -687,54 +1115,45 @@ async function abandonIfInvalid(client, operation, mutation, authority) {
   return { ok: true, ...operationProjection(abandoned), releasedEscrowCount };
 }
 
-function conditionValue(condition, fields) {
-  for (const field of fields) if (condition?.[field] !== undefined) return condition[field];
-  return undefined;
-}
-
 async function conditionBlocker(client, actor, operation, states, condition, interactionId) {
-  const adapter = condition.adapter || condition.type || condition.kind;
+  const normalized = normalizeOperationCondition(condition, 'Operation runtime');
+  const { adapter } = normalized;
   if (adapter === 'graph_dependency') {
-    const id = conditionValue(condition, ['nodeId', 'id', 'value']);
-    return states.get(id)?.state === 'completed' ? null : { adapter };
+    return states.get(normalized.nodeId)?.state === 'completed' ? null : { adapter };
   }
   if (adapter === 'location') {
-    const required = conditionValue(condition, ['value', 'locationId', 'district']);
+    const required = normalized.location;
     return actor.location === required ? null : { adapter, required };
   }
   if (adapter === 'level') {
-    const required = Number(conditionValue(condition, ['minimumLevel', 'level', 'value']));
+    const required = normalized.minimumLevel;
     return actor.level >= required ? null : { adapter, required, current: actor.level };
   }
   if (adapter === 'skill') {
-    const required = conditionValue(condition, ['skillId', 'id', 'value']);
+    const required = normalized.skillId;
     return actor.skills.has(required) ? null : { adapter, required };
   }
   if (adapter === 'item_ownership' || adapter === 'owns_item') {
-    const templateId = conditionValue(condition, ['templateId', 'itemId', 'value']);
     const row = (await client.query(
       `SELECT 1 FROM item_instances WHERE owner_scope='account' AND owner_id=$1
         AND template_id=$2 AND state='active' LIMIT 1 FOR UPDATE`,
-      [actor.accountId, templateId],
+      [actor.accountId, normalized.templateId],
     )).rows[0];
     return row ? null : { adapter };
   }
   if (adapter === 'material_quantity') {
-    const templateId = conditionValue(condition, ['templateId', 'materialId', 'value']);
-    const qty = Number(conditionValue(condition, ['quantity', 'qty', 'minimum']) || 1);
     const row = (await client.query(
       `SELECT quantity FROM item_stacks WHERE owner_scope='account' AND owner_id=$1
         AND template_id=$2 AND quality=$3 FOR UPDATE`,
-      [actor.accountId, templateId, condition.quality || 'standard'],
+      [actor.accountId, normalized.templateId, normalized.quality],
     )).rows[0];
-    return Number(row?.quantity || 0) >= qty ? null : { adapter, required: qty };
+    return Number(row?.quantity || 0) >= normalized.quantity
+      ? null : { adapter, required: normalized.quantity };
   }
   if (adapter === 'evidence') {
-    const id = conditionValue(condition, ['evidenceId', 'nodeId', 'id', 'value']);
-    return states.get(id)?.state === 'completed' ? null : { adapter };
+    return states.get(normalized.evidenceId)?.state === 'completed' ? null : { adapter };
   }
-  const required = conditionValue(condition, ['interactionId', 'id', 'value']);
-  return interactionId === required ? null : { adapter };
+  return interactionId === normalized.interactionId ? null : { adapter };
 }
 
 function throwBlocker(blocker) {
@@ -743,6 +1162,9 @@ function throwBlocker(blocker) {
   if (blocker.adapter === 'skill') fail('skill', 'This role action requires another skill.');
   if (blocker.adapter === 'item_ownership' || blocker.adapter === 'owns_item') {
     fail('item_unavailable', 'This role lacks its required item.');
+  }
+  if (blocker.adapter === 'material_quantity') {
+    fail('materials', 'This role lacks its required materials.');
   }
   if (blocker.adapter === 'material_quantity') fail('materials', 'This role lacks required materials.');
   if (blocker.adapter === 'explicit_interaction') fail('interaction', 'The required interaction is missing.');
@@ -1113,6 +1535,7 @@ export async function cancelOperation(client, contextValue, operationIdValue, op
   const context = contextOf(contextValue);
   const operationId = canonical(operationIdValue, 'Operation id');
   const options = mutationOptions(optionsValue);
+  const authority = await cancellationAuthority(client, context, operationId);
   const destinations = await destinationsFor(client, operationId);
   return withItemMutation(
     client, { scope: 'account', id: context.accountId }, 'operation_action', options.idempotencyKey,
@@ -1121,16 +1544,7 @@ export async function cancelOperation(client, contextValue, operationIdValue, op
       itemAuthority: { operations: [operationId], destinations },
     },
     async (mutation) => {
-      const authority = await authorizeOperation(client, context, operationId, {
-        requireCrew: false, lock: true,
-      });
-      const { row } = authority;
-      if (row.opened_by_account_id !== context.accountId) {
-        fail('operation_cancel_forbidden', 'Only the account that opened this operation may cancel it.');
-      }
-      // Cancellation remains a recovery action even for an already-invalid party, but it shares the
-      // same participant lock boundary so death/Crew mutations cannot cross escrow release.
-      await lockOperationAuthorityRows(client, row);
+      const { row } = await lockedCancellationAuthority(client, context, authority);
       if (row.status === 'canceled') return { ok: true, ...operationProjection(row), releasedEscrowCount: 0 };
       if (!['forming', 'active'].includes(row.status)) fail('operation_closed', 'That operation is closed.');
       const releasedEscrowCount = await releaseAllEscrow(client, row.id, mutation);

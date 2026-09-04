@@ -6,12 +6,15 @@ import { loadGraphPackages } from '../src/worldgraph.js';
 import {
   GraphValidationError,
   loadAndValidateGraphPackages,
+  normalizeAssetToken,
+  rewardAssetDeclarations,
   validateGraph,
 } from '../src/worldgraph-validate.js';
 import {
   PHASE1_WORLD_GRAPH_PACKAGES,
   validatePhase1WorldGraph,
 } from '../tools/worldgraph-content.js';
+import { validatePhase1EconomyPolicy } from '../src/content/phase1-policy.js';
 
 function registry(nodes, overrides = {}) {
   return loadGraphPackages([{
@@ -1106,12 +1109,530 @@ assert.equal(phase1First.packages, 3);
 assert.equal(phase1First.nodes, 21);
 assert.equal(phase1First.recipes, 3);
 assert.equal(phase1First.omrRewards, 0, 'the Phase 1 graph cannot mint OMR');
+assert.deepEqual(phase1First.executableDefinitions, {
+  crafting: true,
+  mysteries: true,
+  operations: true,
+}, 'the release report proves every executable definition vocabulary was validated');
 assert.deepEqual(phase1First.economyPolicy, {
   omrAuthorityPaths: 0,
   cashRewardSourcePaths: 0,
   cashCosts: [{ recipeId: 'recipe:hardened_steel', amount: 300 }],
 }, 'the stricter Phase 1 policy records its sole allowed cash sink and zero currency authority');
 assert.match(phase1First.contentHash, /^[0-9a-f]{64}$/);
+
+const malformedOperation = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+malformedOperation[2].nodes
+  .find(({ id }) => id === 'operation:belladonna-lockbox').metadata.closerRoleId = 'ghost';
+assert.doesNotThrow(() => loadAndValidateGraphPackages(malformedOperation),
+  'the reusable graph-shape validator intentionally does not own operation execution semantics');
+assert.throws(() => validatePhase1WorldGraph(malformedOperation), (error) => (
+  error?.code === 'bad_operation_definition'
+), 'the Phase 1 release gate rejects an operation closer outside its stored role set');
+
+for (const [condition, label] of [[
+  { adapter: 'time_window', windowId: 'night_shift' }, 'time_window',
+], [
+  { adapter: 'owns_car', carType: 'junker' }, 'owns_car',
+]]) {
+  const unsupportedRootCondition = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+  unsupportedRootCondition[2].nodes
+    .find(({ id }) => id === 'operation:belladonna-lockbox').conditions = [condition];
+  assert.doesNotThrow(() => loadAndValidateGraphPackages(unsupportedRootCondition),
+    `the generic graph validator intentionally accepts ${label}`);
+  assert.throws(() => validatePhase1WorldGraph(unsupportedRootCondition), (error) => (
+    error?.code === 'unsupported_operation_condition'
+  ), `the Phase 1 executable gate rejects unsupported ${label} on an operation root`);
+}
+
+const conflictingOperationAlias = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+conflictingOperationAlias[2].nodes
+  .find(({ id }) => id === 'operation:belladonna-mechanic').conditions = [{
+    adapter: 'item_ownership',
+    templateId: 'item:precision_lock_tool',
+    nodeId: 'item:belladonna_artifact',
+  }];
+assert.throws(() => validatePhase1WorldGraph(conflictingOperationAlias), (error) => (
+  ['conflicting_condition_alias', 'bad_operation_definition'].includes(error?.code)
+), 'conflicting operation target aliases fail closed before serving');
+const ambiguousOperationAlias = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+const ambiguousOperationCondition = ambiguousOperationAlias[2].nodes
+  .find(({ id }) => id === 'operation:belladonna-lockbox')
+  .metadata.roles[0].conditions = [{
+    adapter: 'item_ownership',
+    templateId: 'item:precision_lock_tool',
+    itemTemplateId: 'item:precision_lock_tool',
+  }];
+assert(ambiguousOperationCondition);
+assert.throws(() => validatePhase1WorldGraph(ambiguousOperationAlias), (error) => (
+  error?.code === 'bad_operation_definition'
+), 'even equal operation aliases are ambiguous and fail closed before serving');
+
+const crossVocabularyOperationCondition = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+crossVocabularyOperationCondition[2].nodes
+  .find(({ id }) => id === 'operation:belladonna-mechanic').conditions.push({
+    adapter: 'graph_dependency', nodeId: 'mystery:belladonna-lock',
+  });
+assert.doesNotThrow(() => loadAndValidateGraphPackages(crossVocabularyOperationCondition));
+assert.throws(() => validatePhase1WorldGraph(crossVocabularyOperationCondition), (error) => (
+  error?.code === 'bad_operation_definition'
+), 'an operation contribution cannot depend on mystery state absent from its operation ledger');
+
+const crossRoleEvidenceCondition = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+crossRoleEvidenceCondition[2].nodes
+  .find(({ id }) => id === 'operation:belladonna-mechanic').conditions.push({
+    adapter: 'evidence', evidenceId: 'evidence:belladonna-cipher-fragment',
+  });
+assert.doesNotThrow(() => loadAndValidateGraphPackages(crossRoleEvidenceCondition));
+assert.throws(() => validatePhase1WorldGraph(crossRoleEvidenceCondition), (error) => (
+  error?.code === 'bad_operation_definition'
+), 'a contribution cannot use another role\'s private evidence as a condition oracle');
+
+for (const [label, mutateDefinition] of [[
+  'root explicit interaction', (pkg) => {
+    pkg.nodes.find(({ id }) => id === 'operation:belladonna-lockbox').conditions = [{
+      adapter: 'explicit_interaction', interactionId: 'cannot-be-supplied-at-open',
+    }];
+  },
+], [
+  'role explicit interaction', (pkg) => {
+    pkg.nodes.find(({ id }) => id === 'operation:belladonna-lockbox').metadata.roles[0]
+      .conditions = [{
+        adapter: 'explicit_interaction', interactionId: 'cannot-be-supplied-at-assignment',
+      }];
+  },
+], [
+  'role graph state', (pkg) => {
+    pkg.nodes.find(({ id }) => id === 'operation:belladonna-lockbox').metadata.roles[0]
+      .conditions = [{ adapter: 'graph_dependency', nodeId: 'operation:belladonna-investigate' }];
+  },
+]]) {
+  const packages = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+  mutateDefinition(packages[2]);
+  assert.throws(() => validatePhase1WorldGraph(packages), (error) => (
+    ['bad_operation_definition', 'unreachable_terminal'].includes(error?.code)
+  ), `${label} is rejected where runtime supplies no coherent value/state`);
+}
+
+const malformedMystery = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+malformedMystery[2].nodes
+  .find(({ id }) => id === 'mystery:belladonna-file-closed').effects = [{
+    adapter: 'unique_item_award', templateId: 'mat:scrap_steel',
+  }];
+assert.doesNotThrow(() => loadAndValidateGraphPackages(malformedMystery),
+  'the reusable graph-shape validator intentionally does not own mystery execution semantics');
+assert.throws(() => validatePhase1WorldGraph(malformedMystery), (error) => (
+  error?.code === 'bad_mystery_effect'
+), 'the Phase 1 release gate rejects a mystery unique-item award aimed at a material stack');
+
+// Evidence and inert-status definitions are completed directly by an effect; they do not execute
+// their own conditions/effects/lifecycle declarations. Keep their schema closed, require the exact
+// granting source as their sole prerequisite, and assign each target to one runtime domain.
+const closedTargetCases = [[
+  'evidence unique-item effect', 'evidence:belladonna-maker-mark', (node) => {
+    node.effects = [{ adapter: 'unique_item_award', templateId: 'item:belladonna_artifact' }];
+  },
+], [
+  'evidence explicit condition', 'evidence:belladonna-maker-mark', (node) => {
+    node.conditions = [{ adapter: 'explicit_interaction', interactionId: 'ignored' }];
+  },
+], [
+  'evidence cooldown', 'evidence:belladonna-maker-mark', (node) => {
+    node.cooldown = 60;
+  },
+], [
+  'reward effects', 'reward:belladonna-crew-status', (node) => {
+    node.effects = [{ adapter: 'status_award', nodeId: node.id }];
+  },
+], [
+  'reward level condition', 'reward:belladonna-crew-status', (node) => {
+    node.conditions = [{ adapter: 'level', minimumLevel: 1 }];
+  },
+], [
+  'reward repeatability', 'reward:belladonna-crew-status', (node) => {
+    node.repeatability = 'capped';
+  },
+]];
+for (const [label, targetId, mutate] of closedTargetCases) {
+  const packages = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+  mutate(packages[2].nodes.find(({ id }) => id === targetId));
+  assert.doesNotThrow(() => loadAndValidateGraphPackages(packages),
+    `${label} remains generic graph-shape valid`);
+  assert.throws(() => validatePhase1WorldGraph(packages), (error) => (
+    ['unsupported_mystery_semantics', 'unsupported_operation_semantics'].includes(error?.code)
+  ), `${label} is rejected by the shared executable release/runtime gate`);
+}
+
+const mysteryUnmetGrantPrerequisite = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+mysteryUnmetGrantPrerequisite[2].nodes.push({
+  id: 'mystery:unrelated-grant-prerequisite', type: 'mystery_step',
+  version: 1, visibility: 'public',
+});
+mysteryUnmetGrantPrerequisite[2].nodes
+  .find(({ id }) => id === 'evidence:belladonna-maker-mark').requires = [
+    'mystery:unrelated-grant-prerequisite',
+  ];
+assert.doesNotThrow(() => loadAndValidateGraphPackages(mysteryUnmetGrantPrerequisite));
+assert.throws(() => validatePhase1WorldGraph(mysteryUnmetGrantPrerequisite), (error) => (
+  error?.code === 'bad_mystery_effect'
+), 'a mystery effect cannot complete a target whose declared prerequisite is unrelated or later');
+
+const operationLaterGrantPrerequisite = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+operationLaterGrantPrerequisite[2].nodes
+  .find(({ id }) => id === 'evidence:belladonna-cipher-fragment').requires = [
+    'operation:belladonna-drive',
+  ];
+assert.doesNotThrow(() => loadAndValidateGraphPackages(operationLaterGrantPrerequisite));
+assert.throws(() => validatePhase1WorldGraph(operationLaterGrantPrerequisite), (error) => (
+  error?.code === 'bad_operation_effect'
+), 'an operation effect cannot complete evidence gated on a later contribution');
+
+const crossDomainMysteryGrant = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+crossDomainMysteryGrant[2].nodes
+  .find(({ id }) => id === 'mystery:belladonna-lock').effects.push({
+    adapter: 'status_award', nodeId: 'reward:belladonna-crew-status',
+  });
+assert.doesNotThrow(() => loadAndValidateGraphPackages(crossDomainMysteryGrant));
+assert.throws(() => validatePhase1WorldGraph(crossDomainMysteryGrant), (error) => (
+  error?.code === 'bad_mystery_effect'
+), 'a mystery cannot complete a status or evidence target owned by an operation');
+
+const crossDomainMysteryDiscover = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+crossDomainMysteryDiscover[2].nodes
+  .find(({ id }) => id === 'mystery:belladonna-lock').effects.push({
+    adapter: 'discover', nodeId: 'evidence:belladonna-cipher-fragment',
+  });
+assert.doesNotThrow(() => loadAndValidateGraphPackages(crossDomainMysteryDiscover));
+assert.throws(() => validatePhase1WorldGraph(crossDomainMysteryDiscover), (error) => (
+  error?.code === 'bad_mystery_effect'
+), 'a mystery cannot discover private evidence owned by an operation');
+
+const earlyMysteryCompletion = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+earlyMysteryCompletion[2].nodes
+  .find(({ id }) => id === 'mystery:belladonna-trace').effects.push({
+    adapter: 'complete', nodeId: 'mystery:belladonna-file-closed',
+  });
+assert.doesNotThrow(() => loadAndValidateGraphPackages(earlyMysteryCompletion));
+assert.throws(() => validatePhase1WorldGraph(earlyMysteryCompletion), (error) => (
+  error?.code === 'bad_mystery_effect'
+), 'a complete effect cannot bypass a target node\'s later prerequisites or interaction gate');
+
+const unsupportedOperationCompletion = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+unsupportedOperationCompletion[2].nodes
+  .find(({ id }) => id === 'operation:belladonna-investigate').effects.push({
+    adapter: 'complete', nodeId: 'operation:belladonna-drive',
+  });
+assert.doesNotThrow(() => loadAndValidateGraphPackages(unsupportedOperationCompletion));
+assert.throws(() => validatePhase1WorldGraph(unsupportedOperationCompletion), (error) => (
+  error?.code === 'unsupported_operation_effect'
+), 'operation complete effects remain fail-closed until they share the enforced source-edge path');
+
+const choiceOnlyMysteryCycle = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+choiceOnlyMysteryCycle[2].nodes.push({
+  id: 'choice:phase1-cycle-a', type: 'choice', visibility: 'public',
+  requires: ['choice:phase1-cycle-b'], options: [{ id: 'a' }],
+}, {
+  id: 'choice:phase1-cycle-b', type: 'choice', visibility: 'public',
+  requires: ['choice:phase1-cycle-a'], options: [{ id: 'b' }],
+});
+assert.doesNotThrow(() => loadAndValidateGraphPackages(choiceOnlyMysteryCycle),
+  'the generic legacy mystery cycle walk starts only from mystery_step nodes');
+assert.throws(() => validatePhase1WorldGraph(choiceOnlyMysteryCycle), (error) => (
+  error?.code === 'mystery_dependency_cycle'
+), 'the executable gate rejects a choice-only mystery dependency cycle');
+
+const operationStepCycle = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+operationStepCycle[2].nodes.push({
+  id: 'operation:phase1-cycle-a', type: 'operation_step', visibility: 'public',
+  requires: ['operation:phase1-cycle-b'],
+  metadata: { operationId: 'operation:belladonna-lockbox', roleId: 'investigator' },
+}, {
+  id: 'operation:phase1-cycle-b', type: 'operation_step', visibility: 'public',
+  requires: ['operation:phase1-cycle-a'],
+  metadata: { operationId: 'operation:belladonna-lockbox', roleId: 'investigator' },
+});
+assert.doesNotThrow(() => loadAndValidateGraphPackages(operationStepCycle),
+  'generic graph validation does not own operation-state acyclicity');
+assert.throws(() => validatePhase1WorldGraph(operationStepCycle), (error) => (
+  error?.code === 'operation_dependency_cycle'
+), 'the executable gate rejects operation-step dependency cycles outside convergence lists');
+
+const phase1MysteryNode = (packages) => packages[2].nodes
+  .find(({ id }) => id === 'mystery:belladonna-trace');
+const phase1OperationRoot = (packages) => packages[2].nodes
+  .find(({ id }) => id === 'operation:belladonna-lockbox');
+
+for (const [label, mutate] of [[
+  'mystery cooldown', (node) => { node.metadata.cooldownSeconds = 60; },
+], [
+  'mystery once flag', (node) => { node.repeatability = 'once'; },
+], [
+  'mystery failure rules', (node) => { node.failureRules = { onFailure: 'retry' }; },
+], [
+  'mystery expiry', (node) => { node.expiresAt = '2027-01-01T00:00:00.000Z'; },
+], [
+  'mystery death rules', (node) => { node.deathRules = { onDeath: 'reset' }; },
+], [
+  'mystery season override', (node) => { node.season = 'season:2'; },
+], [
+  'mystery consumes', (node) => {
+    node.consumes = [{ templateId: 'mat:scrap_steel', quantity: 1 }];
+  },
+], [
+  'mystery produces', (node) => {
+    node.produces = [{ templateId: 'mat:wire', quantity: 1 }];
+  },
+], [
+  'mystery catalysts', (node) => {
+    node.catalysts = [{ templateId: 'mat:salvage_parts', quantity: 1 }];
+  },
+], [
+  'mystery unknown authority key', (node) => { node.authorityMode = 'author-supplied'; },
+]]) {
+  const packages = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+  mutate(phase1MysteryNode(packages));
+  assert.doesNotThrow(() => loadAndValidateGraphPackages(packages),
+    `${label} remains generic-valid graph data`);
+  assert.throws(() => validatePhase1WorldGraph(packages), (error) => (
+    error?.code === 'unsupported_mystery_semantics'
+  ), `the executable gate rejects ignored ${label} authority`);
+}
+
+const mismatchedMysteryVersion = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+phase1MysteryNode(mismatchedMysteryVersion).version = 2;
+assert.doesNotThrow(() => loadAndValidateGraphPackages(mismatchedMysteryVersion));
+assert.throws(() => validatePhase1WorldGraph(mismatchedMysteryVersion), (error) => (
+  error?.code === 'unsupported_mystery_semantics'
+), 'an explicit mystery node version must equal its immutable package version');
+
+for (const [type, extra] of [[
+  'choice', { options: [{ id: 'version-drift-choice' }] },
+], [
+  'world_gate', {},
+]]) {
+  const packages = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+  packages[2].nodes.push({
+    id: `${type}:phase1-version-drift`, type, version: 2, visibility: 'public', ...extra,
+  });
+  assert.doesNotThrow(() => loadAndValidateGraphPackages(packages));
+  assert.throws(() => validatePhase1WorldGraph(packages), (error) => (
+    error?.code === 'unsupported_mystery_semantics'
+  ), `an explicit ${type} version must equal its immutable package version`);
+}
+
+for (const [label, mutate] of [[
+  'operation cooldown', (root) => { root.metadata.cooldownSeconds = 60; },
+], [
+  'operation repeatable flag', (root) => { root.repeatable = true; },
+], [
+  'operation failure rules', (root) => { root.failureRules = { onFailure: 'retry' }; },
+], [
+  'operation expiry', (root) => { root.expiresAt = '2027-01-01T00:00:00.000Z'; },
+], [
+  'operation death rules', (root) => { root.deathRules = { onDeath: 'continue' }; },
+], [
+  'operation season override', (root) => { root.season = 'season:2'; },
+], [
+  'operation consumes', (root) => {
+    root.consumes = [{ templateId: 'mat:scrap_steel', quantity: 1 }];
+  },
+], [
+  'operation produces', (root) => {
+    root.produces = [{ templateId: 'mat:wire', quantity: 1 }];
+  },
+], [
+  'operation catalysts', (root) => {
+    root.catalysts = [{ templateId: 'mat:salvage_parts', quantity: 1 }];
+  },
+], [
+  'operation unknown authority key', (root) => { root.authorityMode = 'author-supplied'; },
+]]) {
+  const packages = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+  mutate(phase1OperationRoot(packages));
+  assert.doesNotThrow(() => loadAndValidateGraphPackages(packages),
+    `${label} remains generic-valid graph data`);
+  assert.throws(() => validatePhase1WorldGraph(packages), (error) => (
+    error?.code === 'unsupported_operation_semantics'
+  ), `the executable gate rejects ignored ${label} authority`);
+}
+
+const mismatchedOperationVersion = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+phase1OperationRoot(mismatchedOperationVersion).version = 2;
+assert.doesNotThrow(() => loadAndValidateGraphPackages(mismatchedOperationVersion));
+assert.throws(() => validatePhase1WorldGraph(mismatchedOperationVersion), (error) => (
+  error?.code === 'unsupported_operation_semantics'
+), 'an explicit operation root version must equal its immutable package version');
+
+const mismatchedOperationStepVersion = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+mismatchedOperationStepVersion[2].nodes
+  .find(({ id }) => id === 'operation:belladonna-drive').version = 2;
+assert.doesNotThrow(() => loadAndValidateGraphPackages(mismatchedOperationStepVersion));
+assert.throws(() => validatePhase1WorldGraph(mismatchedOperationStepVersion), (error) => (
+  error?.code === 'unsupported_operation_semantics'
+), 'an explicit operation-step version must equal its immutable package version');
+
+for (const visibility of ['hidden', 'discovered']) {
+  const packages = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+  phase1OperationRoot(packages).visibility = visibility;
+  assert.doesNotThrow(() => loadAndValidateGraphPackages(packages));
+  assert.throws(() => validatePhase1WorldGraph(packages), (error) => (
+    error?.code === 'bad_operation_definition'
+  ), `${visibility} operation roots cannot be opened by guessed canonical id`);
+}
+
+const bogusOperationChoiceCycle = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+bogusOperationChoiceCycle[2].nodes.push({
+  id: 'choice:bogus-operation-cycle-a', type: 'choice', visibility: 'public',
+  requires: ['choice:bogus-operation-cycle-b'],
+  metadata: { operationId: 'operation:not-real' }, options: [{ id: 'a' }],
+}, {
+  id: 'choice:bogus-operation-cycle-b', type: 'choice', visibility: 'public',
+  requires: ['choice:bogus-operation-cycle-a'],
+  metadata: { operationId: 'operation:not-real' }, options: [{ id: 'b' }],
+});
+assert.doesNotThrow(() => loadAndValidateGraphPackages(bogusOperationChoiceCycle));
+assert.throws(() => validatePhase1WorldGraph(bogusOperationChoiceCycle), (error) => (
+  error?.code === 'unsupported_mystery_semantics'
+), 'a bogus operationId cannot remove a choice cycle from both executable validators');
+
+const orphanOperationStepCycle = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+orphanOperationStepCycle[2].nodes.push({
+  id: 'operation:orphan-cycle-a', type: 'operation_step', visibility: 'public',
+  requires: ['operation:orphan-cycle-b'],
+  metadata: { operationId: 'operation:not-real', roleId: 'investigator' },
+}, {
+  id: 'operation:orphan-cycle-b', type: 'operation_step', visibility: 'public',
+  requires: ['operation:orphan-cycle-a'],
+  metadata: { operationId: 'operation:not-real', roleId: 'investigator' },
+});
+assert.doesNotThrow(() => loadAndValidateGraphPackages(orphanOperationStepCycle));
+assert.throws(() => validatePhase1WorldGraph(orphanOperationStepCycle), (error) => (
+  error?.code === 'bad_operation_definition'
+), 'mutually cyclic orphan operation steps cannot evade root ownership and cycle validation');
+
+for (const [label, mutate] of [[
+  'missing', (recipe) => { delete recipe.version; },
+], [
+  'zero', (recipe) => { recipe.version = 0; },
+], [
+  'string', (recipe) => { recipe.version = '1'; },
+], [
+  'mismatched', (recipe) => { recipe.version = 2; },
+]]) {
+  const packages = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+  const recipe = packages[1].nodes.find(({ id }) => id === 'recipe:hardened_steel');
+  mutate(recipe);
+  assert.throws(() => validatePhase1WorldGraph(packages), (error) => (
+    error?.code === 'unsupported_recipe_semantics'
+  ), `${label} recipe version cannot enter the boot/release executable registry`);
+}
+
+const craftingGateCases = [[
+  'once recipe', (recipe) => { recipe.repeatability = 'once'; },
+  'unsupported_recipe_repeatability',
+], [
+  'capped recipe', (recipe) => { recipe.repeatability = 'capped'; recipe.maxCrafts = 2; },
+  'unsupported_recipe_repeatability',
+], [
+  'catalyst recipe', (recipe) => {
+    recipe.catalystInputs = [{ templateId: 'mat:wire', quantity: 1, quality: 'standard' }];
+  }, 'unsupported_recipe_semantics',
+], [
+  'unsupported crafting condition', (recipe) => {
+    recipe.conditions.push({
+      adapter: 'time_window',
+      start: '2026-01-01T00:00:00.000Z',
+      end: '2027-01-01T00:00:00.000Z',
+    });
+  }, 'unsupported_recipe_adapter',
+], [
+  'hidden callable recipe', (recipe) => { recipe.visibility = 'hidden'; },
+  'unsupported_recipe_visibility',
+]];
+for (const [label, change, code] of craftingGateCases) {
+  const packages = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+  const recipe = packages[1].nodes.find(({ id }) => id === 'recipe:hardened_steel');
+  change(recipe);
+  assert.doesNotThrow(() => loadAndValidateGraphPackages(packages),
+    `${label} remains generic-valid graph data`);
+  assert.throws(() => validatePhase1WorldGraph(packages), (error) => error?.code === code,
+    `${label} is rejected by the complete executable gate before server boot`);
+}
+
+const conflictingCraftAlias = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+conflictingCraftAlias[1].nodes.find(({ id }) => id === 'recipe:hardened_steel').conditions[0] = {
+  adapter: 'location', value: 'foundry', district: 'docks',
+};
+assert.throws(() => validatePhase1WorldGraph(conflictingCraftAlias), (error) => (
+  error?.code === 'conflicting_condition_alias'
+), 'conflicting crafting aliases fail closed at the shared generic/executable boundary');
+
+const malformedExternalCar = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+malformedExternalCar[1].nodes
+  .find(({ id }) => id === 'recipe:car_salvage_basic').conditions = [
+    { adapter: 'location', value: 'foundry' },
+  ];
+assert.doesNotThrow(() => loadAndValidateGraphPackages(malformedExternalCar));
+assert.throws(() => validatePhase1WorldGraph(malformedExternalCar), (error) => (
+  error?.code === 'unsupported_salvage_recipe'
+), 'external-car recipes must retain an executable authoritative car selector');
+
+const mixedRecipeEntry = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+mixedRecipeEntry[1].nodes
+  .find(({ id }) => id === 'recipe:hardened_steel').consumes = [{
+    templateId: 'mat:scrap_steel', assetType: 'car', quantity: 1,
+  }];
+assert.doesNotThrow(() => loadAndValidateGraphPackages(mixedRecipeEntry),
+  'the generic reference resolver currently prefers the internal half of a mixed entry');
+assert.throws(() => validatePhase1WorldGraph(mixedRecipeEntry), (error) => (
+  error?.code === 'unsupported_recipe_semantics'
+), 'Phase 1 rejects mixed internal/external recipe authority before runtime can classify it');
+
+for (const [field, value] of [[
+  'cooldownSeconds', 60,
+], [
+  'discoveryRule', 'secret_only',
+], [
+  'qualityRule', 'dynamic',
+]]) {
+  const packages = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+  packages[1].nodes.find(({ id }) => id === 'recipe:hardened_steel').metadata[field] = value;
+  assert.doesNotThrow(() => loadAndValidateGraphPackages(packages),
+    `${field} remains generic-valid metadata`);
+  assert.throws(() => validatePhase1WorldGraph(packages), (error) => (
+    error?.code === 'unsupported_recipe_semantics'
+  ), `Phase 1 rejects ignored ${field} recipe authority before serving`);
+}
+
+const namedMysteryWindow = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+namedMysteryWindow[2].nodes
+  .find(({ id }) => id === 'mystery:belladonna-trace').conditions.push({
+    adapter: 'time_window', windowId: 'unpublished_server_window',
+  });
+assert.doesNotThrow(() => loadAndValidateGraphPackages(namedMysteryWindow));
+assert.throws(() => validatePhase1WorldGraph(namedMysteryWindow), (error) => (
+  error?.code === 'unsupported_mystery_condition'
+), 'a named mystery window with no immutable boot definition cannot be released');
+
+const nonstandardMysteryMaterial = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+nonstandardMysteryMaterial[2].nodes
+  .find(({ id }) => id === 'mystery:belladonna-lock').conditions.push({
+    adapter: 'material_quantity', templateId: 'mat:scrap_steel', quantity: 1, quality: 'fine',
+  });
+assert.doesNotThrow(() => loadAndValidateGraphPackages(nonstandardMysteryMaterial));
+assert.throws(() => validatePhase1WorldGraph(nonstandardMysteryMaterial), (error) => (
+  error?.code === 'unsupported_mystery_condition'
+), 'mystery material quality cannot validate as one value and execute as hardcoded standard');
+
+const conflictingMysteryAlias = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+conflictingMysteryAlias[2].nodes
+  .find(({ id }) => id === 'mystery:belladonna-lock').conditions.push({
+    adapter: 'item_ownership',
+    templateId: 'item:precision_lock_tool', nodeId: 'item:belladonna_artifact',
+  });
+assert.throws(() => validatePhase1WorldGraph(conflictingMysteryAlias), (error) => (
+  ['conflicting_mystery_condition_alias', 'conflicting_condition_alias'].includes(error?.code)
+), 'mystery condition target aliases cannot conflict or remain ambiguous');
 
 const expectPhase1PolicyFailure = (packages, kind, message) => {
   assert.throws(() => validatePhase1WorldGraph(packages), (error) => {
@@ -1120,6 +1641,24 @@ const expectPhase1PolicyFailure = (packages, kind, message) => {
     return true;
   }, message);
 };
+for (const [label, mutate, kind] of [[
+  'package OMR reward', (pkg) => { pkg.omrReward = 999; }, 'omr',
+], [
+  'package mint effect', (pkg) => {
+    pkg.effects = [{ adapter: 'mint', currencyCode: 'O.M.R', amount: 1 }];
+  }, 'omr',
+], [
+  'package cooldown', (pkg) => { pkg.cooldown = 1; }, 'package_schema',
+], [
+  'unknown package authority key', (pkg) => { pkg.authority = true; }, 'package_schema',
+]]) {
+  const packages = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+  mutate(packages[2]);
+  assert.doesNotThrow(() => loadAndValidateGraphPackages(packages),
+    `${label} is intentionally outside the reusable node-shape validator`);
+  expectPhase1PolicyFailure(packages, kind,
+    `${label} is rejected by the closed whole-package Phase 1 boot/release boundary`);
+}
 const omrPackages = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
 omrPackages.push({
   id: 'phase1-forbidden-reward', version: 1, season: 'season:1', dependsOn: [],
@@ -1135,6 +1674,147 @@ assert.doesNotThrow(() => validateGraph(loadAndValidateGraphPackages(omrPackages
   'the reusable validator intentionally accepts a finite seasonal OMR reward');
 expectPhase1PolicyFailure(omrPackages, 'omr',
   'the Phase 1 release policy rejects OMR even when the reusable validator accepts it');
+
+const genericCurrencyAliases = [
+  'asset', 'assetType', 'currency', 'currencyType', 'rewardAsset', 'rewardCurrency',
+  'symbol', 'token', 'tokenSymbol', 'assetId', 'currencyId', 'currencyCode',
+  'rewardAssetType', 'rewardCurrencyType', 'tokenType',
+];
+for (const alias of genericCurrencyAliases) {
+  const packages = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+  packages[2].season = 'season:1';
+  Object.assign(packages[2].nodes
+    .find(({ id }) => id === 'reward:belladonna-crew-status').metadata, {
+    [alias]: 'OMR', allocationId: `phase1-${alias}`, claimKey: `phase1-${alias}`,
+  });
+  packages[2].nodes
+    .find(({ id }) => id === 'reward:belladonna-crew-status').repeatability = 'once';
+  assert.equal(validateGraph(loadAndValidateGraphPackages(packages)).reports.omrRewards, 1,
+    `the generic validator recognizes ${alias} as OMR authority`);
+  expectPhase1PolicyFailure(packages, 'omr',
+    `the zero-OMR Phase 1 gate rejects the generic ${alias} vocabulary`);
+}
+
+const artifactCurrencyAlias = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+artifactCurrencyAlias[0].nodes
+  .find(({ id }) => id === 'item:belladonna_artifact').metadata.currencyCode = 'OMR';
+assert.throws(() => validatePhase1WorldGraph(artifactCurrencyAlias), (error) => (
+  ['phase1_economy_policy', 'unsafe_operation_reward', 'unsafe_mystery_reward']
+    .includes(error?.code)
+), 'a gameplay-inert unique artifact cannot conceal currency authority');
+
+const omrSpellingAliases = ['$OMR', 'Omerta', 'Omertà', 'O.M.R', 'O/M/R', 'O:M:R'];
+for (const alias of omrSpellingAliases) {
+  assert.equal(normalizeAssetToken(alias), 'OMR', `${alias} canonicalizes to OMR`);
+
+  const statusPackages = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+  statusPackages[2].season = 'season:1';
+  Object.assign(statusPackages[2].nodes
+    .find(({ id }) => id === 'reward:belladonna-crew-status').metadata, {
+    currencyCode: alias,
+    allocationId: `phase1-status-${normalizeAssetToken(alias)}`,
+    claimKey: `phase1-status-${normalizeAssetToken(alias)}`,
+  });
+  statusPackages[2].nodes
+    .find(({ id }) => id === 'reward:belladonna-crew-status').repeatability = 'once';
+  assert.equal(validateGraph(loadAndValidateGraphPackages(statusPackages)).reports.omrRewards, 1,
+    `the generic reward census cannot report zero for status metadata alias ${alias}`);
+  assert.deepEqual(
+    rewardAssetDeclarations(statusPackages[2].nodes
+      .find(({ id }) => id === 'reward:belladonna-crew-status'))
+      .filter(({ path }) => path.endsWith('.currencyCode'))
+      .map(({ asset }) => asset),
+    ['OMR'],
+    `the shared executable-target detector recognizes status metadata alias ${alias}`,
+  );
+  assert.throws(() => validatePhase1WorldGraph(statusPackages), (error) => (
+    ['phase1_economy_policy', 'unsafe_operation_reward', 'unsafe_mystery_reward']
+      .includes(error?.code)
+  ), `the Phase 1 executable/release gate rejects status metadata alias ${alias}`);
+  assert.throws(() => validatePhase1EconomyPolicy(statusPackages), (error) => (
+    error?.code === 'phase1_economy_policy' && error?.details?.kind === 'omr'
+  ), `the Phase 1 economy scan independently rejects status metadata alias ${alias}`);
+
+  const templatePackages = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+  const awardedTemplate = templatePackages[0].nodes
+    .find(({ id }) => id === 'item:belladonna_artifact');
+  awardedTemplate.metadata.currencyCode = alias;
+  assert.deepEqual(
+    rewardAssetDeclarations(awardedTemplate)
+      .filter(({ path }) => path.endsWith('.currencyCode'))
+      .map(({ asset }) => asset),
+    ['OMR'],
+    `the shared executable-target detector recognizes awarded-template alias ${alias}`,
+  );
+  assert.throws(() => validatePhase1WorldGraph(templatePackages), (error) => (
+    ['phase1_economy_policy', 'unsafe_operation_reward', 'unsafe_mystery_reward']
+      .includes(error?.code)
+  ), `an awarded template cannot conceal OMR authority as ${alias}`);
+  assert.throws(() => validatePhase1EconomyPolicy(templatePackages), (error) => (
+    error?.code === 'phase1_economy_policy' && error?.details?.kind === 'omr'
+  ), `the Phase 1 economy scan independently rejects awarded-template alias ${alias}`);
+}
+
+for (const alias of ['C.A.S.H', 'C/A/S/H', 'C:A:S:H']) {
+  assert.equal(normalizeAssetToken(alias), 'CASH', `${alias} canonicalizes to CASH`);
+
+  const statusPackages = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+  const statusTarget = statusPackages[2].nodes
+    .find(({ id }) => id === 'reward:belladonna-crew-status');
+  statusTarget.metadata.currencyCode = alias;
+  assert.deepEqual(
+    rewardAssetDeclarations(statusTarget)
+      .filter(({ path }) => path.endsWith('.currencyCode'))
+      .map(({ asset }) => asset),
+    ['CASH'],
+    `the shared executable-target detector recognizes status metadata alias ${alias}`,
+  );
+  assert.throws(() => validatePhase1WorldGraph(statusPackages), (error) => (
+    ['phase1_economy_policy', 'unsafe_operation_reward', 'unsafe_mystery_reward']
+      .includes(error?.code)
+  ), `an awarded status cannot conceal cash authority as ${alias}`);
+  assert.throws(() => validatePhase1EconomyPolicy(statusPackages), (error) => (
+    error?.code === 'phase1_economy_policy' && error?.details?.kind === 'cash_authority'
+  ), `the Phase 1 economy scan independently rejects status metadata alias ${alias}`);
+
+  const templatePackages = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+  const awardedTemplate = templatePackages[0].nodes
+    .find(({ id }) => id === 'item:belladonna_artifact');
+  awardedTemplate.metadata.currencyCode = alias;
+  assert.deepEqual(
+    rewardAssetDeclarations(awardedTemplate)
+      .filter(({ path }) => path.endsWith('.currencyCode'))
+      .map(({ asset }) => asset),
+    ['CASH'],
+    `the shared executable-target detector recognizes awarded-template alias ${alias}`,
+  );
+  assert.throws(() => validatePhase1WorldGraph(templatePackages), (error) => (
+    ['phase1_economy_policy', 'unsafe_operation_reward', 'unsafe_mystery_reward']
+      .includes(error?.code)
+  ), `an awarded template cannot conceal cash authority as ${alias}`);
+  assert.throws(() => validatePhase1EconomyPolicy(templatePackages), (error) => (
+    error?.code === 'phase1_economy_policy' && error?.details?.kind === 'cash_authority'
+  ), `the Phase 1 economy scan independently rejects awarded-template alias ${alias}`);
+}
+
+const unicodeAuthorityKey = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
+unicodeAuthorityKey[2].season = 'season:1';
+const unicodeAuthorityTarget = unicodeAuthorityKey[2].nodes
+  .find(({ id }) => id === 'reward:belladonna-crew-status');
+unicodeAuthorityTarget.repeatability = 'once';
+Object.assign(unicodeAuthorityTarget.metadata, {
+  currencyCódé: 'O.M.R', allocationId: 'unicode-key-vault', claimKey: 'unicode-key-claim',
+});
+assert.deepEqual(
+  rewardAssetDeclarations(unicodeAuthorityTarget)
+    .filter(({ path }) => path.endsWith('.currencyCódé')).map(({ asset }) => asset),
+  ['OMR'],
+  'Unicode decomposition is shared by authority-key and currency-value normalization',
+);
+assert.equal(validateGraph(loadAndValidateGraphPackages(unicodeAuthorityKey)).reports.omrRewards, 1);
+assert.throws(() => validatePhase1WorldGraph(unicodeAuthorityKey), (error) => (
+  error?.code === 'phase1_economy_policy'
+), 'an accented currency authority key cannot bypass the zero-OMR boot/release boundary');
 
 const wrongHardeningCost = structuredClone(PHASE1_WORLD_GRAPH_PACKAGES);
 wrongHardeningCost[1].nodes.find(({ id }) => id === 'recipe:hardened_steel').metadata.cashCost = 301;
@@ -1179,12 +1859,17 @@ const phase1RuntimeFiles = [
   'src/worldgraph.js', 'src/worldgraph-validate.js', 'src/routes/worldgraph.js',
   'src/content/core-materials.js', 'src/content/automotive-salvage.js',
   'src/content/belladonna.js', 'src/content/phase1.js', 'src/content/phase1-policy.js',
+  'src/content/phase1-validation.js',
   'tools/worldgraph-content.js',
 ];
 for (const file of phase1RuntimeFiles) {
   assert.doesNotMatch(fs.readFileSync(path.join(root, file), 'utf8'), /collection_log/i,
     `${file} must not introduce collection_log as Phase 1 item authority`);
 }
+const worldGraphRoutes = fs.readFileSync(path.join(root, 'src', 'routes', 'worldgraph.js'), 'utf8');
+assert.match(worldGraphRoutes,
+  /export const PHASE1_WORLD_GRAPH = loadAndValidatePhase1WorldGraph\(\)\.registry/,
+  'server boot must run the same complete Phase 1 validator before registering routes');
 const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
 assert.match(packageJson.scripts['worldgraph:check'], /tools\/worldgraph-content\.js/);
 assert.match(packageJson.scripts.preflight, /tools\/worldgraph-content\.js/,

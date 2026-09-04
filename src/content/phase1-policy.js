@@ -1,5 +1,11 @@
 // Reserved Phase 1 item-economy value vocabulary. Keeping this separate from the package manifest
 // lets the runtime and invariant sweep share the exact namespace without importing graph data.
+import {
+  normalizeAssetToken,
+  normalizeAuthorityIdentifier,
+  rewardAssetDeclarations,
+} from '../worldgraph-validate.js';
+
 export const PHASE1_CRAFT_REASON_PREFIX = 'craft:recipe:';
 export const PHASE1_MYSTERY_REASON_PREFIX = 'mystery:';
 export const PHASE1_OPERATION_REASON_PREFIX = 'operation:';
@@ -26,17 +32,25 @@ export class Phase1EconomyPolicyError extends Error {
 
 const TEXT_ONLY_FIELDS = new Set(['title', 'description', 'lore', 'privateevidence']);
 const ECONOMIC_IDENTIFIER_FIELDS = new Set([
-  'adapter', 'asset', 'assettype', 'currency', 'kind', 'rewardtype', 'symbol', 'type', 'unit',
+  'adapter', 'asset', 'assettype', 'currency', 'currencytype', 'rewardasset', 'rewardcurrency',
+  'symbol', 'token', 'tokensymbol', 'assetid', 'currencyid', 'currencycode',
+  'rewardassettype', 'rewardcurrencytype', 'tokentype', 'kind', 'rewardtype', 'type', 'unit',
 ]);
 const CASH_COST_FIELDS = new Set(['cashcost', 'costcash', 'cost']);
+const PHASE1_PACKAGE_FIELDS = new Set(['id', 'version', 'season', 'dependsOn', 'nodes']);
 
-const normalized = (value) => String(value).toLowerCase().replace(/[^a-z0-9]/g, '');
+const normalized = normalizeAuthorityIdentifier;
 const economicValue = (value) => value !== undefined && value !== null && value !== false
   && value !== 0 && value !== '';
 const currencyToken = (value, currency) => {
   if (typeof value !== 'string') return false;
-  const words = value.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase().split(/[^a-z0-9]+/);
-  return words.includes(currency);
+  const target = currency.toUpperCase();
+  const decomposed = value.normalize('NFKD').replace(/\p{M}/gu, '');
+  const candidates = [
+    value,
+    ...decomposed.replace(/([a-z])([A-Z])/g, '$1_$2').split(/[^a-z0-9]+/i),
+  ];
+  return candidates.some((candidate) => normalizeAssetToken(candidate) === target);
 };
 
 function scanEconomicSignals(value, path, signals) {
@@ -66,10 +80,20 @@ function scanEconomicSignals(value, path, signals) {
 export function validatePhase1EconomyPolicy(packages) {
   const signals = { omr: [], cash: [] };
   const cashCosts = [];
+  const unsupportedPackageFields = [];
   for (const [packageIndex, pkg] of packages.entries()) {
+    const packagePath = `packages[${packageIndex}]`;
+    scanEconomicSignals(pkg, packagePath, signals);
+    for (const key of Object.keys(pkg)) {
+      if (!PHASE1_PACKAGE_FIELDS.has(key)) unsupportedPackageFields.push(`${packagePath}.${key}`);
+    }
     for (const [nodeIndex, node] of (pkg.nodes || []).entries()) {
       const nodePath = `packages[${packageIndex}].nodes[${nodeIndex}]`;
-      scanEconomicSignals(node, nodePath, signals);
+      for (const declaration of rewardAssetDeclarations(node)) {
+        const path = `${nodePath}.${declaration.path.replace(/^reward\.?/, '')}`;
+        if (declaration.asset === 'OMR') signals.omr.push(path);
+        if (declaration.asset === 'CASH') signals.cash.push(path);
+      }
       if (node.type !== 'recipe') continue;
       const declarations = [];
       for (const [containerName, container] of [['node', node], ['metadata', node.metadata || {}]]) {
@@ -99,6 +123,12 @@ export function validatePhase1EconomyPolicy(packages) {
     throw new Phase1EconomyPolicyError(
       `Phase 1 permits no cash rewards, sources, or mutations; found ${uncontrolledCash.join(', ')}`,
       { kind: 'cash_authority', paths: uncontrolledCash },
+    );
+  }
+  if (unsupportedPackageFields.length) {
+    throw new Phase1EconomyPolicyError(
+      `Phase 1 packages contain unsupported authority fields: ${unsupportedPackageFields.join(', ')}`,
+      { kind: 'package_schema', paths: unsupportedPackageFields },
     );
   }
   if (cashCosts.length !== 1

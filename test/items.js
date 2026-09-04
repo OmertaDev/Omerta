@@ -28,6 +28,11 @@ try {
   assert.deepEqual(freshBoard, {
     owner: { scope: 'account', id: 'read-first-account' }, stacks: [], items: [],
   }, 'a fresh pg-mem pool supports an empty inventory read before its first item transaction');
+  const qualityColumn = (await pool.query(
+    `SELECT is_nullable,column_default FROM information_schema.columns
+      WHERE table_name='item_events' AND column_name='quality'`,
+  )).rows[0];
+  assert.equal(qualityColumn?.is_nullable, 'NO');
 
   // Grant/consume conservation and exact replay.
   const firstGrant = await inTransaction((client) => grantStack(
@@ -36,6 +41,17 @@ try {
   const replayedGrant = await inTransaction((client) => grantStack(
     client, characterA, 'mat:scrap_steel', 10, 'standard', 'test grant', 'grant-1',
   ));
+  await pool.query(
+    `INSERT INTO item_events
+       (id,event_key,event_kind,template_id,quantity_delta,quantity_before,quantity_after,
+        to_owner_scope,to_owner_id,reason,idempotency_key)
+     VALUES ('default-quality-probe','default-quality-probe','stack_granted','mat:default-probe',
+       1,0,1,'character','character-a','default probe','grant-1')`,
+  );
+  assert.equal((await pool.query(
+    "SELECT quality FROM item_events WHERE id='default-quality-probe'",
+  )).rows[0]?.quality, 'standard', 'omitted item-event quality safely defaults to standard');
+  await pool.query("DELETE FROM item_events WHERE id='default-quality-probe'");
   assert.deepEqual(replayedGrant, firstGrant, 'an exact logical replay returns its prior result');
   let board = await inventoryBoard(pool, characterA);
   assert.equal(board.stacks.find((stack) => stack.templateId === 'mat:scrap_steel').qty, 10,
@@ -187,14 +203,25 @@ try {
     (error) => error?.code === 'item_not_escrowed',
     'release requires the matching operation',
   );
+  await assert.rejects(
+    inTransaction((client) => releaseEscrow(
+      client, 'operation-1', accountA, created.id, 'wrong recipient', 'item-release-recipient',
+    )),
+    (error) => error?.code === 'item_escrow_destination',
+    'release must return escrow to its exact recorded depositor',
+  );
 
   const released = await inTransaction((client) => releaseEscrow(
-    client, 'operation-1', accountA, created.id, 'operation returned item', 'item-release-1',
+    client, 'operation-1', characterB, created.id, 'operation returned item', 'item-release-1',
   ));
   assert.equal(released.state, 'active');
-  assert.deepEqual(released.owner, accountA);
+  assert.deepEqual(released.owner, characterB);
   assert.equal((await inventoryBoard(pool, { scope: 'operation', id: 'operation-1' })).items.length, 0);
-  assert.deepEqual((await inventoryBoard(pool, accountA)).items.map((item) => item.id), [created.id]);
+  assert.deepEqual((await inventoryBoard(pool, characterB)).items.map((item) => item.id), [created.id]);
+
+  await inTransaction((client) => transferItem(
+    client, characterB, accountA, created.id, 'post-operation gift', 'item-transfer-after-release-1',
+  ));
 
   const consumed = await inTransaction((client) => consumeItem(
     client, accountA, created.id, 'recipe input', 'item-consume-1',
@@ -218,10 +245,18 @@ try {
   );
 
   const rows = (await pool.query(
-    'SELECT event_kind FROM item_events WHERE item_id=$1 ORDER BY sequence', [created.id],
-  )).rows.map((row) => row.event_kind);
-  assert.deepEqual(rows, ['created', 'transferred', 'escrowed', 'released', 'consumed'],
+    'SELECT event_kind,quality FROM item_events WHERE item_id=$1 ORDER BY sequence', [created.id],
+  )).rows;
+  assert.deepEqual(rows.map((row) => row.event_kind),
+    ['created', 'transferred', 'escrowed', 'released', 'transferred', 'consumed'],
     'every successful unique-item mutation appends one provenance event and replays append none');
+  assert.deepEqual([...new Set(rows.map((row) => row.quality))], ['standard'],
+    'unique-item provenance always carries the canonical standard quality');
+  await assert.rejects(
+    pool.query("UPDATE item_events SET quality='pristine' WHERE item_id=$1", [created.id]),
+    /item_event_quality_kind/i,
+    'storage rejects a nonstandard quality on unique-item provenance',
+  );
   assert.equal(Number((await pool.query(
     'SELECT COUNT(*) AS n FROM item_instances WHERE id=$1', [created.id],
   )).rows[0].n), 1, 'the permanent unique item ID is never duplicated or deleted');
@@ -548,6 +583,27 @@ try {
   )).rows[0].provenance_kind, 'used_in_operation',
   'generic escrow does not misclassify social-operation custody as mystery use');
 
+  // Stack quality is part of the conserved identity, not display metadata. Two bands of the same
+  // template must emit distinct exact-quality events so equal-and-opposite cross-quality tampering
+  // cannot hide behind a template-wide total.
+  const qualityTemplate = 'mat:quality_partition';
+  await inTransaction((client) => grantStack(
+    client, characterA, qualityTemplate, 7, 'standard', 'quality fixture', 'quality-standard-1',
+  ));
+  await inTransaction((client) => grantStack(
+    client, characterA, qualityTemplate, 3, 'pristine', 'quality fixture', 'quality-pristine-1',
+  ));
+  await inTransaction((client) => consumeStack(
+    client, characterA, qualityTemplate, 1, 'pristine', 'quality fixture', 'quality-pristine-use-1',
+  ));
+  assert.deepEqual((await pool.query(
+    `SELECT quality,quantity_delta FROM item_events
+      WHERE idempotency_key IN ('quality-standard-1','quality-pristine-1','quality-pristine-use-1')
+      ORDER BY quality,quantity_delta`,
+  )).rows.map((row) => [row.quality, Number(row.quantity_delta)]), [
+    ['pristine', -1], ['pristine', 3], ['standard', 7],
+  ], 'stack provenance stores the exact quality band mutated by every grant and consumption');
+
   // The production drift sweep now covers this ledger too. Prove both the clean state and the two
   // mutations it is specifically meant to catch; a check that is never observed failing is only a
   // plausible-looking query.
@@ -560,6 +616,139 @@ try {
     'world graph currency boundary',
   ]) assert.equal(checks.find((check) => check.name === name)?.ok, true,
     `${name} is a green mandatory economy invariant`);
+
+  await pool.query(
+    `UPDATE item_stacks SET quantity=quantity + 1
+      WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality='standard'`,
+    [characterA.scope, characterA.id, qualityTemplate],
+  );
+  await pool.query(
+    `UPDATE item_stacks SET quantity=quantity - 1
+      WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality='pristine'`,
+    [characterA.scope, characterA.id, qualityTemplate],
+  );
+  assert.equal((await phase1Checks()).find(
+    (check) => check.name === 'world graph stack conservation',
+  )?.ok, false,
+  'equal-and-opposite drift across quality bands fails even though the template-wide total is unchanged');
+  await pool.query(
+    `UPDATE item_stacks SET quantity=quantity - 1
+      WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality='standard'`,
+    [characterA.scope, characterA.id, qualityTemplate],
+  );
+  await pool.query(
+    `UPDATE item_stacks SET quantity=quantity + 1
+      WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality='pristine'`,
+    [characterA.scope, characterA.id, qualityTemplate],
+  );
+  assert.equal((await phase1Checks()).find(
+    (check) => check.name === 'world graph stack conservation',
+  )?.ok, true, 'restoring both exact quality bands returns stack conservation to green');
+
+  const uniqueInvariant = async () => (await phase1Checks()).find(
+    (check) => check.name === 'world graph unique custody and provenance',
+  );
+  const transferEvent = (await pool.query(
+    "SELECT sequence,to_owner_id FROM item_events WHERE item_id=$1 AND event_kind='transferred' ORDER BY sequence LIMIT 1",
+    [created.id],
+  )).rows[0];
+  await pool.query('UPDATE item_events SET to_owner_id=$2 WHERE sequence=$1',
+    [transferEvent.sequence, 'forged-middle-owner']);
+  assert.equal((await uniqueInvariant())?.ok, false,
+    'a forged middle transfer is detected even when the terminal event and item row still agree');
+  await pool.query('UPDATE item_events SET to_owner_id=$2 WHERE sequence=$1',
+    [transferEvent.sequence, transferEvent.to_owner_id]);
+
+  const releaseEvent = (await pool.query(
+    "SELECT sequence,from_owner_id FROM item_events WHERE item_id=$1 AND event_kind='released'",
+    [created.id],
+  )).rows[0];
+  await pool.query('UPDATE item_events SET from_owner_id=$2 WHERE sequence=$1',
+    [releaseEvent.sequence, 'impossible-operation']);
+  assert.equal((await uniqueInvariant())?.ok, false,
+    'a transition whose from owner does not match prior custody fails the provenance chain');
+  await pool.query('UPDATE item_events SET from_owner_id=$2 WHERE sequence=$1',
+    [releaseEvent.sequence, releaseEvent.from_owner_id]);
+
+  const creation = (await pool.query(
+    "SELECT sequence,idempotency_key FROM item_events WHERE item_id=$1 AND event_kind='created'",
+    [created.id],
+  )).rows[0];
+  await pool.query(
+    `INSERT INTO item_events
+       (id,event_key,event_kind,provenance_kind,item_id,template_id,quality,
+        to_owner_scope,to_owner_id,reason,idempotency_key)
+     VALUES ('forged-duplicate-creation','forged-duplicate','created','awarded',$1,
+       'item:precision_lock_tool','standard','account','account-a','forged duplicate',$2)`,
+    [created.id, creation.idempotency_key],
+  );
+  assert.equal((await uniqueInvariant())?.ok, false,
+    'a second creation event fails the exactly-once origin contract');
+  await pool.query("DELETE FROM item_events WHERE id='forged-duplicate-creation'");
+
+  await pool.query(
+    `INSERT INTO item_events
+       (sequence,id,event_key,event_kind,provenance_kind,item_id,template_id,quality,
+        from_owner_scope,from_owner_id,to_owner_scope,to_owner_id,reason,idempotency_key)
+     VALUES (-1,'forged-before-creation','forged-before','transferred','transferred',$1,
+       'item:precision_lock_tool','standard','character','character-a','character','character-b',
+       'forged before origin','item-transfer-1')`,
+    [created.id],
+  );
+  assert.equal((await uniqueInvariant())?.ok, false,
+    'an event before creation fails even when a later creation and terminal row exist');
+  await pool.query("DELETE FROM item_events WHERE id='forged-before-creation'");
+
+  await pool.query(
+    `INSERT INTO item_events
+       (id,event_key,event_kind,provenance_kind,item_id,template_id,quality,
+        from_owner_scope,from_owner_id,to_owner_scope,to_owner_id,reason,idempotency_key)
+     VALUES ('forged-post-consume','forged-post','transferred','transferred',$1,
+       'item:precision_lock_tool','standard','account','account-a','character','character-a',
+       'forged after consumption','item-consume-1')`,
+    [created.id],
+  );
+  assert.equal((await uniqueInvariant())?.ok, false,
+    'no provenance event may appear after the terminal consumption event');
+  await pool.query("DELETE FROM item_events WHERE id='forged-post-consume'");
+  assert.equal((await uniqueInvariant())?.ok, true,
+    'restoring every ordered event returns the full provenance chain to green');
+
+  const releaseContinuityItem = await inTransaction((client) => createItem(
+    client, accountA, 'item:release_continuity', 'awarded', 'release-continuity-create',
+  ));
+  await inTransaction((client) => escrowItem(
+    client, accountA, 'operation-continuity', releaseContinuityItem.id,
+    'continuity fixture', 'release-continuity-escrow', 'used_in_operation',
+  ));
+  await inTransaction((client) => releaseEscrow(
+    client, 'operation-continuity', accountA, releaseContinuityItem.id,
+    'continuity fixture', 'release-continuity-release',
+  ));
+  const continuityRelease = (await pool.query(
+    "SELECT sequence FROM item_events WHERE item_id=$1 AND event_kind='released'",
+    [releaseContinuityItem.id],
+  )).rows[0];
+  await pool.query(
+    `UPDATE item_events SET to_owner_scope='character',to_owner_id=$2 WHERE sequence=$1`,
+    [continuityRelease.sequence, characterB.id],
+  );
+  await pool.query(
+    `UPDATE item_instances SET owner_scope='character',owner_id=$2 WHERE id=$1`,
+    [releaseContinuityItem.id, characterB.id],
+  );
+  assert.equal((await uniqueInvariant())?.ok, false,
+    'release-to-B plus a forged terminal B owner still fails depositor-A continuity');
+  await pool.query(
+    `UPDATE item_events SET to_owner_scope='account',to_owner_id=$2 WHERE sequence=$1`,
+    [continuityRelease.sequence, accountA.id],
+  );
+  await pool.query(
+    `UPDATE item_instances SET owner_scope='account',owner_id=$2 WHERE id=$1`,
+    [releaseContinuityItem.id, accountA.id],
+  );
+  assert.equal((await uniqueInvariant())?.ok, true,
+    'restoring the recorded depositor returns release continuity to green');
 
   const stackProbe = (await pool.query(
     'SELECT owner_scope,owner_id,template_id,quality FROM item_stacks ORDER BY owner_id LIMIT 1',

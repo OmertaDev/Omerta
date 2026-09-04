@@ -1102,13 +1102,24 @@ function validateSocialOperations(registry, packageClosures) {
   return { conditionRequirementGroups, materialConditions, reports };
 }
 
-function normalizedObjectKey(key) {
-  return key.replace(/[^a-z0-9]/gi, '').toLowerCase();
+export function normalizeAuthorityIdentifier(value) {
+  return String(value).normalize('NFKD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
 }
 
-function normalizedAsset(value) {
+function normalizedObjectKey(key) {
+  return normalizeAuthorityIdentifier(key);
+}
+
+// One canonical identity normalizer for every graph-facing asset/currency declaration. NFKD
+// includes canonical decomposition (the behavior NFD provides) while also folding compatibility
+// forms such as full-width Latin letters. Removing combining marks before punctuation makes
+// Omertà, $OMR, O.M.R, O/M/R, and O:M:R converge on the same authority token.
+export function normalizeAssetToken(value) {
   if (!nonEmptyString(value)) return null;
-  const normalized = value.replace(/[$\s_-]/g, '').toUpperCase();
+  const normalized = normalizeAuthorityIdentifier(value).toUpperCase();
   if (['CURRENCY', 'TOKEN', 'ASSET', 'REWARD', 'FUNGIBLE'].includes(normalized)) return null;
   if ([
     'OMR', 'OMERTA', 'OMRTOKEN', 'OMRCURRENCY', 'OMERTAREWARD', 'OMERTATOKEN',
@@ -1152,7 +1163,10 @@ function declaredEffectActionContainers(node) {
   return result;
 }
 
-function rewardAssetDeclarations(node) {
+// Canonical reward/currency identity vocabulary. Executable-definition validators reuse this
+// detector for inert status and item targets so aliases accepted by the generic graph validator
+// cannot bypass a narrower runtime policy.
+export function rewardAssetDeclarations(node) {
   const identityKeys = new Set([
     'asset', 'assettype', 'currency', 'currencytype', 'rewardasset', 'rewardcurrency',
     'symbol', 'token', 'tokensymbol', 'assetid', 'currencyid', 'currencycode',
@@ -1167,13 +1181,13 @@ function rewardAssetDeclarations(node) {
     for (const [key, value] of Object.entries(container)) {
       if (!identityKeys.has(normalizedObjectKey(key))) continue;
       if (typeof value === 'string') {
-        const asset = normalizedAsset(value);
+        const asset = normalizeAssetToken(value);
         if (asset) declarations.push({ asset, path: `${path}.${key}`, value });
       } else if (value && typeof value === 'object' && !Array.isArray(value)) {
         for (const [nestedKey, nestedValue] of Object.entries(value)) {
           if (!nestedIdentityKeys.has(normalizedObjectKey(nestedKey))
             || typeof nestedValue !== 'string') continue;
-          const asset = normalizedAsset(nestedValue);
+          const asset = normalizeAssetToken(nestedValue);
           if (asset) {
             declarations.push({
               asset,

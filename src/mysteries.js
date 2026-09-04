@@ -25,7 +25,7 @@ import {
 } from './items.js';
 import { levelOf } from './rules.js';
 import { isWorldGraphRegistry, nodeOf } from './worldgraph.js';
-import { validateGraph } from './worldgraph-validate.js';
+import { rewardAssetDeclarations, validateGraph } from './worldgraph-validate.js';
 
 const CONTEXTS = new WeakSet();
 const ROOT_SCOPES = new Set(['account', 'character']);
@@ -43,6 +43,26 @@ const CONDITION_ADAPTERS = new Set([
   'time_window',
   'explicit_interaction',
 ]);
+const CONDITION_ALIASES = Object.freeze({
+  graph_dependency: Object.freeze({ target: ['nodeId', 'id', 'value'] }),
+  location: Object.freeze({ target: ['value', 'locationId', 'district'] }),
+  level: Object.freeze({ target: ['value', 'minimumLevel', 'level'] }),
+  skill: Object.freeze({ target: ['skillId', 'id', 'value'] }),
+  item_ownership: Object.freeze({ target: ['templateId', 'itemTemplateId', 'nodeId'] }),
+  owns_item: Object.freeze({ target: ['templateId', 'itemTemplateId', 'nodeId'] }),
+  material_quantity: Object.freeze({
+    target: ['templateId', 'materialId', 'nodeId'],
+    quantity: ['quantity', 'minimumQuantity', 'amount'],
+    optional: ['quality'],
+  }),
+  evidence: Object.freeze({ target: ['evidenceId', 'nodeId'] }),
+  time_window: Object.freeze({
+    target: ['windowId', 'value'],
+    start: ['start', 'startsAt'],
+    end: ['end', 'endsAt'],
+  }),
+  explicit_interaction: Object.freeze({ target: ['interactionId', 'id', 'value'] }),
+});
 const EFFECT_FIELDS = Object.freeze({
   discover: new Set(['adapter', 'nodeId']),
   complete: new Set(['adapter', 'nodeId']),
@@ -53,6 +73,33 @@ const EFFECT_FIELDS = Object.freeze({
   status_award: new Set(['adapter', 'nodeId']),
 });
 const MYSTERY_EFFECT_ADAPTERS = new Set(Object.keys(EFFECT_FIELDS));
+const MYSTERY_NODE_FIELDS = Object.freeze({
+  mystery_step: new Set([
+    'id', 'type', 'version', 'visibility', 'requires', 'requiresAny', 'excludes',
+    'conditions', 'effects', 'metadata', 'packageId',
+  ]),
+  world_gate: new Set([
+    'id', 'type', 'version', 'visibility', 'requires', 'requiresAny', 'excludes',
+    'conditions', 'effects', 'metadata', 'packageId',
+  ]),
+  choice: new Set([
+    'id', 'type', 'version', 'visibility', 'requires', 'requiresAny', 'excludes',
+    'conditions', 'effects', 'metadata', 'options', 'packageId',
+  ]),
+});
+const MYSTERY_TARGET_FIELDS = new Set([
+  'id', 'type', 'version', 'visibility', 'requires', 'metadata', 'packageId',
+]);
+const MYSTERY_METADATA_FIELDS = new Set([
+  'title', 'description', 'lore', 'secret', 'roleId', 'terminal',
+]);
+const MYSTERY_EVIDENCE_METADATA_FIELDS = new Set([
+  'title', 'description', 'lore', 'secret',
+]);
+const MYSTERY_REWARD_METADATA_FIELDS = new Set([
+  'title', 'description', 'lore', 'inert', 'rewardType',
+]);
+const PRESENTATION_FIELDS = new Set(['title', 'description', 'lore', 'secret']);
 
 const fail = (code, message, data) => { throw new GameError(code, message, data); };
 
@@ -61,6 +108,237 @@ function canonical(value, label, code = 'bad_mystery_request') {
     fail(code, `${label} must be a canonical string of at most 200 characters.`);
   }
   return value;
+}
+
+function plainRecord(value) {
+  return !!value && typeof value === 'object' && !Array.isArray(value)
+    && [Object.prototype, null].includes(Object.getPrototypeOf(value));
+}
+
+// Mystery actions are exactly-once instance state transitions. Any content field that purports to
+// add another clock, repeatability rule, failure path, economy input/output, season, expiry, or
+// death policy would otherwise validate but be silently ignored by the runtime. Keep this schema
+// closed so executable authority can only enter through fields this module actually interprets.
+function validateMysteryNodeSchema(registry, node) {
+  const allowed = MYSTERY_NODE_FIELDS[node.type];
+  const unsupported = Object.keys(node).filter((key) => !allowed.has(key));
+  if (unsupported.length) {
+    fail('unsupported_mystery_semantics',
+      `Mystery node ${node.id} contains unsupported executable fields: ${unsupported.join(', ')}.`);
+  }
+  const pkg = registry.byPackage.get(node.packageId);
+  if (node.version !== undefined && node.version !== pkg?.version) {
+    fail('unsupported_mystery_semantics',
+      `Mystery node ${node.id} version must equal its package version when declared.`);
+  }
+  if (node.metadata === undefined) return;
+  if (!plainRecord(node.metadata)) {
+    fail('unsupported_mystery_semantics', `Mystery node ${node.id} metadata must be plain data.`);
+  }
+  const unsupportedMetadata = Object.keys(node.metadata)
+    .filter((key) => !MYSTERY_METADATA_FIELDS.has(key));
+  if (unsupportedMetadata.length) {
+    fail('unsupported_mystery_semantics',
+      `Mystery node ${node.id} metadata contains unsupported executable fields: ${unsupportedMetadata.join(', ')}.`);
+  }
+  for (const field of PRESENTATION_FIELDS) {
+    const value = node.metadata[field];
+    if (value === undefined) continue;
+    if (typeof value !== 'string' || value.trim() !== value || !value
+      || value.length > (field === 'title' ? 200 : 1000)) {
+      fail('unsupported_mystery_semantics',
+        `Mystery node ${node.id} metadata.${field} must be bounded canonical text.`);
+    }
+  }
+  if (node.metadata.roleId !== undefined) {
+    canonical(node.metadata.roleId, `Mystery node ${node.id} role`,
+      'unsupported_mystery_semantics');
+  }
+}
+
+function operationOwnerRoot(registry, node) {
+  const operationId = node.metadata?.operationId;
+  if (typeof operationId !== 'string') return null;
+  const root = nodeOf(registry, operationId);
+  if (!root || root.type !== 'social_gate' || root.packageId !== node.packageId
+    || (root.roles !== undefined && root.metadata?.roles !== undefined)) return null;
+  const roles = root.roles ?? root.metadata?.roles;
+  return Array.isArray(roles) && roles.length > 0 ? root : null;
+}
+
+function isMysteryStateNode(registry, node) {
+  return BOARD_NODE_TYPES.has(node.type) && !operationOwnerRoot(registry, node);
+}
+
+function validateMysteryTargetSchema(registry, node) {
+  const unsupported = Object.keys(node).filter((key) => !MYSTERY_TARGET_FIELDS.has(key));
+  if (unsupported.length) {
+    fail('unsupported_mystery_semantics',
+      `Mystery ${node.type} target ${node.id} contains unsupported executable fields: ${unsupported.join(', ')}.`);
+  }
+  const pkg = registry.byPackage.get(node.packageId);
+  if (node.version !== undefined && node.version !== pkg?.version) {
+    fail('unsupported_mystery_semantics',
+      `Mystery ${node.type} target ${node.id} version must equal its package version when declared.`);
+  }
+  if (node.metadata !== undefined && !plainRecord(node.metadata)) {
+    fail('unsupported_mystery_semantics',
+      `Mystery ${node.type} target ${node.id} metadata must be plain data.`);
+  }
+  const metadata = node.metadata || {};
+  const allowed = node.type === 'evidence'
+    ? MYSTERY_EVIDENCE_METADATA_FIELDS : MYSTERY_REWARD_METADATA_FIELDS;
+  const unsupportedMetadata = Object.keys(metadata).filter((key) => !allowed.has(key));
+  if (unsupportedMetadata.length) {
+    fail('unsupported_mystery_semantics',
+      `Mystery ${node.type} target ${node.id} metadata contains unsupported executable fields: ${unsupportedMetadata.join(', ')}.`);
+  }
+  for (const field of PRESENTATION_FIELDS) {
+    const value = metadata[field];
+    if (value === undefined) continue;
+    if (typeof value !== 'string' || value.trim() !== value || !value
+      || value.length > (field === 'title' ? 200 : 1000)) {
+      fail('unsupported_mystery_semantics',
+        `Mystery ${node.type} target ${node.id} metadata.${field} must be bounded canonical text.`);
+    }
+  }
+  if (node.type === 'reward'
+    && (metadata.inert !== true || metadata.rewardType !== 'status')) {
+    fail('unsafe_mystery_reward',
+      `Mystery reward target ${node.id} must be an explicitly inert status.`);
+  }
+}
+
+function assertMysteryCompletionEdge(registry, source, target) {
+  if (operationOwnerRoot(registry, target) || target.metadata?.operationId !== undefined) {
+    fail('bad_mystery_effect',
+      `Mystery node ${source.id} cannot complete operation-owned target ${target.id}.`);
+  }
+  if (!Array.isArray(target.requires) || target.requires.length !== 1
+    || target.requires[0] !== source.id) {
+    fail('bad_mystery_effect',
+      `Mystery target ${target.id} must require exactly its granting node ${source.id}.`);
+  }
+  if (target.requiresAny !== undefined || target.conditions !== undefined
+    || target.excludes !== undefined) {
+    fail('bad_mystery_effect',
+      `Mystery target ${target.id} declares preconditions its direct completion cannot evaluate.`);
+  }
+}
+
+function oneAlias(condition, names, label, { required = true } = {}) {
+  const declared = names.filter((name) => condition[name] !== undefined);
+  if (declared.length > 1) {
+    fail('conflicting_mystery_condition_alias',
+      `${label} must use exactly one supported alias, not ${declared.join(', ')}.`);
+  }
+  if (required && declared.length !== 1) {
+    fail('bad_mystery_condition', `${label} is required.`);
+  }
+  return declared.length === 1 ? condition[declared[0]] : undefined;
+}
+
+// This is the sole Phase 1 mystery-condition vocabulary. Validation and execution both consume
+// this normalized immutable form, so an accepted alias can never degrade into an undefined target,
+// a default quantity, or a different quality at request time.
+function normalizeMysteryCondition(registry, node, condition, { timeWindows = null } = {}) {
+  if (!condition || typeof condition !== 'object' || Array.isArray(condition)
+    || Object.getPrototypeOf(condition) !== Object.prototype) {
+    fail('bad_mystery_condition', `Mystery node ${node.id} contains a malformed condition.`);
+  }
+  const adapter = oneAlias(condition, ['adapter', 'type', 'kind'], 'Mystery condition adapter');
+  if (!CONDITION_ADAPTERS.has(adapter)) {
+    fail('unsupported_mystery_condition',
+      `Mystery node ${node.id} uses unsupported condition adapter ${String(adapter)}.`);
+  }
+  const aliases = CONDITION_ALIASES[adapter];
+  const allowed = new Set(['adapter', 'type', 'kind',
+    ...Object.values(aliases).flat()]);
+  if (Object.keys(condition).some((key) => !allowed.has(key))) {
+    fail('bad_mystery_condition',
+      `Mystery condition ${adapter} on ${node.id} contains unsupported authority fields.`);
+  }
+
+  if (adapter === 'time_window') {
+    const windowId = oneAlias(condition, aliases.target, 'Mystery time-window id', {
+      required: false,
+    });
+    const startsAt = oneAlias(condition, aliases.start, 'Mystery time-window start', {
+      required: false,
+    });
+    const endsAt = oneAlias(condition, aliases.end, 'Mystery time-window end', {
+      required: false,
+    });
+    if (windowId !== undefined) {
+      canonical(windowId, 'Mystery time-window id', 'bad_mystery_condition');
+      if (startsAt !== undefined || endsAt !== undefined) {
+        fail('bad_mystery_condition',
+          'A named mystery time window cannot also declare inline bounds.');
+      }
+      if (!timeWindows || !Object.hasOwn(timeWindows, windowId)) {
+        fail('unsupported_mystery_condition',
+          `Mystery node ${node.id} names a time window with no immutable server definition.`);
+      }
+      const declared = timeWindows[windowId];
+      return Object.freeze({
+        adapter, windowId, startsAt: declared.startsAt, endsAt: declared.endsAt,
+      });
+    }
+    canonical(startsAt, 'Mystery time-window start', 'bad_mystery_condition');
+    canonical(endsAt, 'Mystery time-window end', 'bad_mystery_condition');
+    if (!Number.isFinite(Date.parse(startsAt)) || !Number.isFinite(Date.parse(endsAt))
+      || Date.parse(startsAt) >= Date.parse(endsAt)) {
+      fail('bad_mystery_condition', `Mystery node ${node.id} has invalid time-window bounds.`);
+    }
+    return Object.freeze({ adapter, windowId: null, startsAt, endsAt });
+  }
+
+  const rawTarget = oneAlias(condition, aliases.target, `Mystery ${adapter} target`);
+  const target = adapter === 'level' ? Number(rawTarget)
+    : canonical(rawTarget, `Mystery ${adapter} target`, 'bad_mystery_condition');
+  if (adapter === 'level' && (!Number.isInteger(target) || target < 1)) {
+    fail('bad_mystery_condition', `Mystery node ${node.id} requires a positive integer level.`);
+  }
+  if (adapter === 'material_quantity') {
+    const quantity = Number(oneAlias(
+      condition, aliases.quantity, 'Mystery material quantity',
+    ));
+    if (!Number.isInteger(quantity) || quantity < 1) {
+      fail('bad_mystery_condition',
+        `Mystery node ${node.id} requires a positive integer material quantity.`);
+    }
+    const quality = condition.quality === undefined ? 'standard'
+      : canonical(condition.quality, 'Mystery material quality', 'bad_mystery_condition');
+    if (quality !== 'standard') {
+      fail('unsupported_mystery_condition',
+        `Mystery node ${node.id} uses unsupported material quality ${quality}.`);
+    }
+    const template = nodeOf(registry, target);
+    if (!template || template.type !== 'material') {
+      fail('bad_mystery_condition',
+        `Mystery material condition on ${node.id} must target a material node.`);
+    }
+    return Object.freeze({ adapter, target, quantity, quality });
+  }
+  if (adapter === 'item_ownership' || adapter === 'owns_item') {
+    const template = nodeOf(registry, target);
+    if (!template || template.type !== 'item_template') {
+      fail('bad_mystery_condition',
+        `Mystery item condition on ${node.id} must target an item_template node.`);
+    }
+  }
+  if (adapter === 'graph_dependency' || adapter === 'evidence') {
+    const dependency = nodeOf(registry, target);
+    if (!dependency || dependency.packageId !== node.packageId
+      || !isMysteryStateNode(registry, dependency)) {
+      fail('bad_mystery_condition',
+        `Mystery ${adapter} on ${node.id} must target its own mystery graph.`);
+    }
+    if (adapter === 'evidence' && dependency.type !== 'evidence') {
+      fail('bad_mystery_condition', `Mystery evidence condition on ${node.id} requires evidence.`);
+    }
+  }
+  return Object.freeze({ adapter, target });
 }
 
 function ownerOf(value) {
@@ -113,22 +391,35 @@ function packageDependencies(registry, packageId, result = new Set()) {
   return result;
 }
 
-function assertEffectTarget(registry, packageId, effect, adapter) {
+function assertEffectTarget(registry, source, effect, adapter) {
   const targetId = effect.nodeId || effect.templateId;
   const target = nodeOf(registry, targetId);
   if (!target) {
     fail('bad_mystery_effect', `Mystery effect ${adapter} references missing node ${targetId}.`);
   }
-  const visiblePackages = packageDependencies(registry, packageId);
-  if (target.packageId !== packageId && !visiblePackages.has(target.packageId)) {
+  const visiblePackages = packageDependencies(registry, source.packageId);
+  if (target.packageId !== source.packageId && !visiblePackages.has(target.packageId)) {
     fail('bad_mystery_effect', `Mystery effect ${adapter} crosses an undeclared package boundary.`);
   }
   if (['item_escrow', 'item_consume', 'unique_item_award'].includes(adapter)
     && target.type !== 'item_template') {
     fail('bad_mystery_effect', `Mystery effect ${adapter} requires an item_template target.`);
   }
+  if (['unique_item_award', 'status_award'].includes(adapter)
+    && rewardAssetDeclarations(target).some(({ asset }) => ['OMR', 'CASH'].includes(asset))) {
+    fail('unsafe_mystery_reward',
+      `Mystery effect ${adapter} cannot target a currency-bearing definition.`);
+  }
   if (adapter === 'evidence_grant' && target.type !== 'evidence') {
     fail('bad_mystery_effect', 'Evidence grants require an evidence target.');
+  }
+  if (['discover', 'complete', 'evidence_grant', 'status_award'].includes(adapter)
+    && !isMysteryStateNode(registry, target)) {
+    fail('bad_mystery_effect',
+      `Mystery effect ${adapter} cannot target operation-owned graph state.`);
+  }
+  if (['complete', 'evidence_grant', 'status_award'].includes(adapter)) {
+    assertMysteryCompletionEdge(registry, source, target);
   }
   if (target.visibility === 'role_private') {
     fail('bad_mystery_effect',
@@ -144,25 +435,14 @@ function assertEffectTarget(registry, packageId, effect, adapter) {
   }
   if (adapter === 'status_award') {
     const metadata = target.metadata || {};
-    const containsCurrencyAuthority = (value, seen = new WeakSet()) => {
-      if (!value || typeof value !== 'object' || seen.has(value)) return false;
-      seen.add(value);
-      for (const [key, child] of Object.entries(value)) {
-        const normalizedKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');
-        if (['currency', 'asset', 'assettype', 'tokensymbol'].includes(normalizedKey)
-          && ['cash', 'omr', '$omr'].includes(String(child).trim().toLowerCase())) return true;
-        if (containsCurrencyAuthority(child, seen)) return true;
-      }
-      return false;
-    };
     if (target.type !== 'reward' || metadata.inert !== true
-      || metadata.rewardType !== 'status' || containsCurrencyAuthority(target)) {
+      || metadata.rewardType !== 'status') {
       fail('unsafe_mystery_reward', 'Status awards must target an explicitly inert reward node.');
     }
   }
 }
 
-function assertEffect(registry, packageId, effect) {
+function assertEffect(registry, source, effect) {
   if (!effect || typeof effect !== 'object' || Array.isArray(effect)
     || Object.getPrototypeOf(effect) !== Object.prototype) {
     fail('bad_mystery_effect', 'Mystery effects must be plain data objects.');
@@ -176,7 +456,7 @@ function assertEffect(registry, packageId, effect) {
     fail('bad_mystery_effect', `Mystery effect ${adapter} contains unsupported authority fields.`);
   }
   canonical(effect.nodeId || effect.templateId, 'Mystery effect target', 'bad_mystery_effect');
-  assertEffectTarget(registry, packageId, effect, adapter);
+  assertEffectTarget(registry, source, effect, adapter);
 }
 
 function assertEffects(registry, node, effects) {
@@ -184,22 +464,82 @@ function assertEffects(registry, node, effects) {
   if (!Array.isArray(effects)) {
     fail('bad_mystery_effect', `Mystery node ${node.id} effects must be an array.`);
   }
-  for (const effect of effects) assertEffect(registry, node.packageId, effect);
+  for (const effect of effects) assertEffect(registry, node, effect);
 }
 
-function validateMysteryDefinitions(registry) {
+function validateMysteryDependencyCycles(registry, timeWindows) {
+  // Evidence and rewards may be shared with the operation runtime, but only a positively claimed
+  // node under a real same-package operation root leaves the mystery dependency graph. A bogus
+  // operationId can therefore never hide a choice/evidence cycle from both runtimes.
+  const candidates = [...registry.nodes.values()].filter((node) => (
+    isMysteryStateNode(registry, node)
+  ));
+  const byId = new Map(candidates.map((node) => [node.id, node]));
+  const edges = new Map(candidates.map((node) => {
+    const conditionTargets = (node.conditions || []).map((condition) => (
+      normalizeMysteryCondition(registry, node, condition, { timeWindows })
+    )).filter(({ adapter }) => ['graph_dependency', 'evidence'].includes(adapter))
+      .map(({ target }) => target);
+    return [node.id, [
+      ...(node.requires || []), ...(node.requiresAny || []).flat(), ...conditionTargets,
+    ].filter((id) => byId.get(id)?.packageId === node.packageId)];
+  }));
+  const visiting = new Set();
+  const visited = new Set();
+  const path = [];
+  const visit = (id) => {
+    if (visiting.has(id)) {
+      const start = path.indexOf(id);
+      const cycle = [...path.slice(start), id];
+      fail('mystery_dependency_cycle',
+        `Mystery executable dependency cycle: ${cycle.join(' -> ')}`);
+    }
+    if (visited.has(id)) return;
+    visiting.add(id);
+    path.push(id);
+    for (const next of edges.get(id) || []) visit(next);
+    path.pop();
+    visiting.delete(id);
+    visited.add(id);
+  };
+  for (const id of [...edges.keys()].sort()) visit(id);
+}
+
+// Pure executable-definition validation used both by request contexts and the Phase 1 boot/release
+// gate. It reads only the immutable registry and performs no database or runtime side effects.
+export function validateMysteryDefinitions(registry, { timeWindows = null } = {}) {
+  for (const node of registry.nodes.values()) {
+    if (!['evidence', 'reward'].includes(node.type)) continue;
+    if (operationOwnerRoot(registry, node)) continue;
+    if (node.metadata?.operationId !== undefined) {
+      fail('unsupported_mystery_semantics',
+        `Graph-state target ${node.id} claims an unknown operation owner.`);
+    }
+    validateMysteryTargetSchema(registry, node);
+  }
   for (const node of registry.nodes.values()) {
     if (!['mystery_step', 'world_gate', 'choice'].includes(node.type)) continue;
-    if (node.conditions !== undefined && (!Array.isArray(node.conditions)
-      || node.conditions.some((condition) => !CONDITION_ADAPTERS.has(
-        condition?.adapter || condition?.type || condition?.kind,
-      )))) {
-      fail('unsupported_mystery_condition',
-        `Mystery node ${node.id} uses an unsupported condition adapter.`);
+    validateMysteryNodeSchema(registry, node);
+    if (node.conditions !== undefined && !Array.isArray(node.conditions)) {
+      fail('bad_mystery_condition', `Mystery node ${node.id} conditions must be an array.`);
+    }
+    for (const condition of node.conditions || []) {
+      normalizeMysteryCondition(registry, node, condition, { timeWindows });
+    }
+    for (const requiredId of [
+      ...(node.requires || []), ...(node.requiresAny || []).flat(),
+    ]) {
+      const required = nodeOf(registry, requiredId);
+      if (!required || required.packageId !== node.packageId
+        || !isMysteryStateNode(registry, required)) {
+        fail('bad_mystery_condition',
+          `Mystery node ${node.id} has an invalid graph prerequisite ${requiredId}.`);
+      }
     }
     for (const excludedId of node.excludes || []) {
       const excluded = nodeOf(registry, excludedId);
-      if (!excluded || excluded.packageId !== node.packageId || !BOARD_NODE_TYPES.has(excluded.type)) {
+      if (!excluded || excluded.packageId !== node.packageId
+        || !isMysteryStateNode(registry, excluded)) {
         fail('bad_mystery_exclusion',
           `Mystery node ${node.id} has an invalid branch exclusion ${excludedId}.`);
       }
@@ -233,6 +573,9 @@ function validateMysteryDefinitions(registry) {
         fail('bad_mystery_choice', `Choice node ${node.id} contains a malformed option.`);
       }
       const optionId = canonical(option.id, 'Choice option id', 'bad_mystery_choice');
+      if (option.title !== undefined) {
+        canonical(option.title, `Choice option ${optionId} title`, 'bad_mystery_choice');
+      }
       if (seen.has(optionId)) fail('bad_mystery_choice', `Choice node ${node.id} repeats ${optionId}.`);
       seen.add(optionId);
       if (option.excludes !== undefined
@@ -242,7 +585,7 @@ function validateMysteryDefinitions(registry) {
       }
       for (const targetId of option.excludes || []) {
         const target = nodeOf(registry, targetId);
-        if (target.packageId !== node.packageId || !BOARD_NODE_TYPES.has(target.type)) {
+        if (target.packageId !== node.packageId || !isMysteryStateNode(registry, target)) {
           fail('bad_mystery_choice', 'Choice exclusions must stay inside their mystery package.');
         }
       }
@@ -256,6 +599,7 @@ function validateMysteryDefinitions(registry) {
       }
     }
   }
+  validateMysteryDependencyCycles(registry, timeWindows);
 }
 
 /**
@@ -274,7 +618,8 @@ export function createMysteryContext({
     fail('bad_mystery_context', 'Mystery context requires an immutable world-graph registry.');
   }
   validateGraph(registry);
-  validateMysteryDefinitions(registry);
+  const immutableTimeWindows = plainFrozenWindows(timeWindows);
+  validateMysteryDefinitions(registry, { timeWindows: immutableTimeWindows });
   const accountId = canonical(
     accountIdValue, 'Authenticated account id', 'bad_mystery_context',
   );
@@ -285,7 +630,7 @@ export function createMysteryContext({
     accountId,
     now: new Date(nowMs).toISOString(),
     nowMs,
-    timeWindows: plainFrozenWindows(timeWindows),
+    timeWindows: immutableTimeWindows,
   });
   CONTEXTS.add(context);
   return context;
@@ -376,21 +721,39 @@ function startKey(owner, graphId, version) {
   return `mystery:start:${hash}`;
 }
 
-async function instanceFor(client, owner, graphId, { lock = false } = {}) {
-  const params = [owner.scope, owner.id, graphId];
+async function instanceFor(client, owner, graphId, graphVersion, { lock = false } = {}) {
+  const params = [owner.scope, owner.id, graphId, Number(graphVersion)];
   if (lock) return (await client.query(
     `SELECT id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,status,
             created_at,updated_at,completed_at,failed_at,canceled_at
        FROM mystery_instances
-      WHERE owner_scope=$1 AND owner_id=$2 AND graph_id=$3 FOR UPDATE`,
+      WHERE owner_scope=$1 AND owner_id=$2 AND graph_id=$3 AND graph_version=$4 FOR UPDATE`,
     params,
   )).rows[0] || null;
   return (await client.query(
     `SELECT id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,status,
             created_at,updated_at,completed_at,failed_at,canceled_at
        FROM mystery_instances
-      WHERE owner_scope=$1 AND owner_id=$2 AND graph_id=$3`,
+      WHERE owner_scope=$1 AND owner_id=$2 AND graph_id=$3 AND graph_version=$4`,
     params,
+  )).rows[0] || null;
+}
+
+async function instanceById(client, instanceIdValue, { lock = false } = {}) {
+  const instanceId = canonical(instanceIdValue, 'Mystery instance id');
+  if (lock) {
+    return (await client.query(
+      `SELECT id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,status,
+              created_at,updated_at,completed_at,failed_at,canceled_at
+         FROM mystery_instances WHERE id=$1 FOR UPDATE`,
+      [instanceId],
+    )).rows[0] || null;
+  }
+  return (await client.query(
+    `SELECT id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,status,
+            created_at,updated_at,completed_at,failed_at,canceled_at
+       FROM mystery_instances WHERE id=$1`,
+    [instanceId],
   )).rows[0] || null;
 }
 
@@ -413,7 +776,7 @@ export async function startMystery(
   const pkg = packageOf(context, graphIdValue, version);
   await authorizeOwner(client, context, owner);
   const graph = graphIdentity(pkg);
-  const existing = await instanceFor(client, owner, pkg.id);
+  const existing = await instanceFor(client, owner, pkg.id, pkg.version);
   if (existing) {
     if (existing.authority_account_id !== context.accountId) {
       fail('mystery_owner_forbidden', 'That account cannot control this mystery instance.');
@@ -442,7 +805,7 @@ export async function startMystery(
         `INSERT INTO mystery_instances
            (id,owner_scope,owner_id,authority_account_id,graph_id,graph_version)
          VALUES ($1,$2,$3,$4,$5,$6)
-         ON CONFLICT (owner_scope,owner_id,graph_id) DO NOTHING
+         ON CONFLICT (owner_scope,owner_id,graph_id,graph_version) DO NOTHING
          RETURNING id`,
         [id, owner.scope, owner.id, context.accountId, pkg.id, Number(pkg.version)],
       );
@@ -453,7 +816,7 @@ export async function startMystery(
           await client.query('DELETE FROM mystery_instances WHERE id=$1', [id]);
         });
       }
-      const instance = await instanceFor(client, owner, pkg.id, { lock: true });
+      const instance = await instanceFor(client, owner, pkg.id, pkg.version, { lock: true });
       if (!instance) fail('mystery_start_failed', 'The mystery instance could not be created.');
       if (instance.authority_account_id !== context.accountId) {
         fail('mystery_owner_forbidden', 'That account cannot control this mystery instance.');
@@ -537,36 +900,31 @@ async function saveNodeResult(client, instanceId, nodeId, result) {
   );
 }
 
-function conditionValue(condition, names) {
-  for (const name of names) if (condition?.[name] !== undefined) return condition[name];
-  return undefined;
-}
-
 async function conditionBlocker({
-  client, context, owner, actor, instance, states, condition, interactionId, lock,
+  client, context, owner, actor, instance, states, node, condition, interactionId, lock,
 }) {
-  const adapter = condition?.adapter || condition?.type || condition?.kind;
-  if (!CONDITION_ADAPTERS.has(adapter)) {
-    fail('unsupported_mystery_condition', `Unsupported mystery condition ${String(adapter)}.`);
-  }
+  const normalized = normalizeMysteryCondition(context.registry, node, condition, {
+    timeWindows: context.timeWindows,
+  });
+  const { adapter } = normalized;
   if (adapter === 'graph_dependency') {
-    const nodeId = conditionValue(condition, ['nodeId', 'id', 'value']);
+    const nodeId = normalized.target;
     return states.get(nodeId)?.state === 'completed' ? null : { adapter, nodeId };
   }
   if (adapter === 'location') {
-    const required = conditionValue(condition, ['value', 'locationId', 'district']);
+    const required = normalized.target;
     return actor?.location === required ? null : { adapter, required, current: actor?.location || null };
   }
   if (adapter === 'level') {
-    const required = Number(conditionValue(condition, ['value', 'minimumLevel', 'level']));
+    const required = normalized.target;
     return actor?.level >= required ? null : { adapter, required, current: actor?.level || 0 };
   }
   if (adapter === 'skill') {
-    const required = conditionValue(condition, ['skillId', 'id', 'value']);
+    const required = normalized.target;
     return actor?.skills?.has(required) ? null : { adapter, required };
   }
   if (adapter === 'item_ownership' || adapter === 'owns_item') {
-    const templateId = conditionValue(condition, ['templateId', 'itemTemplateId', 'nodeId']);
+    const templateId = normalized.target;
     const params = [owner.scope, owner.id, templateId];
     const row = lock ? (await client.query(
       `SELECT id FROM item_instances
@@ -580,33 +938,30 @@ async function conditionBlocker({
     return row ? null : { adapter, templateId };
   }
   if (adapter === 'material_quantity') {
-    const templateId = conditionValue(condition, ['templateId', 'materialId', 'nodeId']);
-    const required = Number(conditionValue(condition, ['quantity', 'minimumQuantity', 'amount']));
-    const params = [owner.scope, owner.id, templateId];
+    const templateId = normalized.target;
+    const required = normalized.quantity;
+    const params = [owner.scope, owner.id, templateId, normalized.quality];
     const row = lock ? (await client.query(
       `SELECT quantity FROM item_stacks
-        WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality='standard' FOR UPDATE`, params,
+        WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality=$4 FOR UPDATE`, params,
     )).rows[0] : (await client.query(
       `SELECT quantity FROM item_stacks
-        WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality='standard'`, params,
+        WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality=$4`, params,
     )).rows[0];
     const current = Number(row?.quantity || 0);
-    return current >= required ? null : { adapter, templateId, required, current };
+    return current >= required ? null
+      : { adapter, templateId, quality: normalized.quality, required, current };
   }
   if (adapter === 'evidence') {
-    const nodeId = conditionValue(condition, ['evidenceId', 'nodeId']);
+    const nodeId = normalized.target;
     return states.get(nodeId)?.state === 'completed' ? null : { adapter, nodeId };
   }
   if (adapter === 'time_window') {
-    const windowId = conditionValue(condition, ['windowId', 'value']);
-    const declared = windowId ? context.timeWindows[windowId] : null;
-    const startsAt = conditionValue(condition, ['start', 'startsAt']) || declared?.startsAt;
-    const endsAt = conditionValue(condition, ['end', 'endsAt']) || declared?.endsAt;
-    const open = startsAt && endsAt
-      && context.nowMs >= Date.parse(startsAt) && context.nowMs < Date.parse(endsAt);
-    return open ? null : { adapter, windowId: windowId || null };
+    const open = context.nowMs >= Date.parse(normalized.startsAt)
+      && context.nowMs < Date.parse(normalized.endsAt);
+    return open ? null : { adapter, windowId: normalized.windowId };
   }
-  const required = conditionValue(condition, ['interactionId', 'id', 'value']);
+  const required = normalized.target;
   return interactionId === required ? null : { adapter };
 }
 
@@ -635,7 +990,7 @@ async function nodeBlockers({
   }
   for (const condition of node.conditions || []) {
     const blocker = await conditionBlocker({
-      client, context, owner, actor, instance, states, condition, interactionId, lock,
+      client, context, owner, actor, instance, states, node, condition, interactionId, lock,
     });
     if (blocker) blockers.push(blocker);
   }
@@ -709,7 +1064,7 @@ function mutationOptions(value = {}) {
 async function actionAuthority(client, context, owner, graphId) {
   await authorizeOwner(client, context, owner);
   const pkg = packageOf(context, graphId);
-  const instance = await instanceFor(client, owner, pkg.id);
+  const instance = await instanceFor(client, owner, pkg.id, pkg.version);
   if (!instance) fail('mystery_not_started', 'Start this mystery first.');
   if (instance.authority_account_id !== context.accountId) {
     fail('mystery_owner_forbidden', 'That account cannot control this mystery instance.');
@@ -722,13 +1077,11 @@ async function actionAuthority(client, context, owner, graphId) {
 // immutable owner/version tuple without interpreting nodes or executing effects from either the old
 // or current package. This keeps old-version escrow recoverable after an activation bump while every
 // gameplay action continues to require assertPinned against the current registry.
-async function cancellationAuthority(client, context, owner, graphId) {
-  await authorizeOwner(client, context, owner);
-  packageOf(context, graphId);
-  const instance = await instanceFor(client, owner, graphId);
-  if (!instance) fail('mystery_not_started', 'Start this mystery first.');
-  if (instance.authority_account_id !== context.accountId) {
-    fail('mystery_owner_forbidden', 'That account cannot control this mystery instance.');
+async function cancellationAuthority(client, context, owner, graphId, instanceId) {
+  const instance = await instanceById(client, instanceId);
+  if (!instance || instance.owner_scope !== owner.scope || instance.owner_id !== owner.id
+    || instance.graph_id !== graphId || instance.authority_account_id !== context.accountId) {
+    fail('mystery_unavailable', 'That mystery instance is unavailable.');
   }
   return { instance };
 }
@@ -738,6 +1091,7 @@ async function lockedActionInstance(client, authority, context, { allowClosed = 
     client,
     { scope: authority.instance.owner_scope, id: authority.instance.owner_id },
     authority.pkg.id,
+    authority.pkg.version,
     { lock: true },
   );
   if (!instance || instance.id !== authority.instance.id
@@ -752,13 +1106,11 @@ async function lockedActionInstance(client, authority, context, { allowClosed = 
 }
 
 async function lockedCancellationInstance(client, authority, context) {
-  const instance = await instanceFor(
-    client,
-    { scope: authority.instance.owner_scope, id: authority.instance.owner_id },
-    authority.instance.graph_id,
-    { lock: true },
-  );
+  const instance = await instanceById(client, authority.instance.id, { lock: true });
   if (!instance || instance.id !== authority.instance.id
+    || instance.owner_scope !== authority.instance.owner_scope
+    || instance.owner_id !== authority.instance.owner_id
+    || instance.graph_id !== authority.instance.graph_id
     || instance.authority_account_id !== context.accountId
     || Number(instance.graph_version) !== Number(authority.instance.graph_version)) {
     fail('mystery_owner_forbidden', 'Mystery instance authority changed.');
@@ -829,7 +1181,8 @@ async function releaseMysteryEscrow(client, owner, instance, mutation) {
 async function closeExcludedBranches(client, context, instance, initialIds) {
   const closed = new Set(initialIds);
   const packageNodes = [...context.registry.nodes.values()]
-    .filter((node) => node.packageId === instance.graph_id && BOARD_NODE_TYPES.has(node.type));
+    .filter((node) => node.packageId === instance.graph_id
+      && isMysteryStateNode(context.registry, node));
   let changed = true;
   while (changed) {
     changed = false;
@@ -839,8 +1192,12 @@ async function closeExcludedBranches(client, context, instance, initialIds) {
       const alternativeClosed = (node.requiresAny || [])
         .some((group) => group.every((id) => closed.has(id)));
       const conditionClosed = (node.conditions || []).some((condition) => (
-        (condition.adapter || condition.type || condition.kind) === 'graph_dependency'
-        && closed.has(conditionValue(condition, ['nodeId', 'id', 'value']))
+        normalizeMysteryCondition(context.registry, node, condition, {
+          timeWindows: context.timeWindows,
+        }).adapter === 'graph_dependency'
+        && closed.has(normalizeMysteryCondition(context.registry, node, condition, {
+          timeWindows: context.timeWindows,
+        }).target)
       ));
       if (requiredClosed || alternativeClosed || conditionClosed) {
         closed.add(node.id);
@@ -906,7 +1263,7 @@ async function applyEffects({ client, context, owner, instance, effects, mutatio
 }
 
 async function completeGraphNode({
-  client, context, owner, instance, node, interactionId, mutation, extraEffects = [],
+  client, context, owner, actor, instance, node, interactionId, mutation, extraEffects = [],
 }) {
   let states = stateMap(await stateRows(client, instance.id));
   const existing = states.get(node.id);
@@ -924,7 +1281,6 @@ async function completeGraphNode({
   if (node.visibility !== 'public' && existing?.state !== 'discovered') {
     fail('mystery_hidden', 'Discover that mystery node before completing it.');
   }
-  const actor = await actorOf(client, context, owner);
   states = stateMap(await stateRows(client, instance.id));
   const blockers = await nodeBlockers({
     client, context, owner, actor, instance, states, node, interactionId, lock: true,
@@ -973,6 +1329,9 @@ export async function discoverNode(
       itemAuthority: { operations: [authority.instance.id] },
     },
     async () => {
+      // Canonical mutation lock order is actor character -> mystery instance -> item rows. The
+      // social-operation opener uses the same suffix after its Crew/operation locks.
+      const actor = await actorOf(client, context, owner);
       const instance = await lockedActionInstance(client, authority, context);
       let states = stateMap(await stateRows(client, instance.id));
       const existing = states.get(node.id);
@@ -985,7 +1344,6 @@ export async function discoverNode(
           node: { id: node.id, status: 'discovered', discoveredAt: dateString(existing.discovered_at) },
         };
       }
-      const actor = await actorOf(client, context, owner);
       states = stateMap(await stateRows(client, instance.id));
       const blockers = await nodeBlockers({
         client, context, owner, actor, instance, states, node,
@@ -1025,9 +1383,12 @@ export async function completeNode(
       },
     },
     async (mutation) => {
+      // Lock and authenticate the actor before the instance so terminal completion cannot invert
+      // the operation-open path's character -> mystery lock order.
+      const actor = await actorOf(client, context, owner);
       const instance = await lockedActionInstance(client, authority, context);
       return completeGraphNode({
-        client, context, owner, instance, node,
+        client, context, owner, actor, instance, node,
         interactionId: options.interactionId, mutation,
       });
     },
@@ -1078,6 +1439,7 @@ export async function commitChoice(
       itemAuthority: { operations: [authority.instance.id] },
     },
     async (mutation) => {
+      const actor = await actorOf(client, context, owner);
       const instance = await lockedActionInstance(client, authority, context);
       const existing = await choiceRow(client, instance.id, node.id);
       if (existing) {
@@ -1103,7 +1465,6 @@ export async function commitChoice(
       if (contradictory) {
         fail('choice_conflict', 'That option contradicts an already completed mystery branch.');
       }
-      const actor = await actorOf(client, context, owner);
       states = stateMap(await stateRows(client, instance.id));
       const blockers = await nodeBlockers({
         client, context, owner, actor, instance, states, node,
@@ -1141,13 +1502,14 @@ export async function commitChoice(
  * proves the authenticated account relationship.
  */
 export async function cancelMystery(
-  client, contextValue, ownerValue, graphIdValue, optionsValue,
+  client, contextValue, ownerValue, graphIdValue, instanceIdValue, optionsValue,
 ) {
   const context = contextOf(contextValue);
   const owner = ownerOf(ownerValue);
   const graphId = canonical(graphIdValue, 'Mystery graph id');
+  const instanceId = canonical(instanceIdValue, 'Mystery instance id');
   const options = mutationOptions(optionsValue);
-  const authority = await cancellationAuthority(client, context, owner, graphId);
+  const authority = await cancellationAuthority(client, context, owner, graphId, instanceId);
   return withItemMutation(
     client,
     owner,
@@ -1226,7 +1588,7 @@ export async function mysteryBoard(client, contextValue, ownerValue, graphIdValu
   const graphId = canonical(graphIdValue, 'Mystery graph id');
   await authorizeOwner(client, context, owner);
   const pkg = packageOf(context, graphId);
-  const instance = await instanceFor(client, owner, graphId);
+  const instance = await instanceFor(client, owner, graphId, pkg.version);
   if (!instance) fail('mystery_not_started', 'Start this mystery first.');
   if (instance.authority_account_id !== context.accountId) {
     fail('mystery_owner_forbidden', 'That account cannot view this mystery instance.');
@@ -1240,7 +1602,7 @@ export async function mysteryBoard(client, contextValue, ownerValue, graphIdValu
   }
   const nodes = [];
   for (const node of context.registry.nodes.values()) {
-    if (node.packageId !== graphId || !BOARD_NODE_TYPES.has(node.type)
+    if (node.packageId !== graphId || !isMysteryStateNode(context.registry, node)
       || node.visibility === 'role_private') continue;
     const row = states.get(node.id);
     if (node.visibility !== 'public' && !row?.discovered_at && row?.state !== 'completed') continue;

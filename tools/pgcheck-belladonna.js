@@ -15,6 +15,7 @@ import {
   transferItem,
   withItemTransaction,
 } from '../src/items.js';
+import { runLedgerInvariants } from '../src/invariants.js';
 import {
   completeNode,
   createMysteryContext,
@@ -179,6 +180,10 @@ export async function runBelladonnaPgChecks({
     const before = await money();
     const ledgerBefore = await n('SELECT COUNT(*) AS n FROM transactions');
     const identity = { accountId: accounts[0], owned: { cars: [] } };
+    const invariantCheck = async (name) => (await runLedgerInvariants(pool, { alert: false }))
+      .checks.find((entry) => entry.name === name);
+    const carDriftBeforeSalvage = (await invariantCheck('car conservation')).drift;
+    const salvageSinksBefore = (await invariantCheck('world graph salvage car audit')).logicalSinks;
 
     // On PostgreSQL these are two separately checked-out clients contending on the same logical
     // guard and car row. pg-mem runs the same control under its compensation/serialization path.
@@ -197,6 +202,23 @@ export async function runBelladonnaPgChecks({
       && stackQty(board, 'mat:wire') === 2
       && stackQty(board, 'mat:salvage_parts') === 2,
     'Belladonna same-key salvage consumes one real car into exact graph quantities');
+    let secondLogicalCode = '';
+    try {
+      await tx((client) => salvageCar(
+        client, identity, carId, 'recipe:car_salvage_basic', `${prefix}-salvage-second`,
+      ));
+    } catch (error) { secondLogicalCode = error.code; }
+    const salvageAudit = await invariantCheck('world graph salvage car audit');
+    const carDriftAfterSalvage = (await invariantCheck('car conservation')).drift;
+    check(secondLogicalCode === 'no_car'
+        && salvageAudit.ok
+        && salvageAudit.logicalSinks === salvageSinksBefore + 1
+        && salvageAudit.carIds.includes(carId)
+        && carDriftAfterSalvage === carDriftBeforeSalvage,
+    'Belladonna salvage, replay, and failed fresh action move held car and one guard sink together',
+    `failure ${secondLogicalCode || 'none'}, sinks ${salvageSinksBefore} -> ${salvageAudit.logicalSinks}, drift ${carDriftBeforeSalvage} -> ${carDriftAfterSalvage}`);
+    check(await n('SELECT COUNT(*) AS n FROM transactions') === ledgerBefore,
+      'Belladonna salvage, replay, and failure create no currency row');
 
     await tx((client) => craftWorldGraphRecipe(
       client, identity, 'recipe:hardened_steel', `${prefix}-harden`,

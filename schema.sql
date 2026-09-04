@@ -4520,7 +4520,7 @@ CREATE TABLE IF NOT EXISTS item_mutation_guards (
   CONSTRAINT item_guard_key CHECK (char_length(idempotency_key) BETWEEN 1 AND 200),
   CONSTRAINT item_guard_kind CHECK (mutation_kind IN (
     'grant_stack','consume_stack','create_item','transfer_item','consume_item','escrow_item','release_escrow',
-    'craft','salvage_car','mystery_action','operation_action','reward_claim'
+    'assign_current_character','craft','salvage_car','mystery_action','operation_action','reward_claim'
   )),
   CONSTRAINT item_guard_owner_scope CHECK (owner_scope IN ('character','account','operation')),
   CONSTRAINT item_guard_owner_id CHECK (char_length(owner_id) BETWEEN 1 AND 200),
@@ -4533,6 +4533,13 @@ CREATE TABLE IF NOT EXISTS item_mutation_guards (
 );
 CREATE INDEX IF NOT EXISTS ix_item_mutation_guards_created
   ON item_mutation_guards (created_at);
+-- Existing Phase 1 databases predate the compound assignment bridge. Rebuild the closed mutation
+-- vocabulary idempotently so deployment cannot accept the code while retaining the old constraint.
+ALTER TABLE item_mutation_guards DROP CONSTRAINT IF EXISTS item_guard_kind;
+ALTER TABLE item_mutation_guards ADD CONSTRAINT item_guard_kind CHECK (mutation_kind IN (
+  'grant_stack','consume_stack','create_item','transfer_item','consume_item','escrow_item','release_escrow',
+  'assign_current_character','craft','salvage_car','mystery_action','operation_action','reward_claim'
+));
 
 -- All stack movements are recorded too, but unique-item provenance is the hard contract: every
 -- successful instance mutation writes exactly one row in the same transaction. `sequence` gives a
@@ -4545,6 +4552,7 @@ CREATE TABLE IF NOT EXISTS item_events (
   provenance_kind TEXT,
   item_id TEXT REFERENCES item_instances(id) ON DELETE RESTRICT,
   template_id TEXT NOT NULL,
+  quality TEXT NOT NULL DEFAULT 'standard',
   quantity_delta INT,
   quantity_before INT,
   quantity_after INT,
@@ -4567,6 +4575,8 @@ CREATE TABLE IF NOT EXISTS item_events (
     )
   ),
   CONSTRAINT item_event_template_id CHECK (char_length(template_id) BETWEEN 1 AND 200),
+  CONSTRAINT item_event_quality CHECK (char_length(quality) BETWEEN 1 AND 80),
+  CONSTRAINT item_event_quality_kind CHECK (item_id IS NULL OR quality = 'standard'),
   CONSTRAINT item_event_reason CHECK (char_length(reason) BETWEEN 1 AND 500),
   CONSTRAINT item_event_from_scope CHECK (
     from_owner_scope IS NULL OR from_owner_scope IN ('character','account','operation')
@@ -4593,6 +4603,16 @@ CREATE TABLE IF NOT EXISTS item_events (
     )
   )
 );
+-- The generic column migration also derives this ADD from the CREATE block. Keep it here too:
+-- schema.sql runs before that derived pass, so an already-created item_events table must gain the
+-- column before the two constraints below are re-applied during the same boot.
+ALTER TABLE item_events ADD COLUMN IF NOT EXISTS quality TEXT NOT NULL DEFAULT 'standard';
+ALTER TABLE item_events DROP CONSTRAINT IF EXISTS item_event_quality;
+ALTER TABLE item_events
+  ADD CONSTRAINT item_event_quality CHECK (char_length(quality) BETWEEN 1 AND 80);
+ALTER TABLE item_events DROP CONSTRAINT IF EXISTS item_event_quality_kind;
+ALTER TABLE item_events
+  ADD CONSTRAINT item_event_quality_kind CHECK (item_id IS NULL OR quality = 'standard');
 CREATE INDEX IF NOT EXISTS ix_item_events_item
   ON item_events (item_id, sequence);
 CREATE INDEX IF NOT EXISTS ix_item_events_owner
@@ -4618,7 +4638,6 @@ CREATE TABLE IF NOT EXISTS mystery_instances (
   completed_at TIMESTAMPTZ,
   failed_at TIMESTAMPTZ,
   canceled_at TIMESTAMPTZ,
-  UNIQUE (owner_scope, owner_id, graph_id),
   CONSTRAINT mystery_instance_id CHECK (char_length(id) BETWEEN 1 AND 200),
   CONSTRAINT mystery_instance_owner_scope CHECK (owner_scope IN ('character','account')),
   CONSTRAINT mystery_instance_owner_id CHECK (char_length(owner_id) BETWEEN 1 AND 200),
@@ -4634,6 +4653,13 @@ CREATE TABLE IF NOT EXISTS mystery_instances (
   )
 );
 ALTER TABLE mystery_instances ADD COLUMN IF NOT EXISTS canceled_at TIMESTAMPTZ;
+-- Pre-Phase1 candidates keyed only owner+graph and permanently stranded later package versions.
+-- Preserve every historical row, replace only the uniqueness authority, and let each immutable
+-- graph version own one independently replay-safe lifecycle.
+ALTER TABLE mystery_instances
+  DROP CONSTRAINT IF EXISTS mystery_instances_owner_scope_owner_id_graph_id_key;
+CREATE UNIQUE INDEX IF NOT EXISTS ux_mystery_instance_owner_graph_version
+  ON mystery_instances (owner_scope, owner_id, graph_id, graph_version);
 ALTER TABLE mystery_instances DROP CONSTRAINT IF EXISTS mystery_instance_status;
 ALTER TABLE mystery_instances
   ADD CONSTRAINT mystery_instance_status

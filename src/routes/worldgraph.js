@@ -7,10 +7,16 @@
 // autonomous mutation capability.
 import crypto from 'node:crypto';
 import * as G from '../game.js';
-import { recipeCatalog, craftWorldGraphRecipe, salvageCar } from '../crafting.js';
+import {
+  createCraftingContext,
+  recipeCatalog,
+  craftWorldGraphRecipe,
+  salvageCar,
+} from '../crafting.js';
 import {
   inventoryBoard,
   transferItem,
+  withItemMutation,
   withItemTransaction,
 } from '../items.js';
 import {
@@ -30,12 +36,15 @@ import {
   createOperationContext,
   openOperation,
   operationBoard,
+  operationDefinitions,
   roleBoard,
 } from '../operations.js';
-import { PHASE1_WORLD_GRAPH_PACKAGES } from '../content/phase1.js';
-import { loadAndValidateGraphPackages } from '../worldgraph-validate.js';
+import { loadAndValidatePhase1WorldGraph } from '../content/phase1-validation.js';
 
-export const PHASE1_WORLD_GRAPH = loadAndValidateGraphPackages(PHASE1_WORLD_GRAPH_PACKAGES);
+// Module initialization is the server boot boundary: the same complete graph, executable adapter,
+// and economy-policy gate used by CI must pass before these routes can be registered.
+export const PHASE1_WORLD_GRAPH = loadAndValidatePhase1WorldGraph().registry;
+const PHASE1_CRAFTING = createCraftingContext({ registry: PHASE1_WORLD_GRAPH });
 
 export const WORLD_GRAPH_CAPABILITIES = Object.freeze({
   phase: 1,
@@ -92,6 +101,7 @@ const PUBLIC_ERROR_REPLACEMENTS = new Map([
   // from an invented identifier. The discovery board is the only operation-ID authority.
   ['operation_not_found', ['operation_unavailable', 'That operation is unavailable.']],
   ['operation_forbidden', ['operation_unavailable', 'That operation is unavailable.']],
+  ['operation_cancel_forbidden', ['operation_unavailable', 'That operation is unavailable.']],
   // Mystery projections deliberately hide undiscovered/private node IDs. Direct action failures
   // therefore collapse missing, wrong-kind, and still-hidden nodes to one public response.
   ['mystery_node', ['mystery_node_unavailable', 'That mystery action is unavailable.']],
@@ -210,12 +220,15 @@ function safeInventory(board) {
 }
 
 function graphPackages(kind) {
-  const types = kind === 'mystery'
-    ? new Set(['mystery_step', 'world_gate', 'choice'])
-    : new Set(['social_gate']);
+  const types = new Set(['mystery_step', 'world_gate', 'choice']);
+  const operationRoots = kind === 'operation'
+    ? new Set(operationDefinitions(PHASE1_WORLD_GRAPH).map(({ root }) => root))
+    : null;
   return [...PHASE1_WORLD_GRAPH.byPackage.values()].filter((pkg) => (
     [...PHASE1_WORLD_GRAPH.nodes.values()].some((node) => (
-      node.packageId === pkg.id && types.has(node.type)
+      node.packageId === pkg.id && (kind === 'mystery'
+        ? types.has(node.type)
+        : operationRoots.has(node))
     ))
   ));
 }
@@ -235,9 +248,11 @@ async function mysteryDiscovery(client, accountId, characterId) {
       WHERE owner_scope='character' AND owner_id=$1 AND authority_account_id=$2`,
     [characterId, accountId],
   )).rows;
-  const byGraph = new Map(instances.map((row) => [row.graph_id, row]));
+  const byGraphVersion = new Map(instances.map((row) => [
+    `${row.graph_id}:${Number(row.graph_version)}`, row,
+  ]));
   return graphPackages('mystery').map((pkg) => {
-    const entry = byGraph.get(pkg.id);
+    const entry = byGraphVersion.get(`${pkg.id}:${Number(pkg.version)}`);
     const publicNodes = publicMysteryNodes(pkg.id);
     return {
       graphId: pkg.id,
@@ -257,17 +272,19 @@ async function mysteryGateReady(client, accountId, characterId, root) {
   const ownerId = gate.ownerScope === 'character' ? characterId : accountId;
   const row = (await client.query(
     `SELECT status,graph_version FROM mystery_instances
-      WHERE owner_scope=$1 AND owner_id=$2 AND authority_account_id=$3 AND graph_id=$4`,
-    [gate.ownerScope, ownerId, accountId, gate.graphId],
+      WHERE owner_scope=$1 AND owner_id=$2 AND authority_account_id=$3 AND graph_id=$4
+        AND graph_version=$5`,
+    [gate.ownerScope, ownerId, accountId, gate.graphId, gate.graphVersion],
   )).rows[0];
   if (!row || row.status !== gate.requiredStatus
     || Number(row.graph_version) !== Number(gate.graphVersion)) return false;
   const completed = new Set((await client.query(
     `SELECT node_id FROM mystery_node_state
       WHERE instance_id=(SELECT id FROM mystery_instances
-        WHERE owner_scope=$1 AND owner_id=$2 AND authority_account_id=$3 AND graph_id=$4)
+        WHERE owner_scope=$1 AND owner_id=$2 AND authority_account_id=$3 AND graph_id=$4
+          AND graph_version=$5)
         AND state='completed'`,
-    [gate.ownerScope, ownerId, accountId, gate.graphId],
+    [gate.ownerScope, ownerId, accountId, gate.graphId, gate.graphVersion],
   )).rows.map(({ node_id: nodeId }) => nodeId));
   return (root.requires || []).every((id) => completed.has(id))
     && (root.requiresAny || []).every((group) => group.some((id) => completed.has(id)))
@@ -278,11 +295,10 @@ async function operationDiscovery(client, accountId, characterId) {
   const membership = (await client.query(
     'SELECT crew_id FROM crew_members WHERE account_id=$1', [accountId],
   )).rows[0];
-  const roots = [...PHASE1_WORLD_GRAPH.nodes.values()].filter((node) => (
-    node.type === 'social_gate' && node.visibility === 'public'
-  ));
+  const definitions = operationDefinitions(PHASE1_WORLD_GRAPH, { publicOnly: true });
   const result = [];
-  for (const root of roots) {
+  for (const definition of definitions) {
+    const { root } = definition;
     const pkg = PHASE1_WORLD_GRAPH.byPackage.get(root.packageId);
     const existing = membership ? (await client.query(
       `SELECT id,status FROM world_operations
@@ -299,8 +315,8 @@ async function operationDiscovery(client, accountId, characterId) {
       version: Number(pkg.version),
       operationNodeId: root.id,
       title: root.metadata?.title || root.id,
-      minimumDistinctAccounts: Number(root.minimumDistinctAccounts || root.roles?.length || 0),
-      roles: (root.roles || []).map((role) => ({
+      minimumDistinctAccounts: definition.minimumDistinctAccounts,
+      roles: definition.roles.map((role) => ({
         roleId: role.id, title: role.title || role.id,
       })),
       available: blockedBy.length === 0,
@@ -314,14 +330,30 @@ async function operationDiscovery(client, accountId, characterId) {
 async function currentCharacterOwner(client, accountId) {
   const row = (await client.query(
     `SELECT id FROM characters
-      WHERE account_id=$1 AND alive ORDER BY created_at DESC,id LIMIT 1 FOR UPDATE`,
+      WHERE account_id=$1 AND alive ORDER BY created_at DESC,id LIMIT 1`,
     [accountId],
   )).rows[0];
   if (!row) fail('no_character', 'Create a character first.');
   return { scope: 'character', id: row.id };
 }
 
-async function assignItemToCurrentCharacter(client, accountId, itemId, idempotencyKey) {
+async function lockCurrentCharacterOwner(client, accountId, expectedOwner) {
+  // Route discovery is snapshot-only. Every mutation first reserves its global item guard, then
+  // resolves and locks the authoritative current street. A concurrent death/replacement either
+  // commits first and changes this identity (so the action fails closed), or waits behind this row;
+  // no outer character lock can invert the guard -> character -> item order used by craft/mystery.
+  const row = (await client.query(
+    `SELECT id FROM characters
+      WHERE account_id=$1 AND alive ORDER BY created_at DESC,id LIMIT 1 FOR UPDATE`,
+    [accountId],
+  )).rows[0];
+  if (!row || row.id !== expectedOwner.id) {
+    fail('no_character', 'The current living character changed; refresh and retry.');
+  }
+  return expectedOwner;
+}
+
+export async function assignItemToCurrentCharacter(client, accountId, itemId, idempotencyKey) {
   const row = (await client.query(
     `SELECT template_id FROM item_instances
       WHERE id=$1 AND owner_scope='account' AND owner_id=$2 AND state='active'`,
@@ -332,17 +364,31 @@ async function assignItemToCurrentCharacter(client, accountId, itemId, idempoten
     || template.metadata?.characterAssignable !== true) {
     fail('item_assignment_unavailable', 'That item cannot be assigned to the current character.');
   }
+  const accountOwner = { scope: 'account', id: accountId };
   const characterOwner = await currentCharacterOwner(client, accountId);
   try {
-    const item = await transferItem(
+    return await withItemMutation(
       client,
-      { scope: 'account', id: accountId },
-      characterOwner,
-      itemId,
-      'assigned to current character',
+      accountOwner,
+      'assign_current_character',
       idempotencyKey,
+      {
+        action: 'assign_current_character', itemId,
+        itemAuthority: { destinations: [characterOwner] },
+      },
+      async (mutation) => {
+        await lockCurrentCharacterOwner(client, accountId, characterOwner);
+        const item = await transferItem(
+          client,
+          accountOwner,
+          characterOwner,
+          itemId,
+          'assigned to current character',
+          mutation,
+        );
+        return { ok: true, kind: 'assign_current_character', item };
+      },
     );
-    return { ok: true, kind: 'assign_current_character', item };
   } catch (error) {
     if (error?.code === 'item_unavailable') {
       fail('item_assignment_unavailable', 'That item cannot be assigned to the current character.');
@@ -357,8 +403,7 @@ async function historicalMysteryOwner(client, accountId, graphId, instanceId) {
       WHERE id=$1 AND authority_account_id=$2 AND graph_id=$3`,
     [instanceId, accountId, graphId],
   )).rows[0];
-  const pkg = PHASE1_WORLD_GRAPH.byPackage.get(graphId);
-  if (!row || !pkg) {
+  if (!row) {
     fail('mystery_unavailable', 'That mystery instance is unavailable.');
   }
   return { scope: row.owner_scope, id: row.owner_id };
@@ -424,19 +469,21 @@ export function register(app, { pool, auth }) {
         cash: Number(ch.cash),
         owned: h.owned,
         inventory: await inventoryBoard(client, { scope: 'account', id: req.user.sub }),
-      }),
+      }, PHASE1_CRAFTING),
     })));
 
   app.post('/v1/worldgraph/recipes/:recipeId/craft', mutationOptions(auth), async (req, reply) =>
     mutate(pool, reply, (client) => craftWorldGraphRecipe(
       client, { accountId: req.user.sub }, req.params.recipeId,
       innerIdempotencyKey(req.user.sub, req.headers['idempotency-key']),
+      PHASE1_CRAFTING,
     )));
 
   app.post('/v1/worldgraph/recipes/:recipeId/salvage/:carId', mutationOptions(auth), async (req, reply) =>
     mutate(pool, reply, (client) => salvageCar(
       client, { accountId: req.user.sub }, req.params.carId, req.params.recipeId,
       innerIdempotencyKey(req.user.sub, req.headers['idempotency-key']),
+      PHASE1_CRAFTING,
     )));
 
   app.get('/v1/worldgraph/mysteries', { preHandler: auth }, async (req) =>
@@ -498,6 +545,7 @@ export function register(app, { pool, auth }) {
       );
       return cancelMystery(
         client, mysteryContext(req.user.sub), owner, req.params.graphId,
+        req.body.instanceId,
         { idempotencyKey: innerIdempotencyKey(req.user.sub, req.headers['idempotency-key']) },
       );
     }));

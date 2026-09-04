@@ -12,6 +12,7 @@ import {
   transferItem,
   withItemTransaction,
 } from '../src/items.js';
+import { runLedgerInvariants } from '../src/invariants.js';
 import {
   cancelMystery,
   completeNode,
@@ -80,7 +81,10 @@ assert.deepEqual(
 );
 assert.equal(registry.nodes.get('item:belladonna_artifact').metadata.inert, true);
 assert.equal(registry.nodes.get('item:belladonna_artifact').metadata.tradeable, false);
-assert.equal(registry.nodes.get('reward:belladonna-crew-status').repeatability, 'once');
+assert.equal(registry.nodes.get('reward:belladonna-crew-status').repeatability, undefined,
+  'the inert status target declares no ignored generic repeatability authority');
+assert.deepEqual(registry.nodes.get('reward:belladonna-crew-status').requires, [OPERATION_ID],
+  'the inert status target is completed only by its exact operation source');
 const malformedPrivateEvidence = structuredClone(BELLADONNA_PACKAGE);
 malformedPrivateEvidence.nodes.find(
   ({ id }) => id === 'evidence:belladonna-cipher-fragment',
@@ -248,6 +252,9 @@ try {
 
   const moneyAtStart = await balances();
   const transactionsAtStart = await count('SELECT COUNT(*) AS n FROM transactions');
+  const invariantCheck = async (name) => (await runLedgerInvariants(pool, { alert: false }))
+    .checks.find((check) => check.name === name);
+  const carDriftAtStart = (await invariantCheck('car conservation')).drift;
   const craftingIdentity = {
     accountId: ACCOUNTS[0],
     // This is only the documented response-cache surface. The crafting runtime reloads and locks
@@ -269,6 +276,17 @@ try {
   ]);
   assert.equal(await count('SELECT COUNT(*) AS n FROM cars WHERE id=$1', [CAR_ID]), 0,
     'the eligible owned car is consumed exactly once');
+  const salvageAudit = await invariantCheck('world graph salvage car audit');
+  assert.equal(salvageAudit.ok, true,
+    'the completed salvage guard is a valid authoritative noncurrency car sink');
+  assert.equal(salvageAudit.logicalSinks, 1,
+    'one successful logical guard counts as exactly one salvage sink');
+  assert.deepEqual(salvageAudit.carIds, [CAR_ID],
+    'the sink identity comes from the server-derived completed result');
+  assert.equal((await invariantCheck('car conservation')).drift, carDriftAtStart,
+    'successful salvage moves the held-car side and authoritative sink side together');
+  assert.equal(await count('SELECT COUNT(*) AS n FROM transactions'), transactionsAtStart,
+    'cashless salvage writes no currency transaction row');
   assert.deepEqual(await tx((client) => salvageCar(
     client,
     craftingIdentity,
@@ -276,6 +294,47 @@ try {
     'recipe:car_salvage_basic',
     'belladonna-salvage-car',
   )), salvaged, 'vehicle disposal is exactly replay-safe');
+  await assert.rejects(
+    tx((client) => salvageCar(
+      client,
+      craftingIdentity,
+      CAR_ID,
+      'recipe:car_salvage_basic',
+      'belladonna-salvage-car-second-logical-action',
+    )),
+    (error) => error?.code === 'no_car',
+    'a fresh logical action cannot sink an already-salvaged car',
+  );
+  const salvageAuditAfterReplay = await invariantCheck('world graph salvage car audit');
+  assert.equal(salvageAuditAfterReplay.logicalSinks, 1,
+    'replay and failed retry create no additional logical car sink');
+  assert.equal((await invariantCheck('car conservation')).drift, carDriftAtStart,
+    'replay and failure leave car conservation unchanged');
+  assert.equal(await count('SELECT COUNT(*) AS n FROM transactions'), transactionsAtStart,
+    'replay and failed retry remain currency-ledger neutral');
+
+  const guardResult = (await pool.query(
+    `SELECT result_json FROM item_mutation_guards
+      WHERE idempotency_key='belladonna-salvage-car'`,
+  )).rows[0].result_json;
+  const guardResultText = typeof guardResult === 'string'
+    ? guardResult : JSON.stringify(guardResult);
+  const malformedResult = JSON.parse(guardResultText);
+  malformedResult.inputs.push({ assetType: 'car', quantity: 1, id: 'forged-second-car' });
+  await pool.query(
+    `UPDATE item_mutation_guards SET result_json=$1
+      WHERE idempotency_key='belladonna-salvage-car'`,
+    [JSON.stringify(malformedResult)],
+  );
+  assert.equal((await invariantCheck('world graph salvage car audit')).ok, false,
+    'a completed guard that does not encode exactly one matching server-derived car fails closed');
+  await pool.query(
+    `UPDATE item_mutation_guards SET result_json=$1
+      WHERE idempotency_key='belladonna-salvage-car'`,
+    [guardResultText],
+  );
+  assert.equal((await invariantCheck('world graph salvage car audit')).ok, true,
+    'restoring the exact completed result returns the salvage audit to green');
 
   const hardened = await tx((client) => craftWorldGraphRecipe(
     client, craftingIdentity, 'recipe:hardened_steel', 'belladonna-harden-steel',
@@ -424,6 +483,12 @@ try {
     id === 'evidence:belladonna-maker-mark' && status === 'completed'
   )));
   assert(investigation.nodes.some(({ id }) => id === 'mystery:belladonna-file-closed'));
+  assert.equal(investigation.nodes.some(({ id }) => [
+    'evidence:belladonna-cipher-fragment',
+    'evidence:belladonna-tumbler-pattern',
+    'reward:belladonna-crew-status',
+  ].includes(id)), false,
+  'the mystery board never leaks operation-owned evidence or status targets from the same package');
 
   const closed = await mysteryAct(
     0, completeNode, CHARACTER_OWNER, GRAPH_ID, 'mystery:belladonna-file-closed', {
@@ -762,14 +827,14 @@ try {
   );
   await pool.query('UPDATE characters SET alive=false WHERE id=$1', [CHARACTERS[2]]);
   const canceledMystery = await mysteryAct(
-    2, cancelMystery, mechanicCharacterOwner, GRAPH_ID, {
+    2, cancelMystery, mechanicCharacterOwner, GRAPH_ID, cancelInstance.instanceId, {
       idempotencyKey: 'belladonna-cancel-after-death',
     },
   );
   assert.equal(canceledMystery.status, 'canceled');
   assert.equal(canceledMystery.releasedEscrowCount, 1);
   assert.deepEqual(await mysteryAct(
-    2, cancelMystery, mechanicCharacterOwner, GRAPH_ID, {
+    2, cancelMystery, mechanicCharacterOwner, GRAPH_ID, cancelInstance.instanceId, {
       idempotencyKey: 'belladonna-cancel-after-death',
     },
   ), canceledMystery, 'dead-character cancellation replays without releasing twice');

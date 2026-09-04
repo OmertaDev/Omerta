@@ -22,21 +22,29 @@ import {
   withItemMutation,
 } from './items.js';
 import { levelOf } from './rules.js';
-import { loadGraphPackages, nodeOf } from './worldgraph.js';
+import { isWorldGraphRegistry, loadGraphPackages, nodeOf } from './worldgraph.js';
 import { validateGraph } from './worldgraph-validate.js';
-import { CORE_MATERIALS_PACKAGE } from './content/core-materials.js';
-import { AUTOMOTIVE_SALVAGE_PACKAGE } from './content/automotive-salvage.js';
+import { PHASE1_WORLD_GRAPH_PACKAGES } from './content/phase1.js';
 
 const RECIPE_ADAPTERS = new Set(['location', 'skill', 'level', 'owns_car']);
 const CASH_COST_KEYS = new Set(['cashcost', 'costcash', 'cost']);
 const OMR_COST_KEYS = new Set(['omrcost', 'costomr']);
+const CRAFT_CAP_KEYS = new Set(['maxcrafts', 'claimcap', 'cap']);
 const QUALITY = 'standard';
-
-export const CRAFTING_GRAPH = loadGraphPackages([
-  CORE_MATERIALS_PACKAGE,
-  AUTOMOTIVE_SALVAGE_PACKAGE,
+const CRAFTING_CONTEXTS = new WeakSet();
+const CRAFTING_DEFINITIONS = new WeakMap();
+const RECIPE_FIELDS = new Set([
+  'id', 'type', 'version', 'visibility', 'repeatability', 'repeatable',
+  'consumes', 'inputs', 'produces', 'outputs', 'catalysts', 'catalystInputs',
+  'conditions', 'metadata', 'packageId', 'title', 'description', 'lore',
+  'cashCost', 'costCash', 'cost', 'omrCost', 'costOmr',
+  'maxCrafts', 'claimCap', 'cap',
 ]);
-export const CRAFTING_GRAPH_VALIDATION = validateGraph(CRAFTING_GRAPH);
+const RECIPE_METADATA_FIELDS = new Set([
+  'title', 'description', 'lore',
+  'repeatability', 'repeatable', 'cashCost', 'costCash', 'cost', 'omrCost', 'costOmr',
+  'maxCrafts', 'claimCap', 'cap',
+]);
 
 const fail = (code, message, data) => { throw new GameError(code, message, data); };
 
@@ -53,6 +61,7 @@ function conditionValue(condition, names) {
 }
 
 function graphCarSelector(condition) {
+  if (condition?.selector && typeof condition.selector === 'object') return condition.selector;
   for (const kind of ['value', 'carId', 'carType', 'vehicleClass', 'assetType']) {
     if (condition?.[kind] !== undefined) return { kind, value: condition[kind] };
   }
@@ -73,15 +82,119 @@ function entriesOf(recipe, primary, alias) {
 const inputsOf = (recipe) => entriesOf(recipe, 'consumes', 'inputs');
 const outputsOf = (recipe) => entriesOf(recipe, 'produces', 'outputs');
 
-function recipeOf(recipeId) {
+const RECIPE_REFERENCE_ALIASES = Object.freeze([
+  'templateId', 'nodeId', 'materialId', 'itemTemplateId', 'id',
+]);
+const RECIPE_CONDITION_ALIASES = Object.freeze({
+  location: Object.freeze(['value', 'locationId', 'district']),
+  level: Object.freeze(['value', 'minimumLevel', 'level']),
+  skill: Object.freeze(['skillId', 'id', 'value']),
+  owns_car: Object.freeze(['value', 'carId', 'carType', 'vehicleClass', 'assetType']),
+});
+
+function oneDeclared(object, names, label) {
+  const declared = names.filter((name) => object[name] !== undefined);
+  if (declared.length !== 1) {
+    fail('unsupported_recipe_semantics',
+      `${label} must declare exactly one supported alias; found ${declared.join(', ') || 'none'}.`);
+  }
+  return { name: declared[0], value: object[declared[0]] };
+}
+
+function normalizedRecipeEntry(registry, recipe, entry, direction) {
+  if (!entry || typeof entry !== 'object' || Array.isArray(entry)
+    || Object.getPrototypeOf(entry) !== Object.prototype) {
+    fail('unsupported_recipe_semantics',
+      `Recipe ${recipe.id} has a malformed ${direction} entry.`);
+  }
+  const references = RECIPE_REFERENCE_ALIASES.filter((name) => entry[name] !== undefined);
+  const hasExternal = entry.assetType !== undefined;
+  if ((references.length === 0) === !hasExternal || references.length > 1) {
+    fail('unsupported_recipe_semantics',
+      `Recipe ${recipe.id} ${direction} entries must be exactly one internal template or external asset.`);
+  }
+  const quantity = Number(entry.quantity);
+  if (!Number.isInteger(quantity) || quantity < 1) {
+    fail('unsupported_recipe_semantics',
+      `Recipe ${recipe.id} ${direction} quantity must be a positive integer.`);
+  }
+  if (hasExternal) {
+    if (direction !== 'input' || entry.assetType !== 'car'
+      || Object.keys(entry).some((key) => !['assetType', 'quantity'].includes(key))) {
+      fail('unsupported_recipe_semantics',
+        `Recipe ${recipe.id} supports only a closed-shape external car input.`);
+    }
+    return Object.freeze({ assetType: 'car', quantity });
+  }
+
+  const { value } = oneDeclared(entry, RECIPE_REFERENCE_ALIASES,
+    `Recipe ${recipe.id} ${direction} template`);
+  const templateId = canonicalString(value, 'Recipe template id');
+  const template = nodeOf(registry, templateId);
+  if (!template || !['material', 'item_template'].includes(template.type)) {
+    fail('unsupported_recipe_semantics',
+      `Recipe ${recipe.id} ${direction} must target a material or item template.`);
+  }
+  const allowed = new Set([...RECIPE_REFERENCE_ALIASES, 'quantity', 'quality']);
+  if (Object.keys(entry).some((key) => !allowed.has(key))) {
+    fail('unsupported_recipe_semantics',
+      `Recipe ${recipe.id} ${direction} contains unsupported authority fields.`);
+  }
+  const quality = entry.quality === undefined ? QUALITY
+    : canonicalString(entry.quality, 'Recipe material quality');
+  if (quality.length > 80) {
+    fail('unsupported_recipe_semantics', 'Recipe material quality exceeds the storage contract.');
+  }
+  if (template.type === 'item_template' && quality !== QUALITY) {
+    fail('unsupported_recipe_semantics',
+      `Unique recipe entry ${templateId} cannot declare a nonstandard quality.`);
+  }
+  return Object.freeze({ templateId, quantity, quality });
+}
+
+function normalizedRecipeCondition(recipe, condition) {
+  if (!condition || typeof condition !== 'object' || Array.isArray(condition)
+    || Object.getPrototypeOf(condition) !== Object.prototype) {
+    fail('unsupported_recipe_adapter', `Recipe ${recipe.id} has a malformed condition.`);
+  }
+  const { value: adapter } = oneDeclared(
+    condition, ['adapter', 'type', 'kind'], `Recipe ${recipe.id} condition adapter`,
+  );
+  if (!RECIPE_ADAPTERS.has(adapter)) {
+    fail('unsupported_recipe_adapter',
+      `Recipe ${recipe.id} uses unsupported crafting condition adapter ${String(adapter)}.`);
+  }
+  const aliases = RECIPE_CONDITION_ALIASES[adapter];
+  const { name, value } = oneDeclared(
+    condition, aliases, `Recipe ${recipe.id} ${adapter} condition`,
+  );
+  const allowed = new Set(['adapter', 'type', 'kind', ...aliases]);
+  if (Object.keys(condition).some((key) => !allowed.has(key))) {
+    fail('unsupported_recipe_semantics',
+      `Recipe ${recipe.id} ${adapter} condition contains unsupported authority fields.`);
+  }
+  if (adapter === 'level') {
+    const minimumLevel = Number(value);
+    if (!Number.isInteger(minimumLevel) || minimumLevel < 1) {
+      fail('unsupported_recipe_semantics', `Recipe ${recipe.id} requires a positive integer level.`);
+    }
+    return Object.freeze({ adapter, minimumLevel });
+  }
+  const target = canonicalString(value, `Recipe ${adapter} condition target`);
+  if (adapter === 'location') return Object.freeze({ adapter, value: target });
+  if (adapter === 'skill') return Object.freeze({ adapter, skillId: target });
+  return Object.freeze({ adapter, selector: Object.freeze({ kind: name, value: target }) });
+}
+
+function recipeOf(context, recipeId) {
   const id = canonicalString(recipeId, 'Recipe id');
-  const recipe = nodeOf(CRAFTING_GRAPH, id);
-  if (!recipe || recipe.type !== 'recipe') fail('bad_recipe', 'No such crafting recipe.');
+  const recipe = CRAFTING_DEFINITIONS.get(context)?.get(id);
+  if (!recipe) fail('bad_recipe', 'No such public crafting recipe.');
   return recipe;
 }
 
-function graphIdentity(recipe) {
-  const pkg = CRAFTING_GRAPH.byPackage.get(recipe.packageId);
+function graphIdentity(context, recipe) {
+  const pkg = context.registry.byPackage.get(recipe.packageId);
   return Object.freeze({
     packageId: recipe.packageId,
     packageVersion: Number(pkg.version),
@@ -90,9 +203,9 @@ function graphIdentity(recipe) {
   });
 }
 
-function graphMutationAuthority(recipe) {
+function graphMutationAuthority(context, recipe) {
   return {
-    ...graphIdentity(recipe),
+    ...graphIdentity(context, recipe),
     consumes: inputsOf(recipe),
     produces: outputsOf(recipe),
     conditions: conditionsOf(recipe),
@@ -118,6 +231,142 @@ function numericDeclaration(recipe, keys) {
 function cashCostOf(recipe) {
   return numericDeclaration(recipe, CASH_COST_KEYS) || 0;
 }
+
+function hasNumericDeclaration(recipe, keys) {
+  for (const container of [recipe, recipe.metadata]) {
+    if (!container || typeof container !== 'object' || Array.isArray(container)) continue;
+    if (Object.keys(container).some((key) => keys.has(normalizedKey(key)))) return true;
+  }
+  return false;
+}
+
+function conditionAdapter(condition) {
+  return condition?.adapter || condition?.type || condition?.kind;
+}
+
+function normalizedCraftingDefinitions(registry) {
+  if (!isWorldGraphRegistry(registry)) {
+    fail('bad_crafting_context', 'Crafting requires an authentic world-graph registry.');
+  }
+  validateGraph(registry);
+  const definitions = new Map();
+  for (const node of registry.nodes.values()) {
+    if (node.type !== 'recipe') continue;
+    const pkg = registry.byPackage.get(node.packageId);
+    if (!Number.isInteger(node.version) || node.version < 1
+      || !pkg || node.version !== pkg.version) {
+      fail('unsupported_recipe_semantics',
+        `Recipe ${node.id} version must be a positive integer equal to its package version.`);
+    }
+    if (Object.keys(node).some((key) => !RECIPE_FIELDS.has(key))
+      || (node.metadata && Object.keys(node.metadata)
+        .some((key) => !RECIPE_METADATA_FIELDS.has(key)))) {
+      fail('unsupported_recipe_semantics',
+        `Recipe ${node.id} contains authority fields outside the Phase 1 executable schema.`);
+    }
+    if (node.visibility !== 'public') {
+      fail('unsupported_recipe_visibility',
+        `Recipe ${node.id} is not public; Phase 1 has no durable recipe-discovery authority.`);
+    }
+    if (node.consumes !== undefined && node.inputs !== undefined) {
+      fail('unsupported_recipe_semantics',
+        `Recipe ${node.id} cannot declare both consumes and inputs.`);
+    }
+    if (node.produces !== undefined && node.outputs !== undefined) {
+      fail('unsupported_recipe_semantics',
+        `Recipe ${node.id} cannot declare both produces and outputs.`);
+    }
+    assertNoUnsupportedEconomy(node);
+    if ((Array.isArray(node.catalysts) && node.catalysts.length > 0)
+      || (Array.isArray(node.catalystInputs) && node.catalystInputs.length > 0)) {
+      fail('unsupported_recipe_semantics',
+        `Recipe ${node.id} uses catalysts, which Phase 1 crafting does not implement.`);
+    }
+
+    const repeatability = [node.repeatability, node.metadata?.repeatability]
+      .filter((value) => value !== undefined)
+      .map((value) => String(value).trim().toLowerCase());
+    const repeatable = [node.repeatable, node.metadata?.repeatable]
+      .filter((value) => value !== undefined);
+    const explicitlyUnbounded = repeatability.includes('repeatable') || repeatable.includes(true);
+    if (!explicitlyUnbounded || repeatability.some((value) => value !== 'repeatable')
+      || repeatable.some((value) => value !== true)
+      || hasNumericDeclaration(node, CRAFT_CAP_KEYS)) {
+      fail('unsupported_recipe_repeatability',
+        `Recipe ${node.id} must be explicitly repeatable and unbounded in Phase 1.`);
+    }
+
+    const conditions = conditionsOf(node).map((condition) => (
+      normalizedRecipeCondition(node, condition)
+    ));
+    const consumes = inputsOf(node).map((entry) => (
+      normalizedRecipeEntry(registry, node, entry, 'input')
+    ));
+    const produces = outputsOf(node).map((entry) => (
+      normalizedRecipeEntry(registry, node, entry, 'output')
+    ));
+    const externalInputs = consumes.filter((entry) => entry.assetType !== undefined);
+    const ownsCar = conditions.filter((condition) => conditionAdapter(condition) === 'owns_car');
+    if (externalInputs.length > 0) {
+      if (externalInputs.length !== 1 || externalInputs[0].assetType !== 'car'
+        || Number(externalInputs[0].quantity) !== 1
+        || consumes.some((entry) => entry.assetType === undefined)
+        || ownsCar.length < 1 || ownsCar.some((condition) => !graphCarSelector(condition))) {
+        fail('unsupported_salvage_recipe',
+          `Recipe ${node.id} must consume exactly one car and declare an owns_car selector.`);
+      }
+    } else if (ownsCar.length > 0) {
+      fail('unsupported_salvage_recipe',
+        `Recipe ${node.id} cannot gate on a car without consuming that car.`);
+    }
+
+    definitions.set(node.id, Object.freeze({
+      id: node.id,
+      type: node.type,
+      packageId: node.packageId,
+      version: node.version,
+      visibility: node.visibility,
+      repeatability: 'repeatable',
+      consumes,
+      produces,
+      conditions,
+      cashCost: cashCostOf(node),
+      metadata: node.metadata,
+    }));
+  }
+  return definitions;
+}
+
+/** Validate the exact executable subset implemented by this Phase 1 runtime. */
+export function validateCraftingDefinitions(registry) {
+  const definitions = normalizedCraftingDefinitions(registry);
+  return Object.freeze({
+    ok: true,
+    recipes: definitions.size,
+    recipeIds: Object.freeze([...definitions.keys()].sort()),
+  });
+}
+
+/** Mint opaque runtime authority from an authentic, validated graph registry. */
+export function createCraftingContext({ registry } = {}) {
+  const definitions = normalizedCraftingDefinitions(registry);
+  const context = Object.freeze({ registry });
+  CRAFTING_CONTEXTS.add(context);
+  CRAFTING_DEFINITIONS.set(context, definitions);
+  return context;
+}
+
+function contextOf(value) {
+  if (!value || typeof value !== 'object' || !CRAFTING_CONTEXTS.has(value)) {
+    fail('bad_crafting_context', 'Use createCraftingContext for crafting runtime authority.');
+  }
+  return value;
+}
+
+const CANONICAL_CRAFTING_REGISTRY = loadGraphPackages(PHASE1_WORLD_GRAPH_PACKAGES);
+export const DEFAULT_CRAFTING_CONTEXT = createCraftingContext({
+  registry: CANONICAL_CRAFTING_REGISTRY,
+});
 
 function asSkillSet(value) {
   if (value instanceof Set) return value;
@@ -151,7 +400,7 @@ function matchesCar(car, selector, selectedCarId = null) {
 
 function ownsCarSelectors(recipe) {
   return conditionsOf(recipe)
-    .filter((condition) => (condition?.adapter || condition?.type || condition?.kind) === 'owns_car')
+    .filter((condition) => conditionAdapter(condition) === 'owns_car')
     .map(graphCarSelector);
 }
 
@@ -172,7 +421,7 @@ function previewContext(ctx = {}) {
 }
 
 function blockerFor(condition, context, { selectedCarId = null, deferOwnsCar = false } = {}) {
-  const adapter = condition?.adapter || condition?.type || condition?.kind;
+  const adapter = conditionAdapter(condition);
   if (!RECIPE_ADAPTERS.has(adapter)) {
     fail('unsupported_recipe_adapter', `Unsupported crafting condition adapter ${String(adapter)}.`);
   }
@@ -195,16 +444,33 @@ function blockerFor(condition, context, { selectedCarId = null, deferOwnsCar = f
     ? null : { adapter, required: selector?.value, carId: selectedCarId };
 }
 
-function recipeBlockers(recipe, context, options) {
-  return conditionsOf(recipe)
+function recipeBlockers(recipe, context, options = {}) {
+  const conditions = conditionsOf(recipe);
+  const blockers = conditions
+    .filter((condition) => conditionAdapter(condition) !== 'owns_car')
     .map((condition) => blockerFor(condition, context, options))
     .filter(Boolean);
+  const carConditions = conditions.filter((condition) => conditionAdapter(condition) === 'owns_car');
+  if (!options.deferOwnsCar && carConditions.length > 0) {
+    const selectors = carConditions.map(graphCarSelector);
+    const matchesConjunction = context.cars.some((car) => (
+      selectors.every((selector) => matchesCar(car, selector, options.selectedCarId))
+    ));
+    if (!matchesConjunction) blockers.push({
+      adapter: 'owns_car',
+      required: selectors.length === 1 ? selectors[0]?.value
+        : selectors.map((selector) => ({ ...selector })),
+      carId: options.selectedCarId || null,
+    });
+  }
+  return blockers;
 }
 
 // Resource snapshots are presentation inputs only. The HTTP board supplies them from authoritative
 // reads; domain mutation still re-reads and locks cash/items independently. Keeping this optional
 // preserves pure callers that only need location/skill/car eligibility.
-export function recipeResourceBlockers(recipe, ctx) {
+export function recipeResourceBlockers(recipe, ctx, craftingContext = DEFAULT_CRAFTING_CONTEXT) {
+  const context = contextOf(craftingContext);
   const blockers = [];
   const rawCash = ctx.cash ?? ctx.character?.cash ?? ctx.ch?.cash;
   const cash = Number(rawCash);
@@ -231,7 +497,7 @@ export function recipeResourceBlockers(recipe, ctx) {
   const requiredItems = new Map();
   for (const entry of inputsOf(recipe)) {
     if (entry.assetType) continue;
-    const templateNode = nodeOf(CRAFTING_GRAPH, entry.templateId);
+    const templateNode = nodeOf(context.registry, entry.templateId);
     if (templateNode?.type === 'material') {
       const quality = entry.quality || QUALITY;
       const key = `${entry.templateId}\n${quality}`;
@@ -302,19 +568,17 @@ function publicEntry(entry) {
  *    inventory?:{stacks,items}, cash?:number }`.
  * It is never mutation authority; craft/salvage re-read the database.
  */
-export function recipeCatalog(ctx = {}) {
+export function recipeCatalog(ctx = {}, craftingContext = DEFAULT_CRAFTING_CONTEXT) {
+  const runtime = contextOf(craftingContext);
   const context = previewContext(ctx);
-  const discovered = ctx.discovered instanceof Set ? ctx.discovered : new Set(ctx.discovered || []);
-  return [...CRAFTING_GRAPH.nodes.values()]
-    .filter((node) => node.type === 'recipe'
-      && (node.visibility === 'public' || discovered.has(node.id)))
+  return [...CRAFTING_DEFINITIONS.get(runtime).values()]
     .map((recipe) => {
       const blockedBy = [
         ...recipeBlockers(recipe, context),
-        ...recipeResourceBlockers(recipe, ctx),
+        ...recipeResourceBlockers(recipe, ctx, runtime),
       ];
       return {
-        ...graphIdentity(recipe),
+        ...graphIdentity(runtime, recipe),
         id: recipe.id,
         title: recipe.metadata?.title || recipe.id,
         inputs: inputsOf(recipe).map(publicEntry),
@@ -339,7 +603,7 @@ async function actorContext(client, accountId) {
     'SELECT skill_id FROM character_skills WHERE character_id=$1', [character.id],
   );
   const cars = await client.query(
-    `SELECT id, model_id, trim_id, listed, pledged, minted_onchain, race_limit, pink_slip
+    `SELECT id, model_id, trim_id, rarity, listed, pledged, minted_onchain, race_limit, pink_slip
        FROM cars WHERE character_id=$1`,
     [character.id],
   );
@@ -364,7 +628,7 @@ function assertNoUnsupportedEconomy(recipe) {
     fail('unsupported_recipe_cost', 'This crafting runtime does not support OMR costs or outputs.');
   }
   for (const entry of [...inputsOf(recipe), ...outputsOf(recipe)]) {
-    if (!entry.assetType && !entry.templateId) {
+    if (!entry.assetType && !RECIPE_REFERENCE_ALIASES.some((name) => entry?.[name] !== undefined)) {
       fail('bad_recipe', `Recipe ${recipe.id} contains a non-item economy entry.`);
     }
   }
@@ -408,8 +672,8 @@ async function debitRecipeCash(client, actor, recipe) {
   return { cashCost, cashAfter: Number(debited.rows[0].cash) };
 }
 
-function templateFor(entry) {
-  const template = nodeOf(CRAFTING_GRAPH, entry.templateId);
+function templateFor(context, entry) {
+  const template = nodeOf(context.registry, entry.templateId);
   if (!template || !['material', 'item_template'].includes(template.type)) {
     fail('bad_recipe', `Recipe output ${String(entry.templateId)} is not an item template.`);
   }
@@ -427,13 +691,13 @@ async function uniqueInput(client, owner, entry) {
   return row.id;
 }
 
-async function consumeRecipeInputs(client, owner, recipe, mutation) {
+async function consumeRecipeInputs(client, context, owner, recipe, mutation) {
   const consumed = [];
   for (const entry of inputsOf(recipe)) {
     if (entry.assetType) {
       fail('salvage_required', 'External assets can only be consumed through salvageCar.');
     }
-    const template = templateFor(entry);
+    const template = templateFor(context, entry);
     if (template.type === 'material') {
       consumed.push(await consumeStack(
         client, owner, entry.templateId, Number(entry.quantity), entry.quality || QUALITY,
@@ -449,11 +713,11 @@ async function consumeRecipeInputs(client, owner, recipe, mutation) {
   return consumed;
 }
 
-async function produceRecipeOutputs(client, owner, recipe, mutation, provenanceKind) {
+async function produceRecipeOutputs(client, context, owner, recipe, mutation, provenanceKind) {
   const produced = [];
   for (const entry of outputsOf(recipe)) {
     if (entry.assetType) fail('bad_recipe', 'A recipe cannot produce an external asset.');
-    const template = templateFor(entry);
+    const template = templateFor(context, entry);
     if (template.type === 'material') {
       produced.push(await grantStack(
         client, owner, entry.templateId, Number(entry.quantity), entry.quality || QUALITY,
@@ -470,10 +734,13 @@ async function produceRecipeOutputs(client, owner, recipe, mutation, provenanceK
 }
 
 /** Execute one non-salvage recipe inside an active `withItemTransaction` callback. */
-export async function craftWorldGraphRecipe(client, h, recipeId, idempotencyKey) {
+export async function craftWorldGraphRecipe(
+  client, h, recipeId, idempotencyKey, craftingContext = DEFAULT_CRAFTING_CONTEXT,
+) {
+  const context = contextOf(craftingContext);
   const accountId = canonicalString(h?.accountId, 'Authenticated account id');
   const owner = { scope: 'account', id: accountId };
-  const recipe = recipeOf(recipeId);
+  const recipe = recipeOf(context, recipeId);
   assertNoUnsupportedEconomy(recipe);
   if (inputsOf(recipe).some((entry) => entry.assetType === 'car')) {
     fail('salvage_required', 'Vehicle recipes must use salvageCar.');
@@ -483,19 +750,19 @@ export async function craftWorldGraphRecipe(client, h, recipeId, idempotencyKey)
     owner,
     'craft',
     idempotencyKey,
-    graphMutationAuthority(recipe),
+    graphMutationAuthority(context, recipe),
     async (mutation) => {
       const actor = await actorContext(client, accountId);
       assertRequirements(recipe, actor);
       const cash = await debitRecipeCash(client, actor, recipe);
-      const inputs = await consumeRecipeInputs(client, owner, recipe, mutation);
+      const inputs = await consumeRecipeInputs(client, context, owner, recipe, mutation);
       const outputs = await produceRecipeOutputs(
-        client, owner, recipe, mutation, 'crafted',
+        client, context, owner, recipe, mutation, 'crafted',
       );
       return {
         ok: true,
         kind: 'craft',
-        recipe: graphIdentity(recipe),
+        recipe: graphIdentity(context, recipe),
         ...cash,
         inputs,
         outputs,
@@ -505,11 +772,15 @@ export async function craftWorldGraphRecipe(client, h, recipeId, idempotencyKey)
 }
 
 /** Execute one exact-car salvage recipe inside an active `withItemTransaction` callback. */
-export async function salvageCar(client, h, carIdValue, recipeId, idempotencyKey) {
+export async function salvageCar(
+  client, h, carIdValue, recipeId, idempotencyKey,
+  craftingContext = DEFAULT_CRAFTING_CONTEXT,
+) {
+  const context = contextOf(craftingContext);
   const accountId = canonicalString(h?.accountId, 'Authenticated account id');
   const owner = { scope: 'account', id: accountId };
   const carId = canonicalString(carIdValue, 'Car id');
-  const recipe = recipeOf(recipeId);
+  const recipe = recipeOf(context, recipeId);
   assertNoUnsupportedEconomy(recipe);
   const externalInputs = inputsOf(recipe).filter((entry) => entry.assetType);
   if (externalInputs.length !== 1 || externalInputs[0].assetType !== 'car'
@@ -522,7 +793,7 @@ export async function salvageCar(client, h, carIdValue, recipeId, idempotencyKey
     owner,
     'salvage_car',
     idempotencyKey,
-    { ...graphMutationAuthority(recipe), carId },
+    { ...graphMutationAuthority(context, recipe), carId },
     async (mutation) => {
       const actor = await actorContext(client, accountId);
       // The locked car helper is the sole mutation authority for owns_car. Deferring only this
@@ -534,12 +805,12 @@ export async function salvageCar(client, h, carIdValue, recipeId, idempotencyKey
         client, h, actor.character.id, carId, ownsCarSelectors(recipe),
       );
       const outputs = await produceRecipeOutputs(
-        client, owner, recipe, mutation, 'salvaged',
+        client, context, owner, recipe, mutation, 'salvaged',
       );
       return {
         ok: true,
         kind: 'salvage_car',
-        recipe: graphIdentity(recipe),
+        recipe: graphIdentity(context, recipe),
         ...cash,
         car,
         inputs: [{ assetType: 'car', quantity: 1, id: car.id }],

@@ -69,7 +69,7 @@ secret operational input and never belongs in the knowledge graph or committed c
 | Goods, cars, boats and gear | Ownership records with domain-specific transfer/conservation checks; not all are §10.4 currencies. |
 | ETH and external assets | On-chain value observed through confirmed events and mirrored into dedicated revenue/reserve tables. |
 | Standing, reputation and progression | Non-currency state; can gate capabilities but must not be confused with a redeemable balance. |
-| Phase 1 graph items | `item_stacks` plus permanent `item_instances`; append-only `item_events` prove quantity and unique custody, while `operation_escrow` is the single live escrow claim. `collection_log` is not item authority. |
+| Phase 1 graph items | `item_stacks` plus permanent `item_instances`; append-only `item_events` prove exact-quality stack movement and every unique-custody transition, while `operation_escrow` is the single live escrow claim. Completed zero-cash `salvage_car` mutation guards are authoritative car sinks. `collection_log` is not item authority. |
 
 Cash cannot be converted into $OMR through a general swap or laundering path. The documented window
 is one-way $OMR to cash, subject to its till. Retired routes remain explicit and should continue to
@@ -81,12 +81,19 @@ The canonical CORE + AUTOMOTIVE + BELLADONNA graph contains no $OMR authority an
 cash source. Its only cash movement is the exact `$300` `craft:recipe:hardened_steel` sink, written
 once to `transactions`; salvage, other crafting, mysteries and social operations move no cash. Four
 named invariants reconcile stack event deltas, permanent unique-item creation/current custody,
-escrow parity and the currency boundary.
+the full ordered unique-item state machine, escrow/depositor parity, audited car-salvage sinks and the
+currency boundary. Item aggregates reserve their global mutation guard before character, domain and
+item locks; living-character authority is revalidated after the guard.
 
 Generic `(owner_scope, owner_id)` values and operation depositor tuples are immutable historical
 ledger state, not estate assets. Death and replacement never wipe, rewrite, auto-inherit or duplicate
 them. An account may cancel its own old character-scoped instance, but release goes once to the exact
 recorded historical depositor; the heir cannot drive or claim that old instance.
+Current mystery gameplay is unique per owner + graph + version. Exact-ID release-only cancellation for
+old mysteries remains available after version bumps or package retirement. For old operations, only the
+authenticated stored opener account has release-only cancellation authority, independent of current Crew
+membership; the Crew is historical association, not cancellation authority. Neither recovery path
+interprets retired graph nodes, effects or rewards.
 
 ## Money router and chain reserve
 

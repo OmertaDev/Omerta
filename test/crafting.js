@@ -8,13 +8,17 @@ import {
   withItemTransaction,
 } from '../src/items.js';
 import {
+  createCraftingContext,
   craftWorldGraphRecipe,
   recipeCatalog,
   recipeResourceBlockers,
   salvageCar,
+  validateCraftingDefinitions,
 } from '../src/crafting.js';
 import { carMatchesGraphSelector } from '../src/economy.js';
 import { AUTOMOTIVE_SALVAGE_PACKAGE } from '../src/content/automotive-salvage.js';
+import { PHASE1_WORLD_GRAPH_PACKAGES } from '../src/content/phase1.js';
+import { loadAndValidateGraphPackages } from '../src/worldgraph-validate.js';
 
 const pool = await makeDb();
 const tx = (action) => withItemTransaction(pool, action);
@@ -40,6 +44,11 @@ const ROLLBACK_ACCOUNT = 'crafting-rollback-account';
 const ROLLBACK_CHARACTER = 'crafting-rollback-character';
 const ROLLBACK_OWNER = { scope: 'account', id: ROLLBACK_ACCOUNT };
 const ROLLBACK_CAR = 'crafting-rollback-car';
+const FIXTURE_CARS = Object.freeze({
+  modelOnly: 'crafting-fixture-model-only',
+  classOnly: 'crafting-fixture-class-only',
+  matching: 'crafting-fixture-matching',
+});
 const rollbackH = {
   accountId: ROLLBACK_ACCOUNT,
   owned: { cars: [{ id: ROLLBACK_CAR, model_id: 'junker', trim_id: 'stock' }] },
@@ -59,6 +68,72 @@ const moneyOf = async (characterId, accountId) => ({
     'SELECT COUNT(*) AS n FROM transactions WHERE character_id=$1', [characterId],
   )).rows[0].n),
 });
+
+function fixturePackage(change = () => {}) {
+  const salvage = {
+    id: 'recipe:fixture_salvage',
+    type: 'recipe',
+    version: 1,
+    visibility: 'public',
+    repeatability: 'repeatable',
+    consumes: [{ assetType: 'car', quantity: 1 }],
+    produces: [{ templateId: 'mat:fixture_fastener', quantity: 1, quality: 'standard' }],
+    conditions: [
+      { adapter: 'location', value: 'foundry' },
+      { adapter: 'owns_car', carType: 'junker' },
+      { adapter: 'owns_car', vehicleClass: 'rare' },
+    ],
+  };
+  const craft = {
+    id: 'recipe:fixture_tool',
+    type: 'recipe',
+    version: 1,
+    visibility: 'public',
+    repeatability: 'repeatable',
+    consumes: [{ templateId: 'mat:fixture_fastener', quantity: 1, quality: 'standard' }],
+    produces: [{ templateId: 'item:fixture_tool', quantity: 1 }],
+    conditions: [{ adapter: 'location', value: 'foundry' }],
+  };
+  const pkg = {
+    id: 'crafting-runtime-fixture',
+    version: 1,
+    season: 'core',
+    dependsOn: ['core-materials', 'automotive-salvage'],
+    nodes: [
+      {
+        id: 'mat:fixture_fastener', type: 'material', version: 1, visibility: 'public',
+        metadata: { inventoryClass: 'stack' },
+      },
+      {
+        id: 'item:fixture_tool', type: 'item_template', version: 1, visibility: 'public',
+        metadata: { inventoryClass: 'unique' },
+      },
+      {
+        id: 'item:fixture_tool_alt', type: 'item_template', version: 1, visibility: 'public',
+        metadata: { inventoryClass: 'unique' },
+      },
+      salvage,
+      craft,
+    ],
+  };
+  change({ pkg, salvage, craft });
+  return pkg;
+}
+
+function acceptedFixtureRegistry(change) {
+  return loadAndValidateGraphPackages([
+    ...PHASE1_WORLD_GRAPH_PACKAGES,
+    fixturePackage(change),
+  ]);
+}
+
+const EXTENDED_REGISTRY = acceptedFixtureRegistry();
+const EXTENDED_CRAFTING = createCraftingContext({ registry: EXTENDED_REGISTRY });
+const ALIASED_ENTRY_REGISTRY = acceptedFixtureRegistry(({ craft }) => {
+  craft.consumes = [{ materialId: 'mat:fixture_fastener', quantity: 1, quality: 'standard' }];
+  craft.produces = [{ itemTemplateId: 'item:fixture_tool', quantity: 1 }];
+});
+const ALIASED_ENTRY_CRAFTING = createCraftingContext({ registry: ALIASED_ENTRY_REGISTRY });
 
 try {
   assert.equal(AUTOMOTIVE_SALVAGE_PACKAGE.id, 'automotive-salvage');
@@ -80,6 +155,91 @@ try {
   assert(carMatchesGraphSelector(selectorCar, { kind: 'assetType', value: 'car' }));
   assert.equal(carMatchesGraphSelector(selectorCar, { kind: 'carId', value: 'junker' }), false,
     'a carId alias cannot accidentally match the model');
+
+  assert.deepEqual(validateCraftingDefinitions(EXTENDED_REGISTRY), {
+    ok: true,
+    recipes: 5,
+    recipeIds: [
+      'recipe:car_salvage_basic',
+      'recipe:fixture_salvage',
+      'recipe:fixture_tool',
+      'recipe:hardened_steel',
+      'recipe:precision_lock_tool',
+    ],
+  }, 'the runtime accepts an authentic validated extension without editing crafting code');
+  assert.throws(
+    () => createCraftingContext({ registry: { byPackage: new Map(), nodes: new Map() } }),
+    (error) => error?.code === 'bad_crafting_context',
+    'a structurally plausible plain registry cannot mint crafting authority',
+  );
+  assert.throws(
+    () => recipeCatalog({}, EXTENDED_REGISTRY),
+    (error) => error?.code === 'bad_crafting_context',
+    'even an authentic registry must enter through the opaque crafting-context constructor',
+  );
+
+  const rejectedRuntimeFixtures = [
+    ['missing recipe version', ({ craft }) => { delete craft.version; },
+      'unsupported_recipe_semantics'],
+    ['zero recipe version', ({ craft }) => { craft.version = 0; },
+      'unsupported_recipe_semantics'],
+    ['string recipe version', ({ craft }) => { craft.version = '1'; },
+      'unsupported_recipe_semantics'],
+    ['mismatched recipe version', ({ craft }) => { craft.version = 2; },
+      'unsupported_recipe_semantics'],
+    ['once recipe', ({ craft }) => { craft.repeatability = 'once'; },
+      'unsupported_recipe_repeatability'],
+    ['capped recipe', ({ craft }) => {
+      craft.repeatability = 'capped';
+      craft.cap = 2;
+    }, 'unsupported_recipe_repeatability'],
+    ['catalyst recipe', ({ craft }) => {
+      craft.catalystInputs = [{ templateId: 'mat:wire', quantity: 1, quality: 'standard' }];
+    }, 'unsupported_recipe_semantics'],
+    ['OMR-bearing recipe', ({ craft }) => { craft.omrCost = 1; },
+      'unsupported_recipe_cost'],
+    ['unsupported condition adapter', ({ craft }) => {
+      craft.conditions.push({ adapter: 'time_window', windowId: 'fixture-night' });
+    }, 'unsupported_recipe_adapter'],
+    ['dual input aliases', ({ craft }) => {
+      craft.inputs = [{ templateId: 'mat:wire', quantity: 1, quality: 'standard' }];
+    }, 'unsupported_recipe_semantics'],
+    ['dual output aliases', ({ craft }) => {
+      craft.outputs = [{ templateId: 'item:fixture_tool_alt', quantity: 1 }];
+    }, 'unsupported_recipe_semantics'],
+    ['nonpublic recipe', ({ craft }) => { craft.visibility = 'hidden'; },
+      'unsupported_recipe_visibility'],
+    ['car source without selector', ({ salvage }) => {
+      salvage.conditions = [{ adapter: 'location', value: 'foundry' }];
+    }, 'unsupported_salvage_recipe'],
+    ['car gate without car consumption', ({ craft }) => {
+      craft.conditions.push({ adapter: 'owns_car', carType: 'junker' });
+    }, 'unsupported_salvage_recipe'],
+    ['mixed internal and external input', ({ salvage }) => {
+      salvage.consumes = [{
+        templateId: 'mat:scrap_steel', assetType: 'car', quantity: 1,
+      }];
+    }, 'unsupported_recipe_semantics'],
+    ['conflicting internal references', ({ craft }) => {
+      craft.consumes = [{
+        templateId: 'mat:fixture_fastener', materialId: 'mat:wire', quantity: 1,
+      }];
+    }, 'unsupported_recipe_semantics'],
+    ['cooldown authority', ({ craft }) => { craft.metadata = { cooldownSeconds: 60 }; },
+      'unsupported_recipe_semantics'],
+    ['discovery authority', ({ craft }) => { craft.metadata = { discoveryRule: 'secret' }; },
+      'unsupported_recipe_semantics'],
+    ['dynamic quality authority', ({ craft }) => { craft.metadata = { qualityRule: 'random' }; },
+      'unsupported_recipe_semantics'],
+  ];
+  for (const [label, change, code] of rejectedRuntimeFixtures) {
+    const registry = acceptedFixtureRegistry(change);
+    assert.throws(
+      () => createCraftingContext({ registry }),
+      (error) => error?.code === code,
+      `${label} is generic-valid graph data but cannot become Phase 1 crafting authority`,
+    );
+  }
 
   assert.deepEqual(recipeResourceBlockers({
     id: 'recipe:test-unique-input',
@@ -131,10 +291,20 @@ try {
             ($7,$2,'junker','stock',20,false,true,false,null,false),
             ($8,$2,'junker','stock',20,false,false,true,null,false),
             ($9,$2,'junker','stock',20,false,false,false,250,false),
-            ($10,$2,'junker','stock',20,false,false,false,null,true)`,
+            ($10,$2,'junker','stock',20,false,false,false,null,true),
+            ($11,$2,'junker','stock',20,false,false,false,null,false),
+            ($12,$2,'falcone','base',20,false,false,false,null,false),
+            ($13,$2,'junker','stock',20,false,false,false,null,false)`,
     [CAR, CHARACTER, COLLISION_CAR, ROLLBACK_CAR, ROLLBACK_CHARACTER,
       BLOCKED_CARS.listed, BLOCKED_CARS.pledged, BLOCKED_CARS.minted,
-      BLOCKED_CARS.raceLimit, BLOCKED_CARS.pinkSlip],
+      BLOCKED_CARS.raceLimit, BLOCKED_CARS.pinkSlip,
+      FIXTURE_CARS.modelOnly, FIXTURE_CARS.classOnly, FIXTURE_CARS.matching],
+  );
+  await pool.query(
+    `UPDATE cars SET rarity=CASE id
+       WHEN $1 THEN 'common' WHEN $2 THEN 'rare' WHEN $3 THEN 'rare' ELSE rarity END
+      WHERE id IN ($1,$2,$3)`,
+    [FIXTURE_CARS.modelOnly, FIXTURE_CARS.classOnly, FIXTURE_CARS.matching],
   );
 
   // Discovery is a pure preview. It may explain requirements from supplied state, but mutations
@@ -203,6 +373,63 @@ try {
 
   await pool.query("UPDATE characters SET loc='foundry' WHERE id=$1", [CHARACTER]);
   const moneyBefore = await moneyOf(CHARACTER, ACCOUNT);
+
+  const disjointSelectorCars = [
+    { id: FIXTURE_CARS.modelOnly, model_id: 'junker', trim_id: 'stock', rarity: 'common' },
+    { id: FIXTURE_CARS.classOnly, model_id: 'falcone', trim_id: 'base', rarity: 'rare' },
+  ];
+  const disjointPreview = recipeCatalog({
+    character: { id: CHARACTER, loc: 'foundry', level: 10 },
+    cars: disjointSelectorCars,
+  }, EXTENDED_CRAFTING).find((entry) => entry.id === 'recipe:fixture_salvage');
+  assert.equal(disjointPreview.available, false,
+    'different cars cannot independently satisfy conjunctive owns_car selectors');
+  assert(disjointPreview.blockedBy.some((blocker) => blocker.adapter === 'owns_car'));
+  for (const car of disjointSelectorCars) {
+    await assert.rejects(
+      tx((client) => salvageCar(
+        client, h, car.id, 'recipe:fixture_salvage', `fixture-disjoint-${car.id}`,
+        EXTENDED_CRAFTING,
+      )),
+      (error) => error?.code === 'no_car',
+      'the locked mutation applies that same selector conjunction to one concrete car',
+    );
+  }
+  assert.equal(Number((await pool.query(
+    'SELECT COUNT(*) AS n FROM cars WHERE id IN ($1,$2)',
+    [FIXTURE_CARS.modelOnly, FIXTURE_CARS.classOnly],
+  )).rows[0].n), 2, 'selector refusals preserve both disjoint cars');
+  assert.equal(Number((await pool.query(
+    "SELECT COUNT(*) AS n FROM item_mutation_guards WHERE idempotency_key LIKE 'fixture-disjoint-%'",
+  )).rows[0].n), 0, 'selector refusals leave no item-mutation reservation');
+  const matchingPreview = recipeCatalog({
+    character: { id: CHARACTER, loc: 'foundry', level: 10 },
+    cars: [{
+      id: FIXTURE_CARS.matching, model_id: 'junker', trim_id: 'stock', rarity: 'rare',
+    }],
+  }, EXTENDED_CRAFTING).find((entry) => entry.id === 'recipe:fixture_salvage');
+  assert.equal(matchingPreview.available, true,
+    'one car matching the graph model and persisted rarity satisfies the preview');
+  const fixtureSalvage = await tx((client) => salvageCar(
+    client, h, FIXTURE_CARS.matching, 'recipe:fixture_salvage', 'fixture-salvage-matching',
+    EXTENDED_CRAFTING,
+  ));
+  assert.equal(fixtureSalvage.outputs[0].templateId, 'mat:fixture_fastener');
+  const fixtureCraft = await tx((client) => craftWorldGraphRecipe(
+    client, h, 'recipe:fixture_tool', 'fixture-craft-tool', ALIASED_ENTRY_CRAFTING,
+  ));
+  assert.equal(fixtureCraft.outputs[0].templateId, 'item:fixture_tool',
+    'validated internal materialId/itemTemplateId aliases execute through normalized authority');
+  const fixtureCatalogIdentity = recipeCatalog({
+    character: { id: CHARACTER, loc: 'foundry', level: 10 },
+    inventory: { stacks: [], items: [] },
+  }, ALIASED_ENTRY_CRAFTING).find(({ id }) => id === 'recipe:fixture_tool');
+  assert.deepEqual(fixtureCraft.recipe, {
+    packageId: fixtureCatalogIdentity.packageId,
+    packageVersion: fixtureCatalogIdentity.packageVersion,
+    recipeId: fixtureCatalogIdentity.recipeId,
+    recipeVersion: fixtureCatalogIdentity.recipeVersion,
+  }, 'catalog and mutation return the same exact validated package/recipe identity');
 
   const deniedCars = [
     [BLOCKED_CARS.listed, 'listed'],
