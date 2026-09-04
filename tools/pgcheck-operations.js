@@ -1,6 +1,7 @@
 // Real-PostgreSQL-only race probes for the world-graph social-operation runtime.
 // Called by tools/pgcheck.js after schema boot. The ordinary pg-mem suite cannot exercise native
 // row locks, MVCC visibility, deadlock/lock timeouts, or transaction rollback across separate clients.
+import crypto from 'node:crypto';
 import {
   assignRole,
   cancelOperation,
@@ -60,6 +61,7 @@ function operationNodes(rootId, stem, { escrowRoles = [], rewards = true } = {})
 function timeoutPool(pool, { failTerminalUpdate = false } = {}) {
   let terminalFailureUsed = false;
   return {
+    query: (...args) => pool.query(...args),
     async connect() {
       const inner = await pool.connect();
       return new Proxy(inner, {
@@ -92,6 +94,7 @@ function trackedTimeoutPool(pool) {
   return {
     pid,
     pool: {
+      query: (...args) => pool.query(...args),
       async connect() {
         const inner = await pool.connect();
         return new Proxy(inner, {
@@ -128,6 +131,7 @@ function pausedOpenCrewPool(pool) {
     pid: tracked.pid,
     release: () => releaseLock(),
     pool: {
+      query: (...args) => tracked.pool.query(...args),
       async connect() {
         const inner = await tracked.pool.connect();
         return new Proxy(inner, {
@@ -157,7 +161,7 @@ function pausedAuthorityPool(pool) {
   let signalLocked;
   let releaseLocks;
   let paused = false;
-  let authorityLocked = false;
+  let membershipLockSeen = false;
   const locked = new Promise((resolve) => { signalLocked = resolve; });
   const released = new Promise((resolve) => { releaseLocks = resolve; });
   const tracked = trackedTimeoutPool(pool);
@@ -166,19 +170,24 @@ function pausedAuthorityPool(pool) {
     pid: tracked.pid,
     release: () => releaseLocks(),
     pool: {
+      query: (...args) => tracked.pool.query(...args),
       async connect() {
         const inner = await tracked.pool.connect();
         return new Proxy(inner, {
           get(target, property) {
             if (property === 'query') return async (sql, params) => {
-              if (authorityLocked && !paused) {
+              const membershipLock = /FROM\s+crew_members\s+WHERE\s+account_id=\$1\s+FOR UPDATE/i
+                .test(String(sql));
+              // Each participant membership is locked with one static/preparable statement in
+              // sorted account order. Pause at the first query *after* that loop, which proves all
+              // bounded participant-authority rows are locked without relying on generated IN SQL.
+              if (membershipLockSeen && !membershipLock && !paused) {
                 paused = true;
                 signalLocked();
                 await released;
               }
               const result = await target.query(sql, params);
-              if (/FROM\s+crew_members\s+WHERE\s+account_id\s+IN\s*\(.+\)\s+ORDER BY\s+account_id\s+FOR UPDATE/is
-                .test(String(sql))) authorityLocked = true;
+              if (membershipLock) membershipLockSeen = true;
               return result;
             };
             const value = target[property];
@@ -239,8 +248,10 @@ export async function runOperationPgChecks({ pool, check }) {
   const graphId = `${prefix}-graph`;
   const crewId = `${prefix}-crew`;
   const otherCrewId = `${prefix}-other-crew`;
-  const accounts = Array.from({ length: 5 }, (_, index) => `${prefix}-account-${index}`);
-  const characters = Array.from({ length: 5 }, (_, index) => `${prefix}-character-${index}`);
+  // Real gameplay account/character ids are UUID strings. Using prefix-shaped fixture ids made the
+  // legacy loadOwned union fail at UUID comparison sites before the intended operation race ran.
+  const accounts = Array.from({ length: 5 }, () => crypto.randomUUID());
+  const characters = Array.from({ length: 5 }, () => crypto.randomUUID());
   const roots = {
     left: `${prefix}:left`,
     right: `${prefix}:right`,

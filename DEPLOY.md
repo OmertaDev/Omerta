@@ -6,7 +6,9 @@ are set). Two Node processes over one Postgres DB. No build step.
 ## 0. Pre-flight (on the release commit)
 - [ ] `npm ci` (or `npm install`) — one runtime dep tree; no native build required for the game (the
       `@resvg/resvg-js` used by social-share PNGs is an **optionalDependency** — absent → cards fall back to SVG).
-- [ ] `npm test` → **113 suites green**.
+- [ ] `npm test` → every suite in `test/` is mandatory and green (the gate derives the current count).
+- [ ] `npm run worldgraph:check` → deterministic CORE + AUTOMOTIVE + BELLADONNA graph validation;
+      this is separate from `npm run content:check` for authored content packs.
 - [ ] `node tools/sim.js` → ends with `✅ sim complete — §10.4 holds exactly` (drift-0).
 - [ ] **`npm run preflight`** — on the box, with the real environment loaded. Runs exactly the checks
       the server runs at startup, so a green result means it will boot; non-zero exit means it won't,
@@ -19,6 +21,8 @@ are set). Two Node processes over one Postgres DB. No build step.
       core loop on real Postgres and FAILS on any pg deprecation. It has already caught one: 16
       overlapping queries on a single pooled client in `loadOwned`, deprecated today and removed in
       pg@9 — i.e. an upgrade would have 500'd every action in the game.
+      Its Phase 1 leg checks all 12 item/mystery/operation tables, native constraints and races,
+      the full Belladonna chain, exact `$300` sink, zero $OMR, provenance and escrow cleanup.
       ```
       createdb omerta_check
       DATABASE_URL=postgres://localhost/omerta_check JWT_SECRET=x MOD_KEY=y \
@@ -333,9 +337,10 @@ or call the script directly:
 ```
 It dumps to a temp name, **verifies**, and only then moves the file into place — so a run that dies
 halfway leaves no truncated file wearing a plausible name. Verification is: readable by `pg_restore`,
-the expected schema, `accounts`/`characters`/`transactions` present, a size floor, **and actual rows**
-(a schema-only database dumps every table — 222 in the current schema — at ~200 KB: it clears every other check while holding
-nothing, so only reading the data section back proves there is data in there). Retention runs **only
+the expected schema, `accounts`/`characters`/`transactions` plus all 12 Phase 1 item, mystery, and
+operation authority tables present, a size floor, **and actual rows** (a schema-only database dumps
+every current table and can clear every structural check while holding nothing, so only reading the
+data section back proves there is data in there). Retention runs **only
 after a good dump**, so a run of bad nights can never age out the last known-good backup.
 - exit non-zero = **no backup was kept**; the message says why. Alert on it.
 - `BACKUP_MIN_ROWS=0` for a genuinely cold database (nobody has signed up yet).
@@ -366,7 +371,7 @@ Success looks exactly like this (measured, not paraphrased):
 ```
 dumping…
 verifying…
-backup verified: ./backups/omerta-20260726-123716.dump (194085 bytes, 161 tables)   # an example run from 2026-07 — the table count grows with the schema (222 today)
+backup verified: ./backups/omerta-20260726-123716.dump (194085 bytes, 161 tables)   # historical example; the current gate derives schema size
 restore with: pg_restore --no-owner --clean --if-exists -d <target> ./backups/omerta-…dump
 ```
 If it instead says `'accounts' holds 0 rows … expected ≥ 1`, it dumped an EMPTY database — almost always
@@ -378,9 +383,10 @@ addresses, the entire ledger — so treat it like a password: keep it off shared
 (`backups/` is already ignored).
 
 **The script has its own regression test** — `npm run backup:selftest`, pointed at a throwaway
-Postgres it may create and drop databases on. It builds a populated database, a schema-only one and a
+Postgres it may create and drop databases on. It builds a linked Phase 1 fixture across all 12 new
+tables, a schema-only database and a
 non-OMERTÀ one, and proves each check *refuses what it should*: a verification that cannot fail is
-decoration. CI runs it against a real Postgres on every push, and that has already earned itself —
+decoration. CI runs it against a real Postgres on every applicable workflow run, and that has already earned itself —
 it caught a **race in the verifier that refused GOOD dumps**. The required-table check piped into
 `grep -q` under `pipefail`; `grep -q` exits at the first match and SIGPIPEs the writer still emitting
 the rest of a ~34 KB table of contents, so a *successful* match returned 141 and the backup was

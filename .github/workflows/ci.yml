@@ -44,6 +44,9 @@ jobs:
           cache: npm
       - run: npm ci
 
+      - name: Phase 1 world graph (deterministic package validation)
+        run: npm run worldgraph:check
+
       # The knowledge artifacts are REVISION-STAMPED (graph.json records its own sourceRevision and
       # carries the git lineage as ~1,200 Commit nodes), so on `push: main` they are necessarily
       # stamped from whichever branch generated them and the byte-comparison in `npm test` cannot be

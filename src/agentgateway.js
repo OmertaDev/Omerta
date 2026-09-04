@@ -1610,9 +1610,11 @@ export function llmsTxt({ baseUrl = 'https://www.omerta.fun' } = {}) {
 - [Inventory](${baseUrl}/v1/worldgraph/inventory): conserved account-owned materials and unique items.
 - [Recipes](${baseUrl}/v1/worldgraph/recipes): discovered recipes with current cash, material, skill, location, and car blockers. Use the issued recipe and owned-car identifiers with the craft/salvage routes.
 - Assign an eligible crafted unique item to the authenticated account's current living character with POST ${baseUrl}/v1/worldgraph/items/:itemId/assign-current-character. The body is empty; the server chooses both owners.
-- [Mysteries](${baseUrl}/v1/worldgraph/mysteries): discover and start a graph, read its board, then deliberately discover/complete/choose. Keep the server-issued instanceId so POST /v1/worldgraph/mysteries/:graphId/cancel can recover historical escrow after character replacement.
+- [Mysteries](${baseUrl}/v1/worldgraph/mysteries): discover and start a graph, read its board, then deliberately discover/complete/choose. Keep the server-issued instanceId so POST /v1/worldgraph/mysteries/:graphId/cancel can recover historical escrow after character replacement. Generic owner/depositor tuples are immutable history, not estate assets: death/replacement never wipes, rewrites, inherits, or duplicates them; release returns once to the exact historical depositor, and an heir cannot drive or claim the old instance.
 - [Crew operations](${baseUrl}/v1/worldgraph/operations): discover/open, read shared or assigned-role boards, claim one role, contribute, then complete or cancel. Shared boards never reveal role-private evidence.
 - Every mutation requires a fresh Idempotency-Key; exact retries replay. Missing, foreign, hidden, and otherwise unavailable private identifiers use non-enumerating errors.
+- The only cash movement is the exact $300 craft:recipe:hardened_steel sink; all other Phase 1 actions are cash-neutral and every action is $OMR-neutral. item_stacks, permanent item_instances, item_events, and operation_escrow are authority; collection_log is not.
+- Operators run npm run worldgraph:check over the canonical CORE + AUTOMOTIVE + BELLADONNA manifest. It is separate from the authored-content compiler and content:check.
 - These world-graph actions are direct-only. Discovery and boards grant no POST /v1/agent/act authority, and the autonomous queue does not execute them.
 
 ## How to earn (skill-based, open to agents)

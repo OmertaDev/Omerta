@@ -4419,6 +4419,11 @@ CREATE UNIQUE INDEX IF NOT EXISTS ux_content_effects_entitlement
   ON content_instance_effects (subject_account, kind, target_id);
 
 -- ── WORLD-GRAPH ITEM ECONOMY — conserved stacks + permanent unique instances ─────────────────
+-- Phase 1 death policy: every generic owner tuple is immutable historical ledger state, not an
+-- estate asset.  Death/replacement never wipes, rewrites, auto-inherits, or duplicates an
+-- (owner_scope, owner_id) tuple, a mystery owner tuple, or an operation escrow depositor tuple.
+-- Account-authorized lifecycle recovery may close a historical instance and release escrow only
+-- to its exact recorded historical depositor; a replacement character cannot drive or claim it.
 -- This is the ordinary gameplay inventory authority used by data-defined world graphs. It is
 -- deliberately separate from the earlier exact-content-hash workshop lots: authored definitions
 -- may nominate template ids and quantities only through an allow-listed runtime, while every actual

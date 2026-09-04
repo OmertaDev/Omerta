@@ -176,7 +176,7 @@ trail is docs/AUDITS.md (85+ reports) and the cited files.
 
 | Item | Status | Evidence / disposition |
 |---|---|---|
-| CI/CD | ✅ | ci.yml (112 suites + sim drift-0 + scale + mobile w/ real Chromium; pgcheck on real Postgres 16) + forge.yml (305 contract tests + the three e2e provers on anvil); autoDeployTrigger: checksPass |
+| CI/CD | ✅ | ci.yml (every discovered suite + deterministic world-graph and authored-content gates + sim drift-0 + scale + mobile w/ real Chromium; pgquery/pgcheck/backup on real Postgres 16) + forge.yml (305 contract tests + the three e2e provers on anvil); autoDeployTrigger: checksPass |
 | Docker / K8s / Helm / Service Discovery / Terraform | — | Render-native Node runtime; two services + one DB; render.yaml IS the IaC format for this platform |
 | Infrastructure as Code | ◐▲§8c | render.yaml covers the full stack; the blueprint-drift check (the 16-day incident) is now a written runbook step |
 | Build Caching | ◐ | npm cached in both CI jobs; Chromium (~150MB) + forge lib/ re-fetched per run — DEFERRED (§4, cost-only) |

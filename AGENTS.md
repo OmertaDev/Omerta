@@ -281,7 +281,11 @@ the currently visible discover/complete/choice interactions. Cancel with
 `POST /v1/worldgraph/mysteries/:graphId/cancel {"instanceId":"..."}`. The exact
 instance ID lets the authenticated account recover its historical mystery
 escrow even after the owning character dies or is replaced; it never grants
-authority over another account's instance.
+authority over another account's instance. Phase 1 treats every generic owner
+and escrow-depositor tuple as immutable historical ledger state, not an estate
+asset. Death and replacement never wipe, rewrite, inherit, or duplicate those
+tuples; cancellation releases once to the exact recorded historical depositor,
+and an heir cannot drive or claim the old character-scoped instance.
 
 After the individual graph opens its Crew gate, use
 `GET /v1/worldgraph/operations`, open the listed operation, read the shared
@@ -294,7 +298,13 @@ non-enumerating unavailable errors.
 Every world-graph mutation requires `Idempotency-Key`; exact retries replay and
 a key cannot be rebound to a different request. These are intentional direct
 content actions only. Discovery does **not** grant `POST /v1/agent/act`
-authority, and neither Agent Turn nor Agent Alpha guesses or executes them.
+authority, and neither Agent Turn nor Agent Alpha guesses or executes them. The
+only cash movement is the exact `$300` `craft:recipe:hardened_steel` sink; every
+other Phase 1 action is cash-neutral and all are $OMR-neutral. `item_stacks`,
+permanent `item_instances`, append-only `item_events`, and `operation_escrow`
+are the authority—`collection_log` is not. Operators run `npm run
+worldgraph:check` over the canonical CORE + AUTOMOTIVE + BELLADONNA manifest;
+this gate is separate from the authored-content compiler and `content:check`.
 
 ### Authored stories (direct, revision-checked play)
 

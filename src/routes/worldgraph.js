@@ -32,22 +32,21 @@ import {
   operationBoard,
   roleBoard,
 } from '../operations.js';
-import { CORE_MATERIALS_PACKAGE } from '../content/core-materials.js';
-import { AUTOMOTIVE_SALVAGE_PACKAGE } from '../content/automotive-salvage.js';
-import { BELLADONNA_PACKAGE } from '../content/belladonna.js';
+import { PHASE1_WORLD_GRAPH_PACKAGES } from '../content/phase1.js';
 import { loadAndValidateGraphPackages } from '../worldgraph-validate.js';
 
-export const PHASE1_WORLD_GRAPH = loadAndValidateGraphPackages([
-  CORE_MATERIALS_PACKAGE,
-  AUTOMOTIVE_SALVAGE_PACKAGE,
-  BELLADONNA_PACKAGE,
-]);
+export const PHASE1_WORLD_GRAPH = loadAndValidateGraphPackages(PHASE1_WORLD_GRAPH_PACKAGES);
 
 export const WORLD_GRAPH_CAPABILITIES = Object.freeze({
   phase: 1,
   authenticated: true,
   directOnly: true,
   agentActAuthority: false,
+  collectionLogAuthority: false,
+  omrAuthority: false,
+  cashAuthority: Object.freeze({ hardenedSteelSink: 300 }),
+  deathPolicy: 'immutable_history_no_inheritance',
+  validation: 'npm run worldgraph:check',
   routes: Object.freeze({
     inventory: '/v1/worldgraph/inventory',
     recipes: '/v1/worldgraph/recipes',

@@ -703,6 +703,127 @@ async function collectLedgerChecks(pool) {
   );
   push('agent referral claim ledger', paidAgentClaims, agentReferralLedger, 0);
 
+  // PHASE 1 WORLD-GRAPH INVENTORY. These are deliberately ledger identities, not row-shape
+  // assertions. The schema prevents negative stacks and duplicate item IDs; this reconciles the
+  // live custody rows against the append-only mutation history so a direct write, missing event, or
+  // one-way escrow transition is loud even when every individual row still satisfies its CHECKs.
+  const stackRows = (await pool.query(
+    `SELECT owner_scope,owner_id,template_id,SUM(quantity) quantity
+       FROM item_stacks GROUP BY owner_scope,owner_id,template_id`,
+  )).rows;
+  const stackEvents = (await pool.query(
+    `SELECT event_kind,template_id,quantity_delta,
+            from_owner_scope,from_owner_id,to_owner_scope,to_owner_id
+       FROM item_events WHERE event_kind IN ('stack_granted','stack_consumed')`,
+  )).rows;
+  const stackKey = (scope, id, template) => `${scope}:${id}:${template}`;
+  const heldStacks = new Map(stackRows.map((row) => [
+    stackKey(row.owner_scope, row.owner_id, row.template_id), Number(row.quantity),
+  ]));
+  const eventStacks = new Map();
+  for (const event of stackEvents) {
+    const grant = event.event_kind === 'stack_granted';
+    const key = stackKey(
+      grant ? event.to_owner_scope : event.from_owner_scope,
+      grant ? event.to_owner_id : event.from_owner_id,
+      event.template_id,
+    );
+    eventStacks.set(key, (eventStacks.get(key) || 0) + Number(event.quantity_delta));
+  }
+  const stackIssues = [...new Set([...heldStacks.keys(), ...eventStacks.keys()])]
+    .filter((key) => (heldStacks.get(key) || 0) !== (eventStacks.get(key) || 0))
+    .sort();
+  push('world graph stack conservation', stackIssues.length, 0, 0, { issues: stackIssues });
+
+  const itemRows = (await pool.query(
+    `SELECT id,template_id,owner_scope,owner_id,state,consumed_at
+       FROM item_instances ORDER BY id`,
+  )).rows;
+  const uniqueEvents = (await pool.query(
+    `SELECT sequence,item_id,event_kind,template_id,from_owner_scope,from_owner_id,
+            to_owner_scope,to_owner_id
+       FROM item_events WHERE item_id IS NOT NULL ORDER BY sequence`,
+  )).rows;
+  const custodyRows = (await pool.query(
+    `SELECT item_id,operation_id,item_state,depositor_scope,depositor_id
+       FROM operation_escrow ORDER BY item_id`,
+  )).rows;
+  const eventsByItem = new Map();
+  for (const event of uniqueEvents) {
+    if (!eventsByItem.has(event.item_id)) eventsByItem.set(event.item_id, []);
+    eventsByItem.get(event.item_id).push(event);
+  }
+  const custodyByItem = new Map(custodyRows.map((row) => [row.item_id, row]));
+  const itemById = new Map(itemRows.map((row) => [row.id, row]));
+  const itemIssues = [];
+  for (const item of itemRows) {
+    const history = eventsByItem.get(item.id) || [];
+    const latest = history.at(-1);
+    const created = history.filter(({ event_kind: kind }) => kind === 'created');
+    const custody = custodyByItem.get(item.id);
+    if (created.length !== 1 || created[0]?.template_id !== item.template_id) {
+      itemIssues.push(`${item.id}:provenance`);
+    }
+    if (item.state === 'escrowed') {
+      if (!custody || custody.operation_id !== item.owner_id || custody.item_state !== 'escrowed'
+        || item.owner_scope !== 'operation' || latest?.event_kind !== 'escrowed') {
+        itemIssues.push(`${item.id}:escrow`);
+      }
+    } else if (custody) itemIssues.push(`${item.id}:stale_escrow`);
+    if (item.state === 'consumed') {
+      if (item.consumed_at == null || latest?.event_kind !== 'consumed') {
+        itemIssues.push(`${item.id}:consumed`);
+      }
+    } else if (item.consumed_at != null || latest?.event_kind === 'consumed') {
+      itemIssues.push(`${item.id}:live_state`);
+    }
+    if (item.state === 'active') {
+      const toScope = latest?.to_owner_scope;
+      const toId = latest?.to_owner_id;
+      if (!latest || !['created', 'transferred', 'released'].includes(latest.event_kind)
+        || toScope !== item.owner_scope || toId !== item.owner_id) {
+        itemIssues.push(`${item.id}:owner`);
+      }
+    }
+  }
+  for (const custody of custodyRows) {
+    if (!itemById.has(custody.item_id)) itemIssues.push(`${custody.item_id}:orphan_escrow`);
+  }
+  for (const [itemId] of eventsByItem) {
+    if (!itemById.has(itemId)) itemIssues.push(`${itemId}:orphan_event`);
+  }
+  push('world graph unique custody and provenance', itemIssues.length, 0, 0,
+    { issues: [...new Set(itemIssues)].sort() });
+
+  // The only Phase 1 cash movement is the exact $300 hardening sink. A completed craft guard is the
+  // exactly-once logical action; its matching cash row is the value audit. Mystery and operation
+  // mutations have no currency adapter, and any OMR row using their/crafting vocabulary is a hard
+  // boundary violation rather than a new mint category.
+  const craftGuards = (await pool.query(
+    `SELECT idempotency_key,result_json FROM item_mutation_guards
+      WHERE mutation_kind='craft' AND result_json IS NOT NULL`,
+  )).rows;
+  const hardeningGuards = craftGuards.filter((row) => {
+    try {
+      const result = typeof row.result_json === 'string' ? JSON.parse(row.result_json) : row.result_json;
+      return result?.recipe?.recipeId === 'recipe:hardened_steel';
+    } catch { return false; }
+  }).length;
+  const hardeningSink = -(await sum(pool,
+    "currency='cash' AND reason='craft:recipe:hardened_steel'"));
+  push('world graph hardening cash sink', hardeningSink, hardeningGuards * 300, 0);
+  const graphCurrencyRows = (await pool.query(
+    `SELECT currency,amount,reason FROM transactions
+      WHERE reason LIKE 'craft:%' OR reason LIKE 'mystery:%' OR reason LIKE 'operation:%'`,
+  )).rows;
+  const graphCurrencyIssues = graphCurrencyRows.filter((row) => (
+    row.currency !== 'cash'
+      || row.reason !== 'craft:recipe:hardened_steel'
+      || Number(row.amount) !== -300
+  )).map((row) => `${row.currency}:${row.reason}:${row.amount}`);
+  push('world graph currency boundary', graphCurrencyIssues.length, 0, 0,
+    { issues: graphCurrencyIssues.sort() });
+
   // (g) UNKNOWN REASONS — any row outside the vocabulary is an unenumerated faucet/sink
   const unknown = [];
   for (const [cur, prefixes] of Object.entries(KNOWN_REASONS)) {

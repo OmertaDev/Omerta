@@ -161,6 +161,9 @@ if (failures.length) {
 // can never disagree about what the set is. This number bounds how much SQL goes unPREPARED; the
 // ledger bounds what can be in it. Neither replaces the other, and the ceiling stays because a
 // statement that never reaches Postgres is still a statement nobody type-checked.
+// Phase 1 added eight closed-shape query sites. They were not absorbed here: read/lock variants are
+// separate static literals, operation participants are locked through bounded sorted single-row
+// queries, and the runtime remains inside the existing global ceiling.
 const CEILING = { interpolated: 162, unreadable: 40 };
 const overflow = [];
 if (interpolated.length > CEILING.interpolated)

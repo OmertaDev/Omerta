@@ -383,9 +383,10 @@ async function lockOpenCrew(client, context) {
     'SELECT crew_id FROM crew_members WHERE account_id=$1', [context.accountId],
   )).rows[0];
   if (!snapshotMembership) fail('no_crew', 'A Crew membership is required for this operation.');
-  const crew = (await client.query(
-    `SELECT id FROM crews WHERE id=$1 ${dbCaps.skipLocked ? 'FOR NO KEY UPDATE' : 'FOR UPDATE'}`,
-    [snapshotMembership.crew_id],
+  const crew = dbCaps.skipLocked ? (await client.query(
+    'SELECT id FROM crews WHERE id=$1 FOR NO KEY UPDATE', [snapshotMembership.crew_id],
+  )).rows[0] : (await client.query(
+    'SELECT id FROM crews WHERE id=$1 FOR UPDATE', [snapshotMembership.crew_id],
   )).rows[0];
   if (!crew) fail('no_crew', 'The current Crew no longer exists.');
   return crew;
@@ -457,10 +458,16 @@ function assertRootGraphGate(root, states) {
 
 async function operationRow(client, operationIdValue, { lock = false } = {}) {
   const id = canonical(operationIdValue, 'Operation id');
+  if (lock) return (await client.query(
+    `SELECT id,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id,status,
+            close_reason,created_at,updated_at,activated_at,completed_at,canceled_at,abandoned_at
+       FROM world_operations WHERE id=$1 FOR UPDATE`,
+    [id],
+  )).rows[0] || null;
   return (await client.query(
     `SELECT id,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id,status,
             close_reason,created_at,updated_at,activated_at,completed_at,canceled_at,abandoned_at
-       FROM world_operations WHERE id=$1${lock ? ' FOR UPDATE' : ''}`,
+       FROM world_operations WHERE id=$1`,
     [id],
   )).rows[0] || null;
 }
@@ -617,20 +624,29 @@ async function lockOperationAuthorityRows(
     ...assignments.map(({ character_id: id }) => id),
     ...(candidateCharacter ? [candidateCharacter.id] : []),
   ])].sort();
-  const characterPlaceholders = characterIds.map((_, index) => `$${index + 1}`).join(',');
-  const characters = characterIds.length ? (await client.query(
-    `SELECT id,account_id,loc,respect,alive FROM characters
-      WHERE id IN (${characterPlaceholders}) ORDER BY id FOR UPDATE`, characterIds,
-  )).rows : [];
+  const characters = [];
+  // At most the four declared roles plus one candidate. Lock them one at a time in the already
+  // sorted global order: static SQL remains preparable, pg-mem avoids indexed ANY(array), and the
+  // lock-order proof stays visible instead of hiding behind generated placeholder text.
+  for (const characterId of characterIds) {
+    const row = (await client.query(
+      `SELECT id,account_id,loc,respect,alive FROM characters
+        WHERE id=$1 FOR UPDATE`, [characterId],
+    )).rows[0];
+    if (row) characters.push(row);
+  }
   const accountIds = [...new Set([
     ...assignments.map(({ account_id: id }) => id),
     ...(candidateAccountId ? [candidateAccountId] : []),
   ])].sort();
-  const accountPlaceholders = accountIds.map((_, index) => `$${index + 1}`).join(',');
-  const memberships = accountIds.length ? (await client.query(
-    `SELECT account_id,crew_id FROM crew_members
-      WHERE account_id IN (${accountPlaceholders}) ORDER BY account_id FOR UPDATE`, accountIds,
-  )).rows : [];
+  const memberships = [];
+  for (const accountId of accountIds) {
+    const row = (await client.query(
+      `SELECT account_id,crew_id FROM crew_members
+        WHERE account_id=$1 FOR UPDATE`, [accountId],
+    )).rows[0];
+    if (row) memberships.push(row);
+  }
   const characterById = new Map(characters.map((row) => [row.id, row]));
   const membershipByAccount = new Map(memberships.map((row) => [row.account_id, row]));
   const dead = assignments.some((assignment) => {
@@ -698,7 +714,7 @@ async function conditionBlocker(client, actor, operation, states, condition, int
     const templateId = conditionValue(condition, ['templateId', 'itemId', 'value']);
     const row = (await client.query(
       `SELECT 1 FROM item_instances WHERE owner_scope='account' AND owner_id=$1
-        AND template_id=$2 AND state='active' LIMIT 1${client ? ' FOR UPDATE' : ''}`,
+        AND template_id=$2 AND state='active' LIMIT 1 FOR UPDATE`,
       [actor.accountId, templateId],
     )).rows[0];
     return row ? null : { adapter };

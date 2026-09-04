@@ -718,10 +718,10 @@ try {
     /FROM world_operations WHERE id=\$1 FOR UPDATE/i.test(sql)
   ));
   const characterLockIndex = authorityTrace.findIndex((sql) => (
-    /FROM characters WHERE id IN \(.+\) ORDER BY id FOR UPDATE/i.test(sql)
+    /FROM characters\s+WHERE id=\$1 FOR UPDATE/i.test(sql)
   ));
   const membershipLockIndex = authorityTrace.findIndex((sql) => (
-    /FROM crew_members WHERE account_id IN \(.+\) ORDER BY account_id FOR UPDATE/i.test(sql)
+    /FROM crew_members\s+WHERE account_id=\$1 FOR UPDATE/i.test(sql)
   ));
   assert(operationLockIndex >= 0 && characterLockIndex > operationLockIndex
     && membershipLockIndex > characterLockIndex,

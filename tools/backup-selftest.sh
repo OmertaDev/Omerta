@@ -60,7 +60,7 @@ psql_q() {
     echo "backup-selftest: FIXTURE SETUP FAILED on $1" >&2; echo "  $2" >&2; echo "  $err" >&2; exit 2; }
 }
 
-FULL_DB="bkchk_full_$$"; COLD_DB="bkchk_cold_$$"; TINY_DB="bkchk_tiny_$$"
+FULL_DB="bkchk_full_$$"; COLD_DB="bkchk_cold_$$"; TINY_DB="bkchk_tiny_$$"; RESTORE_DB=""
 ADMIN_DB_URL="$(base_url postgres)"
 for db in "$FULL_DB" "$COLD_DB" "$TINY_DB"; do
   psql "$ADMIN_DB_URL" -v ON_ERROR_STOP=1 -tAc "CREATE DATABASE $db" >/dev/null 2>&1
@@ -69,6 +69,8 @@ cleanup_dbs() {
   for db in "$FULL_DB" "$COLD_DB" "$TINY_DB"; do
     psql "$ADMIN_DB_URL" -tAc "DROP DATABASE IF EXISTS $db" >/dev/null 2>&1
   done
+  [ -z "$RESTORE_DB" ] || psql "$ADMIN_DB_URL" -tAc \
+    "DROP DATABASE IF EXISTS $RESTORE_DB" >/dev/null 2>&1
 }
 trap 'cleanup_dbs; rm -rf "$WORK"' EXIT
 
@@ -86,13 +88,19 @@ loadSchema() {
   [ "${n:-0}" -ge 40 ] || {
     echo "backup-selftest: schema loaded into $1 but only $n tables exist — the fixture is not what the test assumes." >&2
     exit 2; }
-  # A COUNT is not the assertion that matters. backup.sh insists on three tables BY NAME, so the
+  # A COUNT is not the assertion that matters. backup.sh insists on identity/ledger plus the complete
+  # Phase 1 custody family BY NAME, so the
   # fixture has to be checked by name too — otherwise "table X is missing from the dump" is ambiguous
   # between a broken dump and a fixture that never had X, which is exactly the ambiguity that cost a
   # CI round trip to resolve.
   local missing
   missing="$(psql "$(base_url "$1")" -tAc \
-    "SELECT string_agg(t,',') FROM unnest(ARRAY['accounts','characters','transactions']) t
+    "SELECT string_agg(t,',') FROM unnest(ARRAY[
+       'accounts','characters','transactions',
+       'item_stacks','item_instances','operation_escrow','item_mutation_guards','item_events',
+       'mystery_instances','mystery_node_state','mystery_choices',
+       'world_operations','world_operation_roles','world_operation_node_state','world_operation_contributions'
+     ]) t
       WHERE to_regclass('public.'||t) IS NULL" 2>/dev/null | tr -d ' ')"
   [ -z "$missing" ] || {
     echo "backup-selftest: $1 has $n tables but is missing: $missing — the fixture is not what the test assumes." >&2
@@ -106,16 +114,92 @@ psql_q "$FULL_DB" "INSERT INTO accounts (id, auth_provider, auth_subject)
                    VALUES (gen_random_uuid(),'guest','selftest-1'), (gen_random_uuid(),'guest','selftest-2')"
 psql_q "$FULL_DB" "INSERT INTO characters (id, account_id, name, season)
                    SELECT gen_random_uuid(), id, 'Selftest '||substr(id::text,1,8), 1 FROM accounts"
+# A linked Phase 1 graph fixture. The permanent item is created into character custody, escrowed by
+# one operation, and keeps its exact historical depositor tuple. The mystery and operation each have
+# child state so restore order and every FK edge are exercised, not just the parent tables.
+psql_q "$FULL_DB" "INSERT INTO item_mutation_guards
+                     (idempotency_key, mutation_kind, owner_scope, owner_id, request_hash,
+                      reservation_id, result_json, completed_at)
+                   VALUES
+                     ('bk-phase1-stack','grant_stack','account','bk-account',repeat('a',64),
+                      'bk-res-stack','{\"ok\":true}',now()),
+                     ('bk-phase1-create','create_item','character','bk-depositor',repeat('b',64),
+                      'bk-res-create','{\"ok\":true}',now()),
+                     ('bk-phase1-escrow','escrow_item','character','bk-depositor',repeat('c',64),
+                      'bk-res-escrow','{\"ok\":true}',now()),
+                     ('bk-phase1-active','create_item','account','bk-account',repeat('d',64),
+                      'bk-res-active','{\"ok\":true}',now())"
+psql_q "$FULL_DB" "INSERT INTO item_stacks
+                     (owner_scope,owner_id,template_id,quality,quantity)
+                   VALUES ('account','bk-account','mat:steel','standard',4)"
+psql_q "$FULL_DB" "INSERT INTO item_instances
+                     (id,template_id,owner_scope,owner_id,state)
+                   VALUES ('bk-phase1-item','tool:press','operation','bk-phase1-operation','escrowed')"
+psql_q "$FULL_DB" "INSERT INTO item_instances
+                     (id,template_id,owner_scope,owner_id,state)
+                   VALUES ('bk-phase1-active-item','item:archive','account','bk-account','active')"
+psql_q "$FULL_DB" "INSERT INTO item_events
+                     (id,event_key,event_kind,provenance_kind,item_id,template_id,
+                      from_owner_scope,from_owner_id,to_owner_scope,to_owner_id,reason,idempotency_key)
+                   VALUES
+                     ('bk-event-create','created','created','crafted','bk-phase1-item','tool:press',
+                      NULL,NULL,'character','bk-depositor','backup:selftest:create','bk-phase1-create'),
+                     ('bk-event-escrow','escrowed','escrowed','used_in_operation','bk-phase1-item','tool:press',
+                      'character','bk-depositor','operation','bk-phase1-operation','backup:selftest:escrow','bk-phase1-escrow'),
+                     ('bk-event-active','created','created','awarded','bk-phase1-active-item','item:archive',
+                      NULL,NULL,'account','bk-account','backup:selftest:active','bk-phase1-active')"
+psql_q "$FULL_DB" "INSERT INTO item_events
+                     (id,event_key,event_kind,template_id,quantity_delta,quantity_before,quantity_after,
+                      to_owner_scope,to_owner_id,reason,idempotency_key)
+                   VALUES ('bk-event-stack','stack','stack_granted','mat:steel',4,0,4,
+                     'account','bk-account','backup:selftest:stack','bk-phase1-stack')"
+psql_q "$FULL_DB" "INSERT INTO operation_escrow
+                     (item_id,operation_id,depositor_scope,depositor_id)
+                   VALUES ('bk-phase1-item','bk-phase1-operation','character','bk-depositor')"
+psql_q "$FULL_DB" "INSERT INTO mystery_instances
+                     (id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,status)
+                   VALUES ('bk-phase1-mystery','character','bk-depositor','bk-account','graph:backup',7,'active')"
+psql_q "$FULL_DB" "INSERT INTO mystery_node_state
+                     (instance_id,node_id,state,discovered_at)
+                   VALUES ('bk-phase1-mystery','node:lead','discovered',now())"
+psql_q "$FULL_DB" "INSERT INTO mystery_choices
+                     (instance_id,node_id,choice_id,result_json)
+                   VALUES ('bk-phase1-mystery','node:choice','choice:left','{\"choice\":\"left\"}')"
+psql_q "$FULL_DB" "INSERT INTO world_operations
+                     (id,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id,
+                      status,activated_at)
+                   VALUES ('bk-phase1-operation','graph:backup',7,'node:operation','bk-crew','bk-account',
+                      'active',now())"
+psql_q "$FULL_DB" "INSERT INTO world_operation_roles
+                     (operation_id,role_id,account_id,character_id)
+                   VALUES
+                     ('bk-phase1-operation','role:investigator','bk-account-investigator','bk-character-investigator'),
+                     ('bk-phase1-operation','role:driver','bk-account-driver','bk-character-driver'),
+                     ('bk-phase1-operation','role:mechanic','bk-account-mechanic','bk-character-mechanic'),
+                     ('bk-phase1-operation','role:enforcer','bk-account-enforcer','bk-character-enforcer')"
+psql_q "$FULL_DB" "INSERT INTO world_operation_node_state
+                     (operation_id,node_id,state,completed_at)
+                   VALUES ('bk-phase1-operation','node:checkpoint','completed',now())"
+psql_q "$FULL_DB" "INSERT INTO world_operation_contributions
+                     (operation_id,node_id,role_id,account_id,character_id)
+                   VALUES ('bk-phase1-operation','node:checkpoint','role:driver','bk-account-driver','bk-character-driver')"
 # a database that is NOT omerta — one table, to trip the schema check
 psql_q "$TINY_DB" "CREATE TABLE unrelated (id int); INSERT INTO unrelated VALUES (1)"
 # The fixture is the ground the whole run stands on: if these rows are not here, every later failure
 # is about the fixture and not about backup.sh.
 FIXTURE="$(psql "$(base_url "$FULL_DB")" -tAc \
-  "SELECT (SELECT count(*) FROM accounts)||'/'||(SELECT count(*) FROM characters)" 2>/dev/null | tr -d ' ')"
-[ "$FIXTURE" = "2/2" ] || {
-  echo "backup-selftest: fixture rows are $FIXTURE, expected 2/2 (accounts/characters)." >&2; exit 2; }
+  "SELECT (SELECT count(*) FROM accounts)||'/'||(SELECT count(*) FROM characters)||'/'||
+          (SELECT count(*) FROM item_stacks)||'/'||(SELECT count(*) FROM item_instances)||'/'||
+          (SELECT count(*) FROM item_events)||'/'||(SELECT count(*) FROM item_mutation_guards)||'/'||
+          (SELECT count(*) FROM operation_escrow)||'/'||(SELECT count(*) FROM mystery_instances)||'/'||
+          (SELECT count(*) FROM mystery_node_state)||'/'||(SELECT count(*) FROM mystery_choices)||'/'||
+          (SELECT count(*) FROM world_operations)||'/'||(SELECT count(*) FROM world_operation_roles)||'/'||
+          (SELECT count(*) FROM world_operation_node_state)||'/'||(SELECT count(*) FROM world_operation_contributions)" \
+  2>/dev/null | tr -d ' ')"
+[ "$FIXTURE" = "2/2/1/2/4/4/1/1/1/1/1/4/1/1" ] || {
+  echo "backup-selftest: linked fixture rows are $FIXTURE, expected 2/2/1/2/4/4/1/1/1/1/1/4/1/1." >&2; exit 2; }
 echo "client: pg_dump $(pg_dump --version | awk '{print $3}'), pg_restore $(pg_restore --version | awk '{print $3}'), psql $(psql --version | awk '{print $3}')"
-echo "server: $(psql "$ADMIN_DB_URL" -tAc 'SHOW server_version' 2>/dev/null | tr -d ' ')   fixture: $FIXTURE accounts/characters"
+echo "server: $(psql "$ADMIN_DB_URL" -tAc 'SHOW server_version' 2>/dev/null | tr -d ' ')   fixture: $FIXTURE linked Phase 1 rows"
 
 echo
 echo "0. THE REQUIRED-TABLE CHECK DOES NOT PIPE INTO grep -q"
@@ -224,7 +308,50 @@ GOOD="$(find "$WORK/good" -name 'omerta-*.dump' | head -1)"
 run pg_restore --no-owner --dbname="$(base_url "$RESTORE_DB")" "$GOOD"
 RESTORED="$(psql "$(base_url "$RESTORE_DB")" -tAc 'SELECT count(*) FROM accounts' 2>/dev/null | tr -d ' ')"
 check $([ "${RESTORED:-0}" -ge 2 ] && echo 0 || echo 1) "the dump restores into an empty database with its rows" "accounts=$RESTORED"
+PHASE1_RESTORED="$(psql "$(base_url "$RESTORE_DB")" -tAc \
+  "SELECT
+     (SELECT template_id||':'||owner_scope||':'||owner_id||':'||state
+        FROM item_instances WHERE id='bk-phase1-item')||'|'||
+     (SELECT template_id||':'||owner_scope||':'||owner_id||':'||state
+        FROM item_instances WHERE id='bk-phase1-active-item')||'|'||
+     (SELECT string_agg(event_kind||':'||provenance_kind,',' ORDER BY sequence)
+        FROM item_events WHERE item_id='bk-phase1-item')||'|'||
+     (SELECT owner_scope||':'||operation_id||':'||depositor_scope||':'||depositor_id
+        FROM operation_escrow WHERE item_id='bk-phase1-item')||'|'||
+     (SELECT graph_id||':'||graph_version||':'||status
+        FROM mystery_instances WHERE id='bk-phase1-mystery')||'|'||
+     (SELECT graph_id||':'||graph_version||':'||status
+        FROM world_operations WHERE id='bk-phase1-operation')||'|'||
+     (SELECT count(*) FROM world_operation_roles WHERE operation_id='bk-phase1-operation')" \
+  2>/dev/null | tr -d ' ')"
+EXPECTED_PHASE1="tool:press:operation:bk-phase1-operation:escrowed|item:archive:account:bk-account:active|created:crafted,escrowed:used_in_operation|operation:bk-phase1-operation:character:bk-depositor|graph:backup:7:active|graph:backup:7:active|4"
+check $([ "$PHASE1_RESTORED" = "$EXPECTED_PHASE1" ] && echo 0 || echo 1) \
+  "Phase 1 permanent IDs, provenance, status, custody and historical depositor survive exactly" \
+  "got=$PHASE1_RESTORED"
+PHASE1_ORPHANS="$(psql "$(base_url "$RESTORE_DB")" -tAc \
+  "SELECT
+     (SELECT count(*) FROM item_events e LEFT JOIN item_mutation_guards g
+       ON g.idempotency_key=e.idempotency_key WHERE g.idempotency_key IS NULL)||'/'||
+     (SELECT count(*) FROM operation_escrow e LEFT JOIN item_instances i
+       ON (i.id,i.owner_scope,i.owner_id,i.state)=(e.item_id,e.owner_scope,e.operation_id,e.item_state)
+       WHERE i.id IS NULL)||'/'||
+     (SELECT count(*) FROM mystery_node_state n LEFT JOIN mystery_instances i ON i.id=n.instance_id
+       WHERE i.id IS NULL)||'/'||
+     (SELECT count(*) FROM mystery_choices c LEFT JOIN mystery_instances i ON i.id=c.instance_id
+       WHERE i.id IS NULL)||'/'||
+     (SELECT count(*) FROM world_operation_roles r LEFT JOIN world_operations o ON o.id=r.operation_id
+       WHERE o.id IS NULL)||'/'||
+     (SELECT count(*) FROM world_operation_node_state n LEFT JOIN world_operations o ON o.id=n.operation_id
+       WHERE o.id IS NULL)||'/'||
+     (SELECT count(*) FROM world_operation_contributions c LEFT JOIN world_operation_roles r
+       ON (r.operation_id,r.role_id)=(c.operation_id,c.role_id) WHERE r.operation_id IS NULL)||'/'||
+     (SELECT count(*) FROM item_instances i JOIN operation_escrow e ON e.item_id=i.id
+       WHERE i.owner_scope<>e.owner_scope OR i.owner_id<>e.operation_id OR i.state<>e.item_state)" \
+  2>/dev/null | tr -d ' ')"
+check $([ "$PHASE1_ORPHANS" = "0/0/0/0/0/0/0/0" ] && echo 0 || echo 1) \
+  "restored Phase 1 graph has no orphan or duplicate custody" "violations=$PHASE1_ORPHANS"
 psql "$ADMIN_DB_URL" -tAc "DROP DATABASE IF EXISTS $RESTORE_DB" >/dev/null 2>&1
+RESTORE_DB=""
 
 echo
 if [ ${#fails[@]} -eq 0 ]; then

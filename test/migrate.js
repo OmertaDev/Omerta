@@ -659,6 +659,124 @@ for (const [t, kind] of Object.entries(DISPOSITION)) {
   }
 }
 
+// ── 4b. Phase 1 generic-owner death disposition (fail closed) ────────────────────────────────
+// The legacy guard above deliberately follows character-shaped columns. Phase 1 adds a second,
+// generic ownership vocabulary that must remain immutable historical state across death and
+// replacement. Keep both the complete table census and every generic owner/depositor tuple role
+// derived from the bounded schema section: adding a table or a new *_scope role without an explicit
+// classification fails CI. This is intentionally stronger than an expected-list assertion, which
+// could omit a new owner-bearing column and silently pass.
+const PHASE1_DISPOSITION = {
+  item_stacks: 'historical_owner',
+  item_instances: 'historical_owner',
+  item_events: 'historical_audit',
+  item_mutation_guards: 'historical_audit',
+  operation_escrow: 'operation_lifecycle',
+  mystery_instances: 'historical_owner',
+  mystery_node_state: 'child_history',
+  mystery_choices: 'child_history',
+  world_operations: 'operation_lifecycle',
+  world_operation_roles: 'historical_audit',
+  world_operation_node_state: 'child_history',
+  world_operation_contributions: 'historical_audit',
+};
+const PHASE1_OWNER_TUPLE_DISPOSITION = {
+  'item_stacks.owner_scope/owner_id': 'historical_owner',
+  'item_instances.owner_scope/owner_id': 'historical_owner',
+  'item_events.from_owner_scope/from_owner_id': 'historical_audit',
+  'item_events.to_owner_scope/to_owner_id': 'historical_audit',
+  'item_mutation_guards.owner_scope/owner_id': 'historical_audit',
+  'operation_escrow.owner_scope/operation_id': 'operation_lifecycle',
+  'operation_escrow.depositor_scope/depositor_id': 'historical_owner',
+  'mystery_instances.owner_scope/owner_id': 'historical_owner',
+};
+{
+  const start = SCHEMA.indexOf('-- ── WORLD-GRAPH ITEM ECONOMY');
+  const end = SCHEMA.indexOf('-- ── AUTHORED CONTENT SUPPLY', start);
+  assert(start >= 0 && end > start, 'schema must retain the bounded Phase 1 world-graph section');
+  const phase1Schema = SCHEMA.slice(start, end);
+  assert.match(phase1Schema, /immutable historical ledger state, not an\s+-- estate asset/,
+    'Phase 1 schema must document that generic owner tuples are historical, not estate assets');
+  assert.match(phase1Schema, /Death\/replacement never wipes, rewrites, auto-inherits, or duplicates/,
+    'Phase 1 schema must document the no-inheritance death policy');
+
+  const tables = new Map();
+  const head = /CREATE TABLE(?:\s+IF NOT EXISTS)?\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(/g;
+  let match;
+  const clean = phase1Schema.replace(/--[^\n]*/g, '');
+  while ((match = head.exec(clean))) {
+    let depth = 1;
+    let body = '';
+    let i = head.lastIndex;
+    for (; i < clean.length && depth > 0; i++) {
+      const ch = clean[i];
+      if (ch === '(') depth++;
+      else if (ch === ')') {
+        depth--;
+        if (depth === 0) break;
+      }
+      body += ch;
+    }
+    head.lastIndex = i;
+    tables.set(match[1], body);
+  }
+
+  const unclassifiedTables = [...tables.keys()].filter((table) => !PHASE1_DISPOSITION[table]);
+  const staleTables = Object.keys(PHASE1_DISPOSITION).filter((table) => !tables.has(table));
+  assert.deepEqual(unclassifiedTables, [],
+    `unclassified Phase 1 table(s): ${unclassifiedTables.join(', ')} — classify the death/lifecycle disposition before shipping`);
+  assert.deepEqual(staleTables, [],
+    `stale Phase 1 disposition table(s): ${staleTables.join(', ')}`);
+
+  const ownerTuples = new Set();
+  for (const [table, body] of tables) {
+    const columns = new Set();
+    for (const line of body.split('\n')) {
+      const column = line.match(/^\s*([a-z_][a-z0-9_]*)\s+[A-Z]/i)?.[1];
+      if (column && !/^(PRIMARY|FOREIGN|UNIQUE|CHECK|CONSTRAINT)$/i.test(column)) columns.add(column);
+    }
+    for (const scopeColumn of columns) {
+      let idColumn = null;
+      if (scopeColumn === 'owner_scope') {
+        idColumn = columns.has('owner_id') ? 'owner_id'
+          : (table === 'operation_escrow' && columns.has('operation_id') ? 'operation_id' : null);
+      } else if (scopeColumn === 'from_owner_scope') idColumn = 'from_owner_id';
+      else if (scopeColumn === 'to_owner_scope') idColumn = 'to_owner_id';
+      else if (scopeColumn === 'depositor_scope') idColumn = 'depositor_id';
+      if (idColumn) {
+        assert(columns.has(idColumn), `${table}.${scopeColumn} is missing its ${idColumn} tuple half`);
+        ownerTuples.add(`${table}.${scopeColumn}/${idColumn}`);
+      }
+    }
+  }
+  const unclassifiedTuples = [...ownerTuples].filter((tuple) => !PHASE1_OWNER_TUPLE_DISPOSITION[tuple]);
+  const staleTuples = Object.keys(PHASE1_OWNER_TUPLE_DISPOSITION).filter((tuple) => !ownerTuples.has(tuple));
+  assert.deepEqual(unclassifiedTuples, [],
+    `unclassified Phase 1 generic owner/depositor tuple(s): ${unclassifiedTuples.join(', ')}`);
+  assert.deepEqual(staleTuples, [],
+    `stale Phase 1 owner/depositor disposition(s): ${staleTuples.join(', ')}`);
+
+  const phase1MigrationColumns = {
+    item_stacks: 'owner_scope', item_instances: 'id', item_events: 'sequence',
+    item_mutation_guards: 'idempotency_key', operation_escrow: 'item_id', mystery_instances: 'id',
+    mystery_node_state: 'instance_id', mystery_choices: 'instance_id', world_operations: 'id',
+    world_operation_roles: 'operation_id', world_operation_node_state: 'operation_id',
+    world_operation_contributions: 'operation_id',
+  };
+  for (const [table, column] of Object.entries(phase1MigrationColumns)) {
+    assert(stmts.some((statement) => new RegExp(`^ALTER TABLE ${table} ADD COLUMN IF NOT EXISTS ${column}\\b`, 'i').test(statement)),
+      `${table}.${column} must be covered by the idempotent migration derivation`);
+  }
+
+  const rootDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const backupSource = fs.readFileSync(path.join(rootDir, 'tools', 'backup.sh'), 'utf8');
+  const backupSelftest = fs.readFileSync(path.join(rootDir, 'tools', 'backup-selftest.sh'), 'utf8');
+  for (const table of tables.keys()) {
+    assert(backupSource.includes(table), `backup.sh must require Phase 1 table ${table}`);
+    assert(backupSelftest.includes(table), `backup selftest must seed and verify Phase 1 table ${table}`);
+  }
+}
+
 // ── (c) DISTRICT → GANG lock order (full-sweep red-team, lens B) ──────────────────────────────
 // Three paths hold BOTH a `districts` and a `gangs` row lock: seizeDistrict (social/gangs.js),
 // establishRacket (territory.js) and buildSov (sov.js). Two took districts first; buildSov took
@@ -848,5 +966,5 @@ for (const [t, kind] of Object.entries(DISPOSITION)) {
   }
 }
 
-console.log(`✅ Schema-integrity test passed — MED-1: ${stmts.length} idempotent ADD COLUMN IF NOT EXISTS statements derived from schema.sql (no leakage, clean no-op on a fresh DB, a dropped later-added column is RE-ADDED). MED-2: all ${charTables.size} character-scoped tables (character_id OR a named %_character role) have a documented death disposition (${Object.values(DISPOSITION).filter((v) => v === 'wiped').length} wiped / ${Object.values(DISPOSITION).filter((v) => v === 'special').length} special / ${Object.values(DISPOSITION).filter((v) => v === 'escrow').length} escrow / ${Object.values(DISPOSITION).filter((v) => v === 'ledger' || v === 'log').length} ledger — a new unclassified table fails CI closed, and every wiped/special table has a DELETE or a resolving status UPDATE in src).`);
+console.log(`✅ Schema-integrity test passed — MED-1: ${stmts.length} idempotent ADD COLUMN IF NOT EXISTS statements derived from schema.sql (no leakage, clean no-op on a fresh DB, a dropped later-added column is RE-ADDED). MED-2: all ${charTables.size} character-scoped tables (character_id OR a named %_character role) have a documented death disposition (${Object.values(DISPOSITION).filter((v) => v === 'wiped').length} wiped / ${Object.values(DISPOSITION).filter((v) => v === 'special').length} special / ${Object.values(DISPOSITION).filter((v) => v === 'escrow').length} escrow / ${Object.values(DISPOSITION).filter((v) => v === 'ledger' || v === 'log').length} ledger — a new unclassified table fails CI closed, and every wiped/special table has a DELETE or a resolving status UPDATE in src). Phase 1: ${Object.keys(PHASE1_DISPOSITION).length} world-graph tables and ${Object.keys(PHASE1_OWNER_TUPLE_DISPOSITION).length} generic owner/depositor tuple roles have explicit fail-closed no-inheritance dispositions.`);
 process.exit(0);

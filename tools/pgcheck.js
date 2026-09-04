@@ -462,15 +462,44 @@ console.log('\n7a. ITEM CONSERVATION CONSTRAINTS ARE REAL DATABASE AUTHORITY');
 // row, a rejected negative mutation, and a rejected impossible consumed-instance state.
 {
   const tables = ['item_stacks', 'item_instances', 'item_events',
-    'item_mutation_guards', 'operation_escrow', 'world_operations',
+    'item_mutation_guards', 'operation_escrow',
+    'mystery_instances', 'mystery_node_state', 'mystery_choices', 'world_operations',
     'world_operation_roles', 'world_operation_node_state', 'world_operation_contributions'];
   const present = (await pool.query(
     `SELECT relname FROM pg_class
       WHERE relkind='r' AND relname = ANY($1::text[])`, [tables],
   )).rows.map((row) => row.relname);
   check(tables.every((table) => present.includes(table)),
-    'all item and world-operation authority tables exist on real PostgreSQL',
+    'all 12 Phase 1 item, mystery, and operation authority tables exist on real PostgreSQL',
     `present: ${present.sort().join(', ')}`);
+
+  const mysteryProbe = `pgcheck-mystery-constraint-${process.pid}-${Date.now()}`;
+  await pool.query(
+    `INSERT INTO mystery_instances
+       (id,owner_scope,owner_id,authority_account_id,graph_id,graph_version)
+     VALUES ($1,'account','pgcheck-account','pgcheck-account','pgcheck-graph',1)`,
+    [mysteryProbe],
+  );
+  await pool.query(
+    `INSERT INTO mystery_node_state (instance_id,node_id,state,discovered_at)
+     VALUES ($1,'pgcheck-node','discovered',now())`,
+    [mysteryProbe],
+  );
+  await pool.query(
+    `INSERT INTO mystery_choices (instance_id,node_id,choice_id,result_json)
+     VALUES ($1,'pgcheck-choice','left','{}')`,
+    [mysteryProbe],
+  );
+  let mysteryTupleCode = '';
+  try {
+    await pool.query("UPDATE mystery_instances SET status='completed' WHERE id=$1", [mysteryProbe]);
+  } catch (error) { mysteryTupleCode = error.code; }
+  check(mysteryTupleCode === '23514',
+    'PostgreSQL rejects a completed mystery without its terminal timestamp tuple',
+    `error ${mysteryTupleCode || 'none'}`);
+  await pool.query('DELETE FROM mystery_choices WHERE instance_id=$1', [mysteryProbe]);
+  await pool.query('DELETE FROM mystery_node_state WHERE instance_id=$1', [mysteryProbe]);
+  await pool.query('DELETE FROM mystery_instances WHERE id=$1', [mysteryProbe]);
 
   const operationProbe = `pgcheck-world-operation-${process.pid}-${Date.now()}`;
   await pool.query(
@@ -851,14 +880,21 @@ console.log('\n7a2. GRAPH CRAFTING AND SALVAGE HOLD UNDER REAL ROW LOCKS');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-console.log('\n7a3. WORLD-GRAPH OPERATIONS HOLD UNDER REAL ROW LOCKS');
+console.log('\n7a3. WORLD-GRAPH MYSTERIES HOLD UNDER REAL ROW LOCKS');
+{
+  const { runMysteryPgChecks } = await import('./pgcheck-mysteries.js');
+  await runMysteryPgChecks({ pool, check });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+console.log('\n7a4. WORLD-GRAPH OPERATIONS HOLD UNDER REAL ROW LOCKS');
 {
   const { runOperationPgChecks } = await import('./pgcheck-operations.js');
   await runOperationPgChecks({ pool, check });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-console.log('\n7a4. BELLADONNA VERTICAL SLICE HOLDS ON REAL POSTGRESQL');
+console.log('\n7a5. BELLADONNA VERTICAL SLICE HOLDS ON REAL POSTGRESQL');
 {
   const { runBelladonnaPgChecks } = await import('./pgcheck-belladonna.js');
   await runBelladonnaPgChecks({ pool, check, nativePostgres: true });

@@ -25,6 +25,7 @@ flowchart LR
 |---|---|---|
 | API process | `src/server.js`, `src/routes/`, `src/auth.js`, `src/ratelimit.js` | Serves the web surfaces and JSON API; authenticates, throttles and records routes; owns WebSocket presence and the in-process event bus. |
 | Domain layer | `src/*.js`, `src/social/*.js` | Implements gameplay, economy, social state and reads of public/private boards. |
+| Phase 1 world graph | `src/content/phase1.js`, `src/worldgraph*.js`, `src/items.js`, `src/crafting.js`, `src/mysteries.js`, `src/operations.js`, `src/routes/worldgraph.js` | Loads one canonical immutable package manifest; conserves stack and unique-item custody; executes direct-only mystery and Crew-operation graphs. |
 | Transaction spine | `src/game.js`, `src/accrual.js` | Locks actors in a stable order, applies lazy accrual, persists state, writes ledger/audit records and fires post-commit notifications. |
 | Database | `schema.sql`, `src/db.js` | PostgreSQL is production truth; `pg-mem` provides zero-infrastructure local tests and is explicitly not trusted for PostgreSQL-only behavior. |
 | Worker | `src/worker.js`, `src/watcher.js` | Runs timed settlements, buybacks, season/world sweeps, monitoring and chain-event synchronization. Exactly one worker is intended. |
@@ -59,6 +60,10 @@ PostgreSQL features and concurrency behavior that `pg-mem` cannot model, which i
 
 The core consistency model is detailed in [data-economy.md](data-economy.md). The generated
 [database catalog](generated/schema.md) gives every table and the modules that name it.
+
+The Phase 1 graph is an intentionally separate runtime from the authored-content compiler. Run
+`npm run worldgraph:check` for the canonical CORE + AUTOMOTIVE + BELLADONNA manifest and
+`npm run content:check` for authored content packs; both are release gates.
 
 ## Process topology and scaling boundary
 
@@ -95,6 +100,8 @@ before an external engagement.
 - Randomness is server-side and auditable.
 - Accrual is lazy and timestamp-driven.
 - Mutations are idempotent at the HTTP boundary.
+- Generic Phase 1 owner/depositor tuples are immutable history, never estate assets: character death
+  and replacement do not wipe, rewrite, inherit or duplicate them.
 - Chain withdrawals are reserve-backed and voucher replay is rejected.
 - Dormant integrations fail closed or disappear from the player surface.
 

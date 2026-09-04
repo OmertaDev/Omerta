@@ -1,10 +1,17 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { loadGraphPackages } from '../src/worldgraph.js';
 import {
   GraphValidationError,
   loadAndValidateGraphPackages,
   validateGraph,
 } from '../src/worldgraph-validate.js';
+import {
+  PHASE1_WORLD_GRAPH_PACKAGES,
+  validatePhase1WorldGraph,
+} from '../tools/worldgraph-content.js';
 
 function registry(nodes, overrides = {}) {
   return loadGraphPackages([{
@@ -1084,5 +1091,54 @@ assert.equal(success.reports.materials.required, 1);
 assert.equal(success.reports.materials.sourced, 1);
 assert.equal(success.reports.recipes, 1);
 assert.equal(success.reports.omrRewards, 1);
+
+// The release gate validates the real shipped graph, not only small synthetic fixtures. It is a
+// separate deterministic lane from the authored-content compiler because these inputs are immutable
+// JavaScript graph packages, not activated authored-content JSON bundles.
+const phase1First = validatePhase1WorldGraph();
+const phase1Second = validatePhase1WorldGraph();
+assert.deepEqual(phase1Second, phase1First, 'the Phase 1 graph report is deterministic');
+assert.deepEqual(phase1First.packageIds, [
+  'core-materials', 'automotive-salvage', 'belladonna-demo',
+]);
+assert.equal(PHASE1_WORLD_GRAPH_PACKAGES.length, 3);
+assert.equal(phase1First.packages, 3);
+assert.equal(phase1First.nodes, 21);
+assert.equal(phase1First.recipes, 3);
+assert.equal(phase1First.omrRewards, 0, 'the Phase 1 graph cannot mint OMR');
+assert.match(phase1First.contentHash, /^[0-9a-f]{64}$/);
+
+const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+const packageSources = fs.readdirSync(path.join(root, 'src', 'content'))
+  .filter((file) => /export const [A-Z0-9_]+_PACKAGE\b/.test(
+    fs.readFileSync(path.join(root, 'src', 'content', file), 'utf8'),
+  )).sort();
+assert.deepEqual(packageSources, [
+  'automotive-salvage.js', 'belladonna.js', 'core-materials.js',
+], 'every production world-graph package module must be present in the canonical Phase 1 manifest');
+const phase1RuntimeFiles = [
+  'src/items.js', 'src/crafting.js', 'src/mysteries.js', 'src/operations.js',
+  'src/worldgraph.js', 'src/worldgraph-validate.js', 'src/routes/worldgraph.js',
+  'src/content/core-materials.js', 'src/content/automotive-salvage.js',
+  'src/content/belladonna.js', 'src/content/phase1.js', 'tools/worldgraph-content.js',
+];
+for (const file of phase1RuntimeFiles) {
+  assert.doesNotMatch(fs.readFileSync(path.join(root, file), 'utf8'), /collection_log/i,
+    `${file} must not introduce collection_log as Phase 1 item authority`);
+}
+const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
+assert.match(packageJson.scripts['worldgraph:check'], /tools\/worldgraph-content\.js/);
+assert.match(packageJson.scripts.preflight, /tools\/worldgraph-content\.js/,
+  'deployment preflight must fail on an invalid Phase 1 graph');
+assert.match(packageJson.scripts['content:check'], /tools\/content\.js check/,
+  'authored content keeps its distinct compiler/check lane');
+const ci = fs.readFileSync(path.join(root, '.github', 'workflows', 'ci.yml'), 'utf8');
+assert.match(ci, /npm run worldgraph:check/,
+  'CI must invoke the explicit Phase 1 graph-content gate');
+const pgcheck = fs.readFileSync(path.join(root, 'tools', 'pgcheck.js'), 'utf8');
+for (const helper of [
+  'pgcheck-mysteries.js', 'pgcheck-operations.js', 'pgcheck-belladonna.js',
+]) assert.match(pgcheck, new RegExp(helper.replace('.', '\\.')),
+  `native pgcheck must transitively invoke ${helper}`);
 
 console.log('✓ world graph static validation passed');

@@ -64,6 +64,17 @@ const spec = read('SPEC.md');
       `${name} must explain mutation replay semantics`);
     assert(/private|non-enumerat|hidden/i.test(text),
       `${name} must preserve the shared/private board and existence-oracle boundary`);
+    assert(/immutable historical|immutable history/i.test(text)
+      && /not (?:an )?estate asset/i.test(text)
+      && /(?:never|cannot).{0,80}(?:inherit|auto-inherit)/i.test(plain),
+    `${name} must publish the Phase 1 no-inheritance death policy`);
+    assert(/(?:exact )?\$?300.{0,100}craft:recipe:hardened_steel/i.test(plain)
+      && /\$OMR-neutral|no \$OMR|creates no \$OMR/i.test(plain),
+    `${name} must publish the exact Phase 1 cash sink and zero-OMR boundary`);
+    assert(/worldgraph:check/i.test(text) && /content:check/i.test(text),
+      `${name} must distinguish the Phase 1 graph gate from authored-content validation`);
+    assert(/collection_log.{0,40}(?:not|isn't).{0,40}authority|authority.{0,40}collection_log.{0,40}(?:not|isn't)/i.test(plain),
+      `${name} must state that collection_log is not Phase 1 item authority`);
   }
 }
 

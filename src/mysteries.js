@@ -377,12 +377,20 @@ function startKey(owner, graphId, version) {
 }
 
 async function instanceFor(client, owner, graphId, { lock = false } = {}) {
+  const params = [owner.scope, owner.id, graphId];
+  if (lock) return (await client.query(
+    `SELECT id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,status,
+            created_at,updated_at,completed_at,failed_at,canceled_at
+       FROM mystery_instances
+      WHERE owner_scope=$1 AND owner_id=$2 AND graph_id=$3 FOR UPDATE`,
+    params,
+  )).rows[0] || null;
   return (await client.query(
     `SELECT id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,status,
             created_at,updated_at,completed_at,failed_at,canceled_at
        FROM mystery_instances
-      WHERE owner_scope=$1 AND owner_id=$2 AND graph_id=$3${lock ? ' FOR UPDATE' : ''}`,
-    [owner.scope, owner.id, graphId],
+      WHERE owner_scope=$1 AND owner_id=$2 AND graph_id=$3`,
+    params,
   )).rows[0] || null;
 }
 
@@ -559,22 +567,28 @@ async function conditionBlocker({
   }
   if (adapter === 'item_ownership' || adapter === 'owns_item') {
     const templateId = conditionValue(condition, ['templateId', 'itemTemplateId', 'nodeId']);
-    const row = (await client.query(
+    const params = [owner.scope, owner.id, templateId];
+    const row = lock ? (await client.query(
       `SELECT id FROM item_instances
         WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND state='active'
-        ORDER BY created_at,id LIMIT 1${lock ? ' FOR UPDATE' : ''}`,
-      [owner.scope, owner.id, templateId],
+        ORDER BY created_at,id LIMIT 1 FOR UPDATE`, params,
+    )).rows[0] : (await client.query(
+      `SELECT id FROM item_instances
+        WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND state='active'
+        ORDER BY created_at,id LIMIT 1`, params,
     )).rows[0];
     return row ? null : { adapter, templateId };
   }
   if (adapter === 'material_quantity') {
     const templateId = conditionValue(condition, ['templateId', 'materialId', 'nodeId']);
     const required = Number(conditionValue(condition, ['quantity', 'minimumQuantity', 'amount']));
-    const row = (await client.query(
+    const params = [owner.scope, owner.id, templateId];
+    const row = lock ? (await client.query(
       `SELECT quantity FROM item_stacks
-        WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality='standard'${
-  lock ? ' FOR UPDATE' : ''}`,
-      [owner.scope, owner.id, templateId],
+        WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality='standard' FOR UPDATE`, params,
+    )).rows[0] : (await client.query(
+      `SELECT quantity FROM item_stacks
+        WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality='standard'`, params,
     )).rows[0];
     const current = Number(row?.quantity || 0);
     return current >= required ? null : { adapter, templateId, required, current };

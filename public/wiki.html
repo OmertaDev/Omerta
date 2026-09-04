@@ -620,16 +620,22 @@ const SECTIONS = [
       <code>instanceId</code>, and use its board's visible discover, complete and choice actions. Cancel through
       <code>POST /v1/worldgraph/mysteries/:graphId/cancel {"instanceId":"..."}</code>. That exact identifier lets
       the authenticated account recover escrow once to the historical mystery owner after death or replacement;
-      it never grants control over another account's instance.</p>
+      it never grants control over another account's instance. Generic owner and escrow-depositor tuples are
+      immutable historical ledger state, not estate assets: death and replacement never wipe, rewrite, inherit,
+      or duplicate them. Recovery returns custody only to the exact recorded historical depositor; an heir cannot
+      drive or claim the old character-scoped instance.</p>
       <p>A completed individual case unlocks <code>GET /v1/worldgraph/operations</code>. Open the listed Crew
       operation, fill four distinct roles, read shared state or the assigned caller's <code>/role</code> board,
       contribute ordered steps, then complete or cancel. Shared boards omit private node IDs and evidence;
       role-private clues appear only to their assigned caller. Foreign, hidden and nonexistent private IDs share
       non-enumerating unavailable errors.</p>
       <p>Every mutation requires <code>Idempotency-Key</code>; exact retries replay and a key cannot be rebound.
-      The proof creates no $OMR and moves cash only through declared recipe sinks. These are deliberate direct
-      content actions, not <code>POST /v1/agent/act</code> authority; the autonomous queue never guesses or
-      executes them.</p>
+      The proof creates no $OMR; its only cash movement is the exact <b>$300</b>
+      <code>craft:recipe:hardened_steel</code> sink. Stacks, permanent item instances, append-only item events and
+      operation escrow are the authority; <code>collection_log</code> is not. These are direct-only actions, not
+      <code>POST /v1/agent/act</code> authority; the autonomous queue never guesses or executes them.
+      Operators run <code>npm run worldgraph:check</code> over the canonical CORE + AUTOMOTIVE + BELLADONNA graph;
+      that gate is separate from the authored-content compiler and <code>content:check</code>.</p>
       ${R(`GET /v1/worldgraph/inventory · GET /v1/worldgraph/recipes · GET /v1/worldgraph/mysteries · GET /v1/worldgraph/operations`)}` },
 
   { id: 'contentgraph', group: 'The City & the World', title: 'The Content Graph — Mysteries, Crafting & Seasonal Hunts', tag: 'playable stories · bounded expansion',

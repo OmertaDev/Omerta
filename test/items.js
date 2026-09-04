@@ -14,6 +14,7 @@ import {
   withItemMutation,
   withItemTransaction,
 } from '../src/items.js';
+import { runLedgerInvariants } from '../src/invariants.js';
 
 const pool = await makeDb();
 const characterA = { scope: 'character', id: 'character-a' };
@@ -546,6 +547,58 @@ try {
     [socialItem.id],
   )).rows[0].provenance_kind, 'used_in_operation',
   'generic escrow does not misclassify social-operation custody as mystery use');
+
+  // The production drift sweep now covers this ledger too. Prove both the clean state and the two
+  // mutations it is specifically meant to catch; a check that is never observed failing is only a
+  // plausible-looking query.
+  const phase1Checks = async () => (await runLedgerInvariants(pool, { alert: false })).checks;
+  let checks = await phase1Checks();
+  for (const name of [
+    'world graph stack conservation',
+    'world graph unique custody and provenance',
+    'world graph hardening cash sink',
+    'world graph currency boundary',
+  ]) assert.equal(checks.find((check) => check.name === name)?.ok, true,
+    `${name} is a green mandatory economy invariant`);
+
+  const stackProbe = (await pool.query(
+    'SELECT owner_scope,owner_id,template_id,quality FROM item_stacks ORDER BY owner_id LIMIT 1',
+  )).rows[0];
+  assert(stackProbe, 'the invariant mutation probe has a real stack row');
+  await pool.query(
+    `UPDATE item_stacks SET quantity=quantity+1
+      WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality=$4`,
+    [stackProbe.owner_scope, stackProbe.owner_id, stackProbe.template_id, stackProbe.quality],
+  );
+  checks = await phase1Checks();
+  assert.equal(checks.find((check) => check.name === 'world graph stack conservation')?.ok, false,
+    'an unproven direct stack grant trips the conservation invariant');
+  await pool.query(
+    `UPDATE item_stacks SET quantity=quantity - 1
+      WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality=$4`,
+    [stackProbe.owner_scope, stackProbe.owner_id, stackProbe.template_id, stackProbe.quality],
+  );
+
+  const custody = (await pool.query(
+    'SELECT * FROM operation_escrow WHERE item_id=$1', [socialItem.id],
+  )).rows[0];
+  assert(custody, 'the invariant mutation probe has real operation custody');
+  await pool.query('DELETE FROM operation_escrow WHERE item_id=$1', [socialItem.id]);
+  checks = await phase1Checks();
+  assert.equal(checks.find(
+    (check) => check.name === 'world graph unique custody and provenance',
+  )?.ok, false, 'one-way escrow deletion trips the unique-custody invariant');
+  await pool.query(
+    `INSERT INTO operation_escrow
+       (item_id,owner_scope,operation_id,item_state,depositor_scope,depositor_id,created_at)
+     VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+    [custody.item_id, custody.owner_scope, custody.operation_id, custody.item_state,
+      custody.depositor_scope, custody.depositor_id, custody.created_at],
+  );
+  checks = await phase1Checks();
+  assert.equal(checks.find(
+    (check) => check.name === 'world graph unique custody and provenance',
+  )?.ok, true, 'restoring exact custody returns the invariant to green');
 
   console.log('✅ test/items.js — conserved stacks, permanent unique items, single-custody operation escrow, provenance, and conflict-safe logical replay');
 } finally {

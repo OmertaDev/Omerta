@@ -2386,7 +2386,10 @@ Use `GET /v1/worldgraph/mysteries` to discover graphs, start one, and retain the
 Its graph board exposes only currently visible discover/complete/choice actions. Cancellation requires
 that exact ID in `POST /v1/worldgraph/mysteries/:graphId/cancel {"instanceId":"..."}` so escrow can
 return once to the authenticated account's historical mystery owner after death or replacement without
-guessing which street owned it.
+guessing which street owned it. Generic owner and escrow-depositor tuples are immutable historical
+ledger state, not estate assets: death/replacement never wipes, rewrites, inherits, or duplicates them.
+Cancellation returns custody only to the exact recorded historical depositor; an heir cannot drive or
+claim the old character-scoped instance.
 
 The completed individual case unlocks `GET /v1/worldgraph/operations`. Open the listed Crew operation,
 fill its four distinct roles, read shared state or the caller's assigned `/role` board, contribute the
@@ -2395,9 +2398,12 @@ evidence appears only to its assigned caller. Foreign, hidden, and nonexistent p
 the same unavailable responses instead of becoming enumeration oracles.
 
 Every mutation requires `Idempotency-Key`; exact retries replay, while a key cannot be rebound to another
-request. The demonstration has no $OMR path and moves cash only through declared recipe sinks. These are
-deliberate direct content actions: their discovery never grants `POST /v1/agent/act` authority, and the
-autonomous queue does not guess or execute them.
+request. The demonstration has no $OMR path and its only cash movement is the exact `$300`
+`craft:recipe:hardened_steel` sink. Stacks, permanent item instances, append-only item events and operation
+escrow are the item authority; `collection_log` is not. These are deliberate direct content actions:
+their discovery never grants `POST /v1/agent/act` authority, and the autonomous queue does not guess or
+execute them. Before release, `npm run worldgraph:check` deterministically validates the canonical CORE +
+AUTOMOTIVE + BELLADONNA graph; it is separate from the authored-content compiler and `content:check`.
 
 ### The Content Graph — mysteries, crafting, and seasonal hunts
 

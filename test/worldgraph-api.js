@@ -130,6 +130,11 @@ const catalogSurface = await call('GET', '/v1/catalog');
 assert.equal(catalogSurface.code, 200);
 assert.equal(catalogSurface.body.worldGraph.directOnly, true);
 assert.equal(catalogSurface.body.worldGraph.agentActAuthority, false);
+assert.equal(catalogSurface.body.worldGraph.collectionLogAuthority, false);
+assert.equal(catalogSurface.body.worldGraph.omrAuthority, false);
+assert.equal(catalogSurface.body.worldGraph.cashAuthority.hardenedSteelSink, 300);
+assert.equal(catalogSurface.body.worldGraph.deathPolicy, 'immutable_history_no_inheritance');
+assert.equal(catalogSurface.body.worldGraph.validation, 'npm run worldgraph:check');
 assert.equal(catalogSurface.body.worldGraph.routes.inventory, '/v1/worldgraph/inventory');
 assert.equal(catalogSurface.body.worldGraph.routes.recipes, '/v1/worldgraph/recipes');
 assert.match(catalogSurface.body.worldGraph.routes.assignCurrentCharacter, /assign-current-character$/);
@@ -695,10 +700,77 @@ assert.equal((await app.pool.query(
   'SELECT state FROM item_instances WHERE id=$1', [recoveryToolId],
 )).rows[0].state, 'escrowed');
 
+const historicalCustody = async () => {
+  const [stacks, item, mystery, escrow] = await Promise.all([
+    app.pool.query(
+      `SELECT owner_scope,owner_id,template_id,quality,quantity,created_at,updated_at
+         FROM item_stacks
+        WHERE owner_id IN ($1,$2)
+        ORDER BY owner_scope,owner_id,template_id,quality`,
+      [players[3].characterId, players[3].accountId],
+    ),
+    app.pool.query(
+      `SELECT id,template_id,owner_scope,owner_id,state,created_at,updated_at,consumed_at
+         FROM item_instances WHERE id=$1`,
+      [recoveryToolId],
+    ),
+    app.pool.query(
+      `SELECT id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,status,
+              created_at,updated_at,completed_at,failed_at,canceled_at
+         FROM mystery_instances WHERE id=$1`,
+      [historicalInstanceId],
+    ),
+    app.pool.query(
+      `SELECT item_id,owner_scope,operation_id,item_state,depositor_scope,depositor_id,created_at
+         FROM operation_escrow WHERE item_id=$1`,
+      [recoveryToolId],
+    ),
+  ]);
+  return { stacks: stacks.rows, item: item.rows, mystery: mystery.rows, escrow: escrow.rows };
+};
+const custodyBeforeDeath = await historicalCustody();
+assert(custodyBeforeDeath.stacks.length > 0, 'the death fixture includes generic stack owner tuples');
+assert.deepEqual(custodyBeforeDeath.item.map(({ owner_scope, owner_id, state }) => (
+  { owner_scope, owner_id, state }
+)), [{ owner_scope: 'operation', owner_id: historicalInstanceId, state: 'escrowed' }]);
+assert.deepEqual(custodyBeforeDeath.escrow.map(({ depositor_scope, depositor_id }) => (
+  { depositor_scope, depositor_id }
+)), [{ depositor_scope: 'character', depositor_id: players[3].characterId }]);
+
 await app.pool.query('UPDATE characters SET alive=false WHERE id=$1', [players[3].characterId]);
 assert.equal(Number((await app.pool.query(
   'SELECT COUNT(*) AS n FROM characters WHERE account_id=$1 AND alive', [players[3].accountId],
 )).rows[0].n), 0, 'the historical recovery begins with no living character');
+assert.deepEqual(await historicalCustody(), custodyBeforeDeath,
+  'death preserves every generic owner and exact historical depositor tuple byte-for-byte');
+
+const replacement = await call('POST', '/v1/character', {
+  token: players[3].token, body: { name: 'Graph API Recovery Heir' },
+});
+assert.equal(replacement.code, 200, JSON.stringify(replacement.body));
+const replacementCharacterId = replacement.body.id;
+assert.notEqual(replacementCharacterId, players[3].characterId);
+assert.deepEqual(await historicalCustody(), custodyBeforeDeath,
+  'replacement creation neither inherits nor rewrites historical stack, item, mystery, or escrow tuples');
+const heirDriveHistorical = await mutate(
+  '/v1/worldgraph/mysteries/belladonna-demo/nodes/mystery:belladonna-reward/complete',
+  players[3].token, 'api-heir-drive-historical', { interactionId: 'recover_belladonna_lockbox' },
+);
+assert.equal(heirDriveHistorical.code, 400);
+assert.equal(heirDriveHistorical.body.error, 'mystery_not_started',
+  'the heir cannot drive the old character-scoped mystery instance');
+assert.deepEqual(await historicalCustody(), custodyBeforeDeath,
+  'a refused heir action cannot mutate historical custody');
+
+const replacementStart = await mutate(
+  '/v1/worldgraph/mysteries/belladonna-demo/start',
+  players[3].token, 'api-replacement-mystery-start',
+);
+assert.equal(replacementStart.code, 200);
+assert.notEqual(replacementStart.body.instanceId, historicalInstanceId,
+  'the replacement street may have its own current instance');
+assert.deepEqual(await historicalCustody(), custodyBeforeDeath,
+  'starting the heir\'s distinct instance still does not inherit or duplicate historical custody');
 
 const historicalCancelUrl = '/v1/worldgraph/mysteries/belladonna-demo/cancel';
 const foreignHistorical = await mutate(
@@ -729,20 +801,6 @@ const canceledMystery = await mutate(
 assert.equal(canceledMystery.code, 200, JSON.stringify(canceledMystery.body));
 assert.equal(canceledMystery.body.status, 'canceled');
 assert.equal(canceledMystery.body.releasedEscrowCount, 1);
-
-const replacement = await call('POST', '/v1/character', {
-  token: players[3].token, body: { name: 'Graph API Recovery Heir' },
-});
-assert.equal(replacement.code, 200, JSON.stringify(replacement.body));
-const replacementCharacterId = replacement.body.id;
-assert.notEqual(replacementCharacterId, players[3].characterId);
-const replacementStart = await mutate(
-  '/v1/worldgraph/mysteries/belladonna-demo/start',
-  players[3].token, 'api-replacement-mystery-start',
-);
-assert.equal(replacementStart.code, 200);
-assert.notEqual(replacementStart.body.instanceId, historicalInstanceId,
-  'the replacement street may have its own current instance');
 const canceledMysteryReplay = await mutate(
   historicalCancelUrl, players[3].token, 'api-historical-cancel',
   { instanceId: historicalInstanceId },
@@ -768,6 +826,12 @@ assert.equal(Number((await app.pool.query(
   "SELECT COUNT(*) AS n FROM item_events WHERE item_id=$1 AND event_kind='released'",
   [recoveryToolId],
 )).rows[0].n), 1, 'historical retry cannot duplicate escrow release provenance');
+assert.equal(Number((await app.pool.query(
+  'SELECT COUNT(*) AS n FROM item_instances WHERE id=$1', [recoveryToolId],
+)).rows[0].n), 1, 'historical recovery preserves one permanent item id');
+assert.equal(Number((await app.pool.query(
+  'SELECT COUNT(*) AS n FROM operation_escrow WHERE item_id=$1', [recoveryToolId],
+)).rows[0].n), 0, 'the one live escrow claim is removed after its exact release');
 assert.deepEqual((await app.pool.query(
   'SELECT id,status FROM mystery_instances WHERE id IN ($1,$2) ORDER BY id',
   [historicalInstanceId, replacementStart.body.instanceId],

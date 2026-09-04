@@ -29,6 +29,7 @@ The full operational authority is [DEPLOY.md](../DEPLOY.md); the no-terminal che
 | Knowledge integrity | `npm run knowledge:check`, `test/knowledge.js` | Repository/GitHub graph provenance, link integrity and generated-doc freshness. |
 | Real PostgreSQL syntax | `npm run pgquery` | SQL strings parse on PostgreSQL. |
 | Real PostgreSQL behavior | `npm run pgcheck`, `npm run concurrency` | Migrations, lock order, exactly-once behavior and contended-object correctness. |
+| Phase 1 graph content | `npm run worldgraph:check` | Deterministic validation of the canonical CORE + AUTOMOTIVE + BELLADONNA package manifest; separate from authored-content compilation. |
 | Resilience | `npm run chaos`, backup self-test | Interrupted transactions, restart behavior and recoverability. |
 | Performance | `npm run loadtest`, `boardcost`, `pollcost`, `workercost`, `pageweight` | Measured capacity and known cost centers. |
 | Browser/mobile | `test/client.js`, `npm run mobile`, PWA tests | Control-to-route wiring, response rendering and viewport behavior. |
@@ -57,7 +58,8 @@ See the generated [document catalog](generated/documents.md) for every audit and
 - `INVARIANT_WEBHOOK_URL` receives private economy/ops alarms; `CITY_WIRE_WEBHOOK_URL` is a separate
   public-safe community feed and must never share the alarm destination.
 - Backup tooling creates, verifies and rotates PostgreSQL dumps; the restore rehearsal is part of
-  the runbook, not an optional afterthought.
+  the runbook, not an optional afterthought. Its required-table census and linked restore fixture
+  cover all 12 Phase 1 item/mystery/operation tables, FK order, permanent IDs, provenance and custody.
 - Chain watchers persist their block cursor and stay behind the head by a confirmation window.
 - Kill switches are documented in `LAUNCH-READINESS.md` and `CHAIN-DEPLOY.md`.
 
