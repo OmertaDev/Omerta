@@ -73,37 +73,102 @@ const CONTENT_STALE_BUNDLE_RESPONSE = {
   content: { 'application/json': { schema: { $ref: '#/components/schemas/ContentStaleBundleResponse' } } },
 };
 
+const WORLDGRAPH_CANONICAL_IDENTIFIER = {
+  type: 'string', minLength: 1, maxLength: 200, pattern: '^(?!\\s)(?:.*\\S)?$',
+};
+const WORLDGRAPH_PATH_SCHEMAS = {
+  itemId: WORLDGRAPH_CANONICAL_IDENTIFIER,
+  recipeId: WORLDGRAPH_CANONICAL_IDENTIFIER,
+  carId: WORLDGRAPH_CANONICAL_IDENTIFIER,
+  graphId: WORLDGRAPH_CANONICAL_IDENTIFIER,
+  nodeId: WORLDGRAPH_CANONICAL_IDENTIFIER,
+  operationNodeId: WORLDGRAPH_CANONICAL_IDENTIFIER,
+  operationId: WORLDGRAPH_CANONICAL_IDENTIFIER,
+  roleId: { ...WORLDGRAPH_CANONICAL_IDENTIFIER, maxLength: 80 },
+};
 const WORLDGRAPH_IDEMPOTENCY_PARAMETER = {
   name: 'Idempotency-Key', in: 'header', required: true,
   description: 'Fresh canonical key for this logical mutation. Exact retries replay; conflicting reuse is refused.',
-  schema: { type: 'string', minLength: 1, maxLength: 200 },
+  schema: WORLDGRAPH_CANONICAL_IDENTIFIER,
+};
+const WORLDGRAPH_RETRY_AFTER_HEADER = {
+  description: 'Whole seconds before the caller should retry.',
+  schema: { type: 'integer', minimum: 1 },
+};
+const WORLDGRAPH_COMMON_RESPONSES = {
+  400: {
+    description: 'Stable game refusal. Branch on error, never message.',
+    content: { 'application/json': { schema: { $ref: '#/components/schemas/WorldGraphError' } } },
+  },
+  401: {
+    description: 'Missing, invalid, expired, or revoked bearer token.',
+    content: { 'application/json': { schema: { $ref: '#/components/schemas/WorldGraphError' } } },
+  },
+  403: {
+    description: 'The authenticated account is banned.',
+    content: { 'application/json': { schema: { $ref: '#/components/schemas/WorldGraphForbiddenError' } } },
+  },
+  429: {
+    description: 'Account action cadence exceeded.',
+    headers: { 'Retry-After': WORLDGRAPH_RETRY_AFTER_HEADER },
+    content: { 'application/json': { schema: { $ref: '#/components/schemas/WorldGraphRateLimitError' } } },
+  },
+  503: {
+    description: 'The authoritative database is unavailable; retry later.',
+    headers: { 'Retry-After': WORLDGRAPH_RETRY_AFTER_HEADER },
+    content: { 'application/json': { schema: { $ref: '#/components/schemas/WorldGraphUnavailableError' } } },
+  },
 };
 const WORLDGRAPH_CONFLICT_RESPONSE = {
   description: 'The logical key is still in progress or locked world state conflicts with another mutation. Refresh or retry as indicated by the stable error code.',
-  content: { 'application/json': { schema: { $ref: '#/components/schemas/WorldGraphError' } } },
+  headers: { 'Retry-After': WORLDGRAPH_RETRY_AFTER_HEADER },
+  content: { 'application/json': { schema: { $ref: '#/components/schemas/WorldGraphConflictError' } } },
 };
 const WORLDGRAPH_KEY_REUSE_RESPONSE = {
   description: 'The Idempotency-Key belongs to a different logical request and cannot be reused.',
-  content: { 'application/json': { schema: { $ref: '#/components/schemas/WorldGraphError' } } },
+  content: { 'application/json': { schema: { $ref: '#/components/schemas/WorldGraphKeyReuseError' } } },
 };
 const WORLDGRAPH_EMPTY_BODY = { type: 'object', additionalProperties: false, properties: {} };
 const WORLDGRAPH_INTERACTION_BODY = {
   type: 'object', additionalProperties: false, properties: {
-    interactionId: { type: 'string', minLength: 1, maxLength: 200 },
+    interactionId: WORLDGRAPH_CANONICAL_IDENTIFIER,
   },
 };
 const WORLDGRAPH_CHOICE_BODY = {
   type: 'object', additionalProperties: false, required: ['optionId'], properties: {
-    optionId: { type: 'string', minLength: 1, maxLength: 200 },
-    interactionId: { type: 'string', minLength: 1, maxLength: 200 },
+    optionId: WORLDGRAPH_CANONICAL_IDENTIFIER,
+    interactionId: WORLDGRAPH_CANONICAL_IDENTIFIER,
   },
 };
+const WORLDGRAPH_MYSTERY_CANCEL_BODY = {
+  type: 'object', additionalProperties: false, required: ['instanceId'], properties: {
+    instanceId: WORLDGRAPH_CANONICAL_IDENTIFIER,
+  },
+};
+const WORLDGRAPH_REPLAY_HEADER = {
+  'X-Idempotent-Replay': {
+    description: 'Present as true when this is the exact stored response for the same logical request.',
+    schema: { type: 'string', const: 'true' },
+  },
+};
+const worldGraphRead = (operationId, responseSchema) => ({
+  operationId,
+  responseSchema: { $ref: responseSchema },
+  pathSchemas: WORLDGRAPH_PATH_SCHEMAS,
+  extraResponses: WORLDGRAPH_COMMON_RESPONSES,
+});
 const worldGraphMutation = (operationId, requestSchema = WORLDGRAPH_EMPTY_BODY) => ({
   operationId,
   requestSchema,
   requestParameters: [WORLDGRAPH_IDEMPOTENCY_PARAMETER],
   responseSchema: { $ref: '#/components/schemas/WorldGraphMutationReceipt' },
-  extraResponses: { 409: WORLDGRAPH_CONFLICT_RESPONSE, 422: WORLDGRAPH_KEY_REUSE_RESPONSE },
+  responseHeaders: WORLDGRAPH_REPLAY_HEADER,
+  pathSchemas: WORLDGRAPH_PATH_SCHEMAS,
+  extraResponses: {
+    ...WORLDGRAPH_COMMON_RESPONSES,
+    409: WORLDGRAPH_CONFLICT_RESPONSE,
+    422: WORLDGRAPH_KEY_REUSE_RESPONSE,
+  },
 });
 
 // The first strict contracts cover the autonomous hot path. The route registry still guarantees
@@ -290,25 +355,24 @@ const OPERATION_CONTRACTS = {
     responseSchema: { $ref: '#/components/schemas/ContentReceipt' },
     extraResponses: { 409: CONTENT_STALE_RESPONSE },
   },
-  'GET /v1/worldgraph/inventory': {
-    operationId: 'getWorldGraphInventory',
-    responseSchema: { $ref: '#/components/schemas/WorldGraphInventory' },
-  },
-  'GET /v1/worldgraph/recipes': {
-    operationId: 'getWorldGraphRecipes',
-    responseSchema: { $ref: '#/components/schemas/WorldGraphRecipeCatalog' },
-  },
+  'POST /v1/worldgraph/items/:itemId/assign-current-character': worldGraphMutation(
+    'assignWorldGraphItemToCurrentCharacter',
+  ),
+  'GET /v1/worldgraph/inventory': worldGraphRead(
+    'getWorldGraphInventory', '#/components/schemas/WorldGraphInventory',
+  ),
+  'GET /v1/worldgraph/recipes': worldGraphRead(
+    'getWorldGraphRecipes', '#/components/schemas/WorldGraphRecipeCatalog',
+  ),
   'POST /v1/worldgraph/recipes/:recipeId/craft': worldGraphMutation('craftWorldGraphRecipe'),
   'POST /v1/worldgraph/recipes/:recipeId/salvage/:carId': worldGraphMutation('salvageCarWithWorldGraphRecipe'),
-  'GET /v1/worldgraph/mysteries': {
-    operationId: 'getWorldGraphMysteries',
-    responseSchema: { $ref: '#/components/schemas/WorldGraphMysteryDiscovery' },
-  },
+  'GET /v1/worldgraph/mysteries': worldGraphRead(
+    'getWorldGraphMysteries', '#/components/schemas/WorldGraphMysteryDiscovery',
+  ),
   'POST /v1/worldgraph/mysteries/:graphId/start': worldGraphMutation('startWorldGraphMystery'),
-  'GET /v1/worldgraph/mysteries/:graphId': {
-    operationId: 'getWorldGraphMystery',
-    responseSchema: { $ref: '#/components/schemas/WorldGraphMysteryBoard' },
-  },
+  'GET /v1/worldgraph/mysteries/:graphId': worldGraphRead(
+    'getWorldGraphMystery', '#/components/schemas/WorldGraphMysteryBoard',
+  ),
   'POST /v1/worldgraph/mysteries/:graphId/nodes/:nodeId/discover': worldGraphMutation(
     'discoverWorldGraphMysteryNode', WORLDGRAPH_INTERACTION_BODY,
   ),
@@ -318,22 +382,21 @@ const OPERATION_CONTRACTS = {
   'POST /v1/worldgraph/mysteries/:graphId/choices/:nodeId': worldGraphMutation(
     'commitWorldGraphMysteryChoice', WORLDGRAPH_CHOICE_BODY,
   ),
-  'POST /v1/worldgraph/mysteries/:graphId/cancel': worldGraphMutation('cancelWorldGraphMystery'),
-  'GET /v1/worldgraph/operations': {
-    operationId: 'getWorldGraphOperations',
-    responseSchema: { $ref: '#/components/schemas/WorldGraphOperationDiscovery' },
-  },
+  'POST /v1/worldgraph/mysteries/:graphId/cancel': worldGraphMutation(
+    'cancelWorldGraphMystery', WORLDGRAPH_MYSTERY_CANCEL_BODY,
+  ),
+  'GET /v1/worldgraph/operations': worldGraphRead(
+    'getWorldGraphOperations', '#/components/schemas/WorldGraphOperationDiscovery',
+  ),
   'POST /v1/worldgraph/operations/:graphId/:operationNodeId/open': worldGraphMutation(
     'openWorldGraphOperation',
   ),
-  'GET /v1/worldgraph/operations/:operationId': {
-    operationId: 'getWorldGraphOperation',
-    responseSchema: { $ref: '#/components/schemas/WorldGraphOperationBoard' },
-  },
-  'GET /v1/worldgraph/operations/:operationId/role': {
-    operationId: 'getWorldGraphOperationRole',
-    responseSchema: { $ref: '#/components/schemas/WorldGraphRoleBoard' },
-  },
+  'GET /v1/worldgraph/operations/:operationId': worldGraphRead(
+    'getWorldGraphOperation', '#/components/schemas/WorldGraphOperationBoard',
+  ),
+  'GET /v1/worldgraph/operations/:operationId/role': worldGraphRead(
+    'getWorldGraphOperationRole', '#/components/schemas/WorldGraphRoleBoard',
+  ),
   'POST /v1/worldgraph/operations/:operationId/roles/:roleId': worldGraphMutation(
     'assignWorldGraphOperationRole',
   ),
@@ -1001,8 +1064,40 @@ const AGENT_SCHEMAS = {
     },
   },
   WorldGraphError: {
-    type: 'object', additionalProperties: false, required: ['error', 'message'],
+    type: 'object', required: ['error'],
     properties: { error: { type: 'string' }, message: { type: 'string' } },
+  },
+  WorldGraphForbiddenError: {
+    type: 'object', additionalProperties: false, required: ['error'],
+    properties: { error: { type: 'string', const: 'banned' } },
+  },
+  WorldGraphRateLimitError: {
+    type: 'object', additionalProperties: false, required: ['error', 'retryAfter'],
+    properties: {
+      error: { type: 'string', const: 'rate_limited' },
+      retryAfter: { type: 'integer', minimum: 1 },
+    },
+  },
+  WorldGraphUnavailableError: {
+    type: 'object', additionalProperties: false, required: ['error'],
+    properties: { error: { type: 'string', const: 'db_down' } },
+  },
+  WorldGraphConflictError: {
+    type: 'object', additionalProperties: false, required: ['error', 'message'],
+    properties: {
+      error: { type: 'string', enum: [
+        'in_progress', 'contention', 'idempotency_conflict', 'idempotency_in_progress',
+        'operation_role_taken', 'operation_choice_conflict', 'choice_committed',
+      ] },
+      message: { type: 'string' },
+    },
+  },
+  WorldGraphKeyReuseError: {
+    type: 'object', additionalProperties: false, required: ['error', 'message'],
+    properties: {
+      error: { type: 'string', const: 'idempotency_key_reuse' },
+      message: { type: 'string' },
+    },
   },
   WorldGraphInventoryStack: {
     type: 'object', additionalProperties: false,
@@ -1042,7 +1137,14 @@ const AGENT_SCHEMAS = {
   WorldGraphRecipeBlocker: {
     type: 'object', additionalProperties: false, required: ['adapter'],
     properties: {
-      adapter: { type: 'string' }, required: {}, current: {}, carId: { type: ['string', 'null'] },
+      adapter: { type: 'string', enum: [
+        'location', 'level', 'skill', 'owns_car',
+        'cash', 'material_quantity', 'item_ownership',
+      ] },
+      required: { type: ['string', 'number', 'null'] },
+      current: { type: ['string', 'number', 'null'] },
+      carId: { type: ['string', 'null'] },
+      templateId: { type: 'string' }, quality: { type: 'string' },
     },
   },
   WorldGraphRecipe: {
@@ -1267,6 +1369,7 @@ const AGENT_SCHEMAS = {
       assignment: { $ref: '#/components/schemas/WorldGraphMutationAssignment' },
       contribution: { $ref: '#/components/schemas/WorldGraphMutationContribution' },
       effects: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphMutationEffect' } },
+      item: { $ref: '#/components/schemas/WorldGraphMutationEntry' },
     },
   },
   AgentEV: {
@@ -1425,7 +1528,8 @@ export function buildOpenApi(routes, { baseUrl = 'https://www.omerta.fun', versi
       security,
       parameters: [
         ...paramsOf(url).map((name) => ({
-          name, in: 'path', required: true, schema: { type: 'string' },
+          name, in: 'path', required: true,
+          schema: contract?.pathSchemas?.[name] || { type: 'string' },
         })),
         ...(contract?.requestParameters || []),
       ],
@@ -1437,7 +1541,9 @@ export function buildOpenApi(routes, { baseUrl = 'https://www.omerta.fun', versi
       },
     };
     if (contract?.responseSchema) op.responses[200] = {
-      description: 'OK', content: { 'application/json': { schema: contract.responseSchema } },
+      description: 'OK',
+      ...(contract.responseHeaders ? { headers: contract.responseHeaders } : {}),
+      content: { 'application/json': { schema: contract.responseSchema } },
     };
     if (method !== 'GET' && method !== 'DELETE') {
       op.requestBody = { required: !!contract?.requestSchema?.required,
@@ -1498,7 +1604,16 @@ export function llmsTxt({ baseUrl = 'https://www.omerta.fun' } = {}) {
 
 ## Machine rulebook
 - [Rules](${baseUrl}/v1/rules): crimes, districts, guns, drugs, goods, catalogs, thresholds, paths.
-- [Business catalog](${baseUrl}/v1/catalog): level-gated fronts.
+- [Capability catalog](${baseUrl}/v1/catalog): level-gated fronts plus direct Phase 1 world-graph route pointers.
+
+## Phase 1 world graph — deliberate direct play
+- [Inventory](${baseUrl}/v1/worldgraph/inventory): conserved account-owned materials and unique items.
+- [Recipes](${baseUrl}/v1/worldgraph/recipes): discovered recipes with current cash, material, skill, location, and car blockers. Use the issued recipe and owned-car identifiers with the craft/salvage routes.
+- Assign an eligible crafted unique item to the authenticated account's current living character with POST ${baseUrl}/v1/worldgraph/items/:itemId/assign-current-character. The body is empty; the server chooses both owners.
+- [Mysteries](${baseUrl}/v1/worldgraph/mysteries): discover and start a graph, read its board, then deliberately discover/complete/choose. Keep the server-issued instanceId so POST /v1/worldgraph/mysteries/:graphId/cancel can recover historical escrow after character replacement.
+- [Crew operations](${baseUrl}/v1/worldgraph/operations): discover/open, read shared or assigned-role boards, claim one role, contribute, then complete or cancel. Shared boards never reveal role-private evidence.
+- Every mutation requires a fresh Idempotency-Key; exact retries replay. Missing, foreign, hidden, and otherwise unavailable private identifiers use non-enumerating errors.
+- These world-graph actions are direct-only. Discovery and boards grant no POST /v1/agent/act authority, and the autonomous queue does not execute them.
 
 ## How to earn (skill-based, open to agents)
 - Crime grind, kitchen optimization, trade-goods arbitrage across districts (deterministic

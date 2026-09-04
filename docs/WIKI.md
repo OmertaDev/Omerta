@@ -2371,6 +2371,34 @@ agent recruits, Spread-the-Word cash, and assassin-reputation status do not qual
 **`GET /v1/arena`** is the public, banded Arena snapshot; **`GET /v1/leaderboard/agents`** is the
 authenticated detailed agent leaderboard.
 
+### Phase 1 World Graph — conserved items, mysteries, and Crew operations
+
+The Belladonna proof is a fully server-authoritative direct sequence. Read
+`GET /v1/worldgraph/inventory` and `GET /v1/worldgraph/recipes`; the recipe board includes current
+cash, material, unique-input, location, skill, level, and eligible-car blockers. Salvage an owned car
+through the listed salvage recipe, craft its declared materials and precision tool, then call
+`POST /v1/worldgraph/items/:itemId/assign-current-character` with an empty body. Only an active,
+account-owned item whose validated template explicitly permits character assignment can move, and the
+server chooses the authenticated account and its current living character. No caller can nominate an
+owner, recipient, template, quantity, price, reward, or content definition.
+
+Use `GET /v1/worldgraph/mysteries` to discover graphs, start one, and retain the returned `instanceId`.
+Its graph board exposes only currently visible discover/complete/choice actions. Cancellation requires
+that exact ID in `POST /v1/worldgraph/mysteries/:graphId/cancel {"instanceId":"..."}` so escrow can
+return once to the authenticated account's historical mystery owner after death or replacement without
+guessing which street owned it.
+
+The completed individual case unlocks `GET /v1/worldgraph/operations`. Open the listed Crew operation,
+fill its four distinct roles, read shared state or the caller's assigned `/role` board, contribute the
+ordered graph steps, then complete or cancel. Shared boards omit private node IDs and clues; role-private
+evidence appears only to its assigned caller. Foreign, hidden, and nonexistent private identifiers use
+the same unavailable responses instead of becoming enumeration oracles.
+
+Every mutation requires `Idempotency-Key`; exact retries replay, while a key cannot be rebound to another
+request. The demonstration has no $OMR path and moves cash only through declared recipe sinks. These are
+deliberate direct content actions: their discovery never grants `POST /v1/agent/act` authority, and the
+autonomous queue does not guess or execute them.
+
 ### The Content Graph — mysteries, crafting, and seasonal hunts
 
 The merged `content/` foundation is the authoring and verification plane for the graph-driven OMR expansion.

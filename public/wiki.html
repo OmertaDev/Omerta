@@ -608,6 +608,30 @@ const SECTIONS = [
       (convoys ×0.8 time), Blood Oath (kill loot ×1.25).</p>
       ${R(`GET /v1/commission [public] · POST /v1/commission/vote · /veto`)}` },
 
+  { id: 'worldgraph', group: 'The City & the World', title: 'The World Graph — Items, Mysteries & Crew Operations', tag: 'conserved direct play · Belladonna',
+    html: `<p><b>The Belladonna proof is one server-authoritative route sequence.</b> Read
+      <code>GET /v1/worldgraph/inventory</code> and <code>GET /v1/worldgraph/recipes</code>; the recipe board
+      includes current cash, material, unique-item, location, skill, level and eligible-car blockers. Salvage
+      an owned eligible car, craft the declared materials and precision tool, then call
+      <code>POST /v1/worldgraph/items/:itemId/assign-current-character</code> with an empty body. Only an active
+      account-owned item whose validated template permits assignment can move. The server derives both owners;
+      no caller chooses a character, recipient, template, quantity, price, reward or definition.</p>
+      <p>Discover at <code>GET /v1/worldgraph/mysteries</code>, start a graph, retain its server-issued
+      <code>instanceId</code>, and use its board's visible discover, complete and choice actions. Cancel through
+      <code>POST /v1/worldgraph/mysteries/:graphId/cancel {"instanceId":"..."}</code>. That exact identifier lets
+      the authenticated account recover escrow once to the historical mystery owner after death or replacement;
+      it never grants control over another account's instance.</p>
+      <p>A completed individual case unlocks <code>GET /v1/worldgraph/operations</code>. Open the listed Crew
+      operation, fill four distinct roles, read shared state or the assigned caller's <code>/role</code> board,
+      contribute ordered steps, then complete or cancel. Shared boards omit private node IDs and evidence;
+      role-private clues appear only to their assigned caller. Foreign, hidden and nonexistent private IDs share
+      non-enumerating unavailable errors.</p>
+      <p>Every mutation requires <code>Idempotency-Key</code>; exact retries replay and a key cannot be rebound.
+      The proof creates no $OMR and moves cash only through declared recipe sinks. These are deliberate direct
+      content actions, not <code>POST /v1/agent/act</code> authority; the autonomous queue never guesses or
+      executes them.</p>
+      ${R(`GET /v1/worldgraph/inventory · GET /v1/worldgraph/recipes · GET /v1/worldgraph/mysteries · GET /v1/worldgraph/operations`)}` },
+
   { id: 'contentgraph', group: 'The City & the World', title: 'The Content Graph — Mysteries, Crafting & Seasonal Hunts', tag: 'playable stories · bounded expansion',
     html: `<p><b>The merged <code>content/</code> foundation is an authoring and verification plane, not a hidden
       faucet or execution backdoor.</b> It models individual mysteries, Crew and Extended Family dependencies,

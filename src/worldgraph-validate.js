@@ -1701,6 +1701,21 @@ function validatePrivateEvidence(registry) {
   }
 }
 
+// This is the sole content flag that may authorize the narrow account -> current-character custody
+// bridge. Its placement and type are validated with the graph so a route never trusts an ad-hoc
+// template name, a truthy string, or a declaration on a material/recipe node.
+function validateCharacterAssignmentFlags(registry) {
+  for (const [nodeId, node] of registry.nodes) {
+    const characterAssignable = node.metadata?.characterAssignable;
+    if (characterAssignable === undefined) continue;
+    if (node.type !== 'item_template' || typeof characterAssignable !== 'boolean') {
+      fail('invalid_character_assignment_flag',
+        `Node ${nodeId} characterAssignable must be boolean metadata on an item_template`,
+        { nodeId });
+    }
+  }
+}
+
 /**
  * Validate one immutable registry before it is accepted by a runtime or CI.
  * Validation failures throw GraphValidationError with a stable machine code.
@@ -1714,6 +1729,7 @@ export function validateGraph(registry) {
 
   const packageEdges = validatePackageDependencies(registry);
   validatePrivateEvidence(registry);
+  validateCharacterAssignmentFlags(registry);
   const {
     conditionByNode, dependencyEdges, packageClosures, quantityByNode,
   } = validateNodeReferences(registry, packageEdges);

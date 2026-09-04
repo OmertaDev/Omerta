@@ -10,6 +10,7 @@ import {
 import {
   craft,
   recipeCatalog,
+  recipeResourceBlockers,
   salvageCar,
 } from '../src/crafting.js';
 import { carMatchesGraphSelector } from '../src/economy.js';
@@ -79,6 +80,36 @@ try {
   assert(carMatchesGraphSelector(selectorCar, { kind: 'assetType', value: 'car' }));
   assert.equal(carMatchesGraphSelector(selectorCar, { kind: 'carId', value: 'junker' }), false,
     'a carId alias cannot accidentally match the model');
+
+  assert.deepEqual(recipeResourceBlockers({
+    id: 'recipe:test-unique-input',
+    consumes: [{ templateId: 'item:precision_lock_tool', quantity: 2 }],
+  }, {
+    inventory: {
+      stacks: [],
+      items: [
+        { templateId: 'item:precision_lock_tool', state: 'active', escrowed: false },
+        { templateId: 'item:precision_lock_tool', state: 'escrowed', escrowed: true },
+      ],
+    },
+  }), [{
+    adapter: 'item_ownership', templateId: 'item:precision_lock_tool', required: 2, current: 1,
+  }], 'recipe discovery counts only active, unescrowed unique inputs');
+  assert.deepEqual(recipeResourceBlockers({
+    id: 'recipe:test-aggregate-materials',
+    consumes: [
+      { templateId: 'mat:scrap_steel', quantity: 4, quality: 'standard' },
+      { templateId: 'mat:scrap_steel', quantity: 4, quality: 'standard' },
+    ],
+  }, {
+    inventory: {
+      stacks: [{ templateId: 'mat:scrap_steel', quality: 'standard', qty: 6 }],
+      items: [],
+    },
+  }), [{
+    adapter: 'material_quantity', templateId: 'mat:scrap_steel', quality: 'standard',
+    required: 8, current: 6,
+  }], 'recipe discovery aggregates repeated exact-quality material requirements');
 
   await pool.query(
     `INSERT INTO characters (id,account_id,name,season,loc,respect,cash)

@@ -5,10 +5,12 @@
 // owners, and operation recipients are all resolved from server state and this immutable registry.
 // The authored runtime is intentionally separate from /v1/agent/act: discovery never grants an
 // autonomous mutation capability.
+import crypto from 'node:crypto';
 import * as G from '../game.js';
 import { recipeCatalog, craft, salvageCar } from '../crafting.js';
 import {
   inventoryBoard,
+  transferItem,
   withItemTransaction,
 } from '../items.js';
 import {
@@ -41,6 +43,20 @@ export const PHASE1_WORLD_GRAPH = loadAndValidateGraphPackages([
   BELLADONNA_PACKAGE,
 ]);
 
+export const WORLD_GRAPH_CAPABILITIES = Object.freeze({
+  phase: 1,
+  authenticated: true,
+  directOnly: true,
+  agentActAuthority: false,
+  routes: Object.freeze({
+    inventory: '/v1/worldgraph/inventory',
+    recipes: '/v1/worldgraph/recipes',
+    assignCurrentCharacter: '/v1/worldgraph/items/:itemId/assign-current-character',
+    mysteries: '/v1/worldgraph/mysteries',
+    operations: '/v1/worldgraph/operations',
+  }),
+});
+
 const EMPTY_BODY = Object.freeze({
   type: 'object', additionalProperties: false, properties: {},
 });
@@ -53,6 +69,14 @@ const CHOICE_BODY = Object.freeze({
   type: 'object', additionalProperties: false, required: ['optionId'], properties: {
     optionId: { type: 'string', minLength: 1, maxLength: 200 },
     interactionId: { type: 'string', minLength: 1, maxLength: 200 },
+  },
+});
+const MYSTERY_CANCEL_BODY = Object.freeze({
+  type: 'object', additionalProperties: false, required: ['instanceId'], properties: {
+    instanceId: {
+      type: 'string', minLength: 1, maxLength: 200,
+      pattern: '^(?!\\s)(?:.*\\S)?$',
+    },
   },
 });
 
@@ -109,6 +133,15 @@ function canonicalHeader(value) {
   return value;
 }
 
+function innerIdempotencyKey(accountId, externalKey) {
+  const digest = crypto.createHash('sha256')
+    .update(JSON.stringify([
+      'omerta-worldgraph-http-v1', accountId, canonicalHeader(externalKey),
+    ]))
+    .digest('hex');
+  return `worldgraph:http:v1:${digest}`;
+}
+
 async function requireIdempotency(req) {
   canonicalHeader(req.headers['idempotency-key']);
 }
@@ -138,6 +171,9 @@ const strictBody = (shape) => async (req) => {
     if (rule.type === 'string' && (typeof value !== 'string'
       || value.length < (rule.minLength || 0) || value.length > (rule.maxLength || Infinity))) {
       invalidBody(`${key} must be a valid string.`);
+    }
+    if (rule.pattern && !new RegExp(rule.pattern).test(value)) {
+      invalidBody(`${key} must be a canonical string.`);
     }
   }
 };
@@ -279,11 +315,54 @@ async function operationDiscovery(client, accountId, characterId) {
 async function currentCharacterOwner(client, accountId) {
   const row = (await client.query(
     `SELECT id FROM characters
-      WHERE account_id=$1 AND alive ORDER BY created_at DESC,id LIMIT 1`,
+      WHERE account_id=$1 AND alive ORDER BY created_at DESC,id LIMIT 1 FOR UPDATE`,
     [accountId],
   )).rows[0];
   if (!row) fail('no_character', 'Create a character first.');
   return { scope: 'character', id: row.id };
+}
+
+async function assignItemToCurrentCharacter(client, accountId, itemId, idempotencyKey) {
+  const row = (await client.query(
+    `SELECT template_id FROM item_instances
+      WHERE id=$1 AND owner_scope='account' AND owner_id=$2 AND state='active'`,
+    [itemId, accountId],
+  )).rows[0];
+  const template = row ? PHASE1_WORLD_GRAPH.nodes.get(row.template_id) : null;
+  if (!template || template.type !== 'item_template'
+    || template.metadata?.characterAssignable !== true) {
+    fail('item_assignment_unavailable', 'That item cannot be assigned to the current character.');
+  }
+  const characterOwner = await currentCharacterOwner(client, accountId);
+  try {
+    const item = await transferItem(
+      client,
+      { scope: 'account', id: accountId },
+      characterOwner,
+      itemId,
+      'assigned to current character',
+      idempotencyKey,
+    );
+    return { ok: true, kind: 'assign_current_character', item };
+  } catch (error) {
+    if (error?.code === 'item_unavailable') {
+      fail('item_assignment_unavailable', 'That item cannot be assigned to the current character.');
+    }
+    throw error;
+  }
+}
+
+async function historicalMysteryOwner(client, accountId, graphId, instanceId) {
+  const row = (await client.query(
+    `SELECT owner_scope,owner_id,graph_version FROM mystery_instances
+      WHERE id=$1 AND authority_account_id=$2 AND graph_id=$3`,
+    [instanceId, accountId, graphId],
+  )).rows[0];
+  const pkg = PHASE1_WORLD_GRAPH.byPackage.get(graphId);
+  if (!row || !pkg || Number(row.graph_version) !== Number(pkg.version)) {
+    fail('mystery_unavailable', 'That mystery instance is unavailable.');
+  }
+  return { scope: row.owner_scope, id: row.owner_id };
 }
 
 async function requireCurrentCrewOperation(client, accountId, operationId) {
@@ -326,26 +405,39 @@ async function readForPlayer(pool, accountId, action, { locked = false } = {}) {
 }
 
 export function register(app, { pool, auth }) {
+  app.post('/v1/worldgraph/items/:itemId/assign-current-character', mutationOptions(auth),
+    async (req, reply) => mutate(pool, reply, (client) => assignItemToCurrentCharacter(
+      client,
+      req.user.sub,
+      req.params.itemId,
+      innerIdempotencyKey(req.user.sub, req.headers['idempotency-key']),
+    )));
+
   app.get('/v1/worldgraph/inventory', { preHandler: auth }, async (req) =>
     readForPlayer(pool, req.user.sub, async (_ch, client) => safeInventory(
       await inventoryBoard(client, { scope: 'account', id: req.user.sub }),
     )));
 
   app.get('/v1/worldgraph/recipes', { preHandler: auth }, async (req) =>
-    readForPlayer(pool, req.user.sub, async (ch, _client, h) => ({
-      recipes: recipeCatalog({ character: ch, owned: h.owned }),
+    readForPlayer(pool, req.user.sub, async (ch, client, h) => ({
+      recipes: recipeCatalog({
+        character: ch,
+        cash: Number(ch.cash),
+        owned: h.owned,
+        inventory: await inventoryBoard(client, { scope: 'account', id: req.user.sub }),
+      }),
     })));
 
   app.post('/v1/worldgraph/recipes/:recipeId/craft', mutationOptions(auth), async (req, reply) =>
     mutate(pool, reply, (client) => craft(
       client, { accountId: req.user.sub }, req.params.recipeId,
-      canonicalHeader(req.headers['idempotency-key']),
+      innerIdempotencyKey(req.user.sub, req.headers['idempotency-key']),
     )));
 
   app.post('/v1/worldgraph/recipes/:recipeId/salvage/:carId', mutationOptions(auth), async (req, reply) =>
     mutate(pool, reply, (client) => salvageCar(
       client, { accountId: req.user.sub }, req.params.carId, req.params.recipeId,
-      canonicalHeader(req.headers['idempotency-key']),
+      innerIdempotencyKey(req.user.sub, req.headers['idempotency-key']),
     )));
 
   app.get('/v1/worldgraph/mysteries', { preHandler: auth }, async (req) =>
@@ -360,6 +452,7 @@ export function register(app, { pool, auth }) {
       if (!pkg) fail('mystery_graph', 'No such mystery graph package.');
       return startMystery(
         client, mysteryContext(req.user.sub), owner, req.params.graphId, Number(pkg.version),
+        innerIdempotencyKey(req.user.sub, req.headers['idempotency-key']),
       );
     }));
 
@@ -373,7 +466,7 @@ export function register(app, { pool, auth }) {
       const owner = await currentCharacterOwner(client, req.user.sub);
       return discoverNode(
         client, mysteryContext(req.user.sub), owner, req.params.graphId, req.params.nodeId,
-        { idempotencyKey: canonicalHeader(req.headers['idempotency-key']),
+        { idempotencyKey: innerIdempotencyKey(req.user.sub, req.headers['idempotency-key']),
           interactionId: req.body?.interactionId },
       );
     }));
@@ -383,7 +476,7 @@ export function register(app, { pool, auth }) {
       const owner = await currentCharacterOwner(client, req.user.sub);
       return completeNode(
         client, mysteryContext(req.user.sub), owner, req.params.graphId, req.params.nodeId,
-        { idempotencyKey: canonicalHeader(req.headers['idempotency-key']),
+        { idempotencyKey: innerIdempotencyKey(req.user.sub, req.headers['idempotency-key']),
           interactionId: req.body?.interactionId },
       );
     }));
@@ -394,17 +487,19 @@ export function register(app, { pool, auth }) {
       return commitChoice(
         client, mysteryContext(req.user.sub), owner, req.params.graphId, req.params.nodeId,
         req.body.optionId,
-        { idempotencyKey: canonicalHeader(req.headers['idempotency-key']),
+        { idempotencyKey: innerIdempotencyKey(req.user.sub, req.headers['idempotency-key']),
           interactionId: req.body?.interactionId },
       );
     }));
 
-  app.post('/v1/worldgraph/mysteries/:graphId/cancel', mutationOptions(auth),
+  app.post('/v1/worldgraph/mysteries/:graphId/cancel', mutationOptions(auth, MYSTERY_CANCEL_BODY),
     async (req, reply) => mutate(pool, reply, async (client) => {
-      const owner = await currentCharacterOwner(client, req.user.sub);
+      const owner = await historicalMysteryOwner(
+        client, req.user.sub, req.params.graphId, req.body.instanceId,
+      );
       return cancelMystery(
         client, mysteryContext(req.user.sub), owner, req.params.graphId,
-        { idempotencyKey: canonicalHeader(req.headers['idempotency-key']) },
+        { idempotencyKey: innerIdempotencyKey(req.user.sub, req.headers['idempotency-key']) },
       );
     }));
 
@@ -420,7 +515,7 @@ export function register(app, { pool, auth }) {
       return openOperation(
         client, operationContext(req.user.sub), req.params.graphId,
         req.params.operationNodeId, Number(pkg.version),
-        canonicalHeader(req.headers['idempotency-key']),
+        innerIdempotencyKey(req.user.sub, req.headers['idempotency-key']),
       );
     }));
 
@@ -443,25 +538,25 @@ export function register(app, { pool, auth }) {
   app.post('/v1/worldgraph/operations/:operationId/roles/:roleId', mutationOptions(auth),
     async (req, reply) => mutate(pool, reply, (client) => assignRole(
       client, operationContext(req.user.sub), req.params.operationId, req.params.roleId,
-      { idempotencyKey: canonicalHeader(req.headers['idempotency-key']) },
+      { idempotencyKey: innerIdempotencyKey(req.user.sub, req.headers['idempotency-key']) },
     )));
 
   app.post('/v1/worldgraph/operations/:operationId/contributions/:nodeId',
     mutationOptions(auth, INTERACTION_BODY), async (req, reply) => mutate(pool, reply, (client) => contribute(
       client, operationContext(req.user.sub), req.params.operationId, req.params.nodeId,
-      { idempotencyKey: canonicalHeader(req.headers['idempotency-key']),
+      { idempotencyKey: innerIdempotencyKey(req.user.sub, req.headers['idempotency-key']),
         interactionId: req.body?.interactionId },
     )));
 
   app.post('/v1/worldgraph/operations/:operationId/complete', mutationOptions(auth),
     async (req, reply) => mutate(pool, reply, (client) => completeOperation(
       client, operationContext(req.user.sub), req.params.operationId,
-      { idempotencyKey: canonicalHeader(req.headers['idempotency-key']) },
+      { idempotencyKey: innerIdempotencyKey(req.user.sub, req.headers['idempotency-key']) },
     )));
 
   app.post('/v1/worldgraph/operations/:operationId/cancel', mutationOptions(auth),
     async (req, reply) => mutate(pool, reply, (client) => cancelOperation(
       client, operationContext(req.user.sub), req.params.operationId,
-      { idempotencyKey: canonicalHeader(req.headers['idempotency-key']) },
+      { idempotencyKey: innerIdempotencyKey(req.user.sub, req.headers['idempotency-key']) },
     )));
 }

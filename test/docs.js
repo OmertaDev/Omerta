@@ -33,6 +33,40 @@ const lines = (p) => { const s = read(p); let n = 0; for (let i = 0; i < s.lengt
 const countLines = (files) => files.reduce((n, f) => n + lines(f), 0);
 const spec = read('SPEC.md');
 
+// Phase 1 world-graph discovery is deliberately smaller than the broad documentation census that
+// follows in Task 9, but these four operator/player entry points must already publish the safe route
+// sequence and its direct-only boundary. A route can otherwise be perfectly typed yet undiscoverable.
+{
+  const { llmsTxt } = await import('../src/agentgateway.js');
+  const surfaces = [
+    ['llms.txt', llmsTxt()],
+    ['agent guide', read('AGENTS.md')],
+    ['markdown wiki', read('docs/WIKI.md')],
+    ['browser wiki', read('public/wiki.html').replace(/<[^>]*>/g, ' ')],
+  ];
+  for (const [name, source] of surfaces) {
+    const text = source.replace(/\s+/g, ' ');
+    const plain = text.replace(/[*`]/g, '');
+    for (const route of [
+      '/v1/worldgraph/inventory',
+      '/v1/worldgraph/recipes',
+      '/v1/worldgraph/mysteries',
+      '/v1/worldgraph/operations',
+      'assign-current-character',
+    ]) {
+      assert(text.includes(route), `${name} must publish the Phase 1 world-graph route ${route}`);
+    }
+    assert(/direct(?:-| )only|direct content actions/i.test(text),
+      `${name} must identify world-graph play as deliberate direct actions`);
+    assert(/discovery.{0,100}(?:does not grant|never grants|grant no).{0,80}(?:POST )?\/v1\/agent\/act|direct.{0,140}not (?:POST )?\/v1\/agent\/act authority/i.test(plain),
+      `${name} must say discovery grants no /v1/agent/act authority`);
+    assert(/Idempotency-Key/i.test(text) && /exact retr(?:y|ies)|exact retries/i.test(text),
+      `${name} must explain mutation replay semantics`);
+    assert(/private|non-enumerat|hidden/i.test(text),
+      `${name} must preserve the shared/private board and existence-oracle boundary`);
+  }
+}
+
 // Authored content is now a playable API surface, so every reader-facing guide must distinguish the
 // shipped runtime slice from the larger graph systems that are still staged. This guard exists because
 // the browser wiki continued to call the whole runtime inactive after the API and tests had gone live.

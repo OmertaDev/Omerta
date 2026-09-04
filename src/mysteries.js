@@ -397,7 +397,9 @@ function assertPinned(instance, pkg) {
 }
 
 /** Start one owner/package instance. The server-derived deterministic key makes retries exact. */
-export async function startMystery(client, contextValue, ownerValue, graphIdValue, version) {
+export async function startMystery(
+  client, contextValue, ownerValue, graphIdValue, version, idempotencyKeyValue = null,
+) {
   const context = contextOf(contextValue);
   const owner = ownerOf(ownerValue);
   const pkg = packageOf(context, graphIdValue, version);
@@ -421,7 +423,9 @@ export async function startMystery(client, contextValue, ownerValue, graphIdValu
     client,
     owner,
     'mystery_action',
-    startKey(owner, pkg.id, Number(pkg.version)),
+    idempotencyKeyValue === null
+      ? startKey(owner, pkg.id, Number(pkg.version))
+      : canonical(idempotencyKeyValue, 'Idempotency key', 'bad_idempotency_key'),
     { action: 'start', graph },
     async () => {
       await actorOf(client, context, owner);

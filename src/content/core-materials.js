@@ -24,7 +24,9 @@ export const CORE_MATERIALS_PACKAGE = Object.freeze({
     material('mat:wire', 'Wire'),
     material('mat:salvage_parts', 'Salvage Parts'),
     material('mat:hardened_steel', 'Hardened Steel'),
-    uniqueItem('item:precision_lock_tool', 'Precision Lock Tool'),
+    uniqueItem('item:precision_lock_tool', 'Precision Lock Tool', {
+      characterAssignable: true,
+    }),
     uniqueItem('item:belladonna_artifact', 'Belladonna Artifact', {
       inert: true,
       tradeable: false,

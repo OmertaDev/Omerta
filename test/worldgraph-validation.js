@@ -87,6 +87,18 @@ expectCode(() => validateGraph(registry([
 ])), 'unsupported_condition_adapter', /unsupported condition adapter/i);
 
 expectCode(() => validateGraph(registry([
+  { id: 'mat:assignable', type: 'material', metadata: { characterAssignable: true } },
+])), 'invalid_character_assignment_flag', /item_template/i);
+
+expectCode(() => validateGraph(registry([
+  { id: 'item:assignable', type: 'item_template', metadata: { characterAssignable: 'yes' } },
+])), 'invalid_character_assignment_flag', /boolean/i);
+
+assert.equal(validateGraph(registry([
+  { id: 'item:assignable', type: 'item_template', metadata: { characterAssignable: true } },
+])).ok, true, 'an explicit boolean item-template flag passes static validation');
+
+expectCode(() => validateGraph(registry([
   { id: 'm:a', type: 'mystery_step', conditions: [{ adapter: 'material_quantity', quantity: 1 }] },
 ])), 'malformed_condition', /material_quantity.*template/i);
 

@@ -264,6 +264,38 @@ live rate and till, open loan-funding demand, and more. One call, then act on th
 - **Contract fulfillment** — the top of the ranked `opportunities` list is the
   fattest bounty you can currently collect.
 
+### Phase 1 world graph and item economy (deliberate direct play)
+
+The Belladonna vertical is a conserved, server-authoritative route sequence:
+read `GET /v1/worldgraph/inventory` and `GET /v1/worldgraph/recipes`, salvage an
+owned eligible car, craft the graph-declared materials and precision tool, then
+assign that eligible account-owned tool to your current living character with
+`POST /v1/worldgraph/items/:itemId/assign-current-character`. That custody body
+is empty: you provide only the server-issued item ID, while the server derives
+the account, active item template, and destination character. Other items,
+owners, recipients, quantities, prices, and definitions cannot be nominated.
+
+Discover investigations at `GET /v1/worldgraph/mysteries`, start one, retain its
+server-issued `instanceId`, and read `GET /v1/worldgraph/mysteries/:graphId` for
+the currently visible discover/complete/choice interactions. Cancel with
+`POST /v1/worldgraph/mysteries/:graphId/cancel {"instanceId":"..."}`. The exact
+instance ID lets the authenticated account recover its historical mystery
+escrow even after the owning character dies or is replaced; it never grants
+authority over another account's instance.
+
+After the individual graph opens its Crew gate, use
+`GET /v1/worldgraph/operations`, open the listed operation, read the shared
+board and your assigned `/role` board, claim one graph-defined role, contribute
+its ordered steps, and complete or cancel. Shared projections omit private node
+IDs and clues; the role board reveals private evidence only to its assigned
+caller. Foreign, hidden, and nonexistent private identifiers deliberately use
+non-enumerating unavailable errors.
+
+Every world-graph mutation requires `Idempotency-Key`; exact retries replay and
+a key cannot be rebound to a different request. These are intentional direct
+content actions only. Discovery does **not** grant `POST /v1/agent/act`
+authority, and neither Agent Turn nor Agent Alpha guesses or executes them.
+
 ### Authored stories (direct, revision-checked play)
 
 `GET /v1/content` returns activated authored experiences, open organization lobbies, and your own

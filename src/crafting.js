@@ -200,6 +200,68 @@ function recipeBlockers(recipe, context, options) {
     .filter(Boolean);
 }
 
+// Resource snapshots are presentation inputs only. The HTTP board supplies them from authoritative
+// reads; domain mutation still re-reads and locks cash/items independently. Keeping this optional
+// preserves pure callers that only need location/skill/car eligibility.
+export function recipeResourceBlockers(recipe, ctx) {
+  const blockers = [];
+  const rawCash = ctx.cash ?? ctx.character?.cash ?? ctx.ch?.cash;
+  const cash = Number(rawCash);
+  const cashCost = cashCostOf(recipe);
+  if (Number.isFinite(cash) && cash < cashCost) {
+    blockers.push({ adapter: 'cash', required: cashCost, current: cash });
+  }
+
+  const inventory = ctx.inventory;
+  if (!inventory || !Array.isArray(inventory.stacks) || !Array.isArray(inventory.items)) {
+    return blockers;
+  }
+  const stackQuantities = new Map();
+  for (const stack of inventory.stacks) {
+    const key = `${stack.templateId}\n${stack.quality || QUALITY}`;
+    stackQuantities.set(key, (stackQuantities.get(key) || 0) + Number(stack.qty || 0));
+  }
+  const uniqueQuantities = new Map();
+  for (const item of inventory.items) {
+    if (item.state !== 'active' || item.escrowed) continue;
+    uniqueQuantities.set(item.templateId, (uniqueQuantities.get(item.templateId) || 0) + 1);
+  }
+  const requiredStacks = new Map();
+  const requiredItems = new Map();
+  for (const entry of inputsOf(recipe)) {
+    if (entry.assetType) continue;
+    const templateNode = nodeOf(CRAFTING_GRAPH, entry.templateId);
+    if (templateNode?.type === 'material') {
+      const quality = entry.quality || QUALITY;
+      const key = `${entry.templateId}\n${quality}`;
+      const prior = requiredStacks.get(key) || {
+        templateId: entry.templateId, quality, quantity: 0,
+      };
+      prior.quantity += Number(entry.quantity);
+      requiredStacks.set(key, prior);
+    } else if (templateNode?.type === 'item_template') {
+      requiredItems.set(
+        entry.templateId,
+        (requiredItems.get(entry.templateId) || 0) + Number(entry.quantity),
+      );
+    }
+  }
+  for (const [key, required] of requiredStacks) {
+    const current = stackQuantities.get(key) || 0;
+    if (current < required.quantity) blockers.push({
+      adapter: 'material_quantity', templateId: required.templateId,
+      quality: required.quality, required: required.quantity, current,
+    });
+  }
+  for (const [templateId, required] of requiredItems) {
+    const current = uniqueQuantities.get(templateId) || 0;
+    if (current < required) blockers.push({
+      adapter: 'item_ownership', templateId, required, current,
+    });
+  }
+  return blockers;
+}
+
 function throwBlocker(blocker) {
   if (blocker.adapter === 'location') {
     fail('location', 'That work must be done at the declared facility.', {
@@ -235,7 +297,8 @@ function publicEntry(entry) {
 
 /**
  * Pure recipe preview. `ctx` is a presentation snapshot:
- * `{ character:{id,loc,level|respect}, skills:Set|string[], cars:object[], discovered?:Set }`.
+ * `{ character:{id,loc,level|respect,cash?}, skills:Set|string[], cars:object[], discovered?:Set,
+ *    inventory?:{stacks,items}, cash?:number }`.
  * It is never mutation authority; craft/salvage re-read the database.
  */
 export function recipeCatalog(ctx = {}) {
@@ -245,7 +308,10 @@ export function recipeCatalog(ctx = {}) {
     .filter((node) => node.type === 'recipe'
       && (node.visibility === 'public' || discovered.has(node.id)))
     .map((recipe) => {
-      const blockedBy = recipeBlockers(recipe, context);
+      const blockedBy = [
+        ...recipeBlockers(recipe, context),
+        ...recipeResourceBlockers(recipe, ctx),
+      ];
       return {
         ...graphIdentity(recipe),
         id: recipe.id,

@@ -109,7 +109,7 @@ import { register as registerLeaderboards } from './routes/leaderboards.js';
 import { register as registerModTools } from './routes/modtools.js';
 import { registerRwa } from './routes/rwa.js';
 import { register as registerContent } from './routes/content.js';
-import { register as registerWorldGraph } from './routes/worldgraph.js';
+import { register as registerWorldGraph, WORLD_GRAPH_CAPABILITIES } from './routes/worldgraph.js';
 import * as Phone from './phone.js';
 import * as Mega from './megaproject.js';
 import * as Duels from './duels.js';
@@ -1619,7 +1619,10 @@ export async function buildServer() {
   // Business Empire — the premium, acquired-later personal front layer: buy/upgrade venues that
   // farm pocket cash and double as private, lower-heat laundering. GET /v1/catalog is the public
   // discoverable catalog (also closes the audit's API-discoverability gap).
-  app.get('/v1/catalog', async () => ({ businesses: Business.catalog() }));
+  app.get('/v1/catalog', async () => ({
+    businesses: Business.catalog(),
+    worldGraph: WORLD_GRAPH_CAPABILITIES,
+  }));
   // ── the public rulebook (client discoverability — the /v1/catalog precedent, read-only) ──
   // Curated PUBLIC constants only: what the prototype UI always showed players. Server stays
   // authoritative — knowing the odds table doesn't move a single roll client-side.
