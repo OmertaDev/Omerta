@@ -44,11 +44,12 @@
 | [src/content/core-materials.js](../../src/content/core-materials.js) | 39 | world-graph | 0 / 5 | 0 | 0 | 2 |
 | [src/content/crafting.js](../../src/content/crafting.js) | 1064 | world-graph | 4 / 0 | 0 | 11 | 0 |
 | [src/content/exchange.js](../../src/content/exchange.js) | 412 | economy-ledger | 1 / 0 | 0 | 6 | 0 |
+| [src/content/phase1-policy.js](../../src/content/phase1-policy.js) | 131 | platform-core | 0 / 2 | 0 | 0 | 0 |
 | [src/content/phase1.js](../../src/content/phase1.js) | 12 | world-graph | 3 / 2 | 0 | 0 | 0 |
 | [src/content/runtime.js](../../src/content/runtime.js) | 1095 | platform-core | 2 / 1 | 9 | 12 | 0 |
 | [src/convoy.js](../../src/convoy.js) | 581 | enterprise-logistics | 4 / 11 | 10 | 15 | 3 |
 | [src/corner.js](../../src/corner.js) | 158 | platform-core | 2 / 5 | 3 | 4 | 1 |
-| [src/crafting.js](../../src/crafting.js) | 550 | world-graph | 6 / 4 | 0 | 5 | 1 |
+| [src/crafting.js](../../src/crafting.js) | 551 | world-graph | 7 / 4 | 0 | 5 | 1 |
 | [src/crew.js](../../src/crew.js) | 440 | social-combat | 2 / 8 | 15 | 18 | 3 |
 | [src/day.js](../../src/day.js) | 72 | world-progression | 6 / 2 | 1 | 0 | 0 |
 | [src/db.js](../../src/db.js) | 679 | platform-core | 0 / 51 | 0 | 9 | 28 |
@@ -85,7 +86,7 @@
 | [src/home.js](../../src/home.js) | 54 | engagement-growth | 13 / 3 | 1 | 0 | 1 |
 | [src/honor.js](../../src/honor.js) | 74 | social-combat | 1 / 12 | 1 | 5 | 1 |
 | [src/hustle.js](../../src/hustle.js) | 103 | platform-core | 2 / 3 | 2 | 3 | 0 |
-| [src/invariants.js](../../src/invariants.js) | 922 | economy-ledger | 1 / 88 | 1 | 49 | 82 |
+| [src/invariants.js](../../src/invariants.js) | 939 | economy-ledger | 1 / 88 | 1 | 49 | 82 |
 | [src/items.js](../../src/items.js) | 827 | world-graph | 2 / 5 | 0 | 8 | 1 |
 | [src/kitchen.js](../../src/kitchen.js) | 374 | platform-core | 3 / 3 | 13 | 8 | 0 |
 | [src/landmarks.js](../../src/landmarks.js) | 53 | world-progression | 3 / 1 | 2 | 2 | 0 |
@@ -97,7 +98,7 @@
 | [src/megaproject.js](../../src/megaproject.js) | 296 | enterprise-logistics | 4 / 4 | 6 | 7 | 0 |
 | [src/memo.js](../../src/memo.js) | 39 | economy-ledger | 0 / 3 | 0 | 0 | 1 |
 | [src/mentor.js](../../src/mentor.js) | 233 | social-combat | 2 / 5 | 7 | 7 | 1 |
-| [src/mysteries.js](../../src/mysteries.js) | 1241 | world-graph | 4 / 0 | 0 | 9 | 0 |
+| [src/mysteries.js](../../src/mysteries.js) | 1273 | world-graph | 4 / 0 | 0 | 9 | 0 |
 | [src/nft.js](../../src/nft.js) | 123 | chain-economy | 3 / 3 | 0 | 2 | 1 |
 | [src/notoriety.js](../../src/notoriety.js) | 31 | world-progression | 1 / 2 | 0 | 2 | 0 |
 | [src/npcwar.js](../../src/npcwar.js) | 586 | world-progression | 2 / 8 | 7 | 8 | 1 |
