@@ -55,20 +55,35 @@ for (const route of mounted) {
 // the only lock-bearing bridge and follows guard -> current living character -> item. This catches
 // reintroducing the character-before-guard ABBA against craft/mystery without weakening their locks.
 const worldGraphRouteSource = readFileSync('src/routes/worldgraph.js', 'utf8');
-const currentOwnerSource = worldGraphRouteSource.match(
-  /async function currentCharacterOwner\([\s\S]*?\n}\n/,
+const lfSource = worldGraphRouteSource.replace(/\r\n/g, '\n');
+const crlfSource = lfSource.replace(/\n/g, '\r\n');
+const extractNamedFunction = (source, declaration) => source.match(
+  new RegExp(`${declaration}\\([\\s\\S]*?\\r?\\n}\\r?\\n`),
 )?.[0] || '';
-const assignmentSource = worldGraphRouteSource.match(
-  /export async function assignItemToCurrentCharacter\([\s\S]*?\n}\n/,
-)?.[0] || '';
-assert(currentOwnerSource && assignmentSource, 'world-graph custody helpers remain statically auditable');
-assert.doesNotMatch(currentOwnerSource, /FOR UPDATE/i,
-  'route-level current-character discovery is snapshot-only');
-const guardIndex = assignmentSource.indexOf('withItemMutation(');
-const characterIndex = assignmentSource.indexOf('lockCurrentCharacterOwner(');
-const itemIndex = assignmentSource.indexOf('transferItem(');
-assert(guardIndex >= 0 && characterIndex > guardIndex && itemIndex > characterIndex,
-  'assignment retains guard -> current living character -> item order');
+for (const source of [lfSource, crlfSource]) {
+  const currentOwnerSource = extractNamedFunction(source, 'async function currentCharacterOwner');
+  const assignmentSource = extractNamedFunction(
+    source,
+    'export async function assignItemToCurrentCharacter',
+  );
+  assert(currentOwnerSource && assignmentSource,
+    'world-graph custody helpers remain statically auditable');
+  assert.doesNotMatch(currentOwnerSource, /FOR UPDATE/i,
+    'route-level current-character discovery is snapshot-only');
+  assert.match(assignmentSource, /withItemMutation\(/);
+  const guardIndex = assignmentSource.indexOf('withItemMutation(');
+  const characterIndex = assignmentSource.indexOf('lockCurrentCharacterOwner(');
+  const itemIndex = assignmentSource.indexOf('transferItem(');
+  assert(guardIndex >= 0 && characterIndex > guardIndex && itemIndex > characterIndex,
+    'assignment retains guard -> current living character -> item order');
+}
+assert.equal(extractNamedFunction(
+  crlfSource.replace(
+    'export async function assignItemToCurrentCharacter',
+    'export async function removedAssignmentHelper',
+  ),
+  'export async function assignItemToCurrentCharacter',
+), '');
 
 const spec = buildOpenApi(routeTable.map(([method, url]) => ({
   method, url, hasAuth: true, isMod: false,
