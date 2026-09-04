@@ -23,6 +23,18 @@ const finalCallbackCases = [
     if (!ready) return null;
     return arenaBoard(pool);
   }`, 'arenaBoard', 'final top-level return after an earlier guard'],
+  [[
+    'async () => {',
+    "  const icon = '🥊';",
+    '  return arenaBoard(pool);',
+    '}',
+  ].join('\n'), 'arenaBoard', 'astral string preserves LF callback offsets'],
+  [[
+    'async () => {',
+    "  const icon = '🥊';",
+    '  return arenaBoard(pool);',
+    '}',
+  ].join('\r\n'), 'arenaBoard', 'astral string preserves CRLF callback offsets'],
   [`async () => {
     if (ready) return arenaBoard(pool);
   }`, null, 'conditional return is not a final top-level delegation'],

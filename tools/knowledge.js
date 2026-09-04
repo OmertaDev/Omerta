@@ -427,7 +427,9 @@ function routeRegistrationArguments(snippet) {
 }
 
 function codeMask(source) {
-  const out = [...source];
+  // Scanner offsets are UTF-16 code units. `split('')` preserves that indexing;
+  // string spread would collapse astral characters and shift every later mask.
+  const out = source.split('');
   const blank = (i) => { if (out[i] !== '\n' && out[i] !== '\r') out[i] = ' '; };
   let state = 'code';
   let quote = '';

@@ -763,7 +763,11 @@ const PHASE1_OWNER_TUPLE_DISPOSITION = {
   // table to runEstate (directly or through a named death helper) cannot silently become inheritance.
   const PHASE1_DEATH_MUTATION_APPROVALS = new Set([]);
   const lexicalMask = (source, { keepStrings = false } = {}) => {
-    const out = [...source];
+    // Every offset used below is a UTF-16 code-unit offset (`source[i]`,
+    // `match.index`, `indexOf`, and `slice`). Keep the mutable mask in that
+    // same coordinate system: spreading a string collapses astral characters
+    // to one array entry and shifts every later write.
+    const out = source.split('');
     const blank = (index) => { if (!/\r|\n/.test(out[index])) out[index] = ' '; };
     let state = 'code';
     let quote = null;
@@ -822,6 +826,21 @@ const PHASE1_OWNER_TUPLE_DISPOSITION = {
     }
     assert.fail(`death helper ${label} has an unterminated block body`);
   };
+  for (const newline of ['\n', '\r\n']) {
+    const unicodeFixture = [
+      'async function unicodeDeathHelper() {',
+      "  const marker = '🥊';",
+      '  if (marker) { return { preserved: true }; }',
+      '}',
+    ].join(newline);
+    const maskedFixture = lexicalMask(unicodeFixture);
+    assert.equal(maskedFixture.length, unicodeFixture.length,
+      `death-helper lexical mask must preserve UTF-16 offsets with ${JSON.stringify(newline)} line endings`);
+    const open = maskedFixture.indexOf('{');
+    const body = functionBlock(unicodeFixture, open, `unicode-${JSON.stringify(newline)}`);
+    assert.match(body, /return\s+\{\s*preserved:\s*true\s*\}/,
+      `death-helper block scanning must survive astral strings with ${JSON.stringify(newline)} line endings`);
+  }
 
   // Build a source-wide named-function index, then crawl every statically resolvable bare helper
   // call starting at runEstate. This includes helpers such as recordDeath, refundPot, removeMember,
