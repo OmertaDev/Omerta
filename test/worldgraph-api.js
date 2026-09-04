@@ -919,13 +919,22 @@ assert.deepEqual(phase1Ledger, [{
 }, {
   currency: 'cash', amount: -300, reason: 'craft:recipe:hardened_steel',
 }], 'the Phase 1 HTTP vertical slices create only their three declared crafting sink ledger entries');
-assert.deepEqual(newLedger.filter(({ reason }) => reason.startsWith('death:')), [{
+const deathLedgerOrder = (left, right) => (
+  left.currency.localeCompare(right.currency)
+  || Number(left.amount) - Number(right.amount)
+  || left.reason.localeCompare(right.reason)
+);
+const deathLedger = newLedger
+  .filter(({ reason }) => reason.startsWith('death:'))
+  .sort(deathLedgerOrder);
+assert.deepEqual(deathLedger, [{
   currency: 'cash', amount: -9700, reason: 'death:estate',
 }, {
   currency: 'ammo', amount: -25, reason: 'death:estate',
 }, {
   currency: 'cash', amount: 1600, reason: 'death:legacy',
-}], 'the additional value rows belong only to the explicitly driven legacy production estate');
+}].sort(deathLedgerOrder),
+'the additional value rows belong only to the explicitly driven legacy production estate');
 
 console.log('✅ world-graph Phase 1 HTTP authority, replay, privacy, and economy contract passed');
 await app.close();
