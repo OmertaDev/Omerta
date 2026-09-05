@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `65b0021724fa`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `b33680079db9`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1339 |
+| Commits in clone | 1341 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-05 — ci: the real-Postgres job needs the full lineage — §7c failed on a shallow clone and §7b was vacuous on one |
+| Latest commit | 2026-09-05 — Two-phase commit for withCharacter: accrual settles ahead of the action (#29) |
 
 ## Commit authors
 
@@ -24,25 +24,25 @@
 | Claude | 163 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 22 |
-| omerta | 6 |
+| omerta | 8 |
 | claude[bot] | 1 |
 
 ## Historical hotspots
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| [CLAUDE.md](../../CLAUDE.md) | 515 | yes |
+| [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 399 | yes |
 | [src/server.js](../../src/server.js) | 351 | yes |
-| [SPEC.md](../../SPEC.md) | 280 | yes |
+| [SPEC.md](../../SPEC.md) | 281 | yes |
 | [schema.sql](../../schema.sql) | 274 | yes |
 | [BALANCE.md](../../BALANCE.md) | 253 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
-| [src/game.js](../../src/game.js) | 175 | yes |
-| knowledge/generated/github-history.md | 155 | historical |
-| knowledge/generated/graph-summary.md | 155 | historical |
-| knowledge/generated/graph.json | 155 | historical |
-| knowledge/generated/inventory.md | 155 | historical |
+| [src/game.js](../../src/game.js) | 176 | yes |
+| knowledge/generated/github-history.md | 156 | historical |
+| knowledge/generated/graph-summary.md | 156 | historical |
+| knowledge/generated/graph.json | 156 | historical |
+| knowledge/generated/inventory.md | 156 | historical |
 | [package.json](../../package.json) | 146 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
@@ -51,8 +51,8 @@
 | [test/client.js](../../test/client.js) | 110 | yes |
 | [test/levers.js](../../test/levers.js) | 95 | yes |
 | [test/social.js](../../test/social.js) | 84 | yes |
+| [test/growth.js](../../test/growth.js) | 80 | yes |
 | [public/wiki.html](../../public/wiki.html) | 80 | yes |
-| [test/growth.js](../../test/growth.js) | 79 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 69 | yes |
 | knowledge/generated/documents.md | 66 | historical |
 | [test/hardening.js](../../test/hardening.js) | 65 | yes |

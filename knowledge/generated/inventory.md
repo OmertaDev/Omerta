@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `65b0021724fa`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `b33680079db9`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 1,830 |
-| Text lines | 526,384 |
-| Repository bytes inventoried | 314,434,861 |
+| Text lines | 526,568 |
+| Repository bytes inventoried | 314,450,392 |
 | Backend/route modules | 187 |
 | HTTP route registrations / unique routes | 742 / 742 |
 | Database tables | 317 |
 | Solidity declarations | 49 |
-| Git commits | 1,339 |
+| Git commits | 1,341 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 5,705 / 25,319 |
+| Graph nodes / edges | 5,707 / 25,338 |
 
 ## Artifact kinds
 
@@ -47,7 +47,7 @@
 | File | Lines | Kind | Last change |
 |---|---:|---|---|
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
-| [CLAUDE.md](../../CLAUDE.md) | 18,389 | documentation | 2026-09-05 |
+| [CLAUDE.md](../../CLAUDE.md) | 18,421 | documentation | 2026-09-05 |
 | [public/index.html](../../public/index.html) | 12,728 | web-surface | 2026-09-05 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [test/client.js](../../test/client.js) | 9,332 | test-suite | 2026-09-05 |
@@ -67,15 +67,15 @@
 | [omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1](../../omerta-contracts/script/Verify-AcquisitionConstellationCrosswalk.ps1) | 2,947 | contract-project | 2026-08-28 |
 | [omerta-contracts/fizz_data/contracts.json](../../omerta-contracts/fizz_data/contracts.json) | 2,739 | contract-project | 2026-08-25 |
 | [docs/WIKI.md](../../docs/WIKI.md) | 2,717 | documentation | 2026-08-29 |
+| [src/game.js](../../src/game.js) | 2,717 | backend-module | 2026-09-05 |
 | [public/art/manifest.json](../../public/art/manifest.json) | 2,700 | media-asset | 2026-08-09 |
-| [src/game.js](../../src/game.js) | 2,654 | backend-module | 2026-09-05 |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 2,619 | audit | 2026-08-13 |
 | [docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md](../../docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md) | 2,453 | documentation | 2026-08-27 |
 | [omerta-contracts/x-ray/slither-function-summary.json](../../omerta-contracts/x-ray/slither-function-summary.json) | 2,449 | contract-project | 2026-08-25 |
 | [test/social.js](../../test/social.js) | 2,440 | test-suite | 2026-08-26 |
 | [test/agent-alpha.js](../../test/agent-alpha.js) | 2,416 | test-suite | 2026-08-29 |
 | [omerta-contracts/test/AcquisitionConstellationTask4BudgetBook.t.sol](../../omerta-contracts/test/AcquisitionConstellationTask4BudgetBook.t.sol) | 2,264 | contract-test | 2026-08-28 |
-| [test/growth.js](../../test/growth.js) | 2,212 | test-suite | 2026-08-27 |
+| [test/growth.js](../../test/growth.js) | 2,253 | test-suite | 2026-09-05 |
 
 ## Media estate
 
