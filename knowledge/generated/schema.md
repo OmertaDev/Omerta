@@ -7,18 +7,18 @@
 | `account_gear` | [L308](../../schema.sql#L308) | [chain.js](../../src/chain.js), [economy.js](../../src/economy.js), [game.js](../../src/game.js), [social/combat.js](../../src/social/combat.js) |
 | `account_persistent` | [L27](../../schema.sql#L27) | [accrual.js](../../src/accrual.js), [auction.js](../../src/auction.js), [auth.js](../../src/auth.js), [bank.js](../../src/bank.js), [bloodline.js](../../src/bloodline.js), [bonds.js](../../src/bonds.js), [boxing.js](../../src/boxing.js), [brokers.js](../../src/brokers.js), [bulletin.js](../../src/bulletin.js), [business.js](../../src/business.js), [cards.js](../../src/cards.js), [casino.js](../../src/casino.js), [chain.js](../../src/chain.js), [clues.js](../../src/clues.js), [collection.js](../../src/collection.js), [collision.js](../../src/collision.js), [commission.js](../../src/commission.js), [contacts.js](../../src/contacts.js), [content/runtime.js](../../src/content/runtime.js), [convoy.js](../../src/convoy.js), [crew.js](../../src/crew.js), [deeds.js](../../src/deeds.js), [desk.js](../../src/desk.js), [discovery.js](../../src/discovery.js), [dispatch.js](../../src/dispatch.js), [drop.js](../../src/drop.js), [duels.js](../../src/duels.js), [dynasty.js](../../src/dynasty.js), [economy.js](../../src/economy.js), [engagement.js](../../src/engagement.js), [estate.js](../../src/estate.js), [exchange.js](../../src/exchange.js), [explore.js](../../src/explore.js), [fees.js](../../src/fees.js), [firsts.js](../../src/firsts.js), [game.js](../../src/game.js), [growth.js](../../src/growth.js), [heists.js](../../src/heists.js), [honor.js](../../src/honor.js), [invariants.js](../../src/invariants.js), [kitchen.js](../../src/kitchen.js), [landmarks.js](../../src/landmarks.js), [loans.js](../../src/loans.js), [made.js](../../src/made.js), [mastery.js](../../src/mastery.js), [megaproject.js](../../src/megaproject.js), [mentor.js](../../src/mentor.js), [npcwar.js](../../src/npcwar.js), [ops.js](../../src/ops.js), [pass.js](../../src/pass.js), [people.js](../../src/people.js), [population.js](../../src/population.js), [port.js](../../src/port.js), [portrait.js](../../src/portrait.js), [primetime.js](../../src/primetime.js), [races.js](../../src/races.js), [routes/modtools.js](../../src/routes/modtools.js), [rules.tail.js](../../src/rules.tail.js), [season.js](../../src/season.js), [secrets.js](../../src/secrets.js), [server.js](../../src/server.js), [social/combat.js](../../src/social/combat.js), [social/contracts.js](../../src/social/contracts.js), [soldiers.js](../../src/soldiers.js), [speakeasy.js](../../src/speakeasy.js), [stable.js](../../src/stable.js), [standing.js](../../src/standing.js), [stockdeliver.js](../../src/stockdeliver.js), [store.js](../../src/store.js), [streak.js](../../src/streak.js), [tokenhealth.js](../../src/tokenhealth.js), [treasury.js](../../src/treasury.js), [verify.js](../../src/verify.js), [vig.js](../../src/vig.js), [vouch.js](../../src/vouch.js), [walletforge.js](../../src/walletforge.js), [wire.js](../../src/wire.js), [worker.js](../../src/worker.js), [world.js](../../src/world.js) |
 | `accounts` | [L2](../../schema.sql#L2) | [agentgateway.js](../../src/agentgateway.js), [auction.js](../../src/auction.js), [auth.js](../../src/auth.js), [bank.js](../../src/bank.js), [bonds.js](../../src/bonds.js), [brokers.js](../../src/brokers.js), [chain.js](../../src/chain.js), [collision.js](../../src/collision.js), [commission.js](../../src/commission.js), [crew.js](../../src/crew.js), [desk.js](../../src/desk.js), [dexbot.js](../../src/dexbot.js), [discovery.js](../../src/discovery.js), [dispatch.js](../../src/dispatch.js), [duels.js](../../src/duels.js), [dynasty.js](../../src/dynasty.js), [engagement.js](../../src/engagement.js), [exchange.js](../../src/exchange.js), [explore.js](../../src/explore.js), [fees.js](../../src/fees.js), [firsts.js](../../src/firsts.js), [game.js](../../src/game.js), [growth.js](../../src/growth.js), [invariants.js](../../src/invariants.js), [kitchen.js](../../src/kitchen.js), [loans.js](../../src/loans.js), [megaproject.js](../../src/megaproject.js), [ops.js](../../src/ops.js), [pass.js](../../src/pass.js), [people.js](../../src/people.js), [population.js](../../src/population.js), [preflight.js](../../src/preflight.js), [routes/modtools.js](../../src/routes/modtools.js), [rules.generated.js](../../src/rules.generated.js), [rules.tail.js](../../src/rules.tail.js), [rwastockkeeper.js](../../src/rwastockkeeper.js), [server.js](../../src/server.js), [shipment.js](../../src/shipment.js), [social/contracts.js](../../src/social/contracts.js), [social/gangs.js](../../src/social/gangs.js), [standing.js](../../src/standing.js), [stockdeliver.js](../../src/stockdeliver.js), [store.js](../../src/store.js), [streak.js](../../src/streak.js), [territory.js](../../src/territory.js), [v4oraclekeeper.js](../../src/v4oraclekeeper.js), [verify.js](../../src/verify.js), [walletforge.js](../../src/walletforge.js) |
-| `activity_log` | [L4209](../../schema.sql#L4209) | [bank.js](../../src/bank.js), [brokers.js](../../src/brokers.js), [game.js](../../src/game.js) |
+| `activity_log` | [L4234](../../schema.sql#L4234) | [bank.js](../../src/bank.js), [brokers.js](../../src/brokers.js), [game.js](../../src/game.js) |
 | `agent_acquisition_budgets` | [L622](../../schema.sql#L622) | [agentreferrals.js](../../src/agentreferrals.js), [growth.js](../../src/growth.js), [invariants.js](../../src/invariants.js) |
 | `agent_referral_claims` | [L647](../../schema.sql#L647) | [agentreferrals.js](../../src/agentreferrals.js), [growth.js](../../src/growth.js), [invariants.js](../../src/invariants.js) |
 | `amm_pool` | [L1844](../../schema.sql#L1844) | [economy.js](../../src/economy.js), [invariants.js](../../src/invariants.js), [ops.js](../../src/ops.js) |
-| `auction_consignments` | [L2914](../../schema.sql#L2914) | [auction.js](../../src/auction.js), [invariants.js](../../src/invariants.js) |
+| `auction_consignments` | [L2936](../../schema.sql#L2936) | [auction.js](../../src/auction.js), [invariants.js](../../src/invariants.js) |
 | `auction_wins` | [L1690](../../schema.sql#L1690) | [auction.js](../../src/auction.js), [estate.js](../../src/estate.js) |
 | `auctions` | [L1680](../../schema.sql#L1680) | [agentgateway.js](../../src/agentgateway.js), [auction.js](../../src/auction.js), [estate.js](../../src/estate.js), [explore.js](../../src/explore.js), [invariants.js](../../src/invariants.js), [market.js](../../src/market.js), [opportunities.js](../../src/opportunities.js), [ops.js](../../src/ops.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [social/estate.js](../../src/social/estate.js), [tokenhealth.js](../../src/tokenhealth.js) |
-| `bank_buys` | [L3051](../../schema.sql#L3051) | [bank.js](../../src/bank.js) |
-| `bank_city_pool` | [L3041](../../schema.sql#L3041) | [bank.js](../../src/bank.js), [vig.js](../../src/vig.js) |
-| `bank_epochs` | [L3063](../../schema.sql#L3063) | [bank.js](../../src/bank.js) |
-| `bank_payouts` | [L3077](../../schema.sql#L3077) | [bank.js](../../src/bank.js) |
-| `bank_revenue` | [L3021](../../schema.sql#L3021) | [bank.js](../../src/bank.js), [router.js](../../src/router.js), [rules.tail.js](../../src/rules.tail.js), [treasury.js](../../src/treasury.js) |
+| `bank_buys` | [L3073](../../schema.sql#L3073) | [bank.js](../../src/bank.js) |
+| `bank_city_pool` | [L3063](../../schema.sql#L3063) | [bank.js](../../src/bank.js), [vig.js](../../src/vig.js) |
+| `bank_epochs` | [L3085](../../schema.sql#L3085) | [bank.js](../../src/bank.js) |
+| `bank_payouts` | [L3099](../../schema.sql#L3099) | [bank.js](../../src/bank.js) |
+| `bank_revenue` | [L3043](../../schema.sql#L3043) | [bank.js](../../src/bank.js), [router.js](../../src/router.js), [rules.tail.js](../../src/rules.tail.js), [treasury.js](../../src/treasury.js) |
 | `bans` | [L685](../../schema.sql#L685) | [routes/modtools.js](../../src/routes/modtools.js) |
 | `batches` | [L585](../../schema.sql#L585) | [drop.js](../../src/drop.js), [game.js](../../src/game.js), [kitchen.js](../../src/kitchen.js), [path-funnel.js](../../src/path-funnel.js), [routes/modtools.js](../../src/routes/modtools.js), [rules.generated.js](../../src/rules.generated.js), [rules.tail.js](../../src/rules.tail.js), [social/estate.js](../../src/social/estate.js) |
 | `bespoke_pieces` | [L2357](../../schema.sql#L2357) | [game.js](../../src/game.js), [shipment.js](../../src/shipment.js) |
@@ -36,73 +36,73 @@
 | `boxing_bets` | [L1053](../../schema.sql#L1053) | [boxing.js](../../src/boxing.js), [invariants.js](../../src/invariants.js) |
 | `boxing_bouts` | [L1038](../../schema.sql#L1038) | [boxing.js](../../src/boxing.js), [events.js](../../src/events.js), [invariants.js](../../src/invariants.js) |
 | `boxing_title` | [L1025](../../schema.sql#L1025) | [boxing.js](../../src/boxing.js), [population.js](../../src/population.js) |
-| `broker_activations` | [L4219](../../schema.sql#L4219) | [brokers.js](../../src/brokers.js) |
-| `broker_epochs` | [L4229](../../schema.sql#L4229) | [brokers.js](../../src/brokers.js) |
-| `broker_weights` | [L4237](../../schema.sql#L4237) | [brokers.js](../../src/brokers.js) |
+| `broker_activations` | [L4244](../../schema.sql#L4244) | [brokers.js](../../src/brokers.js) |
+| `broker_epochs` | [L4254](../../schema.sql#L4254) | [brokers.js](../../src/brokers.js) |
+| `broker_weights` | [L4262](../../schema.sql#L4262) | [brokers.js](../../src/brokers.js) |
 | `businesses` | [L889](../../schema.sql#L889) | [agentgateway.js](../../src/agentgateway.js), [business.js](../../src/business.js), [career.js](../../src/career.js), [explore.js](../../src/explore.js), [game.js](../../src/game.js), [heists.js](../../src/heists.js), [opportunities.js](../../src/opportunities.js), [population.js](../../src/population.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [social/combat.js](../../src/social/combat.js), [social/estate.js](../../src/social/estate.js), [wire.js](../../src/wire.js) |
 | `campaign_progress` | [L2194](../../schema.sql#L2194) | [campaigns.js](../../src/campaigns.js), [game.js](../../src/game.js), [social/estate.js](../../src/social/estate.js) |
-| `career_claims` | [L3172](../../schema.sql#L3172) | [career.js](../../src/career.js), [growth.js](../../src/growth.js), [invariants.js](../../src/invariants.js), [rules.tail.js](../../src/rules.tail.js) |
+| `career_claims` | [L3194](../../schema.sql#L3194) | [career.js](../../src/career.js), [growth.js](../../src/growth.js), [invariants.js](../../src/invariants.js), [rules.tail.js](../../src/rules.tail.js) |
 | `cars` | [L241](../../schema.sql#L241) | [assets.js](../../src/assets.js), [career.js](../../src/career.js), [chain.js](../../src/chain.js), [collection.js](../../src/collection.js), [economy.js](../../src/economy.js), [estate.js](../../src/estate.js), [explore.js](../../src/explore.js), [game.js](../../src/game.js), [invariants.js](../../src/invariants.js), [loans.js](../../src/loans.js), [market.js](../../src/market.js), [nft.js](../../src/nft.js), [population.js](../../src/population.js), [port.js](../../src/port.js), [races.js](../../src/races.js), [rules.generated.js](../../src/rules.generated.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [social/combat.js](../../src/social/combat.js), [social/estate.js](../../src/social/estate.js), [underworld.js](../../src/underworld.js), [vanity.js](../../src/vanity.js) |
 | `chain_cursor` | [L809](../../schema.sql#L809) | [watcher.js](../../src/watcher.js) |
 | `chain_reserve` | [L731](../../schema.sql#L731) | [chain.js](../../src/chain.js), [desk.js](../../src/desk.js), [dexbot.js](../../src/dexbot.js), [server.js](../../src/server.js), [vig.js](../../src/vig.js) |
 | `character_assets` | [L296](../../schema.sql#L296) | [economy.js](../../src/economy.js), [favors.js](../../src/favors.js), [game.js](../../src/game.js), [social/estate.js](../../src/social/estate.js) |
 | `character_cargo` | [L301](../../schema.sql#L301) | [contacts.js](../../src/contacts.js), [convoy.js](../../src/convoy.js), [economy.js](../../src/economy.js), [favors.js](../../src/favors.js), [game.js](../../src/game.js), [market.js](../../src/market.js), [megaproject.js](../../src/megaproject.js), [population.js](../../src/population.js), [social/combat.js](../../src/social/combat.js), [social/estate.js](../../src/social/estate.js) |
-| `character_disciplines` | [L3133](../../schema.sql#L3133) | [game.js](../../src/game.js), [regimen.js](../../src/regimen.js), [social/estate.js](../../src/social/estate.js) |
+| `character_disciplines` | [L3155](../../schema.sql#L3155) | [game.js](../../src/game.js), [regimen.js](../../src/regimen.js), [social/estate.js](../../src/social/estate.js) |
 | `character_guns` | [L314](../../schema.sql#L314) | [economy.js](../../src/economy.js), [game.js](../../src/game.js), [social/estate.js](../../src/social/estate.js), [underworld.js](../../src/underworld.js) |
 | `character_items` | [L285](../../schema.sql#L285) | [economy.js](../../src/economy.js), [game.js](../../src/game.js), [social/estate.js](../../src/social/estate.js), [social/exchange.js](../../src/social/exchange.js) |
 | `character_rackets` | [L291](../../schema.sql#L291) | [economy.js](../../src/economy.js), [game.js](../../src/game.js), [social/estate.js](../../src/social/estate.js), [wire.js](../../src/wire.js) |
 | `character_skills` | [L1543](../../schema.sql#L1543) | [favors.js](../../src/favors.js), [game.js](../../src/game.js), [skills.js](../../src/skills.js), [social/estate.js](../../src/social/estate.js) |
-| `character_traits` | [L3112](../../schema.sql#L3112) | [game.js](../../src/game.js), [mastery.js](../../src/mastery.js), [social/estate.js](../../src/social/estate.js) |
+| `character_traits` | [L3134](../../schema.sql#L3134) | [game.js](../../src/game.js), [mastery.js](../../src/mastery.js), [social/estate.js](../../src/social/estate.js) |
 | `characters` | [L115](../../schema.sql#L115) | [auction.js](../../src/auction.js), [auth.js](../../src/auth.js), [bloodline.js](../../src/bloodline.js), [bonds.js](../../src/bonds.js), [boxing.js](../../src/boxing.js), [business.js](../../src/business.js), [cards.js](../../src/cards.js), [casino.js](../../src/casino.js), [chain.js](../../src/chain.js), [circle.js](../../src/circle.js), [clues.js](../../src/clues.js), [collection.js](../../src/collection.js), [collision.js](../../src/collision.js), [commission.js](../../src/commission.js), [contacts.js](../../src/contacts.js), [content/exchange.js](../../src/content/exchange.js), [content/runtime.js](../../src/content/runtime.js), [convoy.js](../../src/convoy.js), [crew.js](../../src/crew.js), [deeds.js](../../src/deeds.js), [diplomacy.js](../../src/diplomacy.js), [discovery.js](../../src/discovery.js), [dispatch.js](../../src/dispatch.js), [duels.js](../../src/duels.js), [dynasty.js](../../src/dynasty.js), [economy.js](../../src/economy.js), [estate.js](../../src/estate.js), [exchange.js](../../src/exchange.js), [explore.js](../../src/explore.js), [favors.js](../../src/favors.js), [fees.js](../../src/fees.js), [firstblood.js](../../src/firstblood.js), [firsts.js](../../src/firsts.js), [game.js](../../src/game.js), [genesisrelease.js](../../src/genesisrelease.js), [growth.js](../../src/growth.js), [heists.js](../../src/heists.js), [honor.js](../../src/honor.js), [invariants.js](../../src/invariants.js), [kitchen.js](../../src/kitchen.js), [law.js](../../src/law.js), [loans.js](../../src/loans.js), [market.js](../../src/market.js), [mastery.js](../../src/mastery.js), [megaproject.js](../../src/megaproject.js), [mentor.js](../../src/mentor.js), [npcwar.js](../../src/npcwar.js), [ops.js](../../src/ops.js), [pen.js](../../src/pen.js), [people.js](../../src/people.js), [phone.js](../../src/phone.js), [population.js](../../src/population.js), [port.js](../../src/port.js), [portrait.js](../../src/portrait.js), [preflight.js](../../src/preflight.js), [primetime.js](../../src/primetime.js), [push.js](../../src/push.js), [races.js](../../src/races.js), [regimen.js](../../src/regimen.js), [ring.js](../../src/ring.js), [rivals.js](../../src/rivals.js), [roster.js](../../src/roster.js), [routes/boxing.js](../../src/routes/boxing.js), [routes/casino.js](../../src/routes/casino.js), [routes/content.js](../../src/routes/content.js), [routes/heists.js](../../src/routes/heists.js), [routes/leaderboards.js](../../src/routes/leaderboards.js), [routes/modtools.js](../../src/routes/modtools.js), [routes/pen.js](../../src/routes/pen.js), [routes/speakeasy.js](../../src/routes/speakeasy.js), [routes/stable.js](../../src/routes/stable.js), [routes/territory.js](../../src/routes/territory.js), [rules.tail.js](../../src/rules.tail.js), [season.js](../../src/season.js), [secrets.js](../../src/secrets.js), [server.js](../../src/server.js), [shipment.js](../../src/shipment.js), [skills.js](../../src/skills.js), [social/combat.js](../../src/social/combat.js), [social/contracts.js](../../src/social/contracts.js), [social/defense.js](../../src/social/defense.js), [social/estate.js](../../src/social/estate.js), [social/gangs.js](../../src/social/gangs.js), [soldiers.js](../../src/soldiers.js), [speakeasy.js](../../src/speakeasy.js), [stable.js](../../src/stable.js), [standing.js](../../src/standing.js), [store.js](../../src/store.js), [streak.js](../../src/streak.js), [territory.js](../../src/territory.js), [tokenhealth.js](../../src/tokenhealth.js), [vanity.js](../../src/vanity.js), [verify.js](../../src/verify.js), [vouch.js](../../src/vouch.js), [walletforge.js](../../src/walletforge.js), [wire.js](../../src/wire.js), [worker.js](../../src/worker.js), [world.js](../../src/world.js) |
 | `chat_messages` | [L2094](../../schema.sql#L2094) | [server.js](../../src/server.js), [worker.js](../../src/worker.js) |
-| `clue_scrolls` | [L2624](../../schema.sql#L2624) | [clues.js](../../src/clues.js), [game.js](../../src/game.js), [social/estate.js](../../src/social/estate.js) |
+| `clue_scrolls` | [L2645](../../schema.sql#L2645) | [clues.js](../../src/clues.js), [game.js](../../src/game.js), [social/estate.js](../../src/social/estate.js) |
 | `coalition_members` | [L2157](../../schema.sql#L2157) | [diplomacy.js](../../src/diplomacy.js) |
 | `coalitions` | [L2150](../../schema.sql#L2150) | [diplomacy.js](../../src/diplomacy.js), [honor.js](../../src/honor.js), [routes/diplomacy.js](../../src/routes/diplomacy.js), [social/gangs.js](../../src/social/gangs.js), [worker.js](../../src/worker.js) |
 | `collection_log` | [L2299](../../schema.sql#L2299) | [clues.js](../../src/clues.js), [collection.js](../../src/collection.js) |
-| `commission_overrides` | [L2904](../../schema.sql#L2904) | [commission.js](../../src/commission.js), [social/gangs.js](../../src/social/gangs.js) |
-| `commission_proposals` | [L2667](../../schema.sql#L2667) | [commission.js](../../src/commission.js), [invariants.js](../../src/invariants.js) |
-| `commission_ticker_votes` | [L3558](../../schema.sql#L3558) | [commission.js](../../src/commission.js), [rwastockkeeper.js](../../src/rwastockkeeper.js), [social/gangs.js](../../src/social/gangs.js) |
-| `commission_ticker_votes_v2` | [L3781](../../schema.sql#L3781) | [commission.js](../../src/commission.js), [db.js](../../src/db.js), [social/gangs.js](../../src/social/gangs.js) |
+| `commission_overrides` | [L2926](../../schema.sql#L2926) | [commission.js](../../src/commission.js), [social/gangs.js](../../src/social/gangs.js) |
+| `commission_proposals` | [L2688](../../schema.sql#L2688) | [commission.js](../../src/commission.js), [invariants.js](../../src/invariants.js) |
+| `commission_ticker_votes` | [L3583](../../schema.sql#L3583) | [commission.js](../../src/commission.js), [rwastockkeeper.js](../../src/rwastockkeeper.js), [social/gangs.js](../../src/social/gangs.js) |
+| `commission_ticker_votes_v2` | [L3806](../../schema.sql#L3806) | [commission.js](../../src/commission.js), [db.js](../../src/db.js), [social/gangs.js](../../src/social/gangs.js) |
 | `commission_vetoes` | [L1446](../../schema.sql#L1446) | [commission.js](../../src/commission.js) |
 | `commission_votes` | [L1433](../../schema.sql#L1433) | [commission.js](../../src/commission.js), [social/gangs.js](../../src/social/gangs.js) |
-| `community_revenue` | [L4258](../../schema.sql#L4258) | [community.js](../../src/community.js), [router.js](../../src/router.js) |
+| `community_revenue` | [L4283](../../schema.sql#L4283) | [community.js](../../src/community.js), [router.js](../../src/router.js) |
 | `consiglieri` | [L2247](../../schema.sql#L2247) | [dynasty.js](../../src/dynasty.js), [people.js](../../src/people.js) |
-| `contact_calls` | [L3254](../../schema.sql#L3254) | [contacts.js](../../src/contacts.js), [population.js](../../src/population.js), [server.js](../../src/server.js), [social/estate.js](../../src/social/estate.js) |
-| `contacts` | [L3210](../../schema.sql#L3210) | [contacts.js](../../src/contacts.js), [crew.js](../../src/crew.js), [discovery.js](../../src/discovery.js), [economy.js](../../src/economy.js), [explore.js](../../src/explore.js), [favors.js](../../src/favors.js), [game.js](../../src/game.js), [mentor.js](../../src/mentor.js), [people.js](../../src/people.js), [phone.js](../../src/phone.js), [population.js](../../src/population.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [social/combat.js](../../src/social/combat.js), [vouch.js](../../src/vouch.js), [wire.js](../../src/wire.js), [worker.js](../../src/worker.js) |
-| `content_activations` | [L4302](../../schema.sql#L4302) | [content/crafting.js](../../src/content/crafting.js), [content/runtime.js](../../src/content/runtime.js) |
-| `content_bundles` | [L4292](../../schema.sql#L4292) | [content/crafting.js](../../src/content/crafting.js), [content/runtime.js](../../src/content/runtime.js) |
-| `content_exchange_events` | [L4629](../../schema.sql#L4629) | [content/exchange.js](../../src/content/exchange.js) |
-| `content_exchange_listings` | [L4602](../../schema.sql#L4602) | [content/crafting.js](../../src/content/crafting.js), [content/exchange.js](../../src/content/exchange.js), [routes/content.js](../../src/routes/content.js) |
-| `content_instance_effects` | [L4398](../../schema.sql#L4398) | [content/runtime.js](../../src/content/runtime.js) |
-| `content_instance_facts` | [L4366](../../schema.sql#L4366) | [content/runtime.js](../../src/content/runtime.js) |
-| `content_instance_members` | [L4339](../../schema.sql#L4339) | [content/runtime.js](../../src/content/runtime.js) |
-| `content_instance_nodes` | [L4354](../../schema.sql#L4354) | [content/runtime.js](../../src/content/runtime.js) |
-| `content_instances` | [L4309](../../schema.sql#L4309) | [content/runtime.js](../../src/content/runtime.js) |
-| `content_inventory_lots` | [L4426](../../schema.sql#L4426) | [content/crafting.js](../../src/content/crafting.js), [content/exchange.js](../../src/content/exchange.js) |
-| `content_skill_progress` | [L4584](../../schema.sql#L4584) | [content/crafting.js](../../src/content/crafting.js) |
-| `content_source_claims` | [L4473](../../schema.sql#L4473) | [content/crafting.js](../../src/content/crafting.js) |
-| `content_source_epochs` | [L4459](../../schema.sql#L4459) | [content/crafting.js](../../src/content/crafting.js) |
-| `content_story_flags` | [L4377](../../schema.sql#L4377) | [content/runtime.js](../../src/content/runtime.js) |
-| `content_supply_receipts` | [L4487](../../schema.sql#L4487) | [content/crafting.js](../../src/content/crafting.js) |
-| `content_tool_events` | [L4560](../../schema.sql#L4560) | [content/crafting.js](../../src/content/crafting.js) |
-| `content_tool_states` | [L4536](../../schema.sql#L4536) | [content/crafting.js](../../src/content/crafting.js) |
-| `content_work_order_runs` | [L4507](../../schema.sql#L4507) | [content/crafting.js](../../src/content/crafting.js) |
+| `contact_calls` | [L3279](../../schema.sql#L3279) | [contacts.js](../../src/contacts.js), [population.js](../../src/population.js), [server.js](../../src/server.js), [social/estate.js](../../src/social/estate.js) |
+| `contacts` | [L3235](../../schema.sql#L3235) | [contacts.js](../../src/contacts.js), [crew.js](../../src/crew.js), [discovery.js](../../src/discovery.js), [economy.js](../../src/economy.js), [explore.js](../../src/explore.js), [favors.js](../../src/favors.js), [game.js](../../src/game.js), [mentor.js](../../src/mentor.js), [people.js](../../src/people.js), [phone.js](../../src/phone.js), [population.js](../../src/population.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [social/combat.js](../../src/social/combat.js), [vouch.js](../../src/vouch.js), [wire.js](../../src/wire.js), [worker.js](../../src/worker.js) |
+| `content_activations` | [L4327](../../schema.sql#L4327) | [content/crafting.js](../../src/content/crafting.js), [content/runtime.js](../../src/content/runtime.js) |
+| `content_bundles` | [L4317](../../schema.sql#L4317) | [content/crafting.js](../../src/content/crafting.js), [content/runtime.js](../../src/content/runtime.js) |
+| `content_exchange_events` | [L4654](../../schema.sql#L4654) | [content/exchange.js](../../src/content/exchange.js) |
+| `content_exchange_listings` | [L4627](../../schema.sql#L4627) | [content/crafting.js](../../src/content/crafting.js), [content/exchange.js](../../src/content/exchange.js), [routes/content.js](../../src/routes/content.js) |
+| `content_instance_effects` | [L4423](../../schema.sql#L4423) | [content/runtime.js](../../src/content/runtime.js) |
+| `content_instance_facts` | [L4391](../../schema.sql#L4391) | [content/runtime.js](../../src/content/runtime.js) |
+| `content_instance_members` | [L4364](../../schema.sql#L4364) | [content/runtime.js](../../src/content/runtime.js) |
+| `content_instance_nodes` | [L4379](../../schema.sql#L4379) | [content/runtime.js](../../src/content/runtime.js) |
+| `content_instances` | [L4334](../../schema.sql#L4334) | [content/runtime.js](../../src/content/runtime.js) |
+| `content_inventory_lots` | [L4451](../../schema.sql#L4451) | [content/crafting.js](../../src/content/crafting.js), [content/exchange.js](../../src/content/exchange.js) |
+| `content_skill_progress` | [L4609](../../schema.sql#L4609) | [content/crafting.js](../../src/content/crafting.js) |
+| `content_source_claims` | [L4498](../../schema.sql#L4498) | [content/crafting.js](../../src/content/crafting.js) |
+| `content_source_epochs` | [L4484](../../schema.sql#L4484) | [content/crafting.js](../../src/content/crafting.js) |
+| `content_story_flags` | [L4402](../../schema.sql#L4402) | [content/runtime.js](../../src/content/runtime.js) |
+| `content_supply_receipts` | [L4512](../../schema.sql#L4512) | [content/crafting.js](../../src/content/crafting.js) |
+| `content_tool_events` | [L4585](../../schema.sql#L4585) | [content/crafting.js](../../src/content/crafting.js) |
+| `content_tool_states` | [L4561](../../schema.sql#L4561) | [content/crafting.js](../../src/content/crafting.js) |
+| `content_work_order_runs` | [L4532](../../schema.sql#L4532) | [content/crafting.js](../../src/content/crafting.js) |
 | `convoy_ambushes` | [L1417](../../schema.sql#L1417) | [convoy.js](../../src/convoy.js), [social/estate.js](../../src/social/estate.js) |
 | `convoy_cargo` | [L1410](../../schema.sql#L1410) | [convoy.js](../../src/convoy.js), [social/estate.js](../../src/social/estate.js) |
-| `convoy_hauls` | [L2858](../../schema.sql#L2858) | [convoy.js](../../src/convoy.js) |
+| `convoy_hauls` | [L2880](../../schema.sql#L2880) | [convoy.js](../../src/convoy.js) |
 | `convoy_insurance` | [L1425](../../schema.sql#L1425) | [convoy.js](../../src/convoy.js), [invariants.js](../../src/invariants.js) |
 | `convoys` | [L1389](../../schema.sql#L1389) | [convoy.js](../../src/convoy.js), [engagement.js](../../src/engagement.js), [explore.js](../../src/explore.js), [game.js](../../src/game.js), [notoriety.js](../../src/notoriety.js), [opportunities.js](../../src/opportunities.js), [path-funnel.js](../../src/path-funnel.js), [population.js](../../src/population.js), [routes/convoy.js](../../src/routes/convoy.js), [rules.generated.js](../../src/rules.generated.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [social/estate.js](../../src/social/estate.js) |
-| `corner_chains` | [L3244](../../schema.sql#L3244) | [corner.js](../../src/corner.js), [social/estate.js](../../src/social/estate.js) |
-| `corner_jobs` | [L3230](../../schema.sql#L3230) | [corner.js](../../src/corner.js), [game.js](../../src/game.js), [social/estate.js](../../src/social/estate.js) |
+| `corner_chains` | [L3269](../../schema.sql#L3269) | [corner.js](../../src/corner.js), [social/estate.js](../../src/social/estate.js) |
+| `corner_jobs` | [L3255](../../schema.sql#L3255) | [corner.js](../../src/corner.js), [game.js](../../src/game.js), [social/estate.js](../../src/social/estate.js) |
 | `crew_heist_members` | [L1376](../../schema.sql#L1376) | [heists.js](../../src/heists.js), [population.js](../../src/population.js), [social/estate.js](../../src/social/estate.js) |
 | `crew_heists` | [L1368](../../schema.sql#L1368) | [heists.js](../../src/heists.js), [population.js](../../src/population.js), [social/estate.js](../../src/social/estate.js), [world.js](../../src/world.js) |
-| `crew_invites` | [L3341](../../schema.sql#L3341) | [crew.js](../../src/crew.js) |
-| `crew_members` | [L3333](../../schema.sql#L3333) | [cards.js](../../src/cards.js), [circle.js](../../src/circle.js), [collision.js](../../src/collision.js), [content/runtime.js](../../src/content/runtime.js), [crew.js](../../src/crew.js), [discovery.js](../../src/discovery.js), [explore.js](../../src/explore.js), [game.js](../../src/game.js), [server.js](../../src/server.js), [social/contracts.js](../../src/social/contracts.js) |
-| `crew_objective_progress` | [L3453](../../schema.sql#L3453) | [crew.js](../../src/crew.js), [game.js](../../src/game.js) |
-| `crew_objectives` | [L3442](../../schema.sql#L3442) | [crew.js](../../src/crew.js), [game.js](../../src/game.js) |
-| `crew_requests` | [L3355](../../schema.sql#L3355) | [crew.js](../../src/crew.js) |
-| `crew_targets` | [L3420](../../schema.sql#L3420) | [crew.js](../../src/crew.js) |
-| `crews` | [L3327](../../schema.sql#L3327) | [cards.js](../../src/cards.js), [crew.js](../../src/crew.js), [discovery.js](../../src/discovery.js), [game.js](../../src/game.js), [heists.js](../../src/heists.js), [mentor.js](../../src/mentor.js), [path-funnel.js](../../src/path-funnel.js), [pen.js](../../src/pen.js), [population.js](../../src/population.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [world.js](../../src/world.js) |
+| `crew_invites` | [L3366](../../schema.sql#L3366) | [crew.js](../../src/crew.js) |
+| `crew_members` | [L3358](../../schema.sql#L3358) | [cards.js](../../src/cards.js), [circle.js](../../src/circle.js), [collision.js](../../src/collision.js), [content/runtime.js](../../src/content/runtime.js), [crew.js](../../src/crew.js), [discovery.js](../../src/discovery.js), [explore.js](../../src/explore.js), [game.js](../../src/game.js), [server.js](../../src/server.js), [social/contracts.js](../../src/social/contracts.js) |
+| `crew_objective_progress` | [L3478](../../schema.sql#L3478) | [crew.js](../../src/crew.js), [game.js](../../src/game.js) |
+| `crew_objectives` | [L3467](../../schema.sql#L3467) | [crew.js](../../src/crew.js), [game.js](../../src/game.js) |
+| `crew_requests` | [L3380](../../schema.sql#L3380) | [crew.js](../../src/crew.js) |
+| `crew_targets` | [L3445](../../schema.sql#L3445) | [crew.js](../../src/crew.js) |
+| `crews` | [L3352](../../schema.sql#L3352) | [cards.js](../../src/cards.js), [crew.js](../../src/crew.js), [discovery.js](../../src/discovery.js), [game.js](../../src/game.js), [heists.js](../../src/heists.js), [mentor.js](../../src/mentor.js), [path-funnel.js](../../src/path-funnel.js), [pen.js](../../src/pen.js), [population.js](../../src/population.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [world.js](../../src/world.js) |
 | `daily_progress` | [L607](../../schema.sql#L607) | [corner.js](../../src/corner.js), [game.js](../../src/game.js), [growth.js](../../src/growth.js), [hustle.js](../../src/hustle.js), [regimen.js](../../src/regimen.js), [social/estate.js](../../src/social/estate.js) |
 | `deed_reimports` | [L1665](../../schema.sql#L1665) | [chain.js](../../src/chain.js) |
 | `den_volume` | [L1154](../../schema.sql#L1154) | [business.js](../../src/business.js), [casino.js](../../src/casino.js), [events.js](../../src/events.js), [invariants.js](../../src/invariants.js), [ops.js](../../src/ops.js), [social/combat.js](../../src/social/combat.js) |
@@ -115,25 +115,25 @@
 | `digs` | [L2290](../../schema.sql#L2290) | [explore.js](../../src/explore.js), [secrets.js](../../src/secrets.js), [social/estate.js](../../src/social/estate.js) |
 | `district_bids` | [L399](../../schema.sql#L399) | [citymap.js](../../src/citymap.js), [invariants.js](../../src/invariants.js), [server.js](../../src/server.js), [social/gangs.js](../../src/social/gangs.js) |
 | `districts` | [L388](../../schema.sql#L388) | [accrual.js](../../src/accrual.js), [agentgateway.js](../../src/agentgateway.js), [casino.js](../../src/casino.js), [chain.js](../../src/chain.js), [citymap.js](../../src/citymap.js), [collision.js](../../src/collision.js), [contacts.js](../../src/contacts.js), [convoy.js](../../src/convoy.js), [corner.js](../../src/corner.js), [crew.js](../../src/crew.js), [deeds.js](../../src/deeds.js), [diplomacy.js](../../src/diplomacy.js), [discovery.js](../../src/discovery.js), [explore.js](../../src/explore.js), [favors.js](../../src/favors.js), [game.js](../../src/game.js), [hustle.js](../../src/hustle.js), [opportunities.js](../../src/opportunities.js), [population.js](../../src/population.js), [port.js](../../src/port.js), [routes/leaderboards.js](../../src/routes/leaderboards.js), [rules.generated.js](../../src/rules.generated.js), [rules.tail.js](../../src/rules.tail.js), [season.js](../../src/season.js), [server.js](../../src/server.js), [shipment.js](../../src/shipment.js), [social/gangs.js](../../src/social/gangs.js), [sov.js](../../src/sov.js), [speakeasy.js](../../src/speakeasy.js), [streets.js](../../src/streets.js), [territory.js](../../src/territory.js), [worker.js](../../src/worker.js) |
-| `dm_blocks` | [L2551](../../schema.sql#L2551) | [contacts.js](../../src/contacts.js), [crew.js](../../src/crew.js), [phone.js](../../src/phone.js), [rivals.js](../../src/rivals.js) |
-| `dm_messages` | [L2535](../../schema.sql#L2535) | [phone.js](../../src/phone.js), [worker.js](../../src/worker.js) |
-| `drop_allocations` | [L4659](../../schema.sql#L4659) | [drop.js](../../src/drop.js), [invariants.js](../../src/invariants.js) |
-| `drop_state` | [L4675](../../schema.sql#L4675) | [drop.js](../../src/drop.js) |
-| `duels` | [L2593](../../schema.sql#L2593) | [duels.js](../../src/duels.js), [explore.js](../../src/explore.js), [firsts.js](../../src/firsts.js), [mastery.js](../../src/mastery.js), [path-funnel.js](../../src/path-funnel.js), [pen.js](../../src/pen.js), [population.js](../../src/population.js), [races.js](../../src/races.js), [rivals.js](../../src/rivals.js), [routes/leaderboards.js](../../src/routes/leaderboards.js), [rules.generated.js](../../src/rules.generated.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [worker.js](../../src/worker.js) |
+| `dm_blocks` | [L2566](../../schema.sql#L2566) | [contacts.js](../../src/contacts.js), [crew.js](../../src/crew.js), [phone.js](../../src/phone.js), [rivals.js](../../src/rivals.js) |
+| `dm_messages` | [L2548](../../schema.sql#L2548) | [phone.js](../../src/phone.js), [worker.js](../../src/worker.js) |
+| `drop_allocations` | [L4684](../../schema.sql#L4684) | [drop.js](../../src/drop.js), [invariants.js](../../src/invariants.js) |
+| `drop_state` | [L4700](../../schema.sql#L4700) | [drop.js](../../src/drop.js) |
+| `duels` | [L2611](../../schema.sql#L2611) | [duels.js](../../src/duels.js), [explore.js](../../src/explore.js), [firsts.js](../../src/firsts.js), [mastery.js](../../src/mastery.js), [path-funnel.js](../../src/path-funnel.js), [pen.js](../../src/pen.js), [population.js](../../src/population.js), [races.js](../../src/races.js), [rivals.js](../../src/rivals.js), [routes/leaderboards.js](../../src/routes/leaderboards.js), [rules.generated.js](../../src/rules.generated.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [worker.js](../../src/worker.js) |
 | `dynasty_divorces` | [L2239](../../schema.sql#L2239) | [dynasty.js](../../src/dynasty.js), [people.js](../../src/people.js) |
 | `dynasty_marriages` | [L2227](../../schema.sql#L2227) | [circle.js](../../src/circle.js), [crew.js](../../src/crew.js), [dynasty.js](../../src/dynasty.js), [people.js](../../src/people.js) |
-| `dynasty_tokens` | [L2517](../../schema.sql#L2517) | [chain.js](../../src/chain.js), [portrait.js](../../src/portrait.js) |
-| `email_confirm_sent` | [L3546](../../schema.sql#L3546) | [dispatch.js](../../src/dispatch.js) |
-| `estate_staff` | [L2639](../../schema.sql#L2639) | [estate.js](../../src/estate.js) |
+| `dynasty_tokens` | [L2530](../../schema.sql#L2530) | [chain.js](../../src/chain.js), [portrait.js](../../src/portrait.js) |
+| `email_confirm_sent` | [L3571](../../schema.sql#L3571) | [dispatch.js](../../src/dispatch.js) |
+| `estate_staff` | [L2660](../../schema.sql#L2660) | [estate.js](../../src/estate.js) |
 | `estates` | [L1586](../../schema.sql#L1586) | [estate.js](../../src/estate.js), [game.js](../../src/game.js), [routes/leaderboards.js](../../src/routes/leaderboards.js), [store.js](../../src/store.js) |
 | `eth_vault` | [L2389](../../schema.sql#L2389) | [treasury.js](../../src/treasury.js) |
 | `event_results` | [L2108](../../schema.sql#L2108) | [events.js](../../src/events.js), [worker.js](../../src/worker.js) |
-| `exchange_pool` | [L2956](../../schema.sql#L2956) | [exchange.js](../../src/exchange.js), [worker.js](../../src/worker.js) |
-| `fair_commitments` | [L4732](../../schema.sql#L4732) | [fairness.js](../../src/fairness.js) |
-| `family_aggro` | [L2754](../../schema.sql#L2754) | [npcwar.js](../../src/npcwar.js), [rules.tail.js](../../src/rules.tail.js), [social/estate.js](../../src/social/estate.js), [worker.js](../../src/worker.js) |
-| `family_buybacks` | [L4272](../../schema.sql#L4272) | [community.js](../../src/community.js) |
-| `family_yield_pool` | [L2968](../../schema.sql#L2968) | [bank.js](../../src/bank.js), [chain.js](../../src/chain.js), [community.js](../../src/community.js), [economy.js](../../src/economy.js), [exchange.js](../../src/exchange.js), [invariants.js](../../src/invariants.js), [router.js](../../src/router.js), [tax.js](../../src/tax.js), [tokenhealth.js](../../src/tokenhealth.js), [worker.js](../../src/worker.js) |
-| `favors` | [L3270](../../schema.sql#L3270) | [agentgateway.js](../../src/agentgateway.js), [explore.js](../../src/explore.js), [favors.js](../../src/favors.js), [game.js](../../src/game.js), [invariants.js](../../src/invariants.js), [routes/underworld.js](../../src/routes/underworld.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [social/estate.js](../../src/social/estate.js), [underworld.js](../../src/underworld.js), [worker.js](../../src/worker.js) |
+| `exchange_pool` | [L2978](../../schema.sql#L2978) | [exchange.js](../../src/exchange.js), [worker.js](../../src/worker.js) |
+| `fair_commitments` | [L4757](../../schema.sql#L4757) | [fairness.js](../../src/fairness.js) |
+| `family_aggro` | [L2776](../../schema.sql#L2776) | [npcwar.js](../../src/npcwar.js), [rules.tail.js](../../src/rules.tail.js), [social/estate.js](../../src/social/estate.js), [worker.js](../../src/worker.js) |
+| `family_buybacks` | [L4297](../../schema.sql#L4297) | [community.js](../../src/community.js) |
+| `family_yield_pool` | [L2990](../../schema.sql#L2990) | [bank.js](../../src/bank.js), [chain.js](../../src/chain.js), [community.js](../../src/community.js), [economy.js](../../src/economy.js), [exchange.js](../../src/exchange.js), [invariants.js](../../src/invariants.js), [router.js](../../src/router.js), [tax.js](../../src/tax.js), [tokenhealth.js](../../src/tokenhealth.js), [worker.js](../../src/worker.js) |
+| `favors` | [L3295](../../schema.sql#L3295) | [agentgateway.js](../../src/agentgateway.js), [explore.js](../../src/explore.js), [favors.js](../../src/favors.js), [game.js](../../src/game.js), [invariants.js](../../src/invariants.js), [routes/underworld.js](../../src/routes/underworld.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [social/estate.js](../../src/social/estate.js), [underworld.js](../../src/underworld.js), [worker.js](../../src/worker.js) |
 | `fee_payments` | [L749](../../schema.sql#L749) | [fees.js](../../src/fees.js), [router.js](../../src/router.js) |
 | `feud_peace_offers` | [L1250](../../schema.sql#L1250) | [dynasty.js](../../src/dynasty.js), [people.js](../../src/people.js), [server.js](../../src/server.js), [social/estate.js](../../src/social/estate.js) |
 | `fight_bets` | [L1076](../../schema.sql#L1076) | [casino.js](../../src/casino.js), [social/estate.js](../../src/social/estate.js) |
@@ -144,7 +144,7 @@
 | `futurity_bets` | [L1143](../../schema.sql#L1143) | [casino.js](../../src/casino.js) |
 | `futurity_runners` | [L1132](../../schema.sql#L1132) | [casino.js](../../src/casino.js) |
 | `futurity_state` | [L1150](../../schema.sql#L1150) | [casino.js](../../src/casino.js) |
-| `gala_guests` | [L2651](../../schema.sql#L2651) | [estate.js](../../src/estate.js), [worker.js](../../src/worker.js) |
+| `gala_guests` | [L2672](../../schema.sql#L2672) | [estate.js](../../src/estate.js), [worker.js](../../src/worker.js) |
 | `gang_members` | [L371](../../schema.sql#L371) | [bonds.js](../../src/bonds.js), [business.js](../../src/business.js), [cards.js](../../src/cards.js), [collision.js](../../src/collision.js), [commission.js](../../src/commission.js), [content/runtime.js](../../src/content/runtime.js), [convoy.js](../../src/convoy.js), [crew.js](../../src/crew.js), [diplomacy.js](../../src/diplomacy.js), [discovery.js](../../src/discovery.js), [duels.js](../../src/duels.js), [explore.js](../../src/explore.js), [game.js](../../src/game.js), [growth.js](../../src/growth.js), [heists.js](../../src/heists.js), [law.js](../../src/law.js), [npcwar.js](../../src/npcwar.js), [pen.js](../../src/pen.js), [people.js](../../src/people.js), [population.js](../../src/population.js), [port.js](../../src/port.js), [portrait.js](../../src/portrait.js), [roster.js](../../src/roster.js), [routes/territory.js](../../src/routes/territory.js), [rwanominations.js](../../src/rwanominations.js), [server.js](../../src/server.js), [social/combat.js](../../src/social/combat.js), [social/contracts.js](../../src/social/contracts.js), [social/gangs.js](../../src/social/gangs.js), [store.js](../../src/store.js), [territory.js](../../src/territory.js), [wire.js](../../src/wire.js) |
 | `gang_portfolios` | [L1574](../../schema.sql#L1574) | [portfolio.js](../../src/portfolio.js), [social/gangs.js](../../src/social/gangs.js) |
 | `gang_relations` | [L2136](../../schema.sql#L2136) | [diplomacy.js](../../src/diplomacy.js), [npcwar.js](../../src/npcwar.js) |
@@ -152,7 +152,7 @@
 | `grand_prix` | [L1217](../../schema.sql#L1217) | [events.js](../../src/events.js), [invariants.js](../../src/invariants.js), [races.js](../../src/races.js) |
 | `grand_prix_entries` | [L1224](../../schema.sql#L1224) | [races.js](../../src/races.js) |
 | `grand_prix_state` | [L1232](../../schema.sql#L1232) | [races.js](../../src/races.js) |
-| `hustles` | [L3152](../../schema.sql#L3152) | [career.js](../../src/career.js), [game.js](../../src/game.js), [hustle.js](../../src/hustle.js), [social/estate.js](../../src/social/estate.js) |
+| `hustles` | [L3174](../../schema.sql#L3174) | [career.js](../../src/career.js), [game.js](../../src/game.js), [hustle.js](../../src/hustle.js), [social/estate.js](../../src/social/estate.js) |
 | `idempotency` | [L695](../../schema.sql#L695) | [auth.js](../../src/auth.js), [bonds.js](../../src/bonds.js), [chain.js](../../src/chain.js), [fees.js](../../src/fees.js), [game.js](../../src/game.js), [routes/rwa.js](../../src/routes/rwa.js), [rwastockkeeper.js](../../src/rwastockkeeper.js), [server.js](../../src/server.js), [store.js](../../src/store.js), [treasury.js](../../src/treasury.js), [verify.js](../../src/verify.js), [watcher.js](../../src/watcher.js), [wire.js](../../src/wire.js), [worker.js](../../src/worker.js) |
 | `informants` | [L1261](../../schema.sql#L1261) | [agentgateway.js](../../src/agentgateway.js), [explore.js](../../src/explore.js), [law.js](../../src/law.js), [rules.tail.js](../../src/rules.tail.js), [social/estate.js](../../src/social/estate.js), [wire.js](../../src/wire.js) |
 | `invite_codes` | [L704](../../schema.sql#L704) | [auth.js](../../src/auth.js), [routes/modtools.js](../../src/routes/modtools.js) |
@@ -160,24 +160,24 @@
 | `landmarks` | [L528](../../schema.sql#L528) | [agentgateway.js](../../src/agentgateway.js), [engagement.js](../../src/engagement.js), [explore.js](../../src/explore.js), [landmarks.js](../../src/landmarks.js), [routes/leaderboards.js](../../src/routes/leaderboards.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js) |
 | `limited_runs` | [L2323](../../schema.sql#L2323) | [economy.js](../../src/economy.js), [rules.tail.js](../../src/rules.tail.js) |
 | `listings` | [L536](../../schema.sql#L536) | [agentgateway.js](../../src/agentgateway.js), [content/exchange.js](../../src/content/exchange.js), [explore.js](../../src/explore.js), [invariants.js](../../src/invariants.js), [market.js](../../src/market.js), [opportunities.js](../../src/opportunities.js), [population.js](../../src/population.js), [races.js](../../src/races.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [social/estate.js](../../src/social/estate.js), [social/exchange.js](../../src/social/exchange.js), [vanity.js](../../src/vanity.js) |
-| `loan_house` | [L2683](../../schema.sql#L2683) | [invariants.js](../../src/invariants.js), [loans.js](../../src/loans.js) |
+| `loan_house` | [L2705](../../schema.sql#L2705) | [invariants.js](../../src/invariants.js), [loans.js](../../src/loans.js) |
 | `loans` | [L1300](../../schema.sql#L1300) | [agentgateway.js](../../src/agentgateway.js), [agentturn.js](../../src/agentturn.js), [explore.js](../../src/explore.js), [game.js](../../src/game.js), [honor.js](../../src/honor.js), [invariants.js](../../src/invariants.js), [loans.js](../../src/loans.js), [opportunities.js](../../src/opportunities.js), [pen.js](../../src/pen.js), [population.js](../../src/population.js), [routes/modtools.js](../../src/routes/modtools.js), [rules.generated.js](../../src/rules.generated.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [social/estate.js](../../src/social/estate.js), [worker.js](../../src/worker.js) |
 | `lp_depth` | [L1804](../../schema.sql#L1804) | [bonds.js](../../src/bonds.js) |
 | `makings` | [L570](../../schema.sql#L570) | [agentgateway.js](../../src/agentgateway.js), [game.js](../../src/game.js), [invariants.js](../../src/invariants.js), [kitchen.js](../../src/kitchen.js), [routes/kitchen.js](../../src/routes/kitchen.js), [rules.generated.js](../../src/rules.generated.js), [rules.tail.js](../../src/rules.tail.js), [social/estate.js](../../src/social/estate.js), [streets.js](../../src/streets.js) |
 | `market_listings` | [L1457](../../schema.sql#L1457) | [explore.js](../../src/explore.js), [invariants.js](../../src/invariants.js), [market.js](../../src/market.js), [population.js](../../src/population.js) |
-| `masteries` | [L3092](../../schema.sql#L3092) | [game.js](../../src/game.js), [mastery.js](../../src/mastery.js), [path-funnel.js](../../src/path-funnel.js), [population.js](../../src/population.js), [rules.tail.js](../../src/rules.tail.js), [social/estate.js](../../src/social/estate.js) |
-| `mastery_legend` | [L3102](../../schema.sql#L3102) | [game.js](../../src/game.js), [mastery.js](../../src/mastery.js), [population.js](../../src/population.js), [social/estate.js](../../src/social/estate.js) |
-| `megaproject_contributions` | [L2575](../../schema.sql#L2575) | [career.js](../../src/career.js), [megaproject.js](../../src/megaproject.js) |
-| `megaprojects` | [L2563](../../schema.sql#L2563) | [events.js](../../src/events.js), [megaproject.js](../../src/megaproject.js) |
-| `mentor_offers` | [L3498](../../schema.sql#L3498) | [mentor.js](../../src/mentor.js) |
-| `mentorships` | [L3486](../../schema.sql#L3486) | [circle.js](../../src/circle.js), [invariants.js](../../src/invariants.js), [mentor.js](../../src/mentor.js) |
+| `masteries` | [L3114](../../schema.sql#L3114) | [game.js](../../src/game.js), [mastery.js](../../src/mastery.js), [path-funnel.js](../../src/path-funnel.js), [population.js](../../src/population.js), [rules.tail.js](../../src/rules.tail.js), [social/estate.js](../../src/social/estate.js) |
+| `mastery_legend` | [L3124](../../schema.sql#L3124) | [game.js](../../src/game.js), [mastery.js](../../src/mastery.js), [population.js](../../src/population.js), [social/estate.js](../../src/social/estate.js) |
+| `megaproject_contributions` | [L2592](../../schema.sql#L2592) | [career.js](../../src/career.js), [megaproject.js](../../src/megaproject.js) |
+| `megaprojects` | [L2580](../../schema.sql#L2580) | [events.js](../../src/events.js), [megaproject.js](../../src/megaproject.js) |
+| `mentor_offers` | [L3523](../../schema.sql#L3523) | [mentor.js](../../src/mentor.js) |
+| `mentorships` | [L3511](../../schema.sql#L3511) | [circle.js](../../src/circle.js), [invariants.js](../../src/invariants.js), [mentor.js](../../src/mentor.js) |
 | `mission_omr_claimed` | [L602](../../schema.sql#L602) | [growth.js](../../src/growth.js) |
 | `missions_done` | [L594](../../schema.sql#L594) | [growth.js](../../src/growth.js), [social/estate.js](../../src/social/estate.js) |
 | `mod_actions` | [L1885](../../schema.sql#L1885) | [chain.js](../../src/chain.js), [routes/modtools.js](../../src/routes/modtools.js), [server.js](../../src/server.js) |
 | `nft_reimports` | [L843](../../schema.sql#L843) | [chain.js](../../src/chain.js), [routes/modtools.js](../../src/routes/modtools.js) |
 | `notifications` | [L545](../../schema.sql#L545) | [agentgateway.js](../../src/agentgateway.js), [agentturn.js](../../src/agentturn.js), [chain.js](../../src/chain.js), [dispatch.js](../../src/dispatch.js), [firstblood.js](../../src/firstblood.js), [game.js](../../src/game.js), [people.js](../../src/people.js), [phone.js](../../src/phone.js), [preflight.js](../../src/preflight.js), [push.js](../../src/push.js), [season.js](../../src/season.js), [server.js](../../src/server.js), [social.js](../../src/social.js), [wire.js](../../src/wire.js), [worker.js](../../src/worker.js) |
-| `npc_aggression` | [L2781](../../schema.sql#L2781) | [diplomacy.js](../../src/diplomacy.js), [dispatch.js](../../src/dispatch.js), [npcwar.js](../../src/npcwar.js), [push.js](../../src/push.js) |
-| `npc_drills` | [L3141](../../schema.sql#L3141) | [game.js](../../src/game.js), [regimen.js](../../src/regimen.js), [social/estate.js](../../src/social/estate.js) |
+| `npc_aggression` | [L2803](../../schema.sql#L2803) | [diplomacy.js](../../src/diplomacy.js), [dispatch.js](../../src/dispatch.js), [npcwar.js](../../src/npcwar.js), [push.js](../../src/push.js) |
+| `npc_drills` | [L3163](../../schema.sql#L3163) | [game.js](../../src/game.js), [regimen.js](../../src/regimen.js), [social/estate.js](../../src/social/estate.js) |
 | `npc_errands` | [L1527](../../schema.sql#L1527) | [game.js](../../src/game.js), [social/estate.js](../../src/social/estate.js), [underworld.js](../../src/underworld.js) |
 | `npc_favors` | [L1537](../../schema.sql#L1537) | [social/estate.js](../../src/social/estate.js), [underworld.js](../../src/underworld.js) |
 | `npc_gain` | [L1505](../../schema.sql#L1505) | [game.js](../../src/game.js), [social/estate.js](../../src/social/estate.js) |
@@ -185,81 +185,81 @@
 | `npc_hits` | [L1553](../../schema.sql#L1553) | [social/combat.js](../../src/social/combat.js), [social/estate.js](../../src/social/estate.js) |
 | `npc_leads` | [L1495](../../schema.sql#L1495) | [game.js](../../src/game.js), [social/estate.js](../../src/social/estate.js), [underworld.js](../../src/underworld.js) |
 | `npc_standing` | [L1484](../../schema.sql#L1484) | [game.js](../../src/game.js), [social/estate.js](../../src/social/estate.js), [underworld.js](../../src/underworld.js) |
-| `npc_wars` | [L2763](../../schema.sql#L2763) | [npcwar.js](../../src/npcwar.js) |
+| `npc_wars` | [L2785](../../schema.sql#L2785) | [npcwar.js](../../src/npcwar.js) |
 | `numbers_tickets` | [L1067](../../schema.sql#L1067) | [casino.js](../../src/casino.js), [social/estate.js](../../src/social/estate.js) |
 | `oauth_states` | [L2122](../../schema.sql#L2122) | [auth.js](../../src/auth.js), [worker.js](../../src/worker.js) |
 | `pen_break_members` | [L1289](../../schema.sql#L1289) | [pen.js](../../src/pen.js), [social/estate.js](../../src/social/estate.js) |
 | `pen_breaks` | [L1283](../../schema.sql#L1283) | [pen.js](../../src/pen.js), [social/estate.js](../../src/social/estate.js) |
 | `pen_contraband` | [L1273](../../schema.sql#L1273) | [pen.js](../../src/pen.js), [social/estate.js](../../src/social/estate.js) |
-| `pen_talks` | [L3162](../../schema.sql#L3162) | [pen.js](../../src/pen.js), [social/estate.js](../../src/social/estate.js) |
+| `pen_talks` | [L3184](../../schema.sql#L3184) | [pen.js](../../src/pen.js), [social/estate.js](../../src/social/estate.js) |
 | `poker_entries` | [L1201](../../schema.sql#L1201) | [casino.js](../../src/casino.js) |
-| `poker_ring_seats` | [L2713](../../schema.sql#L2713) | [invariants.js](../../src/invariants.js), [ring.js](../../src/ring.js) |
+| `poker_ring_seats` | [L2735](../../schema.sql#L2735) | [invariants.js](../../src/invariants.js), [ring.js](../../src/ring.js) |
 | `poker_state` | [L1209](../../schema.sql#L1209) | [casino.js](../../src/casino.js) |
-| `poker_tables` | [L2698](../../schema.sql#L2698) | [invariants.js](../../src/invariants.js), [ring.js](../../src/ring.js) |
+| `poker_tables` | [L2720](../../schema.sql#L2720) | [invariants.js](../../src/invariants.js), [ring.js](../../src/ring.js) |
 | `poker_tournaments` | [L1194](../../schema.sql#L1194) | [casino.js](../../src/casino.js), [events.js](../../src/events.js), [invariants.js](../../src/invariants.js) |
 | `pol_fees` | [L1992](../../schema.sql#L1992) | [desk.js](../../src/desk.js), [router.js](../../src/router.js) |
 | `pol_pairings` | [L1790](../../schema.sql#L1790) | [dexbot.js](../../src/dexbot.js) |
 | `population_state` | [L1855](../../schema.sql#L1855) | [ops.js](../../src/ops.js), [population.js](../../src/population.js), [rules.tail.js](../../src/rules.tail.js) |
 | `port_intercepts` | [L280](../../schema.sql#L280) | [port.js](../../src/port.js), [social/combat.js](../../src/social/combat.js), [social/estate.js](../../src/social/estate.js) |
 | `portfolios` | [L1565](../../schema.sql#L1565) | [portfolio.js](../../src/portfolio.js) |
-| `primetime_happy` | [L3408](../../schema.sql#L3408) | [primetime.js](../../src/primetime.js), [social/estate.js](../../src/social/estate.js) |
-| `primetime_rally` | [L3400](../../schema.sql#L3400) | [primetime.js](../../src/primetime.js), [rules.tail.js](../../src/rules.tail.js), [social/estate.js](../../src/social/estate.js) |
+| `primetime_happy` | [L3433](../../schema.sql#L3433) | [primetime.js](../../src/primetime.js), [social/estate.js](../../src/social/estate.js) |
+| `primetime_rally` | [L3425](../../schema.sql#L3425) | [primetime.js](../../src/primetime.js), [rules.tail.js](../../src/rules.tail.js), [social/estate.js](../../src/social/estate.js) |
 | `push_subscriptions` | [L559](../../schema.sql#L559) | [push.js](../../src/push.js) |
 | `racers` | [L983](../../schema.sql#L983) | [career.js](../../src/career.js), [casino.js](../../src/casino.js), [events.js](../../src/events.js), [population.js](../../src/population.js), [routes/casino.js](../../src/routes/casino.js), [routes/stable.js](../../src/routes/stable.js), [rules.tail.js](../../src/rules.tail.js), [social/combat.js](../../src/social/combat.js), [social/estate.js](../../src/social/estate.js), [stable.js](../../src/stable.js) |
 | `referral_push` | [L1925](../../schema.sql#L1925) | [game.js](../../src/game.js) |
 | `referrals` | [L614](../../schema.sql#L614) | [agentgateway.js](../../src/agentgateway.js), [cards.js](../../src/cards.js), [game.js](../../src/game.js), [growth.js](../../src/growth.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js) |
-| `rigs` | [L2850](../../schema.sql#L2850) | [convoy.js](../../src/convoy.js), [rules.tail.js](../../src/rules.tail.js), [social/estate.js](../../src/social/estate.js) |
-| `rival_events` | [L3182](../../schema.sql#L3182) | [firstblood.js](../../src/firstblood.js), [game.js](../../src/game.js), [people.js](../../src/people.js), [rivals.js](../../src/rivals.js), [wire.js](../../src/wire.js) |
+| `rigs` | [L2872](../../schema.sql#L2872) | [convoy.js](../../src/convoy.js), [rules.tail.js](../../src/rules.tail.js), [social/estate.js](../../src/social/estate.js) |
+| `rival_events` | [L3205](../../schema.sql#L3205) | [firstblood.js](../../src/firstblood.js), [game.js](../../src/game.js), [people.js](../../src/people.js), [rivals.js](../../src/rivals.js), [wire.js](../../src/wire.js) |
 | `rng_audit` | [L2022](../../schema.sql#L2022) | [casino.js](../../src/casino.js), [economy.js](../../src/economy.js), [fees.js](../../src/fees.js), [game.js](../../src/game.js), [invariants.js](../../src/invariants.js), [population.js](../../src/population.js), [routes/modtools.js](../../src/routes/modtools.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [walletforge.js](../../src/walletforge.js) |
-| `route_notoriety` | [L2872](../../schema.sql#L2872) | [notoriety.js](../../src/notoriety.js), [port.js](../../src/port.js), [social/estate.js](../../src/social/estate.js) |
+| `route_notoriety` | [L2894](../../schema.sql#L2894) | [notoriety.js](../../src/notoriety.js), [port.js](../../src/port.js), [social/estate.js](../../src/social/estate.js) |
 | `rwa_dividend_pool` | [L1906](../../schema.sql#L1906) | [exchange.js](../../src/exchange.js), [invariants.js](../../src/invariants.js), [portfolio.js](../../src/portfolio.js), [worker.js](../../src/worker.js) |
 | `rwa_family_dividend_pool` | [L1916](../../schema.sql#L1916) | [exchange.js](../../src/exchange.js), [invariants.js](../../src/invariants.js), [portfolio.js](../../src/portfolio.js) |
-| `rwa_health_apply_lock_v2` | [L5076](../../schema.sql#L5076) | [rwahealthread.js](../../src/rwahealthread.js), [rwahealthreview.js](../../src/rwahealthreview.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
-| `rwa_health_batches_v2` | [L5103](../../schema.sql#L5103) | [rwahealthread.js](../../src/rwahealthread.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
-| `rwa_health_clearance_attestations_v2` | [L5452](../../schema.sql#L5452) | [rwahealthclearance.js](../../src/rwahealthclearance.js) |
-| `rwa_health_clearance_recovery_evidence_v2` | [L5530](../../schema.sql#L5530) | [rwahealthclearance.js](../../src/rwahealthclearance.js) |
-| `rwa_health_clearance_safe_proposals_v2` | [L5544](../../schema.sql#L5544) | [rwahealthclearance.js](../../src/rwahealthclearance.js) |
-| `rwa_health_current_v2` | [L5919](../../schema.sql#L5919) | [db.js](../../src/db.js), [rwahealthclearance.js](../../src/rwahealthclearance.js), [rwahealthread.js](../../src/rwahealthread.js), [rwahealthreview.js](../../src/rwahealthreview.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
-| `rwa_health_episode_events_v2` | [L5819](../../schema.sql#L5819) | [db.js](../../src/db.js), [rwahealthreview.js](../../src/rwahealthreview.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
-| `rwa_health_episodes_v2` | [L5728](../../schema.sql#L5728) | [db.js](../../src/db.js), [rwahealthreview.js](../../src/rwahealthreview.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
-| `rwa_health_evaluations_v2` | [L5185](../../schema.sql#L5185) | [rwahealthclearance.js](../../src/rwahealthclearance.js), [rwahealthread.js](../../src/rwahealthread.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
-| `rwa_health_finalized_clearances_v2` | [L5644](../../schema.sql#L5644) | [db.js](../../src/db.js) |
-| `rwa_health_overlay_asset_state_v2` | [L5369](../../schema.sql#L5369) | [rwahealthoverlay.js](../../src/rwahealthoverlay.js) |
-| `rwa_health_overlay_attempts_v2` | [L5344](../../schema.sql#L5344) | — |
-| `rwa_health_overlay_checkpoint_v2` | [L5248](../../schema.sql#L5248) | [rwahealthoverlay.js](../../src/rwahealthoverlay.js) |
-| `rwa_health_overlay_event_results_v2` | [L5604](../../schema.sql#L5604) | — |
-| `rwa_health_overlay_inbox_v2` | [L5391](../../schema.sql#L5391) | — |
-| `rwa_health_overlay_incidents_v2` | [L5624](../../schema.sql#L5624) | — |
-| `rwa_health_overlay_lock_v2` | [L5243](../../schema.sql#L5243) | [rwahealthoverlay.js](../../src/rwahealthoverlay.js) |
-| `rwa_health_overlay_runtime_v2` | [L5292](../../schema.sql#L5292) | [rwahealthoverlay.js](../../src/rwahealthoverlay.js) |
-| `rwa_health_pages_v2` | [L5169](../../schema.sql#L5169) | [rwahealthread.js](../../src/rwahealthread.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
-| `rwa_health_private_provider_evidence_v2` | [L5154](../../schema.sql#L5154) | [rwahealthread.js](../../src/rwahealthread.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
-| `rwa_health_reviewer_actions_v2` | [L5691](../../schema.sql#L5691) | [rwahealthreview.js](../../src/rwahealthreview.js) |
-| `rwa_health_runtime_v2` | [L5081](../../schema.sql#L5081) | [rwahealthread.js](../../src/rwahealthread.js), [rwahealthreview.js](../../src/rwahealthreview.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
-| `rwa_nomination_endorsements_v2` | [L4121](../../schema.sql#L4121) | [rwanominations.js](../../src/rwanominations.js) |
-| `rwa_nomination_events_v2` | [L4131](../../schema.sql#L4131) | [rwanominations.js](../../src/rwanominations.js) |
-| `rwa_nomination_reviewer_state_v2` | [L4149](../../schema.sql#L4149) | [routes/rwa.js](../../src/routes/rwa.js) |
-| `rwa_nomination_safe_proposals_v2` | [L4173](../../schema.sql#L4173) | [rwanominations.js](../../src/rwanominations.js), [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
-| `rwa_nominations_v2` | [L4064](../../schema.sql#L4064) | [rwanominations.js](../../src/rwanominations.js) |
-| `rwa_registry_activation_instances_v2` | [L4845](../../schema.sql#L4845) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
-| `rwa_registry_asset_lifecycle_current_v2` | [L4892](../../schema.sql#L4892) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
-| `rwa_registry_ballot_events_v2` | [L4947](../../schema.sql#L4947) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
-| `rwa_registry_lifecycle_attempts_v2` | [L5052](../../schema.sql#L5052) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
-| `rwa_registry_lifecycle_checkpoint_v2` | [L4759](../../schema.sql#L4759) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
-| `rwa_registry_lifecycle_event_results_v2` | [L4972](../../schema.sql#L4972) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
-| `rwa_registry_lifecycle_inbox_v2` | [L4794](../../schema.sql#L4794) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
-| `rwa_registry_lifecycle_lock_v2` | [L4754](../../schema.sql#L4754) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
-| `rwa_registry_lifecycle_runtime_v2` | [L5008](../../schema.sql#L5008) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
-| `rwa_registry_publisher_current_v2` | [L4933](../../schema.sql#L4933) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
-| `rwa_registry_publisher_history_v2` | [L4919](../../schema.sql#L4919) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
+| `rwa_health_apply_lock_v2` | [L5101](../../schema.sql#L5101) | [rwahealthread.js](../../src/rwahealthread.js), [rwahealthreview.js](../../src/rwahealthreview.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
+| `rwa_health_batches_v2` | [L5128](../../schema.sql#L5128) | [rwahealthread.js](../../src/rwahealthread.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
+| `rwa_health_clearance_attestations_v2` | [L5477](../../schema.sql#L5477) | [rwahealthclearance.js](../../src/rwahealthclearance.js) |
+| `rwa_health_clearance_recovery_evidence_v2` | [L5555](../../schema.sql#L5555) | [rwahealthclearance.js](../../src/rwahealthclearance.js) |
+| `rwa_health_clearance_safe_proposals_v2` | [L5569](../../schema.sql#L5569) | [rwahealthclearance.js](../../src/rwahealthclearance.js) |
+| `rwa_health_current_v2` | [L5944](../../schema.sql#L5944) | [db.js](../../src/db.js), [rwahealthclearance.js](../../src/rwahealthclearance.js), [rwahealthread.js](../../src/rwahealthread.js), [rwahealthreview.js](../../src/rwahealthreview.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
+| `rwa_health_episode_events_v2` | [L5844](../../schema.sql#L5844) | [db.js](../../src/db.js), [rwahealthreview.js](../../src/rwahealthreview.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
+| `rwa_health_episodes_v2` | [L5753](../../schema.sql#L5753) | [db.js](../../src/db.js), [rwahealthreview.js](../../src/rwahealthreview.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
+| `rwa_health_evaluations_v2` | [L5210](../../schema.sql#L5210) | [rwahealthclearance.js](../../src/rwahealthclearance.js), [rwahealthread.js](../../src/rwahealthread.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
+| `rwa_health_finalized_clearances_v2` | [L5669](../../schema.sql#L5669) | [db.js](../../src/db.js) |
+| `rwa_health_overlay_asset_state_v2` | [L5394](../../schema.sql#L5394) | [rwahealthoverlay.js](../../src/rwahealthoverlay.js) |
+| `rwa_health_overlay_attempts_v2` | [L5369](../../schema.sql#L5369) | — |
+| `rwa_health_overlay_checkpoint_v2` | [L5273](../../schema.sql#L5273) | [rwahealthoverlay.js](../../src/rwahealthoverlay.js) |
+| `rwa_health_overlay_event_results_v2` | [L5629](../../schema.sql#L5629) | — |
+| `rwa_health_overlay_inbox_v2` | [L5416](../../schema.sql#L5416) | — |
+| `rwa_health_overlay_incidents_v2` | [L5649](../../schema.sql#L5649) | — |
+| `rwa_health_overlay_lock_v2` | [L5268](../../schema.sql#L5268) | [rwahealthoverlay.js](../../src/rwahealthoverlay.js) |
+| `rwa_health_overlay_runtime_v2` | [L5317](../../schema.sql#L5317) | [rwahealthoverlay.js](../../src/rwahealthoverlay.js) |
+| `rwa_health_pages_v2` | [L5194](../../schema.sql#L5194) | [rwahealthread.js](../../src/rwahealthread.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
+| `rwa_health_private_provider_evidence_v2` | [L5179](../../schema.sql#L5179) | [rwahealthread.js](../../src/rwahealthread.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
+| `rwa_health_reviewer_actions_v2` | [L5716](../../schema.sql#L5716) | [rwahealthreview.js](../../src/rwahealthreview.js) |
+| `rwa_health_runtime_v2` | [L5106](../../schema.sql#L5106) | [rwahealthread.js](../../src/rwahealthread.js), [rwahealthreview.js](../../src/rwahealthreview.js), [rwahealthsweep.js](../../src/rwahealthsweep.js) |
+| `rwa_nomination_endorsements_v2` | [L4146](../../schema.sql#L4146) | [rwanominations.js](../../src/rwanominations.js) |
+| `rwa_nomination_events_v2` | [L4156](../../schema.sql#L4156) | [rwanominations.js](../../src/rwanominations.js) |
+| `rwa_nomination_reviewer_state_v2` | [L4174](../../schema.sql#L4174) | [routes/rwa.js](../../src/routes/rwa.js) |
+| `rwa_nomination_safe_proposals_v2` | [L4198](../../schema.sql#L4198) | [rwanominations.js](../../src/rwanominations.js), [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
+| `rwa_nominations_v2` | [L4089](../../schema.sql#L4089) | [rwanominations.js](../../src/rwanominations.js) |
+| `rwa_registry_activation_instances_v2` | [L4870](../../schema.sql#L4870) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
+| `rwa_registry_asset_lifecycle_current_v2` | [L4917](../../schema.sql#L4917) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
+| `rwa_registry_ballot_events_v2` | [L4972](../../schema.sql#L4972) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
+| `rwa_registry_lifecycle_attempts_v2` | [L5077](../../schema.sql#L5077) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
+| `rwa_registry_lifecycle_checkpoint_v2` | [L4784](../../schema.sql#L4784) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
+| `rwa_registry_lifecycle_event_results_v2` | [L4997](../../schema.sql#L4997) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
+| `rwa_registry_lifecycle_inbox_v2` | [L4819](../../schema.sql#L4819) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
+| `rwa_registry_lifecycle_lock_v2` | [L4779](../../schema.sql#L4779) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
+| `rwa_registry_lifecycle_runtime_v2` | [L5033](../../schema.sql#L5033) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
+| `rwa_registry_publisher_current_v2` | [L4958](../../schema.sql#L4958) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
+| `rwa_registry_publisher_history_v2` | [L4944](../../schema.sql#L4944) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
 | `rwa_revenue` | [L798](../../schema.sql#L798) | [bonds.js](../../src/bonds.js), [community.js](../../src/community.js), [fees.js](../../src/fees.js), [router.js](../../src/router.js), [store.js](../../src/store.js), [treasury.js](../../src/treasury.js), [watcher.js](../../src/watcher.js) |
-| `rwa_reviewer_idempotency_v2` | [L4157](../../schema.sql#L4157) | [routes/rwa.js](../../src/routes/rwa.js) |
-| `schema_meta` | [L4743](../../schema.sql#L4743) | [db.js](../../src/db.js) |
+| `rwa_reviewer_idempotency_v2` | [L4182](../../schema.sql#L4182) | [routes/rwa.js](../../src/routes/rwa.js) |
+| `schema_meta` | [L4768](../../schema.sql#L4768) | [db.js](../../src/db.js) |
 | `searches` | [L480](../../schema.sql#L480) | [game.js](../../src/game.js), [path-funnel.js](../../src/path-funnel.js), [rivals.js](../../src/rivals.js), [rules.generated.js](../../src/rules.generated.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [social/combat.js](../../src/social/combat.js), [social/contracts.js](../../src/social/contracts.js), [social/estate.js](../../src/social/estate.js), [underworld.js](../../src/underworld.js), [vanity.js](../../src/vanity.js), [wire.js](../../src/wire.js) |
-| `season_recaps` | [L3370](../../schema.sql#L3370) | [rules.tail.js](../../src/rules.tail.js), [season.js](../../src/season.js), [worker.js](../../src/worker.js) |
-| `season_records` | [L3292](../../schema.sql#L3292) | [season.js](../../src/season.js) |
+| `season_recaps` | [L3395](../../schema.sql#L3395) | [rules.tail.js](../../src/rules.tail.js), [season.js](../../src/season.js), [worker.js](../../src/worker.js) |
+| `season_records` | [L3317](../../schema.sql#L3317) | [season.js](../../src/season.js) |
 | `secrets` | [L2277](../../schema.sql#L2277) | [collection.js](../../src/collection.js), [engagement.js](../../src/engagement.js), [explore.js](../../src/explore.js), [invariants.js](../../src/invariants.js), [population.js](../../src/population.js), [preflight.js](../../src/preflight.js), [routes/modtools.js](../../src/routes/modtools.js), [rules.tail.js](../../src/rules.tail.js), [secrets.js](../../src/secrets.js), [server.js](../../src/server.js), [social/estate.js](../../src/social/estate.js), [worker.js](../../src/worker.js) |
-| `sell_tax_events` | [L2990](../../schema.sql#L2990) | [router.js](../../src/router.js), [treasury.js](../../src/treasury.js) |
+| `sell_tax_events` | [L3012](../../schema.sql#L3012) | [router.js](../../src/router.js), [treasury.js](../../src/treasury.js) |
 | `shipment_days` | [L2336](../../schema.sql#L2336) | [shipment.js](../../src/shipment.js) |
 | `shipment_takes` | [L2349](../../schema.sql#L2349) | [shipment.js](../../src/shipment.js), [social/estate.js](../../src/social/estate.js) |
 | `social_claims` | [L665](../../schema.sql#L665) | [growth.js](../../src/growth.js) |
@@ -273,19 +273,19 @@
 | `stakes_races` | [L1005](../../schema.sql#L1005) | [events.js](../../src/events.js), [invariants.js](../../src/invariants.js), [stable.js](../../src/stable.js) |
 | `stakes_state` | [L1022](../../schema.sql#L1022) | [stable.js](../../src/stable.js) |
 | `stash` | [L577](../../schema.sql#L577) | [accrual.js](../../src/accrual.js), [game.js](../../src/game.js), [heists.js](../../src/heists.js), [kitchen.js](../../src/kitchen.js), [rules.tail.js](../../src/rules.tail.js), [secrets.js](../../src/secrets.js), [social/combat.js](../../src/social/combat.js), [social/estate.js](../../src/social/estate.js) |
-| `stock_allocations` | [L2455](../../schema.sql#L2455) | [brokers.js](../../src/brokers.js), [stockdeliver.js](../../src/stockdeliver.js), [treasury.js](../../src/treasury.js) |
-| `stock_asset_active_heads_v2` | [L3697](../../schema.sql#L3697) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js), [stockcatalogv2.js](../../src/stockcatalogv2.js) |
-| `stock_asset_versions_v2` | [L3679](../../schema.sql#L3679) | [commission.js](../../src/commission.js), [rwanominations.js](../../src/rwanominations.js), [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js), [stockcatalogv2.js](../../src/stockcatalogv2.js) |
-| `stock_buys` | [L2422](../../schema.sql#L2422) | [brokers.js](../../src/brokers.js), [treasury.js](../../src/treasury.js) |
-| `stock_catalog_evidence_v2` | [L3729](../../schema.sql#L3729) | — |
-| `stock_catalog_getter_checkpoint_v2` | [L3639](../../schema.sql#L3639) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js), [stockcatalogv2.js](../../src/stockcatalogv2.js) |
-| `stock_catalog_getter_inbox_v2` | [L3661](../../schema.sql#L3661) | [stockcatalogv2.js](../../src/stockcatalogv2.js) |
-| `stock_catalog_sync_lock_v2` | [L3608](../../schema.sql#L3608) | [rwahealthclearance.js](../../src/rwahealthclearance.js), [rwahealthread.js](../../src/rwahealthread.js), [rwahealthreview.js](../../src/rwahealthreview.js), [rwahealthsweep.js](../../src/rwahealthsweep.js), [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js), [stockcatalogv2.js](../../src/stockcatalogv2.js) |
-| `stock_catalog_sync_runs_v2` | [L3705](../../schema.sql#L3705) | [stockcatalogv2.js](../../src/stockcatalogv2.js) |
-| `stock_catalog_sync_state_v2` | [L3612](../../schema.sql#L3612) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js), [stockcatalogv2.js](../../src/stockcatalogv2.js) |
-| `stock_deliveries` | [L2490](../../schema.sql#L2490) | [stockdeliver.js](../../src/stockdeliver.js), [treasury.js](../../src/treasury.js) |
-| `stock_token_catalog` | [L3594](../../schema.sql#L3594) | [rwastockkeeper.js](../../src/rwastockkeeper.js), [stockcatalog.js](../../src/stockcatalog.js) |
-| `stock_token_catalog_state` | [L3588](../../schema.sql#L3588) | [stockcatalog.js](../../src/stockcatalog.js) |
+| `stock_allocations` | [L2468](../../schema.sql#L2468) | [brokers.js](../../src/brokers.js), [stockdeliver.js](../../src/stockdeliver.js), [treasury.js](../../src/treasury.js) |
+| `stock_asset_active_heads_v2` | [L3722](../../schema.sql#L3722) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js), [stockcatalogv2.js](../../src/stockcatalogv2.js) |
+| `stock_asset_versions_v2` | [L3704](../../schema.sql#L3704) | [commission.js](../../src/commission.js), [rwanominations.js](../../src/rwanominations.js), [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js), [stockcatalogv2.js](../../src/stockcatalogv2.js) |
+| `stock_buys` | [L2435](../../schema.sql#L2435) | [brokers.js](../../src/brokers.js), [treasury.js](../../src/treasury.js) |
+| `stock_catalog_evidence_v2` | [L3754](../../schema.sql#L3754) | — |
+| `stock_catalog_getter_checkpoint_v2` | [L3664](../../schema.sql#L3664) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js), [stockcatalogv2.js](../../src/stockcatalogv2.js) |
+| `stock_catalog_getter_inbox_v2` | [L3686](../../schema.sql#L3686) | [stockcatalogv2.js](../../src/stockcatalogv2.js) |
+| `stock_catalog_sync_lock_v2` | [L3633](../../schema.sql#L3633) | [rwahealthclearance.js](../../src/rwahealthclearance.js), [rwahealthread.js](../../src/rwahealthread.js), [rwahealthreview.js](../../src/rwahealthreview.js), [rwahealthsweep.js](../../src/rwahealthsweep.js), [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js), [stockcatalogv2.js](../../src/stockcatalogv2.js) |
+| `stock_catalog_sync_runs_v2` | [L3730](../../schema.sql#L3730) | [stockcatalogv2.js](../../src/stockcatalogv2.js) |
+| `stock_catalog_sync_state_v2` | [L3637](../../schema.sql#L3637) | [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js), [stockcatalogv2.js](../../src/stockcatalogv2.js) |
+| `stock_deliveries` | [L2503](../../schema.sql#L2503) | [stockdeliver.js](../../src/stockdeliver.js), [treasury.js](../../src/treasury.js) |
+| `stock_token_catalog` | [L3619](../../schema.sql#L3619) | [rwastockkeeper.js](../../src/rwastockkeeper.js), [stockcatalog.js](../../src/stockcatalog.js) |
+| `stock_token_catalog_state` | [L3613](../../schema.sql#L3613) | [stockcatalog.js](../../src/stockcatalog.js) |
 | `store_cosmetics` | [L788](../../schema.sql#L788) | [rules.tail.js](../../src/rules.tail.js), [speakeasy.js](../../src/speakeasy.js), [store.js](../../src/store.js) |
 | `store_grants` | [L778](../../schema.sql#L778) | [store.js](../../src/store.js) |
 | `store_payments` | [L765](../../schema.sql#L765) | [router.js](../../src/router.js), [store.js](../../src/store.js) |
@@ -294,10 +294,10 @@
 | `street_tax` | [L1861](../../schema.sql#L1861) | [boxing.js](../../src/boxing.js), [business.js](../../src/business.js), [casino.js](../../src/casino.js), [commission.js](../../src/commission.js), [deeds.js](../../src/deeds.js), [duels.js](../../src/duels.js), [economy.js](../../src/economy.js), [exchange.js](../../src/exchange.js), [favors.js](../../src/favors.js), [game.js](../../src/game.js), [growth.js](../../src/growth.js), [invariants.js](../../src/invariants.js), [kitchen.js](../../src/kitchen.js), [law.js](../../src/law.js), [loans.js](../../src/loans.js), [market.js](../../src/market.js), [ops.js](../../src/ops.js), [pen.js](../../src/pen.js), [population.js](../../src/population.js), [races.js](../../src/races.js), [ring.js](../../src/ring.js), [routes/modtools.js](../../src/routes/modtools.js), [rules.tail.js](../../src/rules.tail.js), [secrets.js](../../src/secrets.js), [social/contracts.js](../../src/social/contracts.js), [social/defense.js](../../src/social/defense.js), [social/shared.js](../../src/social/shared.js), [speakeasy.js](../../src/speakeasy.js), [stable.js](../../src/stable.js), [tokenhealth.js](../../src/tokenhealth.js), [worker.js](../../src/worker.js) |
 | `telemetry` | [L678](../../schema.sql#L678) | [dispatch.js](../../src/dispatch.js), [engagement.js](../../src/engagement.js), [explore.js](../../src/explore.js), [game.js](../../src/game.js), [growth.js](../../src/growth.js), [invariants.js](../../src/invariants.js), [law.js](../../src/law.js), [ops.js](../../src/ops.js), [path-funnel.js](../../src/path-funnel.js), [path-pages.js](../../src/path-pages.js), [population.js](../../src/population.js), [preflight.js](../../src/preflight.js), [push.js](../../src/push.js), [routes/modtools.js](../../src/routes/modtools.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [social/estate.js](../../src/social/estate.js), [worker.js](../../src/worker.js) |
 | `territory_rackets` | [L863](../../schema.sql#L863) | [citymap.js](../../src/citymap.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [social/estate.js](../../src/social/estate.js), [social/gangs.js](../../src/social/gangs.js), [territory.js](../../src/territory.js), [wire.js](../../src/wire.js) |
-| `ticker_ballot_candidates_v2` | [L3762](../../schema.sql#L3762) | [commission.js](../../src/commission.js), [db.js](../../src/db.js) |
-| `ticker_ballot_days_v2` | [L3741](../../schema.sql#L3741) | [commission.js](../../src/commission.js), [db.js](../../src/db.js), [social/gangs.js](../../src/social/gangs.js) |
-| `ticker_ballot_results` | [L3569](../../schema.sql#L3569) | [commission.js](../../src/commission.js), [rules.tail.js](../../src/rules.tail.js), [rwastockkeeper.js](../../src/rwastockkeeper.js) |
-| `ticker_ballot_results_v2` | [L3817](../../schema.sql#L3817) | [commission.js](../../src/commission.js), [db.js](../../src/db.js), [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
+| `ticker_ballot_candidates_v2` | [L3787](../../schema.sql#L3787) | [commission.js](../../src/commission.js), [db.js](../../src/db.js) |
+| `ticker_ballot_days_v2` | [L3766](../../schema.sql#L3766) | [commission.js](../../src/commission.js), [db.js](../../src/db.js), [social/gangs.js](../../src/social/gangs.js) |
+| `ticker_ballot_results` | [L3594](../../schema.sql#L3594) | [commission.js](../../src/commission.js), [rules.tail.js](../../src/rules.tail.js), [rwastockkeeper.js](../../src/rwastockkeeper.js) |
+| `ticker_ballot_results_v2` | [L3842](../../schema.sql#L3842) | [commission.js](../../src/commission.js), [db.js](../../src/db.js), [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js) |
 | `track_bets` | [L1090](../../schema.sql#L1090) | [casino.js](../../src/casino.js), [rules.tail.js](../../src/rules.tail.js), [social/estate.js](../../src/social/estate.js) |
 | `track_entries` | [L1104](../../schema.sql#L1104) | [casino.js](../../src/casino.js) |
 | `transactions` | [L2012](../../schema.sql#L2012) | [aggregate.js](../../src/aggregate.js), [bank.js](../../src/bank.js), [bonds.js](../../src/bonds.js), [brokers.js](../../src/brokers.js), [career.js](../../src/career.js), [chain.js](../../src/chain.js), [community.js](../../src/community.js), [contacts.js](../../src/contacts.js), [convoy.js](../../src/convoy.js), [crew.js](../../src/crew.js), [deeds.js](../../src/deeds.js), [desk.js](../../src/desk.js), [dexbot.js](../../src/dexbot.js), [discovery.js](../../src/discovery.js), [dispatch.js](../../src/dispatch.js), [exchange.js](../../src/exchange.js), [favors.js](../../src/favors.js), [fees.js](../../src/fees.js), [game.js](../../src/game.js), [growth.js](../../src/growth.js), [heists.js](../../src/heists.js), [invariants.js](../../src/invariants.js), [mastery.js](../../src/mastery.js), [people.js](../../src/people.js), [population.js](../../src/population.js), [regimen.js](../../src/regimen.js), [router.js](../../src/router.js), [routes/modtools.js](../../src/routes/modtools.js), [rules.tail.js](../../src/rules.tail.js), [rwaregistrylifecycle.js](../../src/rwaregistrylifecycle.js), [stockdeliver.js](../../src/stockdeliver.js), [store.js](../../src/store.js), [tax.js](../../src/tax.js), [tokenhealth.js](../../src/tokenhealth.js), [vig.js](../../src/vig.js), [walletforge.js](../../src/walletforge.js), [worker.js](../../src/worker.js) |
@@ -307,11 +307,11 @@
 | `vig_prize_pool` | [L1735](../../schema.sql#L1735) | [bank.js](../../src/bank.js), [dexbot.js](../../src/dexbot.js), [pass.js](../../src/pass.js), [vig.js](../../src/vig.js) |
 | `vig_revenue` | [L1708](../../schema.sql#L1708) | [bonds.js](../../src/bonds.js), [community.js](../../src/community.js), [desk.js](../../src/desk.js), [dexbot.js](../../src/dexbot.js), [fees.js](../../src/fees.js), [router.js](../../src/router.js), [rules.tail.js](../../src/rules.tail.js), [store.js](../../src/store.js), [vig.js](../../src/vig.js) |
 | `vouchers` | [L715](../../schema.sql#L715) | [chain.js](../../src/chain.js), [engagement.js](../../src/engagement.js), [server.js](../../src/server.js), [vig.js](../../src/vig.js), [vouch.js](../../src/vouch.js), [worker.js](../../src/worker.js) |
-| `vouches` | [L3511](../../schema.sql#L3511) | [discovery.js](../../src/discovery.js), [explore.js](../../src/explore.js), [people.js](../../src/people.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [vouch.js](../../src/vouch.js) |
+| `vouches` | [L3536](../../schema.sql#L3536) | [discovery.js](../../src/discovery.js), [explore.js](../../src/explore.js), [people.js](../../src/people.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [vouch.js](../../src/vouch.js) |
 | `wage_snapshots` | [L2075](../../schema.sql#L2075) | [social/estate.js](../../src/social/estate.js) |
 | `wallet_challenges` | [L739](../../schema.sql#L739) | [chain.js](../../src/chain.js), [drop.js](../../src/drop.js) |
-| `wallet_rolls` | [L4699](../../schema.sql#L4699) | [rules.tail.js](../../src/rules.tail.js), [walletforge.js](../../src/walletforge.js) |
-| `weekly_bulletin` | [L3387](../../schema.sql#L3387) | [bulletin.js](../../src/bulletin.js) |
+| `wallet_rolls` | [L4724](../../schema.sql#L4724) | [rules.tail.js](../../src/rules.tail.js), [walletforge.js](../../src/walletforge.js) |
+| `weekly_bulletin` | [L3412](../../schema.sql#L3412) | [bulletin.js](../../src/bulletin.js) |
 | `wire_informants` | [L505](../../schema.sql#L505) | [social/estate.js](../../src/social/estate.js), [wire.js](../../src/wire.js) |
 | `wire_watches` | [L517](../../schema.sql#L517) | [social/estate.js](../../src/social/estate.js), [wire.js](../../src/wire.js) |
 | `wiretaps` | [L489](../../schema.sql#L489) | [agentgateway.js](../../src/agentgateway.js), [rivals.js](../../src/rivals.js), [rules.tail.js](../../src/rules.tail.js), [server.js](../../src/server.js), [social/estate.js](../../src/social/estate.js), [wire.js](../../src/wire.js), [worker.js](../../src/worker.js) |
@@ -320,4 +320,4 @@
 | `world_raid_members` | [L1357](../../schema.sql#L1357) | [population.js](../../src/population.js), [social/estate.js](../../src/social/estate.js), [world.js](../../src/world.js) |
 | `world_raids` | [L1350](../../schema.sql#L1350) | [population.js](../../src/population.js), [social/estate.js](../../src/social/estate.js), [world.js](../../src/world.js) |
 | `world_uprisings` | [L1339](../../schema.sql#L1339) | [world.js](../../src/world.js) |
-| `x_checks` | [L2940](../../schema.sql#L2940) | [verify.js](../../src/verify.js) |
+| `x_checks` | [L2962](../../schema.sql#L2962) | [verify.js](../../src/verify.js) |

@@ -5808,6 +5808,180 @@ shared tree is dirty), and the SPEC client line count crossed its 2% guard band 
 restated rather than the tolerance widened. Suite green at the final head; the two SQL-touching
 clusters were verified through CI's real-Postgres job per push.
 
+**THE INNERHTML LEDGER — 110 render sites, one probe, and the mutation that survived for the
+right reason (2026-09-05).** RT#8's stored-XSS lens ended with a sentence rather than a guard: *"one
+missed `cleanText` on a new field is stored XSS and nothing would catch it."* The console has no
+escape discipline enforced anywhere — ~110 `innerHTML` sites, an `esc()` helper used where somebody
+remembered, and `art()`/`goodName`/`distName`/`discName`/`styleName` returning RAW catalog names
+straight into markup — so the client's safety rested entirely on WRITE-time sanitisation of every
+player string on every route, forever. **Check L in `tools/mobile.js` turns that into a property of
+the RENDERER**: `page.route` intercepts every `/v1/**` JSON reply and appends a marker probe
+(`"><i data-xss="ZXSSMARK">ZXSSMARK</i>`) to every string under a DISPLAY key (`name`, `title`,
+`bio`, `tag`, `by`, `dynasty`, `desc`, `headline`, …, never a lookup key like `id`/`kind`/`district`),
+walks every group, tab and the cellphone modal in real Chromium, and fails once per distinct site
+where the probe CREATED AN ELEMENT rather than rendering as text — naming the screen and the nearest
+`[id]`. Two anti-vacuity floors, because they fail differently: the interceptor must have poisoned
+≥50 strings (a probe that lands nowhere finds nothing), and the marker must have rendered as literal
+text ≥10 times (the check is only meaningful on screens that actually printed a poisoned string).
+**First run: 64 sites.** A mechanical transform (`esc(` around every display-key interpolation and
+every raw-name helper on HTML lines, skipping the four text-context regions — `describe()`, the cine,
+`bragText`, `feedText` — whose consumers are `textContent`) took it to 4; ~15 hand fixes on the
+conditional shapes the transform cannot see (`x ? '<b>' + esc(g.name) + '</b>' : esc(g.name)`,
+`.map(esc).join(', ')`, `${p ? esc(p.name) : esc(me.path)}`) took it to 0 across 33 screens, 4,600
+poisoned strings, 781 text hits. `art(n, a)` is deliberately NOT changed to escape: describe() feeds it
+to toast's `textContent`, so an escaping `art` would render entities as literal text on every toast
+(the wave-11 `esc()`-corrupting-every-name class) — the innerHTML sites wrap it instead. The tour
+bodies stay unescaped by design (client-authored static HTML, the title escaped).
+**THE MUTATION THAT SURVIVED WAS RIGHT TO, and it corrected my anchor rather than the guard.** M1
+stripped `esc(` from `<b>${esc(me.name)}</b>` — the FIRST of two occurrences — and the run stayed
+green. The first occurrence is the DEATH MODAL (line 5846), which no walk renders; the `#whoami`
+masthead is the second. Re-targeted at the coach card's `${esc(next.name)}` (inside `#tab-start`,
+poisoned on every walk) it fails by name with the created element quoted verbatim. M2 (the poison
+KEYS emptied) trips the first floor — *"poisoned only 0 string(s) across 154 JSON responses"*. Honest
+scope, stated in the check: it proves every DISPLAY-keyed string the walk renders is escaped, not
+that every innerHTML site is (a field under a key not in KEYS, or a screen the walk cannot reach, is
+outside it); write-time `cleanText` stays the first wall and this is the second. Zero §10.4 (render
+markup moves no value), no SQL moved (verified on the STAGED diff — the unstaged one is empty after a
+savepoint, which reads exactly like a clean sweep).
+
+**THE MIRROR LEARNS TWO-HOP READS — the guard's own stated blind spot, closed, and the drift it found
+(2026-09-05).** `test/client.js` check 4 has said in its own words since it shipped that it covers
+top-level fields, one alias hop and list elements, and that deeper chains are out of scope — and a
+measurement two sessions earlier put the number on it: **814 distinct two-hop reads in the client
+(`b.grandPrix.pool`, `me.gang.treasury`), checked by nothing.** The report-only probe that produced
+that number ended with one drift and a decision to leave it, since the client branched on the
+parent's `open` flag; this drop makes the check permanent and, having done so, fixes the drift at
+the SOURCE rather than waiving it. **The design decision is the ABSENT-PARENT rule.** A parent that
+is missing or null on the fixture's board is the benign empty-state case — no war, no spouse, no
+champion, no decree — and a guard that reports it would be mostly waivers, which is the
+mostly-wrong advisory this file keeps naming as worse than none. So an absent parent is COUNTED
+(and printed — *"32 parent absent/null (empty-state, not a finding)"*), never reported, while a
+parent that IS an object is held to its key set. The nested map rides the same bindings check 4
+already scopes (GETBIND/RAWBIND/THENBIND — the blind-spot family the mirror has closed four times),
+so a board the first level cannot see, the second cannot either; a chain through a BUILTIN
+(`.length`, `.map`) is skipped. **Two anti-vacuity floors, because they fail differently**: >300
+chains collected (an extractor that stopped reading the client) and >100 checked (a fixture whose
+every parent went absent). Measured on the green run: **346 chains, 251 checked, 32 absent.**
+**The one drift is the `dormantView` class, one system over.** `/v1/races`' `grandPrix` carried
+`{open, buyin, minLevel, minEntrants}` when no race was open and
+`{…, id, pool, entrants, entered, closesSeconds}` when one was — and `renderRaces` reads the four
+live-only keys off it. Today the client branches on `open` first, so nothing renders `undefined`;
+it is exactly the shape `bankPosition` was fixed for (a dormant object carrying fewer keys than the
+live one leaves a client unable to tell "no race" from "no such field"), and the closed shape now
+carries the same key set at its natural zeros. Four mutations, each caught at its own named
+assertion (a bogus nested read → *"reads grandPrix.zzbogus off /v1/races|"*; the extractor blinded
+→ *"only 0 two-hop read chain(s) collected"*; the server's closed shape restored → the drift named
+by field; a bogus read under an ABSENT parent → the nested check stays silent by design, and the
+run fails at the pre-existing FIRST-LEVEL check instead, which is the correct behaviour rather than
+a hole). **And the recorded trap was hit again, by me**: `git checkout -- src/races.js` to undo the
+third mutation wiped the uncommitted races.js fix — ground rule #9's own scenario, three days after
+its last occurrence. Re-applied from context; mutations are restored only by `cp` from scratchpad
+copies. No SQL moved (`src/races.js` changed one object literal — verified on the STAGED diff).
+
+**THE PERSIST IS NAMED, NOT COUNTED — the 67-parameter positional UPDATE and its two hand-rolled
+twins (2026-09-05).** `persistCharacter` was one hand-written `UPDATE characters SET respect=$2, … $67`
+and `persistAccount` its 19-parameter sibling — the two statements EVERY authed request ends on — and
+the record shows what that shape costs: every column added to the row since M1 has had to be threaded
+by hand into a list where the ONLY thing binding a value to its column is the position it happens to
+sit at, and a slip is a silent swap between two same-typed columns that no suite sees (this log's own
+entries cite `$59`, `$62/$63`, `$64/$65`, `$67` as landmarks, which is how load-bearing the count had
+become). Worse, the estate had TWO HEADLESS COPIES of the account write — the mod-kill in
+`routes/modtools.js` and the NPC-hunter kill in `combat.js` each carried their own
+`UPDATE account_persistent SET prestige=$2, deaths=$3, omr=$4, unbonding=$5` — and the death-duty and
+unbonding drops both had to touch all three sites, which the log records as the reason those two
+fixes were found by a §10.4 drift rather than by design. **Both statements are now GENERATED from two
+exported column lists** (`CHARACTER_PERSIST_COLUMNS` 66, `ACCOUNT_PERSIST_COLUMNS` 18 — each entry a
+column name plus an optional default, so a two-element entry still applies its `0`/`false`/`null` and a
+one-element entry binds the raw value exactly as the positional list did), the SET clause is built once
+at module load, and the two headless persists collapse onto ONE `persistAccountFields(client, id, acct,
+ESTATE_ACCOUNT_FIELDS)` — a field list that is VALIDATED against the column list (an unknown field
+throws) so a copied UPDATE can never drift from the persist again. Byte-identical behaviour: the
+generated SQL was diffed against the hand-written one before the old text was deleted.
+**`test/persist.js` (the 154th suite) turns the shape into properties**, and the useful one is the
+SCHEMA check: every listed column is `SELECT`ed against the live table, so a persist column the schema
+does not carry fails BY NAME before any request runs — where a positional UPDATE would have shipped it
+as a runtime 500 on every authed request (the 2026-08-06 boot-crash class, one layer down). Its first
+cut killed the typo mutation only as a raw pg-mem `ColumnNotFound` throw — the *failure that teaches
+nothing* shape — so the SELECT is wrapped and names the column and the consequence. The estate half is
+a SOURCE scan of `runEstate`: every `acct.<field>` it assigns must be in `ESTATE_ACCOUNT_FIELDS`, or
+the next unbonding-class column is silently un-persisted on the headless paths again; **its first run
+found ZERO assignments**, because the first `{` after the function name is the `opts = {}` DEFAULT
+PARAMETER, not the body — the same trap THE GATE MATRIX hit on `npcHit` — so the parameter list is
+paren-matched before the body is brace-matched, with an anti-vacuity floor. Four mutations, four named
+kills (`unbonding` dropped from the field list; a column misspelled; the hand-rolled UPDATE restored in
+combat.js; defaults ignored — killed as a NOT NULL violation on the real write). `pgquery`'s
+interpolated ceiling rose 162 → 165 with the reason recorded at the site (the SET clauses are generated
+from the exported lists and every value is bound; the suite SELECTs every column), and the
+interpolation ledger declares the one new `${set}`. **Process note:** four mutations were run against
+`src/` while a background full-suite run was in flight — that run's green was worthless and was
+re-run; a suite reading a file another process is rewriting reports nothing about either tree.
+
+**THE ACCOUNT-ID UNIFICATION — twelve UUID columns become TEXT, the bridging casts go, and
+pgcheck boots on a database that still says UUID (2026-09-05).** The 2026-07-30 outage was a
+`uuid = text` comparison that made `loadOwned` fail to PARSE — every authed request 500'd for hours
+— and its fix was a BRIDGE (`$2` stayed text, a separate `$3` inferred uuid), with the cause left
+standing and documented at the site: `account_persistent.id` and `characters.account_id` are TEXT,
+and **12 columns across 8 tables** (eth_vault, dm_messages, dm_blocks, megaproject_contributions,
+duels, commission_proposals, career_claims, rival_events) held the SAME identifier as UUID. Every
+one of those was a place the outage class was still live, and three more bridges had grown since
+(`rivals.js` `::text`, `people.js` `$1::uuid`, `commission.js` `::text`) — a cast per site is how
+sixty-nine private copies of a gate came to exist. **The canonical type is TEXT** (the 28-column
+majority; `rival_events.id` stays UUID because it is a ROW id, not an account). The mechanism is
+**14 bare `ALTER TABLE … ALTER COLUMN … TYPE TEXT` lines in `schema.sql`** rather than a
+real-Postgres-only pass: pg-mem cannot parse the `USING` form but parses the bare one, real
+Postgres converts uuid→text without `USING` and REBUILDS the primary keys over the converted
+columns, a repeat is a no-op, and it moves neither the table nor its indexes (relfilenodes
+measured unchanged). So the suites boot through the same statement production runs, which is the
+whole point of putting it in the file the deploy applies. The four bridges are then DELETED —
+`loadOwned` is back to two params plus `$3` = today, `rivals.js` is a plain join — because a
+bridge left in place is a cast that stops being needed and starts being a lie about the type.
+**THE GUARD IS THE HALF THAT MATTERS, because a fresh database cannot see this class at all.**
+Every suite starts EMPTY, so the inline `TEXT` declarations make every test green whether or not
+the ALTERs exist — and production is the database that is never fresh (the 2026-08-06 boot-crash
+lesson). `tools/pgcheck.js` §7b now compares `data_type` beside column NAMES (an upgraded column
+surviving with the wrong type reads exactly like a present one), and **§7c** finds the newest
+`schema.sql` in git history that still DECLARES these columns UUID (an anti-vacuity throw if none
+does — the day that history is gone, the check must be rewritten rather than pass over nothing),
+applies it raw, SEEDS a row per table with real uuid literals, boots the CURRENT build on top, and
+asserts four things: every account column is TEXT (naming survivors), the seeded values came
+through intact, a cast-free `$1` TEXT parameter compares against all nine tables — the exact
+outage statement shape — and the primary keys were rebuilt rather than dropped. Today §7c resolves
+to HEAD itself, since the inline declarations still say UUID for pg-mem's sake. Mutation: delete
+one ALTER line → *"survived as uuid: rival_events.aggressor_account"*, by name. §10.4 untouched
+(a column type moves no value). pgquery 3411 statements + pgcheck 87/87 on FRESH real Postgres. **And the drop broke a guard the right way**: `test/migrate.js`'s static idempotency check — every statement in schema.sql must be safe to run a second time, since the whole file is applied at every boot — did not know an `ALTER COLUMN … TYPE TEXT` and listed all thirteen as crash loops. They are not: a widening to TEXT is a no-op the second time by the type's own definition, and pgcheck §7/§7c PROVE the re-apply on real Postgres rather than reasoning about it. So the classifier learned exactly the bare `TYPE TEXT` form and nothing wider — a conversion to a NARROWER type can fail on the second run's data and a `USING` clause can be anything, so neither classifies (self-tests pin both, and a duels column mutated to `TYPE INT` is flagged by name).
+
+**THE TWO-PHASE COMMIT — accrual settles ahead of the action, and the read path stops rolling
+the raid (#29, 2026-09-05).** The lock-free `withCharacterRead` was built once and REVERTED (the
+2026-07-25 POSTGRES SAFETY VALVES entry) on one fatal finding: with reads no longer persisting, the
+§7.1 Bureau raid could only ever fire during an ACTION — the raid sets `jail_until`, the action's
+own jail gate then threw, and the ROLLBACK undid the raid that had just rolled, so the Bureau was
+unreachable. The old design worked only because reads (whose `fn` never throws) were the ones
+committing accrual. The fix that entry prescribed is now built: `withCharacter` runs
+**`settleIfDue(pool, accountId)` FIRST** — a row-only due probe (`last_accrued_at` ≥ 1s, an
+in-transit deposit past its clear, an unbond past its window) and, only when due, its OWN
+transaction (char `FOR UPDATE` twice — the §9b death-race twin — then account, `loadOwned`,
+`accrueAndLedger`, persist, COMMIT) before the action opens its own. What the clock did commits
+whether or not the action does; `withTwoCharacters` settles both parties. On the read side
+`accrueInMemory` takes `{ preview: true }` and `accrue()` gates the raid roll on `!ctx.preview`, so
+a read can show accrued income truthfully and never PICK the outcome of a roll it cannot persist.
+**Two REAL transactions, not a savepoint — and that is what decides where it is provable.** pg-mem
+has no SAVEPOINT and its ROLLBACK is a no-op, so "a refused action still commits accrual" cannot be
+demonstrated on the suite engine at all; `tools/pgcheck.js` §5 was REWRITTEN from "a refused action
+leaves no trace" (the pre-#29 contract, now false) to "A REFUSED ACTION COMMITS THE CLOCK AND
+NOTHING ELSE" — a laundro racket, a jailed street, a 6h-old clock, a refused crime, then the
+`racket:income` row landed, the clock fresh, cash up by exactly the ledgered accrual and not one
+non-accrual row (an exact before/after count, not a loose bound). 88/88 on a fresh real Postgres.
+pg-mem covers what it can: `test/growth.js` runs 300 preview `accrue()` passes on a heat-100 chef
+with stash and asserts the raid never rolls, with a NON-preview control loop that does (a preview
+assertion with no control is vacuous), plus two source tripwires — the read path passes
+`preview: true`, and `settleIfDue` sits ahead of `pool.connect()` in `withCharacter`.
+**The consequence every fixture inherits: a REFUSED action now commits accrual.** The kitchen CUT
+block probed a refused `cut` on a stale clock and its `+~40% units` assertion read +39 — phase one
+had committed the crew's one-unit offline sale before the refusal. The fix shape is the recorded
+one: GUARANTEE the precondition (future-date the clock before the refused probe), never loosen the
+number. §10.4 untouched by construction — the same accrual rows land, one transaction earlier.
+SPEC.md D1 is ADDRESSED; the mutations are recorded in the commit.
+
 ## Sensitive design notes
 *These are standing PRODUCT rules. They bind whatever else is true, and several of them exist
 because breaking one is very hard to walk back.*

@@ -8,7 +8,7 @@
 // the per-character cash check reconciles them automatically. Laundering rides the existing
 // `swap:buy` ledger (no new reason). Step-two scrutiny/raid/extortion risk is deferred by design.
 import crypto from 'node:crypto';
-import { GameError, bus, skillMult, trunkCap, bumpMastery, masteryFx } from './game.js';
+import { GameError, assertStreetActor, bus, skillMult, trunkCap, bumpMastery, masteryFx } from './game.js';
 import { CONSTANTS, M3, CASINO, BUSINESSES, SKILLS, BUSINESS_EMPIRE, RIVALS, POPULATION, businessOf, businessTierOf, businessMaxTier, businessAssessedValue, launderRankOf, levelOf, effStat, pathFx, isMade, jailed, hospitalized, safeHoused, usd, art , coolLeft, coolWait } from './rules.js';
 import { recordRival, revengeOwed } from './rivals.js';
 import { bumpHonor } from './honor.js';
@@ -404,9 +404,9 @@ async function extortFront(ch, victim, businessId, client, h, verb) {
   const energy = rob ? RIVALS.ROB_ENERGY : CONSTANTS.SHAKEDOWN_ENERGY;
   const heat = rob ? RIVALS.ROB_HEAT : CONSTANTS.SHAKEDOWN_HEAT;
   const rate = rob ? RIVALS.ROB_RATE_BPS / 10000 : CONSTANTS.SHAKEDOWN_RATE;
-  if (jailed(ch)) throw new GameError('jailed', 'No street work from lockup.');
-  if (safeHoused(ch)) throw new GameError('safe', "Can't run extortion while you're to ground — a safehouse is a shield, not a bunker.");
-  if (hospitalized(ch)) throw new GameError('hosp_self', 'No leaning on anyone from a hospital bed.');
+  assertStreetActor(ch, { witpro: false, msgs: {
+    safe: "Can't run extortion while you're to ground — a safehouse is a shield, not a bunker.",
+    hosp: 'No leaning on anyone from a hospital bed.' } });
   if (Number(ch.health) < M3.JUMP_MIN_HEALTH) throw new GameError('health', "You're in no shape to lean on anyone.");
   if (Number(ch.energy) < energy) throw new GameError('energy', `Need ${energy} energy for that.`);
   if (hospitalized(victim)) throw new GameError('hosp', "They're under the Doc's care. Even we have rules.");
@@ -548,9 +548,10 @@ async function resetFrontToNewOwner(client, businessId, newOwnerId) {
 // taxed — the `business:buyout` transfer, identical to the club buyout), the front handed over reset. Runs
 // under withTwoCharacters(raider, owner). BUSINESS_TAKEOVER_P pins the roll for tests (the standover precedent). ──
 export async function takeoverBusiness(ch, owner, businessId, client, h) {
-  if (jailed(ch)) throw new GameError('jailed', 'No moves from lockup.');
-  if (safeHoused(ch)) throw new GameError('safe', "Can't run a takeover from a safehouse — a shield, not a bunker.");
-  if (hospitalized(ch)) throw new GameError('hosp_self', 'No muscle from a hospital bed.');
+  assertStreetActor(ch, { witpro: false, msgs: {
+    jailed: 'No moves from lockup.',
+    safe: "Can't run a takeover from a safehouse — a shield, not a bunker.",
+    hosp: 'No muscle from a hospital bed.' } });
   if (levelOf(ch.respect) < BUSINESS_EMPIRE.TAKEOVER.MIN_LEVEL) throw new GameError('level', `Takeovers open at level ${BUSINESS_EMPIRE.TAKEOVER.MIN_LEVEL}.`);
   if (h.owned.gangId && h.victimOwned.gangId === h.owned.gangId) throw new GameError('family', "They're family. Omertà.");
   const r = (await client.query('SELECT * FROM businesses WHERE id=$1 FOR UPDATE', [businessId])).rows[0];

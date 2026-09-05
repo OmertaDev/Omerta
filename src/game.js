@@ -15,7 +15,7 @@ import { CRIMES, DISTRICTS, DRUGS, RECRUIT_MILESTONES, CONSTANTS, RANKS,
          REGIMEN, disciplineLvlOf, energyCapOf, nerveCapOf, BUSINESSES, WIRE, RIVALS, CORNER, cornerTasksOf,
          KITCHENS, labModuleCost, recyclesToDesk, DESK_RECYCLE_REASON, isMade, madeSeconds,
          MADE_LADDER, madeRungIdx, madeRungOf, ladderFx, STAKE_LOCKS, stakeLockActive, effectiveStake,
-         ASSETS, OPERATIONS, opSlotsOf, nextOpSlotLevel, MISSIONS, dailyGuidanceFor, dailyLiveFor, jailed, safeHoused,
+         ASSETS, OPERATIONS, opSlotsOf, nextOpSlotLevel, MISSIONS, dailyGuidanceFor, dailyLiveFor, jailed, safeHoused, hospitalized,
          STABLE, SPEAKEASY, ESTATE, MADE, CREW, crewObjectiveOf, DEEDS, deedController , runOf, npcOf, usd, WALLET_FORGE, bustAttemptsLeft, bustRefillSeconds, safehouseLeftMs , coolLeft, coolWait } from './rules.js';
 import { dbCaps } from './db.js';
 import { accrue } from './accrual.js';
@@ -35,6 +35,31 @@ import { startFirstBlood } from './firstblood.js';   // THE AHA MOMENT — assig
 // sites, rather than each having to remember to wire its own.
 export class GameError extends Error {
   constructor(code, msg, data) { super(msg); this.code = code; if (data) this.data = data; }
+}
+
+// ── THE STREET ACTOR GATE — one helper for the four actor states every offensive verb refuses on ───
+// jailed / safehoused (P1.3 "a shield, not a bunker") / witness protection / hospitalized (R40), plus
+// the verb's energy cost. Fourteen street crimes enforce these, and until 2026-09-05 eleven of them
+// carried a private copy of the block — the forgotten-sibling class this project keeps paying for
+// (jump vs fire, collectFrontier vs collectTerritory, npcHit blind to the Pen shields), since a gate
+// added here reaches every caller and a gate added inline reaches one. test/gates.js's completeness
+// check keys on this helper (and assertStreetCrime, which calls it), so a fifteenth verb routed
+// through it is in the matrix by construction.
+//   opts.energy      — the verb's energy cost (null: the caller gates energy itself, e.g. `fire`,
+//                      whose cost sits behind its gun/trigger checks and must stay there)
+//   opts.witpro      — false for the three verbs that never gated it (extortFront/takeover/standover/
+//                      raid/ambush/intercept) — adding it is a real gate change, a founder call
+//   opts.hospCode    — 'hosp_self' canonically; raidRivalRacket ships 'hospitalized', ambush/intercept
+//                      'hosp' — codes are the client/agent contract, so each verb keeps its own
+//   opts.jailWaived  — npcHit's burner-phone path (pen.js consumes the burner first)
+//   opts.msgs        — per-verb wording; codes never vary, prose may
+export function assertStreetActor(ch, opts = {}) {
+  const m = opts.msgs || {};
+  if (!opts.jailWaived && jailed(ch)) throw new GameError('jailed', m.jailed || 'No street work from lockup.');
+  if (safeHoused(ch)) throw new GameError('safe', m.safe || "Can't work the streets while you're to ground — a safehouse is a shield, not a bunker.");
+  if (opts.witpro !== false && witproActive(ch)) throw new GameError('witpro', m.witpro || "You're in protective custody — keep your head down.");
+  if (hospitalized(ch)) throw new GameError(opts.hospCode || 'hosp_self', m.hosp || "You're laid up under the Doc's care.");
+  if (opts.energy != null && Number(ch.energy) < opts.energy) throw new GameError('energy', m.energy || `That takes ${opts.energy} energy.`);
 }
 
 // (red-team R6 — stored-XSS fix) Player-controlled display strings (character/gang names, custom
@@ -186,7 +211,7 @@ const itemMap = (rows) => Object.fromEntries(rows.map((r) => [r.item_id, Number(
 
 // Everything a character owns or belongs to, loaded inside the caller's txn.
 export async function loadOwned(client, ch) {
-  const today = dayOf();   // bound as $4 below AND read by the work board's claimability rules
+  const today = dayOf();   // bound as $3 below AND read by the work board's claimability rules
   // ONE ROUND TRIP FOR FOURTEEN LOOKUPS. This runs on EVERY authed request in the game, read or
   // write, so its round-trip count is the single largest lever on total database traffic — and
   // `tools/loadtest.js` measured the cost: `/v1/me` was ~3× a board read (15ms vs 5ms uncontended),
@@ -222,19 +247,16 @@ export async function loadOwned(client, ch) {
   // the point where an untyped NULL follows a typed value. Casting everywhere removes the dependence on
   // either engine's inference rules, which is the only version that is safe to rely on.
   //
-  // AND THE SAME LESSON A SECOND TIME, THE HARD WAY — `$3` IS `$2` AGAIN, DELIBERATELY.
-  // Postgres resolves a PARAMETER's type once for the whole statement, from how it is used. `$2` is
-  // first compared to `account_gear.account_id`, which this schema declares TEXT — so `$2` is text
-  // everywhere, and `rival_events.victim_account = $2` is `uuid = text`, for which no operator exists.
-  // The statement does not degrade: it fails to PARSE, so every branch of the union dies with it, and
-  // since loadOwned runs on every authed request that is the entire game returning 500. pg-mem compares
-  // uuid to text happily, so all 61 suites passed over a total production outage.
-  //   The schema's account ids are genuinely mixed (28 text columns, 12 uuid), which is the underlying
-  // defect; changing a live column's type is not an outage fix. So the uuid-typed branch gets its OWN
-  // parameter carrying the SAME value: `$3` is inferred uuid from its only use, `$2` stays text, and
-  // `ix_rival_events_victim` is still usable — casting the COLUMN instead (`victim_account::text=$2`)
-  // would also parse but would throw the index away. Any future branch joining on a uuid-typed account
-  // column must bind $3, not $2. `tools/pgquery.js` fails the build if this regresses.
+  // AND THE SAME LESSON A SECOND TIME — the branches below join rival_events on `$2`, and that
+  // is only legal because THE ACCOUNT-ID UNIFICATION (2026-09-05, schema.sql) made every account
+  // column in this schema TEXT. Before it, `rival_events.victim_account` was UUID: Postgres resolves
+  // a PARAMETER's type once for the whole statement from how it is used, `$2` was inferred text from
+  // `account_gear.account_id`, and `uuid = text` has no operator — the statement failed to PARSE, so
+  // every branch of the union died with it, and since loadOwned runs on every authed request that
+  // was the entire game returning 500 (2026-07-30). pg-mem compares uuid to text happily, so all 61
+  // suites passed over a total production outage; the bridge was a second parameter `$3` carrying
+  // the same value, inferred uuid from its only use. The bridge is gone with the column type, and
+  // `tools/pgcheck.js` §7c fails by name if any account column ever comes back as uuid.
   const bulk = await client.query(`
     SELECT 'rk' AS src, racket_id AS k, NULL::text AS k2, level::numeric AS n, NULL::numeric AS n2, NULL::timestamptz AS ts
       FROM character_rackets WHERE character_id=$1
@@ -269,7 +291,7 @@ export async function loadOwned(client, ch) {
     -- keeps the row (and the way out) even if the mark somehow went missing.
     UNION ALL SELECT 'hunt', s.target, c.name, NULL::numeric, NULL::numeric, s.started_at
       FROM searches s LEFT JOIN characters c ON c.id = s.target WHERE s.hunter=$1
-    UNION ALL SELECT 'rival', aggressor_account::text, NULL::text, NULL::numeric, NULL::numeric, at FROM rival_events WHERE victim_account=$3 AND at > now() - interval '48 hours'
+    UNION ALL SELECT 'rival', aggressor_account, NULL::text, NULL::numeric, NULL::numeric, at FROM rival_events WHERE victim_account=$2 AND at > now() - interval '48 hours'
     -- ...and MY OWN strikes in the same window, so the coach can tell "somebody moved on you" from
     -- "somebody moved on you AND YOU HAVE NOT ANSWERED". The rung's own hint promises that settling
     -- your scores is the move; without this branch it counted only incoming, so hitting back did not
@@ -277,7 +299,7 @@ export async function loadOwned(client, ch) {
     -- Deliberately the SAME 48h window on both sides, which is NOT revengeOwed's semantics (that
     -- one judges honor over the full retention window): fresh malice answered a month ago is still
     -- fresh malice, and a score settled last week does not pay for a jumping this morning.
-    UNION ALL SELECT 'rvback', victim_account::text, NULL::text, NULL::numeric, NULL::numeric, at FROM rival_events WHERE aggressor_account=$3 AND at > now() - interval '48 hours'
+    UNION ALL SELECT 'rvback', victim_account, NULL::text, NULL::numeric, NULL::numeric, at FROM rival_events WHERE aggressor_account=$2 AND at > now() - interval '48 hours'
     -- THE CREW BONUS (M4.REF_XP): the CURRENT respect of every qualified recruit this account brought
     -- in. Read live rather than banked, so the bonus tracks how far the crew has actually got — a
     -- recruit who dies drops to their heir's level and the bonus falls with them. Agents and NPC
@@ -294,18 +316,18 @@ export async function loadOwned(client, ch) {
     -- currently invisible unless you go looking: today's daily contracts, tonight's hustle, the
     -- corner's envelopes, the trainers' drills, a clue in your pocket. Reading them here rather
     -- than in a second query keeps the one-round-trip property this function exists for.
-    -- $4 is TODAY (int) — bound separately so its type is inferred from the day columns alone.
+    -- $3 is TODAY (int) — bound separately so its type is inferred from the day columns alone.
     -- (No backticks in here: this whole query is a JS template literal, and one would end it.)
-    UNION ALL SELECT 'daily', counters, claimed, NULL::numeric, NULL::numeric, NULL::timestamptz FROM daily_progress WHERE character_id=$1 AND day=$4
-    UNION ALL SELECT 'hustle', NULL::text, NULL::text, step::numeric, NULL::numeric, NULL::timestamptz FROM hustles WHERE character_id=$1 AND day=$4
-    UNION ALL SELECT 'corner', district, NULL::text, slot::numeric, CASE WHEN claimed THEN 1 ELSE 0 END::numeric, NULL::timestamptz FROM corner_jobs WHERE character_id=$1 AND day=$4
-    UNION ALL SELECT 'drill', npc, NULL::text, NULL::numeric, NULL::numeric, NULL::timestamptz FROM npc_drills WHERE character_id=$1 AND day=$4
+    UNION ALL SELECT 'daily', counters, claimed, NULL::numeric, NULL::numeric, NULL::timestamptz FROM daily_progress WHERE character_id=$1 AND day=$3
+    UNION ALL SELECT 'hustle', NULL::text, NULL::text, step::numeric, NULL::numeric, NULL::timestamptz FROM hustles WHERE character_id=$1 AND day=$3
+    UNION ALL SELECT 'corner', district, NULL::text, slot::numeric, CASE WHEN claimed THEN 1 ELSE 0 END::numeric, NULL::timestamptz FROM corner_jobs WHERE character_id=$1 AND day=$3
+    UNION ALL SELECT 'drill', npc, NULL::text, NULL::numeric, NULL::numeric, NULL::timestamptz FROM npc_drills WHERE character_id=$1 AND day=$3
     -- THE CREW id, folded in here rather than its own round trip. account_id is TEXT (→ $2, like gear/
     -- est), so this branch is type-safe (the uuid=text outage class). Its only consumers are the crew
     -- non-aggression gate + the board, both reading h.owned.crewId; a scalar, so it fits the shape.
     UNION ALL SELECT 'crew', crew_id, NULL::text, NULL::numeric, NULL::numeric, NULL::timestamptz FROM crew_members WHERE account_id=$2
     UNION ALL SELECT 'clue', NULL::text, NULL::text, step::numeric, steps::numeric, NULL::timestamptz FROM clue_scrolls WHERE character_id=$1`,
-  [ch.id, ch.account_id, ch.account_id, today]);
+  [ch.id, ch.account_id, today]);
   // demultiplex — one entry per original query, in its original column names/types. Kept as
   // `{ rows: [...] }` so every reference below (`rk.rows`, `st.rows`, …) reads exactly as it did.
   const grp = new Map();
@@ -871,8 +893,8 @@ export const trunkCap = (h) => cargoCapacity(h.owned.assets)
 // only mutates the loaded rows and leaves markers (_accruedIncome, _raid, …) for the caller to write.
 // Splitting the two halves is what lets a pure read accrue without a transaction and decide, from the
 // result, whether it has anything worth persisting at all.
-export function accrueInMemory(ch, acct, owned) {
-  accrue(ch, acct, { rackets: owned.rackets, assets: owned.assets, held: owned.held, stash: owned.stash,
+export function accrueInMemory(ch, acct, owned, { preview = false } = {}) {
+  accrue(ch, acct, { preview, rackets: owned.rackets, assets: owned.assets, held: owned.held, stash: owned.stash,
     deedHeld: owned.deedPerk, // STREET DEEDS 2C — controlled corners count at accrual's two perk reads (cathedral nerve, neon income)
     racketLevels: owned.racketLevels, // Tier-4 — per-racket upgrade levels multiply the drip
     disciplines: owned.disciplines, // THE REGIMEN — stamina/composure raise the regen CAPS (pool, not rate)
@@ -1017,7 +1039,65 @@ export function gainRespect(h, ch, rep) {
   return gained;
 }
 
+// THE TWO-PHASE COMMIT (D1, the second half). §7.1 accrual has SIDE-EFFECTS — racket income,
+// bank interest, crew sales, the Bureau raid, the RICO indictment — and every one of them used to
+// ride the ACTION's transaction: a refused action rolled its own accrual back, so the Bureau could
+// fire only while an action succeeded, and the raid that set `jail_until` then made the action's
+// own jail gate throw, which rolled the raid back too. That is the trap that killed the first
+// lock-free read path (SPEC.md D1): reads stopped persisting, so a raid could only ever land during
+// an action, and the action it landed during was exactly the one it made fail.
+//
+// The settle is its own transaction, run BEFORE the action's. What the clock produced commits
+// whether or not the action goes through — which is the honest reading anyway: the interest was
+// earned and the raid happened while the player was away; the click that surfaced them cannot
+// un-happen them. It is deliberately TWO REAL TRANSACTIONS and not a SAVEPOINT (pg-mem cannot parse
+// one, and its ROLLBACK is a no-op, so a savepoint scheme reads green in the suite and drifts on
+// real Postgres — measured at ~$23/refused action by an earlier attempt).
+//
+// THE FAST PATH IS ROW-ONLY. accrue() sets `last_accrued_at = now` whenever a second has passed,
+// and the only things that move UNDER a second are the two Make-Risk-Pay releases — so "is a settle
+// due" is decidable from the character and account rows alone (the same three quantities
+// accrualMark fingerprints), one unlocked read, no loadOwned. In the common case (a client acting
+// again inside a second) this costs a SELECT and nothing else; the action's own transaction then
+// re-accrues a `dtMs < 1000` no-op exactly as before. In the rare lock-wait window between the
+// settle and the action a refused action rolls back at most that sliver — the pre-existing
+// behaviour, and no §10.4 drift, since a rolled-back accrual writes neither its balance nor its row.
+async function settleIfDue(pool, accountId) {
+  const probe = await pool.query(
+    `SELECT c.last_accrued_at, c.bank_intransit, c.bank_intransit_at, a.unbonding, a.unbond_at
+       FROM characters c LEFT JOIN account_persistent a ON a.account_id = c.account_id
+      WHERE c.account_id = $1 AND c.alive`, [accountId]);
+  if (!probe.rows.length) return false; // no street — the action's own no_character refusal speaks
+  const p = probe.rows[0], now = Date.now();
+  const due = (now - +new Date(p.last_accrued_at)) >= 1000
+    || (Number(p.bank_intransit) > 0 && p.bank_intransit_at && now - +new Date(p.bank_intransit_at) >= CONSTANTS.BANK_CLEAR_MS)
+    || (Number(p.unbonding) > 0 && p.unbond_at && now >= +new Date(p.unbond_at));
+  if (!due) return false;
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    // the same lock sequence as the action (the death-race twin: a blocked FOR UPDATE re-evaluates
+    // its WHERE against the killer's commit and drops the corpse; the second look finds the heir)
+    let r = await client.query('SELECT * FROM characters WHERE account_id = $1 AND alive FOR UPDATE', [accountId]);
+    if (!r.rows.length) r = await client.query('SELECT * FROM characters WHERE account_id = $1 AND alive FOR UPDATE', [accountId]);
+    if (!r.rows.length) { await client.query('ROLLBACK'); return false; }
+    const ch = r.rows[0];
+    const acct = (await client.query('SELECT * FROM account_persistent WHERE account_id = $1 FOR UPDATE', [accountId])).rows[0];
+    const owned = await loadOwned(client, ch);
+    await accrueAndLedger(client, ch, acct, owned); // the real roll — this is the one place a read never reaches
+    if (ch.alive !== false) await persistCharacter(client, ch);
+    await persistKitchen(client, ch, owned);
+    await persistAccount(client, accountId, acct);
+    await client.query('COMMIT');
+    return true;
+  } catch (e) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw deadlockToRetry(e);
+  } finally { client.release(); }
+}
+
 export async function withCharacter(pool, accountId, fn) {
+  await settleIfDue(pool, accountId); // phase one: what the clock did commits whether or not the action does
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -1139,7 +1219,7 @@ export async function withCharacterRead(pool, accountId, fn) {
     const owned = await loadOwned(client, ch);
 
     const before = accrualMark(ch, acct);
-    accrueInMemory(ch, acct, owned);
+    accrueInMemory(ch, acct, owned, { preview: true }); // never rolls the Bureau raid — a read rolls nothing
     if (accrualMark(ch, acct) !== before) return null; // caller re-runs under the lock (see below)
 
     // Nothing accrued, so nothing to write. The handler gets a client that REFUSES to write: these
@@ -1189,16 +1269,79 @@ export async function readCharacter(pool, accountId, fn) {
   return fast !== null ? fast : withCharacter(pool, accountId, fn);
 }
 
+// ═══ THE PERSIST COLUMN LISTS — named columns, never positions ═══════════════════════════════════
+// Both writers below used to be ONE positional UPDATE each (67 and 19 `$n` parameters), which had
+// two costs. Adding a column meant editing the SET text and the value array in lockstep, and a slip
+// — a value in position 41 that belongs to the column in position 42 — writes silently wrong data
+// with every check green (both sides are the same statement, so nothing can disagree). And the two
+// hand-rolled headless persists (mod-kill in routes/modtools.js, huntWanted in social/combat.js)
+// restated a SUBSET of the account columns by hand, each commented "must carry every field runEstate
+// mutates" — a rule kept by memory, in two places, that the L2a death duty had already caught once.
+// Now the column list is the single source: the SET clause is GENERATED from it, a subset persist
+// reads from the same list, and test/persist.js proves every column exists and that the headless
+// subset covers every account field runEstate assigns.
+//
+// Each entry is [column, default]. A two-element entry binds `row[column] ?? default` (the old
+// `?? 0` / `?? false` / `?? null` coercions, kept byte-for-byte); a one-element entry binds the raw
+// value, exactly as the positional statement did. Order is irrelevant to correctness now; it is kept
+// as the positional order was so a diff against the old statement reads column-for-column.
+export const ACCOUNT_PERSIST_COLUMNS = [
+  ['omr'], ['staked'], ['rewards'], ['prestige'], ['deaths'],
+  ['recruits'], ['checkins_lifetime'], ['ref_paid'], ['onboard'], ['wallet_address'],
+  ['minted', false], ['mint_credits', 0], ['respawn_tokens', 0], ['hitman_rep', 0], ['kills', 0],
+  ['unbonding', 0], ['unbond_at', null], ['rat', false],
+];
+export const CHARACTER_PERSIST_COLUMNS = [
+  ['respect'], ['energy'], ['nerve'], ['health'], ['cash'], ['bank'],
+  ['muscle'], ['cunning'], ['speed'], ['jail_until'], ['loc'], ['streak'], ['checkin_day'],
+  ['lc_crime'], ['ammo'], ['cb'], ['heat'], ['trade_rep'], ['gta_at'], ['path'],
+  ['gun'], ['vest'], ['shoot_cd_until'], ['busts'], ['hosp_until'],
+  ['lab'], ['crew'], ['heist_at'], ['title'],
+  ['racket_credit_ms'], ['season_kills', 0], ['npchit_at'], ['safe_until'],
+  ['guard_price'], ['guarded_by'], ['guarded_until'], ['bank_credit_ms'], ['last_accrued_at'],
+  ['bank_intransit', 0], ['bank_intransit_at'], ['fade_limit', null], ['wash_used', 0], ['wash_at', null], ['respec_at', null],
+  ['crew_paid_at', null], ['heat_exposure', 0], ['indicted_at', null], ['retainer_until', null], ['jury_bought', false], ['witpro_until', null],
+  ['world_raid_at', null], ['pen_safe_until', null], ['hole_until', null], ['welsher', false], ['wanted_until', null],
+  ['rwa_used', 0], ['rwa_at', null], ['envelope_until', null], ['wire_until', null], ['poker_limit', null],
+  ['safehouse_used', 0], ['safehouse_at', null], ['refill_used', 0], ['refill_at', null], ['family_raid_at', null],
+  ['shipment', 0],
+];
+// The account fields runEstate assigns in memory (prestige, deaths, and the L2a death duty's two
+// $OMR columns). The two headless estate persists write EXACTLY this subset through
+// persistAccountFields, so a field runEstate starts mutating tomorrow is added HERE once, not
+// remembered at two call sites — and test/persist.js scans runEstate for `acct.X =` and fails if
+// an assigned field is missing from this list.
+export const ESTATE_ACCOUNT_FIELDS = ['prestige', 'deaths', 'omr', 'unbonding'];
+
+// `col=$2, col=$3, …` — $1 is always the row key. A generated fragment is not preparable by
+// tools/pgquery.js (counted under its ceiling, reason recorded there) and is classified by THE
+// INTERPOLATION LEDGER as an ALL_CAPS module constant / a declared column-list fragment: every
+// column name comes from the exported lists above, never from a request.
+const setClauseOf = (cols) => cols.map(([c], i) => `${c}=$${i + 2}`).join(', ');
+// A one-element entry binds the raw value (an undefined stays undefined, exactly as the positional
+// list did); a two-element entry applies its default — 0/false/null, never undefined.
+const valuesOf = (cols, row) => cols.map(([c, d]) => (d === undefined ? row[c] : (row[c] ?? d)));
+const ACCOUNT_SET = setClauseOf(ACCOUNT_PERSIST_COLUMNS);
+const CHARACTER_SET = setClauseOf(CHARACTER_PERSIST_COLUMNS);
+
 async function persistAccount(client, accountId, a) {
-  await client.query(
-    `UPDATE account_persistent SET omr=$2, staked=$3, rewards=$4, prestige=$5, deaths=$6,
-      recruits=$7, checkins_lifetime=$8, ref_paid=$9, onboard=$10, wallet_address=$11,
-      minted=$12, mint_credits=$13, respawn_tokens=$14, hitman_rep=$15, kills=$16,
-      unbonding=$17, unbond_at=$18, rat=$19 WHERE account_id=$1`,
-    [accountId, a.omr, a.staked, a.rewards, a.prestige, a.deaths,
-     a.recruits, a.checkins_lifetime, a.ref_paid, a.onboard, a.wallet_address,
-     a.minted ?? false, a.mint_credits ?? 0, a.respawn_tokens ?? 0, a.hitman_rep ?? 0, a.kills ?? 0,
-     a.unbonding ?? 0, a.unbond_at ?? null, a.rat ?? false]);
+  await client.query(`UPDATE account_persistent SET ${ACCOUNT_SET} WHERE account_id=$1`,
+    [accountId, ...valuesOf(ACCOUNT_PERSIST_COLUMNS, a)]);
+}
+
+// A NAMED SUBSET of the account columns — for the headless paths (mod-kill, the NPC bounty hunter)
+// that hold no wrapper and must persist only what runEstate touched. Every field must be on
+// ACCOUNT_PERSIST_COLUMNS: a typo here is a thrown error, never a silent no-op column.
+export async function persistAccountFields(client, accountId, a, fields) {
+  const cols = fields.map((f) => {
+    const entry = ACCOUNT_PERSIST_COLUMNS.find(([c]) => c === f);
+    if (!entry) throw new Error(`persistAccountFields: ${f} is not an account persist column`);
+    return entry;
+  });
+  if (!cols.length) return;
+  const set = setClauseOf(cols);
+  await client.query(`UPDATE account_persistent SET ${set} WHERE account_id=$1`,
+    [accountId, ...valuesOf(cols, a)]);
 }
 
 // Two-party actions (§10.1): lock BOTH character rows in stable id order, then both
@@ -1210,6 +1353,11 @@ async function persistAccount(client, accountId, a) {
 // granting the victim their number would reveal exactly what those mechanics sell as hidden
 // (AUDIT-street-life HIGH-1). The route declares covertness; every named/consensual action defaults in.
 export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, { meet = true } = {}) {
+  // phase one for BOTH parties (the actor by account, the target by their street's account) — each
+  // its own transaction, each holding one character, so no sorted-pair lock is needed here
+  await settleIfDue(pool, accountId);
+  const tgt = await pool.query('SELECT account_id FROM characters WHERE id = $1 AND alive', [targetCharacterId]);
+  if (tgt.rows.length && tgt.rows[0].account_id !== accountId) await settleIfDue(pool, tgt.rows[0].account_id);
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -1281,34 +1429,8 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
 }
 
 async function persistCharacter(client, ch) {
-  await client.query(
-    `UPDATE characters SET respect=$2, energy=$3, nerve=$4, health=$5, cash=$6, bank=$7,
-      muscle=$8, cunning=$9, speed=$10, jail_until=$11, loc=$12, streak=$13, checkin_day=$14,
-      lc_crime=$15, ammo=$16, cb=$17, heat=$18, trade_rep=$19, gta_at=$20, path=$21,
-      gun=$22, vest=$23, shoot_cd_until=$24, busts=$25, hosp_until=$26,
-      lab=$27, crew=$28, heist_at=$29, title=$30,
-      racket_credit_ms=$31, season_kills=$32, npchit_at=$33, safe_until=$34,
-      guard_price=$35, guarded_by=$36, guarded_until=$37, bank_credit_ms=$38, last_accrued_at=$39,
-      bank_intransit=$40, bank_intransit_at=$41, fade_limit=$42, wash_used=$43, wash_at=$44, respec_at=$45,
-      crew_paid_at=$46, heat_exposure=$47, indicted_at=$48, retainer_until=$49, jury_bought=$50, witpro_until=$51,
-      world_raid_at=$52, pen_safe_until=$53, hole_until=$54, welsher=$55, wanted_until=$56,
-      rwa_used=$57, rwa_at=$58, envelope_until=$59, wire_until=$60, poker_limit=$61,
-      safehouse_used=$62, safehouse_at=$63, refill_used=$64, refill_at=$65, family_raid_at=$66,
-      shipment=$67 WHERE id=$1`,
-    [ch.id, ch.respect, ch.energy, ch.nerve, ch.health, ch.cash, ch.bank,
-     ch.muscle, ch.cunning, ch.speed, ch.jail_until, ch.loc, ch.streak, ch.checkin_day,
-     ch.lc_crime, ch.ammo, ch.cb, ch.heat, ch.trade_rep, ch.gta_at, ch.path,
-     ch.gun, ch.vest, ch.shoot_cd_until, ch.busts, ch.hosp_until,
-     ch.lab, ch.crew, ch.heist_at, ch.title, ch.racket_credit_ms, ch.season_kills ?? 0, ch.npchit_at, ch.safe_until,
-     ch.guard_price, ch.guarded_by, ch.guarded_until, ch.bank_credit_ms, ch.last_accrued_at,
-     ch.bank_intransit ?? 0, ch.bank_intransit_at, ch.fade_limit ?? null,
-     ch.wash_used ?? 0, ch.wash_at ?? null, ch.respec_at ?? null, ch.crew_paid_at ?? null,
-     ch.heat_exposure ?? 0, ch.indicted_at ?? null, ch.retainer_until ?? null, ch.jury_bought ?? false, ch.witpro_until ?? null,
-     ch.world_raid_at ?? null, ch.pen_safe_until ?? null, ch.hole_until ?? null, ch.welsher ?? false, ch.wanted_until ?? null,
-     ch.rwa_used ?? 0, ch.rwa_at ?? null, ch.envelope_until ?? null, ch.wire_until ?? null,
-     ch.poker_limit ?? null, ch.safehouse_used ?? 0, ch.safehouse_at ?? null,
-     ch.refill_used ?? 0, ch.refill_at ?? null, ch.family_raid_at ?? null,
-     ch.shipment ?? 0]);
+  await client.query(`UPDATE characters SET ${CHARACTER_SET} WHERE id=$1`,
+    [ch.id, ...valuesOf(CHARACTER_PERSIST_COLUMNS, ch)]);
 }
 
 // THE COACH — the single highest-value next step for THIS player, server-authoritative so the client

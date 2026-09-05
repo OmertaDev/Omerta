@@ -124,8 +124,9 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   // untouched — so death costs the bloodline its extractable hoard, never what it committed. A §10.4
   // $OMR BURN (`death:duty`); runs on EVERY death path (a respawn-token save skips the estate entirely
   // → no duty). Liquid is drained first (the loot ordering). acct.omr/unbonding are persisted by
-  // persistAccount at the end of the wrapper (the whack:loot $OMR precedent); the two hand-rolled
-  // headless persists (mod-kill, huntWanted) carry both columns for the same reason.
+  // persistAccount at the end of the wrapper (the whack:loot $OMR precedent); the two headless
+  // persists (mod-kill, huntWanted) write ESTATE_ACCOUNT_FIELDS through persistAccountFields, and
+  // test/persist.js fails if a field assigned here is missing from that list.
   const dutyLiquid = Number(acct.omr), dutyUnbond = Number(acct.unbonding || 0);
   const deathDuty = Math.floor((dutyLiquid + dutyUnbond) * (M3.DEATH_DUTY_RATE || 0));
   if (deathDuty > 0) {

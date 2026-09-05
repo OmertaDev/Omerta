@@ -119,6 +119,17 @@ function bodyOf(src, from) {
   return src.slice(from, start + 4000);               // unbalanced: fall back, never run to EOF
 }
 
+// ── every assert*/require* helper in the tree, by name → its brace-matched body ───────────────────
+const HELPER_INDEX = new Map();
+for (const f of files) {
+  const src = fs.readFileSync(f, 'utf8');
+  for (const m of src.matchAll(/function\s+((?:assert|require)\w+)\s*\(/g)) {
+    if (!HELPER_INDEX.has(m[1])) HELPER_INDEX.set(m[1], bodyOf(src, m.index));
+  }
+}
+// the assert*/require* CALLS in a body — the call form only (`assertX(`), never a definition
+const helperCalls = (body) => [...body.matchAll(/(?<![\w$])(assert\w+|require\w+)\s*\(/g)].map((m) => m[1]);
+
 // ── extract every exported function with the gates it can reach ──────────────────────────────────
 const fns = new Map();
 for (const f of files) {
@@ -139,10 +150,31 @@ for (const f of files) {
     // Measured on `assertStreetCrime`: a 2,000-char window over a 1,072-char helper carried 928
     // characters of a neighbouring function. Nothing is mis-credited today — the spill happens to
     // hold no extra gate — which is exactly why it had to be checked rather than assumed.
-    for (const hm of code.matchAll(/(?<![\w$])(assert\w+|require\w+)\s*\(/g)) {
-      const hi = src.search(new RegExp(`function\\s+${hm[1]}\\s*\\(`));
-      if (hi >= 0) { scope += bodyOf(src, hi); helpers.push(hm[1]); }
-    }
+    // A helper is resolved in the caller's own file FIRST, then across every file in the walk —
+    // `assertStreetActor` lives in game.js (the one module every street-crime file already imports
+    // GameError from, so it closes no cycle) and eleven verbs in six other files call it. A resolver
+    // that only read the caller's file would credit those verbs with NOTHING and report the shared
+    // helper — the one-core discipline — as eleven missing gates.
+    // TRANSITIVE: `assertStreetCrime` (the victim gates) delegates its actor gates to
+    // `assertStreetActor`, so a one-level follow would credit its three callers with the victim
+    // gates and none of the actor ones. Helpers are followed until no new name appears; a seen
+    // set bounds it, since two helpers that call each other would otherwise never terminate.
+    // The function's OWN name is seeded into `seen`: a helper's entry must never credit itself.
+    const seen = new Set([marks[i].name]);
+    const queue = helperCalls(code);
+    const follow = () => {
+      while (queue.length) {
+        const name = queue.shift();
+        if (seen.has(name)) continue;
+        seen.add(name);
+        const hi = src.search(new RegExp(`function\\s+${name}\\s*\\(`));
+        const hb = hi >= 0 ? bodyOf(src, hi) : HELPER_INDEX.get(name);
+        if (!hb) continue;
+        scope += hb; helpers.push(name);
+        queue.push(...helperCalls(hb));
+      }
+    };
+    follow();
     // A THIN WRAPPER delegates its gates to the one function it returns — `robBusiness` and
     // `shakedownBusiness` are both a single `return extortFront(...)`, which is the one-core
     // discipline working exactly as intended, so refusing to follow it would make the matrix report
@@ -152,7 +184,13 @@ for (const f of files) {
     const thin = code.match(/\{\s*return\s+(\w+)\s*\([^;]*\);?\s*\}\s*$/);
     if (thin) {
       const ti = src.search(new RegExp(`function\\s+${thin[1]}\\s*\\(`));
-      if (ti >= 0) { scope += bodyOf(src, ti); helpers.push(thin[1]); }
+      if (ti >= 0) {
+        const tb = bodyOf(src, ti);
+        scope += tb; helpers.push(thin[1]);
+        // the delegate's own helpers, followed the same transitive way — a wrapper over
+        // `extortFront` reaches `assertStreetActor` only through it
+        queue.push(...helperCalls(tb)); follow();
+      }
     }
     const has = (g) => new RegExp(`(?<![\\w$])${g}\\s*\\(`).test(scope) || (INLINE[g] && INLINE[g].test(scope));
     fns.set(marks[i].name, { file: path.basename(f), scope, gates: new Set(GATES.filter(has)), helpers,
@@ -214,12 +252,15 @@ for (const fam of FAMILIES) {
 console.log(`✓ ${checked} gate requirements hold across ${FAMILIES.length} families`);
 
 // ── COMPLETENESS: a new verb must not slip past the matrix by not being listed ───────────────────
-// Anything routed through assertStreetCrime IS a street crime by construction.
-const streetCrimes = [...fns].filter(([, v]) => v.helpers.includes('assertStreetCrime')).map(([k]) => k);
+// Anything routed through assertStreetCrime OR assertStreetActor IS a street crime by construction —
+// the actor helper is what makes completeness cover all fourteen verbs instead of the three that
+// happened to share the victim helper. The helpers themselves are not verbs and are excluded.
+const STREET_HELPERS = ['assertStreetCrime', 'assertStreetActor'];
+const streetCrimes = [...fns].filter(([k, v]) => !STREET_HELPERS.includes(k) && STREET_HELPERS.some((h) => v.helpers.includes(h))).map(([k]) => k);
 const declaredStreet = new Set(FAMILIES.find((f) => f.name.startsWith('street crime')).members);
 const undeclared = streetCrimes.filter((n) => !declaredStreet.has(n));
 assert.equal(undeclared.length, 0,
-  `street crime(s) routed through assertStreetCrime but absent from the matrix: ${undeclared.join(', ')} — `
+  `street crime(s) routed through assertStreetCrime/assertStreetActor but absent from the matrix: ${undeclared.join(', ')} — `
   + 'add them to the family (or the matrix silently stops covering the newest PvP verbs)');
 
 // Every collect* action must be classified. EXEMPT needs a reason, so "it was inconvenient" cannot
@@ -3032,6 +3073,7 @@ scopedSocialContext = async function(db) {
     'src/world.js|extra': 'freeQ(extra,params) — literal predicate at both call sites; values bound',
     'src/pen.js|cols': 'break setMember/setMemberRat — literal SET clause at every call site; values bound',
     'src/wire.js|col': "claim(w,col) — three literal column names ('alerted_hunt'/'_wanted'/'_indicted')",
+    'src/game.js|set': 'persistAccountFields — SET clause generated from ACCOUNT_PERSIST_COLUMNS entries the field list was validated against (an unknown field throws); every value bound',
     'src/rwanominations.js|setClause': 'updateQueueNominationIds(...,setClause,marker) — literal at every call site',
     'src/rwanominations.js|marker': 'a literal SQL-comment tag at every call site (query attribution only)',
     'src/stockcatalogv2.js|marker': 'readState(marker) — two literal tags, inside a /* */ SQL comment',

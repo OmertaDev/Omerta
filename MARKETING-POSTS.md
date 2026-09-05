@@ -44,7 +44,7 @@ built and devnet-proven but not open — it stays shut until a third-party secur
 and the game says so in-game rather than pretending otherwise.
 
 Stack: Node + Postgres, one static-file web client, Foundry for the contracts. The test posture is
-the part I'm proudest of: 148 suites, plus separate harnesses that run every SQL string against
+the part I'm proudest of: 149 suites, plus separate harnesses that run every SQL string against
 real Postgres (pg-mem lies about type unification — that class took us down once), drive real
 Chromium across every screen at two phone sizes, SIGKILL the worker mid-sweep to prove idempotency,
 and load-test §10.4 conservation under concurrency.

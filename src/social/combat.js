@@ -6,7 +6,7 @@
 //
 // Split out of the 2,003-line src/social.js; every function below is byte-identical to what was
 // there. Import from '../social.js' — it re-exports this package's public surface unchanged.
-import { GameError, bumpFamilyTask, bus, ledger, notify, track, loadOwned, skillMult, npcMult, npcTier, bumpStanding, bumpMastery, masteryFx, trunkCap, gainRespect, bumpCrewObjective, hunterSearchMs } from '../game.js';
+import { GameError, assertStreetActor, bumpFamilyTask, bus, ledger, notify, track, loadOwned, skillMult, npcMult, npcTier, bumpStanding, bumpMastery, masteryFx, trunkCap, gainRespect, bumpCrewObjective, hunterSearchMs, persistAccountFields, ESTATE_ACCOUNT_FIELDS } from '../game.js';
 import { M3, CONSTANTS, LOAN, levelOf, rankIdxOf, cityEventOf, dayOf, btkOf, gunObjOf, vestMultOf, fleetValue, effStat, npcHitmanOf, VENDETTA, COMMISSION, SKILLS, UNDERWORLD, LAW, PORT, witproActive, penSafe, inHole, HONOR, HEIST_LOOT_RATE, BUSINESSES, seasonModOf, pathFx, RIVALS, carVal, carOf, boatOf, gearOf, SHIPMENT, usd , districtName, bustSpentToday, bustAttemptsLeft, bustRefillSeconds , coolLeft, coolWait } from '../rules.js';
 import { activeDecree } from '../commission.js';
 import { bumpHonor } from '../honor.js';
@@ -22,16 +22,17 @@ import { hospitalized, isWanted, jailed, now, rand, safeHoused, warActive } from
 
 // ═══════════════════ JUMPS (§7.6) ═══════════════════
 export async function jump(ch, victim, client, h, intent) {
-  if (jailed(ch)) throw new GameError('jailed', 'No street work from lockup.');
-  if (safeHoused(ch)) throw new GameError('safe', "Can't throw hands while you're to ground — a safehouse is a shield, not a bunker.");
-  if (witproActive(ch)) throw new GameError('witpro', "You're in protective custody — the marshals didn't relocate you to work rivals. (witpro is a shield, not a free-kill window.)");
+  assertStreetActor(ch, { msgs: {
+    safe: "Can't throw hands while you're to ground — a safehouse is a shield, not a bunker.",
+    witpro: "You're in protective custody — the marshals didn't relocate you to work rivals. (witpro is a shield, not a free-kill window.)",
+    hosp: "You're in no shape for a fight — laid up under the Doc's care." } });
   // (R40 gate-matrix) a HOSPITALIZED actor can't launch offense — the symmetric action-lock every offense
   // sibling enforces (shakedownBusiness/standoverSpeakeasy/ambushConvoy/interceptRun/raidRivalRacket/raidNpc/
   // collectLoan + consensual PvP raceChallenge/fightBout/matchRace all gate `hosp_self`). Without it, `heal`
   // restores health=100 without clearing hosp_until, so the JUMP_MIN_HEALTH gate below is bypassable and a
   // laid-up player mugs/kills while still under the Doc's care — yet is itself untargetable (the victim gate).
-  // A founder who wants hospitalized retaliation reverts this one line.
-  if (hospitalized(ch)) throw new GameError('hosp_self', "You're in no shape for a fight — laid up under the Doc's care.");
+  // A founder who wants hospitalized retaliation drops the hosp gate from assertStreetActor's caller — but
+  // that helper is shared, so the honest form is an `opts` flag, never a private copy of the block.
   if (Number(ch.health) < M3.JUMP_MIN_HEALTH) throw new GameError('health', "You're in no shape for a fight.");
   // D6a step two — THE MESSAGE: what you came for (money vs reputation). An omitted/unknown intent
   // resolves to 'standard' (all mults 1.0), byte-identical to the pre-choice jump. Resolved HERE (above
@@ -257,10 +258,12 @@ export async function fire(ch, victim, client, h, rounds) {
   // same clock as startSearch (executioner × fixer T3) — the hunter's two clocks agree
   if (new Date(s.started_at).getTime() + hunterSearchMs(h, ch) > Date.now())
     throw new GameError('searching', "They haven't been placed yet. Patience is a caliber.");
-  if (jailed(ch)) throw new GameError('jailed', 'No wet work from lockup.');
-  if (safeHoused(ch)) throw new GameError('safe', "No wet work while you're to ground — hiding, not hunting.");
-  if (witproActive(ch)) throw new GameError('witpro', "No wet work from witness protection — untargetable is a shield, not a licence to kill.");
-  if (hospitalized(ch)) throw new GameError('hosp_self', "You're laid up under the Doc's care — no wet work from a hospital bed. (R40: the offense action-lock every sibling enforces.)");
+  // energy is gated below the gun/trigger checks on purpose (the order is the contract), so `energy: null`.
+  assertStreetActor(ch, { msgs: {
+    jailed: 'No wet work from lockup.',
+    safe: "No wet work while you're to ground — hiding, not hunting.",
+    witpro: "No wet work from witness protection — untargetable is a shield, not a licence to kill.",
+    hosp: "You're laid up under the Doc's care — no wet work from a hospital bed. (R40: the offense action-lock every sibling enforces.)" } });
   const triggerCool = coolLeft(ch.shoot_cd_until);
   if (triggerCool)
     throw new GameError('cooldown', `Your trigger's still hot — ${coolWait(triggerCool)} before the next shot.`, { cooldownSeconds: triggerCool });
@@ -599,10 +602,11 @@ export async function npcHit(ch, victim, client, h, tierId, opts = {}) {
   if (!tier) throw new GameError('bad_tier', 'No such contractor for hire.');
   // THE PEN step two: a burner phone (opts.fromBurner) is the ONE way to arrange wet work from a
   // cell — pen.js consumes the burner first, then calls in with the jail gate waived.
-  if (!opts.fromBurner && jailed(ch)) throw new GameError('jailed', 'No arranging wet work from lockup.');
-  if (safeHoused(ch)) throw new GameError('safe', "You can't reach your contacts from a safehouse.");
-  if (witproActive(ch)) throw new GameError('witpro', "You can't run contractors from witness protection — untargetable is a shield, not a licence to kill.");
-  if (hospitalized(ch)) throw new GameError('hosp_self', "You're laid up under the Doc's care — no arranging wet work from a hospital bed. (R40: the offense action-lock, symmetric with the victim gate.)");
+  assertStreetActor(ch, { jailWaived: !!opts.fromBurner, msgs: {
+    jailed: 'No arranging wet work from lockup.',
+    safe: "You can't reach your contacts from a safehouse.",
+    witpro: "You can't run contractors from witness protection — untargetable is a shield, not a licence to kill.",
+    hosp: "You're laid up under the Doc's care — no arranging wet work from a hospital bed. (R40: the offense action-lock, symmetric with the victim gate.)" } });
   if (h.owned.gangId && h.victimOwned.gangId === h.owned.gangId && !h.victimAcct.rat && !isWanted(victim)) throw new GameError('family', "They're family. Omertà."); // a rat OR a WANTED welsher forfeits family protection
   // THE CREW — no hiring a gun on your own crew (the omertà twin; rat/WANTED forfeit it)
   if (h.owned.crewId && h.victimOwned.crewId === h.owned.crewId && !h.victimAcct.rat && !isWanted(victim)) throw new GameError('crew', "They run with your crew — call it off.");
@@ -731,11 +735,10 @@ export async function huntWanted(pool) {
       }
       // the hunter lands it — the estate runs (no killerCh: no chop/loot/rep; the pool bounty burns)
       await runEstate(client, h, victim, 'A BOUNTY HUNTER');
-      // narrow hand-rolled persist (no persistAccount here): must carry every account field runEstate
-      // mutates — prestige, deaths, and (L2a) the death-duty $OMR burn (ledgered inside runEstate),
-      // which reaches liquid AND unbonding, so both columns ride or the burn drifts §10.4.
-      await client.query('UPDATE account_persistent SET prestige=$2, deaths=$3, omr=$4, unbonding=$5 WHERE account_id=$1',
-        [victim.account_id, victimAcct.prestige, victimAcct.deaths, victimAcct.omr, victimAcct.unbonding ?? 0]);
+      // narrow headless persist (no persistAccount here): ESTATE_ACCOUNT_FIELDS is the list of every
+      // account field runEstate mutates, kept beside the persist columns in game.js and scanned by
+      // test/persist.js — so the death-duty $OMR burn (liquid AND unbonding) can never drift §10.4 here.
+      await persistAccountFields(client, victim.account_id, victimAcct, ESTATE_ACCOUNT_FIELDS);
       bus.emit('streets', { type: 'kill', by: 'a bounty hunter', victim: victim.name });
       await client.query('COMMIT'); killed++;
     } catch (e) { await client.query('ROLLBACK'); console.error('huntWanted', m.id, e.message); }
@@ -822,11 +825,9 @@ export async function bust(ch, victim, client, h) {
 // feed the RIVALS ledger (the victim's notify names the thief either way).
 export async function stealCar(ch, victim, client, h) {
   const T = RIVALS.CAR_THEFT;
-  if (jailed(ch)) throw new GameError('jailed', 'No street work from lockup.');
-  if (safeHoused(ch)) throw new GameError('safe', "Can't work the streets while you're to ground — a safehouse is a shield, not a bunker.");
-  if (witproActive(ch)) throw new GameError('witpro', "You're in protective custody — the marshals didn't relocate you to boost cars.");
-  if (hospitalized(ch)) throw new GameError('hosp_self', "You're laid up under the Doc's care.");
-  if (Number(ch.energy) < T.ENERGY) throw new GameError('energy', `Boosting takes ${T.ENERGY} energy.`);
+  assertStreetActor(ch, { energy: T.ENERGY, msgs: {
+    witpro: "You're in protective custody — the marshals didn't relocate you to boost cars.",
+    energy: `Boosting takes ${T.ENERGY} energy.` } });
   const ironCool = coolLeft(new Date(ch.gta_at).getTime() + CONSTANTS.GTA_CD_MS);
   if (ironCool)
     throw new GameError('cooldown', `The heat's still on from the last job — lay off the iron for ${coolWait(ironCool)}.`, { cooldownSeconds: ironCool });
@@ -898,11 +899,7 @@ export async function stealCar(ch, victim, client, h) {
 // three copies — the extortFront/resetFrontToNewOwner lesson: a copied gate block is how a later
 // fix misses one of them.
 function assertStreetCrime(ch, victim, h, energy) {
-  if (jailed(ch)) throw new GameError('jailed', 'No street work from lockup.');
-  if (safeHoused(ch)) throw new GameError('safe', "Can't work the streets while you're to ground — a safehouse is a shield, not a bunker.");
-  if (witproActive(ch)) throw new GameError('witpro', "You're in protective custody — keep your head down.");
-  if (hospitalized(ch)) throw new GameError('hosp_self', "You're laid up under the Doc's care.");
-  if (Number(ch.energy) < energy) throw new GameError('energy', `That takes ${energy} energy.`);
+  assertStreetActor(ch, { energy });
   if (hospitalized(victim)) throw new GameError('hosp', "They're under the Doc's care. Even we have rules.");
   if (witproActive(victim)) throw new GameError('witpro', 'They vanished into witness protection.');
   if (h.owned.gangId && h.victimOwned.gangId === h.owned.gangId) throw new GameError('family', "They're family. Omertà.");

@@ -314,7 +314,7 @@
 | [BALANCE.md](../../BALANCE.md) | documentation | 6822 | 2026-09-02 |
 | [CHAIN-AUDIT-PACKET.md](../../CHAIN-AUDIT-PACKET.md) | documentation | 317 | 2026-08-30 |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 2001 | 2026-08-29 |
-| [CLAUDE.md](../../CLAUDE.md) | documentation | 18247 | 2026-09-05 |
+| [CLAUDE.md](../../CLAUDE.md) | documentation | 18421 | 2026-09-05 |
 | [content/README.md](../../content/README.md) | documentation | 281 | 2026-08-29 |
 | [DEPLOY-CHECKLIST.md](../../DEPLOY-CHECKLIST.md) | operations | 147 | 2026-08-13 |
 | [DEPLOY.md](../../DEPLOY.md) | operations | 568 | 2026-08-29 |
@@ -372,7 +372,7 @@
 | [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 283 | 2026-08-27 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 232 | 2026-08-27 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 432 | 2026-08-27 |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-08-29 |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-09-05 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 368 | 2026-08-29 |
 | [NIGHT-SESSION-LOG.md](../../NIGHT-SESSION-LOG.md) | documentation | 45 | 2026-08-13 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 373 | 2026-07-12 |
@@ -460,5 +460,5 @@
 | [PRODUCT.md](../../PRODUCT.md) | documentation | 50 | 2026-08-24 |
 | [README.md](../../README.md) | documentation | 166 | 2026-08-27 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 882 | 2026-08-29 |
-| [SPEC.md](../../SPEC.md) | documentation | 716 | 2026-09-05 |
+| [SPEC.md](../../SPEC.md) | documentation | 735 | 2026-09-05 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |

@@ -879,6 +879,137 @@ for (const vp of VIEWPORTS) {
   await browser.close();
 }
 
+// ── L — STORED XSS: EVERY DISPLAY STRING THE SERVER SENDS, RENDERED HOSTILE ───────────────────
+// The console is one 1 MB file with ~110 innerHTML sites and ~500 esc() calls, and NOTHING guarded
+// the relation between them: safety rested on the server's write-time cleanText plus each renderer
+// remembering esc() at each site — and a static classification of "which interpolation is unescaped"
+// is mostly noise (feedText's output is esc()'d by both consumers, so its 345 bare `${d.from}`s are
+// fine). So this proves the property BEHAVIOURALLY: every JSON response on the wire has a markup
+// probe APPENDED to every string under a display-shaped key (never an id/type/tab — the client
+// BRANCHES on those and a corrupted branch key reads as a different defect), then every screen is
+// walked and asserted to contain NO element the probe could have created. Appending rather than
+// replacing keeps the real value in front, so a renderer that keys on a prefix still takes its
+// normal branch. The probe covers BOTH contexts at once: `">` closes an attribute AND a tag, so an
+// unescaped `title="${name}"` and an unescaped `<b>${name}</b>` both produce the marker element.
+//
+// Anti-vacuity: an interceptor that injects nothing sees no element and reads exactly like a clean
+// bill of health, so the run also requires (a) the probe to have landed in enough responses and (b)
+// the marker to have rendered AS TEXT inside the tab bodies on enough screens — i.e. escaping was
+// exercised, not merely absent. Server-side write-time stripping (cleanText) is deliberately
+// bypassed here: the point is what the CLIENT does with a hostile string, whatever the server did.
+{
+  const MARK = 'ZXSSMARK';
+  const PROBE = `"><i data-xss="${MARK}">${MARK}</i>`;
+  // Display-shaped keys: what a renderer prints, never what it branches on. `id`, `kind`, `tab`,
+  // `type`, `status`, `district` and `loc` are all lookup keys and stay untouched on purpose.
+  const KEYS = new Set(['name', 'title', 'bio', 'tag', 'from', 'by', 'dynasty', 'street', 'label',
+    'desc', 'text', 'body', 'message', 'hint', 'what', 'how', 'headline', 'subtitle', 'holder',
+    'winner', 'poster', 'seller', 'owner', 'reason', 'motd', 'line', 'note', 'blurb', 'story',
+    'npcName', 'kindName', 'tierName', 'routeName', 'outfit', 'trackName', 'goodName', 'taskLabel',
+    'forgedName', 'archetype', 'epithet', 'family', 'gangName', 'crewName', 'heir', 'victim',
+    'killer', 'target', 'mark', 'boss', 'steward', 'contact', 'author', 'sender', 'nick', 'plate']);
+  let injected = 0, responses = 0;
+  const poison = (v) => {
+    if (Array.isArray(v)) return v.map(poison);
+    if (v && typeof v === 'object') {
+      const o = {};
+      for (const [k, x] of Object.entries(v)) {
+        if (typeof x === 'string' && KEYS.has(k) && x.length) { o[k] = x + PROBE; injected++; }
+        else o[k] = poison(x);
+      }
+      return o;
+    }
+    return v;
+  };
+
+  const browser = await chromium.launch({ executablePath: exe });
+  const ctx = await browser.newContext({ viewport: { width: 375, height: 667 }, isMobile: true, hasTouch: true, locale: 'en-US' });
+  const page = await ctx.newPage();
+  const vp = { w: 375, h: 667 };
+  const errs = [];
+  page.on('pageerror', (e) => errs.push(String(e).split('\n')[0]));
+  await page.goto(BASE, { waitUntil: 'domcontentloaded' });
+  await page.click('#btn-guest');
+  await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });
+  await page.fill('#new-name', 'Xss Probe');
+  await page.click('#btn-create');
+  await page.waitForSelector('#screen-main:not(.hidden)', { timeout: 20000 });
+  await page.evaluate(() => {
+    localStorage.setItem('omerta_tour2', '1'); localStorage.setItem('omerta_welcomed', '1');
+    localStorage.setItem('omerta_alltabs', '1');
+  });
+  // Arm the interceptor AFTER the character exists, so the create form posts a clean name and the
+  // probe reaches the client only the way hostile data would — down the wire, on every board.
+  await page.route('**/v1/**', async (route) => {
+    const response = await route.fetch();
+    const ct = response.headers()['content-type'] || '';
+    if (!/json/.test(ct)) return route.fulfill({ response });
+    let json;
+    try { json = await response.json(); } catch { return route.fulfill({ response }); }
+    responses++;
+    await route.fulfill({ response, json: poison(json) });
+  });
+  errs.length = 0;
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('#screen-main:not(.hidden)', { timeout: 20000 });
+  await page.waitForTimeout(1500);
+  if (await page.locator('#tabs-more:not(.hidden)').count()) await page.click('#tabs-more');
+  await page.waitForTimeout(300);
+
+  // Tab bodies PERSIST in the DOM once rendered, so a per-screen element count only ever grows and
+  // reports the same site thirty times. Collect distinct SITES instead — one failure per unescaped
+  // render, keyed on where it sits — and count text renders per screen for the anti-vacuity floor.
+  let textHits = 0, screens = 0;
+  const sites = new Map();
+  const probeScreen = async (id) => {
+    await page.waitForTimeout(350);
+    const o = await page.evaluate((mark) => {
+      const sig = (e) => {
+        const p = e.parentElement; const c = e.closest('[id]');
+        const cls = p?.className ? '.' + String(p.className).trim().split(/\s+/).slice(0, 2).join('.') : '';
+        return (c ? '#' + c.id : 'body') + ' ' + (p?.tagName || '?').toLowerCase() + cls;
+      };
+      const els = [...document.querySelectorAll('[data-xss]')];
+      const found = els.map((e) => [sig(e), (e.parentElement?.outerHTML || '').replace(/\s+/g, ' ').slice(0, 140)]);
+      const bodyText = document.querySelector('#tabbodies')?.innerText || '';
+      const asText = bodyText.split('data-xss="' + mark + '"').length - 1;
+      return { found, asText };
+    }, MARK);
+    screens++;
+    textHits += o.asText;
+    for (const [sig, snippet] of o.found) if (!sites.has(sig)) sites.set(sig, { screen: id, snippet });
+  };
+  await probeScreen('landing');
+  const groups = await page.locator('#grouprail [data-group]').evaluateAll((els) => els.map((e) => e.dataset.group));
+  if (!groups.length) fail('(xss)', vp, 'no group rail buttons found — the XSS walk below covers nothing');
+  for (const g of groups) {
+    await page.click(`#grouprail [data-group="${g}"]`);
+    await page.waitForTimeout(200);
+    const subs = await page.locator('#tabs [data-tab]:not(.hidden)').all();
+    if (!subs.length) await probeScreen(g);
+    for (const t of subs) {
+      const id = await t.getAttribute('data-tab');
+      await t.click();
+      await probeScreen(id);
+    }
+  }
+  // The cellphone modal renders names too (threads, the black book) and sits outside every tab.
+  if (await page.locator('#btn-phone').count()) {
+    await page.click('#btn-phone');
+    await probeScreen('the cellphone');
+  }
+  for (const [sig, { screen, snippet }] of sites)
+    fail(`(xss:${screen})`, vp, `an innerHTML site renders a display string without esc() — the server's string CREATED an element at ${sig}: ${snippet}`);
+  if (injected < 50) fail('(xss)', vp, `the interceptor poisoned only ${injected} string(s) across ${responses} JSON responses — `
+    + `a probe that lands nowhere finds nothing, and that reads exactly like a clean sweep`);
+  if (textHits < 10) fail('(xss)', vp, `the marker rendered as literal text on only ${textHits} occasion(s) across ${screens} screens — `
+    + `escaping was never exercised, so "no element created" proves nothing`);
+  if (errs.length) fail('(xss)', vp, `${errs.length} page error(s) rendering hostile strings: ${errs.slice(0, 3).join(' | ')}`);
+  screensChecked += screens;
+  console.log(`   stored-XSS sweep done (${injected} strings poisoned over ${responses} responses, marker rendered as text ${textHits}× on ${screens} screens), ${failures.length} failure(s)`);
+  await browser.close();
+}
+
 await app.close();
 
 if (failures.length) {
