@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "1d1024ea6f3e8caf99990896a85ac44364f0a8f9",
+  "sourceRevision": "33d447f11373c1d33e5a68614302eb73a4ad7378",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5695,
-    "edges": 25247,
+    "nodes": 5697,
+    "edges": 25259,
     "byNodeType": {
       "Artifact": 1829,
       "Command": 58,
-      "Commit": 1331,
+      "Commit": 1333,
       "Contract": 49,
       "Document": 475,
       "Domain": 12,
@@ -65,18 +65,18 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1981,
-      "CHANGED": 10206,
+      "CHANGED": 10214,
       "CONTAINS": 1849,
       "DECLARES": 58,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 205,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1331,
+      "HAS_COMMIT": 1333,
       "IMPLEMENTS": 124,
       "IMPORTS": 1647,
       "INHERITS": 12,
-      "REFERENCES": 2873,
+      "REFERENCES": 2875,
       "REPRESENTS": 892,
       "TESTS": 583,
       "TRACKS": 126,
@@ -10971,20 +10971,20 @@
       "path": "CLAUDE.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 1764555,
-      "lines": 18283,
-      "version": "0418f8004a732927",
+      "bytes": 1767763,
+      "lines": 18317,
+      "version": "895f383f55a7ee92",
       "text": true,
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "0418f8004a732927"
+          "version": "895f383f55a7ee92"
         }
       ],
-      "lastChangedAt": "2026-09-05T04:56:08.000Z",
+      "lastChangedAt": "2026-09-05T05:19:26.000Z",
       "lastChangedBy": "Claude",
-      "lastChangedCommit": "7b32082bbff05bc5c04a5b51f40a50d07f76b625"
+      "lastChangedCommit": "33d447f11373c1d33e5a68614302eb73a4ad7378"
     },
     {
       "key": "Artifact:content/packs/bad-batch/pack.json",
@@ -35253,20 +35253,20 @@
       "path": "src/races.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 40855,
-      "lines": 508,
-      "version": "18d9d4932745f75b",
+      "bytes": 41229,
+      "lines": 512,
+      "version": "8b95cb8b22f22b67",
       "text": true,
       "provenance": [
         {
           "file": "src/races.js",
           "line": 1,
-          "version": "18d9d4932745f75b"
+          "version": "8b95cb8b22f22b67"
         }
       ],
-      "lastChangedAt": "2026-09-05T01:38:34.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "08ebac4f2224ade676a41a4da72586ac6b8e3f38"
+      "lastChangedAt": "2026-09-05T05:19:26.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "33d447f11373c1d33e5a68614302eb73a4ad7378"
     },
     {
       "key": "Artifact:src/ratelimit.js",
@@ -37576,20 +37576,20 @@
       "path": "test/client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 723812,
-      "lines": 9291,
-      "version": "a5430999b9d55fd0",
+      "bytes": 726789,
+      "lines": 9332,
+      "version": "d6afa13bacb0fbac",
       "text": true,
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "a5430999b9d55fd0"
+          "version": "d6afa13bacb0fbac"
         }
       ],
-      "lastChangedAt": "2026-09-05T01:38:34.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "08ebac4f2224ade676a41a4da72586ac6b8e3f38"
+      "lastChangedAt": "2026-09-05T05:19:26.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "33d447f11373c1d33e5a68614302eb73a4ad7378"
     },
     {
       "key": "Artifact:test/clues.js",
@@ -43620,6 +43620,22 @@
       ]
     },
     {
+      "key": "Commit:0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc",
+      "type": "Commit",
+      "id": "0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc",
+      "label": "chore(knowledge): refresh generated artifacts for 1d1024ea",
+      "title": "chore(knowledge): refresh generated artifacts for 1d1024ea",
+      "date": "2026-09-05T04:58:14.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc",
+      "provenance": [
+        {
+          "commit": "0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc"
+        }
+      ]
+    },
+    {
       "key": "Commit:0adeb83a2f96a321d390ea98b1967efee1a70f85",
       "type": "Commit",
       "id": "0adeb83a2f96a321d390ea98b1967efee1a70f85",
@@ -47072,6 +47088,22 @@
         {
           "commit": "33abbf6c854f6cc832cbb745b6b0135df27164ad",
           "url": "https://github.com/OmertaDev/Omerta/commit/33abbf6c854f6cc832cbb745b6b0135df27164ad"
+        }
+      ]
+    },
+    {
+      "key": "Commit:33d447f11373c1d33e5a68614302eb73a4ad7378",
+      "type": "Commit",
+      "id": "33d447f11373c1d33e5a68614302eb73a4ad7378",
+      "label": "test(client): mirror check 4 covers two-hop reads; grandPrix closed shape unified",
+      "title": "test(client): mirror check 4 covers two-hop reads; grandPrix closed shape unified",
+      "date": "2026-09-05T05:19:26.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/33d447f11373c1d33e5a68614302eb73a4ad7378",
+      "provenance": [
+        {
+          "commit": "33d447f11373c1d33e5a68614302eb73a4ad7378",
+          "url": "https://github.com/OmertaDev/Omerta/commit/33d447f11373c1d33e5a68614302eb73a4ad7378"
         }
       ]
     },
@@ -70043,13 +70075,13 @@
       "id": "CLAUDE.md",
       "label": "CLAUDE.md",
       "documentType": "documentation",
-      "lines": 18283,
-      "version": "0418f8004a732927",
+      "lines": 18317,
+      "version": "895f383f55a7ee92",
       "provenance": [
         {
           "file": "CLAUDE.md",
           "line": 1,
-          "version": "0418f8004a732927"
+          "version": "895f383f55a7ee92"
         }
       ]
     },
@@ -73521,7 +73553,7 @@
         },
         {
           "file": "test/client.js",
-          "line": 8329
+          "line": 8370
         },
         {
           "file": "test/deeds.js",
@@ -77113,6 +77145,9 @@
           "commit": "0a59554664bbf60a2f5d754c5718ea532208ba5f"
         },
         {
+          "commit": "0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc"
+        },
+        {
           "commit": "0fe33ebb51f387d386e03cb828026a59bbde13de"
         },
         {
@@ -77327,6 +77362,9 @@
         },
         {
           "commit": "0a63c20b46b5d90b1541b3829af3d0f6e77404f4"
+        },
+        {
+          "commit": "0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc"
         },
         {
           "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
@@ -77791,6 +77829,9 @@
           "commit": "0a63c20b46b5d90b1541b3829af3d0f6e77404f4"
         },
         {
+          "commit": "0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc"
+        },
+        {
           "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
         },
         {
@@ -78251,6 +78292,9 @@
         },
         {
           "commit": "0a63c20b46b5d90b1541b3829af3d0f6e77404f4"
+        },
+        {
+          "commit": "0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc"
         },
         {
           "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
@@ -78782,6 +78826,9 @@
         },
         {
           "commit": "0a63c20b46b5d90b1541b3829af3d0f6e77404f4"
+        },
+        {
+          "commit": "0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc"
         },
         {
           "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
@@ -81151,13 +81198,13 @@
       "type": "Module",
       "id": "src/races.js",
       "label": "src/races.js",
-      "lines": 508,
-      "version": "18d9d4932745f75b",
+      "lines": 512,
+      "version": "8b95cb8b22f22b67",
       "provenance": [
         {
           "file": "src/races.js",
           "line": 1,
-          "version": "18d9d4932745f75b"
+          "version": "8b95cb8b22f22b67"
         }
       ]
     },
@@ -85516,7 +85563,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "1d1024ea6f3e8caf99990896a85ac44364f0a8f9",
+      "revision": "33d447f11373c1d33e5a68614302eb73a4ad7378",
       "currentBranch": "claude/next-work-recommendations-x5f2fp",
       "defaultBranch": "main",
       "visibility": "public",
@@ -109063,13 +109110,13 @@
       "type": "TestSuite",
       "id": "test/client.js",
       "label": "test/client.js",
-      "lines": 9291,
-      "version": "a5430999b9d55fd0",
+      "lines": 9332,
+      "version": "d6afa13bacb0fbac",
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "a5430999b9d55fd0"
+          "version": "d6afa13bacb0fbac"
         }
       ]
     },
@@ -131594,6 +131641,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:0adeb83a2f96a321d390ea98b1967efee1a70f85",
       "to": "Artifact:DESIGN.md",
       "provenance": {
@@ -147566,6 +147653,30 @@
       "to": "Artifact:package.json",
       "provenance": {
         "commit": "33abbf6c854f6cc832cbb745b6b0135df27164ad"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:33d447f11373c1d33e5a68614302eb73a4ad7378",
+      "to": "Artifact:CLAUDE.md",
+      "provenance": {
+        "commit": "33d447f11373c1d33e5a68614302eb73a4ad7378"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:33d447f11373c1d33e5a68614302eb73a4ad7378",
+      "to": "Artifact:src/races.js",
+      "provenance": {
+        "commit": "33d447f11373c1d33e5a68614302eb73a4ad7378"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:33d447f11373c1d33e5a68614302eb73a4ad7378",
+      "to": "Artifact:test/client.js",
+      "provenance": {
+        "commit": "33d447f11373c1d33e5a68614302eb73a4ad7378"
       }
     },
     {
@@ -247235,6 +247346,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc",
+      "provenance": {
+        "commit": "0a7df69ecc99e10b1b73d7b725dbb24e55fcf6fc"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0adeb83a2f96a321d390ea98b1967efee1a70f85",
       "provenance": {
         "commit": "0adeb83a2f96a321d390ea98b1967efee1a70f85"
@@ -248958,6 +249077,14 @@
       "to": "Commit:33abbf6c854f6cc832cbb745b6b0135df27164ad",
       "provenance": {
         "commit": "33abbf6c854f6cc832cbb745b6b0135df27164ad"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:33d447f11373c1d33e5a68614302eb73a4ad7378",
+      "provenance": {
+        "commit": "33d447f11373c1d33e5a68614302eb73a4ad7378"
       }
     },
     {
@@ -266996,7 +267123,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 1254
+        "line": 1275
       }
     },
     {
@@ -267023,7 +267150,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6008
+        "line": 6049
       }
     },
     {
@@ -267032,7 +267159,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6111
+        "line": 6152
       }
     },
     {
@@ -267068,7 +267195,7 @@
       "to": "ExternalDependency:viem/accounts",
       "provenance": {
         "file": "test/client.js",
-        "line": 8329
+        "line": 8370
       }
     },
     {
@@ -280343,7 +280470,7 @@
       "to": "Artifact:docs/AUDITS.md",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7702
+        "line": 7736
       }
     },
     {
@@ -280352,7 +280479,7 @@
       "to": "Artifact:docs/WIKI.md",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 14837
+        "line": 14871
       }
     },
     {
@@ -280397,7 +280524,7 @@
       "to": "Artifact:docs/WIKI.md",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 5898
+        "line": 5932
       }
     },
     {
@@ -280406,7 +280533,7 @@
       "to": "Artifact:docs/WIKI.md",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 5925
+        "line": 5959
       }
     },
     {
@@ -280415,7 +280542,7 @@
       "to": "Artifact:docs/WIKI.md",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8945
+        "line": 8979
       }
     },
     {
@@ -280424,7 +280551,7 @@
       "to": "Artifact:omerta-contracts/foundry.toml",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17632
+        "line": 17666
       }
     },
     {
@@ -280433,7 +280560,7 @@
       "to": "Artifact:omerta-contracts/README.md",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8094
+        "line": 8128
       }
     },
     {
@@ -280460,7 +280587,7 @@
       "to": "Artifact:omerta-contracts/src/DynastyNFT.sol",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12677
+        "line": 12711
       }
     },
     {
@@ -280469,7 +280596,7 @@
       "to": "Artifact:omerta-contracts/src/GearVault.sol",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16615
+        "line": 16649
       }
     },
     {
@@ -280505,7 +280632,7 @@
       "to": "Artifact:omerta-contracts/src/OMR.sol",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8058
+        "line": 8092
       }
     },
     {
@@ -280514,7 +280641,7 @@
       "to": "Artifact:omerta-contracts/src/StreetDeed.sol",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12632
+        "line": 12666
       }
     },
     {
@@ -280523,7 +280650,7 @@
       "to": "Artifact:omerta-contracts/src/StreetDeed.sol",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12773
+        "line": 12807
       }
     },
     {
@@ -280532,7 +280659,7 @@
       "to": "Artifact:omerta-mcp/README.md",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11413
+        "line": 11447
       }
     },
     {
@@ -280541,7 +280668,7 @@
       "to": "Artifact:public/admin.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11808
+        "line": 11842
       }
     },
     {
@@ -280604,7 +280731,7 @@
       "to": "Artifact:public/fee-flows.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12275
+        "line": 12309
       }
     },
     {
@@ -280613,7 +280740,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10129
+        "line": 10163
       }
     },
     {
@@ -280622,7 +280749,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10185
+        "line": 10219
       }
     },
     {
@@ -280631,7 +280758,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10252
+        "line": 10286
       }
     },
     {
@@ -280640,7 +280767,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10397
+        "line": 10431
       }
     },
     {
@@ -280649,7 +280776,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10520
+        "line": 10554
       }
     },
     {
@@ -280658,7 +280785,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10539
+        "line": 10573
       }
     },
     {
@@ -280667,7 +280794,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10903
+        "line": 10937
       }
     },
     {
@@ -280676,7 +280803,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10936
+        "line": 10970
       }
     },
     {
@@ -280685,7 +280812,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10997
+        "line": 11031
       }
     },
     {
@@ -280694,7 +280821,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11020
+        "line": 11054
       }
     },
     {
@@ -280703,7 +280830,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11051
+        "line": 11085
       }
     },
     {
@@ -280712,7 +280839,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11083
+        "line": 11117
       }
     },
     {
@@ -280721,7 +280848,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12906
+        "line": 12940
       }
     },
     {
@@ -280730,7 +280857,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13186
+        "line": 13220
       }
     },
     {
@@ -280739,7 +280866,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13205
+        "line": 13239
       }
     },
     {
@@ -280748,7 +280875,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13340
+        "line": 13374
       }
     },
     {
@@ -280757,7 +280884,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13443
+        "line": 13477
       }
     },
     {
@@ -280784,7 +280911,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15451
+        "line": 15485
       }
     },
     {
@@ -280793,7 +280920,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15498
+        "line": 15532
       }
     },
     {
@@ -280802,7 +280929,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15538
+        "line": 15572
       }
     },
     {
@@ -280811,7 +280938,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15585
+        "line": 15619
       }
     },
     {
@@ -280820,7 +280947,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15628
+        "line": 15662
       }
     },
     {
@@ -280829,7 +280956,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15682
+        "line": 15716
       }
     },
     {
@@ -280838,7 +280965,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16090
+        "line": 16124
       }
     },
     {
@@ -280847,7 +280974,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16114
+        "line": 16148
       }
     },
     {
@@ -280856,7 +280983,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16143
+        "line": 16177
       }
     },
     {
@@ -280865,7 +280992,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17110
+        "line": 17144
       }
     },
     {
@@ -280874,7 +281001,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 18274
+        "line": 18308
       }
     },
     {
@@ -281099,7 +281226,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6659
+        "line": 6693
       }
     },
     {
@@ -281108,7 +281235,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6695
+        "line": 6729
       }
     },
     {
@@ -281117,7 +281244,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7059
+        "line": 7093
       }
     },
     {
@@ -281126,7 +281253,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7204
+        "line": 7238
       }
     },
     {
@@ -281135,7 +281262,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7232
+        "line": 7266
       }
     },
     {
@@ -281144,7 +281271,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8462
+        "line": 8496
       }
     },
     {
@@ -281153,7 +281280,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9246
+        "line": 9280
       }
     },
     {
@@ -281162,7 +281289,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9267
+        "line": 9301
       }
     },
     {
@@ -281171,7 +281298,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9738
+        "line": 9772
       }
     },
     {
@@ -281180,7 +281307,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9893
+        "line": 9927
       }
     },
     {
@@ -281189,7 +281316,7 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9919
+        "line": 9953
       }
     },
     {
@@ -281198,7 +281325,7 @@
       "to": "Artifact:public/manifest.json",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11082
+        "line": 11116
       }
     },
     {
@@ -281207,7 +281334,7 @@
       "to": "Artifact:public/play.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11190
+        "line": 11224
       }
     },
     {
@@ -281216,7 +281343,7 @@
       "to": "Artifact:public/play.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11413
+        "line": 11447
       }
     },
     {
@@ -281225,7 +281352,7 @@
       "to": "Artifact:public/sw.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10331
+        "line": 10365
       }
     },
     {
@@ -281234,7 +281361,7 @@
       "to": "Artifact:public/sw.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11083
+        "line": 11117
       }
     },
     {
@@ -281243,7 +281370,7 @@
       "to": "Artifact:public/sw.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17126
+        "line": 17160
       }
     },
     {
@@ -281297,7 +281424,7 @@
       "to": "Artifact:public/wiki.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 5899
+        "line": 5933
       }
     },
     {
@@ -281306,7 +281433,7 @@
       "to": "Artifact:public/wiki.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 5925
+        "line": 5959
       }
     },
     {
@@ -281315,7 +281442,7 @@
       "to": "Artifact:public/wiki.html",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8945
+        "line": 8979
       }
     },
     {
@@ -281324,7 +281451,7 @@
       "to": "Artifact:src/accrual.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13204
+        "line": 13238
       }
     },
     {
@@ -281360,7 +281487,7 @@
       "to": "Artifact:src/accrual.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6909
+        "line": 6943
       }
     },
     {
@@ -281396,7 +281523,7 @@
       "to": "Artifact:src/aggregate.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15915
+        "line": 15949
       }
     },
     {
@@ -281414,7 +281541,7 @@
       "to": "Artifact:src/auction.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6971
+        "line": 7005
       }
     },
     {
@@ -281432,7 +281559,7 @@
       "to": "Artifact:src/avatar.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10307
+        "line": 10341
       }
     },
     {
@@ -281441,7 +281568,7 @@
       "to": "Artifact:src/bank.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12060
+        "line": 12094
       }
     },
     {
@@ -281450,7 +281577,7 @@
       "to": "Artifact:src/bank.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12499
+        "line": 12533
       }
     },
     {
@@ -281459,7 +281586,7 @@
       "to": "Artifact:src/bloodline.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6448
+        "line": 6482
       }
     },
     {
@@ -281468,7 +281595,7 @@
       "to": "Artifact:src/bloodline.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6475
+        "line": 6509
       }
     },
     {
@@ -281477,7 +281604,7 @@
       "to": "Artifact:src/bonds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11557
+        "line": 11591
       }
     },
     {
@@ -281486,7 +281613,7 @@
       "to": "Artifact:src/bonds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13104
+        "line": 13138
       }
     },
     {
@@ -281513,7 +281640,7 @@
       "to": "Artifact:src/bonds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6965
+        "line": 6999
       }
     },
     {
@@ -281522,7 +281649,7 @@
       "to": "Artifact:src/boxing.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 18238
+        "line": 18272
       }
     },
     {
@@ -281576,7 +281703,7 @@
       "to": "Artifact:src/brokers.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12854
+        "line": 12888
       }
     },
     {
@@ -281585,7 +281712,7 @@
       "to": "Artifact:src/bulletin.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10672
+        "line": 10706
       }
     },
     {
@@ -281594,7 +281721,7 @@
       "to": "Artifact:src/business.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15451
+        "line": 15485
       }
     },
     {
@@ -281603,7 +281730,7 @@
       "to": "Artifact:src/business.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15585
+        "line": 15619
       }
     },
     {
@@ -281630,7 +281757,7 @@
       "to": "Artifact:src/business.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6950
+        "line": 6984
       }
     },
     {
@@ -281639,7 +281766,7 @@
       "to": "Artifact:src/business.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7171
+        "line": 7205
       }
     },
     {
@@ -281648,7 +281775,7 @@
       "to": "Artifact:src/business.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8717
+        "line": 8751
       }
     },
     {
@@ -281657,7 +281784,7 @@
       "to": "Artifact:src/campaigns.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15421
+        "line": 15455
       }
     },
     {
@@ -281666,7 +281793,7 @@
       "to": "Artifact:src/campaigns.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6447
+        "line": 6481
       }
     },
     {
@@ -281675,7 +281802,7 @@
       "to": "Artifact:src/campaigns.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6470
+        "line": 6504
       }
     },
     {
@@ -281693,7 +281820,7 @@
       "to": "Artifact:src/cards.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10539
+        "line": 10573
       }
     },
     {
@@ -281702,7 +281829,7 @@
       "to": "Artifact:src/cards.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10883
+        "line": 10917
       }
     },
     {
@@ -281711,7 +281838,7 @@
       "to": "Artifact:src/cards.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10936
+        "line": 10970
       }
     },
     {
@@ -281738,7 +281865,7 @@
       "to": "Artifact:src/career.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8437
+        "line": 8471
       }
     },
     {
@@ -281747,7 +281874,7 @@
       "to": "Artifact:src/casino.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16089
+        "line": 10011
       }
     },
     {
@@ -281756,7 +281883,16 @@
       "to": "Artifact:src/casino.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16112
+        "line": 16123
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:src/casino.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 16146
       }
     },
     {
@@ -281774,7 +281910,7 @@
       "to": "Artifact:src/casino.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6801
+        "line": 6835
       }
     },
     {
@@ -281837,16 +281973,7 @@
       "to": "Artifact:src/casino.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9947
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:CLAUDE.md",
-      "to": "Artifact:src/casino.js",
-      "provenance": {
-        "file": "CLAUDE.md",
-        "line": 9977
+        "line": 9981
       }
     },
     {
@@ -281855,7 +281982,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11558
+        "line": 11592
       }
     },
     {
@@ -281864,7 +281991,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12774
+        "line": 12808
       }
     },
     {
@@ -281873,7 +282000,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12807
+        "line": 12841
       }
     },
     {
@@ -281882,7 +282009,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13184
+        "line": 13218
       }
     },
     {
@@ -281891,7 +282018,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13538
+        "line": 13572
       }
     },
     {
@@ -281900,7 +282027,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16614
+        "line": 16648
       }
     },
     {
@@ -281909,7 +282036,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17762
+        "line": 17796
       }
     },
     {
@@ -281927,7 +282054,7 @@
       "to": "Artifact:src/circle.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10275
+        "line": 10309
       }
     },
     {
@@ -281936,7 +282063,7 @@
       "to": "Artifact:src/citymap.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10810
+        "line": 10844
       }
     },
     {
@@ -281945,7 +282072,7 @@
       "to": "Artifact:src/citywire.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10644
+        "line": 10678
       }
     },
     {
@@ -281954,7 +282081,7 @@
       "to": "Artifact:src/clues.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6759
+        "line": 6793
       }
     },
     {
@@ -281963,7 +282090,7 @@
       "to": "Artifact:src/clues.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6871
+        "line": 6905
       }
     },
     {
@@ -281972,7 +282099,7 @@
       "to": "Artifact:src/collection.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6569
+        "line": 6603
       }
     },
     {
@@ -281981,7 +282108,7 @@
       "to": "Artifact:src/collision.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11019
+        "line": 11053
       }
     },
     {
@@ -281990,7 +282117,7 @@
       "to": "Artifact:src/commission.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11528
+        "line": 11562
       }
     },
     {
@@ -282008,7 +282135,7 @@
       "to": "Artifact:src/commission.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6801
+        "line": 6835
       }
     },
     {
@@ -282017,7 +282144,7 @@
       "to": "Artifact:src/commission.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6958
+        "line": 6992
       }
     },
     {
@@ -282026,7 +282153,7 @@
       "to": "Artifact:src/community.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12280
+        "line": 12314
       }
     },
     {
@@ -282035,7 +282162,7 @@
       "to": "Artifact:src/community.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12380
+        "line": 12414
       }
     },
     {
@@ -282044,7 +282171,7 @@
       "to": "Artifact:src/contacts.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8674
+        "line": 8708
       }
     },
     {
@@ -282053,7 +282180,7 @@
       "to": "Artifact:src/contacts.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8872
+        "line": 8906
       }
     },
     {
@@ -282080,7 +282207,7 @@
       "to": "Artifact:src/convoy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16727
+        "line": 16761
       }
     },
     {
@@ -282089,7 +282216,7 @@
       "to": "Artifact:src/convoy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6955
+        "line": 6989
       }
     },
     {
@@ -282098,7 +282225,7 @@
       "to": "Artifact:src/corner.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8674
+        "line": 8708
       }
     },
     {
@@ -282107,7 +282234,7 @@
       "to": "Artifact:src/corner.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8871
+        "line": 8905
       }
     },
     {
@@ -282116,7 +282243,7 @@
       "to": "Artifact:src/crew.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10002
+        "line": 10036
       }
     },
     {
@@ -282125,7 +282252,7 @@
       "to": "Artifact:src/crew.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10097
+        "line": 10131
       }
     },
     {
@@ -282134,7 +282261,7 @@
       "to": "Artifact:src/crew.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10484
+        "line": 10518
       }
     },
     {
@@ -282143,7 +282270,7 @@
       "to": "Artifact:src/crew.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10903
+        "line": 10937
       }
     },
     {
@@ -282152,7 +282279,7 @@
       "to": "Artifact:src/day.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10863
+        "line": 10897
       }
     },
     {
@@ -282161,7 +282288,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12192
+        "line": 12226
       }
     },
     {
@@ -282170,7 +282297,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7733
+        "line": 7767
       }
     },
     {
@@ -282179,7 +282306,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8718
+        "line": 8752
       }
     },
     {
@@ -282188,7 +282315,7 @@
       "to": "Artifact:src/dbhealth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7595
+        "line": 7629
       }
     },
     {
@@ -282197,7 +282324,7 @@
       "to": "Artifact:src/deeds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12512
+        "line": 12546
       }
     },
     {
@@ -282206,7 +282333,7 @@
       "to": "Artifact:src/deeds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12557
+        "line": 12591
       }
     },
     {
@@ -282215,7 +282342,7 @@
       "to": "Artifact:src/deeds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12593
+        "line": 12627
       }
     },
     {
@@ -282224,7 +282351,7 @@
       "to": "Artifact:src/deeds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13205
+        "line": 13239
       }
     },
     {
@@ -282233,7 +282360,7 @@
       "to": "Artifact:src/deeds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13442
+        "line": 13476
       }
     },
     {
@@ -282242,7 +282369,7 @@
       "to": "Artifact:src/desk.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16214
+        "line": 16248
       }
     },
     {
@@ -282287,7 +282414,7 @@
       "to": "Artifact:src/dexbot.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12932
+        "line": 12966
       }
     },
     {
@@ -282296,7 +282423,7 @@
       "to": "Artifact:src/dexbot.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13488
+        "line": 13522
       }
     },
     {
@@ -282305,7 +282432,7 @@
       "to": "Artifact:src/dexbot.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13502
+        "line": 13536
       }
     },
     {
@@ -282314,7 +282441,7 @@
       "to": "Artifact:src/dexbot.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13528
+        "line": 13562
       }
     },
     {
@@ -282323,7 +282450,7 @@
       "to": "Artifact:src/diplomacy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6447
+        "line": 6481
       }
     },
     {
@@ -282332,7 +282459,7 @@
       "to": "Artifact:src/diplomacy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6456
+        "line": 6490
       }
     },
     {
@@ -282341,7 +282468,7 @@
       "to": "Artifact:src/diplomacy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9891
+        "line": 9925
       }
     },
     {
@@ -282350,7 +282477,7 @@
       "to": "Artifact:src/discovery.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10061
+        "line": 10095
       }
     },
     {
@@ -282359,7 +282486,7 @@
       "to": "Artifact:src/discovery.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10097
+        "line": 10131
       }
     },
     {
@@ -282368,7 +282495,7 @@
       "to": "Artifact:src/discovery.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10129
+        "line": 10163
       }
     },
     {
@@ -282377,7 +282504,7 @@
       "to": "Artifact:src/dispatch.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11050
+        "line": 11084
       }
     },
     {
@@ -282386,7 +282513,7 @@
       "to": "Artifact:src/drop.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12983
+        "line": 13017
       }
     },
     {
@@ -282395,7 +282522,7 @@
       "to": "Artifact:src/drop.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13001
+        "line": 13035
       }
     },
     {
@@ -282404,7 +282531,7 @@
       "to": "Artifact:src/drop.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13069
+        "line": 13103
       }
     },
     {
@@ -282413,7 +282540,7 @@
       "to": "Artifact:src/drop.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13146
+        "line": 13180
       }
     },
     {
@@ -282422,7 +282549,7 @@
       "to": "Artifact:src/duels.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6759
+        "line": 6793
       }
     },
     {
@@ -282431,7 +282558,7 @@
       "to": "Artifact:src/duels.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6856
+        "line": 6890
       }
     },
     {
@@ -282440,7 +282567,7 @@
       "to": "Artifact:src/dynasty.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15420
+        "line": 15454
       }
     },
     {
@@ -282449,7 +282576,7 @@
       "to": "Artifact:src/dynasty.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6509
+        "line": 6543
       }
     },
     {
@@ -282458,7 +282585,7 @@
       "to": "Artifact:src/economy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13204
+        "line": 13238
       }
     },
     {
@@ -282494,7 +282621,7 @@
       "to": "Artifact:src/economy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6916
+        "line": 6950
       }
     },
     {
@@ -282521,7 +282648,7 @@
       "to": "Artifact:src/estate.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6801
+        "line": 6835
       }
     },
     {
@@ -282530,7 +282657,7 @@
       "to": "Artifact:src/estate.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6971
+        "line": 7005
       }
     },
     {
@@ -282539,7 +282666,7 @@
       "to": "Artifact:src/events.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10208
+        "line": 10242
       }
     },
     {
@@ -282548,7 +282675,7 @@
       "to": "Artifact:src/events.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10212
+        "line": 10246
       }
     },
     {
@@ -282557,7 +282684,7 @@
       "to": "Artifact:src/events.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10251
+        "line": 10285
       }
     },
     {
@@ -282566,7 +282693,7 @@
       "to": "Artifact:src/events.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10367
+        "line": 10401
       }
     },
     {
@@ -282575,7 +282702,7 @@
       "to": "Artifact:src/events.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16113
+        "line": 16147
       }
     },
     {
@@ -282584,7 +282711,7 @@
       "to": "Artifact:src/exchange.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17721
+        "line": 17755
       }
     },
     {
@@ -282593,7 +282720,7 @@
       "to": "Artifact:src/exchange.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7893
+        "line": 7927
       }
     },
     {
@@ -282602,7 +282729,7 @@
       "to": "Artifact:src/explore.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10698
+        "line": 10732
       }
     },
     {
@@ -282611,7 +282738,7 @@
       "to": "Artifact:src/fairness.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16174
+        "line": 16208
       }
     },
     {
@@ -282620,7 +282747,7 @@
       "to": "Artifact:src/favors.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8828
+        "line": 8862
       }
     },
     {
@@ -282647,7 +282774,7 @@
       "to": "Artifact:src/firstblood.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10967
+        "line": 11001
       }
     },
     {
@@ -282656,7 +282783,7 @@
       "to": "Artifact:src/firsts.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13240
+        "line": 13274
       }
     },
     {
@@ -282665,16 +282792,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10484
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:CLAUDE.md",
-      "to": "Artifact:src/game.js",
-      "provenance": {
-        "file": "CLAUDE.md",
-        "line": 10902
+        "line": 10518
       }
     },
     {
@@ -282692,7 +282810,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13203
+        "line": 10970
       }
     },
     {
@@ -282701,7 +282819,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15497
+        "line": 13237
       }
     },
     {
@@ -282710,7 +282828,16 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15538
+        "line": 15531
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 15572
       }
     },
     {
@@ -282809,7 +282936,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6759
+        "line": 6793
       }
     },
     {
@@ -282818,7 +282945,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6888
+        "line": 6922
       }
     },
     {
@@ -282827,7 +282954,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7147
+        "line": 7181
       }
     },
     {
@@ -282836,7 +282963,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7204
+        "line": 7238
       }
     },
     {
@@ -282845,7 +282972,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8717
+        "line": 8751
       }
     },
     {
@@ -282854,7 +282981,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9227
+        "line": 9261
       }
     },
     {
@@ -282863,7 +282990,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9245
+        "line": 9279
       }
     },
     {
@@ -282872,7 +282999,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9266
+        "line": 9300
       }
     },
     {
@@ -282881,7 +283008,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9714
+        "line": 9748
       }
     },
     {
@@ -282890,7 +283017,7 @@
       "to": "Artifact:src/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10935
+        "line": 10969
       }
     },
     {
@@ -282908,7 +283035,7 @@
       "to": "Artifact:src/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15497
+        "line": 15531
       }
     },
     {
@@ -283007,7 +283134,7 @@
       "to": "Artifact:src/heists.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6863
+        "line": 6897
       }
     },
     {
@@ -283016,7 +283143,7 @@
       "to": "Artifact:src/home.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15832
+        "line": 15866
       }
     },
     {
@@ -283025,7 +283152,7 @@
       "to": "Artifact:src/honor.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15420
+        "line": 15454
       }
     },
     {
@@ -283034,7 +283161,7 @@
       "to": "Artifact:src/honor.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6447
+        "line": 6481
       }
     },
     {
@@ -283043,7 +283170,7 @@
       "to": "Artifact:src/honor.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6929
+        "line": 6963
       }
     },
     {
@@ -283052,7 +283179,7 @@
       "to": "Artifact:src/hustle.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8362
+        "line": 8396
       }
     },
     {
@@ -283061,7 +283188,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10902
+        "line": 10936
       }
     },
     {
@@ -283079,7 +283206,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16141
+        "line": 16175
       }
     },
     {
@@ -283142,7 +283269,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6072
+        "line": 6106
       }
     },
     {
@@ -283151,7 +283278,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6179
+        "line": 6213
       }
     },
     {
@@ -283160,7 +283287,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6882
+        "line": 6916
       }
     },
     {
@@ -283169,7 +283296,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7147
+        "line": 7181
       }
     },
     {
@@ -283178,7 +283305,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7171
+        "line": 7205
       }
     },
     {
@@ -283196,7 +283323,7 @@
       "to": "Artifact:src/kitchen.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16727
+        "line": 16761
       }
     },
     {
@@ -283214,7 +283341,7 @@
       "to": "Artifact:src/kitchen.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6909
+        "line": 6943
       }
     },
     {
@@ -283223,7 +283350,7 @@
       "to": "Artifact:src/kitchen.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7231
+        "line": 7265
       }
     },
     {
@@ -283250,7 +283377,7 @@
       "to": "Artifact:src/loans.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16139
+        "line": 16173
       }
     },
     {
@@ -283295,7 +283422,7 @@
       "to": "Artifact:src/loans.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6801
+        "line": 6835
       }
     },
     {
@@ -283331,7 +283458,7 @@
       "to": "Artifact:src/megaproject.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6722
+        "line": 6756
       }
     },
     {
@@ -283340,7 +283467,7 @@
       "to": "Artifact:src/megaproject.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6922
+        "line": 6956
       }
     },
     {
@@ -283349,7 +283476,7 @@
       "to": "Artifact:src/memo.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16926
+        "line": 16960
       }
     },
     {
@@ -283358,7 +283485,7 @@
       "to": "Artifact:src/mentor.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10207
+        "line": 10241
       }
     },
     {
@@ -283367,7 +283494,7 @@
       "to": "Artifact:src/mentor.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10220
+        "line": 10254
       }
     },
     {
@@ -283376,7 +283503,7 @@
       "to": "Artifact:src/mentor.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10251
+        "line": 10285
       }
     },
     {
@@ -283394,7 +283521,7 @@
       "to": "Artifact:src/notoriety.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6993
+        "line": 7027
       }
     },
     {
@@ -283403,7 +283530,7 @@
       "to": "Artifact:src/npcwar.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9862
+        "line": 9896
       }
     },
     {
@@ -283412,7 +283539,7 @@
       "to": "Artifact:src/npcwar.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9891
+        "line": 9925
       }
     },
     {
@@ -283421,7 +283548,7 @@
       "to": "Artifact:src/npcwar.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9918
+        "line": 9952
       }
     },
     {
@@ -283439,7 +283566,7 @@
       "to": "Artifact:src/ops.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10839
+        "line": 10873
       }
     },
     {
@@ -283448,7 +283575,7 @@
       "to": "Artifact:src/ops.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11808
+        "line": 11842
       }
     },
     {
@@ -283457,7 +283584,7 @@
       "to": "Artifact:src/ops.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17429
+        "line": 17463
       }
     },
     {
@@ -283493,7 +283620,7 @@
       "to": "Artifact:src/ops.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9770
+        "line": 9804
       }
     },
     {
@@ -283511,7 +283638,7 @@
       "to": "Artifact:src/pass.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6968
+        "line": 7002
       }
     },
     {
@@ -283520,7 +283647,7 @@
       "to": "Artifact:src/payroll.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13031
+        "line": 13065
       }
     },
     {
@@ -283529,7 +283656,7 @@
       "to": "Artifact:src/pen.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15420
+        "line": 15454
       }
     },
     {
@@ -283574,7 +283701,7 @@
       "to": "Artifact:src/people.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9736
+        "line": 9770
       }
     },
     {
@@ -283583,7 +283710,7 @@
       "to": "Artifact:src/people.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9770
+        "line": 9804
       }
     },
     {
@@ -283592,7 +283719,7 @@
       "to": "Artifact:src/phone.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6658
+        "line": 6692
       }
     },
     {
@@ -283601,7 +283728,7 @@
       "to": "Artifact:src/phone.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6694
+        "line": 6728
       }
     },
     {
@@ -283610,7 +283737,7 @@
       "to": "Artifact:src/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16140
+        "line": 16174
       }
     },
     {
@@ -283619,7 +283746,7 @@
       "to": "Artifact:src/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7425
+        "line": 7459
       }
     },
     {
@@ -283628,7 +283755,7 @@
       "to": "Artifact:src/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7467
+        "line": 7501
       }
     },
     {
@@ -283637,7 +283764,7 @@
       "to": "Artifact:src/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7532
+        "line": 7566
       }
     },
     {
@@ -283646,7 +283773,7 @@
       "to": "Artifact:src/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8718
+        "line": 8752
       }
     },
     {
@@ -283655,16 +283782,7 @@
       "to": "Artifact:src/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9947
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:CLAUDE.md",
-      "to": "Artifact:src/port.js",
-      "provenance": {
-        "file": "CLAUDE.md",
-        "line": 6115
+        "line": 9981
       }
     },
     {
@@ -283682,7 +283800,7 @@
       "to": "Artifact:src/port.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6178
+        "line": 6183
       }
     },
     {
@@ -283691,7 +283809,7 @@
       "to": "Artifact:src/port.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6194
+        "line": 6212
       }
     },
     {
@@ -283700,7 +283818,16 @@
       "to": "Artifact:src/port.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6380
+        "line": 6228
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:src/port.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 6414
       }
     },
     {
@@ -283763,7 +283890,7 @@
       "to": "Artifact:src/portrait.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11965
+        "line": 11999
       }
     },
     {
@@ -283772,7 +283899,7 @@
       "to": "Artifact:src/portrait.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12808
+        "line": 12842
       }
     },
     {
@@ -283781,7 +283908,7 @@
       "to": "Artifact:src/preflight.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10997
+        "line": 11031
       }
     },
     {
@@ -283790,7 +283917,7 @@
       "to": "Artifact:src/preflight.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11807
+        "line": 11841
       }
     },
     {
@@ -283835,7 +283962,7 @@
       "to": "Artifact:src/primetime.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10724
+        "line": 10758
       }
     },
     {
@@ -283844,7 +283971,7 @@
       "to": "Artifact:src/primetime.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10762
+        "line": 10796
       }
     },
     {
@@ -283853,7 +283980,7 @@
       "to": "Artifact:src/primetime.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10783
+        "line": 10817
       }
     },
     {
@@ -283862,7 +283989,7 @@
       "to": "Artifact:src/push.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10330
+        "line": 10364
       }
     },
     {
@@ -283871,7 +283998,7 @@
       "to": "Artifact:src/push.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10996
+        "line": 11030
       }
     },
     {
@@ -283880,7 +284007,7 @@
       "to": "Artifact:src/races.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16727
+        "line": 10010
       }
     },
     {
@@ -283889,7 +284016,7 @@
       "to": "Artifact:src/races.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 5989
+        "line": 16761
       }
     },
     {
@@ -283898,7 +284025,7 @@
       "to": "Artifact:src/races.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6031
+        "line": 5879
       }
     },
     {
@@ -283907,7 +284034,7 @@
       "to": "Artifact:src/races.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6071
+        "line": 6023
       }
     },
     {
@@ -283916,7 +284043,16 @@
       "to": "Artifact:src/races.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9976
+        "line": 6065
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:src/races.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 6105
       }
     },
     {
@@ -283934,7 +284070,7 @@
       "to": "Artifact:src/regimen.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8274
+        "line": 8308
       }
     },
     {
@@ -283943,7 +284079,7 @@
       "to": "Artifact:src/ring.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6801
+        "line": 6835
       }
     },
     {
@@ -283952,7 +284088,7 @@
       "to": "Artifact:src/ring.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6822
+        "line": 6856
       }
     },
     {
@@ -283961,7 +284097,7 @@
       "to": "Artifact:src/rivals.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 18201
+        "line": 18235
       }
     },
     {
@@ -283970,7 +284106,7 @@
       "to": "Artifact:src/rivals.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8580
+        "line": 8614
       }
     },
     {
@@ -283988,7 +284124,7 @@
       "to": "Artifact:src/router.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11492
+        "line": 11526
       }
     },
     {
@@ -283997,7 +284133,7 @@
       "to": "Artifact:src/routes/deeds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12512
+        "line": 12546
       }
     },
     {
@@ -284006,7 +284142,7 @@
       "to": "Artifact:src/routes/deeds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12557
+        "line": 12591
       }
     },
     {
@@ -284015,7 +284151,7 @@
       "to": "Artifact:src/routes/deeds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12594
+        "line": 12628
       }
     },
     {
@@ -284024,7 +284160,7 @@
       "to": "Artifact:src/routes/modtools.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11919
+        "line": 11953
       }
     },
     {
@@ -284222,7 +284358,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6031
+        "line": 6065
       }
     },
     {
@@ -284231,7 +284367,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6071
+        "line": 6105
       }
     },
     {
@@ -284240,7 +284376,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6149
+        "line": 6183
       }
     },
     {
@@ -284249,7 +284385,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6178
+        "line": 6212
       }
     },
     {
@@ -284258,7 +284394,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6194
+        "line": 6228
       }
     },
     {
@@ -284267,16 +284403,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6288
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:CLAUDE.md",
-      "to": "Artifact:src/rules.js",
-      "provenance": {
-        "file": "CLAUDE.md",
-        "line": 6346
+        "line": 6322
       }
     },
     {
@@ -284294,7 +284421,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6871
+        "line": 6414
       }
     },
     {
@@ -284303,7 +284430,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6877
+        "line": 6905
       }
     },
     {
@@ -284312,7 +284439,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6882
+        "line": 6911
       }
     },
     {
@@ -284321,7 +284448,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6888
+        "line": 6916
       }
     },
     {
@@ -284330,7 +284457,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7115
+        "line": 6922
       }
     },
     {
@@ -284339,7 +284466,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7147
+        "line": 7149
       }
     },
     {
@@ -284348,7 +284475,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7171
+        "line": 7181
       }
     },
     {
@@ -284357,7 +284484,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7203
+        "line": 7205
       }
     },
     {
@@ -284366,7 +284493,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7230
+        "line": 7237
       }
     },
     {
@@ -284375,7 +284502,16 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7334
+        "line": 7264
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 7368
       }
     },
     {
@@ -284384,7 +284520,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10519
+        "line": 10553
       }
     },
     {
@@ -284393,7 +284529,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10902
+        "line": 10936
       }
     },
     {
@@ -284402,7 +284538,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10935
+        "line": 10969
       }
     },
     {
@@ -284411,7 +284547,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11807
+        "line": 11841
       }
     },
     {
@@ -284420,7 +284556,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13202
+        "line": 13236
       }
     },
     {
@@ -284429,7 +284565,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13300
+        "line": 13334
       }
     },
     {
@@ -284438,7 +284574,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16089
+        "line": 16123
       }
     },
     {
@@ -284447,7 +284583,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16111
+        "line": 16145
       }
     },
     {
@@ -284456,7 +284592,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16138
+        "line": 16172
       }
     },
     {
@@ -284465,7 +284601,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16213
+        "line": 16247
       }
     },
     {
@@ -284474,7 +284610,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16387
+        "line": 16421
       }
     },
     {
@@ -284483,7 +284619,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16614
+        "line": 16648
       }
     },
     {
@@ -284492,7 +284628,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16698
+        "line": 16732
       }
     },
     {
@@ -284501,7 +284637,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16725
+        "line": 16759
       }
     },
     {
@@ -284645,7 +284781,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7336
+        "line": 7370
       }
     },
     {
@@ -284654,7 +284790,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9157
+        "line": 9191
       }
     },
     {
@@ -284663,7 +284799,7 @@
       "to": "Artifact:src/rules.tail.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9266
+        "line": 9300
       }
     },
     {
@@ -284672,7 +284808,7 @@
       "to": "Artifact:src/rwaregistrylifecycle.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 18202
+        "line": 18236
       }
     },
     {
@@ -284690,7 +284826,7 @@
       "to": "Artifact:src/secrets.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6569
+        "line": 6603
       }
     },
     {
@@ -284699,7 +284835,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10129
+        "line": 10163
       }
     },
     {
@@ -284708,7 +284844,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11083
+        "line": 11117
       }
     },
     {
@@ -284717,7 +284853,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11412
+        "line": 11446
       }
     },
     {
@@ -284726,7 +284862,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13185
+        "line": 13219
       }
     },
     {
@@ -284744,7 +284880,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16090
+        "line": 16124
       }
     },
     {
@@ -284753,7 +284889,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16113
+        "line": 16147
       }
     },
     {
@@ -284762,7 +284898,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17471
+        "line": 17505
       }
     },
     {
@@ -284906,7 +285042,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6659
+        "line": 6693
       }
     },
     {
@@ -284915,7 +285051,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6695
+        "line": 6729
       }
     },
     {
@@ -284924,7 +285060,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7171
+        "line": 7205
       }
     },
     {
@@ -284933,7 +285069,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7204
+        "line": 7238
       }
     },
     {
@@ -284942,7 +285078,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7231
+        "line": 7265
       }
     },
     {
@@ -284951,7 +285087,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9267
+        "line": 9301
       }
     },
     {
@@ -284960,7 +285096,7 @@
       "to": "Artifact:src/shipment.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13240
+        "line": 13274
       }
     },
     {
@@ -284969,7 +285105,7 @@
       "to": "Artifact:src/shipment.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13301
+        "line": 13335
       }
     },
     {
@@ -285059,7 +285195,7 @@
       "to": "Artifact:src/social.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6380
+        "line": 6414
       }
     },
     {
@@ -285068,7 +285204,7 @@
       "to": "Artifact:src/social.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7114
+        "line": 7148
       }
     },
     {
@@ -285077,7 +285213,7 @@
       "to": "Artifact:src/social.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7147
+        "line": 7181
       }
     },
     {
@@ -285086,7 +285222,7 @@
       "to": "Artifact:src/social.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7171
+        "line": 7205
       }
     },
     {
@@ -285095,7 +285231,7 @@
       "to": "Artifact:src/social.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7231
+        "line": 7265
       }
     },
     {
@@ -285104,7 +285240,7 @@
       "to": "Artifact:src/social/combat.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10252
+        "line": 10286
       }
     },
     {
@@ -285113,7 +285249,7 @@
       "to": "Artifact:src/social/combat.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8630
+        "line": 8664
       }
     },
     {
@@ -285122,7 +285258,7 @@
       "to": "Artifact:src/social/combat.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8717
+        "line": 8751
       }
     },
     {
@@ -285131,7 +285267,7 @@
       "to": "Artifact:src/social/contracts.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17977
+        "line": 18011
       }
     },
     {
@@ -285176,7 +285312,7 @@
       "to": "Artifact:src/social/shared.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9551
+        "line": 9585
       }
     },
     {
@@ -285185,7 +285321,7 @@
       "to": "Artifact:src/sol.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13145
+        "line": 13179
       }
     },
     {
@@ -285194,7 +285330,7 @@
       "to": "Artifact:src/soldiers.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6509
+        "line": 6543
       }
     },
     {
@@ -285203,7 +285339,7 @@
       "to": "Artifact:src/soldiers.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6888
+        "line": 6922
       }
     },
     {
@@ -285221,7 +285357,7 @@
       "to": "Artifact:src/sov.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6447
+        "line": 6481
       }
     },
     {
@@ -285230,7 +285366,7 @@
       "to": "Artifact:src/sov.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6463
+        "line": 6497
       }
     },
     {
@@ -285239,7 +285375,7 @@
       "to": "Artifact:src/sov.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6882
+        "line": 6916
       }
     },
     {
@@ -285284,7 +285420,16 @@
       "to": "Artifact:src/stable.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 18242
+        "line": 10010
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:src/stable.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 18276
       }
     },
     {
@@ -285308,19 +285453,10 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:CLAUDE.md",
-      "to": "Artifact:src/stable.js",
-      "provenance": {
-        "file": "CLAUDE.md",
-        "line": 9976
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:CLAUDE.md",
       "to": "Artifact:src/standing.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7100
+        "line": 7134
       }
     },
     {
@@ -285329,7 +285465,7 @@
       "to": "Artifact:src/stockdeliver.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12725
+        "line": 12759
       }
     },
     {
@@ -285338,7 +285474,7 @@
       "to": "Artifact:src/stockdeliver.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12776
+        "line": 12810
       }
     },
     {
@@ -285347,7 +285483,7 @@
       "to": "Artifact:src/stockdeliver.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12807
+        "line": 12841
       }
     },
     {
@@ -285356,7 +285492,7 @@
       "to": "Artifact:src/stockdeliver.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13085
+        "line": 13119
       }
     },
     {
@@ -285365,7 +285501,7 @@
       "to": "Artifact:src/stockdeliver.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13442
+        "line": 13476
       }
     },
     {
@@ -285374,7 +285510,7 @@
       "to": "Artifact:src/store.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12806
+        "line": 12840
       }
     },
     {
@@ -285419,7 +285555,7 @@
       "to": "Artifact:src/store.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6968
+        "line": 7002
       }
     },
     {
@@ -285428,7 +285564,7 @@
       "to": "Artifact:src/streak.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10274
+        "line": 10308
       }
     },
     {
@@ -285437,7 +285573,7 @@
       "to": "Artifact:src/streak.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10519
+        "line": 10553
       }
     },
     {
@@ -285446,7 +285582,7 @@
       "to": "Artifact:src/territory.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15585
+        "line": 15619
       }
     },
     {
@@ -285455,7 +285591,7 @@
       "to": "Artifact:src/territory.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17213
+        "line": 17247
       }
     },
     {
@@ -285509,7 +285645,7 @@
       "to": "Artifact:src/territory.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6287
+        "line": 6321
       }
     },
     {
@@ -285527,7 +285663,7 @@
       "to": "Artifact:src/territory.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6877
+        "line": 6911
       }
     },
     {
@@ -285536,7 +285672,7 @@
       "to": "Artifact:src/tokenhealth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12327
+        "line": 12361
       }
     },
     {
@@ -285545,7 +285681,7 @@
       "to": "Artifact:src/treasury.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11919
+        "line": 11953
       }
     },
     {
@@ -285554,7 +285690,7 @@
       "to": "Artifact:src/treasury.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17776
+        "line": 17810
       }
     },
     {
@@ -285680,7 +285816,7 @@
       "to": "Artifact:src/vouch.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10418
+        "line": 10452
       }
     },
     {
@@ -285689,7 +285825,7 @@
       "to": "Artifact:src/walletforge.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16651
+        "line": 16685
       }
     },
     {
@@ -285698,7 +285834,7 @@
       "to": "Artifact:src/walletforge.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16699
+        "line": 16733
       }
     },
     {
@@ -285707,7 +285843,7 @@
       "to": "Artifact:src/walletforge.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16727
+        "line": 16761
       }
     },
     {
@@ -285716,7 +285852,7 @@
       "to": "Artifact:src/watcher.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12774
+        "line": 12808
       }
     },
     {
@@ -285725,7 +285861,7 @@
       "to": "Artifact:src/watcher.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12806
+        "line": 12840
       }
     },
     {
@@ -285752,7 +285888,7 @@
       "to": "Artifact:src/watcher.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9074
+        "line": 9108
       }
     },
     {
@@ -285797,7 +285933,7 @@
       "to": "Artifact:src/wire.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6345
+        "line": 6379
       }
     },
     {
@@ -285815,7 +285951,7 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17051
+        "line": 17085
       }
     },
     {
@@ -285824,7 +285960,7 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17481
+        "line": 17515
       }
     },
     {
@@ -285878,7 +286014,7 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6072
+        "line": 6106
       }
     },
     {
@@ -285887,7 +286023,7 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6346
+        "line": 6380
       }
     },
     {
@@ -285896,7 +286032,7 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6659
+        "line": 6693
       }
     },
     {
@@ -285905,7 +286041,7 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9864
+        "line": 9898
       }
     },
     {
@@ -285914,7 +286050,7 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9893
+        "line": 9927
       }
     },
     {
@@ -285968,7 +286104,7 @@
       "to": "Artifact:test/agent-alpha.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17346
+        "line": 17380
       }
     },
     {
@@ -285995,7 +286131,7 @@
       "to": "Artifact:test/auction.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6984
+        "line": 7018
       }
     },
     {
@@ -286004,7 +286140,7 @@
       "to": "Artifact:test/avatar.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10307
+        "line": 10341
       }
     },
     {
@@ -286013,7 +286149,7 @@
       "to": "Artifact:test/avatar.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10322
+        "line": 10356
       }
     },
     {
@@ -286022,7 +286158,7 @@
       "to": "Artifact:test/bank.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12060
+        "line": 12094
       }
     },
     {
@@ -286031,7 +286167,7 @@
       "to": "Artifact:test/bank.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12074
+        "line": 12108
       }
     },
     {
@@ -286040,7 +286176,7 @@
       "to": "Artifact:test/bank.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12446
+        "line": 12480
       }
     },
     {
@@ -286157,7 +286293,7 @@
       "to": "Artifact:test/brokers.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12856
+        "line": 12890
       }
     },
     {
@@ -286166,7 +286302,7 @@
       "to": "Artifact:test/bulletin.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10672
+        "line": 10706
       }
     },
     {
@@ -286175,7 +286311,7 @@
       "to": "Artifact:test/career.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8437
+        "line": 8471
       }
     },
     {
@@ -286184,7 +286320,7 @@
       "to": "Artifact:test/career.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8452
+        "line": 8486
       }
     },
     {
@@ -286193,7 +286329,7 @@
       "to": "Artifact:test/casino.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12041
+        "line": 12075
       }
     },
     {
@@ -286202,7 +286338,7 @@
       "to": "Artifact:test/casino.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15490
+        "line": 15524
       }
     },
     {
@@ -286211,7 +286347,7 @@
       "to": "Artifact:test/casino.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16091
+        "line": 16125
       }
     },
     {
@@ -286220,7 +286356,7 @@
       "to": "Artifact:test/casino.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16114
+        "line": 16148
       }
     },
     {
@@ -286229,7 +286365,7 @@
       "to": "Artifact:test/casino.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16177
+        "line": 16211
       }
     },
     {
@@ -286355,7 +286491,7 @@
       "to": "Artifact:test/chain.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11560
+        "line": 11594
       }
     },
     {
@@ -286364,7 +286500,7 @@
       "to": "Artifact:test/chain.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11571
+        "line": 11605
       }
     },
     {
@@ -286436,7 +286572,7 @@
       "to": "Artifact:test/chain.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6265
+        "line": 6299
       }
     },
     {
@@ -286445,7 +286581,7 @@
       "to": "Artifact:test/chain.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8571
+        "line": 8605
       }
     },
     {
@@ -286454,7 +286590,7 @@
       "to": "Artifact:test/circle.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10275
+        "line": 10309
       }
     },
     {
@@ -286463,7 +286599,7 @@
       "to": "Artifact:test/circle.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10298
+        "line": 10332
       }
     },
     {
@@ -286472,7 +286608,7 @@
       "to": "Artifact:test/citymap.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10811
+        "line": 10845
       }
     },
     {
@@ -286481,7 +286617,7 @@
       "to": "Artifact:test/citymap.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10826
+        "line": 10860
       }
     },
     {
@@ -286490,7 +286626,7 @@
       "to": "Artifact:test/citywide.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15925
+        "line": 15959
       }
     },
     {
@@ -286499,7 +286635,7 @@
       "to": "Artifact:test/citywide.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16010
+        "line": 16044
       }
     },
     {
@@ -286508,7 +286644,7 @@
       "to": "Artifact:test/citywire.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10660
+        "line": 10694
       }
     },
     {
@@ -286517,7 +286653,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11255
+        "line": 11289
       }
     },
     {
@@ -286526,7 +286662,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 14374
+        "line": 14408
       }
     },
     {
@@ -286535,7 +286671,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 14765
+        "line": 14799
       }
     },
     {
@@ -286544,7 +286680,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 14863
+        "line": 14897
       }
     },
     {
@@ -286553,7 +286689,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15091
+        "line": 15125
       }
     },
     {
@@ -286562,7 +286698,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15115
+        "line": 15149
       }
     },
     {
@@ -286571,7 +286707,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15258
+        "line": 15292
       }
     },
     {
@@ -286580,7 +286716,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15341
+        "line": 15375
       }
     },
     {
@@ -286589,7 +286725,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15385
+        "line": 15419
       }
     },
     {
@@ -286598,7 +286734,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15489
+        "line": 15523
       }
     },
     {
@@ -286607,7 +286743,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15538
+        "line": 15572
       }
     },
     {
@@ -286616,7 +286752,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15585
+        "line": 15619
       }
     },
     {
@@ -286625,7 +286761,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15628
+        "line": 15662
       }
     },
     {
@@ -286634,7 +286770,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15682
+        "line": 15716
       }
     },
     {
@@ -286643,7 +286779,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16297
+        "line": 16331
       }
     },
     {
@@ -286652,7 +286788,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16464
+        "line": 16498
       }
     },
     {
@@ -286661,7 +286797,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16851
+        "line": 16885
       }
     },
     {
@@ -286670,7 +286806,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16866
+        "line": 16900
       }
     },
     {
@@ -286679,7 +286815,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17161
+        "line": 17195
       }
     },
     {
@@ -286688,7 +286824,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17292
+        "line": 17326
       }
     },
     {
@@ -286697,7 +286833,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17338
+        "line": 17372
       }
     },
     {
@@ -286706,7 +286842,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17787
+        "line": 17821
       }
     },
     {
@@ -286715,7 +286851,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17905
+        "line": 17939
       }
     },
     {
@@ -286724,7 +286860,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 18253
+        "line": 18287
       }
     },
     {
@@ -286796,7 +286932,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7746
+        "line": 5848
       }
     },
     {
@@ -286805,7 +286941,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7878
+        "line": 7780
       }
     },
     {
@@ -286814,7 +286950,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8512
+        "line": 7912
       }
     },
     {
@@ -286823,7 +286959,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8863
+        "line": 8546
       }
     },
     {
@@ -286832,7 +286968,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9093
+        "line": 8897
       }
     },
     {
@@ -286841,7 +286977,16 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9598
+        "line": 9127
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:test/client.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 9632
       }
     },
     {
@@ -286850,7 +286995,7 @@
       "to": "Artifact:test/clues.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6760
+        "line": 6794
       }
     },
     {
@@ -286859,7 +287004,7 @@
       "to": "Artifact:test/clues.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6871
+        "line": 6905
       }
     },
     {
@@ -286868,7 +287013,7 @@
       "to": "Artifact:test/collision.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11020
+        "line": 11054
       }
     },
     {
@@ -286877,7 +287022,7 @@
       "to": "Artifact:test/collision.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11040
+        "line": 11074
       }
     },
     {
@@ -286886,7 +287031,7 @@
       "to": "Artifact:test/commission.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11532
+        "line": 11566
       }
     },
     {
@@ -286913,7 +287058,7 @@
       "to": "Artifact:test/community.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12281
+        "line": 12315
       }
     },
     {
@@ -286922,7 +287067,7 @@
       "to": "Artifact:test/community.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12316
+        "line": 12350
       }
     },
     {
@@ -286958,7 +287103,7 @@
       "to": "Artifact:test/convoy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16728
+        "line": 16762
       }
     },
     {
@@ -286967,7 +287112,7 @@
       "to": "Artifact:test/convoy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6994
+        "line": 7028
       }
     },
     {
@@ -286976,7 +287121,7 @@
       "to": "Artifact:test/convoy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7017
+        "line": 7051
       }
     },
     {
@@ -286985,7 +287130,7 @@
       "to": "Artifact:test/crew.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10052
+        "line": 10086
       }
     },
     {
@@ -286994,7 +287139,7 @@
       "to": "Artifact:test/crew.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10122
+        "line": 10156
       }
     },
     {
@@ -287003,7 +287148,7 @@
       "to": "Artifact:test/crew.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10486
+        "line": 10520
       }
     },
     {
@@ -287012,7 +287157,7 @@
       "to": "Artifact:test/crew.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10508
+        "line": 10542
       }
     },
     {
@@ -287021,7 +287166,7 @@
       "to": "Artifact:test/day.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10863
+        "line": 10897
       }
     },
     {
@@ -287030,7 +287175,7 @@
       "to": "Artifact:test/day.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10874
+        "line": 10908
       }
     },
     {
@@ -287039,7 +287184,7 @@
       "to": "Artifact:test/deeds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12512
+        "line": 12546
       }
     },
     {
@@ -287048,7 +287193,7 @@
       "to": "Artifact:test/deeds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12544
+        "line": 12578
       }
     },
     {
@@ -287057,25 +287202,7 @@
       "to": "Artifact:test/deeds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12557
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:CLAUDE.md",
-      "to": "Artifact:test/deeds.js",
-      "provenance": {
-        "file": "CLAUDE.md",
-        "line": 12586
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:CLAUDE.md",
-      "to": "Artifact:test/deeds.js",
-      "provenance": {
-        "file": "CLAUDE.md",
-        "line": 12594
+        "line": 12591
       }
     },
     {
@@ -287093,7 +287220,7 @@
       "to": "Artifact:test/deeds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12667
+        "line": 12628
       }
     },
     {
@@ -287102,7 +287229,7 @@
       "to": "Artifact:test/deeds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12777
+        "line": 12654
       }
     },
     {
@@ -287111,7 +287238,7 @@
       "to": "Artifact:test/deeds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13186
+        "line": 12701
       }
     },
     {
@@ -287120,7 +287247,7 @@
       "to": "Artifact:test/deeds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13197
+        "line": 12811
       }
     },
     {
@@ -287129,7 +287256,7 @@
       "to": "Artifact:test/deeds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13205
+        "line": 13220
       }
     },
     {
@@ -287138,7 +287265,7 @@
       "to": "Artifact:test/deeds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13232
+        "line": 13231
       }
     },
     {
@@ -287147,7 +287274,7 @@
       "to": "Artifact:test/deeds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13469
+        "line": 13239
       }
     },
     {
@@ -287156,7 +287283,7 @@
       "to": "Artifact:test/deeds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13539
+        "line": 13266
       }
     },
     {
@@ -287165,7 +287292,25 @@
       "to": "Artifact:test/deeds.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15241
+        "line": 13503
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:test/deeds.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 13573
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:test/deeds.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 15275
       }
     },
     {
@@ -287174,7 +287319,7 @@
       "to": "Artifact:test/desk.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16214
+        "line": 16248
       }
     },
     {
@@ -287237,7 +287382,7 @@
       "to": "Artifact:test/dexbot.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12932
+        "line": 12966
       }
     },
     {
@@ -287246,7 +287391,7 @@
       "to": "Artifact:test/discovery.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10061
+        "line": 10095
       }
     },
     {
@@ -287255,7 +287400,7 @@
       "to": "Artifact:test/discovery.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10088
+        "line": 10122
       }
     },
     {
@@ -287264,7 +287409,7 @@
       "to": "Artifact:test/discovery.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10120
+        "line": 10154
       }
     },
     {
@@ -287273,7 +287418,7 @@
       "to": "Artifact:test/discovery.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10130
+        "line": 10164
       }
     },
     {
@@ -287282,7 +287427,7 @@
       "to": "Artifact:test/discovery.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10144
+        "line": 10178
       }
     },
     {
@@ -287291,7 +287436,7 @@
       "to": "Artifact:test/dispatch.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11050
+        "line": 11084
       }
     },
     {
@@ -287300,7 +287445,7 @@
       "to": "Artifact:test/dispatch.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11071
+        "line": 11105
       }
     },
     {
@@ -287309,7 +287454,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11408
+        "line": 11442
       }
     },
     {
@@ -287318,7 +287463,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12329
+        "line": 12363
       }
     },
     {
@@ -287327,7 +287472,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12467
+        "line": 12501
       }
     },
     {
@@ -287336,7 +287481,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13418
+        "line": 13452
       }
     },
     {
@@ -287345,7 +287490,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13488
+        "line": 13522
       }
     },
     {
@@ -287354,7 +287499,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13529
+        "line": 13563
       }
     },
     {
@@ -287363,7 +287508,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13624
+        "line": 13658
       }
     },
     {
@@ -287372,7 +287517,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13942
+        "line": 13976
       }
     },
     {
@@ -287381,7 +287526,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 14146
+        "line": 14180
       }
     },
     {
@@ -287390,7 +287535,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 14221
+        "line": 14255
       }
     },
     {
@@ -287399,7 +287544,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 14844
+        "line": 14878
       }
     },
     {
@@ -287408,7 +287553,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16533
+        "line": 16567
       }
     },
     {
@@ -287417,7 +287562,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17584
+        "line": 17618
       }
     },
     {
@@ -287426,7 +287571,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17607
+        "line": 17641
       }
     },
     {
@@ -287471,7 +287616,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7697
+        "line": 7731
       }
     },
     {
@@ -287480,7 +287625,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9160
+        "line": 9194
       }
     },
     {
@@ -287489,7 +287634,7 @@
       "to": "Artifact:test/drop.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12983
+        "line": 13017
       }
     },
     {
@@ -287498,7 +287643,7 @@
       "to": "Artifact:test/drop.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13147
+        "line": 13181
       }
     },
     {
@@ -287507,7 +287652,7 @@
       "to": "Artifact:test/duels.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6760
+        "line": 6794
       }
     },
     {
@@ -287516,7 +287661,7 @@
       "to": "Artifact:test/duels.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6856
+        "line": 6890
       }
     },
     {
@@ -287525,7 +287670,7 @@
       "to": "Artifact:test/dynasty.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6509
+        "line": 6543
       }
     },
     {
@@ -287534,7 +287679,7 @@
       "to": "Artifact:test/dynasty.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6541
+        "line": 6575
       }
     },
     {
@@ -287543,7 +287688,7 @@
       "to": "Artifact:test/dynasty.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6889
+        "line": 6923
       }
     },
     {
@@ -287552,7 +287697,7 @@
       "to": "Artifact:test/economy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 14841
+        "line": 14875
       }
     },
     {
@@ -287561,7 +287706,7 @@
       "to": "Artifact:test/economy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16245
+        "line": 16279
       }
     },
     {
@@ -287651,7 +287796,7 @@
       "to": "Artifact:test/economy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7196
+        "line": 7230
       }
     },
     {
@@ -287660,7 +287805,7 @@
       "to": "Artifact:test/economy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7274
+        "line": 7308
       }
     },
     {
@@ -287669,7 +287814,7 @@
       "to": "Artifact:test/economy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8548
+        "line": 8582
       }
     },
     {
@@ -287678,7 +287823,7 @@
       "to": "Artifact:test/economy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8581
+        "line": 8615
       }
     },
     {
@@ -287687,7 +287832,7 @@
       "to": "Artifact:test/economy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8618
+        "line": 8652
       }
     },
     {
@@ -287696,7 +287841,7 @@
       "to": "Artifact:test/economy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8632
+        "line": 8666
       }
     },
     {
@@ -287705,7 +287850,7 @@
       "to": "Artifact:test/economy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8750
+        "line": 8784
       }
     },
     {
@@ -287714,7 +287859,7 @@
       "to": "Artifact:test/economy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9136
+        "line": 9170
       }
     },
     {
@@ -287723,7 +287868,7 @@
       "to": "Artifact:test/economy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9379
+        "line": 9413
       }
     },
     {
@@ -287768,7 +287913,7 @@
       "to": "Artifact:test/events.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10208
+        "line": 10242
       }
     },
     {
@@ -287777,7 +287922,7 @@
       "to": "Artifact:test/events.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10246
+        "line": 10280
       }
     },
     {
@@ -287786,7 +287931,7 @@
       "to": "Artifact:test/events.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10268
+        "line": 10302
       }
     },
     {
@@ -287795,7 +287940,7 @@
       "to": "Artifact:test/expansion.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6448
+        "line": 6482
       }
     },
     {
@@ -287804,7 +287949,7 @@
       "to": "Artifact:test/expansion.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6487
+        "line": 6521
       }
     },
     {
@@ -287813,7 +287958,7 @@
       "to": "Artifact:test/expansion.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6882
+        "line": 6916
       }
     },
     {
@@ -287822,7 +287967,7 @@
       "to": "Artifact:test/explore.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10699
+        "line": 10733
       }
     },
     {
@@ -287831,7 +287976,7 @@
       "to": "Artifact:test/explore.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10714
+        "line": 10748
       }
     },
     {
@@ -287840,7 +287985,7 @@
       "to": "Artifact:test/favors.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8829
+        "line": 8863
       }
     },
     {
@@ -287849,7 +287994,7 @@
       "to": "Artifact:test/firstblood.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10967
+        "line": 11001
       }
     },
     {
@@ -287858,7 +288003,7 @@
       "to": "Artifact:test/firstblood.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10989
+        "line": 11023
       }
     },
     {
@@ -287867,7 +288012,7 @@
       "to": "Artifact:test/firsts.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13241
+        "line": 13275
       }
     },
     {
@@ -287876,7 +288021,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12037
+        "line": 12071
       }
     },
     {
@@ -287885,7 +288030,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13727
+        "line": 13761
       }
     },
     {
@@ -287894,7 +288039,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13868
+        "line": 13902
       }
     },
     {
@@ -287903,7 +288048,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13989
+        "line": 14023
       }
     },
     {
@@ -287912,7 +288057,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 14067
+        "line": 14101
       }
     },
     {
@@ -287921,7 +288066,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 14280
+        "line": 14314
       }
     },
     {
@@ -287930,7 +288075,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 14340
+        "line": 14374
       }
     },
     {
@@ -287939,7 +288084,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 14548
+        "line": 14582
       }
     },
     {
@@ -287948,7 +288093,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 14676
+        "line": 14710
       }
     },
     {
@@ -287957,7 +288102,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15855
+        "line": 15889
       }
     },
     {
@@ -287966,7 +288111,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16390
+        "line": 16424
       }
     },
     {
@@ -287975,7 +288120,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16788
+        "line": 16822
       }
     },
     {
@@ -287984,7 +288129,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17022
+        "line": 17056
       }
     },
     {
@@ -287993,7 +288138,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17387
+        "line": 17421
       }
     },
     {
@@ -288002,7 +288147,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17499
+        "line": 17533
       }
     },
     {
@@ -288011,7 +288156,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17752
+        "line": 17786
       }
     },
     {
@@ -288020,7 +288165,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17889
+        "line": 17923
       }
     },
     {
@@ -288029,7 +288174,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 18110
+        "line": 18144
       }
     },
     {
@@ -288047,7 +288192,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9502
+        "line": 9536
       }
     },
     {
@@ -288056,7 +288201,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9565
+        "line": 9599
       }
     },
     {
@@ -288065,7 +288210,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10583
+        "line": 10617
       }
     },
     {
@@ -288074,7 +288219,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10903
+        "line": 10937
       }
     },
     {
@@ -288083,7 +288228,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10926
+        "line": 10960
       }
     },
     {
@@ -288092,7 +288237,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10936
+        "line": 10970
       }
     },
     {
@@ -288101,7 +288246,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10955
+        "line": 10989
       }
     },
     {
@@ -288110,7 +288255,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11437
+        "line": 11471
       }
     },
     {
@@ -288119,7 +288264,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11454
+        "line": 11488
       }
     },
     {
@@ -288128,7 +288273,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12486
+        "line": 12520
       }
     },
     {
@@ -288137,7 +288282,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15749
+        "line": 15783
       }
     },
     {
@@ -288326,7 +288471,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 5921
+        "line": 5955
       }
     },
     {
@@ -288353,7 +288498,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7033
+        "line": 7067
       }
     },
     {
@@ -288362,7 +288507,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7056
+        "line": 7090
       }
     },
     {
@@ -288371,7 +288516,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7232
+        "line": 7266
       }
     },
     {
@@ -288380,7 +288525,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7256
+        "line": 7290
       }
     },
     {
@@ -288389,7 +288534,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7353
+        "line": 7387
       }
     },
     {
@@ -288398,7 +288543,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7414
+        "line": 7448
       }
     },
     {
@@ -288407,7 +288552,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8375
+        "line": 8409
       }
     },
     {
@@ -288416,7 +288561,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8873
+        "line": 8907
       }
     },
     {
@@ -288425,7 +288570,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9201
+        "line": 9235
       }
     },
     {
@@ -288434,7 +288579,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9227
+        "line": 9261
       }
     },
     {
@@ -288443,7 +288588,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9237
+        "line": 9271
       }
     },
     {
@@ -288452,7 +288597,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9246
+        "line": 9280
       }
     },
     {
@@ -288461,7 +288606,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9263
+        "line": 9297
       }
     },
     {
@@ -288470,7 +288615,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9267
+        "line": 9301
       }
     },
     {
@@ -288479,7 +288624,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9284
+        "line": 9318
       }
     },
     {
@@ -288488,7 +288633,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9290
+        "line": 9324
       }
     },
     {
@@ -288497,7 +288642,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9302
+        "line": 9336
       }
     },
     {
@@ -288506,7 +288651,7 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9725
+        "line": 9759
       }
     },
     {
@@ -288515,7 +288660,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10540
+        "line": 10574
       }
     },
     {
@@ -288524,7 +288669,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10625
+        "line": 10659
       }
     },
     {
@@ -288533,7 +288678,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10849
+        "line": 10883
       }
     },
     {
@@ -288542,7 +288687,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10885
+        "line": 10919
       }
     },
     {
@@ -288551,7 +288696,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10895
+        "line": 10929
       }
     },
     {
@@ -288560,7 +288705,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10937
+        "line": 10971
       }
     },
     {
@@ -288569,7 +288714,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10957
+        "line": 10991
       }
     },
     {
@@ -288578,7 +288723,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11407
+        "line": 11441
       }
     },
     {
@@ -288587,7 +288732,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11413
+        "line": 11447
       }
     },
     {
@@ -288596,7 +288741,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11427
+        "line": 11461
       }
     },
     {
@@ -288605,7 +288750,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17496
+        "line": 17530
       }
     },
     {
@@ -288686,7 +288831,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 5924
+        "line": 5958
       }
     },
     {
@@ -288695,7 +288840,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6659
+        "line": 6693
       }
     },
     {
@@ -288704,7 +288849,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6677
+        "line": 6711
       }
     },
     {
@@ -288713,7 +288858,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6695
+        "line": 6729
       }
     },
     {
@@ -288722,7 +288867,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6714
+        "line": 6748
       }
     },
     {
@@ -288731,7 +288876,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7591
+        "line": 7625
       }
     },
     {
@@ -288740,7 +288885,7 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8873
+        "line": 8907
       }
     },
     {
@@ -288767,7 +288912,7 @@
       "to": "Artifact:test/heists.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6863
+        "line": 6897
       }
     },
     {
@@ -288776,7 +288921,7 @@
       "to": "Artifact:test/home.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15887
+        "line": 15921
       }
     },
     {
@@ -288785,7 +288930,7 @@
       "to": "Artifact:test/home.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15891
+        "line": 15925
       }
     },
     {
@@ -288794,7 +288939,7 @@
       "to": "Artifact:test/home.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16010
+        "line": 16044
       }
     },
     {
@@ -288803,7 +288948,7 @@
       "to": "Artifact:test/intrigue.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6569
+        "line": 6603
       }
     },
     {
@@ -288866,7 +289011,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10249
+        "line": 10283
       }
     },
     {
@@ -288875,7 +289020,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10994
+        "line": 11028
       }
     },
     {
@@ -288884,7 +289029,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12492
+        "line": 12526
       }
     },
     {
@@ -288893,7 +289038,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12582
+        "line": 12616
       }
     },
     {
@@ -288902,7 +289047,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12625
+        "line": 12659
       }
     },
     {
@@ -288911,7 +289056,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13235
+        "line": 13269
       }
     },
     {
@@ -288938,7 +289083,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7981
+        "line": 8015
       }
     },
     {
@@ -288947,7 +289092,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8242
+        "line": 8276
       }
     },
     {
@@ -288956,7 +289101,7 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9437
+        "line": 9471
       }
     },
     {
@@ -288965,7 +289110,7 @@
       "to": "Artifact:test/loans.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16144
+        "line": 16178
       }
     },
     {
@@ -288974,7 +289119,7 @@
       "to": "Artifact:test/loans.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16163
+        "line": 16197
       }
     },
     {
@@ -289055,7 +289200,7 @@
       "to": "Artifact:test/made.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16067
+        "line": 16101
       }
     },
     {
@@ -289127,7 +289272,7 @@
       "to": "Artifact:test/mastery.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9246
+        "line": 9280
       }
     },
     {
@@ -289136,7 +289281,7 @@
       "to": "Artifact:test/mastery.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9260
+        "line": 9294
       }
     },
     {
@@ -289145,7 +289290,7 @@
       "to": "Artifact:test/mcp.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17375
+        "line": 17409
       }
     },
     {
@@ -289154,7 +289299,7 @@
       "to": "Artifact:test/mcp.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17401
+        "line": 17435
       }
     },
     {
@@ -289163,7 +289308,7 @@
       "to": "Artifact:test/megaproject.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6722
+        "line": 6756
       }
     },
     {
@@ -289172,7 +289317,7 @@
       "to": "Artifact:test/megaproject.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6744
+        "line": 6778
       }
     },
     {
@@ -289181,7 +289326,7 @@
       "to": "Artifact:test/mentor.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10207
+        "line": 10241
       }
     },
     {
@@ -289190,7 +289335,7 @@
       "to": "Artifact:test/mentor.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10243
+        "line": 10277
       }
     },
     {
@@ -289199,7 +289344,7 @@
       "to": "Artifact:test/mentor.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10267
+        "line": 10301
       }
     },
     {
@@ -289208,7 +289353,7 @@
       "to": "Artifact:test/migrate.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6485
+        "line": 6519
       }
     },
     {
@@ -289217,7 +289362,7 @@
       "to": "Artifact:test/migrate.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9039
+        "line": 9073
       }
     },
     {
@@ -289235,7 +289380,7 @@
       "to": "Artifact:test/npcwar.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9864
+        "line": 9898
       }
     },
     {
@@ -289244,7 +289389,7 @@
       "to": "Artifact:test/npcwar.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9882
+        "line": 9916
       }
     },
     {
@@ -289253,7 +289398,7 @@
       "to": "Artifact:test/npcwar.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9893
+        "line": 9927
       }
     },
     {
@@ -289262,7 +289407,7 @@
       "to": "Artifact:test/npcwar.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9908
+        "line": 9942
       }
     },
     {
@@ -289271,7 +289416,7 @@
       "to": "Artifact:test/npcwar.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9919
+        "line": 9953
       }
     },
     {
@@ -289280,7 +289425,7 @@
       "to": "Artifact:test/npcwar.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9928
+        "line": 9962
       }
     },
     {
@@ -289307,7 +289452,7 @@
       "to": "Artifact:test/payroll.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13031
+        "line": 13065
       }
     },
     {
@@ -289388,7 +289533,7 @@
       "to": "Artifact:test/pen.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 5967
+        "line": 6001
       }
     },
     {
@@ -289397,7 +289542,7 @@
       "to": "Artifact:test/pen.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8403
+        "line": 8437
       }
     },
     {
@@ -289406,7 +289551,7 @@
       "to": "Artifact:test/people.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9737
+        "line": 9771
       }
     },
     {
@@ -289415,7 +289560,7 @@
       "to": "Artifact:test/people.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9772
+        "line": 9806
       }
     },
     {
@@ -289424,7 +289569,7 @@
       "to": "Artifact:test/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12144
+        "line": 10001
       }
     },
     {
@@ -289433,7 +289578,7 @@
       "to": "Artifact:test/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12488
+        "line": 10012
       }
     },
     {
@@ -289442,7 +289587,7 @@
       "to": "Artifact:test/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17250
+        "line": 10022
       }
     },
     {
@@ -289451,7 +289596,7 @@
       "to": "Artifact:test/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7426
+        "line": 12178
       }
     },
     {
@@ -289460,7 +289605,7 @@
       "to": "Artifact:test/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7468
+        "line": 12522
       }
     },
     {
@@ -289469,7 +289614,7 @@
       "to": "Artifact:test/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7495
+        "line": 17284
       }
     },
     {
@@ -289478,7 +289623,7 @@
       "to": "Artifact:test/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7533
+        "line": 7460
       }
     },
     {
@@ -289487,7 +289632,7 @@
       "to": "Artifact:test/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7554
+        "line": 7502
       }
     },
     {
@@ -289496,7 +289641,7 @@
       "to": "Artifact:test/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8434
+        "line": 7529
       }
     },
     {
@@ -289505,7 +289650,7 @@
       "to": "Artifact:test/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8632
+        "line": 7567
       }
     },
     {
@@ -289514,7 +289659,7 @@
       "to": "Artifact:test/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8753
+        "line": 7588
       }
     },
     {
@@ -289523,7 +289668,7 @@
       "to": "Artifact:test/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8964
+        "line": 8468
       }
     },
     {
@@ -289532,7 +289677,7 @@
       "to": "Artifact:test/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9430
+        "line": 8666
       }
     },
     {
@@ -289541,7 +289686,7 @@
       "to": "Artifact:test/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9948
+        "line": 8787
       }
     },
     {
@@ -289550,7 +289695,7 @@
       "to": "Artifact:test/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9967
+        "line": 8998
       }
     },
     {
@@ -289559,7 +289704,7 @@
       "to": "Artifact:test/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9978
+        "line": 9464
       }
     },
     {
@@ -289568,7 +289713,7 @@
       "to": "Artifact:test/population.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9988
+        "line": 9982
       }
     },
     {
@@ -289577,7 +289722,7 @@
       "to": "Artifact:test/port.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6115
+        "line": 6149
       }
     },
     {
@@ -289586,7 +289731,7 @@
       "to": "Artifact:test/port.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6143
+        "line": 6177
       }
     },
     {
@@ -289595,7 +289740,7 @@
       "to": "Artifact:test/port.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6150
+        "line": 6184
       }
     },
     {
@@ -289604,7 +289749,7 @@
       "to": "Artifact:test/port.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6173
+        "line": 6207
       }
     },
     {
@@ -289613,7 +289758,7 @@
       "to": "Artifact:test/port.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6179
+        "line": 6213
       }
     },
     {
@@ -289622,7 +289767,7 @@
       "to": "Artifact:test/port.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6191
+        "line": 6225
       }
     },
     {
@@ -289631,7 +289776,7 @@
       "to": "Artifact:test/port.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6195
+        "line": 6229
       }
     },
     {
@@ -289640,7 +289785,7 @@
       "to": "Artifact:test/port.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6209
+        "line": 6243
       }
     },
     {
@@ -289649,7 +289794,7 @@
       "to": "Artifact:test/port.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6380
+        "line": 6414
       }
     },
     {
@@ -289658,7 +289803,7 @@
       "to": "Artifact:test/port.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6397
+        "line": 6431
       }
     },
     {
@@ -289667,7 +289812,7 @@
       "to": "Artifact:test/port.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6994
+        "line": 7028
       }
     },
     {
@@ -289676,7 +289821,7 @@
       "to": "Artifact:test/port.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7015
+        "line": 7049
       }
     },
     {
@@ -289766,7 +289911,7 @@
       "to": "Artifact:test/portfolio.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6615
+        "line": 6649
       }
     },
     {
@@ -289775,7 +289920,7 @@
       "to": "Artifact:test/portrait.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11965
+        "line": 11999
       }
     },
     {
@@ -289802,7 +289947,7 @@
       "to": "Artifact:test/preflight.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7928
+        "line": 7962
       }
     },
     {
@@ -289811,7 +289956,7 @@
       "to": "Artifact:test/primetime.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10724
+        "line": 10758
       }
     },
     {
@@ -289820,7 +289965,7 @@
       "to": "Artifact:test/primetime.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10752
+        "line": 10786
       }
     },
     {
@@ -289829,7 +289974,7 @@
       "to": "Artifact:test/primetime.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10783
+        "line": 10817
       }
     },
     {
@@ -289838,7 +289983,7 @@
       "to": "Artifact:test/primetime.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10799
+        "line": 10833
       }
     },
     {
@@ -289847,7 +289992,7 @@
       "to": "Artifact:test/push.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10331
+        "line": 10365
       }
     },
     {
@@ -289856,7 +290001,7 @@
       "to": "Artifact:test/push.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10353
+        "line": 10387
       }
     },
     {
@@ -289865,7 +290010,7 @@
       "to": "Artifact:test/push.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10997
+        "line": 11031
       }
     },
     {
@@ -289874,7 +290019,7 @@
       "to": "Artifact:test/push.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11014
+        "line": 11048
       }
     },
     {
@@ -289883,7 +290028,7 @@
       "to": "Artifact:test/pwa.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11084
+        "line": 11118
       }
     },
     {
@@ -289892,7 +290037,7 @@
       "to": "Artifact:test/pwa.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11094
+        "line": 11128
       }
     },
     {
@@ -289901,7 +290046,7 @@
       "to": "Artifact:test/pwa.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11104
+        "line": 11138
       }
     },
     {
@@ -289910,7 +290055,7 @@
       "to": "Artifact:test/races.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 5989
+        "line": 6023
       }
     },
     {
@@ -289919,7 +290064,7 @@
       "to": "Artifact:test/races.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6011
+        "line": 6045
       }
     },
     {
@@ -289928,7 +290073,7 @@
       "to": "Artifact:test/races.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6032
+        "line": 6066
       }
     },
     {
@@ -289937,7 +290082,7 @@
       "to": "Artifact:test/races.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6051
+        "line": 6085
       }
     },
     {
@@ -289946,7 +290091,7 @@
       "to": "Artifact:test/races.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6072
+        "line": 6106
       }
     },
     {
@@ -289955,7 +290100,7 @@
       "to": "Artifact:test/races.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6092
+        "line": 6126
       }
     },
     {
@@ -289964,7 +290109,7 @@
       "to": "Artifact:test/regimen.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16728
+        "line": 16762
       }
     },
     {
@@ -289973,7 +290118,7 @@
       "to": "Artifact:test/regimen.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8275
+        "line": 8309
       }
     },
     {
@@ -289982,7 +290127,7 @@
       "to": "Artifact:test/regimen.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8308
+        "line": 8342
       }
     },
     {
@@ -289991,7 +290136,7 @@
       "to": "Artifact:test/regimen.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9012
+        "line": 9046
       }
     },
     {
@@ -290000,7 +290145,7 @@
       "to": "Artifact:test/reimport.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16570
+        "line": 16604
       }
     },
     {
@@ -290009,7 +290154,7 @@
       "to": "Artifact:test/reimport.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16616
+        "line": 16650
       }
     },
     {
@@ -290018,7 +290163,7 @@
       "to": "Artifact:test/results.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10368
+        "line": 10402
       }
     },
     {
@@ -290027,7 +290172,7 @@
       "to": "Artifact:test/results.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10388
+        "line": 10422
       }
     },
     {
@@ -290036,7 +290181,7 @@
       "to": "Artifact:test/ring.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6802
+        "line": 6836
       }
     },
     {
@@ -290045,7 +290190,7 @@
       "to": "Artifact:test/ring.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7822
+        "line": 7856
       }
     },
     {
@@ -290054,7 +290199,7 @@
       "to": "Artifact:test/router.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11492
+        "line": 11526
       }
     },
     {
@@ -290063,7 +290208,7 @@
       "to": "Artifact:test/routes.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15971
+        "line": 16005
       }
     },
     {
@@ -290072,7 +290217,7 @@
       "to": "Artifact:test/routes.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17140
+        "line": 17174
       }
     },
     {
@@ -290081,7 +290226,7 @@
       "to": "Artifact:test/routes.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7928
+        "line": 7962
       }
     },
     {
@@ -290099,7 +290244,7 @@
       "to": "Artifact:test/runs.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13241
+        "line": 13275
       }
     },
     {
@@ -290108,7 +290253,7 @@
       "to": "Artifact:test/sacking.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7115
+        "line": 7149
       }
     },
     {
@@ -290117,7 +290262,7 @@
       "to": "Artifact:test/sacking.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7129
+        "line": 7163
       }
     },
     {
@@ -290126,7 +290271,7 @@
       "to": "Artifact:test/sacking.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7135
+        "line": 7169
       }
     },
     {
@@ -290153,7 +290298,7 @@
       "to": "Artifact:test/seasons.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6760
+        "line": 6794
       }
     },
     {
@@ -290171,7 +290316,7 @@
       "to": "Artifact:test/shields.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7147
+        "line": 7181
       }
     },
     {
@@ -290180,7 +290325,7 @@
       "to": "Artifact:test/shields.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7161
+        "line": 7195
       }
     },
     {
@@ -290189,7 +290334,7 @@
       "to": "Artifact:test/shipment.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13241
+        "line": 13275
       }
     },
     {
@@ -290198,7 +290343,7 @@
       "to": "Artifact:test/shipment.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13302
+        "line": 13336
       }
     },
     {
@@ -290279,7 +290424,7 @@
       "to": "Artifact:test/smoke.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7204
+        "line": 7238
       }
     },
     {
@@ -290288,7 +290433,7 @@
       "to": "Artifact:test/smoke.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7221
+        "line": 7255
       }
     },
     {
@@ -290315,7 +290460,7 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12151
+        "line": 12185
       }
     },
     {
@@ -290324,7 +290469,7 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16068
+        "line": 16102
       }
     },
     {
@@ -290351,7 +290496,7 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17963
+        "line": 17997
       }
     },
     {
@@ -290549,7 +290694,7 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6288
+        "line": 6322
       }
     },
     {
@@ -290558,7 +290703,7 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6308
+        "line": 6342
       }
     },
     {
@@ -290567,7 +290712,7 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6380
+        "line": 6414
       }
     },
     {
@@ -290576,16 +290721,7 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6398
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:CLAUDE.md",
-      "to": "Artifact:test/social.js",
-      "provenance": {
-        "file": "CLAUDE.md",
-        "line": 6877
+        "line": 6432
       }
     },
     {
@@ -290603,7 +290739,7 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7196
+        "line": 6911
       }
     },
     {
@@ -290612,7 +290748,7 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7232
+        "line": 7230
       }
     },
     {
@@ -290621,7 +290757,16 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7254
+        "line": 7266
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:test/social.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 7288
       }
     },
     {
@@ -290675,7 +290820,7 @@
       "to": "Artifact:test/speakeasy.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 5985
+        "line": 6019
       }
     },
     {
@@ -290720,16 +290865,7 @@
       "to": "Artifact:test/standing.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7109
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:CLAUDE.md",
-      "to": "Artifact:test/stockdeliver.js",
-      "provenance": {
-        "file": "CLAUDE.md",
-        "line": 12725
+        "line": 7143
       }
     },
     {
@@ -290747,7 +290883,7 @@
       "to": "Artifact:test/stockdeliver.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12776
+        "line": 12793
       }
     },
     {
@@ -290756,7 +290892,16 @@
       "to": "Artifact:test/stockdeliver.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12809
+        "line": 12810
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:CLAUDE.md",
+      "to": "Artifact:test/stockdeliver.js",
+      "provenance": {
+        "file": "CLAUDE.md",
+        "line": 12843
       }
     },
     {
@@ -290801,7 +290946,7 @@
       "to": "Artifact:test/store.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 5919
+        "line": 5953
       }
     },
     {
@@ -290810,7 +290955,7 @@
       "to": "Artifact:test/streak.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10274
+        "line": 10308
       }
     },
     {
@@ -290819,7 +290964,7 @@
       "to": "Artifact:test/streak.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10296
+        "line": 10330
       }
     },
     {
@@ -290828,7 +290973,7 @@
       "to": "Artifact:test/streak.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10520
+        "line": 10554
       }
     },
     {
@@ -290837,7 +290982,7 @@
       "to": "Artifact:test/streak.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10530
+        "line": 10564
       }
     },
     {
@@ -290846,7 +290991,7 @@
       "to": "Artifact:test/streets.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16010
+        "line": 16044
       }
     },
     {
@@ -290864,7 +291009,7 @@
       "to": "Artifact:test/tokenhealth.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12328
+        "line": 12362
       }
     },
     {
@@ -290873,7 +291018,7 @@
       "to": "Artifact:test/tokenomics.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11952
+        "line": 11986
       }
     },
     {
@@ -290882,7 +291027,7 @@
       "to": "Artifact:test/tokenomics.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7893
+        "line": 7927
       }
     },
     {
@@ -290891,7 +291036,7 @@
       "to": "Artifact:test/treasury.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11920
+        "line": 11954
       }
     },
     {
@@ -290927,7 +291072,7 @@
       "to": "Artifact:test/underworld.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 14417
+        "line": 14451
       }
     },
     {
@@ -290981,7 +291126,7 @@
       "to": "Artifact:test/vouch.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10418
+        "line": 10452
       }
     },
     {
@@ -290990,7 +291135,7 @@
       "to": "Artifact:test/vouch.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10442
+        "line": 10476
       }
     },
     {
@@ -290999,7 +291144,7 @@
       "to": "Artifact:test/walletforge.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16652
+        "line": 16686
       }
     },
     {
@@ -291008,7 +291153,7 @@
       "to": "Artifact:test/walletforge.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16700
+        "line": 16734
       }
     },
     {
@@ -291017,7 +291162,7 @@
       "to": "Artifact:test/walletforge.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16728
+        "line": 16762
       }
     },
     {
@@ -291026,7 +291171,7 @@
       "to": "Artifact:test/watcher.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12809
+        "line": 12843
       }
     },
     {
@@ -291053,7 +291198,7 @@
       "to": "Artifact:test/watcher.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9079
+        "line": 9113
       }
     },
     {
@@ -291134,7 +291279,7 @@
       "to": "Artifact:test/wire.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6346
+        "line": 6380
       }
     },
     {
@@ -291143,7 +291288,7 @@
       "to": "Artifact:test/wire.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6371
+        "line": 6405
       }
     },
     {
@@ -291152,7 +291297,7 @@
       "to": "Artifact:test/wire.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8632
+        "line": 8666
       }
     },
     {
@@ -291251,7 +291396,7 @@
       "to": "Artifact:test/world.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9849
+        "line": 9883
       }
     },
     {
@@ -291260,7 +291405,7 @@
       "to": "Artifact:tools/allocate-drop.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12982
+        "line": 13016
       }
     },
     {
@@ -291269,7 +291414,7 @@
       "to": "Artifact:tools/allocate-drop.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12996
+        "line": 13030
       }
     },
     {
@@ -291278,7 +291423,7 @@
       "to": "Artifact:tools/arena-sweep.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 18205
+        "line": 18239
       }
     },
     {
@@ -291287,7 +291432,7 @@
       "to": "Artifact:tools/arena.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17919
+        "line": 17953
       }
     },
     {
@@ -291296,7 +291441,7 @@
       "to": "Artifact:tools/arena.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17945
+        "line": 17979
       }
     },
     {
@@ -291305,7 +291450,7 @@
       "to": "Artifact:tools/arena.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 18023
+        "line": 18057
       }
     },
     {
@@ -291314,7 +291459,7 @@
       "to": "Artifact:tools/arena.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 18077
+        "line": 18111
       }
     },
     {
@@ -291323,7 +291468,7 @@
       "to": "Artifact:tools/arena.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 18101
+        "line": 18135
       }
     },
     {
@@ -291332,7 +291477,7 @@
       "to": "Artifact:tools/arena.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 18192
+        "line": 18226
       }
     },
     {
@@ -291359,7 +291504,7 @@
       "to": "Artifact:tools/art.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9290
+        "line": 9324
       }
     },
     {
@@ -291368,7 +291513,7 @@
       "to": "Artifact:tools/art.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9308
+        "line": 9342
       }
     },
     {
@@ -291386,7 +291531,7 @@
       "to": "Artifact:tools/backup.sh",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7610
+        "line": 7644
       }
     },
     {
@@ -291395,7 +291540,7 @@
       "to": "Artifact:tools/boardcost.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16963
+        "line": 16997
       }
     },
     {
@@ -291404,7 +291549,7 @@
       "to": "Artifact:tools/boardcost.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16968
+        "line": 17002
       }
     },
     {
@@ -291413,7 +291558,7 @@
       "to": "Artifact:tools/boardcost.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17034
+        "line": 17068
       }
     },
     {
@@ -291422,7 +291567,7 @@
       "to": "Artifact:tools/bond-dials.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12252
+        "line": 12286
       }
     },
     {
@@ -291440,7 +291585,7 @@
       "to": "Artifact:tools/bond-dials.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8141
+        "line": 8175
       }
     },
     {
@@ -291449,7 +291594,7 @@
       "to": "Artifact:tools/chain-e2e.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13494
+        "line": 13528
       }
     },
     {
@@ -291467,7 +291612,7 @@
       "to": "Artifact:tools/chaos.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17378
+        "line": 17412
       }
     },
     {
@@ -291476,7 +291621,7 @@
       "to": "Artifact:tools/chaos.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17485
+        "line": 17519
       }
     },
     {
@@ -291485,7 +291630,7 @@
       "to": "Artifact:tools/chaos.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17971
+        "line": 18005
       }
     },
     {
@@ -291494,7 +291639,7 @@
       "to": "Artifact:tools/chaos.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7724
+        "line": 7758
       }
     },
     {
@@ -291521,7 +291666,7 @@
       "to": "Artifact:tools/dexbot-e2e.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13486
+        "line": 13520
       }
     },
     {
@@ -291530,7 +291675,7 @@
       "to": "Artifact:tools/dexbot-e2e.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13600
+        "line": 13634
       }
     },
     {
@@ -291557,7 +291702,7 @@
       "to": "Artifact:tools/knowledge-test.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17660
+        "line": 17694
       }
     },
     {
@@ -291566,7 +291711,7 @@
       "to": "Artifact:tools/loadtest.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12190
+        "line": 12224
       }
     },
     {
@@ -291575,7 +291720,7 @@
       "to": "Artifact:tools/loadtest.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 18000
+        "line": 18034
       }
     },
     {
@@ -291584,7 +291729,7 @@
       "to": "Artifact:tools/loadtest.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7711
+        "line": 7745
       }
     },
     {
@@ -291593,7 +291738,7 @@
       "to": "Artifact:tools/mobile.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13400
+        "line": 13434
       }
     },
     {
@@ -291602,7 +291747,7 @@
       "to": "Artifact:tools/mobile.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15538
+        "line": 15572
       }
     },
     {
@@ -291665,7 +291810,7 @@
       "to": "Artifact:tools/mobile.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7766
+        "line": 7800
       }
     },
     {
@@ -291674,7 +291819,7 @@
       "to": "Artifact:tools/mobile.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7873
+        "line": 7907
       }
     },
     {
@@ -291683,7 +291828,7 @@
       "to": "Artifact:tools/mobile.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8819
+        "line": 8853
       }
     },
     {
@@ -291692,7 +291837,7 @@
       "to": "Artifact:tools/mobile.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9640
+        "line": 9674
       }
     },
     {
@@ -291701,7 +291846,7 @@
       "to": "Artifact:tools/pageweight.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17101
+        "line": 17135
       }
     },
     {
@@ -291710,7 +291855,7 @@
       "to": "Artifact:tools/pageweight.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17105
+        "line": 17139
       }
     },
     {
@@ -291719,7 +291864,7 @@
       "to": "Artifact:tools/pgcheck.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17988
+        "line": 18022
       }
     },
     {
@@ -291728,7 +291873,7 @@
       "to": "Artifact:tools/pgcheck.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 18158
+        "line": 18192
       }
     },
     {
@@ -291737,7 +291882,7 @@
       "to": "Artifact:tools/pgcheck.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8920
+        "line": 8954
       }
     },
     {
@@ -291746,7 +291891,7 @@
       "to": "Artifact:tools/pgquery.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 8927
+        "line": 8961
       }
     },
     {
@@ -291791,7 +291936,7 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7358
+        "line": 7392
       }
     },
     {
@@ -291800,7 +291945,7 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9179
+        "line": 9213
       }
     },
     {
@@ -291809,7 +291954,7 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9370
+        "line": 9404
       }
     },
     {
@@ -291818,7 +291963,7 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9730
+        "line": 9764
       }
     },
     {
@@ -291827,7 +291972,7 @@
       "to": "Artifact:tools/pollcost.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13340
+        "line": 13374
       }
     },
     {
@@ -291836,7 +291981,7 @@
       "to": "Artifact:tools/pollcost.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13346
+        "line": 13380
       }
     },
     {
@@ -291845,7 +291990,7 @@
       "to": "Artifact:tools/pollcost.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 15825
+        "line": 15859
       }
     },
     {
@@ -291854,7 +291999,7 @@
       "to": "Artifact:tools/pollcost.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16038
+        "line": 16072
       }
     },
     {
@@ -291863,7 +292008,7 @@
       "to": "Artifact:tools/pollcost.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16911
+        "line": 16945
       }
     },
     {
@@ -291872,7 +292017,7 @@
       "to": "Artifact:tools/pollcost.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 16966
+        "line": 17000
       }
     },
     {
@@ -291881,7 +292026,7 @@
       "to": "Artifact:tools/pollcost.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17034
+        "line": 17068
       }
     },
     {
@@ -291908,7 +292053,7 @@
       "to": "Artifact:tools/scale.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7852
+        "line": 7886
       }
     },
     {
@@ -291926,7 +292071,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 11578
+        "line": 11612
       }
     },
     {
@@ -291935,7 +292080,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12576
+        "line": 12610
       }
     },
     {
@@ -291944,7 +292089,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13205
+        "line": 13239
       }
     },
     {
@@ -291953,7 +292098,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13302
+        "line": 13336
       }
     },
     {
@@ -291962,7 +292107,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17918
+        "line": 17952
       }
     },
     {
@@ -292007,7 +292152,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 5941
+        "line": 5975
       }
     },
     {
@@ -292016,7 +292161,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 5949
+        "line": 5983
       }
     },
     {
@@ -292025,7 +292170,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 6103
+        "line": 6137
       }
     },
     {
@@ -292043,7 +292188,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7086
+        "line": 7120
       }
     },
     {
@@ -292052,7 +292197,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7172
+        "line": 7206
       }
     },
     {
@@ -292061,7 +292206,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7350
+        "line": 7384
       }
     },
     {
@@ -292070,7 +292215,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 7359
+        "line": 7393
       }
     },
     {
@@ -292079,7 +292224,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9319
+        "line": 9353
       }
     },
     {
@@ -292088,7 +292233,7 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 9933
+        "line": 9967
       }
     },
     {
@@ -292097,7 +292242,7 @@
       "to": "Artifact:tools/snapshot-solana.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13145
+        "line": 13179
       }
     },
     {
@@ -292106,7 +292251,7 @@
       "to": "Artifact:tools/snapshot-solana.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13151
+        "line": 13185
       }
     },
     {
@@ -292115,7 +292260,7 @@
       "to": "Artifact:tools/snapshot.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12982
+        "line": 13016
       }
     },
     {
@@ -292124,7 +292269,7 @@
       "to": "Artifact:tools/snapshot.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 12988
+        "line": 13022
       }
     },
     {
@@ -292133,7 +292278,7 @@
       "to": "Artifact:tools/stock-e2e.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 13605
+        "line": 13639
       }
     },
     {
@@ -292142,7 +292287,7 @@
       "to": "Artifact:tools/validate-fee-splits.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 14254
+        "line": 14288
       }
     },
     {
@@ -292151,7 +292296,7 @@
       "to": "Artifact:tools/vapid.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10840
+        "line": 10874
       }
     },
     {
@@ -292160,7 +292305,7 @@
       "to": "Artifact:tools/vapid.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 10847
+        "line": 10881
       }
     },
     {
@@ -292169,7 +292314,7 @@
       "to": "Artifact:tools/workercost.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17033
+        "line": 17067
       }
     },
     {
@@ -292178,7 +292323,7 @@
       "to": "Artifact:tools/workercost.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17040
+        "line": 17074
       }
     },
     {
@@ -292187,7 +292332,7 @@
       "to": "Artifact:tools/workercost.js",
       "provenance": {
         "file": "CLAUDE.md",
-        "line": 17489
+        "line": 17523
       }
     },
     {
@@ -308027,7 +308172,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 1254
+        "line": 1275
       }
     },
     {
@@ -308054,7 +308199,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6008
+        "line": 6049
       }
     },
     {
@@ -308063,7 +308208,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6111
+        "line": 6152
       }
     },
     {
