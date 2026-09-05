@@ -15,7 +15,7 @@ import { CRIMES, DISTRICTS, DRUGS, RECRUIT_MILESTONES, CONSTANTS, RANKS,
          REGIMEN, disciplineLvlOf, energyCapOf, nerveCapOf, BUSINESSES, WIRE, RIVALS, CORNER, cornerTasksOf,
          KITCHENS, labModuleCost, recyclesToDesk, DESK_RECYCLE_REASON, isMade, madeSeconds,
          MADE_LADDER, madeRungIdx, madeRungOf, ladderFx, STAKE_LOCKS, stakeLockActive, effectiveStake,
-         ASSETS, OPERATIONS, opSlotsOf, nextOpSlotLevel, MISSIONS, dailyGuidanceFor, dailyLiveFor, jailed, safeHoused,
+         ASSETS, OPERATIONS, opSlotsOf, nextOpSlotLevel, MISSIONS, dailyGuidanceFor, dailyLiveFor, jailed, safeHoused, hospitalized,
          STABLE, SPEAKEASY, ESTATE, MADE, CREW, crewObjectiveOf, DEEDS, deedController , runOf, npcOf, usd, WALLET_FORGE, bustAttemptsLeft, bustRefillSeconds, safehouseLeftMs , coolLeft, coolWait } from './rules.js';
 import { dbCaps } from './db.js';
 import { accrue } from './accrual.js';
@@ -35,6 +35,31 @@ import { startFirstBlood } from './firstblood.js';   // THE AHA MOMENT — assig
 // sites, rather than each having to remember to wire its own.
 export class GameError extends Error {
   constructor(code, msg, data) { super(msg); this.code = code; if (data) this.data = data; }
+}
+
+// ── THE STREET ACTOR GATE — one helper for the four actor states every offensive verb refuses on ───
+// jailed / safehoused (P1.3 "a shield, not a bunker") / witness protection / hospitalized (R40), plus
+// the verb's energy cost. Fourteen street crimes enforce these, and until 2026-09-05 eleven of them
+// carried a private copy of the block — the forgotten-sibling class this project keeps paying for
+// (jump vs fire, collectFrontier vs collectTerritory, npcHit blind to the Pen shields), since a gate
+// added here reaches every caller and a gate added inline reaches one. test/gates.js's completeness
+// check keys on this helper (and assertStreetCrime, which calls it), so a fifteenth verb routed
+// through it is in the matrix by construction.
+//   opts.energy      — the verb's energy cost (null: the caller gates energy itself, e.g. `fire`,
+//                      whose cost sits behind its gun/trigger checks and must stay there)
+//   opts.witpro      — false for the three verbs that never gated it (extortFront/takeover/standover/
+//                      raid/ambush/intercept) — adding it is a real gate change, a founder call
+//   opts.hospCode    — 'hosp_self' canonically; raidRivalRacket ships 'hospitalized', ambush/intercept
+//                      'hosp' — codes are the client/agent contract, so each verb keeps its own
+//   opts.jailWaived  — npcHit's burner-phone path (pen.js consumes the burner first)
+//   opts.msgs        — per-verb wording; codes never vary, prose may
+export function assertStreetActor(ch, opts = {}) {
+  const m = opts.msgs || {};
+  if (!opts.jailWaived && jailed(ch)) throw new GameError('jailed', m.jailed || 'No street work from lockup.');
+  if (safeHoused(ch)) throw new GameError('safe', m.safe || "Can't work the streets while you're to ground — a safehouse is a shield, not a bunker.");
+  if (opts.witpro !== false && witproActive(ch)) throw new GameError('witpro', m.witpro || "You're in protective custody — keep your head down.");
+  if (hospitalized(ch)) throw new GameError(opts.hospCode || 'hosp_self', m.hosp || "You're laid up under the Doc's care.");
+  if (opts.energy != null && Number(ch.energy) < opts.energy) throw new GameError('energy', m.energy || `That takes ${opts.energy} energy.`);
 }
 
 // (red-team R6 — stored-XSS fix) Player-controlled display strings (character/gang names, custom
