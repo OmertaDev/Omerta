@@ -35,7 +35,7 @@
 | [src/clues.js](../../src/clues.js) | 114 | platform-core | 4 / 4 | 3 | 5 | 0 |
 | [src/collection.js](../../src/collection.js) | 112 | law-intelligence | 2 / 13 | 2 | 7 | 1 |
 | [src/collision.js](../../src/collision.js) | 97 | engagement-growth | 1 / 3 | 1 | 7 | 1 |
-| [src/commission.js](../../src/commission.js) | 1395 | platform-core | 5 / 16 | 9 | 17 | 4 |
+| [src/commission.js](../../src/commission.js) | 1394 | platform-core | 5 / 16 | 9 | 17 | 4 |
 | [src/community.js](../../src/community.js) | 220 | engagement-growth | 3 / 7 | 2 | 8 | 1 |
 | [src/contacts.js](../../src/contacts.js) | 247 | engagement-growth | 2 / 9 | 3 | 10 | 2 |
 | [src/content/compiler.js](../../src/content/compiler.js) | 1214 | platform-core | 1 / 12 | 0 | 0 | 8 |
@@ -70,7 +70,7 @@
 | [src/finalizedobservation.js](../../src/finalizedobservation.js) | 874 | platform-core | 0 / 0 | 0 | 0 | 0 |
 | [src/firstblood.js](../../src/firstblood.js) | 85 | social-combat | 1 / 2 | 0 | 3 | 0 |
 | [src/firsts.js](../../src/firsts.js) | 144 | world-progression | 1 / 6 | 1 | 7 | 1 |
-| [src/game.js](../../src/game.js) | 2657 | platform-core | 10 / 134 | 29 | 62 | 15 |
+| [src/game.js](../../src/game.js) | 2654 | platform-core | 10 / 134 | 29 | 62 | 15 |
 | [src/genesiscadence.js](../../src/genesiscadence.js) | 152 | platform-core | 0 / 4 | 0 | 0 | 1 |
 | [src/genesiscca.js](../../src/genesiscca.js) | 808 | platform-core | 0 / 3 | 0 | 0 | 1 |
 | [src/genesislaunch.js](../../src/genesislaunch.js) | 72 | platform-core | 1 / 3 | 0 | 1 | 0 |
@@ -114,7 +114,7 @@
 | [src/ratelimit.js](../../src/ratelimit.js) | 126 | platform-core | 1 / 2 | 0 | 0 | 0 |
 | [src/regimen.js](../../src/regimen.js) | 126 | platform-core | 2 / 5 | 3 | 5 | 0 |
 | [src/ring.js](../../src/ring.js) | 444 | vice-competition | 3 / 7 | 7 | 4 | 2 |
-| [src/rivals.js](../../src/rivals.js) | 108 | social-combat | 1 / 6 | 1 | 8 | 1 |
+| [src/rivals.js](../../src/rivals.js) | 107 | social-combat | 1 / 6 | 1 | 8 | 1 |
 | [src/roster.js](../../src/roster.js) | 69 | social-combat | 1 / 3 | 0 | 3 | 0 |
 | [src/router.js](../../src/router.js) | 330 | platform-core | 3 / 6 | 1 | 15 | 3 |
 | [src/routes/boxing.js](../../src/routes/boxing.js) | 38 | vice-competition | 2 / 1 | 10 | 1 | 0 |
