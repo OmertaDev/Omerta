@@ -5916,6 +5916,40 @@ interpolation ledger declares the one new `${set}`. **Process note:** four mutat
 `src/` while a background full-suite run was in flight — that run's green was worthless and was
 re-run; a suite reading a file another process is rewriting reports nothing about either tree.
 
+**THE ACCOUNT-ID UNIFICATION — twelve UUID columns become TEXT, the bridging casts go, and
+pgcheck boots on a database that still says UUID (2026-09-05).** The 2026-07-30 outage was a
+`uuid = text` comparison that made `loadOwned` fail to PARSE — every authed request 500'd for hours
+— and its fix was a BRIDGE (`$2` stayed text, a separate `$3` inferred uuid), with the cause left
+standing and documented at the site: `account_persistent.id` and `characters.account_id` are TEXT,
+and **12 columns across 8 tables** (eth_vault, dm_messages, dm_blocks, megaproject_contributions,
+duels, commission_proposals, career_claims, rival_events) held the SAME identifier as UUID. Every
+one of those was a place the outage class was still live, and three more bridges had grown since
+(`rivals.js` `::text`, `people.js` `$1::uuid`, `commission.js` `::text`) — a cast per site is how
+sixty-nine private copies of a gate came to exist. **The canonical type is TEXT** (the 28-column
+majority; `rival_events.id` stays UUID because it is a ROW id, not an account). The mechanism is
+**14 bare `ALTER TABLE … ALTER COLUMN … TYPE TEXT` lines in `schema.sql`** rather than a
+real-Postgres-only pass: pg-mem cannot parse the `USING` form but parses the bare one, real
+Postgres converts uuid→text without `USING` and REBUILDS the primary keys over the converted
+columns, a repeat is a no-op, and it moves neither the table nor its indexes (relfilenodes
+measured unchanged). So the suites boot through the same statement production runs, which is the
+whole point of putting it in the file the deploy applies. The four bridges are then DELETED —
+`loadOwned` is back to two params plus `$3` = today, `rivals.js` is a plain join — because a
+bridge left in place is a cast that stops being needed and starts being a lie about the type.
+**THE GUARD IS THE HALF THAT MATTERS, because a fresh database cannot see this class at all.**
+Every suite starts EMPTY, so the inline `TEXT` declarations make every test green whether or not
+the ALTERs exist — and production is the database that is never fresh (the 2026-08-06 boot-crash
+lesson). `tools/pgcheck.js` §7b now compares `data_type` beside column NAMES (an upgraded column
+surviving with the wrong type reads exactly like a present one), and **§7c** finds the newest
+`schema.sql` in git history that still DECLARES these columns UUID (an anti-vacuity throw if none
+does — the day that history is gone, the check must be rewritten rather than pass over nothing),
+applies it raw, SEEDS a row per table with real uuid literals, boots the CURRENT build on top, and
+asserts four things: every account column is TEXT (naming survivors), the seeded values came
+through intact, a cast-free `$1` TEXT parameter compares against all nine tables — the exact
+outage statement shape — and the primary keys were rebuilt rather than dropped. Today §7c resolves
+to HEAD itself, since the inline declarations still say UUID for pg-mem's sake. Mutation: delete
+one ALTER line → *"survived as uuid: rival_events.aggressor_account"*, by name. §10.4 untouched
+(a column type moves no value). pgquery 3411 statements + pgcheck 87/87 on FRESH real Postgres. **And the drop broke a guard the right way**: `test/migrate.js`'s static idempotency check — every statement in schema.sql must be safe to run a second time, since the whole file is applied at every boot — did not know an `ALTER COLUMN … TYPE TEXT` and listed all thirteen as crash loops. They are not: a widening to TEXT is a no-op the second time by the type's own definition, and pgcheck §7/§7c PROVE the re-apply on real Postgres rather than reasoning about it. So the classifier learned exactly the bare `TYPE TEXT` form and nothing wider — a conversion to a NARROWER type can fail on the second run's data and a `USING` clause can be anything, so neither classifies (self-tests pin both, and a duels column mutated to `TYPE INT` is flagged by name).
+
 ## Sensitive design notes
 *These are standing PRODUCT rules. They bind whatever else is true, and several of them exist
 because breaking one is very hard to walk back.*

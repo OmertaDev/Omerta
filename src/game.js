@@ -211,7 +211,7 @@ const itemMap = (rows) => Object.fromEntries(rows.map((r) => [r.item_id, Number(
 
 // Everything a character owns or belongs to, loaded inside the caller's txn.
 export async function loadOwned(client, ch) {
-  const today = dayOf();   // bound as $4 below AND read by the work board's claimability rules
+  const today = dayOf();   // bound as $3 below AND read by the work board's claimability rules
   // ONE ROUND TRIP FOR FOURTEEN LOOKUPS. This runs on EVERY authed request in the game, read or
   // write, so its round-trip count is the single largest lever on total database traffic — and
   // `tools/loadtest.js` measured the cost: `/v1/me` was ~3× a board read (15ms vs 5ms uncontended),
@@ -247,19 +247,16 @@ export async function loadOwned(client, ch) {
   // the point where an untyped NULL follows a typed value. Casting everywhere removes the dependence on
   // either engine's inference rules, which is the only version that is safe to rely on.
   //
-  // AND THE SAME LESSON A SECOND TIME, THE HARD WAY — `$3` IS `$2` AGAIN, DELIBERATELY.
-  // Postgres resolves a PARAMETER's type once for the whole statement, from how it is used. `$2` is
-  // first compared to `account_gear.account_id`, which this schema declares TEXT — so `$2` is text
-  // everywhere, and `rival_events.victim_account = $2` is `uuid = text`, for which no operator exists.
-  // The statement does not degrade: it fails to PARSE, so every branch of the union dies with it, and
-  // since loadOwned runs on every authed request that is the entire game returning 500. pg-mem compares
-  // uuid to text happily, so all 61 suites passed over a total production outage.
-  //   The schema's account ids are genuinely mixed (28 text columns, 12 uuid), which is the underlying
-  // defect; changing a live column's type is not an outage fix. So the uuid-typed branch gets its OWN
-  // parameter carrying the SAME value: `$3` is inferred uuid from its only use, `$2` stays text, and
-  // `ix_rival_events_victim` is still usable — casting the COLUMN instead (`victim_account::text=$2`)
-  // would also parse but would throw the index away. Any future branch joining on a uuid-typed account
-  // column must bind $3, not $2. `tools/pgquery.js` fails the build if this regresses.
+  // AND THE SAME LESSON A SECOND TIME — the branches below join rival_events on `$2`, and that
+  // is only legal because THE ACCOUNT-ID UNIFICATION (2026-09-05, schema.sql) made every account
+  // column in this schema TEXT. Before it, `rival_events.victim_account` was UUID: Postgres resolves
+  // a PARAMETER's type once for the whole statement from how it is used, `$2` was inferred text from
+  // `account_gear.account_id`, and `uuid = text` has no operator — the statement failed to PARSE, so
+  // every branch of the union died with it, and since loadOwned runs on every authed request that
+  // was the entire game returning 500 (2026-07-30). pg-mem compares uuid to text happily, so all 61
+  // suites passed over a total production outage; the bridge was a second parameter `$3` carrying
+  // the same value, inferred uuid from its only use. The bridge is gone with the column type, and
+  // `tools/pgcheck.js` §7c fails by name if any account column ever comes back as uuid.
   const bulk = await client.query(`
     SELECT 'rk' AS src, racket_id AS k, NULL::text AS k2, level::numeric AS n, NULL::numeric AS n2, NULL::timestamptz AS ts
       FROM character_rackets WHERE character_id=$1
@@ -294,7 +291,7 @@ export async function loadOwned(client, ch) {
     -- keeps the row (and the way out) even if the mark somehow went missing.
     UNION ALL SELECT 'hunt', s.target, c.name, NULL::numeric, NULL::numeric, s.started_at
       FROM searches s LEFT JOIN characters c ON c.id = s.target WHERE s.hunter=$1
-    UNION ALL SELECT 'rival', aggressor_account::text, NULL::text, NULL::numeric, NULL::numeric, at FROM rival_events WHERE victim_account=$3 AND at > now() - interval '48 hours'
+    UNION ALL SELECT 'rival', aggressor_account, NULL::text, NULL::numeric, NULL::numeric, at FROM rival_events WHERE victim_account=$2 AND at > now() - interval '48 hours'
     -- ...and MY OWN strikes in the same window, so the coach can tell "somebody moved on you" from
     -- "somebody moved on you AND YOU HAVE NOT ANSWERED". The rung's own hint promises that settling
     -- your scores is the move; without this branch it counted only incoming, so hitting back did not
@@ -302,7 +299,7 @@ export async function loadOwned(client, ch) {
     -- Deliberately the SAME 48h window on both sides, which is NOT revengeOwed's semantics (that
     -- one judges honor over the full retention window): fresh malice answered a month ago is still
     -- fresh malice, and a score settled last week does not pay for a jumping this morning.
-    UNION ALL SELECT 'rvback', victim_account::text, NULL::text, NULL::numeric, NULL::numeric, at FROM rival_events WHERE aggressor_account=$3 AND at > now() - interval '48 hours'
+    UNION ALL SELECT 'rvback', victim_account, NULL::text, NULL::numeric, NULL::numeric, at FROM rival_events WHERE aggressor_account=$2 AND at > now() - interval '48 hours'
     -- THE CREW BONUS (M4.REF_XP): the CURRENT respect of every qualified recruit this account brought
     -- in. Read live rather than banked, so the bonus tracks how far the crew has actually got — a
     -- recruit who dies drops to their heir's level and the bonus falls with them. Agents and NPC
@@ -319,18 +316,18 @@ export async function loadOwned(client, ch) {
     -- currently invisible unless you go looking: today's daily contracts, tonight's hustle, the
     -- corner's envelopes, the trainers' drills, a clue in your pocket. Reading them here rather
     -- than in a second query keeps the one-round-trip property this function exists for.
-    -- $4 is TODAY (int) — bound separately so its type is inferred from the day columns alone.
+    -- $3 is TODAY (int) — bound separately so its type is inferred from the day columns alone.
     -- (No backticks in here: this whole query is a JS template literal, and one would end it.)
-    UNION ALL SELECT 'daily', counters, claimed, NULL::numeric, NULL::numeric, NULL::timestamptz FROM daily_progress WHERE character_id=$1 AND day=$4
-    UNION ALL SELECT 'hustle', NULL::text, NULL::text, step::numeric, NULL::numeric, NULL::timestamptz FROM hustles WHERE character_id=$1 AND day=$4
-    UNION ALL SELECT 'corner', district, NULL::text, slot::numeric, CASE WHEN claimed THEN 1 ELSE 0 END::numeric, NULL::timestamptz FROM corner_jobs WHERE character_id=$1 AND day=$4
-    UNION ALL SELECT 'drill', npc, NULL::text, NULL::numeric, NULL::numeric, NULL::timestamptz FROM npc_drills WHERE character_id=$1 AND day=$4
+    UNION ALL SELECT 'daily', counters, claimed, NULL::numeric, NULL::numeric, NULL::timestamptz FROM daily_progress WHERE character_id=$1 AND day=$3
+    UNION ALL SELECT 'hustle', NULL::text, NULL::text, step::numeric, NULL::numeric, NULL::timestamptz FROM hustles WHERE character_id=$1 AND day=$3
+    UNION ALL SELECT 'corner', district, NULL::text, slot::numeric, CASE WHEN claimed THEN 1 ELSE 0 END::numeric, NULL::timestamptz FROM corner_jobs WHERE character_id=$1 AND day=$3
+    UNION ALL SELECT 'drill', npc, NULL::text, NULL::numeric, NULL::numeric, NULL::timestamptz FROM npc_drills WHERE character_id=$1 AND day=$3
     -- THE CREW id, folded in here rather than its own round trip. account_id is TEXT (→ $2, like gear/
     -- est), so this branch is type-safe (the uuid=text outage class). Its only consumers are the crew
     -- non-aggression gate + the board, both reading h.owned.crewId; a scalar, so it fits the shape.
     UNION ALL SELECT 'crew', crew_id, NULL::text, NULL::numeric, NULL::numeric, NULL::timestamptz FROM crew_members WHERE account_id=$2
     UNION ALL SELECT 'clue', NULL::text, NULL::text, step::numeric, steps::numeric, NULL::timestamptz FROM clue_scrolls WHERE character_id=$1`,
-  [ch.id, ch.account_id, ch.account_id, today]);
+  [ch.id, ch.account_id, today]);
   // demultiplex — one entry per original query, in its original column names/types. Kept as
   // `{ rows: [...] }` so every reference below (`rk.rows`, `st.rows`, …) reads exactly as it did.
   const grp = new Map();

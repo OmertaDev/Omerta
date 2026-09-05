@@ -397,6 +397,14 @@ assert(idStmt && !/PRIMARY KEY/i.test(idStmt), 'column-level PRIMARY KEY is stri
     // producing the same result). The occupation seeds are the recorded case — see the E1 note in
     // CLAUDE.md about a re-boot re-occupying a district players had liberated.
     [/^UPDATE [\s\S]*\bSET\b[\s\S]*\bWHERE\b/i, 'UPDATE … WHERE (converges)'],
+    // A widening to TEXT is idempotent by the type's own definition: text→text is a no-op (Postgres
+    // rewrites nothing, relfilenodes are unchanged, PKs over the column are kept), so the second
+    // application of THE ACCOUNT-ID UNIFICATION's uuid→text conversions is a no-op — and it is proven
+    // on real Postgres rather than reasoned about: pgcheck §7 re-applies the whole file to an existing
+    // database, §7c boots the build on one that still declares UUID. ONLY the bare TYPE TEXT form is
+    // safe: a conversion to any NARROWER type (INT, UUID, NUMERIC) can fail on the second run's data
+    // and a USING clause can be anything, so neither classifies (the self-test below pins both).
+    [/^ALTER TABLE\s+\w+\s+ALTER COLUMN\s+\w+\s+TYPE TEXT\s*$/i, 'ALTER COLUMN … TYPE TEXT (a widening is a no-op the second time)'],
   ];
   // Postgres has NO `ADD CONSTRAINT IF NOT EXISTS`, so the only idempotent way to add one is to DROP
   // it first — which is what this file does. So an ADD CONSTRAINT is safe exactly when a matching
@@ -421,6 +429,11 @@ assert(idStmt && !/PRIMARY KEY/i.test(idStmt), 'column-level PRIMARY KEY is stri
   assert.equal(shapeOf('ALTER TABLE t ADD CONSTRAINT ck_x CHECK (a > 0)'), null,
     'a bare ADD CONSTRAINT must never classify safe — Postgres has no IF NOT EXISTS for it');
   assert.equal(shapeOf('CREATE TABLE t (a INT)'), null, 'a bare CREATE TABLE must never classify safe');
+  assert(shapeOf('ALTER TABLE t ALTER COLUMN c TYPE TEXT'), 'a bare widening to TEXT must classify safe — text→text is a no-op');
+  assert.equal(shapeOf('ALTER TABLE t ALTER COLUMN c TYPE INT'), null,
+    'a conversion to a NARROWER type must never classify safe — the second run can fail on the data');
+  assert.equal(shapeOf('ALTER TABLE t ALTER COLUMN c TYPE TEXT USING c::text'), null,
+    'a USING clause can be anything — only the bare TYPE TEXT form is known to be a no-op');
   assert(shapeOf('CREATE UNIQUE INDEX IF NOT EXISTS ux_x ON t (a)'), 'the guarded index form must classify safe');
   dropped.add('t.ck_x');
   assert(shapeOf('ALTER TABLE t ADD CONSTRAINT ck_x CHECK (a > 0)'),

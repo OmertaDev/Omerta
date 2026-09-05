@@ -517,21 +517,144 @@ console.log('\n7b. THE BUILD BOOTS AGAINST A DATABASE OLDER THAN ITSELF');
     // is the reference, and an UPGRADED one must be a superset of it. Independent of any parser, and
     // it cannot be satisfied by the deriver and the check making the same mistake together — the
     // reference is produced by CREATE TABLE, the subject by ALTER, so they share no code path.
-    const COLS = "SELECT table_name||'.'||column_name k FROM information_schema.columns WHERE table_schema='public'";
-    const fresh = new Set((await pool.query(COLS)).rows.map((r) => r.k));       // this build, on the pgcheck db
-    const upgraded = new Set((await p3.query(COLS)).rows.map((r) => r.k));      // this build, on the OLD db
-    const missing = [...fresh].filter((k) => !upgraded.has(k)).sort();
+    const COLS = "SELECT table_name||'.'||column_name k, data_type t FROM information_schema.columns WHERE table_schema='public'";
+    const typed = (rows) => new Map(rows.map((r) => [r.k, r.t]));
+    const fresh = typed((await pool.query(COLS)).rows);       // this build, on the pgcheck db
+    const upgraded = typed((await p3.query(COLS)).rows);      // this build, on the OLD db
+    const missing = [...fresh.keys()].filter((k) => !upgraded.has(k)).sort();
+    // and the TYPE, not only the name: a column that survives an upgrade under the wrong type is the
+    // 2026-07-30 outage class (`uuid = text` has no operator — every authed request 500'd while every
+    // suite stayed green). §7c below drives the one real instance; this is the general net.
+    const mistyped = [...fresh].filter(([k, t]) => upgraded.has(k) && upgraded.get(k) !== t).map(([k, t]) => `${k} (${upgraded.get(k)}, fresh ${t})`).sort();
     added = upgraded.size;
     if (missing.length) {
       ok = false;
       err = `${missing.length} declared column(s) never landed on the upgraded database — the 2026-08-06 `
         + `outage class is live again: ${missing.slice(0, 6).join(', ')}${missing.length > 6 ? ' …' : ''}`;
+    } else if (mistyped.length) {
+      ok = false;
+      err = `${mistyped.length} column(s) carry a different TYPE on the upgraded database than a fresh one: ${mistyped.slice(0, 6).join(', ')}`;
     }
     await p3.end();
     process.env.DATABASE_URL = before;
   } catch (e) { ok = false; err = e.message; }
   try { await pool.query(`DROP DATABASE IF EXISTS ${oldDb}`); } catch { /* best effort */ }
   check(ok, `the current build boots against the ORIGINAL schema (${added} columns present after migration)`, err);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+console.log('\n7c. THE ACCOUNT-ID UNIFICATION SURVIVES A DATABASE THAT STILL DECLARES UUID');
+// THE OUTAGE THIS PINS (2026-07-30): this schema's account ids were MIXED — 28 TEXT columns and 12
+// UUID — and `uuid = text` has no operator, so a query joining the two did not degrade, it failed to
+// PARSE. `loadOwned` runs on every authed request, so that was the entire game returning 500 while
+// all 61 suites stayed green: pg-mem compares uuid to text happily. Three more of the class sat live
+// for weeks (`/v1/rivals`, `/v1/commission`, THE CAST's nemesis), each guarded by "do you have any"
+// so each worked right up until it mattered. THE ACCOUNT-ID UNIFICATION (2026-09-05) made every
+// account column TEXT and removed the bridging casts — which means a database that STILL holds the
+// UUID declarations (every production database that predates it) must be converted at boot, or the
+// cast-free queries that replaced the bridges now fail on exactly the shape they were written for.
+//
+// §7b cannot see this: the OLDEST schema in history predates every one of the twelve columns, so on
+// that database the current build CREATES them TEXT and the migration path is never exercised. So
+// this takes the NEWEST schema in history that still declares an account column UUID — the shape a
+// database migrated up to yesterday really has — seeds every one of the eight tables with real uuid
+// values, boots the current build on top (what a deploy does), and asserts by NAME that no account
+// column survived as uuid, that the seeded rows came through with their values intact, and — the
+// property the outage was about — that a TEXT parameter now compares against each of them.
+// Mutation-verified: drop one `ALTER COLUMN … TYPE TEXT` from schema.sql and this names the column.
+{
+  const { execSync } = await import('node:child_process');
+  const { fileURLToPath } = await import('node:url');
+  const ROOT = fileURLToPath(new URL('..', import.meta.url));
+  const uuidDb = `pgcheck_uuid_${process.pid}`;
+  const swap = (u) => u.replace(/\/[^/?]+(\?|$)/, `/${uuidDb}$1`);
+  const UUID_DECL = /^\s*(account_id|victim_account|aggressor_account|from_account|to_account|blocker_account|blocked_account|account_a|account_b|winner_account|gang_id)\s+UUID\b/m;
+  // every account column the unification converted — the guard's corpus, asserted by NAME below
+  const ACCOUNT_COLS = [
+    ['eth_vault', 'account_id'], ['dm_messages', 'from_account'], ['dm_messages', 'to_account'],
+    ['dm_blocks', 'blocker_account'], ['dm_blocks', 'blocked_account'], ['megaproject_contributions', 'account_id'],
+    ['duels', 'account_a'], ['duels', 'account_b'], ['duels', 'winner_account'],
+    ['commission_proposals', 'gang_id'], ['career_claims', 'account_id'],
+    ['rival_events', 'victim_account'], ['rival_events', 'aggressor_account'],
+  ];
+  let ok = true; let err = ''; let found = null; let survivors = [];
+  let rowsOk = false; let cmpOk = false; let pkOk = false;
+  try {
+    // the newest schema.sql that still declares an account column UUID. Walking the log from the
+    // top means one `git show` past the unification commit, and an anti-vacuity floor: a history
+    // with no such schema means this check is measuring nothing, which must read as a failure.
+    const shas = execSync('git log --format=%H -- schema.sql', { cwd: ROOT }).toString().trim().split('\n');
+    let oldSchema = null;
+    for (const sha of shas) {
+      const text = execSync(`git show ${sha}:schema.sql`, { cwd: ROOT, maxBuffer: 32 * 1024 * 1024 }).toString();
+      if (UUID_DECL.test(text)) { oldSchema = text; found = sha.slice(0, 10); break; }
+    }
+    if (!oldSchema) throw new Error('no schema.sql in history declares an account column UUID — the check has nothing to migrate from');
+    await pool.query(`DROP DATABASE IF EXISTS ${uuidDb}`);
+    await pool.query(`CREATE DATABASE ${uuidDb}`);
+    const before = process.env.DATABASE_URL;
+    const { default: pg } = await import('pg');
+    const legacy = new pg.Pool({ connectionString: swap(before) });
+    await legacy.query(oldSchema);
+    // real uuid values in every converted column, so the conversion has DATA to carry, not just a type
+    const A = '11111111-2222-4333-8444-555555555555', B = '66666666-7777-4888-8999-000000000000';
+    await legacy.query(`INSERT INTO eth_vault (account_id, eth, cost_omr) VALUES ($1, 1.5, 2)`, [A]);
+    await legacy.query(`INSERT INTO dm_messages (id, from_account, to_account, from_name, to_name, body) VALUES ('m1', $1, $2, 'a', 'b', 'hi')`, [A, B]);
+    await legacy.query(`INSERT INTO dm_blocks (blocker_account, blocked_account, name) VALUES ($1, $2, 'b')`, [A, B]);
+    await legacy.query(`INSERT INTO megaproject_contributions (project_id, account_id, contributed) VALUES ('cathedral', $1, 100)`, [A]);
+    await legacy.query(`INSERT INTO duels (id, account_a, account_b, winner_account, day) VALUES ('d1', $1, $2, $1, 1)`, [A, B]);
+    await legacy.query(`INSERT INTO commission_proposals (week, gang_id, decree, deposit) VALUES (1, $1, 'pax', 100000)`, [A]);
+    await legacy.query(`INSERT INTO career_claims (account_id, task_id) VALUES ($1, 'as_job')`, [A]);
+    await legacy.query(`INSERT INTO rival_events (id, victim_account, aggressor_account, kind) VALUES (gen_random_uuid(), $1, $2, 'jump')`, [A, B]);
+    // the precondition, asserted rather than assumed: on the OLD database these really are uuid
+    const stillUuid = (await legacy.query(
+      `SELECT table_name||'.'||column_name k FROM information_schema.columns WHERE table_schema='public' AND data_type='uuid'`)).rows.map((r) => r.k);
+    await legacy.end();
+    if (stillUuid.length < ACCOUNT_COLS.length) throw new Error(`the old schema ${found} declares only ${stillUuid.length} uuid column(s) — the seed is not the shape this check is about`);
+    // boot the current build on top, exactly as a deploy would
+    process.env.DATABASE_URL = swap(before);
+    const mod = await import(`../src/db.js?uuid=${process.pid}`);
+    const p4 = await mod.makeDb();
+    const types = (await p4.query(
+      `SELECT table_name t, column_name c, data_type d FROM information_schema.columns WHERE table_schema='public'`)).rows;
+    const typeOf = new Map(types.map((r) => [`${r.t}.${r.c}`, r.d]));
+    survivors = ACCOUNT_COLS.map(([t, c]) => [`${t}.${c}`, typeOf.get(`${t}.${c}`)]).filter(([, d]) => d !== 'text').map(([k, d]) => `${k} (${d})`);
+    // the data came through (a type conversion that emptied the row would satisfy the type check)
+    const v = (await p4.query('SELECT account_id, eth FROM eth_vault')).rows;
+    const r = (await p4.query('SELECT victim_account, aggressor_account FROM rival_events')).rows;
+    const b = (await p4.query('SELECT blocker_account, blocked_account FROM dm_blocks')).rows;
+    rowsOk = v.length === 1 && v[0].account_id === A && Number(v[0].eth) === 1.5
+      && r.length === 1 && r[0].victim_account === A && r[0].aggressor_account === B
+      && b.length === 1 && b[0].blocker_account === A && b[0].blocked_account === B;
+    // THE PROPERTY: a TEXT parameter compares against every converted column. This is the exact
+    // statement shape that failed to parse in production; run it cast-free on the upgraded database.
+    // (One parameter typed from ONE text use, then reused — the loadOwned shape.)
+    const cmp = await p4.query(
+      `SELECT (SELECT count(*) FROM account_gear WHERE account_id=$1)
+            + (SELECT count(*) FROM rival_events WHERE victim_account=$1)
+            + (SELECT count(*) FROM dm_messages WHERE from_account=$1)
+            + (SELECT count(*) FROM dm_blocks WHERE blocker_account=$1)
+            + (SELECT count(*) FROM megaproject_contributions WHERE account_id=$1)
+            + (SELECT count(*) FROM duels WHERE winner_account=$1)
+            + (SELECT count(*) FROM commission_proposals WHERE gang_id=$1)
+            + (SELECT count(*) FROM career_claims WHERE account_id=$1)
+            + (SELECT count(*) FROM eth_vault WHERE account_id=$1) n`, [A]);
+    cmpOk = Number(cmp.rows[0].n) === 8;   // one seeded row in each of the eight tables (account_gear: none)
+    // the primary keys over converted columns were rebuilt, not dropped
+    const pks = (await p4.query(
+      `SELECT c.conrelid::regclass::text t FROM pg_constraint c WHERE c.contype='p' AND c.conrelid::regclass::text = ANY($1::text[])`,
+      [[...new Set(ACCOUNT_COLS.map(([t]) => t))]])).rows.map((x) => x.t);
+    pkOk = new Set(pks).size === new Set(ACCOUNT_COLS.map(([t]) => t)).size;
+    await p4.end();
+    process.env.DATABASE_URL = before;
+  } catch (e) { ok = false; err = e.message; }
+  try { await pool.query(`DROP DATABASE IF EXISTS ${uuidDb}`); } catch { /* best effort */ }
+  check(ok && survivors.length === 0,
+    `every account column is TEXT after booting on a UUID-declaring database (${found})`,
+    err || `survived as uuid: ${survivors.join(', ')} — the 2026-07-30 outage class is live for every database that predates the unification`);
+  check(ok && rowsOk, 'the seeded uuid values came through the conversion intact', err || 'a row was lost or its value changed');
+  check(ok && cmpOk, 'a TEXT parameter compares cast-free against every converted column (the outage statement shape)', err || 'the cast-free comparison did not match the seeded rows');
+  check(ok && pkOk, 'the primary keys over converted columns were rebuilt, not dropped', err || 'a converted table lost its primary key');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
