@@ -423,6 +423,11 @@ async function extortFront(ch, victim, businessId, client, h, verb) {
   ch.energy = Number(ch.energy) - energy;
   ch.heat = Math.min(100, Number(ch.heat || 0) + heat); // exposure win or lose (clamp 100, audit LOW-2)
   await client.query('UPDATE businesses SET shakedown_at=now() WHERE id=$1', [businessId]);
+  // WAVE 80: the three charges land win OR lose and the reply named none of them. The per-venue
+  // window is the load-bearing one — it is SHARED with rob, so a flopped shakedown closes the
+  // door on a robbery too, which a player has no way to learn but by being refused. Built once
+  // and spread on every branch, so the two outcomes can never disagree about what a visit cost.
+  const terms = { heat, energy, cooldownSeconds: Math.round(CONSTANTS.SHAKEDOWN_CD_MS / 1000) };
 
   // REVENGE, WITH TEETH (step three) — judged BEFORE the roll (so it can carry the striker's hand)
   // and before the strike is RECORDED below (else this strike would count against the debt it is
@@ -470,14 +475,14 @@ async function extortFront(ch, victim, businessId, client, h, verb) {
     // `kindName`, and the client (which has no business catalog and so can render nothing but what
     // it is sent) read only `kindName`: so both rob lines printed the raw catalog KEY. It reads as
     // capitalisation today only because every BUSINESSES id happens to be its own lowercased name.
-    return { ok: true, win: true, kind: r.kind, name: kindName, kindName, cut, revenge, ...(rob ? { robbed: true } : {}) };
+    return { ok: true, win: true, kind: r.kind, name: kindName, kindName, cut, revenge, ...terms, ...(rob ? { robbed: true } : {}) };
   }
   if (rob) {
     // pinched at the register — a failed robbery is a CRIME caught in the act
     ch.jail_until = new Date(Date.now() + RIVALS.ROB_JAIL_S * 1000);
     await h.notify(client, victim.id, 'rob_failed', { from: ch.name, kind: r.kind, kindName });
     await recordRival(client, victim.account_id, ch, verb, { kind: r.kind, failed: true });
-    return { ok: true, win: false, kind: r.kind, name: kindName, kindName, cut: 0, robbed: true, jailedS: RIVALS.ROB_JAIL_S };
+    return { ok: true, win: false, kind: r.kind, name: kindName, kindName, cut: 0, robbed: true, jailedS: RIVALS.ROB_JAIL_S, ...terms };
   }
   // the front's security saw you off — and the BEATING is a term, not flavour: the line read
   // "nothing to show for it" about an action that costs health. It is a roll, so the client cannot
@@ -486,7 +491,7 @@ async function extortFront(ch, victim, businessId, client, h, verb) {
   ch.health = Math.max(1, Number(ch.health) - dmg);
   await h.notify(client, victim.id, 'shakedown_failed', { from: ch.name, kind: r.kind, kindName });
   await recordRival(client, victim.account_id, ch, verb, { kind: r.kind, failed: true });
-  return { ok: true, win: false, kind: r.kind, name: kindName, kindName, cut: 0, dmg };
+  return { ok: true, win: false, kind: r.kind, name: kindName, kindName, cut: 0, dmg, ...terms };
 }
 export async function shakedownBusiness(ch, victim, businessId, client, h) {
   return extortFront(ch, victim, businessId, client, h, 'shakedown');

@@ -51,11 +51,11 @@ export async function dig(ch, client, h) {
   ch.energy = Number(ch.energy) - CLUES.DIG_ENERGY;   // the shovel is paid win or lose (pacing)
   const step = clueStepOf(s.salt, Number(s.step));
   if (ch.loc !== step.district)
-    return { ok: false, cold: true, riddle: step.riddle, hint: 'Cold ground. Read it again — this is not the place.' };
+    return { ok: false, cold: true, riddle: step.riddle, energy: CLUES.DIG_ENERGY, hint: 'Cold ground. Read it again — this is not the place.' };
   if (step.window) {
     const hr = cityHourOf().hour;
     if (hr < step.window.lo || hr > step.window.hi)
-      return { ok: false, cold: true, riddle: step.riddle, hint: `Right ground, wrong hour — come ${step.window.text} (h${step.window.lo}–${step.window.hi}).` };
+      return { ok: false, cold: true, riddle: step.riddle, energy: CLUES.DIG_ENERGY, hint: `Right ground, wrong hour — come ${step.window.text} (h${step.window.lo}–${step.window.hi}).` };
   }
   const done = Number(s.step) >= Number(s.steps);
   if (!done) {

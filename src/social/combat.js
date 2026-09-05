@@ -7,7 +7,7 @@
 // Split out of the 2,003-line src/social.js; every function below is byte-identical to what was
 // there. Import from '../social.js' — it re-exports this package's public surface unchanged.
 import { GameError, bumpFamilyTask, bus, ledger, notify, track, loadOwned, skillMult, npcMult, npcTier, bumpStanding, bumpMastery, masteryFx, trunkCap, gainRespect, bumpCrewObjective, hunterSearchMs } from '../game.js';
-import { M3, CONSTANTS, LOAN, levelOf, rankIdxOf, cityEventOf, dayOf, btkOf, gunObjOf, vestMultOf, fleetValue, effStat, npcHitmanOf, VENDETTA, COMMISSION, SKILLS, UNDERWORLD, LAW, PORT, witproActive, penSafe, inHole, HONOR, HEIST_LOOT_RATE, BUSINESSES, seasonModOf, pathFx, RIVALS, carVal, carOf, boatOf, gearOf, SHIPMENT, usd , districtName, bustSpentToday, bustRefillSeconds , coolLeft, coolWait } from '../rules.js';
+import { M3, CONSTANTS, LOAN, levelOf, rankIdxOf, cityEventOf, dayOf, btkOf, gunObjOf, vestMultOf, fleetValue, effStat, npcHitmanOf, VENDETTA, COMMISSION, SKILLS, UNDERWORLD, LAW, PORT, witproActive, penSafe, inHole, HONOR, HEIST_LOOT_RATE, BUSINESSES, seasonModOf, pathFx, RIVALS, carVal, carOf, boatOf, gearOf, SHIPMENT, usd , districtName, bustSpentToday, bustAttemptsLeft, bustRefillSeconds , coolLeft, coolWait } from '../rules.js';
 import { activeDecree } from '../commission.js';
 import { bumpHonor } from '../honor.js';
 import { recordRival, revengeOwed } from '../rivals.js';
@@ -134,7 +134,9 @@ export async function jump(ch, victim, client, h, intent) {
     await bumpFamilyTask(client, h, 'jump', 1);
     await bumpMastery(client, h, ch, 'muscle', 'jump'); // THE TRADES — a won jump works the protection racketeer's craft
     bus.emit('streets', { type: 'jump', by: ch.name, on: victim.name, war: !!war });
-    return { ok: true, win: true, intent: it.id, energy: energyCost, stolen, crates, rep, bounty, war: !!war, revenge, firstBlood };
+    // WAVE 80: hospMs rode the victim's notify and never the attacker's own reply, so the man who
+    // put them there was the one person not told the mark is off the street.
+    return { ok: true, win: true, intent: it.id, energy: energyCost, hospSeconds: Math.round(hospMs / 1000), stolen, crates, rep, bounty, war: !!war, revenge, firstBlood };
   }
   const dmg = rand(10, 25);
   ch.health = Math.max(1, Number(ch.health) - dmg);
@@ -560,7 +562,13 @@ export async function fire(ch, victim, client, h, rounds) {
     // `gearLootName` is the RAW-KEY half: `gearLoot` is a catalog id and describe() has no gear
     // resolver, so a stripped piece could only ever have rendered 'vest_kevlar' at a player. Every
     // other display name in this file's replies ships server-side for the same reason.
+    // WAVE 80 — the WITHHELD TERMS of the most expensive verb in the game. The line read
+    // "THEY'RE DONE. · +10 respect" while the shot had ALSO spent `fired` rounds and FIRE_ENERGY
+    // energy and drawn FIRE_HEAT law heat (the §7 interlock at the deduction above), and — on a mark
+    // under LOOT_MIN_LVL — paid no loot or feared-rep AT ALL. None of it was on the reply, so the
+    // client could not have said otherwise. `lootable` is the anti-Sybil floor's own local.
     return { ok: true, kill: true, rep, chop, loot, omrLoot, gearLoot, gearLootName: gearLoot ? (gearOf(gearLoot)?.name || gearLoot) : null,
+      heat: M3.FIRE_HEAT, heatNow: Number(ch.heat || 0), fired, energy: M3.FIRE_ENERGY, lootable,
       contraLoot, matLoot, matLootName: matLoot > 0 ? SHIPMENT.MATERIAL : null,
       orderLoot: estate.orderLoot || 0, bounty, jammed, warKill, hitman: hit,
       ...(empireLoot ? { empireLoot } : {}), ...(ammoBack ? { ammoBack } : {}), vendetta: !!vend, ...(grudges.length ? { grudges } : {}), estate: { heirId: estate.heirId } };
@@ -570,7 +578,9 @@ export async function fire(ch, victim, client, h, rounds) {
   const dmg = rand(5, 15);
   victim.health = Math.max(1, Number(victim.health) - dmg);
   await h.notify(client, victim.id, 'attempt', { from: ch.name, dmg });
-  return { ok: true, kill: false, jammed, effective, btk };
+  // WAVE 80 — a MISS draws the same FIRE_HEAT and spends the same rounds and energy; the line named
+  // only the shot. The kill twin ships the identical fields (one shape, two outcomes).
+  return { ok: true, kill: false, jammed, effective, btk, heat: M3.FIRE_HEAT, heatNow: Number(ch.heat || 0), fired, energy: M3.FIRE_ENERGY };
 }
 
 // ═══════════════════ SAFEHOUSE — EARNABLE DEFENSE (M7 Phase 4) ═══════════════════
@@ -785,10 +795,13 @@ export async function bust(ch, victim, client, h) {
     await h.bumpDaily(client, ch.id, 'bust');
     await h.notify(client, victim.id, 'busted', { from: ch.name });
     bus.emit('streets', { type: 'bust', by: ch.name, freed: victim.name });
-    return { ok: true, success: true, reward, busts: ch.busts };
+    // WAVE 80 — the D15 daily bucket is charged BEFORE the roll (line 779), so a try SPENDS one
+    // whichever way the roll lands. Both outcomes carry the same shape (`bust` + what's left) —
+    // the fire precedent: one marker, two outcomes, so no sibling branch can claim either line.
+    return { ok: true, bust: true, success: true, reward, busts: ch.busts, attemptsLeft: bustAttemptsLeft(ch) };
   }
   ch.jail_until = new Date(Date.now() + M3.BUST_FAIL_JAIL_S * 1000);
-  return { ok: true, success: false, jailSeconds: M3.BUST_FAIL_JAIL_S };
+  return { ok: true, bust: true, success: false, jailSeconds: M3.BUST_FAIL_JAIL_S, attemptsLeft: bustAttemptsLeft(ch) };
 }
 
 // ═══════════════════ THE EXCHANGE (§5.4 — escrowed order book) ═══════════════════

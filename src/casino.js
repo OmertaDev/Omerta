@@ -311,7 +311,14 @@ export async function claimFight(ch, client, h) {
       await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: payout, reason: 'casino:win:fight' });
       await bumpProfit(client, -payout);
     }
-    results.push({ week: Number(b.week), side: b.side, winner: res.winner, hit });
+    // Name the FIGHTERS, not the side letters. `boutOf` has named both all along (it draws the
+    // card off the same week), and the TRACK twin below already ships `winnerName` — this is the
+    // forgotten sibling. A week later a bettor does not remember which fighter side 'b' was, so
+    // the backed name rides too and the line reads it on a miss.
+    const card = boutOf(Number(b.week));
+    results.push({ week: Number(b.week), side: b.side, winner: res.winner, hit,
+      winnerName: res.winner === 'a' ? card.a : card.b,
+      pickName: b.side === 'a' ? card.a : card.b });
     await client.query('DELETE FROM fight_bets WHERE character_id=$1 AND week=$2', [ch.id, b.week]);
   }
   await h.track(client, ch.account_id, 'casino', { game: 'fight_claim', settled: bets.length, won });
