@@ -1060,7 +1060,9 @@ console.log('\n9e. THE POT/FUNDER CYCLE LANDS AS CONTENTION, NEVER A 500');
 // The other survivor is BOXING_BOUTS (cancelBout 441 ↔ resolveMainEvent 479), whose inverted holder
 // is reachable ONLY through runEstate — resolveMainEvent's own comment claims no AB-BA and is right
 // about a live bettor and wrong about the estate path, the same "right about itself, wrong about its
-// sibling" shape as refundPot/sweepExpiredBounties. Same remedy, same double net; not driven twice.
+// sibling" shape as refundPot/sweepExpiredBounties. Same remedy, same double net — driven in §9g
+// through the one route that reaches it (the mod-kill), because "same shape, same remedy" is a claim
+// about the code, and only a drive turns it into a fact.
 console.log('\n9f. THE LISTING/BIDDER CYCLE LANDS AS CONTENTION, NEVER A 500');
 {
   const { runLedgerInvariants } = await import('../src/invariants.js');
@@ -1154,6 +1156,140 @@ console.log('\n9f. THE LISTING/BIDDER CYCLE LANDS AS CONTENTION, NEVER A 500');
     `${refunds.length} refund rows, cash +${(await cashOfM(bidder.id)) - bidderCashBefore}`);
   check((await escrowDrift()) === drift0m, 'the market escrow identity is where it started',
     `drift ${await escrowDrift()} vs ${drift0m}`);
+}
+// ─────────────────────────────────────────────────────────────────────────────
+// §9f drove the player-route instance of the class and left the estate-only one as a claim ("same
+// remedy, same double net"). This drives it. cancelBout (boxing.js) holds the BOUT row FOR UPDATE and
+// then `UPDATE characters SET cash` on every living BETTOR — third parties — while resolveMainEvent
+// locks [a_char, b_char, ...bettors] SORTED and only THEN the bout row. The inverted holder is reached
+// only through runEstate (cancelMainEventsAtDeath), so the driver is the mod-kill route: it holds the
+// dying principal's character row, runs the estate, and maps 40P01 through deadlockToRetry.
+//
+// Driven by HOLDING the bettor's row, never by racing a real resolve — a race depends on two backends
+// overlapping inside a millisecond-wide window, and timing luck reads exactly like a proof. The
+// player is given the full second before the holder closes the cycle, so Postgres aborts the PLAYER
+// (whoever started waiting first) and the victim is deterministic.
+console.log('\n9g. THE BOUT/BETTOR CYCLE LANDS AS CONTENTION, NEVER A 500');
+{
+  const { runLedgerInvariants } = await import('../src/invariants.js');
+  const { BOXING, PACING } = await import('../src/rules.js');
+  const escrowDrift = async () => {
+    const inv = await runLedgerInvariants(pool, { alert: false });
+    return inv.checks.find((c) => c.name === 'boxing bet escrow')?.drift;
+  };
+  const lvlRespect = (lvl) => PACING.LEVEL_DIVISOR * (lvl - 1) * (lvl - 1);
+  const mkb = async (label) => {
+    const { body: { token } } = await call('POST', '/v1/auth/guest');
+    await call('POST', '/v1/character', { token, body: { name: `${label} ${Date.now() % 1000000}` } });
+    const me = (await call('GET', '/v1/me', { token })).body.character;
+    await pool.query('UPDATE characters SET cash=$2, respect=$3 WHERE id=$1',
+      [me.id, 5_000_000, lvlRespect(BOXING.MANAGER_MIN_LEVEL + 4)]);
+    return { token, id: me.id };
+  };
+  const promoter = await mkb('Promoter');   // the principal who dies
+  const rival = await mkb('Rival');         // the other manager
+  const bettor = await mkb('Bettor');       // the third party cancelBout reaches
+  const cashOfB = async (id) => Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [id])).rows[0].cash);
+
+  const s1 = await call('POST', '/v1/boxing/recruit', { token: promoter.token, body: { name: 'Iron Mike Corleone' } });
+  const s2 = await call('POST', '/v1/boxing/recruit', { token: rival.token, body: { name: 'Sugar Sal Provolone' } });
+  const listed = s2.body?.id
+    ? await call('POST', '/v1/boxing/list', { token: rival.token, body: { fighter: s2.body.id, stake: BOXING.MIN_STAKE } })
+    : { code: 0 };
+  const ann = s1.body?.id && listed.code === 200
+    ? await call('POST', `/v1/boxing/announce/${rival.id}`, { token: promoter.token,
+        body: { myFighter: s1.body.id, theirFighter: s2.body.id } })
+    : { code: 0 };
+  const boutId = ann.body?.bout;
+  const bet = BOXING.BET_MIN * 20;
+  const placed = boutId
+    ? await call('POST', `/v1/boxing/bout/${boutId}/bet`, { token: bettor.token, body: { fighter: s1.body.id, amount: bet } })
+    : { code: 0 };
+  check(s1.code === 200 && s2.code === 200 && listed.code === 200 && ann.code === 200 && placed.code === 200,
+    'a booked main event carries a third-party bet',
+    `recruit ${s1.code}/${s2.code} ${s1.body?.error || s2.body?.error || ''} / list ${listed.code} ${listed.body?.error || ''}`
+    + ` / announce ${ann.code} ${ann.body?.error || ''} / bet ${placed.code} ${placed.body?.error || ''}`);
+
+  const bettorCashBefore = await cashOfB(bettor.id);
+  const drift0b = await escrowDrift();
+  const deadlockCountB = async () => Number((await pool.query(
+    'SELECT deadlocks FROM pg_stat_database WHERE datname = current_database()')).rows[0]?.deadlocks || 0);
+  const deadlocks0b = await deadlockCountB();
+  const modKill = () => app.inject({ method: 'POST', url: '/v1/mod/kill',
+    headers: { 'x-mod-key': process.env.MOD_KEY, 'idempotency-key': crypto.randomUUID() },
+    payload: { characterId: promoter.id } }).then((res) => {
+    let json = null; try { json = res.json(); } catch {}
+    return { code: res.statusCode, body: json };
+  });
+
+  const holderB = await pool.connect();
+  let raced3 = null, holderTook3 = null;
+  try {
+    await holderB.query('BEGIN');
+    // exactly what resolveMainEvent does FIRST: a bettor's character row, sorted with the principals.
+    await holderB.query('SELECT 1 FROM characters WHERE id=$1 FOR UPDATE', [bettor.id]);
+    // the estate takes the dying promoter's row, then the bout row, then blocks refunding the bettor.
+    const inflightB = modKill();
+    // WAIT FOR THE BLOCK, NEVER FOR A CLOCK. A fixed sleep here is wrong in BOTH directions: too short and the
+    // estate has not reached the bettor row yet (the holder then blocks on the bout until lock_timeout, a
+    // 55P03 the vacuity guard below correctly refuses); too long and the estate's own deadlock_timeout has
+    // already fired with NO cycle to find — Postgres checks ONCE per waiter, so when the holder closes the
+    // cycle afterwards it is the HOLDER's timer that detects it and the HOLDER that is aborted, the estate
+    // sails through with a 200, and this section measures the wrong victim (measured: a 1500ms sleep did
+    // exactly that). So poll pg_stat_activity for the estate's backend WAITING on a characters row, and close
+    // the cycle the moment it is — its timer then fires ~1s later with the cycle present, before the
+    // holder's does, and the victim is deterministic.
+    let blocked = false;
+    for (let i = 0; i < 100 && !blocked; i++) {
+      const { rows } = await pool.query(
+        `SELECT 1 FROM pg_stat_activity WHERE wait_event_type='Lock' AND query ILIKE '%UPDATE characters%'
+           AND pid <> pg_backend_pid() LIMIT 1`);
+      blocked = rows.length > 0;
+      if (!blocked) await new Promise((r) => setTimeout(r, 50));
+    }
+    check(blocked, 'the estate genuinely blocked on the held bettor row', 'it never waited — nothing here can prove a cycle');
+    // close the cycle: we hold the bettor and now want the bout row the estate is holding.
+    holderTook3 = holderB.query('SELECT 1 FROM boxing_bouts WHERE id=$1 FOR UPDATE', [boutId])
+      .then(() => null, (e) => e);
+    raced3 = await inflightB;
+    await holderTook3;
+  } finally { await holderB.query('ROLLBACK').catch(() => {}); holderB.release(); }
+
+  check(raced3.code !== 500, 'the mod-kill is NOT told the server broke',
+    `got ${raced3.code} ${raced3.body?.error || ''} — "${raced3.body?.message || ''}"`);
+  check(raced3.code === 400 && raced3.body?.error === 'contention',
+    'a deadlocked estate comes back as a retryable contention',
+    `got ${raced3.code} ${raced3.body?.error || ''}`);
+  check((await deadlockCountB()) > deadlocks0b, 'and it was the CYCLE, not the lock_timeout valve',
+    'pg_stat_database.deadlocks did not move — a 55P03 maps to `contention` too, so this ran but proved'
+    + ' nothing about the bout/bettor cycle');
+
+  // the aborted estate rolled back WHOLE: a half-cancelled card (bettor refunded, bout still booked,
+  // fighters unlocked) is the drift this guards, and a DEAD promoter beside a live card the other half.
+  const still = (await pool.query('SELECT status FROM boxing_bouts WHERE id=$1', [boutId])).rows[0];
+  const alive = (await pool.query('SELECT alive FROM characters WHERE id=$1', [promoter.id])).rows[0];
+  check(still?.status === 'booked' && alive?.alive === true, 'the card survived the deadlock intact',
+    `status ${still?.status}, promoter alive=${alive?.alive}`);
+  check((await cashOfB(bettor.id)) === bettorCashBefore, 'and the bettor was not part-refunded',
+    `cash moved by ${(await cashOfB(bettor.id)) - bettorCashBefore}`);
+  const fighters = (await pool.query('SELECT booked_until FROM fighters WHERE id IN ($1,$2)', [s1.body.id, s2.body.id])).rows;
+  check(fighters.length === 2 && fighters.every((f) => f.booked_until != null), 'and both fighters are still booked',
+    fighters.map((f) => f.booked_until).join(' / '));
+
+  // the operator's own remedy works: `contention` says retry, so retrying must actually settle it.
+  const retry = await modKill();
+  check(retry.code === 200, 'the retry the contention asked for goes through',
+    `got ${retry.code} ${retry.body?.error || ''}`);
+  const refunds = (await pool.query(
+    "SELECT amount FROM transactions WHERE character_id=$1 AND reason='boxing:bet:refund'", [bettor.id])).rows;
+  check(refunds.length === 1 && Number(refunds[0].amount) === bet
+    && (await cashOfB(bettor.id)) === bettorCashBefore + bet,
+    'and the bettor is made whole exactly once',
+    `${refunds.length} refund rows, cash +${(await cashOfB(bettor.id)) - bettorCashBefore}`);
+  const after = (await pool.query('SELECT status FROM boxing_bouts WHERE id=$1', [boutId])).rows[0];
+  check(after?.status === 'cancelled', 'the card is cancelled ONCE, and the escrow went home', `status ${after?.status}`);
+  check((await escrowDrift()) === drift0b, 'the boxing bet escrow identity is where it started',
+    `drift ${await escrowDrift()} vs ${drift0b}`);
 }
 // ─────────────────────────────────────────────────────────────────────────────
 console.log('\n10. NO node-pg DEPRECATIONS');
