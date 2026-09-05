@@ -5808,6 +5808,42 @@ shared tree is dirty), and the SPEC client line count crossed its 2% guard band 
 restated rather than the tolerance widened. Suite green at the final head; the two SQL-touching
 clusters were verified through CI's real-Postgres job per push.
 
+**THE INNERHTML LEDGER — 110 render sites, one probe, and the mutation that survived for the
+right reason (2026-09-05).** RT#8's stored-XSS lens ended with a sentence rather than a guard: *"one
+missed `cleanText` on a new field is stored XSS and nothing would catch it."* The console has no
+escape discipline enforced anywhere — ~110 `innerHTML` sites, an `esc()` helper used where somebody
+remembered, and `art()`/`goodName`/`distName`/`discName`/`styleName` returning RAW catalog names
+straight into markup — so the client's safety rested entirely on WRITE-time sanitisation of every
+player string on every route, forever. **Check L in `tools/mobile.js` turns that into a property of
+the RENDERER**: `page.route` intercepts every `/v1/**` JSON reply and appends a marker probe
+(`"><i data-xss="ZXSSMARK">ZXSSMARK</i>`) to every string under a DISPLAY key (`name`, `title`,
+`bio`, `tag`, `by`, `dynasty`, `desc`, `headline`, …, never a lookup key like `id`/`kind`/`district`),
+walks every group, tab and the cellphone modal in real Chromium, and fails once per distinct site
+where the probe CREATED AN ELEMENT rather than rendering as text — naming the screen and the nearest
+`[id]`. Two anti-vacuity floors, because they fail differently: the interceptor must have poisoned
+≥50 strings (a probe that lands nowhere finds nothing), and the marker must have rendered as literal
+text ≥10 times (the check is only meaningful on screens that actually printed a poisoned string).
+**First run: 64 sites.** A mechanical transform (`esc(` around every display-key interpolation and
+every raw-name helper on HTML lines, skipping the four text-context regions — `describe()`, the cine,
+`bragText`, `feedText` — whose consumers are `textContent`) took it to 4; ~15 hand fixes on the
+conditional shapes the transform cannot see (`x ? '<b>' + esc(g.name) + '</b>' : esc(g.name)`,
+`.map(esc).join(', ')`, `${p ? esc(p.name) : esc(me.path)}`) took it to 0 across 33 screens, 4,600
+poisoned strings, 781 text hits. `art(n, a)` is deliberately NOT changed to escape: describe() feeds it
+to toast's `textContent`, so an escaping `art` would render entities as literal text on every toast
+(the wave-11 `esc()`-corrupting-every-name class) — the innerHTML sites wrap it instead. The tour
+bodies stay unescaped by design (client-authored static HTML, the title escaped).
+**THE MUTATION THAT SURVIVED WAS RIGHT TO, and it corrected my anchor rather than the guard.** M1
+stripped `esc(` from `<b>${esc(me.name)}</b>` — the FIRST of two occurrences — and the run stayed
+green. The first occurrence is the DEATH MODAL (line 5846), which no walk renders; the `#whoami`
+masthead is the second. Re-targeted at the coach card's `${esc(next.name)}` (inside `#tab-start`,
+poisoned on every walk) it fails by name with the created element quoted verbatim. M2 (the poison
+KEYS emptied) trips the first floor — *"poisoned only 0 string(s) across 154 JSON responses"*. Honest
+scope, stated in the check: it proves every DISPLAY-keyed string the walk renders is escaped, not
+that every innerHTML site is (a field under a key not in KEYS, or a screen the walk cannot reach, is
+outside it); write-time `cleanText` stays the first wall and this is the second. Zero §10.4 (render
+markup moves no value), no SQL moved (verified on the STAGED diff — the unstaged one is empty after a
+savepoint, which reads exactly like a clean sweep).
+
 ## Sensitive design notes
 *These are standing PRODUCT rules. They bind whatever else is true, and several of them exist
 because breaking one is very hard to walk back.*

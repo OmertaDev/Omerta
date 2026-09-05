@@ -1756,7 +1756,7 @@
     // prose (the coach, the glossary, action results, the codex) is written in English by design, so
     // the picker says so rather than over-promising a fully localised game.
     const pick = el(`<select class="langpick" title="Language — menus only (the game text stays English) / Idioma — solo menús / 语言 — 仅菜单">${Object.entries(I18N)
-      .map(([k, v]) => `<option value="${k}"${k === LANG ? ' selected' : ''}>${v.name}${k === 'en' ? '' : ' (menus)'}</option>`).join('')}</select>`);
+      .map(([k, v]) => `<option value="${k}"${k === LANG ? ' selected' : ''}>${esc(v.name)}${k === 'en' ? '' : ' (menus)'}</option>`).join('')}</select>`);
     pick.onchange = () => { localStorage.setItem('omerta_lang', pick.value); location.reload(); };
     host.appendChild(el('<span class="langglobe" title="Language — menus only" style="opacity:.65;margin-left:8px;font-size:14px">🌐</span>')); // (C15) a language affordance
     host.appendChild(pick);
@@ -5467,7 +5467,7 @@
     tourAt = Math.max(0, Math.min(TOUR.length - 1, i));
     const s = TOUR[tourAt], last = tourAt === TOUR.length - 1;
     $('#tour-art').style.backgroundImage = `url(/art/${s.art})`;
-    $('#tour-body').innerHTML = `<h2 id="tour-title">${s.title}</h2>${s.body}`;
+    $('#tour-body').innerHTML = `<h2 id="tour-title">${esc(s.title)}</h2>${s.body}`;
     $('#tour-dots').innerHTML = TOUR.map((_, j) => `<i${j === tourAt ? ' class="on"' : ''}></i>`).join('');
     $('#tour-back').style.visibility = tourAt ? 'visible' : 'hidden';
     $('#tour-skip').textContent = tourReplay ? 'close' : 'skip';
@@ -5880,8 +5880,8 @@
       fam.classList.toggle('hidden', !me.gang);
       if (!me.gang && wtab === 'family') { $('[data-wtab="feed"]')?.click(); }
     }
-    $('#whoami').innerHTML = `<b>${me.name}</b> · gen ${me.generation} · lvl ${me.level} · <button id="go-travel" title="travel">${esc(me.loc)} ⇄</button>` +
-      (me.gang ? ` · <span style="color:${me.gang.color || 'var(--dim)'}">${me.gang.tag}</span>` : '');
+    $('#whoami').innerHTML = `<b>${esc(me.name)}</b> · gen ${me.generation} · lvl ${me.level} · <button id="go-travel" title="travel">${esc(me.loc)} ⇄</button>` +
+      (me.gang ? ` · <span style="color:${me.gang.color || 'var(--dim)'}">${esc(me.gang.tag)}</span>` : '');
     const capitalBalance = $('#capital-balance');
     if (capitalBalance) capitalBalance.textContent = fmt(Math.floor(Number(me.omr) || 0));
     const gt = $('#go-travel'); if (gt) gt.onclick = openTravel;   // move from ANY screen
@@ -5928,7 +5928,7 @@
       $('#coachwrap').innerHTML = `<section id="operation-desk" role="region" aria-labelledby="operation-title" aria-busy="${operationPending ? 'true' : 'false'}">
         <div id="coach">
           <div class="operation-desk__eyebrow"><span class="cwho" id="operation-title">YOUR TURN · CITY-RANKED MOVE</span>
-            <span class="operation-state operation-state--${readiness.tone}">${readiness.label}</span></div>
+            <span class="operation-state operation-state--${readiness.tone}">${esc(readiness.label)}</span></div>
           <div class="cl" title="${esc(order.label)}">${esc(order.label)}</div><div class="ch">${esc(order.hint)}</div>
           <div class="operation-readiness">${esc(readiness.detail)}</div>
           <div class="operation-resources" aria-label="Current resources">
@@ -5993,7 +5993,7 @@
       <div class="row stathelp" data-stathelp="health" title="Tap for how to heal up."><span class="k">${T('k_health')} <i class="ihint">ⓘ</i></span><span>${me.health}/100</span></div>${bar('health', me.health, 100)}
       <div class="row stathelp" data-stathelp="heat" title="Tap for how to cool off."><span class="k">${T('k_heat')} <i class="ihint">ⓘ</i></span><span>${me.heat}</span></div>${bar('heat', me.heat, 100)}
       <div class="row"><span class="k">${T('k_stats')}</span><span>${me.eff.muscle} / ${me.eff.cunning} / ${me.eff.speed}</span></div>
-      <div class="row"><span class="k">base build <span class="d" style="font-size:10px">(${me.forgedName ? `forged: ${me.forgedName}` : 'rolled at birth'} · total ${me.statTotal ?? 15})</span></span><span>${me.stats.muscle} / ${me.stats.cunning} / ${me.stats.speed}
+      <div class="row"><span class="k">base build <span class="d" style="font-size:10px">(${me.forgedName ? `forged: ${esc(me.forgedName)}` : 'rolled at birth'} · total ${me.statTotal ?? 15})</span></span><span>${me.stats.muscle} / ${me.stats.cunning} / ${me.stats.speed}
         ${me.rerollCredits > 0 ? `<button class="act" id="reroll-go" style="font-size:10px;padding:1px 5px">re-roll (${me.rerollCredits})</button>` : ''}</span></div>
       <div class="row"><span class="k">${T('k_gun')}</span><span>${me.gun || '—'}</span></div>
       <div class="row"><span class="k">${T('k_ammo')}</span><span>${fmt(me.ammo)} / ${fmt(me.cb)}</span></div>
@@ -7057,7 +7057,7 @@
   // THE HERO BAND — a screen's headline stats, big and focal. Each stat: { v (the big value), label, sub?, cls? }.
   // cls 'neon' for a live money figure, 'warn' for a call-to-action (e.g. money waiting to be collected).
   const heroBand = (stats) => !stats.length ? '' : `<div class="hband">${stats.map((s) =>
-    `<div class="hst${s.cls ? ' ' + s.cls : ''}"><div class="hv">${s.v}</div><div class="hl">${s.label}</div>${s.sub ? `<div class="hsub">${s.sub}</div>` : ''}</div>`).join('')}</div>`;
+    `<div class="hst${s.cls ? ' ' + s.cls : ''}"><div class="hv">${s.v}</div><div class="hl">${esc(s.label)}</div>${s.sub ? `<div class="hsub">${s.sub}</div>` : ''}</div>`).join('')}</div>`;
   // collapsible screen section (the density fix): reads like an h2, folds like a drawer, and the
   // open/closed choice STICKS per browser (localStorage) so the screen stays how you arranged it
   const sect = (key, title, sub, inner, defaultOpen = false) => {
@@ -7094,29 +7094,29 @@
     t.innerHTML = `
       ${!me.lab ? coachCard('The Kitchen is the deepest money in the game', 'Cook product, hire a crew, and move weight while you\'re offline. You need a lab (buy one below) and it pays to declare The Kitchen as your Path first. Mind your heat and the crew\'s wages (the nut).') : kHero}
       <h2>The Trade</h2>
-      <div class="card"><span class="t">${rank.name}</span>
-        <div class="d">gross moved $${fmt(me.tradeRep || 0)} · rank bonus +${Math.round(rank.bonus * 100)}%${nextRank ? ` · next: ${nextRank.name} at $${fmt(nextRank.at)}` : ' · the top of the trade'}</div>
+      <div class="card"><span class="t">${esc(rank.name)}</span>
+        <div class="d">gross moved $${fmt(me.tradeRep || 0)} · rank bonus +${Math.round(rank.bonus * 100)}%${nextRank ? ` · next: ${esc(nextRank.name)} at $${fmt(nextRank.at)}` : ' · the top of the trade'}</div>
         ${me.kingpin ? `<div class="d" style="color:var(--gold)">THE KINGPIN — <b>${me.kingpin.rank}</b> · lifetime empire $${fmt(me.kingpin.moved || 0)} <span style="color:var(--dim)">(survives death)</span> · <a href="#" id="kingpin-board">the biggest distributors →</a></div><div id="kingpin-lb"></div>` : ''}</div>
 
       <h2 style="margin-top:12px">The Lab</h2>
-      <div class="card"><span class="t">${lab ? lab.name : 'no kitchen'}</span>
+      <div class="card"><span class="t">${lab ? esc(lab.name) : 'no kitchen'}</span>
         <div class="d">${lab ? `batch cap ${lab.cap} · cook ~${lab.mins * 12}min · fire risk ${Math.round(lab.fire * 100)}%` : 'even a bathtub beats the corner'}</div>
-        ${nextLab ? `<button class="act" data-do="POST /v1/kitchen/lab/upgrade">upgrade → ${nextLab.name} ($${fmt(nextLab.cost)}${nextLab.omr ? ` + ${nextLab.omr} $OMR` : ''})</button>` : ''}</div>
+        ${nextLab ? `<button class="act" data-do="POST /v1/kitchen/lab/upgrade">upgrade → ${esc(nextLab.name)} ($${fmt(nextLab.cost)}${nextLab.omr ? ` + ${nextLab.omr} $OMR` : ''})</button>` : ''}</div>
 
       ${me.lab ? sect('kitchen-modules', 'Lab Modules', 'bench upgrades — purity, yield, stealth', `<div class="grid">${(rules?.kitchen?.modules || []).map((mod) => {
         const lvl = me.labModules?.[mod.id] || 0; const maxed = lvl >= (rules?.kitchen?.moduleMax || 5);
-        return `<div class="card"><span class="t">${mod.name}</span> <span class="chip">lvl ${lvl}/${rules?.kitchen?.moduleMax || 5}</span>
-          <div class="d">${mod.desc}</div>
+        return `<div class="card"><span class="t">${esc(mod.name)}</span> <span class="chip">lvl ${lvl}/${rules?.kitchen?.moduleMax || 5}</span>
+          <div class="d">${esc(mod.desc)}</div>
           ${maxed ? '<span class="chip">maxed</span>' : (() => { const c = me.labModuleNext?.[mod.id] || {};
             return `<button class="act" data-modup="${mod.id}">upgrade${c.cash ? ` ($${fmt(c.cash)}${c.omr ? ` + ${c.omr} $OMR` : ''})` : ''}</button>`; })()}</div>`; }).join('')}</div>`,
         Object.values(me.labModules || {}).some((n) => n > 0)) : ''}
 
       ${sect('kitchen-supplier', 'The Supplier', 'makings — today\'s prices', `<div class="grid">${unlocked.map((d) => `
-        <div class="card">${ico('drug', d.id)}<span class="t">${d.name}</span> <span class="d">${d.tag}</span>
+        <div class="card">${ico('drug', d.id)}<span class="t">${esc(d.name)}</span> <span class="d">${esc(d.tag)}</span>
           <div class="d">makings $${fmt(prices.makings?.[d.id] ?? '?')}/unit · shelf: ${me.makings?.[d.id] || 0}</div>
           <input data-mk="${d.id}" placeholder="qty" size="5"> <button class="act" data-mkbuy="${d.id}">buy</button></div>`).join('')}</div>
       ${(rules?.drugs || []).filter((d) => d.unlock > rankIdx).map((d) =>
-        `<span class="chip">${d.name} — locked (rank ${d.unlock})</span>`).join(' ')}`,
+        `<span class="chip">${esc(d.name)} — locked (rank ${d.unlock})</span>`).join(' ')}`,
         !!me.lab && !Object.values(me.makings || {}).some((n) => n > 0))}
 
       <h2 style="margin-top:12px">The Burner</h2>
@@ -7124,7 +7124,7 @@
         <div class="card"><span class="t">${drugName(me.batch.drug)} × ${me.batch.qty}</span>
           <div class="d">${me.batch.readySeconds > 0 ? `ready in ${mins(me.batch.readySeconds)}` : 'DONE — pull it off the heat'}</div>
           <button class="act" data-do="POST /v1/kitchen/collect">collect</button></div>` : `
-        <select id="cook-drug">${unlocked.map((d) => `<option value="${d.id}">${d.name}</option>`).join('')}</select>
+        <select id="cook-drug">${unlocked.map((d) => `<option value="${d.id}">${esc(d.name)}</option>`).join('')}</select>
         <input id="cook-qty" placeholder="qty (blank = max)" size="14">
         <button class="act" id="cook-go">cook</button>
         <span class="d" style="color:var(--dim);font-size:12.5px">1 crate packs 20 units — crates: ${fmt(me.cb)}</span>`}
@@ -7190,7 +7190,7 @@
       t.innerHTML = `
         <h2>The Families</h2>
         ${gl.length ? `<div class="grid">${gl.sort((a, b) => b.standing - a.standing).map((g) => `
-          <div class="card"><span class="t">[${g.tag}] ${g.name}</span>${g.seal ? ` <span class="chip">${g.seal}</span>` : ''}${g.npc ? ' <span class="chip">LOCAL OUTFIT</span>' : ''}
+          <div class="card"><span class="t">[${esc(g.tag)}] ${esc(g.name)}</span>${g.seal ? ` <span class="chip">${g.seal}</span>` : ''}${g.npc ? ' <span class="chip">LOCAL OUTFIT</span>' : ''}
             <div class="d">${g.members} made · ${g.warsWon} wars won · standing ${fmt(g.standing)}</div>
             ${g.npc ? '<div class="d" style="color:var(--dim);font-size:12px">a neighbourhood crew — they take anyone, but they hold no seat at the Commission</div>' : ''}
             <button class="act" data-join="${g.id}">kiss the ring</button></div>`).join('')}</div>`
@@ -7221,7 +7221,7 @@
       ? rivals.map((x) => `<option value="${x.id}">[${esc(x.tag)}] ${esc(x.name)} — ${x.members} made</option>`).join('')
       : '';
     t.innerHTML = `
-      <h2>[${g.tag}] ${g.name}${g.seal ? ` <span class="chip">${g.seal}</span>` : ''}${g.foundation ? ` <span class="chip good">${g.foundation}</span>` : ''} — you are ${me.gang.role}</h2>
+      <h2>[${esc(g.tag)}] ${esc(g.name)}${g.seal ? ` <span class="chip">${g.seal}</span>` : ''}${g.foundation ? ` <span class="chip good">${g.foundation}</span>` : ''} — you are ${me.gang.role}</h2>
       ${heroBand([
         { v: '$' + fmt(g.treasury), label: 'treasury', cls: 'neon' },
         { v: fmt(g.omrReserve) + ' $OMR', label: 'family reserve' },
@@ -7232,15 +7232,15 @@
         <div class="d">score us ${g.war.us} — them ${g.war.them}</div></div>` : ''}
 
       ${sect('fam-members', `Made Men (${g.members.length})`, 'the roster', `<div class="grid">${g.members.map((m) => `
-        <div class="card"><span class="t">${m.name}</span><div class="d">${m.role}${(rost.posts || []).find((p) => p.holder && p.holder.characterId === m.id) ? ` · ${(rost.posts || []).find((p) => p.holder && p.holder.characterId === m.id).name}` : ''}</div></div>`).join('')}</div>`)}
+        <div class="card"><span class="t">${esc(m.name)}</span><div class="d">${m.role}${(rost.posts || []).find((p) => p.holder && p.holder.characterId === m.id) ? ` · ${esc((rost.posts || []).find((p) => p.holder && p.holder.characterId === m.id).name)}` : ''}</div></div>`).join('')}</div>`)}
 
       ${sect('fam-roster', 'The Posts', 'one post per made man, one man per post — and a post is DEAD while its holder is dead, in lockup or in the hospital', `
       <div class="grid">${(rost.posts || []).map((p) => `
-        <div class="card"${p.holder && !p.holder.away ? ' style="border-color:var(--neon)"' : ''}><span class="t">${p.name}</span>
+        <div class="card"${p.holder && !p.holder.away ? ' style="border-color:var(--neon)"' : ''}><span class="t">${esc(p.name)}</span>
           ${p.holder ? (p.holder.away
             ? `<span class="chip bad">${p.holder.away}</span>`
             : `<span class="chip good">+${p.power}</span>`) : '<span class="chip">empty</span>'}
-          <div class="d">${p.what} <span style="color:var(--dim)">(reads ${p.stat})</span></div>
+          <div class="d">${esc(p.what)} <span style="color:var(--dim)">(reads ${p.stat})</span></div>
           <div class="d">${p.holder
             ? `${esc(p.holder.name)}${p.holder.away ? ` — ${p.holder.away}, so this chair is worth nothing right now` : ''}`
             : 'nobody in the chair'}</div>
@@ -7252,7 +7252,7 @@
       <h2 style="margin-top:12px">Territory Operations</h2>
       ${g.empire ? `<div class="card" style="border-color:var(--neon)"><span class="t">🏙️ ${g.empire.rank}</span> <span class="d">$${fmt(g.empire.earned)} lifetime territory income — <a href="#" id="terr-lb">the Empire board →</a></span>${g.syndicate ? `<div style="margin-top:4px">🃏 <b>${esc(g.syndicate.name)}</b> <span class="d">— ${g.syndicate.count} ${esc(g.syndicate.kind)} operations. Specialization pays in prestige.</span></div>` : ''}</div>` : ''}
       ${(g.territory || []).length ? `<div class="grid">${g.territory.map((op) => `
-        <div class="card"><span class="t">${op.district}: ${op.name || op.tier}</span>${op.raidRisk ? ' <span class="chip bad">FEDS WATCHING</span>' : ''}${op.fortitude ? ` <span class="chip">🛡️ ${op.fortitude}/${op.fortMax}</span>` : ''}${op.specialist ? ` <span class="chip good">specialist +${op.specFortBonus}🛡️</span>` : ''}${op.ghostSeconds > 0 ? ' <span class="chip">👻 ghosted</span>' : ''}
+        <div class="card"><span class="t">${op.district}: ${esc(op.name || op.tier)}</span>${op.raidRisk ? ' <span class="chip bad">FEDS WATCHING</span>' : ''}${op.fortitude ? ` <span class="chip">🛡️ ${op.fortitude}/${op.fortMax}</span>` : ''}${op.specialist ? ` <span class="chip good">specialist +${op.specFortBonus}🛡️</span>` : ''}${op.ghostSeconds > 0 ? ' <span class="chip">👻 ghosted</span>' : ''}
           <div class="d">$${fmt(op.incomePerHr || 0)}/hr · pending $${fmt(op.pending || 0)} · <span style="color:var(--warn)">the pad $${fmt(op.upkeepPerHr || 0)}/hr</span>${op.upkeepOwed ? `, owed $${fmt(op.upkeepOwed)}` : ''}${op.cold ? ' · COLD (pay the upkeep)' : ''}</div>
           ${op.scrutiny > 0 ? `<div class="d" style="color:var(--dim)">Bureau heat ${op.scrutiny}/${op.raidThreshold} — a crackdown seizes the pending + fines the treasury</div>` : ''}
           ${boss && op.nextTier ? `<button class="act" data-do="POST /v1/territory/${op.district}/upgrade">move up to ${esc(art(op.nextTier.name))} ($${fmt(op.nextTier.cost)} → $${fmt(op.nextTier.incomePerHr)}/hr)</button>` : (boss && op.tier ? '<span class="d" style="color:var(--dim)">running at full strength</span>' : '')}
@@ -7260,7 +7260,7 @@
           ${boss ? `<div style="margin-top:4px">
             ${op.specialist
               ? `<button class="act" data-do="DELETE /v1/territory/${op.district}/specialist">pull specialist</button>`
-              : `<select id="spec-${op.district}">${(g.members || []).map((m) => `<option value="${m.id}">${m.name}</option>`).join('')}</select> <button class="act" data-spec="${op.district}">assign specialist</button>`}
+              : `<select id="spec-${op.district}">${(g.members || []).map((m) => `<option value="${m.id}">${esc(m.name)}</option>`).join('')}</select> <button class="act" data-spec="${op.district}">assign specialist</button>`}
             <button class="act" data-terrop="${op.district}" ${op.opReady ? '' : 'disabled'}>${op.opId === 'show_of_force' ? 'Show of Force' : op.opId === 'ghost_route' ? 'Ghost the Route' : 'Cook the Books'}${op.opReady ? '' : ` (${Math.ceil((op.opCdSeconds || 0) / 60)}m)`}</button>
           </div>` : ''}</div>`).join('')}</div>`
         : '<span class="d" style="color:var(--dim)">no operations — a boss can establish one on held turf</span>'}
@@ -7281,9 +7281,9 @@
       <span class="d" style="color:var(--dim);font-size:12.5px">tribute builds the treasury AND the family's season standing</span>
 
       ${sect('fam-war', 'War & Turf', 'the apex outfits garrison the core districts — beat one down in The City, then LIBERATE its turf here', `<div class="grid">${distr.map((d) => `
-        <div class="card"><span class="t">${d.id}${d.perk ? '' : ''}</span> ${d.occupiedBy ? `<span class="chip bad">occupied — ${d.occupiedBy.name} @ ${d.occupiedBy.strengthPct}%</span>` : d.holder ? `<span class="chip ${d.holder.tag === g.tag ? 'good' : ''}">[${d.holder.tag}]</span>` : '<span class="chip">open</span>'}
+        <div class="card"><span class="t">${d.id}${d.perk ? '' : ''}</span> ${d.occupiedBy ? `<span class="chip bad">occupied — ${esc(d.occupiedBy.name)} @ ${d.occupiedBy.strengthPct}%</span>` : d.holder ? `<span class="chip ${d.holder.tag === g.tag ? 'good' : ''}">[${esc(d.holder.tag)}]</span>` : '<span class="chip">open</span>'}
           <div class="d">${d.perk || ''}</div>
-          ${d.occupiedBy ? `<div class="d" style="color:var(--dim)">liberate for $${fmt(d.liberationCost)} (rout ${d.occupiedBy.name} to cheapen it)</div>` : d.holder ? `<div class="d" style="color:var(--dim)">garrison $${fmt(d.garrison)}</div>` : ''}
+          ${d.occupiedBy ? `<div class="d" style="color:var(--dim)">liberate for $${fmt(d.liberationCost)} (rout ${esc(d.occupiedBy.name)} to cheapen it)</div>` : d.holder ? `<div class="d" style="color:var(--dim)">garrison $${fmt(d.garrison)}</div>` : ''}
           ${d.watch ? `<div class="d">${d.watch.hour == null
             ? `<span class="chip bad">no watch</span> nobody says when they're home — taking it costs \u00d7${d.watch.surpriseMult} at every hour`
             : `<span class="chip ${d.watch.open ? 'good' : ''}">watch ${String(d.watch.hour).padStart(2, '0')}:00 UTC +${d.watch.windowH}h</span> ${d.watch.open
@@ -7307,7 +7307,7 @@
 
       ${sect('fam-diplomacy', 'Diplomacy', 'sworn PACTS block war between families; a COALITION of the small ganging up on a DOMINANT family fights it at a discount', `
       ${dip.oathbreaker ? `<div class="card" style="border-color:var(--blood)"><span class="t" style="color:var(--bad)">OATHBREAKER</span> <span class="d">you broke a sworn treaty — marked for ${mins(dip.oathbreaker.seconds)}</span></div>` : ''}
-      ${(dip.dominant || []).length ? `<div class="d" style="color:var(--dim);font-size:12px">dominant families (fair game for a coalition): ${dip.dominant.map((x) => `[${x.tag}] ${x.name}`).join(', ')}</div>` : ''}
+      ${(dip.dominant || []).length ? `<div class="d" style="color:var(--dim);font-size:12px">dominant families (fair game for a coalition): ${dip.dominant.map((x) => `[${esc(x.tag)}] ${esc(x.name)}`).join(', ')}</div>` : ''}
       <div class="grid" style="margin-top:4px">${(dip.relations || []).map((r) => `
         <div class="card"><span class="t">${r.with}</span> <span class="chip ${r.active ? 'good' : ''}">${r.active ? `pact — ${mins(r.seconds || 0)}` : r.pending ? (r.mine ? 'offered — awaiting them' : 'they offered you a pact') : 'lapsed'}</span>
           ${boss && r.pending && !r.mine ? `<button class="act" data-pactaccept="${r.withId}">accept the pact</button>` : ''}
@@ -7328,14 +7328,14 @@
       ${sect('fam-sov', 'Sovereignty', 'fortify held turf with a stronghold — a daily vulnerability window when rivals can lay SIEGE; sov points = the family\'s iron reputation', `
       ${sov.family ? `<div class="d" style="color:var(--dim);font-size:12px">your family holds <b>${fmt(sov.family.points || 0)} sov points</b> (${sov.family.rank || ''})</div>` : ''}
       <div class="grid" style="margin-top:4px">${(sov.structures || []).filter((s) => s.mine).map((s) => `
-        <div class="card"><span class="t">${s.district} — ${s.tierName || 'Outpost'} (t${s.tier})</span> <span class="chip ${s.vulnerable ? 'bad' : 'good'}">${s.vulnerable ? 'VULNERABLE NOW' : `safe — window ${String(s.windowHour).padStart(2, '0')}:00 UTC`}</span>
+        <div class="card"><span class="t">${s.district} — ${esc(s.tierName || 'Outpost')} (t${s.tier})</span> <span class="chip ${s.vulnerable ? 'bad' : 'good'}">${s.vulnerable ? 'VULNERABLE NOW' : `safe — window ${String(s.windowHour).padStart(2, '0')}:00 UTC`}</span>
           <div class="d">garrison bonus +${s.garrisonBonus ?? 0} · income $${fmt(s.incomePerDay || 0)}/day${s.incomeOwed ? ` · tribute due $${fmt(s.incomeOwed)}` : ''}${s.upkeepOwed ? ` · upkeep owed $${fmt(s.upkeepOwed)}` : ''}</div>
-          ${boss ? `${s.nextTier ? `<button class="act" data-sovup="${s.district}">upgrade to ${s.nextTier.name} ($${fmt(s.nextTier.cost)})</button>` : '<span class="chip good">The Iron Capital — the strongest hold</span>'}
+          ${boss ? `${s.nextTier ? `<button class="act" data-sovup="${s.district}">upgrade to ${esc(s.nextTier.name)} ($${fmt(s.nextTier.cost)})</button>` : '<span class="chip good">The Iron Capital — the strongest hold</span>'}
             ${s.upkeepOwed ? `<button class="act" data-sovkeep="${s.district}">pay upkeep ($${fmt(s.upkeepOwed)})</button>` : ''}` : ''}</div>`).join('')
         || '<span class="d" style="color:var(--dim)">no strongholds. Build one on turf you hold to make it costly to take — and to draw tribute.</span>'}</div>
       ${(sov.structures || []).some((s) => s.mine && s.incomeOwed) ? `<button class="act" data-do="POST /v1/sov/collect" style="margin-top:4px"${groundOff('The stronghold tribute')}>collect tribute → treasury</button>` : ''}
       ${(sov.structures || []).some((s) => !s.mine && s.vulnerable) ? `<div class="grid" style="margin-top:4px">${(sov.structures || []).filter((s) => !s.mine && s.vulnerable).map((s) => `
-        <div class="card" style="border-color:var(--blood)"><span class="t">${s.district} — ${s.holderTag ? `[${s.holderTag}]` : 'a rival'}'s ${s.tierName} <span class="chip bad">VULNERABLE</span></span>
+        <div class="card" style="border-color:var(--blood)"><span class="t">${s.district} — ${s.holderTag ? `[${s.holderTag}]` : 'a rival'}'s ${esc(s.tierName)} <span class="chip bad">VULNERABLE</span></span>
           <div class="d">stand at ${s.district} and lay siege ($${fmt(s.siegeCost || sov.siegeCost || 50000)}) — a win knocks a tier off</div>
           ${boss ? `<button class="act" data-sovsiege="${s.district}" style="border-color:var(--blood)">lay siege</button>` : ''}</div>`).join('')}</div>` : ''}
       ${boss && (g.held || []).length ? `<div style="margin-top:6px">
@@ -7347,13 +7347,13 @@
         (sov.structures || []).some((s) => s.vulnerable))}
 
       ${sect('fam-commission', `The Commission ${mySeat ? '· seated #' + ((com.seats || []).indexOf(mySeat) + 1) : '· no seat'}`, 'the five biggest families set a weekly decree over the whole city', `
-      <div class="d" style="color:var(--dim);font-size:12.5px">decree in force: <b>${com.decree?.name || com.decree?.id || 'none'}</b>${com.veto ? ` · <span style="color:var(--bad)">VETOED</span>: ${com.veto.decree} by ${com.veto.family}` : ''}</div>
+      <div class="d" style="color:var(--dim);font-size:12.5px">decree in force: <b>${esc(com.decree?.name || com.decree?.id || 'none')}</b>${com.veto ? ` · <span style="color:var(--bad)">VETOED</span>: ${com.veto.decree} by ${com.veto.family}` : ''}</div>
       ${com.override ? `<div class="d" style="color:var(--dim);font-size:12px;margin-top:2px">floor override: ${com.override.weight}/${com.override.need} weight ${com.override.restored ? '— <b style="color:var(--ok)">RESTORED</b> (the floor overruled the head)' : `— the head veto stands unless the floor musters ${com.override.need}`}</div>` : ''}
       <div class="grid" style="margin-top:4px">${(com.seats || []).map((s, i) => `
-        <div class="card"><span class="t">#${i + 1} [${s.tag}] ${s.name}</span><div class="d">standing ${fmt(s.standing)} · weight ${s.weight}</div></div>`).join('')}</div>
-      ${(com.proposals || []).length ? `<div class="d" style="margin-top:4px">motions on the table (ONLY these are votable this week): ${com.proposals.map((p) => `<span class="chip">${p.decree} — ${p.tag ? '[' + p.tag + '] ' : ''}${p.family}</span>`).join(' ')}</div>` : ''}
+        <div class="card"><span class="t">#${i + 1} [${esc(s.tag)}] ${esc(s.name)}</span><div class="d">standing ${fmt(s.standing)} · weight ${s.weight}</div></div>`).join('')}</div>
+      ${(com.proposals || []).length ? `<div class="d" style="margin-top:4px">motions on the table (ONLY these are votable this week): ${com.proposals.map((p) => `<span class="chip">${p.decree} — ${p.tag ? '[' + esc(p.tag) + '] ' : ''}${p.family}</span>`).join(' ')}</div>` : ''}
       ${boss && mySeat ? `<div style="margin-top:6px">
-        <select id="com-decree">${(com.book || []).map((d) => `<option value="${d.id}">${d.id} — ${d.name || d.desc || ''}</option>`).join('')}</select>
+        <select id="com-decree">${(com.book || []).map((d) => `<option value="${d.id}">${d.id} — ${esc(d.name || d.desc || '')}</option>`).join('')}</select>
         <button class="act" id="com-vote">cast the family's vote</button>
         <button class="act" id="com-propose">table a motion ($${fmt(com.proposalDeposit || 100000)} deposit)</button>
         <div style="margin-top:6px"><select id="com-ticker">${((tkb && tkb.tickers) || []).map((x) => `<option value="${x}">${x}</option>`).join('')}</select>
@@ -7362,36 +7362,36 @@
         ${(com.seats || []).indexOf(mySeat) === 0 ? `<button class="act" data-do="POST /v1/commission/veto">VETO (head of the table)</button>` : ''}
         ${(com.seats || []).indexOf(mySeat) > 0 && com.veto ? `<button class="act" data-do="POST /v1/commission/override">move to OVERRIDE the veto</button>` : ''}</div>
         <div class="d" style="color:var(--dim);font-size:12px">a motion stakes a treasury deposit — it refunds if your decree is enacted, forfeits if the chamber goes another way. The head can VETO; a floor supermajority can OVERRIDE.</div>` : ''}
-      ${(com.record || []).length ? `<div class="d" style="color:var(--dim);font-size:12px;margin-top:6px">the record: ${com.record.map((r) => `<span class="chip">wk${r.week}: ${r.name}</span>`).join(' ')}</div>` : ''}
-      ${(com.statesmenTop || []).length ? `<div class="d" style="color:var(--dim);font-size:12px;margin-top:4px">statesmen: ${com.statesmenTop.map((s) => `<span class="chip">${s.name} · ${s.rank} (${s.statecraft})</span>`).join(' ')}</div>` : ''}
+      ${(com.record || []).length ? `<div class="d" style="color:var(--dim);font-size:12px;margin-top:6px">the record: ${com.record.map((r) => `<span class="chip">wk${r.week}: ${esc(r.name)}</span>`).join(' ')}</div>` : ''}
+      ${(com.statesmenTop || []).length ? `<div class="d" style="color:var(--dim);font-size:12px;margin-top:4px">statesmen: ${com.statesmenTop.map((s) => `<span class="chip">${esc(s.name)} · ${s.rank} (${s.statecraft})</span>`).join(' ')}</div>` : ''}
       ${me.statesman ? `<div class="d" style="color:var(--dim);font-size:12px;margin-top:2px">your political capital: <b>${me.statesman.statecraft}</b> — ${me.statesman.rank}</div>` : ''}`,
         !!(boss && mySeat))}
 
       ${sect('fam-foundation', `The Foundation ${g.foundation ? '· ' + g.foundation : ''}`, 'the family charity — public philanthropy that softens every member\'s RICO odds', `
       <div class="d" style="color:var(--dim);font-size:12.5px">the family charity — public philanthropy that launders the family's reputation: every member's RICO conviction odds ×${g.foundationBustMult ?? 1} AND their investigation meter cools ${g.foundationBleedMult ?? 1}× faster (keeps files thin)${g.foundationTier ? ` (tier ${g.foundationTier})` : ''}. Endowed from the $OMR reserve.</div>
-      ${g.nextFoundation ? `<div class="card" style="margin-top:4px"><span class="t">Next: ${g.nextFoundation.name} — ${g.nextFoundation.omr} $OMR</span>
-        <div class="d">${g.nextFoundation.blurb || ''} · softens odds ×${g.nextFoundation.bustMult}</div>
-        ${boss ? `<button class="act" data-do="POST /v1/gangs/foundation">endow ${g.nextFoundation.name} (${g.nextFoundation.omr} $OMR from reserve)</button>` : '<span class="d" style="color:var(--dim)">the boss/underboss endows the foundation</span>'}</div>`
+      ${g.nextFoundation ? `<div class="card" style="margin-top:4px"><span class="t">Next: ${esc(g.nextFoundation.name)} — ${g.nextFoundation.omr} $OMR</span>
+        <div class="d">${esc(g.nextFoundation.blurb || '')} · softens odds ×${g.nextFoundation.bustMult}</div>
+        ${boss ? `<button class="act" data-do="POST /v1/gangs/foundation">endow ${esc(g.nextFoundation.name)} (${g.nextFoundation.omr} $OMR from reserve)</button>` : '<span class="d" style="color:var(--dim)">the boss/underboss endows the foundation</span>'}</div>`
         : '<span class="d" style="color:var(--dim)">the family is the highest pillar of the community there is.</span>'}
       <div class="d" style="margin-top:4px"><a href="#" id="foundation-lb-link">the philanthropy leaderboard →</a></div>
       <div id="foundation-lb"></div>`)}
 
       ${sect('fam-charter', 'The Charter', 'what your family is good at — and what it gives up for it', `
-      <div class="card"><span class="t">${g.charter ? g.charter.name : 'Unchartered'}</span>
-        ${g.charter ? `<div class="d" style="margin-top:3px">${g.charter.blurb || ''}</div>
+      <div class="card"><span class="t">${g.charter ? esc(g.charter.name) : 'Unchartered'}</span>
+        ${g.charter ? `<div class="d" style="margin-top:3px">${esc(g.charter.blurb || '')}</div>
         <div style="margin-top:4px"><span class="chip good">${g.charter.good}</span> <span class="chip bad">${g.charter.bad}</span></div>`
         : '<div class="d" style="margin-top:3px">Your family runs like every other family in the city. Pick a charter and you get one real edge and one real handicap — running neither is a legitimate answer, you just get neither side.</div>'}</div>
       ${boss ? (g.charters || []).map((c) => (g.charter && g.charter.id === c.id) ? '' : `
-        <div class="card" style="margin-top:6px"><span class="t">${c.name}</span>
-          <div class="d" style="margin-top:3px">${c.blurb}</div>
+        <div class="card" style="margin-top:6px"><span class="t">${esc(c.name)}</span>
+          <div class="d" style="margin-top:3px">${esc(c.blurb)}</div>
           <div style="margin-top:4px"><span class="chip good">${c.good}</span> <span class="chip bad">${c.bad}</span></div>
           <button class="act" style="margin-top:5px" data-do="POST /v1/gangs/charter/${c.id}"
-            data-confirm="Run the family as ${c.name}? You take the handicap with the edge${g.charter ? `, and re-founding costs ${g.charter.changeOmr} $OMR from the reserve` : ' — free the first time'}.">${g.charter ? `re-found as ${c.name}` : `charter as ${c.name}`}</button></div>`).join('')
+            data-confirm="Run the family as ${esc(c.name)}? You take the handicap with the edge${g.charter ? `, and re-founding costs ${g.charter.changeOmr} $OMR from the reserve` : ' — free the first time'}.">${g.charter ? `re-found as ${esc(c.name)}` : `charter as ${esc(c.name)}`}</button></div>`).join('')
         : '<div class="d" style="margin-top:4px;color:var(--dim)">the boss says what the family is</div>'}`)}
 
       ${sect('fam-regalia', 'Family Regalia', 'status badges bought from the $OMR reserve — the boss\'s call', `
       <div class="card"><span class="t">Seal: ${g.seal || 'none'}</span>
-        ${g.nextSeal ? (boss ? `<button class="act" data-do="POST /v1/gangs/vanity/seal">commission ${art(g.nextSeal.name)} (${g.nextSeal.omr} $OMR)</button>` : '<span class="d" style="color:var(--dim)"> — the boss commissions seals</span>') : '<span class="chip good"> Obsidian — the finest seal in the city</span>'}</div>
+        ${g.nextSeal ? (boss ? `<button class="act" data-do="POST /v1/gangs/vanity/seal">commission ${esc(art(g.nextSeal.name))} (${g.nextSeal.omr} $OMR)</button>` : '<span class="d" style="color:var(--dim)"> — the boss commissions seals</span>') : '<span class="chip good"> Obsidian — the finest seal in the city</span>'}</div>
       ${boss ? `<div class="card" style="margin-top:6px"><span class="t">Crest &amp; Name</span>
         <div style="margin-top:4px"><input id="crest-color" placeholder="#rrggbb" size="9"> <button class="act" id="crest-go">recolor the crest (${rules?.seals?.colorOmr ?? ''} $OMR)</button></div>
         <div style="margin-top:4px"><input id="fam-rename" placeholder="new family name" size="16"> <input id="fam-retag" placeholder="TAG" size="5" maxlength="4"> <button class="act" id="fam-rename-go">rename the family (${rules?.seals?.renameOmr ?? ''} $OMR)</button></div></div>` : ''}`)}
@@ -7414,14 +7414,14 @@
     t.querySelectorAll('[data-sovsiege]').forEach((b) => b.onclick = () => act('POST', `/v1/sov/${b.dataset.sovsiege}/siege`, {}).then(() => renderFamily()));
     { const b = $('#sov-build'); if (b) b.onclick = () => { const d = $('#sov-dist')?.value; if (d) act('POST', `/v1/sov/${d}/build`, { windowHour: Number($('#sov-hour').value) }).then(() => renderFamily()); }; }
     { const lb = $('#sov-lb-link'); if (lb) lb.onclick = async (e) => { e.preventDefault(); const b = (await api('GET', '/v1/leaderboard/sov')).body?.families || [];
-      $('#sov-lb').innerHTML = `<div class="grid" style="margin-top:4px">${b.map((f, i) => `<div class="card"><span class="t">#${i + 1} [${f.tag}] ${f.name}</span><div class="d">${fmt(f.points)} sov points · ${f.rank || ''}</div></div>`).join('') || '<span class="d">no strongholds standing yet</span>'}</div>`; }; }
+      $('#sov-lb').innerHTML = `<div class="grid" style="margin-top:4px">${b.map((f, i) => `<div class="card"><span class="t">#${i + 1} [${esc(f.tag)}] ${esc(f.name)}</span><div class="d">${fmt(f.points)} sov points · ${f.rank || ''}</div></div>`).join('') || '<span class="d">no strongholds standing yet</span>'}</div>`; }; }
     { const cg = $('#crest-go'); if (cg) cg.onclick = () => act('POST', '/v1/gangs/vanity/color', { color: $('#crest-color').value.trim() }).then(() => renderFamily()); }
     { const fr = $('#fam-rename-go'); if (fr) fr.onclick = () => act('POST', '/v1/gangs/vanity/name', { name: $('#fam-rename').value.trim(), tag: $('#fam-retag').value.trim() }).then(() => renderFamily()); }
     { const flb = $('#foundation-lb-link'); if (flb) flb.onclick = async (e) => {
       e.preventDefault(); const el = $('#foundation-lb'); if (!el) return;
       const rows = (await api('GET', '/v1/leaderboard/foundation')).body?.board || [];
       el.innerHTML = rows.length
-        ? `<div class="grid">${rows.slice(0, 10).map((f, i) => `<div class="card"><span class="t">${i + 1}. ${f.tag ? `[${f.tag}] ` : ''}${f.name}</span><div class="d">${f.foundation || ''}</div></div>`).join('')}</div>`
+        ? `<div class="grid">${rows.slice(0, 10).map((f, i) => `<div class="card"><span class="t">${i + 1}. ${f.tag ? `[${esc(f.tag)}] ` : ''}${esc(f.name)}</span><div class="d">${f.foundation || ''}</div></div>`).join('')}</div>`
         : '<div class="d" style="color:var(--dim);font-size:12.5px">No family has endowed a foundation yet — be the first pillar of the city.</div>';
     }; }
     { const tlb = $('#terr-lb'); if (tlb) tlb.onclick = async (e) => { e.preventDefault();
@@ -7995,14 +7995,14 @@
           ${l.buyNow ? `<button class="act" data-buynow="${l.id}">buy now</button>` : ''}`
         : `<button class="act" data-cancel="${l.id}">pull it</button>`}</div>`;
     const goodCard = (l) => `
-      <div class="card">${ico('good', l.good)}<span class="t">${goodName(l.good)} × ${fmt(l.qty)}</span>
+      <div class="card">${ico('good', l.good)}<span class="t">${esc(goodName(l.good))} × ${fmt(l.qty)}</span>
         ${l.seller === me.name ? '<span class="chip">yours</span>' : ''}
         <div class="d">$${fmt(l.unitPrice)}/unit at ${l.district} (spot here: $${fmt(here[l.good] ?? '?')}) · ${l.seller} · ${mins(l.expiresSeconds)} left</div>
         ${l.seller !== me.name ? `${l.district === me.loc ? `<input data-gqty="${l.id}" placeholder="qty" size="6">
           <button class="act" data-gbuy="${l.id}">buy</button>` : `<span class="chip cold">stand at ${l.district} to buy</span>`}`
         : `<button class="act" data-cancel="${l.id}">pull it</button>`}</div>`;
     const orderCard = (l) => `
-      <div class="card">${ico('good', l.good)}<span class="t">WTB ${goodName(l.good)} × ${fmt(l.wanted)}</span>
+      <div class="card">${ico('good', l.good)}<span class="t">WTB ${esc(goodName(l.good))} × ${fmt(l.wanted)}</span>
         ${l.seller === me.name ? '<span class="chip">yours</span>' : ''}
         <div class="d">pays $${fmt(l.unitPrice)}/unit at ${l.district} · ${l.seller} · ${mins(l.expiresSeconds)} left</div>
         ${l.seller !== me.name ? `${l.district === me.loc ? `<input data-fqty="${l.id}" placeholder="qty" size="6">
@@ -8028,14 +8028,14 @@
 
       <h2 style="margin-top:12px">Move Goods <span class="d" style="font-size:11px">(pinned to ${me.loc} — buyers come to you)</span></h2>
       ${myCargo.length ? `
-        <select id="mk-good">${myCargo.map(([id, q]) => `<option value="${id}">${goodName(id)} (${q} in trunk, spot $${fmt(here[id] ?? '?')})</option>`).join('')}</select>
+        <select id="mk-good">${myCargo.map(([id, q]) => `<option value="${id}">${esc(goodName(id))} (${q} in trunk, spot $${fmt(here[id] ?? '?')})</option>`).join('')}</select>
         <input id="mk-gqty" placeholder="qty" size="6">
         <input id="mk-gprice" placeholder="$/unit" size="8">
         <button class="act" id="mk-listgood">list it</button>`
         : '<span class="d" style="color:var(--dim)">the trunk is empty — buy goods on the Streets first</span>'}
 
       <h2 style="margin-top:12px">Post a Buy Order <span class="d" style="font-size:11px">(escrows cash — sellers deliver to ${me.loc})</span></h2>
-      <select id="mk-ogood">${(rules?.goods || []).map((g) => `<option value="${g.id}">${g.name} (spot $${fmt(here[g.id] ?? '?')})</option>`).join('')}</select>
+      <select id="mk-ogood">${(rules?.goods || []).map((g) => `<option value="${g.id}">${esc(g.name)} (spot $${fmt(here[g.id] ?? '?')})</option>`).join('')}</select>
       <input id="mk-oqty" placeholder="qty" size="6">
       <input id="mk-oprice" placeholder="$/unit" size="8">
       <button class="act" id="mk-order">post it</button>`;
@@ -8305,7 +8305,7 @@
         ${paperCard}
         ${nem ? `<div class="card" style="border-color:var(--bad)"><span class="t" style="color:var(--bad)">${av(nem.street?.id, 30)}YOUR NEMESIS${nem.street?.alive === false ? ' — LINE FALLEN' : ''}${vouchChipOf(nem.street)}</span>
           <div class="d"><b>${esc(nem.street?.name || 'a fallen line')}</b> has moved on you <b>${nem.total}</b> time${nem.total === 1 ? '' : 's'}${nem.bloodOwed > 0 ? ` — and their line owes yours <b>${nem.bloodOwed} bod${nem.bloodOwed === 1 ? 'y' : 'ies'}</b>` : nem.bloodOwed < 0 ? ` — your line owes theirs ${-nem.bloodOwed}` : ''}.${nem.vendetta?.mine ? ' A vendetta is SWORN.' : ''}${nem.vendetta?.theirs ? ' Their line has sworn one on YOU.' : ''}</div>
-          <div class="row">${nem.street?.id ? `<button class="act" data-story="${nem.street.id}" data-story-name="${esc(nem.street.name)}">the story of you two</button><button class="act" data-go-tab="pvp">settle it →</button>${me?.name ? `<a class="act" href="${xIntent(`Me vs ${nem.street.name} in OMERTÀ — ${nem.total} bod${nem.total === 1 ? 'y' : 'ies'} between us and counting. Come help me end them.`, beefUrl(me.name, nem.street.name))}" target="_blank" rel="noopener noreferrer" data-beacon="beef">call them out ↗</a>` : ''}` : `<button class="act" ${''}disabled>their line is dead — for now</button>`}</div></div>` : ''}
+          <div class="row">${nem.street?.id ? `<button class="act" data-story="${nem.street.id}" data-story-name="${esc(nem.street.name)}">the story of you two</button><button class="act" data-go-tab="pvp">settle it →</button>${me?.name ? `<a class="act" href="${xIntent(`Me vs ${esc(nem.street.name)} in OMERTÀ — ${nem.total} bod${nem.total === 1 ? 'y' : 'ies'} between us and counting. Come help me end them.`, beefUrl(me.name, nem.street.name))}" target="_blank" rel="noopener noreferrer" data-beacon="beef">call them out ↗</a>` : ''}` : `<button class="act" ${''}disabled>their line is dead — for now</button>`}</div></div>` : ''}
         ${(pp.family || pp.spouse || pp.consigliere || pp.guardedBy || (pp.guarding || []).length || (pp.bonds || []).length) ? `<div class="card" style="border-color:var(--gold)"><span class="t" style="color:var(--gold)">YOUR PEOPLE</span>
           <div class="d">${[
             pp.family ? `<b>${esc(pp.family.name)}</b> [${esc(pp.family.tag || '')}] — your family (${esc(pp.family.role)})` : null,
@@ -8363,14 +8363,14 @@
       <div id="city-standing" class="d" style="color:var(--dim);font-size:12.5px;margin-bottom:12px">loading…</div>` : ''}
       ${ob.allDone ? '' : `
       <h2>Make Your Bones <span class="d" style="font-size:12.5px">(${ob.claimed}/${ob.total} done — the first week pays cash to learn the ropes)</span></h2>
-      ${next ? `<div class="coachbox"><div class="cl">▸ DO THIS NEXT: ${next.name}</div><div class="ch">${next.ready ? 'The reward\'s waiting — claim it below.' : next.desc}</div>
+      ${next ? `<div class="coachbox"><div class="cl">▸ DO THIS NEXT: ${esc(next.name)}</div><div class="ch">${next.ready ? 'The reward\'s waiting — claim it below.' : esc(next.desc)}</div>
         ${next.ready ? `<button class="act prime" data-obclaim="${next.id}" style="padding:5px 12px;font-size:12.5px">claim ${reward(next.reward)}</button>` : `<button class="act" data-obgo="${next.id}" style="padding:5px 12px;font-size:12.5px">${(go[next.id] || [, 'go do it'])[1]} →</button>`}</div>` : ''}
       <div class="d" style="color:var(--dim);font-size:13.5px;margin-bottom:6px">Work down the list. Green means the reward is waiting — claim it. Grey means do the thing first; tap it to jump there.</div>
       <div class="grid">${(ob.tasks || []).map((x) => `
         <div class="card" ${!x.claimed && x.ready ? 'style="border-color:var(--neon)"' : ''}>
-          <span class="t">${x.claimed ? '✓ ' : ''}${x.name}</span>
+          <span class="t">${x.claimed ? '✓ ' : ''}${esc(x.name)}</span>
           ${x.claimed ? '<span class="chip good">claimed</span>' : x.ready ? '<span class="chip good">reward ready</span>' : ''}
-          <div class="d">${x.desc} · pays ${reward(x.reward)}</div>
+          <div class="d">${esc(x.desc)} · pays ${reward(x.reward)}</div>
           ${x.claimed ? ''
             : x.social ? `<a class="act" href="${x.social}" target="_blank" rel="noopener noreferrer">open</a> <button class="act" data-obclaim="${x.id}">claim</button>`
             : x.ready ? `<button class="act prime" data-obclaim="${x.id}">claim reward</button>`
@@ -8390,14 +8390,14 @@
           if (!tr.open) {
             if (teased) return '';
             teased = true;
-            return `<div class="d" style="color:var(--dim);font-size:12.5px;margin:6px 0">🔒 <b>${tr.name}</b> — opens at ${cr.need || 4} claims in the rank above${tr.capstone ? ` (capstone $${fmt(tr.capstone)})` : ''}. The ranks past it wait their turn.</div>`;
+            return `<div class="d" style="color:var(--dim);font-size:12.5px;margin:6px 0">🔒 <b>${esc(tr.name)}</b> — opens at ${cr.need || 4} claims in the rank above${tr.capstone ? ` (capstone $${fmt(tr.capstone)})` : ''}. The ranks past it wait their turn.</div>`;
           }
-          return `<h2 style="margin-top:8px;font-size:15px">${tr.complete ? '✓ ' : ''}${tr.name} <span class="d" style="font-size:11px">(${tr.done}/${tr.of}${tr.complete ? ' — capstone paid' : ` · all six pays +$${fmt(tr.capstone)}`})</span></h2>
+          return `<h2 style="margin-top:8px;font-size:15px">${tr.complete ? '✓ ' : ''}${esc(tr.name)} <span class="d" style="font-size:11px">(${tr.done}/${tr.of}${tr.complete ? ' — capstone paid' : ` · all six pays +$${fmt(tr.capstone)}`})</span></h2>
           <div class="grid">${tr.tasks.map((k) => `
             <div class="card" ${!k.claimed && k.ready ? 'style="border-color:var(--neon)"' : ''}>
-              <span class="t">${k.claimed ? '✓ ' : ''}${k.name}</span>
+              <span class="t">${k.claimed ? '✓ ' : ''}${esc(k.name)}</span>
               ${k.claimed ? '<span class="chip good">claimed</span>' : k.ready ? '<span class="chip good">reward ready</span>' : ''}
-              <div class="d">${k.how} · pays $${fmt(k.cash)}</div>
+              <div class="d">${esc(k.how)} · pays $${fmt(k.cash)}</div>
               ${k.claimed ? '' : k.ready
                 ? `<button class="act prime" data-crclaim="${k.id}">claim $${fmt(k.cash)}</button>`
                 : `<button class="act" data-crgo="${k.tab || 'streets'}">show me →</button>`}
@@ -8432,11 +8432,11 @@
       <h2 style="margin-top:14px">Spread the Word <span class="d" style="font-size:11px">— daily: share OMERTÀ for petty in-game cash. Your code is your name; a recruit who sticks earns you referral rewards (in-game cash) — and a crew that plays makes you earn respect faster</span></h2>
       ${!sw.enabled ? '<div class="d" style="color:var(--dim);font-size:12.5px;margin-bottom:4px">Reward payouts go live soon — but sharing still brings in new blood (and referral cash) right now.</div>' : ''}
       <div class="grid">${(sw.tasks || []).map((s) => `
-        <div class="card" ${s.state !== 'claimed' && sw.enabled ? 'style="border-color:var(--neon)"' : ''}><span class="t">${s.state === 'claimed' ? '✓ ' : ''}${s.name}</span>
+        <div class="card" ${s.state !== 'claimed' && sw.enabled ? 'style="border-color:var(--neon)"' : ''}><span class="t">${s.state === 'claimed' ? '✓ ' : ''}${esc(s.name)}</span>
           ${s.state === 'claimed' ? '<span class="chip good">done today</span>'
             : s.state === 'ready' ? '<span class="chip good">stood the test — collect</span>'
             : s.state === 'pending' ? `<span class="chip">standing — pays in ${mins(s.matureSeconds)}</span>` : ''}
-          <div class="d">${s.desc} · pays $${fmt(s.cash)} <span style="color:var(--dim)">(the post must stand ${sw.matureHours || 4}h)</span></div>
+          <div class="d">${esc(s.desc)} · pays $${fmt(s.cash)} <span style="color:var(--dim)">(the post must stand ${sw.matureHours || 4}h)</span></div>
           <a class="act" href="${s.share}" target="_blank" rel="noopener noreferrer">share ↗</a>
           ${s.state === 'claimed' ? '' : (s.state === 'todo' || s.state === 'ready')
             ? `<div class="row" style="margin-top:4px"><input class="sw-proof" data-for="${s.id}" placeholder="paste the link to your post${sw.enabled ? ' — needed to pay' : ''}" style="flex:1;min-width:0">
@@ -8463,7 +8463,7 @@
           .map((s) => m.req?.[s] ? (reqTxt[s] ? reqTxt[s](m.req[s]) : `${s} ${m.req[s]}`) : null).filter(Boolean).join(', ');
         const meets = ['muscle', 'cunning', 'speed', 'fp', 'trade'].every((s) => !m.req?.[s]
           || (s in reqHave ? reqHave[s] : (me?.stats?.[s] || 0)) >= m.req[s]);
-        return `<div class="card"><span class="t">${m.name}</span>
+        return `<div class="card"><span class="t">${esc(m.name)}</span>
           <div class="d">${m.brief || ''}</div>
           <div class="d">needs lvl ${m.req?.lvl || 1}${statReq ? ` · ${statReq}` : ''} · pays $${fmt(m.reward?.cash || 0)}${m.reward?.omr ? ` + ${m.reward.omr} $OMR` : ''}${m.reward?.title ? ' + a title' : ''}</div>
           <button class="act" data-mission="${m.id}"${meets && !missionCd ? '' : ' disabled'}>attempt${
@@ -8481,11 +8481,11 @@
           <div style="height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden"><i style="display:block;height:100%;width:${v}%;background:var(--neon)"></i></div></div>`;
       }).join('') : '';
       const mine = you ? `<div class="card" style="border-color:var(--neon)">
-        <span class="t" style="color:var(--neon)">YOUR STANDING · ${you.standing} <span class="d" style="font-size:12px">(${you.title}${you.rank ? ` · #${you.rank} of ${you.of}` : ''})</span></span>
+        <span class="t" style="color:var(--neon)">YOUR STANDING · ${you.standing} <span class="d" style="font-size:12px">(${esc(you.title)}${you.rank ? ` · #${you.rank} of ${you.of}` : ''})</span></span>
         <div class="row" style="gap:8px;margin-top:6px;flex-wrap:wrap">${bars}</div>
         <div class="d" style="font-size:11px;color:var(--dim);margin-top:4px">Every legend you earn — kills, empire, family power, going legit — folds into this one number. Spread across the pillars to climb.</div></div>` : '';
       const top = board.slice(0, 8).map((b, i) =>
-        `<div class="card"><span class="t">${i + 1}. ${b.name} <span class="chip">${b.title}</span></span>
+        `<div class="card"><span class="t">${i + 1}. ${esc(b.name)} <span class="chip">${esc(b.title)}</span></span>
           <div class="d">standing ${b.standing} · lvl ${b.level}</div></div>`).join('');
       el.innerHTML = mine + `<div class="grid" style="margin-top:8px">${top || '<span class="d" style="color:var(--dim)">the city\'s still young — nobody\'s made a name yet</span>'}</div>`;
       el.style.color = ''; el.style.fontSize = '';
@@ -8496,10 +8496,10 @@
       const drive = push?.active ? `<div class="card" style="border-color:var(--neon)"><span class="t" style="color:var(--neon)">🔥 RECRUITMENT DRIVE — ${push.mult}× referral cash</span><div class="d">Bring people in NOW — every referral payout pays ${push.mult}× for the next ${Math.ceil(push.seconds / 3600)}h. Your code is your name.</div></div>` : '';
       if (!rc.length && !fam.length) { el.innerHTML = drive + '<div class="d" style="color:var(--dim);font-size:12.5px">Nobody\'s brought anyone in yet. Be the first — share your code (it\'s your name).</div>'; el.style.color = ''; el.style.fontSize = ''; return; }
       const top = rc.slice(0, 10).map((x, i) =>
-        `<div class="card"><span class="t">${i + 1}. ${x.name}${x.rank ? ` <span class="chip">${x.rank}</span>` : ''}</span>
-          <div class="d">${x.recruits} made ${x.recruits === 1 ? 'man' : 'men'} brought in${x.gang ? ` · ${x.tag ? `[${x.tag}] ` : ''}${x.gang}` : ''}</div></div>`).join('');
+        `<div class="card"><span class="t">${i + 1}. ${esc(x.name)}${x.rank ? ` <span class="chip">${x.rank}</span>` : ''}</span>
+          <div class="d">${x.recruits} made ${x.recruits === 1 ? 'man' : 'men'} brought in${x.gang ? ` · ${x.tag ? `[${esc(x.tag)}] ` : ''}${x.gang}` : ''}</div></div>`).join('');
       const fams = fam.slice(0, 5).map((f, i) =>
-        `<div class="card"><span class="t">${i + 1}. ${f.tag ? `[${f.tag}] ` : ''}${f.name}</span>
+        `<div class="card"><span class="t">${i + 1}. ${f.tag ? `[${esc(f.tag)}] ` : ''}${esc(f.name)}</span>
           <div class="d">${f.recruits} recruited by ${f.members} made ${f.members === 1 ? 'man' : 'men'}</div></div>`).join('');
       el.innerHTML = drive + `<div class="grid">${top}</div>${fam.length ? `<h2 style="margin-top:12px;font-size:14px">Family Recruitment</h2><div class="grid">${fams}</div>` : ''}`;
       el.style.color = ''; el.style.fontSize = '';
@@ -8715,7 +8715,7 @@
     const crimeCard = (c) => {
       const termsId = `crime-${c.id}-terms`;
       return `
-      <div class="card">${aart('crime', c.id)}<span class="t">${c.name}</span>
+      <div class="card">${aart('crime', c.id)}<span class="t">${esc(c.name)}</span>
         <div id="${termsId}" class="operation-action-terms">
           <div class="d operation-terms"><b>COST</b> ${c.nerve} nerve · <b>PAY</b> $${fmt(c.cash[0])}–$${fmt(c.cash[1])} · <b>RISK</b> ${c.jail ? 'jail on a miss' : 'no jail term'}</div>
           <div class="d operation-choice-terms">${approachTerms}</div>
@@ -8737,7 +8737,7 @@
     const crimes = best.map(crimeCard).join('');
     const restCrimes = rest.map(crimeCard).join('');
     const travel = (rules?.districts || []).map((d) =>
-      `<button class="act" data-do="POST /v1/travel/${d.id || d}">${d.name || d.id || d}</button>`).join('');
+      `<button class="act" data-do="POST /v1/travel/${d.id || d}">${esc(d.name || d.id || d)}</button>`).join('');
     // PACING: the gym runs on a cooldown now, so show the live timer rather than letting the player
     // click into a bare `cooldown` error.
     const gymCd = Number(me?.trainSeconds || 0), trainEnergy = Number(rules?.pacing?.trainEnergy || 10);
@@ -8750,8 +8750,8 @@
     const regimenBlock = !gym.disciplines ? '' : `
       <div class="d" style="margin-top:10px"><b>The Regimen</b> — eight disciplines, trained on the same gym clock (${gym.energy} energy a session). Breadth, not shortcuts:</div>
       <div class="grid" style="margin-top:4px">${gym.disciplines.map((d) => `
-        <div class="card"><span class="t">${d.name}</span> <span class="chip">${d.level >= d.cap ? 'MASTERED' : `lvl ${d.level}`}</span>
-          <div class="d">${d.desc}</div>
+        <div class="card"><span class="t">${esc(d.name)}</span> <span class="chip">${d.level >= d.cap ? 'MASTERED' : `lvl ${d.level}`}</span>
+          <div class="d">${esc(d.desc)}</div>
           <div class="bar" style="margin-top:4px"><i style="width:${d.pct}%"></i></div>
           <div class="d" style="font-size:11px">${d.level >= d.cap ? 'nothing left to teach' : `${d.xp} xp · next level at ${d.nextXp}`}</div>
           <button class="act" data-disc="${d.id}"${regCd > 0 || d.level >= d.cap ? ' disabled' : ''}>train</button></div>`).join('')}</div>
@@ -8759,7 +8759,7 @@
       <div class="d" style="margin-top:10px"><b>Trainer drills</b> — each fixture sets one job a day. Do it anywhere in the city, then collect the schooling here (+${rules?.regimen?.drillXp ?? 25} xp, no gym clock):</div>
       <div class="grid" style="margin-top:4px">${gym.drills.map((d) => `
         <div class="card"><span class="t">${d.trainer}</span> <span class="chip${d.claimed ? '' : d.done ? ' good' : ''}">${d.claimed ? 'SCHOOLED TODAY' : d.done ? 'READY' : `${d.progress}/${d.n}`}</span>
-          <div class="d">${d.how} — trains <b>${(gym.disciplines.find((x) => x.id === d.discipline) || {}).name || d.discipline}</b></div>
+          <div class="d">${esc(d.how)} — trains <b>${esc((gym.disciplines.find((x) => x.id === d.discipline) || {}).name || d.discipline)}</b></div>
           ${d.claimed ? '' : `<button class="act${d.done ? ' prime' : ''}" data-drill="${d.npc}"${d.done ? '' : ' disabled'}>${d.done ? 'collect the schooling' : `do the work first (${d.progress}/${d.n})`}</button>`}</div>`).join('')}</div>`;
     // the Path — declared once you make rank (lvl 5). Shapes how you earn for the rest of the street.
     let pathBlock = '';
@@ -8767,15 +8767,15 @@
       const p = (rules?.paths || []).find((x) => x.id === me.path);
       const fx = rules?.pathFx?.matrix?.[me.path];
       const tn = (id) => (rules?.mastery?.tracks || []).find((t) => t.id === id)?.name || id;
-      pathBlock = `<h2 style="margin-top:14px">Your Path</h2><div class="card"><span class="t" style="color:var(--neon)">${p ? p.name : me.path}</span><div class="d">${p ? p.desc : 'Chosen. It shapes how you earn.'}</div>
+      pathBlock = `<h2 style="margin-top:14px">Your Path</h2><div class="card"><span class="t" style="color:var(--neon)">${p ? esc(p.name) : esc(me.path)}</span><div class="d">${p ? p.desc : 'Chosen. It shapes how you earn.'}</div>
         ${fx ? `<div class="d" style="margin-top:4px"><span style="color:var(--ok)">home trades ×${rules.pathFx.xpHome}:</span> ${fx.home.map(tn).join(', ')} · <span style="color:var(--bad)">rival ×${rules.pathFx.xpRival}:</span> ${fx.rival.map(tn).join(', ')}</div>` : ''}</div>`;
     } else if (me && me.level >= 5) {
       pathBlock = `<h2 style="margin-top:14px">Declare Your Path <span class="d" style="color:var(--dim);font-size:12.5px">— permanent, shapes how you earn</span></h2><div class="grid">` +
         (rules?.paths || []).map((p) => { const fx = rules?.pathFx?.matrix?.[p.id];
           const tn = (id) => (rules?.mastery?.tracks || []).find((t) => t.id === id)?.name || id;
-          return `<div class="card"><span class="t" style="color:var(--neon)">${p.name}</span><div class="d">${p.desc}</div>
+          return `<div class="card"><span class="t" style="color:var(--neon)">${esc(p.name)}</span><div class="d">${esc(p.desc)}</div>
           ${fx ? `<div class="d" style="margin-top:4px"><span style="color:var(--ok)">×${rules.pathFx.xpHome}:</span> ${fx.home.map(tn).join(', ')} · <span style="color:var(--bad)">×${rules.pathFx.xpRival}:</span> ${fx.rival.map(tn).join(', ')}</div>` : ''}
-          <button class="act" data-do="POST /v1/path" data-body='{"path":"${p.id}"}'>choose ${p.name}</button></div>`; }).join('') + `</div>`;
+          <button class="act" data-do="POST /v1/path" data-body='{"path":"${p.id}"}'>choose ${esc(p.name)}</button></div>`; }).join('') + `</div>`;
     } else if (me) {
       pathBlock = `<h2 style="margin-top:14px">Your Path</h2><div class="card coach-card"><div class="d">At <b>level 5</b> you'll declare a Path — one of six careers, each with a signature edge, a real handicap, and trades that come easy (or fight you). Keep grinding.</div></div>`;
     }
@@ -8803,7 +8803,7 @@
       const here = me?.loc;
       const flag = i && here === i.lo[0] ? '<span class="chip good">CHEAPEST HERE — buy</span>'
         : i && here === i.hi[0] ? '<span class="chip" style="border-color:var(--gold,#c9a227);color:var(--gold,#c9a227)">RICHEST HERE — sell</span>' : '';
-      return `<div class="card"><img class="ico wide" loading="lazy" alt="" src="/v1/art/good/${g.id}"><span class="t">${g.name}</span> ${flag}
+      return `<div class="card"><img class="ico wide" loading="lazy" alt="" src="/v1/art/good/${g.id}"><span class="t">${esc(g.name)}</span> ${flag}
         <div class="d">spot here: <b>$${price != null ? fmt(price) : '—'}</b> · in trunk: ${held}</div>
         ${i ? `<div class="d" style="font-size:11.5px;color:var(--dim)">cheapest: ${i.lo[0]} $${fmt(i.lo[1])} · richest: ${i.hi[0]} $${fmt(i.hi[1])} · <b>+${i.pct}%</b> spread</div>` : ''}
         <input data-gd="${g.id}" placeholder="qty" size="5">
@@ -8832,7 +8832,7 @@
       // `blocked` is the server saying this contract is out of reach for THIS street today (a
       // tribute job with no family). Say so on the card instead of leaving a bar that never moves —
       // the coach subtracts the same contracts off the same helper, so the two always agree.
-      return `<div class="card"${j.blocked ? ' style="opacity:.6"' : ''}><span class="t">${j.name}</span>
+      return `<div class="card"${j.blocked ? ' style="opacity:.6"' : ''}><span class="t">${esc(j.name)}</span>
         <div class="d">${Math.min(j.progress, j.goal)}/${j.goal}${j.claimed ? ' · claimed' : ready ? ' · READY' : ''}</div>
         ${!j.claimed && j.blocked ? `<div class="d" style="color:var(--warn);font-size:12px">out of reach today — ${j.blocked}</div>` : ''}
         ${!j.claimed && !ready && how ? `<div class="d" style="color:var(--dim);font-size:12px">how: ${how}</div>` : ''}
@@ -8844,8 +8844,8 @@
     const dailyReady = (daily.jobs || []).some((j) => !j.claimed && j.progress >= j.goal);
     const soldierBlock = `${sq.commander && sq.commander.led > 0 ? `<div class="d" style="color:var(--gold,#c9a227);font-size:12px;margin-bottom:4px">🎖 ${esc(sq.commander.rank)} — ${sq.commander.led} job${sq.commander.led === 1 ? '' : 's'} led</div>` : ''}<div class="grid">
         ${(sq.roster || []).map((s) => `
-        <div class="card"><span class="t">${s.name}</span> <span class="chip">${esc(s.rank || '')}</span> <span class="chip ${s.onJob ? 'good' : ''}">${s.injuredSeconds > 0 ? `laid up ${mins(s.injuredSeconds)}` : s.onJob ? 'ON THE JOB' : 'benched'}</span>
-          <div class="d">${s.traitName} — ${s.desc} · lvl ${s.level} (${s.xp} xp)</div>
+        <div class="card"><span class="t">${esc(s.name)}</span> <span class="chip">${esc(s.rank || '')}</span> <span class="chip ${s.onJob ? 'good' : ''}">${s.injuredSeconds > 0 ? `laid up ${mins(s.injuredSeconds)}` : s.onJob ? 'ON THE JOB' : 'benched'}</span>
+          <div class="d">${s.traitName} — ${esc(s.desc)} · lvl ${s.level} (${s.xp} xp)</div>
           ${s.onJob ? '<button class="act" data-do="POST /v1/soldiers/unassign">bench him</button>'
             : s.injuredSeconds > 0 ? '' : `<button class="act" data-soldassign="${s.id}">take him along</button>`}
           <button class="act" data-solddismiss="${s.id}" style="font-size:11px;padding:2px 6px">cut him loose</button></div>`).join('')}
@@ -8853,7 +8853,7 @@
           <div class="d">$${fmt(sq.hireCost || 25000)} — a name, one talent, no guarantees they come home</div>
           <button class="act" data-do="POST /v1/soldiers/hire">put the word out</button></div>` : ''}
       </div>
-      ${(sq.memorial || []).length ? `<div class="d" style="margin-top:6px;color:var(--dim)">⚰ The wall: ${sq.memorial.map((m) => `<b>${m.name}</b> (${m.rank || m.trait}) — ${m.cause}`).join(' · ')}</div>` : ''}`;
+      ${(sq.memorial || []).length ? `<div class="d" style="margin-top:6px;color:var(--dim)">⚰ The wall: ${sq.memorial.map((m) => `<b>${esc(m.name)}</b> (${m.rank || m.trait}) — ${m.cause}`).join(' · ')}</div>` : ''}`;
     // F6 — THE TRADES, where the work happens. Mastery XP has accrued on every action since level 1
     // and the perks at 10/25/40 are real, but the board lives on the Life tab, so 200 crime clicks
     // read as repetition instead of progress. This strip carries the two tracks THIS screen feeds —
@@ -8933,7 +8933,7 @@
           <span class="t">THE FREIGHT GAME</span>
           <div class="d">Every district posts its own prices, fresh each day. The whole racket in one line:
           <b>buy where it's cheap, travel, sell where it's rich</b> — the spread is your margin, your trunk is your ceiling.
-          ${bestPlay ? `Today's best board: <b>${bestPlay.g.name}</b> — ${bestPlay.i.lo[0]} $${fmt(bestPlay.i.lo[1])} → ${bestPlay.i.hi[0]} $${fmt(bestPlay.i.hi[1])} (<b>+${bestPlay.i.pct}%</b>).` : ''}
+          ${bestPlay ? `Today's best board: <b>${esc(bestPlay.g.name)}</b> — ${bestPlay.i.lo[0]} $${fmt(bestPlay.i.lo[1])} → ${bestPlay.i.hi[0]} $${fmt(bestPlay.i.hi[1])} (<b>+${bestPlay.i.pct}%</b>).` : ''}
           Bulk players move the same freight by <b>convoy</b> (Big Scores) and by <b>boat</b> (the Port).</div>
         </div>
         <div class="d" style="color:var(--dim);font-size:12px;margin:4px 0">🚚 your trunk holds <b>${me.cargoCap ?? 0}</b> weight of cargo. Your <b>cars</b> are for muscle &amp; melt value — to <b>haul more</b>, buy a bigger set of <b>Wheels</b> (a truck / muscle car) in <b>The Empire ▸ Assets</b>.</div>
@@ -9065,9 +9065,9 @@
           <div class="d" style="font-size:11.5px;color:var(--dim);margin-top:4px">Whatever you are holding when the season closes goes on the permanent record —
             the top City Standing takes the city, the family holding the most turf goes on the roll.</div></div>` : ''}
       <h2>Today's Conditions</h2>
-      <div class="card"><span class="t">${c.event?.name || c.event?.id || '—'}</span>
-        <div class="d">${c.event?.desc || ''}</div>
-        <div class="d"><b>The law today:</b> ${c.lawEvent?.name || c.lawEvent?.id || '—'} · it's ${c.clock?.phase || 'daytime'} (h${c.clock?.hour ?? '?'})
+      <div class="card"><span class="t">${esc(c.event?.name || c.event?.id || '—')}</span>
+        <div class="d">${esc(c.event?.desc || '')}</div>
+        <div class="d"><b>The law today:</b> ${esc(c.lawEvent?.name || c.lawEvent?.id || '—')} · it's ${c.clock?.phase || 'daytime'} (h${c.clock?.hour ?? '?'})
           ${c.clock?.patrol ? '· <span style="color:var(--bad)">PATROL HOURS — busts and trials convict harder right now</span>' : '· the Bureau is off the clock — a better hour for loud work'}</div></div>
       ${(() => { const M = mega.current; if (!M && !(mega.skyline || []).length) return '';
         const bar = M ? `<div style="background:var(--line2);border-radius:6px;height:14px;overflow:hidden;margin:6px 0">
@@ -9103,13 +9103,13 @@
       }).join('')}</div>
       <h2 style="margin-top:12px">The Cartels <span class="d" style="font-size:11px">— NPC outfits the whole city grinds down together. The loop: RAID them for cash (costs energy + ammo) → ROUT one (drain its strength) → plant your family's flag → the conquered outfit pays your treasury TRIBUTE${w.phase === 'night' ? ' · night: their guard is down' : ''}</span></h2>
       ${w.warEffort ? `<div class="card" style="border-color:var(--neon)"><span class="t">⚔️ War Effort: ${w.warEffort.rank}</span> <span class="d">$${fmt(w.warEffort.damage)} lifetime cartel damage — <a href="#" id="w-lb">the leaderboard →</a> · <a href="#" id="w-flb">the frontier →</a></span></div>` : ''}
-      ${w.uprising ? `<div class="card" style="border-color:var(--blood)"><span class="t">🔥 UPRISING — ${w.uprising.name} is in revolt</span> <span class="d">they've dug in (raiding them is harder today) and pay no tribute. If a family holds their outpost and hasn't reinforced the garrison, they'll break free at the reckoning — <b>reinforce or lose the turf.</b></span></div>` : ''}
+      ${w.uprising ? `<div class="card" style="border-color:var(--blood)"><span class="t">🔥 UPRISING — ${esc(w.uprising.name)} is in revolt</span> <span class="d">they've dug in (raiding them is harder today) and pay no tribute. If a family holds their outpost and hasn't reinforced the garrison, they'll break free at the reckoning — <b>reinforce or lose the turf.</b></span></div>` : ''}
       ${w.frontier && w.frontier.held ? `<div class="card"><span class="t">🏴 The Frontier — your family holds ${w.frontier.held} outpost${w.frontier.held === 1 ? '' : 's'}</span>
         <div class="d">a held outfit pays TRIBUTE to the treasury (a conquered vassal) · pending: <b>$${fmt(w.frontier.tributePending)}</b></div>
         ${w.frontier.tributePending > 0 ? `<button class="act" id="w-collect"${groundOff('The tribute')}>collect the tribute → treasury</button>` : '<span class="d" style="color:var(--dim)">nothing to collect yet — it accrues while you hold the turf</span>'}</div>` : ''}
       <div class="grid">${(w.npcs || []).map((n) => `
-        <div class="card">${aart('outfit', n.id)}<span class="t">${n.name}</span>${n.coop ? '<span class="chip">apex</span>' : ''}${n.routed ? '<span class="chip good">ROUTED</span>' : ''}${n.enraged ? '<span class="chip bad">ON ALERT</span>' : ''}${n.rising ? '<span class="chip bad">🔥 RISING</span>' : ''}
-          ${n.heldBy ? `<div class="d">frontier held by <b>${n.heldBy.name}</b> [${n.heldBy.tag}]${n.heldBy.mine ? ' <span class="chip good">yours</span>' : ''}${n.heldBy.mine && n.tributePending != null ? ` · tribute $${fmt(n.tributePending)} pending ($${fmt(n.tributePerHr)}/hr)` : ''}${!n.heldBy.mine ? ` · garrison $${fmt(n.garrison)}` : ''}</div>` : (n.coop ? '<div class="d" style="color:var(--dim)">frontier: open — rout it to claim its tribute</div>' : `<div class="d" style="color:var(--dim)">frontier: open — rout it ($${fmt(n.tributePerHr)}/hr tribute)</div>`)}
+        <div class="card">${aart('outfit', n.id)}<span class="t">${esc(n.name)}</span>${n.coop ? '<span class="chip">apex</span>' : ''}${n.routed ? '<span class="chip good">ROUTED</span>' : ''}${n.enraged ? '<span class="chip bad">ON ALERT</span>' : ''}${n.rising ? '<span class="chip bad">🔥 RISING</span>' : ''}
+          ${n.heldBy ? `<div class="d">frontier held by <b>${esc(n.heldBy.name)}</b> [${esc(n.heldBy.tag)}]${n.heldBy.mine ? ' <span class="chip good">yours</span>' : ''}${n.heldBy.mine && n.tributePending != null ? ` · tribute $${fmt(n.tributePending)} pending ($${fmt(n.tributePerHr)}/hr)` : ''}${!n.heldBy.mine ? ` · garrison $${fmt(n.garrison)}` : ''}</div>` : (n.coop ? '<div class="d" style="color:var(--dim)">frontier: open — rout it to claim its tribute</div>' : `<div class="d" style="color:var(--dim)">frontier: open — rout it ($${fmt(n.tributePerHr)}/hr tribute)</div>`)}
           <div class="d">strength ${n.strengthPct}% · lvl ${n.minLvl}+${n.odds != null ? ` · your solo odds ${n.odds}%` : ''}${n.enraged ? ' · <span style="color:var(--bad)">enraged — dug in</span>' : ''}</div>
           ${n.canRaid ? `<button class="act" data-raid="${n.id}">raid (energy + ammo)</button>` : `<span class="chip">need lvl ${n.minLvl}</span>`}
           ${n.coop && n.canRaid && !w.myRaid ? `<button class="act" data-plan="${n.id}">plan a crew raid</button>` : ''}
@@ -9125,7 +9125,7 @@
         // The outfit's own level wall applies to every gun on the raid, not just the leader who planned
         // it — joinRaid enforces it. The card stated "lvl 20+" beside a live [join the crew], so a
         // rookie who found a crew forming was refused on press.
-        return `<div class="card"><span class="t">${x.name}</span> <span class="chip">crew ${x.crew}/${x.crewMax}</span>
+        return `<div class="card"><span class="t">${esc(x.name)}</span> <span class="chip">crew ${x.crew}/${x.crewMax}</span>
           <div class="d">led by ${x.leader} · lvl ${x.minLvl}+</div>
           ${lvlOk ? `<button class="act" data-joinraid="${x.id}">join the crew</button>`
             : `<span class="chip">🔒 you need level ${x.minLvl}</span>`}</div>`; }).join('') || (w.myRaid ? '' : '<span class="d" style="color:var(--dim)">no crew raids forming — plan one on an apex outfit above</span>')}</div>
@@ -9217,7 +9217,7 @@
       area.innerHTML = `
         ${(lob.tables || []).length ? `<div class="grid">${lob.tables.map((tb) => `
           <div class="card"><span class="t">$${fmt(tb.bb)} table ${tb.live ? '<span class="chip good">HAND LIVE</span>' : ''}</span>
-            <div class="d">${tb.players.map((p) => `${p.name} ($${fmt(p.stack)})`).join(' · ') || 'empty'}</div>
+            <div class="d">${tb.players.map((p) => `${esc(p.name)} ($${fmt(p.stack)})`).join(' · ') || 'empty'}</div>
             ${tb.players.length < (lob.seats || 6) ? `<input data-ringbuy="${tb.id}" type="number" placeholder="buy-in" style="width:100px" value="${tb.bb * (lob.buyinMinBb || 20)}"> <button class="act" data-ringsit="${tb.id}">sit down</button>` : '<span class="chip">full</span>'}</div>`).join('')}</div>` : '<div class="d" style="color:var(--dim)">no tables running — open one.</div>'}
         <div style="margin-top:6px"><select id="ring-bb">${(lob.blinds || []).map((b) => `<option value="${b}">$${fmt(b)} a hand</option>`).join('')}</select>
           <input id="ring-buyin" type="number" placeholder="buy-in" style="width:110px"> <button class="act" id="ring-open">open a table</button>
@@ -9233,9 +9233,9 @@
     area.innerHTML = `
       <div class="card"><span class="t">$${fmt(tb.bb)} table · ${tb.street ? `${tb.street.toUpperCase()} · pot $${fmt(tb.pot)}` : 'between hands'}</span>
         ${tb.board && tb.board.length ? `<div class="d" style="font-size:16px;letter-spacing:2px">${tb.board.map(cardTxt).join(' ')}</div>` : ''}
-        <div class="d">${(v.seats || []).map((s) => `${s.you ? '<b>' : ''}${s.name} $${fmt(s.stack)}${s.inHand ? '' : ' (out)'}${tb.actingSeat === s.seat && tb.street ? ' \u23f1' : ''}${s.you ? '</b>' : ''}`).join(' · ')}</div>
+        <div class="d">${(v.seats || []).map((s) => `${s.you ? '<b>' : ''}${esc(s.name)} $${fmt(s.stack)}${s.inHand ? '' : ' (out)'}${tb.actingSeat === s.seat && tb.street ? ' \u23f1' : ''}${s.you ? '</b>' : ''}`).join(' · ')}</div>
         ${ys && ys.hole.length ? `<div class="d">your hand: <b style="font-size:15px">${ys.hole.map(cardTxt).join(' ')}</b>${ys.toCall ? ` · $${fmt(ys.toCall)} to you` : ''}${tb.actSeconds != null && tb.street ? ` · clock ${tb.actSeconds}s` : ''}</div>` : ''}
-        ${tb.lastResult ? `<div class="d" style="color:var(--dim);font-size:11.5px">last hand: ${tb.lastResult.winners.map((w) => `${w.name}${w.hand ? ` (${w.hand})` : ''}`).join(' + ')} took $${fmt(tb.lastResult.pot - tb.lastResult.rake)}</div>` : ''}
+        ${tb.lastResult ? `<div class="d" style="color:var(--dim);font-size:11.5px">last hand: ${tb.lastResult.winners.map((w) => `${esc(w.name)}${w.hand ? ` (${w.hand})` : ''}`).join(' + ')} took $${fmt(tb.lastResult.pot - tb.lastResult.rake)}</div>` : ''}
         <div style="margin-top:6px">
           ${ys && ys.yourTurn ? `
             <button class="act" data-ringact="check">check</button>
@@ -9279,7 +9279,7 @@
       <button class="act" data-do="POST /v1/casino/fight/claim">claim bets</button>
       <h2 style="margin-top:14px">The Track <span class="d" style="font-size:11px">(the dogs &amp; the ponies — daily card, one bet a race, pays the posted odds)</span></h2>
       ${(() => { const tk = den.track || {};
-        const card = (race, runners) => `<div class="d" style="font-size:12.5px;margin:3px 0"><b>${race === 'dogs' ? '🐕 The Greyhounds' : '🐎 The Ponies'}:</b> ${(runners || []).map((rn) => `${rn.post}. ${rn.player ? '<span style="color:var(--neon)">' + rn.name + ' ★</span>' : rn.name} <span style="color:var(--gold)">${rn.odds}:1</span>`).join(' &nbsp;·&nbsp; ') || '—'}</div>`;
+        const card = (race, runners) => `<div class="d" style="font-size:12.5px;margin:3px 0"><b>${race === 'dogs' ? '🐕 The Greyhounds' : '🐎 The Ponies'}:</b> ${(runners || []).map((rn) => `${rn.post}. ${rn.player ? '<span style="color:var(--neon)">' + esc(rn.name) + ' ★</span>' : esc(rn.name)} <span style="color:var(--gold)">${rn.odds}:1</span>`).join(' &nbsp;·&nbsp; ') || '—'}</div>`;
         const mine = (tk.myEntries || []).map((e) => `${e.racer} in the ${e.race} (post ${e.post}, form ${e.form})`).join(' · ');
         return card('dogs', tk.dogs) + card('horses', tk.horses) +
           `${mine ? `<div class="d" style="font-size:12.5px;color:var(--neon)">your runners: ${mine}</div>` : ''}
@@ -9305,7 +9305,7 @@
           ${hd.canDouble ? '<button class="act" data-do="POST /v1/casino/blackjack/double">double down</button>' : ''}`;
         return `<input id="bj-amt" placeholder="bet" size="8" value="1000"> <button class="act" id="bj-go">deal</button>`; })()}
       <h2 style="margin-top:14px">Hold'em Table <span class="d" style="font-size:11px">(heads-up showdown — winner takes the raked pot)</span></h2>
-      <div class="d" style="color:var(--dim);font-size:12.5px">open tables: ${(den.poker?.tables || []).map((p) => `<a href="#" class="pk-play" data-id="${p.id}" data-name="${p.name}">${p.name} (up to $${fmt(p.limit)})</a>`).join(' · ') || 'nobody dealing'}</div>
+      <div class="d" style="color:var(--dim);font-size:12.5px">open tables: ${(den.poker?.tables || []).map((p) => `<a href="#" class="pk-play" data-id="${p.id}" data-name="${esc(p.name)}">${esc(p.name)} (up to $${fmt(p.limit)})</a>`).join(' · ') || 'nobody dealing'}</div>
       <div style="margin-top:4px"><input id="pk-amt" placeholder="stake" size="8" value="1000"> <span class="d" style="font-size:11px">click a table above to play for this stake</span></div>
       <input id="pk-limit" placeholder="open your own table (limit)" size="20">
       <button class="act" id="pk-set">deal from your table</button>
@@ -9328,7 +9328,7 @@
           ${fu.mine || fu.yourBet ? '' : `<input id="fut-bet-amt" placeholder="bet amount" size="10" value="${fu.minBet}">`}
           ${fu.mine ? '' : `<div style="margin-top:6px"><input id="fut-nom2" placeholder="nominate another racer id" size="18"><button class="act" id="fut-nom2-go">nominate ($${fmt(fu.nominateFee)})</button></div>`}`; })()}
       <h2 style="margin-top:14px">Back Room</h2>
-      <div class="d" style="color:var(--dim);font-size:12.5px">faders: ${(den.backroom?.faders || []).map((f) => `${f.name} ($${fmt(f.fadeLimit)})`).join(', ') || 'nobody'}</div>
+      <div class="d" style="color:var(--dim);font-size:12.5px">faders: ${(den.backroom?.faders || []).map((f) => `${esc(f.name)} ($${fmt(f.fadeLimit)})`).join(', ') || 'nobody'}</div>
       <input id="fade-limit" placeholder="your fade limit" size="12">
       <button class="act" id="fade-set">post a fade</button>`;
     // THE FELT. The Den is eleven games written as one flat run of <h2> + bare inputs — the only tab
@@ -9596,19 +9596,19 @@
         : '<span class="d" style="color:var(--dim)">no open contracts — the city is at peace. fix that.</span>'}
 
       <h2 style="margin-top:12px">Put Out a Contract</h2>
-      <select id="ct-target">${streets.map((s) => `<option value="${s.id}">${s.name} (lvl ${s.level}${s.gangTag ? ' · ' + s.gangTag : ''})</option>`).join('')}</select>
+      <select id="ct-target">${streets.map((s) => `<option value="${s.id}">${esc(s.name)} (lvl ${s.level}${s.gangTag ? ' · ' + s.gangTag : ''})</option>`).join('')}</select>
       <select id="ct-kind"><option value="hospitalize">hospitalize</option><option value="kill">kill</option></select>
       <input id="ct-amt" placeholder="pot $" size="9">
       <label style="font-size:12.5px;color:var(--dim)"><input type="checkbox" id="ct-anon"> anonymous (${rules?.contracts?.anonOmr ?? ''} $OMR)</label>
       <input id="ct-reason" placeholder="reason (public)" size="18">
       <button class="act" id="ct-post">post it</button>
       <div style="margin-top:4px"><span class="d" style="color:var(--dim);font-size:12.5px">name a gun (optional — directed contract, $10k floor):</span>
-        <select id="ct-hitman"><option value="">— open to all —</option>${streets.map((s) => `<option value="${s.id}">${s.name}</option>`).join('')}</select>
+        <select id="ct-hitman"><option value="">— open to all —</option>${streets.map((s) => `<option value="${s.id}">${esc(s.name)}</option>`).join('')}</select>
         <input id="ct-excl" placeholder="exclusive hrs" size="10"></div>
 
       ${me.gang && (me.gang.role === 'boss' || me.gang.role === 'underboss') ? `
       <h2 style="margin-top:12px">Family Contract <span class="d" style="font-size:11px">(boss/underboss — funded from the family treasury, posted as the family; rides the same board)</span></h2>
-      <select id="fc-target">${streets.map((s) => `<option value="${s.id}">${s.name} (lvl ${s.level}${s.gangTag ? ' · ' + s.gangTag : ''})</option>`).join('')}</select>
+      <select id="fc-target">${streets.map((s) => `<option value="${s.id}">${esc(s.name)} (lvl ${s.level}${s.gangTag ? ' · ' + s.gangTag : ''})</option>`).join('')}</select>
       <select id="fc-kind"><option value="kill">kill</option><option value="hospitalize">hospitalize</option></select>
       <input id="fc-amt" placeholder="pot $ from treasury" size="16">
       <button class="act" id="fc-post" style="border-color:var(--bad)">put the family on it</button>` : ''}
@@ -9661,7 +9661,7 @@
             <div class="d">${d.you.listed ? `on the circuit — taking duels up to $${fmt(d.you.limit)}` : 'not listed — nobody can challenge you'}</div>
             <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;align-items:center">
               <span class="d" style="font-size:11px">stance:</span>
-              <select id="du-style" style="font-size:11px">${d.styles.map((s) => `<option value="${s.id}"${d.you.style === s.id ? ' selected' : ''}>${s.name} (beats ${styleName(s.beats)})</option>`).join('')}</select>
+              <select id="du-style" style="font-size:11px">${d.styles.map((s) => `<option value="${s.id}"${d.you.style === s.id ? ' selected' : ''}>${esc(s.name)} (beats ${esc(styleName(s.beats))})</option>`).join('')}</select>
               <button class="act" id="du-setstyle">set stance</button>
             </div>
             <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
@@ -9894,7 +9894,7 @@
       <div class="card"><span class="t" style="color:${stageColor};text-transform:uppercase">${L.stage}</span>
         ${L.rat ? '<span class="chip bad">RAT — the badge follows the bloodline</span>' : ''}
         ${L.patrol ? '<span class="chip cold">PATROL HOURS — the Bureau convicts harder</span>' : ''}
-        <div class="d" style="margin-top:6px">the case: ${L.exposure} exposure · heat above ${L.watch} feeds it (yours: ${me.heat}) · today ×${L.cityEvent.exposureMult} (${L.cityEvent.name})</div>
+        <div class="d" style="margin-top:6px">the case: ${L.exposure} exposure · heat above ${L.watch} feeds it (yours: ${me.heat}) · today ×${L.cityEvent.exposureMult} (${esc(L.cityEvent.name)})</div>
         <!-- the RICO meter used to be byte-identical to the energy bar. It now carries the three
              thresholds as MARKS ON the track rather than text below it, so "how close am I to
              losing everything" is answerable at a glance instead of by arithmetic. -->
@@ -9949,7 +9949,7 @@
         ${L.witpro.active ? `<span class="chip cold">WITPRO — untargetable ${mins(L.witpro.seconds)}</span>` : ''}
       </div>`;
     const streets = ((await api('GET', '/v1/streets')).body?.streets || []).filter((s) => s.id !== me.id);
-    $('#flip-target').innerHTML = streets.map((s) => `<option value="${s.id}">${s.name} (lvl ${s.level})</option>`).join('');
+    $('#flip-target').innerHTML = streets.map((s) => `<option value="${s.id}">${esc(s.name)} (lvl ${s.level})</option>`).join('');
     $('#flip-go').onclick = async () => {
       if (!await ask('Give them a name?', 'Your case goes away and theirs begins. You are branded a RAT for good — omertà no longer protects you, and your own family can hunt you. It follows your bloodline.',
         { yes: 'name him', no: 'keep your mouth shut', danger: true })) return;
@@ -9970,7 +9970,7 @@
     // your live wires — the intel on each tapped mark
     const wires = (W.taps || []).map((i) => `
       <div class="card">
-        <span class="t">${i.name} <span class="dim">lvl ${i.level}</span></span>
+        <span class="t">${esc(i.name)} <span class="dim">lvl ${i.level}</span></span>
         ${i.huntingYou ? '<span class="chip bad">HUNTING YOU</span>' : ''}${i.wanted ? '<span class="chip bad">WANTED</span>' : ''}
         <div class="d" style="margin-top:4px">
           the law: <b style="color:${stageColor[i.law.stage] || 'var(--dim)'};text-transform:uppercase">${i.law.stage}</b>${i.law.indicted ? ' · INDICTED' : ''} · heat <b style="color:${bandColor(i.law.heat)}">${i.law.heat}</b><br>
@@ -9982,7 +9982,7 @@
     // your standing informants — the TRUE read (pierces a mark's disinformation) + who they're hunting
     const informants = (W.informants || []).map((i) => `
       <div class="card" style="border-color:var(--neon)">
-        <span class="t">${i.name} <span class="dim">lvl ${i.level}</span></span> <span class="chip good">INFORMANT</span>
+        <span class="t">${esc(i.name)} <span class="dim">lvl ${i.level}</span></span> <span class="chip good">INFORMANT</span>
         ${i.huntingYou ? '<span class="chip bad">HUNTING YOU</span>' : ''}${i.wanted ? '<span class="chip bad">WANTED</span>' : ''}
         <div class="d" style="margin-top:4px">
           the law: <b style="color:${stageColor[i.law.stage] || 'var(--dim)'};text-transform:uppercase">${i.law.stage}</b> · heat <b style="color:${bandColor(i.law.heat)}">${i.law.heat}</b> · money: ${i.wealth}<br>
@@ -10006,7 +10006,7 @@
         <span class="t">${W.subscribed ? `SUBSCRIBED · ${W.subTierName || 'Street Wire'}` : 'The Premium Feed'}</span>
         ${W.subscribed ? `<span class="chip cold">${mins(W.subSeconds)} left</span>` : ''}
         <div class="d">${W.subscribed ? 'the intelligence service is live — forecasts, threat chatter, and (tier 2+) the war room + standing watches below.' : 'Law forecasts, threat chatter — and higher tiers unlock the war room + STANDING WATCHES (auto-renewed taps). Pick a tier:'}</div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">${(W.subTiers || []).map((t) => `<button class="act" data-do="POST /v1/wire/subscribe" data-body='${JSON.stringify({ tier: t.tier })}'>${W.subTier === t.tier ? 'renew ' : ''}${t.name} · ${t.omr} $OMR${t.watchSlots ? ` · ${t.watchSlots} watch${t.watchSlots > 1 ? 'es' : ''}` : ''}${t.warRoom ? ' · war room' : ''}</button>`).join('')}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">${(W.subTiers || []).map((t) => `<button class="act" data-do="POST /v1/wire/subscribe" data-body='${JSON.stringify({ tier: t.tier })}'>${W.subTier === t.tier ? 'renew ' : ''}${esc(t.name)} · ${t.omr} $OMR${t.watchSlots ? ` · ${t.watchSlots} watch${t.watchSlots > 1 ? 'es' : ''}` : ''}${t.warRoom ? ' · war room' : ''}</button>`).join('')}</div>
       </div>
 
       ${W.subscribed && W.watchSlots > 0 ? `
@@ -10064,7 +10064,7 @@
         <button class="act" id="sec-dig-go">dig up dirt (${SEC.digOmr || 60} $OMR)</button>
       </div>
       ${(SEC.held || []).length ? `<div class="grid" style="margin-top:6px">${SEC.held.map((s) => `
-        <div class="card"><span class="t">🗂 ${s.kindName}</span> <span class="chip">on ${s.on}</span>
+        <div class="card"><span class="t">🗂 ${esc(s.kindName)}</span> <span class="chip">on ${s.on}</span>
           ${s.demand != null ? `<div class="d">demand out: $${fmt(s.demand)} — ${mins(s.deadlineSeconds)} to pay or it blows</div>`
             : `<div class="d">worth up to $${fmt(s.hushCap)} hush · goes stale in ${mins(s.ttlSeconds)}</div>
                <div style="margin-top:4px"><input data-secamt="${s.id}" placeholder="demand $" size="9">
@@ -10077,13 +10077,13 @@
         <span class="t">Threats</span>
         <div class="d">${W.premium.threats.huntersCount} hunter(s) have a search out on you${W.premium.threats.contracts.length ? ' · contracts on your head: ' + W.premium.threats.contracts.map((c) => `${c.kind} $${fmt(c.pot)}`).join(', ') : ' · no open contracts'}</div>
       </div>
-      ${W.premium.warRoom ? `<div class="card"><span class="t">${W.premium.warRoom.name}</span>
+      ${W.premium.warRoom ? `<div class="card"><span class="t">${esc(W.premium.warRoom.name)}</span>
         <div class="d">turf held: ${(W.premium.warRoom.held || []).join(', ') || 'none'}${W.premium.warRoom.war ? ` · AT WAR with ${W.premium.warRoom.war.with} (${W.premium.warRoom.war.us}–${W.premium.warRoom.war.them})` : ' · at peace'}</div></div>` : ''}
       <h2 style="margin-top:12px">Law Forecast</h2>
       <div class="grid">${(() => { const today = (W.premium.forecast || [])[0]?.day || 0; return (W.premium.forecast || []).map((f) => `<div class="card"><span class="t">${f.day === today ? 'today' : '+' + (f.day - today) + 'd'}</span><div class="d">${f.city || ''} · law: ${f.law || ''}</div></div>`).join(''); })()}</div>
       ` : ''}`;
     const streets = ((await api('GET', '/v1/streets')).body?.streets || []).filter((s) => s.id !== me.id);
-    const opts = streets.map((s) => `<option value="${s.id}">${s.name} (lvl ${s.level})</option>`).join('');
+    const opts = streets.map((s) => `<option value="${s.id}">${esc(s.name)} (lvl ${s.level})</option>`).join('');
     $('#wire-target').innerHTML = opts;
     $('#wire-dossier-target').innerHTML = opts;
     $('#wire-informant-target').innerHTML = opts;
@@ -10179,21 +10179,21 @@
         <div class="card"><span class="t">${o.minted ? 'MINTED' : 'Free Trial'}</span><div class="d">${o.minted ? 'identity minted — on-chain extraction unlocked' : `${o.mintCredits} mint credit(s)${o.mintCredits ? ' — spend it to mint your identity' : ''}`}</div></div>
         <div class="card"><span class="t">Revives</span><div class="d">${o.respawnTokens} pre-paid revive token(s)</div></div>
         <div class="card"><span class="t">${o.patron ? '★ PATRON' : 'Patron'}</span><div class="d">${o.patron ? 'the permanent patron badge is yours' : 'not a patron yet'}</div></div>
-        ${o.patronStanding ? `<div class="card"><span class="t">${o.patronStanding.tierName}</span> <span class="chip good">${eth(o.patronStanding.spentEth)} contributed</span>
-          <div class="d">${o.patronStanding.nextTier ? `${eth(o.patronStanding.nextTier.delta)} to ${o.patronStanding.nextTier.name}` : 'top patron tier'}${o.pass.seasons ? ` · ${o.pass.prestigeName} (${o.pass.seasons} season${o.pass.seasons > 1 ? 's' : ''})` : ''} <span style="color:var(--dim)">(survives death)</span></div></div>` : ''}
+        ${o.patronStanding ? `<div class="card"><span class="t">${esc(o.patronStanding.tierName)}</span> <span class="chip good">${eth(o.patronStanding.spentEth)} contributed</span>
+          <div class="d">${o.patronStanding.nextTier ? `${eth(o.patronStanding.nextTier.delta)} to ${esc(o.patronStanding.nextTier.name)}` : 'top patron tier'}${o.pass.seasons ? ` · ${o.pass.prestigeName} (${o.pass.seasons} season${o.pass.seasons > 1 ? 's' : ''})` : ''} <span style="color:var(--dim)">(survives death)</span></div></div>` : ''}
         <div class="card"><span class="t">Season Pass</span><div class="d">${o.pass.active ? `active — ${mins(o.pass.seconds)} left` : 'no active pass'}${o.pass.seasons ? ` · ${o.pass.prestigeName}` : ''}</div></div>
         <div class="card"><span class="t">Street Wire</span><div class="d">${o.wire.active ? `subscribed — ${mins(o.wire.seconds)} left` : 'not subscribed'}</div></div>
       </div>
       <h2 style="margin-top:12px">The Shelf</h2>
       <div class="grid">${S.packages.map((p) => `
-        <div class="card"><span class="t">${p.name}</span> <span class="chip">${eth(p.priceEth)}</span>${p.plexOmr ? ` <span class="chip good">${fmt(Math.ceil(p.plexOmr))} $OMR</span>` : ''}
-          <div class="d">${p.blurb}</div>
+        <div class="card"><span class="t">${esc(p.name)}</span> <span class="chip">${eth(p.priceEth)}</span>${p.plexOmr ? ` <span class="chip good">${fmt(Math.ceil(p.plexOmr))} $OMR</span>` : ''}
+          <div class="d">${esc(p.blurb)}</div>
           <!-- BOTH rails, and both stated. The ETH checkout is genuinely dormant until the on-chain
                paywall ships, but the $OMR rail is LIVE right now — showing only the dead one made the
                whole shelf read as unbuyable. A price with no way to pay it is the withheld-terms class. -->
           ${p.plexOmr ? `<button class="act" data-plex="${p.sku}" ${myOmr >= p.plexOmr ? '' : `disabled title="you hold ${fmt(Math.floor(myOmr))} $OMR"`}>${myOmr >= p.plexOmr ? `pay ${fmt(Math.ceil(p.plexOmr))} $OMR` : `needs ${fmt(Math.ceil(p.plexOmr - myOmr))} more $OMR`}</button>` : ''}
           <button class="act" disabled title="the on-chain checkout is not live yet">ETH checkout opens at launch</button></div>`).join('')}</div>
-      <div class="card" style="margin-top:8px"><div class="d">${S.note} ${me.wallet ? '' : '<b>Link a wallet first</b> (Going Legit → Your Wallet) — a purchase made before linking is credited the moment you link.'}</div></div>
+      <div class="card" style="margin-top:8px"><div class="d">${esc(S.note)} ${me.wallet ? '' : '<b>Link a wallet first</b> (Going Legit → Your Wallet) — a purchase made before linking is credited the moment you link.'}</div></div>
       <div class="d" style="font-size:11px;margin-top:6px">Revenue split — founder ${S.split.founder / 100}% · token buyback ${S.split.buyback / 100}% · treasury ${S.split.rwa / 100}%.</div>
       <div id="pass-slot"></div>
       <h2 style="margin-top:14px">The Benefactors <span class="d" style="font-size:11px">(the family's biggest patrons — a status board, no power)</span> <a href="#" id="patron-lb" style="font-size:12px">🏛 the league →</a></h2>
@@ -10222,7 +10222,7 @@
     { const lk = $('#patron-lb'); if (lk) lk.onclick = async (e) => { e.preventDefault();
       const b = (await api('GET', '/v1/leaderboard/patrons')).body || {};
       $('#patron-board').innerHTML = `<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
-        <div style="flex:1;min-width:200px"><div class="d"><b>THE BENEFACTORS</b>${b.favor ? ` · 👑 ${esc(b.favor.steward)} holds the House's Favor` : ''}</div>${(b.patrons || []).slice(0, 10).map((p) => `<div class="d">${p.favor ? '' : `#${p.rank} `}${esc(p.steward)} — ${p.tierName} (Ξ${p.spentEth})${p.seasons ? ` · ${p.prestigeName}` : ''}</div>`).join('') || '<div class="d">none yet</div>'}</div>
+        <div style="flex:1;min-width:200px"><div class="d"><b>THE BENEFACTORS</b>${b.favor ? ` · 👑 ${esc(b.favor.steward)} holds the House's Favor` : ''}</div>${(b.patrons || []).slice(0, 10).map((p) => `<div class="d">${p.favor ? '' : `#${p.rank} `}${esc(p.steward)} — ${esc(p.tierName)} (Ξ${p.spentEth})${p.seasons ? ` · ${p.prestigeName}` : ''}</div>`).join('') || '<div class="d">none yet</div>'}</div>
         <div style="flex:1;min-width:200px"><div class="d"><b>PATRON FAMILIES</b></div>${(b.families || []).slice(0, 8).map((g) => `<div class="d">#${g.rank} ${esc(g.name)}${g.tag ? ` [${esc(g.tag)}]` : ''} — Ξ${g.spentEth} (${g.patrons})</div>`).join('') || '<div class="d">none yet</div>'}</div></div>`; }; }
   }
 
@@ -10277,9 +10277,9 @@
 
       <h2 style="margin-top:12px">The Armory <span class="d" style="font-size:11px">(carrying: ${me.gun || 'nothing'} · vest: ${me.vest || 'none'} · ammo ${fmt(me.ammo)})</span></h2>
       <div class="grid">${(rules?.guns || []).map((g) => `
-        <div class="card">${ico('gun', g.id)}<span class="t">${g.name}</span>${me.gun === g.id ? '<span class="chip good">CARRYING</span>' : ownedGuns.has(g.id) ? '<span class="chip">owned</span>' : ''}
+        <div class="card">${ico('gun', g.id)}<span class="t">${esc(g.name)}</span>${me.gun === g.id ? '<span class="chip good">CARRYING</span>' : ownedGuns.has(g.id) ? '<span class="chip">owned</span>' : ''}
           <div class="d">$${fmt(g.cash)} + ${g.crates} crate${g.crates > 1 ? 's' : ''} · firepower ${g.fp}</div>
-          <div class="d">${g.desc || ''}</div>
+          <div class="d">${esc(g.desc || '')}</div>
           ${ownedGuns.has(g.id) ? (me.gun === g.id ? '<button class="act" data-do="POST /v1/armory/unequip">put it away</button>'
             : `<button class="act" data-gundo="equip:${g.id}">carry it</button>`)
             : `<button class="act" data-gundo="buy:${g.id}">buy</button>`}</div>`).join('')}</div>
@@ -10300,8 +10300,8 @@
 
       <h2 style="margin-top:12px">The Tailor's Back Room <span class="d" style="font-size:11px">(vests — paid in $OMR)</span></h2>
       <div class="grid">${(rules?.vests || []).map((v) => `
-        <div class="card">${ico('vest', v.id)}<span class="t">${v.name}</span>${me.vest === v.id ? '<span class="chip good">WEARING</span>' : ''}
-          <div class="d">${v.omr} $OMR${v.desc ? ` · ${v.desc}` : ''}</div>
+        <div class="card">${ico('vest', v.id)}<span class="t">${esc(v.name)}</span>${me.vest === v.id ? '<span class="chip good">WEARING</span>' : ''}
+          <div class="d">${v.omr} $OMR${v.desc ? ` · ${esc(v.desc)}` : ''}</div>
           ${me.vest === v.id ? '' : `<button class="act" data-vestdo="${v.id}">buy &amp; wear</button>`}</div>`).join('')}</div>
 
       <h2 style="margin-top:12px">The Workshop <span class="d" style="font-size:11px">(roll your own — crates of contraband + cash · crates on hand: ${fmt(me.cb || 0)})</span></h2>
@@ -10384,7 +10384,7 @@
         <button class="act" data-do="POST /v1/business/collect" style="margin-left:8px"${groundOff('The take')}>collect all</button>
         <button class="act" data-do="POST /v1/business/upkeep">pay the pad${(() => { const o = owned.reduce((a, b) => a + (Number(b.upkeepOwed) || 0), 0); return o > 0 ? ` — $${fmt(o)} owed` : ''; })()}</button></h2>
       ${owned.length ? `<div class="grid">${owned.map((b) => `
-        <div class="card">${aart('business', b.kind)}<span class="t">${b.name} · tier ${b.tier}</span>
+        <div class="card">${aart('business', b.kind)}<span class="t">${esc(b.name)} · tier ${b.tier}</span>
           ${b.cold ? '<span class="chip bad">COLD — pay the pad</span>' : ''}${b.raidRisk ? '<span class="chip bad">FEDS WATCHING</span>' : ''}
           <div class="d">$${fmt(b.incomePerHr)}/hr · pending $${fmt(b.pending)} · the pad $${fmt(b.upkeepPerHr)}/hr, owed $${fmt(b.upkeepOwed)}</div>
           ${!b.cold && b.coldSeconds ? `<div class="d" style="color:${b.padOutran ? 'var(--warn)' : 'var(--dim)'}">the boys come for the envelope in ${mins(b.coldSeconds)} — miss it and the place goes cold</div>` : ''}
@@ -10418,7 +10418,7 @@
         // `locked = me.level < r.lvl` and greys itself out; this card stated "level 15+" and rendered a
         // live [buy] anyway, so buying a Laundromat at level 1 refused on press. Forgotten sibling, two
         // sections apart in one renderer.
-        return `<div class="card">${aart('business', c.kind)}<span class="t">${c.name}</span>${ownedKinds.has(c.kind) ? '<span class="chip good">owned</span>' : lvlOk ? '' : `<span class="chip">🔒 lvl ${c.lvl}+</span>`}
+        return `<div class="card">${aart('business', c.kind)}<span class="t">${esc(c.name)}</span>${ownedKinds.has(c.kind) ? '<span class="chip good">owned</span>' : lvlOk ? '' : `<span class="chip">🔒 lvl ${c.lvl}+</span>`}
           <div class="d">level ${c.lvl}+ · t1 $${fmt(c.tiers[0].cost)} → $${fmt(c.tiers[0].incomePerHr)}/hr <span style="color:var(--warn)">− $${fmt(c.upkeepPerHr)}/hr pad</span></div>
           ${ownedKinds.has(c.kind) ? '' : `<button class="act" data-bizbuy="${c.kind}"${lvlOk ? '' : ' disabled'}>buy</button>`}</div>`; }).join('')}</div>
 
@@ -10446,8 +10446,8 @@
         // showed "$30/hr" while paying $1,800/hr, on the screen a player uses to decide what to buy.
         const perHr = (x) => Math.floor(Number(x || 0) * 60);
         const effIncome = owned ? (me.racketIncomePerHr?.[r.id] ?? perHr(r.income)) : perHr(r.income);
-        return `<div class="card"><span class="t">${r.name}</span>${owned ? `<span class="chip good">owned${lvl ? ` · lvl ${lvl}` : ''}</span>` : locked ? `<span class="chip">lvl ${r.lvl}+</span>` : ''}
-          <div class="d">$${fmt(effIncome)}/hr${owned && lvl ? ` <span style="color:var(--dim)">(base $${fmt(perHr(r.income))})</span>` : ''} · $${fmt(r.cost)} · ${r.desc}</div>
+        return `<div class="card"><span class="t">${esc(r.name)}</span>${owned ? `<span class="chip good">owned${lvl ? ` · lvl ${lvl}` : ''}</span>` : locked ? `<span class="chip">lvl ${r.lvl}+</span>` : ''}
+          <div class="d">$${fmt(effIncome)}/hr${owned && lvl ? ` <span style="color:var(--dim)">(base $${fmt(perHr(r.income))})</span>` : ''} · $${fmt(r.cost)} · ${esc(r.desc)}</div>
           ${owned ? `${lvl < upMax ? `<button class="act" data-rkup="${r.id}">muscle it up → lvl ${lvl + 1}</button>` : '<span class="chip">maxed</span>'}
               <button class="act" data-rkout="${r.id}:${esc(r.name)}" style="border-color:var(--warn);color:var(--warn)">retire</button>`
             : locked ? '' : `<button class="act" data-rkbuy="${r.id}"${noSeat ? ' disabled' : ''}>${noSeat ? '🔒 no free seat' : 'buy'}</button>`}</div>`; }).join('')}</div>
@@ -10456,8 +10456,8 @@
       <div class="grid">${(rules?.assets || []).map((a) => { const owned = (me.assets || []).includes(a.id);
         // Only the metered category takes a seat — so only those buttons can be gated by one.
         const seats = a.cat === (rules?.operations?.meteredCat || ''), noSeat = seats && !owned && (me.ops?.free || 0) <= 0;
-        return `<div class="card"><span class="t">${a.name}</span>${owned ? '<span class="chip good">owned</span>' : `<span class="chip">${a.cat}</span>`}${seats ? '<span class="chip">takes a seat</span>' : ''}
-          <div class="d">$${fmt(a.price)}${a.boost ? ` · +${a.boost} ${a.stat}` : ''}${a.cargo ? ` · +${a.cargo} cargo` : ''} · ${a.desc}</div>
+        return `<div class="card"><span class="t">${esc(a.name)}</span>${owned ? '<span class="chip good">owned</span>' : `<span class="chip">${a.cat}</span>`}${seats ? '<span class="chip">takes a seat</span>' : ''}
+          <div class="d">$${fmt(a.price)}${a.boost ? ` · +${a.boost} ${a.stat}` : ''}${a.cargo ? ` · +${a.cargo} cargo` : ''} · ${esc(a.desc)}</div>
           ${owned ? '' : `<button class="act" data-asbuy="${a.id}"${noSeat ? ' disabled' : ''}>${noSeat ? '🔒 no free seat' : 'buy'}</button>`}</div>`; }).join('')}</div>`;
     t.querySelectorAll('[data-bizbuy]').forEach((b) => b.onclick = () =>
       act('POST', `/v1/business/${b.dataset.bizbuy}/buy`, {}).then(() => renderEmpire()));
@@ -10477,7 +10477,7 @@
     { const g = $('#biz-takeover-go'); if (g) g.onclick = () => act('POST', `/v1/business/${$('#biz-takeover-id').value.trim()}/takeover`, {}).then(() => renderEmpire()); }
     { const lb = t.querySelector('#launderer-board'); if (lb) lb.onclick = async (e) => { e.preventDefault();
       const b = (await api('GET', '/v1/leaderboard/launderers')).body?.launderers || [];
-      t.querySelector('#launderer-lb').innerHTML = `<div style="margin-top:6px">${b.slice(0, 10).map((x) => `<div class="d">#${x.rank} ${esc(x.name)}${x.tag ? ` [${esc(x.tag)}]` : ''} — ${x.title} ($${fmt(x.washed)})</div>`).join('') || '<div class="d">none yet</div>'}</div>`; }; }
+      t.querySelector('#launderer-lb').innerHTML = `<div style="margin-top:6px">${b.slice(0, 10).map((x) => `<div class="d">#${x.rank} ${esc(x.name)}${x.tag ? ` [${esc(x.tag)}]` : ''} — ${esc(x.title)} ($${fmt(x.washed)})</div>`).join('') || '<div class="d">none yet</div>'}</div>`; }; }
     t.querySelectorAll('[data-rkbuy]').forEach((b) => b.onclick = () => act('POST', `/v1/rackets/${b.dataset.rkbuy}/buy`, {}).then(() => renderEmpire()));
     t.querySelectorAll('[data-rkup]').forEach((b) => b.onclick = () => act('POST', `/v1/rackets/${b.dataset.rkup}/upgrade`, {}).then(() => renderEmpire()));
     // RETIRE — irreversible, frees the seat, returns nothing. Same confirm the other one-way doors get.
@@ -10514,13 +10514,13 @@
       ${!mine && !(b.clubs || []).length ? coachCard('Open a club — be the man to see', 'A speakeasy is the district\'s premier nightclub: it farms cash on its own AND is where the city gathers to be seen. One per district, level ' + (sp.minLevel || 15) + '+. Patrons buy rounds (you pocket the cut) and bottle service; the busiest room tops the nightlife. It dies with your street, so it\'s a marked man\'s prize.') : ''}
       <div class="card" style="border-color:var(--gold)"><span class="t">Your renown: ${rn.rank} <span class="chip">${fmt(rn.renown)}</span></span>
         <div class="d">The nightlife legend — earned by being seen (rounds + bottles) and running a room. <a href="#" id="sp-nl">the leaderboard →</a></div></div>
-      <h2>You're at: ${distName(me.loc)}</h2>
+      <h2>You're at: ${esc(distName(me.loc))}</h2>
       ${mine ? `
-      <div class="card" style="border-color:var(--neon)">${aart('club', mine.tier)}<span class="t">${mine.name || mine.tierName} <span class="chip good">YOUR HOUSE</span></span>
+      <div class="card" style="border-color:var(--neon)">${aart('club', mine.tier)}<span class="t">${esc(mine.name || mine.tierName)} <span class="chip good">YOUR HOUSE</span></span>
         ${mine.shutSeconds ? `<span class="chip bad">RAIDED — dark ${mins(mine.shutSeconds)}</span>` : mine.raidRisk ? '<span class="chip bad">HOT — the Prohibition boys are watching</span>' : ''}
-        <div class="d">${distName(mine.district)} · ${mine.tierName} · prestige ${mine.prestige} · $${fmt(mine.incomePerHr)}/hr · pending $${fmt(mine.pending)} · notoriety ${mine.notoriety}</div>
+        <div class="d">${esc(distName(mine.district))} · ${esc(mine.tierName)} · prestige ${mine.prestige} · $${fmt(mine.incomePerHr)}/hr · pending $${fmt(mine.pending)} · notoriety ${mine.notoriety}</div>
         <button class="act" data-do="POST /v1/speakeasy/collect" style="border-color:var(--neon)"${groundOff('The bar take')}>collect the bar take</button>
-        ${mine.nextTier ? `<button class="act" id="sp-up">redo the decor → ${mine.nextTier.name} ($${fmt(mine.nextTier.cost)})</button>` : '<span class="chip good">The Cathedral — finest room in the city</span>'}
+        ${mine.nextTier ? `<button class="act" id="sp-up">redo the decor → ${esc(mine.nextTier.name)} ($${fmt(mine.nextTier.cost)})</button>` : '<span class="chip good">The Cathedral — finest room in the city</span>'}
         <div style="margin-top:6px"><input id="sp-name" placeholder="${mine.name ? 'rename the club' : 'name the club'}" size="18" maxlength="24">
           <button class="act" id="sp-name-go">${mine.name ? 'rename' : 'name it'} (${sp.nameOmr} $OMR)</button></div>
         <div style="margin-top:6px" class="d">Decor style${mine.decor ? ` — currently <b>${mine.decorName}</b>` : ' — stock'}:
@@ -10530,32 +10530,32 @@
               : '<span style="color:var(--dim)">buy a style in The Store, or earn one with renown (★)</span>'; })()}</div>
         <div style="margin-top:6px" class="d">${mine.salePrice ? `On the market for $${fmt(mine.salePrice)} — <button class="act" id="sp-unlist">take it off</button>` : `Sell the house: <input id="sp-sale" placeholder="ask $" size="8"> <button class="act" id="sp-list">list it</button>`}</div></div>`
       : canOpenHere ? `<div class="card"><span class="t">Open a club here</span>
-          <div class="d">${distName(me.loc)} has no house yet — plant your flag ($${fmt(sp.openCost)}, level ${sp.minLevel}+).</div>
+          <div class="d">${esc(distName(me.loc))} has no house yet — plant your flag ($${fmt(sp.openCost)}, level ${sp.minLevel}+).</div>
           <button class="act" id="sp-open" style="border-color:var(--neon)"${(me.level || 0) >= (sp.minLevel || 15) ? '' : ' disabled'}>${(me.level || 0) >= (sp.minLevel || 15) ? '' : `🔒 lvl ${sp.minLevel}+ — `}open the club ($${fmt(sp.openCost)})</button></div>`
       : ''}
 
       ${here && !here.mine ? `
-      <h2 style="margin-top:12px">Tonight at ${here.name || distName(here.district)} <span class="d" style="font-size:11px">(${here.owner}'s house${here.shut ? ' · DARK — raided' : ''})</span></h2>
+      <h2 style="margin-top:12px">Tonight at ${esc(here.name || distName(here.district))} <span class="d" style="font-size:11px">(${here.owner}'s house${here.shut ? ' · DARK — raided' : ''})</span></h2>
       ${here.shut ? '<div class="d" style="color:var(--bad)">The place is shuttered — the Prohibition boys shut it down. Come back later.</div>' : `
       <div class="card"><div class="d">Buy the house a round — the owner keeps 98%, and your name goes up on the guest list.</div>
-        ${(sp.rounds || []).map((r) => `<button class="act" data-round="${r.id}">${r.name} ($${fmt(r.cost)})</button>`).join(' ')}
+        ${(sp.rounds || []).map((r) => `<button class="act" data-round="${r.id}">${esc(r.name)} ($${fmt(r.cost)})</button>`).join(' ')}
         <div style="margin-top:6px" class="d">Bottle service — burn $OMR for pure prestige:</div>
-        ${(sp.bottles || []).map((x) => `<button class="act" data-bottle="${x.id}">${x.name} (${x.omr} $OMR)</button>`).join(' ')}
+        ${(sp.bottles || []).map((x) => `<button class="act" data-bottle="${x.id}">${esc(x.name)} (${x.omr} $OMR)</button>`).join(' ')}
         <div style="margin-top:6px" class="d">The back-room table — the wheel ($${fmt(sp.table?.minBet || 1000)}–$${fmt(sp.table?.maxBet || 100000)}, the house takes ${(sp.table?.rakeBps ?? 300) / 100}%):</div>
         <input id="sp-bet" placeholder="bet $" size="8"> <button class="act" id="sp-table">spin the wheel</button></div>`}`
       : here && here.mine ? '<div class="d" style="color:var(--dim);margin-top:8px">You own this room — order a bottle to flex, but you don\'t buy your own rounds or play your own table.</div>' : ''}
-      ${here && here.mine ? `<div class="card">${(sp.bottles || []).map((x) => `<button class="act" data-bottle="${x.id}">${x.name} (${x.omr} $OMR)</button>`).join(' ')}</div>` : ''}
+      ${here && here.mine ? `<div class="card">${(sp.bottles || []).map((x) => `<button class="act" data-bottle="${x.id}">${esc(x.name)} (${x.omr} $OMR)</button>`).join(' ')}</div>` : ''}
 
       <h2 style="margin-top:12px">The Nightlife <span class="d" style="font-size:11px">(ranked by prestige — where the city goes to be seen)</span></h2>
       <div class="grid">${(b.clubs || []).map((c) => `
-        <div class="card">${aart('club', c.tier)}<span class="t">${c.name || distName(c.district)}</span>${c.mine ? '<span class="chip good">yours</span>' : ''}${c.decorName ? `<span class="chip">${c.decorName}</span>` : ''}${c.salePrice && !c.mine ? `<span class="chip gold">for sale $${fmt(c.salePrice)}</span>` : ''}
-          <div class="d">${distName(c.district)} · ${c.tierName} · ${c.owner} · prestige ${c.prestige} · ${c.regulars} regular${c.regulars === 1 ? '' : 's'}</div>
-          ${c.guestList?.length ? `<div class="d">seen here: ${c.guestList.map((g) => `${g.you ? '<b>' + g.name + '</b>' : g.name}${g.regular ? '★' : ''}`).join(', ')}</div>` : '<div class="d" style="color:var(--dim)">quiet tonight</div>'}
+        <div class="card">${aart('club', c.tier)}<span class="t">${esc(c.name || distName(c.district))}</span>${c.mine ? '<span class="chip good">yours</span>' : ''}${c.decorName ? `<span class="chip">${c.decorName}</span>` : ''}${c.salePrice && !c.mine ? `<span class="chip gold">for sale $${fmt(c.salePrice)}</span>` : ''}
+          <div class="d">${esc(distName(c.district))} · ${esc(c.tierName)} · ${c.owner} · prestige ${c.prestige} · ${c.regulars} regular${c.regulars === 1 ? '' : 's'}</div>
+          ${c.guestList?.length ? `<div class="d">seen here: ${c.guestList.map((g) => `${g.you ? '<b>' + esc(g.name) + '</b>' : esc(g.name)}${g.regular ? '★' : ''}`).join(', ')}</div>` : '<div class="d" style="color:var(--dim)">quiet tonight</div>'}
           ${!c.mine && c.district !== me.loc ? `<button class="act" data-travel="${c.district}">go there</button>` : ''}
           ${c.salePrice && !c.mine && !mine && c.district === me.loc ? `<button class="act" data-buy="${c.district}" style="border-color:var(--gold)">buy it out ($${fmt(c.salePrice)})</button>` : ''}
           ${!c.mine && !mine && c.district === me.loc && !c.shut ? (c.standoverProtected ? '<span class="chip">just leaned on — cooling off</span>' : `<button class="act" data-standover="${c.district}" style="border-color:var(--bad)">stand over it (fee $${fmt(b.standover?.fee || 250000)}, forces a sale at $${fmt(c.assessedValue)})</button>`) : ''}</div>`).join('')
         || '<span class="d" style="color:var(--dim)">no clubs open yet — be the first proprietor</span>'}</div>
-      ${b.open?.length ? `<div class="d" style="color:var(--dim);margin-top:8px">Open districts: ${b.open.map(distName).join(', ')} — travel there to plant a flag.</div>` : ''}`;
+      ${b.open?.length ? `<div class="d" style="color:var(--dim);margin-top:8px">Open districts: ${b.open.map((x) => esc(distName(x))).join(', ')} — travel there to plant a flag.</div>` : ''}`;
 
     const up = $('#sp-up'); if (up) up.onclick = () => act('POST', '/v1/speakeasy/upgrade', {}).then(() => renderSpeakeasy());
     const op = $('#sp-open'); if (op) op.onclick = () => act('POST', `/v1/speakeasy/${me.loc}/open`, {}).then(() => renderSpeakeasy());
@@ -10590,22 +10590,22 @@
       ${!stable.length ? coachCard('Sign a contender', 'Every boss fancies himself a fight manager. Sign a fighter ($' + fmt(b.recruitCost || 50000) + ', level ' + (b.minLevel || 8) + '+), train them up, and stake them against other managers\' fighters or NPC cards. Run a stable of up to ' + max + '. Your fighters die with your street.') : ''}
       <h2>The Fight Circuit</h2>
       ${b.champion ? `<div class="card" style="border-color:var(--neon)"><span class="t">🏆 World Champion: ${b.champion.fighter}${b.champion.onMe ? ' <span class="chip good">you</span>' : ''}</span>
-        <div class="d">${b.champion.defenses} title defence${b.champion.defenses === 1 ? '' : 's'}${b.champion.defendSeconds > 0 ? ` · must defend within ${mins(b.champion.defendSeconds)} or forfeit` : ' · <span style="color:var(--bad)">defence overdue — forfeit imminent</span>'}${b.champion.contender ? ` · #1 contender: ${b.champion.contender.name} (${b.champion.contender.record})${b.champion.contender.mine ? ' — you' : ''}` : ''}</div>
+        <div class="d">${b.champion.defenses} title defence${b.champion.defenses === 1 ? '' : 's'}${b.champion.defendSeconds > 0 ? ` · must defend within ${mins(b.champion.defendSeconds)} or forfeit` : ' · <span style="color:var(--bad)">defence overdue — forfeit imminent</span>'}${b.champion.contender ? ` · #1 contender: ${esc(b.champion.contender.name)} (${b.champion.contender.record})${b.champion.contender.mine ? ' — you' : ''}` : ''}</div>
         ${b.champion.callout ? `<div class="d" style="color:var(--neon)">🥊 CALLOUT: ${b.champion.callout.challenger} has called out the champ${b.champion.callout.deadlineSeconds > 0 ? ` — the champ must accept within ${mins(b.champion.callout.deadlineSeconds)} or forfeit the belt` : ' — <span style="color:var(--bad)">accept overdue — forfeit imminent</span>'}
           ${b.champion.onMe && b.champion.callout.deadlineSeconds > 0 ? '<button class="act" id="bx-accept" style="border-color:var(--neon)">accept the challenge (title main event)</button>' : ''}</div>`
           : (b.champion.contender && b.champion.contender.mine && !b.champion.onMe ? `<div class="d"><button class="act" id="bx-callout" data-cf="${b.champion.contender.fighterId}" style="border-color:var(--bad)">📣 call out the champ (mandatory title shot)</button></div>` : '')}</div>` : ''}
       ${npc.length ? `<div class="grid" style="margin-top:8px">${npc.map((n) => `
-        <div class="card">${aart('boxer', n.id)}<span class="t">${n.name}</span>
+        <div class="card">${aart('boxer', n.id)}<span class="t">${esc(n.name)}</span>
           <div class="d">house fighter · fee $${fmt(n.fee)} → purse $${fmt(n.purse)} <span style="color:var(--dim)">(pick a fighter below to take the bout)</span></div></div>`).join('')}</div>` : ''}
       <h2 style="margin-top:10px;font-size:15px">Your Stable <span class="d" style="font-size:11px">(${stable.length}/${max})</span></h2>
       <div class="grid">${stable.map((y) => `
-        <div class="card" ${y.belt ? 'style="border-color:var(--neon)"' : ''}><span class="t">${y.belt ? '🏆 ' : ''}${y.name} <span class="chip good">${y.rank}</span> <span class="chip">${y.record}</span></span>
+        <div class="card" ${y.belt ? 'style="border-color:var(--neon)"' : ''}><span class="t">${y.belt ? '🏆 ' : ''}${esc(y.name)} <span class="chip good">${y.rank}</span> <span class="chip">${y.record}</span></span>
           ${y.injuredSeconds ? `<span class="chip bad">LAID UP — ${mins(y.injuredSeconds)}</span>` : ''}${y.exhibitionCdSeconds ? `<span class="chip">resting ${mins(y.exhibitionCdSeconds)}</span>` : ''}
           <div class="d">power ${y.power} · chin ${y.chin} · speed ${y.speed} · form ${y.form}</div>
           <div style="margin-top:6px" class="d">Train ($${fmt(b.trainCost)} + energy, cap ${b.statCap}): ${(b.stats || []).map((s) => `<button class="act" data-train="${s}" data-fid="${y.id}">${s}</button>`).join(' ')}</div>
           <div style="margin-top:4px" class="d">${y.boutLimit ? `Taking bouts up to $${fmt(y.boutLimit)} — <button class="act" data-unlist="${y.id}">stop</button>` : 'Take bouts:'}
             <input id="bx-stake-${y.id}" placeholder="stake $" size="7"> <button class="act" data-list="${y.id}">list</button></div>
-          ${!y.injuredSeconds && !y.exhibitionCdSeconds ? `<div style="margin-top:4px" class="d">Exhibition: ${npc.map((n) => `<button class="act" data-exhib="${y.id}" data-tier="${n.id}" title="fee $${fmt(n.fee)} → win $${fmt(n.purse)}">${n.name}</button>`).join(' ')}</div>` : ''}</div>`).join('')
+          ${!y.injuredSeconds && !y.exhibitionCdSeconds ? `<div style="margin-top:4px" class="d">Exhibition: ${npc.map((n) => `<button class="act" data-exhib="${y.id}" data-tier="${n.id}" title="fee $${fmt(n.fee)} → win $${fmt(n.purse)}">${esc(n.name)}</button>`).join(' ')}</div>` : ''}</div>`).join('')
         || '<span class="d" style="color:var(--dim)">no fighters yet</span>'}</div>
       ${stable.length < max ? `<div class="card" style="margin-top:6px"><span class="t">Sign a contender</span>
         <div class="d">$${fmt(b.recruitCost)}, level ${b.minLevel}+.</div>
@@ -10613,10 +10613,10 @@
 
       <h2 style="margin-top:12px">The Circuit <span class="d" style="font-size:11px">(other managers' fighters — belt holder first)</span></h2>
       <div class="grid">${(b.circuit || []).filter((f) => !f.mine).map((f) => `
-        <div class="card"><span class="t">${f.belt ? '🏆 ' : ''}${f.name}</span><span class="chip">${f.rank}</span>
+        <div class="card"><span class="t">${f.belt ? '🏆 ' : ''}${esc(f.name)}</span><span class="chip">${f.rank}</span>
           <div class="d">${f.manager} · ${f.record} · form ${f.form}${f.injured ? ' · <span style="color:var(--bad)">laid up</span>' : ''}${f.boutLimit ? ' · takes $' + fmt(f.boutLimit) : ''}</div>
           ${f.taking && ready.length ? `<div style="margin-top:4px" class="d">
-            <select id="bx-my-${f.fighterId}">${ready.map((m) => `<option value="${m.id}">${m.name} (${m.form})</option>`).join('')}</select>
+            <select id="bx-my-${f.fighterId}">${ready.map((m) => `<option value="${m.id}">${esc(m.name)} (${m.form})</option>`).join('')}</select>
             <input id="bx-purse-${f.fighterId}" placeholder="purse $" size="7"> <button class="act" data-fight="${f.managerId}" data-oppf="${f.fighterId}" style="border-color:var(--bad)">make the match${f.belt ? ' (TITLE)' : ''}</button>
             <button class="act" data-announce="${f.managerId}" data-oppf="${f.fighterId}" title="book a scheduled card the crowd bets on — no cash wager, just the belt/legend/record">headline it 🥊</button></div>` : ''}</div>`).join('')
         || '<span class="d" style="color:var(--dim)">no other fighters on the circuit yet</span>'}</div>
@@ -10624,17 +10624,17 @@
       <h2 style="margin-top:12px">The Main Event <span class="d" style="font-size:11px">(scheduled cards — bet CASH on a fighter; the crowd's pot pays out at the bell)</span></h2>
       <div class="grid">${(b.mainEvents || []).map((m) => {
         const total = m.a.pool + m.b.pool, oddsA = total ? Math.round(m.a.pool / total * 100) : 50;
-        return `<div class="card"><span class="t">${m.a.name} vs ${m.b.name}</span> <span class="chip">closes ${mins(m.closesSeconds)}</span>${m.isPrincipal ? ' <span class="chip good">your card</span>' : ''}
+        return `<div class="card"><span class="t">${esc(m.a.name)} vs ${esc(m.b.name)}</span> <span class="chip">closes ${mins(m.closesSeconds)}</span>${m.isPrincipal ? ' <span class="chip good">your card</span>' : ''}
           <!-- the crowd's money as a TUG-OF-WAR, which is the one place a bar carries real meaning
                here: two fighters, one pot, and where the room is leaning. It was two percentages. -->
-          <div class="row" style="margin:7px 0 2px;font-size:12px"><span>${m.a.name}</span><span class="k">pot $${fmt(total)}</span><span>${m.b.name}</span></div>
+          <div class="row" style="margin:7px 0 2px;font-size:12px"><span>${esc(m.a.name)}</span><span class="k">pot $${fmt(total)}</span><span>${esc(m.b.name)}</span></div>
           <div class="bar tug" style="height:12px;margin:0 0 3px"><i style="width:${oddsA}%"></i></div>
           <div class="row" style="margin:0 0 4px;font-size:11.5px"><span class="k">$${fmt(m.a.pool)} (${oddsA}%)</span><span class="k">$${fmt(m.b.pool)} (${100 - oddsA}%)</span></div>
           ${m.yourBet ? `<div class="d" style="color:var(--neon)">your bet: $${fmt(m.yourBet.amount)} on ${m.yourBet.on}</div>`
             : (m.isPrincipal || m.closesSeconds <= 0) ? '' : `<div style="margin-top:4px" class="d">
               <input id="bx-bet-${m.id}" placeholder="$${fmt(b.betMin)}–${fmt(b.betMax)}" size="9">
-              <button class="act" data-bet="${m.id}" data-bf="${m.a.fighterId}">on ${m.a.name}</button>
-              <button class="act" data-bet="${m.id}" data-bf="${m.b.fighterId}">on ${m.b.name}</button></div>`}</div>`;
+              <button class="act" data-bet="${m.id}" data-bf="${m.a.fighterId}">on ${esc(m.a.name)}</button>
+              <button class="act" data-bet="${m.id}" data-bf="${m.b.fighterId}">on ${esc(m.b.name)}</button></div>`}</div>`;
       }).join('') || '<span class="d" style="color:var(--dim)">no cards booked — headline a matchup above to draw a crowd</span>'}</div>
       <div style="margin-top:8px"><a href="#" id="bx-lb">the circuit leaderboard + the manager legend →</a></div>`;
 
@@ -10675,39 +10675,39 @@
     const kindName = (k) => (kinds[k] || {}).name || k;
     t.innerHTML = `
       ${!stable.length ? coachCard('Buy a racer', 'Own the dogs &amp; the ponies. Buy a greyhound ($' + fmt((kinds.dog || {}).cost || 30000) + ') or a racehorse ($' + fmt((kinds.horse || {}).cost || 120000) + ', level ' + (b.minLevel || 6) + '+), train up its speed/stamina/heart, and race it — the PvE circuit for a purse, or match it against a rival owner\'s racer for a cash wager. Run a stable of up to ' + max + '. They die with your street; your lifetime wins are a legend that survives.') : ''}
-      <h2>The Stable <span class="d" style="font-size:11px">(${stable.length}/${max})</span> ${b.legend ? `<span class="chip good" style="font-size:11px">${b.legend.title} — ${b.legend.wins} career win${b.legend.wins === 1 ? '' : 's'}</span>` : ''}</h2>
+      <h2>The Stable <span class="d" style="font-size:11px">(${stable.length}/${max})</span> ${b.legend ? `<span class="chip good" style="font-size:11px">${esc(b.legend.title)} — ${b.legend.wins} career win${b.legend.wins === 1 ? '' : 's'}</span>` : ''}</h2>
       <div class="grid">${stable.map((y) => `
-        <div class="card"><span class="t">${y.kind === 'horse' ? '🐎' : '🐕'} ${y.name} <span class="chip good">${y.rank}</span> <span class="chip">${y.record}</span></span>
+        <div class="card"><span class="t">${y.kind === 'horse' ? '🐎' : '🐕'} ${esc(y.name)} <span class="chip good">${y.rank}</span> <span class="chip">${y.record}</span></span>
           ${y.injuredSeconds ? `<span class="chip bad">LAID UP — ${mins(y.injuredSeconds)}</span>` : ''}${y.cooldownSeconds ? `<span class="chip">resting ${mins(y.cooldownSeconds)}</span>` : ''}
           <div class="d">${kindName(y.kind)} · speed ${y.speed} · stamina ${y.stamina} · heart ${y.heart} · form ${y.form}</div>
           <div style="margin-top:6px" class="d">Train ($${fmt(b.trainCost)} + energy, cap ${b.statCap}): ${(b.stats || []).map((s) => `<button class="act" data-train="${s}" data-rid="${y.id}">${s}</button>`).join(' ')}</div>
           <div style="margin-top:4px" class="d">${y.raceLimit ? `Taking matches up to $${fmt(y.raceLimit)} — <button class="act" data-unlist="${y.id}">stop</button>` : 'Take matches:'}
             <input id="st-stake-${y.id}" placeholder="wager $" size="7"> <button class="act" data-list="${y.id}">list</button></div>
-          ${!y.injuredSeconds && !y.cooldownSeconds ? `<div style="margin-top:4px" class="d">Run the circuit: ${(meets[y.kind] || []).map((m) => `<button class="act" data-circuit="${y.id}" data-meet="${m.id}" title="entry $${fmt(m.fee)} → win $${fmt(m.purse)}">${m.name}</button>`).join(' ')}</div>` : ''}</div>`).join('')
+          ${!y.injuredSeconds && !y.cooldownSeconds ? `<div style="margin-top:4px" class="d">Run the circuit: ${(meets[y.kind] || []).map((m) => `<button class="act" data-circuit="${y.id}" data-meet="${m.id}" title="entry $${fmt(m.fee)} → win $${fmt(m.purse)}">${esc(m.name)}</button>`).join(' ')}</div>` : ''}</div>`).join('')
         || '<span class="d" style="color:var(--dim)">no racers yet</span>'}</div>
       ${stable.length < max ? `<div class="card" style="margin-top:6px"><span class="t">Buy a racer</span>
         <div class="d">level ${b.minLevel}+.</div>
-        <select id="st-kind">${Object.entries(kinds).map(([k, v]) => `<option value="${k}">${v.name} ($${fmt(v.cost)})</option>`).join('')}</select>
+        <select id="st-kind">${Object.entries(kinds).map(([k, v]) => `<option value="${k}">${esc(v.name)} ($${fmt(v.cost)})</option>`).join('')}</select>
         <input id="st-name" placeholder="racer name" size="16" maxlength="24"> <button class="act" id="st-buy" style="border-color:var(--neon)"${(me.level || 0) >= (b.minLevel || 0) ? '' : ' disabled'}>${(me.level || 0) >= (b.minLevel || 0) ? '' : `🔒 lvl ${b.minLevel}+ — `}buy</button></div>` : ''}
       ${stable.length >= 2 ? `<div class="card" style="margin-top:6px"><span class="t">Breed a foal <span class="d" style="font-size:11px">($${fmt(b.breedCost || 60000)} — retires both parents into a foal that inherits their form)</span></span>
-        <div class="d" style="margin-top:4px">sire: <select id="st-sire">${stable.map((y) => `<option value="${y.id}" data-kind="${y.kind}">${y.name} (${y.kindName})</option>`).join('')}</select>
-          dam: <select id="st-dam">${stable.map((y) => `<option value="${y.id}" data-kind="${y.kind}">${y.name} (${y.kindName})</option>`).join('')}</select>
+        <div class="d" style="margin-top:4px">sire: <select id="st-sire">${stable.map((y) => `<option value="${y.id}" data-kind="${y.kind}">${esc(y.name)} (${esc(y.kindName)})</option>`).join('')}</select>
+          dam: <select id="st-dam">${stable.map((y) => `<option value="${y.id}" data-kind="${y.kind}">${esc(y.name)} (${esc(y.kindName)})</option>`).join('')}</select>
           <input id="st-foal" placeholder="foal name" size="14" maxlength="24"> <button class="act" id="st-breed">breed (same kind)</button></div></div>` : ''}
 
       <h2 style="margin-top:12px">The Stakes <span class="d" style="font-size:11px">(the marquee — enter your racer, the town's best animal takes the purse)</span></h2>
       ${(() => { const sk = b.stakes || {};
         if (!sk.open) return `<div class="d" style="color:var(--dim);font-size:12.5px">No stakes running. Enter a racer ($${fmt(sk.buyin)} buy-in) to open one — the top ${(sk.payouts || []).length} split the purse (min ${sk.minEntrants} runners or it refunds).</div>
-          ${ready.length ? `<div style="margin-top:4px"><select id="st-enter">${ready.map((m) => `<option value="${m.id}">${m.name} (form ${m.form})</option>`).join('')}</select> <button class="act" id="st-stake" style="border-color:var(--gold)">enter the stakes ($${fmt(sk.buyin)})</button></div>` : '<div class="d" style="color:var(--dim)">no fit racer to enter</div>'}`;
+          ${ready.length ? `<div style="margin-top:4px"><select id="st-enter">${ready.map((m) => `<option value="${m.id}">${esc(m.name)} (form ${m.form})</option>`).join('')}</select> <button class="act" id="st-stake" style="border-color:var(--gold)">enter the stakes ($${fmt(sk.buyin)})</button></div>` : '<div class="d" style="color:var(--dim)">no fit racer to enter</div>'}`;
         return `<div class="card"><span class="t">purse $${fmt(sk.pool)}</span> <span class="chip">${sk.entrants} in</span> <span class="chip">closes ${mins(sk.closesSeconds)}</span>${sk.mine ? ' <span class="chip good">you\'re in</span>' : ''}
           <div class="d">field: ${(sk.field || []).map((f) => `${f.kind === 'horse' ? '🐎' : '🐕'} ${f.racer} (${f.form})`).join(' · ') || '—'}</div>
-          ${!sk.mine && ready.length ? `<div style="margin-top:4px"><select id="st-enter">${ready.map((m) => `<option value="${m.id}">${m.name} (form ${m.form})</option>`).join('')}</select> <button class="act" id="st-stake" style="border-color:var(--gold)">enter ($${fmt(sk.buyin)})</button></div>` : ''}</div>`; })()}
+          ${!sk.mine && ready.length ? `<div style="margin-top:4px"><select id="st-enter">${ready.map((m) => `<option value="${m.id}">${esc(m.name)} (form ${m.form})</option>`).join('')}</select> <button class="act" id="st-stake" style="border-color:var(--gold)">enter ($${fmt(sk.buyin)})</button></div>` : ''}</div>`; })()}
 
       <h2 style="margin-top:12px">The Field <span class="d" style="font-size:11px">(other owners' racers — match your own kind for a cash wager)</span></h2>
       <div class="grid">${(b.field || []).filter((r) => !r.mine).map((r) => `
-        <div class="card"><span class="t">${r.kind === 'horse' ? '🐎' : '🐕'} ${r.name}</span><span class="chip">${r.rank}</span>
+        <div class="card"><span class="t">${r.kind === 'horse' ? '🐎' : '🐕'} ${esc(r.name)}</span><span class="chip">${r.rank}</span>
           <div class="d">${r.owner} · ${r.record} · form ${r.form}${r.injured ? ' · <span style="color:var(--bad)">laid up</span>' : ''}${r.raceLimit ? ' · takes $' + fmt(r.raceLimit) : ''}</div>
           ${r.taking && ready.some((m) => m.kind === r.kind) ? `<div style="margin-top:4px" class="d">
-            <select id="st-my-${r.racerId}">${ready.filter((m) => m.kind === r.kind).map((m) => `<option value="${m.id}">${m.name} (${m.form})</option>`).join('')}</select>
+            <select id="st-my-${r.racerId}">${ready.filter((m) => m.kind === r.kind).map((m) => `<option value="${m.id}">${esc(m.name)} (${m.form})</option>`).join('')}</select>
             <input id="st-wager-${r.racerId}" placeholder="wager $" size="7"> <button class="act" data-match="${r.ownerId}" data-oppr="${r.racerId}" style="border-color:var(--bad)">race them</button></div>` : ''}</div>`).join('')
         || '<span class="d" style="color:var(--dim)">no other racers on the card yet</span>'}</div>
       <div style="margin-top:8px"><a href="#" id="st-lb">the field board + the owner legend →</a></div>`;
@@ -10754,7 +10754,7 @@
         <div class="card"><span class="t">The Circuit (PvE)</span>
           <div class="d">Pay the buy-in (burns win or lose), beat the NPC pack for the purse. A loss dings your car.</div>
           <div class="row" style="margin-top:6px"><select id="rc-car">${carOpts}</select><button class="act nosbtn" id="rc-nos-npc" data-armed="0" title="arm the bottle for this run">NOS +${b.nos?.power || 60}</button></div>
-          ${tiers.map((ti) => { const ok = (me.level || 0) >= ti.minLvl; return `<div class="row" style="margin-top:4px"><span>${ti.name} <span class="chip"${ok ? '' : ' style="color:var(--dim)"'}>${ok ? `lvl ${ti.minLvl}` : `🔒 lvl ${ti.minLvl}+`}</span></span><span>fee $${fmt(ti.fee)} · purse $${fmt(ti.purse)} <button class="act" data-npc="${ti.id}"${cd > 0 || !cars.length || !ok ? ' disabled' : ''}>race</button></span></div>`; }).join('')}
+          ${tiers.map((ti) => { const ok = (me.level || 0) >= ti.minLvl; return `<div class="row" style="margin-top:4px"><span>${esc(ti.name)} <span class="chip"${ok ? '' : ' style="color:var(--dim)"'}>${ok ? `lvl ${ti.minLvl}` : `🔒 lvl ${ti.minLvl}+`}</span></span><span>fee $${fmt(ti.fee)} · purse $${fmt(ti.purse)} <button class="act" data-npc="${ti.id}"${cd > 0 || !cars.length || !ok ? ' disabled' : ''}>race</button></span></div>`; }).join('')}
         </div>
         <div class="card"><span class="t">Your Garage</span>
           ${cars.length ? cars.map((c) => `<div class="row" style="margin-top:4px"><span>${c.model} — <b>power ${c.power}</b>${c.rarity && c.rarity !== 'common' ? ` · <span class="chip good">${esc(c.rarity.toUpperCase())} utility</span>` : ''}${c.nos ? ` · <span class="chip good">💨 ${c.nos} NOS</span>` : ''}${c.dmg ? ` · <span style="color:var(--bad)">${c.dmg}% dmg</span>` : ''}${c.raceLimit ? ` · <span class="chip good">racing ≤ $${fmt(c.raceLimit)}</span>` : ''}${c.pinkSlip ? ' · <span class="chip" style="color:var(--bad)">🎀 up for pinks</span>' : ''}</span>
@@ -10824,7 +10824,7 @@
     // I can't till level 6"). A locked lane is still LISTED, because seeing what the deep runs pay is
     // the reason to level toward them; it just cannot be chosen.
     const canRun = (r) => (me.level || 0) >= (r.minLvl || 0);
-    const routeOpts = routes.map((r) => `<option value="${r.id}"${canRun(r) ? '' : ' disabled'}>${canRun(r) ? '' : `🔒 lvl ${r.minLvl}+ — `}${r.name} — buy $${fmt(r.buy)}/u · sell $${fmt(r.sell)}/u · ~${r.interdictPct}% caught${r.hot ? ' · 🔥HOT LANE' : ''}</option>`).join('');
+    const routeOpts = routes.map((r) => `<option value="${r.id}"${canRun(r) ? '' : ' disabled'}>${canRun(r) ? '' : `🔒 lvl ${r.minLvl}+ — `}${esc(r.name)} — buy $${fmt(r.buy)}/u · sell $${fmt(r.sell)}/u · ~${r.interdictPct}% caught${r.hot ? ' · 🔥HOT LANE' : ''}</option>`).join('');
     const anyRoute = routes.some(canRun);
     const rep = b.reputation || {};
     const repLine = (rep.coolsFaster || rep.tollBreak || rep.quieter)
@@ -10835,14 +10835,14 @@
       <h2>The Port ${b.atDocks ? '' : '<span class="chip" style="color:var(--bad)">travel to the docks to trade</span>'}</h2>
       ${b.legend ? `<div class="card" style="border-color:var(--gold)"><span class="t">The Smuggler's Legend</span><div class="d"><b style="color:var(--gold)">${b.legend.rank}</b> — $${fmt(b.legend.smuggled)} landed for life <span class="chip">survives death</span> · <a href="#" id="pt-lb">the leaderboard →</a></div></div>` : ''}
       <div class="card"><span class="t">The Supplier</span><div class="d">Contraband headroom today: <b>$${fmt(b.supplyLeft || 0)}</b> of $${fmt(b.supplyCap || 0)} — the offshore supplier only moves so much per day.
-        ${(b.harbormaster && b.harbormaster.tolled) ? `<br><span class="chip" style="color:var(--bad)">${art(b.harbormaster.holder.name)} [${b.harbormaster.holder.tag}] hold the docks — a ${(b.harbormaster.tollBps/100)}% toll on every clean landing</span>` : ''}</div></div>
+        ${(b.harbormaster && b.harbormaster.tolled) ? `<br><span class="chip" style="color:var(--bad)">${esc(art(b.harbormaster.holder.name))} [${esc(b.harbormaster.holder.tag)}] hold the docks — a ${(b.harbormaster.tollBps/100)}% toll on every clean landing</span>` : ''}</div></div>
       ${routes.length ? `<div class="card"><span class="t">Sea Lanes <span class="chip">route notoriety</span></span><div class="d">Run the same lane and the Coast Guard learns it — interdiction climbs. Vary your lanes to stay cool (they cool on their own).<br>
-        ${routes.map((r) => `${r.name}: ~${r.interdictPct}% caught ${r.notoriety > 0 ? `<span class="chip ${r.hot ? 'bad' : ''}">heat ${r.notoriety}/${r.notorietyMax}${r.hot ? ' 🔥' : ''}</span>` : '<span class="chip good">cold</span>'}`).join(' · ')}<br>${repLine}</div></div>` : ''}
+        ${routes.map((r) => `${esc(r.name)}: ~${r.interdictPct}% caught ${r.notoriety > 0 ? `<span class="chip ${r.hot ? 'bad' : ''}">heat ${r.notoriety}/${r.notorietyMax}${r.hot ? ' 🔥' : ''}</span>` : '<span class="chip good">cold</span>'}`).join(' · ')}<br>${repLine}</div></div>` : ''}
       ${b.contraband ? `<div class="card"><span class="t">The Warehouse & Fence</span><div class="d">Warehoused contraband: <b>$${fmt(b.contraband.book)}</b> book value · today's fence rate <b>${b.contraband.fenceRate}×</b> → ~$${fmt(b.contraband.estimate)} <span class="chip">time the market — warehouse a landing, fence high</span>${b.contraband.book > 0 ? ' <span class="chip bad">at risk — a killer loots half your stash, so don\'t sit on it marked</span>' : ''}
         ${b.contraband.book > 0 ? `<button class="act" data-fence="1"${b.atDocks ? '' : ' disabled'}>fence it all</button>` : ''}</div></div>` : ''}
       <div class="grid wide">
         <div class="card"><span class="t">Your Fleet <span class="chip">${fleet.length}/${b.fleetMax || 5}</span></span>
-          ${fleet.length ? fleet.map((f) => `<div class="row" style="margin-top:4px"><span><img class="ico row" alt="" src="/v1/art/boat/${f.kind || ''}">${f.name} — hold ${f.hold} · ${f.speed} kn ${f.utilityBps ? `<span class="chip good">${esc(f.rarity.toUpperCase())} +${f.utilityBps / 100}% base</span>` : ''} ${f.status === 'at_sea' ? `<span class="chip">at sea · ${mins(f.etaSeconds)}</span>` : f.status === 'arrived' ? '<span class="chip good">home — collect</span>' : '<span class="chip">docked</span>'}</span>
+          ${fleet.length ? fleet.map((f) => `<div class="row" style="margin-top:4px"><span><img class="ico row" alt="" src="/v1/art/boat/${f.kind || ''}">${esc(f.name)} — hold ${f.hold} · ${f.speed} kn ${f.utilityBps ? `<span class="chip good">${esc(f.rarity.toUpperCase())} +${f.utilityBps / 100}% base</span>` : ''} ${f.status === 'at_sea' ? `<span class="chip">at sea · ${mins(f.etaSeconds)}</span>` : f.status === 'arrived' ? '<span class="chip good">home — collect</span>' : '<span class="chip">docked</span>'}</span>
             <span>${f.status === 'arrived' ? `<label style="font-size:.8em"><input type="checkbox" class="pt-wh" data-for="${f.id}"> warehouse</label> <button class="act" data-collect="${f.id}"${b.atDocks ? groundOff('The captain\'s take') : ' disabled'}>collect</button>` : f.status === 'docked' ? `<button class="act" data-sell="${f.id}"${b.atDocks ? '' : ' disabled'}>sell</button>` : ''}</span></div>
             ${f.status === 'docked' ? `<div class="row" style="margin-top:2px"><select class="pt-route" data-for="${f.id}">${routeOpts}</select><label style="font-size:.8em"><input type="checkbox" class="pt-esc" data-for="${f.id}"> escort +$${fmt((b.escort || {}).cost || 0)}</label><button class="act" data-run="${f.id}"${b.atDocks && anyRoute ? '' : ' disabled'}>run it</button>${anyRoute ? '' : `<span class="chip">no lane open to you yet — the first runs at lvl ${routes[0] ? routes[0].minLvl : 6}</span>`}</div>
             <div class="row" style="margin-top:2px;font-size:.85em"><span class="chip">hull ${f.hull}/${(b.upgrade||{}).max||5}</span>${f.hullCost ? `<button class="act" data-up="${f.id}" data-part="hull">+cargo $${fmt(f.hullCost)}</button>` : ''}
@@ -10851,14 +10851,14 @@
             ${f.status === 'at_sea' ? `<div class="row" style="margin-top:2px;font-size:.85em"><span class="d">hand off to a partner's boat:</span><input class="pt-to" data-for="${f.id}" placeholder="partner boat id" style="flex:1"><button class="act" data-rdv="${f.id}">rendezvous</button></div>` : ''}`).join('') : '<div class="d">No boats. Buy one below.</div>'}
         </div>
         <div class="card"><span class="t">The Boatyard</span>
-          ${cat.map((c) => `<div class="row" style="margin-top:4px"><span><img class="ico row" alt="" src="/v1/art/boat/${c.id}">${c.name} — hold ${c.hold} · ${c.speed} kn</span><span>$${fmt(c.cost)} <button class="act" data-buy="${c.id}"${b.atDocks && fleet.length < (b.fleetMax || 5) ? '' : ' disabled'}>buy</button></span></div>`).join('')}
+          ${cat.map((c) => `<div class="row" style="margin-top:4px"><span><img class="ico row" alt="" src="/v1/art/boat/${c.id}">${esc(c.name)} — hold ${c.hold} · ${c.speed} kn</span><span>$${fmt(c.cost)} <button class="act" data-buy="${c.id}"${b.atDocks && fleet.length < (b.fleetMax || 5) ? '' : ' disabled'}>buy</button></span></div>`).join('')}
           <div class="d" style="margin-top:4px">Boats resell at ${Math.round(((cat[0]||{}).resale||0)/((cat[0]||{}).cost||1)*100)}% and die with your street.</div>
           ${b.berth ? `<div class="row" style="margin-top:4px"><span>Harbor slips <span class="chip">${b.berth.count}/${b.berth.max}</span> — +1 fleet cap each</span>${b.berth.count < b.berth.max ? `<button class="act" data-berth="1"${b.atDocks ? '' : ' disabled'}>rent $${fmt(b.berth.cost)}</button>` : ''}</div>` : ''}
         </div>
       </div>
       ${(b.seas && b.seas.length) ? `<div class="card" style="margin-top:12px"><span class="t">The Seas — runs out there now <span class="chip">piracy</span></span>
         <div class="d">Run down a rival's cargo with your own fast boat + guns (${(b.piracy||{}).ammo} rounds, ${(b.piracy||{}).energy} energy). A win takes a cut of the haul; a loss puts you in the water. ${b.atDocks ? '' : '<b>Travel to the docks to give chase.</b>'}</div>
-        ${b.seas.map((s) => `<div class="row" style="margin-top:4px"><span><b>${s.runner}</b> — ${s.routeName} · <span class="chip">${s.band}</span> · in ${mins(s.etaSeconds)}</span><button class="act" data-pirate="${s.boatId}"${b.atDocks ? '' : ' disabled'}>run her down</button></div>`).join('')}
+        ${b.seas.map((s) => `<div class="row" style="margin-top:4px"><span><b>${s.runner}</b> — ${esc(s.routeName)} · <span class="chip">${s.band}</span> · in ${mins(s.etaSeconds)}</span><button class="act" data-pirate="${s.boatId}"${b.atDocks ? '' : ' disabled'}>run her down</button></div>`).join('')}
       </div>` : (me.level >= ((b.piracy||{}).minLevel||10) ? '<div class="card" style="margin-top:12px"><span class="t">The Seas</span><div class="d">No rival runs out there right now. Keep a fast boat docked and check back — a loaded run is worth chasing.</div></div>' : '')}`;
     t.querySelectorAll('[data-buy]').forEach((x) => x.onclick = () => act('POST', `/v1/port/boat/${x.dataset.buy}`, null).then(() => renderPort()));
     t.querySelectorAll('[data-sell]').forEach((x) => x.onclick = () => act('POST', `/v1/port/boat/${x.dataset.sell}/sell`, null).then(() => renderPort()));
@@ -10904,8 +10904,8 @@
         ${hb.you.hotLoot > 0 ? `<div style="margin-top:6px">🔥 <b>hot loot: $${fmt(hb.you.hotLoot)}</b> <span class="d">— fence it at today's rate (draws heat; a killer loots half if you're marked)</span>
           <button class="act" data-do="POST /v1/heists/fence"${groundOff('The fence')}>fence it</button></div>` : ''}</div>` : ''}
       ${my ? `
-        <div class="card" style="border-color:var(--neon)">${aart('heist', (hb.jobs || []).find((jj) => jj.name === my.name)?.id)}<span class="t">${my.name}</span> <span class="chip">${my.leader ? 'YOUR JOB' : 'crewed up'}</span>${my.fenced ? ' <span class="chip" style="color:var(--warn)">🔥 HOT</span>' : ''}
-          <div class="d">crew: ${my.crew.map((c) => `${c.name} (${c.role})${c.cased ? ' ✓cased' : ''}${c.hired ? ' 🤝hired' : ''}`).join(', ')}${my.crewNeeded > 0 ? ` · ${my.crewNeeded} seat${my.crewNeeded > 1 ? 's' : ''} open` : ' · READY'}</div>
+        <div class="card" style="border-color:var(--neon)">${aart('heist', (hb.jobs || []).find((jj) => jj.name === my.name)?.id)}<span class="t">${esc(my.name)}</span> <span class="chip">${my.leader ? 'YOUR JOB' : 'crewed up'}</span>${my.fenced ? ' <span class="chip" style="color:var(--warn)">🔥 HOT</span>' : ''}
+          <div class="d">crew: ${my.crew.map((c) => `${esc(c.name)} (${c.role})${c.cased ? ' ✓cased' : ''}${c.hired ? ' 🤝hired' : ''}`).join(', ')}${my.crewNeeded > 0 ? ` · ${my.crewNeeded} seat${my.crewNeeded > 1 ? 's' : ''} open` : ' · READY'}</div>
           ${my.leader && my.canHire ? `<div class="d" style="font-size:12px;color:var(--dim)">no crew? hire a hand — $${fmt(my.fillFee)} up front. A hand fills a seat but takes a cut and earns you nothing extra.</div>
             <select data-hirerole="${my.id}">${(my.rolesOpen || []).map((ro) => `<option>${ro}</option>`).join('')}</select>
             <button class="act" data-hireheist="${my.id}">🤝 hire a hand ($${fmt(my.fillFee)})</button>` : ''}
@@ -10922,7 +10922,7 @@
           // level with a 🔒; this one stated "lvl 4" beside a live option, so a level-1 player picked
           // The Corner Store, pressed plan it, and got refused. A control that looks live and only
           // refuses once pressed is the game withholding its own rule.
-          return `<option value="${jb.id}"${jb.locked || !lvlOk ? ' disabled' : ''}>${lvlOk ? '' : '🔒 '}${jb.name} — ${jb.crew} crew, lvl ${jb.lvl}, stake $${fmt(jb.stake)}${jb.locked ? ` (needs ${jb.minPulled} scores)` : ''}</option>`; }).join('')}</select>
+          return `<option value="${jb.id}"${jb.locked || !lvlOk ? ' disabled' : ''}>${lvlOk ? '' : '🔒 '}${esc(jb.name)} — ${jb.crew} crew, lvl ${jb.lvl}, stake $${fmt(jb.stake)}${jb.locked ? ` (needs ${jb.minPulled} scores)` : ''}</option>`; }).join('')}</select>
         <select id="hj-role">${(hb.jobs?.[0]?.roles || []).map((ro) => `<option>${ro}</option>`).join('')}</select>
         <input id="hj-biz" placeholder="mark's business id (inside job)" size="24" style="display:none">
         <label id="hj-fencelbl" style="font-size:12.5px;color:var(--dim)"><input type="checkbox" id="hj-fence"> 🔥 take it HOT (fence later — a gamble, loot-able)</label>
@@ -10932,7 +10932,7 @@
         // Same wall as the picker above, on the other way in: joinHeist enforces the job's level, so a
         // rookie who reads "lvl 4+" on somebody's open job and presses crew up gets refused. State it
         // as a wall, not as trivia.
-        return `<div class="card">${aart('heist', (hb.jobs || []).find((jj) => jj.name === o.name)?.id)}<span class="t">${o.name}</span>
+        return `<div class="card">${aart('heist', (hb.jobs || []).find((jj) => jj.name === o.name)?.id)}<span class="t">${esc(o.name)}</span>
           <div class="d">${o.leader}'s job · ${o.crew} in, ${o.crewNeeded} needed · lvl ${o.lvl}+</div>
           ${!my && o.rolesOpen.length ? (!lvlOk ? `<span class="chip">🔒 you need level ${o.lvl}</span>`
             : o.canJoin === false ? '<span class="chip">not available to your street</span>'
@@ -10945,17 +10945,17 @@
         ${cb.roadBoss || cb.teamsterOfWeek ? `<div class="d">${cb.roadBoss ? `👑 ROAD BOSS this week: <b>${esc(cb.roadBoss.name)}</b> ($${fmt(cb.roadBoss.value)})` : ''}${cb.roadBoss && cb.teamsterOfWeek ? ' · ' : ''}${cb.teamsterOfWeek ? `🏅 TEAMSTER OF THE WEEK: <b>${esc(cb.teamsterOfWeek.name)}</b> ($${fmt(cb.teamsterOfWeek.value)})` : ''}</div>` : ''}
         ${cb.reputation ? `<div class="d">running the same lane heats it (bandits case it → weaker guards) — vary lanes to stay cool. ${(cb.reputation.coolsFaster || cb.reputation.tollBreak || cb.reputation.quieter) ? `<span class="chip" style="color:var(--gold)">reputation: ${[cb.reputation.coolsFaster && 'lanes cool 2× faster', cb.reputation.tollBreak && 'toll halved', cb.reputation.quieter && 'low profile'].filter(Boolean).join(' · ')}</span>` : '<span class="chip">earn the Teamster ranks to manage lane heat</span>'}</div>` : ''}
         <div id="cv-lbout"></div></div>` : ''}
-      ${cb.rig ? `<div class="card"><span class="t">THE RIG — ${cb.rig.name}</span> <span class="chip">🛡 armor ${cb.rig.armorLvl}/${cb.rig.max}</span> <span class="chip">⚙ engine ${cb.rig.engineLvl}/${cb.rig.max}</span>
+      ${cb.rig ? `<div class="card"><span class="t">THE RIG — ${esc(cb.rig.name)}</span> <span class="chip">🛡 armor ${cb.rig.armorLvl}/${cb.rig.max}</span> <span class="chip">⚙ engine ${cb.rig.engineLvl}/${cb.rig.max}</span>
         <div class="d">+${cb.rig.armorDef} guard defense · −${(cb.rig.speedBps / 100).toFixed(0)}% transit</div>
         ${cb.rig.nextArmorCost != null ? `<button class="act" data-rigup="armor">upgrade armor ($${fmt(cb.rig.nextArmorCost)})</button>` : '<span class="chip">armor maxed</span>'}
         ${cb.rig.nextEngineCost != null ? `<button class="act" data-rigup="engine">upgrade engine ($${fmt(cb.rig.nextEngineCost)})</button>` : '<span class="chip">engine maxed</span>'}</div>`
         : `<div class="card"><span class="t">THE RIG</span><div class="d">a built hauler adds armor (defense) + engine (speed) to your runs. Buy one:</div>
-          <div style="display:flex;gap:4px;flex-wrap:wrap">${(cb.rigs || []).map((r) => { const ok = (me.level || 0) >= r.minLvl; return `<button class="act" data-rigbuy="${r.id}"${ok ? '' : ' disabled'}>${ok ? '' : `🔒 lvl ${r.minLvl}+ — `}${r.name} ($${fmt(r.cost)})</button>`; }).join('')}</div></div>`}
+          <div style="display:flex;gap:4px;flex-wrap:wrap">${(cb.rigs || []).map((r) => { const ok = (me.level || 0) >= r.minLvl; return `<button class="act" data-rigbuy="${r.id}"${ok ? '' : ' disabled'}>${ok ? '' : `🔒 lvl ${r.minLvl}+ — `}${esc(r.name)} ($${fmt(r.cost)})</button>`; }).join('')}</div></div>`}
       ${cv ? `
         <div class="card" style="border-color:var(--neon)"><span class="t">your shipment · ${cv.from} → ${cv.to || '?'}</span> <span class="chip">${cv.status.toUpperCase()}</span>${cv.notoriety > 0 ? ` <span class="chip ${cv.notoriety >= ((cb.notoriety||{}).max||40) * 0.5 ? 'bad' : ''}">lane heat ${cv.notoriety}${cv.guardCut ? ` · −${cv.guardCut} guards` : ''}${cv.notoriety >= ((cb.notoriety||{}).max||40) * 0.5 ? ' 🔥' : ''}</span>` : ''}
-          <div class="d">manifest: ${cv.manifest.map((x) => `${goodName(x.good)} ×${x.qty}`).join(', ') || 'empty'}${cv.insured ? ' · INSURED' : ''}${cv.ambushes ? ` · hit ${cv.ambushes}×` : ''}${cv.insuranceDue ? ` · claim due $${fmt(cv.insuranceDue)}` : ''}</div>
+          <div class="d">manifest: ${cv.manifest.map((x) => `${esc(goodName(x.good))} ×${x.qty}`).join(', ') || 'empty'}${cv.insured ? ' · INSURED' : ''}${cv.ambushes ? ` · hit ${cv.ambushes}×` : ''}${cv.insuranceDue ? ` · claim due $${fmt(cv.insuranceDue)}` : ''}</div>
           ${cv.status === 'loading' ? `
-            <select id="cv-good">${Object.entries(me.cargo || {}).filter(([, q]) => q > 0).map(([id, q]) => `<option value="${id}">${goodName(id)} (${q})</option>`).join('')}</select>
+            <select id="cv-good">${Object.entries(me.cargo || {}).filter(([, q]) => q > 0).map(([id, q]) => `<option value="${id}">${esc(goodName(id))} (${q})</option>`).join('')}</select>
             <input id="cv-qty" placeholder="qty" size="5"> <button class="act" id="cv-load">load</button>
             <select id="cv-guards">${(cb.guardTiers || []).map((gt) => `<option value="${gt.id}">${gt.id} guards ($${fmt(gt.fee)})</option>`).join('')}</select>
             <label style="font-size:12.5px;color:var(--dim)"><input type="checkbox" id="cv-insure"> insure (${(cb.insureBps || 0) / 100}%)</label>
@@ -10965,7 +10965,7 @@
           : `<span class="chip cold">on the road — ${mins(cv.arrivesSeconds || 0)}</span>`}</div>` : `
         <div class="d" style="color:var(--dim);font-size:13.5px">open a shipment FROM ${me.loc} with a first load from the trunk (bulk beats the trunk cap — refill from the market between loads):</div>
         <select id="cv-to">${(rules?.districts || []).filter((d) => (d.id || d) !== me.loc).map((d) => `<option value="${d.id || d}">${d.id || d}</option>`).join('')}</select>
-        <select id="cv-good0">${Object.entries(me.cargo || {}).filter(([, q]) => q > 0).map(([id, q]) => `<option value="${id}">${goodName(id)} (${q})</option>`).join('')}</select>
+        <select id="cv-good0">${Object.entries(me.cargo || {}).filter(([, q]) => q > 0).map(([id, q]) => `<option value="${id}">${esc(goodName(id))} (${q})</option>`).join('')}</select>
         <input id="cv-qty0" placeholder="qty" size="5">
         <button class="act" id="cv-open">open a shipment</button>
         ${Object.values(me.cargo || {}).every((q) => !q) ? '<span class="d" style="color:var(--dim);font-size:12.5px"> (trunk empty — buy goods on the Streets first)</span>' : ''}`}
@@ -11082,7 +11082,7 @@
       <input id="ln-amt" placeholder="principal $" size="10">
       <input id="ln-rate" placeholder="rate (0.2 = 20%)" size="12">
       <input id="ln-hours" placeholder="term hrs" size="8">
-      <select id="ln-to"><option value="">— open offer —</option>${streets.map((s) => `<option value="${s.id}">${s.name} only${s.id === me.id ? '' : ''}</option>`).join('')}</select>
+      <select id="ln-to"><option value="">— open offer —</option>${streets.map((s) => `<option value="${s.id}">${esc(s.name)} only${s.id === me.id ? '' : ''}</option>`).join('')}</select>
       <input id="ln-coll" placeholder="collateral min $ (opt)" size="16">
       <input id="ln-collomr" placeholder="$OMR pledge (opt, ≤${fmt(b.terms?.collateralOmrMax ?? 2000)})" size="18">
       <button class="act" id="ln-offer">escrow it</button>
@@ -11388,18 +11388,18 @@
         <div class="d" style="font-size:11px;color:var(--dim);margin-top:4px">Straight talk: <b>no stock moves yet</b> — the treasury's buying opens with the chain at launch. Your window and your play are real today; the splits start when the buys do, and land in your Street Deed's vault.</div>
       </div>`; })() : ''}
 
-      <div class="card capital-anchor" id="capital-stake"><span class="t">THE LADDER — ${me.ladder?.name || 'off the ladder'}${me.ladder?.rung ? ` (rung ${me.ladder.rung}/${me.ladder.of})` : ''}</span>
+      <div class="card capital-anchor" id="capital-stake"><span class="t">THE LADDER — ${esc(me.ladder?.name || 'off the ladder')}${me.ladder?.rung ? ` (rung ${me.ladder.rung}/${me.ladder.of})` : ''}</span>
         <div class="d">Power runs on $OMR you <b>HOLD</b>, not what you spend — ${fmt(Math.floor(me.ladder?.staked || 0))} staked.
           ${me.ladder?.fx ? `Carrying <b>+${me.ladder.fx.trunk}</b>, energy cap <b>+${me.ladder.fx.energy}</b>, nerve <b>+${me.ladder.fx.nerve}</b>, garage <b>+${me.ladder.fx.garage}</b>${me.ladder.fx.fenceBps ? `, the fence pays <b>+${(me.ladder.fx.fenceBps / 100).toFixed(1)}%</b>` : ''}.` : 'Stake $OMR to climb it.'}</div>
         <div class="d" style="color:var(--dim);font-size:11.5px;margin-top:4px">${me.ladder?.next
-          ? `<b>${fmt(me.ladder.next.need)}</b> more reaches <b>${me.ladder.next.name}</b>.`
+          ? `<b>${fmt(me.ladder.next.need)}</b> more reaches <b>${esc(me.ladder.next.name)}</b>.`
           : 'Top rung — nothing above this at any price.'} Being made climbs it ${me.ladder?.madeRungs ?? 1} rung as a shortcut, never higher. Staked $OMR is looted lighter than idle — but it is never safe.</div>
         <div class="row" style="margin-top:6px"><input id="lad-amt" type="number" min="1" placeholder="$OMR to stake" size="10">
           <button class="act" id="lad-go">stake it</button></div>
         <div class="d" style="margin-top:8px"><b>THE COMMITMENT</b> — lock the stake for a window and it counts <b>×mult</b> on the ladder.
           ${me.ladder?.lock ? `Your word is given: <b class="neon">×${me.ladder.lock.mult}</b> for another <b>${mins(me.ladder.lock.seconds)}</b> — ${fmt(me.ladder?.effective || 0)} effective on the rungs. It cannot come out until then, and a killer still loots it at the committed rate.` : `A locked stake cannot be unstaked until the window passes — and it is still looted at the committed rate when you die. Commitment buys rungs, not safety.`}</div>
         ${(me.ladder?.lockTiers || []).length && Number(me.ladder?.staked || 0) > 0 ? `<div class="row" style="margin-top:4px">
-          ${(me.ladder.lockTiers).map((t) => `<button class="act" data-stakelock="${t.id}" title="lock for ${t.days} days — counts ×${t.mult} on the ladder">${t.name} — ${t.days}d ×${t.mult}</button>`).join(' ')}</div>` : ''}</div>
+          ${(me.ladder.lockTiers).map((t) => `<button class="act" data-stakelock="${t.id}" title="lock for ${t.days} days — counts ×${t.mult} on the ladder">${esc(t.name)} — ${t.days}d ×${t.mult}</button>`).join(' ')}</div>` : ''}</div>
       <h2 class="capital-anchor" id="capital-wallet" style="margin-top:12px">Your Wallet <span class="d" style="font-size:11px">(the proven 0x address gates every $OMR / gear extraction — and survives your death)</span></h2>
       <div class="card">${me.wallet
         ? `<span class="t">Linked <span class="chip good">${me.wallet.slice(0, 6)}…${me.wallet.slice(-4)}</span></span><div class="d">on-chain extraction is unlocked (mainnet rail is dormant until launch)</div>`
@@ -11410,7 +11410,7 @@
       <h2 style="margin-top:12px">The Forge <span class="d" style="font-size:11px">(your wallet's history shapes the build — once per wallet, ever)</span></h2>
       <div class="card">
         ${fg.forged
-          ? `<span class="t">Ledger-born: <b style="color:var(--neon)">${fg.archetypes?.[fg.forged]?.name || 'an unknown hand'}</b></span>
+          ? `<span class="t">Ledger-born: <b style="color:var(--neon)">${esc(fg.archetypes?.[fg.forged]?.name || 'an unknown hand')}</b></span>
              <div class="d">this street's build was forged from a wallet's history — the shape is yours for life.</div>`
           : !fg.linked
             ? `<div class="d">Link a wallet above and the forge reads its <b>history</b> — how old it is, how much it has worked —
@@ -11451,7 +11451,7 @@
       <div class="card">
         ${pv.stamped
           ? `<span class="t">You wear the colors of <b>${pv.ward}</b></span><div class="d">stamped on your bloodline's portrait — display only, forever.</div>`
-          : `<div class="d">A snapshot saw your wallet in ${pv.wards.length === 1 ? `<b>${pv.wards[0].name}</b>` : `${pv.wards.length} circles`}.
+          : `<div class="d">A snapshot saw your wallet in ${pv.wards.length === 1 ? `<b>${esc(pv.wards[0].name)}</b>` : `${pv.wards.length} circles`}.
              Claiming stamps the colors onto your portrait — <b>public, cosmetic only, once ever</b>. The default is a clean portrait; nothing is recorded unless you claim.</div>
              <button class="act" id="colors-claim">claim your colors</button>`}
       </div>` : ''}
@@ -11486,7 +11486,7 @@
       ${win.rate ? `
       <h2 class="capital-anchor" id="capital-window" style="margin-top:12px">The Window <span class="d" style="font-size:11px">(one way: burn $OMR, take cash — cash never runs back the other way)</span></h2>
       <div class="card"${win.open ? '' : ' style="opacity:.75"'}>
-        <div class="d">${win.note}</div>
+        <div class="d">${esc(win.note)}</div>
         ${win.open ? `<div class="d">rate $${fmt(win.rate)} cash per $OMR · the till holds $${fmt(win.pool)} (${fmt(win.poolOmr)} $OMR worth) · your allowance today ${fmt(win.yourHeadroomOmr)} of ${fmt(win.dailyCapOmr)} $OMR</div>
         <input id="win-amt" placeholder="$OMR" size="8"> <button class="act" id="win-go">burn it for cash</button>
         <div class="d" style="font-size:11px;color:var(--dim)">the till is filled from the street take, so it can run dry — a short window refuses and burns nothing.</div>`
@@ -11498,7 +11498,7 @@
       <div class="card"><div class="d">pot ${fmt(yld.pool)} $OMR · paid out so far ${fmt(yld.lifetimePaid)}</div>
         <table><tr><th>#</th><th>family</th><th>share</th><th>next</th></tr>
         ${yld.families.map((f) => `<tr><td>${f.rank}</td><td>${esc(f.name)} <span class="chip">${esc(f.tag)}</span></td><td>${(f.shareBps / 100).toFixed(0)}%</td><td>${fmt(f.nextPayout)}</td></tr>`).join('')}</table>
-        <div class="d" style="font-size:11px;color:var(--dim)">${yld.note}</div></div>` : ''}
+        <div class="d" style="font-size:11px;color:var(--dim)">${esc(yld.note)}</div></div>` : ''}
 
       <h2 class="capital-anchor" id="capital-vault" style="margin-top:12px">The Vault <span class="d" style="font-size:11px">(cheaper cover, not a safe harbour — a killer takes 20% of a staked balance against 50% of a loose or unbonding one, so committing drops the take from half to a fifth without ever making you safe. Your principal always returns whole; yield pays the FAMILIES, not the staker; unstaking pulls it ALL and unbonds 6h — at the higher loose rate — before it's liquid)</span></h2>
       <div class="card"><div class="d">staked ${fmt(Math.floor(me.staked || 0))} $OMR${me.unbonding ? ` · unbonding ${fmt(Math.floor(me.unbonding))} (${mins(me.unbondSeconds || 0)})` : ''}</div>
@@ -11563,9 +11563,9 @@
       <div class="card">
         <div><span class="t">${bd.yourStanding.tier}</span> <span class="chip good">score ${fmt(bd.yourStanding.score)}</span>
           ${bd.yourStanding.charterName ? `<span class="chip good">✦ ${bd.yourStanding.charterName}</span>` : ''}</div>
-        <div class="d">${fmt(bd.yourStanding.pledgedOmr)} $OMR pledged${bd.yourStanding.bondedEth ? ` · ${bd.yourStanding.bondedEth} ETH bonded (×${fmt(bd.catalogs.ethScoreOmr)})` : ''}${bd.yourStanding.nextTier ? ` · ${fmt(bd.yourStanding.nextTier.delta)} to ${bd.yourStanding.nextTier.name}` : ' · top tier'} <span style="color:var(--dim)">(survives death)</span></div>
+        <div class="d">${fmt(bd.yourStanding.pledgedOmr)} $OMR pledged${bd.yourStanding.bondedEth ? ` · ${bd.yourStanding.bondedEth} ETH bonded (×${fmt(bd.catalogs.ethScoreOmr)})` : ''}${bd.yourStanding.nextTier ? ` · ${fmt(bd.yourStanding.nextTier.delta)} to ${esc(bd.yourStanding.nextTier.name)}` : ' · top tier'} <span style="color:var(--dim)">(survives death)</span></div>
         <div style="margin-top:6px"><input id="uw-pledge" placeholder="$OMR (min ${bd.catalogs.pledgeMin})" size="14"> <button class="act" id="uw-pledge-go">pledge to the treasury</button></div>
-        ${bd.yourStanding.nextCharter ? `<div style="margin-top:6px"><button class="act" id="uw-charter-go">commission ${art(bd.yourStanding.nextCharter.name)} (${bd.yourStanding.nextCharter.omr} $OMR)</button>
+        ${bd.yourStanding.nextCharter ? `<div style="margin-top:6px"><button class="act" id="uw-charter-go">commission ${esc(art(bd.yourStanding.nextCharter.name))} (${bd.yourStanding.nextCharter.omr} $OMR)</button>
           <span class="d" style="font-size:11px;color:var(--dim)">a permanent treasury seal — pure display</span></div>`
           : (bd.yourStanding.charter ? '<div class="d" style="color:var(--dim)">you hold The Founding Charter — the top seal</div>' : '<div class="d" style="color:var(--dim)">back the treasury to commission a Charter</div>')}
         <div class="d" style="margin-top:6px"><a href="#" id="uw-lb">🏛 the Underwriters →</a></div>
@@ -11585,7 +11585,7 @@
           Object.entries(vault.funding.bySource || {}).map(([k, v]) =>
             `${({ tax: 'the DEX sell tax', bond: 'treasury bonds', store: 'the store', fee: 'game fees' })[k] || k} ${v} ETH`).join(' · ')
             || 'nothing yet'}</div>` : ''}
-        <div class="d" style="font-size:11px;color:var(--dim);margin-top:4px">${vault.note || ''}</div></div>
+        <div class="d" style="font-size:11px;color:var(--dim);margin-top:4px">${esc(vault.note || '')}</div></div>
 
 `;
 
@@ -11679,25 +11679,25 @@
     const tr = e.trophies || {};
     t.innerHTML = `
       ${e.tier === 0 ? coachCard('Buy a place worthy of the name', 'The don\'s compound — a tiered, furnishable home you build with earned $OMR. Pure legend: it displays your rarest iron, your book, your body count. It\'s account-level, so it OUTLIVES YOUR STREET — the heir inherits it.') : ''}
-      <h2>${e.name ? e.name : (e.tierName || 'No Compound Yet')}
-        <span class="d" style="font-size:12.5px">${e.tierName ? `· ${e.tierName} · ${fmt(e.spent)} $OMR sunk` : ''}</span>
+      <h2>${e.name ? esc(e.name) : esc(e.tierName || 'No Compound Yet')}
+        <span class="d" style="font-size:12.5px">${e.tierName ? `· ${esc(e.tierName)} · ${fmt(e.spent)} $OMR sunk` : ''}</span>
         ${auc.collector ? `<span class="chip">${auc.collector.rank} · ${fmt(auc.collector.sunk)} $OMR sunk into prestige</span>` : ''}</h2>
       <div class="card">${e.tier > 0 ? aart('estate', e.tier) : ''}<span class="t">The Deed</span>
-        <div class="d">${e.tierName ? `You hold ${art(e.tierName, 'a')}.` : 'You don\'t own a thing worth showing.'} · ${fmt(Math.floor(e.omr || 0))} $OMR on hand</div>
-        ${e.nextTier ? `<button class="act" id="est-up">move up → ${e.nextTier.name} (${fmt(e.nextTier.omr)} $OMR)</button> <span class="d">${e.nextTier.blurb}</span>` : '<span class="chip good">THE COMPOUND — top of the world</span>'}
+        <div class="d">${e.tierName ? `You hold ${esc(art(e.tierName, 'a'))}.` : 'You don\'t own a thing worth showing.'} · ${fmt(Math.floor(e.omr || 0))} $OMR on hand</div>
+        ${e.nextTier ? `<button class="act" id="est-up">move up → ${esc(e.nextTier.name)} (${fmt(e.nextTier.omr)} $OMR)</button> <span class="d">${esc(e.nextTier.blurb)}</span>` : '<span class="chip good">THE COMPOUND — top of the world</span>'}
         ${e.tier > 0 ? `<div style="margin-top:6px"><input id="est-name" placeholder="name the place" size="18"> <button class="act" id="est-name-go">name it (${fmt(rules?.estate?.nameOmr ?? 18)} $OMR)</button></div>` : ''}</div>
 
       ${(() => { const hh = e.household, ga = e.gala; if (!hh) return ''; return `
       <h2 style="margin-top:12px">The Household <span class="d" style="font-size:11px">(staff draw $OMR wages — stiff them a week and they walk)</span></h2>
       <div class="card">
         ${hh.walked ? '<span class="chip bad">THE STAFF WALKED — back wages went unpaid. Rehire from scratch.</span>' : ''}
-        ${hh.staff.length ? `<div class="d">on the payroll: ${hh.staff.map((s) => `${s.name} (${s.wageOmrDay}/day)`).join(' · ')}</div>
+        ${hh.staff.length ? `<div class="d">on the payroll: ${hh.staff.map((s) => `${esc(s.name)} (${s.wageOmrDay}/day)`).join(' · ')}</div>
           <div class="d">wages: ${hh.wagePerDay} $OMR/day · owed <b>${hh.owed}</b> $OMR${hh.walkInSeconds != null ? ` · they walk in ${Math.ceil(hh.walkInSeconds / 3600)}h if unpaid` : ''}</div>
           ${hh.owed > 0 ? `<button class="act" data-do="POST /v1/estate/wages">pay the household (${hh.owed} $OMR)</button>` : '<span class="chip good">the book is square</span>'}`
           : '<div class="d" style="color:var(--dim)">nobody on the payroll — a great house needs help.</div>'}
         <div class="grid" style="margin-top:6px">${hh.catalog.filter((s) => !s.hired).map((s) => `
-          <div class="card"><span class="t">${s.name} — ${s.hireOmr} $OMR</span>
-            <div class="d">${s.blurb} · ${s.wageOmrDay} $OMR/day${s.locked ? ` · needs tier ${s.minTier}` : ''}</div>
+          <div class="card"><span class="t">${esc(s.name)} — ${s.hireOmr} $OMR</span>
+            <div class="d">${esc(s.blurb)} · ${s.wageOmrDay} $OMR/day${s.locked ? ` · needs tier ${s.minTier}` : ''}</div>
             ${!s.locked ? `<button class="act" data-esthire="${s.id}">hire</button>` : ''}</div>`).join('')}</div>
       </div>
       <h2 style="margin-top:12px">The Gala <span class="d" style="font-size:11px">(open the doors — the whole city can come be seen)</span></h2>
@@ -11720,26 +11720,26 @@
 
       <h2 style="margin-top:12px">The Wings <span class="d" style="font-size:11px">(one-time $OMR, tier-gated)</span></h2>
       <div class="grid">${(e.features || []).map((f) => `
-        <div class="card"><span class="t">${f.name}</span>
+        <div class="card"><span class="t">${esc(f.name)}</span>
           ${f.owned ? '<span class="chip good">built</span>' : f.locked ? `<span class="chip cold">needs tier ${f.minTier}</span>` : ''}
-          <div class="d">${f.blurb}</div>
+          <div class="d">${esc(f.blurb)}</div>
           ${f.owned ? '' : f.locked ? '' : `<button class="act" data-estfeat="${f.id}">build (${fmt(f.omr)} $OMR)</button>`}</div>`).join('')}</div>
 
       <h2 style="margin-top:14px">The Auction Block <span class="d" style="font-size:11px">(this week's lots — highest $OMR bid wins, and burns · closes ${auc.closesInSeconds ? mins(auc.closesInSeconds) : 'soon'})</span></h2>
       <div class="grid">${(auc.lots || []).map((l) => `
-        <div class="card" ${l.youLead ? 'style="border-color:var(--neon)"' : ''}><span class="t">${l.name} <span class="d">#${l.serial}</span></span>
+        <div class="card" ${l.youLead ? 'style="border-color:var(--neon)"' : ''}><span class="t">${esc(l.name)} <span class="d">#${l.serial}</span></span>
           ${l.rarity === 'legendary' ? '<span class="chip good">LEGENDARY</span>' : ''}${l.youLead ? '<span class="chip good">you lead</span>' : ''}
-          <div class="d">${l.blurb}</div>
+          <div class="d">${esc(l.blurb)}</div>
           <div class="d">${l.currentBid > 0 ? `top bid ${fmt(l.currentBid)} $OMR` : 'no bids yet'} · next ≥ ${fmt(l.minNext)} $OMR</div>
           <input data-aucamt="${l.id}" placeholder="${fmt(l.minNext)}" size="7"> <button class="act" data-aucbid="${l.id}">bid</button></div>`).join('')}</div>
-      ${(auc.wins || []).length ? `<div class="d" style="color:var(--dim);font-size:12.5px;margin-top:8px">your trophies: ${auc.wins.map((w) => `${w.name} #${w.serial} (${fmt(w.price)} $OMR)${w.listed ? ' [on the block]' : ''}`).join(' · ')}</div>` : ''}
+      ${(auc.wins || []).length ? `<div class="d" style="color:var(--dim);font-size:12.5px;margin-top:8px">your trophies: ${auc.wins.map((w) => `${esc(w.name)} #${w.serial} (${fmt(w.price)} $OMR)${w.listed ? ' [on the block]' : ''}`).join(' · ')}</div>` : ''}
 
       <h2 style="margin-top:14px">The Block — Resale <span class="d" style="font-size:11px">(put a trophy up for a $OMR reserve; the house takes ${(rules?.auction?.consign?.TAKE_BPS ?? 500) / 100}% — and it burns)</span></h2>
       ${(auc.wins || []).some((w) => !w.listed) ? `<div class="card"><span class="t">Consign a trophy</span>
-        <div style="margin-top:4px"><select id="consign-lot">${auc.wins.filter((w) => !w.listed).map((w) => `<option value="${w.lot}">${w.name} #${w.serial}</option>`).join('')}</select>
+        <div style="margin-top:4px"><select id="consign-lot">${auc.wins.filter((w) => !w.listed).map((w) => `<option value="${w.lot}">${esc(w.name)} #${w.serial}</option>`).join('')}</select>
         <input id="consign-res" placeholder="reserve $OMR" size="10"> <button class="act" id="consign-go">put it on the block (${auc.consign?.FEE_OMR ?? 12} $OMR fee)</button></div></div>` : ''}
       ${(auc.consignments || []).length ? `<div class="grid" style="margin-top:6px">${auc.consignments.map((c) => `
-        <div class="card" ${c.youLead ? 'style="border-color:var(--neon)"' : ''}><span class="t">${c.name} <span class="d">#${c.serial}</span></span>
+        <div class="card" ${c.youLead ? 'style="border-color:var(--neon)"' : ''}><span class="t">${esc(c.name)} <span class="d">#${c.serial}</span></span>
           ${c.mine ? '<span class="chip">yours</span>' : ''}${c.youLead ? '<span class="chip good">you lead</span>' : ''}${c.reserveMet ? '<span class="chip good">reserve met</span>' : '<span class="chip cold">reserve not met</span>'}
           <div class="d">${c.currentBid > 0 ? `top bid ${fmt(c.currentBid)} $OMR` : 'no bids yet'} · next ≥ ${fmt(c.minNext)} $OMR · closes ${mins(c.closesSeconds)}</div>
           ${c.mine ? (c.currentBid > 0 ? '<span class="d" style="color:var(--dim)">a standing bid — you can\'t pull it now</span>' : `<button class="act" data-consigncancel="${c.id}">pull it</button>`)
@@ -11747,22 +11747,22 @@
         : '<div class="d" style="color:var(--dim);font-size:12px">nothing on the resale block right now.</div>'}
 
       ${(auc.sets || []).length ? `<h2 style="margin-top:14px">The Collection — Sets <span class="d" style="font-size:11px">(own the right archetypes as trophies)</span></h2>
-      <div class="grid">${auc.sets.map((s) => `<div class="card"><span class="t">${s.name}</span> <span class="chip ${s.complete ? 'good' : ''}">${s.have}/${s.total}${s.complete ? ' ✦ COMPLETE' : ''}</span>
-        ${!s.complete ? `<div class="d" style="font-size:11px;color:var(--dim)">missing: ${s.missing.join(', ')}</div>` : ''}</div>`).join('')}</div>` : ''}
-      ${auc.patron ? `<div class="d" style="margin-top:6px"><span class="chip good">PATRON OF THE SEASON</span> ${auc.patron.name} — ${fmt(auc.patron.sunk)} $OMR this season</div>` : ''}
+      <div class="grid">${auc.sets.map((s) => `<div class="card"><span class="t">${esc(s.name)}</span> <span class="chip ${s.complete ? 'good' : ''}">${s.have}/${s.total}${s.complete ? ' ✦ COMPLETE' : ''}</span>
+        ${!s.complete ? `<div class="d" style="font-size:11px;color:var(--dim)">missing: ${s.missing.map(esc).join(', ')}</div>` : ''}</div>`).join('')}</div>` : ''}
+      ${auc.patron ? `<div class="d" style="margin-top:6px"><span class="chip good">PATRON OF THE SEASON</span> ${esc(auc.patron.name)} — ${fmt(auc.patron.sunk)} $OMR this season</div>` : ''}
       <div class="d" style="margin-top:2px"><a href="#" id="collectors-lb-link">the collectors of the city →</a></div>
       <div id="collectors-lb"></div>
 
       <h2 style="margin-top:14px">The Collection <span class="d" style="font-size:11px">(everything your bloodline has EVER touched — survives death, selling, seizure · ${col.have || 0}/${col.total || 0} · ${col.pct || 0}%)</span></h2>
       <div class="grid">${(col.categories || []).map((c) => `
-        <div class="card"><span class="t">${c.name}</span> <span class="chip ${c.have === c.total ? 'good' : ''}">${c.have}/${c.total}${c.have === c.total ? ' ✦ COMPLETE' : ''}</span>
+        <div class="card"><span class="t">${esc(c.name)}</span> <span class="chip ${c.have === c.total ? 'good' : ''}">${c.have}/${c.total}${c.have === c.total ? ' ✦ COMPLETE' : ''}</span>
           <!-- a completion BAR reads the progress at a glance; the diamonds are the detail under it.
                They were 11px with the item name only in a title= — invisible on touch, where most of
                the collection game gets played. The zero-width joiner is load-bearing: an unbroken run
                of glyphs is one "word" to the layout engine and overflowed the phone by 187px. -->
           ${bar('', c.have, c.total)}
           <div class="d colgrid">${c.items.map((it) => `<span class="col-i${it.got ? ' got' : ''}" title="${esc(it.name)}">${it.got ? '◆' : '◇'}</span>`).join('​')}</div>
-          ${c.have < c.total ? `<div class="d" style="font-size:10.5px;color:var(--dim)">missing: ${c.items.filter((it) => !it.got).slice(0, 4).map((it) => it.name).join(', ')}${c.total - c.have > 4 ? ` +${c.total - c.have - 4} more` : ''}</div>` : ''}</div>`).join('')}</div>
+          ${c.have < c.total ? `<div class="d" style="font-size:10.5px;color:var(--dim)">missing: ${c.items.filter((it) => !it.got).slice(0, 4).map((it) => esc(it.name)).join(', ')}${c.total - c.have > 4 ? ` +${c.total - c.have - 4} more` : ''}</div>` : ''}</div>`).join('')}</div>
       <div class="d" style="margin-top:4px"><a href="#" id="col-lb-link">the completionist board →</a></div>
       <div id="col-lb"></div>
       <h2 style="margin-top:14px">The Firsts <span class="d" style="font-size:11px">(won once in this city's life — ${fst.taken || 0} of ${fst.total || 0} are gone forever${fst.mine ? ` · you hold ${fst.mine}` : ''})</span></h2>
@@ -11786,7 +11786,7 @@
     { const el = $('#estate-lb-link'); if (el) el.onclick = async (ev) => { ev.preventDefault();
       const b = (await api('GET', '/v1/leaderboard/estates')).body || {};
       $('#estate-lb').innerHTML = `<div class="grid" style="margin-top:4px">${(b.houses || []).map((hh) => `
-        <div class="card"><span class="t">#${hh.pos} ${hh.estate}</span><div class="d">${hh.steward} · ${hh.tierName || ''} · ${fmt(hh.value)} $OMR sunk · staff ${hh.staff} · galas ${hh.galas}${hh.bestGala ? ` (best ${hh.bestGala})` : ''}</div></div>`).join('') || '<span class="d">no great houses yet</span>'}</div>`; }; }
+        <div class="card"><span class="t">#${hh.pos} ${hh.estate}</span><div class="d">${hh.steward} · ${esc(hh.tierName || '')} · ${fmt(hh.value)} $OMR sunk · staff ${hh.staff} · galas ${hh.galas}${hh.bestGala ? ` (best ${hh.bestGala})` : ''}</div></div>`).join('') || '<span class="d">no great houses yet</span>'}</div>`; }; }
     t.querySelectorAll('[data-aucbid]').forEach((b) => b.onclick = () =>
       act('POST', `/v1/auction/${b.dataset.aucbid}/bid`, { amount: Number(t.querySelector(`[data-aucamt="${b.dataset.aucbid}"]`).value) }).then(() => renderEstate()));
     { const cg = $('#consign-go'); if (cg) cg.onclick = () =>
@@ -11797,12 +11797,12 @@
       act('POST', `/v1/auction/consign/${b.dataset.consigncancel}/cancel`, {}).then(() => renderEstate()));
     { const el = $('#collectors-lb-link'); if (el) el.onclick = async (ev) => { ev.preventDefault();
       const b = (await api('GET', '/v1/leaderboard/collectors')).body || {};
-      $('#collectors-lb').innerHTML = `${b.patron ? `<div class="d" style="margin:4px 0"><span class="chip good">PATRON</span> ${b.patron.name} — ${fmt(b.patron.sunk)} $OMR this season</div>` : ''}<div class="grid">${(b.collectors || []).map((c) => `
+      $('#collectors-lb').innerHTML = `${b.patron ? `<div class="d" style="margin:4px 0"><span class="chip good">PATRON</span> ${esc(b.patron.name)} — ${fmt(b.patron.sunk)} $OMR this season</div>` : ''}<div class="grid">${(b.collectors || []).map((c) => `
         <div class="card"><span class="t">#${c.pos} ${c.steward}</span><div class="d">${c.rank} · ${fmt(c.sunk)} $OMR sunk</div></div>`).join('') || '<span class="d">no collectors yet</span>'}</div>`; }; }
     { const cl = $('#col-lb-link'); if (cl) cl.onclick = async (ev) => { ev.preventDefault();
       const b = (await api('GET', '/v1/leaderboard/collection')).body || {};
       $('#col-lb').innerHTML = `<div class="grid" style="margin-top:4px">${(b.collectors || []).map((c, i) => `
-        <div class="card"><span class="t">#${i + 1} ${c.name}</span><div class="d">${c.have}/${c.total} · ${c.pct}%${c.steward && c.steward !== c.name ? ` · steward: ${c.steward}` : ''}</div></div>`).join('') || '<span class="d">nobody has collected a thing</span>'}</div>`; }; }
+        <div class="card"><span class="t">#${i + 1} ${esc(c.name)}</span><div class="d">${c.have}/${c.total} · ${c.pct}%${c.steward && c.steward !== c.name ? ` · steward: ${c.steward}` : ''}</div></div>`).join('') || '<span class="d">nobody has collected a thing</span>'}</div>`; }; }
   }
 
   // ── THE LIFE: the skill tree + the five fixtures who remember your name ──
@@ -11833,11 +11833,11 @@
       <div class="d" style="font-size:11px;margin:-4px 0 6px;color:var(--dim)">Working a trade also builds its stat — up to <b>${ms.statUse?.capDay ?? 3}/day</b> (${ms.statUse?.left ?? '—'} left today). The gym is still the fast lane.</div>
       <div class="d" style="font-size:11px;margin:-4px 0 6px;color:var(--dim)">The bloodline's lifetime schooling: <b>${(ms.legend?.total ?? 0).toLocaleString()}</b> XP — <b>${ms.legend?.rank || 'Dabbler'}</b> · <a href="#" id="trades-board">the deepest tradesmen →</a></div><div id="trades-lb"></div>
       <div class="grid">${(ms.tracks || []).map((k) => `
-        <div class="card"><span class="t">${k.name} <span class="chip${k.lvl >= 40 ? ' good' : ''}">L${k.lvl} — ${k.rank}</span></span>
-          <div class="d">${k.desc}</div>
+        <div class="card"><span class="t">${esc(k.name)} <span class="chip${k.lvl >= 40 ? ' good' : ''}">L${k.lvl} — ${k.rank}</span></span>
+          <div class="d">${esc(k.desc)}</div>
           <div class="d" style="margin-top:4px">${k.nextAt == null ? 'MASTERED' : `${Math.floor(k.xp).toLocaleString()} / ${k.nextAt.toLocaleString()} xp to L${k.lvl + 1}`}
             ${k.legendXp > 0 ? ` · <span style="color:var(--dim)">bloodline ${Math.floor(k.legendXp).toLocaleString()}</span>` : ''}</div>
-          ${k.perk ? `<div class="d" style="margin-top:3px;color:${k.perk.now !== 1 ? 'var(--ok)' : 'var(--dim)'}">${k.perk.now !== 1 ? `◆ ${k.perk.what}: ×${k.perk.now}` : `perk at L${(ms.milestones || [10])[0]}: ${k.perk.what}`}${k.perk.next ? ` <span style="color:var(--dim)">(L${k.perk.nextAt} → ×${k.perk.next})</span>` : ''}</div>` : ''}
+          ${k.perk ? `<div class="d" style="margin-top:3px;color:${k.perk.now !== 1 ? 'var(--ok)' : 'var(--dim)'}">${k.perk.now !== 1 ? `◆ ${esc(k.perk.what)}: ×${k.perk.now}` : `perk at L${(ms.milestones || [10])[0]}: ${esc(k.perk.what)}`}${k.perk.next ? ` <span style="color:var(--dim)">(L${k.perk.nextAt} → ×${k.perk.next})</span>` : ''}</div>` : ''}
           ${k.trait ? `<div class="d" style="margin-top:3px;color:var(--gold,#c9a227)">★ ${(ms.traits || {})[k.trait]?.name || k.trait}</div>` : ''}
           ${k.canChooseTrait ? `<div style="margin-top:4px"><span class="d">MASTERED — choose your legacy (permanent):</span><br>
             <button class="act" data-trait="${k.id}:virtuoso" data-confirm="Permanent. The Virtuoso deepens this trade's perk for THIS life.">Virtuoso</button>
@@ -11852,28 +11852,28 @@
       <div class="grid">${Object.entries(branches).map(([br, list]) => `
         <div class="card"><span class="t" style="text-transform:capitalize">${br}</span>
           ${list.sort((a, b) => a.tier - b.tier).map((s) => `
-            <div class="d" style="margin-top:5px">${s.known ? '◆' : '◇'} <b>${s.name}</b>${s.tier === 4 ? ' <span class="chip good">capstone</span>' : ''} (t${s.tier}, ${s.cost}pt) — ${s.desc}
+            <div class="d" style="margin-top:5px">${s.known ? '◆' : '◇'} <b>${esc(s.name)}</b>${s.tier === 4 ? ' <span class="chip good">capstone</span>' : ''} (t${s.tier}, ${s.cost}pt) — ${esc(s.desc)}
               ${!s.known ? `<button class="act" data-learn="${s.id}" style="font-size:11px;padding:2px 6px">learn</button>`
                 : `<button class="act" data-respec1="${s.id}" style="font-size:11px;padding:2px 6px">unlearn (${sk.respecOneOmr || 30} $OMR)</button>`}</div>`).join('')}</div>`).join('')}</div>
       ${(sk.actives || []).some((a) => a.unlocked) ? `
       <h2 style="margin-top:12px">Active Abilities <span class="d" style="font-size:11px">(capstone-unlocked bursts${sk.grandmaster ? ` · GRANDMASTER — cooldown ${Math.round((sk.activeCdSeconds || 0) / 3600)}h` : ''}${sk.activeCooldownSeconds > 0 ? ` · ready in ${Math.ceil(sk.activeCooldownSeconds / 60)}m` : ' · ready'})</span></h2>
       <div class="grid">${sk.actives.filter((a) => a.unlocked).map((a) => `
-        <div class="card"><span class="t">${a.name}</span>
-          <div class="d">${a.desc}</div>
+        <div class="card"><span class="t">${esc(a.name)}</span>
+          <div class="d">${esc(a.desc)}</div>
           <button class="act" data-active="${a.id}" ${sk.activeCooldownSeconds > 0 ? 'disabled' : ''}>use</button></div>`).join('')}
         ${(sk.grandmasteries || []).filter((g) => g.unlocked).map((g) => `
-        <div class="card" style="border-color:var(--gold,#c9a227)"><span class="t">${g.active.name} <span class="chip good">${g.name} — ultimate</span></span>
-          <div class="d">${g.active.desc}</div>
+        <div class="card" style="border-color:var(--gold,#c9a227)"><span class="t">${esc(g.active.name)} <span class="chip good">${esc(g.name)} — ultimate</span></span>
+          <div class="d">${esc(g.active.desc)}</div>
           <button class="act" data-active="${g.active.id}" ${sk.activeCooldownSeconds > 0 ? 'disabled' : ''}>use</button></div>`).join('')}</div>` : ''}
       ${(sk.grandmasteries || []).some((g) => !g.unlocked) ? `
       <div class="d" style="font-size:11px;margin-top:6px;color:var(--dim)">Grandmastery (own BOTH capstones of a pair → a combined ultimate + a faster cooldown):
-        ${(sk.grandmasteries || []).map((g) => `${g.unlocked ? '◆' : '◇'} <b>${g.name}</b> (${g.reqs.join(' + ')})`).join(' · ')}</div>` : ''}
+        ${(sk.grandmasteries || []).map((g) => `${g.unlocked ? '◆' : '◇'} <b>${esc(g.name)}</b> (${g.reqs.join(' + ')})`).join(' · ')}</div>` : ''}
 
       <h2 style="margin-top:12px">The Underworld
         ${uw.lead ? `<span class="chip good">today's lead: ${esc(uw.lead.npcName || uw.lead.npc)} — ${esc(uw.lead.taskLabel || uw.lead.task || 'any business')}</span>` : ''}
         ${uw.errand ? `<span class="chip">errand: ${esc(uw.errand.npcName || uw.errand.npc)} ${uw.errand.step}/${uw.errand.of} — ${esc(uw.errand.taskLabel || uw.errand.task)}</span>` : ''}</h2>
       <div class="grid">${(uw.npcs || []).map((n) => `
-        <div class="card">${aart('npc', n.id)}<span class="t">${n.name}</span> <span class="chip ${n.tier >= 3 ? 'good' : ''}">standing ${n.standing} · tier ${n.tier}</span>
+        <div class="card">${aart('npc', n.id)}<span class="t">${esc(n.name)}</span> <span class="chip ${n.tier >= 3 ? 'good' : ''}">standing ${n.standing} · tier ${n.tier}</span>
           ${n.grudge ? `<span class="chip bad">${n.grudge} grudge${n.grudge > 1 ? 's' : ''}</span>` : ''}
           <div class="d">earns: ${n.earn}</div>
           <div class="d">${(n.perks || []).map((p, i) => `${i < n.tier ? '◆' : '◇'} ${p}`).join('<br>')}</div>
@@ -11884,24 +11884,24 @@
           ${n.id === 'armorer' && n.tier >= 3 && (me.guns || []).length ? `<div style="margin-top:4px">
             <select id="uw-sellgun" style="max-width:60%">${(me.guns || []).map((gid) => {
               const g = (rules?.guns || []).find((x) => x.id === gid);
-              return `<option value="${gid}">${g ? g.name : gid}</option>`; }).join('')}</select>
+              return `<option value="${gid}">${g ? esc(g.name) : esc(gid)}</option>`; }).join('')}</select>
             <button class="act" id="uw-sellgun-go">sell it back</button></div>` : ''}</div>`).join('')}</div>
       ${me.hospSeconds > 0 ? `<div style="margin-top:8px"><button class="act" data-do="POST /v1/underworld/discharge">Doc's early discharge ($150/min left)</button></div>` : ''}
 
       <h2 style="margin-top:12px">The Fixers' Stories <span class="d" style="font-size:11px">(authored jobs — do the work, make the call, collect once per street · opens at standing ${cam.minStanding ?? 25})</span></h2>
       <div class="grid">${(cam.campaigns || []).map((c) => `
-        <div class="card"><span class="t">${c.name}</span> <span class="chip ${c.completed ? 'good' : c.active ? '' : c.locked ? 'bad' : ''}">${c.claimed ? 'told' : c.completed ? 'ready to collect' : c.active ? `step ${c.step + 1}/${c.steps}` : c.locked ? `locked (standing ${c.standing}/${cam.minStanding})` : 'available'}</span>
-          <div class="d" style="font-size:11px">${c.blurb}</div>
+        <div class="card"><span class="t">${esc(c.name)}</span> <span class="chip ${c.completed ? 'good' : c.active ? '' : c.locked ? 'bad' : ''}">${c.claimed ? 'told' : c.completed ? 'ready to collect' : c.active ? `step ${c.step + 1}/${c.steps}` : c.locked ? `locked (standing ${c.standing}/${cam.minStanding})` : 'available'}</span>
+          <div class="d" style="font-size:11px">${esc(c.blurb)}</div>
           ${c.active && c.say ? `<div class="d" style="margin-top:4px;font-style:italic">"${c.say}"</div>` : ''}
           ${c.active && c.need ? `<div class="d">do this: <b>${c.action}</b> ×${c.need} (${c.done}/${c.need})</div>` : ''}
-          ${c.active && c.choice ? `<div class="d" style="margin-top:4px">Make the call:</div>${c.choice.map((b) => `<button class="act" data-camchoose="${c.id}" data-branch="${b.id}" style="font-size:11px;padding:3px 6px;display:block;margin-top:3px;text-align:left">${b.label} ${b.honor ? `<span class="chip ${b.honor > 0 ? 'good' : 'bad'}">honor ${b.honor > 0 ? '+' : ''}${b.honor}</span>` : ''}</button>`).join('')}` : ''}
+          ${c.active && c.choice ? `<div class="d" style="margin-top:4px">Make the call:</div>${c.choice.map((b) => `<button class="act" data-camchoose="${c.id}" data-branch="${b.id}" style="font-size:11px;padding:3px 6px;display:block;margin-top:3px;text-align:left">${esc(b.label)} ${b.honor ? `<span class="chip ${b.honor > 0 ? 'good' : 'bad'}">honor ${b.honor > 0 ? '+' : ''}${b.honor}</span>` : ''}</button>`).join('')}` : ''}
           ${!c.active && !c.claimed && !c.locked && !c.completed ? `<button class="act" data-camstart="${c.id}">take the job</button>` : ''}
-          ${c.completed && !c.claimed ? `<button class="act" data-camclaim="${c.id}">collect — $${fmt(c.reward.cash)}${c.reward.standing ? ` · +${c.reward.standing} ${c.npc}` : ''}${c.reward.title ? ` · "${c.reward.title}"` : ''}</button>` : ''}</div>`).join('')}</div>
+          ${c.completed && !c.claimed ? `<button class="act" data-camclaim="${c.id}">collect — $${fmt(c.reward.cash)}${c.reward.standing ? ` · +${c.reward.standing} ${c.npc}` : ''}${c.reward.title ? ` · "${esc(c.reward.title)}"` : ''}</button>` : ''}</div>`).join('')}</div>
 
-      <h2 style="margin-top:12px">The Bloodline <span class="d" style="font-size:11px">(${bl.dynasty ? bl.dynasty + ' — ' : ''}${bl.steward?.title || ''} · dynasty score ${fmt(bl.score || 0)})</span></h2>
+      <h2 style="margin-top:12px">The Bloodline <span class="d" style="font-size:11px">(${bl.dynasty ? esc(bl.dynasty) + ' — ' : ''}${esc(bl.steward?.title || '')} · dynasty score ${fmt(bl.score || 0)})</span></h2>
       <div class="card">
         ${(bl.ancestors || []).length ? (bl.ancestors || []).slice().reverse().map((a) => `
-          <div class="d" style="margin-top:4px">⚰ <b>${a.title}</b>${a.epithet ? `, ${a.epithet}` : ''} <span class="chip">${a.honorTier}</span>
+          <div class="d" style="margin-top:4px">⚰ <b>${esc(a.title)}</b>${a.epithet ? `, ${esc(a.epithet)}` : ''} <span class="chip">${a.honorTier}</span>
             <span class="d" style="color:var(--dim)">— ${a.cause} · lvl ${a.level}${a.kills ? ` · ${a.kills} kills` : ''}</span></div>`).join('')
           : '<div class="d" style="color:var(--dim)">No ancestors yet — your line begins with you. When this street dies, the next one inherits a quarter of your name and reads your story here.</div>'}
       </div>
@@ -11911,8 +11911,8 @@
         ${dyn.marriage ? `<div>💍 wed to <b>${dyn.marriage.dynasty || `the house of ${dyn.marriage.steward || '?'}`}</b>${dyn.marriage.steward ? ` <span class="d" style="color:var(--dim)">(steward: ${dyn.marriage.steward})</span>` : ''}
             <button class="act" data-do="POST /v1/dynasty/divorce" style="border-color:var(--blood);margin-left:6px">divorce (honor ${rules?.marriage?.divorce ?? -10})</button></div>`
           : `${(dyn.proposals || []).map((p) => p.mine
-              ? `<div class="d">💍 your proposal sits with <b>${p.steward || p.dynasty || '?'}</b> <button class="act" data-do="POST /v1/dynasty/divorce" style="font-size:11px;padding:2px 6px">withdraw</button></div>`
-              : `<div class="d">💍 <b>${p.steward || p.dynasty || '?'}</b> proposes an alliance <button class="act" data-dynaccept="${p.accountId}">accept ($${fmt(rules?.marriage?.acceptCost || 25000)})</button></div>`).join('')}
+              ? `<div class="d">💍 your proposal sits with <b>${esc(p.steward || p.dynasty || '?')}</b> <button class="act" data-do="POST /v1/dynasty/divorce" style="font-size:11px;padding:2px 6px">withdraw</button></div>`
+              : `<div class="d">💍 <b>${esc(p.steward || p.dynasty || '?')}</b> proposes an alliance <button class="act" data-dynaccept="${p.accountId}">accept ($${fmt(rules?.marriage?.acceptCost || 25000)})</button></div>`).join('')}
             <div style="margin-top:4px"><select id="dyn-target"></select> <button class="act" id="dyn-propose">propose marriage ($${fmt(rules?.marriage?.proposeCost || 25000)})</button></div>`}
         <div style="margin-top:8px;border-top:1px solid var(--line);padding-top:6px">
           ${dyn.consigliere ? `<div class="d">🎩 consigliere: <b>${dyn.consigliere.steward || '?'}</b>${dyn.consigliere.accepted ? '' : ' <span class="chip">awaiting answer</span>'}
@@ -11991,7 +11991,7 @@
     {
       const fillPicker = async (sel) => { if (!sel) return;
         const streets = (await api('GET', '/v1/streets')).body?.streets || [];
-        sel.innerHTML = streets.filter((x) => x.id !== me.id).map((x) => `<option value="${x.id}">${x.name} (lvl ${x.level})</option>`).join(''); };
+        sel.innerHTML = streets.filter((x) => x.id !== me.id).map((x) => `<option value="${x.id}">${esc(x.name)} (lvl ${x.level})</option>`).join(''); };
       fillPicker($('#dyn-target')); fillPicker($('#cons-target'));
       const dp = $('#dyn-propose'); if (dp) dp.onclick = () => { const v = $('#dyn-target')?.value; if (v) act('POST', `/v1/dynasty/propose/${v}`, {}).then(() => renderLife()); };
       const cn = $('#cons-name'); if (cn) cn.onclick = () => { const v = $('#cons-target')?.value; if (v) act('POST', `/v1/dynasty/consigliere/${v}`, {}).then(() => renderLife()); };
@@ -12060,7 +12060,7 @@
       </div>
       <h2 style="margin-top:10px">The Commissary</h2>
       <div class="grid">${(p.commissary || []).map((it) => `
-        <div class="card"><span class="t">${it.name}</span><div class="d">$${fmt(it.cost)} — ${it.desc}</div>
+        <div class="card"><span class="t">${esc(it.name)}</span><div class="d">$${fmt(it.cost)} — ${esc(it.desc)}</div>
           <button class="act" data-penbuy="${it.id}">buy</button></div>`).join('')}</div>
       <h2 style="margin-top:10px">The Yard Lives <span class="d">a sentence doesn't have to be dead time — build the body, learn the table, hear a story</span></h2>
       ${(() => { // step six — THE YARD LIVES: the iron pile, cards with the crew, the daily yard character
@@ -12076,11 +12076,11 @@
             <button class="act" id="pen-talk"${yl.talked ? ' disabled' : ''}>${yl.talked ? 'you talked today' : 'talk to them'}</button></div>
         </div>`; })()}
       <h2 style="margin-top:10px">Yard Crews <span class="d">run with a crew — more inmates on the block covers you from the shiv (up to a cap), and the most-feared calls the shots</span></h2>
-      ${p.faction ? `<div class="card"><span class="t">${p.faction.name} ${p.faction.shotCaller ? '<span class="chip good">SHOT-CALLER</span>' : ''}</span>
+      ${p.faction ? `<div class="card"><span class="t">${esc(p.faction.name)} ${p.faction.shotCaller ? '<span class="chip good">SHOT-CALLER</span>' : ''}</span>
           <div class="d">${p.faction.mates} fellow inmate${p.faction.mates === 1 ? '' : 's'} on the block · <b>${p.faction.cover}%</b> shiv cover${p.faction.shotCaller ? ' (incl. the leadership bonus)' : ''} — you can't shank your own crew (yard omertà)</div>
           <button class="act" data-facleave="1">walk away from the crew</button></div>`
         : `<div class="grid">${(p.factions || []).map((f) => `
-          <div class="card"><span class="t">${f.name}</span>
+          <div class="card"><span class="t">${esc(f.name)}</span>
             <button class="act" data-facjoin="${f.id}">run with them</button></div>`).join('')}</div>`}
       <h2 style="margin-top:10px">Crew Break <span class="d">${bb.min || 2}–${bb.max || 4} inmates over the wall together — bigger crew, better odds</span></h2>
       ${bb.mine ? `<div class="card" style="border-color:var(--blood)"><span class="t">Your break — crew ${bb.mine.crew.length}/${bb.max} (${bb.mine.crew.join(', ')})</span>
