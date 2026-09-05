@@ -5878,6 +5878,44 @@ third mutation wiped the uncommitted races.js fix — ground rule #9's own scena
 its last occurrence. Re-applied from context; mutations are restored only by `cp` from scratchpad
 copies. No SQL moved (`src/races.js` changed one object literal — verified on the STAGED diff).
 
+**THE PERSIST IS NAMED, NOT COUNTED — the 67-parameter positional UPDATE and its two hand-rolled
+twins (2026-09-05).** `persistCharacter` was one hand-written `UPDATE characters SET respect=$2, … $67`
+and `persistAccount` its 19-parameter sibling — the two statements EVERY authed request ends on — and
+the record shows what that shape costs: every column added to the row since M1 has had to be threaded
+by hand into a list where the ONLY thing binding a value to its column is the position it happens to
+sit at, and a slip is a silent swap between two same-typed columns that no suite sees (this log's own
+entries cite `$59`, `$62/$63`, `$64/$65`, `$67` as landmarks, which is how load-bearing the count had
+become). Worse, the estate had TWO HEADLESS COPIES of the account write — the mod-kill in
+`routes/modtools.js` and the NPC-hunter kill in `combat.js` each carried their own
+`UPDATE account_persistent SET prestige=$2, deaths=$3, omr=$4, unbonding=$5` — and the death-duty and
+unbonding drops both had to touch all three sites, which the log records as the reason those two
+fixes were found by a §10.4 drift rather than by design. **Both statements are now GENERATED from two
+exported column lists** (`CHARACTER_PERSIST_COLUMNS` 66, `ACCOUNT_PERSIST_COLUMNS` 18 — each entry a
+column name plus an optional default, so a two-element entry still applies its `0`/`false`/`null` and a
+one-element entry binds the raw value exactly as the positional list did), the SET clause is built once
+at module load, and the two headless persists collapse onto ONE `persistAccountFields(client, id, acct,
+ESTATE_ACCOUNT_FIELDS)` — a field list that is VALIDATED against the column list (an unknown field
+throws) so a copied UPDATE can never drift from the persist again. Byte-identical behaviour: the
+generated SQL was diffed against the hand-written one before the old text was deleted.
+**`test/persist.js` (the 154th suite) turns the shape into properties**, and the useful one is the
+SCHEMA check: every listed column is `SELECT`ed against the live table, so a persist column the schema
+does not carry fails BY NAME before any request runs — where a positional UPDATE would have shipped it
+as a runtime 500 on every authed request (the 2026-08-06 boot-crash class, one layer down). Its first
+cut killed the typo mutation only as a raw pg-mem `ColumnNotFound` throw — the *failure that teaches
+nothing* shape — so the SELECT is wrapped and names the column and the consequence. The estate half is
+a SOURCE scan of `runEstate`: every `acct.<field>` it assigns must be in `ESTATE_ACCOUNT_FIELDS`, or
+the next unbonding-class column is silently un-persisted on the headless paths again; **its first run
+found ZERO assignments**, because the first `{` after the function name is the `opts = {}` DEFAULT
+PARAMETER, not the body — the same trap THE GATE MATRIX hit on `npcHit` — so the parameter list is
+paren-matched before the body is brace-matched, with an anti-vacuity floor. Four mutations, four named
+kills (`unbonding` dropped from the field list; a column misspelled; the hand-rolled UPDATE restored in
+combat.js; defaults ignored — killed as a NOT NULL violation on the real write). `pgquery`'s
+interpolated ceiling rose 162 → 165 with the reason recorded at the site (the SET clauses are generated
+from the exported lists and every value is bound; the suite SELECTs every column), and the
+interpolation ledger declares the one new `${set}`. **Process note:** four mutations were run against
+`src/` while a background full-suite run was in flight — that run's green was worthless and was
+re-run; a suite reading a file another process is rewriting reports nothing about either tree.
+
 ## Sensitive design notes
 *These are standing PRODUCT rules. They bind whatever else is true, and several of them exist
 because breaking one is very hard to walk back.*

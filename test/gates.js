@@ -3073,6 +3073,7 @@ scopedSocialContext = async function(db) {
     'src/world.js|extra': 'freeQ(extra,params) — literal predicate at both call sites; values bound',
     'src/pen.js|cols': 'break setMember/setMemberRat — literal SET clause at every call site; values bound',
     'src/wire.js|col': "claim(w,col) — three literal column names ('alerted_hunt'/'_wanted'/'_indicted')",
+    'src/game.js|set': 'persistAccountFields — SET clause generated from ACCOUNT_PERSIST_COLUMNS entries the field list was validated against (an unknown field throws); every value bound',
     'src/rwanominations.js|setClause': 'updateQueueNominationIds(...,setClause,marker) — literal at every call site',
     'src/rwanominations.js|marker': 'a literal SQL-comment tag at every call site (query attribution only)',
     'src/stockcatalogv2.js|marker': 'readState(marker) — two literal tags, inside a /* */ SQL comment',

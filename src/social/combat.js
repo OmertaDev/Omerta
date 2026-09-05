@@ -6,7 +6,7 @@
 //
 // Split out of the 2,003-line src/social.js; every function below is byte-identical to what was
 // there. Import from '../social.js' — it re-exports this package's public surface unchanged.
-import { GameError, assertStreetActor, bumpFamilyTask, bus, ledger, notify, track, loadOwned, skillMult, npcMult, npcTier, bumpStanding, bumpMastery, masteryFx, trunkCap, gainRespect, bumpCrewObjective, hunterSearchMs } from '../game.js';
+import { GameError, assertStreetActor, bumpFamilyTask, bus, ledger, notify, track, loadOwned, skillMult, npcMult, npcTier, bumpStanding, bumpMastery, masteryFx, trunkCap, gainRespect, bumpCrewObjective, hunterSearchMs, persistAccountFields, ESTATE_ACCOUNT_FIELDS } from '../game.js';
 import { M3, CONSTANTS, LOAN, levelOf, rankIdxOf, cityEventOf, dayOf, btkOf, gunObjOf, vestMultOf, fleetValue, effStat, npcHitmanOf, VENDETTA, COMMISSION, SKILLS, UNDERWORLD, LAW, PORT, witproActive, penSafe, inHole, HONOR, HEIST_LOOT_RATE, BUSINESSES, seasonModOf, pathFx, RIVALS, carVal, carOf, boatOf, gearOf, SHIPMENT, usd , districtName, bustSpentToday, bustAttemptsLeft, bustRefillSeconds , coolLeft, coolWait } from '../rules.js';
 import { activeDecree } from '../commission.js';
 import { bumpHonor } from '../honor.js';
@@ -735,11 +735,10 @@ export async function huntWanted(pool) {
       }
       // the hunter lands it — the estate runs (no killerCh: no chop/loot/rep; the pool bounty burns)
       await runEstate(client, h, victim, 'A BOUNTY HUNTER');
-      // narrow hand-rolled persist (no persistAccount here): must carry every account field runEstate
-      // mutates — prestige, deaths, and (L2a) the death-duty $OMR burn (ledgered inside runEstate),
-      // which reaches liquid AND unbonding, so both columns ride or the burn drifts §10.4.
-      await client.query('UPDATE account_persistent SET prestige=$2, deaths=$3, omr=$4, unbonding=$5 WHERE account_id=$1',
-        [victim.account_id, victimAcct.prestige, victimAcct.deaths, victimAcct.omr, victimAcct.unbonding ?? 0]);
+      // narrow headless persist (no persistAccount here): ESTATE_ACCOUNT_FIELDS is the list of every
+      // account field runEstate mutates, kept beside the persist columns in game.js and scanned by
+      // test/persist.js — so the death-duty $OMR burn (liquid AND unbonding) can never drift §10.4 here.
+      await persistAccountFields(client, victim.account_id, victimAcct, ESTATE_ACCOUNT_FIELDS);
       bus.emit('streets', { type: 'kill', by: 'a bounty hunter', victim: victim.name });
       await client.query('COMMIT'); killed++;
     } catch (e) { await client.query('ROLLBACK'); console.error('huntWanted', m.id, e.message); }

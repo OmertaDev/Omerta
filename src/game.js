@@ -1214,16 +1214,79 @@ export async function readCharacter(pool, accountId, fn) {
   return fast !== null ? fast : withCharacter(pool, accountId, fn);
 }
 
+// ═══ THE PERSIST COLUMN LISTS — named columns, never positions ═══════════════════════════════════
+// Both writers below used to be ONE positional UPDATE each (67 and 19 `$n` parameters), which had
+// two costs. Adding a column meant editing the SET text and the value array in lockstep, and a slip
+// — a value in position 41 that belongs to the column in position 42 — writes silently wrong data
+// with every check green (both sides are the same statement, so nothing can disagree). And the two
+// hand-rolled headless persists (mod-kill in routes/modtools.js, huntWanted in social/combat.js)
+// restated a SUBSET of the account columns by hand, each commented "must carry every field runEstate
+// mutates" — a rule kept by memory, in two places, that the L2a death duty had already caught once.
+// Now the column list is the single source: the SET clause is GENERATED from it, a subset persist
+// reads from the same list, and test/persist.js proves every column exists and that the headless
+// subset covers every account field runEstate assigns.
+//
+// Each entry is [column, default]. A two-element entry binds `row[column] ?? default` (the old
+// `?? 0` / `?? false` / `?? null` coercions, kept byte-for-byte); a one-element entry binds the raw
+// value, exactly as the positional statement did. Order is irrelevant to correctness now; it is kept
+// as the positional order was so a diff against the old statement reads column-for-column.
+export const ACCOUNT_PERSIST_COLUMNS = [
+  ['omr'], ['staked'], ['rewards'], ['prestige'], ['deaths'],
+  ['recruits'], ['checkins_lifetime'], ['ref_paid'], ['onboard'], ['wallet_address'],
+  ['minted', false], ['mint_credits', 0], ['respawn_tokens', 0], ['hitman_rep', 0], ['kills', 0],
+  ['unbonding', 0], ['unbond_at', null], ['rat', false],
+];
+export const CHARACTER_PERSIST_COLUMNS = [
+  ['respect'], ['energy'], ['nerve'], ['health'], ['cash'], ['bank'],
+  ['muscle'], ['cunning'], ['speed'], ['jail_until'], ['loc'], ['streak'], ['checkin_day'],
+  ['lc_crime'], ['ammo'], ['cb'], ['heat'], ['trade_rep'], ['gta_at'], ['path'],
+  ['gun'], ['vest'], ['shoot_cd_until'], ['busts'], ['hosp_until'],
+  ['lab'], ['crew'], ['heist_at'], ['title'],
+  ['racket_credit_ms'], ['season_kills', 0], ['npchit_at'], ['safe_until'],
+  ['guard_price'], ['guarded_by'], ['guarded_until'], ['bank_credit_ms'], ['last_accrued_at'],
+  ['bank_intransit', 0], ['bank_intransit_at'], ['fade_limit', null], ['wash_used', 0], ['wash_at', null], ['respec_at', null],
+  ['crew_paid_at', null], ['heat_exposure', 0], ['indicted_at', null], ['retainer_until', null], ['jury_bought', false], ['witpro_until', null],
+  ['world_raid_at', null], ['pen_safe_until', null], ['hole_until', null], ['welsher', false], ['wanted_until', null],
+  ['rwa_used', 0], ['rwa_at', null], ['envelope_until', null], ['wire_until', null], ['poker_limit', null],
+  ['safehouse_used', 0], ['safehouse_at', null], ['refill_used', 0], ['refill_at', null], ['family_raid_at', null],
+  ['shipment', 0],
+];
+// The account fields runEstate assigns in memory (prestige, deaths, and the L2a death duty's two
+// $OMR columns). The two headless estate persists write EXACTLY this subset through
+// persistAccountFields, so a field runEstate starts mutating tomorrow is added HERE once, not
+// remembered at two call sites — and test/persist.js scans runEstate for `acct.X =` and fails if
+// an assigned field is missing from this list.
+export const ESTATE_ACCOUNT_FIELDS = ['prestige', 'deaths', 'omr', 'unbonding'];
+
+// `col=$2, col=$3, …` — $1 is always the row key. A generated fragment is not preparable by
+// tools/pgquery.js (counted under its ceiling, reason recorded there) and is classified by THE
+// INTERPOLATION LEDGER as an ALL_CAPS module constant / a declared column-list fragment: every
+// column name comes from the exported lists above, never from a request.
+const setClauseOf = (cols) => cols.map(([c], i) => `${c}=$${i + 2}`).join(', ');
+// A one-element entry binds the raw value (an undefined stays undefined, exactly as the positional
+// list did); a two-element entry applies its default — 0/false/null, never undefined.
+const valuesOf = (cols, row) => cols.map(([c, d]) => (d === undefined ? row[c] : (row[c] ?? d)));
+const ACCOUNT_SET = setClauseOf(ACCOUNT_PERSIST_COLUMNS);
+const CHARACTER_SET = setClauseOf(CHARACTER_PERSIST_COLUMNS);
+
 async function persistAccount(client, accountId, a) {
-  await client.query(
-    `UPDATE account_persistent SET omr=$2, staked=$3, rewards=$4, prestige=$5, deaths=$6,
-      recruits=$7, checkins_lifetime=$8, ref_paid=$9, onboard=$10, wallet_address=$11,
-      minted=$12, mint_credits=$13, respawn_tokens=$14, hitman_rep=$15, kills=$16,
-      unbonding=$17, unbond_at=$18, rat=$19 WHERE account_id=$1`,
-    [accountId, a.omr, a.staked, a.rewards, a.prestige, a.deaths,
-     a.recruits, a.checkins_lifetime, a.ref_paid, a.onboard, a.wallet_address,
-     a.minted ?? false, a.mint_credits ?? 0, a.respawn_tokens ?? 0, a.hitman_rep ?? 0, a.kills ?? 0,
-     a.unbonding ?? 0, a.unbond_at ?? null, a.rat ?? false]);
+  await client.query(`UPDATE account_persistent SET ${ACCOUNT_SET} WHERE account_id=$1`,
+    [accountId, ...valuesOf(ACCOUNT_PERSIST_COLUMNS, a)]);
+}
+
+// A NAMED SUBSET of the account columns — for the headless paths (mod-kill, the NPC bounty hunter)
+// that hold no wrapper and must persist only what runEstate touched. Every field must be on
+// ACCOUNT_PERSIST_COLUMNS: a typo here is a thrown error, never a silent no-op column.
+export async function persistAccountFields(client, accountId, a, fields) {
+  const cols = fields.map((f) => {
+    const entry = ACCOUNT_PERSIST_COLUMNS.find(([c]) => c === f);
+    if (!entry) throw new Error(`persistAccountFields: ${f} is not an account persist column`);
+    return entry;
+  });
+  if (!cols.length) return;
+  const set = setClauseOf(cols);
+  await client.query(`UPDATE account_persistent SET ${set} WHERE account_id=$1`,
+    [accountId, ...valuesOf(cols, a)]);
 }
 
 // Two-party actions (§10.1): lock BOTH character rows in stable id order, then both
@@ -1306,34 +1369,8 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
 }
 
 async function persistCharacter(client, ch) {
-  await client.query(
-    `UPDATE characters SET respect=$2, energy=$3, nerve=$4, health=$5, cash=$6, bank=$7,
-      muscle=$8, cunning=$9, speed=$10, jail_until=$11, loc=$12, streak=$13, checkin_day=$14,
-      lc_crime=$15, ammo=$16, cb=$17, heat=$18, trade_rep=$19, gta_at=$20, path=$21,
-      gun=$22, vest=$23, shoot_cd_until=$24, busts=$25, hosp_until=$26,
-      lab=$27, crew=$28, heist_at=$29, title=$30,
-      racket_credit_ms=$31, season_kills=$32, npchit_at=$33, safe_until=$34,
-      guard_price=$35, guarded_by=$36, guarded_until=$37, bank_credit_ms=$38, last_accrued_at=$39,
-      bank_intransit=$40, bank_intransit_at=$41, fade_limit=$42, wash_used=$43, wash_at=$44, respec_at=$45,
-      crew_paid_at=$46, heat_exposure=$47, indicted_at=$48, retainer_until=$49, jury_bought=$50, witpro_until=$51,
-      world_raid_at=$52, pen_safe_until=$53, hole_until=$54, welsher=$55, wanted_until=$56,
-      rwa_used=$57, rwa_at=$58, envelope_until=$59, wire_until=$60, poker_limit=$61,
-      safehouse_used=$62, safehouse_at=$63, refill_used=$64, refill_at=$65, family_raid_at=$66,
-      shipment=$67 WHERE id=$1`,
-    [ch.id, ch.respect, ch.energy, ch.nerve, ch.health, ch.cash, ch.bank,
-     ch.muscle, ch.cunning, ch.speed, ch.jail_until, ch.loc, ch.streak, ch.checkin_day,
-     ch.lc_crime, ch.ammo, ch.cb, ch.heat, ch.trade_rep, ch.gta_at, ch.path,
-     ch.gun, ch.vest, ch.shoot_cd_until, ch.busts, ch.hosp_until,
-     ch.lab, ch.crew, ch.heist_at, ch.title, ch.racket_credit_ms, ch.season_kills ?? 0, ch.npchit_at, ch.safe_until,
-     ch.guard_price, ch.guarded_by, ch.guarded_until, ch.bank_credit_ms, ch.last_accrued_at,
-     ch.bank_intransit ?? 0, ch.bank_intransit_at, ch.fade_limit ?? null,
-     ch.wash_used ?? 0, ch.wash_at ?? null, ch.respec_at ?? null, ch.crew_paid_at ?? null,
-     ch.heat_exposure ?? 0, ch.indicted_at ?? null, ch.retainer_until ?? null, ch.jury_bought ?? false, ch.witpro_until ?? null,
-     ch.world_raid_at ?? null, ch.pen_safe_until ?? null, ch.hole_until ?? null, ch.welsher ?? false, ch.wanted_until ?? null,
-     ch.rwa_used ?? 0, ch.rwa_at ?? null, ch.envelope_until ?? null, ch.wire_until ?? null,
-     ch.poker_limit ?? null, ch.safehouse_used ?? 0, ch.safehouse_at ?? null,
-     ch.refill_used ?? 0, ch.refill_at ?? null, ch.family_raid_at ?? null,
-     ch.shipment ?? 0]);
+  await client.query(`UPDATE characters SET ${CHARACTER_SET} WHERE id=$1`,
+    [ch.id, ...valuesOf(CHARACTER_PERSIST_COLUMNS, ch)]);
 }
 
 // THE COACH — the single highest-value next step for THIS player, server-authoritative so the client
