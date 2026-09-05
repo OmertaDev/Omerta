@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "75bfb77356d198bd79265873452cc0b8b294c121",
+  "sourceRevision": "65b0021724fad6828a97f4ee7bed1aa4738a9b59",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5703,
-    "edges": 25308,
+    "nodes": 5705,
+    "edges": 25319,
     "byNodeType": {
       "Artifact": 1830,
       "Command": 58,
-      "Commit": 1337,
+      "Commit": 1339,
       "Contract": 49,
       "Document": 475,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1982,
-      "CHANGED": 10247,
+      "CHANGED": 10256,
       "CONTAINS": 1850,
       "DECLARES": 58,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 206,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1337,
+      "HAS_COMMIT": 1339,
       "IMPLEMENTS": 124,
       "IMPORTS": 1650,
       "INHERITS": 12,
@@ -7521,20 +7521,20 @@
       "path": ".github/workflows/ci.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 16040,
-      "lines": 292,
-      "version": "8a9fea81b21881cb",
+      "bytes": 16568,
+      "lines": 299,
+      "version": "fdf8e4f3c1946c83",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "8a9fea81b21881cb"
+          "version": "fdf8e4f3c1946c83"
         }
       ],
-      "lastChangedAt": "2026-08-29T13:12:18.000Z",
-      "lastChangedBy": "Claude",
-      "lastChangedCommit": "ffe20171a9ae64a13067a8aa15f2f15bad80c250"
+      "lastChangedAt": "2026-09-05T09:11:49.000Z",
+      "lastChangedBy": "omerta",
+      "lastChangedCommit": "65b0021724fad6828a97f4ee7bed1aa4738a9b59"
     },
     {
       "key": "Artifact:.github/workflows/forge.yml",
@@ -41624,20 +41624,20 @@
       "path": "tools/pgcheck.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 82272,
-      "lines": 1141,
-      "version": "36b964a09e199801",
+      "bytes": 83255,
+      "lines": 1153,
+      "version": "959fab0f01ce03b6",
       "text": true,
       "provenance": [
         {
           "file": "tools/pgcheck.js",
           "line": 1,
-          "version": "36b964a09e199801"
+          "version": "959fab0f01ce03b6"
         }
       ],
-      "lastChangedAt": "2026-09-05T09:00:18.000Z",
+      "lastChangedAt": "2026-09-05T09:11:49.000Z",
       "lastChangedBy": "omerta",
-      "lastChangedCommit": "75bfb77356d198bd79265873452cc0b8b294c121"
+      "lastChangedCommit": "65b0021724fad6828a97f4ee7bed1aa4738a9b59"
     },
     {
       "key": "Artifact:tools/pgquery.js",
@@ -51531,6 +51531,22 @@
       ]
     },
     {
+      "key": "Commit:65b0021724fad6828a97f4ee7bed1aa4738a9b59",
+      "type": "Commit",
+      "id": "65b0021724fad6828a97f4ee7bed1aa4738a9b59",
+      "label": "ci: the real-Postgres job needs the full lineage — §7c failed on a shallow clone and §7b was vacuous on one",
+      "title": "ci: the real-Postgres job needs the full lineage — §7c failed on a shallow clone and §7b was vacuous on one",
+      "date": "2026-09-05T09:11:49.000Z",
+      "author": "omerta",
+      "url": "https://github.com/OmertaDev/Omerta/commit/65b0021724fad6828a97f4ee7bed1aa4738a9b59",
+      "provenance": [
+        {
+          "commit": "65b0021724fad6828a97f4ee7bed1aa4738a9b59",
+          "url": "https://github.com/OmertaDev/Omerta/commit/65b0021724fad6828a97f4ee7bed1aa4738a9b59"
+        }
+      ]
+    },
+    {
       "key": "Commit:65b283debfa4be7bd3b927688882cd13215a0517",
       "type": "Commit",
       "id": "65b283debfa4be7bd3b927688882cd13215a0517",
@@ -58391,6 +58407,22 @@
         {
           "commit": "b30bbd480371c8d2bbf2437922cb051e8c1d3baf",
           "url": "https://github.com/OmertaDev/Omerta/commit/b30bbd480371c8d2bbf2437922cb051e8c1d3baf"
+        }
+      ]
+    },
+    {
+      "key": "Commit:b328f5159a64ff7c347e0160cef2376b3c027277",
+      "type": "Commit",
+      "id": "b328f5159a64ff7c347e0160cef2376b3c027277",
+      "label": "chore(knowledge): refresh generated artifacts for 75bfb773",
+      "title": "chore(knowledge): refresh generated artifacts for 75bfb773",
+      "date": "2026-09-05T09:01:01.000Z",
+      "author": "omerta",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b328f5159a64ff7c347e0160cef2376b3c027277",
+      "provenance": [
+        {
+          "commit": "b328f5159a64ff7c347e0160cef2376b3c027277",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b328f5159a64ff7c347e0160cef2376b3c027277"
         }
       ]
     },
@@ -73220,11 +73252,11 @@
         },
         {
           "file": "tools/pgcheck.js",
-          "line": 503
+          "line": 515
         },
         {
           "file": "tools/pgcheck.js",
-          "line": 596
+          "line": 608
         }
       ]
     },
@@ -77365,6 +77397,9 @@
           "commit": "b0a214cabab9a6fd301844d88f088bd17884f4b5"
         },
         {
+          "commit": "b328f5159a64ff7c347e0160cef2376b3c027277"
+        },
+        {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
         },
         {
@@ -77768,6 +77803,9 @@
         },
         {
           "commit": "b0a214cabab9a6fd301844d88f088bd17884f4b5"
+        },
+        {
+          "commit": "b328f5159a64ff7c347e0160cef2376b3c027277"
         },
         {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
@@ -78241,6 +78279,9 @@
           "commit": "b0a214cabab9a6fd301844d88f088bd17884f4b5"
         },
         {
+          "commit": "b328f5159a64ff7c347e0160cef2376b3c027277"
+        },
+        {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
         },
         {
@@ -78710,6 +78751,9 @@
         },
         {
           "commit": "b0a214cabab9a6fd301844d88f088bd17884f4b5"
+        },
+        {
+          "commit": "b328f5159a64ff7c347e0160cef2376b3c027277"
         },
         {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
@@ -79255,6 +79299,9 @@
           "commit": "b0a214cabab9a6fd301844d88f088bd17884f4b5"
         },
         {
+          "commit": "b328f5159a64ff7c347e0160cef2376b3c027277"
+        },
+        {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
         },
         {
@@ -79492,6 +79539,9 @@
           "commit": "ad7c199e5ca3cfe70cedd4bcbcde5e1c7078e3bd"
         },
         {
+          "commit": "b328f5159a64ff7c347e0160cef2376b3c027277"
+        },
+        {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
         },
         {
@@ -79622,6 +79672,9 @@
         },
         {
           "commit": "9b5e1f54d084547bb33600f5934391191726a3c1"
+        },
+        {
+          "commit": "b328f5159a64ff7c347e0160cef2376b3c027277"
         },
         {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
@@ -85696,7 +85749,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "75bfb77356d198bd79265873452cc0b8b294c121",
+      "revision": "65b0021724fad6828a97f4ee7bed1aa4738a9b59",
       "currentBranch": "claude/next-work-recommendations-x5f2fp",
       "defaultBranch": "main",
       "visibility": "public",
@@ -111253,13 +111306,13 @@
       "type": "Workflow",
       "id": ".github/workflows/ci.yml",
       "label": ".github/workflows/ci.yml",
-      "lines": 292,
-      "version": "8a9fea81b21881cb",
+      "lines": 299,
+      "version": "fdf8e4f3c1946c83",
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "8a9fea81b21881cb"
+          "version": "fdf8e4f3c1946c83"
         }
       ]
     },
@@ -164398,6 +164451,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:65b0021724fad6828a97f4ee7bed1aa4738a9b59",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "commit": "65b0021724fad6828a97f4ee7bed1aa4738a9b59"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:65b0021724fad6828a97f4ee7bed1aa4738a9b59",
+      "to": "Artifact:tools/pgcheck.js",
+      "provenance": {
+        "commit": "65b0021724fad6828a97f4ee7bed1aa4738a9b59"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:65b283debfa4be7bd3b927688882cd13215a0517",
       "to": "Artifact:SPEC.md",
       "provenance": {
@@ -187290,6 +187359,62 @@
       "to": "Artifact:omerta-contracts/test/StockTokenRegistryV2Invariant.t.sol",
       "provenance": {
         "commit": "b30bbd480371c8d2bbf2437922cb051e8c1d3baf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b328f5159a64ff7c347e0160cef2376b3c027277",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "b328f5159a64ff7c347e0160cef2376b3c027277"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b328f5159a64ff7c347e0160cef2376b3c027277",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "b328f5159a64ff7c347e0160cef2376b3c027277"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b328f5159a64ff7c347e0160cef2376b3c027277",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "b328f5159a64ff7c347e0160cef2376b3c027277"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b328f5159a64ff7c347e0160cef2376b3c027277",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "b328f5159a64ff7c347e0160cef2376b3c027277"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b328f5159a64ff7c347e0160cef2376b3c027277",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "b328f5159a64ff7c347e0160cef2376b3c027277"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b328f5159a64ff7c347e0160cef2376b3c027277",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "b328f5159a64ff7c347e0160cef2376b3c027277"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b328f5159a64ff7c347e0160cef2376b3c027277",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "b328f5159a64ff7c347e0160cef2376b3c027277"
       }
     },
     {
@@ -251729,6 +251854,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:65b0021724fad6828a97f4ee7bed1aa4738a9b59",
+      "provenance": {
+        "commit": "65b0021724fad6828a97f4ee7bed1aa4738a9b59"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:65b283debfa4be7bd3b927688882cd13215a0517",
       "provenance": {
         "commit": "65b283debfa4be7bd3b927688882cd13215a0517"
@@ -255156,6 +255289,14 @@
       "to": "Commit:b30bbd480371c8d2bbf2437922cb051e8c1d3baf",
       "provenance": {
         "commit": "b30bbd480371c8d2bbf2437922cb051e8c1d3baf"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:b328f5159a64ff7c347e0160cef2376b3c027277",
+      "provenance": {
+        "commit": "b328f5159a64ff7c347e0160cef2376b3c027277"
       }
     },
     {
@@ -273147,7 +273288,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 1029
+        "line": 1041
       }
     },
     {
@@ -273165,7 +273306,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 916
+        "line": 928
       }
     },
     {
@@ -273174,7 +273315,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 1030
+        "line": 1042
       }
     },
     {
@@ -273192,7 +273333,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 917
+        "line": 929
       }
     },
     {
@@ -273210,7 +273351,7 @@
       "to": "Artifact:src/social/contracts.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 915
+        "line": 927
       }
     },
     {
@@ -273219,7 +273360,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 503
+        "line": 515
       }
     },
     {
@@ -273228,7 +273369,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 596
+        "line": 608
       }
     },
     {
