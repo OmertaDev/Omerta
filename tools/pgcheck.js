@@ -490,8 +490,20 @@ console.log('\n7b. THE BUILD BOOTS AGAINST A DATABASE OLDER THAN ITSELF');
   const swap = (u) => u.replace(/\/[^/?]+(\?|$)/, `/${oldDb}$1`);
   let ok = true; let err = ''; let added = 0;
   try {
-    const first = execSync('git log --format=%H -- schema.sql', { cwd: ROOT }).toString().trim().split('\n').pop();
+    const shas = execSync('git log --format=%H -- schema.sql', { cwd: ROOT }).toString().trim().split('\n');
+    const first = shas[shas.length - 1];
     const oldSchema = execSync(`git show ${first}:schema.sql`, { cwd: ROOT, maxBuffer: 32 * 1024 * 1024 }).toString();
+    // ANTI-VACUITY, learned from CI on 2026-09-05: on a SHALLOW checkout `git log` sees one commit,
+    // so the "oldest" schema is HEAD and this check upgrades a database from itself to itself —
+    // and passes, reading exactly like a clean bill of health. §7c's floor caught the same clone
+    // (no UUID schema to migrate from); this one had none and had been green in CI for that reason.
+    // The floor is on the SCHEMA, not the sha count: a history whose oldest schema.sql is
+    // byte-identical to today's has nothing to upgrade from either.
+    const curSchema = (await import('node:fs')).readFileSync(new URL('../schema.sql', import.meta.url), 'utf8');
+    if (shas.length < 2 || oldSchema === curSchema) {
+      throw new Error(`the oldest schema.sql in history IS the current one (${shas.length} commit(s) visible) — a shallow `
+        + 'checkout? the check has nothing to upgrade from and would pass over nothing');
+    }
     // CREATE DATABASE cannot run inside a transaction, so it goes through the live pool directly
     await pool.query(`DROP DATABASE IF EXISTS ${oldDb}`);
     await pool.query(`CREATE DATABASE ${oldDb}`);
