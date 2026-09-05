@@ -5844,6 +5844,40 @@ outside it); write-time `cleanText` stays the first wall and this is the second.
 markup moves no value), no SQL moved (verified on the STAGED diff — the unstaged one is empty after a
 savepoint, which reads exactly like a clean sweep).
 
+**THE MIRROR LEARNS TWO-HOP READS — the guard's own stated blind spot, closed, and the drift it found
+(2026-09-05).** `test/client.js` check 4 has said in its own words since it shipped that it covers
+top-level fields, one alias hop and list elements, and that deeper chains are out of scope — and a
+measurement two sessions earlier put the number on it: **814 distinct two-hop reads in the client
+(`b.grandPrix.pool`, `me.gang.treasury`), checked by nothing.** The report-only probe that produced
+that number ended with one drift and a decision to leave it, since the client branched on the
+parent's `open` flag; this drop makes the check permanent and, having done so, fixes the drift at
+the SOURCE rather than waiving it. **The design decision is the ABSENT-PARENT rule.** A parent that
+is missing or null on the fixture's board is the benign empty-state case — no war, no spouse, no
+champion, no decree — and a guard that reports it would be mostly waivers, which is the
+mostly-wrong advisory this file keeps naming as worse than none. So an absent parent is COUNTED
+(and printed — *"32 parent absent/null (empty-state, not a finding)"*), never reported, while a
+parent that IS an object is held to its key set. The nested map rides the same bindings check 4
+already scopes (GETBIND/RAWBIND/THENBIND — the blind-spot family the mirror has closed four times),
+so a board the first level cannot see, the second cannot either; a chain through a BUILTIN
+(`.length`, `.map`) is skipped. **Two anti-vacuity floors, because they fail differently**: >300
+chains collected (an extractor that stopped reading the client) and >100 checked (a fixture whose
+every parent went absent). Measured on the green run: **346 chains, 251 checked, 32 absent.**
+**The one drift is the `dormantView` class, one system over.** `/v1/races`' `grandPrix` carried
+`{open, buyin, minLevel, minEntrants}` when no race was open and
+`{…, id, pool, entrants, entered, closesSeconds}` when one was — and `renderRaces` reads the four
+live-only keys off it. Today the client branches on `open` first, so nothing renders `undefined`;
+it is exactly the shape `bankPosition` was fixed for (a dormant object carrying fewer keys than the
+live one leaves a client unable to tell "no race" from "no such field"), and the closed shape now
+carries the same key set at its natural zeros. Four mutations, each caught at its own named
+assertion (a bogus nested read → *"reads grandPrix.zzbogus off /v1/races|"*; the extractor blinded
+→ *"only 0 two-hop read chain(s) collected"*; the server's closed shape restored → the drift named
+by field; a bogus read under an ABSENT parent → the nested check stays silent by design, and the
+run fails at the pre-existing FIRST-LEVEL check instead, which is the correct behaviour rather than
+a hole). **And the recorded trap was hit again, by me**: `git checkout -- src/races.js` to undo the
+third mutation wiped the uncommitted races.js fix — ground rule #9's own scenario, three days after
+its last occurrence. Re-applied from context; mutations are restored only by `cp` from scratchpad
+copies. No SQL moved (`src/races.js` changed one object literal — verified on the STAGED diff).
+
 ## Sensitive design notes
 *These are standing PRODUCT rules. They bind whatever else is true, and several of them exist
 because breaking one is very hard to walk back.*

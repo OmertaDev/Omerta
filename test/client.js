@@ -1024,6 +1024,26 @@ const collectList = (src, v, key, fn) => {
 const GETBIND = /(?:(const|let|var)\s+)?([a-zA-Z_$][\w$]*)\s*=\s*\(*\(await api\(\s*'GET'\s*,\s*([`'"])([^`'"]+)\3\s*\)\)\s*\.body(\s*\?\.\s*([a-zA-Z_$][\w$]*))?/g;
 const reads = new Map(), readWhere = new Map();
 let unscoped = 0, shadowUnresolved = 0;
+// TWO-HOP READS (task #4). The mirror above keys a binding as `path|sub` and checks ONE level of
+// fields off it; `b.x.y` — the field of a sub-object the screen never aliased — was the stated
+// out-of-scope, and a measurement counted ~814 distinct such chains in the client checked by
+// nothing. This collects them per binding: nested.get(key) → Map<parentField, Set<childField>>.
+// Verified below against the live response with ONE rule that keeps it honest rather than noisy:
+// a parent that is ABSENT or null is the benign empty-state (no war, no spouse, no champion for
+// this fixture) and is COUNTED, never reported — a child is checked only when the parent is an
+// object the route actually returned, and a child it does not carry is the same defect as a
+// missing top-level field: it renders undefined with no error anywhere.
+const nested = new Map();
+const NESTED_RE = (V) => new RegExp(`(?<![\\w$.])${V}\\s*\\??\\.\\s*([a-zA-Z_$][\\w$]*)\\s*\\??\\.\\s*([a-zA-Z_$][\\w$]*)`, 'g');
+const collectNested = (src, v, key) => {
+  for (const r of src.matchAll(NESTED_RE(v.replace('$', '\\$')))) {
+    if (BUILTIN.has(r[1]) || BUILTIN.has(r[2])) continue;
+    if (!nested.has(key)) nested.set(key, new Map());
+    const m = nested.get(key);
+    if (!m.has(r[1])) m.set(r[1], new Set());
+    m.get(r[1]).add(r[2]);
+  }
+};
 for (const m of html.matchAll(/\b(?:async\s+)?function\s+([a-zA-Z_$][\w$]*)\s*\(/g)) {
   const open = html.indexOf('{', m.index + m[0].length);
   if (open < 0) continue;
@@ -1213,6 +1233,7 @@ for (const m of html.matchAll(/\b(?:async\s+)?function\s+([a-zA-Z_$][\w$]*)\s*\(
       if (!reads.has(key)) { reads.set(key, new Set()); readWhere.set(key, m[1]); }
       reads.get(key).add(r[1]);
     }
+    collectNested(nxt ? src.slice(0, nxt.index) : src, v, key);
   }
 }
 assert.equal(unscoped, 0, `${unscoped} response binding(s) could not be scoped to a block, so their reads go unchecked`);
@@ -1769,7 +1790,8 @@ const noteObligations = (where, key, have, fields) => {
   if (blind.length) undisclosed.push(`${where} renders ${key} but never reads ${blind.join(',')} — the board `
     + `states an ongoing cost the screen does not, which is how the pad and the nut both reached a tester`);
 };
-const notReturned = [], unobservable = [];
+const notReturned = [], unobservable = [], nestedMissing = [];
+let nestedChains = 0, nestedChecked = 0, nestedAbsent = 0;
 for (const [key, fields] of reads) {
   const [rawPath, sub] = key.split('|');
   let path = rawPath;
@@ -1788,7 +1810,26 @@ for (const [key, fields] of reads) {
   const gone = [...fields].filter((f) => !have.has(f));
   if (gone.length) notReturned.push(`${readWhere.get(key)} reads ${gone.join(',')} off ${key} — the route returns ${[...have].slice(0, 8).join(',')}…`);
   noteObligations(readWhere.get(key), key, have, fields);
+  // the two-hop half, against the SAME fetched body
+  for (const [parent, kids] of nested.get(key) || []) {
+    nestedChains += kids.size;
+    const po = target[parent];
+    const pt = Array.isArray(po) ? po[0] : po;
+    if (pt === undefined || pt === null || typeof pt !== 'object') { nestedAbsent++; continue; }
+    nestedChecked += kids.size;
+    const pk = new Set(Object.keys(pt));
+    const miss = [...kids].filter((k) => !pk.has(k));
+    if (miss.length) nestedMissing.push(`${readWhere.get(key)} reads ${miss.map((k) => `${parent}.${k}`).join(',')} off ${key} — `
+      + `the route's ${parent} carries ${[...pk].slice(0, 8).join(',')}…`);
+  }
 }
+assert.deepEqual(nestedMissing, [], `the client reads ${nestedMissing.length} two-hop field(s) its route's sub-object does not carry — ` +
+  `they render as undefined with no error anywhere`);
+// two floors, because they fail differently: chains COLLECTED (the extractor still sees the client)
+// and chains CHECKED (a fixture whose every parent is absent would verify nothing and read clean)
+assert(nestedChains > 300, `only ${nestedChains} two-hop read chain(s) collected — the nested extraction broke`);
+assert(nestedChecked > 100, `only ${nestedChecked} of ${nestedChains} two-hop chains had a parent to check against (${nestedAbsent} absent) — the fixture stopped reaching them`);
+console.log(`  two-hop reads: ${nestedChains} chains, ${nestedChecked} checked, ${nestedAbsent} parent absent/null (empty-state, not a finding)`);
 assert.deepEqual(notReturned, [], `the client reads ${notReturned.length} field(s) its route does not return — ` +
   `those render as undefined, or silently take a fallback, with no error anywhere`);
 assert.deepEqual(unobservable, [], `${unobservable.length} binding(s) resolved to an empty list or a non-object, ` +

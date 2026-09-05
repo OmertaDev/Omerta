@@ -490,7 +490,11 @@ export async function sweepGrandPrix(pool) {
 async function grandPrixInfo(client, ch) {
   const st = (await client.query('SELECT current FROM grand_prix_state WHERE id=1')).rows[0];
   const g = st?.current ? (await client.query("SELECT * FROM grand_prix WHERE id=$1 AND status='open'", [st.current])).rows[0] : null;
-  if (!g) return { open: false, buyin: RACES.GP.BUYIN, minLevel: RACES.GP.MIN_LEVEL, minEntrants: RACES.GP.MIN_ENTRANTS };
+  // The CLOSED shape carries the same keys as the open one (the bankPosition `dormantView` rule):
+  // a client that reads `grandPrix.pool` off a board with no race cannot tell "no race" from "no such
+  // field", and the mirror guard (test/client.js check 4, two-hop) holds both shapes to one key set.
+  if (!g) return { open: false, id: null, buyin: RACES.GP.BUYIN, minLevel: RACES.GP.MIN_LEVEL, minEntrants: RACES.GP.MIN_ENTRANTS,
+    pool: 0, entrants: 0, entered: false, closesSeconds: 0 };
   const entrants = Number((await client.query('SELECT COUNT(*) n FROM grand_prix_entries WHERE gp_id=$1', [g.id])).rows[0].n);
   const mine = !!(await client.query('SELECT 1 FROM grand_prix_entries WHERE gp_id=$1 AND character_id=$2', [g.id, ch.id])).rows[0];
   return { open: true, id: g.id, buyin: RACES.GP.BUYIN, minLevel: RACES.GP.MIN_LEVEL, minEntrants: RACES.GP.MIN_ENTRANTS,
