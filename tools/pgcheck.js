@@ -209,34 +209,59 @@ console.log('\n4. THE ROW LOCK ACTUALLY SERIALIZES (no lost update)');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-console.log('\n5. A REFUSED ACTION LEAVES NO TRACE');
+console.log('\n5. A REFUSED ACTION COMMITS THE CLOCK AND NOTHING ELSE (two-phase commit)');
 // **pg-mem's ROLLBACK is a no-op.** Measured: BEGIN, INSERT, ROLLBACK, and the row is still there.
-// So every "the action was refused, therefore nothing changed" assertion across all 47 suites is
-// vacuous — they pass whether or not the transaction actually unwinds. That is not a small gap: the
-// entire economy rests on one-transaction-per-action, and until this check existed, nothing anywhere
-// verified that an action which throws mid-flight takes its partial writes with it.
+// So every "the action was refused, therefore nothing changed" assertion across the suites is
+// vacuous there — they pass whether or not the transaction actually unwinds. Only this engine can
+// prove the boundary, and the boundary has TWO halves since the two-phase commit (D1, SPEC.md):
+//   phase one — `settleIfDue` commits what §7.1's clock did (income, interest, the Bureau raid)
+//               in its OWN transaction, so a refused action can no longer discard a raid it rolled
+//               (the phantom that made the lock-free read path unshippable);
+//   phase two — the action itself, which must still take its partial writes with it.
+// Until 2026-09-05 this check asserted the OPPOSITE of phase one ("the accrual clock is untouched")
+// — that was the design then, and it is deliberately inverted here rather than loosened.
 {
   const cid = (await call('GET', '/v1/me', { token })).body.character.id;
-  const rows = async (t) => Number((await pool.query(`SELECT COUNT(*) n FROM ${t} WHERE character_id=$1`, [cid])).rows[0].n);
+  const rows = async (t, extra = '') => Number((await pool.query(
+    `SELECT COUNT(*) n FROM ${t} WHERE character_id=$1 ${extra}`, [cid])).rows[0].n);
   const cashOf = async () => Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [cid])).rows[0].cash);
 
-  // Jail them, then attempt a crime. The gate throws AFTER §7.1 accrual has already run and written
-  // its ledger rows inside the same transaction — so if the rollback were not real, those rows (and
-  // any partial mutation) would survive a refusal.
+  // A racket makes the clock's work DETERMINISTIC: 6h of metered income is a ledger row with a
+  // known reason, where bank interest on a possibly-empty bank is not. Seeded by SQL (the racket's
+  // own income is the faucet under test, not its purchase), then jail them so the crime REFUSES —
+  // the gate throws in phase two, after phase one has already committed.
+  await pool.query(`INSERT INTO character_rackets (character_id, racket_id) VALUES ($1, 'laundro')
+    ON CONFLICT DO NOTHING`, [cid]);
   await pool.query(`UPDATE characters SET jail_until = now() + interval '10 minutes',
-    last_accrued_at = now() - interval '6 hours' WHERE id=$1`, [cid]);
-  const [txBefore, cashBefore] = [await rows('transactions'), await cashOf()];
+    last_accrued_at = now() - interval '6 hours', racket_credit_ms = 0 WHERE id=$1`, [cid]);
+  const NON_ACCRUAL = "AND reason NOT IN ('racket:income','bank:interest','crew:sales')";
+  const [incomeBefore, extraBefore, cashBefore] = [await rows('transactions', "AND reason='racket:income'"), await rows('transactions', NON_ACCRUAL), await cashOf()];
   const refused = await call('POST', '/v1/crimes/pick', { token });
   check(refused.code === 400, 'a jailed crime is refused', `${refused.code} ${JSON.stringify(refused.body)}`);
-  check(await rows('transactions') === txBefore, 'the refusal wrote no ledger rows',
-    `${await rows('transactions')} vs ${txBefore}`);
-  check(await cashOf() === cashBefore, 'the refusal moved no money', `${await cashOf()} vs ${cashBefore}`);
 
-  // and the clock did not advance either — the accrual is deferred, not consumed
-  const stale = (await pool.query(
-    "SELECT last_accrued_at < now() - interval '5 hours' old FROM characters WHERE id=$1", [cid])).rows[0].old;
-  check(stale === true, 'the accrual clock is untouched, so the window is re-accrued on the next touch');
+  // phase one landed: the income row exists, the clock is FRESH, and the cash rose by exactly the
+  // ledgered accrual — the row and the balance are asserted together because §10.4 needs both.
+  const incomeRows = (await pool.query(
+    `SELECT amount FROM transactions WHERE character_id=$1 AND reason='racket:income' AND currency='cash'`, [cid])).rows;
+  check(incomeRows.length === incomeBefore + 1, 'the refused action still COMMITTED the clock\'s racket income (phase one)',
+    `${incomeRows.length} racket:income rows vs ${incomeBefore} before`);
+  const fresh = (await pool.query(
+    "SELECT last_accrued_at > now() - interval '1 minute' fresh FROM characters WHERE id=$1", [cid])).rows[0].fresh;
+  check(fresh === true, 'and the accrual clock is FRESH — the window was settled, not deferred');
+  const accrued = (await pool.query(
+    `SELECT COALESCE(SUM(amount),0) s FROM transactions WHERE character_id=$1 AND currency='cash'
+       AND reason IN ('racket:income','bank:interest','crew:sales')`, [cid])).rows[0].s;
+  const cashAfter = await cashOf();
+  const incomeNow = Number(incomeRows[incomeRows.length - 1].amount);
+  check(incomeNow > 0 && Math.abs((cashAfter - cashBefore) - incomeNow) < 0.01,
+    'the cash rose by exactly the ledgered accrual', `cash ${cashBefore} → ${cashAfter}, income row ${incomeNow}, accrual sum ${accrued}`);
+
+  // phase two unwound: nothing but accrual reasons landed, and the crime's own rows did not.
+  const extra = await rows('transactions', NON_ACCRUAL);
+  check(extra === extraBefore,
+    'the refusal wrote no rows of its own (phase two rolled back)', `${extra} non-accrual rows, ${extraBefore} before`);
   await pool.query('UPDATE characters SET jail_until=NULL WHERE id=$1', [cid]);
+  await pool.query(`DELETE FROM character_rackets WHERE character_id=$1 AND racket_id='laundro'`, [cid]);
 }
 
 console.log('\n6. §10.4 HOLDS on real Postgres');

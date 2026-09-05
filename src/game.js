@@ -893,8 +893,8 @@ export const trunkCap = (h) => cargoCapacity(h.owned.assets)
 // only mutates the loaded rows and leaves markers (_accruedIncome, _raid, …) for the caller to write.
 // Splitting the two halves is what lets a pure read accrue without a transaction and decide, from the
 // result, whether it has anything worth persisting at all.
-export function accrueInMemory(ch, acct, owned) {
-  accrue(ch, acct, { rackets: owned.rackets, assets: owned.assets, held: owned.held, stash: owned.stash,
+export function accrueInMemory(ch, acct, owned, { preview = false } = {}) {
+  accrue(ch, acct, { preview, rackets: owned.rackets, assets: owned.assets, held: owned.held, stash: owned.stash,
     deedHeld: owned.deedPerk, // STREET DEEDS 2C — controlled corners count at accrual's two perk reads (cathedral nerve, neon income)
     racketLevels: owned.racketLevels, // Tier-4 — per-racket upgrade levels multiply the drip
     disciplines: owned.disciplines, // THE REGIMEN — stamina/composure raise the regen CAPS (pool, not rate)
@@ -1039,7 +1039,65 @@ export function gainRespect(h, ch, rep) {
   return gained;
 }
 
+// THE TWO-PHASE COMMIT (D1, the second half). §7.1 accrual has SIDE-EFFECTS — racket income,
+// bank interest, crew sales, the Bureau raid, the RICO indictment — and every one of them used to
+// ride the ACTION's transaction: a refused action rolled its own accrual back, so the Bureau could
+// fire only while an action succeeded, and the raid that set `jail_until` then made the action's
+// own jail gate throw, which rolled the raid back too. That is the trap that killed the first
+// lock-free read path (SPEC.md D1): reads stopped persisting, so a raid could only ever land during
+// an action, and the action it landed during was exactly the one it made fail.
+//
+// The settle is its own transaction, run BEFORE the action's. What the clock produced commits
+// whether or not the action goes through — which is the honest reading anyway: the interest was
+// earned and the raid happened while the player was away; the click that surfaced them cannot
+// un-happen them. It is deliberately TWO REAL TRANSACTIONS and not a SAVEPOINT (pg-mem cannot parse
+// one, and its ROLLBACK is a no-op, so a savepoint scheme reads green in the suite and drifts on
+// real Postgres — measured at ~$23/refused action by an earlier attempt).
+//
+// THE FAST PATH IS ROW-ONLY. accrue() sets `last_accrued_at = now` whenever a second has passed,
+// and the only things that move UNDER a second are the two Make-Risk-Pay releases — so "is a settle
+// due" is decidable from the character and account rows alone (the same three quantities
+// accrualMark fingerprints), one unlocked read, no loadOwned. In the common case (a client acting
+// again inside a second) this costs a SELECT and nothing else; the action's own transaction then
+// re-accrues a `dtMs < 1000` no-op exactly as before. In the rare lock-wait window between the
+// settle and the action a refused action rolls back at most that sliver — the pre-existing
+// behaviour, and no §10.4 drift, since a rolled-back accrual writes neither its balance nor its row.
+async function settleIfDue(pool, accountId) {
+  const probe = await pool.query(
+    `SELECT c.last_accrued_at, c.bank_intransit, c.bank_intransit_at, a.unbonding, a.unbond_at
+       FROM characters c LEFT JOIN account_persistent a ON a.account_id = c.account_id
+      WHERE c.account_id = $1 AND c.alive`, [accountId]);
+  if (!probe.rows.length) return false; // no street — the action's own no_character refusal speaks
+  const p = probe.rows[0], now = Date.now();
+  const due = (now - +new Date(p.last_accrued_at)) >= 1000
+    || (Number(p.bank_intransit) > 0 && p.bank_intransit_at && now - +new Date(p.bank_intransit_at) >= CONSTANTS.BANK_CLEAR_MS)
+    || (Number(p.unbonding) > 0 && p.unbond_at && now >= +new Date(p.unbond_at));
+  if (!due) return false;
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    // the same lock sequence as the action (the death-race twin: a blocked FOR UPDATE re-evaluates
+    // its WHERE against the killer's commit and drops the corpse; the second look finds the heir)
+    let r = await client.query('SELECT * FROM characters WHERE account_id = $1 AND alive FOR UPDATE', [accountId]);
+    if (!r.rows.length) r = await client.query('SELECT * FROM characters WHERE account_id = $1 AND alive FOR UPDATE', [accountId]);
+    if (!r.rows.length) { await client.query('ROLLBACK'); return false; }
+    const ch = r.rows[0];
+    const acct = (await client.query('SELECT * FROM account_persistent WHERE account_id = $1 FOR UPDATE', [accountId])).rows[0];
+    const owned = await loadOwned(client, ch);
+    await accrueAndLedger(client, ch, acct, owned); // the real roll — this is the one place a read never reaches
+    if (ch.alive !== false) await persistCharacter(client, ch);
+    await persistKitchen(client, ch, owned);
+    await persistAccount(client, accountId, acct);
+    await client.query('COMMIT');
+    return true;
+  } catch (e) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw deadlockToRetry(e);
+  } finally { client.release(); }
+}
+
 export async function withCharacter(pool, accountId, fn) {
+  await settleIfDue(pool, accountId); // phase one: what the clock did commits whether or not the action does
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -1161,7 +1219,7 @@ export async function withCharacterRead(pool, accountId, fn) {
     const owned = await loadOwned(client, ch);
 
     const before = accrualMark(ch, acct);
-    accrueInMemory(ch, acct, owned);
+    accrueInMemory(ch, acct, owned, { preview: true }); // never rolls the Bureau raid — a read rolls nothing
     if (accrualMark(ch, acct) !== before) return null; // caller re-runs under the lock (see below)
 
     // Nothing accrued, so nothing to write. The handler gets a client that REFUSES to write: these
@@ -1295,6 +1353,11 @@ export async function persistAccountFields(client, accountId, a, fields) {
 // granting the victim their number would reveal exactly what those mechanics sell as hidden
 // (AUDIT-street-life HIGH-1). The route declares covertness; every named/consensual action defaults in.
 export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, { meet = true } = {}) {
+  // phase one for BOTH parties (the actor by account, the target by their street's account) — each
+  // its own transaction, each holding one character, so no sorted-pair lock is needed here
+  await settleIfDue(pool, accountId);
+  const tgt = await pool.query('SELECT account_id FROM characters WHERE id = $1 AND alive', [targetCharacterId]);
+  if (tgt.rows.length && tgt.rows[0].account_id !== accountId) await settleIfDue(pool, tgt.rows[0].account_id);
   const client = await pool.connect();
   try {
     await client.query('BEGIN');

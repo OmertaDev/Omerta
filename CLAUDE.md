@@ -5950,6 +5950,38 @@ to HEAD itself, since the inline declarations still say UUID for pg-mem's sake. 
 one ALTER line → *"survived as uuid: rival_events.aggressor_account"*, by name. §10.4 untouched
 (a column type moves no value). pgquery 3411 statements + pgcheck 87/87 on FRESH real Postgres. **And the drop broke a guard the right way**: `test/migrate.js`'s static idempotency check — every statement in schema.sql must be safe to run a second time, since the whole file is applied at every boot — did not know an `ALTER COLUMN … TYPE TEXT` and listed all thirteen as crash loops. They are not: a widening to TEXT is a no-op the second time by the type's own definition, and pgcheck §7/§7c PROVE the re-apply on real Postgres rather than reasoning about it. So the classifier learned exactly the bare `TYPE TEXT` form and nothing wider — a conversion to a NARROWER type can fail on the second run's data and a `USING` clause can be anything, so neither classifies (self-tests pin both, and a duels column mutated to `TYPE INT` is flagged by name).
 
+**THE TWO-PHASE COMMIT — accrual settles ahead of the action, and the read path stops rolling
+the raid (#29, 2026-09-05).** The lock-free `withCharacterRead` was built once and REVERTED (the
+2026-07-25 POSTGRES SAFETY VALVES entry) on one fatal finding: with reads no longer persisting, the
+§7.1 Bureau raid could only ever fire during an ACTION — the raid sets `jail_until`, the action's
+own jail gate then threw, and the ROLLBACK undid the raid that had just rolled, so the Bureau was
+unreachable. The old design worked only because reads (whose `fn` never throws) were the ones
+committing accrual. The fix that entry prescribed is now built: `withCharacter` runs
+**`settleIfDue(pool, accountId)` FIRST** — a row-only due probe (`last_accrued_at` ≥ 1s, an
+in-transit deposit past its clear, an unbond past its window) and, only when due, its OWN
+transaction (char `FOR UPDATE` twice — the §9b death-race twin — then account, `loadOwned`,
+`accrueAndLedger`, persist, COMMIT) before the action opens its own. What the clock did commits
+whether or not the action does; `withTwoCharacters` settles both parties. On the read side
+`accrueInMemory` takes `{ preview: true }` and `accrue()` gates the raid roll on `!ctx.preview`, so
+a read can show accrued income truthfully and never PICK the outcome of a roll it cannot persist.
+**Two REAL transactions, not a savepoint — and that is what decides where it is provable.** pg-mem
+has no SAVEPOINT and its ROLLBACK is a no-op, so "a refused action still commits accrual" cannot be
+demonstrated on the suite engine at all; `tools/pgcheck.js` §5 was REWRITTEN from "a refused action
+leaves no trace" (the pre-#29 contract, now false) to "A REFUSED ACTION COMMITS THE CLOCK AND
+NOTHING ELSE" — a laundro racket, a jailed street, a 6h-old clock, a refused crime, then the
+`racket:income` row landed, the clock fresh, cash up by exactly the ledgered accrual and not one
+non-accrual row (an exact before/after count, not a loose bound). 88/88 on a fresh real Postgres.
+pg-mem covers what it can: `test/growth.js` runs 300 preview `accrue()` passes on a heat-100 chef
+with stash and asserts the raid never rolls, with a NON-preview control loop that does (a preview
+assertion with no control is vacuous), plus two source tripwires — the read path passes
+`preview: true`, and `settleIfDue` sits ahead of `pool.connect()` in `withCharacter`.
+**The consequence every fixture inherits: a REFUSED action now commits accrual.** The kitchen CUT
+block probed a refused `cut` on a stale clock and its `+~40% units` assertion read +39 — phase one
+had committed the crew's one-unit offline sale before the refusal. The fix shape is the recorded
+one: GUARANTEE the precondition (future-date the clock before the refused probe), never loosen the
+number. §10.4 untouched by construction — the same accrual rows land, one transaction earlier.
+SPEC.md D1 is ADDRESSED; the mutations are recorded in the commit.
+
 ## Sensitive design notes
 *These are standing PRODUCT rules. They bind whatever else is true, and several of them exist
 because breaking one is very hard to walk back.*
