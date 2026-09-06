@@ -18489,8 +18489,132 @@ mutation run can leave the tree mutated**, and a mutated tree reads exactly like
 pristine copies are restored BEFORE any partial log is read — and an 8-mutation harness needs ~13 minutes
 at ~95s a run, so it belongs in the background with its own `EXIT=` marker rather than in a foreground
 10-minute window. **One candidate DISSOLVED on checking**: a suspected `busts` collision, because
-`withCharacter` returns `{ character, events, ...result }` — every `view()` field is NESTED, so it can
-never reach a top-level `body.busts` branch.
+`withCharacter` returns `{ character, ...result }` — every `view()` field is NESTED, so it can
+never reach a top-level `body.busts` branch. (It returned `{ character, events, ...result }` when that
+was written; the dead `events` slot was removed 2026-09-06 — see THE SIX, item 2.)
+
+**THE SIX — the founder's ranked list, built (founder-directed 2026-09-06: "Do 1, 2, 3, 4, 5, and 7";
+#6, the `omerta-mcp` trusted-publisher swap, deliberately skipped).** Six items, one defect on a signed
+PvP surface, two guards widened past their own stated blind spots, and a harness that had been asserting
+against a state no player can reach.
+
+**(1) `pgcheck` §9g — the bout/bettor cycle, DRIVEN.** §9e proved one instance of the class THE LOCK
+LEDGER structurally cannot see and the sweep that followed it named `boxing_bouts` as the second survivor
+without driving it, on the argument that its inverted holder is estate-only. That is a reason to drive it
+LAST, not a reason never to: `cancelBout` holds the bout row and then writes a third-party bettor's
+`characters` row, while `resolveMainEvent` locks the bettors FIRST — and the ledger is blind twice over
+(the acquisition lives inside a function the transaction CALLS, and the distinguishing feature is WHOSE
+row rather than which table), so a green ledger is compatible with the cycle being live. Driven the
+§9/§9b way — by HOLDING the bettor row, never by racing a real settle — through `POST /v1/mod/kill`
+against a booked promoter, which is the one route that reaches the inverted holder. **The timing rule is
+the finding**: the cycle is closed the moment `pg_stat_activity` shows the estate blocked on that row and
+NEVER after a fixed sleep, because **Postgres checks for a deadlock ONCE per waiter when
+`deadlock_timeout` fires** — a sleep that lets that check run while the cycle is still open makes the
+HOLDER the victim and the test passes on the wrong outcome. Thirteen checks, including the
+`pg_stat_database.deadlocks` mechanism assertion (a 55P03 maps to `contention` too, so without it the run
+proves nothing about this cycle) and the `boxing bet escrow` §10.4 identity where it started. Three
+mutations, each caught at its own named assertion — and the load-bearing one is that **both** contention
+nets must come down together (`withCharacter`'s own catch AND the global handler), because neutering
+either alone leaves every assertion green. Nothing in `src/` changed; the remedy was already correct and
+what was missing was any proof of it.
+
+**(2) THE DEAD `events` SLOT — removed, and the guard that had covered it goes two-sided.** Every authed
+response carried `events: h.events` and **nothing in `src/` ever pushed to it** — three sites initialised
+it to `[]`, three returned it, no writer anywhere. Recorded when the Home aggregate was built: a board
+keyed `events` SHADOWED it silently, and the remedy at the time was to rename the board `cityEvents`
+rather than remove the slot, because *"removing a field from every authed response in the game is its own
+change, not a tail-end edit to an unrelated PR."* This is that change. Removing it makes `events` a legal
+board key, so `test/routes.js`'s envelope sweep is rewritten **two-sided**: the `character` half still
+asserts an envelope character, and the `events` half now asserts the OPPOSITE — a board that owns the
+name may return whatever it likes, and **no route may hand back the dead empty array**. A source tripwire
+pins the three return sites so the slot cannot come back by omission. **`test/client.js`'s own
+stale-waiver assertion then earned its keep**: with the slot gone the `withCharacter` wrapper's shape
+stopped reading as a silent reply, so its silence waiver waived nothing and had to go — *a waiver that
+waives nothing is a decision nobody is making.* **A pre-existing flake was fixed in the same run and its
+cause is a pg-mem quirk worth keeping**: `test/law.js`'s informant-collapse precondition rested on a
+seeded `heat_exposure` that §7.1 accrual BLEEDS on any authed touch, so the claim depended on how long
+the preceding requests took (the recorded deterministic-assertion-on-a-probabilistic-precondition class);
+guaranteed by re-seeding, and the base is asserted to carry no fractional residue because **pg-mem's
+`GREATEST` clamp rounds one away where real Postgres keeps it** (measured: `GREATEST(0, 1699.9977)` →
+`1700` in pg-mem, exact in Postgres) — recorded at the one clamp site it can reach.
+
+**(3) `/v1/rules` ANSWERS A REPEAT VISIT WITH A 304.** The public rulebook is the second-heaviest response
+in the game (69,008 bytes raw), fetched on boot, on every board render that resolves a catalog name, and
+again on the next cold load — with **no validator at all**. **An ETag was ruled out once before and the
+reason it is safe now is narrow**: the page-weight drop declined it because a *generic* JSON ETag would
+touch the response lifecycle EVERY money route passes through, including the idempotency `onSend` store.
+This does not — it is applied at the ONE route, computed from the serialized body, and the 304 returns
+before any of that machinery. The body is time-invariant (published catalogs plus levers, read at module
+load), which is what makes a STRONG validator honest here rather than a guess: a stale copy cannot exist
+without a deploy, and a deploy changes the hash. Guarded beside THE WIRE — first response carries an
+ETag, `If-None-Match` answers 304 with a zero-length body, a mismatched validator answers 200 with the
+full body, and the 304 still carries the header a shared cache needs. Four mutations, four named kills.
+
+**(4) A FIRE KILL ARMS THE TRIGGER COOLDOWN TOO — the wave-80 flag, signed and built.** Wave 80 flagged
+it and did not touch it (*"a signed PvP surface and a founder call, not a copy fix"*); the founder's
+instruction is that sign-off, and by the D13/D15 rule a decision made and not recorded gets made twice —
+so `SIGN-OFF.md` and `BALANCE.md` carry it, same commit. **The defect is wider than the flag said, and
+the correction is worth more than the fix**: `fire` has FOUR shot outcomes and the `shoot_cd_until` stamp
+lived in exactly ONE of them. Inside `if (effective >= btk)` there are two further early returns before
+the kill's own — the **bodyguard absorb** and the **pre-paid revive token** — so a KILL, an ABSORB and a
+REVIVE each returned above the stamp and left the trigger COLD, while a plain MISS was the one outcome
+that paid the two hours: the more successful shot carried the lighter cost. Verified against the DATABASE
+before it was called anything (`shoot_cd_until` NULL after a kill, a real timestamp after a miss). The
+stamp moves out of the MISS branch into the **common cost block**, beside the energy, the rounds and the
+law heat, so it lands on every shot the verb fires — and is deliberately absent from the pre-roll
+refusal, which spends nothing. **No lever moved** (`CONSTANTS.SHOOT_CD_MS` untouched, now pinned in the
+register) and §10.4 is untouched (a clock, not a currency). The client half is the wave-79/80 class — the
+clock a SUCCESS reply arms and never names — so all four render sites state it. **Why nothing caught it**:
+`test/social.js`'s `whack()` helper NULLs the trigger before every shot, so every kill in the file started
+from a clean clock and no assertion in the suite could ever have observed an uncooled trigger; the
+regressions read the DATABASE, never the reply under test. Three mutations kill by name.
+
+**(5) THE SEASON ROLLOVER MOVES OFF THE ALARM TICK.** `safe()` isolates a job's ERRORS and never its
+LATENCY, and `tools/workercost.js` had already measured the rollover as the one job linear in the
+population — **~2 minutes at 50,000 players** — sitting on the same hourly tick as the nightly §10.4 drift
+monitor, the WAL-archiver watchdog and the oracle-keeper watchdog. Once every 28 days, every alarm in the
+game was that late. It has its own hourly clock now, with the `setInterval` registered **BEFORE** the
+un-awaited first call so a slow first rollover cannot lose the schedule. **Neither existing guard could
+see this** — THE ISOLATION LEDGER counts isolation rather than which clock a job sits on, and the
+scheduler-ordering floor is `>= 2`, so moving a job OFF the tick does not trip it — so the new guard is
+deliberately narrow (the rollover must not be called inside the tick body) with an anti-vacuity assertion
+that the symbol exists at all, or a rename reports as clean rather than broken. Two stale citations
+amended in the same commit: the tick's longest job is now the §10.4 invariants sweep.
+
+**(7) THE MIRROR WALKS A READ TO ITS END, NOT ONE HOP.** Check 4 keyed a binding as `path|sub` and
+checked ONE level of fields off it, with `b.x.y` its own STATED out-of-scope — measured at ~814 such
+chains in the client checked by nothing. It collects the WHOLE dotted chain now and WALKS it against the
+live response, because a two-hop rule stops at the first sub-object and leaves `b.grandPrix.pool.total`
+unchecked past it. **One rule keeps it honest rather than noisy**: a parent ABSENT or null AT ANY DEPTH
+is the benign empty state (no war, no spouse, no champion for this fixture) and is COUNTED, never
+reported — reporting it would be the mostly-wrong advisory people route around. Two traps the build paid
+for: a chain is segmented with a `matchAll` over `\??\.ident` rather than `split('.')`, because
+`?.grandPrix?.pool` splits into garbage; and the walk TRUNCATES at the first builtin, since
+`me.law.stage.toUpperCase` is a two-hop DATA chain with a method on the end and reading it as three would
+report a string's own method as a missing field. **384 chains, 273 walked to the leaf, 111 parent
+absent/null — no new drift, so this is coverage rather than a fix.** Mutation-verified in BOTH directions:
+a planted depth-3 defect fails by name with the chain, the route and the real key set, and — the control —
+**the old two-hop truncation passes GREEN over that same defect**, which demonstrates the blind spot
+rather than arguing it.
+
+**AND THE HARNESS HAD BEEN ASSERTING AGAINST A STATE NO PLAYER CAN REACH.** CI came back red on `mobile`
+— one problem in 171 checks, `firstJobReady:false` sitting beside `coach:"Claim your first-job reward"`,
+which is the coach a player only gets once the job IS done. `tools/mobile.js`'s first-action probe fired
+`/v1/me` and `/v1/onboard` **CONCURRENTLY** inside `page.evaluate`; both are authed, so both run through
+`withCharacter`, which takes `SELECT … FOR UPDATE` on the character row — even a read, because §7.1 lazy
+accrual persists — and pg-mem is single-caller, so the second answers `400 contention` (the correct
+retryable mapping). Then `(ob.tasks || []).find(…)` on an ERROR BODY yields `undefined`, **which reads
+exactly like "the task is not ready"**: that is how a race arrived as a mystery instead of a reason.
+Measured against a real socket rather than re-run in a browser: **CONCURRENT 2/60 bad, SERIAL 0/60** —
+~3.3% per pair, which is why it surfaced as one problem in 171 checks, why it moved viewports between
+runs (320×568 locally, 360×780 in CI), and **why my own first read of it — "reproduces
+deterministically" — was wrong, since a control run of the same shape passed. One reproduction is not
+determinism.** The client does NOT do this: `api()` queues every authed call on `_authQueue` for exactly
+this reason (the 2026-07-25 production incident, four of one player's requests queued
+1.0s/2.1s/2.3s/4.3s on one row) — **so the probe had reintroduced inside `page.evaluate` the very pattern
+the client was fixed to remove.** Serializing is therefore not the loosen-until-green antipattern: the
+probe's job is to observe what a PLAYER sees, and a player's browser serializes. A permanent `why` field
+now names the server's own reason, so a 4xx there can never again read as a task that is not ready.
 
 **THE PACKET REBUILT AT THE RELEASE HEAD, AND TWO ASSERTIONS THAT WERE FUNCTIONS OF THE CALENDAR
 (2026-09-06).** `CHAIN-DEPLOY.md` names one prerequisite for gate 2 — a packet frozen at the head an

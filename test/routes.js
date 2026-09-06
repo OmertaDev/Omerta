@@ -197,16 +197,19 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
 }
 
 // ── THE ENVELOPE SURVIVES EVERY ROUTE ──────────────────────────────────────────────────────────
-// `readCharacter` returns `{ character, events: h.events, ...result }` with the spread LAST, so a
-// handler whose own top-level key is `character` or `events` REPLACES the envelope's field — on that
-// route alone, silently, and invisibly to every per-route check, because those compare a board
-// against its own route where both sides are the board and agree perfectly.
+// `readCharacter` returns `{ character, ...result }` with the spread LAST, so a handler whose own
+// top-level key is `character` REPLACES the envelope's field — on that route alone, silently, and
+// invisibly to every per-route check, because those compare a board against its own route where
+// both sides are the board and agree perfectly.
 //
-// This is not hypothetical: the Home aggregate shipped keyed `events` and shadowed it for an hour.
-// It was found by reading a PRODUCTION response and counting (15 boards, 14 keys), and it was
-// harmless only because `h.events` has no writer anywhere in src/. `src/aggregate.js` now refuses a
-// reserved key, which closes the aggregate path structurally — this closes the REST of the class,
-// which that guard cannot see: any handler at all, by any mechanism, now or later.
+// This is not hypothetical: the envelope used to carry a DEAD `events: []` (three init sites in
+// game.js, no writer anywhere in src/), and the Home aggregate shipped keyed `events` and shadowed
+// it for an hour — found by reading a PRODUCTION response and counting (15 boards, 14 keys). The
+// dead field is gone now (2026-09-05): a slot nothing writes is a slot every board has to be kept
+// away from, forever, for nothing. What this sweep asserts is therefore TWO-SIDED — `character`
+// survives on every enveloped route, AND the envelope carries NO `events` key: if one comes back it
+// is a BOARD's, and a board that owns the name is declared here with its reason (catalogue-or-
+// declare), so a resurrected dead slot or an undeclared board both fail by name.
 //
 // EMPIRICAL on purpose. The shape is built across many lines in many modules, so reading the source
 // for it is guesswork, and guesswork here reports confident nonsense. This asks the running server.
@@ -232,14 +235,11 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
     "INSERT INTO rival_events (id, victim_account, aggressor_account, kind, detail) VALUES ($1,$2,$3,'jump','{}')",
     [randomUUID(), await accOf(meId), await accOf(themId)]);
 
-  // THE ENVELOPE'S `events` IS ALWAYS `[]`. It is initialised at three sites in game.js and has NO
-  // writer anywhere in src/, so a route whose `events` is anything else has had it replaced by a
-  // board's own key of that name. Type-checking it as an array is far too weak to see that: a board
-  // whose `events` is a list of history rows is an array too, and passes. Deep equality against the
-  // empty envelope is the real check — and a board that legitimately owns the name is DECLARED here
-  // with its reason, catalogue-or-declare, so it is a decision on the record rather than a silent
-  // pass. (Renaming those is the wrong fix: `events` is the right word for a timeline, agents read
-  // these boards, and the envelope slot being shadowed is dead.)
+  // THE ENVELOPE CARRIES NO `events`. It did once (a dead `[]`), and a board keyed on the name
+  // silently replaced it; now ANY `events` on an enveloped response is a board's own field, and the
+  // board that owns it is DECLARED here with its reason — a decision on the record rather than a
+  // silent pass. (Renaming it is the wrong fix: `events` is the right word for a timeline, and
+  // agents read these boards.) A `[]` coming back UNDECLARED is the dead slot resurrected.
   const EVENTS_OWNED_BY_BOARD = new Map([
     ['/v1/people/history/:characterId', "the pair-history board's own timeline — the client renders it "
       + 'as the story of two bloodlines, and what it shadows is the dead envelope slot'],
@@ -271,11 +271,11 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
     if (!r.body.character || typeof r.body.character !== 'object' || !r.body.character.id) {
       shadowed.push(`${u}: \`character\` is not a character — ${JSON.stringify(r.body.character).slice(0, 70)}`);
     }
-    if (Object.prototype.hasOwnProperty.call(r.body, 'events') && JSON.stringify(r.body.events) !== '[]') {
-      if (EVENTS_OWNED_BY_BOARD.has(u)) declaredSeen.add(u);
+    if (Object.prototype.hasOwnProperty.call(r.body, 'events')) {
+      if (EVENTS_OWNED_BY_BOARD.has(u)) { if (JSON.stringify(r.body.events) !== '[]') declaredSeen.add(u); }
       else {
-        shadowed.push(`${u}: \`events\` is the BOARD's, not the envelope's — ${JSON.stringify(r.body.events).slice(0, 70)}`
-          + '\n      (if the board legitimately owns that name, declare it in EVENTS_OWNED_BY_BOARD with the reason)');
+        shadowed.push(`${u}: carries an \`events\` key the envelope no longer owns — ${JSON.stringify(r.body.events).slice(0, 70)}`
+          + '\n      (a resurrected dead envelope slot, or an undeclared board: declare it in EVENTS_OWNED_BY_BOARD with the reason)');
       }
     }
   }
@@ -294,10 +294,16 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
       + '`events` — so the declaration is untested and the check would pass even if the board stopped shadowing '
       + '(or never started). Seed the state that makes that board answer.');
   }
-  assert.deepEqual(shadowed, [], 'a route\'s own response REPLACES a readCharacter envelope field:\n  ' + shadowed.join('\n  '));
+  assert.deepEqual(shadowed, [], 'a route\'s own response REPLACES or RESURRECTS a readCharacter envelope field:\n  ' + shadowed.join('\n  '));
+  // SOURCE TRIPWIRE for the dead slot itself: the sweep above sees a resurrected `events: []` only
+  // on the routes it can drive, so the three envelope sites are also read directly.
+  const gameSrc = readFileSync(new URL('../src/game.js', import.meta.url), 'utf8');
+  assert.equal((gameSrc.match(/return \{ character, \.\.\.result \};/g) || []).length, 3,
+    'readCharacter/withCharacter/withTwoCharacters return `{ character, ...result }` — three sites, no `events`');
+  assert(!/events: h\.events|events: \[\]/.test(gameSrc), 'the dead `events` envelope slot must not come back — nothing in src/ ever wrote to it');
   console.log(`✅ the envelope survives all ${checked} enveloped routes (${paramChecked} of them param routes; `
     + `${unfillable.length} params this cannot synthesise are named, not skipped) — none replaces \`character\`, and `
-    + `\`events\` is the envelope's empty slot everywhere except ${EVENTS_OWNED_BY_BOARD.size} board that owns the name by declaration`);
+    + `none carries an \`events\` key except ${EVENTS_OWNED_BY_BOARD.size} board that owns the name by declaration`);
 }
 
 // ── THE WIRE ────────────────────────────────────────────────────────────────────────────────────
@@ -455,6 +461,30 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
   assert.equal(rules.headers['content-encoding'], 'gzip', '/v1/rules is 69 KB of catalog — it must compress');
   assert.equal(rules.headers['cache-control'], 'public, max-age=300, stale-while-revalidate=3600',
     '/v1/rules is deploy-stable public catalog data — repeat visits should reuse it while it revalidates');
+
+  // …and it revalidates, which is the half a max-age alone cannot buy. Every client fetches the
+  // rulebook on boot and it moves only when a lever or a catalog does, so a warm client should pay a
+  // few hundred bytes rather than 24 KB gzipped. The ETag is over the UNCOMPRESSED body on purpose:
+  // both encodings answer the same validator, so a cache holding either variant revalidates correctly.
+  const rulesEtag = rules.headers.etag;
+  assert(rulesEtag, '/v1/rules must carry an ETag — a max-age alone re-downloads the catalog every 5 minutes');
+  // read the body off the IDENTITY response: `rules` was fetched with accept-encoding gzip, so its
+  // payload is compressed bytes and JSON.parse would be parsing the wire rather than the catalog
+  const rulesPlain = await get('/v1/rules');
+  assert(JSON.parse(rulesPlain.body).crimes?.length > 0,
+    'the ETag must not have cost the body — this check is about a 304, not about serving less');
+  const rulesAgain = await get('/v1/rules', { ...GZ, 'if-none-match': rulesEtag });
+  assert.equal(rulesAgain.statusCode, 304, 'a matching ETag on /v1/rules must answer 304');
+  assert.equal(rulesAgain.rawPayload.length, 0, 'a 304 must carry no body');
+  assert(/accept-encoding/i.test(String(rulesAgain.headers.vary || '')),
+    'the 304 must still declare the variance, or a shared cache picks the wrong stored copy');
+  const rulesStale = await get('/v1/rules', { ...GZ, 'if-none-match': '"0000000000000000"' });
+  assert.equal(rulesStale.statusCode, 200, 'a stale validator must get the real catalog, never an empty 304');
+  assert.equal(rulesStale.headers.etag, rulesEtag, 'a stale validator must be answered with the CURRENT one');
+  // the identity branch answers the SAME validator — which is what makes hashing the uncompressed body
+  // right, and would break the moment somebody hashed the gzipped bytes instead
+  assert.equal(rulesPlain.headers.etag, rulesEtag,
+    'gzip and identity must share one ETag — the validator is over the representation, not the encoding');
   const tiny = await get('/v1/online', GZ);
   assert.equal(tiny.statusCode, 200);
   assert(Buffer.byteLength(tiny.body) < 1024, 'this check needs a genuinely small response to be about the threshold');
