@@ -461,6 +461,30 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
   assert.equal(rules.headers['content-encoding'], 'gzip', '/v1/rules is 69 KB of catalog — it must compress');
   assert.equal(rules.headers['cache-control'], 'public, max-age=300, stale-while-revalidate=3600',
     '/v1/rules is deploy-stable public catalog data — repeat visits should reuse it while it revalidates');
+
+  // …and it revalidates, which is the half a max-age alone cannot buy. Every client fetches the
+  // rulebook on boot and it moves only when a lever or a catalog does, so a warm client should pay a
+  // few hundred bytes rather than 24 KB gzipped. The ETag is over the UNCOMPRESSED body on purpose:
+  // both encodings answer the same validator, so a cache holding either variant revalidates correctly.
+  const rulesEtag = rules.headers.etag;
+  assert(rulesEtag, '/v1/rules must carry an ETag — a max-age alone re-downloads the catalog every 5 minutes');
+  // read the body off the IDENTITY response: `rules` was fetched with accept-encoding gzip, so its
+  // payload is compressed bytes and JSON.parse would be parsing the wire rather than the catalog
+  const rulesPlain = await get('/v1/rules');
+  assert(JSON.parse(rulesPlain.body).crimes?.length > 0,
+    'the ETag must not have cost the body — this check is about a 304, not about serving less');
+  const rulesAgain = await get('/v1/rules', { ...GZ, 'if-none-match': rulesEtag });
+  assert.equal(rulesAgain.statusCode, 304, 'a matching ETag on /v1/rules must answer 304');
+  assert.equal(rulesAgain.rawPayload.length, 0, 'a 304 must carry no body');
+  assert(/accept-encoding/i.test(String(rulesAgain.headers.vary || '')),
+    'the 304 must still declare the variance, or a shared cache picks the wrong stored copy');
+  const rulesStale = await get('/v1/rules', { ...GZ, 'if-none-match': '"0000000000000000"' });
+  assert.equal(rulesStale.statusCode, 200, 'a stale validator must get the real catalog, never an empty 304');
+  assert.equal(rulesStale.headers.etag, rulesEtag, 'a stale validator must be answered with the CURRENT one');
+  // the identity branch answers the SAME validator — which is what makes hashing the uncompressed body
+  // right, and would break the moment somebody hashed the gzipped bytes instead
+  assert.equal(rulesPlain.headers.etag, rulesEtag,
+    'gzip and identity must share one ETag — the validator is over the representation, not the encoding');
   const tiny = await get('/v1/online', GZ);
   assert.equal(tiny.statusCode, 200);
   assert(Buffer.byteLength(tiny.body) < 1024, 'this check needs a genuinely small response to be about the threshold');
