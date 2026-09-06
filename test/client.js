@@ -1024,24 +1024,31 @@ const collectList = (src, v, key, fn) => {
 const GETBIND = /(?:(const|let|var)\s+)?([a-zA-Z_$][\w$]*)\s*=\s*\(*\(await api\(\s*'GET'\s*,\s*([`'"])([^`'"]+)\3\s*\)\)\s*\.body(\s*\?\.\s*([a-zA-Z_$][\w$]*))?/g;
 const reads = new Map(), readWhere = new Map();
 let unscoped = 0, shadowUnresolved = 0;
-// TWO-HOP READS (task #4). The mirror above keys a binding as `path|sub` and checks ONE level of
-// fields off it; `b.x.y` — the field of a sub-object the screen never aliased — was the stated
-// out-of-scope, and a measurement counted ~814 distinct such chains in the client checked by
-// nothing. This collects them per binding: nested.get(key) → Map<parentField, Set<childField>>.
-// Verified below against the live response with ONE rule that keeps it honest rather than noisy:
-// a parent that is ABSENT or null is the benign empty-state (no war, no spouse, no champion for
-// this fixture) and is COUNTED, never reported — a child is checked only when the parent is an
-// object the route actually returned, and a child it does not carry is the same defect as a
-// missing top-level field: it renders undefined with no error anywhere.
+// DEEP READS. The mirror above keys a binding as `path|sub` and checks ONE level of fields off it;
+// `b.x.y` — the field of a sub-object the screen never aliased — was the stated out-of-scope, and a
+// measurement counted ~814 distinct such chains in the client checked by nothing. This collects the
+// WHOLE dotted chain per binding (`nested.get(key)` → Set<"a.b.c">) rather than one hop, because a
+// two-hop rule stops at the first sub-object and leaves `b.grandPrix.pool.total` unchecked past it.
+// Verified below by WALKING the chain against the live response, with ONE rule that keeps it honest
+// rather than noisy: a parent that is ABSENT or null AT ANY DEPTH is the benign empty state (no war,
+// no spouse, no champion for this fixture) and is COUNTED, never reported — a leaf is checked only
+// when every parent above it is an object the route actually returned, and a leaf it does not carry
+// is the same defect as a missing top-level field: it renders undefined with no error anywhere.
 const nested = new Map();
-const NESTED_RE = (V) => new RegExp(`(?<![\\w$.])${V}\\s*\\??\\.\\s*([a-zA-Z_$][\\w$]*)\\s*\\??\\.\\s*([a-zA-Z_$][\\w$]*)`, 'g');
+const NESTED_RE = (V) => new RegExp(`(?<![\\w$.])${V}((?:\\s*\\??\\.\\s*[a-zA-Z_$][\\w$]*)+)`, 'g');
 const collectNested = (src, v, key) => {
   for (const r of src.matchAll(NESTED_RE(v.replace('$', '\\$')))) {
-    if (BUILTIN.has(r[1]) || BUILTIN.has(r[2])) continue;
-    if (!nested.has(key)) nested.set(key, new Map());
-    const m = nested.get(key);
-    if (!m.has(r[1])) m.set(r[1], new Set());
-    m.get(r[1]).add(r[2]);
+    // Take the whole run of `.ident` segments and TRUNCATE at the first builtin: `me.law.stage.toUpperCase`
+    // is a two-hop DATA chain with a method on the end, and reading it as three would report the string's
+    // own method as a field the route fails to carry — a mostly-wrong advisory people route around.
+    const segs = [];
+    for (const [, seg] of r[1].matchAll(/\??\.\s*([a-zA-Z_$][\w$]*)/g)) {
+      if (BUILTIN.has(seg)) break;
+      segs.push(seg);
+    }
+    if (segs.length < 2) continue;
+    if (!nested.has(key)) nested.set(key, new Set());
+    nested.get(key).add(segs.join('.'));
   }
 };
 for (const m of html.matchAll(/\b(?:async\s+)?function\s+([a-zA-Z_$][\w$]*)\s*\(/g)) {
@@ -1810,26 +1817,33 @@ for (const [key, fields] of reads) {
   const gone = [...fields].filter((f) => !have.has(f));
   if (gone.length) notReturned.push(`${readWhere.get(key)} reads ${gone.join(',')} off ${key} — the route returns ${[...have].slice(0, 8).join(',')}…`);
   noteObligations(readWhere.get(key), key, have, fields);
-  // the two-hop half, against the SAME fetched body
-  for (const [parent, kids] of nested.get(key) || []) {
-    nestedChains += kids.size;
-    const po = target[parent];
-    const pt = Array.isArray(po) ? po[0] : po;
-    if (pt === undefined || pt === null || typeof pt !== 'object') { nestedAbsent++; continue; }
-    nestedChecked += kids.size;
-    const pk = new Set(Object.keys(pt));
-    const miss = [...kids].filter((k) => !pk.has(k));
-    if (miss.length) nestedMissing.push(`${readWhere.get(key)} reads ${miss.map((k) => `${parent}.${k}`).join(',')} off ${key} — `
-      + `the route's ${parent} carries ${[...pk].slice(0, 8).join(',')}…`);
+  // the deep half, against the SAME fetched body — WALKED segment by segment rather than one hop,
+  // so `b.grandPrix.pool.total` is checked to its end instead of stopping at the first sub-object.
+  for (const chain of nested.get(key) || []) {
+    nestedChains++;
+    const segs = chain.split('.');
+    let cur = target, ok = true;
+    for (let i = 0; i < segs.length - 1; i++) {
+      const nx = cur[segs[i]];
+      const nt = Array.isArray(nx) ? nx[0] : nx;
+      if (nt === undefined || nt === null || typeof nt !== 'object') { ok = false; break; }
+      cur = nt;
+    }
+    if (!ok) { nestedAbsent++; continue; }   // the benign empty state, at ANY depth
+    nestedChecked++;
+    const leaf = segs[segs.length - 1];
+    const pk = new Set(Object.keys(cur));
+    if (!pk.has(leaf)) nestedMissing.push(`${readWhere.get(key)} reads ${chain} off ${key} — `
+      + `the route's ${segs.slice(0, -1).join('.')} carries ${[...pk].slice(0, 8).join(',')}…`);
   }
 }
-assert.deepEqual(nestedMissing, [], `the client reads ${nestedMissing.length} two-hop field(s) its route's sub-object does not carry — ` +
+assert.deepEqual(nestedMissing, [], `the client reads ${nestedMissing.length} deep field(s) its route's sub-object does not carry — ` +
   `they render as undefined with no error anywhere`);
 // two floors, because they fail differently: chains COLLECTED (the extractor still sees the client)
 // and chains CHECKED (a fixture whose every parent is absent would verify nothing and read clean)
-assert(nestedChains > 300, `only ${nestedChains} two-hop read chain(s) collected — the nested extraction broke`);
-assert(nestedChecked > 100, `only ${nestedChecked} of ${nestedChains} two-hop chains had a parent to check against (${nestedAbsent} absent) — the fixture stopped reaching them`);
-console.log(`  two-hop reads: ${nestedChains} chains, ${nestedChecked} checked, ${nestedAbsent} parent absent/null (empty-state, not a finding)`);
+assert(nestedChains > 300, `only ${nestedChains} deep read chain(s) collected — the nested extraction broke`);
+assert(nestedChecked > 100, `only ${nestedChecked} of ${nestedChains} deep chains resolved every parent (${nestedAbsent} absent) — the fixture stopped reaching them`);
+console.log(`  deep reads: ${nestedChains} chains, ${nestedChecked} walked to the leaf, ${nestedAbsent} parent absent/null (empty-state, not a finding)`);
 assert.deepEqual(notReturned, [], `the client reads ${notReturned.length} field(s) its route does not return — ` +
   `those render as undefined, or silently take a fallback, with no error anywhere`);
 assert.deepEqual(unobservable, [], `${unobservable.length} binding(s) resolved to an empty list or a non-object, ` +
@@ -6500,7 +6514,10 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   // right — a helper the player never sees the reply of, a shape whose own card renders it, or a
   // branch that cannot be reached with a real body.
   const MUTE_OK = new Map([
-    ['withCharacter', 'the request wrapper itself — every route unwraps it; a player never reads this shape'],
+    // `withCharacter` was here until the envelope dropped its dead `events` slot: with `events: h.events`
+    // on the literal the wrapper's own shape read as a silent reply, and `{ character, ...result }` no
+    // longer does. The stale-waiver assertion is what noticed — a waiver that waives nothing is a
+    // decision nobody is making, so it comes out rather than being kept for comfort.
     ['repairCar', 'its branches key on body.fixed === true|false; the sentinel walk cannot supply a literal'],
     ['burnerHit', 'it spreads ...await npcHit(...) — a call the static walk cannot follow; the npchit '
       + 'branch renders it live, and the WAVE 68 block below drives the burner line for real'],
@@ -7130,6 +7147,16 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   assert(killLine.includes(k.matLootName), `the kill must name the scarce material it took: ${killLine}`);
   assert(/respect/.test(killLine) && /feared/.test(killLine),
     `the kill must name BOTH legends it banked — ordinary respect and the assassin's: ${killLine}`);
+  // ── and the clock the shot just armed ──────────────────────────────────────────────────────
+  // The wave-80 class: a success reply that ARMS a cooldown and never names it, so the player
+  // learns about it by pressing the button again and being refused. The trigger used to cool on a
+  // MISS alone, which is why only the miss line ever mentioned it; it cools on every shot now, so
+  // every outcome has to say so. SERVER half first — a synthetic literal passes straight through
+  // the mutation that stops the field being sent — then the LINE, and it must name HOW LONG rather
+  // than merely that the gun is hot: SHOOT_CD_MS is pinned to 1 above, so minsTxt renders "1s".
+  assert(k.shootCdSeconds > 0, 'the kill must SEND the trigger wait it just armed');
+  assert(/trigger cools/.test(killLine) && /\d+\s*(s|m|h|d)\b/.test(killLine.split('trigger cools')[1] || ''),
+    `the kill must name HOW LONG the trigger is cold, not merely that it is: ${killLine}`);
 }
 // ── WAVE 73 (vice): the Track claim, the pinks, the grid, the futurity book, the siege ──────────
 // Five entries, all DRIVEN (never synthetic — a literal passes straight through the mutation that

@@ -29,8 +29,8 @@ const mk = async (name) => {
   await call('POST', '/v1/character', { token, body: { name } });
   return token;
 };
-// readCharacter merges `{character, events, ...board}` onto every authed board it serves.
-const bare = (body) => { const b = { ...(body || {}) }; delete b.character; delete b.events; return b; };
+// readCharacter merges `{character, ...board}` onto every authed board it serves.
+const bare = (body) => { const b = { ...(body || {}) }; delete b.character; return b; };
 
 const token = await mk('Citywide Board');
 const me = (await call('GET', '/v1/me', { token })).body.character;

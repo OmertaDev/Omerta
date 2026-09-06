@@ -3688,9 +3688,11 @@
     // forgotten-sibling shape, with the JUMP two rows up already naming its own `+N respect`.
     // The two raw ids (`gearLoot`, the material) ship their display names from the SERVER, because
     // describe() has no gear catalog and no handle on the shipment board.
-    if (body.kill) bits.push(`THEY'RE DONE.${body.loot ? ` looted $${fmt(body.loot)}` : ''}${body.chop ? ` · chopped their fleet for $${fmt(body.chop)}` : ''}${body.omrLoot ? ` · took ${fmt(body.omrLoot)} $OMR off them` : ''}${body.gearLootName ? ` · stripped their ${txt(body.gearLootName)}` : ''}${body.matLoot ? ` · ${fmt(body.matLoot)} × ${txt(body.matLootName || 'shipment material')}` : ''}${body.contraLoot ? ` · seized $${fmt(body.contraLoot)} in contraband` : ''}${body.orderLoot ? ` · $${fmt(body.orderLoot)} out of their buy orders` : ''}${body.empireLoot ? ` · 🏢 TOOK OVER their ${body.empireLoot.name}` : ''}${body.bounty ? ` · contract paid $${fmt(body.bounty)}` : ''}${body.ammoBack ? ` · the contract covered ${fmt(body.ammoBack)} rounds` : ''}${body.rep ? ` · +${fmt(body.rep)} respect` : ''}${body.hitman?.repGain ? ` · +${fmt(body.hitman.repGain)} feared${body.hitman.title ? ` (${txt(body.hitman.title)})` : ''}` : ''}${body.vendetta ? ' · 🩸 THE FEUD IS SETTLED — vengeance pays double' : ''}${body.warKill ? ' · ⚔ it scores in your family’s war' : ''}${body.hitman?.blood?.ours > 1 ? ` · that's ${nth(body.hitman.blood.ours)} body between your bloodlines` : ''}${body.op === 'shank' && body.sentenceSeconds ? ` · a yard killing, so your own stretch runs ${minsTxt(body.sentenceSeconds)} now` : ''}${body.fired ? ` · it cost ${fmt(body.fired)} rounds and ${body.energy} energy` : ''}${body.heat ? ` · +${body.heat} law heat (${body.heatNow}/100)` : ''}${body.lootable === false ? " · a mark that green pays no loot and no feared name — the rookie floor" : ''}`);
+    if (body.kill) bits.push(`THEY'RE DONE.${body.loot ? ` looted $${fmt(body.loot)}` : ''}${body.chop ? ` · chopped their fleet for $${fmt(body.chop)}` : ''}${body.omrLoot ? ` · took ${fmt(body.omrLoot)} $OMR off them` : ''}${body.gearLootName ? ` · stripped their ${txt(body.gearLootName)}` : ''}${body.matLoot ? ` · ${fmt(body.matLoot)} × ${txt(body.matLootName || 'shipment material')}` : ''}${body.contraLoot ? ` · seized $${fmt(body.contraLoot)} in contraband` : ''}${body.orderLoot ? ` · $${fmt(body.orderLoot)} out of their buy orders` : ''}${body.empireLoot ? ` · 🏢 TOOK OVER their ${body.empireLoot.name}` : ''}${body.bounty ? ` · contract paid $${fmt(body.bounty)}` : ''}${body.ammoBack ? ` · the contract covered ${fmt(body.ammoBack)} rounds` : ''}${body.rep ? ` · +${fmt(body.rep)} respect` : ''}${body.hitman?.repGain ? ` · +${fmt(body.hitman.repGain)} feared${body.hitman.title ? ` (${txt(body.hitman.title)})` : ''}` : ''}${body.vendetta ? ' · 🩸 THE FEUD IS SETTLED — vengeance pays double' : ''}${body.warKill ? ' · ⚔ it scores in your family’s war' : ''}${body.hitman?.blood?.ours > 1 ? ` · that's ${nth(body.hitman.blood.ours)} body between your bloodlines` : ''}${body.op === 'shank' && body.sentenceSeconds ? ` · a yard killing, so your own stretch runs ${minsTxt(body.sentenceSeconds)} now` : ''}${body.fired ? ` · it cost ${fmt(body.fired)} rounds and ${body.energy} energy` : ''}${body.heat ? ` · +${body.heat} law heat (${body.heatNow}/100)` : ''}${body.lootable === false ? " · a mark that green pays no loot and no feared name — the rookie floor" : ''}${body.shootCdSeconds ? ` · your search is burned and the trigger cools ${minsTxt(body.shootCdSeconds)}` : ''}`);
     if (body.hospitalized && !body.kill) bits.push('they went down — hospital job');
-    if (body.absorbed) bits.push('their cover took the hit');
+    // The two SHIELD outcomes: the shot resolved, so it cost the search, the rounds and the trigger
+    // exactly like a miss — and both read as a bare event with none of that on it.
+    if (body.absorbed) bits.push(`their cover took the hit${body.shootCdSeconds ? ` · your search is burned and the trigger cools ${minsTxt(body.shootCdSeconds)}` : ''}`);
     // THE SHOT THAT DIDN'T LAND. Found by playing: a hit is the most expensive action in the game —
     // a 3h search (BURNED on any resolved shot), the energy, the rounds, and a 2h trigger cooldown —
     // and every outcome but the kill fell through to the generic "✓ done.", which does not merely
@@ -3700,7 +3702,7 @@
     if (body.kill === false && body.btk !== undefined && !body.absorbed && !body.revived)
       bits.push(`he's still standing — ${fmt(body.effective)} rounds told and he can take ${fmt(body.btk)}`
         + `${body.jammed ? ' · YOUR PIECE JAMMED' : ''}${body.fired ? ` · ${fmt(body.fired)} rounds and ${body.energy} energy gone` : ''}${body.heat ? ` · +${body.heat} law heat (${body.heatNow}/100)` : ''}`
-        + ' · your search is burned and the trigger cools');
+        + ` · your search is burned and the trigger cools${body.shootCdSeconds ? ` ${minsTxt(body.shootCdSeconds)}` : ''}`);
     // A SHANK THAT DIDN'T LAND. The miss above keys on `btk` — a rounds-vs-bodyweight number a yard
     // shanking has no concept of — so the caught branch matched nothing and the most expensive verb
     // inside the walls read "done." over three real terms it had already been handed: the beating,
@@ -3723,7 +3725,7 @@
         + `${body.cooldownSeconds ? ` \u00B7 your contact rests ${minsTxt(body.cooldownSeconds)}` : ''}`
         + `${body.targetCdSeconds ? `, and won't touch this mark again for ${minsTxt(body.targetCdSeconds)}` : ''}`);
     }
-    if (body.revived) bits.push('they were carried out and patched up — pre-paid insurance. Still breathing.');
+    if (body.revived) bits.push(`they were carried out and patched up — pre-paid insurance. Still breathing.${body.shootCdSeconds ? ` · your search is burned and the trigger cools ${minsTxt(body.shootCdSeconds)}` : ''}`);
     // ...and the contract the city cancelled on you: family or crew now, so the hit is off and the
     // search is gone with it (the server clears it for real — it used to say so and not do it).
     if (body.calledOff) bits.push(body.calledOff === 'you' ? 'called your people off — the mark is yours to pick again'

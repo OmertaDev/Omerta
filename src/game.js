@@ -1145,7 +1145,7 @@ export async function withCharacter(pool, accountId, fn) {
     // because it is a DIFFERENT connection. That is also why it is a hazard: taking a second
     // connection while this one holds row locks can exhaust the pool under load and deadlock it
     // against itself. Use `client` for everything that belongs to the action.
-    const h = { ledger, rngLog, notify, track, bumpDaily, events: [], acct, owned, accountId, pool };
+    const h = { ledger, rngLog, notify, track, bumpDaily, acct, owned, accountId, pool };
     const result = await fn(ch, client, h);
 
     if (ch.alive !== false) await persistCharacter(client, ch); // a killed row is finalized by the estate
@@ -1181,7 +1181,7 @@ export async function withCharacter(pool, accountId, fn) {
     // success — same discipline as the referral post-commit hooks above.
     let character = null;
     try { character = view(ch, acct, owned); } catch (e) { console.error('view render (post-commit, non-fatal)', e?.code || e); }
-    return { character, events: h.events, ...result };
+    return { character, ...result };
   } catch (e) { await client.query('ROLLBACK'); throw deadlockToRetry(e); }
   finally { client.release(); }
 }
@@ -1226,11 +1226,11 @@ export async function withCharacterRead(pool, accountId, fn) {
     // routes are only ever registered here because they were verified side-effect free, and a guard
     // turns a future mistake into a loud failure instead of a silent unaudited write — one that
     // would land outside any transaction, since there is no BEGIN on this path.
-    const h = { ledger, rngLog, notify, track, bumpDaily, events: [], acct, owned, accountId, readOnly: true };
+    const h = { ledger, rngLog, notify, track, bumpDaily, acct, owned, accountId, readOnly: true };
     const result = await fn(ch, readOnlyClient(client), h);
     let character = null;
     try { character = view(ch, acct, owned); } catch (e) { console.error('view render (read, non-fatal)', e?.code || e); }
-    return { character, events: h.events, ...result };
+    return { character, ...result };
   } catch (e) { throw deadlockToRetry(e); }
   finally { client.release(); }
 }
@@ -1386,7 +1386,7 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
     await accrueAndLedger(client, ch, acct, owned);
     await accrueAndLedger(client, victim, victimAcct, victimOwned);
 
-    const h = { ledger, rngLog, notify, track, bumpDaily, events: [], acct, owned, accountId,
+    const h = { ledger, rngLog, notify, track, bumpDaily, acct, owned, accountId,
                 victimAcct, victimOwned };
     const result = await fn(ch, victim, client, h);
 
@@ -1423,7 +1423,7 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
     // the two-party action already COMMITTED; degrade the snapshot, not the success (see withCharacter).
     let character = null;
     try { character = view(ch, acct, owned); } catch (e) { console.error('view render (post-commit, non-fatal)', e?.code || e); }
-    return { character, events: h.events, ...result };
+    return { character, ...result };
   } catch (e) { await client.query('ROLLBACK'); throw deadlockToRetry(e); }
   finally { client.release(); }
 }

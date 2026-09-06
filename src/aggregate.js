@@ -29,15 +29,18 @@
 // read outside the request's transaction, and N connections per request is the pool-exhaustion shape
 // this project has been bitten by twice. Sequential is correct AND identical in speed.
 
-// THE ENVELOPE OWNS THESE NAMES. `readCharacter` returns `{ character, events: h.events, ...board }`,
-// and the spread is LAST — so a board keyed `character` or `events` SILENTLY replaces the envelope's
-// own field on that screen and no test can see it: the contract block compares the key against its
-// own route, where both sides are the board and agree perfectly. Found by reading a production
-// response and counting: 15 boards, 14 keys. It was harmless only because `h.events` has no writer
-// anywhere in src/ — the moment anything pushes "what just happened to you" into it, that array
-// vanishes on exactly the screens that fold boards, and nowhere else. `boards` and `failed` are ours
-// for the same reason. So the collision is refused rather than documented.
-const RESERVED = new Set(['character', 'events', 'boards', 'failed']);
+// THE ENVELOPE OWNS THESE NAMES. `readCharacter` returns `{ character, ...board }`, and the spread
+// is LAST — so a board keyed `character` SILENTLY replaces the envelope's own field, on exactly the
+// screens that fold boards and nowhere else, invisible to every per-route check (the contract block
+// compares a key against its own route, where both sides are the board and agree perfectly). Found
+// by reading a production response and counting: 15 boards, 14 keys. The colliding key then was
+// `events` — the envelope carried a DEAD `events: []` that nothing in `src/` ever pushed to, so the
+// shadowing was harmless by luck and the field was removed (2026-09-05) rather than reserved forever.
+// `events` is a LEGAL board key now (`/v1/people/history/:characterId` owns it — a timeline is the
+// right word for one). `boards`/`failed` are this function's own summary fields and stay reserved.
+// Validated ONCE per map (a WeakSet) rather than on every request: it is a static property of the
+// map, and a hot-path check for something that cannot change between requests is a slower request.
+const RESERVED = new Set(['character', 'boards', 'failed']);
 // Validated ONCE per map, not per request — it is a static property of the map, and a check that runs
 // on the hot path to prove something that cannot change between requests is just a slower request.
 const validated = new WeakSet();
