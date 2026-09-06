@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `bf71b6a1f945`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `6fbec0a3fad8`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1360 |
+| Commits in clone | 1362 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-06 — ci: the pg-mem job's timeout is a hang bound, and it was policing a runner |
+| Latest commit | 2026-09-06 — fix(client): the bed that outlived the app — a leaked looping <audio> per crossfade |
 
 ## Commit authors
 
@@ -23,7 +23,7 @@
 | OmertaDev | 460 |
 | Claude | 163 |
 | CRVYDEV | 41 |
-| omerta | 25 |
+| omerta | 27 |
 | github-actions[bot] | 23 |
 | claude[bot] | 1 |
 
@@ -31,18 +31,18 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| [CLAUDE.md](../../CLAUDE.md) | 518 | yes |
-| [public/index.html](../../public/index.html) | 401 | yes |
+| [CLAUDE.md](../../CLAUDE.md) | 519 | yes |
+| [public/index.html](../../public/index.html) | 402 | yes |
 | [src/server.js](../../src/server.js) | 352 | yes |
 | [SPEC.md](../../SPEC.md) | 282 | yes |
 | [schema.sql](../../schema.sql) | 275 | yes |
 | [BALANCE.md](../../BALANCE.md) | 254 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 178 | yes |
-| knowledge/generated/github-history.md | 165 | historical |
-| knowledge/generated/graph-summary.md | 165 | historical |
-| knowledge/generated/graph.json | 165 | historical |
-| knowledge/generated/inventory.md | 165 | historical |
+| knowledge/generated/github-history.md | 166 | historical |
+| knowledge/generated/graph-summary.md | 166 | historical |
+| knowledge/generated/graph.json | 166 | historical |
+| knowledge/generated/inventory.md | 166 | historical |
 | [package.json](../../package.json) | 147 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 123 | yes |
