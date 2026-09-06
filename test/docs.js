@@ -1297,6 +1297,117 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     + `interfaces, ${pairs[0]} tests/suites, measured ${dates[0]})`);
 }
 
+// The LIVE packet is a different object from the frozen one and gets a STRICTER check, because it IS
+// the current engagement scope. The frozen file is held only to itself (its figures are evidence about
+// a tree that no longer exists); this one must be held to the TREE, since "batch, not dribble" means an
+// auditor scopes from this table and a contract missing from it is one they never look at — discovered
+// mid-engagement, which is what paying to re-audit looks like. The same partial-refresh failure applies
+// on top, so every restated figure must agree with the ones beside it, and the toolchain it names must
+// be the one the workflow pins: a count without its compiler is not reproducible (an invariant-only
+// suite counts as 1 under the aggregated model and N under 1.7.1), which is exactly the ambiguity that
+// left the forge gate red and unreproducible for 19 hours.
+{
+  const pkt = read('CHAIN-AUDIT-PACKET-O1.md');
+
+  // (a) the table is the scope, and the TREE is the truth it must match
+  const rows = [...pkt.matchAll(/^\| \d+ \| `([A-Za-z0-9]+)` \|(.*)$/gm)];
+  assert(rows.length > 10, `the O1 packet's §1 batch table has stopped being readable (${rows.length} `
+    + 'rows found) — this check would be vacuous rather than clean');
+  const tableIfaces = rows.filter((r) => /interface, not a contract|interface only/.test(r[2])).length;
+  const tableContracts = rows.length - tableIfaces;
+
+  // one name per source file: its contract, or its interface where the file declares no contract
+  const srcDir = 'omerta-contracts/src';
+  const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory()
+    ? walk(`${d}/${e.name}`) : (e.name.endsWith('.sol') ? [`${d}/${e.name}`] : [])));
+  const files = walk(srcDir).sort();
+  const treeContracts = [];
+  const treeIfaces = [];
+  for (const f of files) {
+    const src = read(f);
+    const c = /^(?:abstract )?contract ([A-Za-z0-9_]+)/m.exec(src);
+    if (c) { treeContracts.push(c[1]); continue; }
+    const i = /^interface ([A-Za-z0-9_]+)/m.exec(src);
+    assert(i, `${f} declares neither a contract nor an interface — the packet's scope table is built `
+      + 'one row per source file, so a file this reader cannot name cannot be scoped');
+    treeIfaces.push(i[1]);
+  }
+  assert(treeContracts.length > 10, `read only ${treeContracts.length} contracts out of ${srcDir} — `
+    + 'this cross-check is measuring nothing');
+
+  const named = new Set(rows.map((r) => r[1]));
+  const missing = [...treeContracts, ...treeIfaces].filter((n) => !named.has(n));
+  assert.equal(missing.length, 0, `the O1 packet's scope table omits ${missing.join(', ')}. An auditor `
+    + 'scopes from that table, so a contract missing from it is one nobody reviews — and adding it after '
+    + 'the engagement means paying to re-audit, which is what "batch, not dribble" exists to prevent');
+  const inTree = new Set([...treeContracts, ...treeIfaces]);
+  const phantom = rows.map((r) => r[1]).filter((n) => !inTree.has(n));
+  assert.equal(phantom.length, 0, `the O1 packet scopes ${phantom.join(', ')}, which ${srcDir} does not `
+    + 'contain — a reviewer would go looking for source that is not there');
+  assert.equal(`${tableContracts}+${tableIfaces}`,
+    `${treeContracts.length}+${treeIfaces.length}`,
+    `the O1 packet's table marks ${tableContracts} contracts + ${tableIfaces} interfaces; the tree holds `
+    + `${treeContracts.length} + ${treeIfaces.length}`);
+
+  // (b) the heading and the file-count sentence are what a reader scopes from before reaching the table
+  const head = /## 1\. SCOPE — (\d+) contracts \+ (\d+) interfaces?/.exec(pkt);
+  assert(head, 'CHAIN-AUDIT-PACKET-O1.md §1 has lost its scope heading');
+  assert.equal(`${head[1]}+${head[2]}`, `${tableContracts}+${tableIfaces}`,
+    `the O1 packet's §1 heading sends ${head[1]} contracts + ${head[2]} interface(s) to audit while the `
+    + `table beneath it enumerates ${tableContracts} + ${tableIfaces}`);
+  const body = /(\d+)\s+Solidity files,\s+(\d+)\s+contracts and\s+(\d+)\s+interfaces/.exec(pkt);
+  assert(body, 'CHAIN-AUDIT-PACKET-O1.md §1 has lost its file-count sentence');
+  assert.equal([body[1], body[2], body[3]].join('/'), [files.length, treeContracts.length,
+    treeIfaces.length].join('/'),
+    `the O1 packet says ${body[1]} files / ${body[2]} contracts / ${body[3]} interfaces; the tree holds `
+    + `${files.length} / ${treeContracts.length} / ${treeIfaces.length}`);
+
+  // (c) a partial refresh is the failure mode, so no figure may drift from its own restatements
+  const pairs = [...pkt.matchAll(/(\d+)\s+(?:Foundry\s+)?tests?\s+(?:across|\/)\s+(\d+)\s+suites/g)]
+    .map((m) => `${m[1]}/${m[2]}`);
+  assert(pairs.length >= 2, `the O1 packet states its Foundry count in ${pairs.length} place(s); with `
+    + 'fewer than two there is nothing to hold it to and this assertion proves nothing');
+  assert.equal(new Set(pairs).size, 1,
+    `the O1 packet gives its Foundry suite two different answers: ${[...new Set(pairs)].join(' and ')}`);
+  const fuzz = [...pkt.matchAll(/(\d+)\s+parameterised 512-run fuzz/g)].map((m) => m[1]);
+  assert(fuzz.length >= 2, `the O1 packet counts its 512-run fuzz properties in ${fuzz.length} place(s)`);
+  assert.equal(new Set(fuzz).size, 1, `the O1 packet counts its 512-run fuzz properties two ways: ${
+    [...new Set(fuzz)].join(' and ')}`);
+  const dates = [...pkt.matchAll(/measured (?:on )?\*{0,2}(\d{4}-\d\d-\d\d)/g)].map((m) => m[1]);
+  assert(dates.length >= 2, `the O1 packet states its measurement date in ${dates.length} place(s)`);
+  assert.equal(new Set(dates).size, 1,
+    `the O1 packet was measured on two different days at once: ${[...new Set(dates)].join(' and ')}`);
+
+  // (d) the toolchain it names must be the one that runs — two sources, one truth
+  const pktForge = [...pkt.matchAll(/forge v(\d+\.\d+\.\d+)/g)].map((m) => m[1]);
+  assert(pktForge.length >= 2, `the O1 packet names its toolchain in ${pktForge.length} place(s); a `
+    + 'version-dependent count needs its compiler beside it wherever the count appears');
+  assert.equal(new Set(pktForge).size, 1,
+    `the O1 packet names two toolchains: ${[...new Set(pktForge)].join(' and ')}`);
+  const wfPin = /foundry-toolchain@v1[\s\S]{0,200}?version:\s*v?(\d+\.\d+\.\d+)/
+    .exec(read('.github/workflows/forge.yml'));
+  assert(wfPin, 'the forge workflow has lost its pinned toolchain version');
+  assert.equal(pktForge[0], wfPin[1],
+    `the O1 packet freezes its count under forge v${pktForge[0]} while the workflow pins v${wfPin[1]}. `
+    + 'A stale toolchain claim beside a frozen figure is worse than none: it tells a reader the count is '
+    + 'reproducible under a compiler that is no longer the one that runs');
+
+  // (e) the pointers. A superseded packet that does not name its successor is how a reviewer is handed
+  // the wrong scope — the whole failure this refresh exists to end, one document over.
+  const frozen = read('CHAIN-AUDIT-PACKET.md');
+  assert(/CHAIN-AUDIT-PACKET-O1\.md/.test(frozen),
+    'CHAIN-AUDIT-PACKET.md is superseded and does not name its successor. A reader who opens the file '
+    + 'named in three other documents must be sent onward, or the stale pre-O1 scope is what gets sent');
+  for (const doc of ['CHAIN-DEPLOY.md', 'LAUNCH-READINESS.md']) {
+    assert(/CHAIN-AUDIT-PACKET-O1\.md/.test(read(doc)),
+      `${doc} gates on the audit and does not name CHAIN-AUDIT-PACKET-O1.md as the packet to send`);
+  }
+
+  console.log(`✓ the O1 audit packet matches the tree (${tableContracts} contracts + ${tableIfaces} `
+    + `interfaces, ${files.length} files), agrees with itself (${pairs[0]} tests/suites under forge `
+    + `v${pktForge[0]}, measured ${dates[0]}), and every gate doc points at it`);
+}
+
 // The issuer-retirement answer is a value-conservation rule, not optional prose. Keep the player Codex,
 // the design authority, and the launch runbook aligned: ordinary multiplier actions preserve raw units;
 // terminal actions stop and reconcile actual receipt back to the same pending cohort, never treasury.

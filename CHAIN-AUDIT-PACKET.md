@@ -4,8 +4,13 @@
 > audit evidence. It predates the Acquisition constellation (`AcquisitionAuthority`,
 > `AcquisitionConstellationFactory`, `AcquisitionIntentExecution`, `AcquisitionReconciliation`,
 > `AcquisitionVaultCore`), `PreVoteBudgetBook` and `RwaHealthOverlay`, so it is not the current tree
-> inventory and must not be sent as a complete current engagement scope. Rebuild and freeze a new
-> packet at the exact release head; `CHAIN-DEPLOY.md` is the current operational inventory authority.
+> inventory and must not be sent as a complete current engagement scope.
+>
+> **SUPERSEDED BY [`CHAIN-AUDIT-PACKET-O1.md`](CHAIN-AUDIT-PACKET-O1.md)** — rebuilt and frozen at
+> release head `b0a214ca` under a PINNED toolchain, which is what makes its figures reproducible and
+> these ones not (see that packet's §0). Send THAT one. `CHAIN-DEPLOY.md` remains the operational
+> runbook. Nothing below this line has been edited: the figures are the evidence, stale or not, and
+> rewriting them would destroy the record this file is kept for.
 
 **At that snapshot, this was gate 2 of the three in `CHAIN-DEPLOY.md` §0.** Gate 1
 (`forge test`) was green and gate 3 (the launch review) was signed; the external audit remained

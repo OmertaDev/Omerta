@@ -17548,3 +17548,62 @@ the token's presence was verified before the result was believed. And a check-ru
 from `git rev-parse HEAD` now, and the real answer was still 0, which is what made the dirty-PR
 diagnosis trustworthy rather than an artifact of a bad query. *A confident zero is not a measurement
 until you have proven the query could ever have returned anything else.*
+
+**THE PACKET REBUILT AT THE RELEASE HEAD, AND TWO ASSERTIONS THAT WERE FUNCTIONS OF THE CALENDAR
+(2026-09-06).** `CHAIN-DEPLOY.md` names one prerequisite for gate 2 — a packet frozen at the head an
+auditor will actually review — and the existing one carries its own banner saying it is a
+**SUPERSEDED SNAPSHOT ... retained as historical audit evidence** with instructions to *rebuild and
+freeze a new packet at the release head*. So the work is a NEW file beside it, never an edit: its
+figures ARE the evidence, and rewriting them destroys the record it is kept for. **`CHAIN-AUDIT-PACKET-O1.md`**
+(374 lines) is that packet, and its §0 exists because the last one taught the lesson: it names the
+**COMPILER** beside every figure — head `b0a214ca`, **forge v1.7.1** (now pinned), solc 0.8.26 /
+optimizer 800 / cancun, `[fuzz] runs = 512`, invariants at forge DEFAULTS — because **a test COUNT is
+a version fingerprint** and the old packet's 387/22 is unreproducible without knowing what compiled
+it (an invariant-only suite counts as ONE test under the aggregated model and as N under 1.7.1). The
+authoritative figure is **896 tests across 43 suites, 0 failed, 19 parameterised 512-run fuzz**,
+measured from the CI job at that exact head rather than a local run — deliberately, since a local run
+would be under an unnamed compiler, which is the exact ambiguity the refresh exists to end. Three
+documents had disagreed (CHAIN-DEPLOY 305/305, the frozen packet 387/22, LAUNCH-READINESS 531/531
+across 27), and all three now point at one number with its provenance attached. **§1a is a
+contract→suite MAP rather than CHAIN-DEPLOY's true-but-unusable "every contract carries tests"**,
+because **suite name ≠ contract name**: 19 of 31 contracts have no dedicated `<Name>.t.sol`, so a
+reviewer scoping from filenames would conclude two thirds of the batch is untested.
+**THE GUARD IS DELIBERATELY STRICTER THAN THE FROZEN ONE, and the asymmetry is the point.** The old
+packet is held only to ITSELF (it describes a tree that no longer exists — holding it to today's
+would destroy it). The live packet is held to the **TREE**, because it IS the current engagement
+scope: "batch, not dribble" means an auditor scopes from that table, so a contract missing from it is
+a contract nobody reviews. `test/docs.js` walks `omerta-contracts/src`, takes one name per file (its
+`contract`, or its `interface` where no contract is declared) and fails on a missing name, a phantom
+name, a count mismatch, a disagreeing repeated figure, a forge version that drifts from the
+`foundry-toolchain` pin in `.github/workflows/forge.yml`, or any gate doc that stops pointing at the
+new packet — with six anti-vacuity floors, since an extractor that has stopped reading the tree reads
+exactly like a clean sweep. Ten mutations, ten distinct named kills.
+**AND THE FULL SUITE WAS RED ON TWO ASSERTIONS THAT WERE FUNCTIONS OF THE DATE**, in a file this
+drop does not touch — so almost certainly red on `main` too, which is the ground-rule-8 shape:
+a suite that passes for months and turns red on a calendar boundary reads exactly like a flake and
+gets re-run. Both are `test/stockballotv2.js`, both the recorded class (*a deterministic assertion
+resting on a probabilistic — here temporal — precondition*), and **both were fixed by GUARANTEEING
+the precondition rather than weakening the assertion**. (1) The no-valid-candidate close wrote
+`deactivated_at=now()` against a ballot closing at the literal `2026-09-05T00:00:00Z`, and
+`src/commission.js` rules — correctly — that `deactivated_at >= closes_at` means the asset was still
+live when the ballot shut, so it stays **eligible**: the moment real-now passed the close instant the
+asset qualified and the close returned `closed_ready`. Replaced with an explicit literal before the
+close, matching the neighbouring `synced_at='2026-09-04T23:59:00Z'`. (2) The dissolution block took a
+**RAW** `pool.connect()`, so `removeMember` read real `now()` — and it deletes a ticker vote only
+while its ballot day is still open (`closes_at > now()`), a closed day's vote being deliberately
+FROZEN — so the vote was preserved and the count read 1 against an expected 0. Routed through
+`clockedPool(pool, WALL)`, which is the pattern the file's own dissolution regression at L783 already
+uses; the clock harness (`ticker_ballot_v2_dissolution_clock`) was built for exactly this and this
+one block simply did not use it. **Three mutations kill by name, and M1b is the one that matters**:
+a literal placed AFTER the close instant reproduces today's failure identically, which proves the
+mechanism is the **timestamp RELATION** rather than `now()` itself. **The class was then swept rather
+than the instances patched** (the RT#7 discipline): 639 `now()` uses across `test/` and `tools/` is
+far too broad to review and most have nothing to drift against, so the tractable population is a
+`now()` WRITE sharing a block with a fixed ISO instant — **4 sites, and the other two are safe by
+construction** (`rwaroutes` and `stockcatalogv2` compute `now() ± interval`, relative to themselves;
+`rwaregistrylifecycle`'s `closed_at` is never compared; `stockdeliver`'s block asserts explicitly that
+*age does not affect* the outcome). One trap re-paid: the first reproduction attempt used `sed` to
+insert a quoted timestamp into a **single-quoted JavaScript string**, which produced
+`SyntaxError: missing ) after argument list` — so both directions exited 1 for a reason other than the
+one under test, and *a mutation that does not apply reads exactly like a fix that holds*. Every edit
+since goes through a python heredoc that asserts its own anchor landed first.

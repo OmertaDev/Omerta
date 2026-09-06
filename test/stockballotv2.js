@@ -1576,7 +1576,11 @@ let first;
     day: DAY, maxEthWei: '9', detailsHash: DETAILS, actorId: 'mod',
   });
   await invalidPool.query('DELETE FROM stock_asset_active_heads_v2');
-  await invalidPool.query('UPDATE stock_asset_versions_v2 SET active=false,deactivated_at=now() WHERE asset_version_key=$1',
+  // deactivated BEFORE the ballot's close instant on purpose: the eligibility rule is
+  // `deactivated_at >= closes_at => still eligible` (it was live when the ballot shut), so
+  // now() here makes the assertion below a function of the WALL CLOCK -- it passed while
+  // real-now sat before 2026-09-05 and flipped to 'closed_ready' the day it did not.
+  await invalidPool.query("UPDATE stock_asset_versions_v2 SET active=false,deactivated_at='2026-09-04T23:59:00Z' WHERE asset_version_key=$1",
     [asset.assetVersionKey]);
   await invalidPool.query("UPDATE stock_catalog_sync_state_v2 SET synced_at='2026-09-04T23:59:00Z',verified_at='2026-09-04T23:59:00Z',ready_verified_at='2026-09-04T23:59:00Z',caught_up=true WHERE id=1");
   const skipped = await closeTickerBallotV2(clockedPool(invalidPool, '2026-09-05T00:00:00.000Z'), DAY);
@@ -1613,7 +1617,11 @@ let first;
        'no_valid_candidate',$4,$5,'not_submitted')`,
     [NEXT_DAY, CATALOG_VERSION, hash('c'), hash('f'), '2026-09-06T00:00:00Z'],
   );
-  const client = await pool.connect();
+  // Clocked at WALL on purpose. removeMember deletes a ticker vote only while its ballot day is
+  // still open (`closes_at > now()`) -- a closed day's vote is deliberately FROZEN -- so a raw
+  // client reading real now() makes this assertion a function of the WALL CLOCK: it deleted while
+  // real-now sat before this ballot's 2026-09-05 close and preserved the vote the day it did not.
+  const client = await clockedPool(pool, WALL).connect();
   try {
     await client.query('BEGIN');
     await removeMember(client, family.familyId, family.ch.id);
