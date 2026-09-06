@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "17a8853662a1bb3bc1093eefc3d783367b3379fa",
+  "sourceRevision": "78bd517ac9ebf2139e02707c9da9d022601ee4dd",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 5699,
-    "edges": 25362,
+    "nodes": 5702,
+    "edges": 25370,
     "byNodeType": {
-      "Artifact": 1831,
+      "Artifact": 1832,
       "Command": 58,
-      "Commit": 1331,
+      "Commit": 1333,
       "Contract": 49,
       "Document": 476,
       "Domain": 12,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1982,
-      "CHANGED": 10280,
-      "CONTAINS": 1851,
+      "CHANGED": 10285,
+      "CONTAINS": 1852,
       "DECLARES": 58,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 206,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1331,
+      "HAS_COMMIT": 1333,
       "IMPLEMENTS": 124,
       "IMPORTS": 1653,
       "INHERITS": 12,
@@ -7466,6 +7466,29 @@
       "lastChangedAt": "2026-08-27T08:25:58.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "18738f0238abac2204c0d201ea4ce93acefcd781"
+    },
+    {
+      "key": "Artifact:.claude/settings.json",
+      "type": "Artifact",
+      "id": ".claude/settings.json",
+      "label": "settings.json",
+      "path": ".claude/settings.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 236,
+      "lines": 9,
+      "version": "e03ab65038b668d0",
+      "text": true,
+      "provenance": [
+        {
+          "file": ".claude/settings.json",
+          "line": 1,
+          "version": "e03ab65038b668d0"
+        }
+      ],
+      "lastChangedAt": "2026-09-06T15:57:16.000Z",
+      "lastChangedBy": "Claude",
+      "lastChangedCommit": "78bd517ac9ebf2139e02707c9da9d022601ee4dd"
     },
     {
       "key": "Artifact:.env.example",
@@ -53138,6 +53161,22 @@
       ]
     },
     {
+      "key": "Commit:78bd517ac9ebf2139e02707c9da9d022601ee4dd",
+      "type": "Commit",
+      "id": "78bd517ac9ebf2139e02707c9da9d022601ee4dd",
+      "label": "chore(tooling): install the token-optimizer plugin for cloud sessions",
+      "title": "chore(tooling): install the token-optimizer plugin for cloud sessions",
+      "date": "2026-09-06T15:57:16.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/78bd517ac9ebf2139e02707c9da9d022601ee4dd",
+      "provenance": [
+        {
+          "commit": "78bd517ac9ebf2139e02707c9da9d022601ee4dd",
+          "url": "https://github.com/OmertaDev/Omerta/commit/78bd517ac9ebf2139e02707c9da9d022601ee4dd"
+        }
+      ]
+    },
+    {
       "key": "Commit:78e941108651123e6a5b00592aa64ea7f1770cd1",
       "type": "Commit",
       "id": "78e941108651123e6a5b00592aa64ea7f1770cd1",
@@ -53182,6 +53221,22 @@
         {
           "commit": "78fc957af1aa39ffe5b17f6ed247bc554e85c4a1",
           "url": "https://github.com/OmertaDev/Omerta/commit/78fc957af1aa39ffe5b17f6ed247bc554e85c4a1"
+        }
+      ]
+    },
+    {
+      "key": "Commit:7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "type": "Commit",
+      "id": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "label": "chore(knowledge): refresh generated artifacts for 17a88536",
+      "title": "chore(knowledge): refresh generated artifacts for 17a88536",
+      "date": "2026-09-06T13:02:06.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "provenance": [
+        {
+          "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
         }
       ]
     },
@@ -77590,6 +77645,9 @@
           "commit": "75e712807775da240e10e81821a298f98217aa89"
         },
         {
+          "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
+        },
+        {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
@@ -78061,6 +78119,9 @@
           "commit": "75e712807775da240e10e81821a298f98217aa89"
         },
         {
+          "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
+        },
+        {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
@@ -78530,6 +78591,9 @@
         },
         {
           "commit": "75e712807775da240e10e81821a298f98217aa89"
+        },
+        {
+          "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
         },
         {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
@@ -79076,6 +79140,9 @@
         },
         {
           "commit": "75e712807775da240e10e81821a298f98217aa89"
+        },
+        {
+          "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
         },
         {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
@@ -85642,12 +85709,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "17a8853662a1bb3bc1093eefc3d783367b3379fa",
-      "currentBranch": "main",
+      "revision": "78bd517ac9ebf2139e02707c9da9d022601ee4dd",
+      "currentBranch": "claude/token-optimizer-skill-x33ecr",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 1831,
+      "currentArtifactCount": 1832,
       "provenance": [
         {
           "file": "README.md",
@@ -171120,6 +171187,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:78bd517ac9ebf2139e02707c9da9d022601ee4dd",
+      "to": "Artifact:.claude/settings.json",
+      "provenance": {
+        "commit": "78bd517ac9ebf2139e02707c9da9d022601ee4dd"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:78e941108651123e6a5b00592aa64ea7f1770cd1",
       "to": "Artifact:public/index.html",
       "provenance": {
@@ -171204,6 +171279,38 @@
       "to": "Artifact:omerta-contracts/test/AcquisitionConstellationTask3B.t.sol",
       "provenance": {
         "commit": "78fc957af1aa39ffe5b17f6ed247bc554e85c4a1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
       }
     },
     {
@@ -217664,6 +217771,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:.claude/settings.json",
+      "provenance": {
+        "file": ".claude/settings.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:.gitattributes",
       "provenance": {
         "file": ".gitattributes",
@@ -252740,6 +252856,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:78bd517ac9ebf2139e02707c9da9d022601ee4dd",
+      "provenance": {
+        "commit": "78bd517ac9ebf2139e02707c9da9d022601ee4dd"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:78e941108651123e6a5b00592aa64ea7f1770cd1",
       "provenance": {
         "commit": "78e941108651123e6a5b00592aa64ea7f1770cd1"
@@ -252759,6 +252883,14 @@
       "to": "Commit:78fc957af1aa39ffe5b17f6ed247bc554e85c4a1",
       "provenance": {
         "commit": "78fc957af1aa39ffe5b17f6ed247bc554e85c4a1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "provenance": {
+        "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
       }
     },
     {
