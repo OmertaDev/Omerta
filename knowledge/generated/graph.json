@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "17a8853662a1bb3bc1093eefc3d783367b3379fa",
+  "sourceRevision": "12a59721b53099030928c10aabd0083ca7cc942a",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,17 +43,17 @@
     ]
   },
   "census": {
-    "nodes": 5699,
-    "edges": 25362,
+    "nodes": 5702,
+    "edges": 25369,
     "byNodeType": {
       "Artifact": 1831,
       "Command": 58,
-      "Commit": 1331,
+      "Commit": 1333,
       "Contract": 49,
       "Document": 476,
       "Domain": 12,
       "ExternalDependency": 24,
-      "HistoricalArtifact": 306,
+      "HistoricalArtifact": 307,
       "Module": 187,
       "PullRequest": 126,
       "Repository": 1,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 1982,
-      "CHANGED": 10280,
+      "CHANGED": 10285,
       "CONTAINS": 1851,
       "DECLARES": 58,
       "DEFINED_IN": 1108,
       "DEPENDS_ON": 60,
       "EXECUTES": 206,
       "HANDLED_BY": 702,
-      "HAS_COMMIT": 1331,
+      "HAS_COMMIT": 1333,
       "IMPLEMENTS": 124,
       "IMPORTS": 1653,
       "INHERITS": 12,
@@ -44226,6 +44226,22 @@
       ]
     },
     {
+      "key": "Commit:12a59721b53099030928c10aabd0083ca7cc942a",
+      "type": "Commit",
+      "id": "12a59721b53099030928c10aabd0083ca7cc942a",
+      "label": "chore: make the handoff skill discoverable to Claude Code",
+      "title": "chore: make the handoff skill discoverable to Claude Code",
+      "date": "2026-09-06T15:20:47.000Z",
+      "author": "Claude",
+      "url": "https://github.com/OmertaDev/Omerta/commit/12a59721b53099030928c10aabd0083ca7cc942a",
+      "provenance": [
+        {
+          "commit": "12a59721b53099030928c10aabd0083ca7cc942a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/12a59721b53099030928c10aabd0083ca7cc942a"
+        }
+      ]
+    },
+    {
       "key": "Commit:12ac6b6f26f1808f74c84b6fddb7d6f8b556c7d9",
       "type": "Commit",
       "id": "12ac6b6f26f1808f74c84b6fddb7d6f8b556c7d9",
@@ -53182,6 +53198,22 @@
         {
           "commit": "78fc957af1aa39ffe5b17f6ed247bc554e85c4a1",
           "url": "https://github.com/OmertaDev/Omerta/commit/78fc957af1aa39ffe5b17f6ed247bc554e85c4a1"
+        }
+      ]
+    },
+    {
+      "key": "Commit:7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "type": "Commit",
+      "id": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "label": "chore(knowledge): refresh generated artifacts for 17a88536",
+      "title": "chore(knowledge): refresh generated artifacts for 17a88536",
+      "date": "2026-09-06T13:02:06.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "provenance": [
+        {
+          "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
         }
       ]
     },
@@ -77055,6 +77087,18 @@
       ]
     },
     {
+      "key": "HistoricalArtifact:.claude/skills/handoff",
+      "type": "HistoricalArtifact",
+      "id": ".claude/skills/handoff",
+      "label": ".claude/skills/handoff",
+      "path": ".claude/skills/handoff",
+      "provenance": [
+        {
+          "commit": "12a59721b53099030928c10aabd0083ca7cc942a"
+        }
+      ]
+    },
+    {
       "key": "HistoricalArtifact:.codex/config.toml",
       "type": "HistoricalArtifact",
       "id": ".codex/config.toml",
@@ -77590,6 +77634,9 @@
           "commit": "75e712807775da240e10e81821a298f98217aa89"
         },
         {
+          "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
+        },
+        {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
@@ -78061,6 +78108,9 @@
           "commit": "75e712807775da240e10e81821a298f98217aa89"
         },
         {
+          "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
+        },
+        {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
@@ -78530,6 +78580,9 @@
         },
         {
           "commit": "75e712807775da240e10e81821a298f98217aa89"
+        },
+        {
+          "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
         },
         {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
@@ -79076,6 +79129,9 @@
         },
         {
           "commit": "75e712807775da240e10e81821a298f98217aa89"
+        },
+        {
+          "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
         },
         {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
@@ -85642,12 +85698,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "17a8853662a1bb3bc1093eefc3d783367b3379fa",
-      "currentBranch": "main",
+      "revision": "12a59721b53099030928c10aabd0083ca7cc942a",
+      "currentBranch": "claude/install-handoff-skill-yccrmb",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 1831,
+      "currentArtifactCount": 1832,
       "provenance": [
         {
           "file": "README.md",
@@ -134112,6 +134168,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:12a59721b53099030928c10aabd0083ca7cc942a",
+      "to": "HistoricalArtifact:.claude/skills/handoff",
+      "provenance": {
+        "commit": "12a59721b53099030928c10aabd0083ca7cc942a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:12ac6b6f26f1808f74c84b6fddb7d6f8b556c7d9",
       "to": "Artifact:AUDIT-redteam-loop.md",
       "provenance": {
@@ -171204,6 +171268,38 @@
       "to": "Artifact:omerta-contracts/test/AcquisitionConstellationTask3B.t.sol",
       "provenance": {
         "commit": "78fc957af1aa39ffe5b17f6ed247bc554e85c4a1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
       }
     },
     {
@@ -248284,6 +248380,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:12a59721b53099030928c10aabd0083ca7cc942a",
+      "provenance": {
+        "commit": "12a59721b53099030928c10aabd0083ca7cc942a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:12ac6b6f26f1808f74c84b6fddb7d6f8b556c7d9",
       "provenance": {
         "commit": "12ac6b6f26f1808f74c84b6fddb7d6f8b556c7d9"
@@ -252759,6 +252863,14 @@
       "to": "Commit:78fc957af1aa39ffe5b17f6ed247bc554e85c4a1",
       "provenance": {
         "commit": "78fc957af1aa39ffe5b17f6ed247bc554e85c4a1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:7911060b4ea1368fcbfef42f60e862b6ecb6c57a",
+      "provenance": {
+        "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
       }
     },
     {
