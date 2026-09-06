@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `b7b61cf82ffd`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `030c3bd0b77a`.
 
 ## Repository
 
@@ -9,11 +9,11 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 1333 |
+| Commits in clone | 1335 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-09-06 — play wave 81: the crew pact was named on the way out and not on the way in |
+| Latest commit | 2026-09-06 — fix(mobile): the first-action flake could not name its own cause |
 
 ## Commit authors
 
@@ -21,7 +21,7 @@
 |---|---:|
 | crvydev | 647 |
 | OmertaDev | 460 |
-| Claude | 161 |
+| Claude | 163 |
 | CRVYDEV | 41 |
 | github-actions[bot] | 23 |
 | claude[bot] | 1 |
@@ -38,10 +38,10 @@
 | [BALANCE.md](../../BALANCE.md) | 253 | yes |
 | [src/rules.js](../../src/rules.js) | 188 | yes |
 | [src/game.js](../../src/game.js) | 173 | yes |
-| knowledge/generated/github-history.md | 153 | historical |
-| knowledge/generated/graph-summary.md | 153 | historical |
-| knowledge/generated/graph.json | 153 | historical |
-| knowledge/generated/inventory.md | 153 | historical |
+| knowledge/generated/github-history.md | 154 | historical |
+| knowledge/generated/graph-summary.md | 154 | historical |
+| knowledge/generated/graph.json | 154 | historical |
+| knowledge/generated/inventory.md | 154 | historical |
 | [package.json](../../package.json) | 146 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/worker.js](../../src/worker.js) | 122 | yes |
@@ -54,7 +54,7 @@
 | [public/wiki.html](../../public/wiki.html) | 80 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 69 | yes |
 | [test/hardening.js](../../test/hardening.js) | 65 | yes |
-| knowledge/generated/documents.md | 63 | historical |
+| knowledge/generated/documents.md | 64 | historical |
 | [tools/sim.js](../../tools/sim.js) | 59 | yes |
 | [test/gates.js](../../test/gates.js) | 56 | yes |
 | [src/preflight.js](../../src/preflight.js) | 55 | yes |
@@ -62,8 +62,8 @@
 | [src/growth.js](../../src/growth.js) | 54 | yes |
 | [AUDIT-redteam-loop.md](../../AUDIT-redteam-loop.md) | 51 | yes |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 50 | yes |
+| knowledge/generated/modules.md | 48 | historical |
 | [src/economy.js](../../src/economy.js) | 48 | yes |
-| knowledge/generated/modules.md | 47 | historical |
 | [src/casino.js](../../src/casino.js) | 46 | yes |
 | [test/economy.js](../../test/economy.js) | 46 | yes |
 | [src/business.js](../../src/business.js) | 43 | yes |
